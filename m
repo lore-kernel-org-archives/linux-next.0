@@ -1,86 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Tue, 26 Nov 2013 13:30:01 +1100
-Message-ID: <20131126133001.7cc9d05bdbd763ffa1e1dc4d@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the block tree
+Date: Tue, 26 Nov 2013 14:35:50 +1100
+Message-ID: <20131126143550.7a2195476ff4aa5c73db20b2@canb.auug.org.au>
+References: <20131126132946.e402679788ae8269f0c5128a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Nov_2013_13_30_01_+1100_w/+ChGoWFVdsri4Y"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>, Chao Yu <chao2.yu@samsung.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__26_Nov_2013_14_35_50_+1100_Y/PZPIYZJkUSC7iG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59344 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752674Ab3KZDgA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Nov 2013 22:36:00 -0500
+In-Reply-To: <20131126132946.e402679788ae8269f0c5128a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
 
---Signature=_Tue__26_Nov_2013_13_30_01_+1100_w/+ChGoWFVdsri4Y
+--Signature=_Tue__26_Nov_2013_14_35_50_+1100_Y/PZPIYZJkUSC7iG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi all,
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Tue, 26 Nov 2013 13:29:46 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the block tree, today's linux-next build (arm
+> multi_v7_defconfig) produced these warnings:
+>=20
+> block/blk-merge.c: In function 'blk_rq_map_sg':
+> block/blk-merge.c:133:8: warning: 'bvprv.bv_len' may be used uninitialize=
+d in this function [-Wuninitialized]
+> block/blk-merge.c:171:23: note: 'bvprv.bv_len' was declared here
+> block/blk-merge.c:133:8: warning: 'bvprv.bv_page' may be used uninitializ=
+ed in this function [-Wuninitialized]
+> block/blk-merge.c:171:23: note: 'bvprv.bv_page' was declared here
+> block/blk-merge.c:133:8: warning: 'bvprv.bv_offset' may be used uninitial=
+ized in this function [-Wuninitialized]
+> block/blk-merge.c:171:23: note: 'bvprv.bv_offset' was declared here
+> block/blk-merge.c: In function 'blk_bio_map_sg':
+> block/blk-merge.c:133:8: warning: 'bvprv.bv_len' may be used uninitialize=
+d in this function [-Wuninitialized]
+> block/blk-merge.c:233:23: note: 'bvprv.bv_len' was declared here
+> block/blk-merge.c:133:8: warning: 'bvprv.bv_offset' may be used uninitial=
+ized in this function [-Wuninitialized]
+> block/blk-merge.c:233:23: note: 'bvprv.bv_offset' was declared here
+> block/blk-merge.c:133:8: warning: 'bvprv.bv_page' may be used uninitializ=
+ed in this function [-Wuninitialized]
+> block/blk-merge.c:233:23: note: 'bvprv.bv_page' was declared here
+> block/blk-merge.c: In function 'attempt_merge':
+> block/blk-merge.c:108:7: warning: 'end_bv.bv_offset' may be used uninitia=
+lized in this function [-Wuninitialized]
+> block/blk-merge.c:89:17: note: 'end_bv.bv_offset' was declared here
+> block/blk-merge.c:108:7: warning: 'end_bv.bv_page' may be used uninitiali=
+zed in this function [-Wuninitialized]
+> block/blk-merge.c:89:17: note: 'end_bv.bv_page' was declared here
+> block/blk-merge.c:108:7: warning: 'end_bv.bv_len' may be used uninitializ=
+ed in this function [-Wuninitialized]
+> block/blk-merge.c:89:17: note: 'end_bv.bv_len' was declared here
+>=20
+> arm has its own definition of BIOVEC_PHYS_MERGEABLE() if that is relevant.
 
-fs/f2fs/data.c: In function 'submit_read_page':
-fs/f2fs/data.c:457:10: error: 'struct bio' has no member named 'bi_sector'
-   io->bio->bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
-          ^
-
-Caused by commit 4f024f3797c4 ("block: Abstract out bvec iterator") from
-the block tree interacting with commit 32cd69ef0893 ("f2fs: add a new
-function to support for merging contiguous read") from the f2fs tree.
-
-I added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 26 Nov 2013 13:19:30 +1100
-Subject: [PATCH] f2fs: cope with bvec iterator abstraction
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 728eedb1c0c6..8d31b83bfc89 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -454,7 +454,7 @@ alloc_new:
- 	if (io->bio =3D=3D NULL) {
- 		bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
- 		io->bio =3D f2fs_bio_alloc(bdev, bio_blocks);
--		io->bio->bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
-+		io->bio->bi_iter.bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
- 		io->bio->bi_end_io =3D read_end_io;
- 	}
-=20
---=20
-1.8.4.3
+For an easier test case, the i386 defcongig does this as well.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__26_Nov_2013_13_30_01_+1100_w/+ChGoWFVdsri4Y
+--Signature=_Tue__26_Nov_2013_14_35_50_+1100_Y/PZPIYZJkUSC7iG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSlAepAAoJEMDTa8Ir7ZwV3KsP/j2keY3icILZfwAVbE8vzweU
-XXAqq6H6hV2hawwBQZXyrvpl6TXR+LHjCtpQxk10mc8qmhNa/v2FaV58vadatUc4
-SoxqT4EOBuXM9HmTlBdJZpRZgO0ho0IWtsq+8ZM/Tk/CV3GSNPD4UYGLPvTTnYSN
-XIc0PWgvRXaaYZRfxf6Q7dJsEcdtR9JqZxffNfuE9bsL5Y9o/tlfZon+W4UxPXe4
-ZxuRMt/FPITyBdJC0fiq/X75srDnaYXfG/7mIV8Rd4SlvKAIZ/FBSFxwiBFrNqB6
-TZbd2PKAj7Xo2QxMh/7HRT+KaHO5tI4PIypZF2uYjAZQ8j1i7SronJXtDkI0n5PD
-/bhrl9IM30Q3pAiheAfG52xdwq7hbkU/XaV0AFJBtD7rNH7+gJ4r7DsUkVtkXHmE
-TfImBBYMDSyIlIlarJjidBN5QJgZnhyO47sXMq4MYtH6A97wF0ULf345wW7izMSF
-6CfssrA67jpKZxQvJo2Ay6xYKrLn5yPshrDbyccMGX6xkk8EVEog6VcV1PlUPDhk
-gur1DmYMGA8QcAiEv4seSwbgBLPKSsey7CaHV6t7t42RzgAvphrMYnuhYlkYfmW6
-uGtsW6nHvwcgJ78fa+/x8tMqgUYH3o49kQpp1UDSCPMz9c02+olh41kt3a/ZXNGj
-+njAog1O5Kh8jrpcq0Ly
-=AaoT
+iQIcBAEBCAAGBQJSlBcaAAoJEMDTa8Ir7ZwVOZoP/1u40BvJu2GkxHGmr8l/fbbb
+Af9odClkERbHeC9KDI6RGkRCc7aECvs/k8A/fAcclmdK/qnw4purUHxgTx6wvr4y
+wToQv0t6qJpuHSQ6jJ1zOknDIzTmWW8HVwbosUJ6WLu56fA1JxSEDNOYFcuXq9CS
+S/t3HIIvG74LNJfXLITicjY1mxNySUz29kkAXGtP3m5tA/4QJn4nTQQXSCpjfEU+
+ZccfDQ1URYOEs4iuGBauyiCyABOioYRVA1VUHxCWqGi/hTlyvX+WOvhZ7nDyMYtS
+GKPC1cvZJ6RpOJ1VQnEAHauO7AlS6frjytJVrn2fNhA5pTbqc7Z02S4AA0VBBrzc
++T7IR/U/QywsJYWN6Qpu52p4v4bgXLeSBYuQYPJhlsNONXc41gplTCXpgdVWzfQg
+YgiHwM8spk6yW8BJ1hHt/2mCRWcDtdyS2XgD9bWNib2thCGVFkHcN4m5vSQkp1O2
+20cJvmJEqJqbZUHfA+OARW6TnzfDAqF8Ao1nmCITRNmLi0fNJl+oiMkRT5y2sSWP
+nJfAmYVz4p2nDntFu0i4e0hbPHUVymd00kSObfkl+4ls9n2iRK76idRZqpBcATvL
+VbYnCsuGNhRP+n4VcgdWtQtxUPFhZg3vfRLVXF1wvyiADLbRg3rnOnmuoyTg2mvE
+onu0NLQA7tjc5yzkepNl
+=3fG1
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Nov_2013_13_30_01_+1100_w/+ChGoWFVdsri4Y--
+--Signature=_Tue__26_Nov_2013_14_35_50_+1100_Y/PZPIYZJkUSC7iG--
