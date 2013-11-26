@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the block tree with the f2fs tree
-Date: Tue, 26 Nov 2013 11:56:13 +1100
-Message-ID: <20131126115613.55f5f0f544c57677be035582@canb.auug.org.au>
+Date: Tue, 26 Nov 2013 12:00:24 +1100
+Message-ID: <20131126120024.3532de1b44c22372ac1c37f5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp"
+ boundary="Signature=_Tue__26_Nov_2013_12_00_24_+1100_vWatN8D0KUb08/kt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33709 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48908 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750869Ab3KZA4c (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Nov 2013 19:56:32 -0500
+	with ESMTP id S1751679Ab3KZBAc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Nov 2013 20:00:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chao Yu <chao2.yu@samsung.com>
 
---Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp
+--Signature=_Tue__26_Nov_2013_12_00_24_+1100_vWatN8D0KUb08/kt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,8 +24,8 @@ Content-Transfer-Encoding: quoted-printable
 Hi Jens,
 
 Today's linux-next merge of the block tree got a conflict in
-fs/f2fs/segment.c between commit a79ad49b87f4 ("f2fs: introduce a bio
-array for per-page write bios") from the f2fs tree and commit
+include/trace/events/f2fs.h between commit 4bfc388c73a1 ("f2fs: adds a
+tracepoint for f2fs_submit_read_bio") from the  tree and commit
 4f024f3797c4 ("block: Abstract out bvec iterator") from the block tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
@@ -35,44 +35,55 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/f2fs/segment.c
-index 1c84b7e15631,36e8afd8e1e4..000000000000
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@@ -908,9 -681,9 +906,9 @@@ retry
-  		}
+diff --cc include/trace/events/f2fs.h
+index 204fcc3201b1,bd3ee4fbe7a7..000000000000
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@@ -627,16 -614,16 +627,16 @@@ DECLARE_EVENT_CLASS(f2fs__submit_bio
  =20
-  		bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
- -		sbi->bio[type] =3D f2fs_bio_alloc(bdev, bio_blocks);
- -		sbi->bio[type]->bi_iter.bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
- -		sbi->bio[type]->bi_private =3D priv;
- +		io->bio =3D f2fs_bio_alloc(bdev, bio_blocks);
-- 		io->bio->bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
-++		io->bio->bi_iter.bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
- +		io->bio->bi_private =3D priv;
-  		/*
-  		 * The end_io will be assigned at the sumbission phase.
-  		 * Until then, let bio_add_page() merge consecutive IOs as much
+  	TP_fast_assign(
+  		__entry->dev		=3D sb->s_dev;
+ -		__entry->btype		=3D btype;
+ -		__entry->sync		=3D sync;
+ +		__entry->rw		=3D rw;
+ +		__entry->type		=3D type;
+- 		__entry->sector		=3D bio->bi_sector;
+- 		__entry->size		=3D bio->bi_size;
++ 		__entry->sector		=3D bio->bi_iter.bi_sector;
++ 		__entry->size		=3D bio->bi_iter.bi_size;
+  	),
+ =20
+ -	TP_printk("dev =3D (%d,%d), type =3D %s, io =3D %s, sector =3D %lld, siz=
+e =3D %u",
+ +	TP_printk("dev =3D (%d,%d), %s%s, %s, sector =3D %lld, size =3D %u",
+  		show_dev(__entry),
+ -		show_block_type(__entry->btype),
+ -		__entry->sync ? "sync" : "no sync",
+ +		show_bio_type(__entry->rw),
+ +		show_block_type(__entry->type),
+  		(unsigned long long)__entry->sector,
+  		__entry->size)
+  );
 
---Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp
+--Signature=_Tue__26_Nov_2013_12_00_24_+1100_vWatN8D0KUb08/kt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIbBAEBCAAGBQJSk/G1AAoJEMDTa8Ir7ZwVaegP91Z65vVLzYn0ZEGUFqJnYt1l
-L4HQJD+Sy/bYM2sFwjVAzzr88XU9yyJMWeKOhnnPqcbmcLZsc8BdlQndYw/wNdjr
-7pFa4tkaqaUNnbGIwTF8HWcvLB09WSM/3uVZqC4vMiZ7FqUz3NZ/++3zobO1krsy
-Y7oO8q/WZeoToJeSZ6AVgoykUsSBmVM2dASAoQ565Sau5MBLdcdgI+e8uxy1JaXj
-xvosWh253NIpgLEthSS5f9j2UQWQbu2cpuszE+rv8PlSKVN46w6nj3V4f4Ub0yZK
-hwx78+fmXAeLWkBX548OKwCOm/yGLvFz19JCdXq4gPK0hA57dFm0PY5xnjJosqFS
-FsBQISNdjQlfu7C8ULK+TySoNnqLtiODZ1YiAVytIXRIZ71q9DIg29211nmXDTXY
-jckhi7UKYSyVyMjjip9Le7/zKAJnj5Sxj2zpGcrDv8TmmZldxgTxruSA74e0iBmm
-Vz4gtB/Wulc4kGBBCx5yB45fMrqff8EFdjMb3gLxPJE8IQPgGqiNnpYRYnwBT585
-rsQFufVETyL6Xa0qmlVKmYGO0yebSPMYwWy1PCmC++DAizODCV6w6jjrwlLZdt0d
-I2vlnfg69V7pzVmMr/fBiVXzc7QI2fOxxVh9FxucbJAmK6LnSBh3ttAHKLhpnjaf
-Ulo6kKVV/4NkhWPpjnQ=
-=BqO+
+iQIcBAEBCAAGBQJSk/KtAAoJEMDTa8Ir7ZwVMSAQAJJPhJU0/96v5fr5piMydiU+
+QevF7FQiYhiZtm+dri00J9tzT7WYpHLvOtDxlchZA30mbCF/xevRVoPD9NFy2gQ0
+1eiYiJvwhacaSEutpd2lUZC1nnL1SIBrSzKKYaz3XVFtj2upsWAkP9AaNH/hTTjM
+5GOPIunZaIoFnatsFCY1oJLkQ2waYZnJPCRe9G8ua7NmPSUALSWY0che9gbwzSyA
+V4uf7ITML6a97Oylb4jUjdhEvsyNw5wP+VRhiNoi4xJhZXJhdRdbs6cCngqCc7D+
+2DkNA5bXdOg8xpnVkGPezDJqIP0r/4U5ljy+RBsVP76KaL5JkOgszfEf61TUwwb9
+UAh4jCdGHnWqKU1+os7Rk7mkKR5Jg6qxnz9MsGWKIKvWKnnW5zWegIbQYPUUNIJM
+5R8FS+sTvQGmJMeLQXKoOfHUCwNUUqryTIrBQnnjokvMG4hLPCDVg9J0XvbxGvIf
+trn5Tgevt4P4+YMKb7zLzSyGG/pkBezhmQbynZJ4ksJiNEppAT7fur35NKkOJeF8
+DxKLY2eTxMZE3zoewanJEv997zE2m2kpxKTNeKJzNg6BG/nEpwtoR19nSh39UayT
+L9U6zlk3QqC0v5VOgT+jrK/rpnack6rV5xL9jJLx/ylvh36heqboiLMOjOrP8n4H
+8kR0mvO4hiJJc/paDzEZ
+=dMOK
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Nov_2013_11_56_13_+1100_OzYtznVzW2nEngnp--
+--Signature=_Tue__26_Nov_2013_12_00_24_+1100_vWatN8D0KUb08/kt--
