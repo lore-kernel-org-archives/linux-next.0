@@ -1,77 +1,60 @@
-From: Kent Overstreet <kmo@daterainc.com>
-Subject: [PATCH] block: Silence spurious compiler warnings
-Date: Tue, 26 Nov 2013 16:39:49 -0800
-Message-ID: <20131127003949.GA21305@kmo>
-References: <20131126132946.e402679788ae8269f0c5128a@canb.auug.org.au>
- <20131126143550.7a2195476ff4aa5c73db20b2@canb.auug.org.au>
- <CAOesGMiPpetDRt7dfHvcZ3LTSYyR3CBj2L2kq=pBMamkzCbb3A@mail.gmail.com>
- <5294F030.5090805@kernel.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Wed, 27 Nov 2013 13:01:44 +1100
+Message-ID: <20131127130144.8db67b95b9c1a0141ab58a4a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f45.google.com ([209.85.160.45]:40157 "EHLO
-	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115Ab3K0Ajx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Nov 2013 19:39:53 -0500
-Received: by mail-pb0-f45.google.com with SMTP id rp16so9144978pbb.4
-        for <linux-next@vger.kernel.org>; Tue, 26 Nov 2013 16:39:52 -0800 (PST)
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__27_Nov_2013_13_01_44_+1100_IavDiY/BYPXejUdt"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rashika Kheria <rashika.kheria@gmail.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__27_Nov_2013_13_01_44_+1100_IavDiY/BYPXejUdt
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <5294F030.5090805@kernel.dk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
->From 46e7081430f5f483906f496733a23f8e9d898879 Mon Sep 17 00:00:00 2001
-From: Kent Overstreet <kmo@daterainc.com>
-Date: Tue, 26 Nov 2013 16:36:49 -0800
-Subject: [PATCH] block: Silence spurious compiler warnings
+Hi Greg,
 
-Signed-off-by: Kent Overstreet <kmo@daterainc.com>
----
+Today's linux-next merge of the staging tree got conflicts in
+drivers/staging/tidspbridge/pmgr/cmm.c,
+drivers/staging/tidspbridge/pmgr/dbll.c,
+drivers/staging/tidspbridge/pmgr/dev.c,
+drivers/staging/tidspbridge/pmgr/dmm.c and
+drivers/staging/tidspbridge/pmgr/dspapi.c between commit cb45065428b7
+("staging: delete tidspbridge driver") from the staging.current tree and
+various commits from the staging tree.
 
-On Tue, Nov 26, 2013 at 12:02:08PM -0700, Jens Axboe wrote:
-> On 11/26/2013 12:01 PM, Olof Johansson wrote:
-> > I just noticed that i see this with gcc 4.7.0, but 4.8.1 does not warn.
-> 
-> That's good, because it's not a bug. But arguably we should shut up 4.7
-> as well, however...
+I just removed the files and can carry the fix as necessary (no action
+is required).
 
-Here you go:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
- block/blk-merge.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+--Signature=_Wed__27_Nov_2013_13_01_44_+1100_IavDiY/BYPXejUdt
+Content-Type: application/pgp-signature
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 05c17be..0b097f6 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -89,6 +89,8 @@ static int blk_phys_contig_segment(struct request_queue *q, struct bio *bio,
- 	struct bio_vec end_bv, nxt_bv;
- 	struct bvec_iter iter;
- 
-+	uninitialized_var(end_bv);
-+
- 	if (!blk_queue_cluster(q))
- 		return 0;
- 
-@@ -173,6 +175,8 @@ int blk_rq_map_sg(struct request_queue *q, struct request *rq,
- 	struct scatterlist *sg;
- 	int nsegs, cluster;
- 
-+	uninitialized_var(bvprv);
-+
- 	nsegs = 0;
- 	cluster = blk_queue_cluster(q);
- 
-@@ -235,6 +239,8 @@ int blk_bio_map_sg(struct request_queue *q, struct bio *bio,
- 	int nsegs, cluster;
- 	struct bvec_iter iter;
- 
-+	uninitialized_var(bvprv);
-+
- 	nsegs = 0;
- 	cluster = blk_queue_cluster(q);
- 
--- 
-1.8.4.4
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSlVKMAAoJEMDTa8Ir7ZwVyzgQAJR4dW3Dmk8snfDxNhJuD3f2
+HK5sq/nW67dg0LPqZzfduQ0A7A0hbCte4QHvkqmhklfzUXIFu/jCTbnYky32TWvI
+8TdhoaihbB5JAQpeW3UPixu9e2DsXybalSOpB/EsKvnwTA1hav/bLR9doQzQ2IlR
+Ct28w70P/D5b2hWWO0Xgz4bU13HOIDZEFAsYyuMIeIncVnnwOTofB6KhOmrPLUdY
+TWiL3NppzuqqfO7z1Z4trllJWn10LMLtsjJmusXJ5yk0v8Q0uxcWBre90vBQnBu4
+UdbcChIg9Wx0ytfPYMwYexyqAHNCwopPOxerbyrcEZ/2ZOmlLzmLM15gBcNBiH+l
+YsV6Pn1vtJpisI2wMQigMgw+arLLzekH2rkEZU6z5/15ZLjSHyouGAoj1Y9BC+SW
+CY/Wb1gjTnFowthv9mN4Iae/a02IDd2xnmRunwrK7pLkLGOKGOoHxN+uTOKa802H
+b76mmf8lLSbk/VUMnZvb1EHj5SrX48GF86la+N0WRkCtFhVvJFpA0tQTz4GlUS8u
+kTwY7upq/SfbMCAxj571ZEy82xinTrYJWTk+dRcAMYe2V+aZQeQ2QcCcIIJVOoY3
+BzvLbRbxGUZN2+Mw0k4MX2Nmui4MF/K5+0FJjMZjY16U3iZJggDlOzhwRL2kQplF
+5JbQLKtWScc2Q2MeDGoZ
+=A8Pm
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_Nov_2013_13_01_44_+1100_IavDiY/BYPXejUdt--
