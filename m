@@ -1,19 +1,50 @@
-From: "David Garcka X" <dgarckaa1@gmail.com>
-Subject: ACKNOWLEDGE YOUR PAYMENT
-Date: Wed, 27 Nov 2013 15:27:33 -0500
-Message-ID: <SERVER18A943W4Kpvh700001da9@wilsonelectricco.com>
-Reply-To: dgarcka9696@yahoo.co.jp
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Nov 29 (sfi)
+Date: Fri, 29 Nov 2013 17:41:41 -0800
+Message-ID: <52994255.4000800@infradead.org>
+References: <20131129134535.f886fbf966dcfea00178a1b7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.wilsonelectricco.com ([216.170.165.130]:60706 "EHLO
-	wilsonelectricco.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752975Ab3K2MvE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Nov 2013 07:51:04 -0500
-Content-Description: Mail message body
+Received: from merlin.infradead.org ([205.233.59.134]:55602 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751072Ab3K3Blp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Nov 2013 20:41:45 -0500
+In-Reply-To: <20131129134535.f886fbf966dcfea00178a1b7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <dgarckaa1@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>, sfi-devel@simplefirmware.org
 
-After my intensive search, I understand that you share same last name with our late client who passed on few years ago, and am seeking your consent to present you as heir to his estate estimated 30.5mUSD.if you interest, please send your cell/phone, fax and names, for more details. Mr. David Garcka Send from my iPad
+On 11/28/13 18:45, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20131128:
+> 
+
+on x86_64:
+
+when CONFIG_ACPI is not enabled:
+
+  CC      drivers/sfi/sfi_acpi.o
+drivers/sfi/sfi_acpi.c: In function 'sfi_acpi_parse_xsdt':
+drivers/sfi/sfi_acpi.c:105:12: error: dereferencing pointer to incomplete type
+drivers/sfi/sfi_acpi.c:105:12: error: invalid application of 'sizeof' to incomplete type 'struct acpi_table_header'
+drivers/sfi/sfi_acpi.c:107:32: error: dereferencing pointer to incomplete type
+drivers/sfi/sfi_acpi.c: In function 'sfi_acpi_get_table':
+drivers/sfi/sfi_acpi.c:133:12: error: dereferencing pointer to incomplete type
+drivers/sfi/sfi_acpi.c:133:12: error: invalid application of 'sizeof' to incomplete type 'struct acpi_table_header'
+drivers/sfi/sfi_acpi.c:135:32: error: dereferencing pointer to incomplete type
+drivers/sfi/sfi_acpi.c: In function 'sfi_acpi_table_show':
+drivers/sfi/sfi_acpi.c:195:12: error: dereferencing pointer to incomplete type
+drivers/sfi/sfi_acpi.c: In function 'sfi_acpi_sysfs_init':
+drivers/sfi/sfi_acpi.c:207:12: error: dereferencing pointer to incomplete type
+drivers/sfi/sfi_acpi.c:207:12: error: invalid application of 'sizeof' to incomplete type 'struct acpi_table_header'
+drivers/sfi/sfi_acpi.c:210:35: error: dereferencing pointer to incomplete type
+make[3]: *** [drivers/sfi/sfi_acpi.o] Error 1
+
+
+
+-- 
+~Randy
