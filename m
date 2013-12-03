@@ -1,116 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree with the slave-dma
- tree
-Date: Tue, 3 Dec 2013 11:38:52 +1100
-Message-ID: <20131203113852.63cc7e97a7a9e05f939f4ac1@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
+Date: Tue, 3 Dec 2013 12:52:19 +1100
+Message-ID: <20131203125219.97839b4335adffdeb3ef7160@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ"
+ boundary="Signature=_Tue__3_Dec_2013_12_52_19_+1100_fVJUSE89EslNwWWx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:33121 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:49765 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751826Ab3LCAjA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Dec 2013 19:39:00 -0500
+	id S1751124Ab3LCBwZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Dec 2013 20:52:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <b42378@freescale.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
 
---Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ
+--Signature=_Tue__3_Dec_2013_12_52_19_+1100_fVJUSE89EslNwWWx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the sound-asoc tree got a conflict in
-sound/soc/fsl/fsl_ssi.c between commit bf02c7cb4314 ("ASoC: fsl_ssi: Add
-dual fifo mode support") from the slave-dma tree and commit 2924a9981006
-("ASoC: fsl_ssi: Add monaural audio support for non-ac97 interface") from
-the sound-asoc tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+arch/um/kernel/sysrq.c between commit 8ed12fcc194d ("um: Rename
+print_stack_trace to do_stack_trace") from Linus' tree and commit
+ce89e7878311 ("arch/um/kernel/sysrq.c: rename print_stack_trace()") from
+the akpm-current tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I used the version fro, Linus' tree) and can carry the fix
+as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc sound/soc/fsl/fsl_ssi.c
-index f43be6d4c549,90ff1071e29c..000000000000
---- a/sound/soc/fsl/fsl_ssi.c
-+++ b/sound/soc/fsl/fsl_ssi.c
-@@@ -143,7 -143,7 +143,8 @@@ struct fsl_ssi_private=20
-  	bool ssi_on_imx;
-  	bool imx_ac97;
-  	bool use_dma;
- +	bool use_dual_fifo;
-+ 	u8 i2s_mode;
-  	struct clk *clk;
-  	struct snd_dmaengine_dai_dma_data dma_params_tx;
-  	struct snd_dmaengine_dai_dma_data dma_params_rx;
-@@@ -388,38 -417,9 +418,15 @@@ static int fsl_ssi_setup(struct fsl_ssi
-  	 * because it is also running without an active substream. Normally SSI
-  	 * is only enabled when there is a substream.
-  	 */
-- 	if (ssi_private->imx_ac97) {
-- 		/*
-- 		 * Setup the clock control register
-- 		 */
-- 		write_ssi(CCSR_SSI_SxCCR_WL(17) | CCSR_SSI_SxCCR_DC(13),
-- 				&ssi->stccr);
-- 		write_ssi(CCSR_SSI_SxCCR_WL(17) | CCSR_SSI_SxCCR_DC(13),
-- 				&ssi->srccr);
--=20
-- 		/*
-- 		 * Enable AC97 mode and startup the SSI
-- 		 */
-- 		write_ssi(CCSR_SSI_SACNT_AC97EN | CCSR_SSI_SACNT_FV,
-- 				&ssi->sacnt);
-- 		write_ssi(0xff, &ssi->saccdis);
-- 		write_ssi(0x300, &ssi->saccen);
--=20
-- 		/*
-- 		 * Enable SSI, Transmit and Receive
-- 		 */
-- 		write_ssi_mask(&ssi->scr, 0, CCSR_SSI_SCR_SSIEN |
-- 				CCSR_SSI_SCR_TE | CCSR_SSI_SCR_RE);
--=20
-- 		write_ssi(CCSR_SSI_SOR_WAIT(3), &ssi->sor);
-- 	}
-+ 	if (ssi_private->imx_ac97)
-+ 		fsl_ssi_setup_ac97(ssi_private);
- =20
- +	if (ssi_private->use_dual_fifo) {
- +		write_ssi_mask(&ssi->srcr, 0, CCSR_SSI_SRCR_RFEN1);
- +		write_ssi_mask(&ssi->stcr, 0, CCSR_SSI_STCR_TFEN1);
- +		write_ssi_mask(&ssi->scr, 0, CCSR_SSI_SCR_TCH_EN);
- +	}
- +
-  	return 0;
-  }
- =20
-
---Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ
+--Signature=_Tue__3_Dec_2013_12_52_19_+1100_fVJUSE89EslNwWWx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSnSghAAoJEMDTa8Ir7ZwVYgsP/AjW7XeI9xny6DBRSjYyKQ55
-CX+OGfkRtTRy8LkI9tFCHK6kC3iMDtiCvuXYGeSND1p7AAwGeJszn6o7yv+FV8Q2
-+wTtGm8HE0HSH/Ej3wicxaci1S7x3pdlB7iekLmFiukErnk7VQrM/L6PgTRHogEq
-r8CosD1aym2Jx7uMuseUGdUWXhtdN/aCbuKRkOHZSQAni/6EsU09hnBCTJDD2VFo
-mSJ7Q2Ti+MN+e+E03kstlJIDlupNavz8OW//1nI2oukCSIVeCvExzkUieQ9NNzYl
-nfv/brwAtsxSX04+XaNd+EVokz1OmX4nyioi6e3dgMvhomTOhsK91SV/3KvlktNt
-EVahTkWWX4IQPwWFBeTEQj17z+qC2upKwgEpgsJBYgfpxtzVLYdHXovsdf/X/i/e
-1W/k6wKC9qKplcxvD9ltC2VEFCb0CJpb2oIgj91oyGegdW06FB02H8XZiqwwPYwS
-4fUsOLhjd4tXhr5oJJyaXSKgn1sR60SXxtGZjHM7rZUCOm+9rGIPEhwRi8+bo1sB
-9x0iwsHT5X5UVVkHxKFtE6EiAsZ3rBTr57AmVYp9VOUeZuZi3y5c+wmsNUGZb8d6
-mn6xhPR84FxQb9Jp9JV1ekovmXUj3ljXDfyAHIzghK0mIhLTBBtPqiqS49kP5aDL
-xP2NvneqMGnlJrQGd1CU
-=yp9H
+iQIcBAEBCAAGBQJSnTlXAAoJEMDTa8Ir7ZwVP4UP/2pc4Ubq7r3Fc6zr+R/xKIys
+N21Kn1CustYSJTAX8cyney4GKKmuobam+bAocKqfWh3VaQf3d6TS2HcQ6SGUF97A
+jOT3lWaXv/Yap7CiAsYh8E+3Fq5t+xIj8hdeTX4jk10kzNBDGoLAVBa85ZkzAgqu
+etqjQ0Rpczy9LCbgmLUUxkI4Pq8g7XYfCIdGlY0G37G+p4a3nE3kWPCG0265gWkW
+TeP4vI/3cNkdoQ8Xo0nrTuxT0RJgmYz6wgNZeDfvxAU5v86Xqhyf3B91S4WyYyDA
+WZLAkX9s/cE42J5bI0OeyvFpbQnevNNAgZY/YF3Pxy516511p2hULFP3fW26nED+
+trvRf6SRmbPLbfTI2vORs6BAp1Lhp8XY9x0v9382zZQqjc7Vs3l8TMQYNxG9bTGj
+064RhwR5Vs8eQvH891AXuWU8rp8H60+z/fo5L7vO77c6Z+5QzWv2aoxcO7OC9vJ3
+L+9QjMGFFkPuIHaRwADwdg46fobyZ7ADUKBqmd7OvhtvlqW23Sl8X+G3vfoECjmB
+q/qJHwGHsaMvMy2PYblwOYAj2N6I/VzCkRnngFPw8X7x1g/RVXuf0B+tbxV6Euo/
+iQy5ak82whk3nf5kIFwFhat1n9V3tmlsr7HKrfOux0IxDpfV9i9YebDj0g3T8VcI
+ZRjntTv9w+G9NljOsSD4
+=Ozmo
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ--
+--Signature=_Tue__3_Dec_2013_12_52_19_+1100_fVJUSE89EslNwWWx--
