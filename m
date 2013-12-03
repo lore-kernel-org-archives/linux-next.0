@@ -1,336 +1,82 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: randconfig build error with next-20131202, in arch/x86/pci
-Date: Mon, 2 Dec 2013 16:14:32 -0700
-Message-ID: <CAErSpo4a2CcEpt6okjTS-wyGCgc7JsHWnGPn7FXrhRfwXqj=oA@mail.gmail.com>
-References: <CA+r1ZhiKj_0HXb7s1oDc-Pgm6n63rYNpxzqXfxKDgdKZU27LcQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Date: Tue, 3 Dec 2013 11:20:32 +1100
+Message-ID: <20131203112032.b6c5faa3e40442b66770df91@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:51932 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751530Ab3LBXOw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Dec 2013 18:14:52 -0500
-Received: by mail-ie0-f176.google.com with SMTP id at1so21816789iec.21
-        for <linux-next@vger.kernel.org>; Mon, 02 Dec 2013 15:14:52 -0800 (PST)
-In-Reply-To: <CA+r1ZhiKj_0HXb7s1oDc-Pgm6n63rYNpxzqXfxKDgdKZU27LcQ@mail.gmail.com>
+Received: from ozlabs.org ([203.10.76.45]:57029 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751533Ab3LCAUi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Dec 2013 19:20:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
 
-[+cc Lv, Rafael, linux-acpi]
+--Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is this fallout related to "ACPI: Cleanup <acpi/acpi.h>,
-<acpi/acpi_bus.h> and <acpi/acpi_drivers.h> inclusions"?
+Hi John,
 
-On Mon, Dec 2, 2013 at 7:57 AM, Jim Davis <jim.epost@gmail.com> wrote:
-> Building with the attached random configuration file,
->
-> arch/x86/pci/mmconfig-shared.c:373:1: error: unknown type name =91acp=
-i_status=92
->  static acpi_status check_mcfg_resource(struct acpi_resource *res, vo=
-id *data)
->  ^
-> arch/x86/pci/mmconfig-shared.c:373:47: warning: =91struct acpi_resour=
-ce=92
-> declared inside parameter list [enabled by default]
->  static acpi_status check_mcfg_resource(struct acpi_resource *res, vo=
-id *data)
->                                                ^
-> arch/x86/pci/mmconfig-shared.c:373:47: warning: its scope is only thi=
-s
-> definition or declaration, which is probably not what you want
-> [enabled by default]
-> arch/x86/pci/mmconfig-shared.c: In function =91check_mcfg_resource=92=
-:
-> arch/x86/pci/mmconfig-shared.c:376:33: error: storage size of
-> =91address=92 isn=92t known
->   struct acpi_resource_address64 address;
->                                  ^
-> arch/x86/pci/mmconfig-shared.c:377:2: error: unknown type name =91acp=
-i_status=92
->   acpi_status status;
->   ^
-> arch/x86/pci/mmconfig-shared.c:379:9: error: dereferencing pointer to
-> incomplete type
->   if (res->type =3D=3D ACPI_RESOURCE_TYPE_FIXED_MEMORY32) {
->          ^
-> arch/x86/pci/mmconfig-shared.c:379:19: error:
-> =91ACPI_RESOURCE_TYPE_FIXED_MEMORY32=92 undeclared (first use in this
-> function)
->   if (res->type =3D=3D ACPI_RESOURCE_TYPE_FIXED_MEMORY32) {
->                    ^
-> arch/x86/pci/mmconfig-shared.c:379:19: note: each undeclared
-> identifier is reported only once for each function it appears in
-> arch/x86/pci/mmconfig-shared.c:381:8: error: dereferencing pointer to
-> incomplete type
->     &res->data.fixed_memory32;
->         ^
-> arch/x86/pci/mmconfig-shared.c:383:11: error: =91AE_OK=92 undeclared
-> (first use in this function)
->     return AE_OK;
->            ^
-> arch/x86/pci/mmconfig-shared.c:384:35: error: dereferencing pointer t=
-o
-> incomplete type
->    if ((mcfg_res->start >=3D fixmem32->address) &&
->                                    ^
-> arch/x86/pci/mmconfig-shared.c:385:33: error: dereferencing pointer t=
-o
-> incomplete type
->        (mcfg_res->end < (fixmem32->address +
->                                  ^
-> arch/x86/pci/mmconfig-shared.c:386:19: error: dereferencing pointer t=
-o
-> incomplete type
->            fixmem32->address_length))) {
->                    ^
-> arch/x86/pci/mmconfig-shared.c:388:11: error: =91AE_CTRL_TERMINATE=92
-> undeclared (first use in this function)
->     return AE_CTRL_TERMINATE;
->            ^
-> arch/x86/pci/mmconfig-shared.c:391:10: error: dereferencing pointer t=
-o
-> incomplete type
->   if ((res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS32) &&
->           ^
-> arch/x86/pci/mmconfig-shared.c:391:20: error:
-> =91ACPI_RESOURCE_TYPE_ADDRESS32=92 undeclared (first use in this func=
-tion)
->   if ((res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS32) &&
->                     ^
-> arch/x86/pci/mmconfig-shared.c:392:10: error: dereferencing pointer t=
-o
-> incomplete type
->       (res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS64))
->           ^
-> arch/x86/pci/mmconfig-shared.c:392:20: error:
-> =91ACPI_RESOURCE_TYPE_ADDRESS64=92 undeclared (first use in this func=
-tion)
->       (res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS64))
->                     ^
-> arch/x86/pci/mmconfig-shared.c:395:2: error: implicit declaration of
-> function =91acpi_resource_to_address64=92
-> [-Werror=3Dimplicit-function-declaration]
->   status =3D acpi_resource_to_address64(res, &address);
->   ^
-> arch/x86/pci/mmconfig-shared.c:396:2: error: implicit declaration of
-> function =91ACPI_FAILURE=92 [-Werror=3Dimplicit-function-declaration]
->   if (ACPI_FAILURE(status) ||
->   ^
-> arch/x86/pci/mmconfig-shared.c:398:31: error: =91ACPI_MEMORY_RANGE=92
-> undeclared (first use in this function)
->      (address.resource_type !=3D ACPI_MEMORY_RANGE))
->                                ^
-> arch/x86/pci/mmconfig-shared.c:376:33: warning: unused variable
-> =91address=92 [-Wunused-variable]
->   struct acpi_resource_address64 address;
->                                  ^
-> arch/x86/pci/mmconfig-shared.c: At top level:
-> arch/x86/pci/mmconfig-shared.c:409:1: error: unknown type name =91acp=
-i_status=92
->  static acpi_status find_mboard_resource(acpi_handle handle, u32 lvl,
->  ^
-> arch/x86/pci/mmconfig-shared.c:409:41: error: unknown type name =91ac=
-pi_handle=92
->  static acpi_status find_mboard_resource(acpi_handle handle, u32 lvl,
->                                          ^
-> arch/x86/pci/mmconfig-shared.c: In function =91is_acpi_reserved=92:
-> arch/x86/pci/mmconfig-shared.c:431:2: error: implicit declaration of
-> function =91acpi_get_devices=92 [-Werror=3Dimplicit-function-declarat=
-ion]
->   acpi_get_devices("PNP0C01", find_mboard_resource, &mcfg_res, NULL);
->   ^
-> arch/x86/pci/mmconfig-shared.c:431:30: error: =91find_mboard_resource=
-=92
-> undeclared            ^
-> jim@krebstar:~$ more errs
-> jim@krebstar:~$ cat errs
-> arch/x86/pci/mmconfig-shared.c:373:1: error: unknown type name =91acp=
-i_status=92
->  static acpi_status check_mcfg_resource(struct acpi_resource *res, vo=
-id *data)
->  ^
-> arch/x86/pci/mmconfig-shared.c:373:47: warning: =91struct acpi_resour=
-ce=92
-> declared inside parameter list [enabled by default]
->  static acpi_status check_mcfg_resource(struct acpi_resource *res, vo=
-id *data)
->                                                ^
-> arch/x86/pci/mmconfig-shared.c:373:47: warning: its scope is only thi=
-s
-> definition or declaration, which is probably not what you want
-> [enabled by default]
-> arch/x86/pci/mmconfig-shared.c: In function =91check_mcfg_resource=92=
-:
-> arch/x86/pci/mmconfig-shared.c:376:33: error: storage size of
-> =91address=92 isn=92t known
->   struct acpi_resource_address64 address;
->                                  ^
-> arch/x86/pci/mmconfig-shared.c:377:2: error: unknown type name =91acp=
-i_status=92
->   acpi_status status;
->   ^
-> arch/x86/pci/mmconfig-shared.c:379:9: error: dereferencing pointer to
-> incomplete type
->   if (res->type =3D=3D ACPI_RESOURCE_TYPE_FIXED_MEMORY32) {
->          ^
-> arch/x86/pci/mmconfig-shared.c:379:19: error:
-> =91ACPI_RESOURCE_TYPE_FIXED_MEMORY32=92 undeclared (first use in this
-> function)
->   if (res->type =3D=3D ACPI_RESOURCE_TYPE_FIXED_MEMORY32) {
->                    ^
-> arch/x86/pci/mmconfig-shared.c:379:19: note: each undeclared
-> identifier is reported only once for each function it appears in
-> arch/x86/pci/mmconfig-shared.c:381:8: error: dereferencing pointer to
-> incomplete type
->     &res->data.fixed_memory32;
->         ^
-> arch/x86/pci/mmconfig-shared.c:383:11: error: =91AE_OK=92 undeclared
-> (first use in this function)
->     return AE_OK;
->            ^
-> arch/x86/pci/mmconfig-shared.c:384:35: error: dereferencing pointer t=
-o
-> incomplete type
->    if ((mcfg_res->start >=3D fixmem32->address) &&
->                                    ^
-> arch/x86/pci/mmconfig-shared.c:385:33: error: dereferencing pointer t=
-o
-> incomplete type
->        (mcfg_res->end < (fixmem32->address +
->                                  ^
-> arch/x86/pci/mmconfig-shared.c:386:19: error: dereferencing pointer t=
-o
-> incomplete type
->            fixmem32->address_length))) {
->                    ^
-> arch/x86/pci/mmconfig-shared.c:388:11: error: =91AE_CTRL_TERMINATE=92
-> undeclared (first use in this function)
->     return AE_CTRL_TERMINATE;
->            ^
-> arch/x86/pci/mmconfig-shared.c:391:10: error: dereferencing pointer t=
-o
-> incomplete type
->   if ((res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS32) &&
->           ^
-> arch/x86/pci/mmconfig-shared.c:391:20: error:
-> =91ACPI_RESOURCE_TYPE_ADDRESS32=92 undeclared (first use in this func=
-tion)
->   if ((res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS32) &&
->                     ^
-> arch/x86/pci/mmconfig-shared.c:392:10: error: dereferencing pointer t=
-o
-> incomplete type
->       (res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS64))
->           ^
-> arch/x86/pci/mmconfig-shared.c:392:20: error:
-> =91ACPI_RESOURCE_TYPE_ADDRESS64=92 undeclared (first use in this func=
-tion)
->       (res->type !=3D ACPI_RESOURCE_TYPE_ADDRESS64))
->                     ^
-> arch/x86/pci/mmconfig-shared.c:395:2: error: implicit declaration of
-> function =91acpi_resource_to_address64=92
-> [-Werror=3Dimplicit-function-declaration]
->   status =3D acpi_resource_to_address64(res, &address);
->   ^
-> arch/x86/pci/mmconfig-shared.c:396:2: error: implicit declaration of
-> function =91ACPI_FAILURE=92 [-Werror=3Dimplicit-function-declaration]
->   if (ACPI_FAILURE(status) ||
->   ^
-> arch/x86/pci/mmconfig-shared.c:398:31: error: =91ACPI_MEMORY_RANGE=92
-> undeclared (first use in this function)
->      (address.resource_type !=3D ACPI_MEMORY_RANGE))
->                                ^
-> arch/x86/pci/mmconfig-shared.c:376:33: warning: unused variable
-> =91address=92 [-Wunused-variable]
->   struct acpi_resource_address64 address;
->                                  ^
-> arch/x86/pci/mmconfig-shared.c: At top level:
-> arch/x86/pci/mmconfig-shared.c:409:1: error: unknown type name =91acp=
-i_status=92
->  static acpi_status find_mboard_resource(acpi_handle handle, u32 lvl,
->  ^
-> arch/x86/pci/mmconfig-shared.c:409:41: error: unknown type name =91ac=
-pi_handle=92
->  static acpi_status find_mboard_resource(acpi_handle handle, u32 lvl,
->                                          ^
-> arch/x86/pci/mmconfig-shared.c: In function =91is_acpi_reserved=92:
-> arch/x86/pci/mmconfig-shared.c:431:2: error: implicit declaration of
-> function =91acpi_get_devices=92 [-Werror=3Dimplicit-function-declarat=
-ion]
->   acpi_get_devices("PNP0C01", find_mboard_resource, &mcfg_res, NULL);
->   ^
-> arch/x86/pci/mmconfig-shared.c:431:30: error: =91find_mboard_resource=
-=92
-> undeclared (first use in this function)
->   acpi_get_devices("PNP0C01", find_mboard_resource, &mcfg_res, NULL);
->                               ^
-> arch/x86/pci/mmconfig-shared.c: At top level:
-> arch/x86/pci/mmconfig-shared.c:544:13: warning: =91struct
-> acpi_mcfg_allocation=92 declared inside parameter list [enabled by
-> default]
->       struct acpi_mcfg_allocation *cfg)
->              ^
-> arch/x86/pci/mmconfig-shared.c:544:13: warning: =91struct
-> acpi_table_mcfg=92 declared inside parameter list [enabled by default=
-]
-> arch/x86/pci/mmconfig-shared.c: In function =91acpi_mcfg_check_entry=92=
-:
-> arch/x86/pci/mmconfig-shared.c:548:9: error: dereferencing pointer to
-> incomplete type
->   if (cfg->address < 0xFFFFFFFF)
->          ^
-> arch/x86/pci/mmconfig-shared.c:551:19: error: dereferencing pointer t=
-o
-> incomplete type
->   if (!strncmp(mcfg->header.oem_id, "SGI", 3))
->                    ^
-> arch/x86/pci/mmconfig-shared.c:554:10: error: dereferencing pointer t=
-o
-> incomplete type
->   if (mcfg->header.revision >=3D 1) {
->           ^
-> In file included from include/linux/kernel.h:13:0,
->                  from include/linux/kernfs.h:10,
->                  from include/linux/sysfs.h:15,
->                  from include/linux/kobject.h:21,
->                  from include/linux/pci.h:28,
->                  from arch/x86/pci/mmconfig-shared.c:13:
-> arch/x86/pci/mmconfig-shared.c:561:39: error: dereferencing pointer t=
-o
-> incomplete type
->          "is above 4GB, ignored\n", cfg->pci_segment,
->                                        ^
-> include/linux/printk.h:217:33: note: in definition of macro =91pr_err=
-=92
->   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
->                                  ^
->            ^
-> arch/x86/pci/mmconfig-shared.c:600:32: error: dereferencing pointer t=
-o
-> incomplete type
->         cfg->end_bus_number, cfg->address) =3D=3D NULL) {
->                                 ^
-> arch/x86/pci/mmconfig-shared.c: In function =91pci_mmcfg_early_init=92=
-:
-> arch/x86/pci/mmconfig-shared.c:642:25: error: =91ACPI_SIG_MCFG=92
-> undeclared (first use in this function)
->     acpi_sfi_table_parse(ACPI_SIG_MCFG, pci_parse_mcfg);
->                          ^
-> arch/x86/pci/mmconfig-shared.c: In function =91pci_mmcfg_late_init=92=
-:
-> arch/x86/pci/mmconfig-shared.c:658:24: error: =91ACPI_SIG_MCFG=92
-> undeclared (first use in this function)
->    acpi_sfi_table_parse(ACPI_SIG_MCFG, pci_parse_mcfg);
->                         ^
-> arch/x86/pci/mmconfig-shared.c: At top level:
-> arch/x86/pci/mmconfig-shared.c:373:20: warning: =91check_mcfg_resourc=
-e=92
-> defined but not used [-Wunused-function]
->  static acpi_status check_mcfg_resource(struct acpi_resource *res, vo=
-id *data)
->                     ^
-> cc1: some warnings being treated as errors
-> make[1]: *** [arch/x86/pci/mmconfig-shared.o] Error 1
+Today's linux-next merge of the wireless-next tree got a conflict in
+net/mac80211/util.c between commit 3f718fd8401d ("mac80211: fix the mesh
+channel switch support") from the wireless tree and commit ca91dc97b8a0
+("mac80211: use put_unaligned_le16 for precedence value in mesh") from
+the wireless-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/mac80211/util.c
+index 9f9b9bd3fd44,06265d7f8cc3..000000000000
+--- a/net/mac80211/util.c
++++ b/net/mac80211/util.c
+@@@ -2457,9 -2481,13 +2479,8 @@@ int ieee80211_send_action_csa(struct ie
+  			  WLAN_EID_CHAN_SWITCH_PARAM_TX_RESTRICT : 0x00;
+  		put_unaligned_le16(WLAN_REASON_MESH_CHAN, pos); /* Reason Cd */
+  		pos +=3D 2;
+- 		pre_value =3D cpu_to_le16(ifmsh->pre_value);
+- 		memcpy(pos, &pre_value, 2);		/* Precedence Value */
+ -		if (!ifmsh->pre_value)
+ -			ifmsh->pre_value =3D 1;
+ -		else
+ -			ifmsh->pre_value++;
++ 		put_unaligned_le16(ifmsh->pre_value, pos);/* Precedence Value */
+  		pos +=3D 2;
+ -		ifmsh->chsw_init =3D true;
+  	}
+ =20
+  	ieee80211_tx_skb(sdata, skb);
+
+--Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSnSPUAAoJEMDTa8Ir7ZwVvUAP/2vx4eg658g6PD+xV9OqSkH/
+FjHpeix1q/38ZBhXFb2R+NbKptQswC9r9ObaL3Bk9+nz/SLlX/P8keXjR3wUpS4u
+Dx/LzQcjfwUutBVhDzsxv3VQzmhQJ4fWpwqlKo+O2Vox1zJegqFz5JCzH98I1gtS
+YiU7yX0vDgQl4+qYZqk4/ncvX3bTGwOFlhlOWiNwtS6UVifyVD0l/EWEJ9mIKdUE
+TMQ/Dbhqg3NiZw4Tu3eEXnvhvT4/amAkWFdlIDgqD25RkfFzGvVWL5zaA5VoyEZu
+yGXL3F2VN/6UDX6l8vixtSVIOChUQRbvw1D/nBJYPrbzHJgL4A3TacvTxtyMVe4x
+3gaObx1yV6dpvvKIUtEtq/tYL3Vbg9lJ4yx4739F2NoX9ZitFOmlc3oZfskUjfzz
+Ii44oXox9HbawG3Rpc75ATpYohy1a+8YfZ7eBLC//JSTWknUM2ZVjyeQtXPHD9mI
++0bz/i4xlpRK3N7yu6FyEMNTLXPVGmkxWzf47ALi6q5IumOOytFF3ewSxIkMwaJG
+mFNZBLEVxPaP+PT8FvBxnrkwlwvM28QQxdEk0LrKCO3fyxov++x4DaiX2XTZY/jR
+ywcqXIb4xND9dI46hEqcgpMtcfTYz/RnwOQTyO3oRwX94YLmeYPPeuTKIsASaFG8
+9lR3isdl+RqIZcTwIPLB
+=xT7P
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm.--
