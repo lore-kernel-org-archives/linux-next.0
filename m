@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the
- wireless tree
-Date: Tue, 3 Dec 2013 11:20:32 +1100
-Message-ID: <20131203112032.b6c5faa3e40442b66770df91@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the slave-dma
+ tree
+Date: Tue, 3 Dec 2013 11:38:52 +1100
+Message-ID: <20131203113852.63cc7e97a7a9e05f939f4ac1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm."
+ boundary="Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:57029 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:33121 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751533Ab3LCAUi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Dec 2013 19:20:38 -0500
+	id S1751826Ab3LCAjA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Dec 2013 19:39:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chun-Yeow Yeoh <yeohchunyeow@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <b42378@freescale.com>
 
---Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm.
+--Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi all,
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-net/mac80211/util.c between commit 3f718fd8401d ("mac80211: fix the mesh
-channel switch support") from the wireless tree and commit ca91dc97b8a0
-("mac80211: use put_unaligned_le16 for precedence value in mesh") from
-the wireless-next tree.
+Today's linux-next merge of the sound-asoc tree got a conflict in
+sound/soc/fsl/fsl_ssi.c between commit bf02c7cb4314 ("ASoC: fsl_ssi: Add
+dual fifo mode support") from the slave-dma tree and commit 2924a9981006
+("ASoC: fsl_ssi: Add monaural audio support for non-ac97 interface") from
+the sound-asoc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,46 +37,80 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/mac80211/util.c
-index 9f9b9bd3fd44,06265d7f8cc3..000000000000
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@@ -2457,9 -2481,13 +2479,8 @@@ int ieee80211_send_action_csa(struct ie
-  			  WLAN_EID_CHAN_SWITCH_PARAM_TX_RESTRICT : 0x00;
-  		put_unaligned_le16(WLAN_REASON_MESH_CHAN, pos); /* Reason Cd */
-  		pos +=3D 2;
-- 		pre_value =3D cpu_to_le16(ifmsh->pre_value);
-- 		memcpy(pos, &pre_value, 2);		/* Precedence Value */
- -		if (!ifmsh->pre_value)
- -			ifmsh->pre_value =3D 1;
- -		else
- -			ifmsh->pre_value++;
-+ 		put_unaligned_le16(ifmsh->pre_value, pos);/* Precedence Value */
-  		pos +=3D 2;
- -		ifmsh->chsw_init =3D true;
-  	}
+diff --cc sound/soc/fsl/fsl_ssi.c
+index f43be6d4c549,90ff1071e29c..000000000000
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@@ -143,7 -143,7 +143,8 @@@ struct fsl_ssi_private=20
+  	bool ssi_on_imx;
+  	bool imx_ac97;
+  	bool use_dma;
+ +	bool use_dual_fifo;
++ 	u8 i2s_mode;
+  	struct clk *clk;
+  	struct snd_dmaengine_dai_dma_data dma_params_tx;
+  	struct snd_dmaengine_dai_dma_data dma_params_rx;
+@@@ -388,38 -417,9 +418,15 @@@ static int fsl_ssi_setup(struct fsl_ssi
+  	 * because it is also running without an active substream. Normally SSI
+  	 * is only enabled when there is a substream.
+  	 */
+- 	if (ssi_private->imx_ac97) {
+- 		/*
+- 		 * Setup the clock control register
+- 		 */
+- 		write_ssi(CCSR_SSI_SxCCR_WL(17) | CCSR_SSI_SxCCR_DC(13),
+- 				&ssi->stccr);
+- 		write_ssi(CCSR_SSI_SxCCR_WL(17) | CCSR_SSI_SxCCR_DC(13),
+- 				&ssi->srccr);
+-=20
+- 		/*
+- 		 * Enable AC97 mode and startup the SSI
+- 		 */
+- 		write_ssi(CCSR_SSI_SACNT_AC97EN | CCSR_SSI_SACNT_FV,
+- 				&ssi->sacnt);
+- 		write_ssi(0xff, &ssi->saccdis);
+- 		write_ssi(0x300, &ssi->saccen);
+-=20
+- 		/*
+- 		 * Enable SSI, Transmit and Receive
+- 		 */
+- 		write_ssi_mask(&ssi->scr, 0, CCSR_SSI_SCR_SSIEN |
+- 				CCSR_SSI_SCR_TE | CCSR_SSI_SCR_RE);
+-=20
+- 		write_ssi(CCSR_SSI_SOR_WAIT(3), &ssi->sor);
+- 	}
++ 	if (ssi_private->imx_ac97)
++ 		fsl_ssi_setup_ac97(ssi_private);
  =20
-  	ieee80211_tx_skb(sdata, skb);
+ +	if (ssi_private->use_dual_fifo) {
+ +		write_ssi_mask(&ssi->srcr, 0, CCSR_SSI_SRCR_RFEN1);
+ +		write_ssi_mask(&ssi->stcr, 0, CCSR_SSI_STCR_TFEN1);
+ +		write_ssi_mask(&ssi->scr, 0, CCSR_SSI_SCR_TCH_EN);
+ +	}
+ +
+  	return 0;
+  }
+ =20
 
---Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm.
+--Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSnSPUAAoJEMDTa8Ir7ZwVvUAP/2vx4eg658g6PD+xV9OqSkH/
-FjHpeix1q/38ZBhXFb2R+NbKptQswC9r9ObaL3Bk9+nz/SLlX/P8keXjR3wUpS4u
-Dx/LzQcjfwUutBVhDzsxv3VQzmhQJ4fWpwqlKo+O2Vox1zJegqFz5JCzH98I1gtS
-YiU7yX0vDgQl4+qYZqk4/ncvX3bTGwOFlhlOWiNwtS6UVifyVD0l/EWEJ9mIKdUE
-TMQ/Dbhqg3NiZw4Tu3eEXnvhvT4/amAkWFdlIDgqD25RkfFzGvVWL5zaA5VoyEZu
-yGXL3F2VN/6UDX6l8vixtSVIOChUQRbvw1D/nBJYPrbzHJgL4A3TacvTxtyMVe4x
-3gaObx1yV6dpvvKIUtEtq/tYL3Vbg9lJ4yx4739F2NoX9ZitFOmlc3oZfskUjfzz
-Ii44oXox9HbawG3Rpc75ATpYohy1a+8YfZ7eBLC//JSTWknUM2ZVjyeQtXPHD9mI
-+0bz/i4xlpRK3N7yu6FyEMNTLXPVGmkxWzf47ALi6q5IumOOytFF3ewSxIkMwaJG
-mFNZBLEVxPaP+PT8FvBxnrkwlwvM28QQxdEk0LrKCO3fyxov++x4DaiX2XTZY/jR
-ywcqXIb4xND9dI46hEqcgpMtcfTYz/RnwOQTyO3oRwX94YLmeYPPeuTKIsASaFG8
-9lR3isdl+RqIZcTwIPLB
-=xT7P
+iQIcBAEBCAAGBQJSnSghAAoJEMDTa8Ir7ZwVYgsP/AjW7XeI9xny6DBRSjYyKQ55
+CX+OGfkRtTRy8LkI9tFCHK6kC3iMDtiCvuXYGeSND1p7AAwGeJszn6o7yv+FV8Q2
++wTtGm8HE0HSH/Ej3wicxaci1S7x3pdlB7iekLmFiukErnk7VQrM/L6PgTRHogEq
+r8CosD1aym2Jx7uMuseUGdUWXhtdN/aCbuKRkOHZSQAni/6EsU09hnBCTJDD2VFo
+mSJ7Q2Ti+MN+e+E03kstlJIDlupNavz8OW//1nI2oukCSIVeCvExzkUieQ9NNzYl
+nfv/brwAtsxSX04+XaNd+EVokz1OmX4nyioi6e3dgMvhomTOhsK91SV/3KvlktNt
+EVahTkWWX4IQPwWFBeTEQj17z+qC2upKwgEpgsJBYgfpxtzVLYdHXovsdf/X/i/e
+1W/k6wKC9qKplcxvD9ltC2VEFCb0CJpb2oIgj91oyGegdW06FB02H8XZiqwwPYwS
+4fUsOLhjd4tXhr5oJJyaXSKgn1sR60SXxtGZjHM7rZUCOm+9rGIPEhwRi8+bo1sB
+9x0iwsHT5X5UVVkHxKFtE6EiAsZ3rBTr57AmVYp9VOUeZuZi3y5c+wmsNUGZb8d6
+mn6xhPR84FxQb9Jp9JV1ekovmXUj3ljXDfyAHIzghK0mIhLTBBtPqiqS49kP5aDL
+xP2NvneqMGnlJrQGd1CU
+=yp9H
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Dec_2013_11_20_32_+1100_aDNjMGSUBBBzxLm.--
+--Signature=_Tue__3_Dec_2013_11_38_52_+1100_mAEfB=qQ4AR.rJmQ--
