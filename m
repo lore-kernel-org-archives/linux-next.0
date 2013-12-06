@@ -1,44 +1,64 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: linux-next: Tree for Dec 3 (mm/Kconfig)
-Date: Thu, 5 Dec 2013 15:14:31 -0800 (PST)
-Message-ID: <alpine.DEB.2.02.1312051512490.7717@chino.kir.corp.google.com>
-References: <CAL8k4FwmVmCq8jPWNoRXKPtnSdRc3pwaMCE+AZoq_VoZphpR_A@mail.gmail.com> <alpine.DEB.2.02.1312041558280.6329@chino.kir.corp.google.com> <CAL8k4FzPYZ1Ar1w2rbR7_UWzvvCKRqXMWwJLLFNBNg=VRS3riQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Fri, 6 Dec 2013 11:45:15 +1100
+Message-ID: <20131206114515.8bbe1dcd837ebc71924db3a1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CAL8k4FzPYZ1Ar1w2rbR7_UWzvvCKRqXMWwJLLFNBNg=VRS3riQ@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Sima Baymani <sima.baymani@gmail.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, tangchen@cn.fujitsu.com, akpm@linux-foundation.org, linux-mm@kvack.org, aquini@redhat.com, linux-kernel@vger.kernel.org, gang.chen@asianux.com, aneesh.kumar@linux.vnet.ibm.com, isimatu.yasuaki@jp.fujitsu.com, kirill.shutemov@linux.intel.com, sjenning@linux.vnet.ibm.com, darrick.wong@oracle.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__6_Dec_2013_11_45_15_+1100_MjQhBemwyCiapGMX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:33063 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751399Ab3LFApW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Dec 2013 19:45:22 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cesar Eduardo Barros <cesarb@cesarb.eti.br>
 
-On Thu, 5 Dec 2013, Sima Baymani wrote:
+--Signature=_Fri__6_Dec_2013_11_45_15_+1100_MjQhBemwyCiapGMX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > CONFIG_HWPOISON_INJECT is unrelated, it already depends on CONFIG_PROC_FS.
-> >
-> > CONFIG_PROC_PAGE_MONITOR is obviously only useful for CONFIG_PROC_FS, so
-> > the correct fix would be to make CONFIG_MEM_SOFT_DIRTY depend on
-> > CONFIG_PROC_FS.
-> >
-> > Want to try sending a patch?
-> 
-> You bet!
-> 
-> However, I have the slightest confusion:
-> I tested what you suggested by running "make oldconfig", and it does
-> eliminate the error. However, I can't figure out why it's enough with
-> adding the dependency for PROC_FS in MEM_SOFT_DIRTY, if
-> PROC_PAGE_MONITOR depends on both?
-> 
+Hi Herbert,
 
-"select" will force the option to be selected regardless of its 
-dependencies, so in this case you have CONFIG_MEM_SOFT_DIRTY set and
-CONFIG_PROC_FS unset and CONFIG_MEM_SOFT_DIRTY enables PROC_PAGE_MONITOR 
-which depends on CONFIG_PROC_FS.  The warning you're fixing shows the 
-missing dependency.
+After merging the crypto tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+crypto/memneq.c: In function '__crypto_memneq_16':
+crypto/memneq.c:145:2: warning: no return statement in function returning n=
+on-void [-Wreturn-type]
+crypto/memneq.c: At top level:
+crypto/memneq.c:147:2: error: expected identifier or '(' before 'return'
+crypto/memneq.c:148:1: error: expected identifier or '(' before '}' token
+
+Caused by commit fe8c8a126806 ("crypto: more robust crypto_memneq").
+
+I have used the crypto tree from next-20131205 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__6_Dec_2013_11_45_15_+1100_MjQhBemwyCiapGMX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSoR4fAAoJEMDTa8Ir7ZwVCiMP/2Ke9Q3xTjRLu3JWawDd+v4R
+oitIe0M+Y5/KwNE/oyr05A7d+BqJaO8SCPzzEFUNv7WLAPpI1x1Q7GXdFxArIXx/
+Vvy1KG1J/t/sbPhpeC1MFzvPWCEGvoYAX4MhMQhWg9Ig5jIeDPfHt/+nU7mAav5h
+qlUNCI8wrCH+9j1Tsu1JVMVBu/pRN09kVJsNGnrMLIUUcaeQNea4xt0/oG3YxgVu
+BEMDwDQThf8JAaYyZfXNWnDnvv6Cm2Yg1LIow306scelmQq11OaEtrJHfuw+72ET
+4bq7pmnKsYH11vyLCNvX1bXMqZiCPkWaMQ0eTZrqhfTNdKQ1tk5i6s9Y9nN0c3Yo
+M9tGYkGGi1DG7hbqRyYM7W2d3XI5OcqqHRve2eT4w10JoZmNDbstxId0DteUvrL2
+BxvvePumqmkOOgM53l6Q46l00w3Wm0odBBO/JfSI/Qd8kzWmSZ4NiZgPnOWEbnEB
+GpCytE5ynRx765InbTN/lN447J4JgiqTSSG3FNs4b0kpI5PEsxxuYK3k8rRqZ3R7
+lG5ALUgg8RNsWsD0UHL7Mezs3KWwBvQAeUhnh9SPmmMjKBpJfITTad1NcKP735vc
+hLfx/MoZ6sijB1vzWN69u6MVpSe4GFzRE0yZDsmtY5HJ2TZDvuA5Fg8Q5BAoaz7s
+Rt9HrtTIZdYtRK+cQ8Ln
+=sEeM
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Dec_2013_11_45_15_+1100_MjQhBemwyCiapGMX--
