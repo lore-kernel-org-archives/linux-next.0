@@ -1,346 +1,95 @@
-From: Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>
-Subject: [PATCH] powerpc: Fix "attempt to move .org backwards" error
-Date: Tue, 10 Dec 2013 00:40:15 +0530
-Message-ID: <20131209191015.22974.31604.stgit@mars>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: build failure after merge of the usb-gadget tree
+Date: Mon, 9 Dec 2013 13:40:32 -0600
+Message-ID: <20131209194032.GC28441@saruman.home>
+References: <20131209145803.4aba29ca2eba4444070e43ce@canb.auug.org.au>
+ <20131209041152.GC20608@saruman.home>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:35238 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761398Ab3LITKZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Dec 2013 14:10:25 -0500
-Received: from /spool/local
-	by e23smtp02.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <mahesh@linux.vnet.ibm.com>;
-	Tue, 10 Dec 2013 05:10:23 +1000
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linuxppc-dev <linuxppc-dev@ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20131209041152.GC20608@saruman.home>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Tikhomirov <av.tikhomirov@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+--TiqCXmo5T1hvSQQg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-With recent machine check patch series changes, The exception vectors
-starting from 0x4300 are now overflowing with allyesconfig. Fix that by
-moving machine_check_common and machine_check_handle_early code out of
-that region to make enough room for exception vector area.
+Hi Stephen,
 
-Fixes this build error reportes by Stephen:
+On Sun, Dec 08, 2013 at 10:11:52PM -0600, Felipe Balbi wrote:
+> On Mon, Dec 09, 2013 at 02:58:03PM +1100, Stephen Rothwell wrote:
+> > Hi Felipe,
+> >=20
+> > After merging the usb-gadget tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > drivers/built-in.o: In function `otg_set_state':
+> > (.text+0x14f7de): undefined reference to `usb_bus_start_enum'
+> >=20
+> > CONFIG_USB is 'm' in this build.
+> >=20
+> > I am not sure what changed to cause this, maybe e1d2e31975e1 ("usb: phy:
+> > Add OTG FSM configuration option")?
+> >=20
+> > I have used the usb-gadget tree from next-20131206 for today.
+>=20
+> I see what caused it, will fix it up with a patch which should probably
+> be backported a few kernels back. Thanks for letting me know.
 
-arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
-arch/powerpc/kernel/exceptions-64s.S:958: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:959: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:983: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:984: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:1003: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:1013: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:1014: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:1015: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:1016: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:1017: Error: attempt to move .org backwards
-arch/powerpc/kernel/exceptions-64s.S:1018: Error: attempt to move .org backwards
+Do you still have the .config which caused that build error ? I couldn't
+reproduce with CONFIG_USB=3Dm && CONFIG_USB_OTG=3Dy.
 
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
----
- arch/powerpc/kernel/exceptions-64s.S |  280 +++++++++++++++++-----------------
- 1 file changed, 140 insertions(+), 140 deletions(-)
+In any case, I believe this will help:
 
-diff --git a/arch/powerpc/kernel/exceptions-64s.S b/arch/powerpc/kernel/exceptions-64s.S
-index 862b9dd..b5c3313 100644
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -768,146 +768,6 @@ kvmppc_skip_Hinterrupt:
- 
- 	STD_EXCEPTION_COMMON(0x100, system_reset, .system_reset_exception)
- 
--	/*
--	 * Machine check is different because we use a different
--	 * save area: PACA_EXMC instead of PACA_EXGEN.
--	 */
--	.align	7
--	.globl machine_check_common
--machine_check_common:
--
--	mfspr	r10,SPRN_DAR
--	std	r10,PACA_EXGEN+EX_DAR(r13)
--	mfspr	r10,SPRN_DSISR
--	stw	r10,PACA_EXGEN+EX_DSISR(r13)
--	EXCEPTION_PROLOG_COMMON(0x200, PACA_EXMC)
--	FINISH_NAP
--	DISABLE_INTS
--	ld	r3,PACA_EXGEN+EX_DAR(r13)
--	lwz	r4,PACA_EXGEN+EX_DSISR(r13)
--	std	r3,_DAR(r1)
--	std	r4,_DSISR(r1)
--	bl	.save_nvgprs
--	addi	r3,r1,STACK_FRAME_OVERHEAD
--	bl	.machine_check_exception
--	b	.ret_from_except
--
--#define MACHINE_CHECK_HANDLER_WINDUP			\
--	/* Clear MSR_RI before setting SRR0 and SRR1. */\
--	li	r0,MSR_RI;				\
--	mfmsr	r9;		/* get MSR value */	\
--	andc	r9,r9,r0;				\
--	mtmsrd	r9,1;		/* Clear MSR_RI */	\
--	/* Move original SRR0 and SRR1 into the respective regs */	\
--	ld	r9,_MSR(r1);				\
--	mtspr	SPRN_SRR1,r9;				\
--	ld	r3,_NIP(r1);				\
--	mtspr	SPRN_SRR0,r3;				\
--	ld	r9,_CTR(r1);				\
--	mtctr	r9;					\
--	ld	r9,_XER(r1);				\
--	mtxer	r9;					\
--	ld	r9,_LINK(r1);				\
--	mtlr	r9;					\
--	REST_GPR(0, r1);				\
--	REST_8GPRS(2, r1);				\
--	REST_GPR(10, r1);				\
--	ld	r11,_CCR(r1);				\
--	mtcr	r11;					\
--	/* Decrement paca->in_mce. */			\
--	lhz	r12,PACA_IN_MCE(r13);			\
--	subi	r12,r12,1;				\
--	sth	r12,PACA_IN_MCE(r13);			\
--	REST_GPR(11, r1);				\
--	REST_2GPRS(12, r1);				\
--	/* restore original r1. */			\
--	ld	r1,GPR1(r1)
--
--	/*
--	 * Handle machine check early in real mode. We come here with
--	 * ME=1, MMU (IR=0 and DR=0) off and using MC emergency stack.
--	 */
--	.align	7
--	.globl machine_check_handle_early
--machine_check_handle_early:
--BEGIN_FTR_SECTION
--	std	r0,GPR0(r1)	/* Save r0 */
--	EXCEPTION_PROLOG_COMMON_3(0x200)
--	bl	.save_nvgprs
--	addi	r3,r1,STACK_FRAME_OVERHEAD
--	bl	.machine_check_early
--	ld	r12,_MSR(r1)
--#ifdef	CONFIG_PPC_P7_NAP
--	/*
--	 * Check if thread was in power saving mode. We come here when any
--	 * of the following is true:
--	 * a. thread wasn't in power saving mode
--	 * b. thread was in power saving mode with no state loss or
--	 *    supervisor state loss
--	 *
--	 * Go back to nap again if (b) is true.
--	 */
--	rlwinm.	r11,r12,47-31,30,31	/* Was it in power saving mode? */
--	beq	4f			/* No, it wasn;t */
--	/* Thread was in power saving mode. Go back to nap again. */
--	cmpwi	r11,2
--	bne	3f
--	/* Supervisor state loss */
--	li	r0,1
--	stb	r0,PACA_NAPSTATELOST(r13)
--3:	bl	.machine_check_queue_event
--	MACHINE_CHECK_HANDLER_WINDUP
--	GET_PACA(r13)
--	ld	r1,PACAR1(r13)
--	b	.power7_enter_nap_mode
--4:
--#endif
--	/*
--	 * Check if we are coming from hypervisor userspace. If yes then we
--	 * continue in host kernel in V mode to deliver the MC event.
--	 */
--	rldicl.	r11,r12,4,63		/* See if MC hit while in HV mode. */
--	beq	5f
--	andi.	r11,r12,MSR_PR		/* See if coming from user. */
--	bne	9f			/* continue in V mode if we are. */
--
--5:
--#ifdef CONFIG_KVM_BOOK3S_64_HV
--	/*
--	 * We are coming from kernel context. Check if we are coming from
--	 * guest. if yes, then we can continue. We will fall through
--	 * do_kvm_200->kvmppc_interrupt to deliver the MC event to guest.
--	 */
--	lbz	r11,HSTATE_IN_GUEST(r13)
--	cmpwi	r11,0			/* Check if coming from guest */
--	bne	9f			/* continue if we are. */
--#endif
--	/*
--	 * At this point we are not sure about what context we come from.
--	 * Queue up the MCE event and return from the interrupt.
--	 * But before that, check if this is an un-recoverable exception.
--	 * If yes, then stay on emergency stack and panic.
--	 */
--	andi.	r11,r12,MSR_RI
--	bne	2f
--1:	addi	r3,r1,STACK_FRAME_OVERHEAD
--	bl	.unrecoverable_exception
--	b	1b
--2:
--	/*
--	 * Return from MC interrupt.
--	 * Queue up the MCE event so that we can log it later, while
--	 * returning from kernel or opal call.
--	 */
--	bl	.machine_check_queue_event
--	MACHINE_CHECK_HANDLER_WINDUP
--	rfid
--9:
--	/* Deliver the machine check to host kernel in V mode. */
--	MACHINE_CHECK_HANDLER_WINDUP
--	b	machine_check_pSeries
--END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
--
- 	STD_EXCEPTION_COMMON_ASYNC(0x500, hardware_interrupt, do_IRQ)
- 	STD_EXCEPTION_COMMON_ASYNC(0x900, decrementer, .timer_interrupt)
- 	STD_EXCEPTION_COMMON(0x980, hdecrementer, .hdec_interrupt)
-@@ -1458,6 +1318,146 @@ _GLOBAL(opal_mc_secondary_handler)
- 	b	machine_check_pSeries
- #endif /* CONFIG_PPC_POWERNV */
- 
-+	/*
-+	 * Machine check is different because we use a different
-+	 * save area: PACA_EXMC instead of PACA_EXGEN.
-+	 */
-+	.align	7
-+	.globl machine_check_common
-+machine_check_common:
-+
-+	mfspr	r10,SPRN_DAR
-+	std	r10,PACA_EXGEN+EX_DAR(r13)
-+	mfspr	r10,SPRN_DSISR
-+	stw	r10,PACA_EXGEN+EX_DSISR(r13)
-+	EXCEPTION_PROLOG_COMMON(0x200, PACA_EXMC)
-+	FINISH_NAP
-+	DISABLE_INTS
-+	ld	r3,PACA_EXGEN+EX_DAR(r13)
-+	lwz	r4,PACA_EXGEN+EX_DSISR(r13)
-+	std	r3,_DAR(r1)
-+	std	r4,_DSISR(r1)
-+	bl	.save_nvgprs
-+	addi	r3,r1,STACK_FRAME_OVERHEAD
-+	bl	.machine_check_exception
-+	b	.ret_from_except
-+
-+#define MACHINE_CHECK_HANDLER_WINDUP			\
-+	/* Clear MSR_RI before setting SRR0 and SRR1. */\
-+	li	r0,MSR_RI;				\
-+	mfmsr	r9;		/* get MSR value */	\
-+	andc	r9,r9,r0;				\
-+	mtmsrd	r9,1;		/* Clear MSR_RI */	\
-+	/* Move original SRR0 and SRR1 into the respective regs */	\
-+	ld	r9,_MSR(r1);				\
-+	mtspr	SPRN_SRR1,r9;				\
-+	ld	r3,_NIP(r1);				\
-+	mtspr	SPRN_SRR0,r3;				\
-+	ld	r9,_CTR(r1);				\
-+	mtctr	r9;					\
-+	ld	r9,_XER(r1);				\
-+	mtxer	r9;					\
-+	ld	r9,_LINK(r1);				\
-+	mtlr	r9;					\
-+	REST_GPR(0, r1);				\
-+	REST_8GPRS(2, r1);				\
-+	REST_GPR(10, r1);				\
-+	ld	r11,_CCR(r1);				\
-+	mtcr	r11;					\
-+	/* Decrement paca->in_mce. */			\
-+	lhz	r12,PACA_IN_MCE(r13);			\
-+	subi	r12,r12,1;				\
-+	sth	r12,PACA_IN_MCE(r13);			\
-+	REST_GPR(11, r1);				\
-+	REST_2GPRS(12, r1);				\
-+	/* restore original r1. */			\
-+	ld	r1,GPR1(r1)
-+
-+	/*
-+	 * Handle machine check early in real mode. We come here with
-+	 * ME=1, MMU (IR=0 and DR=0) off and using MC emergency stack.
-+	 */
-+	.align	7
-+	.globl machine_check_handle_early
-+machine_check_handle_early:
-+BEGIN_FTR_SECTION
-+	std	r0,GPR0(r1)	/* Save r0 */
-+	EXCEPTION_PROLOG_COMMON_3(0x200)
-+	bl	.save_nvgprs
-+	addi	r3,r1,STACK_FRAME_OVERHEAD
-+	bl	.machine_check_early
-+	ld	r12,_MSR(r1)
-+#ifdef	CONFIG_PPC_P7_NAP
-+	/*
-+	 * Check if thread was in power saving mode. We come here when any
-+	 * of the following is true:
-+	 * a. thread wasn't in power saving mode
-+	 * b. thread was in power saving mode with no state loss or
-+	 *    supervisor state loss
-+	 *
-+	 * Go back to nap again if (b) is true.
-+	 */
-+	rlwinm.	r11,r12,47-31,30,31	/* Was it in power saving mode? */
-+	beq	4f			/* No, it wasn;t */
-+	/* Thread was in power saving mode. Go back to nap again. */
-+	cmpwi	r11,2
-+	bne	3f
-+	/* Supervisor state loss */
-+	li	r0,1
-+	stb	r0,PACA_NAPSTATELOST(r13)
-+3:	bl	.machine_check_queue_event
-+	MACHINE_CHECK_HANDLER_WINDUP
-+	GET_PACA(r13)
-+	ld	r1,PACAR1(r13)
-+	b	.power7_enter_nap_mode
-+4:
-+#endif
-+	/*
-+	 * Check if we are coming from hypervisor userspace. If yes then we
-+	 * continue in host kernel in V mode to deliver the MC event.
-+	 */
-+	rldicl.	r11,r12,4,63		/* See if MC hit while in HV mode. */
-+	beq	5f
-+	andi.	r11,r12,MSR_PR		/* See if coming from user. */
-+	bne	9f			/* continue in V mode if we are. */
-+
-+5:
-+#ifdef CONFIG_KVM_BOOK3S_64_HV
-+	/*
-+	 * We are coming from kernel context. Check if we are coming from
-+	 * guest. if yes, then we can continue. We will fall through
-+	 * do_kvm_200->kvmppc_interrupt to deliver the MC event to guest.
-+	 */
-+	lbz	r11,HSTATE_IN_GUEST(r13)
-+	cmpwi	r11,0			/* Check if coming from guest */
-+	bne	9f			/* continue if we are. */
-+#endif
-+	/*
-+	 * At this point we are not sure about what context we come from.
-+	 * Queue up the MCE event and return from the interrupt.
-+	 * But before that, check if this is an un-recoverable exception.
-+	 * If yes, then stay on emergency stack and panic.
-+	 */
-+	andi.	r11,r12,MSR_RI
-+	bne	2f
-+1:	addi	r3,r1,STACK_FRAME_OVERHEAD
-+	bl	.unrecoverable_exception
-+	b	1b
-+2:
-+	/*
-+	 * Return from MC interrupt.
-+	 * Queue up the MCE event so that we can log it later, while
-+	 * returning from kernel or opal call.
-+	 */
-+	bl	.machine_check_queue_event
-+	MACHINE_CHECK_HANDLER_WINDUP
-+	rfid
-+9:
-+	/* Deliver the machine check to host kernel in V mode. */
-+	MACHINE_CHECK_HANDLER_WINDUP
-+	b	machine_check_pSeries
-+END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
-+
- 
- /*
-  * r13 points to the PACA, r9 contains the saved CR,
+diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+index fed7f68..03cc86c 100644
+--- a/drivers/usb/core/Kconfig
++++ b/drivers/usb/core/Kconfig
+@@ -51,6 +51,7 @@ config USB_DYNAMIC_MINORS
+=20
+ config USB_OTG
+ 	bool "OTG support"
++	depends on USB && USB_GADGET
+ 	depends on PM_RUNTIME
+ 	default n
+ 	help
+
+
+It makes no sense to allow OTG without having both host and gadget
+support.
+
+cheers
+
+--=20
+balbi
+
+--TiqCXmo5T1hvSQQg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSphywAAoJEIaOsuA1yqREl9IP/2Ev+vgCskCbqWChAM7XyBOH
+jdpRLOf7R33Wjpkyf7u54aaAM2IDGpGDWsRNXGQdIQQrY/95gUjZGqxBKZbim1SC
+WyX8YYVOedaYkxDuTtCL1C9n6dFSwREXqmS5U5kMkbPw4Wxi4IGGDwcCeWoC0vKm
+PSUQQkr6lpKhnOMKCLfSF0Ecc7lBadqJoj5Jp+vDcG3NOS6t3P2lLFQvmvYbkFRf
+45x+v4Jq5ZzO+HiKWwFMmZQmVxLa3EFhHlmhD1MKRQodQKo9+SKwx1Jeo7/W7a4N
+upe1YXjMWkg7nf8sqpmE/NjO76KVWs4rKDjioIkYDqgozArthbCs3zIOCYtDPosL
+EqOxSpRHjs1Jx4KZTTI6SMsVXltV1tzKRaej8CHCXEODTRI4iZwmz+wANi6/5ANo
+UQMmdFklEttwM8bxpiMTTafVYlo8I+FAJPBLr3HeIUKlf0PfCLKu0liBALpTZMsQ
+Hj2ZqTLUu/HmbRqdnk+YCIww3+aMDmvXmUj1umK4y82JVnQSsMPJ+0bTdNW0U1Mv
+TZ/ZczdmemXyD5fUyv84GMa7IZOlTOy0GeF9LL3gWMhcfZVolPUX1A6K9eD+9Bhr
+Cbyhs29JmlQw4LO1n+VYSqaMt2SiO6Ml/ZZVSipqFDLUz/cqlHtLg7UwgHDuMEu7
+JZK99Ui3Oya+7qhIVnGX
+=weZd
+-----END PGP SIGNATURE-----
+
+--TiqCXmo5T1hvSQQg--
