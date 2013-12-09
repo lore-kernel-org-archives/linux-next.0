@@ -1,69 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pinctrl tree
-Date: Mon, 9 Dec 2013 15:18:49 +1100
-Message-ID: <20131209151849.d36d6374e622f44b821ec3d8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (powerpc
+ tree related)
+Date: Mon, 9 Dec 2013 17:32:55 +1100
+Message-ID: <20131209173255.599c63da380bafbdcd98d47f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu"
+ boundary="Signature=_Mon__9_Dec_2013_17_32_55_+1100_IJEOCgQFQSR2n416"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60186 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:56267 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760357Ab3LIESz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 Dec 2013 23:18:55 -0500
+	id S1760582Ab3LIGdB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Dec 2013 01:33:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>
 
---Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu
+--Signature=_Mon__9_Dec_2013_17_32_55_+1100_IJEOCgQFQSR2n416
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi all,
 
-After merging the pinctrl tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-drivers/pinctrl/pinctrl-msm.c:103:21: error: 'pinconf_generic_dt_node_to_ma=
-p_group' undeclared here (not in a function)
-  .dt_node_to_map  =3D pinconf_generic_dt_node_to_map_group,
-                     ^
-drivers/pinctrl/pinctrl-msm.c: In function 'msm_gpio_init':
-drivers/pinctrl/pinctrl-msm.c:905:6: error: 'struct gpio_chip' has no membe=
-r named 'of_node'
-  chip->of_node =3D pctrl->dev->of_node;
-      ^
+arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+arch/powerpc/kernel/exceptions-64s.S:958: Error: attempt to move .org backw=
+ards
+arch/powerpc/kernel/exceptions-64s.S:959: Error: attempt to move .org backw=
+ards
+arch/powerpc/kernel/exceptions-64s.S:983: Error: attempt to move .org backw=
+ards
+arch/powerpc/kernel/exceptions-64s.S:984: Error: attempt to move .org backw=
+ards
+arch/powerpc/kernel/exceptions-64s.S:1003: Error: attempt to move .org back=
+wards
+arch/powerpc/kernel/exceptions-64s.S:1013: Error: attempt to move .org back=
+wards
+arch/powerpc/kernel/exceptions-64s.S:1014: Error: attempt to move .org back=
+wards
+arch/powerpc/kernel/exceptions-64s.S:1015: Error: attempt to move .org back=
+wards
+arch/powerpc/kernel/exceptions-64s.S:1016: Error: attempt to move .org back=
+wards
+arch/powerpc/kernel/exceptions-64s.S:1017: Error: attempt to move .org back=
+wards
+arch/powerpc/kernel/exceptions-64s.S:1018: Error: attempt to move .org back=
+wards
 
-Probably caused by commit f365be092572 ("pinctrl: Add Qualcomm TLMM
-driver").
+Caused by commit 1e9b4507ed98 ("powerpc/book3s: handle machine check in
+Linux host").
 
-I have used the pinctrl tree from next-20131206 for today.
+I have reverted these commits (possibly some of these reverts are
+unnecessary):
+
+b63a0ffe35de "powerpc/powernv: Machine check exception handling"
+28446de2ce99 "powerpc/powernv: Remove machine check handling in OPAL"
+b5ff4211a829 "powerpc/book3s: Queue up and process delayed MCE events"
+36df96f8acaf "powerpc/book3s: Decode and save machine check event"
+ae744f3432d3 "powerpc/book3s: Flush SLB/TLBs if we get SLB/TLB machine chec=
+k errors on power8"
+e22a22740c1a "powerpc/book3s: Flush SLB/TLBs if we get SLB/TLB machine chec=
+k errors on power7"
+0440705049b0 "powerpc/book3s: Add flush_tlb operation in cpu_spec"
+4c703416efc0 "powerpc/book3s: Introduce a early machine check hook in cpu_s=
+pec"
+1c51089f777b "powerpc/book3s: Return from interrupt if coming from evil con=
+text"
+1e9b4507ed98 "powerpc/book3s: handle machine check in Linux host"
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu
+--Signature=_Mon__9_Dec_2013_17_32_55_+1100_IJEOCgQFQSR2n416
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSpUStAAoJEMDTa8Ir7ZwV8ksQAJdV4hGZrRC8qaG48iWSDg9r
-VBif0XhscZVat4F4nm1B6ilKHGGb/6m9Tr3mDrisG8ARBTBY8NQjxfwVgb/bGmtF
-ev4fypl5TQfuOVfujjrPFOxj5rVVP9KrDwjRROTxgeAgBe9Z5wRaO4JjzGCsE4sB
-BcGevlYBKthej8zYiQeylQC7jN1WN+yHSHkx785em6r1CpvjeW5e4FUlcOrconlK
-kc/JTEXIIM6RKQBFz7nTDe3qTj1vhChH8oc6pQ+MlEMpnBM3XsoG5kPoHfYkAcRm
-5l4Jq90iAdCWBZ78PI8f0aZpVxC2k22dIcteQAfR7nhaZRm8Y0Myp5CYWkOfd5z6
-B8D5eJmuLykLEtEGPXklsvYn8Lx6rZiT5/1JtDPbvGKCwbCQoDT/V/llST/paKGA
-rX7MPKzzrqdvansNL9NNfQYLb84sJ5penUsSuzAE0wyqDeqUeqKfOWdrBuyuycsh
-2D9YO//wbnEHPErsT7AMrZi+/EWuX0AmQwqj0VX+yW6xcdAOoJ3kf8fqbtuyLWLW
-CVlhNBJH2JMMpzEjZ6NWZrOtUh2QXtnR9qVizCldeOXwHr4aQ0/hJYzma6sIFBBM
-36v/yXlibEOKmbMNHgqQhiD4Ha/wEW9T8rmWhfRcB/V7t/bRxUQZ0fa+LeTMBqvO
-QfdIXs7KueIhJMHMDsGp
-=Y7qe
+iQIcBAEBCAAGBQJSpWQbAAoJEMDTa8Ir7ZwVbDsP/igqKWHTyjYzHuL3fWutUSw4
+9VpPjC3q6bCLnBV/UcBLl2BVqepMSwsJsGZkQPvPaNTJpCbAZZZkFlXIaE2VQAUd
+Cml9gRVAy+BuqppTTuuj5wfeTBAMuO1oIs1+ysnLUKRe4nDmhzMahWmTn5ZpkZ0n
+0MWVsZA9BhNaqYuDibl2FpsoZVxBGa/p81LxQCuMnUkZ/YCvmEjhskUlwACh8GXg
+iPCD1PJ6O6/pZuCz6z7atmWgBC+okmtsKLtGicBHCEpIPu5acXbchKRi4dNgl9sC
+ZtKWKyl3nz7e75Epm6u8IYznCs9sLoBtzR/XVZQw6azugwAIAiAtK6sah9c8iipl
+aRlAhHpiceOqESmRSq6dbjqwBumuT3v5wd4aOJQkQ7M5O8aiLFnJ/G9a0iVCF93/
+09MIWRiv9ARWLYMhK3HBJ2QKfclqPyv6H7AGsIv5bkguP1DnzGRnQzW029OTHX9r
+iXW36EvEO3LWLass6U7vbGRwhDNxQ8ToYSJP6kgMJnxPtstKcFeEIbSsV1TrseG/
+OSD544lQMktKzMvpOUnpsk7utRizy4PBOjmg6ocJD9iipLWcs15cjTccUKIv3g45
+o1cXOwbVDJVxb4kdyABmhoLMOxw3jNztblaGW87ed91237jlxjNrhFcem9scc1+/
+FZAd4SYGMHLsLWPrYHC1
+=TDqO
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu--
+--Signature=_Mon__9_Dec_2013_17_32_55_+1100_IJEOCgQFQSR2n416--
