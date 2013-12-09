@@ -1,73 +1,69 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: build failure after merge of the usb-gadget tree
-Date: Sun, 8 Dec 2013 22:11:52 -0600
-Message-ID: <20131209041152.GC20608@saruman.home>
-References: <20131209145803.4aba29ca2eba4444070e43ce@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pinctrl tree
+Date: Mon, 9 Dec 2013 15:18:49 +1100
+Message-ID: <20131209151849.d36d6374e622f44b821ec3d8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WplhKdTI2c8ulnbP"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:60945 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753679Ab3LIEMi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Dec 2013 23:12:38 -0500
-Content-Disposition: inline
-In-Reply-To: <20131209145803.4aba29ca2eba4444070e43ce@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:60186 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760357Ab3LIESz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Dec 2013 23:18:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Tikhomirov <av.tikhomirov@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
---WplhKdTI2c8ulnbP
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Linus,
 
-On Mon, Dec 09, 2013 at 02:58:03PM +1100, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> After merging the usb-gadget tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/built-in.o: In function `otg_set_state':
-> (.text+0x14f7de): undefined reference to `usb_bus_start_enum'
->=20
-> CONFIG_USB is 'm' in this build.
->=20
-> I am not sure what changed to cause this, maybe e1d2e31975e1 ("usb: phy:
-> Add OTG FSM configuration option")?
->=20
-> I have used the usb-gadget tree from next-20131206 for today.
+After merging the pinctrl tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I see what caused it, will fix it up with a patch which should probably
-be backported a few kernels back. Thanks for letting me know.
+drivers/pinctrl/pinctrl-msm.c:103:21: error: 'pinconf_generic_dt_node_to_ma=
+p_group' undeclared here (not in a function)
+  .dt_node_to_map  =3D pinconf_generic_dt_node_to_map_group,
+                     ^
+drivers/pinctrl/pinctrl-msm.c: In function 'msm_gpio_init':
+drivers/pinctrl/pinctrl-msm.c:905:6: error: 'struct gpio_chip' has no membe=
+r named 'of_node'
+  chip->of_node =3D pctrl->dev->of_node;
+      ^
+
+Probably caused by commit f365be092572 ("pinctrl: Add Qualcomm TLMM
+driver").
+
+I have used the pinctrl tree from next-20131206 for today.
 
 --=20
-balbi
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---WplhKdTI2c8ulnbP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSpUMIAAoJEIaOsuA1yqRE9fIQAKa7mj9OH/Cz0oskSux3lpJM
-r40DhP/gVXiQfFnoNJ1+iKVzkbyI9WEK+FivSjwQp/9ujCM5P47FhTdL+JVUJWn4
-c203lR+SzNpZ1T0lIzELzZQTq+BdP8NYggLu47BCFvZSJOs5p5efjxPtG/IT5gqw
-hcItv/vGhDGdxZqKzbOTbDFDGzvQx4Km4pbSSyvm6Et8vYiUwJ+4OK+3dmAVPke7
-It7A7Gr42vog0Fu3ARrUhQ1c67Jpaja11kTDswhYZ9zpOHq1cEqhf8FWNFi8Q+Ir
-5LoDct+p63+teF9RzojkH+zxQ+Xk7m0v1XOUCT9nbvzbNWsSvAyjzUw3iTBX69CP
-RCnfc3ClFphtLC4bFQvZizH5nG/BW74+kEkHMAW+C6757KCmsUXqD0W2AbGRnhPp
-jyUdT7FrDwNtxqbLPJGRwxfB8MPYAgRCqd9ti3z2CzgtoSS9NCLJ7Jx3bvsXDFiH
-EIxfBq0Ux1BflUWSDSVxafImXQKc6ABtQ3gWFjjz2xS8g+rH72AF1W6d+cEa4f2x
-z9otsMDBigWz6DuZGxP7f8PihH+P6auQwDTPZp2GGowonCfXA92aGzPnICQKZxlr
-rDTEuFFToCE2wOSlZn8rotH1Xz3Bp0orHRwVkqTTwhyNAjeoxW/ICYDpMeS10w5d
-KO66Rex3Ou6JLB/VlKlQ
-=SaGK
+iQIcBAEBCAAGBQJSpUStAAoJEMDTa8Ir7ZwV8ksQAJdV4hGZrRC8qaG48iWSDg9r
+VBif0XhscZVat4F4nm1B6ilKHGGb/6m9Tr3mDrisG8ARBTBY8NQjxfwVgb/bGmtF
+ev4fypl5TQfuOVfujjrPFOxj5rVVP9KrDwjRROTxgeAgBe9Z5wRaO4JjzGCsE4sB
+BcGevlYBKthej8zYiQeylQC7jN1WN+yHSHkx785em6r1CpvjeW5e4FUlcOrconlK
+kc/JTEXIIM6RKQBFz7nTDe3qTj1vhChH8oc6pQ+MlEMpnBM3XsoG5kPoHfYkAcRm
+5l4Jq90iAdCWBZ78PI8f0aZpVxC2k22dIcteQAfR7nhaZRm8Y0Myp5CYWkOfd5z6
+B8D5eJmuLykLEtEGPXklsvYn8Lx6rZiT5/1JtDPbvGKCwbCQoDT/V/llST/paKGA
+rX7MPKzzrqdvansNL9NNfQYLb84sJ5penUsSuzAE0wyqDeqUeqKfOWdrBuyuycsh
+2D9YO//wbnEHPErsT7AMrZi+/EWuX0AmQwqj0VX+yW6xcdAOoJ3kf8fqbtuyLWLW
+CVlhNBJH2JMMpzEjZ6NWZrOtUh2QXtnR9qVizCldeOXwHr4aQ0/hJYzma6sIFBBM
+36v/yXlibEOKmbMNHgqQhiD4Ha/wEW9T8rmWhfRcB/V7t/bRxUQZ0fa+LeTMBqvO
+QfdIXs7KueIhJMHMDsGp
+=Y7qe
 -----END PGP SIGNATURE-----
 
---WplhKdTI2c8ulnbP--
+--Signature=_Mon__9_Dec_2013_15_18_49_+1100_5L225CdilyEPuJAu--
