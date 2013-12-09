@@ -1,41 +1,346 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- driver-core.current tree
-Date: Mon, 9 Dec 2013 00:21:52 -0800
-Message-ID: <20131209082152.GA26809@kroah.com>
-References: <20131209144712.57a50d7ed468ae8a4d57a0bf@canb.auug.org.au>
+From: Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>
+Subject: [PATCH] powerpc: Fix "attempt to move .org backwards" error
+Date: Tue, 10 Dec 2013 00:40:15 +0530
+Message-ID: <20131209191015.22974.31604.stgit@mars>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:37327 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1760594Ab3LIIfq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Dec 2013 03:35:46 -0500
-Received: from compute5.internal (compute5.nyi.mail.srv.osa [10.202.2.45])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 1602220ADA
-	for <linux-next@vger.kernel.org>; Mon,  9 Dec 2013 03:35:46 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20131209144712.57a50d7ed468ae8a4d57a0bf@canb.auug.org.au>
+Received: from e23smtp02.au.ibm.com ([202.81.31.144]:35238 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761398Ab3LITKZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Dec 2013 14:10:25 -0500
+Received: from /spool/local
+	by e23smtp02.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <mahesh@linux.vnet.ibm.com>;
+	Tue, 10 Dec 2013 05:10:23 +1000
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: linuxppc-dev <linuxppc-dev@ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Mon, Dec 09, 2013 at 02:47:12PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> fs/sysfs/file.c between commit a8b14744429f ("sysfs: give different
-> locking key to regular and bin files") from the driver-core.current tree
-> and commit 414985ae23c0 ("sysfs, kernfs: move file core code to
-> fs/kernfs/file.c") (among others) from the driver-core tree.
-> 
-> I just dropped the driver-core.current tree commit as I don't see what
-> needs to be done after the other changes in the driver-core tree.
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-Tejun said he would provide a merge fixup as we knew this was going to
-be a problem :)
+With recent machine check patch series changes, The exception vectors
+starting from 0x4300 are now overflowing with allyesconfig. Fix that by
+moving machine_check_common and machine_check_handle_early code out of
+that region to make enough room for exception vector area.
 
-thanks,
+Fixes this build error reportes by Stephen:
 
-greg k-h
+arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+arch/powerpc/kernel/exceptions-64s.S:958: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:959: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:983: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:984: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1003: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1013: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1014: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1015: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1016: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1017: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1018: Error: attempt to move .org backwards
+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+---
+ arch/powerpc/kernel/exceptions-64s.S |  280 +++++++++++++++++-----------------
+ 1 file changed, 140 insertions(+), 140 deletions(-)
+
+diff --git a/arch/powerpc/kernel/exceptions-64s.S b/arch/powerpc/kernel/exceptions-64s.S
+index 862b9dd..b5c3313 100644
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -768,146 +768,6 @@ kvmppc_skip_Hinterrupt:
+ 
+ 	STD_EXCEPTION_COMMON(0x100, system_reset, .system_reset_exception)
+ 
+-	/*
+-	 * Machine check is different because we use a different
+-	 * save area: PACA_EXMC instead of PACA_EXGEN.
+-	 */
+-	.align	7
+-	.globl machine_check_common
+-machine_check_common:
+-
+-	mfspr	r10,SPRN_DAR
+-	std	r10,PACA_EXGEN+EX_DAR(r13)
+-	mfspr	r10,SPRN_DSISR
+-	stw	r10,PACA_EXGEN+EX_DSISR(r13)
+-	EXCEPTION_PROLOG_COMMON(0x200, PACA_EXMC)
+-	FINISH_NAP
+-	DISABLE_INTS
+-	ld	r3,PACA_EXGEN+EX_DAR(r13)
+-	lwz	r4,PACA_EXGEN+EX_DSISR(r13)
+-	std	r3,_DAR(r1)
+-	std	r4,_DSISR(r1)
+-	bl	.save_nvgprs
+-	addi	r3,r1,STACK_FRAME_OVERHEAD
+-	bl	.machine_check_exception
+-	b	.ret_from_except
+-
+-#define MACHINE_CHECK_HANDLER_WINDUP			\
+-	/* Clear MSR_RI before setting SRR0 and SRR1. */\
+-	li	r0,MSR_RI;				\
+-	mfmsr	r9;		/* get MSR value */	\
+-	andc	r9,r9,r0;				\
+-	mtmsrd	r9,1;		/* Clear MSR_RI */	\
+-	/* Move original SRR0 and SRR1 into the respective regs */	\
+-	ld	r9,_MSR(r1);				\
+-	mtspr	SPRN_SRR1,r9;				\
+-	ld	r3,_NIP(r1);				\
+-	mtspr	SPRN_SRR0,r3;				\
+-	ld	r9,_CTR(r1);				\
+-	mtctr	r9;					\
+-	ld	r9,_XER(r1);				\
+-	mtxer	r9;					\
+-	ld	r9,_LINK(r1);				\
+-	mtlr	r9;					\
+-	REST_GPR(0, r1);				\
+-	REST_8GPRS(2, r1);				\
+-	REST_GPR(10, r1);				\
+-	ld	r11,_CCR(r1);				\
+-	mtcr	r11;					\
+-	/* Decrement paca->in_mce. */			\
+-	lhz	r12,PACA_IN_MCE(r13);			\
+-	subi	r12,r12,1;				\
+-	sth	r12,PACA_IN_MCE(r13);			\
+-	REST_GPR(11, r1);				\
+-	REST_2GPRS(12, r1);				\
+-	/* restore original r1. */			\
+-	ld	r1,GPR1(r1)
+-
+-	/*
+-	 * Handle machine check early in real mode. We come here with
+-	 * ME=1, MMU (IR=0 and DR=0) off and using MC emergency stack.
+-	 */
+-	.align	7
+-	.globl machine_check_handle_early
+-machine_check_handle_early:
+-BEGIN_FTR_SECTION
+-	std	r0,GPR0(r1)	/* Save r0 */
+-	EXCEPTION_PROLOG_COMMON_3(0x200)
+-	bl	.save_nvgprs
+-	addi	r3,r1,STACK_FRAME_OVERHEAD
+-	bl	.machine_check_early
+-	ld	r12,_MSR(r1)
+-#ifdef	CONFIG_PPC_P7_NAP
+-	/*
+-	 * Check if thread was in power saving mode. We come here when any
+-	 * of the following is true:
+-	 * a. thread wasn't in power saving mode
+-	 * b. thread was in power saving mode with no state loss or
+-	 *    supervisor state loss
+-	 *
+-	 * Go back to nap again if (b) is true.
+-	 */
+-	rlwinm.	r11,r12,47-31,30,31	/* Was it in power saving mode? */
+-	beq	4f			/* No, it wasn;t */
+-	/* Thread was in power saving mode. Go back to nap again. */
+-	cmpwi	r11,2
+-	bne	3f
+-	/* Supervisor state loss */
+-	li	r0,1
+-	stb	r0,PACA_NAPSTATELOST(r13)
+-3:	bl	.machine_check_queue_event
+-	MACHINE_CHECK_HANDLER_WINDUP
+-	GET_PACA(r13)
+-	ld	r1,PACAR1(r13)
+-	b	.power7_enter_nap_mode
+-4:
+-#endif
+-	/*
+-	 * Check if we are coming from hypervisor userspace. If yes then we
+-	 * continue in host kernel in V mode to deliver the MC event.
+-	 */
+-	rldicl.	r11,r12,4,63		/* See if MC hit while in HV mode. */
+-	beq	5f
+-	andi.	r11,r12,MSR_PR		/* See if coming from user. */
+-	bne	9f			/* continue in V mode if we are. */
+-
+-5:
+-#ifdef CONFIG_KVM_BOOK3S_64_HV
+-	/*
+-	 * We are coming from kernel context. Check if we are coming from
+-	 * guest. if yes, then we can continue. We will fall through
+-	 * do_kvm_200->kvmppc_interrupt to deliver the MC event to guest.
+-	 */
+-	lbz	r11,HSTATE_IN_GUEST(r13)
+-	cmpwi	r11,0			/* Check if coming from guest */
+-	bne	9f			/* continue if we are. */
+-#endif
+-	/*
+-	 * At this point we are not sure about what context we come from.
+-	 * Queue up the MCE event and return from the interrupt.
+-	 * But before that, check if this is an un-recoverable exception.
+-	 * If yes, then stay on emergency stack and panic.
+-	 */
+-	andi.	r11,r12,MSR_RI
+-	bne	2f
+-1:	addi	r3,r1,STACK_FRAME_OVERHEAD
+-	bl	.unrecoverable_exception
+-	b	1b
+-2:
+-	/*
+-	 * Return from MC interrupt.
+-	 * Queue up the MCE event so that we can log it later, while
+-	 * returning from kernel or opal call.
+-	 */
+-	bl	.machine_check_queue_event
+-	MACHINE_CHECK_HANDLER_WINDUP
+-	rfid
+-9:
+-	/* Deliver the machine check to host kernel in V mode. */
+-	MACHINE_CHECK_HANDLER_WINDUP
+-	b	machine_check_pSeries
+-END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
+-
+ 	STD_EXCEPTION_COMMON_ASYNC(0x500, hardware_interrupt, do_IRQ)
+ 	STD_EXCEPTION_COMMON_ASYNC(0x900, decrementer, .timer_interrupt)
+ 	STD_EXCEPTION_COMMON(0x980, hdecrementer, .hdec_interrupt)
+@@ -1458,6 +1318,146 @@ _GLOBAL(opal_mc_secondary_handler)
+ 	b	machine_check_pSeries
+ #endif /* CONFIG_PPC_POWERNV */
+ 
++	/*
++	 * Machine check is different because we use a different
++	 * save area: PACA_EXMC instead of PACA_EXGEN.
++	 */
++	.align	7
++	.globl machine_check_common
++machine_check_common:
++
++	mfspr	r10,SPRN_DAR
++	std	r10,PACA_EXGEN+EX_DAR(r13)
++	mfspr	r10,SPRN_DSISR
++	stw	r10,PACA_EXGEN+EX_DSISR(r13)
++	EXCEPTION_PROLOG_COMMON(0x200, PACA_EXMC)
++	FINISH_NAP
++	DISABLE_INTS
++	ld	r3,PACA_EXGEN+EX_DAR(r13)
++	lwz	r4,PACA_EXGEN+EX_DSISR(r13)
++	std	r3,_DAR(r1)
++	std	r4,_DSISR(r1)
++	bl	.save_nvgprs
++	addi	r3,r1,STACK_FRAME_OVERHEAD
++	bl	.machine_check_exception
++	b	.ret_from_except
++
++#define MACHINE_CHECK_HANDLER_WINDUP			\
++	/* Clear MSR_RI before setting SRR0 and SRR1. */\
++	li	r0,MSR_RI;				\
++	mfmsr	r9;		/* get MSR value */	\
++	andc	r9,r9,r0;				\
++	mtmsrd	r9,1;		/* Clear MSR_RI */	\
++	/* Move original SRR0 and SRR1 into the respective regs */	\
++	ld	r9,_MSR(r1);				\
++	mtspr	SPRN_SRR1,r9;				\
++	ld	r3,_NIP(r1);				\
++	mtspr	SPRN_SRR0,r3;				\
++	ld	r9,_CTR(r1);				\
++	mtctr	r9;					\
++	ld	r9,_XER(r1);				\
++	mtxer	r9;					\
++	ld	r9,_LINK(r1);				\
++	mtlr	r9;					\
++	REST_GPR(0, r1);				\
++	REST_8GPRS(2, r1);				\
++	REST_GPR(10, r1);				\
++	ld	r11,_CCR(r1);				\
++	mtcr	r11;					\
++	/* Decrement paca->in_mce. */			\
++	lhz	r12,PACA_IN_MCE(r13);			\
++	subi	r12,r12,1;				\
++	sth	r12,PACA_IN_MCE(r13);			\
++	REST_GPR(11, r1);				\
++	REST_2GPRS(12, r1);				\
++	/* restore original r1. */			\
++	ld	r1,GPR1(r1)
++
++	/*
++	 * Handle machine check early in real mode. We come here with
++	 * ME=1, MMU (IR=0 and DR=0) off and using MC emergency stack.
++	 */
++	.align	7
++	.globl machine_check_handle_early
++machine_check_handle_early:
++BEGIN_FTR_SECTION
++	std	r0,GPR0(r1)	/* Save r0 */
++	EXCEPTION_PROLOG_COMMON_3(0x200)
++	bl	.save_nvgprs
++	addi	r3,r1,STACK_FRAME_OVERHEAD
++	bl	.machine_check_early
++	ld	r12,_MSR(r1)
++#ifdef	CONFIG_PPC_P7_NAP
++	/*
++	 * Check if thread was in power saving mode. We come here when any
++	 * of the following is true:
++	 * a. thread wasn't in power saving mode
++	 * b. thread was in power saving mode with no state loss or
++	 *    supervisor state loss
++	 *
++	 * Go back to nap again if (b) is true.
++	 */
++	rlwinm.	r11,r12,47-31,30,31	/* Was it in power saving mode? */
++	beq	4f			/* No, it wasn;t */
++	/* Thread was in power saving mode. Go back to nap again. */
++	cmpwi	r11,2
++	bne	3f
++	/* Supervisor state loss */
++	li	r0,1
++	stb	r0,PACA_NAPSTATELOST(r13)
++3:	bl	.machine_check_queue_event
++	MACHINE_CHECK_HANDLER_WINDUP
++	GET_PACA(r13)
++	ld	r1,PACAR1(r13)
++	b	.power7_enter_nap_mode
++4:
++#endif
++	/*
++	 * Check if we are coming from hypervisor userspace. If yes then we
++	 * continue in host kernel in V mode to deliver the MC event.
++	 */
++	rldicl.	r11,r12,4,63		/* See if MC hit while in HV mode. */
++	beq	5f
++	andi.	r11,r12,MSR_PR		/* See if coming from user. */
++	bne	9f			/* continue in V mode if we are. */
++
++5:
++#ifdef CONFIG_KVM_BOOK3S_64_HV
++	/*
++	 * We are coming from kernel context. Check if we are coming from
++	 * guest. if yes, then we can continue. We will fall through
++	 * do_kvm_200->kvmppc_interrupt to deliver the MC event to guest.
++	 */
++	lbz	r11,HSTATE_IN_GUEST(r13)
++	cmpwi	r11,0			/* Check if coming from guest */
++	bne	9f			/* continue if we are. */
++#endif
++	/*
++	 * At this point we are not sure about what context we come from.
++	 * Queue up the MCE event and return from the interrupt.
++	 * But before that, check if this is an un-recoverable exception.
++	 * If yes, then stay on emergency stack and panic.
++	 */
++	andi.	r11,r12,MSR_RI
++	bne	2f
++1:	addi	r3,r1,STACK_FRAME_OVERHEAD
++	bl	.unrecoverable_exception
++	b	1b
++2:
++	/*
++	 * Return from MC interrupt.
++	 * Queue up the MCE event so that we can log it later, while
++	 * returning from kernel or opal call.
++	 */
++	bl	.machine_check_queue_event
++	MACHINE_CHECK_HANDLER_WINDUP
++	rfid
++9:
++	/* Deliver the machine check to host kernel in V mode. */
++	MACHINE_CHECK_HANDLER_WINDUP
++	b	machine_check_pSeries
++END_FTR_SECTION_IFSET(CPU_FTR_HVMODE)
++
+ 
+ /*
+  * r13 points to the PACA, r9 contains the saved CR,
