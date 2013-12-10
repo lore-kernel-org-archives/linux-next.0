@@ -1,65 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pinctrl tree
-Date: Tue, 10 Dec 2013 14:02:18 +1100
-Message-ID: <20131210140218.645eaf6983481bafe5833eef@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the usb tree
+Date: Tue, 10 Dec 2013 14:59:15 +1100
+Message-ID: <20131210145915.1cd7eb979bf40a30bfcfe694@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Dec_2013_14_02_18_+1100_PhEk+3RnDkr7UcKm"
+ boundary="Signature=_Tue__10_Dec_2013_14_59_15_+1100_VJCFU6=md4tuzTJ0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52979 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:51809 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751417Ab3LJDC2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Dec 2013 22:02:28 -0500
+	id S1751932Ab3LJD7X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Dec 2013 22:59:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
 
---Signature=_Tue__10_Dec_2013_14_02_18_+1100_PhEk+3RnDkr7UcKm
+--Signature=_Tue__10_Dec_2013_14_59_15_+1100_VJCFU6=md4tuzTJ0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Greg,
 
-After merging the pinctrl tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the usb tree, today's linux-next build (sparc64 defconfig)
+produced this warning:
 
-sound/soc/fsl/eukrea-tlv320.c:28:28: fatal error: asm/mach-types.h: No such=
- file or directory
- #include <asm/mach-types.h>
-                            ^
+drivers/usb/storage/protocol.c: In function 'usb_stor_access_xfer_buf':
+drivers/usb/storage/protocol.c:155:22: warning: comparison of distinct poin=
+ter types lacks a cast [enabled by default]
 
-Probably caused by commit 6bca8471566c ("pinctrl: select dependency on OF
-for MSM driver").  the build of eukrea-tlv320.c depends on CONFIG_OF
-which is not normally set for as x86_64 build, but the above commit
-caused it to be selected (I think).
+Introduced by commit e5fc70d5ccc3 ("USB: storage: use sg_miter_* APIs to
+access scsi buffer").
 
-I have used the pinctrl tree from next-20131206 again.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__10_Dec_2013_14_02_18_+1100_PhEk+3RnDkr7UcKm
+--Signature=_Tue__10_Dec_2013_14_59_15_+1100_VJCFU6=md4tuzTJ0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSpoQ+AAoJEMDTa8Ir7ZwV980QAJDdUNKcY9U/BplxM6mee8Ge
-iH+sZUW/DIX4ANyoGZ79QYwS9Ch8pN3sihZ3jHOlAceRduMQ8D9SPDCqM3UF735b
-PA0qeE0YpM0LJCYwGUIzJha5hCdgYCchsMGeoDuDMV9t61mTpZkWC3dVV/fDjPqZ
-ZuRFr3pQo5T9bXtgx6f/UyULoUgrmso2Hx7+m5hZBY++f7l0cxOMHtzQIy8knmHV
-wb2t3rqgsEuX+z14AHZcaMULU7uksMy4daq1MVLM5RvnyKOOgFrNGIbYMlFsPw2Q
-MCRTBub44s789pvSrJv3R+VibXospb/k5SmmK2wOqFOBcHOgd9SvtMrA/GndOBCW
-X7YnVEr/F/HkOC6j2zhsuKjafndZI7hgJKkhQNyEjgkc4Y6y8wdfKAujUN4BEPsS
-U83j10kEyIMLXBbhByiZLiuSDJEgPf+hGEFHDOgc8lbojLaW3mP8e4vS4NA0q26h
-5XvxmQ3pdxtTBDHkJrcrrnr2aK1HKm1WRYyyRYfBNUkqmxfKbl7dcZLSodufJupc
-ddgKZMvKCmcCfdWWKE2X/m9B83bEZnj6nozM0SZUDEm/TJhaZ1OYsXkiZyq/IMvg
-IMS5FnlpYHQgfyy+73978h0XRWMEPW55stWBeRPdyro80CZmgkCrJ7Co0mBPLn/b
-wXKq5OplicIMVHcLAPnp
-=gzsx
+iQIcBAEBCAAGBQJSppGXAAoJEMDTa8Ir7ZwV/gAP/AuHfH3KoqdddWZ0S6Vp/Cli
+ajhagi7GtdTLh2miiGTNudQdcNXjPGdeNlNl+iAvDxB7lujZZsnf8b2q0HXC3SGc
+6oQZbgteoZhC47B2UmBKz7HyBzvzXTRXairpxhqMM0sTAqPv/308buwH1kqwHWjf
+C6AnsnmV1p+35XnghGQtaT9WJil55RXsEQ2SdYTOSYGlnffxVUnflwNvOVWWZ59H
+9jbCrHk2FkbsnzHtTc+DG3uTsk8S+jVZLmfJfVyG7VCgxl0Qj9ailjCXA0vGWoDQ
+WpOTyE1rc8BexlLqa02P36i25MKMeS8tEh+yCiijii1oDkeOO9OVd6t7i8229Ijp
+bEkhZXl49GvPnMDK3bTyltNyJgH92LGtAKkX3uNDboYkHdxGwdYfNveUyoItlydu
+rGATgrXKTPfdnvbnEqCXdnoLjpZTuS1t45R7Cj02Lxr74zO4YoJDDV/+mtU84QVS
+ma/OSZ0LBIfYHAdacV7yEUxexhfNMXf1LeEXtd/UssE5jC3JUbGEBPqtqxVzL4RX
+9bbpkfgXG60BTaaO2nsoGgEzTFG2TQFDlFD0dSnfhUxC3G9xUhlqfTOI3rCFOJfI
+w2Z9blV1yE9eo+1B1RnrmBkcrW3/WWmJHLjS7/xoUyvMo6HL6vil3k59n1He/eyq
+cOEIT2PR8O0squFqOoI5
+=iNRB
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Dec_2013_14_02_18_+1100_PhEk+3RnDkr7UcKm--
+--Signature=_Tue__10_Dec_2013_14_59_15_+1100_VJCFU6=md4tuzTJ0--
