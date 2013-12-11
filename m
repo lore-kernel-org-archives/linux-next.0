@@ -1,49 +1,75 @@
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: randconfig build error with next-20131210, in drivers/crypto/ccp/ccp-pci.c
-Date: Tue, 10 Dec 2013 09:34:48 -0600
-Message-ID: <1785749.ip5jsEzFz7@tlendack-t1>
-References: <CA+r1ZhhhUWhMqeyS0J7V5j-iYtCk24gszpJFif8hF2cwr5K6hg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH driver-core-next] sysfs: bail early from
+ kernfs_file_mmap() to avoid spurious lockdep warning
+Date: Wed, 11 Dec 2013 11:03:19 +1100
+Message-ID: <20131211110319.33065ea7642d1fd5775531be@canb.auug.org.au>
+References: <20131209144712.57a50d7ed468ae8a4d57a0bf@canb.auug.org.au>
+	<20131209082152.GA26809@kroah.com>
+	<20131210145004.GA4610@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+r1ZhhhUWhMqeyS0J7V5j-iYtCk24gszpJFif8hF2cwr5K6hg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Dec_2013_11_03_19_+1100_sO5u4vgXIuT7Qx9i"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:38211 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751321Ab3LKADb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Dec 2013 19:03:31 -0500
+In-Reply-To: <20131210145004.GA4610@htj.dyndns.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
 
+--Signature=_Wed__11_Dec_2013_11_03_19_+1100_sO5u4vgXIuT7Qx9i
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday, December 10, 2013 07:21:36 AM Jim Davis wrote:
-> Building with the attached random configuration file,
+Hi Tejun,
+
+On Tue, 10 Dec 2013 09:50:04 -0500 Tejun Heo <tj@kernel.org> wrote:
+>
+> Greg, given that there will be more patches in driver-core-next, I
+> think it'll be best to pull driver-core-linus into driver-core-next to
+> avoid conflicts from the same commit.  You can pull my commit or if
+> you pull it yourself, just take all the chunks from driver-core-next
+> so that the resulting fs/sysfs/file.c is unchanged compared to
+> driver-core-next before pull, and then apply this patch.
 >=20
-> drivers/crypto/ccp/ccp-pci.c: In function =E2=80=98ccp_get_msix_irqs=E2=
-=80=99:
-> drivers/crypto/ccp/ccp-pci.c:44:20: error: array type has incomplete
-> element type
-> drivers/crypto/ccp/ccp-pci.c:48:18: error: negative width in bit-fiel=
-d
-> =E2=80=98<anonymous>=E2=80=99
-> drivers/crypto/ccp/ccp-pci.c:51:2: error: implicit declaration of
-> function =E2=80=98pci_enable_msix=E2=80=99 [-Werror=3Dimplicit-functi=
-on-declaration]
-> drivers/crypto/ccp/ccp-pci.c:76:2: error: implicit declaration of
-> function =E2=80=98pci_disable_msix=E2=80=99 [-Werror=3Dimplicit-funct=
-ion-declaration]
-> drivers/crypto/ccp/ccp-pci.c:44:20: warning: unused variable
-> =E2=80=98msix_entry=E2=80=99 [-Wunused-variable]
-> drivers/crypto/ccp/ccp-pci.c: In function =E2=80=98ccp_get_msi_irq=E2=
-=80=99:
-> drivers/crypto/ccp/ccp-pci.c:89:2: error: implicit declaration of
-> function =E2=80=98pci_enable_msi=E2=80=99 [-Werror=3Dimplicit-functio=
-n-declaration]
-> drivers/crypto/ccp/ccp-pci.c:102:2: error: implicit declaration of
-> function =E2=80=98pci_disable_msi=E2=80=99 [-Werror=3Dimplicit-functi=
-on-declaration]
-> cc1: some warnings being treated as errors
-> make[3]: *** [drivers/crypto/ccp/ccp-pci.o] Error 1
+> ------ 8< ------
+> From 5cb9f29a28c87cbf62f74ff6bde3d9da2a565b1d Mon Sep 17 00:00:00 2001
+> From: Tejun Heo <tj@kernel.org>
+> Date: Tue, 10 Dec 2013 09:29:17 -0500
+>=20
+> This is v3.14 fix for the same issue that a8b14744429f ("sysfs: give
 
-Thanks for finding this, I'll update to the Kconfig to add PCI to
-the 'depends on' statement.
+I have added the patch as a merge fix patch for the merge of the
+driver-core tree today.  I will throw it away if/when Greg applies it.
 
-Tom
+--=20
+Cheers,
+Stephen Rothwell <sfr@canb.auug.org.au>
+
+--Signature=_Wed__11_Dec_2013_11_03_19_+1100_sO5u4vgXIuT7Qx9i
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSp6vMAAoJEMDTa8Ir7ZwVPoMP/1iSkD7vVtUeRxEz/DQJ9NNx
+mgMNzzwDUQ658bK9orKq8uRMOYJQDE38r70FZEtpxSxrzzgcpRFKNIFNSc2HO2FS
+HV4uhE+oo6DXJolkbl1x7mdkwFOZp0MZe7kji/hj9dtjFRKA9WbEGsJJxNFs38Qj
+9eVFE2jF20248crBq7GIcxgW26jswJGVPvGhKZcravNtZ3INF+hHjhHV/irwHBXl
+PeibpEpFM8DYkyLxZL38+T+LmaNtkrqG38345XzpIHQqtD9sDYAwdsSK3NvXSNrK
+jHePPU2fcu9PTJtb5ZGf9zOwebK8tQH6ciCp8S+SkxPdJRmpw05HeScBNj3raDxT
+80TWuWZ5C9/eL9/88GLlO3MVQL0ZRFLEov1/6X8HcA4mjV2NqqbfMulpJ+AVwTY3
+//Zkj63raub6XY17TTUOb8PrbKdqgdlz7E6dXW6nw0MMfYkCEKbXNVz9XojzCcJI
+vR3fQbP8PTo3OjP/y/QxsUFxQsJ9BKMDCfWzi3QFkwVQmPPpG6ia6bIq7T6iTilf
+E0vEXA9KDUPddQBYT/oiXnK8MAZfCN+NUGUHB6r6uPO/44W0cwqwp7IqGD2XzHW3
+LRfr3dKcM09jG07CZQb5cjIIPy1V3hlM4X4hcxrWiq0EpsZmMqYbePQr096vPHfu
+eAKGE6NEU4xbgGRXKqWg
+=BX7C
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Dec_2013_11_03_19_+1100_sO5u4vgXIuT7Qx9i--
