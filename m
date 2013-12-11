@@ -1,62 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Dec 11
-Date: Wed, 11 Dec 2013 15:59:11 +1100
-Message-ID: <20131211155911.b703df4a4cf61760c4659a24@canb.auug.org.au>
-References: <20131211155648.4a6095e31dc96c38b2dcc1d5@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH driver-core-next] sysfs: bail early from
+ kernfs_file_mmap() to avoid spurious lockdep warning
+Date: Tue, 10 Dec 2013 21:39:31 -0800
+Message-ID: <20131211053931.GA31896@kroah.com>
+References: <20131209144712.57a50d7ed468ae8a4d57a0bf@canb.auug.org.au>
+ <20131209082152.GA26809@kroah.com>
+ <20131210145004.GA4610@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__11_Dec_2013_15_59_11_+1100_bBOf/mWthblIES37"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:39497 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751203Ab3LKE7S (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Dec 2013 23:59:18 -0500
-In-Reply-To: <20131211155648.4a6095e31dc96c38b2dcc1d5@canb.auug.org.au>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:38905 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750743Ab3LKFh4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Dec 2013 00:37:56 -0500
+Received: from compute4.internal (compute4.nyi.mail.srv.osa [10.202.2.44])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 6D95E21511
+	for <linux-next@vger.kernel.org>; Wed, 11 Dec 2013 00:37:56 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20131210145004.GA4610@htj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
 
---Signature=_Wed__11_Dec_2013_15_59_11_+1100_bBOf/mWthblIES37
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 10, 2013 at 09:50:04AM -0500, Tejun Heo wrote:
+> Hello,
+> 
+> Yeap, I was planning to send this out earlier but was completely
+> passed out yesterday after the first snowboarding in over a decade. :)
+> 
+> The offending commit a8b14744429f isn't applicable to
+> driver-core-next.  This was done this way because no matter what we
+> do, conflict is inevitable and keeping things minimal is the least
+> painful.  The following git branch pulls driver-core-linus into
+> driver-core-next, resolves the conflict by ignoring the offending
+> commit and applies this patch on top of it to implement the equivalent
+> fix.
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git driver-core-fix-lockdep-class
 
-On Wed, 11 Dec 2013 15:56:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Non-merge commits (relative to Linus' tree): 3141
->  3634 files changed, 143080 insertions(+), 83685 deletions(-)
+I've pulled from this and pushed it out as my driver-next branch, thanks
+for doing this (note, I --ammend the patch and added my signed-off-by,
+so you can't just pull and not get a conflict.)
 
-Actually:
+thanks,
 
-Non-merge commits (relative to Linus' tree): 3236
- 3756 files changed, 155884 insertions(+), 86331 deletions(-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__11_Dec_2013_15_59_11_+1100_bBOf/mWthblIES37
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSp/EkAAoJEMDTa8Ir7ZwVIPEP/1TUy5A2TE6zle+d5zfeah5S
-ixPRcH79RpVVezfzNLaOftkvZNtjPgqRJ1Ju1W+xDEkYIQFkYge3dL2pg5+3KXbx
-0cjIJcYhO85aGbHi1Ft/emMLbNFq70mfx9tLKuVXUHnZOl2xdnJzUQiFbIUh0p2W
-DoHFQ0Ac9RGBWpSa1KRBJGgVhdORDazmGZEt8uihyFeo+JmHLlD9fyh2OkdTMvtP
-aoR1qCwbiCz9VajsgqxZoV4hA+lp1YR7fpp7mafkRsh9rgda5bQ/5rnumrRH8Yor
-uUCT8SoDCZSlwLDdejS18R9C69RSfwTEOANA2qDR9/3EN8z8IXZFIBVnP9CR/bYF
-kA5nbaCtFXj5Uc9EpwvEr3CtxTJNtUPnQQo/7P7H46Zeq3ISlUlsqE9dwPosaVa2
-48NNhDzt4jkLGcyCImU5hk42QV6JcTc0b+Z7J5NfrgcbCGdvOh+klQM9AtdzqcSL
-7g1G7602lOnCQQNKDi4gDoT9JSxkql0D/AmioLL2v42s0NVe/wt62oWaOl9OavFx
-3Y6VooHW+iVhrGvFBbzWWpQwQfpts6k8L2EqxQfFhiOvECGH/xDUULaclc9/sOBj
-t/lbLZzNgth+GllngvVgrLD6vfhEXF2Bxa4cEpjx0u6/6dNwZXPrJzq9R+lGsytL
-XNcus8Gwy35Iy+Z7mUia
-=XfQ+
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_Dec_2013_15_59_11_+1100_bBOf/mWthblIES37--
+greg k-h
