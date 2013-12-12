@@ -1,58 +1,53 @@
-From: Jesper Dangaard Brouer <jbrouer@redhat.com>
-Subject: Re: [RFC PATCH net-next] packet: fix using smp_processor_id() in
- preemptible code
-Date: Thu, 12 Dec 2013 08:18:38 +0100
-Message-ID: <20131212081838.2d2eafb9@redhat.com>
-References: <1386828604.2584.13.camel@ThinkPad-T5421>
-	<52A83699.9010504@redhat.com>
-	<1386892503.2586.13.camel@ThinkPad-T5421>
+From: Qais Yousef <qais.yousef@imgtec.com>
+Subject: [PATCH] net/sched/sch_tbf.c: fix linking error
+Date: Thu, 12 Dec 2013 12:38:56 +0000
+Message-ID: <1386851936-1582-1-git-send-email-qais.yousef@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:6159 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751831Ab3LLHSq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Dec 2013 02:18:46 -0500
-In-Reply-To: <1386892503.2586.13.camel@ThinkPad-T5421>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Li Zhong <zhong@linux.vnet.ibm.com>
-Cc: Daniel Borkmann <dborkman@redhat.com>, linux-next list <linux-next@vger.kernel.org>, brouer@redhat.com, davem@davemloft.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yang Yingliang <yangyingliang@huawei.com>
+Cc: Qais Yousef <qais.yousef@imgtec.com>, Eric Dumazet <edumazet@google.com>, Jamal Hadi Salim <jhs@mojatatu.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+ERROR: "__udivdi3" [net/sched/sch_tbf.ko] undefined!
 
-On Fri, 13 Dec 2013 07:55:03 +0800 Li Zhong <zhong@linux.vnet.ibm.com> wrote:
-> On Wed, 2013-12-11 at 10:55 +0100, Daniel Borkmann wrote:
-> > On 12/12/2013 07:10 AM, Li Zhong wrote:
-[...]
-> > > Also, it seems that we could move skb_set_queue_mapping() into
-> > > packet_pick_tx_queue(), so we avoid calling it one more time
-> > > unnecessarily if we are going into the normal dev_queue_xmit() code
-> > > path.
-> > 
-> > I don't agree with that part, I think this can be also beneficiary for
-> > packets without direct xmit, as in PF_PACKET we don't have a notion of
-> > "flow" but just raw packets instead, and can keep the mapping local
-> > depending on the current CPU as we do queue setting elsewhere in the
-> > stack just as well.
-> 
-> It seems to me that the newly added xmit in packet_sock is
-> dev_queue_xmit() by default, and in this default case, dev_queue_xmit()
-> would call netdev_pick_tx(), which would set the skb queue_mapping again
-> to override the value based on the current CPU. 
+introduced by: cc106e441a63 (net: sched: tbf: fix the calculation of max_size)
 
-Yes, I think you are right, that is also my experience with the code path.
+which adds a 64 by 32 bit division without using do_div().
+Fix it by using do_div(len/ 53) instead of len/53.
 
-> Or did I miss something here? 
+Signed-off-by: Qais Yousef <qais.yousef@imgtec.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org
+---
+We caught this error on linux-next today. This is my quick attemp of a fix.
+If it's not appropriate or doesn't make sense my apologies and feel free to
+resend a better fix :)
 
-A bit related; One thing I'm missing to understand, is why the
-RAW/PF_PACKET sockets have a NULL in skb->sk when they reach
-__netdev_pick_tx() ? (resulting in they cannot store/cache the queue in
-sk_tx_queue_set)
+ net/sched/sch_tbf.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c
+index a44928c..771cbec 100644
+--- a/net/sched/sch_tbf.c
++++ b/net/sched/sch_tbf.c
+@@ -131,8 +131,10 @@ static u64 psched_ns_t2l(const struct psched_ratecfg *r,
+ 
+ 	do_div(len, NSEC_PER_SEC);
+ 
+-	if (unlikely(r->linklayer == TC_LINKLAYER_ATM))
+-		len = (len / 53) * 48;
++	if (unlikely(r->linklayer == TC_LINKLAYER_ATM)) {
++		do_div(len, 53);
++		len *= 48;
++	}
+ 
+ 	if (len > r->overhead)
+ 		len -= r->overhead;
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Sr. Network Kernel Developer at Red Hat
-  Author of http://www.iptv-analyzer.org
-  LinkedIn: http://www.linkedin.com/in/brouer
+1.7.1
