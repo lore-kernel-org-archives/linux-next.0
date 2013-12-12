@@ -1,34 +1,38 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: Re: getting fixmap patches in linux-next
-Date: Thu, 12 Dec 2013 10:11:54 -0500
-Message-ID: <1386861114.1979.122.camel@deneb.redhat.com>
-References: <1386775505.1979.105.camel@deneb.redhat.com>
-	 <20131211154021.GA11208@gmail.com>
-	 <1386777359.1979.106.camel@deneb.redhat.com>
-	 <20131211140157.0a9c6decb597b491968c484a@linux-foundation.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net/sched/sch_tbf.c: fix linking error
+Date: Thu, 12 Dec 2013 12:25:42 -0500 (EST)
+Message-ID: <20131212.122542.1538675820432940524.davem@davemloft.net>
+References: <1386851936-1582-1-git-send-email-qais.yousef@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:36843 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751300Ab3LLPMC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Dec 2013 10:12:02 -0500
-In-Reply-To: <20131211140157.0a9c6decb597b491968c484a@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, mingo <mingo@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1386851936-1582-1-git-send-email-qais.yousef@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: qais.yousef@imgtec.com
+Cc: yangyingliang@huawei.com, edumazet@google.com, jhs@mojatatu.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2013-12-11 at 14:01 -0800, Andrew Morton wrote:
-> It seems that "[PATCH 03/11] arm: use generic fixmap.h" has issues?
+From: Qais Yousef <qais.yousef@imgtec.com>
+Date: Thu, 12 Dec 2013 12:38:56 +0000
+
+> ERROR: "__udivdi3" [net/sched/sch_tbf.ko] undefined!
 > 
-> If/when that gets resolved, please integrate all the reviewed-by's and
-> acked-by's and cc me on the resend?
+> introduced by: cc106e441a63 (net: sched: tbf: fix the calculation of max_size)
+> 
+> which adds a 64 by 32 bit division without using do_div().
+> Fix it by using do_div(len/ 53) instead of len/53.
+> 
+> Signed-off-by: Qais Yousef <qais.yousef@imgtec.com>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-next@vger.kernel.org
+> ---
+> We caught this error on linux-next today. This is my quick attemp of a fix.
+> If it's not appropriate or doesn't make sense my apologies and feel free to
+> resend a better fix :)
 
-The posted v2 of that patch shouldn't have any issues. The kmap
-interfaces which would be effected by the change have been tested.
-I pinged the arm folks on it, so let's see if they have anything
-to say about it.
-
---Mark
+This is already fixed in the net-next tree.
