@@ -1,69 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mmc tree
-Date: Fri, 13 Dec 2013 12:57:16 +1100
-Message-ID: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
+Subject: linux-next: manual merge of the pinctrl tree with Linus' tree
+Date: Fri, 13 Dec 2013 15:01:02 +1100
+Message-ID: <20131213150102.47de4cd579163889dd364297@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__13_Dec_2013_12_57_16_+1100_zukTqccmKs8xWNx5"
+ boundary="Signature=_Fri__13_Dec_2013_15_01_02_+1100_J95uBBYrwdz1D+I8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60211 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:42265 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751929Ab3LMB5W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Dec 2013 20:57:22 -0500
+	id S1751715Ab3LMEBL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Dec 2013 23:01:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <b29396@freescale.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---Signature=_Fri__13_Dec_2013_12_57_16_+1100_zukTqccmKs8xWNx5
+--Signature=_Fri__13_Dec_2013_15_01_02_+1100_J95uBBYrwdz1D+I8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi Linus,
 
-After merging the mmc tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the pinctrl tree got a conflict in
+drivers/pinctrl/sh-pfc/pfc-r8a7740.c between commit 5d27619498ab
+("sh-pfc: r8a7740: Fix pin bias setup") from Linus' tree and commit
+5b46ac3a7723 ("sh-pfc: Rename sh_pfc window field to windows") from the
+pinctrl tree.
 
-ERROR (phandle_references): Reference to non-existent node or label "pinctr=
-l_usdhc4_1"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/imx6dl-sabresd.dtb] Error 2
-ERROR (phandle_references): Reference to non-existent node or label "pinctr=
-l_usdhc4_1"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/imx6q-sabresd.dtb] Error 2
-
-Caused by commit fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support").
-
-I have used the mmc tree from next-20131212 for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Fri__13_Dec_2013_12_57_16_+1100_zukTqccmKs8xWNx5
+diff --cc drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+index bc5eb453a45c,a189b962a1eb..000000000000
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+@@@ -3720,8 -3709,8 +3709,8 @@@ static void __iomem *r8a7740_pinmux_por
+  		const struct r8a7740_portcr_group *group =3D
+  			&r8a7740_portcr_offsets[i];
+ =20
+ -		if (i <=3D group->end_pin)
+ +		if (pin <=3D group->end_pin)
+- 			return pfc->window->virt + group->offset + pin;
++ 			return pfc->windows->virt + group->offset + pin;
+  	}
+ =20
+  	return NULL;
+
+--Signature=_Fri__13_Dec_2013_15_01_02_+1100_J95uBBYrwdz1D+I8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSqmmAAAoJEMDTa8Ir7ZwVtFcP/j1qWoh57jq0DppZ2YoKue1Q
-AgrJZymQvmZrKRGpF/T6G5aN81evrVBZ1MO7nsz2rGiRgeYpcVksVNE87P/A9WUi
-5JOXxKidFOX9zLI752yo0QrDlq4jWiVm1FqvSSTOGsNNxNUQvwjlBqcSXtkcyDvM
-w/3CzAS+Q3bLH1IC3bFuxSV5u+2drG3J+dbf0Izey0XdKlIfx2Kp/8umZfD4lGm1
-RJPpDhZPqIvvzVWrNmlGGcRro5WoFBGvZZy6tj1QyVgMmdptoCiCvYWV/o14Pi/B
-eun4UlSwvQY2SE6Kl6TR45zgrwlIUB7okw/u/8kRRxYsjYdcCcR4CC2lwqVfspjR
-y8r1rBg85zsrkT0ETg3Ow1A5nXv1C0498McNDfEic2SROMu/9r6bPaK/JSKANAyQ
-hdHyM/S5Vpr4nHNWWvMddn/kswupn6Mgz43q2lTKmiWeBjYkJEov4vcNgS3N+H9/
-1SIGClp29zNpi0iZr18G4mJrjrsmcRfm960hfUWIG1MB2jx8MWUw/xVeYhLA3oRP
-2r2awIhEUqXxEEvdrPJADaH/HDJocVPNRxsAof94XttaSrTltijp+hv8QyUzCBQ9
-ETY/UQrdD2W1V8kmhsIg66bJMxMcnlikJCwqN1rc7BBH9cukUcCD1UsmK7iNH3OC
-+h/4WgaQSbrJX1t9hb19
-=n2lj
+iQIcBAEBCAAGBQJSqoaCAAoJEMDTa8Ir7ZwVwmMP/Rvx7ebZ7uQuchjSYUxfIJJH
+8szWXN2mBKlFFNjM4B04wKfny8SI8DAZGY8UIeQO+vpQP7Sk4u6pM1vZS8u9nv5/
+H7hXBvEkMLEKNaYGQJmAFcaeSl7yF3rEkyuNrqgVVfvY7s4Lbrc1bBIcrLcOezEj
+XU/YBmjBvxvdpx+JMXJI1qFZZf3mSvzgYp7+FXGxOLftmTsjNXpJ9+gElj+EiLxk
+zuCKnBPWHE+fbJ1GEh66adxD0nz6VZO9YV/u8/uf1V9TXPDydjD1TXr+hDYATJVH
+vmFAN1KyaN74OH3ChT+JDwdPrOaEOXC6+zDtRd2wZ9tNxa7TznW/ZgMVvIKve+vh
+IhrNFoiEDRR25lE/R8Y+wVHe6JbNX4S4Q+BNc+3D3lurxRghwLgNP0in3DJEJIpv
+/3WRpSURi38TaaFYFN6BIQZjMQhRqhgtb8dhS9D4TAb1gcxHGMKdnsy74C8kzBZf
+gV9VeV+Mf4neObFz9K3xu1D9fiYy/bFBR6q8gzSVHASytUQPnWHlcRSEeQcT/+PI
+sCf3OwMKAc8Z+34RmLLzpaW6XZmTSFShQHczSLu0UGfc3qnNsauYkQH6AMHB1AFY
+Ek74QUXlFxKle1ow6t8VSNjCGlwzQi8YVQJXySanq3fpSOvNBI5ChlDWCb7C0sKB
+qqVoyGv1AJa5nK6ggOoy
+=autl
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__13_Dec_2013_12_57_16_+1100_zukTqccmKs8xWNx5--
+--Signature=_Fri__13_Dec_2013_15_01_02_+1100_J95uBBYrwdz1D+I8--
