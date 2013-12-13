@@ -1,38 +1,79 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] net/sched/sch_tbf.c: fix linking error
-Date: Thu, 12 Dec 2013 12:25:42 -0500 (EST)
-Message-ID: <20131212.122542.1538675820432940524.davem@davemloft.net>
-References: <1386851936-1582-1-git-send-email-qais.yousef@imgtec.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
+Date: Fri, 13 Dec 2013 11:58:54 +1100
+Message-ID: <20131213115854.5f103f7b91aefd3e65ad5ae6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1386851936-1582-1-git-send-email-qais.yousef@imgtec.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: qais.yousef@imgtec.com
-Cc: yangyingliang@huawei.com, edumazet@google.com, jhs@mojatatu.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__13_Dec_2013_11_58_54_+1100_1x57eyI+jz0TnAHL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:33248 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751765Ab3LMA7B (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Dec 2013 19:59:01 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Paulo Zanoni <paulo.r.zanoni@intel.com>
 
-From: Qais Yousef <qais.yousef@imgtec.com>
-Date: Thu, 12 Dec 2013 12:38:56 +0000
+--Signature=_Fri__13_Dec_2013_11_58_54_+1100_1x57eyI+jz0TnAHL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ERROR: "__udivdi3" [net/sched/sch_tbf.ko] undefined!
-> 
-> introduced by: cc106e441a63 (net: sched: tbf: fix the calculation of max_size)
-> 
-> which adds a 64 by 32 bit division without using do_div().
-> Fix it by using do_div(len/ 53) instead of len/53.
-> 
-> Signed-off-by: Qais Yousef <qais.yousef@imgtec.com>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-next@vger.kernel.org
-> ---
-> We caught this error on linux-next today. This is my quick attemp of a fix.
-> If it's not appropriate or doesn't make sense my apologies and feel free to
-> resend a better fix :)
+Hi all,
 
-This is already fixed in the net-next tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_ddi.c between commit 76bb80ed3027
+("drm/i915/ddi: set sink to power down mode on dp disable") from Linus'
+tree and commit dff392dbd258 ("drm/i915: don't touch the VDD when
+disabling the panel") from the drm-intel tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/i915/intel_ddi.c
+index 526c8ded16b0,cec06a5453cc..000000000000
+--- a/drivers/gpu/drm/i915/intel_ddi.c
++++ b/drivers/gpu/drm/i915/intel_ddi.c
+@@@ -1158,10 -1235,9 +1235,10 @@@ static void intel_ddi_post_disable(stru
+  	if (wait)
+  		intel_wait_ddi_buf_idle(dev_priv, port);
+ =20
+ -	if (type =3D=3D INTEL_OUTPUT_EDP) {
+ +	if (type =3D=3D INTEL_OUTPUT_DISPLAYPORT || type =3D=3D INTEL_OUTPUT_EDP=
+) {
+  		struct intel_dp *intel_dp =3D enc_to_intel_dp(encoder);
+- 		ironlake_edp_panel_vdd_on(intel_dp);
++=20
+ +		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
+  		ironlake_edp_panel_off(intel_dp);
+  	}
+ =20
+
+--Signature=_Fri__13_Dec_2013_11_58_54_+1100_1x57eyI+jz0TnAHL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSqlvSAAoJEMDTa8Ir7ZwVY+QP/jJGQUI6cutH0UaqxMO8FCZ3
+wTsFbWq7mG/zOGdBZIMMn3IvWyPTvNDg+EHYhPinROotsHKY65kazmEpYex9pNeL
+SldgK9XWboVnCLEyGwEsPjRJYfS8qEc++ceBqXxBGkDWkvzgcKg32lx7pAkomjBz
+4xj1PNbtiE+3Sb4yKXDdBb+vrPidqmBRQhZBAwHWj/5xHCr4QgqpvT0S7/J1DoGT
+QBfANEROwrUq75T07+Q5tcZ0xQJV53BFtckMmWV2RVVq8Zf/Nr/20tlLremKV0pc
+IAcaeWessAzwoFPfwLSqLQ79FBuQETEg3DmZ0EBQeRdJBTKcLjZ+vYW/flDyA1yQ
+3PZ3WMBBHh2Tnwm8zx9l98jZzhvTnzCvLMGXK/Sng6KPzHZOOWQM0qwV8XgBfAUO
+LfBSY9FdD0aElZgo+Mms+GZtBM0Wu+3rmd1Dm3MX7BXvEkJOwzMv/YKs1dkZpQJR
+mrceQJl5N2YXB3Sdq882HMNh4HrpZg2IpqAQfNEggXEhDHonpvONfIojrMvBrFbW
+iaSm2baIM9MEc7Yc9MNCsVYh38/EWClw8FS7hlxEx2YgdoE4qUWOrCk5b0bwYCdU
+m6qpw1DkNyUkTvFoOvZ2XIvH1NaEDo1hZJmlko8xeYkxqe4dp33AWHG71IRWR+uM
+F+SM8hxOJMItFN3f0b9M
+=FHKI
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__13_Dec_2013_11_58_54_+1100_1x57eyI+jz0TnAHL--
