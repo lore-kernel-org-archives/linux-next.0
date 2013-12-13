@@ -1,75 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with Linus'tree
-Date: Fri, 13 Dec 2013 15:02:47 +1100
-Message-ID: <20131213150247.db3f0bfa2a2ac01caa49c43a@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the pinctrl tree
+Date: Fri, 13 Dec 2013 15:06:43 +1100
+Message-ID: <20131213150643.51342b68314f2d6b201e54dd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__13_Dec_2013_15_02_47_+1100_Kd4zAu6FvpJS09jj"
+ boundary="Signature=_Fri__13_Dec_2013_15_06_43_+1100_7mf8rNDm2xtmEFgD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52868 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:42601 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751715Ab3LMEC4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Dec 2013 23:02:56 -0500
+	id S1751715Ab3LMEGu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Dec 2013 23:06:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
---Signature=_Fri__13_Dec_2013_15_02_47_+1100_Kd4zAu6FvpJS09jj
+--Signature=_Fri__13_Dec_2013_15_06_43_+1100_7mf8rNDm2xtmEFgD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
-Today's linux-next merge of the pinctrl tree got a conflict in
-drivers/pinctrl/sh-pfc/pfc-sh7372.c between commit 71493de7e55a ("sh-pfc:
-sh7372: Fix pin bias setup") from Linus' tree and commit 5b46ac3a7723
-("sh-pfc: Rename sh_pfc window field to windows") from the pinctrl tree.
+After merging the pinctrl tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/pinctrl/pinconf.c: In function 'pinconf_pins_show':
+drivers/pinctrl/pinconf.c:299:28: warning: unused variable 'ops' [-Wunused-=
+variable]
+  const struct pinconf_ops *ops =3D pctldev->desc->confops;
+                            ^
+drivers/pinctrl/pinconf.c: In function 'pinconf_groups_show':
+drivers/pinctrl/pinconf.c:346:28: warning: unused variable 'ops' [-Wunused-=
+variable]
+  const struct pinconf_ops *ops =3D pctldev->desc->confops;
+                            ^
+
+Introduced by commit c420619d5177 ("pinctrl: pinconf: remove checks on
+ops->pin_config_get").
 
 --=20
 Cheers,
-Stephen Rothwell <sfr@canb.auug.org.au>
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/sh-pfc/pfc-sh7372.c
-index cc097b693820,bcdd5c3cdcf0..000000000000
---- a/drivers/pinctrl/sh-pfc/pfc-sh7372.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7372.c
-@@@ -2584,8 -2573,8 +2573,8 @@@ static void __iomem *sh7372_pinmux_port
-  		const struct sh7372_portcr_group *group =3D
-  			&sh7372_portcr_offsets[i];
- =20
- -		if (i <=3D group->end_pin)
- +		if (pin <=3D group->end_pin)
-- 			return pfc->window->virt + group->offset + pin;
-+ 			return pfc->windows->virt + group->offset + pin;
-  	}
- =20
-  	return NULL;
-
---Signature=_Fri__13_Dec_2013_15_02_47_+1100_Kd4zAu6FvpJS09jj
+--Signature=_Fri__13_Dec_2013_15_06_43_+1100_7mf8rNDm2xtmEFgD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSqobrAAoJEMDTa8Ir7ZwVTkkP/1walEKw7N/73wPnlIwIqJgE
-cU4GaCkjF+j/eM/iRoDsixMgQTPxYk05JtolCWytzRibz8Xvo4HAsqTIuZ15XqVl
-/cYwHqKSaMaC1rEDJtEpcU1Pxc4JMYq4RWr+XM+tfdSyJ8yCX08GXPM4hU7BY0tf
-0peqxMsJ7RPhNeJmZEMcPlnfdZZc6Wai9fEP5ecfE12IoAJB9do5YcrCvk/K4k0K
-VQsRX+ScqBb5htpOQjIKEDzGPmqqA+DltHIQeliMXICJHGOSWIIu2AQbi60gxkhA
-2E5KYbTluDMtf5zlEi4Ow8ETOVY7UpiHkvClT6hoPLpwjqRvY+ZH50v6aRIpthAR
-JUvgsTXWB0XorZNSUCbCpF3cNqrAacqbXuQBE9IjS+Wmf6kjYn+pswzmddFCeh1Y
-mEhFJQXrnLclS9fGSdlapAZkZcQbZWWtCEWaGvMdgwFG/J6BA51wezQMzBTd0WN1
-NrKLcaDXiHcF3jFL4L05k0kX+Iv7fHgKMw19rD61HC7hhUfLa55YvvQPt2aRaFUu
-XAFAXjplsue+Y85Xkh2rPGcVUifCUoCZ33v6ONuubnErSffb0LSFR/aF9qExBBaw
-YauoexdWYvzTiWzCKTknKsSjsFXbIPTEV4mnM4wi+W+723jecQbcbPHGwEY0qtT0
-6qYErSsPrTMgQLjL3UeJ
-=4iD1
+iQIcBAEBCAAGBQJSqofXAAoJEMDTa8Ir7ZwVd4MP/iSe5h0+cigzf2eRRAUchx2a
+SRBFEPLn22181kvlSqVGrhPiCdr5pE8RkB28hnsvrjUZNU2P7vssTpZV8ikqlUYg
+1YuNT7CNrkrYJGJyg+jZVjJf7HCubzqMh3c4AQ60J0CbeNwBtA72noxRS657WnHE
+4//O1NKGqp+hti9FGaBNuujDvMK0EKlQaEdQeUPTMvLBQKCLUyhHZEL+xQYuiA6Y
+9eN0Zm30UY3Nco3y6CkkseAyNI14WZVXcMIyKP/6aq007TyIt53dJ8CrX4vN4lqE
+MUJTbOkOxe+A5gguflutQ4HNreNC4MNI2+aRQVrAI7bHl4CWlEl5RNN6sog4c3L5
+9fheNUDPdgfdAog4KGIEc+/3ZELwtfZUfH453W6qoyMybwIHjlsttdW+weGxi5x+
+gn9+b8Hi/Dt7F/5QDrwE0f2ABhukzxm2+JnRSkdra+GBCjDntJmwL40M/8tajeDq
+ibRj4hpE4fdABr4O+7SP7Ioc9ydL3gCmmrFE5kc1O1hxhYjdSlPIqqlnCa3hzU2I
+Cfzg9SFcWjNm3NHzeooiwfhHF0H52gmJm/zp1RcM/jh/GmhhH3OqqwZ0JJ6vHK4j
+bEtOuOCMaYKoXeUP/a5Gf/5Jl9JwkTuuMPjNbZUh78BVBORPhuXDhtLksMC9psue
+bfX4Jr7efXWtizsaWoDL
+=1+WF
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__13_Dec_2013_15_02_47_+1100_Kd4zAu6FvpJS09jj--
+--Signature=_Fri__13_Dec_2013_15_06_43_+1100_7mf8rNDm2xtmEFgD--
