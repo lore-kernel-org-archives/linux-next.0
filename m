@@ -1,62 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the
- drm-intel-fixes tree
-Date: Mon, 16 Dec 2013 12:45:59 +1100
-Message-ID: <20131216124559.28f80d315d7b2846159e4031@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Mon, 16 Dec 2013 14:18:35 +1100
+Message-ID: <20131216141835.0ded286276730efcf7fed52e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__16_Dec_2013_12_45_59_+1100_0lPVKYT5Tq9HfdqU"
+ boundary="Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60773 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:57537 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752067Ab3LPBqE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Dec 2013 20:46:04 -0500
+	id S1751998Ab3LPDSk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Dec 2013 22:18:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paulo Zanoni <paulo.r.zanoni@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <matthew.garrett@nebula.com>, Borislav Petkov <bp@suse.de>, Matt Fleming <matt.fleming@intel.com>
 
---Signature=_Mon__16_Dec_2013_12_45_59_+1100_0lPVKYT5Tq9HfdqU
+--Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_pm.c between commit be3d26b0588c ("drm/i915:
-get a PC8 reference when enabling the power well") from the
-drm-intel-fixes tree and commit c1ca727f8945 ("drm/i915: support for
-multiple power wells") from the drm-intel tree.
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/platform/efi/efi.c between commit 04bf9ba720fc ("x86, efi: Don't
+use (U)EFI time services on 32 bit") from Linus' tree and commit
+f4fccac05f7f ("x86/efi: Simplify EFI_DEBUG") from the tip tree.
 
-I fixed it up (the drm-intel-fixes tree patch also appears in the
-drm-intel so I just use the drm-intel tree version of this file) and can
-carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Mon__16_Dec_2013_12_45_59_+1100_0lPVKYT5Tq9HfdqU
+diff --cc arch/x86/platform/efi/efi.c
+index cceb813044ef,f8ec4dafc74e..000000000000
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@@ -690,9 -692,13 +692,7 @@@ void __init efi_init(void
+ =20
+  	set_bit(EFI_MEMMAP, &x86_efi_facility);
+ =20
+- #if EFI_DEBUG
+ -#ifdef CONFIG_X86_32
+ -	if (efi_is_native()) {
+ -		x86_platform.get_wallclock =3D efi_get_time;
+ -		x86_platform.set_wallclock =3D efi_set_rtc_mmss;
+ -	}
+ -#endif
+  	print_efi_memmap();
+- #endif
+  }
+ =20
+  void __init efi_late_init(void)
+
+--Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSrltbAAoJEMDTa8Ir7ZwVf3QP/2sTvolr2SLMuqDeBfS9DuW7
-yPReZp9ABtqZTkQKDobSJjw9aoJFW7WYCknKzBqmX6yXAwfyuZ5IxSWkXKJItTF8
-s3y+rX4BUyi97gg3i1tKoLfkAOULriCehyZpz1SZF4fjkHnrNLfY1xVOpvQGFn1a
-1dFYXvT9MUbCbAK+j4FN8HvoXG3T/sOhCMeoLO8QebO3PrSUwKOyGJegNZOo7s4Y
-E3zkIuVfTcaZ1cIHU+zsO5Id0Ek9wgQVvW5HgcRQ++JDWpghoIxtWMIUlvVKEL9S
-UA1l41pYW1k16ayGtO1GbLNGPjOkzmgu4SLhtaCALxfYd7lIkXL5jXaGdHv9nlOP
-sPJYiyzmL/h+TOu4etuIoslsWU8E4g5Hyfipn/XNwJwZ+K8NzZaJmbNMaNFwvvzh
-TB0d5AmbeWJ6VOi6lwz6mmCAtGWSAmUskNvHDafumrcMwhdkTj+G6p8/MBwRpBZ/
-apxomj8l8hT4deet/DOwG+qq/9Xp3Fb+lxbEE/8O8GZ8aho1SIxFek3EgZvkd+fx
-ooIGmeMCO9FPLrvR5e9q66TAs22dB1kijGb1hAZ2woYo6ezLgAxlObIF3m6sr3Rw
-stBVKXjAwy13+lb8/pGdQl3YLi/kScZpM5FSaWzWUd9zi4em6zmxWR8nsaCa5dDz
-q7UcEU36QKhp/KIp6ZZc
-=xyCq
+iQIcBAEBCAAGBQJSrnEOAAoJEMDTa8Ir7ZwVgz8P/2U8vh5ZWOxB8oROWNdBIKSm
+SOJbP2Q/73nI3h0r5xLPmMT5f46MIlt8XN07bIJBBWqDk1yePGWbhIBuNtGB7xNv
+9dW02/bS2ar4e6pneOXqjEFManb++7bjALhxWvqPnROT/JZ/6qfMPn8Pss/1EkGN
+LRMmLFGJpogyEtqIeZdJt4Xq2Ype8bNc9uuCIobrzkEnEm0u+8rS7L31tbBdZ92w
+RXmOU3Y17pNGbHSwFQOcQAz4jjFocYqW8NKt32m4fqZPP9v+qKNO7GplC6vUwAQm
+vZHo9BmmjIi94gHfx/pjbB2RTCXHhA6bU6cEQrPNnsVwduJJYJ42Y0OslaKw4NH5
+nxo53pP7oN6bLy4/Yd07rIcArJWdWOtr9pvgtNzmI2tI9HrDQ0YI7+1CPNq5o9HF
+gDH6bSr4M39s+3ENIGeT3cg25NYoFqhnHllY6vQmU1W+/CD0xoL5+wJVQdAkCiQw
+UDmfjLfhQYXsPlbXRXC0GgP9ubYbpX63alUEI+e0PNBaA8t+cGBNgkHeqDAuyi5O
+bi7os/DUEgcQvQ9ZEHEAlTjUarcDg3rhEf35ykUy835Z7sFbD6ORjcGvTDV7usBu
+44D14nRYcogenv75FU8cqY6IEXNvTuSvnA/5FiT7la0YdGJWHud2w9nTCdGRr1LR
+UO+IOQvFaIZ9p+jdJu44
+=gFDG
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__16_Dec_2013_12_45_59_+1100_0lPVKYT5Tq9HfdqU--
+--Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A--
