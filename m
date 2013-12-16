@@ -1,80 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Mon, 16 Dec 2013 14:18:35 +1100
-Message-ID: <20131216141835.0ded286276730efcf7fed52e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the usb-gadget tree
+Date: Mon, 16 Dec 2013 15:40:20 +1100
+Message-ID: <20131216154020.9d7f9dacf60e41b775d44223@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:57537 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751998Ab3LPDSk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Dec 2013 22:18:40 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <matthew.garrett@nebula.com>, Borislav Petkov <bp@suse.de>, Matt Fleming <matt.fleming@intel.com>
+ boundary="Signature=_Mon__16_Dec_2013_15_40_20_+1100_q.uc/1kkFhUeveZ+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, WingMan Kwok <w-kwok2@ti.com>, Roger Quadros <rogerq@ti.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A
+--Signature=_Mon__16_Dec_2013_15_40_20_+1100_q.uc/1kkFhUeveZ+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Felipe,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/platform/efi/efi.c between commit 04bf9ba720fc ("x86, efi: Don't
-use (U)EFI time services on 32 bit") from Linus' tree and commit
-f4fccac05f7f ("x86/efi: Simplify EFI_DEBUG") from the tip tree.
+After merging the usb-gadget tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/usb/phy/phy-keystone.c: In function 'keystone_usbphy_probe':
+drivers/usb/phy/phy-keystone.c:96:4: warning: passing argument 3 of 'usb_ph=
+y_gen_create_phy' makes pointer from integer without a cast [enabled by def=
+ault]
+    USB_PHY_TYPE_USB2, 0, false);
+    ^
+In file included from drivers/usb/phy/phy-keystone.c:25:0:
+drivers/usb/phy/phy-generic.h:18:5: note: expected 'struct usb_phy_gen_xcei=
+v_platform_data *' but argument is of type 'int'
+ int usb_phy_gen_create_phy(struct device *dev, struct usb_phy_gen_xceiv *n=
+op,
+     ^
+drivers/usb/phy/phy-keystone.c:96:4: error: too many arguments to function =
+'usb_phy_gen_create_phy'
+    USB_PHY_TYPE_USB2, 0, false);
+    ^
+In file included from drivers/usb/phy/phy-keystone.c:25:0:
+drivers/usb/phy/phy-generic.h:18:5: note: declared here
+ int usb_phy_gen_create_phy(struct device *dev, struct usb_phy_gen_xceiv *n=
+op,
+     ^
+
+Caused by commit 25acdd08fd71 ("usb: phy: add Keystone usb phy driver")
+interacting with commit bd27fa44e138 ("usb: phy: add Keystone usb phy
+driver") which was merged before v3.13-rc1 and is included in the
+usb-gadget tree.
+
+I have used the usb-gadget tree from next-20131206 again for today.
 
 --=20
 Cheers,
-Stephen Rothwell <sfr@canb.auug.org.au>
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/platform/efi/efi.c
-index cceb813044ef,f8ec4dafc74e..000000000000
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@@ -690,9 -692,13 +692,7 @@@ void __init efi_init(void
- =20
-  	set_bit(EFI_MEMMAP, &x86_efi_facility);
- =20
-- #if EFI_DEBUG
- -#ifdef CONFIG_X86_32
- -	if (efi_is_native()) {
- -		x86_platform.get_wallclock =3D efi_get_time;
- -		x86_platform.set_wallclock =3D efi_set_rtc_mmss;
- -	}
- -#endif
-  	print_efi_memmap();
-- #endif
-  }
- =20
-  void __init efi_late_init(void)
-
---Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A
+--Signature=_Mon__16_Dec_2013_15_40_20_+1100_q.uc/1kkFhUeveZ+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSrnEOAAoJEMDTa8Ir7ZwVgz8P/2U8vh5ZWOxB8oROWNdBIKSm
-SOJbP2Q/73nI3h0r5xLPmMT5f46MIlt8XN07bIJBBWqDk1yePGWbhIBuNtGB7xNv
-9dW02/bS2ar4e6pneOXqjEFManb++7bjALhxWvqPnROT/JZ/6qfMPn8Pss/1EkGN
-LRMmLFGJpogyEtqIeZdJt4Xq2Ype8bNc9uuCIobrzkEnEm0u+8rS7L31tbBdZ92w
-RXmOU3Y17pNGbHSwFQOcQAz4jjFocYqW8NKt32m4fqZPP9v+qKNO7GplC6vUwAQm
-vZHo9BmmjIi94gHfx/pjbB2RTCXHhA6bU6cEQrPNnsVwduJJYJ42Y0OslaKw4NH5
-nxo53pP7oN6bLy4/Yd07rIcArJWdWOtr9pvgtNzmI2tI9HrDQ0YI7+1CPNq5o9HF
-gDH6bSr4M39s+3ENIGeT3cg25NYoFqhnHllY6vQmU1W+/CD0xoL5+wJVQdAkCiQw
-UDmfjLfhQYXsPlbXRXC0GgP9ubYbpX63alUEI+e0PNBaA8t+cGBNgkHeqDAuyi5O
-bi7os/DUEgcQvQ9ZEHEAlTjUarcDg3rhEf35ykUy835Z7sFbD6ORjcGvTDV7usBu
-44D14nRYcogenv75FU8cqY6IEXNvTuSvnA/5FiT7la0YdGJWHud2w9nTCdGRr1LR
-UO+IOQvFaIZ9p+jdJu44
-=gFDG
+iQIcBAEBCAAGBQJSroQ4AAoJEMDTa8Ir7ZwVhO8P/RpwuCJr+h4xmKpQR+78i5lZ
++a5vYUT5pNRhc/xa7JHA6WKrhiG/8d1lDdWU28Kc71JkkWqXaC6bM4j9oHRcfQ+m
+dnnVgTNSWvJ/p/1oapzHli8YAolcB2nSZ3fQgiPmQqQo1zCJ0A5y7WnYUWNqRPIt
+JXGuX4q0FzO/jppav5/Si8oWEGGmE9dHHrJqJ7zPangA4JgbyP7E7OW89rpHhjwT
+1j4DhBAaWjN+JM8KXhWG3bhOkAAfB3p3uiAT8cJXZfsEqJZNlxXuHVBNUXeiIxs2
+ZHWjrloDvrY7sHvgMOuh6DN2U87Ve80CFqZ5MHYtOCj3Q9szmEk6pObeHOb8zbYw
+sabyu0A375+VpuEmQfQvyB5QAUE1X9qJ00v33OqLy3stAtfhQajFXajYuTEKJXPj
+WpMxhLmnGDbo7a8O3NSlo4WxFlwgba23MH2/NQ2EbCGYWiIDgRSPvljGVp0+RQmQ
+cmUxW01XdxWNBP+sxUEq7FbGjHMyq61EfTT4t10ViAnSckjJZ2izL+iaU1U5QXfq
+xRpXyabUEWRE0eyg8QldaDtCa2SrpZCBqekv0/31tEiz1bIbIx6Yt3/7iuCdTMV8
+XRyKUtO+IPvic+LfJS6xOXUM/loFiTxpasaRW3Sii8IxkSct/eNSX5YPC4x6mIan
+0rWvG9DMFdko28+azl9R
+=vJ6q
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__16_Dec_2013_14_18_35_+1100_fPYZ=ppb6lN5jg_A--
+--Signature=_Mon__16_Dec_2013_15_40_20_+1100_q.uc/1kkFhUeveZ+--
