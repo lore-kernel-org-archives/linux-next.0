@@ -1,70 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 17 Dec 2013 00:29:53 +1100
-Message-ID: <20131217002953.c767935e277d23742589e367@canb.auug.org.au>
-References: <20131216164721.79bfe996919a8ec3576867c7@canb.auug.org.au>
-	<1387177714.4280.2.camel@AMDC1943>
-	<20131216114510.GE3185@sirena.org.uk>
-	<1387196021.4280.7.camel@AMDC1943>
-	<20131216123301.GG3185@sirena.org.uk>
+From: Qais Yousef <Qais.Yousef@imgtec.com>
+Subject: RE: [PATCH] net/sched/sch_tbf.c: fix linking error
+Date: Mon, 16 Dec 2013 13:34:57 +0000
+Message-ID: <392C4BDEFF12D14FA57A3F30B283D7D13C994E@LEMAIL01.le.imgtec.org>
+References: <1386851356-1395-1-git-send-email-qais.yousef@imgtec.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__17_Dec_2013_00_29_53_+1100_gr8x/Sjo4.WvwM6t"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:38149 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752803Ab3LPNaA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Dec 2013 08:30:00 -0500
-In-Reply-To: <20131216123301.GG3185@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1386851356-1395-1-git-send-email-qais.yousef@imgtec.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yang Yingliang <yangyingliang@huawei.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jamal Hadi Salim <jhs@mojatatu.com>, "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__17_Dec_2013_00_29_53_+1100_gr8x/Sjo4.WvwM6t
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry for the noise. I'm not sure how this got sent out again. I definitely didn't type any git send-email commands at all today :-/
 
-On Mon, 16 Dec 2013 12:33:01 +0000 Mark Brown <broonie@kernel.org> wrote:
->
-> On Mon, Dec 16, 2013 at 01:13:41PM +0100, Krzysztof Kozlowski wrote:
->=20
-> > Thanks for applying the patch. The commit introducing error was picked
-> > up by Andrew to MM tree and lately got merged to Linus' tree:
-> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/=
-?id=3D8d2763770c34e8ed771f0be86760eb4485febc05
->=20
-> Yeah, I saw it went in through -mm - what I was wondering was why it
-> wasn't causing failures in -next.
+Qais
 
-That patch was never in mmotm (which is what linux-next mostly
-includes).  mmotm hasn't been updated since Nov 22.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__17_Dec_2013_00_29_53_+1100_gr8x/Sjo4.WvwM6t
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJSrwBWAAoJEMDTa8Ir7ZwVoYwP/AxXEEmx2195Qg0i0r2NSQrt
-RSAbQbbfKtfcqkmmKngAjwlB361WDw3rei+LEoRcNK3a+wQc11xkaNSnj48PrGO6
-Qb8amO+X0Qhj9OZQDyH4DKfq4YgSLOczV0jRxMFuSfFvbWKc++7N7xT2rmQ2Eosd
-NVeQHCSr/5dmuXx7mrsgHQfkO0GCTShOU3FGqGCbmm5KMywt3tUcp+5iJguSDIyZ
-i7CDf8Rtx1SIHZO07hpjDhv/FqRctJM+b4vUVaCAvcZD/Rl5IvMm7NbZ1qOTXTxk
-N6VrCPcZC9mylKWUv9UQxG5KBdMWKENQUsv1509G3f+lLOFmB+DGvnJpHw1dEW1C
-Rx9htoua8YBrEBwJSKEOd5b7KxTB0eMECcJ6zS0ULGsmno5sH8UnEyeJiDRaQDw3
-yu9qFfFA0H8Km9UM5VS01qiqK8I3tt5fH63mLswOdY01bNR35SSu8ZsLXNKpJf8V
-ZqyhVOuIWDXFO+h243eOHr9AFjoAlO7MDfBdMzSYIxAscySv8JAQ4qWRRxS35uBR
-hVpdKN+qDa0gNmJPZwPBgBjBX8OWrvmyEwP9UvhGQp6naExiH+w4GUfos2jqDZ/0
-mPhMnKnXB/X2P1G+qWg3NTddYF9TAMo3QZ622UiPJa+Kb1tOS7LlAi1DZR32cFiv
-xaZAv0GjA5cVKXtYrYvs
-=GsDx
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Dec_2013_00_29_53_+1100_gr8x/Sjo4.WvwM6t--
+> -----Original Message-----
+> From: Qais Yousef [mailto:qais.yousef@imgtec.com]
+> Sent: 12 December 2013 12:29
+> To: Yang Yingliang
+> Cc: Qais Yousef; Eric Dumazet; Jamal Hadi Salim; David S. Miller;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> next@vger.kernel.org
+> Subject: [PATCH] net/sched/sch_tbf.c: fix linking error
+> 
+> ERROR: "__udivdi3" [net/sched/sch_tbf.ko] undefined!
+> 
+> introduced by: cc106e441a63 (net: sched: tbf: fix the calculation of max_size)
+> 
+> which adds a 64 by 32 bit division without using do_div().
+> Fix it by using do_div(len/ 53) instead of len/53.
+> 
+> Signed-off-by: Qais Yousef <qais.yousef@imgtec.com>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-next@vger.kernel.org
+> ---
+> We caught this error on linux-next today. This is my quick attemp of a fix.
+> If it's not appropriate or doesn't make sense my apologies and feel free to resend
+> a better fix :)
+> 
+>  net/sched/sch_tbf.c |    6 ++++--
+>  1 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c index a44928c..771cbec
+> 100644
+> --- a/net/sched/sch_tbf.c
+> +++ b/net/sched/sch_tbf.c
+> @@ -131,8 +131,10 @@ static u64 psched_ns_t2l(const struct psched_ratecfg *r,
+> 
+>  	do_div(len, NSEC_PER_SEC);
+> 
+> -	if (unlikely(r->linklayer == TC_LINKLAYER_ATM))
+> -		len = (len / 53) * 48;
+> +	if (unlikely(r->linklayer == TC_LINKLAYER_ATM)) {
+> +		do_div(len, 53);
+> +		len *= 48;
+> +	}
+> 
+>  	if (len > r->overhead)
+>  		len -= r->overhead;
+> --
+> 1.7.1
