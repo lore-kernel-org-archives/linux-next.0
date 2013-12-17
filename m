@@ -1,66 +1,68 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Tue, 17 Dec 2013 11:16:01 +0800
-Message-ID: <20131217031600.GG6691@S2101-09.ap.freescale.net>
-References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
- <20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
- <CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the usb-gadget tree
+Date: Tue, 17 Dec 2013 15:27:04 +1100
+Message-ID: <20131217152704.e4ce5fd1556402ed4da789b1@canb.auug.org.au>
+References: <20131216154020.9d7f9dacf60e41b775d44223@canb.auug.org.au>
+	<20131216194113.GA5258@saruman.home>
+	<20131217101032.1f4d2ba671e6359fce0514cb@canb.auug.org.au>
+	<20131216233815.GB29284@saruman.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__17_Dec_2013_15_27_04_+1100_ckHV8ffl4s+G31mx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from co1ehsobe002.messaging.microsoft.com ([216.32.180.185]:8980
-	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751954Ab3LQDPN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Dec 2013 22:15:13 -0500
-Content-Disposition: inline
-In-Reply-To: <CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
+Received: from ozlabs.org ([203.10.76.45]:54618 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751765Ab3LQE1L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Dec 2013 23:27:11 -0500
+In-Reply-To: <20131216233815.GB29284@saruman.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
+To: balbi@ti.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, WingMan Kwok <w-kwok2@ti.com>, Roger Quadros <rogerq@ti.com>
 
-Hi Chris,
+--Signature=_Tue__17_Dec_2013_15_27_04_+1100_ckHV8ffl4s+G31mx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please drop fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support") from
-your tree.  It should go via my tree (with a rebase).  Sorry, I did not
-notice it early.
+Hi Filipe,
 
-Shawn
+On Mon, 16 Dec 2013 17:38:15 -0600 Felipe Balbi <balbi@ti.com> wrote:
+>
+> It's long, sorry, basically what I did was this:
+>=20
+> -      ret =3D usb_phy_gen_create_phy(dev, &k_phy->usb_phy_gen,
+> -                      USB_PHY_TYPE_USB2, 0, false);
+> +      ret =3D usb_phy_gen_create_phy(dev, &k_phy->usb_phy_gen, NULL);
 
-On Tue, Dec 17, 2013 at 11:07:19AM +0800, Dong Aisheng wrote:
-> Hi Stephen,
-> 
-> Sorry, i just see this mail.
-> It seems the imx pinctrl dt binding has changes since Chris pick my patch.
-> I will fix it ASAP.
-> 
-> Regards
-> Dong Aisheng
-> 
-> On Tue, Dec 17, 2013 at 10:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Chris,
-> >
-> > ping?
-> >
-> > On Fri, 13 Dec 2013 12:57:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >> After merging the mmc tree, today's linux-next build (arm
-> >> multi_v7_defconfig) failed like this:
-> >>
-> >> ERROR (phandle_references): Reference to non-existent node or label "pinctrl_usdhc4_1"
-> >>
-> >> ERROR: Input tree has errors, aborting (use -f to force output)
-> >> make[2]: *** [arch/arm/boot/dts/imx6dl-sabresd.dtb] Error 2
-> >> ERROR (phandle_references): Reference to non-existent node or label "pinctrl_usdhc4_1"
-> >>
-> >> ERROR: Input tree has errors, aborting (use -f to force output)
-> >> make[2]: *** [arch/arm/boot/dts/imx6q-sabresd.dtb] Error 2
-> >>
-> >> Caused by commit fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support").
-> >>
-> >> I have used the mmc tree from next-20131212 for today.
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
+OK, so I added that as a merge fix patch from today.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__17_Dec_2013_15_27_04_+1100_ckHV8ffl4s+G31mx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSr9KcAAoJEMDTa8Ir7ZwVIxkP/R/DfWzqNKIVztMhttDJyw/Z
+UKGa3Xzq5W59m36lEipekFZfR50mVEit5skt9l5AKFfePdSPe613nazDs/dYccOG
+NssPISjCSSe2v6cfp3ZLtbCAHSQfelU7nABTQY5zEWjw6vsKFjJuT58CY03N87XK
+Sh4rginwFjrIY0VknvZzqEG1cG+mspeYkW4hIcWz81o6NFHetlhFK0ZXPDuI9fLA
+aoVnC0iRcRAyaNnqcbZJTAK/oyMA78bF5Rtbo5qW1oiexTlBq6mLNEJoVc13BMYP
+uc2i1R5WXpRk4d2IXal/Qj6DOPQ4RV9tiHXyFC1dangg59eWmjLrVBsMC3gIO/pi
+VUG5hplhI2C/z+2BHI9NSsSRBvlaWb43xPSag4sce9kiRdSA1K0JJJEiJ5UuovFu
+CCY53uQ18Z58U0aUiFhzJG+/xkNyhjl1Gc5NukRybHbOZxTUnaR8L4f3d8fnlj0K
+tc6CRFlGbTJjT7mI4v8XGOzhT3x+dl2T4zCcOTtHAS0/4g1sjKocJToSUGP/TX6B
+19rnxdkC2LdOh4tF81TSz8si82Eardy8XL8ht1xYYP3P7JSJeJC0qGPM62ISwio0
+aavBptcCMbC4Gy1MuKlE9CVB/OLj6Hxv2w5qBFyfSMiJpTT8aS1LT9OSmyZFEQov
+X5Ua1ssFRj9gURhe50tN
+=Hk2L
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Dec_2013_15_27_04_+1100_ckHV8ffl4s+G31mx--
