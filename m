@@ -1,36 +1,77 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: manual merge of the renesas tree with the arm-soc
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the device-mapper tree with the block
  tree
-Date: Tue, 17 Dec 2013 09:19:05 +0900
-Message-ID: <20131217001905.GA27171@verge.net.au>
-References: <20131216104738.6f845aabd0e3b609ed9ca170@canb.auug.org.au>
- <52AECF56.8020508@atmel.com>
+Date: Tue, 17 Dec 2013 13:16:15 +1100
+Message-ID: <20131217131615.ad900aa79aadfdef3509b4ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41428 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751608Ab3LQATK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Dec 2013 19:19:10 -0500
-Content-Disposition: inline
-In-Reply-To: <52AECF56.8020508@atmel.com>
+Received: from ozlabs.org ([203.10.76.45]:56445 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752365Ab3LQCQZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Dec 2013 21:16:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Mike Turquette <mturquette@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Boris BREZILLON <b.brezillon@overkiz.com>, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
 
-On Mon, Dec 16, 2013 at 11:00:54AM +0100, Nicolas Ferre wrote:
-> On 16/12/2013 00:47, Stephen Rothwell :
-> > Hi Simon,
-> > 
-> > Today's linux-next merge of the renesas tree got a conflict in
-> > drivers/clk/Makefile between commit 0ad6125b1579 ("clk: at91: add PMC
-> > base support") from the arm-soc tree and commit 10cdfe9f327a ("clk:
-> > shmobile: Add R-Car Gen2 clocks support") from the renesas tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
-> 
-> Fine for me.
+--Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Likewise. Thanks Stephen.
+Hi all,
+
+Today's linux-next merge of the device-mapper tree got a conflict in
+drivers/md/dm-thin.c between commit 4f024f3797c4 ("block: Abstract out
+bvec iterator") from the block tree and commit 1d8b40855c42 ("dm thin:
+requeue bios to DM core if may_requeue_bios and in read-only mode") from
+the device-mapper tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/md/dm-thin.c
+index 357eb272dbd9,dde2b1eddbce..000000000000
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@@ -1262,8 -1260,8 +1266,8 @@@ static void process_bio_read_only(struc
+  	r =3D dm_thin_find_block(tc->td, block, 1, &lookup_result);
+  	switch (r) {
+  	case 0:
+ -		if (lookup_result.shared && (rw =3D=3D WRITE) && bio->bi_size)
+ +		if (lookup_result.shared && (rw =3D=3D WRITE) && bio->bi_iter.bi_size)
+- 			bio_io_error(bio);
++ 			handle_unserviceable_bio(tc->pool, bio);
+  		else {
+  			inc_all_io_entry(tc->pool, bio);
+  			remap_and_issue(tc, bio, lookup_result.block);
+
+--Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSr7PzAAoJEMDTa8Ir7ZwV/FIP/j+AlaIUqzIJTPEp7kyKM0uF
+Pw/WRRtrY7uwEZQ9Lj29ZY0v7Ee5SDMypEgYZXYeCHOlNceJtqkNhT43d12+yNvU
+Vrk3Na2OZRWrmazJ64cgWu6WVTy4qO/u4sVY2zoM9JtVtllZUGqNt+rlkq/cSnjv
+6j8SrltOpOIiYnkPn59OAP5Fd/m+tgH2UaTXhdO8G3i0+2nVQTx8FSHtff0fS0tm
+AcxkWvlmuzqZcf4Te4w1XxryJpSGcEy3pKP/aF/CjBniPLbLM+YWKRv0MYwBAXPq
+TzrfsWUBsVS3rjJZKYriwhCeCVpTAYPrHUD2+GAUEbC28E9cMn6yCZdJw8Q3ZX2C
+wBDsxha3ZBwyIlcIaaNw4XB6IwMszsRV4PFkIwL1xbJyyoUWbzF7QktNvJKmiHyt
+bsJLWu2/3QrB8SWgX3Xl+T+WxAq9MkPYrojsM2ZXR+cTjVM/ZXG3NxQFsDKy+rHU
+yF9+Is6zs9S6KULyD3BD4CxOsNY0VNXNeap3MFLLY1RB1xWtA0pAJK+5Fv8o/Kkq
+sKNT3T/6lTjTK5MTMVZPhhsGbV6BBu4R8hPlsyqipvU1l32vh1GwwrB2fQA7t+S4
+6OrPKxPhee0o+3j88groh3EDFZWjGabJCrskIItQ7hW+qjk9jgCMKatCwLB8y5DJ
+E+ausk6q8Qs9JAZ1W80p
+=VXE4
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M--
