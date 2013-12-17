@@ -1,86 +1,92 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: build failure after merge of the usb-gadget tree
-Date: Mon, 16 Dec 2013 23:13:02 -0600
-Message-ID: <20131217051302.GB22740@saruman.home>
-References: <20131209145803.4aba29ca2eba4444070e43ce@canb.auug.org.au>
- <20131209041152.GC20608@saruman.home>
- <20131217153625.744ebbe433f3d624d11af2bb@canb.auug.org.au>
- <20131217050822.GA22658@saruman.home>
-Reply-To: <balbi@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (akpm-current tree related)
+Date: Tue, 17 Dec 2013 16:43:17 +1100
+Message-ID: <20131217164317.f9ba5505266969cd32706a79@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__17_Dec_2013_16_43_17_+1100_a=xtZj/sut1.KYm3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:35058 "EHLO arroyo.ext.ti.com"
+Received: from ozlabs.org ([203.10.76.45]:42905 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750977Ab3LQFNm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Dec 2013 00:13:42 -0500
-Content-Disposition: inline
-In-Reply-To: <20131217050822.GA22658@saruman.home>
+	id S1750872Ab3LQFn0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Dec 2013 00:43:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Tikhomirov <av.tikhomirov@samsung.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tang Chen <tangchen@cn.fujitsu.com>
 
---7iMSBzlTiPOCCT2k
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__17_Dec_2013_16_43_17_+1100_a=xtZj/sut1.KYm3
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-hi,
+Hi all,
 
-On Mon, Dec 16, 2013 at 11:08:22PM -0600, Felipe Balbi wrote:
-> > > On Mon, Dec 09, 2013 at 02:58:03PM +1100, Stephen Rothwell wrote:
-> > > >=20
-> > > > After merging the usb-gadget tree, today's linux-next build (x86_64
-> > > > allmodconfig) failed like this:
-> > > >=20
-> > > > drivers/built-in.o: In function `otg_set_state':
-> > > > (.text+0x14f7de): undefined reference to `usb_bus_start_enum'
-> > > >=20
-> > > > CONFIG_USB is 'm' in this build.
-> > > >=20
-> > > > I am not sure what changed to cause this, maybe e1d2e31975e1 ("usb:=
- phy:
-> > > > Add OTG FSM configuration option")?
-> > > >=20
-> > > > I have used the usb-gadget tree from next-20131206 for today.
-> > >=20
-> > > I see what caused it, will fix it up with a patch which should probab=
-ly
-> > > be backported a few kernels back. Thanks for letting me know.
-> >=20
-> > I am still getting this error ...
->=20
-> Fix is in Greg's queue, not sure if it has reached mainline, yet. Will
-> check when I wake up.
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-just checked, it's not there. Pinged Greg.
+arch/powerpc/mm/mem.c: In function 'do_init_bootmem':
+arch/powerpc/mm/mem.c:212:49: error: 'memblock_memory' undeclared (first us=
+e in this function)
+  memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock_memory, 0);
+                                                 ^
 
+Caused by commit 3a543893d46a ("memblock: make memblock_set_node()
+support different memblock_type") from the apm-current tree.
+
+I added the following fix for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 17 Dec 2013 16:38:21 +1100
+Subject: [PATCH] memblock-make-memblock_set_node-support-different-memblock=
+_type-fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/mm/mem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 231b785b726e..8c1dd23652a1 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -209,7 +209,7 @@ void __init do_init_bootmem(void)
+ 	/* Place all memblock_regions in the same node and merge contiguous
+ 	 * memblock_regions
+ 	 */
+-	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock_memory, 0);
++	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
+=20
+ 	/* Add all physical memory to the bootmem map, mark each area
+ 	 * present.
+--=20
+1.8.5.1
 
 --=20
-balbi
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---7iMSBzlTiPOCCT2k
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Tue__17_Dec_2013_16_43_17_+1100_a=xtZj/sut1.KYm3
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSr91eAAoJEIaOsuA1yqRETnoP/0svIZHENns+4NkDYRyIjpQl
-y8l7YvB4BIqZ7zbxP7EDRIjJfuS1QnX+Js80kWMx69i8TOxuLPHbXK2I3FQXCkZ9
-NdB7Zd5Fbbast24+szlSvxiRm8y99tyi9hNiINkvyGpIIKdBzpJdt5HAnhXj/asT
-OhoviDOl+Rty3jMJlSY5+ccsIeoGUjtOoETpKkjwhcKPj63fjG01571FNIz9SmI+
-ffhAUNnpG9SbdIG2ox37vQIsU2Uc+r7srROXRvqMaOZ0TI1K/EE8+iIVFIdfSAaW
-KueiVDTx6+05lOIfhaIxABZFAkKsupkJgMYvOiXT5z6wl52ibzdDLEhbJX6HaaWn
-KGsvX7Cl8uhJi47UPWK1hMsSI12bH8Kz7LWmO5f/HXFGc3nhrvP7CjfrBaEWmHiC
-PgOAwo+42LyqH+sfym+70SgvUp2vOh/ELgzDB3rZ+ZxFqB1NZ/C8W6ABGhAr+REk
-DkCiuSN2FzNl0Dh0drLkvMfF4SDjoZo89jgePt4fTUsGTi3jmdENUo83QYVCx+hh
-Av1BBUY3Cuu1bTrbbRS25I0+/voldeWE7OeO2zgMi6ZjFtRyELnGy+gMFdWamSoE
-2TbjxV9fxfsEf9rlnWXa6DQ/Q8TPkk2fGYeam8pcFhZV+S/Wy4toOJX5mTvMqOVR
-ioWL/BX+zdCBZeuFoArc
-=94H5
+iQIcBAEBCAAGBQJSr+R7AAoJEMDTa8Ir7ZwVJYsP/0O86UyHhPj+iSHbhUVrX0X8
+5kxqcOCZzxiec/R94JzTnMG5yi0zdjiRKygDcSG6LuQCwE5yWwbGG83zBw9V6US1
+VpNhp8BAwS9KdMP499iKF40F69E6uf3eKEqPNR3JLAAhnsYp7uhBES7D+M5QAPMz
+UJesYzxsGiyqf7lturUcGqypIbjERVRnNFrFNUIAG7GUA9ahlKnlSuPdzorh2CjC
+TR04o9xkpKtOOFJfRjCw8TNl6+41NwAt6Q/MJBnoF9x/bUFDbmUICr+uYqCCeN7G
+G+ziF3R9LcXbatq5BYTB5C22LE6dvQug0vjtmz9bvUVl8KwtxjhoYvpFW+va+o6w
+mYuxVbWsPqTKfMbW5ny8CaB+4lh5F5uztJPWQYcdCApWqYMzOZlOs+NhrqdT0bXn
+SKVeCMLYIxEDWZjYM7LEaVX9LSTcJYGu0miIT0NeXYn2RGxFnkaGUFMLnGjEcDlb
+6ki3RsaGcuOQvT8BFL6wdH4YrgHQZel2xJPWFzb92GtyO3EAP9wuWUzn86Tpqz6y
+5rEXorC3H/IW69bKMg9rfvQ+R8yIzY710Yi9IcBAHMu5RkK8kQBc7YuzDbLCrYcy
+BKvukiWlDcQ5pWgWHP27Q6gYUpMvxM4n84fSRNk1jYI/G9haspvY/7VDa50B48uI
+qhDrqy/lHFsxLBpbLh7z
+=Yv92
 -----END PGP SIGNATURE-----
 
---7iMSBzlTiPOCCT2k--
+--Signature=_Tue__17_Dec_2013_16_43_17_+1100_a=xtZj/sut1.KYm3--
