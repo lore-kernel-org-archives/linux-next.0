@@ -1,77 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the device-mapper tree with the block
- tree
-Date: Tue, 17 Dec 2013 13:16:15 +1100
-Message-ID: <20131217131615.ad900aa79aadfdef3509b4ec@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Tue, 17 Dec 2013 13:28:38 +1100
+Message-ID: <20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
+References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M"
+ boundary="Signature=_Tue__17_Dec_2013_13_28_38_+1100_4_imMTusJeo.Q8Qw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:56445 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:47500 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752365Ab3LQCQZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Dec 2013 21:16:25 -0500
+	id S1751738Ab3LQC2p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Dec 2013 21:28:45 -0500
+In-Reply-To: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <b29396@freescale.com>
 
---Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M
+--Signature=_Tue__17_Dec_2013_13_28_38_+1100_4_imMTusJeo.Q8Qw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Chris,
 
-Today's linux-next merge of the device-mapper tree got a conflict in
-drivers/md/dm-thin.c between commit 4f024f3797c4 ("block: Abstract out
-bvec iterator") from the block tree and commit 1d8b40855c42 ("dm thin:
-requeue bios to DM core if may_requeue_bios and in read-only mode") from
-the device-mapper tree.
+ping?
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+On Fri, 13 Dec 2013 12:57:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the mmc tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>=20
+> ERROR (phandle_references): Reference to non-existent node or label "pinc=
+trl_usdhc4_1"
+>=20
+> ERROR: Input tree has errors, aborting (use -f to force output)
+> make[2]: *** [arch/arm/boot/dts/imx6dl-sabresd.dtb] Error 2
+> ERROR (phandle_references): Reference to non-existent node or label "pinc=
+trl_usdhc4_1"
+>=20
+> ERROR: Input tree has errors, aborting (use -f to force output)
+> make[2]: *** [arch/arm/boot/dts/imx6q-sabresd.dtb] Error 2
+>=20
+> Caused by commit fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support").
+>=20
+> I have used the mmc tree from next-20131212 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/md/dm-thin.c
-index 357eb272dbd9,dde2b1eddbce..000000000000
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@@ -1262,8 -1260,8 +1266,8 @@@ static void process_bio_read_only(struc
-  	r =3D dm_thin_find_block(tc->td, block, 1, &lookup_result);
-  	switch (r) {
-  	case 0:
- -		if (lookup_result.shared && (rw =3D=3D WRITE) && bio->bi_size)
- +		if (lookup_result.shared && (rw =3D=3D WRITE) && bio->bi_iter.bi_size)
-- 			bio_io_error(bio);
-+ 			handle_unserviceable_bio(tc->pool, bio);
-  		else {
-  			inc_all_io_entry(tc->pool, bio);
-  			remap_and_issue(tc, bio, lookup_result.block);
-
---Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M
+--Signature=_Tue__17_Dec_2013_13_28_38_+1100_4_imMTusJeo.Q8Qw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSr7PzAAoJEMDTa8Ir7ZwV/FIP/j+AlaIUqzIJTPEp7kyKM0uF
-Pw/WRRtrY7uwEZQ9Lj29ZY0v7Ee5SDMypEgYZXYeCHOlNceJtqkNhT43d12+yNvU
-Vrk3Na2OZRWrmazJ64cgWu6WVTy4qO/u4sVY2zoM9JtVtllZUGqNt+rlkq/cSnjv
-6j8SrltOpOIiYnkPn59OAP5Fd/m+tgH2UaTXhdO8G3i0+2nVQTx8FSHtff0fS0tm
-AcxkWvlmuzqZcf4Te4w1XxryJpSGcEy3pKP/aF/CjBniPLbLM+YWKRv0MYwBAXPq
-TzrfsWUBsVS3rjJZKYriwhCeCVpTAYPrHUD2+GAUEbC28E9cMn6yCZdJw8Q3ZX2C
-wBDsxha3ZBwyIlcIaaNw4XB6IwMszsRV4PFkIwL1xbJyyoUWbzF7QktNvJKmiHyt
-bsJLWu2/3QrB8SWgX3Xl+T+WxAq9MkPYrojsM2ZXR+cTjVM/ZXG3NxQFsDKy+rHU
-yF9+Is6zs9S6KULyD3BD4CxOsNY0VNXNeap3MFLLY1RB1xWtA0pAJK+5Fv8o/Kkq
-sKNT3T/6lTjTK5MTMVZPhhsGbV6BBu4R8hPlsyqipvU1l32vh1GwwrB2fQA7t+S4
-6OrPKxPhee0o+3j88groh3EDFZWjGabJCrskIItQ7hW+qjk9jgCMKatCwLB8y5DJ
-E+ausk6q8Qs9JAZ1W80p
-=VXE4
+iQIcBAEBCAAGBQJSr7baAAoJEMDTa8Ir7ZwVqEMP/AseTyBC5UxhbSbXbGZ1UU7O
+BmWZiMFMZ6/bfLwyzzGaD8ahyhtkoBpOBGjzDZkX/GVDx6InPTNe2+4cki2MAQyD
+P429RqPmu7a/SJ66ex9I4vcaXZ5FoQOWhVcOyyZ+IDL3fKlZb9UDyRxjlr9nUhkP
+yA72xjhRXfGTtf8fd2lCt2T+dxjYr707lZFZ9vci/iDBKW9farBgEQXdc37s2zOP
+jn5aSuOMrmjpJmj4XhjpOajhizEK/RBIYLpt3VoEjxhtBkR17PnWUZXtHYgE25iJ
+IdsQ2yzzgZge8hscssEQVhQD7YgkmO9IWSGZCakOFDdZA2Hcmdh+nkX5PMrt5TQF
+QWdk9c7VBKh3FdqNbT7c3BYh2DTCqfEQd5na+rNnsfiuKLRv9jKPQ2f7mDXviGeR
+xrCy3U5qKU+wyWET0ComidW8q8F0Xcbt/F1IL6fHx5xXoCgWjD5ALoPqXoHYb5l0
+pDzHs1E2QxJPTGE313U/mvoRoJOTwdmbLNzfdJjYMpKkKzQC9wg+kghGhNAF95Kb
+Ah7j79EPXjk43/4ZE262YL8B7CTTRUkEqLqIC5w8JiI4f5rw+tJzIxK+LrD2qSke
+w7hw1RHKrg7CcOK5mipwpvY5sSkktP+HUEzoJyIO/mTff4/cDwPaU34KH0O6z+ni
+CvV93EpYTSSdJNaQ5yfP
+=PS1r
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__17_Dec_2013_13_16_15_+1100_Htl/tmtVzlet17+M--
+--Signature=_Tue__17_Dec_2013_13_28_38_+1100_4_imMTusJeo.Q8Qw--
