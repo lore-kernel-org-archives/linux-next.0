@@ -1,72 +1,35 @@
-From: Dong Aisheng <dongas86@gmail.com>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Tue, 17 Dec 2013 16:06:19 +0800
-Message-ID: <CAA+hA=QU1TApbbohD1iNFiMMMHdQSamRfOsO0r3GpqmCbdiSgw@mail.gmail.com>
-References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
-	<20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
-	<CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
-	<20131217031600.GG6691@S2101-09.ap.freescale.net>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Tue, 17 Dec 2013 09:26:59 +0100
+Message-ID: <201312170926.59893.heiko@sntech.de>
+References: <20131217165956.b5c92af06a83392e8bfb5d46@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131217031600.GG6691@S2101-09.ap.freescale.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:59514 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750760Ab3LQI1E (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Dec 2013 03:27:04 -0500
+In-Reply-To: <20131217165956.b5c92af06a83392e8bfb5d46@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I tested that Chris tree does not have problem.
-It's caused by IMX tree updates.
+Hi,
 
-Chris,
-Is the way Shawn suggested OK for you?
+Am Dienstag, 17. Dezember 2013, 06:59:56 schrieb Stephen Rothwell:
+> Caused by commit 34ef6d7fe467 ("rtc: add hym8563 rtc-driver") from the
+> akpm-current tree.  Probably some missing include(s).
+> 
+> I just reverted that commit for today.
 
-Regards
-Dong Aisheng
+The includes are fine, I just seem to have forgotten the dependency of 
+COMMON_CLK, which enables the clk structs in clk-provider.h. Sorry about that.
 
-On Tue, Dec 17, 2013 at 11:16 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
-> Hi Chris,
->
-> Please drop fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support") from
-> your tree.  It should go via my tree (with a rebase).  Sorry, I did not
-> notice it early.
->
-> Shawn
->
-> On Tue, Dec 17, 2013 at 11:07:19AM +0800, Dong Aisheng wrote:
->> Hi Stephen,
->>
->> Sorry, i just see this mail.
->> It seems the imx pinctrl dt binding has changes since Chris pick my patch.
->> I will fix it ASAP.
->>
->> Regards
->> Dong Aisheng
->>
->> On Tue, Dec 17, 2013 at 10:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > Hi Chris,
->> >
->> > ping?
->> >
->> > On Fri, 13 Dec 2013 12:57:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> >>
->> >> After merging the mmc tree, today's linux-next build (arm
->> >> multi_v7_defconfig) failed like this:
->> >>
->> >> ERROR (phandle_references): Reference to non-existent node or label "pinctrl_usdhc4_1"
->> >>
->> >> ERROR: Input tree has errors, aborting (use -f to force output)
->> >> make[2]: *** [arch/arm/boot/dts/imx6dl-sabresd.dtb] Error 2
->> >> ERROR (phandle_references): Reference to non-existent node or label "pinctrl_usdhc4_1"
->> >>
->> >> ERROR: Input tree has errors, aborting (use -f to force output)
->> >> make[2]: *** [arch/arm/boot/dts/imx6q-sabresd.dtb] Error 2
->> >>
->> >> Caused by commit fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support").
->> >>
->> >> I have used the mmc tree from next-20131212 for today.
->> >
->> > --
->> > Cheers,
->> > Stephen Rothwell                    sfr@canb.auug.org.au
->
+Follow up patch coming shortly.
+
+
+Heiko
