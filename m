@@ -1,71 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Wed, 18 Dec 2013 12:46:57 +1100
-Message-ID: <20131218124657.f573d9ae178ea37fa971456d@canb.auug.org.au>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Tue, 17 Dec 2013 17:56:09 -0800
+Message-ID: <1387331769.2330.12.camel@jtkirshe-mobl>
+References: <20131218124657.f573d9ae178ea37fa971456d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Dec_2013_12_46_57_+1100_=TZRK9paHkOF+ET8"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Anjali Singhai Jain <anjali.singhai@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-bpj1wp9CNtR2ivYx+FkM"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:1161 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750875Ab3LRB4L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Dec 2013 20:56:11 -0500
+In-Reply-To: <20131218124657.f573d9ae178ea37fa971456d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Anjali Singhai Jain <anjali.singhai@intel.com>
 
---Signature=_Wed__18_Dec_2013_12_46_57_+1100_=TZRK9paHkOF+ET8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--=-bpj1wp9CNtR2ivYx+FkM
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, 2013-12-18 at 12:46 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/ethernet/intel/i40e/i40e_main.c between commit 3c325ced6aef
+> ("i40e: fix null dereference") from Linus' tree and commit bc7d338fbb3f
+> ("i40e: reinit flow for the main VSI") from the net-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>=20
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/intel/i40e/i40e_main.c between commit 3c325ced6aef
-("i40e: fix null dereference") from Linus' tree and commit bc7d338fbb3f
-("i40e: reinit flow for the main VSI") from the net-next tree.
+Your fix is fine, what I have in my tree is the following, so if you
+want to modify your change so that the resultant code looks like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/ethernet/intel/i40e/i40e_main.c
-index 12b0932204ba,fba0aada062a..000000000000
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@@ -354,8 -354,8 +354,10 @@@ static struct rtnl_link_stats64 *i40e_g
-  	struct rtnl_link_stats64 *vsi_stats =3D i40e_get_vsi_stats_struct(vsi);
-  	int i;
+        struct rtnl_link_stats64 *vsi_stats =3D
+i40e_get_vsi_stats_struct(vsi);
+        int i;
  =20
- +	if (!vsi->tx_rings)
- +		return stats;
-+ 	if (test_bit(__I40E_DOWN, &vsi->state))
-+ 		return stats;
- =20
-  	rcu_read_lock();
-  	for (i =3D 0; i < vsi->num_queue_pairs; i++) {
+        if (test_bit(__I40E_DOWN, &vsi->state))
+               return stats;
 
---Signature=_Wed__18_Dec_2013_12_46_57_+1100_=TZRK9paHkOF+ET8
-Content-Type: application/pgp-signature
+        if (!vsi->tx_rings)
+               return stats;
+ =20
+        rcu_read_lock();
+        for (i =3D 0; i < vsi->num_queue_pairs; i++) {
+
+--=-bpj1wp9CNtR2ivYx+FkM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v1.4.15 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSsP6VAAoJEMDTa8Ir7ZwVFGYP/iKa9Jk4cybLV+M1dOSPlNTm
-I1VgTGMpts/EN+/I4+L1ztPdrc4BhtugPdcHRzsfIr7BJIt0E0CJfOnU8uPjU5z7
-7KW0QBV6evvQN14PLpQyGaptsYLnq0zpCkkY7+Xf7zk1pgeFhdT38hHzAkDKsnAP
-UaPsT5fKdLC4pZtbcHQfNTwL2xnhooN+R2dIOaNQDAsJB86V2NM6Jf+X1/iwd3gE
-O4ZLeiwAY/yAOghshEDtEop7x0YXlx4BCKU76vQVov8WIxw//doGoyazlqaJzL/3
-H+zeHzYy6vUT958iuug5IImke3+rIQLAwJPKVhT3asYVNLZoHjxqnORDNl4Kp4Hg
-QIOz/vIayR0cz2MDGseAGN8/mcd4Z4l5ufJqeNKIw1YZzdQunJHrrwR3DLAWPRtJ
-livsqcrYl15VtE5xR7JTM4/vHt/IKlkkvZUCPJ/G1hz6q8GvFyd2GTRxyJO6pROZ
-eQ5cJiCq1ZmwfJrQ0g0IzjY3zagknFr6NBEh7rS3eyf5NCWYXmN5burSlY2hW3Fq
-DF1q5G0uy/GZqZoWJCJipK3POEu15v8tV8RTeL50flUuNJh1JwZsXTqx62NqgwfB
-FJLiKIlbLj39bq6Eo1gZ+1Aj0paT58ieSt7Mb2epRaE7fYbYqlG1dbW3KIk5ETV8
-AbBFIryzQBwF5uSN7mHg
-=rlje
+iQIcBAABCgAGBQJSsQC5AAoJEOVv75VaS+3O7lQQAJjuUL7GLZrx9wgSzEeQ17Wr
+B+TvpYVDBo0M7UPBNsmh235UgRaTbs7LWUjhEsTkskwYuaVpm9bH1wqfPu8/eSvi
+qSWTvduJY3l5gUdc9eCUVoUvWVrx7dDYmizriQLMUVZCFOT5c9hyAdyiDja416Xm
+iCC48vQOdYuqIz4E93T7H6oIPOAqWAbggW7D100wbAo4z+G7a4181u5iOHR4wzlZ
+uxbMkkifyRzDYUuJ7q1QiGeZIC8Ng+16oMNi9+5//m1jnjC1NP2Knicbci9pp3KP
+j3XxI7AJRHUfe2qnj3lY600RwRl38Wi2rlvRgvwo1pzmRbKLUKupxrYz+IP33LSr
+i4TnTVk6ndRyR3qcJG7zt8KPiBQjIHV9Xj2RWgpBtzv+IAU141POONcCEo17Z/sU
+GcxNo5U9jBegdBvJ05/YzmX1+R2RErvvmlM3tzKUF5yKJ9XxZ6vdbAdmqZ5lYHR1
+NuplLUuTaRscrNcSfy1O1xwpQC+uCtCBDs6E8obVb4eZUj9m4XspvxVokhfUVPLR
+UAUZeJN8gW04x1GfBkeT0VRUNFZKAn/Mxp74beCGTe4sCAJlr83Wh87WAkEwICB1
+nepxDmrgCC/mGxKX31/4xjGNf1dMViEid5padJeX4kwskcNteYSiDEJyejYPPja6
+t9Z42o3+n7sdsg/Jn/Ek
+=Ho12
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__18_Dec_2013_12_46_57_+1100_=TZRK9paHkOF+ET8--
+--=-bpj1wp9CNtR2ivYx+FkM--
