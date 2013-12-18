@@ -1,60 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning in Linus' tree
-Date: Wed, 18 Dec 2013 09:52:03 +1100
-Message-ID: <20131218095203.aceb7cfffffa16907feb9af7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Wed, 18 Dec 2013 12:00:26 +1100
+Message-ID: <20131218120026.aa6c48feca3e24c59b5bf4c3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Dec_2013_09_52_03_+1100_u6ymJkaAjEug80Fh"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Fastabend <john.r.fastabend@intel.com>, Neil Horman <nhorman@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__18_Dec_2013_12_00_26_+1100_5C2wyKjp8w6h2Do."
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:50564 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751200Ab3LRBAh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Dec 2013 20:00:37 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lv Zheng <lv.zheng@intel.com>
 
---Signature=_Wed__18_Dec_2013_09_52_03_+1100_u6ymJkaAjEug80Fh
+--Signature=_Wed__18_Dec_2013_12_00_26_+1100_5C2wyKjp8w6h2Do.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Rafael,
 
-While building Linus' tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c: In function 'ixgbe_pci_srio=
-v_disable':
-drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c:294:6: warning: unused varia=
-ble 'current_flags' [-Wunused-variable]
-  u32 current_flags =3D adapter->flags;
-      ^
+drivers/acpi/nvs.c:15:27: fatal error: linux/acpi_io.h: No such file or dir=
+ectory
+ #include <linux/acpi_io.h>
+                           ^
 
-Introduced by commit 2a47fa45d4df ("ixgbe: enable l2 forwarding
-acceleration for macvlans") which was merged before v3.13-rc1.
+Caused by commit a99493647c1a ("Merge branch 'acpi-cleanup' into
+linux-next") which incorrectly reintroduced the include of
+linux/acpi_io.h.
+
+I have used the pm tree from next-20131217 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__18_Dec_2013_09_52_03_+1100_u6ymJkaAjEug80Fh
+--Signature=_Wed__18_Dec_2013_12_00_26_+1100_5C2wyKjp8w6h2Do.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSsNWXAAoJEMDTa8Ir7ZwVJvQQAJMlqkwq6m8iUu+XT3Scrw6l
-RzOUPvbvlIk5T0ojg5YL+j4lK5n+M71wsud9vDTNQCQvXGt92+oqmwJX0s7AY76c
-khaOHGkP9Fie4wiLlZLYE8CybYtUQLizTPxqxlQOz7cUM9THUX+yZ74IInYc0tE3
-pUwRAegvRi8JVrVUNOvBBC4CkY9SOF/vsHYVfsJBFR2VKUcfWL2m9UODa8Ih7k8i
-Jw36z1mHa5mvP+KHgOM6rUvWV6KrjetrbKkgFkFeWf/5CUhjiZz4PteQqdk7wH+Y
-bTQM/MO35UoBgJYUmLT6yZESu8BsPBAwbOaTq3FFuI940m2c+wugNl0BTLvSkPFy
-BKWKJxKS+5KcN6M4uVDOxNEDFL1xoMMX1glT9qDSqXOrrUw18OSWxqQc2Wg++bbw
-pLF+DB0eOqDqNTzIfQehCLHbPgVdUyRBNvx7m8swrTFRS1IxMszl/zE5MQgykZ5u
-OP1zjF0Fg+1YKum8SqK1TC8YImAvNTrTKr/GfMsPHkya0/4fBOdeTJWVKLFJcEyC
-P22f7D3SnxEX0s8yoCPlQPZ5/Un7NZSn7NMOfw9QZvtPAI13FZdlmUofXZ+5ePvb
-l8tngQgpN5CBfHeiR2psgCaL5BPAMRgXLbvybNjKHTAkPvG/yYX1RlzWiybds3IV
-vQKfUVa9GphqfxQsisyZ
-=9bvM
+iQIcBAEBCAAGBQJSsPOvAAoJEMDTa8Ir7ZwVF04P/3ldy5PMtkV3pAfrStbJzG2m
+Y906K7wT8n6thKqKx4X9zcRquULvf3hGBDUoMH3pgpmDzH52Db7ua/E0ge0KhO+B
+ncLXOoknZvPHtfLcbYCEnLrK9fZO7ZYaoKRn77JUeundT56fzkHE87wQ8dwR/9co
+O6JGlZidhIsjunHaYs7Abxor1Y9AxD2YSmp/sY/Cm3hAGI5RjxOhmWUX4WMDvDy2
+CQmh8j5QkGKvplkF5OOsjC0vWYrc5/Z36zdvd+JEe0C/Zczx2NExniRLonUjMt2M
+GnOpnVJPR+jHB6LkNlGqf8Ez69gbo/ZzKKPI1vZLeET4GeFjhKEujSEBeBFkfIMz
+fY84ZIqvqTis41LPs4JRDMLhoki2A64adonhV7Sw1j5QibTFz/Vj0UMleXPodhvt
+1OJKkl3YHYsldftHBea5gJ+Dd0p73niU4tc2QoDivbhNumLQ4kE15f0AC2WEpbnv
+dGQN3LgPHOtF39Cq5PM4ry+kyrqBq2gYxpLG4hda6P4+pPAiZxU7oD1pGzgKLyz5
+qHzqFcK2QQBBsJLPx1lvIuRgcZyr9m7ufjxW8xCBXDYgP96g9DznP7WuPpv5cNRn
+LDJbAAUQQt0ifYnOJ93To8AnvHGXbREKhCWud8aa0dAIcQXazGOAKGafyUjEctlB
+/qMSePRsKHv/yovmDdqC
+=e+wz
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__18_Dec_2013_09_52_03_+1100_u6ymJkaAjEug80Fh--
+--Signature=_Wed__18_Dec_2013_12_00_26_+1100_5C2wyKjp8w6h2Do.--
