@@ -1,24 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 18 Dec 2013 12:06:55 -0500 (EST)
-Message-ID: <20131218.120655.881363015739010955.davem@davemloft.net>
-References: <20131217.213033.1019416869378407851.davem@davemloft.net>
-	<CAMuHMdUi4GQYR2p7enikEkTq1s-5YwirTzmo_tS0JwiE=dVmYw@mail.gmail.com>
-	<20131218101523.GP13532@twins.programming.kicks-ass.net>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: build warning after merge of the target-updates tree
+Date: Wed, 18 Dec 2013 15:59:30 -0800
+Message-ID: <1387411170.5567.3.camel@haakon3.risingtidesystems.com>
+References: <20131218173930.56f758971ca1939cbc3e67ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131218101523.GP13532@twins.programming.kicks-ass.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: peterz@infradead.org
-Cc: geert@linux-m68k.org, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ffusco@redhat.com, dborkman@redhat.com, tgraf@redhat.com
+Return-path: <target-devel-owner@vger.kernel.org>
+In-Reply-To: <20131218173930.56f758971ca1939cbc3e67ec@canb.auug.org.au>
+Sender: target-devel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>, target-devel <target-devel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed, 18 Dec 2013 11:15:23 +0100
+Hi Stephen,
 
-> So unless there's a sane and easy way to keep it sorted; I'm going to
-> ignore that rule.
+On Wed, 2013-12-18 at 17:39 +1100, Stephen Rothwell wrote:
+> Hi Nicholas,
+> 
+> After merging the target-updates tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/target/target_core_alua.c: In function 'core_alua_state_lba_dependent':
+> drivers/target/target_core_alua.c:473:6: warning: suggest parentheses around operand of '!' or change '&' to '&&' or '!' to '~' [-Wparentheses]
+>   if (!cmd->se_cmd_flags & SCF_SCSI_DATA_CDB)
+>       ^
+> 
+> Introduced by commit 923aacab87ba ("target_core_alua: Referrals
+> infrastructure").
 
-Me too, it's unreasonable and of dubious value.
+Fixed for today's linux-next tree.
+
+Thank you,
+
+--nab
