@@ -1,29 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the usb.current tree
-Date: Wed, 18 Dec 2013 16:53:37 +1100
-Message-ID: <20131218165337.b4ed157d1c013d1eaaf2c218@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ usb.current tree
+Date: Wed, 18 Dec 2013 17:09:56 +1100
+Message-ID: <20131218170956.ac1f118ee4928654af340c3c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Dec_2013_16_53_37_+1100_3.p55qv8hBmKbhhQ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris BREZILLON <b.brezillon@overkiz.com>, Peter Chen <peter.chen@freescale.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:47977 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750975Ab3LRGKD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Dec 2013 01:10:03 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Tikhomirov <av.tikhomirov@samsung.com>
 
---Signature=_Wed__18_Dec_2013_16_53_37_+1100_3.p55qv8hBmKbhhQ
+--Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Felipe,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/host/ohci-at91.c between commit fb5f1834c322 ("usb:
-ohci-at91: fix irq and iomem resource retrieval") from the usb.current
-tree and commit 3c9740a117d4 ("usb: hcd: move controller wakeup setting
-initialization to individual driver") from the usb tree.
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/phy/Kconfig between commit 7cd0c298f6e0 ("usb: phy: fix
+driver dependencies") from the usb.current tree and commit e1d2e31975e1
+("usb: phy: Add OTG FSM configuration option") from the usb-gadget tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -32,44 +36,42 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/usb/host/ohci-at91.c
-index 8c356af79409,29d2093e3cee..000000000000
---- a/drivers/usb/host/ohci-at91.c
-+++ b/drivers/usb/host/ohci-at91.c
-@@@ -203,9 -199,11 +203,11 @@@ static int usb_hcd_at91_probe(const str
-  	ohci->num_ports =3D board->ports;
-  	at91_start_hc(pdev);
+diff --cc drivers/usb/phy/Kconfig
+index 2b41c636a52a,54bebba39e91..000000000000
+--- a/drivers/usb/phy/Kconfig
++++ b/drivers/usb/phy/Kconfig
+@@@ -19,9 -27,8 +27,9 @@@ config AB8500_US
+  	  in host mode, low speed.
  =20
- -	retval =3D usb_add_hcd(hcd, pdev->resource[1].start, IRQF_SHARED);
- +	retval =3D usb_add_hcd(hcd, irq, IRQF_SHARED);
-- 	if (retval =3D=3D 0)
-+ 	if (retval =3D=3D 0) {
-+ 		device_wakeup_enable(hcd->self.controller);
-  		return retval;
-+ 	}
- =20
-  	/* Error handling */
-  	at91_stop_hc(pdev);
+  config FSL_USB2_OTG
+ -	bool "Freescale USB OTG Transceiver Driver"
+ +	tristate "Freescale USB OTG Transceiver Driver"
+- 	depends on USB_EHCI_FSL && USB_FSL_USB2 && PM_RUNTIME
++ 	depends on USB_EHCI_FSL && USB_FSL_USB2 && USB_OTG_FSM && PM_RUNTIME
+ +	depends on USB
+  	select USB_OTG
+  	select USB_PHY
+  	help
 
---Signature=_Wed__18_Dec_2013_16_53_37_+1100_3.p55qv8hBmKbhhQ
+--Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSsThlAAoJEMDTa8Ir7ZwVYV0P/2pZjmoOADGoHcYedKqQ4CiR
-8GgbY0jydCCOPG2peKmCAvIwXzzUl2HxudpvTu3xq4f6XM1giTjVRTatLSrlaNDz
-M8S3A62nhRwu15zv5DMMZYbSaMWS8vtHmGDLKQwL8DO+A6KNjQe8RMohIMWuENcl
-4gkqGznNpGAlEcNQxTnrkcX9htidiAIbAnhy2xJxuXuqqvorsWmuV8MFlEL+Q91m
-uszd+1ijFFkI05dhU50S+PlKBQBnXFkWIBNB97xa1i7/vwRpJTXjg6r7v0ADmXZ8
-pj+hmPWNeWz/MEylW6Ry3tWsLetjG8uzR36H/pOcBoPK0BbmxyTeoQZrUtRm41pS
-waC6RRn0xsTbHvb37cgeqKct6CuqHrLci8Aya9S3hJh3uirMZz5sGxIzZ4afb2ng
-KuWorhygqlCU2WE9pmT9RyfPYuXhdNaRWq7CRWDLtcU4BFwPPg6IrS39dhJRNvg6
-X6KQHJb5D+PX4ROnwdzCkuaQqrokHf5DoyfJW9v0ylAuhb/29gJbZno5I/B81v4a
-DaisPr8oYT+nz91zB/z8sSj4JwnxRth7IqZHbOgzRwxCeKuuVDp4feCrBupajgDP
-MSRKLQo98O+KhWv2/3d/XKw0zqubmzCGYM2Y9+j6EpXda1EkQi8cjqJ47NikPiRN
-19WmuI5LlRzKcRQIsAPq
-=fcuX
+iQIcBAEBCAAGBQJSsTw4AAoJEMDTa8Ir7ZwV8/0P/RaoMJbvG57xFQPxc7BI5lJy
+lFWkGy1XFTJ6/OW+//nVkZ9M/C7zUecNgYwmXecso3AWMr5WxLk/CgnjOsAUAOsc
+yGhFNmYG1qRSQ6KDkzrw37Mhc8lqStHw/fPs+mr4cMfpcafIytK3Ijp2zhDuyMJD
+A95Y1q+DqDXRbXBUME9IN9/OcPQbFIfORR27gQk8mc101oODj3oIK3grk9Ye8ebj
+galiSyDxfILenezTzMZKfa6rzuUs298rStAoVK9s2+D/7n1+OEv4SfdUZR06yAt8
+aNw3sYBo03xUUxzgD8ed615VYXBbz+KmCl6/zf6KH453yksXjLuWb2CZ+275C4+R
+vDsYb44MOB4ACueeLHszLPKG+99mJbw8I9DD5iTgBwvhi+PBowCS6P+BW65ncSaC
+KtQ2mut/AkUraqnZxnHtSPH3GNwscFhe17kaTOVJ5+hWFb7ZHHdzSsMRY6/temDw
+2k6TpHYrFF3+nkt9a/jDrvMwrfS17DOySM/rNK4CEl1YZlUUHbGE6C6rkG+mbLwW
+A4s+bWwLe+d6OuX6wrQeyJsv6mizU1H/NO5fhccVV5oNiRUvAczBQgozAjVm3/Hl
+HMjFt8R5Uv1rStR1RtA/Fdy3SLRa3sCbRf+Vq3Lg7qTZ/o6F73kGGMBvOiiUggeB
+vFVC/SNlrXZN9i2A5GuZ
+=acNP
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__18_Dec_2013_16_53_37_+1100_3.p55qv8hBmKbhhQ--
+--Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK--
