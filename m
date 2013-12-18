@@ -1,77 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with the
- usb.current tree
-Date: Wed, 18 Dec 2013 17:09:56 +1100
-Message-ID: <20131218170956.ac1f118ee4928654af340c3c@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the target-updates tree
+Date: Wed, 18 Dec 2013 17:39:30 +1100
+Message-ID: <20131218173930.56f758971ca1939cbc3e67ec@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK"
+ boundary="Signature=_Wed__18_Dec_2013_17_39_30_+1100_VXSR.XynMKLT07Re"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:47977 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:60172 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750975Ab3LRGKD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Dec 2013 01:10:03 -0500
+	id S1750910Ab3LRGjh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Dec 2013 01:39:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Tikhomirov <av.tikhomirov@samsung.com>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>
 
---Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK
+--Signature=_Wed__18_Dec_2013_17_39_30_+1100_VXSR.XynMKLT07Re
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Felipe,
+Hi Nicholas,
 
-Today's linux-next merge of the usb-gadget tree got a conflict in
-drivers/usb/phy/Kconfig between commit 7cd0c298f6e0 ("usb: phy: fix
-driver dependencies") from the usb.current tree and commit e1d2e31975e1
-("usb: phy: Add OTG FSM configuration option") from the usb-gadget tree.
+After merging the target-updates tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/target/target_core_alua.c: In function 'core_alua_state_lba_depende=
+nt':
+drivers/target/target_core_alua.c:473:6: warning: suggest parentheses aroun=
+d operand of '!' or change '&' to '&&' or '!' to '~' [-Wparentheses]
+  if (!cmd->se_cmd_flags & SCF_SCSI_DATA_CDB)
+      ^
 
+Introduced by commit 923aacab87ba ("target_core_alua: Referrals
+infrastructure").
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell <sfr@canb.auug.org.au>
 
-diff --cc drivers/usb/phy/Kconfig
-index 2b41c636a52a,54bebba39e91..000000000000
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@@ -19,9 -27,8 +27,9 @@@ config AB8500_US
-  	  in host mode, low speed.
- =20
-  config FSL_USB2_OTG
- -	bool "Freescale USB OTG Transceiver Driver"
- +	tristate "Freescale USB OTG Transceiver Driver"
-- 	depends on USB_EHCI_FSL && USB_FSL_USB2 && PM_RUNTIME
-+ 	depends on USB_EHCI_FSL && USB_FSL_USB2 && USB_OTG_FSM && PM_RUNTIME
- +	depends on USB
-  	select USB_OTG
-  	select USB_PHY
-  	help
-
---Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK
+--Signature=_Wed__18_Dec_2013_17_39_30_+1100_VXSR.XynMKLT07Re
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSsTw4AAoJEMDTa8Ir7ZwV8/0P/RaoMJbvG57xFQPxc7BI5lJy
-lFWkGy1XFTJ6/OW+//nVkZ9M/C7zUecNgYwmXecso3AWMr5WxLk/CgnjOsAUAOsc
-yGhFNmYG1qRSQ6KDkzrw37Mhc8lqStHw/fPs+mr4cMfpcafIytK3Ijp2zhDuyMJD
-A95Y1q+DqDXRbXBUME9IN9/OcPQbFIfORR27gQk8mc101oODj3oIK3grk9Ye8ebj
-galiSyDxfILenezTzMZKfa6rzuUs298rStAoVK9s2+D/7n1+OEv4SfdUZR06yAt8
-aNw3sYBo03xUUxzgD8ed615VYXBbz+KmCl6/zf6KH453yksXjLuWb2CZ+275C4+R
-vDsYb44MOB4ACueeLHszLPKG+99mJbw8I9DD5iTgBwvhi+PBowCS6P+BW65ncSaC
-KtQ2mut/AkUraqnZxnHtSPH3GNwscFhe17kaTOVJ5+hWFb7ZHHdzSsMRY6/temDw
-2k6TpHYrFF3+nkt9a/jDrvMwrfS17DOySM/rNK4CEl1YZlUUHbGE6C6rkG+mbLwW
-A4s+bWwLe+d6OuX6wrQeyJsv6mizU1H/NO5fhccVV5oNiRUvAczBQgozAjVm3/Hl
-HMjFt8R5Uv1rStR1RtA/Fdy3SLRa3sCbRf+Vq3Lg7qTZ/o6F73kGGMBvOiiUggeB
-vFVC/SNlrXZN9i2A5GuZ
-=acNP
+iQIcBAEBCAAGBQJSsUMmAAoJEMDTa8Ir7ZwV3ycP/0L+RcFpmpTnsK0xpwhMXPwp
+1YuP2hl7FgXSnh4M55usZJjla9tJG23qncUA3QTkBV8oWPGd0BNlDPFXmbN0wPdg
+Bji4mz5+f8R5FYVouimlcmHEDGDhv9NxoGuaY01gOr0BgHlnZYBuLHa4MsC8EDkr
+4Oxwjs2Fh/Op07nswlw4r+6IwH+h5TEP2Q+eykljulw5P3+uUDDigJyfJC7A67/U
+/2O9n9G4668qJnKqm3CPNMMYvmBJVt3BVjMYNwWEg0mm3hT/rqCH27wQRN65xMga
+aiS1j3nj0RgTYYW8RWWGp8WYojEs5fI6TyCl0sydI7At1u/lrG+9UZiyyxACpHwe
+Ffwl5XtuYzuA11K81Wtakm67957RUqI6kcSIrwviTqqso1NzZhpSxfvYpksJWydQ
+Yg5HNxlCBxJEfELTKk/YA7lQ+4HF07IYFev4ielUCKKEAZGJGvlqj0G++xqDlWAb
+cC76jDYDQOVYe58ppnQeW5FENdGLk+Ijf2JMo+33Qsc96uHmpnjP6WtA9CTlunsp
+6SCF9nAODAo2Ke1CpNjfeqkAeJSTI7fUgX0PknfckFQXKm7wrYsXIFHIDqjl5tCo
+B9PJia8QC6E0SR/EtUSon5nq1lRSkPVWl6OLre5yzmzXHHMwMz03lW+aC3PKsCZv
+e+LEEONflTIhD6CpbBu2
+=PB2h
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__18_Dec_2013_17_09_56_+1100_Q.lqJB1TuUS3vZwK--
+--Signature=_Wed__18_Dec_2013_17_39_30_+1100_VXSR.XynMKLT07Re--
