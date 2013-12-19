@@ -1,27 +1,75 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Change of repository for the arm64 kernel
-Date: Thu, 19 Dec 2013 18:37:34 +0000
-Message-ID: <20131219183730.GA12999@arm.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Thu, 19 Dec 2013 14:09:14 -0500 (EST)
+Message-ID: <20131219.140914.1059872546032993195.davem@davemloft.net>
+References: <20131219115710.598bdf6314b4784703a07100@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:58388 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755163Ab3LSShz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Dec 2013 13:37:55 -0500
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131219115710.598bdf6314b4784703a07100@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ffusco@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 19 Dec 2013 11:57:10 +1100
 
-Could you please replace the arm64/upstream branch (by cmarinas) with
-our new common repository (by arm64):
+> Caused by commit 71ae8aac3e19 ("lib: introduce arch optimized hash
+> library").  Read Rule 1 in Documentation/SubmitChecklist :-(  Hint:
+> __read_mostly is defined in linux/cache.h ...
+> 
+> I have used the net-next tree from next-20131217 again today.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux for-next/core
+Sorry for this breaking in two different ways two days in a row :-/
 
-Thanks,
+I hope with the following commit everything is good now:
 
-Catalin
+====================
+>From 237217546d44fe06c16b8895eecaef22f18ba5ee Mon Sep 17 00:00:00 2001
+From: Francesco Fusco <ffusco@redhat.com>
+Date: Wed, 18 Dec 2013 16:05:48 +0100
+Subject: [PATCH] lib: hash: follow-up fixups for arch hash
+
+This patch adds the include file to pull in __read_mostly on some
+architectures e.g. ppc and also fixes up signatures in generic
+asm.
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Francesco Fusco <ffusco@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ include/asm-generic/hash.h | 4 ++--
+ lib/hash.c                 | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/include/asm-generic/hash.h b/include/asm-generic/hash.h
+index 05cb342..b631284 100644
+--- a/include/asm-generic/hash.h
++++ b/include/asm-generic/hash.h
+@@ -1,8 +1,8 @@
+ #ifndef __ASM_GENERIC_HASH_H
+ #define __ASM_GENERIC_HASH_H
+ 
+-struct arch_hash_ops;
+-static inline void setup_arch_fast_hash(struct arch_hash_ops *ops)
++struct fast_hash_ops;
++static inline void setup_arch_fast_hash(struct fast_hash_ops *ops)
+ {
+ }
+ 
+diff --git a/lib/hash.c b/lib/hash.c
+index b89f06a..fea973f 100644
+--- a/lib/hash.c
++++ b/lib/hash.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/jhash.h>
+ #include <linux/hash.h>
++#include <linux/cache.h>
+ 
+ static struct fast_hash_ops arch_hash_ops __read_mostly = {
+ 	.hash  = jhash,
+-- 
+1.7.11.7
