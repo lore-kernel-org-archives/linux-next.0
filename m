@@ -1,36 +1,62 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Dec 19 (target)
-Date: Thu, 19 Dec 2013 11:32:05 -0800
-Message-ID: <52B349B5.6090200@infradead.org>
-References: <20131219165106.73f28ea8aa1bd059423cb5f8@canb.auug.org.au>
+Subject: Re: randconfig build error with next-20131210, in drivers/crypto/ccp/ccp-pci.c
+Date: Thu, 19 Dec 2013 11:35:09 -0800
+Message-ID: <52B34A6D.7010903@infradead.org>
+References: <CA+r1ZhhhUWhMqeyS0J7V5j-iYtCk24gszpJFif8hF2cwr5K6hg@mail.gmail.com> <1785749.ip5jsEzFz7@tlendack-t1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:34781 "EHLO
+Received: from merlin.infradead.org ([205.233.59.134]:34835 "EHLO
 	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754124Ab3LSTcH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Dec 2013 14:32:07 -0500
-In-Reply-To: <20131219165106.73f28ea8aa1bd059423cb5f8@canb.auug.org.au>
+	with ESMTP id S1754522Ab3LSTfN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Dec 2013 14:35:13 -0500
+In-Reply-To: <1785749.ip5jsEzFz7@tlendack-t1>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, target-devel <target-devel@vger.kernel.org>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+To: Tom Lendacky <thomas.lendacky@amd.com>, Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
 
-On 12/18/13 21:51, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20131218:
-> 
+On 12/10/13 07:34, Tom Lendacky wrote:
+>=20
+> On Tuesday, December 10, 2013 07:21:36 AM Jim Davis wrote:
+>> Building with the attached random configuration file,
+>>
+>> drivers/crypto/ccp/ccp-pci.c: In function =E2=80=98ccp_get_msix_irqs=
+=E2=80=99:
+>> drivers/crypto/ccp/ccp-pci.c:44:20: error: array type has incomplete
+>> element type
+>> drivers/crypto/ccp/ccp-pci.c:48:18: error: negative width in bit-fie=
+ld
+>> =E2=80=98<anonymous>=E2=80=99
+>> drivers/crypto/ccp/ccp-pci.c:51:2: error: implicit declaration of
+>> function =E2=80=98pci_enable_msix=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+>> drivers/crypto/ccp/ccp-pci.c:76:2: error: implicit declaration of
+>> function =E2=80=98pci_disable_msix=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+>> drivers/crypto/ccp/ccp-pci.c:44:20: warning: unused variable
+>> =E2=80=98msix_entry=E2=80=99 [-Wunused-variable]
+>> drivers/crypto/ccp/ccp-pci.c: In function =E2=80=98ccp_get_msi_irq=E2=
+=80=99:
+>> drivers/crypto/ccp/ccp-pci.c:89:2: error: implicit declaration of
+>> function =E2=80=98pci_enable_msi=E2=80=99 [-Werror=3Dimplicit-functi=
+on-declaration]
+>> drivers/crypto/ccp/ccp-pci.c:102:2: error: implicit declaration of
+>> function =E2=80=98pci_disable_msi=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+>> cc1: some warnings being treated as errors
+>> make[3]: *** [drivers/crypto/ccp/ccp-pci.o] Error 1
+>=20
+> Thanks for finding this, I'll update to the Kconfig to add PCI to
+> the 'depends on' statement.
 
+Tom,
 
-on i386:
+Can you get this patch and the HW_RANDOM patch merged into linux-next, =
+please?
+linux-next builds are still failing for both of these reasons.
 
-drivers/built-in.o: In function `target_alua_state_check':
-(.text+0x3fc859): undefined reference to `__udivdi3'
-
-
-
-
--- 
+thanks,
+--=20
 ~Randy
