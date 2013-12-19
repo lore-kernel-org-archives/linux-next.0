@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 19 Dec 2013 12:59:13 +1100
-Message-ID: <20131219125913.421629bb84b8fde532c2150f@canb.auug.org.au>
+Date: Thu, 19 Dec 2013 13:09:26 +1100
+Message-ID: <20131219130926.88df43815bf7c642e2c5c357@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Dec_2013_12_59_13_+1100_PuGxH=jti8qxLK1T"
+ boundary="Signature=_Thu__19_Dec_2013_13_09_26_+1100_8ix7TC_Jq5fPR0Fb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:54435 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:59527 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750872Ab3LSB7T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Dec 2013 20:59:19 -0500
+	id S1751983Ab3LSCJb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Dec 2013 21:09:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ilia Mirkin <imirkin@alum.mit.edu>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Greg KH <greg@kroah.com>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Thu__19_Dec_2013_12_59_13_+1100_PuGxH=jti8qxLK1T
+--Signature=_Thu__19_Dec_2013_13_09_26_+1100_8ix7TC_Jq5fPR0Fb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,9 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi Dave,
 
 Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/drm_stub.c between commit 0f58411d4fd7 ("drm: don't
-double-free on driver load error") from Linus' tree and commit
-2c695fa04442 ("drm: remove agp_init() bus callback") from the drm tree.
+drivers/staging/imx-drm/imx-drm-core.c between commit 8007875f0619
+("imx-drm: imx-drm-core: fix DRM cleanup paths") from Linus' tree and
+commit 9076dccfc532 ("drm/imx: directly call drm_put_dev in ->remove")
+from the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,48 +36,55 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/drm_stub.c
-index 66dd3a001cf1,a4a5c6ac110a..000000000000
---- a/drivers/gpu/drm/drm_stub.c
-+++ b/drivers/gpu/drm/drm_stub.c
-@@@ -566,14 -564,11 +564,11 @@@ err_unload
-  	if (dev->driver->unload)
-  		dev->driver->unload(dev);
-  err_primary_node:
- -	drm_put_minor(dev->primary);
- +	drm_unplug_minor(dev->primary);
-  err_render_node:
- -	drm_put_minor(dev->render);
- +	drm_unplug_minor(dev->render);
-  err_control_node:
- -	drm_put_minor(dev->control);
- +	drm_unplug_minor(dev->control);
-- err_agp:
-- 	if (dev->driver->bus->agp_destroy)
-- 		dev->driver->bus->agp_destroy(dev);
-  out_unlock:
-  	mutex_unlock(&drm_global_mutex);
+diff --cc drivers/staging/imx-drm/imx-drm-core.c
+index 96e4eee344ef,0507b662ae40..000000000000
+--- a/drivers/staging/imx-drm/imx-drm-core.c
++++ b/drivers/staging/imx-drm/imx-drm-core.c
+@@@ -443,19 -441,14 +443,21 @@@ static int imx_drm_driver_load(struct d
+  	 */
+  	imxdrm->drm->vblank_disable_allowed =3D true;
+ =20
+ -	if (!imx_drm_device_get())
+ +	if (!imx_drm_device_get()) {
+  		ret =3D -EINVAL;
+ +		goto err_vblank;
+ +	}
+ =20
++ 	platform_set_drvdata(drm->platformdev, drm);
++=20
+ -	ret =3D 0;
+ +	mutex_unlock(&imxdrm->mutex);
+ +	return 0;
+ =20
+ -err_init:
+ +err_vblank:
+ +	drm_vblank_cleanup(drm);
+ +err_kms:
+ +	drm_kms_helper_poll_fini(drm);
+ +	drm_mode_config_cleanup(drm);
+  	mutex_unlock(&imxdrm->mutex);
+ =20
   	return ret;
 
---Signature=_Thu__19_Dec_2013_12_59_13_+1100_PuGxH=jti8qxLK1T
+--Signature=_Thu__19_Dec_2013_13_09_26_+1100_8ix7TC_Jq5fPR0Fb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSslL1AAoJEMDTa8Ir7ZwVJEcP/j0CSaW58b1C44AZBV0W9YJj
-3rqpEq6ETCGVgn2wUtdbZgg3IrK4iIMbGWIl2gIy9E62ugDEgyrKQjBZYfS2IcOO
-kY21BoRSIsZRU9OrQ8BSAuGxdF8Qcx/EGJXcd9cXO/LgWX+HnQiucB/yKsemNjPP
-60XuW5ZdWG84BylFkMlR5DuIwyC1x4IHj7Qh4WD61Qd8NUU8olL4nQS6l+daaGbI
-jQ1MVCMpc0NR81/rc9vyJ9gzrJJ8qv2mx4el02Wto+G9sBwsEb5JZK1KDjQFqDTT
-aj/jShYXnh6+kzh89G8L5QXMaMDIiiW8zHLvatAyHCrDdZUjjN4mCre3HVvrVGuE
-eNaOTFMFvxdK3uqSgKCFvMcoxNueS2Ywuln8B34mHrCN1QLRjol6x7QNHG78LAct
-sxQTSwoDmeFopqNq0zH6htLrwcG44Lhsk5jDBQVFc+SClNEqPitQWBDF25QubQh0
-3UNYXSKsm/UgEypq43+jE+LPtVaEWUi72/P5mGFoAI+/zyheEqDnHn8Qf981/hNT
-ob4VAHRBawuMH7Oo7l8DVeJKCikyJxyfgwGv1lds1K7cFQYU59A3Z8/i5mIqe+wT
-tg/eC/cVJJWXMGBNpmiIJdvp7bMoK25KIPcd/jlxzvDQ+tviFXpyrNArxvFz3n3d
-OhEibh7s7bmIrLpjxHFy
-=2APY
+iQIcBAEBCAAGBQJSslVZAAoJEMDTa8Ir7ZwVlrcP/RSuaOr7TY1MDMcZlqEvytgj
+7vRL4QT1TAwc+Q5ZtTtL+STORl6CXXTTsTwPkzeaRlABIc7iyoUWsfd0WgDX7G9Y
+WWpX5HJqZxr/vUsagDqH22UVAhAsVI8LS8mS8Jl5z3DuECw8IJqgTpZv6VjYcEPq
+G4W71eJj9NMjs5M4/TKMGN/Gkc26eYEXCU0OXP3DtIFOkbzyqFt3RHvW0DcF3EHm
+VHzBVlvEr1HIy4+ZMtNhIHIPBqWpASRuIxwzSw0OkDYHu+vkcah458Q7s+Yh/B/a
+MRepsbL4vyyjkavaNM0OyLCqmiKEFOWiqzZVhD+ERZvRa2l2A2b886LDRaI/oEK+
+8zzcei+6FCib+oOwDEZ0CvFaHpCxF8OfsV3WIu1yzk/jStHRCCeRU3SZf40jWcDE
+Pi882rJinlJDPR0lzO2WlGQWR+j1CW2LmWNNx7rfWBGpS0v1/oIuLk2GDmKbbfFo
+BJjLfJgscLA4O6VP+abT0DA4MSsS+hCyclmGiW/eg8TWSCRvRB8smsQC6b3XQxKJ
+MKSLXJdC3pJtdLLubNn9m1BN4w72LES2U73Zpd7rKIFp8LDt0RK3kbD45BMitK0P
+YN7wXJd8Pni41rWznpXvPNNU/Y/v9KXveYoGbQxcd7arE+zHaGSZl/atzghiMMLg
+HKyRN2RYU2hACXxwxtpS
+=hJb0
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Dec_2013_12_59_13_+1100_PuGxH=jti8qxLK1T--
+--Signature=_Thu__19_Dec_2013_13_09_26_+1100_8ix7TC_Jq5fPR0Fb--
