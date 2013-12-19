@@ -1,55 +1,90 @@
-From: "Upinder Malhi (umalhi)" <umalhi-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-Subject: Re: randconfig build error with next-20131211, in
- drivers/infiniband/hw/usnic/usnic_uiom.c
-Date: Thu, 19 Dec 2013 22:38:23 +0000
-Message-ID: <B13BFDDB-0C52-4A27-B47B-05F71CB696FC@cisco.com>
-References: <CA+r1ZhhA1QDeNwvOb+Yn_eoQ9VPS2VmAkGZXt8HJRiagp-rvTg@mail.gmail.com>
- <52B350BC.8000903@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Could you include clockevents/clocksource tree in linux-next ?
+Date: Fri, 20 Dec 2013 09:39:16 +1100
+Message-ID: <20131220093916.06b43263127f5d6428a9056f@canb.auug.org.au>
+References: <52B363F1.2080209@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B350BC.8000903-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Content-Language: en-US
-Content-ID: <55CA01CFE2F675498CC32E6AB632F62A-WwaMAgPkaIIluPl5bxqUMw@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "<linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "<linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "<linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "<roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>" <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "<hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>" <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__20_Dec_2013_09_39_16_+1100_UOk.bJtW/5oMf/F6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <52B363F1.2080209@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Randy,
-	This - http://www.spinics.net/lists/linux-rdma/msg18126.html- has fix =
-for this.  Once the patch goes into ib for-next tree, the problem will =
-go away.
+--Signature=_Fri__20_Dec_2013_09_39_16_+1100_UOk.bJtW/5oMf/F6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Upinder
+Hi Daniel,
 
-On Dec 19, 2013, at 12:02 PM, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> wrot=
-e:
-
-> On 12/11/13 07:57, Jim Davis wrote:
->> Building with the attached random configuration file,
->>=20
->> drivers/infiniband/hw/usnic/usnic_uiom.c: In function
->> =91usnic_uiom_attach_dev_to_pd=92:
->> drivers/infiniband/hw/usnic/usnic_uiom.c:505:2: error: implicit decl=
-aration of f
->> unction =91iommu_domain_has_cap=92 [-Werror=3Dimplicit-function-decl=
-aration]
->>  if (!iommu_domain_has_cap(pd->domain, IOMMU_CAP_CACHE_COHERENCY)) {
->>  ^
->> cc1: some warnings being treated as errors
->> make[3]: *** [drivers/infiniband/hw/usnic/usnic_uiom.o] Error 1
->>=20
+On Thu, 19 Dec 2013 22:24:01 +0100 Daniel Lezcano <daniel.lezcano@linaro.or=
+g> wrote:
+>
+> is it possible to add the clockevents/clocksource tree in linux-next.
 >=20
+> git://git.linaro.org/people/daniel.lezcano/linux.git clockevents/next
 >=20
-> This build error still happens in linux-next of 20131219.
->=20
-> --=20
-> ~Randy
+> It will be based on top of tip/timers/core.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Added from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Fri__20_Dec_2013_09_39_16_+1100_UOk.bJtW/5oMf/F6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSs3WYAAoJEMDTa8Ir7ZwVDwIP/iPO/HUZiTbDMvPq8pxEBe3h
+l+4cfEHF3HJN/Y8AHauPwiRkngZghPslEeJSwyMC8rSaWrQPWYdn/qQNyuuzh7MZ
+QLgBZkyBD5/fCIWTsAByeS77VV4a/SQAuHCJFDD806AmCjrYA8DBiotp01G4iAwr
+JyvX+TgTWJpGbIH+ETqgwvW4M/7SeHUcodwbVxAQzpnW3YFKOy1RA22Ymke7xYnL
+g2oNJoE4thZuNKLRxq1+W5ot6HBOsyXiAOUBv9PFxUDhXnm5lweEmg/t2i1sjQNh
+ZNhuRXP2/S+4Tn5k1ueQDLmBYdQnZbK+4E4Bos71lJb/V2cFk6l0WA3l+g2m0D3x
+Dmsw25ejBterYxl+ROhj2X5t20A8RGFJsM6/rEbs5oWBjddfkYePx9IG5mS1HY22
++NSrztr8tAzc2UB4hsbfP9Ir6EJrlfltbMJoNquXYGElKTcTa6lDFNOrOm55VgDX
+aiZuk6bwoJLkGqwtzlKMprsiGOH7xlaTs1EJMGCvPfKP2wceQJldG1ZuWtEkOpFE
+Kdv7f5PpEFMhDKlaJUJjJRmNAcaX8OE2qTpThLIOLbbRsVicD/1EGyJbjFvSJGgM
+g6BQn8YCu7RkklSmZdciAKaXujP2VE7p53wuRxh/NGTZ8ZImSKTEBId1kvIXPLVJ
+6wn+TCR6EUUdJ65PwF5B
+=PGlI
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__20_Dec_2013_09_39_16_+1100_UOk.bJtW/5oMf/F6--
