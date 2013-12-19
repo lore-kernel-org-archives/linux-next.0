@@ -1,62 +1,39 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: randconfig build error with next-20131210, in drivers/crypto/ccp/ccp-pci.c
-Date: Thu, 19 Dec 2013 11:35:09 -0800
-Message-ID: <52B34A6D.7010903@infradead.org>
-References: <CA+r1ZhhhUWhMqeyS0J7V5j-iYtCk24gszpJFif8hF2cwr5K6hg@mail.gmail.com> <1785749.ip5jsEzFz7@tlendack-t1>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: randconfig build error with next-20131211, in drivers/infiniband/hw/usnic/usnic_uiom.c
+Date: Thu, 19 Dec 2013 12:02:04 -0800
+Message-ID: <52B350BC.8000903@infradead.org>
+References: <CA+r1ZhhA1QDeNwvOb+Yn_eoQ9VPS2VmAkGZXt8HJRiagp-rvTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:34835 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754522Ab3LSTfN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Dec 2013 14:35:13 -0500
-In-Reply-To: <1785749.ip5jsEzFz7@tlendack-t1>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tom Lendacky <thomas.lendacky@amd.com>, Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+r1ZhhA1QDeNwvOb+Yn_eoQ9VPS2VmAkGZXt8HJRiagp-rvTg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, umalhi-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On 12/10/13 07:34, Tom Lendacky wrote:
+On 12/11/13 07:57, Jim Davis wrote:
+> Building with the attached random configuration file,
 >=20
-> On Tuesday, December 10, 2013 07:21:36 AM Jim Davis wrote:
->> Building with the attached random configuration file,
->>
->> drivers/crypto/ccp/ccp-pci.c: In function =E2=80=98ccp_get_msix_irqs=
-=E2=80=99:
->> drivers/crypto/ccp/ccp-pci.c:44:20: error: array type has incomplete
->> element type
->> drivers/crypto/ccp/ccp-pci.c:48:18: error: negative width in bit-fie=
-ld
->> =E2=80=98<anonymous>=E2=80=99
->> drivers/crypto/ccp/ccp-pci.c:51:2: error: implicit declaration of
->> function =E2=80=98pci_enable_msix=E2=80=99 [-Werror=3Dimplicit-funct=
-ion-declaration]
->> drivers/crypto/ccp/ccp-pci.c:76:2: error: implicit declaration of
->> function =E2=80=98pci_disable_msix=E2=80=99 [-Werror=3Dimplicit-func=
-tion-declaration]
->> drivers/crypto/ccp/ccp-pci.c:44:20: warning: unused variable
->> =E2=80=98msix_entry=E2=80=99 [-Wunused-variable]
->> drivers/crypto/ccp/ccp-pci.c: In function =E2=80=98ccp_get_msi_irq=E2=
-=80=99:
->> drivers/crypto/ccp/ccp-pci.c:89:2: error: implicit declaration of
->> function =E2=80=98pci_enable_msi=E2=80=99 [-Werror=3Dimplicit-functi=
-on-declaration]
->> drivers/crypto/ccp/ccp-pci.c:102:2: error: implicit declaration of
->> function =E2=80=98pci_disable_msi=E2=80=99 [-Werror=3Dimplicit-funct=
-ion-declaration]
->> cc1: some warnings being treated as errors
->> make[3]: *** [drivers/crypto/ccp/ccp-pci.o] Error 1
+> drivers/infiniband/hw/usnic/usnic_uiom.c: In function
+> =91usnic_uiom_attach_dev_to_pd=92:
+> drivers/infiniband/hw/usnic/usnic_uiom.c:505:2: error: implicit decla=
+ration of f
+> unction =91iommu_domain_has_cap=92 [-Werror=3Dimplicit-function-decla=
+ration]
+>   if (!iommu_domain_has_cap(pd->domain, IOMMU_CAP_CACHE_COHERENCY)) {
+>   ^
+> cc1: some warnings being treated as errors
+> make[3]: *** [drivers/infiniband/hw/usnic/usnic_uiom.o] Error 1
 >=20
-> Thanks for finding this, I'll update to the Kconfig to add PCI to
-> the 'depends on' statement.
 
-Tom,
 
-Can you get this patch and the HW_RANDOM patch merged into linux-next, =
-please?
-linux-next builds are still failing for both of these reasons.
+This build error still happens in linux-next of 20131219.
 
-thanks,
 --=20
 ~Randy
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
