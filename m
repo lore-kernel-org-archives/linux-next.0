@@ -1,35 +1,32 @@
 From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: build warning after merge of the target-updates tree
-Date: Wed, 18 Dec 2013 15:59:30 -0800
-Message-ID: <1387411170.5567.3.camel@haakon3.risingtidesystems.com>
-References: <20131218173930.56f758971ca1939cbc3e67ec@canb.auug.org.au>
+Subject: Re: randconfig build error with next-20131218, in
+ drivers/target/target_core_alua.c
+Date: Wed, 18 Dec 2013 16:00:48 -0800
+Message-ID: <1387411248.5567.4.camel@haakon3.risingtidesystems.com>
+References: <CA+r1ZhieKb_Y-e51vud0Ot5xm2O+hkp7nX6tNPpcZ02zVRq+9w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <target-devel-owner@vger.kernel.org>
-In-Reply-To: <20131218173930.56f758971ca1939cbc3e67ec@canb.auug.org.au>
-Sender: target-devel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>, target-devel <target-devel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+r1ZhieKb_Y-e51vud0Ot5xm2O+hkp7nX6tNPpcZ02zVRq+9w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi Jim,
 
-On Wed, 2013-12-18 at 17:39 +1100, Stephen Rothwell wrote:
-> Hi Nicholas,
+On Wed, 2013-12-18 at 06:45 -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
 > 
-> After merging the target-updates tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/target/target_core_alua.c: In function 'core_alua_state_lba_dependent':
-> drivers/target/target_core_alua.c:473:6: warning: suggest parentheses around operand of '!' or change '&' to '&&' or '!' to '~' [-Wparentheses]
->   if (!cmd->se_cmd_flags & SCF_SCSI_DATA_CDB)
->       ^
-> 
-> Introduced by commit 923aacab87ba ("target_core_alua: Referrals
-> infrastructure").
+>   LD      init/built-in.o
+> drivers/built-in.o: In function `core_alua_state_lba_dependent':
+> /home/jim/linux/drivers/target/target_core_alua.c:492: undefined
+> reference to `__umoddi3'
+> make: *** [vmlinux] Error 1
 
-Fixed for today's linux-next tree.
+Thanks for the heads up.  A patch for this has been merged into the
+original, and will be appearing in today's (12192013) linux-next tree.
 
 Thank you,
 
