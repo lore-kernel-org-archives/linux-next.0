@@ -1,107 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the spi tree with the mpc5xxx tree
-Date: Fri, 20 Dec 2013 14:48:31 +1100
-Message-ID: <20131220144831.234673a46206ecc9287724fb@canb.auug.org.au>
+Subject: linux-next: manual merge of the clockevents tree with Linus' tree
+Date: Fri, 20 Dec 2013 15:09:21 +1100
+Message-ID: <20131220150921.1203c672e25cd6eafb8a4118@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Dec_2013_14_48_31_+1100_.d6BlH73jlJBV35Q"
+ boundary="Signature=_Fri__20_Dec_2013_15_09_21_+1100_BQxXCG9pzbHwYe6h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:35135 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:44018 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753529Ab3LTDsj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Dec 2013 22:48:39 -0500
+	id S1752000Ab3LTEJb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Dec 2013 23:09:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Anatolij Gustschin <agust@denx.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gerhard Sittig <gsi@denx.de>, Jingoo Han <jg1.han@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Fri__20_Dec_2013_14_48_31_+1100_.d6BlH73jlJBV35Q
+--Signature=_Fri__20_Dec_2013_15_09_21_+1100_BQxXCG9pzbHwYe6h
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi Daniel,
 
-Today's linux-next merge of the spi tree got a conflict in
-drivers/spi/spi-mpc512x-psc.c between commit 9d37619fb37f ("spi: mpc512x:
-adjust to OF based clock lookup") from the mpc5xxx tree and commit
-e1d0cd473be4 ("spi: mpc512x: Use devm_*() functions") from the spi tree.
+Today's linux-next merge of the clockevents tree got a conflict in
+drivers/clocksource/clksrc-of.c between commit 4c4b053235fa
+("clocksource: clksrc-of: Do not drop unheld reference on device node")
+from Linus' tree and commit fdca679d87bb ("clocksource: clksrc-of: Warn
+if no clock sources are found") from the clockevents tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
 --=20
 Cheers,
-Stephen Rothwell <sfr@canb.auug.org.au>
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/spi/spi-mpc512x-psc.c
-index 2babea28b310,46d2313f7c6f..000000000000
---- a/drivers/spi/spi-mpc512x-psc.c
-+++ b/drivers/spi/spi-mpc512x-psc.c
-@@@ -519,10 -519,12 +518,10 @@@ static int mpc512x_psc_spi_do_probe(str
-  		goto free_master;
-  	init_completion(&mps->txisrdone);
+diff --cc drivers/clocksource/clksrc-of.c
+index b9ddd9e3a2f5,a30b42c3ac3b..000000000000
+--- a/drivers/clocksource/clksrc-of.c
++++ b/drivers/clocksource/clksrc-of.c
+@@@ -35,5 -36,9 +36,8 @@@ void __init clocksource_of_init(void
  =20
- -	psc_num =3D master->bus_num;
- -	snprintf(clk_name, sizeof(clk_name), "psc%d_mclk", psc_num);
- -	clk =3D devm_clk_get(dev, clk_name);
- +	clk =3D devm_clk_get(dev, "mclk");
-  	if (IS_ERR(clk)) {
-  		ret =3D PTR_ERR(clk);
-- 		goto free_irq;
-+ 		goto free_master;
+  		init_func =3D match->data;
+  		init_func(np);
+ -		of_node_put(np);
++ 		clocksources++;
   	}
-  	ret =3D clk_prepare_enable(clk);
-  	if (ret)
-@@@ -550,15 -542,9 +549,11 @@@
- =20
-  	return ret;
- =20
- -free_clock:
- +free_ipg_clock:
- +	clk_disable_unprepare(mps->clk_ipg);
- +free_mclk_clock:
-  	clk_disable_unprepare(mps->clk_mclk);
-- free_irq:
-- 	free_irq(mps->irq, mps);
-  free_master:
-- 	if (mps->psc)
-- 		iounmap(mps->psc);
-  	spi_master_put(master);
- =20
-  	return ret;
-@@@ -570,10 -556,6 +565,7 @@@ static int mpc512x_psc_spi_do_remove(st
-  	struct mpc512x_psc_spi *mps =3D spi_master_get_devdata(master);
- =20
-  	clk_disable_unprepare(mps->clk_mclk);
- +	clk_disable_unprepare(mps->clk_ipg);
-- 	free_irq(mps->irq, mps);
-- 	if (mps->psc)
-- 		iounmap(mps->psc);
- =20
-  	return 0;
++ 	if (!clocksources)
++ 		pr_crit("%s: no matching clocksources found\n", __func__);
   }
 
---Signature=_Fri__20_Dec_2013_14_48_31_+1100_.d6BlH73jlJBV35Q
+--Signature=_Fri__20_Dec_2013_15_09_21_+1100_BQxXCG9pzbHwYe6h
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSs74UAAoJEMDTa8Ir7ZwVkOwP+QEuJmyPrkkTkr8LFGI03DzQ
-etC/IYP0fzXfl3zzRZPScApSlYcqzqeq1AO2pD3fJrRJp93bd6qSvZCURnZF+yg1
-Q7rrpiz+Lmunu6Xy0XvtmLcIXrul1RhfmCHS2UTTrvR+4xrBuADlyHPiGnAoDREZ
-AO59r8qw8NCN8EOLGDtum6SrG6V+owYZ0U6Utw83RmszBpsqTrlhEqjTJCcHLQMN
-nShdnJ4xDmOWZIkdTRBA2JAj6pigIkzmqsXe6/OEVOK2oRy0JHFL/7VWJVA8taVt
-EEmDQp5lZuGSoP7ho0Z5qDuKsv7ag6DwSwq/yZGqCwdb9/kiUyifojh/hS+58IZw
-Mm5rMAIClLease99/f+aEcDnGmy6MTUyLYhOUIgkjE2Lr3U1AnVjemznOQDCi9rl
-jTj79x9KSZ00gWOXUZ2jO8EYREidGl7U8Wn7qil2ylqVfk9TIy2CyAJpk3UjmiLB
-2Y6UbgxGysMboVuR9oJ5FNvyzKh4DG5UupKqzNa1zNJrCR+gfJkGkDV4DnewlJGH
-lja0vzf8TJyfN23iY7xPuMsedot+NALHHdv/B5nmAgImWLYf+tFvWs6zgwTsHX/M
-jeiGBLYQ2fvb+wxX5GuB94tonqUYUVPmMgwRa2IIPj8gbktmyr3JYyQw4zI5SAKi
-4esnMABTOdxObJzDb0tg
-=yM+D
+iQIcBAEBCAAGBQJSs8L5AAoJEMDTa8Ir7ZwVK9oP/1EZD+zcDo9Ia8vxDOLw8u3R
+Ydd1wRXBalMubChHOpoo+N8jPePshmY1L9Fli+UJA7PU5Ash7yUXmji1tSirzIBC
+FBggQ6Mf2GD/JdPlDvjq51wwMOroAtMzDhCUP/L9DEKpnrxAaboa8Qs4l72lXwa6
+WWYpIw/GHuFE+8KAVOwPn7xNEQpT98NgxUEZ26KXTrIYFpPcHGQqPPRBwvxr4OB1
+XHup8ZFtreV8xyBxySy2P2qtKuG56kah+Cy1uTAny0WgR1qoyggjxhU3ryg/X8nY
+Sz9YXoqUCYFteGiHDY5ps4LWVBj4SEkiD2fbI/jvREIyJCBNs1OVNhcG4J2k9UT3
+6Ljg3QKqhTJjomINTV/o0Ca2gEdqXFGmD7Pn1qbxsz9srj7BJCjVOrn3W8Bdur/H
+IHTAnG550jU5R7CuSkDtg0K47HRllClWIyKLthsCm6S/FgBVZPSYHa7n3Q617AVi
+LilIInQgudrGRcVKzteeOQXaKi/opR16GHDAcJaEvLcZoHYdv6zBWF4ZN7hxqJl5
+U+TQwk/8oqgqVnVWjhE0QfCMDpAbSbalPQgNWBZqZC6FI4f0/0lbNbLkwi/fSHYo
+87RzZUJzSQq0QATncXbO5SKizs6QXg7ZRXM1AAAlk6L1JGWIpVX192CWlNfsWtZ/
+v+sdEfBIKPnNxnX+B46R
+=rith
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__20_Dec_2013_14_48_31_+1100_.d6BlH73jlJBV35Q--
+--Signature=_Fri__20_Dec_2013_15_09_21_+1100_BQxXCG9pzbHwYe6h--
