@@ -1,78 +1,56 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/2] GenWQE: Fix endian issues detected by sparse
-Date: Fri, 20 Dec 2013 08:47:05 -0800
-Message-ID: <20131220164705.GA24804@kroah.com>
-References: <CA+r1Zhimt7Xusnc4kkkVqfoRhfZRnreMmZqaN7WP7rSpZ3XTvw@mail.gmail.com>
- <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] gpu: fix qxl missing crc32_le
+Date: Fri, 20 Dec 2013 10:58:15 -0800
+Message-ID: <52B49347.3090209@infradead.org>
+References: <20131220172503.b2b7cb92f437d974f032e1a4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53027 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753614Ab3LTQq4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Dec 2013 11:46:56 -0500
-Content-Disposition: inline
-In-Reply-To: <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
+Received: from merlin.infradead.org ([205.233.59.134]:38024 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751581Ab3LTS6S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Dec 2013 13:58:18 -0500
+In-Reply-To: <20131220172503.b2b7cb92f437d974f032e1a4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Cc: fengguang.wu@intel.com, jim.epost@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, alevy@redhat.com
 
-On Fri, Dec 20, 2013 at 04:26:10PM +0100, Frank Haverkamp wrote:
-> Fengguang Wu used CF=-D__CHECK_ENDIAN__ to check the GenWQE driver for
-> endian issues. Sparse found a couple of those. Most of them were caused
-> by not correctly handling __be64/32 and __u64/32. Those I was able to
-> fix with appropriate castings.
-> 
-> One more serious issue was the ATS entry in struct genwqe_ddcb_cmd.
-> The kernel expected it in big-endian, but the type was defined __u64.
-> I decided that it is better to keep the interface consistent using
-> host endian byte-odering instead of having a mixture. With this change
-> the kernel likes to see host endian byte order for the ATS entry. That
-> would have been an interface change, if someone would have used the
-> driver already. Since this is not the case, I hope it is ok to fix it
-> now.
-> 
-> For the genqwe_readq/writeq/readl/writel functions I enforced the casts.
-> 
-> It still complains, as far as I can see, about some copy_to/from_user()
-> usages:
-> 
->   CHECK   char-misc/drivers/misc/genwqe/card_dev.c
-> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
-> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
-> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
-> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
->   CC [M]  drivers/misc/genwqe/card_dev.o
->   CHECK   char-misc/drivers/misc/genwqe/card_ddcb.c
-> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
-> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
-> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
->   CC [M]  drivers/misc/genwqe/card_ddcb.o
->   LD [M]  drivers/misc/genwqe/genwqe_card.o
-> 
-> I appreciate some help from you to figure out what is causig those, and
-> making a proposal how to fix them.
-> 
-> I included the missing header file to fix the
-> implicit-function-declaration warning when using dynamic_hex_dump.
-> 
-> Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-In the future (I missed this as well), please use a "Reported-by:" tag
-to document who reported the problem to you.
+Fix build error: qxl uses crc32 functions so it needs to select
+CRC32.
 
-thanks,
+Also use angle quotes around a kernel header file name.
 
-greg k-h
+drivers/built-in.o: In function `qxl_display_read_client_monitors_config':
+(.text+0x19d754): undefined reference to `crc32_le'
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ drivers/gpu/drm/qxl/Kconfig       |    1 +
+ drivers/gpu/drm/qxl/qxl_display.c |    2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+--- linux-next-20131220.orig/drivers/gpu/drm/qxl/qxl_display.c
++++ linux-next-20131220/drivers/gpu/drm/qxl/qxl_display.c
+@@ -24,7 +24,7 @@
+  */
+ 
+ 
+-#include "linux/crc32.h"
++#include <linux/crc32.h>
+ 
+ #include "qxl_drv.h"
+ #include "qxl_object.h"
+--- linux-next-20131220.orig/drivers/gpu/drm/qxl/Kconfig
++++ linux-next-20131220/drivers/gpu/drm/qxl/Kconfig
+@@ -8,6 +8,7 @@ config DRM_QXL
+ 	select DRM_KMS_HELPER
+ 	select DRM_KMS_FB_HELPER
+ 	select DRM_TTM
++	select CRC32
+ 	help
+ 	  QXL virtual GPU for Spice virtualization desktop integration.
+ 	  Do not enable this driver unless your distro ships a corresponding
