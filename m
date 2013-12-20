@@ -1,56 +1,35 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] gpu: fix qxl missing crc32_le
-Date: Fri, 20 Dec 2013 10:58:15 -0800
-Message-ID: <52B49347.3090209@infradead.org>
-References: <20131220172503.b2b7cb92f437d974f032e1a4@canb.auug.org.au>
+From: Frank Haverkamp <haver@linux.vnet.ibm.com>
+Subject: Re: [PATCH 1/2] GenWQE: Fix endian issues detected by sparse
+Date: Fri, 20 Dec 2013 20:12:53 +0100
+Message-ID: <1387566773.1847.28.camel@oc7383187364.ibm.com>
+References: <CA+r1Zhimt7Xusnc4kkkVqfoRhfZRnreMmZqaN7WP7rSpZ3XTvw@mail.gmail.com>
+	 <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
+Reply-To: haver@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:38024 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751581Ab3LTS6S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Dec 2013 13:58:18 -0500
-In-Reply-To: <20131220172503.b2b7cb92f437d974f032e1a4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, alevy@redhat.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: fengguang.wu@intel.com
+Cc: jim.epost@gmail.com, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Greg,
 
-Fix build error: qxl uses crc32 functions so it needs to select
-CRC32.
+Am Freitag, den 20.12.2013, 16:26 +0100 schrieb Frank Haverkamp:
+> +++ b/drivers/misc/genwqe/card_utils.c
+> @@ -59,7 +59,7 @@ int __genwqe_writeq(struct genwqe_dev *c
+>         if (cd->mmio == NULL)
+>                 return -EIO;
+> 
+> -       __raw_writeq(cpu_to_be64((val)), (cd->mmio + byte_offs));
+> +       __raw_writeq((__force u32)cpu_to_be64(val), cd->mmio +
+> byte_offs);
 
-Also use angle quotes around a kernel header file name.
+what a pity. I introduced here a wrong cast to u32 and not to u64 what
+it should have been. I will send a fix, once I have tried it out.
 
-drivers/built-in.o: In function `qxl_display_read_client_monitors_config':
-(.text+0x19d754): undefined reference to `crc32_le'
+Regards
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
- drivers/gpu/drm/qxl/Kconfig       |    1 +
- drivers/gpu/drm/qxl/qxl_display.c |    2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
---- linux-next-20131220.orig/drivers/gpu/drm/qxl/qxl_display.c
-+++ linux-next-20131220/drivers/gpu/drm/qxl/qxl_display.c
-@@ -24,7 +24,7 @@
-  */
- 
- 
--#include "linux/crc32.h"
-+#include <linux/crc32.h>
- 
- #include "qxl_drv.h"
- #include "qxl_object.h"
---- linux-next-20131220.orig/drivers/gpu/drm/qxl/Kconfig
-+++ linux-next-20131220/drivers/gpu/drm/qxl/Kconfig
-@@ -8,6 +8,7 @@ config DRM_QXL
- 	select DRM_KMS_HELPER
- 	select DRM_KMS_FB_HELPER
- 	select DRM_TTM
-+	select CRC32
- 	help
- 	  QXL virtual GPU for Spice virtualization desktop integration.
- 	  Do not enable this driver unless your distro ships a corresponding
+Frank
