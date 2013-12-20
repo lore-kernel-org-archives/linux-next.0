@@ -1,35 +1,31 @@
 From: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] GenWQE: Fix endian issues detected by sparse
-Date: Fri, 20 Dec 2013 20:12:53 +0100
-Message-ID: <1387566773.1847.28.camel@oc7383187364.ibm.com>
-References: <CA+r1Zhimt7Xusnc4kkkVqfoRhfZRnreMmZqaN7WP7rSpZ3XTvw@mail.gmail.com>
-	 <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
-Reply-To: haver@linux.vnet.ibm.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] GenWQE: Accidently casting to u32 where u64 is required
+Date: Fri, 20 Dec 2013 20:27:20 +0100
+Message-ID: <1387567640-25413-1-git-send-email-haver@linux.vnet.ibm.com>
+References: <1387566773.1847.28.camel@oc7383187364.ibm.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
+In-Reply-To: <1387566773.1847.28.camel@oc7383187364.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: fengguang.wu@intel.com
-Cc: jim.epost@gmail.com, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org
+To: gregkh@linuxfoundation.org
+Cc: jim.epost@gmail.com, sfr@canb.auug.org.au, fengguang.wu@intel.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org, haver@linux.vnet.ibm.com
 List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Fix a casting to u32 where u64 would be appropriate.
+The bad casting made the driver unusable.
 
-Am Freitag, den 20.12.2013, 16:26 +0100 schrieb Frank Haverkamp:
-> +++ b/drivers/misc/genwqe/card_utils.c
-> @@ -59,7 +59,7 @@ int __genwqe_writeq(struct genwqe_dev *c
->         if (cd->mmio == NULL)
->                 return -EIO;
-> 
-> -       __raw_writeq(cpu_to_be64((val)), (cd->mmio + byte_offs));
-> +       __raw_writeq((__force u32)cpu_to_be64(val), cd->mmio +
-> byte_offs);
+Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
+---
+ drivers/misc/genwqe/card_utils.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-what a pity. I introduced here a wrong cast to u32 and not to u64 what
-it should have been. I will send a fix, once I have tried it out.
-
-Regards
-
-Frank
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -59,7 +59,7 @@ int __genwqe_writeq(struct genwqe_dev *c
+ 	if (cd->mmio == NULL)
+ 		return -EIO;
+ 
+-	__raw_writeq((__force u32)cpu_to_be64(val), cd->mmio + byte_offs);
++	__raw_writeq((__force u64)cpu_to_be64(val), cd->mmio + byte_offs);
+ 	return 0;
+ }
+ 
