@@ -1,71 +1,77 @@
 From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2] GenWQE: Replace dynamic_hex_dump with
- print_hex_dump_debug
-Date: Fri, 20 Dec 2013 07:55:19 -0800
-Message-ID: <20131220155519.GA6890@kroah.com>
+Subject: Re: [PATCH 1/2] GenWQE: Fix endian issues detected by sparse
+Date: Fri, 20 Dec 2013 08:47:05 -0800
+Message-ID: <20131220164705.GA24804@kroah.com>
 References: <CA+r1Zhimt7Xusnc4kkkVqfoRhfZRnreMmZqaN7WP7rSpZ3XTvw@mail.gmail.com>
- <1387553171-31469-2-git-send-email-haver@linux.vnet.ibm.com>
- <20131220153309.GA21797@kroah.com>
- <1387554543.1847.22.camel@oc7383187364.ibm.com>
+ <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52686 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53027 "EHLO
 	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752109Ab3LTPzK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Dec 2013 10:55:10 -0500
+	with ESMTP id S1753614Ab3LTQq4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Dec 2013 11:46:56 -0500
 Content-Disposition: inline
-In-Reply-To: <1387554543.1847.22.camel@oc7383187364.ibm.com>
+In-Reply-To: <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Frank Haverkamp <haver@linux.vnet.ibm.com>
 Cc: fengguang.wu@intel.com, jim.epost@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org
 
-On Fri, Dec 20, 2013 at 04:49:03PM +0100, Frank Haverkamp wrote:
-> Hi Greg,
+On Fri, Dec 20, 2013 at 04:26:10PM +0100, Frank Haverkamp wrote:
+> Fengguang Wu used CF=-D__CHECK_ENDIAN__ to check the GenWQE driver for
+> endian issues. Sparse found a couple of those. Most of them were caused
+> by not correctly handling __be64/32 and __u64/32. Those I was able to
+> fix with appropriate castings.
 > 
-> Am Freitag, den 20.12.2013, 07:33 -0800 schrieb Greg KH:
-> > On Fri, Dec 20, 2013 at 04:26:11PM +0100, Frank Haverkamp wrote:
-> > > As requested by Greg, replacing the hexdump function from dynamic_debug.h
-> > > with one defined in printk.h. I hope I picked the right one.
-> > 
-> > No, just use the "%*ph" modifier for printk.
-> > 
-> > So, you can do it all on just one line:
-> >   	scnprintf(prefix, sizeof(prefix), "%s %s: %*ph\n",
-> >   		  GENWQE_DEVNAME, pci_name(pci_dev), size, buff);
+> One more serious issue was the ATS entry in struct genwqe_ddcb_cmd.
+> The kernel expected it in big-endian, but the type was defined __u64.
+> I decided that it is better to keep the interface consistent using
+> host endian byte-odering instead of having a mixture. With this change
+> the kernel likes to see host endian byte order for the ATS entry. That
+> would have been an interface change, if someone would have used the
+> driver already. Since this is not the case, I hope it is ok to fix it
+> now.
 > 
-> Oh, I did not know that such a feature exists. The buffer I like to dump
-> is 256 bytes large. Looking in to Documentation/printk-formats.txt it
-> says:
+> For the genqwe_readq/writeq/readl/writel functions I enforced the casts.
 > 
-> Raw buffer as a hex string:
->         %*ph    00 01 02  ...  3f
->         %*phC   00:01:02: ... :3f
->         %*phD   00-01-02- ... -3f
->         %*phN   000102 ... 3f
+> It still complains, as far as I can see, about some copy_to/from_user()
+> usages:
 > 
->         For printing a small buffers (up to 64 bytes long) as a hex
-> string with
->         certain separator. For the larger buffers consider to use
->         print_hex_dump().
+>   CHECK   char-misc/drivers/misc/genwqe/card_dev.c
+> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
+> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
+> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
+> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
+>   CC [M]  drivers/misc/genwqe/card_dev.o
+>   CHECK   char-misc/drivers/misc/genwqe/card_ddcb.c
+> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
+> char-misc/arch/x86/include/asm/uaccess.h:625:18: warning: incorrect type in argument 1 (different modifiers)
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    expected void *<noident>
+> char-misc/arch/x86/include/asm/uaccess.h:625:18:    got void const *from
+>   CC [M]  drivers/misc/genwqe/card_ddcb.o
+>   LD [M]  drivers/misc/genwqe/genwqe_card.o
 > 
-> So is my choice still not ok, considering the data size I like to dump?
+> I appreciate some help from you to figure out what is causig those, and
+> making a proposal how to fix them.
+> 
+> I included the missing header file to fix the
+> implicit-function-declaration warning when using dynamic_hex_dump.
+> 
+> Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
 
-Ah, I didn't realize it was limited to 64 bytes long.  So nevermind,
-your original patch is fine, I'll queue it up.
-
-> > And even then, do you really need this genwqe_hexdump() function at all
-> > anymore?  What is it used for?
-> 
-> We were using this feature to dump work-requests before and after they
-> had been sent to the card. This was very helpful when there was a
-> problem with the card executing one of those requests. Now since the
-> card is really running stable, you  could argue that we do not need it
-> anymore. So if you really, really insist, I will remove the feature else
-> I would like to keep it.
-
-If you want to keep it, that's fine, just checking.
+In the future (I missed this as well), please use a "Reported-by:" tag
+to document who reported the problem to you.
 
 thanks,
 
