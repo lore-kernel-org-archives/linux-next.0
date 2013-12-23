@@ -1,78 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Mon, 23 Dec 2013 12:40:05 +1100
-Message-ID: <20131223124005.d65bea8edf00419a371be64b@canb.auug.org.au>
-References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
-	<20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
+Subject: linux-next: manual merge of the target-updates tree with Linus'
+ tree
+Date: Mon, 23 Dec 2013 14:25:50 +1100
+Message-ID: <20131223142550.2a138347235da28ee0f51e96@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Dec_2013_12_40_05_+1100_cpHkv1umPhiYefx/"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <b29396@freescale.com>, Shawn Guo <shawn.guo@linaro.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__23_Dec_2013_14_25_50_+1100_USUHAyXBNz3UYcO4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:52406 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756497Ab3LWDZ6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Dec 2013 22:25:58 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Grover <agrover@redhat.com>
 
---Signature=_Mon__23_Dec_2013_12_40_05_+1100_cpHkv1umPhiYefx/
+--Signature=_Mon__23_Dec_2013_14_25_50_+1100_USUHAyXBNz3UYcO4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 17 Dec 2013 13:28:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi Chris,
->=20
-> ping?
+Hi Nicholas,
 
-ping again - I am still getting this error.
+Today's linux-next merge of the target-updates tree got a conflict in
+drivers/target/target_core_tpg.c between commit de06875f0896 ("target:
+Remove extra percpu_ref_init") from Linus' tree and commit d344f8a15637
+("target: Rename core_tpg_{pre,post}_addlun for clarity") from the
+target-updates tree.
 
-> On Fri, 13 Dec 2013 12:57:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the mmc tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> >=20
-> > ERROR (phandle_references): Reference to non-existent node or label "pi=
-nctrl_usdhc4_1"
-> >=20
-> > ERROR: Input tree has errors, aborting (use -f to force output)
-> > make[2]: *** [arch/arm/boot/dts/imx6dl-sabresd.dtb] Error 2
-> > ERROR (phandle_references): Reference to non-existent node or label "pi=
-nctrl_usdhc4_1"
-> >=20
-> > ERROR: Input tree has errors, aborting (use -f to force output)
-> > make[2]: *** [arch/arm/boot/dts/imx6q-sabresd.dtb] Error 2
-> >=20
-> > Caused by commit fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support").
-> >=20
-> > I have used the mmc tree from next-20131212 for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__23_Dec_2013_12_40_05_+1100_cpHkv1umPhiYefx/
+diff --cc drivers/target/target_core_tpg.c
+index 2a573de19a9f,d1df39a05d88..000000000000
+--- a/drivers/target/target_core_tpg.c
++++ b/drivers/target/target_core_tpg.c
+@@@ -656,9 -658,15 +656,9 @@@ static int core_tpg_setup_virtual_lun0(
+  	spin_lock_init(&lun->lun_sep_lock);
+  	init_completion(&lun->lun_ref_comp);
+ =20
+- 	ret =3D core_tpg_post_addlun(se_tpg, lun, lun_access, dev);
+ -	ret =3D percpu_ref_init(&lun->lun_ref, core_tpg_lun_ref_release);
+ -	if (ret < 0)
+ -		return ret;
+ -
++ 	ret =3D core_tpg_add_lun(se_tpg, lun, lun_access, dev);
+ -	if (ret < 0) {
+ -		percpu_ref_cancel_init(&lun->lun_ref);
+ +	if (ret < 0)
+  		return ret;
+ -	}
+ =20
+  	return 0;
+  }
+
+--Signature=_Mon__23_Dec_2013_14_25_50_+1100_USUHAyXBNz3UYcO4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSt5R5AAoJEMDTa8Ir7ZwV2GAP/RV0uYcbmJiTTz5q1qw5HKpC
-JGlbcCKibaUDijNc5P0lyWAaWeiTzP8i3V5dzQLuChr42RjFQ8muWYXtv/RAhkj2
-U281TuElymWF5zbJ+/Aqc8LFr1RdzWa1vFt00aAKfjVWViHC+XySn/c/6bBrUSh/
-9Uy1al7wXldvPMxDpDpNNkI0pT/vRZDqtW8UuWqMA7GcC36pu14QzHS/1+F/qh93
-1RrGFrO/inelRKLWpZxpD9cXFvomp4UD+Ohy4wqJaK/Spf/cHN+GqqlhkMgvTB2L
-BOyeQDbbbkzvTt8vRb4dta+Nflz8xVIq9tZte8PHve6ROKKI87GNcOf+zHcgvOqO
-t2zW8W4RoTAGPtQLKlUKgh4wwpNejEywww/SdERhtQ1uXrOosMvQ7IhiV3AJ6WYU
-oyiyf670iAcXX94ThuGAWDGXLNgJrvuUyf8aDOXxYjfFZ+eADqVV2q/6RlMa8eox
-DSCH87V86rlP2RXtGzPMoznA3wIlNLokurJHOLtvL3ZyjZKZDg6yfv3JrSLmZI8n
-2qYlKIaVZ/z0NUDdEgKsyBpSzz18ay6ZlrJPUL1FtG7+/ZBQYlY1UzlFCdsBN9mi
-sy6TJveVTRsU3FGIYtefCeWxDtn6IOaTIbJHDRUIGMewp/fhi4acQ4W2zLPQp4NI
-uvJppDUnu5lvSOmgfq2G
-=sJgc
+iQIcBAEBCAAGBQJSt61CAAoJEMDTa8Ir7ZwV6ugP/jbUMpuEIkV7eLv3XkyAWx7F
+upikEBzbydG/GvUni3HajobSqlp1SDDipae40Ib+scYPcTAdPE1Iec+yOQeorfOG
+wJnC1N+p3H2lxiQU0PYE7W9ZMqUoXOPaA8Qieqt/uckZbfM1BuVuRa1681zyNWsP
+e/1UECvLRaQoYLK+B/9laqHxECorDyWrJiLKH3OdchRfldVasAblO4n3xq9i8qTx
+eWXkdLCNq/ao7jIROrFNXsjkiuVbbF8+msW20nxXXJrbkXA9F2DuGG7zkJhXUMub
+TDxY/RwbSaKuLPqaXo7vTmwNhVyoTuDiLXkNm9ZsJpYXvcZ0gjMX08G7o9ZKsQrk
+36XkY7Es7FsXN0hMEQmdkv9HJf/6UR539aRCw+iciWyGPBJupcqUXlhtaDPQIxKR
+I6lX0vVgfS9zq013blQ9dF6qa+nYFqz+yPsSb7nif+UK1CuPQaUk998VcfHfxu5h
+saWQmv16A6vZ0b24nzO0CgIdEA4D9hciqn4/AP9hdmvwPhfTBsoTHge3NCgjiPXO
+30ALVJpz3wl1vITR8+3RfEPUDkkod+Qi/7Ztk1c1uFFqn3uhNfGs943a1pG7UWD9
+xFt/fDlf+AYOpiWiUawi1J2wT0SBJ7UGKmZQXpHggzaNNrrwrUqYOo2grrn7FJRh
+cy4/l5N1XnE7DNSi5RnE
+=mP9n
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Dec_2013_12_40_05_+1100_cpHkv1umPhiYefx/--
+--Signature=_Mon__23_Dec_2013_14_25_50_+1100_USUHAyXBNz3UYcO4--
