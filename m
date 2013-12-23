@@ -1,41 +1,36 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: randconfig build error with next-20131223, in
- arch/x86/crypto/aesni-intel_avx.S
-Date: Mon, 23 Dec 2013 17:02:38 +0100
-Message-ID: <20131223160238.GA15360@pd.tnic>
-References: <CA+r1Zhh5As3QByXMvz0ha5Or2Xtxa3Y=QzuR75O7FwBKTk8XVA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5] gpio: add GPIO support for SMSC SCH311x
+Date: Mon, 23 Dec 2013 18:11:07 +0100
+Message-ID: <CACRpkdZ0u5uZ+S0AYTkAnOEm2dxTdBO+SYCagEk6qgPZ3tSkdA@mail.gmail.com>
+References: <1387792903-4286-1-git-send-email-br1@einfach.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1Zhh5As3QByXMvz0ha5Or2Xtxa3Y=QzuR75O7FwBKTk8XVA@mail.gmail.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-crypto@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1387792903-4286-1-git-send-email-br1@einfach.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Bruno Randolf <br1@einfach.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, David Cohen <david.a.cohen@intel.com>, Simon Guinot <simon.guinot@sequanux.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 23, 2013 at 08:09:18AM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
-> 
-> arch/x86/crypto/aesni-intel_avx.S: Assembler messages:
-> arch/x86/crypto/aesni-intel_avx.S:1449: Error: bad register name `%r12'
-> [...]
-> arch/x86/crypto/aesni-intel_avx.S:2807: Error: bad register name `%r12'
-> make[2]: *** [arch/x86/crypto/aesni-intel_avx.o] Error 1
+On Mon, Dec 23, 2013 at 11:01 AM, Bruno Randolf <br1@einfach.org> wrote:
 
-> #
-> # Automatically generated file; DO NOT EDIT.
-> # Linux/x86 3.13.0-rc5 Kernel Configuration
-> #
-> # CONFIG_64BIT is not set
-> CONFIG_X86_32=y
+> This patch adds support for the GPIOs found on the SMSC "Super I/O" chips
+> SCH3112, SCH3114 and SCH3116.
+>
+> The chip detection and I/O functions are copied from sch311x_wdt.
+>
+> Signed-off-by: Bruno Randolf <br1@einfach.org>
+>
+> ---
+> Notes (v5):
+> - #include <linux/io.h> to avoid error "implicit declaration of function 'outb'
+>   [-Werror=implicit-function-declaration]"
 
-Sounds like this aesni-intel_avx.S thing wasn't meant to be built for
-32-bit.
+Please send incremental patches after I have applied the patches
+to my tree. Applying this would force me to revert or rebase the
+tree, both bad alternatives.
 
--- 
-Regards/Gruss,
-    Boris.
+I will go and fix this myself now.
 
-Sent from a fat crate under my desk. Formatting is fine.
---
+Yours,
+Linus Walleij
