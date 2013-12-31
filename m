@@ -1,44 +1,55 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: randconfig build error with next-20131223, in
- arch/x86/crypto/aesni-intel_avx.S
-Date: Mon, 30 Dec 2013 17:04:50 +0800
-Message-ID: <20131230090450.GA8636@gondor.apana.org.au>
-References: <CA+r1Zhh5As3QByXMvz0ha5Or2Xtxa3Y=QzuR75O7FwBKTk8XVA@mail.gmail.com>
- <20131223160238.GA15360@pd.tnic>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Subject: [PATCH linux-next 1/2] staging: dgap: fix missing header inclusion
+Date: Tue, 31 Dec 2013 11:55:08 +0100
+Message-ID: <1388487309-22319-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20131223160238.GA15360@pd.tnic>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-crypto@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Lidza Louina <lidza.louina@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Scott H Kilau <Scott_Kilau@digi.com>, Eng.Linux@digi.com, trivial@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 23, 2013 at 05:02:38PM +0100, Borislav Petkov wrote:
-> On Mon, Dec 23, 2013 at 08:09:18AM -0700, Jim Davis wrote:
-> > Building with the attached random configuration file,
-> > 
-> > arch/x86/crypto/aesni-intel_avx.S: Assembler messages:
-> > arch/x86/crypto/aesni-intel_avx.S:1449: Error: bad register name `%r12'
-> > [...]
-> > arch/x86/crypto/aesni-intel_avx.S:2807: Error: bad register name `%r12'
-> > make[2]: *** [arch/x86/crypto/aesni-intel_avx.o] Error 1
-> 
-> > #
-> > # Automatically generated file; DO NOT EDIT.
-> > # Linux/x86 3.13.0-rc5 Kernel Configuration
-> > #
-> > # CONFIG_64BIT is not set
-> > CONFIG_X86_32=y
-> 
-> Sounds like this aesni-intel_avx.S thing wasn't meant to be built for
-> 32-bit.
+Include slab.h to fix the following compilation error:
 
-Indeed.  Tim, can you provide me with a fix for this?
+  drivers/staging/dgap/dgap_fep5.c: In function =E2=80=98dgap_do_config=
+_load=E2=80=99:
+  drivers/staging/dgap/dgap_fep5.c:78:2: error: implicit declaration of=
+ function =E2=80=98kzalloc=E2=80=99 [-Werror=3Dimplicit-function-declar=
+ation]
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+Cc: Lidza Louina <lidza.louina@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Scott H Kilau <Scott_Kilau@digi.com>
+Cc: Eng.Linux@digi.com
+Cc: trivial@kernel.org
+---
+
+Hi,
+
+This can be seen with e.g. linux next-20131224 arm allmodconfig.
+
+Best regards,
+
+V.
+
+ drivers/staging/dgap/dgap_fep5.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/dgap/dgap_fep5.c b/drivers/staging/dgap/dg=
+ap_fep5.c
+index 15f9a85..7deea2a 100644
+--- a/drivers/staging/dgap/dgap_fep5.c
++++ b/drivers/staging/dgap/dgap_fep5.c
+@@ -39,6 +39,7 @@
+ #include <asm/uaccess.h>	/* For copy_from_user/copy_to_user */
+ #include <linux/tty.h>
+ #include <linux/tty_flip.h>	/* For tty_schedule_flip */
++#include <linux/slab.h>
+=20
+ #if LINUX_VERSION_CODE >=3D KERNEL_VERSION(2,6,39)
+ #include <linux/sched.h>
+--=20
+1.8.5.2
