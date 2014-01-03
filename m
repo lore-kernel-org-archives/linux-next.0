@@ -1,59 +1,38 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2014-01-02-14-35 uploaded (musb)
-Date: Fri, 03 Jan 2014 12:47:47 -0800
-Message-ID: <52C721F3.2020101@infradead.org>
-References: <20140102223649.D8FB931C206@corp2gmr1-1.hot.corp.google.com> <52C6FA1E.4030607@infradead.org> <20140103200226.GD18722@saruman.home>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next build failure
+Date: Fri, 3 Jan 2014 14:56:09 -0800
+Message-ID: <20140103145609.76b9f8622e8914cde183d7ce@linux-foundation.org>
+References: <1388764729.2564.32.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140103200226.GD18722@saruman.home>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: akpm@linux-foundation.org, USB list <linux-usb@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51492 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753362AbaACW4L (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jan 2014 17:56:11 -0500
+In-Reply-To: <1388764729.2564.32.camel@deneb.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Salter <msalter@redhat.com>
+Cc: linux-next@vger.kernel.org, jmarchan@redhat.com
 
-On 01/03/14 12:02, Felipe Balbi wrote:
-> On Fri, Jan 03, 2014 at 09:57:50AM -0800, Randy Dunlap wrote:
->> On 01/02/14 14:36, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2014-01-02-14-35 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>
->> on x86_64:
->>
->> when CONFIG_USB is not enabled:
->>
->> drivers/built-in.o: In function `musb_init':
->> musb_core.c:(.init.text+0x45fc): undefined reference to `usb_disabled'
+On Fri, 03 Jan 2014 10:58:49 -0500 Mark Salter <msalter@redhat.com> wrote:
+
+> The c6x arch (no MMU) is failing to build in linux-next with:
 > 
-> already have a patch for that. Waiting for Greg to merge ;-)
-
-Thanks.
-
-> commit 89f836a8c56bfea6585a09f7afff7094968a4fd0
-> Author: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
-> Date:   Thu Dec 26 09:24:52 2013 -0300
+>   kernel/built-in.o:(.fardata+0x3fc): undefined reference to `overcommit_ratio_handler'
+>   kernel/built-in.o:(.fardata+0x420): undefined reference to `overcommit_kbytes_handler'
+>   make[1]: *** [vmlinux] Error 1
 > 
->     usb: musb: Remove usb_disable() check in module_init()
->     
->     Removing the check to usb_disable() before registering the platform
->     driver allows to build this driver when !USB && USB_GADGET, to be
->     used in gadget-only mode.
->     
->     Also, use module_platform_driver() to register the platform driver.
->     
->     Signed-off-by: Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
->     Signed-off-by: Felipe Balbi <balbi@ti.com>
+> Looks like this patch adds those functions to mm/mmap.c which
+> is only used when CONFIG_MMU is defined.
+> 
+>   commit 31bdaf7c8e8a784fd8f889371bdacb24670734c7
+>   Author: Jerome Marchand <jmarchan@redhat.com>
+>   Date:   Tue Dec 17 10:45:06 2013 +1100
+> 
+>       mm: add overcommit_kbytes sysctl variable
 
--- 
-~Randy
+Please check whether that linux-next includes
+http://ozlabs.org/~akpm/mmotm/broken-out/mm-add-overcommit_kbytes-sysctl-variable-fix-2.patch
