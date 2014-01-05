@@ -1,90 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 6 Jan 2014 10:20:31 +1100
-Message-ID: <20140106102031.8ecedbad59dddbc8aa0946ce@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
+Date: Mon, 6 Jan 2014 10:38:50 +1100
+Message-ID: <20140106103850.3c60fa973ae9355c0a3c2449@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0013517463573351960=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Shawn Guo <shawn.guo@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Fabio Estevam <fabio.estevam@freescale.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
+List-Id: linux-next.vger.kernel.org
+
+--===============0013517463573351960==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Jan_2014_10_20_31_+1100_5Gja8rk9olyAcxvq"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60786 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751941AbaAEXUl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 5 Jan 2014 18:20:41 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Daudt <csd@broadcom.com>, ebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+ boundary="Signature=_Mon__6_Jan_2014_10_38_50_+1100_zHLIbuw/TY3GiNlU"
 
---Signature=_Mon__6_Jan_2014_10_20_31_+1100_5Gja8rk9olyAcxvq
+--Signature=_Mon__6_Jan_2014_10_38_50_+1100_zHLIbuw/TY3GiNlU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shawn,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/Kconfig.debug between commit 753d12434da3 ("ARM: 7932/1: bcm:
-Add DEBUG_LL console support") from the arm tree and commit caad0b41de69
-("ARM: add Marvell Berlin UART0 lowlevel debug") from the arm-soc tree.
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/boot/dts/imx27-phytec-phycore-som.dtsi between commit
+8f568b496dd9 ("ARM: imx: Explicitly pass the active level of the PHY
+reset") from the arm-soc tree and commit 208d5b9c2c71 ("ARM: dts: i.MX27
+boards: Switch to use standard GPIO and IRQ flags definitions") from the
+imx-mxs tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I randomly chose to go with the latter - please get
+together and decide which is right) and can carry the fix as necessary
+(no action is required).
+
+At the time of those commits, the file was called
+arch/arm/boot/dts/imx27-phytec-phycore-som.dts (it is renamed by commit
+c7914d9b5565 ("ARM: dts: imx27-phytec-phycore-som: Rename file to .dtsi"
+from the imx-mxs tree) and we we ended up with (cut and paste damaged):
+
+&fec {
+	phy-mode =3D "mii";
+	phy-reset-gpios =3D <&gpio3 30 GPIO_ACTIVE_HIGH>;
+	phy-supply =3D <&reg_3v3>;
+	pinctrl-names =3D "default";
+	pinctrl-0 =3D <&pinctrl_fec1>;
+	status =3D "okay";
+};
 
 --=20
 Cheers,
 Stephen Rothwell <sfr@canb.auug.org.au>
 
-diff --cc arch/arm/Kconfig.debug
-index 9afabbb5e798,bda94e46e8d6..000000000000
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@@ -106,17 -94,14 +106,25 @@@ choic
-  		depends on ARCH_BCM2835
-  		select DEBUG_UART_PL01X
- =20
- +	config DEBUG_BCM_KONA_UART
- +		bool "Kernel low-level debugging messages via BCM KONA UART"
- +		depends on ARCH_BCM
- +		select DEBUG_UART_8250
- +		help
- +		  Say Y here if you want kernel low-level debugging support
- +		  on Broadcom SoC platforms.
- +		  This low level debug works for Broadcom
- +		  mobile SoCs in the Kona family of chips (e.g. bcm28155,
- +		  bcm11351, etc...)
- +
-+ 	config DEBUG_BERLIN_UART
-+ 		bool "Marvell Berlin SoC Debug UART"
-+ 		depends on ARCH_BERLIN
-+ 		select DEBUG_UART_8250
-+ 		help
-+ 		  Say Y here if you want kernel low-level debugging support
-+ 		  on Marvell Berlin SoC based platforms.
-+=20
-  	config DEBUG_CLPS711X_UART1
-  		bool "Kernel low-level debugging messages via UART1"
-  		depends on ARCH_CLPS711X
-
---Signature=_Mon__6_Jan_2014_10_20_31_+1100_5Gja8rk9olyAcxvq
+--Signature=_Mon__6_Jan_2014_10_38_50_+1100_zHLIbuw/TY3GiNlU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSyejGAAoJEMDTa8Ir7ZwVWcIP/1TxaPOmhIl1CgO1A8bKRQMB
-jmQ5OfUhoSX/1CpESlIW5B9cVG8ENRFxhennPvaJWYpfMqWGjHYeRWIuAyBx7YcA
-e7rYI6SOGb9JJ1wAf3jJat1Tu0zuUK6RfJIG86Vs2FFOH/Z8h5CFbvlznkMzSzx7
-cHaiipO8h7+WRXmtWAK3IRoIrSkWd6f5QqeD9/jqAKgn2kcHaIQQfGIGDzqGb7it
-9d83MdJVVJeHG6Sff+xEPo/sp91WoBPHlooddlCi6oYYIlPuP/eqIx8AmLNlWsOQ
-pCvKPF0Q4hyqmU7rZtFv58EpJCvZw2+n5uAj5DP1CwpIB+FLeTAvBjkrIJ6hZfzf
-l2Ud8US9MmgFHtxR42xLFSMB+oewRaKf9f3NfpVu136V26Ffypr/YF4BwCSxXOhf
-ymX7YsaP6TbHWu8L1ZKN6LWtG4VG7P6wLwSTmxtVos1CScIQTvQd5vMWbpttFKXX
-AbVZTbru+CkVNgQ360Ri88IEDvtL+2Yz5W1uUnkxDjwxLvWzXbtPLmAVdNaOCDNo
-4/XK7cqw2/EGKTn0Nd7CUwAUC+mEY6a2HIw4SoNs4ZGp/mUNJxKP2djM1Fia/OWO
-udiSmX5kf7ZMQV3ZWj9M9nW2cjJsJTQgaMrkUHvpXyw4qZtwnXR7QiEa/SosMknv
-f2mzzBPphkaM24mDwOYG
-=O8O3
+iQIcBAEBCAAGBQJSye0OAAoJEMDTa8Ir7ZwVmDcQAINLAoNQv1ANcrw7Mah0ylrA
+iStW0WV7rieWaa69AOSkssS7CxHTOwYfaw4CVrhZAmN61x+fqx3KLALtnHBWtyaz
+g9/SS8Dlzwkvc7hXoD7kgnxa9/uEMsZsMqka/lQJdmUbs5JWnSo191fj0vDmdx0d
+jjvVp89DqLk5tZMdDuv4a+1cDTKTMvaBtHk9JRvW6bQ83TVnZTczLQmEVuyrDZPD
+Q/YP+LYQKhSvNUdEkU86O4aY99GYqeqAng4Ojf3JPwSmeMnFCcDfpDWmMM+AL7k9
+EftxpUpXqsbuMmevaotB4ahr0owjw7KG/7hsA1zUfnl10B7N/tQCG35OQj0bN83S
+JV55ZmzxY03nNIE+3TOjHjm87CQJgKjuC2CATVHeh02FWioNrMY6TktxLfhDE8Jp
+BkH2jDIcJXr0MMX2dXYzllQz8VN9pIsGa3O93nA3miAZUaftx3Q6IyIuIsTRiDkc
+Tm8+PaWFE3A1degtNwDYdBGT4kWtIVf6Dxq/2aAUcIIG26vmPRQtLhq4Mt16mwdM
+PeJaO8yDwSuALB+EUOKvg8GK00aABOjsV2Jmh2t6JQIQ0qxbOOAdaI5kaBLds2kX
+Xr/VzitnQCUo8pztq6SbJnyAwp8LD+Y9lEKWiTRDq5z7OHKjMKpyKzQ3Zj20Sz7v
+XmYVGtdIbVISrfE41ZdK
+=zsw8
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Jan_2014_10_20_31_+1100_5Gja8rk9olyAcxvq--
+--Signature=_Mon__6_Jan_2014_10_38_50_+1100_zHLIbuw/TY3GiNlU--
+
+
+--===============0013517463573351960==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0013517463573351960==--
