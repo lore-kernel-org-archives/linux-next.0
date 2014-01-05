@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
-Date: Mon, 6 Jan 2014 10:42:27 +1100
-Message-ID: <20140106104227.6cbe4b16e2fe4120a7e1c51a@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the  tree
+Date: Mon, 6 Jan 2014 10:49:38 +1100
+Message-ID: <20140106104938.82a53f6d3b4d773607fe7556@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Jan_2014_10_42_27_+1100_R8U9A1sr.g.Q9gpd"
+ boundary="Signature=_Mon__6_Jan_2014_10_49_38_+1100_Bh_Is9I1rSMDHHyd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:39131 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:47027 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751407AbaAEXmq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 5 Jan 2014 18:42:46 -0500
+	id S1751872AbaAEXto (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Jan 2014 18:49:44 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Shawn Guo <shawn.guo@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>, Alexander Shiyan <shc_work@mail.ru>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>, Troy Kisky <troy.kisky@boundarydevices.com>
 
---Signature=_Mon__6_Jan_2014_10_42_27_+1100_R8U9A1sr.g.Q9gpd
+--Signature=_Mon__6_Jan_2014_10_49_38_+1100_Bh_Is9I1rSMDHHyd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,37 +24,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi Shawn,
 
 Today's linux-next merge of the imx-mxs tree got a conflict in
-arch/arm/boot/dts/imx51-apf51.dts between commit 8f568b496dd9 ("ARM: imx:
-Explicitly pass the active level of the PHY reset") from the arm-soc tree
-and commit 756c8d5762c2 ("ARM: dts: i.MX51 boards: Switch to use standard
-GPIO flags definitions") from the imx-mxs tree.
+arch/arm/boot/dts/imx6q-sabrelite.dts between commit 8f568b496dd9 ("ARM:
+imx: Explicitly pass the active level of the PHY reset") from the arm-soc
+tree and commit e5a5af250568 ("ARM: dts: imx: sabrelite: add Dual
+Lite/Solo support") from the imx-mxs tree.
 
-I fixed it up (again, I arbitrarily chose to go with the latter) and can
-carry the fix as necessary (no action is required).
+I fixed it up (just used the latter) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Mon__6_Jan_2014_10_42_27_+1100_R8U9A1sr.g.Q9gpd
+--Signature=_Mon__6_Jan_2014_10_49_38_+1100_Bh_Is9I1rSMDHHyd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSye3nAAoJEMDTa8Ir7ZwVWrIP/2mZMnlGc87oUOPiEVz8eCsM
-AkCC0wVId0+J+EebWJoD2OYnC2BTu+IfCuSNY2wDI9flvqKTMzzV5w8Mp7imq0BX
-jiFbYVNtfgipSvZtkogc758mIeh+pnJ7ZD6vWAXwFLFZLkTgCrIwtBtSu7MulCnK
-rg17kSKZjJiUUGesUdgT3ToDYHOMwg0Yq0c6hQaoeplaRlfAyqGJv0ZcLya19CKz
-GTBvkUPfRv+PCsY7/sDOlYwrzCj4DSVtXCSlODMa7NCd5JYp1tFcL27Oypx2YEEX
-0fg9txHc5ZlZNZg0bKHd7UIH7Xnj4bvW0B8cS/Wj/NoVAtTPCCXoGPLcjbGy07ZW
-CUBSsp4JQVgOZzjyqZllj3jDv9ULTx9oWa/7yaGulTYbRLakyDRPBo9CXjNmX+H+
-mFFtZXSPbulTJjQZh/NGQU0EnK/qzmXlYFdo3LalStDy7ss7sNGDQB4MgQ8m682O
-iqDia5lQr2hadQZEkOdJp2JVil/aHWW/N8YuCJKuuS8yN2DMkO1xNN9PRrNygFpi
-IXXnOjpbaeUaKOI1h41R/BeoQuwny/FMmGHnvtM1mVcWgX5BopaHhpZbxK/gdoqj
-heuNXCNysmLUhorQ7qEwlH2Mb2ZjbvALcz+P1IADrXjO2eAJigicqrAqiGLiXu8x
-Ep3bYFaJ+hLrDbMu5xnl
-=sxYX
+iQIcBAEBCAAGBQJSye+WAAoJEMDTa8Ir7ZwVPWQP/R/agg5MPS2aYWbJwPWUydFo
+rkat2FYU7sgv7PzOFSc/OXA3oq134dxlxaV9p4CVfXgkcOMRyudOlBAihLST7c0B
+mjP0DNHa3RnN5vBIsY/VWvdlhLB7hCSLNYY/fPPaqlk6/4QYANKSgcruaEAyLEt6
+ywQm/iIka5B6O8M1d2+44JzLVWvdusQxQ6M5T7t/xcntpwrFavB4d4IQSndyjw/6
+2imaIeQUcbZpIQZyw1N0FC9qjNcvwIuf+ZhjVVDlvfpR+als3cIbt2bMjQQRRW9F
+hhH5B5s7iSwIudw4qeCsDQkNIGFCtXxa74AWAEzQYwHKpa4ePlf9MFZyqDE6UxJw
+mgOSy3ZHWQfW8QOU87PMqKYH72XK/fr21Z5EcEResb6uPjgDhwKy4X7pFvlXBwhh
+clh0VFD++48OfMpB1kmar+L2t8V6PoFmUO7tvt2NwaiTVShHG4mRWwZcyzKB1ig8
+i5iCNyKh6Me9ydfL5GSoUpqnVGuUDTkWoB54dxltfh3pmd8cIKCohZnr4bHT1HTy
+IApCCbxemz5PeR/U1yDBmiVdryz24q/nG9p8/EI3l7efRJAwhBR3e6Ht0yCs7U5P
+CHsjtFHrppc/sH0PzQyOnpmPd6phjiMLmlyu852AOc2j6ZkSEVDmp9kmSmAD/7da
+QMGtORsnlq1Z9NZPMcbu
+=FH9m
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Jan_2014_10_42_27_+1100_R8U9A1sr.g.Q9gpd--
+--Signature=_Mon__6_Jan_2014_10_49_38_+1100_Bh_Is9I1rSMDHHyd--
