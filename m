@@ -1,40 +1,65 @@
-From: Dong Aisheng <dongas86@gmail.com>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Mon, 6 Jan 2014 14:46:39 +0800
-Message-ID: <CAA+hA=RZdT=Nz6P+TYtSHxPvA0WwsZUsod=FnBU7OtZa=8GtTQ@mail.gmail.com>
-References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
-	<20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
-	<CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
-	<20131217031600.GG6691@S2101-09.ap.freescale.net>
-	<CAA+hA=QU1TApbbohD1iNFiMMMHdQSamRfOsO0r3GpqmCbdiSgw@mail.gmail.com>
-	<20140106172243.8067c8e72c666511129a9701@canb.auug.org.au>
-	<CAA+hA=TDJM_OAh=WFd5mqsix9-ZQuPvzXe_xHH0z+4xSZRRsBg@mail.gmail.com>
-	<20140106064600.GE26128@S2101-09.ap.freescale.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Mon, 6 Jan 2014 18:03:05 +1100
+Message-ID: <20140106180305.2839a467466f52f97ac68b93@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140106064600.GE26128@S2101-09.ap.freescale.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__6_Jan_2014_18_03_05_+1100_wSRUuS1DcmxyRyJl"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:42727 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751218AbaAFHDQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jan 2014 02:03:16 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
 
-On Mon, Jan 6, 2014 at 2:46 PM, Shawn Guo <shawn.guo@linaro.org> wrote:
-> On Mon, Jan 06, 2014 at 02:30:00PM +0800, Dong Aisheng wrote:
->> Hi Shawn,
->>
->> How do you suggest to fix this issue?
->> Can we cook a patch for it directly based on linux-next tree?
->
-> No, we can not.  No patch should be targeting linux-next tree.  I just
-> gave a resolution to Stephen.  Before Chris shows up and drops the patch
-> from his tree, we will need to use that temp resolution.
->
+--Signature=_Mon__6_Jan_2014_18_03_05_+1100_wSRUuS1DcmxyRyJl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Got it, thanks.
+Hi Mark,
 
-Regards
-Dong Aisheng
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-> Shawn
->
+drivers/spi/spi-dw-pci.c: In function 'spi_pci_probe':
+drivers/spi/spi-dw-pci.c:50:29: error: 'dev' undeclared (first use in this =
+function)
+  dwpci =3D devm_kzalloc(&pdev-dev, sizeof(struct dw_spi_pci), GFP_KERNEL);
+                             ^
+
+Caused by commit 04f421e7b0b1 ("spi: dw: use managed resources").
+
+I have used the spi tree from next-20131224 for today (since the above
+commit does not revert cleanly).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__6_Jan_2014_18_03_05_+1100_wSRUuS1DcmxyRyJl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSylUtAAoJEMDTa8Ir7ZwVbVEP/3p8LJwB/AN0dqoKSPdwmg+9
+5kMkT3JqdVSmfMyAh760B+RNDkBNOZpSeFOaQR5b3OyrrBkAm9Gf1f5Pkcy6vmb7
+pjXUGrypJgS2pl6lXvxL0piWi8YsTUCUmf5B6qfMmQ1k/6ZHGKJW5z3I2WxzNhjt
+nELACP1WnDA8HAh/93hqNVbllUUgGVyHZeMBQ6G1wIploBBYrcMC/6H3DNiYCFgN
+z/oqbuuxMyJDF4FCa0vmI8hZQFstqa4IJbrX/3GqJHrqvP6JfIlk+jDQi9MV1kV6
+Lt/WPT2FPQDkWpWtW14VbYAmweZ1VidXZJPE0N3zBbPiWTOxRTpoTR3DALzaGsRb
+Th3Gy6sNN0K1njk4A6c7NI7pBoIxBem42dbgcyVWSRKVftseA+l2e/1y++AtNefh
+M1QcMSBIRpweOu6W2mz8RqBA0BJA/e0ILUqmMz/j5x5xDcHLfCgQR6QyEW7Qvept
+AVPES/j/4HTltH9H/yecVH9cR8lJ9WXDW8ASFpZoDnz7vemf5amFjfz7PpnHfozp
+9kZvz0pfMnGBSAYB2Y1/qb6RAz7sC7ndVVbLXUosuRt20/5vlG0m8DbVYMGyGiza
+dtpxqgSOZvabBc9UoUEhAzJBne5xd73CBWZWyETAgsDg0Rdgw9sv0KP2zxZr/xys
+xRvahMV7GUdSFQP8UCcG
+=VxAT
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__6_Jan_2014_18_03_05_+1100_wSRUuS1DcmxyRyJl--
