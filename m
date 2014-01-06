@@ -1,64 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sh tree with the  tree
-Date: Mon, 6 Jan 2014 12:13:17 +1100
-Message-ID: <20140106121317.bada4233ec3fec40f79735cc@canb.auug.org.au>
+Subject: linux-next: manual merge of the thermal tree with the pm tree
+Date: Mon, 6 Jan 2014 14:14:19 +1100
+Message-ID: <20140106141419.308086b992aae2e1ee729f6e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:33234 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752164AbaAFBNZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 5 Jan 2014 20:13:25 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bastian Hecht <hechtb@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+ boundary="Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>, Eduardo Valentin <eduardo.valentin@ti.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1
+--Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Zhang,
 
-Today's linux-next merge of the sh tree got conflicts in
-drivers/tty/serial/sh-sci.c and include/linux/serial_sci.h between
-commits 8fb9631c517b ("serial: sh-sci: Sort headers alphabetically"),
-20bdcab8268c ("serial: sh-sci: Add OF support") and probably others from
-the arm-soc tree and commits ada80ee7fa60 ("serial: sh-sci: Add OF
-support") and b19ef75c56e9 ("serial: sh-sci: OF definitions need
-linux/of.h") from the sh tree.
+Today's linux-next merge of the thermal tree got a conflict in
+drivers/cpufreq/Kconfig between commit 109df086e002 ("cpufreq: Select
+PM_OPP rather than depending on it") from the pm tree and commit
+77cff5926a14 ("cpufreq: cpufreq-cpu0: add dt node parsing for cooling
+device properties") from the thermal tree.
 
-The arm-soc tree version is dated much more recently than
-the sh tree version and conflicts badly, so for today I have just dropped
-the sh tree (everything in there was committed before April 2013).  Please
-figure this out.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1
+diff --cc drivers/cpufreq/Kconfig
+index 386dbc9ccdfd,6b8cde5f98af..000000000000
+--- a/drivers/cpufreq/Kconfig
++++ b/drivers/cpufreq/Kconfig
+@@@ -181,8 -181,7 +181,8 @@@ config CPU_FREQ_GOV_CONSERVATIV
+ =20
+  config GENERIC_CPUFREQ_CPU0
+  	tristate "Generic CPU0 cpufreq driver"
+- 	depends on HAVE_CLK && REGULATOR && OF
+ -	depends on HAVE_CLK && REGULATOR && PM_OPP && OF && THERMAL && CPU_THERM=
+AL
+++	depends on HAVE_CLK && REGULATOR && OF && THERMAL && CPU_THERMAL
+ +	select PM_OPP
+  	help
+  	  This adds a generic cpufreq driver for CPU0 frequency management.
+  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
+
+--Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSygMyAAoJEMDTa8Ir7ZwVikkP+wdSxBZ+oTWuZIkr1qabm69b
-HYjk97O0HvXr/bgppF3CFzHWm1g7vqtK3UwXjp0Z8H+VpmaoTc0IVn99+wQKZ9/d
-yBenqdPSMAlYDUZD68RfOCmBIQIf9sHIvtLiXN2Q49sDu5syiaA6Xt+WDHhxYIdq
-dIhpktSptG8LbT3H/2EtqTibzIqA5UmaNnou9Y5D2xFJYHXFOAkPWgJXQyeBmrAD
-HJPaNiWQXWkQqs8vyCuHuI3QM8jW6BHFqnXMbJGGr8rZ/Olim+IqCuMAFhVL9M+B
-Cnzyo4g2S1n7RIZXRl4ig+SxN2Fr8EMa1ulp9yH7U7qFIMEeYO9KL5HTLUv+M1TA
-sS486GihwjStbYeXjwNBUduqw6MuCMdUPK0Gmvgtoc+mfbaN8A3vPBJ4n3J3DY35
-to9kG9imBDhiKjHcs5qQeqhaRr417olMiOoFzCTBWQ8GLzw1GUqOS/CdPwYoLj8v
-JyOoHjpbcrEyk5Smq1Rfc46jX7wOVk0kVn7R6RLfZrRDc9TeDPMUp4T6N1XxVwE0
-VqnBPBrdJsDVyR9NGkQaGVaLV/OYUCqE5JgLYPm5w8y6ofnE3Go27XiN0Vsk+WYh
-JoMsEwPEmiC7aqDwInztBX9OYiGJ8T2lEFE/bU0wfWOHjHkf4MHpcbZiMjwIJSOJ
-QIUP7tc8LTBEBQesF7JK
-=11Oh
+iQIcBAEBCAAGBQJSyh+PAAoJEMDTa8Ir7ZwV8igP/0QwbpYRb7dlbcOB8kgR7MVQ
+qmftoCseg4lWLbneJMY2/RbrTq0Vcs+nhs1mCOQSyIhJfxMjDNyPLxY2nTFiWUUI
+Dh+ehL/xE8rsw2l0H7X2Z+JpLaUGt7PWfSostqNbHAt/plbIj1STK7lM1T0kTNrA
+s31U6eHFw/6ts0gqgyKamewabw2Tbas1iw5pRY+TU3RTAHK0SNvEM9fqpiu7dGSu
+wi3jfTsxPytPD9mPqB1624IbCYvYJPU9T4tnNSBHC5wJMZ9J70bmo4S3fYbnaMa4
+M1IQbTrIv4BDNXlWG9sPkPXTaNR0M6k+9LHTwU7OApYYTzvGP6DYQYyPi02DsoV4
+plSXdaOES5Qmn687dTJjX5uE8Xpqll6rEuG234nCF4L95iqmSnpFi1MLgI8Loo7z
+ceXH44tggiQPwbH7J79vERS4tMiy/SlJVz3it6yhKel5opo+XFIx8S81LnxnoHAX
+AN4SW+M+3iecaCNAqz7/zuu2sxZlfz4BlMlOqJ7n+V+tK2ntovDNScxqN1E2eYdJ
+0EogCYccOYM3pBr4+31QyvG45OEH5+39PF7EobhI7xpJsTN0gNDwTBUI69yh6GjR
+wzbKz4htCwEKckPrzj5Ei+Yt0xEeCAhQBoIyTlFOOA05oO2HFoxF3ngo8m4lB4GM
+I2Iv6u2PDA1PO6gAACA4
+=uVRF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1--
+--Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+--
