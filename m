@@ -1,26 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: mmotm 2014-01-02-14-35 uploaded (brocade/bna)
-Date: Mon, 06 Jan 2014 17:24:27 -0500 (EST)
-Message-ID: <20140106.172427.1901836894729408800.davem@davemloft.net>
-References: <20140102223649.D8FB931C206@corp2gmr1-1.hot.corp.google.com>
-	<52C700B9.8040504@infradead.org>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Tue, 07 Jan 2014 10:12:59 +1100
+Message-ID: <1389049979.12906.11.camel@pasglop>
+References: <20140106202856.5630590efc4bd6a466b7a668@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52C700B9.8040504@infradead.org>
+In-Reply-To: <20140106202856.5630590efc4bd6a466b7a668@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rdunlap@infradead.org
-Cc: akpm@linux-foundation.org, rmody@brocade.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Fri, 03 Jan 2014 10:26:01 -0800
-
-> as reported for linux-next of Dec.20, 2013
-> when CONFIG_NEED_DMA_MAP_STATE is not enabled:
+On Mon, 2014-01-06 at 20:28 +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> drivers/net/ethernet/brocade/bna/bnad.c: In function 'bnad_start_xmit':
-> drivers/net/ethernet/brocade/bna/bnad.c:3074:26: error: 'struct bnad_tx_vector' has no member named 'dma_len'
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+> arch/powerpc/kernel/exceptions-64s.S:1312: Error: attempt to move .org backwards
+> 
+> The last time I got this error, I needed to apply patch "powerpc: Fix
+> "attempt to move .org backwards" error", but that has been included in
+> the powerpc tree now, so I guess something else has added code in a
+> critical place. :-(
+> 
+> I have just left this broken for today.
 
-Sorry for taking so long, I plan to look into this tonight Randy.
+I had to modify that patch when applying it, it's possible that the
+"new" version isn't making as much room. Without that change it would
+fail the build on some of my configs due to some of the asm for the
+maskable exception handling being too far from the conditional branches
+that calls it.
+
+I think it's time we do a bit of re-org of that file to figure out
+precisely what has to be where and move things out more aggressively.
+
+Cheers,
+Ben.
