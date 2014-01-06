@@ -1,60 +1,36 @@
 From: Shawn Guo <shawn.guo@linaro.org>
 Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Mon, 6 Jan 2014 14:44:08 +0800
-Message-ID: <20140106064406.GD26128@S2101-09.ap.freescale.net>
+Date: Mon, 6 Jan 2014 14:46:02 +0800
+Message-ID: <20140106064600.GE26128@S2101-09.ap.freescale.net>
 References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
  <20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
  <CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
  <20131217031600.GG6691@S2101-09.ap.freescale.net>
  <CAA+hA=QU1TApbbohD1iNFiMMMHdQSamRfOsO0r3GpqmCbdiSgw@mail.gmail.com>
  <20140106172243.8067c8e72c666511129a9701@canb.auug.org.au>
+ <CAA+hA=TDJM_OAh=WFd5mqsix9-ZQuPvzXe_xHH0z+4xSZRRsBg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe001.messaging.microsoft.com ([216.32.180.11]:18215
-	"EHLO va3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750909AbaAFGn0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jan 2014 01:43:26 -0500
+Received: from ch1ehsobe004.messaging.microsoft.com ([216.32.181.184]:7225
+	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751063AbaAFGpY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jan 2014 01:45:24 -0500
 Content-Disposition: inline
-In-Reply-To: <20140106172243.8067c8e72c666511129a9701@canb.auug.org.au>
+In-Reply-To: <CAA+hA=TDJM_OAh=WFd5mqsix9-ZQuPvzXe_xHH0z+4xSZRRsBg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dong Aisheng <dongas86@gmail.com>, Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
 
-On Mon, Jan 06, 2014 at 05:22:43PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Jan 06, 2014 at 02:30:00PM +0800, Dong Aisheng wrote:
+> Hi Shawn,
 > 
-> On Tue, 17 Dec 2013 16:06:19 +0800 Dong Aisheng <dongas86@gmail.com> wrote:
-> >
-> > I tested that Chris tree does not have problem.
-> > It's caused by IMX tree updates.
-> > 
-> > Chris,
-> > Is the way Shawn suggested OK for you?
-> 
-> Can we have some resolution of this please?  This failed to build again
-> today so I have used the version of the mmc tree from next-20131212
-> again.  I tried the obvious fix (s/pinctrl_usdhc4_1/pinctrl_usdhc4/) but
-> that didn't work.
+> How do you suggest to fix this issue?
+> Can we cook a patch for it directly based on linux-next tree?
 
-Okay, I missed your point.  The resolution needs the additional changes
-as below.
+No, we can not.  No patch should be targeting linux-next tree.  I just
+gave a resolution to Stephen.  Before Chris shows up and drops the patch
+from his tree, we will need to use that temp resolution.
 
 Shawn
-
-diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-index 91e5dd4..8b05648 100644
---- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-@@ -356,6 +356,10 @@
-                pinctrl_usdhc3: usdhc3grp {
-                        fsl,pins = <MX6QDL_USDHC3_PINGRP_D8>;
-                };
-+
-+               pinctrl_usdhc4: usdhc4grp {
-+                       fsl,pins = <MX6QDL_USDHC4_PINGRP_D8>;
-+               };
-        };
- };
