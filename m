@@ -1,73 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the thermal tree with the pm tree
-Date: Mon, 6 Jan 2014 14:14:19 +1100
-Message-ID: <20140106141419.308086b992aae2e1ee729f6e@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 6 Jan 2014 15:35:40 +1100
+Message-ID: <20140106153540.179f4fb01293599f5b5099ba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>, Eduardo Valentin <eduardo.valentin@ti.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__6_Jan_2014_15_35_40_+1100_Kurqa2Paerr4wb7L"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:39175 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752569AbaAFEfr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Jan 2014 23:35:47 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li RongQing <roy.qing.li@gmail.com>
 
---Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+
+--Signature=_Mon__6_Jan_2014_15_35_40_+1100_Kurqa2Paerr4wb7L
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Zhang,
+Hi all,
 
-Today's linux-next merge of the thermal tree got a conflict in
-drivers/cpufreq/Kconfig between commit 109df086e002 ("cpufreq: Select
-PM_OPP rather than depending on it") from the pm tree and commit
-77cff5926a14 ("cpufreq: cpufreq-cpu0: add dt node parsing for cooling
-device properties") from the thermal tree.
+Today's linux-next merge of the net-next tree got a conflict in
+net/ipv6/ip6_vti.c between commit 469bdcefdc47 ("ipv6: fix the use of
+pcpu_tstats in ip6_vti.c") from the net tree and commit 8f84985fec10
+("net: unify the pcpu_tstats and br_cpu_netstats as one") from the
+net-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I just used the former version which removes the code
+modified by the latter) and can carry the fix as necessary (no action is
+required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/cpufreq/Kconfig
-index 386dbc9ccdfd,6b8cde5f98af..000000000000
---- a/drivers/cpufreq/Kconfig
-+++ b/drivers/cpufreq/Kconfig
-@@@ -181,8 -181,7 +181,8 @@@ config CPU_FREQ_GOV_CONSERVATIV
- =20
-  config GENERIC_CPUFREQ_CPU0
-  	tristate "Generic CPU0 cpufreq driver"
-- 	depends on HAVE_CLK && REGULATOR && OF
- -	depends on HAVE_CLK && REGULATOR && PM_OPP && OF && THERMAL && CPU_THERM=
-AL
-++	depends on HAVE_CLK && REGULATOR && OF && THERMAL && CPU_THERMAL
- +	select PM_OPP
-  	help
-  	  This adds a generic cpufreq driver for CPU0 frequency management.
-  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
-
---Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+
+--Signature=_Mon__6_Jan_2014_15_35_40_+1100_Kurqa2Paerr4wb7L
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSyh+PAAoJEMDTa8Ir7ZwV8igP/0QwbpYRb7dlbcOB8kgR7MVQ
-qmftoCseg4lWLbneJMY2/RbrTq0Vcs+nhs1mCOQSyIhJfxMjDNyPLxY2nTFiWUUI
-Dh+ehL/xE8rsw2l0H7X2Z+JpLaUGt7PWfSostqNbHAt/plbIj1STK7lM1T0kTNrA
-s31U6eHFw/6ts0gqgyKamewabw2Tbas1iw5pRY+TU3RTAHK0SNvEM9fqpiu7dGSu
-wi3jfTsxPytPD9mPqB1624IbCYvYJPU9T4tnNSBHC5wJMZ9J70bmo4S3fYbnaMa4
-M1IQbTrIv4BDNXlWG9sPkPXTaNR0M6k+9LHTwU7OApYYTzvGP6DYQYyPi02DsoV4
-plSXdaOES5Qmn687dTJjX5uE8Xpqll6rEuG234nCF4L95iqmSnpFi1MLgI8Loo7z
-ceXH44tggiQPwbH7J79vERS4tMiy/SlJVz3it6yhKel5opo+XFIx8S81LnxnoHAX
-AN4SW+M+3iecaCNAqz7/zuu2sxZlfz4BlMlOqJ7n+V+tK2ntovDNScxqN1E2eYdJ
-0EogCYccOYM3pBr4+31QyvG45OEH5+39PF7EobhI7xpJsTN0gNDwTBUI69yh6GjR
-wzbKz4htCwEKckPrzj5Ei+Yt0xEeCAhQBoIyTlFOOA05oO2HFoxF3ngo8m4lB4GM
-I2Iv6u2PDA1PO6gAACA4
-=uVRF
+iQIcBAEBCAAGBQJSyjKgAAoJEMDTa8Ir7ZwVzysP/0RXqG5LoSTwd/7tzGQPjTqS
+knndAW+XqVL3sjFi+wM1iOQQ0bDCUqcWL02kSE2rh8i+Z6sU8VunLv/7BzOxMKX2
+RitfRDlp9j3OI5jvEwDhLdF9kCXtNbIECbp0E1OuGc7VrZk8Rq5r07XWhZRsUe8e
+ll13BrbgA9eytz3leTNp4kcO4lcsVLifBZgJEnWTx8veM+j3+VSJTk2Hwx1BojbP
+pTxnJ8uzcDtFhJmrB9Fiu57ZS2FP2o9Z/5+xMAPOljxSvcOONYHLwgHgbTxdQNpi
+4+Lgf24A6LY8aRCACAWLZ57kSZwSUyWsbo8nLTUIzRKZwEvydwCRhDEwBy8wXx3f
+TpcHZpvPk2UvrmULmldPeHAY2Qn8uqGOSgPW5DwCoM6zwJbEArgQ//RMUSHJT1oi
+VTYdVWu0vpzjDY4mqkMgMlnmpIVqXHBaXs0+nVYzV698qmZBhmuNrl5Ibq/VHgxA
+Eh/gXSO06hwHZoq50M6oQ9t4Gcytg2Y8imdZUR1PoCG8r5JfReyYvAmNG/5TETjW
+3TP/WKP51CyzJMiCJLUwNMnyciLERpzvtuCtUtJS3XKxLfonBZsww7VCWtJ861cy
+cLAbXAMuTJTAhyXz0WPUV2HMbZeZYlLy4rpWj62KwwOVtB0k5fMMmqWq530em3z+
+1g6H38lbsLgwIOpoWq4I
+=ZOvz
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Jan_2014_14_14_19_+1100_FSssg9Z_+jnm+CQ+--
+--Signature=_Mon__6_Jan_2014_15_35_40_+1100_Kurqa2Paerr4wb7L--
