@@ -1,147 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Mon, 6 Jan 2014 18:18:37 +1100
-Message-ID: <20140106181837.3f47b95ea5fafc48df78d1b0@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Mon, 6 Jan 2014 18:29:39 +1100
+Message-ID: <20140106182939.32468378e51c5ab1b45e90bd@canb.auug.org.au>
+References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
+	<20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
+	<CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
+	<20131217031600.GG6691@S2101-09.ap.freescale.net>
+	<CAA+hA=QU1TApbbohD1iNFiMMMHdQSamRfOsO0r3GpqmCbdiSgw@mail.gmail.com>
+	<20140106172243.8067c8e72c666511129a9701@canb.auug.org.au>
+	<20140106064406.GD26128@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Jan_2014_18_18_37_+1100_AdZ_3FjBRrsKBhDe"
+ boundary="Signature=_Mon__6_Jan_2014_18_29_39_+1100_4wB..y9ZMx0RyWTi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60721 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:41647 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752594AbaAFHSo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Jan 2014 02:18:44 -0500
+	id S1752144AbaAFH3v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jan 2014 02:29:51 -0500
+In-Reply-To: <20140106064406.GD26128@S2101-09.ap.freescale.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Chen, Gong" <gong.chen@linux.intel.com>, Borislav Petkov <bp@suse.de>, Jiang Liu <jiang.liu@linux.intel.com>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Dong Aisheng <dongas86@gmail.com>, Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
 
---Signature=_Mon__6_Jan_2014_18_18_37_+1100_AdZ_3FjBRrsKBhDe
+--Signature=_Mon__6_Jan_2014_18_29_39_+1100_4wB..y9ZMx0RyWTi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shawn,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/acpi/acpi_extlog.c between commit 7ede9f8a1805 ("ACPI / extlog:
-replace open-coded _DSM code with helper functions") from the pm tree and
-commit 42139eb356e3 ("ACPI, eMCA: Combine eMCA/EDAC event reporting
-priority") from the tip tree.
+On Mon, 6 Jan 2014 14:44:08 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
+>
+> Okay, I missed your point.  The resolution needs the additional changes
+> as below.
+>=20
+> Shawn
+>=20
+> diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+> b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+> index 91e5dd4..8b05648 100644
+> --- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+> @@ -356,6 +356,10 @@
+>                 pinctrl_usdhc3: usdhc3grp {
+>                         fsl,pins =3D <MX6QDL_USDHC3_PINGRP_D8>;
+>                 };
+> +
+> +               pinctrl_usdhc4: usdhc4grp {
+> +                       fsl,pins =3D <MX6QDL_USDHC4_PINGRP_D8>;
+> +               };
+>         };
+>  };
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thanks, I will add this as a merge resolution patch tomorrow.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/acpi/acpi_extlog.c
-index 94166680b3a3,5d33c5415405..000000000000
---- a/drivers/acpi/acpi_extlog.c
-+++ b/drivers/acpi/acpi_extlog.c
-@@@ -9,8 -9,10 +9,9 @@@
- =20
-  #include <linux/module.h>
-  #include <linux/acpi.h>
- -#include <acpi/acpi_bus.h>
-  #include <linux/cper.h>
-  #include <linux/ratelimit.h>
-+ #include <linux/edac.h>
-  #include <asm/cpu.h>
-  #include <asm/mce.h>
- =20
-@@@ -40,7 -44,9 +41,9 @@@ struct extlog_l1_head=20
-  	u8  rev1[12];
-  };
- =20
-+ static int old_edac_report_status;
-+=20
- -static u8 extlog_dsm_uuid[] =3D "663E35AF-CC10-41A4-88EA-5470AF055295";
- +static u8 extlog_dsm_uuid[] __initdata =3D "663E35AF-CC10-41A4-88EA-5470A=
-F055295";
- =20
-  /* L1 table related physical address */
-  static u64 elog_base;
-@@@ -147,16 -153,53 +150,16 @@@ static int extlog_print(struct notifier
- =20
-  	rc =3D print_extlog_rcd(NULL, (struct acpi_generic_status *)elog_buf, cp=
-u);
- =20
-- 	return NOTIFY_DONE;
-+ 	return NOTIFY_STOP;
-  }
- =20
- -static int extlog_get_dsm(acpi_handle handle, int rev, int func, u64 *ret)
- +static bool __init extlog_get_l1addr(void)
-  {
- -	struct acpi_buffer buf =3D {ACPI_ALLOCATE_BUFFER, NULL};
- -	struct acpi_object_list input;
- -	union acpi_object params[4], *obj;
-  	u8 uuid[16];
- -	int i;
- +	acpi_handle handle;
- +	union acpi_object *obj;
- =20
-  	acpi_str_to_uuid(extlog_dsm_uuid, uuid);
- -	input.count =3D 4;
- -	input.pointer =3D params;
- -	params[0].type =3D ACPI_TYPE_BUFFER;
- -	params[0].buffer.length =3D 16;
- -	params[0].buffer.pointer =3D uuid;
- -	params[1].type =3D ACPI_TYPE_INTEGER;
- -	params[1].integer.value =3D rev;
- -	params[2].type =3D ACPI_TYPE_INTEGER;
- -	params[2].integer.value =3D func;
- -	params[3].type =3D ACPI_TYPE_PACKAGE;
- -	params[3].package.count =3D 0;
- -	params[3].package.elements =3D NULL;
- -
- -	if (ACPI_FAILURE(acpi_evaluate_object(handle, "_DSM", &input, &buf)))
- -		return -1;
- -
- -	*ret =3D 0;
- -	obj =3D (union acpi_object *)buf.pointer;
- -	if (obj->type =3D=3D ACPI_TYPE_INTEGER) {
- -		*ret =3D obj->integer.value;
- -	} else if (obj->type =3D=3D ACPI_TYPE_BUFFER) {
- -		if (obj->buffer.length <=3D 8) {
- -			for (i =3D 0; i < obj->buffer.length; i++)
- -				*ret |=3D (obj->buffer.pointer[i] << (i * 8));
- -		}
- -	}
- -	kfree(buf.pointer);
- -
- -	return 0;
- -}
- -
- -static bool extlog_get_l1addr(void)
- -{
- -	acpi_handle handle;
- -	u64 ret;
- =20
-  	if (ACPI_FAILURE(acpi_get_handle(NULL, "\\_SB", &handle)))
-  		return false;
-
---Signature=_Mon__6_Jan_2014_18_18_37_+1100_AdZ_3FjBRrsKBhDe
+--Signature=_Mon__6_Jan_2014_18_29_39_+1100_4wB..y9ZMx0RyWTi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSyljSAAoJEMDTa8Ir7ZwVR3wP/jRFawXFHqzjDKrJBH5VuIvY
-c4WKjuP6eutRAFhvCEAieG9Yd0Mc/pFqf2wsWuUmuVrFZEn2tCxWlnf0ClX5Dh4a
-02b8Pn5oLXlIWkmvf/ekAPdfjvQmVqF6WmHcmyKC3Z3/AwmrP4Ydty6NvTXIj0l1
-e4Nslfvo74NRB/R7iQc7CR9wd2FLoWEzhmtLRZk33fr593QVrW+h6nyInghMqotY
-laMkU5b9hiHMrdeBKEve1L92WCOPq1NJLNqi9vDxTVx74F86JC7iIcxkp8dkLJRC
-F7oQFoyOXbyQnSalaIW8vXRB5okzed6zNZxv2gPOa6ChYs8LIPCnqTEKWg4Q2/yO
-hom61XQDBoEjOkvi1TKd/PQexeaJj++TAywxOAIhWJzXUCLenPDwti2F0PKzd15O
-ZO0Acza/lV28n7cneticteKuNCMiuANY7FHvghMBnTTUQvr5wKhUC+nm3Xi4lK+8
-ZHMxC4O5XOg+Jh9fMruEg69rRq07QD5RB86B5IpAHllp+V9JO6IlaRh20uCaNTTg
-svfmmErfK9Tra4PcoO2dStIy+AVB7rqMNELb6Z9VCsltkpX2e1DYTmBAytuty/ou
-yyo31ZzHldRwbw36kd/Stv3DvgI7yuSrpmkhSK1/fdqKKvjqC0p20I5PYJmyGGD3
-SU3OSjOdCtpfw9wFIvYb
-=nCNZ
+iQIcBAEBCAAGBQJSyltnAAoJEMDTa8Ir7ZwVR+sQAImsIedAAVBCuzgYaIwSAPd2
+DGNOMC+x6BEPJW8I5PlhNWhd+ssVwp6DCBc+PflaZ8nA+q0ak5cNoA8l+3BEalMz
+tWjg9oR1dr+/kqjpIOQWAQrEy9pxxoVeJSpWWKGVIVFrcXq+uy5TxS6f9P6QRwwD
+f96+Wz+BUyr2GelThfdMoFki0MyYJYoeCMF6LYxxMpfEzhblTeziWE7X17rzG7RA
+SWtjacwwBbVNzc2P6IQTnA1KcWoP4fHG+/gO2MIXFTLUl8kq9gFabofpSVvRoxgf
+2XhEbZs5/PlyQRjQHHH8W89lqUdKeDv2wpAbEIxhBSuzIWj3FGU3P2t1J52+gzru
+2QYRim8FX9Nn6fk7L6zRlxGuSPtLVlgrqhzA8lZeEapO6aqyJ8JOs36XBXqPeirw
+LQT5IC+n84W4E/LVYtMMx0I7UDxl2qv2KINROglOGktQ51TyUJQ6M5pDs1xpfeqK
+3BJh4uDGMihS6rpWx/HOeojWLe9q872nacYBTYpKYa+fXClA4OZRmm0V3D3eOMKT
+rTe1QyukJyeSd1PIMsmLaaUsJPr62hCkGtcRviD9gJYAk4ZJhRlqYDCnoQnf4A67
+5RVFzKmg1Q1EwA8QFOtcaR5+5HwyE6OJcDI4dfz4KtsFO+dFGX2uvfyBwfzQQdmR
++lJweFf2GXw1gmT2lB9B
+=EeWA
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Jan_2014_18_18_37_+1100_AdZ_3FjBRrsKBhDe--
+--Signature=_Mon__6_Jan_2014_18_29_39_+1100_4wB..y9ZMx0RyWTi--
