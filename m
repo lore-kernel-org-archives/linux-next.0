@@ -1,38 +1,64 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: manual merge of the imx-mxs tree with the tree
-Date: Sun, 5 Jan 2014 16:06:10 -0800
-Message-ID: <CAOesGMiTjUV78Gw1eKKSsz2Q0ODTk9p8hT_FcX1d0F3gMbX4Tw@mail.gmail.com>
-References: <20140106104938.82a53f6d3b4d773607fe7556@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sh tree with the  tree
+Date: Mon, 6 Jan 2014 12:13:17 +1100
+Message-ID: <20140106121317.bada4233ec3fec40f79735cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:55098 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751407AbaAFAGN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Jan 2014 19:06:13 -0500
-Received: by mail-qc0-f171.google.com with SMTP id c9so16694423qcz.2
-        for <linux-next@vger.kernel.org>; Sun, 05 Jan 2014 16:06:10 -0800 (PST)
-In-Reply-To: <20140106104938.82a53f6d3b4d773607fe7556@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:33234 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752164AbaAFBNZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Jan 2014 20:13:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>, Troy Kisky <troy.kisky@boundarydevices.com>
+To: Paul Mundt <lethal@linux-sh.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bastian Hecht <hechtb@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-On Sun, Jan 5, 2014 at 3:49 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Shawn,
->
-> Today's linux-next merge of the imx-mxs tree got a conflict in
-> arch/arm/boot/dts/imx6q-sabrelite.dts between commit 8f568b496dd9 ("ARM:
-> imx: Explicitly pass the active level of the PHY reset") from the arm-soc
-> tree and commit e5a5af250568 ("ARM: dts: imx: sabrelite: add Dual
-> Lite/Solo support") from the imx-mxs tree.
->
-> I fixed it up (just used the latter) and can carry the fix as necessary
-> (no action is required).
+--Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen. The offending patch from the arm-soc side has been
-dropped, but I didn't push out the new for-next yet. It should be gone
-tomorrow. Same for some of the other imx conflicts.
+Hi Paul,
 
+Today's linux-next merge of the sh tree got conflicts in
+drivers/tty/serial/sh-sci.c and include/linux/serial_sci.h between
+commits 8fb9631c517b ("serial: sh-sci: Sort headers alphabetically"),
+20bdcab8268c ("serial: sh-sci: Add OF support") and probably others from
+the arm-soc tree and commits ada80ee7fa60 ("serial: sh-sci: Add OF
+support") and b19ef75c56e9 ("serial: sh-sci: OF definitions need
+linux/of.h") from the sh tree.
 
--Olof
+The arm-soc tree version is dated much more recently than
+the sh tree version and conflicts badly, so for today I have just dropped
+the sh tree (everything in there was committed before April 2013).  Please
+figure this out.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSygMyAAoJEMDTa8Ir7ZwVikkP+wdSxBZ+oTWuZIkr1qabm69b
+HYjk97O0HvXr/bgppF3CFzHWm1g7vqtK3UwXjp0Z8H+VpmaoTc0IVn99+wQKZ9/d
+yBenqdPSMAlYDUZD68RfOCmBIQIf9sHIvtLiXN2Q49sDu5syiaA6Xt+WDHhxYIdq
+dIhpktSptG8LbT3H/2EtqTibzIqA5UmaNnou9Y5D2xFJYHXFOAkPWgJXQyeBmrAD
+HJPaNiWQXWkQqs8vyCuHuI3QM8jW6BHFqnXMbJGGr8rZ/Olim+IqCuMAFhVL9M+B
+Cnzyo4g2S1n7RIZXRl4ig+SxN2Fr8EMa1ulp9yH7U7qFIMEeYO9KL5HTLUv+M1TA
+sS486GihwjStbYeXjwNBUduqw6MuCMdUPK0Gmvgtoc+mfbaN8A3vPBJ4n3J3DY35
+to9kG9imBDhiKjHcs5qQeqhaRr417olMiOoFzCTBWQ8GLzw1GUqOS/CdPwYoLj8v
+JyOoHjpbcrEyk5Smq1Rfc46jX7wOVk0kVn7R6RLfZrRDc9TeDPMUp4T6N1XxVwE0
+VqnBPBrdJsDVyR9NGkQaGVaLV/OYUCqE5JgLYPm5w8y6ofnE3Go27XiN0Vsk+WYh
+JoMsEwPEmiC7aqDwInztBX9OYiGJ8T2lEFE/bU0wfWOHjHkf4MHpcbZiMjwIJSOJ
+QIUP7tc8LTBEBQesF7JK
+=11Oh
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__6_Jan_2014_12_13_17_+1100_SGsrsE/AfAwa8sY1--
