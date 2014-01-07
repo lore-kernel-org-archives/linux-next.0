@@ -1,42 +1,97 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 07 Jan 2014 10:12:59 +1100
-Message-ID: <1389049979.12906.11.camel@pasglop>
-References: <20140106202856.5630590efc4bd6a466b7a668@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] hwmon/sensors: fix SENSORS_LM75 dependencies
+Date: Mon, 06 Jan 2014 17:09:48 -0800
+Message-ID: <52CB53DC.4030901@infradead.org>
+References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au> <52CB0948.6030702@infradead.org> <20140106203209.GA21630@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140106202856.5630590efc4bd6a466b7a668@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:46773 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751446AbaAGBJy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jan 2014 20:09:54 -0500
+In-Reply-To: <20140106203209.GA21630@roeck-us.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frodo Looijaard <frodol@dds.nl>, lm-sensors@lm-sensors.org, "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-pm@vger.kernel.org
 
-On Mon, 2014-01-06 at 20:28 +1100, Stephen Rothwell wrote:
-> Hi all,
+On 01/06/14 12:32, Guenter Roeck wrote:
+> On Mon, Jan 06, 2014 at 11:51:36AM -0800, Randy Dunlap wrote:
+>> On 01/06/14 01:40, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> This tree fails (more than usual) the powerpc allyesconfig build.
+>>>
+>>> Changes since 20131224:
+>>>
+>>
+>>
+>> on i386:
+>>
+>> drivers/built-in.o: In function `lm75_remove':
+>> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
+>> drivers/built-in.o: In function `lm75_probe':
+>> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
+>>
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
-> arch/powerpc/kernel/exceptions-64s.S:1312: Error: attempt to move .org backwards
-> 
-> The last time I got this error, I needed to apply patch "powerpc: Fix
-> "attempt to move .org backwards" error", but that has been included in
-> the powerpc tree now, so I guess something else has added code in a
-> critical place. :-(
-> 
-> I have just left this broken for today.
+> AFAICS that is a dependency problem in thermal code.
+> CONFIG_THERMAL=m defines the symbols, but CONFIG_SENSORS_LM75=y.
 
-I had to modify that patch when applying it, it's possible that the
-"new" version isn't making as much room. Without that change it would
-fail the build on some of my configs due to some of the asm for the
-maskable exception handling being too far from the conditional branches
-that calls it.
+CONFIG_THERMAL_OF defines the symbols.
 
-I think it's time we do a bit of re-org of that file to figure out
-precisely what has to be where and move things out more aggressively.
+It looks to me like drivers/hwmon/Kconfig SENSORS_LM75 entry needs a
+	depends on THERMAL_OF
+line, but that won't fix this build error.
+The problem (once again, not the first time that I have seen this one) is that
+we have a tristate =m that depends on a bool =y.
 
-Cheers,
-Ben.
+Hm, I bet a "depends on THERMAL" for SENSORS_LM75 will fix this.
+[test]
+Yes, that restricts (limits) SENSORS_LM75 to n/m; y is not possible.
+
+Patch for your consideration is below.
+
+> 
+> Up to the thermal folks to fix; if the code ends up in mainline we'll have to
+> revert the patch introducing the calls to the lm75 driver (and the tmp102 driver
+> which has the same issue).
+> 
+> Another oddity is the help text to THERMAL_OF, which states that it supports
+> reading and parsing thermal data definitions out of dt but fails to mention
+> that it also provides the above API functions.
+
+---
+From: Randy Dunlap <rdunlap@infradead.org>
+
+Fix SENSORS_LM75 dependencies to eliminate build errors:
+
+drivers/built-in.o: In function `lm75_remove':
+lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
+drivers/built-in.o: In function `lm75_probe':
+lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
+
+Add depends on THERMAL_OF since that is what provides the
+register/unregister functions above.
+
+Add depends on THERMAL since THERMAL is a tristate (while THERMAL_OF
+is a bool) and SENSORS_LM75 (tristate) needs to be limited to modular
+builds when THERMAL=m.
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ drivers/hwmon/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- linux-next-20140106.orig/drivers/hwmon/Kconfig
++++ linux-next-20140106/drivers/hwmon/Kconfig
+@@ -650,6 +650,8 @@ config SENSORS_LM73
+ config SENSORS_LM75
+ 	tristate "National Semiconductor LM75 and compatibles"
+ 	depends on I2C
++	depends on THERMAL
++	depends on THERMAL_OF
+ 	help
+ 	  If you say yes here you get support for one common type of
+ 	  temperature sensor chip, with models including:
