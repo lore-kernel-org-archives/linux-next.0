@@ -1,66 +1,74 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] staging/media: fix sn9c102 dependencies
-Date: Tue, 07 Jan 2014 09:55:40 -0800
-Message-ID: <52CC3F9C.8090407@infradead.org>
-References: <20140107173816.003dc67433cea097c097eb74@canb.auug.org.au>
+Subject: Re: [PATCH] hwmon/sensors: fix SENSORS_LM75 dependencies
+Date: Tue, 07 Jan 2014 10:06:47 -0800
+Message-ID: <52CC4237.5000704@infradead.org>
+References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au>	<52CB0948.6030702@infradead.org>	<20140106203209.GA21630@roeck-us.net>	<52CB53DC.4030901@infradead.org>	<52CB65DA.2010103@roeck-us.net>	<20140107130401.23bffcd2@endymion.delvare>	<52CBF1CF.2000603@ti.com> <20140107152148.36768345@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:37703 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753215AbaAGRzn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jan 2014 12:55:43 -0500
-In-Reply-To: <20140107173816.003dc67433cea097c097eb74@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Luca Risolia <luca.risolia@studio.unibo.it>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media <linux-media@vger.kernel.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20140107152148.36768345@endymion.delvare>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>, Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frodo Looijaard <frodol@dds.nl>, lm-sensors@lm-sensors.org, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On 01/07/14 06:21, Jean Delvare wrote:
+> Hi Eduardo,
+> 
 
-Fix numerous build errors when USB is not enabled.  Examples:
+> I suppose this works, however I believe there is value in allowing for
+> modular building of as much code as possible.
 
-drivers/built-in.o: In function `sn9c102_stop_transfer':
-sn9c102_core.c:(.text+0xccbd0a): undefined reference to `usb_kill_urb'
-sn9c102_core.c:(.text+0xccbd15): undefined reference to `usb_free_urb'
-sn9c102_core.c:(.text+0xccbd4c): undefined reference to `usb_set_interface'
-drivers/built-in.o: In function `sn9c102_urb_complete':
-sn9c102_core.c:(.text+0xccdca5): undefined reference to `usb_submit_urb'
-drivers/built-in.o: In function `sn9c102_release_resources':
-sn9c102_core.c:(.text+0xcce62b): undefined reference to `usb_put_dev'
-drivers/built-in.o: In function `sn9c102_match_id':
-(.text+0xcce9d7): undefined reference to `usb_ifnum_to_if'
-drivers/built-in.o: In function `sn9c102_match_id':
-(.text+0xcce9de): undefined reference to `usb_match_id'
-drivers/built-in.o: In function `sn9c102_write_regs':
-(.text+0xccea7a): undefined reference to `usb_control_msg'
-drivers/built-in.o: In function `sn9c102_open':
-sn9c102_core.c:(.text+0xcd17b4): undefined reference to `usb_altnum_to_altsetting'
-sn9c102_core.c:(.text+0xcd1851): undefined reference to `usb_alloc_urb'
-drivers/built-in.o: In function `sn9c102_read_reg':
-(.text+0xcd1fdf): undefined reference to `usb_control_msg'
-drivers/built-in.o: In function `sn9c102_usb_probe':
-sn9c102_core.c:(.text+0xcd275d): undefined reference to `usb_get_dev'
-drivers/built-in.o: In function `sn9c102_usb_driver_init':
-sn9c102_core.c:(.init.text+0x3e4eb): undefined reference to `usb_register_driver'
-drivers/built-in.o: In function `sn9c102_usb_driver_exit':
-sn9c102_core.c:(.exit.text+0x7226): undefined reference to `usb_deregister'
+ack, yes, please.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Luca Risolia <luca.risolia@studio.unibo.it>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>
----
- drivers/staging/media/sn9c102/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> I have an alternative proposal, which lets thermal be built as module,
+> and hopefully also addresses the issue (I can't test...) The only
+> drawback is that the same dependency must be added for every other
+> hwmon driver which optionally uses THERMAL_OF.
+> 
+> From: Jean Delvare <khali@linux-fr.org>
+> 
+> Based on an earlier attempt by Randy Dunlap.
+> 
+> Fix SENSORS_LM75 dependencies to eliminate build errors:
+> 
+> drivers/built-in.o: In function `lm75_remove':
+> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
+> drivers/built-in.o: In function `lm75_probe':
+> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
+> 
+> Add depends on THERMAL since that is what provides the
+> register/unregister functions above, but only if THERMAL_OF was
+> selected as this is an optional feature of the driver.
+> 
+> Signed-off-by: Jean Delvare <khali@linux-fr.org>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Eduardo Valentin <eduardo.valentin@ti.com>
 
---- linux-next-20140107.orig/drivers/staging/media/sn9c102/Kconfig
-+++ linux-next-20140107/drivers/staging/media/sn9c102/Kconfig
-@@ -1,6 +1,6 @@
- config USB_SN9C102
- 	tristate "USB SN9C1xx PC Camera Controller support (DEPRECATED)"
--	depends on VIDEO_V4L2
-+	depends on VIDEO_V4L2 && USB
- 	---help---
- 	  This driver is DEPRECATED, please use the gspca sonixb and
- 	  sonixj modules instead.
+works for me.
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  drivers/hwmon/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-3.13-rc7.orig/drivers/hwmon/Kconfig	2014-01-07 09:01:24.812848091 +0100
+> +++ linux-3.13-rc7/drivers/hwmon/Kconfig	2014-01-07 15:19:11.039472329 +0100
+> @@ -650,6 +650,7 @@ config SENSORS_LM73
+>  config SENSORS_LM75
+>  	tristate "National Semiconductor LM75 and compatibles"
+>  	depends on I2C
+> +	depends on THERMAL || !THERMAL_OF
+>  	help
+>  	  If you say yes here you get support for one common type of
+>  	  temperature sensor chip, with models including:
+> 
+> 
+
+
+-- 
+~Randy
