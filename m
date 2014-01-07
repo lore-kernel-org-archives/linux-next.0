@@ -1,225 +1,66 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH] hwmon/sensors: fix SENSORS_LM75 dependencies
-Date: Tue, 7 Jan 2014 12:33:28 -0400
-Message-ID: <52CC2C58.5080205@ti.com>
-References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au> <52CB0948.6030702@infradead.org> <20140106203209.GA21630@roeck-us.net> <52CB53DC.4030901@infradead.org> <52CB65DA.2010103@roeck-us.net> <20140107130401.23bffcd2@endymion.delvare> <52CBF1CF.2000603@ti.com> <20140107152148.36768345@endymion.delvare>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] staging/media: fix sn9c102 dependencies
+Date: Tue, 07 Jan 2014 09:55:40 -0800
+Message-ID: <52CC3F9C.8090407@infradead.org>
+References: <20140107173816.003dc67433cea097c097eb74@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="m3Mo5vQbTd1BAO3H7ex0KSOLEI0DhJlb1"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140107152148.36768345@endymion.delvare>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Guenter Roeck <linux@roeck-us.net>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frodo Looijaard <frodol@dds.nl>, lm-sensors@lm-sensors.org, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:37703 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753215AbaAGRzn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jan 2014 12:55:43 -0500
+In-Reply-To: <20140107173816.003dc67433cea097c097eb74@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Luca Risolia <luca.risolia@studio.unibo.it>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media <linux-media@vger.kernel.org>
 
---m3Mo5vQbTd1BAO3H7ex0KSOLEI0DhJlb1
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <rdunlap@infradead.org>
 
-On 07-01-2014 10:21, Jean Delvare wrote:
-> Hi Eduardo,
->=20
-> On Tue, 7 Jan 2014 08:23:43 -0400, Eduardo Valentin wrote:
->> On 07-01-2014 08:04, Jean Delvare wrote:
->>> On Mon, 06 Jan 2014 18:26:34 -0800, Guenter Roeck wrote:
->>>> This needs to be addressed
->>>> in the thermal code, for example with dummy declarations if THERMAL=3D=
-m but
->>>> SENSORS_LM75=3Dy. The functions are already declared as dummies if T=
-HERMAL_OF=3Dn.
->>>
->>> This won't fly I'm afraid, the number of hwmon drivers affected will
->>> grow in the future and you certainly don't want to have to change the=
+Fix numerous build errors when USB is not enabled.  Examples:
 
->>> generic thermal code every time a new driver is added/converted.
->>
->> Agreed
->>
->>>
->>> I've looked at the problem this morning and I will admit I do not eve=
-n
->>> understand what the problem is. In Randy's config, CONFIG_THERMAL_OF=3D=
-y
->>> so both thermal_zone_of_sensor_unregister and
->>> thermal_zone_of_sensor_register are built-in. SENSORS_LM75=3Dy so the=
+drivers/built-in.o: In function `sn9c102_stop_transfer':
+sn9c102_core.c:(.text+0xccbd0a): undefined reference to `usb_kill_urb'
+sn9c102_core.c:(.text+0xccbd15): undefined reference to `usb_free_urb'
+sn9c102_core.c:(.text+0xccbd4c): undefined reference to `usb_set_interface'
+drivers/built-in.o: In function `sn9c102_urb_complete':
+sn9c102_core.c:(.text+0xccdca5): undefined reference to `usb_submit_urb'
+drivers/built-in.o: In function `sn9c102_release_resources':
+sn9c102_core.c:(.text+0xcce62b): undefined reference to `usb_put_dev'
+drivers/built-in.o: In function `sn9c102_match_id':
+(.text+0xcce9d7): undefined reference to `usb_ifnum_to_if'
+drivers/built-in.o: In function `sn9c102_match_id':
+(.text+0xcce9de): undefined reference to `usb_match_id'
+drivers/built-in.o: In function `sn9c102_write_regs':
+(.text+0xccea7a): undefined reference to `usb_control_msg'
+drivers/built-in.o: In function `sn9c102_open':
+sn9c102_core.c:(.text+0xcd17b4): undefined reference to `usb_altnum_to_altsetting'
+sn9c102_core.c:(.text+0xcd1851): undefined reference to `usb_alloc_urb'
+drivers/built-in.o: In function `sn9c102_read_reg':
+(.text+0xcd1fdf): undefined reference to `usb_control_msg'
+drivers/built-in.o: In function `sn9c102_usb_probe':
+sn9c102_core.c:(.text+0xcd275d): undefined reference to `usb_get_dev'
+drivers/built-in.o: In function `sn9c102_usb_driver_init':
+sn9c102_core.c:(.init.text+0x3e4eb): undefined reference to `usb_register_driver'
+drivers/built-in.o: In function `sn9c102_usb_driver_exit':
+sn9c102_core.c:(.exit.text+0x7226): undefined reference to `usb_deregister'
 
->>> calls to these functions are built-in too. I just can't see how this
->>> can be a problem at link time. Can anyone enlighten me?
->>
->> I believe the problem is more in the fact that THERMAL_OF is a bool, b=
-ut
->> the way it is in thermal Kconfig, it will link to the thermal module, =
-in
->> case CONFIG_THERMAL=3Dm.
->=20
-> Doh. I've been looking at this for an hour and managed to miss
-> that :( Thanks for explaining.
->=20
->> Thus I am proposing the following,
->> which limits the user to have THERMAL_OF only as builtin and whenever
->> is selected, it will select THERMAL too. That is:
->>
->>
->> From b643aa260ed4f3514d1ca51b1ecbe4be7652a8d0 Mon Sep 17 00:00:00 2001=
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Luca Risolia <luca.risolia@studio.unibo.it>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>
+---
+ drivers/staging/media/sn9c102/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> From: Eduardo Valentin <eduardo.valentin@ti.com>
->> Date: Tue, 7 Jan 2014 08:04:02 -0400
->> Subject: [PATCH 1/1] thermal: fix compilation issue on CONFIG_THERMAL_=
-OF
->>  dependencies
->>
->> Users of API provided by THERMAL_OF config may suffer when
->> CONFIG_THERMAL=3Dy, causing linking issues, such as:
->>
->> drivers/built-in.o: In function `lm75_remove':
->> lm75.c:(.text+0x12bd8c): undefined reference to
->> `thermal_zone_of_sensor_unregister'
->> drivers/built-in.o: In function `lm75_probe':
->> lm75.c:(.text+0x12c123): undefined reference to
->> `thermal_zone_of_sensor_register'
->>
->> Therefore, this patch limits the compilation build to always
->> have THERMAL=3Dy, whenever THERMAL_OF=3Dy. In this way, whenever
->> the API user is built, if THERMAL_OF=3Dy, the build shall have
->> the full thermal support, otherwise, the thermal API will provide
->> stubs.
->>
->> Cc: Zhang Rui <rui.zhang@intel.com>
->> Cc: linux-pm@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Eduardo Valentin <eduardo.valentin@ti.com>
->> ---
->>  drivers/thermal/Kconfig | 29 ++++++++++++++++-------------
->>  1 file changed, 16 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
->> index 58f98bd..dc315e9 100644
->> --- a/drivers/thermal/Kconfig
->> +++ b/drivers/thermal/Kconfig
->> @@ -29,19 +29,6 @@ config THERMAL_HWMON
->>  	  Say 'Y' here if you want all thermal sensors to
->>  	  have hwmon sysfs interface too.
->>
->> -config THERMAL_OF
->> -	bool
->> -	prompt "APIs to parse thermal data out of device tree"
->> -	depends on OF
->> -	default y
->> -	help
->> -	  This options provides helpers to add the support to
->> -	  read and parse thermal data definitions out of the
->> -	  device tree blob.
->> -
->> -	  Say 'Y' here if you need to build thermal infrastructure
->> -	  based on device tree.
->> -
->>  choice
->>  	prompt "Default Thermal governor"
->>  	default THERMAL_DEFAULT_GOV_STEP_WISE
->> @@ -235,3 +222,19 @@ source "drivers/thermal/samsung/Kconfig"
->>  endmenu
->>
->>  endif
->> +
->> +menuconfig THERMAL_OF
->> +	bool
->> +	prompt "APIs to parse thermal data out of device tree"
->> +	depends on OF
->> +	select THERMAL
->> +	default y
->> +	help
->> +	  This options enables DT thermal API which adds support to
->> +	  read and parse thermal data definitions out of the
->> +	  device tree blob. This option is mostly used by embedded
->> +	  thermal drivers.
->> +
->> +	  Say 'Y' here if you need to build thermal infrastructure
->> +	  based on device tree.
->> +
->=20
-> I suppose this works, however I believe there is value in allowing for
-> modular building of as much code as possible.
->=20
-> I have an alternative proposal, which lets thermal be built as module,
-> and hopefully also addresses the issue (I can't test...) The only
-> drawback is that the same dependency must be added for every other
-> hwmon driver which optionally uses THERMAL_OF.
->=20
-> From: Jean Delvare <khali@linux-fr.org>
->=20
-> Based on an earlier attempt by Randy Dunlap.
->=20
-> Fix SENSORS_LM75 dependencies to eliminate build errors:
->=20
-> drivers/built-in.o: In function `lm75_remove':
-> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor=
-_unregister'
-> drivers/built-in.o: In function `lm75_probe':
-> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor=
-_register'
->=20
-> Add depends on THERMAL since that is what provides the
-> register/unregister functions above, but only if THERMAL_OF was
-> selected as this is an optional feature of the driver.
->=20
-> Signed-off-by: Jean Delvare <khali@linux-fr.org>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Eduardo Valentin <eduardo.valentin@ti.com>
-
-I agree with this approach, as it can properly serve the purpose of
-fixing this specific issue. The only drawback here is the fact that we
-need to add this change to every possible user of this API. If you want
-to push this fix via hwmon, you can add my
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
-and I request Rui to drop the patch I sent earlier.
-
-Now, other issue is the fact that the thermal framework config entry
-needs to be revisited, despite the link to this issue. As I mentioned in
-other email thread, there are other system requirements that may prevent
-proper usage of the thermal framework as a module. This is, I know,
-another topic, and it shall be discussed in a different thread.
-
-> ---
->  drivers/hwmon/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->=20
-> --- linux-3.13-rc7.orig/drivers/hwmon/Kconfig	2014-01-07 09:01:24.81284=
-8091 +0100
-> +++ linux-3.13-rc7/drivers/hwmon/Kconfig	2014-01-07 15:19:11.039472329 =
-+0100
-> @@ -650,6 +650,7 @@ config SENSORS_LM73
->  config SENSORS_LM75
->  	tristate "National Semiconductor LM75 and compatibles"
->  	depends on I2C
-> +	depends on THERMAL || !THERMAL_OF
->  	help
->  	  If you say yes here you get support for one common type of
->  	  temperature sensor chip, with models including:
->=20
->=20
-
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
---m3Mo5vQbTd1BAO3H7ex0KSOLEI0DhJlb1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlLMLFgACgkQCXcVR3XQvP3BiwEAypIWI1EdAWVLLMwN3mcV7LM5
-OuIxvtLhSTc50vGxAocA/jsuWRBFCA1Tza5+Jg5ipFbkmpI5vlLa1btH0zxg6BJE
-=G5v/
------END PGP SIGNATURE-----
-
---m3Mo5vQbTd1BAO3H7ex0KSOLEI0DhJlb1--
+--- linux-next-20140107.orig/drivers/staging/media/sn9c102/Kconfig
++++ linux-next-20140107/drivers/staging/media/sn9c102/Kconfig
+@@ -1,6 +1,6 @@
+ config USB_SN9C102
+ 	tristate "USB SN9C1xx PC Camera Controller support (DEPRECATED)"
+-	depends on VIDEO_V4L2
++	depends on VIDEO_V4L2 && USB
+ 	---help---
+ 	  This driver is DEPRECATED, please use the gspca sonixb and
+ 	  sonixj modules instead.
