@@ -1,27 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 1/2] GenWQE: Fix endian issues detected by sparse
-Date: Tue, 7 Jan 2014 15:45:01 +0300
-Message-ID: <20140107124501.GK5443@mwanda>
-References: <CA+r1Zhimt7Xusnc4kkkVqfoRhfZRnreMmZqaN7WP7rSpZ3XTvw@mail.gmail.com>
- <1387553171-31469-1-git-send-email-haver@linux.vnet.ibm.com>
- <20140107064130.GA5494@mwanda>
- <1389097816.15325.7.camel@oc7383187364.ibm.com>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the arm-current
+ tree
+Date: Tue, 7 Jan 2014 13:32:25 +0000
+Message-ID: <alpine.DEB.2.02.1401071332140.8667@kaball.uk.xensource.com>
+References: <20140107154222.b2c0c8081441671f32d78bc1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:19503 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751070AbaAGMo4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jan 2014 07:44:56 -0500
-Content-Disposition: inline
-In-Reply-To: <1389097816.15325.7.camel@oc7383187364.ibm.com>
+Received: from smtp.citrix.com ([66.165.176.89]:56227 "EHLO SMTP.CITRIX.COM"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752047AbaAGNdS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Jan 2014 08:33:18 -0500
+In-Reply-To: <20140107154222.b2c0c8081441671f32d78bc1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Cc: fengguang.wu@intel.com, jim.epost@gmail.com, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Wei Liu <liuw@liuw.name>
 
-Oops sorry...  I'm also still catching up from the holidays.  I think I
-was even CC'd on your earlier fix.
+On Tue, 7 Jan 2014, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the xen-tip tree got a conflict in
+> arch/arm/include/asm/xen/page.h between commit 0a5ccc86507f ("ARM:
+> 7933/1: rename ioremap_cached to ioremap_cache") from the  tree and
+> commit 02bcf053e9c5 ("asm/xen/page.h: remove redundant semicolon") from
+> the xen-tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-regards,
-dan carpenter
+That's fine, thanks!
+
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/include/asm/xen/page.h
+> index 3759cacdd7f8,709c4b4d2f1d..000000000000
+> --- a/arch/arm/include/asm/xen/page.h
+> +++ b/arch/arm/include/asm/xen/page.h
+> @@@ -117,6 -117,7 +117,7 @@@ static inline bool set_phys_to_machine(
+>   	return __set_phys_to_machine(pfn, mfn);
+>   }
+>   
+> - #define xen_remap(cookie, size) ioremap_cache((cookie), (size));
+>  -#define xen_remap(cookie, size) ioremap_cached((cookie), (size))
+> ++#define xen_remap(cookie, size) ioremap_cache((cookie), (size))
+> + #define xen_unmap(cookie) iounmap((cookie))
+>   
+>   #endif /* _ASM_ARM_XEN_PAGE_H */
+> 
