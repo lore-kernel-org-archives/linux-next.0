@@ -1,80 +1,102 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2014-01-02-14-35 uploaded (brocade/bna)
-Date: Mon, 06 Jan 2014 17:58:05 -0800
-Message-ID: <52CB5F2D.6020908@infradead.org>
-References: <20140102223649.D8FB931C206@corp2gmr1-1.hot.corp.google.com>	<52C700B9.8040504@infradead.org>	<20140106.172427.1901836894729408800.davem@davemloft.net> <20140106.203806.913798650848633178.davem@davemloft.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] hwmon/sensors: fix SENSORS_LM75 dependencies
+Date: Mon, 06 Jan 2014 18:26:34 -0800
+Message-ID: <52CB65DA.2010103@roeck-us.net>
+References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au> <52CB0948.6030702@infradead.org> <20140106203209.GA21630@roeck-us.net> <52CB53DC.4030901@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:47251 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756131AbaAGB6R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jan 2014 20:58:17 -0500
-In-Reply-To: <20140106.203806.913798650848633178.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: akpm@linux-foundation.org, rmody@brocade.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <52CB53DC.4030901@infradead.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frodo Looijaard <frodol@dds.nl>, lm-sensors@lm-sensors.org, "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-pm@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 01/06/14 17:38, David Miller wrote:
-> From: David Miller <davem@davemloft.net>
-> Date: Mon, 06 Jan 2014 17:24:27 -0500 (EST)
-> 
->> From: Randy Dunlap <rdunlap@infradead.org>
->> Date: Fri, 03 Jan 2014 10:26:01 -0800
->>
->>> as reported for linux-next of Dec.20, 2013
->>> when CONFIG_NEED_DMA_MAP_STATE is not enabled:
+On 01/06/2014 05:09 PM, Randy Dunlap wrote:
+> On 01/06/14 12:32, Guenter Roeck wrote:
+>> On Mon, Jan 06, 2014 at 11:51:36AM -0800, Randy Dunlap wrote:
+>>> On 01/06/14 01:40, Stephen Rothwell wrote:
+>>>> Hi all,
+>>>>
+>>>> This tree fails (more than usual) the powerpc allyesconfig build.
+>>>>
+>>>> Changes since 20131224:
+>>>>
 >>>
->>> drivers/net/ethernet/brocade/bna/bnad.c: In function 'bnad_start_xmit':
->>> drivers/net/ethernet/brocade/bna/bnad.c:3074:26: error: 'struct bnad_tx_vector' has no member named 'dma_len'
+>>>
+>>> on i386:
+>>>
+>>> drivers/built-in.o: In function `lm75_remove':
+>>> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
+>>> drivers/built-in.o: In function `lm75_probe':
+>>> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
+>>>
 >>
->> Sorry for taking so long, I plan to look into this tonight Randy.
-> 
-> I just committed the following fix for this, thanks!
-> 
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks, Dave.
-
-
-> ====================
-> [PATCH] bna: Fix build due to missing use of dma_unmap_len_set()
-> 
->> as reported for linux-next of Dec.20, 2013
->> when CONFIG_NEED_DMA_MAP_STATE is not enabled:
+>> AFAICS that is a dependency problem in thermal code.
+>> CONFIG_THERMAL=m defines the symbols, but CONFIG_SENSORS_LM75=y.
+>
+> CONFIG_THERMAL_OF defines the symbols.
+>
+> It looks to me like drivers/hwmon/Kconfig SENSORS_LM75 entry needs a
+> 	depends on THERMAL_OF
+> line, but that won't fix this build error.
+> The problem (once again, not the first time that I have seen this one) is that
+> we have a tristate =m that depends on a bool =y.
+>
+> Hm, I bet a "depends on THERMAL" for SENSORS_LM75 will fix this.
+> [test]
+> Yes, that restricts (limits) SENSORS_LM75 to n/m; y is not possible.
+>
+> Patch for your consideration is below.
+>
 >>
->> drivers/net/ethernet/brocade/bna/bnad.c: In function 'bnad_start_xmit':
->> drivers/net/ethernet/brocade/bna/bnad.c:3074:26: error: 'struct bnad_tx_vector' has no member named 'dma_len'
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
+>> Up to the thermal folks to fix; if the code ends up in mainline we'll have to
+>> revert the patch introducing the calls to the lm75 driver (and the tmp102 driver
+>> which has the same issue).
+>>
+>> Another oddity is the help text to THERMAL_OF, which states that it supports
+>> reading and parsing thermal data definitions out of dt but fails to mention
+>> that it also provides the above API functions.
+>
 > ---
->  drivers/net/ethernet/brocade/bna/bnad.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/brocade/bna/bnad.c b/drivers/net/ethernet/brocade/bna/bnad.c
-> index d31524f..5f24a9f 100644
-> --- a/drivers/net/ethernet/brocade/bna/bnad.c
-> +++ b/drivers/net/ethernet/brocade/bna/bnad.c
-> @@ -3071,11 +3071,11 @@ bnad_start_xmit(struct sk_buff *skb, struct net_device *netdev)
->  
->  		dma_addr = skb_frag_dma_map(&bnad->pcidev->dev, frag,
->  					    0, size, DMA_TO_DEVICE);
-> -		unmap->vectors[vect_id].dma_len = size;
-> +		dma_unmap_len_set(&unmap->vectors[vect_id], dma_len, size);
->  		BNA_SET_DMA_ADDR(dma_addr, &txqent->vector[vect_id].host_addr);
->  		txqent->vector[vect_id].length = htons(size);
->  		dma_unmap_addr_set(&unmap->vectors[vect_id], dma_addr,
-> -						dma_addr);
-> +				   dma_addr);
->  		head_unmap->nvecs++;
->  	}
->  
-> 
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix SENSORS_LM75 dependencies to eliminate build errors:
+>
+> drivers/built-in.o: In function `lm75_remove':
+> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
+> drivers/built-in.o: In function `lm75_probe':
+> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
+>
+> Add depends on THERMAL_OF since that is what provides the
+> register/unregister functions above.
+>
+> Add depends on THERMAL since THERMAL is a tristate (while THERMAL_OF
+> is a bool) and SENSORS_LM75 (tristate) needs to be limited to modular
+> builds when THERMAL=m.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>   drivers/hwmon/Kconfig |    2 ++
+>   1 file changed, 2 insertions(+)
+>
+> --- linux-next-20140106.orig/drivers/hwmon/Kconfig
+> +++ linux-next-20140106/drivers/hwmon/Kconfig
+> @@ -650,6 +650,8 @@ config SENSORS_LM73
+>   config SENSORS_LM75
+>   	tristate "National Semiconductor LM75 and compatibles"
+>   	depends on I2C
+> +	depends on THERMAL
+> +	depends on THERMAL_OF
+>   	help
+>   	  If you say yes here you get support for one common type of
+>   	  temperature sensor chip, with models including:
+>
+>
+NACK. The driver does not and must not depend on THERMAL. This needs to be addressed
+in the thermal code, for example with dummy declarations if THERMAL=m but
+SENSORS_LM75=y. The functions are already declared as dummies if THERMAL_OF=n.
 
+Guenter
 
--- 
-~Randy
