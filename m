@@ -1,83 +1,79 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: [PATCH] hwmon/sensors: fix SENSORS_LM75 dependencies
-Date: Tue, 7 Jan 2014 11:28:55 -0400
-Message-ID: <52CC1D37.40604@ti.com>
-References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au> <52CB0948.6030702@infradead.org> <20140106203209.GA21630@roeck-us.net> <52CB53DC.4030901@infradead.org> <52CB65DA.2010103@roeck-us.net> <20140107130401.23bffcd2@endymion.delvare> <52CBF1CF.2000603@ti.com> <744357E9AAD1214791ACBA4B0B909263011BC64C@SHSMSX101.ccr.corp.intel.com> <52CC15F0.6020209@ti.com> <20140107160738.4a76a6d0@endymion.delvare>
+Date: Tue, 7 Jan 2014 08:02:36 -0800
+Message-ID: <20140107160236.GA24018@roeck-us.net>
+References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au>
+ <52CB0948.6030702@infradead.org>
+ <20140106203209.GA21630@roeck-us.net>
+ <52CB53DC.4030901@infradead.org>
+ <52CB65DA.2010103@roeck-us.net>
+ <20140107130401.23bffcd2@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="QgwbA2aqk28CVpiw55qa319MSVul2MVnC"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:44959 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751631AbaAGPbc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Jan 2014 10:31:32 -0500
-In-Reply-To: <20140107160738.4a76a6d0@endymion.delvare>
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:46838 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751819AbaAGQCh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jan 2014 11:02:37 -0500
+Content-Disposition: inline
+In-Reply-To: <20140107130401.23bffcd2@endymion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jean Delvare <khali@linux-fr.org>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, "Zhang, Rui" <rui.zhang@intel.com>, Guenter Roeck <linux@roeck-us.net>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-pm@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frodo Looijaard <frodol@dds.nl>, lm-sensors@lm-sensors.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-pm@vger.kernel.org
 
---QgwbA2aqk28CVpiw55qa319MSVul2MVnC
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 07, 2014 at 01:04:01PM +0100, Jean Delvare wrote:
+> Hi Guenter, Randy,
+> 
+> On Mon, 06 Jan 2014 18:26:34 -0800, Guenter Roeck wrote:
+> > On 01/06/2014 05:09 PM, Randy Dunlap wrote:
+> > > From: Randy Dunlap <rdunlap@infradead.org>
+> > >
+> > > Fix SENSORS_LM75 dependencies to eliminate build errors:
+> > >
+> > > drivers/built-in.o: In function `lm75_remove':
+> > > lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
+> > > drivers/built-in.o: In function `lm75_probe':
+> > > lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
+> > >
+> > > Add depends on THERMAL_OF since that is what provides the
+> > > register/unregister functions above.
+> > >
+> > > Add depends on THERMAL since THERMAL is a tristate (while THERMAL_OF
+> > > is a bool) and SENSORS_LM75 (tristate) needs to be limited to modular
+> > > builds when THERMAL=m.
+> > >
+> > > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > > ---
+> > >   drivers/hwmon/Kconfig |    2 ++
+> > >   1 file changed, 2 insertions(+)
+> > >
+> > > --- linux-next-20140106.orig/drivers/hwmon/Kconfig
+> > > +++ linux-next-20140106/drivers/hwmon/Kconfig
+> > > @@ -650,6 +650,8 @@ config SENSORS_LM73
+> > >   config SENSORS_LM75
+> > >   	tristate "National Semiconductor LM75 and compatibles"
+> > >   	depends on I2C
+> > > +	depends on THERMAL
+> > > +	depends on THERMAL_OF
+> > >   	help
+> > >   	  If you say yes here you get support for one common type of
+> > >   	  temperature sensor chip, with models including:
+> > >
+> > >
+> > NACK. The driver does not and must not depend on THERMAL.
+> 
+> Correct.
+> 
+> > This needs to be addressed
+> > in the thermal code, for example with dummy declarations if THERMAL=m but
+> > SENSORS_LM75=y. The functions are already declared as dummies if THERMAL_OF=n.
+> 
+> This won't fly I'm afraid, the number of hwmon drivers affected will
+> grow in the future and you certainly don't want to have to change the
+> generic thermal code every time a new driver is added/converted.
+> 
+That is not really necessary - see the patch fragment I sent as response to
+the other patch.
 
-On 07-01-2014 11:07, Jean Delvare wrote:
-> On Tue, 7 Jan 2014 10:57:52 -0400, Eduardo Valentin wrote:
->> On 07-01-2014 10:05, Zhang, Rui wrote:
->>> BTW, I've been thinking of make CONFIG_THERMAL a bool since long time=
- ago, the only thing that blocks me is that Thermal subsystem needs to re=
-gister a hwmon device for each thermal zone and CONFIG_HWMON is a tristat=
-e.
->>
->> I agree with the move of having CONFIG_THERMAL as bool. Unless you hav=
-e
->> use cases where users are dynamically loading and unloading thermal pe=
-r
->> user demand, which I doubt.
->=20
-> Modularity is not only about reloading modules (although this can be
-> useful for developers in particular.) It's also about enabling many
-> features in a generic distribution kernel and each feature only gets
-> loaded/used on the hardware which needs it. This is why, as a
-
-In fact, no one has said anything different than the above. I definitely
-agree with you. Except that this needs to be taken with a bit of care.
-
-> distribution kernel maintainer, I keep complaining when I see boolean
-> options which might easily be tristates.
-
-Well, I would say it is not that 'easy' and not that straight forward.
-there a couple of items to be considered in the thermal case, the boot
-requirements and API provisioning are two, just to mention. There are
-use cases that waiting for init to be loaded and modules to be linked is
-just no go for thermal constraints, in case the system is already booted
-'hot'.
-
-Besides, hiding APIs when a component is build is module is not very
-'modular', even considering the statements you brought above.
-
->=20
-
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
---QgwbA2aqk28CVpiw55qa319MSVul2MVnC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlLMHTcACgkQCXcVR3XQvP2L/AEA4/uDi0hCpifWJeYLb+YQgufP
-1lslHDJXpn5p02CzRyIBAMydMpbvxLHckrsoQvd6xF4hkIcsPxG+sAZIWRpRMghc
-=XGl3
------END PGP SIGNATURE-----
-
---QgwbA2aqk28CVpiw55qa319MSVul2MVnC--
+Guenter
