@@ -1,102 +1,102 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] hwmon/sensors: fix SENSORS_LM75 dependencies
-Date: Mon, 06 Jan 2014 18:26:34 -0800
-Message-ID: <52CB65DA.2010103@roeck-us.net>
-References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au> <52CB0948.6030702@infradead.org> <20140106203209.GA21630@roeck-us.net> <52CB53DC.4030901@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Tue, 7 Jan 2014 14:27:59 +1100
+Message-ID: <20140107142759.abeb12cd3748ecd3284f20a6@canb.auug.org.au>
+References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
+	<20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
+	<CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
+	<20131217031600.GG6691@S2101-09.ap.freescale.net>
+	<CAA+hA=QU1TApbbohD1iNFiMMMHdQSamRfOsO0r3GpqmCbdiSgw@mail.gmail.com>
+	<20140106172243.8067c8e72c666511129a9701@canb.auug.org.au>
+	<20140106064406.GD26128@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <52CB53DC.4030901@infradead.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frodo Looijaard <frodol@dds.nl>, lm-sensors@lm-sensors.org, "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-pm@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__7_Jan_2014_14_27_59_+1100_ZAvw9rTzgqu1mkZ4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:55817 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754974AbaAGD2I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jan 2014 22:28:08 -0500
+In-Reply-To: <20140106064406.GD26128@S2101-09.ap.freescale.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Dong Aisheng <dongas86@gmail.com>, Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
 
-On 01/06/2014 05:09 PM, Randy Dunlap wrote:
-> On 01/06/14 12:32, Guenter Roeck wrote:
->> On Mon, Jan 06, 2014 at 11:51:36AM -0800, Randy Dunlap wrote:
->>> On 01/06/14 01:40, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> This tree fails (more than usual) the powerpc allyesconfig build.
->>>>
->>>> Changes since 20131224:
->>>>
->>>
->>>
->>> on i386:
->>>
->>> drivers/built-in.o: In function `lm75_remove':
->>> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
->>> drivers/built-in.o: In function `lm75_probe':
->>> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
->>>
->>
->> AFAICS that is a dependency problem in thermal code.
->> CONFIG_THERMAL=m defines the symbols, but CONFIG_SENSORS_LM75=y.
->
-> CONFIG_THERMAL_OF defines the symbols.
->
-> It looks to me like drivers/hwmon/Kconfig SENSORS_LM75 entry needs a
-> 	depends on THERMAL_OF
-> line, but that won't fix this build error.
-> The problem (once again, not the first time that I have seen this one) is that
-> we have a tristate =m that depends on a bool =y.
->
-> Hm, I bet a "depends on THERMAL" for SENSORS_LM75 will fix this.
-> [test]
-> Yes, that restricts (limits) SENSORS_LM75 to n/m; y is not possible.
->
-> Patch for your consideration is below.
->
->>
->> Up to the thermal folks to fix; if the code ends up in mainline we'll have to
->> revert the patch introducing the calls to the lm75 driver (and the tmp102 driver
->> which has the same issue).
->>
->> Another oddity is the help text to THERMAL_OF, which states that it supports
->> reading and parsing thermal data definitions out of dt but fails to mention
->> that it also provides the above API functions.
->
-> ---
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix SENSORS_LM75 dependencies to eliminate build errors:
->
-> drivers/built-in.o: In function `lm75_remove':
-> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
-> drivers/built-in.o: In function `lm75_probe':
-> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
->
-> Add depends on THERMAL_OF since that is what provides the
-> register/unregister functions above.
->
-> Add depends on THERMAL since THERMAL is a tristate (while THERMAL_OF
-> is a bool) and SENSORS_LM75 (tristate) needs to be limited to modular
-> builds when THERMAL=m.
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
->   drivers/hwmon/Kconfig |    2 ++
->   1 file changed, 2 insertions(+)
->
-> --- linux-next-20140106.orig/drivers/hwmon/Kconfig
-> +++ linux-next-20140106/drivers/hwmon/Kconfig
-> @@ -650,6 +650,8 @@ config SENSORS_LM73
->   config SENSORS_LM75
->   	tristate "National Semiconductor LM75 and compatibles"
->   	depends on I2C
-> +	depends on THERMAL
-> +	depends on THERMAL_OF
->   	help
->   	  If you say yes here you get support for one common type of
->   	  temperature sensor chip, with models including:
->
->
-NACK. The driver does not and must not depend on THERMAL. This needs to be addressed
-in the thermal code, for example with dummy declarations if THERMAL=m but
-SENSORS_LM75=y. The functions are already declared as dummies if THERMAL_OF=n.
+--Signature=_Tue__7_Jan_2014_14_27_59_+1100_ZAvw9rTzgqu1mkZ4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Guenter
+Hi Shawn,
 
+On Mon, 6 Jan 2014 14:44:08 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
+>
+> Okay, I missed your point.  The resolution needs the additional changes
+> as below.
+
+Thanks, I applied the following as a merge fix patch today and will carry
+it as necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 7 Jan 2014 14:20:53 +1100
+Subject: [PATCH] mmc: merge fixup for imx6qdl-sabresd.dtsi
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/boot/dts/imx6qdl-sabresd.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx=
+6qdl-sabresd.dtsi
+index 0eab66ea2009..0eb5704f2850 100644
+--- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+@@ -356,6 +356,10 @@
+ 		pinctrl_usdhc3: usdhc3grp {
+ 			fsl,pins =3D <MX6QDL_USDHC3_PINGRP_D8>;
+ 		};
++
++		pinctrl_usdhc4: usdhc4grp {
++			fsl,pins =3D <MX6QDL_USDHC4_PINGRP_D8>;
++		};
+ 	};
+ };
+=20
+@@ -438,7 +438,7 @@
+=20
+ &usdhc4 {
+ 	pinctrl-names =3D "default";
+-	pinctrl-0 =3D <&pinctrl_usdhc4_1>;
++	pinctrl-0 =3D <&pinctrl_usdhc4>;
+ 	bus-width =3D <8>;
+ 	non-removable;
+ 	no-1-8-v;
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__7_Jan_2014_14_27_59_+1100_ZAvw9rTzgqu1mkZ4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSy3RFAAoJEMDTa8Ir7ZwV7VEP/3RntVsI7dmQqaek3lTzuQj8
+wvvwhyab8IwCX8+XzxZyuwqTU7z6dhooq8A7kxKWejxFku2LBFw/cm4TAZ5QecFJ
+OXvP31A6uryEMRt/E7t2D/hm57Iy45v1s7iptROe9zVNE6HGFyCYUFLioIDsWZCU
+gX8ENmecvW4BymjEVKOIkmXGike1Q7xarc5chYaWj5Ds8TKnYuOCRx8B0AjdS7tK
+fwN3PS2zziZBtJoeov4OM//hqT+ky5Oe7cyusIzdnz6s/Njtl2yh8l6DFhIreDMQ
+fSwgxVhiJ3wHnazcsX37hKMr2IicZRciCPj/NR8NtIbqMnjZwLk1wDsUrZt1P/WE
+zQfNyIBe1ANCnxGfQlR0VaJ0VTMmXi8P/AQoN2TObIZ1cAOSAzVi+s6SM4Yb7UEz
+buhUW48VUIcZ+JAKvuXnHNSsgxQsbezQ1BhKvFaFhEKZxaHa+7z7hf3rkqnq4oxr
+80LEwbOWu0bs90XHNVtKSYSVhXnL8X8B5kpOXAmzr5AWFNR/V7v6GiL9fyelTktB
+mv6SY6pO3nsWij7vpS78SJ48xzfVeiIelCbkF5Okl47d3OMNKkxQfPELz9ptjyjb
+Awv9XUxltDuyy2iau2bdw82ioQMtk9rcrnbqwxWMLqE5uh/3ziqljVGQFWapkDnU
+j19YPOZNkmAOtGOLBQ1D
+=c7xi
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__7_Jan_2014_14_27_59_+1100_ZAvw9rTzgqu1mkZ4--
