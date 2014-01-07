@@ -1,64 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the security tree with the pm tree
-Date: Tue, 7 Jan 2014 14:46:38 +1100
-Message-ID: <20140107144638.5227139098f6cf772a162f35@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Date: Tue, 7 Jan 2014 15:20:43 +1100
+Message-ID: <20140107152043.6595eb01fbe10a5b32952fbf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__7_Jan_2014_14_46_38_+1100_enE+GiCy8REbaUd="
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:40990 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756636AbaAGDqt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Jan 2014 22:46:49 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Huewe <PeterHuewe@gmx.de>, Jiang Liu <jiang.liu@linux.intel.com>
+ boundary="Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__7_Jan_2014_14_46_38_+1100_enE+GiCy8REbaUd=
+--Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi all,
 
-Today's linux-next merge of the security tree got a conflict in
-drivers/char/tpm/tpm_ppi.c between commits df45c712d1f4 ("ACPI / TPM: fix
-memory leak when walking ACPI namespace"), 84b1667dea23 ("ACPI / TPM:
-replace open-coded _DSM code with helper functions") and 1569a4c4ceba
-("ACPI / TPM: detect PPI features by checking availability of _DSM
-functions") from the pm tree and commits 747d35bd9bb4 ("tpm/tpm_ppi: Do
-not compare strcmp(a,b) =3D=3D -1") and 238b1eaa59e6 ("tpm/tpm_ppi: Check
-return value of acpi_get_name") from the security tree.
+Today's linux-next merge of the tip tree got a conflict in
+drivers/acpi/processor_idle.c between commit 6cb85b2b9df9 ("ACPI /
+cpuidle: fix max idle state handling with hotplug CPU support") from the
+pm tree and commit 16824255394f ("x86, acpi, idle: Restructure the mwait
+idle routines") from the tip tree.
 
-I fixed it up (all of the latter patches have been subsumed by changes in
-the former ones) and can carry the fix as necessary (no action is
-required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__7_Jan_2014_14_46_38_+1100_enE+GiCy8REbaUd=
+diff --cc drivers/acpi/processor_idle.c
+index 1fc455b8ce17,f90c56c8379e..000000000000
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@@ -783,18 -780,6 +778,13 @@@ static int acpi_idle_enter_simple(struc
+  	if (unlikely(!pr))
+  		return -EINVAL;
+ =20
+ +#ifdef CONFIG_HOTPLUG_CPU
+ +	if ((cx->type !=3D ACPI_STATE_C1) && (num_online_cpus() > 1) &&
+ +	    !pr->flags.has_cst &&
+ +	    !(acpi_gbl_FADT.flags & ACPI_FADT_C2_MP_SUPPORTED))
+ +		return acpi_idle_enter_c1(dev, drv, CPUIDLE_DRIVER_STATE_START);
+ +#endif
+ +
+- 	if (cx->entry_method =3D=3D ACPI_CSTATE_FFH) {
+- 		if (current_set_polling_and_test())
+- 			return -EINVAL;
+- 	}
+-=20
+  	/*
+  	 * Must be done before busmaster disable as we might need to
+  	 * access HPET !
+
+--Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSy3imAAoJEMDTa8Ir7ZwVtgIP/0TypRLLc40j5D+JGSrUM0xX
-vK7K+PbZj26KbqnyvmC+FPdyVONIsZ2Z3Pbzmr2rSpfuoPuQr/cBVLLwpScocRrj
-8PvOA7iZk9WKClDdBOtb/vK4nipkPjo/7O3XVyRok2Hevp97Qtxuu4AXg1g3vFdT
-lnn4a1IlTE+vr0cYKJp94njTyJcXVC+RO1N4c+rQKxbdaOGQQ+qeEXOOv8GPeRUK
-HksquqgVbK3dpBT9G81mhRkK2xqiTyciuCKfc0nK04F+y5OfWiNosNH7vrv8e7F/
-NyObfVNSm4rJuqWU/9hDx45dH0smix7QWxBWtc+0vya5LLYyLhGtbAkATII2yhOq
-LrjmeijDq3fI6azATBgDKOFs4MRA2nhMM42Ej/+kfRfIcgojAAebHmNbe9/peJys
-TPEH9mfiNkeARt8UsFHRc/kCRWBDLUydYOsuAxj7ORC1wB0TYFX2Z0fvJtfl6uLE
-0X09JKhXeT0pOZJ7Q3Lj+0oxK4swllZVT65YcxISIvBZ/bRm9BOvfuHJI4n/fqqX
-2HjDhOR08Kb5PQBGe4dEVWe4VCcy9Aa/6FDjvC3dGvnXoz3qN+/UnsXcUDV32T3+
-aWJLdOIq3isZ7290adS6yFxcgVc1imX7lct/SsBdx5KFNxzOSnO60Am4EL8lAaYG
-gjmhmyNeFliyWVIL3/HF
-=wt6w
+iQIcBAEBCAAGBQJSy4ChAAoJEMDTa8Ir7ZwVei0P/At8p4VELYY3DR4ZlHLwimdr
+wPRcm/nuk4LUuEHNgkEt5x44QlZcRjb7SSuUO/TZ0HG+cRvx+G4be06sLshp/20G
+C8eScN+Mk82Zclhn0J2Oe+C37THT24CYQt3fBsWCBplncz8F37b2AUgx6hChW2nc
+HAPzf9lg4fj1CEhsZ2kpfG2nBVQ2DorBT71/OvuTpqC5ooyTQfKuAOetTK7ZqP8R
+vlGp7qoh1NUdfYzJah6jEcgTMQJRPnAaLfiHbr+aKiweDp/oiEwmSQL+41r5vVq6
+yXgchx/31OMbzAbHqCD1k0rwC/5n9oYr+YJGefASUAAVqtjKDTRAnEKwVl5xfQ2A
+pXM4jIhjna4c9LZIVppnKFIvSueUvTXXcpOKbh382g5nubCnXTNE5h1y6yc+3gIG
+GhDBBr4NjV3mg3HdB9cdr6+3yaZs48o09lg6eMVAaJqusrnCDws9/Io6pB6PtiXf
+lXB/y5njf5qLJlAOtdhE18adPP1VKCju6rZQOvD2pQQWxh3yESO41NRGG9uV9o3v
+Y7wZumTTpk4z8ZkxK+shbr9yftMndPMGV6ixmN735q5Pi/4hfFS3FyKVCTzEul6e
+r0fAAzxgi1tdZvCVMuqlLOq1B2++UUQIf+Ug64Hp6W6G0r9LiiWFpCGlE0UMydLH
+A4AHxy0nr/VeGGSZ1HQq
+=XVgD
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Jan_2014_14_46_38_+1100_enE+GiCy8REbaUd=--
+--Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7--
