@@ -1,72 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with the arm-current
- tree
-Date: Tue, 7 Jan 2014 15:42:22 +1100
-Message-ID: <20140107154222.b2c0c8081441671f32d78bc1@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Tue, 7 Jan 2014 17:00:41 +1100
+Message-ID: <20140107170041.3a0b3ada016d250b1f9f0572@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Wei Liu <liuw@liuw.name>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__7_Jan_2014_17_00_41_+1100_JMhaqLsdVJWhU4p8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:59456 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751929AbaAGGLE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Jan 2014 01:11:04 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lans Zhang <jia.zhang@windriver.com>, Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>, Lai Jiangshan <laijs@cn.fujitsu.com>, Tang Chen <tangchen@cn.fujitsu.com>, Jiang Liu <jiang.liu@huawei.com>, Zhang Yanfei <zhangyanfei@cn.fujitsu.com>
 
---Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz
+--Signature=_Tue__7_Jan_2014_17_00_41_+1100_JMhaqLsdVJWhU4p8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the xen-tip tree got a conflict in
-arch/arm/include/asm/xen/page.h between commit 0a5ccc86507f ("ARM:
-7933/1: rename ioremap_cached to ioremap_cache") from the  tree and
-commit 02bcf053e9c5 ("asm/xen/page.h: remove redundant semicolon") from
-the xen-tip tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+arch/x86/mm/numa.c between commit f3d815cb854b ("x86/mm/numa: Fix 32-bit
+kernel NUMA boot") from the tip tree and commit 1459be89954e ("x86: get
+pg_data_t's memory from other node") from the akpm-current tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+These appear to be two very similar solutions, I fixed it up (see below -
+I (arbitrarily) chose to keep the actual allocation from the tip tree, but
+the messages from the akpm-current tree) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/include/asm/xen/page.h
-index 3759cacdd7f8,709c4b4d2f1d..000000000000
---- a/arch/arm/include/asm/xen/page.h
-+++ b/arch/arm/include/asm/xen/page.h
-@@@ -117,6 -117,7 +117,7 @@@ static inline bool set_phys_to_machine(
-  	return __set_phys_to_machine(pfn, mfn);
-  }
- =20
-- #define xen_remap(cookie, size) ioremap_cache((cookie), (size));
- -#define xen_remap(cookie, size) ioremap_cached((cookie), (size))
-++#define xen_remap(cookie, size) ioremap_cache((cookie), (size))
-+ #define xen_unmap(cookie) iounmap((cookie))
- =20
-  #endif /* _ASM_ARM_XEN_PAGE_H */
+diff --cc arch/x86/mm/numa.c
+index c85da7bb6b60,f26b16f0d3e0..000000000000
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@@ -211,11 -211,12 +211,12 @@@ static void __init setup_node_data(int=20
+  	 */
+  	nd_pa =3D memblock_alloc_nid(nd_size, SMP_CACHE_BYTES, nid);
+  	if (!nd_pa) {
++ 		pr_warn("Cannot find %zu bytes in node %d, so try other nodes",
++ 			nd_size, nid);
+ -		nd_pa =3D memblock_alloc_nid(nd_size, SMP_CACHE_BYTES,
+ -					   MAX_NUMNODES);
+ +		nd_pa =3D __memblock_alloc_base(nd_size, SMP_CACHE_BYTES,
+ +					      MEMBLOCK_ALLOC_ACCESSIBLE);
+  		if (!nd_pa) {
+- 			pr_err("Cannot find %zu bytes in node %d\n",
+- 			       nd_size, nid);
++ 			pr_err("Cannot find %zu bytes in any node\n", nd_size);
+  			return;
+  		}
+  	}
 
---Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz
+--Signature=_Tue__7_Jan_2014_17_00_41_+1100_JMhaqLsdVJWhU4p8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSy4WzAAoJEMDTa8Ir7ZwVUnUP/0EHDRFLLab9spxf8kCH6AIN
-a5Bpk3xpkVU/8Yx2so9pVA9lmo9NfizhCvrJ+eX+P0rOSt7wGag3Bu/9U3R9znrX
-AwFr9b1awuSFP9qXGqDqmGKY4Cf8fwZC3YPa5keQ4DJoyxCCZ8e8fjWTgDMaA5xD
-AK3Dfy+eYwRDdhvAnGj9MUxzLMGeuqGF9YCdtSCtiWtz343kJDzRJmEGoimnAyYU
-GSG9za3HYkl3ElBNF1Vjkklfph5vnn0zuMd3hLsRBufRlAsUuM95WguJwAvxMrbW
-hP66ONsbLMihIGlRo0si5gmTsWiquk1Yhb3X9uHcDq662I8iwW4JW8+oXyNAYlKd
-V/BmzAoK2vp/8vVyCOqp4gN6NHbhy9dL9K8WQZOOgUegPq3YxQOAjXCb7OCoYxFo
-1E/XoeAqu+dXVTKbsnLdeVRCEmfh/yPj22mSpfrN16RvJFSUjQbXWzK1vhGOuQK6
-4Jajbz5mBhrs+gDYCMRORvxaCE1/TK+k4nMt4ON8W9hVU6TeFPv9YKAfPqPLqlp2
-GaSjwsXzSoBe3TIObtPG34uYf2ec2J7LRu0YLddZ8s3s+HyoClxygmL4ELtmZtUu
-2bEA0t3jTOR98KrNd1u2KYFMT8pxs0KoheHq8X2Y8hK07Ety3J4OpIZ+p5x22xwi
-5axr1xKdt7hLTkDB4Xg9
-=udXo
+iQIcBAEBCAAGBQJSy5gNAAoJEMDTa8Ir7ZwV8ocP/j64fesEWSJLml18z8IhXY2j
++WUApqxJYISDiH9s26NvjY0zp1CC+5BxbFHHOGg22rE+OwJmO5uQavrG1cNK7KkO
+EoXDgljoRJXnLO9svlNnNuKg+MvxHQkgWUdFE9ncyiP5e2724NvoglwCfSNsbaVF
+fKyQ73lUAMLGo6dtYeePMrjZd/ZjlH0SqP+MsupZ+EJ8qUPBGWOrH+EMckG9+4k3
+c2loLK/fhOcf0Wn4yqYE/rr1TEa0oT7P45F6sbor2QXd2Z7PBqoCwywAOQT5y0JH
+R8+V9m0IaDRJbd//srK2rk2yo8ycidr8Qlz9xmXRA2NyhaXvdCuv+uXdcGUi4I0h
+dZgXr4ppI3wVpkbL8NyskyMMH0/nROIzXmpYjB94buQFN9IJHhwTXi6UkpgDOoDk
+SRoqau/D42Pq2dZu7YTzZbMde78Axg+5Q65BGya7eEGAzeIwnYjUR9KbcFVb0+Ww
+j2nkYSkbVESO8W23Cp/x1KD/kwPRqP4UJ8TS+049O9QR8h82dAQ4MS+Gwb7jGZaN
+/h87t32Af6miaD3bSjS5TazMyGkL9QLgqBA3ZH6t2x+CGpxLjgxGKKJ2gddaTgac
+agRJoU8DUnSGnsUy2Rmtdo37fd8MrcTEj+1cbrjROzplwAaVhKR4r351O2Gt1l2f
+XfCAVeSW0Lb87kGpMiP8
+=ZjRD
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz--
+--Signature=_Tue__7_Jan_2014_17_00_41_+1100_JMhaqLsdVJWhU4p8--
