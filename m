@@ -1,29 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Tue, 7 Jan 2014 15:20:43 +1100
-Message-ID: <20140107152043.6595eb01fbe10a5b32952fbf@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-tip tree with the arm-current
+ tree
+Date: Tue, 7 Jan 2014 15:42:22 +1100
+Message-ID: <20140107154222.b2c0c8081441671f32d78bc1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7"
+ boundary="Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Wei Liu <liuw@liuw.name>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7
+--Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/acpi/processor_idle.c between commit 6cb85b2b9df9 ("ACPI /
-cpuidle: fix max idle state handling with hotplug CPU support") from the
-pm tree and commit 16824255394f ("x86, acpi, idle: Restructure the mwait
-idle routines") from the tip tree.
+Today's linux-next merge of the xen-tip tree got a conflict in
+arch/arm/include/asm/xen/page.h between commit 0a5ccc86507f ("ARM:
+7933/1: rename ioremap_cached to ioremap_cache") from the  tree and
+commit 02bcf053e9c5 ("asm/xen/page.h: remove redundant semicolon") from
+the xen-tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -32,49 +33,40 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/acpi/processor_idle.c
-index 1fc455b8ce17,f90c56c8379e..000000000000
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@@ -783,18 -780,6 +778,13 @@@ static int acpi_idle_enter_simple(struc
-  	if (unlikely(!pr))
-  		return -EINVAL;
+diff --cc arch/arm/include/asm/xen/page.h
+index 3759cacdd7f8,709c4b4d2f1d..000000000000
+--- a/arch/arm/include/asm/xen/page.h
++++ b/arch/arm/include/asm/xen/page.h
+@@@ -117,6 -117,7 +117,7 @@@ static inline bool set_phys_to_machine(
+  	return __set_phys_to_machine(pfn, mfn);
+  }
  =20
- +#ifdef CONFIG_HOTPLUG_CPU
- +	if ((cx->type !=3D ACPI_STATE_C1) && (num_online_cpus() > 1) &&
- +	    !pr->flags.has_cst &&
- +	    !(acpi_gbl_FADT.flags & ACPI_FADT_C2_MP_SUPPORTED))
- +		return acpi_idle_enter_c1(dev, drv, CPUIDLE_DRIVER_STATE_START);
- +#endif
- +
-- 	if (cx->entry_method =3D=3D ACPI_CSTATE_FFH) {
-- 		if (current_set_polling_and_test())
-- 			return -EINVAL;
-- 	}
--=20
-  	/*
-  	 * Must be done before busmaster disable as we might need to
-  	 * access HPET !
+- #define xen_remap(cookie, size) ioremap_cache((cookie), (size));
+ -#define xen_remap(cookie, size) ioremap_cached((cookie), (size))
+++#define xen_remap(cookie, size) ioremap_cache((cookie), (size))
++ #define xen_unmap(cookie) iounmap((cookie))
+ =20
+  #endif /* _ASM_ARM_XEN_PAGE_H */
 
---Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7
+--Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSy4ChAAoJEMDTa8Ir7ZwVei0P/At8p4VELYY3DR4ZlHLwimdr
-wPRcm/nuk4LUuEHNgkEt5x44QlZcRjb7SSuUO/TZ0HG+cRvx+G4be06sLshp/20G
-C8eScN+Mk82Zclhn0J2Oe+C37THT24CYQt3fBsWCBplncz8F37b2AUgx6hChW2nc
-HAPzf9lg4fj1CEhsZ2kpfG2nBVQ2DorBT71/OvuTpqC5ooyTQfKuAOetTK7ZqP8R
-vlGp7qoh1NUdfYzJah6jEcgTMQJRPnAaLfiHbr+aKiweDp/oiEwmSQL+41r5vVq6
-yXgchx/31OMbzAbHqCD1k0rwC/5n9oYr+YJGefASUAAVqtjKDTRAnEKwVl5xfQ2A
-pXM4jIhjna4c9LZIVppnKFIvSueUvTXXcpOKbh382g5nubCnXTNE5h1y6yc+3gIG
-GhDBBr4NjV3mg3HdB9cdr6+3yaZs48o09lg6eMVAaJqusrnCDws9/Io6pB6PtiXf
-lXB/y5njf5qLJlAOtdhE18adPP1VKCju6rZQOvD2pQQWxh3yESO41NRGG9uV9o3v
-Y7wZumTTpk4z8ZkxK+shbr9yftMndPMGV6ixmN735q5Pi/4hfFS3FyKVCTzEul6e
-r0fAAzxgi1tdZvCVMuqlLOq1B2++UUQIf+Ug64Hp6W6G0r9LiiWFpCGlE0UMydLH
-A4AHxy0nr/VeGGSZ1HQq
-=XVgD
+iQIcBAEBCAAGBQJSy4WzAAoJEMDTa8Ir7ZwVUnUP/0EHDRFLLab9spxf8kCH6AIN
+a5Bpk3xpkVU/8Yx2so9pVA9lmo9NfizhCvrJ+eX+P0rOSt7wGag3Bu/9U3R9znrX
+AwFr9b1awuSFP9qXGqDqmGKY4Cf8fwZC3YPa5keQ4DJoyxCCZ8e8fjWTgDMaA5xD
+AK3Dfy+eYwRDdhvAnGj9MUxzLMGeuqGF9YCdtSCtiWtz343kJDzRJmEGoimnAyYU
+GSG9za3HYkl3ElBNF1Vjkklfph5vnn0zuMd3hLsRBufRlAsUuM95WguJwAvxMrbW
+hP66ONsbLMihIGlRo0si5gmTsWiquk1Yhb3X9uHcDq662I8iwW4JW8+oXyNAYlKd
+V/BmzAoK2vp/8vVyCOqp4gN6NHbhy9dL9K8WQZOOgUegPq3YxQOAjXCb7OCoYxFo
+1E/XoeAqu+dXVTKbsnLdeVRCEmfh/yPj22mSpfrN16RvJFSUjQbXWzK1vhGOuQK6
+4Jajbz5mBhrs+gDYCMRORvxaCE1/TK+k4nMt4ON8W9hVU6TeFPv9YKAfPqPLqlp2
+GaSjwsXzSoBe3TIObtPG34uYf2ec2J7LRu0YLddZ8s3s+HyoClxygmL4ELtmZtUu
+2bEA0t3jTOR98KrNd1u2KYFMT8pxs0KoheHq8X2Y8hK07Ety3J4OpIZ+p5x22xwi
+5axr1xKdt7hLTkDB4Xg9
+=udXo
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Jan_2014_15_20_43_+1100_vQxbrKtQM6BG4Sw7--
+--Signature=_Tue__7_Jan_2014_15_42_22_+1100_o1XXANa77vLhDjqz--
