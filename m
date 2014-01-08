@@ -1,181 +1,73 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH] hwmon/sensors: fix SENSORS_LM75 dependencies
-Date: Wed, 08 Jan 2014 10:02:53 +0800
-Message-ID: <1389146573.6486.1.camel@rzhang1-mobl4>
-References: <20140106204020.b47e53cc3ead8f90164ef5b7@canb.auug.org.au>
-	 <52CB0948.6030702@infradead.org> <20140106203209.GA21630@roeck-us.net>
-	 <52CB53DC.4030901@infradead.org> <52CB65DA.2010103@roeck-us.net>
-	 <20140107130401.23bffcd2@endymion.delvare> <52CBF1CF.2000603@ti.com>
-	 <20140107152148.36768345@endymion.delvare>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the xtensa tree
+Date: Wed, 8 Jan 2014 15:14:59 +1100
+Message-ID: <20140108151459.d4743129d9cae88865774073@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:55873 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753627AbaAHCDN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Jan 2014 21:03:13 -0500
-In-Reply-To: <20140107152148.36768345@endymion.delvare>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Guenter Roeck <linux@roeck-us.net>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frodo Looijaard <frodol@dds.nl>, lm-sensors@lm-sensors.org, linux-pm@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__8_Jan_2014_15_14_59_+1100_kzhUPIu4Kdwt9pGt"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Chris Zankel <chris@zankel.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, Max Filippov <jcmvbkbc@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2014-01-07 at 15:21 +0100, Jean Delvare wrote:
-> Hi Eduardo,
-> 
-> On Tue, 7 Jan 2014 08:23:43 -0400, Eduardo Valentin wrote:
-> > On 07-01-2014 08:04, Jean Delvare wrote:
-> > > On Mon, 06 Jan 2014 18:26:34 -0800, Guenter Roeck wrote:
-> > >> This needs to be addressed
-> > >> in the thermal code, for example with dummy declarations if THERMAL=m but
-> > >> SENSORS_LM75=y. The functions are already declared as dummies if THERMAL_OF=n.
-> > > 
-> > > This won't fly I'm afraid, the number of hwmon drivers affected will
-> > > grow in the future and you certainly don't want to have to change the
-> > > generic thermal code every time a new driver is added/converted.
-> > 
-> > Agreed
-> > 
-> > > 
-> > > I've looked at the problem this morning and I will admit I do not even
-> > > understand what the problem is. In Randy's config, CONFIG_THERMAL_OF=y
-> > > so both thermal_zone_of_sensor_unregister and
-> > > thermal_zone_of_sensor_register are built-in. SENSORS_LM75=y so the
-> > > calls to these functions are built-in too. I just can't see how this
-> > > can be a problem at link time. Can anyone enlighten me?
-> > 
-> > I believe the problem is more in the fact that THERMAL_OF is a bool, but
-> > the way it is in thermal Kconfig, it will link to the thermal module, in
-> > case CONFIG_THERMAL=m.
-> 
-> Doh. I've been looking at this for an hour and managed to miss
-> that :( Thanks for explaining.
-> 
-> > Thus I am proposing the following,
-> > which limits the user to have THERMAL_OF only as builtin and whenever
-> > is selected, it will select THERMAL too. That is:
-> > 
-> > 
-> > From b643aa260ed4f3514d1ca51b1ecbe4be7652a8d0 Mon Sep 17 00:00:00 2001
-> > From: Eduardo Valentin <eduardo.valentin@ti.com>
-> > Date: Tue, 7 Jan 2014 08:04:02 -0400
-> > Subject: [PATCH 1/1] thermal: fix compilation issue on CONFIG_THERMAL_OF
-> >  dependencies
-> > 
-> > Users of API provided by THERMAL_OF config may suffer when
-> > CONFIG_THERMAL=y, causing linking issues, such as:
-> > 
-> > drivers/built-in.o: In function `lm75_remove':
-> > lm75.c:(.text+0x12bd8c): undefined reference to
-> > `thermal_zone_of_sensor_unregister'
-> > drivers/built-in.o: In function `lm75_probe':
-> > lm75.c:(.text+0x12c123): undefined reference to
-> > `thermal_zone_of_sensor_register'
-> > 
-> > Therefore, this patch limits the compilation build to always
-> > have THERMAL=y, whenever THERMAL_OF=y. In this way, whenever
-> > the API user is built, if THERMAL_OF=y, the build shall have
-> > the full thermal support, otherwise, the thermal API will provide
-> > stubs.
-> > 
-> > Cc: Zhang Rui <rui.zhang@intel.com>
-> > Cc: linux-pm@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Eduardo Valentin <eduardo.valentin@ti.com>
-> > ---
-> >  drivers/thermal/Kconfig | 29 ++++++++++++++++-------------
-> >  1 file changed, 16 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > index 58f98bd..dc315e9 100644
-> > --- a/drivers/thermal/Kconfig
-> > +++ b/drivers/thermal/Kconfig
-> > @@ -29,19 +29,6 @@ config THERMAL_HWMON
-> >  	  Say 'Y' here if you want all thermal sensors to
-> >  	  have hwmon sysfs interface too.
-> > 
-> > -config THERMAL_OF
-> > -	bool
-> > -	prompt "APIs to parse thermal data out of device tree"
-> > -	depends on OF
-> > -	default y
-> > -	help
-> > -	  This options provides helpers to add the support to
-> > -	  read and parse thermal data definitions out of the
-> > -	  device tree blob.
-> > -
-> > -	  Say 'Y' here if you need to build thermal infrastructure
-> > -	  based on device tree.
-> > -
-> >  choice
-> >  	prompt "Default Thermal governor"
-> >  	default THERMAL_DEFAULT_GOV_STEP_WISE
-> > @@ -235,3 +222,19 @@ source "drivers/thermal/samsung/Kconfig"
-> >  endmenu
-> > 
-> >  endif
-> > +
-> > +menuconfig THERMAL_OF
-> > +	bool
-> > +	prompt "APIs to parse thermal data out of device tree"
-> > +	depends on OF
-> > +	select THERMAL
-> > +	default y
-> > +	help
-> > +	  This options enables DT thermal API which adds support to
-> > +	  read and parse thermal data definitions out of the
-> > +	  device tree blob. This option is mostly used by embedded
-> > +	  thermal drivers.
-> > +
-> > +	  Say 'Y' here if you need to build thermal infrastructure
-> > +	  based on device tree.
-> > +
-> 
-> I suppose this works, however I believe there is value in allowing for
-> modular building of as much code as possible.
-> 
-> I have an alternative proposal, which lets thermal be built as module,
-> and hopefully also addresses the issue (I can't test...) The only
-> drawback is that the same dependency must be added for every other
-> hwmon driver which optionally uses THERMAL_OF.
-> 
-> From: Jean Delvare <khali@linux-fr.org>
-> 
-> Based on an earlier attempt by Randy Dunlap.
-> 
-> Fix SENSORS_LM75 dependencies to eliminate build errors:
-> 
-> drivers/built-in.o: In function `lm75_remove':
-> lm75.c:(.text+0x12bd8c): undefined reference to `thermal_zone_of_sensor_unregister'
-> drivers/built-in.o: In function `lm75_probe':
-> lm75.c:(.text+0x12c123): undefined reference to `thermal_zone_of_sensor_register'
-> 
-> Add depends on THERMAL since that is what provides the
-> register/unregister functions above, but only if THERMAL_OF was
-> selected as this is an optional feature of the driver.
-> 
-> Signed-off-by: Jean Delvare <khali@linux-fr.org>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Eduardo Valentin <eduardo.valentin@ti.com>
+--Signature=_Wed__8_Jan_2014_15_14_59_+1100_kzhUPIu4Kdwt9pGt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Zhang Rui <rui.zhang@intel.com>
+Hi Linus,
 
-thanks,
-rui
-> ---
->  drivers/hwmon/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-3.13-rc7.orig/drivers/hwmon/Kconfig	2014-01-07 09:01:24.812848091 +0100
-> +++ linux-3.13-rc7/drivers/hwmon/Kconfig	2014-01-07 15:19:11.039472329 +0100
-> @@ -650,6 +650,7 @@ config SENSORS_LM73
->  config SENSORS_LM75
->  	tristate "National Semiconductor LM75 and compatibles"
->  	depends on I2C
-> +	depends on THERMAL || !THERMAL_OF
->  	help
->  	  If you say yes here you get support for one common type of
->  	  temperature sensor chip, with models including:
-> 
-> 
+Today's linux-next merge of the gpio tree got a conflict in
+arch/xtensa/Kconfig between commit dbacef090841 ("xtensa: add SMP
+support") from the xtensa tree and commit a1a2bdec4772 ("gpio: xtensa:
+depend on HAVE_XTENSA_GPIO32") from the gpio tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/xtensa/Kconfig
+index 70a160be3464,f8df0cc70cb6..000000000000
+--- a/arch/xtensa/Kconfig
++++ b/arch/xtensa/Kconfig
+@@@ -64,9 -64,9 +64,12 @@@ config MM
+  config VARIANT_IRQ_SWITCH
+  	def_bool n
+ =20
+ +config MAY_HAVE_SMP
+ +	def_bool n
+ +
++ config HAVE_XTENSA_GPIO32
++ 	def_bool n
++=20
+  menu "Processor type and features"
+ =20
+  choice
+
+--Signature=_Wed__8_Jan_2014_15_14_59_+1100_kzhUPIu4Kdwt9pGt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSzNDHAAoJEMDTa8Ir7ZwVYBEP/j5Wchm5FadSkTn+3ke4uda5
+EYTIcVL+IucXtF20Q1wKwM7HrVzOgTDPJoZcvBndDaYoSIvxtn6ZcPUXHjyE8QH9
+t2oNNYio5hbx/81Scu3q7gJHnWdElAbeyFyqMxrTs7bdCs1MCXwza0IDRIan8POt
+WuNY2Z2KF9DSq6K5p6ZdVLrMNM/AbZoqeHqI/ScJ5H89MFiZZuNrA1Wqv3YgEomp
+0nhjVYapxb+eeIBH6EF61Fcj89XrPrMyiqcBeUIOB4ZfYGwzjz3hzP5jzNWyI3hB
+t0iNb4KHjrAcxcMyPt7FZcw2Qw8HJLw9byinB4kJAdgXOCnq1Ik2q5lQQ6DMfawL
+Bs686cPcRoOE8hOofqqqdFwqoONWgqe7mK6Z8DU2VMZAD/UDtaxJY02Gfzb2kxDz
+jc2BquW8fSl6vr2iyJmugd/3duZTO+ORFX7ckb9/IXKuuESM1rYHpIeQYic3GqIy
+OJT6nyYuioK9xOkhaxttZ2Ym+u16gEO/9L4yEu+9uvb6WZKKpJOIoD9JDSeVzOA4
+0VpM7ilEbU88MUJllGJ6kydy47g7KmpM+slEHAdB5Qu/1Y6DkBEcHUCXn977R90a
+mGM/CTvfXGn3LdWd/o4TJSCA4X1QZGPCDbdUvg3Lz52hPFswyqZzsQ+rtqldpNiU
+Fmqy5aFjKAiF0zBur9Jp
+=cmF7
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__8_Jan_2014_15_14_59_+1100_kzhUPIu4Kdwt9pGt--
