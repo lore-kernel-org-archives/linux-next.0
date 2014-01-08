@@ -1,33 +1,82 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the gpio tree with the xtensa tree
-Date: Wed, 8 Jan 2014 09:02:27 +0100
-Message-ID: <CACRpkdaGArKx2WXkxrakFQ4vaJtytsbSW8mpA+FdyJxEROURvg@mail.gmail.com>
-References: <20140108151459.d4743129d9cae88865774073@canb.auug.org.au>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: linux-next: manual merge of the renesas tree with the arm-soc tree
+Date: Wed, 08 Jan 2014 08:56:34 -0800
+Message-ID: <20140108165634.27803.31368@quantum>
+References: <20131216104738.6f845aabd0e3b609ed9ca170@canb.auug.org.au>
+ <52AECF56.8020508@atmel.com>
+ <CAOesGMgi3COtsr+-9B3Tt350gwBs0Qm0AjatjLWCWTeUkAP5og@mail.gmail.com>
+ <52CA7AFB.9010208@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:53579 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755332AbaAHIC2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jan 2014 03:02:28 -0500
-Received: by mail-oa0-f51.google.com with SMTP id m1so1420387oag.38
-        for <linux-next@vger.kernel.org>; Wed, 08 Jan 2014 00:02:27 -0800 (PST)
-In-Reply-To: <20140108151459.d4743129d9cae88865774073@canb.auug.org.au>
+Received: from mail-yh0-f49.google.com ([209.85.213.49]:62582 "EHLO
+	mail-yh0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932115AbaAHQ4l convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jan 2014 11:56:41 -0500
+Received: by mail-yh0-f49.google.com with SMTP id z20so477221yhz.8
+        for <linux-next@vger.kernel.org>; Wed, 08 Jan 2014 08:56:40 -0800 (PST)
+In-Reply-To: <52CA7AFB.9010208@atmel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Baruch Siach <baruch@tkos.co.il>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Simon Horman <horms@verge.net.au>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Boris BREZILLON <b.brezillon@overkiz.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-On Wed, Jan 8, 2014 at 5:14 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Quoting Nicolas Ferre (2014-01-06 01:44:27)
+> On 04/01/2014 06:11, Olof Johansson :
+> > On Mon, Dec 16, 2013 at 2:00 AM, Nicolas Ferre <nicolas.ferre@atmel.com> wrote:
+> >> On 16/12/2013 00:47, Stephen Rothwell :
+> >>> Hi Simon,
+> >>>
+> >>> Today's linux-next merge of the renesas tree got a conflict in
+> >>> drivers/clk/Makefile between commit 0ad6125b1579 ("clk: at91: add PMC
+> >>> base support") from the arm-soc tree and commit 10cdfe9f327a ("clk:
+> >>> shmobile: Add R-Car Gen2 clocks support") from the renesas tree.
+> >>>
+> >>> I fixed it up (see below) and can carry the fix as necessary (no action
+> >>> is required).
+> >>
+> >> Fine for me.
+> > 
+> > Simon, Nicolas,
+> > 
+> > <mini-rant>
+> > 
+> > While a very minor issue, this should have been altogether avoided
+> > with a little more attention when applying patches. The Makefile is
+> > sorted, and you've appended new lines to the end instead of in the
+> > place they're supposed to go. Sure, others have done the same mistake
+> > in a few places but that doesn't mean we shouldn't try to keep it
+> > sorted.
+> > 
+> > The very reason _to_ sort a Makefile is to avoid these needless
+> > add-add conflicts when two people append to the same unsorted list.
+> > 
+> > Now I can't resolve it properly and move the entries when I do the
+> > same merge (and get the same conflict), because that will cause a
+> > third conflict for Stephen, and he's about to return from vacation and
+> > is going to cuss at us if we cause too many new conflicts in one day.
+> > :)
+> > 
+> > </mini-rant>
+> > 
+> > So, best choice is to keep the unsortedness now, and have Mike resort
+> > his Makefile for us at the end of the merge window. And keep a little
+> > closer eye on Makefile and Kconfig additions in the future. :)
+> 
+> Totally agree in keeping a Makefile sorted, when it is already sorted.
+> What I recall having thought when I had seen this Makefile is: well this
+> one must be of the "append your changes to the end" type...
+> 
+> Anyway be sure that I will pay attention to this.
 
-> Hi Linus,
->
-> Today's linux-next merge of the gpio tree got a conflict in
-> arch/xtensa/Kconfig between commit dbacef090841 ("xtensa: add SMP
-> support") from the xtensa tree and commit a1a2bdec4772 ("gpio: xtensa:
-> depend on HAVE_XTENSA_GPIO32") from the gpio tree.
+The file used to be sorted. I've cleaned it up locally and will apply
+the patch after I take in a few more pull requests.
 
-Looks correct, thanks!
+Regards,
+Mike
 
-Yours,
-Linus Walleij
+> 
+> Bye,
+> -- 
+> Nicolas Ferre
