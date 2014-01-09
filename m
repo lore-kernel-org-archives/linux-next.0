@@ -1,83 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the btrfs tree
-Date: Thu, 9 Jan 2014 15:01:33 +1100
-Message-ID: <20140109150133.cfaeb84aeea153c52bcb9828@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the leds tree
+Date: Thu, 9 Jan 2014 16:49:48 +1100
+Message-ID: <20140109164948.6a7341cfbd92258bc8d522e3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__9_Jan_2014_15_01_33_+1100_2hHAKjWccERnguUq"
+ boundary="Signature=_Thu__9_Jan_2014_16_49_48_+1100_c0bIg7tr2/yIDwYC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:58849 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:48553 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752752AbaAIEBn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Jan 2014 23:01:43 -0500
+	id S1751103AbaAIFt5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jan 2014 00:49:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>, Valentina Giusti <valentina.giusti@microon.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, achin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>
 
---Signature=_Thu__9_Jan_2014_15_01_33_+1100_2hHAKjWccERnguUq
+--Signature=_Thu__9_Jan_2014_16_49_48_+1100_c0bIg7tr2/yIDwYC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Linus,
 
-Today's linux-next merge of the block tree got a conflict in
-fs/btrfs/extent_io.c between commit 1c94f854cbb6 ("btrfs: remove unused
-variables from extent_io.c") from the btrfs tree and commit 2c30c71bd653
-("block: Convert various code to bio_for_each_segment()") from the block
-tree.
+Today's linux-next merge of the gpio tree got a conflict in
+drivers/leds/leds-s3c24xx.c between commit cfc7937fb6bd ("leds: s3c24xx:
+Remove hardware.h inclusion") from the leds tree and commit 224feb33a645
+("leds: s3c24xx: Fix build failure") from the gpio tree.
 
-I fixed it up (thanks Chris for the heads up and resolution - see below)
-and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/btrfs/extent_io.c
-index fbe501d3bd01,bcb6f1b780d6..000000000000
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@@ -2375,12 -2332,15 +2375,13 @@@ int end_extent_writepage(struct page *p
-   */
-  static void end_bio_extent_writepage(struct bio *bio, int err)
-  {
-- 	struct bio_vec *bvec =3D bio->bi_io_vec + bio->bi_vcnt - 1;
-+ 	struct bio_vec *bvec;
- -	struct extent_io_tree *tree;
-  	u64 start;
-  	u64 end;
-+ 	int i;
+diff --cc drivers/leds/leds-s3c24xx.c
+index b7876eb09e8c,87cf215af798..000000000000
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@@ -18,9 -18,11 +18,10 @@@
+  #include <linux/gpio.h>
+  #include <linux/slab.h>
+  #include <linux/module.h>
+ +#include <linux/platform_data/leds-s3c24xx.h>
  =20
-- 	do {
-+ 	bio_for_each_segment_all(bvec, bio, i) {
-  		struct page *page =3D bvec->bv_page;
- -		tree =3D &BTRFS_I(page->mapping->host)->io_tree;
+ -#include <mach/hardware.h>
+  #include <mach/regs-gpio.h>
++ #include <plat/gpio-cfg.h>
+ -#include <linux/platform_data/leds-s3c24xx.h>
  =20
-  		/* We always issue full-page reads, but if some block
-  		 * in a page fails to read, blk_update_request() will
+  /* our context */
+ =20
 
---Signature=_Thu__9_Jan_2014_15_01_33_+1100_2hHAKjWccERnguUq
+--Signature=_Thu__9_Jan_2014_16_49_48_+1100_c0bIg7tr2/yIDwYC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSzh8hAAoJEMDTa8Ir7ZwVerQP/005f65PK99DcBgtuUWDK3DS
-p5bf3nXwppSyCDcUAQDjaxb7Ur5z39Xo4LcioPU7iHDUz+xhyNNAb39+DcKu/kI+
-jd3CugZHHfNIPW4+BWz6Lwjp6vVDnCa3Mm4I89zb3Igzic9PHdDegVaCSH0Uvua5
-qVh9U5KkJPOiZAQ2DjOmxHDA3DQ2Pvlq2UF4U/swhDIBlIKS2H+FPLofpxiOuF0b
-MVMxfkkp/3Wt84n0qoQOA/9woShr7Bd4G89EoTMuv9C2Z62iFbEtcKekJHoCCEcn
-RbBihKEUWRPReANGP7c9VO0MhtCF3rtnMrixnhc2GkcIIlnYfHnjdPlCImOpXW2w
-wYw7ixgRNSYxCycNX1GVbM9KsuGEPwCX/0vYi6KZ215+QfLGwsUPQ/QuIFx/JkXb
-pQ9JxvFGCpVL3Pw5pyy94YnbvmpWcK/YBny84IvXg7GD6Cj9J1BaHLXZwRCJhmZo
-Gd5RuGtf5sPC/aG5HxAF+VA8dFxAEQnuzOS2lFWq+1PTfOQLKfyWCZYysWoXExL4
-fe4ZFpOMjY7UCBPukIg/qjlTyMDA2l7x8NLMZf+fxChEa+9atN4tlu/9nlC3Dx8J
-CMHXfLjr4WTW7fbc+UzJC7mNf1CdyS6732TSoTnOhqV++50VDHd/gxSBdNq58NeH
-PGVYBgfPVFdFgq/L1AX0
-=2/zC
+iQIcBAEBCAAGBQJSzjiAAAoJEMDTa8Ir7ZwVlZUP/Rsb34h5Pow/hL8AA3uWw1p/
+dRHeKJrfYvENm+C7+ZyNUrZZplBu/HSb8EqR1jsi/kLEVbduOPkVBHGo9VE1uKvY
+L8rniETeVk+JKe/7qGlZps0dKDRy/CyqFzWyW4wd+OLv9jK45EbkzzpbxOOKS5z5
+AiLJaDnbBPj6izALL2QPbTqM+28bpAL6v7gxUNNtwUzu/f8unwy3+AATEHD6UnkC
+W6LkpGN2LWgCHzmoYTReiBUw8vs/K/vh5/Z+Ca4ci6MnPYrRo9K3dxT1YyUv42hc
+/q2V8ntSgUbqxmXMLIA/VMTff1dXOb/NzvS90rkVv5iix6DBPXWCCmHEF3jE3J3T
+XfA+Zg49kIXqelH8vO2s7JJt1zmy9eQZ3vRmkWlJrrJcCSIKav66qT8E17+s/Fuf
+5bxubsw+7RBgTyMkTFLtXqu+wL/ZQbtMEtQ22TGPjciSkencv+kZ+fNl/iYSmr8d
+P06OcwmS2DHYaWnCOPCslGWmJblBwaupro80Bv3iWfqra5Z+yPIfiJ5eykQORYiX
+ZjQCTcD8oSa0hKZd4P10SXqygviUYRk02+8auK10bmdGFYsbGm2quZ/GxU1Nre/q
+cqDZGjUhw8XRYuKLEp6KW1mMViuolzEII6k6XzmDEOHjNCoubxJ23dCR1MuBO2b6
+QUV7MvcH1wr6xGZeGb6S
+=2zkM
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__9_Jan_2014_15_01_33_+1100_2hHAKjWccERnguUq--
+--Signature=_Thu__9_Jan_2014_16_49_48_+1100_c0bIg7tr2/yIDwYC--
