@@ -1,22 +1,22 @@
-From: "GOOD NEWS" <quezada@konawa.k12.ok.us>
-Subject: GOOD NEWS
-Date: Thu, 9 Jan 2014 11:27:11 -0600
-Message-ID: <1790fe61905bf33f6c63c5950ad4c315.squirrel@konawa.k12.ok.us>
-Reply-To: pedro_quezada@yeah.net
+From: David Miller <davem@davemloft.net>
+Subject: Re: randconfig build error with next-20140109, in
+ net/ipv6/ip6_vti.c
+Date: Thu, 09 Jan 2014 15:58:27 -0500 (EST)
+Message-ID: <20140109.155827.536194406324178452.davem@davemloft.net>
+References: <CA+r1Zhg2srn3FkJcjKg0xiwbR89127sockdNQiGqUYn1qYTC0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailhost.konawa.k12.ok.us ([164.58.211.133]:55281 "EHLO
-	mailhost.konawa.k12.ok.us" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751405AbaAIRl1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jan 2014 12:41:27 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <CA+r1Zhg2srn3FkJcjKg0xiwbR89127sockdNQiGqUYn1qYTC0g@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: jim.epost@gmail.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, steffen.klassert@secunet.com, herbert@gondor.apana.org.au, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+From: Jim Davis <jim.epost@gmail.com>
+Date: Thu, 9 Jan 2014 06:55:50 -0700
 
+> Building with the attached random configuration file,
 
-
--- 
-A personal Donation of 2,000,000.00 USD has been Donated To You, Contact
-(pedro_quezada@yeah.net) for more info
+I cannot reproduce this in either the 'net' or 'net-next' tree.
