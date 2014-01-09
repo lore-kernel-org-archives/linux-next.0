@@ -1,126 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the libata tree with the pci tree
-Date: Thu, 9 Jan 2014 12:45:15 +1100
-Message-ID: <20140109124515.754c7d393b8c118766f1d2d2@canb.auug.org.au>
+Subject: linux-next: manual merge of the ipsec-next tree with the net-next
+ tree
+Date: Thu, 9 Jan 2014 13:41:17 +1100
+Message-ID: <20140109134117.41611cbfb87052212da67f03@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__9_Jan_2014_12_45_15_+1100_nrr03Bu=lptLv49v"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52962 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750986AbaAIBpX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Jan 2014 20:45:23 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@redhat.com>, Rashika Kheria <rashika.kheria@gmail.com>
+ boundary="Signature=_Thu__9_Jan_2014_13_41_17_+1100_dMnYdPS_pv+MHWlp"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Steffen Klassert <steffen.klassert@secunet.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <dborkman@redhat.com>, Weilong Chen <chenweilong@huawei.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__9_Jan_2014_12_45_15_+1100_nrr03Bu=lptLv49v
+--Signature=_Thu__9_Jan_2014_13_41_17_+1100_dMnYdPS_pv+MHWlp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Steffen,
 
-Today's linux-next merge of the libata tree got a conflict in
-drivers/ata/ahci.c between commit 7b92b4f61ec4 ("PCI/MSI: Remove
-pci_enable_msi_block_auto()") from the pci tree and commit d93414513966
-("drivers: ata: Mark the function ahci_init_interrupts() as static in
-ahci.c") from the libata tree.
+Today's linux-next merge of the ipsec-next tree got a conflict in
+net/xfrm/xfrm_policy.c between commits be7928d20bab ("net: xfrm:
+xfrm_policy: fix inline not at beginning of declaration") and
+da7c224b1baa ("net: xfrm: xfrm_policy: silence compiler warning") from
+the net-next tree and commit 2f3ea9a95c58 ("xfrm: checkpatch erros with
+inline keyword position") from the ipsec-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I used the version from the net-next tree) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/ata/ahci.c
-index 3cf6dad71e11,74911c2cb1dd..000000000000
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@@ -1097,40 -1148,26 +1148,40 @@@ static inline void ahci_gtf_filter_work
-  {}
-  #endif
- =20
-- int ahci_init_interrupts(struct pci_dev *pdev, unsigned int n_ports,
- -static int ahci_init_interrupts(struct pci_dev *pdev, struct ahci_host_pr=
-iv *hpriv)
-++static int ahci_init_interrupts(struct pci_dev *pdev, unsigned int n_port=
-s,
- +			 struct ahci_host_priv *hpriv)
-  {
- -	int rc;
- -	unsigned int maxvec;
- +	int rc, nvec;
- =20
- -	if (!(hpriv->flags & AHCI_HFLAG_NO_MSI)) {
- -		rc =3D pci_enable_msi_block_auto(pdev, &maxvec);
- -		if (rc > 0) {
- -			if ((rc =3D=3D maxvec) || (rc =3D=3D 1))
- -				return rc;
- -			/*
- -			 * Assume that advantage of multipe MSIs is negated,
- -			 * so fallback to single MSI mode to save resources
- -			 */
- -			pci_disable_msi(pdev);
- -			if (!pci_enable_msi(pdev))
- -				return 1;
- -		}
- -	}
- +	if (hpriv->flags & AHCI_HFLAG_NO_MSI)
- +		goto intx;
- +
- +	rc =3D pci_msi_vec_count(pdev);
- +	if (rc < 0)
- +		goto intx;
- +
- +	/*
- +	 * If number of MSIs is less than number of ports then Sharing Last
- +	 * Message mode could be enforced. In this case assume that advantage
- +	 * of multipe MSIs is negated and use single MSI mode instead.
- +	 */
- +	if (rc < n_ports)
- +		goto single_msi;
- +
- +	nvec =3D rc;
- +	rc =3D pci_enable_msi_block(pdev, nvec);
- +	if (rc)
- +		goto intx;
- =20
- +	return nvec;
- +
- +single_msi:
- +	rc =3D pci_enable_msi(pdev);
- +	if (rc)
- +		goto intx;
- +	return 1;
- +
- +intx:
-  	pci_intx(pdev, 1);
-  	return 0;
-  }
-
---Signature=_Thu__9_Jan_2014_12_45_15_+1100_nrr03Bu=lptLv49v
+--Signature=_Thu__9_Jan_2014_13_41_17_+1100_dMnYdPS_pv+MHWlp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJSzf8wAAoJEMDTa8Ir7ZwVN4IP/idj3xZk7gJiAskPB8Fny3fN
-ADqolQ/Bbzapri1rt67wkJm+JH6aAhv2Ph3/RfQSOUkIgXGgl0yDYhDxyOeW3LW2
-UsFfiA9LFUHj1nGb/q7RqP2j4heuBEDucnAT90SEibzL5G+5dWHCSk3DATvlL1wp
-a4liX2kBbaegLD8vHAw317adOF37OtPwZRVDjCo5vAXJDq9YzL1poo3774Nfc3Sy
-3rVnhVC/fQqNLnEYxz1S2SIBf3FBCQxoTVf0U8vmjCEcwZ+D4VSyQ3q/90MJWF7h
-v0ZtvDMuIUX9eiABkPaW8XpN+e/t0Hr+FqYLBE4HeRdXomq/aWd9SCo2LvEA3sAI
-6waVcgByIPEn40S1rx9t9fiEjTFsZMEHTsvKUQabmqlEC39HJshfIbkEb+p6FgAl
-qpaOdkmGOkW799JhznkyWWMwHVWIOguwAo175UbcXmhOaLWyIODZSLOKtjPK7CZw
-7NtHFnR7XTurC20wDPDsaZRLZqdTsheJr9cSa53qMpgAEGxgtMRt9+pWPygYSw/K
-HzJ+Nh/E2PwcRgDAhYTxgPBYH5hNuYMdJFe+x16dedP/nfTotqwdnbymtMYzCfDe
-53ZHG3rr4L9xOg5lHhwERZqSFrDndiRsb1zyT5kefNTaJBvwy+nzfMYUtEww7Xjy
-gutCJ4ncAmUaSjelj1SG
-=e4R0
+iQIcBAEBCAAGBQJSzgxRAAoJEMDTa8Ir7ZwV0ngP+wZLfmLbO1ufZxotLK1oFtqw
+zeI2eM8f4We+8BicZSvseea/jBxjdvRAse8HKMioscet2v1HdcMgUY7NHaphsqRF
+P4alnURnk5J6NuFp5MaDB9S2AKKpqLWWQ7lq0sjfZ9eLS0XpTiQeIPoDmV8Rq6+F
+CfGCZCZSqy4ayF+t74QvoWYMuqL5fNA3PeRVNAT6GF2EQFD2bgI62vfK+HdaEMku
+RTGgpqwh4s2cpuBC72v6ar6fM3R4YWh+S5SGmFybtHcmHrpr7ucCKWYekwRPcZOL
+YGXt8DOPYvUGr7fmAwy4pOEyKf1eK3riX+ZMBG0QuUXlsZAC4SAtGPhh5ieVeyq6
+7VjuiuAKL7L7o7feZhMrXApakdOowSPjHSAu4uzNg2OMff1Fqae8OoXkl9ZqJYvX
+Jw8/rNcoseAk/B/OjhbnNF4aYTxOBDizv2ZjqXLAsg0utDOY8shRz0mjq+4nnr0v
+hjw1/nyq/fbPrZLBQsFtLg0UNcsq37JF5lOdKpasP8SoE9SADFYYei6dDPTYJn+H
+RjVUuwinWCpdNU8egDjf40g8Td+T5v+EfN24kSGfM88+zzlDLixZyDITGSIEWi7u
+6aJennljunJkfDUuN3oTqNM3T9vXXPjbJIkfR9qijme6oRONAv0clj3CcvCq6Jdm
+b4g02cENxUK4fxAzuayp
+=gEOF
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__9_Jan_2014_12_45_15_+1100_nrr03Bu=lptLv49v--
+--Signature=_Thu__9_Jan_2014_13_41_17_+1100_dMnYdPS_pv+MHWlp--
