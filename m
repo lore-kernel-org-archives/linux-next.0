@@ -1,50 +1,62 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: manual merge of the sh tree with the tree
-Date: Fri, 10 Jan 2014 11:19:54 +0900
-Message-ID: <20140110021954.GB14912@verge.net.au>
-References: <20140106121317.bada4233ec3fec40f79735cc@canb.auug.org.au>
- <CAOesGMgJe9KR2muA4F9EaXYpDFDLxVZsKOj-8qZFbDZTiRBuww@mail.gmail.com>
- <20140110004724.GA22965@verge.net.au>
- <20140110125529.9843f450bf79223164031b02@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Fri, 10 Jan 2014 14:00:43 +1100
+Message-ID: <20140110140043.1e090e614df48b230202ab3d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52331 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751330AbaAJCT6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jan 2014 21:19:58 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__10_Jan_2014_14_00_43_+1100_GFrMiVIS9qh/SP1m"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <stephen@networkplumber.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__10_Jan_2014_14_00_43_+1100_GFrMiVIS9qh/SP1m
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140110125529.9843f450bf79223164031b02@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-sh@vger.kernel.org, Olof Johansson <olof@lixom.net>, Paul Mundt <lethal@linux-sh.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bastian Hecht <hechtb@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-[CC Magnus]
+Hi all,
 
-On Fri, Jan 10, 2014 at 12:55:29PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Fri, 10 Jan 2014 09:47:24 +0900 Simon Horman <horms@verge.net.au> wrote:
-> >
-> > On Wed, Jan 08, 2014 at 11:11:03PM -0800, Olof Johansson wrote:
-> > >
-> > > The request to merge the sh code came through Simon with claimed
-> > > agreement from SH maintainers to do so -- I didn't verify this since
-> > > they have in the past been well-coordinated. Simon?
-> > 
-> > I spoke with Paul recently and my understanding is that
-> > he hasn't been actively working in this area for over a year now.
-> > 
-> > I guess there are some stale patches in his tree.
-> 
-> That is certainly what it looks like.  So, do I remove the sh{,.-current)
-> trees (git://github.com/pmundt/linux-sh.git#sh-{latest,fixes-for-linus})
-> from linux-next permanently?  Will it be cleaned up any time soon?
+After merging the kvm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I think that removing it would be a good choice.
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 'kvm_vcpu_on_spi=
+n':
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1807:4: error: implicit decla=
+ration of function 'kvm_vcpu_eligible_for_directed_yield' [-Werror=3Dimplic=
+it-function-declaration]
+    if (!kvm_vcpu_eligible_for_directed_yield(vcpu))
+    ^
 
-> Is anyone maintaining/supporting sh now?  Is it a candidate for pruning?
+Caused by commit 7940876e1330 ("kvm: make local functions static").
 
-Its a topic of discussion at Renesas. And I hope that someone
-will be doing some form of maintenance again soon.
+I have used the kvm tree from next-20140109 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__10_Jan_2014_14_00_43_+1100_GFrMiVIS9qh/SP1m
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJSz2JfAAoJEMDTa8Ir7ZwVn6AP/jp6XvkSCua3h4cyT692ULzU
+xm1valW1vKADwnYhEBkxqbRGwU0QRhtPHe/j6I4/S1IZajysSSpoSq2AYGwQlMoM
+N3kmJ3g0wAB63ElYstFsNuOY1j10iYK8E2dfON2fV5v3RuF/3/ELo4lfAi+C1s/e
+lFLQqe3WnddCBYa7B0pG5j9ziYFWbvVsUvlQWXRmevznqvog9jVcScvS/ov09PoM
+f1Dmxw51ocTv7O4yf5TTP8tty5Zxcn2jLd66nWgkpw/+HWgme9Iaa29xNT4XNogS
+9/CYhhwBWkAa6WCB6/qG0OSkl4mMTFS/z2ocCwR2DTHi37OTmR0ujkEz4HvFTfeY
+/UwKvunhM6NzuS9ydyH8iR6rfWQenDrm/cNcBHUeRiEBs6s+H8NRXnJ15nARXxrK
+i1SJWQYERi90FhYCYyQGTEzwRAaBpsUEVcCSEdA+arIe7gAJ8Myw3jHz5QKri123
+MjAekUwHenM69tl5h6D21TN6oXIjVqv+9Pq9ZfOnOKXDs52QoaZ8w/T7pNw8qs5u
+XaEDavi4doPkEUkJ4X45hBNZv4dAVrQ+Ex/ykN8IC5udWjlVsb2VQBPw32a39ZzA
+iOg2TE0GeEa49brR8bljhs1T3zmzpJMUO6XlqBIBusCiISB+SuPsTABQoqstrBLp
+A2fx5IqYe0lpydz+WUfu
+=IyZI
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__10_Jan_2014_14_00_43_+1100_GFrMiVIS9qh/SP1m--
