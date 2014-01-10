@@ -1,68 +1,49 @@
-From: David Vrabel <david.vrabel@citrix.com>
-Subject: Re: randconfig build error with next-20140108, in drivers/xen/platform-pci.c
-Date: Fri, 10 Jan 2014 15:33:45 +0000
-Message-ID: <52D012D9.1010602@citrix.com>
-References: <CA+r1ZhinEQiBzonB_+ev_9hry+-7wscEVWcwqW46ExjGC2SYYg@mail.gmail.com> <20140110150738.GC19124@phenom.dumpdata.com>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: randconfig build error with next-20140110, in
+ drivers/target/target_core_sbc.c
+Date: Fri, 10 Jan 2014 11:37:45 -0800
+Message-ID: <1389382665.5567.418.camel@haakon3.risingtidesystems.com>
+References: <CA+r1ZhiKhGJrki8X_bcKC3LrALRHj61uFpAmiGRfePO0g9tU4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp02.citrix.com ([66.165.176.63]:37526 "EHLO
-	SMTP02.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750944AbaAJPds (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jan 2014 10:33:48 -0500
-In-Reply-To: <20140110150738.GC19124@phenom.dumpdata.com>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:40767 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752069AbaAJTgA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jan 2014 14:36:00 -0500
+In-Reply-To: <CA+r1ZhiKhGJrki8X_bcKC3LrALRHj61uFpAmiGRfePO0g9tU4w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, boris.ostrovsky@oracle.com, xen-devel@lists.xenproject.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
 
-On 10/01/14 15:07, Konrad Rzeszutek Wilk wrote:
-> On Wed, Jan 08, 2014 at 03:32:00PM -0700, Jim Davis wrote:
->> Building with the attached random configuration file,
->>
->> drivers/xen/platform-pci.c: In function =E2=80=98platform_pci_init=E2=
-=80=99:
->> drivers/xen/platform-pci.c:131:2: error: implicit declaration of
->> function =E2=80=98pci_request_region=E2=80=99 [-Werror=3Dimplicit-fu=
-nction-declaration]
->>   ret =3D pci_request_region(pdev, 1, DRV_NAME);
->>   ^
->> drivers/xen/platform-pci.c:170:2: error: implicit declaration of
->> function =E2=80=98pci_release_region=E2=80=99 [-Werror=3Dimplicit-fu=
-nction-declaration]
->>   pci_release_region(pdev, 0);
->>   ^
->> cc1: some warnings being treated as errors
->> make[2]: *** [drivers/xen/platform-pci.o] Error 1
->>
->> These warnings appeared too:
->>
->> warning: (XEN_PVH) selects XEN_PVHVM which has unmet direct
->> dependencies (HYPERVISOR_GUEST && XEN && PCI && X86_LOCAL_APIC)
->=20
-> Hey Jim,
->=20
-> This fix works for me:
->=20
->=20
-> diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-> index d88bfd6..01b9026 100644
-> --- a/arch/x86/xen/Kconfig
-> +++ b/arch/x86/xen/Kconfig
-> @@ -53,6 +53,5 @@ config XEN_DEBUG_FS
-> =20
->  config XEN_PVH
->  	bool "Support for running as a PVH guest"
-> -	depends on X86_64 && XEN
-> -	select XEN_PVHVM
-> +	depends on X86_64 && XEN && XEN_PVHVM
->  	def_bool n
->=20
-> David, you OK with that? You suggested to use 'select' in the patchse=
-t
-> instead of 'depends' and this throws away your suggestion.
+Hi Jim,
 
-Yes.
+On Fri, 2014-01-10 at 06:57 -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
+> 
+>   LD      init/built-in.o
+> drivers/built-in.o: In function `sbc_dif_v1_verify':
+> /home/jim/linux/drivers/target/target_core_sbc.c:1019: undefined
+> reference to `crc_t10dif'
+> make: *** [vmlinux] Error 1
 
-David
+Applying the following patch to address this build failure.
+
+Thanks for the heads up!
+
+--nab
+
+diff --git a/drivers/target/Kconfig b/drivers/target/Kconfig
+index 1830368..50aad2e 100644
+--- a/drivers/target/Kconfig
++++ b/drivers/target/Kconfig
+@@ -3,6 +3,7 @@ menuconfig TARGET_CORE
+        tristate "Generic Target Core Mod (TCM) and ConfigFS Infrastructure"
+        depends on SCSI && BLOCK
+        select CONFIGFS_FS
++       select CRC_T10DIF
+        default n
+        help
+        Say Y or M here to enable the TCM Storage Engine and ConfigFS enabled
