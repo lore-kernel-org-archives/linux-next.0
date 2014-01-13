@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with Linus' tree
-Date: Mon, 13 Jan 2014 15:09:51 +1100
-Message-ID: <20140113150951.91b337d4b316f84001a51114@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the v4l-dvb tree
+Date: Mon, 13 Jan 2014 16:00:01 +1100
+Message-ID: <20140113160001.f2b359a6a8cc312fd1286855@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB"
+ boundary="Signature=_Mon__13_Jan_2014_16_00_01_+1100_Hk_IXk2xqxRy4HQW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:39094 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:54863 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751131AbaAMEJ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 12 Jan 2014 23:09:59 -0500
+	id S1750727AbaAMFAP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jan 2014 00:00:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chuansheng Liu <chuansheng.liu@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
+To: Mike Turquette <mturquette@linaro.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
---Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB
+--Signature=_Mon__13_Jan_2014_16_00_01_+1100_Hk_IXk2xqxRy4HQW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Mike,
 
-Today's linux-next merge of the workqueues tree got a conflict in
-kernel/workqueue.c between commit 12997d1a999c ("Revert "workqueue: allow
-work_on_cpu() to be called recursively"") from Linus' tree and commit
-440a11360326 ("workqueue: Calling destroy_work_on_stack() to pair with
-INIT_WORK_ONSTACK()") from the workqueues tree.
+Today's linux-next merge of the clk tree got a conflict in MAINTAINERS
+between commit 7d459937dc09 ("[media] Add driver for Samsung S5K5BAF
+camera sensor") from the v4l-dvb tree and commit 310e39c9b320
+("MAINTAINERS: Add entry for Samsung SoC clock drivers") from the clk
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,47 +36,50 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/workqueue.c
-index b010eac595d2,fdeec6e9d025..000000000000
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@@ -4827,7 -4833,15 +4828,8 @@@ long work_on_cpu(int cpu, long (*fn)(vo
+diff --cc MAINTAINERS
+index 0188725a5658,273311e10b5b..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -7460,13 -7334,12 +7468,19 @@@ L:	linux-media@vger.kernel.or
+  S:	Supported
+  F:	drivers/media/i2c/s5c73m3/*
  =20
-  	INIT_WORK_ONSTACK(&wfc.work, work_for_cpu_fn);
-  	schedule_work_on(cpu, &wfc.work);
- -
- -	/*
- -	 * The work item is on-stack and can't lead to deadlock through
- -	 * flushing.  Use __flush_work() to avoid spurious lockdep warnings
- -	 * when work_on_cpu()s are nested.
- -	 */
- -	__flush_work(&wfc.work);
- -
- +	flush_work(&wfc.work);
-+ 	destroy_work_on_stack(&wfc.work);
-  	return wfc.ret;
-  }
-  EXPORT_SYMBOL_GPL(work_on_cpu);
+ +SAMSUNG S5K5BAF CAMERA DRIVER
+ +M:	Kyungmin Park <kyungmin.park@samsung.com>
+ +M:	Andrzej Hajda <a.hajda@samsung.com>
+ +L:	linux-media@vger.kernel.org
+ +S:	Supported
+ +F:	drivers/media/i2c/s5k5baf.c
+ +
++ SAMSUNG SOC CLOCK DRIVERS
++ M:	Tomasz Figa <t.figa@samsung.com>
++ S:	Supported
++ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++ F:	drivers/clk/samsung/
++=20
+  SERIAL DRIVERS
+  M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  L:	linux-serial@vger.kernel.org
 
---Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB
+--Signature=_Mon__13_Jan_2014_16_00_01_+1100_Hk_IXk2xqxRy4HQW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS02cTAAoJEMDTa8Ir7ZwV/SEQAIXoh4v0J36PBKHT5AgZUtfl
-120iIyvBT9L54r/7/cQLqwpghuXVaV2kMpZ2kbHtOX0dRdR0/U6NjyrQc+6ooUSd
-5itxhWoXN8y4yaSv0xAdN1j0iIKFrQtUZdF2nzDlVR7kYVa7sPMvdJdqC6AzRBby
-WKAHqdUoxF7T/8OGVos5nLTRbBhoDm9v0jUKmTtWNj5rnwnB7M6x6zvZdODU3HFx
-pHCmu6zhDcDYNx7/Sy21Mdr6NfHJc4uA4mxLU44uAnY+IgdgW9+7NajiLTRUuInK
-ndqe1STBAlDFb1JP+aWgSu5rhx9YoY3Ikpo+QYqcLMli4mQmlWGUYCkMNuxnU7ij
-yYEX74n9oxitNyWqOtJEQfEMyGokGC4Lj05SfcqnXPYGvDZlhFoCMPjTmJ7n6g7A
-v7F8YRVlB+Ul+1bqwEMjDN5CRl4h/o4nUT0/yRiJLCizgRlA/7NEr8A1P5a96wmQ
-/rn7BubrLLyF/v2QdlTegJEHH89bj5zTXmTpztqXyLJae0AtE2Fs03hKs8e2M5Js
-fkiJOOjwJEiA1nrTPSrvzQEf+qVbI3K7s5P7txvkRRPZ8Oe/+wifUgMFZaq/okg8
-fGTRgkG192CQt1KX/xxKcdJRZKahfW++GUUJj67SP6MMytTYMUYhqeeJ8d4Mj98z
-yQv9vvF8pig7RYxNrjBr
-=+a2d
+iQIcBAEBCAAGBQJS03LVAAoJEMDTa8Ir7ZwVMMgQAIDt4HgQiCn18/agE1q+tkva
+xyXrdvzt7GC/D8h3BdHRIbaETTjclSiYiOPuY9S7Us+bDNhlNAFHs716Xga8WADT
+YRVSVgaKfsPrBi4ATcpkNeZZTE6rlBDsFe1lFVOxEt133ieOyaASr4nrCRXsxVjv
+Ix7PU2Z9YzeXwjmd5O++81hGLBsoL4EB2IYD5sINtB8WyznW3YNvwY8rjqcQBowH
+rWW5GfD0ESlWiXJkKjOvACmzYqe7vw88pNj2IUx0QhtuiZnAA+AA499WeHBrvp4S
+h7fllwCBq4CMbrudOaA4aga50TNEqh5+hvSJG7e+vVLn7h7vZopsCa/N1TljC/OC
+4yOQF1girnxrM4R+huJEMtZoK5mJFGzp4jnafgn/JyWXFwBvsrlW8csCZx21WDlj
+Ln8iTqQCJ5Kh0YWJXUxfTE4pIaNkpLS4jxOu9RfXbvdXpd74WffipuOm/yoUjYMn
+KZ2JAidY6ezXePq9O1ZSzIrnpBbTVL40jiacG12h9bMSsMdSx39cXsBjSd/eJmBN
+DUozR1jjXS/aOnMQxiymxWvsqxo9DNy8rdlI4x2qrAOJMqxitNs4s7rNpnt2F5tq
+afmzKNPzMQUax0dGhzislt/EuQeMCBk6LWg9B6M1Zuq481TSzLkz0Kp/KntDod4L
+3T5SM8Hwme79y7rWZtA3
+=Igzc
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB--
+--Signature=_Mon__13_Jan_2014_16_00_01_+1100_Hk_IXk2xqxRy4HQW--
