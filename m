@@ -1,43 +1,82 @@
-From: czankel <chris@zankel.net>
-Subject: Re: linux-next: manual merge of the tip tree with the xtensa tree
-Date: Sun, 12 Jan 2014 19:38:23 -0800
-Message-ID: <52D35FAF.5050805@zankel.net>
-References: <20140113142642.6e1944155b1db50d2c70abb4@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the workqueues tree with Linus' tree
+Date: Mon, 13 Jan 2014 15:09:51 +1100
+Message-ID: <20140113150951.91b337d4b316f84001a51114@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:57071 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751213AbaAMDi1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 12 Jan 2014 22:38:27 -0500
-Received: by mail-pa0-f53.google.com with SMTP id hz1so7055965pad.26
-        for <linux-next@vger.kernel.org>; Sun, 12 Jan 2014 19:38:27 -0800 (PST)
-In-Reply-To: <20140113142642.6e1944155b1db50d2c70abb4@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:39094 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751131AbaAMEJ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Jan 2014 23:09:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chuansheng Liu <chuansheng.liu@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
 
-Hi Stephen,
+--Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the fix! I actually just got an updated set for most of the 
-patches currently in the for_next tree for xtensa and might have to do a 
-rebase to integrate them better. I'll include your fix when I come 
-across the issue.
+Hi Tejun,
 
-Thanks again,
--Chris
+Today's linux-next merge of the workqueues tree got a conflict in
+kernel/workqueue.c between commit 12997d1a999c ("Revert "workqueue: allow
+work_on_cpu() to be called recursively"") from Linus' tree and commit
+440a11360326 ("workqueue: Calling destroy_work_on_stack() to pair with
+INIT_WORK_ONSTACK()") from the workqueues tree.
 
-On 1/12/14 7:26 PM, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/xtensa/include/asm/barrier.h between commit dbacef090841 ("xtensa:
-> add SMP support") from the xtensa tree and commit 93ea02bb8435 ("arch:
-> Clean up asm/barrier.h implementations using asm-generic/barrier.h") from
-> the tip tree.
->
-> I fixed it up (I am pretty sure - see below) and can carry the fix as
-> necessary (no action is required).
->
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/workqueue.c
+index b010eac595d2,fdeec6e9d025..000000000000
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@@ -4827,7 -4833,15 +4828,8 @@@ long work_on_cpu(int cpu, long (*fn)(vo
+ =20
+  	INIT_WORK_ONSTACK(&wfc.work, work_for_cpu_fn);
+  	schedule_work_on(cpu, &wfc.work);
+ -
+ -	/*
+ -	 * The work item is on-stack and can't lead to deadlock through
+ -	 * flushing.  Use __flush_work() to avoid spurious lockdep warnings
+ -	 * when work_on_cpu()s are nested.
+ -	 */
+ -	__flush_work(&wfc.work);
+ -
+ +	flush_work(&wfc.work);
++ 	destroy_work_on_stack(&wfc.work);
+  	return wfc.ret;
+  }
+  EXPORT_SYMBOL_GPL(work_on_cpu);
+
+--Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS02cTAAoJEMDTa8Ir7ZwV/SEQAIXoh4v0J36PBKHT5AgZUtfl
+120iIyvBT9L54r/7/cQLqwpghuXVaV2kMpZ2kbHtOX0dRdR0/U6NjyrQc+6ooUSd
+5itxhWoXN8y4yaSv0xAdN1j0iIKFrQtUZdF2nzDlVR7kYVa7sPMvdJdqC6AzRBby
+WKAHqdUoxF7T/8OGVos5nLTRbBhoDm9v0jUKmTtWNj5rnwnB7M6x6zvZdODU3HFx
+pHCmu6zhDcDYNx7/Sy21Mdr6NfHJc4uA4mxLU44uAnY+IgdgW9+7NajiLTRUuInK
+ndqe1STBAlDFb1JP+aWgSu5rhx9YoY3Ikpo+QYqcLMli4mQmlWGUYCkMNuxnU7ij
+yYEX74n9oxitNyWqOtJEQfEMyGokGC4Lj05SfcqnXPYGvDZlhFoCMPjTmJ7n6g7A
+v7F8YRVlB+Ul+1bqwEMjDN5CRl4h/o4nUT0/yRiJLCizgRlA/7NEr8A1P5a96wmQ
+/rn7BubrLLyF/v2QdlTegJEHH89bj5zTXmTpztqXyLJae0AtE2Fs03hKs8e2M5Js
+fkiJOOjwJEiA1nrTPSrvzQEf+qVbI3K7s5P7txvkRRPZ8Oe/+wifUgMFZaq/okg8
+fGTRgkG192CQt1KX/xxKcdJRZKahfW++GUUJj67SP6MMytTYMUYhqeeJ8d4Mj98z
+yQv9vvF8pig7RYxNrjBr
+=+a2d
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__13_Jan_2014_15_09_51_+1100_77q0qdykXRKfztXB--
