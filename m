@@ -1,34 +1,35 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: linux-next: manual merge of the mmc tree with Linus' tree
-Date: Mon, 13 Jan 2014 09:11:41 -0800
-Message-ID: <31979761-213c-4b65-b14a-b6ef3b2ca60d@AM1EHSMHS002.ehs.local>
-References: <20140113131700.840c214536826d7e9a92ef8b@canb.auug.org.au>
+From: Chris Ball <chris@printf.net>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Mon, 13 Jan 2014 17:49:35 +0000
+Message-ID: <86iotndb68.fsf@void.printf.net>
+References: <20131213125716.f432c59bf8782a489400a5a7@canb.auug.org.au>
+	<20131217132838.cc16a4dbac2f4d3218bbed1d@canb.auug.org.au>
+	<CAA+hA=Shwn1P25+xB+VogD+9n7gdvCmJ-EG6khgf3a2gjGwTJQ@mail.gmail.com>
+	<20131217031600.GG6691@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140113131700.840c214536826d7e9a92ef8b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chris Ball <chris@printf.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:35041 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752228AbaAMRtl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jan 2014 12:49:41 -0500
+In-Reply-To: <20131217031600.GG6691@S2101-09.ap.freescale.net> (Shawn Guo's
+	message of "Tue, 17 Dec 2013 11:16:01 +0800")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Dong Aisheng <dongas86@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <b29396@freescale.com>
 
-On Mon, Jan 13, 2014 at 01:17:00PM +1100, Stephen Rothwell wrote:
-> Hi Chris,
->=20
-> Today's linux-next merge of the mmc tree got a conflict in MAINTAINER=
-S
-> between commit c2fd4e380322 ("MAINTAINERS: set up proper record for
-> Xilinx Zynq") from Linus' tree and commit 45f210424b4b ("mmc: arasan:=
- Add
-> driver for Arasan SDHCI") from the mmc tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no acti=
-on
-> is required).
+Hi,
 
-The fix is correct, AFAICT.
+On Tue, Dec 17 2013, Shawn Guo wrote:
+> Please drop fc4fafac9656 ("ARM: dts: sabresd: add usdhc4 support") from
+> your tree.  It should go via my tree (with a rebase).  Sorry, I did not
+> notice it early.
 
-	Thanks,
-	S=C3=B6ren
+Sorry for missing this thread, everyone -- I've dropped this patch
+from mmc-next now.
+
+- Chris.
+-- 
+Chris Ball   <chris@printf.net>   <http://printf.net/>
