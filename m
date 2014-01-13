@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the xtensa tree
-Date: Mon, 13 Jan 2014 14:26:42 +1100
-Message-ID: <20140113142642.6e1944155b1db50d2c70abb4@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Date: Mon, 13 Jan 2014 14:29:39 +1100
+Message-ID: <20140113142939.402b0033cdbc43efe7382ac9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__13_Jan_2014_14_26_42_+1100_4JNwu7Z.iyuGcO1E"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Chris Zankel <chris@zankel.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__13_Jan_2014_14_29_39_+1100_qSrAFKQosROUC=uW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:59606 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751117AbaAMD3s (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Jan 2014 22:29:48 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lv Zheng <lv.zheng@intel.com>, "Chen, Gong" <gong.chen@linux.intel.com>, Borislav Petkov <bp@suse.de>
 
---Signature=_Mon__13_Jan_2014_14_26_42_+1100_4JNwu7Z.iyuGcO1E
+--Signature=_Mon__13_Jan_2014_14_29_39_+1100_qSrAFKQosROUC=uW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,61 +24,51 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the tip tree got a conflict in
-arch/xtensa/include/asm/barrier.h between commit dbacef090841 ("xtensa:
-add SMP support") from the xtensa tree and commit 93ea02bb8435 ("arch:
-Clean up asm/barrier.h implementations using asm-generic/barrier.h") from
-the tip tree.
+drivers/acpi/apei/einj.c between commit 8b48463f8942 ("ACPI: Clean up
+inclusions of ACPI header files") from the pm tree and commit
+d3ab3edc029b ("ACPI, APEI: Cleanup alignment-aware accesses") from the
+tip tree.
 
-I fixed it up (I am pretty sure - see below) and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/xtensa/include/asm/barrier.h
-index 8e5e5c980a7a,e1ee6b51dfc5..000000000000
---- a/arch/xtensa/include/asm/barrier.h
-+++ b/arch/xtensa/include/asm/barrier.h
-@@@ -16,16 -13,10 +13,6 @@@
-  #define rmb() barrier()
-  #define wmb() mb()
+diff --cc drivers/acpi/apei/einj.c
+index ca0c6d7ec0d4,7dcc8a824aae..000000000000
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@@ -33,6 -33,8 +33,7 @@@
+  #include <linux/nmi.h>
+  #include <linux/delay.h>
+  #include <linux/mm.h>
+ -#include <acpi/acpi.h>
++ #include <asm/unaligned.h>
  =20
---#ifdef CONFIG_SMP
-- #define smp_mb()	mb()
-- #define smp_rmb()	rmb()
-- #define smp_wmb()	wmb()
-- #else
-- #define smp_mb()	barrier()
-- #define smp_rmb()	barrier()
-- #define smp_wmb()	barrier()
- -#error smp_* not defined
---#endif
---
-- #define set_mb(var, value)	do { var =3D value; mb(); } while (0)
-+ #include <asm-generic/barrier.h>
+  #include "apei-internal.h"
  =20
-  #endif /* _XTENSA_SYSTEM_H */
 
---Signature=_Mon__13_Jan_2014_14_26_42_+1100_4JNwu7Z.iyuGcO1E
+--Signature=_Mon__13_Jan_2014_14_29_39_+1100_qSrAFKQosROUC=uW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS01zyAAoJEMDTa8Ir7ZwVpA0P/iqd5aTZvpNksYfrFh1+kjcs
-JXbNwR4IfOrgYYqlRl9EvskpGbWxZPxqKrh6+zFbuw8zrAALag8LAUMKEXn56G96
-18IG9lD0lai6kWtZWqNQAKdaNcXarU5ODNPSxiYOkbSzwrgXNyVOnxYVkgbr0kvo
-k4rvBU1ZutD+yWcs2ybj1mCfNi5quTYO/60z2J82dxtCA/boS7000IIRAE9M4a0O
-/V8FbCEVgd7dSHhxsE70XI5yudSGI95EBWCEdBBcfMBr+OdlTX0ANwh/Owksqhfy
-Lm/Tv77pAGOUf2qx6p86wQcyo8swG2ZJGwoblXLWFyp1Tegaea0wJ+Bok/wIu0uN
-1X2h+3ErzVL/imSW5lTWquhjCiMYzmJfIcGErmGI/I0IOpeUw992UDhBQmbbJ6CV
-pGWZX1dC6koZlB+hXbkV4SPcFOrkjaD8XYbBg6+lUYEg1PEl1aag3djwudsWCTim
-06vpDU+iYwt6Ty98YLl4MoHVNAycR85FDFsZ3f004dXaAbsr6jSvx6yEDhpm6G30
-HeA112ZUkeUYnUrg1s5x6ZVuHbS2xk2+lB7nQjtR7EfmEJfg/aj5DaL8jyXTYQ+l
-efLoQF+hOzA08AuX0FDFE1c+G+VBIUzxuoXr2matryWnkGABtFlR6X0Gn3k0iDiu
-esELcQvKkskGfoDXT85I
-=YaUV
+iQIcBAEBCAAGBQJS012nAAoJEMDTa8Ir7ZwVHv4P/37HxlG45tsYJGqrf4jLzTrP
+Mo+0THvYAVvgiOitY9SAN9ZaWpIf95YmB0tn0ZPc3925gliQif7g/76iXSSfir/6
+v5XzobSuZM07/5mHd7wDhS033Yr4LoSny5vlRRakHMDAeEtDjeaebUKygSt8LxFc
+jNgVLtSZwjvJnxM+S6Vw5tmecNRhZZZT9fGuxWCQYk2Jlr+/6NuZuccUdKbxcZR2
+ufH5nP7cwMjGLWLv5IyTJ2cTM8dkDfZ6mcMiz0ecafh5hqwOKTL4Tyrl/TJCbTn3
+3SqR16VgLuBnvxTlm0Yi/wAbGALiIikTnbY9q3OOO3MM5/BKfUHm6Cd8ytkqFASv
+3KNgkqHR+Vw89BqHDCA9oY2zE1GK9JUDgJObhjAwIDWrD4CVtKu8KbGETZYc0dlL
+5z8oEr1HuPYIHpvs8ngdUddErEcudtd4NJvcmhoagLQ0uc/9OideSZ/O/0SlFw67
+fiSlTp7ICqlrhU8RqxuMLBzYHXbjk+/fAIOIE1QaiHvQS9ojs5SnkL8vj8Fe6cBI
+Jkpp/FUH/+hK+77XwrvRmGWLSAl6lfFNiBGklZqyTtxNfT4648RYA1uDFhYFbgTq
+qKiHsZP45BbM4HKYQfWpIkeILUN69SRTWXfJ7MH1NPBRIfDSXV1PSL/QIX5RMFd7
+sJIn2XpH4rbBmdM+Q3fG
+=eVOw
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Jan_2014_14_26_42_+1100_4JNwu7Z.iyuGcO1E--
+--Signature=_Mon__13_Jan_2014_14_29_39_+1100_qSrAFKQosROUC=uW--
