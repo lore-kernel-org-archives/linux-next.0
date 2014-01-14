@@ -1,35 +1,48 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Tue, 14 Jan 2014 08:19:08 -0800
-Message-ID: <52D5637C.9000609@zytor.com>
-References: <20140114155331.88d170d3c991b9465c23a537@canb.auug.org.au>	<20140114125153.GY7572@laptop.programming.kicks-ass.net> <CAMuHMdUPJ7pu5J6om+j=Tm8xDXhXU3sD4k7ZP6b4Xu-tF+gK2w@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: futex: Switch to USER_DS for futex test (was: Re: linux-next:
+ manual merge of the akpm-current tree with the tip tree)
+Date: Tue, 14 Jan 2014 17:32:51 +0100
+Message-ID: <CAMuHMdXz93YsqzxR1hny2P8afMWEQGMw19=o=S7cR0rT9QvRFQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:52149 "EHLO mail.zytor.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751550AbaANQUF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jan 2014 11:20:05 -0500
-In-Reply-To: <CAMuHMdUPJ7pu5J6om+j=Tm8xDXhXU3sD4k7ZP6b4Xu-tF+gK2w@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Davidlohr Bueso <davidlohr@hp.com>
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Davidlohr Bueso <davidlohr@hp.com>, Linux-Arch <linux-arch@vger.kernel.org>, Andreas Schwab <schwab@linux-m68k.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On 01/14/2014 05:17 AM, Geert Uytterhoeven wrote:
+CC linux-arch
+
+https://lkml.org/lkml/2013/12/11/141
+
+On Tue, Jan 14, 2014 at 5:19 PM, H. Peter Anvin <hpa@zytor.com> wrote:
+> On 01/14/2014 05:17 AM, Geert Uytterhoeven wrote:
+>>>
+>>> This seems terribly broken, the *futex_value*() ops should not need
+>>> that; they are supposed to access userspace without any of that.
 >>
->> This seems terribly broken, the *futex_value*() ops should not need
->> that; they are supposed to access userspace without any of that.
-> 
-> Why don't they need set_fs(USER_DS)?
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
+>> Why don't they need set_fs(USER_DS)?
+>
+> Because USER_DS is the normal operating state?  It would appear m68k is
 
-Because USER_DS is the normal operating state?  It would appear m68k is
-the only(?) arch that calls initcalls with get_fs() == KERNEL_DS...
+Is it?
 
-	-hpa
+> the only(?) arch that calls initcalls with get_fs() == KERNEL_DS...
+
+On ARM:
+
+fs = 0x0, USER_DS = 0xbf000000, KERNEL_DS = 0x0
+
+Presumably also on s390, as the fix for m68k broke s390. That's why it's still
+in -mm and not yet in mainline.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
