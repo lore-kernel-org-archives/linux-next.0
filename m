@@ -1,131 +1,105 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 14 Jan 2014 23:18:16 +0100
-Message-ID: <2433882.lLbOWJV5fl@vostro.rjw.lan>
-References: <20140114142627.537a702607e703c6eff63640@canb.auug.org.au> <1742600.ID61iX8uKd@vostro.rjw.lan> <alpine.LRH.2.02.1401141651490.19206@file01.intranet.prod.int.rdu2.redhat.com>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: linux-next: Tree for Jan 14 (lowpan, 802.15.4)
+Date: Wed, 15 Jan 2014 02:54:56 +0400
+Message-ID: <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
+References: <20140114165128.0dd51f362e0f34a2ef4dc92f@canb.auug.org.au>
+	<52D578A7.8020000@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <alpine.LRH.2.02.1401141651490.19206@file01.intranet.prod.int.rdu2.redhat.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Viresh Kumar <viresh.kumar@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org
+Content-Type: multipart/mixed; boundary=001a11c1d7f4cf6a6704eff6147f
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <52D578A7.8020000@infradead.org>
+Sender: netdev-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, linux-zigbee-devel <linux-zigbee-devel@lists.sourceforge.net>, Alexander Smirnov <alex.bluesman.smirnov@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jukka Rissanen <jukka.rissanen@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tuesday, January 14, 2014 04:52:20 PM Mikulas Patocka wrote:
-> 
-> On Tue, 14 Jan 2014, Rafael J. Wysocki wrote:
-> 
-> > On Tuesday, January 14, 2014 04:43:43 PM Mikulas Patocka wrote:
-> > > 
-> > > On Tue, 14 Jan 2014, Peter Zijlstra wrote:
-> > > 
-> > > > On Tue, Jan 14, 2014 at 02:06:57PM -0500, Mikulas Patocka wrote:
-> > > > > On Tue, 14 Jan 2014, Peter Zijlstra wrote:
-> > > > > > > Caused by commit 62b94a08da1b ("sched/preempt: Take away
-> > > > > > > preempt_enable_no_resched() from modules")
-> > > > 
-> > > > Read these two lines, then note that:
-> > > > 
-> > > > > Try adding #include <linux/preempt.h> to speedstep-lib.c. Does it help?
-> > > > 
-> > > > this obviously will not work as preempt_check_resched() and
-> > > > preempt_enable_no_resched() are no longer available to modules.
-> > > 
-> > > I see, you added commit 62b94a08da1bae9d187d49dfcd6665af393750f8 to 
-> > > linux-next, that broke my patch.
-> > > 
-> > > > > > I think that pm commit is a very good example of why the sched/preempt
-> > > > > > patch is a very good idea.
-> > > > > > 
-> > > > > > Also that Changelog fails to explain why enabling interrupts helps. What
-> > > > > > interrupt is required for progress, and how does it make the progress
-> > > > > > happen.
-> > > > > 
-> > > > > There is no explanation. It's hardware issue and I have no documentation 
-> > > > > for the hardware.
-> > > > 
-> > > > Rafael works for Intel, he ought to be able to figure out wtf the
-> > > > hardware does/needs.
-> > > > 
-> > > > > The general problem is that if there are bus-master transfers running (or 
-> > > > > possibly for other hardware reasons), the CPU refuses to change frequency. 
-> > > > > You can wait a little bit and retry and maybe you succeed changing the 
-> > > > > frequency next time.
-> > > > > 
-> > > > > If you enable interrupts, wait, disable interrupts and retry, you may 
-> > > > > succeed. If you keep interrupts disabled and retry, you never succeed, no 
-> > > > > matter how long do you wait. I found it experimentally, I don't know 
-> > > > > reason for that.
-> > > > 
-> > > > Sounds like magic goo..
-> > > > 
-> > > > In any case, try the below, it does the same but is far less horrid.
-> > > > 
-> > > > ---
-> > > >  drivers/cpufreq/speedstep-smi.c | 4 ++++
-> > > >  1 file changed, 4 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/cpufreq/speedstep-smi.c b/drivers/cpufreq/speedstep-smi.c
-> > > > index 0f5326d6f79f..57d31538c248 100644
-> > > > --- a/drivers/cpufreq/speedstep-smi.c
-> > > > +++ b/drivers/cpufreq/speedstep-smi.c
-> > > > @@ -188,6 +188,7 @@ static void speedstep_set_state(unsigned int state)
-> > > >  		return;
-> > > >  
-> > > >  	/* Disable IRQs */
-> > > > +	preempt_disable();
-> > > >  	local_irq_save(flags);
-> > > >  
-> > > >  	command = (smi_sig & 0xffffff00) | (smi_cmd & 0xff);
-> > > > @@ -200,7 +201,9 @@ static void speedstep_set_state(unsigned int state)
-> > > >  		if (retry) {
-> > > >  			pr_debug("retry %u, previous result %u, waiting...\n",
-> > > >  					retry, result);
-> > > > +			local_irq_restore(flags);
-> > > 
-> > > ^^^ this is wrong, because the function speedstep_set_state may already be 
-> > > called with interrupts disabled from speedstep_get_freqs. So, you need to 
-> > > enable interrupts unconditionally, even if they were disabled at the 
-> > > beginning of the function speedstep_set_state.
-> > > 
-> > > I know it's dirty to enable interrupts in a function that was called with 
-> > > disabled interrupts, but here it must be so (you could rewrite 
-> > > speedstep_get_freqs to not disable interrupts if you want to avoid this 
-> > > dirtiness).
-> > > 
-> > > >  			mdelay(retry * 50);
-> > > > +			local_irq_save(flags);
-> > > >  		}
-> > > >  		retry++;
-> > > >  		__asm__ __volatile__(
-> > > > @@ -217,6 +220,7 @@ static void speedstep_set_state(unsigned int state)
-> > > >  
-> > > >  	/* enable IRQs */
-> > > >  	local_irq_restore(flags);
-> > > > +	preempt_enable();
-> > > >  
-> > > >  	if (new_state == state)
-> > > >  		pr_debug("change to %u MHz succeeded after %u tries "
-> > > 
-> > > You need also preempt_disable/enable in speedstep_get_freqs.
-> > > 
-> > > 
-> > > Here I'm resending the patch, to account for 
-> > > 62b94a08da1bae9d187d49dfcd6665af393750f8.
-> > 
-> > Do I think correctly that this should work regardless of whether or not
-> > 62b94a08da1bae9d187d49dfcd6665af393750f8 is applied?
-> 
-> Yes.
+--001a11c1d7f4cf6a6704eff6147f
+Content-Type: text/plain; charset=ISO-8859-1
 
-OK
+Hello,
 
-I'll replace your original patch with this version, then.
 
-Thanks!
+On Tue, Jan 14, 2014 at 9:49 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 01/13/2014 09:51 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > This tree fails (more than usual) the powerpc allyesconfig build.
+> >
+> > Changes since 20140113:
+> >
+>
+>
+> on i386:
+>
+> net/built-in.o: In function `header_create':
+> 6lowpan.c:(.text+0x166149): undefined reference to `lowpan_header_compress'
+> net/built-in.o: In function `bt_6lowpan_recv':
+> (.text+0x166b3c): undefined reference to `lowpan_process_data'
+
+Ah, nice Makefile hack there.
+David, Marcel, could you please consider the attached patch.
+
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+With best wishes
+Dmitry
+
+--001a11c1d7f4cf6a6704eff6147f
+Content-Type: text/x-patch; charset=US-ASCII;
+	name="0001-net-move-6lowpan-compression-code-to-separate-module.patch"
+Content-Disposition: attachment;
+	filename="0001-net-move-6lowpan-compression-code-to-separate-module.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hqfrd7t71
+
+RnJvbSA0YzNkYjZkM2MyNDRkZWNmNDM0NjY1YzMwYzFiZjc1YWFkMWY5NGIyIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBEbWl0cnkgRXJlbWluLVNvbGVuaWtvdiA8ZG1pdHJ5X2VyZW1p
+bkBtZW50b3IuY29tPgpEYXRlOiBXZWQsIDE1IEphbiAyMDE0IDAyOjUwOjQwICswNDAwClN1Ympl
+Y3Q6IFtQQVRDSF0gbmV0OiBtb3ZlIDZsb3dwYW4gY29tcHJlc3Npb24gY29kZSB0byBzZXBhcmF0
+ZSBtb2R1bGUKCklFRUUgODAyLjE1LjQgYW5kIEJsdWV0b290aCBuZXR3b3JraW5nIHN0YWNrcyBz
+aGFyZSA2bG93cGFuIGNvbXByZXNzaW9uCmNvZGUuIEluc3RlYWQgb2YgaW50cm9kdWNpbmcgTWFr
+ZWZpbGUvS2NvbmZpZyBoYWNrcywgYnVpbGQgdGhpcyBjb2RlIGFzCmEgc2VwYXJhdGUgbW9kdWxl
+IHJlZmVyZW5jZWQgZnJvbSBib3RoIGllZWU4MDIxNTQgYW5kIGJsdWV0b290aCBtb2R1bGVzLgoK
+VGhpcyBmaXhlcyB0aGUgZm9sbG93aW5nIGJ1aWxkIGVycm9yIG9ic2VydmVkIGluIHNvbWUga2Vy
+bmVsCmNvbmZpZ3VyYXRpb25zOgoKbmV0L2J1aWx0LWluLm86IEluIGZ1bmN0aW9uIGBoZWFkZXJf
+Y3JlYXRlJzogNmxvd3Bhbi5jOigudGV4dCsweDE2NjE0OSk6IHVuZGVmaW5lZCByZWZlcmVuY2Ug
+dG8gYGxvd3Bhbl9oZWFkZXJfY29tcHJlc3MnCm5ldC9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBg
+YnRfNmxvd3Bhbl9yZWN2JzogKC50ZXh0KzB4MTY2YjNjKTogdW5kZWZpbmVkIHJlZmVyZW5jZSB0
+byBgbG93cGFuX3Byb2Nlc3NfZGF0YScKClNpZ25lZC1vZmYtYnk6IERtaXRyeSBFcmVtaW4tU29s
+ZW5pa292IDxkbWl0cnlfZXJlbWluQG1lbnRvci5jb20+Ci0tLQogbmV0L01ha2VmaWxlICAgICAg
+ICAgICAgfCAyICstCiBuZXQvYmx1ZXRvb3RoL0tjb25maWcgICB8IDEgKwogbmV0L2llZWU4MDIx
+NTQvS2NvbmZpZyAgfCA3ICsrKysrKysKIG5ldC9pZWVlODAyMTU0L01ha2VmaWxlIHwgMyArKy0K
+IDQgZmlsZXMgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYg
+LS1naXQgYS9uZXQvTWFrZWZpbGUgYi9uZXQvTWFrZWZpbGUKaW5kZXggOGZhMmY5MS4uY2JiYmU2
+ZCAxMDA2NDQKLS0tIGEvbmV0L01ha2VmaWxlCisrKyBiL25ldC9NYWtlZmlsZQpAQCAtNTcsNyAr
+NTcsNyBAQCBvYmotJChDT05GSUdfQ0FJRikJCSs9IGNhaWYvCiBpZm5lcSAoJChDT05GSUdfRENC
+KSwpCiBvYmoteQkJCQkrPSBkY2IvCiBlbmRpZgotb2JqLSQoQ09ORklHX0lFRUU4MDIxNTQpCSs9
+IGllZWU4MDIxNTQvCitvYmoteQkJCQkrPSBpZWVlODAyMTU0Lwogb2JqLSQoQ09ORklHX01BQzgw
+MjE1NCkJCSs9IG1hYzgwMjE1NC8KIAogaWZlcSAoJChDT05GSUdfTkVUKSx5KQpkaWZmIC0tZ2l0
+IGEvbmV0L2JsdWV0b290aC9LY29uZmlnIGIvbmV0L2JsdWV0b290aC9LY29uZmlnCmluZGV4IGQz
+ZjNmN2IuLjk4NWI1NjAgMTAwNjQ0Ci0tLSBhL25ldC9ibHVldG9vdGgvS2NvbmZpZworKysgYi9u
+ZXQvYmx1ZXRvb3RoL0tjb25maWcKQEAgLTEyLDYgKzEyLDcgQEAgbWVudWNvbmZpZyBCVAogCXNl
+bGVjdCBDUllQVE9fQUVTCiAJc2VsZWN0IENSWVBUT19FQ0IKIAlzZWxlY3QgQ1JZUFRPX1NIQTI1
+NgorCXNlbGVjdCA2TE9XUEFOX0lQSEMKIAloZWxwCiAJICBCbHVldG9vdGggaXMgbG93LWNvc3Qs
+IGxvdy1wb3dlciwgc2hvcnQtcmFuZ2Ugd2lyZWxlc3MgdGVjaG5vbG9neS4KIAkgIEl0IHdhcyBk
+ZXNpZ25lZCBhcyBhIHJlcGxhY2VtZW50IGZvciBjYWJsZXMgYW5kIG90aGVyIHNob3J0LXJhbmdl
+CmRpZmYgLS1naXQgYS9uZXQvaWVlZTgwMjE1NC9LY29uZmlnIGIvbmV0L2llZWU4MDIxNTQvS2Nv
+bmZpZwppbmRleCBiMmUwNmRmLi45Yzk4NzlkIDEwMDY0NAotLS0gYS9uZXQvaWVlZTgwMjE1NC9L
+Y29uZmlnCisrKyBiL25ldC9pZWVlODAyMTU0L0tjb25maWcKQEAgLTEzLDUgKzEzLDEyIEBAIGNv
+bmZpZyBJRUVFODAyMTU0CiBjb25maWcgSUVFRTgwMjE1NF82TE9XUEFOCiAJdHJpc3RhdGUgIjZs
+b3dwYW4gc3VwcG9ydCBvdmVyIElFRUUgODAyLjE1LjQiCiAJZGVwZW5kcyBvbiBJRUVFODAyMTU0
+ICYmIElQVjYKKwlzZWxlY3QgNkxPV1BBTl9JUEhDCiAJLS0taGVscC0tLQogCUlQdjYgY29tcHJl
+c3Npb24gb3ZlciBJRUVFIDgwMi4xNS40LgorCitjb25maWcgNkxPV1BBTl9JUEhDCisJdHJpc3Rh
+dGUKKwktLS1oZWxwLS0tCisJICA2bG93cGFuIGNvbXByZXNzaW9uIGNvZGUgd2hpY2ggaXMgc2hh
+cmVkIGJldHdlZW4gSUVFRSA4MDIuMTUuNCBhbmQgQmx1ZXRvb3RoCisJICBzdGFja3MuCmRpZmYg
+LS1naXQgYS9uZXQvaWVlZTgwMjE1NC9NYWtlZmlsZSBiL25ldC9pZWVlODAyMTU0L01ha2VmaWxl
+CmluZGV4IDk1MWE4M2UuLmU4ZjA1ODggMTAwNjQ0Ci0tLSBhL25ldC9pZWVlODAyMTU0L01ha2Vm
+aWxlCisrKyBiL25ldC9pZWVlODAyMTU0L01ha2VmaWxlCkBAIC0xLDUgKzEsNiBAQAogb2JqLSQo
+Q09ORklHX0lFRUU4MDIxNTQpICs9IGllZWU4MDIxNTQubyBhZl84MDIxNTQubwotb2JqLSQoQ09O
+RklHX0lFRUU4MDIxNTRfNkxPV1BBTikgKz0gNmxvd3Bhbi5vIDZsb3dwYW5faXBoYy5vCitvYmot
+JChDT05GSUdfSUVFRTgwMjE1NF82TE9XUEFOKSArPSA2bG93cGFuLm8KK29iai0kKENPTkZJR182
+TE9XUEFOX0lQSEMpICs9IDZsb3dwYW5faXBoYy5vCiAKIGllZWU4MDIxNTQteSA6PSBuZXRsaW5r
+Lm8gbmwtbWFjLm8gbmwtcGh5Lm8gbmxfcG9saWN5Lm8gd3Bhbi1jbGFzcy5vCiBhZl84MDIxNTQt
+eSA6PSBhZl9pZWVlODAyMTU0Lm8gcmF3Lm8gZGdyYW0ubwotLSAKMS44LjUuMgoK
+--001a11c1d7f4cf6a6704eff6147f--
