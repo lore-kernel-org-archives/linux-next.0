@@ -1,83 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
-Date: Tue, 14 Jan 2014 14:02:14 +1100
-Message-ID: <20140114140214.7279bcaf88d7a4514d889186@canb.auug.org.au>
-References: <20140113141824.4301cb76e8e5540d42d74015@canb.auug.org.au>
-	<20140113142059.f9f1c58c391b2c8bbd05699f@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Tue, 14 Jan 2014 14:26:27 +1100
+Message-ID: <20140114142627.537a702607e703c6eff63640@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5"
+ boundary="Signature=_Tue__14_Jan_2014_14_26_27_+1100_Dfl7rtkbotIs5xjd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:49174 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:44322 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752612AbaANDCY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jan 2014 22:02:24 -0500
-In-Reply-To: <20140113142059.f9f1c58c391b2c8bbd05699f@canb.auug.org.au>
+	id S1751547AbaAND0m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jan 2014 22:26:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>
 
---Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5
+--Signature=_Tue__14_Jan_2014_14_26_27_+1100_Dfl7rtkbotIs5xjd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 13 Jan 2014 14:20:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Mon, 13 Jan 2014 14:18:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > Today's linux-next merge of the tip tree got conflicts in
-> > arch/arc/include/asm/Kbuild, arch/cris/include/asm/Kbuild,
-> > arch/hexagon/include/asm/Kbuild, arch/microblaze/include/asm/Kbuild,
-> > arch/parisc/include/asm/Kbuild and arch/score/include/asm/Kbuild between
-> > commit e3fec2f74f7f ("lib: Add missing arch generic-y entries for
-> > asm-generic/hash.h") from the net-next tree and commit 93ea02bb8435
-> > ("arch: Clean up asm/barrier.h implementations using
-> > asm-generic/barrier.h") from the tip tree.
-> >=20
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
-> >=20
-> > BTW: thanks for not keeping the Kbuild files sorted :-(
->=20
-> I missed arch/mn10300/include/asm/Kbuild the first time round.
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-And ... git rerere does not work well here.  It stores resolutions by a
-hash of the (sanitised) conflict and since most of these files have
-exactly the same conflict, I am going to have to edit 5 of them by hand
-every day.
+drivers/cpufreq/speedstep-lib.c: In function 'speedstep_get_freqs':
+drivers/cpufreq/speedstep-lib.c:467:2: error: implicit declaration of funct=
+ion 'preempt_check_resched' [-Werror=3Dimplicit-function-declaration]
+  preempt_check_resched();
+  ^
 
-Not happy :-(
+Caused by commit 62b94a08da1b ("sched/preempt: Take away
+preempt_enable_no_resched() from modules") interacting with commit
+24e1937b2386 ("speedstep-smi: enable interrupts when waiting") from the
+pm tree.
 
+For now, I have reverted that pm tree commit.  Please sort this out.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5
+--Signature=_Tue__14_Jan_2014_14_26_27_+1100_Dfl7rtkbotIs5xjd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1Ki6AAoJEMDTa8Ir7ZwVtqcP/1WOrHDiX/sqRICnivK6m2I5
-PaVt5Ng70rzsm8goudyBrX79dw1ObfuD+oE0yBTZFLVjb0NHPUzBt9hmLyGyQaU4
-owQ/73gSmNSuY5YypPIDtQCYd5vq0ri5fynNIrofePqW1zKXaPH0ICvYwHB5AAJF
-MWd8UTRuhPLAvGHysq+iY+yE8KuGMa9jKGOMunLmYxvYSzhGcsYQZ+kVKRxQblhQ
-CzjhIeQnokXwjLmsSf0hKaNewY19e/G1UQ/2cPJwYqMLqCNCWjdZT/5DTtbg3+gH
-yK29iqN5FGK+gQ2DH/QWYXIa/UrgBe9oGhSEevIj9UIV4HVUKG2jOZvhdI40a39l
-ia+Oss0oVdUgIV06JZiMqBg97ong+SjR6BB+kBy0OuNvHMsW5inw8NRlzVrszPMM
-Iz1pm00lBxE0nfoQgrVbNhos1C1zd9FAe3jHyAinhLFKTHR9R3cqatbeyvu5HKRA
-IlzB9yec5o3vdJMPmpnX0K3/iZ+Fy5DLzE6mvj4woQuAzMQ/rI5gAxYuesGuJl46
-9ohcLSM2+XbOHiHybTteXgbwgdK1wWNVMxonDkXf4nhBKjL+vwFvewyY2kQkh/Dd
-bKXy68RCt1WkSbmsvCWZM1zPRAql9BOb8G6e71gb0eaKoZK9ylnXMG468w05DGSa
-Dkt7jKlRglGMD+03PIDC
-=KQf7
+iQIcBAEBCAAGBQJS1K5nAAoJEMDTa8Ir7ZwV3QwP/iDrm/iLU/rN7TZbD4vHqSsj
+p27fBoppSfK+JTrgLllProzxVoDQhHOUid2C/A5AOxijBlC/8c+QfHGlfVJy2p1G
+lDDhmFV9H2U0ceN+l/xv0WWJY/7gfwj+d7S5cZupsRIT5BekBfILLKaLCVof3g7J
+V9U0QH+3Y0Zk/GDPqXtupoOUr8NDdZPmIHVvN6lSomgX2aHuK3yEXctrUNIqi17I
+3de7OU/qtc9d+7T+WxpTcAkuDnHfTF8eUwjQi+L+y7tDkPdbrFD8Hzj9TGhIkf8G
+Iw3bamRPsit8q8NmbM/cqGtjInllutKkhH7gd7/WnLMfliAaTgy6uNLrc+BRdZ2H
+phZfCpT8m0u6Qq3ecZzMgCQA60DHFordGjd4rp2vJa95/ND87UE0xg+i+EMRo2Q4
+kd85IXtqA8dDEjz4VpEl2P9+CzBGnEq2Wv0zdcjKnCz24Vj1PXe0j2106CvQqNV8
+02ra7JdHORyu7KCXNtsA8zi2zW4GTA54FvFFPqHDMaUy07OAEjtX37RYwR5VsOin
+e9OlWU9h8CaBxHAWVp260degWEXZkT1MIKERdHS9lxJhtKqGTqv0LHXlA9W+OI/O
+37ZtjT9NgPcynKjEL93EMdSHUlEO5/iROHp9YrjK32IBQKHxzr9kvALJ9NFAf2uR
+KCNaU/k/YSD7gJfUDB2i
+=+Aqw
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5--
+--Signature=_Tue__14_Jan_2014_14_26_27_+1100_Dfl7rtkbotIs5xjd--
