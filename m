@@ -1,45 +1,41 @@
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-Subject: RE: linux-next: manual merge of the akpm-current tree with the
- char-misc tree
-Date: Tue, 14 Jan 2014 08:31:26 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B1AF42F69@HASMSX106.ger.corp.intel.com>
-References: <20140114155104.0ab2772aaa909e49bc89cd61@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+ tree
+Date: Tue, 14 Jan 2014 13:51:53 +0100
+Message-ID: <20140114125153.GY7572@laptop.programming.kicks-ass.net>
+References: <20140114155331.88d170d3c991b9465c23a537@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:43792 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751071AbaANIbs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Jan 2014 03:31:48 -0500
-In-Reply-To: <20140114155104.0ab2772aaa909e49bc89cd61@canb.auug.org.au>
-Content-Language: en-US
+Received: from merlin.infradead.org ([205.233.59.134]:59766 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751318AbaANMwO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Jan 2014 07:52:14 -0500
+Content-Disposition: inline
+In-Reply-To: <20140114155331.88d170d3c991b9465c23a537@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ian Munsie <imunsie@au1.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Davidlohr Bueso <davidlohr@hp.com>
 
-
-
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Tuesday, January 14, 2014 06:51
-> To: Andrew Morton; Greg KH; Arnd Bergmann
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Ian Munsie;
-> Winkler, Tomas
-> Subject: linux-next: manual merge of the akpm-current tree with the char-misc
-> tree
-> 
+On Tue, Jan 14, 2014 at 03:53:31PM +1100, Stephen Rothwell wrote:
 > Hi Andrew,
 > 
 > Today's linux-next merge of the akpm-current tree got a conflict in
-> drivers/misc/mei/init.c between commit 33ec08263147 ("mei: revamp mei
-> reset state machine") from the char-misc tree and commit dd045dab2999
-> ("drivers/misc/mei: ratelimit several error messages") from the
-> akpm-current tree.
+> kernel/futex.c between commit a52b89ebb6d4 ("futexes: Increase hash table
+> size for better performance") from the tip tree and commit 61beee6c76e5
+> ("futex: switch to USER_DS for futex test") from the akpm-current tree.
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> @@@ -2869,10 -2748,13 +2871,13 @@@
+>   	 * implementation, the non-functional ones will return
+>   	 * -ENOSYS.
+>   	 */
+> + 	fs = get_fs();
+> + 	set_fs(USER_DS);
+>   	if (cmpxchg_futex_value_locked(&curval, NULL, 0, 0) == -EFAULT)
+>   		futex_cmpxchg_enabled = 1;
+> + 	set_fs(fs);
+>   
 
-Can we just drop this rete limit stuff, I've never asked that. 
-Tomas
+This seems terribly broken, the *futex_value*() ops should not need
+that; they are supposed to access userspace without any of that.
