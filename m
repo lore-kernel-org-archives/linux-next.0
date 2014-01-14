@@ -1,88 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Tue, 14 Jan 2014 11:50:18 +1100
-Message-ID: <20140114115018.b8dfc68565fa0f033a38e606@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
+Date: Tue, 14 Jan 2014 14:02:14 +1100
+Message-ID: <20140114140214.7279bcaf88d7a4514d889186@canb.auug.org.au>
+References: <20140113141824.4301cb76e8e5540d42d74015@canb.auug.org.au>
+	<20140113142059.f9f1c58c391b2c8bbd05699f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__14_Jan_2014_11_50_18_+1100_7atiCk9OgUCJca5m"
+ boundary="Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:36300 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:49174 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753932AbaANAu0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jan 2014 19:50:26 -0500
+	id S1752612AbaANDCY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jan 2014 22:02:24 -0500
+In-Reply-To: <20140113142059.f9f1c58c391b2c8bbd05699f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__14_Jan_2014_11_50_18_+1100_7atiCk9OgUCJca5m
+--Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi all,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/staging/media/go7007/go7007-usb.c between commits 66a528c1c3d6
-("Revert "staging:media: Use dev_dbg() instead of pr_debug()"") and
-e6bbda9da9e8 ("Staging: go7007: fix up some remaining go->dev issues")
-from Linus' tree and commit c61c3094a630 ("[media] go7007-usb: only use
-go->dev after allocated") from the v4l-dvb tree.
+On Mon, 13 Jan 2014 14:20:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 13 Jan 2014 14:18:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Today's linux-next merge of the tip tree got conflicts in
+> > arch/arc/include/asm/Kbuild, arch/cris/include/asm/Kbuild,
+> > arch/hexagon/include/asm/Kbuild, arch/microblaze/include/asm/Kbuild,
+> > arch/parisc/include/asm/Kbuild and arch/score/include/asm/Kbuild between
+> > commit e3fec2f74f7f ("lib: Add missing arch generic-y entries for
+> > asm-generic/hash.h") from the net-next tree and commit 93ea02bb8435
+> > ("arch: Clean up asm/barrier.h implementations using
+> > asm-generic/barrier.h") from the tip tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary (no action
+> > is required).
+> >=20
+> > BTW: thanks for not keeping the Kbuild files sorted :-(
+>=20
+> I missed arch/mn10300/include/asm/Kbuild the first time round.
 
-I fixed it up (I basically used the version from the patches in Linus'
-tree (they are in v3.13-rc2) - see below) and can carry the fix as necessar=
-y (no action is
-required).
+And ... git rerere does not work well here.  It stores resolutions by a
+hash of the (sanitised) conflict and since most of these files have
+exactly the same conflict, I am going to have to edit 5 of them by hand
+every day.
+
+Not happy :-(
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/media/go7007/go7007-usb.c
-index b658c2316df3,1d747de6dfa6..000000000000
---- a/drivers/staging/media/go7007/go7007-usb.c
-+++ b/drivers/staging/media/go7007/go7007-usb.c
-@@@ -1099,13 -1097,16 +1099,15 @@@ static int go7007_usb_probe(struct usb_
-  		board =3D &board_px_tv402u;
-  		break;
-  	case GO7007_BOARDID_LIFEVIEW_LR192:
- -		printk(KERN_ERR
- -		       "The Lifeview TV Walker Ultra is not supported. Sorry!\n");
- +		dev_err(&intf->dev, "The Lifeview TV Walker Ultra is not supported. Sor=
-ry!\n");
-  		return -ENODEV;
-+ #if 0
-  		name =3D "Lifeview TV Walker Ultra";
-  		board =3D &board_lifeview_lr192;
-  		break;
-+ #endif
-  	case GO7007_BOARDID_SENSORAY_2250:
- -		printk(KERN_INFO "Sensoray 2250 found\n");
- +		dev_info(&intf->dev, "Sensoray 2250 found\n");
-  		name =3D "Sensoray 2250/2251";
-  		board =3D &board_sensoray_2250;
-  		break;
-
---Signature=_Tue__14_Jan_2014_11_50_18_+1100_7atiCk9OgUCJca5m
+--Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1InPAAoJEMDTa8Ir7ZwVE/QP/046TFQZMkmgiYoQTDV614zS
-saupnyBcoAjvbDEQhWiUdhnXxl41BvxhLcOvRfVsqIfFKnot6tD+5IWEQA18md6v
-Yg8qtWrFUXOYHN1t66yZ350xF3iliEq1JHR3pCrmWyU6jteNBMjrJHCSdn3qdN8v
-Ps4pDwzvtVR06XJv4bItapaIPwx5DuU0spaIwzHKdokd/rOK9EEl27btN11bkB6R
-TkNPFoTKl33Wg52g3v0j/t6nE/KVXl9DtdM2/8TfON9/cHLiIauP1RZNl5BEmHmQ
-yxLYEBVqelt9ST9MvNSLojms9Heoqe4anjh+2OpybAyZrrM+sg6NX2hJFJuaLCjr
-o7brOaRYdXbowhLFOnDAiOeUHMA9QduyV96bNoLIy2rnaCcwMHUXDHsBUAGz8yVk
-hlZdgk33dO1Xk47OyAAxKd2WRtgSqJMgSJPCml6JV2Bs5tQ5uDvmFS1HrbpQaVqF
-JtA1lbax+lBIHCvG6QCM7+Hz3TlcPz99W3myuat9td43GP+fmqSRl+F2N+bkpg8r
-ANHKb6NlssPT5/SJ7fiZRpoeHCK4zx+yZIM+UCdnOfmo5PUC5dH5R4Iczi4a52uE
-W9mItZLYFaF5za1OxYTYL39eFgLiIVtVj+qi2q8jscLiUc/kyuvdqGF+MEn1cOzX
-iXEXm5S8sOkVtFx+nS9+
-=ApDJ
+iQIcBAEBCAAGBQJS1Ki6AAoJEMDTa8Ir7ZwVtqcP/1WOrHDiX/sqRICnivK6m2I5
+PaVt5Ng70rzsm8goudyBrX79dw1ObfuD+oE0yBTZFLVjb0NHPUzBt9hmLyGyQaU4
+owQ/73gSmNSuY5YypPIDtQCYd5vq0ri5fynNIrofePqW1zKXaPH0ICvYwHB5AAJF
+MWd8UTRuhPLAvGHysq+iY+yE8KuGMa9jKGOMunLmYxvYSzhGcsYQZ+kVKRxQblhQ
+CzjhIeQnokXwjLmsSf0hKaNewY19e/G1UQ/2cPJwYqMLqCNCWjdZT/5DTtbg3+gH
+yK29iqN5FGK+gQ2DH/QWYXIa/UrgBe9oGhSEevIj9UIV4HVUKG2jOZvhdI40a39l
+ia+Oss0oVdUgIV06JZiMqBg97ong+SjR6BB+kBy0OuNvHMsW5inw8NRlzVrszPMM
+Iz1pm00lBxE0nfoQgrVbNhos1C1zd9FAe3jHyAinhLFKTHR9R3cqatbeyvu5HKRA
+IlzB9yec5o3vdJMPmpnX0K3/iZ+Fy5DLzE6mvj4woQuAzMQ/rI5gAxYuesGuJl46
+9ohcLSM2+XbOHiHybTteXgbwgdK1wWNVMxonDkXf4nhBKjL+vwFvewyY2kQkh/Dd
+bKXy68RCt1WkSbmsvCWZM1zPRAql9BOb8G6e71gb0eaKoZK9ylnXMG468w05DGSa
+Dkt7jKlRglGMD+03PIDC
+=KQf7
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Jan_2014_11_50_18_+1100_7atiCk9OgUCJca5m--
+--Signature=_Tue__14_Jan_2014_14_02_14_+1100_acrA+AyAj4P=aEp5--
