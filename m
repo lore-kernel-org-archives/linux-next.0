@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tip tree with the mips tree
-Date: Wed, 15 Jan 2014 16:00:32 +1100
-Message-ID: <20140115160032.96b4d84d063ab108ae3cdb35@canb.auug.org.au>
+Date: Wed, 15 Jan 2014 16:06:08 +1100
+Message-ID: <20140115160608.5bf8571204de731b2c8d5e66@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868"
+ boundary="Signature=_Wed__15_Jan_2014_16_06_08_+1100_hMHhg5_K_7enrf7e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:45567 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:46103 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750703AbaAOFAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jan 2014 00:00:40 -0500
+	id S1751482AbaAOFGP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jan 2014 00:06:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Paul Burton <paul.burton@imgtec.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jayachandran C <jchandra@broadcom.com>, John Crispin <blogic@openwrt.org>
 
---Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868
+--Signature=_Wed__15_Jan_2014_16_06_08_+1100_hMHhg5_K_7enrf7e
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +24,9 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the tip tree got a conflict in
-arch/mips/Kconfig between commit 597ce1723e0f ("MIPS: Support for 64-bit
-FP with O32 binaries") from the mips tree and commit 19952a92037e
-("stackprotector: Unify the HAVE_CC_STACKPROTECTOR logic between
-architectures") from the tip tree.
+arch/mips/netlogic/xlp/setup.c between commit 8e4857962d97 ("MIPS:
+Netlogic: Core wakeup improvements") from the mips tree and commit
+7972e966b032 ("MIPS: Remove panic_timeout settings") from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,67 +35,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/mips/Kconfig
-index 87dc0c3fe05f,c93d92beb3d6..000000000000
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@@ -2354,36 -2323,6 +2355,23 @@@ config SECCOM
+diff --cc arch/mips/netlogic/xlp/setup.c
+index c3af2d8772cf,54e75c77184b..000000000000
+--- a/arch/mips/netlogic/xlp/setup.c
++++ b/arch/mips/netlogic/xlp/setup.c
+@@@ -96,15 -92,6 +96,14 @@@ static void __init xlp_init_mem_from_ba
  =20
-  	  If unsure, say Y. Only embedded should say N here.
- =20
-- config CC_STACKPROTECTOR
-- 	bool "Enable -fstack-protector buffer overflow detection (EXPERIMENTAL)"
-- 	help
-- 	  This option turns on the -fstack-protector GCC feature. This
-- 	  feature puts, at the beginning of functions, a canary value on
-- 	  the stack just before the return address, and validates
-- 	  the value just before actually returning.  Stack based buffer
-- 	  overflows (that need to overwrite this return address) now also
-- 	  overwrite the canary, which gets detected and the attack is then
-- 	  neutralized via a kernel panic.
--=20
-- 	  This feature requires gcc version 4.2 or above.
--=20
- +config MIPS_O32_FP64_SUPPORT
- +	bool "Support for O32 binaries using 64-bit FP"
- +	depends on 32BIT || MIPS32_O32
- +	default y
- +	help
- +	  When this is enabled, the kernel will support use of 64-bit floating
- +	  point registers with binaries using the O32 ABI along with the
- +	  EF_MIPS_FP64 ELF header flag (typically built with -mfp64). On
- +	  32-bit MIPS systems this support is at the cost of increasing the
- +	  size and complexity of the compiled FPU emulator. Thus if you are
- +	  running a MIPS32 system and know that none of your userland binaries
- +	  will require 64-bit floating point, you may wish to reduce the size
- +	  of your kernel & potentially improve FP emulation performance by
- +	  saying N here.
+  void __init plat_mem_setup(void)
+  {
+ +#ifdef CONFIG_SMP
+ +	nlm_wakeup_secondary_cpus();
  +
- +	  If unsure, say Y.
+ +	/* update TLB size after waking up threads */
+ +	current_cpu_data.tlbsize =3D ((read_c0_config6() >> 16) & 0xffff) + 1;
  +
-  config USE_OF
-  	bool
-  	select OF
+ +	register_smp_ops(&nlm_smp_ops);
+ +#endif
+- 	panic_timeout	=3D 5;
+  	_machine_restart =3D (void (*)(char *))nlm_linux_exit;
+  	_machine_halt	=3D nlm_linux_exit;
+  	pm_power_off	=3D nlm_linux_exit;
 
---Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868
+--Signature=_Wed__15_Jan_2014_16_06_08_+1100_hMHhg5_K_7enrf7e
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1hX0AAoJEMDTa8Ir7ZwVpFgP/3hYeH0qXGnX/Ac3L3jtAhSf
-4VO1ntxUCvFSoC0BBceDvmImeIkADA2RpSA+GRIw1OLKBLX70SdEI34HVQBXDVG/
-Rskth9SgnGBg8IiA4W6HeNFx5bj7rNhdfCnQuP9XwlQLC3xfv1YGkdYoUa98oUCC
-+Jp+kcT0TehzoRf7/N7+lsBE582xwp6I7Bb5qiktlLe3k9qLrXDIVkStgnIvp4ah
-jbZe4zzeoyCEpMBzoCOs4b4kJmeXuQtJsJ3bPprFJAa/2r9Q/tWc4sxPo6z4Fw64
-c/4gukclbaLadccT+2DJA4ssJpfJWJ3NRzds+WlO2VLwmkcvMLbFSBZnv8rGUhGn
-C97kzBWJTqKPX85oTH7S/KIr7K1iiFF27KzZMsI6LXZe90JY5OJLQ5o53tUtv34A
-gRYOIWixyOcRsgI4fTaKBolgIY0bPiHUbsAFtnFACTSMVY+UlhitLUVgtUE+PNEu
-7CM10qeC3VmUdbdtG0f3tNluojcPcYR8AhawipXHKkioakzqbZAwxQd0p4QJCaR1
-KN+LpnLgHaYTP+Zjxm0h4YjxWnJ1Sv+SrR+ffJgUgNgwyP5cNIxgxJiPOFraAUEK
-+Q7aTJk4UfDLVtIwijUCrTQBz5gtKVGktJPOddrTd6locRdW9Xgae/E5w57ZWBcZ
-AGUm4A5G5Wo7cRS8qA2C
-=Dkrm
+iQIcBAEBCAAGBQJS1hdEAAoJEMDTa8Ir7ZwV5ssP/iLE9hFCdG2XrLJ+eY8tZ5QK
+kBsMJLzElIxud0qOgv8QtrI9DnIzAzilISObfLY1aFgwAp8bQcagvYYTBohLQNpJ
+M6HyyUUxoVYxxxc6eWEF+rUnVMtwPLTWmewiMesrqZBqv504g939huY3WjvefCkH
+NqdrbhkuWDB1HZ6DS+2+R67qTcMAnqTQ2hlBOi+8gSpjfFleM+RGVD24DM+t54PX
+LgR0ltYUTaSKhHtI4JE+5QBo/o6MBsSxfsjef7KwDNM9AdFkyHeWx6TkeTfhpWB5
+qq5FUScblaRdpsD+Vz3GpVTHJI4eFSWZGbCStd8W0C4o/ikn2scMn1tZTZlZ0y7d
+jighwYr7/v7JOfqlg+tDdmk9l1QjdtWQlY7Rsos7Zqn4aDM0UIgebB/JiZ9VYNfo
+x+Yt3o5DS5uzXmvYnmMnJJEUT/hD+9WA/8kKwu+A4/dBlEVLLtaJssQpCRA/hsDj
+pN5Cr3Fsyqaog+ZAktu8dAUjCRpXkdlje6EfRQgZJG7ikwJSRrFqE3sYTzU13pyy
+S6rNetw+NZ2Mxr4fgxVjEgO1Uwq2Ygvcz0MUJXlLF6WR9qoylxpjicGuILP/uuXv
+MpBlH3vyiTjItAhbHcpisSYYjN91ZlUeOFJmDbjL12/mHt5nJniDLvKhy+zhCI5B
+5X/LJwX1mVvJj0T6vIv0
+=IaUT
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868--
+--Signature=_Wed__15_Jan_2014_16_06_08_+1100_hMHhg5_K_7enrf7e--
