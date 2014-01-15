@@ -1,23 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for Jan 14 (lowpan, 802.15.4)
-Date: Wed, 15 Jan 2014 15:36:58 -0800 (PST)
-Message-ID: <20140115.153658.1102159829315209730.davem@davemloft.net>
-References: <20140114165128.0dd51f362e0f34a2ef4dc92f@canb.auug.org.au>
-	<52D578A7.8020000@infradead.org>
-	<CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jan 15 (netfilter: nft_reject)
+Date: Wed, 15 Jan 2014 15:39:09 -0800
+Message-ID: <52D71C1D.3020609@infradead.org>
+References: <20140115185545.497c14923814b6ecaa540d9f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dbaryshkov@gmail.com
-Cc: rdunlap@infradead.org, marcel@holtmann.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-zigbee-devel@lists.sourceforge.net, alex.bluesman.smirnov@gmail.com, netdev@vger.kernel.org, jukka.rissanen@linux.intel.com
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20140115185545.497c14923814b6ecaa540d9f@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Date: Wed, 15 Jan 2014 02:54:56 +0400
+On 01/14/2014 11:55 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> This tree fails (more than usual) the powerpc allyesconfig build.
+> 
+> Changes since 20140114:
+> 
 
-> David, Marcel, could you please consider the attached patch.
+on x86_64:
+# CONFIG_IPV6 is not enabled.
 
-Applied, thanks Dmitry.
+warning: (NF_TABLES_INET) selects NF_TABLES_IPV6 which has unmet direct dependencies (NET && INET && IPV6 && NETFILTER && NF_TABLES)
+...
+ERROR: "ip6_dst_hoplimit" [net/netfilter/nft_reject.ko] undefined!
+ERROR: "ip6_route_output" [net/netfilter/nft_reject.ko] undefined!
+ERROR: "nf_ip6_checksum" [net/netfilter/nft_reject.ko] undefined!
+
+
+
+-- 
+~Randy
