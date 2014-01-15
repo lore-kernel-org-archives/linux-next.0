@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the audit tree with Linus' tree
-Date: Wed, 15 Jan 2014 15:48:55 +1100
-Message-ID: <20140115154855.09736b2b99b44da360b127db@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the mips tree
+Date: Wed, 15 Jan 2014 16:00:32 +1100
+Message-ID: <20140115160032.96b4d84d063ab108ae3cdb35@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Jan_2014_15_48_55_+1100_lxsalGKUMKwoG_Y4"
+ boundary="Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55887 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:45567 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751601AbaAOEtP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jan 2014 23:49:15 -0500
+	id S1750703AbaAOFAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jan 2014 00:00:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>, Joe Perches <joe@perches.com>, "David S. Miller" <davem@davemloft.net>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Paul Burton <paul.burton@imgtec.com>
 
---Signature=_Wed__15_Jan_2014_15_48_55_+1100_lxsalGKUMKwoG_Y4
+--Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi all,
 
-Today's linux-next merge of the audit tree got a conflict in
-include/net/xfrm.h between commit d511337a1eda ("xfrm.h: Remove extern
-from function prototypes") from Linus' tree and commit 4440e8548153
-("audit: convert all sessionid declaration to unsigned int") from the
-audit tree.
+Today's linux-next merge of the tip tree got a conflict in
+arch/mips/Kconfig between commit 597ce1723e0f ("MIPS: Support for 64-bit
+FP with O32 binaries") from the mips tree and commit 19952a92037e
+("stackprotector: Unify the HAVE_CC_STACKPROTECTOR logic between
+architectures") from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,81 +36,67 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/net/xfrm.h
-index cd7c46ff6f1f,f8d32b908423..000000000000
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@@ -714,23 -713,23 +714,23 @@@ static inline void xfrm_audit_helper_us
-  		audit_log_task_context(audit_buf);
-  }
+diff --cc arch/mips/Kconfig
+index 87dc0c3fe05f,c93d92beb3d6..000000000000
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@@ -2354,36 -2323,6 +2355,23 @@@ config SECCOM
  =20
- -extern void xfrm_audit_policy_add(struct xfrm_policy *xp, int result,
- -				  kuid_t auid, unsigned int ses, u32 secid);
- -extern void xfrm_audit_policy_delete(struct xfrm_policy *xp, int result,
- -				  kuid_t auid, unsigned int ses, u32 secid);
- -extern void xfrm_audit_state_add(struct xfrm_state *x, int result,
- -				 kuid_t auid, unsigned int ses, u32 secid);
- -extern void xfrm_audit_state_delete(struct xfrm_state *x, int result,
- -				    kuid_t auid, unsigned int ses, u32 secid);
- -extern void xfrm_audit_state_replay_overflow(struct xfrm_state *x,
- -					     struct sk_buff *skb);
- -extern void xfrm_audit_state_replay(struct xfrm_state *x,
- -				    struct sk_buff *skb, __be32 net_seq);
- -extern void xfrm_audit_state_notfound_simple(struct sk_buff *skb, u16 fam=
-ily);
- -extern void xfrm_audit_state_notfound(struct sk_buff *skb, u16 family,
- -				      __be32 net_spi, __be32 net_seq);
- -extern void xfrm_audit_state_icvfail(struct xfrm_state *x,
- -				     struct sk_buff *skb, u8 proto);
- +void xfrm_audit_policy_add(struct xfrm_policy *xp, int result, kuid_t aui=
-d,
-- 			   u32 ses, u32 secid);
-++			   unsigned int ses, u32 secid);
- +void xfrm_audit_policy_delete(struct xfrm_policy *xp, int result, kuid_t =
-auid,
-- 			      u32 ses, u32 secid);
-++			      unsigned int ses, u32 secid);
- +void xfrm_audit_state_add(struct xfrm_state *x, int result, kuid_t auid,
-- 			  u32 ses, u32 secid);
-++			  unsigned int ses, u32 secid);
- +void xfrm_audit_state_delete(struct xfrm_state *x, int result, kuid_t aui=
-d,
-- 			     u32 ses, u32 secid);
-++			     unsigned int ses, u32 secid);
- +void xfrm_audit_state_replay_overflow(struct xfrm_state *x,
- +				      struct sk_buff *skb);
- +void xfrm_audit_state_replay(struct xfrm_state *x, struct sk_buff *skb,
- +			     __be32 net_seq);
- +void xfrm_audit_state_notfound_simple(struct sk_buff *skb, u16 family);
- +void xfrm_audit_state_notfound(struct sk_buff *skb, u16 family, __be32 ne=
-t_spi,
- +			       __be32 net_seq);
- +void xfrm_audit_state_icvfail(struct xfrm_state *x, struct sk_buff *skb,
- +			      u8 proto);
-  #else
+  	  If unsure, say Y. Only embedded should say N here.
  =20
-  static inline void xfrm_audit_policy_add(struct xfrm_policy *xp, int resu=
-lt,
+- config CC_STACKPROTECTOR
+- 	bool "Enable -fstack-protector buffer overflow detection (EXPERIMENTAL)"
+- 	help
+- 	  This option turns on the -fstack-protector GCC feature. This
+- 	  feature puts, at the beginning of functions, a canary value on
+- 	  the stack just before the return address, and validates
+- 	  the value just before actually returning.  Stack based buffer
+- 	  overflows (that need to overwrite this return address) now also
+- 	  overwrite the canary, which gets detected and the attack is then
+- 	  neutralized via a kernel panic.
+-=20
+- 	  This feature requires gcc version 4.2 or above.
+-=20
+ +config MIPS_O32_FP64_SUPPORT
+ +	bool "Support for O32 binaries using 64-bit FP"
+ +	depends on 32BIT || MIPS32_O32
+ +	default y
+ +	help
+ +	  When this is enabled, the kernel will support use of 64-bit floating
+ +	  point registers with binaries using the O32 ABI along with the
+ +	  EF_MIPS_FP64 ELF header flag (typically built with -mfp64). On
+ +	  32-bit MIPS systems this support is at the cost of increasing the
+ +	  size and complexity of the compiled FPU emulator. Thus if you are
+ +	  running a MIPS32 system and know that none of your userland binaries
+ +	  will require 64-bit floating point, you may wish to reduce the size
+ +	  of your kernel & potentially improve FP emulation performance by
+ +	  saying N here.
+ +
+ +	  If unsure, say Y.
+ +
+  config USE_OF
+  	bool
+  	select OF
 
---Signature=_Wed__15_Jan_2014_15_48_55_+1100_lxsalGKUMKwoG_Y4
+--Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1hNJAAoJEMDTa8Ir7ZwVqswP/jxWynFHSLpKbHVWfU/7gmNJ
-NtRuO2xfU4ropZCI9bYkOqzsmzB1dlf0ecNZMJBAF8oG3ErkrTFQfZkWFa/kptD4
-P33dftCVIPSom04Jvthsq2+56KcwBi+fxwK/FfnTVmacV3Pjw2IEm5A07D+rfsTh
-Q0WF07zA45GLrEEKtiNDOXbDvLPMWkSew5DCV2J6ua3cUnkejqZH/gabyadW/tdm
-Mtxpy9pGEyqzIm9Z+5b8aIhLaf/6zBQL31rXJM7Is+k1Zt5y/oiLrpJ6y3WRh1Y6
-mYCXiV1iPhRKeC4WocIKJ86TE482+jAx1Z1RNbd/OjzavQBDF7rFt+x1KHrddkUp
-JBJr3bd6oNDorz1hBBIJTJVnW1d1I46GTAmE/mpWgyhbEh93tufsGEXAN0g0UVVm
-DFZ3Kr16+n/lJheYLkhZBTs1Ireaj/sUE6Cg04BgGpCY9Egao3mRLTcxYQujYYob
-JJ88S0FAL8eLtk1tj0yVywpf/FawU5Shm+1QEpwgnApPSq+2h6YgvGLhjR0XV+ba
-dmFQAxJVLSFpgi49NmVV/Oi2dgoCr98nXS16sgd/iskq+uY42SpkIhoQ5iVXBZJB
-iW19pdDj5Pe9JhkhQDS8H2JoM6PD12Ki+w/3ABPlbHfb9EyrCwEmJmgcnkQh/T2k
-q8h8XPPIOApwndXJE88q
-=kZg4
+iQIcBAEBCAAGBQJS1hX0AAoJEMDTa8Ir7ZwVpFgP/3hYeH0qXGnX/Ac3L3jtAhSf
+4VO1ntxUCvFSoC0BBceDvmImeIkADA2RpSA+GRIw1OLKBLX70SdEI34HVQBXDVG/
+Rskth9SgnGBg8IiA4W6HeNFx5bj7rNhdfCnQuP9XwlQLC3xfv1YGkdYoUa98oUCC
++Jp+kcT0TehzoRf7/N7+lsBE582xwp6I7Bb5qiktlLe3k9qLrXDIVkStgnIvp4ah
+jbZe4zzeoyCEpMBzoCOs4b4kJmeXuQtJsJ3bPprFJAa/2r9Q/tWc4sxPo6z4Fw64
+c/4gukclbaLadccT+2DJA4ssJpfJWJ3NRzds+WlO2VLwmkcvMLbFSBZnv8rGUhGn
+C97kzBWJTqKPX85oTH7S/KIr7K1iiFF27KzZMsI6LXZe90JY5OJLQ5o53tUtv34A
+gRYOIWixyOcRsgI4fTaKBolgIY0bPiHUbsAFtnFACTSMVY+UlhitLUVgtUE+PNEu
+7CM10qeC3VmUdbdtG0f3tNluojcPcYR8AhawipXHKkioakzqbZAwxQd0p4QJCaR1
+KN+LpnLgHaYTP+Zjxm0h4YjxWnJ1Sv+SrR+ffJgUgNgwyP5cNIxgxJiPOFraAUEK
++Q7aTJk4UfDLVtIwijUCrTQBz5gtKVGktJPOddrTd6locRdW9Xgae/E5w57ZWBcZ
+AGUm4A5G5Wo7cRS8qA2C
+=Dkrm
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Jan_2014_15_48_55_+1100_lxsalGKUMKwoG_Y4--
+--Signature=_Wed__15_Jan_2014_16_00_32_+1100_GqHf/5IIuKgra868--
