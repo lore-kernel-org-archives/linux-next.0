@@ -1,48 +1,54 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: linux-next: Tree for Jan 15 (um, rcu)
-Date: Wed, 15 Jan 2014 20:39:03 +0100
-Message-ID: <2114717.uibXxy8kL0@sandpuppy>
-References: <20140115185545.497c14923814b6ecaa540d9f@canb.auug.org.au> <52D6B591.3070707@infradead.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: futex: Switch to USER_DS for futex test (was: Re: linux-next:
+ manual merge of the akpm-current tree with the tip tree)
+Date: Wed, 15 Jan 2014 20:59:31 +0100
+Message-ID: <CAMuHMdUJhjtogAPKzN6cua1KdtMbhZ1U0MBt6QaD6t3e_BMCMQ@mail.gmail.com>
+References: <CAMuHMdXz93YsqzxR1hny2P8afMWEQGMw19=o=S7cR0rT9QvRFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from b.ns.miles-group.at ([95.130.255.144]:1661 "EHLO radon.swed.at"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750933AbaAOTjJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jan 2014 14:39:09 -0500
-In-Reply-To: <52D6B591.3070707@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXz93YsqzxR1hny2P8afMWEQGMw19=o=S7cR0rT9QvRFQ@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Davidlohr Bueso <davidlohr@hp.com>, Linux-Arch <linux-arch@vger.kernel.org>, Andreas Schwab <schwab@linux-m68k.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Am Mittwoch, 15. Januar 2014, 08:21:37 schrieb Randy Dunlap:
-> On 01/14/2014 11:55 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > This tree fails (more than usual) the powerpc allyesconfig build.
-> 
-> > Changes since 20140114:
-> on i386 and/or x86_64 defconfigs:
-> 
->   CC      arch/um/kernel/asm-offsets.s
-> In file included from include/linux/sched.h:43:0,
->                  from arch/x86/um/shared/sysdep/kernel-offsets.h:2,
->                  from arch/um/kernel/asm-offsets.c:1:
-> include/linux/rculist.h: In function '__list_add_rcu':
-> include/linux/rculist.h:54:2: error: implicit declaration of function
-> 'smp_store_release' [-Werror=implicit-function-declaration] cc1: some
-> warnings being treated as errors
-> make[2]: *** [arch/um/kernel/asm-offsets.s] Error 1
+On Tue, Jan 14, 2014 at 5:32 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> https://lkml.org/lkml/2013/12/11/141
+>
+> On Tue, Jan 14, 2014 at 5:19 PM, H. Peter Anvin <hpa@zytor.com> wrote:
+>> On 01/14/2014 05:17 AM, Geert Uytterhoeven wrote:
+>>>>
+>>>> This seems terribly broken, the *futex_value*() ops should not need
+>>>> that; they are supposed to access userspace without any of that.
+>>>
+>>> Why don't they need set_fs(USER_DS)?
+>>
+>> Because USER_DS is the normal operating state?  It would appear m68k is
+>
+> Is it?
+>
+>> the only(?) arch that calls initcalls with get_fs() == KERNEL_DS...
+>
+> On ARM:
+>
+> fs = 0x0, USER_DS = 0xbf000000, KERNEL_DS = 0x0
+>
+> Presumably also on s390, as the fix for m68k broke s390. That's why it's still
+> in -mm and not yet in mainline.
 
-Thanks for reporting Randy!
+On uml/amd64:
 
-Stephen, can you please add my UML tree to -next?
-It contains already the fix.
-git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git next
+fs = 0xffffffff, USER_DS = 0x7fc0000000, KERNEL_DS = 0xffffffff
 
-Please note there is a trivial merge conflict in arch/um/include/asm/Kbuild.
+Gr{oetje,eeting}s,
 
-Thanks,
-//richard
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
