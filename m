@@ -1,46 +1,38 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: futex: Switch to USER_DS for futex test (was: Re: linux-next:
- manual merge of the akpm-current tree with the tip tree)
-Date: Wed, 15 Jan 2014 20:59:31 +0100
-Message-ID: <CAMuHMdUJhjtogAPKzN6cua1KdtMbhZ1U0MBt6QaD6t3e_BMCMQ@mail.gmail.com>
-References: <CAMuHMdXz93YsqzxR1hny2P8afMWEQGMw19=o=S7cR0rT9QvRFQ@mail.gmail.com>
+Subject: Re: [uml-devel] [PATCH] um: Include generic barrier.h
+Date: Wed, 15 Jan 2014 21:03:48 +0100
+Message-ID: <CAMuHMdVkpd9W_sg2g4uztRVORddmOtuUW+ofweRhOmKcsi6XyA@mail.gmail.com>
+References: <52D6B591.3070707@infradead.org>
+	<1389814553-19861-1-git-send-email-richard@nod.at>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXz93YsqzxR1hny2P8afMWEQGMw19=o=S7cR0rT9QvRFQ@mail.gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Davidlohr Bueso <davidlohr@hp.com>, Linux-Arch <linux-arch@vger.kernel.org>, Andreas Schwab <schwab@linux-m68k.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:64246 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750933AbaAOUDs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jan 2014 15:03:48 -0500
+Received: by mail-pb0-f46.google.com with SMTP id ma3so1613746pbc.33
+        for <linux-next@vger.kernel.org>; Wed, 15 Jan 2014 12:03:48 -0800 (PST)
+In-Reply-To: <1389814553-19861-1-git-send-email-richard@nod.at>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Richard Weinberger <richard@nod.at>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Linux-Next <linux-next@vger.kernel.org>, uml-devel <user-mode-linux-devel@lists.sourceforge.net>
 
-On Tue, Jan 14, 2014 at 5:32 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> https://lkml.org/lkml/2013/12/11/141
->
-> On Tue, Jan 14, 2014 at 5:19 PM, H. Peter Anvin <hpa@zytor.com> wrote:
->> On 01/14/2014 05:17 AM, Geert Uytterhoeven wrote:
->>>>
->>>> This seems terribly broken, the *futex_value*() ops should not need
->>>> that; they are supposed to access userspace without any of that.
->>>
->>> Why don't they need set_fs(USER_DS)?
->>
->> Because USER_DS is the normal operating state?  It would appear m68k is
->
-> Is it?
->
->> the only(?) arch that calls initcalls with get_fs() == KERNEL_DS...
->
-> On ARM:
->
-> fs = 0x0, USER_DS = 0xbf000000, KERNEL_DS = 0x0
->
-> Presumably also on s390, as the fix for m68k broke s390. That's why it's still
-> in -mm and not yet in mainline.
+On Wed, Jan 15, 2014 at 8:35 PM, Richard Weinberger <richard@nod.at> wrote:
+> --- a/arch/um/include/asm/Kbuild
+> +++ b/arch/um/include/asm/Kbuild
+> @@ -4,3 +4,4 @@ generic-y += ftrace.h pci.h io.h param.h delay.h mutex.h current.h exec.h
+>  generic-y += switch_to.h clkdev.h
+>  generic-y += trace_clock.h
+>  generic-y += preempt.h
+> +generic-y += barrier.h
 
-On uml/amd64:
+Please use insertion sort instead of append, so Stephen doesn't have to
+extend his patch "arch: Re-sort some Kbuild files to hopefully help avoid
+some conflicts" for arch/um/include/asm/Kbuild.
 
-fs = 0xffffffff, USER_DS = 0x7fc0000000, KERNEL_DS = 0xffffffff
+Thanks!
 
 Gr{oetje,eeting}s,
 
