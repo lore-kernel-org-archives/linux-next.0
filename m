@@ -1,60 +1,61 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: linux-next: Tree for Jan 15 (um, rcu)
-Date: Wed, 15 Jan 2014 21:57:49 +0100
-Message-ID: <1481134.LAgAS757c0@sandpuppy>
-References: <20140115185545.497c14923814b6ecaa540d9f@canb.auug.org.au> <2114717.uibXxy8kL0@sandpuppy> <20140116075025.7b7ec09805b5f90c75a36dd2@canb.auug.org.au>
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+Subject: RE: linux-next: manual merge of the akpm-current tree with the
+ char-misc tree
+Date: Wed, 15 Jan 2014 22:36:40 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B1AF462B0@HASMSX106.ger.corp.intel.com>
+References: <20140114155104.0ab2772aaa909e49bc89cd61@canb.auug.org.au>
+ <5B8DA87D05A7694D9FA63FD143655C1B1AF42F69@HASMSX106.ger.corp.intel.com>
+ <1389750036-sup-8437@delenn.ozlabs.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from b.ns.miles-group.at ([95.130.255.144]:1660 "EHLO radon.swed.at"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751127AbaAOU5z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jan 2014 15:57:55 -0500
-In-Reply-To: <20140116075025.7b7ec09805b5f90c75a36dd2@canb.auug.org.au>
+Received: from mga09.intel.com ([134.134.136.24]:64260 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754178AbaAOWh4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jan 2014 17:37:56 -0500
+In-Reply-To: <1389750036-sup-8437@delenn.ozlabs.ibm.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ian Munsie <imunsie@au1.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
-
-Am Donnerstag, 16. Januar 2014, 07:50:25 schrieb Stephen Rothwell:
-> Hi Richard,
-> 
-> On Wed, 15 Jan 2014 20:39:03 +0100 Richard Weinberger <richard@nod.at> 
-wrote:
-> > Stephen, can you please add my UML tree to -next?
-> > It contains already the fix.
-> > git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git next
-> 
-> Sure, added from today.  As long as it only contains stuff for v3.14 ...
-
-Yep, only stuff for 3.14.
-
-> > Please note there is a trivial merge conflict in
-> > arch/um/include/asm/Kbuild.
-> Yeah, what Geert said.  If you can fix this, then fine, but a single
-> conflict is not so bad.
-
-I can update my tree if it saves you time. No problem...
-
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgment of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window.
-> 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
-> 	Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and
->      * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
-
-Thanks,
-//richard
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSWFuIE11bnNpZSBbbWFp
+bHRvOmltdW5zaWVAYXUxLmlibS5jb21dDQo+IFNlbnQ6IFdlZG5lc2RheSwgSmFudWFyeSAxNSwg
+MjAxNCAwMzo1OA0KPiBUbzogV2lua2xlciwgVG9tYXMNCj4gQ2M6IFN0ZXBoZW4gUm90aHdlbGw7
+IEFuZHJldyBNb3J0b247IEdyZWcgS0g7IEFybmQgQmVyZ21hbm47IGxpbnV4LQ0KPiBuZXh0QHZn
+ZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBS
+RTogbGludXgtbmV4dDogbWFudWFsIG1lcmdlIG9mIHRoZSBha3BtLWN1cnJlbnQgdHJlZSB3aXRo
+IHRoZSBjaGFyLQ0KPiBtaXNjIHRyZWUNCj4gDQo+IEV4Y2VycHRzIGZyb20gV2lua2xlciwgVG9t
+YXMncyBtZXNzYWdlIG9mIDIwMTQtMDEtMTQgMTk6MzE6MjYgKzExMDA6DQo+ID4gPiBUb2RheSdz
+IGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIGFrcG0tY3VycmVudCB0cmVlIGdvdCBhIGNvbmZsaWN0
+IGluDQo+ID4gPiBkcml2ZXJzL21pc2MvbWVpL2luaXQuYyBiZXR3ZWVuIGNvbW1pdCAzM2VjMDgy
+NjMxNDcgKCJtZWk6IHJldmFtcCBtZWkNCj4gPiA+IHJlc2V0IHN0YXRlIG1hY2hpbmUiKSBmcm9t
+IHRoZSBjaGFyLW1pc2MgdHJlZSBhbmQgY29tbWl0IGRkMDQ1ZGFiMjk5OQ0KPiA+ID4gKCJkcml2
+ZXJzL21pc2MvbWVpOiByYXRlbGltaXQgc2V2ZXJhbCBlcnJvciBtZXNzYWdlcyIpIGZyb20gdGhl
+DQo+ID4gPiBha3BtLWN1cnJlbnQgdHJlZS4NCj4gPiA+DQo+ID4gPiBJIGZpeGVkIGl0IHVwIChz
+ZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkgKG5vIGFjdGlvbg0K
+PiA+ID4gaXMgcmVxdWlyZWQpLg0KPiA+DQo+ID4gQ2FuIHdlIGp1c3QgZHJvcCB0aGlzIHJldGUg
+bGltaXQgc3R1ZmYsIEkndmUgbmV2ZXIgYXNrZWQgdGhhdC4NCj4gPiBUb21hcw0KPiANCj4gSGkg
+VG9tYXMsDQo+IA0KPiBTbyBmYXIgdGhlIHByb2JsZW0gaGFzIG9ubHkgYmVlbiBhIG9uZSBvZmYg
+dGhpbmcgZm9yIG1lLCBzbyBpdCB3b3VsZA0KPiBzZWVtIHRoYXQgd2hhdGV2ZXIgY2lyY3Vtc3Rh
+bmNlcyBjb250cmlidXRlZCB0byBpdCBhcmUgZmFpcmx5IHJhcmUsIGJ1dA0KPiB1bmxlc3MgdGhl
+IHVuZGVybHlpbmcgaXNzdWUgaGFzIGJlZW4gaWRlbnRpZmllZCBhbmQgZml4ZWQgSSB3b3VsZCBu
+b3QNCj4gcmVjb21tZW5kIGp1c3QgZHJvcHBpbmcgdGhlIHBhdGNoLiBXaGVuIGl0IGRpZCBoaXQg
+SSBlbmRlZCB1cCB3aXRoIG15DQo+IGxvZyBmaWxlcyAoa2Vybi5sb2csIHN5c2xvZyAmIG1lc3Nh
+Z2VzKSBmaWxsZWQgdXAgd2l0aCAxNUdCIG9mIHRoZQ0KPiBtZXNzYWdlcyBtZW50aW9uZWQgaW4g
+dGhlIGNvbW1pdCBtZXNzYWdlIHdpdGhpbiBtaW51dGVzLCB1bnRpbCBteSBoYXJkDQo+IGRyaXZl
+IHJhbiBvdXQgb2Ygc3BhY2UgYnJpbmdpbmcgbXkgc3lzdGVtIGRvd24uDQo+IA0KPiBFdmVuIGlm
+IHRoZSB1bmRlcmx5aW5nIGlzc3VlIGlzIGZpeGVkIEkgZG8gbm90IHNlZSBhbnkgYWR2YW50YWdl
+IGluDQo+IGRyb3BwaW5nIHRoZSByYXRlIGxpbWl0IHBhdGNoIC0gaXQgaXMgYW4gYWJzb2x1dGVs
+eSB0cml2aWFsKiBwYXRjaCwgYW5kDQo+IGlmIGFueXRoaW5nIEkgd291bGQgZXhwYW5kIGl0IHRv
+IGNvdmVyIGFsbCB0aGUgZXJyb3IgbWVzc2FnZXMgaW4gdGhlDQo+IGRyaXZlciwgbm90IGp1c3Qg
+dGhlIHRocmVlIGludm9sdmVkIGluIHRoYXQgcGFydGljdWxhciBjYXNlLg0KPiANCj4gKiBJdCdz
+IGVzc2VudGlhbGx5OiBzZWQgJ3MvZGV2X1wod2Fyblx8ZXJyXClcPi9kZXZfXDFfcmF0ZWxpbWl0
+ZWQvZycNCj4gDQoNCkkgdGhpbmsgdGhlIGlzc3VlIHdhcyBmaXhlZCBhbmQgYWxzbyB0aGVuIG51
+bWJlciAgb2YgY29uc2VjdXRpdmUgcmVzZXRzIHdlcmUgbGltaXRlZCB0byAzIHNvIHlvdSBzaG91
+bGQNCm5vdCBzZWUgdGhpcyBpc3N1ZSBhbnltb3JlIGluIHRoZSBuZXh0IHJlbGVhc2UsIHlvdXIg
+cGF0Y2gganVzdCBjb25mbGljdGVkIHdpdGggdGhlc2UgZml4ZXMuIA0KU3RpbGwgbmVlZCB0byBw
+cm92aWRlIGEgc2ltcGxlciBmaXggZm9yIHRoZSBzdGFibGUga2VybmVsLg0KDQpUaGFua3MNClRv
+bWFzDQo=
