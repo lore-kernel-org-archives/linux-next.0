@@ -1,105 +1,53 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: linux-next: Tree for Jan 14 (lowpan, 802.15.4)
-Date: Wed, 15 Jan 2014 02:54:56 +0400
-Message-ID: <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
-References: <20140114165128.0dd51f362e0f34a2ef4dc92f@canb.auug.org.au>
-	<52D578A7.8020000@infradead.org>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=001a11c1d7f4cf6a6704eff6147f
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <52D578A7.8020000@infradead.org>
-Sender: netdev-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, linux-zigbee-devel <linux-zigbee-devel@lists.sourceforge.net>, Alexander Smirnov <alex.bluesman.smirnov@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jukka Rissanen <jukka.rissanen@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+From: Ian Munsie <imunsie@au1.ibm.com>
+Subject: RE: linux-next: manual merge of the akpm-current tree with the char-misc tree
+Date: Wed, 15 Jan 2014 12:57:36 +1100
+Message-ID: <1389750036-sup-8437@delenn.ozlabs.ibm.com>
+References: <20140114155104.0ab2772aaa909e49bc89cd61@canb.auug.org.au> <5B8DA87D05A7694D9FA63FD143655C1B1AF42F69@HASMSX106.ger.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:50633 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751631AbaAOB5s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Jan 2014 20:57:48 -0500
+Received: from /spool/local
+	by e23smtp09.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <imunsie@au1.ibm.com>;
+	Wed, 15 Jan 2014 11:57:46 +1000
+In-reply-to: <5B8DA87D05A7694D9FA63FD143655C1B1AF42F69@HASMSX106.ger.corp.intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---001a11c1d7f4cf6a6704eff6147f
-Content-Type: text/plain; charset=ISO-8859-1
+Excerpts from Winkler, Tomas's message of 2014-01-14 19:31:26 +1100:
+> > Today's linux-next merge of the akpm-current tree got a conflict in
+> > drivers/misc/mei/init.c between commit 33ec08263147 ("mei: revamp mei
+> > reset state machine") from the char-misc tree and commit dd045dab2999
+> > ("drivers/misc/mei: ratelimit several error messages") from the
+> > akpm-current tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary (no action
+> > is required).
+> 
+> Can we just drop this rete limit stuff, I've never asked that. 
+> Tomas
 
-Hello,
+Hi Tomas,
 
+So far the problem has only been a one off thing for me, so it would
+seem that whatever circumstances contributed to it are fairly rare, but
+unless the underlying issue has been identified and fixed I would not
+recommend just dropping the patch. When it did hit I ended up with my
+log files (kern.log, syslog & messages) filled up with 15GB of the
+messages mentioned in the commit message within minutes, until my hard
+drive ran out of space bringing my system down.
 
-On Tue, Jan 14, 2014 at 9:49 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 01/13/2014 09:51 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > This tree fails (more than usual) the powerpc allyesconfig build.
-> >
-> > Changes since 20140113:
-> >
->
->
-> on i386:
->
-> net/built-in.o: In function `header_create':
-> 6lowpan.c:(.text+0x166149): undefined reference to `lowpan_header_compress'
-> net/built-in.o: In function `bt_6lowpan_recv':
-> (.text+0x166b3c): undefined reference to `lowpan_process_data'
+Even if the underlying issue is fixed I do not see any advantage in
+dropping the rate limit patch - it is an absolutely trivial* patch, and
+if anything I would expand it to cover all the error messages in the
+driver, not just the three involved in that particular case.
 
-Ah, nice Makefile hack there.
-David, Marcel, could you please consider the attached patch.
+* It's essentially: sed 's/dev_\(warn\|err\)\>/dev_\1_ratelimited/g'
 
-
--- 
-With best wishes
-Dmitry
-
---001a11c1d7f4cf6a6704eff6147f
-Content-Type: text/x-patch; charset=US-ASCII;
-	name="0001-net-move-6lowpan-compression-code-to-separate-module.patch"
-Content-Disposition: attachment;
-	filename="0001-net-move-6lowpan-compression-code-to-separate-module.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hqfrd7t71
-
-RnJvbSA0YzNkYjZkM2MyNDRkZWNmNDM0NjY1YzMwYzFiZjc1YWFkMWY5NGIyIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBEbWl0cnkgRXJlbWluLVNvbGVuaWtvdiA8ZG1pdHJ5X2VyZW1p
-bkBtZW50b3IuY29tPgpEYXRlOiBXZWQsIDE1IEphbiAyMDE0IDAyOjUwOjQwICswNDAwClN1Ympl
-Y3Q6IFtQQVRDSF0gbmV0OiBtb3ZlIDZsb3dwYW4gY29tcHJlc3Npb24gY29kZSB0byBzZXBhcmF0
-ZSBtb2R1bGUKCklFRUUgODAyLjE1LjQgYW5kIEJsdWV0b290aCBuZXR3b3JraW5nIHN0YWNrcyBz
-aGFyZSA2bG93cGFuIGNvbXByZXNzaW9uCmNvZGUuIEluc3RlYWQgb2YgaW50cm9kdWNpbmcgTWFr
-ZWZpbGUvS2NvbmZpZyBoYWNrcywgYnVpbGQgdGhpcyBjb2RlIGFzCmEgc2VwYXJhdGUgbW9kdWxl
-IHJlZmVyZW5jZWQgZnJvbSBib3RoIGllZWU4MDIxNTQgYW5kIGJsdWV0b290aCBtb2R1bGVzLgoK
-VGhpcyBmaXhlcyB0aGUgZm9sbG93aW5nIGJ1aWxkIGVycm9yIG9ic2VydmVkIGluIHNvbWUga2Vy
-bmVsCmNvbmZpZ3VyYXRpb25zOgoKbmV0L2J1aWx0LWluLm86IEluIGZ1bmN0aW9uIGBoZWFkZXJf
-Y3JlYXRlJzogNmxvd3Bhbi5jOigudGV4dCsweDE2NjE0OSk6IHVuZGVmaW5lZCByZWZlcmVuY2Ug
-dG8gYGxvd3Bhbl9oZWFkZXJfY29tcHJlc3MnCm5ldC9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBg
-YnRfNmxvd3Bhbl9yZWN2JzogKC50ZXh0KzB4MTY2YjNjKTogdW5kZWZpbmVkIHJlZmVyZW5jZSB0
-byBgbG93cGFuX3Byb2Nlc3NfZGF0YScKClNpZ25lZC1vZmYtYnk6IERtaXRyeSBFcmVtaW4tU29s
-ZW5pa292IDxkbWl0cnlfZXJlbWluQG1lbnRvci5jb20+Ci0tLQogbmV0L01ha2VmaWxlICAgICAg
-ICAgICAgfCAyICstCiBuZXQvYmx1ZXRvb3RoL0tjb25maWcgICB8IDEgKwogbmV0L2llZWU4MDIx
-NTQvS2NvbmZpZyAgfCA3ICsrKysrKysKIG5ldC9pZWVlODAyMTU0L01ha2VmaWxlIHwgMyArKy0K
-IDQgZmlsZXMgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYg
-LS1naXQgYS9uZXQvTWFrZWZpbGUgYi9uZXQvTWFrZWZpbGUKaW5kZXggOGZhMmY5MS4uY2JiYmU2
-ZCAxMDA2NDQKLS0tIGEvbmV0L01ha2VmaWxlCisrKyBiL25ldC9NYWtlZmlsZQpAQCAtNTcsNyAr
-NTcsNyBAQCBvYmotJChDT05GSUdfQ0FJRikJCSs9IGNhaWYvCiBpZm5lcSAoJChDT05GSUdfRENC
-KSwpCiBvYmoteQkJCQkrPSBkY2IvCiBlbmRpZgotb2JqLSQoQ09ORklHX0lFRUU4MDIxNTQpCSs9
-IGllZWU4MDIxNTQvCitvYmoteQkJCQkrPSBpZWVlODAyMTU0Lwogb2JqLSQoQ09ORklHX01BQzgw
-MjE1NCkJCSs9IG1hYzgwMjE1NC8KIAogaWZlcSAoJChDT05GSUdfTkVUKSx5KQpkaWZmIC0tZ2l0
-IGEvbmV0L2JsdWV0b290aC9LY29uZmlnIGIvbmV0L2JsdWV0b290aC9LY29uZmlnCmluZGV4IGQz
-ZjNmN2IuLjk4NWI1NjAgMTAwNjQ0Ci0tLSBhL25ldC9ibHVldG9vdGgvS2NvbmZpZworKysgYi9u
-ZXQvYmx1ZXRvb3RoL0tjb25maWcKQEAgLTEyLDYgKzEyLDcgQEAgbWVudWNvbmZpZyBCVAogCXNl
-bGVjdCBDUllQVE9fQUVTCiAJc2VsZWN0IENSWVBUT19FQ0IKIAlzZWxlY3QgQ1JZUFRPX1NIQTI1
-NgorCXNlbGVjdCA2TE9XUEFOX0lQSEMKIAloZWxwCiAJICBCbHVldG9vdGggaXMgbG93LWNvc3Qs
-IGxvdy1wb3dlciwgc2hvcnQtcmFuZ2Ugd2lyZWxlc3MgdGVjaG5vbG9neS4KIAkgIEl0IHdhcyBk
-ZXNpZ25lZCBhcyBhIHJlcGxhY2VtZW50IGZvciBjYWJsZXMgYW5kIG90aGVyIHNob3J0LXJhbmdl
-CmRpZmYgLS1naXQgYS9uZXQvaWVlZTgwMjE1NC9LY29uZmlnIGIvbmV0L2llZWU4MDIxNTQvS2Nv
-bmZpZwppbmRleCBiMmUwNmRmLi45Yzk4NzlkIDEwMDY0NAotLS0gYS9uZXQvaWVlZTgwMjE1NC9L
-Y29uZmlnCisrKyBiL25ldC9pZWVlODAyMTU0L0tjb25maWcKQEAgLTEzLDUgKzEzLDEyIEBAIGNv
-bmZpZyBJRUVFODAyMTU0CiBjb25maWcgSUVFRTgwMjE1NF82TE9XUEFOCiAJdHJpc3RhdGUgIjZs
-b3dwYW4gc3VwcG9ydCBvdmVyIElFRUUgODAyLjE1LjQiCiAJZGVwZW5kcyBvbiBJRUVFODAyMTU0
-ICYmIElQVjYKKwlzZWxlY3QgNkxPV1BBTl9JUEhDCiAJLS0taGVscC0tLQogCUlQdjYgY29tcHJl
-c3Npb24gb3ZlciBJRUVFIDgwMi4xNS40LgorCitjb25maWcgNkxPV1BBTl9JUEhDCisJdHJpc3Rh
-dGUKKwktLS1oZWxwLS0tCisJICA2bG93cGFuIGNvbXByZXNzaW9uIGNvZGUgd2hpY2ggaXMgc2hh
-cmVkIGJldHdlZW4gSUVFRSA4MDIuMTUuNCBhbmQgQmx1ZXRvb3RoCisJICBzdGFja3MuCmRpZmYg
-LS1naXQgYS9uZXQvaWVlZTgwMjE1NC9NYWtlZmlsZSBiL25ldC9pZWVlODAyMTU0L01ha2VmaWxl
-CmluZGV4IDk1MWE4M2UuLmU4ZjA1ODggMTAwNjQ0Ci0tLSBhL25ldC9pZWVlODAyMTU0L01ha2Vm
-aWxlCisrKyBiL25ldC9pZWVlODAyMTU0L01ha2VmaWxlCkBAIC0xLDUgKzEsNiBAQAogb2JqLSQo
-Q09ORklHX0lFRUU4MDIxNTQpICs9IGllZWU4MDIxNTQubyBhZl84MDIxNTQubwotb2JqLSQoQ09O
-RklHX0lFRUU4MDIxNTRfNkxPV1BBTikgKz0gNmxvd3Bhbi5vIDZsb3dwYW5faXBoYy5vCitvYmot
-JChDT05GSUdfSUVFRTgwMjE1NF82TE9XUEFOKSArPSA2bG93cGFuLm8KK29iai0kKENPTkZJR182
-TE9XUEFOX0lQSEMpICs9IDZsb3dwYW5faXBoYy5vCiAKIGllZWU4MDIxNTQteSA6PSBuZXRsaW5r
-Lm8gbmwtbWFjLm8gbmwtcGh5Lm8gbmxfcG9saWN5Lm8gd3Bhbi1jbGFzcy5vCiBhZl84MDIxNTQt
-eSA6PSBhZl9pZWVlODAyMTU0Lm8gcmF3Lm8gZGdyYW0ubwotLSAKMS44LjUuMgoK
---001a11c1d7f4cf6a6704eff6147f--
+-Ian
