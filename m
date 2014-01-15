@@ -1,75 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the iommu tree with the drm tree
-Date: Wed, 15 Jan 2014 15:20:41 +1100
-Message-ID: <20140115152041.2e80fe852696fd9cbaa6d21d@canb.auug.org.au>
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+Date: Tue, 14 Jan 2014 23:30:47 -0500
+Message-ID: <20140115043047.GA14894@redhat.com>
+References: <20140115145259.2961c5623f17b20afd5f04c6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Jan_2014_15_20_41_+1100_Aql5=/hIikivimkT"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:54144 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:25762 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750751AbaAOEUt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jan 2014 23:20:49 -0500
+	id S1750751AbaAOEav (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jan 2014 23:30:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20140115145259.2961c5623f17b20afd5f04c6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joerg Roedel <joro@8bytes.org>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alasdair G Kergon <agk@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>
 
---Signature=_Wed__15_Jan_2014_15_20_41_+1100_Aql5=/hIikivimkT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 14 2014 at 10:52pm -0500,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Joerg,
+> Hi all,
+> 
+> After merging the device-mapper tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> ERROR: ".dm_bufio_get_device_size" [drivers/md/dm-snapshot.ko] undefined!
+> ERROR: ".dm_bufio_release" [drivers/md/dm-snapshot.ko] undefined!
+> ERROR: ".dm_bufio_client_destroy" [drivers/md/dm-snapshot.ko] undefined!
+> ERROR: ".dm_bufio_prefetch" [drivers/md/dm-snapshot.ko] undefined!
+> ERROR: ".dm_bufio_set_minimum_buffers" [drivers/md/dm-snapshot.ko] undefined!
+> ERROR: ".dm_bufio_forget" [drivers/md/dm-snapshot.ko] undefined!
+> ERROR: ".dm_bufio_client_create" [drivers/md/dm-snapshot.ko] undefined!
+> ERROR: ".dm_bufio_read" [drivers/md/dm-snapshot.ko] undefined!
+> 
+> Presumably caused by commit b41bf7440bcf ("dm snapshot: use dm-bufio").
 
-Today's linux-next merge of the iommu tree got a conflict in
-drivers/gpu/drm/msm/Kconfig between commit 3083894f7f29 ("drm/msm:
-COMPILE_TEST support") from the drm tree and commit 4c071c7b851b
-("drm/msm: Fix link error with !MSM_IOMMU") from the iommu tree.
+Hi Stephen,
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+That commit was missing a Kconfig update to have DM_SNAPSHOT select
+DM_BUFIO.  I've rebased the "dm snapshot: use dm-bufio" commit to include
+the Kconfig change and pushed to 'for-next'.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/msm/Kconfig
-index bb103fb4519e,d3de8e1ae915..000000000000
---- a/drivers/gpu/drm/msm/Kconfig
-+++ b/drivers/gpu/drm/msm/Kconfig
-@@@ -2,7 -2,9 +2,8 @@@
-  config DRM_MSM
-  	tristate "MSM DRM"
-  	depends on DRM
- -	depends on ARCH_MSM
- -	depends on ARCH_MSM8960
- +	depends on (ARCH_MSM && ARCH_MSM8960) || (ARM && COMPILE_TEST)
-+ 	depends on MSM_IOMMU
-  	select DRM_KMS_HELPER
-  	select SHMEM
-  	select TMPFS
-
---Signature=_Wed__15_Jan_2014_15_20_41_+1100_Aql5=/hIikivimkT
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJS1gyeAAoJEMDTa8Ir7ZwVixoP/j29Zrx47k59wIXonaoMy8Ub
-yraXnWk/nRXp3sHCp5Q3UvlDcun3zdyCMvm1ag16MTPpy+xVCxmgH+FawStZO2a0
-TGXVsfipjBtXfmsUtKEJpUKDInrT1XKdPXe8gjS9xy1aNFHuQM5SK8dyFfPdKKzi
-7w248cg3x1KR1LH275qHHv0sDYFXzNsd421TRap6H7tLzjWoBnG9j/5mcvorNl0v
-D8DNiqggpt+WmRl0OPjqygvoa6sl8UlT3DAmrLozMrVmvtpacr4KkFR2Ikt/Hjvj
-5gT0L97TG/fGVfZlxnRzNp6qOCBX+VWe2oLysf9CxoUKxc6Pm151lpr8W2fy7qYF
-7kqVsSZ5gSTZAODnlT7tL6PGtOGd1QWRviB/VWHSYLsY3adr+v0wtn0PUs9dBx1e
-3eG9r4p3JVQF2YGOO0N4x4TA30VdHb6lesSyZs0qugSnCsfY0nzab02h4QzCGWhQ
-dP2n1IqxaSra1j5xE+l26Cnhd46A2Qmlu2WWGFxFnog0WzefOKDy4g4h7YUC1RnP
-zwGG+f3PITLyFBh13gTExQOl9tOptnB4C1dkIKYGnejJYpG+GEbyBGmfGyDv9IOa
-dWJ777OVEhc2aZaJ80fK4muBy8x+NdsZWlL5ikkwoe2Km2/356DxFmIfPfaUAI+Q
-H2vS9JqSv9tcV4yBca/5
-=BBKT
------END PGP SIGNATURE-----
-
---Signature=_Wed__15_Jan_2014_15_20_41_+1100_Aql5=/hIikivimkT--
+Thanks,
+Mike
