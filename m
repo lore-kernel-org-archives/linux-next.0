@@ -1,54 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unsigned commits in the mips tree
-Date: Wed, 15 Jan 2014 16:09:31 +1100
-Message-ID: <20140115160931.dbecb8afadd4c3f498f5a8f5@canb.auug.org.au>
+From: NeilBrown <neilb@suse.de>
+Subject: Re: linux-next: manual merge of the md tree with the block tree
+Date: Wed, 15 Jan 2014 16:30:55 +1100
+Message-ID: <20140115163055.24e2bae2@notabene.brown>
+References: <20140115150743.ff3de076048b32e82fa5ba27@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Jan_2014_16_09_31_+1100_uvfQhnNfamAMGWwH"
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/e.LDbpvrug70YpxkPZMxikS"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:38709 "EHLO ozlabs.org"
+Received: from cantor2.suse.de ([195.135.220.15]:39323 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751450AbaAOFJi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jan 2014 00:09:38 -0500
+	id S1750705AbaAOFbI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jan 2014 00:31:08 -0500
+In-Reply-To: <20140115150743.ff3de076048b32e82fa5ba27@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
 
---Signature=_Wed__15_Jan_2014_16_09_31_+1100_uvfQhnNfamAMGWwH
+--Sig_/e.LDbpvrug70YpxkPZMxikS
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+On Wed, 15 Jan 2014 15:07:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au>
+wrote:
 
-I noticed that there is a whole series of commits in today's mips tree
-that were committed by John Crispin but have no Signed-off-by from him ...
+> Hi Neil,
+>=20
+> Today's linux-next merge of the md tree got a conflict in
+> drivers/md/raid10.c between commit 4f024f3797c4 ("block: Abstract out
+> bvec iterator") from the block tree and commit b50c259e25d9 ("md/raid10:
+> fix two bugs in handling of known-bad-blocks") from the md tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>=20
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks Stephen.
+Those md fixes are now on their way to Linus (I'm hoping for 3.13 inclusion,
+I might be lucky).  Good they they are easy to resolve!
 
---Signature=_Wed__15_Jan_2014_16_09_31_+1100_uvfQhnNfamAMGWwH
-Content-Type: application/pgp-signature
+Thanks,
+NeilBrown
+
+--Sig_/e.LDbpvrug70YpxkPZMxikS
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1hgPAAoJEMDTa8Ir7ZwVJJIP/2C/yRaxvD+YQTF9Bct6gofR
-owhRCWAlLAxGlTONoKAENxm6AEa8QtY3+CQyTncN75MQiGZ+1RPN3sdDIaYdcU6B
-ujGAwkcu+B+ef05Hcp1ZWCxjWA+RjQyu3rQU5azyfdQ9aSh5fpGSf6V6M6wmz73K
-4YPonNvpGo4iK33+GZ/FiGUUU1cMngKgqCTM8t3FDrjctbGtQ/u2vmjTY/Xcwo/R
-PvOPzeMqB2i+OXxMc5FBXFvvT3LSOQtRsVYjWX3av/xkfu+DuQqvbCL+gjENL9Ru
-N8KeR96Iw/l9rto84t1IBv5++lQ4OPBjQMshuWPKTEK5FuJL3YmH/sFHq/HNvXXc
-bmwwhA4aFL+Puf7FtCV19RIRV4oMMdqa0IvXoE7HyRqoCVlyxbdG9O3/iyZZJFeR
-VWSygh8BuuzMZryS/E722rID+boXhq3vLyTrNrNuHrmzGZToOBBRQiw6dhhmzbdf
-VwT3CGeJQBRbMbNc851sqg77pcrJlgve/zYpts26p6yK/jg1yN9sznv4ezg6Qbrl
-UJaFoZhROd6PwTHmogyKccTHmcSGhGACaakwpCiPaK1SrhVXVVZdHCuPTH34/X1Q
-EkueeSnPLt9t3R48YsOMaYR6EXGdbDzTcUtEcYVXzyl9g/fnM1sTsU0jupVpGw3c
-4BGGk9BFtdmktleQvNLy
-=qX81
+iQIVAwUBUtYdDznsnt1WYoG5AQJ4RhAApQC/r3v4Ze23mlnYCs5V9GEQO4AZ9sz4
+m3XzgAzG2spw6Z8nLNWtIdgQ1r0NOUG+YQWv7P4Zft3IqNWin9jWBxUFhBMi4rPJ
+zVKdYUmStnbFB4EvLWdODioSUVu5y5BEisErVfhjgm5K4xukjw3cFKgW8eRX/7u0
+asv/NwPjsL0+le1VA1JnF9jZxlzEg1JI+g5l6sz9cTNImAAfrFZZucExkmlu1SkP
+ti3lsOzk2KgoXsHZAwcHPEhVJyWEDMdoxXAsTfkn9wQeYXgHjHh6o7j3cNwmpwdZ
+ME6bmpuJ1mA4WdlIRDlencmoY+Xk3NS+Os5qY4z60y53MlbQJ21+K0vmgAdV4Zfj
+cj8U52oqXTMSF6piaVyaXkW0XElygaLbGzBn0TFeHW8V7oYDqXnMlKiNkUmKVwPI
+zda8UjTOhdlQ4dubdsxR/ZIjMvcDqXpxfQ2XOF79B1IvaZ0JLOvgsjGlKn4n1cRQ
+PKKP9aCyFNNLjHuAfQsd+hTWrL7QWNYYhqVe14hVl2f7KrzxWOkLHqPqEnhn/Jzp
+yao1X2wCGvnQj1N+ThtfyVGxn1qf4HNG00+8OzHaDf/oScsfckSPdzZN7miNATdY
+V6/+a/2VhK2vNIW9sdAwt8/pQiRAjR5XorXSP9HCif8JJ0Ro4CLgywj6+t+gq6BZ
+A702HF9LDz4=
+=NFMA
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Jan_2014_16_09_31_+1100_uvfQhnNfamAMGWwH--
+--Sig_/e.LDbpvrug70YpxkPZMxikS--
