@@ -1,90 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the infiniband tree with the net-next
- tree
-Date: Wed, 15 Jan 2014 13:46:51 +1100
-Message-ID: <20140115134651.5da1a0da6a77891739562279@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Date: Wed, 15 Jan 2014 14:52:59 +1100
+Message-ID: <20140115145259.2961c5623f17b20afd5f04c6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6"
+ boundary="Signature=_Wed__15_Jan_2014_14_52_59_+1100_Fus456Tttw_.52p5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:59145 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:38188 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750918AbaAOCq7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jan 2014 21:46:59 -0500
+	id S1750928AbaAODxH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jan 2014 22:53:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, Matan Barak <matanb@mellanox.com>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>
 
---Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6
+--Signature=_Wed__15_Jan_2014_14_52_59_+1100_Fus456Tttw_.52p5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the infiniband tree got a conflict in
-include/linux/mlx4/device.h between commit 7ffdf726cfe0 ("net/mlx4_core:
-Add basic support for TCP/IP offloads under tunneling") from the net-next
-tree and commits 4de658036086 ("mlx4_core: Add support for steerable IB
-UD QPs") and dd5f03beb4f7 ("IB/core: Ethernet L2 attributes in verbs/cm
-structures") from the infiniband tree.
+After merging the device-mapper tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+ERROR: ".dm_bufio_get_device_size" [drivers/md/dm-snapshot.ko] undefined!
+ERROR: ".dm_bufio_release" [drivers/md/dm-snapshot.ko] undefined!
+ERROR: ".dm_bufio_client_destroy" [drivers/md/dm-snapshot.ko] undefined!
+ERROR: ".dm_bufio_prefetch" [drivers/md/dm-snapshot.ko] undefined!
+ERROR: ".dm_bufio_set_minimum_buffers" [drivers/md/dm-snapshot.ko] undefine=
+d!
+ERROR: ".dm_bufio_forget" [drivers/md/dm-snapshot.ko] undefined!
+ERROR: ".dm_bufio_client_create" [drivers/md/dm-snapshot.ko] undefined!
+ERROR: ".dm_bufio_read" [drivers/md/dm-snapshot.ko] undefined!
+
+Presumably caused by commit b41bf7440bcf ("dm snapshot: use dm-bufio").
+
+I have used the device-mapper tree from next-20140114 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/mlx4/device.h
-index c99ecf6d2c67,ac5cb1d92487..000000000000
---- a/include/linux/mlx4/device.h
-+++ b/include/linux/mlx4/device.h
-@@@ -166,7 -161,7 +166,8 @@@ enum=20
-  	MLX4_DEV_CAP_FLAG2_VLAN_CONTROL		=3D 1LL <<  6,
-  	MLX4_DEV_CAP_FLAG2_FSM			=3D 1LL <<  7,
-  	MLX4_DEV_CAP_FLAG2_UPDATE_QP		=3D 1LL <<  8,
-- 	MLX4_DEV_CAP_FLAG2_VXLAN_OFFLOADS	=3D 1LL <<  9
- -	MLX4_DEV_CAP_FLAG2_DMFS_IPOIB		=3D 1LL <<  9
-++	MLX4_DEV_CAP_FLAG2_VXLAN_OFFLOADS	=3D 1LL <<  9,
-++	MLX4_DEV_CAP_FLAG2_DMFS_IPOIB		=3D 1LL <<  10
-  };
- =20
-  enum {
-@@@ -1130,7 -1096,7 +1131,8 @@@ int mlx4_SET_PORT_qpn_calc(struct mlx4_
-  int mlx4_SET_PORT_PRIO2TC(struct mlx4_dev *dev, u8 port, u8 *prio2tc);
-  int mlx4_SET_PORT_SCHEDULER(struct mlx4_dev *dev, u8 port, u8 *tc_tx_bw,
-  		u8 *pg, u16 *ratelimit);
- +int mlx4_SET_PORT_VXLAN(struct mlx4_dev *dev, u8 port, u8 steering);
-+ int mlx4_find_cached_mac(struct mlx4_dev *dev, u8 port, u64 mac, int *idx=
-);
-  int mlx4_find_cached_vlan(struct mlx4_dev *dev, u8 port, u16 vid, int *id=
-x);
-  int mlx4_register_vlan(struct mlx4_dev *dev, u8 port, u16 vlan, int *inde=
-x);
-  void mlx4_unregister_vlan(struct mlx4_dev *dev, u8 port, u16 vlan);
-
---Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6
+--Signature=_Wed__15_Jan_2014_14_52_59_+1100_Fus456Tttw_.52p5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1fafAAoJEMDTa8Ir7ZwVRUwP/0Nz7/5ftIorq7G9FZVDns+G
-bOy5k3MJxNMSjJbNSN4DDC4PzFDWSjMXLSLUaJwzNjQ50c7QDIQbK7N4w6PZT8Mx
-6RRTZJyJTYPdc7U7LHJBAN04L8WhFxUnDBxgWaYC69ktkPaK2voXfB68R6bZpsdL
-qTDjCUIaSJKuyMwuneMIsrxe5/l7dNPvr5xcWqhhryYPeIPtJUSLadPAq37lcVkD
-tfis0YxDqy4QmmALZmpXFz+frooyWEBLNi1JLi7nAANnHGt4zilVNIRc8Lzu3P7x
-jDRknrF2xhqMNC/zCHpV1auDKrkkEQXbAfIzpD6JH4LPRqvAB4Bs555uwd3q0PIx
-eGpbTGIKdfWeUhIa4/zllPYMZD0Fv/YDJhkpS+HGLAH0ulj95GCKYElzasWcHBlO
-cHeiO/ulEHKYXjDiP7qJa9W3yepIcj1nSviLHWzMzzXtjTqljCStixbxP1F+FYz7
-DlTAimJwEc/GYfAU3fXbbd2P+sf5XHiYdy3c9OZJOTiQcbrvqndqotN6XSZeVyXX
-j3Hq6Z8Y0KQX70J8bL943WOLDPkivB9rhPpQMrAYQ2aGZ8LMPcrFllM8rcngdvV4
-Lp2FpSGtFr0CKU4rMelNhgM/KgMc093uSu1eEH20u5v4dvvNeIIu/2o+MwLYvNX2
-Z6B861cMMY1QBataNRXq
-=sqOl
+iQIcBAEBCAAGBQJS1gYgAAoJEMDTa8Ir7ZwVRxIQAIYvIPZ1y9TgHZ6Uc1B3cwOm
+N9/EW7unywA66I6oPCEU9aQetsvw77DCTt5A1HaX0Ae9jJjOYe/YMzUAnXMkwNyu
+j+vUjQXnB/vYS+F4H42d450RzKQqN/pu+pF388zBCxRPrZaH2rff3skFCLk3999n
+p0l24/lX6TAhKVCJkolQVymQj1Obxel07RMcPuq0VxbQm4OBT03cEvWVm0EVHHfD
+3pcOWvLBfCsziu8ipvfpjWHhHJ2nCw+c/Bqfld26wq+fS6d/SKVgGmAEwxaub6o/
+OXoMazgyiXqjdhGnDC/0LPZu9sjYQm7PjSlpeWu9QrTTZ6ieHL7U0Cy8o14IGyhh
+wLEa9An8IwdBh0vzLtX7PDwIXoTFiNjt4vpL7MBZ2YFL6Br+7Yprw0uk8CRa0cUY
+beoe/FeP6gMM24OIa1gy5osvQH79ShXTA2YS3PyeT5rkWrmNGmJ3W6V3vcagPr7t
+d9XAX1+ToaoL4QQvFA7HX8nIJ210sMbfmc01nXpxoZZhrFWMLYiPhSgp/5cfm11P
+jvuU5ai6/Ulae16Ld/4OEnTX9e6I/qYIDcd4c6AF5dt+zZRh/N9QwLe6/Qf3l7Mp
+qxT6Uqkzf0u9sJDtBeIT14MZ3LcUePL1vGDwd7FKouziINfoAkyTUXDojYbKJzcm
+IcMEduVXN+Y27JfeWmwX
+=IApA
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6--
+--Signature=_Wed__15_Jan_2014_14_52_59_+1100_Fus456Tttw_.52p5--
