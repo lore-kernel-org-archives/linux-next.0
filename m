@@ -1,30 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the mips tree
-Date: Wed, 15 Jan 2014 13:24:36 +1100
-Message-ID: <20140115132436.8b89920c1ed4c0d293883b85@canb.auug.org.au>
+Subject: linux-next: manual merge of the infiniband tree with the net-next
+ tree
+Date: Wed, 15 Jan 2014 13:46:51 +1100
+Message-ID: <20140115134651.5da1a0da6a77891739562279@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Jan_2014_13_24_36_+1100_R9OXwE5CiIP2G.9j"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?IlJhZmHFgiBNacWCZWNraSI=?= <zajec5@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:59145 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750918AbaAOCq7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jan 2014 21:46:59 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, Matan Barak <matanb@mellanox.com>
 
---Signature=_Wed__15_Jan_2014_13_24_36_+1100_R9OXwE5CiIP2G.9j
+--Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in arch/mips/b=
-cm47xx/setup.c between commits dc8db0fd9f9f ("MIPS: BCM47XX: Prepare suppor=
-t for LEDs"), db780310ed48 ("MIPS: BCM47XX: Prepare support for GPIO button=
-s") and 7fb942c59696 ("MIPS: BCM47XX: fix position of cpu_wait disabling") =
-from the mips tree and commit b04138b33520 ("b44: use fixed PHY device if w=
-e do not find any") from the net-next tree.
+Today's linux-next merge of the infiniband tree got a conflict in
+include/linux/mlx4/device.h between commit 7ffdf726cfe0 ("net/mlx4_core:
+Add basic support for TCP/IP offloads under tunneling") from the net-next
+tree and commits 4de658036086 ("mlx4_core: Add support for steerable IB
+UD QPs") and dd5f03beb4f7 ("IB/core: Ethernet L2 attributes in verbs/cm
+structures") from the infiniband tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -33,96 +38,53 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/mips/bcm47xx/setup.c
-index 12d77e9c2cb4,9057728ac56b..000000000000
---- a/arch/mips/bcm47xx/setup.c
-+++ b/arch/mips/bcm47xx/setup.c
-@@@ -26,10 -26,11 +26,13 @@@
-   *  675 Mass Ave, Cambridge, MA 02139, USA.
-   */
+diff --cc include/linux/mlx4/device.h
+index c99ecf6d2c67,ac5cb1d92487..000000000000
+--- a/include/linux/mlx4/device.h
++++ b/include/linux/mlx4/device.h
+@@@ -166,7 -161,7 +166,8 @@@ enum=20
+  	MLX4_DEV_CAP_FLAG2_VLAN_CONTROL		=3D 1LL <<  6,
+  	MLX4_DEV_CAP_FLAG2_FSM			=3D 1LL <<  7,
+  	MLX4_DEV_CAP_FLAG2_UPDATE_QP		=3D 1LL <<  8,
+- 	MLX4_DEV_CAP_FLAG2_VXLAN_OFFLOADS	=3D 1LL <<  9
+ -	MLX4_DEV_CAP_FLAG2_DMFS_IPOIB		=3D 1LL <<  9
+++	MLX4_DEV_CAP_FLAG2_VXLAN_OFFLOADS	=3D 1LL <<  9,
+++	MLX4_DEV_CAP_FLAG2_DMFS_IPOIB		=3D 1LL <<  10
+  };
  =20
- +#include "bcm47xx_private.h"
- +
-  #include <linux/export.h>
-  #include <linux/types.h>
-+ #include <linux/ethtool.h>
-+ #include <linux/phy.h>
-+ #include <linux/phy_fixed.h>
-  #include <linux/ssb/ssb.h>
-  #include <linux/ssb/ssb_embedded.h>
-  #include <linux/bcma/bcma_soc.h>
-@@@ -229,34 -226,14 +232,40 @@@ void __init plat_mem_setup(void
-  	_machine_halt =3D bcm47xx_machine_halt;
-  	pm_power_off =3D bcm47xx_machine_halt;
-  	bcm47xx_board_detect();
- +	mips_set_machine_name(bcm47xx_board_get_name());
-  }
- =20
- +static int __init bcm47xx_cpu_fixes(void)
- +{
- +	switch (bcm47xx_bus_type) {
- +#ifdef CONFIG_BCM47XX_SSB
- +	case BCM47XX_BUS_TYPE_SSB:
- +		/* Nothing to do */
- +		break;
- +#endif
- +#ifdef CONFIG_BCM47XX_BCMA
- +	case BCM47XX_BUS_TYPE_BCMA:
- +		/* The BCM4706 has a problem with the CPU wait instruction.
- +		 * When r4k_wait or r4k_wait_irqoff is used will just hang and
- +		 * not return from a msleep(). Removing the cpu_wait
- +		 * functionality is a workaround for this problem. The BCM4716
- +		 * does not have this problem.
- +		 */
- +		if (bcm47xx_bus.bcma.bus.chipinfo.id =3D=3D BCMA_CHIP_ID_BCM4706)
- +			cpu_wait =3D NULL;
- +		break;
- +#endif
- +	}
- +	return 0;
- +}
- +arch_initcall(bcm47xx_cpu_fixes);
- +
-+ static struct fixed_phy_status bcm47xx_fixed_phy_status __initdata =3D {
-+ 	.link	=3D 1,
-+ 	.speed	=3D SPEED_100,
-+ 	.duplex	=3D DUPLEX_FULL,
-+ };
-+=20
-  static int __init bcm47xx_register_bus_complete(void)
-  {
-  	switch (bcm47xx_bus_type) {
-@@@ -271,9 -248,7 +280,10 @@@
-  		break;
-  #endif
-  	}
- +	bcm47xx_buttons_register();
- +	bcm47xx_leds_register();
- +
-+ 	fixed_phy_add(PHY_POLL, 0, &bcm47xx_fixed_phy_status);
-  	return 0;
-  }
-  device_initcall(bcm47xx_register_bus_complete);
+  enum {
+@@@ -1130,7 -1096,7 +1131,8 @@@ int mlx4_SET_PORT_qpn_calc(struct mlx4_
+  int mlx4_SET_PORT_PRIO2TC(struct mlx4_dev *dev, u8 port, u8 *prio2tc);
+  int mlx4_SET_PORT_SCHEDULER(struct mlx4_dev *dev, u8 port, u8 *tc_tx_bw,
+  		u8 *pg, u16 *ratelimit);
+ +int mlx4_SET_PORT_VXLAN(struct mlx4_dev *dev, u8 port, u8 steering);
++ int mlx4_find_cached_mac(struct mlx4_dev *dev, u8 port, u64 mac, int *idx=
+);
+  int mlx4_find_cached_vlan(struct mlx4_dev *dev, u8 port, u16 vid, int *id=
+x);
+  int mlx4_register_vlan(struct mlx4_dev *dev, u8 port, u16 vlan, int *inde=
+x);
+  void mlx4_unregister_vlan(struct mlx4_dev *dev, u8 port, u16 vlan);
 
---Signature=_Wed__15_Jan_2014_13_24_36_+1100_R9OXwE5CiIP2G.9j
+--Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1fFsAAoJEMDTa8Ir7ZwVhNEP/ArxfSdJ0zT6uSqnFWgAYp5r
-wNpfB9W8i+f/4pKBE36nGeT+OlEUpT3C+6Wz9EBHegxaoGyYDXg10cGyhHE0fiCv
-9ssb1XIMG4sbD5V4j1O72hTwzDNsTyQM4D/EywsQAR+nP/IxtN/009yl8XxNc65h
-5z3xUhrvJhDGawUvcW9VKEEWLO4x+vncBk/KJCrX9DTroeuUFwCmMegR6TpfF9e0
-EYRu0viVrSBPr2FWTcDVcqrgvPE+d9/6m5aP65FpDHBhI01HPIg01kGJzeTvuqlK
-kcEqNF0SXH2GizzZGkaV+d13juQ3wzTFCDbMaPrcXrboDzVU9bkIhgQvx6qmJUhf
-YFYbuMAtsj+XCKqqbN5FYaqbizZyc6Q7ko4orooQEF/qA1OkLhXCOMrFVZEIBCFx
-tAcJZ8HZt1o4pFO4UJxIti5HkOqLMDpZja3q3M1gqXJHG0h6WWHB38V+rGsnRO8x
-2wpGmah38bUrh6QBQNVWWIUAPYSglGMThA64fZgQ0nU5siqzWEfzzR1auHWk/UBz
-+chAJhAX0LWeDEpFIap4vAKmKFj+Q8VJS1Nt0n4XMWBL2/Bbmo+9HtvM1DmEYLxt
-mFES2xSLB8Zy4b+4XfTbH9wzbn2bic3WTiVx0fJMZ6ErtB2DqpxEwHpd2jyNwvBx
-BTgeAdxmQ50Lu+/T8QK4
-=UWkI
+iQIcBAEBCAAGBQJS1fafAAoJEMDTa8Ir7ZwVRUwP/0Nz7/5ftIorq7G9FZVDns+G
+bOy5k3MJxNMSjJbNSN4DDC4PzFDWSjMXLSLUaJwzNjQ50c7QDIQbK7N4w6PZT8Mx
+6RRTZJyJTYPdc7U7LHJBAN04L8WhFxUnDBxgWaYC69ktkPaK2voXfB68R6bZpsdL
+qTDjCUIaSJKuyMwuneMIsrxe5/l7dNPvr5xcWqhhryYPeIPtJUSLadPAq37lcVkD
+tfis0YxDqy4QmmALZmpXFz+frooyWEBLNi1JLi7nAANnHGt4zilVNIRc8Lzu3P7x
+jDRknrF2xhqMNC/zCHpV1auDKrkkEQXbAfIzpD6JH4LPRqvAB4Bs555uwd3q0PIx
+eGpbTGIKdfWeUhIa4/zllPYMZD0Fv/YDJhkpS+HGLAH0ulj95GCKYElzasWcHBlO
+cHeiO/ulEHKYXjDiP7qJa9W3yepIcj1nSviLHWzMzzXtjTqljCStixbxP1F+FYz7
+DlTAimJwEc/GYfAU3fXbbd2P+sf5XHiYdy3c9OZJOTiQcbrvqndqotN6XSZeVyXX
+j3Hq6Z8Y0KQX70J8bL943WOLDPkivB9rhPpQMrAYQ2aGZ8LMPcrFllM8rcngdvV4
+Lp2FpSGtFr0CKU4rMelNhgM/KgMc093uSu1eEH20u5v4dvvNeIIu/2o+MwLYvNX2
+Z6B861cMMY1QBataNRXq
+=sqOl
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Jan_2014_13_24_36_+1100_R9OXwE5CiIP2G.9j--
+--Signature=_Wed__15_Jan_2014_13_46_51_+1100_8WTi_GZ9Q6haM.y6--
