@@ -1,51 +1,42 @@
-From: Alexander Aring <alex.aring@gmail.com>
-Subject: Re: linux-next: Tree for Jan 14 (lowpan, 802.15.4)
-Date: Wed, 15 Jan 2014 10:45:28 +0100
-Message-ID: <20140115094527.GB12036@omega>
-References: <20140114165128.0dd51f362e0f34a2ef4dc92f@canb.auug.org.au>
- <52D578A7.8020000@infradead.org>
- <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next 2/2] bcache: Use max_t() when comparing different types
+Date: Wed, 15 Jan 2014 10:06:24 +0100
+Message-ID: <1389776784-30825-2-git-send-email-geert@linux-m68k.org>
+References: <1389776784-30825-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:44962 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751499AbaAOJpc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jan 2014 04:45:32 -0500
-Content-Disposition: inline
-In-Reply-To: <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, linux-zigbee-devel <linux-zigbee-devel@lists.sourceforge.net>, Alexander Smirnov <alex.bluesman.smirnov@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-bcache-owner@vger.kernel.org>
+In-Reply-To: <1389776784-30825-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-bcache-owner@vger.kernel.org
+To: Kent Overstreet <kmo@daterainc.com>, Neil Brown <neilb@suse.de>
+Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dmitry,
+drivers/md/bcache/btree.c: In function =E2=80=98insert_u64s_remaining=E2=
+=80=99:
+drivers/md/bcache/btree.c:1816: warning: comparison of distinct pointer=
+ types lacks a cast
 
-On Wed, Jan 15, 2014 at 02:54:56AM +0400, Dmitry Eremin-Solenikov wrote:
-> Hello,
-> 
-> 
-> On Tue, Jan 14, 2014 at 9:49 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> >
-> > On 01/13/2014 09:51 PM, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > This tree fails (more than usual) the powerpc allyesconfig build.
-> > >
-> > > Changes since 20140113:
-> > >
-> >
-> >
-> > on i386:
-> >
-> > net/built-in.o: In function `header_create':
-> > 6lowpan.c:(.text+0x166149): undefined reference to `lowpan_header_compress'
-> > net/built-in.o: In function `bt_6lowpan_recv':
-> > (.text+0x166b3c): undefined reference to `lowpan_process_data'
-> 
-> Ah, nice Makefile hack there.
-> David, Marcel, could you please consider the attached patch.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/md/bcache/btree.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-oops, thanks for fixing this fast!
-
-- Alex
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 98cc0a810a36..c2ebc850d9a9 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1813,7 +1813,7 @@ static size_t insert_u64s_remaining(struct btree =
+*b)
+ 	if (b->keys.ops->is_extents)
+ 		ret -=3D KEY_MAX_U64S;
+=20
+-	return max(ret, 0L);
++	return max_t(ssize_t, ret, 0L);
+ }
+=20
+ static bool bch_btree_insert_keys(struct btree *b, struct btree_op *op=
+,
+--=20
+1.7.9.5
