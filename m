@@ -1,62 +1,25 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: "H. Peter Anvin" <hpa@zytor.com>
 Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Fri, 17 Jan 2014 07:46:28 +1100
-Message-ID: <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
-References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
-	<20140116121955.GQ31570@twins.programming.kicks-ass.net>
+Date: Thu, 16 Jan 2014 12:56:34 -0800
+Message-ID: <52D84782.7080100@zytor.com>
+References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au> <20140116121955.GQ31570@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from terminus.zytor.com ([198.137.202.10]:43457 "EHLO mail.zytor.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750910AbaAPU51 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jan 2014 15:57:27 -0500
 In-Reply-To: <20140116121955.GQ31570@twins.programming.kicks-ass.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 01/16/2014 04:19 AM, Peter Zijlstra wrote:
+> + * MONITOR/MWAIT with no hints, used for default default C1 state.
 
-Hi Peter,
+The default default?
 
-On Thu, 16 Jan 2014 13:19:55 +0100 Peter Zijlstra <peterz@infradead.org> wr=
-ote:
->
-> I think the below ought to work
-
-To be clear, all you did was replace the body of mwait_idle() with
-
-	mwait_idle_with_hints(0, 0);
-
-(and the comment above it)?  I need to apply in incremental patch in the
-merge commit.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJS2EUoAAoJEMDTa8Ir7ZwV5fUP/jfd/lVky9my2PddEGkcvQsn
-Jio9vlGNlwlB3caOmStVQ8jcboBf6XEELKROsEJ82t0ATGPo2D/1Yfkm4nQRl/q3
-lE1430vquUY0gAiIAIKcX74p2MKw4E4QoC9MrMUELSAbebvGpRg/qHCbHfOhe6Nb
-nHLOFg8FR70x7NHNtD4+Sg+VAhpgYIqfqbvKX5UrUJwKVod5YoXoYIyvOiCdCMDB
-euquVUs27+H3m39OkNFOcv8CcLYQjLOiwGCYcSk3H02ppx01/iZ9bJvJTfU/FkAl
-9gV6Kb4JYlxzNevigM94Muowx/Mo94eDufHhkR5dH5notqz5G5sJlbQR0QKviaOz
-2INXfjvdNCO0MLFU1rU1y+mPrEn1B1RWnuB20shIGum0oj9HRv4NkE3iqLlD2IN0
-hUVdQMZ3EuMo6AX364d9AxYRRD86JNiSgeK4M1/M/5I3mnFSIwy54GekaijlGis1
-ayAz5w4jeMCcKx8QfG+xe4iBmNg+pIrJkcR4/otQtdmVwpvDnyBrykn5S7GdF+f4
-OYXbztNu21z6wgl0UtZVyfb6YxWLJfp6f1QoypBn5+ssVXFQuhgunhGjNEU8b21b
-YaoufsNu0yjSrV35uEW+dp90vrhNeqggBiFRBtl0oZLOxHbNm6dcniamGNVyNNKN
-zRHGpaxpN3hFZw7nLEXc
-=f9/h
------END PGP SIGNATURE-----
-
---Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf--
+	-hpa
