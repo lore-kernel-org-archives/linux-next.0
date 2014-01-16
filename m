@@ -1,181 +1,62 @@
-From: Mikulas Patocka <mpatocka@redhat.com>
-Subject: [PATCH] speedstep: clean up interrupt disabling (was: linux-next:
- build failure after merge of the tip tree)
-Date: Thu, 16 Jan 2014 14:33:02 -0500 (EST)
-Message-ID: <alpine.LRH.2.02.1401161238270.16143@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20140114142627.537a702607e703c6eff63640@canb.auug.org.au> <20140114141406.GD7572@laptop.programming.kicks-ass.net> <alpine.LRH.2.02.1401141400030.19206@file01.intranet.prod.int.rdu2.redhat.com> <20140114200547.GM7572@laptop.programming.kicks-ass.net>
- <alpine.LRH.2.02.1401141629520.19206@file01.intranet.prod.int.rdu2.redhat.com> <20140116121415.GP31570@twins.programming.kicks-ass.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Fri, 17 Jan 2014 07:46:28 +1100
+Message-ID: <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
+References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
+	<20140116121955.GQ31570@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:65140 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751298AbaAPTdr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jan 2014 14:33:47 -0500
-In-Reply-To: <20140116121415.GP31570@twins.programming.kicks-ass.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140116121955.GQ31570@twins.programming.kicks-ass.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+--Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Peter,
 
-On Thu, 16 Jan 2014, Peter Zijlstra wrote:
+On Thu, 16 Jan 2014 13:19:55 +0100 Peter Zijlstra <peterz@infradead.org> wr=
+ote:
+>
+> I think the below ought to work
 
-> > >  		retry++;
-> > >  		__asm__ __volatile__(
-> > > @@ -217,6 +220,7 @@ static void speedstep_set_state(unsigned int state)
-> > >  
-> > >  	/* enable IRQs */
-> > >  	local_irq_restore(flags);
-> > > +	preempt_enable();
-> > >  
-> > >  	if (new_state == state)
-> > >  		pr_debug("change to %u MHz succeeded after %u tries "
-> > 
-> > You need also preempt_disable/enable in speedstep_get_freqs.
-> 
-> Argh I see, this is really horrid.
-> 
-> 
-> Anyway, its Rafael's call, its his subsystem he gets to fix it when it
-> explodes.
-> 
-> /me shudders
+To be clear, all you did was replace the body of mwait_idle() with
 
-speedstep_get_freqs disables the interrupts to measure the transition 
-latency. It is called from speedstep-ich.c (that requires the latency) and 
-from speedstep-smi.c (that passes NULL as a pointer to latency, because it 
-doesn't need it).
+	mwait_idle_with_hints(0, 0);
 
-So, you could disable interrupts in speedstep_get_freqs only when the 
-transition_latency pointer is non-NULL.
+(and the comment above it)?  I need to apply in incremental patch in the
+merge commit.
 
-I think speedstep_set_state doesn't need to disable interrupts at all - 
-all that it does is one "out" instruction, you don't need to synchronize 
-that "out" instruction with anything, so there is no need to disable 
-interrupts. Or - does some specification say that interrupts must be 
-disabled there?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-I am sending this patch to clean up the mess to be applied on the top of 
-my previous patch.
+--Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf
+Content-Type: application/pgp-signature
 
-Mikulas
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
+iQIcBAEBCAAGBQJS2EUoAAoJEMDTa8Ir7ZwV5fUP/jfd/lVky9my2PddEGkcvQsn
+Jio9vlGNlwlB3caOmStVQ8jcboBf6XEELKROsEJ82t0ATGPo2D/1Yfkm4nQRl/q3
+lE1430vquUY0gAiIAIKcX74p2MKw4E4QoC9MrMUELSAbebvGpRg/qHCbHfOhe6Nb
+nHLOFg8FR70x7NHNtD4+Sg+VAhpgYIqfqbvKX5UrUJwKVod5YoXoYIyvOiCdCMDB
+euquVUs27+H3m39OkNFOcv8CcLYQjLOiwGCYcSk3H02ppx01/iZ9bJvJTfU/FkAl
+9gV6Kb4JYlxzNevigM94Muowx/Mo94eDufHhkR5dH5notqz5G5sJlbQR0QKviaOz
+2INXfjvdNCO0MLFU1rU1y+mPrEn1B1RWnuB20shIGum0oj9HRv4NkE3iqLlD2IN0
+hUVdQMZ3EuMo6AX364d9AxYRRD86JNiSgeK4M1/M/5I3mnFSIwy54GekaijlGis1
+ayAz5w4jeMCcKx8QfG+xe4iBmNg+pIrJkcR4/otQtdmVwpvDnyBrykn5S7GdF+f4
+OYXbztNu21z6wgl0UtZVyfb6YxWLJfp6f1QoypBn5+ssVXFQuhgunhGjNEU8b21b
+YaoufsNu0yjSrV35uEW+dp90vrhNeqggBiFRBtl0oZLOxHbNm6dcniamGNVyNNKN
+zRHGpaxpN3hFZw7nLEXc
+=f9/h
+-----END PGP SIGNATURE-----
 
-
-From: Mikulas Patocka <mpatocka@redhat.com>
-Subject: speedstep: clean up interrupt disabling
-
-This patch cleans up interrupt disabling in speedstep-smi and
-speedstep-lib.
-
-speedstep_get_freqs in speedstep-lib may be called from speedstep-smi or
-speedstep-ich. When it is called from speedstep-ich, it needs to calculate
-transition latency. When it is called from speedstep-smi, transition
-latency doesn't have to be calculated.
-
-The function speedstep_set_state in speedstep-smi needs to enable
-interrupts. Previously it enabled interrupts even if it was called with
-disabled interrupts, but it is dirty.
-
-This patch changes speedstep_get_freqs so that it disables interrupts only
-when it is called from speedstep-ich and when it is measuring the
-transition latency. This avoids much of the code dirtiness.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-
----
- drivers/cpufreq/speedstep-lib.c |   13 ++++++-------
- drivers/cpufreq/speedstep-smi.c |   11 ++++-------
- 2 files changed, 10 insertions(+), 14 deletions(-)
-
-Index: linux-3.4.75/drivers/cpufreq/speedstep-lib.c
-===================================================================
---- linux-3.4.75.orig/drivers/cpufreq/speedstep-lib.c	2014-01-16 18:51:16.000000000 +0100
-+++ linux-3.4.75/drivers/cpufreq/speedstep-lib.c	2014-01-16 18:51:22.000000000 +0100
-@@ -400,9 +400,6 @@ unsigned int speedstep_get_freqs(enum sp
- 
- 	pr_debug("previous speed is %u\n", prev_speed);
- 
--	preempt_disable();
--	local_irq_save(flags);
--
- 	/* switch to low state */
- 	set_state(SPEEDSTEP_LOW);
- 	*low_speed = speedstep_get_frequency(processor);
-@@ -414,15 +411,19 @@ unsigned int speedstep_get_freqs(enum sp
- 	pr_debug("low speed is %u\n", *low_speed);
- 
- 	/* start latency measurement */
--	if (transition_latency)
-+	if (transition_latency) {
-+		local_irq_save(flags);
- 		do_gettimeofday(&tv1);
-+	}
- 
- 	/* switch to high state */
- 	set_state(SPEEDSTEP_HIGH);
- 
- 	/* end latency measurement */
--	if (transition_latency)
-+	if (transition_latency) {
- 		do_gettimeofday(&tv2);
-+		local_irq_restore(flags);
-+	}
- 
- 	*high_speed = speedstep_get_frequency(processor);
- 	if (!*high_speed) {
-@@ -464,8 +465,6 @@ unsigned int speedstep_get_freqs(enum sp
- 	}
- 
- out:
--	local_irq_restore(flags);
--	preempt_enable();
- 
- 	return ret;
- }
-Index: linux-3.4.75/drivers/cpufreq/speedstep-smi.c
-===================================================================
---- linux-3.4.75.orig/drivers/cpufreq/speedstep-smi.c	2014-01-16 18:51:16.000000000 +0100
-+++ linux-3.4.75/drivers/cpufreq/speedstep-smi.c	2014-01-16 18:51:22.000000000 +0100
-@@ -180,16 +180,16 @@ static int speedstep_get_state(void)
- static void speedstep_set_state(unsigned int state)
- {
- 	unsigned int result = 0, command, new_state, dummy;
--	unsigned long flags;
- 	unsigned int function = SET_SPEEDSTEP_STATE;
- 	unsigned int retry = 0;
- 
- 	if (state > 0x1)
- 		return;
- 
--	/* Disable IRQs */
-+	WARN_ON_ONCE(irqs_disabled());
-+
-+	/* Disable preemption so that other processes don't run */
- 	preempt_disable();
--	local_irq_save(flags);
- 
- 	command = (smi_sig & 0xffffff00) | (smi_cmd & 0xff);
- 
-@@ -209,9 +209,7 @@ static void speedstep_set_state(unsigned
- 			 */
- 			pr_debug("retry %u, previous result %u, waiting...\n",
- 					retry, result);
--			local_irq_enable();
- 			mdelay(retry * 50);
--			local_irq_disable();
- 		}
- 		retry++;
- 		__asm__ __volatile__(
-@@ -226,8 +224,7 @@ static void speedstep_set_state(unsigned
- 			);
- 	} while ((new_state != state) && (retry <= SMI_TRIES));
- 
--	/* enable IRQs */
--	local_irq_restore(flags);
-+	/* enable preemption */
- 	preempt_enable();
- 
- 	if (new_state == state)
+--Signature=_Fri__17_Jan_2014_07_46_28_+1100_Ds4ZGWHAk=lCeVXf--
