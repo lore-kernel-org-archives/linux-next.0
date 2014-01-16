@@ -1,32 +1,39 @@
-From: Ian Munsie <imunsie@au1.ibm.com>
-Subject: RE: linux-next: manual merge of the akpm-current tree with the char-misc tree
-Date: Thu, 16 Jan 2014 10:52:16 +1100
-Message-ID: <1389829885-sup-9038@delenn.ozlabs.ibm.com>
-References: <20140114155104.0ab2772aaa909e49bc89cd61@canb.auug.org.au> <5B8DA87D05A7694D9FA63FD143655C1B1AF42F69@HASMSX106.ger.corp.intel.com> <1389750036-sup-8437@delenn.ozlabs.ibm.com> <5B8DA87D05A7694D9FA63FD143655C1B1AF462B0@HASMSX106.ger.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 16 Jan 2014 23:25:36 +0100
+Message-ID: <20140116222536.GX30183@twins.programming.kicks-ass.net>
+References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
+ <20140116121955.GQ31570@twins.programming.kicks-ass.net>
+ <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp06.au.ibm.com ([202.81.31.148]:37811 "EHLO
-	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751354AbaAPVDN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jan 2014 16:03:13 -0500
-Received: from /spool/local
-	by e23smtp06.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <imunsie@au1.ibm.com>;
-	Thu, 16 Jan 2014 09:52:29 +1000
-In-reply-to: <5B8DA87D05A7694D9FA63FD143655C1B1AF462B0@HASMSX106.ger.corp.intel.com>
+Received: from merlin.infradead.org ([205.233.59.134]:48546 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751403AbaAPW0B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jan 2014 17:26:01 -0500
+Content-Disposition: inline
+In-Reply-To: <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Excerpts from Winkler, Tomas's message of 2014-01-16 09:36:40 +1100:
-> I think the issue was fixed and also then number  of consecutive resets were limited to 3 so you should
-> not see this issue anymore in the next release, your patch just conflicted with these fixes. 
-> Still need to provide a simpler fix for the stable kernel.
+On Fri, Jan 17, 2014 at 07:46:28AM +1100, Stephen Rothwell wrote:
+> Hi Peter,
+> 
+> On Thu, 16 Jan 2014 13:19:55 +0100 Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > I think the below ought to work
+> 
+> To be clear, all you did was replace the body of mwait_idle() with
+> 
+> 	mwait_idle_with_hints(0, 0);
 
-Ok, If you think it should not occur again I don't mind if my patch is
-dropped.
+Pretty much, and add the asm/mwait.h include, otherwise you'll end up
+with a compile fail.
 
-Cheers,
--Ian
+> (and the comment above it)?  I need to apply in incremental patch in the
+> merge commit.
+
+I don't think I touched the comment at all.
