@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the libata tree with the arm-soc tree
-Date: Thu, 16 Jan 2014 11:48:31 +1100
-Message-ID: <20140116114831.50261e22b6fb25aac2004b43@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the uml tree
+Date: Thu, 16 Jan 2014 12:42:15 +1100
+Message-ID: <20140116124215.78ed8795c91309badc844566@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__16_Jan_2014_11_48_31_+1100_Z2tO_HsQO5aZZquV"
+ boundary="Signature=_Thu__16_Jan_2014_12_42_15_+1100_=HeLZ+GHKpMY2Mni"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55479 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:40817 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751520AbaAPAsp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jan 2014 19:48:45 -0500
+	id S1752063AbaAPBmW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jan 2014 20:42:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>, Jason Cooper <jason@lakedaemon.net>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Richard Weinberger <richard@nod.at>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__16_Jan_2014_11_48_31_+1100_Z2tO_HsQO5aZZquV
+--Signature=_Thu__16_Jan_2014_12_42_15_+1100_=HeLZ+GHKpMY2Mni
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi all,
 
-Today's linux-next merge of the libata tree got a conflict in
-arch/arm/boot/dts/armada-370-xp.dtsi between commit a095b1c78a35 ("ARM:
-mvebu: sort DT nodes by address") from the arm-soc tree and commit
-a96cc303e42a ("ARM: mvebu: update the SATA compatible string for Armada
-370/XP") from the libata tree.
+Today's linux-next merge of the net-next tree got a conflict in
+arch/um/include/asm/Kbuild between commit 989e59fa41c5 ("um: Include
+generic barrier.h") from the uml tree and commit e3fec2f74f7f ("lib: Add
+missing arch generic-y entries for asm-generic/hash.h") from the net-next
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,51 +36,36 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/armada-370-xp.dtsi
-index b6b253924893,df141a1d6448..000000000000
---- a/arch/arm/boot/dts/armada-370-xp.dtsi
-+++ b/arch/arm/boot/dts/armada-370-xp.dtsi
-@@@ -236,12 -183,13 +236,12 @@@
-  				status =3D "disabled";
-  			};
- =20
- -			i2c0: i2c@11000 {
- -				compatible =3D "marvell,mv64xxx-i2c";
- -				#address-cells =3D <1>;
- -				#size-cells =3D <0>;
- -				interrupts =3D <31>;
- -				timeout-ms =3D <1000>;
- -				clocks =3D <&coreclk 0>;
- +			sata@a0000 {
-- 				compatible =3D "marvell,orion-sata";
-++				compatible =3D "marvell,armada-370-sata";
- +				reg =3D <0xa0000 0x5000>;
- +				interrupts =3D <55>;
- +				clocks =3D <&gateclk 15>, <&gateclk 30>;
- +				clock-names =3D "0", "1";
-  				status =3D "disabled";
-  			};
- =20
+diff --cc arch/um/include/asm/Kbuild
+index fb3a6cc23015,75de4abe4f94..000000000000
+--- a/arch/um/include/asm/Kbuild
++++ b/arch/um/include/asm/Kbuild
+@@@ -4,4 -4,4 +4,5 @@@ generic-y +=3D ftrace.h pci.h io.h param.
+  generic-y +=3D switch_to.h clkdev.h
+  generic-y +=3D trace_clock.h
+  generic-y +=3D preempt.h
+ +generic-y +=3D barrier.h
++ generic-y +=3D hash.h
 
---Signature=_Thu__16_Jan_2014_11_48_31_+1100_Z2tO_HsQO5aZZquV
+--Signature=_Thu__16_Jan_2014_12_42_15_+1100_=HeLZ+GHKpMY2Mni
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS1yxjAAoJEMDTa8Ir7ZwVHkAP/1PmRayrcJrVICTx2Ue7Uq+S
-t5SI4k6tgPpm/U1dBeV4EpZnYw7CI7vSmOVZWBa0mggrL4wtIB96N2smVMDFyxPL
-XSsJPQjsrFCzUMgrEbEC7Iw1Dl+EuyrYlQFaUBHzN1z+7ixEERX7NxJkEcQYcMCC
-873SpMo4XPevgif9c/PUldeQJiEs17e0AmduwXaMbXmfYg+Iag0rl+rtrPGiLdKz
-nSm4kcNMLRLWYJLtQklxOMuTyEi5BbgtWKl/OglkzQ8Uhi3wrf039IfBX0IYVCqd
-2kxvwUs86T0HOXnBEMP5pCL3yWC2VWXkOsT7pXIC0QBNcW1TD2MpnNj/ulc5BnH4
-thFpc5TfAmQIQfoZ0nz2MoLPosEso0yrt19Ljo+OGhe41f/0C90zgMbmDA0xlpa3
-K7DG7S5az98H8QphRYl4InQIedZbpsyHfoDBy8wa0tyqCNpnZEKa4MlZ6GsB817M
-lwJfyuPZQHXGOkB3UgFe11hkyl9siB0iQcFboVo0zbDyYPboi+cgV+DQMWGkwfnf
-iQzmOw2gffapf3b+mJnZHh/Gnu4OEsh4olqjWLk3MSByBC3XLbPMF25BrZELSOEV
-0/WFKoReI+ZHMHLDiydFkrRZUkimqEcCL29xyZq325p1QvZp+qJcnzQ52xET8/Eq
-6iSlE4DqANIkHxfgCOk4
-=GA+/
+iQIcBAEBCAAGBQJS1zj8AAoJEMDTa8Ir7ZwVu2EP/iksyZxhZyelCYN4WBCV/Xtr
+p46fkgA9APqife4RKErkoc21/+nof0YG0PYNT9bkAFgaSXq/DNQ5sRqdjPX7r1gM
+dqHKz9t9WibgYL2pCJhES61l0fBJq1Ed1TLu4jQsJE2sTxZ3yE05RYzLV9aAPaPg
+I1B0BfAoHPUooNECsiJtPftFK7yPwrHgpEagzd5Ld4/cjIBKsj4J/gmEe4f5mDXv
+LesGUaICi1O6OGgCa0YtFyMxbgm9BOJXyxfYYH27DoNoJqXkiKc44FNJ3yfAIKEb
+mv2PLbw5HdaC5QcTRdTUhW2NHxsnt5MnucqHTjinHzXvvIXuJg7kiSssjtyIcyVJ
+xg1ajDm9KbVccpPQGRvjsRklb5rvZYQzs/Y2YqxcG9jBjFofew2MF9m2j8HM97vG
+EVINnoMz4c7citU4UKdLe+sxN1KLvDIU3MXwvZkTlHoWzlVwvgKZugSysy5ihn2a
+XB/xqVjZQxUCEKYSxIZfRg/HsVMAkrN7C4ivFPDaHMe2fPP+UrWnAiFcDdZLk/DG
+1FEvcpgb3/WFZXLDKykH7CT2XAcbO5JsMNRyh579r5kE6wcKc4gnbKSoeXhHP615
+lmCZ+Nm5/V1/aI6m72iqdAaX/BoVfrPe1pnbl98Wv/ogY30Oa8Fewaf2MwPrUM6x
+GshqgaTxOWF3MKG489uF
+=suFf
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__16_Jan_2014_11_48_31_+1100_Z2tO_HsQO5aZZquV--
+--Signature=_Thu__16_Jan_2014_12_42_15_+1100_=HeLZ+GHKpMY2Mni--
