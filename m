@@ -1,107 +1,74 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Thu, 16 Jan 2014 13:19:55 +0100
-Message-ID: <20140116121955.GQ31570@twins.programming.kicks-ass.net>
-References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: linux-next: manual merge of the libata tree with the arm-soc
+ tree
+Date: Thu, 16 Jan 2014 07:26:29 -0500
+Message-ID: <20140116122629.GG29184@titan.lakedaemon.net>
+References: <20140116114831.50261e22b6fb25aac2004b43@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:35661 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752430AbaAPMUU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jan 2014 07:20:20 -0500
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:16413 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752488AbaAPM0p (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jan 2014 07:26:45 -0500
 Content-Disposition: inline
-In-Reply-To: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
+In-Reply-To: <20140116114831.50261e22b6fb25aac2004b43@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>, Kevin Hilman <khilman@linaro.org>
 
-On Thu, Jan 16, 2014 at 02:58:29PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> arch/x86/kernel/process.c: In function 'mwait_idle':
-> /scratch/sfr/next/arch/x86/kernel/process.c:434:3: error: implicit declaration of function '__monitor' [-Werror=implicit-function-declaration]
->    __monitor((void *)&current_thread_info()->flags, 0, 0);
->    ^
-> arch/x86/kernel/process.c:437:4: error: implicit declaration of function '__sti_mwait' [-Werror=implicit-function-declaration]
->     __sti_mwait(0, 0);
->     ^
-> 
-> Caused by commit 16824255394f ("x86, acpi, idle: Restructure the mwait
-> idle routines") interacting with commit 7760518cce95 ("x86 idle: restore
-> mwait_idle()") from the idle tree.
-> 
-> I am not sure how to fix this so I just reverted the idle tree commit for
-> now (since it reverted cleanly). Please let me know if there is a better
-> solution.
+Stephen,
 
-I think the below ought to work
+Thanks, this looks good.
 
----
- arch/x86/kernel/process.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Arnd, Olof, Kevin,
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 3fb8d95ab8b5..220df9b2f22a 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -28,6 +28,7 @@
- #include <asm/fpu-internal.h>
- #include <asm/debugreg.h>
- #include <asm/nmi.h>
-+#include <asm/mwait.h>
- 
- /*
-  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
-@@ -398,6 +399,37 @@ static void amd_e400_idle(void)
- 		default_idle();
- }
- 
-+/*
-+ * Intel Core2 and older machines prefer MWAIT over HALT for C1.
-+ * We can't rely on cpuidle installing MWAIT, because it will not load
-+ * on systems that support only C1 -- so the boot default must be MWAIT.
-+ *  
-+ * Some AMD machines are the opposite, they depend on using HALT.
-+ *
-+ * So for default C1, which is used during boot until cpuidle loads,
-+ * use MWAIT-C1 on Intel HW that has it, else use HALT.
-+ */
-+static int prefer_mwait_c1_over_halt(const struct cpuinfo_x86 *c)
-+{
-+	if (c->x86_vendor != X86_VENDOR_INTEL)
-+		return 0;
-+
-+	if (!cpu_has(c, X86_FEATURE_MWAIT))
-+		return 0;
-+
-+	return 1;
-+}
-+
-+/*
-+ * MONITOR/MWAIT with no hints, used for default default C1 state.
-+ * This invokes MWAIT with interrutps enabled and no flags,
-+ * which is backwards compatible with the original MWAIT implementation.
-+ */
-+static void mwait_idle(void)
-+{
-+	mwait_idle_with_hints(0, 0);
-+}
-+
- void select_idle_routine(const struct cpuinfo_x86 *c)
- {
- #ifdef CONFIG_SMP
-@@ -411,6 +443,9 @@ void select_idle_routine(const struct cpuinfo_x86 *c)
- 		/* E400: APIC timer interrupt does not wake up CPU from C1e */
- 		pr_info("using AMD E400 aware idle routine\n");
- 		x86_idle = amd_e400_idle;
-+	} else if (prefer_mwait_c1_over_halt(c)) {
-+		pr_info("using mwait in idle threads\n");
-+		x86_idle = mwait_idle;
- 	} else
- 		x86_idle = default_idle;
- }
+This patch is in Tejun's tree because it is part of a patch series
+fixing SATA hotplug.  That series is marked for stable.
+
+thx,
+
+Jason.
+
+On Thu, Jan 16, 2014 at 11:48:31AM +1100, Stephen Rothwell wrote:
+> Hi Tejun,
+> 
+> Today's linux-next merge of the libata tree got a conflict in
+> arch/arm/boot/dts/armada-370-xp.dtsi between commit a095b1c78a35 ("ARM:
+> mvebu: sort DT nodes by address") from the arm-soc tree and commit
+> a96cc303e42a ("ARM: mvebu: update the SATA compatible string for Armada
+> 370/XP") from the libata tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/boot/dts/armada-370-xp.dtsi
+> index b6b253924893,df141a1d6448..000000000000
+> --- a/arch/arm/boot/dts/armada-370-xp.dtsi
+> +++ b/arch/arm/boot/dts/armada-370-xp.dtsi
+> @@@ -236,12 -183,13 +236,12 @@@
+>   				status = "disabled";
+>   			};
+>   
+>  -			i2c0: i2c@11000 {
+>  -				compatible = "marvell,mv64xxx-i2c";
+>  -				#address-cells = <1>;
+>  -				#size-cells = <0>;
+>  -				interrupts = <31>;
+>  -				timeout-ms = <1000>;
+>  -				clocks = <&coreclk 0>;
+>  +			sata@a0000 {
+> - 				compatible = "marvell,orion-sata";
+> ++				compatible = "marvell,armada-370-sata";
+>  +				reg = <0xa0000 0x5000>;
+>  +				interrupts = <55>;
+>  +				clocks = <&gateclk 15>, <&gateclk 30>;
+>  +				clock-names = "0", "1";
+>   				status = "disabled";
+>   			};
+>   
