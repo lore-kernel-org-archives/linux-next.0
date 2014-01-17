@@ -1,42 +1,69 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Fri, 17 Jan 2014 09:27:15 -0800
-Message-ID: <9ebf3c00-ac91-41bd-8fd0-24dc09e61a05@DB9EHSMHS001.ehs.local>
-References: <20140117143035.fa787a8203afaa83c64009bb@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jan 14 (lowpan, 802.15.4)
+Date: Fri, 17 Jan 2014 10:49:59 -0800
+Message-ID: <52D97B57.9000000@infradead.org>
+References: <20140114165128.0dd51f362e0f34a2ef4dc92f@canb.auug.org.au>	<52D578A7.8020000@infradead.org> <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-db9lp0251.outbound.messaging.microsoft.com ([213.199.154.251]:50001
-	"EHLO db9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751951AbaAQR1W convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Jan 2014 12:27:22 -0500
-Content-Disposition: inline
-In-Reply-To: <20140117143035.fa787a8203afaa83c64009bb@canb.auug.org.au>
+Received: from merlin.infradead.org ([205.233.59.134]:43253 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752819AbaAQSuJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jan 2014 13:50:09 -0500
+In-Reply-To: <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, linux-zigbee-devel <linux-zigbee-devel@lists.sourceforge.net>, Alexander Smirnov <alex.bluesman.smirnov@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jukka Rissanen <jukka.rissanen@linux.intel.com>
 
-Hi Stephen,
+On 01/14/2014 02:54 PM, Dmitry Eremin-Solenikov wrote:
+> Hello,
+> 
+> 
+> On Tue, Jan 14, 2014 at 9:49 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> On 01/13/2014 09:51 PM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> This tree fails (more than usual) the powerpc allyesconfig build.
+>>>
+>>> Changes since 20140113:
+>>>
+>>
+>>
+>> on i386:
+>>
+>> net/built-in.o: In function `header_create':
+>> 6lowpan.c:(.text+0x166149): undefined reference to `lowpan_header_compress'
+>> net/built-in.o: In function `bt_6lowpan_recv':
+>> (.text+0x166b3c): undefined reference to `lowpan_process_data'
+> 
+> Ah, nice Makefile hack there.
+> David, Marcel, could you please consider the attached patch.
+> 
+> 
 
-On Fri, Jan 17, 2014 at 02:30:35PM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the tip tree got a conflict in
-> drivers/clocksource/cadence_ttc_timer.c between commit c1dcc927dae0
-> ("clocksource: cadence_ttc: Fix mutex taken inside interrupt context"=
-)
-> from Linus' tree and commit dfded00902d7 ("clocksource:
-> cadence_ttc_timer: Switch to sched_clock_register()") from the tip tr=
-ee.
->=20
-> I fixed it up (I think - see below) and can carry the fix as necessar=
-y
-> (no action is required).
+Hi,
+I guess that the Makefile hack is still causing problems.
+With today's linux-next (20140117), I see these build errors (or warnings
+in the case of loadable modules):
 
-The fix is correct.
 
-	Thanks,
-	S=C3=B6ren
+when 802.15.4 and Bluetooth are built as loadable modules:
+
+WARNING: net/ieee802154/6lowpan_iphc: 'lowpan_header_compress' exported twice. Previous export was in net/bluetooth/bluetooth.ko
+WARNING: net/ieee802154/6lowpan_iphc: 'lowpan_process_data' exported twice. Previous export was in net/bluetooth/bluetooth.ko
+
+when they are builtin to the kernel image:
+
+net/ieee802154/built-in.o: In function `lowpan_header_compress':
+(.text+0x3d00): multiple definition of `lowpan_header_compress'
+net/bluetooth/built-in.o:(.text+0x2e8f0): first defined here
+net/ieee802154/built-in.o: In function `lowpan_process_data':
+(.text+0x3230): multiple definition of `lowpan_process_data'
+net/bluetooth/built-in.o:(.text+0x2de20): first defined here
+
+
+-- 
+~Randy
