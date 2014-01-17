@@ -1,23 +1,23 @@
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
 Subject: Re: linux-next: Tree for Jan 14 (lowpan, 802.15.4)
-Date: Fri, 17 Jan 2014 10:49:59 -0800
-Message-ID: <52D97B57.9000000@infradead.org>
+Date: Fri, 17 Jan 2014 12:13:49 -0700
+Message-ID: <52D980ED.6000603@wwwdotorg.org>
 References: <20140114165128.0dd51f362e0f34a2ef4dc92f@canb.auug.org.au>	<52D578A7.8020000@infradead.org> <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:43253 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752819AbaAQSuJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jan 2014 13:50:09 -0500
+Received: from avon.wwwdotorg.org ([70.85.31.133]:35466 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752823AbaAQTNx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jan 2014 14:13:53 -0500
 In-Reply-To: <CALT56yPzfkz7=WdT0p6EYXdsQJUT+Ld9gdd72z6_czn0YaKUWA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>, linux-zigbee-devel <linux-zigbee-devel@lists.sourceforge.net>, Alexander Smirnov <alex.bluesman.smirnov@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jukka Rissanen <jukka.rissanen@linux.intel.com>
 
-On 01/14/2014 02:54 PM, Dmitry Eremin-Solenikov wrote:
+On 01/14/2014 03:54 PM, Dmitry Eremin-Solenikov wrote:
 > Hello,
 > 
 > 
@@ -41,29 +41,22 @@ On 01/14/2014 02:54 PM, Dmitry Eremin-Solenikov wrote:
 > 
 > Ah, nice Makefile hack there.
 > David, Marcel, could you please consider the attached patch.
-> 
-> 
 
-Hi,
-I guess that the Makefile hack is still causing problems.
-With today's linux-next (20140117), I see these build errors (or warnings
-in the case of loadable modules):
+I think you forgot to "git add net/bluetooth/Makefile" into that patch;
+don't you need the following too (I certainly do, to build next-20140117)
 
+> diff --git a/net/bluetooth/Makefile b/net/bluetooth/Makefile
+> index cc6827e2ce68..80cb215826e8 100644
+> --- a/net/bluetooth/Makefile
+> +++ b/net/bluetooth/Makefile
+> @@ -12,8 +12,4 @@ bluetooth-y := af_bluetooth.o hci_core.o hci_conn.o hci_event.o mgmt.o \
+>  	hci_sock.o hci_sysfs.o l2cap_core.o l2cap_sock.o smp.o sco.o lib.o \
+>  	a2mp.o amp.o 6lowpan.o
+>  
+> -ifeq ($(CONFIG_IEEE802154_6LOWPAN),)
+> -  bluetooth-y +=  ../ieee802154/6lowpan_iphc.o
+> -endif
+> -
+>  subdir-ccflags-y += -D__CHECK_ENDIAN__
 
-when 802.15.4 and Bluetooth are built as loadable modules:
-
-WARNING: net/ieee802154/6lowpan_iphc: 'lowpan_header_compress' exported twice. Previous export was in net/bluetooth/bluetooth.ko
-WARNING: net/ieee802154/6lowpan_iphc: 'lowpan_process_data' exported twice. Previous export was in net/bluetooth/bluetooth.ko
-
-when they are builtin to the kernel image:
-
-net/ieee802154/built-in.o: In function `lowpan_header_compress':
-(.text+0x3d00): multiple definition of `lowpan_header_compress'
-net/bluetooth/built-in.o:(.text+0x2e8f0): first defined here
-net/ieee802154/built-in.o: In function `lowpan_process_data':
-(.text+0x3230): multiple definition of `lowpan_process_data'
-net/bluetooth/built-in.o:(.text+0x2de20): first defined here
-
-
--- 
-~Randy
+Should I send this as a separate followup patch?
