@@ -1,76 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dt-rh tree with the arm-soc tree
-Date: Fri, 17 Jan 2014 14:23:50 +1100
-Message-ID: <20140117142350.dc957c59116a9d0885e4724a@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Fri, 17 Jan 2014 14:30:35 +1100
+Message-ID: <20140117143035.fa787a8203afaa83c64009bb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG"
+ boundary="Signature=_Fri__17_Jan_2014_14_30_35_+1100__QOP+1tYHMp3DdEI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:51027 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:35484 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750898AbaAQDX6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jan 2014 22:23:58 -0500
+	id S1751051AbaAQDam (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jan 2014 22:30:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkxvdGhhciBXYcOfbWFubiI=?= <LW@KARO-electronics.de>, Arnaud Ebalard <arno@natisbad.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
 
---Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG
+--Signature=_Fri__17_Jan_2014_14_30_35_+1100__QOP+1tYHMp3DdEI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi all,
 
-Today's linux-next merge of the dt-rh tree got a conflict in
-Documentation/devicetree/bindings/vendor-prefixes.txt between commits
-70e123373c05 ("rtc: Add support for Intersil ISL12057 I2C RTC chip") from
-the arm-soc tree and 53d6b36020c7 ("of: Add vendor prefix for LG
-Corporation") from Linus' tree and commit 7e73700ce785 ("of: add vendor
-prefix for Ka-Ro electronics GmbH") from the dt-rh tree.
+Today's linux-next merge of the tip tree got a conflict in
+drivers/clocksource/cadence_ttc_timer.c between commit c1dcc927dae0
+("clocksource: cadence_ttc: Fix mutex taken inside interrupt context")
+from Linus' tree and commit dfded00902d7 ("clocksource:
+cadence_ttc_timer: Switch to sched_clock_register()") from the tip tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
-index d92c88f551f9,d98fa9a6279c..000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@@ -42,8 -38,7 +42,9 @@@ ibm	International Business Machines (IB
-  idt	Integrated Device Technologies, Inc.
-  img	Imagination Technologies Ltd.
-  intercontrol	Inter Control Group
- +isl	Intersil
-+ karo	Ka-Ro electronics GmbH
- +lg	LG Corporation
-  linux	Linux-specific binding
-  lsi	LSI Corp. (LSI Logic)
-  marvell	Marvell Technology Group Ltd.
+diff --cc drivers/clocksource/cadence_ttc_timer.c
+index a92350b55d32,8c7382bf260c..000000000000
+--- a/drivers/clocksource/cadence_ttc_timer.c
++++ b/drivers/clocksource/cadence_ttc_timer.c
+@@@ -308,7 -306,8 +308,8 @@@ static void __init ttc_setup_clocksourc
+  	}
+ =20
+  	ttc_sched_clock_val_reg =3D base + TTC_COUNT_VAL_OFFSET;
+- 	setup_sched_clock(ttc_sched_clock_read, 16, ttccs->ttc.freq / PRESCALE);
++ 	sched_clock_register(ttc_sched_clock_read, 16,
+ -			clk_get_rate(ttccs->ttc.clk) / PRESCALE);
+++			     ttccs->ttc.freq / PRESCALE);
+  }
+ =20
+  static int ttc_rate_change_clockevent_cb(struct notifier_block *nb,
 
---Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG
+--Signature=_Fri__17_Jan_2014_14_30_35_+1100__QOP+1tYHMp3DdEI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS2KJLAAoJEMDTa8Ir7ZwVFn8P/1VmTS+F8LdwQlpeIZQAAdz9
-IDjXERHYGXFXmxpFN/a0r0+Py4I5WO5Aw4euX4cWUt8Iq/a3HI2FpocxYPLHjlVM
-bUhbz9sLwU6wT3KqLvu/Q2dMj6Y79dneKaRhm1RMws2OEDIuZ1leg8W5jYAdlWMw
-54kSatCbiqFccEzWbeJ3bhZel55RC0rXmBYXc46Nlaa4OrnUQT3UHsQ2VpsRk1NU
-y4dUFfP3aUzCdDBArNmwByPh23UC406tFh9d2s1s6GCM4LKqbHejYC3oDJKnPSIR
-GisfbiymScsVRatFdoikMjpqc39djv5JJaiDWJa3Nb2QteV2cdtvFNBaxHu8wBGe
-C8XN54jBLhkP1+S0PCa8FskQg2yV34s4nXwDfAGHzP/v0R/BwCK79TjCeTT3S8T9
-5ZfmKXRvUhN2fK68XbhQf+5fkFuHBPoVND29JNCMTdRc2imG+fyWzP34z7rqZ7dE
-UHx9tDFmnKcW3EaRM7AzI6Uwhd/urSNVqG3pkxBM5Es9Rqe5maY6CU3y71TsxHbT
-WQnttms8lkub7XtHxLW4vV27WV5Wwqe7fmbXGHgSHTvbUpYaA1KpNjtfBiWHgrW7
-itFc2ug5GkZLOGqOGhmaau/+TccKiqR2EKMQT/8EkBKIGHcRF9RlFlSUa069yZJM
-tqcIwlLZOtPfISDs2tmE
-=Wu2l
+iQIcBAEBCAAGBQJS2KPfAAoJEMDTa8Ir7ZwVXtkP/i45vlkm7SuoYqi+SLP++1CD
+cXIrBCL+/nrpSCMhjtDSHbsGWP7vkbIPcxWS4xbXjLxeUqEsYrLvFM0cR03J7H9X
+gxsOIAZ1cxFlaepIBLOAT/HSxm1SpoA2eaehLWT5weOsp7EszFlnj77ZteVTsVY1
+WFOdyJ2fdquCNGncKDOvlJz7q5guAGxlhPlZjPUaNW2sG4wLduKoUzYl/Vc8pIJg
+oV6SzLHM6JGuAYS+vvVRCVE2crJrVy4m/UnI5xYXlCoiYv4opYDLQ6NIiqC8KY8w
+b24iMuHLzLd1BvLd3ywFS1JcVDoJk5TzTmFvxx3frFGfDxlRFFmGIINnvOe1e8Up
+hG/6kwrDHWMg2uRegQvylxAMMTrnTZMjGoGk9daLoskWCy3JxU/GB6SPasj4yYNc
+fuNNOcnYw3hRQJYyvt0eiEIX7zcXmfJywKnP4NJVqNdJx2KkOnpzrXR5XdwOdJRD
+U3CZZ25VuYg+VAn4gzpI6t8TmfjigCtGrml29WlUFEzRZzBngbwaqEm3wdayimP+
+FDqph/usuqwXnizTIdbH4oSKUvPJw/CkXPalmAOdwkKaTuwR4Z+rJxPnkxyDZwUj
+A6lOQNs1mFA/0zhA1NS49C6O2fKCf3beEggSWpaVF1Oer9O32FFWqnw53ceJsK9T
+tZ8NJgeZcLizMH8EfLEx
+=jvFn
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG--
+--Signature=_Fri__17_Jan_2014_14_30_35_+1100__QOP+1tYHMp3DdEI--
