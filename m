@@ -1,62 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the arm-soc
- tree
-Date: Fri, 17 Jan 2014 14:14:20 +1100
-Message-ID: <20140117141420.e70ad2837f74fcff6a7f4a9d@canb.auug.org.au>
+Subject: linux-next: manual merge of the dt-rh tree with the arm-soc tree
+Date: Fri, 17 Jan 2014 14:23:50 +1100
+Message-ID: <20140117142350.dc957c59116a9d0885e4724a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__17_Jan_2014_14_14_20_+1100_R8z15SsjuF0NcqTE"
+ boundary="Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55725 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:51027 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751811AbaAQDO1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jan 2014 22:14:27 -0500
+	id S1750898AbaAQDX6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jan 2014 22:23:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@st.com>, Jason Cooper <jason@lakedaemon.net>
+To: Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkxvdGhhciBXYcOfbWFubiI=?= <LW@KARO-electronics.de>, Arnaud Ebalard <arno@natisbad.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>
 
---Signature=_Fri__17_Jan_2014_14_14_20_+1100_R8z15SsjuF0NcqTE
+--Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi Rob,
 
-Today's linux-next merge of the devicetree tree got a conflict in
-arch/arm/boot/dts/orion5x-lacie-ethernet-disk-mini-v2.dts between commit
-6b6430e82331 ("ARM: orion5x: Fix typo in device_type property of phy
-node") from the arm-soc tree and commit 40aad3c1a9b6 ("dt/bindings:
-Remove all references to device_type "ethernet-phy"") from the devicetree
-tree.
+Today's linux-next merge of the dt-rh tree got a conflict in
+Documentation/devicetree/bindings/vendor-prefixes.txt between commits
+70e123373c05 ("rtc: Add support for Intersil ISL12057 I2C RTC chip") from
+the arm-soc tree and 53d6b36020c7 ("of: Add vendor prefix for LG
+Corporation") from Linus' tree and commit 7e73700ce785 ("of: add vendor
+prefix for Ka-Ro electronics GmbH") from the dt-rh tree.
 
-I fixed it up (removed the line) and can carry the fix as necessary (no
-action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__17_Jan_2014_14_14_20_+1100_R8z15SsjuF0NcqTE
+diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
+index d92c88f551f9,d98fa9a6279c..000000000000
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@@ -42,8 -38,7 +42,9 @@@ ibm	International Business Machines (IB
+  idt	Integrated Device Technologies, Inc.
+  img	Imagination Technologies Ltd.
+  intercontrol	Inter Control Group
+ +isl	Intersil
++ karo	Ka-Ro electronics GmbH
+ +lg	LG Corporation
+  linux	Linux-specific binding
+  lsi	LSI Corp. (LSI Logic)
+  marvell	Marvell Technology Group Ltd.
+
+--Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS2KAQAAoJEMDTa8Ir7ZwV9x0P+gPjVFl7jRAjBlyNVFX8yqT+
-ABjAoooGL1NjXmlbAW1hPOCVGnv1qLdrt+q0z1Rnnz7HkqUvTXoCw33MnGJQsLGW
-+rdhoK8WkUNZa0Ts7EyecBBOzi1zX44OJoijcwFXZ0dQ6zJfIq/PuL/KB568jpO4
-YNhMSXEPh/DtG4ODqkfPRuob35x6h4v29AA7VJdI1sW1KfB2zQjPXfglsEzzOmkq
-0jWoruG14bq8q8kKgMkrX2ClYUo4G90GTzoXb3BSZv8i0qfpL+Q6W8rjy1wsuCMP
-h61IoRDBiXw4KgnRUwFljaZeKUHLIoWnOyx7VxtObzpifKiMY7S3A58j8HpUGyQW
-iXQcH8pVsYxVNhs1M5sGyTutsGe5Kzg1CzoArhohlsTrKDbjfc2hjxi/gDYp2SwZ
-BH+OYVxGT4xqSC7RUFTxYS9SgrJfQDdh1yJfDAcFRuBzHLGxsle0uDFyuDcbJVtR
-kJvgDgcD6m4w/TpRygseg2QgprtMftXkELdvzBytRESnnqOtb3hIc54KRfIoqZRD
-53rttC+uq9C9iAyeHc5Aw+SeBOUKB4tDFPA9sFvyoJCt8AInYCEG5O+o5q81dC3L
-uelpZtPQbE8pf+JT1Owyie71h1Nn37N7OdzFx0JeLZbcF3SChM5CWJqu3uBAOFFq
-3kFNhiBsFrQEgJrOFHr7
-=vIMy
+iQIcBAEBCAAGBQJS2KJLAAoJEMDTa8Ir7ZwVFn8P/1VmTS+F8LdwQlpeIZQAAdz9
+IDjXERHYGXFXmxpFN/a0r0+Py4I5WO5Aw4euX4cWUt8Iq/a3HI2FpocxYPLHjlVM
+bUhbz9sLwU6wT3KqLvu/Q2dMj6Y79dneKaRhm1RMws2OEDIuZ1leg8W5jYAdlWMw
+54kSatCbiqFccEzWbeJ3bhZel55RC0rXmBYXc46Nlaa4OrnUQT3UHsQ2VpsRk1NU
+y4dUFfP3aUzCdDBArNmwByPh23UC406tFh9d2s1s6GCM4LKqbHejYC3oDJKnPSIR
+GisfbiymScsVRatFdoikMjpqc39djv5JJaiDWJa3Nb2QteV2cdtvFNBaxHu8wBGe
+C8XN54jBLhkP1+S0PCa8FskQg2yV34s4nXwDfAGHzP/v0R/BwCK79TjCeTT3S8T9
+5ZfmKXRvUhN2fK68XbhQf+5fkFuHBPoVND29JNCMTdRc2imG+fyWzP34z7rqZ7dE
+UHx9tDFmnKcW3EaRM7AzI6Uwhd/urSNVqG3pkxBM5Es9Rqe5maY6CU3y71TsxHbT
+WQnttms8lkub7XtHxLW4vV27WV5Wwqe7fmbXGHgSHTvbUpYaA1KpNjtfBiWHgrW7
+itFc2ug5GkZLOGqOGhmaau/+TccKiqR2EKMQT/8EkBKIGHcRF9RlFlSUa069yZJM
+tqcIwlLZOtPfISDs2tmE
+=Wu2l
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Jan_2014_14_14_20_+1100_R8z15SsjuF0NcqTE--
+--Signature=_Fri__17_Jan_2014_14_23_50_+1100_d2.JI/NI5YSQCAmG--
