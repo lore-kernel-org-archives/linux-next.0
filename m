@@ -1,44 +1,69 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Sat, 18 Jan 2014 22:54:31 +0100
-Message-ID: <20140118215431.GO11314@laptop.programming.kicks-ass.net>
-References: <20140116121955.GQ31570@twins.programming.kicks-ass.net>
- <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
- <20140116222536.GX30183@twins.programming.kicks-ass.net>
- <20140117093426.ee8e3d1bb2e95c9f67ec625b@canb.auug.org.au>
- <52D8625C.1000902@zytor.com>
- <20140117144518.231fa4bccb16a8d7edd36662@canb.auug.org.au>
- <1390038366.5676.10.camel@marge.simpson.net>
- <20140118124451.GA30183@twins.programming.kicks-ass.net>
- <1390058494.5439.3.camel@marge.simpson.net>
- <52DAD2B1.2050401@zytor.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the arm-soc tree
+Date: Mon, 20 Jan 2014 10:39:53 +1100
+Message-ID: <20140120103953.329bd64dd540d547956ff46c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__20_Jan_2014_10_39_53_+1100_Jk3Egyvm8+Ez3E0k"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:34578 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751436AbaARVys (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jan 2014 16:54:48 -0500
-Content-Disposition: inline
-In-Reply-To: <52DAD2B1.2050401@zytor.com>
+Received: from ozlabs.org ([203.10.76.45]:57284 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752172AbaASXj7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Jan 2014 18:39:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Mike Galbraith <bitbucket@online.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Sat, Jan 18, 2014 at 11:14:57AM -0800, H. Peter Anvin wrote:
-> >> Could something like this work?
-> >>
-> >> 	local_irq_enable();
-> >> 	mwait_idle_with_hints(0,0);
-> >>
+--Signature=_Mon__20_Jan_2014_10_39_53_+1100_Jk3Egyvm8+Ez3E0k
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This means an interrupt window is open and we can take an interrupt
-> between checking need_resched and the MWAIT, which couldn't happen with
-> __sti_mwait().
-> 
-> Are we sure that is actually safe?
+Hi all,
 
-current_set_polling_and_test() vs resched_task() should be good that
-way, but I've got a terrible head-ache today so don't rely on anything
-much I say.
+After merging the arm-soc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+drivers/pinctrl/pinconf.c: In function 'pinconf_pins_show':
+drivers/pinctrl/pinconf.c:299:28: warning: unused variable 'ops' [-Wunused-=
+variable]
+  const struct pinconf_ops *ops =3D pctldev->desc->confops;
+                            ^
+drivers/pinctrl/pinconf.c: In function 'pinconf_groups_show':
+drivers/pinctrl/pinconf.c:346:28: warning: unused variable 'ops' [-Wunused-=
+variable]
+  const struct pinconf_ops *ops =3D pctldev->desc->confops;
+                            ^
+
+Introduced by commit c420619d5177 ("pinctrl: pinconf: remove checks on
+ops->pin_config_get").
+
+Sorry, that I did not notice this earlier.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__20_Jan_2014_10_39_53_+1100_Jk3Egyvm8+Ez3E0k
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS3GJNAAoJEMDTa8Ir7ZwVe4AP/2oBSWAwuyQfwAj4e7vCh6US
+cFVsHmTEvhwIUd0f4NZHquuRcG5X0mBJyc3NLRwHEgc0SrmVs/ZWi1Exx9ZmhJuN
+7KDR3a5Hdf4xw0s3iS2iPUm3xi6dBcUDlo+AJdGHeKS9I+OFREbYaJ9r+n2GDXHJ
+G8JaoRX0a2Y9paO3n9aSCRgvRcbkZGuq9HJG2l05Ixvos4eo8HuyqYWLnXzkBogm
+GKvlg3xNQFgyLbSzTWbo1XFqNROzb2KEy0noiPOVuCX/kmASI2WOZ7cDUCd5zsI0
+EwJjbg+dh4Ar2p1Pb3d3vVFQ1sGgDTe4zTrpLt3e/ww2+7p8Q2r2So/0zwBCZAQU
+R0o8aLopzpG6tR0QMQhb+6Njbbuafn2/elCILE/Y7Rerw+KHnbxBpodyrw3gJbEh
+TOGdBquKr5iO4t9OGgWFFJ0ROGkl5OlMc7zu2Oi5o5kTPTFTq075BVBPJam6BvDl
+i3PXUmjDJuO6iqtAd+K8iuPQbxNtZj1+mb0WFxbd1F9kue/TFXTX8vdNIh41avKi
+7xt2NPO0LZYDDtX8wmIGJc9vYfVWV+SxvLNnij+FBJK43UKuqr1ExiuVoJwtB3Xe
+DPFK3ANRwKS1iCLXYheF5jqLLvQsd2tgavJTVEnWg7oY2r2jC26Sf0u0rUM7tzX8
+c/M0ky92a4fqu4OL28Lc
+=R4iP
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_Jan_2014_10_39_53_+1100_Jk3Egyvm8+Ez3E0k--
