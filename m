@@ -1,36 +1,126 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Sun, 19 Jan 2014 23:45:43 -0500
-Message-ID: <CAJvTdKnoNh2YAvtXraYxTct+8e6e_8Om9cAZGSTpy8UO=t=W4w@mail.gmail.com>
-References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
-	<20140116121955.GQ31570@twins.programming.kicks-ass.net>
-	<20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the target-updates tree
+Date: Mon, 20 Jan 2014 16:25:24 +1100
+Message-ID: <20140120162524.82964f2972d8933ce05e4df4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:47984 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752367AbaATEpp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 19 Jan 2014 23:45:45 -0500
-In-Reply-To: <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:55841 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750712AbaATFZd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Jan 2014 00:25:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
 
-+static void mwait_idle(void)
-+{
-+       mwait_idle_with_hints(0, 0);
-+}
-+
+--Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The reason the patch above will crash Core2 machines is because
-core2 machines don't support mwait_idle_with_hints().
+Hi Nicholas,
 
-The calling sequence for old and new MWAIT instructions is different.
-The former must be invoked with interrupts enabled,
-and the later can be invoked with interrupts disabled,
-which is a feature that Linux takes advantage of.
+After merging the target-updates tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-thanks,
--Len
+drivers/target/target_core_iblock.c: In function 'iblock_alloc_bip':
+drivers/target/target_core_iblock.c:646:5: error: 'struct bio_integrity_pay=
+load' has no member named 'bip_size'
+  bip->bip_size =3D (cmd->data_length / dev->dev_attrib.block_size) *
+     ^
+drivers/target/target_core_iblock.c:648:5: error: 'struct bio_integrity_pay=
+load' has no member named 'bip_sector'
+  bip->bip_sector =3D bio->bi_sector;
+     ^
+drivers/target/target_core_iblock.c:648:23: error: 'struct bio' has no memb=
+er named 'bi_sector'
+  bip->bip_sector =3D bio->bi_sector;
+                       ^
+In file included from include/linux/printk.h:243:0,
+                 from include/linux/kernel.h:13,
+                 from include/linux/cache.h:4,
+                 from include/linux/time.h:4,
+                 from include/linux/ktime.h:24,
+                 from include/linux/timer.h:5,
+                 from drivers/target/target_core_iblock.c:29:
+drivers/target/target_core_iblock.c:650:52: error: 'struct bio_integrity_pa=
+yload' has no member named 'bip_size'
+  pr_debug("IBLOCK BIP Size: %u Sector: %llu\n", bip->bip_size,
+                                                    ^
+drivers/target/target_core_iblock.c:651:27: error: 'struct bio_integrity_pa=
+yload' has no member named 'bip_sector'
+    (unsigned long long)bip->bip_sector);
+                           ^
+
+Caused by commit ecebbf6ccbca ("target/iblock: Add blk_integrity + BIP
+passthrough support") interacting with commits 4f024f3797c4 ("block:
+Abstract out bvec iterator") and d57a5f7c6605 ("bio-integrity: Convert to
+bvec_iter") from the block tree.
+
+I applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 20 Jan 2014 16:21:31 +1100
+Subject: [PATCH] tagtet/iblock: merge for for bvec_iter changes
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/target/target_core_iblock.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_co=
+re_iblock.c
+index b7c64ef78338..554d4f75a75a 100644
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -643,12 +643,12 @@ iblock_alloc_bip(struct se_cmd *cmd, struct bio *bio)
+ 		return -ENOMEM;
+ 	}
+=20
+-	bip->bip_size =3D (cmd->data_length / dev->dev_attrib.block_size) *
++	bip->bip_iter.bi_size =3D (cmd->data_length / dev->dev_attrib.block_size)=
+ *
+ 			 dev->prot_length;
+-	bip->bip_sector =3D bio->bi_sector;
++	bip->bip_iter.bi_sector =3D bio->bi_iter.bi_sector;
+=20
+-	pr_debug("IBLOCK BIP Size: %u Sector: %llu\n", bip->bip_size,
+-		 (unsigned long long)bip->bip_sector);
++	pr_debug("IBLOCK BIP Size: %u Sector: %llu\n", bip->bip_iter.bi_size,
++		 (unsigned long long)bip->bip_iter.bi_sector);
+=20
+ 	for_each_sg(cmd->t_prot_sg, sg, cmd->t_prot_nents, i) {
+=20
+--=20
+1.8.5.3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS3LNLAAoJEMDTa8Ir7ZwVM6oP/04s2/pcVCjNBHlc8GhalUQi
+tt/uQk0ckFI64LA3wOZeM44xcB48TuUytEATgnj35ZDezkvL8AHrx6TAE+cfsCPU
+duO8q78AvadFd4RItnPM55aPIQf6ev37BEo3jN6Ld/U3iUTejeNUkUYvP6VIJT/t
+AIVzth8jQvdoRLj64zvnqOHmSNqIrCqWxBObGBdMWPo+8Fp8uZTh6y7vahdZHISK
+FJLl6oBObQRYH8+RsyQrpZy18oGTdONkz7g0Nz8xS03SlLt170i3/ruqdMhmpL5W
+tgZWfQw3gudOsqE0ubw0QkiaRpTeHk9VaCdBFj5w6WeJ+JMYwNahH7I5GDgA/KiJ
+XS2Bz20oaFtd97ODw3l+JWpNI82yqFqp+I6D5UYoOv3yAf4AHt0HjlsIdeDbcVak
+2tTA0o1pIt4OR7sqF+cuts3GnDujDDc9RrwSTpEvsd94GIBzJI/G0PuX7K+lCka/
+U/nKb3zJ8tQrR/yfQO/FUpV0pK+nZBFKzbslRL93RW+hFJcjUPBHasBFCfMqZQ+F
+v5qGjSbBRAXoS3MZiXjMekrYVu6KNLPi3sE7wnNTxn1nAjVsg4K8Vkgd+x6/4/Fx
+IU0dpl2N2hJzJmDQIbhSQDDDekObjlaJnHYLc/Ks2gx/Io2tcEt+qZIruX4hDUvn
+SsYDV2JHQ5DbJYZRN3Vz
+=dL9r
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD--
