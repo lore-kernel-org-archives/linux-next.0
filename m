@@ -1,60 +1,33 @@
-From: Ingo Molnar <mingo@kernel.org>
+From: Mike Galbraith <bitbucket@online.de>
 Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Mon, 20 Jan 2014 10:29:31 +0100
-Message-ID: <20140120092931.GA3836@gmail.com>
+Date: Mon, 20 Jan 2014 10:48:30 +0100
+Message-ID: <1390211310.5483.43.camel@marge.simpson.net>
 References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
- <20140116121955.GQ31570@twins.programming.kicks-ass.net>
- <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
- <CAJvTdKnoNh2YAvtXraYxTct+8e6e_8Om9cAZGSTpy8UO=t=W4w@mail.gmail.com>
- <20140120082620.GB30183@twins.programming.kicks-ass.net>
- <52DCE4CF.2060605@zytor.com>
- <20140120091600.GW31570@twins.programming.kicks-ass.net>
- <52DCEAF4.3040902@zytor.com>
+	 <20140116121955.GQ31570@twins.programming.kicks-ass.net>
+	 <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
+	 <20140116222536.GX30183@twins.programming.kicks-ass.net>
+	 <20140117093426.ee8e3d1bb2e95c9f67ec625b@canb.auug.org.au>
+	 <52D8625C.1000902@zytor.com>
+	 <20140117144518.231fa4bccb16a8d7edd36662@canb.auug.org.au>
+	 <1390038366.5676.10.camel@marge.simpson.net>
+	 <20140120145122.a95b3e3a17d20117214098ca@canb.auug.org.au>
+	 <CA+icZUVNdEkE0uR2gn0iY790sKKFzG7Py2mPqqJN+pUNiuYXDw@mail.gmail.com>
+	 <1390209434.5483.26.camel@marge.simpson.net>
+	 <CA+icZUU2WVB+tyQd6_B2YHAgj4a=+v4OxeKVztYWWVLo7nQMQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:39062 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752115AbaATJ3f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Jan 2014 04:29:35 -0500
-Content-Disposition: inline
-In-Reply-To: <52DCEAF4.3040902@zytor.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUU2WVB+tyQd6_B2YHAgj4a=+v4OxeKVztYWWVLo7nQMQg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Len Brown <lenb@kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
+On Mon, 2014-01-20 at 10:25 +0100, Sedat Dilek wrote:
 
-* H. Peter Anvin <hpa@zytor.com> wrote:
+> It's about the handling of fixes for -next.
 
-> On 01/20/2014 01:16 AM, Peter Zijlstra wrote:
-> >>
-> >> The difference is the STI!
-> > 
-> > So do the local_irq_enable(); mwait_idle_with_hints(0,0); thing.
-> > 
-> 
-> No, that doesn't work.  The point of __sti_mwait() is that the STI 
-> is the instruction immediately before the MWAIT, just like the 
-> combination STI;HLT.  Since the execution of STI is always delayed 
-> by one instruction, these two instructions form an atomic unit, 
-> which means interrupts are enabled "after" we have entered MWAIT or 
-> HLT.
-> 
-> > But that's entirely different from saying that core2 doesn't 
-> > support mwait_idle_with_hints because its a different instruction.
-> 
-> If you think of STI;MWAIT as a "compound instruction" it kind of is. 
-> Newer CPUs don't have to play that trick anymore, because there is a 
-> flag to MWAIT which breaks us out of MWAIT on a pending interrupt 
-> without having to actually enable interrupts at the point of the 
-> MWAIT.
+Ah, it was a gripe in query form.  My bad.
 
-As a side note, at minimum the semantic and compatibility difference 
-needs to be _very_ clearly present in the naming. Something like 
-mwait_old_() or mwait_core2_(). That way such dependencies and 
-assumptions don't get lost in code restructuring, etc.
-
-Thanks,
-
-	Ingo
+-Mike
