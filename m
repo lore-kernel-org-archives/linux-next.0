@@ -1,50 +1,63 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Mon, 20 Jan 2014 22:51:51 +0100
-Message-ID: <20140120215151.GN31570@twins.programming.kicks-ass.net>
-References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
- <20140116121955.GQ31570@twins.programming.kicks-ass.net>
- <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
- <CAJvTdKnoNh2YAvtXraYxTct+8e6e_8Om9cAZGSTpy8UO=t=W4w@mail.gmail.com>
- <20140120082620.GB30183@twins.programming.kicks-ass.net>
- <52DCE4CF.2060605@zytor.com>
- <20140120091600.GW31570@twins.programming.kicks-ass.net>
- <52DCEAF4.3040902@zytor.com>
- <20140120092931.GA3836@gmail.com>
- <CAJvTdKmF0Bzo+=VRD=3dZKVZAxAQ=am33fFGR7XH4hYd2=9Mww@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm tree
+Date: Tue, 21 Jan 2014 10:58:54 +1100
+Message-ID: <20140121105854.77cebd3229f919ce6e7976b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:39455 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbaATVwU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Jan 2014 16:52:20 -0500
-Content-Disposition: inline
-In-Reply-To: <CAJvTdKmF0Bzo+=VRD=3dZKVZAxAQ=am33fFGR7XH4hYd2=9Mww@mail.gmail.com>
+Received: from ozlabs.org ([203.10.76.45]:34400 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752878AbaATX7A (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Jan 2014 18:59:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Shawn Guo <shawn.guo@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2014 at 04:39:45PM -0500, Len Brown wrote:
-> > As a side note, at minimum the semantic and compatibility difference
-> > needs to be _very_ clearly present in the naming. Something like
-> > mwait_old_() or mwait_core2_(). That way such dependencies and
-> > assumptions don't get lost in code restructuring, etc.
-> 
-> Agreed.
-> We started with mwait_idle() -- which was erroneously removed
-> and is now being restored under it original name.
-> 
-> The "new" function is mwait_idle_with_hints() -- which uses
-> the additional hints that were not available w/ the original MWAIT instruction.
-> Where "new" is Core Duo and later -- all the processor that can use
-> MWAIT for C-states deeper than C1.
+--Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm still waiting for someone to explain what's wrong with:
+Hi Shawn,
 
-static inline void mwait_idle(void)
-{
-	local_irq_enable();
-	mwait_idle_with_hints(0, 0);
-}
+Today's linux-next merge of the imx-mxs tree got conflicts in
+arch/arm/boot/dts/Makefile, arch/arm/boot/dts/imx6dl-hummingboard.dts,
+arch/arm/boot/dts/imx6qdl-microsom-ar8035.dtsi and
+arch/arm/boot/dts/imx6qdl-microsom.dtsi between commits 728d5599f5d8
+("ARM: imx: initial SolidRun HummingBoard support") and d79c363fd9cd
+("ARM: imx: initial SolidRun Cubox-i support") from the arm tree and a
+series of commits from the imx-mxs tree.
+
+Russell told me that the imx-ims tree changes have not yet been approved
+for v3.13 inclusion and they conflict fairly badly, so for today I have
+dropped the imx-mxs tree.  Let me know what I should do in the future.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS3bhCAAoJEMDTa8Ir7ZwVAgQP/0bovRDpN93VPdMrS1PpZtEy
+6nJvcLE1/AXJVm1YM5CNNBf5JJy/YK4rY2CSSl7YhS3U/14sSqI1HeMX6A99SXhP
+NWksKI2JoV4oCp8QjpOJJnG6b4OQsxWuenpnGWRP6z7rciPKLcs4eWTrE8OYrgYA
+p5GtUSg+eXHp0K+IJkLxXpsOLgNf2uCA+Y8P/UqQu4SCZtY60CsKZlpMryaxxHPV
+V/0Ai9xbStZLVNZUpdHT5cBfJKOqvrPTtho2pwWDAbskRZAbqGDkh6KNJeF8xFU2
+VJXkTAMf3Xh8w1EN4tfA3VtduyUk/jd1s63hFZ5MaXT8rVg83gUFvxA25AGBP5kY
+Ms+qX2zQdha6uIeKzwPIFf41SttMEjP+jZ3hXJ95cRC103jv0jcO68eE13YQfasa
+JlKBZjX+jwqv924vza/2wWC6dUf33T2luotH9hMi7r/Qr5h4N2C0IFTmCd7nGnUz
+9xK69ZW1G07s955Ge0JAsVV7CIt+4SPmm1AA+UL+GtlZHUkLMyGvOwbU7FZ2DYB0
+WaH6OQJYeykhW1akRKqPdO2lJpMjCjwfTxIQ80zqfTdmbzEKJXpPAQLIgWeoMTli
+rUsRjI+u8WN2fbmy94DHmhvJOUR2X5sh5SBg4vpImw9z+Y8b6De8U00PhIC1yjCj
+bzp+bO+G6cymp1W4otsG
+=ocPu
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC--
