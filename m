@@ -1,54 +1,69 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Sun, 19 Jan 2014 17:07:04 -0800
-Message-ID: <52DC76B8.7050808@zytor.com>
-References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au> <CAJvTdKmdopjSopfHrZRKXJBKqjizrFHich+dQCd6Fq7C3bOogw@mail.gmail.com>
+Date: Mon, 20 Jan 2014 14:51:22 +1100
+Message-ID: <20140120145122.a95b3e3a17d20117214098ca@canb.auug.org.au>
+References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
+	<20140116121955.GQ31570@twins.programming.kicks-ass.net>
+	<20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
+	<20140116222536.GX30183@twins.programming.kicks-ass.net>
+	<20140117093426.ee8e3d1bb2e95c9f67ec625b@canb.auug.org.au>
+	<52D8625C.1000902@zytor.com>
+	<20140117144518.231fa4bccb16a8d7edd36662@canb.auug.org.au>
+	<1390038366.5676.10.camel@marge.simpson.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__20_Jan_2014_14_51_22_+1100_5CvgZpkNG=6+aFBy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:37778 "EHLO mail.zytor.com"
+Received: from ozlabs.org ([203.10.76.45]:47019 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752166AbaATBIZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 19 Jan 2014 20:08:25 -0500
-In-Reply-To: <CAJvTdKmdopjSopfHrZRKXJBKqjizrFHich+dQCd6Fq7C3bOogw@mail.gmail.com>
+	id S1752166AbaATDvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Jan 2014 22:51:32 -0500
+In-Reply-To: <1390038366.5676.10.camel@marge.simpson.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mike Galbraith <bitbucket@online.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01/19/2014 05:00 PM, Len Brown wrote:
-> On Wed, Jan 15, 2014 at 10:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
->> failed like this:
->>
->> arch/x86/kernel/process.c: In function 'mwait_idle':
->> /scratch/sfr/next/arch/x86/kernel/process.c:434:3: error: implicit declaration of function '__monitor' [-Werror=implicit-function-declaration]
->>    __monitor((void *)&current_thread_info()->flags, 0, 0);
->>    ^
->> arch/x86/kernel/process.c:437:4: error: implicit declaration of function '__sti_mwait' [-Werror=implicit-function-declaration]
->>     __sti_mwait(0, 0);
->>     ^
->>
->> Caused by commit 16824255394f ("x86, acpi, idle: Restructure the mwait
->> idle routines") interacting with commit 7760518cce95 ("x86 idle: restore
->> mwait_idle()") from the idle tree.
->>
->> I am not sure how to fix this so I just reverted the idle tree commit for
->> now (since it reverted cleanly). Please let me know if there is a better
->> solution.
-> 
-> IMO, a regression fix (restore mwait_idle()) is more important than a clean up
-> (restructure mwait routines), and the clean-up should take a back seat;
-> in -tip, in -next, upstream, and in -stable.
-> 
-> Also, I'm wondering if that clean-up went too far -- as not all users of mwait
-> are necessarily under the same conditions...
-> 
+--Signature=_Mon__20_Jan_2014_14_51_22_+1100_5CvgZpkNG=6+aFBy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sounds like a NAK to me, in which case that bit should probably be
-deferred and reintroduced after fixing via the idle tree?
+On Sat, 18 Jan 2014 10:46:06 +0100 Mike Galbraith <bitbucket@online.de> wro=
+te:
+>
+> I hope it doesn't look quite like that, next-20140117 is -ENOBOOT on
+> Q6600 box.  See below for an alternative.
+>=20
+> idle: kill unnecessary mwait_idle() resched IPIs
 
-	-hpa
+OK, so despite even further discussion, I have applied this as a merge
+fix patch for today.  Let me know when it is all sorted out.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__20_Jan_2014_14_51_22_+1100_5CvgZpkNG=6+aFBy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS3J1CAAoJEMDTa8Ir7ZwV3NwP/0SHXUcoYXWAqfIEYKfUSPck
+rQjRXuJlXK+FJgE1HPcEq6yOsZ0PKC6kdmWi9ZkBGdUud1THWQxebkW6r3QMGMBq
+jAbeCDMXH6l8kSDobu3u0Yekckm1yg5qQDTSuXM1xSo2AcG4yo3PXB3/NtiQCCj0
+urMFp5UADlLPkUIrS1X4EClNuGTwStkibMEfw5/2VsCiTJWBMxNRzvM0CqHdeMI9
+L0qWo/kYPGiZvGOaq4ol+TImEDFJsdcri3YWYflHjHzE/PTUg2Kt8j71kqr0Zg6F
+7uiJlCmcmGLpxt/puU8LVBSAwziqSqQL5WAWuLCU+vsDH/mH7Ynm8xe0/2fsY/8c
+Re4YN6MLFFcghBTyORwUkAoyin6QGEkrPO6eBtqW+89t/luE2r2yCaYmZSiXNvKe
+dFjFCBRZKmFDj1o3+iyF4zIWLXStcALqxbYLHO9CtytvBg6SpOhOx2exbf81ZQ1m
+4hNhxe9dMjhT851KXGuFd/O11+ph0AkhTC7zdlCA3BCiWlbF/atfw0spkh7Q5KCN
+oiCXrtnNsFIP3JkldAVejd5+jJVkAHhZQgDIeA1ELKSVOgiHO1+nNUMB1rV8ddUU
+szuTPP7J3yw15mpJ8j9BYCzDo60n4PvJSOgBJUvOzPG7gZ3wxAgbWPyr3wy1RfPL
+O6SNRjaxV4VN8aSOiXYC
+=hzEF
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_Jan_2014_14_51_22_+1100_5CvgZpkNG=6+aFBy--
