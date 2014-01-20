@@ -1,71 +1,37 @@
 From: Peter Zijlstra <peterz@infradead.org>
 Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Mon, 20 Jan 2014 10:55:32 +0100
-Message-ID: <20140120095532.GX31570@twins.programming.kicks-ass.net>
+Date: Mon, 20 Jan 2014 11:13:45 +0100
+Message-ID: <20140120101345.GC3694@twins.programming.kicks-ass.net>
 References: <20140116145829.5e4fcab103b1c5c77501ee77@canb.auug.org.au>
- <20140116121955.GQ31570@twins.programming.kicks-ass.net>
- <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
- <CAJvTdKnoNh2YAvtXraYxTct+8e6e_8Om9cAZGSTpy8UO=t=W4w@mail.gmail.com>
- <20140120082620.GB30183@twins.programming.kicks-ass.net>
- <52DCE4CF.2060605@zytor.com>
- <20140120091600.GW31570@twins.programming.kicks-ass.net>
- <52DCEAF4.3040902@zytor.com>
+ <CAJvTdKmdopjSopfHrZRKXJBKqjizrFHich+dQCd6Fq7C3bOogw@mail.gmail.com>
+ <20140120083021.GC30183@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:52093 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752731AbaATJz7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Jan 2014 04:55:59 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <52DCEAF4.3040902@zytor.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20140120083021.GC30183@twins.programming.kicks-ass.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 20, 2014 at 01:23:00AM -0800, H. Peter Anvin wrote:
-> On 01/20/2014 01:16 AM, Peter Zijlstra wrote:
-> >>
-> >> The difference is the STI!
-> > 
-> > So do the local_irq_enable(); mwait_idle_with_hints(0,0); thing.
-> > 
-> 
-> No, that doesn't work.  The point of __sti_mwait() is that the STI is
-> the instruction immediately before the MWAIT, just like the combination
-> STI;HLT.  Since the execution of STI is always delayed by one
-> instruction, these two instructions form an atomic unit, which means
-> interrupts are enabled "after" we have entered MWAIT or HLT.
-> 
-> > But that's entirely different from saying that core2 doesn't support
-> > mwait_idle_with_hints because its a different instruction.
-> 
-> If you think of STI;MWAIT as a "compound instruction" it kind of is.
-> Newer CPUs don't have to play that trick anymore, because there is a
-> flag to MWAIT which breaks us out of MWAIT on a pending interrupt
-> without having to actually enable interrupts at the point of the MWAIT.
+On Mon, Jan 20, 2014 at 09:30:21AM +0100, Peter Zijlstra wrote:
+> Then make them so. The fact was that most of the mwait idle sites
+> were bloody broken. And the single mwait_idle_with_hints() function
+> presents a single nice function that does all the required magics.
 
-Ok, so I still don't get the problem of enabling interrupts early.
+To stress this a bit more; have a look see at mwwait_idle_with_hints();
+it does a whole lot of subtle magic.
 
-If we enable them early we can get interrupts; which afaict fall into
-two groups, those that do and do not set NEED_RESCHED.
+ - current_{set,clr}_polling*(), these are crucial in not missing and
+   wrecking NEED_RESCHED state.
 
-For those that do not set NEED_RESCHED, we'd have woken from MWAIT/HLT
-and looped right back into it, so receiving those early -- before
-actually calling MWAIT/HLT seems like a NO-OP.
+ - X86_FEATURE_CLFLUSH_MONTIOR quirk
 
-For those setting NEED_RESCHED, we test NEED_RESCHED in all the right
-places.
+ - Does the monitor(); if (!need_resched()) mwait() thing.
 
- - current_set_polling_and_test(), we test need_resched after telling
-   remote CPUs they don't need to send interrupts because we're polling
-   for it -- the remote cpus set NEED_RESCHED before testing if we're
-   polling for it.
+All of those are required for a correct and functional idle loop. And
+I've seen sites where any or all of the above were missing/broken.
 
- - we test NEED_RESCHED after setting up the monitor and before calling
-   MWAIT. Therefore, if an interrupt would happen right before we call
-   MWAIT, the monitor is already set and the MWAIT does an immediate
-   exit.
-
-AFAICT we simply cannot get stuck and miss a NEED_RESCHED this way.
+Not unifying the lot into a simple usable function is just stupid --
+history has shown people simply cannot be trusted to get this right.
