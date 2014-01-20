@@ -1,126 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the target-updates tree
-Date: Mon, 20 Jan 2014 16:25:24 +1100
-Message-ID: <20140120162524.82964f2972d8933ce05e4df4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Mon, 20 Jan 2014 16:42:22 +1100
+Message-ID: <20140120164222.e56f0c9abfbe4f3dcf726d4c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD"
+ boundary="Signature=_Mon__20_Jan_2014_16_42_22_+1100_IpKbluxJ6grWWHRs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55841 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:35943 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750712AbaATFZd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Jan 2014 00:25:33 -0500
+	id S1750711AbaATFmb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Jan 2014 00:42:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kmo@daterainc.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars Poeschel <poeschel@lemonage.de>
 
---Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD
+--Signature=_Mon__20_Jan_2014_16_42_22_+1100_IpKbluxJ6grWWHRs
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicholas,
+Hi Linus,
 
-After merging the target-updates tree, today's linux-next build (x86_64
+After merging the gpio tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/target/target_core_iblock.c: In function 'iblock_alloc_bip':
-drivers/target/target_core_iblock.c:646:5: error: 'struct bio_integrity_pay=
-load' has no member named 'bip_size'
-  bip->bip_size =3D (cmd->data_length / dev->dev_attrib.block_size) *
-     ^
-drivers/target/target_core_iblock.c:648:5: error: 'struct bio_integrity_pay=
-load' has no member named 'bip_sector'
-  bip->bip_sector =3D bio->bi_sector;
-     ^
-drivers/target/target_core_iblock.c:648:23: error: 'struct bio' has no memb=
-er named 'bi_sector'
-  bip->bip_sector =3D bio->bi_sector;
-                       ^
-In file included from include/linux/printk.h:243:0,
-                 from include/linux/kernel.h:13,
-                 from include/linux/cache.h:4,
-                 from include/linux/time.h:4,
-                 from include/linux/ktime.h:24,
-                 from include/linux/timer.h:5,
-                 from drivers/target/target_core_iblock.c:29:
-drivers/target/target_core_iblock.c:650:52: error: 'struct bio_integrity_pa=
-yload' has no member named 'bip_size'
-  pr_debug("IBLOCK BIP Size: %u Sector: %llu\n", bip->bip_size,
-                                                    ^
-drivers/target/target_core_iblock.c:651:27: error: 'struct bio_integrity_pa=
-yload' has no member named 'bip_sector'
-    (unsigned long long)bip->bip_sector);
-                           ^
+drivers/gpio/gpio-mcp23s08.c: In function 'mcp23s08_irq_setup':
+drivers/gpio/gpio-mcp23s08.c:482:46: error: 'struct gpio_chip' has no membe=
+r named 'of_node'
+  mcp->irq_domain =3D irq_domain_add_linear(chip->of_node, chip->ngpio,
+                                              ^
+drivers/gpio/gpio-mcp23s08.c: In function 'mcp23s08_probe_one':
+drivers/gpio/gpio-mcp23s08.c:651:55: error: 'struct gpio_chip' has no membe=
+r named 'of_node'
+  mcp->irq_controller =3D of_property_read_bool(mcp->chip.of_node,
+                                                       ^
+drivers/gpio/gpio-mcp23s08.c:654:43: error: 'struct gpio_chip' has no membe=
+r named 'of_node'
+   mirror =3D of_property_read_bool(mcp->chip.of_node,
+                                           ^
 
-Caused by commit ecebbf6ccbca ("target/iblock: Add blk_integrity + BIP
-passthrough support") interacting with commits 4f024f3797c4 ("block:
-Abstract out bvec iterator") and d57a5f7c6605 ("bio-integrity: Convert to
-bvec_iter") from the block tree.
+Caused by commit 4e47f91bf741 ("gpio: mcp23s08: Add irq functionality for
+i2c chips").  The presence of of_node depends on CONFIG_OF_GPIO.
 
-I applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 20 Jan 2014 16:21:31 +1100
-Subject: [PATCH] tagtet/iblock: merge for for bvec_iter changes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/target/target_core_iblock.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_co=
-re_iblock.c
-index b7c64ef78338..554d4f75a75a 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -643,12 +643,12 @@ iblock_alloc_bip(struct se_cmd *cmd, struct bio *bio)
- 		return -ENOMEM;
- 	}
-=20
--	bip->bip_size =3D (cmd->data_length / dev->dev_attrib.block_size) *
-+	bip->bip_iter.bi_size =3D (cmd->data_length / dev->dev_attrib.block_size)=
- *
- 			 dev->prot_length;
--	bip->bip_sector =3D bio->bi_sector;
-+	bip->bip_iter.bi_sector =3D bio->bi_iter.bi_sector;
-=20
--	pr_debug("IBLOCK BIP Size: %u Sector: %llu\n", bip->bip_size,
--		 (unsigned long long)bip->bip_sector);
-+	pr_debug("IBLOCK BIP Size: %u Sector: %llu\n", bip->bip_iter.bi_size,
-+		 (unsigned long long)bip->bip_iter.bi_sector);
-=20
- 	for_each_sg(cmd->t_prot_sg, sg, cmd->t_prot_nents, i) {
-=20
---=20
-1.8.5.3
-
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD
+--Signature=_Mon__20_Jan_2014_16_42_22_+1100_IpKbluxJ6grWWHRs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS3LNLAAoJEMDTa8Ir7ZwVM6oP/04s2/pcVCjNBHlc8GhalUQi
-tt/uQk0ckFI64LA3wOZeM44xcB48TuUytEATgnj35ZDezkvL8AHrx6TAE+cfsCPU
-duO8q78AvadFd4RItnPM55aPIQf6ev37BEo3jN6Ld/U3iUTejeNUkUYvP6VIJT/t
-AIVzth8jQvdoRLj64zvnqOHmSNqIrCqWxBObGBdMWPo+8Fp8uZTh6y7vahdZHISK
-FJLl6oBObQRYH8+RsyQrpZy18oGTdONkz7g0Nz8xS03SlLt170i3/ruqdMhmpL5W
-tgZWfQw3gudOsqE0ubw0QkiaRpTeHk9VaCdBFj5w6WeJ+JMYwNahH7I5GDgA/KiJ
-XS2Bz20oaFtd97ODw3l+JWpNI82yqFqp+I6D5UYoOv3yAf4AHt0HjlsIdeDbcVak
-2tTA0o1pIt4OR7sqF+cuts3GnDujDDc9RrwSTpEvsd94GIBzJI/G0PuX7K+lCka/
-U/nKb3zJ8tQrR/yfQO/FUpV0pK+nZBFKzbslRL93RW+hFJcjUPBHasBFCfMqZQ+F
-v5qGjSbBRAXoS3MZiXjMekrYVu6KNLPi3sE7wnNTxn1nAjVsg4K8Vkgd+x6/4/Fx
-IU0dpl2N2hJzJmDQIbhSQDDDekObjlaJnHYLc/Ks2gx/Io2tcEt+qZIruX4hDUvn
-SsYDV2JHQ5DbJYZRN3Vz
-=dL9r
+iQIcBAEBCAAGBQJS3LdEAAoJEMDTa8Ir7ZwV8CoQAIbyMw3s2cyDuE3c3F+RD/vX
+Fl8NTXlrIvJE1nOOCsl7fox5ftFEkbHEZIbXk3OucrFaYsl7FkusLnBBwffHTmFl
+5UgBBZbJwWv684GExO0lF2wM6oh/gj304d4pQEtlzmSyV9PdW08a7mytcNHTYaL5
+rcMg5sqj3K6bM7HrOJXmX9MJQxtN+n1rBNN+jd0GV5x90U/nyH7zGAGK3+0hkMKe
+vBzZaqE5vBjLcGrICJCEFNGlBbvvTTqAn98I4+VYX4DUExNPmToffZKZEDJZQznr
+eANM69IJ1FuJu1HR7/q0hKgyN2FqbbK8y5NvvVKKewMJcByx9Qhg9Rt3jgERbDVn
+zUFmr1yT+IIsdtWQTkuwcPEoy3RiDHt8+2Wqa15S4d6ytCs+JzVT4djqfHqrLJCI
+cvvkrQBXPxNGFFrA6j4PjtMx0POqMoI8XfKTrCKOATVKIWmfjqOEgANFbveHUTm3
+lbUgGkGdqXle9RifCrPdHcn9OrR7wjNy+xfX2+r0+pKdVITd+JOjNv1rXAwNrGo9
+6ZbHVYmOqA/ee0jqe/j57GwVbLgcPot/MBtYMO03YnEkgOXhZkvjvPyZPiT+9y94
+St/tSCXe74OatQiVUYA3GNBG43ddCgRVvPIxCAg72Cd4MoaQwUFDgxsgcHl/6tUJ
++POTNBWqMvd3o/QVjz7D
+=yIXe
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__20_Jan_2014_16_25_24_+1100_rUdNPtcK682yRAiD--
+--Signature=_Mon__20_Jan_2014_16_42_22_+1100_IpKbluxJ6grWWHRs--
