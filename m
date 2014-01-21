@@ -1,63 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the arm tree
-Date: Tue, 21 Jan 2014 10:58:54 +1100
-Message-ID: <20140121105854.77cebd3229f919ce6e7976b2@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the  tree
+Date: Tue, 21 Jan 2014 13:43:26 +1100
+Message-ID: <20140121134326.5b0d0d08c8b718e6fa635be6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC"
+ boundary="Signature=_Tue__21_Jan_2014_13_43_26_+1100_Q85K2_XDFeuyGZP9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:34400 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:43953 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752878AbaATX7A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Jan 2014 18:59:00 -0500
+	id S1752329AbaAUCnd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Jan 2014 21:43:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC
+--Signature=_Tue__21_Jan_2014_13_43_26_+1100_Q85K2_XDFeuyGZP9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shawn,
+Hi all,
 
-Today's linux-next merge of the imx-mxs tree got conflicts in
-arch/arm/boot/dts/Makefile, arch/arm/boot/dts/imx6dl-hummingboard.dts,
-arch/arm/boot/dts/imx6qdl-microsom-ar8035.dtsi and
-arch/arm/boot/dts/imx6qdl-microsom.dtsi between commits 728d5599f5d8
-("ARM: imx: initial SolidRun HummingBoard support") and d79c363fd9cd
-("ARM: imx: initial SolidRun Cubox-i support") from the arm tree and a
-series of commits from the imx-mxs tree.
+Today's linux-next merge of the sound-asoc tree got a conflict in
+sound/soc/soc-compress.c between commit 2a99ef0fdb35 ("ASoC: compress:
+Add suport for DPCM into compressed audio") from the sound tree and
+commit 76063d340520 ("ASoC: compress: Add suport for DPCM into compressed
+audio") from the sound-asoc tree.
 
-Russell told me that the imx-ims tree changes have not yet been approved
-for v3.13 inclusion and they conflict fairly badly, so for today I have
-dropped the imx-mxs tree.  Let me know what I should do in the future.
+The sound tree version had a later Author date, so I just used that
+version - let me know if something else should be done.  Otherwise, the
+sound-asoc tree needs to be cleaned up as this is the only change left in
+it (relative to the sound tree).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC
+--Signature=_Tue__21_Jan_2014_13_43_26_+1100_Q85K2_XDFeuyGZP9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS3bhCAAoJEMDTa8Ir7ZwVAgQP/0bovRDpN93VPdMrS1PpZtEy
-6nJvcLE1/AXJVm1YM5CNNBf5JJy/YK4rY2CSSl7YhS3U/14sSqI1HeMX6A99SXhP
-NWksKI2JoV4oCp8QjpOJJnG6b4OQsxWuenpnGWRP6z7rciPKLcs4eWTrE8OYrgYA
-p5GtUSg+eXHp0K+IJkLxXpsOLgNf2uCA+Y8P/UqQu4SCZtY60CsKZlpMryaxxHPV
-V/0Ai9xbStZLVNZUpdHT5cBfJKOqvrPTtho2pwWDAbskRZAbqGDkh6KNJeF8xFU2
-VJXkTAMf3Xh8w1EN4tfA3VtduyUk/jd1s63hFZ5MaXT8rVg83gUFvxA25AGBP5kY
-Ms+qX2zQdha6uIeKzwPIFf41SttMEjP+jZ3hXJ95cRC103jv0jcO68eE13YQfasa
-JlKBZjX+jwqv924vza/2wWC6dUf33T2luotH9hMi7r/Qr5h4N2C0IFTmCd7nGnUz
-9xK69ZW1G07s955Ge0JAsVV7CIt+4SPmm1AA+UL+GtlZHUkLMyGvOwbU7FZ2DYB0
-WaH6OQJYeykhW1akRKqPdO2lJpMjCjwfTxIQ80zqfTdmbzEKJXpPAQLIgWeoMTli
-rUsRjI+u8WN2fbmy94DHmhvJOUR2X5sh5SBg4vpImw9z+Y8b6De8U00PhIC1yjCj
-bzp+bO+G6cymp1W4otsG
-=ocPu
+iQIcBAEBCAAGBQJS3d7SAAoJEMDTa8Ir7ZwV880QAI7ka0Oaina1DmZROk2i6f/J
+yYlU4kxl4CSAfeeClnO+0ou6L+T6ZgUNuenoSd7oNu0BP5VGsdShaNCY0g5BoirO
+FdQtMYpOWXp1lorQqHmjlfdRSJSqLvGJKbNAsJ8uN16JEUbygYplJ6rXNxMf7Ok7
+azYf+xdjwquMJZ5m3IF+/Y5+b0CycSmQE8HllGBwzlCgKFwCe5gb8BF1Z1ImsDX/
+7T85Mo5EEkyecnxMiKEDrC0V0/+o8/vAV1RH7AIhbBo6QM2O3lWBHM1Ew1CjPDMC
+/+tnfa+Cz97jADXfC3C60OUY4jTbVtIy+mq1QoXQXEboGRtmnkqc27WGwG4Matv9
+BmnP+Ns5AcqKysrFwRFHTXhhfPga+IvFqvCHsHYr/74snFpWucBWkGS2n0vbdX8C
+aV6+C3Ck6oUYPHd6aLeV49+D4+kgcF7eOalTOfr1AyTkVJcO+rJSP+N9m7n67cTe
+Os1bz8M4crnu+CG/+GiA5D2E8+9L4kNa58MNZu3+ruC4SyrkiEcRrJvCWsEYnzYT
+87p+ZGUEVNYODmojQ3izKO0z8VcsBuhr4EAh7sXp5f1Z89rEfMUU+sszDcAhlUsM
+NFiw4kKkkPf+/yA3ZYOtlpdWg5hCh7ydAdZFHDjWccgywkAfkhYw5cBLAq84kQIP
+jS7woVvwIupA5bW0EPbE
+=tEZO
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__21_Jan_2014_10_58_54_+1100_wbZdp4yluXM4kKVC--
+--Signature=_Tue__21_Jan_2014_13_43_26_+1100_Q85K2_XDFeuyGZP9--
