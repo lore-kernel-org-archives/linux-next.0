@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the drm-intel tree with the drm tree
-Date: Wed, 22 Jan 2014 14:04:02 +1100
-Message-ID: <20140122140402.20163da276690810a1040909@canb.auug.org.au>
+Date: Wed, 22 Jan 2014 14:09:08 +1100
+Message-ID: <20140122140908.c57e7336c70156e30eda2a18@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__22_Jan_2014_14_04_02_+1100_OYX7Ji.UJk6bH6kV"
+ boundary="Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:50564 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:51236 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755069AbaAVDEM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jan 2014 22:04:12 -0500
+	id S1752698AbaAVDJO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Jan 2014 22:09:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>
 
---Signature=_Wed__22_Jan_2014_14_04_02_+1100_OYX7Ji.UJk6bH6kV
+--Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,81 +24,58 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/i915_irq.c between commit abca9e454498 ("drm: Pass
-'flags' from the caller to .get_scanout_position()") from the drm tree
-and commit d59a63ad8234 ("drm/i915: Add intel_get_crtc_scanline()") from
-the drm-intel tree.
+drivers/gpu/drm/i915/intel_display.c between commit c326c0a9c98c
+("drm/i915: Call drm_calc_timestamping_constants() earlier") from the drm
+tree and commit bbee18af2a25 ("drm/i915: Prepare to track new pipe config
+per pipe") from the drm-intel tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/i915_irq.c
-index 17d8fcb1b6f7,ffb56a9db9cc..000000000000
---- a/drivers/gpu/drm/i915/i915_irq.c
-+++ b/drivers/gpu/drm/i915/i915_irq.c
-@@@ -649,8 -675,9 +649,9 @@@ static bool ilk_pipe_in_vblank_locked(s
-  }
+diff --cc drivers/gpu/drm/i915/intel_display.c
+index 14b024becb91,e1d3ae1212a7..000000000000
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@@ -9660,14 -9705,7 +9703,15 @@@ static int __intel_set_mode(struct drm_
+  		/* mode_set/enable/disable functions rely on a correct pipe
+  		 * config. */
+  		to_intel_crtc(crtc)->config =3D *pipe_config;
++ 		to_intel_crtc(crtc)->new_config =3D &to_intel_crtc(crtc)->config;
+ +
+ +		/*
+ +		 * Calculate and store various constants which
+ +		 * are later needed by vblank and swap-completion
+ +		 * timestamping. They are derived from true hwmode.
+ +		 */
+ +		drm_calc_timestamping_constants(crtc,
+ +						&pipe_config->adjusted_mode);
+  	}
  =20
-  static int i915_get_crtc_scanoutpos(struct drm_device *dev, int pipe,
- -				    int *vpos, int *hpos,
- +				    unsigned int flags, int *vpos, int *hpos,
-- 				    ktime_t *stime, ktime_t *etime)
-+ 				    ktime_t *stime, ktime_t *etime,
-+ 				    bool adjust)
-  {
-  	struct drm_i915_private *dev_priv =3D dev->dev_private;
-  	struct drm_crtc *crtc =3D dev_priv->pipe_to_crtc_mapping[pipe];
-@@@ -788,6 -786,24 +791,24 @@@
-  	return ret;
-  }
- =20
-+ static int i915_get_scanout_position(struct drm_device *dev, int pipe,
-+ 				     int *vpos, int *hpos,
-+ 				     ktime_t *stime, ktime_t *etime)
-+ {
- -	return i915_get_crtc_scanoutpos(dev, pipe, vpos, hpos,
-++	return i915_get_crtc_scanoutpos(dev, pipe, 0, vpos, hpos,
-+ 					stime, etime, true);
-+ }
-+=20
-+ int intel_get_crtc_scanline(struct drm_crtc *crtc)
-+ {
-+ 	int vpos =3D 0, hpos =3D 0;
-+=20
- -	i915_get_crtc_scanoutpos(crtc->dev, to_intel_crtc(crtc)->pipe,
-++	i915_get_crtc_scanoutpos(crtc->dev, to_intel_crtc(crtc)->pipe, 0,
-+ 				 &vpos, &hpos, NULL, NULL, false);
-+=20
-+ 	return vpos;
-+ }
-+=20
-  static int i915_get_vblank_timestamp(struct drm_device *dev, int pipe,
-  			      int *max_error,
-  			      struct timeval *vblank_time,
+  	/* Only after disabling all output pipelines that will be changed can we
 
---Signature=_Wed__22_Jan_2014_14_04_02_+1100_OYX7Ji.UJk6bH6kV
+--Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS3zUmAAoJEMDTa8Ir7ZwVoBoP/02lVouuO92LU+J3tB+NZRwi
-XUnxxgQAn5Jpm8G83xmOJKlgo3uA9GhZwwshuQHNZYP3WuK/XZBcviy+IJOGlfLz
-c1GYh4UCihpNvcYkGgBOWM+wFP+l8eyaokHMsHxGQTXfPYKj20ZHW0haqdsTGguX
-aGLHZlOPa2BlHaUbLEEHh/gwTnS6YitXC+0IK9zKYEl0/WZ2gk6kf1DNXJsT0Ghz
-YjHibgIItTKJncRwkd1kIq9V33pOODqqU+9XZZfMZdgBiOXLXdVCab6DVGXJx+3L
-rb5z1H1VnZGsHkBss4ZlBu3z+6KbCWGYfoMIPL1yrAK5CXe++oyeiaRPSp734eF7
-bKglA3K59ua6aI4K+iUgYRULZMJnX1ewSynBWLD5JdddNx/ipShDjnMgnP6uIXZe
-5CivbdTWxrn8qLjlaeRlveRQpvYFne0QKdx/kjlynoG1k6ZHlkmQ9NwEmsVq8INH
-Lf1s5njSyJ2FONDLUkqf+5mS5OXkiHMYvt12Zx2kg7tiXhzB2yHXCOmASpFqWYdC
-Nja2O9gD8MB4ZbmTIYguJKqqDP9PqLa9uILOkEQeGdT2Nzov6r3MYF0aK0fvD8zj
-MoYLrBs1N/KZ+ZqcoYAS3/4HS/0O3jZOzm7nosORbL266iU3papVtVvsDRtL0ToR
-BRH/BxCSVTSYZhFujMSx
-=D0cz
+iQIcBAEBCAAGBQJS3zZYAAoJEMDTa8Ir7ZwVRSoP/R0gK1HqFim6I3tSfaNMgbXa
+IPKQkMDCPx6Fm+rhrcZJXKjIjBUk1p0VE3laDemUQANJAoxWD4uAvibeCuslw2rC
+l+hTRWxnkoB5xfVsAdHKu3YVi5e4Y1txTCr7D1f8JVHZ1cuN/Rt/wgdY7ehamt02
+6NmiPJMOHXkL5zSxlRw+bSgoK+ew3MJ14icYjUsu7d+2TNOSMOaOT5++B2x+1I1W
+SO8S8rS9ghrhb6s5Hak69XfRsUwubOrpAUIa7QAMfHP6c2dhVxly5vZfXei65sqM
+SUPnNJ7lNfc4aMVcsc7G50gfmRFQgPIZwb1WAJlKIILfCiedmz6FKe4Wy2Q3D3dA
++ViMMI4Kh5SoAXTPp7HQzTGzY3siAGKwiFYcgVCQY/pnzIopXhftiErvjOqVnAq+
+huWkALLKzDcjGn1g9HW2Z0sTC0avM6/EPAqqHqAAIrLrAaNch64X74Yygpd6YDaT
+jqOQJv20+ky17L90L03XcQ42pZgGqX6mLO7iPtKnkbH59BgOQEfbEcs2S1AcKO3h
+Fbiiwej77huNjd04QiiR2xPl1DTWv1CBnpct2BcLJBowI9dQ1fHbURtrm7erdZVw
+tgXB9WlbuKk4a/Q/G+HxWgZwsUyziATzOFaFth1TYGT7FEnD0DgYqSVe955pz4cz
+x4yee5ODdO1x8bysFknS
+=+D0N
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__22_Jan_2014_14_04_02_+1100_OYX7Ji.UJk6bH6kV--
+--Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K--
