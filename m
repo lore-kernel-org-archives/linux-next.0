@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the drm tree
-Date: Wed, 22 Jan 2014 14:09:08 +1100
-Message-ID: <20140122140908.c57e7336c70156e30eda2a18@canb.auug.org.au>
+Subject: linux-next: manual merge of the drivers-x86 tree with the pm tree
+Date: Wed, 22 Jan 2014 16:42:54 +1100
+Message-ID: <20140122164254.6880efb8506ed4636768d935@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K"
+ boundary="Signature=_Wed__22_Jan_2014_16_42_54_+1100_5fOYg=WRj_5TDjTc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:51236 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:45394 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752698AbaAVDJO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jan 2014 22:09:14 -0500
+	id S1750819AbaAVFm7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Jan 2014 00:42:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlZpbGxlIFN5cmrDpGzDpCI=?= <ville.syrjala@linux.intel.com>
+To: Matthew Garrett <mjg59@srcf.ucam.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rashika Kheria <rashika.kheria@gmail.com>, Lv Zheng <lv.zheng@intel.com>
 
---Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K
+--Signature=_Wed__22_Jan_2014_16_42_54_+1100_5fOYg=WRj_5TDjTc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Matthew,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_display.c between commit c326c0a9c98c
-("drm/i915: Call drm_calc_timestamping_constants() earlier") from the drm
-tree and commit bbee18af2a25 ("drm/i915: Prepare to track new pipe config
-per pipe") from the drm-intel tree.
+Today's linux-next merge of the drivers-x86 tree got a conflict in
+drivers/platform/x86/mxm-wmi.c between commit 8b48463f8942 ("ACPI: Clean
+up inclusions of ACPI header files") from the pm tree and commit
+475879d65123 ("drivers: platform: Include appropriate header file in
+mxm-wmi.c") from the drivers-x86 tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,46 +36,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_display.c
-index 14b024becb91,e1d3ae1212a7..000000000000
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@@ -9660,14 -9705,7 +9703,15 @@@ static int __intel_set_mode(struct drm_
-  		/* mode_set/enable/disable functions rely on a correct pipe
-  		 * config. */
-  		to_intel_crtc(crtc)->config =3D *pipe_config;
-+ 		to_intel_crtc(crtc)->new_config =3D &to_intel_crtc(crtc)->config;
- +
- +		/*
- +		 * Calculate and store various constants which
- +		 * are later needed by vblank and swap-completion
- +		 * timestamping. They are derived from true hwmode.
- +		 */
- +		drm_calc_timestamping_constants(crtc,
- +						&pipe_config->adjusted_mode);
-  	}
+diff --cc drivers/platform/x86/mxm-wmi.c
+index 3c59c0a3ee0f,7503d2b9b073..000000000000
+--- a/drivers/platform/x86/mxm-wmi.c
++++ b/drivers/platform/x86/mxm-wmi.c
+@@@ -20,7 -20,9 +20,8 @@@
+  #include <linux/kernel.h>
+  #include <linux/module.h>
+  #include <linux/init.h>
++ #include <linux/mxm-wmi.h>
+ -#include <acpi/acpi_bus.h>
+ -#include <acpi/acpi_drivers.h>
+ +#include <linux/acpi.h>
  =20
-  	/* Only after disabling all output pipelines that will be changed can we
+  MODULE_AUTHOR("Dave Airlie");
+  MODULE_DESCRIPTION("MXM WMI Driver");
 
---Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K
+--Signature=_Wed__22_Jan_2014_16_42_54_+1100_5fOYg=WRj_5TDjTc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS3zZYAAoJEMDTa8Ir7ZwVRSoP/R0gK1HqFim6I3tSfaNMgbXa
-IPKQkMDCPx6Fm+rhrcZJXKjIjBUk1p0VE3laDemUQANJAoxWD4uAvibeCuslw2rC
-l+hTRWxnkoB5xfVsAdHKu3YVi5e4Y1txTCr7D1f8JVHZ1cuN/Rt/wgdY7ehamt02
-6NmiPJMOHXkL5zSxlRw+bSgoK+ew3MJ14icYjUsu7d+2TNOSMOaOT5++B2x+1I1W
-SO8S8rS9ghrhb6s5Hak69XfRsUwubOrpAUIa7QAMfHP6c2dhVxly5vZfXei65sqM
-SUPnNJ7lNfc4aMVcsc7G50gfmRFQgPIZwb1WAJlKIILfCiedmz6FKe4Wy2Q3D3dA
-+ViMMI4Kh5SoAXTPp7HQzTGzY3siAGKwiFYcgVCQY/pnzIopXhftiErvjOqVnAq+
-huWkALLKzDcjGn1g9HW2Z0sTC0avM6/EPAqqHqAAIrLrAaNch64X74Yygpd6YDaT
-jqOQJv20+ky17L90L03XcQ42pZgGqX6mLO7iPtKnkbH59BgOQEfbEcs2S1AcKO3h
-Fbiiwej77huNjd04QiiR2xPl1DTWv1CBnpct2BcLJBowI9dQ1fHbURtrm7erdZVw
-tgXB9WlbuKk4a/Q/G+HxWgZwsUyziATzOFaFth1TYGT7FEnD0DgYqSVe955pz4cz
-x4yee5ODdO1x8bysFknS
-=+D0N
+iQIcBAEBCAAGBQJS31phAAoJEMDTa8Ir7ZwVASAP+wdqGFeFQuslrJ5JRIQ4dmB2
+1Nw1I1xjTsXGgb5uYNJ/bnz4uaRF84qkKWfSHt3nx2hhDUjjVL6uS6QnGUz2L8hV
+VbrlbaGgFtjDE47E3fB8DmJsDkKtq8d68RsMs0+sDCP9AYcsaOWJVwFvS6rL1E+t
+LWbavw9wA2cJGz0r2dtgAM2vf0N6VO0dEQ9f9lYGy8PuWaEyp+NiE1ojz6v+xh3R
+0HekmLqnsAyzuhe1rBFIihQZtwWxxbsctVZ2OSGvATkDr5/PKwUERZYGDIfi4R3V
+n9wj+DpZTUHNrhy1dblIHiKbICT5OF0VNBLWViialoS9KEezhpkj0hLMb+1wWiYG
+Nr20XbHUzhfidAzJEgjRA1RNZj4pSiGfJbnotCRWcQ+hCMtGEfT1+TUM/24VbqD2
+yP/smhQZU+9Wbu61o/RFJHFQalXTS+NNR86M3EM8zULpxraqTH4/vvj+EYvcXzgB
+cphASuTRoYeddzpzlL4Wi27IONsVCmjPDPfii90xtawq3Oev5d/nXj2/QVyERiFE
+o7cHjCkz5s770zUN886Qcc5E8Q9c157JSs7RGojDB/7sEAcXUsqq+XKIvjoUlcm7
+9YAwAWlUj8/g63wAsmtS4q8pSZepOFg1KcjnFpgBnn4Cg97hg33KPEZJ+fzTYuXo
+MBcN+SVYrswrr9nvYSbW
+=7v3M
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__22_Jan_2014_14_09_08_+1100_FoM7x0L4JZZkNM_K--
+--Signature=_Wed__22_Jan_2014_16_42_54_+1100_5fOYg=WRj_5TDjTc--
