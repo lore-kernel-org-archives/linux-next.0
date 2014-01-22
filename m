@@ -1,61 +1,56 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 21 Jan 2014 11:47:21 +0100
-Message-ID: <20140121104721.GB4105@gmail.com>
-References: <20140116121955.GQ31570@twins.programming.kicks-ass.net>
- <20140117074628.88698f59939c9002b7c12968@canb.auug.org.au>
- <CAJvTdKnoNh2YAvtXraYxTct+8e6e_8Om9cAZGSTpy8UO=t=W4w@mail.gmail.com>
- <20140120082620.GB30183@twins.programming.kicks-ass.net>
- <52DCE4CF.2060605@zytor.com>
- <20140120091600.GW31570@twins.programming.kicks-ass.net>
- <52DCEAF4.3040902@zytor.com>
- <20140120092931.GA3836@gmail.com>
- <CAJvTdKmF0Bzo+=VRD=3dZKVZAxAQ=am33fFGR7XH4hYd2=9Mww@mail.gmail.com>
- <20140120215151.GN31570@twins.programming.kicks-ass.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next:  the usual request
+Date: Wed, 22 Jan 2014 11:10:37 +1100
+Message-ID: <20140122111037.15527f0c5634ee41730dd754@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__22_Jan_2014_11_10_37_+1100_QSRi.E7lLbVB5Iln"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f41.google.com ([74.125.83.41]:45472 "EHLO
-	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754185AbaAUKrZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Jan 2014 05:47:25 -0500
-Content-Disposition: inline
-In-Reply-To: <20140120215151.GN31570@twins.programming.kicks-ass.net>
+Received: from ozlabs.org ([203.10.76.45]:56027 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750862AbaAVAKq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Jan 2014 19:10:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Len Brown <lenb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Wed__22_Jan_2014_11_10_37_+1100_QSRi.E7lLbVB5Iln
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+Hi all,
 
-> On Mon, Jan 20, 2014 at 04:39:45PM -0500, Len Brown wrote:
-> > > As a side note, at minimum the semantic and compatibility difference
-> > > needs to be _very_ clearly present in the naming. Something like
-> > > mwait_old_() or mwait_core2_(). That way such dependencies and
-> > > assumptions don't get lost in code restructuring, etc.
-> > 
-> > Agreed.
-> > We started with mwait_idle() -- which was erroneously removed
-> > and is now being restored under it original name.
-> > 
-> > The "new" function is mwait_idle_with_hints() -- which uses the 
-> > additional hints that were not available w/ the original MWAIT 
-> > instruction. Where "new" is Core Duo and later -- all the 
-> > processor that can use MWAIT for C-states deeper than C1.
-> 
-> I'm still waiting for someone to explain what's wrong with:
-> 
-> static inline void mwait_idle(void)
-> {
-> 	local_irq_enable();
-> 	mwait_idle_with_hints(0, 0);
-> }
+I forgot to say this yesterday:
 
-Absolutely agreed, we don't want to carry it on 'just because', the 
-compatibility aspect needs to be documented - otherwise we degrade 
-into cargo cult programming.
+Please do not add any code intended for v3.15 to your linux-next included
+trees until after v3.14-rc1 has been released.
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-	Ingo
+--Signature=_Wed__22_Jan_2014_11_10_37_+1100_QSRi.E7lLbVB5Iln
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS3wyCAAoJEMDTa8Ir7ZwV2NYP/14DO1DbU0/r77LolDrNCFZj
+bfuXZHpFUrzH21f6RdGuw6zMj0lZ58273aDjUAuNEmfyWxRNzx0JSxX1MEm56lRO
+/cgnDWke+c1SsOexgL9YtpZWeupu0D44fDBSwlzYOFqXDva+CsvCxGP7TLVybpRh
+B0KZDhQgxKBI6vwa+eKoY3MGNq/n/6qZBWke73U0RL8cJnxCX4QEurK/X5OdbBQH
+HYiRVlIAKC89ZS4KNgSd8X+3sN4r+IEZ9hKIWdKPBMgn2Kni4Hs67MPEjN3M467F
+eVfnHqyAcpuiDK6l61UlbGqlB2v70awZ/595xWl6oY4kCMRe8KGdL9bbsE3u0lGL
+1yg1jZ1mwnlacm9Sn30glq09eHU7yu0Cq433z18U5TYHhxGhsvQokUzzQI/hUIFO
+CRatRnmp9MfCN/L4AKjTiRf7g3nzWIK+cmc3C0zoA7HpYPyFh8l6jECLfh76ENH8
+NBlYQbaTvs9wkQqEYlduPpFWAiKAjtHMYJ5SYL0mCggpzLiHCZCViYHztF+VhXk8
+I4gDmoVLv4pJyKv67/XfjBSbLphhVvOIG1wfGWNl62T5nKHA58Mu1wtnWzbIy5B2
+hW6RACmcmGKC1YUB1wY3Il26lXP5Dt8XFlMn2ALLVV4MBQEbLKarI5oVLxEvYu/b
+4sA1dPzaFsCIVwt+6aMf
+=x07F
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Jan_2014_11_10_37_+1100_QSRi.E7lLbVB5Iln--
