@@ -1,71 +1,65 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: Re: randconfig build error with next-20140122, in
- arch/x86/platform/intel-mid/intel-mid.c
-Date: Wed, 22 Jan 2014 13:38:40 -0800
-Message-ID: <20140122213839.GA26480@psi-dev26.jf.intel.com>
-References: <CA+r1ZhgAbZH19kbVfKgeVJ0tPqGpJ86b10GAYaGVgDn2Q58Dyg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: SELinux linux-next tree changes
+Date: Thu, 23 Jan 2014 10:35:23 +1100
+Message-ID: <20140123103523.54692d10e2307f4c61fc23fc@canb.auug.org.au>
+References: <53482168.WA5pJRbF6o@sifl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__23_Jan_2014_10_35_23_+1100_vYGbmtAKdHdW/t3Q"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:40773 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752331AbaAVXfa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Jan 2014 18:35:30 -0500
+In-Reply-To: <53482168.WA5pJRbF6o@sifl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@tycho.nsa.gov, linux-next@vger.kernel.org
+
+--Signature=_Thu__23_Jan_2014_10_35_23_+1100_vYGbmtAKdHdW/t3Q
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <CA+r1ZhgAbZH19kbVfKgeVJ0tPqGpJ86b10GAYaGVgDn2Q58Dyg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Paul,
 
-On Wed, Jan 22, 2014 at 11:45:42AM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
+On Wed, 22 Jan 2014 16:06:04 -0500 Paul Moore <paul@paul-moore.com> wrote:
+>
+> I just changed the location of the SELinux tree for linux-next; while the=
+=20
+> repository is in the same place, all of the linux-next patches are now go=
+ing=20
+> into the next branch.
 >=20
-> In file included from arch/x86/platform/intel-mid/intel-mid.c:38:0:
-> arch/x86/platform/intel-mid/intel_mid_weak_decls.h:17:25: error:
-> expected =E2=80=98=3D=E2=80=99, =E2=80=98,=E2=80=99, =E2=80=98;=E2=80=
-=99, =E2=80=98asm=E2=80=99 or =E2=80=98__attribute__=E2=80=99 before
-> =E2=80=98get_penwell_ops=E2=80=99
->  extern void * __cpuinit get_penwell_ops(void) __attribute__((weak));
->                          ^
-> arch/x86/platform/intel-mid/intel_mid_weak_decls.h:18:25: error:
-> expected =E2=80=98=3D=E2=80=99, =E2=80=98,=E2=80=99, =E2=80=98;=E2=80=
-=99, =E2=80=98asm=E2=80=99 or =E2=80=98__attribute__=E2=80=99 before
-> =E2=80=98get_cloverview_ops=E2=80=99
->  extern void * __cpuinit get_cloverview_ops(void) __attribute__((weak=
-));
->                          ^
-> In file included from arch/x86/platform/intel-mid/intel-mid.c:30:0:
-> /home/jim/linux/arch/x86/include/asm/intel-mid.h:74:15: error:
-> =E2=80=98get_penwell_ops=E2=80=99 undeclared here (not in a function)
->      [cpuid] =3D get_##cpuname##_ops
->                ^
-> /home/jim/linux/arch/x86/include/asm/intel-mid.h:84:2: note: in
-> expansion of macro =E2=80=98DECLARE_INTEL_MID_OPS_INIT=E2=80=99
->   DECLARE_INTEL_MID_OPS_INIT(penwell, INTEL_MID_CPU_CHIP_PENWELL), \
->   ^
-> arch/x86/platform/intel-mid/intel-mid.c:66:45: note: in expansion of
-> macro =E2=80=98INTEL_MID_OPS_INIT=E2=80=99
->  static void *(*get_intel_mid_ops[])(void) =3D INTEL_MID_OPS_INIT;
->                                              ^
-> /home/jim/linux/arch/x86/include/asm/intel-mid.h:74:15: error:
-> =E2=80=98get_cloverview_ops=E2=80=99 undeclared here (not in a functi=
-on)
->      [cpuid] =3D get_##cpuname##_ops
->                ^
-> /home/jim/linux/arch/x86/include/asm/intel-mid.h:85:2: note: in
-> expansion of macro =E2=80=98DECLARE_INTEL_MID_OPS_INIT=E2=80=99
->   DECLARE_INTEL_MID_OPS_INIT(cloverview, INTEL_MID_CPU_CHIP_CLOVERVIE=
-W), \
->   ^
-> arch/x86/platform/intel-mid/intel-mid.c:66:45: note: in expansion of
-> macro =E2=80=98INTEL_MID_OPS_INIT=E2=80=99
->  static void *(*get_intel_mid_ops[])(void) =3D INTEL_MID_OPS_INIT;
->                                              ^
-> make[3]: *** [arch/x86/platform/intel-mid/intel-mid.o] Error 1
+>  git://git.infradead.org/users/pcmoore/selinux next
 
-I just acked a patch fixing this problem. Please, consider apply this a=
-s
-fix:
-https://lkml.org/lkml/2014/1/22/327
+Done.
 
-Br, David Cohen
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__23_Jan_2014_10_35_23_+1100_vYGbmtAKdHdW/t3Q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS4FW/AAoJEMDTa8Ir7ZwVR2QP/AriCS6hX2McdmP2GTH1t/bD
+hIS8IJJxFmPl+zEaCNY9hSlcZGf6oavYb1laTqBoFm3NAUho7PgzDWTzyrlJOwu/
+qu3Nc2N70Qy8m7kDLrWnFI2Yd3ayYMB7ASOZLn5a4qBWCQ6bb9VRGHU6QfguAIAI
+pIPJQrD/NMkQdNKPcFWdKsYncK74LpPPEJutT6uyxCffXX0W+/XXH1inDXvKwAaf
+8xfnilIQGxN5kUgDlY0mCWVTH6QufKx/57gRu6BW/D9BCCmafBlvsBadQgWwcP6e
+UuWAwUwJOQyt/2jLBKyKP+jNCP/XNVvEKOiRAKai1wMOe3KH/d2Tb4ieSzg7tHpv
+zU1hQsRfhZvQQmklKhhg25JvPOLKq5uXINOKsVQand6V4SHhE9WJf2qnq2meon2S
+P/AN31wpNqZBWu5nkBj4en0pWM2o039JklWaH6mipVXyDKeeb5Jqe50MfXaaiXb4
+XqOBpJoW6pF0lqPcIDVWr1QpmUGaccWhZ6F8w2Anf+XsHpnqgHXIvMs+KAhjonMw
+n2VvlMAVNgwZBcxkOhXWi9RauQvKJyKLL/IEfcqQ+M/LMy503c0n8XmM2Wzqkz1U
+wvxY9nlj0LSfWbyFU3et/18XLzuHQfrLiv4nCBlfFRdY2Xnxy/eHRN6gL6RTBWRa
+2Dyp4qh/Y0++QvKnzWrd
+=t1m0
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__23_Jan_2014_10_35_23_+1100_vYGbmtAKdHdW/t3Q--
