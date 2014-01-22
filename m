@@ -1,33 +1,71 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: SELinux linux-next tree changes
-Date: Wed, 22 Jan 2014 16:06:04 -0500
-Message-ID: <53482168.WA5pJRbF6o@sifl>
+From: David Cohen <david.a.cohen@linux.intel.com>
+Subject: Re: randconfig build error with next-20140122, in
+ arch/x86/platform/intel-mid/intel-mid.c
+Date: Wed, 22 Jan 2014 13:38:40 -0800
+Message-ID: <20140122213839.GA26480@psi-dev26.jf.intel.com>
+References: <CA+r1ZhgAbZH19kbVfKgeVJ0tPqGpJ86b10GAYaGVgDn2Q58Dyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:51797 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751379AbaAVVGI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jan 2014 16:06:08 -0500
-Received: by mail-qc0-f174.google.com with SMTP id x13so1296973qcv.19
-        for <linux-next@vger.kernel.org>; Wed, 22 Jan 2014 13:06:07 -0800 (PST)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: selinux@tycho.nsa.gov, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CA+r1ZhgAbZH19kbVfKgeVJ0tPqGpJ86b10GAYaGVgDn2Q58Dyg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi,
 
-I just changed the location of the SELinux tree for linux-next; while the 
-repository is in the same place, all of the linux-next patches are now going 
-into the next branch.
+On Wed, Jan 22, 2014 at 11:45:42AM -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
+>=20
+> In file included from arch/x86/platform/intel-mid/intel-mid.c:38:0:
+> arch/x86/platform/intel-mid/intel_mid_weak_decls.h:17:25: error:
+> expected =E2=80=98=3D=E2=80=99, =E2=80=98,=E2=80=99, =E2=80=98;=E2=80=
+=99, =E2=80=98asm=E2=80=99 or =E2=80=98__attribute__=E2=80=99 before
+> =E2=80=98get_penwell_ops=E2=80=99
+>  extern void * __cpuinit get_penwell_ops(void) __attribute__((weak));
+>                          ^
+> arch/x86/platform/intel-mid/intel_mid_weak_decls.h:18:25: error:
+> expected =E2=80=98=3D=E2=80=99, =E2=80=98,=E2=80=99, =E2=80=98;=E2=80=
+=99, =E2=80=98asm=E2=80=99 or =E2=80=98__attribute__=E2=80=99 before
+> =E2=80=98get_cloverview_ops=E2=80=99
+>  extern void * __cpuinit get_cloverview_ops(void) __attribute__((weak=
+));
+>                          ^
+> In file included from arch/x86/platform/intel-mid/intel-mid.c:30:0:
+> /home/jim/linux/arch/x86/include/asm/intel-mid.h:74:15: error:
+> =E2=80=98get_penwell_ops=E2=80=99 undeclared here (not in a function)
+>      [cpuid] =3D get_##cpuname##_ops
+>                ^
+> /home/jim/linux/arch/x86/include/asm/intel-mid.h:84:2: note: in
+> expansion of macro =E2=80=98DECLARE_INTEL_MID_OPS_INIT=E2=80=99
+>   DECLARE_INTEL_MID_OPS_INIT(penwell, INTEL_MID_CPU_CHIP_PENWELL), \
+>   ^
+> arch/x86/platform/intel-mid/intel-mid.c:66:45: note: in expansion of
+> macro =E2=80=98INTEL_MID_OPS_INIT=E2=80=99
+>  static void *(*get_intel_mid_ops[])(void) =3D INTEL_MID_OPS_INIT;
+>                                              ^
+> /home/jim/linux/arch/x86/include/asm/intel-mid.h:74:15: error:
+> =E2=80=98get_cloverview_ops=E2=80=99 undeclared here (not in a functi=
+on)
+>      [cpuid] =3D get_##cpuname##_ops
+>                ^
+> /home/jim/linux/arch/x86/include/asm/intel-mid.h:85:2: note: in
+> expansion of macro =E2=80=98DECLARE_INTEL_MID_OPS_INIT=E2=80=99
+>   DECLARE_INTEL_MID_OPS_INIT(cloverview, INTEL_MID_CPU_CHIP_CLOVERVIE=
+W), \
+>   ^
+> arch/x86/platform/intel-mid/intel-mid.c:66:45: note: in expansion of
+> macro =E2=80=98INTEL_MID_OPS_INIT=E2=80=99
+>  static void *(*get_intel_mid_ops[])(void) =3D INTEL_MID_OPS_INIT;
+>                                              ^
+> make[3]: *** [arch/x86/platform/intel-mid/intel-mid.o] Error 1
 
- git://git.infradead.org/users/pcmoore/selinux next
+I just acked a patch fixing this problem. Please, consider apply this a=
+s
+fix:
+https://lkml.org/lkml/2014/1/22/327
 
-Thanks,
--Paul
-
--- 
-paul moore
-www.paul-moore.com
+Br, David Cohen
