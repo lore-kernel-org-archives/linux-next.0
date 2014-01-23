@@ -1,86 +1,50 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: randconfig build error with next-20140122, in arch/x86/kernel/devicetree.c
-Date: Wed, 22 Jan 2014 19:26:12 -0500
-Message-ID: <CAP=VYLq_rhAUqyfPAPYTwAH5zjR4OtpULGPh6dBQJDbGtG8ZcA@mail.gmail.com>
-References: <CA+r1Zhjiw3Cv8AnsAhT==nkAYN2dxVXcWABpiVhtHXsW52YRkg@mail.gmail.com>
- <52DFFAA7.40008@infradead.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the drm-intel tree with
+	the drm tree
+Date: Wed, 22 Jan 2014 17:21:28 -0800
+Message-ID: <CAOesGMgtavy=gSJQeqqxQFXgSwKGekU2=vwnN2o2TeWhG0bktg@mail.gmail.com>
+References: <20140122140402.20163da276690810a1040909@canb.auug.org.au>
+	<CAKMK7uF+p96YtDo3NG4nBV5S5gYXk55p5KUOxsb+PMY+MH_Zyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:56108 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752862AbaAWA0o convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jan 2014 19:26:44 -0500
-In-Reply-To: <52DFFAA7.40008@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <CAKMK7uF+p96YtDo3NG4nBV5S5gYXk55p5KUOxsb+PMY+MH_Zyw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Sender: intel-gfx-bounces@lists.freedesktop.org
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 22, 2014 at 12:06 PM, Randy Dunlap <rdunlap@infradead.org> =
-wrote:
-> On 01/22/2014 08:34 AM, Jim Davis wrote:
->> Building with the attached random configuration file,
+On Wed, Jan 22, 2014 at 2:06 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> Hi Stephen,
+>
+> On Wed, Jan 22, 2014 at 4:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi all,
 >>
->> warning: (X86_INTEL_MID) selects INTEL_SCU_IPC which has unmet direc=
-t
->> dependencies (X86 && X86_PLATFORM_DEVICES && X86_INTEL_MID)
->> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
->> which has unmet direct dependencies (USB_SUPPORT && USB && PM_RUNTIM=
-E)
->> warning: (X86_INTEL_MID) selects INTEL_SCU_IPC which has unmet direc=
-t
->> dependencies (X86 && X86_PLATFORM_DEVICES && X86_INTEL_MID)
->> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
->> which has unmet direct dependencies (USB_SUPPORT && USB && PM_RUNTIM=
-E)
+>> Today's linux-next merge of the drm-intel tree got a conflict in
+>> drivers/gpu/drm/i915/i915_irq.c between commit abca9e454498 ("drm: Pass
+>> 'flags' from the caller to .get_scanout_position()") from the drm tree
+>> and commit d59a63ad8234 ("drm/i915: Add intel_get_crtc_scanline()") from
+>> the drm-intel tree.
 >>
->> arch/x86/kernel/devicetree.c:67:1: warning: data definition has no
->> type or storage class [enabled by default]
->>  module_init(add_bus_probe);
->>  ^
+>> I fixed it up (I think - see below) and can carry the fix as necessary
+>> (no action is required).
 >
-> For linux-next, devicetree.c needs to #include <linux/module.h>.
-> For mainline, it would have needed to #include <linux/init.h>.
-> However, it does neither of those.
+> Oops, this patch escaped - it's only for 3.15. I've shuffled my
+> branches around now for the merge window so this should not pop up in
+> your -next tree again until 3.15 starts.
 
-Thanks guys; I've already queued a fix for this.
+I just bisected boot failures on x86 chromebooks with -next to this
+merge commit. I'll take a look tomorrow morning and make sure they're
+gone.
 
-http://git.kernel.org/cgit/linux/kernel/git/paulg/init.git/commit/?id=3D=
-3d83b6b84210066f0886b0916136fa49ca61704d
 
-Paul.
---
-
->
-> See Documentation/SubmitChecklist #1:
->
-> 1: If you use a facility then #include the file that defines/declares
->    that facility.  Don't depend on other header files pulling in ones
->    that you use.http://git.kernel.org/cgit/linux/kernel/git/paulg/ini=
-t.git/commit/?id=3D3d83b6b84210066f0886b0916136fa49ca61704d
->
->
->> arch/x86/kernel/devicetree.c:67:1: error: type defaults to =91int=92=
- in
->> declaration of =91module_init=92 [-Werror=3Dimplicit-int]
->> arch/x86/kernel/devicetree.c:67:1: warning: parameter names (without
->> types) in function declaration [enabled by default]
->> arch/x86/kernel/devicetree.c:60:19: warning: =91add_bus_probe=92 def=
-ined
->> but not used [-Wunused-function]
->>  static int __init add_bus_probe(void)
->>                    ^
->> cc1: some warnings being treated as errors
->> make[2]: *** [arch/x86/kernel/devicetree.o] Error 1
->>
->
->
-> --
-> ~Randy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Olof
