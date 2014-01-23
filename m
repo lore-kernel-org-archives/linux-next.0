@@ -1,54 +1,28 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: manual merge of the drm-intel tree with
-	the drm tree
-Date: Thu, 23 Jan 2014 13:10:09 -0800
-Message-ID: <CAOesGMjg5hX8KV847DPQrP94GxRPAaMxyGH48BrCyySvFxSLog@mail.gmail.com>
-References: <20140122140402.20163da276690810a1040909@canb.auug.org.au>
-	<CAKMK7uF+p96YtDo3NG4nBV5S5gYXk55p5KUOxsb+PMY+MH_Zyw@mail.gmail.com>
-	<CAOesGMgtavy=gSJQeqqxQFXgSwKGekU2=vwnN2o2TeWhG0bktg@mail.gmail.com>
+From: <BusinessProposal16@fundstransferbankofT419.onmicrosoft.com>
+Subject: BUSINESS PROPOSAL OF $44.5MILLI?ON.USD.
+Date: Thu, 23 Jan 2014 17:18:32 -0500
+Message-ID: <dcf0dfc3-73af-4d4e-a9e2-e4372c08a7b3@HKNPR03MB132.apcprd03.prod.outlook.com>
+Reply-To: <mrchingkwok091@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <CAOesGMgtavy=gSJQeqqxQFXgSwKGekU2=vwnN2o2TeWhG0bktg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Sender: intel-gfx-bounces@lists.freedesktop.org
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from emea01-am1-ndr.ptr.protection.outlook.com ([157.56.116.105]:28325
+	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751783AbaAWWTf convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jan 2014 17:19:35 -0500
+Content-Description: Mail message body
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Recipients <BusinessProposal16@fundstransferbankofT419.onmicrosoft.com>
 
-On Wed, Jan 22, 2014 at 5:21 PM, Olof Johansson <olof@lixom.net> wrote:
-> On Wed, Jan 22, 2014 at 2:06 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->> Hi Stephen,
->>
->> On Wed, Jan 22, 2014 at 4:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi all,
->>>
->>> Today's linux-next merge of the drm-intel tree got a conflict in
->>> drivers/gpu/drm/i915/i915_irq.c between commit abca9e454498 ("drm: Pass
->>> 'flags' from the caller to .get_scanout_position()") from the drm tree
->>> and commit d59a63ad8234 ("drm/i915: Add intel_get_crtc_scanline()") from
->>> the drm-intel tree.
->>>
->>> I fixed it up (I think - see below) and can carry the fix as necessary
->>> (no action is required).
->>
->> Oops, this patch escaped - it's only for 3.15. I've shuffled my
->> branches around now for the merge window so this should not pop up in
->> your -next tree again until 3.15 starts.
->
-> I just bisected boot failures on x86 chromebooks with -next to this
-> merge commit. I'll take a look tomorrow morning and make sure they're
-> gone.
+Dear Friend,
+ 
+I am Ching Kwok, an Account Director with the International bank of Taipei, I have a very sensitive and confidential brief for you from international bank of Taipei, Taiwan. I am requesting for your partnership in re-profiling funds I will give the details, but in summary, the funds are coming via Bank Of Taipei Taiwan.
+This is a legitimate transaction,You will be paid 30% for your Management Fees". If you are interested,please write back and provide me with your confidential telephone and fax  numbers, and I will provide further details and instructions. Please keep this confidential, as we can't afford more political problems.Finally,please note that this must be concluded within two weeks.Please write back promptly via this confidential email address {mrchingkwok091@gmail.com} for further information
 
-Yep, looks happier today.
+I look forward to it.
 
-
--Olof
+Regards,
+Mr. Ching Kwok
