@@ -1,54 +1,54 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH-next] drivers/clk: make max77686 driver bool for now
-Date: Thu, 23 Jan 2014 14:32:15 -0500
-Message-ID: <1390505535-30229-1-git-send-email-paul.gortmaker@windriver.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the drm-intel tree with
+	the drm tree
+Date: Thu, 23 Jan 2014 13:10:09 -0800
+Message-ID: <CAOesGMjg5hX8KV847DPQrP94GxRPAaMxyGH48BrCyySvFxSLog@mail.gmail.com>
+References: <20140122140402.20163da276690810a1040909@canb.auug.org.au>
+	<CAKMK7uF+p96YtDo3NG4nBV5S5gYXk55p5KUOxsb+PMY+MH_Zyw@mail.gmail.com>
+	<CAOesGMgtavy=gSJQeqqxQFXgSwKGekU2=vwnN2o2TeWhG0bktg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:62657 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753519AbaAWTdI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jan 2014 14:33:08 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, SeongJae Park <sj38.park@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Mike Turquette <mturquette@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOesGMgtavy=gSJQeqqxQFXgSwKGekU2=vwnN2o2TeWhG0bktg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Sender: intel-gfx-bounces@lists.freedesktop.org
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Commit 3966c947f45911e093114371462687134d5e8d40 ("clk: max77686:
-Refactor driver data handling") added a call to __clk_get_hw()
-but this function is not exported (as __<name> is typically a
-private/internal thing).
+On Wed, Jan 22, 2014 at 5:21 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Wed, Jan 22, 2014 at 2:06 AM, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>> Hi Stephen,
+>>
+>> On Wed, Jan 22, 2014 at 4:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi all,
+>>>
+>>> Today's linux-next merge of the drm-intel tree got a conflict in
+>>> drivers/gpu/drm/i915/i915_irq.c between commit abca9e454498 ("drm: Pass
+>>> 'flags' from the caller to .get_scanout_position()") from the drm tree
+>>> and commit d59a63ad8234 ("drm/i915: Add intel_get_crtc_scanline()") from
+>>> the drm-intel tree.
+>>>
+>>> I fixed it up (I think - see below) and can carry the fix as necessary
+>>> (no action is required).
+>>
+>> Oops, this patch escaped - it's only for 3.15. I've shuffled my
+>> branches around now for the merge window so this should not pop up in
+>> your -next tree again until 3.15 starts.
+>
+> I just bisected boot failures on x86 chromebooks with -next to this
+> merge commit. I'll take a look tomorrow morning and make sure they're
+> gone.
 
-Hence this driver fails to build modular, and has been causing
-allmodconfig build breakage in arch outside of just ARM.  Since
-the only defconfig that uses it sets it as =y, lets just make
-it non-modular for now.
+Yep, looks happier today.
 
-Mike says that changes are pending to export similar functionality
-in the future[1], so at that point in time, it can be returned to
-tristate if desired.
 
-[1] https://lkml.org/lkml/2014/1/20/21
-
-Reported-by: SeongJae Park <sj38.park@gmail.com>
-Cc: SeongJae Park <sj38.park@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index efb508a..009fb9b 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -40,7 +40,7 @@ config COMMON_CLK_VERSATILE
- 	  - Versatile Express
- 
- config COMMON_CLK_MAX77686
--	tristate "Clock driver for Maxim 77686 MFD"
-+	bool "Clock driver for Maxim 77686 MFD"
- 	depends on MFD_MAX77686
- 	---help---
- 	  This driver supports Maxim 77686 crystal oscillator clock. 
--- 
-1.8.5.2
+-Olof
