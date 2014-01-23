@@ -1,31 +1,54 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Tree for Jan 23
-Date: Thu, 23 Jan 2014 09:44:38 -0500
-Message-ID: <52E12AD6.6060903@windriver.com>
-References: <20140123172109.980e620c6dd163a6946ebd14@canb.auug.org.au> <20140123173821.f9f2499cc9403829eb492ae4@canb.auug.org.au>
+Subject: [PATCH-next] drivers/clk: make max77686 driver bool for now
+Date: Thu, 23 Jan 2014 14:32:15 -0500
+Message-ID: <1390505535-30229-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140123173821.f9f2499cc9403829eb492ae4@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:62657 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753519AbaAWTdI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jan 2014 14:33:08 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, SeongJae Park <sj38.park@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Mike Turquette <mturquette@linaro.org>
 
-On 14-01-23 01:38 AM, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> On Thu, 23 Jan 2014 17:21:09 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Changes since 20140122:
->>
->> The init tree lost one of its patches.
-> 
-> It turns out that I merged yesterday's version of the init tree again
-> today (so the fixes that went in do not appear).  Sorry about that, I
-> will try to do better tomorrow.
+Commit 3966c947f45911e093114371462687134d5e8d40 ("clk: max77686:
+Refactor driver data handling") added a call to __clk_get_hw()
+but this function is not exported (as __<name> is typically a
+private/internal thing).
 
-No worries -- better to happen this Thursday vs. next Thursday.  :)
+Hence this driver fails to build modular, and has been causing
+allmodconfig build breakage in arch outside of just ARM.  Since
+the only defconfig that uses it sets it as =y, lets just make
+it non-modular for now.
 
-Paul.
+Mike says that changes are pending to export similar functionality
+in the future[1], so at that point in time, it can be returned to
+tristate if desired.
+
+[1] https://lkml.org/lkml/2014/1/20/21
+
+Reported-by: SeongJae Park <sj38.park@gmail.com>
+Cc: SeongJae Park <sj38.park@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index efb508a..009fb9b 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -40,7 +40,7 @@ config COMMON_CLK_VERSATILE
+ 	  - Versatile Express
+ 
+ config COMMON_CLK_MAX77686
+-	tristate "Clock driver for Maxim 77686 MFD"
++	bool "Clock driver for Maxim 77686 MFD"
+ 	depends on MFD_MAX77686
+ 	---help---
+ 	  This driver supports Maxim 77686 crystal oscillator clock. 
+-- 
+1.8.5.2
