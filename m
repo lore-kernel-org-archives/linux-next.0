@@ -1,43 +1,113 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Sun, 26 Jan 2014 22:05:06 +0100
-Message-ID: <52E57882.6060601@gmail.com>
-References: <20140113160630.cf720268510f5e0931c24284@canb.auug.org.au> <52E57744.5030807@gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: Tree for Jan 24
+Date: Mon, 27 Jan 2014 12:47:57 -0500
+Message-ID: <20140127174756.GA21205@windriver.com>
+References: <20140124154002.6020ae0892c30c82c77d7adf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:48210 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752461AbaAZVFN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Jan 2014 16:05:13 -0500
-In-Reply-To: <52E57744.5030807@gmail.com>
+Received: from mail.windriver.com ([147.11.1.11]:40599 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753651AbaA0Rrh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jan 2014 12:47:37 -0500
+Content-Disposition: inline
+In-Reply-To: <20140124154002.6020ae0892c30c82c77d7adf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Turquette <mturquette@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linus.walleij@linaro.org
 
-On 26.01.2014 21:59, Tomasz Figa wrote:
-> Hi Stephen,
->
-> On 13.01.2014 06:06, Stephen Rothwell wrote:
->> Hi Mike,
->>
->> Today's linux-next merge of the clk tree got a conflict in
->> drivers/clk/samsung/clk-exynos4.c between commit 86576fbe201b ("clk:
->> samsung: exynos4: Fix definition of div_mmc_pre4 divider") from the
->> arm-soc tree and commit 2d7382375054 ("clk: exynos4: replace clock ID
->> private enums with IDs from DT header") from the clk tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary (no action
->> is required).
->
-> It seems like somehow this fix-up has been lost in action and the
-> conflict ended up being merged incorrectly in linux-next. Could you take
-> a look?
+[linux-next: Tree for Jan 24] On 24/01/2014 (Fri 15:40) Stephen Rothwell wrote:
 
-Ehh, it's a false alarm fortunately. I've been looking at wrong ref, 
-silly me. Sorry for the noise.
+> Hi all,
+> 
+> There will be no tree on Monday (26/1) as it is a public holiday.
+> 
+> Please do *not* add material destined for v3.15 to your linux-next
+> included trees until after v3.14-rc1 is released.
+> 
+> This tree fails (more than usual) the powerpc allyesconfig build.
 
-Best regards,
-Tomasz
+Hi Stephen,
+
+While looking over some of the other fails, I noticed arm
+shark_defconfig build failure:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/10510182/
+
+We can simply drop this build entirely, due to this commit:
+
+   commit 136dfa5edae3207422a8b93347eb79e92e07cdfa
+   Author: Linus Walleij <linus.walleij@linaro.org>
+   Date:   Tue Sep 3 11:32:24 2013 +0200
+
+       ARM: delete mach-shark
+
+The last passing build was Sept 26, so apologies if this has been
+reported since then.
+
+Thanks,
+Paul.
+--
+
+> 
+> Changes since 20140123:
+> 
+> Dropped trees: imx-mxs (complex merge conflicts against the arm tree)
+> 	scsi (complex merge conflicts with Linus' tree)
+> 
+> The powerpc tree still had its build failure.
+> 
+> The staging tree gained a build failure for which I disabled a driver.
+> 
+> The scsi tree gained conflict against the version of it merged into
+> Linus' tree so I just dropped it for today.
+> 
+> The init tree lost two of its patches.
+> 
+> Non-merge commits (relative to Linus' tree): 6876
+>  7279 files changed, 331484 insertions(+), 151447 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+> (see below).
+> 
+> You can see which trees have been included by looking in the Next/Trees
+> file in the source.  There are also quilt-import.log and merge.log files
+> in the Next directory.  Between each merge, the tree was built with
+> a ppc64_defconfig for powerpc and an allmodconfig for x86_64 and a
+> multi_v7_defconfig for arm. After the final fixups (if any), it is also
+> built with powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig and
+> allyesconfig (minus CONFIG_PROFILE_ALL_BRANCHES - this fails its final
+> link) and i386, sparc, sparc64 and arm defconfig. These builds also have
+> CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+> CONFIG_DEBUG_INFO disabled when necessary.
+> 
+> Below is a summary of the state of the merge.
+> 
+> I am currently merging 208 trees (counting Linus' and 28 trees of patches
+> pending for Linus' tree).
+> 
+> Stats about the size of the tree over time can be seen at
+> http://neuling.org/linux-next-size.html .
+> 
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+> advice about cross compilers/configs that work, we are always open to add
+> more builds.
+> 
+> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+> Gortmaker for triage and bug fixes.
+> 
+> There is a wiki covering stuff to do with linux-next at
+> http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
