@@ -1,102 +1,70 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Tree for Jan 24
-Date: Mon, 27 Jan 2014 12:58:26 -0500
-Message-ID: <20140127175825.GB21205@windriver.com>
-References: <20140124154002.6020ae0892c30c82c77d7adf@canb.auug.org.au>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH-next] drivers/clk: make max77686 driver bool for now
+Date: Mon, 27 Jan 2014 13:52:57 -0800
+Message-ID: <20140127215257.4167.26286@quantum>
+References: <1390505535-30229-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140124154002.6020ae0892c30c82c77d7adf@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vb0-f49.google.com ([209.85.212.49]:46296 "EHLO
+	mail-vb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753447AbaA0VxL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jan 2014 16:53:11 -0500
+Received: by mail-vb0-f49.google.com with SMTP id x14so3760623vbb.22
+        for <linux-next@vger.kernel.org>; Mon, 27 Jan 2014 13:53:11 -0800 (PST)
+In-Reply-To: <1390505535-30229-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, SeongJae Park <sj38.park@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-[linux-next: Tree for Jan 24] On 24/01/2014 (Fri 15:40) Stephen Rothwell wrote:
-
-> Hi all,
+Quoting Paul Gortmaker (2014-01-23 11:32:15)
+> Commit 3966c947f45911e093114371462687134d5e8d40 ("clk: max77686:
+> Refactor driver data handling") added a call to __clk_get_hw()
+> but this function is not exported (as __<name> is typically a
+> private/internal thing).
 > 
-> There will be no tree on Monday (26/1) as it is a public holiday.
+> Hence this driver fails to build modular, and has been causing
+> allmodconfig build breakage in arch outside of just ARM.  Since
+> the only defconfig that uses it sets it as =y, lets just make
+> it non-modular for now.
 > 
-> Please do *not* add material destined for v3.15 to your linux-next
-> included trees until after v3.14-rc1 is released.
-> 
-> This tree fails (more than usual) the powerpc allyesconfig build.
+> Mike says that changes are pending to export similar functionality
+> in the future[1], so at that point in time, it can be returned to
+> tristate if desired.
 
-FWIW, there were a lot of new 32bit fails on the bonding driver.
-These will be fixed in Tuesday's tree via this commit:
+Hi Paul,
 
-commit 0681a28264dcf948e0236adb7bf505a638c4dec1
-Author: Nikolay Aleksandrov <nikolay@redhat.com>
-Date:   Thu Jan 23 23:43:43 2014 +0100
+I've just sent off my 2nd pull request for 3.14 and it includes the
+export for __clk_get_hw.
 
-    bonding: fix u64 division
-    
-coming in via the davem net tree.
-
-Paul.
---
+Regards,
+Mike
 
 > 
-> Changes since 20140123:
+> [1] https://lkml.org/lkml/2014/1/20/21
 > 
-> Dropped trees: imx-mxs (complex merge conflicts against the arm tree)
-> 	scsi (complex merge conflicts with Linus' tree)
+> Reported-by: SeongJae Park <sj38.park@gmail.com>
+> Cc: SeongJae Park <sj38.park@gmail.com>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 > 
-> The powerpc tree still had its build failure.
-> 
-> The staging tree gained a build failure for which I disabled a driver.
-> 
-> The scsi tree gained conflict against the version of it merged into
-> Linus' tree so I just dropped it for today.
-> 
-> The init tree lost two of its patches.
-> 
-> Non-merge commits (relative to Linus' tree): 6876
->  7279 files changed, 331484 insertions(+), 151447 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-> (see below).
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log files
-> in the Next directory.  Between each merge, the tree was built with
-> a ppc64_defconfig for powerpc and an allmodconfig for x86_64 and a
-> multi_v7_defconfig for arm. After the final fixups (if any), it is also
-> built with powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig and
-> allyesconfig (minus CONFIG_PROFILE_ALL_BRANCHES - this fails its final
-> link) and i386, sparc, sparc64 and arm defconfig. These builds also have
-> CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-> CONFIG_DEBUG_INFO disabled when necessary.
-> 
-> Below is a summary of the state of the merge.
-> 
-> I am currently merging 208 trees (counting Linus' and 28 trees of patches
-> pending for Linus' tree).
-> 
-> Stats about the size of the tree over time can be seen at
-> http://neuling.org/linux-next-size.html .
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-> 
-> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-> Gortmaker for triage and bug fixes.
-> 
-> There is a wiki covering stuff to do with linux-next at
-> http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index efb508a..009fb9b 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -40,7 +40,7 @@ config COMMON_CLK_VERSATILE
+>           - Versatile Express
+>  
+>  config COMMON_CLK_MAX77686
+> -       tristate "Clock driver for Maxim 77686 MFD"
+> +       bool "Clock driver for Maxim 77686 MFD"
+>         depends on MFD_MAX77686
+>         ---help---
+>           This driver supports Maxim 77686 crystal oscillator clock. 
 > -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> 1.8.5.2
 > 
