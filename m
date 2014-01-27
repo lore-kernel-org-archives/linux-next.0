@@ -1,77 +1,92 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH-next] drivers/clk: make max77686 driver bool for now
-Date: Mon, 27 Jan 2014 17:32:19 -0500
-Message-ID: <52E6DE73.8010205@windriver.com>
-References: <1390505535-30229-1-git-send-email-paul.gortmaker@windriver.com> <20140127215257.4167.26286@quantum>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the bluetooth tree with the
+ net/net-next trees
+Date: Tue, 28 Jan 2014 09:54:15 +1100
+Message-ID: <20140128095415.8382335c33545ad14d4be067@canb.auug.org.au>
+References: <20140107125418.986ae20298ddc55e5e657447@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:56578 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753762AbaA0Wca (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jan 2014 17:32:30 -0500
-In-Reply-To: <20140127215257.4167.26286@quantum>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, SeongJae Park <sj38.park@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__28_Jan_2014_09_54_15_+1100_9.C+37tbD.O6vAfb"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140107125418.986ae20298ddc55e5e657447@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <dborkman@redhat.com>, Jukka Rissanen <jukka.rissanen@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 14-01-27 04:52 PM, Mike Turquette wrote:
-> Quoting Paul Gortmaker (2014-01-23 11:32:15)
->> Commit 3966c947f45911e093114371462687134d5e8d40 ("clk: max77686:
->> Refactor driver data handling") added a call to __clk_get_hw()
->> but this function is not exported (as __<name> is typically a
->> private/internal thing).
->>
->> Hence this driver fails to build modular, and has been causing
->> allmodconfig build breakage in arch outside of just ARM.  Since
->> the only defconfig that uses it sets it as =y, lets just make
->> it non-modular for now.
->>
->> Mike says that changes are pending to export similar functionality
->> in the future[1], so at that point in time, it can be returned to
->> tristate if desired.
-> 
-> Hi Paul,
-> 
-> I've just sent off my 2nd pull request for 3.14 and it includes the
-> export for __clk_get_hw.
+--Signature=_Tue__28_Jan_2014_09_54_15_+1100_9.C+37tbD.O6vAfb
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sounds good ; I wasn't too partial to how it got fixed, but just
-wanting to see the ARCH != ARM build fallout go away.
+Hi all,
 
-Thanks,
-Paul.
---
+On Tue, 7 Jan 2014 12:54:18 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the bluetooth tree got a conflict in
+> net/ieee802154/6lowpan.c between commit 965801e1eb62 ("net: 6lowpan: fix
+> lowpan_header_create non-compression memcpy call") from the  tree and
+> commit 8df8c56a5abc ("6lowpan: Moving generic compression code into
+> 6lowpan_iphc.c") from the bluetooth tree.
+>=20
+> I fixed it up (I applied the following patch to move the fix into
+> 6lowpan_iphc.c) and can carry the fix as necessary (no action is
+> required).
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 7 Jan 2014 12:52:43 +1100
+> Subject: [PATCH] net: 6lowpan: fixup for code movement
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  net/ieee802154/6lowpan_iphc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/net/ieee802154/6lowpan_iphc.c b/net/ieee802154/6lowpan_iphc.c
+> index 11840f9e46da..e14fe8b2c054 100644
+> --- a/net/ieee802154/6lowpan_iphc.c
+> +++ b/net/ieee802154/6lowpan_iphc.c
+> @@ -677,7 +677,7 @@ int lowpan_header_compress(struct sk_buff *skb, struc=
+t net_device *dev,
+>  			hc06_ptr +=3D 3;
+>  		} else {
+>  			/* compress nothing */
+> -			memcpy(hc06_ptr, &hdr, 4);
+> +			memcpy(hc06_ptr, hdr, 4);
+>  			/* replace the top byte with new ECN | DSCP format */
+>  			*hc06_ptr =3D tmp;
+>  			hc06_ptr +=3D 4;
+> --=20
+> 1.8.5.2
 
-> 
-> Regards,
-> Mike
-> 
->>
->> [1] https://lkml.org/lkml/2014/1/20/21
->>
->> Reported-by: SeongJae Park <sj38.park@gmail.com>
->> Cc: SeongJae Park <sj38.park@gmail.com>
->> Cc: Tomasz Figa <t.figa@samsung.com>
->> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Mike Turquette <mturquette@linaro.org>
->> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index efb508a..009fb9b 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -40,7 +40,7 @@ config COMMON_CLK_VERSATILE
->>           - Versatile Express
->>  
->>  config COMMON_CLK_MAX77686
->> -       tristate "Clock driver for Maxim 77686 MFD"
->> +       bool "Clock driver for Maxim 77686 MFD"
->>         depends on MFD_MAX77686
->>         ---help---
->>           This driver supports Maxim 77686 crystal oscillator clock. 
->> -- 
->> 1.8.5.2
->>
+I think this fix patch got missed when bluetooth was merged ... so it
+should probably go into the net tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__28_Jan_2014_09_54_15_+1100_9.C+37tbD.O6vAfb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS5uObAAoJEMDTa8Ir7ZwVSkoP/RfvqDurol0Qhki0tzIlWWUy
+sMgkoah19nmjzew2hPLLmaI0cBv3yrwUPWIjbI6GMRsOGOivykMaj69ER7DNqnhO
+fg79SsahBBihw50kja9mx/KWBcQt6vxXZZMVd1a+UWOwSKnsf5I2gaIJMsvhIfCB
+CsIas+O0WZ385pAyjqK/uvRNM4lX3mIXuRInybGqYXlLY8NgMMAyU3bvuqLtt6Jm
+DNL45fjGxMRsuaGGTgVfw4k3W4eILS4NvSzsz/MDesaJbEQ2g7OkmpbIPY494OhL
+MQs5tqe6tvst1aVpd+ouYCCAWrkktcMq118iUwoNfBuNrEtqmw9thWFFRry1T2AQ
+Imw7g8lxnqB8RKTsljAo9+r+chpMEuX4EsT9WPmQO2xYG4d4uDNB3GpPIvIjoZWe
+S7Ryy8DNocLbKQbvq0ko9VRleCbfBgVwKsLVr94wrsGrLrnU6D4TOCZJA1MzPLh8
+53LvIGEADbinHWBwYpuZ4NCWdMzjk99fs/0Gi31TqF7kPvSdUeMUablPvycHd/Gq
+t8vZeY4Rzp35IUlc8upqU+DQiAp2OLzfnj9uWcBSTX1T+47RAGLV2+zAzlKhEA81
+7n01JWCSBm5ID5o1tOWcrK5NAmVI4jwd5N4u6iFbGllDbsHbr9TvSiMRSLzQhoNj
+Djmzf+ThlWD1iEAKVwaZ
+=qH/o
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__28_Jan_2014_09_54_15_+1100_9.C+37tbD.O6vAfb--
