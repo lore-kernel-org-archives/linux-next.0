@@ -1,21 +1,17 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
 Subject: Re: linux-next: Tree for Jan 24
-Date: Mon, 27 Jan 2014 12:47:57 -0500
-Message-ID: <20140127174756.GA21205@windriver.com>
+Date: Mon, 27 Jan 2014 12:58:26 -0500
+Message-ID: <20140127175825.GB21205@windriver.com>
 References: <20140124154002.6020ae0892c30c82c77d7adf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:40599 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753651AbaA0Rrh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jan 2014 12:47:37 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20140124154002.6020ae0892c30c82c77d7adf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linus.walleij@linaro.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
 [linux-next: Tree for Jan 24] On 24/01/2014 (Fri 15:40) Stephen Rothwell wrote:
 
@@ -28,25 +24,17 @@ Cc: linux-next@vger.kernel.org, linus.walleij@linaro.org
 > 
 > This tree fails (more than usual) the powerpc allyesconfig build.
 
-Hi Stephen,
+FWIW, there were a lot of new 32bit fails on the bonding driver.
+These will be fixed in Tuesday's tree via this commit:
 
-While looking over some of the other fails, I noticed arm
-shark_defconfig build failure:
+commit 0681a28264dcf948e0236adb7bf505a638c4dec1
+Author: Nikolay Aleksandrov <nikolay@redhat.com>
+Date:   Thu Jan 23 23:43:43 2014 +0100
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/10510182/
+    bonding: fix u64 division
+    
+coming in via the davem net tree.
 
-We can simply drop this build entirely, due to this commit:
-
-   commit 136dfa5edae3207422a8b93347eb79e92e07cdfa
-   Author: Linus Walleij <linus.walleij@linaro.org>
-   Date:   Tue Sep 3 11:32:24 2013 +0200
-
-       ARM: delete mach-shark
-
-The last passing build was Sept 26, so apologies if this has been
-reported since then.
-
-Thanks,
 Paul.
 --
 
@@ -111,3 +99,4 @@ Paul.
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
+> 
