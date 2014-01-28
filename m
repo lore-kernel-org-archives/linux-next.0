@@ -1,75 +1,145 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jan 24
-Date: Tue, 28 Jan 2014 10:28:33 +1100
-Message-ID: <20140128102833.188b0ecb3d0d627b3d31ea30@canb.auug.org.au>
-References: <20140124154002.6020ae0892c30c82c77d7adf@canb.auug.org.au>
-	<20140127174756.GA21205@windriver.com>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Tue, 28 Jan 2014 11:43:13 +1100
+Message-ID: <20140128114313.76eed729898870aecc5f9040@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__28_Jan_2014_10_28_33_+1100_.I86aqEt8v_am0Le"
+ boundary="Signature=_Tue__28_Jan_2014_11_43_13_+1100_XOp8_CRwA.kX3G0W"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:49573 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:47080 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753849AbaA0X2k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jan 2014 18:28:40 -0500
-In-Reply-To: <20140127174756.GA21205@windriver.com>
+	id S1753892AbaA1AnT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jan 2014 19:43:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linus.walleij@linaro.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Aaron Tomlin <atomlin@redhat.com>
 
---Signature=_Tue__28_Jan_2014_10_28_33_+1100_.I86aqEt8v_am0Le
+--Signature=_Tue__28_Jan_2014_11_43_13_+1100_XOp8_CRwA.kX3G0W
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-On Mon, 27 Jan 2014 12:47:57 -0500 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
->
-> While looking over some of the other fails, I noticed arm
-> shark_defconfig build failure:
->=20
-> http://kisskb.ellerman.id.au/kisskb/buildresult/10510182/
->=20
-> We can simply drop this build entirely, due to this commit:
->=20
->    commit 136dfa5edae3207422a8b93347eb79e92e07cdfa
->    Author: Linus Walleij <linus.walleij@linaro.org>
->    Date:   Tue Sep 3 11:32:24 2013 +0200
->=20
->        ARM: delete mach-shark
->=20
-> The last passing build was Sept 26, so apologies if this has been
-> reported since then.
+Today's linux-next merge of the tip tree got a conflict in
+Documentation/sysctl/kernel.txt between commit 7984754b99b6 ("kexec: add
+sysctl to disable kexec_load") from Linus' tree and commit 270750dbc18a
+("hung_task: Display every hung task warning") from the tip tree.
 
-Thanks for pointing it out - I have removed the build.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__28_Jan_2014_10_28_33_+1100_.I86aqEt8v_am0Le
+diff --cc Documentation/sysctl/kernel.txt
+index ee9a2f983b99,4205f3c05cbe..000000000000
+--- a/Documentation/sysctl/kernel.txt
++++ b/Documentation/sysctl/kernel.txt
+@@@ -33,7 -33,10 +33,11 @@@ show up in /proc/sys/kernel
+  - domainname
+  - hostname
+  - hotplug
++ - hung_task_panic
++ - hung_task_check_count
++ - hung_task_timeout_secs
++ - hung_task_warnings
+ +- kexec_load_disabled
+  - kptr_restrict
+  - kstack_depth_to_print       [ X86 only ]
+  - l2cr                        [ PPC only ]
+@@@ -288,18 -291,44 +292,56 @@@ Default value is "/sbin/hotplug"
+ =20
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+ =20
++ hung_task_panic:
++=20
++ Controls the kernel's behavior when a hung task is detected.
++ This file shows up if CONFIG_DETECT_HUNG_TASK is enabled.
++=20
++ 0: continue operation. This is the default behavior.
++=20
++ 1: panic immediately.
++=20
++ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++=20
++ hung_task_check_count:
++=20
++ The upper bound on the number of tasks that are checked.
++ This file shows up if CONFIG_DETECT_HUNG_TASK is enabled.
++=20
++ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++=20
++ hung_task_timeout_secs:
++=20
++ Check interval. When a task in D state did not get scheduled
++ for more than this value report a warning.
++ This file shows up if CONFIG_DETECT_HUNG_TASK is enabled.
++=20
++ 0: means infinite timeout - no checking done.
++=20
++ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++=20
++ hung_task_warning:
++=20
++ The maximum number of warnings to report. During a check interval
++ When this value is reached, no more the warnings will be reported.
++ This file shows up if CONFIG_DETECT_HUNG_TASK is enabled.
++=20
++ -1: report an infinite number of warnings.
++=20
++ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++=20
+ +kexec_load_disabled:
+ +
+ +A toggle indicating if the kexec_load syscall has been disabled. This
+ +value defaults to 0 (false: kexec_load enabled), but can be set to 1
+ +(true: kexec_load disabled). Once true, kexec can no longer be used, and
+ +the toggle cannot be set back to false. This allows a kexec image to be
+ +loaded before disabling the syscall, allowing a system to set up (and
+ +later use) an image without it being altered. Generally used together
+ +with the "modules_disabled" sysctl.
+ +
+ +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+ +
+  kptr_restrict:
+ =20
+  This toggle indicates whether restrictions are placed on
+
+--Signature=_Tue__28_Jan_2014_11_43_13_+1100_XOp8_CRwA.kX3G0W
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS5uumAAoJEMDTa8Ir7ZwV8HcP/iqi0/0HvjOhQiuthpqjhOXD
-jq4fJExyIrWB34FySrfC8liE1+Oa8voctOtCVE8ZW6CFP8YnNkYh26sESeTq2hEE
-A42vYVNE5cj0y5tuGdE9XDKHX5akwhzuABNU3R/aSVNhKIrNuXF0IgOKnT7q6vCw
-taJpZeu89kpcF2HUCiJbB0R6i08kObfmAkd3SJcH3OQEK4VeOnoiMgRcCZuTcYR6
-yAz9TsstlsZoTL2dBb6S70mkFZqjoLFUeGURaj9kgfYpkMOfuDYogaFuU5OEitg2
-Yf5TDKpCuyrUJKzzQZbzgqZrE17hBiB5b+Xa+HkmDMtTLEHYja3SMARywNjz5gC4
-fRoVfTXPz6zltpStrKJqTtXyzNOI0NVLOmZQ3uBmX09cdPArUaPRHS2hVV24SRDZ
-KuwMYX2+9492RMT7QWMLm3ZWiWqNSFS+yyuup8Q0pPjSJwBx1JkYtGaMl6ZR8Ot2
-+x3azaB/hxwZLchmFS8pK+ncufqXMjLyMfPNAeeJMWnVr4lFg0WPqGg0Pp3tgYc9
-XCcHnD7ThJFuCBhnbXdGO613mQSGr6Zf6qR/D+2TcyPwUwa3Rk2ZzCUUe2g+ideP
-mbsrxZDcC2LPtqiyfmM2R4Utr++SajO4eZpuMg5AYVQN8Rq+9lCaeF93l58WPjsh
-zSu24tJI6WXt+TLdpPf5
-=tgtV
+iQIcBAEBCAAGBQJS5v0lAAoJEMDTa8Ir7ZwVJ2MQAIa5v66E0Xyq7drTJavr2s6R
+9UQd1rHaqYwTQwEdIB0hzaFSnSZV67d87ymJ8rfX//dwjX8afl++3si2mVj7ops7
+jTQuoY1pid4oucOpvySn1sheXpVsWB0pUb8KXMhZMrMwxJ1tksIgZTOWKRYgbPqs
+hQhmbgbSanPG/HrY2PzTPyykfpbkOGZoxsxiXJocWuqNzbAqTMuock1yeDyocaAa
+Vp6Cvk6OLUJa2QQrCsWqSh72frI3ch5ck8dzqI3dXCq2hwU9tfCHA3CIbZvWSqpm
+OAeONIvxO6841qymCuj7UDZPXpc7L/TN/dv9OWBwly1uO8eKHHlQHSgJVtLH82Wq
+ZDPqI8IoOrc9oVXsrh3BmNl5ReVDEh97MKyOYdBN+kNXSqI5RV7m2sdE6UVij/1y
+2XOfSrvcclB/3RbZQN1tHzzmPFzO9yg0Qw83K/qJzVzr8FEkcmAEFdF6gE65q1VU
+YIirDgl14fEL/Ws7w4H+AFF2fx+As4gv66qKQsgJ20PFRhtoJYAW/FqNXSZ1p3kn
+1FzS1IsJvirjXAzzws7k1TTfgYUK4Wg5pJLPi3AXSyfM/TuPa/0iT2NjZDmVRxf0
+rovLssKTqBhZ9XHmUM8UNqNtvCoKsildtT7G4ZoFQ1DICQ7/uGPJRic2iUAi9m/a
+eagxwguj0t/yefCugiyZ
+=5XXP
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__28_Jan_2014_10_28_33_+1100_.I86aqEt8v_am0Le--
+--Signature=_Tue__28_Jan_2014_11_43_13_+1100_XOp8_CRwA.kX3G0W--
