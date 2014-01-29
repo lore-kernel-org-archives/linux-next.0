@@ -1,61 +1,150 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the imx-mxs tree with the arm tree
-Date: Wed, 29 Jan 2014 13:25:13 +1100
-Message-ID: <20140129132513.3846b7eb56650e4208d2d24a@canb.auug.org.au>
-References: <20140129113514.86275e22015dea313d78d5e1@canb.auug.org.au>
-	<20140129011310.GT15937@n2100.arm.linux.org.uk>
-	<20140129011803.GA13518@S2101-09.ap.freescale.net>
+Subject: linux-next: manual merge of the clk tree with Linus' tree
+Date: Wed, 29 Jan 2014 14:25:51 +1100
+Message-ID: <20140129142551.6e6e27fc1a9440c762370af1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B"
+ boundary="Signature=_Wed__29_Jan_2014_14_25_51_+1100_LSzBOTd.wnvuSkK="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:44603 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:52852 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754026AbaA2CZU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jan 2014 21:25:20 -0500
-In-Reply-To: <20140129011803.GA13518@S2101-09.ap.freescale.net>
+	id S1751631AbaA2D0C (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jan 2014 22:26:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris BREZILLON <b.brezillon@overkiz.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
---Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B
+--Signature=_Wed__29_Jan_2014_14_25_51_+1100_LSzBOTd.wnvuSkK=
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shawn,
+Hi Mike,
 
-On Wed, 29 Jan 2014 09:18:06 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
->
-> I will rebase my branch on v3.14-rc1 once it's out.
+Today's linux-next merge of the clk tree got a conflict in
+drivers/clk/Makefile between commit 0ad6125b1579 ("clk: at91: add PMC
+base support") from Linus' tree and commit fd3fdaf09f26 ("clk: sort
+Makefile") from the clk tree.
 
-Um, does that mean that all that stuff is *not* destined for v3.14? ...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B
+diff --cc drivers/clk/Makefile
+index a277875d64a7,51a4c0dac1af..000000000000
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@@ -9,46 -9,43 +9,44 @@@ obj-$(CONFIG_COMMON_CLK)	+=3D clk-gate.
+  obj-$(CONFIG_COMMON_CLK)	+=3D clk-mux.o
+  obj-$(CONFIG_COMMON_CLK)	+=3D clk-composite.o
+ =20
+- # SoCs specific
+- obj-$(CONFIG_ARCH_BCM2835)	+=3D clk-bcm2835.o
+- obj-$(CONFIG_ARCH_EFM32)	+=3D clk-efm32gg.o
+- obj-$(CONFIG_ARCH_NOMADIK)	+=3D clk-nomadik.o
+- obj-$(CONFIG_ARCH_HIGHBANK)	+=3D clk-highbank.o
+- obj-$(CONFIG_ARCH_HI3xxx)	+=3D hisilicon/
+- obj-$(CONFIG_ARCH_NSPIRE)	+=3D clk-nspire.o
+- obj-$(CONFIG_ARCH_MXS)		+=3D mxs/
+- obj-$(CONFIG_ARCH_SOCFPGA)	+=3D socfpga/
+- obj-$(CONFIG_PLAT_SPEAR)	+=3D spear/
+- obj-$(CONFIG_ARCH_U300)		+=3D clk-u300.o
+- obj-$(CONFIG_COMMON_CLK_VERSATILE) +=3D versatile/
+- obj-$(CONFIG_COMMON_CLK_QCOM)	+=3D qcom/
+- obj-$(CONFIG_PLAT_ORION)	+=3D mvebu/
++ # hardware specific clock types
++ # please keep this section sorted lexicographically by file/directory pat=
+h name
+++obj-$(CONFIG_COMMON_CLK_AT91)		+=3D at91/
++ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+=3D clk-axi-clkgen.o
++ obj-$(CONFIG_ARCH_BCM2835)		+=3D clk-bcm2835.o
++ obj-$(CONFIG_ARCH_EFM32)		+=3D clk-efm32gg.o
++ obj-$(CONFIG_ARCH_HIGHBANK)		+=3D clk-highbank.o
++ obj-$(CONFIG_MACH_LOONGSON1)		+=3D clk-ls1x.o
++ obj-$(CONFIG_COMMON_CLK_MAX77686)	+=3D clk-max77686.o
++ obj-$(CONFIG_ARCH_NOMADIK)		+=3D clk-nomadik.o
++ obj-$(CONFIG_ARCH_NSPIRE)		+=3D clk-nspire.o
++ obj-$(CONFIG_CLK_PPC_CORENET)		+=3D clk-ppc-corenet.o
++ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+=3D clk-s2mps11.o
++ obj-$(CONFIG_COMMON_CLK_SI5351)		+=3D clk-si5351.o
++ obj-$(CONFIG_COMMON_CLK_SI570)		+=3D clk-si570.o
++ obj-$(CONFIG_CLK_TWL6040)		+=3D clk-twl6040.o
++ obj-$(CONFIG_ARCH_U300)			+=3D clk-u300.o
++ obj-$(CONFIG_ARCH_VT8500)		+=3D clk-vt8500.o
++ obj-$(CONFIG_COMMON_CLK_WM831X)		+=3D clk-wm831x.o
++ obj-$(CONFIG_COMMON_CLK_XGENE)		+=3D clk-xgene.o
++ obj-$(CONFIG_ARCH_HI3xxx)		+=3D hisilicon/
++ obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+=3D keystone/
+  ifeq ($(CONFIG_COMMON_CLK), y)
+- obj-$(CONFIG_ARCH_MMP)		+=3D mmp/
++ obj-$(CONFIG_ARCH_MMP)			+=3D mmp/
+  endif
+- obj-$(CONFIG_MACH_LOONGSON1)	+=3D clk-ls1x.o
+- obj-$(CONFIG_ARCH_ROCKCHIP)	+=3D rockchip/
+- obj-$(CONFIG_ARCH_SUNXI)	+=3D sunxi/
+- obj-$(CONFIG_ARCH_U8500)	+=3D ux500/
+- obj-$(CONFIG_ARCH_VT8500)	+=3D clk-vt8500.o
+- obj-$(CONFIG_ARCH_SIRF)		+=3D sirf/
+- obj-$(CONFIG_ARCH_ZYNQ)		+=3D zynq/
+- obj-$(CONFIG_ARCH_TEGRA)	+=3D tegra/
+- obj-$(CONFIG_PLAT_SAMSUNG)	+=3D samsung/
+- obj-$(CONFIG_COMMON_CLK_XGENE)  +=3D clk-xgene.o
+- obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+=3D keystone/
+- obj-$(CONFIG_COMMON_CLK_AT91)	+=3D at91/
++ obj-$(CONFIG_PLAT_ORION)		+=3D mvebu/
++ obj-$(CONFIG_ARCH_MXS)			+=3D mxs/
++ obj-$(CONFIG_COMMON_CLK_QCOM)		+=3D qcom/
++ obj-$(CONFIG_ARCH_ROCKCHIP)		+=3D rockchip/
++ obj-$(CONFIG_PLAT_SAMSUNG)		+=3D samsung/
+  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+=3D shmobile/
+-=20
+- obj-$(CONFIG_X86)		+=3D x86/
+- obj-$(CONFIG_ARCH_BCM)		+=3D bcm/
+-=20
+- # Chip specific
+- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN) +=3D clk-axi-clkgen.o
+- obj-$(CONFIG_COMMON_CLK_WM831X) +=3D clk-wm831x.o
+- obj-$(CONFIG_COMMON_CLK_MAX77686) +=3D clk-max77686.o
+- obj-$(CONFIG_COMMON_CLK_SI5351) +=3D clk-si5351.o
+- obj-$(CONFIG_COMMON_CLK_SI570) +=3D clk-si570.o
+- obj-$(CONFIG_COMMON_CLK_S2MPS11) +=3D clk-s2mps11.o
+- obj-$(CONFIG_CLK_TWL6040)	+=3D clk-twl6040.o
+- obj-$(CONFIG_CLK_PPC_CORENET)	+=3D clk-ppc-corenet.o
++ obj-$(CONFIG_ARCH_SIRF)			+=3D sirf/
++ obj-$(CONFIG_ARCH_SOCFPGA)		+=3D socfpga/
++ obj-$(CONFIG_PLAT_SPEAR)		+=3D spear/
++ obj-$(CONFIG_ARCH_SUNXI)		+=3D sunxi/
++ obj-$(CONFIG_ARCH_TEGRA)		+=3D tegra/
++ obj-$(CONFIG_ARCH_OMAP2PLUS)		+=3D ti/
++ obj-$(CONFIG_ARCH_U8500)		+=3D ux500/
++ obj-$(CONFIG_COMMON_CLK_VERSATILE)	+=3D versatile/
++ obj-$(CONFIG_X86)			+=3D x86/
++ obj-$(CONFIG_ARCH_ZYNQ)			+=3D zynq/
+
+--Signature=_Wed__29_Jan_2014_14_25_51_+1100_LSzBOTd.wnvuSkK=
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS6GaNAAoJEMDTa8Ir7ZwVG7EP/0eCLdWRFUJCbx2PRFqBc2lc
-sRc+oiwsxr+/5f8rPruBLsjBWXuKEkHeT0HzlAfTvPHI1HUm5KgnObObaCFhReue
-6ezGcyUg1SnOcJ7usF+562+9G0meUfRx+j5ZN/KKLsk9yoZdcLbKt8VRzaG166en
-F8Y+lydJGNPMqF+50UVc+lsVUoeZqm6Pnoi6+glmOxU3+1N2JJXGoZVBiPYmG/Km
-OasMmYZN7TI5ttoURYI3XiHrfVGLxeJPQNsxSmxBfWOQ7GZtJ/PBVZh5Ndy9f+WO
-+RfVe4ajYKmaJQ+CU4tTeFI3K0axFtwk0X8f5beY7yJ3oCkUjqgI3gQWKygW4BIp
-X6YgPiY7hkehXX6F8MmT1UNCPzoEvDYJQMMCtvzBekeXGln7PCOT6k+q/a4xr/Wb
-Qs7KOP5qNN0Voxr8HRjfJCpLnPqEvnMFEDD6AlHmcyswzxwfR1Y1j6dJz5XW/cIa
-vx4fCxUbHwEspzbd1z1Vzhhz07IhvBzVllqhfSVuyCym2ZFmYOtBQl9eIbXQi1jY
-Y3SFAjFbP3RHZJGDaRP2EqjF+9pslGzOMXxsNdhiIXbbLrNYStwZbOywFkW6hOyD
-M8VmMx1RxCDMLD7aa27TGEluUo4gB2iTMTScR5vxUQmkMz352gHumXpQVLhoS2fo
-iAglgsHj6fYiqQJRb4CX
-=Jrnl
+iQIcBAEBCAAGBQJS6HTEAAoJEMDTa8Ir7ZwV7cMP/1V4XAGFCGNgOl97cauTIN5I
+6hm4CTyVziQqsvfQ77O13CLKeowbfE730WrFkSe/4UOxekwOhxMLmtY5ICWqwmUP
+FI8FWZZybv1+Rg3Q+5a/XwFwaN01SY3NXwTuS3aQON6cLZxT5jfJeDGr9q+KWjII
+BnOyJ5i6EZi66AGnJ5QzpD0EMP5VapyoGuPsc92Q83GiKZDoh6npnHzA2/UmP5yo
+WK4zlSoJvNyK8PfPiXGKFt1pXthf1SXt7WGFZx28l+SS1wNDMoidTaUF93mxuhNk
+7evbK5gkqIS9ZO9bS111GLOIlKjR6hA3E1Gq6kF/KB/v53VLx1Vu05mDlLlXoOG8
+ULj8fzbg65mqUsnE6BWdkp45iurSZmaklzYg6VW1xVMXXeR1hUFmgBhjb/7cVtgX
+lnV4QJgWd+BX9YISdRMxhRhjv38EPFk3Z2CzVFDMQO5Y2DW0AvBdQxTxz01jU/b8
+SnzvLguiKKGLIX6NO9K7cFCn+qYsrKcjENCB2L5xA5nv1GPR4Ln8zsSWCcPheJRP
+g8MoF4LY5hTXjNlDhzCH4HygcQF15Q57LHH9LEgJtw60BvjYX9paI32/TnlaQ53Z
+gb0D5T5A0O/0cFYuAh/WY7bVerZLz4ucMYjm1IvTZk2BZT1Lwz0c00fVqbxcj7Dh
+KA53A8p1Z9jPXV80D1xu
+=MG+s
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B--
+--Signature=_Wed__29_Jan_2014_14_25_51_+1100_LSzBOTd.wnvuSkK=--
