@@ -1,87 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
-Date: Wed, 29 Jan 2014 14:46:00 +1100
-Message-ID: <20140129144600.772e7be42998c947203146b1@canb.auug.org.au>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: linux-next: manual merge of the imx-mxs tree with the arm tree
+Date: Wed, 29 Jan 2014 11:58:19 +0800
+Message-ID: <20140129035817.GB13518@S2101-09.ap.freescale.net>
+References: <20140129113514.86275e22015dea313d78d5e1@canb.auug.org.au>
+ <20140129011310.GT15937@n2100.arm.linux.org.uk>
+ <20140129011803.GA13518@S2101-09.ap.freescale.net>
+ <20140129132513.3846b7eb56650e4208d2d24a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Jan_2014_14_46_00_+1100_xuo5PaKfDKlNgGpO"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55176 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755236AbaA2DqP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jan 2014 22:46:15 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, =?UTF-8?B?IlBhbGkgUm9ow6FyIg==?= <pali.rohar@gmail.com>
-
---Signature=_Wed__29_Jan_2014_14_46_00_+1100_xuo5PaKfDKlNgGpO
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20140129132513.3846b7eb56650e4208d2d24a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+On Wed, Jan 29, 2014 at 01:25:13PM +1100, Stephen Rothwell wrote:
+> Hi Shawn,
+> 
+> On Wed, 29 Jan 2014 09:18:06 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
+> >
+> > I will rebase my branch on v3.14-rc1 once it's out.
+> 
+> Um, does that mean that all that stuff is *not* destined for v3.14? ...
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-fs/afs/proc.c between commit b42d570c9fbe ("afs: get rid of junk in
-fs/afs/proc.c") from Linus' tree and commit 1a3459681f5c ("afs: proc
-cells and rootcell are writeable") from the akpm-current tree.
+Yes, Stephen.  That's the case.  If it causes problem for you, you can
+keep excluding my for-next branch from linux-next until I rebase it on
+v3.14-rc1.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/afs/proc.c
-index bddc5120ed40,276cb6ed0b93..000000000000
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@@ -130,9 -147,13 +130,9 @@@ int afs_proc_init(void
-  	if (!proc_afs)
-  		goto error_dir;
- =20
-- 	if (!proc_create("cells", 0, proc_afs, &afs_proc_cells_fops) ||
-- 	    !proc_create("rootcell", 0, proc_afs, &afs_proc_rootcell_fops))
- -	p =3D proc_create("cells", S_IFREG | S_IRUGO | S_IWUSR, proc_afs, &afs_p=
-roc_cells_fops);
- -	if (!p)
- -		goto error_cells;
- -
- -	p =3D proc_create("rootcell", S_IFREG | S_IRUGO | S_IWUSR, proc_afs, &af=
-s_proc_rootcell_fops);
- -	if (!p)
- -		goto error_rootcell;
-++	if (!proc_create("cells", S_IFREG | S_IRUGO | S_IWUSR, proc_afs, &afs_pr=
-oc_cells_fops) ||
-++	    !proc_create("rootcell", S_IFREG | S_IRUGO | S_IWUSR, proc_afs, &afs=
-_proc_rootcell_fops))
- +		goto error_tree;
- =20
-  	_leave(" =3D 0");
-  	return 0;
-
---Signature=_Wed__29_Jan_2014_14_46_00_+1100_xuo5PaKfDKlNgGpO
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJS6HmFAAoJEMDTa8Ir7ZwVmO4QAIxEhdrS+2GhJCKNtHF59oy8
-9j+6EUKTvklQf08o2SNS/WBw9D8ZBeEieUxsurB8sLRRIcs/AS8/KrCf40JuMOYe
-6XeweO4IHopJIsvGq5A7L841IgXLKhuVdLuHBzoh/aSKuDGZmCklFTjcKTBE0W4j
-HgD3hYi3WNDwI6ToMNb4n7x7D00ZLyVVirup+j7nyh+8yO3cmt3Mj55IgY/LnnLs
-rX9jNJStG8ges1AlKNbny34XPTkPlROPaL6RteIAv5UYsvvPp1TsvABpibc1AdgU
-hRjjsDk358+5E2O+KeYfTD5NY9qWnDQJnU8hhmrQ8le6J4v/VOjRyC+af9P8gGOW
-An+Ga811uVrCSBEqnmBcn3JkQSdEnPvScxzBS5CVNnjlepJBAdTiB8kdbCNv4v6r
-Sqfmj5+5eW54+nNziJc0yZxW92zHrMYz74lNi/sNz2Ek7pYgOEUBzyO4eSFJ+FRV
-kDpCmDkb6XcTeA2K0HndcGDD/Cye+mGMkDFoChcm8RrOrqmQPZ/uciatjtHLZgiB
-ILqeZx0SExCx+tpvZPNOc3ShnBO1/Q8eQS5atc1xUd6k7Wn6eNcVu6b2hD94FErC
-Ymx95YwUH5VhlL5L3MDqqEtTe8jDV0qLZPlDdRGV1dumnUZXwSN5fLnl2EYpEzZY
-EV+RqbGcq86hSUpX/PlT
-=n5f5
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Jan_2014_14_46_00_+1100_xuo5PaKfDKlNgGpO--
+Shawn
