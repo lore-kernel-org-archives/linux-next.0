@@ -1,75 +1,59 @@
-From: Michal Nazarewicz <mina86@mina86.com>
-Subject: Re: linux-next: manual merge of the btrfs tree with Linus' tree
-Date: Wed, 29 Jan 2014 14:07:35 +0100
-Message-ID: <xa1t7g9jym08.fsf@mina86.com>
-References: <20140129115403.4d2772c096a4fc7a4c9cb156@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commits in the blackfin tree
+Date: Thu, 30 Jan 2014 10:40:23 +1100
+Message-ID: <20140130104023.b176abc94ca4e79aeb3862cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-=-="
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__30_Jan_2014_10_40_23_+1100_N_8=TXWzF+zszJiT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:63146 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751466AbaA2NHw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Jan 2014 08:07:52 -0500
-Received: by mail-ea0-f175.google.com with SMTP id z10so908460ead.34
-        for <linux-next@vger.kernel.org>; Wed, 29 Jan 2014 05:07:51 -0800 (PST)
-In-Reply-To: <20140129115403.4d2772c096a4fc7a4c9cb156@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:50810 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751924AbaA2Xka (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jan 2014 18:40:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Linus <torvalds@linux-foundation.org>
+To: Steven Miao <realmz6@gmail.com>, Mike Frysinger <vapier.adi@gmail.com>, Bob Liu <lliubbo@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
+--Signature=_Thu__30_Jan_2014_10_40_23_+1100_N_8=TXWzF+zszJiT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 29 2014, Stephen Rothwell wrote:
-> Today's linux-next merge of the btrfs tree got a conflict in
-> fs/btrfs/acl.c between commit 996a710d4641 ("btrfs: use generic posix ACL
-> infrastructure") from the  tree and commit cfad95253440 ("btrfs: remove
-> dead code") from the btrfs tree.
->
-> I fixed it up (I used the version from Linus' tree) and can carry the fix
-> as necessary (no action is required).
+Hi all,
 
-That sounds correct.  My commit [cfad95253440: btrfs: remove dead code]
-can be dropped, since Christoph's commit completely rewrites
-btrfs_init_acl function.
+Looking at the changes in the blackfin tree, I noticed that there are
+several commits that are missing a Signed-off-by line from the
+committer.  :-(
 
+Also a couple of the commits subject lines are pretty useless (the have
+the "From:" lines as the subject and their author's are wrong) ...
+
+Please take more care.
 --=20
-Best regards,                                         _     _
-.o. | Liege of Serenely Enlightened Majesty of      o' \,=3D./ `o
-..o | Computer Science,  Micha=C5=82 =E2=80=9Cmina86=E2=80=9D Nazarewicz   =
- (o o)
-ooo +--<mpn@google.com>--<xmpp:mina86@jabber.org>--ooO--(_)--Ooo--
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---=-=-=
-Content-Type: multipart/signed; boundary="==-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-
---==-=-=
-Content-Type: text/plain
-
-
---==-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+--Signature=_Thu__30_Jan_2014_10_40_23_+1100_N_8=TXWzF+zszJiT
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJS6P0YAAoJECBgQBJQdR/0rdQP/1nGJKzJxKlQcHjHWC+LjBTu
-5pjMOuu6ydBULYF+VXFKILwKhS5R2qY0AHVp0ApsU/MFDimbj20i8+tbAzPaTIaD
-XNKMV/xp4VZvAQAwkr295VdlO2hBUOypHcwik7zs7Z70FE4quRbaUNK5FmdWjJ1d
-tMpcZ7L9jZCTNFa//DCLsO7OBg8hfPcB7verRMtpyWbQnGsBvgzJhRXbt5bQchwn
-fdKg6WHaHr9zObvjHEn/oiaPm3aZEVajCkfaTRHsH43sl9g4dGfTbZdDP8PzL+bf
-0R4NnHUDdlu+lhMjSrztG7hKWQhwVGAokZivm8ytltuBzpjW9IHTwFEeyQtsFdky
-Y1cskKeaduL0seO2YOeZ3Q6Csz8g72HryEO6szeRRoPf2KDV+8fHp6CaEqqr5zVj
-ONMAzVd2jXj0FV0Jpmb4c4ge1x5Khu1fBXP3fZMfAT2HXImZxy16nGlGH3WEbl8q
-7TzZzi+7O9ilv+MKB+se+x5yGGjaDqCPNI8O4cEm7BdVhlE0OzvcKqdPg7VXWDtF
-L9aOZbp0acPnU9dO1syyyrfj5nJZCFnbMM34VZT2ci8UQyJw5rMINXZnpzpNCF/b
-uA0nDbZz+zR7fbObRNDkZSZv3LuVx/ySdz1ZjcyjoHoST4UTtxVODlID+vj3R/hl
-wYdVCXm41fCCRc0lR/Mw
-=E5JR
+iQIcBAEBCAAGBQJS6ZFrAAoJEMDTa8Ir7ZwVNZEQAIJcDPe71mXsyMnzPyaQoPmu
+JIpboZSW2qqtNMryH75BOtAGrh/+ZdeBuptkBqNbyBMqKc5VMkqReeIfSoRmhBe4
+qvwc7IDpu0fw+jDyIr995C9htpv8+7GOs2kTFbrehfPz7IsDTQA7rwvRhujeOZDv
+Y/RdA0fM1BawRjJDH8hHNBYTSXcgyPcoseh+zLLyeT5ZaUUgdaQVx1xNREi5tzmk
+fRIdLwVxhSwk1alVt9VQiRZeBtO+cKgkK+BMw95AhGkwaLtpdxB8R1zH/GkT5WIF
+pxjGB2KC3Pd9os57SlUCqzhyhsgSTsgfbfg0+p18WLaKkoTSsW/qswR8u3sQD8pT
+yBAxv6odhgOHiN/Fm+zwB9N5QnGbmKbqjBPqoYSu8n1J9LKlQyobo4pn9jceVf4L
+LVNj8aVr19U1XhEK2KU0D/vs5gys/vT6sVFAiumN28NPIyMcZCMy+tv8E7Wydf6f
+9dT1J6DBSXTcnmsYVCoWuIp1PsHmHIZ6EzPJzEfX4rxE3QdOTgEBRqL/bEpwakvq
+iu8K7ftNeQSYOBSU1Uiy6tdp3pFDJbrRUX32HH+0g7zMKVZV2T+To6DZ4Q/YCqiV
+s6oZzV1Dyb97gYfo/kjx+7hTGeItA1kcQ7Fd7/IVEUy5LsWGaznrj5rUEN2NK9oD
+eDXwTFwSI1ZlqJsfnUmI
+=rGVC
 -----END PGP SIGNATURE-----
---==-=-=--
 
---=-=-=--
+--Signature=_Thu__30_Jan_2014_10_40_23_+1100_N_8=TXWzF+zszJiT--
