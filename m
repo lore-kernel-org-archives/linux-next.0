@@ -1,113 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nfsd tree with Linus' tree
-Date: Wed, 29 Jan 2014 12:42:38 +1100
-Message-ID: <20140129124238.6e1667abab08be8be2dafe01@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the imx-mxs tree with the arm tree
+Date: Wed, 29 Jan 2014 13:25:13 +1100
+Message-ID: <20140129132513.3846b7eb56650e4208d2d24a@canb.auug.org.au>
+References: <20140129113514.86275e22015dea313d78d5e1@canb.auug.org.au>
+	<20140129011310.GT15937@n2100.arm.linux.org.uk>
+	<20140129011803.GA13518@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Jan_2014_12_42_38_+1100_cWlZEdzBHAW4iRgC"
+ boundary="Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:40236 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:44603 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755521AbaA2Bmo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jan 2014 20:42:44 -0500
+	id S1754026AbaA2CZU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jan 2014 21:25:20 -0500
+In-Reply-To: <20140129011803.GA13518@S2101-09.ap.freescale.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Linus <torvalds@linux-foundation.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__29_Jan_2014_12_42_38_+1100_cWlZEdzBHAW4iRgC
+--Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shawn,
 
-Today's linux-next merge of the nfsd tree got a conflict in
-fs/nfsd/nfs4acl.c between commit 4ac7249ea5a0 ("nfsd: use get_acl and
-->set_acl") from Linus' tree and commit 3554116d3aae ("nfsd4: simplify
-xdr encoding of nfsv4 names") from the nfsd tree.
+On Wed, 29 Jan 2014 09:18:06 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
+>
+> I will rebase my branch on v3.14-rc1 once it's out.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Um, does that mean that all that stuff is *not* destined for v3.14? ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/nfsd/nfs4acl.c
-index 649ad7cf2204,eea24c9a561d..000000000000
---- a/fs/nfsd/nfs4acl.c
-+++ b/fs/nfsd/nfs4acl.c
-@@@ -37,13 -37,9 +37,14 @@@
-  #include <linux/slab.h>
-  #include <linux/nfs_fs.h>
-  #include <linux/export.h>
- +#include "nfsfh.h"
-+ #include "nfsd.h"
-  #include "acl.h"
- +#include "vfs.h"
- =20
- +#define NFS4_ACL_TYPE_DEFAULT	0x01
- +#define NFS4_ACL_DIR		0x02
- +#define NFS4_ACL_OWNER		0x04
- =20
-  /* mode bit translations: */
-  #define NFS4_READ_MODE (NFS4_ACE_READ_DATA)
-@@@ -916,17 -849,26 +917,22 @@@ nfs4_acl_get_whotype(char *p, u32 len
-  	return NFS4_ACL_WHO_NAMED;
-  }
- =20
-- int
-- nfs4_acl_write_who(int who, char *p)
-+ __be32 nfs4_acl_write_who(int who, __be32 **p, int *len)
-  {
-  	int i;
-+ 	int bytes;
- =20
-  	for (i =3D 0; i < ARRAY_SIZE(s2t_map); i++) {
-- 		if (s2t_map[i].type =3D=3D who) {
-- 			memcpy(p, s2t_map[i].string, s2t_map[i].stringlen);
-- 			return s2t_map[i].stringlen;
-- 		}
-+ 		if (s2t_map[i].type !=3D who)
-+ 			continue;
-+ 		bytes =3D 4 + (XDR_QUADLEN(s2t_map[i].stringlen) << 2);
-+ 		if (bytes > *len)
-+ 			return nfserr_resource;
-+ 		*p =3D xdr_encode_opaque(*p, s2t_map[i].string,
-+ 					s2t_map[i].stringlen);
-+ 		*len -=3D bytes;
-+ 		return 0;
-  	}
-- 	BUG();
-+ 	WARN_ON_ONCE(1);
-  	return -1;
-  }
- -
- -EXPORT_SYMBOL(nfs4_acl_new);
- -EXPORT_SYMBOL(nfs4_acl_get_whotype);
- -EXPORT_SYMBOL(nfs4_acl_write_who);
-
---Signature=_Wed__29_Jan_2014_12_42_38_+1100_cWlZEdzBHAW4iRgC
+--Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS6FySAAoJEMDTa8Ir7ZwVZh4P/2jD9fLkbKb1xlPHW824xx2i
-mfWiI4nwKoQmB99UU992DRN3h944LIlro9VXezVsviZiyrozlFSM9Znok1wdT+PU
-3BPVrDyqCTGEU9WML5A8yWZxHh8ysx2GEHZiTN2Mt2XH308ASrAI/LwoIxcEaWaS
-aR1zP9L0k2PV5D/zmAQNG59kxan6U5Xf11pICUob9ytzPP77ypq0f5gahl1cswiW
-tiFxQv0g4DvskBrLIDouUETFq9GIaMX+w4udvQstBclFHAR1PRYqvyYYkBoCJydn
-vWWSXz6z5bT7XE1nzYZGVmp3QWww+lFA56K5isu/iE7Jke2frfD5WSSnfM4SOZj2
-M5KA5A7OV/t3xIg0EbYssrfdI3pAbfU75QrITFxbEKYBVy4NHx6xI0BDgUHVaFLQ
-xXRgYYQZmGfcJDWj2lcQrAI+sWkEHSbiruq58kmX010huZPY+d16sxXRoST262PY
-vfP5IOfHahEhWkhcR+KseaJMhN8P7w4F0NKHj74xHf/LLU7/q4/Pqf6U2Nt86hAv
-xjpWZ3I8sUAyOepX/As86vPLJZR2STtH5cC3PRB1H7xEzVarT7sIc231X0USBiIV
-1xfMTGIvIi4AnTWgy2auNs/7YoWhX5rAUYgmhtIEVNvwUbTUQ5wg4ZOVZcri3te8
-HFzBOn/EOmVakPL2P5ll
-=egy+
+iQIcBAEBCAAGBQJS6GaNAAoJEMDTa8Ir7ZwVG7EP/0eCLdWRFUJCbx2PRFqBc2lc
+sRc+oiwsxr+/5f8rPruBLsjBWXuKEkHeT0HzlAfTvPHI1HUm5KgnObObaCFhReue
+6ezGcyUg1SnOcJ7usF+562+9G0meUfRx+j5ZN/KKLsk9yoZdcLbKt8VRzaG166en
+F8Y+lydJGNPMqF+50UVc+lsVUoeZqm6Pnoi6+glmOxU3+1N2JJXGoZVBiPYmG/Km
+OasMmYZN7TI5ttoURYI3XiHrfVGLxeJPQNsxSmxBfWOQ7GZtJ/PBVZh5Ndy9f+WO
++RfVe4ajYKmaJQ+CU4tTeFI3K0axFtwk0X8f5beY7yJ3oCkUjqgI3gQWKygW4BIp
+X6YgPiY7hkehXX6F8MmT1UNCPzoEvDYJQMMCtvzBekeXGln7PCOT6k+q/a4xr/Wb
+Qs7KOP5qNN0Voxr8HRjfJCpLnPqEvnMFEDD6AlHmcyswzxwfR1Y1j6dJz5XW/cIa
+vx4fCxUbHwEspzbd1z1Vzhhz07IhvBzVllqhfSVuyCym2ZFmYOtBQl9eIbXQi1jY
+Y3SFAjFbP3RHZJGDaRP2EqjF+9pslGzOMXxsNdhiIXbbLrNYStwZbOywFkW6hOyD
+M8VmMx1RxCDMLD7aa27TGEluUo4gB2iTMTScR5vxUQmkMz352gHumXpQVLhoS2fo
+iAglgsHj6fYiqQJRb4CX
+=Jrnl
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_Jan_2014_12_42_38_+1100_cWlZEdzBHAW4iRgC--
+--Signature=_Wed__29_Jan_2014_13_25_13_+1100_3YvLv9rBQtYXf16B--
