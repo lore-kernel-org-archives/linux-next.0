@@ -1,43 +1,62 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: manual merge of the init tree with the kvm/kvm-ppc trees
-Date: Wed, 29 Jan 2014 22:33:48 -0500
-Message-ID: <CAP=VYLoid=spfhT5z5AxgLuXPXxj5J4ZVv+JOcr2bXAjSYOu=w@mail.gmail.com>
-References: <20140130142708.6d47d4d63683e32b7ae16c80@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Thu, 30 Jan 2014 14:55:29 +1100
+Message-ID: <20140130145529.be54098a5eb5414f14d85c9d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__30_Jan_2014_14_55_29_+1100_4YiBNhvItXwmGaiw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f54.google.com ([74.125.82.54]:64224 "EHLO
-	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751166AbaA3DeV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Jan 2014 22:34:21 -0500
-In-Reply-To: <20140130142708.6d47d4d63683e32b7ae16c80@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:59211 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750905AbaA3Dzm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jan 2014 22:55:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alexander Graf <agraf@suse.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 29, 2014 at 10:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Paul,
->
-> Today's linux-next merge of the init tree got conflicts in
-> arch/powerpc/kvm/44x.c, arch/powerpc/kvm/e500.c,
-> arch/powerpc/kvm/e500mc.c between commit 398a76c677a2 ("KVM: PPC: Add
-> devname:kvm aliases for modules") from the kvm/kvm-ppc trees and commit
-> "powerpc: kvm e500/44x is not modular, so don't use module_init" from the
-> init tree.
->
-> It sounds like there may be some intent to allow these to be built as
-> modules in the future, so for now I have just reverted the init tree
-> patch to these files and can carry the fix as necessary (no action is
-> required).
+--Signature=_Thu__30_Jan_2014_14_55_29_+1100_4YiBNhvItXwmGaiw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I'll check it out tomorrow morning (EDT) once you've published
-the latest linux-next and update accordingly,
+Hi all,
 
-Paul.
---
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+arch/powerpc/kvm/44x.c: In function 'kvmppc_44x_exit':
+arch/powerpc/kvm/44x.c:231:2: error: implicit declaration of function 'kvmp=
+pc_booke_exit' [-Werror=3Dimplicit-function-declaration]
+
+Caused by my conflict fixup in the init tree.  I just reverted the rest
+of commit f9315b9d2680 ("powerpc: kvm e500/44x is not modular, so don't
+use module_init") from the init tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__30_Jan_2014_14_55_29_+1100_4YiBNhvItXwmGaiw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS6c07AAoJEMDTa8Ir7ZwVBekP/js3fE8Hq55CuRyU92Vkjurp
+royK7OTd+Bt1hM+QVVsq2BXWPISbMc/i59CpWXez3VMZk1fXfscLeNS9YGZt3uTE
+CveE9oG67P6dJ1Ym4m261mzcDAWgYF6ckX8mlzGdrge3n4RT+K/sjiaUZDzv2k3+
+g+7e6kDWvkM+Anj6gw7SqXPzUBtGxcswTKC9DOK+2y1GKXH5TmbiponDMVoF3ki3
+nd2ql56PAKlVTGtrLkblHyb28kwXlULx1QhmL8tfGcL1QD4cBAz2o3kHMVUafNER
+n2Yz1LRpOD4rN2qt2vMCbqF31OHy59vYKIXkv4968IKixoBV2e2cCBlUMxDvLej/
+QWZVrQGDXn4H06h7839CfAbVX2J/yHapDgabrhXPiTbseW86t7w3MoMB7Kkuspdm
+uOeis/CHP2wOGpH8BwIDB0yjoQvVzGBHg9b/tPQBn+d17Fm8rR4OUdQ3yejou/6h
+vEp11utGW9ax6wxxZlarisJl6PHngAQYSuLiFYMZI59JY/hyxTcrA7Pk5LT+xmll
+AGQQmJ0PZo2cKxfyPH3rFmRjMi3pk6+bGfDCrXvP8D7i1xERP5oV9k/ElTRYDLuH
+QJ5VEks9qPB3xEMUKKJQdhuUCxkgWFrAZcXbn76JLwJJltleMJ1DIp7hZb1LtCfX
+KLhTqHqTEtD9W2lUcM9D
+=jT1P
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__30_Jan_2014_14_55_29_+1100_4YiBNhvItXwmGaiw--
