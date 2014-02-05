@@ -1,60 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Feb 4
-Date: Wed, 5 Feb 2014 09:23:11 +1100
-Message-ID: <20140205092311.f60341c0211e49b4d1e0a0cd@canb.auug.org.au>
+Date: Wed, 5 Feb 2014 11:41:13 +1100
+Message-ID: <20140205114113.6be2122ab17b5a1a106d89bf@canb.auug.org.au>
 References: <20140204160704.0cf4cb0ccf45f413056e7f34@canb.auug.org.au>
-	<CAP=VYLpgLC_4yuPtQH_yAd8S9cqQAVu2uB2=Wf3q_zgY4uzkLw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__5_Feb_2014_09_23_11_+1100_cFT+3kxiEPDm5rBr"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAP=VYLpgLC_4yuPtQH_yAd8S9cqQAVu2uB2=Wf3q_zgY4uzkLw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__5_Feb_2014_11_41_13_+1100_WC4PX4cwBq.fK_HP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:56218 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751344AbaBEAlU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Feb 2014 19:41:20 -0500
+In-Reply-To: <20140204160704.0cf4cb0ccf45f413056e7f34@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
---Signature=_Wed__5_Feb_2014_09_23_11_+1100_cFT+3kxiEPDm5rBr
+--Signature=_Wed__5_Feb_2014_11_41_13_+1100_WC4PX4cwBq.fK_HP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-On Tue, 4 Feb 2014 16:18:28 -0500 Paul Gortmaker <paul.gortmaker@windriver.=
-com> wrote:
+On Tue, 4 Feb 2014 16:07:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> > The init tree lost a patch.
+> This tree fails (more than usual) the powerpc allyesconfig build.
 >=20
-> I've sent the pull request to Linus for this, so you can drop it from next
-> at your leisure.
+> Changes since 20140203:
 
-Done.
+I forgot to mention the addition of the file-private-locks tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__5_Feb_2014_09_23_11_+1100_cFT+3kxiEPDm5rBr
+--Signature=_Wed__5_Feb_2014_11_41_13_+1100_WC4PX4cwBq.fK_HP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS8WhTAAoJEMDTa8Ir7ZwVDXMP/3zonQ3Q9fBzwN61c4i9XEPw
-g0Yiiydfqvaq+HqtuH5JjuNjoWti91mhu0xG1hfXLp6yUEI6Iu25UaZaD4SMg//A
-SyD9PKeAbod1EAI2URXrZR8BKNTVAyu1l3Pca0IthQdf/mPbt0IpMsaVbt68ICls
-81HVbeONBPRtyNK6+C9EW1Jshw8DMl6WT8W365oU0bu5i6CLz2nMkLVFiDd8pDNd
-5DCiA/0WAK9NeT8mc0xysrdy8vnMJ//tGBuMBrYCX9AKgFhS5gwuPsvMv5YzErgr
-fMR2PmKORzPodn+B7B340P13Tnx+OpNxFv6xr9+4CTDIXdISAa8tLBmw7KPs8qgj
-ZfpTBEdm511HyJpCtrWGgJgOwpc5Fj3CL5zkK28Ib7xVXZUaPavHkivNgmtzsNty
-ItAslXrwq3zbaA1ErP8x4fRN0p8wjprqsnhtQI8w9ufsrn04xw8DH3Psqtyx6jZ4
-hIvGKg1yrMwIwvWCiXDGgbAihfhpZ1Sh0GOXAiFika0McNFtkWF4Pup4yd9QoS7I
-TKoqxHwYgyRGxUpPMNMlmw8ReeRfPIMms403wqWXsFwZuWm9LVOA3KOIOx8DTE4N
-Mi6YAeitg5SxJ5evB6dIhlTEGKPz7Tv7LNutbt2S8LX9++3cFFxGw10Cc4Z3lNX3
-h9MppWIwW0m3uS0FKuet
-=va3O
+iQIcBAEBCAAGBQJS8YitAAoJEMDTa8Ir7ZwVHY0P/2H+qrdPzJcTdx+dSrtMNDzy
+/7L5/jQxZZff1ETv6Jgt0yhEc5aLi2BRDW9ugqPvyAaH10iKD3rAUy37Sms4dRWj
+IZ5n5rDQOnQ0Oku6k0OCoumQXTl1tecXQUi/g4KvxUC4ydmPqYZJD4YiSc0V/zAi
+iAD5rUkrCFiPzjD2hbVd2rhX9q0L9tWMcWHnrM7MnNTdcwwW08dhOqFjd8Y7yn0z
+HP7tTue9yAlCYUR2/Dvi7Vz/3SZuLal+6D6laTeusFbuPjzKwr0Yr0Rt7V/eyOaB
+ftytevZ7bC4RhO9SOHQGqzc7lkK36MWACKoRiLoLL2aL8EmASaYGN1N2TXcymfQp
+QRXpA9FoR0IWhlxZI7IMP4OI+IAUOgm8KnWhkFO+IhSm+QO4TDG3REAslpRQ8bKw
+5ClBUBGzcrp6mO/8xzEiLFmqjB5OOXsoTHQluorqdJ4yI+W6xar/pnP0cHDN7kWy
+6Ui/O9jGMZUidrseJWDORVn9GAOlewlxpmjbQrQ8l/63jsUaFyy5f54+XBG80OVz
+gxJJ3d8e572Gcu+h2Qxy62UQ9cAOmYyweoWYP8gG2k1k5FV7NxNHNd/UUWvluFoT
+vnTMcUaIfLcErec7X/SEibKSlC4H/wMFuUKaVjfXSS3fetjxxRhvxtU4giyiNh1W
+G+DlXO6tQ0g5PU1LkaVI
+=s2E6
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__5_Feb_2014_09_23_11_+1100_cFT+3kxiEPDm5rBr--
+--Signature=_Wed__5_Feb_2014_11_41_13_+1100_WC4PX4cwBq.fK_HP--
