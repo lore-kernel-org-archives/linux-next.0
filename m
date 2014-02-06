@@ -1,64 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bad commits in the f2fs tree
-Date: Thu, 6 Feb 2014 11:38:45 +1100
-Message-ID: <20140206113845.081b6847d8263f2fd37adefd@canb.auug.org.au>
-References: <20140206110401.7888b06cbd651b842404b902@canb.auug.org.au>
-	<1391646482.25542.72.camel@kjgkr>
+Subject: linux-next: build failure after merge of the fscache tree
+Date: Thu, 6 Feb 2014 12:08:43 +1100
+Message-ID: <20140206120843.5a8b2d7928243f52436ac02c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Feb_2014_11_38_45_+1100_gvJnKgqab+Ba0b67"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1391646482.25542.72.camel@kjgkr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__6_Feb_2014_12_08_43_+1100_6EfkXCeCjB32NfzQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:36290 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752935AbaBFBIt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Feb 2014 20:08:49 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Huston <jhuston@redhat.com>
 
---Signature=_Thu__6_Feb_2014_11_38_45_+1100_gvJnKgqab+Ba0b67
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Thu__6_Feb_2014_12_08_43_+1100_6EfkXCeCjB32NfzQ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jaegeuk,
+Hi David,
 
-On Thu, 06 Feb 2014 09:28:02 +0900 Jaegeuk Kim <jaegeuk.kim@samsung.com> wr=
-ote:
->
-> 2014-02-06 (=EB=AA=A9), 11:04 +1100, Stephen Rothwell:
-> >=20
-> > Looking at the f2fs tree today, it has *copies* of several commits that
-> > are in Linus' tree (including b522196a6ffb "Linus 3.14-rc1" which is
-> > commit 38dbfb59d117 in Linus' tree).  I assume this happened when you
-> > tried to rewrite your tree. :-(
->=20
-> I fixed that.
+After merging the fscache tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I have refetched your tree and will use it today.
+fs/cachefiles/bind.c: In function 'cachefiles_daemon_unbind':
+fs/cachefiles/bind.c:361:4: error: too few arguments to function 'vfs_unlin=
+k'
+    ret =3D vfs_unlink(cache->root->d_inode, dentry);
+    ^
+In file included from fs/cachefiles/bind.c:18:0:
+include/linux/fs.h:1458:12: note: declared here
+ extern int vfs_unlink(struct inode *, struct dentry *, struct inode **);
+            ^
+
+Caused by commit ab3d73f3ce3d ("Cachefiles: Add features that make sanity
+checking easier") from the fscache tree interacting with commit
+b21996e36c8e ("locks: break delegations on unlink") from Linus' tree
+(which entered Linus' tree before v3.13-rc1).  Does this build for you?
+
+I have used the fscache tree from next-20140205 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__6_Feb_2014_11_38_45_+1100_gvJnKgqab+Ba0b67
+--Signature=_Thu__6_Feb_2014_12_08_43_+1100_6EfkXCeCjB32NfzQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS8tmbAAoJEMDTa8Ir7ZwVqNkP/Av9ZAcga4vD8iAetDcVE4ot
-3TLDROdpc9Ug6zpGA9K4T4AVqud3A5aSW9YapnJrN/m3HrFy3XkcmCerw9EjcXmW
-BBZYoegmr33cpcRPE6rpZgg/IViRcVKGLysMYe3JGaTijCM4vBVgux3vwGidcvTT
-jyhblOPhYVwdLxQ+2JL/VQjqAU8G9drg8xLz3I24dW7X1GdYw0vuWW40BAhUqyzX
-0P7ZU2DhIIJumEHdUm5xswRwlAoPECd7wGcxg9oD6Ldz00a/TkzUA1u91mtYRsto
-CHPCl4CFiuFMZhKR25KN5owwWnW/sQ6QeppzNlqHx7ZxWWF4ZrzZXlACOGHB5ySc
-uoOcfgacj6U2z8ogHMj9I9xGUcJ4/eYr+03ahrZwyiKaoPjks7sii9PZfPHfl9qo
-uwW50KBgGK+DDa3hMemSNX6JUxoBYCgor7v4iGXphpeCvBL0VKDWuOPPjKgTqy8a
-mEnIxpRYD7DhHiJsu/znnud1Y8uNGKUqFphn0b4sX0FGosi9k4whYXtj+3jtw3w0
-L86uyJY7YpAguNERPoz2ejsRwHb4jFbewEs8UE031rsf7FS0qwaYZZkxi6lA3dEF
-vU/iwrhRlTSXO/Myp66h1Neh+YA0f4z1E5q0ymz08JeG2EX4vhL1eBeg7cKHHy9p
-2/i0IljDxd58QZyMwYVy
-=SGjN
+iQIcBAEBCAAGBQJS8uCfAAoJEMDTa8Ir7ZwVyYkP/0Q00yJ25zL3pqJoASWy+p+8
+n6SAR7GIWVlzVKdFbBbVse9qeKLeuLPC1gZYOBBYsJQLSKa0mOTW8H/lTtRjBMyL
+yMVdrXLrgESHO89juPGQqWNkI++kMVMgXWDV6+XI//3haDYgqQ8BT7/GLHXiMequ
+MxpPM5nwVSr2SLUfgCxRpxhtJSbhn3Wgs+iudZJV1KssSPcUwZRqJnfmXWZ1bOKY
+miiWCWY1ieFMHgyVE5RLybeOLeD03NKXPqux6PQVvwp0WCv8Xz9g1lEIQLG1yUtL
+KwzE56iESPL9XHxZxDqsU8njLnNspf8i2R5f7ZGaaXBwbVUUyH2pN3OePpmNiElj
+6IdwvxhPh38kmEG4oFSB3Ph5s/l3KOn48PwwAoHWyAa5UVRgJedERXCu5MqYQP8V
+S5g5Lfzxdcf1jVof7N/m3VjrW7TtPQSVbvJ8ghjfXAZISjG+AetSFvqEW2hyJ8bY
+l199dj1MXdoI31s+2dl2c4AtJXaowMKRE3ECNimt5z+0m8YJgVI6hN8IujB4TjXk
+R4W+25AcA2O6NpM43S5+Vqx5+quBeJGiyuEPaSii+Q5tZ1s0BdQECJ1WntVbSosp
+n90VsMmqv2UUZdP/Es8wqiUkbAu8iaTktq2fmYGPrWtDi92hjvYFEzFKLHYz+qbN
+NujgBEyKLS1QtcJ49yHQ
+=sgpz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Feb_2014_11_38_45_+1100_gvJnKgqab+Ba0b67--
+--Signature=_Thu__6_Feb_2014_12_08_43_+1100_6EfkXCeCjB32NfzQ--
