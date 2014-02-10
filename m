@@ -1,46 +1,90 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] irqdesc: Fix missing irq_to_desc export for !CONFIG_SPARSE_IRQ
-Date: Mon, 10 Feb 2014 13:39:53 -0500
-Message-ID: <1392057610-11514-1-git-send-email-paul.gortmaker@windriver.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: regression(ti platforms): next-20140210 (ehci?)
+Date: Mon, 10 Feb 2014 13:33:14 -0600
+Message-ID: <52F9297A.1080206@ti.com>
+References: <52F8F77B.70605@ti.com> <52F9117C.8000405@ti.com> <7h61omakk9.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <sparclinux-owner@vger.kernel.org>
-Sender: sparclinux-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: sparclinux@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Jiri Kosina <jkosina@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <7h61omakk9.fsf@paris.lan>
+Sender: linux-omap-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>, Roger Quadros <rogerq@ti.com>
+Cc: linux-omap <linux-omap@vger.kernel.org>, linux-usb@vger.kernel.org, "Balbi, Felipe" <balbi@ti.com>, linux-next@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>
 List-Id: linux-next.vger.kernel.org
 
-In allmodconfig builds for sparc and any other arch which does
-not set CONFIG_SPARSE_IRQ, the following will be seen at modpost:
+On 02/10/2014 12:28 PM, Kevin Hilman wrote:
+> Roger Quadros <rogerq@ti.com> writes:
+> 
+>> +devicetree
+>>
+>> On 02/10/2014 05:59 PM, Nishanth Menon wrote:
+>>> Hi,
+>>>
+>>> A quick note to report that I saw regression in today's next tag (logs
+>>> indicate around EHCI) boot on various TI platforms:
+>>>
+>>> Note: crane and sdp2430 are not expected to pass with
+>>> multi_v7_defconfig (note: omap2plus_defconfig boot seems to be sane
+>>> but USB is disabled there)
+>>>
+>>> next-20140210-multi_v7_defconfig
+>>>  1: am335x-evm:  Boot PASS: http://slexy.org/raw/s2zYHdPb94
+>>>  2:  am335x-sk:  Boot PASS: http://slexy.org/raw/s2UChLyzSE
+>>>  3: am3517-evm:  Boot FAIL: http://slexy.org/raw/s20Br9XLO1
+>>> around ehci
+>>>
+>>>  4:  am37x-evm:  Boot FAIL: http://slexy.org/raw/s20mVz9Wc7
+>>> around ehci
+>>>
+>>>  5: am43xx-epos:  Boot PASS: http://slexy.org/raw/s2byveBYtT
+>>>  6: BeagleBoard-XM:  Boot FAIL: http://slexy.org/raw/s21sOgJNwK
+>>> around ehci
+>>>
+>>>  7: BeagleBone-Black:  Boot PASS: http://slexy.org/raw/s2ovVNAmO7
+>>>  8:      crane: No Image built - Missing platform support?:
+>>>  9:       dra7:  Boot PASS: http://slexy.org/raw/s217qwaXsM
+>>> 10:        ldp:  Boot FAIL: http://slexy.org/raw/s203IvjE23
+>>> around ehci
+>>>
+>>> 11: PandaBoard-ES:  Boot FAIL: http://slexy.org/raw/s2NvkRx2YJ
+>>> around ehci
+>>
+>> I think the problem is that ehci-platform driver gets loaded instead of ehci-omap.
+>>
+>> In the DT node we have compatible ids for both. e.g. for omap4.dtsi
+>>
+>>                         usbhsehci: ehci@4a064c00 {
+>>                                 compatible = "ti,ehci-omap", "usb-ehci";
+>>                                 reg = <0x4a064c00 0x400>;
+>>                                 interrupt-parent = <&gic>;
+>>                                 interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+>>                         };
+>>
+>> Shouldn't ehci-omap driver be getting a higher priority than usb-ehci?
+>>
+>> A quick fix would be to eliminate "usb-ehci" from the DT node of all failing platforms.
+> 
+> I can confirm that simply remvoing usb-ehci from omap[34].dtsi nodes
+> fixed the problem for me on 3530/overo, 3730/beagle-xM and
+> 4460/panda-es.  But I don't think that's the right fix.  First we have
+> to figure out why ehci-omap stopped getting loaded first.
 
-  CC [M]  lib/cpu-notifier-error-inject.o
-  CC [M]  lib/pm-notifier-error-inject.o
-ERROR: "irq_to_desc" [drivers/gpio/gpio-mcp23s08.ko] undefined!
-make[2]: *** [__modpost] Error 1
+Wont that depend on driver probe order? of_match_device is fairly
+simple compatible walk through without looking at other drivers which
+might also be compatible, but not yet probed?
 
-This happens because commit 3911ff30f5d1175e2e67e73244405e3492b35c79
-("genirq: export handle_edge_irq() and irq_to_desc()") added one
-export for it, but there were actually two instances of it, in
-an if/else clause for CONFIG_SPARSE_IRQ.  Add the second one.
+The issue started I think with the following patch getting merged:
+ehci-platform: Add support for clks and phy passed through devicetree
+some version of http://www.spinics.net/lists/linux-usb/msg101061.html
+introduced { .compatible = "usb-ehci", },
 
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org	# 3.4+
-Fixes: 3911ff30f5d1 ("genirq: export handle_edge_irq() and irq_to_desc()")
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Now, in the build we have two drivers which dts claims compatibility
+with, but only 1 driver actually works (drivers/usb/host/ehci-omap.c)
+for the platform. Thinking that way, in fact, the current
+compatibility even matches drivers/usb/host/ehci-ppc-of.c which
+obviously wont work either.
 
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 192a302d6cfd..8ab8e9390297 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -274,6 +274,7 @@ struct irq_desc *irq_to_desc(unsigned int irq)
- {
- 	return (irq < NR_IRQS) ? irq_desc + irq : NULL;
- }
-+EXPORT_SYMBOL(irq_to_desc);
- 
- static void free_desc(unsigned int irq)
- {
 -- 
-1.8.5.2
-
+Regards,
+Nishanth Menon
