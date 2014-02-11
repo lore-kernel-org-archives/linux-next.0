@@ -1,65 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd-lj tree
-Date: Tue, 11 Feb 2014 13:25:52 +1100
-Message-ID: <20140211132552.68b0802fd8742c6d72dfa738@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Tue, 11 Feb 2014 14:00:59 +1100
+Message-ID: <20140211140059.acf8dd51bfa5dfbb738d2de0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc"
+ boundary="Signature=_Tue__11_Feb_2014_14_00_59_+1100_57sUphbkTXEt_4GL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:47983 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:34231 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752474AbaBKCZ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Feb 2014 21:25:59 -0500
+	id S1752186AbaBKDBI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Feb 2014 22:01:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dongsheng Yang <yangds.fnst@cn.fujitsu.com>
 
---Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc
+--Signature=_Tue__11_Feb_2014_14_00_59_+1100_57sUphbkTXEt_4GL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+Hi all,
 
-After merging the mfd-lj tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/mfd/tps65218: struct i2c_device_id is 32 bytes.  The last of 1 is:
-0x74 0x70 0x73 0x36 0x35 0x32 0x31 0x38 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xf0 0x00 0x00 0x00 0x00 0x00 =
-0x00 0x00=20
-FATAL: drivers/mfd/tps65218: struct i2c_device_id is not terminated with a =
-NULL entry!
+arch/powerpc/platforms/cell/spufs/sched.c:86:0: error: "MAX_USER_PRIO" rede=
+fined [-Werror]
+ #define MAX_USER_PRIO  (MAX_PRIO - MAX_RT_PRIO)
+ ^
+In file included from include/linux/sched.h:6:0,
+                 from arch/powerpc/platforms/cell/spufs/sched.c:26:
+include/linux/sched/prio.h:38:0: note: this is the location of the previous=
+ definition
+ #define MAX_USER_PRIO  (USER_PRIO(MAX_PRIO))
+ ^
 
-Caused by commit cc493e30e3a1 ("mfd: tps65218: Add driver for the
-TPS65218 PMIC").
+Caused by commit 6b6350f155af ("sched: Expose some macros related to
+priority").  A quick grep shows that MAX_USER_PRIO is defined in
+include/linux/sched/prio.h, but not used anywhere (except in
+arch/powerpc/platforms/cell/spufs/sched.c where it is also defined)?
 
-I have used the mfd-lj tree from next-20140210 for today.
+I have used the tip tree from next-20140210 for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc
+--Signature=_Tue__11_Feb_2014_14_00_59_+1100_57sUphbkTXEt_4GL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS+Yo0AAoJEMDTa8Ir7ZwVif0QAIPb5UxzxRtQkvKlXjdZobBK
-ahSa7kDNkrIR3SFCzHx3zktaIceiorkW+HcN66wW1Wuk40z9LFTkqcMCp/L2+bMN
-vZ4Qtpr2IXUuTvy+j8DSQn5obmM77QT1QR9C6WAqwxoHdHwHnbu3LyhvzhYTdoIW
-B/HwE3LPzJhKU4DRlTtUHfi2hQoebyBP9MkayhQkFBGtpHF+AbotcuUePe30VPdw
-UjdouOwwt3NoBlTZY0eicnBUyiHF6MnLrTvClAPVALkmu40wUvLFyJVwP+Z/lXz/
-26v6T65wazfoU2O9j/FaD0l8LHwAn5eaDwOLDWgOYatWFE7r9R0mVmZRt3HQlqk7
-CxaEFZ1tN4KKnCHwuIQ+BfsomIBYHKoL+Gp3mVa55HofbthYdCbVC8ZjoSC1dxjh
-u3O9dPgnGE36qIStWRJ39YWluoipVC706wTQTc9n/DPJTQYKeVHmM5TJbAt8qqgd
-icci2FiN3k3glb5JSKGlcAo9jcX4j7mX9bEeWIoissB8PMwsPmM1eeLZxmAEYVPA
-/ZmJlR1iMeD/9LHG+m/M6MNfIc1BHsBrLACPDXZCudT4ESUVw8IZtjDgx2ACcuWk
-oLVvf8ScZtMoycYdz73yx/wOZmtkrscMwEDDz8cIG4/sYs7o6wUMRXZEur8rheH9
-uAsVDVn530GTBRs6ZY23
-=q/5k
+iQIcBAEBCAAGBQJS+ZJvAAoJEMDTa8Ir7ZwVFMQP/jNDyxY5c16ewD1kRtb9NGba
+7XUKZOD4Pt8G7U+UzPvwZbJpsrYiRda3U9FjGL2wh21hk3L5eAfr/6EgNrLRcr5T
+tQR7sW2mhhxi5HbufDKDfaWf8amhE9wwJdS3I8DdWq/Z0oePHHAmGWflEFjM9x6m
+bvdAXRk2GpOhPh8JdgzAxyc4cPwFqTIWdwbPsmo1fap1+XdmAHhB1ex01UEMrVRn
+r4thWOLnPom7mOrepb3v8AXPPsIcsRI+CIJstUeeAJOP+YzahiMlPgxNUzAJCYwc
+XWCoWnJdqCFtHo/X9oHjKiT31UFzU0GrZlS6WJF66wAAdSAqaijkOABhutME61+Q
+l4cM9mBQzV/REevkR2IFJlP6V1rt/L5jVzcK3AJKnxsnHxKiRLyXf0Awx5rNiLFe
+rhO0F1+dUtP6AHaURgyBOnweQJUyUN4TaBKf8t/roUOuWvxhUR1mye2UXMhyNG4G
+zQtoPh6jdFBcMk1xyWNNcKzq4iOAvyfioSiHiUSf4Oi6w2umHlK3fEojHmIJNN/W
+F4sgAm2mgBTk1Y8y2tDAWIipCiw9RrSA4MWRXKneDEIXVcJ1++/fkK58FHkaCNZy
+Zl2yGpw1sjWP5Va5H3HuqJJgNQjXIJMOKJk9X4rkm9bWDJhvKNLoRNc9HQX8PmHs
+ZjVXNNIy21iyMCKEHPsA
+=X6Zz
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc--
+--Signature=_Tue__11_Feb_2014_14_00_59_+1100_57sUphbkTXEt_4GL--
