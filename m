@@ -1,110 +1,65 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: regression(ti platforms): next-20140210 (ehci?)
-Date: Mon, 10 Feb 2014 17:07:02 -0800
-Message-ID: <7h38jq8nk9.fsf@paris.lan>
-References: <52F8F77B.70605@ti.com> <52F9117C.8000405@ti.com>
-	<7h61omakk9.fsf@paris.lan> <52F9297A.1080206@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd-lj tree
+Date: Tue, 11 Feb 2014 13:25:52 +1100
+Message-ID: <20140211132552.68b0802fd8742c6d72dfa738@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:58959 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752123AbaBKBHF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Feb 2014 20:07:05 -0500
-Received: by mail-pd0-f174.google.com with SMTP id z10so6758242pdj.5
-        for <linux-next@vger.kernel.org>; Mon, 10 Feb 2014 17:07:04 -0800 (PST)
-In-Reply-To: <52F9297A.1080206@ti.com> (Nishanth Menon's message of "Mon, 10
-	Feb 2014 13:33:14 -0600")
+Received: from ozlabs.org ([203.10.76.45]:47983 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752474AbaBKCZ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Feb 2014 21:25:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nishanth Menon <nm@ti.com>
-Cc: Roger Quadros <rogerq@ti.com>, linux-omap <linux-omap@vger.kernel.org>, linux-usb@vger.kernel.org, "Balbi, Felipe" <balbi@ti.com>, linux-next@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>
 
-Nishanth Menon <nm@ti.com> writes:
+--Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 02/10/2014 12:28 PM, Kevin Hilman wrote:
->> Roger Quadros <rogerq@ti.com> writes:
->> 
->>> +devicetree
->>>
->>> On 02/10/2014 05:59 PM, Nishanth Menon wrote:
->>>> Hi,
->>>>
->>>> A quick note to report that I saw regression in today's next tag (logs
->>>> indicate around EHCI) boot on various TI platforms:
->>>>
->>>> Note: crane and sdp2430 are not expected to pass with
->>>> multi_v7_defconfig (note: omap2plus_defconfig boot seems to be sane
->>>> but USB is disabled there)
->>>>
->>>> next-20140210-multi_v7_defconfig
->>>>  1: am335x-evm:  Boot PASS: http://slexy.org/raw/s2zYHdPb94
->>>>  2:  am335x-sk:  Boot PASS: http://slexy.org/raw/s2UChLyzSE
->>>>  3: am3517-evm:  Boot FAIL: http://slexy.org/raw/s20Br9XLO1
->>>> around ehci
->>>>
->>>>  4:  am37x-evm:  Boot FAIL: http://slexy.org/raw/s20mVz9Wc7
->>>> around ehci
->>>>
->>>>  5: am43xx-epos:  Boot PASS: http://slexy.org/raw/s2byveBYtT
->>>>  6: BeagleBoard-XM:  Boot FAIL: http://slexy.org/raw/s21sOgJNwK
->>>> around ehci
->>>>
->>>>  7: BeagleBone-Black:  Boot PASS: http://slexy.org/raw/s2ovVNAmO7
->>>>  8:      crane: No Image built - Missing platform support?:
->>>>  9:       dra7:  Boot PASS: http://slexy.org/raw/s217qwaXsM
->>>> 10:        ldp:  Boot FAIL: http://slexy.org/raw/s203IvjE23
->>>> around ehci
->>>>
->>>> 11: PandaBoard-ES:  Boot FAIL: http://slexy.org/raw/s2NvkRx2YJ
->>>> around ehci
->>>
->>> I think the problem is that ehci-platform driver gets loaded instead of ehci-omap.
->>>
->>> In the DT node we have compatible ids for both. e.g. for omap4.dtsi
->>>
->>>                         usbhsehci: ehci@4a064c00 {
->>>                                 compatible = "ti,ehci-omap", "usb-ehci";
->>>                                 reg = <0x4a064c00 0x400>;
->>>                                 interrupt-parent = <&gic>;
->>>                                 interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
->>>                         };
->>>
->>> Shouldn't ehci-omap driver be getting a higher priority than usb-ehci?
->>>
->>> A quick fix would be to eliminate "usb-ehci" from the DT node of all failing platforms.
->> 
->> I can confirm that simply remvoing usb-ehci from omap[34].dtsi nodes
->> fixed the problem for me on 3530/overo, 3730/beagle-xM and
->> 4460/panda-es.  But I don't think that's the right fix.  First we have
->> to figure out why ehci-omap stopped getting loaded first.
->
-> Wont that depend on driver probe order? of_match_device is fairly
-> simple compatible walk through without looking at other drivers which
-> might also be compatible, but not yet probed?
->
-> The issue started I think with the following patch getting merged:
-> ehci-platform: Add support for clks and phy passed through devicetree
-> some version of http://www.spinics.net/lists/linux-usb/msg101061.html
-> introduced { .compatible = "usb-ehci", },
+Hi Lee,
 
-This is what I was getting at: an understanding of what caused the
-failue in the first place.
+After merging the mfd-lj tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> Now, in the build we have two drivers which dts claims compatibility
-> with, but only 1 driver actually works (drivers/usb/host/ehci-omap.c)
-> for the platform. Thinking that way, in fact, the current
-> compatibility even matches drivers/usb/host/ehci-ppc-of.c which
-> obviously wont work either.
+drivers/mfd/tps65218: struct i2c_device_id is 32 bytes.  The last of 1 is:
+0x74 0x70 0x73 0x36 0x35 0x32 0x31 0x38 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xf0 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00=20
+FATAL: drivers/mfd/tps65218: struct i2c_device_id is not terminated with a =
+NULL entry!
 
-Right, so I agree that it makes sense to remove a compatible string
-where there is no compatability, but a couple other things should happen
-here.
+Caused by commit cc493e30e3a1 ("mfd: tps65218: Add driver for the
+TPS65218 PMIC").
 
-1) changelog should describe why this compatible string is in the omap
-dtsi files in first place.
+I have used the mfd-lj tree from next-20140210 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-2) investigation into the patch that introduced this change to double
-check it's not introducing other breakage as well.
+--Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc
+Content-Type: application/pgp-signature
 
-Kevin
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS+Yo0AAoJEMDTa8Ir7ZwVif0QAIPb5UxzxRtQkvKlXjdZobBK
+ahSa7kDNkrIR3SFCzHx3zktaIceiorkW+HcN66wW1Wuk40z9LFTkqcMCp/L2+bMN
+vZ4Qtpr2IXUuTvy+j8DSQn5obmM77QT1QR9C6WAqwxoHdHwHnbu3LyhvzhYTdoIW
+B/HwE3LPzJhKU4DRlTtUHfi2hQoebyBP9MkayhQkFBGtpHF+AbotcuUePe30VPdw
+UjdouOwwt3NoBlTZY0eicnBUyiHF6MnLrTvClAPVALkmu40wUvLFyJVwP+Z/lXz/
+26v6T65wazfoU2O9j/FaD0l8LHwAn5eaDwOLDWgOYatWFE7r9R0mVmZRt3HQlqk7
+CxaEFZ1tN4KKnCHwuIQ+BfsomIBYHKoL+Gp3mVa55HofbthYdCbVC8ZjoSC1dxjh
+u3O9dPgnGE36qIStWRJ39YWluoipVC706wTQTc9n/DPJTQYKeVHmM5TJbAt8qqgd
+icci2FiN3k3glb5JSKGlcAo9jcX4j7mX9bEeWIoissB8PMwsPmM1eeLZxmAEYVPA
+/ZmJlR1iMeD/9LHG+m/M6MNfIc1BHsBrLACPDXZCudT4ESUVw8IZtjDgx2ACcuWk
+oLVvf8ScZtMoycYdz73yx/wOZmtkrscMwEDDz8cIG4/sYs7o6wUMRXZEur8rheH9
+uAsVDVn530GTBRs6ZY23
+=q/5k
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__11_Feb_2014_13_25_52_+1100_oNImwvJr3nuTDAzc--
