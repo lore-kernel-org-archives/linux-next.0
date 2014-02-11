@@ -1,56 +1,59 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: regression(ti platforms): next-20140210 (ehci?)
-Date: Tue, 11 Feb 2014 10:21:13 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1402111017440.1209-100000@iolanthe.rowland.org>
-References: <7h38jq8nk9.fsf@paris.lan>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 11  (staging/rtl8821ae/)
+Date: Tue, 11 Feb 2014 10:14:52 -0800
+Message-ID: <52FA689C.7090103@infradead.org>
+References: <20140211172136.37976e8c5e7b81ce11f30b34@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7h38jq8nk9.fsf-4poPxKt068f/PtFMR13I2A@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, linux-omap <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Balbi, Felipe" <balbi-l0cyMroinI0@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org" <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20140211172136.37976e8c5e7b81ce11f30b34@canb.auug.org.au>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 10 Feb 2014, Kevin Hilman wrote:
-
-> > The issue started I think with the following patch getting merged:
-> > ehci-platform: Add support for clks and phy passed through devicetree
-> > some version of http://www.spinics.net/lists/linux-usb/msg101061.html
-> > introduced { .compatible = "usb-ehci", },
+On 02/10/2014 10:21 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> This is what I was getting at: an understanding of what caused the
-> failue in the first place.
+> This tree fails (more than usual) the powerpc allyesconfig build.
 > 
-> > Now, in the build we have two drivers which dts claims compatibility
-> > with, but only 1 driver actually works (drivers/usb/host/ehci-omap.c)
-> > for the platform. Thinking that way, in fact, the current
-> > compatibility even matches drivers/usb/host/ehci-ppc-of.c which
-> > obviously wont work either.
+> Changes since 20140210:
 > 
-> Right, so I agree that it makes sense to remove a compatible string
-> where there is no compatability, but a couple other things should happen
-> here.
-> 
-> 1) changelog should describe why this compatible string is in the omap
-> dtsi files in first place.
-> 
-> 2) investigation into the patch that introduced this change to double
-> check it's not introducing other breakage as well.
 
-Oddly enough, it was Roger who introduced this incorrect compatibility 
-string in commit f17c89948dcd6 (ARM: dts: OMAP4: Add HS USB Host IP 
-nodes).  There is no explanation in the commit log of why the string is 
-there.
+on i386:
 
-We better remove it from all the files where it doesn't belong.  Of
-course, this won't help existing hardware.  It will still be necessary 
-to change the compatibility string used for the generic platform 
-drivers.
+ERROR: "ieee80211_rx_irqsafe" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_beacon_get_tim" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_unregister_hw" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "rate_control_send_low" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_stop_queue" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_rate_control_register" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "wiphy_to_ieee80211_hw" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_stop_tx_ba_cb_irqsafe" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_tx_status_irqsafe" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_find_sta" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_wake_queue" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_rate_control_unregister" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_register_hw" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_start_tx_ba_session" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_alloc_hw" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_free_hw" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_connection_loss" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
+ERROR: "ieee80211_start_tx_ba_cb_irqsafe" [drivers/staging/rtl8821ae/rtl8821ae.ko] undefined!
 
-Alan Stern
+when CONFIG_MAC80211 is not enabled.
+Looks like it should also depend on MAC80211.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+-- 
+~Randy
