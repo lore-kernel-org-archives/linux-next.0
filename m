@@ -1,75 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] powerpc: Fix "attempt to move .org backwards" error
-Date: Wed, 12 Feb 2014 16:22:51 +1100
-Message-ID: <20140212162251.57472ed024ace170b49ec2fa@canb.auug.org.au>
-References: <20131209191015.22974.31604.stgit@mars>
-	<20131210101031.82b02468d32ddb89481b24b9@canb.auug.org.au>
-	<1386631570.32037.40.camel@pasglop>
+Subject: linux-next: build failure after merge of the final tree (cgroup
+ tree related)
+Date: Wed, 12 Feb 2014 16:25:00 +1100
+Message-ID: <20140212162500.242e91e4cc3541b992fa3a0c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS"
+ boundary="Signature=_Wed__12_Feb_2014_16_25_00_+1100_QkOsFjCyETRGSVJN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:43951 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:44076 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750854AbaBLFW5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Feb 2014 00:22:57 -0500
-In-Reply-To: <1386631570.32037.40.camel@pasglop>
+	id S1750743AbaBLFZF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Feb 2014 00:25:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS
+--Signature=_Wed__12_Feb_2014_16_25_00_+1100_QkOsFjCyETRGSVJN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 10 Dec 2013 10:26:10 +1100 Benjamin Herrenschmidt <benh@kernel.cras=
-hing.org> wrote:
->
-> On Tue, 2013-12-10 at 10:10 +1100, Stephen Rothwell wrote:
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> >=20
-> > Works for me.  Thanks.  I will add this to linux-next today if Ben
-> > doesn't add it to his tree.
->=20
-> I will but probably not soon enough for your cut today
+After merging the final tree, today's linux-next build (sparc defconfig)
+failed like this:
 
-As noted elsewhere, this did not completely fix the problem and I have
-been still getting this error from my allyesconfig builds for some time:
+arch/sparc/kernel/sun4m_irq.c: In function 'sun4m_build_device_irq':
+arch/sparc/kernel/sun4m_irq.c:266:2: error: implicit declaration of functio=
+n 'kzalloc' [-Werror=3Dimplicit-function-declaration]
+arch/sparc/kernel/sun4m_irq.c:266:15: error: assignment makes pointer from =
+integer without a cast [-Werror]
 
-arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
-arch/powerpc/kernel/exceptions-64s.S:1312: Error: attempt to move .org back=
-wards
+Presumably caused by commit 2bd59d48ebfb ("cgroup: convert to kernfs")
+(see the comment in commit 1ff6bbfd13ca ("arm, pm, vmpressure: add
+missing slab.h includes")).  I wonder how mane more builds are broken by
+this :-(
 
-Could someone please fix this?
+Indeed, reverting that commit fixes the build.
+
+I have added the following build fix for today (please check the
+overnight builds for more breakage):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 12 Feb 2014 16:01:10 +1100
+Subject: [PATCH] sun4M: add include of slab.h for kzalloc
+
+This was being included implicitly via cgroup.h's inclusion of xattr.h
+(which has now been removed).
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/sun4m_irq.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/sparc/kernel/sun4m_irq.c b/arch/sparc/kernel/sun4m_irq.c
+index c5ade9d27a1d..8bb3b3fddea7 100644
+--- a/arch/sparc/kernel/sun4m_irq.c
++++ b/arch/sparc/kernel/sun4m_irq.c
+@@ -9,6 +9,8 @@
+  *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)
+  */
+=20
++#include <linux/slab.h>
++
+ #include <asm/timer.h>
+ #include <asm/traps.h>
+ #include <asm/pgalloc.h>
+--=20
+1.9.rc1
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS
+--Signature=_Wed__12_Feb_2014_16_25_00_+1100_QkOsFjCyETRGSVJN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS+wUvAAoJEMDTa8Ir7ZwVWe4P/A1XEMQbgN4KUHbAsM5RH7wz
-YIOmJ8NJdEZOLgP7WXgoPEJ2dy9ZU0K/wNBXANcuiZEpQ7MBRl0/r2VpCJIhOmdq
-Dk7dJH/SUOZ8T8f/gMmE20vXuJkBbmt7+ycmKHSH7QHaCfxHnqzPfeFDXOeHWF9a
-8WDr066+lu2K4N3TdennMHa38BQhzZTdD/XqZytuI3XwywUwDZeqc1lVj9oe0c7m
-7Mtjx8xGnbY7HWnTfCBEdvD78L+83m6gvlvluC7S1Iiy3BarrKbUCTftdlT9AuIA
-DLovvSLnieu3d11wnaxolExCLcWKr+kLDRfj/9CiKiOUVmR16k/oKF+ddpBZDuWM
-ExFtzOSsDRxT9HRvDrSIUmFWKq+YJv2VBCZzG9pSY5LabwDmeJNbwSIJGbXwyZyA
-HwEVKKQDE/eJuOSeejFbPz1JaO9CoInnc+6miXFrIIpYinEC8UtkxCQvzFpLyqz+
-eXMNHRcKkW3yRp9BGeHTG4ojWPdj4IquthXrUOuhkMEKPjtiGxEVv7rjUya4zCqG
-80mLm9xV/syRe4fHNJ8wPg56FkZNS5CeWLmNZq276eyVLPlUc6RHnpA0jnesePx/
-SoEhTAXGRAoDvWLBtuEiqKlMa31ASW8TGc89Agof1jy5sYh1w6UFnDgz0nYOrIIO
-grQY8QnnWmeQ0ppEC1Ym
-=Yeot
+iQIcBAEBCAAGBQJS+wWwAAoJEMDTa8Ir7ZwV0TUP/28n2eb0TPtm3kR05jTkHti0
+e4R8Ccst50p0c6Y1JbcnGWitoJ+n4Bk42+nRiS6Ji4n0jpxE0NsVQ13TVxICV3QI
+2Apd+T677u7r/aNGFSyI9UgySgCcNG7Sbbee54so/QyH1PIZaNI3fFYNzGhtS0MG
+laU1d4DMxdO4hTyiyRIIP0MM1g/2HoeoN24i0T0Jb2LKRQrAcOAvS2M1RLtEalCF
+U4to7rQfIO3M9bqbOjWYOvniX4UOeX5135ZOFxrOtSxD3aVl2gS6D+7z4sBP9P65
+J6ppns47NqpiYOcZwHNGzIkOD0KzGMftGwTRtxWSvzt7BCpPkekZCqU/0p274kNK
+spnxOb2jSTlvjY5JUNrhMftFIFVJjq4MMIjMXqbjXTK4qgmXThH3G2lVpmAuJ+0x
+yqwFh7qQnR8/Oy/xVnCr1SMtSQOaKjZhjtVp1WduXGDCDLVOH9VF5tfPId9ghZRX
+MJfvzp8Thg17+lHDvXi61I73sb2RfUinQoh3f0uVk6+062Rb/Nuiu1X4uZDb6qQX
+rXwkea5VmGTLFwlIDglZ1Dnkh9SAoFgUXqMoM/R+UODcrYRDCHdVnx0uHeni2NM5
+kceoN0bTxCDTWzwIfmjKgOXHZQk0IloRRxHLFHwRwxYILIdAm8Xis8pqIbwEQU0Y
+0y27oxtXbaW9QwHI5QQM
+=1xUE
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS--
+--Signature=_Wed__12_Feb_2014_16_25_00_+1100_QkOsFjCyETRGSVJN--
