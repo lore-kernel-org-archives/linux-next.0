@@ -1,94 +1,70 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 0/8] Improved seccomp-bpf support for MIPS
-Date: Tue, 11 Feb 2014 19:58:19 -0500
-Message-ID: <CAP=VYLoNjfC8ZBgfLtCSv=s638p3faY-wm2cj2rn482KekyA7A@mail.gmail.com>
-References: <1390401604-11830-1-git-send-email-markos.chandras@imgtec.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Wed, 12 Feb 2014 13:41:27 +1100
+Message-ID: <20140212134127.2c049bb94175e12201b257ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__12_Feb_2014_13_41_27_+1100_aDglfghNEfcP4Eg4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:43231 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750978AbaBLA6u (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Feb 2014 19:58:50 -0500
-Received: by mail-wi0-f172.google.com with SMTP id e4so5787198wiv.17
-        for <linux-next@vger.kernel.org>; Tue, 11 Feb 2014 16:58:49 -0800 (PST)
-In-Reply-To: <1390401604-11830-1-git-send-email-markos.chandras@imgtec.com>
+Received: from ozlabs.org ([203.10.76.45]:58280 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751919AbaBLClf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Feb 2014 21:41:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Markos Chandras <markos.chandras@imgtec.com>
-Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Preeti U Murthy <preeti@linux.vnet.ibm.com>
 
-On Wed, Jan 22, 2014 at 9:39 AM, Markos Chandras
-<markos.chandras@imgtec.com> wrote:
-> Hi,
->
-> This patch improves the existing seccomp-bpf support for MIPS.
-> It fixes a bug when copying system call arguments for the filter
-> checks and it also moves away from strict filtering to actually
-> use the filter supplied by the userspace process.
+--Signature=_Wed__12_Feb_2014_13_41_27_+1100_aDglfghNEfcP4Eg4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-It seems this causes a build fail on linux-next allmodconfig.  I left
-a mindless "git bisect run .." go against it and it came up with:
-----------------------------
-make[2]: *** [samples/seccomp/bpf-direct.o] Error 1
-make[1]: *** [samples/seccomp] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [vmlinux] Error 2
-5c5df77172430c6377ec3434ce62f2b14a6799fc is the first bad commit
-commit 5c5df77172430c6377ec3434ce62f2b14a6799fc
-Author: Markos Chandras <markos.chandras@imgtec.com>
-Date:   Wed Jan 22 14:40:04 2014 +0000
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-    MIPS: Select HAVE_ARCH_SECCOMP_FILTER
+drivers/cpuidle/cpuidle-pseries.c: In function 'idle_loop_prolog':
+drivers/cpuidle/cpuidle-pseries.c:32:2: error: implicit declaration of func=
+tion 'ppc64_runlatch_off' [-Werror=3Dimplicit-function-declaration]
+  ppc64_runlatch_off();
+  ^
+drivers/cpuidle/cpuidle-pseries.c: In function 'idle_loop_epilog':
+drivers/cpuidle/cpuidle-pseries.c:52:2: error: implicit declaration of func=
+tion 'ppc64_runlatch_on' [-Werror=3Dimplicit-function-declaration]
+  ppc64_runlatch_on();
+  ^
 
-    Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
-    Reviewed-by: James Hogan <james.hogan@imgtec.com>
-    Reviewed-by: Paul Burton <paul.burton@imgtec.com>
-    Cc: linux-mips@linux-mips.org
-    Patchwork: https://patchwork.linux-mips.org/patch/6401/
-    Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
----------------------
+Caused by commit d8c6ad3184ca ("sched/idle, PPC: Remove redundant
+cpuidle_idle_call()").
 
-The original linux-next fail is at:
+I have used the tip tree from next-20140210 again today (since
+next-20140211 was broken differently).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/10601740/
+--Signature=_Wed__12_Feb_2014_13_41_27_+1100_aDglfghNEfcP4Eg4
+Content-Type: application/pgp-signature
 
-Paul.
---
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
->
-> This patchset has been tested with libseccomp
-> (MIPS support not upstream yet) on mips, mipsel and mips64
-> and with Chromium test suite (MIPS support not upstream yet)
-> on mipsel.
->
-> This patchset is based on the upstream-sfr/mips-for-linux-next tree.
->
-> Markos Chandras (8):
->   MIPS: asm: syscall: Fix copying system call arguments
->   MIPS: asm: syscall: Add the syscall_rollback function
->   MIPS: asm: syscall: Define syscall_get_arch
->   MIPS: asm: thread_info: Add _TIF_SECCOMP flag
->   MIPS: ptrace: Move away from secure_computing_strict
->   MIPS: kernel: scalls: Skip the syscall if denied by the seccomp filter
->   MIPS: seccomp: Handle indirect system calls (o32)
->   MIPS: Select HAVE_ARCH_SECCOMP_FILTER
->
->  arch/mips/Kconfig                   |  1 +
->  arch/mips/include/asm/ptrace.h      |  2 +-
->  arch/mips/include/asm/syscall.h     | 35 ++++++++++++++++++++++++++++++-----
->  arch/mips/include/asm/thread_info.h |  3 ++-
->  arch/mips/kernel/ptrace.c           | 11 ++++++-----
->  arch/mips/kernel/scall32-o32.S      | 15 +++++++++++++--
->  arch/mips/kernel/scall64-64.S       |  5 ++++-
->  arch/mips/kernel/scall64-n32.S      |  5 ++++-
->  arch/mips/kernel/scall64-o32.S      | 17 +++++++++++++++--
->  9 files changed, 76 insertions(+), 18 deletions(-)
->
-> --
-> 1.8.5.3
->
->
->--
+iQIcBAEBCAAGBQJS+t9bAAoJEMDTa8Ir7ZwVk2EP/0mNCTin2FpOCU5aB6h14JqX
+YWoiroIdm51EHowoH9/QenJ4d53EQxkG8bAjnrHjaK7g5Jc1NMOsdMvAzgsTOSZD
+pOO9DHMp6ZVdG09zcoZGLPRiDryeKbRpmyV8PoZMO0jyvwJD90hW1y3gs4LtNoia
++vcV3FUo7XLf/SgQ8fu6U/y0rGFF14q2FTsEXaOI32v40yHTSG5HpOosPEXcZ1wx
+Gndijxmhzrjrym66Jh78wpARoOamj5zOVYF9KdNZmO/8niXHLF2BGEyCp+st/N1Q
+hME9zFZtBgezzEBYzgmoOidEhH3kUpJhmqYQ7LBS0z3C598nKLSV4MX8TjO7swEV
+SEDO2NlmHQSWyMArVGaKWFcgmc900WwOHT3gkyRyj2SSsx9w0cfYYixRMEAsDEz+
+IiQFiBGD4ftxHX3OnHB/aCY/RLFVerQYYyybhG6P5DMG81G0BEGScgIjHGOhpt5x
+ZJuW7ZHMYsBS471T9Y3zIC0aTwKgFvWxbBxCuj87FOaSuAlSKnXLvv6BCyHHMARL
+Ul+EExYDGL5Autxi7zZogaq1XyrNYr5Wg7hKsG2Pkre676LI/nzLE3PXV8/hHY4b
+TaXunVwCCfVOPKC1vyKdyCXLghKFVaKUQa4x/rIXq7oyZzps/xNTjBrVyLRu+Rn1
+mzgST90yXQqmPVm+XEnA
+=hkaC
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Feb_2014_13_41_27_+1100_aDglfghNEfcP4Eg4--
