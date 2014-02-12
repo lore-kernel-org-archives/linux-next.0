@@ -1,85 +1,75 @@
-From: Preeti U Murthy <preeti@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 12 Feb 2014 10:18:45 +0530
-Message-ID: <52FAFD2D.2090306@linux.vnet.ibm.com>
-References: <20140212134127.2c049bb94175e12201b257ef@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] powerpc: Fix "attempt to move .org backwards" error
+Date: Wed, 12 Feb 2014 16:22:51 +1100
+Message-ID: <20140212162251.57472ed024ace170b49ec2fa@canb.auug.org.au>
+References: <20131209191015.22974.31604.stgit@mars>
+	<20131210101031.82b02468d32ddb89481b24b9@canb.auug.org.au>
+	<1386631570.32037.40.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140212134127.2c049bb94175e12201b257ef@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:43951 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750854AbaBLFW5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Feb 2014 00:22:57 -0500
+In-Reply-To: <1386631570.32037.40.camel@pasglop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
+--Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/12/2014 08:11 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/cpuidle/cpuidle-pseries.c: In function 'idle_loop_prolog':
-> drivers/cpuidle/cpuidle-pseries.c:32:2: error: implicit declaration of function 'ppc64_runlatch_off' [-Werror=implicit-function-declaration]
->   ppc64_runlatch_off();
->   ^
-> drivers/cpuidle/cpuidle-pseries.c: In function 'idle_loop_epilog':
-> drivers/cpuidle/cpuidle-pseries.c:52:2: error: implicit declaration of function 'ppc64_runlatch_on' [-Werror=implicit-function-declaration]
->   ppc64_runlatch_on();
->   ^
-> 
-> Caused by commit d8c6ad3184ca ("sched/idle, PPC: Remove redundant
-> cpuidle_idle_call()").
+Hi all,
 
-Ok so after the commit
+On Tue, 10 Dec 2013 10:26:10 +1100 Benjamin Herrenschmidt <benh@kernel.cras=
+hing.org> wrote:
+>
+> On Tue, 2013-12-10 at 10:10 +1100, Stephen Rothwell wrote:
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >=20
+> > Works for me.  Thanks.  I will add this to linux-next today if Ben
+> > doesn't add it to his tree.
+>=20
+> I will but probably not soon enough for your cut today
 
-d8c6ad3184ca651:sched/idle, PPC: Remove redundant cpuidle_idle_call()
-reintroduced ppc64_runlatch_off/on() in drivers/cpuidle/cpuidle-pseries.c
-the cleanup caused by the commit "c0c4301c54adde05:pseries/cpuidle:
-Remove redundant call to ppc64_runlatch_off() in cpu idle routines"
-now needs to be introduced in part.
+As noted elsewhere, this did not completely fix the problem and I have
+been still getting this error from my allyesconfig builds for some time:
 
-Below is the patch which should fix this. This is based on top of tip-tree.
+arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+arch/powerpc/kernel/exceptions-64s.S:1312: Error: attempt to move .org back=
+wards
 
-Thanks
+Could someone please fix this?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Regards
-Preeti U Murthy
+--Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS
+Content-Type: application/pgp-signature
 
----------------------------------------------------------------------------------
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-cpuidle/pseries: Fix fallout caused due to cleanup in pseries cpuidle backend driver
+iQIcBAEBCAAGBQJS+wUvAAoJEMDTa8Ir7ZwVWe4P/A1XEMQbgN4KUHbAsM5RH7wz
+YIOmJ8NJdEZOLgP7WXgoPEJ2dy9ZU0K/wNBXANcuiZEpQ7MBRl0/r2VpCJIhOmdq
+Dk7dJH/SUOZ8T8f/gMmE20vXuJkBbmt7+ycmKHSH7QHaCfxHnqzPfeFDXOeHWF9a
+8WDr066+lu2K4N3TdennMHa38BQhzZTdD/XqZytuI3XwywUwDZeqc1lVj9oe0c7m
+7Mtjx8xGnbY7HWnTfCBEdvD78L+83m6gvlvluC7S1Iiy3BarrKbUCTftdlT9AuIA
+DLovvSLnieu3d11wnaxolExCLcWKr+kLDRfj/9CiKiOUVmR16k/oKF+ddpBZDuWM
+ExFtzOSsDRxT9HRvDrSIUmFWKq+YJv2VBCZzG9pSY5LabwDmeJNbwSIJGbXwyZyA
+HwEVKKQDE/eJuOSeejFbPz1JaO9CoInnc+6miXFrIIpYinEC8UtkxCQvzFpLyqz+
+eXMNHRcKkW3yRp9BGeHTG4ojWPdj4IquthXrUOuhkMEKPjtiGxEVv7rjUya4zCqG
+80mLm9xV/syRe4fHNJ8wPg56FkZNS5CeWLmNZq276eyVLPlUc6RHnpA0jnesePx/
+SoEhTAXGRAoDvWLBtuEiqKlMa31ASW8TGc89Agof1jy5sYh1w6UFnDgz0nYOrIIO
+grQY8QnnWmeQ0ppEC1Ym
+=Yeot
+-----END PGP SIGNATURE-----
 
-From: Preeti U Murthy <preeti@linux.vnet.ibm.com>
-
-Commit "d8c6ad3184ca651:sched/idle, PPC: Remove redundant cpuidle_idle_call()"
-reintroduced ppc64_runlatch_off/on() in the pseries cpuidle backend driver.
-Hence the cleanup caused by the commit "c0c4301c54adde05:pseries/cpuidle:
-Remove redundant call to ppc64_runlatch_off() in cpu idle routines"  in
-conjuction with the commit d8c6ad3184ca651 causes a build failure.
-
-Signed-off-by: Preeti U Murthy <preeti@linux.vnet.ibm.com>
----
- drivers/cpuidle/cpuidle-pseries.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
-index d486489..6f7b019 100644
---- a/drivers/cpuidle/cpuidle-pseries.c
-+++ b/drivers/cpuidle/cpuidle-pseries.c
-@@ -17,6 +17,7 @@
- #include <asm/reg.h>
- #include <asm/machdep.h>
- #include <asm/firmware.h>
-+#include <asm/runlatch.h>
- #include <asm/plpar_wrappers.h>
- 
- struct cpuidle_driver pseries_idle_driver = {
-
-
-> 
-> I have used the tip tree from next-20140210 again today (since
-> next-20140211 was broken differently).
-> 
+--Signature=_Wed__12_Feb_2014_16_22_51_+1100_rlRrq_CgXz3Z8bzS--
