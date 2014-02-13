@@ -1,88 +1,76 @@
-From: David Daney <ddaney.cavm@gmail.com>
-Subject: Re: [PATCH] samples/seccomp/Makefile: Do not build tests if cross-compiling
- for MIPS
-Date: Thu, 13 Feb 2014 10:30:30 -0800
-Message-ID: <52FD0F46.6040503@gmail.com>
-References: <1392312460-24902-1-git-send-email-markos.chandras@imgtec.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the wireless-next tree
+Date: Thu, 13 Feb 2014 10:28:09 -0800
+Message-ID: <20140213182809.GB32578@kroah.com>
+References: <20140213131923.4a0b79959e0b27399c021aa7@canb.auug.org.au>
+ <CAP=VYLrGdsJawCU3u5VZN192TptCOKZp-hO9cR7PtuspZui4uA@mail.gmail.com>
+ <CAP=VYLpa7yOZb4bgT6jNkLaEmDVHpKkwm07x8--URvUFEb+E2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:47596 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752869AbaBMSad (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Feb 2014 13:30:33 -0500
-Received: by mail-ig0-f169.google.com with SMTP id uq10so4065788igb.0
-        for <linux-next@vger.kernel.org>; Thu, 13 Feb 2014 10:30:33 -0800 (PST)
-In-Reply-To: <1392312460-24902-1-git-send-email-markos.chandras@imgtec.com>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:44929 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752233AbaBMSd2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Feb 2014 13:33:28 -0500
+Content-Disposition: inline
+In-Reply-To: <CAP=VYLpa7yOZb4bgT6jNkLaEmDVHpKkwm07x8--URvUFEb+E2Q@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Markos Chandras <markos.chandras@imgtec.com>
-Cc: linux-mips@linux-mips.org, linux-next@vger.kernel.org, linux-kernel@linux-mips.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Berg <johannes.berg@intel.com>, David Howells <dhowells@redhat.com>
 
-Really I think we should add a Kconfig item for this and disable the=20
-whole directory for targets that do not support it.
+On Thu, Feb 13, 2014 at 01:22:15PM -0500, Paul Gortmaker wrote:
+> On Thu, Feb 13, 2014 at 12:31 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> > On Wed, Feb 12, 2014 at 9:19 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> Hi John,
+> >>
+> >> After merging the wireless-next tree, today's linux-next build (x86_64
+> >> allmodconfig) failed like this:
+> >>
+> >> drivers/staging/rtl8821ae/rc.c:289:2: error: unknown field 'module' specified in initializer
+> >>   .module = NULL,
+> >>   ^
+> >>
+> >> Caused by commit cc01f9b55fe7 ("mac80211: remove module handling from
+> >> rate control ops") interacting with commit 3c05bedb5fef ("Staging:
+> >> rtl8812ae: Add Realtek 8821 PCI WIFI driver") which entered Linus' tree
+> >> before v3.14-rc1.
+> >
+> > It seems this new driver has multiple issues; I'm seeing this on sparc32
+> > allmodconfig builds.
+> >
+> > In file included from drivers/staging/rtl8821ae/btcoexist/halbt_precomp.h:31:0,
+> >                  from drivers/staging/rtl8821ae/btcoexist/halbtc8192e2ant.c:14:
+> > drivers/staging/rtl8821ae/btcoexist/../pci.h:290:15: error: expected
+> > '=', ',', ';', 'asm' or '__attribute__' before 'rtl_pci_probe'
+> > make[3]: *** [drivers/staging/rtl8821ae/btcoexist/halbtc8192e2ant.o] Error 1
+> > make[3]: *** Waiting for unfinished jobs....
+> >
+> > It looks like a mangled version check which is allowing it to try and use
+> > __devinit on the rtl_pci_probe function, but of course __devinit is gone.
+> >
+> > Ideally all that version check stuff should be gutted.
+> 
+> While it still should be gutted, I tracked down the source of the version
+> skew.  If a person is bisecting and if you go back to pre-UAPI days,
+> you will create an include/linux/version.h  -- then if you checkout a
+> post-UAPI kernel, and run "make distclean" it won't delete that file.
+> So you get a situation like this:
+> 
+> $ grep -R LINUX_VERSION_CODE include/
+> include/generated/uapi/linux/version.h:#define LINUX_VERSION_CODE 200192
+> include/linux/version.h:#define LINUX_VERSION_CODE 132646
+> 
+> Note the presence of a v2.6.38 version.  And it will be sourced/used,
+> hence the fail above.  We might want to unconditionally clobber the
+> old file in new kernels to avoid this trap, since it is subtle.
 
-David Daney
+Yeah, I've run into that problem a number of times before, a 'git clean
+-fdx' usually fixes it up for me, and is why I do it all the time when
+switching major kernel versions.
 
+thanks,
 
-On 02/13/2014 09:27 AM, Markos Chandras wrote:
-> The Makefile is designed to use the host toolchain so it may be
-> unsafe to build the tests if the kernel has been configured and built
-> for another architecture. This fixes a build problem when the kernel =
-has
-> been configured and built for the MIPS architecture but the host is
-> not MIPS (cross-compiled). The MIPS syscalls are only defined
-> if one of the following is true:
->
-> 1) _MIPS_SIM =3D=3D _MIPS_SIM_ABI64
-> 2) _MIPS_SIM =3D=3D _MIPS_SIM_ABI32
-> 3) _MIPS_SIM =3D=3D _MIPS_SIM_NABI32
->
-> Of course, none of these make sense on a non-MIPS toolchain and the
-> following build problem occurs when building on a non-MIPS host.
->
-> linux/usr/include/linux/kexec.h:50:
-> userspace cannot reference function or variable defined in the kernel
-> samples/seccomp/bpf-direct.c: In function =E2=80=98emulator=E2=80=99:
-> samples/seccomp/bpf-direct.c:76:17: error:
-> =E2=80=98__NR_write=E2=80=99 undeclared (first use in this function)
->
-> Cc: linux-next@vger.kernel.org
-> Cc: linux-kernel@linux-mips.org
-> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
-> ---
-> This problem is only reproducible on the linux-next tree at the momen=
-t
-> ---
->   samples/seccomp/Makefile | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-> index 7203e66..f6bda1c 100644
-> --- a/samples/seccomp/Makefile
-> +++ b/samples/seccomp/Makefile
-> @@ -17,9 +17,14 @@ HOSTCFLAGS_bpf-direct.o +=3D -I$(objtree)/usr/incl=
-ude
->   HOSTCFLAGS_bpf-direct.o +=3D -idirafter $(objtree)/include
->   bpf-direct-objs :=3D bpf-direct.o
->  =20
-> +# MIPS system calls are defined based on the -mabi that is passed
-> +# to the toolchain which may or may not be a valid option
-> +# for the host toolchain. So disable tests if target architecture
-> +# is mips but the host isn't.
-> +ifndef CONFIG_MIPS
->   # Try to match the kernel target.
-> -ifndef CONFIG_64BIT
->   ifndef CROSS_COMPILE
-> +ifndef CONFIG_64BIT
->  =20
->   # s390 has -m31 flag to build 31 bit binaries
->   ifndef CONFIG_S390
-> @@ -40,3 +45,4 @@ endif
->  =20
->   # Tell kbuild to always build the programs
->   always :=3D $(hostprogs-y)
-> +endif
+greg k-h
