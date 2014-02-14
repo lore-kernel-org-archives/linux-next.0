@@ -1,95 +1,66 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] samples/seccomp/Makefile: Do not build tests if
- cross-compiling for MIPS
-Date: Thu, 13 Feb 2014 20:33:31 -0500
-Message-ID: <CAP=VYLr1D-DQz8U4naa5aEL_AFa_JkO5e+TgFSxpsd_2t3dahQ@mail.gmail.com>
-References: <1392312460-24902-1-git-send-email-markos.chandras@imgtec.com> <52FD0F46.6040503@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd-lj tree
+Date: Fri, 14 Feb 2014 13:42:17 +1100
+Message-ID: <20140214134217.aa7e1994b4cab7ee563c8307@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:60763 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750987AbaBNBeF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Feb 2014 20:34:05 -0500
-Received: by mail-wi0-f177.google.com with SMTP id e4so9472439wiv.4
-        for <linux-next@vger.kernel.org>; Thu, 13 Feb 2014 17:34:01 -0800 (PST)
-In-Reply-To: <52FD0F46.6040503@gmail.com>
+Received: from ozlabs.org ([203.10.76.45]:33090 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750987AbaBNCmY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Feb 2014 21:42:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Daney <ddaney.cavm@gmail.com>
-Cc: Markos Chandras <markos.chandras@imgtec.com>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel@linux-mips.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 13, 2014 at 1:30 PM, David Daney <ddaney.cavm@gmail.com> wrote:
-> Really I think we should add a Kconfig item for this and disable the whole
-> directory for targets that do not support it.
+--Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can we do something based on  CONFIG_CROSS_COMPILE vs. adding more Kconfig?
+Hi Lee,
 
-Paul.
---
+After merging the mfd-lj tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
->
-> David Daney
->
->
->
-> On 02/13/2014 09:27 AM, Markos Chandras wrote:
->>
->> The Makefile is designed to use the host toolchain so it may be
->> unsafe to build the tests if the kernel has been configured and built
->> for another architecture. This fixes a build problem when the kernel has
->> been configured and built for the MIPS architecture but the host is
->> not MIPS (cross-compiled). The MIPS syscalls are only defined
->> if one of the following is true:
->>
->> 1) _MIPS_SIM == _MIPS_SIM_ABI64
->> 2) _MIPS_SIM == _MIPS_SIM_ABI32
->> 3) _MIPS_SIM == _MIPS_SIM_NABI32
->>
->> Of course, none of these make sense on a non-MIPS toolchain and the
->> following build problem occurs when building on a non-MIPS host.
->>
->> linux/usr/include/linux/kexec.h:50:
->> userspace cannot reference function or variable defined in the kernel
->> samples/seccomp/bpf-direct.c: In function 'emulator':
->> samples/seccomp/bpf-direct.c:76:17: error:
->> '__NR_write' undeclared (first use in this function)
->>
->> Cc: linux-next@vger.kernel.org
->> Cc: linux-kernel@linux-mips.org
->> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->> Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
->> ---
->> This problem is only reproducible on the linux-next tree at the moment
->> ---
->>   samples/seccomp/Makefile | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
->> index 7203e66..f6bda1c 100644
->> --- a/samples/seccomp/Makefile
->> +++ b/samples/seccomp/Makefile
->> @@ -17,9 +17,14 @@ HOSTCFLAGS_bpf-direct.o += -I$(objtree)/usr/include
->>   HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
->>   bpf-direct-objs := bpf-direct.o
->>   +# MIPS system calls are defined based on the -mabi that is passed
->> +# to the toolchain which may or may not be a valid option
->> +# for the host toolchain. So disable tests if target architecture
->> +# is mips but the host isn't.
->> +ifndef CONFIG_MIPS
->>   # Try to match the kernel target.
->> -ifndef CONFIG_64BIT
->>   ifndef CROSS_COMPILE
->> +ifndef CONFIG_64BIT
->>     # s390 has -m31 flag to build 31 bit binaries
->>   ifndef CONFIG_S390
->> @@ -40,3 +45,4 @@ endif
->>     # Tell kbuild to always build the programs
->>   always := $(hostprogs-y)
->> +endif
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+In file included from drivers/mfd/max665x.c:19:0:
+include/linux/mfd/max665x-private.h:31:1: error: expected ';', identifier o=
+r '(' before 'struct'
+ struct max665x_dev {
+ ^
+
+Caused by commit e77bb5297293 ("mfd: max665x: Differentiate between
+MAX665X devices").  Clearly never built by anyone :-(
+
+I have used the mfd-lj tree from next-20140210 again for today (since the
+other version had other problems).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS/YKNAAoJEMDTa8Ir7ZwVxmgP/A7QEEAcIiSSDFvxD3SHjDve
+xM64gPzTH7jQ5l+9wmxfeSx9YVn51nm3ySF3K29elvPfGHHQC65kd2B2sYeayTq7
+4cnWWLDuKmYkfFpCIWOUd+NGIaO7FkYReP5YnXwsJ/QdwnVU9q0jjfFfa3WoO6I0
+Aq+N/LhMKMmYQEMuf/2/0p9qLJT3NU8sQn03bsRRctCWNCIU3+bDBzafjw+Eqo3f
+il6NbnNDMHjcZwJ+guDWs3XvU/12N1eQMoHVEC3dgRuo1MAg5RGHt+IRP+4uQVUm
+z5/63AuIWcCz00r8NEfnROMfmac4rrFvnZKIv4obsIsBCpOtP3q5VsxQCzFMwbf1
+SVsgjcayEdJu4eVMdTykky7UyGHiPQ1r4LLihCK/6pr8vOpeuExHtQt/mMkWFhVn
+4+emwB8qRzxp9jmWfraLkc3tl2u9iKNPiMZXT6YxCibN473wxMlXS+2XR6DVRne2
+PAOlVvfNM771FR6uotO1DiafXPxgH89jHTzQ4/8e1k4+joy5N3/AVFeYMvIDRFqo
+pGAo6S9y2GW0EFQIoUZDIj9OnkDkEG8ac86Ut7FetnmGNxU+DAS6y3CXIHPzdaS4
+HFQCq/afyQ4kp8p7lePZUl1WMbxQuR1BsXK1k9TNYarLzTp4Aubfpkh5fLqdIj7F
+wM+ROgx1xhzMK0XP7rnF
+=9wxA
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L--
