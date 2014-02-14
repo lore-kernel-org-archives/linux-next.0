@@ -1,66 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd-lj tree
-Date: Fri, 14 Feb 2014 13:42:17 +1100
-Message-ID: <20140214134217.aa7e1994b4cab7ee563c8307@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the net-next
+ tree
+Date: Fri, 14 Feb 2014 14:16:39 +1100
+Message-ID: <20140214141639.74ea45728f39a8ee874ce986@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L"
+ boundary="Signature=_Fri__14_Feb_2014_14_16_39_+1100_sjO5N6.pESqgo9wY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:33090 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:46897 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750987AbaBNCmY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Feb 2014 21:42:24 -0500
+	id S1751050AbaBNDQr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Feb 2014 22:16:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
 
---Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L
+--Signature=_Fri__14_Feb_2014_14_16_39_+1100_sjO5N6.pESqgo9wY
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+Hi Grant,
 
-After merging the mfd-lj tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the devicetree tree got a conflict in
+drivers/of/of_net.c between commit 8a2fe56e8827 ("net: phy: re-design
+phy_modes to be self-contained") from the net-next tree and commit
+cf4c9eb5a451 ("of: make of_get_phy_mode parse 'phy-connection-type'")
+from the devicetree tree.
 
-In file included from drivers/mfd/max665x.c:19:0:
-include/linux/mfd/max665x-private.h:31:1: error: expected ';', identifier o=
-r '(' before 'struct'
- struct max665x_dev {
- ^
+I fixed it up (I applied the following merge fix patch) and can carry the
+fix as necessary (no action is required).
 
-Caused by commit e77bb5297293 ("mfd: max665x: Differentiate between
-MAX665X devices").  Clearly never built by anyone :-(
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 14 Feb 2014 14:14:31 +1100
+Subject: [PATCH] net: of: merges fix for a moved comment
 
-I have used the mfd-lj tree from next-20140210 again for today (since the
-other version had other problems).
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/phy.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 42f1bc7eaeb0..bc77c174e0a3 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -79,8 +79,8 @@ typedef enum {
+=20
+ /**
+  * It maps 'enum phy_interface_t' found in include/linux/phy.h
+- * into the device tree binding of 'phy-mode', so that Ethernet
+- * device driver can get phy interface from device tree.
++ * into the device tree binding of 'phy-mode' or 'phy-connection-type',
++ * so that Ethernet device driver can get phy interface from device tree.
+  */
+ static inline const char *phy_modes(phy_interface_t interface)
+ {
+--=20
+1.9.0.rc3
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L
+--Signature=_Fri__14_Feb_2014_14_16_39_+1100_sjO5N6.pESqgo9wY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS/YKNAAoJEMDTa8Ir7ZwVxmgP/A7QEEAcIiSSDFvxD3SHjDve
-xM64gPzTH7jQ5l+9wmxfeSx9YVn51nm3ySF3K29elvPfGHHQC65kd2B2sYeayTq7
-4cnWWLDuKmYkfFpCIWOUd+NGIaO7FkYReP5YnXwsJ/QdwnVU9q0jjfFfa3WoO6I0
-Aq+N/LhMKMmYQEMuf/2/0p9qLJT3NU8sQn03bsRRctCWNCIU3+bDBzafjw+Eqo3f
-il6NbnNDMHjcZwJ+guDWs3XvU/12N1eQMoHVEC3dgRuo1MAg5RGHt+IRP+4uQVUm
-z5/63AuIWcCz00r8NEfnROMfmac4rrFvnZKIv4obsIsBCpOtP3q5VsxQCzFMwbf1
-SVsgjcayEdJu4eVMdTykky7UyGHiPQ1r4LLihCK/6pr8vOpeuExHtQt/mMkWFhVn
-4+emwB8qRzxp9jmWfraLkc3tl2u9iKNPiMZXT6YxCibN473wxMlXS+2XR6DVRne2
-PAOlVvfNM771FR6uotO1DiafXPxgH89jHTzQ4/8e1k4+joy5N3/AVFeYMvIDRFqo
-pGAo6S9y2GW0EFQIoUZDIj9OnkDkEG8ac86Ut7FetnmGNxU+DAS6y3CXIHPzdaS4
-HFQCq/afyQ4kp8p7lePZUl1WMbxQuR1BsXK1k9TNYarLzTp4Aubfpkh5fLqdIj7F
-wM+ROgx1xhzMK0XP7rnF
-=9wxA
+iQIcBAEBCAAGBQJS/YqcAAoJEMDTa8Ir7ZwV7ZEQAIHF/EtycQCpIQV297/Ksqgk
+e6C6vJhT+lX/2/2BPbA370X/eeWqB8ceHiwvbgVGwB95mTkw+Q8D9blSPZn6/5CI
+OkuQsLjkqHGO5EwUtbllcHaFU4iUZXI6o2Jz+V7up/WY6UYuPi+8E6Lm2+3wzlWq
+nys63I+BJTU7UXFpOKDcF34WZw+Dbcqxx6RfUbTJAUbi5x5R/GKAq5sNNiVdffm6
+tyZvWrrpSIoezgLkjHPo99ZeOLNPDqHpKduc4cxwRxZArdAwmuUkaGRAgi0Aj8SY
+SH6crWxCpoYuAl6RyhsceMjxz1FLPaS3WzPu2sozng+SxJ+tCt5NmsT3hlg3TMH1
+/NcNL8h0khZW8j2TvbTQR4nIZ2z6CYutKTrzwiuk4jI+DoY5/dz6tbIeuGdHIAuG
+CyvNfIrQDklCl2V5TF5yMNynlEKak6g3tOoNl0sWLDM++Z2LUo8N3N+mvwcKbhul
+jUK0kB3noTGGaVzwHDthgFSm9Kn9TQH6gpvLB2VAC7H0wL4LGYSNE+mEcd670pNB
+ftzQm+6lmn2hteQ4sNPphNRE7OsQlFqSRqdJivV3h3jD5ngvJqwtxO1jkMxWXKFl
+lJzNahReCtQLdJwlabNG73QK7iQPhLdl2gYLMl0GiaH8ln3h38qX2IisDrGVrsBc
+S68f0QoY+SFvG6IuyR3C
+=aTXQ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Feb_2014_13_42_17_+1100_fXIOBl3zUsoz8i+L--
+--Signature=_Fri__14_Feb_2014_14_16_39_+1100_sjO5N6.pESqgo9wY--
