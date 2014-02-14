@@ -1,45 +1,78 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] sparc: fix implicit include of slab.h in
- leon_pci_grpci2.c
-Date: Thu, 13 Feb 2014 16:18:57 -0500
-Message-ID: <20140213211857.GF17608@htj.dyndns.org>
-References: <1392307158-6932-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Fri, 14 Feb 2014 11:19:39 +1100
+Message-ID: <20140214111939.58ecc154f74a9ea273df795a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:53400 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932AbaBMVTB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Feb 2014 16:19:01 -0500
-Content-Disposition: inline
-In-Reply-To: <1392307158-6932-1-git-send-email-paul.gortmaker@windriver.com>
+Received: from ozlabs.org ([203.10.76.45]:50619 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751440AbaBNATq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Feb 2014 19:19:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: sparclinux@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlJhZmHFgiBNacWCZWNraSI=?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, John Crispin <blogic@openwrt.org>
 
-On Thu, Feb 13, 2014 at 10:59:18AM -0500, Paul Gortmaker wrote:
-> To fix:
-> 
-> arch/sparc/kernel/leon_pci_grpci2.c: In function 'grpci2_of_probe':
-> arch/sparc/kernel/leon_pci_grpci2.c:720:2: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
-> arch/sparc/kernel/leon_pci_grpci2.c:720:20: error: assignment makes pointer from integer without a cast [-Werror]
-> arch/sparc/kernel/leon_pci_grpci2.c:882:2: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
-> cc1: all warnings being treated as errors
-> make[2]: *** [arch/sparc/kernel/leon_pci_grpci2.o] Error 1
-> 
-> According to Stephen, these types of failures are caused by
-> commit 2bd59d48ebfb ("cgroup: convert to kernfs") which was
-> being included implicitly via cgroup.h's inclusion of xattr.h
-> (which has now been removed).
-> 
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+--Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to cgroup/for-3.15.
+Hi John,
 
-Thanks.
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/bcma/driver_gpio.c between commit 2997609eb4c9 ("bcma: gpio: add
+own IRQ domain") from Linus' tree and commit 6b6ee88774ae ("bcma: gpio:
+register all 32 GPIOs") from the wireless tree.
 
--- 
-tejun
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+[Aside, Ralf: that commit in Linus' tree is committed by you but has no
+Signed-off-by from you.  There were a couple of others there as well.]
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/bcma/driver_gpio.c
+index 25f9887a35d0,39dadf5342c6..000000000000
+--- a/drivers/bcma/driver_gpio.c
++++ b/drivers/bcma/driver_gpio.c
+@@@ -215,10 -95,8 +215,10 @@@ int bcma_gpio_init(struct bcma_drv_cc *
+  	chip->set		=3D bcma_gpio_set_value;
+  	chip->direction_input	=3D bcma_gpio_direction_input;
+  	chip->direction_output	=3D bcma_gpio_direction_output;
+ +#if IS_BUILTIN(CONFIG_BCMA_HOST_SOC)
+  	chip->to_irq		=3D bcma_gpio_to_irq;
+ +#endif
+- 	chip->ngpio		=3D 16;
++ 	chip->ngpio		=3D 32;
+  	/* There is just one SoC in one device and its GPIO addresses should be
+  	 * deterministic to address them more easily. The other buses could get
+  	 * a random base number. */
+
+--Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJS/WEgAAoJEMDTa8Ir7ZwV63AP/0H1abBLj1OXS7J/X2WCc057
+za8w+86FNdQRqVcg/6vXk9wRwQEX30FN9VaOVItgf13fIX/R874yfkQxV3Tr1tU/
+vOptAui2IGD8JQX+UEntRBagk5wE3omg7jgHmrpaX7I2vXCXbd0UX9d+OggQN5hJ
+gPnFBkXo03knr5LEE3S3CL3GN8lxMQIYb1pqVhByT+0un8Y5D8wDRnKZmZiE6DL6
+enL6xFFikxK050tqmcNePwlhPlz4V6tuaGgKLVvTJ7pZOB8Wx1xfvmMHuaQGL9PT
+Fj526QD0Ls0DTEDvsyUSXHOjtF72q1RbyDbPY3fpk//SlOmlXtEmdGTSYcLwLktV
+Zj9FhGKDg6Qj+1KV6nakbFm9cUsXPhO99wRs+3947jfDmqVWXH4VybQCt+Z2G2b+
+IdjrM1q+nZFYQehoiCMj39ANKG0Y+E9Y30PUn0+3esVz//wDE9qDknp0U4dJMYLJ
+b50RARFiNyG+irdalfsPKza9D8pUSmzy3xYYS92x8f3rBU8Yma0RkOuMNhyFxzVN
+Ct2wTr4NTbWTIptFD9M1uv+OC/unDDjWntQd69TC4u0q9g7TpEfSucK61praqsr+
+Vv8xGW0vL6rTEsTGW7xshLCdNkf+43uYJMi1hMKxhUqomU1Kv/DH2dQoUJS2aGCC
+06iAQ+wZbbW5hdawEpEi
+=Hh+l
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr--
