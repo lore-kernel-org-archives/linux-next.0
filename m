@@ -1,58 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the cgroup
- tree
-Date: Fri, 14 Feb 2014 15:25:57 +1100
-Message-ID: <20140214152557.cf6e5b5b0961dc47f800fe4d@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ cgroup tree
+Date: Fri, 14 Feb 2014 15:30:10 +1100
+Message-ID: <20140214153010.7ccb12b8518a46b21a158b22@canb.auug.org.au>
+References: <20140214152557.cf6e5b5b0961dc47f800fe4d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Feb_2014_15_25_57_+1100_L.Zeo8H1L.qERp1c"
+ boundary="Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140214152557.cf6e5b5b0961dc47f800fe4d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__14_Feb_2014_15_25_57_+1100_L.Zeo8H1L.qERp1c
+--Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+[Just adding Tejun]
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-kernel/cpuset.c between commit d66393e54e0a ("cpuset: use
-css_task_iter_start/next/end() instead of css_scan_tasks()") from the
-cgroup tree and commit a82211b06d6e ("cpusets: allocate heap only when
-required") from the akpm-current tree.
+On Fri, 14 Feb 2014 15:25:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi Andrew,
+>=20
+> Today's linux-next merge of the akpm-current tree got a conflict in
+> kernel/cpuset.c between commit d66393e54e0a ("cpuset: use
+> css_task_iter_start/next/end() instead of css_scan_tasks()") from the
+> cgroup tree and commit a82211b06d6e ("cpusets: allocate heap only when
+> required") from the akpm-current tree.
+>=20
+> I fixed it up (the former removed the need for the heap, so I effectively
+> remove the latter) and can carry the fix as necessary (no action is
+> required).
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-I fixed it up (the former removed the need for the heap, so I effectively
-remove the latter) and can carry the fix as necessary (no action is
-required).
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Fri__14_Feb_2014_15_25_57_+1100_L.Zeo8H1L.qERp1c
+--Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS/ZrZAAoJEMDTa8Ir7ZwVKUIP/16S636I2rElzD4w3VdWrKHu
-1rfsN6mH/UQw9xbaDyVLqORc/RMruisG6ZrGFIXIxQrhR3TgCgWRVqExpJCoIhkO
-N4ujdZC5cPu27wRHsexUg8z/78KwKfjpvmOSAsKXV+oudMZMXslMc+A+AdcjVy4b
-E2VQhQImo2RBtvkxDm3l4oIT5JLDvjtqh+L+lG7zsH1l5ii6iCd/84JCisdYNYAU
-lrRXTpQEy5+dZ7J1mXlpwakind64Ra/34Zc72Odl0v6PIY+tu8Ym5uO/LKp1bZKA
-ctQ2lza6MJ8ISnYYmFXXumwJiCVGkqTY0QVDkTvDmsgdAUxKBVm+NfZn0uFFk7S3
-ZQEzzRQktpMuN1FBriZzbrEhUgqvQlfbtAoAQ9LE7qNpkDGSH7KsZMZ1NUxphCCV
-uUvsP9eR11OnEmnF0ran6uJ0Jnk2mR+JpSQRmOtQRHRtk9VSkf20WKkvZi9crI1a
-dHUU/amYHYIV+wyhLlu4HJnVH4dDge3geAwxQmVM4Cu6RMLi5oYvw8yVJ4bgeeTc
-w+Fm+vOuJZjOT/SyajcLSXyRFMJhPRd1+oT/trvdt5u8ViZTGb+AuJwV3xUSkG44
-rTm5azMRrdzYyb0urw+oujDKzNxVF1qWu7moiH9ebtDA9lNmAjXpAIZkyoRGPhgQ
-SvjTWbIDNyJgBCV4CBml
-=VEaB
+iQIcBAEBCAAGBQJS/ZvWAAoJEMDTa8Ir7ZwVk3wP/2s0F46DVtBshmQYwdW1va4w
+bayj13jQeF2rYpzdu46l5Odn+k8EsjvwJ7/1OQhngVtOL+cGqpmQfTGaOKOVaboA
+mHhEDWh6zAYzsnTn6t1ZTId7naSkLmUq1f5Cov2L4RfYZehs/O3l+Q+3SZGG91sQ
+TQuAeOoJn2qtt2hWjtwz5xWcDJrFq7ZtkADmVljbBBOuwbspSj6RZRfjIzlt7/Z1
+6LNJBcKQ+/AzDhmgbBrT8aTMlrh3V64JTj2B/My7SLwWiAht310i+pYOx6UrqPLC
+wUdndv8Oyx9/glbdPkqdAPM5QG+DM+qLSGxj74SW+4PFi6Cxj0Fsy0Euq9G3M6qZ
+1JhX8Gl+M5GaPovoQcYlLwJstQXmG7jYmIhZJrnmlxEDqVQAUQVede/A2ibua4q+
+sQccy3ycyQ0O4UGgV64PprIvztlqVf6pe3GjJf00SURAUv2Y6sLhdPLVFbUvyo9J
+lcjyM7z5Bmmdvu90/wg5Z8wHJcm+L3uPa8ozuJYH6OFhaut+5xibihdT7oRLazON
+OlaBmdoIcXvd8d8TV0Ik0YSrPyyo2DlQrJI4DOSGw+gvsqXxn50/QUL1FynWqZpa
+bjccuc/T26rrj4CWehPeTGvh+AjrT3knvJqmfY+bEYWCLAYeHy6iYhGCOtATSyGO
+yk1X1btMWk4Ooshw6dY5
+=1km7
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Feb_2014_15_25_57_+1100_L.Zeo8H1L.qERp1c--
+--Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz--
