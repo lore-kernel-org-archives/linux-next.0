@@ -1,78 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Fri, 14 Feb 2014 11:19:39 +1100
-Message-ID: <20140214111939.58ecc154f74a9ea273df795a@canb.auug.org.au>
+Subject: Re: mvebu_defconfig was renamed
+Date: Fri, 14 Feb 2014 11:48:48 +1100
+Message-ID: <20140214114848.d506c7a9947e3028b2aa203e@canb.auug.org.au>
+References: <52FCE3E8.6080507@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr"
+ boundary="Signature=_Fri__14_Feb_2014_11_48_48_+1100_JhVaRYdVpwt+KTcE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:50619 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:52334 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751440AbaBNATq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Feb 2014 19:19:46 -0500
+	id S1750932AbaBNAsz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Feb 2014 19:48:55 -0500
+In-Reply-To: <52FCE3E8.6080507@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlJhZmHFgiBNacWCZWNraSI=?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, John Crispin <blogic@openwrt.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr
+--Signature=_Fri__14_Feb_2014_11_48_48_+1100_JhVaRYdVpwt+KTcE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Paul,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/bcma/driver_gpio.c between commit 2997609eb4c9 ("bcma: gpio: add
-own IRQ domain") from Linus' tree and commit 6b6ee88774ae ("bcma: gpio:
-register all 32 GPIOs") from the wireless tree.
+On Thu, 13 Feb 2014 10:25:28 -0500 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
+>
+> This recent build failure:
+>=20
+> http://kisskb.ellerman.id.au/kisskb/target/16059/
+>=20
+> is caused by a defconfig being renamed:
+>=20
+> commit 7fc2def52fbf6cdfebf48c51ce8ec61202a1d4b9
+> Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Date:   Mon Feb 10 19:19:59 2014 +0100
+>=20
+>     ARM: mvebu: rename mvebu_defconfig to mvebu_v7_defconfig
+>=20
+> so it will require a configuration change on your builders.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thanks for the heads up.  Hopefully fixed now.
 
-[Aside, Ralf: that commit in Linus' tree is committed by you but has no
-Signed-off-by from you.  There were a couple of others there as well.]
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/bcma/driver_gpio.c
-index 25f9887a35d0,39dadf5342c6..000000000000
---- a/drivers/bcma/driver_gpio.c
-+++ b/drivers/bcma/driver_gpio.c
-@@@ -215,10 -95,8 +215,10 @@@ int bcma_gpio_init(struct bcma_drv_cc *
-  	chip->set		=3D bcma_gpio_set_value;
-  	chip->direction_input	=3D bcma_gpio_direction_input;
-  	chip->direction_output	=3D bcma_gpio_direction_output;
- +#if IS_BUILTIN(CONFIG_BCMA_HOST_SOC)
-  	chip->to_irq		=3D bcma_gpio_to_irq;
- +#endif
-- 	chip->ngpio		=3D 16;
-+ 	chip->ngpio		=3D 32;
-  	/* There is just one SoC in one device and its GPIO addresses should be
-  	 * deterministic to address them more easily. The other buses could get
-  	 * a random base number. */
-
---Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr
+--Signature=_Fri__14_Feb_2014_11_48_48_+1100_JhVaRYdVpwt+KTcE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS/WEgAAoJEMDTa8Ir7ZwV63AP/0H1abBLj1OXS7J/X2WCc057
-za8w+86FNdQRqVcg/6vXk9wRwQEX30FN9VaOVItgf13fIX/R874yfkQxV3Tr1tU/
-vOptAui2IGD8JQX+UEntRBagk5wE3omg7jgHmrpaX7I2vXCXbd0UX9d+OggQN5hJ
-gPnFBkXo03knr5LEE3S3CL3GN8lxMQIYb1pqVhByT+0un8Y5D8wDRnKZmZiE6DL6
-enL6xFFikxK050tqmcNePwlhPlz4V6tuaGgKLVvTJ7pZOB8Wx1xfvmMHuaQGL9PT
-Fj526QD0Ls0DTEDvsyUSXHOjtF72q1RbyDbPY3fpk//SlOmlXtEmdGTSYcLwLktV
-Zj9FhGKDg6Qj+1KV6nakbFm9cUsXPhO99wRs+3947jfDmqVWXH4VybQCt+Z2G2b+
-IdjrM1q+nZFYQehoiCMj39ANKG0Y+E9Y30PUn0+3esVz//wDE9qDknp0U4dJMYLJ
-b50RARFiNyG+irdalfsPKza9D8pUSmzy3xYYS92x8f3rBU8Yma0RkOuMNhyFxzVN
-Ct2wTr4NTbWTIptFD9M1uv+OC/unDDjWntQd69TC4u0q9g7TpEfSucK61praqsr+
-Vv8xGW0vL6rTEsTGW7xshLCdNkf+43uYJMi1hMKxhUqomU1Kv/DH2dQoUJS2aGCC
-06iAQ+wZbbW5hdawEpEi
-=Hh+l
+iQIcBAEBCAAGBQJS/Wf0AAoJEMDTa8Ir7ZwVEl8P/RhIlVvqwLyXHefpHuI6tnuQ
+XBOUvWK+mo6ovtA5W9NQ+kRbHSdwx6PBRwS6O0XZOeNOb/AVGz5rAoC4aZuuaDZe
+MUPMz7kucvPLsMc2YNvSGSjQM4SavSFG5XwMo+9BcmkVrMTJy226GcSbUqklMudn
+KK3inPvH9SS3aBKvhONuCEjO0BNB/3Q1wROnDcJ2mntCERQCwsKTr2xsctE5Z1O9
+vBnXvrK7pFSmohP67LRtfEp/6PFRljE3fXwrR4VmVprxiNKTRPpnS2VSrvYJOkfP
+0LlIFhTi6Zlb+vJ/EfXRY9v2TuBjdm81DTZhNn0ULKdn/bDPQ0TejYtJ8mcP+OIg
+04WNA+0MfoVaYUvXHVtROBvzHtwWGayxN4nUj+ajVtUy3OWkdFZ8QnO4o4GMi0v/
+fZhPppEwNXPJ4oQWQRpSFdP2XsQUEIveSp2arfyhJK5W+naIp9NfaVISz66mpx3y
+RilBkGyH7ZL3kjpKr3KXGkzoPACKdNEBe4W37yyaDY5OJEloLXmzYuxowDr8yq3h
+RGiRgTMWrv8KA6mRiSKXqPEECaXh3auawrf8B4N+M9OzAz3OVWdBnombk7VwavH2
+Iivy0/VIcftrN0+ysEqQUkBljlJhQYurA5Bq2znm3+oVOTkggFysmBvYdhM+mFWe
+WDrQyMS36GogaXbkWpBm
+=I03Q
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Feb_2014_11_19_39_+1100_6ROuI1Q7jrsrN7Gr--
+--Signature=_Fri__14_Feb_2014_11_48_48_+1100_JhVaRYdVpwt+KTcE--
