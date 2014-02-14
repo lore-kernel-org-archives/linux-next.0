@@ -1,70 +1,129 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- cgroup tree
-Date: Fri, 14 Feb 2014 15:30:10 +1100
-Message-ID: <20140214153010.7ccb12b8518a46b21a158b22@canb.auug.org.au>
-References: <20140214152557.cf6e5b5b0961dc47f800fe4d@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the cgroup
+ tree
+Date: Fri, 14 Feb 2014 15:34:14 +1100
+Message-ID: <20140214153414.b15e54bf5aa61d0e75bacc90@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140214152557.cf6e5b5b0961dc47f800fe4d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Fri__14_Feb_2014_15_34_14_+1100_U5A81uSflaRJ.7Of"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:38114 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751323AbaBNEeV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Feb 2014 23:34:21 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>
 
---Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz
+--Signature=_Fri__14_Feb_2014_15_34_14_+1100_U5A81uSflaRJ.7Of
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[Just adding Tejun]
+Hi Andrew,
 
-On Fri, 14 Feb 2014 15:25:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi Andrew,
->=20
-> Today's linux-next merge of the akpm-current tree got a conflict in
-> kernel/cpuset.c between commit d66393e54e0a ("cpuset: use
-> css_task_iter_start/next/end() instead of css_scan_tasks()") from the
-> cgroup tree and commit a82211b06d6e ("cpusets: allocate heap only when
-> required") from the akpm-current tree.
->=20
-> I fixed it up (the former removed the need for the heap, so I effectively
-> remove the latter) and can carry the fix as necessary (no action is
-> required).
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Today's linux-next merge of the akpm-current tree got a conflict in
+mm/memcontrol.c between commit e61734c55c24 ("cgroup: remove
+cgroup->name") from the cgroup tree and commit 05d3a02a1a0d ("memcg:
+change oom_info_lock to mutex") from the akpm-current tree.
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
-Stephen Rothwell <sfr@canb.auug.org.au>
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz
+diff --cc mm/memcontrol.c
+index d9c6ac1532e6,de1a2aed4954..000000000000
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@@ -1683,25 -1683,54 +1683,25 @@@ static void move_unlock_mem_cgroup(stru
+   */
+  void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_stru=
+ct *p)
+  {
+ -	/*
+ -	 * protects memcg_name and makes sure that parallel ooms do not
+ -	 * interleave
+ -	 */
+ +	/* oom_info_lock ensures that parallel ooms do not interleave */
+- 	static DEFINE_SPINLOCK(oom_info_lock);
++ 	static DEFINE_MUTEX(oom_info_lock);
+ -	struct cgroup *task_cgrp;
+ -	struct cgroup *mem_cgrp;
+ -	static char memcg_name[PATH_MAX];
+ -	int ret;
+  	struct mem_cgroup *iter;
+  	unsigned int i;
+ =20
+  	if (!p)
+  		return;
+ =20
+- 	spin_lock(&oom_info_lock);
++ 	mutex_lock(&oom_info_lock);
+  	rcu_read_lock();
+ =20
+ -	mem_cgrp =3D memcg->css.cgroup;
+ -	task_cgrp =3D task_cgroup(p, mem_cgroup_subsys_id);
+ -
+ -	ret =3D cgroup_path(task_cgrp, memcg_name, PATH_MAX);
+ -	if (ret < 0) {
+ -		/*
+ -		 * Unfortunately, we are unable to convert to a useful name
+ -		 * But we'll still print out the usage information
+ -		 */
+ -		rcu_read_unlock();
+ -		goto done;
+ -	}
+ -	rcu_read_unlock();
+ -
+ -	pr_info("Task in %s killed", memcg_name);
+ +	pr_info("Task in ");
+ +	pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
+ +	pr_info(" killed as a result of limit of ");
+ +	pr_cont_cgroup_path(memcg->css.cgroup);
+ +	pr_info("\n");
+ =20
+ -	rcu_read_lock();
+ -	ret =3D cgroup_path(mem_cgrp, memcg_name, PATH_MAX);
+ -	if (ret < 0) {
+ -		rcu_read_unlock();
+ -		goto done;
+ -	}
+  	rcu_read_unlock();
+ =20
+ -	/*
+ -	 * Continues from above, so we don't need an KERN_ level
+ -	 */
+ -	pr_cont(" as a result of limit of %s\n", memcg_name);
+ -done:
+ -
+  	pr_info("memory: usage %llukB, limit %llukB, failcnt %llu\n",
+  		res_counter_read_u64(&memcg->res, RES_USAGE) >> 10,
+  		res_counter_read_u64(&memcg->res, RES_LIMIT) >> 10,
+
+--Signature=_Fri__14_Feb_2014_15_34_14_+1100_U5A81uSflaRJ.7Of
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJS/ZvWAAoJEMDTa8Ir7ZwVk3wP/2s0F46DVtBshmQYwdW1va4w
-bayj13jQeF2rYpzdu46l5Odn+k8EsjvwJ7/1OQhngVtOL+cGqpmQfTGaOKOVaboA
-mHhEDWh6zAYzsnTn6t1ZTId7naSkLmUq1f5Cov2L4RfYZehs/O3l+Q+3SZGG91sQ
-TQuAeOoJn2qtt2hWjtwz5xWcDJrFq7ZtkADmVljbBBOuwbspSj6RZRfjIzlt7/Z1
-6LNJBcKQ+/AzDhmgbBrT8aTMlrh3V64JTj2B/My7SLwWiAht310i+pYOx6UrqPLC
-wUdndv8Oyx9/glbdPkqdAPM5QG+DM+qLSGxj74SW+4PFi6Cxj0Fsy0Euq9G3M6qZ
-1JhX8Gl+M5GaPovoQcYlLwJstQXmG7jYmIhZJrnmlxEDqVQAUQVede/A2ibua4q+
-sQccy3ycyQ0O4UGgV64PprIvztlqVf6pe3GjJf00SURAUv2Y6sLhdPLVFbUvyo9J
-lcjyM7z5Bmmdvu90/wg5Z8wHJcm+L3uPa8ozuJYH6OFhaut+5xibihdT7oRLazON
-OlaBmdoIcXvd8d8TV0Ik0YSrPyyo2DlQrJI4DOSGw+gvsqXxn50/QUL1FynWqZpa
-bjccuc/T26rrj4CWehPeTGvh+AjrT3knvJqmfY+bEYWCLAYeHy6iYhGCOtATSyGO
-yk1X1btMWk4Ooshw6dY5
-=1km7
+iQIcBAEBCAAGBQJS/ZzLAAoJEMDTa8Ir7ZwVIzIP/iuRClF7TxQ9RhjfxEqzhq1w
+VZFOavW/zMC+w0Yfq1T53Jib8eEPlpSlqtZXHXtKPLeTfiuF3iZTj+6ZmJ7+A03r
+I7kW6fveSLRYchzgkkYFU++Ebz5gy825jp3aK6wDNk4LHOmbMCNlSjuKOakEHotE
+bpY0L5TGgPgTbQYR6TA0kCKH0sDklfttc0b6lm3P6h71Nt7QMjhdmbTZNfDAom7Y
+jaYM8Xe/een7xti0SiT3PtcbBc15EB3RHtqDJRW5CHn7Xxj63t8wiBw6NdM5HwSa
+420juYyo5ZfWUlG/V6zVx4jE/cga6XgbnPOopJkG4mjI/JD2wHxTk01pR63BTQTw
+cH+Gp0KHZppV3x95sf9/JvYmTXEFjkhoepTt0nEgs7YN9k47xlcV1ga1rpIJKD3T
+KreSHI5f+CSZ4afBVLpp/Ul/RuF+52qKJpzpBl/IdI45g6DMQNcKXY6t2kh5BSYD
+v2goyuhaa8iTEXHeHcgXWS0oQp5knmizq6ai3dKPpN1/PAgKyL+n3ELhQ6rP5koK
+k+zyIalNSD1DYpzUS5P00eFjJplLrbnk/+/XH9NuUBzV4Qgw0FI1E58ouSEvv0NT
+g47FDBlq5WSTBqQE+pX8rveD0P9g4mkj0heIvFpH5aF7/GcfdSS5Tnj7JsGX6BCY
++7L6xRM1Q15I+U/W/0ru
+=An/1
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Feb_2014_15_30_10_+1100_4IT5bCg+/A9kEaaz--
+--Signature=_Fri__14_Feb_2014_15_34_14_+1100_U5A81uSflaRJ.7Of--
