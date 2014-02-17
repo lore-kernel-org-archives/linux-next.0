@@ -1,48 +1,39 @@
-From: Markos Chandras <Markos.Chandras@imgtec.com>
-Subject: Re: [PATCH] samples/seccomp/Makefile: Do not build tests if cross-compiling
- for MIPS
-Date: Mon, 17 Feb 2014 13:22:26 +0000
-Message-ID: <53020D12.6060000@imgtec.com>
-References: <1392312460-24902-1-git-send-email-markos.chandras@imgtec.com> <52FD0F46.6040503@gmail.com> <CAP=VYLr1D-DQz8U4naa5aEL_AFa_JkO5e+TgFSxpsd_2t3dahQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 17 (pinctrl-msm)
+Date: Mon, 17 Feb 2014 09:33:48 -0800
+Message-ID: <530247FC.90606@infradead.org>
+References: <20140217172329.2c61499f57842ec2ed177bc5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from multi.imgtec.com ([194.200.65.239]:19761 "EHLO multi.imgtec.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752702AbaBQNV5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Feb 2014 08:21:57 -0500
-In-Reply-To: <CAP=VYLr1D-DQz8U4naa5aEL_AFa_JkO5e+TgFSxpsd_2t3dahQ@mail.gmail.com>
+Received: from merlin.infradead.org ([205.233.59.134]:48208 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752191AbaBQRdv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Feb 2014 12:33:51 -0500
+In-Reply-To: <20140217172329.2c61499f57842ec2ed177bc5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, David Daney <ddaney.cavm@gmail.com>
-Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On 02/14/2014 01:33 AM, Paul Gortmaker wrote:
-> On Thu, Feb 13, 2014 at 1:30 PM, David Daney <ddaney.cavm@gmail.com> wrote:
->> Really I think we should add a Kconfig item for this and disable the whole
->> directory for targets that do not support it.
->
-> Can we do something based on  CONFIG_CROSS_COMPILE vs. adding more Kconfig?
->
-> Paul.
-> --
+On 02/16/2014 10:23 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> If you see failures in building this tree due to missing declarations of
+> k..alloc/free, then it may be caused by commit 2bd59d48ebfb ("cgroup:
+> convert to kernfs").  Please send Tejun Heo <tj@kernel.org> a patch
+> adding an inclusion of linux/slab.h to the appropriate file(s).
+> 
+> This tree fails (more than usual) the powerpc allyesconfig build.
+> 
+> Changes since 20140214:
+> 
 
-Hi Paul,
+on i386:
 
-I am not sure how this would solve anything. CONFIG_CROSS_COMPILE could 
-be empty, but you can still use 'make CROSS_COMPILE=mips-linux-foobar-' 
-or whatever to cross-compile for MIPS. So using this symbol to disable 
-tests does not seem right to me.
+ERROR: "handle_bad_irq" [drivers/pinctrl/pinctrl-msm.ko] undefined!
 
-Another Kconfig symbol should be more appropriate but as far as I can 
-see MIPS is the only architecture which has this problem (or I may have 
-missed all{yes,mod}config failures from other architectures).
-
-I still think that an "ifndef CONFIG_MIPS" is good enough for now until 
-more architectures suffer from this problem in the future. So far (and 
-looking at the git history of that file) other architectures managed to 
-workaround this.
 
 -- 
-markos
+~Randy
