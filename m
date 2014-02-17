@@ -1,80 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the libata tree with Linus' tree
-Date: Mon, 17 Feb 2014 13:14:52 +1100
-Message-ID: <20140217131452.90bef35b57b5cc29e83a0353@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mfd-lj tree
+Date: Mon, 17 Feb 2014 14:14:46 +1100
+Message-ID: <20140217141446.454ab86eb19621fd397be6ed@canb.auug.org.au>
+References: <20140214134217.aa7e1994b4cab7ee563c8307@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Feb_2014_13_14_52_+1100_iKl4DBO=5hdr+jTj"
+ boundary="Signature=_Mon__17_Feb_2014_14_14_46_+1100_i6pUEJqY/xg+4.c5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:57949 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:52729 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753744AbaBQCPB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Feb 2014 21:15:01 -0500
+	id S1751105AbaBQDOx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Feb 2014 22:14:53 -0500
+In-Reply-To: <20140214134217.aa7e1994b4cab7ee563c8307@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__17_Feb_2014_13_14_52_+1100_iKl4DBO=5hdr+jTj
+--Signature=_Mon__17_Feb_2014_14_14_46_+1100_i6pUEJqY/xg+4.c5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Lee,
 
-Today's linux-next merge of the libata tree got a conflict in
-drivers/ata/sata_mv.c between commit 90aa2997029f ("ata: sata_mv: Fix
-probe failures with optional phys") from Linus' tree and commit
-8ad116e649b2 ("ata: sata_mv: Cleanup only the initialized ports") from
-the libata tree.
+On Fri, 14 Feb 2014 13:42:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the mfd-lj tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> In file included from drivers/mfd/max665x.c:19:0:
+> include/linux/mfd/max665x-private.h:31:1: error: expected ';', identifier=
+ or '(' before 'struct'
+>  struct max665x_dev {
+>  ^
+>=20
+> Caused by commit e77bb5297293 ("mfd: max665x: Differentiate between
+> MAX665X devices").  Clearly never built by anyone :-(
+>=20
+> I have used the mfd-lj tree from next-20140210 again for today (since the
+> other version had other problems).
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Still seeing this error.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/ata/sata_mv.c
-index 52b8181ddafd,9c1a11de3044..000000000000
---- a/drivers/ata/sata_mv.c
-+++ b/drivers/ata/sata_mv.c
-@@@ -4131,9 -4129,11 +4130,12 @@@ static int mv_platform_probe(struct pla
-  		if (IS_ERR(hpriv->port_phys[port])) {
-  			rc =3D PTR_ERR(hpriv->port_phys[port]);
-  			hpriv->port_phys[port] =3D NULL;
- -			if ((rc !=3D -EPROBE_DEFER) && (rc !=3D -ENODEV))
- -				dev_warn(&pdev->dev, "error getting phy");
- +			if (rc !=3D -EPROBE_DEFER)
- +				dev_warn(&pdev->dev, "error getting phy %d",
- +					rc);
-+=20
-+ 			/* Cleanup only the initialized ports */
-+ 			hpriv->n_ports =3D port;
-  			goto err;
-  		} else
-  			phy_power_on(hpriv->port_phys[port]);
-
---Signature=_Mon__17_Feb_2014_13_14_52_+1100_iKl4DBO=5hdr+jTj
+--Signature=_Mon__17_Feb_2014_14_14_46_+1100_i6pUEJqY/xg+4.c5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTAXChAAoJEMDTa8Ir7ZwVdXgP/R8VCAENaQ5j6fyfj1YuiUTo
-2SVcczjXAoiLF7EwQmSbx09R4gCs8Gis9gxeLl7g/X4R4eHtkWJNpvW4PpVuhLlK
-zcReExGHaCXv3bysnFH3VyKsqVDUVdG/Htspy4/UC2GxgnPGBU+NpNuCjRYAkJBV
-AY4WUBmPebORQtUtSc3TZF1ch5Yez2cg/BG+LJ5zfyqTlxrgRMkuBy6mkmlxL28C
-4oYBX590ofGknOjiVn0cB0w4hQIvjxiv8fS6E+LB4mxcpC91SBHltHSkpNpObgA1
-2K/ATCLo3BUD7I2ueNTJ+6l/md2FrTRwlHOh5WHSYjpwh7qkAAo7CUf89owEK14U
-WYRWyhuqft0yrAolBABUHmu1W7tKqwhWo7Fg5FdEaaq5l87UPTvXEY2IqN1tYdgq
-POuBnqakmNqVU9Ni+Q/Z4g08KnoVDPhYi61R3t+WMGkGZm7amZjyr6oK5UllP4E8
-XmFywTmZiYI/4FttpiIdUFhEddOHSOKlzyJUdOATeTKPT6gfcDQjaoSQuE8je+00
-6f6WYM7cFoOM/y8SjfRvKso5DbaTSp1pqg7A5gr6VjrzsY57kPxAXcwRxP02AoUg
-siU8XgMP6QvF4d2vhUdH3tmFhKiDy6VTqNbvLzEHwtIJoRVY6jTjetYyc1k4PzEx
-1S8HlbjymiffU9FpISr6
-=T3Tm
+iQIcBAEBCAAGBQJTAX6qAAoJEMDTa8Ir7ZwVfU4P/0s5/BSMyGQhHixBqtCKFtcV
+BD2sYxKJ8rKK3vmZQtoml9lkW1Rq906VB8H4bgJfrl66hYiOdvbftkk4eamiwKOL
+u3xZQGwM30+GEE06ohvEN3o/mz8DTEGTSeA1GNkM3r0yZG3ZUzw2Rf8365mo7CaW
+0QMddAV7izd3LFiadotx9rpD2SselNWiJUTRcRO0grqcn5SNZAmux/V/qjmxhu1n
+/V7OckDUTzd/0doQY9Hy6XX0o6B8W5/2GooK//7o6+gm2SoGuPKzrijWjR3ByU10
+B1qbUnBrwd7kLs2kZ3bSapuYh16tsCHGtVom59wWbWo0V+u7EwjhTFvs2LKGmXKr
+DFE9ZmwSj3cugl+vZAkxIC0chc8yIdHGKZgo1ad6TAtQmjTNX6QJ6BPzg36wvxS8
+wgvl49iNaJersy/j33SGLUQPH8hB2eu17kJ9fsOIsMAfVskJ2ennssmPsUtIOhL+
+1XiRbS8sZA6wtIZ+VV+fVy0izXwrObSGiGIMu7GGLKpPiQLZJyGfwg3pZBSBt+9T
+XTUiBVLR1MgJhr5P1mvPbNj7Od4l2FttC773ZEmaXBn8+q3pYk6/TJuzz4L43qWD
+EfcDJ4+CQ+dkJ6HlTnycodi4EfogO1+zatWsTUiGioid2lcZx575HxgLKUHaTuLB
+TbiLOBbEwMNU390XGgTB
+=fIB1
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Feb_2014_13_14_52_+1100_iKl4DBO=5hdr+jTj--
+--Signature=_Mon__17_Feb_2014_14_14_46_+1100_i6pUEJqY/xg+4.c5--
