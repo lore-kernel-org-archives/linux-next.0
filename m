@@ -1,48 +1,60 @@
-From: Chen Gang <gang.chen.5i5j@gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Tue, 18 Feb 2014 22:15:50 +0800
-Message-ID: <53036B16.50305@gmail.com>
-References: <20140218140920.e79e5cff80dad8ecee400538@canb.auug.org.au> <20140218080603.GA27512@samfundet.no>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 18 (hid/hid-cp2112.c)
+Date: Tue, 18 Feb 2014 08:34:07 -0800
+Message-ID: <53038B7F.1070506@infradead.org>
+References: <20140218160612.34d64514ade66fcb21a6cc0f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140218080603.GA27512@samfundet.no>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans-Christian Egtvedt <hegtvedt@cisco.com>, Tim Chen <tim.c.chen@linux.intel.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20140218160612.34d64514ade66fcb21a6cc0f@canb.auug.org.au>
+Sender: linux-input-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Barksdale <dbarksdale@uplogix.com>
 List-Id: linux-next.vger.kernel.org
 
-On 02/18/2014 04:06 PM, Hans-Christian Egtvedt wrote:
-> Around Tue 18 Feb 2014 14:09:20 +1100 or thereabout, Stephen Rothwell wrote:
+On 02/17/14 21:06, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Hello Stephen,
+> If you see failures in building this tree due to missing declarations of
+> k..alloc/free, then it may be caused by commit 2bd59d48ebfb ("cgroup:
+> convert to kernfs").  Please send Tejun Heo <tj@kernel.org> a patch
+> adding an inclusion of linux/slab.h to the appropriate file(s).
 > 
->> Today's linux-next merge of the tip tree got a conflict in
->> arch/avr32/include/asm/Kbuild between commit d7668f9d448a ("avr32: add
->> generic vga.h to Kbuild") from the  tree and commit b119fa61d440
->> ("locking/mcs: Order the header files in Kbuild of each architecture in
->> alphabetical order") from the tip tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary (no action
->> is required).
+> This tree fails (more than usual) the powerpc allyesconfig build.
 > 
-> Thank you for handling the merge.
-> 
-> PS! I typically don't use my Cisco address for avr32 related kernel patches,
-> but it seems to be my own fault, my global gitconfig contained my @cisco.com
-> address. Fixed now.
+> Changes since 20140217:
 > 
 
-Thank all of your work (also include another 2 patches).
+on x86_64:
+when GPIOLIB is not enabled.
 
-And I guess, in the next month, I shall/can have more free time for
-upstream open source, so I will/should finish avr32 allmodconfig within
-next month (2014-03-31).
+Add
+	depends on GPIOLIB
+to drivers/hid/Kconfig?
 
 
-Thanks.
+  CC [M]  drivers/hid/hid-cp2112.o
+drivers/hid/hid-cp2112.c:162:19: error: field 'gc' has incomplete type
+drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_direction_input':
+drivers/hid/hid-cp2112.c:171:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/hid/hid-cp2112.c:171:30: warning: (near initialization for 'dev') [enabled by default]
+drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_set':
+drivers/hid/hid-cp2112.c:200:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/hid/hid-cp2112.c:200:30: warning: (near initialization for 'dev') [enabled by default]
+drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_get':
+drivers/hid/hid-cp2112.c:218:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/hid/hid-cp2112.c:218:30: warning: (near initialization for 'dev') [enabled by default]
+drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_direction_output':
+drivers/hid/hid-cp2112.c:237:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/hid/hid-cp2112.c:237:30: warning: (near initialization for 'dev') [enabled by default]
+drivers/hid/hid-cp2112.c: In function 'cp2112_probe':
+drivers/hid/hid-cp2112.c:944:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
+/local/lnx/next/linux-next-20140218/drivers/hid/hid-cp2112.c:962:2: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/hid/hid-cp2112.o] Error 1
+
+
+
 -- 
-Chen Gang
-
-Open, share and attitude like air, water and life which God blessed
+~Randy
