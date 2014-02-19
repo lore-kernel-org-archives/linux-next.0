@@ -1,66 +1,71 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] samples/seccomp/Makefile: Do not build tests if
- cross-compiling for MIPS
-Date: Tue, 18 Feb 2014 23:21:09 -0500
-Message-ID: <20140219042109.GE5799@windriver.com>
-References: <1392312460-24902-1-git-send-email-markos.chandras@imgtec.com>
- <52FD0F46.6040503@gmail.com>
- <CAP=VYLr1D-DQz8U4naa5aEL_AFa_JkO5e+TgFSxpsd_2t3dahQ@mail.gmail.com>
- <53020D12.6060000@imgtec.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound-asoc
+ tree related)
+Date: Wed, 19 Feb 2014 16:30:30 +1100
+Message-ID: <20140219163030.049eecb85a2a540995f2ba54@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__19_Feb_2014_16_30_30_+1100_RP1UpiDuWLF2X5h0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:65112 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751165AbaBSEUh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Feb 2014 23:20:37 -0500
-Content-Disposition: inline
-In-Reply-To: <53020D12.6060000@imgtec.com>
+Received: from ozlabs.org ([203.10.76.45]:52358 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751318AbaBSFaj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Feb 2014 00:30:39 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Markos Chandras <Markos.Chandras@imgtec.com>
-Cc: David Daney <ddaney.cavm@gmail.com>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[Re: [PATCH] samples/seccomp/Makefile: Do not build tests if cross-compiling for MIPS] On 17/02/2014 (Mon 13:22) Markos Chandras wrote:
+--Signature=_Wed__19_Feb_2014_16_30_30_+1100_RP1UpiDuWLF2X5h0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 02/14/2014 01:33 AM, Paul Gortmaker wrote:
-> >On Thu, Feb 13, 2014 at 1:30 PM, David Daney <ddaney.cavm@gmail.com> wrote:
-> >>Really I think we should add a Kconfig item for this and disable the whole
-> >>directory for targets that do not support it.
-> >
-> >Can we do something based on  CONFIG_CROSS_COMPILE vs. adding more Kconfig?
-> >
-> >Paul.
-> >--
-> 
-> Hi Paul,
-> 
-> I am not sure how this would solve anything. CONFIG_CROSS_COMPILE
-> could be empty, but you can still use 'make
-> CROSS_COMPILE=mips-linux-foobar-' or whatever to cross-compile for
-> MIPS. So using this symbol to disable tests does not seem right to
-> me.
-> 
-> Another Kconfig symbol should be more appropriate but as far as I
-> can see MIPS is the only architecture which has this problem (or I
-> may have missed all{yes,mod}config failures from other
-> architectures).
-> 
-> I still think that an "ifndef CONFIG_MIPS" is good enough for now
-> until more architectures suffer from this problem in the future. So
-> far (and looking at the git history of that file) other
-> architectures managed to workaround this.
+Hi all,
 
-I don't have a specific preference to any one fix over another; I leave
-that to the seccomp folks who review the fix.  But I would like to see
-it dealt with ASAP.  The regression has been in linux-next for roughly a
-week now, and doing that can mask us from seeing other build regressions
-silently stacking up behind this one.  
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Thanks,
-Paul.
---
+sound/soc/intel/sst-dsp.c: In function 'sst_dsp_outbox_write':
+sound/soc/intel/sst-dsp.c:218:2: error: implicit declaration of function 'm=
+emcpy_toio' [-Werror=3Dimplicit-function-declaration]
+  memcpy_toio(sst->mailbox.out_base, message, bytes);
+  ^
+sound/soc/intel/sst-dsp.c: In function 'sst_dsp_outbox_read':
+sound/soc/intel/sst-dsp.c:231:2: error: implicit declaration of function 'm=
+emcpy_fromio' [-Werror=3Dimplicit-function-declaration]
+  memcpy_fromio(message, sst->mailbox.out_base, bytes);
+  ^
 
-> 
-> -- markos
-> 
+Caused by commit 790aff62291e ("ASoC: Intel: Add Intel SST audio DSP low
+level shim driver") from the sound-asoc tree.
+
+I have disabled this new driver by reverting commit ddfa40b1586f ("ASoC:
+Intel: Add build support for Intel SST DSP core") for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__19_Feb_2014_16_30_30_+1100_RP1UpiDuWLF2X5h0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTBEF9AAoJEMDTa8Ir7ZwVA6oP/2n9V1XXzHVVYjP0N3RT1Vl5
+dnlrN+7mkQjwPw+7XbaiyKryKZkIn7qqNGFYGKwvcg/KWm4QvVY0i70bpBGgGH43
+pbLIHc38xx6QJ/YChlFNVamItMekmksJ8AihXjmL8jhzHpWIfHs8wLqbrCFBfX0S
+8+V6MZCemNu7Nn6ekTqED4yqHwXw3ffgf4v+PyfOyHSB6uJBPBszJQmtOAW4kxvz
+BAr/CBAAsyq7dy43y12JQVop5h9/zmr1b3aInQkisMXqlxHGiMMhnsmRCMrhD8sL
+Nc8FXhuGkU0u5Asn9iKr8kK3xj4aBnJM/9wrjjVAKyNQCGBONAZNgq1GfHco05gh
+ZDWIyKxYZ7E/d7Yc+sLWAShTWR86p5s0B483gLax8TVy26iU3+BKhpeW6DEJ2gSo
+Tbxg5IOQHw7GxymA7wpZRut7V7ClfufcCrCrUpySBxCuNYnKxiKiGrH52ofQ6IKj
+zV2Pnpp9twAknz2Q4i7LdptljSQKqTg5e5Dmw9qC5ezFYYra5K8Fgpi4aQBkcwxl
+Ai4tqtYwo3mMtWRsQhWsSAvZi5gEJUAlxe+xpUDg42unTHVLMPmODYDvQQ+jegEK
+bOQuJ6LvSXw2vAiEVZ0WDTZlgMl6oETh/WiZ0LFJipnh6QVREu9Q9ZARfe7y+oO1
+O0OEzZ9KwKbVcgzNwZ2l
+=2bo+
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Feb_2014_16_30_30_+1100_RP1UpiDuWLF2X5h0--
