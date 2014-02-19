@@ -1,60 +1,66 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Feb 18 (hid/hid-cp2112.c)
-Date: Tue, 18 Feb 2014 08:34:07 -0800
-Message-ID: <53038B7F.1070506@infradead.org>
-References: <20140218160612.34d64514ade66fcb21a6cc0f@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] samples/seccomp/Makefile: Do not build tests if
+ cross-compiling for MIPS
+Date: Tue, 18 Feb 2014 23:21:09 -0500
+Message-ID: <20140219042109.GE5799@windriver.com>
+References: <1392312460-24902-1-git-send-email-markos.chandras@imgtec.com>
+ <52FD0F46.6040503@gmail.com>
+ <CAP=VYLr1D-DQz8U4naa5aEL_AFa_JkO5e+TgFSxpsd_2t3dahQ@mail.gmail.com>
+ <53020D12.6060000@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20140218160612.34d64514ade66fcb21a6cc0f@canb.auug.org.au>
-Sender: linux-input-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, David Barksdale <dbarksdale@uplogix.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:65112 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751165AbaBSEUh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Feb 2014 23:20:37 -0500
+Content-Disposition: inline
+In-Reply-To: <53020D12.6060000@imgtec.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Markos Chandras <Markos.Chandras@imgtec.com>
+Cc: David Daney <ddaney.cavm@gmail.com>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 02/17/14 21:06, Stephen Rothwell wrote:
-> Hi all,
+[Re: [PATCH] samples/seccomp/Makefile: Do not build tests if cross-compiling for MIPS] On 17/02/2014 (Mon 13:22) Markos Chandras wrote:
+
+> On 02/14/2014 01:33 AM, Paul Gortmaker wrote:
+> >On Thu, Feb 13, 2014 at 1:30 PM, David Daney <ddaney.cavm@gmail.com> wrote:
+> >>Really I think we should add a Kconfig item for this and disable the whole
+> >>directory for targets that do not support it.
+> >
+> >Can we do something based on  CONFIG_CROSS_COMPILE vs. adding more Kconfig?
+> >
+> >Paul.
+> >--
 > 
-> If you see failures in building this tree due to missing declarations of
-> k..alloc/free, then it may be caused by commit 2bd59d48ebfb ("cgroup:
-> convert to kernfs").  Please send Tejun Heo <tj@kernel.org> a patch
-> adding an inclusion of linux/slab.h to the appropriate file(s).
+> Hi Paul,
 > 
-> This tree fails (more than usual) the powerpc allyesconfig build.
+> I am not sure how this would solve anything. CONFIG_CROSS_COMPILE
+> could be empty, but you can still use 'make
+> CROSS_COMPILE=mips-linux-foobar-' or whatever to cross-compile for
+> MIPS. So using this symbol to disable tests does not seem right to
+> me.
 > 
-> Changes since 20140217:
+> Another Kconfig symbol should be more appropriate but as far as I
+> can see MIPS is the only architecture which has this problem (or I
+> may have missed all{yes,mod}config failures from other
+> architectures).
 > 
+> I still think that an "ifndef CONFIG_MIPS" is good enough for now
+> until more architectures suffer from this problem in the future. So
+> far (and looking at the git history of that file) other
+> architectures managed to workaround this.
 
-on x86_64:
-when GPIOLIB is not enabled.
+I don't have a specific preference to any one fix over another; I leave
+that to the seccomp folks who review the fix.  But I would like to see
+it dealt with ASAP.  The regression has been in linux-next for roughly a
+week now, and doing that can mask us from seeing other build regressions
+silently stacking up behind this one.  
 
-Add
-	depends on GPIOLIB
-to drivers/hid/Kconfig?
+Thanks,
+Paul.
+--
 
-
-  CC [M]  drivers/hid/hid-cp2112.o
-drivers/hid/hid-cp2112.c:162:19: error: field 'gc' has incomplete type
-drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_direction_input':
-drivers/hid/hid-cp2112.c:171:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/hid/hid-cp2112.c:171:30: warning: (near initialization for 'dev') [enabled by default]
-drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_set':
-drivers/hid/hid-cp2112.c:200:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/hid/hid-cp2112.c:200:30: warning: (near initialization for 'dev') [enabled by default]
-drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_get':
-drivers/hid/hid-cp2112.c:218:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/hid/hid-cp2112.c:218:30: warning: (near initialization for 'dev') [enabled by default]
-drivers/hid/hid-cp2112.c: In function 'cp2112_gpio_direction_output':
-drivers/hid/hid-cp2112.c:237:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/hid/hid-cp2112.c:237:30: warning: (near initialization for 'dev') [enabled by default]
-drivers/hid/hid-cp2112.c: In function 'cp2112_probe':
-drivers/hid/hid-cp2112.c:944:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
-/local/lnx/next/linux-next-20140218/drivers/hid/hid-cp2112.c:962:2: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[3]: *** [drivers/hid/hid-cp2112.o] Error 1
-
-
-
--- 
-~Randy
+> 
+> -- markos
+> 
