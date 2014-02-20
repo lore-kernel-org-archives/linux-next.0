@@ -1,56 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 20 Feb 2014 14:01:40 +1100
-Message-ID: <20140220140140.9a4f1c90d27e77161116af8d@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mfd-lj tree
+Date: Thu, 20 Feb 2014 15:05:08 +1100
+Message-ID: <20140220150508.79bfff95fb5d93c651801ffd@canb.auug.org.au>
+References: <20140214134217.aa7e1994b4cab7ee563c8307@canb.auug.org.au>
+	<20140217141446.454ab86eb19621fd397be6ed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Feb_2014_14_01_40_+1100_HPVUxE9FnRKPVCh1"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__20_Feb_2014_15_05_08_+1100_iQaUD1/+lJ_RPpJv"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:56605 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752314AbaBTEFR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Feb 2014 23:05:17 -0500
+In-Reply-To: <20140217141446.454ab86eb19621fd397be6ed@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__20_Feb_2014_14_01_40_+1100_HPVUxE9FnRKPVCh1
+--Signature=_Thu__20_Feb_2014_15_05_08_+1100_iQaUD1/+lJ_RPpJv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Lee,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Mon, 17 Feb 2014 14:14:46 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Fri, 14 Feb 2014 13:42:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the mfd-lj tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > In file included from drivers/mfd/max665x.c:19:0:
+> > include/linux/mfd/max665x-private.h:31:1: error: expected ';', identifi=
+er or '(' before 'struct'
+> >  struct max665x_dev {
+> >  ^
+> >=20
+> > Caused by commit e77bb5297293 ("mfd: max665x: Differentiate between
+> > MAX665X devices").  Clearly never built by anyone :-(
+> >=20
+> > I have used the mfd-lj tree from next-20140210 again for today (since t=
+he
+> > other version had other problems).
+>=20
+> Still seeing this error.
 
-ERROR: "snd_pcm_hw_constraint_mask64" [sound/soc/codecs/snd-soc-adau1977.ko=
-] undefined!
+Still ...
 
-Caused by commit 603597c9375b ("ASoC: Add ADAU1977 CODEC driver").
-
-I have used the sound-asoc tree from next-20140219 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__20_Feb_2014_14_01_40_+1100_HPVUxE9FnRKPVCh1
+--Signature=_Thu__20_Feb_2014_15_05_08_+1100_iQaUD1/+lJ_RPpJv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTBXAUAAoJEMDTa8Ir7ZwV9AAQAJP57sZawXymiLvEg8FepD9I
-/oTMY+Rs8XOug5cBmcfhHgIGLuUG8Nk9H0uG4V+HCr3YQwVpRl+Qt/uwnBOxKOgT
-Udef0oi7DrAdRIVPoF8qb1Mlx4ZQ6Wsdplx1f7f3qTzd6jeQ0xbjDfgmwyF893Vj
-LKIsND+HyXqCTSiW9KOYAZWsGp/y9LGlEy9zDbOgTAeNtuOcoWKI0VxvbV6xN1bM
-2eMlQIDexR6xnePo01HJYQ6ALGDof9wcm+a5qyT8er05vFRTW75oSgu8Mvmtv104
-pGpU/E2FcXOHUJAOFelWxaCLNi5gxjeqpeZ6xGQ0jlvmQCJ31nmAOkVoDvZrBelp
-DPqKQA7cM6Mj9BoegDNkB8csK/J3RJFiKA+O5Mz64i28gaZ1MpTShyNUNeNMlmJD
-ZDWowJJeLceCacggz5+vwYaiJG6lKmGJhnGusgMwomOHuG3j4aQtGrLwxo8b07Yx
-zIRI7wwvdyzp/pjJSp7FgINanuP3Ha8v5N/QSlnFv5c9x5hsMmBOBvxashuCDUAe
-8Piwbs6E7lJmH1PUV3/CbpoK8L364ACggPdxF36qAGU+MKBSfHbSdrfujRywPj0G
-2djSNGZZxzxgUIa0JKb0rDwfYEBVlNBvHhSFlynQ6PnXwz+rIJfCdVylmyx9gtiL
-Vi2WXY1/L4YtKR+vHOvi
-=RYS5
+iQIcBAEBCAAGBQJTBX75AAoJEMDTa8Ir7ZwVA2UP/2wj5gpxTnj+gbeAAsq0ZEuy
+1AoZ8GIrPU+A1hDM56DI/HXkNyNKULxOTFBGb1gUtmk8ZD32USXahkb3X9Un7RRw
+sB8fKAm9240LlpP0QQ4eRlQIuBE5twWqu7rZjCDs3DNMK/CbnB1ElvAMek/Uq6fo
+7thY4vioPih/HwOFHfLqL/O6tHieA2JH5xEmh7NDRwiyw6Qv1fE89JIh9UXQb9PI
+44IryMIXBA3s6T9ZT1BMBA02FcfJPdwioCmIrxlmiKka9GmwWROwTGY1iDZ6ZtiY
+klzFO4A+vXdXrg6xl9rNsrovtjtlIRE9U2ob1C6hnS19Tm+LDkylODeIqhoG2mV/
+qh1ETQXGxL6GbzfG4k/ZBeWvK+MRi0xJLc/s9C1Oix6m7JU+6kdQf1zHUCxYCAe3
+E/XNhWNL3B9pOmsvGKRZ6emxpLaKKLggvuGJPP8KOAhUScFkLILqGmpt44lFX3qv
+tW6NX+M7B7BQe91U+kHK/wCEPbwboQ1ivenOYiSyAQTAkN5Y+IthH08zw+wmUJRa
+WWp8AbhsgRMimd0pD1DWEZ2fwIEq3HGPSuLRVNaqWZ/ZUxHJPZ8zDrhjwSpnHHkv
+cQj83p3+cFfjqY8QiM//Tp1YXTKkkK3Vl7IIgknTvD89pH/tT4M7Iqlh34C2jL4I
+Qlkbo+Oh5VNPE9TSn8lU
+=tba4
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__20_Feb_2014_14_01_40_+1100_HPVUxE9FnRKPVCh1--
+--Signature=_Thu__20_Feb_2014_15_05_08_+1100_iQaUD1/+lJ_RPpJv--
