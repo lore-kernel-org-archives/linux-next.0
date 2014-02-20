@@ -1,39 +1,72 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: linux-next: manual merge of the imx-mxs tree with the arm-soc
- tree
-Date: Thu, 20 Feb 2014 09:30:54 +0800
-Message-ID: <20140220013051.GK3010@S2101-09.ap.freescale.net>
-References: <20140220114242.b3ce4d77b677544d2feebd3e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the hid tree with Linus' tree
+Date: Thu, 20 Feb 2014 13:03:29 +1100
+Message-ID: <20140220130329.cbf82034cb246805a4fd59ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:17529 "EHLO
-	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751638AbaBTBbE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Feb 2014 20:31:04 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__20_Feb_2014_13_03_29_+1100_pS8HYIV0sYRndiGw"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Barksdale <dbarksdale@uplogix.com>, Dinesh Ram <Dinesh.Ram@cern.ch>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__20_Feb_2014_13_03_29_+1100_pS8HYIV0sYRndiGw
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140220114242.b3ce4d77b677544d2feebd3e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anson Huang <b20788@freescale.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 20, 2014 at 11:42:42AM +1100, Stephen Rothwell wrote:
-> Hi Shawn,
-> 
-> Today's linux-next merge of the imx-mxs tree got conflicts in
-> arch/arm/mach-imx/Makefile and arch/arm/mach-imx/common.h between commit
-> 28a9f3b078c5 ("ARM: imx6: build pm-imx6q.c independently of CONFIG_PM")
-> from the arm-soc tree and commits 8dd751932545 ("ARM: imx: add suspend in
-> ocram support for i.mx6q") and 79a8eef47d12 ("RM: imx: add suspend in
-> ocram support for i.mx6sl") from the imx-mxs tree.
-> 
-> I fixed it up (I think, see below) and can carry the fix as necessary (no
-> action is required).
+Hi Jiri,
 
-Thanks, Stephen.  Once "ARM: imx6: build pm-imx6q.c independently of
-CONFIG_PM" hits mainline, I will rebase my branch against the latest -rc
-to get rid of the conflicts.
+Today's linux-next merge of the hid tree got a conflict in
+drivers/hid/hid-ids.h between commits adc232592337 ("[media] si4713: HID
+blacklist Si4713 USB development board") and 3db187e7bf76 ("HID:
+multitouch: add FocalTech FTxxxx support") from Linus' tree and commit
+e932d8178667 ("HID: add hid-cp2112 driver") from the hid tree.
 
-Shawn
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/hid/hid-ids.h
+index 22f28d6b33a8,00be0d0f0dde..000000000000
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@@ -241,9 -240,7 +241,10 @@@
+ =20
+  #define USB_VENDOR_ID_CYGNAL		0x10c4
+  #define USB_DEVICE_ID_CYGNAL_RADIO_SI470X	0x818a
+ +#define USB_DEVICE_ID_FOCALTECH_FTXXXX_MULTITOUCH	0x81b9
+ +
+ +#define USB_DEVICE_ID_CYGNAL_RADIO_SI4713       0x8244
++ #define USB_DEVICE_ID_CYGNAL_CP2112	0xea90
+ =20
+  #define USB_VENDOR_ID_CYPRESS		0x04b4
+  #define USB_DEVICE_ID_CYPRESS_MOUSE	0x0001
+
+--Signature=_Thu__20_Feb_2014_13_03_29_+1100_pS8HYIV0sYRndiGw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTBWJ1AAoJEMDTa8Ir7ZwVZsYP/3gPNObwoiVAGYkH8H7RwewC
+8G+1D7p/ocwnHwV/GnWgyUzqb/8nwFJRtMcuCBoyJ5MjsjWCk6gYYPTEAABVlImS
++TzM/XThT7xBdKmDwuW4KS9IBLNQ7GG727CjFGzN+rVLI73sYM4o0JECTZKD7wIw
+FqvZ41rlklUxCqcNv+uoy0tahPXlXaWA3kQyyCrN/aZ3g6DBjeZvZAfQLB332wXM
+EXTHkzJFpnBWRNfstGnDkUBeKEgYRUWhoLJwud3Pz7XKLuE8yizxEmUPGoMa2dMw
+71xO2PtD0JRG7gTe0bAqo+cmZZbVJ+9m1+apr1DTebR3Bv5jQBIoEJYGDx8XRidI
+y2nWMiWBMv4gK6kkr2WAd99d3wtoxtyqQ6Oyl779BCK0GVti7KD17lIxojzGSenU
+a8UMbyGFiy2+eISSjDkeYtTqUd1Rt9679KB48gU8FkHOZhBnOstch8vMMIAP6cIm
+sNYseSQUA0WJc9rUonecImGpToB1MNHqB4e0HeBIvX57j7i/RB905qDiRSlD/Abe
+yiQJC9cNRM5KzI19UNXlJDGUk4Wa7XyVGgFzJ76nLDSbIVU3cCc9tXkxmtbptl4w
+j0RMoFYPIhuRtc8Iv/iVSgjgN/TzsVG1gK5/3xO6XgqnmUg/L2x64MXkZurZYcS7
+wp1K7GvK8WlVD2sB6RVf
+=CWgg
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__20_Feb_2014_13_03_29_+1100_pS8HYIV0sYRndiGw--
