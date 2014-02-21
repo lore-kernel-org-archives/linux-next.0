@@ -1,151 +1,132 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Feb 19 (netdev)
-Date: Thu, 20 Feb 2014 10:37:23 -0800
-Message-ID: <53064B63.2050803@infradead.org>
-References: <20140219164733.781c782bc5ad4f5eaf25a636@canb.auug.org.au>	<5304C8D9.5000906@infradead.org> <20140220.021320.1623323851847472760.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm-perf tree
+Date: Fri, 21 Feb 2014 11:58:57 +1100
+Message-ID: <20140221115857.3ea3d7277d03c5b6b4d26488@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:42738 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753733AbaBTSh2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Feb 2014 13:37:28 -0500
-In-Reply-To: <20140220.021320.1623323851847472760.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__21_Feb_2014_11_58_57_+1100_7Nk3/p1gg16h_nhG"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Will Deacon <will.deacon@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>
+List-Id: linux-next.vger.kernel.org
 
-On 02/19/14 23:13, David Miller wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> Date: Wed, 19 Feb 2014 07:08:09 -0800
-> 
->> on i386:
->>
->> net/built-in.o:(.rodata+0x1707c): undefined reference to `ip_tunnel_get_stats64'
->>
->> Full randconfig file is attached.
-> 
-> Thanks for the report Randy, this should do it:
+--Signature=_Fri__21_Feb_2014_11_58_57_+1100_7Nk3/p1gg16h_nhG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Hi all,
 
-Thanks.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/boot/dts/qcom-msm8960-cdp.dts between commit a1d711938959 ("ARM:
+dts: msm: Add krait-pmu to platforms with Krait CPUs") from the arm-perf
+tree and commit cc60a1a4d47a ("ARM: dts: msm: split out msm8660 and
+msm8960 soc into dts include") from the arm-soc tree.
 
-> diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
-> index 6d430ff..7b19528 100644
-> --- a/net/ipv4/ip_tunnel.c
-> +++ b/net/ipv4/ip_tunnel.c
-> @@ -119,52 +119,6 @@ static struct rtable *tunnel_rtable_get(struct ip_tunnel *t, u32 cookie)
->  	return (struct rtable *)dst;
->  }
->  
-> -/* Often modified stats are per cpu, other are shared (netdev->stats) */
-> -struct rtnl_link_stats64 *ip_tunnel_get_stats64(struct net_device *dev,
-> -						struct rtnl_link_stats64 *tot)
-> -{
-> -	int i;
-> -
-> -	for_each_possible_cpu(i) {
-> -		const struct pcpu_sw_netstats *tstats =
-> -						   per_cpu_ptr(dev->tstats, i);
-> -		u64 rx_packets, rx_bytes, tx_packets, tx_bytes;
-> -		unsigned int start;
-> -
-> -		do {
-> -			start = u64_stats_fetch_begin_bh(&tstats->syncp);
-> -			rx_packets = tstats->rx_packets;
-> -			tx_packets = tstats->tx_packets;
-> -			rx_bytes = tstats->rx_bytes;
-> -			tx_bytes = tstats->tx_bytes;
-> -		} while (u64_stats_fetch_retry_bh(&tstats->syncp, start));
-> -
-> -		tot->rx_packets += rx_packets;
-> -		tot->tx_packets += tx_packets;
-> -		tot->rx_bytes   += rx_bytes;
-> -		tot->tx_bytes   += tx_bytes;
-> -	}
-> -
-> -	tot->multicast = dev->stats.multicast;
-> -
-> -	tot->rx_crc_errors = dev->stats.rx_crc_errors;
-> -	tot->rx_fifo_errors = dev->stats.rx_fifo_errors;
-> -	tot->rx_length_errors = dev->stats.rx_length_errors;
-> -	tot->rx_frame_errors = dev->stats.rx_frame_errors;
-> -	tot->rx_errors = dev->stats.rx_errors;
-> -
-> -	tot->tx_fifo_errors = dev->stats.tx_fifo_errors;
-> -	tot->tx_carrier_errors = dev->stats.tx_carrier_errors;
-> -	tot->tx_dropped = dev->stats.tx_dropped;
-> -	tot->tx_aborted_errors = dev->stats.tx_aborted_errors;
-> -	tot->tx_errors = dev->stats.tx_errors;
-> -
-> -	tot->collisions  = dev->stats.collisions;
-> -
-> -	return tot;
-> -}
-> -EXPORT_SYMBOL_GPL(ip_tunnel_get_stats64);
-> -
->  static bool ip_tunnel_key_match(const struct ip_tunnel_parm *p,
->  				__be16 flags, __be32 key)
->  {
-> diff --git a/net/ipv4/ip_tunnel_core.c b/net/ipv4/ip_tunnel_core.c
-> index 6156f4e..8d69626 100644
-> --- a/net/ipv4/ip_tunnel_core.c
-> +++ b/net/ipv4/ip_tunnel_core.c
-> @@ -148,3 +148,49 @@ error:
->  	return ERR_PTR(err);
->  }
->  EXPORT_SYMBOL_GPL(iptunnel_handle_offloads);
-> +
-> +/* Often modified stats are per cpu, other are shared (netdev->stats) */
-> +struct rtnl_link_stats64 *ip_tunnel_get_stats64(struct net_device *dev,
-> +						struct rtnl_link_stats64 *tot)
-> +{
-> +	int i;
-> +
-> +	for_each_possible_cpu(i) {
-> +		const struct pcpu_sw_netstats *tstats =
-> +						   per_cpu_ptr(dev->tstats, i);
-> +		u64 rx_packets, rx_bytes, tx_packets, tx_bytes;
-> +		unsigned int start;
-> +
-> +		do {
-> +			start = u64_stats_fetch_begin_bh(&tstats->syncp);
-> +			rx_packets = tstats->rx_packets;
-> +			tx_packets = tstats->tx_packets;
-> +			rx_bytes = tstats->rx_bytes;
-> +			tx_bytes = tstats->tx_bytes;
-> +		} while (u64_stats_fetch_retry_bh(&tstats->syncp, start));
-> +
-> +		tot->rx_packets += rx_packets;
-> +		tot->tx_packets += tx_packets;
-> +		tot->rx_bytes   += rx_bytes;
-> +		tot->tx_bytes   += tx_bytes;
-> +	}
-> +
-> +	tot->multicast = dev->stats.multicast;
-> +
-> +	tot->rx_crc_errors = dev->stats.rx_crc_errors;
-> +	tot->rx_fifo_errors = dev->stats.rx_fifo_errors;
-> +	tot->rx_length_errors = dev->stats.rx_length_errors;
-> +	tot->rx_frame_errors = dev->stats.rx_frame_errors;
-> +	tot->rx_errors = dev->stats.rx_errors;
-> +
-> +	tot->tx_fifo_errors = dev->stats.tx_fifo_errors;
-> +	tot->tx_carrier_errors = dev->stats.tx_carrier_errors;
-> +	tot->tx_dropped = dev->stats.tx_dropped;
-> +	tot->tx_aborted_errors = dev->stats.tx_aborted_errors;
-> +	tot->tx_errors = dev->stats.tx_errors;
-> +
-> +	tot->collisions  = dev->stats.collisions;
-> +
-> +	return tot;
-> +}
-> +EXPORT_SYMBOL_GPL(ip_tunnel_get_stats64);
-> --
+I fixed it up (probably not the best way ... see below) and can carry the
+fix as necessary (no action is required).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+diff --cc arch/arm/boot/dts/qcom-msm8960-cdp.dts
+index 66c59a6a722c,a58fb88315f6..000000000000
+--- a/arch/arm/boot/dts/qcom-msm8960-cdp.dts
++++ b/arch/arm/boot/dts/qcom-msm8960-cdp.dts
+@@@ -7,70 -3,4 +3,10 @@@
+  / {
+  	model =3D "Qualcomm MSM8960 CDP";
+  	compatible =3D "qcom,msm8960-cdp", "qcom,msm8960";
+- 	interrupt-parent =3D <&intc>;
+ +
+ +	cpu-pmu {
+ +		compatible =3D "qcom,krait-pmu";
+ +		interrupts =3D <1 10 0x304>;
+ +		qcom,no-pc-write;
+ +	};
+-=20
+- 	intc: interrupt-controller@2000000 {
+- 		compatible =3D "qcom,msm-qgic2";
+- 		interrupt-controller;
+- 		#interrupt-cells =3D <3>;
+- 		reg =3D < 0x02000000 0x1000 >,
+- 		      < 0x02002000 0x1000 >;
+- 	};
+-=20
+- 	timer@200a000 {
+- 		compatible =3D "qcom,kpss-timer", "qcom,msm-timer";
+- 		interrupts =3D <1 1 0x301>,
+- 			     <1 2 0x301>,
+- 			     <1 3 0x301>;
+- 		reg =3D <0x0200a000 0x100>;
+- 		clock-frequency =3D <27000000>,
+- 				  <32768>;
+- 		cpu-offset =3D <0x80000>;
+- 	};
+-=20
+- 	msmgpio: gpio@800000 {
+- 		compatible =3D "qcom,msm-gpio";
+- 		gpio-controller;
+- 		#gpio-cells =3D <2>;
+- 		ngpio =3D <150>;
+- 		interrupts =3D <0 16 0x4>;
+- 		interrupt-controller;
+- 		#interrupt-cells =3D <2>;
+- 		reg =3D <0x800000 0x4000>;
+- 	};
+-=20
+- 	gcc: clock-controller@900000 {
+- 		compatible =3D "qcom,gcc-msm8960";
+- 		#clock-cells =3D <1>;
+- 		#reset-cells =3D <1>;
+- 		reg =3D <0x900000 0x4000>;
+- 	};
+-=20
+- 	clock-controller@4000000 {
+- 		compatible =3D "qcom,mmcc-msm8960";
+- 		reg =3D <0x4000000 0x1000>;
+- 		#clock-cells =3D <1>;
+- 		#reset-cells =3D <1>;
+- 	};
+-=20
+- 	serial@16440000 {
+- 		compatible =3D "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
+- 		reg =3D <0x16440000 0x1000>,
+- 		      <0x16400000 0x1000>;
+- 		interrupts =3D <0 154 0x0>;
+- 		clocks =3D <&gcc GSBI5_UART_CLK>, <&gcc GSBI5_H_CLK>;
+- 		clock-names =3D "core", "iface";
+- 	};
+-=20
+- 	qcom,ssbi@500000 {
+- 		compatible =3D "qcom,ssbi";
+- 		reg =3D <0x500000 0x1000>;
+- 		qcom,controller-type =3D "pmic-arbiter";
+- 	};
+  };
+
+--Signature=_Fri__21_Feb_2014_11_58_57_+1100_7Nk3/p1gg16h_nhG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTBqTVAAoJEMDTa8Ir7ZwVah4P/jWmnF5oh+jXTMgA8oX3kkFI
+qfZNXHMDfn+XClTwZu0jP8qam3tOEINn48m7aA5uJPFEyoIXgmUOHMR1ez7eD0pa
+8ZzM4yJTw+0BgwOfBHr/gNUqkSOqoVJt1iaUrHDXsPZ3Yt5HuyuMsFwTaI5JrZl3
+6n5ZlhbTDA0PJGELXOi6G0BXlTV+vq0phGH2yNwofmO25BuJQAWfynsL1s3WJuhG
+2qvyDbTu8+wYoglZTra4tZj3yTtdCtNiRZX+/Mdj28atU/Js7/t9SrinZdhzL2ti
+HKX5FpBm/VFIEhWPDuL9F0CjPj17RB0Qrv5mCGnmCx2i9M2VYTVHo71OVPM/etXV
+az1Kkph8CUKpQi+jW1hsplRl30vAYnDIEJjPQjNXpf7D7isIVjs0OfVBa/SJycOW
+NtHLC7Ds/qbUrhFECvEexmsOXqd9S4snHefF1DonXeRaFL4zxMIAgeDsa9rGC665
+Sq9B78bKPKgwU5S8HMT6NVUHHkMAkDFp0ZBGB1A5T7rYAaQn4LnJ2Jr1m5IkEnFw
+dTkfUBQVuZj78JWuDl5GfLV3enpwn2ZH6gmYeAvzd/Odff0agzcYOtnQ1K6Z9wMh
+RRY58Rb17ZsD8JnorhxUygnzHVieJK2xFIMuWgBHcuIG5hOzepzJ3MNG24MYZf+k
+yJPk2zxUtN46M96v0Dkz
+=irkH
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_Feb_2014_11_58_57_+1100_7Nk3/p1gg16h_nhG--
