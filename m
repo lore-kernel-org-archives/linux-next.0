@@ -1,153 +1,143 @@
-From: Prabhakar Kushwaha <prabhakar@freescale.com>
-Subject: Re: [PATCH v2] powerpc: select MEMORY for FSL_IFC to not break existing
- .config files
-Date: Fri, 21 Feb 2014 09:30:09 +0530
-Message-ID: <5306CF49.1030206@freescale.com>
-References: <1392848350.6733.809.camel@snotra.buserror.net> <1392850000-4601-1-git-send-email-paul.gortmaker@windriver.com> <53059B47.8000103@freescale.com> <530613CD.2080309@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the char-misc tree
+Date: Fri, 21 Feb 2014 16:47:11 +1100
+Message-ID: <20140221164711.9e62ae1f03fe1166943a2a14@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__21_Feb_2014_16_47_11_+1100_P_edYjAu//9CpyOG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ch1ehsobe004.messaging.microsoft.com ([216.32.181.184]:3402
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752294AbaBUEA3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Feb 2014 23:00:29 -0500
-In-Reply-To: <530613CD.2080309@windriver.com>
+Received: from ozlabs.org ([203.10.76.45]:47388 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752737AbaBUFrS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Feb 2014 00:47:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-mtd@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linux-next@vger.kernel.org, Scott Wood <scottwood@freescale.com>, Arnd Bergmann <arnd@arndb.de>, David Woodhouse <dwmw2@infradead.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
 
+--Signature=_Fri__21_Feb_2014_16_47_11_+1100_P_edYjAu//9CpyOG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2/20/2014 8:10 PM, Paul Gortmaker wrote:
-> On 14-02-20 01:05 AM, Prabhakar Kushwaha wrote:
->> On 2/20/2014 4:16 AM, Paul Gortmaker wrote:
->>> commit d2ae2e20fbdde5a65f3a5a153044ab1e5c53f7cc ("driver/memory:Move
->>> Freescale IFC driver to a common driver") introduces this build
->>> regression into the mpc85xx_defconfig:
->>>
->>>    drivers/built-in.o: In function `fsl_ifc_nand_remove':
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1147: undefined reference to `fsl_ifc_ctrl_dev'
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1147: undefined reference to `fsl_ifc_ctrl_dev'
->>>    drivers/built-in.o: In function `fsl_ifc_nand_probe':
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1031: undefined reference to `fsl_ifc_ctrl_dev'
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1031: undefined reference to `fsl_ifc_ctrl_dev'
->>>    drivers/built-in.o: In function `match_bank':
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1013: undefined reference to `convert_ifc_address'
->>>    drivers/built-in.o: In function `fsl_ifc_nand_probe':
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1059: undefined reference to `fsl_ifc_ctrl_dev'
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1080: undefined reference to `fsl_ifc_ctrl_dev'
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1069: undefined reference to `fsl_ifc_ctrl_dev'
->>>    drivers/mtd/nand/fsl_ifc_nand.c:1069: undefined reference to `fsl_ifc_ctrl_dev'
->>>    make: *** [vmlinux] Error 1
->>>
->>> This happens because there is nothing to descend us into the
->>> drivers/memory directory in the mpc85xx_defconfig.  It wasn't
->>> selecting CONFIG_MEMORY.  So we never built drivers/memory/fsl_ifc.o
->>> and so we have nothing to link the above symbols against.
->>>
->>> Since the goal of the original commit was to relocate the driver to
->>> an arch independent location, it only makes sense to relocate the
->>> Kconfig setting there as well.  But that alone won't fix the build
->>> failure; for that we ensure whoever selects FSL_IFC also selects MEMORY.
->>>
->>> Cc: Prabhakar Kushwaha <prabhakar@freescale.com>
->>> Cc: Scott Wood <scottwood@freescale.com>
->>> Cc: Arnd Bergmann <arnd@arndb.de>
->>> Cc: David Woodhouse <dwmw2@infradead.org>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->>> ---
->>>
->>> [v2: fix the mislocated FSL_IFC as per Scott's comment.  It still
->>>    probably makes sense to go in via Greg's char-misc/char-misc-next
->>>    (vs. powerpc-next) since that is where the regression was introduced.]
->>>
->>>    arch/powerpc/Kconfig     | 4 ----
->>>    drivers/memory/Kconfig   | 4 ++++
->>>    drivers/mtd/nand/Kconfig | 1 +
->>>    3 files changed, 5 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->>> index 957bf344c0f5..b9fcecc706ab 100644
->>> --- a/arch/powerpc/Kconfig
->>> +++ b/arch/powerpc/Kconfig
->>> @@ -736,10 +736,6 @@ config FSL_LBC
->>>    	  controller.  Also contains some common code used by
->>>    	  drivers for specific local bus peripherals.
->>>    
->>> -config FSL_IFC
->>> -	bool
->>> -        depends on FSL_SOC
->>> -
->>>    config FSL_GTM
->>>    	bool
->>>    	depends on PPC_83xx || QUICC_ENGINE || CPM2
->>> diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
->>> index 29a11db365bc..a3640fe9852f 100644
->>> --- a/drivers/memory/Kconfig
->>> +++ b/drivers/memory/Kconfig
->>> @@ -50,4 +50,8 @@ config TEGRA30_MC
->>>    	  analysis, especially for IOMMU/SMMU(System Memory Management
->>>    	  Unit) module.
->>>    
->>> +config FSL_IFC
->>> +	bool
->>> +	depends on FSL_SOC
->>> +
->>>    endif
->>> diff --git a/drivers/mtd/nand/Kconfig b/drivers/mtd/nand/Kconfig
->>> index 90ff447bf043..a4bee41ad5cb 100644
->>> --- a/drivers/mtd/nand/Kconfig
->>> +++ b/drivers/mtd/nand/Kconfig
->>> @@ -428,6 +428,7 @@ config MTD_NAND_FSL_IFC
->>>    	tristate "NAND support for Freescale IFC controller"
->>>    	depends on MTD_NAND && FSL_SOC
->>>    	select FSL_IFC
->>> +	select MEMORY
->>>    	help
->>>    	  Various Freescale chips e.g P1010, include a NAND Flash machine
->>>    	  with built-in hardware ECC capabilities.
->> Hi All,
->>
->> I am not sure which version of patch is being picked here.
->>
->> Latest version is v8 and it is a "patch set" and it do enable
->> CONFIG_MEMORY in powerpc/configs
-> It really doesn't matter what the latest version is, if the
-> maintainer has already taken an earlier version and merged it.
-> In that case one needs to work with the maintainer to determine
-> whether they want a new version, or a delta/fixup commit on the
-> old one.
-I think, I got the reason of this issue.
-I thought this patch will be picked by powerpc.git and updated version 
-were sent on linuxppc-dev mail list after initial version review on both 
-powerpc and linux-kernel mailing list. It should have sent on both the 
-list "always".   A learning for future :)
+Hi all,
 
-I am OK with the current patch and modification  because it  full fill 
-my requirements.
-I will sent separate patch to fix other things.
+After merging the char-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+In file included from drivers/misc/mei/hw-txe.c:25:0:
+drivers/misc/mei/hw-txe.h:63:1: error: unknown type name 'irqreturn_t'
+ irqreturn_t mei_txe_irq_quick_handler(int irq, void *dev_id);
+ ^
+drivers/misc/mei/hw-txe.h:64:1: error: unknown type name 'irqreturn_t'
+ irqreturn_t mei_txe_irq_thread_handler(int irq, void *dev_id);
+ ^
+drivers/misc/mei/hw-txe.c:879:1: error: unknown type name 'irqreturn_t'
+ irqreturn_t mei_txe_irq_quick_handler(int irq, void *dev_id)
+ ^
+drivers/misc/mei/hw-txe.c: In function 'mei_txe_irq_quick_handler':
+drivers/misc/mei/hw-txe.c:884:10: error: 'IRQ_WAKE_THREAD' undeclared (firs=
+t use in this function)
+   return IRQ_WAKE_THREAD;
+          ^
+drivers/misc/mei/hw-txe.c:884:10: note: each undeclared identifier is repor=
+ted only once for each function it appears in
+drivers/misc/mei/hw-txe.c:885:9: error: 'IRQ_NONE' undeclared (first use in=
+ this function)
+  return IRQ_NONE;
+         ^
+drivers/misc/mei/hw-txe.c: At top level:
+drivers/misc/mei/hw-txe.c:898:1: error: unknown type name 'irqreturn_t'
+ irqreturn_t mei_txe_irq_thread_handler(int irq, void *dev_id)
+ ^
+drivers/misc/mei/hw-txe.c: In function 'mei_txe_irq_thread_handler':
+drivers/misc/mei/hw-txe.c:1007:9: error: 'IRQ_HANDLED' undeclared (first us=
+e in this function)
+  return IRQ_HANDLED;
+         ^
+drivers/misc/mei/hw-txe.c: In function 'mei_txe_irq_quick_handler':
+drivers/misc/mei/hw-txe.c:886:1: warning: control reaches end of non-void f=
+unction [-Wreturn-type]
+ }
+ ^
+drivers/misc/mei/hw-txe.c: In function 'mei_txe_irq_thread_handler':
+drivers/misc/mei/hw-txe.c:1008:1: warning: control reaches end of non-void =
+function [-Wreturn-type]
+ }
+ ^
 
->> 1.  driver/memory:Move Freescale IFC driver to a common driver
->> http://patchwork.ozlabs.org/patch/315531/
-> So, this has the Kconfig move part, but the one currently in
-> char-misc does not.  And it still needs the "select".
->
->> 2. powerpc/config: Enable memory driver
->> http://patchwork.ozlabs.org/patch/315532/
-> Updating the defconfigs is fine, but incomplete in itself.  You
-> still need the IFC users to select MEMORY, otherwise you still
-> introduce build failures for anyone else who chooses IFC but
-> does not choose MEMORY.
->
-> In short, the char-misc tree still needs the v2 patch above.
->
->
+Caused by commit 266f6178d1f1 ("mei: txe: add hw-txe.h header file") but
+probably exposed by commit 46cb7b1bd86f ("PCI: Remove unused SR-IOV VF
+Migration support") from the pci tree which removed the include of
+irqreturn.h from pci.h ...
 
-Yes,  this patch still required.
+See Rule 1 from Documentation/SubmitChecklist ...
 
-Thanks,
-Prabhakar
+I added the following merge fix patch (this should be applied to the
+char-misc tree):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 21 Feb 2014 16:38:28 +1100
+Subject: [PATCH] mei: txe: include irqreturn.h for irqreturn_t etc
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/misc/mei/hw-txe.c | 1 +
+ drivers/misc/mei/hw-txe.h | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/misc/mei/hw-txe.c b/drivers/misc/mei/hw-txe.c
+index 19579e560dad..49a5ed376969 100644
+--- a/drivers/misc/mei/hw-txe.c
++++ b/drivers/misc/mei/hw-txe.c
+@@ -18,6 +18,7 @@
+ #include <linux/jiffies.h>
+ #include <linux/delay.h>
+ #include <linux/kthread.h>
++#include <linux/irqreturn.h>
+=20
+ #include <linux/mei.h>
+=20
+diff --git a/drivers/misc/mei/hw-txe.h b/drivers/misc/mei/hw-txe.h
+index 857d88ccef61..fdb665f44d5d 100644
+--- a/drivers/misc/mei/hw-txe.h
++++ b/drivers/misc/mei/hw-txe.h
+@@ -17,6 +17,8 @@
+ #ifndef _MEI_HW_TXE_H_
+ #define _MEI_HW_TXE_H_
+=20
++#include <linux/irqreturn.h>
++
+ #include "hw.h"
+ #include "hw-txe-regs.h"
+=20
+--=20
+1.9.0
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__21_Feb_2014_16_47_11_+1100_P_edYjAu//9CpyOG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTBuhjAAoJEMDTa8Ir7ZwVl6sP/R+AAj4SiGXoMH/uGgK7b/69
+iauSTN8pFfdY1/IaStvxOtCPuSvp8O+9JKxYcQB5HGI9k2kTM64porkPDN4YE787
+rvd0MvkUEnQHLvt0BX1wC6wp/BSogaiGC3LSx4oBgQtz+D0wGKQQe4fEN7xql/W7
+rVF788LOBO61k3JsZSfk3lffi5Ka0kLh6ubf5EcsVlhC8tTSh9Wke/TnEYsRXY8q
+m2sj1kIODrR+ewWfHAT4fOKHEs0ifXweZ3oQ9ucLR5n+s3hRCIch74nGkCrDdAi9
+pTe3+QP7ZrcJTKD1Ok0RPTZvAgIvOknQEoLO/jBiCxk5ALkSW2TJThWyrDyzi7FU
+PQRDMjLVAxkYi1n0z/soUWaty877VTN4ugze5JewZ7XOTXE609pavYWbecn5V0i+
+mYWXEUtQRMp5+zZtd2nNfGn8HZdQcd0BfKl06QrGCbkZjuZF+OGbvv3N0/ugFbhe
+nL3fFb9YuN47DpN8CUn7aJhzxYDniAtN+GyOL0ZS9yxmz/Pf4hMhPwaq09e9PDs1
+oQbKZGj81Hcc+oLWfaTGodfQs2jR/nW+yhyNfn8EpnFgxpToHhilTqs8RYB+yoyR
+23YkZba/RqA/L3fH68bfcPJBPgWKo4TFEiToASGRAzsrIP67jGKLmOu8OZszvY/j
+Xj8mZ+cbrHYshOzptP9q
+=aSm4
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_Feb_2014_16_47_11_+1100_P_edYjAu//9CpyOG--
