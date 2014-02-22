@@ -1,35 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- sparc tree
-Date: Fri, 21 Feb 2014 12:19:59 -0500 (EST)
-Message-ID: <20140221.121959.1500262643643918996.davem@davemloft.net>
-References: <20140221174238.acefa05c8a5e71b06155d32d@canb.auug.org.au>
-	<28092.1392982364@warthog.procyon.org.uk>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm-perf tree
+Date: Fri, 21 Feb 2014 16:46:04 -0800
+Message-ID: <CAOesGMi6p5LPQ0P2p9MtJEXJP4+5eU-7shze3EB2Gy3BuPv_wg@mail.gmail.com>
+References: <20140221115857.3ea3d7277d03c5b6b4d26488@canb.auug.org.au>
+	<CAOesGMimJxYLor11EQ-Cn9BnZGg60VrOFC8ZqBdC+wNunptm8w@mail.gmail.com>
+	<20140221110950.GB8731@mudshark.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:41652 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932519AbaBURUB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Feb 2014 12:20:01 -0500
-In-Reply-To: <28092.1392982364@warthog.procyon.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: dhowells@redhat.com
-Cc: sfr@canb.auug.org.au, akpm@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140221110950.GB8731@mudshark.cambridge.arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>
+List-Id: linux-next.vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Fri, 21 Feb 2014 11:32:44 +0000
+On Fri, Feb 21, 2014 at 3:09 AM, Will Deacon <will.deacon@arm.com> wrote:
+> On Fri, Feb 21, 2014 at 01:02:47AM +0000, Olof Johansson wrote:
+>> On Thu, Feb 20, 2014 at 4:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > Today's linux-next merge of the arm-soc tree got a conflict in
+>> > arch/arm/boot/dts/qcom-msm8960-cdp.dts between commit a1d711938959 ("ARM:
+>> > dts: msm: Add krait-pmu to platforms with Krait CPUs") from the arm-perf
+>> > tree and commit cc60a1a4d47a ("ARM: dts: msm: split out msm8660 and
+>> > msm8960 soc into dts include") from the arm-soc tree.
+>> >
+>> > I fixed it up (probably not the best way ... see below) and can carry the
+>> > fix as necessary (no action is required).
+>>
+>> Will, I think we'll be better off taking dts changes through arm-soc,
+>> unless there's a good reason to take them through other trees (such as
+>> the perf tree in this case). Is there, or should we move them over?
+>
+> Sure, I can drop that from my tree (it came as part of the series adding
+> Krait PMU support).
+>
+> I've included the original patch below so you can put it into arm-soc.
 
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
->> Today's linux-next merge of the akpm-current tree got a conflict in
->> drivers/sbus/char/jsflash.c between commit 967f038e491b ("Sparc:
->> sparc_cpu_model isn't in asm/system.h any more [ver #2]") from the sparc
->> tree and commit 695f43eb1721 ("asm/system.h: sparc: sparc_cpu_model isn't
->> in asm/system.h any more") from the akpm-current tree.
-> 
-> I think Andrew's is an old version.
+Thanks, I've applied it now (with the fixups to move to the dtsi).
 
-Right.
+
+-Olof
