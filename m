@@ -1,75 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree with the mvebu tree
-Date: Mon, 24 Feb 2014 13:37:52 +1100
-Message-ID: <20140224133752.bc1ffffa4e81edb76a76e555@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Mon, 24 Feb 2014 14:45:29 +1100
+Message-ID: <20140224144529.1d3b9f3e974b6364298182cc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY"
+ boundary="Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:54936 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:40785 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751042AbaBXCh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 23 Feb 2014 21:37:58 -0500
+	id S1751402AbaBXDph (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 23 Feb 2014 22:45:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
 
---Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY
+--Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mark,
 
-Today's linux-next merge of the sound-asoc tree got a conflict in
-sound/soc/kirkwood/Kconfig between commit cd34edc2eab2 ("drivers: Enable
-building of Kirkwood drivers for mach-mvebu") from the  tree and commit
-9a0d5113ac0e ("ASoC: kirkwood: enable Kirkwood driver for mvebu
-platforms") from the sound-asoc tree.
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I fixed it up (Probably incorrectly - see below) and can carry the fix as
-necessary (no action is required).
+drivers/spi/spi-qup.c: In function 'spi_qup_set_state':
+drivers/spi/spi-qup.c:185:3: error: implicit declaration of function 'write=
+l_relaxed' [-Werror=3Dimplicit-function-declaration]
+   writel_relaxed(QUP_STATE_CLEAR, controller->base + QUP_STATE);
+   ^
+
+Caused by commit 64ff247a978f ("spi: Add Qualcomm QUP SPI controller
+support") and exposed by commit 702d3cf9d05d ("spi: qup: Enable driver
+compilation with COMPILE_TEST").  Please at least test building on x86
+before allowing a build with COMPILE_TEST.
+
+I have used the spi tree from next-20140221 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc sound/soc/kirkwood/Kconfig
-index 106e2e22fed2,2dc3ecf34801..000000000000
---- a/sound/soc/kirkwood/Kconfig
-+++ b/sound/soc/kirkwood/Kconfig
-@@@ -1,6 -1,6 +1,6 @@@
-  config SND_KIRKWOOD_SOC
-  	tristate "SoC Audio for the Marvell Kirkwood and Dove chips"
-- 	depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || COMPILE_TEST
- -	depends on ARCH_KIRKWOOD || ARCH_DOVE || ARCH_MVEBU || COMPILE_TEST
-++	depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || ARCH_MVEBU || =
-COMPILE_TEST
-  	help
-  	  Say Y or M if you want to add support for codecs attached to
-  	  the Kirkwood I2S interface. You will also need to select the
-
---Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY
+--Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTCrCEAAoJEMDTa8Ir7ZwVNeoP/2kCkdU88NiqZ9rT5SNH0rgP
-HOn45Zr77xwqfLEIZSHVSSgSOCQ5k86wpwuNdIQ0DdZkmEMxlAUHMrhEw7C1Bz6t
-Nna/e+BEQj75ASxqJG3HkT0eetvedYoodLXV4iXLlOslIGlVeQIWuH2+rRr93OiF
-iea8PyF/hMsKuCH6VfpiVegGGeR0cqWy4HV/qob1ZyPfvDbGifwQnkPJ9TqaBt8G
-oT+oD7xJ3KcILNbX9YdT5iP9daQ/a1+z11Y322Ox8uRV9Vjto8QO25gw9myHD5bZ
-Xaq5dvfdAc/tSuPZt3JW5o5hhvlUQRt1M0nkIZWT6fjvvWQEm9NZp6w76jFER21g
-P3V9ghRZOcZsT3G+vZBtna/YOSkCy/KSDzgBMAh03olqMpcI3eKK6iEtxuRQY08D
-JXSqIBFPdGxHfHOVfuDfBDFZuaZaTNTmeTUAhVgKONW9ajobmk2X2tCVHfThjQ4U
-0gVnLunpkybgmlO2//wXjt5rCiQXRujZ7DhN68iCx9SnAOC6+DxJElHxpYov1wjO
-e9LCaUoYIFuu96q1tBtlZX5TfuxGjoWrZftsA52YnYjq5Av9rkZPxAWGhxBFFg8T
-q9vNoI2PMS0/Z5sXYaMYKKyrqvwEg1zhoHAQLKVgJxsEN2is9YCDV9IWGw6M5TYS
-/R4kSl9UPOB3XGsH7J41
-=vQxk
+iQIcBAEBCAAGBQJTCsBgAAoJEMDTa8Ir7ZwVdLYP/iZYJs3g3Bws/rFULj+Yb4hg
+wyqUbE8vAiFgGhfARTDJ5n8VCc5uSxIdxLcDu2Qo8gxHbbRsXgAIXkdn7k1ZCabj
+dtHMSlzFgszQ5hR3S5pQLtq0Q+18qE4GRP2lJZGXO2V2OtS6QPVuH940/EE/cSmz
+3feDM4Il/G0EEv5X76hGNaTDnS7zNpWCMe1630B8fGh9SFAg8PEaRWUsbv9ekBAy
+jCLhDValxVC5ezi8jjx7BZvQk7TvD+nIDtHqaNLD0CgisvWgmjktz1fS44HuTFw0
+urUzjvg/BQHKhIiPr+bxD5u2oh9Zorue0T+aY6mUB56KKnAdzqKF3++urpnBxDHQ
+ussEl+4Vj8DuG/F1wy6PRni4XVuzhIiROM6eh1W9zpYU60UnIhTZGtab7Ujfixnz
+2+PzMxXWXBVSkMeL9/OiboqwsoLBYF1JRuh0A5++PsH1EDpVu1HvJFSQYGbwEwkk
+GyZMroqM/ECqaYub6pqjY0gnTwYJ7thf5j1pCgxtqe+/MiehvJyzpHlwgx8Le1os
+MqrGERPSpDlN/ZUlWVT5P/XZqxfLNjNWuppy68RQJrL9MefiziWVYlaAdkdEYOiV
+j5MxOkZEiP+GNWp3ITHl4xSxZWVxdJp3nVg8AABinD++Vwg/XTPToFqE8ynC7C2D
+pqIG/4Ke8HMa3xB+7ZvH
+=el70
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY--
+--Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn--
