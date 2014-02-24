@@ -1,28 +1,31 @@
-From: Andi Kleen <ak@linux.intel.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
 Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Mon, 24 Feb 2014 07:48:41 -0800
-Message-ID: <20140224154841.GG12219@tassilo.jf.intel.com>
-References: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
+Date: Mon, 24 Feb 2014 07:51:42 -0800
+Message-ID: <5631f550-8a43-4831-8a62-a47451dbbb1b@email.android.com>
+References: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au> <20140224154841.GG12219@tassilo.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:31445 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752473AbaBXPs4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Feb 2014 10:48:56 -0500
-Content-Disposition: inline
-In-Reply-To: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140224154841.GG12219@tassilo.jf.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andi Kleen <ak@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-> I guess that there may be more places where "asmlinkage" is used with
-> "static" - I assume that they are all incorrect?
+static asmlinkage can make sense if a pointer to the function is taken somewhere in the same translation unit.
 
-Likely they are bogus yes.
+On February 24, 2014 7:48:41 AM PST, Andi Kleen <ak@linux.intel.com> wrote:
+>> I guess that there may be more places where "asmlinkage" is used with
+>> "static" - I assume that they are all incorrect?
+>
+>Likely they are bogus yes.
+>
+>One issue is still the changed ABI on i386, so one has to double check
+>before removing if they have arguments.
+>
+>-Andi
 
-One issue is still the changed ABI on i386, so one has to double check
-before removing if they have arguments.
-
--Andi
+-- 
+Sent from my mobile phone.  Please pardon brevity and lack of formatting.
