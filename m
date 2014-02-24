@@ -1,84 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Mon, 24 Feb 2014 16:56:21 +1100
-Message-ID: <20140224165621.843089bb746605469e016e5d@canb.auug.org.au>
-References: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the spi tree
+Date: Mon, 24 Feb 2014 15:00:05 +0900
+Message-ID: <20140224060005.GC25940@sirena.org.uk>
+References: <20140224144529.1d3b9f3e974b6364298182cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Feb_2014_16_56_21_+1100_Ps8xTYS//EHHoWgh"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Rashika Kheria <rashika.kheria@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__24_Feb_2014_16_56_21_+1100_Ps8xTYS//EHHoWgh
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0CHKT3anvf6u5QiQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50626 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750720AbaBXGAK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Feb 2014 01:00:10 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20140224144529.1d3b9f3e974b6364298182cc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
 
-Hi all,
 
-On Mon, 24 Feb 2014 15:17:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> I guess that there may be more places where "asmlinkage" is used with
-> "static" - I assume that they are all incorrect?
->=20
-> $ git grep -l 'static.*asmlinkage'
-> arch/x86/crypto/sha1_ssse3_glue.c
-> arch/x86/crypto/sha256_ssse3_glue.c
-> arch/x86/crypto/sha512_ssse3_glue.c
+--0CHKT3anvf6u5QiQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In fact, my x86_64 allmodconfig build produces these:
+On Mon, Feb 24, 2014 at 02:45:29PM +1100, Stephen Rothwell wrote:
 
-arch/x86/crypto/sha1_ssse3_glue.c:43:1: warning: 'externally_visible' attri=
-bute have effect only on public objects [-Wattributes]
- static asmlinkage void (*sha1_transform_asm)(u32 *, const char *, unsigned=
- int);
- ^
-arch/x86/crypto/sha256_ssse3_glue.c:56:1: warning: 'externally_visible' att=
-ribute have effect only on public objects [-Wattributes]
- static asmlinkage void (*sha256_transform_asm)(const char *, u32 *, u64);
- ^
-arch/x86/crypto/sha512_ssse3_glue.c:55:1: warning: 'externally_visible' att=
-ribute have effect only on public objects [-Wattributes]
- static asmlinkage void (*sha512_transform_asm)(const char *, u64 *, u64);
- ^
-mm/process_vm_access.c:422:1: warning: 'externally_visible' attribute have =
-effect only on public objects [-Wattributes]
- {
- ^
+> compilation with COMPILE_TEST").  Please at least test building on x86
+> before allowing a build with COMPILE_TEST.
 
-That last is added by commit 700d00f85598 ("mm/process_vm_access.c: mark
-function as static") from the akpm-current tree.
+Yeah, I tend to rely on the zero day tester to get that when travelling
+since it's normally quicker to get a result from that than it is for me
+to build on my laptop.  That doesn't seem to have worked out though...
 
-So is "static asmlinkage" not allowed?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Like I said in reply to Axel's patch it's not exactly sane that things
+like this are an issue in the first place.
 
---Signature=_Mon__24_Feb_2014_16_56_21_+1100_Ps8xTYS//EHHoWgh
-Content-Type: application/pgp-signature
+--0CHKT3anvf6u5QiQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTCt8JAAoJEMDTa8Ir7ZwVQhUP/jvRl/dKkzKay9jMWvxw/5wQ
-gs7vi1q6rdjLMT8GRWf3n4xTNZJHjg8M3FE3COFcACLoZEyWfobhPGbiblZVZB4m
-OTEaW09ucGWSSkhm6zjDPjSgAPZF7SlGYIejJyjAHq4u7QvlcFFhsOIPOBJ2wpFC
-MvL7wpEXDC2EmUZ6RpN2aci/bsKp0QTQfKljk/8h/6SwjM8SL8BPFcVH+ffD9aJJ
-8USVsOs/IpzFonu3q+8QsfILP0WXIoQ5+MHiJkSgwgw78ejk2F+iLEG8NSAhzdYq
-lUcJb5MJYTs1si+xLLrXneWMYhuruk2NQ/tMSVIigy6zrfRGxWdwo/wcg33+sPNF
-bpaibOJN1Wuqp3f/3goAUIg4y51v8tgzoBHGNxebWObZH3xfEF5au2bYypay2pBK
-joS1txQ4q71xrw3PriqWHNlXSMq4xQVpN51MlMQWWeUQZF3FINOOXbFzmGFX5X/m
-ro6NtfUDLzwIUigxn1vwvg7aEglubusUQJtZZJSW+MgZjVXlJf89z/DyRU71I2pl
-1CrtsynbQDJzsmVbB/Q5p7YBehlA6EzH/p/Blo18CUMTAB9bzPSRC1dux91giivf
-LBwz9Y/sHjd9laODCeEiPDLzO3lZ7ODb020kxGnYfox5NK7g6b/23xH4DfaKMv68
-aVtM9d4HQlBBgzdxFeSJ
-=e1kR
+iQIcBAEBAgAGBQJTCt/iAAoJELSic+t+oim91R8P/3ysnTjMUpQkJnEkzw4jfoJh
+tpUUF+3meY3nxVi2GWCsTwRipU8HiuBKE/30dHEeK0nKlUWYHghV56CR0rLRIpTu
+nOe7C2uJLclzzAHst4396TL72H2dn2qImmDMsJrHN3hPvYJWseMH81xJxM4P36nl
+61U+eeveZWLsMK32ezXhBMzl7yb8UcLVxHQSYMhPeRvehL9SIsl5ahk5VXiRdvxF
+NPeIagvZXL0C80pL5cqhTRmW/VVmwfJM8q02a3Z1Kgu+4NFPpDeab+HOCigqc9+A
+NKvYtj5+Nc+Gmp04QRILiIEEyjA/WE7lYlnD5ha52Qzmuv6vf+BWA9o+42GlK1RG
+7rrukYNkhzLueywWkz2p0H0SzN2ql2kZTHFNmApc7Gdw2eZ5ZOIpoRLwms4KboG9
+zN1msnsdERqeW3j/Z3YkfudMiP01IlWB+d4ukSw61lxyiMxibCLo3bdVuV+LzUix
+tqTswDYI33cRA9XmMR0A3wxeGpAtQZdaXcRgVsm/IjBuX3YqBvmO6y95W67KB2Uk
+cU/DJ7PuE9xFPJ9W3nebMqQei8s81M95SS2ztE7Ck2vaZAHS06ebmbhQdZR7zpLJ
+Bu73myWI5XPGeBOjCKQw5r+M003sQ5yNiDBCJTSZ/WNZrybdCqgh2fj2GofQALru
+rYWb1yaDe8h4L8qqArBF
+=t0v9
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Feb_2014_16_56_21_+1100_Ps8xTYS//EHHoWgh--
+--0CHKT3anvf6u5QiQ--
