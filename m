@@ -1,47 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Tree for Feb 17 (pinctrl-msm)
-Date: Mon, 24 Feb 2014 15:46:17 +0100
-Message-ID: <CACRpkdamW1-CxZV65at3PaPhY5nANRDd=SY=FsNPVnrPxyD81w@mail.gmail.com>
-References: <20140217172329.2c61499f57842ec2ed177bc5@canb.auug.org.au>
-	<530247FC.90606@infradead.org>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the mvebu
+ tree
+Date: Mon, 24 Feb 2014 10:10:18 -0500
+Message-ID: <20140224151018.GE14250@titan.lakedaemon.net>
+References: <20140224133752.bc1ffffa4e81edb76a76e555@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:34668 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752313AbaBXOqR convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Feb 2014 09:46:17 -0500
-Received: by mail-oa0-f41.google.com with SMTP id o6so7114772oag.0
-        for <linux-next@vger.kernel.org>; Mon, 24 Feb 2014 06:46:17 -0800 (PST)
-In-Reply-To: <530247FC.90606@infradead.org>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:39942 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539AbaBXPK6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Feb 2014 10:10:58 -0500
+Content-Disposition: inline
+In-Reply-To: <20140224133752.bc1ffffa4e81edb76a76e555@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Bjorn Andersson <Bjorn.Andersson@sonymobile.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-On Mon, Feb 17, 2014 at 6:33 PM, Randy Dunlap <rdunlap@infradead.org> w=
-rote:
-> On 02/16/2014 10:23 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> If you see failures in building this tree due to missing declaration=
-s of
->> k..alloc/free, then it may be caused by commit 2bd59d48ebfb ("cgroup=
-:
->> convert to kernfs").  Please send Tejun Heo <tj@kernel.org> a patch
->> adding an inclusion of linux/slab.h to the appropriate file(s).
->>
->> This tree fails (more than usual) the powerpc allyesconfig build.
->>
->> Changes since 20140214:
->>
->
-> on i386:
->
-> ERROR: "handle_bad_irq" [drivers/pinctrl/pinctrl-msm.ko] undefined!
+Stephen,
 
-Weird, Bj=F6rn do you know what may be causing this?
+On Mon, Feb 24, 2014 at 01:37:52PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the sound-asoc tree got a conflict in
+> sound/soc/kirkwood/Kconfig between commit cd34edc2eab2 ("drivers: Enable
+> building of Kirkwood drivers for mach-mvebu") from the  tree and commit
+> 9a0d5113ac0e ("ASoC: kirkwood: enable Kirkwood driver for mvebu
+> platforms") from the sound-asoc tree.
+> 
+> I fixed it up (Probably incorrectly - see below) and can carry the fix as
+> necessary (no action is required).
 
-Yours,
-Linus Walleij
+Yes, sorry this isn't ideal.  We're moving all DT support from
+mach-kirkwood to mach-mvebu and having to keep legacy support for a
+cycle.  Hence the confusing config symbols.
+
+This resolution is correct.
+
+thx,
+
+Jason.
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc sound/soc/kirkwood/Kconfig
+> index 106e2e22fed2,2dc3ecf34801..000000000000
+> --- a/sound/soc/kirkwood/Kconfig
+> +++ b/sound/soc/kirkwood/Kconfig
+> @@@ -1,6 -1,6 +1,6 @@@
+>   config SND_KIRKWOOD_SOC
+>   	tristate "SoC Audio for the Marvell Kirkwood and Dove chips"
+> - 	depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || COMPILE_TEST
+>  -	depends on ARCH_KIRKWOOD || ARCH_DOVE || ARCH_MVEBU || COMPILE_TEST
+> ++	depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || ARCH_MVEBU || COMPILE_TEST
+>   	help
+>   	  Say Y or M if you want to add support for codecs attached to
+>   	  the Kirkwood I2S interface. You will also need to select the
