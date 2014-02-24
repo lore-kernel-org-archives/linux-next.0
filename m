@@ -1,67 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the spi tree
-Date: Mon, 24 Feb 2014 14:45:29 +1100
-Message-ID: <20140224144529.1d3b9f3e974b6364298182cc@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Mon, 24 Feb 2014 15:17:32 +1100
+Message-ID: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn"
+ boundary="Signature=_Mon__24_Feb_2014_15_17_32_+1100_jAcTd3W8BKDJ.4+b"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:40785 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:45926 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751402AbaBXDph (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 23 Feb 2014 22:45:37 -0500
+	id S1751402AbaBXERi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 23 Feb 2014 23:17:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
---Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn
+--Signature=_Mon__24_Feb_2014_15_17_32_+1100_jAcTd3W8BKDJ.4+b
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi all,
 
-After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-drivers/spi/spi-qup.c: In function 'spi_qup_set_state':
-drivers/spi/spi-qup.c:185:3: error: implicit declaration of function 'write=
-l_relaxed' [-Werror=3Dimplicit-function-declaration]
-   writel_relaxed(QUP_STATE_CLEAR, controller->base + QUP_STATE);
-   ^
+drivers/irqchip/irq-armada-370-xp.c:415:1: warning: 'externally_visible' at=
+tribute have effect only on public objects [-Wattributes]
+drivers/irqchip/irq-sun4i.c:39:70: warning: 'externally_visible' attribute =
+have effect only on public objects [-Wattributes]
+drivers/irqchip/irq-sun4i.c:140:1: warning: 'externally_visible' attribute =
+have effect only on public objects [-Wattributes]
+drivers/irqchip/irq-gic.c:283:1: warning: 'externally_visible' attribute ha=
+ve effect only on public objects [-Wattributes]
+drivers/irqchip/irq-sirfsoc.c:51:1: warning: 'externally_visible' attribute=
+ have effect only on public objects [-Wattributes]
+drivers/irqchip/irq-vt8500.c:183:1: warning: 'externally_visible' attribute=
+ have effect only on public objects [-Wattributes]
 
-Caused by commit 64ff247a978f ("spi: Add Qualcomm QUP SPI controller
-support") and exposed by commit 702d3cf9d05d ("spi: qup: Enable driver
-compilation with COMPILE_TEST").  Please at least test building on x86
-before allowing a build with COMPILE_TEST.
+Probably introduced by commit 128ea04a9885 ("lto: Make asmlinkage __visible=
+").
 
-I have used the spi tree from next-20140221 for today.
+I guess that there may be more places where "asmlinkage" is used with
+"static" - I assume that they are all incorrect?
 
+$ git grep -l 'static.*asmlinkage'
+arch/x86/crypto/sha1_ssse3_glue.c
+arch/x86/crypto/sha256_ssse3_glue.c
+arch/x86/crypto/sha512_ssse3_glue.c
+drivers/irqchip/irq-armada-370-xp.c
+drivers/irqchip/irq-bcm2835.c
+drivers/irqchip/irq-gic.c
+drivers/irqchip/irq-mmp.c
+drivers/irqchip/irq-moxart.c
+drivers/irqchip/irq-orion.c
+drivers/irqchip/irq-sirfsoc.c
+drivers/irqchip/irq-sun4i.c
+drivers/irqchip/irq-vic.c
+drivers/irqchip/irq-vt8500.c
+drivers/irqchip/irq-zevio.c
+drivers/pnp/pnpbios/bioscalls.c
+scripts/checkpatch.pl
+
+(the last two don't matter)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn
+--Signature=_Mon__24_Feb_2014_15_17_32_+1100_jAcTd3W8BKDJ.4+b
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTCsBgAAoJEMDTa8Ir7ZwVdLYP/iZYJs3g3Bws/rFULj+Yb4hg
-wyqUbE8vAiFgGhfARTDJ5n8VCc5uSxIdxLcDu2Qo8gxHbbRsXgAIXkdn7k1ZCabj
-dtHMSlzFgszQ5hR3S5pQLtq0Q+18qE4GRP2lJZGXO2V2OtS6QPVuH940/EE/cSmz
-3feDM4Il/G0EEv5X76hGNaTDnS7zNpWCMe1630B8fGh9SFAg8PEaRWUsbv9ekBAy
-jCLhDValxVC5ezi8jjx7BZvQk7TvD+nIDtHqaNLD0CgisvWgmjktz1fS44HuTFw0
-urUzjvg/BQHKhIiPr+bxD5u2oh9Zorue0T+aY6mUB56KKnAdzqKF3++urpnBxDHQ
-ussEl+4Vj8DuG/F1wy6PRni4XVuzhIiROM6eh1W9zpYU60UnIhTZGtab7Ujfixnz
-2+PzMxXWXBVSkMeL9/OiboqwsoLBYF1JRuh0A5++PsH1EDpVu1HvJFSQYGbwEwkk
-GyZMroqM/ECqaYub6pqjY0gnTwYJ7thf5j1pCgxtqe+/MiehvJyzpHlwgx8Le1os
-MqrGERPSpDlN/ZUlWVT5P/XZqxfLNjNWuppy68RQJrL9MefiziWVYlaAdkdEYOiV
-j5MxOkZEiP+GNWp3ITHl4xSxZWVxdJp3nVg8AABinD++Vwg/XTPToFqE8ynC7C2D
-pqIG/4Ke8HMa3xB+7ZvH
-=el70
+iQIcBAEBCAAGBQJTCsfhAAoJEMDTa8Ir7ZwV0UIP/RdE98ABLeYb+nr8ngSOXp/5
+eb6cxK8iBiCu80NEIV1oAL2JV+3ESmRgonvhN+6CXG1DUYMlvxNoWYkEY3Cs8C9f
++OFSGYVokHugOLOye/sdAqFWonDMjaflXcEHKPI0ZgbiWdocj975tzI6botxV4vU
+KEleOOJcj0UpxzaMFHvGv9N9noBoB2FHhBuwJxPExKKWwP/WBDp0XZ3/R0rQXk3i
+XFCKJlAM29qYFMlZ4xt7upsGqIosIedSuc+G1irA7h38uNBfBZ8f1KBE59812XVY
+bHOQ02GnpDbh3royohPcctGK5qAQ8cC/5PAgDQ92kvP/RTv1VVmtSqJjAH7UtXHk
+m6Ugpsw2dfH0HQ7cylGSQGhD6a+JRXePq66m7X8FQMU+G8nOMH8rR3tfCORej8fk
+1tfTP7XziL4oMTNZdglDShT2s19ep87I8l+cnw2ZG61vkVI+AM9gEf/AfUnlxo1i
+w5wFxKdc0yna0epIPr8X61FNTgbVolrrztLRJVXyJ5SQDar+41jEp2x2FxXXSkcq
+RKG3PVEWKNW3oPjPNAoddnzuivE8sZ1GB4PQgzh1iEWkFSIad9ANHgi98rwng4DE
+3UjR1AqJ4HieRqYciKZx2zvgd3F1KtKv/Ot3Tpr3MOpWxKM09dCHlm9aO7JBVhl/
+VDmoD9CJeeHybWcH5ut3
+=Wq7u
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Feb_2014_14_45_29_+1100_t18sJy9vJFaB0gVn--
+--Signature=_Mon__24_Feb_2014_15_17_32_+1100_jAcTd3W8BKDJ.4+b--
