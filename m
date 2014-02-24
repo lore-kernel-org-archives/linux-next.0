@@ -1,101 +1,86 @@
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 Subject: Re: linux-next: Tree for Feb 17 (pinctrl-msm)
-Date: Mon, 24 Feb 2014 10:46:49 -0800
-Message-ID: <530B9399.5010909@infradead.org>
-References: <20140217172329.2c61499f57842ec2ed177bc5@canb.auug.org.au> <530247FC.90606@infradead.org> <CACRpkdamW1-CxZV65at3PaPhY5nANRDd=SY=FsNPVnrPxyD81w@mail.gmail.com> <20140224174646.GA32621@sonymobile.com> <530B8C15.50100@infradead.org> <20140224184120.GB18563@joshc.qualcomm.com>
+Date: Mon, 24 Feb 2014 11:28:13 -0800
+Message-ID: <20140224192813.GA4451@sonymobile.com>
+References: <20140217172329.2c61499f57842ec2ed177bc5@canb.auug.org.au>
+ <530247FC.90606@infradead.org>
+ <CACRpkdamW1-CxZV65at3PaPhY5nANRDd=SY=FsNPVnrPxyD81w@mail.gmail.com>
+ <20140224174646.GA32621@sonymobile.com>
+ <530B8C15.50100@infradead.org>
+ <20140224184120.GB18563@joshc.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:47365 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752421AbaBXSq5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Feb 2014 13:46:57 -0500
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20140224184120.GB18563@joshc.qualcomm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Josh Cartwright <joshc@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Josh Cartwright <joshc@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 02/24/2014 10:41 AM, Josh Cartwright wrote:
-> On Mon, Feb 24, 2014 at 10:14:45AM -0800, Randy Dunlap wrote:
->> On 02/24/2014 09:46 AM, Bjorn Andersson wrote:
->>> On Mon 24 Feb 06:46 PST 2014, Linus Walleij wrote:
->>>> On Mon, Feb 17, 2014 at 6:33 PM, Randy Dunlap <rdunlap@infradead.o=
-rg> wrote:
->>>>> On 02/16/2014 10:23 PM, Stephen Rothwell wrote:
->>>>> ERROR: "handle_bad_irq" [drivers/pinctrl/pinctrl-msm.ko] undefine=
-d!
->>>>
->>>> Weird, Bj=F6rn do you know what may be causing this?
->>>
->>> I include linux/irq.h to get hold of handle_bad_irq() and as far as=
- I can see
->>> there are no changes related to that in linux-next.
->>>
->>> Do we know if the build still fails? Or if something changed?
->>>
->>>
->>> Please let me know if I should pull down the -next tree and try to =
-reproduce
->>> this.
->>
->> I guess that you get off free on this one since I didn't post the fa=
-iling
->> .config file and I have already deleted it.
->>
->> I'm trying to reproduce it now but it's slow going.  I'll let you kn=
-ow if
->> I get it to fail again.
->=20
+On Mon 24 Feb 10:41 PST 2014, Josh Cartwright wrote:
+
+[...]
+
+> 
 > Without too much effort, I can get this to fail just by making
-> CONFIG_PINCTRL_MSM=3Dm.  handle_bad_irq isn't marked EXPORT_SYMBOL*, =
-so
+> CONFIG_PINCTRL_MSM=m.  handle_bad_irq isn't marked EXPORT_SYMBOL*, so
 > hence the warning.
+> 
 
-Yes, I was just about to write the same thing.
+Ohh, yeah I missed that.
 
-> Whether or not this is intentional is not clear.  Do we support modul=
-es
+> Whether or not this is intentional is not clear.  Do we support modules
 > installing chained irq handlers?
-
-Thomas?
-
+> 
 > For now, the patch below just makes this driver 'bool' instead of
 > 'tristate'.
 
-What does pinctrl have against using loadable modules in many cases?
+This comes from the request of having everything as a module, to reduce the
+size of the multi-platform ARM builds. I would say that the important part
+related to that would be to keep the platform specific tables in modules.
 
+But keeping these parts as modules would still mean that it's a module that
+install the chained irq handler.
 
+@Linus, I'm not sure about what should be module and not in pinctrl, but this
+part of pinctrl-msm is less important then the others to be able to be compiled
+as a module.
+
+FWIW;
+Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+
+> 
 >   Josh
->=20
+
+Regards,
+Bjorn
+
+> 
 > --8<--
-> Subject: [PATCH] pinctrl: msm: make PINCTRL_MSM bool instead of trist=
-ate
->=20
+> Subject: [PATCH] pinctrl: msm: make PINCTRL_MSM bool instead of tristate
+> 
 > Modular builds of pinctrl-msm break due to handle_bad_irq being
 > unexported for module use.  For now, make PINCTRL_MSM 'bool'.
->=20
+> 
 > Signed-off-by: Josh Cartwright <joshc@codeaurora.org>
 > ---
 >  drivers/pinctrl/Kconfig | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
+> 
 > diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
 > index be361b7..1e4e693 100644
 > --- a/drivers/pinctrl/Kconfig
 > +++ b/drivers/pinctrl/Kconfig
 > @@ -217,7 +217,7 @@ config PINCTRL_IMX28
 >  	select PINCTRL_MXS
-> =20
+>  
 >  config PINCTRL_MSM
 > -	tristate
 > +	bool
 >  	select PINMUX
 >  	select PINCONF
 >  	select GENERIC_PINCONF
->=20
-
-
---=20
-~Randy
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> hosted by The Linux Foundation
