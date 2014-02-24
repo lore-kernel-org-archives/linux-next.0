@@ -1,86 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with Linus' tree
-Date: Mon, 24 Feb 2014 11:48:10 +1100
-Message-ID: <20140224114810.468d0db355553fc15629592d@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the mvebu tree
+Date: Mon, 24 Feb 2014 13:37:52 +1100
+Message-ID: <20140224133752.bc1ffffa4e81edb76a76e555@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Feb_2014_11_48_10_+1100_CIfG1biWB6lSi8.7"
+ boundary="Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:54817 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:54936 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750976AbaBXAsQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 23 Feb 2014 19:48:16 -0500
+	id S1751042AbaBXCh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 23 Feb 2014 21:37:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Rob Herring <robh@kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
---Signature=_Mon__24_Feb_2014_11_48_10_+1100_CIfG1biWB6lSi8.7
+--Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-Documentation/devicetree/bindings/vendor-prefixes.txt between commit
-d5f93b8ad01e ("of: Update qcom vendor prefix description") from Linus'
-tree and commit f7f2ea9f49b0 ("DT: Vendor prefixes: Add ricoh, qnap, sii
-and synology") from the mvebu tree.
+Today's linux-next merge of the sound-asoc tree got a conflict in
+sound/soc/kirkwood/Kconfig between commit cd34edc2eab2 ("drivers: Enable
+building of Kirkwood drivers for mach-mvebu") from the  tree and commit
+9a0d5113ac0e ("ASoC: kirkwood: enable Kirkwood driver for mvebu
+platforms") from the sound-asoc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (Probably incorrectly - see below) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
-Stephen Rothwell <sfr@canb.auug.org.au>
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
-index e9d19e2b359b,c73b435f58f5..000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@@ -69,7 -64,8 +69,8 @@@ phytec	PHYTEC Messtechnik Gmb
-  picochip	Picochip Ltd
-  powervr	PowerVR (deprecated, use img)
-  qca	Qualcomm Atheros, Inc.
- -qcom	Qualcomm, Inc.
- +qcom	Qualcomm Technologies, Inc
-+ qnap	QNAP Systems, Inc.
-  ralink	Mediatek/Ralink Technology Corp.
-  ramtron	Ramtron International
-  realtek Realtek Semiconductor Corp.
-@@@ -81,9 -78,9 +83,10 @@@ schindler	Schindle
-  sil	Silicon Image
-  silabs	Silicon Laboratories
-  simtek
-+ sii	Seiko Instruments, Inc.
-  sirf	SiRF Technology, Inc.
-  snps 	Synopsys, Inc.
- +spansion	Spansion Inc.
-  st	STMicroelectronics
-  ste	ST-Ericsson
-  stericsson	ST-Ericsson
+diff --cc sound/soc/kirkwood/Kconfig
+index 106e2e22fed2,2dc3ecf34801..000000000000
+--- a/sound/soc/kirkwood/Kconfig
++++ b/sound/soc/kirkwood/Kconfig
+@@@ -1,6 -1,6 +1,6 @@@
+  config SND_KIRKWOOD_SOC
+  	tristate "SoC Audio for the Marvell Kirkwood and Dove chips"
+- 	depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || COMPILE_TEST
+ -	depends on ARCH_KIRKWOOD || ARCH_DOVE || ARCH_MVEBU || COMPILE_TEST
+++	depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || ARCH_MVEBU || =
+COMPILE_TEST
+  	help
+  	  Say Y or M if you want to add support for codecs attached to
+  	  the Kirkwood I2S interface. You will also need to select the
 
---Signature=_Mon__24_Feb_2014_11_48_10_+1100_CIfG1biWB6lSi8.7
+--Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTCpbOAAoJEMDTa8Ir7ZwVvasP/2m2mZel48QzZNbn6BKW2UeE
-zulPy5mCHHAqkOdSkWkN+6S6mjiJDSWpz/HZm81ibyz9Vl09bXBQqkSSjDskfZaW
-ZO0q6otd7JfNz810uAyScv8dkW2e1WV0N4ZAnxtdcsxhnsRqC5IjYHYng8fGovfK
-Jo8+mXAKCrpxzjpqoU0b/wka56rw8EX2dKUayoFdbPMfYqCtoqr6aYNEOHn8R7XB
-K16xvFrXr5p+Mv41AL0YKTerti8kqTmvyXy64BXqjb+vXZ7A1BK9ii8E4hk1Ijk8
-n1SwGlechbABDEd4jp0vbk40zSQSOUV4db6sgWLXEaz4rO7UcEwvYwDlHr6VVnKP
-p1KAE95iTYippjspqHkm6eqN8CJvq0EqVqahvHwkWZ0sajvHwl1g5GC/GEw3a7mQ
-Qp/OIKnCEu410djPQojjkeBQlrmk9hABPCRhOofgD35ePclljUEQJDd/3rG38eeg
-tysZVvjK/6P6KCDMTEJDCMVwS4LXGNVYr8Q5iqy6TD0FBQ+BFsG/rKWV4hZD4RLM
-KVsXSOOlvYN0CuKGvxJfo1urxJQWavNglFLYwyndlkD3Kdo2oiEgO95UToWWrdAl
-4Rfq+Vwsj6NFeCaLFA0Bi6Rjh1gtO8wqmPL8wOq6nHhZstMpPrAIAoENY7Hpl0ma
-zRw9yfl6huFUKTw0Bs7j
-=pchW
+iQIcBAEBCAAGBQJTCrCEAAoJEMDTa8Ir7ZwVNeoP/2kCkdU88NiqZ9rT5SNH0rgP
+HOn45Zr77xwqfLEIZSHVSSgSOCQ5k86wpwuNdIQ0DdZkmEMxlAUHMrhEw7C1Bz6t
+Nna/e+BEQj75ASxqJG3HkT0eetvedYoodLXV4iXLlOslIGlVeQIWuH2+rRr93OiF
+iea8PyF/hMsKuCH6VfpiVegGGeR0cqWy4HV/qob1ZyPfvDbGifwQnkPJ9TqaBt8G
+oT+oD7xJ3KcILNbX9YdT5iP9daQ/a1+z11Y322Ox8uRV9Vjto8QO25gw9myHD5bZ
+Xaq5dvfdAc/tSuPZt3JW5o5hhvlUQRt1M0nkIZWT6fjvvWQEm9NZp6w76jFER21g
+P3V9ghRZOcZsT3G+vZBtna/YOSkCy/KSDzgBMAh03olqMpcI3eKK6iEtxuRQY08D
+JXSqIBFPdGxHfHOVfuDfBDFZuaZaTNTmeTUAhVgKONW9ajobmk2X2tCVHfThjQ4U
+0gVnLunpkybgmlO2//wXjt5rCiQXRujZ7DhN68iCx9SnAOC6+DxJElHxpYov1wjO
+e9LCaUoYIFuu96q1tBtlZX5TfuxGjoWrZftsA52YnYjq5Av9rkZPxAWGhxBFFg8T
+q9vNoI2PMS0/Z5sXYaMYKKyrqvwEg1zhoHAQLKVgJxsEN2is9YCDV9IWGw6M5TYS
+/R4kSl9UPOB3XGsH7J41
+=vQxk
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Feb_2014_11_48_10_+1100_CIfG1biWB6lSi8.7--
+--Signature=_Mon__24_Feb_2014_13_37_52_+1100_nRDEJPUBe6s2wajY--
