@@ -1,60 +1,81 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 24 Feb 2014 15:00:05 +0900
-Message-ID: <20140224060005.GC25940@sirena.org.uk>
-References: <20140224144529.1d3b9f3e974b6364298182cc@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Sun, 23 Feb 2014 22:12:17 -0800
+Message-ID: <20140223221217.4f09b9d1.akpm@linux-foundation.org>
+References: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
+	<20140224165621.843089bb746605469e016e5d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0CHKT3anvf6u5QiQ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50626 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750720AbaBXGAK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Feb 2014 01:00:10 -0500
-Content-Disposition: inline
-In-Reply-To: <20140224144529.1d3b9f3e974b6364298182cc@canb.auug.org.au>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45531 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751326AbaBXGKT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Feb 2014 01:10:19 -0500
+In-Reply-To: <20140224165621.843089bb746605469e016e5d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Rashika Kheria <rashika.kheria@gmail.com>
 
+On Mon, 24 Feb 2014 16:56:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
---0CHKT3anvf6u5QiQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi all,
+> 
+> On Mon, 24 Feb 2014 15:17:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > I guess that there may be more places where "asmlinkage" is used with
+> > "static" - I assume that they are all incorrect?
+> > 
+> > $ git grep -l 'static.*asmlinkage'
+> > arch/x86/crypto/sha1_ssse3_glue.c
+> > arch/x86/crypto/sha256_ssse3_glue.c
+> > arch/x86/crypto/sha512_ssse3_glue.c
+> 
+> In fact, my x86_64 allmodconfig build produces these:
+> 
+> arch/x86/crypto/sha1_ssse3_glue.c:43:1: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
+>  static asmlinkage void (*sha1_transform_asm)(u32 *, const char *, unsigned int);
+>  ^
+> arch/x86/crypto/sha256_ssse3_glue.c:56:1: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
+>  static asmlinkage void (*sha256_transform_asm)(const char *, u32 *, u64);
+>  ^
+> arch/x86/crypto/sha512_ssse3_glue.c:55:1: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
+>  static asmlinkage void (*sha512_transform_asm)(const char *, u64 *, u64);
+>  ^
+> mm/process_vm_access.c:422:1: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
+>  {
+>  ^
+> 
+> That last is added by commit 700d00f85598 ("mm/process_vm_access.c: mark
+> function as static") from the akpm-current tree.
+> 
+> So is "static asmlinkage" not allowed?
 
-On Mon, Feb 24, 2014 at 02:45:29PM +1100, Stephen Rothwell wrote:
+Doh, I missed that.  I don't know if it's "allowed" or not, but it's
+clearly the wrong thing to do - the whole point of asmlinkage is to
+export the thing to other compilation units.
 
-> compilation with COMPILE_TEST").  Please at least test building on x86
-> before allowing a build with COMPILE_TEST.
+So I suppose this:
 
-Yeah, I tend to rely on the zero day tester to get that when travelling
-since it's normally quicker to get a result from that than it is for me
-to build on my laptop.  That doesn't seem to have worked out though...
+mm/process_vm_access.c:416:1: warning: no previous prototype for `compat_process_vm_rw' [-Wmissing-prototypes]
 
-Like I said in reply to Axel's patch it's not exactly sane that things
-like this are an issue in the first place.
+should be squashed by giving it a prototype.  Something like
 
---0CHKT3anvf6u5QiQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTCt/iAAoJELSic+t+oim91R8P/3ysnTjMUpQkJnEkzw4jfoJh
-tpUUF+3meY3nxVi2GWCsTwRipU8HiuBKE/30dHEeK0nKlUWYHghV56CR0rLRIpTu
-nOe7C2uJLclzzAHst4396TL72H2dn2qImmDMsJrHN3hPvYJWseMH81xJxM4P36nl
-61U+eeveZWLsMK32ezXhBMzl7yb8UcLVxHQSYMhPeRvehL9SIsl5ahk5VXiRdvxF
-NPeIagvZXL0C80pL5cqhTRmW/VVmwfJM8q02a3Z1Kgu+4NFPpDeab+HOCigqc9+A
-NKvYtj5+Nc+Gmp04QRILiIEEyjA/WE7lYlnD5ha52Qzmuv6vf+BWA9o+42GlK1RG
-7rrukYNkhzLueywWkz2p0H0SzN2ql2kZTHFNmApc7Gdw2eZ5ZOIpoRLwms4KboG9
-zN1msnsdERqeW3j/Z3YkfudMiP01IlWB+d4ukSw61lxyiMxibCLo3bdVuV+LzUix
-tqTswDYI33cRA9XmMR0A3wxeGpAtQZdaXcRgVsm/IjBuX3YqBvmO6y95W67KB2Uk
-cU/DJ7PuE9xFPJ9W3nebMqQei8s81M95SS2ztE7Ck2vaZAHS06ebmbhQdZR7zpLJ
-Bu73myWI5XPGeBOjCKQw5r+M003sQ5yNiDBCJTSZ/WNZrybdCqgh2fj2GofQALru
-rYWb1yaDe8h4L8qqArBF
-=t0v9
------END PGP SIGNATURE-----
-
---0CHKT3anvf6u5QiQ--
+--- a/include/linux/compat.h~a
++++ a/include/linux/compat.h
+@@ -644,6 +644,13 @@ asmlinkage ssize_t compat_sys_mq_timedre
+ asmlinkage long compat_sys_socketcall(int call, u32 __user *args);
+ asmlinkage long compat_sys_sysctl(struct compat_sysctl_args __user *args);
+ 
++asmlinkage ssize_t compat_process_vm_rw(compat_pid_t pid,
++		     const struct compat_iovec __user *lvec,
++		     unsigned long liovcnt,
++		     const struct compat_iovec __user *rvec,
++		     unsigned long riovcnt,
++		     unsigned long flags, int vm_write);
++
+ extern ssize_t compat_rw_copy_check_uvector(int type,
+ 		const struct compat_iovec __user *uvector,
+ 		unsigned long nr_segs,
+_
