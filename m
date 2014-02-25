@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the arm-soc tree
-Date: Tue, 25 Feb 2014 17:09:44 +1100
-Message-ID: <20140225170944.d322d9868871bc2f669b92e5@canb.auug.org.au>
+Date: Tue, 25 Feb 2014 17:09:53 +1100
+Message-ID: <20140225170953.673cf5073d5682a54c1a1771@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Feb_2014_17_09_44_+1100_9OfsID/L.pP0y6A1"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:37879 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751106AbaBYGJw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Feb 2014 01:09:52 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__25_Feb_2014_17_09_53_+1100_9EVCd_nS9a_NXNl8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Shawn Guo <shawn.guo@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__25_Feb_2014_17_09_44_+1100_9OfsID/L.pP0y6A1
+--Signature=_Tue__25_Feb_2014_17_09_53_+1100_9EVCd_nS9a_NXNl8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,251 +20,82 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-arch/arm/boot/dts/imx53-qsb.dts between commit d5eb195f26fa ("ARM: dts:
-i.MX53: move common QSB nodes to new file") from the arm-soc tree and
-commit 17b5001b5143 ("imx-drm: convert to componentised device support")
-from the staging tree.
+arch/arm/boot/dts/imx53-mba53.dts between commit a4a2aa9b038c ("ARM: dts:
+imx53-mba53: create a container for fixed regulators") from the arm-soc
+tree and commit 17b5001b5143 ("imx-drm: convert to componentised device
+support") from the staging tree.
 
-I fixed it up (see at bottom) and can carry the fix as necessary (no
-action is required).  I also added the following fix up patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 25 Feb 2014 17:07:01 +1100
-Subject: [PATCH] ARM: dts: i.MX53: merge fix patch
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/boot/dts/imx53-qsb-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/imx53-qsb-common.dtsi b/arch/arm/boot/dts/im=
-x53-qsb-common.dtsi
-index 2dca98b79f48..5dd37c7c38b8 100644
---- a/arch/arm/boot/dts/imx53-qsb-common.dtsi
-+++ b/arch/arm/boot/dts/imx53-qsb-common.dtsi
-@@ -17,7 +17,7 @@
- 		reg =3D <0x70000000 0x40000000>;
- 	};
-=20
--	display@di0 {
-+	display0: display@di0 {
- 		compatible =3D "fsl,imx-parallel-display";
- 		crtcs =3D <&ipu 0>;
- 		interface-pix-fmt =3D "rgb565";
---=20
-1.9.0
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/imx53-qsb.dts
-index dec4b073ceb1,3cb4f7791a91..000000000000
---- a/arch/arm/boot/dts/imx53-qsb.dts
-+++ b/arch/arm/boot/dts/imx53-qsb.dts
-@@@ -16,6 -16,182 +16,11 @@@
-  / {
-  	model =3D "Freescale i.MX53 Quick Start Board";
-  	compatible =3D "fsl,imx53-qsb", "fsl,imx53";
- -
- -	memory {
- -		reg =3D <0x70000000 0x40000000>;
- -	};
- -
- -	display0: display@di0 {
- -		compatible =3D "fsl,imx-parallel-display";
- -		crtcs =3D <&ipu 0>;
- -		interface-pix-fmt =3D "rgb565";
- -		pinctrl-names =3D "default";
- -		pinctrl-0 =3D <&pinctrl_ipu_disp0_1>;
- -		status =3D "disabled";
- -		display-timings {
- -			claawvga {
- -				native-mode;
- -				clock-frequency =3D <27000000>;
- -				hactive =3D <800>;
- -				vactive =3D <480>;
- -				hback-porch =3D <40>;
- -				hfront-porch =3D <60>;
- -				vback-porch =3D <10>;
- -				vfront-porch =3D <10>;
- -				hsync-len =3D <20>;
- -				vsync-len =3D <10>;
- -				hsync-active =3D <0>;
- -				vsync-active =3D <0>;
- -				de-active =3D <1>;
- -				pixelclk-active =3D <0>;
- -			};
- -		};
- -	};
- -
- -	gpio-keys {
- -		compatible =3D "gpio-keys";
- -
- -		power {
- -			label =3D "Power Button";
- -			gpios =3D <&gpio1 8 0>;
- -			linux,code =3D <116>; /* KEY_POWER */
- -		};
- -
- -		volume-up {
- -			label =3D "Volume Up";
- -			gpios =3D <&gpio2 14 0>;
- -			linux,code =3D <115>; /* KEY_VOLUMEUP */
- -			gpio-key,wakeup;
- -		};
- -
- -		volume-down {
- -			label =3D "Volume Down";
- -			gpios =3D <&gpio2 15 0>;
- -			linux,code =3D <114>; /* KEY_VOLUMEDOWN */
- -			gpio-key,wakeup;
- -		};
- -	};
- -
+diff --cc arch/arm/boot/dts/imx53-mba53.dts
+index 55af11037a00,9b6e76980a74..000000000000
+--- a/arch/arm/boot/dts/imx53-mba53.dts
++++ b/arch/arm/boot/dts/imx53-mba53.dts
+@@@ -35,27 -43,18 +35,33 @@@
+  		status =3D "disabled";
+  	};
+ =20
 + 	imx-drm {
 + 		compatible =3D "fsl,imx-drm";
-+ 		crtcs =3D <&ipu 0>;
-+ 		connectors =3D <&display0>;
++ 		crtcs =3D <&ipu 1>;
++ 		connectors =3D <&disp1>, <&tve>;
 + 	};
- -
- -	leds {
- -		compatible =3D "gpio-leds";
- -		pinctrl-names =3D "default";
- -		pinctrl-0 =3D <&led_pin_gpio7_7>;
- -
- -		user {
- -			label =3D "Heartbeat";
- -			gpios =3D <&gpio7 7 0>;
- -			linux,default-trigger =3D "heartbeat";
- -		};
- -	};
- -
- -	regulators {
- -		compatible =3D "simple-bus";
- -
- -		reg_3p2v: 3p2v {
- -			compatible =3D "regulator-fixed";
- -			regulator-name =3D "3P2V";
- -			regulator-min-microvolt =3D <3200000>;
- -			regulator-max-microvolt =3D <3200000>;
- -			regulator-always-on;
- -		};
- -
- -		reg_usb_vbus: usb_vbus {
- -			compatible =3D "regulator-fixed";
- -			regulator-name =3D "usb_vbus";
- -			regulator-min-microvolt =3D <5000000>;
- -			regulator-max-microvolt =3D <5000000>;
- -			gpio =3D <&gpio7 8 0>;
- -			enable-active-high;
- -		};
- -	};
- -
- -	sound {
- -		compatible =3D "fsl,imx53-qsb-sgtl5000",
- -			     "fsl,imx-audio-sgtl5000";
- -		model =3D "imx53-qsb-sgtl5000";
- -		ssi-controller =3D <&ssi2>;
- -		audio-codec =3D <&sgtl5000>;
- -		audio-routing =3D
- -			"MIC_IN", "Mic Jack",
- -			"Mic Jack", "Mic Bias",
- -			"Headphone Jack", "HP_OUT";
- -		mux-int-port =3D <2>;
- -		mux-ext-port =3D <5>;
- -	};
- -};
- -
- -&esdhc1 {
- -	pinctrl-names =3D "default";
- -	pinctrl-0 =3D <&pinctrl_esdhc1_1>;
- -	status =3D "okay";
- -};
- -
- -&ssi2 {
- -	fsl,mode =3D "i2s-slave";
- -	status =3D "okay";
- -};
- -
- -&esdhc3 {
- -	pinctrl-names =3D "default";
- -	pinctrl-0 =3D <&pinctrl_esdhc3_1>;
- -	cd-gpios =3D <&gpio3 11 0>;
- -	wp-gpios =3D <&gpio3 12 0>;
- -	bus-width =3D <8>;
- -	status =3D "okay";
- -};
- -
- -&iomuxc {
- -	pinctrl-names =3D "default";
- -	pinctrl-0 =3D <&pinctrl_hog>;
- -
- -	hog {
- -		pinctrl_hog: hoggrp {
- -			fsl,pins =3D <
- -				MX53_PAD_GPIO_0__CCM_SSI_EXT1_CLK 0x80000000
- -				MX53_PAD_GPIO_8__GPIO1_8          0x80000000
- -				MX53_PAD_PATA_DATA14__GPIO2_14    0x80000000
- -				MX53_PAD_PATA_DATA15__GPIO2_15    0x80000000
- -				MX53_PAD_EIM_DA11__GPIO3_11       0x80000000
- -				MX53_PAD_EIM_DA12__GPIO3_12       0x80000000
- -				MX53_PAD_PATA_DA_0__GPIO7_6       0x80000000
- -				MX53_PAD_PATA_DA_2__GPIO7_8	  0x80000000
- -				MX53_PAD_GPIO_16__GPIO7_11        0x80000000
- -			>;
- -		};
- -
- -		led_pin_gpio7_7: led_gpio7_7@0 {
- -			fsl,pins =3D <
- -				MX53_PAD_PATA_DA_1__GPIO7_7 0x80000000
- -			>;
- -		};
- -	};
- -
- -};
- -
- -&uart1 {
- -	pinctrl-names =3D "default";
- -	pinctrl-0 =3D <&pinctrl_uart1_1>;
- -	status =3D "okay";
- -};
- -
- -&i2c2 {
- -	pinctrl-names =3D "default";
- -	pinctrl-0 =3D <&pinctrl_i2c2_1>;
- -	status =3D "okay";
- -
- -	sgtl5000: codec@0a {
- -		compatible =3D "fsl,sgtl5000";
- -		reg =3D <0x0a>;
- -		VDDA-supply =3D <&reg_3p2v>;
- -		VDDIO-supply =3D <&reg_3p2v>;
- -		clocks =3D <&clks 150>;
- -	};
-  };
++=20
+ -	reg_3p2v: 3p2v {
+ -		compatible =3D "regulator-fixed";
+ -		regulator-name =3D "3P2V";
+ -		regulator-min-microvolt =3D <3200000>;
+ -		regulator-max-microvolt =3D <3200000>;
+ -		regulator-always-on;
+ +	regulators {
+ +		compatible =3D "simple-bus";
+ +		#address-cells =3D <1>;
+ +		#size-cells =3D <0>;
+ +
+ +		reg_backlight: regulator@0 {
+ +			compatible =3D "regulator-fixed";
+ +			reg =3D <0>;
+ +			regulator-name =3D "lcd-supply";
+ +			gpio =3D <&gpio2 5 0>;
+ +			startup-delay-us =3D <5000>;
+ +		};
+ +
+ +		reg_3p2v: regulator@1 {
+ +			compatible =3D "regulator-fixed";
+ +			reg =3D <1>;
+ +			regulator-name =3D "3P2V";
+ +			regulator-min-microvolt =3D <3200000>;
+ +			regulator-max-microvolt =3D <3200000>;
+ +			regulator-always-on;
+ +		};
+  	};
  =20
-  &i2c1 {
+  	sound {
 
---Signature=_Tue__25_Feb_2014_17_09_44_+1100_9OfsID/L.pP0y6A1
+--Signature=_Tue__25_Feb_2014_17_09_53_+1100_9EVCd_nS9a_NXNl8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDDOtAAoJEMDTa8Ir7ZwV7cMQAI5ZgEFADjRGqtCBf6R/9gZp
-r9oVMszzg3NSL8AHxxv8rFap+Mo05dhBGG28hV3ftEdR4ebvvSfSJW9SCBPNB82w
-HKMhsB29+Di+x1QT8R8H2sJ9Su7ozR7V9NWiI0wFWomhHkJtsgS1IKeEdHG9T4t4
-bQ82+geCTD1AZJtzgEOAZa6CMa96XAgLPsGMAD5VKQO43LJMWuE7gf7QXD/u0iQp
-3JYYYjZb1liaWOJbqlmzCRpp+v1JPt7oTBHVwDhUs6r86bd4dVrD9tes0zVvrDnC
-SF6UBKiu271T2kl9vdUkmQiq4VVP2fqvUQXJqs3unNNmcz/GkAkQ/be5zgPhlWd/
-bQZbzGhgJp3eYpHE059appLAo3ES2w5vujxojiLRHt9zpWQpj5GQxhIdnD1MF8e5
-Jp/s1Jfr5HBgQGBjF/xXDdqrMSjzs6yOSExmgxtl1zL0ACnlXL4cyhmPG9UhYzqe
-OCCDjM/cmvLa4y6xrTkvO5yNq25Mv8hd+aedtUDGFE9a+UFBwHTmym4nAckUzMhM
-/cf3XKue6MDNRut88xS4MJKb+ZH4KTepLMfGuSr93e+429te/FET+Jo/a+mccKes
-2dtQ0kL3SGLMXDNee5vO5ZkAIsZN5jb2QvdFu1qXsEYJQDpxpo3RUoYF072bKLwC
-xQVCMNuN2NB7W5YUIHqk
-=gCPM
+iQIcBAEBCAAGBQJTDDOyAAoJEMDTa8Ir7ZwVo8YP/1/NjNv7CfydTZSWTURM+OwH
+ls2Da54LhFy5pIBCjLIhWdg4+ZF7dZHZx+BoDInR5CJQgpX5fNzbT4ReuVBYExeF
+2kp6Vv+e+oQDO+W3ozeP8xSnQLp/keI8DvSkSkGt/B0RU/CsrORjWYuBTtxcFbwT
+k18kBoQ/rz3iqFuQj08WCdT8abqWQncIGmLU+hTODlfPf2GAvjZhJ1LON5RzZ8jP
+7k5Iv+MsrZEPj75+RWVI0R352JfhOSwl2Co0Ip8ggokN1vb5A0iuXEyRkZFojRKB
+APzvbizq5us5+/pxd1PvPXEvUwCLhVMyh1pWn54xO5QkZJ+53dmFH2qWGdXdZ51A
+EyJGyNgAVYrRhgQ1cH0PI0ftLPa2Ern+HWhRMmvrWC5RXseDxjGlu6xG5OhJPodd
+3Mj1yN4oYjTtkXwP8hCFfFldYMn15KoMaHOHAtOwDYaivFJv4VV7Iy9hKbWm3h1D
+/17KcRCl9ugewYaMPBHW+Cz/IGfTNFW1z7QFaKroUtFdHUOn7DC1jJo6nY/dlt3t
+lzfHTHQMFwAeizAJbJl3VbDYN+9xs4iqP5rvX+1EHkcv+Q+ObIkte88TBzR3/3Fh
+PXNxgoQ/9gkARlp4xcw9fdA0npJh8NRj8y14FK9lLzyaEJW9gNbzQgvkdsKZ7Gib
+FyjQxenMETBFOApEdUZo
+=oIgj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Feb_2014_17_09_44_+1100_9OfsID/L.pP0y6A1--
+--Signature=_Tue__25_Feb_2014_17_09_53_+1100_9EVCd_nS9a_NXNl8--
