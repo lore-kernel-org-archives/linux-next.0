@@ -1,46 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Tree for Feb 17 (pinctrl-msm)
-Date: Tue, 25 Feb 2014 10:44:26 +0100
-Message-ID: <CACRpkdbKmHW3OqDWs7Mj1eGE2foigUomMiMndejqY_2Yj-kznw@mail.gmail.com>
-References: <20140217172329.2c61499f57842ec2ed177bc5@canb.auug.org.au>
-	<530247FC.90606@infradead.org>
-	<CACRpkdamW1-CxZV65at3PaPhY5nANRDd=SY=FsNPVnrPxyD81w@mail.gmail.com>
-	<20140224174646.GA32621@sonymobile.com>
-	<530B8C15.50100@infradead.org>
-	<20140224184120.GB18563@joshc.qualcomm.com>
-	<20140224192813.GA4451@sonymobile.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 25 (externally_visible attribute)
+Date: Tue, 25 Feb 2014 08:22:23 -0800
+Message-ID: <530CC33F.8050805@infradead.org>
+References: <20140225184832.420d9e32378e9f68a9432bcb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140224192813.GA4451@sonymobile.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Josh Cartwright <joshc@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:46226 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752129AbaBYQWY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Feb 2014 11:22:24 -0500
+In-Reply-To: <20140225184832.420d9e32378e9f68a9432bcb@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Mon, Feb 24, 2014 at 8:28 PM, Bjorn Andersson
-<bjorn.andersson@sonymobile.com> wrote:
+On 02/24/2014 11:48 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> This tree fails (more than usual) the powerpc allyesconfig build.
+> 
+> Changes since 20140224:
+> 
 
-> This comes from the request of having everything as a module, to reduce the
-> size of the multi-platform ARM builds. I would say that the important part
-> related to that would be to keep the platform specific tables in modules.
->
-> But keeping these parts as modules would still mean that it's a module that
-> install the chained irq handler.
+I'm seeing several of these warnings (since 20140224):
 
-Yeah that is a bit of double-command is it not :-)
+arch/x86/crypto/sha1_ssse3_glue.c:43:1: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
+arch/x86/crypto/sha256_ssse3_glue.c:56:1: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
+arch/x86/crypto/sha512_ssse3_glue.c:55:1: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
+arch/x86/kernel/machine_kexec_32.c:191:12: warning: 'externally_visible' attribute have effect only on public objects [-Wattributes]
 
-> @Linus, I'm not sure about what should be module and not in pinctrl, but this
-> part of pinctrl-msm is less important then the others to be able to be compiled
-> as a module.
->
-> FWIW;
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-Well we can't export that function in the rc series so I applied
-this patch for fixes with your review tag.
-
-We can discuss making chained IRQ handlers in modules
-for the next merge window...
-
-Linus
+-- 
+~Randy
