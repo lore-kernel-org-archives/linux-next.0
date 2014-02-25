@@ -1,86 +1,77 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: linux-next: Tree for Feb 17 (pinctrl-msm)
-Date: Mon, 24 Feb 2014 11:28:13 -0800
-Message-ID: <20140224192813.GA4451@sonymobile.com>
-References: <20140217172329.2c61499f57842ec2ed177bc5@canb.auug.org.au>
- <530247FC.90606@infradead.org>
- <CACRpkdamW1-CxZV65at3PaPhY5nANRDd=SY=FsNPVnrPxyD81w@mail.gmail.com>
- <20140224174646.GA32621@sonymobile.com>
- <530B8C15.50100@infradead.org>
- <20140224184120.GB18563@joshc.qualcomm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the wireless-next tree
+Date: Tue, 25 Feb 2014 13:35:37 +1100
+Message-ID: <20140225133537.55ce6935e55faa6aeae53d89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Feb_2014_13_35_37_+1100_jqHYESQij09Rf=Hr"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:44778 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751514AbaBYCfp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Feb 2014 21:35:45 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__25_Feb_2014_13_35_37_+1100_jqHYESQij09Rf=Hr
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140224184120.GB18563@joshc.qualcomm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Josh Cartwright <joshc@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 24 Feb 10:41 PST 2014, Josh Cartwright wrote:
+Hi John,
 
-[...]
+After merging the wireless-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> 
-> Without too much effort, I can get this to fail just by making
-> CONFIG_PINCTRL_MSM=m.  handle_bad_irq isn't marked EXPORT_SYMBOL*, so
-> hence the warning.
-> 
+drivers/staging/rtl8821ae/rc.c:289:2: error: unknown field 'module' specifi=
+ed in initializer
+  .module =3D NULL,
+  ^
 
-Ohh, yeah I missed that.
+Caused by commit 161d78555435 ("Revert "Staging: rtl8812ae: remove
+modules field of rate_control_ops"").
 
-> Whether or not this is intentional is not clear.  Do we support modules
-> installing chained irq handlers?
-> 
-> For now, the patch below just makes this driver 'bool' instead of
-> 'tristate'.
+The commit "Staging: rtl8812ae: remove modules field of rate_control_ops"
+was needed in the wireless-next tree - I said so at the time of reporting
+the original breakage:=20
 
-This comes from the request of having everything as a module, to reduce the
-size of the multi-platform ARM builds. I would say that the important part
-related to that would be to keep the platform specific tables in modules.
+> Actually, your tree is based on -rc2, so you need this patch already (it
+> should have bee included in the merge commit 841577c3d33b ("Merge branch
+> 'for-john' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next").
 
-But keeping these parts as modules would still mean that it's a module that
-install the chained irq handler.
+And now that part of the wireless-next tree has migrated to the net-next tr=
+ee.
 
-@Linus, I'm not sure about what should be module and not in pinctrl, but this
-part of pinctrl-msm is less important then the others to be able to be compiled
-as a module.
+I have no idea why you thought you should revert the fix.
 
-FWIW;
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+I have used the wireless tree from next-20140224 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> 
->   Josh
+--Signature=_Tue__25_Feb_2014_13_35_37_+1100_jqHYESQij09Rf=Hr
+Content-Type: application/pgp-signature
 
-Regards,
-Bjorn
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-> 
-> --8<--
-> Subject: [PATCH] pinctrl: msm: make PINCTRL_MSM bool instead of tristate
-> 
-> Modular builds of pinctrl-msm break due to handle_bad_irq being
-> unexported for module use.  For now, make PINCTRL_MSM 'bool'.
-> 
-> Signed-off-by: Josh Cartwright <joshc@codeaurora.org>
-> ---
->  drivers/pinctrl/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index be361b7..1e4e693 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -217,7 +217,7 @@ config PINCTRL_IMX28
->  	select PINCTRL_MXS
->  
->  config PINCTRL_MSM
-> -	tristate
-> +	bool
->  	select PINMUX
->  	select PINCONF
->  	select GENERIC_PINCONF
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> hosted by The Linux Foundation
+iQIcBAEBCAAGBQJTDAF9AAoJEMDTa8Ir7ZwVu8kP+wQ+Luwu7rNKruZo9XfY06CP
+OP2Z0Ss0W85PNZBHDEQJLr0y4XmVrKomgyOz0ogrKFWjGIYqMm8j9TzcUkZWg51h
+57diB9mcX/Zod7G8hphaJGQescxKJLQIAMSji94REJeAsYedlctc9Uv7Y3RZo6oh
+arHI7FzFymbsgndJq8fGBrqjBmvXZXdPWC20nfY7QwtFTWlI/L2BKG+L7diajB1T
+gEQbwjgX2WGNYEAwcFKEpQOHlOchSJuDVEePyllyAXHnWsLE1Pq/aLmos4Jba4XA
+b5EQHwYkh/mQuvx1JVNKIrTOKLXzAEyPSOo9gair2EhOaN355TJ6a+d6vJpq0bZZ
+rmSP2j+MWE9YkXxZ5cV0sCbQbcjnJiXO7kcssJ/z312IW2Zpm+X31hH/IbT0Q8GP
+T3V4NDkvwF49KGMcEjTza+thjN124N4dLQUBrHTWWoxxKCa796AcltUek0qHIn6Y
+qb5Ym5NaQhio+uCdPjoHcj8tbQ1tXAC+/eazDSR2fMnYJX3Ri2/4zIjCXnqpnNiG
+3XUMvcyuRYyWsW5LWf1l3WHXbU/iSI/oynKBuTTKFL6ISFu98poCzkphFh97oC6X
+uwg4NuG8x6l0+iILsdWcMLumvRNN9TE3G/Qe7g4J/1EWlKdrN+OZq1IGdxVH3+3F
+wUfLNcZ140AnMxdv+qZ5
+=8fK0
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Feb_2014_13_35_37_+1100_jqHYESQij09Rf=Hr--
