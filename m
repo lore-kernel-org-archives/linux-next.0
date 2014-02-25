@@ -1,85 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the mfd-lj tree
-Date: Tue, 25 Feb 2014 14:32:46 +1100
-Message-ID: <20140225143246.914c9732966764234bc51de2@canb.auug.org.au>
-References: <20140214134217.aa7e1994b4cab7ee563c8307@canb.auug.org.au>
-	<20140217141446.454ab86eb19621fd397be6ed@canb.auug.org.au>
-	<20140220150508.79bfff95fb5d93c651801ffd@canb.auug.org.au>
+Subject: linux-next: manual merge of the watchdog tree with the mvebu tree
+Date: Tue, 25 Feb 2014 15:25:48 +1100
+Message-ID: <20140225152548.65ba8372349800898f109fb2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Feb_2014_14_32_46_+1100_FyNMutQDxv8dKUFb"
+ boundary="Signature=_Tue__25_Feb_2014_15_25_48_+1100_MXBf+t4kBYf2hc9Y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:37848 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:49900 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752181AbaBYDcx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Feb 2014 22:32:53 -0500
-In-Reply-To: <20140220150508.79bfff95fb5d93c651801ffd@canb.auug.org.au>
+	id S1751866AbaBYEZ5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Feb 2014 23:25:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>, Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
 
---Signature=_Tue__25_Feb_2014_14_32_46_+1100_FyNMutQDxv8dKUFb
+--Signature=_Tue__25_Feb_2014_15_25_48_+1100_MXBf+t4kBYf2hc9Y
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+Hi Wim,
 
-On Thu, 20 Feb 2014 15:05:08 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Mon, 17 Feb 2014 14:14:46 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > On Fri, 14 Feb 2014 13:42:17 +1100 Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
-> > >
-> > > After merging the mfd-lj tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >=20
-> > > In file included from drivers/mfd/max665x.c:19:0:
-> > > include/linux/mfd/max665x-private.h:31:1: error: expected ';', identi=
-fier or '(' before 'struct'
-> > >  struct max665x_dev {
-> > >  ^
-> > >=20
-> > > Caused by commit e77bb5297293 ("mfd: max665x: Differentiate between
-> > > MAX665X devices").  Clearly never built by anyone :-(
-> > >=20
-> > > I have used the mfd-lj tree from next-20140210 again for today (since=
- the
-> > > other version had other problems).
-> >=20
-> > Still seeing this error.
->=20
-> Still ...
+Today's linux-next merge of the watchdog tree got a conflict in
+drivers/watchdog/orion_wdt.c between commit e97662e1e28d ("watchdog:
+orion: Handle the interrupt so it's properly acked") from the mvebu tree
+and commit 2e9a2ff49520 ("watchdog: delete non-required instances of
+include <linux/init.h>") from the watchdog tree.
 
-Ping ...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__25_Feb_2014_14_32_46_+1100_FyNMutQDxv8dKUFb
+diff --cc drivers/watchdog/orion_wdt.c
+index 15321aa0bb94,498163497c1c..000000000000
+--- a/drivers/watchdog/orion_wdt.c
++++ b/drivers/watchdog/orion_wdt.c
+@@@ -18,9 -18,8 +18,8 @@@
+  #include <linux/kernel.h>
+  #include <linux/platform_device.h>
+  #include <linux/watchdog.h>
+- #include <linux/init.h>
+ +#include <linux/interrupt.h>
+  #include <linux/io.h>
+ -#include <linux/spinlock.h>
+  #include <linux/clk.h>
+  #include <linux/err.h>
+  #include <linux/of.h>
+
+--Signature=_Tue__25_Feb_2014_15_25_48_+1100_MXBf+t4kBYf2hc9Y
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDA7iAAoJEMDTa8Ir7ZwV5MMP/0M7mq3uYEsLlxYI3AZ6ZcRd
-3z8WyE6bAjH9sqElR2EXuheG47H0IxBEvcqVYEeSVaw6NNGIvVbLnCtYsmDSaVf4
-yaPsrMqe3+FWkeW992B7tZ6aE1fkVHJktPoWAuqsagsEwQ3CP6GMkRFRsR8Tyvf+
-W8OL6W83ZOtQWsD6DeCR2de/HNl+Aebc7JxYPhLAwenExUAFrbTJFYSj/11yizcF
-Cp8qgGEkVNqRY4zwKzwKayRJTnfVswrw4zr/EyUxQxirT2rpyCKQmHOQZJOpVOkM
-2zYZJfNzR6zZtZzoQeS/Aq8maNRa87F8QPSI1tsp6EYghWG6QskzCZQNVM5le+50
-WTtiQ6bfR6XsaU7cpGuGVF5of3aqgB2JHszVA08NzPNPBTvHNgOUTbhf/M5IFyI8
-yH0IEL6sgHVQBCArg6LbAYzzUrHn01v8nxz0mWyyia9tB71GvugStG2i0qrtwPzI
-h2F8v2bAt/BA2FLQAyh+SSoX7A1+9wg8EOK+hy6YEcgf8++hYHUjf3EW7dAOklHL
-/n1GcyoWiu3f71IDkH8WgEKSbi9thKZ+V0yCQ0PJX6/S+zGhRgI2PMQFid64Mlgo
-TS1cIKxaSFy7MX9nJk9U1Q1Qhc9IK8V/yG9d3WvUNQ5GLo/Xod4f0urAhPZDRB92
-d8T7JzWv36c2ppJ7bthG
-=oZ/M
+iQIcBAEBCAAGBQJTDBtQAAoJEMDTa8Ir7ZwV4NAP/RNgUFh3F2TsQNi1spyluMmk
+G41rjWky0pL3WCqcTcCuCRbOf0DskfAo6HUL6R9Jy8moYp0mbr7+WWK9O0VGpxsC
+lvBVkN9B91dc0GpPoaIIV8DqWwDbVwZFNwBSsbIuj/HLnB7maSucFDunZ2ADoeso
+pAiXj7Lc/n7WunLdYRmv0KQhm5ZMZlqgqBS38Q1xua3POS7LwPG7cYZVSmZ0Fl+s
+cUkV9C5Kd8UxMi4gALEfFeXEj5oIv6ZPfqHKbco5bwAGQlmm7vyqCwzNsii6qBF2
+bMcQDGYrUMD1zS6WsbqZAsUM0B8Cux4sxgYAhJsvQcW9eQizlsuoLGZCrVOFPF0f
+7SpLa0pAWmCq0dPwfKm9wILKzpwS1bBgnLMIzZG7fDXdyRdO8Ugp5xGaPZBhM5sf
+OTT2r3+/Zr6/zjBp9sp+FJprt6sE37IiQ5PTJx6xCe11LFLn5n81rKTHJzsjvni5
+Fr/TNu3HfHuIfgOZaf2oo9Pp82U7bUC/jgz+R+jZvgu2jAGs1RG/TyMSrvEdWZ93
+xuF/Kyl3Hdj/J4yqk1XCH2Ze71KvLGrPWZu4FBnOXGz6HRPqHXYcyxZMyVZlaHRw
+pdRWAm3C74AGI9YTX2sn7aOILxnUeJ+CyTqolBJzHicSDPRuHGWaSyfS71zpyDoJ
+3tTl3jNHSGFOvTan3HMh
+=wbrG
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Feb_2014_14_32_46_+1100_FyNMutQDxv8dKUFb--
+--Signature=_Tue__25_Feb_2014_15_25_48_+1100_MXBf+t4kBYf2hc9Y--
