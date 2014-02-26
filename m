@@ -1,66 +1,89 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: linux-next: manual merge of the clk tree with the keystone tree
-Date: Tue, 25 Feb 2014 23:28:58 -0800
-Message-ID: <CAPtuhTi=4XewQma4XT_mNmFKOphjE24353RVSOFXas7_0GddAA@mail.gmail.com>
-References: <20140226181521.e8cecdff21d892ea1f037bff@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the ext3
+ tree
+Date: Wed, 26 Feb 2014 18:32:04 +1100
+Message-ID: <20140226183204.4ea7969f087360c565ac3d4e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__26_Feb_2014_18_32_04_+1100_PFCBYfwc=c==r3VX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:54563 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751192AbaBZH3T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 02:29:19 -0500
-Received: by mail-wi0-f173.google.com with SMTP id bs8so5505928wib.6
-        for <linux-next@vger.kernel.org>; Tue, 25 Feb 2014 23:29:18 -0800 (PST)
-In-Reply-To: <20140226181521.e8cecdff21d892ea1f037bff@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:45544 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751363AbaBZHcN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Feb 2014 02:32:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ivan Khoronzhuk <ivan.khoronzhuk@ti.com>, Murali Karicheri <m-karicheri2@ti.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 25, 2014 at 11:15 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Mike,
->
-> Today's linux-next merge of the clk tree got a conflict in
-> arch/arm/boot/dts/keystone-clocks.dtsi between commit 0cfc9ccec2a8 ("ARM:
-> dts: keystone: preparatory patch to support K2L and K2E SOCs") from the
-> keystone tree and commit 565bbdcd3b91 ("ARM: keystone: dts: fix clkvcp3
-> control register address") from the clk tree.
->
-> I fixed it up (by adding the following merge fix patch) and can carry the
-> fix as necessary (no action is required).
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 26 Feb 2014 18:12:55 +1100
-> Subject: [PATCH] ARM: keystone: dts: fix for code movement
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+--Signature=_Wed__26_Feb_2014_18_32_04_+1100_PFCBYfwc=c==r3VX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me.
+Hi Andrew,
 
-Thanks!
-Mike
+Today's linux-next merge of the akpm-current tree got a conflict in
+fs/notify/fanotify/fanotify_user.c between commit ff57cd5863cf
+("fsnotify: Allocate overflow events with proper type") from the ext3
+tree and commit c40e3490382b ("fanotify: convert access_mutex to
+spinlock") from the akpm-current tree.
 
-> ---
->  arch/arm/boot/dts/k2hk-clocks.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/k2hk-clocks.dtsi b/arch/arm/boot/dts/k2hk-clocks.dtsi
-> index 4eed84feb761..a71aa2996321 100644
-> --- a/arch/arm/boot/dts/k2hk-clocks.dtsi
-> +++ b/arch/arm/boot/dts/k2hk-clocks.dtsi
-> @@ -339,7 +339,7 @@ clocks {
->                 compatible = "ti,keystone,psc-clock";
->                 clocks = <&chipclk13>;
->                 clock-output-names = "vcp-3";
-> -               reg = <0x0235000a8 0xb00>, <0x02350060 0x400>;
-> +               reg = <0x023500a8 0xb00>, <0x02350060 0x400>;
->                 reg-names = "control", "domain";
->                 domain-id = <24>;
->         };
-> --
-> 1.9.0
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/notify/fanotify/fanotify_user.c
+index 287a22c04149,c3406d633925..000000000000
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@@ -731,21 -690,9 +691,21 @@@ SYSCALL_DEFINE2(fanotify_init, unsigne
+  	group->fanotify_data.user =3D user;
+  	atomic_inc(&user->fanotify_listeners);
+ =20
+ +	oevent =3D kmem_cache_alloc(fanotify_event_cachep, GFP_KERNEL);
+ +	if (unlikely(!oevent)) {
+ +		fd =3D -ENOMEM;
+ +		goto out_destroy_group;
+ +	}
+ +	group->overflow_event =3D &oevent->fse;
+ +	fsnotify_init_event(group->overflow_event, NULL, FS_Q_OVERFLOW);
+ +	oevent->tgid =3D get_pid(task_tgid(current));
+ +	oevent->path.mnt =3D NULL;
+ +	oevent->path.dentry =3D NULL;
+ +
+  	group->fanotify_data.f_flags =3D event_f_flags;
+  #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+ +	oevent->response =3D 0;
+- 	mutex_init(&group->fanotify_data.access_mutex);
++ 	spin_lock_init(&group->fanotify_data.access_lock);
+  	init_waitqueue_head(&group->fanotify_data.access_waitq);
+  	INIT_LIST_HEAD(&group->fanotify_data.access_list);
+  	atomic_set(&group->fanotify_data.bypass_perm, 0);
+
+--Signature=_Wed__26_Feb_2014_18_32_04_+1100_PFCBYfwc=c==r3VX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTDZh8AAoJEMDTa8Ir7ZwVSuEQAIYbKmcIxOm69xgB8ad4kKuF
+vQ0MJFb3e1ytk7FOC+tJRO9OwpYeegmEtORwiGEVNdkgKrmN/qB/rM6cLdrJCKFR
+BhqoovptyHrGtm7KQQxdRbKZAYmXxiKOV4YtV+qypt+qBoSqyRiYf5E7GYQzSKkZ
+xCHdoJuX75QYp0Cbh+waoMy1e7NiOzSy/mmqUYUlZP6JB3IvL0Z1PoQzEOCGj1H7
+/3XtZM44OenkWYjO7YpwwDF41Q7l2ud1M2J58NXnB5F8oiRLu02XPOvcEWIhehx+
+qaDH4Gt4xKubaHbBdxueYuX7x/Sv3jhubSU3CM77GVQd5oLXN54+rbn+dN3CIeJI
+d93OIruzFDe0B28WicNHnxB1VP/wLwT1XDNn3nCIpuhxiMobZIbpkVnJqL81VIr9
+KaJl/dpl+yPTbOQMariowZivRbk/eicRGv9vqoj3lG8Zz+nxQWdwVTIBId8Gn1Q4
+D3QG1mjFznBbo65SBpwhxWQCNcJTbJQURxUUas7HV+ugNGspkJ7cs2J6vclKPv1K
+ZIe/FUqhXLDTs3FGKlMfwrTx9pGJlG4wlR5anXKJDBhHBAr+Vpath2n+vKgTgb7V
+M93Aj8UJf2vuuvXWP3mAKLrOpriIhz0VOrV5skM7mNeTgAczKWLHYR9AydzfqvSR
+OS4IKgav6lixpy8dTELY
+=Zqvu
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_Feb_2014_18_32_04_+1100_PFCBYfwc=c==r3VX--
