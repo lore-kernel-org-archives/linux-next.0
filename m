@@ -1,37 +1,43 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: Regression with wait_event_timeout in next-20140226
-Date: Wed, 26 Feb 2014 17:50:43 +0100
-Message-ID: <20140226165043.GA22802@laptop.programming.kicks-ass.net>
-References: <530E17C7.1030504@free-electrons.com>
-Mime-Version: 1.0
+From: Kumar Gala <galak@codeaurora.org>
+Subject: Re: linux-next: manual merge of the crypto tree with the arm-soc tree
+Date: Wed, 26 Feb 2014 13:15:06 -0600
+Message-ID: <B4102448-9875-4C8A-94A1-E2EDFC5011E2@codeaurora.org>
+References: <20140226150159.7ea5e60285ee9d0193bde811@canb.auug.org.au>
+Mime-Version: 1.0 (Mac OS X Mail 7.1 \(1827\))
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:52459 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333AbaBZQuu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 11:50:50 -0500
-Content-Disposition: inline
-In-Reply-To: <530E17C7.1030504@free-electrons.com>
+Received: from smtp.codeaurora.org ([198.145.11.231]:55812 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752941AbaBZTPM convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 14:15:12 -0500
+In-Reply-To: <20140226150159.7ea5e60285ee9d0193bde811@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2014 at 05:35:19PM +0100, Gregory CLEMENT wrote:
-> Hi,
+
+On Feb 25, 2014, at 10:01 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Herbert,
 > 
-> while testing next-20140226 I got an issue with the function
-> wait_event_timeout. When this function timed out instead of returning
-> 0, it returned the value of the timeout passed in parameter. I found
-> that reverting "sched/wait: Suppress Sparse 'variable shadowing'
-> warning" fixed this regression.
+> Today's linux-next merge of the crypto tree got a conflict in
+> drivers/char/hw_random/Kconfig between commit 2257ffbca73c ("hwrng: msm:
+> switch Kconfig to ARCH_QCOM depends") from the arm-soc tree and commit
+> f9bee046c915 ("hwrng: msm: switch Kconfig to ARCH_QCOM depends") from the
+> crypto tree.
 > 
-> I got this issue in the driver drivers/i2c/busses/i2c-mv64xxx.c.
+> Two version of the same patch ... I just kept the arm-soc version.
 
-Ah indeed. We actually rely on the shadowing for ___wait_cond_timeout().
+Herbert,
 
-We further used the __ret variable in __wait_event_timeout()'s cmd
-argument: __ret = schedule_timeout(__ret). That now explicitly uses the
-wrong __ret.
+Was trying to keep all the ARCH_QCOM Kconfig updates together and via arm-soc.git
 
-Yeah, we need to pull that patch.
+thanks
+
+- k
+
+-- 
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
