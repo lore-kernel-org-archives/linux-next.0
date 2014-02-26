@@ -1,37 +1,37 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Regression with wait_event_timeout in next-20140226
-Date: Wed, 26 Feb 2014 17:35:19 +0100
-Message-ID: <530E17C7.1030504@free-electrons.com>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: Regression with wait_event_timeout in next-20140226
+Date: Wed, 26 Feb 2014 17:50:43 +0100
+Message-ID: <20140226165043.GA22802@laptop.programming.kicks-ass.net>
+References: <530E17C7.1030504@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:39627 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752249AbaBZQf0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 11:35:26 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52459 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751333AbaBZQuu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 11:50:50 -0500
+Content-Disposition: inline
+In-Reply-To: <530E17C7.1030504@free-electrons.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi,
+On Wed, Feb 26, 2014 at 05:35:19PM +0100, Gregory CLEMENT wrote:
+> Hi,
+> 
+> while testing next-20140226 I got an issue with the function
+> wait_event_timeout. When this function timed out instead of returning
+> 0, it returned the value of the timeout passed in parameter. I found
+> that reverting "sched/wait: Suppress Sparse 'variable shadowing'
+> warning" fixed this regression.
+> 
+> I got this issue in the driver drivers/i2c/busses/i2c-mv64xxx.c.
 
-while testing next-20140226 I got an issue with the function
-wait_event_timeout. When this function timed out instead of returning
-0, it returned the value of the timeout passed in parameter. I found
-that reverting "sched/wait: Suppress Sparse 'variable shadowing'
-warning" fixed this regression.
+Ah indeed. We actually rely on the shadowing for ___wait_cond_timeout().
 
-I got this issue in the driver drivers/i2c/busses/i2c-mv64xxx.c.
+We further used the __ret variable in __wait_event_timeout()'s cmd
+argument: __ret = schedule_timeout(__ret). That now explicitly uses the
+wrong __ret.
 
-
-Thanks,
-
-Gregory
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Yeah, we need to pull that patch.
