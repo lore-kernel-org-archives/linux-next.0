@@ -1,65 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Feb 26
-Date: Wed, 26 Feb 2014 19:50:50 +1100
-Message-ID: <20140226195050.a1ea0f32f705695ed1a3b46d@canb.auug.org.au>
-References: <20140226194738.451ef022a5f197cf22804769@canb.auug.org.au>
+From: Josh Triplett <josh@joshtriplett.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (akpm-current tree related)
+Date: Wed, 26 Feb 2014 02:02:34 -0800
+Message-ID: <20140226100234.GA23064@thin>
+References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Feb_2014_19_50_50_+1100_YeIQ3vJE2f332qV2"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:38562 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750891AbaBZIu5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 03:50:57 -0500
-In-Reply-To: <20140226194738.451ef022a5f197cf22804769@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
---Signature=_Wed__26_Feb_2014_19_50_50_+1100_YeIQ3vJE2f332qV2
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 26 Feb 2014 19:47:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Non-merge commits (relative to Linus' tree): 41340
-                                               ^^^^^
-That was just wrong :-)
+On Wed, Feb 26, 2014 at 07:16:27PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc64
+> allnoconfig) failed like this:
+> 
+> arch/powerpc/kernel/built-in.o: In function `.machine_check_queue_event':
+> (.text+0x11260): undefined reference to `.irq_work_queue'
+> 
+> Caused (or exposed) (along with a lot of warnings) by commit 3dd6115cd60b
+> ("kconfig: make allnoconfig disable options behind EMBEDDED and EXPERT")
+> from the apm-current tree.
 
->  4327 files changed, 156351 insertions(+), 81744 deletions(-)
+Pre-existing, just now triggerable with just "make allnoconfig" rather
+than manually turning off other options (like PRINTK) that select
+IRQ_WORK.  (One of the goals of that commit: get those options more
+widely used and build-tested.)
 
-Those were yesterday's figures, today's actually:
+The following (untested) patch *should* fix this:
+----- 8< -----
+>From 36a5b6c87292b6c5eeb390ed6dc6acbb8f0a3767 Mon Sep 17 00:00:00 2001
+From: Josh Triplett <josh@joshtriplett.org>
+Date: Wed, 26 Feb 2014 01:58:02 -0800
+Subject: [PATCH] ppc: Make PPC_BOOK3S_64 select IRQ_WORK
 
-Non-merge commits (relative to Linus' tree): 4690
- 4620 files changed, 177782 insertions(+), 100723 deletions(-)
+arch/powerpc/kernel/mce.c, compiled in for PPC_BOOK3S_64, calls
+functions only built when IRQ_WORK, so select it.  Fixes the following
+build error:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+arch/powerpc/kernel/built-in.o: In function `.machine_check_queue_event':
+(.text+0x11260): undefined reference to `.irq_work_queue'
 
---Signature=_Wed__26_Feb_2014_19_50_50_+1100_YeIQ3vJE2f332qV2
-Content-Type: application/pgp-signature
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+---
+ arch/powerpc/platforms/Kconfig.cputype | 1 +
+ 1 file changed, 1 insertion(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTDaruAAoJEMDTa8Ir7ZwVDdwP/RY1miHazEWd6vNusbm5E9F+
-mcQDx/kXoE3wmqxEEigTooush5+iOBU6siQjGae2cFWv0w6yrA7rWe3L6GZTLsbD
-aaKsxuxxeqQY35h8/u04OLZ0FHA1ohAPvHbWgwf8ZD23IX2I/Y3KDCkrngNyB2DX
-A8wbu0AEe2Hu/2vFvwXxcsrcpIHU56SF7VAA70KSvGi007RqlWXuS4Sr0dpt5IIb
-/6g1lON4ImSw5NNLixKF2KMYlhXPcPMKe2Oh5lSZ/Cc9EDhCV+eE6bpwfNHwvlmy
-TJbcO+krYIzU66e4aFAOnSIRlC9e6+t4mWFoJKaEB9OlIqbRE7ZtbzwTeGyWt/1i
-uJMFJJxbox18pmudXAD1ZE7LKJuo6i0wL67rL0bBI/8EuFAnRPPrxN09LMR8nxEa
-zjfMsClbVRMqPKWLAKkV985j6uk8J9J2MU+P1EmSrJUGhlCr/TZhcCaEdD1grXM6
-1FneaiSvpD2NIg/f3HlGa2txqcaBML0Hq6mGmQkMKaaMl+abaYSv37aj5y3VSLYK
-zakRppl0hHXbjovRBSee/gO4F5U4fPEtNht9jFl1DMoUkquphZp+2WjvVmNem8GI
-o54S4tKbUCmsZegyPQ4rDZd0hSkMGtEYe+1u/qcNGMTjmyKdtfgTsIkHRTMnzqG0
-ufFVZtuUbcLwbC6wiRtv
-=Kw/Q
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_Feb_2014_19_50_50_+1100_YeIQ3vJE2f332qV2--
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index 434fda3..d9e2b19 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -73,6 +73,7 @@ config PPC_BOOK3S_64
+ 	select SYS_SUPPORTS_HUGETLBFS
+ 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if PPC_64K_PAGES
+ 	select ARCH_SUPPORTS_NUMA_BALANCING
++	select IRQ_WORK
+ 
+ config PPC_BOOK3E_64
+ 	bool "Embedded processors"
+-- 
+1.9.0
