@@ -1,42 +1,41 @@
 From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-Date: Wed, 26 Feb 2014 08:44:39 -0500
-Message-ID: <20140226134439.GA17302@htj.dyndns.org>
-References: <20140226174655.b5430a1a2413ddb459dababe@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the libata tree
+Date: Wed, 26 Feb 2014 08:49:15 -0500
+Message-ID: <20140226134915.GB17302@htj.dyndns.org>
+References: <20140226135521.047c301755d2bb44401e3ac6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:43614 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750957AbaBZNom (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 08:44:42 -0500
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:38986 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750942AbaBZNtS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 08:49:18 -0500
 Content-Disposition: inline
-In-Reply-To: <20140226174655.b5430a1a2413ddb459dababe@canb.auug.org.au>
+In-Reply-To: <20140226135521.047c301755d2bb44401e3ac6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 
-On Wed, Feb 26, 2014 at 05:46:55PM +1100, Stephen Rothwell wrote:
+On Wed, Feb 26, 2014 at 01:55:21PM +1100, Stephen Rothwell wrote:
 > Hi Tejun,
 > 
-> After merging the cgroup tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> After merging the libata tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> kernel/cgroup.c: In function 'cgroup_mount':
-> kernel/cgroup.c:1572:2: error: too few arguments to function 'kernfs_mount'
->   dentry = kernfs_mount(fs_type, flags, root->kf_root);
->   ^
+> drivers/ata/ahci_st.c: In function 'st_ahci_probe':
+> drivers/ata/ahci_st.c:159:8: error: implicit declaration of function 'ahci_platform_put_resources' [-Werror=implicit-function-declaration]
+>         ahci_platform_put_resources(&pdev->dev, hpriv);
+>         ^
 > 
-> Caused by commit 2bd59d48ebfb ("cgroup: convert to kernfs") interacting
-> with commit fed95bab8d29 ("sysfs: fix namespace refcnt leak") from the
-> driver-core.current tree.
+> Caused by commit 0d8d213703ff ("ahci: st: Add support for ST's SATA
+> IP").  That function is defined as "static" in another file ...
 > 
-> I added the following merge fix patch, but it may not be completely
-> correct, please check.
+> I have used the version of the libata tree from next-20140225 for today.
 
-Yes, that should be fine for now.  I'll soon pull in Greg's tree into
-cgroup and apply Li's refcnt fix to cgroup too.
+Right, that patch was against the previous version which didn't use
+devres.  The put_resources calls are no longer necessary.  Will revert
+the patch for now.
 
 Thanks.
 
