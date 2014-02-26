@@ -1,83 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the arm-soc tree
-Date: Wed, 26 Feb 2014 12:46:35 +1100
-Message-ID: <20140226124635.46eb18b096b7835e28e62d3e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the libata tree
+Date: Wed, 26 Feb 2014 13:55:21 +1100
+Message-ID: <20140226135521.047c301755d2bb44401e3ac6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Feb_2014_12_46_35_+1100_6XCAFRunFs/MK/gk"
+ boundary="Signature=_Wed__26_Feb_2014_13_55_21_+1100_anEQrncZ=+8EAVZm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:36670 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:46322 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750968AbaBZBqm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Feb 2014 20:46:42 -0500
+	id S1751746AbaBZCz1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Feb 2014 21:55:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 
---Signature=_Wed__26_Feb_2014_12_46_35_+1100_6XCAFRunFs/MK/gk
+--Signature=_Wed__26_Feb_2014_13_55_21_+1100_anEQrncZ=+8EAVZm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Tejun,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-arch/arm/boot/dts/Makefile between commit 8fc1b0f87d9f ("ARM: qcom: Split
-Qualcomm support into legacy and multiplatform") from the arm-soc tree
-and commit a02dd0271d01 ("ARM: mvebu: select dtbs from MACH_ARMADA_*")
-from the mvebu tree.
+After merging the libata tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/ata/ahci_st.c: In function 'st_ahci_probe':
+drivers/ata/ahci_st.c:159:8: error: implicit declaration of function 'ahci_=
+platform_put_resources' [-Werror=3Dimplicit-function-declaration]
+        ahci_platform_put_resources(&pdev->dev, hpriv);
+        ^
 
+Caused by commit 0d8d213703ff ("ahci: st: Add support for ST's SATA
+IP").  That function is defined as "static" in another file ...
+
+I have used the version of the libata tree from next-20140225 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/Makefile
-index cf8bb9f05c94,01f9ceb450ca..000000000000
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@@ -123,9 -138,16 +139,13 @@@ kirkwood :=3D=20
-  	kirkwood-ts219-6282.dtb \
-  	kirkwood-ts419-6281.dtb \
-  	kirkwood-ts419-6282.dtb
-+ dtb-$(CONFIG_ARCH_KIRKWOOD) +=3D $(kirkwood)
-+ dtb-$(CONFIG_MACH_KIRKWOOD) +=3D $(kirkwood)
-+ dtb-$(CONFIG_ARCH_LPC32XX) +=3D ea3250.dtb phy3250.dtb
-  dtb-$(CONFIG_ARCH_MARCO) +=3D marco-evb.dtb
-  dtb-$(CONFIG_ARCH_MOXART) +=3D moxart-uc7112lx.dtb
-- dtb-$(CONFIG_ARCH_MVEBU) +=3D armada-370-db.dtb \
- -dtb-$(CONFIG_ARCH_MSM) +=3D qcom-msm8660-surf.dtb \
- -	qcom-msm8960-cdp.dtb \
- -	qcom-apq8074-dragonboard.dtb
-+ dtb-$(CONFIG_MACH_ARMADA_370) +=3D \
-+ 	armada-370-db.dtb \
-  	armada-370-mirabox.dtb \
-  	armada-370-netgear-rn102.dtb \
-  	armada-370-netgear-rn104.dtb \
-
---Signature=_Wed__26_Feb_2014_12_46_35_+1100_6XCAFRunFs/MK/gk
+--Signature=_Wed__26_Feb_2014_13_55_21_+1100_anEQrncZ=+8EAVZm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDUeAAAoJEMDTa8Ir7ZwVSz8P/1pDATgA62SPFUtqE4hHafpb
-lCxCwEpZRRBnYWaEqi76jKZwkDYoK/gvRDaLza7a4FUPYtVxVzWjcKqUUJ8sSulL
-fNR05inUAAjFfW9aL4TV5g/Qzcth+tw9HZOfcjFbBHRAW90wyBK104cuPiD4Rk3o
-j25oFaN2UpDdlfbtMQnFbxSbfXyVpwsqTv9esLwJdap6UuESMGL4LmosJsRgBjz1
-IsJhRpR+jFJUK616m8I1CM8Vw5dxefr0naaAsFyB1i9jjv53mh5BnH08kHHqrqew
-hNSok98cFDpgql3RYrLOy+bn8gtG9ayf76D1fxFUVCqclZeJ8bFDWeS+1vkJuTtC
-Eg4BH1gmMUvBlQVPIAlmiTxnhNgB/YRQEnGN0E03sQfc6Q+7i2noLXe2idn0IMg+
-65/9aM9s3n5QGVEp4aBzH32fEP3EJcGh5FzqRiT8t5IEFwEzcmrcxsfZFPCdAtOi
-xtgSjiaWfGWhutneWR1lG/ro3+x0rCXAbHe601PNJafFtrDL14P8M4nkALkWJ75i
-kGD6PE8blb2xouMgevnFoixpJkhRYtSqSXEK38KVzEo7QheluaQIi4fDrQgHpRE5
-/brNrBOrP4ntNVWC67oVhldLvPG1h26zxjFgJGOYq97/54cZipHNfAMiHxYUWNLc
-duHv9q6ka2lkpZlN5Wmb
-=P8T7
+iQIcBAEBCAAGBQJTDVeeAAoJEMDTa8Ir7ZwVNb0P/AkI6Ur1vRq3u4Ww14omBmCO
+mFL1k67D00iTFrD8FY0aKydX22jrLvkmEBgBgiLYfskucGE577kxwc6wtl/5ngWl
+lbGF3BVKAWy6+5P+a5lWybnoN8mRNkJnANxZrHvvDX0hJnRGlFOTIntI5ensi55j
+eJ/9lhhoJmInEpJbhManVMt5UwhQft1BWkabHURtxF08mOGj6epB6as92X0J8Nd1
+l9z/m36jChXiZI1gR8jIws/IP1tB4sNRFCLydoWiaRmM72R8tVdY9dvoejB2m8iz
+o9wMmKHvSWscZNlezTjfFXAwqIjUIt4Gx/o7IxGMLPiGm+Rd3fKqQ9PAz406GAlD
+9k4+nkhdWTsIGkzfTS3EYuXwXIuPmpGRVrsrMcdIceYOSkVuk/TM3iryrirGklCe
+Afa3zVz8xpSjI3UtCQheyZn3AAArB3yxxbXO717IJdCYvvmklJdzEPnCNXjUKAj1
+qtRROhGe+/88dbVMzC63ZMC69T+wupfvFrM6KsYab3/UN/y6M7g+KQRT8ec0liar
+AdhBkqhbkv+bG0CpUFy3wkOLspGXkbg8b68VwLDeMrKZnluS4Tv/IHD8yAcFLStF
+gHOVWp2DGIL7FGY4AojRYD3kmXi+g6a3b8xoX9G5yAgiZGPc2CUf7S60elZd7ehZ
+kyfG9L+yba1lDdAlN3uw
+=rIZ/
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Feb_2014_12_46_35_+1100_6XCAFRunFs/MK/gk--
+--Signature=_Wed__26_Feb_2014_13_55_21_+1100_anEQrncZ=+8EAVZm--
