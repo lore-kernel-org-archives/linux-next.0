@@ -1,76 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the char-misc tree
-Date: Wed, 26 Feb 2014 17:47:21 +1100
-Message-ID: <20140226174721.3f27c7ca917e9c73b0fb8ce5@canb.auug.org.au>
-References: <20140221164711.9e62ae1f03fe1166943a2a14@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the keystone tree
+Date: Wed, 26 Feb 2014 18:15:21 +1100
+Message-ID: <20140226181521.e8cecdff21d892ea1f037bff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Feb_2014_17_47_21_+1100_KeFHX/DOSD8WzAFI"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:54385 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751319AbaBZGrX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 01:47:23 -0500
-In-Reply-To: <20140221164711.9e62ae1f03fe1166943a2a14@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+ boundary="Signature=_Wed__26_Feb_2014_18_15_21_+1100_+0Il8Pt7isG4sZzw"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ivan Khoronzhuk <ivan.khoronzhuk@ti.com>, Murali Karicheri <m-karicheri2@ti.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__26_Feb_2014_17_47_21_+1100_KeFHX/DOSD8WzAFI
+--Signature=_Wed__26_Feb_2014_18_15_21_+1100_+0Il8Pt7isG4sZzw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Mike,
 
-On Fri, 21 Feb 2014 16:47:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the char-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> In file included from drivers/misc/mei/hw-txe.c:25:0:
-> drivers/misc/mei/hw-txe.h:63:1: error: unknown type name 'irqreturn_t'
->  irqreturn_t mei_txe_irq_quick_handler(int irq, void *dev_id);
->  ^
->=20
-> Caused by commit 266f6178d1f1 ("mei: txe: add hw-txe.h header file") but
-> probably exposed by commit 46cb7b1bd86f ("PCI: Remove unused SR-IOV VF
-> Migration support") from the pci tree which removed the include of
-> irqreturn.h from pci.h ...
->=20
-> See Rule 1 from Documentation/SubmitChecklist ...
->=20
-> I added the following merge fix patch (this should be applied to the
-> char-misc tree):
+Today's linux-next merge of the clk tree got a conflict in
+arch/arm/boot/dts/keystone-clocks.dtsi between commit 0cfc9ccec2a8 ("ARM:
+dts: keystone: preparatory patch to support K2L and K2E SOCs") from the
+keystone tree and commit 565bbdcd3b91 ("ARM: keystone: dts: fix clkvcp3
+control register address") from the clk tree.
 
-Ping?
+I fixed it up (by adding the following merge fix patch) and can carry the
+fix as necessary (no action is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 26 Feb 2014 18:12:55 +1100
+Subject: [PATCH] ARM: keystone: dts: fix for code movement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/boot/dts/k2hk-clocks.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/k2hk-clocks.dtsi b/arch/arm/boot/dts/k2hk-cl=
+ocks.dtsi
+index 4eed84feb761..a71aa2996321 100644
+--- a/arch/arm/boot/dts/k2hk-clocks.dtsi
++++ b/arch/arm/boot/dts/k2hk-clocks.dtsi
+@@ -339,7 +339,7 @@ clocks {
+ 		compatible =3D "ti,keystone,psc-clock";
+ 		clocks =3D <&chipclk13>;
+ 		clock-output-names =3D "vcp-3";
+-		reg =3D <0x0235000a8 0xb00>, <0x02350060 0x400>;
++		reg =3D <0x023500a8 0xb00>, <0x02350060 0x400>;
+ 		reg-names =3D "control", "domain";
+ 		domain-id =3D <24>;
+ 	};
+--=20
+1.9.0
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__26_Feb_2014_17_47_21_+1100_KeFHX/DOSD8WzAFI
+--Signature=_Wed__26_Feb_2014_18_15_21_+1100_+0Il8Pt7isG4sZzw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDY35AAoJEMDTa8Ir7ZwVpSMP/j1K0w4FUdRvqHyGR7MPMWJE
-hYvjTh+3NWUUMhsXK3cs2nbEkws8CFs4nmsJnbcivm9oSsjOZml2M/ePjOBIWUEq
-iL5mJ6A6i6N7d3JMcqzOMRMt8ijrgtTJcsdlZx0qpKLTV3J0hcJAALb6cz7u7tfe
-1/Z2EBsFPP7FLaVCi/eJ8F455nJtjUfbr39Mqlp4/WXZuLyWjX20HIC10w/llabQ
-x1s+megIx1jA0ez9vaaVL2BtRSNaVSjj9vYvxUskfMLdV2mfPpAyt8W1T/JlL8Uv
-gKzZkdN5OonLDYq+DOQ4bPSDJhS+zP1LMLvXFLg+Z+EBUX9sJPpXcGxZzcO3SK2Q
-rSo5jHsWvoTBNpQN0SlJM7P/0EGySZWi9c6yhdDMMTepkNCz6rByvjDCr/oJzNsn
-Jh+pwdIGV9SFuryHD1syInuYFZ/N4n6/rYKNRcXJU88QXQ3cygrbfybtomgDGCfL
-0IBpOYbBmh2P+Yt9Jv3zNO0ryk99Lu02l/nKBxZXrc0GC8ptmEpgu/Iqkiy9T6le
-QzL8ZqSjDPOj/S2Lq7bFzZJuy7nfYdItle3SHqabEo2dzomZ9dXRRUSMQJYvI/Hp
-+S3m+SIbkagWe3TWUSKg9nGfkUzhxpZB6bIkJKM5KIJOHsHF1w4Bae97cdjl2EL3
-idZHWgwJjSSAEfbAwaLP
-=ydsf
+iQIcBAEBCAAGBQJTDZSOAAoJEMDTa8Ir7ZwVWN0P/0bD5kprh+dJ0AasN8wPP+s2
+Rdof+q4eTJDuHmKAuvT9qszMtsr7vLSQCPhGzbjN6/2b0bHePvZ0GsBrW9kGQvnp
+MP5LypxYjFckV7FvzUgMWVvMMvnlLmvCRybWSS6jXAovu+K+J3rTqkE8FziapHwF
+dkfGgENpNtv4D6NOMGa8CUg1f5Z9euns1aZ7rtN9CO34ptLy5fZio+Xlyz3SNf8i
+2ViJgFPanKQJRAwkWqUToXl/9uDpdezv0ahzgU6HNRtpdSsJQBWVweTlJchhdGaM
+agDMsV3VbkWaglEbJaDh/gBLvBLFwqpq2m2Tqxh3qWOJczuBcc6R/s/aI2YBTlyh
+dAVbHypQkSFFEJ5rIXrrUOTU6mqnc7Sc/DI/HP/uJBnzRBLJTTFp3FbznuMCnLXR
+cbxB0y8NbkepHofX4nNQ4g+Nu51HU+ecybVZ1syWCVA75+jCvhzkznzVAMZCHA2B
+hkP7EtNwsphgJcMroYAQalQiQtYsDf2RKe/JQiRET0XjFt7qeORzRe+hMQwz5Zqt
+sBC7cPoMCNfZWrPMfJy6rZi12Z7vJ3p03YdYi2oky5LLCYGJFaYMZdT5N3lryUu0
+gdsas+GCBiWN80mjyuwsN2PmlqUEtswL2idkeAt1BRCcebcDs4bpEUmflTC40ks7
+ALsQhYSDSdDSYAJbEgYa
+=Gplr
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Feb_2014_17_47_21_+1100_KeFHX/DOSD8WzAFI--
+--Signature=_Wed__26_Feb_2014_18_15_21_+1100_+0Il8Pt7isG4sZzw--
