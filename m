@@ -1,48 +1,89 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: Regression with wait_event_timeout in next-20140226
-Date: Wed, 26 Feb 2014 23:35:00 +0100
-Message-ID: <20140226223500.GW9987@twins.programming.kicks-ass.net>
-References: <530E17C7.1030504@free-electrons.com>
- <20140226165043.GA22802@laptop.programming.kicks-ass.net>
- <20140226142534.3b8c6eb1652d000206948ae0@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (akpm-current tree related)
+Date: Thu, 27 Feb 2014 10:00:26 +1100
+Message-ID: <20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
+References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
+	<20140226100234.GA23064@thin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__27_Feb_2014_10_00_26_+1100_q83SYf+8Ri_LR0g0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:34778 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751621AbaBZWfN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 17:35:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20140226142534.3b8c6eb1652d000206948ae0@linux-foundation.org>
+Received: from ozlabs.org ([203.10.76.45]:46991 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751445AbaBZXAe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Feb 2014 18:00:34 -0500
+In-Reply-To: <20140226100234.GA23064@thin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Steven Rostedt <rostedt@goodmis.org>
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2014 at 02:25:34PM -0800, Andrew Morton wrote:
-> Is there anything we can do to make all this clearer?  Simply using a
-> distinctive variable name ("__wait_var__"?) in place of __ret (and
-> documenting it) would help a lot.
+--Signature=_Thu__27_Feb_2014_10_00_26_+1100_q83SYf+8Ri_LR0g0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-% s/\<__ret\>/__wait_var__/g should get you mostly there I suppose :-)
+Hi Josh,
 
-Although I'm not entirely sure __wait_var__ is a better name.
+On Wed, 26 Feb 2014 02:02:34 -0800 Josh Triplett <josh@joshtriplett.org> wr=
+ote:
+>
+> On Wed, Feb 26, 2014 at 07:16:27PM +1100, Stephen Rothwell wrote:
+> >=20
+> > After merging the final tree, today's linux-next build (powerpc64
+> > allnoconfig) failed like this:
+> >=20
+> > arch/powerpc/kernel/built-in.o: In function `.machine_check_queue_event=
+':
+> > (.text+0x11260): undefined reference to `.irq_work_queue'
+> >=20
+> > Caused (or exposed) (along with a lot of warnings) by commit 3dd6115cd6=
+0b
+> > ("kconfig: make allnoconfig disable options behind EMBEDDED and EXPERT")
+> > from the apm-current tree.
+>=20
+> Pre-existing, just now triggerable with just "make allnoconfig" rather
+> than manually turning off other options (like PRINTK) that select
+> IRQ_WORK.  (One of the goals of that commit: get those options more
+> widely used and build-tested.)
+>=20
+> The following (untested) patch *should* fix this:
+> ----- 8< -----
+> From 36a5b6c87292b6c5eeb390ed6dc6acbb8f0a3767 Mon Sep 17 00:00:00 2001
+> From: Josh Triplett <josh@joshtriplett.org>
+> Date: Wed, 26 Feb 2014 01:58:02 -0800
+> Subject: [PATCH] ppc: Make PPC_BOOK3S_64 select IRQ_WORK
 
-> Some __ret's are long and some are int.  Maybe that's a glitch, 
+OK, I added this as a merge fix patch for Andrew's tree today.  Please
+check the build results overnight tonight (for next-20140227 at
+http://kisskb.ellerman.id.au/linux-next) and submit any more fixes for
+the allnoconfig build errors.
 
-No that's on purpose.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-The longs are needed to hold the timeout values, we truncate to an int
-where we only need to return errors.
+--Signature=_Thu__27_Feb_2014_10_00_26_+1100_q83SYf+8Ri_LR0g0
+Content-Type: application/pgp-signature
 
-> maybe
-> it's because some __ret's are used for inter-macro communications and
-> some are not, which just makes things worse.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-The timeout related ones are the worst. The others aren't nearly as bad.
+iQIcBAEBCAAGBQJTDnIOAAoJEMDTa8Ir7ZwVxLkP+QH7upg3ImmQTCAUN/7RJd1E
+JEzGZEdyiXZ9zNG3QpxMOGbWxv4TzbRAwzjB9awUjUtax9/Z4u19qfYPTyICnxp9
+9GPEoujpHiu3yX3ZG41Ivc9yGfgaCfTSUaWkFrnX870zFXNEghaZ46Lsh+Ibn0Q/
+VukeQk2je1FymnTeTOvTHSNVcs4JFJw5e3Fg7IyCTrk/7xPjoOc+2tDKhuiPaZj/
+/C7x+Eg8OPL9JXeS2xmEKQlQPpHvQawuCzfKx95vcQ+nKcPoQrQw+6YwpzsW79AS
+bXzM3dAJuAgb0RvjbPj0JdmDs0YwOOQT1rUsxKDka7kj7ygIHksr4O7wVTNhG91C
+pGdZ8je0bDNs1ifuFEclJzevlINu7GQnfE4SLnjuJqfngM+O+u9P/ay90UTMGQjv
+l20JVf0LyZKLYPAcdqggnhc0s3ciL/IYyAIHPHypFe2CqwkFHEiSzilVAORUeaOx
+58/7zuN84PV/tQHuCVo9qvPflZ6Qn6LU7lfI9+2xoQ/N8tPw+aMNppeBtuQYfBcM
+1IWsKEUGrj4hw08uuI34n9BhR0XYwJEmyPKjDm0h6JRJ0dzDQAjwg5yiaWVMZmrD
+DpH0tl+KDrFEF1ibEtnNvu+zPF2uhlEAyYAO5Codn7ZRoPpvcg4iNLoJfAR6NQBZ
+DX3TkxSmCckDkyE5aRlF
+=mk8+
+-----END PGP SIGNATURE-----
 
-> I started to do a patch, got all confused and gave up.  We've made
-> quite a tangly mess in there, alas.
-
-Hehe, yes, made a lot of duplicated code go away though. Maybe we
-compressed too much, dunno.
+--Signature=_Thu__27_Feb_2014_10_00_26_+1100_q83SYf+8Ri_LR0g0--
