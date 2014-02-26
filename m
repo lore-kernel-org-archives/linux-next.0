@@ -1,63 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
- (akpm-current tree related)
-Date: Wed, 26 Feb 2014 19:16:27 +1100
-Message-ID: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ renesas tree
+Date: Wed, 26 Feb 2014 09:46:27 +0100
+Message-ID: <20140226084627.GC6865@pengutronix.de>
+References: <20140226182700.4001291b522f958a8da83f58@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Feb_2014_19_16_27_+1100_fkq=PmvfOsfuA.xv"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55174 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750748AbaBZIQe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 03:16:34 -0500
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:42360 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750801AbaBZIqg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 03:46:36 -0500
+Content-Disposition: inline
+In-Reply-To: <20140226182700.4001291b522f958a8da83f58@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Simon Horman <horms@verge.net.au>, linux-next@vger.kernel.org, Magnus Damm <damm@opensource.se>
 
---Signature=_Wed__26_Feb_2014_19_16_27_+1100_fkq=PmvfOsfuA.xv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Stephen,
 
-Hi all,
+On Wed, Feb 26, 2014 at 06:27:00PM +1100, Stephen Rothwell wrote:
+> Today's linux-next merge of the akpm-current tree got a conflict in
+> arch/arm/mach-shmobile/Kconfig between commits 2b2e7c65166a ("ARM:
+> shmobile: Use 64-bit dma_addr_t on r8a7790/r8a7791") and 4a51856b4267
+> ("ARM: shmobile: Use 64-bit dma_addr_t on r8a7790/r8a7791") from the
+> renesas tree and commit b096b0b50c4b ("Kconfig: rename HAS_IOPORT to
+> HAS_IOPORT_MAP") from the akpm-current tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no acti=
+on
+> is required).
+>=20
+> (I am not sure why that commit appears twice in the renesas tree)
+The two commits (4a51856b4267 and 2b2e7c65166a) both base on top of
+v3.14-rc1, but it seems it's just the CommitData that is different
+beween the twos. The relevant history can be seen in
 
-After merging the final tree, today's linux-next build (powerpc64
-allnoconfig) failed like this:
+	git log --boundary --graph --oneline 5ffd11e972c4~2..5ffd11e972c4 -- a=
+rch/arm/mach-shmobile/Kconfig
 
-arch/powerpc/kernel/built-in.o: In function `.machine_check_queue_event':
-(.text+0x11260): undefined reference to `.irq_work_queue'
+This shows that heads/defconfig-for-v3.15, heads/soc-for-v3.15 and
+heads/boards-for-v3.15 where pulled into Simon's devel branch twice.
+While heads/defconfig-for-v3.15 is identical in both merges,
+heads/soc-for-v3.15 was rewritten and heads/boards-for-v3.15 got an
+additional patch.
 
-Caused (or exposed) (along with a lot of warnings) by commit 3dd6115cd60b
-("kconfig: make allnoconfig disable options behind EMBEDDED and EXPERT")
-from the apm-current tree.
+Simon: if you want to fix that in your branch, the most easiest option
+is probably:
 
-I have reverted that commit for today.
+	git filter-branch -f --parent-filter 'sed s/4a51856b42672cfcb7d6fbab22=
+dcf2caba2be5ab/2b2e7c65166aa4a7d6ca0352b249b38b45680d45/' v3.14-rc1..br=
+anch1 branch2 branch3
+
+for all branches that contain 4a51856b4267.  (Or alternatively
+substitute in the opposite direction if you want to drop 2b2e7c65166a
+instead.)
+
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>=20
+> diff --cc arch/arm/mach-shmobile/Kconfig
+> index 57069c12f9a4,dac2941fa383..000000000000
+> --- a/arch/arm/mach-shmobile/Kconfig
+> +++ b/arch/arm/mach-shmobile/Kconfig
+> @@@ -13,8 -13,7 +13,8 @@@ config ARCH_SHMOBILE_MULT
+>   	select ARM_GIC
+>   	select MIGHT_HAVE_CACHE_L2X0
+>   	select MIGHT_HAVE_PCI
+>  +	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+> - 	select NO_IOPORT
+> + 	select NO_IOPORT_MAP
+>   	select PINCTRL
+>   	select ARCH_REQUIRE_GPIOLIB
+>   	select CLKDEV_LOOKUP
+Obviously looks right. Thanks.
+
+Uwe
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__26_Feb_2014_19_16_27_+1100_fkq=PmvfOsfuA.xv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTDaLgAAoJEMDTa8Ir7ZwVN68P/RLn4jRBNDZxw9Q+LrqdEZZz
-ULRJyqLEDGpXBvjqHLnJqFfsIuHAhpxYHn4WUwvQfrggA8p8BmpRdQzA/9lVU0vh
-ScGuRK556hqGpWHBeVj73inULU9PimuE4Onu7vaydXSDgSUyyS1LCdEAGfQgdGgr
-sE/jUBqJgCx3fn6rUTkjB2RA4fCwD1vN6RkO2mvLQBY4e/pC/I9u+RDMnzEyMPRu
-DHkqqrCPqyJHW8L2fPQdk8x26CgI2GCU9IdjI7zipoPDIsi8itoCH3ZVFMfgpxpp
-odG/sfuZm+J76EV9C1ipG+jC7dOlXadpX6aBIKu9GMGfwH4OkrKvVLG+6xQyvmTC
-kFUzQwLtXRMBHDYWISClGANUlrXM45YxJz02UlGCXVKaSnQkt6rqXVHILWXXG5Kz
-DhP3tjX2XSTyOqfSP43HBSMD5urNjGKqnq9xDArmTtwX2Y70IzlqHVxlDrMkJHVw
-1lLGGNxNmgSykRiY2Bukw2ujv+SfRqbKMAhPOhbHlJ5CRWbb9Tg7PKfG8jwCXcxB
-Wn/2v7B/2gravEJ+1cRFmKA4PYYmI6pX708ZQBdAigzgTiRU+BPuXfOdsTXll8eg
-/vU5Rd1SeCvjyMGDZMAuXFCNlNe3LgXVf13yO0vmSvPnBDjZCW8U+mwCjuqqxG8q
-ZW8bZ0lc6qEduOP3oky7
-=GjK3
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_Feb_2014_19_16_27_+1100_fkq=PmvfOsfuA.xv--
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
