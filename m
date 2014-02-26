@@ -1,68 +1,71 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (akpm-current tree related)
-Date: Wed, 26 Feb 2014 02:02:34 -0800
-Message-ID: <20140226100234.GA23064@thin>
-References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 26 Feb 2014 12:14:32 +0100
+Message-ID: <20140226111432.GD6989@quack.suse.cz>
+References: <20140226190436.53e6cf83e03ef4261577b94c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:41169 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751140AbaBZLOe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Feb 2014 06:14:34 -0500
 Content-Disposition: inline
-In-Reply-To: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20140226190436.53e6cf83e03ef4261577b94c@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2014 at 07:16:27PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Wed 26-02-14 19:04:36, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> After merging the final tree, today's linux-next build (powerpc64
-> allnoconfig) failed like this:
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> arch/powerpc/kernel/built-in.o: In function `.machine_check_queue_event':
-> (.text+0x11260): undefined reference to `.irq_work_queue'
+> fs/notify/fanotify/fanotify_user.c: In function 'SYSC_fanotify_init':
+> fs/notify/fanotify/fanotify_user.c:707:8: error: 'struct fanotify_event_info' has no member named 'response'
+>   oevent->response = 0;
+>         ^
 > 
-> Caused (or exposed) (along with a lot of warnings) by commit 3dd6115cd60b
-> ("kconfig: make allnoconfig disable options behind EMBEDDED and EXPERT")
-> from the apm-current tree.
+> Caused by my bad conflict resolution.  I added the following merge fix
+> patch (but I am not too sure of it).
+  The fix below looks good for now. I'll push the fixes which are in
+linux-next to Linus this week and after that send Andrew an updated version
+of the cleanup rebased on top of fixes (ultimately the code added in the
+fix wants to use new alloc_event() helper added by the cleanup).
 
-Pre-existing, just now triggerable with just "make allnoconfig" rather
-than manually turning off other options (like PRINTK) that select
-IRQ_WORK.  (One of the goals of that commit: get those options more
-widely used and build-tested.)
+								Honza
 
-The following (untested) patch *should* fix this:
------ 8< -----
->From 36a5b6c87292b6c5eeb390ed6dc6acbb8f0a3767 Mon Sep 17 00:00:00 2001
-From: Josh Triplett <josh@joshtriplett.org>
-Date: Wed, 26 Feb 2014 01:58:02 -0800
-Subject: [PATCH] ppc: Make PPC_BOOK3S_64 select IRQ_WORK
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 26 Feb 2014 19:01:03 +1100
+> Subject: [PATCH] fanotify: fix for bad merge resolution
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 0edc47f7dfae..0d378a8cd279 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -704,7 +704,6 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  
+>  	group->fanotify_data.f_flags = event_f_flags;
+>  #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+> -	oevent->response = 0;
+>  	spin_lock_init(&group->fanotify_data.access_lock);
+>  	init_waitqueue_head(&group->fanotify_data.access_waitq);
+>  	INIT_LIST_HEAD(&group->fanotify_data.access_list);
+> -- 
+> 1.9.0
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-arch/powerpc/kernel/mce.c, compiled in for PPC_BOOK3S_64, calls
-functions only built when IRQ_WORK, so select it.  Fixes the following
-build error:
 
-arch/powerpc/kernel/built-in.o: In function `.machine_check_queue_event':
-(.text+0x11260): undefined reference to `.irq_work_queue'
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Josh Triplett <josh@joshtriplett.org>
----
- arch/powerpc/platforms/Kconfig.cputype | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index 434fda3..d9e2b19 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -73,6 +73,7 @@ config PPC_BOOK3S_64
- 	select SYS_SUPPORTS_HUGETLBFS
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if PPC_64K_PAGES
- 	select ARCH_SUPPORTS_NUMA_BALANCING
-+	select IRQ_WORK
- 
- config PPC_BOOK3E_64
- 	bool "Embedded processors"
 -- 
-1.9.0
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
