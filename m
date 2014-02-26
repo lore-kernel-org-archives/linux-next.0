@@ -1,130 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the cgroup
- tree
-Date: Wed, 26 Feb 2014 18:43:46 +1100
-Message-ID: <20140226184346.d459564165b30a9f1f42807d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 26 Feb 2014 19:04:36 +1100
+Message-ID: <20140226190436.53e6cf83e03ef4261577b94c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Feb_2014_18_43_46_+1100_8jEItOkr5zfVqnAW"
+ boundary="Signature=_Wed__26_Feb_2014_19_04_36_+1100_g4iRjQyie.e.FZ4a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:37566 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:60535 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750745AbaBZHnv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 02:43:51 -0500
+	id S1751017AbaBZIEl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Feb 2014 03:04:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>, Vladimir Davydov <vdavydov@parallels.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__26_Feb_2014_18_43_46_+1100_8jEItOkr5zfVqnAW
+--Signature=_Wed__26_Feb_2014_19_04_36_+1100_g4iRjQyie.e.FZ4a
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-mm/memcontrol.c between commits e61734c55c24 ("cgroup: remove
-cgroup->name") from the cgroup tree and commits a89db06ab1b4 ("memcg:
-change oom_info_lock to mutex") and c78e84121972 ("memcg, slab: cleanup
-memcg cache creation") from the akpm-current tree.
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+fs/notify/fanotify/fanotify_user.c: In function 'SYSC_fanotify_init':
+fs/notify/fanotify/fanotify_user.c:707:8: error: 'struct fanotify_event_inf=
+o' has no member named 'response'
+  oevent->response =3D 0;
+        ^
+
+Caused by my bad conflict resolution.  I added the following merge fix
+patch (but I am not too sure of it).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 26 Feb 2014 19:01:03 +1100
+Subject: [PATCH] fanotify: fix for bad merge resolution
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/notify/fanotify/fanotify_user.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanoti=
+fy_user.c
+index 0edc47f7dfae..0d378a8cd279 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -704,7 +704,6 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, uns=
+igned int, event_f_flags)
+=20
+ 	group->fanotify_data.f_flags =3D event_f_flags;
+ #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+-	oevent->response =3D 0;
+ 	spin_lock_init(&group->fanotify_data.access_lock);
+ 	init_waitqueue_head(&group->fanotify_data.access_waitq);
+ 	INIT_LIST_HEAD(&group->fanotify_data.access_list);
+--=20
+1.9.0
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/memcontrol.c
-index d9c6ac1532e6,452f45087566..000000000000
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@@ -1683,25 -1683,54 +1683,25 @@@ static void move_unlock_mem_cgroup(stru
-   */
-  void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_stru=
-ct *p)
-  {
- -	/*
- -	 * protects memcg_name and makes sure that parallel ooms do not
- -	 * interleave
- -	 */
- +	/* oom_info_lock ensures that parallel ooms do not interleave */
-- 	static DEFINE_SPINLOCK(oom_info_lock);
-+ 	static DEFINE_MUTEX(oom_info_lock);
- -	struct cgroup *task_cgrp;
- -	struct cgroup *mem_cgrp;
- -	static char memcg_name[PATH_MAX];
- -	int ret;
-  	struct mem_cgroup *iter;
-  	unsigned int i;
- =20
-  	if (!p)
-  		return;
- =20
-- 	spin_lock(&oom_info_lock);
-+ 	mutex_lock(&oom_info_lock);
-  	rcu_read_lock();
- =20
- -	mem_cgrp =3D memcg->css.cgroup;
- -	task_cgrp =3D task_cgroup(p, mem_cgroup_subsys_id);
- +	pr_info("Task in ");
- +	pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
- +	pr_info(" killed as a result of limit of ");
- +	pr_cont_cgroup_path(memcg->css.cgroup);
- +	pr_info("\n");
- =20
- -	ret =3D cgroup_path(task_cgrp, memcg_name, PATH_MAX);
- -	if (ret < 0) {
- -		/*
- -		 * Unfortunately, we are unable to convert to a useful name
- -		 * But we'll still print out the usage information
- -		 */
- -		rcu_read_unlock();
- -		goto done;
- -	}
-  	rcu_read_unlock();
- =20
- -	pr_info("Task in %s killed", memcg_name);
- -
- -	rcu_read_lock();
- -	ret =3D cgroup_path(mem_cgrp, memcg_name, PATH_MAX);
- -	if (ret < 0) {
- -		rcu_read_unlock();
- -		goto done;
- -	}
- -	rcu_read_unlock();
- -
- -	/*
- -	 * Continues from above, so we don't need an KERN_ level
- -	 */
- -	pr_cont(" as a result of limit of %s\n", memcg_name);
- -done:
- -
-  	pr_info("memory: usage %llukB, limit %llukB, failcnt %llu\n",
-  		res_counter_read_u64(&memcg->res, RES_USAGE) >> 10,
-  		res_counter_read_u64(&memcg->res, RES_LIMIT) >> 10,
-
---Signature=_Wed__26_Feb_2014_18_43_46_+1100_8jEItOkr5zfVqnAW
+--Signature=_Wed__26_Feb_2014_19_04_36_+1100_g4iRjQyie.e.FZ4a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDZs2AAoJEMDTa8Ir7ZwV++UP/Az8172jyQkEQsOJ5brZWTnq
-98EhHaGbGdihrn/vHiyj8azr5aZ6DL7Xr634hwLJggC+RgDS/u1bTIlTF6Q58Cix
-r0oXFzKAlL4DQxRBAyOa1WGHgwEnKn5VpiIWAXQcUjvRpjoo8SA+q2Aj6H749xPY
-pdNi7CotbyGhWxqHSBynthp6PgYcARJqvHJWoT39iTi2nyRmnjZ1YUsFFRc02p+y
-9vg6wLD02CaIg4VCGMyRU39GCj/fqASkqaktdrJJyeUU2qz5waVuDBSEdbuTR/kq
-ksUaI9HrsFMi7j4kMnvUDgm19XQSVw0v0msYpyspJHQrjrsIk8g5fCpxOPAM+hhA
-BgGDrDpjy3v2IeItzUxAnIPi/10Qm6zY01rOgIa5I0/tRhjsB+Rvt7UTOtpg/qgR
-jcFP3Rj4amtFP97gOcMmH3brfciOG8CQf66wArphP86pX5yHxwzKVhfIySdKLbce
-UwxGiioWOuhoM5+2kRoQSgBICaBXcVzMSL6Ccr9yk9ovMthzF2e3fPKaqzWN/4r0
-nUG/LXr8NulHIReJwUqctAqXDk46qTA7qnt9pVCxFmg3ONVgccQzXAKkNO7rrEbL
-r4hDlJZuvknyI0M5GmRrTlpOayrIZ1j5oFcVi04CS7EOkqFUhg/ymOUf1qHVhqys
-Ik5wjBddYCHxGR9ciVK9
-=pd3L
+iQIcBAEBCAAGBQJTDaAYAAoJEMDTa8Ir7ZwVg/IP/iZJy+Th3fdVvfYsRaUH5tVP
+TwAOsVRXhlO5f/PD/ac6bcHygzju4xqZWxbe/e6aj+zcrmB2NwEX0ndHQMSKOWfU
+GKcLt00FGwZlP05tBmJA+OmVHlnNfk++l4UXk1f/twStDeFGaacgju/hPlAVOM3+
+NQncRd/OQTO+Spc0LqjzoOzb2w5uZqU+b40JmeoYbChUkgVctlLyUeNPqurOVZ/m
+wZwSo+UJTWIyxmwSlPwkolSbcQEdRH9gASLLSZ+ZvLwIiC9xWg990f/I1iKsTRRu
+qhy4oIb58LBT47uJSSISnKHnBiyx7wm1FTZQfS3KE4aT5e86o5KbbhQTqYVwyclC
+P3dvdHB8KDPBjhaoVjEKc7XthxZbsRjWGBheBuGG5sQ+VH8HxffvGDb8XRweR+Tk
+VdfKN4bbS/2oPDXu4ouoA7e0qP7181F2oVUJ5eqvYJ+TvoBJ9q85We0KeJJC6Yhl
+DmCvHqDwlSwF0Bo67zOvpkOOdUJi9mw+bcl2Fi0bFx9FEFptUnY+UnVz0IvMUfYo
+CQJQw7G60Z8+xmh6IYNpK7fIkEHCIl27Lpy+BxG4IgLPc7fdgM1nz7HbW4jFyAxv
+gS7HxwgTExKqlN6g3Iua8DkgJJquW6ONQ/40+GU7udjNb76tpL1/1R3+KH7kuB/H
+MCvIdJQ7koKxNR9FYRSM
+=KRCq
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Feb_2014_18_43_46_+1100_8jEItOkr5zfVqnAW--
+--Signature=_Wed__26_Feb_2014_19_04_36_+1100_g4iRjQyie.e.FZ4a--
