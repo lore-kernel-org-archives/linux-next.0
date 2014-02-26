@@ -1,59 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the arm-soc tree
-Date: Wed, 26 Feb 2014 15:01:59 +1100
-Message-ID: <20140226150159.7ea5e60285ee9d0193bde811@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the cgroup tree
+Date: Wed, 26 Feb 2014 17:46:55 +1100
+Message-ID: <20140226174655.b5430a1a2413ddb459dababe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Feb_2014_15_01_59_+1100_mQ7SzSDg8/SNYd_V"
+ boundary="Signature=_Wed__26_Feb_2014_17_46_55_+1100_7jDWOrjbyOGJQ73G"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:56833 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:52307 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751075AbaBZECI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Feb 2014 23:02:08 -0500
+	id S1750717AbaBZGrA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Feb 2014 01:47:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>
+To: Tejun Heo <tj@kernel.org>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>
 
---Signature=_Wed__26_Feb_2014_15_01_59_+1100_mQ7SzSDg8/SNYd_V
+--Signature=_Wed__26_Feb_2014_17_46_55_+1100_7jDWOrjbyOGJQ73G
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Tejun,
 
-Today's linux-next merge of the crypto tree got a conflict in
-drivers/char/hw_random/Kconfig between commit 2257ffbca73c ("hwrng: msm:
-switch Kconfig to ARCH_QCOM depends") from the arm-soc tree and commit
-f9bee046c915 ("hwrng: msm: switch Kconfig to ARCH_QCOM depends") from the
-crypto tree.
+After merging the cgroup tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Two version of the same patch ... I just kept the arm-soc version.
+kernel/cgroup.c: In function 'cgroup_mount':
+kernel/cgroup.c:1572:2: error: too few arguments to function 'kernfs_mount'
+  dentry =3D kernfs_mount(fs_type, flags, root->kf_root);
+  ^
+
+Caused by commit 2bd59d48ebfb ("cgroup: convert to kernfs") interacting
+with commit fed95bab8d29 ("sysfs: fix namespace refcnt leak") from the
+driver-core.current tree.
+
+I added the following merge fix patch, but it may not be completely
+correct, please check.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 26 Feb 2014 17:41:51 +1100
+Subject: [PATCH] cgroup: fix up for kernfs_mount API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/cgroup.c b/kernel/cgroup.c
+index 306ad0ed19ef..8f4ddbe23d58 100644
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@ -1569,7 +1569,7 @@ out_unlock:
+ 	if (ret)
+ 		return ERR_PTR(ret);
+=20
+-	dentry =3D kernfs_mount(fs_type, flags, root->kf_root);
++	dentry =3D kernfs_mount(fs_type, flags, root->kf_root, NULL);
+ 	if (IS_ERR(dentry))
+ 		cgroup_put(&root->top_cgroup);
+ 	return dentry;
+--=20
+1.9.0
 
 --=20
 Cheers,
-Stephen Rothwell <sfr@canb.auug.org.au>
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__26_Feb_2014_15_01_59_+1100_mQ7SzSDg8/SNYd_V
+--Signature=_Wed__26_Feb_2014_17_46_55_+1100_7jDWOrjbyOGJQ73G
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDWc8AAoJEMDTa8Ir7ZwVBY8P/R5vuzMJoriyt1Tgy4IcY3Ke
-lepR565wi7BYri3uad2RIzmiXFjt+ReImyw4t0CGDny/ZasI/UkujSNTTBdhCsrt
-Cmq+JEoPxoJJIdny0+ayQVpJkk9Mh1u8FH9NOPcohSMZXOCYxJl/es8eW6IxIfck
-LfhkAGqeZ0lPBBJfLK4iy9Wk7NrrMfiOnnSkRK6dB5mQy+U7C5uwn5+tAkbzGoGn
-+2OuDqDQnbLi399KMYhAdqcc8q2bYG16fywCKowaAtkN0F0/2oXDv7w8zDGX1T5J
-V4ONom/MaiAGFqrRWpRMygUdypZ2X7y/DR8GKyAZwztUt2ey1W4+eUeTphGCCccm
-B7VyayM2AEwKso4Ki3Id/yoX+CnImAfoacErD3AXo3ABC8bEJWuFBaPPK9rc2sd/
-yVet8irmQMK3fxkZs2aA7FzKLpgCYPP/07blr/RlyQly3qoNPRkyyLKivQa2Qja+
-yrJEjE8P+L20FOwE/G2H2VawAEw9PHJAPe+oyvxeR349UUlYsl2gGSyVeNeFhfAX
-S8hucPcsLc+OSVlKBRJrbOV++zAIlCFFNXD15ErIoos7k8b0UWi4nqpgiRxTwTtY
-YV/SL9t6+p4svOlCMvDxixdjMPqMa4JJWMXC16VW/Sw3A2UbuaN26ral7RKMlNFj
-L5KIMcgSpT4L5lQwFp9L
-=2/jK
+iQIcBAEBCAAGBQJTDY3jAAoJEMDTa8Ir7ZwV494P/1tky6yrFNJEpJZ7o61zJbz1
+/wIieAEuKGYIrAAuCva5lkYuyjvxlwUhCGvwa6lda/K65cKiaCYMlX7PyJiot80P
+W144G7OXpJWgC13Sw/BjNwm1l055CQAU3sH7x+4QYaI/ADO2I8qjWbwgkHCMC0XH
+Q4W7C0DWQLeiej/1M8P2OCorKDA2vvEDdgSmODT9Xj2mUFQSRT/xP2rqQlZEmYXl
++/XqaH4pdAHIISmEj21ZEC6EDjHi5CVHY4pumh6Q+M92YWS968jGB3x3eyweUSNr
+D16JfTmzptwaqGFxUbSE10szV42q0z2GZuuy5JnipK5Gykdqzph+9cHbDi2kB2E+
+ttrnAYootLOtn1CQ8/5rUlx34fFnlcfhws+/tDLqfXjD9DSrNH0K/ou65PLehB0c
+j9p+o1NVVQtlzJ2ovtuEkbmhm7oKtSLyej88A12fkaWhdf1BJa8crkpLZFBO2g7D
+upUH7XIhMAnhq/mpeXkycq3GwQBpPeRI7RNOdcelQYoGE230L9kz9NVsMQ6Sddmz
+Pkp11pHljXCtkUnOMEsZ+7KSwVsRrVw/M5hiljyf12B4FnkDqa+YqgTMrWRkvqw4
+AOw3cJW9ODOVrTT1JquMi5LZyRfgxjePRR+dHCcqJ/sk6+2JrtlLsBt2HlE3MQf9
+1kKsMRBKEsEyIer+TlK7
+=XzJY
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Feb_2014_15_01_59_+1100_mQ7SzSDg8/SNYd_V--
+--Signature=_Wed__26_Feb_2014_17_46_55_+1100_7jDWOrjbyOGJQ73G--
