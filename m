@@ -1,78 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Regression with wait_event_timeout in next-20140226
-Date: Thu, 27 Feb 2014 14:12:05 +1100
-Message-ID: <20140227141205.257c6dc9ab6da4fc11ee97ce@canb.auug.org.au>
-References: <530E17C7.1030504@free-electrons.com>
-	<20140226165043.GA22802@laptop.programming.kicks-ass.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the char-misc tree
+Date: Wed, 26 Feb 2014 19:37:16 -0800
+Message-ID: <20140227033716.GC31199@kroah.com>
+References: <20140221164711.9e62ae1f03fe1166943a2a14@canb.auug.org.au>
+ <20140226174721.3f27c7ca917e9c73b0fb8ce5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:54535 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754475AbaB0DMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 22:12:12 -0500
-In-Reply-To: <20140226165043.GA22802@laptop.programming.kicks-ass.net>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:57261 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752466AbaB0DeP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Feb 2014 22:34:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20140226174721.3f27c7ca917e9c73b0fb8ce5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
 
---Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 26, 2014 at 05:47:21PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Fri, 21 Feb 2014 16:47:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the char-misc tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > In file included from drivers/misc/mei/hw-txe.c:25:0:
+> > drivers/misc/mei/hw-txe.h:63:1: error: unknown type name 'irqreturn_t'
+> >  irqreturn_t mei_txe_irq_quick_handler(int irq, void *dev_id);
+> >  ^
+> > 
+> > Caused by commit 266f6178d1f1 ("mei: txe: add hw-txe.h header file") but
+> > probably exposed by commit 46cb7b1bd86f ("PCI: Remove unused SR-IOV VF
+> > Migration support") from the pci tree which removed the include of
+> > irqreturn.h from pci.h ...
+> > 
+> > See Rule 1 from Documentation/SubmitChecklist ...
+> > 
+> > I added the following merge fix patch (this should be applied to the
+> > char-misc tree):
+> 
+> Ping?
 
-Hi Peter,
+I've merged everything together, and it all builds properly for me in
+the char-misc branches, so I don't see what is missing.  What did I do
+wrong?
 
-On Wed, 26 Feb 2014 17:50:43 +0100 Peter Zijlstra <peterz@infradead.org> wr=
-ote:
->
-> On Wed, Feb 26, 2014 at 05:35:19PM +0100, Gregory CLEMENT wrote:
-> >=20
-> > while testing next-20140226 I got an issue with the function
-> > wait_event_timeout. When this function timed out instead of returning
-> > 0, it returned the value of the timeout passed in parameter. I found
-> > that reverting "sched/wait: Suppress Sparse 'variable shadowing'
-> > warning" fixed this regression.
-> >=20
-> > I got this issue in the driver drivers/i2c/busses/i2c-mv64xxx.c.
->=20
-> Ah indeed. We actually rely on the shadowing for ___wait_cond_timeout().
->=20
-> We further used the __ret variable in __wait_event_timeout()'s cmd
-> argument: __ret =3D schedule_timeout(__ret). That now explicitly uses the
-> wrong __ret.
->=20
-> Yeah, we need to pull that patch.
+confused,
 
-I have reverted that commit from linux-next for today pending some other
-resolution.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTDq0JAAoJEMDTa8Ir7ZwV6pwP/0GSEP/c6AFLdFOaFxxDFEYW
-ouDBlC+cuexvjc+tdDKABKNRtRqhCqAGj5qxMNNlb9jtNVetoFQLlw/I9qWsAt4M
-ADmlsHdKiCVmeGL83DhJIcgdqb1AK0PWnjJbIPyiIjXa5KabF2u7sNaRo1N99F7D
-WJskvpcZYAavze7Q7ok0yi5sL8kWIcaDF4mNPw0L6chIoDj5Z8GBS8ku94g5GmKI
-IG4uUk156R+e3ChJyCmQGHLhCcc68VrhZ0jp4DBoL31/VLnZDuZoJPVrSaL+6rWs
-0wreyZIlwNSIV5qfAasdD67kR7ETAFrP8mgAu+xCR+dltoG4K9MXtwUWGH6pxEfG
-fONjvQNX3wK4jwoOwaQXMTZAt/VS/0QZwSZt5/xU8zGLlBzYawYR2LCuAfdRA3bW
-Q6rN9FX0obHXo41+5K0LREiZQe4ifJzyVfoUr8Pehv6Vp9iVjvP4McfDrlLoyH5r
-ZDQiGNAkWOx6ofE9hk4KzqGfeHFTOocNWiieRFi+2/1E37Qntq4q0MqdQ3Qqd+zG
-6kBDZpyynTRO7xRCrcl30oWhOI0J2Ep7fUu6GP/Gu8Y+CjY/fiRx4puGhMgUgcs4
-s3PpcVu2f4nC0BeBghS6C/5nH2pmiNpWIWhG5zN33vtgfYqlnDQpfSySRvi3hr4Y
-umjzd1oIccQLwVdw/4G0
-=FGxf
------END PGP SIGNATURE-----
-
---Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l--
+greg k-h
