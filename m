@@ -1,73 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pwm tree with the usb tree
-Date: Thu, 27 Feb 2014 15:56:13 +1100
-Message-ID: <20140227155613.16a690cf5423d4889d887273@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the char-misc tree
+Date: Thu, 27 Feb 2014 16:48:08 +1100
+Message-ID: <20140227164808.354149fc2237d5f3df04242d@canb.auug.org.au>
+References: <20140221164711.9e62ae1f03fe1166943a2a14@canb.auug.org.au>
+	<20140226174721.3f27c7ca917e9c73b0fb8ce5@canb.auug.org.au>
+	<20140227033716.GC31199@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Feb_2014_15_56_13_+1100_W_ZJjhlM=7NYIzxe"
+ boundary="Signature=_Thu__27_Feb_2014_16_48_08_+1100_sSuVKgJ4qkETPR3h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:50853 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:38839 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751929AbaB0E4U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 23:56:20 -0500
+	id S1750781AbaB0FsP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Feb 2014 00:48:15 -0500
+In-Reply-To: <20140227033716.GC31199@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Paul Bolle <pebolle@tiscali.nl>
+To: Greg KH <greg@kroah.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
 
---Signature=_Thu__27_Feb_2014_15_56_13_+1100_W_ZJjhlM=7NYIzxe
+--Signature=_Thu__27_Feb_2014_16_48_08_+1100_sSuVKgJ4qkETPR3h
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+Hi Greg,
 
-Today's linux-next merge of the pwm tree got a conflict in
-arch/arm/Kconfig between commit f6723b569a67 ("usb: host: remove selects
-of USB_ARCH_HAS_?HCI") from the usb tree and commit 557fe99d9d49 ("pwm:
-Remove obsolete HAVE_PWM Kconfig symbol") from the pwm tree.
+On Wed, 26 Feb 2014 19:37:16 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> On Wed, Feb 26, 2014 at 05:47:21PM +1100, Stephen Rothwell wrote:
+> >=20
+> > On Fri, 21 Feb 2014 16:47:11 +1100 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> > >
+> > > After merging the char-misc tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >=20
+> > > In file included from drivers/misc/mei/hw-txe.c:25:0:
+> > > drivers/misc/mei/hw-txe.h:63:1: error: unknown type name 'irqreturn_t'
+> > >  irqreturn_t mei_txe_irq_quick_handler(int irq, void *dev_id);
+> > >  ^
+> > >=20
+> > > Caused by commit 266f6178d1f1 ("mei: txe: add hw-txe.h header file") =
+but
+> > > probably exposed by commit 46cb7b1bd86f ("PCI: Remove unused SR-IOV VF
+> > > Migration support") from the pci tree which removed the include of
+> > > irqreturn.h from pci.h ...
+> > >=20
+> > > See Rule 1 from Documentation/SubmitChecklist ...
+> > >=20
+> > > I added the following merge fix patch (this should be applied to the
+> > > char-misc tree):
+> >=20
+> > Ping?
+>=20
+> I've merged everything together, and it all builds properly for me in
+> the char-misc branches, so I don't see what is missing.  What did I do
+> wrong?
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Nothing, your tree is fine, except when merged with the pci tree.  There
+is a commit in the pci tree that removed the include of irqreturn.h from
+pci.h, thus exposing that drivers/misc/mei/hw-txe.c did not include
+irqreturn.h directly despite using stuff from there (similarly for
+hw-txe.h).  My patch is just a "quality of implementation" thing in your
+tree at the moment, but applying it to your tree will save doing the
+semantic merge conflict fixup in linux-next and later in Linus' tree when
+your tree and the pci tree meet there.
 
+i.e. it does not hurt your tree to apply it and will save is forgetting
+later.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig
-index c85745d2d20a,cc6ce44064a2..000000000000
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -628,7 -629,7 +625,6 @@@ config ARCH_LPC32X
-  	select CPU_ARM926T
-  	select GENERIC_CLOCKEVENTS
-  	select HAVE_IDE
-- 	select HAVE_PWM
- -	select USB_ARCH_HAS_OHCI
-  	select USE_OF
-  	help
-  	  Support for the NXP LPC32XX family of processors
-
---Signature=_Thu__27_Feb_2014_15_56_13_+1100_W_ZJjhlM=7NYIzxe
+--Signature=_Thu__27_Feb_2014_16_48_08_+1100_sSuVKgJ4qkETPR3h
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDsVxAAoJEMDTa8Ir7ZwVPMIQAI9m/jUABxm4d2aCjjrFVTfA
-nF7YGPTSQlGxMkYzNHKHrHBXtOVJKMF5KO+eMFNjo7SzKFkSGl9BN99xQq/DeYb9
-qLXrF9UzeyKb40Iml6LWzv+xfOPIYYYKYcJwc/V/9Bk6lr9ihHWPNL7B/Dx4O+Ys
-IYoS9Aq8aM2aYIbbWI32cnBH11ucsnSUfxZElDLoNA+2eD++nF4b60AA/3whf1gF
-5oUXkuGYzrZkjf81pBff9+9fw7/Su9+DOForS8q65rbEBd1YBjW4ldXwDYZUg1Wx
-3gR7oJnaIuyp1vQUR3c6piKXxx3JQT+nTo6CGq+MYgudsrC8D3DkTKaFI1YWTsha
-CiBYVehNNZiJJwx8o7KmMu+8SRkq/KlmFC/d5Gzsqakx0NZMeLdLoWSCDEhBzTqe
-iZBUH1UqsFdwXwu8PebPu4Nbi5FjWRiVMLwTcbgtLdeAovdcoek7Sp0NjxDc2zkh
-+tMs79sPaAJop2sOLNKVlrKRsYRwaPEEGEMhChWSPwfyNLUQXiZuFo8kaxnrg5SF
-7GkY/dET3FUp0nSLAJXqJpkrWG8v3vfHnm3WTL0apSTti3c06C8OV3PI1u7An2n0
-tii9FpYc0AdLQqqPI1j36MAf1lFEgoM2911KmBwmGFDW8r4jk1K1DhXfpw8L0kvu
-QiH7dTYQ35MK4e4UnCLD
-=t6V5
+iQIcBAEBCAAGBQJTDtGcAAoJEMDTa8Ir7ZwVn9kP/ier2gqNK4pIQnmxHG3sNI4b
+8pKwmV/jCuzKVRHqDcpq+2QF/ZlKVKJ7s+002kFgm8LBitARaGyezCf/S+SJq9LG
+9lfb353NZvx+Opk2IQyhDYwQHmLx0SmGjKvpHAlNU6m6gHcoY4a0SgGmSj4RGQJd
+SKLpiJQKEGea9FPSE9rtZhHfqHL7SJhWmghXCZrGq4/Q1n1OCJt91SeW4nzcPeM+
+TxeNo5Icleth0wLxVwb4vRev64Aakkeald/GQ8dbFErXZ62DYYkUZfcu5dhMwWFz
+LqjHRFMy9DL0dDkEutlmfp8rW7hO2n9egxrjyb7TVddmCSE1LnQfUNVYUs8xL3j+
+0653rxNo/22He0WNdeozE3f/XtO4RWylB4DuNnA4wVUpSFgZgfVnGJV0VTPlsA8+
+CurSES1UJsC2H89L9+8lgkQtcnqc0CtOTsXOaZpccfx5s9MrhaUYmNfETaj1mHl5
+VFuFTg12iIul2HkcUpxMxI+wom7qhxG2jnGdrSX7KModsuWq3ZZshCB40W18uY9h
+yCwriU8FI17/nTnsQHOZKt52DbYMuizfD8IS2iXYapd7GgMdQUXkwoy9n+i4lC3Y
+sUDcNeT1GbqkCDtWCgJDOgaIB7khBSGsgWGkGM0lI5tB84LHxdfE4CsKVticIgHC
+5OvbbhUokCU/CDvA7FnV
+=si0i
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__27_Feb_2014_15_56_13_+1100_W_ZJjhlM=7NYIzxe--
+--Signature=_Thu__27_Feb_2014_16_48_08_+1100_sSuVKgJ4qkETPR3h--
