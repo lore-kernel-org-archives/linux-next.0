@@ -1,82 +1,40 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: manual merge of the pwm tree with the usb tree
-Date: Thu, 27 Feb 2014 13:10:49 +0100
-Message-ID: <20140227121048.GC21422@ulmo.nvidia.com>
-References: <20140227155613.16a690cf5423d4889d887273@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qtZFehHsKgwS5rPz"
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] xtensa: Export __invalidate_icache_range
+Date: Thu, 27 Feb 2014 14:41:14 +0100
+Message-ID: <1393508474-16710-1-git-send-email-geert@linux-m68k.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f41.google.com ([74.125.83.41]:55149 "EHLO
-	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813AbaB0MKx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Feb 2014 07:10:53 -0500
-Content-Disposition: inline
-In-Reply-To: <20140227155613.16a690cf5423d4889d887273@canb.auug.org.au>
+Received: from michel.telenet-ops.be ([195.130.137.88]:34811 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751740AbaB0NlR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Feb 2014 08:41:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Paul Bolle <pebolle@tiscali.nl>
+To: Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
+When modular code calls flush_icache_range():
 
---qtZFehHsKgwS5rPz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    ERROR: "__invalidate_icache_range" [drivers/misc/lkdtm.ko] undefined!
+    make[1]: *** [__modpost] Error 1
 
-On Thu, Feb 27, 2014 at 03:56:13PM +1100, Stephen Rothwell wrote:
-> Hi Thierry,
->=20
-> Today's linux-next merge of the pwm tree got a conflict in
-> arch/arm/Kconfig between commit f6723b569a67 ("usb: host: remove selects
-> of USB_ARCH_HAS_?HCI") from the usb tree and commit 557fe99d9d49 ("pwm:
-> Remove obsolete HAVE_PWM Kconfig symbol") from the pwm tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc arch/arm/Kconfig
-> index c85745d2d20a,cc6ce44064a2..000000000000
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@@ -628,7 -629,7 +625,6 @@@ config ARCH_LPC32X
->   	select CPU_ARM926T
->   	select GENERIC_CLOCKEVENTS
->   	select HAVE_IDE
-> - 	select HAVE_PWM
->  -	select USB_ARCH_HAS_OHCI
->   	select USE_OF
->   	help
->   	  Support for the NXP LPC32XX family of processors
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/10663772/
 
-Looks good to me.
+ arch/xtensa/kernel/xtensa_ksyms.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Thierry
-
---qtZFehHsKgwS5rPz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTDytIAAoJEN0jrNd/PrOhq9QP/jlXyYyoj6bW4jUEbwl08EXc
-6ZDwFM7va9foUwKukWfcuZ11AIFTf+24fC0FJYh4Q5LXrGxPSrwHRi9+j0Q17/S8
-o8uUp4SfJKIPSxcBgJMMjOI4/WGnHTw6bL4p6+Wr4kyl7xNitSP7Z8g/SnAVUUCI
-1IWwNzDF9z+dbdrsF7VXgzkSU7LKxd9QHVW17R/eISv3cIHbdkJSTJTPjX1LDJHR
-18rA60JhLJ+G54AEP9KryB6dNmFcL9lZNHP/o54lyIqnFLJvj5MWViEzo/TCKf1S
-6AUMXH+Yf7O8vvBO3iC/qLyXpdt0dAvsfcRecwMGeGLkZxMHlwYw9NwaGl4RaZwK
-3J36MOrFJHEhBJC7zNeBNKpIn2rTVmaTMSntoDSUFF/ZtYmhukbVzHjD9+hUNGiq
-2cr2LNbbVosxssaGEE7pGACE78MkKIW6jsgrQP+A3XqwXIrGurPXJEqpZR0DLN64
-Q/4ASSV1KY4CD75AeEQvu1VP2277QMpRxQB9hdZuRZvuQBZ163e+bxTFLjmHj1WV
-xn2ArDMhpvaX25ufEpKf7bf6/AKroqqqk6UAWAT1Nrzf66ispwliOFhtiVZMcZGY
-trXV+10yxkthPyJL95AIghPC1KUuLL4aoveG0IanhBKoNUIM51MVQFsFqjl/cB3P
-xLJ2pXZcYo27c1hknYuV
-=6r4E
------END PGP SIGNATURE-----
-
---qtZFehHsKgwS5rPz--
+diff --git a/arch/xtensa/kernel/xtensa_ksyms.c b/arch/xtensa/kernel/xtensa_ksyms.c
+index 80b33ed51f31..88eab32be29e 100644
+--- a/arch/xtensa/kernel/xtensa_ksyms.c
++++ b/arch/xtensa/kernel/xtensa_ksyms.c
+@@ -105,6 +105,7 @@ EXPORT_SYMBOL(csum_partial_copy_generic);
+  * Architecture-specific symbols
+  */
+ EXPORT_SYMBOL(__xtensa_copy_user);
++EXPORT_SYMBOL(__invalidate_icache_range);
+ 
+ /*
+  * Kernel hacking ...
+-- 
+1.7.9.5
