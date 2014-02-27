@@ -1,69 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] s390: select CONFIG_TTY for use of tty in unconditional
- keyboard driver
-Date: Thu, 27 Feb 2014 13:43:02 +1100
-Message-ID: <20140227134302.99d5bbeb0918b745b0953ee6@canb.auug.org.au>
-References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
-	<20140226100234.GA23064@thin>
-	<20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
-	<20140226231916.GB17589@jtriplet-mobl1>
-	<20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
-	<20140227021305.GA23659@thin>
+Subject: Re: Regression with wait_event_timeout in next-20140226
+Date: Thu, 27 Feb 2014 14:12:05 +1100
+Message-ID: <20140227141205.257c6dc9ab6da4fc11ee97ce@canb.auug.org.au>
+References: <530E17C7.1030504@free-electrons.com>
+	<20140226165043.GA22802@laptop.programming.kicks-ass.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Feb_2014_13_43_02_+1100_9iAAkX6gxm5YGDMV"
+ boundary="Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:39725 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:54535 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753524AbaB0CnJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 21:43:09 -0500
-In-Reply-To: <20140227021305.GA23659@thin>
+	id S1754475AbaB0DMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Feb 2014 22:12:12 -0500
+In-Reply-To: <20140226165043.GA22802@laptop.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>
 
---Signature=_Thu__27_Feb_2014_13_43_02_+1100_9iAAkX6gxm5YGDMV
+--Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Josh,
+Hi Peter,
 
-On Wed, 26 Feb 2014 18:13:06 -0800 Josh Triplett <josh@joshtriplett.org> wr=
+On Wed, 26 Feb 2014 17:50:43 +0100 Peter Zijlstra <peterz@infradead.org> wr=
 ote:
 >
-> The unconditionally built keyboard driver, drivers/s390/char/keyboard.c,
-> requires CONFIG_TTY, so select it from CONFIG_S390 to prevent a build
-> error.
+> On Wed, Feb 26, 2014 at 05:35:19PM +0100, Gregory CLEMENT wrote:
+> >=20
+> > while testing next-20140226 I got an issue with the function
+> > wait_event_timeout. When this function timed out instead of returning
+> > 0, it returned the value of the timeout passed in parameter. I found
+> > that reverting "sched/wait: Suppress Sparse 'variable shadowing'
+> > warning" fixed this regression.
+> >=20
+> > I got this issue in the driver drivers/i2c/busses/i2c-mv64xxx.c.
 >=20
-> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> Ah indeed. We actually rely on the shadowing for ___wait_cond_timeout().
+>=20
+> We further used the __ret variable in __wait_event_timeout()'s cmd
+> argument: __ret =3D schedule_timeout(__ret). That now explicitly uses the
+> wrong __ret.
+>=20
+> Yeah, we need to pull that patch.
 
-Will be added to linux-next today.
+I have reverted that commit from linux-next for today pending some other
+resolution.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__27_Feb_2014_13_43_02_+1100_9iAAkX6gxm5YGDMV
+--Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTDqY6AAoJEMDTa8Ir7ZwV9EsP/j00xuBfRY0Spi6UjpZlg/qW
-/x6eRVEvIvWc9I+c2qLygIPG8mtJ+9h6jucSrJJ1TGR5uma7ks9vBlGF4975Nd9r
-zJhZnYO50oXvjQ2QzaEBABmt7FfYIXpXxoEnOLSrgrRVrezM2n8Bus/06HWB9Llo
-KloajWZXIYA5+/xJrnyuHt+PMn0WB/6+VIlx+2x1tp3s7ILqrnHtrJJsCPc+AGVN
-ElP0qr/70sJcm3a+jwAndndFo8Bw7GiHIU5HD1nsC/WnMRf6rTNV0O9tMCOivPOz
-sV9OqWDDxaDik/+BiOg6NP9nhHbtoiipQ2Jk6vc+m4HZOtgw2u/Q/kG2+CinpZgS
-g2uzVIRsWcwlnPgItmQKBfCqoG9OWkysIP7fYNja6R8OQx6ik72/mKYOqsmSJOlt
-dsiP1D6+VMQ9UnmSj8iuTti02j+rtC3FqMVk9Z1s10eqP2ILuGJoxdH1qRgAT+Jb
-gZdn/CM/cjlg7Y2uReTWKytyAoftP9pJar5AfgOZ0XXRSyt/G+hUFjob3T1MOL9e
-FF6UONSOSYP1P/2I48l9Cz6NKfnw8080RNRhlfgG+NN02Vv4T3jkwDcejxMt04U8
-idBrQ5qcOVhAPGJzNfWKzDF+7Au1q2o1o5QL6L/Bf7io7h+WrNZtGnGJIvr8DqcH
-GkcV8rVa85rtYRhVfnyu
-=kTt9
+iQIcBAEBCAAGBQJTDq0JAAoJEMDTa8Ir7ZwV6pwP/0GSEP/c6AFLdFOaFxxDFEYW
+ouDBlC+cuexvjc+tdDKABKNRtRqhCqAGj5qxMNNlb9jtNVetoFQLlw/I9qWsAt4M
+ADmlsHdKiCVmeGL83DhJIcgdqb1AK0PWnjJbIPyiIjXa5KabF2u7sNaRo1N99F7D
+WJskvpcZYAavze7Q7ok0yi5sL8kWIcaDF4mNPw0L6chIoDj5Z8GBS8ku94g5GmKI
+IG4uUk156R+e3ChJyCmQGHLhCcc68VrhZ0jp4DBoL31/VLnZDuZoJPVrSaL+6rWs
+0wreyZIlwNSIV5qfAasdD67kR7ETAFrP8mgAu+xCR+dltoG4K9MXtwUWGH6pxEfG
+fONjvQNX3wK4jwoOwaQXMTZAt/VS/0QZwSZt5/xU8zGLlBzYawYR2LCuAfdRA3bW
+Q6rN9FX0obHXo41+5K0LREiZQe4ifJzyVfoUr8Pehv6Vp9iVjvP4McfDrlLoyH5r
+ZDQiGNAkWOx6ofE9hk4KzqGfeHFTOocNWiieRFi+2/1E37Qntq4q0MqdQ3Qqd+zG
+6kBDZpyynTRO7xRCrcl30oWhOI0J2Ep7fUu6GP/Gu8Y+CjY/fiRx4puGhMgUgcs4
+s3PpcVu2f4nC0BeBghS6C/5nH2pmiNpWIWhG5zN33vtgfYqlnDQpfSySRvi3hr4Y
+umjzd1oIccQLwVdw/4G0
+=FGxf
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__27_Feb_2014_13_43_02_+1100_9iAAkX6gxm5YGDMV--
+--Signature=_Thu__27_Feb_2014_14_12_05_+1100_=qyQd+eR/_8Gve+l--
