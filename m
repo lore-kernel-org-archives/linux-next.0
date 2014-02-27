@@ -1,47 +1,32 @@
 From: Josh Triplett <josh@joshtriplett.org>
-Subject: [PATCH] s390: select CONFIG_TTY for use of tty in unconditional
- keyboard driver
-Date: Wed, 26 Feb 2014 18:13:06 -0800
-Message-ID: <20140227021305.GA23659@thin>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (akpm-current tree related)
+Date: Wed, 26 Feb 2014 18:21:29 -0800
+Message-ID: <20140227022128.GB23659@thin>
 References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
  <20140226100234.GA23064@thin>
  <20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
- <20140226231916.GB17589@jtriplet-mobl1>
- <20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53069 "EHLO
-	relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754229AbaB0CNP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 21:13:15 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:34744 "EHLO
+	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754607AbaB0CVh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 21:21:37 -0500
 Content-Disposition: inline
-In-Reply-To: <20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
+In-Reply-To: <20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The unconditionally built keyboard driver, drivers/s390/char/keyboard.c,
-requires CONFIG_TTY, so select it from CONFIG_S390 to prevent a build
-error.
+On Thu, Feb 27, 2014 at 10:00:26AM +1100, Stephen Rothwell wrote:
+> Please check the build results overnight tonight (for next-20140227 at
+> http://kisskb.ellerman.id.au/linux-next) and submit any more fixes for
+> the allnoconfig build errors.
 
-Signed-off-by: Josh Triplett <josh@joshtriplett.org>
----
- arch/s390/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Checking that site, I don't see any other instances of failures caused
+by allnoconfig.  If I'm missing some, could you please point me to the
+page on that site I'm missing?
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 65a0775..398efa1 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -140,6 +140,7 @@ config S390
- 	select OLD_SIGACTION
- 	select OLD_SIGSUSPEND3
- 	select SYSCTL_EXCEPTION_TRACE
-+	select TTY
- 	select VIRT_CPU_ACCOUNTING
- 	select VIRT_TO_BUS
- 
--- 
-1.9.0
+- Josh Triplett
