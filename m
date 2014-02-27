@@ -1,61 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-tegra tree
-Date: Thu, 27 Feb 2014 12:53:57 +1100
-Message-ID: <20140227125357.795646e8ee6ea60f79423162@canb.auug.org.au>
+From: Josh Triplett <josh@joshtriplett.org>
+Subject: [PATCH] s390: select CONFIG_TTY for use of tty in unconditional
+ keyboard driver
+Date: Wed, 26 Feb 2014 18:13:06 -0800
+Message-ID: <20140227021305.GA23659@thin>
+References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
+ <20140226100234.GA23064@thin>
+ <20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
+ <20140226231916.GB17589@jtriplet-mobl1>
+ <20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Feb_2014_12_53_57_+1100_0+8xSkHeTutKMwQ2"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52980 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751989AbaB0ByM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Feb 2014 20:54:12 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:53069 "EHLO
+	relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754229AbaB0CNP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Feb 2014 21:13:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org
 
---Signature=_Thu__27_Feb_2014_12_53_57_+1100_0+8xSkHeTutKMwQ2
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The unconditionally built keyboard driver, drivers/s390/char/keyboard.c,
+requires CONFIG_TTY, so select it from CONFIG_S390 to prevent a build
+error.
 
-Hi Thierry,
+Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+---
+ arch/s390/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-After merging the drm-tegra tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_init':
-drivers/gpu/drm/tegra/sor.c:924:22: error: 'TEGRA_OUTPUT_LVDS' undeclared (=
-first use in this function)
-
-Caused by commit 765db82ce08a ("drm/tegra: Add eDP support").
-
-I have used the drm-tegra tree from next-20140226 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__27_Feb_2014_12_53_57_+1100_0+8xSkHeTutKMwQ2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTDprCAAoJEMDTa8Ir7ZwVZ18P/2gRHKXUtOZTBMLRMk12Re5S
-fFXcSY7HCJUdRFAQqnCJDOpyIOH3qhZ3s6L3G1G6Z7ryHF0epstqsbCNzYP8PtUe
-4S8Sj4R3Wr0/Uf20Z+p3g184O/wnNN9lcv8uv6CeW41VCTN64bFpetS/FlpOfjNl
-sNEhs7hyQOjTqQrj3JPG6OLlWpBPneqgbAHCkpgM5guuMJVBCUSDkHB6Q3JRTXEy
-YqAfXQQvUTvL9qJzkMDA4NPVldPn67mYBA9EgUD3F+lu2fl8FJmMf5qnTJV4tJYo
-/waVVs/uPKPAe4QWGByV8NP/PfO6Qobgybxn+a0um6EKlhijHS7hz+bw84wHwSZt
-qDhNUKsMu2N8xl+VCbfWesCmNMLI28oo95oPVftXoeG1fvK39n1odbWDpOKKEs+W
-N+oAiOeS+WeLxwOoNdODScLUAOnkPgvLbYx+ZbQz0+VIAQagkjxt89BMyQr7C/ru
-9XxjUG/Luel54TMm241rxy+2VugLFcBX/tHPT5OGgBHNTCr4VGFDytM6+YJXQF+p
-LfwXxL3bLCiDa5ZGEur9BkYpv9E4kB4t4PlJ8kQABavxYt1mtm0etMWZcJk7FEhG
-J51m15VBoCwg9GmHDFjRkuIlzs/9YGzhZO7EdBesbBuWtcawfFu+y7R+ZVWq54Cr
-lYCysuokTBuhuH+fG6Od
-=vKau
------END PGP SIGNATURE-----
-
---Signature=_Thu__27_Feb_2014_12_53_57_+1100_0+8xSkHeTutKMwQ2--
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 65a0775..398efa1 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -140,6 +140,7 @@ config S390
+ 	select OLD_SIGACTION
+ 	select OLD_SIGSUSPEND3
+ 	select SYSCTL_EXCEPTION_TRACE
++	select TTY
+ 	select VIRT_CPU_ACCOUNTING
+ 	select VIRT_TO_BUS
+ 
+-- 
+1.9.0
