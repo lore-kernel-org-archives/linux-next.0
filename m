@@ -1,49 +1,67 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (akpm-current tree related)
-Date: Thu, 27 Feb 2014 17:29:10 -0800
-Message-ID: <20140228012907.GB9890@thin>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] cris: Make ETRAX_ARCH_V10 select TTY for use in
+ debugport
+Date: Fri, 28 Feb 2014 13:30:37 +1100
+Message-ID: <20140228133037.08fbdf972f54b1217629fdd4@canb.auug.org.au>
 References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
- <20140226100234.GA23064@thin>
- <20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
- <20140227022128.GB23659@thin>
- <20140227134057.6492e7e2bcbb592f71bef8d5@canb.auug.org.au>
+	<20140226100234.GA23064@thin>
+	<20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
+	<20140226231916.GB17589@jtriplet-mobl1>
+	<20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
+	<20140228012732.GA9890@thin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__28_Feb_2014_13_30_37_+1100_acJ+Yi8ET=R24LBm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58080 "EHLO
-	relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751213AbaB1B3T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Feb 2014 20:29:19 -0500
-Content-Disposition: inline
-In-Reply-To: <20140227134057.6492e7e2bcbb592f71bef8d5@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:39413 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750999AbaB1Cat (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Feb 2014 21:30:49 -0500
+In-Reply-To: <20140228012732.GA9890@thin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>, linux-cris-kernel@axis.com
 
-On Thu, Feb 27, 2014 at 01:40:57PM +1100, Stephen Rothwell wrote:
-> Hi Josh,
-> 
-> On Wed, 26 Feb 2014 18:21:29 -0800 Josh Triplett <josh@joshtriplett.org> wrote:
-> >
-> > On Thu, Feb 27, 2014 at 10:00:26AM +1100, Stephen Rothwell wrote:
-> > > Please check the build results overnight tonight (for next-20140227 at
-> > > http://kisskb.ellerman.id.au/linux-next) and submit any more fixes for
-> > > the allnoconfig build errors.
-> > 
-> > Checking that site, I don't see any other instances of failures caused
-> > by allnoconfig.  If I'm missing some, could you please point me to the
-> > page on that site I'm missing?
-> 
-> That is because your patch was reverted in yesterday's (next-20140226)
-> linux-next.  You will need to look tomorrow (next-20140227) sometime.
+--Signature=_Fri__28_Feb_2014_13_30_37_+1100_acJ+Yi8ET=R24LBm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It looks like the next-20140227 builds have shown up, and I only see one
-additional allnoconfig build failure exposed by my patch (TTY dependency
-on cris arch-v10).  I sent a patch for that one.
+On Thu, 27 Feb 2014 17:27:34 -0800 Josh Triplett <josh@joshtriplett.org> wr=
+ote:
+>
+> arch/cris/arch-v10/kernel/debugport.c, compiled in unconditionally with
+> ETRAX_ARCH_V10, requires TTY, so select TTY to avoid a build failure.
+>=20
+> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
 
-I *think* that should have it covered; let me know if you see any
-other failures.
+Added to linux-next today.
 
-- Josh Triplett
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__28_Feb_2014_13_30_37_+1100_acJ+Yi8ET=R24LBm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTD/TWAAoJEMDTa8Ir7ZwVyDgP/ArGnHthxve48iGofSQullUS
+ZuvV8RIz18JE+OAhNOVoLGnWRxDLEkdi2+Qzeg6NuZGkgPHCrhQEnKxa/EXSC9hl
+IFBeQJ0Cya6pLs+DWoBYbTEBynFFwDZZd62rFWxiWhrRhccrliAu8x1ykSvbsszP
++wY1YisiNNhqYvETyP+ijrgT3kAoLbqZYUfJOcAqlabF24GSdfH+7Lo309Rp6xex
+1jQrHJcCgZyPOs6Dv7Bprd11p2GRAfsDCCG9pCPaD3PXDKS3ITMw8+PLlyQLq1iu
+REYHnFSe8mCkh2aZv5h/TMPp8AEB72ivnD58YPk88khjOuEUXkfsrSdjto1qsJkz
+bMNfTCpbacDtOnUyBIwaY4cNzIwockaKUO0yOzNYxrG0jnIPFS7QVAn0O6OPvb5J
+w5wp3h625CMcOUlYpdZgQ7ZmCgMYCT78NdYFNJOO61Hln3u+No+Xs8VDBVXEb4JM
+Ei07ja5Fc1/dL7IFXtdo+2DODHObQ1xc1Q4mODQVb7WIlBRGrtpKM6I4ePtusDYt
+rLmbzasxm1nmjssv3MPbim/q2ZtpdAEy338cllbYAJbsmmEvtSqnONNrYvkNOmgm
+uZ2jCpSTurUT9tyqcn4e/9OUPwYy1/Vkdti82UxPf5H1RKZFYhU4MOEpfoRepSVh
+bRjLs4RMpE2MF0MNY35j
+=D+Yw
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__28_Feb_2014_13_30_37_+1100_acJ+Yi8ET=R24LBm--
