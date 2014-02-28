@@ -1,45 +1,49 @@
 From: Josh Triplett <josh@joshtriplett.org>
-Subject: [PATCH] cris: Make ETRAX_ARCH_V10 select TTY for use in debugport
-Date: Thu, 27 Feb 2014 17:27:34 -0800
-Message-ID: <20140228012732.GA9890@thin>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (akpm-current tree related)
+Date: Thu, 27 Feb 2014 17:29:10 -0800
+Message-ID: <20140228012907.GB9890@thin>
 References: <20140226191627.9adf3c8e1548e2016c16557c@canb.auug.org.au>
  <20140226100234.GA23064@thin>
  <20140227100026.1cc909f2722b16b6d11a7b91@canb.auug.org.au>
- <20140226231916.GB17589@jtriplet-mobl1>
- <20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
+ <20140227022128.GB23659@thin>
+ <20140227134057.6492e7e2bcbb592f71bef8d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:32926 "EHLO
-	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751504AbaB1B1o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Feb 2014 20:27:44 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58080 "EHLO
+	relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751213AbaB1B3T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Feb 2014 20:29:19 -0500
 Content-Disposition: inline
-In-Reply-To: <20140227104211.b2a4a5a1066fcf8ac2640ce3@canb.auug.org.au>
+In-Reply-To: <20140227134057.6492e7e2bcbb592f71bef8d5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>, linux-cris-kernel@axis.com
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-arch/cris/arch-v10/kernel/debugport.c, compiled in unconditionally with
-ETRAX_ARCH_V10, requires TTY, so select TTY to avoid a build failure.
+On Thu, Feb 27, 2014 at 01:40:57PM +1100, Stephen Rothwell wrote:
+> Hi Josh,
+> 
+> On Wed, 26 Feb 2014 18:21:29 -0800 Josh Triplett <josh@joshtriplett.org> wrote:
+> >
+> > On Thu, Feb 27, 2014 at 10:00:26AM +1100, Stephen Rothwell wrote:
+> > > Please check the build results overnight tonight (for next-20140227 at
+> > > http://kisskb.ellerman.id.au/linux-next) and submit any more fixes for
+> > > the allnoconfig build errors.
+> > 
+> > Checking that site, I don't see any other instances of failures caused
+> > by allnoconfig.  If I'm missing some, could you please point me to the
+> > page on that site I'm missing?
+> 
+> That is because your patch was reverted in yesterday's (next-20140226)
+> linux-next.  You will need to look tomorrow (next-20140227) sometime.
 
-Signed-off-by: Josh Triplett <josh@joshtriplett.org>
----
- arch/cris/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+It looks like the next-20140227 builds have shown up, and I only see one
+additional allnoconfig build failure exposed by my patch (TTY dependency
+on cris arch-v10).  I sent a patch for that one.
 
-diff --git a/arch/cris/Kconfig b/arch/cris/Kconfig
-index ed0fcdf..7cb90a5 100644
---- a/arch/cris/Kconfig
-+++ b/arch/cris/Kconfig
-@@ -138,6 +138,7 @@ config ETRAX_ARCH_V10
-        bool
-        default y if ETRAX100LX || ETRAX100LX_V2
-        default n if !(ETRAX100LX || ETRAX100LX_V2)
-+       select TTY
- 
- config ETRAX_ARCH_V32
-        bool
--- 
-1.9.0
+I *think* that should have it covered; let me know if you see any
+other failures.
+
+- Josh Triplett
