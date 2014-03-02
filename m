@@ -1,48 +1,44 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: kissb mkimage doesn't support extensa
-Date: Sun, 2 Mar 2014 11:25:07 +0100
-Message-ID: <CAMuHMdU2L+m4-dKNAacqrLw66obsFYVKu8x1n6=up7Mkg1HL_Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:37399 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751765AbaCBKZH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 2 Mar 2014 05:25:07 -0500
-Received: by mail-pd0-f170.google.com with SMTP id v10so504950pde.1
-        for <linux-next@vger.kernel.org>; Sun, 02 Mar 2014 02:25:07 -0800 (PST)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Ellerman <michael@ellerman.id.au>
-Cc: Linux-Next <linux-next@vger.kernel.org>
+Subject: [PATCH -next] cris: cpuinfo_op should depend on CONFIG_PROC_FS
+Date: Sun,  2 Mar 2014 11:34:39 +0100
+Message-ID: <1393756479-12530-1-git-send-email-geert@linux-m68k.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: linux-cris-kernel@axis.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/10665903/
+Now allnoconfig started disabling CONFIG_PROC_FS:
 
-Invalid CPU Type - valid names are: alpha, arm, x86, ia64, m68k,
-microblaze, mips, mips64, nios, nios2, ppc, s390, sh, sparc, sparc64,
-blackfin, avr32
-Usage: /usr/local/bin/mkimage -l image
-          -l ==> list image header information
-       /usr/local/bin/mkimage [-x] -A arch -O os -T type -C comp -a
-addr -e ep -n name -d data_file[:data_file...] image
-          -A ==> set architecture to 'arch'
-          -O ==> set operating system to 'os'
-          -T ==> set image type to 'type'
-          -C ==> set compression type 'comp'
-          -a ==> set load address to 'addr' (hex)
-          -e ==> set entry point to 'ep' (hex)
-          -n ==> set image name to 'name'
-          -d ==> use image data from 'datafile'
-          -x ==> set XIP (execute in place)
-make[3]: *** [arch/xtensa/boot/boot-uboot/../uImage] Error 1
+    arch/cris/kernel/built-in.o:(.rodata+0xc): undefined reference to `show_cpuinfo'
+    make: *** [vmlinux] Error 1
 
-Gr{oetje,eeting}s,
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/10665698/
 
-                        Geert
+ arch/cris/kernel/setup.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/cris/kernel/setup.c b/arch/cris/kernel/setup.c
+index 32c3d248868e..905b70ea9939 100644
+--- a/arch/cris/kernel/setup.c
++++ b/arch/cris/kernel/setup.c
+@@ -165,6 +165,7 @@ void __init setup_arch(char **cmdline_p)
+ 	strcpy(init_utsname()->machine, cris_machine_name);
+ }
+ 
++#ifdef CONFIG_PROC_FS
+ static void *c_start(struct seq_file *m, loff_t *pos)
+ {
+ 	return *pos < nr_cpu_ids ? (void *)(int)(*pos + 1) : NULL;
+@@ -188,6 +189,7 @@ const struct seq_operations cpuinfo_op = {
+ 	.stop  = c_stop,
+ 	.show  = show_cpuinfo,
+ };
++#endif /* CONFIG_PROC_FS */
+ 
+ static int __init topology_init(void)
+ {
+-- 
+1.7.9.5
