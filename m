@@ -1,88 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (char-misc
- tree related)
-Date: Mon, 3 Mar 2014 19:45:36 +1100
-Message-ID: <20140303194536.a9ce403f8e86df43160bfc3e@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ arm-soc tree
+Date: Mon, 3 Mar 2014 09:54:41 +0100
+Message-ID: <20140303085441.GW6865@pengutronix.de>
+References: <20140303190152.8b87330c0d83679b10c5ca5a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:46772 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753541AbaCCIpp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 Mar 2014 03:45:45 -0500
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:36827 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753879AbaCCIy6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Mar 2014 03:54:58 -0500
+Content-Disposition: inline
+In-Reply-To: <20140303190152.8b87330c0d83679b10c5ca5a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Thumshirn <johannes.thumshirn@men.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 
---Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 03, 2014 at 07:01:52PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+>=20
+> Today's linux-next merge of the akpm-current tree got a conflict in
+> arch/arm/mach-vexpress/Kconfig between commit 9352b05b6e4e ("ARM: sel=
+ect
+> MIGHT_HAVE_CACHE_L2X0 for V6 and V7 multi-platform") from the arm-soc
+> tree and commit b096b0b50c4b ("Kconfig: rename HAS_IOPORT to
+> HAS_IOPORT_MAP") from the akpm-current tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no acti=
+on
+> is required).
+your resolution and the two earlier ones from today[1] all look right
 
-Hi all,
+Best regards
+Uwe
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+[1] The conflicts with
 
-drivers/iio/adc/men_z188_adc.c: In function 'z188_iio_read_raw':
-drivers/iio/adc/men_z188_adc.c:61:3: error: implicit declaration of functio=
-n 'readw' [-Werror=3Dimplicit-function-declaration]
-   tmp =3D readw(adc->base + chan->channel * 4);
-   ^
-drivers/iio/adc/men_z188_adc.c: In function 'men_z188_config_channels':
-drivers/iio/adc/men_z188_adc.c:91:2: error: implicit declaration of functio=
-n 'readl' [-Werror=3Dimplicit-function-declaration]
-  ctl =3D readl(addr + Z188_CTRL_REG);
-  ^
-drivers/iio/adc/men_z188_adc.c:93:2: error: implicit declaration of functio=
-n 'writel' [-Werror=3Dimplicit-function-declaration]
-  writel(ctl, addr + Z188_CTRL_REG);
-  ^
-drivers/iio/adc/men_z188_adc.c: In function 'men_z188_probe':
-drivers/iio/adc/men_z188_adc.c:126:2: error: implicit declaration of functi=
-on 'ioremap' [-Werror=3Dimplicit-function-declaration]
-  adc->base =3D ioremap(mem->start, resource_size(mem));
-  ^
-drivers/iio/adc/men_z188_adc.c:126:12: warning: assignment makes pointer fr=
-om integer without a cast [enabled by default]
-  adc->base =3D ioremap(mem->start, resource_size(mem));
-            ^
-drivers/iio/adc/men_z188_adc.c: In function 'men_z188_remove':
-drivers/iio/adc/men_z188_adc.c:148:2: error: implicit declaration of functi=
-on 'iounmap' [-Werror=3Dimplicit-function-declaration]
-  iounmap(adc->base);
-  ^
+	ddb902cc3459 ("ARM: centralize common multi-platform kconfig options")
+	9352b05b6e4e ("ARM: select MIGHT_HAVE_CACHE_L2X0 for V6 and V7 multi-p=
+latform")
 
-Caused by commit 74aeac4da66f ("iio: adc: Add MEN 16z188 ADC driver")
-from the char-misc tree.  Need to include linux/io.h, I think.
-
-I have reverted that commit for today.
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTFEE2AAoJEMDTa8Ir7ZwVCfsP/3w9Kv0Th2GcheyKaAi6mZwo
-RuiqVnrgVKjOW+23j1jOB81aTbUaMXpDCsQ+F8FKyuiufuLLWNhXElebKFKTobwB
-8dDSL3GTzu8vIqbPEhD3Mwv55dvMMjwanUD4bWKqyRM+mmeh1Z5InHbOMDvDMr15
-WH0IaAMRcavnR3PDALvyA3M3xsEn1w5G90mdgaF8AC8zHw5cC65h3ewwyp6cUJxq
-mPU4Ak3wng75e0SKs6tZTTLgojPRqT36NDpnLjrEg9pCTo5A2Q7clA5a7aaYOYdS
-t7o2FF3QG96XmFtCdSjY+UAI+e/U0BmRMi5cvs33oNPQX53SkwUQ5DzHoKEccc0c
-QJU6KolBIxLXLtSmorxj82cx52e41jVJswUf+k9S5j4eWOCb/6ctM1EXJ34zfmNL
-l7Qkl2gn8YDZ+IBcxClRze0/h7armwY/wP/dXcajF+Jt4lX0Fl/VQG/3iVnpVX/j
-hv6SvBOF18nzLW27F7BhVQxtzDAJIECGC9n1m7NZ6ZNuSY6dLuXsst0MxyezjHjZ
-0F7mQRJEX85PMgV3gRC+9tzmMlv4Sm8+AlQzCXFqrBQBMO8+Q8ls1R2HjzsnSvxX
-4uetF7pwVtFNjC6rI4guluLc4ZJrVqvFyLKgRai9i7adu8+WXF8uk4uoucYgd9+s
-96ZTyuKs5e+ovP5rN3pl
-=igmB
------END PGP SIGNATURE-----
-
---Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX--
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
