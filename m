@@ -1,99 +1,100 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- renesas tree
-Date: Mon, 3 Mar 2014 13:27:01 +0900
-Message-ID: <20140303042659.GA14534@verge.net.au>
-References: <20140226182700.4001291b522f958a8da83f58@canb.auug.org.au>
- <20140226084627.GC6865@pengutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mfd-lj tree
+Date: Mon, 3 Mar 2014 16:18:03 +1100
+Message-ID: <20140303161803.ecbd9b124b5f2cdf79b8cf51@canb.auug.org.au>
+References: <20140214134217.aa7e1994b4cab7ee563c8307@canb.auug.org.au>
+	<20140217141446.454ab86eb19621fd397be6ed@canb.auug.org.au>
+	<20140220150508.79bfff95fb5d93c651801ffd@canb.auug.org.au>
+	<20140225143246.914c9732966764234bc51de2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__3_Mar_2014_16_18_03_+1100_GdqpDeYVT4xhCHqg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49940 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753452AbaCCE1F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 2 Mar 2014 23:27:05 -0500
-Content-Disposition: inline
-In-Reply-To: <20140226084627.GC6865@pengutronix.de>
+Received: from ozlabs.org ([203.10.76.45]:59107 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750809AbaCCFSL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 Mar 2014 00:18:11 -0500
+In-Reply-To: <20140225143246.914c9732966764234bc51de2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, Magnus Damm <damm@opensource.se>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 26, 2014 at 09:46:27AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Stephen,
->=20
-> On Wed, Feb 26, 2014 at 06:27:00PM +1100, Stephen Rothwell wrote:
-> > Today's linux-next merge of the akpm-current tree got a conflict in
-> > arch/arm/mach-shmobile/Kconfig between commits 2b2e7c65166a ("ARM:
-> > shmobile: Use 64-bit dma_addr_t on r8a7790/r8a7791") and 4a51856b42=
-67
-> > ("ARM: shmobile: Use 64-bit dma_addr_t on r8a7790/r8a7791") from th=
-e
-> > renesas tree and commit b096b0b50c4b ("Kconfig: rename HAS_IOPORT t=
-o
-> > HAS_IOPORT_MAP") from the akpm-current tree.
+--Signature=_Mon__3_Mar_2014_16_18_03_+1100_GdqpDeYVT4xhCHqg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Lee,
+
+On Tue, 25 Feb 2014 14:32:46 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 20 Feb 2014 15:05:08 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > On Mon, 17 Feb 2014 14:14:46 +1100 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> > >
+> > > On Fri, 14 Feb 2014 13:42:17 +1100 Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+> > > >
+> > > > After merging the mfd-lj tree, today's linux-next build (x86_64
+> > > > allmodconfig) failed like this:
+> > > >=20
+> > > > In file included from drivers/mfd/max665x.c:19:0:
+> > > > include/linux/mfd/max665x-private.h:31:1: error: expected ';', iden=
+tifier or '(' before 'struct'
+> > > >  struct max665x_dev {
+> > > >  ^
+> > > >=20
+> > > > Caused by commit e77bb5297293 ("mfd: max665x: Differentiate between
+> > > > MAX665X devices").  Clearly never built by anyone :-(
+> > > >=20
+> > > > I have used the mfd-lj tree from next-20140210 again for today (sin=
+ce the
+> > > > other version had other problems).
+> > >=20
+> > > Still seeing this error.
 > >=20
-> > I fixed it up (see below) and can carry the fix as necessary (no ac=
-tion
-> > is required).
-> >=20
-> > (I am not sure why that commit appears twice in the renesas tree)
-> The two commits (4a51856b4267 and 2b2e7c65166a) both base on top of
-> v3.14-rc1, but it seems it's just the CommitData that is different
-> beween the twos. The relevant history can be seen in
+> > Still ...
 >=20
-> 	git log --boundary --graph --oneline 5ffd11e972c4~2..5ffd11e972c4 --=
- arch/arm/mach-shmobile/Kconfig
->=20
-> This shows that heads/defconfig-for-v3.15, heads/soc-for-v3.15 and
-> heads/boards-for-v3.15 where pulled into Simon's devel branch twice.
-> While heads/defconfig-for-v3.15 is identical in both merges,
-> heads/soc-for-v3.15 was rewritten and heads/boards-for-v3.15 got an
-> additional patch.
->=20
-> Simon: if you want to fix that in your branch, the most easiest optio=
-n
-> is probably:
->=20
-> 	git filter-branch -f --parent-filter 'sed s/4a51856b42672cfcb7d6fbab=
-22dcf2caba2be5ab/2b2e7c65166aa4a7d6ca0352b249b38b45680d45/' v3.14-rc1..=
-branch1 branch2 branch3
->=20
-> for all branches that contain 4a51856b4267.  (Or alternatively
-> substitute in the opposite direction if you want to drop 2b2e7c65166a
-> instead.)
+> Ping ...
 
-Thanks.
+I am still seeing this error which means that I am still using the
+version of your tree from next-20140210 i.e. Feb 10.  It is a bit
+disappointing that his has not been fixed in such a long time even though
+there have been other updates to your tree which means that those other
+changes have received no exposure in linux-next.  It is a trivial error,
+but it does indicate that noone ever build tested that particular commit.
 
-I believe that I have removed the duplicate commits.
+(this is now commit 2fc7e7d25bee in your tree since it was rewritten but
+not fixed on Feb 14.)
 
->=20
-> > --=20
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
-> >=20
-> > diff --cc arch/arm/mach-shmobile/Kconfig
-> > index 57069c12f9a4,dac2941fa383..000000000000
-> > --- a/arch/arm/mach-shmobile/Kconfig
-> > +++ b/arch/arm/mach-shmobile/Kconfig
-> > @@@ -13,8 -13,7 +13,8 @@@ config ARCH_SHMOBILE_MULT
-> >   	select ARM_GIC
-> >   	select MIGHT_HAVE_CACHE_L2X0
-> >   	select MIGHT_HAVE_PCI
-> >  +	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
-> > - 	select NO_IOPORT
-> > + 	select NO_IOPORT_MAP
-> >   	select PINCTRL
-> >   	select ARCH_REQUIRE_GPIOLIB
-> >   	select CLKDEV_LOOKUP
-> Obviously looks right. Thanks.
->=20
-> Uwe
->=20
-> --=20
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig   =
-         |
-> Industrial Linux Solutions                 | http://www.pengutronix.d=
-e/  |
->=20
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__3_Mar_2014_16_18_03_+1100_GdqpDeYVT4xhCHqg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTFBCPAAoJEMDTa8Ir7ZwVj6IP/iq1rx6Cs4vVI5ZJHiU5TgZ2
+lENe5DoA684Wwhx2UzxdgL4Y0QCuXBePG7jIk1X3urN3p0rago5SZQT5m41FKZ4y
+i/XSQxVpaNgbei6b4fdscbVTDt47s57/k8IiGc/bGHKsQGCr/6z/JG8Qp1nBRta3
+PzOuPlWxH7t1qkSgZqRnm9n90sPqCcdhEVhWo1O32ptj59EL4OF9941zyd+ZxwLQ
+NH+OJBDYJ8nULE0sR9gKMCxLYvjjMqQ2rU4dZTiL5NeOWE9Twu0uVTcRqbyigNDs
+t06YB/79OR4DZAau+EXkoyPHC/gJDYfgC3nXdfgT3ArLcYKYNztqec+6ol9yvznP
+24Ac6blC30DlrT++WRE+ct8ePVB7K5lWnXQLe0wpC9E0A+3UwkfYJINxmsX7DsMJ
+mGxuXva3aABUvH6L7BSa2UydZiqC+nvjnUhUdBm42hY7OspfnKyvX3aSvOWhcbrR
+kjqkzVxz8HHtEC0uYQyqxJLhsvGrFePp1DQ4T3bpRndBzQvCrGkKuEh0UTHATp4p
+UHEoeF7UybhMfOmmZFRitMwIRNchO7ol8IMCNmFfDukYPPPtmnatihs+2RBtQxoF
+1dLW18jbXRURN30E69Zl+XjOXRUW8pOPCRjYKTvtlRXX2vngPwRtTFm+JmW7OM3H
+64wLCi9mnnD6G4nR1qPW
+=YcD1
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__3_Mar_2014_16_18_03_+1100_GdqpDeYVT4xhCHqg--
