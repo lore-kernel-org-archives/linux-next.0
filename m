@@ -1,67 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the final tree (char-misc
  tree related)
-Date: Mon, 3 Mar 2014 19:39:55 +1100
-Message-ID: <20140303193955.e3d4240943d940a2b8d19fee@canb.auug.org.au>
+Date: Mon, 3 Mar 2014 19:45:36 +1100
+Message-ID: <20140303194536.a9ce403f8e86df43160bfc3e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__3_Mar_2014_19_39_55_+1100_3zBTpFcpJW3Etnkd"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:46772 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753541AbaCCIpp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 Mar 2014 03:45:45 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Thumshirn <johannes.thumshirn@men.de>
-List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__3_Mar_2014_19_39_55_+1100_3zBTpFcpJW3Etnkd
+--Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (arm defconfig)
-failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-drivers/mcb/mcb-pci.c: At top level:
-drivers/mcb/mcb-pci.c:110:1: warning: data definition has no type or storag=
-e class [enabled by default]
-drivers/mcb/mcb-pci.c:110:1: error: type defaults to 'int' in declaration o=
-f 'module_pci_driver' [-Werror=3Dimplicit-int]
-drivers/mcb/mcb-pci.c:110:1: warning: parameter names (without types) in fu=
-nction declaration [enabled by default]
-drivers/mcb/mcb-pci.c:103:26: warning: 'mcb_pci_driver' defined but not use=
-d [-Wunused-variable]
+drivers/iio/adc/men_z188_adc.c: In function 'z188_iio_read_raw':
+drivers/iio/adc/men_z188_adc.c:61:3: error: implicit declaration of functio=
+n 'readw' [-Werror=3Dimplicit-function-declaration]
+   tmp =3D readw(adc->base + chan->channel * 4);
+   ^
+drivers/iio/adc/men_z188_adc.c: In function 'men_z188_config_channels':
+drivers/iio/adc/men_z188_adc.c:91:2: error: implicit declaration of functio=
+n 'readl' [-Werror=3Dimplicit-function-declaration]
+  ctl =3D readl(addr + Z188_CTRL_REG);
+  ^
+drivers/iio/adc/men_z188_adc.c:93:2: error: implicit declaration of functio=
+n 'writel' [-Werror=3Dimplicit-function-declaration]
+  writel(ctl, addr + Z188_CTRL_REG);
+  ^
+drivers/iio/adc/men_z188_adc.c: In function 'men_z188_probe':
+drivers/iio/adc/men_z188_adc.c:126:2: error: implicit declaration of functi=
+on 'ioremap' [-Werror=3Dimplicit-function-declaration]
+  adc->base =3D ioremap(mem->start, resource_size(mem));
+  ^
+drivers/iio/adc/men_z188_adc.c:126:12: warning: assignment makes pointer fr=
+om integer without a cast [enabled by default]
+  adc->base =3D ioremap(mem->start, resource_size(mem));
+            ^
+drivers/iio/adc/men_z188_adc.c: In function 'men_z188_remove':
+drivers/iio/adc/men_z188_adc.c:148:2: error: implicit declaration of functi=
+on 'iounmap' [-Werror=3Dimplicit-function-declaration]
+  iounmap(adc->base);
+  ^
 
-Caused by commit b71bb8639891 ("mcb: Add PCI carrier for MEN Chameleon
-Bus") from the char-misc tree.  module_pci_driver is defined in
-linux/pci.h only if CONFIG_PCI is defined (which is not true for this
-build).
+Caused by commit 74aeac4da66f ("iio: adc: Add MEN 16z188 ADC driver")
+from the char-misc tree.  Need to include linux/io.h, I think.
 
 I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__3_Mar_2014_19_39_55_+1100_3zBTpFcpJW3Etnkd
+--Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTFD/gAAoJEMDTa8Ir7ZwVQWoP/RrCq8JJ9/Tz9F+iSS6hI+E4
-AYfRdmbncwDoWtdxjnpKtG8UaWqZRsHFWyH2hGpTWKPEU5ypNqioZhF4EKKYReO3
-qlykYQPhSaD46fbCkwvSPgNetLNp9fb3LV25qIyI1GCr6FTI8WeSczLHhzOr3JLL
-Q47rDI6KAJfTfT3Fs16O++uED4P6bdmL8fuLpxSGMVQOXFI52rxUJcgsuk4DM/lT
-4hGB8pK3HdIZiLFDTmMRwfU14IVny37U3ayEXa+sjKI7mmeOxa4UKyOpQieSX+LX
-D1RKlmcgHtezSumvSVTxr0Yb0N2rLLfV8/UpmY6wDKARv5V06OCtvWPkvq1Ji5Qe
-4CSTaxsFZWnqI+fie8igSEQKIeEd/jEi+/RPeFMJO4ydxW5/taISmnC+qgKZwQP6
-cxqUoNFZFNd208udkNzZB76AHEsWl0hV03b5bogFP9EiRVbp12ezcNZ2hB7zARjN
-btIeZ+tcW/Z9DdbSWXcuEcRdUCklwzDj7gG0GD9akDPyGWKHMofZ7YdYUC9RbbEC
-uxf7kddvm1VKwEpq8Gc2rxe/94dw5UkFyxRLoDLyr/9fotSRVCV10x2WLoIbsw4N
-9fr5foa3YR8hPtlzH+Zz4+txHzkPqvV6aPWcUy6k+hYmFG3xHuyTeMBgedlYVGOY
-ILzqDwevDVWhU+BWbW/r
-=WV/4
+iQIcBAEBCAAGBQJTFEE2AAoJEMDTa8Ir7ZwVCfsP/3w9Kv0Th2GcheyKaAi6mZwo
+RuiqVnrgVKjOW+23j1jOB81aTbUaMXpDCsQ+F8FKyuiufuLLWNhXElebKFKTobwB
+8dDSL3GTzu8vIqbPEhD3Mwv55dvMMjwanUD4bWKqyRM+mmeh1Z5InHbOMDvDMr15
+WH0IaAMRcavnR3PDALvyA3M3xsEn1w5G90mdgaF8AC8zHw5cC65h3ewwyp6cUJxq
+mPU4Ak3wng75e0SKs6tZTTLgojPRqT36NDpnLjrEg9pCTo5A2Q7clA5a7aaYOYdS
+t7o2FF3QG96XmFtCdSjY+UAI+e/U0BmRMi5cvs33oNPQX53SkwUQ5DzHoKEccc0c
+QJU6KolBIxLXLtSmorxj82cx52e41jVJswUf+k9S5j4eWOCb/6ctM1EXJ34zfmNL
+l7Qkl2gn8YDZ+IBcxClRze0/h7armwY/wP/dXcajF+Jt4lX0Fl/VQG/3iVnpVX/j
+hv6SvBOF18nzLW27F7BhVQxtzDAJIECGC9n1m7NZ6ZNuSY6dLuXsst0MxyezjHjZ
+0F7mQRJEX85PMgV3gRC+9tzmMlv4Sm8+AlQzCXFqrBQBMO8+Q8ls1R2HjzsnSvxX
+4uetF7pwVtFNjC6rI4guluLc4ZJrVqvFyLKgRai9i7adu8+WXF8uk4uoucYgd9+s
+96ZTyuKs5e+ovP5rN3pl
+=igmB
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__3_Mar_2014_19_39_55_+1100_3zBTpFcpJW3Etnkd--
+--Signature=_Mon__3_Mar_2014_19_45_36_+1100_kSJdA+mzafEX8hMX--
