@@ -1,83 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the mfd-lj tree
-Date: Wed, 5 Mar 2014 10:36:36 +1100
-Message-ID: <20140305103636.3185c4b4f3e7a3b6ecdbed2f@canb.auug.org.au>
-References: <20140211132552.68b0802fd8742c6d72dfa738@canb.auug.org.au>
-	<20140304140318.06e7a535ed06e9432e5df7d9@canb.auug.org.au>
-	<20140304080655.GD10579@lee--X1>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the wireless-next tree
+Date: Tue, 4 Mar 2014 15:49:39 -0800
+Message-ID: <20140304234939.GB25144@kroah.com>
+References: <20140225133537.55ce6935e55faa6aeae53d89@canb.auug.org.au>
+ <20140225190715.GA4384@tuxdriver.com>
+ <20140226074738.0b530aebe4cde54216698d91@canb.auug.org.au>
+ <20140305101627.1d9e3a0941dbadbc6f0a7733@canb.auug.org.au>
+ <20140305102109.948255688bc31a030fdd49d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__5_Mar_2014_10_36_36_+1100_Q8uGbWhRzuasC0dC"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:48909 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751805AbaCDXgn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Mar 2014 18:36:43 -0500
-In-Reply-To: <20140304080655.GD10579@lee--X1>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>
-
---Signature=_Wed__5_Mar_2014_10_36_36_+1100_Q8uGbWhRzuasC0dC
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20140305102109.948255688bc31a030fdd49d7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Lee,
+On Wed, Mar 05, 2014 at 10:21:09AM +1100, Stephen Rothwell wrote:
+> Hi John,
+> 
+> On Wed, 5 Mar 2014 10:16:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > If I revert commit 161d78555435 "Revert "Staging: rtl8812ae: remove
+> > modules field of rate_control_ops"", it fails differently:
+> > 
+> > In file included from drivers/staging/wlan-ng/p80211netdev.c:91:0:
+> > drivers/staging/wlan-ng/cfg80211.c: In function 'prism2_scan':
+> > drivers/staging/wlan-ng/cfg80211.c:419:10: error: implicit declaration of function 'ieee80211_dsss_chan_to_freq' [-Werror=implicit-function-declaration]
+> >           ieee80211_dsss_chan_to_freq(msg2.dschannel.data)),
+> >           ^
+> > drivers/staging/rtl8821ae/rtl8821ae/trx.c: In function 'rtl8821ae_rx_query_desc':
+> > drivers/staging/rtl8821ae/rtl8821ae/trx.c:619:3: warning: passing argument 1 of 'ieee80211_is_robust_mgmt_frame' from incompatible pointer type [enabled by default]
+> >    if ((ieee80211_is_robust_mgmt_frame(hdr)) &&
+> >    ^
+> > In file included from include/net/mac80211.h:20:0,
+> >                  from drivers/staging/rtl8821ae/rtl8821ae/../wifi.h:38,
+> >                  from drivers/staging/rtl8821ae/rtl8821ae/trx.c:30:
+> > include/linux/ieee80211.h:2286:20: note: expected 'struct sk_buff *' but argument is of type 'struct ieee80211_hdr *'
+> >  static inline bool ieee80211_is_robust_mgmt_frame(struct sk_buff *skb)
+> >                     ^
+> > drivers/staging/rtl8821ae/rtl8821ae/dm.c: In function 'rtl8821ae_dm_clear_txpower_tracking_state':
+> > drivers/staging/rtl8821ae/rtl8821ae/dm.c:487:31: warning: iteration 2u invokes undefined behavior [-Waggressive-loop-optimizations]
+> >    rtldm->bb_swing_idx_ofdm[p] = rtldm->default_ofdm_index;
+> >                                ^
+> > drivers/staging/rtl8821ae/rtl8821ae/dm.c:485:2: note: containing loop
+> >   for (p = RF90_PATH_A; p < MAX_RF_PATH; ++p) {
+> >   ^
+> > 
+> > So please revert 161d78555435, and then fix this other error.
+> 
+> That fix could be a simple as just disabling the affected staging tree
+> driver and letting Greg know.  Or you could actually fix it.
 
-On Tue, 4 Mar 2014 16:06:55 +0800 Lee Jones <lee.jones@linaro.org> wrote:
->
-> > > After merging the mfd-lj tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >=20
-> > > drivers/mfd/tps65218: struct i2c_device_id is 32 bytes.  The last of =
-1 is:
-> > > 0x74 0x70 0x73 0x36 0x35 0x32 0x31 0x38 0x00 0x00 0x00 0x00 0x00 0x00=
- 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xf0 0x00 0x00 0x00 0x00=
- 0x00 0x00 0x00=20
-> > > FATAL: drivers/mfd/tps65218: struct i2c_device_id is not terminated w=
-ith a NULL entry!
-> > >=20
-> > > Caused by commit cc493e30e3a1 ("mfd: tps65218: Add driver for the
-> > > TPS65218 PMIC").
->=20
-> -rw-r--r-- 1 lee lee   6320 Mar  4 15:20 tps65218.o
->=20
-> Hmmm... I'm having trouble reproducing the error. My toolchain
-> doesn't complain about the lack of a terminating entry. I have fixed
-> the problem and re-pushed the branch though. Would you be kind enough
-> to re-test it please?
+John and Larry and I have been talking about how to handle some
+cross-tree issues, and I should be merging with his tree soon to handle
+them, hopefully this will get resolved at that point in time as well.
 
-I assume that the error comes from some post processing that happens late
-in the allmodconfig build process.
+thanks,
 
-You current tree build fine, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__5_Mar_2014_10_36_36_+1100_Q8uGbWhRzuasC0dC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTFmOJAAoJEMDTa8Ir7ZwV4KoP+QFIAjbfG2BF1nY+eVOYiSak
-LNoKiB+KABQNDIr81JEux9/NG/eS5c6H7h2wYGSSb9tfquDyv49OLqC2VhEag9Rb
-cXu+cqUDosk5fC6t4zLxDHXtoTgnj2tdrR/L9bhr64fpplLxBrRhXgQDMaj/qJm9
-CjEYNA1LkThjUmPouBQSDGsxz3y8X4wK+giaB2t50w3H0lqA78ZTOM1/L9lLZPGw
-y/hh1BVoSADlqa9oCUBQ41yw54jpaupUMwAA7UocaMLH+VKE9vW0kTkMLxd3VX+X
-l8nGJnE6SiQipS3VUdAPNB8EImmhLfxVN4vwgR9iJtm4E1opczY0cS2o4SQ8BgDl
-MWVL2+ym+Dx996zW26fIBCqY25Uee6rMjHpio6tCHvb8GQ03ZU0I+F/rViss7kZJ
-alpGwGk8Gu+D76+//FJGQRAkwqnRrRa4xKKoD8V4Y3M4eUNk5xIpDDYm2K8aHno3
-Yf1K9hwEQCW0tyj/yW6KZXNJHw3P2tN8RG1gRgheCrAgq3wEpYPszevLvb98DEOs
-ZdfeD9l8+KN7Ll1ZIgoOwQnrPs4Revm+d5JCVYWA0glfY6MJldQ0sM5Pphzu0yBw
-TqZaWobJs+KFzG1I8rUJuvhhkZg9lnkDMVofJf+SJOeIAy1MmKpODev0egphPVUi
-r6x4z6LCvcVj+/FEf1pH
-=HzLA
------END PGP SIGNATURE-----
-
---Signature=_Wed__5_Mar_2014_10_36_36_+1100_Q8uGbWhRzuasC0dC--
+greg k-h
