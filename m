@@ -1,89 +1,56 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: build failure after merge of the omap_dss2 tree
-Date: Tue, 4 Mar 2014 08:58:31 +0200
-Message-ID: <53157997.8000408@ti.com>
-References: <20140304143543.4ab2321f14a61d84bb63b692@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mfd-lj tree
+Date: Tue, 4 Mar 2014 15:05:12 +0800
+Message-ID: <20140304070512.GC10579@lee--X1>
+References: <20140211132552.68b0802fd8742c6d72dfa738@canb.auug.org.au>
+ <20140304140318.06e7a535ed06e9432e5df7d9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="7hrLlREP00dkQSMVoC6A4FWrt1r2UxaEn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140304143543.4ab2321f14a61d84bb63b692@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:52913 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752025AbaCDHFU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Mar 2014 02:05:20 -0500
+Received: by mail-pd0-f171.google.com with SMTP id r10so4764670pdi.2
+        for <linux-next@vger.kernel.org>; Mon, 03 Mar 2014 23:05:19 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20140304140318.06e7a535ed06e9432e5df7d9@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, Bill Pemberton <wfp5p@virginia.edu>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>
 
---7hrLlREP00dkQSMVoC6A4FWrt1r2UxaEn
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Stephen,
 
-On 04/03/14 05:35, Stephen Rothwell wrote:
-> Hi Tomi,
+> > After merging the mfd-lj tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > drivers/mfd/tps65218: struct i2c_device_id is 32 bytes.  The last o=
+f 1 is:
+> > 0x74 0x70 0x73 0x36 0x35 0x32 0x31 0x38 0x00 0x00 0x00 0x00 0x00 0x=
+00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xf0 0x00 0x00 0x0=
+0 0x00 0x00 0x00 0x00=20
+> > FATAL: drivers/mfd/tps65218: struct i2c_device_id is not terminated=
+ with a NULL entry!
+> >=20
+> > Caused by commit cc493e30e3a1 ("mfd: tps65218: Add driver for the
+> > TPS65218 PMIC").
 >=20
-> After merging the omap_dss2 tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Now that the otherproblem is fixed, I am getting this one again :-(
+
+That's annoying. I thought I'd built all of the new drivers.
+
+> > I have used the mfd-lj tree from next-20140210 for today.
 >=20
-> In file included from drivers/staging/xgifb/XGIfb.h:3:0,
->                  from drivers/staging/xgifb/vb_init.c:4:
-> drivers/staging/xgifb/vgatypes.h:5:38: fatal error: ../../video/sis/vga=
-types.h: No such file or directory
->  #include "../../video/sis/vgatypes.h"
->                                       ^
-> In file included from drivers/staging/xgifb/XGIfb.h:3:0,
->                  from drivers/staging/xgifb/vb_setmode.c:2:
-> drivers/staging/xgifb/vgatypes.h:5:38: fatal error: ../../video/sis/vga=
-types.h: No such file or directory
->  #include "../../video/sis/vgatypes.h"
->                                       ^
-> In file included from drivers/staging/xgifb/vb_util.c:1:0:
-> drivers/staging/xgifb/vgatypes.h:5:38: fatal error: ../../video/sis/vga=
-types.h: No such file or directory
->  #include "../../video/sis/vgatypes.h"
->                                       ^
-> In file included from drivers/staging/xgifb/XGIfb.h:3:0,
->                  from drivers/staging/xgifb/XGI_main.h:4,
->                  from drivers/staging/xgifb/XGI_main_26.c:16:
-> drivers/staging/xgifb/vgatypes.h:5:38: fatal error: ../../video/sis/vga=
-types.h: No such file or directory
->  #include "../../video/sis/vgatypes.h"
->                                       ^
->=20
-> Caused by commit 08667731d1d4 ("video: move fbdev to
-> drivers/video/fbdev").
->=20
-> I have applied this merge fix patch (you should add it to your tree):
+> Again.
 
-Thanks. I forgot we may have fbdev drivers in staging... This is now
-fixed in my for-next branch (along with a couple of others, found by the
-kbuild bot).
+Sorry, again.
 
- Tomi
+/me investigates.
 
-
-
---7hrLlREP00dkQSMVoC6A4FWrt1r2UxaEn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJTFXmXAAoJEPo9qoy8lh71TQgQAKrasPWYSsBGqp/wxmja4YTC
-109IWtOliTL+LHIxJ9kOJXC7EfOhvtdAQb3Q7OmYpfRcdXWKaciXzeuFtNoS+qrf
-mT9uQkDxQ6k9UIsrYNwm8OcLi+W1ZSsB0TPkxRBtr03657o0m9QLF9KqOg/dOYUB
-u1S2pR4hPmLto/Yp3l5DXbtsDe3wrECY3e5lvrlnQjZEQGvyTNq4oT1J/DdzscxC
-5S5YX8vAexsX3JjE9ynWBLt5ks9FyI9wR9r1k67PpxcAveb/R5RZnPFwU1sYwx/J
-dzTO4gwL7qngqnvpw/kzDHfIeGM87YuSERjfdTaE75uW+q451tvJ5m5T6bVXZyOz
-i52x8pOxv88hSXzvc47hnfQK61RwqyLedHgsezWDvoFizSyCdEzeVtCPL6k/5jgN
-qFW0wG8Ien5xpEq/IXCopQysjBhX7/NejFAoWizvhUHuLW8pfzuHWra8ezOz1xeG
-9T2gWEJXl8t75Kl6f5ayKlCYD1roxMxWLwAgc9cJUZM4BuTKQ38aulDPsePZ2wVU
-OgzAjTVXaSrnLocCyWBv/Jnvx41iMlnRgn3cTXRopLqjYMGS7m7Xp0Qrwz7MwJNN
-bkA7Q2pBa2qDXkPQBL9imz2C4lUx62bYtrNK3XHHpvLwQFamhC5Ca5ueMGCswV5M
-H4hk5VTDClc41tv6lXUv
-=kSJy
------END PGP SIGNATURE-----
-
---7hrLlREP00dkQSMVoC6A4FWrt1r2UxaEn--
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
