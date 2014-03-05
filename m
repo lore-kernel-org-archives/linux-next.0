@@ -1,62 +1,64 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the wireless-next tree
-Date: Tue, 4 Mar 2014 15:49:39 -0800
-Message-ID: <20140304234939.GB25144@kroah.com>
-References: <20140225133537.55ce6935e55faa6aeae53d89@canb.auug.org.au>
- <20140225190715.GA4384@tuxdriver.com>
- <20140226074738.0b530aebe4cde54216698d91@canb.auug.org.au>
- <20140305101627.1d9e3a0941dbadbc6f0a7733@canb.auug.org.au>
- <20140305102109.948255688bc31a030fdd49d7@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the omap_dss2 tree
+Date: Wed, 5 Mar 2014 14:32:19 +1100
+Message-ID: <20140305143219.1613f7dcad9ab8a3290be9ee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__5_Mar_2014_14_32_19_+1100_fmBFALPj2dyj7Rp_"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:33693 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751007AbaCEDcZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Mar 2014 22:32:25 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Wed__5_Mar_2014_14_32_19_+1100_fmBFALPj2dyj7Rp_
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140305102109.948255688bc31a030fdd49d7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 05, 2014 at 10:21:09AM +1100, Stephen Rothwell wrote:
-> Hi John,
-> 
-> On Wed, 5 Mar 2014 10:16:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > If I revert commit 161d78555435 "Revert "Staging: rtl8812ae: remove
-> > modules field of rate_control_ops"", it fails differently:
-> > 
-> > In file included from drivers/staging/wlan-ng/p80211netdev.c:91:0:
-> > drivers/staging/wlan-ng/cfg80211.c: In function 'prism2_scan':
-> > drivers/staging/wlan-ng/cfg80211.c:419:10: error: implicit declaration of function 'ieee80211_dsss_chan_to_freq' [-Werror=implicit-function-declaration]
-> >           ieee80211_dsss_chan_to_freq(msg2.dschannel.data)),
-> >           ^
-> > drivers/staging/rtl8821ae/rtl8821ae/trx.c: In function 'rtl8821ae_rx_query_desc':
-> > drivers/staging/rtl8821ae/rtl8821ae/trx.c:619:3: warning: passing argument 1 of 'ieee80211_is_robust_mgmt_frame' from incompatible pointer type [enabled by default]
-> >    if ((ieee80211_is_robust_mgmt_frame(hdr)) &&
-> >    ^
-> > In file included from include/net/mac80211.h:20:0,
-> >                  from drivers/staging/rtl8821ae/rtl8821ae/../wifi.h:38,
-> >                  from drivers/staging/rtl8821ae/rtl8821ae/trx.c:30:
-> > include/linux/ieee80211.h:2286:20: note: expected 'struct sk_buff *' but argument is of type 'struct ieee80211_hdr *'
-> >  static inline bool ieee80211_is_robust_mgmt_frame(struct sk_buff *skb)
-> >                     ^
-> > drivers/staging/rtl8821ae/rtl8821ae/dm.c: In function 'rtl8821ae_dm_clear_txpower_tracking_state':
-> > drivers/staging/rtl8821ae/rtl8821ae/dm.c:487:31: warning: iteration 2u invokes undefined behavior [-Waggressive-loop-optimizations]
-> >    rtldm->bb_swing_idx_ofdm[p] = rtldm->default_ofdm_index;
-> >                                ^
-> > drivers/staging/rtl8821ae/rtl8821ae/dm.c:485:2: note: containing loop
-> >   for (p = RF90_PATH_A; p < MAX_RF_PATH; ++p) {
-> >   ^
-> > 
-> > So please revert 161d78555435, and then fix this other error.
-> 
-> That fix could be a simple as just disabling the affected staging tree
-> driver and letting Greg know.  Or you could actually fix it.
+Hi Tomi,
 
-John and Larry and I have been talking about how to handle some
-cross-tree issues, and I should be merging with his tree soon to handle
-them, hopefully this will get resolved at that point in time as well.
+After merging the omap_dss2 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-thanks,
+drivers/video/fbdev/aty/mach64_cursor.c:8:24: fatal error: ../fb_draw.h: No=
+ such file or directory
+ #include "../fb_draw.h"
+                        ^
 
-greg k-h
+Caused by commit 236c52f2ad52 ("fbdev: move fbdev core files to separate di=
+rectory").
+
+I have used the omap_dss2 tree from next-20140304 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__5_Mar_2014_14_32_19_+1100_fmBFALPj2dyj7Rp_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTFprHAAoJEMDTa8Ir7ZwVH7gP/2YSwA4hlDGyGsRyForiBq4/
+iHqCqOJkbXf0LxyozMiI0JIZTLQ3phvIcZ4lhPKq+V9+y0KPLipi1PZGC0iLbyCU
+YSHue75ogFCV1WuZXeToOPLhCz3C2BLTGiryfY1QaIJGt6UQss2WRRkD/Mci7CQa
+MH1UOVrNaiAk3DIEWpH6XFEjyg0JWRv8v2HY3H5Z9285U2laf1kFf2HImHRZvQkq
+kfZ2NUoUxtOWryh3QRj3EnkI0JY34wSmp2eqRU7gRim/aZR3zQffDW/glQ4Y5P9i
+36/G71hr2ROym8puVoOKzeXb4C/A2afwhN99f+5qbaUXQ3AGPfqWbxoQjjge2IvT
+heDCwV944VKjH2Y+WkC9lFvg4atwSMr7L+imK5S8PoJqUf2VTgKo8n5SFyhLMvKh
+aWbMEYeg8d9Fz7/I9swGecX5cepaxECCKQ5upu6ZKqHwxK3q79WTgfSHg5uqAvqF
++dauvwOLaB53IlYalH3Au4Iulv3/njiU92nRzpWr11BsGSWdyIhbAz0VEm8Wf9Pv
+X+NLA1e8rCCSuusV14RF0XlT/Tlg7f8xinepgHf5em/9ylRi77LsJSisirmqfg4W
+2JybA9Mza1awvVHfo/9SIzAJPsReaUfCeIJqfvvQx3hndkjNoUgVtDyoWAHkf/y2
+SDehqmI1+KQT/9LARgIR
+=IEXh
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Mar_2014_14_32_19_+1100_fmBFALPj2dyj7Rp_--
