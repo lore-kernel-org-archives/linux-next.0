@@ -1,71 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the i2c tree
-Date: Thu, 6 Mar 2014 13:50:16 +1100
-Message-ID: <20140306135016.2f026cd81b41cd2474c99124@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Thu, 6 Mar 2014 15:00:10 +1100
+Message-ID: <20140306150010.e873f440ac5a22d8812268a4@canb.auug.org.au>
+References: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:44656 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756496AbaCFCuW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Mar 2014 21:50:22 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
+ boundary="Signature=_Thu__6_Mar_2014_15_00_10_+1100_/YkSXspJcxo7d8z6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs
+--Signature=_Thu__6_Mar_2014_15_00_10_+1100_/YkSXspJcxo7d8z6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+On Mon, 24 Feb 2014 15:17:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi all,
+>=20
+> After merging the tip tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> drivers/irqchip/irq-armada-370-xp.c:415:1: warning: 'externally_visible' =
+attribute have effect only on public objects [-Wattributes]
+> drivers/irqchip/irq-sun4i.c:39:70: warning: 'externally_visible' attribut=
+e have effect only on public objects [-Wattributes]
+> drivers/irqchip/irq-sun4i.c:140:1: warning: 'externally_visible' attribut=
+e have effect only on public objects [-Wattributes]
+> drivers/irqchip/irq-gic.c:283:1: warning: 'externally_visible' attribute =
+have effect only on public objects [-Wattributes]
+> drivers/irqchip/irq-sirfsoc.c:51:1: warning: 'externally_visible' attribu=
+te have effect only on public objects [-Wattributes]
+> drivers/irqchip/irq-vt8500.c:183:1: warning: 'externally_visible' attribu=
+te have effect only on public objects [-Wattributes]
+>=20
+> Probably introduced by commit 128ea04a9885 ("lto: Make asmlinkage __visib=
+le").
+>=20
+> I guess that there may be more places where "asmlinkage" is used with
+> "static" - I assume that they are all incorrect?
+>=20
+> $ git grep -l 'static.*asmlinkage'
+> arch/x86/crypto/sha1_ssse3_glue.c
+> arch/x86/crypto/sha256_ssse3_glue.c
+> arch/x86/crypto/sha512_ssse3_glue.c
+> drivers/irqchip/irq-armada-370-xp.c
+> drivers/irqchip/irq-bcm2835.c
+> drivers/irqchip/irq-gic.c
+> drivers/irqchip/irq-mmp.c
+> drivers/irqchip/irq-moxart.c
+> drivers/irqchip/irq-orion.c
+> drivers/irqchip/irq-sirfsoc.c
+> drivers/irqchip/irq-sun4i.c
+> drivers/irqchip/irq-vic.c
+> drivers/irqchip/irq-vt8500.c
+> drivers/irqchip/irq-zevio.c
+> drivers/pnp/pnpbios/bioscalls.c
+> scripts/checkpatch.pl
+>=20
+> (the last two don't matter)
 
-After merging the i2c tree, today's linux-next build (powerpc
-ppc64_defconfig, x86_64 allmodconfig and arm multi_v7_defconfig) produced
-this warning:
+Any resolution for this?
 
-drivers/video/Kconfig:42:error: recursive dependency detected!
-drivers/video/Kconfig:42:	symbol FB is selected by DRM_KMS_FB_HELPER
-drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_TEG=
-RA_FBDEV
-drivers/gpu/drm/tegra/Kconfig:18:	symbol DRM_TEGRA_FBDEV depends on DRM_TEG=
-RA
-drivers/gpu/drm/tegra/Kconfig:1:	symbol DRM_TEGRA depends on RESET_CONTROLL=
-ER
-drivers/reset/Kconfig:4:	symbol RESET_CONTROLLER is selected by I2C_MV64XXX
-drivers/i2c/busses/Kconfig:528:	symbol I2C_MV64XXX depends on I2C
-drivers/i2c/Kconfig:5:	symbol I2C is selected by FB_DDC
-drivers/video/Kconfig:92:	symbol FB_DDC is selected by FB_CYBER2000_DDC
-drivers/video/Kconfig:386:	symbol FB_CYBER2000_DDC depends on FB_CYBER2000
-drivers/video/Kconfig:374:	symbol FB_CYBER2000 depends on FB
-
-Introduced by commit 370136bc67c3 ("i2c: mv64xxx: Add reset deassert call").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs
+--Signature=_Thu__6_Mar_2014_15_00_10_+1100_/YkSXspJcxo7d8z6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTF+JtAAoJEMDTa8Ir7ZwV9okP/0U05EldzRcFD8PFX8u0etcb
-qrZcYch/A4oFACb1jyY6WOz5/ziXSY1bPe6beO2aQyez5f9uDaZ41TS1wZNxlfiB
-pGXxBNGrIDlHb9Mw5636N5f5oua/C7bo7Oge5P8lCJp666rWY2K870fFD701+4cz
-Hu7hFWWL5OP1CbaB2Z/RHTDNyr69AbA5x1foT5CZT/hh0QoGZIjlxPXsy/JdUM23
-VZef2Bk0923lxVix6qnDw5G/pC2DDooQ3WnXGXRd1XfV3W1SgK/OR1PoHo0AEQod
-5eLaYMyqLJHUynql/doGgRZQMGl5kuwyf6MbFprwglIPjQJCujY2BYlKPc42JPSx
-J93pC2nx8IBdXYUHR2ah39CipRwSR9h8xCp/SdU8mEV2ZlVYFPVYM3ZF0miuLJqe
-XAjMGhSRN17OAr57BJaXY4dRenOfk4BxeNtd14YZm6Ilx1R+226uPjXO7xHWU+eG
-zzaKhgJd7PMb2qSTJWJfuTDE5rhwAtG0Xz3ptp6TY165ENV36Dji350vJ8QvIKY+
-Y8korylDXlrt+uqeAdrKGNbAv3zIgyy6E7hNVqW2ijir7cccgkkD34M1t9Ijwgro
-Xj4oIxgUkeiiCJITSgBjLbfuyvgVhR9UfiUy2ZMR2HmmHmn6/4w7Bfp9Ce94CcCF
-f5iFONJXv3u2AMksJ8Gd
-=lSAz
+iQIcBAEBCAAGBQJTF/LOAAoJEMDTa8Ir7ZwVONkP/RJR0sGVmDwi4mgCf+4CKe0/
+MNDZhx5HtQnPETgr5Lc1vqsc5B4o0VRUZfgQCoFMVP3KE8VFO8deVnWOjbHIrmpe
+kc5va2Y4WOsUxFbpg2imnhku9Ol+WTrf7QPw1bwrSMnzPR8HmAa/AbKwD1mwMoZE
+H0InqsfKkw5X91FEO78R+VDQ48Hq0ejBEUjzMK7iFVhlQrarK556lKEP9pn3mO+e
+K2tiwyib2i0N9rzpJbEgVjU28dGDPFYkLBfYf1NhI5M7WE4/dS8wVE5ggYXWEziF
+NkPOsvz5jDLor0T6zFj7ez16b5UzfpcT1S4GfU1hNWWCWNfKFVh4L6Ieztip4n+E
+Oh60gyOpl4zWl9deBB6MFob5bE0YjBsfpEw+sJ39fvVYAbsdNxH7wMF6vfzaTbuV
+94Pg6BMu2Gm6lwOZlV/nKPJZPo/BQ0rW5voQEILMVmKRbGgsLJGh1Iv1etNHh05w
+XP1IU3MHm4rC4uWwBeoO2AAzEGmt03z+JhrZI6uan7bwjgsfGWycxPr+N/Q4MLA0
+rT7MTpiSM10R6/71/8lUXB1Ode9mHMpD8Fvt8uolC5CwTfa88gb+6ot7799hFRCl
+LrZx1jdxqqcGkd2q3mkAbBvcTXHkGTJCO//9ewj9Lt3fcVyl0vQniW5zxMdVBH8C
+WUjQ36DFiQWXGzeRT1+x
+=GmrB
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs--
+--Signature=_Thu__6_Mar_2014_15_00_10_+1100_/YkSXspJcxo7d8z6--
