@@ -1,64 +1,93 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH-next] drivers/mcb: do not set default Kconfig variable to modular
-Date: Wed, 5 Mar 2014 19:38:09 -0500
-Message-ID: <1394066289-18320-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the wireless-next tree
+Date: Thu, 6 Mar 2014 13:24:37 +1100
+Message-ID: <20140306132437.f6e754dd5fe316c7ed4552da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:49472 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757260AbaCFAip (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Mar 2014 19:38:45 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Johannes Thumshirn <johannes.thumshirn@men.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__6_Mar_2014_13_24_37_+1100_lS4ZrYA7avrQS6_1"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Zhao, Gang" <gamerh2o@gmail.com>, devel@driverdev.osuosl.org
+List-Id: linux-next.vger.kernel.org
 
-Coverage builds found this build fail in ARM ebsa110_defconfig:
+--Signature=_Thu__6_Mar_2014_13_24_37_+1100_lS4ZrYA7avrQS6_1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/mcb/mcb-parse.c: In function 'chameleon_parse_cells':
-drivers/mcb/mcb-parse.c:105:2: error: implicit declaration of function 'memcpy_fromio' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/mcb/mcb-parse.o] Error 1
+Hi John,
 
-A simple bisect will output this:
+[I started by reverting commit 161d78555435 "Revert "Staging: rtl8812ae:
+remove modules field of rate_control_ops""]
 
-3764e82e5150d87b205c10cd78a9c9ab86fbfa51 is the first bad commit
-commit 3764e82e5150d87b205c10cd78a9c9ab86fbfa51
-Author: Johannes Thumshirn <johannes.thumshirn@men.de>
-Date:   Wed Feb 26 17:29:05 2014 +0100
+After merging the wireless-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-    drivers: Introduce MEN Chameleon Bus
+In file included from drivers/staging/wlan-ng/p80211netdev.c:91:0:
+drivers/staging/wlan-ng/cfg80211.c: In function 'prism2_scan':
+drivers/staging/wlan-ng/cfg80211.c:419:10: error: implicit declaration of f=
+unction 'ieee80211_dsss_chan_to_freq' [-Werror=3Dimplicit-function-declarat=
+ion]
+          ieee80211_dsss_chan_to_freq(msg2.dschannel.data)),
+          ^
 
-The above commit used "default m" which is wrong.  New drivers
-should never be globally enabled with "default y/m".  Whether
-this driver makes sense to build on ARM is an independent issue.
+Caused by commit 3ebe8e257307 ("ieee80211: remove function ieee80211_
+{dsss_chan_to_freq, freq_to_dsss_chan}").
 
-Here we delete the "default m" line, which is the equivalent of
-"default n".
+I disabled the staging tree driver like this:
 
-Cc: Johannes Thumshirn <johannes.thumshirn@men.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 6 Mar 2014 13:17:16 +1100
+Subject: [PATCH] staging: disable Prism2.5/3 USB driver
+
+it is currently broken by changes in the wireless-next tree
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
+ drivers/staging/wlan-ng/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-[above commit ID comes from char-misc tree, and will be invalid
- if that content gets rebased... ]
-
- drivers/mcb/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/mcb/Kconfig b/drivers/mcb/Kconfig
-index 44c82d68c563..9ad2f8661487 100644
---- a/drivers/mcb/Kconfig
-+++ b/drivers/mcb/Kconfig
-@@ -4,7 +4,6 @@
- 
- menuconfig MCB
- 	   tristate "MCB support"
--	   default m
- 	   help
- 
- 	   The MCB (MEN Chameleon Bus) is a Bus specific to MEN Mikroelektronik
--- 
+diff --git a/drivers/staging/wlan-ng/Kconfig b/drivers/staging/wlan-ng/Kcon=
+fig
+index 426d4efbabc3..56caa46e4791 100644
+--- a/drivers/staging/wlan-ng/Kconfig
++++ b/drivers/staging/wlan-ng/Kconfig
+@@ -1,6 +1,7 @@
+ config PRISM2_USB
+ 	tristate "Prism2.5/3 USB driver"
+ 	depends on WLAN && USB && CFG80211
++	depends on BROKEN
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	default n
+--=20
 1.9.0
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__6_Mar_2014_13_24_37_+1100_lS4ZrYA7avrQS6_1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTF9xpAAoJEMDTa8Ir7ZwVRsMP/3zuE7CC6oC8ic8XT4q3K2tJ
++apkTnpcZmzkoTKN2DGpDrbrkhvOylRc6nUEDD1xfWUJnG71cwm3yQiVK0b+D3P+
+aE0dAWJInl4ANa0ftNOsuEkTCYeKkhYV55e/oB5T4Y9DvpplxQjim4g7J2adqZgv
+PULQteU/lyJAn+8z8xs9rDhj5FCNamKWWvkd31+M6vCosFYJJT2UGvsSwf4phW2z
+wGZTSymyBXUwehFKRInTdQgpO3j7ew0t7pYNoEaR3/lwu1yUjp+lnGcpOYMQ6sqq
+ED0PCBoK4zPtefHAN5fJZqvzTciiVRc/2076KqSrcka7syWnYqqtjTK9eZ9Xtzbl
+6p1tNnnVjIIrLu23P4v+dNy814Mmpp7T7y7qfjAymYYvc1A+vr5zrNGC+7Jpq2Hg
+NN+9r4RtKHILpJcFVORgtJNgASfYUdcdFoMobzKGwoCrINY7MQT6izt1HDeMPLVw
+hp4+VnzJGd+vKNZ6ObdHzuu+Dk2yuuDN/T8ii1Z+0SVx9QwnZs0Z8Pg5nL0SgrDX
+l76l1WcD/+zCv8k7WwXWjLLfE/UdAZD4aJYhSR7SOUMi82txddwMrnIKGZc9rdEV
+/C94MEWHA2ikPcr95FysSRLORLweflQWQTBpsE6IkOL4gFuzmU2irOIvqCVe2sbG
+6ASY5GKKpol1+tNOSLry
+=vDpz
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Mar_2014_13_24_37_+1100_lS4ZrYA7avrQS6_1--
