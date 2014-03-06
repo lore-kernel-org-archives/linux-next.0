@@ -1,199 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Wed, 5 Mar 2014 21:11:58 -0800
-Message-ID: <20140306051158.GA11456@kroah.com>
-References: <20140306160649.9564c40b8deaaf3b1e261a5b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Thu, 6 Mar 2014 17:12:20 +1100
+Message-ID: <20140306171220.9262f702efb6fba592b60b11@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__6_Mar_2014_17_12_20_+1100_cPoxtuayb5QSEWdy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:51395 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750760AbaCFFLf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Mar 2014 00:11:35 -0500
-Content-Disposition: inline
-In-Reply-To: <20140306160649.9564c40b8deaaf3b1e261a5b@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:32807 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750714AbaCFGM1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Mar 2014 01:12:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?iso-8859-1?Q?=22Salva_Peir=F3=22?= <speiro@ai2.upv.es>, Daeseok Youn <daeseok.youn@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>
 
-On Thu, Mar 06, 2014 at 04:06:49PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/cxt1e1/linux.c between commit 084b6e7765b9
-> ("staging/cxt1e1/linux.c: Correct arbitrary memory write in c4_ioctl()")
-> from the staging.current tree and commit 922b81b835c4 ("staging: cxt1e1:
-> remove space between function name and parenthesis") and a couple of
-> others from the staging tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Thu__6_Mar_2014_17_12_20_+1100_cPoxtuayb5QSEWdy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, that looks good.
+Hi all,
 
-greg k-h
+After merging the tip tree, today's linux-next build (i386 defconfig)
+produced this warning:
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/staging/cxt1e1/linux.c
-> index 79206cb3fb94,579e68e3dece..000000000000
-> --- a/drivers/staging/cxt1e1/linux.c
-> +++ b/drivers/staging/cxt1e1/linux.c
-> @@@ -861,79 -876,78 +876,80 @@@ c4_ioctl(struct net_device *ndev, struc
->   #endif
->   
->   #if 0
-> -     pr_info("c4_ioctl: iocmd %x, dir %x type %x nr %x iolen %d.\n", iocmd,
-> -             _IOC_DIR (iocmd), _IOC_TYPE (iocmd), _IOC_NR (iocmd),
-> -             _IOC_SIZE (iocmd));
-> + 	pr_info("c4_ioctl: iocmd %x, dir %x type %x nr %x iolen %d.\n", iocmd,
-> + 		_IOC_DIR(iocmd), _IOC_TYPE(iocmd), _IOC_NR(iocmd),
-> + 		_IOC_SIZE(iocmd));
->   #endif
-> -     iolen = _IOC_SIZE (iocmd);
-> -     if (iolen > sizeof(arg))
-> -         return -EFAULT;
-> -     data = ifr->ifr_data + sizeof (iocmd);
-> -     if (copy_from_user (&arg, data, iolen))
-> -         return -EFAULT;
-> - 
-> -     ret = 0;
-> -     switch (iocmd)
-> -     {
-> -     case SBE_IOC_PORT_GET:
-> -         //pr_info(">> SBE_IOC_PORT_GET Ioctl...\n");
-> -         ret = do_get_port (ndev, data);
-> -         break;
-> -     case SBE_IOC_PORT_SET:
-> -         //pr_info(">> SBE_IOC_PORT_SET Ioctl...\n");
-> -         ret = do_set_port (ndev, data);
-> -         break;
-> -     case SBE_IOC_CHAN_GET:
-> -         //pr_info(">> SBE_IOC_CHAN_GET Ioctl...\n");
-> -         ret = do_get_chan (ndev, data);
-> -         break;
-> -     case SBE_IOC_CHAN_SET:
-> -         //pr_info(">> SBE_IOC_CHAN_SET Ioctl...\n");
-> -         ret = do_set_chan (ndev, data);
-> -         break;
-> -     case C4_DEL_CHAN:
-> -         //pr_info(">> C4_DEL_CHAN Ioctl...\n");
-> -         ret = do_del_chan (ndev, data);
-> -         break;
-> -     case SBE_IOC_CHAN_NEW:
-> -         ret = do_create_chan (ndev, data);
-> -         break;
-> -     case SBE_IOC_CHAN_GET_STAT:
-> -         ret = do_get_chan_stats (ndev, data);
-> -         break;
-> -     case SBE_IOC_LOGLEVEL:
-> -         ret = do_set_loglevel (ndev, data);
-> -         break;
-> -     case SBE_IOC_RESET_DEV:
-> -         ret = do_reset (ndev, data);
-> -         break;
-> -     case SBE_IOC_CHAN_DEL_STAT:
-> -         ret = do_reset_chan_stats (ndev, data);
-> -         break;
-> -     case C4_LOOP_PORT:
-> -         ret = do_port_loop (ndev, data);
-> -         break;
-> -     case C4_RW_FRMR:
-> -         ret = do_framer_rw (ndev, data);
-> -         break;
-> -     case C4_RW_MSYC:
-> -         ret = do_musycc_rw (ndev, data);
-> -         break;
-> -     case C4_RW_PLD:
-> -         ret = do_pld_rw (ndev, data);
-> -         break;
-> -     case SBE_IOC_IID_GET:
-> -         ret = (iolen == sizeof (struct sbe_iid_info)) ? c4_get_iidinfo (ci, &arg.u.iip) : -EFAULT;
-> -         if (ret == 0)               /* no error, copy data */
-> -             if (copy_to_user (data, &arg, iolen))
-> -                 return -EFAULT;
-> -         break;
-> -     default:
-> -         //pr_info(">> c4_ioctl: EINVAL - unknown iocmd <%x>\n", iocmd);
-> -         ret = -EINVAL;
-> -         break;
-> -     }
-> -     return mkret (ret);
-> + 	iolen = _IOC_SIZE(iocmd);
-> ++	if (iolen > sizeof(arg))
-> ++		return -EFAULT;
-> + 	data = ifr->ifr_data + sizeof(iocmd);
-> + 	if (copy_from_user(&arg, data, iolen))
-> + 		return -EFAULT;
-> + 
-> + 	ret = 0;
-> + 	switch (iocmd)
-> + 	{
-> + 	case SBE_IOC_PORT_GET:
-> + 		//pr_info(">> SBE_IOC_PORT_GET Ioctl...\n");
-> + 		ret = do_get_port(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_PORT_SET:
-> + 		//pr_info(">> SBE_IOC_PORT_SET Ioctl...\n");
-> + 		ret = do_set_port(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_CHAN_GET:
-> + 		//pr_info(">> SBE_IOC_CHAN_GET Ioctl...\n");
-> + 		ret = do_get_chan(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_CHAN_SET:
-> + 		//pr_info(">> SBE_IOC_CHAN_SET Ioctl...\n");
-> + 		ret = do_set_chan(ndev, data);
-> + 		break;
-> + 	case C4_DEL_CHAN:
-> + 		//pr_info(">> C4_DEL_CHAN Ioctl...\n");
-> + 		ret = do_del_chan(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_CHAN_NEW:
-> + 		ret = do_create_chan(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_CHAN_GET_STAT:
-> + 		ret = do_get_chan_stats(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_LOGLEVEL:
-> + 		ret = do_set_loglevel(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_RESET_DEV:
-> + 		ret = do_reset(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_CHAN_DEL_STAT:
-> + 		ret = do_reset_chan_stats(ndev, data);
-> + 		break;
-> + 	case C4_LOOP_PORT:
-> + 		ret = do_port_loop(ndev, data);
-> + 		break;
-> + 	case C4_RW_FRMR:
-> + 		ret = do_framer_rw(ndev, data);
-> + 		break;
-> + 	case C4_RW_MSYC:
-> + 		ret = do_musycc_rw(ndev, data);
-> + 		break;
-> + 	case C4_RW_PLD:
-> + 		ret = do_pld_rw(ndev, data);
-> + 		break;
-> + 	case SBE_IOC_IID_GET:
-> + 		ret = (iolen == sizeof(struct sbe_iid_info)) ?
-> + 		       c4_get_iidinfo(ci, &arg.u.iip) : -EFAULT;
-> + 		if (ret == 0)               /* no error, copy data */
-> + 			if (copy_to_user(data, &arg, iolen))
-> + 				return -EFAULT;
-> + 		break;
-> + 	default:
-> + 		//pr_info(">> c4_ioctl: EINVAL - unknown iocmd <%x>\n", iocmd);
-> + 		ret = -EINVAL;
-> + 		break;
-> + 	}
-> + 	return mkret(ret);
->   }
->   
->   static const struct net_device_ops c4_ops = {
+arch/x86/kernel/cpu/perf_event_intel_uncore.c: In function 'snb_uncore_imc_=
+init_box':
+arch/x86/kernel/cpu/perf_event_intel_uncore.c:1725:15: warning: unused vari=
+able 'addr_hi' [-Wunused-variable]
+
+Introduced by commit b9e1ab6d4c05 ("perf/x86/uncore: add SNB/IVB/HSW
+client uncore memory controller support") from the tip tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__6_Mar_2014_17_12_20_+1100_cPoxtuayb5QSEWdy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTGBHIAAoJEMDTa8Ir7ZwVYPYP/0j8L5Rr24hZi+weDT/tqj+O
+SJveqaFE5KH3R/FDIM/TNf+g051ThT45klRNwx4gTPvHF1yeyM+ZEBGtIPp78DjD
+5FWn2/OfQ9iB3sztbv9XXap5Hir0ICfdnOat2RDsfwYBtI6DXImBX6cEp0AX9zhY
+aaKWMyfyHqbQKtvymiOW9YJJBPF/a2Se0bOGr6e/u8CrDcuVtevRq00dC8pKsp2/
+Y5QmutJJg0XGnnwAaVXmf465M04TBYYVzDxEif+GrIoM9nvewewPCQABjRgm7PU2
+TfzyLQ8efef97WxtSgWTN3PdaoX5C+biTau28zs/3W4IXm3xInWYe3xDkf1ZiAd0
+AXr6veMLJBLYC7/yZu3WPN+hH5Lh4cX9yeEbdSin8VnvdMt8yzGqbzTrBhAil+i1
+I0QaV4ixOQYYwSLsmbGYLNPtPzdgQYdfn2gba/lo6c/qEe5BmB7hQP9UK8fS4koB
+WlEtjlEMquoNONpEsRrHCrs16xAWI1zULuCi+Mhn5KDv0ZVT69ST43Wp8SHZ2cb+
+vmVrItWsjJV5dQ28WYzR5yn3i0i/MPhG0C6LrR8L44Nhyhl88Ojc/uUiLo/ylh3w
+Qf6U5rTcnNwP02c5fldy4aA/yoSOLiGxj3HUujYaBz4ueDGzZQrMtyxCK4TbJMzR
+oi0hFiW966dEMx94tel6
+=V4pi
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Mar_2014_17_12_20_+1100_cPoxtuayb5QSEWdy--
