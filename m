@@ -1,64 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless-next tree
-Date: Thu, 6 Mar 2014 13:43:32 +1100
-Message-ID: <20140306134332.0c3f12ec6849d1b2ccefda6e@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the i2c tree
+Date: Thu, 6 Mar 2014 13:50:16 +1100
+Message-ID: <20140306135016.2f026cd81b41cd2474c99124@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Mar_2014_13_43_32_+1100_yQPDdRXmVATb.IL/"
+ boundary="Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:41978 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:44656 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756064AbaCFCnh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Mar 2014 21:43:37 -0500
+	id S1756496AbaCFCuW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Mar 2014 21:50:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hante Meuleman <meuleman@broadcom.com>, Arend van Spriel <arend@broadcom.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 
---Signature=_Thu__6_Mar_2014_13_43_32_+1100_yQPDdRXmVATb.IL/
+--Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Wolfram,
 
-After merging the wireless-next tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+After merging the i2c tree, today's linux-next build (powerpc
+ppc64_defconfig, x86_64 allmodconfig and arm multi_v7_defconfig) produced
+this warning:
 
-drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c: In function 'brcmf_sdio=
-_intr_rstatus':
-drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:2464:3: error: implicit =
-declaration of function 'atomic_set_mask' [-Werror=3Dimplicit-function-decl=
-aration]
+drivers/video/Kconfig:42:error: recursive dependency detected!
+drivers/video/Kconfig:42:	symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_TEG=
+RA_FBDEV
+drivers/gpu/drm/tegra/Kconfig:18:	symbol DRM_TEGRA_FBDEV depends on DRM_TEG=
+RA
+drivers/gpu/drm/tegra/Kconfig:1:	symbol DRM_TEGRA depends on RESET_CONTROLL=
+ER
+drivers/reset/Kconfig:4:	symbol RESET_CONTROLLER is selected by I2C_MV64XXX
+drivers/i2c/busses/Kconfig:528:	symbol I2C_MV64XXX depends on I2C
+drivers/i2c/Kconfig:5:	symbol I2C is selected by FB_DDC
+drivers/video/Kconfig:92:	symbol FB_DDC is selected by FB_CYBER2000_DDC
+drivers/video/Kconfig:386:	symbol FB_CYBER2000_DDC depends on FB_CYBER2000
+drivers/video/Kconfig:374:	symbol FB_CYBER2000 depends on FB
 
-Caused by commit c98db0bec72a ("brcmfmac: Use atomic functions for
-intstatus update").  Arm does not seem to provide atomic_set_mask()?
-
-I reverted that commit for today.
+Introduced by commit 370136bc67c3 ("i2c: mv64xxx: Add reset deassert call").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__6_Mar_2014_13_43_32_+1100_yQPDdRXmVATb.IL/
+--Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTF+DYAAoJEMDTa8Ir7ZwV/LcP/25XA+sSESm4S2Kno45SeZ5T
-0Lpjv4sevCMF2gPI2bE3Xczy52YqTMPm1bdDbDSnEGdjgUWQGsRuCyQS+i/m2EM9
-TkFcURSDgbAocw1Sdu0kKmuqDe8mpZVICQKMaouqjdZP0p5WCRVwlX6ss0jjCqL1
-z5n4QA0RD6H8P07G02ceyjwQWju9x7EWSqfitJWU2VXvZ1CW76VuFV8JwnrO3GaY
-d4XaC26Zxn+b9tss5SsI6IdNEuvK2MFi47s6AY6X7teyGTHtwF9/tJKmRn9shNBb
-hG2f66MzxrUWgDA6YuPJ9w6f8lQnx1t89x/aelY9iRMxFtF8wWElA0lBJjVPrNpX
-2ghlabfULk2fY6d2s3iL4/DGLcv5qeNO1A44go48wjQr7rShpDoTnN496yItEFvm
-XuBUcbDc5/suMxVxykSvz12S9Dh35vEH6ZS/VSS3VBmebftvEMlar+QzdLyNPScc
-JQT1/p56mlgHvN3Pvq+VGidZJgjfs8F3nndCUAVmM/kbU8ftV7gpJeBCQZHqQtZJ
-j37qHIyt7PS1uC2oBY22nScrftUplog9X9xoszYDxBPzrzneiBYJfyEfrrR6g6Xh
-C/qiGm4KYtLkoulrHXCzs8Aztfok9y84MqiaCiN22TVmDoRpURqKreup3wBLgfFD
-Zq49U5i6ZXMrVrNHdL8e
-=+Z3z
+iQIcBAEBCAAGBQJTF+JtAAoJEMDTa8Ir7ZwV9okP/0U05EldzRcFD8PFX8u0etcb
+qrZcYch/A4oFACb1jyY6WOz5/ziXSY1bPe6beO2aQyez5f9uDaZ41TS1wZNxlfiB
+pGXxBNGrIDlHb9Mw5636N5f5oua/C7bo7Oge5P8lCJp666rWY2K870fFD701+4cz
+Hu7hFWWL5OP1CbaB2Z/RHTDNyr69AbA5x1foT5CZT/hh0QoGZIjlxPXsy/JdUM23
+VZef2Bk0923lxVix6qnDw5G/pC2DDooQ3WnXGXRd1XfV3W1SgK/OR1PoHo0AEQod
+5eLaYMyqLJHUynql/doGgRZQMGl5kuwyf6MbFprwglIPjQJCujY2BYlKPc42JPSx
+J93pC2nx8IBdXYUHR2ah39CipRwSR9h8xCp/SdU8mEV2ZlVYFPVYM3ZF0miuLJqe
+XAjMGhSRN17OAr57BJaXY4dRenOfk4BxeNtd14YZm6Ilx1R+226uPjXO7xHWU+eG
+zzaKhgJd7PMb2qSTJWJfuTDE5rhwAtG0Xz3ptp6TY165ENV36Dji350vJ8QvIKY+
+Y8korylDXlrt+uqeAdrKGNbAv3zIgyy6E7hNVqW2ijir7cccgkkD34M1t9Ijwgro
+Xj4oIxgUkeiiCJITSgBjLbfuyvgVhR9UfiUy2ZMR2HmmHmn6/4w7Bfp9Ce94CcCF
+f5iFONJXv3u2AMksJ8Gd
+=lSAz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Mar_2014_13_43_32_+1100_yQPDdRXmVATb.IL/--
+--Signature=_Thu__6_Mar_2014_13_50_16_+1100_sriXNDYgAvaA4Phs--
