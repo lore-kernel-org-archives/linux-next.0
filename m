@@ -1,245 +1,95 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 6 Mar 2014 14:58:26 -0800
-Message-ID: <20140306145826.4453a8edbfcf18cd2e9fa8c1@linux-foundation.org>
+Date: Fri, 7 Mar 2014 11:42:25 +1100
+Message-ID: <20140307114225.17ba235975177d7173393d5a@canb.auug.org.au>
 References: <20140306180852.b1515db3cccc1622172524c0@canb.auug.org.au>
+	<20140306145826.4453a8edbfcf18cd2e9fa8c1@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__7_Mar_2014_11_42_25_+1100_EvVgcjF/5u2Gcc7B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36354 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751639AbaCFW62 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Mar 2014 17:58:28 -0500
-In-Reply-To: <20140306180852.b1515db3cccc1622172524c0@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:43429 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750919AbaCGAmc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Mar 2014 19:42:32 -0500
+In-Reply-To: <20140306145826.4453a8edbfcf18cd2e9fa8c1@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davidlohr Bueso <davidlohr@hp.com>, Rik van Riel <riel@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Michel Lespinasse <walken@google.com>
 
-On Thu, 6 Mar 2014 18:08:52 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Fri__7_Mar_2014_11_42_25_+1100_EvVgcjF/5u2Gcc7B
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> ...
+Hi Andrew,
+
+On Thu, 6 Mar 2014 14:58:26 -0800 Andrew Morton <akpm@linux-foundation.org>=
+ wrote:
 >
-> and on and on ...
-> 
-> Caused by commit 0d9ad4220e6d ("mm: per-thread vma caching") which adds
-> the include of linux/vmacache.h (which includes linux/mm.h) into
-> linux/sched.h ... There is a reason that we did not include linux/mm.h
-> into sched.h.
+> On Thu, 6 Mar 2014 18:08:52 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+>=20
+> > After merging the akpm-current tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> >=20
+> > ...
+> >
+> > and on and on ...
+> >=20
+> > Caused by commit 0d9ad4220e6d ("mm: per-thread vma caching") which adds
+> > the include of linux/vmacache.h (which includes linux/mm.h) into
+> > linux/sched.h ... There is a reason that we did not include linux/mm.h
+> > into sched.h.
+>=20
+> Yeah.
+>=20
+> > --- /dev/null
+> > +++ b/include/linux/vmacachedefs.h
+> > @@ -0,0 +1,9 @@
+> > +
+> > +#ifndef __LINUX_VMACACHEDEFS_H
+> > +#define __LINUX_VMACACHEDEFS_H
+> > +
+> > +#define VMACACHE_BITS 2
+> > +#define VMACACHE_SIZE (1U << VMACACHE_BITS)
+> > +#define VMACACHE_MASK (VMACACHE_SIZE - 1)
+> > +
+> > +#endif /* __LINUX_VMACACHEDEFS_H */
+>=20
+> I just did pretty much the same thing:
+>=20
+>=20
+> From: Andrew Morton <akpm@linux-foundation.org>
+> Subject: mm-per-thread-vma-caching-fix-3
 
-Yeah.
+I will replace my patch with this today.
 
-> --- /dev/null
-> +++ b/include/linux/vmacachedefs.h
-> @@ -0,0 +1,9 @@
-> +
-> +#ifndef __LINUX_VMACACHEDEFS_H
-> +#define __LINUX_VMACACHEDEFS_H
-> +
-> +#define VMACACHE_BITS 2
-> +#define VMACACHE_SIZE (1U << VMACACHE_BITS)
-> +#define VMACACHE_MASK (VMACACHE_SIZE - 1)
-> +
-> +#endif /* __LINUX_VMACACHEDEFS_H */
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-I just did pretty much the same thing:
+--Signature=_Fri__7_Mar_2014_11_42_25_+1100_EvVgcjF/5u2Gcc7B
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: mm-per-thread-vma-caching-fix-3
+iQIcBAEBCAAGBQJTGRX2AAoJEMDTa8Ir7ZwV/UwP/i0JyQSS172zsTUQt+tsDwWo
+BUavRksyhXI7dpgFHY/O5Arq3Ur33wl2N1kAyCVOAKSyGeuk2iIl2TAMtX1IU1Fj
+EW77ufzU4s8MeyBVVsRo+ntDJc2StOpa4HEJ4YnuEiF4whDPjGxIZSxky4nhG9lI
+mId5ZsT0NslrK+epyVVCXFvELC05pISo++RQW3Ptcz8dYNu85wnMDi26T05oM2Jg
+9vg/sYjSIHjH3qbBDh1XkopbvY+7DDsFt8ot9kuu2b2nkkI/FbhSvRrOdy11Xa4W
+ibZxq5bnq0x50330e9kxyzq/XJjHwiVvPOddwiJpUgI7BzfcW/WVsd4Z9YtwtZng
+N6uDSAzr12BeK8z2YhyiF43sGMHRiISWS9ddqJnapuHttJFS1uDm8liWksyoxoED
+XM9Umzn60zQDN+n8rKVXRYn/DCtEROlqwGRD4vMUXs/cJjROq5ciGhrBf5BhInsZ
+PF6KjPMj3SU5g4ldhkhwQjeHuuPNUd8m33BCu11L+hhuzaXnechtyPawzBSfKrkf
+OfMr3r20OxxkOpbYKY4Wm5NvfHHqf0gatg6QyNyqUqguSsTRRxHfLL+xvWDVCY35
+e9poZ6fljib2+FnLoi+mStUIQ26BnDa4Q1ceHQAvpszH5GGeoi9G9dPUJnbpKd//
+f9QBdozxrSYXKfmOHAfc
+=2Jwy
+-----END PGP SIGNATURE-----
 
-Attempt to untangle header files.
-
-Prior to this patch:
-
-mm.h does not require sched.h
-sched.h does not require mm.h
-sched.h requires vmacache.h
-vmacache.h requires mm.h
-
-After this patch:
-
-mm.h still does not require sched.h
-sched.h still does not require mm.h
-sched.h does not require vmacache.h
-mm.h does not require vmacache.h
-vmacache.h requires (and includes) mm.h
-vmacache.h requires (and includes) sched.h
-
-To do all this, the three "#define VMACACHE_foo" lines were moved to
-sched.h.
-
-The inclusions of sched.h and mm.h into vmacache.h are actually unrequired
-because the .c files include mm.h and sched.h directly, but I put them in
-there for cargo-cult reasons.
-
-vmacache_flush() no longer needs to be implemented in cpp - make it so.
-
-Cc: Davidlohr Bueso <davidlohr@hp.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michel Lespinasse <walken@google.com>
-Cc: Rik van Riel <riel@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- arch/unicore32/include/asm/mmu_context.h |    2 ++
- fs/exec.c                                |    1 +
- fs/proc/task_mmu.c                       |    1 +
- include/linux/sched.h                    |    5 ++++-
- include/linux/vmacache.h                 |   12 +++++-------
- kernel/debug/debug_core.c                |    1 +
- kernel/fork.c                            |    2 ++
- mm/mmap.c                                |    1 +
- mm/nommu.c                               |    1 +
- mm/vmacache.c                            |    1 +
- 10 files changed, 19 insertions(+), 8 deletions(-)
-
-diff -puN arch/unicore32/include/asm/mmu_context.h~mm-per-thread-vma-caching-fix-3 arch/unicore32/include/asm/mmu_context.h
---- a/arch/unicore32/include/asm/mmu_context.h~mm-per-thread-vma-caching-fix-3
-+++ a/arch/unicore32/include/asm/mmu_context.h
-@@ -14,6 +14,8 @@
- 
- #include <linux/compiler.h>
- #include <linux/sched.h>
-+#include <linux/mm.h>
-+#include <linux/vmacache.h>
- #include <linux/io.h>
- 
- #include <asm/cacheflush.h>
-diff -puN fs/exec.c~mm-per-thread-vma-caching-fix-3 fs/exec.c
---- a/fs/exec.c~mm-per-thread-vma-caching-fix-3
-+++ a/fs/exec.c
-@@ -26,6 +26,7 @@
- #include <linux/file.h>
- #include <linux/fdtable.h>
- #include <linux/mm.h>
-+#include <linux/vmacache.h>
- #include <linux/stat.h>
- #include <linux/fcntl.h>
- #include <linux/swap.h>
-diff -puN fs/proc/task_mmu.c~mm-per-thread-vma-caching-fix-3 fs/proc/task_mmu.c
---- a/fs/proc/task_mmu.c~mm-per-thread-vma-caching-fix-3
-+++ a/fs/proc/task_mmu.c
-@@ -1,4 +1,5 @@
- #include <linux/mm.h>
-+#include <linux/vmacache.h>
- #include <linux/hugetlb.h>
- #include <linux/huge_mm.h>
- #include <linux/mount.h>
-diff -puN include/linux/mm_types.h~mm-per-thread-vma-caching-fix-3 include/linux/mm_types.h
-diff -puN include/linux/sched.h~mm-per-thread-vma-caching-fix-3 include/linux/sched.h
---- a/include/linux/sched.h~mm-per-thread-vma-caching-fix-3
-+++ a/include/linux/sched.h
-@@ -23,7 +23,6 @@ struct sched_param {
- #include <linux/errno.h>
- #include <linux/nodemask.h>
- #include <linux/mm_types.h>
--#include <linux/vmacache.h>
- #include <linux/preempt_mask.h>
- 
- #include <asm/page.h>
-@@ -131,6 +130,10 @@ struct perf_event_context;
- struct blk_plug;
- struct filename;
- 
-+#define VMACACHE_BITS 2
-+#define VMACACHE_SIZE (1U << VMACACHE_BITS)
-+#define VMACACHE_MASK (VMACACHE_SIZE - 1)
-+
- /*
-  * List of flags we want to share for kernel threads,
-  * if only because they are not used by them anyway.
-diff -puN include/linux/vmacache.h~mm-per-thread-vma-caching-fix-3 include/linux/vmacache.h
---- a/include/linux/vmacache.h~mm-per-thread-vma-caching-fix-3
-+++ a/include/linux/vmacache.h
-@@ -1,21 +1,19 @@
- #ifndef __LINUX_VMACACHE_H
- #define __LINUX_VMACACHE_H
- 
-+#include <linux/sched.h>
- #include <linux/mm.h>
- 
--#define VMACACHE_BITS 2
--#define VMACACHE_SIZE (1U << VMACACHE_BITS)
--#define VMACACHE_MASK (VMACACHE_SIZE - 1)
- /*
-  * Hash based on the page number. Provides a good hit rate for
-  * workloads with good locality and those with random accesses as well.
-  */
- #define VMACACHE_HASH(addr) ((addr >> PAGE_SHIFT) & VMACACHE_MASK)
- 
--#define vmacache_flush(tsk)					 \
--	do {							 \
--		memset(tsk->vmacache, 0, sizeof(tsk->vmacache)); \
--	} while (0)
-+static inline void vmacache_flush(struct task_struct *tsk)
-+{
-+	memset(tsk->vmacache, 0, sizeof(tsk->vmacache));
-+}
- 
- extern void vmacache_flush_all(struct mm_struct *mm);
- extern void vmacache_update(unsigned long addr, struct vm_area_struct *newvma);
-diff -puN kernel/debug/debug_core.c~mm-per-thread-vma-caching-fix-3 kernel/debug/debug_core.c
---- a/kernel/debug/debug_core.c~mm-per-thread-vma-caching-fix-3
-+++ a/kernel/debug/debug_core.c
-@@ -49,6 +49,7 @@
- #include <linux/pid.h>
- #include <linux/smp.h>
- #include <linux/mm.h>
-+#include <linux/vmacache.h>
- #include <linux/rcupdate.h>
- 
- #include <asm/cacheflush.h>
-diff -puN kernel/fork.c~mm-per-thread-vma-caching-fix-3 kernel/fork.c
---- a/kernel/fork.c~mm-per-thread-vma-caching-fix-3
-+++ a/kernel/fork.c
-@@ -28,6 +28,8 @@
- #include <linux/mman.h>
- #include <linux/mmu_notifier.h>
- #include <linux/fs.h>
-+#include <linux/mm.h>
-+#include <linux/vmacache.h>
- #include <linux/nsproxy.h>
- #include <linux/capability.h>
- #include <linux/cpu.h>
-diff -puN mm/Makefile~mm-per-thread-vma-caching-fix-3 mm/Makefile
-diff -puN mm/mmap.c~mm-per-thread-vma-caching-fix-3 mm/mmap.c
---- a/mm/mmap.c~mm-per-thread-vma-caching-fix-3
-+++ a/mm/mmap.c
-@@ -10,6 +10,7 @@
- #include <linux/slab.h>
- #include <linux/backing-dev.h>
- #include <linux/mm.h>
-+#include <linux/vmacache.h>
- #include <linux/shm.h>
- #include <linux/mman.h>
- #include <linux/pagemap.h>
-diff -puN mm/nommu.c~mm-per-thread-vma-caching-fix-3 mm/nommu.c
---- a/mm/nommu.c~mm-per-thread-vma-caching-fix-3
-+++ a/mm/nommu.c
-@@ -15,6 +15,7 @@
- 
- #include <linux/export.h>
- #include <linux/mm.h>
-+#include <linux/vmacache.h>
- #include <linux/mman.h>
- #include <linux/swap.h>
- #include <linux/file.h>
-diff -puN mm/vmacache.c~mm-per-thread-vma-caching-fix-3 mm/vmacache.c
---- a/mm/vmacache.c~mm-per-thread-vma-caching-fix-3
-+++ a/mm/vmacache.c
-@@ -2,6 +2,7 @@
-  * Copyright (C) 2014 Davidlohr Bueso.
-  */
- #include <linux/sched.h>
-+#include <linux/mm.h>
- #include <linux/vmacache.h>
- 
- /*
-_
+--Signature=_Fri__7_Mar_2014_11_42_25_+1100_EvVgcjF/5u2Gcc7B--
