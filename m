@@ -1,58 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the
- net-next tree
-Date: Fri, 7 Mar 2014 12:07:27 +1100
-Message-ID: <20140307120727.a4436ad2afc4b834db6b0641@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Thu, 6 Mar 2014 17:38:22 -0800
+Message-ID: <20140306173822.1f4fed3a.akpm@linux-foundation.org>
+References: <20140306192234.62ad3ac104a2adc16752b033@canb.auug.org.au>
+	<20140306134848.7aabdc426fbad30f6e818631@linux-foundation.org>
+	<20140307115744.5c3d5475af77726dc6c5a76b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__7_Mar_2014_12_07_27_+1100_cL0D6DlT5Ejy393+"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__7_Mar_2014_12_07_27_+1100_cL0D6DlT5Ejy393+
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37262 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751359AbaCGBeh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Mar 2014 20:34:37 -0500
+In-Reply-To: <20140307115744.5c3d5475af77726dc6c5a76b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>
 
-Hi John,
+On Fri, 7 Mar 2014 11:57:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-drivers/net/wireless/ath/ath9k/recv.c between commit 67ddc87f162e ("Merge
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net") from the
-net-next tree and commit f3b6a488a670 ("Merge branch 'master' of
-git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless") from
-the wireless-next tree.
+> Hi Andrew,
+> 
+> On Thu, 6 Mar 2014 13:48:48 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > Yes, I've disabled the whole series for now.  Some of these errors
+> > appear to be caused by compiler mishandling, so it's going to be
+> > difficult :(
+> 
+> So, by "the whole series" do you mean just/all these:
+> 
+> percpu-add-raw_cpu_ops.patch
+> ...
+> sh-replace-__get_cpu_var-uses.patch
 
-I fixed it up (I used the version from the wireless-next tree) and can
-carry the fix as necessary (no action is required).
+Yep.  Commented out in http://ozlabs.org/~akpm/mmots/series
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> If so, I will remove them from my tree today (if you don't get around to
+> a new mmotm before then).
 
---Signature=_Fri__7_Mar_2014_12_07_27_+1100_cL0D6DlT5Ejy393+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTGRvTAAoJEMDTa8Ir7ZwVzR0QAIwZyZ65Jtk+rdkYEqU7XURH
-VA8SDW9SE5GfZKFFaZQ1mcU6ii2R1GsbNLbeBp9FYwcKdy9zOLsCR1n7rhLNKPqV
-e5ZfU7WyyRJrYaSRJ0dQBba3GQnWe7pLcUTFkQ3KEj9zMOPUGQLijkWoZxDRHEir
-Xxuzr3ZJF78McmxD76+IpdOwq9nf8+cm01Jh2BxXL0YGBzRaeWNeZXSRWHtnnlgi
-DwLFNr7W/h0zX2MMP4riymK2Kx0VniV9CUPZQsC9wIV2InhAlqRImdK9eSQHsqGD
-bwL6Sqz3lveCq9EaoWl97ks25E9N3bZ21LSqs0hGC3uIFdrZdW4EgHhSib3Gr7B+
-344aGjqWSaXC3u/QxGuTwv3nsw05P75M1UJvVu2l06W3cHEhWdB2g1387NVBZ45v
-gvztO/gfVAuxiOL82OnRg0hB3xDrZ6e9WzACFX6KjNPkinZvxwYVboBGkOnvim58
-zNdClG0MZKyibP4dCGTbYvMTWbGYqTX+8Su9hElbzRpQwBq1J1d+o5Zu7d+nKtav
-dEpRCP3nmx31icR0Vkto72kUMm1pW6lUqye//Ue0cTlcGW9hGRMPrWcW7HZjGE3e
-auPTeTF/Jt4D++i7CfYWi19deoJXOAswnpL/bNWk8zwkjps0/Rtv+Jp5c2eEtbe2
-S1saqFOPinxLabxeM4Cs
-=QyYm
------END PGP SIGNATURE-----
-
---Signature=_Fri__7_Mar_2014_12_07_27_+1100_cL0D6DlT5Ejy393+--
+Cool.
