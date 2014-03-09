@@ -1,64 +1,144 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Sun, 9 Mar 2014 19:08:07 +0000
-Message-ID: <20140309190807.GZ28112@sirena.org.uk>
-References: <20140309114134.502cdcae7e6a97db684d6b15@kernel.org>
- <CAOesGMhUVEEa6KLs2ZORxJunxitVdOQ5-wbs3KtEWBq+77t5JA@mail.gmail.com>
+Subject: linux-next: manual merge of the drm-intel tree with the  tree
+Date: Sun, 9 Mar 2014 19:19:10 +0000
+Message-ID: <20140309191910.139fd91ac440c926cbe94ebe@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ddN45lq1N3it+fOY"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59585 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750949AbaCITI3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Mar 2014 15:08:29 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOesGMhUVEEa6KLs2ZORxJunxitVdOQ5-wbs3KtEWBq+77t5JA@mail.gmail.com>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52054 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750962AbaCITTT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Mar 2014 15:19:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
---ddN45lq1N3it+fOY
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 09, 2014 at 10:08:58AM -0700, Olof Johansson wrote:
-> On Sun, Mar 9, 2014 at 4:41 AM, Mark Brown <broonie@kernel.org> wrote:
+Hi all,
 
-> > ERROR: Input tree has errors, aborting (use -f to force output)
-> > make[2]: *** [arch/arm/boot/dts/socfpga_arria5_socdk.dtb] Error 2
+Today's linux-next merge of the drm-intel tree got a conflict in  between c=
+ommit 27d50c82714f6 ("ACPI / i915: Fix incorrect <acpi/acpi.h> inclusions v=
+ia <linux/acpi_io.h>") from  tree and commit 2fae6a860ca9 ("drm/i915: Go OC=
+D on the Makefile") from the drm-intel tree.
 
-> Known issue, I unmerged the offending branch but didn't push out the
-> backed out for-next branch last night (I was unaware that you were
-> doing linux-next now, and sfr doesn't do them until Sunday night our
-> time, so I didn't think it was urgent).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-No worries, I wouldn't have done it on a Sunday either but this time
-round I've got Stephen's scripts so I've been pipe cleaning those so
-hopefully everything will actually run properly on Monday.
+diff --cc drivers/gpu/drm/i915/Makefile
+index f33902ff2c22,077e81b1065d..b1445b73465b
+--- a/drivers/gpu/drm/i915/Makefile
++++ b/drivers/gpu/drm/i915/Makefile
+@@@ -12,49 -23,50 +23,49 @@@ i915-y +=3D i915_cmd_parser.o=20
+  	  i915_gem_evict.o \
+  	  i915_gem_execbuffer.o \
+  	  i915_gem_gtt.o \
++ 	  i915_gem.o \
+  	  i915_gem_stolen.o \
+  	  i915_gem_tiling.o \
+- 	  i915_params.o \
+- 	  i915_sysfs.o \
++ 	  i915_gpu_error.o \
++ 	  i915_irq.o \
+  	  i915_trace_points.o \
+- 	  i915_ums.o \
++ 	  intel_ringbuffer.o \
++ 	  intel_uncore.o
++=20
++ # modesetting core code
++ i915-y +=3D intel_bios.o \
+  	  intel_display.o \
+- 	  intel_crt.o \
+- 	  intel_lvds.o \
+- 	  intel_dsi.o \
+- 	  intel_dsi_cmd.o \
+- 	  intel_dsi_pll.o \
+- 	  intel_bios.o \
+- 	  intel_ddi.o \
+- 	  intel_dp.o \
+- 	  intel_hdmi.o \
+- 	  intel_sdvo.o \
+  	  intel_modes.o \
+- 	  intel_panel.o \
+- 	  intel_pm.o \
+- 	  intel_i2c.o \
+- 	  intel_tv.o \
+- 	  intel_dvo.o \
+- 	  intel_ringbuffer.o \
+ -	  intel_opregion.o \
+  	  intel_overlay.o \
+- 	  intel_sprite.o \
+  	  intel_sideband.o \
+- 	  intel_uncore.o \
++ 	  intel_sprite.o
+ -i915-$(CONFIG_ACPI)		+=3D intel_acpi.o
+++i915-$(CONFIG_ACPI)		+=3D intel_acpi.o intel_opregion.o
++ i915-$(CONFIG_DRM_I915_FBDEV)	+=3D intel_fbdev.o
++=20
++ # modesetting output/encoder code
++ i915-y +=3D dvo_ch7017.o \
+  	  dvo_ch7xxx.o \
+- 	  dvo_ch7017.o \
+  	  dvo_ivch.o \
+- 	  dvo_tfp410.o \
+- 	  dvo_sil164.o \
+  	  dvo_ns2501.o \
+- 	  i915_gem_dmabuf.o
+-=20
+- i915-$(CONFIG_COMPAT)   +=3D i915_ioc32.o
+-=20
+- i915-$(CONFIG_ACPI)	+=3D intel_acpi.o intel_opregion.o
+-=20
+- i915-$(CONFIG_DRM_I915_FBDEV) +=3D intel_fbdev.o
++ 	  dvo_sil164.o \
++ 	  dvo_tfp410.o \
++ 	  intel_crt.o \
++ 	  intel_ddi.o \
++ 	  intel_dp.o \
++ 	  intel_dsi_cmd.o \
++ 	  intel_dsi.o \
++ 	  intel_dsi_pll.o \
++ 	  intel_dvo.o \
++ 	  intel_hdmi.o \
++ 	  intel_i2c.o \
++ 	  intel_lvds.o \
++ 	  intel_panel.o \
++ 	  intel_sdvo.o \
++ 	  intel_tv.o
+ =20
+- i915-$(CONFIG_DEBUG_FS) +=3D i915_debugfs.o
++ # legacy horrors
++ i915-y +=3D i915_dma.o \
++ 	  i915_ums.o
+ =20
+  obj-$(CONFIG_DRM_I915)  +=3D i915.o
+ =20
 
---ddN45lq1N3it+fOY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTHLwUAAoJELSic+t+oim9H9AP/2TGw3M0IdazbHj3RqPQ7opo
-pi9q8xIt3f2FvatOLEYrfCzmQLzR+r7aY1ASByrTTrabwGHk8CQADYHRJe4+Tg11
-VRTHfnN6RC1kyBJuyduys2Dcw740/sBfzhJUKU3AwP3+4Jyw836vi/AyU11YL8nS
-irhy9+4pjs3bXi5lXZkA6OSXQ7q1DqyOV9S95kjZRL69rbyFjvoPQ0N+9OtM6cv7
-Vm8RZIU6plM+hpoWZnVoxpQtOj8hykaOQ/r64RbnZ/cl6fPMbnM8/vg2I8Y0phhq
-cRNUOdzL0CVB8301M6swbfe03HCwUcUvCvf/1ZsL4xJTfIBLAFXzP4HZKpImw7XH
-pxTxig68ab6apDYCt7FmFcxw6B3yAOtU3YdUnFRFk/IeuH/kd6b9QeYzZ6OEoJQA
-18lWxnKDDEkLpsd3zuOXaG4uRLJgSoWQB8c4nMx2O3SxVT28rXuQaqkS5aooiE3W
-MkOiCKL2M3NUmHNhxSMqYJ5cxo41/6lcZfrhM7YVMJO/ZKO2B/duKqwIDokkHhg6
-W143uXJABcRkvHWaYr89IHzV3QI4l7iK4+ViV2/HN+wTDW1v4IJsWzBWf48CiOqO
-VcE6GevBftcfXzUaNLWYvACf3rZ9yplMr+nkylp3cooaQ0WLmIzjv1ngxkqkZP8W
-3sPK1vz9c9xFM0gK9t68
-=JypB
+iQIcBAEBAgAGBQJTHL6uAAoJELSic+t+oim9yOcP/12dm7X8l1Ag5xXLcTfNF17P
+mNMepf2dE+ni+EoyB+3ZPp9jq/rQmldJyw2KOjOt+KjdiiWucDbyeaNVWYZkl2t1
+4EBj6Y8EmNXxuyb3COUPUi63JU6Ygu9Hn7OQtSlR8p9bOPn61Ug+IsSj2m3NnxpZ
+TmL7b2w3tqnmv8K4R+tnj8My79LEIPvtY8PrBsfo6Y02olocxN8oz8tMIuMtDKuf
+3JAPyeHhfGPl6mqv5Z7j8sU2iKJOybhYMrg1bF8wHNkbv8FkC8zveWXkYyCHptf/
+TGYN6JHaBrxaXswDXUJ4Tln1u45ze8lEpar2QcJStEhkIs1cr8CZQsJ3+AG+VmIm
+ub2POIb/YC5TEdwjnCJi2Rc6UU/Jg2gJiJL5LgXso96J9K55/i0w6NGCvc2oD5TP
+i5VeOYiGj3k9Bq3cNDIo0AcOdnQ+uwi1G/9bhkT08NsljqvbKENkeoLd4m/VwEI4
+mlweilchviO3/S0oGubZZsIJFSMviHXyePw5BGzgsqwNgH6WNwkxshGf/GUqucwT
+Osk7pWQ36GC3H9XHyRG6am9sk5mV8AV6kfq4mZP6KsCBIA1mE39TniX09xDxvyRu
++ac0qrNddMtFR7ELCfFw1A9XTWoHFtWlm85GvQ4FvW6niatN3HhVx29qkYctmxZk
+/hOCM1PGwamlTX7SFAqT
+=ixBH
 -----END PGP SIGNATURE-----
 
---ddN45lq1N3it+fOY--
+--Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur--
