@@ -1,35 +1,64 @@
-From: Olof Johansson <olof@lixom.net>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Sun, 9 Mar 2014 10:08:58 -0700
-Message-ID: <CAOesGMhUVEEa6KLs2ZORxJunxitVdOQ5-wbs3KtEWBq+77t5JA@mail.gmail.com>
+Date: Sun, 9 Mar 2014 19:08:07 +0000
+Message-ID: <20140309190807.GZ28112@sirena.org.uk>
 References: <20140309114134.502cdcae7e6a97db684d6b15@kernel.org>
+ <CAOesGMhUVEEa6KLs2ZORxJunxitVdOQ5-wbs3KtEWBq+77t5JA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140309114134.502cdcae7e6a97db684d6b15@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ddN45lq1N3it+fOY"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59585 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750949AbaCITI3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Mar 2014 15:08:29 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOesGMhUVEEa6KLs2ZORxJunxitVdOQ5-wbs3KtEWBq+77t5JA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
 Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
-
-On Sun, Mar 9, 2014 at 4:41 AM, Mark Brown <broonie@kernel.org> wrote:
-> Hi all,
->
-> After merging the arm-soc tree, today's linux-next build (20140309)
-> failed for multi_v7_defconfig like this:
->
-> ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
->
-> ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
->
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/socfpga_arria5_socdk.dtb] Error 2
-
-Known issue, I unmerged the offending branch but didn't push out the
-backed out for-next branch last night (I was unaware that you were
-doing linux-next now, and sfr doesn't do them until Sunday night our
-time, so I didn't think it was urgent).
 
 
+--ddN45lq1N3it+fOY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--Olof
+On Sun, Mar 09, 2014 at 10:08:58AM -0700, Olof Johansson wrote:
+> On Sun, Mar 9, 2014 at 4:41 AM, Mark Brown <broonie@kernel.org> wrote:
+
+> > ERROR: Input tree has errors, aborting (use -f to force output)
+> > make[2]: *** [arch/arm/boot/dts/socfpga_arria5_socdk.dtb] Error 2
+
+> Known issue, I unmerged the offending branch but didn't push out the
+> backed out for-next branch last night (I was unaware that you were
+> doing linux-next now, and sfr doesn't do them until Sunday night our
+> time, so I didn't think it was urgent).
+
+No worries, I wouldn't have done it on a Sunday either but this time
+round I've got Stephen's scripts so I've been pipe cleaning those so
+hopefully everything will actually run properly on Monday.
+
+--ddN45lq1N3it+fOY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTHLwUAAoJELSic+t+oim9H9AP/2TGw3M0IdazbHj3RqPQ7opo
+pi9q8xIt3f2FvatOLEYrfCzmQLzR+r7aY1ASByrTTrabwGHk8CQADYHRJe4+Tg11
+VRTHfnN6RC1kyBJuyduys2Dcw740/sBfzhJUKU3AwP3+4Jyw836vi/AyU11YL8nS
+irhy9+4pjs3bXi5lXZkA6OSXQ7q1DqyOV9S95kjZRL69rbyFjvoPQ0N+9OtM6cv7
+Vm8RZIU6plM+hpoWZnVoxpQtOj8hykaOQ/r64RbnZ/cl6fPMbnM8/vg2I8Y0phhq
+cRNUOdzL0CVB8301M6swbfe03HCwUcUvCvf/1ZsL4xJTfIBLAFXzP4HZKpImw7XH
+pxTxig68ab6apDYCt7FmFcxw6B3yAOtU3YdUnFRFk/IeuH/kd6b9QeYzZ6OEoJQA
+18lWxnKDDEkLpsd3zuOXaG4uRLJgSoWQB8c4nMx2O3SxVT28rXuQaqkS5aooiE3W
+MkOiCKL2M3NUmHNhxSMqYJ5cxo41/6lcZfrhM7YVMJO/ZKO2B/duKqwIDokkHhg6
+W143uXJABcRkvHWaYr89IHzV3QI4l7iK4+ViV2/HN+wTDW1v4IJsWzBWf48CiOqO
+VcE6GevBftcfXzUaNLWYvACf3rZ9yplMr+nkylp3cooaQ0WLmIzjv1ngxkqkZP8W
+3sPK1vz9c9xFM0gK9t68
+=JypB
+-----END PGP SIGNATURE-----
+
+--ddN45lq1N3it+fOY--
