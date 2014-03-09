@@ -1,58 +1,97 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Fri, 7 Mar 2014 13:08:46 -0800
-Message-ID: <20140307130846.ad8ee2b20c6f2dcf6d0b6a33@linux-foundation.org>
-References: <20140306192234.62ad3ac104a2adc16752b033@canb.auug.org.au>
-	<20140306134848.7aabdc426fbad30f6e818631@linux-foundation.org>
-	<20140307115744.5c3d5475af77726dc6c5a76b@canb.auug.org.au>
-	<20140306173822.1f4fed3a.akpm@linux-foundation.org>
-	<alpine.DEB.2.10.1403071103040.21846@nuc>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: build failure after merge of the arm-soc tree
+Date: Sun, 9 Mar 2014 11:41:34 +0000
+Message-ID: <20140309114134.502cdcae7e6a97db684d6b15@kernel.org>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============9035146313581930458=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--===============9035146313581930458==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__9_Mar_2014_11_41_34_+0000_BIEAkRtpn+kZ3kQj"
+
+--Signature=_Sun__9_Mar_2014_11_41_34_+0000_BIEAkRtpn+kZ3kQj
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+After merging the arm-soc tree, today's linux-next build (20140309)
+failed for multi_v7_defconfig like this:
+
+ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
+
+ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/socfpga_arria5_socdk.dtb] Error 2
+make[2]: *** Waiting for unfinished jobs....
+ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
+
+ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/socfpga_cyclone5_sockit.dtb] Error 2
+ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
+
+ERROR (phandle_references): Reference to non-existent node or label "sysmgr"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/socfpga_cyclone5_socdk.dtb] Error 2
+make[1]: *** [dtbs] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [sub-make] Error 2
+Build failed
+
+I have tried using the tree from Friday instead but see following mail.
+
+--Signature=_Sun__9_Mar_2014_11_41_34_+0000_BIEAkRtpn+kZ3kQj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTHFNuAAoJELSic+t+oim9AAQP/R0vD7+OrjVtA9GEwA+2whdF
+UucbEV1dMZSvJCSItYyLvbkzr3SksrTrNNhQhtz25+rllR595N2qfOJIxjnp0X6h
+PYFmxrxSay6u4rZMzoZUums6BJUPUKmdxJx5hiXpOh3VZCmEgW5UDjXJzEmWM9hP
+TGdRvc2XDo/wBlZlRGptdOFCy+PVm/HCzRlGtCy22BmBdLpJUeJy7xfy1sHQUtOR
+yHrOzw72l4PAPPUQqx2Tms1dSe+duXX5PL/YKNnIGGlaTr3bD7J0XcepCm5boyDH
+x4dXjAQUChG/ohRzlt/ol5CVnq4vvB8cvYHKEWcyYcm0lIi5tIoaGzS37wpENtLk
+yAKF8kA5ei2YWK7VQSOoWewKtPnnl21/ydMyOKLWtAOrW1BCjhtJxQ53VGexi+ha
+xiGugr05+148J54SUkVDYVsDWDxcqcK9yBlKMcxK2IhvSIdYSCzkE0jfbLQanecO
+rT5wiM2TDlcIDLgv4Qeil96lRRlS+bAzmemJZAjXwz/zueh/+aFyt2xPfsg2oNBv
+z9i52Pmr5PqgAGl0/PeFpKy+CZzXBibgcQvpy8RSdpyft7/xwup1Q0NZ0es8mo9j
+lQ/UhTKe84n3FJdu6UgZt88sSJKUgqkmV2hbMHrAMQLgG+NoXmyyzbzHT+u7uj9r
+bv0uVmsxW0jlDA77SbsY
+=wSGW
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__9_Mar_2014_11_41_34_+0000_BIEAkRtpn+kZ3kQj--
+
+
+--===============9035146313581930458==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43932 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751033AbaCGVIs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Mar 2014 16:08:48 -0500
-In-Reply-To: <alpine.DEB.2.10.1403071103040.21846@nuc>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Disposition: inline
 
-On Fri, 7 Mar 2014 11:05:49 -0600 (CST) Christoph Lameter <cl@linux.com> wrote:
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-> On Thu, 6 Mar 2014, Andrew Morton wrote:
-> 
-> > > So, by "the whole series" do you mean just/all these:
-> > >
-> > > percpu-add-raw_cpu_ops.patch
-> > > ...
-> > > sh-replace-__get_cpu_var-uses.patch
-> >
-> > Yep.  Commented out in http://ozlabs.org/~akpm/mmots/series
-> >
-> > > If so, I will remove them from my tree today (if you don't get around to
-> > > a new mmotm before then).
-> >
-> > Cool.
-> 
-> I need at least the initial 5 patches that establish the framework in
-> -next and do the debugging in order to make further progress on this one.
-
-I'll re-enable
-
-percpu-add-raw_cpu_ops.patch
-mm-use-raw_cpu-ops-for-determining-current-numa-node.patch
-modules-use-raw_cpu_write-for-initialization-of-per-cpu-refcount.patch
-net-replace-__this_cpu_inc-in-routec-with-raw_cpu_inc.patch
-percpu-add-preemption-checks-to-__this_cpu-ops.patch
-
-OK?
-
-> The rest are bits and pieces that may require some detail work.
-
-It looks like they will need quite a lot of work I'm afraid.  The
-automated sweep wasn't very successful but it did demonstrate that
-there are nasties and gremlins all over the place.
+--===============9035146313581930458==--
