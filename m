@@ -1,49 +1,52 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: Tree for Mar 6 (mfd/tps65218)
-Date: Mon, 10 Mar 2014 15:31:42 +0000
-Message-ID: <20140310153142.GD13661@lee--X1>
-References: <20140306194821.3715d0b6212cc10415374a68@canb.auug.org.au>
- <5318B2B5.4030609@infradead.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Mon, 10 Mar 2014 15:39:50 +0000
+Message-ID: <20140310153950.5567aa7b37066c1d083c20c3@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f169.google.com ([74.125.82.169]:36102 "EHLO
-	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753752AbaCJPbr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Mar 2014 11:31:47 -0400
-Received: by mail-we0-f169.google.com with SMTP id w62so8872700wes.0
-        for <linux-next@vger.kernel.org>; Mon, 10 Mar 2014 08:31:47 -0700 (PDT)
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>, Roman Pen <r.peniaev@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <5318B2B5.4030609@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, J Keerthy <j-keerthy@ti.com>, Samuel Ortiz <sameo@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-> > Hi all,
-> >=20
-> > There may be build failures in this tree due to the percpu changes =
-in the
-> > akpm tree.
-> >=20
-> > This tree fails (more than usual) the powerpc allyesconfig build.
-> >=20
-> > Changes since 20140305:
-> >=20
->=20
-> In linux-next-20140305 and -20140306:
->=20
-> ERROR: "regmap_del_irq_chip" [drivers/mfd/tps65218.ko] undefined!
->=20
-> when CONFIG_REGMAP_IRQ is not enabled.
->=20
-> Driver's kconfig needs to select REGMAP_IRQ ?
+Hi Jens,
 
-=46ix submitted with your Reported-by. Thanks for letting us know.
+Today's linux-next merge of the block tree got a conflict in block/blk-mq.c=
+ between commit d6a25b31315327 (blk-mq: support partial I/O completions) fr=
+om Linus' tree and commit af5040da01ef (blktrace: fix accounting of partial=
+ly completed requests) from the block tree.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+I fixed it up by dropping the hunk from af5040da01ef in a way git doesn't s=
+eem easily persuaded to show as a resolution and can carry the fix as neces=
+sary (no action is required).
+
+--Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTHdzGAAoJELSic+t+oim9h6MP/jaz+CW05sdS3vGL9XQ300FY
+tKK41CNTkyjBpKkIhfCtkNVm/p8T0TjxEa2AG9B51+nykkWtxHa2Gsyxxv/gVZqN
+hhxjVDHCfd1errPEuOYtQrPy7ZvmYI1JxWWQVjgYz9ohpT4hQA4nnWxJijMA9/r8
+0FFP1T4WxfkafPCJ+Trqs9yne/uyjlggtTekDv5aOm7N8vm8xg+6vpG0LYCCP54a
+9cTCcLa5zd1Ml7qIV2gAZ/7140kS+XkJOFh3rlaPpVXGDH8DI2SOrn1dIj/WdID5
+X4Jxfy8ziiyvBE/qYlblu3SUWcg1n57ZHOJR4Ztk94xJVmhmSpD9FGYAFIyPByNO
+a0O2BB09INkgnVRuNdfDNEfQtq4eUWy3BKhbG7//XQ2dHIMRW5H4KU5p865CnlOw
+ndjRY9iMjVT5pThqcHTsQ8RSVVBjD34XBsZdt/dAlhfl+F8xjjjvKeCBz1NodOSS
+n+T88OdXv5z2Sb3WlwAU9HymDp8ExYEbtiMNc0j6Q96vPxmQXubg+SsNKat8byTl
+4z+bRnU2sT7zLfzRGeLHMbiARtb1cshbhfXQ8lYMkrmRgDbiATt/7In1g4Z2o57o
+0A5DYIFnyNjk5x/WFWXqdfyPnLcOqi6KKcawWbObXJVCRtbCs1wDSvUEfXj5ZXZg
+PpkTvIOced1H+c/U0fkW
+=D4TR
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh--
