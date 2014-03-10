@@ -1,52 +1,65 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 10 Mar 2014 15:39:50 +0000
-Message-ID: <20140310153950.5567aa7b37066c1d083c20c3@kernel.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 0/3] Add support for the M5150 processor
+Date: Mon, 10 Mar 2014 13:43:56 -0400
+Message-ID: <CAP=VYLribDoh9LyQuNr-RxmRdaVxqNqzCCSAgMxKoZKWd2b1YA@mail.gmail.com>
+References: <1393940084-29518-1-git-send-email-markos.chandras@imgtec.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>, Roman Pen <r.peniaev@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:63485 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754422AbaCJRo1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Mar 2014 13:44:27 -0400
+Received: by mail-we0-f179.google.com with SMTP id x48so8979805wes.38
+        for <linux-next@vger.kernel.org>; Mon, 10 Mar 2014 10:44:26 -0700 (PDT)
+In-Reply-To: <1393940084-29518-1-git-send-email-markos.chandras@imgtec.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Markos Chandras <markos.chandras@imgtec.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>
 
---Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Mar 4, 2014 at 8:34 AM, Markos Chandras
+<markos.chandras@imgtec.com> wrote:
+> Hi,
+>
+> This patchset adds support for the recently announced M5150 processor
+> http://imgtec.com/mips/mips-series5-mclass-m51xx.asp?NewsID=804
 
-Hi Jens,
+I'm going to skip the bisect, and make a guess that this patchset causes
+the following build failures on all pre-existing mips boards:
 
-Today's linux-next merge of the block tree got a conflict in block/blk-mq.c=
- between commit d6a25b31315327 (blk-mq: support partial I/O completions) fr=
-om Linus' tree and commit af5040da01ef (blktrace: fix accounting of partial=
-ly completed requests) from the block tree.
+arch/mips/kernel/cpu-probe.c:856:7: error: 'PRID_IMP_M5150' undeclared
+(first use in this function)
+arch/mips/kernel/cpu-probe.c:857:16: error: 'CPU_M5150' undeclared
+(first use in this function)
+make[3]: *** [arch/mips/kernel/cpu-probe.o] Error 1
 
-I fixed it up by dropping the hunk from af5040da01ef in a way git doesn't s=
-eem easily persuaded to show as a resolution and can carry the fix as neces=
-sary (no action is required).
+See this link as one of the many linux-next mips failures:
 
---Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh
-Content-Type: application/pgp-signature
+http://kisskb.ellerman.id.au/kisskb/buildresult/10701712/
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Paul.
+--
 
-iQIcBAEBAgAGBQJTHdzGAAoJELSic+t+oim9h6MP/jaz+CW05sdS3vGL9XQ300FY
-tKK41CNTkyjBpKkIhfCtkNVm/p8T0TjxEa2AG9B51+nykkWtxHa2Gsyxxv/gVZqN
-hhxjVDHCfd1errPEuOYtQrPy7ZvmYI1JxWWQVjgYz9ohpT4hQA4nnWxJijMA9/r8
-0FFP1T4WxfkafPCJ+Trqs9yne/uyjlggtTekDv5aOm7N8vm8xg+6vpG0LYCCP54a
-9cTCcLa5zd1Ml7qIV2gAZ/7140kS+XkJOFh3rlaPpVXGDH8DI2SOrn1dIj/WdID5
-X4Jxfy8ziiyvBE/qYlblu3SUWcg1n57ZHOJR4Ztk94xJVmhmSpD9FGYAFIyPByNO
-a0O2BB09INkgnVRuNdfDNEfQtq4eUWy3BKhbG7//XQ2dHIMRW5H4KU5p865CnlOw
-ndjRY9iMjVT5pThqcHTsQ8RSVVBjD34XBsZdt/dAlhfl+F8xjjjvKeCBz1NodOSS
-n+T88OdXv5z2Sb3WlwAU9HymDp8ExYEbtiMNc0j6Q96vPxmQXubg+SsNKat8byTl
-4z+bRnU2sT7zLfzRGeLHMbiARtb1cshbhfXQ8lYMkrmRgDbiATt/7In1g4Z2o57o
-0A5DYIFnyNjk5x/WFWXqdfyPnLcOqi6KKcawWbObXJVCRtbCs1wDSvUEfXj5ZXZg
-PpkTvIOced1H+c/U0fkW
-=D4TR
------END PGP SIGNATURE-----
-
---Signature=_Mon__10_Mar_2014_15_39_50_+0000_D6aFgsgAqK3j7Xdh--
+>
+> This patchset is for the upstream-sfr/mips-for-linux-next tree
+>
+> Leonid Yegoshin (3):
+>   MIPS: Add processor identifier for the M5150 processor
+>   MIPS: Add support for the M5150 processor
+>   MIPS: kernel: cpu-probe: Add support for probing M5150 cores
+>
+>  arch/mips/include/asm/cpu-type.h     | 1 +
+>  arch/mips/include/asm/cpu.h          | 3 ++-
+>  arch/mips/kernel/cpu-probe.c         | 4 ++++
+>  arch/mips/kernel/idle.c              | 1 +
+>  arch/mips/mm/c-r4k.c                 | 1 +
+>  arch/mips/mm/tlbex.c                 | 1 +
+>  arch/mips/oprofile/common.c          | 1 +
+>  arch/mips/oprofile/op_model_mipsxx.c | 4 ++++
+>  8 files changed, 15 insertions(+), 1 deletion(-)
+>
+> --
+> 1.9.0
+>
+>
