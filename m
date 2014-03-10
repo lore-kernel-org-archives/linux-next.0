@@ -1,144 +1,76 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the drm-intel tree with the  tree
-Date: Sun, 9 Mar 2014 19:19:10 +0000
-Message-ID: <20140309191910.139fd91ac440c926cbe94ebe@kernel.org>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Mon, 10 Mar 2014 10:45:58 +0000
+Message-ID: <20140310104558.GB8830@mudshark.cambridge.arm.com>
+References: <20140309115514.GY28112@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:52054 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750962AbaCITTT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Mar 2014 15:19:19 -0400
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:62316 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752342AbaCJKqs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Mar 2014 06:46:48 -0400
+Content-Disposition: inline
+In-Reply-To: <20140309115514.GY28112@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <Catalin.Marinas@arm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Mar 09, 2014 at 11:55:14AM +0000, Mark Brown wrote:
+> Hi all,
 
-Hi all,
+Hi Mark,
 
-Today's linux-next merge of the drm-intel tree got a conflict in  between c=
-ommit 27d50c82714f6 ("ACPI / i915: Fix incorrect <acpi/acpi.h> inclusions v=
-ia <linux/acpi_io.h>") from  tree and commit 2fae6a860ca9 ("drm/i915: Go OC=
-D on the Makefile") from the drm-intel tree.
+> After merging the arm-soc tree, today's linux-next build (20140309)
+> failed for arm64 defconfig like this:
+> 
+> /home/broonie/next/next/drivers/irqchip/irq-gic.c: In function 'gic_raise_softirq':
+> /home/broonie/next/next/drivers/irqchip/irq-gic.c:666:2: error: implicit declaration of function 'dmb' [-Werror=implicit-function-declaration]
+>   dmb(ishst);
+>   ^
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Damnit, that's because we ended up going with dmb instead of dsb after it
+(surprisingly) turned out to be sufficient. The simple patch below fixes the
+problem -- Catalin, can we get this into -next please?
 
-diff --cc drivers/gpu/drm/i915/Makefile
-index f33902ff2c22,077e81b1065d..b1445b73465b
---- a/drivers/gpu/drm/i915/Makefile
-+++ b/drivers/gpu/drm/i915/Makefile
-@@@ -12,49 -23,50 +23,49 @@@ i915-y +=3D i915_cmd_parser.o=20
-  	  i915_gem_evict.o \
-  	  i915_gem_execbuffer.o \
-  	  i915_gem_gtt.o \
-+ 	  i915_gem.o \
-  	  i915_gem_stolen.o \
-  	  i915_gem_tiling.o \
-- 	  i915_params.o \
-- 	  i915_sysfs.o \
-+ 	  i915_gpu_error.o \
-+ 	  i915_irq.o \
-  	  i915_trace_points.o \
-- 	  i915_ums.o \
-+ 	  intel_ringbuffer.o \
-+ 	  intel_uncore.o
-+=20
-+ # modesetting core code
-+ i915-y +=3D intel_bios.o \
-  	  intel_display.o \
-- 	  intel_crt.o \
-- 	  intel_lvds.o \
-- 	  intel_dsi.o \
-- 	  intel_dsi_cmd.o \
-- 	  intel_dsi_pll.o \
-- 	  intel_bios.o \
-- 	  intel_ddi.o \
-- 	  intel_dp.o \
-- 	  intel_hdmi.o \
-- 	  intel_sdvo.o \
-  	  intel_modes.o \
-- 	  intel_panel.o \
-- 	  intel_pm.o \
-- 	  intel_i2c.o \
-- 	  intel_tv.o \
-- 	  intel_dvo.o \
-- 	  intel_ringbuffer.o \
- -	  intel_opregion.o \
-  	  intel_overlay.o \
-- 	  intel_sprite.o \
-  	  intel_sideband.o \
-- 	  intel_uncore.o \
-+ 	  intel_sprite.o
- -i915-$(CONFIG_ACPI)		+=3D intel_acpi.o
-++i915-$(CONFIG_ACPI)		+=3D intel_acpi.o intel_opregion.o
-+ i915-$(CONFIG_DRM_I915_FBDEV)	+=3D intel_fbdev.o
-+=20
-+ # modesetting output/encoder code
-+ i915-y +=3D dvo_ch7017.o \
-  	  dvo_ch7xxx.o \
-- 	  dvo_ch7017.o \
-  	  dvo_ivch.o \
-- 	  dvo_tfp410.o \
-- 	  dvo_sil164.o \
-  	  dvo_ns2501.o \
-- 	  i915_gem_dmabuf.o
--=20
-- i915-$(CONFIG_COMPAT)   +=3D i915_ioc32.o
--=20
-- i915-$(CONFIG_ACPI)	+=3D intel_acpi.o intel_opregion.o
--=20
-- i915-$(CONFIG_DRM_I915_FBDEV) +=3D intel_fbdev.o
-+ 	  dvo_sil164.o \
-+ 	  dvo_tfp410.o \
-+ 	  intel_crt.o \
-+ 	  intel_ddi.o \
-+ 	  intel_dp.o \
-+ 	  intel_dsi_cmd.o \
-+ 	  intel_dsi.o \
-+ 	  intel_dsi_pll.o \
-+ 	  intel_dvo.o \
-+ 	  intel_hdmi.o \
-+ 	  intel_i2c.o \
-+ 	  intel_lvds.o \
-+ 	  intel_panel.o \
-+ 	  intel_sdvo.o \
-+ 	  intel_tv.o
- =20
-- i915-$(CONFIG_DEBUG_FS) +=3D i915_debugfs.o
-+ # legacy horrors
-+ i915-y +=3D i915_dma.o \
-+ 	  i915_ums.o
- =20
-  obj-$(CONFIG_DRM_I915)  +=3D i915.o
- =20
+I have an extra patch which actually makes use of the options, but we should
+get things building again first.
 
---Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur
-Content-Type: application/pgp-signature
+Cheers,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Will
 
-iQIcBAEBAgAGBQJTHL6uAAoJELSic+t+oim9yOcP/12dm7X8l1Ag5xXLcTfNF17P
-mNMepf2dE+ni+EoyB+3ZPp9jq/rQmldJyw2KOjOt+KjdiiWucDbyeaNVWYZkl2t1
-4EBj6Y8EmNXxuyb3COUPUi63JU6Ygu9Hn7OQtSlR8p9bOPn61Ug+IsSj2m3NnxpZ
-TmL7b2w3tqnmv8K4R+tnj8My79LEIPvtY8PrBsfo6Y02olocxN8oz8tMIuMtDKuf
-3JAPyeHhfGPl6mqv5Z7j8sU2iKJOybhYMrg1bF8wHNkbv8FkC8zveWXkYyCHptf/
-TGYN6JHaBrxaXswDXUJ4Tln1u45ze8lEpar2QcJStEhkIs1cr8CZQsJ3+AG+VmIm
-ub2POIb/YC5TEdwjnCJi2Rc6UU/Jg2gJiJL5LgXso96J9K55/i0w6NGCvc2oD5TP
-i5VeOYiGj3k9Bq3cNDIo0AcOdnQ+uwi1G/9bhkT08NsljqvbKENkeoLd4m/VwEI4
-mlweilchviO3/S0oGubZZsIJFSMviHXyePw5BGzgsqwNgH6WNwkxshGf/GUqucwT
-Osk7pWQ36GC3H9XHyRG6am9sk5mV8AV6kfq4mZP6KsCBIA1mE39TniX09xDxvyRu
-+ac0qrNddMtFR7ELCfFw1A9XTWoHFtWlm85GvQ4FvW6niatN3HhVx29qkYctmxZk
-/hOCM1PGwamlTX7SFAqT
-=ixBH
------END PGP SIGNATURE-----
+--->8
 
---Signature=_Sun__9_Mar_2014_19_19_10_+0000_8v44P9f/qAUhRgur--
+>From bacbd4af61a671ad21f58197ed16116ff41b54cd Mon Sep 17 00:00:00 2001
+From: Will Deacon <will.deacon@arm.com>
+Date: Mon, 10 Mar 2014 10:36:52 +0000
+Subject: [PATCH] arm64: barriers: add dmb barrier
+
+Commit 8adbf57fc429 ("irqchip: gic: use dmb ishst instead of dsb when
+raising a softirq") added an explicit dmb(...) call to the GIC driver.
+
+This patch adds a simple dmb() macro to arm64, which expands to a DMB SY
+instruction.
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/barrier.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
+index 409ca370cfe2..66eb7648043b 100644
+--- a/arch/arm64/include/asm/barrier.h
++++ b/arch/arm64/include/asm/barrier.h
+@@ -25,6 +25,7 @@
+ #define wfi()		asm volatile("wfi" : : : "memory")
+ 
+ #define isb()		asm volatile("isb" : : : "memory")
++#define dmb(opt)	asm volatile("dmb sy" : : : "memory")
+ #define dsb(opt)	asm volatile("dsb sy" : : : "memory")
+ 
+ #define mb()		dsb()
+-- 
+1.8.2.2
