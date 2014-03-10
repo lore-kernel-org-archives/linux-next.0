@@ -1,43 +1,49 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Mon, 10 Mar 2014 11:58:18 +0000
-Message-ID: <20140310115817.GA10240@arm.com>
-References: <20140309115514.GY28112@sirena.org.uk>
- <20140310104558.GB8830@mudshark.cambridge.arm.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: Tree for Mar 6 (mfd/tps65218)
+Date: Mon, 10 Mar 2014 15:31:42 +0000
+Message-ID: <20140310153142.GD13661@lee--X1>
+References: <20140306194821.3715d0b6212cc10415374a68@canb.auug.org.au>
+ <5318B2B5.4030609@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:43218 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752193AbaCJL6d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Mar 2014 07:58:33 -0400
+Received: from mail-we0-f169.google.com ([74.125.82.169]:36102 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753752AbaCJPbr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Mar 2014 11:31:47 -0400
+Received: by mail-we0-f169.google.com with SMTP id w62so8872700wes.0
+        for <linux-next@vger.kernel.org>; Mon, 10 Mar 2014 08:31:47 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20140310104558.GB8830@mudshark.cambridge.arm.com>
+In-Reply-To: <5318B2B5.4030609@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, J Keerthy <j-keerthy@ti.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Mon, Mar 10, 2014 at 10:45:58AM +0000, Will Deacon wrote:
-> On Sun, Mar 09, 2014 at 11:55:14AM +0000, Mark Brown wrote:
 > > Hi all,
-> 
-> Hi Mark,
-> 
-> > After merging the arm-soc tree, today's linux-next build (20140309)
-> > failed for arm64 defconfig like this:
-> > 
-> > /home/broonie/next/next/drivers/irqchip/irq-gic.c: In function 'gic_raise_softirq':
-> > /home/broonie/next/next/drivers/irqchip/irq-gic.c:666:2: error: implicit declaration of function 'dmb' [-Werror=implicit-function-declaration]
-> >   dmb(ishst);
-> >   ^
-> 
-> Damnit, that's because we ended up going with dmb instead of dsb after it
-> (surprisingly) turned out to be sufficient. The simple patch below fixes the
-> problem -- Catalin, can we get this into -next please?
+> >=20
+> > There may be build failures in this tree due to the percpu changes =
+in the
+> > akpm tree.
+> >=20
+> > This tree fails (more than usual) the powerpc allyesconfig build.
+> >=20
+> > Changes since 20140305:
+> >=20
+>=20
+> In linux-next-20140305 and -20140306:
+>=20
+> ERROR: "regmap_del_irq_chip" [drivers/mfd/tps65218.ko] undefined!
+>=20
+> when CONFIG_REGMAP_IRQ is not enabled.
+>=20
+> Driver's kconfig needs to select REGMAP_IRQ ?
 
-Done.
+=46ix submitted with your Reported-by. Thanks for letting us know.
 
--- 
-Catalin
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
