@@ -1,15 +1,15 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2014-03-10-15-35 uploaded (media/pci/ttpci/av7110)
-Date: Tue, 11 Mar 2014 10:04:31 -0700
-Message-ID: <531F421F.3010402@infradead.org>
+Subject: Re: mmotm 2014-03-10-15-35 uploaded (virtio_balloon)
+Date: Tue, 11 Mar 2014 10:12:18 -0700
+Message-ID: <531F43F2.1030504@infradead.org>
 References: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 In-Reply-To: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Holger Waechtler <holger@convergence.de>, Oliver Endriss <o.endriss@gmx.de>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, virtio-dev@lists.oasis-open.org, "Michael S. Tsirkin" <mst@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
 On 03/10/2014 03:37 PM, akpm@linux-foundation.org wrote:
@@ -41,39 +41,22 @@ On 03/10/2014 03:37 PM, akpm@linux-foundation.org wrote:
 > linux-next.
 > 
 
-on i386:
-(not from mmotm patches, so must be from linux-next or mainline)
+on x86_64:
 
-CONFIG_INPUT=m
-CONFIG_INPUT_EVDEV=m
-CONFIG_DVB_AV7110=y
+ERROR: "balloon_devinfo_alloc" [drivers/virtio/virtio_balloon.ko] undefined!
+ERROR: "balloon_page_enqueue" [drivers/virtio/virtio_balloon.ko] undefined!
+ERROR: "balloon_page_dequeue" [drivers/virtio/virtio_balloon.ko] undefined!
 
+when loadable module
 
-drivers/built-in.o: In function `input_sync':
-av7110_ir.c:(.text+0x14b999): undefined reference to `input_event'
-drivers/built-in.o: In function `av7110_emit_key':
-av7110_ir.c:(.text+0x14ba4b): undefined reference to `input_event'
-av7110_ir.c:(.text+0x14ba63): undefined reference to `input_event'
-av7110_ir.c:(.text+0x14bb20): undefined reference to `input_event'
-av7110_ir.c:(.text+0x14bb35): undefined reference to `input_event'
-drivers/built-in.o:av7110_ir.c:(.text+0x14bb76): more undefined references to `input_event' follow
-drivers/built-in.o: In function `av7110_ir_init':
-(.text+0x14bec7): undefined reference to `input_allocate_device'
-drivers/built-in.o: In function `av7110_ir_init':
-(.text+0x14bf95): undefined reference to `input_register_device'
-drivers/built-in.o: In function `av7110_ir_init':
-(.text+0x14bfa5): undefined reference to `input_free_device'
-drivers/built-in.o: In function `av7110_ir_exit':
-(.text+0x14c0ad): undefined reference to `input_unregister_device'
+or
 
+virtio_balloon.c:(.text+0x1fa26): undefined reference to `balloon_page_enqueue'
+virtio_balloon.c:(.text+0x1fb87): undefined reference to `balloon_page_dequeue'
+virtio_balloon.c:(.text+0x1fdf1): undefined reference to `balloon_devinfo_alloc'
 
-Possibly just make DVB_AV7110 depend on INPUT.
+when builtin.
+
 
 -- 
 ~Randy
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
