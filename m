@@ -1,27 +1,79 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Request to update imx-mxs tree for linux-next
-Date: Tue, 11 Mar 2014 23:08:54 +0800
-Message-ID: <20140311150853.GD26502@S2101-09.ap.freescale.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2014-03-10-15-35 uploaded (media/pci/ttpci/av7110)
+Date: Tue, 11 Mar 2014 10:04:31 -0700
+Message-ID: <531F421F.3010402@infradead.org>
+References: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe001.messaging.microsoft.com ([216.32.180.11]:30484
-	"EHLO va3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753498AbaCKPI1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Mar 2014 11:08:27 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Holger Waechtler <holger@convergence.de>, Oliver Endriss <o.endriss@gmx.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 03/10/2014 03:37 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2014-03-10-15-35 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (3.x
+> or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
+> This tree is partially included in linux-next.  To see which patches are
+> included in linux-next, consult the `series' file.  Only the patches
+> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> linux-next.
+> 
 
-We're moving imx-mxs tree from Linaro git server to kernel.org.  Can you
-please update the imx-mxs tree for linux-next to the following one?
+on i386:
+(not from mmotm patches, so must be from linux-next or mainline)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+CONFIG_INPUT=m
+CONFIG_INPUT_EVDEV=m
+CONFIG_DVB_AV7110=y
 
-Thanks,
-Shawn
+
+drivers/built-in.o: In function `input_sync':
+av7110_ir.c:(.text+0x14b999): undefined reference to `input_event'
+drivers/built-in.o: In function `av7110_emit_key':
+av7110_ir.c:(.text+0x14ba4b): undefined reference to `input_event'
+av7110_ir.c:(.text+0x14ba63): undefined reference to `input_event'
+av7110_ir.c:(.text+0x14bb20): undefined reference to `input_event'
+av7110_ir.c:(.text+0x14bb35): undefined reference to `input_event'
+drivers/built-in.o:av7110_ir.c:(.text+0x14bb76): more undefined references to `input_event' follow
+drivers/built-in.o: In function `av7110_ir_init':
+(.text+0x14bec7): undefined reference to `input_allocate_device'
+drivers/built-in.o: In function `av7110_ir_init':
+(.text+0x14bf95): undefined reference to `input_register_device'
+drivers/built-in.o: In function `av7110_ir_init':
+(.text+0x14bfa5): undefined reference to `input_free_device'
+drivers/built-in.o: In function `av7110_ir_exit':
+(.text+0x14c0ad): undefined reference to `input_unregister_device'
+
+
+Possibly just make DVB_AV7110 depend on INPUT.
+
+-- 
+~Randy
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
