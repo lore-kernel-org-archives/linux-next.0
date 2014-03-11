@@ -1,61 +1,71 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: mmotm 2014-03-10-15-35 uploaded (virtio_balloon)
-Date: Tue, 11 Mar 2014 14:40:14 -0700
-Message-ID: <20140311214014.GA18708@leaf>
-References: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
- <531F43F2.1030504@infradead.org>
- <20140311110338.333e1ee691cadb0f20dbb083@linux-foundation.org>
- <20140311192046.GA2686@leaf>
- <20140311123133.f40adf3154452e82aecb61ca@linux-foundation.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Tue, 11 Mar 2014 23:55:13 +0000
+Message-ID: <20140311235513.57aadc3a23f88c64cdc92555@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__11_Mar_2014_23_55_13_+0000_._QCQNGxY1k6L4pG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:46363 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755535AbaCKXzV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 19:55:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__11_Mar_2014_23_55_13_+0000_._QCQNGxY1k6L4pG
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140311123133.f40adf3154452e82aecb61ca@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, virtio-dev@lists.oasis-open.org, "Michael S. Tsirkin" <mst@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2014 at 12:31:33PM -0700, Andrew Morton wrote:
-> On Tue, 11 Mar 2014 12:20:46 -0700 Josh Triplett <josh@joshtriplett.org> wrote:
-> 
-> > > > ERROR: "balloon_devinfo_alloc" [drivers/virtio/virtio_balloon.ko] undefined!
-> > > > ERROR: "balloon_page_enqueue" [drivers/virtio/virtio_balloon.ko] undefined!
-> > > > ERROR: "balloon_page_dequeue" [drivers/virtio/virtio_balloon.ko] undefined!
-> > > > 
-> > > > when loadable module
-> > > > 
-> > > > or
-> > > > 
-> > > > virtio_balloon.c:(.text+0x1fa26): undefined reference to `balloon_page_enqueue'
-> > > > virtio_balloon.c:(.text+0x1fb87): undefined reference to `balloon_page_dequeue'
-> > > > virtio_balloon.c:(.text+0x1fdf1): undefined reference to `balloon_devinfo_alloc'
-> > > > 
-> > > > when builtin.
-> > > 
-> > > OK, thanks, I'll drop
-> > > http://ozlabs.org/~akpm/mmots/broken-out/mm-disable-mm-balloon_compactionc-completely-when-config_balloon_compaction.patch
-> > 
-> > Sorry about that; I missed that case in my testing.  It always seems
-> > strange that the dependency goes that way around.
-> > 
-> > With virtio-balloon being the one and only user of this API, would it be
-> > reasonable to just only compile in balloon_compaction.o when
-> > CONFIG_VIRTIO_BALLOON?
-> 
-> Better to make VIRTIO_BALLOON depend on (or select) BALLOON_COMPACTION.
+Hi all,
 
-I'd love to do that, but as far as I can tell, VIRTIO_BALLOON has gone
-out of its way to support !CONFIG_BALLOON_COMPACTION.
+After merging the kvm tree, today's linux-next build (20140311)
+failed like this:
 
-Could someone who works on VIRTIO_BALLOON provide some details here
-about the distinction?
+/home/broonie/next/next/arch/x86/kvm/vmx.c: In function 'nested_vmx_setup_c=
+tls_msrs':
+/home/broonie/next/next/arch/x86/kvm/vmx.c:2292:2: error: implicit declarat=
+ion of function 'vmx_mpx_supported' [-Werror=3Dimplicit-function-declaratio=
+n]
+  if (vmx_mpx_supported())
+  ^
+/home/broonie/next/next/arch/x86/kvm/vmx.c: At top level:
+/home/broonie/next/next/arch/x86/kvm/vmx.c:7036:13: error: conflicting type=
+s for 'vmx_mpx_supported'
+ static bool vmx_mpx_supported(void)
+             ^
+/home/broonie/next/next/arch/x86/kvm/vmx.c:2292:6: note: previous implicit =
+declaration of 'vmx_mpx_supported' was here
+  if (vmx_mpx_supported())
+      ^
+cc1: some warnings being treated as errors
+make[3]: *** [arch/x86/kvm/vmx.o] Error 1
 
-- Josh Triplett
+I have used the version from next-20140307 instead.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Signature=_Tue__11_Mar_2014_23_55_13_+0000_._QCQNGxY1k6L4pG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTH6JhAAoJELSic+t+oim9c78P+gNakwSWK38ZftdfQThsOlmZ
+GhR1i+o5XwnW0/S0pTReAdCEU8azer1n9/lQrLthf0GegJ+7gbAtZMmsCgHJItSQ
+Pq12R3QgIJ49w0FLgwCnNQV447/0IpoGW8UkkRNIo2VugJihaMV9/8H9rj/mYT44
+Zm+tdDotbW8mg3LHu+/cHAIVYgLXFOkmJbyfH3XT37JoXMByySdGAH3WX/AjAXuX
+ZqNWphk7F/PTsbbrJnutj5eqX6qLrG1Oaq8zmHyJOElzgykZb/nisUiG1ysFIgGY
+ts2kdncoUmLuKp2/cAEVas4AUeOKED4pi45YiTLe7I1OKMSsZEqGDT02zOZ3Kjoa
+nxSQULezKXFZfwdJcb0uV94SkeOjcFVuC8bgFbp5v7EyU8fYIbNS4IT7uOHqFWUw
+9ph9hvP+daICMxO5jRC6H01r3lka7ICh8Svuws7tIvV63n58Az8T9btJIquVtS2E
+EXrJ8cYSVExR9ty91CnTy5SNwsOxLiBJc5vqc2L4Y5dl/AQXV3Kc3LtdpN4HnKYX
+jAGgQl1dGHvwvv5A71/NsuklYI7eIrYksiyLf+bTctMDD9cHyhGWYfffbWlNBXNv
+ADoG81Q/xKwEZ5ANCpiFrxpb3u5VV/jbcrbiFUd6GRnqnDLlHFJ5dyTBd0979T6k
+Z21EuEifGbqTYeRwvnH9
+=cGAM
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__11_Mar_2014_23_55_13_+0000_._QCQNGxY1k6L4pG--
