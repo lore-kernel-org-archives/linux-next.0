@@ -1,51 +1,75 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: mmotm 2014-03-10-15-35 uploaded (virtio_balloon)
-Date: Tue, 11 Mar 2014 12:31:33 -0700
-Message-ID: <20140311123133.f40adf3154452e82aecb61ca@linux-foundation.org>
-References: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
-	<531F43F2.1030504@infradead.org>
-	<20140311110338.333e1ee691cadb0f20dbb083@linux-foundation.org>
-	<20140311192046.GA2686@leaf>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the kvm tree with the  tree
+Date: Tue, 11 Mar 2014 20:09:14 +0000
+Message-ID: <20140311200914.2cf12d61480eca0044691007@kernel.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__11_Mar_2014_20_09_14_+0000_Z1fvsEVAky95t/Qb"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:59714 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755304AbaCKUJY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 16:09:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Konstantin Weitz <konstantin.weitz@gmail.com>, Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__11_Mar_2014_20_09_14_+0000_Z1fvsEVAky95t/Qb
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20140311192046.GA2686@leaf>
-Sender: owner-linux-mm@kvack.org
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, virtio-dev@lists.oasis-open.org, "Michael S. Tsirkin" <mst@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 11 Mar 2014 12:20:46 -0700 Josh Triplett <josh@joshtriplett.org> wrote:
+Hi all,
 
-> > > ERROR: "balloon_devinfo_alloc" [drivers/virtio/virtio_balloon.ko] undefined!
-> > > ERROR: "balloon_page_enqueue" [drivers/virtio/virtio_balloon.ko] undefined!
-> > > ERROR: "balloon_page_dequeue" [drivers/virtio/virtio_balloon.ko] undefined!
-> > > 
-> > > when loadable module
-> > > 
-> > > or
-> > > 
-> > > virtio_balloon.c:(.text+0x1fa26): undefined reference to `balloon_page_enqueue'
-> > > virtio_balloon.c:(.text+0x1fb87): undefined reference to `balloon_page_dequeue'
-> > > virtio_balloon.c:(.text+0x1fdf1): undefined reference to `balloon_devinfo_alloc'
-> > > 
-> > > when builtin.
-> > 
-> > OK, thanks, I'll drop
-> > http://ozlabs.org/~akpm/mmots/broken-out/mm-disable-mm-balloon_compactionc-completely-when-config_balloon_compaction.patch
-> 
-> Sorry about that; I missed that case in my testing.  It always seems
-> strange that the dependency goes that way around.
-> 
-> With virtio-balloon being the one and only user of this API, would it be
-> reasonable to just only compile in balloon_compaction.o when
-> CONFIG_VIRTIO_BALLOON?
+Today's linux-next merge of the kvm tree got a conflict in arch/s390/includ=
+e/asm/kvm_host.h between commit b31288fa83b2b ("s390/kvm: support collabora=
+tive memory management") from the  tree and commit 672550fb682e993 ("KVM: s=
+390: Provide access to program parameter") from the kvm tree.
 
-Better to make VIRTIO_BALLOON depend on (or select) BALLOON_COMPACTION.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --cc arch/s390/include/asm/kvm_host.h
+index 9bf95bb30f1a,734d302ba389..000000000000
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@@ -106,9 -107,9 +107,11 @@@ struct kvm_s390_sie_block=20
+        __u64   gbea;                   /* 0x0180 */
+        __u8    reserved188[24];        /* 0x0188 */
+        __u32   fac;                    /* 0x01a0 */
+ -      __u8    reserved1a4[58];        /* 0x01a4 */
+ +      __u8    reserved1a4[20];        /* 0x01a4 */
+ +      __u64   cbrlo;                  /* 0x01b8 */
+-       __u8    reserved1c0[40];        /* 0x01c0 */
+++      __u8    reserved1c0[30];        /* 0x01c0 */
++       __u64   pp;                     /* 0x01de */
++       __u8    reserved1e6[2];         /* 0x01e6 */
+        __u64   itdba;                  /* 0x01e8 */
+        __u8    reserved1f0[16];        /* 0x01f0 */
+  } __attribute__((packed));
+
+
+--Signature=_Tue__11_Mar_2014_20_09_14_+0000_Z1fvsEVAky95t/Qb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTH21qAAoJELSic+t+oim9ByAP/iXEtSV4XWigbtd5hUCNxOF/
+K1sfOQAsxmi1agDS7KP5y2I9qRAiJokKWEJON5dkh/0A5SiyisEiPnjmhE3SMtuG
+0K8Vq7yLCpK1n4YgvMIOVfzAgUwzXUhJlb30iAwfvJtrn82hgKJeLf+cV7N+LmiV
+7Szbq4X4Z8iYUJfB42cWTxfHLjV1hlVxI1m1jexboOnZpL1BJ4xRB0uI4H1ZFprb
+X91w6r9pskXZKIIqjUCskbUtBCA2bXPhlil+o+utxKNARIuDrZv4Wu6eTxbRbmTq
+NGSVqo1EDj0d4eQBe6Bqg/JIJfR+aMPN+gYAUbVak4Z0hAHjZOlytJ7srxwgbbqq
+hUuqbF0OQYNmZg4g9EJ61fdh7bC8Sr8r9efVQT0vXkL1jDHYHFfCn1sAYAwSFEQm
+YZ6s0d9ihlNpj2lVee79sfdtbrT5vACf3L9LSUDX2+gwrQwsG4MoJ24JvtV062ry
+Jve+x/JaX/TfIxoUIm43o0XJEIHxUEhr+iecG9N0PmFyKTLUdxVg3T+7fmK7B3Pt
+xkdQ79XsoCHK9NublENnJl0Y1yZ5ALWf6nnApCVpn8JmgWJOvwUpyUM+aZCOmmGD
+4GxPTaoDLA5q58bsKauxfFd4FROkjqkfwdi9bxmBor84PftgCFf513mjWHgLQTsG
+L1zbCh2ryqERJwZoUdJZ
+=TVtZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__11_Mar_2014_20_09_14_+0000_Z1fvsEVAky95t/Qb--
