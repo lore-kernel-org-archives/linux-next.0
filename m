@@ -1,69 +1,55 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: mmotm 2014-03-10-15-35 uploaded (virtio_balloon)
-Date: Tue, 11 Mar 2014 11:03:38 -0700
-Message-ID: <20140311110338.333e1ee691cadb0f20dbb083@linux-foundation.org>
-References: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
-	<531F43F2.1030504@infradead.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the tip tree with the  tree
+Date: Tue, 11 Mar 2014 19:03:46 +0000
+Message-ID: <20140311190346.89aa11208f24e6abd10721b1@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__11_Mar_2014_19_03_46_+0000_R8J9bvw_pDkCuhU2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44156 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752562AbaCKSDk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 14:03:40 -0400
-In-Reply-To: <531F43F2.1030504@infradead.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:49500 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751718AbaCKTEV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 15:04:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, virtio-dev@lists.oasis-open.org, "Michael S. Tsirkin" <mst@redhat.com>, Josh Triplett <josh@joshtriplett.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 11 Mar 2014 10:12:18 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+--Signature=_Tue__11_Mar_2014_19_03_46_+0000_R8J9bvw_pDkCuhU2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 03/10/2014 03:37 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2014-03-10-15-35 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> > 
-> > You will need quilt to apply these patches to the latest Linus release (3.x
-> > or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > http://ozlabs.org/~akpm/mmotm/series
-> > 
-> > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > followed by the base kernel version against which this patch series is to
-> > be applied.
-> > 
-> > This tree is partially included in linux-next.  To see which patches are
-> > included in linux-next, consult the `series' file.  Only the patches
-> > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> > linux-next.
-> > 
-> 
-> on x86_64:
-> 
-> ERROR: "balloon_devinfo_alloc" [drivers/virtio/virtio_balloon.ko] undefined!
-> ERROR: "balloon_page_enqueue" [drivers/virtio/virtio_balloon.ko] undefined!
-> ERROR: "balloon_page_dequeue" [drivers/virtio/virtio_balloon.ko] undefined!
-> 
-> when loadable module
-> 
-> or
-> 
-> virtio_balloon.c:(.text+0x1fa26): undefined reference to `balloon_page_enqueue'
-> virtio_balloon.c:(.text+0x1fb87): undefined reference to `balloon_page_dequeue'
-> virtio_balloon.c:(.text+0x1fdf1): undefined reference to `balloon_devinfo_alloc'
-> 
-> when builtin.
+Hi all,
 
-OK, thanks, I'll drop
-http://ozlabs.org/~akpm/mmots/broken-out/mm-disable-mm-balloon_compactionc-completely-when-config_balloon_compaction.patch
+Today's linux-next merge of the tip tree got a conflict in drivers/video/fb=
+dev/sgivwfb.c between commit 844901baede6b5 ("video: move fbdev to drivers/=
+video/fbdev") from the omap2_dss tree and commit c5f9ee3d665a76 ("x86, plat=
+forms: Remove SGI Visual Workstation") from the tip tree.
+
+I fixed it up by deleting the offending driver and can carry the fix as nec=
+essary (no action is required).
+
+--Signature=_Tue__11_Mar_2014_19_03_46_+0000_R8J9bvw_pDkCuhU2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTH14SAAoJELSic+t+oim9XQMP/08uTuRXvpg1+DdE95wTTVdt
+ZSkMupGWhkpsQbFXXjUtrMUlfCUzDAorZj16quSVvb3zE55kas7s4sLFC4NaT0mR
+ayQI8hapteG842AZaJeiph6WAc9i5zu8juhqHwYzDwpt44PsJcwCDeMdLJbWsEiU
+YKQjmSoJWSgIXG9j3Wu6+yTAf8mlPE8JTLIENRRZfP+b4kG/Cxpnsx/9M7T8rSU7
+PrFSauT+2kA9dbEKMvzl/bD9UnRenjalcE7nE5aE7lZEGpXoVx7O79A32c2NsFa+
+xqlG/EM8Ek3dxkPt38uuoHTpHg5YJTDdMavK0CdwL4HiXcxRBx4PBKLfHufV2D8k
+3YoOxNWxxLGyg914kZvI00FsfMEUnCZyf34hoKG4kcMIXkkLYoPrCWTC8dluB6ah
+HxiVorB0B+ARM1YrIlEeSdFBYlXWiynhg8zZH2/5jA5dnYMeg6XRSpLPRIlgc/vM
+qU9SHhq694MvjQ13akZGdAjDUFTTDrOSXgKAOa/EmMI5R0eAjsq0rnpOna06jcto
+gYbbJkwik9zvCj41+1IZgsoHfFQLsAoBj4Jjb60dd8uVLa2jBDjnAJ1wLSbtfLDF
+/ns51zhlCQ763KSXhZ82XIUk6GgYmauA4bMzoEdVC2QHzOXPWulfRCy7UVzbjJbv
+acMPRv6SXSL+pgDHXsU1
+=5pzu
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__11_Mar_2014_19_03_46_+0000_R8J9bvw_pDkCuhU2--
