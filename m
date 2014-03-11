@@ -1,80 +1,51 @@
-From: Josh Triplett <josh@joshtriplett.org>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: mmotm 2014-03-10-15-35 uploaded (virtio_balloon)
-Date: Tue, 11 Mar 2014 12:20:46 -0700
-Message-ID: <20140311192046.GA2686@leaf>
+Date: Tue, 11 Mar 2014 12:31:33 -0700
+Message-ID: <20140311123133.f40adf3154452e82aecb61ca@linux-foundation.org>
 References: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com>
- <531F43F2.1030504@infradead.org>
- <20140311110338.333e1ee691cadb0f20dbb083@linux-foundation.org>
+	<531F43F2.1030504@infradead.org>
+	<20140311110338.333e1ee691cadb0f20dbb083@linux-foundation.org>
+	<20140311192046.GA2686@leaf>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38721 "EHLO
-	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755311AbaCKTUz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 15:20:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20140311110338.333e1ee691cadb0f20dbb083@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20140311192046.GA2686@leaf>
+Sender: owner-linux-mm@kvack.org
+To: Josh Triplett <josh@joshtriplett.org>
 Cc: Randy Dunlap <rdunlap@infradead.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, virtio-dev@lists.oasis-open.org, "Michael S. Tsirkin" <mst@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 11, 2014 at 11:03:38AM -0700, Andrew Morton wrote:
-> On Tue, 11 Mar 2014 10:12:18 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+On Tue, 11 Mar 2014 12:20:46 -0700 Josh Triplett <josh@joshtriplett.org> wrote:
+
+> > > ERROR: "balloon_devinfo_alloc" [drivers/virtio/virtio_balloon.ko] undefined!
+> > > ERROR: "balloon_page_enqueue" [drivers/virtio/virtio_balloon.ko] undefined!
+> > > ERROR: "balloon_page_dequeue" [drivers/virtio/virtio_balloon.ko] undefined!
+> > > 
+> > > when loadable module
+> > > 
+> > > or
+> > > 
+> > > virtio_balloon.c:(.text+0x1fa26): undefined reference to `balloon_page_enqueue'
+> > > virtio_balloon.c:(.text+0x1fb87): undefined reference to `balloon_page_dequeue'
+> > > virtio_balloon.c:(.text+0x1fdf1): undefined reference to `balloon_devinfo_alloc'
+> > > 
+> > > when builtin.
+> > 
+> > OK, thanks, I'll drop
+> > http://ozlabs.org/~akpm/mmots/broken-out/mm-disable-mm-balloon_compactionc-completely-when-config_balloon_compaction.patch
 > 
-> > On 03/10/2014 03:37 PM, akpm@linux-foundation.org wrote:
-> > > The mm-of-the-moment snapshot 2014-03-10-15-35 has been uploaded to
-> > > 
-> > >    http://www.ozlabs.org/~akpm/mmotm/
-> > > 
-> > > mmotm-readme.txt says
-> > > 
-> > > README for mm-of-the-moment:
-> > > 
-> > > http://www.ozlabs.org/~akpm/mmotm/
-> > > 
-> > > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > > more than once a week.
-> > > 
-> > > You will need quilt to apply these patches to the latest Linus release (3.x
-> > > or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > > http://ozlabs.org/~akpm/mmotm/series
-> > > 
-> > > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > > followed by the base kernel version against which this patch series is to
-> > > be applied.
-> > > 
-> > > This tree is partially included in linux-next.  To see which patches are
-> > > included in linux-next, consult the `series' file.  Only the patches
-> > > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> > > linux-next.
-> > > 
-> > 
-> > on x86_64:
-> > 
-> > ERROR: "balloon_devinfo_alloc" [drivers/virtio/virtio_balloon.ko] undefined!
-> > ERROR: "balloon_page_enqueue" [drivers/virtio/virtio_balloon.ko] undefined!
-> > ERROR: "balloon_page_dequeue" [drivers/virtio/virtio_balloon.ko] undefined!
-> > 
-> > when loadable module
-> > 
-> > or
-> > 
-> > virtio_balloon.c:(.text+0x1fa26): undefined reference to `balloon_page_enqueue'
-> > virtio_balloon.c:(.text+0x1fb87): undefined reference to `balloon_page_dequeue'
-> > virtio_balloon.c:(.text+0x1fdf1): undefined reference to `balloon_devinfo_alloc'
-> > 
-> > when builtin.
+> Sorry about that; I missed that case in my testing.  It always seems
+> strange that the dependency goes that way around.
 > 
-> OK, thanks, I'll drop
-> http://ozlabs.org/~akpm/mmots/broken-out/mm-disable-mm-balloon_compactionc-completely-when-config_balloon_compaction.patch
+> With virtio-balloon being the one and only user of this API, would it be
+> reasonable to just only compile in balloon_compaction.o when
+> CONFIG_VIRTIO_BALLOON?
 
-Sorry about that; I missed that case in my testing.  It always seems
-strange that the dependency goes that way around.
+Better to make VIRTIO_BALLOON depend on (or select) BALLOON_COMPACTION.
 
-With virtio-balloon being the one and only user of this API, would it be
-reasonable to just only compile in balloon_compaction.o when
-CONFIG_VIRTIO_BALLOON?
-
-- Josh Triplett
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
