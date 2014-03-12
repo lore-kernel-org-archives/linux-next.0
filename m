@@ -1,71 +1,86 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: linux-next: manual merge of the usb tree with the  tree
-Date: Wed, 12 Mar 2014 01:05:25 +0000
-Message-ID: <20140312010525.b04a12173c7778df42da7a31@kernel.org>
+Date: Wed, 12 Mar 2014 01:18:01 +0000
+Message-ID: <20140312011801.4245384d14d877881c3f5a1e@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U"
+ boundary="Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:45109 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:57052 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755989AbaCLBFf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 21:05:35 -0400
+	with ESMTP id S1756145AbaCLBSN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 21:18:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+To: Greg KH <greg@kroah.com>, Shaibal Dutta <shaibal.dutta@broadcom.com>, Tejun Heo <tj@kernel.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U
+--Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in arch/arm/mach-te=
-gra/Kconfig between commit 06c886a95cbb533 ("phy: mvebu-sata: prepare new D=
-ove DT Kconfig variable") from the USB tree and commit ff1f0018cf66 ("drive=
-rs: Enable building of Kirkwood drivers for mach-mvebu") from the mvebu tre=
-e.
+Today's linux-next merge of the usb tree got a conflict in  between commit =
+22f6a0f0e3549 ("usb: move hub init and LED blink work to power efficient wo=
+rkqueue") from the usb tree and commit 77fa83cf747820 ("usb: don't use PREP=
+ARE_DELAYED_WORK") from the workqueues tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
-diff --cc drivers/phy/Kconfig
-index 05711ea4fd15,8d3c49cc500f..000000000000
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@@ -24,7 -27,7 +27,7 @@@ config PHY_EXYNOS_MIPI_VIDE
+diff --cc drivers/usb/core/hub.c
+index 5cbf78d0be25,5da5394127e9..000000000000
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@@ -1040,8 -1049,9 +1049,9 @@@ static void hub_activate(struct usb_hu
+                 */
+                if (type =3D=3D HUB_INIT) {
+                        delay =3D hub_power_on(hub, false);
+ -                      PREPARE_DELAYED_WORK(&hub->init_work, hub_init_func=
+2);
+ +                      INIT_DELAYED_WORK(&hub->init_work, hub_init_func2);
+-                       schedule_delayed_work(&hub->init_work,
++                       queue_delayed_work(system_power_efficient_wq,
++                                       &hub->init_work,
+                                        msecs_to_jiffies(delay));
  =20
-  config PHY_MVEBU_SATA
-        def_bool y
--       depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD
- -      depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_DOVE
-++      depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || MACH_DOVE
-        depends on OF
-        select GENERIC_PHY
+                        /* Suppress autosuspend until init is done */
+@@@ -1194,8 -1204,9 +1204,9 @@@
  =20
+                /* Don't do a long sleep inside a workqueue routine */
+                if (type =3D=3D HUB_INIT2) {
+ -                      PREPARE_DELAYED_WORK(&hub->init_work, hub_init_func=
+3);
+ +                      INIT_DELAYED_WORK(&hub->init_work, hub_init_func3);
+-                       schedule_delayed_work(&hub->init_work,
++                       queue_delayed_work(system_power_efficient_wq,
++                                       &hub->init_work,
+                                        msecs_to_jiffies(delay));
+                        return;         /* Continues at init3: below */
+                } else {
 
---Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U
+--Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIbBAEBAgAGBQJTH7LVAAoJELSic+t+oim95e8P+LCZBr//C1ACPxRjqzl5HP7P
-U2HRVHiF+W9fiMMxVzVwjxQe/YcqpbInJB5xMx2blVWqlaOjn16b5jgR4C4C2Dcm
-nDijCt8fxW24cLbWnKJJyDga9s6xS41RbAA+K76fGVNQ0rH3YQbsKzJw6amS00kj
-4CWIdvZsEmOWkmRJh2vNd6C3SXj1+xTT11buw7knkcIgz94Na2kThrJeLJeBFCSh
-xpP5dmW03kX67nCAu9FdJItXAOHT7a0Sx8Ijbsc0gG/HNKbFEZIDqYC+4T9F85rF
-ueSstHWS4K9VPSlFvszjp0zxKwS33ld0WNCe2izXETWvSDoJ8Rtny+FAPrPadsi0
-o+lL4hUBcKr0lmrGxUWLANcCbvhBwewxmXpjc9vpP1WJoQ65Fq4tQZsetGeJAfz0
-ur8ys9pWLFLdMDuaPdSXafBE97TN1Deqgwlu2oKxAZDk7K15ur+ur4jXPHcQbSry
-KcDfXV8vw9srjl4i2D16CFrrBDKfqckO7koCSuBPUyXelMoeNrS0vMp0Dz9IBJ4y
-W5G1ziIn8soUJed+hoO3JV9d5PCl8yY6iKlOSqZ/dNyBLKGtJH1XkA4EBmz7LsT6
-ZNuN8g+UzF8BZtpTEfpckUNY2IAi44BAd/w5mV8xCmDTFVr22lkfEwXK05yvcV69
-El+0NfM/8T+PPu03VVU=
-=RE5I
+iQIcBAEBAgAGBQJTH7XJAAoJELSic+t+oim9cuMP/0B+Y/YqH9UVP1xef6oNSYBU
+ioSxri/SaJEJp0k4mb0RApvsEsG82EXhpUAqlegoY+8wGNJjbaJyxOCCS8kANnsd
+ehmhjG51IADRiAasdG55EP1tEWLeoVn8z/NkIfSkS8hCa4EgoIkS15uct/eAY0hR
+Jk1SVvr3zSD3MU8J+U2qrSs8FD4laRhk5gSv4xNafWqDusMoRSi8ZEasjlNTfqHP
+Ev1FBKqcnYFNIV1RjVy0TZ0nx4rWtCsWwhXE+5/Xb1xLL+mTmRxsm0M30uEj3eyr
+GLyLNV/6SaiEw+UZjCAa3XOiyQ/idA3e73gy2SfNwchLpyA10Ekk68PO292lN367
+zer6wxvvzqvAFdvLndD1fbqIqCyIx4nZ3apMzwhr7m/zF1fVtEo7BkAmEDg8iDcB
+fDkQypTWaWfK2OdelyChbEMXHysTAC3fhl+1376OGcbenDCvFh3vw4waqXls5XkZ
+N4z8qzCXU3KVq/13omBV/9L+YHoVrMqr3rUmIKSb6i1WyCesEiwMg75C93mO8r8T
+MmmNjbpFC+jXQZLSVk8ODQfc3Q8RIOZzmulvq0WOFX3Deila5ic+YEvDOCZpEuq7
+LK20Qa+X34/XMjf5azvXAzc1QMdq7yGXHNlCfCjqpN+86xImWWMyBhrre4gyA6+J
+eGcEjfyLU4UWeoK+wixF
+=2rr7
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U--
+--Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4--
