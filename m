@@ -1,87 +1,210 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: linux-next: manual merge of the staging tree with the  tree
-Date: Wed, 12 Mar 2014 01:27:01 +0000
-Message-ID: <20140312012701.c99ebd52abb416cbae3863ad@kernel.org>
+Date: Wed, 12 Mar 2014 01:32:59 +0000
+Message-ID: <20140312013259.d374b64c0655e98612d880b3@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49254 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756221AbaCLB1M (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 21:27:12 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@arm.linux.org.uk>
+ boundary="Signature=_Wed__12_Mar_2014_01_32_59_+0000_8Cb6YRmElvMM_1wV"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Salva =?ISO-8859-1?Q?Peir=F3?= <speiro@ai2.upv.es>, Daeseok Youn <daeseok.youn@gmail.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB
+--Signature=_Wed__12_Mar_2014_01_32_59_+0000_8Cb6YRmElvMM_1wV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the staging tree got a conflict in arch/arm/boo=
-t/dts/imx53-qsb.dts between various commits from the arm-soc tree and commi=
-t 17b5001b5143e3b ("imx-drm: convert to componentised device support") from=
- the staging tree.
+Today's linux-next merge of the staging tree got a conflict in drivers/stag=
+ing/cxt1e1/linux.c between commit 084b6e7765b95 ("staging/cxt1e1/linux.c: C=
+orrect arbitrary memory write in c4_ioctl()") from Linus' tree and commit a=
+a562fa70931d ("staging: cxt1e1: Fix no spaces at the start of a line in lin=
+ux.c") from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
-diff --cc arch/arm/boot/dts/imx53-qsb.dts
-index dec4b073ceb1,8b254289344f..000000000000
---- a/arch/arm/boot/dts/imx53-qsb.dts
-+++ b/arch/arm/boot/dts/imx53-qsb.dts
-diff --git a/arch/arm/boot/dts/imx53-qsb-common.dtsi b/arch/arm/boot/dts/im=
-x53-qsb-common.dtsi
-index 2dca98b79f48..50823d0f05bf 100644
---- a/arch/arm/boot/dts/imx53-qsb-common.dtsi
-+++ b/arch/arm/boot/dts/imx53-qsb-common.dtsi
-@@ -17,7 +17,7 @@
-                reg =3D <0x70000000 0x40000000>;
-        };
-=20
--       display@di0 {
-+       display0: display@di0 {
-                compatible =3D "fsl,imx-parallel-display";
-                crtcs =3D <&ipu 0>;
-                interface-pix-fmt =3D "rgb565";
-@@ -68,6 +68,12 @@
-                };
-        };
-=20
-+       imx-drm {
-+               compatible =3D "fsl,imx-drm";
-+               crtcs =3D <&ipu 0>;
-+               connectors =3D <&display0>;
-+       };
-+
-        leds {
-                compatible =3D "gpio-leds";
-                pinctrl-names =3D "default";
+diff --cc drivers/staging/cxt1e1/linux.c
+index 79206cb3fb94,549efd1fa965..000000000000
+--- a/drivers/staging/cxt1e1/linux.c
++++ b/drivers/staging/cxt1e1/linux.c
+@@@ -861,79 -867,77 +867,79 @@@ c4_ioctl(struct net_device *ndev, struc
+  #endif
+ =20
+  #if 0
+-     pr_info("c4_ioctl: iocmd %x, dir %x type %x nr %x iolen %d.\n", iocmd,
+-             _IOC_DIR (iocmd), _IOC_TYPE (iocmd), _IOC_NR (iocmd),
+-             _IOC_SIZE (iocmd));
++ 	pr_info("c4_ioctl: iocmd %x, dir %x type %x nr %x iolen %d.\n", iocmd,
++ 		_IOC_DIR(iocmd), _IOC_TYPE(iocmd), _IOC_NR(iocmd),
++ 		_IOC_SIZE(iocmd));
+  #endif
+-     iolen =3D _IOC_SIZE (iocmd);
+-     if (iolen > sizeof(arg))
+-         return -EFAULT;
+-     data =3D ifr->ifr_data + sizeof (iocmd);
+-     if (copy_from_user (&arg, data, iolen))
+-         return -EFAULT;
+-=20
+-     ret =3D 0;
+-     switch (iocmd)
+-     {
+-     case SBE_IOC_PORT_GET:
+-         //pr_info(">> SBE_IOC_PORT_GET Ioctl...\n");
+-         ret =3D do_get_port (ndev, data);
+-         break;
+-     case SBE_IOC_PORT_SET:
+-         //pr_info(">> SBE_IOC_PORT_SET Ioctl...\n");
+-         ret =3D do_set_port (ndev, data);
+-         break;
+-     case SBE_IOC_CHAN_GET:
+-         //pr_info(">> SBE_IOC_CHAN_GET Ioctl...\n");
+-         ret =3D do_get_chan (ndev, data);
+-         break;
+-     case SBE_IOC_CHAN_SET:
+-         //pr_info(">> SBE_IOC_CHAN_SET Ioctl...\n");
+-         ret =3D do_set_chan (ndev, data);
+-         break;
+-     case C4_DEL_CHAN:
+-         //pr_info(">> C4_DEL_CHAN Ioctl...\n");
+-         ret =3D do_del_chan (ndev, data);
+-         break;
+-     case SBE_IOC_CHAN_NEW:
+-         ret =3D do_create_chan (ndev, data);
+-         break;
+-     case SBE_IOC_CHAN_GET_STAT:
+-         ret =3D do_get_chan_stats (ndev, data);
+-         break;
+-     case SBE_IOC_LOGLEVEL:
+-         ret =3D do_set_loglevel (ndev, data);
+-         break;
+-     case SBE_IOC_RESET_DEV:
+-         ret =3D do_reset (ndev, data);
+-         break;
+-     case SBE_IOC_CHAN_DEL_STAT:
+-         ret =3D do_reset_chan_stats (ndev, data);
+-         break;
+-     case C4_LOOP_PORT:
+-         ret =3D do_port_loop (ndev, data);
+-         break;
+-     case C4_RW_FRMR:
+-         ret =3D do_framer_rw (ndev, data);
+-         break;
+-     case C4_RW_MSYC:
+-         ret =3D do_musycc_rw (ndev, data);
+-         break;
+-     case C4_RW_PLD:
+-         ret =3D do_pld_rw (ndev, data);
+-         break;
+-     case SBE_IOC_IID_GET:
+-         ret =3D (iolen =3D=3D sizeof (struct sbe_iid_info)) ? c4_get_iidi=
+nfo (ci, &arg.u.iip) : -EFAULT;
+-         if (ret =3D=3D 0)               /* no error, copy data */
+-             if (copy_to_user (data, &arg, iolen))
+-                 return -EFAULT;
+-         break;
+-     default:
+-         //pr_info(">> c4_ioctl: EINVAL - unknown iocmd <%x>\n", iocmd);
+-         ret =3D -EINVAL;
+-         break;
+-     }
+-     return mkret (ret);
++ 	iolen =3D _IOC_SIZE(iocmd);
+++	if (iolen > sizeof(arg))
+++		return -EFAULT;
++ 	data =3D ifr->ifr_data + sizeof(iocmd);
++ 	if (copy_from_user(&arg, data, iolen))
++ 		return -EFAULT;
++=20
++ 	ret =3D 0;
++ 	switch (iocmd) {
++ 	case SBE_IOC_PORT_GET:
++ 		//pr_info(">> SBE_IOC_PORT_GET Ioctl...\n");
++ 		ret =3D do_get_port(ndev, data);
++ 		break;
++ 	case SBE_IOC_PORT_SET:
++ 		//pr_info(">> SBE_IOC_PORT_SET Ioctl...\n");
++ 		ret =3D do_set_port(ndev, data);
++ 		break;
++ 	case SBE_IOC_CHAN_GET:
++ 		//pr_info(">> SBE_IOC_CHAN_GET Ioctl...\n");
++ 		ret =3D do_get_chan(ndev, data);
++ 		break;
++ 	case SBE_IOC_CHAN_SET:
++ 		//pr_info(">> SBE_IOC_CHAN_SET Ioctl...\n");
++ 		ret =3D do_set_chan(ndev, data);
++ 		break;
++ 	case C4_DEL_CHAN:
++ 		//pr_info(">> C4_DEL_CHAN Ioctl...\n");
++ 		ret =3D do_del_chan(ndev, data);
++ 		break;
++ 	case SBE_IOC_CHAN_NEW:
++ 		ret =3D do_create_chan(ndev, data);
++ 		break;
++ 	case SBE_IOC_CHAN_GET_STAT:
++ 		ret =3D do_get_chan_stats(ndev, data);
++ 		break;
++ 	case SBE_IOC_LOGLEVEL:
++ 		ret =3D do_set_loglevel(ndev, data);
++ 		break;
++ 	case SBE_IOC_RESET_DEV:
++ 		ret =3D do_reset(ndev, data);
++ 		break;
++ 	case SBE_IOC_CHAN_DEL_STAT:
++ 		ret =3D do_reset_chan_stats(ndev, data);
++ 		break;
++ 	case C4_LOOP_PORT:
++ 		ret =3D do_port_loop(ndev, data);
++ 		break;
++ 	case C4_RW_FRMR:
++ 		ret =3D do_framer_rw(ndev, data);
++ 		break;
++ 	case C4_RW_MSYC:
++ 		ret =3D do_musycc_rw(ndev, data);
++ 		break;
++ 	case C4_RW_PLD:
++ 		ret =3D do_pld_rw(ndev, data);
++ 		break;
++ 	case SBE_IOC_IID_GET:
++ 		ret =3D (iolen =3D=3D sizeof(struct sbe_iid_info)) ?
++ 		       c4_get_iidinfo(ci, &arg.u.iip) : -EFAULT;
++ 		if (ret =3D=3D 0)               /* no error, copy data */
++ 			if (copy_to_user(data, &arg, iolen))
++ 				return -EFAULT;
++ 		break;
++ 	default:
++ 		//pr_info(">> c4_ioctl: EINVAL - unknown iocmd <%x>\n", iocmd);
++ 		ret =3D -EINVAL;
++ 		break;
++ 	}
++ 	return mkret(ret);
+  }
+ =20
+  static const struct net_device_ops c4_ops =3D {
 
---Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB
+--Signature=_Wed__12_Mar_2014_01_32_59_+0000_8Cb6YRmElvMM_1wV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTH7flAAoJELSic+t+oim9rDYQAIXAv4ib3+/NMWX50rNaPH8J
-+CVmii407n55W1FwWrSsqadJkQ5np4J3tW0KJJZgPqq+0SBSgQFgBBZtOIVSTOXh
-5fHpVFS2h+7X22+OXwGDOuVajyl+U34mZSFe2QHug87j8Zn2E+uf8+45UFfZjJuC
-eh2UhMENSO1WqIS0ak8V1nuDbW0MlX5jWdD9tbHBItXA9LCedCdEtpCcu90f4/Cf
-CtU6/s1CMEHwKNJf+RkwqmhdlRoK8ZZ+IDTmuXQqbWRWuXCQMxBp34AuE+E345ug
-MH7KfXZiIvlBdCUjE9DSb0cR64R51cIsPOAqKze1p9YAoM4HD+P/tGsBi+iLvQU3
-vCmVv7OXTg2CAEx0+Q47AA/db+DtzqLgsj2eD2fpzn+kj+Q8IJE0TfcyiJ1yR0Ru
-QGqveDNJHBOUEoLwJMFLooneGnWX/FIvx3erd2cR1sShJt9Szuy8TveVgHHvEHEf
-8rN7zyL9hgsN2Wy25KrbXmuK5mTTVuvy8pMDEHwUfS5213LPrFzmXOl/LroWZuPv
-RIpcRfArchK4eoCiVwu17TI0T0kVCjbm+4bVCbOVbGdQsjnNJd2vUrcQsBy4AsyN
-OD3D80Ribbq8nf5OXuB6vUhej1FHNCcyN2Krja3CvaEwz0mVvUhIVnMwFu8Y6LZN
-mBmoFpMNcRiWC8ZjTVO4
-=z5yx
+iQIcBAEBAgAGBQJTH7lLAAoJELSic+t+oim9JuEQAJf02sFaOxefD+GCCwP0jioA
+p79dR4BPde/S9k/xNh/16giX7yN4NwokmTwKRLppQAKi9MZVKsRlxDtobAeScaDT
+KOiTBZHOiC13iq+/0aneJE3CvbGxru/80zDJR9wt0pOtxBKyvck0n6D5pf4x/6WR
+8y1I7HWm23uj6EVGXsXnpNRNv/EIpT+Cu7BIiyiXhjQjhOOWXxL8kKQ/RaCwxBBF
+uBY3423b0ERf8JAUldTsA3yv0DCDQQaqCZ/QMU7zBGHi7JKV8p3BezYPnaCgbXFw
+EZ8nkLrOamTQvVxVCEJFrA18i6GOQjLU6W5x0CEEMnYZCUaCulY0VgG8xAI+vSVx
+dlQ1KQ5W2Oj2+vx93S2/AAE9iwlS0+yPifQEBJZcZVWzcDrNcSo4qz6598iE/VAP
+EPz64IqnxmHPXNyoTM9XdVODHeEj+KuBRbYwtGliLjBprglUAbG807jMojgj+eF4
+QxVt+JLjU7QuHKoJQJYcC6L33inms266PnkmOyIteCG87SYbjCY6GCHWExZulRkJ
+Kw0TUJGCHbh/6o2FKy5vek1aXVTQ1IkPSbs+lBGO/WO7jZgHf++NkJUT+Bq6J+0L
+kTrx2cteOlZC6VnFqRh3tJj9ejOU2jaPTY3jhdNPx6/mt6s1Q0lQO2OucJdWqC9k
+XpaxUQ+ShZ7zdqHvPJBl
+=5KJo
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB--
+--Signature=_Wed__12_Mar_2014_01_32_59_+0000_8Cb6YRmElvMM_1wV--
