@@ -1,61 +1,52 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Subject: Re: [PATCH 0/3] Add support for the M5150 processor
-Date: Wed, 12 Mar 2014 12:45:24 +0100
-Message-ID: <CAOiHx=kH+e6At0coBjC+-4gc-VHpXtrXc6Cki3Ga7x3b4AKJ7Q@mail.gmail.com>
-References: <1393940084-29518-1-git-send-email-markos.chandras@imgtec.com>
- <CAP=VYLribDoh9LyQuNr-RxmRdaVxqNqzCCSAgMxKoZKWd2b1YA@mail.gmail.com> <CAOiHx=mNtTv01CyjC=rXKzTeF79sbBqnZBQWbWXAkKnrGeZrng@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the pci tree with the pci-current tree
+Date: Wed, 12 Mar 2014 13:00:09 +0000
+Message-ID: <20140312130009.2c05e3aea858358daacfbba0@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0.mx.nanl.de ([217.115.11.12]:42119 "EHLO mail.nanl.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752717AbaCLLpv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Mar 2014 07:45:51 -0400
-Received: from mail-qa0-f46.google.com (mail-qa0-f46.google.com [209.85.216.46])
-	by mail.nanl.de (Postfix) with ESMTPSA id A266945F37
-	for <linux-next@vger.kernel.org>; Wed, 12 Mar 2014 11:45:31 +0000 (UTC)
-Received: by mail-qa0-f46.google.com with SMTP id i13so9869905qae.33
-        for <linux-next@vger.kernel.org>; Wed, 12 Mar 2014 04:45:45 -0700 (PDT)
-In-Reply-To: <CAOiHx=mNtTv01CyjC=rXKzTeF79sbBqnZBQWbWXAkKnrGeZrng@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Markos Chandras <markos.chandras@imgtec.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__12_Mar_2014_13_00_09_+0000_jgn8=AK7rWkd8O7t"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 10, 2014 at 8:21 PM, Jonas Gorski <jogo@openwrt.org> wrote:
-> On Mon, Mar 10, 2014 at 6:43 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
->> On Tue, Mar 4, 2014 at 8:34 AM, Markos Chandras
->> <markos.chandras@imgtec.com> wrote:
->>> Hi,
->>>
->>> This patchset adds support for the recently announced M5150 processor
->>> http://imgtec.com/mips/mips-series5-mclass-m51xx.asp?NewsID=804
->>
->> I'm going to skip the bisect, and make a guess that this patchset causes
->> the following build failures on all pre-existing mips boards:
->>
->> arch/mips/kernel/cpu-probe.c:856:7: error: 'PRID_IMP_M5150' undeclared
->> (first use in this function)
->> arch/mips/kernel/cpu-probe.c:857:16: error: 'CPU_M5150' undeclared
->> (first use in this function)
->> make[3]: *** [arch/mips/kernel/cpu-probe.o] Error 1
->>
->> See this link as one of the many linux-next mips failures:
->>
->> http://kisskb.ellerman.id.au/kisskb/buildresult/10701712/
->
->
-> Looking at mips-next and patchwork, the problem isn't the patchset
-> itself, but rather that only the third patch was applied.
->
-> Ralf, I think you missed the following two patches :)
->
-> http://patchwork.linux-mips.org/patch/6595/
-> http://patchwork.linux-mips.org/patch/6596/
+--Signature=_Wed__12_Mar_2014_13_00_09_+0000_jgn8=AK7rWkd8O7t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For me it now builds through, thank you!
+Hi Bjorn,
 
+Today's linux-next merge of the pci tree got a conflict in drivers/pci/pci.=
+c between commit 5f4fe7ad54087 ("PCI: Enable INTx in pci_reenable_device() =
+only when MSI/MSI-X not enabled") from the pci-current tree and commit 1e25=
+71a7813836 ("PCI: Enable INTx if BIOS left them disabled") from the pci tre=
+e.
 
-Regards
-Jonas
+I fixed it up resulting in the contents of pci-current and can carry the fi=
+x as necessary (no action is required).
+
+--Signature=_Wed__12_Mar_2014_13_00_09_+0000_jgn8=AK7rWkd8O7t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTIFpZAAoJELSic+t+oim97UsP/R/Bd9iM48j9ODnpwtl1YPVX
+95l3pspq9ZMKYm+1dMJGwOvqKoe3P2P2QKjThWD6DomPB3vVl/uz1jrO21bpK9VY
+1V4HK/3h0RS8i8XKgWMHU9g0wqqQmhBBEqHZ88nRp4Yc8SABIQXZ5H9GQBcPDkYa
+rvxxoBKyWuT3uDursPGATFI+LjaP6DtlkWRfMAyfJhXvYwpkGDLN42YA+r9oQkaY
+M0eBCjbYsCtUuQnKPJJxa/FkYjyXeU4p4AXfRhAjNGH3y//vSfXQSTVeqO+UW89n
+EhXaytNvF8l8vY6Nx5mhLmlUIfRzPA4207CMYnmngk/SFQDD2ScaG3p2dmETzAoI
+FfKmrGavT9Sgm5BijqWy1dB48dtIJ6U3RzT+/vYsx3SdR8hnl/XYHZ+JAIDdA4qL
+0QM40gqUuYufshjkiEne8Nmg9M4JcUxwzE4zL2dXp+8GajMhDXUxayoVyvZdEyCB
+yxeDZ3JqrOftS9LtH6ZOhtvgPF7tmI0G9aLJZ1q6DUgbggLmZFWmeNc370To0YBc
+DXgNo6nW+o+OAef+XvT+AycsUpuJ4B+9AK9G+xpSsXdyd9TS5dUWjgvOcddHB5WR
+k74c5zpdN7A//+620Ysc1DDpSitljI4mMTADcyjkQpNOsAiiX0jFoWDCHK7JyxN2
+4EG4gBtD9C2AQh8lVyFF
+=AlS5
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Mar_2014_13_00_09_+0000_jgn8=AK7rWkd8O7t--
