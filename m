@@ -1,63 +1,95 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 12 Mar 2014 14:55:41 +1100
-Message-ID: <1394596541.4840.70.camel@pasglop>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
-	 <20140312015021.GC10106@kroah.com>
+From: Markos Chandras <Markos.Chandras@imgtec.com>
+Subject: Re: [PATCH v2] samples/seccomp/Makefile: Do not build tests if cross-compiling
+ for MIPS
+Date: Wed, 12 Mar 2014 11:22:26 +0000
+Message-ID: <53204372.1000400@imgtec.com>
+References: <52FD0131.9040304@imgtec.com> <1392804917-29789-1-git-send-email-markos.chandras@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:39055 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752535AbaCLD4C (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Mar 2014 23:56:02 -0400
-In-Reply-To: <20140312015021.GC10106@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1392804917-29789-1-git-send-email-markos.chandras@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-mips@linux-mips.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2014-03-11 at 18:50 -0700, Greg KH wrote:
-> On Wed, Mar 12, 2014 at 12:51:52AM +0000, Mark Brown wrote:
-> > Hi Greg,
-> > 
-> > After merging the driver-core tree, today's linux-next build ()
-> > failed like this on a PowerPC defconfig:
-> > 
-> > HEAD is now at ceb98e684dec Merge remote-tracking branch 'driver-core/driver-core-next'
-> >   GEN     /home/broonie/next/powerpc_ppc64_defconfig/Makefile
-> > #
-> > # configuration written to .config
-> > #
-> > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c: In function 'elog_ack_store':
-> > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c:84:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
-> >   sysfs_schedule_callback(&elog_obj->kobj, delay_release_kobj,
-> >   ^
-> > cc1: all warnings being treated as errors
-> > make[3]: *** [arch/powerpc/platforms/powernv/opal-elog.o] Error 1
-> > make[3]: *** Waiting for unfinished jobs....
-> > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c: In function 'dump_ack_store':
-> > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c:100:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
-> >   sysfs_schedule_callback(&dump_obj->kobj, delay_release_kobj,
-> >   ^
-> > cc1: all warnings being treated as errors
-> > 
-> > due to an interaction between d1ba277e7988908 (sysfs, driver-core: remove unused {sysfs|device}_schedule_callback_owner()) and 774fea1a38c6a5a8 (powerpc/powernv: Read OPAL error log and export it through sysfs) from the PowerPC tree.
-> > 
-> > I reverted 774fea1a38c6a5a8 for today.
-> 
-> Sounds like the powerpc tree also needs to stop using this function :)
+On 02/19/2014 10:15 AM, Markos Chandras wrote:
+> The Makefile is designed to use the host toolchain so it may be
+> unsafe to build the tests if the kernel has been configured and built
+> for another architecture. This fixes a build problem when the kernel =
+has
+> been configured and built for the MIPS architecture but the host is
+> not MIPS (cross-compiled). The MIPS syscalls are only defined
+> if one of the following is true:
+>
+> 1) _MIPS_SIM =3D=3D _MIPS_SIM_ABI64
+> 2) _MIPS_SIM =3D=3D _MIPS_SIM_ABI32
+> 3) _MIPS_SIM =3D=3D _MIPS_SIM_NABI32
+>
+> Of course, none of these make sense on a non-MIPS toolchain and the
+> following build problem occurs when building on a non-MIPS host.
+>
+> linux/usr/include/linux/kexec.h:50:
+> userspace cannot reference function or variable defined in the kernel
+> samples/seccomp/bpf-direct.c: In function =E2=80=98emulator=E2=80=99:
+> samples/seccomp/bpf-direct.c:76:17: error:
+> =E2=80=98__NR_write=E2=80=99 undeclared (first use in this function)
+>
+> Cc: linux-next@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
+> ---
+> This build problem is only reproducible on the linux-next tree at the=
+ moment
+>
+> Changes since v1:
+> - Rework code so native builds are allowed on MIPS
+> ---
+>   samples/seccomp/Makefile | 14 ++++++++++----
+>   1 file changed, 10 insertions(+), 4 deletions(-)
+>
+> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
+> index 7203e66..855051b 100644
+> --- a/samples/seccomp/Makefile
+> +++ b/samples/seccomp/Makefile
+> @@ -18,8 +18,8 @@ HOSTCFLAGS_bpf-direct.o +=3D -idirafter $(objtree)/=
+include
+>   bpf-direct-objs :=3D bpf-direct.o
+>
+>   # Try to match the kernel target.
+> -ifndef CONFIG_64BIT
+>   ifndef CROSS_COMPILE
+> +ifndef CONFIG_64BIT
+>
+>   # s390 has -m31 flag to build 31 bit binaries
+>   ifndef CONFIG_S390
+> @@ -36,7 +36,13 @@ HOSTLOADLIBES_bpf-direct +=3D $(MFLAG)
+>   HOSTLOADLIBES_bpf-fancy +=3D $(MFLAG)
+>   HOSTLOADLIBES_dropper +=3D $(MFLAG)
+>   endif
+> -endif
+> -
+> -# Tell kbuild to always build the programs
+>   always :=3D $(hostprogs-y)
+> +else
+> +# MIPS system calls are defined based on the -mabi that is passed
+> +# to the toolchain which may or may not be a valid option
+> +# for the host toolchain. So disable tests if target architecture
+> +# is MIPS but the host isn't.
+> +ifndef CONFIG_MIPS
+> +always :=3D $(hostprogs-y)
+> +endif
+> +endif
+>
 
-powerpc -next is a never-rebase branch, so we are somewhat stuffed here.
+CC'ing Andrew Morton as well
 
-How do you suggest we proceed ? I can't add a fix to powerpc-next to use
-the new function since it doesn't exist upstream yet. I would have to
-pull drivers-core-next in which I really don't want to do....
+Ping? Is anyone willing to take this patch in his tree so we can restor=
+e=20
+the build for allyes/allmod configs for MIPS on linux-next?
 
-Can the removal of the function be delayed to -rc1 so we can properly
-do the fixup ? Or do you have the introduction of the new function in
-a topic branch I can pull in without the rest of drivers-core-next ?
-
-Cheers,
-Ben.
+--=20
+markos
