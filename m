@@ -1,47 +1,81 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 12 Mar 2014 16:21:02 -0400
-Message-ID: <20140312202102.GB22332@htj.dyndns.org>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
- <20140312015021.GC10106@kroah.com>
- <1394596541.4840.70.camel@pasglop>
- <20140312113742.GM28112@sirena.org.uk>
- <1394654396.4840.94.camel@pasglop>
- <20140312200232.GA22332@htj.dyndns.org>
- <1394655292.4840.97.camel@pasglop>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the audit tree with arch trees
+Date: Wed, 12 Mar 2014 21:27:39 +0000
+Message-ID: <20140312212739.b160142e6f75e4e9f23640ab@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__12_Mar_2014_21_27_39_+0000_RUw3e.UgtGNScMrd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:57635 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751811AbaCLV1t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Mar 2014 17:27:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eric Paris <eparis@redhat.com>, AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Wed__12_Mar_2014_21_27_39_+0000_RUw3e.UgtGNScMrd
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <1394655292.4840.97.camel@pasglop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Mark Brown <broonie@kernel.org>, Greg KH <greg@kroah.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Eric,
 
-On Thu, Mar 13, 2014 at 07:14:52AM +1100, Benjamin Herrenschmidt wrote:
-> It's generally consider bad taste to pull entire trees into each
-> other :-) I know Stephen isn't fan of it...
+Today's linux-next merge of the audit tree got conflicts between context ch=
+anges in various arch trees and commit b4df597ae51f820 ("audit: Add CONFIG_=
+HAVE_ARCH_AUDITSYSCALL") from the audit tree.
 
-I wouldn't say it's considered "generally" bad taste.  For one-off
-changes, maybe.  This was a rather large restructuring of the whole
-thing, so actually duplicating all the rather significant commits
-would be a lot worse.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> I'd rather have just that series (or even better, just the patches
-> introducing the new function) in a topic branch, itself pulled into
-> both driver-core-next and my tree.
-> 
-> Can you produce that ? (I need a non-rebase guarantee though).
+diff --cc arch/powerpc/Kconfig
+index 957d3e5aff9e,96627d67bd67..000000000000
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@@ -140,7 -139,7 +140,8 @@@ config PP
+        select OLD_SIGACTION if PPC32
+        select HAVE_DEBUG_STACKOVERFLOW
+        select HAVE_IRQ_EXIT_ON_IRQ_STACK
+ +      select ARCH_USE_CMPXCHG_LOCKREF if PPC64
++       select HAVE_ARCH_AUDITSYSCALL
+ =20
+  config GENERIC_CSUM
+        def_bool CPU_LITTLE_ENDIAN
+diff --cc arch/x86/Kconfig
+index 0af5250d914f,56f47caf6fa0..000000000000
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -126,7 -125,7 +126,8 @@@ config X8
+        select RTC_LIB
+        select HAVE_DEBUG_STACKOVERFLOW
+        select HAVE_IRQ_EXIT_ON_IRQ_STACK if X86_64
+ +      select HAVE_CC_STACKPROTECTOR
++       select HAVE_ARCH_AUDITSYSCALL
+ =20
+  config INSTRUCTION_DECODER
+        def_bool y
 
-It's a series of rather complex patches.  I really don't think
-duplicating them is a good idea.  We can either resurrect the old API
-to kill it again or set up a merge branch which I don't think is too
-unusual in situations like this.
+--Signature=_Wed__12_Mar_2014_21_27_39_+0000_RUw3e.UgtGNScMrd
+Content-Type: application/pgp-signature
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
--- 
-tejun
+iQIcBAEBAgAGBQJTINFLAAoJELSic+t+oim9bb0P/2u/uzMTp3kQECGrLVRHWivu
+3LAnA9n2xlUdIlRoJfT/Jrl3rqziWFxVSvMiE5fg/B0nbtB+/u6v+XYS/TQsSGpO
+Y6VdWUdPWHZMG373f8yIjJc9lx+RvwEdpcEf1SUl9lHN0u2BS1uiIVpSAJp5yLxQ
+/TITeKsA3FSGuE7aNj9xW1isuOETXQ6fvY95oYYJNpdQFZ7ZPCcVKvGs2+t/RdTf
+VdOkZZKN5BERTiG5TKr0HyayvkZVgPjazg+v2CyStq29KnlJR+WZsyMJySjHKmqN
+zqUgcKgoOuefJ0Us9z9wrvIoBfJQBqKdh3AcHqDUpO9Yw2MN6CqBaVkaf4kIeadg
+sNE65twt/8+Xm48Jbd1pEffRkenBuEc1Vjd6oYlFnHunvFQVtCl5KjIgh+7CE4Tr
+HWZ27CNpM+Y2XtGLy9DKzOQOhJU8Srvd5U7YFtusaOCIQ38aFEd75c0hxJzyYGXE
+3qMH0elFNBrl2Jspy5nQnbdfXrW+DY4SW2BVjlrUIKcnyNh2l5ww/0tfrI/HAN0g
+YMsZAGnUCxfDcTC299YkJIOQ7LO2BDO0CVZ6EipMXfUFpXUtTX1cotbEjIh1f0Ht
+eNV9jqsQzMCuTZg/LQKhxfpf/YvgvU9iJCb1TmsnBOMASGkThwwTSyn5SpJct95s
+W2B5KFyfUvRopYs3uQ0V
+=6eqW
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Mar_2014_21_27_39_+0000_RUw3e.UgtGNScMrd--
