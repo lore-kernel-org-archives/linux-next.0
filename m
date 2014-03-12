@@ -1,97 +1,87 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the devicetree tree with the arm-soc
- tree
-Date: Wed, 12 Mar 2014 22:03:50 +0000
-Message-ID: <20140312220350.3c35bce7dff139a73a9c8262@kernel.org>
+Subject: linux-next: manual merge of the tip tree with the pci tree
+Date: Wed, 12 Mar 2014 22:18:28 +0000
+Message-ID: <20140312221828.da7bffd214e9749a5652ff22@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Mar_2014_22_03_50_+0000_vmFFXRA22RtmV3h9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+ boundary="Signature=_Wed__12_Mar_2014_22_18_28_+0000_qsdKRJrhV+y.GV_c"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:56056 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752268AbaCLWSs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Mar 2014 18:18:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__12_Mar_2014_22_03_50_+0000_vmFFXRA22RtmV3h9
+--Signature=_Wed__12_Mar_2014_22_18_28_+0000_qsdKRJrhV+y.GV_c
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi all,
 
-Today's linux-next merge of the devicetree tree got a conflict in include/a=
-sm-generic/vmlinux.lds.h between commit 6c3ff8b11a16ec69 ("ARM: Introduce C=
-PU_METHOD_OF_DECLARE() for cpu hotplug/smp") from the  tree and commit f618=
-c4703a14672d27 ("drivers: of: add support for custom reserved memory driver=
-s") from the devicetree tree.
+Today's linux-next merge of the tip tree got a conflict in arch/x86/include=
+/asm/topology.h between commit 25453e9e521382 ("x86/PCI: Remove mp_bus_to_n=
+ode[], set_mp_bus_to_node(), get_mp_bus_to_node()") from the pci tree and c=
+ommit 36fc5500bb1907bea7e ("sched: Remove unused mc_capable() and smt_capab=
+le()") from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
-diff --cc include/asm-generic/vmlinux.lds.h
-index bd02ca7a1d55,f10f64fcc815..000000000000
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@@ -167,15 -167,16 +167,25 @@@
-  #define CLK_OF_TABLES()
-  #endif
- =20
- +#ifdef CONFIG_SMP
- +#define CPU_METHOD_OF_TABLES() . =3D ALIGN(8);                           =
-   \
- +                         VMLINUX_SYMBOL(__cpu_method_of_table_begin) =3D =
-.; \
- +                         *(__cpu_method_of_table)                        =
- \
- +                         VMLINUX_SYMBOL(__cpu_method_of_table_end) =3D .;
- +#else
- +#define CPU_METHOD_OF_TABLES()
- +#endif
- +
-+ #ifdef CONFIG_OF_RESERVED_MEM
-+ #define RESERVEDMEM_OF_TABLES()                               \
-+       . =3D ALIGN(8);                                   \
-+       VMLINUX_SYMBOL(__reservedmem_of_table) =3D .;     \
-+       *(__reservedmem_of_table)                       \
-+       *(__reservedmem_of_table_end)
-+ #else
-+ #define RESERVEDMEM_OF_TABLES()
-+ #endif
-+=20
-  #define KERNEL_DTB()                                                  \
-        STRUCT_ALIGN();                                                 \
-        VMLINUX_SYMBOL(__dtb_start) =3D .;                                \
-@@@ -499,8 -500,8 +509,9 @@@
-        TRACE_SYSCALLS()                                                \
-        MEM_DISCARD(init.rodata)                                        \
-        CLK_OF_TABLES()                                                 \
-+       RESERVEDMEM_OF_TABLES()                                         \
-        CLKSRC_OF_TABLES()                                              \
- +      CPU_METHOD_OF_TABLES()                                          \
-        KERNEL_DTB()                                                    \
-        IRQCHIP_OF_MATCH_TABLE()
- =20
 
---Signature=_Wed__12_Mar_2014_22_03_50_+0000_vmFFXRA22RtmV3h9
+diff --cc arch/x86/include/asm/topology.h
+index c840571afa4e,9bcc724cafdd..000000000000
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@@ -131,13 -131,19 +131,7 @@@ static inline void arch_fix_phys_packag
+  }
+ =20
+  struct pci_bus;
+ +int x86_pci_root_bus_node(int bus);
+  void x86_pci_root_bus_resources(int bus, struct list_head *resources);
+ =20
+- #ifdef CONFIG_SMP
+- #define mc_capable()  ((boot_cpu_data.x86_max_cores > 1) && \
+-                       (cpumask_weight(cpu_core_mask(0)) !=3D nr_cpu_ids))
+- #define smt_capable()                 (smp_num_siblings > 1)
+ -#ifdef CONFIG_NUMA
+ -extern int get_mp_bus_to_node(int busnum);
+ -extern void set_mp_bus_to_node(int busnum, int node);
+ -#else
+ -static inline int get_mp_bus_to_node(int busnum)
+ -{
+ -      return 0;
+ -}
+ -static inline void set_mp_bus_to_node(int busnum, int node)
+ -{
+ -}
+--#endif
+--
+  #endif /* _ASM_X86_TOPOLOGY_H */
+
+--Signature=_Wed__12_Mar_2014_22_18_28_+0000_qsdKRJrhV+y.GV_c
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTINnGAAoJELSic+t+oim9T84P/jHXGdUJg0CaVMZPMLQYbis3
-hpQRZCjrLmdV9hsTCPZA6A7enhUSYObXBJ1AIz6secN3A9MshoIcoGtyk/SayRrf
-NeIZlBGsujBz7Zs7VbrE77+fHKl24xgmb9iiAZbR7J0KuH8Vj7fVIjuWDdknj+K0
-mFXQ+ozWDkUFwkXL6+a3u691oqAovpQo6DM1wn9gz+i3IFWXijMsG1KPPOMiqNfg
-0BBsvLHRG7u2a7qQ5/R5I0Hajlzpsz/nNl2BsIphEjOwStDvV9tF9/S9waB10hYC
-yPi5YpL6XR9naRY75NyFCmwjpSdhfK9chOw7UsfNd88Q9z8vNZ4YrjUK5vHFZ7NE
-cg+lMeK8NI/BVhnPG+d4D2I2WFUeau6O1DgcdmL33r05KIhjuky3SabFRYfPXs1X
-UjbZPlmblWLKlfiytj5ze+KzShLmxThRHWseOdTBqnXDnFwXxgcj2N1QWatsRO1s
-WSLcsPsdkA1BIlnwftafLC6S8Wt6tKL/RokaIvUKxj7cHdGutx8NjLsBsH5hgd7r
-vokZnw9OuixYaUjq+/gl8kskkdos0X8mwfivj/LcqK0Sa11pvtBELLG2E/wKHbQ8
-mToDRGBNe5BdqNVoViPvTPGSwh+ZvhgIIAQA2dMy0DC70m8gPWfD9eMXcxLgCmBj
-vloSDCIm65dxs8mPVeqD
-=1+3D
+iQIcBAEBAgAGBQJTIN00AAoJELSic+t+oim9ALAQAJ0vEsQXiqaS4DE71EHZIrpG
+HlflXLb+rsvo/93ctkgfPEbKbgzAjgU+c3ywTeS9DC5Qa4+IvAhdf7mwosiyPHzn
+jrS6BgUjKgObISrvHCc5BAvTmz2+C6I7LL/oNx2oRpSEIt5fQqpJsw47Apr+X7Px
+9DJQhI32yeWtPh65GpQLQPz8KQnq9c6Za9wjW7UnxMXMPi5vLfiD+vfAcl79PLZE
+Cs1HGRcrWKxkLOPE5EgMt84gpPLcHT40FoNCtnAOgUW+Q6iVWewPSIjW/YmzY4T6
+1LHsvB1qbPe09XG7BnvGGByIsJdKzFxixACBe6ggmNGuPkvdpTIV7K3sL11S/mxl
+qUD4eErJ+PWn0vh3SQ/pX2fYxJQ3Be/mUObLBXNxKaztMdmJR83uFSm042sMJN6r
+rkEeHWVbDWaXy+s8jy4jJHQLLEUbIgZXtEMrhvTAjTldtFUTx00w4M9a5EyiwU4Z
+YWmCSLlFJGgt6lIpngnvxnZmeBtfGF4h9ZOuMYSb14IABhB6Jnp7nfnyhN6G+gwa
+lHBQ2mzYkzsYi7tqlKLn1bJ/N5/wiv05F+HOQ1pK8fnSCwTmzgBIE7h5ycAmWYXc
+3+wPhYkTkAzPMJ2v9SFcXDjWguCJAXUZNXucNvOhm+TpN5kHCg7hXmwrPfJFf9uX
+mqz/sUaDebZFegWu+zdy
+=zsPZ
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Mar_2014_22_03_50_+0000_vmFFXRA22RtmV3h9--
+--Signature=_Wed__12_Mar_2014_22_18_28_+0000_qsdKRJrhV+y.GV_c--
