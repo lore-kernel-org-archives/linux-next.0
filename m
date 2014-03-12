@@ -1,95 +1,65 @@
-From: Markos Chandras <Markos.Chandras@imgtec.com>
-Subject: Re: [PATCH v2] samples/seccomp/Makefile: Do not build tests if cross-compiling
- for MIPS
-Date: Wed, 12 Mar 2014 11:22:26 +0000
-Message-ID: <53204372.1000400@imgtec.com>
-References: <52FD0131.9040304@imgtec.com> <1392804917-29789-1-git-send-email-markos.chandras@imgtec.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 12 Mar 2014 11:37:42 +0000
+Message-ID: <20140312113742.GM28112@sirena.org.uk>
+References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
+ <20140312015021.GC10106@kroah.com>
+ <1394596541.4840.70.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1392804917-29789-1-git-send-email-markos.chandras@imgtec.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-mips@linux-mips.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dRVXJ+Hn0i/OWgv8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39024 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753951AbaCLLh7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Mar 2014 07:37:59 -0400
+Content-Disposition: inline
+In-Reply-To: <1394596541.4840.70.camel@pasglop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Greg KH <greg@kroah.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/19/2014 10:15 AM, Markos Chandras wrote:
-> The Makefile is designed to use the host toolchain so it may be
-> unsafe to build the tests if the kernel has been configured and built
-> for another architecture. This fixes a build problem when the kernel =
-has
-> been configured and built for the MIPS architecture but the host is
-> not MIPS (cross-compiled). The MIPS syscalls are only defined
-> if one of the following is true:
->
-> 1) _MIPS_SIM =3D=3D _MIPS_SIM_ABI64
-> 2) _MIPS_SIM =3D=3D _MIPS_SIM_ABI32
-> 3) _MIPS_SIM =3D=3D _MIPS_SIM_NABI32
->
-> Of course, none of these make sense on a non-MIPS toolchain and the
-> following build problem occurs when building on a non-MIPS host.
->
-> linux/usr/include/linux/kexec.h:50:
-> userspace cannot reference function or variable defined in the kernel
-> samples/seccomp/bpf-direct.c: In function =E2=80=98emulator=E2=80=99:
-> samples/seccomp/bpf-direct.c:76:17: error:
-> =E2=80=98__NR_write=E2=80=99 undeclared (first use in this function)
->
-> Cc: linux-next@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
-> ---
-> This build problem is only reproducible on the linux-next tree at the=
- moment
->
-> Changes since v1:
-> - Rework code so native builds are allowed on MIPS
-> ---
->   samples/seccomp/Makefile | 14 ++++++++++----
->   1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-> index 7203e66..855051b 100644
-> --- a/samples/seccomp/Makefile
-> +++ b/samples/seccomp/Makefile
-> @@ -18,8 +18,8 @@ HOSTCFLAGS_bpf-direct.o +=3D -idirafter $(objtree)/=
-include
->   bpf-direct-objs :=3D bpf-direct.o
->
->   # Try to match the kernel target.
-> -ifndef CONFIG_64BIT
->   ifndef CROSS_COMPILE
-> +ifndef CONFIG_64BIT
->
->   # s390 has -m31 flag to build 31 bit binaries
->   ifndef CONFIG_S390
-> @@ -36,7 +36,13 @@ HOSTLOADLIBES_bpf-direct +=3D $(MFLAG)
->   HOSTLOADLIBES_bpf-fancy +=3D $(MFLAG)
->   HOSTLOADLIBES_dropper +=3D $(MFLAG)
->   endif
-> -endif
-> -
-> -# Tell kbuild to always build the programs
->   always :=3D $(hostprogs-y)
-> +else
-> +# MIPS system calls are defined based on the -mabi that is passed
-> +# to the toolchain which may or may not be a valid option
-> +# for the host toolchain. So disable tests if target architecture
-> +# is MIPS but the host isn't.
-> +ifndef CONFIG_MIPS
-> +always :=3D $(hostprogs-y)
-> +endif
-> +endif
->
 
-CC'ing Andrew Morton as well
+--dRVXJ+Hn0i/OWgv8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ping? Is anyone willing to take this patch in his tree so we can restor=
-e=20
-the build for allyes/allmod configs for MIPS on linux-next?
+On Wed, Mar 12, 2014 at 02:55:41PM +1100, Benjamin Herrenschmidt wrote:
 
---=20
-markos
+> How do you suggest we proceed ? I can't add a fix to powerpc-next to use
+> the new function since it doesn't exist upstream yet. I would have to
+> pull drivers-core-next in which I really don't want to do....
+
+> Can the removal of the function be delayed to -rc1 so we can properly
+> do the fixup ? Or do you have the introduction of the new function in
+> a topic branch I can pull in without the rest of drivers-core-next ?
+
+The delay would have been my first suggestion - otherwise I'd not be
+surprised to see this coming up again.  Perhaps change to tagging the
+APIs as deprecated for now (so any futher new users get flagged up)
+would help.
+
+--dRVXJ+Hn0i/OWgv8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTIEcDAAoJELSic+t+oim9r8sP/3fKFwFMgG/OFEElwquDIgaG
+WY3cuOahFM1beenb0utYgrYZj+aWfVGB+/VwVfGJCuq8K450Nuh9vcwH1vrCXW3u
+LFrU5vOlaSA634hNhxZYJFvpBkkE0Rb5KDn1ryMuNFLOPTrlxnP12Q9QtFINhD9L
+M4PYXOS+Nw1h8ZP530L+MtBaDmtt2FFYt6jWSbBeuJoF2vZxS736LUQVooTTLQKM
+2jigyZ4zcZbttnOZ2JrQ1x8LvDzvrb6a2UsceD0gL6aaqJjIVsgHiNbPAKuUrq4e
+08T1lzyxS8ykK5S937d6wftTOH/PVh5ygiwT/4uMEZYkUwfQ56ItgQ5Ffa2svcZ4
+htRTvG06j39T/C+5zhlmhZP7VGYvyhAKvXP2NzKwdzRVX2kXS41p5rS4H4P+xCKm
+SjlueaPnz9MoNPRJjI/GBrqqd9SnBYiIelS9nJgdHP5Q0wkDfySKeS6LqmEMO+bz
+nNgQyZfZkixoNjs52vSjPwvu5mCnpyjp3AJMjyeOpwJYd3Oeonjga0xjlMPrioRn
+MaRyjlIMIo7y7AoQkCyIrPOoxs/4j400NT6HtZ3lK1hY8WQPCWzd9YYSVfwkabUy
+brEIanO9bhkNwk+E1YSQs86eXFRP0Ec76T0yqDci/4loIhySCheb9GOwN6b7Xj9g
+vndZFScodadXpLN/7iZw
+=hSge
+-----END PGP SIGNATURE-----
+
+--dRVXJ+Hn0i/OWgv8--
