@@ -1,28 +1,52 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the  tree
-Date: Tue, 11 Mar 2014 18:49:14 -0700
-Message-ID: <20140312014914.GB10106@kroah.com>
-References: <20140312013259.d374b64c0655e98612d880b3@kernel.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 11 Mar 2014 18:50:21 -0700
+Message-ID: <20140312015021.GC10106@kroah.com>
+References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:33611 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755835AbaCLBtf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Mar 2014 21:49:35 -0400
 Content-Disposition: inline
-In-Reply-To: <20140312013259.d374b64c0655e98612d880b3@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Mark Brown <broonie@kernel.org>
-Cc: Salva =?iso-8859-1?Q?Peir=F3?= <speiro@ai2.upv.es>, Daeseok Youn <daeseok.youn@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Stewart Smith <stewart@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 12, 2014 at 01:32:59AM +0000, Mark Brown wrote:
+On Wed, Mar 12, 2014 at 12:51:52AM +0000, Mark Brown wrote:
 > Hi Greg,
 > 
-> Today's linux-next merge of the staging tree got a conflict in drivers/staging/cxt1e1/linux.c between commit 084b6e7765b95 ("staging/cxt1e1/linux.c: Correct arbitrary memory write in c4_ioctl()") from Linus' tree and commit aa562fa70931d ("staging: cxt1e1: Fix no spaces at the start of a line in linux.c") from the staging tree.
+> After merging the driver-core tree, today's linux-next build ()
+> failed like this on a PowerPC defconfig:
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> HEAD is now at ceb98e684dec Merge remote-tracking branch 'driver-core/driver-core-next'
+>   GEN     /home/broonie/next/powerpc_ppc64_defconfig/Makefile
+> #
+> # configuration written to .config
+> #
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c: In function 'elog_ack_store':
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c:84:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
+>   sysfs_schedule_callback(&elog_obj->kobj, delay_release_kobj,
+>   ^
+> cc1: all warnings being treated as errors
+> make[3]: *** [arch/powerpc/platforms/powernv/opal-elog.o] Error 1
+> make[3]: *** Waiting for unfinished jobs....
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c: In function 'dump_ack_store':
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c:100:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
+>   sysfs_schedule_callback(&dump_obj->kobj, delay_release_kobj,
+>   ^
+> cc1: all warnings being treated as errors
+> 
+> due to an interaction between d1ba277e7988908 (sysfs, driver-core: remove unused {sysfs|device}_schedule_callback_owner()) and 774fea1a38c6a5a8 (powerpc/powernv: Read OPAL error log and export it through sysfs) from the PowerPC tree.
+> 
+> I reverted 774fea1a38c6a5a8 for today.
 
-Known issue, was reported previously and fixed up in linux-next and I
-will handle it when I merge my trees together...
+Sounds like the powerpc tree also needs to stop using this function :)
 
 thanks,
 
