@@ -1,41 +1,48 @@
-From: Tejun Heo <tj@kernel.org>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 12 Mar 2014 16:02:32 -0400
-Message-ID: <20140312200232.GA22332@htj.dyndns.org>
+Date: Thu, 13 Mar 2014 07:14:52 +1100
+Message-ID: <1394655292.4840.97.camel@pasglop>
 References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
- <20140312015021.GC10106@kroah.com>
- <1394596541.4840.70.camel@pasglop>
- <20140312113742.GM28112@sirena.org.uk>
- <1394654396.4840.94.camel@pasglop>
+	 <20140312015021.GC10106@kroah.com> <1394596541.4840.70.camel@pasglop>
+	 <20140312113742.GM28112@sirena.org.uk> <1394654396.4840.94.camel@pasglop>
+	 <20140312200232.GA22332@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:40543 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751151AbaCLUCh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Mar 2014 16:02:37 -0400
-Content-Disposition: inline
-In-Reply-To: <1394654396.4840.94.camel@pasglop>
+Received: from gate.crashing.org ([63.228.1.57]:52890 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752069AbaCLUPG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Mar 2014 16:15:06 -0400
+In-Reply-To: <20140312200232.GA22332@htj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Tejun Heo <tj@kernel.org>
 Cc: Mark Brown <broonie@kernel.org>, Greg KH <greg@kroah.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 13, 2014 at 06:59:56AM +1100, Benjamin Herrenschmidt wrote:
-> Either that or I can put a copy of the patch that introduces the new
-> function in my tree as long as it's a single patch. The resulting
-> conflict should resolve trivially and Linus should be fine if
-> appropriate explanations are provided (though I would have preferred
-> pulling in a topic branch).
+On Wed, 2014-03-12 at 16:02 -0400, Tejun Heo wrote:
+> On Thu, Mar 13, 2014 at 06:59:56AM +1100, Benjamin Herrenschmidt wrote:
+> > Either that or I can put a copy of the patch that introduces the new
+> > function in my tree as long as it's a single patch. The resulting
+> > conflict should resolve trivially and Linus should be fine if
+> > appropriate explanations are provided (though I would have preferred
+> > pulling in a topic branch).
+> 
+> An alternative that I personally prefer to resolve conflicts like this
+> is to pull driver-core-next into the broken tree and resolve it there.
+> It's highly likely that the pending changes are gonna be included in
+> the next merge window.  If contaminating the merge history is a
+> concern, it can live in a separate branch which is pulled into
+> for-next.
 
-An alternative that I personally prefer to resolve conflicts like this
-is to pull driver-core-next into the broken tree and resolve it there.
-It's highly likely that the pending changes are gonna be included in
-the next merge window.  If contaminating the merge history is a
-concern, it can live in a separate branch which is pulled into
-for-next.
+It's generally consider bad taste to pull entire trees into each
+other :-) I know Stephen isn't fan of it...
 
-Thanks.
+I'd rather have just that series (or even better, just the patches
+introducing the new function) in a topic branch, itself pulled into
+both driver-core-next and my tree.
 
--- 
-tejun
+Can you produce that ? (I need a non-rebase guarantee though).
+
+Cheers,
+Ben.
