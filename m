@@ -1,82 +1,132 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 12 Mar 2014 16:00:20 +0000
-Message-ID: <20140312160020.32d84949c126564994c251be@kernel.org>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH/RFC 00/16] compat: convert to COMPAT_SYSCALL_DEFINE
+Date: Wed, 12 Mar 2014 20:45:26 +0100
+Message-ID: <20140312194526.GA3755@osiris>
+References: <1394121083-2507-1-git-send-email-heiko.carstens@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Mar_2014_16_00_20_+0000_Nv.Sa.YokVOqnVqA"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, hayeswang <hayeswang@realtek.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__12_Mar_2014_16_00_20_+0000_Nv.Sa.YokVOqnVqA
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e06smtp13.uk.ibm.com ([195.75.94.109]:38587 "EHLO
+	e06smtp13.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750981AbaCLTpc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Mar 2014 15:45:32 -0400
+Received: from /spool/local
+	by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+	Wed, 12 Mar 2014 19:45:31 -0000
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1394121083-2507-1-git-send-email-heiko.carstens@de.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, "H. Peter Anvin" <hpa@linux.intel.com>
 
-Hi all,
+Hi Stephen,
 
-Today's linux-next merge of the net-next tree got a conflict in drivers/net=
-/usb/r8152.c between commit 10c3271712f5821 ("r8152: disable the ECM mode")=
- from the net tree and commit 4f1d4d54f99e9 ("r8152: support dumping the hw=
- counters") from the net-next tree.
+since nobody objected to the compat changes I described below, could you
+please add the tree
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git compat
 
-diff --cc drivers/net/usb/r8152.c
-index adb12f349a61,aa1d5b2e9c30..000000000000
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@@ -449,6 -465,25 +465,22 @@@ enum rtl8152_flags=20
-  #define MCU_TYPE_PLA                  0x0100
-  #define MCU_TYPE_USB                  0x0000
- =20
- -#define REALTEK_USB_DEVICE(vend, prod)        \
- -      USB_DEVICE_INTERFACE_CLASS(vend, prod, USB_CLASS_VENDOR_SPEC)
- -
-+ struct tally_counter {
-+       __le64  tx_packets;
-+       __le64  rx_packets;
-+       __le64  tx_errors;
-+       __le32  rx_errors;
-+       __le16  rx_missed;
-+       __le16  align_errors;
-+       __le32  tx_one_collision;
-+       __le32  tx_multi_collision;
-+       __le64  rx_unicast;
-+       __le64  rx_broadcast;
-+       __le32  rx_multicast;
-+       __le16  tx_aborted;
-+       __le16  tx_underun;
-+ };
-+=20
-  struct rx_desc {
-        __le32 opts1;
-  #define RX_LEN_MASK                   0x7fff
+to linux-next?
 
---Signature=_Wed__12_Mar_2014_16_00_20_+0000_Nv.Sa.YokVOqnVqA
-Content-Type: application/pgp-signature
+Thanks,
+Heiko
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+[full quote below]
 
-iQIcBAEBAgAGBQJTIISUAAoJELSic+t+oim9y9MP/3gKnZwFrIVSgT7xcnMBekod
-ipHtNguJIHCt/l+gqju4eQpNMa6urBdDYJQm3IY8XKDoxhbBLJ1oLgoEsnmz6otg
-Ls3w5j9zIZUQh3XPuaItIbfKu4zOlgBoaE3qAMT0535mfpiSv4LQkNxOGnfrGY43
-4U8ZCJj5JhwUxl4aojRCz69XFuiogT0AGg2QQe/BKB8BdzAxuYE3EbTfXBob81Wx
-rIl71J1WqScuSNt9tYG/cpAp9OtB2PkU2pnfKE3n4uMybsRD8XAedS2QQsnHgg6l
-kr++kzBrQ7R94XyAnAjZOGKJNyxcqWkzhL45rgXUaDbk23ytjeb64JiUTzzFSdF9
-Kngz6nTIrmTat4CnAHLaKQVjCrRVFCkJm3fxn631VV/mEHX9iRobrVSe7G7vbxDb
-vqh9igKSq+bPAPOisHByof0Qdt/S1KoBRFZ3GzAn+QrslpMqx12qrFh9U1DiJ70U
-jAFpGW9XhQKv2NF7d/l61hbkYrroF1LwcmFwy+X17XKtm7jd8BypDbQUeUMHj3HK
-dPFj0zwOPkY4/pSMnatr4aMFcgEuLgvSxRZIYXYU7+M/2jI0hzvgqIGMcCraC4ch
-9j7app3AYmDXE6VrdTxQXs5ezlqFK2RmmMTAJpPOEwqSLWDqKdD9UKLf9+3sOXMa
-QdipK80haxU687rz3cLy
-=Rgq7
------END PGP SIGNATURE-----
-
---Signature=_Wed__12_Mar_2014_16_00_20_+0000_Nv.Sa.YokVOqnVqA--
+On Thu, Mar 06, 2014 at 04:51:07PM +0100, Heiko Carstens wrote:
+> Hi all,
+> 
+> this patch series converts all common code compat syscalls to use the new
+> COMPAT_SYSCALL_DEFINE macros introduced by Al Viro.
+> My main motivation is to get rid of the 1400+ line s390 specific assembler
+> file which contains code for each and every compat system call to perform
+> proper sign, zero and pointer conversion.
+> 
+> Eventually the conversion is pretty trivial, except that for a couple of
+> compat syscalls argument types needed to be changed from e.g. 'long' to
+> 'compat_long_t' so that the COMPAT_SYSCALL_DEFINE macro can perform
+> proper sign extension from the 32 bit compat system call argument like
+> it was orginally passed in from user space.
+> 
+> The patch series keeps the "noop" conversions (5-10) and those with type
+> changes (11-15) separate.
+> 
+> Patches 1-4 are just additional cleanup patches.
+> 
+> Especially I'd like to know from somebody familiar with the x32 ABI if
+> any of the type changes break x32?
+> I intentionally did not touch the preadv64 and pwritev64 compat system
+> calls since they have been explicitly added to allow x32 pass 64 bit
+> arguments.
+> However it's not obvious to me if any of my other compat system call
+> changes break x32 or not.
+> 
+> FWIW, this patch series omits the whole s390 patches, since I assume
+> they are not very interesting to non-s390 people ;)
+> 
+> The complete series (including the s390 only patches) is available at
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git compat
+> 
+> If nobody objects I'd like to have the branch integrated into linux-next
+> to get some additional testing.
+> 
+> So, please let me know if I screwed up something! :)
+> 
+> Thanks,
+> Heiko
+> 
+> Heiko Carstens (16):
+>       compat: let architectures define __ARCH_WANT_COMPAT_SYS_GETDENTS64
+>       compat: add COMPAT_SYSCALL_DEFINE0 macro
+>       ipc/compat_sys_msgrcv: change msgtyp type from long to compat_long_t
+>       fs/compat: optional preadv64/pwrite64 compat system calls
+>       kernel/compat: convert to COMPAT_SYSCALL_DEFINE
+>       net/compat: convert to COMPAT_SYSCALL_DEFINE
+>       mm/compat: convert to COMPAT_SYSCALL_DEFINE
+>       security/compat: convert to COMPAT_SYSCALL_DEFINE
+>       fs/compat: convert to COMPAT_SYSCALL_DEFINE
+>       ipc/compat: convert to COMPAT_SYSCALL_DEFINE
+>       fs/compat: convert to COMPAT_SYSCALL_DEFINE with changing parameter types
+>       ipc/compat: convert to COMPAT_SYSCALL_DEFINE with changing parameter types
+>       net/compat: convert to COMPAT_SYSCALL_DEFINE with changing parameter types
+>       kexec/compat: convert to COMPAT_SYSCALL_DEFINE with changing parameter types
+>       mm/compat: convert to COMPAT_SYSCALL_DEFINE with changing parameter types
+>       s390/compat: build error for large compat syscall args
+> 
+> (diffstat below includes the s390 only patches)
+> 
+>  arch/arm64/include/asm/unistd.h   |    1 +
+>  arch/mips/include/asm/unistd.h    |    1 -
+>  arch/s390/include/asm/compat.h    |    6 +-
+>  arch/s390/kernel/compat_linux.c   |  116 +--
+>  arch/s390/kernel/compat_linux.h   |   81 +--
+>  arch/s390/kernel/compat_signal.c  |    4 +-
+>  arch/s390/kernel/compat_wrapper.S | 1425 -------------------------------------
+>  arch/s390/kernel/compat_wrapper.c |  209 ++++++
+>  arch/s390/kernel/entry.h          |    6 +-
+>  arch/s390/kernel/syscalls.S       |  504 ++++++-------
+>  arch/x86/include/asm/unistd.h     |    3 +
+>  fs/compat.c                       |  121 ++--
+>  fs/compat_ioctl.c                 |    5 +-
+>  fs/exec.c                         |    6 +-
+>  fs/read_write.c                   |   36 +-
+>  include/linux/compat.h            |   62 +-
+>  include/linux/kexec.h             |    6 -
+>  include/linux/syscalls.h          |    2 +
+>  include/uapi/asm-generic/unistd.h |    1 +
+>  ipc/compat.c                      |   13 +-
+>  ipc/compat_mq.c                   |   32 +-
+>  kernel/compat.c                   |  100 +--
+>  kernel/kexec.c                    |    8 +-
+>  kernel/ptrace.c                   |    4 +-
+>  mm/mempolicy.c                    |   18 +-
+>  mm/process_vm_access.c            |   26 +-
+>  net/compat.c                      |   32 +-
+>  security/keys/compat.c            |    4 +-
+>  28 files changed, 828 insertions(+), 2004 deletions(-)
+> 
+> -- 
+> 1.8.4.5
