@@ -1,65 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 12 Mar 2014 11:37:42 +0000
-Message-ID: <20140312113742.GM28112@sirena.org.uk>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
- <20140312015021.GC10106@kroah.com>
- <1394596541.4840.70.camel@pasglop>
+From: Jonas Gorski <jogo@openwrt.org>
+Subject: Re: [PATCH 0/3] Add support for the M5150 processor
+Date: Wed, 12 Mar 2014 12:45:24 +0100
+Message-ID: <CAOiHx=kH+e6At0coBjC+-4gc-VHpXtrXc6Cki3Ga7x3b4AKJ7Q@mail.gmail.com>
+References: <1393940084-29518-1-git-send-email-markos.chandras@imgtec.com>
+ <CAP=VYLribDoh9LyQuNr-RxmRdaVxqNqzCCSAgMxKoZKWd2b1YA@mail.gmail.com> <CAOiHx=mNtTv01CyjC=rXKzTeF79sbBqnZBQWbWXAkKnrGeZrng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dRVXJ+Hn0i/OWgv8"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39024 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753951AbaCLLh7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Mar 2014 07:37:59 -0400
-Content-Disposition: inline
-In-Reply-To: <1394596541.4840.70.camel@pasglop>
+Received: from 0.mx.nanl.de ([217.115.11.12]:42119 "EHLO mail.nanl.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752717AbaCLLpv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Mar 2014 07:45:51 -0400
+Received: from mail-qa0-f46.google.com (mail-qa0-f46.google.com [209.85.216.46])
+	by mail.nanl.de (Postfix) with ESMTPSA id A266945F37
+	for <linux-next@vger.kernel.org>; Wed, 12 Mar 2014 11:45:31 +0000 (UTC)
+Received: by mail-qa0-f46.google.com with SMTP id i13so9869905qae.33
+        for <linux-next@vger.kernel.org>; Wed, 12 Mar 2014 04:45:45 -0700 (PDT)
+In-Reply-To: <CAOiHx=mNtTv01CyjC=rXKzTeF79sbBqnZBQWbWXAkKnrGeZrng@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Greg KH <greg@kroah.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Markos Chandras <markos.chandras@imgtec.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
+
+On Mon, Mar 10, 2014 at 8:21 PM, Jonas Gorski <jogo@openwrt.org> wrote:
+> On Mon, Mar 10, 2014 at 6:43 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+>> On Tue, Mar 4, 2014 at 8:34 AM, Markos Chandras
+>> <markos.chandras@imgtec.com> wrote:
+>>> Hi,
+>>>
+>>> This patchset adds support for the recently announced M5150 processor
+>>> http://imgtec.com/mips/mips-series5-mclass-m51xx.asp?NewsID=804
+>>
+>> I'm going to skip the bisect, and make a guess that this patchset causes
+>> the following build failures on all pre-existing mips boards:
+>>
+>> arch/mips/kernel/cpu-probe.c:856:7: error: 'PRID_IMP_M5150' undeclared
+>> (first use in this function)
+>> arch/mips/kernel/cpu-probe.c:857:16: error: 'CPU_M5150' undeclared
+>> (first use in this function)
+>> make[3]: *** [arch/mips/kernel/cpu-probe.o] Error 1
+>>
+>> See this link as one of the many linux-next mips failures:
+>>
+>> http://kisskb.ellerman.id.au/kisskb/buildresult/10701712/
+>
+>
+> Looking at mips-next and patchwork, the problem isn't the patchset
+> itself, but rather that only the third patch was applied.
+>
+> Ralf, I think you missed the following two patches :)
+>
+> http://patchwork.linux-mips.org/patch/6595/
+> http://patchwork.linux-mips.org/patch/6596/
+
+For me it now builds through, thank you!
 
 
---dRVXJ+Hn0i/OWgv8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Mar 12, 2014 at 02:55:41PM +1100, Benjamin Herrenschmidt wrote:
-
-> How do you suggest we proceed ? I can't add a fix to powerpc-next to use
-> the new function since it doesn't exist upstream yet. I would have to
-> pull drivers-core-next in which I really don't want to do....
-
-> Can the removal of the function be delayed to -rc1 so we can properly
-> do the fixup ? Or do you have the introduction of the new function in
-> a topic branch I can pull in without the rest of drivers-core-next ?
-
-The delay would have been my first suggestion - otherwise I'd not be
-surprised to see this coming up again.  Perhaps change to tagging the
-APIs as deprecated for now (so any futher new users get flagged up)
-would help.
-
---dRVXJ+Hn0i/OWgv8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTIEcDAAoJELSic+t+oim9r8sP/3fKFwFMgG/OFEElwquDIgaG
-WY3cuOahFM1beenb0utYgrYZj+aWfVGB+/VwVfGJCuq8K450Nuh9vcwH1vrCXW3u
-LFrU5vOlaSA634hNhxZYJFvpBkkE0Rb5KDn1ryMuNFLOPTrlxnP12Q9QtFINhD9L
-M4PYXOS+Nw1h8ZP530L+MtBaDmtt2FFYt6jWSbBeuJoF2vZxS736LUQVooTTLQKM
-2jigyZ4zcZbttnOZ2JrQ1x8LvDzvrb6a2UsceD0gL6aaqJjIVsgHiNbPAKuUrq4e
-08T1lzyxS8ykK5S937d6wftTOH/PVh5ygiwT/4uMEZYkUwfQ56ItgQ5Ffa2svcZ4
-htRTvG06j39T/C+5zhlmhZP7VGYvyhAKvXP2NzKwdzRVX2kXS41p5rS4H4P+xCKm
-SjlueaPnz9MoNPRJjI/GBrqqd9SnBYiIelS9nJgdHP5Q0wkDfySKeS6LqmEMO+bz
-nNgQyZfZkixoNjs52vSjPwvu5mCnpyjp3AJMjyeOpwJYd3Oeonjga0xjlMPrioRn
-MaRyjlIMIo7y7AoQkCyIrPOoxs/4j400NT6HtZ3lK1hY8WQPCWzd9YYSVfwkabUy
-brEIanO9bhkNwk+E1YSQs86eXFRP0Ec76T0yqDci/4loIhySCheb9GOwN6b7Xj9g
-vndZFScodadXpLN/7iZw
-=hSge
------END PGP SIGNATURE-----
-
---dRVXJ+Hn0i/OWgv8--
+Regards
+Jonas
