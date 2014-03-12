@@ -1,82 +1,71 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 12 Mar 2014 00:51:52 +0000
-Message-ID: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
+Subject: linux-next: manual merge of the usb tree with the  tree
+Date: Wed, 12 Mar 2014 01:05:25 +0000
+Message-ID: <20140312010525.b04a12173c7778df42da7a31@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Mar_2014_00_51_52_+0000_d4BWeWPHZp.pHIYy"
+ boundary="Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:52030 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:45109 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755984AbaCLAwE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 20:52:04 -0400
+	with ESMTP id S1755989AbaCLBFf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 21:05:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>
+To: Greg KH <greg@kroah.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__12_Mar_2014_00_51_52_+0000_d4BWeWPHZp.pHIYy
+--Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-After merging the driver-core tree, today's linux-next build ()
-failed like this on a PowerPC defconfig:
+Today's linux-next merge of the usb tree got a conflict in arch/arm/mach-te=
+gra/Kconfig between commit 06c886a95cbb533 ("phy: mvebu-sata: prepare new D=
+ove DT Kconfig variable") from the USB tree and commit ff1f0018cf66 ("drive=
+rs: Enable building of Kirkwood drivers for mach-mvebu") from the mvebu tre=
+e.
 
-HEAD is now at ceb98e684dec Merge remote-tracking branch 'driver-core/drive=
-r-core-next'
-  GEN     /home/broonie/next/powerpc_ppc64_defconfig/Makefile
-#
-# configuration written to .config
-#
-/home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c: In func=
-tion 'elog_ack_store':
-/home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c:84:2: er=
-ror: implicit declaration of function 'sysfs_schedule_callback' [-Werror=3D=
-implicit-function-declaration]
-  sysfs_schedule_callback(&elog_obj->kobj, delay_release_kobj,
-  ^
-cc1: all warnings being treated as errors
-make[3]: *** [arch/powerpc/platforms/powernv/opal-elog.o] Error 1
-make[3]: *** Waiting for unfinished jobs....
-/home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c: In func=
-tion 'dump_ack_store':
-/home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c:100:2: e=
-rror: implicit declaration of function 'sysfs_schedule_callback' [-Werror=
-=3Dimplicit-function-declaration]
-  sysfs_schedule_callback(&dump_obj->kobj, delay_release_kobj,
-  ^
-cc1: all warnings being treated as errors
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-due to an interaction between d1ba277e7988908 (sysfs, driver-core: remove u=
-nused {sysfs|device}_schedule_callback_owner()) and 774fea1a38c6a5a8 (power=
-pc/powernv: Read OPAL error log and export it through sysfs) from the Power=
-PC tree.
+diff --cc drivers/phy/Kconfig
+index 05711ea4fd15,8d3c49cc500f..000000000000
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@@ -24,7 -27,7 +27,7 @@@ config PHY_EXYNOS_MIPI_VIDE
+ =20
+  config PHY_MVEBU_SATA
+        def_bool y
+-       depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD
+ -      depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_DOVE
+++      depends on ARCH_KIRKWOOD || ARCH_DOVE || MACH_KIRKWOOD || MACH_DOVE
+        depends on OF
+        select GENERIC_PHY
+ =20
 
-I reverted 774fea1a38c6a5a8 for today.
-
---Signature=_Wed__12_Mar_2014_00_51_52_+0000_d4BWeWPHZp.pHIYy
+--Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTH6+oAAoJELSic+t+oim9k44QAJwAVNHXmKC+BQ4CwzyM809r
-cTiQNjh303o/KsNgRRouzPfK3B2yIDxpntja2uX5ML2v/+XRJ+bTxGdscLAlNqr4
-3J2DLL4OIeCaSZ3sBl9gdRR5ZKARur4tkWjZInb7m7fmk8R9gbgBQPFu9bfPoLVx
-nzdkVNtOVZ171fpvrlH5AVum/BX2PW/sasAhvlWmAQcgsM341wgdBIts0OE0uuK/
-m89bfGflrDfIld5kYLx3Y93QB/izxYjSdtNqEMBAkvw39AdIN6lz66hfkkXsGgh6
-70MuTY4qLca4ebs/Cu4iwJZ4ziT8/vj0OjrWlfhumD5/xMyMn3t20i0Gr9Gcmm8X
-82cx1exTVtOCkEi9meIpr1Myyhvat1d6KqxC1tTmDgCYsXpEip3KXC2rhnr5Q570
-A2qKZlySO17eYDh6sQ79ahtpocJ8xH3f54bBySuchb2/kK0qiMoYrVLP0L1NjsUG
-mXI30QdM0PEckKuGTjwg9cCvzEYACHUIaD+mVPijmwh5HOOUQ2v7hIIhNCOsE520
-Wfq7m3AjcJZ6bAonZ7NgA19UtU962vomyKWjqSdf0O33Gm5zbp/i8mtNHON3ramn
-9B/gn8vxI0tgdJsLkWXIxWeNsNSsuHfpw7aU7hXNdbryB6melu/B6FMSHOUYPG1r
-oH8NYZ4xgMyNskipmKDo
-=wHEN
+iQIbBAEBAgAGBQJTH7LVAAoJELSic+t+oim95e8P+LCZBr//C1ACPxRjqzl5HP7P
+U2HRVHiF+W9fiMMxVzVwjxQe/YcqpbInJB5xMx2blVWqlaOjn16b5jgR4C4C2Dcm
+nDijCt8fxW24cLbWnKJJyDga9s6xS41RbAA+K76fGVNQ0rH3YQbsKzJw6amS00kj
+4CWIdvZsEmOWkmRJh2vNd6C3SXj1+xTT11buw7knkcIgz94Na2kThrJeLJeBFCSh
+xpP5dmW03kX67nCAu9FdJItXAOHT7a0Sx8Ijbsc0gG/HNKbFEZIDqYC+4T9F85rF
+ueSstHWS4K9VPSlFvszjp0zxKwS33ld0WNCe2izXETWvSDoJ8Rtny+FAPrPadsi0
+o+lL4hUBcKr0lmrGxUWLANcCbvhBwewxmXpjc9vpP1WJoQ65Fq4tQZsetGeJAfz0
+ur8ys9pWLFLdMDuaPdSXafBE97TN1Deqgwlu2oKxAZDk7K15ur+ur4jXPHcQbSry
+KcDfXV8vw9srjl4i2D16CFrrBDKfqckO7koCSuBPUyXelMoeNrS0vMp0Dz9IBJ4y
+W5G1ziIn8soUJed+hoO3JV9d5PCl8yY6iKlOSqZ/dNyBLKGtJH1XkA4EBmz7LsT6
+ZNuN8g+UzF8BZtpTEfpckUNY2IAi44BAd/w5mV8xCmDTFVr22lkfEwXK05yvcV69
+El+0NfM/8T+PPu03VVU=
+=RE5I
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Mar_2014_00_51_52_+0000_d4BWeWPHZp.pHIYy--
+--Signature=_Wed__12_Mar_2014_01_05_25_+0000_0TIXGZuAqW=sSg5U--
