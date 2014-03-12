@@ -1,86 +1,87 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the usb tree with the  tree
-Date: Wed, 12 Mar 2014 01:18:01 +0000
-Message-ID: <20140312011801.4245384d14d877881c3f5a1e@kernel.org>
+Subject: linux-next: manual merge of the staging tree with the  tree
+Date: Wed, 12 Mar 2014 01:27:01 +0000
+Message-ID: <20140312012701.c99ebd52abb416cbae3863ad@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4"
+ boundary="Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:57052 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:49254 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756145AbaCLBSN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 21:18:13 -0400
+	with ESMTP id S1756221AbaCLB1M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Mar 2014 21:27:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Shaibal Dutta <shaibal.dutta@broadcom.com>, Tejun Heo <tj@kernel.org>
+To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@arm.linux.org.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4
+--Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in  between commit =
-22f6a0f0e3549 ("usb: move hub init and LED blink work to power efficient wo=
-rkqueue") from the usb tree and commit 77fa83cf747820 ("usb: don't use PREP=
-ARE_DELAYED_WORK") from the workqueues tree.
+Today's linux-next merge of the staging tree got a conflict in arch/arm/boo=
+t/dts/imx53-qsb.dts between various commits from the arm-soc tree and commi=
+t 17b5001b5143e3b ("imx-drm: convert to componentised device support") from=
+ the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
-diff --cc drivers/usb/core/hub.c
-index 5cbf78d0be25,5da5394127e9..000000000000
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@@ -1040,8 -1049,9 +1049,9 @@@ static void hub_activate(struct usb_hu
-                 */
-                if (type =3D=3D HUB_INIT) {
-                        delay =3D hub_power_on(hub, false);
- -                      PREPARE_DELAYED_WORK(&hub->init_work, hub_init_func=
-2);
- +                      INIT_DELAYED_WORK(&hub->init_work, hub_init_func2);
--                       schedule_delayed_work(&hub->init_work,
-+                       queue_delayed_work(system_power_efficient_wq,
-+                                       &hub->init_work,
-                                        msecs_to_jiffies(delay));
- =20
-                        /* Suppress autosuspend until init is done */
-@@@ -1194,8 -1204,9 +1204,9 @@@
- =20
-                /* Don't do a long sleep inside a workqueue routine */
-                if (type =3D=3D HUB_INIT2) {
- -                      PREPARE_DELAYED_WORK(&hub->init_work, hub_init_func=
-3);
- +                      INIT_DELAYED_WORK(&hub->init_work, hub_init_func3);
--                       schedule_delayed_work(&hub->init_work,
-+                       queue_delayed_work(system_power_efficient_wq,
-+                                       &hub->init_work,
-                                        msecs_to_jiffies(delay));
-                        return;         /* Continues at init3: below */
-                } else {
+diff --cc arch/arm/boot/dts/imx53-qsb.dts
+index dec4b073ceb1,8b254289344f..000000000000
+--- a/arch/arm/boot/dts/imx53-qsb.dts
++++ b/arch/arm/boot/dts/imx53-qsb.dts
+diff --git a/arch/arm/boot/dts/imx53-qsb-common.dtsi b/arch/arm/boot/dts/im=
+x53-qsb-common.dtsi
+index 2dca98b79f48..50823d0f05bf 100644
+--- a/arch/arm/boot/dts/imx53-qsb-common.dtsi
++++ b/arch/arm/boot/dts/imx53-qsb-common.dtsi
+@@ -17,7 +17,7 @@
+                reg =3D <0x70000000 0x40000000>;
+        };
+=20
+-       display@di0 {
++       display0: display@di0 {
+                compatible =3D "fsl,imx-parallel-display";
+                crtcs =3D <&ipu 0>;
+                interface-pix-fmt =3D "rgb565";
+@@ -68,6 +68,12 @@
+                };
+        };
+=20
++       imx-drm {
++               compatible =3D "fsl,imx-drm";
++               crtcs =3D <&ipu 0>;
++               connectors =3D <&display0>;
++       };
++
+        leds {
+                compatible =3D "gpio-leds";
+                pinctrl-names =3D "default";
 
---Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4
+--Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTH7XJAAoJELSic+t+oim9cuMP/0B+Y/YqH9UVP1xef6oNSYBU
-ioSxri/SaJEJp0k4mb0RApvsEsG82EXhpUAqlegoY+8wGNJjbaJyxOCCS8kANnsd
-ehmhjG51IADRiAasdG55EP1tEWLeoVn8z/NkIfSkS8hCa4EgoIkS15uct/eAY0hR
-Jk1SVvr3zSD3MU8J+U2qrSs8FD4laRhk5gSv4xNafWqDusMoRSi8ZEasjlNTfqHP
-Ev1FBKqcnYFNIV1RjVy0TZ0nx4rWtCsWwhXE+5/Xb1xLL+mTmRxsm0M30uEj3eyr
-GLyLNV/6SaiEw+UZjCAa3XOiyQ/idA3e73gy2SfNwchLpyA10Ekk68PO292lN367
-zer6wxvvzqvAFdvLndD1fbqIqCyIx4nZ3apMzwhr7m/zF1fVtEo7BkAmEDg8iDcB
-fDkQypTWaWfK2OdelyChbEMXHysTAC3fhl+1376OGcbenDCvFh3vw4waqXls5XkZ
-N4z8qzCXU3KVq/13omBV/9L+YHoVrMqr3rUmIKSb6i1WyCesEiwMg75C93mO8r8T
-MmmNjbpFC+jXQZLSVk8ODQfc3Q8RIOZzmulvq0WOFX3Deila5ic+YEvDOCZpEuq7
-LK20Qa+X34/XMjf5azvXAzc1QMdq7yGXHNlCfCjqpN+86xImWWMyBhrre4gyA6+J
-eGcEjfyLU4UWeoK+wixF
-=2rr7
+iQIcBAEBAgAGBQJTH7flAAoJELSic+t+oim9rDYQAIXAv4ib3+/NMWX50rNaPH8J
++CVmii407n55W1FwWrSsqadJkQ5np4J3tW0KJJZgPqq+0SBSgQFgBBZtOIVSTOXh
+5fHpVFS2h+7X22+OXwGDOuVajyl+U34mZSFe2QHug87j8Zn2E+uf8+45UFfZjJuC
+eh2UhMENSO1WqIS0ak8V1nuDbW0MlX5jWdD9tbHBItXA9LCedCdEtpCcu90f4/Cf
+CtU6/s1CMEHwKNJf+RkwqmhdlRoK8ZZ+IDTmuXQqbWRWuXCQMxBp34AuE+E345ug
+MH7KfXZiIvlBdCUjE9DSb0cR64R51cIsPOAqKze1p9YAoM4HD+P/tGsBi+iLvQU3
+vCmVv7OXTg2CAEx0+Q47AA/db+DtzqLgsj2eD2fpzn+kj+Q8IJE0TfcyiJ1yR0Ru
+QGqveDNJHBOUEoLwJMFLooneGnWX/FIvx3erd2cR1sShJt9Szuy8TveVgHHvEHEf
+8rN7zyL9hgsN2Wy25KrbXmuK5mTTVuvy8pMDEHwUfS5213LPrFzmXOl/LroWZuPv
+RIpcRfArchK4eoCiVwu17TI0T0kVCjbm+4bVCbOVbGdQsjnNJd2vUrcQsBy4AsyN
+OD3D80Ribbq8nf5OXuB6vUhej1FHNCcyN2Krja3CvaEwz0mVvUhIVnMwFu8Y6LZN
+mBmoFpMNcRiWC8ZjTVO4
+=z5yx
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Mar_2014_01_18_01_+0000_pTB932psRw0D=/w4--
+--Signature=_Wed__12_Mar_2014_01_27_01_+0000_he5rynqJ2dVP3afB--
