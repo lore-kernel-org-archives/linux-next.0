@@ -1,39 +1,54 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Fri, 14 Mar 2014 09:14:55 +1100
-Message-ID: <1394748895.15098.16.camel@pasglop>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
-	 <20140312015021.GC10106@kroah.com> <1394596541.4840.70.camel@pasglop>
-	 <20140312113742.GM28112@sirena.org.uk> <1394654396.4840.94.camel@pasglop>
-	 <20140312200232.GA22332@htj.dyndns.org> <1394655292.4840.97.camel@pasglop>
-	 <20140312202102.GB22332@htj.dyndns.org> <1394671056.4840.103.camel@pasglop>
+From: Jim Davis <jim.epost@gmail.com>
+Subject: randconfig build error with next-20140313,
+	in drivers/net/ethernet/intel/i40evf
+Date: Thu, 13 Mar 2014 15:22:19 -0700
+Message-ID: <CA+r1ZhjUM_JNzFuWQ5EZyb3uJMiNb7thz8Y+sT8NUZVVXuYtOQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary=bcaec51593e3f8720b04f48462bd
+Return-path: <e1000-devel-bounces@lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
+	<mailto:e1000-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=e1000-devel>
+List-Post: <mailto:e1000-devel@lists.sourceforge.net>
+List-Help: <mailto:e1000-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
+	<mailto:e1000-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: e1000-devel-bounces@lists.sourceforge.net
+To: broonie <broonie@kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, jeffrey.t.kirsher@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--bcaec51593e3f8720b04f48462bd
+Content-Type: text/plain; charset=ISO-8859-1
+
+Building with the attached random configuration file,
+
+drivers/net/ethernet/intel/i40evf/built-in.o:(.data+0x320): multiple definition
+of `i40e_ptype_lookup'
+drivers/net/ethernet/intel/i40e/built-in.o:(.data+0x7a0): first defined here
+make[4]: *** [drivers/net/ethernet/intel/built-in.o] Error 1
+
+--bcaec51593e3f8720b04f48462bd
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:37566 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753504AbaCMWPO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Mar 2014 18:15:14 -0400
-In-Reply-To: <1394671056.4840.103.camel@pasglop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Greg KH <greg@kroah.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Disposition: inline
 
-On Thu, 2014-03-13 at 11:37 +1100, Benjamin Herrenschmidt wrote:
-> On Wed, 2014-03-12 at 16:21 -0400, Tejun Heo wrote:
-> > It's a series of rather complex patches.  I really don't think
-> > duplicating them is a good idea.  We can either resurrect the old API
-> > to kill it again or set up a merge branch which I don't think is too
-> > unusual in situations like this.
-> 
-> Right, a topic branch that gets merged in both driver-core-next and
-> powerpc-next.
+------------------------------------------------------------------------------
+Learn Graph Databases - Download FREE O'Reilly Book
+"Graph Databases" is the definitive new guide to graph databases and their
+applications. Written by three acclaimed leaders in the field,
+this first edition is now available. Download your free book today!
+http://p.sf.net/sfu/13534_NeoTech
+--bcaec51593e3f8720b04f48462bd
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Just want to make sure we agree ... ie, the offending commit is already
-in powerpc-next on my side and I can't really back it out (I could
-revert it though).
+_______________________________________________
+E1000-devel mailing list
+E1000-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/e1000-devel
+To learn more about Intel&#174; Ethernet, visit http://communities.intel.com/community/wired
 
-Cheers,
-Ben.
+--bcaec51593e3f8720b04f48462bd--
