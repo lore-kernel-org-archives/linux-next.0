@@ -1,54 +1,97 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: Tree for Mar 13
-Date: Thu, 13 Mar 2014 18:53:25 +0000
-Message-ID: <20140313185325.GF366@sirena.org.uk>
+Subject: Re: [PATCH/RFC 00/16] compat: convert to COMPAT_SYSCALL_DEFINE
+Date: Thu, 13 Mar 2014 19:09:44 +0000
+Message-ID: <20140313190944.GG366@sirena.org.uk>
+References: <1394121083-2507-1-git-send-email-heiko.carstens@de.ibm.com>
+ <20140312194526.GA3755@osiris>
+ <20140313073230.GA4268@osiris>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Wl2tksQRuA3a9k2N"
+	protocol="application/pgp-signature"; boundary="STig1+2QdxPS4TAh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37313 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39265 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752178AbaCMSxa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Mar 2014 14:53:30 -0400
+	with ESMTP id S1754593AbaCMTJt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Mar 2014 15:09:49 -0400
 Content-Disposition: inline
+In-Reply-To: <20140313073230.GA4268@osiris>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org
 
 
---Wl2tksQRuA3a9k2N
+--STig1+2QdxPS4TAh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Mar 13, 2014 at 08:32:30AM +0100, Heiko Carstens wrote:
 
-I've uploaded -next for today.  There were no new issues today and no
-trees needed reverting.  This build has been tested with ARM
-multi_v7_defconfig and x86 allmodconfig between each merge.
+> I obviously missed that you are currently handling linux-next, so I sent =
+my
+> request to Stephen yesterday :)
 
-Thanks,
-Mark
+> Could you add the
 
---Wl2tksQRuA3a9k2N
+>   git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git compat
+
+> to linux-next, please?
+
+OK, I think I did this but it's entirely possible I'm not driving the
+scripts correctly so things might explode.  Take a look tomorrow :)  You
+should also make sure this is handed over to Stephen when he's back from
+vacation next week.
+
+Thanks for adding your subsystem tree as a participant of linux-next.
+As you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.
+
+You will need to ensure that the patches/commits in your tree/series
+have been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project, Linaro (my employer) and IBM (Stephen's employer) make no
+warranties regarding the linux-next project, the testing procedures, the
+results, the e-mails, etc.  If you don't agree to these ground rules,
+let me know and I'll remove your tree from participation in linux-next.
+
+--STig1+2QdxPS4TAh
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTIf6iAAoJELSic+t+oim9jsoP+wROyX4EkDiF7Dqqpf5UY49z
-d2bbd5rmxqL8vHUkdFNCT7DCJ/7MiPUwhtHi253GEi0XXb57B/EPVLFyvdPwW2XT
-h///tBbTyyXUYiBAg/VQXypZf+SMGBOCt1QNK8wmVe68TdPSf+/39/fVfY1QMwTN
-y4VOHYkV0ff3rrZ4degRX+0yBMnIRXzPREjzBcCTJuiXAv369fTavZsXzPCdXCfr
-JBHMGHBA2IIJU5VgmzTUFgv9lxW752a0Qe2K7mRwH3yJqxg/9Um2UxJSFk+BZ/Z0
-QD+4t1DZNxSXqtWRhXbNM/3ygwFZkGynvnNJJrTQQdgjzuCppHQ1KmQjFMyrO5qB
-caZ0flMM8MO1rdT+qpl1ZVXINxK/XmQr5J9FCo5tfWmOVHiXHyc0JnY8lfMbR4Xl
-iuhKcQYxJ2Ve/Eh2sfdg3tmqRbQgx+Hup5yncRlTentxyfJJuesmYezIo8Z2+NzP
-pw0tdsP22ORA3cOOp46iMYgOmHH6Sy+5FfB8tw9tdcEE2eNVA1k7bk8WXXJOWI4s
-qibSO1N5I7D0FWGyVbeyx12ilgdc2lAw+9OtBjoRoWvZr790hiSbvkxV+FllBKAQ
-sCj7JfOGvgn68mMunUReHV/HDPc2ADwvDQwRR3afVg2k0+w8olGSZa5j53lyVH41
-6f2QHQ6lms85tAZ4zpUi
-=YkBY
+iQIcBAEBAgAGBQJTIgJ1AAoJELSic+t+oim9tT4P/RdhVbXZlyGqStXSiHbU1U5G
+jBIsa0C2EmvUiDHOnZcawawtjIQ7KP5S905HIgeO/3ICBvvPlhLccQrNvEnlpF1L
+RY1wZRg+thbelGJdqcnXupTrPuDb/xf1nSeI1oIQw0HuCPrE0azX0YuzLO1plTrr
+PJ2zN21oLy8rKbMTBhupenpa8dN8OJmEkWdswJ3OobgXcW448KaVRFZiByGFgzpj
+ZltR0U9GQSWUBPYjjX7i43xUTcn7ZdB3O0jfoefYhNDpH/FUV5kh+oYInFlpB0ci
++EHuV256Y6HvU0HCmQ200ldk/IZP1gkqulogoBpQ/uMsVbGHm13cjHRttCp2yyKU
+5tHv8MStFiaEsheKLBXdzD2SujSk7MgoffS55WjCy/vHcRySatYEt7QwgRuYFDvq
+Yg5MCispZ1H1n5hoKfvBk26t52AxrbzLtl6qy+k26KNZichxXp4UuRAAOch1y53l
+QP2PzDzO7MM7HIs/JqRrUM2GY5kmJiLZdStj2Jpdb+kKeMSyxOAdm9Zf5oOKBzJw
+M+Qv/2eZTZGjdZqsx3RmDZHCmHdspUPMkxVlrMfU7PdbfE17iDILYKzzVyiecT41
+7VfSF48humtzcOi7sgWEFnM0/07SupKu3I7k/E0vplRhryLu4O441lK1aAAhAsUg
+OuG9QTBh24GaIbYmOuWx
+=gF+W
 -----END PGP SIGNATURE-----
 
---Wl2tksQRuA3a9k2N--
+--STig1+2QdxPS4TAh--
