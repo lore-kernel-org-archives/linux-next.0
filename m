@@ -1,36 +1,39 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the devicetree tree with the arm-soc tree
-Date: Thu, 13 Mar 2014 12:55:21 +0000
-Message-ID: <20140313125521.19449C41038@trevor.secretlab.ca>
-References: <20140312220350.3c35bce7dff139a73a9c8262@kernel.org> < CAOesGMiK-8_0vt7jWSMT3oaoPUz5fS92ztknC-HhsEYt2XCNZQ@mail.gmail.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:62486 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308AbaCMMzb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Mar 2014 08:55:31 -0400
-Received: by mail-ea0-f171.google.com with SMTP id n15so468221ead.2
-        for <linux-next@vger.kernel.org>; Thu, 13 Mar 2014 05:55:30 -0700 (PDT)
-In-Reply-To: <CAOesGMiK-8_0vt7jWSMT3oaoPUz5fS92ztknC-HhsEYt2XCNZQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: mmotm 2014-03-12-16-04 uploaded
+Date: Thu, 13 Mar 2014 18:04:23 +0100
+Message-ID: <20140313170423.GI4473@dhcp22.suse.cz>
+References: <20140312230510.69CD831C078@corp2gmr1-1.hot.corp.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20140312230510.69CD831C078@corp2gmr1-1.hot.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 12 Mar 2014 15:36:58 -0700, Olof Johansson <olof@lixom.net> wrote:
-> On Wed, Mar 12, 2014 at 3:03 PM, Mark Brown <broonie@kernel.org> wrote:
-> > Hi Grant,
-> >
-> > Today's linux-next merge of the devicetree tree got a conflict in include/asm-generic/vmlinux.lds.h between commit 6c3ff8b11a16ec69 ("ARM: Introduce CPU_METHOD_OF_DECLARE() for cpu hotplug/smp") from the  tree and commit f618c4703a14672d27 ("drivers: of: add support for custom reserved memory drivers") from the devicetree tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
-> 
-> LGTM from the arm-soc side.
+On Wed 12-03-14 16:05:10, Andrew Morton wrote:
+[...]
+> A git tree which contains the memory management portion of this tree is
+> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> by Michal Hocko.  It contains the patches which are between the
+> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+> file, http://www.ozlabs.org/~akpm/mmotm/series
 
-Ditto
+I am sorry but I didn't get to update the last two releases and probably
+wont't make the next in this release cycle because I am quite busy with
+other stuff and there are too many cross tree conflicts to have this
+automated (notably slab and cgroup trees are conflicting a lot). Let's
+see whether I can sort it out before traveling to LSF next week
+otherwise I will start after getting back (around 12th Apr. after
+vacation) with a new release cycle. Sorry about that!
+-- 
+Michal Hocko
+SUSE Labs
 
-g.
-
-> 
-> 
-> -Olof
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
