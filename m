@@ -1,52 +1,89 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Fri, 14 Mar 2014 09:00:02 -0400
-Message-ID: <20140314130002.GB12613@htj.dyndns.org>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
- <20140312015021.GC10106@kroah.com>
- <1394596541.4840.70.camel@pasglop>
- <20140312113742.GM28112@sirena.org.uk>
- <1394654396.4840.94.camel@pasglop>
- <20140312200232.GA22332@htj.dyndns.org>
- <1394655292.4840.97.camel@pasglop>
- <20140312202102.GB22332@htj.dyndns.org>
- <1394671056.4840.103.camel@pasglop>
- <1394748895.15098.16.camel@pasglop>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the compat tree with the
+ file-private-locks tree
+Date: Fri, 14 Mar 2014 17:06:37 +0000
+Message-ID: <20140314170637.6370787172f6b7a78a5c2812@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f43.google.com ([209.85.216.43]:46879 "EHLO
-	mail-qa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754051AbaCNNAF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Mar 2014 09:00:05 -0400
-Content-Disposition: inline
-In-Reply-To: <1394748895.15098.16.camel@pasglop>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:53432 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755609AbaCNRGr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Mar 2014 13:06:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Mark Brown <broonie@kernel.org>, Greg KH <greg@kroah.com>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>, Jeff Layton <jlayton@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+--Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2014 at 09:14:55AM +1100, Benjamin Herrenschmidt wrote:
-> On Thu, 2014-03-13 at 11:37 +1100, Benjamin Herrenschmidt wrote:
-> > On Wed, 2014-03-12 at 16:21 -0400, Tejun Heo wrote:
-> > > It's a series of rather complex patches.  I really don't think
-> > > duplicating them is a good idea.  We can either resurrect the old API
-> > > to kill it again or set up a merge branch which I don't think is too
-> > > unusual in situations like this.
-> > 
-> > Right, a topic branch that gets merged in both driver-core-next and
-> > powerpc-next.
-> 
-> Just want to make sure we agree ... ie, the offending commit is already
-> in powerpc-next on my side and I can't really back it out (I could
-> revert it though).
+Hi Heiko,
 
-Hmmm... reverting may be an option too but I don't think fixing it
-retroactively in a new branch should be okay too.
+Today's linux-next merge of the compat tree got a conflict in fs/compat.c b=
+etween commit 1ed1950c412f1b ("locks: add new fcntl cmd values for handling=
+ file private locks") from the file-private-locks tree and commit 932602e23=
+8329 ("fs/compat: convert to COMPAT_SYSCALL_DEFINE with changing parameter =
+types") from the compat tree.
 
-Thanks.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
--- 
-tejun
+diff --cc fs/compat.c
+index 800914a1092a,19252b97f0cc..000000000000
+--- a/fs/compat.c
++++ b/fs/compat.c
+@@@ -399,23 -399,8 +399,23 @@@ static int put_compat_flock64(struct fl
+  }
+  #endif
+ =20
+ +static unsigned int
+ +convert_fcntl_cmd(unsigned int cmd)
+ +{
+ +      switch (cmd) {
+ +      case F_GETLK64:
+ +              return F_GETLK;
+ +      case F_SETLK64:
+ +              return F_SETLK;
+ +      case F_SETLKW64:
+ +              return F_SETLKW;
+ +      }
+ +
+ +      return cmd;
+ +}
+ +
+- asmlinkage long compat_sys_fcntl64(unsigned int fd, unsigned int cmd,
+-               unsigned long arg)
++ COMPAT_SYSCALL_DEFINE3(fcntl64, unsigned int, fd, unsigned int, cmd,
++                      compat_ulong_t, arg)
+  {
+        mm_segment_t old_fs;
+        struct flock f;
+
+
+--Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTIzceAAoJELSic+t+oim9OTsP/28a7Q3x6cbg/lahfUftUXeD
+isd0o5aPRZYFzPACDj2Ye8OTJRuTcPfEcN5wXzokWMZQUlANpmDBhK/7HS4zh/Tm
+1iHEpZYForriKkhAzLy/QX1X1WX0rO7L3NTploGsRLI9L5rNiUCmOoL/H2f4GUcD
+BHpaCw4lm1pBMBYCXakOn24TbgBvWlPoopSghDiNdLLaV2JpNLzELNMWMG7uNTNv
+JxRVAk+BljQNUXIA/wwHiNZGd10JX2OymSMEaJa3fO7GKpUaUfWTwFl/wBkvwnej
+KrfAKa8I5HfHXbNSLQ7Nu3r+Aypxpah+ZD1YAdd0dB1j0yX9MOBDX0HVIbK7bap8
+l09PzxtNeo52nuCGP2Gv6/6l09R6oEBBHMbDtIEdGfWNJIw5SVwlzz7tVoN/S2AO
+7deqCQyzC0KENp/M2d8mmWRDLXS7j4nXhX2AYT/0G5T8hbsQe1R2jPudzg9ZzUG9
+q5BiURoCQXvUrpJ7o2W7X48owztKvfwhcw/oqfqJUnQhJAGEwU9bebaTP8I+sZCd
+/Lm6j/eetKzeh2MFdX+ryRcipT3geiHSXceN3jh6tNM7mbu/QJQFkEjfHbx/+ZIx
+b2uklta7D26AktV4ztiR0s1ZVQdO3BXkA2ZaYmJGzz1jmBH6e/GQ58voq+3otZ0/
+1pMWz0N/31in1emkRALQ
+=CyIz
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy--
