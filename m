@@ -1,89 +1,116 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the compat tree with the
- file-private-locks tree
-Date: Fri, 14 Mar 2014 17:06:37 +0000
-Message-ID: <20140314170637.6370787172f6b7a78a5c2812@kernel.org>
+Subject: Re: linux-next: manual merge of the compat tree with the  tree
+Date: Fri, 14 Mar 2014 18:43:47 +0000
+Message-ID: <20140314184347.GY366@sirena.org.uk>
+References: <20140314183653.0a4a750f0b72080e3b982104@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KCLoHzx0Ylaw/v4x"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:53432 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755609AbaCNRGr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Mar 2014 13:06:47 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38222 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755144AbaCNSn7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Mar 2014 14:43:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20140314183653.0a4a750f0b72080e3b982104@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>, Jeff Layton <jlayton@redhat.com>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>, "H. Peter Anvin" <hpa@linux.intel.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy
-Content-Type: text/plain; charset=US-ASCII
+
+--KCLoHzx0Ylaw/v4x
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Heiko,
+On Fri, Mar 14, 2014 at 06:36:53PM +0000, Mark Brown wrote:
 
-Today's linux-next merge of the compat tree got a conflict in fs/compat.c b=
-etween commit 1ed1950c412f1b ("locks: add new fcntl cmd values for handling=
- file private locks") from the file-private-locks tree and commit 932602e23=
-8329 ("fs/compat: convert to COMPAT_SYSCALL_DEFINE with changing parameter =
-types") from the compat tree.
+> Today's linux-next merge of the compat tree got a conflict in  between
+> commit 81993e81a99 ("compat: Get rid of
+> (get|put)_compat_time(val|spec)") from the tip tree and commit
+> 932602e23832 ("fs/compat: convert to COMPAT_SYSCALL_DEFINE with
+> changing parameter types") from the compat tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-diff --cc fs/compat.c
-index 800914a1092a,19252b97f0cc..000000000000
---- a/fs/compat.c
-+++ b/fs/compat.c
-@@@ -399,23 -399,8 +399,23 @@@ static int put_compat_flock64(struct fl
+And essentially the same thing in ipc/compat_mq.c:
+
+diff --cc ipc/compat_mq.c
+index a9cf16378d7a,d58747293772..000000000000
+--- a/ipc/compat_mq.c
++++ b/ipc/compat_mq.c
+@@@ -64,10 -64,24 +64,10 @@@ COMPAT_SYSCALL_DEFINE4(mq_open, const c
+  	return sys_mq_open(u_name, oflag, mode, p);
   }
-  #endif
  =20
- +static unsigned int
- +convert_fcntl_cmd(unsigned int cmd)
- +{
- +      switch (cmd) {
- +      case F_GETLK64:
- +              return F_GETLK;
- +      case F_SETLK64:
- +              return F_SETLK;
- +      case F_SETLKW64:
- +              return F_SETLKW;
- +      }
- +
- +      return cmd;
- +}
- +
-- asmlinkage long compat_sys_fcntl64(unsigned int fd, unsigned int cmd,
--               unsigned long arg)
-+ COMPAT_SYSCALL_DEFINE3(fcntl64, unsigned int, fd, unsigned int, cmd,
-+                      compat_ulong_t, arg)
+- asmlinkage long compat_sys_mq_timedsend(mqd_t mqdes,
+- 			const char __user *u_msg_ptr,
+- 			size_t msg_len, unsigned int msg_prio,
+- 			const struct compat_timespec __user *u_abs_timeout)
+ -static int compat_prepare_timeout(struct timespec __user **p,
+ -				  const struct compat_timespec __user *u)
+ -{
+ -	struct timespec ts;
+ -	if (!u) {
+ -		*p =3D NULL;
+ -		return 0;
+ -	}
+ -	*p =3D compat_alloc_user_space(sizeof(ts));
+ -	if (get_compat_timespec(&ts, u) || copy_to_user(*p, &ts, sizeof(ts)))
+ -		return -EFAULT;
+ -	return 0;
+ -}
+ -
++ COMPAT_SYSCALL_DEFINE5(mq_timedsend, mqd_t, mqdes,
++ 		       const char __user *, u_msg_ptr,
++ 		       compat_size_t, msg_len, unsigned int, msg_prio,
++ 		       const struct compat_timespec __user *, u_abs_timeout)
   {
-        mm_segment_t old_fs;
-        struct flock f;
+  	struct timespec __user *u_ts;
+ =20
+@@@ -78,14 -92,13 +78,14 @@@
+  			msg_prio, u_ts);
+  }
+ =20
+- asmlinkage ssize_t compat_sys_mq_timedreceive(mqd_t mqdes,
+- 			char __user *u_msg_ptr,
+- 			size_t msg_len, unsigned int __user *u_msg_prio,
+- 			const struct compat_timespec __user *u_abs_timeout)
++ COMPAT_SYSCALL_DEFINE5(mq_timedreceive, mqd_t, mqdes,
++ 		       char __user *, u_msg_ptr,
++ 		       compat_size_t, msg_len, unsigned int __user *, u_msg_prio,
++ 		       const struct compat_timespec __user *, u_abs_timeout)
+  {
+  	struct timespec __user *u_ts;
+ -	if (compat_prepare_timeout(&u_ts, u_abs_timeout))
+ +
+ +	if (compat_convert_timespec(&u_ts, u_abs_timeout))
+  		return -EFAULT;
+ =20
+  	return sys_mq_timedreceive(mqdes, u_msg_ptr, msg_len,
 
-
---Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy
-Content-Type: application/pgp-signature
+--KCLoHzx0Ylaw/v4x
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTIzceAAoJELSic+t+oim9OTsP/28a7Q3x6cbg/lahfUftUXeD
-isd0o5aPRZYFzPACDj2Ye8OTJRuTcPfEcN5wXzokWMZQUlANpmDBhK/7HS4zh/Tm
-1iHEpZYForriKkhAzLy/QX1X1WX0rO7L3NTploGsRLI9L5rNiUCmOoL/H2f4GUcD
-BHpaCw4lm1pBMBYCXakOn24TbgBvWlPoopSghDiNdLLaV2JpNLzELNMWMG7uNTNv
-JxRVAk+BljQNUXIA/wwHiNZGd10JX2OymSMEaJa3fO7GKpUaUfWTwFl/wBkvwnej
-KrfAKa8I5HfHXbNSLQ7Nu3r+Aypxpah+ZD1YAdd0dB1j0yX9MOBDX0HVIbK7bap8
-l09PzxtNeo52nuCGP2Gv6/6l09R6oEBBHMbDtIEdGfWNJIw5SVwlzz7tVoN/S2AO
-7deqCQyzC0KENp/M2d8mmWRDLXS7j4nXhX2AYT/0G5T8hbsQe1R2jPudzg9ZzUG9
-q5BiURoCQXvUrpJ7o2W7X48owztKvfwhcw/oqfqJUnQhJAGEwU9bebaTP8I+sZCd
-/Lm6j/eetKzeh2MFdX+ryRcipT3geiHSXceN3jh6tNM7mbu/QJQFkEjfHbx/+ZIx
-b2uklta7D26AktV4ztiR0s1ZVQdO3BXkA2ZaYmJGzz1jmBH6e/GQ58voq+3otZ0/
-1pMWz0N/31in1emkRALQ
-=CyIz
+iQIcBAEBAgAGBQJTI03gAAoJELSic+t+oim9yzYQAJcL61P53DUvAOlBS4j9Euxe
+ZfqT0TQ4IPByZh1I4MCTErv+dC6C0K6S3dwso5pCfaJPkwZ3yXW8xOxao3NFX/DP
+MhCr3bDic5cDSdIdmbtO72ylorXELnHYuZiigdIDoPCNc+eiIjmIvp1+kbu/RTqQ
+finpZN4Rw5A9fKVT6/zUTfFbv7kXjW1VvtixBHKpPuBeo9nv9gRfQ6VnnLqmuyOu
+PpQJWP8xvBkNoidUbrLTAwkAZXQjioHOwsbhH8tDZuqmcIfysDOUfky1ydZY0Kfa
+arcjM2AmzgLwo5Q8GTDLczbh/d6/VSBSoOOTHlGAx2EFKIJQ4+Q/1OC41WhAr3o/
+DI1KwG29QpLhU0jfPDUOP07uJ9jmMF+95VznPkAtbLsDyiak0m41uyz5aC3y+WXi
+4LJdChIhRDWFRyyUveWJ2Exi24NgrQ63PyHqQjQYBz52yKX5O8Vm5My+Pqtm/x3B
+jC24Vf0EKAB050PQDA8kb0Ws2j+HabTcl+AGuyO9vTz98JOYyptYtyMveXpMeQoj
+6vn7STT2HjXVvEgP2Jgy9Zq6f8kaDZUhdboQ4JmjuV6iQAffck9bYXNopHZWdiAy
+4nRrlY3TMgBy4wEi2320HKzVjgHsS6hb6V/aYfRe/FcuRM5QPjHerOwACPy8FiRp
+FIiOCxOFedFCjqXmUUAV
+=GM/W
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Mar_2014_17_06_37_+0000_F0NUV4c0Re.Mjfyy--
+--KCLoHzx0Ylaw/v4x--
