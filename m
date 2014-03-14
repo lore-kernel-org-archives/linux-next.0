@@ -1,116 +1,57 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the compat tree with the  tree
-Date: Fri, 14 Mar 2014 18:43:47 +0000
-Message-ID: <20140314184347.GY366@sirena.org.uk>
-References: <20140314183653.0a4a750f0b72080e3b982104@kernel.org>
+Subject: linux-next: Tree for Mar 14
+Date: Fri, 14 Mar 2014 19:32:48 +0000
+Message-ID: <20140314193248.GF366@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KCLoHzx0Ylaw/v4x"
+	protocol="application/pgp-signature"; boundary="AkcDN4P/vcry3ns+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38222 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44114 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755144AbaCNSn7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Mar 2014 14:43:59 -0400
+	with ESMTP id S1755415AbaCNTcw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Mar 2014 15:32:52 -0400
 Content-Disposition: inline
-In-Reply-To: <20140314183653.0a4a750f0b72080e3b982104@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>, "H. Peter Anvin" <hpa@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---KCLoHzx0Ylaw/v4x
+--AkcDN4P/vcry3ns+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2014 at 06:36:53PM +0000, Mark Brown wrote:
+Hi all,
 
-> Today's linux-next merge of the compat tree got a conflict in  between
-> commit 81993e81a99 ("compat: Get rid of
-> (get|put)_compat_time(val|spec)") from the tip tree and commit
-> 932602e23832 ("fs/compat: convert to COMPAT_SYSCALL_DEFINE with
-> changing parameter types") from the compat tree.
+I've uploaded -next for today.  There were a couple of small issues
+today, mainly due to the addition of the new compat tree, and no trees
+needed reverting.  This build has been tested with ARM
+multi_v7_defconfig and x86 allmodconfig between each merge.
 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Stephen should be back on Monday and normal service resumed.
 
-And essentially the same thing in ipc/compat_mq.c:
+Thanks,
+Mark
 
-diff --cc ipc/compat_mq.c
-index a9cf16378d7a,d58747293772..000000000000
---- a/ipc/compat_mq.c
-+++ b/ipc/compat_mq.c
-@@@ -64,10 -64,24 +64,10 @@@ COMPAT_SYSCALL_DEFINE4(mq_open, const c
-  	return sys_mq_open(u_name, oflag, mode, p);
-  }
- =20
-- asmlinkage long compat_sys_mq_timedsend(mqd_t mqdes,
-- 			const char __user *u_msg_ptr,
-- 			size_t msg_len, unsigned int msg_prio,
-- 			const struct compat_timespec __user *u_abs_timeout)
- -static int compat_prepare_timeout(struct timespec __user **p,
- -				  const struct compat_timespec __user *u)
- -{
- -	struct timespec ts;
- -	if (!u) {
- -		*p =3D NULL;
- -		return 0;
- -	}
- -	*p =3D compat_alloc_user_space(sizeof(ts));
- -	if (get_compat_timespec(&ts, u) || copy_to_user(*p, &ts, sizeof(ts)))
- -		return -EFAULT;
- -	return 0;
- -}
- -
-+ COMPAT_SYSCALL_DEFINE5(mq_timedsend, mqd_t, mqdes,
-+ 		       const char __user *, u_msg_ptr,
-+ 		       compat_size_t, msg_len, unsigned int, msg_prio,
-+ 		       const struct compat_timespec __user *, u_abs_timeout)
-  {
-  	struct timespec __user *u_ts;
- =20
-@@@ -78,14 -92,13 +78,14 @@@
-  			msg_prio, u_ts);
-  }
- =20
-- asmlinkage ssize_t compat_sys_mq_timedreceive(mqd_t mqdes,
-- 			char __user *u_msg_ptr,
-- 			size_t msg_len, unsigned int __user *u_msg_prio,
-- 			const struct compat_timespec __user *u_abs_timeout)
-+ COMPAT_SYSCALL_DEFINE5(mq_timedreceive, mqd_t, mqdes,
-+ 		       char __user *, u_msg_ptr,
-+ 		       compat_size_t, msg_len, unsigned int __user *, u_msg_prio,
-+ 		       const struct compat_timespec __user *, u_abs_timeout)
-  {
-  	struct timespec __user *u_ts;
- -	if (compat_prepare_timeout(&u_ts, u_abs_timeout))
- +
- +	if (compat_convert_timespec(&u_ts, u_abs_timeout))
-  		return -EFAULT;
- =20
-  	return sys_mq_timedreceive(mqdes, u_msg_ptr, msg_len,
-
---KCLoHzx0Ylaw/v4x
+--AkcDN4P/vcry3ns+
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTI03gAAoJELSic+t+oim9yzYQAJcL61P53DUvAOlBS4j9Euxe
-ZfqT0TQ4IPByZh1I4MCTErv+dC6C0K6S3dwso5pCfaJPkwZ3yXW8xOxao3NFX/DP
-MhCr3bDic5cDSdIdmbtO72ylorXELnHYuZiigdIDoPCNc+eiIjmIvp1+kbu/RTqQ
-finpZN4Rw5A9fKVT6/zUTfFbv7kXjW1VvtixBHKpPuBeo9nv9gRfQ6VnnLqmuyOu
-PpQJWP8xvBkNoidUbrLTAwkAZXQjioHOwsbhH8tDZuqmcIfysDOUfky1ydZY0Kfa
-arcjM2AmzgLwo5Q8GTDLczbh/d6/VSBSoOOTHlGAx2EFKIJQ4+Q/1OC41WhAr3o/
-DI1KwG29QpLhU0jfPDUOP07uJ9jmMF+95VznPkAtbLsDyiak0m41uyz5aC3y+WXi
-4LJdChIhRDWFRyyUveWJ2Exi24NgrQ63PyHqQjQYBz52yKX5O8Vm5My+Pqtm/x3B
-jC24Vf0EKAB050PQDA8kb0Ws2j+HabTcl+AGuyO9vTz98JOYyptYtyMveXpMeQoj
-6vn7STT2HjXVvEgP2Jgy9Zq6f8kaDZUhdboQ4JmjuV6iQAffck9bYXNopHZWdiAy
-4nRrlY3TMgBy4wEi2320HKzVjgHsS6hb6V/aYfRe/FcuRM5QPjHerOwACPy8FiRp
-FIiOCxOFedFCjqXmUUAV
-=GM/W
+iQIcBAEBAgAGBQJTI1ldAAoJELSic+t+oim96DAP/RXaUmkAn99NaOkRBzOMbEgc
+hw7pR7Rr/SKDhK2rG03szDaUEcWuPueaLxqlcrK+CRNg6uvOrkLi5NzT45eONpzu
+iabr8+slR8DkMah0FkhYBcJIUCASlLCnpgsurfLMqPqVRWzFK7U7tEQX01Cu853i
+QoFKfcJwdizcYNt8TRN2PP0AMt+n0jtn6lYuO+Ou6Yra/q8u7064u8KA0EbM8A4f
+PckH0uxJ7FC9lHy9HO+51cKchaj0YLqXFJzscB4bXOxtJSI1P5PZtTtnElkXGZhU
+2LIpKSuX1JKlzEfM8ZU8Lk1uJEf29JZN/vMTM1bWhGUG2//XbhXRY41cL8Kdzbsx
+91vh2B/sPNYQN6P9GxULvbH3umx7KoiQ2Y5giNykBzXEcZChemVAm1xl5qzwqoA2
+h/kYDPn1VKGns5ZS14moQEvZW7PdRbRh8xCiETJabeuKvNZ5IXazm0bqTUukccNv
+GDtVL5L7qGCGL3zJM2SW9qJQ2k+jmsQyENeFiru+GM4PsaQ8EdVKZBnrK9ogFp8R
+FjoHFsZHFOr+QYRI02IypCjA5AxI1IPA43+VGeAWn101nj8+XsfGgh8XrcpDb+b3
+vioBFfkNF3ziH5bUoFOv5imdJfplkDPtLMUw5BNq3lzs3d7Sh/lS5aqCKUFzFlke
+d+yfuvoV1FGmPU7RjPxP
+=cpfV
 -----END PGP SIGNATURE-----
 
---KCLoHzx0Ylaw/v4x--
+--AkcDN4P/vcry3ns+--
