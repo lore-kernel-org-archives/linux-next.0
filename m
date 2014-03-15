@@ -1,57 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: Tree for Mar 14
-Date: Fri, 14 Mar 2014 19:32:48 +0000
-Message-ID: <20140314193248.GF366@sirena.org.uk>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Sat, 15 Mar 2014 00:03:43 +0000
+Message-ID: <20140315000343.GD5687@kroah.com>
+References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
+ <20140312015021.GC10106@kroah.com>
+ <1394596541.4840.70.camel@pasglop>
+ <20140312113742.GM28112@sirena.org.uk>
+ <1394654396.4840.94.camel@pasglop>
+ <20140312200232.GA22332@htj.dyndns.org>
+ <1394655292.4840.97.camel@pasglop>
+ <20140312202102.GB22332@htj.dyndns.org>
+ <1394671056.4840.103.camel@pasglop>
+ <1394748895.15098.16.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AkcDN4P/vcry3ns+"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44114 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755415AbaCNTcw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Mar 2014 15:32:52 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:47267 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754050AbaCOACo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Mar 2014 20:02:44 -0400
+Received: from compute5.internal (compute5.nyi.mail.srv.osa [10.202.2.45])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 1E6B320FFA
+	for <linux-next@vger.kernel.org>; Fri, 14 Mar 2014 20:02:44 -0400 (EDT)
 Content-Disposition: inline
+In-Reply-To: <1394748895.15098.16.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Tejun Heo <tj@kernel.org>, Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Fri, Mar 14, 2014 at 09:14:55AM +1100, Benjamin Herrenschmidt wrote:
+> On Thu, 2014-03-13 at 11:37 +1100, Benjamin Herrenschmidt wrote:
+> > On Wed, 2014-03-12 at 16:21 -0400, Tejun Heo wrote:
+> > > It's a series of rather complex patches.  I really don't think
+> > > duplicating them is a good idea.  We can either resurrect the old API
+> > > to kill it again or set up a merge branch which I don't think is too
+> > > unusual in situations like this.
+> > 
+> > Right, a topic branch that gets merged in both driver-core-next and
+> > powerpc-next.
+> 
+> Just want to make sure we agree ... ie, the offending commit is already
+> in powerpc-next on my side and I can't really back it out (I could
+> revert it though).
 
---AkcDN4P/vcry3ns+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You can pull in driver-core-next into your tree if you want, it's not
+going to be reverted, and will be sent to Linus for 3.15-rc1, so you can
+base your work on it and fix up the api usage in your tree that way.
 
-Hi all,
+thanks,
 
-I've uploaded -next for today.  There were a couple of small issues
-today, mainly due to the addition of the new compat tree, and no trees
-needed reverting.  This build has been tested with ARM
-multi_v7_defconfig and x86 allmodconfig between each merge.
-
-Stephen should be back on Monday and normal service resumed.
-
-Thanks,
-Mark
-
---AkcDN4P/vcry3ns+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTI1ldAAoJELSic+t+oim96DAP/RXaUmkAn99NaOkRBzOMbEgc
-hw7pR7Rr/SKDhK2rG03szDaUEcWuPueaLxqlcrK+CRNg6uvOrkLi5NzT45eONpzu
-iabr8+slR8DkMah0FkhYBcJIUCASlLCnpgsurfLMqPqVRWzFK7U7tEQX01Cu853i
-QoFKfcJwdizcYNt8TRN2PP0AMt+n0jtn6lYuO+Ou6Yra/q8u7064u8KA0EbM8A4f
-PckH0uxJ7FC9lHy9HO+51cKchaj0YLqXFJzscB4bXOxtJSI1P5PZtTtnElkXGZhU
-2LIpKSuX1JKlzEfM8ZU8Lk1uJEf29JZN/vMTM1bWhGUG2//XbhXRY41cL8Kdzbsx
-91vh2B/sPNYQN6P9GxULvbH3umx7KoiQ2Y5giNykBzXEcZChemVAm1xl5qzwqoA2
-h/kYDPn1VKGns5ZS14moQEvZW7PdRbRh8xCiETJabeuKvNZ5IXazm0bqTUukccNv
-GDtVL5L7qGCGL3zJM2SW9qJQ2k+jmsQyENeFiru+GM4PsaQ8EdVKZBnrK9ogFp8R
-FjoHFsZHFOr+QYRI02IypCjA5AxI1IPA43+VGeAWn101nj8+XsfGgh8XrcpDb+b3
-vioBFfkNF3ziH5bUoFOv5imdJfplkDPtLMUw5BNq3lzs3d7Sh/lS5aqCKUFzFlke
-d+yfuvoV1FGmPU7RjPxP
-=cpfV
------END PGP SIGNATURE-----
-
---AkcDN4P/vcry3ns+--
+greg k-h
