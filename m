@@ -1,133 +1,61 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
-	tree
-Date: Mon, 17 Mar 2014 22:27:36 +0000
-Message-ID: <20140317222736.GB3708@flint.arm.linux.org.uk>
-References: <20140317185542.fe4554210fc1893b44289008@canb.auug.org.au> <20140317080122.459ff9d4@infradead.org> <20140317182953.GA10565@kroah.com> <20140317162937.2ccdec83@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Request to update imx-mxs tree for linux-next
+Date: Tue, 18 Mar 2014 10:42:53 +1100
+Message-ID: <20140318104253.78904e5f522f1ea3f0fe5a68@canb.auug.org.au>
+References: <20140311150853.GD26502@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:38437 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751180AbaCQXm7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Mar 2014 19:42:59 -0400
+In-Reply-To: <20140311150853.GD26502@S2101-09.ap.freescale.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+
+--Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140317162937.2ccdec83@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Grant Likely <grant.likely@linaro.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2014 at 04:29:37PM -0300, Mauro Carvalho Chehab wrote:
-> Em Mon, 17 Mar 2014 11:29:53 -0700
-> Greg KH <greg@kroah.com> escreveu:
-> 
-> > On Mon, Mar 17, 2014 at 08:01:22AM -0300, Mauro Carvalho Chehab wrote:
-> > > Em Mon, 17 Mar 2014 18:55:42 +1100
-> > > Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
-> > > 
-> > > > Hi Greg,
-> > > > 
-> > > > Today's linux-next merge of the staging tree got a conflict in
-> > > > drivers/media/platform/exynos4-is/fimc-is.c between commit d265d9ac6c7c
-> > > > ("[media] exynos4-is: Use external s5k6a3 sensor driver") from the
-> > > > v4l-dvb tree and commit fd9fdb78a9bf ("[media] of: move graph helpers
-> > > > from drivers/media/v4l2-core to drivers/of") from the staging tree.
-> > > > I fixed it up (see below, though I suspect it is wasted?) and can carry
-> > > > the fix as necessary (no action is required).
-> > > 
-> > > I used to have those OF patches on my tree, but I was forced to remove,
-> > > as Grant rejected the patches. After his nack, lots of dicussions about
-> > > the DT bindings started and, until last week, there were no consensus
-> > > about that (as far as I followed the discussions).
-> > > 
-> > > So, reluctantly, I just dropped this series from my tree, pretending
-> > > it never existed, as reverting them could cause troubles if it 
-> > > (or some version of it) got merged via Greg, Grant and/or Russell
-> > > trees.
-> > > 
-> > > On my head, it become too late to merge it for 3.15, as first
-> > > people must agree on the DT bindings. Also, I already closed the
-> > > media merge window, as -rc7 seems to be the last -rc.
-> > > 
-> > > One possible approach for this would be to merge the patches that move
-> > > the OF graph code away from drivers/media, and the corresponding
-> > > internal ABI changes early at -rc, and applying the DT binding
-> > > patches, and the staging imx-drm driver for 3.16.
-> > 
-> > I don't understand, was I supposed to do something in my staging-next
-> > tree for this as well?
-> > 
-> > totally confused,
-> 
-> Hi Greg,
-> 
-> Let me summarize what was discussed so far with regards to it.
-> 
-> There are two changesets related to this:
-> - a 6 patch series moving OF graph functions from
->   /drivers/media to /drivers/of;
-> - a 12 patch series (at version 11 - not sure if are there any
->   newer version) that adds the imx-drm driver to staging.
+Hi Shawn,
 
-No, it's not adding the imx-drm driver to staging, that driver has been
-there for getting on for 18 months.  What Grant's nack does is destroy
-the work which both Philipp and myself have put in to try and get this
-out of staging for (maybe) 3.16.
+On Tue, 11 Mar 2014 23:08:54 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
+>
+> We're moving imx-mxs tree from Linaro git server to kernel.org.  Can you
+> please update the imx-mxs tree for linux-next to the following one?
+>=20
+>  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
 
-The individual status of the patches are:
+Done.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-  of: move graph helpers from drivers/media/v4l2-core to drivers/of
+--Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP
+Content-Type: application/pgp-signature
 
-"This patch is fine because it only moves code, but I'm not providing an
- ack yet.  I'll supply one when I'm happy with the collection of fixups."
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-though there is more discussion of a previous patch version.
+iQIcBAEBCAAGBQJTJ4iBAAoJEMDTa8Ir7ZwVTP0QAJBTLRPiDuEgDWXXqKb15LI/
+MTCbxnBslgvQQGJ8/qGInORNLhZ4nKyT1pxqrLDrGXJVQQdqHbCiiR2vGgtSbvuA
+iLDII+KwGYkLMrtnYcV/YpYW6FeNoTziRDakdEMOItG8nXcAGnKNQiLFs4u82cAO
+Z3e+dHAS4/NasVAj469BpvlgSeWp7cTUfd4nzJDB0/mowFqFuiQEK5sHPx4pVBE9
+psGmh8WXSr5+H/3xZY4pu2p7Tq5Nl7zRjevHt+x+od35mKgSPu/7qvsbDHlqIqBz
+1kITlYfovUy6f9cXlM4+KrdgieOtL9ABKXxD+6HI3BezPT3t8VvlTI12KeQvozRz
+Y3Kug14ntUc1iO0qH/FkcwbwvslyKNDPqqKVqOnIOoIXfTePNlx8hetA1bwU8Le6
+/L513IpLvyFg6ucdMpZWH1BQiVLHV6XN85e6qf4r1vXXb7GGgA0PQliqsVD9zX3N
+EbYcwsaUQIwpKXLRRfJ1HdrbDvsT4+KoOxCvwF1T5MJLrd5NA2x04AvID09P1R3i
+QAPEVi5zwPoCxH43aoCYa/QttXmdPbv13EU/+ZOfckT8KCS8YUU80XcXuGbC22mV
+2dDryhRvoz3veHTGwu3RZRKiBrX7TmolH3VYWktOR02aljaN2FVSZgkeLYw5k7WY
+v9E9umOCpTQmuZQM3RvK
+=2Phh
+-----END PGP SIGNATURE-----
 
-  Documentation: of: Document graph bindings
-
-"See my comments on the previous version. My concerns are the handling of
- the optional 'ports' node and the usage of reverse links."
-
-The odd thing is that this patch is only documenting what is /already/ in
-the kernel, and has /already/ been reviewed by Grant and Rob as DT
-maintainers as part of the v4l2 OF graph parsing code.  It's rather late
-to object to it now.
-
-Grant has subsequently acked all these cleanup patches:
-
-  of: Warn if of_graph_get_next_endpoint is called with the root node
-  of: Reduce indentation in of_graph_get_next_endpoint
-  of: move common endpoint parsing to drivers/of
-
-The following was totally ignored, even though it was a simple patch:
-
-  of: Warn if of_graph_parse_endpoint is called with the root node
-
-and the last patch is a build fix for the previous patches.
-
-And to top it off, Grant seems to have gone non-responsive again during
-the last week.
-
-Now, what Grant's most recent response (10 March) said was:
-| It means any tree containing that branch *must* be rewound. See my reply
-| to rmk. I've made a proposal on how I could be happy with leaving the
-| branches alone. I'm not particularly happy, but there is a way to
-| resolve things without reverts or rewinds.
-
-What Grant doesn't realise is that his last reply to me was in response to
-an email I sent privately to Grant, so the reply is private.  Policy is
-not to share private emails publically.
-
-It was based upon solving Grant's objections, which as agreement hasn't
-been reached, hasn't happened.
-
-However, I still find myself coming back to a fundamental question: why
-were these bindings fine in April 2013, passed review, and were acked,
-but not fine today.  Here's the links to the emails acking their
-introduction which Sylwester Nawrocki sent me:
-
-  http://www.spinics.net/lists/linux-media/msg61899.html
-  http://www.spinics.net/lists/linux-media/msg62458.html
-
-So... *shrug*.  Make of this what you will.
-
--- 
-Russell King
-ARM architecture Linux Kernel maintainer
+--Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP--
