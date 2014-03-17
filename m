@@ -1,60 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hid tree with Linus' tree
-Date: Mon, 17 Mar 2014 13:32:32 +1100
-Message-ID: <20140317133232.c18d3d977ecf8466f9959a8f@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Mon, 17 Mar 2014 14:55:09 +1100
+Message-ID: <20140317145509.41f0042e7ef1db504d9bb62e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx"
+ boundary="Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:47389 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:34835 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755818AbaCQCcr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Mar 2014 22:32:47 -0400
+	id S932221AbaCQDzU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Mar 2014 23:55:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Bellinger <nab@linux-iscsi.org>, Gu Zheng <guz.fnst@cn.fujitsu.com>
 
---Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx
+--Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Jens,
 
-Today's linux-next merge of the hid tree got a conflict in
-drivers/hid/i2c-hid/i2c-hid.c between commit 9d27f43274e4 ("HID: fix
-buffer allocations") from Linus' tree and commit 649f94790314 ("HID:
-i2c-hid: use generic .request() implementation") from the hid tree.
+Today's linux-next merge of the block tree got a conflict in
+fs/bio-integrity.c between commit eec70897d81b ("bio-integrity: Drop
+bio_integrity_verify BUG_ON in post bip->bip_iter world") from Linus'
+tree and commit bf36f9cfa6d3 ("fs/bio-integrity: remove duplicate code")
+from the block tree.
 
-I fixed it up (the latter removes the code modified by the former, so I
-just used the latter) and can carry the fix as necessary (no action is
-required).
+I fixed it up (by using the latter - however, I am not sure that this is
+completely correct as the BUG_ON more or less returns?) and can carry the
+fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx
+--Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJl7EAAoJEMDTa8Ir7ZwVzY0P/AlciGvWxOpazljxC4+suQc/
-fQcUAU5ngfSPJhjPKSry8IQLJCleF+DhbNrbHwUwXbGxCWbfN+PthYcJTXyVd/dx
-hZKthWhvy97Hfam1eFYppmfdXaYtHdYao1tmEThZeKWzqZxKns+YIq70muZIZScL
-G2PbFTwlLo2Fx7upWOnGIvqmnFI7xsAIc8pK4tXVjmNQ+qvaFci5Sqx6t+imD+p3
-audugdN7vWEXe2rDpBRR7oEesHlC5iCs5XNofO7gVKJT7dWmtXKDYgZMrub3WYtf
-gS4YNgnsJ7NIfAL+K32rRESVOVavxvqJA1G9oH+7IhfSLJ/drTpKbkzeQanavOzP
-Or4KuIjlOdY5UkQduoRT0gpGeV0jQXqnr8OYPU/KJUjHWPdPGITlye6t4Usp8S81
-gDgoW9w3CABeLZEHjX22oCCbqg1FCrgYVVU0plGBYavFawi0YYahKZ0SoEwdGVN0
-DGSKtZ2A4GgOJhOBbdUPs/ex/Gl4HBdcGOkaQYM5bT0uUhhtjmPOSNvAmcXDlU7a
-KOcWd8dSAR7n/Wc4IHhPiLzGQA231lda+gl1m8KdnaUGRoaDy9ThgI092PnU/Cim
-BreQX1KJ7odAgXfQP6r9vx8PtKfEEdJwvxSuL07DC7tZc+1xVmmdD7Fo6JrRMdyi
-YzY/8RfctOPilsFu7eTs
-=p/a8
+iQIcBAEBCAAGBQJTJnIhAAoJEMDTa8Ir7ZwVcUQP/3zKpKZmlobBzCmTlZPNQvAL
+M6+8AdWyAWtWGPoOMuK7EKbWq6FmpMs8J1HJJ0Eh4KQMROp75aYO6A3ELJlkh2wP
+3HUSnrQ4GXjcRm5KLwziDRjA8oymD9y9tkIsaTneWyBHpAVmOphPwPBA9dWOmMgH
+dS4w3C+3dWIcuXx/7DHNeYAGsC6XqwD8eYCB0sP1FVqa5MPoxq273HYyg4eYdGNG
+W8353adoNvOkz0VUD5MdcoLPN8Plak+7fTy0rEhZuJ4OndKXTPWakqpKU3e8c9+X
+b4FZ/+SYZI4t/F9xzmSZ11sI6YAyTzcgWlkyCCD8261E2mXL9G6uldQgjxwCn5hj
+ItcQp1Jdr3x7BKHqo/grFJLTrvEnxeTrZPv4lUCe5vqea4nMio3YdxAsLEr2xjAV
+Gw5fqGL0TLNETh7PKmelzLX2dh3qDk7p+mY9vK+5WdHyNpXYuvy8fXwnNjVH3Ixn
+Zjcp1jWAWuwSh0qliCm2ViJcVUfVSmYaRxca/yZnmNJAj6SBXDtSlWyM17Trgc+E
+3Q0tOwZvjcbORGXGikQYBgVCn8ArcwADOkXmhz90+Z4snlSgVNtopbSMqStuqnQX
+HmZS1tPVr37HuKtOw6SbkHfuePN45HAr6mCaNEfT1fbLEaELWF8nZTGL5wuULKvm
+ts3mYWH2NC1hLvhwA73E
+=fHDk
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx--
+--Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f--
