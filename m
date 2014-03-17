@@ -1,94 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Mon, 17 Mar 2014 19:28:04 +1100
-Message-ID: <20140317192804.c338ea1863f70615ab1a53dc@canb.auug.org.au>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
+Subject: linux-next: manual merge of the powernv-cpuidle tree with the
+ powerpc tree
+Date: Mon, 17 Mar 2014 19:59:55 +1100
+Message-ID: <20140317195955.f7b50aa835d281caf5725610@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============6157766730967261450=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--===============6157766730967261450==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:48110 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753253AbaCQI2L (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 04:28:11 -0400
-In-Reply-To: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Mon__17_Mar_2014_19_59_55_+1100_MJm+zueLLJeqRQCd"
 
---Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy
+--Signature=_Mon__17_Mar_2014_19_59_55_+1100_MJm+zueLLJeqRQCd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Wed, 12 Mar 2014 00:51:52 +0000 Mark Brown <broonie@kernel.org> wrote:
->
-> After merging the driver-core tree, today's linux-next build ()
-> failed like this on a PowerPC defconfig:
->=20
-> HEAD is now at ceb98e684dec Merge remote-tracking branch 'driver-core/dri=
-ver-core-next'
->   GEN     /home/broonie/next/powerpc_ppc64_defconfig/Makefile
-> #
-> # configuration written to .config
-> #
-> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c: In fu=
-nction 'elog_ack_store':
-> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c:84:2: =
-error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=
-=3Dimplicit-function-declaration]
->   sysfs_schedule_callback(&elog_obj->kobj, delay_release_kobj,
->   ^
-> cc1: all warnings being treated as errors
-> make[3]: *** [arch/powerpc/platforms/powernv/opal-elog.o] Error 1
-> make[3]: *** Waiting for unfinished jobs....
-> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c: In fu=
-nction 'dump_ack_store':
-> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c:100:2:=
- error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=
-=3Dimplicit-function-declaration]
->   sysfs_schedule_callback(&dump_obj->kobj, delay_release_kobj,
->   ^
-> cc1: all warnings being treated as errors
->=20
-> due to an interaction between d1ba277e7988908 (sysfs, driver-core: remove=
- unused {sysfs|device}_schedule_callback_owner()) and 774fea1a38c6a5a8 (pow=
-erpc/powernv: Read OPAL error log and export it through sysfs) from the Pow=
-erPC tree.
->=20
-> I reverted 774fea1a38c6a5a8 for today.
+Today's linux-next merge of the powernv-cpuidle tree got a conflict in
+arch/powerpc/include/asm/opal.h between commit c7e64b9ce04a
+("powerpc/powernv Platform dump interface") from the powerpc tree and
+commit 97eb001f0349 ("powerpc/powernv: Add OPAL call to resync timebase
+on wakeup") from the powernv-cpuidle tree.
 
-I instead reverted commit d1ba277e7988908 (sysfs, driver-core: remove
-unused {sysfs|device}_schedule_callback_owner()).  I hope that will work
-as well.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy
+diff --cc arch/powerpc/include/asm/opal.h
+index 2636acfcd340,c71c72e47d47..000000000000
+--- a/arch/powerpc/include/asm/opal.h
++++ b/arch/powerpc/include/asm/opal.h
+@@@ -159,15 -154,10 +159,16 @@@ extern int opal_enter_rtas(struct rtas_
+  #define OPAL_FLASH_VALIDATE			76
+  #define OPAL_FLASH_MANAGE			77
+  #define OPAL_FLASH_UPDATE			78
++ #define OPAL_RESYNC_TIMEBASE			79
+ +#define OPAL_DUMP_INIT				81
+ +#define OPAL_DUMP_INFO				82
+ +#define OPAL_DUMP_READ				83
+ +#define OPAL_DUMP_ACK				84
+  #define OPAL_GET_MSG				85
+  #define OPAL_CHECK_ASYNC_COMPLETION		86
+ +#define OPAL_DUMP_RESEND			91
+  #define OPAL_SYNC_HOST_REBOOT			87
+ +#define OPAL_DUMP_INFO2				94
+ =20
+  #ifndef __ASSEMBLY__
+ =20
+@@@ -888,13 -862,11 +889,14 @@@ extern void opal_get_rtc_time(struct rt
+  extern unsigned long opal_get_boot_time(void);
+  extern void opal_nvram_init(void);
+  extern void opal_flash_init(void);
+ +extern int opal_elog_init(void);
+ +extern void opal_platform_dump_init(void);
+ =20
+  extern int opal_machine_check(struct pt_regs *regs);
+ +extern bool opal_mce_check_early_recovery(struct pt_regs *regs);
+ =20
+  extern void opal_shutdown(void);
++ extern int opal_resync_timebase(void);
+ =20
+  extern void opal_lpc_init(void);
+ =20
+
+--Signature=_Mon__17_Mar_2014_19_59_55_+1100_MJm+zueLLJeqRQCd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJrIYAAoJEMDTa8Ir7ZwVb9gP/0Zwyxhaxn47TDKNmRqvelHU
-p9pbGvvc+G5Ujg/0AkP+UfA+G/9N/+51OmVnr//8HLrLRfL4LRxGiL3gKi9X64Gh
-GAw8SNApMqohV16Q+I4g13b0/fkNuyX8nT83SLRYNkoAjf2co1kQwrctu9LF+pln
-nf+Oreyx+w9YE0ZMfFb7m94bwgBzoADQc62BgqkoZPK9kTUST0AcKPaJGEPWIuO4
-nf6v7eiCIHR6gD1yVBG+A/G0knYpB1aKyvj9NwlPK1HVEGrcIg1UR9+WffDCt8RC
-oCC4NzuvEPr/+3GfKWcmAm6qizbQA/wxBU6VtHtDbI6hzeXoWKn/dRvgww5sq4Hy
-BO3J+adQ8B9MuLrIZMCHwVWwW8aTUi0n8/cwPIdFTgl4dcrbZ0CK9e4yWetAEq3U
-ykQ76OWDzVnhCafWPzgPmmhwxqNsVkmifW+QpXRPwBQCYZn01TPFrxyLmCB9yXld
-GsGm6FhXboaSgsrK1cyEr+6AktjJBxGiTbQek1NsSVnGBkMRb8W+pbLZUA/P3Fq7
-71uZfbXR1vcFBxD2q6rnj1S9fQKx6DuSXMZSDF8VmqqWznkKZ21zisl+pQ46RijZ
-jJAzXqje1nxuWLdzE9xiN5KPIoVec7FmoulXA2k+2PVpOhN/goAknHSgGckHSlwH
-hG28bLtUHDsvnGORLNxC
-=XaDU
+iQIcBAEBCAAGBQJTJrmPAAoJEMDTa8Ir7ZwV4HIP/Alc3en+bBqvm4nsO7nlLkPU
+0xqWYU8MQYTuQ0Ak9LABXYQ1JE6m6MvMIFunXzhOy6J6gBACieJjbHT3lilq/ZH6
+FSVyLJEjMW3HVAAiP/ljGtcLpBoaUxIKxLAijNWLHrpSpPC5zAFh/mt7eQHtbVAi
+Yw0SYY5sqSW3jeO+BfnPttCjLijltyAEaFGPUoY5PqudooImy6uRKQ2TDw2qgyBz
+SOlwdbx/rklgnE0FpNRGQ/+Njq1vDQDcPh2gYDgwQBMQOCcnq6YQJ22DA9Rpa0ha
+SnoSegEjkwuUCWOFikz0Lq/KX8k7L86rtkuclsWt1rIsh/JvTX2oUlpKea/5jxbv
+EpTavAeR/NuSm+/5fN6P/BXz6+5NAw0B2lKEQOzUScD4VvZkL/QiU79ukyzOJjZi
+RsMOv7g03R+JADfjD68pQJIZPqgSAwPfKpOHCjtCWHE/DutM6D0+RBCGgI6y71ND
+VS36N7Y6LLTRQfGBOQly/MXmSTZQcSxxK1tbEbx034B1TwPBVnZL/zq/2z8oU2Jv
+LePgRdRTc5Ve78AderfM7WkPCk+axAyL0GDr1hq5FB/oJ/e3q5aN+DcNTc5utcUz
+Qk1wX6iMVi/Ft834lYW200CoeJHLMUAKgGLlR5QLSaWDUJymtQqVtoSbvgz7Z0bC
+PvsdQx3nF6yXiYiFmFL2
+=EYhw
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy--
+--Signature=_Mon__17_Mar_2014_19_59_55_+1100_MJm+zueLLJeqRQCd--
+
+--===============6157766730967261450==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMt
+ZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRwczovL2xp
+c3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
+
+--===============6157766730967261450==--
