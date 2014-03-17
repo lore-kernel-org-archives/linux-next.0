@@ -1,54 +1,51 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
- tree
-Date: Mon, 17 Mar 2014 08:01:22 -0300
-Message-ID: <20140317080122.459ff9d4@infradead.org>
-References: <20140317185542.fe4554210fc1893b44289008@canb.auug.org.au>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: linux-next: manual merge of the tip tree with the arm-soc tree
+Date: Mon, 17 Mar 2014 09:41:18 -0700
+Message-ID: <6b7bc052-bb06-4821-9710-50c4852425c8@AM1EHSMHS002.ehs.local>
+References: <20140317163506.5770f06a77ba011e682f47ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:51225 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932477AbaCQLBd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Mar 2014 07:01:33 -0400
-In-Reply-To: <20140317185542.fe4554210fc1893b44289008@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20140317163506.5770f06a77ba011e682f47ff@canb.auug.org.au>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, "H.
+ Peter Anvin" <hpa@zytor.com>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-Em Mon, 17 Mar 2014 18:55:42 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
-
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/media/platform/exynos4-is/fimc-is.c between commit d265d9ac6c7c
-> ("[media] exynos4-is: Use external s5k6a3 sensor driver") from the
-> v4l-dvb tree and commit fd9fdb78a9bf ("[media] of: move graph helpers
-> from drivers/media/v4l2-core to drivers/of") from the staging tree.
-> I fixed it up (see below, though I suspect it is wasted?) and can carry
-> the fix as necessary (no action is required).
-
-I used to have those OF patches on my tree, but I was forced to remove,
-as Grant rejected the patches. After his nack, lots of dicussions about
-the DT bindings started and, until last week, there were no consensus
-about that (as far as I followed the discussions).
-
-So, reluctantly, I just dropped this series from my tree, pretending
-it never existed, as reverting them could cause troubles if it 
-(or some version of it) got merged via Greg, Grant and/or Russell
-trees.
-
-On my head, it become too late to merge it for 3.15, as first
-people must agree on the DT bindings. Also, I already closed the
-media merge window, as -rc7 seems to be the last -rc.
-
-One possible approach for this would be to merge the patches that move
-the OF graph code away from drivers/media, and the corresponding
-internal ABI changes early at -rc, and applying the DT binding
-patches, and the staging imx-drm driver for 3.16.
-
-Regards,
-Mauro
+T24gTW9uLCAyMDE0LTAzLTE3IGF0IDA0OjM1UE0gKzExMDAsIFN0ZXBoZW4gUm90aHdlbGwgd3Jv
+dGU6Cj4gSGkgYWxsLAo+IAo+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgdGlwIHRy
+ZWUgZ290IGEgY29uZmxpY3QgaW4KPiBhcmNoL2FybS9tYWNoLXp5bnEvS2NvbmZpZyBiZXR3ZWVu
+IGNvbW1pdCBkZGI5MDJjYzM0NTkgKCJBUk06IGNlbnRyYWxpemUKPiBjb21tb24gbXVsdGktcGxh
+dGZvcm0ga2NvbmZpZyBvcHRpb25zIikgZnJvbSB0aGUgYXJtLXNvYyB0cmVlIGFuZCBjb21taXQK
+PiBjZDMyNTI5NTg3MWYgKCJhcm06IHp5bnE6IEFkZCBzdXBwb3J0IGZvciBjcHVmcmVxIikgZnJv
+bSB0aGUgdGlwIHRyZWUuCj4gCj4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNh
+cnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5IChubyBhY3Rpb24KPiBpcyByZXF1aXJlZCkuCj4gCj4g
+LS0gCj4gQ2hlZXJzLAo+IFN0ZXBoZW4gUm90aHdlbGwgICAgICAgICAgICAgICAgICAgIHNmckBj
+YW5iLmF1dWcub3JnLmF1Cj4gCj4gZGlmZiAtLWNjIGFyY2gvYXJtL21hY2gtenlucS9LY29uZmln
+Cj4gaW5kZXggMTA1ZDM5YjcyYTI1LGYwM2U3NWJkMGIyYi4uMDAwMDAwMDAwMDAwCj4gLS0tIGEv
+YXJjaC9hcm0vbWFjaC16eW5xL0tjb25maWcKPiArKysgYi9hcmNoL2FybS9tYWNoLXp5bnEvS2Nv
+bmZpZwo+IEBAQCAtMiwxMCAtMiwxOSArMiwxMiBAQEAgY29uZmlnIEFSQ0hfWllOCj4gICAJYm9v
+bCAiWGlsaW54IFp5bnEgQVJNIENvcnRleCBBOSBQbGF0Zm9ybSIgaWYgQVJDSF9NVUxUSV9WNwo+
+ICAgCXNlbGVjdCBBUk1fQU1CQQo+ICAgCXNlbGVjdCBBUk1fR0lDCj4gKyAJc2VsZWN0IEFSQ0hf
+SEFTX0NQVUZSRVEKPiArIAlzZWxlY3QgQVJDSF9IQVNfT1BQCj4gIC0Jc2VsZWN0IENPTU1PTl9D
+TEsKPiAgLQlzZWxlY3QgQ1BVX1Y3Cj4gIC0Jc2VsZWN0IEdFTkVSSUNfQ0xPQ0tFVkVOVFMKPiAg
+IAlzZWxlY3QgSEFWRV9BUk1fU0NVIGlmIFNNUAo+ICAgCXNlbGVjdCBIQVZFX0FSTV9UV0QgaWYg
+U01QCj4gICAJc2VsZWN0IElDU1QKPiAgLQlzZWxlY3QgTUlHSFRfSEFWRV9DQUNIRV9MMlgwCgpU
+aGUgdHdvIGNvbmZsaWN0aW5nIHBhdGNoZXMgbWVudGlvbmVkIGFib3ZlIGRvbid0IHRvdWNoIHRo
+aXMgbGluZSwgSQp0aGluay4gSSdtIG5vdCBzdXJlIHdoZXRoZXIgdGhpcyBzaG91bGQgZ28gYXdh
+eS4KQXBhcnQgZnJvbSB0aGlzLCB0aGluZ3MgbG9vayBva2F5IHRvIG1lLgoKCVRoYW5rcywKCVPD
+tnJlbgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwps
+aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
+ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
+eC1hcm0ta2VybmVsCg==
