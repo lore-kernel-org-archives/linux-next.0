@@ -1,77 +1,80 @@
 From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Mon, 17 Mar 2014 11:33:33 -0700
-Message-ID: <20140317183333.GE10565@kroah.com>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
- <20140312015021.GC10106@kroah.com>
- <20140317101611.d043a90e1cb72dcfb8bc767a@canb.auug.org.au>
+Date: Mon, 17 Mar 2014 11:36:27 -0700
+Message-ID: <20140317183627.GF10565@kroah.com>
+References: <1394654396.4840.94.camel@pasglop>
+ <20140312200232.GA22332@htj.dyndns.org>
+ <1394655292.4840.97.camel@pasglop>
+ <20140312202102.GB22332@htj.dyndns.org>
+ <1394671056.4840.103.camel@pasglop>
+ <1394748895.15098.16.camel@pasglop>
+ <20140315000343.GD5687@kroah.com>
+ <1394852249.15098.75.camel@pasglop>
+ <20140315052942.GA30262@kroah.com>
+ <20140317101621.92f0d6d9bab79a0ea24fe37b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58250 "EHLO
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:53790 "EHLO
 	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756351AbaCQSbf (ORCPT
+	by vger.kernel.org with ESMTP id S1756419AbaCQSe1 (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 14:31:35 -0400
-Received: from compute6.internal (compute6.nyi.mail.srv.osa [10.202.2.46])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 5A46C20E0A
-	for <linux-next@vger.kernel.org>; Mon, 17 Mar 2014 14:31:33 -0400 (EDT)
+	Mon, 17 Mar 2014 14:34:27 -0400
 Content-Disposition: inline
-In-Reply-To: <20140317101611.d043a90e1cb72dcfb8bc767a@canb.auug.org.au>
+In-Reply-To: <20140317101621.92f0d6d9bab79a0ea24fe37b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Mon, Mar 17, 2014 at 10:16:11AM +1100, Stephen Rothwell wrote:
+On Mon, Mar 17, 2014 at 10:16:21AM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> On Tue, 11 Mar 2014 18:50:21 -0700 Greg KH <greg@kroah.com> wrote:
+> On Sat, 15 Mar 2014 05:29:42 +0000 Greg KH <greg@kroah.com> wrote:
 > >
-> > On Wed, Mar 12, 2014 at 12:51:52AM +0000, Mark Brown wrote:
+> > On Sat, Mar 15, 2014 at 01:57:29PM +1100, Benjamin Herrenschmidt wrote:
 > > > 
-> > > After merging the driver-core tree, today's linux-next build ()
-> > > failed like this on a PowerPC defconfig:
-> > > 
-> > > HEAD is now at ceb98e684dec Merge remote-tracking branch 'driver-core/driver-core-next'
-> > >   GEN     /home/broonie/next/powerpc_ppc64_defconfig/Makefile
-> > > #
-> > > # configuration written to .config
-> > > #
-> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c: In function 'elog_ack_store':
-> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c:84:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
-> > >   sysfs_schedule_callback(&elog_obj->kobj, delay_release_kobj,
-> > >   ^
-> > > cc1: all warnings being treated as errors
-> > > make[3]: *** [arch/powerpc/platforms/powernv/opal-elog.o] Error 1
-> > > make[3]: *** Waiting for unfinished jobs....
-> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c: In function 'dump_ack_store':
-> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c:100:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
-> > >   sysfs_schedule_callback(&dump_obj->kobj, delay_release_kobj,
-> > >   ^
-> > > cc1: all warnings being treated as errors
-> > > 
-> > > due to an interaction between d1ba277e7988908 (sysfs, driver-core: remove unused {sysfs|device}_schedule_callback_owner()) and 774fea1a38c6a5a8 (powerpc/powernv: Read OPAL error log and export it through sysfs) from the PowerPC tree.
-> > > 
-> > > I reverted 774fea1a38c6a5a8 for today.
+> > > It's messy. Stephen really doesn't like if we pull each other trees like
+> > > that unless they are topic branches. He also doesn't like when we keep
+> > > pulling Linus in.
 > > 
-> > Sounds like the powerpc tree also needs to stop using this function :)
+> > I only pull Linus in after a -rc in which I have merged patches with him
+> > for that "topic".  Otherwise I end up with merge issues, and for testing
+> > reasons, I want those fixes from Linus and from me, in order to keep
+> > people from hitting the same already-fixes issues.
 > 
-> So, explain to us in detail why the old interface could not be maintained
-> for a release, please.  I thought we had become a bit more sophisticated
-> about changing core APIs i.e. introduce the new API - fix up all the
-> users - keep the old one around if possible for a release (or beyond
-> -rc1) to catch the new users.
+> Maybe you should consider instead just merging the branch you asked
+> Linus' to merge instead of back merging his whole -rc ... especially when
+> the merge commit message is usually just something like "We want those
+> fixes here for testing and development" which doesn't actually tell us
+> anything very useful.
 > 
-> It may be that there is a good reason not to so this in this case, but it
-> is not explained as far as I can see.
+> Your trees always have lots of back merges of Linus' tree in them and I
+> don't know why Linus has not complained about it before now (or at least
+> explained to you why we normally don't do that).
 
-There were only 3 (or 4), users of this api, and no new ones had been
-added in _years_, it's a very obscure thing, and odds are, it wouldn't
-ever be added again, especially as it was just removed entirely not
-being needed anymore.  And I'd argue, it's something that you shouldn't
-have even been doing in the first place, so why a new user of it was
-added now is quite strange to me.
+No, I don't like merging at "unknown" points in the tree, I only merge
+back at the -rc point as that is a "known good" version of Linus's tree.
+
+And I only do the merge if I have patches that have been accepted in
+Linus's tree for that tree (usb, staging, tty, etc.) as almost always,
+if I don't, I get merge issues (as you find out all the time), and those
+bugfixes that go into Linus's tree, I want them in the -next branch as
+well so that the developers running those branches don't have the
+problems that those fixes resolved.
+
+> > Just take my tree, it's not a big deal,
+> 
+> Except, of course, you are completely discounting any testing that Ben
+> has done on his tree that could be invalidated and/or complicated by
+> pulling in so much more of Linus' tree at this point of the cycle.  And
+> it complicates the git history even more than just your trees already do.
+
+If Ben's testing is somehow "invalidated" by moving to a newer -rc
+release, then when would that testing have ever happened?  -rc merges
+should always be safe to do, otherwise you probably have problems in
+your code that Linus will later run into when you ask him to pull for
+-rc1.
 
 thanks,
 
