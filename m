@@ -1,95 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Mon, 17 Mar 2014 10:16:21 +1100
-Message-ID: <20140317101621.92f0d6d9bab79a0ea24fe37b@canb.auug.org.au>
-References: <1394596541.4840.70.camel@pasglop>
-	<20140312113742.GM28112@sirena.org.uk>
-	<1394654396.4840.94.camel@pasglop>
-	<20140312200232.GA22332@htj.dyndns.org>
-	<1394655292.4840.97.camel@pasglop>
-	<20140312202102.GB22332@htj.dyndns.org>
-	<1394671056.4840.103.camel@pasglop>
-	<1394748895.15098.16.camel@pasglop>
-	<20140315000343.GD5687@kroah.com>
-	<1394852249.15098.75.camel@pasglop>
-	<20140315052942.GA30262@kroah.com>
+Subject: linux-next: manual merge of the hid tree with Linus' tree
+Date: Mon, 17 Mar 2014 13:32:32 +1100
+Message-ID: <20140317133232.c18d3d977ecf8466f9959a8f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_10_16_21_+1100_=TjaJ_ofyhNHOrQM"
+ boundary="Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:56687 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:47389 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932124AbaCPXQX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Mar 2014 19:16:23 -0400
-In-Reply-To: <20140315052942.GA30262@kroah.com>
+	id S1755818AbaCQCcr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Mar 2014 22:32:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
---Signature=_Mon__17_Mar_2014_10_16_21_+1100_=TjaJ_ofyhNHOrQM
+--Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Jiri,
 
-On Sat, 15 Mar 2014 05:29:42 +0000 Greg KH <greg@kroah.com> wrote:
->
-> On Sat, Mar 15, 2014 at 01:57:29PM +1100, Benjamin Herrenschmidt wrote:
-> >=20
-> > It's messy. Stephen really doesn't like if we pull each other trees like
-> > that unless they are topic branches. He also doesn't like when we keep
-> > pulling Linus in.
->=20
-> I only pull Linus in after a -rc in which I have merged patches with him
-> for that "topic".  Otherwise I end up with merge issues, and for testing
-> reasons, I want those fixes from Linus and from me, in order to keep
-> people from hitting the same already-fixes issues.
+Today's linux-next merge of the hid tree got a conflict in
+drivers/hid/i2c-hid/i2c-hid.c between commit 9d27f43274e4 ("HID: fix
+buffer allocations") from Linus' tree and commit 649f94790314 ("HID:
+i2c-hid: use generic .request() implementation") from the hid tree.
 
-Maybe you should consider instead just merging the branch you asked
-Linus' to merge instead of back merging his whole -rc ... especially when
-the merge commit message is usually just something like "We want those
-fixes here for testing and development" which doesn't actually tell us
-anything very useful.
+I fixed it up (the latter removes the code modified by the former, so I
+just used the latter) and can carry the fix as necessary (no action is
+required).
 
-Your trees always have lots of back merges of Linus' tree in them and I
-don't know why Linus has not complained about it before now (or at least
-explained to you why we normally don't do that).
-
-> Just take my tree, it's not a big deal,
-
-Except, of course, you are completely discounting any testing that Ben
-has done on his tree that could be invalidated and/or complicated by
-pulling in so much more of Linus' tree at this point of the cycle.  And
-it complicates the git history even more than just your trees already do.
-
-/me is a bit cross after such a nice holiday in HobbitLand and may need
-to take deep breath :-(
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Mar_2014_10_16_21_+1100_=TjaJ_ofyhNHOrQM
+--Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJjDFAAoJEMDTa8Ir7ZwVidAP/0/Ym5mc3CAZjH9lalRQbAaa
-bN8MvrU0sNOM1lltkojPNDpXZ9CEsNlo7VfzIqzMrlI517TVCHGo+HXHoprUMKqp
-hBUyb5uUii+lgkTPnIvI2AgoUuCj0Tb+65ZarVWTap5X+OtGnubPAnNVnRqmw3Z7
-tIeID83stDr4rzoLOg9Cmk+3RFpKEWYzb7WRZKlwMly9YIa4Co5wMXic0SVzABJb
-peZlNGQjh5vIv/9UjHkYYKWbfyUB4u87LIlsFfomhRgBtkdQFEWDFNbbHpF7dTEG
-o0o1T/8SGaO5n5jJIiuHMjcZfI7uXt+hZyvAuGeNoZMVUUwSjW1w200jEnEX/d15
-GQ4cGIlM6zeChziiwZQmCOa1oojXdaceeAJKjW91NAzJSnAmpIcPjoc7Ldm8kfTi
-EdGWN88sld85V8urTBGhKNGhe/yR1MFQQFh3GYnc0/ktiw5OP27oJ22//rqsi0XK
-ojmVsxQMhJ7XXFRNjKyLqjis6jzjgQ8lk/YFz9phQOnz5eWXR0VVikxcyIIqKYpf
-QovFlTVxSLqDMC+LIju3IsqveIjdPetRAYdO4b0M7E6A1mfwwZXEB5xqFY6E5gFO
-X3USc8hzHmMxlO9CJtUdFZWe0GBBoVsfTKnsbjpwXdTjZfVnu0GwTnkSdJVwhFjE
-CIWutdy5k1ne+puxvh0g
-=Q2+q
+iQIcBAEBCAAGBQJTJl7EAAoJEMDTa8Ir7ZwVzY0P/AlciGvWxOpazljxC4+suQc/
+fQcUAU5ngfSPJhjPKSry8IQLJCleF+DhbNrbHwUwXbGxCWbfN+PthYcJTXyVd/dx
+hZKthWhvy97Hfam1eFYppmfdXaYtHdYao1tmEThZeKWzqZxKns+YIq70muZIZScL
+G2PbFTwlLo2Fx7upWOnGIvqmnFI7xsAIc8pK4tXVjmNQ+qvaFci5Sqx6t+imD+p3
+audugdN7vWEXe2rDpBRR7oEesHlC5iCs5XNofO7gVKJT7dWmtXKDYgZMrub3WYtf
+gS4YNgnsJ7NIfAL+K32rRESVOVavxvqJA1G9oH+7IhfSLJ/drTpKbkzeQanavOzP
+Or4KuIjlOdY5UkQduoRT0gpGeV0jQXqnr8OYPU/KJUjHWPdPGITlye6t4Usp8S81
+gDgoW9w3CABeLZEHjX22oCCbqg1FCrgYVVU0plGBYavFawi0YYahKZ0SoEwdGVN0
+DGSKtZ2A4GgOJhOBbdUPs/ex/Gl4HBdcGOkaQYM5bT0uUhhtjmPOSNvAmcXDlU7a
+KOcWd8dSAR7n/Wc4IHhPiLzGQA231lda+gl1m8KdnaUGRoaDy9ThgI092PnU/Cim
+BreQX1KJ7odAgXfQP6r9vx8PtKfEEdJwvxSuL07DC7tZc+1xVmmdD7Fo6JrRMdyi
+YzY/8RfctOPilsFu7eTs
+=p/a8
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_10_16_21_+1100_=TjaJ_ofyhNHOrQM--
+--Signature=_Mon__17_Mar_2014_13_32_32_+1100_8Ugo4k6G6oI=a_lx--
