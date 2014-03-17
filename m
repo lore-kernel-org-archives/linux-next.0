@@ -1,85 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the tip tree
-Date: Mon, 17 Mar 2014 18:34:19 +1100
-Message-ID: <20140317183419.f0ac20789cdfca0ad7d93c48@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
+Date: Mon, 17 Mar 2014 18:55:42 +1100
+Message-ID: <20140317185542.fe4554210fc1893b44289008@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_18_34_19_+1100_0cS6guq+B+fau7+o"
+ boundary="Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52070 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:41208 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753612AbaCQHe0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 03:34:26 -0400
+	id S932175AbaCQHzs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Mar 2014 03:55:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Magnus Damm <damm@opensource.se>, Daniel Lezcano <daniel.lezcano@linaro.org>, Wolfram Sang <wsa@sang-engineering.com>
+To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---Signature=_Mon__17_Mar_2014_18_34_19_+1100_0cS6guq+B+fau7+o
+--Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-arch/sh/Kconfig between commit fbfa893458ed ("sh: Remove Kconfig entries
-for TMU, CMT and MTU2") from the tip tree and commit f6723b569a67 ("usb:
-host: remove selects of USB_ARCH_HAS_?HCI") from the usb tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/media/platform/exynos4-is/fimc-is.c between commit d265d9ac6c7c
+("[media] exynos4-is: Use external s5k6a3 sensor driver") from the
+v4l-dvb tree and commit fd9fdb78a9bf ("[media] of: move graph helpers
+from drivers/media/v4l2-core to drivers/of") from the staging tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (see below, though I suspect it is wasted?) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/sh/Kconfig
-index dfb1fbf38e44,64455daa63a1..000000000000
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@@ -346,9 -354,8 +346,8 @@@ config CPU_SUBTYPE_SH772
-  	bool "Support SH7720 processor"
-  	select CPU_SH3
-  	select CPU_HAS_DSP
- -	select SYS_SUPPORTS_CMT
- +	select SYS_SUPPORTS_SH_CMT
-  	select ARCH_WANT_OPTIONAL_GPIOLIB
-- 	select USB_ARCH_HAS_OHCI
-  	select USB_OHCI_SH if USB_OHCI_HCD
-  	select PINCTRL
-  	help
-@@@ -358,8 -365,7 +357,7 @@@ config CPU_SUBTYPE_SH772
-  	bool "Support SH7721 processor"
-  	select CPU_SH3
-  	select CPU_HAS_DSP
- -	select SYS_SUPPORTS_CMT
- +	select SYS_SUPPORTS_SH_CMT
-- 	select USB_ARCH_HAS_OHCI
-  	select USB_OHCI_SH if USB_OHCI_HCD
-  	help
-  	  Select SH7721 if you have a SH3-DSP SH7721 CPU.
+diff --cc drivers/media/platform/exynos4-is/fimc-is.c
+index c289d5a69d09,9bdfa4599bc3..000000000000
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@@ -168,19 -167,11 +168,19 @@@ static int fimc_is_parse_sensor_config(
+  	u32 tmp =3D 0;
+  	int ret;
+ =20
+ -	np =3D of_graph_get_next_endpoint(np, NULL);
+ -	if (!np)
+ +	sensor->drvdata =3D fimc_is_sensor_get_drvdata(node);
+ +	if (!sensor->drvdata) {
+ +		dev_err(&is->pdev->dev, "no driver data found for: %s\n",
+ +							 node->full_name);
+ +		return -EINVAL;
+ +	}
+ +
+- 	node =3D v4l2_of_get_next_endpoint(node, NULL);
+++	node =3D of_graph_get_next_endpoint(node, NULL);
+ +	if (!node)
+  		return -ENXIO;
+ -	np =3D of_graph_get_remote_port(np);
+ -	if (!np)
+ +
+- 	node =3D v4l2_of_get_remote_port(node);
+++	node =3D of_graph_get_remote_port(node);
+ +	if (!node)
+  		return -ENXIO;
+ =20
+  	/* Use MIPI-CSIS channel id to determine the ISP I2C bus index. */
 
---Signature=_Mon__17_Mar_2014_18_34_19_+1100_0cS6guq+B+fau7+o
+--Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJqV/AAoJEMDTa8Ir7ZwV1qIP/1ZUkfE/FBRJ1qoh6X+KmXIZ
-F0PQVKOmaf2Fc+EyPDyCVWEQocsqSwdPu9eqWX2yMZyInQdE8KnqaM8GlWNk/y6j
-rfdku1nmkH/L8yN41HJ4Yt1AKe9Prq9PB5sS+KfVbx+pF7N3t+75AiK+tUuseew0
-cmjId6VGSLnOeX3Vrf7LZ15iNiWVLwKlI77klsLzr4YE+xYrTzYFytpRf6DmjtQE
-qI4/0AbS93R2mXdDqxVvsQq3pCuZzUJPlgOZJPrAzI3GfyRTMqaece9LqRChu55v
-Yvm2tKZWxpkH1r4xcbA+84QpLmy5JLpa44gM/8J+BEMR5PaKCXq93KWTaU6DO9wn
-BsPMe+l7xpbP/lRQ/6xQiOv5LL5wy4/0sjmRGwz6cg7oeIePzhTARkihn+DW6+Mu
-Ay+iPyZN3zUF3BbL4DzJ9TeuY5PeYN7agqNTLW9n0bzttKGjAg63YU/ENmg7yloB
-MPp6DMaQu1AbaGiffB8J7vvCJCLShqLXBKUFDFUJUH0dWrBieGfSU1Z2/A4DTp28
-CdSWDB/h10/kbkHOhlSWBWgu79O4JiOTbDoYpuVtHb7Tk0hWY8s7eCYM9aPqxxI2
-hBk4Kr07Qg8G9KrpSnTPB6JgI+omhv4MXr4WwzgJRRLeczV+gk3+qaVIH+U+g5Hn
-lP+l2bwPdz7prxKsA/tY
-=QU2B
+iQIcBAEBCAAGBQJTJqqCAAoJEMDTa8Ir7ZwVuSYP/jThuBEWRCa4guhII1fBK6g6
+7iERKzKgs6V47v+GavpMrK7LM01K7dFYoMJ8XG+SKRn3Tm6P+q9HWOO5mVVRwYPH
+DcQ/20pgf5dJWe6jrIgqmWPSbM1S9TQo7OKyUULZwyd5m1vxc+8IiGHDZ+Pkq0tH
+5GpAvF2+3gtpzsrmgFW8NnqSqiI4PVzX4X8mQy4BwYCwAxQ1PiklRGKxlZxHX8E5
+uV6iiCmP63pU6k/YuDCftyk/JXpGyM4QVbxneEfFWKDkzDRJCCEpCl7H1cDaJW/A
+dKePNIRY3VXl+5uaotvbDKVK2M+fNjMqZVwL+CJb+NoKbdMkh1GJrRcNL20+3H8J
+efHKc/QIjiZI58KLdNfhA7/C3F08Qp5dqCTb+78HPTK4QxnzRf2CQxLxUfGTpuE3
+tgC6KdGkcBoEO2t78Y0lGaYSf84Zs1TGwjWbBVQWvpeM+S1i0imOE1u23ttEZX6I
+OOlSN1CP83MWd2LovrRH6MD3ISey4n4eoYfef5lWGQ4XECkF35UBbRWQJzBFD3jV
+8YzEF+9Ga1mC6VxAfw/VcQiYT0xMSOgV4qiNOpLPmt7YaWOvxWYG2oyciKt0jDnu
+VaQA21hmJ1Kd2/AJ5xHr1Bp2fgCG4GbzkvIbVEQVDeIWa0F1fkii1y1qkqd+3I34
+sg8R4TPZ4vedabQtvas6
+=Of/Z
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_18_34_19_+1100_0cS6guq+B+fau7+o--
+--Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw--
