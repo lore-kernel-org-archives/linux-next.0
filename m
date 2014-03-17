@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Date: Mon, 17 Mar 2014 18:55:42 +1100
-Message-ID: <20140317185542.fe4554210fc1893b44289008@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Mon, 17 Mar 2014 19:08:42 +1100
+Message-ID: <20140317190842.795b9d29db9a131a9cff91a9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw"
+ boundary="Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:41208 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:36356 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932175AbaCQHzs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 03:55:48 -0400
+	id S932175AbaCQIIt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Mar 2014 04:08:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, "Zhao, Gang" <gamerh2o@gmail.com>
 
---Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw
+--Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,68 +24,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-drivers/media/platform/exynos4-is/fimc-is.c between commit d265d9ac6c7c
-("[media] exynos4-is: Use external s5k6a3 sensor driver") from the
-v4l-dvb tree and commit fd9fdb78a9bf ("[media] of: move graph helpers
-from drivers/media/v4l2-core to drivers/of") from the staging tree.
+drivers/staging/wlan-ng/cfg80211.c between commit 3ead0d2e220e ("wlan-ng:
+fixup staging driver for removal of ieee80211_dsss_chan_to_freq") from
+the net-next tree and commit 4e5e9d7c66f0 ("staging: wlan-ng: replace
+function ieee80211_dsss_chan_to_freq()") from the staging tree.
 
-I fixed it up (see below, though I suspect it is wasted?) and can carry
-the fix as necessary (no action is required).
+I fixed it up (I used the staging tree version) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/media/platform/exynos4-is/fimc-is.c
-index c289d5a69d09,9bdfa4599bc3..000000000000
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@@ -168,19 -167,11 +168,19 @@@ static int fimc_is_parse_sensor_config(
-  	u32 tmp =3D 0;
-  	int ret;
- =20
- -	np =3D of_graph_get_next_endpoint(np, NULL);
- -	if (!np)
- +	sensor->drvdata =3D fimc_is_sensor_get_drvdata(node);
- +	if (!sensor->drvdata) {
- +		dev_err(&is->pdev->dev, "no driver data found for: %s\n",
- +							 node->full_name);
- +		return -EINVAL;
- +	}
- +
-- 	node =3D v4l2_of_get_next_endpoint(node, NULL);
-++	node =3D of_graph_get_next_endpoint(node, NULL);
- +	if (!node)
-  		return -ENXIO;
- -	np =3D of_graph_get_remote_port(np);
- -	if (!np)
- +
-- 	node =3D v4l2_of_get_remote_port(node);
-++	node =3D of_graph_get_remote_port(node);
- +	if (!node)
-  		return -ENXIO;
- =20
-  	/* Use MIPI-CSIS channel id to determine the ISP I2C bus index. */
-
---Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw
+--Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJqqCAAoJEMDTa8Ir7ZwVuSYP/jThuBEWRCa4guhII1fBK6g6
-7iERKzKgs6V47v+GavpMrK7LM01K7dFYoMJ8XG+SKRn3Tm6P+q9HWOO5mVVRwYPH
-DcQ/20pgf5dJWe6jrIgqmWPSbM1S9TQo7OKyUULZwyd5m1vxc+8IiGHDZ+Pkq0tH
-5GpAvF2+3gtpzsrmgFW8NnqSqiI4PVzX4X8mQy4BwYCwAxQ1PiklRGKxlZxHX8E5
-uV6iiCmP63pU6k/YuDCftyk/JXpGyM4QVbxneEfFWKDkzDRJCCEpCl7H1cDaJW/A
-dKePNIRY3VXl+5uaotvbDKVK2M+fNjMqZVwL+CJb+NoKbdMkh1GJrRcNL20+3H8J
-efHKc/QIjiZI58KLdNfhA7/C3F08Qp5dqCTb+78HPTK4QxnzRf2CQxLxUfGTpuE3
-tgC6KdGkcBoEO2t78Y0lGaYSf84Zs1TGwjWbBVQWvpeM+S1i0imOE1u23ttEZX6I
-OOlSN1CP83MWd2LovrRH6MD3ISey4n4eoYfef5lWGQ4XECkF35UBbRWQJzBFD3jV
-8YzEF+9Ga1mC6VxAfw/VcQiYT0xMSOgV4qiNOpLPmt7YaWOvxWYG2oyciKt0jDnu
-VaQA21hmJ1Kd2/AJ5xHr1Bp2fgCG4GbzkvIbVEQVDeIWa0F1fkii1y1qkqd+3I34
-sg8R4TPZ4vedabQtvas6
-=Of/Z
+iQIcBAEBCAAGBQJTJq2OAAoJEMDTa8Ir7ZwVe+MP/RAPisWxnpi7eERRukWgyrzC
+cuVENomgiHi44G8DfgpChCjjBQ1j9jc/34xNDhFm4usS4U2tY5PhImSIESebN9Eq
+A15JcbCtofiaS729/6IZxmGC+2rmi0ZGZzRnFQ8x3H+GEkKMLEM05ejT1DIwITsj
+wHErJWRB4A5qDf0UXpt4DhxH+Y22yP85LI3EPbuiprsS8NLoms4QUI76NKLam7/c
+jJl9Dh80OQNyE6v2OIH3tVPYC299AtfX+4rvuRzpI6EdTXy1vBGrgUOrF4rxS7Vs
+i2x0apeuWC0IqR43NkOIOt/RWvZ0NlaNRV97C2tlklse3ZKou6lwCS8NG5m8rsdP
+TYhi56f6P0BDjIi5nHojb78O1ZYWxPtWHWMgZwysUbZRR4yb/V5aMF3V19Sjv76s
+laC0myqgIavzLc11Ku6mX5ZDUR9z+U6lvvel2G9t36iorsmlnLZV4iYBBqn/GWVD
+d8//UfI1vNxxhB+0DP7OVMWrLoIGdkO2g5I5WqTUIEJlFydyW+9Lm+3yZRFMtwDF
+C4hQD44J0qTi28IsX2fGSnsG6WZaVrBqaE4bs1nyUUBXZXf3ImKoHDXAkFDbGM3f
+JTPiVLndzJQDa9EuCu/swoF4Ce3LqflT/XSNLMEqsPVIoobBOAJvmzPpVbN7ifkU
+X/038DAVB9N+50r+mZjP
+=1e0s
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_18_55_42_+1100_hRFLQNLJOR7gYmSw--
+--Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw--
