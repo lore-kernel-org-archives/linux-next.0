@@ -1,60 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net-next tree
-Date: Mon, 17 Mar 2014 19:08:42 +1100
-Message-ID: <20140317190842.795b9d29db9a131a9cff91a9@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Mon, 17 Mar 2014 19:28:04 +1100
+Message-ID: <20140317192804.c338ea1863f70615ab1a53dc@canb.auug.org.au>
+References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw"
+ boundary="Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:36356 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:48110 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932175AbaCQIIt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 04:08:49 -0400
+	id S1753253AbaCQI2L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Mar 2014 04:28:11 -0400
+In-Reply-To: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, "Zhao, Gang" <gamerh2o@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw
+--Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/wlan-ng/cfg80211.c between commit 3ead0d2e220e ("wlan-ng:
-fixup staging driver for removal of ieee80211_dsss_chan_to_freq") from
-the net-next tree and commit 4e5e9d7c66f0 ("staging: wlan-ng: replace
-function ieee80211_dsss_chan_to_freq()") from the staging tree.
+On Wed, 12 Mar 2014 00:51:52 +0000 Mark Brown <broonie@kernel.org> wrote:
+>
+> After merging the driver-core tree, today's linux-next build ()
+> failed like this on a PowerPC defconfig:
+>=20
+> HEAD is now at ceb98e684dec Merge remote-tracking branch 'driver-core/dri=
+ver-core-next'
+>   GEN     /home/broonie/next/powerpc_ppc64_defconfig/Makefile
+> #
+> # configuration written to .config
+> #
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c: In fu=
+nction 'elog_ack_store':
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c:84:2: =
+error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=
+=3Dimplicit-function-declaration]
+>   sysfs_schedule_callback(&elog_obj->kobj, delay_release_kobj,
+>   ^
+> cc1: all warnings being treated as errors
+> make[3]: *** [arch/powerpc/platforms/powernv/opal-elog.o] Error 1
+> make[3]: *** Waiting for unfinished jobs....
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c: In fu=
+nction 'dump_ack_store':
+> /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c:100:2:=
+ error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=
+=3Dimplicit-function-declaration]
+>   sysfs_schedule_callback(&dump_obj->kobj, delay_release_kobj,
+>   ^
+> cc1: all warnings being treated as errors
+>=20
+> due to an interaction between d1ba277e7988908 (sysfs, driver-core: remove=
+ unused {sysfs|device}_schedule_callback_owner()) and 774fea1a38c6a5a8 (pow=
+erpc/powernv: Read OPAL error log and export it through sysfs) from the Pow=
+erPC tree.
+>=20
+> I reverted 774fea1a38c6a5a8 for today.
 
-I fixed it up (I used the staging tree version) and can carry the fix as
-necessary (no action is required).
+I instead reverted commit d1ba277e7988908 (sysfs, driver-core: remove
+unused {sysfs|device}_schedule_callback_owner()).  I hope that will work
+as well.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw
+--Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJq2OAAoJEMDTa8Ir7ZwVe+MP/RAPisWxnpi7eERRukWgyrzC
-cuVENomgiHi44G8DfgpChCjjBQ1j9jc/34xNDhFm4usS4U2tY5PhImSIESebN9Eq
-A15JcbCtofiaS729/6IZxmGC+2rmi0ZGZzRnFQ8x3H+GEkKMLEM05ejT1DIwITsj
-wHErJWRB4A5qDf0UXpt4DhxH+Y22yP85LI3EPbuiprsS8NLoms4QUI76NKLam7/c
-jJl9Dh80OQNyE6v2OIH3tVPYC299AtfX+4rvuRzpI6EdTXy1vBGrgUOrF4rxS7Vs
-i2x0apeuWC0IqR43NkOIOt/RWvZ0NlaNRV97C2tlklse3ZKou6lwCS8NG5m8rsdP
-TYhi56f6P0BDjIi5nHojb78O1ZYWxPtWHWMgZwysUbZRR4yb/V5aMF3V19Sjv76s
-laC0myqgIavzLc11Ku6mX5ZDUR9z+U6lvvel2G9t36iorsmlnLZV4iYBBqn/GWVD
-d8//UfI1vNxxhB+0DP7OVMWrLoIGdkO2g5I5WqTUIEJlFydyW+9Lm+3yZRFMtwDF
-C4hQD44J0qTi28IsX2fGSnsG6WZaVrBqaE4bs1nyUUBXZXf3ImKoHDXAkFDbGM3f
-JTPiVLndzJQDa9EuCu/swoF4Ce3LqflT/XSNLMEqsPVIoobBOAJvmzPpVbN7ifkU
-X/038DAVB9N+50r+mZjP
-=1e0s
+iQIcBAEBCAAGBQJTJrIYAAoJEMDTa8Ir7ZwVb9gP/0Zwyxhaxn47TDKNmRqvelHU
+p9pbGvvc+G5Ujg/0AkP+UfA+G/9N/+51OmVnr//8HLrLRfL4LRxGiL3gKi9X64Gh
+GAw8SNApMqohV16Q+I4g13b0/fkNuyX8nT83SLRYNkoAjf2co1kQwrctu9LF+pln
+nf+Oreyx+w9YE0ZMfFb7m94bwgBzoADQc62BgqkoZPK9kTUST0AcKPaJGEPWIuO4
+nf6v7eiCIHR6gD1yVBG+A/G0knYpB1aKyvj9NwlPK1HVEGrcIg1UR9+WffDCt8RC
+oCC4NzuvEPr/+3GfKWcmAm6qizbQA/wxBU6VtHtDbI6hzeXoWKn/dRvgww5sq4Hy
+BO3J+adQ8B9MuLrIZMCHwVWwW8aTUi0n8/cwPIdFTgl4dcrbZ0CK9e4yWetAEq3U
+ykQ76OWDzVnhCafWPzgPmmhwxqNsVkmifW+QpXRPwBQCYZn01TPFrxyLmCB9yXld
+GsGm6FhXboaSgsrK1cyEr+6AktjJBxGiTbQek1NsSVnGBkMRb8W+pbLZUA/P3Fq7
+71uZfbXR1vcFBxD2q6rnj1S9fQKx6DuSXMZSDF8VmqqWznkKZ21zisl+pQ46RijZ
+jJAzXqje1nxuWLdzE9xiN5KPIoVec7FmoulXA2k+2PVpOhN/goAknHSgGckHSlwH
+hG28bLtUHDsvnGORLNxC
+=XaDU
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_19_08_42_+1100_NpNP02eTe_x=Xyjw--
+--Signature=_Mon__17_Mar_2014_19_28_04_+1100_bu8Gb2Lia/n=nWIy--
