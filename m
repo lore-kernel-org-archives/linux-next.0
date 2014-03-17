@@ -1,61 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 17 Mar 2014 14:55:09 +1100
-Message-ID: <20140317145509.41f0042e7ef1db504d9bb62e@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: mmotm 2014-03-10-15-35 uploaded (virtio_balloon)
+Date: Mon, 17 Mar 2014 14:02:31 +1030
+Message-ID: <877g7tts8g.fsf@rustcorp.com.au>
+References: <20140310223701.0969C31C2AA@corp2gmr1-1.hot.corp.google.com> <531F43F2.1030504@infradead.org> <20140311110338.333e1ee691cadb0f20dbb083@linux-foundation.org> <20140311192046.GA2686@leaf> <20140311123133.f40adf3154452e82aecb61ca@linux-foundation.org> <20140311214014.GA18708@leaf>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:34835 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932221AbaCQDzU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Mar 2014 23:55:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Bellinger <nab@linux-iscsi.org>, Gu Zheng <guz.fnst@cn.fujitsu.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20140311214014.GA18708@leaf>
+Sender: owner-linux-mm@kvack.org
+To: Josh Triplett <josh@joshtriplett.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, virtio-dev@lists.oasis-open.org, "Michael S. Tsirkin" <mst@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Josh Triplett <josh@joshtriplett.org> writes:
+> On Tue, Mar 11, 2014 at 12:31:33PM -0700, Andrew Morton wrote:
+> I'd love to do that, but as far as I can tell, VIRTIO_BALLOON has gone
+> out of its way to support !CONFIG_BALLOON_COMPACTION.
+>
+> Could someone who works on VIRTIO_BALLOON provide some details here
+> about the distinction?
 
-Hi Jens,
+Balloon gives pages back to the host.  If you want to do compaction,
+we'll try to help you, but it's independent.
 
-Today's linux-next merge of the block tree got a conflict in
-fs/bio-integrity.c between commit eec70897d81b ("bio-integrity: Drop
-bio_integrity_verify BUG_ON in post bip->bip_iter world") from Linus'
-tree and commit bf36f9cfa6d3 ("fs/bio-integrity: remove duplicate code")
-from the block tree.
+The normal way to do this would be to put a dummy inline version of
+balloon_page_enqueue etc in the header.  If you look at how the virtio
+balloon code looked before e22504296d4f64fbbbd741602ab47ee874649c18
+you'll see what it should do, eg:
 
-I fixed it up (by using the latter - however, I am not sure that this is
-completely correct as the BUG_ON more or less returns?) and can carry the
-fix as necessary (no action is required).
+#ifndef CONFIG_BALLOON_COMPACTION
+struct balloon_dev_info {
+	struct list_head pages;		/* Pages enqueued & handled to Host */
+};
 
---=20
+static inline struct page *balloon_page_enqueue(struct balloon_dev_info *b_dev_info)
+{
+        struct page *page = alloc_page(GFP_HIGHUSER | __GFP_NORETRY |
+                                       __GFP_NOMEMALLOC | __GFP_NOWARN)
+        if (page)
+                list_add(&page->lru, &b_dev_info->pages);
+
+        return page;
+}
+
+static inline struct page *balloon_page_dequeue(struct balloon_dev_info *b_dev_info)
+{
+        struct page *page;
+        page = list_first_entry(&b_dev_info->pages, struct page, lru);
+        list_del(&page->lru);
+        return page;
+}
+
+static inline void balloon_page_free(struct page *page)
+{
+        __free_page(page);
+}
+#else
+...
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Rusty.
 
---Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTJnIhAAoJEMDTa8Ir7ZwVcUQP/3zKpKZmlobBzCmTlZPNQvAL
-M6+8AdWyAWtWGPoOMuK7EKbWq6FmpMs8J1HJJ0Eh4KQMROp75aYO6A3ELJlkh2wP
-3HUSnrQ4GXjcRm5KLwziDRjA8oymD9y9tkIsaTneWyBHpAVmOphPwPBA9dWOmMgH
-dS4w3C+3dWIcuXx/7DHNeYAGsC6XqwD8eYCB0sP1FVqa5MPoxq273HYyg4eYdGNG
-W8353adoNvOkz0VUD5MdcoLPN8Plak+7fTy0rEhZuJ4OndKXTPWakqpKU3e8c9+X
-b4FZ/+SYZI4t/F9xzmSZ11sI6YAyTzcgWlkyCCD8261E2mXL9G6uldQgjxwCn5hj
-ItcQp1Jdr3x7BKHqo/grFJLTrvEnxeTrZPv4lUCe5vqea4nMio3YdxAsLEr2xjAV
-Gw5fqGL0TLNETh7PKmelzLX2dh3qDk7p+mY9vK+5WdHyNpXYuvy8fXwnNjVH3Ixn
-Zjcp1jWAWuwSh0qliCm2ViJcVUfVSmYaRxca/yZnmNJAj6SBXDtSlWyM17Trgc+E
-3Q0tOwZvjcbORGXGikQYBgVCn8ArcwADOkXmhz90+Z4snlSgVNtopbSMqStuqnQX
-HmZS1tPVr37HuKtOw6SbkHfuePN45HAr6mCaNEfT1fbLEaELWF8nZTGL5wuULKvm
-ts3mYWH2NC1hLvhwA73E
-=fHDk
------END PGP SIGNATURE-----
-
---Signature=_Mon__17_Mar_2014_14_55_09_+1100_hOe1PspIr95JFG5f--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
