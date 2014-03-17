@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tip tree with the arm-soc tree
-Date: Mon, 17 Mar 2014 16:35:06 +1100
-Message-ID: <20140317163506.5770f06a77ba011e682f47ff@canb.auug.org.au>
+Date: Mon, 17 Mar 2014 16:37:52 +1100
+Message-ID: <20140317163752.f93d266cffa1cbdfcd1f9f8d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_16_35_06_+1100_ZgO=MpxIl+oEqYDa"
+ boundary="Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:45012 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:36788 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751009AbaCQFfS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 01:35:18 -0400
+	id S1751062AbaCQFiK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Mar 2014 01:38:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Magnus Damm <damm@opensource.se>, Daniel Lezcano <daniel.lezcano@linaro.org>, Wolfram Sang <wsa@sang-engineering.com>
 
---Signature=_Mon__17_Mar_2014_16_35_06_+1100_ZgO=MpxIl+oEqYDa
+--Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,9 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the tip tree got a conflict in
-arch/arm/mach-zynq/Kconfig between commit ddb902cc3459 ("ARM: centralize
-common multi-platform kconfig options") from the arm-soc tree and commit
-cd325295871f ("arm: zynq: Add support for cpufreq") from the tip tree.
+drivers/clocksource/Kconfig between commit 3f8e8cee2f4b ("clocksource:
+qcom: Move clocksource code out of mach-msm") from the arm-soc tree and
+commit fd3f1270d237 ("clocksource: Add Kconfig entries for CMT, MTU2, TMU
+and STI") from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,51 +36,80 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-zynq/Kconfig
-index 105d39b72a25,f03e75bd0b2b..000000000000
---- a/arch/arm/mach-zynq/Kconfig
-+++ b/arch/arm/mach-zynq/Kconfig
-@@@ -2,10 -2,19 +2,12 @@@ config ARCH_ZYN
-  	bool "Xilinx Zynq ARM Cortex A9 Platform" if ARCH_MULTI_V7
-  	select ARM_AMBA
-  	select ARM_GIC
-+ 	select ARCH_HAS_CPUFREQ
-+ 	select ARCH_HAS_OPP
- -	select COMMON_CLK
- -	select CPU_V7
- -	select GENERIC_CLOCKEVENTS
-  	select HAVE_ARM_SCU if SMP
-  	select HAVE_ARM_TWD if SMP
-  	select ICST
- -	select MIGHT_HAVE_CACHE_L2X0
- -	select USE_OF
- -	select HAVE_SMP
- -	select SPARSE_IRQ
-  	select CADENCE_TTC_TIMER
-- 	select ARM_GLOBAL_TIMER
-+ 	select ARM_GLOBAL_TIMER if !CPU_FREQ
+diff --cc drivers/clocksource/Kconfig
+index 6510ec4f45ff,4f754a972139..000000000000
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@@ -141,5 -141,46 +141,49 @@@ config VF_PIT_TIME
   	help
-  	  Support for Xilinx Zynq ARM Cortex A9 Platform
+  	  Support for Period Interrupt Timer on Freescale Vybrid Family SoCs.
+ =20
+ +config CLKSRC_QCOM
+ +	bool
+++
++ config SYS_SUPPORTS_SH_CMT
++         bool
++=20
++ config SYS_SUPPORTS_SH_MTU2
++         bool
++=20
++ config SYS_SUPPORTS_SH_TMU
++         bool
++=20
++ config SYS_SUPPORTS_EM_STI
++         bool
++=20
++ config SH_TIMER_CMT
++ 	bool "Renesas CMT timer driver" if COMPILE_TEST
++ 	default SYS_SUPPORTS_SH_CMT
++ 	help
++ 	  This enables build of a clocksource and clockevent driver for
++ 	  the Compare Match Timer (CMT) hardware available in 16/32/48-bit
++ 	  variants on a wide range of Mobile and Automotive SoCs from Renesas.
++=20
++ config SH_TIMER_MTU2
++ 	bool "Renesas MTU2 timer driver" if COMPILE_TEST
++ 	default SYS_SUPPORTS_SH_MTU2
++ 	help
++ 	  This enables build of a clockevent driver for the Multi-Function
++ 	  Timer Pulse Unit 2 (TMU2) hardware available on SoCs from Renesas.
++ 	  This hardware comes with 16 bit-timer registers.
++=20
++ config SH_TIMER_TMU
++ 	bool "Renesas TMU timer driver" if COMPILE_TEST
++ 	default SYS_SUPPORTS_SH_TMU
++ 	help
++ 	  This enables build of a clocksource and clockevent driver for
++ 	  the 32-bit Timer Unit (TMU) hardware available on a wide range
++ 	  SoCs from Renesas.
++=20
++ config EM_TIMER_STI
++ 	bool "Renesas STI timer driver" if COMPILE_TEST
++ 	default SYS_SUPPORTS_EM_STI
++ 	help
++ 	  This enables build of a clocksource and clockevent driver for
++ 	  the 48-bit System Timer (STI) hardware available on a SoCs
++ 	  such as EMEV2 from former NEC Electronics.
 
---Signature=_Mon__17_Mar_2014_16_35_06_+1100_ZgO=MpxIl+oEqYDa
+--Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJomOAAoJEMDTa8Ir7ZwV/TIP/0g/4oUhwSIJE3MmEsbgZNud
-PWBa5n6NaTo27vILHhbcurzBmUqXvpNCOMe3KaU3fQvPAm08vSyqZ+QfZnw0OmFC
-lK+PaeXvmfsQoS2jJgiAEdaWuyHUP5Y4V1Z2J/i0789Fc4Ad2sZL9ZmEKh0Mlbpd
-gUyLDYHARGxXWTq5P8n1315NBXDj+F/WGdnkwvxkodFRD3s/UOpQtC26fdC5+YrS
-iW0nXUx9zMsQudGKa3K+0VUGrhTHTpcIXuBN2i4AA7QPs9LN0a9ZKpHkpF62kRE3
-gSOQtIP3JrabSjjum/1hz/P4ElcPphM+ETn/KFbcQmY//Rb2zN82GBYFRVCfYP3s
-xhtAICdLHwGde8y7Rb5jkyNZdDLSZYLfV3SuP/w1UgV6vV0dhSE1V4ZiPEA9UBPZ
-uv+RiK3MhsOuyTm33hvG9VKFAqwouDTCtoh129WjXDHXnpnR1ybDXV9kCxpVpthn
-/pU/fSzeN8q9qankOj+CiHnBIfChHNLEFiicJI95xiuC4aArqkT5VZYoJ67v0R7X
-vHgdZib0k0XR73FTIuOzaVa/qRV/MyMTJcoATK0IHqxfaQeomvfGbd7RMOaMkqwE
-xARFoFwdHlb+Vx4QKMNidzXWtOiqqFY6DlV/BqPGgn66SNDzmn4j3got272QKQTf
-uZz7b5mtP6Cx7Dl+/OgF
-=wcjY
+iQIcBAEBCAAGBQJTJoo1AAoJEMDTa8Ir7ZwVhHAP/iRxgIYU8IJLeMBdDPuY/Gbt
+UVMh22WrIrN9k+FDPta6uVSiCAm2KRIQCNYltIaUUcNNG3jLZAW0y84hikWu0twn
+zMBXg8k1lvlABgrBfce0Ue0+k/+OXhHNZZaDn/9yifB2RcYO8ZzCbEVAEFwh1UFZ
+hoZNEDRJkHqVeXfNv6NoOSH0RcfWg7/TkwSuyxDIE3DZJFk7/Wy/0CAXvxyioRUW
+4p7y1FYFzSSc8nl/0Aj/qFqm3pJIWGa11CJ2dfIzEVG4Oe84SaspkzArVppST3fv
+NpMdFvwz3vZHUjp4YIqBWtGu2d7JTbu3r0GoLFHpzNl/OlZK4oIuS3/oaBrA9ONt
+VoD/VGdbni3XLG8arqxIK7P0i1yemxtBVuigBhEmIXnog2SWGHCQ+ZVR2eHUhahv
+kDkRWzyR7p72xIuEt7VMZR2yRafKT14t12xVXmfwmIkUif2O2SvpaCHvnGUfp/e+
+2sA2S6KLokgWEGgAM1v9yxtS4atsWy6OgiemLIYKLtYab6JIJ1bsh4Cu2QSm0Hqg
+fOj0xUqVDbOmUXgnDZ1CbIQP2lqrZ+pZSLCAS/1YqKMZSfWptozc86AeTJH624Ah
+Or9oCgt5KHCL1F3qPfjRPlbBqIzi4eOyx97ubmfvGze7dvg5DE+a9xXv/JdPCKIH
+I2MZ90n3dEkxJcNpIDrQ
+=3RKR
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_16_35_06_+1100_ZgO=MpxIl+oEqYDa--
+--Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo--
