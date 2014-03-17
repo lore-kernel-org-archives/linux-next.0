@@ -1,81 +1,126 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Mon, 17 Mar 2014 11:36:27 -0700
-Message-ID: <20140317183627.GF10565@kroah.com>
-References: <1394654396.4840.94.camel@pasglop>
- <20140312200232.GA22332@htj.dyndns.org>
- <1394655292.4840.97.camel@pasglop>
- <20140312202102.GB22332@htj.dyndns.org>
- <1394671056.4840.103.camel@pasglop>
- <1394748895.15098.16.camel@pasglop>
- <20140315000343.GD5687@kroah.com>
- <1394852249.15098.75.camel@pasglop>
- <20140315052942.GA30262@kroah.com>
- <20140317101621.92f0d6d9bab79a0ea24fe37b@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
+ tree
+Date: Mon, 17 Mar 2014 16:29:37 -0300
+Message-ID: <20140317162937.2ccdec83@infradead.org>
+References: <20140317185542.fe4554210fc1893b44289008@canb.auug.org.au>
+	<20140317080122.459ff9d4@infradead.org>
+	<20140317182953.GA10565@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:53790 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756419AbaCQSe1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 14:34:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20140317101621.92f0d6d9bab79a0ea24fe37b@canb.auug.org.au>
+Received: from bombadil.infradead.org ([198.137.202.9]:52867 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751000AbaCQT3w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Mar 2014 15:29:52 -0400
+In-Reply-To: <20140317182953.GA10565@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Grant Likely <grant.likely@linaro.org>, Russell King <rmk@arm.linux.org.uk>, Mauro Carvalho Chehab <m.chehab@samsung.com>
 
-On Mon, Mar 17, 2014 at 10:16:21AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Sat, 15 Mar 2014 05:29:42 +0000 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Sat, Mar 15, 2014 at 01:57:29PM +1100, Benjamin Herrenschmidt wrote:
-> > > 
-> > > It's messy. Stephen really doesn't like if we pull each other trees like
-> > > that unless they are topic branches. He also doesn't like when we keep
-> > > pulling Linus in.
+Em Mon, 17 Mar 2014 11:29:53 -0700
+Greg KH <greg@kroah.com> escreveu:
+
+> On Mon, Mar 17, 2014 at 08:01:22AM -0300, Mauro Carvalho Chehab wrote:
+> > Em Mon, 17 Mar 2014 18:55:42 +1100
+> > Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 > > 
-> > I only pull Linus in after a -rc in which I have merged patches with him
-> > for that "topic".  Otherwise I end up with merge issues, and for testing
-> > reasons, I want those fixes from Linus and from me, in order to keep
-> > people from hitting the same already-fixes issues.
+> > > Hi Greg,
+> > > 
+> > > Today's linux-next merge of the staging tree got a conflict in
+> > > drivers/media/platform/exynos4-is/fimc-is.c between commit d265d9ac6c7c
+> > > ("[media] exynos4-is: Use external s5k6a3 sensor driver") from the
+> > > v4l-dvb tree and commit fd9fdb78a9bf ("[media] of: move graph helpers
+> > > from drivers/media/v4l2-core to drivers/of") from the staging tree.
+> > > I fixed it up (see below, though I suspect it is wasted?) and can carry
+> > > the fix as necessary (no action is required).
+> > 
+> > I used to have those OF patches on my tree, but I was forced to remove,
+> > as Grant rejected the patches. After his nack, lots of dicussions about
+> > the DT bindings started and, until last week, there were no consensus
+> > about that (as far as I followed the discussions).
+> > 
+> > So, reluctantly, I just dropped this series from my tree, pretending
+> > it never existed, as reverting them could cause troubles if it 
+> > (or some version of it) got merged via Greg, Grant and/or Russell
+> > trees.
+> > 
+> > On my head, it become too late to merge it for 3.15, as first
+> > people must agree on the DT bindings. Also, I already closed the
+> > media merge window, as -rc7 seems to be the last -rc.
+> > 
+> > One possible approach for this would be to merge the patches that move
+> > the OF graph code away from drivers/media, and the corresponding
+> > internal ABI changes early at -rc, and applying the DT binding
+> > patches, and the staging imx-drm driver for 3.16.
 > 
-> Maybe you should consider instead just merging the branch you asked
-> Linus' to merge instead of back merging his whole -rc ... especially when
-> the merge commit message is usually just something like "We want those
-> fixes here for testing and development" which doesn't actually tell us
-> anything very useful.
+> I don't understand, was I supposed to do something in my staging-next
+> tree for this as well?
 > 
-> Your trees always have lots of back merges of Linus' tree in them and I
-> don't know why Linus has not complained about it before now (or at least
-> explained to you why we normally don't do that).
+> totally confused,
 
-No, I don't like merging at "unknown" points in the tree, I only merge
-back at the -rc point as that is a "known good" version of Linus's tree.
+Hi Greg,
 
-And I only do the merge if I have patches that have been accepted in
-Linus's tree for that tree (usb, staging, tty, etc.) as almost always,
-if I don't, I get merge issues (as you find out all the time), and those
-bugfixes that go into Linus's tree, I want them in the -next branch as
-well so that the developers running those branches don't have the
-problems that those fixes resolved.
+Let me summarize what was discussed so far with regards to it.
 
-> > Just take my tree, it's not a big deal,
+There are two changesets related to this:
+- a 6 patch series moving OF graph functions from
+  /drivers/media to /drivers/of;
+- a 12 patch series (at version 11 - not sure if are there any
+  newer version) that adds the imx-drm driver to staging.
+
+At the first series, there's one DT patch in the middle.
+
+Both patch series was being discussed for a while at the
+pertinent MLs.
+
+My understanding on March, 7, after an email from Russell,
+was that everybody was happy with the first patch series, 
+and that I should be applying it on my tree. So, I did it.
+
+However, on the same day, Grant nacked the patch series,
+because of some DT bindings, mainly focused on this one:
+	"Documentation: of: Document graph bindings"
+
+After lots of discussions and no agreements with regards
+to it, Grant asked me to rewind my git tree, in order to
+discard the git pull from the first series.
+
+Even hating the idea of doing a git rebase upstream, 
+after talking with the media submaintainers on IRC,
+I did a git rewind, as I was afraid that just reverting
+the 6 individual patches would cause merge conflicts with
+other trees that might have merged those patches, or some
+newer version of it.
+
+Latter, Laurent also rised some other points about for the
+DT binding discussions, and, AFAICT, there's still no
+consensus about that.
+
+In the mean time, it seems you applied those 6 patches on your 
+staging tree - at least, I received 6 messages from you about
+those commits. Also, as this conflict arrived at -next, I
+suspect that those patches are still on your tree.
+
+Please notice that, from my side, I don't have anything
+against those patch series, as the changes on the media 
+drivers are just at the ABI glue, and I already acked with
+those changes. 
+
+The only thing that concerns me is that, if this series gets applied
+upstream, the patch that Stephen did will needed to be applied
+upstream to, to avoid compilation breakages there due to the 
+Exynos patches on my tree that depend on the current ABI.
+
+Regards,
+Mauro
 > 
-> Except, of course, you are completely discounting any testing that Ben
-> has done on his tree that could be invalidated and/or complicated by
-> pulling in so much more of Linus' tree at this point of the cycle.  And
-> it complicates the git history even more than just your trees already do.
+> greg k-h
 
-If Ben's testing is somehow "invalidated" by moving to a newer -rc
-release, then when would that testing have ever happened?  -rc merges
-should always be safe to do, otherwise you probably have problems in
-your code that Linus will later run into when you ask him to pull for
--rc1.
 
-thanks,
 
-greg k-h
+
+Regards,
+Mauro
