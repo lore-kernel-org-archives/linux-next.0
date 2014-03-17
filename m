@@ -1,33 +1,64 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Mon, 17 Mar 2014 10:36:02 +0100
-Message-ID: <20140317093602.GY27965@twins.programming.kicks-ass.net>
-References: <20140317203124.3b947e0799cc8142df5e4a2e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Mon, 17 Mar 2014 21:13:40 +1100
+Message-ID: <20140317211340.7beed734d3e3825f31520776@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:55144 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753311AbaCQJgd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Mar 2014 05:36:33 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__17_Mar_2014_21_13_40_+1100_=oyqgGyVeVQX_c8e"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Ertman <davidx.m.ertman@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__17_Mar_2014_21_13_40_+1100_=oyqgGyVeVQX_c8e
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140317203124.3b947e0799cc8142df5e4a2e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2014 at 08:31:24PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm-current tree got a conflict in
-> kernel/locking/Makefile between commit fb0527bd5ea9 ("locking/mutexes:
-> Introduce cancelable MCS lock for adaptive spinning") from the  tree and
-> commit 4dc0fe493027 ("lglock: map to spinlock when !CONFIG_SMP") from the
-> akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi all,
 
-I'm a bit sad of not having seen that lglock patch at all.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
+
+drivers/net/ethernet/intel/e1000e/netdev.c:7079:13: error: 'e1000e_pm_suspe=
+nd' undeclared here (not in a function)
+drivers/net/ethernet/intel/e1000e/netdev.c:7080:13: error: 'e1000e_pm_resum=
+e' undeclared here (not in a function)
+drivers/net/ethernet/intel/e1000e/netdev.c:7082:11: error: 'e1000e_pm_thaw'=
+ undeclared here (not in a function)
+
+Caused by commit 2800209994f8 ("e1000e: Refactor PM flows") from the
+net-next tree.
+
+I reverted that commit for today (and 63eb48f151b5 "e1000e Refactor of
+Runtime Power Management" that conflicts with the revert).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__17_Mar_2014_21_13_40_+1100_=oyqgGyVeVQX_c8e
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTJsrZAAoJEMDTa8Ir7ZwVKQIP/RhIbagxqqg15BD1e+f/O3ID
+3Eop6tM7FbA7HMlh8oso80+pG5CnlclodA8jgezeArzsBdZquMlKf/6B+rsqCCeP
+BDsWkmgf1s/2bqYtzosWLmTZOQw1ob3oz/QrhaWXQFMOUjzJBAeeds1XeMRQIWFB
+Y0E2tYwL+SLt+k8vutu4DKdATHKhwxDt3B0ZQnEQhbkrQdJNtIlSoKkea2ABoD85
+jls0hh4PkQPUC5459H5CYOSsPnq0YgTe9vGvzy1xV+H1BsKnlkNJHoUjoT0oaWHX
+3b2HKGsXPm83wgbhgSm6i5u/SwmwItobvJFjD/MWlCtsV0IBsWF4izuDh3L5HAGA
+XfAO5cWrAh9mEawZF6bQ7qtiIZIPk8kQigQk1P3UP43NekHcpYfMoqk/GJ/TYtzZ
+2sBxWihh1RV+Q/XEvsi1RFHXaCy6CZCeNNqb+AR0nXEtsMTxGcoOFTup4EMhf+14
+8hZsDtV9R9vt2OTIbc5ksiG0qpNPJjKcMQjt1tsseIbIHCZ/sNXuIFGGxssr9zm1
+kmb4MsbV4pFjE81qSkMWN2Xq5T77v4qJBaBwbn7l84/5sb52zcA9c3Qn1/QPo8bo
+h+ipLt1F8MDJyEmwuWL5a36M3mDgxE4ZWOPEXAdkSMdA2ayVJm/FkYVZ++wZ7MZa
+wEhXSbxYkD2GkxtjAu3f
+=zJ54
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_Mar_2014_21_13_40_+1100_=oyqgGyVeVQX_c8e--
