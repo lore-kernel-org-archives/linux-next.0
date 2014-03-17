@@ -1,30 +1,78 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the tip tree
-Date: Mon, 17 Mar 2014 11:30:52 -0700
-Message-ID: <20140317183052.GD10565@kroah.com>
-References: <20140317183126.7c8ba1901c81fbb9ace00f20@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Mon, 17 Mar 2014 11:33:33 -0700
+Message-ID: <20140317183333.GE10565@kroah.com>
+References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
+ <20140312015021.GC10106@kroah.com>
+ <20140317101611.d043a90e1cb72dcfb8bc767a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58250 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756351AbaCQSbf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Mar 2014 14:31:35 -0400
+Received: from compute6.internal (compute6.nyi.mail.srv.osa [10.202.2.46])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 5A46C20E0A
+	for <linux-next@vger.kernel.org>; Mon, 17 Mar 2014 14:31:33 -0400 (EDT)
 Content-Disposition: inline
-In-Reply-To: <20140317183126.7c8ba1901c81fbb9ace00f20@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20140317101611.d043a90e1cb72dcfb8bc767a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Magnus Damm <damm@opensource.se>, Daniel Lezcano <daniel.lezcano@linaro.org>, Wolfram Sang <wsa@sang-engineering.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 17, 2014 at 06:31:26PM +1100, Stephen Rothwell wrote:
+On Mon, Mar 17, 2014 at 10:16:11AM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> Today's linux-next merge of the usb tree got a conflict in
-> arch/arm/mach-shmobile/Kconfig between commit aeb8fb7910fc ("ARM:
-> shmobile: Remove CMT, TMU and STI Kconfig entries") from the tip tree and
-> commit f6723b569a67 ("usb: host: remove selects of USB_ARCH_HAS_?HCI")
-> from the usb tree.
+> On Tue, 11 Mar 2014 18:50:21 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > On Wed, Mar 12, 2014 at 12:51:52AM +0000, Mark Brown wrote:
+> > > 
+> > > After merging the driver-core tree, today's linux-next build ()
+> > > failed like this on a PowerPC defconfig:
+> > > 
+> > > HEAD is now at ceb98e684dec Merge remote-tracking branch 'driver-core/driver-core-next'
+> > >   GEN     /home/broonie/next/powerpc_ppc64_defconfig/Makefile
+> > > #
+> > > # configuration written to .config
+> > > #
+> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c: In function 'elog_ack_store':
+> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-elog.c:84:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
+> > >   sysfs_schedule_callback(&elog_obj->kobj, delay_release_kobj,
+> > >   ^
+> > > cc1: all warnings being treated as errors
+> > > make[3]: *** [arch/powerpc/platforms/powernv/opal-elog.o] Error 1
+> > > make[3]: *** Waiting for unfinished jobs....
+> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c: In function 'dump_ack_store':
+> > > /home/broonie/next/next/arch/powerpc/platforms/powernv/opal-dump.c:100:2: error: implicit declaration of function 'sysfs_schedule_callback' [-Werror=implicit-function-declaration]
+> > >   sysfs_schedule_callback(&dump_obj->kobj, delay_release_kobj,
+> > >   ^
+> > > cc1: all warnings being treated as errors
+> > > 
+> > > due to an interaction between d1ba277e7988908 (sysfs, driver-core: remove unused {sysfs|device}_schedule_callback_owner()) and 774fea1a38c6a5a8 (powerpc/powernv: Read OPAL error log and export it through sysfs) from the PowerPC tree.
+> > > 
+> > > I reverted 774fea1a38c6a5a8 for today.
+> > 
+> > Sounds like the powerpc tree also needs to stop using this function :)
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> So, explain to us in detail why the old interface could not be maintained
+> for a release, please.  I thought we had become a bit more sophisticated
+> about changing core APIs i.e. introduce the new API - fix up all the
+> users - keep the old one around if possible for a release (or beyond
+> -rc1) to catch the new users.
+> 
+> It may be that there is a good reason not to so this in this case, but it
+> is not explained as far as I can see.
 
-Looks good, thanks.
+There were only 3 (or 4), users of this api, and no new ones had been
+added in _years_, it's a very obscure thing, and odds are, it wouldn't
+ever be added again, especially as it was just removed entirely not
+being needed anymore.  And I'd argue, it's something that you shouldn't
+have even been doing in the first place, so why a new user of it was
+added now is quite strange to me.
+
+thanks,
 
 greg k-h
