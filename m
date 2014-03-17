@@ -1,115 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm-soc tree
-Date: Mon, 17 Mar 2014 16:37:52 +1100
-Message-ID: <20140317163752.f93d266cffa1cbdfcd1f9f8d@canb.auug.org.au>
+Subject: Re: [PATCH/RFC 00/16] compat: convert to COMPAT_SYSCALL_DEFINE
+Date: Mon, 17 Mar 2014 17:02:41 +1100
+Message-ID: <20140317170241.9197da46cdc87f6c3df6b517@canb.auug.org.au>
+References: <1394121083-2507-1-git-send-email-heiko.carstens@de.ibm.com>
+	<20140312194526.GA3755@osiris>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:36788 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751062AbaCQFiK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 01:38:10 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Magnus Damm <damm@opensource.se>, Daniel Lezcano <daniel.lezcano@linaro.org>, Wolfram Sang <wsa@sang-engineering.com>
+ boundary="Signature=_Mon__17_Mar_2014_17_02_41_+1100_QkHRoQ5ZfZGGV6xA"
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <20140312194526.GA3755@osiris>
+Sender: linux-arch-owner@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Mark Brown <broonie@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo
+--Signature=_Mon__17_Mar_2014_17_02_41_+1100_QkHRoQ5ZfZGGV6xA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Heiko,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/clocksource/Kconfig between commit 3f8e8cee2f4b ("clocksource:
-qcom: Move clocksource code out of mach-msm") from the arm-soc tree and
-commit fd3f1270d237 ("clocksource: Add Kconfig entries for CMT, MTU2, TMU
-and STI") from the tip tree.
+On Wed, 12 Mar 2014 20:45:26 +0100 Heiko Carstens <heiko.carstens@de.ibm.co=
+m> wrote:
+>
+> since nobody objected to the compat changes I described below, could you
+> please add the tree
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git compat
+>=20
+> to linux-next?
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Mark added this the other day and I will add it to my tree from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-diff --cc drivers/clocksource/Kconfig
-index 6510ec4f45ff,4f754a972139..000000000000
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@@ -141,5 -141,46 +141,49 @@@ config VF_PIT_TIME
-  	help
-  	  Support for Period Interrupt Timer on Freescale Vybrid Family SoCs.
- =20
- +config CLKSRC_QCOM
- +	bool
-++
-+ config SYS_SUPPORTS_SH_CMT
-+         bool
-+=20
-+ config SYS_SUPPORTS_SH_MTU2
-+         bool
-+=20
-+ config SYS_SUPPORTS_SH_TMU
-+         bool
-+=20
-+ config SYS_SUPPORTS_EM_STI
-+         bool
-+=20
-+ config SH_TIMER_CMT
-+ 	bool "Renesas CMT timer driver" if COMPILE_TEST
-+ 	default SYS_SUPPORTS_SH_CMT
-+ 	help
-+ 	  This enables build of a clocksource and clockevent driver for
-+ 	  the Compare Match Timer (CMT) hardware available in 16/32/48-bit
-+ 	  variants on a wide range of Mobile and Automotive SoCs from Renesas.
-+=20
-+ config SH_TIMER_MTU2
-+ 	bool "Renesas MTU2 timer driver" if COMPILE_TEST
-+ 	default SYS_SUPPORTS_SH_MTU2
-+ 	help
-+ 	  This enables build of a clockevent driver for the Multi-Function
-+ 	  Timer Pulse Unit 2 (TMU2) hardware available on SoCs from Renesas.
-+ 	  This hardware comes with 16 bit-timer registers.
-+=20
-+ config SH_TIMER_TMU
-+ 	bool "Renesas TMU timer driver" if COMPILE_TEST
-+ 	default SYS_SUPPORTS_SH_TMU
-+ 	help
-+ 	  This enables build of a clocksource and clockevent driver for
-+ 	  the 32-bit Timer Unit (TMU) hardware available on a wide range
-+ 	  SoCs from Renesas.
-+=20
-+ config EM_TIMER_STI
-+ 	bool "Renesas STI timer driver" if COMPILE_TEST
-+ 	default SYS_SUPPORTS_EM_STI
-+ 	help
-+ 	  This enables build of a clocksource and clockevent driver for
-+ 	  the 48-bit System Timer (STI) hardware available on a SoCs
-+ 	  such as EMEV2 from former NEC Electronics.
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
 
---Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo
+--Signature=_Mon__17_Mar_2014_17_02_41_+1100_QkHRoQ5ZfZGGV6xA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJoo1AAoJEMDTa8Ir7ZwVhHAP/iRxgIYU8IJLeMBdDPuY/Gbt
-UVMh22WrIrN9k+FDPta6uVSiCAm2KRIQCNYltIaUUcNNG3jLZAW0y84hikWu0twn
-zMBXg8k1lvlABgrBfce0Ue0+k/+OXhHNZZaDn/9yifB2RcYO8ZzCbEVAEFwh1UFZ
-hoZNEDRJkHqVeXfNv6NoOSH0RcfWg7/TkwSuyxDIE3DZJFk7/Wy/0CAXvxyioRUW
-4p7y1FYFzSSc8nl/0Aj/qFqm3pJIWGa11CJ2dfIzEVG4Oe84SaspkzArVppST3fv
-NpMdFvwz3vZHUjp4YIqBWtGu2d7JTbu3r0GoLFHpzNl/OlZK4oIuS3/oaBrA9ONt
-VoD/VGdbni3XLG8arqxIK7P0i1yemxtBVuigBhEmIXnog2SWGHCQ+ZVR2eHUhahv
-kDkRWzyR7p72xIuEt7VMZR2yRafKT14t12xVXmfwmIkUif2O2SvpaCHvnGUfp/e+
-2sA2S6KLokgWEGgAM1v9yxtS4atsWy6OgiemLIYKLtYab6JIJ1bsh4Cu2QSm0Hqg
-fOj0xUqVDbOmUXgnDZ1CbIQP2lqrZ+pZSLCAS/1YqKMZSfWptozc86AeTJH624Ah
-Or9oCgt5KHCL1F3qPfjRPlbBqIzi4eOyx97ubmfvGze7dvg5DE+a9xXv/JdPCKIH
-I2MZ90n3dEkxJcNpIDrQ
-=3RKR
+iQIcBAEBCAAGBQJTJpAFAAoJEMDTa8Ir7ZwVJBkP/0+3aiTt+VRWhBTOrQERfq/Y
+jYHiYgJcW0OxBB0C2zovFCeN19QHaSSCAA21bEyMtT4rmUNZYozcb6RCsGSTHHCC
+ZycBrmO/v+RLv1/MC1r81p3onpRIVqBOyzMuJM0TNwjlesPfTh4TKgyj/UrXwiId
+XrZv6Jfjt8jBXXY0fbQR+RqNM2IG9IeXjeNxUKS2XrzK4tGxBkes/H2Mgz4UaGwV
+by+Q/H+8N+7MBUV7kNwsEfOgJF1GxsynJb7hRl/2p6Yf/z/KmXPDOUkA1ad9aMt9
+1s3k7dNCrXAQRHE+ubvDu3DD8eq5fNyIwz92cEXi6kFvY+AM3yzqRj8EbXAcvB++
+Ng+mZL+c9nYvsvJope6X7p8AoaAp/5k2wM8uP/2fsez61HjWnTZZVAvwLz8ShnSi
+F3kgmS7S5qA0b3F/mtTmoRS9RuP7+VTNcwWZ+xmkmUkuddaImptDCL3KXs2OfP28
+W5Denq3z+B17OyK9dsqS7ToYCHGhTmAVweZ9DNNPuorFXgJurZA1a7WIDtBHEWkD
+dtYG3Q5+q7JNTOTcv5n5siiGhMzneooSbj0fjjzZ2oiw/T+AM3EEADILYjlHyGrm
+IY5ELsR5MR5m4SS7beDZPus9QyNrelMYq6nCaRmqqrwAsieP1XPp6poyzTJ7Ojex
+g70OcWYwSNI7Vya/phQY
+=iBdP
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_Mar_2014_16_37_52_+1100_6j/c2XGPZQ=Wejqo--
+--Signature=_Mon__17_Mar_2014_17_02_41_+1100_QkHRoQ5ZfZGGV6xA--
