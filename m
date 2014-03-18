@@ -1,56 +1,107 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 18 Mar 2014 11:22:26 +1100
-Message-ID: <1395102146.15098.198.camel@pasglop>
-References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
-	 <20140312015021.GC10106@kroah.com>
-	 <20140317101611.d043a90e1cb72dcfb8bc767a@canb.auug.org.au>
-	 <20140317183333.GE10565@kroah.com> <1395088410.15098.175.camel@pasglop>
-	 <20140317215619.GA25228@kroah.com> <20140317220554.GG17373@mtj.dyndns.org>
-	 <20140317222107.GH17373@mtj.dyndns.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the audit tree with the mips tree
+Date: Tue, 18 Mar 2014 15:15:29 +1100
+Message-ID: <20140318151529.0b0acf9a6d74c6aca080efe0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__18_Mar_2014_15_15_29_+1100_3y4HHsUKBftS/T/J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:57397 "EHLO gate.crashing.org"
+Received: from ozlabs.org ([203.10.76.45]:53460 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750716AbaCRAWo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 20:22:44 -0400
-In-Reply-To: <20140317222107.GH17373@mtj.dyndns.org>
+	id S1750734AbaCREPo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Mar 2014 00:15:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Paris <eparis@redhat.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markos Chandras <markos.chandras@imgtec.com>
 
-On Mon, 2014-03-17 at 18:21 -0400, Tejun Heo wrote:
-> So, looked at the failed code.  The only necessary change seems to be
-> calling device_remove_file_self() in dump_ack_store() and then doing
-> kobject_put() directly afterwards, which would have been completely
-> fine as a merge fix patch.
+--Signature=_Tue__18_Mar_2014_15_15_29_+1100_3y4HHsUKBftS/T/J
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok. Since there's no merge error, I'll have to tell Linus explicitly to
-apply it during the merge. I've never done that before but I suppose
-it's doable.
+Hi Eric,
 
-> Just to be clear, I'm not necessarily against reverting the removal of
-> the API.  The removal was based on the speculation that this isn't
-> likely to cause trouble.  The speculation was perfectly reasonable but
-> being a speculation it failed, so we take actions to remedy that and
-> we *do* want to do things that way.  Reverting the removal can sure be
-> one choice but the way that choice is being made here seems completely
-> wrong to me.  There's no technical evaluation whatsoever.  I'd really
-> hate to work in an environment where taking active trade off is
-> discouraged replaced with blind policy enforcement.
+Today's linux-next merge of the audit tree got conflicts in
+arch/mips/include/asm/syscall.h and arch/mips/kernel/ptrace.c between
+commits cdda64d4d01f ("MIPS: asm: syscall: Define syscall_get_arch"),
+d746666c2862 ("MIPS: ptrace: Move away from secure_computing_strict") and
+f5179287b016 ("MIPS: Fix randconfig build error") from the mips tree and
+commits 74d0bf770dd6 ("syscall_get_arch: remove useless function
+arguments") and e8d1226a197d ("audit: use uapi/linux/audit.h for
+AUDIT_ARCH declarations") from the audit tree.
 
-Sorry I don't understand. Reverting the removal until after -rc1 (or
-later in the merge window) is the easiest path from my perspective and
-ensure no bisection breakage but whatever Linus prefers works here.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-I don't think it's a drastic action or anything like that. It can
-trivially be re-applied once the merge window has settled. But I'm happy
-to also just send Linus a "apply this as a merge fixup" patch if he's
-happy with the method (as I said, I've never done that before on
-something that doesn't have an actual merge conflict to begin with)
-
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/mips/include/asm/syscall.h
+index 6c488c85d791,fc556d8052c9..000000000000
+--- a/arch/mips/include/asm/syscall.h
++++ b/arch/mips/include/asm/syscall.h
+@@@ -13,8 -13,7 +13,8 @@@
+  #ifndef __ASM_MIPS_SYSCALL_H
+  #define __ASM_MIPS_SYSCALL_H
+ =20
+ +#include <linux/compiler.h>
+- #include <linux/audit.h>
++ #include <uapi/linux/audit.h>
+  #include <linux/elf-em.h>
+  #include <linux/kernel.h>
+  #include <linux/sched.h>
+@@@ -132,8 -105,7 +131,8 @@@ static inline int syscall_get_arch(void
+  {
+  	int arch =3D EM_MIPS;
+  #ifdef CONFIG_64BIT
+- 	if (!test_tsk_thread_flag(task, TIF_32BIT_REGS))
+ -	arch |=3D  __AUDIT_ARCH_64BIT;
+++	if (!test_tsk_thread_flag(current, TIF_32BIT_REGS))
+ +		arch |=3D __AUDIT_ARCH_64BIT;
+  #endif
+  #if defined(__LITTLE_ENDIAN)
+  	arch |=3D  __AUDIT_ARCH_LE;
+diff --cc arch/mips/kernel/ptrace.c
+index 4137a49eae26,65ba622baf3e..000000000000
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@@ -706,11 -671,10 +706,11 @@@ asmlinkage long syscall_trace_enter(str
+  	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
+  		trace_sys_enter(regs, regs->regs[2]);
+ =20
+- 	audit_syscall_entry(syscall_get_arch(current, regs),
++ 	audit_syscall_entry(syscall_get_arch(),
+ -			    regs->regs[2],
+ +			    syscall,
+  			    regs->regs[4], regs->regs[5],
+  			    regs->regs[6], regs->regs[7]);
+ +	return syscall;
+  }
+ =20
+  /*
+
+--Signature=_Tue__18_Mar_2014_15_15_29_+1100_3y4HHsUKBftS/T/J
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTJ8hlAAoJEMDTa8Ir7ZwV8lYP/icvMK/pMXbBP0axym3GKB7R
+gRzeL6yXpzIvH8dh4+O3M5kpv1Kygn34OnpzvRVHoFMAGf5KxSYGg03xg0FT+qhj
+rNq2owgteX/hz+pM8ilHOy3/DlVLLamje8OfAPLp6YWaprKpiL7B2tdBaDf93ELc
+oWG1NpKuVV70ZEQK71xIN3m80Nb+y7ouGLWgEVRuWbd69ZVPRUfeDCRvx7Ol126C
+6Suku8VG81rYi2r4KsjNvw3jihztv6Lf18WBM1Jj7CDMPji3nZ7pn2zhYhJxoFdC
+fwoaWN+lMXxCCNu4zMOW6c2YiZPQmq2T5mFtpv3KDJYpFEAL4FbG1vND2j5Xlu3I
+qISn3GrLQuWL2VEiSo4QNUoZn0liybxpgquZstN0wu8nh3ZmH8ZBC6RXvc5rzXGe
+QboH/pe5IAkKT5/+CVqZKoVq85J1xY432w9wNnLKZc768jBZ3crieP3Ni/jJ4D2q
+/cajSf4qagb0yuMgqeYF2Pk2kQWBfTeOrpkmfnGHiAv2K/6FlBnKmSy0OvUu6RaM
+JIB5w0RoUfRik8iTPnLANlhQhKxR4emZ+tXianKR5yAl4tiFrhE2TaFYcCuhS3ae
+xGn3qbWtZ7pt+m874NhMH7yW/81gYJC3a2YDRWXfMVTSj8FkfkQHOXnqMJaukhP3
+JPvPtvRXXa5MnUuGZa9g
+=uRdS
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__18_Mar_2014_15_15_29_+1100_3y4HHsUKBftS/T/J--
