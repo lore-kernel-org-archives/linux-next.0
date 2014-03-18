@@ -1,33 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the samsung tree
-Date: Tue, 18 Mar 2014 16:58:29 +1100
-Message-ID: <20140318165829.a13e43598654a1144d0325dd@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the arm-soc tree
+Date: Tue, 18 Mar 2014 17:10:59 +1100
+Message-ID: <20140318171059.a1134a2c670e1b18847f98d0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Mar_2014_16_58_29_+1100_ZWm+04+XM81cTegN"
+ boundary="Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55862 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:39367 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750957AbaCRF6i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Mar 2014 01:58:38 -0400
+	id S1750957AbaCRGLH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Mar 2014 02:11:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>
+To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris BREZILLON <b.brezillon@overkiz.com>, Jonathan Cameron <jic23@kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
---Signature=_Tue__18_Mar_2014_16_58_29_+1100_ZWm+04+XM81cTegN
+--Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-Documentation/devicetree/bindings/phy/samsung-phy.txt between commit
-ba0d7ed391b7 ("ARM: dts: enable ahci sata and sata phy for exynos5250")
-from the samsung tree and commit 06fb01373cae ("phy: Add new Exynos USB
-2.0 PHY driver") from the usb tree.
+Today's linux-next merge of the staging tree got a conflict in
+Documentation/devicetree/bindings/iio/adc/at91_adc.txt between commit
+b5303ffbcf11 ("Documentation: dt: iio: improve atmel-adc documentation")
+from the arm-soc tree and commit 1a5b7d41f8f6 ("iio: at91: document ADC
+clock properties") from the staging tree.
+
+[This file is renamed from
+Documentation/devicetree/bindings/arm/atmel-adc.txt in the arm-soc tree.]
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,129 +39,68 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/phy/samsung-phy.txt
-index a937f75d062c,28f9edb8f19c..000000000000
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@@ -21,38 -21,56 +21,92 @@@ Required properties
-  - reg : offset and length of the Display Port PHY register set;
-  - #phy-cells : from the generic PHY bindings, must be 0;
+diff --cc Documentation/devicetree/bindings/iio/adc/at91_adc.txt
+index 82061c7e4fea,9a1175b46f49..000000000000
+--- a/Documentation/devicetree/bindings/iio/adc/at91_adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/at91_adc.txt
+@@@ -5,7 -5,10 +5,10 @@@ Required properties
+      <chip> can be "at91sam9260", "at91sam9g45" or "at91sam9x5"
+    - reg: Should contain ADC registers location and length
+    - interrupts: Should contain the IRQ line for the ADC
++   - clock-names: tuple listing input clock names.
++ 	Required elements: "adc_clk", "adc_op_clk".
++   - clocks: phandles to input clocks.
+ -  - atmel,adc-channels-used: Bitmask of the channels muxed and enable for=
+ this
+ +  - atmel,adc-channels-used: Bitmask of the channels muxed and enabled fo=
+r this
+      device
+    - atmel,adc-startup-time: Startup Time of the ADC in microseconds as
+      defined in the datasheet
+@@@ -41,14 -44,19 +44,16 @@@ Optional trigger Nodes
  =20
- +Samsung SATA PHY Controller
- +---------------------------
- +
- +SATA PHY nodes are defined to describe on-chip SATA Physical layer contro=
-llers.
- +Each SATA PHY controller should have its own node.
- +
- +Required properties:
- +- compatible        : compatible list, contains "samsung,exynos5250-sata-=
-phy"
- +- reg : offset and length of the SATA PHY register set;
- +- #phy-cells : from the generic phy bindings;
- +
- +Example:
- +	sata_phy: sata-phy@12170000 {
- +		compatible =3D "samsung,exynos5250-sata-phy";
- +		reg =3D <0x12170000 0x1ff>;
- +		clocks =3D <&clock 287>;
- +		clock-names =3D "sata_phyctrl";
- +		#phy-cells =3D <0>;
- +		samsung,exynos-sataphy-i2c-phandle =3D <&sata_phy_i2c>;
- +		samsung,syscon-phandle =3D <&pmu_syscon>;
- +	};
- +
- +Device-Tree bindings for sataphy i2c client driver
- +--------------------------------------------------
- +
- +Required properties:
- +compatible: Should be "samsung,exynos-sataphy-i2c"
- +- reg: I2C address of the sataphy i2c device.
- +
- +Example:
- +
- +	sata_phy_i2c:sata-phy@38 {
- +		compatible =3D "samsung,exynos-sataphy-i2c";
- +		reg =3D <0x38>;
- +	};
-++
-+ Samsung S5P/EXYNOS SoC series USB PHY
-+ -------------------------------------------------
-+=20
-+ Required properties:
-+ - compatible : should be one of the listed compatibles:
-+ 	- "samsung,exynos4210-usb2-phy"
-+ 	- "samsung,exynos4x12-usb2-phy"
-+ 	- "samsung,exynos5250-usb2-phy"
-+ - reg : a list of registers used by phy driver
-+ 	- first and obligatory is the location of phy modules registers
-+ - samsung,sysreg-phandle - handle to syscon used to control the system re=
-gisters
-+ - samsung,pmureg-phandle - handle to syscon used to control PMU registers
-+ - #phy-cells : from the generic phy bindings, must be 1;
-+ - clocks and clock-names:
-+ 	- the "phy" clock is required by the phy module, used as a gate
-+ 	- the "ref" clock is used to get the rate of the clock provided to the
-+ 	  PHY module
-+=20
-+ The first phandle argument in the PHY specifier identifies the PHY, its
-+ meaning is compatible dependent. For the currently supported SoCs (Exynos=
- 4210
-+ and Exynos 4212) it is as follows:
-+   0 - USB device ("device"),
-+   1 - USB host ("host"),
-+   2 - HSIC0 ("hsic0"),
-+   3 - HSIC1 ("hsic1"),
-+=20
-+ Exynos 4210 and Exynos 4212 use mode switching and require that mode swit=
-ch
-+ register is supplied.
-+=20
-+ Example:
-+=20
-+ For Exynos 4412 (compatible with Exynos 4212):
-+=20
-+ usbphy: phy@125b0000 {
-+ 	compatible =3D "samsung,exynos4x12-usb2-phy";
-+ 	reg =3D <0x125b0000 0x100>;
-+ 	clocks =3D <&clock 305>, <&clock 2>;
-+ 	clock-names =3D "phy", "ref";
-+ 	status =3D "okay";
-+ 	#phy-cells =3D <1>;
-+ 	samsung,sysreg-phandle =3D <&sys_reg>;
-+ 	samsung,pmureg-phandle =3D <&pmu_reg>;
-+ };
-+=20
-+ Then the PHY can be used in other nodes such as:
-+=20
-+ phy-consumer@12340000 {
-+ 	phys =3D <&usbphy 2>;
-+ 	phy-names =3D "phy";
-+ };
-+=20
-+ Refer to DT bindings documentation of particular PHY consumer devices for=
- more
-+ information about required PHYs and the way of specification.
+  Examples:
+  adc0: adc@fffb0000 {
+ +	#address-cells =3D <1>;
+ +	#size-cells =3D <0>;
+  	compatible =3D "atmel,at91sam9260-adc";
+  	reg =3D <0xfffb0000 0x100>;
+ -	interrupts =3D <20 4>;
+ +	interrupts =3D <20 IRQ_TYPE_LEVEL_HIGH 0>;
++ 	clocks =3D <&adc_clk>, <&adc_op_clk>;
++ 	clock-names =3D "adc_clk", "adc_op_clk";
+ -	atmel,adc-channel-base =3D <0x30>;
+  	atmel,adc-channels-used =3D <0xff>;
+ -	atmel,adc-drdy-mask =3D <0x10000>;
+ -	atmel,adc-num-channels =3D <8>;
+  	atmel,adc-startup-time =3D <40>;
+ -	atmel,adc-status-register =3D <0x1c>;
+ -	atmel,adc-trigger-register =3D <0x08>;
+ -	atmel,adc-use-external;
+ +	atmel,adc-use-external-triggers;
+  	atmel,adc-vref =3D <3300>;
+  	atmel,adc-res =3D <8 10>;
+  	atmel,adc-res-names =3D "lowres", "highres";
 
---Signature=_Tue__18_Mar_2014_16_58_29_+1100_ZWm+04+XM81cTegN
+--Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJ+CMAAoJEMDTa8Ir7ZwVQZUP/3Ga+wtPLZp+fXo1IV53uoe+
-GsTa+uneOgt9Kxd1qMtEZvVbQeavV31JQ03Tkb+AabH6uAS6Hvn7pVF6oe5kEHbz
-HL3uDCAy5iEYLAIMMIad36GlAj+E0LvH5dRYiW97CLyFNLJsL3O1YCqbdYiiaG4j
-MHdA3C6QYdzgqyEUWtTbYIb9uqSzysV1E91CE5Wmvw5CEW5P8TwvqzSaKlqRpPML
-8zzXucbs4W4iDQlGquBWxD/EKFqEINCt/aeUkOg+Gfbo1OcLIL1VJ9upxT5kTYc1
-+axRCMCEz3YxpEKpRQEF34pCP1IkXpe/rYryS/LIY+ldu9/9i56oFjhsc01uqGW/
-hD4yuPgyWo9haedMHyZ/bdpf/SG3n3hJtzEDgtAHSllY7ZQvTWu0s6V7bl80E1Ck
-AvFYjdLcN0ek2KWTdqDruU1yu8igNRWHbO65MQKVM6/9O6wA3vpQP2U0bCL7szd6
-9FUoiyqZ0HV4piHh4Q0r4KFBbilJxeVJNYbZyPVi56AQE6U9W/XIgqTOJHuP39f/
-ZfP/7es2eHBLmzFeBXOqhvQU1TvFb4L5vbwuCOJaxMVGym3TksGp96rkwVSDs+Yd
-z6U4H3/FHd94VZvwnQ3ppOJpTXblJkLbc/bSyFH3i4qMjkThmwTUH5sJM9XitMGf
-BHkdqS4iFr1LivmqX2VW
-=cV+c
+iQIcBAEBCAAGBQJTJ+N3AAoJEMDTa8Ir7ZwVwaIQAIkmgkAPlpGxDsn/CaWlisl6
+g3qxxDYbyWaInlxSmVUFusXIejeyfmJdLNxr7qa6jXO8PWEFrg68CNN4kPgukYse
+8CidKcSjBq7adbkozAsbPFNcDxh4XdOU869uoMXD85UMSzM6nC4Bq42b+WcA/qLE
+V4eh22WRX3iFeuIQSWAlCPsVQ3AmLpbSEOpoe0GlhyxxpcDsqMlo8q0ikTeg19NE
+5HuLW0VxdYysrIGwNdzyrM7S4yoyyJclIKG/Qyi3phGoF2aEEeWghv1acGfJyCz+
+G+lPcfsgs66YKMJ5996ZvFbCAamrv8IQ+V9qZ9+dKoPmS7n9K9xK1HNS7F/wAiiz
+HcF/nvMTu7+ymZDq+C4+xJRrPWKZEO7dyUSYHZMlBCVu52MwsOmK0IxG2AqD8WYA
+esurYhrqCVi0zorNI/cictI0YoXRqDHmajv5/yDzzo8sjJBZ8y+Uu1EA7GZWBQDm
+CB6TRJbZq31Rb1/ySqKrnQI5rlpZfMx4a4ogV295wsgFHc9S7iR7K6utVkEW7K8E
+nBg/ZUrqtvc99cdGvkotHaf5AdZIwaY+ISDXaoD4wsZMJmNpwuduEyzo7u+u1667
+piP7L0PrbLhtwB5AR0HO60Aq+Pzu2jLEu4VCLL8MesLdsN2zNQ/pQM/nDLvoqGZL
+KSwhKUQocctBUT+BQZ1z
+=/JqS
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Mar_2014_16_58_29_+1100_ZWm+04+XM81cTegN--
+--Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8--
