@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the arm-soc tree
-Date: Tue, 18 Mar 2014 17:10:59 +1100
-Message-ID: <20140318171059.a1134a2c670e1b18847f98d0@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
+Date: Tue, 18 Mar 2014 17:15:06 +1100
+Message-ID: <20140318171506.d94275bb6dcad73899fd39fe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8"
+ boundary="Signature=_Tue__18_Mar_2014_17_15_06_+1100_rVIp=+YKCcebiFdT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:39367 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:37477 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750957AbaCRGLH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Mar 2014 02:11:07 -0400
+	id S1750923AbaCRGPN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Mar 2014 02:15:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris BREZILLON <b.brezillon@overkiz.com>, Jonathan Cameron <jic23@kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uma Sharma <uma.sharma523@gmail.com>, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, Antti Palosaari <crope@iki.fi>
 
---Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8
+--Signature=_Tue__18_Mar_2014_17_15_06_+1100_rVIp=+YKCcebiFdT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,13 +24,10 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-Documentation/devicetree/bindings/iio/adc/at91_adc.txt between commit
-b5303ffbcf11 ("Documentation: dt: iio: improve atmel-adc documentation")
-from the arm-soc tree and commit 1a5b7d41f8f6 ("iio: at91: document ADC
-clock properties") from the staging tree.
-
-[This file is renamed from
-Documentation/devicetree/bindings/arm/atmel-adc.txt in the arm-soc tree.]
+drivers/staging/media/msi3101/sdr-msi3101.c between commit 3d0c8fa3c5a0
+("[media] msi3101: convert to SDR API") from the v4l-dvb tree and commit
+6e878c0299c1 ("staging: media/msi3101/sdr-msi3101.c removed warning")
+from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -39,68 +36,40 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/iio/adc/at91_adc.txt
-index 82061c7e4fea,9a1175b46f49..000000000000
---- a/Documentation/devicetree/bindings/iio/adc/at91_adc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/at91_adc.txt
-@@@ -5,7 -5,10 +5,10 @@@ Required properties
-      <chip> can be "at91sam9260", "at91sam9g45" or "at91sam9x5"
-    - reg: Should contain ADC registers location and length
-    - interrupts: Should contain the IRQ line for the ADC
-+   - clock-names: tuple listing input clock names.
-+ 	Required elements: "adc_clk", "adc_op_clk".
-+   - clocks: phandles to input clocks.
- -  - atmel,adc-channels-used: Bitmask of the channels muxed and enable for=
- this
- +  - atmel,adc-channels-used: Bitmask of the channels muxed and enabled fo=
-r this
-      device
-    - atmel,adc-startup-time: Startup Time of the ADC in microseconds as
-      defined in the datasheet
-@@@ -41,14 -44,19 +44,16 @@@ Optional trigger Nodes
+diff --cc drivers/staging/media/msi3101/sdr-msi3101.c
+index 011db2c08014,5a0400fdb98c..000000000000
+--- a/drivers/staging/media/msi3101/sdr-msi3101.c
++++ b/drivers/staging/media/msi3101/sdr-msi3101.c
+@@@ -132,7 -411,7 +132,7 @@@ struct msi3101_state=20
+  	unsigned int vb_full; /* vb is full and packets dropped */
  =20
-  Examples:
-  adc0: adc@fffb0000 {
- +	#address-cells =3D <1>;
- +	#size-cells =3D <0>;
-  	compatible =3D "atmel,at91sam9260-adc";
-  	reg =3D <0xfffb0000 0x100>;
- -	interrupts =3D <20 4>;
- +	interrupts =3D <20 IRQ_TYPE_LEVEL_HIGH 0>;
-+ 	clocks =3D <&adc_clk>, <&adc_op_clk>;
-+ 	clock-names =3D "adc_clk", "adc_op_clk";
- -	atmel,adc-channel-base =3D <0x30>;
-  	atmel,adc-channels-used =3D <0xff>;
- -	atmel,adc-drdy-mask =3D <0x10000>;
- -	atmel,adc-num-channels =3D <8>;
-  	atmel,adc-startup-time =3D <40>;
- -	atmel,adc-status-register =3D <0x1c>;
- -	atmel,adc-trigger-register =3D <0x08>;
- -	atmel,adc-use-external;
- +	atmel,adc-use-external-triggers;
-  	atmel,adc-vref =3D <3300>;
-  	atmel,adc-res =3D <8 10>;
-  	atmel,adc-res-names =3D "lowres", "highres";
+  	struct urb *urbs[MAX_ISO_BUFS];
+- 	int (*convert_stream) (struct msi3101_state *s, u8 *dst, u8 *src,
+ -	int (*convert_stream)(struct msi3101_state *s, u32 *dst, u8 *src,
+++	int (*convert_stream)(struct msi3101_state *s, u8 *dst, u8 *src,
+  			unsigned int src_len);
+ =20
+  	/* Controls */
 
---Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8
+--Signature=_Tue__18_Mar_2014_17_15_06_+1100_rVIp=+YKCcebiFdT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTJ+N3AAoJEMDTa8Ir7ZwVwaIQAIkmgkAPlpGxDsn/CaWlisl6
-g3qxxDYbyWaInlxSmVUFusXIejeyfmJdLNxr7qa6jXO8PWEFrg68CNN4kPgukYse
-8CidKcSjBq7adbkozAsbPFNcDxh4XdOU869uoMXD85UMSzM6nC4Bq42b+WcA/qLE
-V4eh22WRX3iFeuIQSWAlCPsVQ3AmLpbSEOpoe0GlhyxxpcDsqMlo8q0ikTeg19NE
-5HuLW0VxdYysrIGwNdzyrM7S4yoyyJclIKG/Qyi3phGoF2aEEeWghv1acGfJyCz+
-G+lPcfsgs66YKMJ5996ZvFbCAamrv8IQ+V9qZ9+dKoPmS7n9K9xK1HNS7F/wAiiz
-HcF/nvMTu7+ymZDq+C4+xJRrPWKZEO7dyUSYHZMlBCVu52MwsOmK0IxG2AqD8WYA
-esurYhrqCVi0zorNI/cictI0YoXRqDHmajv5/yDzzo8sjJBZ8y+Uu1EA7GZWBQDm
-CB6TRJbZq31Rb1/ySqKrnQI5rlpZfMx4a4ogV295wsgFHc9S7iR7K6utVkEW7K8E
-nBg/ZUrqtvc99cdGvkotHaf5AdZIwaY+ISDXaoD4wsZMJmNpwuduEyzo7u+u1667
-piP7L0PrbLhtwB5AR0HO60Aq+Pzu2jLEu4VCLL8MesLdsN2zNQ/pQM/nDLvoqGZL
-KSwhKUQocctBUT+BQZ1z
-=/JqS
+iQIcBAEBCAAGBQJTJ+RuAAoJEMDTa8Ir7ZwVBEYQAIlJeM0OYVmSpje56LbIIHqn
+lfCXzEHnWwVc7125hL7xmiEc4pA2YCJ5Vp+Tq6LWIBM8jZV/KAbBqtMpckqGPWrq
+ZOFNx3X4pV1UWFo+kxNYYZR3Lf8eS0n7yqg9YFV7o01noBeQ2ppYRHCEzmv/wBFB
+wWMa6Dp2kFb8D3A41Ya1XjLdTmiRJ1rUadSzGToZEz/tGf57RvteOuPVvMnMvHbQ
+82MbBED/go7ooUwJv01xaRGqeA+xoFX9ir5FzK1Nuo1Ri+WO+U7DdjRWIxcJdSgU
+CupjxzwRYt29eHqSqaBhhVLdiZG6cvJ/75w9fcVmf5oa0lN95nliLh7XaO/zB0rB
+FEwYJgXOLwuXhBB49++b49Y/uLpqKMLdJt/6088I/+ErRcXM5j8uTUVb3MRhgbWY
+vhTjFDeDPh02/hr+/1bxT+7IPryy3Oy7/EUzIscJo0GuBFW0IaIVLfYvTShvJcm2
+DOrn9toRbQG60pP3l/eiTnbmkBNu1keK9ICfhEuyMFGOTuAA2JF1df1U1HiMb32z
+DeMCrxm3sQ7JBrnuKl9ykZURVqUcTqJTJVSbmy/B/gSWi4+gFTnCKQgXUHURxBkA
+8poD47+23a7aq1MLMKD7deZJiAYILtFkKsksrb7SdgaZdb+n+/H3muRXxHyUAla7
+jHkmZxbzJN/divGqrZKB
+=y1qh
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Mar_2014_17_10_59_+1100_YJ_Oe62b8_MZoce8--
+--Signature=_Tue__18_Mar_2014_17_15_06_+1100_rVIp=+YKCcebiFdT--
