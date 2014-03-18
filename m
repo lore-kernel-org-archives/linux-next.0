@@ -1,61 +1,93 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Request to update imx-mxs tree for linux-next
-Date: Tue, 18 Mar 2014 10:42:53 +1100
-Message-ID: <20140318104253.78904e5f522f1ea3f0fe5a68@canb.auug.org.au>
-References: <20140311150853.GD26502@S2101-09.ap.freescale.net>
+From: Stewart Smith <stewart@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 18 Mar 2014 11:00:58 +1100
+Message-ID: <87siqggyth.fsf@river.i-did-not-set--mail-host-address--so-tickle-me>
+References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org> <20140312015021.GC10106@kroah.com> <20140317101611.d043a90e1cb72dcfb8bc767a@canb.auug.org.au> <20140317183333.GE10565@kroah.com> <1395088410.15098.175.camel@pasglop> <20140317215619.GA25228@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP"
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:38437 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751180AbaCQXm7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 19:42:59 -0400
-In-Reply-To: <20140311150853.GD26502@S2101-09.ap.freescale.net>
+Received: from e23smtp07.au.ibm.com ([202.81.31.140]:52743 "EHLO
+	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751953AbaCRABN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Mar 2014 20:01:13 -0400
+Received: from /spool/local
+	by e23smtp07.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <stewart@linux.vnet.ibm.com>;
+	Tue, 18 Mar 2014 10:01:11 +1000
+In-Reply-To: <20140317215619.GA25228@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Greg KH <greg@kroah.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Shawn,
-
-On Tue, 11 Mar 2014 23:08:54 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
+Greg KH <greg@kroah.com> writes:
+> On Tue, Mar 18, 2014 at 07:33:30AM +1100, Benjamin Herrenschmidt wrote:
+>> On Mon, 2014-03-17 at 11:33 -0700, Greg KH wrote:
+>> 
+>> > There were only 3 (or 4), users of this api, and no new ones had been
+>> > added in _years_, it's a very obscure thing, and odds are, it wouldn't
+>> > ever be added again, especially as it was just removed entirely not
+>> > being needed anymore.  And I'd argue, it's something that you shouldn't
+>> > have even been doing in the first place, so why a new user of it was
+>> > added now is quite strange to me.
+>> 
+>> Actually that's a good question. Is there a better way for us than to
+>> use this API ? Essentially we use that because it's our understanding
+>> that it is what is needed for a sysfs file that can remove its parent
+>> directory from within a write() op.
+>> 
+>> We followed the driver "remove" implementation as an example.
+>> 
+>> The reason the opal elog and dump patches use it is that those two
+>> patches add sysfs interface that represent the error logs (and platform
+>> dumps but you can treat the latter as some kind of special case of error
+>> logs) from the service processor in sysfs.
+>> 
+>> So for each log we create a dir (kobject) which we populate with a few
+>> things like the log unique ID, raw data, etc.... and a file that can be
+>> used to "ack" the log with the service processor.
+>> 
+>> The latter has the effect of removing it. This is done by the collection
+>> daemon after it has confirmed that the error log has been stored to disk
+>> and properly flushed.
+>> 
+>> Is there a better interface ? Can we implement for example unlink() on
+>> the kobject itself ? IE. Do the ack by essentially having userspace rm
+>> the directory ? :-)
 >
-> We're moving imx-mxs tree from Linaro git server to kernel.org.  Can you
-> please update the imx-mxs tree for linux-next to the following one?
->=20
->  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+> No you can't, sorry.
+>
+> And this seems like a huge abuse of sysfs, you better be using binary
+> sysfs files for your log data...
 
-Done.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+We are. It's a binary format we get from the service processor that we
+then parse in userspace.
 
---Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP
-Content-Type: application/pgp-signature
+Seeing as each of these log entries is a separate thing that can be
+retrieved and acknowledged to the service processor, it seemed fitting
+to have each of them exposed to userspace so that policy can be dictated
+there (acking them removes them from FSP and we have use cases for
+peeking at them)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+If there's a better way, I'd be interested in hearing it - it appeared
+to be relatively good fit for sysfs (no sysadmin overhead, busybox has
+enough utility to semi-meaningfully poke at it).
 
-iQIcBAEBCAAGBQJTJ4iBAAoJEMDTa8Ir7ZwVTP0QAJBTLRPiDuEgDWXXqKb15LI/
-MTCbxnBslgvQQGJ8/qGInORNLhZ4nKyT1pxqrLDrGXJVQQdqHbCiiR2vGgtSbvuA
-iLDII+KwGYkLMrtnYcV/YpYW6FeNoTziRDakdEMOItG8nXcAGnKNQiLFs4u82cAO
-Z3e+dHAS4/NasVAj469BpvlgSeWp7cTUfd4nzJDB0/mowFqFuiQEK5sHPx4pVBE9
-psGmh8WXSr5+H/3xZY4pu2p7Tq5Nl7zRjevHt+x+od35mKgSPu/7qvsbDHlqIqBz
-1kITlYfovUy6f9cXlM4+KrdgieOtL9ABKXxD+6HI3BezPT3t8VvlTI12KeQvozRz
-Y3Kug14ntUc1iO0qH/FkcwbwvslyKNDPqqKVqOnIOoIXfTePNlx8hetA1bwU8Le6
-/L513IpLvyFg6ucdMpZWH1BQiVLHV6XN85e6qf4r1vXXb7GGgA0PQliqsVD9zX3N
-EbYcwsaUQIwpKXLRRfJ1HdrbDvsT4+KoOxCvwF1T5MJLrd5NA2x04AvID09P1R3i
-QAPEVi5zwPoCxH43aoCYa/QttXmdPbv13EU/+ZOfckT8KCS8YUU80XcXuGbC22mV
-2dDryhRvoz3veHTGwu3RZRKiBrX7TmolH3VYWktOR02aljaN2FVSZgkeLYw5k7WY
-v9E9umOCpTQmuZQM3RvK
-=2Phh
------END PGP SIGNATURE-----
+> Do you have a pointer to where you document this sysfs api in
+> Documentation/ABI/ ?
 
---Signature=_Tue__18_Mar_2014_10_42_53_+1100_v7nU1gUrIdT0jyxP--
+Yes:
+- Documentation/ABI/stable/sysfs-firmware-opal-dump
+- Documentation/ABI/stable/sysfs-firmware-opal-elog
+
+>> Now regarding the practicals of sorting out our trees, Stephen suggested
+>> that rather than doing anything on my side (heh, I like that !), you
+>> should revert the last patch of the series, the one removing the old
+>> API, in your tree.
+>> 
+>> It can then be re-applied later around rc1.
+>
+> I'll look to see if we can do that, let me dig it up out of my tree...
+
+Thanks. The new API looks like it should work fine for us, I'll be sure
+to covert my API usage and let you know.
