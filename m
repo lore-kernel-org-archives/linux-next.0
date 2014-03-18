@@ -1,61 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the arm-soc tree
-Date: Tue, 18 Mar 2014 11:21:38 +1100
-Message-ID: <20140318112138.75a24ca8a0719d5b3fb98720@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 18 Mar 2014 11:22:26 +1100
+Message-ID: <1395102146.15098.198.camel@pasglop>
+References: <20140312005152.9ac4063f65dbd233f5d50b4d@kernel.org>
+	 <20140312015021.GC10106@kroah.com>
+	 <20140317101611.d043a90e1cb72dcfb8bc767a@canb.auug.org.au>
+	 <20140317183333.GE10565@kroah.com> <1395088410.15098.175.camel@pasglop>
+	 <20140317215619.GA25228@kroah.com> <20140317220554.GG17373@mtj.dyndns.org>
+	 <20140317222107.GH17373@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__18_Mar_2014_11_21_38_+1100_pcZ9NIDEJ8LVe.Y1"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:57970 "EHLO ozlabs.org"
+Received: from gate.crashing.org ([63.228.1.57]:57397 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752777AbaCRAVp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Mar 2014 20:21:45 -0400
+	id S1750716AbaCRAWo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Mar 2014 20:22:44 -0400
+In-Reply-To: <20140317222107.GH17373@mtj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann s <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Stewart Smith <stewart@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__18_Mar_2014_11_21_38_+1100_pcZ9NIDEJ8LVe.Y1
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2014-03-17 at 18:21 -0400, Tejun Heo wrote:
+> So, looked at the failed code.  The only necessary change seems to be
+> calling device_remove_file_self() in dump_ack_store() and then doing
+> kobject_put() directly afterwards, which would have been completely
+> fine as a merge fix patch.
 
-Hi all,
+Ok. Since there's no merge error, I'll have to tell Linus explicitly to
+apply it during the merge. I've never done that before but I suppose
+it's doable.
 
-Today's linux-next merge of the mvebu tree got a conflict in
-arch/arm/boot/dts/Makefile between commit 8fc1b0f87d9f ("ARM: qcom: Split
-Qualcomm support into legacy and multiplatform") from the arm-soc tree
-and commits 97623e934388 ("Merge branch 'mvebu/dt' into for-next") and
-54cab10f63f2 ("Merge branch 'mvebu/soc3' into next/dt") from the mvebu
-tree.
+> Just to be clear, I'm not necessarily against reverting the removal of
+> the API.  The removal was based on the speculation that this isn't
+> likely to cause trouble.  The speculation was perfectly reasonable but
+> being a speculation it failed, so we take actions to remedy that and
+> we *do* want to do things that way.  Reverting the removal can sure be
+> one choice but the way that choice is being made here seems completely
+> wrong to me.  There's no technical evaluation whatsoever.  I'd really
+> hate to work in an environment where taking active trade off is
+> discouraged replaced with blind policy enforcement.
 
-I fixed it up (which produced no git diff) and can carry the fix as
-necessary (no action is required).
+Sorry I don't understand. Reverting the removal until after -rc1 (or
+later in the merge window) is the easiest path from my perspective and
+ensure no bisection breakage but whatever Linus prefers works here.
 
---=20
+I don't think it's a drastic action or anything like that. It can
+trivially be re-applied once the merge window has settled. But I'm happy
+to also just send Linus a "apply this as a merge fixup" patch if he's
+happy with the method (as I said, I've never done that before on
+something that doesn't have an actual merge conflict to begin with)
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__18_Mar_2014_11_21_38_+1100_pcZ9NIDEJ8LVe.Y1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTJ5GWAAoJEMDTa8Ir7ZwVepAP/jOeP6HWmmVFMWmwWXgRszwX
-N7JEG+YlDxWx/wbZfBYf9zagAMlbAURoHk+3UsnAq4ioQKAlhlcDVjib3FYGtGiE
-egSXEhoqOyVL3cwAdodc9VvSTOtcn/QHfpMPFhTlo/L2RYtJzS8dDG39Rah5QO6N
-Rno7Fl/s3CRqTNriVILycZXZffi/VqCsssoRXQVtM9TyC1mixbSFCHSlkCaKfkph
-wDwFHeKuKWCgm4JEydiJjciwFDt6+llxd8FBXZ+u9+GpRglVFzRrEe4Znjqnf6VY
-zEPyj52PAYUCtTcEi/l/YucQwSLpYRY2Ub/BNNWUEj3nqieJRR4hqYTtlDW4Gyn5
-FuUPxcZaROvJvnzz32lPbRoXL5wvpQFela1ymvHCIkqU6+sLEGNPThBxyDwo+bC6
-Dvu+4sIXDb594+FCwd0+NrS1tw3HBM+fSJ5TS4XWBtyCZGW7O1/10VHedNAelgum
-tL2lWjK267dlC9FXWBnW2LmAFFymoadTI79K8R96XemicdqBd72SUJrr1JJtE3Mx
-CtRyBksyuxpq4N63Ve5V9f8KFR85edrYpkQgddugIumklO9MAD+Xaf+3AXhvXemA
-QRNQ2XLRkLUnRjoqoaFcyUL2H4cAzm7bgzIfcQIsuLjtwfzg3Zh9WXRfCPJ+1Uor
-GyhDAxkyxPGh7IF5gZF0
-=/fR/
------END PGP SIGNATURE-----
-
---Signature=_Tue__18_Mar_2014_11_21_38_+1100_pcZ9NIDEJ8LVe.Y1--
+Ben.
