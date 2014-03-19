@@ -1,64 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the drm tree
-Date: Wed, 19 Mar 2014 15:22:10 +1100
-Message-ID: <20140319152210.e79924dacd3a613965d104a3@canb.auug.org.au>
+Subject: linux-next: manual merge of the random tree with Linus' tree
+Date: Wed, 19 Mar 2014 16:56:08 +1100
+Message-ID: <20140319165608.739527f179d25c63ebb583ea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Mar_2014_15_22_10_+1100_TduQU=lLzT/V8/WP"
+ boundary="Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:50119 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:43415 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751599AbaCSEWV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Mar 2014 00:22:21 -0400
+	id S1752733AbaCSF4P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Mar 2014 01:56:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Russell King <rmk+kernel@arm.linux.org.uk>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, "H. Peter Anvin" <hpa@linux.intel.com>
 
---Signature=_Wed__19_Mar_2014_15_22_10_+1100_TduQU=lLzT/V8/WP
+--Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Theodore,
 
-Today's linux-next merge of the staging tree got conflicts in
-drivers/staging/imx-drm/imx-hdmi.c, drivers/staging/imx-drm/imx-ldb.c,
-drivers/staging/imx-drm/imx-tve.c and
-drivers/staging/imx-drm/parallel-display.c between commits 69fa5293bf8d
-("drm/kms: rip out drm_mode_connector_detach_encoder") and fc1645ac826c
-("drm/imx: remove drm_mode_connector_detach_encoder harder") from the drm
-tree and commit 1b3f76756633 ("imx-drm: initialise drm components
-directly") from the staging tree.
+Today's linux-next merge of the random tree got a conflict in
+arch/x86/include/asm/archrandom.h between commit 5bfce5ef55cb ("x86,
+kaslr: Provide randomness functions") from Linus' tree and commits
+e3be36e60bdc ("x86, random: Enable the RDSEED instruction") and
+91a60dc7aa88 ("random: Add arch_has_random[_seed]()") from the random tree.
 
-I fixed it up (I used the staging tree version as it was a superset of
-the drm tree version) and can carry the fix as necessary (no action is
-required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__19_Mar_2014_15_22_10_+1100_TduQU=lLzT/V8/WP
+diff --cc arch/x86/include/asm/archrandom.h
+index e6a92455740e,c7ed4a61e928..000000000000
+--- a/arch/x86/include/asm/archrandom.h
++++ b/arch/x86/include/asm/archrandom.h
+@@@ -39,20 -42,16 +42,30 @@@
+ =20
+  #ifdef CONFIG_ARCH_RANDOM
+ =20
+ +/* Instead of arch_get_random_long() when alternatives haven't run. */
+ +static inline int rdrand_long(unsigned long *v)
+ +{
+ +	int ok;
+ +	asm volatile("1: " RDRAND_LONG "\n\t"
+ +		     "jc 2f\n\t"
+ +		     "decl %0\n\t"
+ +		     "jnz 1b\n\t"
+ +		     "2:"
+ +		     : "=3Dr" (ok), "=3Da" (*v)
+ +		     : "0" (RDRAND_RETRY_LOOPS));
+ +	return ok;
+ +}
+ +
++ /* A single attempt at RDSEED */
++ static inline bool rdseed_long(unsigned long *v)
++ {
++ 	unsigned char ok;
++ 	asm volatile(RDSEED_LONG "\n\t"
++ 		     "setc %0"
++ 		     : "=3Dqm" (ok), "=3Da" (*v));
++ 	return ok;
++ }
++=20
+  #define GET_RANDOM(name, type, rdrand, nop)			\
+  static inline int name(type *v)					\
+  {								\
+@@@ -80,15 -95,14 +109,21 @@@ GET_SEED(arch_get_random_seed_int, unsi
+  GET_RANDOM(arch_get_random_long, unsigned long, RDRAND_LONG, ASM_NOP3);
+  GET_RANDOM(arch_get_random_int, unsigned int, RDRAND_INT, ASM_NOP3);
+ =20
++ GET_SEED(arch_get_random_seed_long, unsigned long, RDSEED_LONG, ASM_NOP4);
++ GET_SEED(arch_get_random_seed_int, unsigned int, RDSEED_INT, ASM_NOP4);
++=20
+  #endif /* CONFIG_X86_64 */
+ =20
++ #define arch_has_random()	static_cpu_has(X86_FEATURE_RDRAND)
++ #define arch_has_random_seed()	static_cpu_has(X86_FEATURE_RDSEED)
++=20
+ +#else
+ +
+ +static inline int rdrand_long(unsigned long *v)
+ +{
+ +	return 0;
+ +}
+ +
+  #endif  /* CONFIG_ARCH_RANDOM */
+ =20
+  extern void x86_init_rdrand(struct cpuinfo_x86 *c);
+
+--Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTKRt5AAoJEMDTa8Ir7ZwVpJkP/RdZJ2wd2CJKqYz3RwnVtQ7h
-+4yPFX7oJWHpjBepTvZOpiVuhjommLwIdILy1mKhRj7XZZ2YYlAKSkX3msDLQ3Fy
-f2Lg0MgLAnXbqYeHiA92+X3wSv0jYC6R++316tmSUuVUaRnqBbNOZvW536+db99s
-59oGzMD24V++t5inS5u8Blnb5V/f05o/oMxgcI1OeA7UI0ff4hnPcX+LBvqoo5iz
-PwN2aGPYNBLh03gwmUBD7yrch+wKCy4qJhux0GXADEXuAz0laVSx/mw2Vo10jk87
-4MjK7A80RxPuFkqKBBteim0cyAP/ljQjJak3T/LuEHkJzZqsjeXs+rPUM1wfEVUN
-hrJ9mM9ox/s8dbDDAY0bvD/qhNWSn5GbBz187IO6UPBQ6+EzxpOb7LneuGbfpPL5
-7jcCC9Jc2GLtacEaRuGFTV/4M9DJYxbS5LWTGJSRPvva9i4UzDqCxFIGF5dXo1EA
-Cuk3t8++9WJDOCWpa8itb6i58VBKVZJ73GyX3Sg3XOEG3VBH20Zm/nZHlG7EKEDy
-E8CZnE3bEF/sCiVSt4MYR3VrNz0ZVeU7HcPABPy4E0w2tZp7tF/h+cU9T5Kqrts4
-oRuvFS7hiQuFVju6Srpbcas17YINdkiKQXwyR5VPVsg9ZcMZKpg9ZruTrQ3jvA/8
-Zsh7kQI+UO1SLj2YuunE
-=f1W4
+iQIcBAEBCAAGBQJTKTF9AAoJEMDTa8Ir7ZwV+tAQAIJaMQhrs5uTkfxmhPLd6rzX
+OFElO6hsHd4IyJFNAEoQRj3v6vVImiEk9+3dY304v1aXIthFGg4g5FNRUXheJLvF
+quYz9fsE8g2713Bq9Hu7OCQio07ePzIUaGNKpHY3AU+rHbSnaxZh4FcenBIlU1th
+AO3PHATnfxgxHlC9jbfASgiDNRZC4qgIHt5Lg7u64MZx45nStWSruOKFOX24Y6xn
+r3/DzEU27jXzy5PE3bcsciNL8k8cSiJcvknptz5n6DDKNzyC+2GrDSoZ9iaBLoKn
+N9S1A0U7NZjxwjVi+QmcGK9gNsvF02huox2MtQsIQlNW9trDZOYoy9lV1uQSr/AP
+b2DPjgzXwqYkvQN5SE1/hPcAi20Z+Wwh3G6Gdjv4KqcByVjcHBvRwjleibldDhkK
+PGhvT0wLlxdfV4p3kNyIPY7Q6Yk8ORHPtchxBt6CqHs9DhfOiAfylSWQ6161iwja
+ovnFfpLThMxc+nX+lFB2DNnCTTQMijz+xRS9EhWMo0auAYZgJ7JTzDefpI2gCh4Q
+TFgW9ppraQddQhvyHwrU+IqrHdEKff7g1QKpulrdUCzpttM7knj1TtTUpRihYym8
+0kwW0q2U5LM9BaoYps3hOs7KvjUOvjfQgaKKUOgbPTI3BUVBe6K4O/XtDoeCpcmR
+a7KOg4bLX6vOkn0Iw7fD
+=8sX9
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Mar_2014_15_22_10_+1100_TduQU=lLzT/V8/WP--
+--Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE--
