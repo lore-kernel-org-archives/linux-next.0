@@ -1,69 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 19 Mar 2014 12:10:00 +1100
-Message-ID: <20140319121000.ccea7c0440649976ae722abd@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: build failure after merge of the
+	drm-intel tree
+Date: Tue, 18 Mar 2014 21:18:42 -0400
+Message-ID: <20140318211842.017be730@gandalf.local.home>
+References: <20140319115350.7860f102a804a9975ba6e93d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Mar_2014_12_10_00_+1100_pmTAvu+dtHT+U2AM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55365 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758552AbaCSBKG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Mar 2014 21:10:06 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <Guangyu.Chen@freescale.com>, Jean-Francois Moine <moinejf@free.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20140319115350.7860f102a804a9975ba6e93d@canb.auug.org.au>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__19_Mar_2014_12_10_00_+1100_pmTAvu+dtHT+U2AM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 19 Mar 2014 11:53:50 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> Caused by commit a25ca17c1eac ("drm/i915: Do not dereference pointers
+> from ring buffer in evict event").
+> 
+> I have used the drm-intel tree from next-20140318 for today.
+> 
 
-sound/soc/generic/simple-card.c: In function 'asoc_simple_card_parse_of':
-sound/soc/generic/simple-card.c:188:47: error: 'struct simple_card_data' ha=
-s no member named 'daifmt'
-   ret =3D asoc_simple_card_sub_parse_of(np, priv->daifmt,
-                                               ^
-sound/soc/generic/simple-card.c:201:47: error: 'struct simple_card_data' ha=
-s no member named 'daifmt'
-   ret =3D asoc_simple_card_sub_parse_of(np, priv->daifmt,
-                                               ^
+Bah! I'm still suffering from jet lag (just came back from Linux-Tage
+in Chemnitz).
 
-Caused by commit 56556f333ae3 ("ASoC: simple-card: overwrite cpu_dai->fmt
-with codec_dai->fmt"). daifmt was removed from struct simple_card_data in
-commit c56c4d74c6f9 ("ASoC: simple-card: Simplify code").
+The next time I compile test a patch for a module, I'll make sure I have
+that module's config option set :-(  The woe of using localmodconfig. I
+should have picked the box with the i915. :-/
 
-I have used the sound-asoc tree from next-20140318 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Below is the fix. I'll repost a v2 of the original patch.
 
---Signature=_Wed__19_Mar_2014_12_10_00_+1100_pmTAvu+dtHT+U2AM
-Content-Type: application/pgp-signature
+Sorry about that.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+-- Steve
 
-iQIcBAEBCAAGBQJTKO5sAAoJEMDTa8Ir7ZwVcn0P/3wBmaLWB6DNN6wrpc5rc1SI
-wDRBAPccWyr8wwGxgfbgiNmZw2l+b66D0ccHugU/8Hnvy8mliFv5kYvN+3NhP/lK
-I6XHsFKRtiktaIhQ+4ECvlqWCm4QSbMIUIwC+aXQujAyjGBMs2p2hVjKjv64vOH/
-p9QSvYvqlVJ1iJq2qrCtQuWgu8zYJXFyCEvkgJROhUmbKXaR8GrnXk03YpZlV7Cc
-cmobPbztuCwjR9gQgERGNwdGrAa4vo9U1GLhtjRrNHPX0j0fOIR/OiRMPyXt3Rad
-9ZcZseoYc/iDCEIPovunX9bCGp/UtjkqFGvwB7yoSQSQQLtud7CP6n4Fzcbog2Yf
-hSaBWC8ArtxOaJm3FVFkXRV8VFCuz4WP+45LLOgN8kqFWB7DeQNvjTZiTCFsh7O2
-lRSrmBG5xoknRtUcYLYF0hOZSlVJuU8h9OXsbUeVaPtb+gNJYWVxxPVGhroi9HHp
-4wdfyxoc/euSTM6ZJ+m4HwPphiDVE2qe74q+HeTgjl/lAHyUml/xbS9+wyttWNi/
-IjuIG5Xn98ZhpM3voDSPQra51ZUQRe6/H/86i/1z8CQuQGPpqfyA7MGtF9hXGDUE
-epCvpzq+thrzfmIk4RxCdH5n1EvPmb6MVyEZhIzUuqH9ACeymyZYq6Up6ZaCfqJv
-0Mbd4y+iN7R915al3nNM
-=L2li
------END PGP SIGNATURE-----
-
---Signature=_Wed__19_Mar_2014_12_10_00_+1100_pmTAvu+dtHT+U2AM--
+diff --git a/drivers/gpu/drm/i915/i915_trace.h b/drivers/gpu/drm/i915/i915_trace.h
+index f3e8a90..783ae08 100644
+--- a/drivers/gpu/drm/i915/i915_trace.h
++++ b/drivers/gpu/drm/i915/i915_trace.h
+@@ -243,7 +243,7 @@ TRACE_EVENT(i915_gem_evict_vm,
+ 			    ),
+ 
+ 	    TP_fast_assign(
+-			   __entry->dev = dev->primary->index;
++			   __entry->dev = vm->dev->primary->index;
+ 			   __entry->vm = vm;
+ 			  ),
