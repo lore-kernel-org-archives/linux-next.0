@@ -1,45 +1,61 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: pull request: iwlwifi 2014-03-19
-Date: Wed, 19 Mar 2014 15:15:04 -0400
-Message-ID: <20140319191504.GB3355@tuxdriver.com>
-References: <532939A0.9000901@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 20 Mar 2014 07:30:39 +1100
+Message-ID: <20140320073039.0ca391a3b8bbc47274ca1efc@canb.auug.org.au>
+References: <20140319121000.ccea7c0440649976ae722abd@canb.auug.org.au>
+	<20140319101701.GU11706@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:43021 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755574AbaCSUap (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Mar 2014 16:30:45 -0400
+In-Reply-To: <20140319101701.GU11706@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <Guangyu.Chen@freescale.com>, Jean-Francois Moine <moinejf@free.fr>
+
+--Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <532939A0.9000901@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Emmanuel Grumbach <egrumbach@gmail.com>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2014 at 08:30:56AM +0200, Emmanuel Grumbach wrote:
-> Hi John,
-> 
-> This fixes the build failure faced by Stephen:
-> 
-> drivers/net/wireless/iwlwifi/mvm/debugfs.c: In function 'iwl_dbgfs_fw_error_dump_release':
-> drivers/net/wireless/iwlwifi/mvm/debugfs.c:161:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
->   vfree(file->private_data);
->   ^
-> 
-> Please pull.
-> 
-> 
-> The following changes since commit a82dda6cd492b8c88952be6f6527f3656f7ac585:
-> 
->   iwlwifi: mvm: disable uAPSD due to bugs in the firmware (2014-03-18 21:15:42 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next.git for-john
-> 
-> for you to fetch changes up to 192c80a2499cf2571924081c646262036d841484:
-> 
->   iwlwifi: mvm: add missing include (2014-03-19 08:25:05 +0200)
+Hi Mark,
 
-Pulling now...
+On Wed, 19 Mar 2014 10:17:01 +0000 Mark Brown <broonie@kernel.org> wrote:
+>
+> Sorry, it's fixed already - your fetch must've raced with my fix last
+> night.
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+No worries, that can happen since I fetch all the trees before I start
+merging.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTKf5zAAoJEMDTa8Ir7ZwVSmcP/2khdopLpkekEgsoaHU76ZLQ
+IPS8HYCps7Z0kpjPO9isArFzsiK5gk3IbIb341qTIqPAtDDATSohffCFMVNNxa3+
+xXX2OlUC97xjtnYdcRgcI5ufOVX/lQ6X60VDAVRH2Y9BPTjXIUylp+NPFnLDCzxw
+EKm3FssFzY645aRzuX+M/eDfgnvxLVET969iwLUAtQ5OfaECqXNwMfRGzpv4fklc
+VRgXQqlFmcfd8frfuQsDDPYpYbcGPe/Jm/sUuK/t+yVMOtZUkUH/jNgoYWSqQy1v
+ddGM6LebI0IKpqwHdqUXp3r2a92+vZIMxvsZIB8/lmLHV4grxs4HdcIiXoNMtyTk
+EbbNYEyuwyQc0Jq4RzspLeasCa+ErEdBB3pFtHLdGqmsFasdtPHTHJN8JQg1qFvJ
+iT/tulqGFGBFVyAScxwThswTS6suw7mPUkqFl9gl0Duu+5l+mOb6PCKvhx2CzRq7
+X6WLZUBwkffO4Iqjr6h35kJZx10UcSu0q0ELOXqXPzQuslvC0aaopSYNEvwjS/4n
+g8XkBjTLufzAHXsvHXYBFDIrfOxGyqS5UDrlbZEpAjbiU/0AGu2isftxU/9QMevv
+LsScQ1MkPlWdgCklKfB+l4QhRktp4wr9hicC0I/BSlAuhS67IcR762FPIeoTMQp0
+PiSe58QJlqg1yPozzwTs
+=qe4n
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S--
