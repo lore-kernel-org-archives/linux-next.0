@@ -1,61 +1,108 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 20 Mar 2014 07:30:39 +1100
-Message-ID: <20140320073039.0ca391a3b8bbc47274ca1efc@canb.auug.org.au>
-References: <20140319121000.ccea7c0440649976ae722abd@canb.auug.org.au>
-	<20140319101701.GU11706@sirena.org.uk>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+ tree
+Date: Wed, 19 Mar 2014 16:27:29 -0700
+Message-ID: <20140319162729.9b9f322b171140548b25c7af@linux-foundation.org>
+References: <20140317203124.3b947e0799cc8142df5e4a2e@canb.auug.org.au>
+	<20140317093602.GY27965@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:43021 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755574AbaCSUap (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Mar 2014 16:30:45 -0400
-In-Reply-To: <20140319101701.GU11706@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <Guangyu.Chen@freescale.com>, Jean-Francois Moine <moinejf@free.fr>
-
---Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140317093602.GY27965@twins.programming.kicks-ass.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mark,
+On Mon, 17 Mar 2014 10:36:02 +0100 Peter Zijlstra <peterz@infradead.org> wrote:
 
-On Wed, 19 Mar 2014 10:17:01 +0000 Mark Brown <broonie@kernel.org> wrote:
->
-> Sorry, it's fixed already - your fetch must've raced with my fix last
-> night.
+> On Mon, Mar 17, 2014 at 08:31:24PM +1100, Stephen Rothwell wrote:
+> > Hi Andrew,
+> > 
+> > Today's linux-next merge of the akpm-current tree got a conflict in
+> > kernel/locking/Makefile between commit fb0527bd5ea9 ("locking/mutexes:
+> > Introduce cancelable MCS lock for adaptive spinning") from the  tree and
+> > commit 4dc0fe493027 ("lglock: map to spinlock when !CONFIG_SMP") from the
+> > akpm-current tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary (no action
+> > is required).
+> 
+> I'm a bit sad of not having seen that lglock patch at all.
 
-No worries, that can happen since I fetch all the trees before I start
-merging.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Here 'tis:
 
---Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S
-Content-Type: application/pgp-signature
+From: Josh Triplett <josh@joshtriplett.org>
+Subject: lglock: map to spinlock when !CONFIG_SMP
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+When the system has only one CPU, lglock is effectively a spinlock; map it
+directly to spinlock to eliminate the indirection and duplicate code.
 
-iQIcBAEBCAAGBQJTKf5zAAoJEMDTa8Ir7ZwVSmcP/2khdopLpkekEgsoaHU76ZLQ
-IPS8HYCps7Z0kpjPO9isArFzsiK5gk3IbIb341qTIqPAtDDATSohffCFMVNNxa3+
-xXX2OlUC97xjtnYdcRgcI5ufOVX/lQ6X60VDAVRH2Y9BPTjXIUylp+NPFnLDCzxw
-EKm3FssFzY645aRzuX+M/eDfgnvxLVET969iwLUAtQ5OfaECqXNwMfRGzpv4fklc
-VRgXQqlFmcfd8frfuQsDDPYpYbcGPe/Jm/sUuK/t+yVMOtZUkUH/jNgoYWSqQy1v
-ddGM6LebI0IKpqwHdqUXp3r2a92+vZIMxvsZIB8/lmLHV4grxs4HdcIiXoNMtyTk
-EbbNYEyuwyQc0Jq4RzspLeasCa+ErEdBB3pFtHLdGqmsFasdtPHTHJN8JQg1qFvJ
-iT/tulqGFGBFVyAScxwThswTS6suw7mPUkqFl9gl0Duu+5l+mOb6PCKvhx2CzRq7
-X6WLZUBwkffO4Iqjr6h35kJZx10UcSu0q0ELOXqXPzQuslvC0aaopSYNEvwjS/4n
-g8XkBjTLufzAHXsvHXYBFDIrfOxGyqS5UDrlbZEpAjbiU/0AGu2isftxU/9QMevv
-LsScQ1MkPlWdgCklKfB+l4QhRktp4wr9hicC0I/BSlAuhS67IcR762FPIeoTMQp0
-PiSe58QJlqg1yPozzwTs
-=qe4n
------END PGP SIGNATURE-----
+In addition to removing overhead, this drops 1.6k of code with a defconfig
+modified to have !CONFIG_SMP, and 1.1k with a minimal config.
 
---Signature=_Thu__20_Mar_2014_07_30_39_+1100_e.KRfo4++RjW1O/S--
+Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Michal Marek <mmarek@suse.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Nick Piggin <npiggin@kernel.dk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ include/linux/lglock.h  |   16 ++++++++++++++++
+ kernel/locking/Makefile |    3 ++-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff -puN include/linux/lglock.h~lglock-map-to-spinlock-when-config_smp include/linux/lglock.h
+--- a/include/linux/lglock.h~lglock-map-to-spinlock-when-config_smp
++++ a/include/linux/lglock.h
+@@ -25,6 +25,8 @@
+ #include <linux/cpu.h>
+ #include <linux/notifier.h>
+ 
++#ifdef CONFIG_SMP
++
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ #define LOCKDEP_INIT_MAP lockdep_init_map
+ #else
+@@ -57,4 +59,18 @@ void lg_local_unlock_cpu(struct lglock *
+ void lg_global_lock(struct lglock *lg);
+ void lg_global_unlock(struct lglock *lg);
+ 
++#else
++/* When !CONFIG_SMP, map lglock to spinlock */
++#define lglock spinlock
++#define DEFINE_LGLOCK(name) DEFINE_SPINLOCK(name)
++#define DEFINE_STATIC_LGLOCK(name) static DEFINE_SPINLOCK(name)
++#define lg_lock_init(lg, name) spin_lock_init(lg)
++#define lg_local_lock spin_lock
++#define lg_local_unlock spin_unlock
++#define lg_local_lock_cpu(lg, cpu) spin_lock(lg)
++#define lg_local_unlock_cpu(lg, cpu) spin_unlock(lg)
++#define lg_global_lock spin_lock
++#define lg_global_unlock spin_unlock
++#endif
++
+ #endif
+diff -puN kernel/locking/Makefile~lglock-map-to-spinlock-when-config_smp kernel/locking/Makefile
+--- a/kernel/locking/Makefile~lglock-map-to-spinlock-when-config_smp
++++ a/kernel/locking/Makefile
+@@ -1,5 +1,5 @@
+ 
+-obj-y += mutex.o semaphore.o rwsem.o lglock.o mcs_spinlock.o
++obj-y += mutex.o semaphore.o rwsem.o mcs_spinlock.o
+ 
+ ifdef CONFIG_FUNCTION_TRACER
+ CFLAGS_REMOVE_lockdep.o = -pg
+@@ -14,6 +14,7 @@ ifeq ($(CONFIG_PROC_FS),y)
+ obj-$(CONFIG_LOCKDEP) += lockdep_proc.o
+ endif
+ obj-$(CONFIG_SMP) += spinlock.o
++obj-$(CONFIG_SMP) += lglock.o
+ obj-$(CONFIG_PROVE_LOCKING) += spinlock.o
+ obj-$(CONFIG_RT_MUTEXES) += rtmutex.o
+ obj-$(CONFIG_DEBUG_RT_MUTEXES) += rtmutex-debug.o
+_
