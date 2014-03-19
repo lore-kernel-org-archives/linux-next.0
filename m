@@ -1,63 +1,58 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [Intel-gfx] linux-next: build failure after merge of the
- drm-intel tree
-Date: Wed, 19 Mar 2014 08:20:06 +0100
-Message-ID: <CAKMK7uFEBe6RwgHBzJ7zwzqhTg1s+mxFKcfVxo6oychvZzZeFw@mail.gmail.com>
-References: <20140319115350.7860f102a804a9975ba6e93d@canb.auug.org.au>
- <20140318211842.017be730@gandalf.local.home>
- <20140319015415.GD7956@bwidawsk.net>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 19 Mar 2014 10:17:01 +0000
+Message-ID: <20140319101701.GU11706@sirena.org.uk>
+References: <20140319121000.ccea7c0440649976ae722abd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140319015415.GD7956@bwidawsk.net>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ben Widawsky <ben@bwidawsk.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RuZRL+GX2sd4FWYD"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44293 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758999AbaCSKRM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Mar 2014 06:17:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20140319121000.ccea7c0440649976ae722abd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolin Chen <Guangyu.Chen@freescale.com>, Jean-Francois Moine <moinejf@free.fr>
 
-On Wed, Mar 19, 2014 at 2:54 AM, Ben Widawsky <ben@bwidawsk.net> wrote:
-> On Tue, Mar 18, 2014 at 09:18:42PM -0400, Steven Rostedt wrote:
->> On Wed, 19 Mar 2014 11:53:50 +1100
->> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->>
->> > Caused by commit a25ca17c1eac ("drm/i915: Do not dereference pointers
->> > from ring buffer in evict event").
->> >
->> > I have used the drm-intel tree from next-20140318 for today.
->> >
->>
->> Bah! I'm still suffering from jet lag (just came back from Linux-Tage
->> in Chemnitz).
->>
->> The next time I compile test a patch for a module, I'll make sure I have
->> that module's config option set :-(  The woe of using localmodconfig. I
->> should have picked the box with the i915. :-/
->>
->> Below is the fix. I'll repost a v2 of the original patch.
->>
->> Sorry about that.
->>
->
-> I was about to send out the same fix when I saw this.
->
-> Reviewed-by: Ben Widawsky <ben@bwidawsk.net>
 
-Just fixed this this morning before starting to read mail - my
-apologies the mess me pushing out a patch yesterday right before
-rushing out caused, really shouldn't be doing that ;-)
+--RuZRL+GX2sd4FWYD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On Wed, Mar 19, 2014 at 12:10:00PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+
+Sorry, it's fixed already - your fetch must've raced with my fix last
+night.
+
+--RuZRL+GX2sd4FWYD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTKW6aAAoJELSic+t+oim9GSoQAJ2raYipevFF3PSU9S76DkJw
+UHzppgubEAp8rDUoNIpxbgI65cg1TogLnlLxXynL/wks34f0dnt2458uuGZoSkkE
++TM0tBnYmai8TxPm8ExG86hI+RVlfwl0dxrt9sRPvPj6au837tmmzUwOTSgtXTGA
+R4tB3FSjDnDQzf3LpeXQ7M2szhkL9uNyrAsMtmYBvkzrqwzw9e/Ez/dGWSiDsZG1
+ROmRHBr9tP751ly6/SMyhhT843keeXI7xuJjPj5+N5B+CJ6PdNIZm/hWWreuTrol
+hi59iCR3M3PkmAc5YGlSytdERbAOVZEOG6FZjNyqic6ak99xAhcDPu1xUX+uqrXK
+CVKlf9dcHd/0DDTzkuZ84VH0KDI72GvMQ6NZ40kn9DKrC7Yl3Ml05Cks5m3FJyW2
+5U6K6p2fOYJF9GRXj+a+D6PZE4OGYxj5g1C9E+h7ifkwdm2gfjWwIYxiVPTZeKaG
+fDeEXX6iE7LRHmYNVX2jL4q7n1CvqIx7OTTVUhkcHD3OpjrQkL1Rk0xCjfjo1uPJ
+9WLbF7D971jInVmwAxsIZHj++CZKuXPGOX1275g2apE/NhAaibneZ3mFGbeI71jz
+Fadw4eZfWgbaXoB9j7Rdw08Mcof8C3A+aaA7W1pAGoVeND52mydtYbKXtCPgL759
+G1pfGsR/Enh48JuOTkmK
+=bHPC
+-----END PGP SIGNATURE-----
+
+--RuZRL+GX2sd4FWYD--
