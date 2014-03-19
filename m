@@ -1,118 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the random tree with Linus' tree
-Date: Wed, 19 Mar 2014 16:56:08 +1100
-Message-ID: <20140319165608.739527f179d25c63ebb583ea@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (wireless-next tree related)
+Date: Wed, 19 Mar 2014 17:20:35 +1100
+Message-ID: <20140319172035.b4e7c4043b486d8eeaa0534a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE"
+ boundary="Signature=_Wed__19_Mar_2014_17_20_35_+1100_siFwPu9=VL_Yui1F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:43415 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:33871 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752733AbaCSF4P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Mar 2014 01:56:15 -0400
+	id S1751313AbaCSGUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Mar 2014 02:20:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, "H. Peter Anvin" <hpa@linux.intel.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
---Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE
+--Signature=_Wed__19_Mar_2014_17_20_35_+1100_siFwPu9=VL_Yui1F
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi all,
 
-Today's linux-next merge of the random tree got a conflict in
-arch/x86/include/asm/archrandom.h between commit 5bfce5ef55cb ("x86,
-kaslr: Provide randomness functions") from Linus' tree and commits
-e3be36e60bdc ("x86, random: Enable the RDSEED instruction") and
-91a60dc7aa88 ("random: Add arch_has_random[_seed]()") from the random tree.
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/net/wireless/iwlwifi/mvm/debugfs.c: In function 'iwl_dbgfs_fw_error=
+_dump_release':
+drivers/net/wireless/iwlwifi/mvm/debugfs.c:161:2: error: implicit declarati=
+on of function 'vfree' [-Werror=3Dimplicit-function-declaration]
+  vfree(file->private_data);
+  ^
 
+Caused by commit 1bd3cbc1a0e9 ("iwlwifi: mvm: send udev event upon
+firmware error to dump logs") from the wireless-next tree.  See Rule 1
+from Documentation/SubmitChecklist.
+
+I have reverted that commit (and commit cdb00563fe2c ("iwlwifi: mvm: BT
+Coex - add debugfs hook to set BT Tx priority") that may depend on it)
+for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/include/asm/archrandom.h
-index e6a92455740e,c7ed4a61e928..000000000000
---- a/arch/x86/include/asm/archrandom.h
-+++ b/arch/x86/include/asm/archrandom.h
-@@@ -39,20 -42,16 +42,30 @@@
- =20
-  #ifdef CONFIG_ARCH_RANDOM
- =20
- +/* Instead of arch_get_random_long() when alternatives haven't run. */
- +static inline int rdrand_long(unsigned long *v)
- +{
- +	int ok;
- +	asm volatile("1: " RDRAND_LONG "\n\t"
- +		     "jc 2f\n\t"
- +		     "decl %0\n\t"
- +		     "jnz 1b\n\t"
- +		     "2:"
- +		     : "=3Dr" (ok), "=3Da" (*v)
- +		     : "0" (RDRAND_RETRY_LOOPS));
- +	return ok;
- +}
- +
-+ /* A single attempt at RDSEED */
-+ static inline bool rdseed_long(unsigned long *v)
-+ {
-+ 	unsigned char ok;
-+ 	asm volatile(RDSEED_LONG "\n\t"
-+ 		     "setc %0"
-+ 		     : "=3Dqm" (ok), "=3Da" (*v));
-+ 	return ok;
-+ }
-+=20
-  #define GET_RANDOM(name, type, rdrand, nop)			\
-  static inline int name(type *v)					\
-  {								\
-@@@ -80,15 -95,14 +109,21 @@@ GET_SEED(arch_get_random_seed_int, unsi
-  GET_RANDOM(arch_get_random_long, unsigned long, RDRAND_LONG, ASM_NOP3);
-  GET_RANDOM(arch_get_random_int, unsigned int, RDRAND_INT, ASM_NOP3);
- =20
-+ GET_SEED(arch_get_random_seed_long, unsigned long, RDSEED_LONG, ASM_NOP4);
-+ GET_SEED(arch_get_random_seed_int, unsigned int, RDSEED_INT, ASM_NOP4);
-+=20
-  #endif /* CONFIG_X86_64 */
- =20
-+ #define arch_has_random()	static_cpu_has(X86_FEATURE_RDRAND)
-+ #define arch_has_random_seed()	static_cpu_has(X86_FEATURE_RDSEED)
-+=20
- +#else
- +
- +static inline int rdrand_long(unsigned long *v)
- +{
- +	return 0;
- +}
- +
-  #endif  /* CONFIG_ARCH_RANDOM */
- =20
-  extern void x86_init_rdrand(struct cpuinfo_x86 *c);
-
---Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE
+--Signature=_Wed__19_Mar_2014_17_20_35_+1100_siFwPu9=VL_Yui1F
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTKTF9AAoJEMDTa8Ir7ZwV+tAQAIJaMQhrs5uTkfxmhPLd6rzX
-OFElO6hsHd4IyJFNAEoQRj3v6vVImiEk9+3dY304v1aXIthFGg4g5FNRUXheJLvF
-quYz9fsE8g2713Bq9Hu7OCQio07ePzIUaGNKpHY3AU+rHbSnaxZh4FcenBIlU1th
-AO3PHATnfxgxHlC9jbfASgiDNRZC4qgIHt5Lg7u64MZx45nStWSruOKFOX24Y6xn
-r3/DzEU27jXzy5PE3bcsciNL8k8cSiJcvknptz5n6DDKNzyC+2GrDSoZ9iaBLoKn
-N9S1A0U7NZjxwjVi+QmcGK9gNsvF02huox2MtQsIQlNW9trDZOYoy9lV1uQSr/AP
-b2DPjgzXwqYkvQN5SE1/hPcAi20Z+Wwh3G6Gdjv4KqcByVjcHBvRwjleibldDhkK
-PGhvT0wLlxdfV4p3kNyIPY7Q6Yk8ORHPtchxBt6CqHs9DhfOiAfylSWQ6161iwja
-ovnFfpLThMxc+nX+lFB2DNnCTTQMijz+xRS9EhWMo0auAYZgJ7JTzDefpI2gCh4Q
-TFgW9ppraQddQhvyHwrU+IqrHdEKff7g1QKpulrdUCzpttM7knj1TtTUpRihYym8
-0kwW0q2U5LM9BaoYps3hOs7KvjUOvjfQgaKKUOgbPTI3BUVBe6K4O/XtDoeCpcmR
-a7KOg4bLX6vOkn0Iw7fD
-=8sX9
+iQIcBAEBCAAGBQJTKTc3AAoJEMDTa8Ir7ZwV7J0P/ijg3uCXHHnjVuX3a29oMWtB
+iAyxUMmABClnq3KDTsT+OkPMcUEqUfIt1Ho9NolDG2S2CV/f9o+GzTr7Hh8cEduL
+EVUtHZk5AMp2+hFn0j65Vg+sxmUxHOVerk+LET3+gxBztPi1XZaNy+SZ8PDzzPdc
+qafOR8hQVt5+MPlpvx9UJm68Rh22yrdYBexa+j6UlG2fjhm1OZlisahZmPOYKY+p
+JmpYPwNuUSg6uomT5oT2Af9StfK/XgKnvMnxAJtY1g07D7WoiFbevBWAvzIbYDl8
+LoQ2LCMQBnRxWk9K0xtxdhHsbkgkOIciBgZkcj8JOskGHgyq27MJnXhZaHo/siqe
+Fv5CneFlsuBEYCTIaDPxD6fFh1qIELnpQdZRvIUzWfnvJ+di5BVKYvJ+FSH56JOY
+/F+7Q18O1x+EOW3upz5VlUPnOb+dAooIXTDugGkCISgv6n+1kZp+2Cr16dC/TaY9
+Nr5Piv5gN8yMbbAo9BIXuOswmPnzOV9PR9472JGu9kVp2eErtUBodk+pezinP8QW
+Cw6g6NpSadeKp/BPbY1k5v/I2Y8dZeyBTYftb1T3pxSINBiH53snYxSBpF6xrQhn
+ZM/1N80fFSKpK1xII6oclizzM/WAqlvnfctcynp09NpWH5FDtb9F0tslvQEFcR5K
+oT0myRe6gycAaiB7BmGI
+=IrVT
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Mar_2014_16_56_08_+1100_SjfipRG2h5olfvbE--
+--Signature=_Wed__19_Mar_2014_17_20_35_+1100_siFwPu9=VL_Yui1F--
