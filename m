@@ -1,108 +1,98 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Wed, 19 Mar 2014 16:27:29 -0700
-Message-ID: <20140319162729.9b9f322b171140548b25c7af@linux-foundation.org>
-References: <20140317203124.3b947e0799cc8142df5e4a2e@canb.auug.org.au>
-	<20140317093602.GY27965@twins.programming.kicks-ass.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the arm-soc tree
+Date: Thu, 20 Mar 2014 14:36:03 +1100
+Message-ID: <20140320143603.a2f82d77be61c09a7852cfe9@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__20_Mar_2014_14_36_03_+1100_vpOcCefY=.FU/wEF"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:52159 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751448AbaCTDgM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Mar 2014 23:36:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+
+--Signature=_Thu__20_Mar_2014_14_36_03_+1100_vpOcCefY=.FU/wEF
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140317093602.GY27965@twins.programming.kicks-ass.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 17 Mar 2014 10:36:02 +0100 Peter Zijlstra <peterz@infradead.org> wrote:
+Hi all,
 
-> On Mon, Mar 17, 2014 at 08:31:24PM +1100, Stephen Rothwell wrote:
-> > Hi Andrew,
-> > 
-> > Today's linux-next merge of the akpm-current tree got a conflict in
-> > kernel/locking/Makefile between commit fb0527bd5ea9 ("locking/mutexes:
-> > Introduce cancelable MCS lock for adaptive spinning") from the  tree and
-> > commit 4dc0fe493027 ("lglock: map to spinlock when !CONFIG_SMP") from the
-> > akpm-current tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
-> 
-> I'm a bit sad of not having seen that lglock patch at all.
+Today's linux-next merge of the tip tree got a conflict in
+arch/arm/mach-imx/pm-imx6q.c between commit 9cdde7217e92 ("ARM: imx6:
+rename pm-imx6q.c to pm-imx6.c") from the arm-soc tree and commit
+8435cf757632 ("arm: Replace various irq_desc accesses") from the tip tree.
 
-Here 'tis:
+I fixed it up (by applying the tip tree patch to the renamed file -
+arch/arm/mach-imx/pm-imx6.c - see patch below) and can carry the fix as
+necessary (no action is required).
 
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: lglock: map to spinlock when !CONFIG_SMP
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 20 Mar 2014 14:33:26 +1100
+Subject: [PATCH] arm: Replace various irq_desc accesses fix for file move
 
-When the system has only one CPU, lglock is effectively a spinlock; map it
-directly to spinlock to eliminate the indirection and duplicate code.
-
-In addition to removing overhead, this drops 1.6k of code with a defconfig
-modified to have !CONFIG_SMP, and 1.1k with a minimal config.
-
-Signed-off-by: Josh Triplett <josh@joshtriplett.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Michal Marek <mmarek@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Nick Piggin <npiggin@kernel.dk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
+ arch/arm/mach-imx/pm-imx6.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
- include/linux/lglock.h  |   16 ++++++++++++++++
- kernel/locking/Makefile |    3 ++-
- 2 files changed, 18 insertions(+), 1 deletion(-)
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index 16f0d249f6a7..9392a8f4ef24 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -241,7 +241,7 @@ static void imx6q_enable_wb(bool enable)
+=20
+ int imx6q_set_lpm(enum mxc_cpu_pwr_mode mode)
+ {
+-	struct irq_desc *iomuxc_irq_desc;
++	struct irq_data *iomuxc_irq_data =3D irq_get_irq_data(32);
+ 	u32 val =3D readl_relaxed(ccm_base + CLPCR);
+=20
+ 	val &=3D ~BM_CLPCR_LPM;
+@@ -288,10 +288,9 @@ int imx6q_set_lpm(enum mxc_cpu_pwr_mode mode)
+ 	 * 3) Software should mask IRQ #32 right after CCM Low-Power mode
+ 	 *    is set (set bits 0-1 of CCM_CLPCR).
+ 	 */
+-	iomuxc_irq_desc =3D irq_to_desc(32);
+-	imx_gpc_irq_unmask(&iomuxc_irq_desc->irq_data);
++	imx_gpc_irq_unmask(iomuxc_irq_data);
+ 	writel_relaxed(val, ccm_base + CLPCR);
+-	imx_gpc_irq_mask(&iomuxc_irq_desc->irq_data);
++	imx_gpc_irq_mask(iomuxc_irq_data);
+=20
+ 	return 0;
+ }
+--=20
+1.9.0
 
-diff -puN include/linux/lglock.h~lglock-map-to-spinlock-when-config_smp include/linux/lglock.h
---- a/include/linux/lglock.h~lglock-map-to-spinlock-when-config_smp
-+++ a/include/linux/lglock.h
-@@ -25,6 +25,8 @@
- #include <linux/cpu.h>
- #include <linux/notifier.h>
- 
-+#ifdef CONFIG_SMP
-+
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- #define LOCKDEP_INIT_MAP lockdep_init_map
- #else
-@@ -57,4 +59,18 @@ void lg_local_unlock_cpu(struct lglock *
- void lg_global_lock(struct lglock *lg);
- void lg_global_unlock(struct lglock *lg);
- 
-+#else
-+/* When !CONFIG_SMP, map lglock to spinlock */
-+#define lglock spinlock
-+#define DEFINE_LGLOCK(name) DEFINE_SPINLOCK(name)
-+#define DEFINE_STATIC_LGLOCK(name) static DEFINE_SPINLOCK(name)
-+#define lg_lock_init(lg, name) spin_lock_init(lg)
-+#define lg_local_lock spin_lock
-+#define lg_local_unlock spin_unlock
-+#define lg_local_lock_cpu(lg, cpu) spin_lock(lg)
-+#define lg_local_unlock_cpu(lg, cpu) spin_unlock(lg)
-+#define lg_global_lock spin_lock
-+#define lg_global_unlock spin_unlock
-+#endif
-+
- #endif
-diff -puN kernel/locking/Makefile~lglock-map-to-spinlock-when-config_smp kernel/locking/Makefile
---- a/kernel/locking/Makefile~lglock-map-to-spinlock-when-config_smp
-+++ a/kernel/locking/Makefile
-@@ -1,5 +1,5 @@
- 
--obj-y += mutex.o semaphore.o rwsem.o lglock.o mcs_spinlock.o
-+obj-y += mutex.o semaphore.o rwsem.o mcs_spinlock.o
- 
- ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_lockdep.o = -pg
-@@ -14,6 +14,7 @@ ifeq ($(CONFIG_PROC_FS),y)
- obj-$(CONFIG_LOCKDEP) += lockdep_proc.o
- endif
- obj-$(CONFIG_SMP) += spinlock.o
-+obj-$(CONFIG_SMP) += lglock.o
- obj-$(CONFIG_PROVE_LOCKING) += spinlock.o
- obj-$(CONFIG_RT_MUTEXES) += rtmutex.o
- obj-$(CONFIG_DEBUG_RT_MUTEXES) += rtmutex-debug.o
-_
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__20_Mar_2014_14_36_03_+1100_vpOcCefY=.FU/wEF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTKmIoAAoJEMDTa8Ir7ZwVsRoQAI9/6fKYMFWzMuXUFeJMuHeT
++jpJBxh3K+nMFISN2QlgYljhO6inhJMfPn5O2wG6i3aHFcRZG4YnkZ7LezCF50OT
+MPUKv/IjYr0C03PU6FtOZG2B8crL+BeMvv7nO/rSr56fELcozdqMrQGBTBmJjlVD
+qXofQyju5qyeq41Ic1LiBpjj0pX9CHV6mOll3t28QE3H0k/MTGsYqRABClk9WNLE
+N8NYXhWfZ/jqU5Ws2pPtZm3Opn8EG24j0s8wknVOMmB/cuSyJjT6pEIILioJRhJ3
+QcNW8K1S2e1IoYq50RH2sRq4f5d4IEO5covnr581y37SD2gol5ctaPvEvykXmkg2
+HIDir/kphUelp4uyy/ZVHTpYrtV6SLB+GRn712hOU9J2mMJrwtjZ4TxzZQ2Qvo6C
+BfbUZznCGUJBgf1doayHZn5Zh4D+VbqKc4yLXU78oxrNRnqMj1TH6dN9SJn3IJtp
+HEPrGFJ07pfg37A2mAtIb+CZ8Kfzq7tyWKHcD5aTKIIF26Zz5+EnB/V4A/NpklQB
+QzJe3IgeVjPudLFymLMLjwa12fSL5hpILTdvChY9m/H/NnhQzGp8MVbPhRGaVwi+
+NjTnR+lJffDj746I3e38tEQ+blHtEWi1mJaiEdng6vGEdm++c+ZMontbB6VlsU09
+yD7jVi4HuXqGPB5A89sh
+=Mseq
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__20_Mar_2014_14_36_03_+1100_vpOcCefY=.FU/wEF--
