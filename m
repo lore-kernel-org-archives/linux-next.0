@@ -1,82 +1,57 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the staging tree with the  tree
-Date: Thu, 20 Mar 2014 18:51:01 +0000
-Message-ID: <20140320185101.ED471C4067A@trevor.secretlab.ca>
-References: <20140313005026.95bb2222270ded24b0a5deff@kernel.org> <3306881. foYD0IDJn0@avalon> <20140320154402.063BDC40A0B@trevor.secretlab.ca> < 20140320140933.4218df22@samsung.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f48.google.com ([74.125.83.48]:45531 "EHLO
-	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759544AbaCTSvG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Mar 2014 14:51:06 -0400
-Received: by mail-ee0-f48.google.com with SMTP id b57so1001115eek.35
-        for <linux-next@vger.kernel.org>; Thu, 20 Mar 2014 11:51:05 -0700 (PDT)
-In-Reply-To: <20140320140933.4218df22@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Brown <broonie@kernel.org>, Greg KH <greg@kroah.com>, Philipp Zabel <p.zabel@pengutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: empty commit in the security tree
+Date: Fri, 21 Mar 2014 09:25:41 +1100
+Message-ID: <20140321092541.77ae84b831cc71b1318d6f12@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__21_Mar_2014_09_25_41_+1100_gNv0mN.2Qx6wjY62"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 20 Mar 2014 14:09:33 -0300, Mauro Carvalho Chehab <m.chehab@samsung.com> wrote:
-> Em Thu, 20 Mar 2014 15:44:01 +0000
-> Grant Likely <grant.likely@secretlab.ca> escreveu:
-> 
-> > On Thu, 13 Mar 2014 10:17:56 +0100, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
-> > > Hi Mark,
-> > > 
-> > > On Thursday 13 March 2014 00:50:26 Mark Brown wrote:
-> > > > Hi Greg,
-> > > > 
-> > > > Today's linux-next merge of the staging tree got a conflict in
-> > > > drivers/media/v4l2-core/v4l2-of.c between commit b9db140c1e4644d
-> > > > ("[media] v4l: of: Support empty port nodes") from the v4l tree and
-> > > > commit fd9fdb78a9bf ("[media] of: move graph helpers from
-> > > > drivers/media/v4l2-core to drivers/of") from the staging tree.
-> > > > 
-> > > > I fixed it up by essentially dropping the support for empty port nodes
-> > > > since there were more context differences than I was comfortable with
-> > > > in the changes in the new code.
-> > > 
-> > > If I'm not mistaken the move of drivers/media/v4l2-core/v4l2-of.c to 
-> > > drivers/of/of-graph.c has been canceled for v3.15 and related patches should 
-> > > be dropped from the for-next branches in the very near future (the v4l tree 
-> > > has already been rebased).
-> > 
-> > I had not actually asked Mauro to revert,
-> 
-> See:
-> 	https://lkml.org/lkml/2014/3/10/283
-> 
-> There, you literally answered me that:
-> 	"All trees containing the branch would need to be reverted."
+--Signature=_Fri__21_Mar_2014_09_25_41_+1100_gNv0mN.2Qx6wjY62
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-"would" being the operative word. I then went on to say that because it
-is messy, I would be okay with leaving it as is if my concerns are
-addressed.
+Hi James,
 
-Sorry for the confusion.
+I noticed this commit in the security tree this morning:
 
-g.
+commit 2c5f5c9a1d1b3559cbbda8e014706eb359566c00
+Author: Paul Moore <pmoore@redhat.com>
+Date:   Wed Mar 19 16:46:04 2014 -0400
 
-> and:
-> 	"It means any tree containing that branch *must* be rewound."
-> 
-> That's what I (unhappily) did.
-> 
-> I won't reapply this series, but, instead, I'll simply wait for the
-> staging tree to be merged before sending those patches upstream,
-> before sending the topic branch with exynos 5 patches that depend on it.
-> 
-> This way, I can add Stephen patch on such topic branch, to avoid
-> compilation breakages after merged.
-> 
-> > but the branch is still in rmk's
-> > tree and linux-next. I do not think it needs to be cancelled.
-> 
-> > I do still have issues about it as a generic pattern, but I'm happy with
-> > the discussion so far and the documentation will be sorted before the
-> > next kernel is released.
-> > 
-> > g.
-> 
-> Regards,
-> Mauro
+    selinux: fix the output of ./scripts/get_maintainer.pl for SELinux
+   =20
+It has no changes, just a commit message.  Did something go missing?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__21_Mar_2014_09_25_41_+1100_gNv0mN.2Qx6wjY62
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTK2rpAAoJEMDTa8Ir7ZwVMfgP/3ViAztOPkepit9mH+OvxnHI
+jw9t5NsuvcJ7dn4MotVNy03FveYg4Ih3cIMQVSfsucSHQTj6VlMOwgJ+URuZ4Y1i
+A4D0pQ5388PGsWcG2mvi7QviixJ6Q1gAhyGIDFWmFCJg5xIOoDTMyq17YuWC6Pfb
+Nlg+yolsMZEBW/pWndF1maByEAqjAl1+hWq+/bBh5j0HMoV9D3T3jeD0iAqxHfKA
+QP52cP8lrtD7SD/x/6Jo8SkM+xYBCq7VAX1ieg8KOrMy+nojZ0tErHwHj3f+lPFE
+ynWIT94moZ3JgRSxDwrENHWOYmB59mdyB9xph09MXPHi/WUpYFr7lR5Np2vOGhxf
+bu3GjNai2wkZsfrUSJ2fa2R/GaE0x9K7/7aE0/gXWVIn0raxjBRoM7EdgK0F5ZB4
++zB6ExKJUSvPFOV8XIMvPcIBXfkoB1fT5w7+1NtdEo9S5OAlvd+r8ueHFSoUAuXb
++vurQ/542/z5r6yicDzBoWw0YN+weZKMQTr+Yfu7YGwKP9jvzv/Lc3MCljdCmoz7
+AOIaDcN2+rKN+5qid3wqGDy6MEU0pnN4rGQoAth59nek1Ia1zlvCBz8XQA9oR9po
+edPsYerivtopGbGl1Pfrvg/wlran+OAM/uRTQwxeJbSFlzGLVJqUuUicWB1NlMbz
+3wuKgYeO/sTKutwV8gIc
+=Iq9S
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_Mar_2014_09_25_41_+1100_gNv0mN.2Qx6wjY62--
