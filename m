@@ -1,110 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Fri, 21 Mar 2014 15:23:03 +1100
-Message-ID: <20140321152303.5e4071c94957a70831edd1a1@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Fri, 21 Mar 2014 17:45:55 +1100
+Message-ID: <20140321174555.c6df4e9a1fcd20e606813f35@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__21_Mar_2014_15_23_03_+1100_UUE4hhb1cD8HTSyH"
+ boundary="Signature=_Fri__21_Mar_2014_17_45_55_+1100_IgMWU8i1qHs7dwvQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:42108 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:59260 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751420AbaCUEXO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Mar 2014 00:23:14 -0400
+	id S1753331AbaCUGqH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Mar 2014 02:46:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Stephane Eranian <eranian@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Mark Salter <msalter@redhat.com>
 
---Signature=_Fri__21_Mar_2014_15_23_03_+1100_UUE4hhb1cD8HTSyH
+--Signature=_Fri__21_Mar_2014_17_45_55_+1100_IgMWU8i1qHs7dwvQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/kernel/cpu/perf_event_intel_uncore.c between commit 2c666adacc9e
-("x86, intel, uncore: Fix CPU hotplug callback registration") from Linus'
-tree and commit 411cf180fa00 ("perf/x86/uncore: fix initialization of
-cpumask") from the tip tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/x86/include/asm/Kbuild between commit 073d8224d299 ("arch: Remove
+stub cputime.h headers") from the tip tree and commit "x86: use generic
+early_ioremap" from the akpm tree.
 
-I fixed it up (maybe incorrectly - see below) and can carry the fix as
-necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/kernel/cpu/perf_event_intel_uncore.c
-index 28922f62eb29,bd2253d40cff..000000000000
---- a/arch/x86/kernel/cpu/perf_event_intel_uncore.c
-+++ b/arch/x86/kernel/cpu/perf_event_intel_uncore.c
-@@@ -3868,6 -4234,41 +4234,41 @@@ static int __init uncore_pmus_register(
-  	return 0;
-  }
+diff --cc arch/x86/include/asm/Kbuild
+index 4acddc43ee0c,c98cd05d1cdf..000000000000
+--- a/arch/x86/include/asm/Kbuild
++++ b/arch/x86/include/asm/Kbuild
+@@@ -5,5 -5,5 +5,6 @@@ genhdr-y +=3D unistd_64.
+  genhdr-y +=3D unistd_x32.h
  =20
-+ static void __init uncore_cpumask_init(void)
-+ {
-+ 	int cpu;
-+=20
-+ 	/*
-+ 	 * ony invoke once from msr or pci init code
-+ 	 */
-+ 	if (!cpumask_empty(&uncore_cpu_mask))
-+ 		return;
-+=20
- -	get_online_cpus();
-++	cpu_notifier_register_begin();
-+=20
-+ 	for_each_online_cpu(cpu) {
-+ 		int i, phys_id =3D topology_physical_package_id(cpu);
-+=20
-+ 		for_each_cpu(i, &uncore_cpu_mask) {
-+ 			if (phys_id =3D=3D topology_physical_package_id(i)) {
-+ 				phys_id =3D -1;
-+ 				break;
-+ 			}
-+ 		}
-+ 		if (phys_id < 0)
-+ 			continue;
-+=20
-+ 		uncore_cpu_prepare(cpu, phys_id);
-+ 		uncore_event_init_cpu(cpu);
-+ 	}
-+ 	on_each_cpu(uncore_cpu_setup, NULL, 1);
-+=20
- -	register_cpu_notifier(&uncore_cpu_nb);
-++	__register_cpu_notifier(&uncore_cpu_nb);
-+=20
- -	put_online_cpus();
-++	cpu_notifier_register_done();
-+ }
-+=20
-+=20
-  static int __init intel_uncore_init(void)
-  {
-  	int ret;
+  generic-y +=3D clkdev.h
+ +generic-y +=3D cputime.h
++ generic-y +=3D early_ioremap.h
+  generic-y +=3D mcs_spinlock.h
 
---Signature=_Fri__21_Mar_2014_15_23_03_+1100_UUE4hhb1cD8HTSyH
+--Signature=_Fri__21_Mar_2014_17_45_55_+1100_IgMWU8i1qHs7dwvQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTK76vAAoJEMDTa8Ir7ZwVGjgP/ivFVvladrihLURVghvhTLTf
-ZhmjGJ+lQj+SjucfIm8DI1lFJb89snhwOh3cp6gRv+q1ZGRBhBn9kUjn5NhrlTBy
-g3NllaqNzETaeSVGCUXf24T198U/+4AFq43+WaX7xYJvmpuNW3CjljMNR7l8sREE
-SucSlvQC86zLoFkhVJgE0C4AQ7zooqd4tDA+s65dntMeDyt95Bmh1SC9sVhdkacg
-Rpnzc08HQBqOxEb8S60HLKpEepXaAckt8AW13NXccmx4RCu8bxHRNeXAr6gNLniN
-bWvvi02klMYykbj6fGVyPjsaU7B091Xslhs60Oi6d8scix18NR8lj+ELIFjqITnn
-ELhEPJgf1tSDuB3gtDFGi2fPGBbgkHrTBY92AV5x4gdODVoaeXvBNKyNG3FjFmdy
-0AIbssZx1fF/rZ+o+jqbOZXDPNfXJetqJC7yrPjh//no3Qh0GtT61q06wrR8kj+J
-7+0WZNpuA7Ocyhxhbzgr/eaED9XeKTZcZ026RXE/wVnfJqziZfqxRM2rkQJTKbaW
-/2UFqpIDQld1StXFvFwe7xzhLH7p43ywtShirOV9lt4IRU2ICyzSP7zkh6f97cv2
-oYKXFmUaqgnAirKDVttf9b2gNKTIf+rBCIWZfBx/AnIsy354jkYa9lRCXZkRkmLa
-A/T5pVwr0fEK+GBKUYIx
-=DKYq
+iQIcBAEBCAAGBQJTK+AsAAoJEMDTa8Ir7ZwVmYIP/jcvQq0En3LmnwBd6Jw9eLYr
+f7P1OSikDnkRu/1XrbL4qlEptbe6FR4BZxuh0RPs5i11jVoSNUHF8e5e619KHoMh
+87bfx+RRertPnkzEdffUNxvLChycsZ0cSU6EMfrU0WpPN0RF/YBWLmKzr1s8XXsG
+ZY+nLhgkaJ3Vm3dZlUrFx1T2QmyUdsRraDra7nv6t5FhYmuRfIeTjcdUP2FPTn/U
+i5ZVEotnqzMU8NNIQ+i0NtLEI6h+N5EG5xJu7SRKz5baU3jY7Tv4uLJL6Rw1cb5X
+a2/LUZpJOkV7q20ZIHsytoEd2tofBWA1kxpy3KR7wpMBQeCHkl0Nh+9ioZCzwX9z
+QglGPT9Attg7lnex+2Gs+nl5ku1jUown0n1vNa2bro4AHmC1b9bPqEDn+WM/DLt4
+8trEHapsifvKjEu/r2UDQK2gr8xM0usykZe12d1B1BNW51MAv3ofAg9hmlajccA6
+W7oAPWQlVBWdlZ2xF1rNqwCZ4/aGWWjvztouhJTPzZ8AHY1nEw+dNUIEUKfAlwB6
+W2stB6tt2fJOvkfTU10fz2hTFGN+boq3x7CTxEeJ/gviOIRjy1a2IHFABKWNWVJc
+pgtDWUnkdbhTp1KOc0WUSOxAA07zEyK4NG8HRjYiVStPAEv3mg+gB2sYR1sk/GUe
+XKwImFZ7YPHaVc4SN8Ca
+=y8L0
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__21_Mar_2014_15_23_03_+1100_UUE4hhb1cD8HTSyH--
+--Signature=_Fri__21_Mar_2014_17_45_55_+1100_IgMWU8i1qHs7dwvQ--
