@@ -1,38 +1,67 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [next]  da8xx_omapl_defconfig has been removed.
-Date: Fri, 21 Mar 2014 11:56:53 -0400
-Message-ID: <532C6145.6070107@windriver.com>
+Subject: Re: [PATCH] lkdtm: include cacheflush.h
+Date: Fri, 21 Mar 2014 14:31:54 -0400
+Message-ID: <CAP=VYLpYhOR3xoX5AjvENR_FRLNsgGE4w275_SZEvBa_UwZrmw@mail.gmail.com>
+References: <20140214235849.GA30703@www.outflux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:62968 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755353AbaCUP4s (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Mar 2014 11:56:48 -0400
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:57198 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750745AbaCUSc0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Mar 2014 14:32:26 -0400
+In-Reply-To: <20140214235849.GA30703@www.outflux.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-Hi Stephen,
+On Fri, Feb 14, 2014 at 6:58 PM, Kees Cook <keescook@chromium.org> wrote:
+> Some architectures need cacheflush.h explicitly included (mips) for
+> use of flush_icache_range():
+>
+>     config: make ARCH=mips allmodconfig
+>     All error/warnings:
+>     >> ERROR: "flush_icache_range" undefined!
 
-This target build:
+The linux-next builds still fail with a similar error:
 
-http://kisskb.ellerman.id.au/kisskb/target/7977/
+http://kisskb.ellerman.id.au/kisskb/buildresult/10808358/
 
-is no longer valid as of this commit:
+I'm not sure if it ever was a compile error, or if it was always
+a missing export symbol type error as it is apparently now.
 
-commit 4b9e44f8d7c9cd166d8304b8f619741c1d59b836
-Author: Sekhar Nori <nsekhar@ti.com>
-Date:   Wed Feb 26 10:41:24 2014 +0530
-
-    ARM: davinci: remove da8xx_omapl_defconfig
-    
-    Remove da8xx_omapl_defconfig. Use davinci_all_defconfig
-    for da830 and da850 as well.
-    
-    Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
 Paul.
+--
+
+>
+> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  drivers/misc/lkdtm.c |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/misc/lkdtm.c b/drivers/misc/lkdtm.c
+> index 47ed2d321351..2ebd52e05773 100644
+> --- a/drivers/misc/lkdtm.c
+> +++ b/drivers/misc/lkdtm.c
+> @@ -46,6 +46,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/mman.h>
+> +#include <asm/cacheflush.h>
+>
+>  #ifdef CONFIG_IDE
+>  #include <linux/ide.h>
+> --
+> 1.7.9.5
+>
+>
+> --
+> Kees Cook
+> Chrome OS Security
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
