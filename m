@@ -1,40 +1,37 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Fri, 21 Mar 2014 14:17:13 +0530
-Message-ID: <532BFC91.3030505@linux.vnet.ibm.com>
-References: <20140321152303.5e4071c94957a70831edd1a1@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Grant Likely <grant.likely@linaro.org>
+Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb tree
+Date: Fri, 21 Mar 2014 12:24:33 +0000
+Message-ID: <20140321122434.06755C40567@trevor.secretlab.ca>
+References: <20140317185542.fe4554210fc1893b44289008@canb.auug.org.au> < 20140317080122.459ff9d4@infradead.org> <20140317182953.GA10565@kroah.com> < 20140317162937.2ccdec83@infradead.org> <20140317222736.GB3708@flint.arm. linux.org.uk> <20140319153008.GC31293@kroah.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp04.in.ibm.com ([122.248.162.4]:32775 "EHLO
-	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758082AbaCUIrf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Mar 2014 04:47:35 -0400
-Received: from /spool/local
-	by e28smtp04.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
-	Fri, 21 Mar 2014 14:17:32 +0530
-In-Reply-To: <20140321152303.5e4071c94957a70831edd1a1@canb.auug.org.au>
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:38454 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753575AbaCUMYj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Mar 2014 08:24:39 -0400
+Received: by mail-ee0-f50.google.com with SMTP id c13so1738783eek.23
+        for <linux-next@vger.kernel.org>; Fri, 21 Mar 2014 05:24:38 -0700 (PDT)
+In-Reply-To: <20140319153008.GC31293@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Stephane Eranian <eranian@google.com>
+To: Greg KH <greg@kroah.com>, Russell King <rmk@arm.linux.org.uk>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>
 
-On 03/21/2014 09:53 AM, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 19 Mar 2014 08:30:08 -0700, Greg KH <greg@kroah.com> wrote:
+> On Mon, Mar 17, 2014 at 10:27:36PM +0000, Russell King wrote:
+> > However, I still find myself coming back to a fundamental question: why
+> > were these bindings fine in April 2013, passed review, and were acked,
+> > but not fine today.  Here's the links to the emails acking their
+> > introduction which Sylwester Nawrocki sent me:
+> > 
+> >   http://www.spinics.net/lists/linux-media/msg61899.html
+> >   http://www.spinics.net/lists/linux-media/msg62458.html
+> > 
+> > So... *shrug*.  Make of this what you will.
 > 
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/x86/kernel/cpu/perf_event_intel_uncore.c between commit 2c666adacc9e
-> ("x86, intel, uncore: Fix CPU hotplug callback registration") from Linus'
-> tree and commit 411cf180fa00 ("perf/x86/uncore: fix initialization of
-> cpumask") from the tip tree.
-> 
-> I fixed it up (maybe incorrectly - see below) and can carry the fix as
-> necessary (no action is required).
-> 
+> Thanks for the details, I'll just leave my tree as-is for now, as that
+> seems the simplest thing to do.
 
-The fix looks good to me. Thank you!
+Yes, please leave it in your tree. I've caused noise and trouble than I
+should, and could have handled it differently. I apologize.
 
-Regards,
-Srivatsa S. Bhat
+g.
