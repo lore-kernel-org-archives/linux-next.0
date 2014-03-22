@@ -1,78 +1,109 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] i2c: mv64xxx: Fix compilation breakage
-Date: Sat, 22 Mar 2014 12:11:24 +0100
-Message-ID: <4177769.XedaQsoUgV@wuerfel>
-References: <1394204370-22979-1-git-send-email-maxime.ripard@free-electrons.com>
- <CAP=VYLqCmG6fRmPPABoW4xg_tFgGh2pji=f5ML=cBgCu4zZocg@mail.gmail.com>
- <20140321191739.GT27873@lukather>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] lkdtm: include cacheflush.h
+Date: Sat, 22 Mar 2014 09:32:52 -0600
+Message-ID: <CAGXu5jKqcj9AYDrhCuEc3jUf=-k5wosQFBdq_yJ3K-YKvkfPNw@mail.gmail.com>
+References: <20140214235849.GA30703@www.outflux.net>
+	<CAP=VYLpYhOR3xoX5AjvENR_FRLNsgGE4w275_SZEvBa_UwZrmw@mail.gmail.com>
+	<CAGXu5jKZwxPbhE1a0MfjQBRe0Dzxip0iiR2Rp4JFn38YRQFk_Q@mail.gmail.com>
+	<532C94B0.9090602@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140321191739.GT27873@lukather>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, zhuzhenhua@allwinnertech.com, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kevin.z.m.zh@gmail.com, sunny@allwinnertech.com, shuge@allwinnertech.com, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-i2c@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:34945 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbaCVPcx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 22 Mar 2014 11:32:53 -0400
+Received: by mail-oa0-f53.google.com with SMTP id j17so3940717oag.40
+        for <linux-next@vger.kernel.org>; Sat, 22 Mar 2014 08:32:52 -0700 (PDT)
+In-Reply-To: <532C94B0.9090602@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Friday 21 March 2014 20:17:39 Maxime Ripard wrote:
-> On Fri, Mar 21, 2014 at 11:49:59AM -0400, Paul Gortmaker wrote:
-> > On Mon, Mar 10, 2014 at 7:29 AM, Russell King - ARM Linux
-> > <linux@arm.linux.org.uk> wrote:
-> > > On Mon, Mar 10, 2014 at 11:58:08AM +0100, Maxime Ripard wrote:
-> > >> On Fri, Mar 07, 2014 at 04:08:36PM +0000, Russell King - ARM Linux wrote:
-> > >> > On Fri, Mar 07, 2014 at 03:59:30PM +0100, Maxime Ripard wrote:
-> > >> > > @@ -900,7 +902,8 @@ mv64xxx_i2c_probe(struct platform_device *pd)
-> > >> > >  exit_free_irq:
-> > >> > >   free_irq(drv_data->irq, drv_data);
-> > >> > >  exit_reset:
-> > >> > > - if (pd->dev.of_node && !IS_ERR(drv_data->rstc))
-> > >> > > + if (pd->dev.of_node && IS_ENABLED(CONFIG_RESET_CONTROLLER) &&
-> > >> > > +     !IS_ERR(drv_data->rstc))
-> > >> > >           reset_control_assert(drv_data->rstc);
-> > >> >
-> > >> > Another question is... why do we need to check pd->dev.of_node here?
-> > >> > If CONFIG_RESET_CONTROLLER is set, we always try to get the reset
-> > >> > controller node, so drv_data->rstc is either going to be a valid
-> > >> > pointer, or it's going to be an error pointer - neither
-> > >> > reset_control_get() nor devm_reset_control_get return NULL.
-> > >>
-> > >> Following back on this as I was doing the patch, actually,
-> > >> drv_data->rstc will be NULL if we're not probed by DT, and hence never
-> > >> call reset_control_get, that would set an error pointer.
-> > >>
-> > >> But then, we can use IS_ERR_OR_NULL on drv_data->rstc.
-> > >
-> > > I think you can also move the devm_reset_control_get() into the main
-> > > probe function: you're only checking for -EPROBE_DEFER from it to fail,
-> > > allowing other errors to continue with the driver init.  This means
-> > > that on non-OF, devm_reset_control_get() will fail with -ENOENT.
-> > 
-> > Looping linux-next into the CC since this is the cause of the failure
-> > in orion5x_defconfig there, and no point in anyone else re-doing the
-> > same bisect.
-> 
-> I sent a fix for this that hasn't been picked up yet:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-March/239069.html
-> 
-> IIRC, Wolfram's away until Monday, so I guess it will be merged some
-> time next week.
+On Fri, Mar 21, 2014 at 1:36 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> On 14-03-21 03:33 PM, Kees Cook wrote:
+>> On Fri, Mar 21, 2014 at 12:31 PM, Paul Gortmaker
+>> <paul.gortmaker@windriver.com> wrote:
+>>> On Fri, Feb 14, 2014 at 6:58 PM, Kees Cook <keescook@chromium.org> wrote:
+>>>> Some architectures need cacheflush.h explicitly included (mips) for
+>>>> use of flush_icache_range():
+>>>>
+>>>>     config: make ARCH=mips allmodconfig
+>>>>     All error/warnings:
+>>>>     >> ERROR: "flush_icache_range" undefined!
+>>>
+>>> The linux-next builds still fail with a similar error:
+>>>
+>>> http://kisskb.ellerman.id.au/kisskb/buildresult/10808358/
+>>>
+>>> I'm not sure if it ever was a compile error, or if it was always
+>>> a missing export symbol type error as it is apparently now.
+>>
+>> It seems no one picked up this fix? Greg, you normally take my lkdtm work...
+>
+> No, the "fix" is there, in linux-next, but it doesn't work.  :)
 
-I think there is something wrong with an interface that makes you use
-IS_ERR_OR_NULL(). If you are calling reset_control_get_optional(), that'
-should not return an error when there is no reset controller listed
-in the device tree. We should still have a way to propagate -EPROBE_DEFER,
-or bail out if there is a reset controller but there is something wrong
-with it, but otherwise I'd suggest just leaving NULL as a valid pointer
-in drv_data->rstc and making sure that the reset controller functions
-can just deal with a NULL argument, so you never have to check it again.
+Oh! So it is. Does anyone have a MIPS builder available to figure out
+the right fix? I'll try to get a cross builder set up for this.
 
-	Arnd
+A more careful look at this would seem to indicate the problem is the
+lack of an EXPORT, rather than the missing declaration. I'll dig in to
+this.
+
+Sorry for the noise!
+
+-Kees
+
+>
+> Paul.
+> --
+>
+>>
+>> -Kees
+>>
+>>>
+>>> Paul.
+>>> --
+>>>
+>>>>
+>>>> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>>> ---
+>>>>  drivers/misc/lkdtm.c |    1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/misc/lkdtm.c b/drivers/misc/lkdtm.c
+>>>> index 47ed2d321351..2ebd52e05773 100644
+>>>> --- a/drivers/misc/lkdtm.c
+>>>> +++ b/drivers/misc/lkdtm.c
+>>>> @@ -46,6 +46,7 @@
+>>>>  #include <linux/debugfs.h>
+>>>>  #include <linux/vmalloc.h>
+>>>>  #include <linux/mman.h>
+>>>> +#include <asm/cacheflush.h>
+>>>>
+>>>>  #ifdef CONFIG_IDE
+>>>>  #include <linux/ide.h>
+>>>> --
+>>>> 1.7.9.5
+>>>>
+>>>>
+>>>> --
+>>>> Kees Cook
+>>>> Chrome OS Security
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>> Please read the FAQ at  http://www.tux.org/lkml/
+>>
+>>
+>>
+
+
+
+-- 
+Kees Cook
+Chrome OS Security
