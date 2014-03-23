@@ -1,109 +1,95 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] lkdtm: include cacheflush.h
-Date: Sat, 22 Mar 2014 09:32:52 -0600
-Message-ID: <CAGXu5jKqcj9AYDrhCuEc3jUf=-k5wosQFBdq_yJ3K-YKvkfPNw@mail.gmail.com>
-References: <20140214235849.GA30703@www.outflux.net>
-	<CAP=VYLpYhOR3xoX5AjvENR_FRLNsgGE4w275_SZEvBa_UwZrmw@mail.gmail.com>
-	<CAGXu5jKZwxPbhE1a0MfjQBRe0Dzxip0iiR2Rp4JFn38YRQFk_Q@mail.gmail.com>
-	<532C94B0.9090602@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
+Date: Mon, 24 Mar 2014 10:30:51 +1100
+Message-ID: <20140324103051.59808436210b8b98f1bda0a1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:34945 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770AbaCVPcx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 22 Mar 2014 11:32:53 -0400
-Received: by mail-oa0-f53.google.com with SMTP id j17so3940717oag.40
-        for <linux-next@vger.kernel.org>; Sat, 22 Mar 2014 08:32:52 -0700 (PDT)
-In-Reply-To: <532C94B0.9090602@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============2528751868908908209=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 21, 2014 at 1:36 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On 14-03-21 03:33 PM, Kees Cook wrote:
->> On Fri, Mar 21, 2014 at 12:31 PM, Paul Gortmaker
->> <paul.gortmaker@windriver.com> wrote:
->>> On Fri, Feb 14, 2014 at 6:58 PM, Kees Cook <keescook@chromium.org> wrote:
->>>> Some architectures need cacheflush.h explicitly included (mips) for
->>>> use of flush_icache_range():
->>>>
->>>>     config: make ARCH=mips allmodconfig
->>>>     All error/warnings:
->>>>     >> ERROR: "flush_icache_range" undefined!
->>>
->>> The linux-next builds still fail with a similar error:
->>>
->>> http://kisskb.ellerman.id.au/kisskb/buildresult/10808358/
->>>
->>> I'm not sure if it ever was a compile error, or if it was always
->>> a missing export symbol type error as it is apparently now.
->>
->> It seems no one picked up this fix? Greg, you normally take my lkdtm work...
->
-> No, the "fix" is there, in linux-next, but it doesn't work.  :)
+--===============2528751868908908209==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj"
 
-Oh! So it is. Does anyone have a MIPS builder available to figure out
-the right fix? I'll try to get a cross builder set up for this.
+--Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-A more careful look at this would seem to indicate the problem is the
-lack of an EXPORT, rather than the missing declaration. I'll dig in to
-this.
+Hi Kukjin,
 
-Sorry for the noise!
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/Kconfig.debug between commit 886545ea7d0b ("ARM: efm32: allow
+uncompress debug output") from the arm-soc tree and commit 90266754801c
+("ARM: SAMSUNG: use generic uncompress.h") from the samsung tree.
 
--Kees
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
->
-> Paul.
-> --
->
->>
->> -Kees
->>
->>>
->>> Paul.
->>> --
->>>
->>>>
->>>> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
->>>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>>> ---
->>>>  drivers/misc/lkdtm.c |    1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/misc/lkdtm.c b/drivers/misc/lkdtm.c
->>>> index 47ed2d321351..2ebd52e05773 100644
->>>> --- a/drivers/misc/lkdtm.c
->>>> +++ b/drivers/misc/lkdtm.c
->>>> @@ -46,6 +46,7 @@
->>>>  #include <linux/debugfs.h>
->>>>  #include <linux/vmalloc.h>
->>>>  #include <linux/mman.h>
->>>> +#include <asm/cacheflush.h>
->>>>
->>>>  #ifdef CONFIG_IDE
->>>>  #include <linux/ide.h>
->>>> --
->>>> 1.7.9.5
->>>>
->>>>
->>>> --
->>>> Kees Cook
->>>> Chrome OS Security
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>> Please read the FAQ at  http://www.tux.org/lkml/
->>
->>
->>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/Kconfig.debug
+index e5a00d421cc4,a160744312ab..000000000000
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@@ -1167,7 -1162,7 +1167,7 @@@ config DEBUG_UNCOMPRES
+  config UNCOMPRESS_INCLUDE
+  	string
+  	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
+- 					ARCH_EXYNOS || ARCH_EFM32
+ -					PLAT_SAMSUNG
+++					PLAT_SAMSUNG || ARCH_EFM32
+  	default "mach/uncompress.h"
+ =20
+  config EARLY_PRINTK
+
+--Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTL260AAoJEMDTa8Ir7ZwVAlsP/jtgy/EzPH2X6sH+n9j53qeF
++R5D23VFAd3WWzdmKeW/BVifMckOKfFFJ29koeyLXqmq/Lw5JGP2a928kj0HuZvz
+QHte5+kLAsRpkBHIk6bX1zwomZZGKOSFgp+aTgJOzx7+z+Q1zjX2k0hrzn2rZr6L
+L28cT3rNg84EziXhYDkfJhOYXF/GW474YzTVITH+5B8GrFa/PYYcJDeNjV9VCIOO
+xiNzTVua9da/UJxMPa5TKR8T5iokvEfaQ6YPRJF+mOsdl8GWc2+JgRxSnVH4I6BP
+ins1K43OBc062Lvj7GYSRG5u+sMUTAkt97YXlLhLVicjssDsCk6UB/l97oN/sk/Q
+koLj5UwFQJZTifH6dtgLAHgG5PDDtzCiOq/dqQVCSuBJlVKVVgt0WD4a6kpQ1q69
+GcgpEflEJAg1k1XhozUcp7eoNyhHh66VU2t7BpzOaJYhSySEQ+YGXG4XOtFqXFFd
+2ErDHCAoOKVvYlJkJ531XsO16J3yKHZIlfSzaZ1a3jUXXt0WVRm7h+acf8IbZ5Rc
+HhXwLhXfJVJ7canQvvIvgYhroSxfp87vhq0BjHxHqyEPR75HgFa1AFI9o8CaBuw2
+CBamPp5+W91jfds1KIPf6GFgDAGFrMsBo7n5lPXWoJepaf9Nsbo26v6EATMVr+VI
+9eLAn64CmM54JncLFugi
+=5rkL
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj--
 
 
+--===============2528751868908908209==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
--- 
-Kees Cook
-Chrome OS Security
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2528751868908908209==--
