@@ -1,95 +1,99 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
-Date: Mon, 24 Mar 2014 10:30:51 +1100
-Message-ID: <20140324103051.59808436210b8b98f1bda0a1@canb.auug.org.au>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH -next] clocksource: CMT, MTU2, TMU and STI should depend
+ on GENERIC_CLOCKEVENTS
+Date: Mon, 24 Mar 2014 10:54:41 +0900
+Message-ID: <20140324015440.GA8777@verge.net.au>
+References: <1395324352-9146-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2528751868908908209=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
-List-Id: linux-next.vger.kernel.org
-
---===============2528751868908908209==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj"
-
---Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:35095 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750878AbaCXByv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Mar 2014 21:54:51 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1395324352-9146-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <damm@opensource.se>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi Kukjin,
+On Thu, Mar 20, 2014 at 03:05:50PM +0100, Geert Uytterhoeven wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> If GENERIC_CLOCKEVENTS=n:
+> 
+> drivers/clocksource/sh_cmt.c:54:28: error: field 'ced' has incomplete type
+> drivers/clocksource/sh_cmt.c: In function 'sh_cmt_interrupt':
+> drivers/clocksource/sh_cmt.c:407:23: error: 'CLOCK_EVT_MODE_ONESHOT' undeclared (first use in this function)
+> 
+> drivers/clocksource/sh_mtu2.c:44:28: error: field 'ced' has incomplete type
+> drivers/clocksource/sh_mtu2.c: In function 'ced_to_sh_mtu2':
+> drivers/clocksource/sh_mtu2.c:184:70: warning: initialization from incompatible pointer type [enabled by default]
+> drivers/clocksource/sh_mtu2.c: At top level:
+> drivers/clocksource/sh_mtu2.c:188:16: warning: 'enum clock_event_mode' declared inside parameter list [enabled by default]
+> 
+> drivers/clocksource/sh_tmu.c:45:28: error: field 'ced' has incomplete type
+> drivers/clocksource/sh_tmu.c: In function 'sh_tmu_interrupt':
+> drivers/clocksource/sh_tmu.c:207:21: error: 'CLOCK_EVT_MODE_ONESHOT' undeclared (first use in this function)
+> 
+> drivers/clocksource/em_sti.c:44:28: error: field 'ced' has incomplete type
+> drivers/clocksource/em_sti.c: In function 'ced_to_em_sti':
+> drivers/clocksource/em_sti.c:251:69: warning: initialization from incompatible pointer type [enabled by default]
+> drivers/clocksource/em_sti.c: At top level:
+> drivers/clocksource/em_sti.c:255:16: warning: 'enum clock_event_mode' declared inside parameter list [enabled by default]
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/Kconfig.debug between commit 886545ea7d0b ("ARM: efm32: allow
-uncompress debug output") from the arm-soc tree and commit 90266754801c
-("ARM: SAMSUNG: use generic uncompress.h") from the samsung tree.
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/Kconfig.debug
-index e5a00d421cc4,a160744312ab..000000000000
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@@ -1167,7 -1162,7 +1167,7 @@@ config DEBUG_UNCOMPRES
-  config UNCOMPRESS_INCLUDE
-  	string
-  	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
-- 					ARCH_EXYNOS || ARCH_EFM32
- -					PLAT_SAMSUNG
-++					PLAT_SAMSUNG || ARCH_EFM32
-  	default "mach/uncompress.h"
- =20
-  config EARLY_PRINTK
-
---Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTL260AAoJEMDTa8Ir7ZwVAlsP/jtgy/EzPH2X6sH+n9j53qeF
-+R5D23VFAd3WWzdmKeW/BVifMckOKfFFJ29koeyLXqmq/Lw5JGP2a928kj0HuZvz
-QHte5+kLAsRpkBHIk6bX1zwomZZGKOSFgp+aTgJOzx7+z+Q1zjX2k0hrzn2rZr6L
-L28cT3rNg84EziXhYDkfJhOYXF/GW474YzTVITH+5B8GrFa/PYYcJDeNjV9VCIOO
-xiNzTVua9da/UJxMPa5TKR8T5iokvEfaQ6YPRJF+mOsdl8GWc2+JgRxSnVH4I6BP
-ins1K43OBc062Lvj7GYSRG5u+sMUTAkt97YXlLhLVicjssDsCk6UB/l97oN/sk/Q
-koLj5UwFQJZTifH6dtgLAHgG5PDDtzCiOq/dqQVCSuBJlVKVVgt0WD4a6kpQ1q69
-GcgpEflEJAg1k1XhozUcp7eoNyhHh66VU2t7BpzOaJYhSySEQ+YGXG4XOtFqXFFd
-2ErDHCAoOKVvYlJkJ531XsO16J3yKHZIlfSzaZ1a3jUXXt0WVRm7h+acf8IbZ5Rc
-HhXwLhXfJVJ7canQvvIvgYhroSxfp87vhq0BjHxHqyEPR75HgFa1AFI9o8CaBuw2
-CBamPp5+W91jfds1KIPf6GFgDAGFrMsBo7n5lPXWoJepaf9Nsbo26v6EATMVr+VI
-9eLAn64CmM54JncLFugi
-=5rkL
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Mar_2014_10_30_51_+1100_zL..TeyR.b5jBJcj--
-
-
---===============2528751868908908209==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2528751868908908209==--
+> ---
+> http://kisskb.ellerman.id.au/kisskb/buildresult/10807476/
+> 
+>  drivers/clocksource/Kconfig |    4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index 143f1aff486b..837b7804775e 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -158,6 +158,7 @@ config SYS_SUPPORTS_EM_STI
+>  
+>  config SH_TIMER_CMT
+>  	bool "Renesas CMT timer driver" if COMPILE_TEST
+> +	depends on GENERIC_CLOCKEVENTS
+>  	default SYS_SUPPORTS_SH_CMT
+>  	help
+>  	  This enables build of a clocksource and clockevent driver for
+> @@ -166,6 +167,7 @@ config SH_TIMER_CMT
+>  
+>  config SH_TIMER_MTU2
+>  	bool "Renesas MTU2 timer driver" if COMPILE_TEST
+> +	depends on GENERIC_CLOCKEVENTS
+>  	default SYS_SUPPORTS_SH_MTU2
+>  	help
+>  	  This enables build of a clockevent driver for the Multi-Function
+> @@ -174,6 +176,7 @@ config SH_TIMER_MTU2
+>  
+>  config SH_TIMER_TMU
+>  	bool "Renesas TMU timer driver" if COMPILE_TEST
+> +	depends on GENERIC_CLOCKEVENTS
+>  	default SYS_SUPPORTS_SH_TMU
+>  	help
+>  	  This enables build of a clocksource and clockevent driver for
+> @@ -182,6 +185,7 @@ config SH_TIMER_TMU
+>  
+>  config EM_TIMER_STI
+>  	bool "Renesas STI timer driver" if COMPILE_TEST
+> +	depends on GENERIC_CLOCKEVENTS
+>  	default SYS_SUPPORTS_EM_STI
+>  	help
+>  	  This enables build of a clocksource and clockevent driver for
+> -- 
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
