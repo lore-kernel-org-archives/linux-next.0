@@ -1,60 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pwm tree with the arm-soc tree
-Date: Mon, 24 Mar 2014 16:35:18 +1100
-Message-ID: <20140324163518.a96d786dbfdef5b71619d60b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 24 Mar 2014 17:23:27 +1100
+Message-ID: <20140324172327.b852272309976f61238d3d22@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf"
+ boundary="Signature=_Mon__24_Mar_2014_17_23_27_+1100_vbK3T_b7sWeiz1Cz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:35372 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:34742 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750794AbaCXFf0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Mar 2014 01:35:26 -0400
+	id S1750900AbaCXGXe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Mar 2014 02:23:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>
 
---Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf
+--Signature=_Mon__24_Mar_2014_17_23_27_+1100_vbK3T_b7sWeiz1Cz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+Hi Andrew,
 
-Today's linux-next merge of the pwm tree got a conflict in
-arch/arm/mach-pxa/Kconfig between commit c7dc7d49fa8c ("ARM: pxa: select
-I2C_GPIO only if I2C is on") from the arm-soc tree and commit
-557fe99d9d49 ("pwm: Remove obsolete HAVE_PWM Kconfig symbol") from the
-pwm tree.
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (the former also remove the select of HAVE_PWM) and can
-carry the fix as necessary (no action is required).
+In file included from include/linux/mm.h:897:0,
+                 from include/linux/mman.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:22:
+include/linux/vmstat.h: In function '__count_vm_event':
+include/linux/vmstat.h:36:2: error: implicit declaration of function 'raw_c=
+pu_inc' [-Werror=3Dimplicit-function-declaration]
+  raw_cpu_inc(vm_event_states.event[item]);
+  ^
+include/linux/vmstat.h: In function '__count_vm_events':
+include/linux/vmstat.h:46:2: error: implicit declaration of function 'raw_c=
+pu_add' [-Werror=3Dimplicit-function-declaration]
+  raw_cpu_add(vm_event_states.event[item], delta);
+  ^
+
+Caused by commit "vmstat: use raw_cpu_ops to avoid false positives on
+preemption checks".
+
+My kernel (even going back to v3.13) has no reference to
+raw_cpu_inc/add ... missed patch?  Ah, ha percpu-add-raw_cpu_ops.patch
+etc are in the later part of the series :-(
+
+I just reverted "vmstat: use raw_cpu_ops to avoid false positives on
+preemption checks" and
+"vmstat-use-raw_cpu_ops-to-avoid-false-positives-on-preemption-checks-fix"
+for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf
+--Signature=_Mon__24_Mar_2014_17_23_27_+1100_vbK3T_b7sWeiz1Cz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTL8QaAAoJEMDTa8Ir7ZwV3SsP/2yMbSMrxU0a6WHNd/dtrGNw
-lWK3+R4C2it1pKTjenZGWaNZQc/S8X1NfNDwYHqptQp+fjhMGa5hfog7mN1iHxg/
-VxaQUM13j5VVpC+km7Dad2cRUHhy2LavytiqczUji37lZyBurKyVPv+YkMY7y4g9
-61hAzeZUTMJWdVfCJFaSkbHUiOXXJ49XlrI0+g/ZVD3fTQDlXzL582wZczT4BWPp
-mo8f8YgmCklWJbptvJ/ftKWp5KpJb20g1YPAG07bdourDR8zDgopSGcSMQPr/i/z
-XgCsFc8pnRF6NK/Vs0mInZ8PGAX9nlpL7Zt1E7EZkC9YkyMJqverloam9Y2mV4sA
-cENlxdZoGe3VK5DDBX9ZRnge/SKhY2/GE9WcxXRcHYHVLp0PSRGTJ6fAqHluCOTb
-njeLryRZiSE9G0z9OOmr70OJkJORrmgRm1vYHrAR9E3K2MHQIlW7DZ7LJBpKYW4m
-HVOMeZI100FrGnsltZEsnFMgVrl/iPomXYuoyblkiPUv2onyJRdfJctHAPh3xQec
-IDpFiVQ9loIPwNGrWLypYbVSyej4xvNhuhJtHTK72F2bsGvVw9KL4aI1gr5uNBXd
-lob6785Bx6EAW+JMLG1BUxfLrFXoO4n+f30/LjNoDo9xAU0hmQzXH25Xe2ogueTv
-dOdR8NbDcCOeUBqF0AsY
-=sR5j
+iQIcBAEBCAAGBQJTL89kAAoJEMDTa8Ir7ZwVZ7IQAIMbItezGMaMH1S1M4eOaap6
+rbV6xHug1RBtnjK2m/Z9QjFM9Ey7RjbpqUuJldMcAuaN+vXLcRg06lIgBmHi6pZH
+i2ogicZnGpCOgtB6a93jOal0rvvX0SGh14dWym6BQ9R40VLRCLji7Zje9U+IpMpe
+oR140/DBIbamL+IosCZcCuLyqbaNvBN7+viZhfUF3xgpy7GLPe0g6Ce3zXQEFi+U
+3mqdO8/sNwyh9DVZBFaePUVAQ0qogPLN0ZyFUcbGKxPFG373u5twdadslkybDnO+
+JVMARob6O/fNxWZtSLMFjtvvrYMScTxeQ3eRHBtvzA+LJLgreY85LVhgZwCkLS5u
+W1XS08xidwTcWx+U3aZ59TWF+2pkf/uGmqa7LUOBYEJpOgPAjnDPIcFPg490lWMf
+cTp3qLul3QaIEr4DrVkhdyWxHpCOfgNAzAWbSzOtHe8H1IdCGKKIDm438C0+87jR
+N+CqXC39d5h2RieD0SClqaprcCSTFQ6/D1Ge9hro5EwRQXT8XeoeqTOYcwtAInA1
+1e2urT6CSKPYMtAUNOafHRq/ofOyTCowhFiOJDmYnEocoHMAH/EWGfRHI7GH2bKy
+MHo/jQ7IU+1Q5E+41nWXTrjfs2qSBXI2ba1cz6GxMC5dfwMd4GlticAHBiDUTfNf
+UoO9A46KIn7jZMlG61Ka
+=OIDU
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf--
+--Signature=_Mon__24_Mar_2014_17_23_27_+1100_vbK3T_b7sWeiz1Cz--
