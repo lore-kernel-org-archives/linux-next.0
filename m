@@ -1,99 +1,65 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH -next] clocksource: CMT, MTU2, TMU and STI should depend
- on GENERIC_CLOCKEVENTS
-Date: Mon, 24 Mar 2014 10:54:41 +0900
-Message-ID: <20140324015440.GA8777@verge.net.au>
-References: <1395324352-9146-1-git-send-email-geert@linux-m68k.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 24 Mar 2014 13:01:35 +1100
+Message-ID: <20140324130135.d8788dffbc82ad210c53e258@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__24_Mar_2014_13_01_35_+1100_dPg0EMQC22ND7ohj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35095 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750878AbaCXByv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Mar 2014 21:54:51 -0400
-Content-Disposition: inline
-In-Reply-To: <1395324352-9146-1-git-send-email-geert@linux-m68k.org>
+Received: from ozlabs.org ([203.10.76.45]:48200 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751850AbaCXCBt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 23 Mar 2014 22:01:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <damm@opensource.se>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Paulo Zanoni <paulo.r.zanoni@intel.com>
 
-On Thu, Mar 20, 2014 at 03:05:50PM +0100, Geert Uytterhoeven wrote:
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> If GENERIC_CLOCKEVENTS=n:
-> 
-> drivers/clocksource/sh_cmt.c:54:28: error: field 'ced' has incomplete type
-> drivers/clocksource/sh_cmt.c: In function 'sh_cmt_interrupt':
-> drivers/clocksource/sh_cmt.c:407:23: error: 'CLOCK_EVT_MODE_ONESHOT' undeclared (first use in this function)
-> 
-> drivers/clocksource/sh_mtu2.c:44:28: error: field 'ced' has incomplete type
-> drivers/clocksource/sh_mtu2.c: In function 'ced_to_sh_mtu2':
-> drivers/clocksource/sh_mtu2.c:184:70: warning: initialization from incompatible pointer type [enabled by default]
-> drivers/clocksource/sh_mtu2.c: At top level:
-> drivers/clocksource/sh_mtu2.c:188:16: warning: 'enum clock_event_mode' declared inside parameter list [enabled by default]
-> 
-> drivers/clocksource/sh_tmu.c:45:28: error: field 'ced' has incomplete type
-> drivers/clocksource/sh_tmu.c: In function 'sh_tmu_interrupt':
-> drivers/clocksource/sh_tmu.c:207:21: error: 'CLOCK_EVT_MODE_ONESHOT' undeclared (first use in this function)
-> 
-> drivers/clocksource/em_sti.c:44:28: error: field 'ced' has incomplete type
-> drivers/clocksource/em_sti.c: In function 'ced_to_em_sti':
-> drivers/clocksource/em_sti.c:251:69: warning: initialization from incompatible pointer type [enabled by default]
-> drivers/clocksource/em_sti.c: At top level:
-> drivers/clocksource/em_sti.c:255:16: warning: 'enum clock_event_mode' declared inside parameter list [enabled by default]
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--Signature=_Mon__24_Mar_2014_13_01_35_+1100_dPg0EMQC22ND7ohj
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Hi Dave,
 
-> ---
-> http://kisskb.ellerman.id.au/kisskb/buildresult/10807476/
-> 
->  drivers/clocksource/Kconfig |    4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 143f1aff486b..837b7804775e 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -158,6 +158,7 @@ config SYS_SUPPORTS_EM_STI
->  
->  config SH_TIMER_CMT
->  	bool "Renesas CMT timer driver" if COMPILE_TEST
-> +	depends on GENERIC_CLOCKEVENTS
->  	default SYS_SUPPORTS_SH_CMT
->  	help
->  	  This enables build of a clocksource and clockevent driver for
-> @@ -166,6 +167,7 @@ config SH_TIMER_CMT
->  
->  config SH_TIMER_MTU2
->  	bool "Renesas MTU2 timer driver" if COMPILE_TEST
-> +	depends on GENERIC_CLOCKEVENTS
->  	default SYS_SUPPORTS_SH_MTU2
->  	help
->  	  This enables build of a clockevent driver for the Multi-Function
-> @@ -174,6 +176,7 @@ config SH_TIMER_MTU2
->  
->  config SH_TIMER_TMU
->  	bool "Renesas TMU timer driver" if COMPILE_TEST
-> +	depends on GENERIC_CLOCKEVENTS
->  	default SYS_SUPPORTS_SH_TMU
->  	help
->  	  This enables build of a clocksource and clockevent driver for
-> @@ -182,6 +185,7 @@ config SH_TIMER_TMU
->  
->  config EM_TIMER_STI
->  	bool "Renesas STI timer driver" if COMPILE_TEST
-> +	depends on GENERIC_CLOCKEVENTS
->  	default SYS_SUPPORTS_EM_STI
->  	help
->  	  This enables build of a clocksource and clockevent driver for
-> -- 
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Today's linux-next merge of the drm tree got conflicts in
+drivers/gpu/drm/i915/intel_ddi.c and
+drivers/gpu/drm/i915/intel_dp.c between commit 825938307f81 ("Revert
+"drm/i915: don't touch the VDD when disabling the panel"") from Linus'
+tree and commits 4be7378004a0 ("drm/i915: drop ironlake_ prefix from edp
+panel/backlight functions"), dce56b3c626f ("drm/i915: save some time when
+waiting the eDP timings") and b3064154dfd3 ("drm/i915: Don't just say it,
+actually force edp vdd") from the drm tree.
+
+This latter commit in the drm tree seems to be solving the same problem
+as the one in Linus' tree (but slightly differently), so I just
+effectively dropped the patch from Linus' tree and can carry the fix as
+necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__24_Mar_2014_13_01_35_+1100_dPg0EMQC22ND7ohj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTL5IIAAoJEMDTa8Ir7ZwVSCQP/j5Dr6gDdjxDn8+gA7K/fZD8
+cHMS6mJGIftDbeSxm4hRSfZiG2PE3QbHzsRd8xyp2G+C8/OVDkFpwlOOuS5an6H3
+4n8TVf/onZnk5c0jVswFCRGN0u2zywZek8G0LvVlL3eAzzxVIBSzLzM8SBLtKqvY
+TnlumiNZLIJLUKkMq5NFQzXRBx8OQgIt2yR3QRf6XRWESqQdlIu2tVOkHZpZuBc7
+/p30BDcrThggCGVisYqphVbMel3zWVw1lJswA/LTjDipZ3LJA0yFWCE+MnMiDhbw
+hWRxkR2gacltGKYkbeMttk2M9dK3CTdA7LJh5ZcvMPjDEBcmq/rLgTv78fQYdpfA
++8V2Havs8TyUcKfMQkIwhTz7knwrrDoECtkWhA+XbaPoUvltL3Ng/N/10uDrKvNf
+4fnNvas0v8JHMbagpdi0Oq2lYDZt67FTLgXGN8LIkb+PC1Ay2SiHU9QlK3juBwqc
+5AgWAiOdQuZl2BHRKqu8gRDxkhUP+upnUPk/hCbtfkWfwYSU8Z3BwpaKw4ttstYk
+z0NmsHhlgZYt3mFcgaFBS+EOUMKj7dvu0L0tBgptZhYORdL8EO4T8cviE4hhFNul
+nTPKHVWturswFouYW046VdtzWYQdWYvYhYuAhZRKxpqjpxpWvySUZ1cyvzzQOn0V
+oiRLsKdjcwYjepWjiHWW
+=aB/6
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Mar_2014_13_01_35_+1100_dPg0EMQC22ND7ohj--
