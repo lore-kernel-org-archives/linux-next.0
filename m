@@ -1,75 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the drm tree
-Date: Mon, 24 Mar 2014 14:38:46 +1100
-Message-ID: <20140324143846.39a09ca7ed3de2b089eef1c7@canb.auug.org.au>
+Subject: linux-next: manual merge of the pwm tree with the arm-soc tree
+Date: Mon, 24 Mar 2014 16:35:18 +1100
+Message-ID: <20140324163518.a96d786dbfdef5b71619d60b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Mar_2014_14_38_46_+1100_YMBUzQQAECHUA+dH"
+ boundary="Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:53429 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:35372 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750881AbaCXDix (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 23 Mar 2014 23:38:53 -0400
+	id S1750794AbaCXFf0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Mar 2014 01:35:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
---Signature=_Mon__24_Mar_2014_14_38_46_+1100_YMBUzQQAECHUA+dH
+--Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Thierry,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/gpu/drm/gma500/mmu.c between commit b219372dff81 ("drm/gma500:
-Make SGX MMU driver actually do something") from the drm tree and commit
-840d2830e6e5 ("x86, cpufeature: Rename X86_FEATURE_CLFLSH to
-X86_FEATURE_CLFLUSH") from the tip tree.
+Today's linux-next merge of the pwm tree got a conflict in
+arch/arm/mach-pxa/Kconfig between commit c7dc7d49fa8c ("ARM: pxa: select
+I2C_GPIO only if I2C is on") from the arm-soc tree and commit
+557fe99d9d49 ("pwm: Remove obsolete HAVE_PWM Kconfig symbol") from the
+pwm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the former also remove the select of HAVE_PWM) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/gma500/mmu.c
-index 3e14a9b35252,c3e67ba94446..000000000000
---- a/drivers/gpu/drm/gma500/mmu.c
-+++ b/drivers/gpu/drm/gma500/mmu.c
-@@@ -478,8 -520,7 +478,8 @@@ struct psb_mmu_driver *psb_mmu_driver_i
- =20
-  	driver->has_clflush =3D 0;
- =20
- +#if defined(CONFIG_X86)
-- 	if (boot_cpu_has(X86_FEATURE_CLFLSH)) {
-+ 	if (boot_cpu_has(X86_FEATURE_CLFLUSH)) {
-  		uint32_t tfms, misc, cap0, cap4, clflush_size;
- =20
-  		/*
-
---Signature=_Mon__24_Mar_2014_14_38_46_+1100_YMBUzQQAECHUA+dH
+--Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTL6jKAAoJEMDTa8Ir7ZwV3lQP/i4i/TA2HoDQmEWmXW+18sS6
-Ofg8Z4tcV9DZ15215s+iF7TAJ/YF5aJvfj0HJLmRpA48CCsHyFU4O2hFvrABjZ3A
-mImUaXwB3PF64yAU7uGjLT9NKE8Sk18P77IQcydRSTs3byjPgj2r+RVvhlo7znWs
-uMpXsmOH8vgvi504UUEsV+JuGoCH31ndcAve4S94eanRR8sRjSNuLqFNBOvPWNFy
-O8lw6BKROiqLXcXFsTdAIVxCTXwnC5sSIeS7YFFfINYdz20YnrjrV294oDgMFkM2
-UJTE1JKrSQ/EnHq78C5o7JkZXpmIpNBK6OwvFL/1Yol4+Sdf5Kxeo6fY4ekAQyTB
-9Ge5wfGexqJAIf7PHL/4xO+om8TIaKvdyO71ro5OkgnzoSfRmSrRUZgA5Y8JA3pG
-ymAT6578qvRRTKIW5Huics7dnTc4N1zS7aEaSVOR7i5NR6ua4HpfiRXU8KG7G4MC
-QTb322bwRfRiRrz8EvG8BaWigU7PAujHnO0+W8HytC12Tg6VC2w88HNjtHjBFCGn
-gf24dPLP3kFFBIVWZGL26VDvcK0k2/365fnXhV2A0S5ddXrTl9ObgdNQuwEE1yH1
-9gs4s1QyoihYN9QIkiuwt6WMTgXmacIiiZccOTTONDD/CuQwoqpQH5sx2PaNyQCH
-ePX6bFi1493mrZXxZWKx
-=DtQb
+iQIcBAEBCAAGBQJTL8QaAAoJEMDTa8Ir7ZwV3SsP/2yMbSMrxU0a6WHNd/dtrGNw
+lWK3+R4C2it1pKTjenZGWaNZQc/S8X1NfNDwYHqptQp+fjhMGa5hfog7mN1iHxg/
+VxaQUM13j5VVpC+km7Dad2cRUHhy2LavytiqczUji37lZyBurKyVPv+YkMY7y4g9
+61hAzeZUTMJWdVfCJFaSkbHUiOXXJ49XlrI0+g/ZVD3fTQDlXzL582wZczT4BWPp
+mo8f8YgmCklWJbptvJ/ftKWp5KpJb20g1YPAG07bdourDR8zDgopSGcSMQPr/i/z
+XgCsFc8pnRF6NK/Vs0mInZ8PGAX9nlpL7Zt1E7EZkC9YkyMJqverloam9Y2mV4sA
+cENlxdZoGe3VK5DDBX9ZRnge/SKhY2/GE9WcxXRcHYHVLp0PSRGTJ6fAqHluCOTb
+njeLryRZiSE9G0z9OOmr70OJkJORrmgRm1vYHrAR9E3K2MHQIlW7DZ7LJBpKYW4m
+HVOMeZI100FrGnsltZEsnFMgVrl/iPomXYuoyblkiPUv2onyJRdfJctHAPh3xQec
+IDpFiVQ9loIPwNGrWLypYbVSyej4xvNhuhJtHTK72F2bsGvVw9KL4aI1gr5uNBXd
+lob6785Bx6EAW+JMLG1BUxfLrFXoO4n+f30/LjNoDo9xAU0hmQzXH25Xe2ogueTv
+dOdR8NbDcCOeUBqF0AsY
+=sR5j
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Mar_2014_14_38_46_+1100_YMBUzQQAECHUA+dH--
+--Signature=_Mon__24_Mar_2014_16_35_18_+1100_8XSLcTKA2hQQLeWf--
