@@ -1,106 +1,73 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the keystone tree with the arm-soc
- tree
-Date: Mon, 24 Mar 2014 20:23:53 -0500
-Message-ID: <20140325012353.GA25643@saruman.home>
-References: <20140325105501.e63fcdd78d0d604b4e5309a1@canb.auug.org.au>
- <5330C703.5030705@ti.com>
-Reply-To: balbi@ti.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 25 Mar 2014 12:58:35 +1100
+Message-ID: <20140325125835.f3dc8f542b4d11394373718b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1189873701980153452=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5330C703.5030705@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Mar_2014_12_58_35_+1100_19fGEbkp3wXSpBUO"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:59558 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751141AbaCYB6q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Mar 2014 21:58:46 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
---===============1189873701980153452==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
-Content-Disposition: inline
-
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__25_Mar_2014_12_58_35_+1100_19fGEbkp3wXSpBUO
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2014 at 08:00:03PM -0400, Santosh Shilimkar wrote:
-> On Monday 24 March 2014 07:55 PM, Stephen Rothwell wrote:
-> > Hi Santosh,
-> >=20
-> > Today's linux-next merge of the keystone tree got a conflict in
-> > arch/arm/boot/dts/Makefile between commit ba5a37e52194 ("ARM: mvebu: Mo=
-ve
-> > kirkwood DT boards into mach-mvebu") from the arm-soc tree and commit
-> > 400550ae7e77 ("ARM: dts: Build all keystone dt blobs") from the keystone
-> > tree.
-> >=20
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
-> >=20
-> Looks fine. Thanks
+Hi all,
 
-wow, not even a mention of my original patch [1]. I also couldn't find
-your patch [2] anywhere in the mailing list archives, not even google
-could find it. The only place that commit was ever mentioned was this
-very thread.
+Today's linux-next merge of the net-next tree got a conflict in
+Documentation/devicetree/bindings/net/micrel-ks8851.txt between commit
+ebf4ad955d3e ("net: micrel : ks8851-ml: add vdd-supply support") from
+the  tree and commit e8f08ee0ad86 ("DT: net: document Ethernet bindings
+in one place") from the net-next tree.
 
-The patch I wrote was valid for v3.14-rc7 (the base where it was
-written), I'd expect to, at a minimum, have a mention or a Reported-by
-or at least see your patch in the mailing list.
-
-Anyway, it's just a patch. Nevermind.
-
-[1] http://marc.info/?l=3Dlinux-arm-kernel&m=3D139463982310448&w=3D2
-[2] https://git.kernel.org/cgit/linux/kernel/git/ssantosh/linux-keystone.gi=
-t/commit/?h=3Dnext&id=3D400550ae7e778302a45d2952ac75907903e2610c
+I fixed it up (maybe - see below) and can carry the fix as necessary (no
+action is required).
 
 --=20
-balbi
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---1yeeQ81UyVL57Vl7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --cc Documentation/devicetree/bindings/net/micrel-ks8851.txt
+index 4fc392763611,8e20c04a1da1..000000000000
+--- a/Documentation/devicetree/bindings/net/micrel-ks8851.txt
++++ b/Documentation/devicetree/bindings/net/micrel-ks8851.txt
+@@@ -4,7 -4,3 +4,6 @@@ Required properties
+  - compatible =3D "micrel,ks8851-ml" of parallel interface
+  - reg : 2 physical address and size of registers for data and command
+  - interrupts : interrupt connection
+ +
+ +Optional properties:
+- - local-mac-address : Ethernet mac address to use
+ +- vdd-supply:	supply for Ethernet mac
+
+--Signature=_Tue__25_Mar_2014_12_58_35_+1100_19fGEbkp3wXSpBUO
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTMNqpAAoJEIaOsuA1yqREE/8P/15ozWPKmoYBcApaAP3iFKVr
-YNMgzopVTxA5lxV001n1t+tPn/kiuGm9BC/ZpkeyvVapPiAvqU3QUelyO5RqVete
-KO1JhXOOGolyOwy1WMIAx/n6nPHxpr3SVzmrpZS7GLaew6l6Ij4sbjkf7Kc09Jn7
-QN29A4EM7Md6fY4wMsGAOJ0LXfWUJ86zZwTtN7Twlw2muOTYjgV2Tfe8pELLi2dv
-wotmKqOK5wSn7fX4+G0WvmcoN8nlbr0Cn7jfF+sJVTXI+SoyyyS+OZcvxj7JKLsp
-ok0qZo7hCMBz1qhQk/nO6kGT7tz3FyVcyD1NBzS2wfqSRA2A7VIYeiCHIg5wzhtm
-LVn6WNsPCLYuasH5pPC5a5je29h+f4rzJfSQoWTL/iwii/O3aWLfmaGEpZaO8nq+
-HMnMlbvvPeHrniN38IWqtCJ5+WZrMslyEblZ/7sm/irTKSYvIT0xB2xKvyRVzc4O
-j0eExeCktWVo3QDu7edpHZYNN6eaXQ4q9m2nsXqor5NktwRFPd/KfmfVZWlX1qH5
-IsYmn2pkBlwmm9T9f3ga72ftUNqxqHgsABndtu7VaDsg2bifqEkOr3I7rwEpw9qv
-5FYuClwR3vneRhIx1xUH07bn9dTjnnDxDiNrgP5cp67DNxnimMQCukddtqqJrZLx
-l4HE5G5TdXOuVdjlD8Ho
-=/W4i
+iQIcBAEBCAAGBQJTMOLUAAoJEMDTa8Ir7ZwVLkAP/jTGl+rW6nyN2FStqgtz2dIL
+ZriBGMK9ZRZoaDDpsP2dCXQH2XA7tmuYIoRH6aLOd1M/oEfvWTu9OXBkQW/ANLWj
+wCG/oveXB9jDtVGMjpCHIwS2zj54BMzrDeWrMNvc7JOiEdTMOFnQRhiIFjcA8BsL
+X8ByqQHHU5rKcuzg3Yd7wobi5l6K9u297bQ51yVF13h7nWoiYysOySY19vvrLN3+
+K5yt4PI6blYpjs/M+L3z9Zrj3vFRtmfMvTY58rKEnb6EcV4mHUCmaUsW8w15TRuy
+puXJ4gvB41C+Uykcpcy4muQ/mt3q+WYmpbk6ws61P+XNSZL+F0zfJsTvSaFfgI3H
+YeGXF/VYYsDCduBYJ71O+NSBMYhFwTkWaUGzcb82DEb1XjbyTgAJR2HA9cfnRryN
+npOz+EKVdES3XNJ8F8Q2G8A1pR6TtaRUXnHE+zoKmAojRV+4Llftyp+N4hF1SI0H
+puSEo/tKnRYUzdOT4ENFd6VOVPNjhef6Cu91m73LgOy/U5njDazGGYFw1yjoYp86
+VK8dG8LUDksoAn40a6sp8WZuHYEjCmf9ixEP9LLlsRtKt0qDrJGcsDscS2PSgIpl
+VgVydw4C+6T6uL1z4iM2+Sm1VQaSSOHUK1/nbxIJNsojvNsASaiGC6JIwmlRkjmw
+LTLpw2dlwckPmOCYROrq
+=L+Ts
 -----END PGP SIGNATURE-----
 
---1yeeQ81UyVL57Vl7--
-
-
---===============1189873701980153452==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1189873701980153452==--
+--Signature=_Tue__25_Mar_2014_12_58_35_+1100_19fGEbkp3wXSpBUO--
