@@ -1,32 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 25 Mar 2014 00:31:46 -0400 (EDT)
-Message-ID: <20140325.003146.1533027544821884786.davem@davemloft.net>
-References: <20140325130447.e38f4242c03090fd48eae340@canb.auug.org.au>
+From: Michele CURTI <michele.curti@gmail.com>
+Subject: [PATCH] staging/winbond: fix a style error
+Date: Tue, 25 Mar 2014 07:29:52 +0100
+Message-ID: <20140325062952.GA1026@ativ>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:47386 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751065AbaCYEbr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Mar 2014 00:31:47 -0400
-In-Reply-To: <20140325130447.e38f4242c03090fd48eae340@canb.auug.org.au>
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:44717 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750830AbaCYG34 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Mar 2014 02:29:56 -0400
+Received: by mail-ee0-f52.google.com with SMTP id e49so18334eek.11
+        for <linux-next@vger.kernel.org>; Mon, 24 Mar 2014 23:29:55 -0700 (PDT)
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, roy.qing.li@gmail.com, ebiederm@xmission.com
+To: linux-next@vger.kernel.org
+Cc: pavel@ucw.cz, gregkh@linuxfoundation.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 25 Mar 2014 13:04:47 +1100
+Removed a few spaces.
 
-> Today's linux-next merge of the net-next tree got a conflict in
-> net/core/netpoll.c between commit c27f0872a344 ("netpoll: fix the skb
-> check in pkt_is_ns") from the net tree and commit 9c62a68d1311 ("netpoll:
-> Remove dead packet receive code (CONFIG_NETPOLL_TRAP)") from the net-next
-> tree.
-> 
-> I fixed it up (the latter removes the code fixed by the former, so I did
-> that) and can carry the fix as necessary (no action is required).
 
-That's a perfect resolution, thanks.
+diff --git a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
+index 715f87d..dc12008 100644
+--- a/drivers/staging/winbond/wb35tx_s.h
++++ b/drivers/staging/winbond/wb35tx_s.h
+@@ -12,7 +12,7 @@
+ /* Internal variable for module */
+ struct wb35_tx {
+        /* For Tx buffer */
+-       u8      TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
++       u8      TxBuffer[MAX_USB_TX_BUFFER_NUMBER][MAX_USB_TX_BUFFER];
+
+        /* For Interrupt pipe */
+        u8      EP2_buf[MAX_INTERRUPT_LENGTH];
+
+Signed-off-by: Michele Curti <michele.curti@gmail.com>
+
+
+Regards,
+Michele
