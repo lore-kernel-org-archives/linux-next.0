@@ -1,62 +1,40 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: linux-next: manual merge of the keystone tree with the arm-soc
- tree
-Date: Tue, 25 Mar 2014 09:17:33 -0400
-Message-ID: <533181ED.6040702@ti.com>
-References: <20140325105501.e63fcdd78d0d604b4e5309a1@canb.auug.org.au>
- <5330C703.5030705@ti.com> <20140325012353.GA25643@saruman.home>
+From: Michele Curti <michele.curti@gmail.com>
+Subject: [PATCHv2] staging/winbond: fix a style error
+Date: Tue, 25 Mar 2014 15:36:37 +0100
+Message-ID: <20140325143637.GA1477@powerline.azcom-win.it>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140325012353.GA25643@saruman.home>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "Balbi, Felipe" <balbi@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ee0-f45.google.com ([74.125.83.45]:58766 "EHLO
+	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752070AbaCYOgl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Mar 2014 10:36:41 -0400
+Received: by mail-ee0-f45.google.com with SMTP id d17so530302eek.4
+        for <linux-next@vger.kernel.org>; Tue, 25 Mar 2014 07:36:40 -0700 (PDT)
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: pavel@ucw.cz, gregkh@linuxfoundation.org
 
-On Monday 24 March 2014 09:23 PM, Balbi, Felipe wrote:
-> On Mon, Mar 24, 2014 at 08:00:03PM -0400, Santosh Shilimkar wrote:
->> On Monday 24 March 2014 07:55 PM, Stephen Rothwell wrote:
->>> Hi Santosh,
->>>
->>> Today's linux-next merge of the keystone tree got a conflict in
->>> arch/arm/boot/dts/Makefile between commit ba5a37e52194 ("ARM: mvebu: Move
->>> kirkwood DT boards into mach-mvebu") from the arm-soc tree and commit
->>> 400550ae7e77 ("ARM: dts: Build all keystone dt blobs") from the keystone
->>> tree.
->>>
->>> I fixed it up (see below) and can carry the fix as necessary (no action
->>> is required).
->>>
->> Looks fine. Thanks
-> 
-> wow, not even a mention of my original patch [1]. I also couldn't find
-> your patch [2] anywhere in the mailing list archives, not even google
-> could find it. The only place that commit was ever mentioned was this
-> very thread.
-> 
-I thought, we closed the thread mentioning about the patch applied
-on the same thread. [1]
 
-> The patch I wrote was valid for v3.14-rc7 (the base where it was
-> written), I'd expect to, at a minimum, have a mention or a Reported-by
-> or at least see your patch in the mailing list.
-> 
-> Anyway, it's just a patch. Nevermind.
-> 
-I missed to add the reported-by tag and also should have just pasted
-the patch in the reply. Sorry about that.
+Removed a few spaces that cause coding style error.
 
-regards,
-Santosh
+Signed-off-by: Michele Curti <michele.curti@gmail.com>
 
-[1] http://www.spinics.net/lists/devicetree/msg27351.html
+---
+ drivers/staging/winbond/wb35tx_s.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
+index 715f87d..dc12008 100644
+--- a/drivers/staging/winbond/wb35tx_s.h
++++ b/drivers/staging/winbond/wb35tx_s.h
+@@ -12,7 +12,7 @@
+ /* Internal variable for module */
+ struct wb35_tx {
+        /* For Tx buffer */
+-       u8      TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
++       u8      TxBuffer[MAX_USB_TX_BUFFER_NUMBER][MAX_USB_TX_BUFFER];
+
+        /* For Interrupt pipe */
+        u8      EP2_buf[MAX_INTERRUPT_LENGTH];
