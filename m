@@ -1,41 +1,108 @@
-From: Michele CURTI <michele.curti@gmail.com>
-Subject: [PATCH] staging/winbond: fix a style error
-Date: Tue, 25 Mar 2014 07:29:52 +0100
-Message-ID: <20140325062952.GA1026@ativ>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Tue, 25 Mar 2014 18:44:57 +1100
+Message-ID: <20140325184457.af6f08e9829e275100870b01@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Mar_2014_18_44_57_+1100_mQDsAeW8kiVT0gTQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:44717 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750830AbaCYG34 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Mar 2014 02:29:56 -0400
-Received: by mail-ee0-f52.google.com with SMTP id e49so18334eek.11
-        for <linux-next@vger.kernel.org>; Mon, 24 Mar 2014 23:29:55 -0700 (PDT)
-Content-Disposition: inline
+Received: from ozlabs.org ([203.10.76.45]:47541 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751886AbaCYHpF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Mar 2014 03:45:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: pavel@ucw.cz, gregkh@linuxfoundation.org
+To: Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.de>
 
-Removed a few spaces.
+--Signature=_Tue__25_Mar_2014_18_44_57_+1100_mQDsAeW8kiVT0gTQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Andrew,
 
-diff --git a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
-index 715f87d..dc12008 100644
---- a/drivers/staging/winbond/wb35tx_s.h
-+++ b/drivers/staging/winbond/wb35tx_s.h
-@@ -12,7 +12,7 @@
- /* Internal variable for module */
- struct wb35_tx {
-        /* For Tx buffer */
--       u8      TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
-+       u8      TxBuffer[MAX_USB_TX_BUFFER_NUMBER][MAX_USB_TX_BUFFER];
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-        /* For Interrupt pipe */
-        u8      EP2_buf[MAX_INTERRUPT_LENGTH];
+In file included from include/linux/thread_info.h:11:0,
+                 from arch/x86/include/asm/preempt.h:6,
+                 from include/linux/preempt.h:18,
+                 from include/linux/spinlock.h:50,
+                 from fs/ocfs2/stackglue.c:22:
+include/linux/bug.h:33:45: error: negative width in bit-field '<anonymous>'
+ #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
+                                             ^
+include/linux/kernel.h:848:3: note: in expansion of macro 'BUILD_BUG_ON_ZER=
+O'
+   BUILD_BUG_ON_ZERO((perms) > 0777) +    \
+   ^
+include/linux/sysfs.h:75:12: note: in expansion of macro 'VERIFY_OCTAL_PERM=
+ISSIONS'
+    .mode =3D VERIFY_OCTAL_PERMISSIONS(_mode) },  \
+            ^
+fs/ocfs2/stackglue.c:614:2: note: in expansion of macro '__ATTR'
+  __ATTR(dlm_recover_callback_support, S_IFREG | S_IRUGO,
+  ^
 
-Signed-off-by: Michele Curti <michele.curti@gmail.com>
+Caused by commit 88991182643c ("ocfs2: add dlm_recover_callback_support
+in sysfs") interacting with commit 58f86cc89c33
+("VERIFY_OCTAL_PERMISSIONS: stricter checking for sysfs perms") from the
+modules tree.
 
+I applied this fix up patch for today:
 
-Regards,
-Michele
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 25 Mar 2014 18:39:49 +1100
+Subject: [PATCH] ocfs2: VERIFY_OCTAL_PERMISSIONS fix up
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/ocfs2/stackglue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ocfs2/stackglue.c b/fs/ocfs2/stackglue.c
+index c8c9d54dabc5..5e4d314c854d 100644
+--- a/fs/ocfs2/stackglue.c
++++ b/fs/ocfs2/stackglue.c
+@@ -611,7 +611,7 @@ static ssize_t ocfs2_dlm_recover_show(struct kobject *k=
+obj,
+ }
+=20
+ static struct kobj_attribute ocfs2_attr_dlm_recover_support =3D
+-	__ATTR(dlm_recover_callback_support, S_IFREG | S_IRUGO,
++	__ATTR(dlm_recover_callback_support, S_IRUGO,
+ 	       ocfs2_dlm_recover_show, NULL);
+=20
+ static struct attribute *ocfs2_attrs[] =3D {
+--=20
+1.9.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_Mar_2014_18_44_57_+1100_mQDsAeW8kiVT0gTQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTMTP/AAoJEMDTa8Ir7ZwVBksQAIlkczltLK/OyL/GW/i2Rknh
+KVn/NbWqzRmvwejmsdSnuQsQhM4rOj4jkFA3ubqqOGDb4YjOBpibkZYGK2piJJRb
+IH/X5kpQU0jRMD+g3ta4MxENgrxSmo1kseNUdBEGX6gMAMXA5Ck2/6jFAcMYyf1L
+twBUqI471dmJfsA7Bgz3/SyDPcJIe6IVs/CY+N5cuDZYH8A9ZPMz/J4Tf+YDyejx
+PeZjXeJPFAMnVD/luPnTTTcGgQfwcK59SuYTUuj0W48mjKo+AHIb92wI7l+hHF6D
+Cz9eSopC+4hrN+dLMxqTuJYIBQMFIC2ZQ9h5jAOhpSAVV6xSXGI54WxF3Udfsu6K
+UCfpe8D37RqOEaRofl0YUOWwcz/m2tqBkd5W9ojZFvw65qjrsl8vPYiIKP9tZN+y
+e+VyfcC/2bfFjwFh7TytgP7Tsah/3VuGIre3K6SMzM+b9fXzCNqGeHuGY6UV0K/Q
+hthhNOjrA/SvjpcCag4Cg10poUi9T3Ydsy5qPENxsB7/bXZxZY/nlQ1+NWWvIdlg
+YjnQpeSKwlW8nu+iXNckEVn0g26esZ2A8RjN48ig6noecY8iUX0j/i6bSFI1heZk
+KALAASdalMv5+JcZCY4D4gRA1aFyXWWfcvy3Tf3j+KWrTRcm5o+w51w8yM4U44ko
+vk5Zj8nYAbU5w3FUk7WB
+=FyKn
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Mar_2014_18_44_57_+1100_mQDsAeW8kiVT0gTQ--
