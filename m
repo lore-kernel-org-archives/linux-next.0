@@ -1,40 +1,52 @@
-From: Michele Curti <michele.curti@gmail.com>
-Subject: [PATCHv2] staging/winbond: fix a style error
-Date: Tue, 25 Mar 2014 15:36:37 +0100
-Message-ID: <20140325143637.GA1477@powerline.azcom-win.it>
+From: Pat Erley <pat-lkml@erley.org>
+Subject: Possible regression after 3935ed6a3a533c1736e3ca65bff72afd1773be27
+Date: Wed, 26 Mar 2014 00:36:50 -0500
+Message-ID: <53326772.4000900@erley.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:58766 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752070AbaCYOgl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Mar 2014 10:36:41 -0400
-Received: by mail-ee0-f45.google.com with SMTP id d17so530302eek.4
-        for <linux-next@vger.kernel.org>; Tue, 25 Mar 2014 07:36:40 -0700 (PDT)
-Content-Disposition: inline
+Received: from erley.org ([97.107.129.9]:57643 "EHLO remote.erley.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750832AbaCZFp2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Mar 2014 01:45:28 -0400
+Received: from [192.168.1.102] (162-230-90-164.lightspeed.mdsnwi.sbcglobal.net [162.230.90.164])
+	(using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
+	(No client certificate requested)
+	by remote.erley.org (Postfix) with ESMTPSA id 215962801D
+	for <linux-next@vger.kernel.org>; Wed, 26 Mar 2014 05:36:51 +0000 (UTC)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: pavel@ucw.cz, gregkh@linuxfoundation.org
 
+On my 64bit kernel,  some commit after 
+3935ed6a3a533c1736e3ca65bff72afd1773be27 seems to have broken 32bit 
+compatibility.  I've run the bisection twice, and both pointed to 
+0df1ea2b7955d3cb311a549c44ed482452b859ff, but reverting that on HEAD did 
+not solve the problem.
 
-Removed a few spaces that cause coding style error.
+Even this simple program:
 
-Signed-off-by: Michele Curti <michele.curti@gmail.com>
+main(){puts("HELLO");}
 
----
- drivers/staging/winbond/wb35tx_s.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-diff --git a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
-index 715f87d..dc12008 100644
---- a/drivers/staging/winbond/wb35tx_s.h
-+++ b/drivers/staging/winbond/wb35tx_s.h
-@@ -12,7 +12,7 @@
- /* Internal variable for module */
- struct wb35_tx {
-        /* For Tx buffer */
--       u8      TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
-+       u8      TxBuffer[MAX_USB_TX_BUFFER_NUMBER][MAX_USB_TX_BUFFER];
+compiled with:
 
-        /* For Interrupt pipe */
-        u8      EP2_buf[MAX_INTERRUPT_LENGTH];
+gcc -m32 test.c
+
+Will crash with the infinitely unhelpful:
+
+$ ./a.out
+Killed
+
+Even strace doesn't point to why it's failing:
+
+$ strace ./a.out
+execve("./a.out", ["./a.out"], [/* 73 vars */] <unfinished ...>
++++ killed by SIGKILL +++
+Killed
+
+I wasn't sure how to proceed with finding which further commits might be 
+causing issues, so I traced it back to the last working.  .config 
+available by request.  I'll happily test fixes/further reverts.
+
+Pat Erley
