@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tip tree with the arm-soc tree
-Date: Fri, 28 Mar 2014 14:39:52 +1100
-Message-ID: <20140328143952.7a77bc128f4affc3efd48ddf@canb.auug.org.au>
+Date: Fri, 28 Mar 2014 14:47:15 +1100
+Message-ID: <20140328144715.3798b9a7ee033de0ee40f359@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__28_Mar_2014_14_39_52_+1100_MY+fwB=1zg6Gt1oJ"
+ boundary="Signature=_Fri__28_Mar_2014_14_47_15_+1100_ZLRNTrWxFy2x78Vd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55025 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:45678 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757221AbaC1DkA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Mar 2014 23:40:00 -0400
+	id S1757242AbaC1DrY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Mar 2014 23:47:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Rob Herring <robh@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>
 
---Signature=_Fri__28_Mar_2014_14_39_52_+1100_MY+fwB=1zg6Gt1oJ
+--Signature=_Fri__28_Mar_2014_14_47_15_+1100_ZLRNTrWxFy2x78Vd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,10 +24,11 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the tip tree got a conflict in
-arch/arm/boot/dts/sun7i-a20.dtsi between commit 36ab3e73b7ac ("ARM: dt:
-sun7i: Add A20 SPI controller nodes") from the arm-soc tree and commit
-8ff973a26763 ("ARM: sun7i/sun6i: dts: Add NMI irqchip support") from the
-tip tree.
+arch/arm/mach-zynq/Kconfig between commits ddb902cc3459 ("ARM: centralize
+common multi-platform kconfig options") and 016f4dcae81e ("ARM: zynq:
+Split slcr in two parts") from the arm-soc tree and commits 61f1fc7e9258
+("arm: zynq: Don't use arm_global_timer with cpufreq") and cd325295871f
+("arm: zynq: Add support for cpufreq") from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,67 +37,52 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/sun7i-a20.dtsi
-index 024a01ce4f0c,cadcf2f9881d..000000000000
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@@ -401,28 -339,14 +401,36 @@@
-  		#size-cells =3D <1>;
-  		ranges;
- =20
- +		spi0: spi@01c05000 {
- +			compatible =3D "allwinner,sun4i-a10-spi";
- +			reg =3D <0x01c05000 0x1000>;
- +			interrupts =3D <0 10 4>;
- +			clocks =3D <&ahb_gates 20>, <&spi0_clk>;
- +			clock-names =3D "ahb", "mod";
- +			status =3D "disabled";
- +			#address-cells =3D <1>;
- +			#size-cells =3D <0>;
- +		};
- +
- +		spi1: spi@01c06000 {
- +			compatible =3D "allwinner,sun4i-a10-spi";
- +			reg =3D <0x01c06000 0x1000>;
- +			interrupts =3D <0 11 4>;
- +			clocks =3D <&ahb_gates 21>, <&spi1_clk>;
- +			clock-names =3D "ahb", "mod";
- +			status =3D "disabled";
- +			#address-cells =3D <1>;
- +			#size-cells =3D <0>;
- +		};
- +
-+ 		nmi_intc: interrupt-controller@01c00030 {
-+ 			compatible =3D "allwinner,sun7i-a20-sc-nmi";
-+ 			interrupt-controller;
-+ 			#interrupt-cells =3D <2>;
-+ 			reg =3D <0x01c00030 0x0c>;
-+ 			interrupts =3D <0 0 4>;
-+ 		};
-+=20
-  		emac: ethernet@01c0b000 {
-  			compatible =3D "allwinner,sun4i-a10-emac";
-  			reg =3D <0x01c0b000 0x1000>;
+diff --cc arch/arm/mach-zynq/Kconfig
+index cd2d55ab834a,f03e75bd0b2b..000000000000
+--- a/arch/arm/mach-zynq/Kconfig
++++ b/arch/arm/mach-zynq/Kconfig
+@@@ -2,11 -2,19 +2,13 @@@ config ARCH_ZYN
+  	bool "Xilinx Zynq ARM Cortex A9 Platform" if ARCH_MULTI_V7
+  	select ARM_AMBA
+  	select ARM_GIC
++ 	select ARCH_HAS_CPUFREQ
++ 	select ARCH_HAS_OPP
+ -	select COMMON_CLK
+ -	select CPU_V7
+ -	select GENERIC_CLOCKEVENTS
+  	select HAVE_ARM_SCU if SMP
+  	select HAVE_ARM_TWD if SMP
+  	select ICST
+ -	select MIGHT_HAVE_CACHE_L2X0
+ -	select USE_OF
+ -	select HAVE_SMP
+ -	select SPARSE_IRQ
+  	select CADENCE_TTC_TIMER
+- 	select ARM_GLOBAL_TIMER
++ 	select ARM_GLOBAL_TIMER if !CPU_FREQ
+ +	select MFD_SYSCON
+  	help
+  	  Support for Xilinx Zynq ARM Cortex A9 Platform
 
---Signature=_Fri__28_Mar_2014_14_39_52_+1100_MY+fwB=1zg6Gt1oJ
+--Signature=_Fri__28_Mar_2014_14_47_15_+1100_ZLRNTrWxFy2x78Vd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTNO8NAAoJEMDTa8Ir7ZwVY/AP/2SIWbozXxOj2pyResQvHTdr
-Yq+VnQTINMGLaGWcie7jQNHIlZIk1APffccJcV8FKI3TM74QaUKO7Yj2xfpHfPsF
-9xNi9VEet85mOkS5xHvY9imXUcvFM/h23uDTyH8tg7QoJdet8a3Xmi+yC9BsRNAt
-IYJWCp+Kj+9C+2kZtKPRAKFLxYfKXa/fRytj/GgCF9xEV+dZYBC9+y+qF0D0/JTy
-Ccoi0qIG1NqRNnp2FkpBdTmma+g3RRoKgJzt+A71b6IqH3KXcrLI8UuNTXqfYgbf
-VX2yjnMNvZNgg3ur6Hjd8ieU2eKyW18FLMwKySCUrm0Sn4TGBLl+3kz6l8lTRycH
-NGDgxrUUZ6YtXZFx8z4PK5iSBtoUfEvutNn3s6OLQUJ2cNZVW2UQvE8JaPada+gW
-iC2z9zSRnhfy9tKqtXmpZ7lv46K5SNzGDzdXKo4Z0M6VmQKMtzy/PnVlXWlFPlAq
-6hMYQ8uW9eayAXyYPd071kuasZRksWLiXe8NY/aC9E3kgxt0OOhPUm3X4qPFky8b
-oMyOa/9Fub0bwgYf6K3JHjw4J3run87NO+zN16D+/ZNnAga++RACzhr1AQf2eJ1w
-9wHIX+AUfvSOMjKyb4T+NkcQrNUZBYt4d3Uf0w6cbo95jhFWJm843zSGqbzmwjBs
-fuVOGl0pAnpqKJWkPeeP
-=YheQ
+iQIcBAEBCAAGBQJTNPDKAAoJEMDTa8Ir7ZwVQnQQAIFejjfzypqCLus/Js51hWiw
+NUI1WziHs9vssPLTVJcFlWFrp8TVkrAubha5Dll8g3mkgPIvq9mNEqqKZQKCq6WT
+3LHxnyoC1THIgkJhzmjOxMREb/HIC0Gke0h7aUKnnDNfjxXqCErLPeOhS84FOIni
+e071IU3SEJiq/UqOOaaTusc8j+h1R4MEfBZAQ9ibqYlYNUr8hcUdEHMQ6OZTPxt6
+QRCAcUCkyU4JTihE3UoyHER8FxocwQUXkx8SPMFHLMWKmI2MUXG4q7t5ssiMvXs2
+QudEqPnCkTtoOO4bkQGEO9ohSOxBy5q+Y8eIqgICoTzdDgmnwpoia2wSPfQcyyw4
+ZE4uyUcOfXyPpoXWpZNaYyLFLtJ3YwxWdNPDnQrfwQmHcEWK9Ni2qTRhIEN6eVnD
+b4oALbPZR/n5zoihaU0n5INaVdE+3tkPEAPs0voeAShGANuOTLxfpmLAhEu3Su4p
+8/hDwMU5ss3G7JiuTaNzutH1IW8Q/TawkNSMGYFXGbbZ3ZU1PT40HR1s029buYxO
+ewu0OTT97drx0HkMF5W8+ujd3mFQNdglpLu4tjWHR0TRiYDvXMv7c1yKI6TCeM2f
+403NaNWWWgLCHAEW/J5A/ZAGMMnl9vWmWzXxn2Nz4of3QSfp0MLyOzLLaGKGzv1O
+c2FL67AyBRSl7hnnTIyF
+=wMw3
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_Mar_2014_14_39_52_+1100_MY+fwB=1zg6Gt1oJ--
+--Signature=_Fri__28_Mar_2014_14_47_15_+1100_ZLRNTrWxFy2x78Vd--
