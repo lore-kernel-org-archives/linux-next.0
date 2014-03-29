@@ -1,54 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: preemptive reminder
-Date: Sat, 29 Mar 2014 12:17:50 +1100
-Message-ID: <20140329121750.2e75402e83c21e3e43f08de1@canb.auug.org.au>
+From: Shahed Shaikh <shahed.shaikh@qlogic.com>
+Subject: RE: linux-next: Tree for Mar 28 (qlcnic)
+Date: Sat, 29 Mar 2014 09:11:52 +0000
+Message-ID: <262CB373A6D1F14F9B81E82F74F77D5A46F881E9@avmb2.qlogic.org>
+References: <20140328180950.322d12920ce31e0ad3dace59@canb.auug.org.au>
+ <5335BEE1.4030609@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:41560 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751465AbaC2BR5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 28 Mar 2014 21:17:57 -0400
+Received: from mx0a-0016ce01.pphosted.com ([67.231.148.157]:42913 "EHLO
+	mx0a-0016ce01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751204AbaC2JMX convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 29 Mar 2014 05:12:23 -0400
+In-Reply-To: <5335BEE1.4030609@infradead.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Dept-HSG Linux NIC Dev <Dept-HSGLinuxNICDev@qlogic.com>
 
---Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+> -----Original Message-----
+> From: Randy Dunlap [mailto:rdunlap@infradead.org]
+> Sent: Friday, March 28, 2014 11:57 PM
+> To: Stephen Rothwell; linux-next@vger.kernel.org
+> Cc: linux-kernel; netdev; Shahed Shaikh; Dept-HSG Linux NIC Dev
+> Subject: Re: linux-next: Tree for Mar 28 (qlcnic)
+> 
+> On 03/28/2014 12:09 AM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > This tree still fails (more than usual) the powerpc allyesconfig build.
+> >
+> > Changes since 20140327:
+> >
+> 
+> 
+> on x86_64:
+> CONFIG_VXLAN=m
+> 
+> drivers/built-in.o: In function `qlcnic_attach':
+> (.text+0x25d9dc): undefined reference to `vxlan_get_rx_port'
+> 
+> 
+> Full randconfig file is attached.
+> 
+> depends on VXLAN ?
 
-Please do not add anything to you linux-next included branches that you
-intend for v3.16 until after v3.15-rc1 is released (at least).
+Yes. Need to add dependency on VXLAN in Kconfig of qlcnic. I will send a patch to fix this build failure.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTNh9DAAoJEMDTa8Ir7ZwVHfUP/01bj0hMfbS/QOhkaq2CMDn9
-GgB5YAkL6JyGnDWdeOb3/HSDlJ7KygYI2zT4B8AtefjHDPod+86G897Q8lYX+mHE
-VH9+COM7UbWBNRYJMNdH1Ny2+sbHpW51l3W7dKlgW8WBSlI5kQouQwSL9DIhm2I2
-nQjZRAcVIHeLjw5g9e2m9g6HlWfIDoF9jGaTh6tUy1Z1HGrU73xqYohkunv1UgFJ
-v/BEdMhULCgQ+Duz10M6m1zEYIsr8FjVX0Gyzh1IBL9lo4wJsPDfszP8XykNxTO6
-uUU+QKIXnW3iFmN3gGME+8pEExCafI+9SlUhj765GTBl7sAj4k5G4wb0wL9Zon5M
-7jvsbyWGFW0Z9N9RX9q9fAFajrywdD6fHXAG7I9lZJoOE39nPebqvyBtuuYSfE+l
-rjowxzbreDtYO2LBL0HiH0hgn1xHa2Bj/hreRxqbsgIQTC7NOHcFuPHL0IxGrJTT
-82lpW9mH/BxVLr3xpYaK6TEIDAsferWtGgOOhieHJ084yFC4ELBXzmPVFDyI9rw/
-rwwCJDFRs0le0q9Suqw61u/8L36/e0kwDaaIGQpYzFEMQAjY5hLc57jQ+j4eB6rG
-Fk4QYVRLfLhuPyiF5c9+Tr369leeFKLFaZeNkHqllKz2x4NhhFKo/lIliNkxzaYZ
-RTOKp2W0OiSSvbhUXJW/
-=wxd9
------END PGP SIGNATURE-----
-
---Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr--
+Thanks,
+Shahed
+> 
+> --
+> ~Randy
