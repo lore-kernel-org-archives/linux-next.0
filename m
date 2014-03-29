@@ -1,48 +1,54 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] infiniband: fix iser_verbs.c format warning
-Date: Fri, 28 Mar 2014 14:03:40 -0700
-Message-ID: <5335E3AC.8080401@infradead.org>
-References: <20140328180950.322d12920ce31e0ad3dace59@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: preemptive reminder
+Date: Sat, 29 Mar 2014 12:17:50 +1100
+Message-ID: <20140329121750.2e75402e83c21e3e43f08de1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:43853 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753062AbaC1VDn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Mar 2014 17:03:43 -0400
-In-Reply-To: <20140328180950.322d12920ce31e0ad3dace59@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:41560 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751465AbaC2BR5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Mar 2014 21:17:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, linux-rdma@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+--Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix pr_err (printk) format warning:
+Hi all,
 
-drivers/infiniband/ulp/iser/iser_verbs.c:1181:4: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'sector_t' [-Wformat]
+Please do not add anything to you linux-next included branches that you
+intend for v3.16 until after v3.15-rc1 is released (at least).
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc:	Or Gerlitz <ogerlitz@mellanox.com>
-Cc:	Roi Dayan <roid@mellanox.com>
-Cc:	linux-rdma@vger.kernel.org
----
- drivers/infiniband/ulp/iser/iser_verbs.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---- linux-next-20140328.orig/drivers/infiniband/ulp/iser/iser_verbs.c
-+++ linux-next-20140328/drivers/infiniband/ulp/iser/iser_verbs.c
-@@ -1178,9 +1178,10 @@ u8 iser_check_task_pi_status(struct iscs
- 			do_div(sector_off, sector_size + 8);
- 			*sector = scsi_get_lba(iser_task->sc) + sector_off;
- 
--			pr_err("PI error found type %d at sector %lx "
-+			pr_err("PI error found type %d at sector %llx "
- 			       "expected %x vs actual %x\n",
--			       mr_status.sig_err.err_type, *sector,
-+			       mr_status.sig_err.err_type,
-+			       (unsigned long long)*sector,
- 			       mr_status.sig_err.expected,
- 			       mr_status.sig_err.actual);
- 
+--Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTNh9DAAoJEMDTa8Ir7ZwVHfUP/01bj0hMfbS/QOhkaq2CMDn9
+GgB5YAkL6JyGnDWdeOb3/HSDlJ7KygYI2zT4B8AtefjHDPod+86G897Q8lYX+mHE
+VH9+COM7UbWBNRYJMNdH1Ny2+sbHpW51l3W7dKlgW8WBSlI5kQouQwSL9DIhm2I2
+nQjZRAcVIHeLjw5g9e2m9g6HlWfIDoF9jGaTh6tUy1Z1HGrU73xqYohkunv1UgFJ
+v/BEdMhULCgQ+Duz10M6m1zEYIsr8FjVX0Gyzh1IBL9lo4wJsPDfszP8XykNxTO6
+uUU+QKIXnW3iFmN3gGME+8pEExCafI+9SlUhj765GTBl7sAj4k5G4wb0wL9Zon5M
+7jvsbyWGFW0Z9N9RX9q9fAFajrywdD6fHXAG7I9lZJoOE39nPebqvyBtuuYSfE+l
+rjowxzbreDtYO2LBL0HiH0hgn1xHa2Bj/hreRxqbsgIQTC7NOHcFuPHL0IxGrJTT
+82lpW9mH/BxVLr3xpYaK6TEIDAsferWtGgOOhieHJ084yFC4ELBXzmPVFDyI9rw/
+rwwCJDFRs0le0q9Suqw61u/8L36/e0kwDaaIGQpYzFEMQAjY5hLc57jQ+j4eB6rG
+Fk4QYVRLfLhuPyiF5c9+Tr369leeFKLFaZeNkHqllKz2x4NhhFKo/lIliNkxzaYZ
+RTOKp2W0OiSSvbhUXJW/
+=wxd9
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__29_Mar_2014_12_17_50_+1100_plvmxDxeLbP__2Xr--
