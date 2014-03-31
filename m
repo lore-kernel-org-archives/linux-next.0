@@ -1,46 +1,64 @@
-From: "Zhang, Yanmin" <yanmin.zhang@intel.com>
-Subject: RE: linux-next: build failure after merge of the ia64 tree
-Date: Mon, 31 Mar 2014 01:21:48 +0000
-Message-ID: <144086DDB7BB6D429C79280EB1C804D40A79EB0C@SHSMSX104.ccr.corp.intel.com>
-References: <20140331110756.c4f9b2e9f9f4874e0d90da11@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 31 Mar 2014 13:01:07 +1100
+Message-ID: <20140331130107.93488407b1f13f9d64679979@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__31_Mar_2014_13_01_07_+1100_t8gcBkZ1C9/Zvnj2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:21011 "EHLO mga02.intel.com"
+Received: from ozlabs.org ([203.10.76.45]:59875 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751866AbaCaBVx convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Mar 2014 21:21:53 -0400
-In-Reply-To: <20140331110756.c4f9b2e9f9f4874e0d90da11@canb.auug.org.au>
-Content-Language: en-US
+	id S1751889AbaCaCBP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Mar 2014 22:01:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Luck, Tony" <tony.luck@intel.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Liu, ShuoX" <shuox.liu@intel.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antti Palosaari <crope@iki.fi>
 
-Sorry. We would fix it ASAP.
+--Signature=_Mon__31_Mar_2014_13_01_07_+1100_t8gcBkZ1C9/Zvnj2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yanmin
+Hi Mauro,
 
------Original Message-----
-From: Stephen Rothwell [mailto:sfr@canb.auug.org.au] 
-Sent: Monday, March 31, 2014 8:08 AM
-To: Luck, Tony
-Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Liu, ShuoX; Zhang, Yanmin
-Subject: linux-next: build failure after merge of the ia64 tree
-
-Hi all,
-
-After merging the ia64 tree, today's linux-next build (x86_64
+After merging the v4l-dvb tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-fs/built-in.o: In function `pstore_file_open':
-inode.c:(.text+0xa29e9): undefined reference to `persistent_ram_size'
+drivers/media/usb/em28xx/em28xx-dvb.c: In function 'em28xx_dvb_resume':
+drivers/media/usb/em28xx/em28xx-dvb.c:1645:7: error: 'client' undeclared (f=
+irst use in this function)
+   if (client) {
+       ^
 
-Caused by commit f5d7e81eda59 ("pstore: Support current records dump in ramoops").
+Caused by commit 37571b163c15 ("[media] em28xx-dvb: fix PCTV 461e tuner
+I2C binding").  Basic build testing is a good idea :-(
 
-I have used the ia64 tree from next-20140328 for today.
-
--- 
+I have used the v4v-dvb tree from next-20140328 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__31_Mar_2014_13_01_07_+1100_t8gcBkZ1C9/Zvnj2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTOMxnAAoJEMDTa8Ir7ZwV5IkQAIw90nW1YLLD1ZJVZseh46a/
+0VF8XpqieVCPRd7+4sF+mhxwBGnGO30Z4hTtASG4E80Ug7NGNPq1qqxrdL3iYYSz
+zeB8gUB1aG0kUIzwQWRT7rjnWd0y18+DCe6a1I8Yf0wknWV9L89KX1Of9uplghDc
+2sMVKGR8FEb1r3YOR/MO1MB6nWx2PSJ4wYhxbfWmOCiyTJBEeKAIyup//Kd+TXmL
+2lWGxMWoZUm/cl7zGO3oD8z3M2VHkNC9WkOTuSCfCJDyHsuGdeIdsUkSEFRENEa4
+2XzrINxfIZOlJUCJhmyxCjJgttEUWRU2Jdcats0g05ecbpibH7W9izRaWBa6iAQq
+DxrOYu0FF/l99zCEuHfgDNnytXI0PrrAdE982mb5Rc97eBY0IeW2IjB9LVKKjDM6
+LvdxICH3CieHxWn8XLHiO2LTENQAhgLAYjoZ9a9DH9jWh1WwMNLMNVyq1rlmgzub
+gIneNJJbh1JojtuYitKApTY6EnnSXlDnd6kNPggCkU/3sztJEnsILfg89tilvs7z
+eudNZ4Ie1oX2Uv9sNMUPxpeG5LButn+Dwd1ymvjytLAmqaUeFmb5NO9jdSBFCKcO
+I0gQEGS+i5dfk/2gGhYArS+dmPKwwKYySx3umvcEVXvNx2IjxUfI4XhdONxur5cS
+HRJzssjOnNxPAgAn844B
+=Dei6
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__31_Mar_2014_13_01_07_+1100_t8gcBkZ1C9/Zvnj2--
