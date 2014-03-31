@@ -1,41 +1,26 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Mar 31 (netfilter)
-Date: Mon, 31 Mar 2014 08:49:24 -0700
-Message-ID: <53398E84.4050907@infradead.org>
-References: <20140331190618.ecee9947ade030d7fced05b9@canb.auug.org.au>
+From: Jim Davis <jim.epost@gmail.com>
+Subject: make help error with next-20140331
+Date: Mon, 31 Mar 2014 14:53:08 -0700
+Message-ID: <CA+r1ZhhyxVeT5ABFj33fvvknUi9EHTq+16UcTqRss5JeP1vcJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140331190618.ecee9947ade030d7fced05b9@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 03/31/2014 01:06 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Please do not add material intended for v3.16 to your linux-next included
-> branches until after v3.15-rc1 is released.
-> 
-> This tree still fails (more than usual) the powerpc allyesconfig build.
-> 
-> Changes since 20140328:
-> 
+jim@doorstop:~/linux-next$ git describe
+next-20140331
+jim@doorstop:~/linux-next$ make help
+Cleaning targets:
+  clean		  - Remove most generated files but keep the config and
+                    enough build support to build external modules
+  mrproper	  - Remove all generated files + config + various backup files
+  distclean	  - mrproper + remove editor backup and patch files
 
-on i386:
-CONFIG_IPV6=m
+[ ... ]
 
-
-net/built-in.o: In function `tproxy_tg6_v1':
-xt_TPROXY.c:(.text+0xb2719): undefined reference to `udp6_lib_lookup'
-xt_TPROXY.c:(.text+0xb2d0e): undefined reference to `udp6_lib_lookup'
-xt_TPROXY.c:(.text+0xb2f61): undefined reference to `udp6_lib_lookup'
-net/built-in.o: In function `tproxy_tg_init':
-xt_TPROXY.c:(.init.text+0x28ba): undefined reference to `nf_defrag_ipv6_enable'
-
-
-
--- 
-~Randy
+Documentation targets:
+/home/jim/linux-next/Documentation/DocBook/Makefile:19:
+/media/Makefile: No such file or directory
+make[1]: *** No rule to make target `/media/Makefile'.  Stop.
