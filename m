@@ -1,892 +1,764 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Mon, 31 Mar 2014 14:15:06 +1030
-Message-ID: <87k3bbowu5.fsf@rustcorp.com.au>
-References: <20140325140226.bb363b52de048346cf01a179@canb.auug.org.au>
+From: Liu ShuoX <shuox.liu@intel.com>
+Subject: [PATCH v2 1/3] pstore: restructure ramoops to support more trace
+Date: Mon, 31 Mar 2014 14:27:08 +0800
+Message-ID: <20140331062708.GA2395@lskakaxi-intel>
+References: <20140331110756.c4f9b2e9f9f4874e0d90da11@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:38274 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752289AbaCaEfX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 31 Mar 2014 00:35:23 -0400
-In-Reply-To: <20140325140226.bb363b52de048346cf01a179@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, William Hubbs <w.d.hubbs@gmail.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140331110756.c4f9b2e9f9f4874e0d90da11@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Luck, Tony" <tony.luck@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Yanmin <yanmin.zhang@intel.com>, fengguang.wu@intel.com
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> Hi Rusty,
+On Mon 31.Mar'14 at 11:07:56 +1100, Stephen Rothwell wrote:
+>Hi all,
 >
-> After merging the modules tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+>After merging the ia64 tree, today's linux-next build (x86_64
+>allmodconfig) failed like this:
+>
+>fs/built-in.o: In function `pstore_file_open':
+>inode.c:(.text+0xa29e9): undefined reference to `persistent_ram_size'
+>
+>Caused by commit f5d7e81eda59 ("pstore: Support current records dump in ramoops").
+>
+>I have used the ia64 tree from next-20140328 for today.
+Sorry for the compiling failure and thanks for Tony, Fengguang and Stephen Rothwell.
+We updated the serial patches and i also updated this email's subject.
+Changelog v2:
+   1) Fix compiling errors when CONFIG_PSTORE_RAM is disabled.
+   2) Add some protection in the code in case we disable CONFIG_PSTORE_RAM.
 
-Hmm, I sent Greg KH a separate patch for staging, which rips these out
-altogether.  He said he'd apply it "in a bit".
-
-I see it hasn't hit mainline yet, so here it is.
-
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: staging: fix up speakup kobject mode
-
-It uses the unnecessary S_IFREG bit which will break when my
-stricter-checking-for-mode patch goes in.
-
-Since we're fixing it anyway, the extra level of indirection is
-confusing for readers (ROOT_W == rw-r--r-- for example).
-
-Also, many of these are other-writable.  Is that really intended?
-
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+Below are the v2 patches.
 ---
- drivers/staging/speakup/kobjects.c       | 62 ++++++++++++++++----------------
- drivers/staging/speakup/speakup.h        |  2 --
- drivers/staging/speakup/speakup_acntpc.c | 22 ++++++------
- drivers/staging/speakup/speakup_acntsa.c | 22 ++++++------
- drivers/staging/speakup/speakup_apollo.c | 24 ++++++-------
- drivers/staging/speakup/speakup_audptr.c | 24 ++++++-------
- drivers/staging/speakup/speakup_bns.c    | 22 ++++++------
- drivers/staging/speakup/speakup_decext.c | 24 ++++++-------
- drivers/staging/speakup/speakup_decpc.c  | 24 ++++++-------
- drivers/staging/speakup/speakup_dectlk.c | 24 ++++++-------
- drivers/staging/speakup/speakup_dtlk.c   | 28 +++++++--------
- drivers/staging/speakup/speakup_dummy.c  | 22 ++++++------
- drivers/staging/speakup/speakup_keypc.c  | 18 +++++-----
- drivers/staging/speakup/speakup_ltlk.c   | 28 +++++++--------
- drivers/staging/speakup/speakup_soft.c   | 30 ++++++++--------
- drivers/staging/speakup/speakup_spkout.c | 24 ++++++-------
- drivers/staging/speakup/speakup_txprt.c  | 22 ++++++------
- 17 files changed, 210 insertions(+), 212 deletions(-)
+From: Zhang Yanmin <yanmin.zhang@intel.com>
 
-diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
-index e2f597ee6261..1ca91f7092b1 100644
---- a/drivers/staging/speakup/kobjects.c
-+++ b/drivers/staging/speakup/kobjects.c
-@@ -851,75 +851,75 @@ static ssize_t message_store(struct kobject *kobj, struct kobj_attribute *attr,
-  * Declare the attributes.
-  */
- static struct kobj_attribute keymap_attribute =
--	__ATTR(keymap, ROOT_W, keymap_show, keymap_store);
-+	__ATTR(keymap, S_IWUSR|S_IRUGO, keymap_show, keymap_store);
- static struct kobj_attribute silent_attribute =
--	__ATTR(silent, USER_W, NULL, silent_store);
-+	__ATTR(silent, S_IWUGO, NULL, silent_store);
- static struct kobj_attribute synth_attribute =
--	__ATTR(synth, USER_RW, synth_show, synth_store);
-+	__ATTR(synth, S_IWUGO|S_IRUGO, synth_show, synth_store);
- static struct kobj_attribute synth_direct_attribute =
--	__ATTR(synth_direct, USER_W, NULL, synth_direct_store);
-+	__ATTR(synth_direct, S_IWUGO, NULL, synth_direct_store);
- static struct kobj_attribute version_attribute =
- 	__ATTR_RO(version);
- 
- static struct kobj_attribute delimiters_attribute =
--	__ATTR(delimiters, USER_RW, punc_show, punc_store);
-+	__ATTR(delimiters, S_IWUGO|S_IRUGO, punc_show, punc_store);
- static struct kobj_attribute ex_num_attribute =
--	__ATTR(ex_num, USER_RW, punc_show, punc_store);
-+	__ATTR(ex_num, S_IWUGO|S_IRUGO, punc_show, punc_store);
- static struct kobj_attribute punc_all_attribute =
--	__ATTR(punc_all, USER_RW, punc_show, punc_store);
-+	__ATTR(punc_all, S_IWUGO|S_IRUGO, punc_show, punc_store);
- static struct kobj_attribute punc_most_attribute =
--	__ATTR(punc_most, USER_RW, punc_show, punc_store);
-+	__ATTR(punc_most, S_IWUGO|S_IRUGO, punc_show, punc_store);
- static struct kobj_attribute punc_some_attribute =
--	__ATTR(punc_some, USER_RW, punc_show, punc_store);
-+	__ATTR(punc_some, S_IWUGO|S_IRUGO, punc_show, punc_store);
- static struct kobj_attribute repeats_attribute =
--	__ATTR(repeats, USER_RW, punc_show, punc_store);
-+	__ATTR(repeats, S_IWUGO|S_IRUGO, punc_show, punc_store);
- 
- static struct kobj_attribute attrib_bleep_attribute =
--	__ATTR(attrib_bleep, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(attrib_bleep, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute bell_pos_attribute =
--	__ATTR(bell_pos, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(bell_pos, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute bleep_time_attribute =
--	__ATTR(bleep_time, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(bleep_time, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute bleeps_attribute =
--	__ATTR(bleeps, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(bleeps, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute cursor_time_attribute =
--	__ATTR(cursor_time, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(cursor_time, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute key_echo_attribute =
--	__ATTR(key_echo, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(key_echo, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute no_interrupt_attribute =
--	__ATTR(no_interrupt, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(no_interrupt, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punc_level_attribute =
--	__ATTR(punc_level, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punc_level, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute reading_punc_attribute =
--	__ATTR(reading_punc, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(reading_punc, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute say_control_attribute =
--	__ATTR(say_control, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(say_control, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute say_word_ctl_attribute =
--	__ATTR(say_word_ctl, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(say_word_ctl, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute spell_delay_attribute =
--	__ATTR(spell_delay, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(spell_delay, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * These attributes are i18n related.
-  */
- static struct kobj_attribute announcements_attribute =
--	__ATTR(announcements, USER_RW, message_show, message_store);
-+	__ATTR(announcements, S_IWUGO|S_IRUGO, message_show, message_store);
- static struct kobj_attribute characters_attribute =
--	__ATTR(characters, USER_RW, chars_chartab_show, chars_chartab_store);
-+	__ATTR(characters, S_IWUGO|S_IRUGO, chars_chartab_show, chars_chartab_store);
- static struct kobj_attribute chartab_attribute =
--	__ATTR(chartab, USER_RW, chars_chartab_show, chars_chartab_store);
-+	__ATTR(chartab, S_IWUGO|S_IRUGO, chars_chartab_show, chars_chartab_store);
- static struct kobj_attribute ctl_keys_attribute =
--	__ATTR(ctl_keys, USER_RW, message_show, message_store);
-+	__ATTR(ctl_keys, S_IWUGO|S_IRUGO, message_show, message_store);
- static struct kobj_attribute colors_attribute =
--	__ATTR(colors, USER_RW, message_show, message_store);
-+	__ATTR(colors, S_IWUGO|S_IRUGO, message_show, message_store);
- static struct kobj_attribute formatted_attribute =
--	__ATTR(formatted, USER_RW, message_show, message_store);
-+	__ATTR(formatted, S_IWUGO|S_IRUGO, message_show, message_store);
- static struct kobj_attribute function_names_attribute =
--	__ATTR(function_names, USER_RW, message_show, message_store);
-+	__ATTR(function_names, S_IWUGO|S_IRUGO, message_show, message_store);
- static struct kobj_attribute key_names_attribute =
--	__ATTR(key_names, USER_RW, message_show, message_store);
-+	__ATTR(key_names, S_IWUGO|S_IRUGO, message_show, message_store);
- static struct kobj_attribute states_attribute =
--	__ATTR(states, USER_RW, message_show, message_store);
-+	__ATTR(states, S_IWUGO|S_IRUGO, message_show, message_store);
- 
- /*
-  * Create groups of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup.h b/drivers/staging/speakup/speakup.h
-index 0126f714821a..a7bcceec436a 100644
---- a/drivers/staging/speakup/speakup.h
-+++ b/drivers/staging/speakup/speakup.h
-@@ -12,8 +12,6 @@
- /* proc permissions */
- #define USER_R (S_IFREG|S_IRUGO)
- #define USER_W (S_IFREG|S_IWUGO)
--#define USER_RW (S_IFREG|S_IRUGO|S_IWUGO)
--#define ROOT_W (S_IFREG|S_IRUGO|S_IWUSR)
- 
- #define TOGGLE_0 .u.n = {NULL, 0, 0, 1, 0, 0, NULL }
- #define TOGGLE_1 .u.n = {NULL, 1, 0, 1, 0, 0, NULL }
-diff --git a/drivers/staging/speakup/speakup_acntpc.c b/drivers/staging/speakup/speakup_acntpc.c
-index 1c8a7f4a0ef5..e7dfa434bd96 100644
---- a/drivers/staging/speakup/speakup_acntpc.c
-+++ b/drivers/staging/speakup/speakup_acntpc.c
-@@ -62,28 +62,28 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/acntpc.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_acntsa.c b/drivers/staging/speakup/speakup_acntsa.c
-index 22a8b7291098..c7f014ed9628 100644
---- a/drivers/staging/speakup/speakup_acntsa.c
-+++ b/drivers/staging/speakup/speakup_acntsa.c
-@@ -47,28 +47,28 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/acntsa.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IRUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IRUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IRUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IRUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_apollo.c b/drivers/staging/speakup/speakup_apollo.c
-index 70cf1591676a..38c8c2221e4e 100644
---- a/drivers/staging/speakup/speakup_apollo.c
-+++ b/drivers/staging/speakup/speakup_apollo.c
-@@ -53,30 +53,30 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/apollo.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute lang_attribute =
--	__ATTR(lang, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(lang, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute voice_attribute =
--	__ATTR(voice, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(voice, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_audptr.c b/drivers/staging/speakup/speakup_audptr.c
-index 61a3ceeb0d3a..de5b4a5f43b6 100644
---- a/drivers/staging/speakup/speakup_audptr.c
-+++ b/drivers/staging/speakup/speakup_audptr.c
-@@ -49,30 +49,30 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/audptr.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_bns.c b/drivers/staging/speakup/speakup_bns.c
-index 4bfe3d458dc0..4939e8c7272e 100644
---- a/drivers/staging/speakup/speakup_bns.c
-+++ b/drivers/staging/speakup/speakup_bns.c
-@@ -44,28 +44,28 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/bns.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_decext.c b/drivers/staging/speakup/speakup_decext.c
-index d306e010d3ea..b17af9803929 100644
---- a/drivers/staging/speakup/speakup_decext.c
-+++ b/drivers/staging/speakup/speakup_decext.c
-@@ -70,30 +70,30 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/decext.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute voice_attribute =
--	__ATTR(voice, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(voice, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_decpc.c b/drivers/staging/speakup/speakup_decpc.c
-index ea6b72d40b31..cfa4bc032358 100644
---- a/drivers/staging/speakup/speakup_decpc.c
-+++ b/drivers/staging/speakup/speakup_decpc.c
-@@ -164,30 +164,30 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/decpc.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute voice_attribute =
--	__ATTR(voice, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(voice, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_dectlk.c b/drivers/staging/speakup/speakup_dectlk.c
-index 15fdec323a70..0a27c8f32bb9 100644
---- a/drivers/staging/speakup/speakup_dectlk.c
-+++ b/drivers/staging/speakup/speakup_dectlk.c
-@@ -70,30 +70,30 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/dectlk.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute voice_attribute =
--	__ATTR(voice, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(voice, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_dtlk.c b/drivers/staging/speakup/speakup_dtlk.c
-index 1feb0fba1b43..5c6c34191e8d 100644
---- a/drivers/staging/speakup/speakup_dtlk.c
-+++ b/drivers/staging/speakup/speakup_dtlk.c
-@@ -67,34 +67,34 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/dtlk.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute freq_attribute =
--	__ATTR(freq, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(freq, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute voice_attribute =
--	__ATTR(voice, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(voice, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_dummy.c b/drivers/staging/speakup/speakup_dummy.c
-index 4a24b9c1e8e3..e19e9994bbb5 100644
---- a/drivers/staging/speakup/speakup_dummy.c
-+++ b/drivers/staging/speakup/speakup_dummy.c
-@@ -46,28 +46,28 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/dummy.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_keypc.c b/drivers/staging/speakup/speakup_keypc.c
-index 2f2fe5eeff63..9c246d701a95 100644
---- a/drivers/staging/speakup/speakup_keypc.c
-+++ b/drivers/staging/speakup/speakup_keypc.c
-@@ -59,24 +59,24 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/keypc.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_ltlk.c b/drivers/staging/speakup/speakup_ltlk.c
-index 326f94d6b079..c9be6f52c254 100644
---- a/drivers/staging/speakup/speakup_ltlk.c
-+++ b/drivers/staging/speakup/speakup_ltlk.c
-@@ -50,34 +50,34 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/ltlk.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute freq_attribute =
--	__ATTR(freq, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(freq, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute voice_attribute =
--	__ATTR(voice, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(voice, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_soft.c b/drivers/staging/speakup/speakup_soft.c
-index 243c3d52fe5e..ee6089502a96 100644
---- a/drivers/staging/speakup/speakup_soft.c
-+++ b/drivers/staging/speakup/speakup_soft.c
-@@ -61,41 +61,41 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/soft.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute freq_attribute =
--	__ATTR(freq, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(freq, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute voice_attribute =
--	__ATTR(voice, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(voice, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * We should uncomment the following definition, when we agree on a
-  * method of passing a language designation to the software synthesizer.
-  * static struct kobj_attribute lang_attribute =
-- *	__ATTR(lang, USER_RW, spk_var_show, spk_var_store);
-+ *	__ATTR(lang, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
-  */
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_spkout.c b/drivers/staging/speakup/speakup_spkout.c
-index e74f85620c68..711cf114df83 100644
---- a/drivers/staging/speakup/speakup_spkout.c
-+++ b/drivers/staging/speakup/speakup_spkout.c
-@@ -48,30 +48,30 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/spkout.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute punct_attribute =
--	__ATTR(punct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(punct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
-diff --git a/drivers/staging/speakup/speakup_txprt.c b/drivers/staging/speakup/speakup_txprt.c
-index 5a29b9fcc930..3f0be04df071 100644
---- a/drivers/staging/speakup/speakup_txprt.c
-+++ b/drivers/staging/speakup/speakup_txprt.c
-@@ -44,28 +44,28 @@ static struct var_t vars[] = {
-  * These attributes will appear in /sys/accessibility/speakup/txprt.
-  */
- static struct kobj_attribute caps_start_attribute =
--	__ATTR(caps_start, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_start, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute caps_stop_attribute =
--	__ATTR(caps_stop, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(caps_stop, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute pitch_attribute =
--	__ATTR(pitch, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(pitch, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute rate_attribute =
--	__ATTR(rate, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(rate, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute tone_attribute =
--	__ATTR(tone, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(tone, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute vol_attribute =
--	__ATTR(vol, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(vol, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- 
- static struct kobj_attribute delay_time_attribute =
--	__ATTR(delay_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(delay_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute direct_attribute =
--	__ATTR(direct, USER_RW, spk_var_show, spk_var_store);
-+	__ATTR(direct, S_IWUGO|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute full_time_attribute =
--	__ATTR(full_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(full_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute jiffy_delta_attribute =
--	__ATTR(jiffy_delta, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(jiffy_delta, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- static struct kobj_attribute trigger_time_attribute =
--	__ATTR(trigger_time, ROOT_W, spk_var_show, spk_var_store);
-+	__ATTR(trigger_time, S_IWUSR|S_IRUGO, spk_var_show, spk_var_store);
- 
- /*
-  * Create a group of attributes so that we can create and destroy them all
+The patch restructure ramoops of pstore a little to support more user-defined
+tracers through ramoops. Here is reason we enhance ramoops:
+pstore ramoops is a very import debug feature for mobile development. At present,
+ramoops has supported kdump, console and ftrace tracer. Sometimes, we need some
+special tracers such as recording cmd and data when driver send/receive. But now,
+it's hard to add new tracers into ramoops without touching the pstore core codes.
+So we restructure ramoops to let it more flexiable, more eailier to extend.
+
+With this, we split the pstore codes and new tracers which are based on ramoops.
+Developer could add a new tracer based on ramoops standalone and pstore detects
+it automatically.
+
+Signed-off-by: Zhang Yanmin <yanmin.zhang@intel.com>
+Signed-off-by: Liu ShuoX <shuox.liu@intel.com>
+---
+  Documentation/ramoops.txt                 |  70 ++++++++++++++-
+  arch/x86/kernel/vmlinux.lds.S             |   9 ++
+  drivers/platform/chrome/chromeos_pstore.c |   2 +-
+  fs/pstore/inode.c                         |  85 +++++++++++++++++-
+  fs/pstore/internal.h                      |   1 +
+  fs/pstore/ram.c                           | 145 +++++++++++++++++++++++-------
+  fs/pstore/ram_core.c                      |  20 +++++
+  include/linux/pstore.h                    |   2 +
+  include/linux/pstore_ram.h                |  21 ++---
+  include/linux/pstore_ramoops.h            |  65 ++++++++++++++
+  10 files changed, 371 insertions(+), 49 deletions(-)
+  create mode 100644 include/linux/pstore_ramoops.h
+
+diff --git a/Documentation/ramoops.txt b/Documentation/ramoops.txt
+index 69b3cac..243ce5f 100644
+--- a/Documentation/ramoops.txt
++++ b/Documentation/ramoops.txt
+@@ -49,7 +49,7 @@ Setting the ramoops parameters can be done in 2 different manners:
+   2. Use a platform device and set the platform data. The parameters can then
+   be set through that platform data. An example of doing that is:
+  
+-#include <linux/pstore_ram.h>
++#include <linux/pstore_ramoops.h>
+  [...]
+  
+  static struct ramoops_platform_data ramoops_data = {
+@@ -117,3 +117,71 @@ file. Here is an example of usage:
+   0 ffffffff811d9c54  ffffffff8101a7a0  __const_udelay <- native_machine_emergency_restart+0x110/0x1e0
+   0 ffffffff811d9c34  ffffffff811d9c80  __delay <- __const_udelay+0x30/0x40
+   0 ffffffff811d9d14  ffffffff811d9c3f  delay_tsc <- __delay+0xf/0x20
++
++6. Persistent record tracing
++
++Persistent record tracing might be useful for debugging software of hardware
++related hangs. It has flexible usage allows developer to trace self-defined
++record structure at self-defined tracepoint. After reboot, the record log is
++stored in a "NAME-ramoops" file. Here is an example of usage:
++
++#include <linux/pstore_ramoops.h>
++[...]
++
++struct norm_zone_test_record {
++	unsigned long val;
++	char str[32];
++};
++
++static void print_record(struct seq_file *s, void *rec)
++{
++	struct norm_zone_test_record *record = rec;
++	seq_printf(s, "%s: %ld\n",
++		record->str, record->val);
++}
++
++DEFINE_PSTORE_RAMZONE(test_zone) = {
++	.size = 4096,
++	.name = "test_zone",
++	.item_size = sizeof(struct norm_zone_test_record),
++	.print_record = print_record,
++};
++
++static void add_test_record(char *str, unsigned long val)
++{
++	struct norm_zone_test_record *record;
++	record = persistent_ram_new_record(test_zone.prz);
++	if (record) {
++		record->val = val;
++		strcpy(record->str, str);
++	}
++}
++
++static int test_cpufreq_transition(struct notifier_block *nb,
++		unsigned long event, void *data)
++{
++	add_test_record("cpufreq transition", event);
++	return 0;
++}
++
++static struct notifier_block freq_transition = {
++	.notifier_call = test_cpufreq_transition,
++};
++
++static int __init norm_zone_test_init(void)
++{
++	cpufreq_register_notifier(&freq_transition,
++			CPUFREQ_TRANSITION_NOTIFIER);
++	return 0;
++}
++module_init(norm_zone_test_init);
++
++Record trace use the reserved memory by ramoops. For the most compatibility,
++user could use Chapter 2's methods to define the ramoops paramters, then
++enlarge the defined mem_size with ramoops_norm_zones_size(), e.g.:
++
++#include <linux/memblock.h>
++#include <linux/pstore_ramoops.h>
++
++memblock_reserve(ramoops_data.mem_address, ramoops_data.mem_size +
++					ramoops_norm_zones_size(NULL));
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 49edf2d..a37d5e3 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -304,6 +304,15 @@ SECTIONS
+  		NOSAVE_DATA
+  	}
+  #endif
++#ifdef CONFIG_PSTORE_RAM
++	/* ramoops zone */
++	. = ALIGN(8);
++	.ram_zone : AT(ADDR(.ram_zone) - LOAD_OFFSET) {
++		__ramoops_zone_start = .;
++		*(.ram_zone)
++		__ramoops_zone_end = .;
++	}
++#endif
+  
+  	/* BSS */
+  	. = ALIGN(PAGE_SIZE);
+diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
+index e0e0e65..59e102f 100644
+--- a/drivers/platform/chrome/chromeos_pstore.c
++++ b/drivers/platform/chrome/chromeos_pstore.c
+@@ -11,7 +11,7 @@
+  #include <linux/dmi.h>
+  #include <linux/module.h>
+  #include <linux/platform_device.h>
+-#include <linux/pstore_ram.h>
++#include <linux/pstore_ramoops.h>
+  
+  static struct dmi_system_id chromeos_pstore_dmi_table[] __initdata = {
+  	{
+diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
+index 192297b..d463481 100644
+--- a/fs/pstore/inode.c
++++ b/fs/pstore/inode.c
+@@ -54,6 +54,78 @@ struct pstore_private {
+  	char	data[];
+  };
+  
++struct pstore_seq_data {
++	size_t off;
++};
++
++static void *pstore_seq_start(struct seq_file *s, loff_t *pos)
++{
++	struct pstore_private *ps = s->private;
++	struct ramoops_context *cxt = ps->psi->data;
++	struct ramoops_zone    *zones = cxt->zones;
++	int size = zones[ps->id].item_size;
++	struct pstore_seq_data *data;
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return NULL;
++
++	data->off = 0;
++	data->off += *pos * size;
++	if (data->off + size > ps->size) {
++		kfree(data);
++		return NULL;
++	}
++
++	return data;
++}
++
++static void pstore_seq_stop(struct seq_file *s, void *v)
++{
++	kfree(v);
++}
++
++static void *pstore_seq_next(struct seq_file *s, void *v, loff_t *pos)
++{
++	struct pstore_private *ps = s->private;
++	struct pstore_seq_data *data = v;
++	struct ramoops_context *cxt = ps->psi->data;
++	struct ramoops_zone    *zones = cxt->zones;
++	int size = zones[ps->id].item_size;
++
++	data->off += size;
++	if (data->off + size > ps->size)
++		return NULL;
++
++	(*pos)++;
++	return data;
++}
++
++static int pstore_seq_show(struct seq_file *s, void *v)
++{
++	struct pstore_private *ps = s->private;
++	struct pstore_seq_data *data = v;
++	void *record = (void *)(ps->data + data->off);
++	struct ramoops_context *cxt = ps->psi->data;
++	struct ramoops_zone    *zones = cxt->zones;
++
++	if (zones[ps->id].print_record)
++		zones[ps->id].print_record(s, record);
++	else {
++		seq_printf(s, "zone %s doesn't support print_record\n",
++			zones[ps->id].name);
++	}
++
++	return 0;
++}
++
++static const struct seq_operations pstore_seq_ops = {
++	.start	= pstore_seq_start,
++	.next	= pstore_seq_next,
++	.stop	= pstore_seq_stop,
++	.show	= pstore_seq_show,
++};
++
+  struct pstore_ftrace_seq_data {
+  	const void *ptr;
+  	size_t off;
+@@ -126,7 +198,8 @@ static ssize_t pstore_file_read(struct file *file, char __user *userbuf,
+  	struct seq_file *sf = file->private_data;
+  	struct pstore_private *ps = sf->private;
+  
+-	if (ps->type == PSTORE_TYPE_FTRACE)
++	if (ps->type == PSTORE_TYPE_FTRACE ||
++		ps->type == PSTORE_TYPE_NORM)
+  		return seq_read(file, userbuf, count, ppos);
+  	return simple_read_from_buffer(userbuf, count, ppos, ps->data, ps->size);
+  }
+@@ -140,6 +213,8 @@ static int pstore_file_open(struct inode *inode, struct file *file)
+  
+  	if (ps->type == PSTORE_TYPE_FTRACE)
+  		sops = &pstore_ftrace_seq_ops;
++	if (ps->type == PSTORE_TYPE_NORM)
++		sops = &pstore_seq_ops;
+  
+  	err = seq_open(file, sops);
+  	if (err < 0)
+@@ -286,6 +361,8 @@ int pstore_mkfile(enum pstore_type_id type, char *psname, u64 id, int count,
+  	char			name[PSTORE_NAMELEN];
+  	struct pstore_private	*private, *pos;
+  	unsigned long		flags;
++	struct ramoops_context	*cxt = psi->data;
++	struct ramoops_zone	*zones = cxt ? cxt->zones : NULL;
+  
+  	spin_lock_irqsave(&allpstore_lock, flags);
+  	list_for_each_entry(pos, &allpstore, list) {
+@@ -337,6 +414,12 @@ int pstore_mkfile(enum pstore_type_id type, char *psname, u64 id, int count,
+  	case PSTORE_TYPE_PPC_COMMON:
+  		sprintf(name, "powerpc-common-%s-%lld", psname, id);
+  		break;
++	case PSTORE_TYPE_NORM:
++		/* if zones NULL, it's unknown */
++		if (zones) {
++			sprintf(name, "%s-%s", zones[id].name, psname);
++			break;
++		}
+  	case PSTORE_TYPE_UNKNOWN:
+  		sprintf(name, "unknown-%s-%lld", psname, id);
+  		break;
+diff --git a/fs/pstore/internal.h b/fs/pstore/internal.h
+index 3b3d305..86623ee 100644
+--- a/fs/pstore/internal.h
++++ b/fs/pstore/internal.h
+@@ -4,6 +4,7 @@
+  #include <linux/types.h>
+  #include <linux/time.h>
+  #include <linux/pstore.h>
++#include <linux/pstore_ramoops.h>
+  
+  #if NR_CPUS <= 2 && defined(CONFIG_ARM_THUMB)
+  #define PSTORE_CPU_IN_IP 0x1
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 3b57443..e1f2adc 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -33,7 +33,7 @@
+  #include <linux/platform_device.h>
+  #include <linux/slab.h>
+  #include <linux/compiler.h>
+-#include <linux/pstore_ram.h>
++#include <linux/pstore_ramoops.h>
+  
+  #define RAMOOPS_KERNMSG_HDR "===="
+  #define MIN_MEM_SIZE 4096UL
+@@ -73,29 +73,13 @@ MODULE_PARM_DESC(ramoops_ecc,
+  		"ECC buffer size in bytes (1 is a special value, means 16 "
+  		"bytes ECC)");
+  
+-struct ramoops_context {
+-	struct persistent_ram_zone **przs;
+-	struct persistent_ram_zone *cprz;
+-	struct persistent_ram_zone *fprz;
+-	phys_addr_t phys_addr;
+-	unsigned long size;
+-	size_t record_size;
+-	size_t console_size;
+-	size_t ftrace_size;
+-	int dump_oops;
+-	struct persistent_ram_ecc_info ecc_info;
+-	unsigned int max_dump_cnt;
+-	unsigned int dump_write_cnt;
+-	/* _read_cnt need clear on ramoops_pstore_open */
+-	unsigned int dump_read_cnt;
+-	unsigned int console_read_cnt;
+-	unsigned int ftrace_read_cnt;
+-	struct pstore_info pstore;
+-};
+-
+  static struct platform_device *dummy;
+  static struct ramoops_platform_data *dummy_data;
+  
++/* Below data need be defined in vmlinux.lds.S */
++void *__ramoops_zone_start __weak;
++void *__ramoops_zone_end __weak;
++
+  static int ramoops_pstore_open(struct pstore_info *psi)
+  {
+  	struct ramoops_context *cxt = psi->data;
+@@ -103,6 +87,7 @@ static int ramoops_pstore_open(struct pstore_info *psi)
+  	cxt->dump_read_cnt = 0;
+  	cxt->console_read_cnt = 0;
+  	cxt->ftrace_read_cnt = 0;
++	cxt->norm_read_cnt = 0;
+  	return 0;
+  }
+  
+@@ -176,6 +161,14 @@ static ssize_t ramoops_pstore_read(u64 *id, enum pstore_type_id *type,
+  		prz = ramoops_get_next_prz(&cxt->fprz, &cxt->ftrace_read_cnt,
+  					   1, id, type, PSTORE_TYPE_FTRACE, 0);
+  	if (!prz)
++		while (cxt->norm_read_cnt < cxt->norm_num) {
++			prz = ramoops_get_next_prz(cxt->norm_przs,
++					&cxt->norm_read_cnt, cxt->norm_num,
++					id, type, PSTORE_TYPE_NORM, 0);
++			if (!prz)
++				continue;
++		}
++	if (!prz)
+  		return 0;
+  
+  	size = persistent_ram_old_size(prz);
+@@ -295,6 +288,11 @@ static int ramoops_pstore_erase(enum pstore_type_id type, u64 id, int count,
+  	case PSTORE_TYPE_FTRACE:
+  		prz = cxt->fprz;
+  		break;
++	case PSTORE_TYPE_NORM:
++		if (id >= cxt->norm_num)
++			return -EINVAL;
++		prz = cxt->norm_przs[id];
++		break;
+  	default:
+  		return -EINVAL;
+  	}
+@@ -329,6 +327,20 @@ static void ramoops_free_przs(struct ramoops_context *cxt)
+  	kfree(cxt->przs);
+  }
+  
++static void ramoops_free_norm_przs(struct ramoops_context *cxt)
++{
++	int i;
++
++	cxt->norm_num = 0;
++	if (!cxt->norm_przs)
++		return;
++
++	for (i = 0; i < cxt->norm_num &&
++			!IS_ERR_OR_NULL(cxt->norm_przs[i]); i++)
++		persistent_ram_free(cxt->norm_przs[i]);
++	kfree(cxt->norm_przs);
++}
++
+  static int ramoops_init_przs(struct device *dev, struct ramoops_context *cxt,
+  			     phys_addr_t *paddr, size_t dump_mem_sz)
+  {
+@@ -376,7 +388,7 @@ fail_prz:
+  
+  static int ramoops_init_prz(struct device *dev, struct ramoops_context *cxt,
+  			    struct persistent_ram_zone **prz,
+-			    phys_addr_t *paddr, size_t sz, u32 sig)
++			    phys_addr_t *paddr, size_t sz, u32 sig, bool ecc)
+  {
+  	if (!sz)
+  		return 0;
+@@ -388,7 +400,7 @@ static int ramoops_init_prz(struct device *dev, struct ramoops_context *cxt,
+  		return -ENOMEM;
+  	}
+  
+-	*prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info);
++	*prz = persistent_ram_new(*paddr, sz, sig, ecc ? &cxt->ecc_info : NULL);
+  	if (IS_ERR(*prz)) {
+  		int err = PTR_ERR(*prz);
+  
+@@ -404,12 +416,46 @@ static int ramoops_init_prz(struct device *dev, struct ramoops_context *cxt,
+  	return 0;
+  }
+  
++static int ramoops_init_norm_przs(struct device *dev,
++			struct ramoops_context *cxt,
++			phys_addr_t *paddr)
++{
++	int err = -ENOMEM;
++	struct ramoops_zone *zones = cxt->zones;
++	int i;
++
++	cxt->norm_przs = kzalloc(sizeof(*cxt->przs) * cxt->norm_num,
++			GFP_KERNEL);
++	if (!cxt->norm_przs) {
++		dev_err(dev, "failed to initialize a prz array for dumps\n");
++		goto fail_prz;
++	}
++
++	for (i = 0; i < cxt->norm_num; i++) {
++		err = ramoops_init_prz(dev, cxt, &zones[i].prz,
++				paddr, zones[i].size, 0, false);
++		if (err)
++			goto fail_prz;
++		persistent_ram_set_record_size(zones[i].prz,
++						zones[i].item_size);
++		zones[i].prz->buffer_size -=
++			(zones[i].prz->buffer_size % zones[i].item_size);
++		cxt->norm_przs[i] = zones[i].prz;
++	}
++
++	return 0;
++fail_prz:
++	ramoops_free_norm_przs(cxt);
++	return err;
++}
++
+  static int ramoops_probe(struct platform_device *pdev)
+  {
+  	struct device *dev = &pdev->dev;
+  	struct ramoops_platform_data *pdata = pdev->dev.platform_data;
+  	struct ramoops_context *cxt = &oops_cxt;
+  	size_t dump_mem_sz;
++	size_t norm_mem_size;
+  	phys_addr_t paddr;
+  	int err = -EINVAL;
+  
+@@ -419,8 +465,11 @@ static int ramoops_probe(struct platform_device *pdev)
+  	if (cxt->max_dump_cnt)
+  		goto fail_out;
+  
++	cxt->norm_zone_size = norm_mem_size =
++		ramoops_norm_zones_size(&cxt->norm_num);
++
+  	if (!pdata->mem_size || (!pdata->record_size && !pdata->console_size &&
+-			!pdata->ftrace_size)) {
++			!pdata->ftrace_size && !norm_mem_size)) {
+  		pr_err("The memory size and the record/console size must be "
+  			"non-zero\n");
+  		goto fail_out;
+@@ -433,6 +482,8 @@ static int ramoops_probe(struct platform_device *pdev)
+  	if (pdata->ftrace_size && !is_power_of_2(pdata->ftrace_size))
+  		pdata->ftrace_size = rounddown_pow_of_two(pdata->ftrace_size);
+  
++	if (cxt->norm_num)
++		cxt->zones = (struct ramoops_zone *)&__ramoops_zone_start;
+  	cxt->size = pdata->mem_size;
+  	cxt->phys_addr = pdata->mem_address;
+  	cxt->record_size = pdata->record_size;
+@@ -443,25 +494,29 @@ static int ramoops_probe(struct platform_device *pdev)
+  
+  	paddr = cxt->phys_addr;
+  
+-	dump_mem_sz = cxt->size - cxt->console_size - cxt->ftrace_size;
++	dump_mem_sz = cxt->size - cxt->console_size -
++		cxt->ftrace_size - norm_mem_size;
+  	err = ramoops_init_przs(dev, cxt, &paddr, dump_mem_sz);
+  	if (err)
+  		goto fail_out;
++	err = ramoops_init_norm_przs(dev, cxt, &paddr);
++	if (err)
++		goto fail_norm_przs;
+  
+  	err = ramoops_init_prz(dev, cxt, &cxt->cprz, &paddr,
+-			       cxt->console_size, 0);
++			       cxt->console_size, 0, true);
+  	if (err)
+  		goto fail_init_cprz;
+  
+-	err = ramoops_init_prz(dev, cxt, &cxt->fprz, &paddr, cxt->ftrace_size,
+-			       LINUX_VERSION_CODE);
++	err = ramoops_init_prz(dev, cxt, &cxt->fprz, &paddr,
++				cxt->ftrace_size, 0, true);
+  	if (err)
+  		goto fail_init_fprz;
+  
+-	if (!cxt->przs && !cxt->cprz && !cxt->fprz) {
++	if (!cxt->przs && !cxt->cprz && !cxt->fprz && !cxt->norm_przs) {
+  		pr_err("memory size too small, minimum is %zu\n",
+  			cxt->console_size + cxt->record_size +
+-			cxt->ftrace_size);
++			cxt->ftrace_size + cxt->norm_zone_size);
+  		err = -EINVAL;
+  		goto fail_cnt;
+  	}
+@@ -514,6 +569,8 @@ fail_cnt:
+  fail_init_fprz:
+  	kfree(cxt->cprz);
+  fail_init_cprz:
++	ramoops_free_norm_przs(cxt);
++fail_norm_przs:
+  	ramoops_free_przs(cxt);
+  fail_out:
+  	return err;
+@@ -582,6 +639,34 @@ static void ramoops_register_dummy(void)
+  	}
+  }
+  
++/* calculate norm zone number and size */
++unsigned long ramoops_norm_zones_size(int *zone_count)
++{
++	unsigned long mem_size = 0;
++	struct ramoops_zone *zones;
++	struct ramoops_zone *zone_end;
++	int i;
++	int count;
++
++	zones = (struct ramoops_zone *)&__ramoops_zone_start;
++	zone_end = (struct ramoops_zone *)&__ramoops_zone_end;
++
++	count = zone_end - zones;
++	if (zone_count)
++		*zone_count = count > 0 ? count : 0;
++	if (count <= 0)
++		return 0;
++
++	for (i = 0; i < count; i++) {
++		/*Roundup in case buffer is overflown*/
++		if (zones[i].size && !is_power_of_2(zones[i].size))
++			zones[i].size = roundup_pow_of_two(zones[i].size);
++		mem_size += zones[i].size;
++	}
++
++	return mem_size;
++}
++
+  static int __init ramoops_init(void)
+  {
+  	ramoops_register_dummy();
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index ff7e3d4..9c25a0f 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -30,6 +30,7 @@ struct persistent_ram_buffer {
+  	uint32_t    sig;
+  	atomic_t    start;
+  	atomic_t    size;
++	uint32_t    record_size;
+  	uint8_t     data[0];
+  };
+  
+@@ -356,6 +357,19 @@ int notrace persistent_ram_write(struct persistent_ram_zone *prz,
+  	return count;
+  }
+  
++notrace void *persistent_ram_new_record(struct persistent_ram_zone *prz)
++{
++	size_t record_size;
++
++	if (!prz)
++		return NULL;
++
++	record_size = prz->buffer->record_size;
++	buffer_size_add(prz, record_size);
++	return (void *)(prz->buffer->data +
++			buffer_start_add(prz, record_size));
++}
++
+  size_t persistent_ram_old_size(struct persistent_ram_zone *prz)
+  {
+  	return prz->old_log_size;
+@@ -380,6 +394,12 @@ void persistent_ram_zap(struct persistent_ram_zone *prz)
+  	persistent_ram_update_header_ecc(prz);
+  }
+  
++void persistent_ram_set_record_size(struct persistent_ram_zone *prz,
++			uint32_t record_size)
++{
++	prz->buffer->record_size = record_size;
++}
++
+  static void *persistent_ram_vmap(phys_addr_t start, size_t size)
+  {
+  	struct page **pages;
+diff --git a/include/linux/pstore.h b/include/linux/pstore.h
+index ece0c6b..9936859 100644
+--- a/include/linux/pstore.h
++++ b/include/linux/pstore.h
+@@ -39,6 +39,8 @@ enum pstore_type_id {
+  	PSTORE_TYPE_PPC_RTAS	= 4,
+  	PSTORE_TYPE_PPC_OF	= 5,
+  	PSTORE_TYPE_PPC_COMMON	= 6,
++	/* normal ram zones */
++	PSTORE_TYPE_NORM	= 7,
+  	PSTORE_TYPE_UNKNOWN	= 255
+  };
+  
+diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
+index 9974975..d7d0b7a 100644
+--- a/include/linux/pstore_ram.h
++++ b/include/linux/pstore_ram.h
+@@ -22,6 +22,7 @@
+  #include <linux/list.h>
+  #include <linux/types.h>
+  #include <linux/init.h>
++#include <linux/pstore.h>
+  
+  struct persistent_ram_buffer;
+  struct rs_control;
+@@ -59,6 +60,10 @@ void persistent_ram_zap(struct persistent_ram_zone *prz);
+  
+  int persistent_ram_write(struct persistent_ram_zone *prz, const void *s,
+  	unsigned int count);
++void persistent_ram_set_record_size(struct persistent_ram_zone *prz,
++		uint32_t record_size);
++
++void *persistent_ram_new_record(struct persistent_ram_zone *prz);
+  
+  void persistent_ram_save_old(struct persistent_ram_zone *prz);
+  size_t persistent_ram_old_size(struct persistent_ram_zone *prz);
+@@ -67,20 +72,4 @@ void persistent_ram_free_old(struct persistent_ram_zone *prz);
+  ssize_t persistent_ram_ecc_string(struct persistent_ram_zone *prz,
+  	char *str, size_t len);
+  
+-/*
+- * Ramoops platform data
+- * @mem_size	memory size for ramoops
+- * @mem_address	physical memory address to contain ramoops
+- */
+-
+-struct ramoops_platform_data {
+-	unsigned long	mem_size;
+-	unsigned long	mem_address;
+-	unsigned long	record_size;
+-	unsigned long	console_size;
+-	unsigned long	ftrace_size;
+-	int		dump_oops;
+-	struct persistent_ram_ecc_info ecc_info;
+-};
+-
+  #endif
+diff --git a/include/linux/pstore_ramoops.h b/include/linux/pstore_ramoops.h
+new file mode 100644
+index 0000000..7c0a64b
+--- /dev/null
++++ b/include/linux/pstore_ramoops.h
+@@ -0,0 +1,65 @@
++#ifndef __LINUX_PSTORE_RAMOOPS_H__
++#define __LINUX_PSTORE_RAMOOPS_H__
++#include <linux/pstore_ram.h>
++
++struct ramoops_context {
++	struct persistent_ram_zone **przs;
++	struct persistent_ram_zone *cprz;
++	struct persistent_ram_zone *fprz;
++	phys_addr_t phys_addr;
++	unsigned long size;
++	size_t record_size;
++	size_t console_size;
++	size_t ftrace_size;
++	int dump_oops;
++	struct persistent_ram_ecc_info ecc_info;
++	unsigned int max_dump_cnt;
++	unsigned int dump_write_cnt;
++	unsigned int dump_read_cnt;
++	unsigned int console_read_cnt;
++	unsigned int ftrace_read_cnt;
++	struct pstore_info pstore;
++	struct ramoops_zone *zones;
++	struct persistent_ram_zone **norm_przs;
++	size_t norm_zone_size;
++	unsigned int norm_num;
++	unsigned int norm_read_cnt;
++};
++
++struct ramoops_zone {
++	char		name[16];
++	unsigned long	size;
++	struct persistent_ram_zone *prz;
++	int		item_size;
++	void (*print_record)(struct seq_file *s, void *record);
++};
++
++/*
++ * Ramoops platform data
++ * @mem_size	memory size for ramoops
++ * @mem_address	physical memory address to contain ramoops
++ */
++
++struct ramoops_platform_data {
++	unsigned long	mem_size;
++	unsigned long	mem_address;
++	unsigned long	record_size;
++	unsigned long	console_size;
++	unsigned long	ftrace_size;
++	int		dump_oops;
++	struct persistent_ram_ecc_info ecc_info;
++};
++
++/*
++ * define a ram_zone for ramoops
++ * Refer to Documentation/ramoops.txt
++ */
++#define DEFINE_PSTORE_RAMZONE(zone) \
++	struct ramoops_zone zone \
++	__attribute__((__section__(".ram_zone"))) \
++	__aligned(sizeof(void *))
++
++/* calculate norm zone number and size */
++unsigned long ramoops_norm_zones_size(int *zone_count);
++
++#endif
+-- 
+1.8.3.2
