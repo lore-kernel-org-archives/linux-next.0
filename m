@@ -1,81 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 31 Mar 2014 13:34:35 +1100
-Message-ID: <20140331133435.67c5f41ea2e1f918730ebbe8@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 31 Mar 2014 13:54:59 +1100
+Message-ID: <20140331135459.d00ea1ef9ed6aee65cf0f602@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__31_Mar_2014_13_34_35_+1100_=MHuiIRQxQDztSCW"
+ boundary="Signature=_Mon__31_Mar_2014_13_54_59_+1100_kiHwhg87a0HBZjoA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:39841 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:39766 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752577AbaCaCem (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Mar 2014 22:34:42 -0400
+	id S1752634AbaCaCzF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Mar 2014 22:55:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Durrant <Paul.Durrant@citrix.com>, Zoltan Kiss <zoltan.kiss@citrix.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Ben Widawsky <benjamin.widawsky@intel.com>
 
---Signature=_Mon__31_Mar_2014_13_34_35_+1100_=MHuiIRQxQDztSCW
+--Signature=_Mon__31_Mar_2014_13_54_59_+1100_kiHwhg87a0HBZjoA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/xen-netback/netback.c between commit 1425c7a4e8d3
-("xen-netback: BUG_ON in xenvif_rx_action() not catching overflow") from
-the net tree and commit 8f13dd961228 ("xen-netback: Use skb->cb for
-pending_idx") from the net-next tree.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/i915_gem_gtt.c between commit 8ee661b50561
+("drm/i915: Undo gtt scratch pte unmapping again") from Linus' tree and
+commit 782f149523d3 ("drm/i915: Make clear/insert vfuncs args absolute")
+from the drm tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/xen-netback/netback.c
-index cd0bd95ccc14,cb784fe5220c..000000000000
---- a/drivers/net/xen-netback/netback.c
-+++ b/drivers/net/xen-netback/netback.c
-@@@ -531,13 -539,8 +560,11 @@@ static void xenvif_rx_action(struct xen
-  		} else
-  			vif->rx_last_skb_slots =3D 0;
+diff --cc drivers/gpu/drm/i915/i915_gem_gtt.c
+index d278be110805,63a6dc7a6bb6..000000000000
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@@ -840,9 -1337,9 +1337,9 @@@ void i915_gem_suspend_gtt_mappings(stru
+  	i915_check_and_clear_faults(dev);
  =20
-- 		sco =3D (struct skb_cb_overlay *)skb->cb;
--=20
- +		old_req_cons =3D vif->rx.req_cons;
-- 		sco->meta_slots_used =3D xenvif_gop_skb(skb, &npo);
-+ 		XENVIF_RX_CB(skb)->meta_slots_used =3D xenvif_gop_skb(skb, &npo);
- -		BUG_ON(XENVIF_RX_CB(skb)->meta_slots_used > max_slots_needed);
- +		ring_slots_used =3D vif->rx.req_cons - old_req_cons;
- +
- +		BUG_ON(ring_slots_used > max_slots_needed);
+  	dev_priv->gtt.base.clear_range(&dev_priv->gtt.base,
+- 				       dev_priv->gtt.base.start / PAGE_SIZE,
+- 				       dev_priv->gtt.base.total / PAGE_SIZE,
++ 				       dev_priv->gtt.base.start,
++ 				       dev_priv->gtt.base.total,
+ -				       false);
+ +				       true);
+  }
  =20
-  		__skb_queue_tail(&rxq, skb);
-  	}
+  void i915_gem_restore_gtt_mappings(struct drm_device *dev)
 
---Signature=_Mon__31_Mar_2014_13_34_35_+1100_=MHuiIRQxQDztSCW
+--Signature=_Mon__31_Mar_2014_13_54_59_+1100_kiHwhg87a0HBZjoA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTONRAAAoJEMDTa8Ir7ZwVe+0P/2ZSRiHsOT/p2NvodlgkI8aM
-AYIf9zp/j5yVkbEfmG3eaiEtjasb1RSr9zSb3yuZNDp8BDzHcONZFhAIlLVDVv07
-cU/GCBnzr2H+OTeHvw3ej5oDYS5n00kexrxNKeLYW0iepyhZzjHe5otIwYb7ZWEw
-MqRW/1d4xysLZnKYFgZVyIvuOBihy0ZyN7p7i6fLLrD0ybpeEatLF39gprzFN1gi
-JrjATXzgif/0locUODKf+O8qxJESv+S7EzPGw3TpgaHgZkshRQygOgDWSls+/BW0
-ScGO3gFNBfg7DjtNSzDTc4y2H99QxVeiU2HQ/IpCZpYgJqcLkVY+ZeXHfrxCx5bv
-dZ3yfHPBQUQJ/wBKplPHZL1piLLOhSxHA/eEmSsKno20AnDboi0E//Tdo4Z01iag
-MCrUhKlU9jcnn8s015puN+Z9GwhSf4nrtnY6OnPhZqzs2fL1p99HfqyR+SNNL7+1
-DuMRTHmUb3498f85VFlhQPbk2BmuhRQ8VR1/vDoj8GwFHTSIAtB1FEA5yZA9aEmc
-1MGdJLUYXZu7WtNDCGcV/eP5lIg/bTmZ3rqZlVe/0eFb24PGQ2s1bNcC4qtwDqlg
-u04LuYbinAbgr7484xOJo7v/81gjQ90o+LjXYMvbhHuAFd0KGkVo0HI//HI6wWhP
-wwnpEL/cKZt0ZZb3xZdR
-=wFVR
+iQIcBAEBCAAGBQJTONkHAAoJEMDTa8Ir7ZwVCq8P/2L98Cp0gawckAbWsr1zBFwS
+KCFu3MkJbNZ1ZG7R1Nac3qYTUvkrdCF9Va2thxtM40+ZCOO8+qnajadetw2BxjQX
+x+ovEi8NYyo8G1QPGBzaVY7alUgc8WL3uaGyAUKOkDG4uvRKYqodIlijvaSR/oLK
+0x+9J47yRifvIpy6/EgMPs6lU9Cb1ia3cYyhIzeU9DjvulYYji6SypWRUBErxpfQ
+cmt7s8ZROGYVBvd9DsltF00sab8SSvxcmYtVw7sqav39zCrjGHEGTB71cawLvlac
+zawBT/dzgOPgshje8Q9WT8VEOLv1K78ES/501wYkHsMnDs+MgbYOIQDEOrsYRJbU
+Fm8+1jzF8Z8eN1nwepzY6+gh+WMLFiy1lDPh/fJ211V3qxBehGhm2TNcKcUJU80u
+JOICbl6bpxRqi4vqlYomWrMVhYSyql+IEAxiHNr3GBozO5qyDWSokNCjJG5z6/B0
+crhlu6nLYVuqjlfF1bB06OUrUaQMJdE28v1rSoAUN8kKkwfcXJI51bZXro1I1svK
+a10GerhM/hMdHm7jDmYZadsBd5UtCkynDo8Fi5U05/7WHpKmpKUxtFOLAJFNL7vV
+E0fgTTLQchq21YURsJLm3k3GvTcm1y0R+2dVpSAIfBLBtMiFNRQPIo+tKInVpHaB
+D/GDAr9aavAFIl1DcpuL
+=T2dX
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__31_Mar_2014_13_34_35_+1100_=MHuiIRQxQDztSCW--
+--Signature=_Mon__31_Mar_2014_13_54_59_+1100_kiHwhg87a0HBZjoA--
