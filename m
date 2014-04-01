@@ -1,57 +1,87 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Mon, 31 Mar 2014 18:56:08 -0700
-Message-ID: <533A1CB8.1060401@zytor.com>
-References: <20140224151732.7461213fabef4fc1bbca8213@canb.auug.org.au>	<20140306150010.e873f440ac5a22d8812268a4@canb.auug.org.au>	<20140328165238.7d9e0804a2781eaaa88a4fa5@canb.auug.org.au>	<alpine.DEB.2.02.1403311140180.14882@ionos.tec.linutronix.de>	<20140331215743.a357aa685a63c06ea303dbba@canb.auug.org.au> <20140401112637.454be94f789d5fd9db729dcd@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the audit tree with Linus' tree
+Date: Tue, 1 Apr 2014 15:07:21 +1100
+Message-ID: <20140401150721.1e9d4e6c36660d5411c10f37@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:51422 "EHLO mail.zytor.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751032AbaDAB5E (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 31 Mar 2014 21:57:04 -0400
-In-Reply-To: <20140401112637.454be94f789d5fd9db729dcd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__1_Apr_2014_15_07_21_+1100_kdychD2_Oo/1=j4r"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On 03/31/2014 05:26 PM, Stephen Rothwell wrote:
-> 
-> And today from Linus' tree I get these:
-> 
-> x86_64_allmodconfig:
-> 
-> arch/x86/crypto/sha1_ssse3_glue.c:43:1: warning:
-> 'externally_visible' attribute have effect only on public objects
-> [-Wattributes] static asmlinkage void (*sha1_transform_asm)(u32 *,
-> const char *, unsigned int); ^ 
-> arch/x86/crypto/sha256_ssse3_glue.c:56:1: warning:
-> 'externally_visible' attribute have effect only on public objects
-> [-Wattributes] static asmlinkage void (*sha256_transform_asm)(const
-> char *, u32 *, u64); ^ arch/x86/crypto/sha512_ssse3_glue.c:55:1:
-> warning: 'externally_visible' attribute have effect only on public
-> objects [-Wattributes] static asmlinkage void
-> (*sha512_transform_asm)(const char *, u64 *, u64); ^
-> 
-> arm_multi_v7_defconfig:
-> 
-> drivers/irqchip/irq-sun4i.c:39:70: warning: 'externally_visible'
-> attribute have effect only on public objects [-Wattributes] 
-> drivers/irqchip/irq-sun4i.c:140:1: warning: 'externally_visible'
-> attribute have effect only on public objects [-Wattributes] 
-> drivers/irqchip/irq-armada-370-xp.c:357:1: warning:
-> 'externally_visible' attribute have effect only on public objects
-> [-Wattributes] drivers/irqchip/irq-gic.c:283:1: warning:
-> 'externally_visible' attribute have effect only on public objects
-> [-Wattributes] drivers/irqchip/irq-sirfsoc.c:51:1: warning:
-> 'externally_visible' attribute have effect only on public objects
-> [-Wattributes] drivers/irqchip/irq-vt8500.c:183:1: warning:
-> 'externally_visible' attribute have effect only on public objects
-> [-Wattributes]
-> 
+--Signature=_Tue__1_Apr_2014_15_07_21_+1100_kdychD2_Oo/1=j4r
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please see the tree "[GIT PULL] x86 LTO changes for v3.15".
+Hi Eric,
 
-	-hpa
+Today's linux-next merge of the audit tree got a conflict in
+kernel/audit.c between commit aa4af831bb4f ("AUDIT: Allow login in
+non-init namespaces") from Linus' tree and commit 5a3cb3b6c3a0 ("audit:
+allow user processes to log from another PID namespace") from the audit
+tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+[Eric: that audit tree commit has no Signed-off-by from you even though
+you committed it ... there are a few like that]
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/audit.c
+index 95a20f3f52f1,ad77d1e80895..000000000000
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@@ -607,20 -607,9 +607,19 @@@ static int audit_netlink_ok(struct sk_b
+  {
+  	int err =3D 0;
+ =20
+- 	/* Only support the initial namespaces for now. */
++ 	/* Only support initial user namespace for now. */
+ +	/*
+ +	 * We return ECONNREFUSED because it tricks userspace into thinking
+ +	 * that audit was not configured into the kernel.  Lots of users
+ +	 * configure their PAM stack (because that's what the distro does)
+ +	 * to reject login if unable to send messages to audit.  If we return
+ +	 * ECONNREFUSED the PAM stack thinks the kernel does not have audit
+ +	 * configured in and will let login proceed.  If we return EPERM
+ +	 * userspace will reject all logins.  This should be removed when we
+ +	 * support non init namespaces!!
+ +	 */
+- 	if ((current_user_ns() !=3D &init_user_ns) ||
+- 	    (task_active_pid_ns(current) !=3D &init_pid_ns))
++ 	if ((current_user_ns() !=3D &init_user_ns))
+ -		return -EPERM;
+ +		return -ECONNREFUSED;
+ =20
+  	switch (msg_type) {
+  	case AUDIT_LIST:
+
+--Signature=_Tue__1_Apr_2014_15_07_21_+1100_kdychD2_Oo/1=j4r
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTOjt9AAoJEMDTa8Ir7ZwV+AQP/R4KgK/7Cf9pFmizqhOlyCU1
+3Bjs19TEWNKIWWSvoWub9F4iZ+4DkqQOz+gsfRsTOpply0OZMeKNCKHNxvh74KgO
+XhCx9UsGf9H11K/RZqctCsZHYzhy+6qa3IffRnQ44LYWNfLOrjKEu/k4mum4BaBi
+MJ1CGO/TmnNPcZlrnPWCRaix6bmgDmXrQnARTPBtfkrH7QmOLjvrt0OalOYxttBm
+KhUiV5FKfYspRP+gmEYRuoDjXU+nEZ2k87bXK0NNmDp/VewsDlfTBk9NLOEZoM8m
+ADjJ9ExbUWb2vVL1SVtLS4CZ8wUHNMqJQASfs0o/RPRzrhZ6RT4ln2nd1Gw7S5YW
+Q8zn6SKsuDShAHx8iI/ZXBAIiPiXUuQZnwOwhzsCWszizWsms/CuOC+hn00LSAor
+5ptGRnD01VH8IzL1fySOjccl+PagrMTve68ClfpwRW8Hp8wh/3bV+IqEFc6SLOck
+Aiozsv/z1vdWzixACDqXZclXivRvsq7phy8T8pxrFu3lDFV5IzjDHOqgzCB+Qp+P
+L9ac4MNXB1VYk53AwMZGzE6CpIJnj/PR2qj+7GMhB701lsztFszbiiXLvRRDFFbb
+BJwuK48LLXDJKCSoamk5U2y9FfmZ/1S5/rdnX98b3ewwp13SECV2RQc4/0H4moQC
+ygT4YS5+hXyD+JTJcIO/
+=QolZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Apr_2014_15_07_21_+1100_kdychD2_Oo/1=j4r--
