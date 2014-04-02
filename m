@@ -1,81 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the drm tree
-Date: Thu, 3 Apr 2014 12:00:26 +1100
-Message-ID: <20140403120026.481c9a08f440b72ffaf19fa6@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the arm-soc tree
+Date: Wed, 2 Apr 2014 11:47:15 +1100
+Message-ID: <20140402114715.471bcdb0962ef38c17120530@canb.auug.org.au>
+References: <20140320143603.a2f82d77be61c09a7852cfe9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__3_Apr_2014_12_00_26_+1100_Q5ssZFc7DN=N523v"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:51913 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161060AbaDCBAg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Apr 2014 21:00:36 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Roper <matthew.d.roper@intel.com>, Rob Clark <robdclark@gmail.com>
+ boundary="Signature=_Wed__2_Apr_2014_11_47_15_+1100_sBqhvVvxE3=Cvsx."
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140320143603.a2f82d77be61c09a7852cfe9@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__3_Apr_2014_12_00_26_+1100_Q5ssZFc7DN=N523v
+--Signature=_Wed__2_Apr_2014_11_47_15_+1100_sBqhvVvxE3=Cvsx.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_display.c between commit f4510a2752b7 ("drm:
-Replace crtc fb with primary plane fb (v3)") from the drm tree and commit
-262ca2b08fbd ("drm/i915: Rename similar plane functions to avoid
-confusion") from the drm-intel tree.
+On Thu, 20 Mar 2014 14:36:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/arm/mach-imx/pm-imx6q.c between commit 9cdde7217e92 ("ARM: imx6:
+> rename pm-imx6q.c to pm-imx6.c") from the arm-soc tree and commit
+> 8435cf757632 ("arm: Replace various irq_desc accesses") from the tip tree.
+>=20
+> I fixed it up (by applying the tip tree patch to the renamed file -
+> arch/arm/mach-imx/pm-imx6.c - see patch below) and can carry the fix as
+> necessary (no action is required).
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+The below merge fixup is now needed when the arm-soc tree is merged with
+Linus' tree (as well as removing arch/arm/mach-imx/pm-imx6q.c).
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 20 Mar 2014 14:33:26 +1100
+> Subject: [PATCH] arm: Replace various irq_desc accesses fix for file move
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/arm/mach-imx/pm-imx6.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+> index 16f0d249f6a7..9392a8f4ef24 100644
+> --- a/arch/arm/mach-imx/pm-imx6.c
+> +++ b/arch/arm/mach-imx/pm-imx6.c
+> @@ -241,7 +241,7 @@ static void imx6q_enable_wb(bool enable)
+> =20
+>  int imx6q_set_lpm(enum mxc_cpu_pwr_mode mode)
+>  {
+> -	struct irq_desc *iomuxc_irq_desc;
+> +	struct irq_data *iomuxc_irq_data =3D irq_get_irq_data(32);
+>  	u32 val =3D readl_relaxed(ccm_base + CLPCR);
+> =20
+>  	val &=3D ~BM_CLPCR_LPM;
+> @@ -288,10 +288,9 @@ int imx6q_set_lpm(enum mxc_cpu_pwr_mode mode)
+>  	 * 3) Software should mask IRQ #32 right after CCM Low-Power mode
+>  	 *    is set (set bits 0-1 of CCM_CLPCR).
+>  	 */
+> -	iomuxc_irq_desc =3D irq_to_desc(32);
+> -	imx_gpc_irq_unmask(&iomuxc_irq_desc->irq_data);
+> +	imx_gpc_irq_unmask(iomuxc_irq_data);
+>  	writel_relaxed(val, ccm_base + CLPCR);
+> -	imx_gpc_irq_mask(&iomuxc_irq_desc->irq_data);
+> +	imx_gpc_irq_mask(iomuxc_irq_data);
+> =20
+>  	return 0;
+>  }
+> --=20
+> 1.9.0
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_display.c
-index 3ffe5a6124f1,c31c6203c7ca..000000000000
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@@ -2291,9 -2398,11 +2398,11 @@@ void intel_display_handle_reset(struct=20
-  		 * disabling them without disabling the entire crtc) allow again
-  		 * a NULL crtc->fb.
-  		 */
- -		if (intel_crtc->active && crtc->fb)
- +		if (intel_crtc->active && crtc->primary->fb)
-- 			dev_priv->display.update_plane(crtc, crtc->primary->fb,
-- 						       crtc->x, crtc->y);
-+ 			dev_priv->display.update_primary_plane(crtc,
- -							       crtc->fb,
-++							       crtc->primary->fb,
-+ 							       crtc->x,
-+ 							       crtc->y);
-  		mutex_unlock(&crtc->mutex);
-  	}
-  }
-
---Signature=_Thu__3_Apr_2014_12_00_26_+1100_Q5ssZFc7DN=N523v
+--Signature=_Wed__2_Apr_2014_11_47_15_+1100_sBqhvVvxE3=Cvsx.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTPLKwAAoJEMDTa8Ir7ZwVujMQAJLPIbe11qDSdiqCSdEx8vcg
-xRF9Vdz2YPp5FTG3cfxPk64Av8MomxC0Tet5NCn4hUIEoeSDtcsXMk0bNdo8zOsG
-0t5UHdg9MSCFNz+Lh2sHIN8DT50OSI4rRsaMDcB5wPePfo3/fHw1QXnDXITa05uO
-ZvW1o9glrzCwJCSsfM8BCY6fRhYI6FEjRntD0+rRUrN3bDoOyxjc5NwismxtuSkS
-xJCjnyi2IORXZXAaZMh5z6vnen3BbsrWtKR2F/DzJHoUdAeJvyPi+7C6yDHO5plX
-0IkEirIgIPdOLHyjO+LKT0FXHCbOv9pPbByNSNYyj2nPNs2eBpb6e+MBKBqguebq
-+1+rxszghow0HPJGTS++MqwlcWrjV33XX7VT2XjpH+seU+KB0g1oKkcaR2gSNcsx
-DAkwyLvmq+r6uOZi3Trh5Gs9O/2/H0RQ0NwnOzq8cADj/OdOhRyGHAIsAPn7ngWf
-YZ4m+N+9LTrSeK3hIgbldiNmmSreqHMCp7HzhDp9JvFyMxixEtMtQaZSgBsQfVID
-y68PzUCKFQ8nqkp74nIQfZCX1QiyAljLqfFz8sRG9uMZ9QcX0FbqkQcXastvLd1y
-ZlsAkLSHeacsVuwqmbwxzr97un3k7D6LjgvEQcvIeftb1FDY/xulXMWSLKYQayk6
-to/QXtXkLtA9UjJF1nPC
-=79qp
+iQIcBAEBCAAGBQJTO14XAAoJEMDTa8Ir7ZwVbPcP/25mNUHzl7yJ/mdrBhkmMngO
+demraJgI0hX+6kvvgbBekDTOdRo5cQVuASsSaCgWDxQxS6ntwTN0BKm0eERFYCmo
+xKi+xu9g6GlBJV92Ht/H6o4fQznUPoXtAXOGkByius/z36lV5XypLv7bRqQnuVaI
+TycwHJxVkLvCPUcIccddrjPnxd4WUGbYsqKcFOlrwtDjntPk7C8//+Qe9yJyTEaY
+wDPcZCq/DdGtrmfQ2LTCLGEsIoBRzqa4w1lADcypBmoOhL6f6l8ZcC6J6yy/vm9A
+dWswKPzmaFKnjS3eFYW+VizKAn7U0Yeo1Uw6e5GdB5dCbrxr1rm7btEzwMvotkiN
+cxMmawWfUwIse1ZWkJwPUoPQ4nwF1Y7S91HHkqjTA5H5LhFgm497G1O4Z0vPJY+y
+OB4uHDV9ePyboZSayVYd0t+0nS+O6JrGmTnVEkW9IFR0WUZr2BKyRUIRnU91J9OF
+pkncogk1ZYR3xsUctm11ESEpNhINaFIgaHuUNAIPeToZbRbei/5MRqHC71wnm7yD
+PLa75/+N6XnBGJ++72QSsWYdFfTmwfyy0Vwc3ETrf5+F+lQk2Wo4Hi8L7ScHjeMx
+NG1/JAxo0o+3Gc3IZHTwJTMi02rcMELA2UUUP7H3Sxel1VA0WS7HqZbnxauKbemf
+RjXI9nWvPGw7RczWlYf6
+=fWTN
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__3_Apr_2014_12_00_26_+1100_Q5ssZFc7DN=N523v--
+--Signature=_Wed__2_Apr_2014_11_47_15_+1100_sBqhvVvxE3=Cvsx.--
