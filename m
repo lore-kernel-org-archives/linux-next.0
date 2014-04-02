@@ -1,74 +1,68 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] drm/i915: fix command parser debug print
-	format mismatches
-Date: Wed, 02 Apr 2014 08:26:23 -0700
-Message-ID: <533C2C1F.5010303@infradead.org>
-References: <533B106B.8090408@infradead.org>
- <1396427060-12539-1-git-send-email-jani.nikula@intel.com>
+From: Alexei Starovoitov <ast@plumgrid.com>
+Subject: Re: [PATCH net-next] sh: add missing fpscr_values
+Date: Wed, 2 Apr 2014 09:09:56 -0700
+Message-ID: <CAMEtUuy_KZXmWAs6GkZe2HdJ_i0Go+FpJ09rA0AVg=dpWCevig@mail.gmail.com>
+References: <1396407244-26771-1-git-send-email-ast@plumgrid.com>
+	<20140402.084713.204716153605145333.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1396427060-12539-1-git-send-email-jani.nikula@intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-we0-f175.google.com ([74.125.82.175]:36253 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932169AbaDBQJ5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Apr 2014 12:09:57 -0400
+Received: by mail-we0-f175.google.com with SMTP id q58so475617wes.6
+        for <linux-next@vger.kernel.org>; Wed, 02 Apr 2014 09:09:56 -0700 (PDT)
+In-Reply-To: <20140402.084713.204716153605145333.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>, Daniel Borkmann <dborkman@redhat.com>, Paul Mundt <lethal@linux-sh.org>, kbuild test robot <fengguang.wu@intel.com>, linux-sh <linux-sh@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, Kaz Kojima <kkojima@rr.iij4u.or.jp>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org
 
-On 04/02/2014 01:24 AM, Jani Nikula wrote:
-> Drop the cast from the pointer diff to fix:
-> 
-> drivers/gpu/drm/i915/i915_cmd_parser.c:405:4: warning: format '%td' expects
-> argument of type 'ptrdiff_t', but argument 5 has type 'long unsigned int'
-> [-Wformat]
-> 
-> While at it, use %u for u32.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-> 
-> ---
-> 
-> Randy, try as I might, I wasn't able to coerce gcc to spit out that
-> warning. Please enlighten me! (Does this fix the warn?)
+On Wed, Apr 2, 2014 at 5:47 AM, David Miller <davem@davemloft.net> wrote:
+> From: Alexei Starovoitov <ast@plumgrid.com>
+> Date: Tue,  1 Apr 2014 19:54:04 -0700
+>
+>> GCC on SuperH for the following program:
+>> int foo(int i)
+>> {
+>>       static const void *table[2] = {
+>>               [0] = &&label1,
+>>               [1] = &&label2,
+>>       };
+>>       goto *table[i & 1];
+>>
+>>       label1:
+>>               return 1;
+>>       label2:
+>>               return 2;
+>> }
+>> generates code:
+>>       mov.l   .L9,r1
+>>       mov     #1,r0
+>>       rts
+>>       lds.l   @r1+,fpscr
+>> .L9:
+>>       .long   __fpscr_values+4
+>>
+>> so kernel has to provide body of fpscr_values just like glibc does
+>>
+>> Fixes: bd4cf0ed331a ("net: filter: rework/optimize internal BPF interpreter's instruction set")
+>> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+>> Signed-off-by: Alexei Starovoitov <ast@plumgrid.com>
+>
+> You guys really need to just fix the compiler, sorry.
 
-Yes, it does.  Thanks.
+agree.
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+To summarize:
+according to Kaz:
+"For sh2a, configuring gcc with --with-multilib-list=m2a,m2a-nofpu
+ and specifying -m2a-nofpu during compiling kernel would work."
 
+and as Geert pointed out we already have:
+arch/sh/Makefile:
+cflags-$(CONFIG_CPU_SH2A)               += $(call cc-option,-m2a,) \
+                                           $(call cc-option,-m2a-nofpu,)
 
-> Thanks for the report.
-> ---
->  drivers/gpu/drm/i915/i915_cmd_parser.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_cmd_parser.c b/drivers/gpu/drm/i915/i915_cmd_parser.c
-> index 71ac3b4eaa0d..e5c4e99a22fb 100644
-> --- a/drivers/gpu/drm/i915/i915_cmd_parser.c
-> +++ b/drivers/gpu/drm/i915/i915_cmd_parser.c
-> @@ -811,10 +811,10 @@ int i915_parse_cmds(struct intel_ring_buffer *ring,
->  			length = ((*cmd & desc->length.mask) + LENGTH_BIAS);
->  
->  		if ((batch_end - cmd) < length) {
-> -			DRM_DEBUG_DRIVER("CMD: Command length exceeds batch length: 0x%08X length=%d batchlen=%td\n",
-> +			DRM_DEBUG_DRIVER("CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
->  					 *cmd,
->  					 length,
-> -					 (unsigned long)(batch_end - cmd));
-> +					 batch_end - cmd);
->  			ret = -EINVAL;
->  			break;
->  		}
-> 
-
-
--- 
-~Randy
+so no kernel changes needed and gcc just needs to be reconfigured.
