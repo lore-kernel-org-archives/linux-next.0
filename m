@@ -1,63 +1,54 @@
-From: Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH] drm/i915: fix command parser debug print format mismatches
-Date: Wed,  2 Apr 2014 11:24:20 +0300
-Message-ID: <1396427060-12539-1-git-send-email-jani.nikula@intel.com>
-References: <533B106B.8090408@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no tree tomorrow
+Date: Thu, 3 Apr 2014 21:47:12 +1100
+Message-ID: <20140403214712.c8947998f04adbe4efbbfa4f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <533B106B.8090408@infradead.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, jani.nikula@intel.com, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_Apr_2014_21_47_12_+1100_SFj7qV/DwksMkp6="
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:53080 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751036AbaDCKrX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Apr 2014 06:47:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Drop the cast from the pointer diff to fix:
+--Signature=_Thu__3_Apr_2014_21_47_12_+1100_SFj7qV/DwksMkp6=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/gpu/drm/i915/i915_cmd_parser.c:405:4: warning: format '%td' expects
-argument of type 'ptrdiff_t', but argument 5 has type 'long unsigned int'
-[-Wformat]
+Hi all,
 
-While at it, use %u for u32.
+Sorry, but there will be no linux-next release tomorrow.  Normal service
+will resume on Monday.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
----
+--Signature=_Thu__3_Apr_2014_21_47_12_+1100_SFj7qV/DwksMkp6=
+Content-Type: application/pgp-signature
 
-Randy, try as I might, I wasn't able to coerce gcc to spit out that
-warning. Please enlighten me! (Does this fix the warn?)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Thanks for the report.
----
- drivers/gpu/drm/i915/i915_cmd_parser.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+iQIcBAEBCAAGBQJTPTw6AAoJEMDTa8Ir7ZwVTgQP/2PzSD6iLq9q/lXYvzatD/0V
+YU9E/vDa1V5iJEIUftcOmuc2LFFbey6A37aG9Ui9VgUZghQxwPqzUTAsHgIjLG39
+prfN/AaAznvS3dD7aQmHDosmxJ9UHBSxlzkNZtDTyOcURkiQD9oXCDEkfUxnW7bZ
+Cve/ggOhmHBIP4qTjtFtzvIonLnz7UoYqFea3L7xGKrD5wcOrYwPD/z96wqRhTWO
+4YuScBnEkLV2/yzyld3SxxJCabsSUfqezSraxhDAtZZtr3164/c9vo51UFUhAbIU
+1cEr3jvItcsDQ4NWVjmOmg/36iylpvAiNRkK3ERj8rh8GrUA80NgqnTzvlcCCqJr
+msn6lme2CqvYeau4M5y9eOiP/bo3bkoVrjBV+Tf+By3xk/LdyWH9b4HLw621MlaO
+kKrGOuiRHAaWJjwO9H/6t2vHTDty/orhctmN8cCKOfzG6pyZEGYh2xLWQerKIVod
+JEbrIWlN0vynNpyxPinEWmw5YN/QTIzMxtmG3JxdVSJKMy85DiWaNwHUaAnQSloK
+A/Gv+sH2cUboHfPx6/xlL17uPguPZ0BnOdoA8Z/8vcbqlbOPuvKPcEnVsFbgyzj8
+mBVBsn5B1StR0EyrlafFoP1Bi1XceQQHQx9AXn1GaFHfz9iwoQctXyKIGXqzRWr2
+67oEgCXesyxe6MicPT95
+=41Nb
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/gpu/drm/i915/i915_cmd_parser.c b/drivers/gpu/drm/i915/i915_cmd_parser.c
-index 71ac3b4eaa0d..e5c4e99a22fb 100644
---- a/drivers/gpu/drm/i915/i915_cmd_parser.c
-+++ b/drivers/gpu/drm/i915/i915_cmd_parser.c
-@@ -811,10 +811,10 @@ int i915_parse_cmds(struct intel_ring_buffer *ring,
- 			length = ((*cmd & desc->length.mask) + LENGTH_BIAS);
- 
- 		if ((batch_end - cmd) < length) {
--			DRM_DEBUG_DRIVER("CMD: Command length exceeds batch length: 0x%08X length=%d batchlen=%td\n",
-+			DRM_DEBUG_DRIVER("CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
- 					 *cmd,
- 					 length,
--					 (unsigned long)(batch_end - cmd));
-+					 batch_end - cmd);
- 			ret = -EINVAL;
- 			break;
- 		}
--- 
-1.7.9.5
+--Signature=_Thu__3_Apr_2014_21_47_12_+1100_SFj7qV/DwksMkp6=--
