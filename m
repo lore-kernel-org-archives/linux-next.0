@@ -1,8 +1,8 @@
 From: Jan Moskyto Matejka <mq@suse.cz>
 Subject: [PATCH] Revert "drm/i915: fix build warning on 32-bit
 	(v2)"
-Date: Mon,  7 Apr 2014 13:07:56 +0200
-Message-ID: <1396868876-7372-1-git-send-email-mq@suse.cz>
+Date: Thu,  3 Apr 2014 14:53:57 +0200
+Message-ID: <1396529637-15395-1-git-send-email-mq@suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,7 +16,7 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
  <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: intel-gfx-bounces@lists.freedesktop.org
 Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Jan Moskyto Matejka <mq@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
@@ -30,8 +30,6 @@ long to ptrdiff_t.
 
 The other commit fixes the original warning the better way so I'm reverting
 this commit now.
-
-Signed-off-by: Jan Moskyto Matejka <mq@suse.cz>
 ---
  drivers/gpu/drm/i915/i915_cmd_parser.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
