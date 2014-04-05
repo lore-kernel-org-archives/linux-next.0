@@ -1,30 +1,35 @@
-From: Vincent <vincent.stehle@laposte.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH] topology: Fix compilation warning when not in SMP
-Date: Sat, 05 Apr 2014 14:30:27 +0200
-Message-ID: <533FF763.3020000@bergerie>
-References: <1396593798-29173-1-git-send-email-vincent.stehle@laposte.net> <20140404234943.GA14633@kroah.com>
+Date: Sat, 5 Apr 2014 10:20:00 -0700
+Message-ID: <20140405172000.GB3850@kroah.com>
+References: <1396593798-29173-1-git-send-email-vincent.stehle@laposte.net>
+ <20140404234943.GA14633@kroah.com>
+ <533FF763.3020000@bergerie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp2-g21.free.fr ([212.27.42.2]:48270 "EHLO smtp2-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752528AbaDEMah (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 5 Apr 2014 08:30:37 -0400
-In-Reply-To: <20140404234943.GA14633@kroah.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50639 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753157AbaDERRg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Apr 2014 13:17:36 -0400
+Content-Disposition: inline
+In-Reply-To: <533FF763.3020000@bergerie>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vincent <vincent.stehle@laposte.net>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On 04/05/2014 01:49 AM, Greg Kroah-Hartman wrote:
-> Warnings aren't a stable kernel issue, so why would this be relevant
-> there?
+On Sat, Apr 05, 2014 at 02:30:27PM +0200, Vincent wrote:
+> On 04/05/2014 01:49 AM, Greg Kroah-Hartman wrote:
+> > Warnings aren't a stable kernel issue, so why would this be relevant
+> > there?
+> 
+> Oh, sorry about that. I'll go re-read the stable kernel rules again.
+> 
+> Shall I re-post without the stable Cc:, for only mainline and next?
 
-Oh, sorry about that. I'll go re-read the stable kernel rules again.
+No need, I'll just remove them when I apply the patch.
 
-Shall I re-post without the stable Cc:, for only mainline and next?
+thanks,
 
-Best regards,
-
-V.
+greg k-h
