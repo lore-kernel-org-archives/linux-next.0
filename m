@@ -1,51 +1,30 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Vincent <vincent.stehle@laposte.net>
 Subject: Re: [PATCH] topology: Fix compilation warning when not in SMP
-Date: Fri, 4 Apr 2014 16:49:43 -0700
-Message-ID: <20140404234943.GA14633@kroah.com>
-References: <1396593798-29173-1-git-send-email-vincent.stehle@laposte.net>
+Date: Sat, 05 Apr 2014 14:30:27 +0200
+Message-ID: <533FF763.3020000@bergerie>
+References: <1396593798-29173-1-git-send-email-vincent.stehle@laposte.net> <20140404234943.GA14633@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1396593798-29173-1-git-send-email-vincent.stehle@laposte.net>
-Sender: stable-owner@vger.kernel.org
-To: Vincent =?iso-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, stable@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp2-g21.free.fr ([212.27.42.2]:48270 "EHLO smtp2-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752528AbaDEMah (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 5 Apr 2014 08:30:37 -0400
+In-Reply-To: <20140404234943.GA14633@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Fri, Apr 04, 2014 at 08:43:18AM +0200, Vincent Stehl=C3=A9 wrote:
-> The topology_##name() macro does not use its argument when CONFIG_SMP=
- is not
-> set, as it ultimately calls the cpu_data() macro.
->=20
-> So we avoid maintaining a possibly unused `cpu' variable, to avoid th=
-e
-> following compilation warning:
->=20
->   drivers/base/topology.c: In function =E2=80=98show_physical_package=
-_id=E2=80=99:
->   drivers/base/topology.c:103:118: warning: unused variable =E2=80=98=
-cpu=E2=80=99 [-Wunused-variable]
->    define_id_show_func(physical_package_id);
->=20
->   drivers/base/topology.c: In function =E2=80=98show_core_id=E2=80=99=
-:
->   drivers/base/topology.c:106:106: warning: unused variable =E2=80=98=
-cpu=E2=80=99 [-Wunused-variable]
->    define_id_show_func(core_id);
->=20
-> This can be seen with e.g. x86 defconfig and CONFIG_SMP not set.
->=20
-> Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: <stable@vger.kernel.org> # 3.10.x
-> Cc: <stable@vger.kernel.org> # 3.13.x
-> Cc: <stable@vger.kernel.org> # 3.14.x
+On 04/05/2014 01:49 AM, Greg Kroah-Hartman wrote:
+> Warnings aren't a stable kernel issue, so why would this be relevant
+> there?
 
-Warnings aren't a stable kernel issue, so why would this be relevant
-there?
+Oh, sorry about that. I'll go re-read the stable kernel rules again.
 
-thanks,
+Shall I re-post without the stable Cc:, for only mainline and next?
 
-greg k-h
+Best regards,
+
+V.
