@@ -1,35 +1,58 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] topology: Fix compilation warning when not in SMP
-Date: Sat, 5 Apr 2014 10:20:00 -0700
-Message-ID: <20140405172000.GB3850@kroah.com>
-References: <1396593798-29173-1-git-send-email-vincent.stehle@laposte.net>
- <20140404234943.GA14633@kroah.com>
- <533FF763.3020000@bergerie>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: strange state of the drivers-x86 tree
+Date: Sun, 6 Apr 2014 23:11:09 +1000
+Message-ID: <20140406231109.bfb3e6a3566dc8a4d07332b5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sun__6_Apr_2014_23_11_09_+1000_8.7n+fLCDT6gANpf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50639 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753157AbaDERRg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Apr 2014 13:17:36 -0400
-Content-Disposition: inline
-In-Reply-To: <533FF763.3020000@bergerie>
+Received: from ozlabs.org ([203.10.76.45]:46250 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750835AbaDFNLR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Apr 2014 09:11:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vincent <vincent.stehle@laposte.net>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 05, 2014 at 02:30:27PM +0200, Vincent wrote:
-> On 04/05/2014 01:49 AM, Greg Kroah-Hartman wrote:
-> > Warnings aren't a stable kernel issue, so why would this be relevant
-> > there?
-> 
-> Oh, sorry about that. I'll go re-read the stable kernel rules again.
-> 
-> Shall I re-post without the stable Cc:, for only mainline and next?
+--Signature=_Sun__6_Apr_2014_23_11_09_+1000_8.7n+fLCDT6gANpf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No need, I'll just remove them when I apply the patch.
+Hi Matthew,
 
-thanks,
+I was just looking at the drivers-x86 tree
+(git://cavan.codon.org.uk/platform-drivers-x86.git#linux-next) and it
+seems to contain quite a few commits committed by you but not signed off
+by you.  Also some of those commits look like they belong in other trees
+(notably the net tree).
 
-greg k-h
+Please clean it up.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sun__6_Apr_2014_23_11_09_+1000_8.7n+fLCDT6gANpf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTQVJyAAoJEMDTa8Ir7ZwVpEQP/0FdpNRbNY0QmAUcYdluK9yI
+MNU28PnUmg5IYSSfVE4TBkWx638dr7yrI4pkGQtgLsp6+IiJC/970rAkb2wl+/8M
+NAgVX2TTAyNFZMyyHKe1MdRo082jtRjuq1SRddeAwd2iIUg/HHAcebgaIEp6Hx/0
+dApUvSPfUlSeo2BBlknkX99K1j6ahDoUltlVlJ6ZB4MciylcaVpmxAr3Juf+CqrT
+UnJiXe/6A4kRUo6U41umkfToC+p3cJcnZ7w958FdlYXVnWOUfNrGPJ4t/XDQ3lkL
+yYJpvX0UkUirRcORjE0shVLgq2bsRL2gXoSoLNVa15gK2mJn3EUfd2sbUvyk/DYq
+3mWL8Ta5zIsYsccjydc/6Y5sKwTT2842Y6O/0Tsvi2Sa71CUtX6S+i8hUG5RfA2o
+TVLxUBz36h5DAUFlD35c2JBVQVq045hLngZyvgy2tCsnrk5gALcpfpjXeWf62Ugs
+ieClRlb58sTSsl/PM77H0dO1CrnS5KdfonDqO+Ad3DIqYm2FeBcNzaUhtK6MREOg
+AHx45TSjJE4ZZ1QUAhJSajTHdNuKXSLiRkfPdwJwnCX5zeBcXyjAI+F3d3tsq0sj
+4uf0POeNanf8qae44j3SWOHZgu7AyVF9d7CRCBWBV8F7175Z2y69/11FBmjCz1iU
+MERq2Z11fnXqlRagrvDC
+=F7K2
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__6_Apr_2014_23_11_09_+1000_8.7n+fLCDT6gANpf--
