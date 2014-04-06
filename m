@@ -1,54 +1,62 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Apr 1 (netfilter)
-Date: Sun, 6 Apr 2014 18:08:47 +0200
-Message-ID: <CAMuHMdVS8+wMTbUCC9x0zhUq9EJx5RUgWTw8zEnQ4nVTOHugsg@mail.gmail.com>
-References: <533B06A7.5010900@infradead.org>
-	<20140401.152203.847120817141929645.davem@davemloft.net>
-	<CAMuHMdXaoUvUButpaDYQh6aj=Zm9GCS7MKFA_-h8GOo1RkOObw@mail.gmail.com>
-	<20140406.113106.564835222660199498.davem@davemloft.net>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Subject: [PATCH] cpts: Fix missing includes
+Date: Sun,  6 Apr 2014 19:34:20 +0200
+Message-ID: <1396805660-9807-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140406.113106.564835222660199498.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp3-g21.free.fr ([212.27.42.3]:50303 "EHLO smtp3-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754340AbaDFRep (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Apr 2014 13:34:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
 
-Hi David,
+The ETH_HLEN and VLAN_HLEN definitions are not in if.h any more. Add th=
+e
+necessary includes to fix the following compilation errors:
 
-On Sun, Apr 6, 2014 at 5:31 PM, David Miller <davem@davemloft.net> wrote:
->> On Tue, Apr 1, 2014 at 9:22 PM, David Miller <davem@davemloft.net> wrote:
->>> From: Randy Dunlap <rdunlap@infradead.org>
->>> Date: Tue, 01 Apr 2014 11:34:15 -0700
->>>> on x86_64:
->>>>
->>>> net/netfilter/xt_connlimit.c: In function 'connlimit_mt_check':
->>>> net/netfilter/xt_connlimit.c:380:18: warning: division by zero [-Wdiv-by-zero]
->>>>
->>>> Maybe just use CONNLIMIT_LOCK_SLOTS instead of ARRAY_SIZE(...).
->>>
->>> I'd rather see that ARRAY_SIZE() be adjusted to work cleanly for zero
->>> sized array elements.
->>
->> Anyone with a suggestion?
->>
->> Please note this is now in Linus' tree, possibly crashing people's boxes...
->
-> I took in the version of the fix I didn't like via Pablo for
-> now.
+  drivers/net/ethernet/ti/cpts.c: In function =E2=80=98cpts_match=E2=80=
+=99:
+  drivers/net/ethernet/ti/cpts.c:266:12: error: =E2=80=98ETH_HLEN=E2=80=
+=99 undeclared (first use in this function)
+  drivers/net/ethernet/ti/cpts.c:266:12: note: each undeclared identifi=
+er is reported only once for each function it appears in
+  drivers/net/ethernet/ti/cpts.c:276:23: error: =E2=80=98VLAN_HLEN=E2=80=
+=99 undeclared (first use in this function)
 
-Thank you!
+Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+---
 
-Fixing ARRAY_SIZE() can still be done later, if possible.
 
-Gr{oetje,eeting}s,
+Hi,
 
-                        Geert
+This compilation error can be seen with e.g. arm allmodconfig.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Best regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvald
+V.
+
+
+ drivers/net/ethernet/ti/cpts.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/c=
+pts.c
+index a3bbf59..2a2f82a 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -19,6 +19,8 @@
+  */
+ #include <linux/err.h>
+ #include <linux/if.h>
++#include <linux/if_ether.h>
++#include <linux/if_vlan.h>
+ #include <linux/hrtimer.h>
+ #include <linux/module.h>
+ #include <linux/net_tstamp.h>
+--=20
+1.9.1
