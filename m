@@ -1,56 +1,81 @@
-From: Daniel Borkmann <dborkman@redhat.com>
-Subject: Re: [PATCH] cpts: Fix missing includes
-Date: Sun, 06 Apr 2014 19:47:28 +0200
-Message-ID: <53419330.405@redhat.com>
-References: <1396805660-9807-1-git-send-email-vincent.stehle@laposte.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the  tree
+Date: Mon, 7 Apr 2014 10:21:02 +1000
+Message-ID: <20140407102102.97ad7dcaab69324efa8d897a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:20287 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754499AbaDFRrh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 6 Apr 2014 13:47:37 -0400
-In-Reply-To: <1396805660-9807-1-git-send-email-vincent.stehle@laposte.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?VmluY2VudCBTdGVobMOp?= <vincent.stehle@laposte.net>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============6238272719315196282=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 04/06/2014 07:34 PM, Vincent Stehl=C3=A9 wrote:
-> The ETH_HLEN and VLAN_HLEN definitions are not in if.h any more. Add =
-the
-> necessary includes to fix the following compilation errors:
->
->    drivers/net/ethernet/ti/cpts.c: In function =E2=80=98cpts_match=E2=
-=80=99:
->    drivers/net/ethernet/ti/cpts.c:266:12: error: =E2=80=98ETH_HLEN=E2=
-=80=99 undeclared (first use in this function)
->    drivers/net/ethernet/ti/cpts.c:266:12: note: each undeclared ident=
-ifier is reported only once for each function it appears in
->    drivers/net/ethernet/ti/cpts.c:276:23: error: =E2=80=98VLAN_HLEN=E2=
-=80=99 undeclared (first use in this function)
->
-> Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+--===============6238272719315196282==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB"
 
-Thanks, fix is already in net tree ...
+--Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://git.kernel.org/cgit/linux/kernel/git/davem/net.git/commit/?id=3D=
-79eb9d28c9b22fa419e2c3f1b2cc6e285720ae41
+Hi all,
 
-> diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti=
-/cpts.c
-> index a3bbf59..2a2f82a 100644
-> --- a/drivers/net/ethernet/ti/cpts.c
-> +++ b/drivers/net/ethernet/ti/cpts.c
-> @@ -19,6 +19,8 @@
->    */
->   #include <linux/err.h>
->   #include <linux/if.h>
-> +#include <linux/if_ether.h>
-> +#include <linux/if_vlan.h>
->   #include <linux/hrtimer.h>
->   #include <linux/module.h>
->   #include <linux/net_tstamp.h>
->
+Today's linux-next merge of the arm-soc tree got conflicts in
+arch/arm/boot/dts/qcom-msm8960.dtsi, arch/arm/boot/dts/qcom-msm8974.dtsi,
+arch/arm/mach-omap2/pdata-quirks.c, arch/arm/mach-zynq/Kconfig,
+drivers/watchdog/Kconfig and sound/soc/kirkwood/Kconfig between various
+merge commits from Linus' tree and various merge commits from the arm-soc
+tree.
+
+I used the versions from Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTQe9yAAoJEMDTa8Ir7ZwVWjwP/0t01hBnQHcHgthyv4WNolRt
+SceHDG1ikfghygYjWGoRDF08LgEcp9i88GTIyHO7vDnoDx1/ai2UwUvzBytREW0G
+UpCMEDq30sTRUytwXcthFgZ5sTp26iK1BtZeiON8U8LJu0omFRQrvvHqbbyP+Kd9
+hbLNatffsu5bgIeGxOJNZDuoeYeLnQ+8Q7QEQ9GypWrVXbWfnvDaAHcw+dheZk09
+yzphhVk5FLPOIIqUhwtrkpB4c7vyzdWO6L6UPI6gZm8zhX9PsIESAts1M+L7tEQG
+6h/hX8JYouVxsdYl7JYdjCkmpQrLMEg2pzFiE6QroVsNSQCNts5L29bekBD7EJn8
+ZkUD6H/2GTvWL5CZZeksTBuDCaIsZ5niBoblsJbVhOk/Q26XwCySuYh2ACKVkGVJ
+s37FI+irWndTqKcG0Cz6FUg6jZd6RS+tJJtqGJHaRX5se+AB9XDbwzysAQrXzquT
+NJ5oStjisv0CD/khd8X92iwgEfh7zYBofm8mfpGLwRBNiRr7qLiEG+TajuiRzabs
+N3yGMZMBmk3IdgnZ9D08KFkKU7hvzFaDHhbfg6yZq2TtSi1pwgpXB/LslOcaCFQX
+eW2SUjnhIBPe9obE4knhKE6mbDO56erN3Nit1myDuvuRC7toZ6fPnhMKL1Ej4cBc
+upmAnR46JYkW1DalaT1U
+=R1U+
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB--
+
+
+--===============6238272719315196282==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6238272719315196282==--
