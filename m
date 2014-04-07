@@ -1,64 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: strange state of the kbuild tree
-Date: Tue, 8 Apr 2014 07:47:34 +1000
-Message-ID: <20140408074734.34deb43270183941b5118c7f@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Tue, 8 Apr 2014 07:51:07 +1000
+Message-ID: <20140408075107.f13e69a4d08471656acfb9f3@canb.auug.org.au>
+References: <20140407145242.1958251349e0b6c6c8923f46@canb.auug.org.au>
+	<20140407112654.e2172fd7c0df975bf79df388@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C"
+ boundary="Signature=_Tue__8_Apr_2014_07_51_07_+1000_.F8xZfcJqLi/MxG6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:57829 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:39020 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755169AbaDGVrm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Apr 2014 17:47:42 -0400
+	id S1754637AbaDGVvO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Apr 2014 17:51:14 -0400
+In-Reply-To: <20140407112654.e2172fd7c0df975bf79df388@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
 
---Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C
+--Signature=_Tue__8_Apr_2014_07_51_07_+1000_.F8xZfcJqLi/MxG6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+Hi Andrew,
 
-I noticed that you have two copies of two commits in your tree ("Kbuild,
-lto: Set TMPDIR for LTO v4" and "Kbuild, lto: Add Link Time Optimization
-support v3").  I understan why you recommitted them (to add your
-Signed-off-by), but to leave the unsigned commits in there sort of
-defeats the purpose.  This is probably a case where you should have
-removed the original merge (or just these two commits) and then merged
-the new version.
+On Mon, 7 Apr 2014 11:26:54 -0700 Andrew Morton <akpm@linux-foundation.org>=
+ wrote:
+>
+> On Mon, 7 Apr 2014 14:52:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+>=20
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >=20
+> > fs/ocfs2/suballoc.c: In function 'ocfs2_block_group_set_bits':
+> > fs/ocfs2/suballoc.c:1357:2: error: implicit declaration of function 'tr=
+ace_ocfs2_block_group_set_bits' [-Werror=3Dimplicit-function-declaration]
+> >   trace_ocfs2_block_group_set_bits(bit_off, num_bits);
+> >   ^
+> >=20
+> > I have no idea how to track this down :-( The only patches affecting th=
+is
+> > code are now in Linus' tree.  I can only assume that some implicitly
+> > included header file is no longer included.  I have just left it broken
+> > for now.
+>=20
+> I can't reproduce this with either mainline or linux-next.  Pulled half
+> an hour ago, powerpc allyesconfig.
 
-I am not sure what you intend to send to Linus, but this whole tree (in
-one piece) should not be it.  From the state of the tree, it looks like
-you send your separate topic branches (or a new merge of them) which
-should be ok, but please after doing that, clean up your for-next branch
-(it current has merge commits dating back to May, 2103 in it).
+Rats!  I think I have been fooled by my own scripts.  What was built here
+was the result of me trying to merge your tree.  After abandoning the
+attempt, my build tree did not get reset to the final linux-next before I
+did my final build checks which include the powerpc allyesconfig.
+
+Sorry about that.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C
+--Signature=_Tue__8_Apr_2014_07_51_07_+1000_.F8xZfcJqLi/MxG6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTQxz6AAoJEMDTa8Ir7ZwVNMIP/38ZvUkBlhNotAfhqt1DtWOP
-o4dBI15g1wnse69phAcuqY4PZir3DFfWCkeFifsxxWHsEj/oEeZYbk3cDAKo0DAs
-RSwcrdaOZHy6sJh8g7Fye5FU3qK1yxBZBqIWwcEUu/jkzoNcWx0c/OdWWgj1pGSJ
-gPvAOJAka5EbkDPxP7I0cjLJBM8Fegp/1z/aBTuBcxY02vXM11w7SA1bh8OmGz0q
-JBjWcyPZzzc4kHi2nxHG8ZW7Cse2HhCjs1uTcZMFVVdnK+6BKK3OmutoKzAfgym0
-WEtVpXQE4JF/SP4f1ITnoFEGqu0qAdpiWKd8LhZdW9yBgP0KhByouKz3AOf7CoB/
-XFlAUvnunJI4arOGOCFFvWVZmvW6l6dV44Q3Wdha41sFOS0w+/sB4BKtUeCLza3V
-Q9PnXYyVb782rIUqsCIvE1bgh7SJkDLU09TXD3xR1+nMNqeCVlwiCJCKEauM1vjs
-CZbpQQqZI71i6bSOrinONCxz3g073Q9azVoFbVl+Ockx7EthGTF27FWDiv1yoAgv
-F3ksilTGyHDDfUvDkbc6iT7jyvz5h3AKUzOnP/KwoKdYnV1SA2gYmRNKRa44OvR5
-iztvUH54gn1jO6OpnFbLXiKsUSqn003vhC/NP8pDR53AiKwnwZwX1cm1SKTfOm+J
-ZIxO7nRrTpz+bqvBdVIN
-=nCkT
+iQIcBAEBCAAGBQJTQx3QAAoJEMDTa8Ir7ZwV6JoP/3kQK5eZ4x22IWpmuZLj9Xjj
+kWDc0uqpV7kAmbOW1pfb01ZQRzlwQIc6Yqy41lUhJRHQ3BLI3MNjwpD9g9pWCxlT
+sJKQEA9p1GKd1R4nMvNNUYlbvIWtie4ccyIyVpBVWDxMz0Bm+72G3vDrEj/jXNjq
+OrXNb674K88gJblPBtJGFgzDyZCxQ0bMCdCtuVLuymb4kGgU2PaHxp9tb0jM3oFd
+aCC2TgA/1aqRW5Bm2qynWG1wdtEvuj04YtBhrLjunsmlP65ZRoncg/ESeTrF9LlM
+WlkVtZElPJvuql7OB+FtS0oRXI9t+B7rqDU7j+oS/VOLGBcJ4xtv4qRrdjM3zqu6
+QioH/piTiFop7al900REr5BqUK1aAT45O4g1K90Gv/QtsDPmQi0e5bWorUjPLFFm
+5t/CdMU7mthmnJAS6hwC6wZlU8VDn4+OvAXODDQq5qFRpdyeRXLePiXPgZ4XwNJJ
+En9UfKMC2x3z+Pn3ZxdtELNo0t2gbBKj24As6vdiggGO8RhTuf9+DoYSqk3Mv6By
+D4CP8usoT6pivQ0DoUah4RLnWi/FDqSMqourH7ru/LsI/84UrzFj2ZxnLFtw6liS
+AeBZ+81r7EoIT+dWdDR3z7/ISg3YSi0KvlW72GgHQhnc7rM5Uwh4XVvb8T2KhfKx
+l9ccPxeCKnZm7F8sOKAM
+=+Q7r
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C--
+--Signature=_Tue__8_Apr_2014_07_51_07_+1000_.F8xZfcJqLi/MxG6--
