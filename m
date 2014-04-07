@@ -1,81 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the  tree
-Date: Mon, 7 Apr 2014 10:21:02 +1000
-Message-ID: <20140407102102.97ad7dcaab69324efa8d897a@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
+Date: Mon, 7 Apr 2014 14:18:11 +1000
+Message-ID: <20140407141811.bab860490915219f94464446@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6238272719315196282=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---===============6238272719315196282==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB"
+ boundary="Signature=_Mon__7_Apr_2014_14_18_11_+1000_k9z=Su4Wz.9J/2D5"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:43762 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750711AbaDGEST (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Apr 2014 00:18:19 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB
+--Signature=_Mon__7_Apr_2014_14_18_11_+1000_k9z=Su4Wz.9J/2D5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the arm-soc tree got conflicts in
-arch/arm/boot/dts/qcom-msm8960.dtsi, arch/arm/boot/dts/qcom-msm8974.dtsi,
-arch/arm/mach-omap2/pdata-quirks.c, arch/arm/mach-zynq/Kconfig,
-drivers/watchdog/Kconfig and sound/soc/kirkwood/Kconfig between various
-merge commits from Linus' tree and various merge commits from the arm-soc
-tree.
-
-I used the versions from Linus' tree.
+Today's linux-next merge of the akpm-current tree got lots of conflicts
+with Linus' tree.  I tried to fix things up, but it was a real mess and
+in the end I have just dropped your patch series until you can clean out
+what went to Linus.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB
+--Signature=_Mon__7_Apr_2014_14_18_11_+1000_k9z=Su4Wz.9J/2D5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTQe9yAAoJEMDTa8Ir7ZwVWjwP/0t01hBnQHcHgthyv4WNolRt
-SceHDG1ikfghygYjWGoRDF08LgEcp9i88GTIyHO7vDnoDx1/ai2UwUvzBytREW0G
-UpCMEDq30sTRUytwXcthFgZ5sTp26iK1BtZeiON8U8LJu0omFRQrvvHqbbyP+Kd9
-hbLNatffsu5bgIeGxOJNZDuoeYeLnQ+8Q7QEQ9GypWrVXbWfnvDaAHcw+dheZk09
-yzphhVk5FLPOIIqUhwtrkpB4c7vyzdWO6L6UPI6gZm8zhX9PsIESAts1M+L7tEQG
-6h/hX8JYouVxsdYl7JYdjCkmpQrLMEg2pzFiE6QroVsNSQCNts5L29bekBD7EJn8
-ZkUD6H/2GTvWL5CZZeksTBuDCaIsZ5niBoblsJbVhOk/Q26XwCySuYh2ACKVkGVJ
-s37FI+irWndTqKcG0Cz6FUg6jZd6RS+tJJtqGJHaRX5se+AB9XDbwzysAQrXzquT
-NJ5oStjisv0CD/khd8X92iwgEfh7zYBofm8mfpGLwRBNiRr7qLiEG+TajuiRzabs
-N3yGMZMBmk3IdgnZ9D08KFkKU7hvzFaDHhbfg6yZq2TtSi1pwgpXB/LslOcaCFQX
-eW2SUjnhIBPe9obE4knhKE6mbDO56erN3Nit1myDuvuRC7toZ6fPnhMKL1Ej4cBc
-upmAnR46JYkW1DalaT1U
-=R1U+
+iQIcBAEBCAAGBQJTQicHAAoJEMDTa8Ir7ZwV48AQAIeYu+7JQSEY+ZU5rfpNTPlv
+cd8ooOOMiTSL2YUPcUwFMKLI4suxzpLVWdhXesTetwG72cYvd/6qjK670Dqb7Mbh
+miWqU09WuHYcgACX1Ot9erV/9ElClpxT1RhQy6OeXT+/mWxnPzZ8jzKOc7Ouky94
+HsTcx/BqglEsmle5/be46+4q0CDNhACApC4GZ911xO7Pcn8rCI23EgWE+uv+4hxl
+/CnJvxGESV3p3dPd/cwphcqbwWGyPDUAnWtcONe8+o9t++mqLxe3NjSDChuEIfZ9
+GuTB/YTpBM1apl8y2e5n5aCzTUgW9mOCWNNEOiuH9XQmoLL/ZyM6TEjQRnQTGfPs
+FD+CR/FnljNjCpjB7jOyVB225XPTqFBzI84v/D+xtayOpjvnGacbfp2BUfLG9Dur
+yolXH+kMd63pkxnXDx966TRY9njXsCVZNPQnQTFs6gNaSnsp7kztnXz6UjbNsUxr
+us2fDqZ7G8OejBUo4jCWE0KNV6z3Hz2hiVhfz2Kcb1mKIUIVyGzlWN3vazw3rHfK
+K8A/BsRJ7TI2HNnjEJmGRwuoEAFu3sh8Gqkpq7VE3Nsmjo7DDJnWEBLrKbPZnIYE
+rVl1RLV9SoE0C+ubGIehdgMdU33eW7UpIyMzElKEKh3KHIqYjHWGxerBonFRYcjY
+ImtSxWYDtzvrgB+tI1iL
+=U8Ri
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__7_Apr_2014_10_21_02_+1000_aTLV=OV6ftiY/tqB--
-
-
---===============6238272719315196282==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6238272719315196282==--
+--Signature=_Mon__7_Apr_2014_14_18_11_+1000_k9z=Su4Wz.9J/2D5--
