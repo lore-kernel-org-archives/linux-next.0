@@ -1,57 +1,64 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] powerpc/opal: Add missing include
-Date: Mon, 7 Apr 2014 23:03:36 +0200
-Message-ID: <CAMuHMdV7BuSMu5gyhBcxY_8v+u3KnVStDgvC-JSN=hX3VZw3+g@mail.gmail.com>
-References: <13762.1395708188@ale.ozlabs.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: strange state of the kbuild tree
+Date: Tue, 8 Apr 2014 07:47:34 +1000
+Message-ID: <20140408074734.34deb43270183941b5118c7f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:56966 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754572AbaDGVDi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Apr 2014 17:03:38 -0400
-Received: by mail-wg0-f41.google.com with SMTP id n12so4852wgh.12
-        for <linux-next@vger.kernel.org>; Mon, 07 Apr 2014 14:03:37 -0700 (PDT)
-In-Reply-To: <13762.1395708188@ale.ozlabs.ibm.com>
+Received: from ozlabs.org ([203.10.76.45]:57829 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755169AbaDGVrm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Apr 2014 17:47:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Neuling <mikey@neuling.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, Linux PPC dev <linuxppc-dev@ozlabs.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 25, 2014 at 1:43 AM, Michael Neuling <mikey@neuling.org> wrote:
-> next-20140324 currently fails compiling celleb_defconfig with:
->
-> arch/powerpc/include/asm/opal.h:894:42: error: 'struct notifier_block' declared inside parameter list [-Werror]
-> arch/powerpc/include/asm/opal.h:894:42: error: its scope is only this definition or declaration, which is probably not what you want [-Werror]
-> arch/powerpc/include/asm/opal.h:896:14: error: 'struct notifier_block' declared inside parameter list [-Werror]
->
-> This is due to a missing include which is added here.
+--Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This build issue has now been in mainline since a few days.
+Hi Michal,
 
-> Signed-off-by: Michael Neuling <mikey@neuling.org>
->
-> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-> index fe2aa0b..f57fb58 100644
-> --- a/arch/powerpc/include/asm/opal.h
-> +++ b/arch/powerpc/include/asm/opal.h
-> @@ -177,6 +177,8 @@ extern int opal_enter_rtas(struct rtas_args *args,
->
->  #ifndef __ASSEMBLY__
->
-> +#include <linux/notifier.h>
-> +
->  /* Other enums */
->  enum OpalVendorApiTokens {
->         OPAL_START_VENDOR_API_RANGE = 1000, OPAL_END_VENDOR_API_RANGE = 1999
+I noticed that you have two copies of two commits in your tree ("Kbuild,
+lto: Set TMPDIR for LTO v4" and "Kbuild, lto: Add Link Time Optimization
+support v3").  I understan why you recommitted them (to add your
+Signed-off-by), but to leave the unsigned commits in there sort of
+defeats the purpose.  This is probably a case where you should have
+removed the original merge (or just these two commits) and then merged
+the new version.
 
-Gr{oetje,eeting}s,
+I am not sure what you intend to send to Linus, but this whole tree (in
+one piece) should not be it.  From the state of the tree, it looks like
+you send your separate topic branches (or a new merge of them) which
+should be ok, but please after doing that, clean up your for-next branch
+(it current has merge commits dating back to May, 2103 in it).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-                        Geert
+--Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C
+Content-Type: application/pgp-signature
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIcBAEBCAAGBQJTQxz6AAoJEMDTa8Ir7ZwVNMIP/38ZvUkBlhNotAfhqt1DtWOP
+o4dBI15g1wnse69phAcuqY4PZir3DFfWCkeFifsxxWHsEj/oEeZYbk3cDAKo0DAs
+RSwcrdaOZHy6sJh8g7Fye5FU3qK1yxBZBqIWwcEUu/jkzoNcWx0c/OdWWgj1pGSJ
+gPvAOJAka5EbkDPxP7I0cjLJBM8Fegp/1z/aBTuBcxY02vXM11w7SA1bh8OmGz0q
+JBjWcyPZzzc4kHi2nxHG8ZW7Cse2HhCjs1uTcZMFVVdnK+6BKK3OmutoKzAfgym0
+WEtVpXQE4JF/SP4f1ITnoFEGqu0qAdpiWKd8LhZdW9yBgP0KhByouKz3AOf7CoB/
+XFlAUvnunJI4arOGOCFFvWVZmvW6l6dV44Q3Wdha41sFOS0w+/sB4BKtUeCLza3V
+Q9PnXYyVb782rIUqsCIvE1bgh7SJkDLU09TXD3xR1+nMNqeCVlwiCJCKEauM1vjs
+CZbpQQqZI71i6bSOrinONCxz3g073Q9azVoFbVl+Ockx7EthGTF27FWDiv1yoAgv
+F3ksilTGyHDDfUvDkbc6iT7jyvz5h3AKUzOnP/KwoKdYnV1SA2gYmRNKRa44OvR5
+iztvUH54gn1jO6OpnFbLXiKsUSqn003vhC/NP8pDR53AiKwnwZwX1cm1SKTfOm+J
+ZIxO7nRrTpz+bqvBdVIN
+=nCkT
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Apr_2014_07_47_34_+1000_JUp86DQBCiwuoT7C--
