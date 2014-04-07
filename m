@@ -1,51 +1,38 @@
-From: Jan Moskyto Matejka <mq@suse.cz>
-Subject: [PATCH] Revert "drm/i915: fix build warning on 32-bit
-	(v2)"
-Date: Thu,  3 Apr 2014 14:53:57 +0200
-Message-ID: <1396529637-15395-1-git-send-email-mq@suse.cz>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Mon, 7 Apr 2014 11:26:54 -0700
+Message-ID: <20140407112654.e2172fd7c0df975bf79df388@linux-foundation.org>
+References: <20140407145242.1958251349e0b6c6c8923f46@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jan Moskyto Matejka <mq@suse.cz>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38569 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755832AbaDGS04 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Apr 2014 14:26:56 -0400
+In-Reply-To: <20140407145242.1958251349e0b6c6c8923f46@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
 
-This reverts commit 60f2b4af1258c05e6b037af866be81abc24438f7.
+On Mon, 7 Apr 2014 14:52:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-The same warning has been fixed in e5081a538a565284fec5f30a937d98e460d5e780 and
-these two commits got merged in 74e99a84de2d0980320612db8015ba606af42114 which
-caused another warning. Simply, the reverted commit casted the pointer
-difference to unsigned long and the other commit changed the output type from
-long to ptrdiff_t.
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> fs/ocfs2/suballoc.c: In function 'ocfs2_block_group_set_bits':
+> fs/ocfs2/suballoc.c:1357:2: error: implicit declaration of function 'trace_ocfs2_block_group_set_bits' [-Werror=implicit-function-declaration]
+>   trace_ocfs2_block_group_set_bits(bit_off, num_bits);
+>   ^
+> 
+> I have no idea how to track this down :-( The only patches affecting this
+> code are now in Linus' tree.  I can only assume that some implicitly
+> included header file is no longer included.  I have just left it broken
+> for now.
 
-The other commit fixes the original warning the better way so I'm reverting
-this commit now.
----
- drivers/gpu/drm/i915/i915_cmd_parser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_cmd_parser.c b/drivers/gpu/drm/i915/i915_cmd_parser.c
-index 4cf6d02..0eaed44 100644
---- a/drivers/gpu/drm/i915/i915_cmd_parser.c
-+++ b/drivers/gpu/drm/i915/i915_cmd_parser.c
-@@ -405,7 +405,7 @@ int i915_parse_cmds(struct intel_ring_buffer *ring,
- 			DRM_DEBUG_DRIVER("CMD: Command length exceeds batch length: 0x%08X length=%d batchlen=%td\n",
- 					 *cmd,
- 					 length,
--					 (unsigned long)(batch_end - cmd));
-+					 batch_end - cmd);
- 			ret = -EINVAL;
- 			break;
- 		}
--- 
-1.8.4.5
+I can't reproduce this with either mainline or linux-next.  Pulled half
+an hour ago, powerpc allyesconfig.
