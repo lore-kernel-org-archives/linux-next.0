@@ -1,44 +1,61 @@
-From: Michal Marek <mmarek@suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: strange state of the kbuild tree
-Date: Tue, 08 Apr 2014 10:06:09 +0200
-Message-ID: <5343ADF1.1060906@suse.cz>
+Date: Tue, 8 Apr 2014 20:42:49 +1000
+Message-ID: <20140408204249.375a96e79bac0d8500fa3e7b@canb.auug.org.au>
 References: <20140408074734.34deb43270183941b5118c7f@canb.auug.org.au>
+	<5343ADF1.1060906@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__8_Apr_2014_20_42_49_+1000_a+hCSraFhH1iSedD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:54028 "EHLO mx2.suse.de"
+Received: from ozlabs.org ([203.10.76.45]:54047 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756527AbaDHIGL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Apr 2014 04:06:11 -0400
-In-Reply-To: <20140408074734.34deb43270183941b5118c7f@canb.auug.org.au>
+	id S1754579AbaDHKm5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Apr 2014 06:42:57 -0400
+In-Reply-To: <5343ADF1.1060906@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michal Marek <mmarek@suse.cz>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2014-04-07 23:47, Stephen Rothwell wrote:
-> Hi Michal,
-> 
-> I noticed that you have two copies of two commits in your tree ("Kbuild,
-> lto: Set TMPDIR for LTO v4" and "Kbuild, lto: Add Link Time Optimization
-> support v3").  I understan why you recommitted them (to add your
-> Signed-off-by), but to leave the unsigned commits in there sort of
-> defeats the purpose.  This is probably a case where you should have
-> removed the original merge (or just these two commits) and then merged
-> the new version.
+--Signature=_Tue__8_Apr_2014_20_42_49_+1000_a+hCSraFhH1iSedD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry about that.
+Hi Michal,
 
+On Tue, 08 Apr 2014 10:06:09 +0200 Michal Marek <mmarek@suse.cz> wrote:
+>
+> Right, I send the individual topic branches to Linus. Will it be OK if I
+> reset the for-next branch to v3.15-rc1 after this merge window?
 
-> I am not sure what you intend to send to Linus, but this whole tree (in
-> one piece) should not be it.  From the state of the tree, it looks like
-> you send your separate topic branches (or a new merge of them) which
-> should be ok, but please after doing that, clean up your for-next branch
-> (it current has merge commits dating back to May, 2103 in it).
+Yep, fine.
 
-Right, I send the individual topic branches to Linus. Will it be OK if I
-reset the for-next branch to v3.15-rc1 after this merge window?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
-Michal
+--Signature=_Tue__8_Apr_2014_20_42_49_+1000_a+hCSraFhH1iSedD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTQ9KvAAoJEMDTa8Ir7ZwV4bsP/jtvwhJviQSncupZe/zCICV5
+MhbH3lwo/bx5oEEGiXuJCKTVNBUctwJoLA9guM2ajUom0YVun6ELly+NqNSrCJYg
+vPTgzXLKCu8spdnayS9PtqdpyL8KumtFKklp42tjB6MCB8LNkcMug4N2B03Vme7N
+srxCxXZ2CskO1FQy3T7sExLW/StC75PbnUrD2n/LIuKbyfqsGMDyVW+D0Kd3mw0y
+hSiQonad2yi+5Z7wRJPm+FgvUC7RZGcpV4FaUu+MQ/lJWwgDX9JvS4UVPCMyNrJf
+27dTuTgF8XyNV/6fP5jjyBrb+HYco4JPcqyuduXFphd7CCuqB06H0CgE1kVnVmz2
+JOAHC88tQTxhbXqBRShztXyA0C/PSHr4Xfj5MzVIhGHfudWQbpvOoCa7jVJd3krZ
+Ov3NyBsC/LlFON8J2aktSa1s69SUz/emSDZCfXmiPotodSEyvC08bwF8M5CtdyCI
+pMrm+ywGhbdMWSq5Gudf4zE9pC2EC/V0AiMrssiPDBSE9CicukwUW1VAROSfjEVS
+PrF7Br1ayElXNKwf9VLXQNrvp/Xqt2E0U0hyx/UeJns47774+FEUD8dD7oI4HO9B
+Fwqd5EWG0++oL3mR/yMC0m7583to+AwC6rFa5niDRJj3nM0dVPlVqbSM6kt9GMHC
+7NZpWa31o/cB1pfAHApI
+=L0yA
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Apr_2014_20_42_49_+1000_a+hCSraFhH1iSedD--
