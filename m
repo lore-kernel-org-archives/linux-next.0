@@ -1,42 +1,82 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: linux-next: Tree for Apr 9 (media/i2c/s5c73m3)
-Date: Wed, 09 Apr 2014 18:20:54 +0200
-Message-ID: <53457366.6000905@samsung.com>
-References: <20140409172233.093c15de27c3b9f3c7c61bd7@canb.auug.org.au>
- <53456EDE.5000807@infradead.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Regression with wait_event_timeout in next-20140226
+Date: Wed, 9 Apr 2014 12:05:14 -0700
+Message-ID: <20140409120514.da292ccfd5530a995090228d@linux-foundation.org>
+References: <530E17C7.1030504@free-electrons.com>
+	<20140226165043.GA22802@laptop.programming.kicks-ass.net>
+	<20140226142534.3b8c6eb1652d000206948ae0@linux-foundation.org>
+	<20140409111638.GS11096@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <53456EDE.5000807@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37375 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933480AbaDITFP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Apr 2014 15:05:15 -0400
+In-Reply-To: <20140409111638.GS11096@twins.programming.kicks-ass.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Steven Rostedt <rostedt@goodmis.org>
 
-Hi,
+On Wed, 9 Apr 2014 13:16:38 +0200 Peter Zijlstra <peterz@infradead.org> wrote:
 
-On 09/04/14 18:01, Randy Dunlap wrote:
-> On 04/09/2014 12:22 AM, Stephen Rothwell wrote:
->> > Hi all,
->> > 
->> > Please do not add material intended for v3.16 to your linux-next included
->> > branches until after v3.15-rc1 is released.
->> > 
->> > This tree still fails (more than usual) the powerpc allyesconfig build.
->> > 
->> > Changes since 20140408:
->> > 
-> on i386:
-> CONFIG_OF is not enabled.
+> On Wed, Feb 26, 2014 at 02:25:34PM -0800, Andrew Morton wrote:
+> > Is there anything we can do to make all this clearer?  Simply using a
+> > distinctive variable name ("__wait_var__"?) in place of __ret (and
+> > documenting it) would help a lot.
+> > 
+> > Some __ret's are long and some are int.  Maybe that's a glitch, maybe
+> > it's because some __ret's are used for inter-macro communications and
+> > some are not, which just makes things worse.
+> > 
+> > I started to do a patch, got all confused and gave up.  We've made
+> > quite a tangly mess in there, alas.
 > 
-> drivers/media/i2c/s5c73m3/s5c73m3-core.c: In function 's5c73m3_get_platform_data':
-> drivers/media/i2c/s5c73m3/s5c73m3-core.c:1619:2: error: implicit declaration of function 'v4l2_of_get_next_endpoint' [-Werror=implicit-function-declaration]
-> drivers/media/i2c/s5c73m3/s5c73m3-core.c:1619:10: warning: assignment makes pointer from integer without a cast [enabled by default]
+> Something like so?
+> 
+> ---
+> Subject: wait: Explain the shadowing and type inconsistencies
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Wed Apr  9 12:50:34 CEST 2014
+> 
+> Stick in a comment before someone else tries to fix the sparse warning
+> this generates.
+> 
+> Requested-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+> Link: http://lkml.kernel.org/n/tip-o2ro6f3vkxklni0bc8f7m68s@git.kernel.org
+> ---
+>  include/linux/wait.h |   14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> --- a/include/linux/wait.h
+> +++ b/include/linux/wait.h
+> @@ -191,11 +191,23 @@ wait_queue_head_t *bit_waitqueue(void *,
+>  	(!__builtin_constant_p(state) ||				\
+>  		state == TASK_INTERRUPTIBLE || state == TASK_KILLABLE)	\
+>  
+> +/*
+> + * The below macro ___wait_event() has an explicit shadow of the __ret
+> + * variable when used from the wait_event_*() macros.
+> + *
+> + * This is so that both can use the ___wait_cond_timeout() construct
+> + * to wrap the condition.
+> + *
+> + * The type inconsistency of the wait_event_*() __ret variable is also
+> + * on purpose; we use long where we can return timeout values and int
+> + * otherwise.
+> + */
+> +
+>  #define ___wait_event(wq, condition, state, exclusive, ret, cmd)	\
+>  ({									\
+>  	__label__ __out;						\
+>  	wait_queue_t __wait;						\
+> -	long __ret = ret;						\
+> +	long __ret = ret;	/* explicit shadow */			\
+>  									\
+>  	INIT_LIST_HEAD(&__wait.task_list);				\
+>  	if (exclusive)							\
 
-I have already prepared a patch for this issue:
-https://patchwork.linuxtv.org/patch/23465
-
---
-Thanks,
-Sylwester
+Looks nice to me, thanks.
