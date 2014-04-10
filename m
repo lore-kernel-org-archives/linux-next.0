@@ -1,12 +1,14 @@
-From: Michele Curti <michele.curti@gmail.com>
-Subject: [PATCH] staging: comedi: declare das6402_boards as static
-Date: Thu, 10 Apr 2014 15:54:47 +0200
-Message-ID: <20140410135447.GA11137@powerline.azcom-win.it>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] staging: comedi: declare das6402_boards as static
+Date: Thu, 10 Apr 2014 17:06:53 +0300
+Message-ID: <20140410140653.GG26890@mwanda>
+References: <20140410135447.GA11137@powerline.azcom-win.it>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 Content-Disposition: inline
+In-Reply-To: <20140410135447.GA11137@powerline.azcom-win.it>
 List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
 List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
@@ -16,35 +18,39 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: abbotti@mev.co.uk, hsweeten@visionengravers.com, gregkh@linuxfoundation.org, chase.southwood@yahoo.com, devel@driverdev.osuosl.org, linux-next@vger.kernel.org
+To: Michele Curti <michele.curti@gmail.com>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, abbotti@mev.co.uk, linux-next@vger.kernel.org, chase.southwood@yahoo.com
 List-Id: linux-next.vger.kernel.org
 
-Hi,
-das6402_boards array seems to be used in das6402.c only, so declare it 
-as static.
+On Thu, Apr 10, 2014 at 03:54:47PM +0200, Michele Curti wrote:
+> Hi,
+> das6402_boards array seems to be used in das6402.c only, so declare it 
+> as static.
+> 
+> This patch applies to linux-next next-20140410.
+> 
+> Regards,
+> Michele
+> 
 
-This patch applies to linux-next next-20140410.
+The patch is fine, but you have too much fluff in the changelog.  We
+just apply patches automatically by saving the raw email as text
+(including headers and everything) the we do a
+`cat raw_email.txt | git am`.
 
-Regards,
-Michele
+Your changelog is all "Hello, how are you?  blah blah blah.  Best
+wishes, etc.".  It should just say:
 
-Signed-off-by: Michele Curti <michele.curti@gmail.com>
----
- drivers/staging/comedi/drivers/das6402.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+das6402_boards array is used in das6402.c only, so declare it as static.
 
-diff --git a/drivers/staging/comedi/drivers/das6402.c b/drivers/staging/comedi/drivers/das6402.c
-index e0cfb6c..d18eea6 100644
---- a/drivers/staging/comedi/drivers/das6402.c
-+++ b/drivers/staging/comedi/drivers/das6402.c
-@@ -125,7 +125,7 @@ struct das6402_boardinfo {
- 	unsigned int maxdata;
- };
- 
--struct das6402_boardinfo das6402_boards[] = {
-+static struct das6402_boardinfo das6402_boards[] = {
- 	{
- 		.name		= "das6402-12",
- 		.maxdata	= 0x0fff,
--- 
-1.9.1
+Signed-off-by ...
+
+You can put the "This patch applies to linux-next next-20140410" under
+the --- cut off line so that we're aware but it doesn't get saved in the
+log.  For staging it doesn't really matter, because either the patch
+applies to linux-next or we'll ask you to redo it.
+
+Please send a v2 with a terser changelog.
+
+regards,
+dan carpenter
