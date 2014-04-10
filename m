@@ -1,57 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: error fetching the drivers-x86 tree
-Date: Thu, 10 Apr 2014 11:18:10 +1000
-Message-ID: <20140410111810.45b37fc0d3fa68e4513fa027@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the arm tree
+Date: Thu, 10 Apr 2014 11:35:33 +1000
+Message-ID: <20140410113533.97a55fed92809a6cff6c5b20@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy"
+ boundary="Signature=_Thu__10_Apr_2014_11_35_33_+1000_2nd7VFDb1ewazTpX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48860 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56130 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932996AbaDJBSU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Apr 2014 21:18:20 -0400
+	id S932996AbaDJBfn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Apr 2014 21:35:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
 
---Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy
+--Signature=_Thu__10_Apr_2014_11_35_33_+1000_2nd7VFDb1ewazTpX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi Russell,
 
-Fetching the drivers-x86 tree
-(git://cavan.codon.org.uk/platform-drivers-x86.git#linux-next) today (and
-yesterday) produced this error:
+After merging the arm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-fatal: read error: Connection reset by peer
+arch/arm/kernel/iwmmxt.S: Assembler messages:
+arch/arm/kernel/iwmmxt.S:68: Error: bad instruction `inc_preempt_count r10,=
+r3'
+arch/arm/kernel/iwmmxt.S:176: Error: bad instruction `dec_preempt_count r10=
+,r3'
 
+Caused by commit c9133fdf69c4 ("ARM: 8019/1: Disable preemption in
+iwmmxt_task_enable()").
+
+I have used the arm tree from next-20140409 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy
+--Signature=_Thu__10_Apr_2014_11_35_33_+1000_2nd7VFDb1ewazTpX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTRfFXAAoJEMDTa8Ir7ZwVIhYP/2kV0uftFyAed32poD1x3KGu
-Pzeke/5F0pFYYHNCeQ7XLFKTAQfzSzFguQVsxhQxoOuzj7yDzR10LnhG2dR7V3PU
-ER2GFV9GpmNOZ2ilTD370Aey5W0VYD8BT2eIlPQr6hMBKikMA+yAmnJzLZMZdwRB
-7EZthgupnAl7ISj/u/QwBZaMAeHwqsENIDA5Ew8vXvS2Au3R9WyUmSv0XS53eYAP
-C2Aa3S3BWHEHKDRujoObqks0OJ3G1BZzYq0M2JKsZARd2y6S6AwjPoqDxz4zGG+5
-9qhhFghzTm8+iEbNC+4ODHFvytLAQhsqL3vRX7YjNDCnFSFzWAiqmODH7C+Jho3u
-Hf7bfW9vVAaIBTS6QPdU2wCdCAcTsvmJKiCC9n7hiaelStBJHgF0OvrXPTRCnCjH
-M/YfSEQ2BZjVDM2b2IVbqR2ROv8BLQUJnMBcCoxUQ+FH+1WvzFkZ2fAtHxIZdf9E
-3UPoGplt37eylpLEeNYME+mDdrekAuhaDytjF7AOpV+4Zz5APDGGtEaPLmIhvTqZ
-2LFYqAfsnKi8dJT/OhmrQ4WzU3Ddow65gOKpSa8gv3Nfc4JU7g0qe7v70wbpzcgy
-/NsHcEPwtIcqTjYIBYdAdCauUTgMR9iYzTFLggdschyas58wVA+B7bu38Sp8AyV0
-6ORRUlPrh2JE7AnN/sYD
-=bb1w
+iQIcBAEBCAAGBQJTRfVtAAoJEMDTa8Ir7ZwVCAUP/j9/wSqAmMqtkTKSw28YSVZR
+g6EFjD7AiapG7M1/+SjjY/wTgVqy3HOYOmGpce8iLEXmEwQnveNYiUJqotWjI/29
+7gy1KDkoRMoUafIGebXvo2tTlXfLHUYchZFBZT/wRVN9bezb56U6bnXC9w80reUi
+UZEVzn+qAwMTTOmU3S5gQTpjACNZceyO6QWmsJ/CkR6xvD3CtdGEV6jRQuKzGC3G
+pIWVWhJvT9GUSPQlB1e7lk5X+Lzusr/J9QjkaWPPOTnaiCHgIgNQSBGEpgDlCSVZ
+PMQZWc+wFuFZOTi5zzOtwnxaBaNFi5XEjan23Pl7CUdYVJJ2xrzodiHp2h44Mlxo
+uUxbYOaH8PBnAOPKeNdb4iaunjBJ+NOR9L/sD/jK7C/WOMMp22FisqQ2r4ix44PN
+4MEwJtEqX7mPWunrEDcB5n3Kbf1+Mqy3eef09LOK08i1EhO4iQtjz3zDkd6GjAY0
+6lejLaNdrKRHa1rzFJ82ReB8Dm7qZQzj+pKgE6pg+LlEqcdDlN9kYkyE7uGfbedn
+phehCNQO5EWyd/CGbBJdgpwP7LmICvjOBZHgGeDtC5qiOTIk1kyinhfPV4Fbgp+C
+G7aG1U2U4F8HN2d76KGQko/qQFN9EQkfC7w9NgYNYDwbsIrftht2HdDRmeo9G/tu
+6keqSkgeXobZ2kNVtlBW
+=0tUV
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy--
+--Signature=_Thu__10_Apr_2014_11_35_33_+1000_2nd7VFDb1ewazTpX--
