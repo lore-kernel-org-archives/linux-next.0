@@ -1,82 +1,57 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Regression with wait_event_timeout in next-20140226
-Date: Wed, 9 Apr 2014 12:05:14 -0700
-Message-ID: <20140409120514.da292ccfd5530a995090228d@linux-foundation.org>
-References: <530E17C7.1030504@free-electrons.com>
-	<20140226165043.GA22802@laptop.programming.kicks-ass.net>
-	<20140226142534.3b8c6eb1652d000206948ae0@linux-foundation.org>
-	<20140409111638.GS11096@twins.programming.kicks-ass.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: error fetching the drivers-x86 tree
+Date: Thu, 10 Apr 2014 11:18:10 +1000
+Message-ID: <20140410111810.45b37fc0d3fa68e4513fa027@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37375 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933480AbaDITFP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Apr 2014 15:05:15 -0400
-In-Reply-To: <20140409111638.GS11096@twins.programming.kicks-ass.net>
+Received: from ozlabs.org ([103.22.144.67]:48860 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932996AbaDJBSU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Apr 2014 21:18:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Steven Rostedt <rostedt@goodmis.org>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 9 Apr 2014 13:16:38 +0200 Peter Zijlstra <peterz@infradead.org> wrote:
+--Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Feb 26, 2014 at 02:25:34PM -0800, Andrew Morton wrote:
-> > Is there anything we can do to make all this clearer?  Simply using a
-> > distinctive variable name ("__wait_var__"?) in place of __ret (and
-> > documenting it) would help a lot.
-> > 
-> > Some __ret's are long and some are int.  Maybe that's a glitch, maybe
-> > it's because some __ret's are used for inter-macro communications and
-> > some are not, which just makes things worse.
-> > 
-> > I started to do a patch, got all confused and gave up.  We've made
-> > quite a tangly mess in there, alas.
-> 
-> Something like so?
-> 
-> ---
-> Subject: wait: Explain the shadowing and type inconsistencies
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Wed Apr  9 12:50:34 CEST 2014
-> 
-> Stick in a comment before someone else tries to fix the sparse warning
-> this generates.
-> 
-> Requested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-> Link: http://lkml.kernel.org/n/tip-o2ro6f3vkxklni0bc8f7m68s@git.kernel.org
-> ---
->  include/linux/wait.h |   14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> --- a/include/linux/wait.h
-> +++ b/include/linux/wait.h
-> @@ -191,11 +191,23 @@ wait_queue_head_t *bit_waitqueue(void *,
->  	(!__builtin_constant_p(state) ||				\
->  		state == TASK_INTERRUPTIBLE || state == TASK_KILLABLE)	\
->  
-> +/*
-> + * The below macro ___wait_event() has an explicit shadow of the __ret
-> + * variable when used from the wait_event_*() macros.
-> + *
-> + * This is so that both can use the ___wait_cond_timeout() construct
-> + * to wrap the condition.
-> + *
-> + * The type inconsistency of the wait_event_*() __ret variable is also
-> + * on purpose; we use long where we can return timeout values and int
-> + * otherwise.
-> + */
-> +
->  #define ___wait_event(wq, condition, state, exclusive, ret, cmd)	\
->  ({									\
->  	__label__ __out;						\
->  	wait_queue_t __wait;						\
-> -	long __ret = ret;						\
-> +	long __ret = ret;	/* explicit shadow */			\
->  									\
->  	INIT_LIST_HEAD(&__wait.task_list);				\
->  	if (exclusive)							\
+Hi Matthew,
 
-Looks nice to me, thanks.
+Fetching the drivers-x86 tree
+(git://cavan.codon.org.uk/platform-drivers-x86.git#linux-next) today (and
+yesterday) produced this error:
+
+fatal: read error: Connection reset by peer
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTRfFXAAoJEMDTa8Ir7ZwVIhYP/2kV0uftFyAed32poD1x3KGu
+Pzeke/5F0pFYYHNCeQ7XLFKTAQfzSzFguQVsxhQxoOuzj7yDzR10LnhG2dR7V3PU
+ER2GFV9GpmNOZ2ilTD370Aey5W0VYD8BT2eIlPQr6hMBKikMA+yAmnJzLZMZdwRB
+7EZthgupnAl7ISj/u/QwBZaMAeHwqsENIDA5Ew8vXvS2Au3R9WyUmSv0XS53eYAP
+C2Aa3S3BWHEHKDRujoObqks0OJ3G1BZzYq0M2JKsZARd2y6S6AwjPoqDxz4zGG+5
+9qhhFghzTm8+iEbNC+4ODHFvytLAQhsqL3vRX7YjNDCnFSFzWAiqmODH7C+Jho3u
+Hf7bfW9vVAaIBTS6QPdU2wCdCAcTsvmJKiCC9n7hiaelStBJHgF0OvrXPTRCnCjH
+M/YfSEQ2BZjVDM2b2IVbqR2ROv8BLQUJnMBcCoxUQ+FH+1WvzFkZ2fAtHxIZdf9E
+3UPoGplt37eylpLEeNYME+mDdrekAuhaDytjF7AOpV+4Zz5APDGGtEaPLmIhvTqZ
+2LFYqAfsnKi8dJT/OhmrQ4WzU3Ddow65gOKpSa8gv3Nfc4JU7g0qe7v70wbpzcgy
+/NsHcEPwtIcqTjYIBYdAdCauUTgMR9iYzTFLggdschyas58wVA+B7bu38Sp8AyV0
+6ORRUlPrh2JE7AnN/sYD
+=bb1w
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Apr_2014_11_18_10_+1000_67tCA64=zHlL=8Hy--
