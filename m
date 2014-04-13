@@ -1,38 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [git pull] vfs.git
-Date: Sun, 13 Apr 2014 20:53:01 +0200
-Message-ID: <CAMuHMdWS+MP7BNy=FU8j6mCXT5CXd45eeVBXxthO8SB7-4j8ww@mail.gmail.com>
-References: <20140412124042.GL18016@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Linux 3.15-rc1 out, merge window closed
+Date: Mon, 14 Apr 2014 09:18:18 +1000
+Message-ID: <20140414091818.2d43bcd17ef49a65b0b969a3@canb.auug.org.au>
+References: <CA+55aFykrvKAe29pTUqq8Oc2FKtnFWwU7vxbTQXa7ysZ6xxMXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140412124042.GL18016@ZenIV.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__14_Apr_2014_09_18_18_+1000__eOO+tMR8mQjIJE8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48810 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751030AbaDMXS2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 13 Apr 2014 19:18:28 -0400
+In-Reply-To: <CA+55aFykrvKAe29pTUqq8Oc2FKtnFWwU7vxbTQXa7ysZ6xxMXw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Al,
+--Signature=_Mon__14_Apr_2014_09_18_18_+1000__eOO+tMR8mQjIJE8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 12, 2014 at 2:40 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> The first vfs pile, with deep apologies for being very late in this window.
+The merge window is closed, so this would be a good moment for everyone
+to tidy up their linux-next included trees/branches (i.e. reset to
+v3.15-rc1) before continuing on.  For most, this will be a simple fast
+forward ...
 
-Can we please have vfs.git in -next in the future, before it has been
-pulled into mainline?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-I (read: Google) also couldn't find any evindence of patch submissions to
-public mailing lists. I admit I only looked for the two commits that
-introduced issues I just sent patches for.
+--Signature=_Mon__14_Apr_2014_09_18_18_+1000__eOO+tMR8mQjIJE8
+Content-Type: application/pgp-signature
 
-Thanks for your understanding!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Gr{oetje,eeting}s,
+iQIcBAEBCAAGBQJTSxtAAAoJEMDTa8Ir7ZwVLNcP/RUqR613k+L0KXr8JpJ5N1PU
+xqP9J5CTg7LJJ53FBKst90rrnBYmg2S3XLOY2p8AVxKbySB0fjbxAwLRmeBEA2TC
+HP+KlIVtNA62WIdZJWhoCgl/A+ZO323xzKqf7+6dTW8qfkpfT/oag0P0xbI7TH0c
+EAfQdCNUKw1pmsjD1XpV53wGiiaxxEH0NOzbBf4C5ps2OX2LI5H6ub7evc0/WA7C
+VFXXNFANcGs4VIB7Grd6AHrtjC8NcDBHidT9igA75Ar0bphA2jTid+G75aDvkJK0
+10DQz7gRfI41x95l96eOAWIgKgFyAxySelmtIhbJb1Xym0ol680BvarTkOhlitE+
+wwt/VbYYY8qrBpUk/I8RNu+rRX29WaISfALht2QZqkqyxVtOqyjUJvmIum109kLO
+OHNQ+UO1KHvRveflP/dTmdqJ5ODhu6FOJ3OPYJLXwpEZqi0KxYisQ434NVuEQwMj
+a2PHwVdktjh0DwNAcyq2uroKNpXu8qLur5xS8sJ6l+rMuJ3CNY7NxoDAN8QLEisL
+CVhvXwR8F1fCuLLxV0fP+77NMlJiTD0c+lnV/muEXVMp1f4zil3PAXjeuheYCQIJ
+ZF2v1uIGkDoRmZ8SUCSdzPi0wjMfiHgM8gso0UC4oDPkkirp701aNeetbEQ5XDcC
+QjXX6SPx54sPvB+znIiq
+=Q27u
+-----END PGP SIGNATURE-----
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Signature=_Mon__14_Apr_2014_09_18_18_+1000__eOO+tMR8mQjIJE8--
