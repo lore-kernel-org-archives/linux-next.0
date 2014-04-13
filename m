@@ -1,62 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Apr 11
-Date: Fri, 11 Apr 2014 13:28:07 +1000
-Message-ID: <20140411132807.031d90304b91fae47ea3368d@canb.auug.org.au>
-References: <20140411130313.f01ee5d3c66fc031789c692b@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [git pull] vfs.git
+Date: Sun, 13 Apr 2014 20:53:01 +0200
+Message-ID: <CAMuHMdWS+MP7BNy=FU8j6mCXT5CXd45eeVBXxthO8SB7-4j8ww@mail.gmail.com>
+References: <20140412124042.GL18016@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Apr_2014_13_28_07_+1000_G4Bog8QevbNwo0bE"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60066 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751938AbaDKD2P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Apr 2014 23:28:15 -0400
-In-Reply-To: <20140411130313.f01ee5d3c66fc031789c692b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140412124042.GL18016@ZenIV.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__11_Apr_2014_13_28_07_+1000_G4Bog8QevbNwo0bE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Al,
 
-On Fri, 11 Apr 2014 13:03:13 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Non-merge commits (relative to Linus' tree): 568
->  1077 files changed, 16245 insertions(+), 11823 deletions(-)
+On Sat, Apr 12, 2014 at 2:40 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> The first vfs pile, with deep apologies for being very late in this window.
 
-Actually ...
+Can we please have vfs.git in -next in the future, before it has been
+pulled into mainline?
 
-Non-merge commits (relative to Linus' tree): 533
- 996 files changed, 12720 insertions(+), 12603 deletions(-)
+I (read: Google) also couldn't find any evindence of patch submissions to
+public mailing lists. I admit I only looked for the two commits that
+introduced issues I just sent patches for.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks for your understanding!
 
---Signature=_Fri__11_Apr_2014_13_28_07_+1000_G4Bog8QevbNwo0bE
-Content-Type: application/pgp-signature
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+                        Geert
 
-iQIcBAEBCAAGBQJTR2FMAAoJEMDTa8Ir7ZwVGdsP/1VFK8DoDDogIEiTSNxj2CrQ
-mz55BkvLn2bfOLYV/YSLiD3e2lt+J2RwW+XfyH421IkVAdvdAcP3EtMehQcrrA+x
-PLkFys4ibsBjAhP/n3pss7tuQS+o0C6NV3OXIlQrrH1JBGVgQ6EKqxh2gi5xLJLR
-HbmgO0mnTaSaag48HCWM3wtO3QIZ044S/ykiWUdODYx/n/XIe9gvdSXS3Ob9tQxU
-hEG6qCvWiEZ2VWlwUhsxh8iNjYBeLCM9NLYZexKfTvlUvTlWEXU0nH3CHXJ1Gna2
-7JoZ2PzsUGDSTZf4hk1zli4ZEkkMuztGmSGaSyH1Nh1QYaf2qIcPf3qYPdMTdJ8r
-T2It6PbKnGMH+jfN1G+tTI2gd6LcsKeytgGLLgcLzjjEF2jLia7tYHxBUvq82F0q
-UHDOaHwe0LmB8wXRvCDcquJMbuyOu00Y8LPRZ/Wf08jeBxNUY67+uAT/YJ3EQlLK
-fWSIsBTvOfauU3cGKsaevp8mOwYq3CZTF7QqrEXNWDmGIxcJpdq1ubVSaHi98WaQ
-9OQnN/PhyTZaVYSAkSt9VRyq7y4doUcvDdEhur+QnHjT+OrVFFgC4PCwa6yxEHFt
-U2ADrg6zcJ0+4Szxot9ckQyf/ZBII2AOVsG4aZFmXcO26G3y3Ve5/Q9enAGmqngn
-mdS+iQgaNPZRdprI79hR
-=0GnJ
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---Signature=_Fri__11_Apr_2014_13_28_07_+1000_G4Bog8QevbNwo0bE--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
