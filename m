@@ -1,60 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Date: Tue, 15 Apr 2014 11:44:05 +1000
-Message-ID: <20140415114405.54a1f6d33f3707d785f913cc@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 15 Apr 2014 11:47:45 +1000
+Message-ID: <20140415114745.d1b7997d0271566e38af45f7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__15_Apr_2014_11_44_05_+1000_xHEgKvlb_9ziyfw/"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__15_Apr_2014_11_47_45_+1000_CRR1SPOPF5mbRs1t"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34820 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751070AbaDOBrw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Apr 2014 21:47:52 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__15_Apr_2014_11_44_05_+1000_xHEgKvlb_9ziyfw/
+--Signature=_Tue__15_Apr_2014_11_47_45_+1000_CRR1SPOPF5mbRs1t
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the sound-asoc tree, today's linux-next build
+(x86_64_allmodconfig) failed like this:
 
-sound/soc/intel/sst-haswell-pcm.c: In function 'hsw_stream_volume_put':
-sound/soc/intel/sst-haswell-pcm.c:139:38: warning: initialization from inco=
-mpatible pointer type [enabled by default]
-  struct snd_soc_platform *platform =3D snd_soc_kcontrol_platform(kcontrol);
-                                      ^
+sound/soc/codecs/wm8997.c:248:1: error: implicit declaration of function 'S=
+OC_VALUE' [-Werror=3Dimplicit-function-declaration]
+ SOC_VALUE("ISRC1 FSL", arizona_isrc_fsl[0]),
+ ^
 
-And several others ... really, you should try build testing this stuff :-(
+Caused by commit e13dd8ce39a8 ("ASoC: wm8997: Replace usage deprecated
+MUX/ENUM macros").
 
-Caused by commit f6272ff8a5f4 ("ASoC: Add snd_soc_kcontrol_platform()
-helper function").
+I have used the version of the sound-asoc tree from next-20140414 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__15_Apr_2014_11_44_05_+1000_xHEgKvlb_9ziyfw/
+--Signature=_Tue__15_Apr_2014_11_47_45_+1000_CRR1SPOPF5mbRs1t
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTTI7qAAoJEMDTa8Ir7ZwVKVIP/3/tectkU3l1wgSxpc0YwqtT
-/DsZcVPTspZySSRnFWpzcPhK314dwlm5eZMHYo4GfpyCxZ11FA5snGty+U0Xc2cZ
-IOelkjfiThSSNaF/J+e9a+yMee4yYJsdoZILt68dz1/mk7DTdgfKGUUelG6BuauX
-zuuO9wInhW7RocLHuB3xEbOF0/zRbnXmGceW7M5Q1sqjGbX+7yzElk4ch92wpByI
-bU8oCW8Wss28Z1naxJ7wUiivlTK3VswPRqjXFFV4FH1ZEsQ6kzaTUSM65NIZYsf/
-mmIqC6k6krpCQHmOiCbaBFOjPyq1blqdXmcDr8REiCqaMeW32pTAgVMJnN8ZW2JC
-UjCR4rVEvVQOkUsL0mpwGwphwjFwWvCx5MlVNBPx5xEDdj0SfnVa8jM5kS1AvE2I
-jJyOoikHMlOLIcEZHvXlE+j8Kyr0mI91dFHz/UlH4szRF/DnKBphmUhNgi0UlPim
-ku5bya4HwSehcTs5Jwlx1OWDQ4WPCcG7KL9fUQ2B/mNw1c5VCsTAWb1WFx+H0MTv
-/7xUYOSwrn/zT3fRamt820dG0ji4NBnrm6a95JglwvMrPNmgOyGI02Oj5HnK7a4E
-laa2JwQ2hTybJIl7e+zyACMON1j9e4p/wPEZH0zYYarRrkDYC4vYDSBE3CYvRZQi
-SID8P0Zc2FWEso99WQyZ
-=ermm
+iQIcBAEBCAAGBQJTTI/GAAoJEMDTa8Ir7ZwVfxAP/1K+MVjJerADjT93tH6d1mUA
+jK6WvlhU0+X62GAhHZesCtCH4kw0F46T5cLLviym5EHbKoVvWFrUnFitf3X0RkS9
+zUxaV6QMKIol46zES/zA33rcHZs2iC69+HY8e7FvMXyP12HjWk0vLjF/z93GBcRu
+f15nHMrL/K20h0ufq1i1kyGaFE/wcq9fM8QoSOIG7ahuDAx2xiG19I+ZDifoA1Ix
+895CBSf07NiOP1zc8VO3izCWtIis3w+XG3AsvItWyZvAg9/ZN4llcKo/yM4fU3HE
+j5BR0I67FXAfFo6yA/Vf02wustNF7NqxcnCAIxYtMMOT/2JzMOb+dExWZ3lpsEAA
+MdSrwzTis5Q6Gq6BGj9ZAU75ovJDvpn6n990FMpdcHeP1nt8h66KDhB9wzL+i3C7
+ZFs9f5QwjPJg44OHjRanIDczkWqyhaIjXl8YzAKdyln78oVLskec2sDv1VFT9Bqd
+0NM6bvlb4ZHAdYfcQqF6cQWdAF2kMfDYiQg2dEugpTKaw5K3RW2gQE/hG1QgVGUG
+6Fx56tijGEzylQ0MAL+3KzyxILVgcwpz8k61DnDEu2ZgZ0qGmgxFGB4u2uioQTcm
+eBvgWHsQ2Wwj/hEAeuoLMgZVD4LWycx1QKtcowY2ltigdxQZjLWd4cQlFqiVBsUz
+d/ncWHIOlHtXmD+Dye9N
+=INsZ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__15_Apr_2014_11_44_05_+1000_xHEgKvlb_9ziyfw/--
+--Signature=_Tue__15_Apr_2014_11_47_45_+1000_CRR1SPOPF5mbRs1t--
