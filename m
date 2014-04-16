@@ -1,86 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 16 Apr 2014 15:38:56 +1000
-Message-ID: <20140416153856.222b665abb0a66d2470a7c81@canb.auug.org.au>
+From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH] cpufreq, powernv: Fix build failure on UP
+Date: Wed, 16 Apr 2014 11:18:13 +0530
+Message-ID: <534E199D.2090504@linux.vnet.ibm.com>
+References: <20140415141111.GA28352@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56478 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754268AbaDPFjD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Apr 2014 01:39:03 -0400
+Received: from e23smtp03.au.ibm.com ([202.81.31.145]:35989 "EHLO
+	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753169AbaDPFtF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Apr 2014 01:49:05 -0400
+Received: from /spool/local
+	by e23smtp03.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
+	Wed, 16 Apr 2014 15:49:03 +1000
+In-Reply-To: <20140415141111.GA28352@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Davydov <vdavydov@parallels.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: ego@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com, preeti@linux.vnet.ibm.com, linux-next@vger.kernel.org, rafael.j.wysocki@intel.com, Viresh Kumar <viresh.kumar@linaro.org>, cpufreq <cpufreq@vger.kernel.org>, Linux PM mailing list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/15/2014 07:41 PM, Paul Gortmaker wrote:
+> Hi all,
+> 
+> This new driver is causing build fails on linux-next for non-SMP.
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/10911507/
+> 
+> I didn't bisect since there are only two commits in total.  :)
+> 
+> Looks like some header foo where <linux/smp.h> is not getting <asm/smp.h>
+> 
 
-Hi Andrew,
+Hi Paul,
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Thanks a lot for reporting the build failure. Please find the fix
+below.
+ 
+Regards,
+Srivatsa S. Bhat
 
-ERROR: "kmalloc_order" [drivers/net/wireless/brcm80211/brcmfmac/brcmfmac.ko=
-] undefined!
+---------------------------------------------------------------------------
 
-Caused by commit a3ed1ed24850 ("mm: get rid of __GFP_KMEMCG").
+From: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH] cpufreq, powernv: Fix build failure on UP
 
-I added the following patch:
+Paul Gortmaker reported the following build failure of the powernv cpufreq
+driver on UP configs:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 16 Apr 2014 15:32:54 +1000
-Subject: [PATCH] mm: get rid of __GFP_KMEMCG fix
+drivers/cpufreq/powernv-cpufreq.c:241:2: error: implicit declaration of
+function 'cpu_sibling_mask' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/cpufreq/powernv-cpufreq.o] Error 1
+make[2]: *** [drivers/cpufreq] Error 2
+make[1]: *** [drivers] Error 2
+make: *** [sub-make] Error 2
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+The trouble here is that cpu_sibling_mask is defined only in <asm/smp.h>, and
+<linux/smp.h> includes <asm/smp.h> only in SMP builds.
+
+So fix this build failure by explicitly including <asm/smp.h> in the driver,
+so that we get the definition of cpu_sibling_mask even in UP configurations.
+
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
 ---
- mm/slab_common.c | 1 +
+
+ drivers/cpufreq/powernv-cpufreq.c |    1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index cab4c49b3e8c..edd10a8af69e 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -584,6 +584,7 @@ void *kmalloc_order(size_t size, gfp_t flags, unsigned =
-int order)
- 	kmemleak_alloc(ret, size, 1, flags);
- 	return ret;
- }
-+EXPORT_SYMBOL(kmalloc_order);
-=20
- #ifdef CONFIG_TRACING
- void *kmalloc_order_trace(size_t size, gfp_t flags, unsigned int order)
---=20
-1.9.2
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTThd0AAoJEMDTa8Ir7ZwVB2IQAIUVQnKOtUZDt36kAfTH3rKO
-vkQCLn+RkpNqf2rtBpf/Igl1ktBGpvvwo7DCHQypoA1dadf5NXI+fGc2KZmjDQti
-oemmLq+zhl4itgJwXZ2L36/ZtNJemDoi5hhQYFghcriEBnf4iTx4ohNHmWxMJzrO
-4UZDYF1CI0w5BuN97LPGN6TlJHkAMpr9fMV06TRGFwWTJ7lwG25bLFX1C8Bdt2LF
-ObMB3A8RWTgp/ELDv/Hgi7RrdaVrH0K+wNGVhVirUS6bZhvw3RS27+KPmJBvKNKe
-z1Z+YWizDaKERU/0Usa9D3a0pSxN6zMYQUIsCbTbZEpm5NSVsshrLmHVT+ijQijQ
-NJP/z+27i7HmsqLZX1BMYCXeyqLFGxxcRo5HpBzOurjM1l0BPRJy55koVpK4q1yw
-AH2B7dwcwXv5aJQOVip7GERr9TxuIcUST9wNDcPm2baFOq3fVaz7sXYr9rlwWoUr
-Lnyt7OA8wDMZUEk8Y2lI7quXpMdJf0saEkfQaZhNWszQebUxPnTYax/YoiCFA8ol
-AEKpzfE1rbrwfX00tUxwecxSFECLsv034tzhBJcW4h8nRwJCAZ0dUdFKynhe6/BQ
-e1SklzCTWfNVwOARgUeidNBqCMP0Y4IfoMNyV23FPgw12GuNJhR1LMYQAqcYo2Hl
-WE3fy10Ta59NIUEI6qhn
-=YB0A
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA--
+diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+index 9edccc6..ed1c7e5 100644
+--- a/drivers/cpufreq/powernv-cpufreq.c
++++ b/drivers/cpufreq/powernv-cpufreq.c
+@@ -29,6 +29,7 @@
+ 
+ #include <asm/cputhreads.h>
+ #include <asm/reg.h>
++#include <asm/smp.h>
+ 
+ #define POWERNV_MAX_PSTATES	256
+ 
