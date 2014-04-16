@@ -1,31 +1,25 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: linux-next: manual merge of the audit tree with Linus' tree
-Date: Wed, 16 Apr 2014 08:08:00 -0400
-Message-ID: <1397650080.2725.3.camel@localhost>
-References: <20140416140240.dd99f42196991edcb73a969d@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: new 64 bit math link fail in xfs in linux-next today
+Date: Wed, 16 Apr 2014 12:09:37 -0400
+Message-ID: <534EAB41.60901@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140416140240.dd99f42196991edcb73a969d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:47357 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754922AbaDPQJe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Apr 2014 12:09:34 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: xfs@oss.sgi.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Wed, 2014-04-16 at 14:02 +1000, Stephen Rothwell wrote:
+Hi Dave,
 
-> You could have avoided this by doing a fast forward merge of v3.15-rc1
-> instead of the v3.14 merge (since everything in your tree before that
-> merge was also in Linus' tree by v3.15-rc1).
+Not sure if this has been reported yet, but this new failure showed
+up in the xtensa link of today's linux-next builds.
 
-This is a situation I've never really known the right way to handle.  I
-certainly could/can fast forward to 3.15-rc1, but then I have a random
-crap development base for the audit tree.  Which is especially bad sine
--rc1 doesn't even boot on my main machine.
+http://kisskb.ellerman.id.au/kisskb/buildresult/10938384/
 
-What I've always done is to merge the last release right after the pull
-and go from there, but it clearly leaves conflict potential
-
-Which is preferred?  I've always enjoyed having my trees based on a
-release....
+Paul.
