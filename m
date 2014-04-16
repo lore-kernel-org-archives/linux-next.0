@@ -1,90 +1,79 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: new 64 bit math link fail in xfs in linux-next today
-Date: Thu, 17 Apr 2014 07:57:33 +1000
-Message-ID: <20140416215733.GM15995@dastard>
-References: <534EAB41.60901@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 17 Apr 2014 09:54:19 +1000
+Message-ID: <20140417095419.de828de2cd490711d5e4de7a@canb.auug.org.au>
+References: <20140416151956.b3388ef9c11c6c58b535186f@canb.auug.org.au>
+	<20140416192135.GY7292@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__17_Apr_2014_09_54_19_+1000_Wb10tmYVmPyEkMVR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:41000 "EHLO
-	ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751390AbaDPV6G (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Apr 2014 17:58:06 -0400
-Content-Disposition: inline
-In-Reply-To: <534EAB41.60901@windriver.com>
+Received: from ozlabs.org ([103.22.144.67]:59461 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751503AbaDPXy2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Apr 2014 19:54:28 -0400
+In-Reply-To: <20140416192135.GY7292@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: xfs@oss.sgi.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Mel Gorman <mgorman@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 16, 2014 at 12:09:37PM -0400, Paul Gortmaker wrote:
-> Hi Dave,
-> 
-> Not sure if this has been reported yet, but this new failure showed
-> up in the xtensa link of today's linux-next builds.
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/10938384/
+--Signature=_Thu__17_Apr_2014_09_54_19_+1000_Wb10tmYVmPyEkMVR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-fs/built-in.o: In function `__xfs_get_blocks':
-/home/dave/src/build/x86-64/xfsdev/fs/xfs/xfs_aops.c:1368: undefined reference to `__divdi3'
+Hi Mel, Andrew,
 
-Fmeh. The hunk that throws the error:
+On Wed, 16 Apr 2014 20:21:35 +0100 Mel Gorman <mgorman@suse.de> wrote:
+>
+> On Wed, Apr 16, 2014 at 03:19:56PM +1000, Stephen Rothwell wrote:
+> >=20
+> > After merging the akpm-current tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >=20
+> > In file included from mm/vmscan.c:50:0:
+> > include/linux/swapops.h: In function 'is_swap_pte':
+> > include/linux/swapops.h:57:2: error: implicit declaration of function '=
+pte_present_nonuma' [-Werror=3Dimplicit-function-declaration]
+> >   return !pte_none(pte) && !pte_present_nonuma(pte) && !pte_file(pte);
+> >   ^
+> >=20
+> > Caused by commit 851fe3337768 ("x86: define _PAGE_NUMA by reusing
+> > software bits on the PMD and PTE levels").  This build does not have
+> > CONFIG_NUMA_BALANCING set.
+> >=20
+> > I have reverted that commit for today.
+>=20
+> Thanks Stephen. A patch that should address the problem is on its way to
+> Andrew.
 
-@@ -1354,6 +1362,12 @@ __xfs_get_blocks(
-                ASSERT(mapping_size > 0);
-                if (mapping_size > size)
-                        mapping_size = size;
-+               if (offset < i_size_read(inode) &&
-+                   offset + mapping_size >= i_size_read(inode)) {
-+                       /* limit mapping to block that spans EOF */
-+                       mapping_size = roundup(i_size_read(inode) - offset,
-+                                              1 << inode->i_blkbits);
-+               }
-                if (mapping_size > LONG_MAX)
-                        mapping_size = LONG_MAX;
-
-You'd think a generic function like roundup() would handle that sort
-of 64/32 bit type problem, yes? But it doesn't, despite what the
-comment implies:
-
-/* The `const' in roundup() prevents gcc-3.3 from calling __divdi3 */
-#define roundup(x, y) (                                 \
-{                                                       \
-        const typeof(y) __y = y;                        \
-        (((x) + (__y - 1)) / __y) * __y;                \
-}                                                       \
-)
-
-It doesn't even have type checking that might warn you of impending
-problems...
-
-<sigh>
-
-/me looks around in the XFS code for a bit
-
-... and finds roundup_64() in fs/xfs/xfs_linux.h. That uses do_div()
-to avoid this problem. And it's a static inline function, so it has
-type checking, too.
-
-And so this hunk fixes the problem:
-
-@@ -1365,7 +1365,7 @@ __xfs_get_blocks(
- 		if (offset < i_size_read(inode) &&
- 		    offset + mapping_size >= i_size_read(inode)) {
- 			/* limit mapping to block that spans EOF */
--                       mapping_size = roundup(i_size_read(inode) - offset,
-+                       mapping_size = roundup_64(i_size_read(inode) - offset,
- 					       1 << inode->i_blkbits);
- 		}
- 		if (mapping_size > LONG_MAX)
-
-Can you test it, please, and I'll push out an updated branch
-hopefully in time for today's linux-next build....
-
+I grabbed it out of mmots and added it to linux-next for today (in case a
+new mmotm does not appear in time).
+--=20
 Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--Signature=_Thu__17_Apr_2014_09_54_19_+1000_Wb10tmYVmPyEkMVR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTTxgwAAoJEMDTa8Ir7ZwVuZQP/Rd0Kl3z0eS1Im48eAWbUKH5
+fu8vwbiIoMKRVHrb1hjKV4WmlD3EjhqmygxcouNbEc6XMvI7OMZBpJbvkm5TidG3
+nt23CcBqpfgbqtgTkCOXQQ3hJc5fvurmyPOWT/pTEKYjCfrzq0dutyjRx52QECGP
+l5Ggu5sE4rNOe++a+era/sFGUKp3FWQWvaKRVH5Dd1XwzvyECTiwyfhd7dUJHKCY
+3+b8HhTaeRxR/COmhwUZPAMdlZz2oR7aGFCY571lGnfMOE4BsxMDnzLa6JFJ1azR
+62u61WWZ9shgXwCOG8T95GH76O34UNi0oIfBH3Y/9OL2qA5yyyy/CxncWqp9+bfP
+z+J6HwLb85ED5FeIgSxOHmuP0jy4tDEjbhy7JVL+0AeUfU6nn+1iWMYduskVqWev
+FLWgJxujEIGnmdO353jdYTIikSqtuDsTO1Ug79r8ZOesuAsoo4a5L5SM7xHIVehB
+D752NJW54G6yPvddrvXTApFXRe+UiDZGZ4Aka11G955LMtW+dRuteLGfH1E7lbfB
+5fTks19vB9QGpnKLsRCcGoDFdDZ4N8QqbrT9s2XF4f+ecNLijyJvoq77LqlBM8WC
+sj36EArJVTyzdn6HmXrDJFedAxGzcenTkMvc9AzZyrEQ8a6RKR6nSGdXM6VkwYti
+JWd91SnUK3ICJ66wMbZn
+=AC6r
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_Apr_2014_09_54_19_+1000_Wb10tmYVmPyEkMVR--
