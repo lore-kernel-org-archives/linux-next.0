@@ -1,66 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the audit tree with Linus' tree
-Date: Wed, 16 Apr 2014 14:02:40 +1000
-Message-ID: <20140416140240.dd99f42196991edcb73a969d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 16 Apr 2014 15:19:56 +1000
+Message-ID: <20140416151956.b3388ef9c11c6c58b535186f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_Apr_2014_14_02_40_+1000_RSdjxG+9Sbl3Rk/N"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56470 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750918AbaDPECt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Apr 2014 00:02:49 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+ boundary="Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__16_Apr_2014_14_02_40_+1000_RSdjxG+9Sbl3Rk/N
+--Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Andrew,
 
-Today's linux-next merge of the audit tree got conflicts in
-arch/mips/include/asm/syscall.h, arch/x86/Kconfig and kernel/audit.c
-between commits from Linus' tree and commit 596b0569084b ("Merge tag
-'v3.14' into mergeing") from the audit tree.
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-This happened because you merged Linus' tag v3.14 into your tree.  In
-this case, that merge had conflicts that you resolved differently to the
-way Linus had resolved them when he merged your tree for v3.15-rc1.  I
-fixed it up (by using Linus' version) and can carry the fix as necessary
-(no action is required).
+In file included from mm/vmscan.c:50:0:
+include/linux/swapops.h: In function 'is_swap_pte':
+include/linux/swapops.h:57:2: error: implicit declaration of function 'pte_=
+present_nonuma' [-Werror=3Dimplicit-function-declaration]
+  return !pte_none(pte) && !pte_present_nonuma(pte) && !pte_file(pte);
+  ^
 
-You could have avoided this by doing a fast forward merge of v3.15-rc1
-instead of the v3.14 merge (since everything in your tree before that
-merge was also in Linus' tree by v3.15-rc1).
+Caused by commit 851fe3337768 ("x86: define _PAGE_NUMA by reusing
+software bits on the PMD and PTE levels").  This build does not have
+CONFIG_NUMA_BALANCING set.
+
+I have reverted that commit for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__16_Apr_2014_14_02_40_+1000_RSdjxG+9Sbl3Rk/N
+--Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTTgDkAAoJEMDTa8Ir7ZwV2bcP/jtWk6ipR0Kh2G2rmeqRd0G9
-g6TGBPqC6XEumCdIZY3Y5RYfwpXPyncvqiHlK/EeMi1Mu3FCo2NH6Z8pZp0U84d9
-0sRbNZn6XGa7S6UGT7YGy2MBqsQuDP7+53Zv+a4rE5Efm3htd89FrB7rHY/mULD/
-GboVzJb8fPligycbrrmWJ1I2KaGcxOdFsB1NafDBGPnWXLTPvP4EmpO9LULzaoqW
-mnb+6mafwhdR2/om3LDjSK9cl+T4BTMNrX9za9yOghXcQQxYomV4gGQrEzWPjGdr
-+zHKPQqBUBEXPrCysZHQDej45t39IdyrzBPz9ovJ0zLeIkOHSPd6tou33vXU2vLB
-YVmVEWua6rObRJk0LV9sggh/7W6XwMJPAUm1f5qSewDcjL32HZmWUtTx5OSFQVUx
-1Npu5MevgjiMK4XvTVwvy29ioKkUQLZ63n8Na+VEEJ3yWi23G1YlOLvH4pv9QwVG
-1tkQ3opNklkIQus++7bGInSe66bW5KxZ1GAyH3JOg5i+oC6BdTNtQ3o5XD/3+y16
-CwpIctx1ilIMQEsZxHzGMXogSXveozOpX+ggSObYTi/D02CtCEWImForp6M36724
-i1IRy7M1il654gYNf7OMbH2gk7VxhuyICKO977RgEr41NrE2R+ayHNYxD2U8Feju
-yj/j3FPtuE8o3h3F2Ajp
-=je24
+iQIcBAEBCAAGBQJTThMAAAoJEMDTa8Ir7ZwVnvoP/i+0jZ8B29183MPtalq8jFie
+hvbY1YyTyVjlWiJIDD+CwwcjyiXWOhXw4fEwOSNrCRcWyjtlidzcyIwHqAmapmPe
+7k0M6xrzZB1+qJQC/heA8jacZxU2PzHemm0nj+rwXNPWnfdCATmR6R2O6kM99kdS
+cjXCYNhR7IKapqSpYDT3qjWN85rVc3c4dm6/H8TDKFlQTyhSXOooetybaNflhEHX
+nXqykprFQgYgPXWB+nzgJH7LRPkNKWAoCD4x9+TPhGILNEW0f6JEvf1FJOU+4Z6W
+uwIr2lQDR8sJotwu2RLX/naBvJFt2qW0AR6U+ah0DYFOLA9oZMiY5Xprg4EpyRgJ
+1FgDlQ+W6psv3113qcZ9L6W6wkNxt/BO3HNEDpCeCaVHzHGKdWWCwm2Isl6nGRQW
+15ojTPFc5N5IUh7oZJLWlP3DM4CDPRgbaEWQev6pwPE52OMKmue3APx6sbjnfaJc
+GcxS9PRO/226GrqnCMqu4l5+WE/QYXO1v1niy0wNUOMLDDj0a1JBwjmfVYo3qh1w
+EzCnLJgxfcxHzKWrDg13qVhNQMPS6E4VeBxEdm4iJA5+DuzZT8X2Dn0zXrcmEAGV
+XDsmRiqRGnrxKy9IIvPjEptBI+rhz7nTEXF3aY9/jecjeajn001zYpwLmPKIaVUL
+xkPfjDhC+fQMCHqyIno6
+=GFDq
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_Apr_2014_14_02_40_+1000_RSdjxG+9Sbl3Rk/N--
+--Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq--
