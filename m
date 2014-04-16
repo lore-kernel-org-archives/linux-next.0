@@ -1,63 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 16 Apr 2014 15:19:56 +1000
-Message-ID: <20140416151956.b3388ef9c11c6c58b535186f@canb.auug.org.au>
+Date: Wed, 16 Apr 2014 15:38:56 +1000
+Message-ID: <20140416153856.222b665abb0a66d2470a7c81@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56478 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754268AbaDPFjD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Apr 2014 01:39:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Davydov <vdavydov@parallels.com>
 
---Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq
+--Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-In file included from mm/vmscan.c:50:0:
-include/linux/swapops.h: In function 'is_swap_pte':
-include/linux/swapops.h:57:2: error: implicit declaration of function 'pte_=
-present_nonuma' [-Werror=3Dimplicit-function-declaration]
-  return !pte_none(pte) && !pte_present_nonuma(pte) && !pte_file(pte);
-  ^
+ERROR: "kmalloc_order" [drivers/net/wireless/brcm80211/brcmfmac/brcmfmac.ko=
+] undefined!
 
-Caused by commit 851fe3337768 ("x86: define _PAGE_NUMA by reusing
-software bits on the PMD and PTE levels").  This build does not have
-CONFIG_NUMA_BALANCING set.
+Caused by commit a3ed1ed24850 ("mm: get rid of __GFP_KMEMCG").
 
-I have reverted that commit for today.
+I added the following patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 16 Apr 2014 15:32:54 +1000
+Subject: [PATCH] mm: get rid of __GFP_KMEMCG fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/slab_common.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index cab4c49b3e8c..edd10a8af69e 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -584,6 +584,7 @@ void *kmalloc_order(size_t size, gfp_t flags, unsigned =
+int order)
+ 	kmemleak_alloc(ret, size, 1, flags);
+ 	return ret;
+ }
++EXPORT_SYMBOL(kmalloc_order);
+=20
+ #ifdef CONFIG_TRACING
+ void *kmalloc_order_trace(size_t size, gfp_t flags, unsigned int order)
+--=20
+1.9.2
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq
+--Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTThMAAAoJEMDTa8Ir7ZwVnvoP/i+0jZ8B29183MPtalq8jFie
-hvbY1YyTyVjlWiJIDD+CwwcjyiXWOhXw4fEwOSNrCRcWyjtlidzcyIwHqAmapmPe
-7k0M6xrzZB1+qJQC/heA8jacZxU2PzHemm0nj+rwXNPWnfdCATmR6R2O6kM99kdS
-cjXCYNhR7IKapqSpYDT3qjWN85rVc3c4dm6/H8TDKFlQTyhSXOooetybaNflhEHX
-nXqykprFQgYgPXWB+nzgJH7LRPkNKWAoCD4x9+TPhGILNEW0f6JEvf1FJOU+4Z6W
-uwIr2lQDR8sJotwu2RLX/naBvJFt2qW0AR6U+ah0DYFOLA9oZMiY5Xprg4EpyRgJ
-1FgDlQ+W6psv3113qcZ9L6W6wkNxt/BO3HNEDpCeCaVHzHGKdWWCwm2Isl6nGRQW
-15ojTPFc5N5IUh7oZJLWlP3DM4CDPRgbaEWQev6pwPE52OMKmue3APx6sbjnfaJc
-GcxS9PRO/226GrqnCMqu4l5+WE/QYXO1v1niy0wNUOMLDDj0a1JBwjmfVYo3qh1w
-EzCnLJgxfcxHzKWrDg13qVhNQMPS6E4VeBxEdm4iJA5+DuzZT8X2Dn0zXrcmEAGV
-XDsmRiqRGnrxKy9IIvPjEptBI+rhz7nTEXF3aY9/jecjeajn001zYpwLmPKIaVUL
-xkPfjDhC+fQMCHqyIno6
-=GFDq
+iQIcBAEBCAAGBQJTThd0AAoJEMDTa8Ir7ZwVB2IQAIUVQnKOtUZDt36kAfTH3rKO
+vkQCLn+RkpNqf2rtBpf/Igl1ktBGpvvwo7DCHQypoA1dadf5NXI+fGc2KZmjDQti
+oemmLq+zhl4itgJwXZ2L36/ZtNJemDoi5hhQYFghcriEBnf4iTx4ohNHmWxMJzrO
+4UZDYF1CI0w5BuN97LPGN6TlJHkAMpr9fMV06TRGFwWTJ7lwG25bLFX1C8Bdt2LF
+ObMB3A8RWTgp/ELDv/Hgi7RrdaVrH0K+wNGVhVirUS6bZhvw3RS27+KPmJBvKNKe
+z1Z+YWizDaKERU/0Usa9D3a0pSxN6zMYQUIsCbTbZEpm5NSVsshrLmHVT+ijQijQ
+NJP/z+27i7HmsqLZX1BMYCXeyqLFGxxcRo5HpBzOurjM1l0BPRJy55koVpK4q1yw
+AH2B7dwcwXv5aJQOVip7GERr9TxuIcUST9wNDcPm2baFOq3fVaz7sXYr9rlwWoUr
+Lnyt7OA8wDMZUEk8Y2lI7quXpMdJf0saEkfQaZhNWszQebUxPnTYax/YoiCFA8ol
+AEKpzfE1rbrwfX00tUxwecxSFECLsv034tzhBJcW4h8nRwJCAZ0dUdFKynhe6/BQ
+e1SklzCTWfNVwOARgUeidNBqCMP0Y4IfoMNyV23FPgw12GuNJhR1LMYQAqcYo2Hl
+WE3fy10Ta59NIUEI6qhn
+=YB0A
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_Apr_2014_15_19_56_+1000_d+RjUBV934JWIEmq--
+--Signature=_Wed__16_Apr_2014_15_38_56_+1000_o8tuMnJEZv_DMKUA--
