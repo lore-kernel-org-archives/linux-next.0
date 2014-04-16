@@ -1,39 +1,66 @@
-From: Mel Gorman <mgorman@suse.de>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 16 Apr 2014 20:21:35 +0100
-Message-ID: <20140416192135.GY7292@suse.de>
-References: <20140416151956.b3388ef9c11c6c58b535186f@canb.auug.org.au>
+From: Mark Tinguely <tinguely@sgi.com>
+Subject: Re: new 64 bit math link fail in xfs in linux-next today
+Date: Wed, 16 Apr 2014 15:59:51 -0500
+Message-ID: <534EEF47.4000706@sgi.com>
+References: <534EAB41.60901@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140416151956.b3388ef9c11c6c58b535186f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <xfs-bounces@oss.sgi.com>
+In-Reply-To: <534EAB41.60901@windriver.com>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, xfs@oss.sgi.com
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 16, 2014 at 03:19:56PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from mm/vmscan.c:50:0:
-> include/linux/swapops.h: In function 'is_swap_pte':
-> include/linux/swapops.h:57:2: error: implicit declaration of function 'pte_present_nonuma' [-Werror=implicit-function-declaration]
->   return !pte_none(pte) && !pte_present_nonuma(pte) && !pte_file(pte);
->   ^
-> 
-> Caused by commit 851fe3337768 ("x86: define _PAGE_NUMA by reusing
-> software bits on the PMD and PTE levels").  This build does not have
-> CONFIG_NUMA_BALANCING set.
-> 
-> I have reverted that commit for today.
+On 04/16/14 11:09, Paul Gortmaker wrote:
+> Hi Dave,
+>
+> Not sure if this has been reported yet, but this new failure showed
+> up in the xtensa link of today's linux-next builds.
+>
+> http://kisskb.ellerman.id.au/kisskb/buildresult/10938384/
+>
+> Paul.
+>
 
-Thanks Stephen. A patch that should address the problem is on its way to
-Andrew.
+Try this works on i386. sorry if my mailer wraps the line:
 
--- 
-Mel Gorman
-SUSE Labs
+The roundup in commit 68c1fb5d should be a roundup_64()
+because it is desired to round a 64 bit type by an integer
+and that will result in a 64 bit value. On 32 bit machines
+using roundup() in this case will result in the error:
+
+  ERROR: "__divdi3" [fs/xfs/xfs.ko] undefined!
+
+Signed-off-by: Mark Tinguely <tinguely@sgi.com>
+---
+  fs/xfs/xfs_aops.c |    2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: b/fs/xfs/xfs_aops.c
+===================================================================
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -1365,7 +1365,7 @@ __xfs_get_blocks(
+  		if (offset < i_size_read(inode) &&
+  		    offset + mapping_size >= i_size_read(inode)) {
+  			/* limit mapping to block that spans EOF */
+-			mapping_size = roundup(i_size_read(inode) - offset,
++			mapping_size = roundup_64(i_size_read(inode) - offset,
+  					       1 << inode->i_blkbits);
+  		}
+  		if (mapping_size > LONG_MAX)
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
