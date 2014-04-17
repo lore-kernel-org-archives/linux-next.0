@@ -1,93 +1,42 @@
-From: Mel Gorman <mgorman@suse.de>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 17 Apr 2014 10:56:30 +0100
-Message-ID: <20140417095630.GA7292@suse.de>
-References: <20140417170831.53f065b7aa4ff04d30a79469@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Thu, 17 Apr 2014 09:17:32 -0700
+Message-ID: <20140417161732.GD22187@kroah.com>
+References: <20140417143137.a66d4f53a928fd454911fa50@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:42360 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751110AbaDQQR2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Apr 2014 12:17:28 -0400
+Received: from compute4.internal (compute4.nyi.mail.srv.osa [10.202.2.44])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 1508421462
+	for <linux-next@vger.kernel.org>; Thu, 17 Apr 2014 12:17:27 -0400 (EDT)
 Content-Disposition: inline
-In-Reply-To: <20140417170831.53f065b7aa4ff04d30a79469@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20140417143137.a66d4f53a928fd454911fa50@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jes Sorensen <Jes.Sorensen@redhat.com>
 
-On Thu, Apr 17, 2014 at 05:08:31PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
+On Thu, Apr 17, 2014 at 02:31:37PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> After merging the akpm-current tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+> Today's linux-next merge of the staging tree got conflicts in
+> drivers/staging/rtl8723au/core/rtw_ieee80211.c,
+> drivers/staging/rtl8723au/core/rtw_mlme_ext.c,
+> drivers/staging/rtl8723au/core/rtw_p2p.c and
+> drivers/staging/rtl8723au/core/rtw_wlan_util.c between commit
+> f5d197b614d8 ("staging: rtl8723au: Fix buffer overflow in rtw_get_wfd_ie
+> ()") from the staging.current tree and various commits from the staging
+> tree.
 > 
-> In file included from mm/shmem.c:61:0:
-> include/linux/swapops.h: In function 'is_swap_pte':
-> include/linux/swapops.h:57:2: error: implicit declaration of function 'pte_present_nonuma' [-Werror=implicit-function-declaration]
-> 
-> And a couple more similar.
-> 
-> Caused by commit 851fe3337768 ("x86: define _PAGE_NUMA by reusing
-> software bits on the PMD and PTE levels").
-> 
-> I have reverted this commit (and 7cb1c1eb682e "x86: define _PAGE_NUMA by
-> reusing software bits on the PMD and PTE levels -fix") for today and
-> wonder how many other architectures would be broken by this?  Everything
-> else with CONFIG_MMU set?
-> 
+> I fixed it up (I just use dthe version from the staging tree) and can
+> carry the fix as necessary (no action is required).
 
-/me slaps self
+Sounds good, thanks.
 
-Andrew, can you replace the broken fix with this version please?
-
----8<---
-x86: define _PAGE_NUMA by reusing software bits on the PMD and PTE levels -fix
-
-powerpc has NUMA_BALANCING and non-NUMA_BALANCING versions of pte_present
-and I missed that when testing cross-compiling. This patch replaces
-x86-define-_page_numa-by-reusing-software-bits-on-the-pmd-and-pte-levels-fix.patch
-
-Signed-off-by: Mel Gorman <mgorman@suse.de>
----
- arch/powerpc/include/asm/pgtable.h | 1 +
- arch/x86/include/asm/pgtable.h     | 1 +
- include/asm-generic/pgtable.h      | 4 ++++
- 3 files changed, 6 insertions(+)
-
-diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
-index cdf6679..d98c1ec 100644
---- a/arch/powerpc/include/asm/pgtable.h
-+++ b/arch/powerpc/include/asm/pgtable.h
-@@ -44,6 +44,7 @@ static inline int pte_present(pte_t pte)
- 	return pte_val(pte) & (_PAGE_PRESENT | _PAGE_NUMA);
- }
- 
-+#define pte_present_nonuma pte_present_nonuma
- static inline int pte_present_nonuma(pte_t pte)
- {
- 	return pte_val(pte) & (_PAGE_PRESENT);
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 611dd32..d772c9c 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -452,6 +452,7 @@ static inline int pte_present(pte_t a)
- 			       _PAGE_NUMA);
- }
- 
-+#define pte_present_nonuma pte_present_nonuma
- static inline int pte_present_nonuma(pte_t a)
- {
- 	return pte_flags(a) & (_PAGE_PRESENT | _PAGE_PROTNONE);
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index d2b92be..8916a76 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -220,6 +220,10 @@ static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
- # define pte_accessible(mm, pte)	((void)(pte), 1)
- #endif
- 
-+#ifndef pte_present_nonuma
-+#define pte_present_nonuma(pte) pte_present(pte)
-+#endif
-+
- #ifndef flush_tlb_fix_spurious_fault
- #define flush_tlb_fix_spurious_fault(vma, address) flush_tlb_page(vma, address)
- #endif
+greg k-h
