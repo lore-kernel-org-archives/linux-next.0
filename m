@@ -1,69 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 17 Apr 2014 17:08:31 +1000
-Message-ID: <20140417170831.53f065b7aa4ff04d30a79469@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build failure after merge of the userns tree
+Date: Thu, 17 Apr 2014 00:18:44 -0700
+Message-ID: <87bnw0ctkb.fsf@x220.int.ebiederm.org>
+References: <20140417151245.467efa8bd8d084277fd471c9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__17_Apr_2014_17_08_31_+1000_kLwOaZ_GSUro=Bsm"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36167 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751992AbaDQHIm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Apr 2014 03:08:42 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140417151245.467efa8bd8d084277fd471c9@canb.auug.org.au>
+	(Stephen Rothwell's message of "Thu, 17 Apr 2014 15:12:45 +1000")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__17_Apr_2014_17_08_31_+1000_kLwOaZ_GSUro=Bsm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Hi Andrew,
+> Hi Eric,
+>
+> After merging the userns tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> fs/namespace.c: In function 'new_mountpoint':
+> fs/namespace.c:725:9: error: implicit declaration of function 'hash' [-Werror=implicit-function-declaration]
+>   struct list_head *chain = mountpoint_hashtable + hash(NULL, dentry);
+>          ^
+> fs/namespace.c:725:28: warning: initialization from incompatible pointer type [enabled by default]
+>   struct list_head *chain = mountpoint_hashtable + hash(NULL, dentry);
+>                             ^
+> fs/namespace.c:741:2: warning: passing argument 2 of 'hlist_add_head' from incompatible pointer type [enabled by default]
+>   hlist_add_head(&mp->m_hash, chain);
+>   ^
+> In file included from include/linux/signal.h:4:0,
+>                  from include/linux/syscalls.h:72,
+>                  from fs/namespace.c:11:
+> include/linux/list.h:637:20: note: expected 'struct hlist_head *' but argument is of type 'struct list_head *'
+>  static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h)
+>                     ^
+>
+> So clearly my merge conflict resolution was not sufficient.
+>
+> I will just drop the userns tree for today.  Please give me some help
+> with the resolutions - or fix this stuff up yourselves.
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+You had this exact conflict succesfully resolved yesterday.  Sigh.
 
-In file included from mm/shmem.c:61:0:
-include/linux/swapops.h: In function 'is_swap_pte':
-include/linux/swapops.h:57:2: error: implicit declaration of function 'pte_=
-present_nonuma' [-Werror=3Dimplicit-function-declaration]
+Line 725 of fs/namespace.c: Simply need to read.
+	struct hlist_head *chain = mp_hash(dentry);
 
-And a couple more similar.
-
-Caused by commit 851fe3337768 ("x86: define _PAGE_NUMA by reusing
-software bits on the PMD and PTE levels").
-
-I have reverted this commit (and 7cb1c1eb682e "x86: define _PAGE_NUMA by
-reusing software bits on the PMD and PTE levels -fix") for today and
-wonder how many other architectures would be broken by this?  Everything
-else with CONFIG_MMU set?
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__17_Apr_2014_17_08_31_+1000_kLwOaZ_GSUro=Bsm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTT331AAoJEMDTa8Ir7ZwVWKQP/0XlBJGgcvC7oB1FCzfRpFvK
-UrZJ1QzdGqhTh7hYZV5MXSAt4NOA6cl1GoW4MmBBpUzcDbW+V5dLfvb5z6si5mlb
-D2NVEk47Yuitxmm690uDO0THfeLDBfv47bg+BFx6c1Hk2ZuBVS6KlnP/z3C32qq2
-suxM65vdUP7QBp9SshxK+M25vR2ZxcvJuDRupUUWDjuA41hF6YYHB9GQ0nvA5lYL
-KT1eaXXtrBFwl2n3Dc+CGOpLMZP615nAtfHWmFWFxaJ+lxj8QxHyO8STTJxhLGFE
-C9ncbinBJ9esp0vcglDqwcsFs+cr8Uw25XcqTUnUDu1cIoGtdPHj35bVVL1BMISs
-KbtC57pCQ5EFCmf/xBly4qTZU1MrsJV1vPmZ48Y/xk5hUuDiZJCub6xrymftSAg2
-FBopoG26n8b17Gr/5ytLU61KOF3NQVtZQv2d+Hj9yVv91CjUxRpCeHJuedk2wTCk
-hsMfB9KxvwzVcQaBwf+9sTfoKQBxI2ySYkvUcglMbH7uaFEHu6WRjdv97Sc/qYam
-VC0+e978XumpNKJh2LIxKh0YhutfTBdB4YprRFNvCJrqXJsH8rG7ZPn+9uxa+tAG
-PDGgVrk0Y6THviHbk8PtATmiCt0iiGqEhxASSKjFwbPvSHQGvHzXXbvyIx45HLdS
-wF9iPTb9jujCz/xcB/JI
-=O3O/
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Apr_2014_17_08_31_+1000_kLwOaZ_GSUro=Bsm--
+Eric
