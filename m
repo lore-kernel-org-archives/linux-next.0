@@ -1,52 +1,93 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the userns tree with Linus' tree
-Date: Thu, 17 Apr 2014 01:44:21 -0700
-Message-ID: <874n1s73bu.fsf@x220.int.ebiederm.org>
-References: <20140417150657.6d67e750081860b30f99715c@canb.auug.org.au>
-	<20140417052500.GZ18016@ZenIV.linux.org.uk>
+From: Mel Gorman <mgorman@suse.de>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 17 Apr 2014 10:56:30 +0100
+Message-ID: <20140417095630.GA7292@suse.de>
+References: <20140417170831.53f065b7aa4ff04d30a79469@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:40096 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751203AbaDQIos (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Apr 2014 04:44:48 -0400
-In-Reply-To: <20140417052500.GZ18016@ZenIV.linux.org.uk> (Al Viro's message of
-	"Thu, 17 Apr 2014 06:25:00 +0100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset=iso-8859-15
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140417170831.53f065b7aa4ff04d30a79469@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Al Viro <viro@ZenIV.linux.org.uk> writes:
+On Thu, Apr 17, 2014 at 05:08:31PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> In file included from mm/shmem.c:61:0:
+> include/linux/swapops.h: In function 'is_swap_pte':
+> include/linux/swapops.h:57:2: error: implicit declaration of function 'pte_present_nonuma' [-Werror=implicit-function-declaration]
+> 
+> And a couple more similar.
+> 
+> Caused by commit 851fe3337768 ("x86: define _PAGE_NUMA by reusing
+> software bits on the PMD and PTE levels").
+> 
+> I have reverted this commit (and 7cb1c1eb682e "x86: define _PAGE_NUMA by
+> reusing software bits on the PMD and PTE levels -fix") for today and
+> wonder how many other architectures would be broken by this?  Everything
+> else with CONFIG_MMU set?
+> 
 
-> On Thu, Apr 17, 2014 at 03:06:57PM +1000, Stephen Rothwell wrote:
->> Hi Eric,
->> 
->> Today's linux-next merge of the userns tree got a conflict in
->> fs/namespace.c between various commits from Linus' tree and various
->> commits from the userns tree.
->> 
->> I fixed it up (hopefully - see below) and can carry the fix as necessary
->> (no action is required).
->
-> Various commits include this:
-> commit 38129a13e6e71f666e0468e99fdd932a687b4d7e
-> Author: Al Viro <viro@zeniv.linux.org.uk>
-> Date:   Thu Mar 20 21:10:51 2014 -0400
->
->     switch mnt_hash to hlist
->
-> present in v3.14...  It's been there since before the merge window.
+/me slaps self
 
-And the code that is in conflict is even older.  
+Andrew, can you replace the broken fix with this version please?
 
-I just figured out of an abundance of caution I would make certain the
-code was out there for automatic and semi-automatic things to pound on
-before I resent my pull request to Linus, now that I have fixed the
-stack overflow issue you were complaining about.
+---8<---
+x86: define _PAGE_NUMA by reusing software bits on the PMD and PTE levels -fix
 
-I suspect something about fixing mntput caused Stephen to loose his
-trivial resolution for this trivial conflict.
+powerpc has NUMA_BALANCING and non-NUMA_BALANCING versions of pte_present
+and I missed that when testing cross-compiling. This patch replaces
+x86-define-_page_numa-by-reusing-software-bits-on-the-pmd-and-pte-levels-fix.patch
 
-Eric
+Signed-off-by: Mel Gorman <mgorman@suse.de>
+---
+ arch/powerpc/include/asm/pgtable.h | 1 +
+ arch/x86/include/asm/pgtable.h     | 1 +
+ include/asm-generic/pgtable.h      | 4 ++++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
+index cdf6679..d98c1ec 100644
+--- a/arch/powerpc/include/asm/pgtable.h
++++ b/arch/powerpc/include/asm/pgtable.h
+@@ -44,6 +44,7 @@ static inline int pte_present(pte_t pte)
+ 	return pte_val(pte) & (_PAGE_PRESENT | _PAGE_NUMA);
+ }
+ 
++#define pte_present_nonuma pte_present_nonuma
+ static inline int pte_present_nonuma(pte_t pte)
+ {
+ 	return pte_val(pte) & (_PAGE_PRESENT);
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 611dd32..d772c9c 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -452,6 +452,7 @@ static inline int pte_present(pte_t a)
+ 			       _PAGE_NUMA);
+ }
+ 
++#define pte_present_nonuma pte_present_nonuma
+ static inline int pte_present_nonuma(pte_t a)
+ {
+ 	return pte_flags(a) & (_PAGE_PRESENT | _PAGE_PROTNONE);
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index d2b92be..8916a76 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -220,6 +220,10 @@ static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+ # define pte_accessible(mm, pte)	((void)(pte), 1)
+ #endif
+ 
++#ifndef pte_present_nonuma
++#define pte_present_nonuma(pte) pte_present(pte)
++#endif
++
+ #ifndef flush_tlb_fix_spurious_fault
+ #define flush_tlb_fix_spurious_fault(vma, address) flush_tlb_page(vma, address)
+ #endif
