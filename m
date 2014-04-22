@@ -1,58 +1,64 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH] linux-next: rsi: fix using of removed stuff from mmc
-Date: Tue, 22 Apr 2014 15:57:28 +0900
-Message-ID: <000c01cf5df8$1fecf810$5fc6e830$%jun@samsung.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: [PATCH] ARM: Wire up the renameat2() syscall
+Date: Tue, 22 Apr 2014 10:05:38 +0300
+Message-ID: <1398150338-23475-1-git-send-email-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Fariya Fatima' <fariyaf@gmail.com>, "'John W. Linville'" <linville@tuxdriver.com>, 'Chris Ball' <chris@printf.net>, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, tytso@mit.edu, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mszeredi@suse.cz, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-As commit 3957848(mmc: drop the speed mode of card's state) applies,
-this change should be followed.
+The new renameat2() system call was only wired up for ARM causing:
+ CALL    /home/ujfalusi/work/kernel/kernel.org-next-linux-next/scripts/checksyscalls.sh
+<stdin>:1232:2: warning: #warning syscall renameat2 not implemented [-Wcpp]
 
-drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: error: 'MMC_STATE_HIGHSPEED' undeclared (first use in this function)
-drivers/net/wireless/rsi/rsi_91x_sdio.c:299:4: error: implicit declaration of function 'mmc_card_set_highspeed' [-Werror=implicit-function-declaration]
-drivers/net/wireless/rsi/rsi_91x_sdio.c:306:2: error: implicit declaration of function 'mmc_card_highspeed' [-Werror=implicit-function-declaration]
-
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 ---
- drivers/net/wireless/rsi/rsi_91x_sdio.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_sdio.c b/drivers/net/wireless/rsi/rsi_91x_sdio.c
-index 2e39d38..46e7af4 100644
---- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
-@@ -285,7 +285,6 @@ static void rsi_reset_card(struct sdio_func *pfunction)
- 		if (err) {
- 			rsi_dbg(ERR_ZONE, "%s: CCCR speed reg read failed: %d\n",
- 				__func__, err);
--			card->state &= ~MMC_STATE_HIGHSPEED;
- 		} else {
- 			err = rsi_cmd52writebyte(card,
- 						 SDIO_CCCR_SPEED,
-@@ -296,14 +295,13 @@ static void rsi_reset_card(struct sdio_func *pfunction)
- 					__func__, err);
- 				return;
- 			}
--			mmc_card_set_highspeed(card);
- 			host->ios.timing = MMC_TIMING_SD_HS;
- 			host->ops->set_ios(host, &host->ios);
- 		}
- 	}
+I have noticed this with linux-next.
+
+Regards,
+Peter
+
+ arch/arm/include/uapi/asm/unistd.h | 1 +
+ arch/arm/kernel/calls.S            | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/arch/arm/include/uapi/asm/unistd.h b/arch/arm/include/uapi/asm/unistd.h
+index fb5584d0cc05..ba94446c72d9 100644
+--- a/arch/arm/include/uapi/asm/unistd.h
++++ b/arch/arm/include/uapi/asm/unistd.h
+@@ -408,6 +408,7 @@
+ #define __NR_finit_module		(__NR_SYSCALL_BASE+379)
+ #define __NR_sched_setattr		(__NR_SYSCALL_BASE+380)
+ #define __NR_sched_getattr		(__NR_SYSCALL_BASE+381)
++#define __NR_renameat2			(__NR_SYSCALL_BASE+382)
  
- 	/* Set clock */
--	if (mmc_card_highspeed(card))
-+	if (mmc_card_hs(card))
- 		clock = 50000000;
- 	else
- 		clock = card->cis.max_dtr;
+ /*
+  * This may need to be greater than __NR_last_syscall+1 in order to
+diff --git a/arch/arm/kernel/calls.S b/arch/arm/kernel/calls.S
+index 166e945de832..8f51bdcdacbb 100644
+--- a/arch/arm/kernel/calls.S
++++ b/arch/arm/kernel/calls.S
+@@ -391,6 +391,7 @@
+ 		CALL(sys_finit_module)
+ /* 380 */	CALL(sys_sched_setattr)
+ 		CALL(sys_sched_getattr)
++		CALL(sys_renameat2)
+ #ifndef syscalls_counted
+ .equ syscalls_padding, ((NR_syscalls + 3) & ~3) - NR_syscalls
+ #define syscalls_counted
 -- 
-1.7.0.4
-
-
+1.9.2
