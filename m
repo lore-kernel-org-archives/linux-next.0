@@ -1,92 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the userns tree with Linus' tree
-Date: Tue, 22 Apr 2014 11:37:11 +1000
-Message-ID: <20140422113711.a5fdc95aa6fe6b309d2d38e1@canb.auug.org.au>
-References: <20140417150657.6d67e750081860b30f99715c@canb.auug.org.au>
-	<20140417052500.GZ18016@ZenIV.linux.org.uk>
-	<874n1s73bu.fsf@x220.int.ebiederm.org>
+Subject: linux-next: build failure after merge of the mmc tree
+Date: Tue, 22 Apr 2014 13:06:55 +1000
+Message-ID: <20140422130655.51daec1807bde98ade65d691@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Apr_2014_11_37_11_+1000_cBBu9Y5g0/_rIlFS"
+ boundary="Signature=_Tue__22_Apr_2014_13_06_55_+1000_c7MfBUJEg/P9Ghlg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [101.0.96.218] ([101.0.96.218]:36245 "EHLO pide.tip.net.au"
+Received: from [101.0.96.218] ([101.0.96.218]:47468 "EHLO pide.tip.net.au"
 	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1751167AbaDVBhi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Apr 2014 21:37:38 -0400
-In-Reply-To: <874n1s73bu.fsf@x220.int.ebiederm.org>
+	id S1751446AbaDVDH1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Apr 2014 23:07:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+To: Chris Ball <chris@printf.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
---Signature=_Tue__22_Apr_2014_11_37_11_+1000_cBBu9Y5g0/_rIlFS
+--Signature=_Tue__22_Apr_2014_13_06_55_+1000_c7MfBUJEg/P9Ghlg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 17 Apr 2014 01:44:21 -0700 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> Al Viro <viro@ZenIV.linux.org.uk> writes:
->=20
-> > On Thu, Apr 17, 2014 at 03:06:57PM +1000, Stephen Rothwell wrote:
-> >> Hi Eric,
-> >>=20
-> >> Today's linux-next merge of the userns tree got a conflict in
-> >> fs/namespace.c between various commits from Linus' tree and various
-> >> commits from the userns tree.
-> >>=20
-> >> I fixed it up (hopefully - see below) and can carry the fix as necessa=
-ry
-> >> (no action is required).
-> >
-> > Various commits include this:
-> > commit 38129a13e6e71f666e0468e99fdd932a687b4d7e
-> > Author: Al Viro <viro@zeniv.linux.org.uk>
-> > Date:   Thu Mar 20 21:10:51 2014 -0400
-> >
-> >     switch mnt_hash to hlist
-> >
-> > present in v3.14...  It's been there since before the merge window.
->=20
-> And the code that is in conflict is even older. =20
->=20
-> I just figured out of an abundance of caution I would make certain the
-> code was out there for automatic and semi-automatic things to pound on
-> before I resent my pull request to Linus, now that I have fixed the
-> stack overflow issue you were complaining about.
->=20
-> I suspect something about fixing mntput caused Stephen to loose his
-> trivial resolution for this trivial conflict.
+Hi Chris,
 
-That would be the three extra commits you added that touched that file -
-it throws "git rerere" off and I didn't recognise the source of the
-problem.
+After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
+drivers/net/wireless/rsi/rsi_91x_sdio.c: In function 'rsi_reset_card':
+drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: error: 'MMC_STATE_HIGHSPEED=
+' undeclared (first use in this function)
+    card->state &=3D ~MMC_STATE_HIGHSPEED;
+                    ^
+drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: note: each undeclared ident=
+ifier is reported only once for each function it appears in
+drivers/net/wireless/rsi/rsi_91x_sdio.c:299:4: error: implicit declaration =
+of function 'mmc_card_set_highspeed' [-Werror=3Dimplicit-function-declarati=
+on]
+    mmc_card_set_highspeed(card);
+    ^
+drivers/net/wireless/rsi/rsi_91x_sdio.c:306:2: error: implicit declaration =
+of function 'mmc_card_highspeed' [-Werror=3Dimplicit-function-declaration]
+  if (mmc_card_highspeed(card))
+  ^
+
+Caused by commit 395784826a81 ("mmc: drop the speed mode of card's state").
+
+I have used the version of the mmc tree from next-20140417 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__22_Apr_2014_11_37_11_+1000_cBBu9Y5g0/_rIlFS
+--Signature=_Tue__22_Apr_2014_13_06_55_+1000_c7MfBUJEg/P9Ghlg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTVcfMAAoJEMDTa8Ir7ZwVnZQQAJF3cK0HMec0nvqyQpqyNkmx
-VXUAR/g6xI+MSFaL0QkCcy8DVyAmN9xDp5KC4icU6c5yNz0Feu8UrGKfgi3vE1fj
-b2akFvIdTiA8nv3BywRESEdRzHlmyEgb9oGbJbgBpSANri7u9mnDwOlDgT4prt29
-OKmRdKWLSzvBq07h2oNl6vulp0WQ0Dico4usjagb+pF/7fqwFDYq/2mclm7OOQ6z
-yjZnUQKZ7Xt30DG9Ed+32COP7O5P8NGNb+k7zog+SH2XqF5viqmefGmmFnLL9dMw
-uaqSzySv0QUJTu0l6GL4+w/BxlnCa15VRQqwFKKiTOMnPx8Y4exTplNRJ0EGNI6Q
-8w+dN9WWLuxmHekXwc259fVY+hPxEl8l+UfbBDrf8l+PIjOHJvJXqPSE3EtHgEt5
-YCulRilQC1DnqfomoMyFHhrh5q9F2nOcTGuhVoSHd9bYAu/tGuhU7BIvb91DkZWQ
-1CP12Lc4ApNwuTBjCGteehvtuqORopxybZyvu/ijY86CZmt0pt8fdRCJ8/XsoSwL
-OFNOEUmOsebigBxhe5dNAsEQR9Z3hTVl6cdC2vcQ56Ok62WKFC+7fqQQ6J8k0JrE
-R0PKssyrys85diUtQLe1ZGSm1/fSK6oit7lHtVkIRqXHExkrzP+9miNyjM2i4gCu
-Dd5F5z1JfDghMlrO+PC4
-=zvQZ
+iQIcBAEBCAAGBQJTVdzTAAoJEMDTa8Ir7ZwVp6YQAJGhvcDnd1oJFkgmc4Iy/Yiv
+INTn3KmWi9UgMIIxy86ElQkRf/xiTQXRayCQQhZquuy2YnM58If0mTIXkEcq00Pj
+QRBd81Z65GZW2r3FYzk4ZhutLaHjjucTAIFUeLL4NjoDU8d0cpyihYebf7TXrCh+
+6POE3xZo8t3RO5Ug5g17HYsZSqNjVggbwy4eKjgNNw5Mvx8UGXXqZbGV/q7jBDRF
+Zd8htB0gQY2/0HsIBiKgZojdeSWcDK2YK4IwJKznpO+137mF9ftiF8q+3aKQfE5R
+VQ4W6nSawb/yO+6adCwoKfAk+kKbyuLpoy4HQMBiIrNVtOpHTjp2E+7y3mgvRtr2
+XRjTrGzByc2YPHliQBx6G827cXVwTr8Ivc/d2nt2CDy/lOMtkv+d7xt1gKEPW7Te
+W+6MgMOqT4ItBSX9/gmVAU2cDm/UY0MaS2NAr543oDo9xOvIFK4ScKg3OYKG3S1r
+C8eJ7XG2Vlsd0kzjTJVEa4rfNLrrJymUFbCEVJSXVfvv84pCx/KnGXBaw9heV9nQ
+XeYED7J0mHMFAdUcjSbx+BOgJ1ByYU54p6gNldmXcWRSGxtJB3+vg6nKjrOqksut
+dPPPnOPg9Ju8J7kulLvSO0UHk/WyKOjPzbqRncAL0c0mEDNS7rMd7KFmIkVITzJB
+aiMQvyo235nk6rdWxA4W
+=Xyt5
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Apr_2014_11_37_11_+1000_cBBu9Y5g0/_rIlFS--
+--Signature=_Tue__22_Apr_2014_13_06_55_+1000_c7MfBUJEg/P9Ghlg--
