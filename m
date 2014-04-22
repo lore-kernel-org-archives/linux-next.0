@@ -1,61 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with Linus' and te ext4
- trees
-Date: Tue, 22 Apr 2014 11:04:59 +1000
-Message-ID: <20140422110459.ab3af554dd61297c61a568c2@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext4 tree
+Date: Tue, 22 Apr 2014 11:13:42 +1000
+Message-ID: <20140422111342.b44f579c60d039f93f8730ab@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w"
+ boundary="Signature=_Tue__22_Apr_2014_11_13_42_+1000_SHwIXmNjA3xo9YXI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pide.tip.net.au ([101.0.96.218]:50572 "EHLO pide.tip.net.au"
+Received: from pide.tip.net.au ([101.0.96.218]:41524 "EHLO pide.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751138AbaDVBFI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Apr 2014 21:05:08 -0400
+	id S1751028AbaDVBNt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Apr 2014 21:13:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
 
---Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w
+--Signature=_Tue__22_Apr_2014_11_13_42_+1000_SHwIXmNjA3xo9YXI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Al,
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/ext4/extents.c between rebased versions of commits from Linus' and the
-ext4 trees and the same commits from the vfs tree.
+Today's linux-next merge of the vfs tree got a conflict in fs/ext4/file.c
+between rebased commits from the ext4 tree and commit 29a8196bc41c
+("convert ext4 to ->write_iter()") from the vfs tree.
 
-I fixed it up (I just used the version from Linus' and the ext4 trees)
-and can carry the fix as necessary (no action is required).
+I fixed it up (in this case I used the conflicting hunks from the vfs
+tree - I hope its right) and can carry the fix as necessary (no action is
+required).
 
-Al, this is why I asked you about checking with Ted about his tree being
-rebased after you merged it into yours ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w
+--Signature=_Tue__22_Apr_2014_11_13_42_+1000_SHwIXmNjA3xo9YXI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTVcBBAAoJEMDTa8Ir7ZwVbzYP/ApoRPQQKJ2ImGXNWtfNcptK
-mocUZg7ksjqPoUWtYMW6XBVO0Yqg8vDNwVPDMmNOfLENPuT4Two0gtMwmeUny93P
-k8UwPRJDf7l3XTz0t+jyCZLKVKsjjw+q+3c2vIroTpZ3ufnH5OSbzIjNtmdXX4Iv
-PwROWXqwwuKMs31U9o63/SsJs6QcWlWU8Z3iY4lLBTjRaSBtaqrDgbFOZ7omJTm+
-w7zBVdYQl8P3JgRXpLOjdhKNss/8uugZ3XRzW7ye73giHt8d2Q0k/BHMWeLDdj9t
-JJC1Tz+rL6Pchg1s2mQXAcwCiMWpVDD/smJbjBNViA71YFLw7k9qtEsQwOU3Ess/
-3/yBN421uWYeg5o8TD4lrhUhC51pLs4zybdAHELQnnV+IPqTRhXBbs3cpJ/DL7Ig
-44XNubrOjiSuJvNr2uF4Gwf7ICO8LodYXGV3ZQPmqo6EhRUPeJxQWCsCfBydg0ks
-EJbJo9h5KGS6n74NC9mxL/tU2BhRv3wda1krFl6ikzLTU04HWaXSpEoiILHtUdO0
-rnMHHY47RxhmWfkYcU8Hz0z1W0iGTodtim017BnGG+xk2BffoP+kWIcSuYlAo/0S
-HAtMFFxM4ZyR/ER71otwePscXCpmWlviDHxF2ByRzWIW0GViK7VygYpVFO5Fc6ZM
-AXI3bxukOtO3yF3lZsyF
-=aUFM
+iQIcBAEBCAAGBQJTVcJLAAoJEMDTa8Ir7ZwV98AP/R76X1PklBZAN2OOjOY8pHNd
+oNb+hKreH+roKBghD4/AK5FGnRmvlK4S5HzUezF13wtReo1kOJAC3r0hqrDgdyzz
+yDzkBx0BfBgRRB9mVImPmQJBg17QFfJHkkPQPGbIt9PUWbes4k1DTm46wxt4bcpZ
+Wlu6NEM30Q/koEw+NOT00xHqAw35QAAIDRmWdEJ6y1GzOeSOprBv3HvpDr1Mi/Fa
+oOKfH61EmSvkEhNMHWEB+bBxBCaYALM6hFySgw9M1zW5D4FmLOJbmYfjMnlBQbat
+OY1/i4/xl3Q4yTqOQp9lAFoRNpawHKlLQ/KddtIorf9RliDi/Q/gvpsCkGShX/UA
+ulXFMbUJ0lqn7X9FGmsLc7AfQt7nAjPYDSD6KNezitQB3LPznsx8eqz+LcDIBHki
+SsWGt3WCmqxhInsiY8YADgrc1UKltfcTpizPnpZWUC7Mj4MTsFcseIw6pamEIF71
+cqO1YxJxgzxfGcJEtPEBDpVWF5bPojfMLdY8a5C3GrdVz/WncfAfRfmVVuFclzOW
+uuPbyMDra1o/C5AIwokSwc+239iPVYcpsuaoQpiz+S4MWDCljBiY6mGcvRgeOrK1
+09H/FO47BkZy+sR7SvOVUPN1XSavel0NagpqsooYscsfvJiJq8K4ANDRpnHBAI3a
+96rZ8pItL5C01GGSP1O5
+=rYRn
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w--
+--Signature=_Tue__22_Apr_2014_11_13_42_+1000_SHwIXmNjA3xo9YXI--
