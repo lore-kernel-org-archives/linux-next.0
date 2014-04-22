@@ -1,96 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the audit tree
-Date: Tue, 22 Apr 2014 16:22:07 +1000
-Message-ID: <20140422162207.55e3d9f09244de281b9798cc@canb.auug.org.au>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH] linux-next: rsi: fix using of removed stuff from mmc
+Date: Tue, 22 Apr 2014 15:57:28 +0900
+Message-ID: <000c01cf5df8$1fecf810$5fc6e830$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Apr_2014_16_22_07_+1000_Hfowe9C_s3T5UyXP"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Briggs <rgb@redhat.com>, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Fariya Fatima' <fariyaf@gmail.com>, "'John W. Linville'" <linville@tuxdriver.com>, 'Chris Ball' <chris@printf.net>, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__22_Apr_2014_16_22_07_+1000_Hfowe9C_s3T5UyXP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As commit 3957848(mmc: drop the speed mode of card's state) applies,
+this change should be followed.
 
-Hi Eric,
+drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: error: 'MMC_STATE_HIGHSPEED' undeclared (first use in this function)
+drivers/net/wireless/rsi/rsi_91x_sdio.c:299:4: error: implicit declaration of function 'mmc_card_set_highspeed' [-Werror=implicit-function-declaration]
+drivers/net/wireless/rsi/rsi_91x_sdio.c:306:2: error: implicit declaration of function 'mmc_card_highspeed' [-Werror=implicit-function-declaration]
 
-After merging the audit tree, today's linux-next build (sparc defconfig)
-failed like this:
-
-In file included from include/linux/audit.h:29:0,
-                 from mm/mmap.c:33:
-arch/sparc/include/asm/syscall.h: In function 'syscall_get_arch':
-arch/sparc/include/asm/syscall.h:131:9: error: 'TIF_32BIT' undeclared (firs=
-t use in this function)
-arch/sparc/include/asm/syscall.h:131:9: note: each undeclared identifier is=
- reported only once for each function it appears in
-
-And many more ...
-
-Caused by commit 374c0c054122 ("ARCH: AUDIT: implement syscall_get_arch
-for all arches").
-
-I applied this patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 22 Apr 2014 16:18:53 +1000
-Subject: [PATCH] fix ARCH: AUDIT: implement syscall_get_arch for all arches
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
 ---
- arch/sparc/include/asm/syscall.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wireless/rsi/rsi_91x_sdio.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-diff --git a/arch/sparc/include/asm/syscall.h b/arch/sparc/include/asm/sysc=
-all.h
-index fed3d511b108..a5a8153766b3 100644
---- a/arch/sparc/include/asm/syscall.h
-+++ b/arch/sparc/include/asm/syscall.h
-@@ -128,8 +128,12 @@ static inline void syscall_set_arguments(struct task_s=
-truct *task,
-=20
- static inline int syscall_get_arch(void)
- {
-+#if defined(__sparc__) && defined(__arch64__)
- 	return test_thread_flag(TIF_32BIT) ? AUDIT_ARCH_SPARC
- 					   : AUDIT_ARCH_SPARC64;
-+#else
-+	return AUDIT_ARCH_SPARC;
-+#endif
- }
-=20
- #endif /* __ASM_SPARC_SYSCALL_H */
---=20
-1.9.2
+diff --git a/drivers/net/wireless/rsi/rsi_91x_sdio.c b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+index 2e39d38..46e7af4 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
++++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+@@ -285,7 +285,6 @@ static void rsi_reset_card(struct sdio_func *pfunction)
+ 		if (err) {
+ 			rsi_dbg(ERR_ZONE, "%s: CCCR speed reg read failed: %d\n",
+ 				__func__, err);
+-			card->state &= ~MMC_STATE_HIGHSPEED;
+ 		} else {
+ 			err = rsi_cmd52writebyte(card,
+ 						 SDIO_CCCR_SPEED,
+@@ -296,14 +295,13 @@ static void rsi_reset_card(struct sdio_func *pfunction)
+ 					__func__, err);
+ 				return;
+ 			}
+-			mmc_card_set_highspeed(card);
+ 			host->ios.timing = MMC_TIMING_SD_HS;
+ 			host->ops->set_ios(host, &host->ios);
+ 		}
+ 	}
+ 
+ 	/* Set clock */
+-	if (mmc_card_highspeed(card))
++	if (mmc_card_hs(card))
+ 		clock = 50000000;
+ 	else
+ 		clock = card->cis.max_dtr;
+-- 
+1.7.0.4
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__22_Apr_2014_16_22_07_+1000_Hfowe9C_s3T5UyXP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTVgqTAAoJEMDTa8Ir7ZwV9xkP/inpB6dDFQh9mZ4IrcTDuJ5y
-mLg/Hw8ozo6TJmPCsCVFaCZ7U77fVqjW2W59N7kYnOdeqKQfcutgXWc4Bc7SwyGV
-89B+yS5kVUwNl423hBnPzhXY8cKFahZpKRdRRMyHuylhYweGVLMvwvoHbfxsnuq+
-ljWoikZOK6JDBOvsXmLwOIXSFUTHWCYZUFCQsmEvim6nkumSrpaQIeYHhUiZb5Kx
-COslWdBzvMtmgSE+Y4fOZItlkHHz0OLn3wBi+yKmQamSN6fHW4v0DzKNg5lPdNg8
-Ow8C/StPnGLvWpAKkDM/rWLJGwQYS0l8Ujj1q5goxgF9hUiUWu94wgiDSX6iljz5
-SOwgxBrVGuuBPkwGym3UENSTuW2/HvRlyni36K3nc30oWYTNwC8L+X1JzPRLgtl2
-mxLtvv8JKQhIsQN3jzwsCq0qMVohG+NYuMcrCm/vBGlOOP4rZ7NjYzO03BuWMnB8
-a2TG0URTDU+kcqcx3aNb6hwb/hHvgccz/egwX8Vx7sd16Cvr6jpjIVKy9fSUvQ5B
-fICUIVrDiUerNNR1etq7akKkx53R3c9wO9YH0lLJfodxRl2T6I2cj6CW2Lgp6rdC
-BikmxR1p8BVA2U2tASwifPuD1weI1d+nHTFpHp99LMEGBfZHHjfYZhPrNA/icSyx
-/uPJscp6c7M/luSdwOoz
-=dO/q
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_Apr_2014_16_22_07_+1000_Hfowe9C_s3T5UyXP--
