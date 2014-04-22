@@ -1,79 +1,85 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] linux-next: rsi: fix using of removed stuff from mmc
-Date: Tue, 22 Apr 2014 15:05:03 +0200
-Message-ID: <CAPDyKFr6t-FJSahK-U+a-09hYG-GxxY2=xCJZkPtNysGfcT2eA@mail.gmail.com>
-References: <000c01cf5df8$1fecf810$5fc6e830$%jun@samsung.com>
-	<CAPDyKFoMOJ_Eb3O5B-Sy-fF0Yx7Mp==3-Wyff=rTVNCO3YxCFg@mail.gmail.com>
-	<000801cf5e19$07613c40$1623b4c0$%jun@samsung.com>
-	<CAPDyKFpe4_3BXFB8jxHhZknfmT2UrO6ddCcOpq2whN3ayEO6Dg@mail.gmail.com>
-	<000901cf5e26$e1005fa0$a3011ee0$%jun@samsung.com>
+From: Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: linux-next: build failure after merge of the audit tree
+Date: Tue, 22 Apr 2014 11:56:42 -0400
+Message-ID: <20140422155642.GA20182@madcap2.tricolour.ca>
+References: <20140422162207.55e3d9f09244de281b9798cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <000901cf5e26$e1005fa0$a3011ee0$%jun@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fariya Fatima <fariyaf@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:52723 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757189AbaDVP4t (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Apr 2014 11:56:49 -0400
+Content-Disposition: inline
+In-Reply-To: <20140422162207.55e3d9f09244de281b9798cc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
 
->> >>
->> >> I am not sure it's safe to carry this patch through Chris' mmc tree
->> >> due to merge conflicts with John's wireless tree.
->> >>
->> >> Though, since you have changed the mmc_card_highspeed() function to be
->> >> named to mmc_card_hs(), we need to work out the dependency.
->> >>
->> >> We have some options to handle this, I suggest the following.
->> >>
->> >> Re-spin this patch to keep using mmc_card_highspeed() and let John
->> >> take it through his wireless tree. Thus  you also need to keep the
->> > It would be better if this patch can be handled in Chris's.
->> > Because if the rest of changes of this patch with keeping "mmc_card_highspeed" is applied,
->> > high-speed SDIO will be ignored in John's tree.
->>
->> You are right Seungwon!
->>
->> Please re-spin the patchset on the mmc core an squash the code from
->> this patch, into the patch "mmc: drop the speed mode of card's state".
->> We then need to get acks from John and Fariya.
-> Sure! I'll send before long.
-> You still want to get back naming for mmc_card_highspeed?
+On 14/04/22, Stephen Rothwell wrote:
+> Hi Eric,
+> 
+> After merging the audit tree, today's linux-next build (sparc defconfig)
+> failed like this:
+> 
+> In file included from include/linux/audit.h:29:0,
+>                  from mm/mmap.c:33:
+> arch/sparc/include/asm/syscall.h: In function 'syscall_get_arch':
+> arch/sparc/include/asm/syscall.h:131:9: error: 'TIF_32BIT' undeclared (first use in this function)
+> arch/sparc/include/asm/syscall.h:131:9: note: each undeclared identifier is reported only once for each function it appears in
+> 
+> And many more ...
+> 
+> Caused by commit 374c0c054122 ("ARCH: AUDIT: implement syscall_get_arch
+> for all arches").
+> 
+> I applied this patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 22 Apr 2014 16:18:53 +1000
+> Subject: [PATCH] fix ARCH: AUDIT: implement syscall_get_arch for all arches
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-It's up to you, I have no strong opinion.
+Looks good to me.  Thanks.
 
-Kind regards
-Ulf Hansson
+Acked-by: Richard Guy Briggs <rgb@redhat.com>
 
->
->>
->> BTW, I had a look at the rsi_reset_card() function
->> (drivers/net/wireless/rsi/rsi_91x_sdio.c), which handles a complete
->> SDIO re-initialization and I think performs "layering violations"
->> while doing that.  I suppose it's because of lack of documentation
->> about the mmc/sdio core, but I really don't think an SDIO func driver
->> should be doing that kind of stuff by itself. There are APIs to use to
->> perform an SDIO reset. Two options exists:
->>
->> a) Use pm_runtime_get|put in combination with a MMC_CAP_POWER_OFF_CARD
->> enabled host.
->> b) Invoke mmc_power_save|restore_host() API.
-> Yes, we could expect better changes in rsi sdio soon.
->
-> Thanks,
-> Seungwon Jeon
->>
->> Kind regards
->> Ulf Hansson
->>
->> >
->> > Thanks,
->> > Seungwon Jeon
->> >
->> >> name mmc_card_highspeed() function from the patches to the mmc core -
->> >> could you please re-spin and post new version of those patches as
->> >> well!?
->> >>
->> >> Kind regards
->> >> Ulf Hansson
->> >
->
+> ---
+>  arch/sparc/include/asm/syscall.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/sparc/include/asm/syscall.h b/arch/sparc/include/asm/syscall.h
+> index fed3d511b108..a5a8153766b3 100644
+> --- a/arch/sparc/include/asm/syscall.h
+> +++ b/arch/sparc/include/asm/syscall.h
+> @@ -128,8 +128,12 @@ static inline void syscall_set_arguments(struct task_struct *task,
+>  
+>  static inline int syscall_get_arch(void)
+>  {
+> +#if defined(__sparc__) && defined(__arch64__)
+>  	return test_thread_flag(TIF_32BIT) ? AUDIT_ARCH_SPARC
+>  					   : AUDIT_ARCH_SPARC64;
+> +#else
+> +	return AUDIT_ARCH_SPARC;
+> +#endif
+>  }
+>  
+>  #endif /* __ASM_SPARC_SYSCALL_H */
+> -- 
+> 1.9.2
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+
+- RGB
+
+--
+Richard Guy Briggs <rbriggs@redhat.com>
+Senior Software Engineer, Kernel Security, AMER ENG Base Operating Systems, Red Hat
+Remote, Ottawa, Canada
+Voice: +1.647.777.2635, Internal: (81) 32635, Alt: +1.613.693.0684x3545
