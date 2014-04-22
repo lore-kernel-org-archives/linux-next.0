@@ -1,60 +1,99 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Tue, 22 Apr 2014 10:40:32 +0200
-Message-ID: <CAPDyKFqeEsDpamUksmgyEBhMN+xLih-Hv_bczbZv43m8ApHDvA@mail.gmail.com>
-References: <20140422130655.51daec1807bde98ade65d691@canb.auug.org.au>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] linux-next: rsi: fix using of removed stuff from mmc
+Date: Tue, 22 Apr 2014 19:53:00 +0900
+Message-ID: <000801cf5e19$07613c40$1623b4c0$%jun@samsung.com>
+References: <000c01cf5df8$1fecf810$5fc6e830$%jun@samsung.com>
+ <CAPDyKFoMOJ_Eb3O5B-Sy-fF0Yx7Mp==3-Wyff=rTVNCO3YxCFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f169.google.com ([209.85.216.169]:58542 "EHLO
-	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754517AbaDVIkd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Apr 2014 04:40:33 -0400
-Received: by mail-qc0-f169.google.com with SMTP id i17so5147180qcy.0
-        for <linux-next@vger.kernel.org>; Tue, 22 Apr 2014 01:40:32 -0700 (PDT)
-In-Reply-To: <20140422130655.51daec1807bde98ade65d691@canb.auug.org.au>
+Received: from mailout1.samsung.com ([203.254.224.24]:47099 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755478AbaDVKxE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Apr 2014 06:53:04 -0400
+In-reply-to: <CAPDyKFoMOJ_Eb3O5B-Sy-fF0Yx7Mp==3-Wyff=rTVNCO3YxCFg@mail.gmail.com>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <chris@printf.net>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, Fariya Fatima <fariyaf@gmail.com>
+To: 'Ulf Hansson' <ulf.hansson@linaro.org>
+Cc: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Fariya Fatima' <fariyaf@gmail.com>, "'John W. Linville'" <linville@tuxdriver.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chris Ball' <chris@printf.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'linux-mmc' <linux-mmc@vger.kernel.org>
 
-On 22 April 2014 05:06, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Chris,
->
-> After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> drivers/net/wireless/rsi/rsi_91x_sdio.c: In function 'rsi_reset_card':
-> drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: error: 'MMC_STATE_HIGHSPEED' undeclared (first use in this function)
->     card->state &= ~MMC_STATE_HIGHSPEED;
->                     ^
-> drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: note: each undeclared identifier is reported only once for each function it appears in
-> drivers/net/wireless/rsi/rsi_91x_sdio.c:299:4: error: implicit declaration of function 'mmc_card_set_highspeed' [-Werror=implicit-function-declaration]
->     mmc_card_set_highspeed(card);
->     ^
-> drivers/net/wireless/rsi/rsi_91x_sdio.c:306:2: error: implicit declaration of function 'mmc_card_highspeed' [-Werror=implicit-function-declaration]
->   if (mmc_card_highspeed(card))
->   ^
->
-> Caused by commit 395784826a81 ("mmc: drop the speed mode of card's state").
->
-> I have used the version of the mmc tree from next-20140417 for today.
+On Tue, April 22, 2014, Ulf Hansson wrote:
+> On 22 April 2014 08:57, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > As commit 3957848(mmc: drop the speed mode of card's state) applies,
+> > this change should be followed.
+> >
+> > drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: error: 'MMC_STATE_HIGHSPEED' undeclared (first use
+> in this function)
+> > drivers/net/wireless/rsi/rsi_91x_sdio.c:299:4: error: implicit declaration of function
+> 'mmc_card_set_highspeed' [-Werror=implicit-function-declaration]
+> > drivers/net/wireless/rsi/rsi_91x_sdio.c:306:2: error: implicit declaration of function
+> 'mmc_card_highspeed' [-Werror=implicit-function-declaration]
+> >
+> > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> 
+> Hi Seungwon,
+> 
+> Thanks for responding quickly!
+> 
+> > ---
+> >  drivers/net/wireless/rsi/rsi_91x_sdio.c |    4 +---
+> >  1 files changed, 1 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/rsi/rsi_91x_sdio.c b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+> > index 2e39d38..46e7af4 100644
+> > --- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
+> > +++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+> > @@ -285,7 +285,6 @@ static void rsi_reset_card(struct sdio_func *pfunction)
+> >                 if (err) {
+> >                         rsi_dbg(ERR_ZONE, "%s: CCCR speed reg read failed: %d\n",
+> >                                 __func__, err);
+> > -                       card->state &= ~MMC_STATE_HIGHSPEED;
+> >                 } else {
+> >                         err = rsi_cmd52writebyte(card,
+> >                                                  SDIO_CCCR_SPEED,
+> > @@ -296,14 +295,13 @@ static void rsi_reset_card(struct sdio_func *pfunction)
+> >                                         __func__, err);
+> >                                 return;
+> >                         }
+> > -                       mmc_card_set_highspeed(card);
+> >                         host->ios.timing = MMC_TIMING_SD_HS;
+> >                         host->ops->set_ios(host, &host->ios);
+> >                 }
+> >         }
+> >
+> >         /* Set clock */
+> > -       if (mmc_card_highspeed(card))
+> > +       if (mmc_card_hs(card))
+> >                 clock = 50000000;
+> >         else
+> >                 clock = card->cis.max_dtr;
+> > --
+> > 1.7.0.4
+> >
+> >
+> 
+> I am not sure it's safe to carry this patch through Chris' mmc tree
+> due to merge conflicts with John's wireless tree.
+> 
+> Though, since you have changed the mmc_card_highspeed() function to be
+> named to mmc_card_hs(), we need to work out the dependency.
+> 
+> We have some options to handle this, I suggest the following.
+> 
+> Re-spin this patch to keep using mmc_card_highspeed() and let John
+> take it through his wireless tree. Thus  you also need to keep the
+It would be better if this patch can be handled in Chris's.
+Because if the rest of changes of this patch with keeping "mmc_card_highspeed" is applied,
+high-speed SDIO will be ignored in John's tree.
 
-Hi Chris,
+Thanks,
+Seungwon Jeon
 
-Until we work out the dependency issue caused by the above commit,
-could you please drop the following patches from your mmc-next
-branch!?
-
-df1a292 mmc: add support for HS400 mode of eMMC5.0
-f27a5d7 mmc: rework selection of bus speed mode
-e64f275 mmc: step power class after final selection of bus mode
-6371adf mmc: identify available device type to select
-3957848 mmc: drop the speed mode of card's state
-
-Kind regards
-Ulf Hansson
-
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> name mmc_card_highspeed() function from the patches to the mmc core -
+> could you please re-spin and post new version of those patches as
+> well!?
+> 
+> Kind regards
+> Ulf Hansson
