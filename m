@@ -1,64 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Tue, 22 Apr 2014 11:26:53 +1000
-Message-ID: <20140422112653.bff070556db8f7d28187695a@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the userns tree
+Date: Tue, 22 Apr 2014 11:34:22 +1000
+Message-ID: <20140422113422.a49a96ab12274a1bff6cb14b@canb.auug.org.au>
+References: <20140417151245.467efa8bd8d084277fd471c9@canb.auug.org.au>
+	<87bnw0ctkb.fsf@x220.int.ebiederm.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Apr_2014_11_26_53_+1000_ci96lqytTXbjh=qD"
+ boundary="Signature=_Tue__22_Apr_2014_11_34_22_+1000_nv42p9rl5.qUrH8Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pide.tip.net.au ([101.0.96.218]:50423 "EHLO pide.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751463AbaDVB1A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Apr 2014 21:27:00 -0400
+Received: from [101.0.96.218] ([101.0.96.218]:49707 "EHLO pide.tip.net.au"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1751028AbaDVBev (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Apr 2014 21:34:51 -0400
+In-Reply-To: <87bnw0ctkb.fsf@x220.int.ebiederm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>
 
---Signature=_Tue__22_Apr_2014_11_26_53_+1000_ci96lqytTXbjh=qD
+--Signature=_Tue__22_Apr_2014_11_34_22_+1000_nv42p9rl5.qUrH8Q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Eric,
 
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On Thu, 17 Apr 2014 00:18:44 -0700 ebiederm@xmission.com (Eric W. Biederman=
+) wrote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>=20
+> > After merging the userns tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > fs/namespace.c: In function 'new_mountpoint':
+> > fs/namespace.c:725:9: error: implicit declaration of function 'hash' [-=
+Werror=3Dimplicit-function-declaration]
+> >   struct list_head *chain =3D mountpoint_hashtable + hash(NULL, dentry);
+> >          ^
+> > fs/namespace.c:725:28: warning: initialization from incompatible pointe=
+r type [enabled by default]
+> >   struct list_head *chain =3D mountpoint_hashtable + hash(NULL, dentry);
+> >                             ^
+> > fs/namespace.c:741:2: warning: passing argument 2 of 'hlist_add_head' f=
+rom incompatible pointer type [enabled by default]
+> >   hlist_add_head(&mp->m_hash, chain);
+> >   ^
+> > In file included from include/linux/signal.h:4:0,
+> >                  from include/linux/syscalls.h:72,
+> >                  from fs/namespace.c:11:
+> > include/linux/list.h:637:20: note: expected 'struct hlist_head *' but a=
+rgument is of type 'struct list_head *'
+> >  static inline void hlist_add_head(struct hlist_node *n, struct hlist_h=
+ead *h)
+> >                     ^
+> >
+> > So clearly my merge conflict resolution was not sufficient.
+> >
+> > I will just drop the userns tree for today.  Please give me some help
+> > with the resolutions - or fix this stuff up yourselves.
+>=20
+> You had this exact conflict succesfully resolved yesterday.  Sigh.
+>=20
+> Line 725 of fs/namespace.c: Simply need to read.
+> 	struct hlist_head *chain =3D mp_hash(dentry);
 
-fs/nfs/direct.c: In function 'nfs_direct_read_schedule_iovec':
-fs/nfs/direct.c:382:4: error: implicit declaration of function 'vfree' [-We=
-rror=3Dimplicit-function-declaration]
-    vfree(pagevec);
-    ^
-
-Caused by commit 2703e4cd2d57 ("new helper: iov_iter_get_pages_alloc()").
-
-I have used the vfs tree from next-20140417 for today.
-
+Yes, sorry about that - fixed for today (hopefully).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__22_Apr_2014_11_26_53_+1000_ci96lqytTXbjh=qD
+--Signature=_Tue__22_Apr_2014_11_34_22_+1000_nv42p9rl5.qUrH8Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTVcViAAoJEMDTa8Ir7ZwVTRcP/1Tztv/XoVMTywX+pNuYhy3i
-WF0kXEWRY00GvFEulvQ8tFUx0oE1mja8xc+1h6uqECa4wqCPljEGaYLd7WvYWh0i
-qsn8xBQysXypvtcTvknZYbkUvL6HX4N2e1vm779Mm164rNj0BLudrRBXJgaH1PPR
-OiXirz2Fdh1xZ65toymqN6BHL44C/vjwspWlLhmzDZQR0XlWzw0zD1YRTafL0e7a
-hfn1YsTTT6NTrOZxKkZnc9cPRuMcGM00hUkIjSX8yyFQVYLjswxH/yRVBc62BFb5
-6n176Bhq9/OgACaAptarUcEXtGU4d7lKMc+es7FknieTsmuYXd4ItB8xFFwZ6404
-eafvNIIy5KjTm/iOL54hpQ6nsjfLGWEcXTLBF+v66lR/yQtVG1GVQ262un17+XP+
-BQsqw9KbccbE5Oz7wYrQUUGVu83VYbsgVUoT95o43o4CBci6Fwt11u52eb2sLtC/
-WHgg9nOj/wHwh9wfYLVq0VUIL502TNNxM2WwkdTt4qzNkpe34tulQqOUFb8ukBF4
-8dkV5SWdoDLrLmclE17y83tjrh/ohEvMFYCaGaZJ0GGtCTZAc0X2jEzIV3t7YZdH
-pDxIBMY0gzOGCldoSL1fh4jTH5dmnISBCcMeEscXbwHqWsGrcX94CAYRNqVlXScn
-IAsjAGF3OVTjQNODti0t
-=BduS
+iQIcBAEBCAAGBQJTVcciAAoJEMDTa8Ir7ZwVWjYP/2KHa0SrQ7CRNL19tRk8bVsK
+gZYx6WblfeJ3hcXrCdgjGttsNGt5wBI7HnhwX88lpaQrMPMngYk+8im5c4gbAR+S
++jQdr+luwc18noN1hmZ0l0/Gs4nCDyXw4xoP2x08JRZXCRhrgPWGOwtodfIoh7EH
+75B5LSRV6NTFd4lEYvbI5IWMxFJQl94TlfoHKvliENWk6pQgkMI1+NoYCP9lCD+5
+8hqS9PVAix8aONVy7TK4RQX22GtMQTX1gc+mNrRCONFRlTXA+tvlthkoss72acQm
+DrmUASYeLK7kXEqLXTi9fXkqInuYMniCG9DAH7vedq30pxDWTgPINhNoTNmZZL9S
+AQ6w3UJw6HixoqYzTbh+ghxakTbpzvPM3anOnk0CIO+TWvW1w7hw4McFCLR+jvDp
+z0cKuj9UdRpUTmXeZKBEPxvHD28BGL6PVEkAstdNGwrVMkjeCC6EiHJh49kCZKa1
+e5xH7lfi2rh7/mXSyBfKA6RwSzcnB9tAvEpv1XKvM4e42J00iNhcElC9MIaGhtjZ
+Ff8itlfrh9HdFor1TNMHCGKeKlY30myYjmQvDhDV1bIKbO870ZFEONet+oxFAUKk
+EcjEGAMvPQwYm9GdMnuxXLmQ89QdMTV8/mOaohud+Fe1ptyT15Rgq633ian/Jar+
+v7DDF3EG28Xgzc0axX6v
+=uhRf
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Apr_2014_11_26_53_+1000_ci96lqytTXbjh=qD--
+--Signature=_Tue__22_Apr_2014_11_34_22_+1000_nv42p9rl5.qUrH8Q--
