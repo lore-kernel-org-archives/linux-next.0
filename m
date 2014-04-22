@@ -1,48 +1,60 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: build warning after merge of the arm tree
-Date: Tue, 22 Apr 2014 09:35:24 +0100
-Message-ID: <20140422083524.GQ24070@n2100.arm.linux.org.uk>
-References: <20140422103223.f16654774d15a81410eaad22@canb.auug.org.au>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Tue, 22 Apr 2014 10:40:32 +0200
+Message-ID: <CAPDyKFqeEsDpamUksmgyEBhMN+xLih-Hv_bczbZv43m8ApHDvA@mail.gmail.com>
+References: <20140422130655.51daec1807bde98ade65d691@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:42995 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753636AbaDVIgP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Apr 2014 04:36:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20140422103223.f16654774d15a81410eaad22@canb.auug.org.au>
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:58542 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754517AbaDVIkd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Apr 2014 04:40:33 -0400
+Received: by mail-qc0-f169.google.com with SMTP id i17so5147180qcy.0
+        for <linux-next@vger.kernel.org>; Tue, 22 Apr 2014 01:40:32 -0700 (PDT)
+In-Reply-To: <20140422130655.51daec1807bde98ade65d691@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Capella <sebastian.capella@linaro.org>
+To: Chris Ball <chris@printf.net>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, Fariya Fatima <fariyaf@gmail.com>
 
-On Tue, Apr 22, 2014 at 10:32:23AM +1000, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> After merging the arm tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> In file included from /scratch/sfr/next/arch/arm/include/asm/page.h:163:0,
->                  from /scratch/sfr/next/include/linux/mmzone.h:20,
->                  from /scratch/sfr/next/include/linux/gfp.h:5,
->                  from /scratch/sfr/next/include/linux/kmod.h:22,
->                  from /scratch/sfr/next/include/linux/module.h:13,
->                  from /scratch/sfr/next/init/version.c:10:
-> /scratch/sfr/next/arch/arm/include/asm/memory.h:297:0: warning: "virt_to_pfn" redefined [enabled by default]
-> /scratch/sfr/next/arch/arm/include/asm/memory.h:194:0: note: this is the location of the previous definition
-> 
-> Lots of these ...
-> 
-> Introduced by commit e2b5c192c4a6 ("ARM: 8011/1: ARM hibernation /
-> suspend-to-disk").
+On 22 April 2014 05:06, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Chris,
+>
+> After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> drivers/net/wireless/rsi/rsi_91x_sdio.c: In function 'rsi_reset_card':
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: error: 'MMC_STATE_HIGHSPEED' undeclared (first use in this function)
+>     card->state &= ~MMC_STATE_HIGHSPEED;
+>                     ^
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:299:4: error: implicit declaration of function 'mmc_card_set_highspeed' [-Werror=implicit-function-declaration]
+>     mmc_card_set_highspeed(card);
+>     ^
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:306:2: error: implicit declaration of function 'mmc_card_highspeed' [-Werror=implicit-function-declaration]
+>   if (mmc_card_highspeed(card))
+>   ^
+>
+> Caused by commit 395784826a81 ("mmc: drop the speed mode of card's state").
+>
+> I have used the version of the mmc tree from next-20140417 for today.
 
-Yes, it's a conflict between that patch and one I pushed during the
-merge window.  I've asked the Sebastian to validate with his version of
-virt_to_pfn() removed, and I'm waiting for the results of that...
-That's partly happened, but I'm waiting for the final results.
+Hi Chris,
 
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+Until we work out the dependency issue caused by the above commit,
+could you please drop the following patches from your mmc-next
+branch!?
+
+df1a292 mmc: add support for HS400 mode of eMMC5.0
+f27a5d7 mmc: rework selection of bus speed mode
+e64f275 mmc: step power class after final selection of bus mode
+6371adf mmc: identify available device type to select
+3957848 mmc: drop the speed mode of card's state
+
+Kind regards
+Ulf Hansson
+
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
