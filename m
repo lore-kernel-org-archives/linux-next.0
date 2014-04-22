@@ -1,28 +1,61 @@
-From: Sebastian Capella <sebastian.capella@linaro.org>
-Subject: Re: linux-next: build warning after merge of the arm tree
-Date: Mon, 21 Apr 2014 17:59:01 -0700
-Message-ID: <CADHgK6vPpNtKNmqcQgqDUHLSCM0DfDGbqcrXMaNkOpe+6ikR-Q@mail.gmail.com>
-References: <20140422103223.f16654774d15a81410eaad22@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' and te ext4
+ trees
+Date: Tue, 22 Apr 2014 11:04:59 +1000
+Message-ID: <20140422110459.ab3af554dd61297c61a568c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140422103223.f16654774d15a81410eaad22@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from pide.tip.net.au ([101.0.96.218]:50572 "EHLO pide.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751138AbaDVBFI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Apr 2014 21:05:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
 
-Hi Stephen,
+--Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm not sure if this is helpful, but the virt_to_pfn macro added in
-arch/arm/include/asm/memory.h:300 (I assume the 297 warning in yours),
-in the hibernation patch:
+Hi Al,
 
-#define virt_to_pfn(kaddr)      (__pa(kaddr) >> PAGE_SHIFT)
+Today's linux-next merge of the vfs tree got a conflict in
+fs/ext4/extents.c between rebased versions of commits from Linus' and the
+ext4 trees and the same commits from the vfs tree.
 
-Should be removed as there is an improved version of virt_to_pfn for
-arm in this commit: e26a9e00afc482b971afcaef1db8c9034d4d6d7c
+I fixed it up (I just used the version from Linus' and the ext4 trees)
+and can carry the fix as necessary (no action is required).
 
-Thanks,
+Al, this is why I asked you about checking with Ted about his tree being
+rebased after you merged it into yours ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Sebastian
+--Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTVcBBAAoJEMDTa8Ir7ZwVbzYP/ApoRPQQKJ2ImGXNWtfNcptK
+mocUZg7ksjqPoUWtYMW6XBVO0Yqg8vDNwVPDMmNOfLENPuT4Two0gtMwmeUny93P
+k8UwPRJDf7l3XTz0t+jyCZLKVKsjjw+q+3c2vIroTpZ3ufnH5OSbzIjNtmdXX4Iv
+PwROWXqwwuKMs31U9o63/SsJs6QcWlWU8Z3iY4lLBTjRaSBtaqrDgbFOZ7omJTm+
+w7zBVdYQl8P3JgRXpLOjdhKNss/8uugZ3XRzW7ye73giHt8d2Q0k/BHMWeLDdj9t
+JJC1Tz+rL6Pchg1s2mQXAcwCiMWpVDD/smJbjBNViA71YFLw7k9qtEsQwOU3Ess/
+3/yBN421uWYeg5o8TD4lrhUhC51pLs4zybdAHELQnnV+IPqTRhXBbs3cpJ/DL7Ig
+44XNubrOjiSuJvNr2uF4Gwf7ICO8LodYXGV3ZQPmqo6EhRUPeJxQWCsCfBydg0ks
+EJbJo9h5KGS6n74NC9mxL/tU2BhRv3wda1krFl6ikzLTU04HWaXSpEoiILHtUdO0
+rnMHHY47RxhmWfkYcU8Hz0z1W0iGTodtim017BnGG+xk2BffoP+kWIcSuYlAo/0S
+HAtMFFxM4ZyR/ER71otwePscXCpmWlviDHxF2ByRzWIW0GViK7VygYpVFO5Fc6ZM
+AXI3bxukOtO3yF3lZsyF
+=aUFM
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Apr_2014_11_04_59_+1000_o.iz7QBTAuWdFk+w--
