@@ -1,80 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the audit tree with Linus' tree
-Date: Tue, 22 Apr 2014 13:58:39 +1000
-Message-ID: <20140422135839.7c0471ebff244cf3d123e276@canb.auug.org.au>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: linux-next: build failure after merge of the mmc tree
+Date: Tue, 22 Apr 2014 13:57:04 +0900
+Message-ID: <001001cf5de7$4e3728a0$eaa579e0$%jun@samsung.com>
+References: <20140422130655.51daec1807bde98ade65d691@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Apr_2014_13_58_39_+1000_ZyDcQpCMnUcyEUiD"
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33332 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751244AbaDVD6q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Apr 2014 23:58:46 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:27614 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750890AbaDVE5H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Apr 2014 00:57:07 -0400
+In-reply-to: <20140422130655.51daec1807bde98ade65d691@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markos Chandras <markos.chandras@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Chris Ball' <chris@printf.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Ulf Hansson' <ulf.hansson@linaro.org>
 
---Signature=_Tue__22_Apr_2014_13_58_39_+1000_ZyDcQpCMnUcyEUiD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, April 22, 2014, Stephen Rothwell wrote:
+> Hi Chris,
+> 
+> After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/net/wireless/rsi/rsi_91x_sdio.c: In function 'rsi_reset_card':
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: error: 'MMC_STATE_HIGHSPEED' undeclared (first use in
+> this function)
+>     card->state &= ~MMC_STATE_HIGHSPEED;
+>                     ^
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:288:20: note: each undeclared identifier is reported only once
+> for each function it appears in
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:299:4: error: implicit declaration of function
+> 'mmc_card_set_highspeed' [-Werror=implicit-function-declaration]
+>     mmc_card_set_highspeed(card);
+>     ^
+> drivers/net/wireless/rsi/rsi_91x_sdio.c:306:2: error: implicit declaration of function
+> 'mmc_card_highspeed' [-Werror=implicit-function-declaration]
+>   if (mmc_card_highspeed(card))
+>   ^
+> 
+> Caused by commit 395784826a81 ("mmc: drop the speed mode of card's state").
+> 
+> I have used the version of the mmc tree from next-20140417 for today.
 
-Hi Eric,
+I didn't detect usage out of mmc-sub for that.
+Let me fix and send a patch.
 
-Today's linux-next merge of the audit tree got a conflict in
-arch/mips/kernel/ptrace.c between commits 6e34574603f6 ("MIPS: asm:
-syscall: Define syscall_get_arch") and 1225eb825208("MIPS: ptrace: Move
-away from secure_computing_strict") from Linus' tree and commit
-8ea408a0c1e7 ("ARCH: AUDIT: audit_syscall_entry() should not require the
-arch") from the audit tree.
+Thanks,
+Seungwon Jeon
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/mips/kernel/ptrace.c
-index 71f85f427034,8b393bcf7919..000000000000
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@@ -649,11 -677,8 +649,9 @@@ asmlinkage long syscall_trace_enter(str
-  	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-  		trace_sys_enter(regs, regs->regs[2]);
- =20
-- 	audit_syscall_entry(syscall_get_arch(),
-- 			    syscall,
-- 			    regs->regs[4], regs->regs[5],
- -	audit_syscall_entry(regs->regs[2], regs->regs[4], regs->regs[5],
-++	audit_syscall_entry(syscall, regs->regs[4], regs->regs[5],
-  			    regs->regs[6], regs->regs[7]);
- +	return syscall;
-  }
- =20
-  /*
-
---Signature=_Tue__22_Apr_2014_13_58_39_+1000_ZyDcQpCMnUcyEUiD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTVejzAAoJEMDTa8Ir7ZwVnD0P/27VaAk0Zyce+khrJWx1p4lV
-Vu4oaVxN/E/a8ZEtkgvBvscOxIVHw9MZheolWSfNt24ePQpPLgNAVP8wBasmVg98
-rgsn6GTw8twGP/eXdkowoBjQyvVEawlUpggRwu2C9Hprq0GV8ZhxDfwqdFN3nr7v
-UuOoFcImR9cFPn5yxpMiGeZ8uSc6UHwW1+x5AZxxTvSdns8bJHa4xRcIdDrIzq9n
-x1CRN9z7dZi+X1Aiy4rIQoRWtUIGW/plpHUIBa3R+XzywE800YHd90ruCDEeIByt
-QyflR26RWeNnV9C5MIfpR/6+WrPHIcYxfPLju2pxEaZj5+1ER1iskmSu40rpEvsK
-Bc4c0C6XP1O5zhxNXAlCudJxxjhfpolT+FR/WHI++bc77/F1gHxVPm237SskiLnA
-uRPuvMFPfv1nEaatTOyTdns2k7ncr4TqVFvU+Za8ZgrT3l1atbUeIR1KonQibTa6
-Wc5uelWTOYln10++MMwdQxDk8f/CAz9cLlzJDxHb7fXUyQSdGjcBjhFl4w3MPZ5b
-TBNtOtWJTxYP1P5Reapvnl6zl1KoZSIeKA6UH2VWyCPC4jUb+jv5+0e/Xawu97UE
-44ouxVvv98LJdgtQQ9yGTXk7AGIBoYE28Vy7CiRQ7Ec5WE8pas8gA5YKACeq27g6
-UmmXlRj5SOESeD4sSOtr
-=yIT0
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_Apr_2014_13_58_39_+1000_ZyDcQpCMnUcyEUiD--
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
