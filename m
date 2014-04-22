@@ -1,85 +1,55 @@
-From: Richard Guy Briggs <rgb@redhat.com>
-Subject: Re: linux-next: build failure after merge of the audit tree
-Date: Tue, 22 Apr 2014 11:56:42 -0400
-Message-ID: <20140422155642.GA20182@madcap2.tricolour.ca>
-References: <20140422162207.55e3d9f09244de281b9798cc@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [blackfin] gpio_request build fail on linux-next bisected
+Date: Tue, 22 Apr 2014 12:21:06 -0400
+Message-ID: <535696F2.6010009@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:52723 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757189AbaDVP4t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Apr 2014 11:56:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20140422162207.55e3d9f09244de281b9798cc@canb.auug.org.au>
+Received: from mail.windriver.com ([147.11.1.11]:64233 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751335AbaDVQUt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Apr 2014 12:20:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+To: Steven Miao <realmz6@gmail.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 14/04/22, Stephen Rothwell wrote:
-> Hi Eric,
-> 
-> After merging the audit tree, today's linux-next build (sparc defconfig)
-> failed like this:
-> 
-> In file included from include/linux/audit.h:29:0,
->                  from mm/mmap.c:33:
-> arch/sparc/include/asm/syscall.h: In function 'syscall_get_arch':
-> arch/sparc/include/asm/syscall.h:131:9: error: 'TIF_32BIT' undeclared (first use in this function)
-> arch/sparc/include/asm/syscall.h:131:9: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> And many more ...
-> 
-> Caused by commit 374c0c054122 ("ARCH: AUDIT: implement syscall_get_arch
-> for all arches").
-> 
-> I applied this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 22 Apr 2014 16:18:53 +1000
-> Subject: [PATCH] fix ARCH: AUDIT: implement syscall_get_arch for all arches
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Hi Steven,
 
-Looks good to me.  Thanks.
+This linux-next build fail:
 
-Acked-by: Richard Guy Briggs <rgb@redhat.com>
+http://kisskb.ellerman.id.au/kisskb/buildresult/10940572/
 
-> ---
->  arch/sparc/include/asm/syscall.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/sparc/include/asm/syscall.h b/arch/sparc/include/asm/syscall.h
-> index fed3d511b108..a5a8153766b3 100644
-> --- a/arch/sparc/include/asm/syscall.h
-> +++ b/arch/sparc/include/asm/syscall.h
-> @@ -128,8 +128,12 @@ static inline void syscall_set_arguments(struct task_struct *task,
->  
->  static inline int syscall_get_arch(void)
->  {
-> +#if defined(__sparc__) && defined(__arch64__)
->  	return test_thread_flag(TIF_32BIT) ? AUDIT_ARCH_SPARC
->  					   : AUDIT_ARCH_SPARC64;
-> +#else
-> +	return AUDIT_ARCH_SPARC;
-> +#endif
->  }
->  
->  #endif /* __ASM_SPARC_SYSCALL_H */
-> -- 
-> 1.9.2
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+which fails like this:
 
+  CC      arch/blackfin/mach-bf533/boards/stamp.o
+arch/blackfin/mach-bf533/boards/stamp.c: In function 'stamp_init':
+arch/blackfin/mach-bf533/boards/stamp.c:874:2: error: implicit declaration of function 'gpio_request'
+arch/blackfin/mach-bf533/boards/stamp.c:876:3: error: implicit declaration of function 'gpio_direction_output'
+arch/blackfin/mach-bf533/boards/stamp.c:877:3: error: implicit declaration of function 'gpio_free'
+make[1]: *** [arch/blackfin/mach-bf533/boards/stamp.o] Error 1
 
+...bisects as follows:
 
-- RGB
+a0c1fb2ea74dedecd303fb0388e21ca869239db2 is the first bad commit
+commit a0c1fb2ea74dedecd303fb0388e21ca869239db2
+Author: Steven Miao <realmz6@gmail.com>
+Date:   Mon Mar 17 13:36:51 2014 +0800
 
---
-Richard Guy Briggs <rbriggs@redhat.com>
-Senior Software Engineer, Kernel Security, AMER ENG Base Operating Systems, Red Hat
-Remote, Ottawa, Canada
-Voice: +1.647.777.2635, Internal: (81) 32635, Alt: +1.613.693.0684x3545
+    blackfin: portmux: cleanup head file
+    
+    drop unused head file
+    change pinmux request/free macro for backward compatiblity
+    add function declaration
+    
+    Signed-off-by: Steven Miao <realmz6@gmail.com>
+
+:040000 040000 6bf439b9ec79ab17c87afe720ef23e2a01ee1c1f 6a67fdde171be53f3bfd0fd290f270fbca104542 M	arch
+bisect run success
+
+Since the failure is now in mainline/master, the fix should
+be aimed at rc3 and not be specific to linux-next.
+
+Thanks,
+Paul.
