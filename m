@@ -1,99 +1,117 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless-next tree
-Date: Wed, 23 Apr 2014 13:47:53 +1000
-Message-ID: <20140423134753.4731f16efe32ee9f20925757@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 23 Apr 2014 14:17:27 +1000
+Message-ID: <20140423141727.0262510673258b07e9a9fa4a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_Apr_2014_13_47_53_+1000_Cne3cXYYf.OXrymN"
+ boundary="Signature=_Wed__23_Apr_2014_14_17_27_+1000_XTiil/4_xe918AZN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38179 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:32907 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751154AbaDWDr7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Apr 2014 23:47:59 -0400
+	id S1750746AbaDWERf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Apr 2014 00:17:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amitkumar Karwar <akarwar@marvell.com>, Bing Zhao <bzhao@marvell.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nishanth Aravamudan <nacc@linux.vnet.ibm.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Mel Gorman <mgorman@suse.de>
 
---Signature=_Wed__23_Apr_2014_13_47_53_+1000_Cne3cXYYf.OXrymN
+--Signature=_Wed__23_Apr_2014_14_17_27_+1000_XTiil/4_xe918AZN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Andrew,
 
-After merging the wireless-next tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-drivers/net/wireless/mwifiex/pcie.c: In function 'mwifiex_pcie_fw_dump_work=
-':
-drivers/net/wireless/mwifiex/pcie.c:2290:3: error: implicit declaration of =
-function 'vmalloc' [-Werror=3Dimplicit-function-declaration]
-   entry->mem_ptr =3D vmalloc(memory_size + 1);
-   ^
-drivers/net/wireless/mwifiex/pcie.c:2290:18: warning: assignment makes poin=
-ter from integer without a cast [enabled by default]
-   entry->mem_ptr =3D vmalloc(memory_size + 1);
-                  ^
-drivers/net/wireless/mwifiex/pcie.c:2361:4: error: implicit declaration of =
-function 'vfree' [-Werror=3Dimplicit-function-declaration]
-    vfree(entry->mem_ptr);
-    ^
+In file included from arch/arm/mm/flush.c:20:0:
+include/linux/hugetlb.h: In function 'hugepages_supported':
+include/linux/hugetlb.h:468:9: error: 'HPAGE_SHIFT' undeclared (first use i=
+n this function)
 
-Caused by commit e050c76fcf49 ("mwifiex: add firmware dump feature for
-PCIe").
+And a few more similarly.
 
-I have applied this patch for today:
+Caused by commit c669debfbf05 ("hugetlb: ensure hugepage access is denied
+if hugepages are not supported").
 
+I added the following fix patch:
+
+=46rom 91e29eff2be1b6bc0c9ea33b1ee901dd4877e924 Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 23 Apr 2014 13:44:59 +1000
-Subject: [PATCH] mwifiex: using vmallog requires including vmalloc.h
+Date: Wed, 23 Apr 2014 14:12:56 +1000
+Subject: [PATCH] hugetlb: ensure hugepage access is denied if hugepages are
+ not supported -fix
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/net/wireless/mwifiex/pcie.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/hugetlb.h | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwi=
-fiex/pcie.c
-index 51989b31137a..9c1f42754bbe 100644
---- a/drivers/net/wireless/mwifiex/pcie.c
-+++ b/drivers/net/wireless/mwifiex/pcie.c
-@@ -17,6 +17,7 @@
-  * this warranty disclaimer.
-  */
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 4eace5e94117..cbee9847e425 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -214,6 +214,15 @@ static inline int is_file_hugepages(struct file *file)
+ 	return 0;
+ }
 =20
-+#include <linux/vmalloc.h>
- #include <linux/firmware.h>
++static inline bool hugepages_supported(void)
++{
++	/*
++	 * Some platform decide whether they support huge pages at boot
++	 * time. On these, such as powerpc, HPAGE_SHIFT is set to 0 when
++	 * there is no such support
++	 */
++	return HPAGE_SHIFT !=3D 0;
++}
 =20
- #include "decl.h"
+ #else /* !CONFIG_HUGETLBFS */
+=20
+@@ -458,14 +467,4 @@ static inline spinlock_t *huge_pte_lock(struct hstate =
+*h,
+ 	return ptl;
+ }
+=20
+-static inline bool hugepages_supported(void)
+-{
+-	/*
+-	 * Some platform decide whether they support huge pages at boot
+-	 * time. On these, such as powerpc, HPAGE_SHIFT is set to 0 when
+-	 * there is no such support
+-	 */
+-	return HPAGE_SHIFT !=3D 0;
+-}
+-
+ #endif /* _LINUX_HUGETLB_H */
 --=20
 1.9.2
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__23_Apr_2014_13_47_53_+1000_Cne3cXYYf.OXrymN
+--Signature=_Wed__23_Apr_2014_14_17_27_+1000_XTiil/4_xe918AZN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTVzfuAAoJEMDTa8Ir7ZwVWh4P/RXkrDOqO5RvEwH1F36djonz
-0d3i8mQupPI9tFQiFofSTuUk7KVgw72XvMDsIAFjBOnYAnDCDdHezCSRCEjSxqvy
-bM088FmHi8yFdIxMlKsBsAufzYBFPJwZIwFOc5DylxVRCReM8dzyrSBziahW/AE6
-m5Ex7R1ohMhu57MWRNCN0ouDB7ScX/mz4tKT5KU6pVyAIdNfWEvXFg1K46dscAMK
-pMuEgsJDDJE8DhASuUWWiNfZ9XjGaBa9RJVQo3fwk6cayf+myVIRibZc/erqe7Zr
-s/oItcKPhJQKyigLpCbME5Kr9bMp1pvymi9i89wUxxH4GMvgorh97OzuLJncyLQh
-k6dRGaCpBGHM1vPetjuVH39uwlR5xVWikrf/cS8VZaOUymf92N+xWS22pKq+c9LN
-MYm5kscyWE8/cQ+eXO8BPUZmYZUAXoo/aWrxPct9+etcj9H7P4Kvc0e9nLnNmSQN
-xP5xk15HAC1LUQVjphPiDn19FMuDkTcmmEK4ySJ/rCuj9yLH4YjZS7CutssY8LIY
-4qI1G3GGybVHQ84Dc2ZI7f6sZk5kec9C4r7PCJUt7bIaxu8e/WzA2yCQR8jtGCi+
-40r9lgAMtfWQIBermLvL6f8vdTAr/zQ1h5FTt8NraXtBjGCcSg2Ns5/OxTUb9jDu
-9h1A2qmzMAFxpcEArRrN
-=HQkN
+iQIcBAEBCAAGBQJTVz7dAAoJEMDTa8Ir7ZwVwJgP/iHj8VUXkOv8ZRHYjpuAwtAM
+r6Av13BAvWwucr32BU7Ae6cHWmcCy5JQCDtiILaCmv08vvqq05nmNWzNo6eSnCqh
+9o2jh78u2Mmt+uQchMLgQ1qGlfow/EwbXfLV3biV8B8edygntgdZMlpevzIhfXyN
+mgM9gWEUpgd3H1z+Qj7xf28S4b9NdnAmcfaqoddOFHI7Qj/rJW3YnQvs1VG0gwSD
+7jgdoJpryB7cTs/VXBRRuufVTTkcSD+R5BrBXpb1mwXAS+jYlkue0fCKxe8zfz6C
+yh6CQF7sEo9Hf8fJgueF0l0AY+xG+u+ZiK7ri07oWjY4rrzbg6tTSACEMzwfmtha
+DSLliE9G2T4d9jmdOR2vr6ic4N0q0I3nztUX4exaIY0ybQWchz68pTVxHTLTIg1c
+K9QLjY9E0upL+BLFvkrb6uHjTs+snKqYXpGAbdmnh+Z4Oj/92F56D3c3jxr/HYdM
+VeFfusHcKLelgcq3aV1c6xMLOztmjte5pM7uQ/RuujVIXoWRAQO2mhrrq4MJJr/v
+I6XB9KngS4sXptR2nMPNBo22vtdxdfw7YzZimVdVctHogDxxCf5uyzZeqOGWpgmr
+VMEay/VTPcGzxgsl8/kWS+/JGE0csnzNIQGZnYXEJ/gOcwdd67MdRTQD+QswFOk5
+Rfz7B/2S9DXZxRghXGCn
+=MM8o
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Apr_2014_13_47_53_+1000_Cne3cXYYf.OXrymN--
+--Signature=_Wed__23_Apr_2014_14_17_27_+1000_XTiil/4_xe918AZN--
