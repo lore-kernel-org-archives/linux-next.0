@@ -1,46 +1,65 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2014-04-22-15-20 uploaded (uml 32- and 64-bit defconfigs)
-Date: Wed, 23 Apr 2014 17:00:10 -0700
-Message-ID: <5358540A.3030302@infradead.org>
-References: <20140422222121.2FAB45A431E@corp2gmr1-2.hot.corp.google.com>	<5357F405.20205@infradead.org>	<20140423134131.778f0d0a@redhat.com>	<5357FCEB.2060507@infradead.org>	<20140423141600.4a303d95@redhat.com>	<20140423112442.5a5c8f23d580a65575e0c5fc@linux-foundation.org>	<20140424081019.596b5d23c624f5721ba0480a@canb.auug.org.au>	<20140423151819.d752391e323a850ca0aded57@linux-foundation.org> <20140424083100.c5f32e14abd2f6ed05673cb9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the libata tree
+Date: Thu, 24 Apr 2014 11:17:54 +1000
+Message-ID: <20140424111754.45e9672e06c362945d111b6e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20140424083100.c5f32e14abd2f6ed05673cb9@canb.auug.org.au>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Luiz Capitulino <lcapitulino@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, nacc@linux.vnet.ibm.com, Richard Weinberger <richard@nod.at>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__24_Apr_2014_11_17_54_+1000_JmDUxZv/5R8zACYz"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kefeng Wang <kefeng.wang@linaro.org>, Hans de Goede <hdegoede@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On 04/23/14 15:31, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> On Wed, 23 Apr 2014 15:18:19 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
->>
->> Stephen who?
->>
->> Oh, that guy who sends stuff first then comes last when others use LIFO :)
-> 
-> Ah ha!  So all I have to do is stamp my emails a day ahead?  Or queue
-> them up and send them via a cron job just after "Andrew's breakfast
-> time"? :-)
-> 
-> Anyway, I was more suggesting that Randy and the others could have saved
-> themselves time by reading that email.
+--Signature=_Thu__24_Apr_2014_11_17_54_+1000_JmDUxZv/5R8zACYz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Agreed, thanks for kicking me.  ;)
+Hi Tejun,
 
-I think that it also means that there is still plenty of room for process
-improvement with akpm including linux-next and linux-next including (parts of)
-akpm-current.  IMHO.
+After merging the libata tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/ata/libahci_platform.c: In function 'ahci_platform_init_host':
+drivers/ata/libahci_platform.c:317:20: warning: cast to pointer from intege=
+r of different size [-Wint-to-pointer-cast]
+  pi.private_data =3D (void *)host_flags
+                    ^
+drivers/ata/libahci_platform.c:318:2: error: expected ';' before 'hpriv'
+  hpriv->flags |=3D host_flags;
+  ^
 
--- 
-~Randy
+Please test build this stuff ...
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Caused by commit ac795a7ec2d2 ("libahci_platform: add host_flags parameter
+in ahci_platform_init_host()").
+
+I have used the libata tree from next-20140423 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__24_Apr_2014_11_17_54_+1000_JmDUxZv/5R8zACYz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTWGZNAAoJEMDTa8Ir7ZwVkY8P/jO2v1f6OcHqCcEMgdHuNa80
+J52bQhns1gf95omr84+c8Z89KlL0Qpy6jPk7zzPYLXT18+I5TKad9QC84mQ7wg7b
+pfbhHe1f9UAOIF+dr3GTYXE723E/REixf5iEjcgNo3k10fVFeXhG9RjX7upZnQLa
+z1WgPzBkFe/tlT8qGe1MawEI4Pnymi9FxAreKa57jrzPwk+kxlrwRtEY9PvczekV
+gKt0lDG4K+Bbybxr2E7v9Aj+wpjpxPtROsDb7Io5j62Mz/E1L1Hag7hKNtwKNy2p
+wkSGV6YdZtJ3uxf5hq3rCfjHlObNYNpUPsv7LveBH5Man3RjXaSRNb+tHqZCqsvu
+iZRJaUbdg8WVQB7xW9l1PHnZ5Na1O8fh/hjiUiCWb8CqWPZwlvtG0+qSciwUGvFr
+nCdhXv0qB3fL6INq4TQQB2hWwI2FAKh71zalRsxNDPfVMHdKWVR/a0QA4rxi896u
+18pEX1YXdTQ6zmMZss8LaR/NaX66Em+buYXeP1lgCxofONk0zAKaGcNomo/QrZGP
+OgIvnLlK10wt5/2QnXIhRMLcO9LDcbMLZ3k0eWCMKzzxz+cMcsfh7DCh4mmGsWTY
+o4Hqcg2fKUAzVucxyj/cpQl35NbpOPawnEX1uRjf1lA9xV7EL9ZunkOpZSFOZ+zR
+a5hTjP/sdDHB+2UTKkhQ
+=Od2p
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Apr_2014_11_17_54_+1000_JmDUxZv/5R8zACYz--
