@@ -1,48 +1,49 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the libata tree
-Date: Thu, 24 Apr 2014 08:25:34 -0400
-Message-ID: <20140424122534.GK4781@htj.dyndns.org>
-References: <20140424111754.45e9672e06c362945d111b6e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no release on April 25
+Date: Thu, 24 Apr 2014 22:36:51 +1000
+Message-ID: <20140424223651.95d5ff6567fdc0a775224ec0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:34804 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753183AbaDXMZq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Apr 2014 08:25:46 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__24_Apr_2014_22_36_51_+1000_d5UMruFo3kBj+Sk2"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__24_Apr_2014_22_36_51_+1000_d5UMruFo3kBj+Sk2
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20140424111754.45e9672e06c362945d111b6e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kefeng Wang <kefeng.wang@linaro.org>, Hans de Goede <hdegoede@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi all,
 
-On Thu, Apr 24, 2014 at 11:17:54AM +1000, Stephen Rothwell wrote:
-> After merging the libata tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/ata/libahci_platform.c: In function 'ahci_platform_init_host':
-> drivers/ata/libahci_platform.c:317:20: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->   pi.private_data = (void *)host_flags
->                     ^
-> drivers/ata/libahci_platform.c:318:2: error: expected ';' before 'hpriv'
->   hpriv->flags |= host_flags;
->   ^
-> 
-> Please test build this stuff ...
+The next linux-next release will be next Monday.
 
-My apologies.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> Caused by commit ac795a7ec2d2 ("libahci_platform: add host_flags parameter
-> in ahci_platform_init_host()").
-> 
-> I have used the libata tree from next-20140423 for today.
+--Signature=_Thu__24_Apr_2014_22_36_51_+1000_d5UMruFo3kBj+Sk2
+Content-Type: application/pgp-signature
 
-Reverted.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Thanks.
+iQIcBAEBCAAGBQJTWQVpAAoJEMDTa8Ir7ZwV2yUP/2c2dAU/bmho6kbVngx5hESN
+Pa3Y/3aBl+FsYLb4y0wci52MYPn6OxhAyWRc/vW7AlPIUrYmBggxCliX/8tLGlP+
+hap6VuPlUSTKuxgdc05u2pEyZ++EjreU/dWxfF7Rs4fy6a5gqz1A5aQdAyth3euF
+kefofOAQYEXinPJmh5hmfEMK23AY/tKoeMz1fN9F8ujcshQeIOsFTRlUXyI5cS9e
+fuQglgm4aGGG1Tpj6U064t/umo9OBnsNjZicxC8EcfrLxharnE+Mt2CRINslzAwl
+U0h8JWg9pQI6fhj1uST5Fw+H/IdpW/3Rm/NGvDTBS9QnXf6fKsnihpKVQz+uF9Dl
+K8xcNa/bF8mAAgzfwWGGrReECCvoy2ZfEPZq2i4i819ooOwHV3P3jXefMAOdiC2X
+jvjdZZVn2XnR/YSG3vl7CZWF3+l+38it0Uv7NoJrPeAHvxhVWAcCenTVOqJf7H67
+CZc598gaE9Jc2GtxfcstPEG286OWDhDd9WmjmonNMuMTNSIyDNNCn74ObO002iT/
+D06KkEr2eb8SHRAyxor4vW9bfTAYjXFcCQpFQ2enO/g7CvfdCIhl6pIWaBzMoesM
+tSisqfW//KF0xFFgHdk4J49v01D2tI+Ch5K6Wr3WBHuZGmWDUnRj4AX/lTU+OVG+
+8AqwHCLYRxD/CathjGEr
+=4w3l
+-----END PGP SIGNATURE-----
 
--- 
-tejun
+--Signature=_Thu__24_Apr_2014_22_36_51_+1000_d5UMruFo3kBj+Sk2--
