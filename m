@@ -1,56 +1,65 @@
 From: Rik van Riel <riel@redhat.com>
 Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Fri, 25 Apr 2014 09:25:55 -0400
-Message-ID: <535A6263.10009@redhat.com>
-References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com> <535992DD.3060808@infradead.org> <20140425024924.GR4496@linux.vnet.ibm.com>
+Date: Fri, 25 Apr 2014 10:04:59 -0400
+Message-ID: <20140425100459.7824f676@annuminas.surriel.com>
+References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com>
+	<535992DD.3060808@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:10405 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751311AbaDYN02 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Apr 2014 09:26:28 -0400
-In-Reply-To: <20140425024924.GR4496@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com, Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <535992DD.3060808@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-next@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, umgwanakikbuti@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-On 04/24/2014 10:49 PM, Paul E. McKenney wrote:
-> On Thu, Apr 24, 2014 at 03:40:29PM -0700, Randy Dunlap wrote:
->> On 04/24/14 13:08, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2014-04-24-13-07 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>> You will need quilt to apply these patches to the latest Linus release (3.x
->>> or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->>> http://ozlabs.org/~akpm/mmotm/series
->>>
->>
->> uml on x86_64 defconfig:
->>
->> drivers/built-in.o: In function `__handle_sysrq':
->> drivers/tty/sysrq.c:514: undefined reference to `rcu_sysrq_start'
->> drivers/tty/sysrq.c:558: undefined reference to `rcu_sysrq_end'
+On Thu, 24 Apr 2014 15:40:29 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
+
+
+> uml on x86_64 defconfig:
 > 
-> Hmmm...  Looks like Rik's patch needs declarations in rcupdate.h.
-> Not sure how I missed that...  :-/
+> drivers/built-in.o: In function `__handle_sysrq':
+> drivers/tty/sysrq.c:514: undefined reference to `rcu_sysrq_start'
+> drivers/tty/sysrq.c:558: undefined reference to `rcu_sysrq_end'
 
-Looks like maybe sysrq.c should explicitly #include rcupdate.h.
+Randy, does the patch below fix it?
 
-On x86-64 the code compiled just fine, because something else
-included rcupdate.h. Apparently on UML this breaks...
+Mike, this patch should also address your concerns.
 
--- 
-All rights reversed
+Andrew, this can be a -fix patch for the sysctl-rcu patch,
+assuming it fixes things :)
+
+Signed-off-by: Rik van Riel <riel@redhat.com
+---
+ drivers/tty/sysrq.c | 1 +
+ kernel/rcu/update.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+index dd53af9..0867433 100644
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -46,6 +46,7 @@
+ #include <linux/jiffies.h>
+ #include <linux/syscalls.h>
+ #include <linux/of.h>
++#include <linux/rcupdate.h>
+ 
+ #include <asm/ptrace.h>
+ #include <asm/irq_regs.h>
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 2ac3289..d22309c 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -322,7 +322,8 @@ int rcu_jiffies_till_stall_check(void)
+ 
+ void rcu_sysrq_start(void)
+ {
+-	rcu_cpu_stall_suppress = 2;
++	if (!rcu_cpu_stall_suppress)
++		rcu_cpu_stall_suppress = 2;
+ }
+ 
+ void rcu_sysrq_end(void)
