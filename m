@@ -1,160 +1,72 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Mon, 28 Apr 2014 06:55:40 -0700
-Message-ID: <20140428135540.GA14661@linux.vnet.ibm.com>
-References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com>
- <535992DD.3060808@infradead.org>
- <20140425100459.7824f676@annuminas.surriel.com>
- <535AC91A.1070504@infradead.org>
- <535ACB0E.4070600@infradead.org>
- <20140427062650.GW4496@linux.vnet.ibm.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: manual merge of the usb-gadget tree with the usb tree
+Date: Mon, 28 Apr 2014 11:11:10 -0500
+Message-ID: <20140428161110.GL30292@saruman.home>
+References: <20140428152044.5b5dd87a9e3d885129bb2485@canb.auug.org.au>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e39.co.us.ibm.com ([32.97.110.160]:57561 "EHLO
-	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755673AbaD1Nzu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Apr 2014 09:55:50 -0400
-Received: from /spool/local
-	by e39.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Mon, 28 Apr 2014 07:55:50 -0600
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2OzUYMsT4j3Kc+NU"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140427062650.GW4496@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+In-Reply-To: <20140428152044.5b5dd87a9e3d885129bb2485@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, Apr 26, 2014 at 11:26:50PM -0700, Paul E. McKenney wrote:
-> On Fri, Apr 25, 2014 at 01:52:30PM -0700, Randy Dunlap wrote:
-> > On 04/25/14 13:44, Randy Dunlap wrote:
-> > > On 04/25/14 07:04, Rik van Riel wrote:
-> > >> On Thu, 24 Apr 2014 15:40:29 -0700
-> > >> Randy Dunlap <rdunlap@infradead.org> wrote:
-> > >>
-> > >>
-> > >>> uml on x86_64 defconfig:
-> > >>>
-> > >>> drivers/built-in.o: In function `__handle_sysrq':
-> > >>> drivers/tty/sysrq.c:514: undefined reference to `rcu_sysrq_start'
-> > >>> drivers/tty/sysrq.c:558: undefined reference to `rcu_sysrq_end'
-> > >>
-> > >> Randy, does the patch below fix it?
-> > 
-> > CONFIG_TINY_RCU=y
-> > 
-> > tiny.c does not provide these functions...  Paul...
-> > 
-> > > Hm, no, it does not.  I'll look into it.
-> > > 
-> > >> Mike, this patch should also address your concerns.
-> > >>
-> > >> Andrew, this can be a -fix patch for the sysctl-rcu patch,
-> > >> assuming it fixes things :)
-> > >>
-> > >> Signed-off-by: Rik van Riel <riel@redhat.com
-> > >> ---
-> > >>  drivers/tty/sysrq.c | 1 +
-> > >>  kernel/rcu/update.c | 3 ++-
-> > >>  2 files changed, 3 insertions(+), 1 deletion(-)
-> > >>
-> > >> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-> > >> index dd53af9..0867433 100644
-> > >> --- a/drivers/tty/sysrq.c
-> > >> +++ b/drivers/tty/sysrq.c
-> > >> @@ -46,6 +46,7 @@
-> > >>  #include <linux/jiffies.h>
-> > >>  #include <linux/syscalls.h>
-> > >>  #include <linux/of.h>
-> > >> +#include <linux/rcupdate.h>
-> > >>  
-> > >>  #include <asm/ptrace.h>
-> > >>  #include <asm/irq_regs.h>
-> > >> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> > >> index 2ac3289..d22309c 100644
-> > >> --- a/kernel/rcu/update.c
-> > >> +++ b/kernel/rcu/update.c
-> > >> @@ -322,7 +322,8 @@ int rcu_jiffies_till_stall_check(void)
-> > >>  
-> > >>  void rcu_sysrq_start(void)
-> > >>  {
-> > >> -	rcu_cpu_stall_suppress = 2;
-> > >> +	if (!rcu_cpu_stall_suppress)
-> > >> +		rcu_cpu_stall_suppress = 2;
-> > >>  }
-> > >>  
-> > >>  void rcu_sysrq_end(void)
-> 
-> You would think that I would have learned by now that RCU requires a bit
-> more care...  Anyway, patch containing only the APIs that -should- work
-> is below.  Currently testing it on the usual set of configs.
+--2OzUYMsT4j3Kc+NU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Right...  Adding a "static inline" would help, wouldn't it?  Updated
-patch below.
+On Mon, Apr 28, 2014 at 03:20:44PM +1000, Stephen Rothwell wrote:
+> Hi Felipe,
+>=20
+> Today's linux-next merge of the usb-gadget tree got a conflict in
+> drivers/usb/phy/phy-mv-u3d-usb.c between commit 543cab640279 ("usb: phy:
+> mv_u3d: Remove usb phy driver for mv_u3d") from the usb tree and commit
+> 041832565e40 ("usb: phy: mv-u3d: switch over to writel/readl") from the
+> usb-gadget tree.
+>=20
+> I fixed it up (the former removes the file, so I did that) and can carry
+> the fix as necessary (no action is required).
 
-							Thanx, Paul
+I actually rejected that patch as you can see from the archives:
 
-------------------------------------------------------------------------
+http://marc.info/?l=3Dlinux-usb&m=3D139758276329167&w=3D2
 
-rcu: Provide API to suppress stall warnings while sysrc runs
+I said that it doesn't break anything and can even build in any
+architecture if we switch over to writel/readl instead of _relaxed
+versions which are only available on ARM (afaict).
 
-Some sysrq handlers can run for a long time, because they dump a lot
-of data onto a serial console. Having RCU stall warnings pop up in
-the middle of them only makes the problem worse.
+Greg, looks like this commit went in your tree by mistake.
 
-This commit provides rcu_sysrq_start() and rcu_sysrq_end() APIs to
-temporarily suppress RCU CPU stall warnings while a sysrq request is
-handled.
+cheers
 
-Signed-off-by: Rik van Riel <riel@redhat.com>
-[ paulmck: Fix TINY_RCU build error. ]
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+--=20
+balbi
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index a6f2664a1b77..ca6fe55913b7 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -248,6 +248,18 @@ void rcu_idle_exit(void);
- void rcu_irq_enter(void);
- void rcu_irq_exit(void);
- 
-+#ifdef CONFIG_RCU_STALL_COMMON
-+void rcu_sysrq_start(void);
-+void rcu_sysrq_end(void);
-+#else /* #ifdef CONFIG_RCU_STALL_COMMON */
-+static inline void rcu_sysrq_start(void)
-+{
-+}
-+static inline void rcu_sysrq_end(void)
-+{
-+}
-+#endif /* #else #ifdef CONFIG_RCU_STALL_COMMON */
-+
- #ifdef CONFIG_RCU_USER_QS
- void rcu_user_enter(void);
- void rcu_user_exit(void);
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index ed7a0d72562c..a2aeb4df0f60 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -320,6 +320,18 @@ int rcu_jiffies_till_stall_check(void)
- 	return till_stall_check * HZ + RCU_STALL_DELAY_DELTA;
- }
- 
-+void rcu_sysrq_start(void)
-+{
-+	if (!rcu_cpu_stall_suppress)
-+		rcu_cpu_stall_suppress = 2;
-+}
-+
-+void rcu_sysrq_end(void)
-+{
-+	if (rcu_cpu_stall_suppress == 2)
-+		rcu_cpu_stall_suppress = 0;
-+}
-+
- static int rcu_panic(struct notifier_block *this, unsigned long ev, void *ptr)
- {
- 	rcu_cpu_stall_suppress = 1;
+--2OzUYMsT4j3Kc+NU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJTXn2eAAoJEIaOsuA1yqREHTcP/0RlnxVSdIG7aG8yLfvzk5h/
+unw2ID5GYMF9kq/ctOFWOo1qtW/bwltlHyS1g4nI847Ck4+oE+WcWbU+n/y1KAoc
+5TrWgXJlPEm7uyGnc4LRP4g3n9qDHa/AZ9dmF16enNJMqqTLAVk/itm+c7wP1TmQ
+hqbybjinTzLgCe5LqTvMoEpjtQF6T7i5/XcUD7r8P2zQJoh7yRdm3tiE0zl0fyip
+4FrtSlEAIhmCxI4228FKouuem62XoF59zWYNlWLcSwDrHzMmshOh3y+KQf34BmmQ
+ZEWKzk2WzDdUBUiTALXmG4b7UoHLxx6AfzvNEgvbtw/g0K7vkuVY/xl5nIOcMacH
+jC8VJdiradgu5/IxYRtzRNyi++nkjFDt87fufTm/oe3fll+4vM0dSWIeYwB5yurX
+p10w4p/CbyjC1gR2sUq6OisbvDoK0fYNKhdLxr/r/2f4B1yDC9U/wtKY3I1M3E94
+ZT9BpS1mdvVpV6fz3kz51eyY++l0Gznbr4+bXgwqGsQszSbBntfBzFEfvpCrzn6W
+XUb8AHvirtbA9/lRLt+BLAGDGJP6FsPlferbGQUW4ArLwyAMMEYVV/aB1PqVamf5
+q592+IITGlrtu6Y1MQtgb2eRl/NfAPBzlsXuJNsZesVlwXKTG7/ks5NxnjyP6yO1
+mtJauCwUy01jYvmkG/H+
+=vX5H
+-----END PGP SIGNATURE-----
+
+--2OzUYMsT4j3Kc+NU--
