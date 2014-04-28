@@ -1,80 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the arm tree
-Date: Mon, 28 Apr 2014 11:33:59 +1000
-Message-ID: <20140428113359.95298f9a895dda6fbbb06f12@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 28 Apr 2014 12:53:54 +1000
+Message-ID: <20140428125354.ad04d9e14a89f7f34913d79e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43783 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755680AbaD1BeG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Apr 2014 21:34:06 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>
+ boundary="Signature=_Mon__28_Apr_2014_12_53_54_+1000_xToPOnTx0Fm0T/3q"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>, Vince Bridgers <vbridger@altera.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH
+--Signature=_Mon__28_Apr_2014_12_53_54_+1000_xToPOnTx0Fm0T/3q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-arch/arm/mach-mvebu/board-v7.c between commit b21770945fa2 ("ARM: l2c:
-remove unnecessary UL-suffix to mask values") from the arm tree and
-commit 2865b82e9e19 ("ARM: mvebu: remove unnecessary ifdef around
-l2x0_of_init") from the mvebu tree.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/altera/altera_sgdma.c between commit 37c0ffaad214
+("Altera TSE: Work around unaligned DMA receive packet issue with Altera
+SGDMA") from the net tree and commit d42f157b3498 ("Altera TSE: Remove
+unnecessary cast of void pointers") from the net-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the former removes the code updated by the latter, so I
+did that) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-mvebu/board-v7.c
-index c6bd79f64744,bc0283f0dd88..000000000000
---- a/arch/arm/mach-mvebu/board-v7.c
-+++ b/arch/arm/mach-mvebu/board-v7.c
-@@@ -57,11 -75,10 +75,10 @@@ static void __init mvebu_timer_and_clk_
-  {
-  	of_clk_init(NULL);
-  	clocksource_of_init();
-+ 	mvebu_scu_enable();
-  	coherency_init();
-- 	BUG_ON(mvebu_mbus_dt_init());
-- #ifdef CONFIG_CACHE_L2X0
-+ 	BUG_ON(mvebu_mbus_dt_init(coherency_available()));
- -	l2x0_of_init(0, ~0UL);
- +	l2x0_of_init(0, ~0);
-- #endif
- =20
-  	if (of_machine_is_compatible("marvell,armada375"))
-  		hook_fault_code(16 + 6, armada_375_external_abort_wa, SIGBUS, 0,
-
---Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH
+--Signature=_Mon__28_Apr_2014_12_53_54_+1000_xToPOnTx0Fm0T/3q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTXbAMAAoJEMDTa8Ir7ZwVPlUP/0aTYjvey2LkFkmv7ukAKD5W
-Za/ZCeya5pJc3e1YBHbQoaYy2DWsq8thBa1ZBgh9nlagR+pzPaXD0k+jP2MLoo2x
-cENXkTJ7M2MtRtnB/muyoCdIbLaImGN9e+XE3bkLntvh5+J37ObTaoQq9ulPM96e
-O8o0ZOxYEY/u80p71UF7UnGe8SlnXzviu/Ke71VlCXdb6a7LlQQpja1FaoGKy1FZ
-qvrdoWcmleR/oxkXrOM7Y48+OmXxVPDxR097/4fk4bspQF87uxJsrTBoXo6ekDqW
-37RepoqyqdxXtp50So6DZDl1HiIyU37hEmVk3M6c7K//nFL0NjJXEuwDh1StUoin
-M0OpOri62KgFPK+//MnO86H+vj7/b6C11HyG6fsux6fO7atOUQG8mxEhacAhpsKg
-hSaovWprUH8PgOH5YgBg7XLo79ARo96Bzjkd0UgV2Fxlb2v5R2SCnSQSXUIVhU6Q
-T6FX4SrrJbXi5F3KwGFlb5IYcGCTl1JtkGaeHG+e1LWUbSjqBs1X1o6Mh42pjtGY
-Eq0GvIW0jlw7w025qIoeloyeh5oqR5CNhogHmcPd5FkwL66Hr3Bx4apxEg58cfwc
-NG6pymWwRPb1Mx8Nje5stWSkeVSgRWStbYJ1+uLdw1wPpoQLWd6H6S1RH+ikIWt0
-FRnoB7iFj1oswykMCjmy
-=2KF5
+iQIcBAEBCAAGBQJTXcLJAAoJEMDTa8Ir7ZwV0a8P/0U5uVyGtLx3J//bX0jNnEpR
+x9WzUoWwQWa81XEUbtyyBJtHW5rrZdoY3wPViuAK4PPQS/SpMvXkxhZJoQbZAS5q
+qC326P84icGq9+8nW/v/NjOzApPEl+6j2dIna7KQyWkHlX0NTZzLpIFiMDElx1T0
+YKPy0VzTWNsADOSrBGjmY1ZBoyhRpObq4ge7dHUJZ9nRphgGfpu2rwDIm6T+Qlt7
+2G/SGGBka1h/THJLM+q054R3skqEd3B//pvLKK8ZoqnsikpX1/pQqJjQCMgwrgAg
+Oe2Jdxr+meVbh+yoxfcx/AIuPXR8qPTuEE6cu0n8IQC3H5PZUPrBqdTqWlq82cXJ
+8jAc4hhzmxMIA3Vtm3+vy7zeV4Yf3PDJPBU/RWHtKFlxSWZAHb5ulfITKo9F7XRn
+YKLgBlTJDbtSPieiyAI7Uhk8drmY71fSLbAIwQ24KSwP+0wcDPb51V52Dw9GV7T0
++4tUaexBhxppm5eFwzKK4QSEtZMiUpIGY0fo0xhX9pzVPc3fh147/XDw+5ym/aZb
+n96E5MbAyV/bbZCDoEpsWAQdXdUMzQDhmPE9vGslUMcIpsec+gj5CevEXhIrVKnH
+8/QQi6frQ6YJEB/yK787ynYNIgOkzqOM0B+tV67bXiNKDZXnRRomh9g25kRstJvp
+YslEjEvxgOQupEdqadOu
+=chkW
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH--
+--Signature=_Mon__28_Apr_2014_12_53_54_+1000_xToPOnTx0Fm0T/3q--
