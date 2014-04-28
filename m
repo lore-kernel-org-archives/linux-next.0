@@ -1,130 +1,198 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Mon, 28 Apr 2014 13:32:38 -0700
-Message-ID: <535EBAE6.3080907@infradead.org>
-References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com> <535992DD.3060808@infradead.org> <20140425100459.7824f676@annuminas.surriel.com> <535AC91A.1070504@infradead.org> <535ACB0E.4070600@infradead.org> <20140427062650.GW4496@linux.vnet.ibm.com> <20140428135540.GA14661@linux.vnet.ibm.com> <535E8D14.7080405@infradead.org> <535E8E17.2050600@nod.at> <20140428200640.GG4430@linux.vnet.ibm.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: Tree for Apr 28 (drivers/pnp/quirks.c)
+Date: Mon, 28 Apr 2014 15:11:41 -0600
+Message-ID: <20140428211141.GA24070@google.com>
+References: <20140428165724.6361cf10ebd3067b7f998c0f@canb.auug.org.au>
+ <535E93C1.90908@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140428200640.GG4430@linux.vnet.ibm.com>
+Content-Disposition: inline
+In-Reply-To: <535E93C1.90908@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: paulmck@linux.vnet.ibm.com, Richard Weinberger <richard@nod.at>
-Cc: Rik van Riel <riel@redhat.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafael Wysocki <rafael.j.wysocki@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On 04/28/14 13:06, Paul E. McKenney wrote:
-> On Mon, Apr 28, 2014 at 07:21:27PM +0200, Richard Weinberger wrote:
->> Am 28.04.2014 19:17, schrieb Randy Dunlap:
->>>
->>> uml defconfig on x86_64:
->>>
->>>   CC      arch/um/kernel/asm-offsets.s
->>> In file included from include/linux/sem.h:5:0,
->>>                  from include/linux/sched.h:35,
->>>                  from arch/x86/um/shared/sysdep/kernel-offsets.h:2,
->>>                  from arch/um/kernel/asm-offsets.c:1:
->>> include/linux/rcupdate.h:257:20: error: static declaration of 'rcu_sysrq_start' follows non-static declaration
->>> include/linux/rcupdate.h:250:6: note: previous declaration of 'rcu_sysrq_start' was here
->>> include/linux/rcupdate.h:260:20: error: static declaration of 'rcu_sysrq_end' follows non-static declaration
->>> include/linux/rcupdate.h:251:6: note: previous declaration of 'rcu_sysrq_end' was here
->>> make[2]: *** [arch/um/kernel/asm-offsets.s] Error 1
->>>
->>>
->>> Please test your patch(es).
+On Mon, Apr 28, 2014 at 10:45:37AM -0700, Randy Dunlap wrote:
+> On 04/27/14 23:57, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > This tree still fails (more than usual) the powerpc allyesconfig build.
+> > 
+> > Changes since 20140424:
+> > 
 > 
-> Against exactly what?  ;-)
+> on i386:
+> 
+>   CC      drivers/pnp/quirks.o
+> drivers/pnp/quirks.c: In function 'quirk_intel_mch':
+> drivers/pnp/quirks.c:393:2: error: implicit declaration of function 'pcibios_bus_to_resource' [-Werror=implicit-function-declaration]
+> cc1: some warnings being treated as errors
+> make[3]: *** [drivers/pnp/quirks.o] Error 1
 
-see $Subject
-
->> Just in case, to build an x86_64 UML please run:
->>
->> make defconfig ARCH=um SUBARCH=x86_64
->> make linux ARCH=um SUBARCH=x86_64
-> 
-> Hmmm....  Builds without errors in my local tree.
-> 
-> Make a clone of linux-next...
-> 
-> OK, now I get a different build failure:
-> 
-> /home/paulmck/public_git/linux-next/drivers/tty/sysrq.c:514: undefined reference to `rcu_sysrq_start'
-> /home/paulmck/public_git/linux-next/drivers/tty/sysrq.c:558: undefined reference to `rcu_sysrq_end'
-> 
-> This is due to Rik's "#include <linux/rcupdate.h>" getting lost somehow.
-> This #include is needed in drivers/tty/sysrq.c.
-> 
-> But maybe I need to be using some other branch of linux-next.  Am currently
-> on 5bd4e10b96ce20271688aa31d8bd739441249152, which is origin/master.  And
-> is also next-20140428.  If I should be somewhere else, please let me know.
-> 
-> OK, it also appears that my change to make TINY_RCU work is also missing,
-> possibly because Randy applied it by hand.
-
-nope.
-
-> Please see below for a patch against next-20140428 that makes this build
-> for me.  This is derived from Rik's patch, my patch, and is consistent with
-> Arnd's patch.
-> 
-> 							Thanx, Paul
-
-Thnx, works for me.  Finally.
+Thanks Randy.  This is a config that doesn't define CONFIG_PCI.  Rafael,
+here's an incremental fix, or the full updated patch is below.
 
 
-> ------------------------------------------------------------------------
-> 
-> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-> index 6c3d11b..38d5f9a 100644
-> --- a/drivers/tty/sysrq.c
-> +++ b/drivers/tty/sysrq.c
-> @@ -46,6 +46,7 @@
->  #include <linux/jiffies.h>
->  #include <linux/syscalls.h>
->  #include <linux/of.h>
-> +#include <linux/rcupdate.h>
->  
->  #include <asm/ptrace.h>
->  #include <asm/irq_regs.h>
-> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> index e9cc71c..7b0a669 100644
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -247,8 +247,17 @@ void rcu_idle_enter(void);
->  void rcu_idle_exit(void);
->  void rcu_irq_enter(void);
->  void rcu_irq_exit(void);
-> +#ifdef CONFIG_RCU_STALL_COMMON
->  void rcu_sysrq_start(void);
->  void rcu_sysrq_end(void);
-> +#else /* #ifdef CONFIG_RCU_STALL_COMMON */
-> +static inline void rcu_sysrq_start(void)
-> +{
-> +}
-> +static inline void rcu_sysrq_end(void)
-> +{
-> +}
-> +#endif /* #else #ifdef CONFIG_RCU_STALL_COMMON */
->  
->  #ifdef CONFIG_RCU_USER_QS
->  void rcu_user_enter(void);
-> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> index 20caaf0..a2aeb4d 100644
-> --- a/kernel/rcu/update.c
-> +++ b/kernel/rcu/update.c
-> @@ -322,7 +322,8 @@ int rcu_jiffies_till_stall_check(void)
->  
->  void rcu_sysrq_start(void)
->  {
-> -	rcu_cpu_stall_suppress = 2;
-> +	if (!rcu_cpu_stall_suppress)
-> +		rcu_cpu_stall_suppress = 2;
->  }
->  
->  void rcu_sysrq_end(void)
-> 
-> --
+diff -u b/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
+--- b/drivers/pnp/quirks.c
++++ b/drivers/pnp/quirks.c
+@@ -335,7 +335,7 @@
+ }
+ #endif
+ 
+-#ifdef CONFIG_X86
++#if defined(CONFIG_X86) && defined(CONFIG_PCI)
+ /* Device IDs of parts that have 32KB MCH space */
+ static const unsigned int mch_quirk_devices[] = {
+ 	0x0154,	/* Ivy Bridge */
+@@ -440,7 +440,7 @@
+ #ifdef CONFIG_AMD_NB
+ 	{"PNP0c01", quirk_amd_mmconfig_area},
+ #endif
+-#ifdef CONFIG_X86
++#if defined(CONFIG_X86) && defined(CONFIG_PCI)
+ 	{"PNP0c02", quirk_intel_mch},
+ #endif
+ 	{""}
 
 
--- 
-~Randy
+Full updated commit below:
+
+commit 742fd103a3fbf2d5b0ed1f2a0f20ff234a82949b
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Thu Apr 17 14:22:18 2014 -0600
+
+    PNP: Work around BIOS defects in Intel MCH area reporting
+    
+    Work around BIOSes that don't report the entire Intel MCH area.
+    
+    MCHBAR is not an architected PCI BAR, so MCH space is usually reported as a
+    PNP0C02 resource.  The MCH space was once 16KB, but is 32KB in newer parts.
+    Some BIOSes still report a PNP0C02 resource that is only 16KB, which means
+    the rest of the MCH space is consumed but unreported.
+    
+    This can cause resource map sanity check warnings or (theoretically) a
+    device conflict if we assigned the unreported space to another device.
+    
+    The Intel perf event uncore driver tripped over this when it claimed the
+    MCH region:
+    
+      resource map sanity check conflict: 0xfed10000 0xfed15fff 0xfed10000 0xfed13fff pnp 00:01
+      Info: mapping multiple BARs. Your kernel is fine.
+    
+    To prevent this, if we find a PNP0C02 resource that covers part of the MCH
+    space, extend it to cover the entire space.
+    
+    Link: http://lkml.kernel.org/r/20140224162400.GE16457@pd.tnic
+    Reported-by: Borislav Petkov <bp@alien8.de>
+    Tested-by: Borislav Petkov <bp@suse.de>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Acked-by: Borislav Petkov <bp@suse.de>
+    Acked-by: Stephane Eranian <eranian@google.com>
+
+diff --git a/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
+index 258fef272ea7..2fc505df5daf 100644
+--- a/drivers/pnp/quirks.c
++++ b/drivers/pnp/quirks.c
+@@ -15,6 +15,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/kernel.h>
++#include <linux/pci.h>
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/pnp.h>
+@@ -334,6 +335,81 @@ static void quirk_amd_mmconfig_area(struct pnp_dev *dev)
+ }
+ #endif
+ 
++#if defined(CONFIG_X86) && defined(CONFIG_PCI)
++/* Device IDs of parts that have 32KB MCH space */
++static const unsigned int mch_quirk_devices[] = {
++	0x0154,	/* Ivy Bridge */
++	0x0c00,	/* Haswell */
++};
++
++static struct pci_dev *get_intel_host(void)
++{
++	int i;
++	struct pci_dev *host;
++
++	for (i = 0; i < ARRAY_SIZE(mch_quirk_devices); i++) {
++		host = pci_get_device(PCI_VENDOR_ID_INTEL, mch_quirk_devices[i],
++				      NULL);
++		if (host)
++			return host;
++	}
++	return NULL;
++}
++
++static void quirk_intel_mch(struct pnp_dev *dev)
++{
++	struct pci_dev *host;
++	u32 addr_lo, addr_hi;
++	struct pci_bus_region region;
++	struct resource mch;
++	struct pnp_resource *pnp_res;
++	struct resource *res;
++
++	host = get_intel_host();
++	if (!host)
++		return;
++
++	/*
++	 * MCHBAR is not an architected PCI BAR, so MCH space is usually
++	 * reported as a PNP0C02 resource.  The MCH space was originally
++	 * 16KB, but is 32KB in newer parts.  Some BIOSes still report a
++	 * PNP0C02 resource that is only 16KB, which means the rest of the
++	 * MCH space is consumed but unreported.
++	 */
++
++	/*
++	 * Read MCHBAR for Host Member Mapped Register Range Base
++	 * https://www-ssl.intel.com/content/www/us/en/processors/core/4th-gen-core-family-desktop-vol-2-datasheet
++	 * Sec 3.1.12.
++	 */
++	pci_read_config_dword(host, 0x48, &addr_lo);
++	region.start = addr_lo & ~0x7fff;
++	pci_read_config_dword(host, 0x4c, &addr_hi);
++	region.start |= (u64) addr_hi << 32;
++	region.end = region.start + 32*1024 - 1;
++
++	memset(&mch, 0, sizeof(mch));
++	mch.flags = IORESOURCE_MEM;
++	pcibios_bus_to_resource(host->bus, &mch, &region);
++
++	list_for_each_entry(pnp_res, &dev->resources, list) {
++		res = &pnp_res->res;
++		if (res->end < mch.start || res->start > mch.end)
++			continue;	/* no overlap */
++		if (res->start == mch.start && res->end == mch.end)
++			continue;	/* exact match */
++
++		dev_info(&dev->dev, FW_BUG "PNP resource %pR covers only part of %s Intel MCH; extending to %pR\n",
++			 res, pci_name(host), &mch);
++		res->start = mch.start;
++		res->end = mch.end;
++		break;
++	}
++
++	pci_dev_put(host);
++}
++#endif
++
+ /*
+  *  PnP Quirks
+  *  Cards or devices that need some tweaking due to incomplete resource info
+@@ -364,6 +440,9 @@ static struct pnp_fixup pnp_fixups[] = {
+ #ifdef CONFIG_AMD_NB
+ 	{"PNP0c01", quirk_amd_mmconfig_area},
+ #endif
++#if defined(CONFIG_X86) && defined(CONFIG_PCI)
++	{"PNP0c02", quirk_intel_mch},
++#endif
+ 	{""}
+ };
+ 
