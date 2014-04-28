@@ -1,72 +1,40 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with the usb tree
-Date: Mon, 28 Apr 2014 11:11:10 -0500
-Message-ID: <20140428161110.GL30292@saruman.home>
-References: <20140428152044.5b5dd87a9e3d885129bb2485@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: mmotm 2014-04-24-13-07 uploaded
+Date: Mon, 28 Apr 2014 19:21:27 +0200
+Message-ID: <535E8E17.2050600@nod.at>
+References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com> <535992DD.3060808@infradead.org> <20140425100459.7824f676@annuminas.surriel.com> <535AC91A.1070504@infradead.org> <535ACB0E.4070600@infradead.org> <20140427062650.GW4496@linux.vnet.ibm.com> <20140428135540.GA14661@linux.vnet.ibm.com> <535E8D14.7080405@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2OzUYMsT4j3Kc+NU"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140428152044.5b5dd87a9e3d885129bb2485@canb.auug.org.au>
+In-Reply-To: <535E8D14.7080405@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>
+To: paulmck@linux.vnet.ibm.com
+Cc: Randy Dunlap <rdunlap@infradead.org>, Rik van Riel <riel@redhat.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
 List-Id: linux-next.vger.kernel.org
 
---2OzUYMsT4j3Kc+NU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am 28.04.2014 19:17, schrieb Randy Dunlap:
+> 
+> uml defconfig on x86_64:
+> 
+>   CC      arch/um/kernel/asm-offsets.s
+> In file included from include/linux/sem.h:5:0,
+>                  from include/linux/sched.h:35,
+>                  from arch/x86/um/shared/sysdep/kernel-offsets.h:2,
+>                  from arch/um/kernel/asm-offsets.c:1:
+> include/linux/rcupdate.h:257:20: error: static declaration of 'rcu_sysrq_start' follows non-static declaration
+> include/linux/rcupdate.h:250:6: note: previous declaration of 'rcu_sysrq_start' was here
+> include/linux/rcupdate.h:260:20: error: static declaration of 'rcu_sysrq_end' follows non-static declaration
+> include/linux/rcupdate.h:251:6: note: previous declaration of 'rcu_sysrq_end' was here
+> make[2]: *** [arch/um/kernel/asm-offsets.s] Error 1
+> 
+> 
+> Please test your patch(es).
 
-On Mon, Apr 28, 2014 at 03:20:44PM +1000, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> Today's linux-next merge of the usb-gadget tree got a conflict in
-> drivers/usb/phy/phy-mv-u3d-usb.c between commit 543cab640279 ("usb: phy:
-> mv_u3d: Remove usb phy driver for mv_u3d") from the usb tree and commit
-> 041832565e40 ("usb: phy: mv-u3d: switch over to writel/readl") from the
-> usb-gadget tree.
->=20
-> I fixed it up (the former removes the file, so I did that) and can carry
-> the fix as necessary (no action is required).
+Just in case, to build an x86_64 UML please run:
 
-I actually rejected that patch as you can see from the archives:
+make defconfig ARCH=um SUBARCH=x86_64
+make linux ARCH=um SUBARCH=x86_64
 
-http://marc.info/?l=3Dlinux-usb&m=3D139758276329167&w=3D2
-
-I said that it doesn't break anything and can even build in any
-architecture if we switch over to writel/readl instead of _relaxed
-versions which are only available on ARM (afaict).
-
-Greg, looks like this commit went in your tree by mistake.
-
-cheers
-
---=20
-balbi
-
---2OzUYMsT4j3Kc+NU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTXn2eAAoJEIaOsuA1yqREHTcP/0RlnxVSdIG7aG8yLfvzk5h/
-unw2ID5GYMF9kq/ctOFWOo1qtW/bwltlHyS1g4nI847Ck4+oE+WcWbU+n/y1KAoc
-5TrWgXJlPEm7uyGnc4LRP4g3n9qDHa/AZ9dmF16enNJMqqTLAVk/itm+c7wP1TmQ
-hqbybjinTzLgCe5LqTvMoEpjtQF6T7i5/XcUD7r8P2zQJoh7yRdm3tiE0zl0fyip
-4FrtSlEAIhmCxI4228FKouuem62XoF59zWYNlWLcSwDrHzMmshOh3y+KQf34BmmQ
-ZEWKzk2WzDdUBUiTALXmG4b7UoHLxx6AfzvNEgvbtw/g0K7vkuVY/xl5nIOcMacH
-jC8VJdiradgu5/IxYRtzRNyi++nkjFDt87fufTm/oe3fll+4vM0dSWIeYwB5yurX
-p10w4p/CbyjC1gR2sUq6OisbvDoK0fYNKhdLxr/r/2f4B1yDC9U/wtKY3I1M3E94
-ZT9BpS1mdvVpV6fz3kz51eyY++l0Gznbr4+bXgwqGsQszSbBntfBzFEfvpCrzn6W
-XUb8AHvirtbA9/lRLt+BLAGDGJP6FsPlferbGQUW4ArLwyAMMEYVV/aB1PqVamf5
-q592+IITGlrtu6Y1MQtgb2eRl/NfAPBzlsXuJNsZesVlwXKTG7/ks5NxnjyP6yO1
-mtJauCwUy01jYvmkG/H+
-=vX5H
------END PGP SIGNATURE-----
-
---2OzUYMsT4j3Kc+NU--
+Thanks,
+//richard
