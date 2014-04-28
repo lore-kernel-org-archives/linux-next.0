@@ -1,209 +1,80 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Sun, 27 Apr 2014 17:26:15 -0700
-Message-ID: <20140428002615.GZ4496@linux.vnet.ibm.com>
-References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com>
- <535992DD.3060808@infradead.org>
- <20140425100459.7824f676@annuminas.surriel.com>
- <535AC91A.1070504@infradead.org>
- <535ACB0E.4070600@infradead.org>
- <20140427062650.GW4496@linux.vnet.ibm.com>
- <535D3E0F.2090905@infradead.org>
- <535D6B31.3040604@infradead.org>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mvebu tree with the arm tree
+Date: Mon, 28 Apr 2014 11:33:59 +1000
+Message-ID: <20140428113359.95298f9a895dda6fbbb06f12@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e32.co.us.ibm.com ([32.97.110.150]:53249 "EHLO
-	e32.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751290AbaD1A0Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Apr 2014 20:26:24 -0400
-Received: from /spool/local
-	by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Sun, 27 Apr 2014 18:26:24 -0600
-Content-Disposition: inline
-In-Reply-To: <535D6B31.3040604@infradead.org>
+Received: from ozlabs.org ([103.22.144.67]:43783 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755680AbaD1BeG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Apr 2014 21:34:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-On Sun, Apr 27, 2014 at 01:40:17PM -0700, Randy Dunlap wrote:
-> On 04/27/14 10:27, Randy Dunlap wrote:
-> > On 04/26/14 23:26, Paul E. McKenney wrote:
-> >> On Fri, Apr 25, 2014 at 01:52:30PM -0700, Randy Dunlap wrote:
-> >>> On 04/25/14 13:44, Randy Dunlap wrote:
-> >>>> On 04/25/14 07:04, Rik van Riel wrote:
-> >>>>> On Thu, 24 Apr 2014 15:40:29 -0700
-> >>>>> Randy Dunlap <rdunlap@infradead.org> wrote:
-> >>>>>
-> >>>>>
-> >>>>>> uml on x86_64 defconfig:
-> >>>>>>
-> >>>>>> drivers/built-in.o: In function `__handle_sysrq':
-> >>>>>> drivers/tty/sysrq.c:514: undefined reference to `rcu_sysrq_start'
-> >>>>>> drivers/tty/sysrq.c:558: undefined reference to `rcu_sysrq_end'
-> >>>>>
-> >>>>> Randy, does the patch below fix it?
-> >>>
-> >>> CONFIG_TINY_RCU=y
-> >>>
-> >>> tiny.c does not provide these functions...  Paul...
-> >>>
-> >>>> Hm, no, it does not.  I'll look into it.
-> >>>>
-> >>>>> Mike, this patch should also address your concerns.
-> >>>>>
-> >>>>> Andrew, this can be a -fix patch for the sysctl-rcu patch,
-> >>>>> assuming it fixes things :)
-> >>>>>
-> >>>>> Signed-off-by: Rik van Riel <riel@redhat.com
-> >>>>> ---
-> >>>>>  drivers/tty/sysrq.c | 1 +
-> >>>>>  kernel/rcu/update.c | 3 ++-
-> >>>>>  2 files changed, 3 insertions(+), 1 deletion(-)
-> >>>>>
-> >>>>> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-> >>>>> index dd53af9..0867433 100644
-> >>>>> --- a/drivers/tty/sysrq.c
-> >>>>> +++ b/drivers/tty/sysrq.c
-> >>>>> @@ -46,6 +46,7 @@
-> >>>>>  #include <linux/jiffies.h>
-> >>>>>  #include <linux/syscalls.h>
-> >>>>>  #include <linux/of.h>
-> >>>>> +#include <linux/rcupdate.h>
-> >>>>>  
-> >>>>>  #include <asm/ptrace.h>
-> >>>>>  #include <asm/irq_regs.h>
-> >>>>> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> >>>>> index 2ac3289..d22309c 100644
-> >>>>> --- a/kernel/rcu/update.c
-> >>>>> +++ b/kernel/rcu/update.c
-> >>>>> @@ -322,7 +322,8 @@ int rcu_jiffies_till_stall_check(void)
-> >>>>>  
-> >>>>>  void rcu_sysrq_start(void)
-> >>>>>  {
-> >>>>> -	rcu_cpu_stall_suppress = 2;
-> >>>>> +	if (!rcu_cpu_stall_suppress)
-> >>>>> +		rcu_cpu_stall_suppress = 2;
-> >>>>>  }
-> >>>>>  
-> >>>>>  void rcu_sysrq_end(void)
-> >>
-> >> You would think that I would have learned by now that RCU requires a bit
-> >> more care...  Anyway, patch containing only the APIs that -should- work
-> >> is below.  Currently testing it on the usual set of configs.
-> >>
-> >> 							Thanx, Paul
-> >>
-> >> ------------------------------------------------------------------------
-> >>
-> >> rcu: Provide API to suppress stall warnings while sysrc runs
-> >>
-> >> Some sysrq handlers can run for a long time, because they dump a lot
-> >> of data onto a serial console. Having RCU stall warnings pop up in
-> >> the middle of them only makes the problem worse.
-> >>
-> >> This commit provides rcu_sysrq_start() and rcu_sysrq_end() APIs to
-> >> temporarily suppress RCU CPU stall warnings while a sysrq request is
-> >> handled.
-> >>
-> >> Signed-off-by: Rik van Riel <riel@redhat.com>
-> >> [ paulmck: Fix TINY_RCU build error. ]
-> >> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> 
-> I guess that you want static inline on those functions...
+--Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Indeed I do, please see the subsequent patch.
+Hi all,
 
-One of my favorite mistakes, leaving out static inline...
+Today's linux-next merge of the mvebu tree got a conflict in
+arch/arm/mach-mvebu/board-v7.c between commit b21770945fa2 ("ARM: l2c:
+remove unnecessary UL-suffix to mask values") from the arm tree and
+commit 2865b82e9e19 ("ARM: mvebu: remove unnecessary ifdef around
+l2x0_of_init") from the mvebu tree.
 
-							Thanx, Paul
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> > Still on uml on x86_64 defconfig:
-> > 
-> >   LD      init/built-in.o
-> > init/version.o: In function `rcu_sysrq_start':
-> > include/linux/rcupdate.h:258: multiple definition of `rcu_sysrq_start'
-> > init/main.o:include/linux/rcupdate.h:258: first defined here
-> > init/version.o: In function `rcu_sysrq_end':
-> > include/linux/rcupdate.h:261: multiple definition of `rcu_sysrq_end'
-> > init/main.o:include/linux/rcupdate.h:261: first defined here
-> > init/mounts.o: In function `rcu_sysrq_start':
-> > include/linux/rcupdate.h:258: multiple definition of `rcu_sysrq_start'
-> > init/main.o:include/linux/rcupdate.h:258: first defined here
-> > init/mounts.o: In function `rcu_sysrq_end':
-> > include/linux/rcupdate.h:261: multiple definition of `rcu_sysrq_end'
-> > init/main.o:include/linux/rcupdate.h:261: first defined here
-> > init/noinitramfs.o: In function `rcu_sysrq_start':
-> > include/linux/rcupdate.h:258: multiple definition of `rcu_sysrq_start'
-> > init/main.o:include/linux/rcupdate.h:258: first defined here
-> > init/noinitramfs.o: In function `rcu_sysrq_end':
-> > include/linux/rcupdate.h:261: multiple definition of `rcu_sysrq_end'
-> > init/main.o:include/linux/rcupdate.h:261: first defined here
-> > init/init_task.o: In function `rcu_sysrq_start':
-> > include/linux/rcupdate.h:258: multiple definition of `rcu_sysrq_start'
-> > init/main.o:include/linux/rcupdate.h:258: first defined here
-> > init/init_task.o: In function `rcu_sysrq_end':
-> > include/linux/rcupdate.h:261: multiple definition of `rcu_sysrq_end'
-> > init/main.o:include/linux/rcupdate.h:261: first defined here
-> > make[2]: *** [init/built-in.o] Error 1
-> > 
-> > 
-> > 
-> >>
-> >> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> >> index a6f2664a1b77..3f53c96b3b77 100644
-> >> --- a/include/linux/rcupdate.h
-> >> +++ b/include/linux/rcupdate.h
-> >> @@ -248,6 +248,18 @@ void rcu_idle_exit(void);
-> >>  void rcu_irq_enter(void);
-> >>  void rcu_irq_exit(void);
-> >>  
-> >> +#ifdef CONFIG_RCU_STALL_COMMON
-> >> +void rcu_sysrq_start(void);
-> >> +void rcu_sysrq_end(void);
-> >> +#else /* #ifdef CONFIG_RCU_STALL_COMMON */
-> >> +void rcu_sysrq_start(void)
-> >> +{
-> >> +}
-> >> +void rcu_sysrq_end(void)
-> >> +{
-> >> +}
-> >> +#endif /* #else #ifdef CONFIG_RCU_STALL_COMMON */
-> >> +
-> >>  #ifdef CONFIG_RCU_USER_QS
-> >>  void rcu_user_enter(void);
-> >>  void rcu_user_exit(void);
-> >> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> >> index ed7a0d72562c..a2aeb4df0f60 100644
-> >> --- a/kernel/rcu/update.c
-> >> +++ b/kernel/rcu/update.c
-> >> @@ -320,6 +320,18 @@ int rcu_jiffies_till_stall_check(void)
-> >>  	return till_stall_check * HZ + RCU_STALL_DELAY_DELTA;
-> >>  }
-> >>  
-> >> +void rcu_sysrq_start(void)
-> >> +{
-> >> +	if (!rcu_cpu_stall_suppress)
-> >> +		rcu_cpu_stall_suppress = 2;
-> >> +}
-> >> +
-> >> +void rcu_sysrq_end(void)
-> >> +{
-> >> +	if (rcu_cpu_stall_suppress == 2)
-> >> +		rcu_cpu_stall_suppress = 0;
-> >> +}
-> >> +
-> >>  static int rcu_panic(struct notifier_block *this, unsigned long ev, void *ptr)
-> >>  {
-> >>  	rcu_cpu_stall_suppress = 1;
-> >>
-> > 
-> > 
-> 
-> 
-> -- 
-> ~Randy
-> 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-mvebu/board-v7.c
+index c6bd79f64744,bc0283f0dd88..000000000000
+--- a/arch/arm/mach-mvebu/board-v7.c
++++ b/arch/arm/mach-mvebu/board-v7.c
+@@@ -57,11 -75,10 +75,10 @@@ static void __init mvebu_timer_and_clk_
+  {
+  	of_clk_init(NULL);
+  	clocksource_of_init();
++ 	mvebu_scu_enable();
+  	coherency_init();
+- 	BUG_ON(mvebu_mbus_dt_init());
+- #ifdef CONFIG_CACHE_L2X0
++ 	BUG_ON(mvebu_mbus_dt_init(coherency_available()));
+ -	l2x0_of_init(0, ~0UL);
+ +	l2x0_of_init(0, ~0);
+- #endif
+ =20
+  	if (of_machine_is_compatible("marvell,armada375"))
+  		hook_fault_code(16 + 6, armada_375_external_abort_wa, SIGBUS, 0,
+
+--Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTXbAMAAoJEMDTa8Ir7ZwVPlUP/0aTYjvey2LkFkmv7ukAKD5W
+Za/ZCeya5pJc3e1YBHbQoaYy2DWsq8thBa1ZBgh9nlagR+pzPaXD0k+jP2MLoo2x
+cENXkTJ7M2MtRtnB/muyoCdIbLaImGN9e+XE3bkLntvh5+J37ObTaoQq9ulPM96e
+O8o0ZOxYEY/u80p71UF7UnGe8SlnXzviu/Ke71VlCXdb6a7LlQQpja1FaoGKy1FZ
+qvrdoWcmleR/oxkXrOM7Y48+OmXxVPDxR097/4fk4bspQF87uxJsrTBoXo6ekDqW
+37RepoqyqdxXtp50So6DZDl1HiIyU37hEmVk3M6c7K//nFL0NjJXEuwDh1StUoin
+M0OpOri62KgFPK+//MnO86H+vj7/b6C11HyG6fsux6fO7atOUQG8mxEhacAhpsKg
+hSaovWprUH8PgOH5YgBg7XLo79ARo96Bzjkd0UgV2Fxlb2v5R2SCnSQSXUIVhU6Q
+T6FX4SrrJbXi5F3KwGFlb5IYcGCTl1JtkGaeHG+e1LWUbSjqBs1X1o6Mh42pjtGY
+Eq0GvIW0jlw7w025qIoeloyeh5oqR5CNhogHmcPd5FkwL66Hr3Bx4apxEg58cfwc
+NG6pymWwRPb1Mx8Nje5stWSkeVSgRWStbYJ1+uLdw1wPpoQLWd6H6S1RH+ikIWt0
+FRnoB7iFj1oswykMCjmy
+=2KF5
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_Apr_2014_11_33_59_+1000_sd/PU55UjPo4=FLH--
