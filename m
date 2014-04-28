@@ -1,133 +1,60 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Mon, 28 Apr 2014 13:06:40 -0700
-Message-ID: <20140428200640.GG4430@linux.vnet.ibm.com>
-References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com>
- <535992DD.3060808@infradead.org>
- <20140425100459.7824f676@annuminas.surriel.com>
- <535AC91A.1070504@infradead.org>
- <535ACB0E.4070600@infradead.org>
- <20140427062650.GW4496@linux.vnet.ibm.com>
- <20140428135540.GA14661@linux.vnet.ibm.com>
- <535E8D14.7080405@infradead.org>
- <535E8E17.2050600@nod.at>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 28 Apr 2014 14:19:38 -0400
+Message-ID: <20140428181938.GA24111@madcap2.tricolour.ca>
+References: <20140428125759.47924ab500af7624f401d424@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e34.co.us.ibm.com ([32.97.110.152]:43457 "EHLO
-	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932984AbaD1UGo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Apr 2014 16:06:44 -0400
-Received: from /spool/local
-	by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Mon, 28 Apr 2014 14:06:43 -0600
+Received: from mx1.redhat.com ([209.132.183.28]:20727 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754374AbaD1U3V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Apr 2014 16:29:21 -0400
 Content-Disposition: inline
-In-Reply-To: <535E8E17.2050600@nod.at>
+In-Reply-To: <20140428125759.47924ab500af7624f401d424@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Weinberger <richard@nod.at>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Rik van Riel <riel@redhat.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Eric Paris <eparis@redhat.com>
 
-On Mon, Apr 28, 2014 at 07:21:27PM +0200, Richard Weinberger wrote:
-> Am 28.04.2014 19:17, schrieb Randy Dunlap:
-> > 
-> > uml defconfig on x86_64:
-> > 
-> >   CC      arch/um/kernel/asm-offsets.s
-> > In file included from include/linux/sem.h:5:0,
-> >                  from include/linux/sched.h:35,
-> >                  from arch/x86/um/shared/sysdep/kernel-offsets.h:2,
-> >                  from arch/um/kernel/asm-offsets.c:1:
-> > include/linux/rcupdate.h:257:20: error: static declaration of 'rcu_sysrq_start' follows non-static declaration
-> > include/linux/rcupdate.h:250:6: note: previous declaration of 'rcu_sysrq_start' was here
-> > include/linux/rcupdate.h:260:20: error: static declaration of 'rcu_sysrq_end' follows non-static declaration
-> > include/linux/rcupdate.h:251:6: note: previous declaration of 'rcu_sysrq_end' was here
-> > make[2]: *** [arch/um/kernel/asm-offsets.s] Error 1
-> > 
-> > 
-> > Please test your patch(es).
-
-Against exactly what?  ;-)
-
-> Just in case, to build an x86_64 UML please run:
+On 14/04/28, Stephen Rothwell wrote:
+> Hi all,
 > 
-> make defconfig ARCH=um SUBARCH=x86_64
-> make linux ARCH=um SUBARCH=x86_64
+> Today's linux-next merge of the net-next tree got a conflict in
+> net/netlink/af_netlink.c between commit 5187cd055b6e ("netlink: Rename
+> netlink_capable netlink_allowed") from the net tree and commit
+> 4f520900522f ("netlink: have netlink per-protocol bind function return an
+> error code") from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hmmm....  Builds without errors in my local tree.
+Works for me.  Thanks Stephen.
 
-Make a clone of linux-next...
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc net/netlink/af_netlink.c
+> index 81dca96d2be6,92f4b6915e89..000000000000
+> --- a/net/netlink/af_netlink.c
+> +++ b/net/netlink/af_netlink.c
+> @@@ -1492,8 -1445,8 +1510,8 @@@ static int netlink_bind(struct socket *
+>   		return -EINVAL;
+>   
+>   	/* Only superuser is allowed to listen multicasts */
+> - 	if (nladdr->nl_groups) {
+> + 	if (groups) {
+>  -		if (!netlink_capable(sock, NL_CFG_F_NONROOT_RECV))
+>  +		if (!netlink_allowed(sock, NL_CFG_F_NONROOT_RECV))
+>   			return -EPERM;
+>   		err = netlink_realloc_groups(sk);
+>   		if (err)
 
-OK, now I get a different build failure:
+- RGB
 
-/home/paulmck/public_git/linux-next/drivers/tty/sysrq.c:514: undefined reference to `rcu_sysrq_start'
-/home/paulmck/public_git/linux-next/drivers/tty/sysrq.c:558: undefined reference to `rcu_sysrq_end'
-
-This is due to Rik's "#include <linux/rcupdate.h>" getting lost somehow.
-This #include is needed in drivers/tty/sysrq.c.
-
-But maybe I need to be using some other branch of linux-next.  Am currently
-on 5bd4e10b96ce20271688aa31d8bd739441249152, which is origin/master.  And
-is also next-20140428.  If I should be somewhere else, please let me know.
-
-OK, it also appears that my change to make TINY_RCU work is also missing,
-possibly because Randy applied it by hand.
-
-Please see below for a patch against next-20140428 that makes this build
-for me.  This is derived from Rik's patch, my patch, and is consistent with
-Arnd's patch.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-index 6c3d11b..38d5f9a 100644
---- a/drivers/tty/sysrq.c
-+++ b/drivers/tty/sysrq.c
-@@ -46,6 +46,7 @@
- #include <linux/jiffies.h>
- #include <linux/syscalls.h>
- #include <linux/of.h>
-+#include <linux/rcupdate.h>
- 
- #include <asm/ptrace.h>
- #include <asm/irq_regs.h>
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index e9cc71c..7b0a669 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -247,8 +247,17 @@ void rcu_idle_enter(void);
- void rcu_idle_exit(void);
- void rcu_irq_enter(void);
- void rcu_irq_exit(void);
-+#ifdef CONFIG_RCU_STALL_COMMON
- void rcu_sysrq_start(void);
- void rcu_sysrq_end(void);
-+#else /* #ifdef CONFIG_RCU_STALL_COMMON */
-+static inline void rcu_sysrq_start(void)
-+{
-+}
-+static inline void rcu_sysrq_end(void)
-+{
-+}
-+#endif /* #else #ifdef CONFIG_RCU_STALL_COMMON */
- 
- #ifdef CONFIG_RCU_USER_QS
- void rcu_user_enter(void);
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 20caaf0..a2aeb4d 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -322,7 +322,8 @@ int rcu_jiffies_till_stall_check(void)
- 
- void rcu_sysrq_start(void)
- {
--	rcu_cpu_stall_suppress = 2;
-+	if (!rcu_cpu_stall_suppress)
-+		rcu_cpu_stall_suppress = 2;
- }
- 
- void rcu_sysrq_end(void)
+--
+Richard Guy Briggs <rbriggs@redhat.com>
+Senior Software Engineer, Kernel Security, AMER ENG Base Operating Systems, Red Hat
+Remote, Ottawa, Canada
+Voice: +1.647.777.2635, Internal: (81) 32635, Alt: +1.613.693.0684x3545
