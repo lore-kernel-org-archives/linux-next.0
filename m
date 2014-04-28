@@ -1,69 +1,149 @@
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: linux-next: Tree for Apr 28 (drivers/pnp/quirks.c)
-Date: Mon, 28 Apr 2014 23:14:15 +0200
-Message-ID: <535EC4A7.5070001@intel.com>
-References: <20140428165724.6361cf10ebd3067b7f998c0f@canb.auug.org.au> <535E93C1.90908@infradead.org> <20140428211141.GA24070@google.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: mmotm 2014-04-24-13-07 uploaded
+Date: Mon, 28 Apr 2014 14:15:35 -0700
+Message-ID: <20140428211535.GK4430@linux.vnet.ibm.com>
+References: <535992DD.3060808@infradead.org>
+ <20140425100459.7824f676@annuminas.surriel.com>
+ <535AC91A.1070504@infradead.org>
+ <535ACB0E.4070600@infradead.org>
+ <20140427062650.GW4496@linux.vnet.ibm.com>
+ <20140428135540.GA14661@linux.vnet.ibm.com>
+ <535E8D14.7080405@infradead.org>
+ <535E8E17.2050600@nod.at>
+ <20140428200640.GG4430@linux.vnet.ibm.com>
+ <535EBAE6.3080907@infradead.org>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:28891 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753854AbaD1VOS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Apr 2014 17:14:18 -0400
-In-Reply-To: <20140428211141.GA24070@google.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <535EBAE6.3080907@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Richard Weinberger <richard@nod.at>, Rik van Riel <riel@redhat.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-On 4/28/2014 11:11 PM, Bjorn Helgaas wrote:
-> On Mon, Apr 28, 2014 at 10:45:37AM -0700, Randy Dunlap wrote:
->> On 04/27/14 23:57, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> This tree still fails (more than usual) the powerpc allyesconfig build.
->>>
->>> Changes since 20140424:
->>>
->> on i386:
->>
->>    CC      drivers/pnp/quirks.o
->> drivers/pnp/quirks.c: In function 'quirk_intel_mch':
->> drivers/pnp/quirks.c:393:2: error: implicit declaration of function 'pcibios_bus_to_resource' [-Werror=implicit-function-declaration]
->> cc1: some warnings being treated as errors
->> make[3]: *** [drivers/pnp/quirks.o] Error 1
-> Thanks Randy.  This is a config that doesn't define CONFIG_PCI.  Rafael,
-> here's an incremental fix, or the full updated patch is below.
->
+On Mon, Apr 28, 2014 at 01:32:38PM -0700, Randy Dunlap wrote:
+> On 04/28/14 13:06, Paul E. McKenney wrote:
+> > On Mon, Apr 28, 2014 at 07:21:27PM +0200, Richard Weinberger wrote:
+> >> Am 28.04.2014 19:17, schrieb Randy Dunlap:
+> >>>
+> >>> uml defconfig on x86_64:
+> >>>
+> >>>   CC      arch/um/kernel/asm-offsets.s
+> >>> In file included from include/linux/sem.h:5:0,
+> >>>                  from include/linux/sched.h:35,
+> >>>                  from arch/x86/um/shared/sysdep/kernel-offsets.h:2,
+> >>>                  from arch/um/kernel/asm-offsets.c:1:
+> >>> include/linux/rcupdate.h:257:20: error: static declaration of 'rcu_sysrq_start' follows non-static declaration
+> >>> include/linux/rcupdate.h:250:6: note: previous declaration of 'rcu_sysrq_start' was here
+> >>> include/linux/rcupdate.h:260:20: error: static declaration of 'rcu_sysrq_end' follows non-static declaration
+> >>> include/linux/rcupdate.h:251:6: note: previous declaration of 'rcu_sysrq_end' was here
+> >>> make[2]: *** [arch/um/kernel/asm-offsets.s] Error 1
+> >>>
+> >>>
+> >>> Please test your patch(es).
+> > 
+> > Against exactly what?  ;-)
+> 
+> see $Subject
 
-Well, that went to Linus already, so a fix on top of 3.15-rc3 is needed.
+Testing my patches against MMOTM would be Stephen Rothwell's job.  ;-)
 
-> diff -u b/drivers/pnp/quirks.c b/drivers/pnp/quirks.c
-> --- b/drivers/pnp/quirks.c
-> +++ b/drivers/pnp/quirks.c
-> @@ -335,7 +335,7 @@
->   }
->   #endif
->   
-> -#ifdef CONFIG_X86
-> +#if defined(CONFIG_X86) && defined(CONFIG_PCI)
+> >> Just in case, to build an x86_64 UML please run:
+> >>
+> >> make defconfig ARCH=um SUBARCH=x86_64
+> >> make linux ARCH=um SUBARCH=x86_64
+> > 
+> > Hmmm....  Builds without errors in my local tree.
+> > 
+> > Make a clone of linux-next...
+> > 
+> > OK, now I get a different build failure:
+> > 
+> > /home/paulmck/public_git/linux-next/drivers/tty/sysrq.c:514: undefined reference to `rcu_sysrq_start'
+> > /home/paulmck/public_git/linux-next/drivers/tty/sysrq.c:558: undefined reference to `rcu_sysrq_end'
+> > 
+> > This is due to Rik's "#include <linux/rcupdate.h>" getting lost somehow.
+> > This #include is needed in drivers/tty/sysrq.c.
+> > 
+> > But maybe I need to be using some other branch of linux-next.  Am currently
+> > on 5bd4e10b96ce20271688aa31d8bd739441249152, which is origin/master.  And
+> > is also next-20140428.  If I should be somewhere else, please let me know.
+> > 
+> > OK, it also appears that my change to make TINY_RCU work is also missing,
+> > possibly because Randy applied it by hand.
+> 
+> nope.
+> 
+> > Please see below for a patch against next-20140428 that makes this build
+> > for me.  This is derived from Rik's patch, my patch, and is consistent with
+> > Arnd's patch.
+> > 
+> > 							Thanx, Paul
+> 
+> Thnx, works for me.  Finally.
 
-Do we need both or would CONFIG_PCI be sufficient?
+Good!
 
->   /* Device IDs of parts that have 32KB MCH space */
->   static const unsigned int mch_quirk_devices[] = {
->   	0x0154,	/* Ivy Bridge */
-> @@ -440,7 +440,7 @@
->   #ifdef CONFIG_AMD_NB
->   	{"PNP0c01", quirk_amd_mmconfig_area},
->   #endif
-> -#ifdef CONFIG_X86
-> +#if defined(CONFIG_X86) && defined(CONFIG_PCI)
->   	{"PNP0c02", quirk_intel_mch},
->   #endif
->   	{""}
->
+Rik, how would you like to proceed with this?
 
-Thanks,
-Rafael
+							Thanx, Paul
+
+> > ------------------------------------------------------------------------
+> > 
+> > diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+> > index 6c3d11b..38d5f9a 100644
+> > --- a/drivers/tty/sysrq.c
+> > +++ b/drivers/tty/sysrq.c
+> > @@ -46,6 +46,7 @@
+> >  #include <linux/jiffies.h>
+> >  #include <linux/syscalls.h>
+> >  #include <linux/of.h>
+> > +#include <linux/rcupdate.h>
+> >  
+> >  #include <asm/ptrace.h>
+> >  #include <asm/irq_regs.h>
+> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> > index e9cc71c..7b0a669 100644
+> > --- a/include/linux/rcupdate.h
+> > +++ b/include/linux/rcupdate.h
+> > @@ -247,8 +247,17 @@ void rcu_idle_enter(void);
+> >  void rcu_idle_exit(void);
+> >  void rcu_irq_enter(void);
+> >  void rcu_irq_exit(void);
+> > +#ifdef CONFIG_RCU_STALL_COMMON
+> >  void rcu_sysrq_start(void);
+> >  void rcu_sysrq_end(void);
+> > +#else /* #ifdef CONFIG_RCU_STALL_COMMON */
+> > +static inline void rcu_sysrq_start(void)
+> > +{
+> > +}
+> > +static inline void rcu_sysrq_end(void)
+> > +{
+> > +}
+> > +#endif /* #else #ifdef CONFIG_RCU_STALL_COMMON */
+> >  
+> >  #ifdef CONFIG_RCU_USER_QS
+> >  void rcu_user_enter(void);
+> > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > index 20caaf0..a2aeb4d 100644
+> > --- a/kernel/rcu/update.c
+> > +++ b/kernel/rcu/update.c
+> > @@ -322,7 +322,8 @@ int rcu_jiffies_till_stall_check(void)
+> >  
+> >  void rcu_sysrq_start(void)
+> >  {
+> > -	rcu_cpu_stall_suppress = 2;
+> > +	if (!rcu_cpu_stall_suppress)
+> > +		rcu_cpu_stall_suppress = 2;
+> >  }
+> >  
+> >  void rcu_sysrq_end(void)
+> > 
+> > --
+> 
+> 
+> -- 
+> ~Randy
+> 
