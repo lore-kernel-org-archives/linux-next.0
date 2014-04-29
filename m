@@ -1,76 +1,153 @@
-From: Don Zickus <dzickus@redhat.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 29 Apr 2014 09:09:23 -0400
-Message-ID: <20140429130923.GA32375@redhat.com>
-References: <20140429171321.69409c76a15ad2a97761585c@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: mmotm 2014-04-24-13-07 uploaded
+Date: Tue, 29 Apr 2014 09:36:04 -0700
+Message-ID: <20140429163604.GH8754@linux.vnet.ibm.com>
+References: <535AC91A.1070504@infradead.org>
+ <535ACB0E.4070600@infradead.org>
+ <20140427062650.GW4496@linux.vnet.ibm.com>
+ <20140428135540.GA14661@linux.vnet.ibm.com>
+ <535E8D14.7080405@infradead.org>
+ <535E8E17.2050600@nod.at>
+ <20140428200640.GG4430@linux.vnet.ibm.com>
+ <535EBAE6.3080907@infradead.org>
+ <20140428211535.GK4430@linux.vnet.ibm.com>
+ <535F95FC.1020909@redhat.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:15240 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751167AbaD2NJ2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Apr 2014 09:09:28 -0400
+Received: from e36.co.us.ibm.com ([32.97.110.154]:51467 "EHLO
+	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756515AbaD2QgI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Apr 2014 12:36:08 -0400
+Received: from /spool/local
+	by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Tue, 29 Apr 2014 10:36:07 -0600
 Content-Disposition: inline
-In-Reply-To: <20140429171321.69409c76a15ad2a97761585c@canb.auug.org.au>
+In-Reply-To: <535F95FC.1020909@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Tomlin <atomlin@redhat.com>
+To: Rik van Riel <riel@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Richard Weinberger <richard@nod.at>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
 
-On Tue, Apr 29, 2014 at 05:13:21PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
+On Tue, Apr 29, 2014 at 08:07:24AM -0400, Rik van Riel wrote:
+> On 04/28/2014 05:15 PM, Paul E. McKenney wrote:
+> > On Mon, Apr 28, 2014 at 01:32:38PM -0700, Randy Dunlap wrote:
+> >> On 04/28/14 13:06, Paul E. McKenney wrote:
 > 
-> After merging the akpm tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
+> >>> Please see below for a patch against next-20140428 that makes this build
+> >>> for me.  This is derived from Rik's patch, my patch, and is consistent with
+> >>> Arnd's patch.
+> >>>
+> >>> 							Thanx, Paul
+> >>
+> >> Thnx, works for me.  Finally.
+> > 
+> > Good!
+> > 
+> > Rik, how would you like to proceed with this?
 > 
-> arch/sparc/kernel/process_64.c: In function 'arch_trigger_all_cpu_backtrace':
-> arch/sparc/kernel/process_64.c:267:3: error: ISO C90 forbids mixed declarations and code [-Werror=declaration-after-statement]
-> cc1: all warnings being treated as errors
-> 
-> Caused by commit dd0063a16aa1 ("nmi: provide the option to issue an NMI
-> back trace to every cpu but current").
-> 
-> I have no idea why I did not see this yesterday.
-> 
-> I applied the following fix up patch:
+> I guess this fix should go into -mm?
 
-I apologize for that.  The downsides of making changes without having a
-cross compiler.  Thanks for the fixup!
+Andrew dropped the original patch, so a consolidated patch is needed.
+I believe that something like the following is what we ended up with.
+Does this look right to you?
 
-Cheers,
-Don
+							Thanx, Paul
 
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 29 Apr 2014 17:10:00 +1000
-> Subject: [PATCH] nmi-provide-the-option-to-issue-an-nmi-back-trace-to-every-cpu-but-current-fix
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/sparc/kernel/process_64.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/sparc/kernel/process_64.c b/arch/sparc/kernel/process_64.c
-> index 65b405c36421..9975a6dbca0a 100644
-> --- a/arch/sparc/kernel/process_64.c
-> +++ b/arch/sparc/kernel/process_64.c
-> @@ -261,10 +261,12 @@ void arch_trigger_all_cpu_backtrace(bool include_self)
->  	smp_fetch_global_regs();
->  
->  	for_each_online_cpu(cpu) {
-> +		struct global_reg_snapshot *gp;
-> +
->  		if (!include_self && cpu == this_cpu)
->  			continue;
->  
-> -		struct global_reg_snapshot *gp = &global_cpu_snapshot[cpu].reg;
-> +		gp = &global_cpu_snapshot[cpu].reg;
->  
->  		__global_reg_poll(gp);
->  
-> -- 
-> 2.0.0.rc0
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+------------------------------------------------------------------------
+
+sysrq,rcu: suppress RCU stall warnings while sysrq runs
+
+Some sysrq handlers can run for a long time, because they dump a lot
+of data onto a serial console. Having RCU stall warnings pop up in
+the middle of them only makes the problem worse.
+
+This patch temporarily disables RCU stall warnings while a sysrq
+request is handled.
+
+Signed-off-by: Rik van Riel <riel@redhat.com>
+[ paulmck: Fix build bugs for obscure config options. ]
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Joern Engel <joern@logfs.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Madper Xie <cxie@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+
+diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+index fc67a89..38d5f9a 100644
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -46,6 +46,7 @@
+ #include <linux/jiffies.h>
+ #include <linux/syscalls.h>
+ #include <linux/of.h>
++#include <linux/rcupdate.h>
+ 
+ #include <asm/ptrace.h>
+ #include <asm/irq_regs.h>
+@@ -511,6 +512,7 @@ void __handle_sysrq(int key, bool check_mask)
+ 	int orig_log_level;
+ 	int i;
+ 
++	rcu_sysrq_start();
+ 	rcu_read_lock();
+ 	/*
+ 	 * Raise the apparent loglevel to maximum so that the sysrq header
+@@ -554,6 +556,7 @@ void __handle_sysrq(int key, bool check_mask)
+ 		console_loglevel = orig_log_level;
+ 	}
+ 	rcu_read_unlock();
++	rcu_sysrq_end();
+ }
+ 
+ void handle_sysrq(int key)
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 00a7fd6..f3a672c 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -227,6 +227,17 @@ void rcu_idle_enter(void);
+ void rcu_idle_exit(void);
+ void rcu_irq_enter(void);
+ void rcu_irq_exit(void);
++#ifdef CONFIG_RCU_STALL_COMMON
++void rcu_sysrq_start(void);
++void rcu_sysrq_end(void);
++#else /* #ifdef CONFIG_RCU_STALL_COMMON */
++static inline void rcu_sysrq_start(void)
++{
++}
++static inline void rcu_sysrq_end(void)
++{
++}
++#endif /* #else #ifdef CONFIG_RCU_STALL_COMMON */
+ 
+ #ifdef CONFIG_RCU_USER_QS
+ void rcu_user_enter(void);
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 4c0a9b0..d22309c 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -320,6 +320,18 @@ int rcu_jiffies_till_stall_check(void)
+ 	return till_stall_check * HZ + RCU_STALL_DELAY_DELTA;
+ }
+ 
++void rcu_sysrq_start(void)
++{
++	if (!rcu_cpu_stall_suppress)
++		rcu_cpu_stall_suppress = 2;
++}
++
++void rcu_sysrq_end(void)
++{
++	if (rcu_cpu_stall_suppress == 2)
++		rcu_cpu_stall_suppress = 0;
++}
++
+ static int rcu_panic(struct notifier_block *this, unsigned long ev, void *ptr)
+ {
+ 	rcu_cpu_stall_suppress = 1;
