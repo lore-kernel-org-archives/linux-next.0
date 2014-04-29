@@ -1,39 +1,76 @@
-From: Rik van Riel <riel@redhat.com>
-Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Tue, 29 Apr 2014 08:07:24 -0400
-Message-ID: <535F95FC.1020909@redhat.com>
-References: <535992DD.3060808@infradead.org> <20140425100459.7824f676@annuminas.surriel.com> <535AC91A.1070504@infradead.org> <535ACB0E.4070600@infradead.org> <20140427062650.GW4496@linux.vnet.ibm.com> <20140428135540.GA14661@linux.vnet.ibm.com> <535E8D14.7080405@infradead.org> <535E8E17.2050600@nod.at> <20140428200640.GG4430@linux.vnet.ibm.com> <535EBAE6.3080907@infradead.org> <20140428211535.GK4430@linux.vnet.ibm.com>
+From: Don Zickus <dzickus@redhat.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Tue, 29 Apr 2014 09:09:23 -0400
+Message-ID: <20140429130923.GA32375@redhat.com>
+References: <20140429171321.69409c76a15ad2a97761585c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:51547 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:15240 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933447AbaD2MIB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Apr 2014 08:08:01 -0400
-In-Reply-To: <20140428211535.GK4430@linux.vnet.ibm.com>
+	id S1751167AbaD2NJ2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Apr 2014 09:09:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20140429171321.69409c76a15ad2a97761585c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com, Randy Dunlap <rdunlap@infradead.org>
-Cc: Richard Weinberger <richard@nod.at>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Tomlin <atomlin@redhat.com>
 
-On 04/28/2014 05:15 PM, Paul E. McKenney wrote:
-> On Mon, Apr 28, 2014 at 01:32:38PM -0700, Randy Dunlap wrote:
->> On 04/28/14 13:06, Paul E. McKenney wrote:
-
->>> Please see below for a patch against next-20140428 that makes this build
->>> for me.  This is derived from Rik's patch, my patch, and is consistent with
->>> Arnd's patch.
->>>
->>> 							Thanx, Paul
->>
->> Thnx, works for me.  Finally.
+On Tue, Apr 29, 2014 at 05:13:21PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> Good!
+> After merging the akpm tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
 > 
-> Rik, how would you like to proceed with this?
+> arch/sparc/kernel/process_64.c: In function 'arch_trigger_all_cpu_backtrace':
+> arch/sparc/kernel/process_64.c:267:3: error: ISO C90 forbids mixed declarations and code [-Werror=declaration-after-statement]
+> cc1: all warnings being treated as errors
+> 
+> Caused by commit dd0063a16aa1 ("nmi: provide the option to issue an NMI
+> back trace to every cpu but current").
+> 
+> I have no idea why I did not see this yesterday.
+> 
+> I applied the following fix up patch:
 
-I guess this fix should go into -mm?
+I apologize for that.  The downsides of making changes without having a
+cross compiler.  Thanks for the fixup!
 
--- 
-All rights reversed
+Cheers,
+Don
+
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 29 Apr 2014 17:10:00 +1000
+> Subject: [PATCH] nmi-provide-the-option-to-issue-an-nmi-back-trace-to-every-cpu-but-current-fix
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/sparc/kernel/process_64.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/sparc/kernel/process_64.c b/arch/sparc/kernel/process_64.c
+> index 65b405c36421..9975a6dbca0a 100644
+> --- a/arch/sparc/kernel/process_64.c
+> +++ b/arch/sparc/kernel/process_64.c
+> @@ -261,10 +261,12 @@ void arch_trigger_all_cpu_backtrace(bool include_self)
+>  	smp_fetch_global_regs();
+>  
+>  	for_each_online_cpu(cpu) {
+> +		struct global_reg_snapshot *gp;
+> +
+>  		if (!include_self && cpu == this_cpu)
+>  			continue;
+>  
+> -		struct global_reg_snapshot *gp = &global_cpu_snapshot[cpu].reg;
+> +		gp = &global_cpu_snapshot[cpu].reg;
+>  
+>  		__global_reg_poll(gp);
+>  
+> -- 
+> 2.0.0.rc0
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
