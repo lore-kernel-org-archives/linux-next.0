@@ -1,79 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Tue, 29 Apr 2014 09:42:11 +1000
-Message-ID: <20140429094211.aa10845c82f772155d12923c@canb.auug.org.au>
-References: <20140424200837.727695A407C@corp2gmr1-2.hot.corp.google.com>
-	<535992DD.3060808@infradead.org>
-	<20140425100459.7824f676@annuminas.surriel.com>
-	<535AC91A.1070504@infradead.org>
-	<535ACB0E.4070600@infradead.org>
-	<20140427062650.GW4496@linux.vnet.ibm.com>
-	<20140428135540.GA14661@linux.vnet.ibm.com>
-	<535E8D14.7080405@infradead.org>
-	<535E8E17.2050600@nod.at>
-	<20140428200640.GG4430@linux.vnet.ibm.com>
-	<20140428213909.GA16623@linux.vnet.ibm.com>
-	<20140428160501.df072b191fce77ab5d042054@linux-foundation.org>
+Subject: linux-next: manual merge of the vfs tree with the f2fs tree
+Date: Tue, 29 Apr 2014 10:37:03 +1000
+Message-ID: <20140429103703.efca943550755ccb0ed875eb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Apr_2014_09_42_11_+1000_7YrNW7mQo=3Cqg+J"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34727 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932339AbaD1XmW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Apr 2014 19:42:22 -0400
-In-Reply-To: <20140428160501.df072b191fce77ab5d042054@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: paulmck@linux.vnet.ibm.com, Richard Weinberger <richard@nod.at>, Randy Dunlap <rdunlap@infradead.org>, Rik van Riel <riel@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+ boundary="Signature=_Tue__29_Apr_2014_10_37_03_+1000_W7sbrYXuhzot3eL_"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chao Yu <chao2.yu@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__29_Apr_2014_09_42_11_+1000_7YrNW7mQo=3Cqg+J
+--Signature=_Tue__29_Apr_2014_10_37_03_+1000_W7sbrYXuhzot3eL_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Al,
 
-On Mon, 28 Apr 2014 16:05:01 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> OK, my tiny brain just burst.  Rik, I think I shall ease
->=20
-> sysrq-rcu-ify-__handle_sysrq.patch
-> sysrq-rcu-ify-__handle_sysrq-fix.patch
-> and
-> sysrqrcu-suppress-rcu-stall-warnings-while-sysrq-runs.patch
->=20
-> into the bitbucket for now.  Please resend everything when it's all
-> sorted out?
+Today's linux-next merge of the vfs tree got a conflict in fs/f2fs/file.c
+between commit adeb670f1fee ("f2fs: introduce f2fs_seek_block to support
+SEEK_{DATA, HOLE} in llseek") from the f2fs tree and commits 8eb02141b8a6
+("switch simple generic_file_aio_read() users to ->read_iter()") and
+e6552301fb08 ("write_iter variants of {__,}generic_file_aio_write()")
+from the vfs tree.
 
-And I have dropped them from today's linux-next.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__29_Apr_2014_09_42_11_+1000_7YrNW7mQo=3Cqg+J
+diff --cc fs/f2fs/file.c
+index b9f4fbf5c07e,e4ba4b93f96a..000000000000
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@@ -802,11 -678,11 +802,11 @@@ long f2fs_compat_ioctl(struct file *fil
+  #endif
+ =20
+  const struct file_operations f2fs_file_operations =3D {
+ -	.llseek		=3D generic_file_llseek,
+ +	.llseek		=3D f2fs_llseek,
+- 	.read		=3D do_sync_read,
+- 	.write		=3D do_sync_write,
+- 	.aio_read	=3D generic_file_aio_read,
+- 	.aio_write	=3D generic_file_aio_write,
++ 	.read		=3D new_sync_read,
++ 	.write		=3D new_sync_write,
++ 	.read_iter	=3D generic_file_read_iter,
++ 	.write_iter	=3D generic_file_write_iter,
+  	.open		=3D generic_file_open,
+  	.mmap		=3D f2fs_file_mmap,
+  	.fsync		=3D f2fs_sync_file,
+
+--Signature=_Tue__29_Apr_2014_10_37_03_+1000_W7sbrYXuhzot3eL_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTXudcAAoJEMDTa8Ir7ZwVgQEP/11NkHf0lMu+wO4BQClrOlHi
-IiHfeTJWUvCUL/jlfa9RxSRzJ95MVk/CizmatyPO0+zvzuxBEnBN7TM/Jvf27gTd
-VwHj2L5j7A0AUeCMTDOyXSrvZ2VCSpnv1GyEWw1K1S2SxyioOBfbYYkgbJooV8xs
-kc48/slcRrMoZsQc6fR6QYrk6lD4K0wpvQghQFI3NLtA1lpZie+n9CNGnAk+QGUi
-FVKeAJsiT4BaJGDOgpMDKspiouNHLg9sswMOVNjAkG4Gc1fX4rfjDOtnmRaSHThP
-SNdjpC1acwmisM3FGEJUE3hi4Bxh9wgm2xrPfQVKJAp9ZOvR1Gw91pUoy9XlUzqo
-NkjfR72RDCLr9eKyJnDhS0bmuhKfTfc1MuP8SDvr+T8cwhzECUgIXaUCVQjBN52S
-5hGD3rRPMl9x3060jQeweVaOn9pwNeLgDqbK7a+O0Bw3A4OiHJFURFzGsqnIeWYA
-61o+Q6yGEQg9OP+hcXCZE8xAs8EQwm9vqx+9YuD1/J206Fw8Kjde4uFJj0SOX7mU
-NpRLdgQXKtdHv01bGlYiMXXe1EuHtGqn9tvEU/RnhZ1nth+p9GK7zTX2FV3Lb99l
-rKDTvsPxDfX8qYuhhDQYwdhZ5XQ060LrZIvaIzldImA75ud2QkVQREOT4+rphDx3
-L8TxldWXA8Tqf2g0QbeI
-=5rWU
+iQIcBAEBCAAGBQJTXvQ0AAoJEMDTa8Ir7ZwVt+MP/AxLH1yUhfigWUpj88HhkNgW
+Iiv2Zyr1Z2Ky06Iu5qGE+hlLc2gN9xcqLFK/lC4U+Xh4DCggo0+DvL5OhUjNTMMG
+ZspWcU9ugkZz7/QJP/bfzubBk0zPCj7Q7bnHdSCg1F2oD/LwkZturJ+hq7A0A8we
+MdFnQCO04bUimdP0czyK7yOIG1bYLZVs03Zbk2u7bQPTJFjXLDcpn8b7qDHb1lZE
+nuJfjqS+rYA4/Wo6SuMW8foQ61bvweSG3pV4/Vy1ZosGFn/P70G3ENSU79gpFl78
+FGl5QNsQGuYaQKe2TEMl72hFAr02a/bs2/aHczc23dYnrzob3s6klrRykuRofpWC
+0MhC36OfimUy56OUmF4uwppVq/zqGMsf5jjiC9JYx58Mv2yPdJaOFNXaJE79Zi/s
+HU+H6abgrWV6THlVbazlQh7gpipmbElndcVqKUnqfobDGlvDo65N44S01PPEjNNy
+MqsMywOPiv283DLSfSbHt+0oDyhFbWLSrcZIHKP2BNUrrUT0qZ0Co4se12eESD5d
+vMHqf1tiebQqigb+8AzAgQdMd8Puttr0Zs+Up03MwGLMVhIRUU3cI1Jje035Exkv
+PJE6fT7PxolNUF+GAhKs/wVHYCPNfaxfMUDQ0f6zMJh3BhT/bW2spbaBcLx2+9rn
+pzYXym1ZpGs+GDhPMJh6
+=DFvG
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Apr_2014_09_42_11_+1000_7YrNW7mQo=3Cqg+J--
+--Signature=_Tue__29_Apr_2014_10_37_03_+1000_W7sbrYXuhzot3eL_--
