@@ -1,69 +1,176 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: mmotm 2014-04-24-13-07 uploaded
-Date: Tue, 29 Apr 2014 10:45:08 -0700
-Message-ID: <20140429174508.GI8754@linux.vnet.ibm.com>
-References: <20140427062650.GW4496@linux.vnet.ibm.com>
- <20140428135540.GA14661@linux.vnet.ibm.com>
- <535E8D14.7080405@infradead.org>
- <535E8E17.2050600@nod.at>
- <20140428200640.GG4430@linux.vnet.ibm.com>
- <535EBAE6.3080907@infradead.org>
- <20140428211535.GK4430@linux.vnet.ibm.com>
- <535F95FC.1020909@redhat.com>
- <20140429163604.GH8754@linux.vnet.ibm.com>
- <535FE1DB.2060601@redhat.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Wed, 30 Apr 2014 12:37:53 +1000
+Message-ID: <20140430123753.16dd13b23d29e09548a4bd56@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e32.co.us.ibm.com ([32.97.110.150]:52006 "EHLO
-	e32.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932491AbaD2RpO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Apr 2014 13:45:14 -0400
-Received: from /spool/local
-	by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Tue, 29 Apr 2014 11:45:13 -0600
+Content-Type: multipart/mixed; boundary="===============0897753326=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--===============0897753326==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__30_Apr_2014_12_37_53_+1000_pqN4Wux4IR7CmFMp"
+
+--Signature=_Wed__30_Apr_2014_12_37_53_+1000_pqN4Wux4IR7CmFMp
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <535FE1DB.2060601@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rik van Riel <riel@redhat.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Richard Weinberger <richard@nod.at>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, umgwanakikbuti@gmail.com
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2014 at 01:31:07PM -0400, Rik van Riel wrote:
-> On 04/29/2014 12:36 PM, Paul E. McKenney wrote:
-> > On Tue, Apr 29, 2014 at 08:07:24AM -0400, Rik van Riel wrote:
-> >> On 04/28/2014 05:15 PM, Paul E. McKenney wrote:
-> >>> On Mon, Apr 28, 2014 at 01:32:38PM -0700, Randy Dunlap wrote:
-> >>>> On 04/28/14 13:06, Paul E. McKenney wrote:
-> >>
-> >>>>> Please see below for a patch against next-20140428 that makes this build
-> >>>>> for me.  This is derived from Rik's patch, my patch, and is consistent with
-> >>>>> Arnd's patch.
-> >>>>>
-> >>>>> 							Thanx, Paul
-> >>>>
-> >>>> Thnx, works for me.  Finally.
-> >>>
-> >>> Good!
-> >>>
-> >>> Rik, how would you like to proceed with this?
-> >>
-> >> I guess this fix should go into -mm?
-> > 
-> > Andrew dropped the original patch, so a consolidated patch is needed.
-> > I believe that something like the following is what we ended up with.
-> > Does this look right to you?
-> 
-> That looks exactly like the one I have here :)
+Hi all,
 
-That is reassuring.  ;-)
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/i915_gem_gtt.c between commitcfa7c862982b
+("drm/i915: Sanitize the enable_ppgtt module option once") from the
+drm-intel-fixes tree tree and commit 5db6c735ead5 ("drm/i915: dmesg
+output for VT-d testing") from the drm-intel tree.
 
-							Thanx, Paul
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> Andrew, should I send you the two patches?
-> 
-> -- 
-> All rights reversed
-> 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/i915/i915_gem_gtt.c
+index 154b0f8bb88d,496916298e8a..000000000000
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@@ -62,62 -48,13 +62,9 @@@ static int sanitize_enable_ppgtt(struc
+  	}
+  #endif
+ =20
+ -	/* Full ppgtt disabled by default for now due to issues. */
+ -	if (full)
+ -		return HAS_PPGTT(dev) && (i915.enable_ppgtt =3D=3D 2);
+ -	else
+ -		return HAS_ALIASING_PPGTT(dev);
+ +	return HAS_ALIASING_PPGTT(dev) ? 1 : 0;
+  }
+ =20
+- #define GEN6_PPGTT_PD_ENTRIES 512
+- #define I915_PPGTT_PT_ENTRIES (PAGE_SIZE / sizeof(gen6_gtt_pte_t))
+- typedef uint64_t gen8_gtt_pte_t;
+- typedef gen8_gtt_pte_t gen8_ppgtt_pde_t;
+-=20
+- /* PPGTT stuff */
+- #define GEN6_GTT_ADDR_ENCODE(addr)	((addr) | (((addr) >> 28) & 0xff0))
+- #define HSW_GTT_ADDR_ENCODE(addr)	((addr) | (((addr) >> 28) & 0x7f0))
+-=20
+- #define GEN6_PDE_VALID			(1 << 0)
+- /* gen6+ has bit 11-4 for physical addr bit 39-32 */
+- #define GEN6_PDE_ADDR_ENCODE(addr)	GEN6_GTT_ADDR_ENCODE(addr)
+-=20
+- #define GEN6_PTE_VALID			(1 << 0)
+- #define GEN6_PTE_UNCACHED		(1 << 1)
+- #define HSW_PTE_UNCACHED		(0)
+- #define GEN6_PTE_CACHE_LLC		(2 << 1)
+- #define GEN7_PTE_CACHE_L3_LLC		(3 << 1)
+- #define GEN6_PTE_ADDR_ENCODE(addr)	GEN6_GTT_ADDR_ENCODE(addr)
+- #define HSW_PTE_ADDR_ENCODE(addr)	HSW_GTT_ADDR_ENCODE(addr)
+-=20
+- /* Cacheability Control is a 4-bit value. The low three bits are stored i=
+n *
+-  * bits 3:1 of the PTE, while the fourth bit is stored in bit 11 of the P=
+TE.
+-  */
+- #define HSW_CACHEABILITY_CONTROL(bits)	((((bits) & 0x7) << 1) | \
+- 					 (((bits) & 0x8) << (11 - 3)))
+- #define HSW_WB_LLC_AGE3			HSW_CACHEABILITY_CONTROL(0x2)
+- #define HSW_WB_LLC_AGE0			HSW_CACHEABILITY_CONTROL(0x3)
+- #define HSW_WB_ELLC_LLC_AGE0		HSW_CACHEABILITY_CONTROL(0xb)
+- #define HSW_WB_ELLC_LLC_AGE3		HSW_CACHEABILITY_CONTROL(0x8)
+- #define HSW_WT_ELLC_LLC_AGE0		HSW_CACHEABILITY_CONTROL(0x6)
+- #define HSW_WT_ELLC_LLC_AGE3		HSW_CACHEABILITY_CONTROL(0x7)
+-=20
+- #define GEN8_PTES_PER_PAGE		(PAGE_SIZE / sizeof(gen8_gtt_pte_t))
+- #define GEN8_PDES_PER_PAGE		(PAGE_SIZE / sizeof(gen8_ppgtt_pde_t))
+-=20
+- /* GEN8 legacy style addressis defined as a 3 level page table:
+-  * 31:30 | 29:21 | 20:12 |  11:0
+-  * PDPE  |  PDE  |  PTE  | offset
+-  * The difference as compared to normal x86 3 level page table is the PDP=
+Es are
+-  * programmed via register.
+-  */
+- #define GEN8_PDPE_SHIFT			30
+- #define GEN8_PDPE_MASK			0x3
+- #define GEN8_PDE_SHIFT			21
+- #define GEN8_PDE_MASK			0x1ff
+- #define GEN8_PTE_SHIFT			12
+- #define GEN8_PTE_MASK			0x1ff
+-=20
+- #define PPAT_UNCACHED_INDEX		(_PAGE_PWT | _PAGE_PCD)
+- #define PPAT_CACHED_PDE_INDEX		0 /* WB LLC */
+- #define PPAT_CACHED_INDEX		_PAGE_PAT /* WB LLCeLLC */
+- #define PPAT_DISPLAY_ELLC_INDEX		_PAGE_PCD /* WT eLLC */
+ =20
+  static void ppgtt_bind_vma(struct i915_vma *vma,
+  			   enum i915_cache_level cache_level,
+@@@ -2041,14 -1971,10 +1981,18 @@@ int i915_gem_gtt_init(struct drm_devic
+  		 gtt->base.total >> 20);
+  	DRM_DEBUG_DRIVER("GMADR size =3D %ldM\n", gtt->mappable_end >> 20);
+  	DRM_DEBUG_DRIVER("GTT stolen size =3D %zdM\n", gtt->stolen_size >> 20);
+ +	/*
+ +	 * i915.enable_ppgtt is read-only, so do an early pass to validate the
+ +	 * user's requested state against the hardware/driver capabilities.  We
+ +	 * do this now so that we can print out any log messages once rather
+ +	 * than every time we check intel_enable_ppgtt().
+ +	 */
+ +	i915.enable_ppgtt =3D sanitize_enable_ppgtt(dev, i915.enable_ppgtt);
+ +	DRM_DEBUG_DRIVER("ppgtt mode: %i\n", i915.enable_ppgtt);
++ #ifdef CONFIG_INTEL_IOMMU
++ 	if (intel_iommu_gfx_mapped)
++ 		DRM_INFO("VT-d active for gfx access\n");
++ #endif
+ =20
+  	return 0;
+  }
+
+--Signature=_Wed__30_Apr_2014_12_37_53_+1000_pqN4Wux4IR7CmFMp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTYGIGAAoJEMDTa8Ir7ZwVHrIP/2Mvt6zorQK9C9Cnd4X4Cw05
+bjUJOzMvpQro8Q5ho3xXJgMfHAaG0XN2FyBln1JHup1nXKhlWVrsKiFa/AsdSOVX
+B6CxMkbQ1/l1MNSrssk8HnR2+9tT5zYBd3tl8+htmiW/EQigLvr0R+3QgY1JVamn
+xdQ2U3R40foSCELFcbkmMsgHJ95ZRQXTRZLxf0MGAUSbFXSE7gUomCiBYSvA7YV0
++Cfuslz7eXJdrr6TdVo5PGBId0kkklKAG2azMHG+SKukUTVkFKE9GgbbhUukfEnr
+ASo8ux0Hgh3Ye227SUV1cz8b45+fFAFctjcJ2TfE/E0VQYl4s+nXc1Nz+nfUCQtJ
+3bYhHgUVoXDHjoreN3YsZER3j0G9hHtT3iYlWJjoW0gHhlErGDiPN8zW8W5rSSKy
+M5zw28yzcdTqtjj4y+aro1Dr7FZF74tBoMhJAgb927tqE4nYVtZ98515bqkWu7Qa
+MIMS6YyRCWRyy6Kb6K7BfWy9BrIsc9+xpvGwWKTDaXlPXNlAHI76AOB9hJQ6ejbl
+VoS+Mxl+mKO7OUybnYjs7yBy/Tkommr4Nw0M2PpER1YUntnR83LH1VMU2+gT7tuL
+Qmf8FHgEZCx0bJYaKjoXobgfQrX9Ki0cluMQr08TxRrr9vrQkiLj7QZZLsKFZHIe
+pnSYLfDG5YfbTMbgQIn5
+=PyIM
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__30_Apr_2014_12_37_53_+1000_pqN4Wux4IR7CmFMp--
+
+--===============0897753326==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0897753326==--
