@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the mips tree
-Date: Thu, 1 May 2014 12:09:32 +1000
-Message-ID: <20140501120932.ff26772f983a436b4453c915@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Thu, 1 May 2014 14:37:26 +1000
+Message-ID: <20140501143726.13b4ea03f25679d3e0a78fed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn"
+ boundary="Signature=_Thu__1_May_2014_14_37_26_+1000_Qi85KDme0QDrn4n2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40978 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43903 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751225AbaEACJj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Apr 2014 22:09:39 -0400
+	id S1750706AbaEAEhd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 May 2014 00:37:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, Stratos Karafotis <stratosk@semaphore.gr>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.de>
 
---Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn
+--Signature=_Thu__1_May_2014_14_37_26_+1000_Qi85KDme0QDrn4n2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Greg,
 
-Today's linux-next merge of the pm tree got a conflict in
-arch/mips/loongson/lemote-2f/clock.c between commit a68ce6507a45
-("MIPS/loongson2_cpufreq: Fix CPU clock rate setting") from the mips tree
-and commit 4966ee4037fe ("mips: lemote 2f: Use cpufreq_for_each_entry
-macro for iteration") from the pm tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/iio/adc/Kconfig between commit bbc28134e915 ("iio: adc: Nothing
+in ADC should be a bool CONFIG") from the staging.current tree and commit
+9ef080ec0c5e ("iio: adc: Fix exynos_adc dependencies") from the staging
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,64 +37,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/mips/loongson/lemote-2f/clock.c
-index 67dd94ef28e6,1eed38e28b1e..000000000000
---- a/arch/mips/loongson/lemote-2f/clock.c
-+++ b/arch/mips/loongson/lemote-2f/clock.c
-@@@ -91,10 -91,9 +91,10 @@@ EXPORT_SYMBOL(clk_put)
+diff --cc drivers/iio/adc/Kconfig
+index 24c28e3f93a3,6cbf34a90c04..000000000000
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@@ -106,8 -117,8 +117,8 @@@ config AT91_AD
+  	  Say yes here to build support for Atmel AT91 ADC.
  =20
-  int clk_set_rate(struct clk *clk, unsigned long rate)
-  {
- +	unsigned int rate_khz =3D rate / 1000;
-+ 	struct cpufreq_frequency_table *pos;
-  	int ret =3D 0;
-  	int regval;
-- 	int i;
- =20
-  	if (likely(clk->ops && clk->ops->set_rate)) {
-  		unsigned long flags;
-@@@ -107,15 -106,10 +107,10 @@@
-  	if (unlikely(clk->flags & CLK_RATE_PROPAGATES))
-  		propagate_rate(clk);
- =20
-- 	for (i =3D 0; loongson2_clockmod_table[i].frequency !=3D CPUFREQ_TABLE_E=
-ND;
-- 	     i++) {
-- 		if (loongson2_clockmod_table[i].frequency =3D=3D
-- 		    CPUFREQ_ENTRY_INVALID)
-- 			continue;
-- 		if (rate_khz =3D=3D loongson2_clockmod_table[i].frequency)
-+ 	cpufreq_for_each_valid_entry(pos, loongson2_clockmod_table)
- -		if (rate =3D=3D pos->frequency)
-++		if (rate_khz =3D=3D pos->frequency)
-  			break;
-- 	}
-- 	if (rate_khz !=3D loongson2_clockmod_table[i].frequency)
- -	if (rate !=3D pos->frequency)
-++	if (rate_khz !=3D pos->frequency)
-  		return -ENOTSUPP;
- =20
-  	clk->rate =3D rate;
+  config EXYNOS_ADC
+ -	bool "Exynos ADC driver support"
+ +	tristate "Exynos ADC driver support"
+- 	depends on OF
++ 	depends on ARCH_EXYNOS || (OF && COMPILE_TEST)
+  	help
+  	  Core support for the ADC block found in the Samsung EXYNOS series
+  	  of SoCs for drivers such as the touchscreen and hwmon to use to share
 
---Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn
+--Signature=_Thu__1_May_2014_14_37_26_+1000_Qi85KDme0QDrn4n2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTYazgAAoJEMDTa8Ir7ZwVrJwP/RFrn/rh2YO1BSHg3kHzp5Ys
-+fEFSQA1lAjkbPsSDBTrTPGSF8Ap02OZa9apU+0uK5ojzkDKbNVygZgjE9xKcSb4
-VHzKuhyGO5DbtqJ9sWjCjAPZR5yIsteunkAy8r6YaITY3HBTKJEFO7LxtalEVrdZ
-koTVQ5JH1oZqi+8L5ZWiitNfbMhrsk3VWgz3j+OqO2rFeTr459ghF/vXBEtb7F+C
-cPd9W9ueqVNJooEgBnwEXHBH40mN2CLk+pbFhAEjthlkXyH2u0S1Q+8aW0xF5kLT
-tE5TnuoLGZk1h4yL4kuOMfwlotHaIcrC/ydTLa4PcmU5q8QQPgczPvXdRtKEwUxE
-0JC1OnB1jgs8KybpdyqLhdBGAHm0shRjU2imn1urHQB+2oqABsng6z8V4jLVy4FX
-X89+ICxnlZy5ts9jbsI4E4NE8OBGOD4DIHoaAxBC49XEw0tBZNgZPgudCEJypGrr
-u4AQ3Z4INhgpEcV0F0sK3UVpW/HigdBAhuFOXTnBrNbUS1riesxCgBKEaQrXbtr0
-F/nsNtwJ6CGuBL2tkB0FM8F/2TP/7k1FBqHhEV96JSI2sS/lX4UGg6UXXq2Gxxkc
-uPTK3Yd+8wncyTeAPC/ZX3PK+6AcKJbcyM8og+XOjuH3w2xaWSrG5GfNgSBdvY1J
-FvZQKI75k7/wDu9j70Nl
-=FHF+
+iQIcBAEBCAAGBQJTYc+LAAoJEMDTa8Ir7ZwVRuoP/ArtJNBZl/nz0d3dpfmu3Ruu
+kfQs2QdtjyCfBv7rT/OdLDWxEDX5/ieFbvlrqOvPmxL2+97PlpUqNBL19koBDPtT
+Ow9iThru9RTVAHyNojH0WTpKFIG8LP+NLY1WJcDpp934mszDzl5UTfPUUi51/22u
+mFedFxV9QEp/8VU2GE1KX/ss1J9y3ELJnYTXaMQ0IxDtU/qmFROQNVm2dP4JF20r
+x5eYA+0W9/2EVkf/BTWY27Ea40w63AF6YoPWaaanTNKCMo++0vDN+HSpfAMWZJy2
+kC4Be0gVIjlFfzXtzw/3+Iaab7nQ2bNfOkV4ZnnJP/Q4cT8wraKLWJG+ojXnVgDc
+Iwv2iYKrdzi5DvV5McMgxSFOKVHCfeHMs55qaMu/i+yXhFZmZ89J/QEV3b3V8v6p
+7cWcWCPuvTh63mTy5maUvdT+IE9mfIy4QBsoDy+FeM1QQn0CVkpQUelUXvXFVFAP
+gJGtz4vuMPYFxuPuFB3YPGl1wYUG+X2uGoc0t7sa+qjZw9+ENeDDchQnSGUbV9IY
+AgR4SYsj2FBpRk4XWTe2DdGoX28FXd03FTD1VZYZlU6gwMZ2PCb9etHfLFviDd23
+dUtewQg96UBkFUqYhwoEUoUcZG3nSV1GqwUSyEJVlxkC8GFks8etQUmk6uiJeOgP
+0qDEszyWWMMxaOBRiakW
+=hsVT
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn--
+--Signature=_Thu__1_May_2014_14_37_26_+1000_Qi85KDme0QDrn4n2--
