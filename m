@@ -1,85 +1,99 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: kissb mkimage doesn't support extensa
-Date: Thu, 1 May 2014 04:45:02 +0400
-Message-ID: <CAMo8BfLRfQOYHR0Ltbqa4emaTjSFVBvT9NJcfK7Nk-JHf5dU3A@mail.gmail.com>
-References: <CAMuHMdU2L+m4-dKNAacqrLw66obsFYVKu8x1n6=up7Mkg1HL_Q@mail.gmail.com>
-	<1398743403.8217.7.camel@concordia>
-	<CAOMZO5AuVyZ9Dqo2wUjeN2E0CZVjXoCgR5t8zje-37yPtr_tHA@mail.gmail.com>
-	<CAMo8Bf+6AZcSEqTvnkV2e0x85v9PViGdLy5m9YCDK0Z9GsO-Pg@mail.gmail.com>
-	<CAMuHMdU6DEnE+-b+V1DKub3F4ZENPwzvfqwg7LMToH3ULTHCHA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the mips tree
+Date: Thu, 1 May 2014 12:09:32 +1000
+Message-ID: <20140501120932.ff26772f983a436b4453c915@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:61782 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750921AbaEAApE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Apr 2014 20:45:04 -0400
-In-Reply-To: <CAMuHMdU6DEnE+-b+V1DKub3F4ZENPwzvfqwg7LMToH3ULTHCHA@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:40978 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751225AbaEACJj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Apr 2014 22:09:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Fabio Estevam <festevam@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, linux-kbuild <linux-kbuild@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, Stratos Karafotis <stratosk@semaphore.gr>
 
-On Thu, May 1, 2014 at 12:53 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Apr 30, 2014 at 9:34 PM, Max Filippov <jcmvbkbc@gmail.com> wrote:
->> On Wed, Apr 30, 2014 at 10:31 PM, Fabio Estevam <festevam@gmail.com> wrote:
->>> On Tue, Apr 29, 2014 at 12:50 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
->>>> On Sun, 2014-03-02 at 11:25 +0100, Geert Uytterhoeven wrote:
->>>>> http://kisskb.ellerman.id.au/kisskb/buildresult/10665903/
->>>>>
->>>>> Invalid CPU Type - valid names are: alpha, arm, x86, ia64, m68k,
->>>>> microblaze, mips, mips64, nios, nios2, ppc, s390, sh, sparc, sparc64,
->>>>> blackfin, avr32
->>>>
->>>> I've upgraded to the latest version in Debian (2014.01), but it still doesn't
->>>> seem to support xtensa.
->>>>
->>>>   $ /usr/bin/mkimage -A xtensa
->>>>
->>>>   Invalid CPU Type - valid names are: alpha, arm, x86, ia64, m68k, microblaze,
->>>>   mips, mips64, nios2, powerpc, ppc, s390, sh, sparc, sparc64, blackfin, avr32,
->>>>   nds32, or1k, sandbox, arm64
->>>
->>> As mainline U-boot does not support xtensa currently, what about
->>> dropping the uImage format to be built?
->>
->> There's xtensa port for U-boot at https://github.com/foss-xtensa/u-boot
->> Also KISSKB didn't even try to build uImage for xtensa until recently.
->> What's changed?
->
-> When comparing the build between 18a1a7a1 (good) and a7963eb7f4
-> (bad), it seems allnoconfig changes the build type from ISS to XT2000.
+--Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, then we'd better restore ISS as the default platform for allnoconfig:
+Hi Rafael,
 
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index 17b3198..2ca8819 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -243,7 +243,6 @@ choice
+Today's linux-next merge of the pm tree got a conflict in
+arch/mips/loongson/lemote-2f/clock.c between commit a68ce6507a45
+("MIPS/loongson2_cpufreq: Fix CPU clock rate setting") from the mips tree
+and commit 4966ee4037fe ("mips: lemote 2f: Use cpufreq_for_each_entry
+macro for iteration") from the pm tree.
 
- config XTENSA_PLATFORM_ISS
-        bool "ISS"
--       depends on TTY
-        select XTENSA_CALIBRATE_CCOUNT
-        select SERIAL_CONSOLE
-        help
-diff --git a/arch/xtensa/platforms/iss/Makefile
-b/arch/xtensa/platforms/iss/Makefile
-index d2369b7..b3e8929 100644
---- a/arch/xtensa/platforms/iss/Makefile
-+++ b/arch/xtensa/platforms/iss/Makefile
-@@ -4,6 +4,7 @@
- # "prom monitor" library routines under Linux.
- #
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
--obj-y                  = console.o setup.o
-+obj-y                  = setup.o
-+obj-$(CONFIG_TTY)      += console.o
- obj-$(CONFIG_NET)      += network.o
- obj-$(CONFIG_BLK_DEV_SIMDISK) += simdisk.o
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Thanks.
--- Max
+diff --cc arch/mips/loongson/lemote-2f/clock.c
+index 67dd94ef28e6,1eed38e28b1e..000000000000
+--- a/arch/mips/loongson/lemote-2f/clock.c
++++ b/arch/mips/loongson/lemote-2f/clock.c
+@@@ -91,10 -91,9 +91,10 @@@ EXPORT_SYMBOL(clk_put)
+ =20
+  int clk_set_rate(struct clk *clk, unsigned long rate)
+  {
+ +	unsigned int rate_khz =3D rate / 1000;
++ 	struct cpufreq_frequency_table *pos;
+  	int ret =3D 0;
+  	int regval;
+- 	int i;
+ =20
+  	if (likely(clk->ops && clk->ops->set_rate)) {
+  		unsigned long flags;
+@@@ -107,15 -106,10 +107,10 @@@
+  	if (unlikely(clk->flags & CLK_RATE_PROPAGATES))
+  		propagate_rate(clk);
+ =20
+- 	for (i =3D 0; loongson2_clockmod_table[i].frequency !=3D CPUFREQ_TABLE_E=
+ND;
+- 	     i++) {
+- 		if (loongson2_clockmod_table[i].frequency =3D=3D
+- 		    CPUFREQ_ENTRY_INVALID)
+- 			continue;
+- 		if (rate_khz =3D=3D loongson2_clockmod_table[i].frequency)
++ 	cpufreq_for_each_valid_entry(pos, loongson2_clockmod_table)
+ -		if (rate =3D=3D pos->frequency)
+++		if (rate_khz =3D=3D pos->frequency)
+  			break;
+- 	}
+- 	if (rate_khz !=3D loongson2_clockmod_table[i].frequency)
+ -	if (rate !=3D pos->frequency)
+++	if (rate_khz !=3D pos->frequency)
+  		return -ENOTSUPP;
+ =20
+  	clk->rate =3D rate;
+
+--Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTYazgAAoJEMDTa8Ir7ZwVrJwP/RFrn/rh2YO1BSHg3kHzp5Ys
++fEFSQA1lAjkbPsSDBTrTPGSF8Ap02OZa9apU+0uK5ojzkDKbNVygZgjE9xKcSb4
+VHzKuhyGO5DbtqJ9sWjCjAPZR5yIsteunkAy8r6YaITY3HBTKJEFO7LxtalEVrdZ
+koTVQ5JH1oZqi+8L5ZWiitNfbMhrsk3VWgz3j+OqO2rFeTr459ghF/vXBEtb7F+C
+cPd9W9ueqVNJooEgBnwEXHBH40mN2CLk+pbFhAEjthlkXyH2u0S1Q+8aW0xF5kLT
+tE5TnuoLGZk1h4yL4kuOMfwlotHaIcrC/ydTLa4PcmU5q8QQPgczPvXdRtKEwUxE
+0JC1OnB1jgs8KybpdyqLhdBGAHm0shRjU2imn1urHQB+2oqABsng6z8V4jLVy4FX
+X89+ICxnlZy5ts9jbsI4E4NE8OBGOD4DIHoaAxBC49XEw0tBZNgZPgudCEJypGrr
+u4AQ3Z4INhgpEcV0F0sK3UVpW/HigdBAhuFOXTnBrNbUS1riesxCgBKEaQrXbtr0
+F/nsNtwJ6CGuBL2tkB0FM8F/2TP/7k1FBqHhEV96JSI2sS/lX4UGg6UXXq2Gxxkc
+uPTK3Yd+8wncyTeAPC/ZX3PK+6AcKJbcyM8og+XOjuH3w2xaWSrG5GfNgSBdvY1J
+FvZQKI75k7/wDu9j70Nl
+=FHF+
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__1_May_2014_12_09_32_+1000_d7zY1SkU6vg6nEQn--
