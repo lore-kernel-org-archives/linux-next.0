@@ -1,67 +1,37 @@
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Subject: RE: randconfig build error with next-20140502, in
+From: David Miller <davem@davemloft.net>
+Subject: Re: randconfig build error with next-20140502, in
  drivers/net/hyperv/netvsc_drv.c
-Date: Fri, 2 May 2014 15:25:56 +0000
-Message-ID: <9847b18e41ed493daa61a1b5a9c1b7e8@DFM-DB3MBX15-06.exchange.corp.microsoft.com>
+Date: Fri, 02 May 2014 15:19:27 -0400 (EDT)
+Message-ID: <20140502.151927.359156056899842119.davem@davemloft.net>
 References: <CA+r1ZhhAdRwEFE3u4E1QQiCSa6Cz5Onhy1iVJHhzB4dUiEOL4g@mail.gmail.com>
  <91a4eac99889460f91f619385208cbca@DFM-DB3MBX15-06.exchange.corp.microsoft.com>
- <f49938e3920d4e5e9088ccd1de92f69b@BY2PR03MB299.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-sn2on0225.outbound.o365filtering.com ([157.56.87.225]:40529
-	"EHLO na01-sn2-obe.outbound.o365filtering.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751968AbaEBP0F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 May 2014 11:26:05 -0400
-In-Reply-To: <f49938e3920d4e5e9088ccd1de92f69b@BY2PR03MB299.namprd03.prod.outlook.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: KY Srinivasan <kys@microsoft.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <91a4eac99889460f91f619385208cbca@DFM-DB3MBX15-06.exchange.corp.microsoft.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: haiyangz@microsoft.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, jim.epost@gmail.com, devel@linuxdriverproject.org
+List-Id: linux-next.vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS1kgU3Jpbml2YXNhbg0K
-PiBTZW50OiBGcmlkYXksIE1heSAyLCAyMDE0IDExOjAwIEFNDQo+IFRvOiBIYWl5YW5nIFpoYW5n
-OyBKaW0gRGF2aXM7IFN0ZXBoZW4gUm90aHdlbGw7IGxpbnV4LW5leHQ7IGxpbnV4LWtlcm5lbDsN
-Cj4gZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZzsgbmV0ZGV2DQo+IFN1YmplY3Q6IFJFOiBy
-YW5kY29uZmlnIGJ1aWxkIGVycm9yIHdpdGggbmV4dC0yMDE0MDUwMiwgaW4NCj4gZHJpdmVycy9u
-ZXQvaHlwZXJ2L25ldHZzY19kcnYuYw0KPiANCj4gDQo+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVz
-c2FnZS0tLS0tDQo+ID4gRnJvbTogSGFpeWFuZyBaaGFuZw0KPiA+IFNlbnQ6IEZyaWRheSwgTWF5
-IDIsIDIwMTQgNzo0MiBBTQ0KPiA+IFRvOiBKaW0gRGF2aXM7IFN0ZXBoZW4gUm90aHdlbGw7IGxp
-bnV4LW5leHQ7IGxpbnV4LWtlcm5lbDsgS1kNCj4gU3Jpbml2YXNhbjsNCj4gPiBkZXZlbEBsaW51
-eGRyaXZlcnByb2plY3Qub3JnOyBuZXRkZXYNCj4gPiBTdWJqZWN0OiBSRTogcmFuZGNvbmZpZyBi
-dWlsZCBlcnJvciB3aXRoIG5leHQtMjAxNDA1MDIsIGluDQo+ID4gZHJpdmVycy9uZXQvaHlwZXJ2
-L25ldHZzY19kcnYuYw0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdl
-LS0tLS0NCj4gPiA+IEZyb206IEppbSBEYXZpcyBbbWFpbHRvOmppbS5lcG9zdEBnbWFpbC5jb21d
-DQo+ID4gPiBTZW50OiBGcmlkYXksIE1heSAyLCAyMDE0IDk6NTYgQU0NCj4gPiA+IFRvOiBTdGVw
-aGVuIFJvdGh3ZWxsOyBsaW51eC1uZXh0OyBsaW51eC1rZXJuZWw7IEtZIFNyaW5pdmFzYW47DQo+
-IEhhaXlhbmcNCj4gPiA+IFpoYW5nOyBkZXZlbEBsaW51eGRyaXZlcnByb2plY3Qub3JnOyBuZXRk
-ZXYNCj4gPiA+IFN1YmplY3Q6IHJhbmRjb25maWcgYnVpbGQgZXJyb3Igd2l0aCBuZXh0LTIwMTQw
-NTAyLCBpbg0KPiA+ID4gZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzY19kcnYuYw0KPiA+ID4NCj4g
-PiA+IEJ1aWxkaW5nIHdpdGggdGhlIGF0dGFjaGVkIHJhbmRvbSBjb25maWd1cmF0aW9uIGZpbGUs
-DQo+ID4gPg0KPiA+ID4gZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzY19kcnYuYzogSW4gZnVuY3Rp
-b24g4oCYbmV0dnNjX3JlY3ZfY2FsbGJhY2vigJk6DQo+ID4gPiBkcml2ZXJzL25ldC9oeXBlcnYv
-bmV0dnNjX2Rydi5jOjY0ODoxMTogZXJyb3I6IOKAmHN0cnVjdCBuZXRfZGV2aWNl4oCZDQo+IGhh
-cw0KPiA+ID4gbm8gbWVtYmVyICBuYW1lZCDigJhyZWFsX251bV9yeF9xdWV1ZXPigJkNCj4gPiA+
-ICAgICAgICAgbmV0LT5yZWFsX251bV9yeF9xdWV1ZXMpOw0KPiA+ID4gICAgICAgICAgICBeDQo+
-ID4gPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzY19kcnYu
-YzoyNjowOg0KPiA+ID4gZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzY19kcnYuYzogSW4gZnVuY3Rp
-b24g4oCYbmV0dnNjX3Byb2Jl4oCZOg0KPiA+ID4gZHJpdmVycy9uZXQvaHlwZXJ2L25ldHZzY19k
-cnYuYzo4MzI6MzI6IGVycm9yOiDigJhzdHJ1Y3QgbmV0X2RldmljZeKAmQ0KPiBoYXMNCj4gPiA+
-IG5vIG1lbWJlciBuYW1lZCDigJhyZWFsX251bV9yeF9xdWV1ZXPigJkNCj4gPiA+ICAgICBuZXQt
-PnJlYWxfbnVtX3R4X3F1ZXVlcywgbmV0LT5yZWFsX251bV9yeF9xdWV1ZXMpOw0KPiA+ID4gICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeDQo+ID4gPiBpbmNsdWRlL2xpbnV4L2Rldmlj
-ZS5oOjEwODA6NTg6IG5vdGU6IGluIGRlZmluaXRpb24gb2YgbWFjcm8NCj4g4oCYZGV2X2luZm/i
-gJkNCj4gPiA+ICAjZGVmaW5lIGRldl9pbmZvKGRldiwgZm10LCBhcmcuLi4pIF9kZXZfaW5mbyhk
-ZXYsIGZtdCwgIyNhcmcpDQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiA+ID4gbWFrZVszXTogKioqIFtkcml2ZXJzL25l
-dC9oeXBlcnYvbmV0dnNjX2Rydi5vXSBFcnJvciAxDQo+ID4NCj4gPiByZWFsX251bV9yeF9xdWV1
-ZXMgaXMgZGVmaW5lZCBpbiAiaW5jbHVkZS9saW51eC9uZXRkZXZpY2UuaCI6DQo+ID4gSXQgcmVx
-dWlyZXMgQ09ORklHX1NZU0ZTIGZsYWcsIHdoaWNoIGlzIGVuYWJsZWQgYnkgZGVmYXVsdCwgYnV0
-IG5vdA0KPiBzZXQgaW4NCj4gPiB5b3VyIGNvbmZpZyBmaWxlLg0KPiA+DQo+ID4gQ291bGQgeW91
-IHVzZSBkZWZhdWx0IGNvbmZpZyBhbmQgYWRkIGh5cGVydiBkcml2ZXJzLCB0aGVuIHRyeSBhZ2Fp
-bj8NCj4gDQo+IEhhaXlhbmcsDQo+IA0KPiBUaGF0IGlzIHRoZSBwb2ludCAtIHRoZSBjb2RlIG11
-c3QgY29tcGlsZSBjb3JyZWN0bHkgZm9yIGFsbCBwb3NzaWJsZQ0KPiBjb25maWd1cmF0aW9ucy4N
-Cj4gWW91IHdpbGwgd2FudCB0byBwcm90ZWN0IHRoZSBkZXBlbmRlbmNpZXMgYXBwcm9wcmlhdGVs
-eS4NCj4gDQpPSywgSSdsbCBsb29rIGludG8gdGhpcy4NCg0KVGhhbmtzLA0KLSBIYWl5YW5nDQoN
-Cg==
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Fri, 2 May 2014 14:42:06 +0000
+
+> real_num_rx_queues is defined in "include/linux/netdevice.h":
+> It requires CONFIG_SYSFS flag, which is enabled by default, but not set in 
+> your config file.
+> 
+> Could you use default config and add hyperv drivers, then try again?
+
+You must fix your driver to compile successfully under all possible
+configuration combinations, not just the ones which are convenient
+for you to support.
