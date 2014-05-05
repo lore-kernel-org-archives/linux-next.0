@@ -1,130 +1,111 @@
-From: Michele CURTI <michele.curti@gmail.com>
-Subject: [PATCH] drm/radeon: use NULL instead of zero
-Date: Sat, 3 May 2014 15:55:12 +0200
-Message-ID: <20140503135512.GA17068@ativ>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 5 May 2014 12:10:59 +1000
+Message-ID: <20140505121059.3bfeee816db3c39945734897@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:49969 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751202AbaECNzQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 3 May 2014 09:55:16 -0400
-Received: by mail-ee0-f44.google.com with SMTP id c41so3896319eek.31
-        for <linux-next@vger.kernel.org>; Sat, 03 May 2014 06:55:15 -0700 (PDT)
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__5_May_2014_12_10_59_+1000_e/250.re52uThTYt"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, =?UTF-8?B?IlN0w6lwaGFuZSBH?= =?UTF-8?B?cmFiZXIi?= <stgraber@ubuntu.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__5_May_2014_12_10_59_+1000_e/250.re52uThTYt
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@linux.ie
-Cc: linux-next@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Use NULL instead of zero for NULL pointers
+Today's linux-next merge of the net-next tree got conflicts in
+net/sched/sch_api.c and net/sched/cls_api.c between commit 90f62cf30a78
+("net: Use netlink_ns_capable to verify the permisions of netlink
+messages") from the net tree and commit 4e8bbb819d15 ("net: Allow tc
+changes in user namespaces") from the net-next tree.
 
-Signed-off-by: Michele Curti <michele.curti@gmail.com>
----
- drivers/gpu/drm/radeon/clearstate_cayman.h | 8 ++++----
- drivers/gpu/drm/radeon/clearstate_ci.h     | 4 ++--
- drivers/gpu/drm/radeon/clearstate_si.h     | 4 ++--
- drivers/gpu/drm/radeon/radeon_object.c     | 2 +-
- drivers/gpu/drm/radeon/radeon_object.h     | 2 +-
- 5 files changed, 10 insertions(+), 10 deletions(-)
+I fixed it up (hopefully, see below) and can carry the fix as necessary
+(no action is required).
 
-diff --git a/drivers/gpu/drm/radeon/clearstate_cayman.h b/drivers/gpu/drm/radeon/clearstate_cayman.h
-index aa908c5..ee428ac 100644
---- a/drivers/gpu/drm/radeon/clearstate_cayman.h
-+++ b/drivers/gpu/drm/radeon/clearstate_cayman.h
-@@ -1050,7 +1050,7 @@ static const struct cs_extent_def SECT_CONTEXT_defs[] =
-     {SECT_CONTEXT_def_5, 0x0000a29e, 5 },
-     {SECT_CONTEXT_def_6, 0x0000a2a5, 56 },
-     {SECT_CONTEXT_def_7, 0x0000a2de, 290 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const u32 SECT_CLEAR_def_1[] =
- {
-@@ -1061,7 +1061,7 @@ static const u32 SECT_CLEAR_def_1[] =
- static const struct cs_extent_def SECT_CLEAR_defs[] =
- {
-     {SECT_CLEAR_def_1, 0x0000ffc0, 3 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const u32 SECT_CTRLCONST_def_1[] =
- {
-@@ -1071,11 +1071,11 @@ static const u32 SECT_CTRLCONST_def_1[] =
- static const struct cs_extent_def SECT_CTRLCONST_defs[] =
- {
-     {SECT_CTRLCONST_def_1, 0x0000f3fc, 2 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const struct cs_section_def cayman_cs_data[] = {
-     { SECT_CONTEXT_defs, SECT_CONTEXT },
-     { SECT_CLEAR_defs, SECT_CLEAR },
-     { SECT_CTRLCONST_defs, SECT_CTRLCONST },
--    { 0, SECT_NONE }
-+    { NULL, SECT_NONE }
- };
-diff --git a/drivers/gpu/drm/radeon/clearstate_ci.h b/drivers/gpu/drm/radeon/clearstate_ci.h
-index c3982f9..1673c34 100644
---- a/drivers/gpu/drm/radeon/clearstate_ci.h
-+++ b/drivers/gpu/drm/radeon/clearstate_ci.h
-@@ -936,9 +936,9 @@ static const struct cs_extent_def ci_SECT_CONTEXT_defs[] =
-     {ci_SECT_CONTEXT_def_5, 0x0000a2a0, 2 },
-     {ci_SECT_CONTEXT_def_6, 0x0000a2a3, 1 },
-     {ci_SECT_CONTEXT_def_7, 0x0000a2a5, 233 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const struct cs_section_def ci_cs_data[] = {
-     { ci_SECT_CONTEXT_defs, SECT_CONTEXT },
--    { 0, SECT_NONE }
-+    { NULL, SECT_NONE }
- };
-diff --git a/drivers/gpu/drm/radeon/clearstate_si.h b/drivers/gpu/drm/radeon/clearstate_si.h
-index b994cb2..60474b8 100644
---- a/drivers/gpu/drm/radeon/clearstate_si.h
-+++ b/drivers/gpu/drm/radeon/clearstate_si.h
-@@ -933,9 +933,9 @@ static const struct cs_extent_def si_SECT_CONTEXT_defs[] =
-     {si_SECT_CONTEXT_def_5, 0x0000a2a1, 1 },
-     {si_SECT_CONTEXT_def_6, 0x0000a2a3, 1 },
-     {si_SECT_CONTEXT_def_7, 0x0000a2a5, 233 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const struct cs_section_def si_cs_data[] = {
-     { si_SECT_CONTEXT_defs, SECT_CONTEXT },
--    { 0, SECT_NONE }
-+    { NULL, SECT_NONE }
- };
-diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
-index 19bec0d..95197aa 100644
---- a/drivers/gpu/drm/radeon/radeon_object.c
-+++ b/drivers/gpu/drm/radeon/radeon_object.c
-@@ -722,7 +722,7 @@ int radeon_bo_wait(struct radeon_bo *bo, u32 *mem_type, bool no_wait)
- {
- 	int r;
- 
--	r = ttm_bo_reserve(&bo->tbo, true, no_wait, false, 0);
-+	r = ttm_bo_reserve(&bo->tbo, true, no_wait, false, NULL);
- 	if (unlikely(r != 0))
- 		return r;
- 	spin_lock(&bo->tbo.bdev->fence_lock);
-diff --git a/drivers/gpu/drm/radeon/radeon_object.h b/drivers/gpu/drm/radeon/radeon_object.h
-index 9e7b25a..5a873f3 100644
---- a/drivers/gpu/drm/radeon/radeon_object.h
-+++ b/drivers/gpu/drm/radeon/radeon_object.h
-@@ -65,7 +65,7 @@ static inline int radeon_bo_reserve(struct radeon_bo *bo, bool no_intr)
- {
- 	int r;
- 
--	r = ttm_bo_reserve(&bo->tbo, !no_intr, false, false, 0);
-+	r = ttm_bo_reserve(&bo->tbo, !no_intr, false, false, NULL);
- 	if (unlikely(r != 0)) {
- 		if (r != -ERESTARTSYS)
- 			dev_err(bo->rdev->dev, "%p reserve failed\n", bo);
--- 
-1.9.2
+--=20
+Cheers,
+Stephen Rothwell <sfr@canb.auug.org.au>
 
-Regards,
-Michele
+diff --cc net/sched/cls_api.c
+index bdbdb1a7920a,1a4a20267787..000000000000
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@@ -134,7 -134,8 +134,8 @@@ static int tc_ctl_tfilter(struct sk_buf
+  	int err;
+  	int tp_created =3D 0;
+ =20
+- 	if ((n->nlmsg_type !=3D RTM_GETTFILTER) && !netlink_capable(skb, CAP_NET=
+_ADMIN))
++ 	if ((n->nlmsg_type !=3D RTM_GETTFILTER) &&
+ -	    !ns_capable(net->user_ns, CAP_NET_ADMIN))
+++	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
+  		return -EPERM;
+ =20
+  replay:
+diff --cc net/sched/sch_api.c
+index 400769014bbd,86f8edfd6b8a..000000000000
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@@ -1084,7 -1084,8 +1084,8 @@@ static int tc_get_qdisc(struct sk_buff=20
+  	struct Qdisc *p =3D NULL;
+  	int err;
+ =20
+- 	if ((n->nlmsg_type !=3D RTM_GETQDISC) && !netlink_capable(skb, CAP_NET_A=
+DMIN))
++ 	if ((n->nlmsg_type !=3D RTM_GETQDISC) &&
+ -	    !ns_capable(net->user_ns, CAP_NET_ADMIN))
+++	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
+  		return -EPERM;
+ =20
+  	err =3D nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL);
+@@@ -1151,7 -1152,7 +1152,7 @@@ static int tc_modify_qdisc(struct sk_bu
+  	struct Qdisc *q, *p;
+  	int err;
+ =20
+- 	if (!netlink_capable(skb, CAP_NET_ADMIN))
+ -	if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
+++	if (!netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
+  		return -EPERM;
+ =20
+  replay:
+@@@ -1490,7 -1491,8 +1491,8 @@@ static int tc_ctl_tclass(struct sk_buf
+  	u32 qid;
+  	int err;
+ =20
+- 	if ((n->nlmsg_type !=3D RTM_GETTCLASS) && !netlink_capable(skb, CAP_NET_=
+ADMIN))
++ 	if ((n->nlmsg_type !=3D RTM_GETTCLASS) &&
+ -	    !ns_capable(net->user_ns, CAP_NET_ADMIN))
+++	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
+  		return -EPERM;
+ =20
+  	err =3D nlmsg_parse(n, sizeof(*tcm), tca, TCA_MAX, NULL);
+
+--Signature=_Mon__5_May_2014_12_10_59_+1000_e/250.re52uThTYt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTZvM3AAoJEMDTa8Ir7ZwV8CAP/ArqZdNL62aJbSzEv3rAvPuT
+ttounYrLSki9wsiP405XfCYYeXoRnGvLe3wxsP430W71WN+j/5IxO0Bb0rNfNNgb
+MXvRyLP1ahOsqipoD9Tz6Og4H4FCpPXQXtXY8S19uGbg5h6MgbuC+PSwWeeazK70
+3nN4S8K7pAS1s5p1QHJp3E/R5q2fEaXIbEgNhD5KcOVU8dbYCoQfgp+PxHwBfaR+
+07c4sdR6T0S40obuOAh/FccpOHFNzkK9WrC8QPQlVpv4iKmPcgYCK00nAMGWa3zy
+ohwlDLUKFAK/jbpv3fw9anbMDymlBvpSA9H/MBTzs6U1m5lR4gs8TD5eAhydhJEN
+V5iUTQ7nafQABdpMqZ4/c4tPHA7mhdZtGoYIJot9osyOKVhDBrwfVpYzZIDWIePi
+4mhkJIj/zHSxt/UDuBkI2/0D2EfvREYSt32ZnrpdxiyXr0iEoXLM338XPp2T7YJ+
+uQ/YJzeXjCYricUMB0kmhn27+O2cZUwl09s2TYPpVG68QwzQwQPkSlAMDdra47Ev
+4N4hRbe8JCXnAl/iZguBvf08yUeTAgWrgrkBaZrAlKuc905JoSo2HmjAEXs1jb8n
+GR4N9pCzu+0IlhN4Jj7Xsxk1lte6w94+Bpt2vCChnsx3UBflwcJSt+c8yi++WL+e
+vinmpifQp7M0LyNld7jj
+=smVQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__5_May_2014_12_10_59_+1000_e/250.re52uThTYt--
