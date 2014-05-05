@@ -1,66 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 5
-Date: Mon, 5 May 2014 19:57:11 +1000
-Message-ID: <20140505195711.fcce1825483f7a1ce707c2c6@canb.auug.org.au>
-References: <20140505171459.3ce28e8e0c4d6b107a66eb97@canb.auug.org.au>
-	<CAHO5Pa0D8bxBV98feBt2qk_gb3XdTDcmaa6bD7eQv4UOdjcFrA@mail.gmail.com>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Mon, 5 May 2014 14:29:34 +1000
+Message-ID: <20140505142934.4d732ab3e809850b426fce3d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_May_2014_19_57_11_+1000_9tbL7Qe41NhvTWJP"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHO5Pa0D8bxBV98feBt2qk_gb3XdTDcmaa6bD7eQv4UOdjcFrA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__5_May_2014_14_29_34_+1000_pDT=pzXV7VKODGji"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52493 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751027AbaEEE3q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 May 2014 00:29:46 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>
 
---Signature=_Mon__5_May_2014_19_57_11_+1000_9tbL7Qe41NhvTWJP
+--Signature=_Mon__5_May_2014_14_29_34_+1000_pDT=pzXV7VKODGji
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi all,
 
-On Mon, 5 May 2014 10:42:23 +0200 Michael Kerrisk <mtk.manpages@gmail.com> =
-wrote:
->
-> I don't know what the process is for clearing cruft out of linux-next
-> is, but there's at least one piece of cruft that probably should go:
+Today's linux-next merge of the tip tree got a conflict in
+net/ipv4/tcp_output.c between commit e114a710aa50 ("tcp: fix cwnd limited
+checking to improve congestion control") from the  tree and commit
+4e857c58efeb ("arch: Mass conversion of smp_mb__*()") from the tip tree.
 
-I usually depend on maintainers to clean up their trees.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> commit d30c01a0611d54926ac860721c933edafcc91905
-> commit 8c013e265a8eca0ada9f1aaa6cd7590698dc7231
-> commit e86263c9d00efb091a5215b9e4063378828d815c
-
-I can't find any of these commits in linux-next or any commits by Andrey
-Vagin <avagin@openvz.org> ...
-
-[P.S. Please trim replies to relevant bits ...]
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__5_May_2014_19_57_11_+1000_9tbL7Qe41NhvTWJP
+diff --cc net/ipv4/tcp_output.c
+index 694711a140d4,366cf06587b8..000000000000
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@@ -1946,18 -1930,10 +1946,16 @@@ static bool tcp_write_xmit(struct sock=20
+  			/* It is possible TX completion already happened
+  			 * before we set TSQ_THROTTLED, so we must
+  			 * test again the condition.
+- 			 * We abuse smp_mb__after_clear_bit() because
+- 			 * there is no smp_mb__after_set_bit() yet
+  			 */
+- 			smp_mb__after_clear_bit();
++ 			smp_mb__after_atomic();
+ -			if (atomic_read(&sk->sk_wmem_alloc) > limit)
+ +			if (atomic_read(&sk->sk_wmem_alloc) > limit) {
+ +				u32 unsent_bytes;
+ +
+ +compute_unsent_segs:
+ +				unsent_bytes =3D tp->write_seq - tp->snd_nxt;
+ +				unsent_segs =3D DIV_ROUND_UP(unsent_bytes, mss_now);
+  				break;
+ +			}
+  		}
+ =20
+  		limit =3D mss_now;
+
+--Signature=_Mon__5_May_2014_14_29_34_+1000_pDT=pzXV7VKODGji
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTZ2B9AAoJEMDTa8Ir7ZwVkEUQAIBb4HKJMli5U447Z0pOhmEP
-XZvyQq6LuQS6ue9rFJyLImxJ/Qmaz1Ge9DVJtKGn0fKxHYEXy3Cw2b2ipySVm/nI
-SqTPvcBYOyV+utoBT5uT1hgw3pMvhxULHFYdY/o8OFog0NQLA+eRHskFPt8kuLu4
-pm1+5k4JsrswkboE09j0hBHMTKT8SM4lVygzcZq7outrnXTOmmfZcL/UpEznTCLt
-srjElZx6e19MXjY2TxdjIWNxYPsskjbga3+zWrUstrr9ZnLo0UvjaT8iFeNwB1j7
-ovLiqVB59SKmWlYHl7xkSPUtOVsBMMissDVMvFYsSmKgaW9okCC3KnMJRTqn82/5
-CI9IH0zbpPYZQ9ZPwJx1BKOvso5soUYejKXeWrQHhn1AU6zq3jRgj1KSGFkvZx+V
-e3BjSEgWW1JxZORDKasvFucPYJbRNi8x++/kIKwjKXM7aQIDEB7mfH6UfEFVa6sP
-FtIWqrytfgNNgAZ7S47B5fELZJ3boBIf9/VyO7BiWcaFAMIwgs47QsNQ5qDmYQu/
-H4ZG2m/z8o5drlf6fFRxiNlKzWm7R73utHqkkMn8Pb1Npylexnv2AlV9IS8l2Ekk
-qDRNPTk3OcYsolI3eMb4LhdKxOsf2EKDec/lclboT1O6XZ9IvjWCNEib7HMIdBDq
-mt/1PaMMMQkWNtC23kad
-=pS5k
+iQIcBAEBCAAGBQJTZxO3AAoJEMDTa8Ir7ZwVussP+wZ2M7RclqjNPcx4HqnSitMf
+z+OdogQvRBAz27NfhWWs2ekr9QPUgurNwg3ufmiUC3nSPtV4emSHcbTABGf1Zkuo
+TTajnam40xxuSIFsRA7JNhxyW56mGWqk7Vzc/Q9ru4DsyRIk5gSC7TK6Ufe4vqnm
+X1f6pCGVuViLc5Zc6N7bNnr/VeeIXSTiIMAroG9IB6aPii6RdVLqYrbECoMkkP19
+O0gO1z3UDR2yNIRgn438c8dKqR2LVN2MvmAwOpncheNCmI9z43LKvaa3ZgFd5oN4
+JbR3KBFar86wFJCfjfx1x8Dr+EZlqh0MY6/N0IC9b1ytbZdi9/AI0omtleqi93/S
+PM7gYs/BFlP0LSiQgTJ2dCqi8pi65v5si0CL7yKnG5yr7K+cwgaSm686+NNWnHIQ
+7a8jJ3FbtHnUXskL+IogC6B67se3QUdXTXvw89//GzUJeqVgNcVR7H4L8CDssiZJ
+Y/IFLUbvThkgJcVoUIYe2c+dfXZJv4qp8pobWUIBq6SXMt5lWQFZP1RI4Eenajqh
+dMutFs2pHanc2rjFzgqEU/9lNqZL8II0MdTFlDoDyb2F1fIZThFp7Y8G6Sc1f/uS
+fvhcCCNzZThjayxsdxpFw6DRNtG6WFuCgmwc6BamacgCTbAxYmEZhVMYLcHcGG6A
+TSDyCo7zcZYqI6/VmT0j
+=Mxms
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_May_2014_19_57_11_+1000_9tbL7Qe41NhvTWJP--
+--Signature=_Mon__5_May_2014_14_29_34_+1000_pDT=pzXV7VKODGji--
