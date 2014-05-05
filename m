@@ -1,60 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with Linus' tree
-Date: Mon, 5 May 2014 15:41:03 +1000
-Message-ID: <20140505154103.941b62e29706efa62b826354@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the tty tree with Linus' tree
+Date: Mon, 5 May 2014 14:02:11 -0700
+Message-ID: <20140505210211.GA27503@kroah.com>
+References: <20140505154103.941b62e29706efa62b826354@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46587 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754412AbaEEFlJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 May 2014 01:41:09 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Rob Herring <robh@kernel.org>
-
---Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20140505154103.941b62e29706efa62b826354@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Rob Herring <robh@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+On Mon, May 05, 2014 at 03:41:03PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in
+> arch/arm64/kernel/early_printk.c between commit f774b7d10e21 ("arm64:
+> fixmap: fix missing sub-page offset for earlyprintk") from the  tree and
+> commit 8ef0ed95ee04 ("arm64: remove arch specific earlyprintk") from the
+> tty tree.
+> 
+> I fixed it up (I removed the file) and can carry the fix as necessary (no
+> action is required).
 
-Today's linux-next merge of the tty tree got a conflict in
-arch/arm64/kernel/early_printk.c between commit f774b7d10e21 ("arm64:
-fixmap: fix missing sub-page offset for earlyprintk") from the  tree and
-commit 8ef0ed95ee04 ("arm64: remove arch specific earlyprintk") from the
-tty tree.
+That sounds fine to me, thanks.
 
-I fixed it up (I removed the file) and can carry the fix as necessary (no
-action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTZyRzAAoJEMDTa8Ir7ZwV36IQAIybcKs6I4juMAfJMS+ym9Hh
-BT1gERUUiR9Yp0m+/NmjAnR0za1urqvaY3++SovcdrKUFMMQmnzsxeeHWxvo/ctk
-Tmn4mDTKWj4DbytYvlEWkRHk7mtFe2AR9E4s/kcD+QgWyvlNhl9iByGgMUn3gxef
-0a6RmeH8fe51/BosyKH7nrvAK1JLktOHQE3cty6ucGvUQzea8DgHBwdppuwqvlMA
-SoXLVUuu+j6mouDwTcjCkwOscHHS+Xgpol8aV13Hu377iWntEmvBzMJ2xnuoU0SI
-bgSZFml+87Dw07A7VRybVmVnKX5VMgQPUcoBSGElL2tQmT5WptYTT48lmV5Pf67P
-xTr45NqQv7B+cf/dTHCERlqUp5PC0bALD7leu5ry8MOKVOJjuFbc8ZQqL5LtdUsO
-68b89wSBVRzcTpqFzq2zvSDvdGEuLJdBTZ3qFFUsp+7RN/jMTjaIvYKb1QsyB3iC
-nhJflmoMOiB82pmbV6J4MIB3Xu8dLNr3DxgWlG8uguYJ6tj4Z88PDFiuH9vsxdrc
-vFIrJXpn1bFLrSwrF0o3aT3z3VPKWhDhmommlHfXgHdQQk9/rX9lO46Y8ZaQcLzk
-hgAaDikqrPbnrywaG+50d22yywotCJw2uOPvQAqIxBCemS+lMMb9FJLljq1d458q
-5TZwp+nxKbPAbO2rGePB
-=zG5S
------END PGP SIGNATURE-----
-
---Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y--
+greg k-h
