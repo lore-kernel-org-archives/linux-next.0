@@ -1,56 +1,60 @@
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Subject: Re: linux-next: Tree for May 5
-Date: Mon, 5 May 2014 12:06:27 +0200
-Message-ID: <CAKgNAkj4hsTBqfD72ZhoCrHdV4S_68tJEQ_AaE0KWO_cySqeHw@mail.gmail.com>
-References: <20140505171459.3ce28e8e0c4d6b107a66eb97@canb.auug.org.au>
- <CAHO5Pa0D8bxBV98feBt2qk_gb3XdTDcmaa6bD7eQv4UOdjcFrA@mail.gmail.com> <20140505195711.fcce1825483f7a1ce707c2c6@canb.auug.org.au>
-Reply-To: mtk.manpages@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with Linus' tree
+Date: Mon, 5 May 2014 15:41:03 +1000
+Message-ID: <20140505154103.941b62e29706efa62b826354@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f51.google.com ([209.85.216.51]:42077 "EHLO
-	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756078AbaEEKGs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 May 2014 06:06:48 -0400
-In-Reply-To: <20140505195711.fcce1825483f7a1ce707c2c6@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:46587 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754412AbaEEFlJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 May 2014 01:41:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Rob Herring <robh@kernel.org>
 
-Hi Stephen,
+--Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 5, 2014 at 11:57 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Michael,
->
-> On Mon, 5 May 2014 10:42:23 +0200 Michael Kerrisk <mtk.manpages@gmail.com> wrote:
->>
->> I don't know what the process is for clearing cruft out of linux-next
->> is, but there's at least one piece of cruft that probably should go:
->
-> I usually depend on maintainers to clean up their trees.
->
->> commit d30c01a0611d54926ac860721c933edafcc91905
->> commit 8c013e265a8eca0ada9f1aaa6cd7590698dc7231
->> commit e86263c9d00efb091a5215b9e4063378828d815c
->
-> I can't find any of these commits in linux-next or any commits by Andrey
-> Vagin <avagin@openvz.org> ...
+Hi Greg,
 
-Okay, must be my problem then. Sorry for the noise. Somehow, I'm not
-syncing my linux-next correctly then. (Is the proper way of doing this
-documented somewhere?)
+Today's linux-next merge of the tty tree got a conflict in
+arch/arm64/kernel/early_printk.c between commit f774b7d10e21 ("arm64:
+fixmap: fix missing sub-page offset for earlyprintk") from the  tree and
+commit 8ef0ed95ee04 ("arm64: remove arch specific earlyprintk") from the
+tty tree.
 
-> [P.S. Please trim replies to relevant bits ...]
+I fixed it up (I removed the file) and can carry the fix as necessary (no
+action is required).
 
-Ah yes--sorry.
-
+--=20
 Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Michael
+--Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+iQIcBAEBCAAGBQJTZyRzAAoJEMDTa8Ir7ZwV36IQAIybcKs6I4juMAfJMS+ym9Hh
+BT1gERUUiR9Yp0m+/NmjAnR0za1urqvaY3++SovcdrKUFMMQmnzsxeeHWxvo/ctk
+Tmn4mDTKWj4DbytYvlEWkRHk7mtFe2AR9E4s/kcD+QgWyvlNhl9iByGgMUn3gxef
+0a6RmeH8fe51/BosyKH7nrvAK1JLktOHQE3cty6ucGvUQzea8DgHBwdppuwqvlMA
+SoXLVUuu+j6mouDwTcjCkwOscHHS+Xgpol8aV13Hu377iWntEmvBzMJ2xnuoU0SI
+bgSZFml+87Dw07A7VRybVmVnKX5VMgQPUcoBSGElL2tQmT5WptYTT48lmV5Pf67P
+xTr45NqQv7B+cf/dTHCERlqUp5PC0bALD7leu5ry8MOKVOJjuFbc8ZQqL5LtdUsO
+68b89wSBVRzcTpqFzq2zvSDvdGEuLJdBTZ3qFFUsp+7RN/jMTjaIvYKb1QsyB3iC
+nhJflmoMOiB82pmbV6J4MIB3Xu8dLNr3DxgWlG8uguYJ6tj4Z88PDFiuH9vsxdrc
+vFIrJXpn1bFLrSwrF0o3aT3z3VPKWhDhmommlHfXgHdQQk9/rX9lO46Y8ZaQcLzk
+hgAaDikqrPbnrywaG+50d22yywotCJw2uOPvQAqIxBCemS+lMMb9FJLljq1d458q
+5TZwp+nxKbPAbO2rGePB
+=zG5S
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__5_May_2014_15_41_03_+1000_80h7XuoxpnDxrQ6y--
