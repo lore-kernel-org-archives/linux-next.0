@@ -1,84 +1,156 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 5
-Date: Mon, 5 May 2014 20:26:28 +1000
-Message-ID: <20140505202628.7f406c1b77e05d0ad56db54c@canb.auug.org.au>
-References: <20140505171459.3ce28e8e0c4d6b107a66eb97@canb.auug.org.au>
-	<CAHO5Pa0D8bxBV98feBt2qk_gb3XdTDcmaa6bD7eQv4UOdjcFrA@mail.gmail.com>
-	<20140505195711.fcce1825483f7a1ce707c2c6@canb.auug.org.au>
-	<CAKgNAkj4hsTBqfD72ZhoCrHdV4S_68tJEQ_AaE0KWO_cySqeHw@mail.gmail.com>
+From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Subject: RE: [PATCH] drm/radeon: use NULL instead of zero
+Date: Mon, 5 May 2014 12:53:58 +0000
+Message-ID: <A3397C8B8B789E45844E7EC5DEAD89D040EEF93D@satlexdag05.amd.com>
+References: <20140503135512.GA17068@ativ>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_May_2014_20_26_28_+1000_B=/oppWKcQrFfWzZ"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46420 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756086AbaEEK0g (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 May 2014 06:26:36 -0400
-In-Reply-To: <CAKgNAkj4hsTBqfD72ZhoCrHdV4S_68tJEQ_AaE0KWO_cySqeHw@mail.gmail.com>
+Received: from mail-bl2lp0205.outbound.protection.outlook.com ([207.46.163.205]:53551
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S932267AbaEEMyU convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 May 2014 08:54:20 -0400
+In-Reply-To: <20140503135512.GA17068@ativ>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: mtk.manpages@gmail.com
-Cc: linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>
+To: Michele CURTI <michele.curti@gmail.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, "airlied@linux.ie" <airlied@linux.ie>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Mon__5_May_2014_20_26_28_+1000_B=/oppWKcQrFfWzZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Michele CURTI [mailto:michele.curti@gmail.com]
+> Sent: Saturday, May 03, 2014 9:55 AM
+> To: Deucher, Alexander; Koenig, Christian; airlied@linux.ie
+> Cc: linux-next@vger.kernel.org
+> Subject: [PATCH] drm/radeon: use NULL instead of zero
+> 
+> 
+> Use NULL instead of zero for NULL pointers
+> 
+> Signed-off-by: Michele Curti <michele.curti@gmail.com>
 
-Hi Michael,
+Can you break this into two patches?  One that changes that clearstate headers and one that changes object functions?
 
-On Mon, 5 May 2014 12:06:27 +0200 "Michael Kerrisk (man-pages)" <mtk.manpag=
-es@gmail.com> wrote:
->
-> Okay, must be my problem then. Sorry for the noise. Somehow, I'm not
-> syncing my linux-next correctly then. (Is the proper way of doing this
-> documented somewhere?)
+Thanks,
 
-Yeah, in the stuff you quoted :-)
+Alex
 
-"If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below)."
-
-then later
-
-"There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel."
-
-Unfortunately, that site seems to have vanished :-(  Seems like I need to
-update my daily release note.
-
-Since linux-next is rebased and remoerged every day, you need to "git
-fetch" the tree and then "git reset" to the new tree, not "git pull".
-The latter will try to merge the new linux-next into the previous one  -
-which should normally make a read mess :-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__5_May_2014_20_26_28_+1000_B=/oppWKcQrFfWzZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTZ2daAAoJEMDTa8Ir7ZwVY3AP+wanYxm5lAEH2l9hOQibzl56
-u2IBKxQj0jsAWcTMzlD0o9ay7WzminEr9kGaP55Fd3Ts08uDve6OucFlGOJWVWD+
-V+2apvTmfQAjHEinaLkv2eRF5jkoUJpIEA8QUly+PHCXBjKpkeIPaDgRG+enJgde
-BEWJmnmH+fOJ/i1ChfXEXwWYQe2mCyvseNGXyC4IWz1uvhTJHbeQaUXe4WBB7jHh
-z8/rGxh0K9GNcYm78AF9G1Z/NGPTzNBBWrlRuLwApWjC3urknYfV7z5pworkksEa
-7c36hmJX3t6RNxfN9C/uX4G4gcJEXpxnypm1RgZegrzIRY3MvwPfV7uGOn04jQNS
-fhrMBDrNiwjurLWDb0ha9kS6Hpicj3g1ipuhe3hkxgUaXGDpfFKEFIorSy+wMN48
-iydY16lpG1Po3oG+qf2agdJF3l+uojOptrBcAXurAm2Z/4MmVDinFh6YQbEoQPyY
-tFcOxWPga4/5Uq4tKUPt6zesAewfqmgBCDtuvHOfX1fHr21BouaEvObUjLcx2ecQ
-+CiV8pQ4meWXorrpvUnGJbABMI6Y/9SidXUga1OybWtDtD71iHh1qPAwaKGTXlhr
-0JnZyFffMdGxBGEgkfJEmS1srznKfOeJKMjrj6lg+J7LcPvHKcojtcejwBXbyILE
-undczOsq0dbwLGR3gJs0
-=Wzvj
------END PGP SIGNATURE-----
-
---Signature=_Mon__5_May_2014_20_26_28_+1000_B=/oppWKcQrFfWzZ--
+> ---
+>  drivers/gpu/drm/radeon/clearstate_cayman.h | 8 ++++----
+>  drivers/gpu/drm/radeon/clearstate_ci.h     | 4 ++--
+>  drivers/gpu/drm/radeon/clearstate_si.h     | 4 ++--
+>  drivers/gpu/drm/radeon/radeon_object.c     | 2 +-
+>  drivers/gpu/drm/radeon/radeon_object.h     | 2 +-
+>  5 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/radeon/clearstate_cayman.h
+> b/drivers/gpu/drm/radeon/clearstate_cayman.h
+> index aa908c5..ee428ac 100644
+> --- a/drivers/gpu/drm/radeon/clearstate_cayman.h
+> +++ b/drivers/gpu/drm/radeon/clearstate_cayman.h
+> @@ -1050,7 +1050,7 @@ static const struct cs_extent_def
+> SECT_CONTEXT_defs[] =
+>      {SECT_CONTEXT_def_5, 0x0000a29e, 5 },
+>      {SECT_CONTEXT_def_6, 0x0000a2a5, 56 },
+>      {SECT_CONTEXT_def_7, 0x0000a2de, 290 },
+> -    { 0, 0, 0 }
+> +    {NULL, 0, 0 }
+>  };
+>  static const u32 SECT_CLEAR_def_1[] =
+>  {
+> @@ -1061,7 +1061,7 @@ static const u32 SECT_CLEAR_def_1[] =
+>  static const struct cs_extent_def SECT_CLEAR_defs[] =
+>  {
+>      {SECT_CLEAR_def_1, 0x0000ffc0, 3 },
+> -    { 0, 0, 0 }
+> +    {NULL, 0, 0 }
+>  };
+>  static const u32 SECT_CTRLCONST_def_1[] =
+>  {
+> @@ -1071,11 +1071,11 @@ static const u32 SECT_CTRLCONST_def_1[] =
+>  static const struct cs_extent_def SECT_CTRLCONST_defs[] =
+>  {
+>      {SECT_CTRLCONST_def_1, 0x0000f3fc, 2 },
+> -    { 0, 0, 0 }
+> +    {NULL, 0, 0 }
+>  };
+>  static const struct cs_section_def cayman_cs_data[] = {
+>      { SECT_CONTEXT_defs, SECT_CONTEXT },
+>      { SECT_CLEAR_defs, SECT_CLEAR },
+>      { SECT_CTRLCONST_defs, SECT_CTRLCONST },
+> -    { 0, SECT_NONE }
+> +    { NULL, SECT_NONE }
+>  };
+> diff --git a/drivers/gpu/drm/radeon/clearstate_ci.h
+> b/drivers/gpu/drm/radeon/clearstate_ci.h
+> index c3982f9..1673c34 100644
+> --- a/drivers/gpu/drm/radeon/clearstate_ci.h
+> +++ b/drivers/gpu/drm/radeon/clearstate_ci.h
+> @@ -936,9 +936,9 @@ static const struct cs_extent_def
+> ci_SECT_CONTEXT_defs[] =
+>      {ci_SECT_CONTEXT_def_5, 0x0000a2a0, 2 },
+>      {ci_SECT_CONTEXT_def_6, 0x0000a2a3, 1 },
+>      {ci_SECT_CONTEXT_def_7, 0x0000a2a5, 233 },
+> -    { 0, 0, 0 }
+> +    {NULL, 0, 0 }
+>  };
+>  static const struct cs_section_def ci_cs_data[] = {
+>      { ci_SECT_CONTEXT_defs, SECT_CONTEXT },
+> -    { 0, SECT_NONE }
+> +    { NULL, SECT_NONE }
+>  };
+> diff --git a/drivers/gpu/drm/radeon/clearstate_si.h
+> b/drivers/gpu/drm/radeon/clearstate_si.h
+> index b994cb2..60474b8 100644
+> --- a/drivers/gpu/drm/radeon/clearstate_si.h
+> +++ b/drivers/gpu/drm/radeon/clearstate_si.h
+> @@ -933,9 +933,9 @@ static const struct cs_extent_def
+> si_SECT_CONTEXT_defs[] =
+>      {si_SECT_CONTEXT_def_5, 0x0000a2a1, 1 },
+>      {si_SECT_CONTEXT_def_6, 0x0000a2a3, 1 },
+>      {si_SECT_CONTEXT_def_7, 0x0000a2a5, 233 },
+> -    { 0, 0, 0 }
+> +    {NULL, 0, 0 }
+>  };
+>  static const struct cs_section_def si_cs_data[] = {
+>      { si_SECT_CONTEXT_defs, SECT_CONTEXT },
+> -    { 0, SECT_NONE }
+> +    { NULL, SECT_NONE }
+>  };
+> diff --git a/drivers/gpu/drm/radeon/radeon_object.c
+> b/drivers/gpu/drm/radeon/radeon_object.c
+> index 19bec0d..95197aa 100644
+> --- a/drivers/gpu/drm/radeon/radeon_object.c
+> +++ b/drivers/gpu/drm/radeon/radeon_object.c
+> @@ -722,7 +722,7 @@ int radeon_bo_wait(struct radeon_bo *bo, u32
+> *mem_type, bool no_wait)
+>  {
+>  	int r;
+> 
+> -	r = ttm_bo_reserve(&bo->tbo, true, no_wait, false, 0);
+> +	r = ttm_bo_reserve(&bo->tbo, true, no_wait, false, NULL);
+>  	if (unlikely(r != 0))
+>  		return r;
+>  	spin_lock(&bo->tbo.bdev->fence_lock);
+> diff --git a/drivers/gpu/drm/radeon/radeon_object.h
+> b/drivers/gpu/drm/radeon/radeon_object.h
+> index 9e7b25a..5a873f3 100644
+> --- a/drivers/gpu/drm/radeon/radeon_object.h
+> +++ b/drivers/gpu/drm/radeon/radeon_object.h
+> @@ -65,7 +65,7 @@ static inline int radeon_bo_reserve(struct radeon_bo
+> *bo, bool no_intr)
+>  {
+>  	int r;
+> 
+> -	r = ttm_bo_reserve(&bo->tbo, !no_intr, false, false, 0);
+> +	r = ttm_bo_reserve(&bo->tbo, !no_intr, false, false, NULL);
+>  	if (unlikely(r != 0)) {
+>  		if (r != -ERESTARTSYS)
+>  			dev_err(bo->rdev->dev, "%p reserve failed\n", bo);
+> --
+> 1.9.2
+> 
+> Regards,
+> Michele
