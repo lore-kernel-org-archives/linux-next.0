@@ -1,102 +1,68 @@
-From: Michele CURTI <michele.curti@gmail.com>
-Subject: [PATCH v2 2/2] drm/radeon: use NULL instead of zero in clearstate
- headers
-Date: Mon, 5 May 2014 22:32:19 +0200
-Message-ID: <20140505203219.GC404@ativ>
-References: <20140503135512.GA17068@ativ>
- <A3397C8B8B789E45844E7EC5DEAD89D040EEF93D@satlexdag05.amd.com>
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Subject: Re: linux-next: Tree for May 5
+Date: Mon, 5 May 2014 12:45:46 +0200
+Message-ID: <CAKgNAkg3X3osNCdWYs4abru9kWGakF2pFuN5jje5HdNV=pK2-g@mail.gmail.com>
+References: <20140505171459.3ce28e8e0c4d6b107a66eb97@canb.auug.org.au>
+ <CAHO5Pa0D8bxBV98feBt2qk_gb3XdTDcmaa6bD7eQv4UOdjcFrA@mail.gmail.com>
+ <20140505195711.fcce1825483f7a1ce707c2c6@canb.auug.org.au>
+ <CAKgNAkj4hsTBqfD72ZhoCrHdV4S_68tJEQ_AaE0KWO_cySqeHw@mail.gmail.com> <20140505202628.7f406c1b77e05d0ad56db54c@canb.auug.org.au>
+Reply-To: mtk.manpages@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f51.google.com ([74.125.83.51]:56905 "EHLO
-	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752629AbaEEUcX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 May 2014 16:32:23 -0400
-Received: by mail-ee0-f51.google.com with SMTP id e51so1077301eek.38
-        for <linux-next@vger.kernel.org>; Mon, 05 May 2014 13:32:22 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <A3397C8B8B789E45844E7EC5DEAD89D040EEF93D@satlexdag05.amd.com>
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:48887 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756190AbaEEKqI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 May 2014 06:46:08 -0400
+In-Reply-To: <20140505202628.7f406c1b77e05d0ad56db54c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Cc: "Koenig, Christian" <Christian.Koenig@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Andrey Vagin <avagin@openvz.org>
 
-drm/radeon: use NULL instead of zero in clearstate headers
+On Mon, May 5, 2014 at 12:26 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Michael,
+>
+> On Mon, 5 May 2014 12:06:27 +0200 "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> wrote:
+>>
+>> Okay, must be my problem then. Sorry for the noise. Somehow, I'm not
+>> syncing my linux-next correctly then. (Is the proper way of doing this
+>> documented somewhere?)
+>
+> Yeah, in the stuff you quoted :-)
 
-Signed-off-by: Michele Curti <michele.curti@gmail.com>
----
- drivers/gpu/drm/radeon/clearstate_cayman.h | 8 ++++----
- drivers/gpu/drm/radeon/clearstate_ci.h     | 4 ++--
- drivers/gpu/drm/radeon/clearstate_si.h     | 4 ++--
- 3 files changed, 8 insertions(+), 8 deletions(-)
+:-}
+> "If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+> (see below)."
+>
+> then later
+>
+> "There is a wiki covering stuff to do with linux-next at
+> http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel."
+>
+> Unfortunately, that site seems to have vanished :-(  Seems like I need to
+> update my daily release note.
 
-diff --git a/drivers/gpu/drm/radeon/clearstate_cayman.h b/drivers/gpu/drm/radeon/clearstate_cayman.h
-index aa908c5..ee428ac 100644
---- a/drivers/gpu/drm/radeon/clearstate_cayman.h
-+++ b/drivers/gpu/drm/radeon/clearstate_cayman.h
-@@ -1050,7 +1050,7 @@ static const struct cs_extent_def SECT_CONTEXT_defs[] =
-     {SECT_CONTEXT_def_5, 0x0000a29e, 5 },
-     {SECT_CONTEXT_def_6, 0x0000a2a5, 56 },
-     {SECT_CONTEXT_def_7, 0x0000a2de, 290 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const u32 SECT_CLEAR_def_1[] =
- {
-@@ -1061,7 +1061,7 @@ static const u32 SECT_CLEAR_def_1[] =
- static const struct cs_extent_def SECT_CLEAR_defs[] =
- {
-     {SECT_CLEAR_def_1, 0x0000ffc0, 3 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const u32 SECT_CTRLCONST_def_1[] =
- {
-@@ -1071,11 +1071,11 @@ static const u32 SECT_CTRLCONST_def_1[] =
- static const struct cs_extent_def SECT_CTRLCONST_defs[] =
- {
-     {SECT_CTRLCONST_def_1, 0x0000f3fc, 2 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const struct cs_section_def cayman_cs_data[] = {
-     { SECT_CONTEXT_defs, SECT_CONTEXT },
-     { SECT_CLEAR_defs, SECT_CLEAR },
-     { SECT_CTRLCONST_defs, SECT_CTRLCONST },
--    { 0, SECT_NONE }
-+    { NULL, SECT_NONE }
- };
-diff --git a/drivers/gpu/drm/radeon/clearstate_ci.h b/drivers/gpu/drm/radeon/clearstate_ci.h
-index c3982f9..1673c34 100644
---- a/drivers/gpu/drm/radeon/clearstate_ci.h
-+++ b/drivers/gpu/drm/radeon/clearstate_ci.h
-@@ -936,9 +936,9 @@ static const struct cs_extent_def ci_SECT_CONTEXT_defs[] =
-     {ci_SECT_CONTEXT_def_5, 0x0000a2a0, 2 },
-     {ci_SECT_CONTEXT_def_6, 0x0000a2a3, 1 },
-     {ci_SECT_CONTEXT_def_7, 0x0000a2a5, 233 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const struct cs_section_def ci_cs_data[] = {
-     { ci_SECT_CONTEXT_defs, SECT_CONTEXT },
--    { 0, SECT_NONE }
-+    { NULL, SECT_NONE }
- };
-diff --git a/drivers/gpu/drm/radeon/clearstate_si.h b/drivers/gpu/drm/radeon/clearstate_si.h
-index b994cb2..60474b8 100644
---- a/drivers/gpu/drm/radeon/clearstate_si.h
-+++ b/drivers/gpu/drm/radeon/clearstate_si.h
-@@ -933,9 +933,9 @@ static const struct cs_extent_def si_SECT_CONTEXT_defs[] =
-     {si_SECT_CONTEXT_def_5, 0x0000a2a1, 1 },
-     {si_SECT_CONTEXT_def_6, 0x0000a2a3, 1 },
-     {si_SECT_CONTEXT_def_7, 0x0000a2a5, 233 },
--    { 0, 0, 0 }
-+    {NULL, 0, 0 }
- };
- static const struct cs_section_def si_cs_data[] = {
-     { si_SECT_CONTEXT_defs, SECT_CONTEXT },
--    { 0, SECT_NONE }
-+    { NULL, SECT_NONE }
- };
+It was those instructions that I thought I'd been following (from
+memory), and then when I went to google for the site I recalled
+finding them on, I didn't get a match. Now I know why ;-).
+
+> Since linux-next is rebased and remoerged every day, you need to "git
+> fetch" the tree and then "git reset" to the new tree, not "git pull".
+> The latter will try to merge the new linux-next into the previous one  -
+> which should normally make a read mess :-)
+
+Okay -- thanks.
+
+Cheers,
+
+Michael
+
+
 -- 
-1.9.2
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
