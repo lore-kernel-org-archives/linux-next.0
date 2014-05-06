@@ -1,59 +1,74 @@
-From: Michele CURTI <michele.curti@gmail.com>
-Subject: [PATCH v2 1/2] drm/radeon: use NULL instead of zero in object
- functions
-Date: Mon, 5 May 2014 22:29:55 +0200
-Message-ID: <20140505202955.GB404@ativ>
-References: <20140503135512.GA17068@ativ>
- <A3397C8B8B789E45844E7EC5DEAD89D040EEF93D@satlexdag05.amd.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with Linus'  tree
+Date: Tue, 6 May 2014 13:52:45 +1000
+Message-ID: <20140506135245.1e11ac1f55aca61df58105d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__6_May_2014_13_52_45_+1000_Gty1//SSfIRkEWeP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:47870 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752330AbaEEU37 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 May 2014 16:29:59 -0400
-Received: by mail-ee0-f42.google.com with SMTP id d49so1745502eek.1
-        for <linux-next@vger.kernel.org>; Mon, 05 May 2014 13:29:58 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <A3397C8B8B789E45844E7EC5DEAD89D040EEF93D@satlexdag05.amd.com>
+Received: from ozlabs.org ([103.22.144.67]:38013 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933767AbaEFDwv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 May 2014 23:52:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Cc: "Koenig, Christian" <Christian.Koenig@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Carlos Garcia <carlos@cgarcia.org>, Lokesh Vutla <lokeshvutla@ti.com>, Benoit Cousson <bcousson@baylibre.com>
 
-drm/radeon: use NULL instead of zero in object functions
+--Signature=_Tue__6_May_2014_13_52_45_+1000_Gty1//SSfIRkEWeP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Michele Curti <michele.curti@gmail.com>
----
- drivers/gpu/drm/radeon/radeon_object.c | 2 +-
- drivers/gpu/drm/radeon/radeon_object.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Hi Jiri,
 
-diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
-index 19bec0d..95197aa 100644
---- a/drivers/gpu/drm/radeon/radeon_object.c
-+++ b/drivers/gpu/drm/radeon/radeon_object.c
-@@ -722,7 +722,7 @@ int radeon_bo_wait(struct radeon_bo *bo, u32 *mem_type, bool no_wait)
- {
- 	int r;
- 
--	r = ttm_bo_reserve(&bo->tbo, true, no_wait, false, 0);
-+	r = ttm_bo_reserve(&bo->tbo, true, no_wait, false, NULL);
- 	if (unlikely(r != 0))
- 		return r;
- 	spin_lock(&bo->tbo.bdev->fence_lock);
-diff --git a/drivers/gpu/drm/radeon/radeon_object.h b/drivers/gpu/drm/radeon/radeon_object.h
-index 9e7b25a..5a873f3 100644
---- a/drivers/gpu/drm/radeon/radeon_object.h
-+++ b/drivers/gpu/drm/radeon/radeon_object.h
-@@ -65,7 +65,7 @@ static inline int radeon_bo_reserve(struct radeon_bo *bo, bool no_intr)
- {
- 	int r;
- 
--	r = ttm_bo_reserve(&bo->tbo, !no_intr, false, false, 0);
-+	r = ttm_bo_reserve(&bo->tbo, !no_intr, false, false, NULL);
- 	if (unlikely(r != 0)) {
- 		if (r != -ERESTARTSYS)
- 			dev_err(bo->rdev->dev, "%p reserve failed\n", bo);
--- 
-1.9.2
+Today's linux-next merge of the trivial tree got a conflict in
+Documentation/devicetree/bindings/arm/omap/omap.txt between commit
+11e2191c2a6f ("ARM: dts: am437x-gp-evm: Add gp dts") from the  tree and
+commit c98be0c96db0 ("doc: spelling error changes") from the trivial tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc Documentation/devicetree/bindings/arm/omap/omap.txt
+index 36ede19a1630,aa71962352ff..000000000000
+--- a/Documentation/devicetree/bindings/arm/omap/omap.txt
++++ b/Documentation/devicetree/bindings/arm/omap/omap.txt
+@@@ -117,8 -114,5 +117,8 @@@ Boards
+  - AM43x EPOS EVM
+    compatible =3D "ti,am43x-epos-evm", "ti,am4372", "ti,am43"
+ =20
+ +- AM437x GP EVM
+ +  compatible =3D "ti,am437x-gp-evm", "ti,am4372", "ti,am43"
+ +
+- - DRA7 EVM:  Software Developement Board for DRA7XX
++ - DRA7 EVM:  Software Development Board for DRA7XX
+    compatible =3D "ti,dra7-evm", "ti,dra7"
+
+--Signature=_Tue__6_May_2014_13_52_45_+1000_Gty1//SSfIRkEWeP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTaFyRAAoJEMDTa8Ir7ZwV/iMP/1IgLGwliBGu1zTQAFAtxNt8
+CRbrXXnMSyebne/S5kVz47OoQiwjBKunptxGJiAIRordQMl38tZ/LtCR33LAkIoD
+kNR6qQNaoLUePsab7TFOgp7BzHrQdusxqYXxUI6SKKjYYKH6vrN6GnWIM0F0m6qh
+BZwUsQdd8/r10Eq4AMJL4Pots+aMmDV0b7DVaEBcDvf1/6dsbWPWz2laazP45Pdu
+qAKwlCpNDS+9OlkPMizdkweqXsSmj3XgfkxFHuwmNYbdcwPBPuiuTHQiXraa995y
+5PMcyxv1mFyFhbd+ahpYKu9DCEb3wWYRi3kZIEqanFqFHDLG4XfqpPnYxk1CrDKu
+MGCHOsm6mTZDFe1oaGSJHgYPIFsQYmDH0UkGsUERYlwDQ2PUWjKc467VhLs4tiWN
+Fx0vNTqqvUoKmJ6/gxfIcCtsBFjxmamRiWbJOvVJsY9k3pmKWj59+c2el1SnH4Wz
+fSP9S4BGD2OSNsmaKpOaRWgCNSqM+P93oZUe1PcNBF4B83ZmEcEJ1kFDdElwwx/R
+fNPGsyKqJJ3S0ZNizU3i0U35N5dOxLLXyGP6DikkmKYnwqcZhGSum5osNr3CRX/V
+N6pPewlT9OPhNXqs+hTesxU3AilNPz+3MLq+XS3O02myT6pdBBaK4j1Lf94mn6om
+BAwFcp+kXicW/PqK3Q3+
+=yN0A
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_May_2014_13_52_45_+1000_Gty1//SSfIRkEWeP--
