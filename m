@@ -1,70 +1,54 @@
-From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Subject: RE: [PATCH v2 0/2] drm/radeon: use NULL instead of zero
-Date: Tue, 6 May 2014 16:28:52 +0000
-Message-ID: <A3397C8B8B789E45844E7EC5DEAD89D040EEFF95@satlexdag05.amd.com>
-References: <20140503135512.GA17068@ativ>
- <A3397C8B8B789E45844E7EC5DEAD89D040EEF93D@satlexdag05.amd.com>
- <20140505202631.GA404@ativ>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Subject: [PATCH linux-next] ARM: mvebu: Fix pmsu compilation when ARMv6 is
+ selected
+Date: Tue,  6 May 2014 22:23:02 +0200
+Message-ID: <1399407782-29091-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bl2lp0207.outbound.protection.outlook.com ([207.46.163.207]:50395
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750810AbaEFQ3Q convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 May 2014 12:29:16 -0400
-In-Reply-To: <20140505202631.GA404@ativ>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michele CURTI <michele.curti@gmail.com>
-Cc: "Koenig, Christian" <Christian.Koenig@amd.com>, "airlied@linux.ie" <airlied@linux.ie>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-> -----Original Message-----
-> From: Michele CURTI [mailto:michele.curti@gmail.com]
-> Sent: Monday, May 05, 2014 4:27 PM
-> To: Deucher, Alexander
-> Cc: Koenig, Christian; airlied@linux.ie; linux-next@vger.kernel.org
-> Subject: [PATCH v2 0/2] drm/radeon: use NULL instead of zero
-> 
-> This patches replace 0 with NULL when NULL pointers in radeon driver.
-> The first in object functions.
-> the second in clearstate headers.
-> 
-> Changes from v1:
-> - splitted in two separated patches
-
-For the series:
-
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-
-We'll pick these up for 3.16.
-
-Alex
-
-> 
-> On Mon, May 05, 2014 at 12:53:58PM +0000, Deucher, Alexander wrote:
-> > > -----Original Message-----
-> > > From: Michele CURTI [mailto:michele.curti@gmail.com]
-> > > Sent: Saturday, May 03, 2014 9:55 AM
-> > > To: Deucher, Alexander; Koenig, Christian; airlied@linux.ie
-> > > Cc: linux-next@vger.kernel.org
-> > > Subject: [PATCH] drm/radeon: use NULL instead of zero
-> > >
-> > >
-> > > Use NULL instead of zero for NULL pointers
-> > >
-> > > Signed-off-by: Michele Curti <michele.curti@gmail.com>
-> >
-> > Can you break this into two patches?  One that changes that clearstate
-> headers and one that changes object functions?
-> >
-> > Thanks,
-> >
-> > Alex
-> >
-> 
-> Sure!
-> Or at least, I'm going to try..
-> Michele
+V2hlbiBjb21waWxpbmcgZm9yIG11bHRpcGxhdGZvcm0gZm9yIGJvdGggQVJNdjYgYW5kIEFSTXY3
+LCB0aGUgZGVmYXVsdCBjb21waWxlcgpmbGFncyBhcmUgZm9yIEFSTXY2LCBhbmQgd2Ugd2lsbCBn
+ZXQ6CgogIC90bXAvY2N3REV6ZDAuczogQXNzZW1ibGVyIG1lc3NhZ2VzOgogIC90bXAvY2N3REV6
+ZDAuczo2Mzk6IEVycm9yOiBzZWxlY3RlZCBwcm9jZXNzb3IgZG9lcyBub3Qgc3VwcG9ydCBBUk0g
+bW9kZSBgaXNiICcKICAvdG1wL2Njd0RFemQwLnM6NjQ1OiBFcnJvcjogc2VsZWN0ZWQgcHJvY2Vz
+c29yIGRvZXMgbm90IHN1cHBvcnQgQVJNIG1vZGUgYGlzYiAnCiAgL3RtcC9jY3dERXpkMC5zOjY0
+NjogRXJyb3I6IHNlbGVjdGVkIHByb2Nlc3NvciBkb2VzIG5vdCBzdXBwb3J0IEFSTSBtb2RlIGBk
+c2IgJwogIC90bXAvY2N3REV6ZDAuczo2OTU6IEVycm9yOiBzZWxlY3RlZCBwcm9jZXNzb3IgZG9l
+cyBub3Qgc3VwcG9ydCBBUk0gbW9kZSBgaXNiICcKICBtYWtlWzFdOiAqKiogW2FyY2gvYXJtL21h
+Y2gtbXZlYnUvcG1zdS5vXSBFcnJvciAxCgpGaXggdGhpcyBpbiBhIHNpbWlsYXIgbWFubmVyIHRo
+YW4gZG9uZSBwcmV2aW91c2x5IGluIGNvbW1pdAo3MjUzM2I3N2QzMGMyYmUwMjY3MmUyNmI1ZGRl
+MTI2M2Q3YjRjMmJlLCBieSBzcGVjaWZ5aW5nIEFSTXY3IGZsYWdzIGZvciBwbXN1Lm8uCgpTaWdu
+ZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQuc3RlaGxlQGxhcG9zdGUubmV0PgpD
+YzogSmFzb24gQ29vcGVyIDxqYXNvbkBsYWtlZGFlbW9uLm5ldD4KQ2M6IEFuZHJldyBMdW5uIDxh
+bmRyZXdAbHVubi5jaD4KQ2M6IEdyZWdvcnkgQ2xlbWVudCA8Z3JlZ29yeS5jbGVtZW50QGZyZWUt
+ZWxlY3Ryb25zLmNvbT4KQ2M6IFNlYmFzdGlhbiBIZXNzZWxiYXJ0aCA8c2ViYXN0aWFuLmhlc3Nl
+bGJhcnRoQGdtYWlsLmNvbT4KQ2M6IFJ1c3NlbGwgS2luZyA8bGludXhAYXJtLmxpbnV4Lm9yZy51
+az4KLS0tCgpIaSwKClRoaXMgYnVpbGQgaXNzdWUgY2FuIGJlIHNlZW4gd2l0aCBlLmcuIExpbnV4
+IG5leHQtMjAxNDA1MDYsIEFSQ0g9YXJtIGFuZAphbGxtb2Rjb25maWcuCgpCZXN0IHJlZ2FyZHMs
+CgpWLgoKIGFyY2gvYXJtL21hY2gtbXZlYnUvTWFrZWZpbGUgfCAxICsKIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtbXZlYnUvTWFrZWZp
+bGUgYi9hcmNoL2FybS9tYWNoLW12ZWJ1L01ha2VmaWxlCmluZGV4IDg1NGI3MmEuLjJlY2I4Mjgg
+MTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL21hY2gtbXZlYnUvTWFrZWZpbGUKKysrIGIvYXJjaC9hcm0v
+bWFjaC1tdmVidS9NYWtlZmlsZQpAQCAtMiw2ICsyLDcgQEAgY2NmbGFncy0kKENPTkZJR19BUkNI
+X01VTFRJUExBVEZPUk0pIDo9IC1JJChzcmN0cmVlKS8kKHNyYykvaW5jbHVkZSBcCiAJLUkkKHNy
+Y3RyZWUpL2FyY2gvYXJtL3BsYXQtb3Jpb24vaW5jbHVkZQogCiBBRkxBR1NfY29oZXJlbmN5X2xs
+Lm8JCTo9IC1XYSwtbWFyY2g9YXJtdjctYQorQ0ZMQUdTX3Btc3UubwkJCTo9IC1tYXJjaD1hcm12
+Ny1hCiAKIG9iai15CQkJCSArPSBzeXN0ZW0tY29udHJvbGxlci5vIG12ZWJ1LXNvYy1pZC5vCiAK
+LS0gCjEuOS4yCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
+bmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
+bGludXgtYXJtLWtlcm5lbAo=
