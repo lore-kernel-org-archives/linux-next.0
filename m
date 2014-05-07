@@ -1,54 +1,158 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] ARM: mvebu: Fix pmsu compilation when ARMv6 is
- selected
-Date: Tue,  6 May 2014 22:23:02 +0200
-Message-ID: <1399407782-29091-1-git-send-email-vincent.stehle@laposte.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Date: Wed, 7 May 2014 13:24:48 +1000
+Message-ID: <20140507132448.d1f892070fa01733ff10b933@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_May_2014_13_24_48_+1000__FWZYjVfy3q+4bIT"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56657 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751149AbaEGDYz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 May 2014 23:24:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@intel.com>
 
-V2hlbiBjb21waWxpbmcgZm9yIG11bHRpcGxhdGZvcm0gZm9yIGJvdGggQVJNdjYgYW5kIEFSTXY3
-LCB0aGUgZGVmYXVsdCBjb21waWxlcgpmbGFncyBhcmUgZm9yIEFSTXY2LCBhbmQgd2Ugd2lsbCBn
-ZXQ6CgogIC90bXAvY2N3REV6ZDAuczogQXNzZW1ibGVyIG1lc3NhZ2VzOgogIC90bXAvY2N3REV6
-ZDAuczo2Mzk6IEVycm9yOiBzZWxlY3RlZCBwcm9jZXNzb3IgZG9lcyBub3Qgc3VwcG9ydCBBUk0g
-bW9kZSBgaXNiICcKICAvdG1wL2Njd0RFemQwLnM6NjQ1OiBFcnJvcjogc2VsZWN0ZWQgcHJvY2Vz
-c29yIGRvZXMgbm90IHN1cHBvcnQgQVJNIG1vZGUgYGlzYiAnCiAgL3RtcC9jY3dERXpkMC5zOjY0
-NjogRXJyb3I6IHNlbGVjdGVkIHByb2Nlc3NvciBkb2VzIG5vdCBzdXBwb3J0IEFSTSBtb2RlIGBk
-c2IgJwogIC90bXAvY2N3REV6ZDAuczo2OTU6IEVycm9yOiBzZWxlY3RlZCBwcm9jZXNzb3IgZG9l
-cyBub3Qgc3VwcG9ydCBBUk0gbW9kZSBgaXNiICcKICBtYWtlWzFdOiAqKiogW2FyY2gvYXJtL21h
-Y2gtbXZlYnUvcG1zdS5vXSBFcnJvciAxCgpGaXggdGhpcyBpbiBhIHNpbWlsYXIgbWFubmVyIHRo
-YW4gZG9uZSBwcmV2aW91c2x5IGluIGNvbW1pdAo3MjUzM2I3N2QzMGMyYmUwMjY3MmUyNmI1ZGRl
-MTI2M2Q3YjRjMmJlLCBieSBzcGVjaWZ5aW5nIEFSTXY3IGZsYWdzIGZvciBwbXN1Lm8uCgpTaWdu
-ZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQuc3RlaGxlQGxhcG9zdGUubmV0PgpD
-YzogSmFzb24gQ29vcGVyIDxqYXNvbkBsYWtlZGFlbW9uLm5ldD4KQ2M6IEFuZHJldyBMdW5uIDxh
-bmRyZXdAbHVubi5jaD4KQ2M6IEdyZWdvcnkgQ2xlbWVudCA8Z3JlZ29yeS5jbGVtZW50QGZyZWUt
-ZWxlY3Ryb25zLmNvbT4KQ2M6IFNlYmFzdGlhbiBIZXNzZWxiYXJ0aCA8c2ViYXN0aWFuLmhlc3Nl
-bGJhcnRoQGdtYWlsLmNvbT4KQ2M6IFJ1c3NlbGwgS2luZyA8bGludXhAYXJtLmxpbnV4Lm9yZy51
-az4KLS0tCgpIaSwKClRoaXMgYnVpbGQgaXNzdWUgY2FuIGJlIHNlZW4gd2l0aCBlLmcuIExpbnV4
-IG5leHQtMjAxNDA1MDYsIEFSQ0g9YXJtIGFuZAphbGxtb2Rjb25maWcuCgpCZXN0IHJlZ2FyZHMs
-CgpWLgoKIGFyY2gvYXJtL21hY2gtbXZlYnUvTWFrZWZpbGUgfCAxICsKIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtbXZlYnUvTWFrZWZp
-bGUgYi9hcmNoL2FybS9tYWNoLW12ZWJ1L01ha2VmaWxlCmluZGV4IDg1NGI3MmEuLjJlY2I4Mjgg
-MTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL21hY2gtbXZlYnUvTWFrZWZpbGUKKysrIGIvYXJjaC9hcm0v
-bWFjaC1tdmVidS9NYWtlZmlsZQpAQCAtMiw2ICsyLDcgQEAgY2NmbGFncy0kKENPTkZJR19BUkNI
-X01VTFRJUExBVEZPUk0pIDo9IC1JJChzcmN0cmVlKS8kKHNyYykvaW5jbHVkZSBcCiAJLUkkKHNy
-Y3RyZWUpL2FyY2gvYXJtL3BsYXQtb3Jpb24vaW5jbHVkZQogCiBBRkxBR1NfY29oZXJlbmN5X2xs
-Lm8JCTo9IC1XYSwtbWFyY2g9YXJtdjctYQorQ0ZMQUdTX3Btc3UubwkJCTo9IC1tYXJjaD1hcm12
-Ny1hCiAKIG9iai15CQkJCSArPSBzeXN0ZW0tY29udHJvbGxlci5vIG12ZWJ1LXNvYy1pZC5vCiAK
-LS0gCjEuOS4yCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
-bmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
-bGludXgtYXJtLWtlcm5lbAo=
+--Signature=_Wed__7_May_2014_13_24_48_+1000__FWZYjVfy3q+4bIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dave,
+
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/i915_gem_gtt.c between commit cfa7c862982b
+("drm/i915: Sanitize the enable_ppgtt module option once") from the
+drm-intel-fixes tree and commit 5db6c735ead5 ("drm/i915: dmesg output for
+VT-d testing") from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/i915/i915_gem_gtt.c
+index 154b0f8bb88d,0d514ff9b94c..000000000000
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@@ -62,62 -48,13 +62,9 @@@ static int sanitize_enable_ppgtt(struc
+  	}
+  #endif
+ =20
+ -	/* Full ppgtt disabled by default for now due to issues. */
+ -	if (full)
+ -		return HAS_PPGTT(dev) && (i915.enable_ppgtt =3D=3D 2);
+ -	else
+ -		return HAS_ALIASING_PPGTT(dev);
+ +	return HAS_ALIASING_PPGTT(dev) ? 1 : 0;
+  }
+ =20
+- #define GEN6_PPGTT_PD_ENTRIES 512
+- #define I915_PPGTT_PT_ENTRIES (PAGE_SIZE / sizeof(gen6_gtt_pte_t))
+- typedef uint64_t gen8_gtt_pte_t;
+- typedef gen8_gtt_pte_t gen8_ppgtt_pde_t;
+-=20
+- /* PPGTT stuff */
+- #define GEN6_GTT_ADDR_ENCODE(addr)	((addr) | (((addr) >> 28) & 0xff0))
+- #define HSW_GTT_ADDR_ENCODE(addr)	((addr) | (((addr) >> 28) & 0x7f0))
+-=20
+- #define GEN6_PDE_VALID			(1 << 0)
+- /* gen6+ has bit 11-4 for physical addr bit 39-32 */
+- #define GEN6_PDE_ADDR_ENCODE(addr)	GEN6_GTT_ADDR_ENCODE(addr)
+-=20
+- #define GEN6_PTE_VALID			(1 << 0)
+- #define GEN6_PTE_UNCACHED		(1 << 1)
+- #define HSW_PTE_UNCACHED		(0)
+- #define GEN6_PTE_CACHE_LLC		(2 << 1)
+- #define GEN7_PTE_CACHE_L3_LLC		(3 << 1)
+- #define GEN6_PTE_ADDR_ENCODE(addr)	GEN6_GTT_ADDR_ENCODE(addr)
+- #define HSW_PTE_ADDR_ENCODE(addr)	HSW_GTT_ADDR_ENCODE(addr)
+-=20
+- /* Cacheability Control is a 4-bit value. The low three bits are stored i=
+n *
+-  * bits 3:1 of the PTE, while the fourth bit is stored in bit 11 of the P=
+TE.
+-  */
+- #define HSW_CACHEABILITY_CONTROL(bits)	((((bits) & 0x7) << 1) | \
+- 					 (((bits) & 0x8) << (11 - 3)))
+- #define HSW_WB_LLC_AGE3			HSW_CACHEABILITY_CONTROL(0x2)
+- #define HSW_WB_LLC_AGE0			HSW_CACHEABILITY_CONTROL(0x3)
+- #define HSW_WB_ELLC_LLC_AGE0		HSW_CACHEABILITY_CONTROL(0xb)
+- #define HSW_WB_ELLC_LLC_AGE3		HSW_CACHEABILITY_CONTROL(0x8)
+- #define HSW_WT_ELLC_LLC_AGE0		HSW_CACHEABILITY_CONTROL(0x6)
+- #define HSW_WT_ELLC_LLC_AGE3		HSW_CACHEABILITY_CONTROL(0x7)
+-=20
+- #define GEN8_PTES_PER_PAGE		(PAGE_SIZE / sizeof(gen8_gtt_pte_t))
+- #define GEN8_PDES_PER_PAGE		(PAGE_SIZE / sizeof(gen8_ppgtt_pde_t))
+-=20
+- /* GEN8 legacy style addressis defined as a 3 level page table:
+-  * 31:30 | 29:21 | 20:12 |  11:0
+-  * PDPE  |  PDE  |  PTE  | offset
+-  * The difference as compared to normal x86 3 level page table is the PDP=
+Es are
+-  * programmed via register.
+-  */
+- #define GEN8_PDPE_SHIFT			30
+- #define GEN8_PDPE_MASK			0x3
+- #define GEN8_PDE_SHIFT			21
+- #define GEN8_PDE_MASK			0x1ff
+- #define GEN8_PTE_SHIFT			12
+- #define GEN8_PTE_MASK			0x1ff
+-=20
+- #define PPAT_UNCACHED_INDEX		(_PAGE_PWT | _PAGE_PCD)
+- #define PPAT_CACHED_PDE_INDEX		0 /* WB LLC */
+- #define PPAT_CACHED_INDEX		_PAGE_PAT /* WB LLCeLLC */
+- #define PPAT_DISPLAY_ELLC_INDEX		_PAGE_PCD /* WT eLLC */
+ =20
+  static void ppgtt_bind_vma(struct i915_vma *vma,
+  			   enum i915_cache_level cache_level,
+@@@ -2041,15 -1962,11 +1972,20 @@@ int i915_gem_gtt_init(struct drm_devic
+  		 gtt->base.total >> 20);
+  	DRM_DEBUG_DRIVER("GMADR size =3D %ldM\n", gtt->mappable_end >> 20);
+  	DRM_DEBUG_DRIVER("GTT stolen size =3D %zdM\n", gtt->stolen_size >> 20);
+ +	/*
+ +	 * i915.enable_ppgtt is read-only, so do an early pass to validate the
+ +	 * user's requested state against the hardware/driver capabilities.  We
+ +	 * do this now so that we can print out any log messages once rather
+ +	 * than every time we check intel_enable_ppgtt().
+ +	 */
+ +	i915.enable_ppgtt =3D sanitize_enable_ppgtt(dev, i915.enable_ppgtt);
+ +	DRM_DEBUG_DRIVER("ppgtt mode: %i\n", i915.enable_ppgtt);
+ +
++ #ifdef CONFIG_INTEL_IOMMU
++ 	if (intel_iommu_gfx_mapped)
++ 		DRM_INFO("VT-d active for gfx access\n");
++ #endif
++=20
+  	return 0;
+  }
+ =20
+
+--Signature=_Wed__7_May_2014_13_24_48_+1000__FWZYjVfy3q+4bIT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTaaeFAAoJEMDTa8Ir7ZwVUh8P/0XlhOXl2jcs4Ie41l6khiUx
+r3doXTFt5DN0X22hYU0v9gPyr2JbhPtiT52x2S01qj3rG0f4RE5xaOPoaV9YA1Ea
+ls9T/X4zIgvqfgPYLOlg/M6mV+nQaDeBDvwrJWCl4yhbXEAUu1EgS5DBFxH/dSVr
+ElW4jKu0SbWt2gNLsk8O40L7XeMyHKCGwkzBDoluKKaby0RTipo+zr/q2GLPWOLY
+Z05QOGNujQ/hqrvdWRPLEwG56GRobTCPnRFj5Bh/dVBgSw4/tA+N+mJ5MGth+Czb
+4XuRwMf1UUyU/2OhaQTrONlh5nn3i92Oi1bxIabWw+USPrmXNuC+S54KPAH6wqDV
+eBxIHGPV6ECOoH4mckAyP/x06vyf6dGYmcmnqbdXOdeC4riP//Y4hgbxszcoS0sV
+bN4HkIDmX92Uw7KQVZ6JFAK+HjLQJR/Gr4+2TRu7zpHZfHdHv6Ci2O1WJoiR/vtU
+8A0g0f2Ms0VbMUfBAXx60yor4OO+LQxuuwS+4aHnR5UBlDacXOnwjdZXpCTqJ5RN
+evFAuDtzTLXkJhh6goypuLR5PQJiQneztC71LPzyiIY8m4ETG0c/1TZQnhPMxweL
+3AgZcRXjDdmp7OBFq6nT/kqFBuWQ/k40r8ULF6U/uVhcrok9IoVlY/Z1KsxobFJh
+LZBuVglaJPfVWjgmggIr
+=RYF4
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_May_2014_13_24_48_+1000__FWZYjVfy3q+4bIT--
