@@ -1,63 +1,43 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH linux-next] ARM: mvebu: Fix pmsu compilation when ARMv6
- is selected
-Date: Thu, 8 May 2014 13:05:09 -0400
-Message-ID: <20140508170509.GJ12708@titan.lakedaemon.net>
-References: <1399407782-29091-1-git-send-email-vincent.stehle@laposte.net>
+From: Jim Davis <jim.epost@gmail.com>
+Subject: Re: linux-next: Tree for May 7 (argh)
+Date: Thu, 8 May 2014 10:05:35 -0700
+Message-ID: <CA+r1ZhjErMWqVY5kSfMqLUAeQNMQhLXdwRMY2ro-OQMzbgEX9g@mail.gmail.com>
+References: <20140507173341.753d8ccf4fe033abd513f98f@canb.auug.org.au>
+	<536A9CF2.90906@infradead.org>
+	<CA+r1ZhiUj3G44MWoacLg6fWD-eDFZ=3L8QbwuBvOB2JWAURDqQ@mail.gmail.com>
+	<20140508080251.64eed8b579e307c25c46e27f@canb.auug.org.au>
+	<CA+r1Zhg4TKBkV8fZ+uUj9yy_0fWYNrrSLuL9ZEYppQBUKRm6jQ@mail.gmail.com>
+	<20140508011030.GT19657@tassilo.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1399407782-29091-1-git-send-email-vincent.stehle@laposte.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vincent =?iso-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:53895 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753895AbaEHRFf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 May 2014 13:05:35 -0400
+Received: by mail-ie0-f172.google.com with SMTP id as1so2901799iec.17
+        for <linux-next@vger.kernel.org>; Thu, 08 May 2014 10:05:35 -0700 (PDT)
+In-Reply-To: <20140508011030.GT19657@tassilo.jf.intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-next <linux-next@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Michal Marek <mmarek@suse.cz>
 
-On Tue, May 06, 2014 at 10:23:02PM +0200, Vincent Stehl=E9 wrote:
-> When compiling for multiplatform for both ARMv6 and ARMv7, the defaul=
-t compiler
-> flags are for ARMv6, and we will get:
->=20
->   /tmp/ccwDEzd0.s: Assembler messages:
->   /tmp/ccwDEzd0.s:639: Error: selected processor does not support ARM=
- mode `isb '
->   /tmp/ccwDEzd0.s:645: Error: selected processor does not support ARM=
- mode `isb '
->   /tmp/ccwDEzd0.s:646: Error: selected processor does not support ARM=
- mode `dsb '
->   /tmp/ccwDEzd0.s:695: Error: selected processor does not support ARM=
- mode `isb '
->   make[1]: *** [arch/arm/mach-mvebu/pmsu.o] Error 1
->=20
-> Fix this in a similar manner than done previously in commit
-> 72533b77d30c2be02672e26b5dde1263d7b4c2be, by specifying ARMv7 flags f=
-or pmsu.o.
->=20
-> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@laposte.net>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@free-electrons.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> ---
->=20
-> Hi,
->=20
-> This build issue can be seen with e.g. Linux next-20140506, ARCH=3Dar=
-m and
-> allmodconfig.
->=20
-> Best regards,
->=20
-> V.
->=20
->  arch/arm/mach-mvebu/Makefile | 1 +
->  1 file changed, 1 insertion(+)
+On 5/7/14, Andi Kleen <ak@linux.intel.com> wrote:
 
-Applied to mvebu/soc, thanks!
+> It sounds like it misdetects your binutils. LTO should
+> disable itself when your binutils cannot handle it. Can you send me
+> the full build log and output of ld --version and gcc --version
+> please?
 
-thx,
+With next-20140518 I am getting
 
-Jason.
+buildlog-1399568101.txt:/home/jim/linux/scripts/Makefile.lto:76:
+"WARNING: Too old linker version 22400000 for kernel LTO. You need
+Linux binutils. CONFIG_LTO disabled."
+
+I don't recall seeing that when the problems first started, but I
+didn't save a buildlog from back then...
+
+ld --version is GNU ld (GNU Binutils for Ubuntu) 2.24, and gcc
+--version is gcc (Ubuntu 4.8.2-19ubuntu1) 4.8.2.
