@@ -1,96 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with Linus' tree
-Date: Fri, 9 May 2014 12:07:02 +1000
-Message-ID: <20140509120702.62c609a3@canb.auug.org.au>
+Subject: linux-next: manual merge of the mmc tree with Linus' tree
+Date: Fri, 9 May 2014 13:44:55 +1000
+Message-ID: <20140509134455.07d7de4d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UN1PTG.WZCX3AzXJZIw5msV"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Miller <davem@davemloft.net>, Matthias-Christian Ott <ott@mirix.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/PjVaGnR.dlNJckWVZtyr8/."; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58378 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752029AbaEIDpH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 May 2014 23:45:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Ball <chris@printf.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Micky Ching <micky_ching@realsil.com.cn>, Lee Jones <lee.jones@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>
 
---Sig_/UN1PTG.WZCX3AzXJZIw5msV
+--Sig_/PjVaGnR.dlNJckWVZtyr8/.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Chris,
 
-Today's linux-next merge of the crypto tree got a conflict in
-crypto/crypto_user.c between commit 90f62cf30a78 ("net: Use
-netlink_ns_capable to verify the permisions of netlink messages") from
-Linus' tree and commit c568398aa05f ("crypto: user - Allow
-CRYPTO_MSG_GETALG without CAP_NET_ADMIN") from the crypto tree.
+Today's linux-next merge of the mmc tree got a conflict in
+drivers/mmc/host/rtsx_pci_sdmmc.c between commit 98fcc5762dce ("mmc:
+rtsx: Revert "mmc: rtsx: add support for pre_req and post_req"") from
+the  tree and commit 1f7b581b3ffc ("mmc: rtsx: modify error handle and
+remove smatch warnings") from the mmc tree.
 
-I fixed it up (I hope - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (maybe - see below and in the final tree) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc crypto/crypto_user.c
-index 43665d0d0905,aa906b8fdd17..000000000000
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@@ -265,6 -265,9 +265,9 @@@ static int crypto_update_alg(struct sk_
-  	struct nlattr *priority =3D attrs[CRYPTOCFGA_PRIORITY_VAL];
-  	LIST_HEAD(list);
+diff --cc drivers/mmc/host/rtsx_pci_sdmmc.c
+index 0b9ded13a3ae,09340b9429ec..000000000000
+--- a/drivers/mmc/host/rtsx_pci_sdmmc.c
++++ b/drivers/mmc/host/rtsx_pci_sdmmc.c
+@@@ -258,10 -375,11 +260,13 @@@ static void sd_send_cmd_get_rsp(struct=20
+  	if (cmd->opcode =3D=3D SD_SWITCH_VOLTAGE) {
+  		err =3D rtsx_pci_write_register(pcr, SD_BUS_STAT,
+  				0xFF, SD_CLK_TOGGLE_EN);
+- 		if (err < 0)
++ 		if (err < 0) {
++ 			rtsx_pci_write_register(pcr, SD_BUS_STAT,
++ 				SD_CLK_TOGGLE_EN | SD_CLK_FORCE_STOP, 0);
+  			goto out;
++ 		}
+ +
+ +		clock_toggled =3D true;
+  	}
  =20
- -	if (!capable(CAP_NET_ADMIN))
-++	if (!netlink_capable(skb, CAP_NET_ADMIN))
-+ 		return -EPERM;
-+=20
-  	if (!null_terminated(p->cru_name) || !null_terminated(p->cru_driver_name=
-))
-  		return -EINVAL;
- =20
-@@@ -295,6 -298,9 +298,9 @@@ static int crypto_del_alg(struct sk_buf
-  	struct crypto_alg *alg;
-  	struct crypto_user_alg *p =3D nlmsg_data(nlh);
- =20
- -	if (!capable(CAP_NET_ADMIN))
-++	if (!netlink_capable(skb, CAP_NET_ADMIN))
-+ 		return -EPERM;
-+=20
-  	if (!null_terminated(p->cru_name) || !null_terminated(p->cru_driver_name=
-))
-  		return -EINVAL;
- =20
-@@@ -379,6 -385,9 +385,9 @@@ static int crypto_add_alg(struct sk_buf
-  	struct crypto_user_alg *p =3D nlmsg_data(nlh);
-  	struct nlattr *priority =3D attrs[CRYPTOCFGA_PRIORITY_VAL];
- =20
- -	if (!capable(CAP_NET_ADMIN))
-++	if (!netlink_capable(skb, CAP_NET_ADMIN))
-+ 		return -EPERM;
-+=20
-  	if (!null_terminated(p->cru_name) || !null_terminated(p->cru_driver_name=
-))
-  		return -EINVAL;
- =20
+  	rtsx_pci_init_cmd(pcr);
 
---Sig_/UN1PTG.WZCX3AzXJZIw5msV
+--Sig_/PjVaGnR.dlNJckWVZtyr8/.
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTbDhKAAoJEMDTa8Ir7ZwVxisP/3KgAvS38uuB+P9MbG1giINP
-TPm+G9Bl5YLLu9SowZJpapXjv6cR+h1r6tN9VTfP/4WyLszOlO8dzgi7PiwxL0Yx
-K2eaHp7lHYjb6LoaRYRToca2MEeFYgFlF8XsoR1st9+0Bago8uyfJW/1Vn8tAVqe
-t2eTulyy+tua8E4AJhsEkiQj4pfbA4IBFu2uY3GuhahYDYv2mjDKPW8EYp0aPwqX
-twAU9NyiegDSeepnQ1W0qctWmsamlTk7iuaweBqztg9lDiLYGzJ2gOE6ABfPyU8a
-IpiBdu/YIXwbQqlU5PPtlkU++FYTe1ewXEOqWMV78yryu6oOwwhs54HeFSUhxdgM
-YNqsa46esjz5b05G1rLlfa3x0Sa7vGXRXqI9ZvWxZbij1GMfBq78uEWdQzzI9i14
-Mg5pQpkEOcQHDtRisIIZ+k0vIXMGvj/1IRZeVjyBgVPxiQNcybpgIItYCVIhPN0g
-e1vP3JrhFMcvbgyG99u1bPwIMbKhrNasKPcvjOC9Xa7zm/dIelsj5tvccOUwrqR2
-XeH62vJFyfcguupbJWxk0dvemc77Dxs2JFo/G0PbttdzIDx0sZUg+HDgGzKlFIz0
-sIK4E/tM6PyqcOH9CZGqHgvF903At5piHNZLa3mrmKJ20HLKkRkNd/YFWCJtMD7T
-cUnIhJ0LuQ3aXk7liGI+
-=gbZ1
+iQIcBAEBCAAGBQJTbE88AAoJEMDTa8Ir7ZwV3kkP/jk0ARYN9mVJFkiqC38pDqpM
+ZYI/dJyWNTiWN4G5oQqL4mr0vAxLFWhG9QlaMwp3UjRtQieZbbNizgq6g6mR+OY8
+Ua51N6XqC5HPchYuQWsS7eJg0bYhTZ/E8fVejncjeCGTKp+1FSeUwVWQF6/LrB/8
+Mn+6L/ImbQDKi2IG5gggJKw6KwVV8PB4a1nhob61Amh0oIOs0Fbq0az5/onJ7jXG
+KGtug0sg6c6Vv3bC6A3Br9wo6EdO6ZtzGeKo7ppr8xMFz1X7Q9ILYsaYLv4HLj1s
+YN+Kp6sNXGMig56VJtT3FRjr4Y3xF1DrBuICwhKXQOBsLvHH3xS5Sj5XVwryaYld
+XCbXNlI0Rma4vkKQBVH4Wihe+soRkumYoHTWm6kmVoF/PNQCsbIc5WGkIkziIbOK
+1tH1JzrjVzmegYTxAiZ5lZB+lvDNevHzqXuwk8W24UlvbyanK0hESA/7ZTGC07d7
+ZZSTWCB8OoFw8So0qqd0pb7nrgdB9rpkbmxz/zPcs1fAJS8KKhBJNp+jGiXWlUMO
+oIKbseF0RcQZ36koe+/+VcA9yxoEXKiC0GU135YKPKMQ85oBzArgAUH4WR/7j1ZB
+K6sLx4wUejgD+ctAGJ558aIVD3nw6SiRF9WU4tT/En6nx829LgoKN1azGUiQ+SOm
+oi5PSBG/z4/U75vTeGhq
+=VXDj
 -----END PGP SIGNATURE-----
 
---Sig_/UN1PTG.WZCX3AzXJZIw5msV--
+--Sig_/PjVaGnR.dlNJckWVZtyr8/.--
