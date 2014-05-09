@@ -1,37 +1,79 @@
-From: Jim Davis <jim.epost@gmail.com>
-Subject: Re: linux-next: Tree for May 7 (argh)
-Date: Thu, 8 May 2014 10:40:42 -0700
-Message-ID: <CA+r1Zhhi30bsRVYqhVgCa6khKW2W5YXsedtx90z=pMZp-M+iow@mail.gmail.com>
-References: <20140507173341.753d8ccf4fe033abd513f98f@canb.auug.org.au>
-	<536A9CF2.90906@infradead.org>
-	<CA+r1ZhiUj3G44MWoacLg6fWD-eDFZ=3L8QbwuBvOB2JWAURDqQ@mail.gmail.com>
-	<20140508080251.64eed8b579e307c25c46e27f@canb.auug.org.au>
-	<CA+r1Zhg4TKBkV8fZ+uUj9yy_0fWYNrrSLuL9ZEYppQBUKRm6jQ@mail.gmail.com>
-	<20140508011030.GT19657@tassilo.jf.intel.com>
-	<CA+r1ZhjErMWqVY5kSfMqLUAeQNMQhLXdwRMY2ro-OQMzbgEX9g@mail.gmail.com>
-	<20140508170851.GU19657@tassilo.jf.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bluetooth tree with Linus' tree
+Date: Fri, 9 May 2014 11:41:49 +1000
+Message-ID: <20140509114149.30c2c1c1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/LzreT9ZAet5wlOu2Zhc=/LG"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:38261 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754840AbaEHRkm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 May 2014 13:40:42 -0400
-Received: by mail-ie0-f177.google.com with SMTP id rp18so2921388iec.36
-        for <linux-next@vger.kernel.org>; Thu, 08 May 2014 10:40:42 -0700 (PDT)
-In-Reply-To: <20140508170851.GU19657@tassilo.jf.intel.com>
+Received: from ozlabs.org ([103.22.144.67]:39253 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932117AbaEIBl5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 May 2014 21:41:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-next <linux-next@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Michal Marek <mmarek@suse.cz>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petri Gynther <pgynther@google.com>, Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@intel.com>
 
-On 5/8/14, Andi Kleen <ak@linux.intel.com> wrote:
+--Sig_/LzreT9ZAet5wlOu2Zhc=/LG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
->
-> Ok so LTO is not active, and you still get errors.
+Hi Gustavo,
 
-> Please send a full build log / config
+Today's linux-next merge of the bluetooth tree got a conflict in
+drivers/bluetooth/btusb.c between commit 3c49aa852e00 ("Revert
+"Bluetooth: Enable autosuspend for Intel Bluetooth device"") from
+Linus' tree and commit 10d4c6736ea6 ("Bluetooth: btusb: Add Broadcom
+patch RAM support") from the bluetooth tree.
 
->From a quick look at the failed buildlogs from next-20140508, those
-problems may be due to a Makefile problem that Nishanth Menon just
-identified (http://marc.info/?l=linux-next&m=139956566006889&w=2).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/bluetooth/btusb.c
+index a7dfbf9a3afb,8f579cd9bbaf..000000000000
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@@ -1486,8 -1635,13 +1636,11 @@@ static int btusb_probe(struct usb_inter
+  	if (id->driver_info & BTUSB_BCM92035)
+  		hdev->setup =3D btusb_setup_bcm92035;
+ =20
++ 	if (id->driver_info & BTUSB_BCM_PATCHRAM)
++ 		hdev->setup =3D btusb_setup_bcm_patchram;
++=20
+ -	if (id->driver_info & BTUSB_INTEL) {
+ -		usb_enable_autosuspend(data->udev);
+ +	if (id->driver_info & BTUSB_INTEL)
+  		hdev->setup =3D btusb_setup_intel;
+ -	}
+ =20
+  	/* Interface numbers are hardcoded in the specification */
+  	data->isoc =3D usb_ifnum_to_if(data->udev, 1);
+
+--Sig_/LzreT9ZAet5wlOu2Zhc=/LG
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTbDJiAAoJEMDTa8Ir7ZwV8xwP/3jBWYzkbNSt5CsauDoT2g+s
+pIx45Xnh8ENaEmhyWzJxhp/EijhQAvWdSgaiAqdTv4wQh6p8EA3E4UZjyHPM8/RI
+aayvvrs7bg4pRTfnOIxCt16Gj1j1MkP/vSsa9zXjFyUrBbCa3jqiLDJLuW5SlrYo
+waiwaK273Ff04+WCDaVqYA3IYAZQViUILiPt4TPqcCY/O/KIE6TCIICzBoxZ455k
+C54EeOzaVWNtU9w+dV2t1heeTi9ezKaihJGVcq7zLN7cfd9/2TV8HZyaO65KdgwQ
+OEt9FG8bLXkuAmlFPH1Y1FUSry639nVxNBDZVu+JnnHNiFK7d/nA+kyJYvaad7nq
+pFAECGTOHQOQahxvXSyNOem4IBTygE/D4xtRuumUvZST/crOurLOjCll6OyO+PLf
+rrHMjWDej8mipirlvwK48qmO3G7ZdqtZ+tz0br5gLzyDoLChudVEdmwmic/6h+I6
+A0l94qUGWLQfjJRO+bFFbgzJxE8Racsv9nW6r7SdLmqpedjsz6fUmk9UE0RsUUbz
+6L7/BQ0WEEmjINZfiB0UtqrXH7ISoUA/feZMriOTDpuwKJBZiK913E2v2xFu/Aig
+wVg0TO8ZGVoJPF/u9fDl2xKzMDUvaGqZS3SjBcVWrzpH9ggeWXzMBhO9A08p/F6s
+VkHDPgOmh5c8Mxzy92BZ
+=JknW
+-----END PGP SIGNATURE-----
+
+--Sig_/LzreT9ZAet5wlOu2Zhc=/LG--
