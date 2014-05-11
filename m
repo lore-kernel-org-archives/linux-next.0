@@ -1,59 +1,98 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] perf: remove unused variable
-Date: Sun, 11 May 2014 23:43:49 +0200
-Message-ID: <1399844629-32173-1-git-send-email-vincent.stehle@laposte.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: add scottwood/linux.git
+Date: Mon, 12 May 2014 08:23:36 +1000
+Message-ID: <20140512082336.501fa8a2@canb.auug.org.au>
+References: <20140320042527.GA23206@home.buserror.net>
+	<1395616617.3460.109.camel@pasglop>
+	<1395617608.3460.113.camel@pasglop>
+	<1395709794.12479.411.camel@snotra.buserror.net>
+	<1399670133.15726.440.camel@snotra.buserror.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/a45ejLIsKa/qDmEnMXuEy/8"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6-g21.free.fr ([212.27.42.6]:54985 "EHLO smtp6-g21.free.fr"
+Received: from ozlabs.org ([103.22.144.67]:47280 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751663AbaEKVnz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 May 2014 17:43:55 -0400
+	id S1754226AbaEKWXp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 May 2014 18:23:45 -0400
+In-Reply-To: <1399670133.15726.440.camel@snotra.buserror.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Scott Wood <scottwood@freescale.com>
+Cc: linuxppc-dev@lists.ozlabs.org, galak@kernel.crashing.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org
 
-This fixes the following compilation warning:
+--Sig_/a45ejLIsKa/qDmEnMXuEy/8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  kernel/events/core.c: In function =E2=80=98perf_event_exit_task_conte=
-xt=E2=80=99:
-  kernel/events/core.c:7434:35: warning: unused variable =E2=80=98tmp=E2=
-=80=99 [-Wunused-variable]
+Hi Scott,
 
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
----
+On Fri, 9 May 2014 16:15:33 -0500 Scott Wood <scottwood@freescale.com> wrot=
+e:
+>
+> On Mon, 2014-03-24 at 20:09 -0500, Scott Wood wrote:
+> > On Mon, 2014-03-24 at 10:33 +1100, Benjamin Herrenschmidt wrote:
+> > > On Mon, 2014-03-24 at 10:16 +1100, Benjamin Herrenschmidt wrote:
+> > > > On Wed, 2014-03-19 at 23:25 -0500, Scott Wood wrote:
+> > > > > The following changes since commit c7e64b9ce04aa2e3fad7396d92b5cb=
+92056d16ac:
+> > > > >=20
+> > > > >   powerpc/powernv Platform dump interface (2014-03-07 16:19:10 +1=
+100)
+> > > > >=20
+> > > > > are available in the git repository at:
+> > > > >=20
+> > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/scottwood/linux.g=
+it next
+> > > > >=20
+> > > > > for you to fetch changes up to 48b16180d0d91324e5d2423c6d53d97bbe=
+3dcc14:
+> > > > >=20
+> > > > >   fsl/pci: The new pci suspend/resume implementation (2014-03-19 =
+22:37:44 -0500)
+> > > >=20
+> > > > Stephen just informed me that your tree wasn't in -next ... Kumar's
+> > > > still is.
+> > > >=20
+> > > > Can you guys fix that up ? I somewhat rely on the FSL stuff to simm=
+er
+> > > > in -next on its own.
+> >=20
+> > Stephen, what's the process for adding a tree?
+>=20
+> ping
 
-Hi,
+Sorry, for the delay.
 
-This can be seen with e.g. linux next-20140509 and arm allmodconfig.
+Just send me a git URL for your tree, and a list of the people I should
+contact in case of conflicts/build/fetch problems and cc the
+appropriate people/lists.
 
-Best regards,
-
-V.
-
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7ab734f..ed50b09 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7431,7 +7431,7 @@ __perf_event_exit_task(struct perf_event *child_e=
-vent,
-=20
- static void perf_event_exit_task_context(struct task_struct *child, in=
-t ctxn)
- {
--	struct perf_event *child_event, *tmp;
-+	struct perf_event *child_event;
- 	struct perf_event_context *child_ctx;
- 	unsigned long flags;
-=20
+I also assume that this will actually replace Kumar's tree?
 --=20
-2.0.0.rc0
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/a45ejLIsKa/qDmEnMXuEy/8
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTb/htAAoJEMDTa8Ir7ZwVMxwP/2QX1/RPmhwiZuNJkGYx1VEg
+3w+g6qrxc/PROspFszXn2/NIw912/xqcfG2hpVFKGRiJ80BRGXYbb6ucEHFn3e1T
+0iRdR9ioB8EDPJStDbilTw+jC3/VMUgoV5CMtz159ShxqhES5mg+pQk+rSIFuq4L
+k0sefbaCLVuZzZdSkh65ZQmGZgSxr90mMj48yIC5g7eDVWl1vkXXuI3thhkXWhci
+4Za5hR9H7iUWY3Mv9+7ZqjH6sbsztIfJBqM3L82QxQYEMMnnyrU/JjMCo0/w9+C/
+wklWunUhumDkCw3MoEnebrd2rz+wwJhH/II28R+AHM5eHptIPiwjnsMbr0C/xFFz
+XI8l39w9t0CWSy1lxlgeYFudweE3w6UevexL2o0QW0XSqt2HCqRSR2CI3lJdkusb
+U+TFdRX27reMHyfP5Ydsj/XoNgCm+42pL+pPqYsJbAl74aqcy/lDJsJEDcZ31Zf/
+6CXTa9X09W8mEvpwhlGs/6r8liuG1c1hvPXU3I5ClpZTLmIn1yfrBr4GjxjAvrL2
+n5bPhQo2A0jjKBQZyl8iPLdj/KkfTfXcdVMGl/5SsLpAwgVwJjnra6xOhHcOhofC
+tH2k75ZOIskCPABIHO7Le3lpEHdotyzF+NfGDyuyZBfLpn27kYTaK/oTac+nYRm5
+3CtwtydjN3u9G98rm4sp
+=VkPP
+-----END PGP SIGNATURE-----
+
+--Sig_/a45ejLIsKa/qDmEnMXuEy/8--
