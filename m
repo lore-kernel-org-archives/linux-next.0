@@ -1,77 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the net-next tree
-Date: Mon, 12 May 2014 15:16:47 +1000
-Message-ID: <20140512151647.1ceae8f2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the fsl tree
+Date: Mon, 12 May 2014 15:55:57 +1000
+Message-ID: <20140512155557.5b758614@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MVjs+d+Msi0bgSUrUcBA4U+"; protocol="application/pgp-signature"
+ boundary="Sig_/elLLYofYkdxJx6jXv+M0eEG"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52139 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56180 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751864AbaELFQz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 May 2014 01:16:55 -0400
+	id S1752074AbaELF4L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 May 2014 01:56:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+To: Scott Wood <scottwood@freescale.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stuart Yoder <stuart.yoder@freescale.com>
 
---Sig_/MVjs+d+Msi0bgSUrUcBA4U+
+--Sig_/elLLYofYkdxJx6jXv+M0eEG
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Scott,
 
-Today's linux-next merge of the gpio tree got a conflict in
-Documentation/driver-model/devres.txt between commit 6d48f44b7b2a
-("mdio_bus: implement devm_mdiobus_alloc/devm_mdiobus_free") from the
-net-next tree and commit f9748ef13b6a ("gpio: Add missing
-device-managed documentation") from the gpio tree.
+After merging the fsl tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+arch/powerpc/kernel/epapr_paravirt.c: In function 'epapr_idle_init':
+arch/powerpc/kernel/epapr_paravirt.c:77:23: error: 'epapr_ev_idle' undeclar=
+ed (first use in this function)
+   ppc_md.power_save =3D epapr_ev_idle;
+                       ^
+
+Caused by commit 7762b1ed7aae ("powerpc: move epapr paravirt init of
+power_save to an initcall").
+
+I have reverted that commit for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/driver-model/devres.txt
-index d483f2cf221b,8ff1167cfedf..000000000000
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@@ -310,7 -309,7 +310,12 @@@ SLAVE DMA ENGIN
-  SPI
-    devm_spi_register_master()
- =20
- +MDIO
- +  devm_mdiobus_alloc()
- +  devm_mdiobus_alloc_size()
- +  devm_mdiobus_free()
-++
-+ GPIO
-+   devm_gpiod_get()
-+   devm_gpiod_get_index()
-+   devm_gpiod_put()
-
---Sig_/MVjs+d+Msi0bgSUrUcBA4U+
+--Sig_/elLLYofYkdxJx6jXv+M0eEG
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTcFlEAAoJEMDTa8Ir7ZwVhxgQAI5sk/kqpjeNzZN8CUOO1h5w
-42mbASrCn1dgUO+dns6PmIfdnCnKqrMlZpt3Ri8eDWIGTJvn4YtQfsjx4hcXNen4
-bd3yycCeoduHkzY9BnarW8bTa0xHsu5wND4NOHVCJFO8sMeRKq+J1I2KX0Jvam5U
-i0M9p1MqBpt+n/6b4qgM2TTGh9cBPJep5vF1bZLHUBdK6TS94+9yOaYvow9lD0Yz
-7OevnKrpRw7jybG0i1HQDhKFY03Ec2UeiY0I74yG9IiFZ5ttKyk4MGXi+ZJrDbq8
-5MfPdLEuZYsGDtkZ/oUbCjlPz9vMiFWbwsUpqINnUN8osLfNXakgOMvgjcy1JjvZ
-drZQy4BHhI/NpJJ8W9s3jHXBT/tD9aCl4DglspWXnIewdKlS1Gcy62GI6+woSqAV
-JqOJxV4ldYv1SgTP+Pf4v893KPTJwT8+l0xKNnt5gh0NU3Vj/fOePgfuxI6ltTXa
-6sTJ94fPD5XQ764AuJ2qLzPtuMF9IllntoWi4zpARagWuCpODYvgzHCSc2BJH66i
-BF/PRZg/mqP7uEeqooif3ctbgifF10P5NgENudEKjmpoIltEeBkJBrxsMnWBOI4D
-53jN7IYH1LHyCzhMmP6F8AkB7vpBQZNTekvBhTqyUAvyitGnfHcE9iAFb7Pc/wC5
-v8YHRUZxOBI8sBVBC14l
-=VVtt
+iQIcBAEBCAAGBQJTcGJ5AAoJEMDTa8Ir7ZwVACUP/22wVygigCWr729ZnUuAeO0L
+hkh7xpnHGTSslOs6kfwnXcq2c0Mh94nOZTqmI5L5WPq1+bInlsEBSwoZKrzqkHov
+m3H3H94iWPD83rw6iVzvenpNvQErxZMPUSKW+WQc09byDWmTt+gm2TGARAdzoWND
+CT6958dJ0Sh1H4UQls+LJ1Pqblhx5m/2BkvZxLveeogwBZHkmqZgaWb79BAnsqsL
+pvt3V8QDgyphR4Zo8NasUUBf01Pce+A3+0UsEM67+KqPbnl99VjnPU7W29X0/ceA
+UDQEvWIsKpCKCV+sMWsb57eqD97+KFSfMGwV3j2YCO1kKRtbrn5JYLtECFQfygld
+dgpvrLJMOakxnyKK+Xy1OeCGGvAorTzKMPnq4nUfOe0bk1+snvmVCpncGLCbcxgw
+rRpXJcGxTp1TqbTrv6XVpsmEWHcbuQGJnz2uRgNFxVKI8JWMRbFn6V6Kt7H580bc
+upbMil0joLzuWzl6iYusqwuXxZOMqW7dF2OtcxwNhQh3O+869HwhCPOU7vkMtfES
+wUJvWMbUaMkT3wFfpJiMN53awjP7nN3q66CHIzIVWkQXxWsW2gVs1ha8SOjERjQj
+RaVfxqylz5w+0uueGgraAe1NmljIajKbaMIebOeUPTWXzJUgOFd5vTXGy0WShcto
+mbk7nmxrzhbDkvdCUGnH
+=m/mk
 -----END PGP SIGNATURE-----
 
---Sig_/MVjs+d+Msi0bgSUrUcBA4U+--
+--Sig_/elLLYofYkdxJx6jXv+M0eEG--
