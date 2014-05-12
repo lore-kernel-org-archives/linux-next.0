@@ -1,40 +1,61 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: randconfig build error with next-20140512, in mm/slub.c
-Date: Mon, 12 May 2014 13:36:53 -0700 (PDT)
-Message-ID: <alpine.DEB.2.02.1405121336180.961@chino.kir.corp.google.com>
-References: <CA+r1Zhg4JzViQt=J0XBu4dRwFUZGwi52QLefkzwcwn4NUfk8Sw@mail.gmail.com> <alpine.DEB.2.10.1405121346370.30318@gentwo.org> <537118C6.7050203@iki.fi>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] compiler.h: don't use temporary variable in
+ __compiletime_assert()
+Date: Mon, 12 May 2014 14:16:42 -0700
+Message-ID: <20140512141642.5eb526deed5ea32ad5bced72@linux-foundation.org>
+References: <1399530685-7749-1-git-send-email-johannes@sipsolutions.net>
+	<5370CFAC.40705@imgtec.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:37516 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751288AbaELUgz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 May 2014 16:36:55 -0400
-Received: by mail-pa0-f49.google.com with SMTP id lj1so9262056pab.8
-        for <linux-next@vger.kernel.org>; Mon, 12 May 2014 13:36:55 -0700 (PDT)
-In-Reply-To: <537118C6.7050203@iki.fi>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@iki.fi>
-Cc: Christoph Lameter <cl@linux.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, penberg@kernel.org, mpm@selenic.com, linux-mm@kvack.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5370CFAC.40705@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Hogan <james.hogan@imgtec.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Daniel Santos <daniel.santos@pobox.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-metag <linux-metag@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 12 May 2014, Pekka Enberg wrote:
+On Mon, 12 May 2014 14:42:04 +0100 James Hogan <james.hogan@imgtec.com> wrote:
 
-> On 05/12/2014 09:47 PM, Christoph Lameter wrote:
-> > A patch was posted today for this issue.
-> 
-> AFAICT, it's coming from -mm. Andrew, can you pick up the fix?
-> 
-> > Date: Mon, 12 May 2014 09:36:30 -0300
-> > From: Fabio Estevam <fabio.estevam@freescale.com>
-> > To: akpm@linux-foundation.org
-> > Cc: linux-mm@kvack.org, festevam@gmail.com, Fabio Estevam
-> > <fabio.estevam@freescale.com>,    Christoph Lameter <cl@linux.com>, David
-> > Rientjes <rientjes@google.com>, Pekka Enberg <penberg@kernel.org>
-> > Subject: [PATCH] mm: slub: Place count_partial() outside CONFIG_SLUB_DEBUG
-> > if block
+> > --- a/include/linux/compiler.h
+> > +++ b/include/linux/compiler.h
+> > @@ -324,11 +324,10 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
+> >  
+> >  #define __compiletime_assert(condition, msg, prefix, suffix)		\
+> >  	do {								\
+> > -		bool __cond = !(condition);				\
+> >  		extern void prefix ## suffix(void) __compiletime_error(msg); \
+> > -		if (__cond)						\
+> > +		if (!(condition))					\
+> >  			prefix ## suffix();				\
+> > -		__compiletime_error_fallback(__cond);			\
+> > +		__compiletime_error_fallback(!(condition));		\
+> >  	} while (0)
+> >  
+> >  #define _compiletime_assert(condition, msg, prefix, suffix) \
 > > 
+> 
+> Unfortunately this breaks the build of today's linux-next for the Meta
+> architecture (arch/metag), which happens to use a fairly old compiler
+> (based on gcc 4.2.4) which I presume is the reason why.
+> 
+> A bunch of compile time asserts fail, even in code which should be
+> optimised out. E.g. here's one which I analysed:
+> 
+> mm/gup.c: In function ___follow_page_mask___:
+> mm/gup.c:208: error: size of array ___type name___ is negative
+> 
+> Line 208 uses HPAGE_PMD_NR which expands to a HPAGE_PMD_SHIFT, which
+> expands to a BUILD_BUG(). However that line is inside an if block
+> conditioned on pmd_trans_huge(*pmd) which include/asm-generic/pgtable.h
+> defines inline to return 0, so the whole block should already be being
+> optimised out.
+> 
+> I don't understand why your patch should break things, I suspect it's
+> related to the sparse behaviour you're trying to work around, but can we
+> please drop this patch until a more portable workaround can be found?
 
-That's the wrong fix since it doesn't work properly when sysfs is 
-disabled.  We want http://marc.info/?l=linux-mm-commits&m=139992385527040 
-which was merged into -mm already.
+Older gcc's often have this problem.
+
+I suppose that build bustage is more serious than sparse false
+positives so yes, let's please try to find an alternative.
