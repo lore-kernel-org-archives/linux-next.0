@@ -1,98 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: add scottwood/linux.git
-Date: Mon, 12 May 2014 08:23:36 +1000
-Message-ID: <20140512082336.501fa8a2@canb.auug.org.au>
-References: <20140320042527.GA23206@home.buserror.net>
-	<1395616617.3460.109.camel@pasglop>
-	<1395617608.3460.113.camel@pasglop>
-	<1395709794.12479.411.camel@snotra.buserror.net>
-	<1399670133.15726.440.camel@snotra.buserror.net>
+Subject: Re: linux-next: manual merge of the mmc tree with Linus' tree
+Date: Mon, 12 May 2014 10:11:15 +1000
+Message-ID: <20140512101115.3876b3f5@canb.auug.org.au>
+References: <20140509134455.07d7de4d@canb.auug.org.au>
+ <20140509071423.GF5767@lee--X1>
+ <CAPDyKFq1O-bB1Vax0uRKaF2p2AJ1FXHC6LNoLsooGx5gBdsuLA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/a45ejLIsKa/qDmEnMXuEy/8"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47280 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754226AbaEKWXp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 May 2014 18:23:45 -0400
-In-Reply-To: <1399670133.15726.440.camel@snotra.buserror.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Scott Wood <scottwood@freescale.com>
-Cc: linuxppc-dev@lists.ozlabs.org, galak@kernel.crashing.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org
+ boundary="Sig_/BNg1iRPXGbdbBwPZG4NXfc9"; protocol="application/pgp-signature"
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFq1O-bB1Vax0uRKaF2p2AJ1FXHC6LNoLsooGx5gBdsuLA@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Chris Ball <chris@printf.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Micky Ching <micky_ching@realsil.com.cn>, linux-mmc <linux-mmc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/a45ejLIsKa/qDmEnMXuEy/8
+--Sig_/BNg1iRPXGbdbBwPZG4NXfc9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Scott,
+Hi Ulf,
 
-On Fri, 9 May 2014 16:15:33 -0500 Scott Wood <scottwood@freescale.com> wrot=
+On Fri, 9 May 2014 09:41:39 +0200 Ulf Hansson <ulf.hansson@linaro.org> wrot=
 e:
 >
-> On Mon, 2014-03-24 at 20:09 -0500, Scott Wood wrote:
-> > On Mon, 2014-03-24 at 10:33 +1100, Benjamin Herrenschmidt wrote:
-> > > On Mon, 2014-03-24 at 10:16 +1100, Benjamin Herrenschmidt wrote:
-> > > > On Wed, 2014-03-19 at 23:25 -0500, Scott Wood wrote:
-> > > > > The following changes since commit c7e64b9ce04aa2e3fad7396d92b5cb=
-92056d16ac:
-> > > > >=20
-> > > > >   powerpc/powernv Platform dump interface (2014-03-07 16:19:10 +1=
-100)
-> > > > >=20
-> > > > > are available in the git repository at:
-> > > > >=20
-> > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/scottwood/linux.g=
-it next
-> > > > >=20
-> > > > > for you to fetch changes up to 48b16180d0d91324e5d2423c6d53d97bbe=
-3dcc14:
-> > > > >=20
-> > > > >   fsl/pci: The new pci suspend/resume implementation (2014-03-19 =
-22:37:44 -0500)
-> > > >=20
-> > > > Stephen just informed me that your tree wasn't in -next ... Kumar's
-> > > > still is.
-> > > >=20
-> > > > Can you guys fix that up ? I somewhat rely on the FSL stuff to simm=
-er
-> > > > in -next on its own.
-> >=20
-> > Stephen, what's the process for adding a tree?
+> Within this context; while Chris is being busy, I would be able to
+> help out better as co-maintainer - if we would add my published mmc
+> git tree, into your linux-next merge. Could you do that?
 >=20
-> ping
+> My intent at this point, is to get patches tested in linux-next, but
+> still get them merged via Chris' mmc tree. Does that make sense?
+>=20
+> Here is my git tree:
+> git://git.linaro.org/people/ulf.hansson/mmc.git
+>=20
+> I have added a next branch, currently it points to the commit for
+> "Linux 3.15-rc4", so it holds no patches yet.
 
-Sorry, for the delay.
+Added from today. Chris, if this is a problem, give me a heads up.
 
-Just send me a git URL for your tree, and a list of the people I should
-contact in case of conflicts/build/fetch problems and cc the
-appropriate people/lists.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-I also assume that this will actually replace Kumar's tree?
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Sig_/a45ejLIsKa/qDmEnMXuEy/8
+--Sig_/BNg1iRPXGbdbBwPZG4NXfc9
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTb/htAAoJEMDTa8Ir7ZwVMxwP/2QX1/RPmhwiZuNJkGYx1VEg
-3w+g6qrxc/PROspFszXn2/NIw912/xqcfG2hpVFKGRiJ80BRGXYbb6ucEHFn3e1T
-0iRdR9ioB8EDPJStDbilTw+jC3/VMUgoV5CMtz159ShxqhES5mg+pQk+rSIFuq4L
-k0sefbaCLVuZzZdSkh65ZQmGZgSxr90mMj48yIC5g7eDVWl1vkXXuI3thhkXWhci
-4Za5hR9H7iUWY3Mv9+7ZqjH6sbsztIfJBqM3L82QxQYEMMnnyrU/JjMCo0/w9+C/
-wklWunUhumDkCw3MoEnebrd2rz+wwJhH/II28R+AHM5eHptIPiwjnsMbr0C/xFFz
-XI8l39w9t0CWSy1lxlgeYFudweE3w6UevexL2o0QW0XSqt2HCqRSR2CI3lJdkusb
-U+TFdRX27reMHyfP5Ydsj/XoNgCm+42pL+pPqYsJbAl74aqcy/lDJsJEDcZ31Zf/
-6CXTa9X09W8mEvpwhlGs/6r8liuG1c1hvPXU3I5ClpZTLmIn1yfrBr4GjxjAvrL2
-n5bPhQo2A0jjKBQZyl8iPLdj/KkfTfXcdVMGl/5SsLpAwgVwJjnra6xOhHcOhofC
-tH2k75ZOIskCPABIHO7Le3lpEHdotyzF+NfGDyuyZBfLpn27kYTaK/oTac+nYRm5
-3CtwtydjN3u9G98rm4sp
-=VkPP
+iQIcBAEBCAAGBQJTcBGoAAoJEMDTa8Ir7ZwV1TMP/RN6RAqgS3OxvqjMuPWL19j5
+To6Eog67SCf2a0bSk24PHyRsBPRmpxHYB+ij6VzEqarqbpPg4CeNJNqAn9OUtXUe
+ugoSZEkf9aOVXu87D8damIGv+1vpv4wf0JNwMqs267i/GsZ2t2V1FZjtzeS5HgCY
+i/SMdONZsXo1eVNNZPYGqg05wwNJ7TPuOy440Te6DndmcBSKAGybSvGZn0LzQfh6
+wC7/uTtWVAUcCgHsvEVn+cFpEaoXnJ2CSHWVG2f2fXWVovq3Rizvdqg1cLnThE/f
+u1EpTHKrziPx1TxKYFpnNme++jEDX9+137pB3nxTy5W4w8jKmlgRTQEQzymO1nSe
+QLuos1LyFDChZfcClQLdJUWQHOFHUAfQzEzz/GcfRuf+sGno8v/KjBVKAs+dCn8i
+9Yv4xSAPQ9PS85gDbSP7Lv2JTbNQ38H5HpXg+mQmzUcqE/GaMyHXVgW+QfpLp9Ea
+0fwACVJHjT+dyaGSkf7tV6T001Kjfd17F+GC/Z5dl1xw0edFV38naORZLIbiZSSD
+zV7zrpAM+IiZGpTwQCyNcYFau14IMZjz9DfV4wKFtSWEog6p0OqVNcMTGqstzHxH
+JTRCYQ8PTbVoFx2bbJiDaJU9rX1wlBxv0zWvNGDgrFzQzPi79K9/X6HehW/Zf6jh
+7Wc4iss9e7gpRGhRRh/h
+=/sfq
 -----END PGP SIGNATURE-----
 
---Sig_/a45ejLIsKa/qDmEnMXuEy/8--
+--Sig_/BNg1iRPXGbdbBwPZG4NXfc9--
