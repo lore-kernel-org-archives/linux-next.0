@@ -1,59 +1,106 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 13
-Date: Tue, 13 May 2014 18:23:30 +1000
-Message-ID: <20140513182330.51117999@canb.auug.org.au>
-References: <20140513181651.33c9cc11@canb.auug.org.au>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [PATCH] compiler.h: don't use temporary variable in __compiletime_assert()
+Date: Tue, 13 May 2014 09:53:38 +0100
+Message-ID: <5371DD92.5080304@imgtec.com>
+References: <1399530685-7749-1-git-send-email-johannes@sipsolutions.net>	 <5370CFAC.40705@imgtec.com>	 <20140512141642.5eb526deed5ea32ad5bced72@linux-foundation.org> <1399966293.4137.5.camel@jlt4.sipsolutions.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dRS5en22cHaAF0xuzvCA_=M"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140513181651.33c9cc11@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailapp01.imgtec.com ([195.59.15.196]:2570 "EHLO
+	mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758826AbaEMIxl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 May 2014 04:53:41 -0400
+In-Reply-To: <1399966293.4137.5.camel@jlt4.sipsolutions.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Daniel Santos <daniel.santos@pobox.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-metag <linux-metag@vger.kernel.org>
 
---Sig_/dRS5en22cHaAF0xuzvCA_=M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Johannes,
 
-Hi all,
+On 13/05/14 08:31, Johannes Berg wrote:
+> On Mon, 2014-05-12 at 14:16 -0700, Andrew Morton wrote:
+> 
+>>> I don't understand why your patch should break things, I suspect it's
+>>> related to the sparse behaviour you're trying to work around, but can we
+>>> please drop this patch until a more portable workaround can be found?
+>>
+>> Older gcc's often have this problem.
+>>
+>> I suppose that build bustage is more serious than sparse false
+>> positives so yes, let's please try to find an alternative.
+> 
+> Since most people probably don't use sparse without compiling (in fact
+> it's pretty difficult to do so) I'll just send a patch to disable
+> __compiletime_assert for sparse - any objections?
 
-On Tue, 13 May 2014 18:16:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Non-merge commits (relative to Linus' tree): 4501
->   4211 files changed, 151888 insertions(+), 93171 deletions(-)
+I came up with the hack below yesterday evening. Is that the sort of
+thing you mean? (feel free to use this or do something else, just my
+2p).
 
-Actually:
+Cheers
+James
 
-Non-merge commits (relative to Linus' tree): 4960
- 4638 files changed, 174648 insertions(+), 107611 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Subject: [PATCH] compiler.h: avoid sparse errors in
+ __compiletime_error_fallback()
 
---Sig_/dRS5en22cHaAF0xuzvCA_=M
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Usually, BUG_ON and friends aren't even evaluated in sparse, but
+recently compiletime_assert_atomic_type() was added, and that now
+results in a sparse warning every time it is used.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+The reason turns out to be the temporary variable, after it sparse no
+longer considers the value to be a constant, and results in a warning
+and an error. The error is the more annoying part of this as it
+suppresses any further warnings in the same file, hiding other problems.
 
-iQIcBAEBCAAGBQJTcdaGAAoJEMDTa8Ir7ZwVllYP/ioSO+dEEQrIC8YPSlnStREM
-Pa2SFScUdqwk+8i9M0zzLIyZvOyr7sYHzjDKNlUxC7ILzdGwFfOYGpxPLlRKNY2F
-7xasRYSzcgsJMWaDPMyqw5maoejT6nxSUKC5xmtmNbZ4RgQIZ8MmxLqk39cbPj0l
-bFp3M9doZJY0RhADYHE07vgl7SEcLkfQctC9IcAAt4RyUqfMXJ3QHEEx3L5KhaGY
-XpMTeLUY6c+KzXOgWiHeITaFt5TcDg+LBQvWovbBpYMoQObpPz+N9l2Yo7LrVOs+
-jF5qDH7tC7seigvznFphRwQRdM8+ybo6SIA/1wwunQESH1AAlrL/9nVPwFLdzhjZ
-lUUZaZidNHeWodQlZa4cZURfC6u4pEDX5z5R1t20TLXxn94kiUQ6FzZ5IssHC98Q
-wpmrX0bYFdFVSouedYuXjXfMjuUAb0Zbt4yRBzxEE/S09MtMkIcsCkkh5HMjV94D
-XJJuzyjTnRqwWml8VSPOOve4n3YklXHoV7UkR/HEhrGKcK7GIFa0whKLXoBwnCtY
-MSs4pm8H0Xe2TzmGWVYOLtp1iQotLeInJpCRO3kITeIFUkDJdPXrwu1NAOdHD5Sl
-ioSCp3dtEK4lxAa/kyCoxkK5ipAO3GhbmSPA+FPrBv/ocolgbwnDSVz0q4CF2UMO
-YMdV7MABSefSF58U37jF
-=/30a
------END PGP SIGNATURE-----
+Unfortunately the condition cannot be simply expanded out to avoid the
+temporary variable since it breaks compiletime_assert on old versions of
+GCC such as GCC 4.2.4 which the latest metag compiler is based on.
 
---Sig_/dRS5en22cHaAF0xuzvCA_=M--
+Therefore #ifndef __CHECKER__ out the __compiletime_error_fallback which
+uses the potentially negative size array to trigger a conditional
+compiler error, so that sparse doesn't see it.
+
+Signed-off-by: James Hogan <james.hogan@imgtec.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
+Cc: Daniel Santos <daniel.santos@pobox.com>
+Cc: Luciano Coelho <luciano.coelho@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+It's not particularly pretty, if you can think of a better solution that
+doesn't break old GCC I'm all ears.
+---
+ include/linux/compiler.h | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ee7239ea1583..64fdfe1cfcf0 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -323,9 +323,18 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
+ #endif
+ #ifndef __compiletime_error
+ # define __compiletime_error(message)
+-# define __compiletime_error_fallback(condition) \
++/*
++ * Sparse complains of variable sized arrays due to the temporary variable in
++ * __compiletime_assert. Unfortunately we can't just expand it out to make
++ * sparse see a constant array size without breaking compiletime_assert on old
++ * versions of GCC (e.g. 4.2.4), so hide the array from sparse altogether.
++ */
++# ifndef __CHECKER__
++#  define __compiletime_error_fallback(condition) \
+ 	do { ((void)sizeof(char[1 - 2 * condition])); } while (0)
+-#else
++# endif
++#endif
++#ifndef __compiletime_error_fallback
+ # define __compiletime_error_fallback(condition) do { } while (0)
+ #endif
+ 
+-- 
+1.9.3
