@@ -1,111 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dt-rh tree with Linus' tree
-Date: Tue, 13 May 2014 15:10:45 +1000
-Message-ID: <20140513151045.2e640394@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH] compiler.h: don't use temporary variable in
+ __compiletime_assert()
+Date: Tue, 13 May 2014 09:31:33 +0200
+Message-ID: <1399966293.4137.5.camel@jlt4.sipsolutions.net>
+References: <1399530685-7749-1-git-send-email-johannes@sipsolutions.net>
+	 <5370CFAC.40705@imgtec.com>
+	 <20140512141642.5eb526deed5ea32ad5bced72@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RUtkFMFrcawWDepH+5RSEkd"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>, Grant Likely <grant.likely@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from s3.sipsolutions.net ([5.9.151.49]:37531 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753032AbaEMHbq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 May 2014 03:31:46 -0400
+In-Reply-To: <20140512141642.5eb526deed5ea32ad5bced72@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: James Hogan <james.hogan@imgtec.com>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Daniel Santos <daniel.santos@pobox.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-metag <linux-metag@vger.kernel.org>
 
---Sig_/RUtkFMFrcawWDepH+5RSEkd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2014-05-12 at 14:16 -0700, Andrew Morton wrote:
 
-Hi Rob,
+> > I don't understand why your patch should break things, I suspect it's
+> > related to the sparse behaviour you're trying to work around, but can we
+> > please drop this patch until a more portable workaround can be found?
+> 
+> Older gcc's often have this problem.
+> 
+> I suppose that build bustage is more serious than sparse false
+> positives so yes, let's please try to find an alternative.
 
-Today's linux-next merge of the dt-rh tree got a conflict in
-drivers/of/selftest.c between commit 82c0f5897a87 ("of: selftest: add
-deferred probe interrupt test") from Linus' tree and commit
-ae7c987bc3a7 ("of/selftest: add testcase for nodes with same name and
-address") from the dt-rh tree.
+Since most people probably don't use sparse without compiling (in fact
+it's pretty difficult to do so) I'll just send a patch to disable
+__compiletime_assert for sparse - any objections?
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/of/selftest.c
-index fe70b86bcffb,c93cb4ae5a21..000000000000
---- a/drivers/of/selftest.c
-+++ b/drivers/of/selftest.c
-@@@ -430,32 -430,23 +430,49 @@@ static void __init of_selftest_match_no
- =20
-  static void __init of_selftest_platform_populate(void)
-  {
- -	struct device_node *np, *child;
- +	int irq;
- +	struct device_node *np;
- +	struct platform_device *pdev;
-++	struct device_node *child;
-+ 	int rc;
-+ 	struct of_device_id match[] =3D {
-+ 		{ .compatible =3D "test-device", },
-+ 		{}
-+ 	};
- =20
- +	np =3D of_find_node_by_path("/testcase-data");
- +	of_platform_populate(np, of_default_bus_match_table, NULL, NULL);
- +
- +	/* Test that a missing irq domain returns -EPROBE_DEFER */
- +	np =3D of_find_node_by_path("/testcase-data/testcase-device1");
- +	pdev =3D of_find_device_by_node(np);
- +	if (!pdev)
- +		selftest(0, "device 1 creation failed\n");
- +	irq =3D platform_get_irq(pdev, 0);
- +	if (irq !=3D -EPROBE_DEFER)
- +		selftest(0, "device deferred probe failed - %d\n", irq);
- +
- +	/* Test that a parsing failure does not return -EPROBE_DEFER */
- +	np =3D of_find_node_by_path("/testcase-data/testcase-device2");
- +	pdev =3D of_find_device_by_node(np);
- +	if (!pdev)
- +		selftest(0, "device 2 creation failed\n");
- +	irq =3D platform_get_irq(pdev, 0);
- +	if (irq >=3D 0 || irq =3D=3D -EPROBE_DEFER)
- +		selftest(0, "device parsing error failed - %d\n", irq);
- +
- +	selftest(1, "passed");
-++
-+ 	np =3D of_find_node_by_path("/testcase-data/platform-tests");
-+ 	if (!np) {
-+ 		pr_err("No testcase data in device tree\n");
-+ 		return;
-+ 	}
-+=20
-+ 	for_each_child_of_node(np, child) {
-+ 		rc =3D of_platform_populate(child, match, NULL, NULL);
-+ 		selftest(!rc, "Could not create device for node '%s'\n", child->name);
-+ 	}
-  }
- =20
-  static int __init of_selftest(void)
-
---Sig_/RUtkFMFrcawWDepH+5RSEkd
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTcalbAAoJEMDTa8Ir7ZwVeDoP/RCw6UNg6JNvArYrF82mDYye
-6vWhmD3saHJF/p5/5sB/F4oJC/XVoiIoGr10nEZgYOPl1AnkthoZQWIBMcv17m8U
-Pk3g2gNZgAjqzs99D8kxmxKQSmuEU1WSkmthimhbLr0dfYYTHs74JegUdqzTmx8Q
-APlOv8seaxvCG54kOF9fseC/drQuSHBzlSOUqusRKMX1bp5zZ3dEsos7W/iLUzCm
-Wec6y65YOYcDmgKRzXpnsJp9tLqIjGlrTFil9NElLIABPr37kaM81XGGWcarY9K0
-uHpqwQLFgl4zwu2soX9G2LjZB6RH1wbTJ4oWvyII0Cl26SsXlDiXvj7OQbe7ZdEZ
-5HZpGHKj04y5dyOo1sDE/dFMkPxK9JEoLJnxQ4qL7f4sMFMuFrjWzUPsKrblEn08
-Q8aB0skDwTWH2mTxuDk/zMefopwfJlPVgzIR5kuhWSXUR/acY/Q8eUZ+nvziGAcH
-RthKlS5RWYa/OFR0AUJy0kZnxNo19GfgY2/P9lJYoHlBNBgKE9A0iDkjdm0iAle2
-qu7WCnPjP+GcaIHaP0hNJpVLQCf3YnrxYGImqKdW9mfdDE75aGJCBv8p3UYNEjaO
-+Bds8UklmffPsUBouAm3MTsF9zfFkGFlbeEcE17rYgFp6pmaDq5u6j8uus1f7ufz
-vck8SYCH2g6An/zQUhmU
-=IT51
------END PGP SIGNATURE-----
-
---Sig_/RUtkFMFrcawWDepH+5RSEkd--
+johannes
