@@ -1,43 +1,55 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] net: fix test_bpf build to depend on NET
-Date: Tue, 13 May 2014 09:58:44 -0700
-Message-ID: <53724F44.2010608@infradead.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH -next] net: fix test_bpf build to depend on NET
+Date: Tue, 13 May 2014 10:04:23 -0700
+Message-ID: <CAADnVQKPRbDjP=G2b0dopYrLzo+r=AkuLed5hDXDJT2HkE92pA@mail.gmail.com>
+References: <53724F44.2010608@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:57951 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751991AbaEMQ6q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 May 2014 12:58:46 -0400
+Received: from mail-qg0-f46.google.com ([209.85.192.46]:59406 "EHLO
+	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751152AbaEMREY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 May 2014 13:04:24 -0400
+In-Reply-To: <53724F44.2010608@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, David Miller <davem@davemloft.net>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, David Miller <davem@davemloft.net>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Tue, May 13, 2014 at 9:58 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix build when CONFIG_NET is not enabled.
+> Fixes these build errors:
+>
+> WARNING: "sk_unattached_filter_destroy" [lib/test_bpf.ko] undefined!
+> WARNING: "kfree_skb" [lib/test_bpf.ko] undefined!
+> WARNING: "sk_unattached_filter_create" [lib/test_bpf.ko] undefined!
+> WARNING: "sk_run_filter_int_skb" [lib/test_bpf.ko] undefined!
+> WARNING: "__alloc_skb" [lib/test_bpf.ko] undefined!
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-Fix build when CONFIG_NET is not enabled.
-Fixes these build errors:
+ohh. yes. sorry about that.
 
-WARNING: "sk_unattached_filter_destroy" [lib/test_bpf.ko] undefined!
-WARNING: "kfree_skb" [lib/test_bpf.ko] undefined!
-WARNING: "sk_unattached_filter_create" [lib/test_bpf.ko] undefined!
-WARNING: "sk_run_filter_int_skb" [lib/test_bpf.ko] undefined!
-WARNING: "__alloc_skb" [lib/test_bpf.ko] undefined!
+Acked-by: Alexei Starovoitov <ast@plumgrid.com>
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
- lib/Kconfig.debug |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20140513.orig/lib/Kconfig.debug
-+++ linux-next-20140513/lib/Kconfig.debug
-@@ -1639,7 +1639,7 @@ config TEST_USER_COPY
- config TEST_BPF
- 	tristate "Test BPF filter functionality"
- 	default n
--	depends on m
-+	depends on m && NET
- 	help
- 	  This builds the "test_bpf" module that runs various test vectors
- 	  against the BPF interpreter or BPF JIT compiler depending on the
+> ---
+>  lib/Kconfig.debug |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- linux-next-20140513.orig/lib/Kconfig.debug
+> +++ linux-next-20140513/lib/Kconfig.debug
+> @@ -1639,7 +1639,7 @@ config TEST_USER_COPY
+>  config TEST_BPF
+>         tristate "Test BPF filter functionality"
+>         default n
+> -       depends on m
+> +       depends on m && NET
+>         help
+>           This builds the "test_bpf" module that runs various test vectors
+>           against the BPF interpreter or BPF JIT compiler depending on the
+> --
+> To unsubscribe from this list: send the line "unsubscribe netdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
