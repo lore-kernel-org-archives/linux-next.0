@@ -1,82 +1,106 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 14 May 2014 17:30:52 +1000
-Message-ID: <20140514173052.3ec80d90@canb.auug.org.au>
+Date: Wed, 14 May 2014 17:47:49 +1000
+Message-ID: <20140514174749.1ec4d37f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/x8CcuEJdLbLWVk4nF0o+zEA"; protocol="application/pgp-signature"
+ boundary="Sig_/Kq._m=Eyug.o66EvUr4vXOx"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41474 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37389 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751789AbaENHbB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 May 2014 03:31:01 -0400
+	id S1751253AbaENHr5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 May 2014 03:47:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>, Rik van Riel <riel@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>
 
---Sig_/x8CcuEJdLbLWVk4nF0o+zEA
+--Sig_/Kq._m=Eyug.o66EvUr4vXOx
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-In file included from arch/powerpc/mm/numa.c:23:0:
-include/linux/cpuset.h: In function 'cpusets_enabled':
-include/linux/cpuset.h:21:2: error: implicit declaration of function 'stati=
-c_key_false' [-Werror=3Dimplicit-function-declaration]
-  return static_key_false(&cpusets_enabled_key);
-  ^
-include/linux/cpuset.h: In function 'nr_cpusets':
-include/linux/cpuset.h:27:2: error: implicit declaration of function 'stati=
-c_key_count' [-Werror=3Dimplicit-function-declaration]
-  return static_key_count(&cpusets_enabled_key) + 1;
-  ^
-include/linux/cpuset.h: In function 'cpuset_inc':
-include/linux/cpuset.h:32:2: error: implicit declaration of function 'stati=
-c_key_slow_inc' [-Werror=3Dimplicit-function-declaration]
-  static_key_slow_inc(&cpusets_enabled_key);
-  ^
-include/linux/cpuset.h: In function 'cpuset_dec':
-include/linux/cpuset.h:37:2: error: implicit declaration of function 'stati=
-c_key_slow_dec' [-Werror=3Dimplicit-function-declaration]
-  static_key_slow_dec(&cpusets_enabled_key);
-  ^
+mm/memcontrol.c: In function 'mem_cgroup_write':
+mm/memcontrol.c:5088:45: error: 'buffer' undeclared (first use in this func=
+tion)
+   ret =3D res_counter_memparse_write_strategy(buffer, &val);
+                                             ^
+mm/memcontrol.c: At top level:
+/scratch/sfr/next/mm/memcontrol.c:6029:3: error: unknown field 'write_strin=
+g' specified in initializer
+   .write_string =3D mem_cgroup_write,
+   ^
 
-And lots more - you get the idea.
+Caused by commit a4bf584ed8c2 ("memcg: allow setting low_limit")
+interacting with commit 451af504df0c ("cgroup: replace
+cftype->write_string() with cftype->write()") from the cgroup tree.
+(I love API changes and unnecessary variable renaming :-()
 
-Caused by commit 95d217015fd3 ("mm: page_alloc: use jump labels to
-avoid checking number_of_cpusets").  See Rule 1 in
-Documentation/SubmitChecklist :-(
+I applied the following merge fix patch and can carry it as necessary:
 
-I have reverted that commit for today.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 14 May 2014 17:42:00 +1000
+Subject: [PATCH] memcg: update for change from write_string() to write()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/memcontrol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 493175e616e3..98e38b50cc82 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5085,7 +5085,7 @@ static ssize_t mem_cgroup_write(struct kernfs_open_fi=
+le *of,
+ 			ret =3D -EINVAL;
+ 			break;
+ 		}
+-		ret =3D res_counter_memparse_write_strategy(buffer, &val);
++		ret =3D res_counter_memparse_write_strategy(buf, &val);
+ 		if (ret)
+ 			break;
+ 		if (type =3D=3D _MEM) {
+@@ -6026,7 +6026,7 @@ static struct cftype mem_cgroup_files[] =3D {
+ 	{
+ 		.name =3D "low_limit_in_bytes",
+ 		.private =3D MEMFILE_PRIVATE(_MEM, RES_LOW_LIMIT),
+-		.write_string =3D mem_cgroup_write,
++		.write =3D mem_cgroup_write,
+ 		.read_u64 =3D mem_cgroup_read_u64,
+ 	},
+ 	{
+--=20
+2.0.0.rc2
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/x8CcuEJdLbLWVk4nF0o+zEA
+--Sig_/Kq._m=Eyug.o66EvUr4vXOx
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTcxuxAAoJEMDTa8Ir7ZwVzM4P/279CoPb46QCJIXyDl6M/fSl
-IGVL1JeerzZqJArwIciv4NCQgY3nRRKR2m/TeEqRjIMovaSExhVbn1qNhpSTC+nJ
-SzOJW4oHuTOb6cA1ryBSTY0s7jnWzIElr/8HYgKogHjPwB8bL8w1VtGMHg0s2TOI
-/sFb43f6PexBmvFeiOddCQ5WHSiX5jQFpO7gNgNtm//ZU2vFahBss5M95UseH5GU
-qCWvhcocGVImbf23gvHVa9R/epfe8oUsLZzEy818TlTpjl4Tzf44oSyoVMPEpYch
-omxxEGT1k8yf1q9S9KovCTvwZ6eNH/tb5kPYj1jDd16VymBo2dS7v0O+Y13H0xOU
-7/3VWHKMTnCpj0/4sjJ81P57rYjwJU7xd1HprsU64X9rl3TCENnDstg+AVydiHzY
-DbhGFzuMj1IEjnzkYdP6tEzWDTq8MC6FnaEt8qk6EiHmu3tzMbaDZj2J8BXKpXM6
-9XCZQKkRt67GA8+4MRen7VQ24RXdRJ66lrs17nyjIpByITYMjjURxLpgFRD6HwC6
-6KehvvnKRJ4/sixIU6FjQimzBF+8KvluFiY1tEJiYJEpiEYZBABSRp4/F+mMwKGc
-DgWeDhI7BpWEcUODcifgi9MSkgXdeQWLXHr60H0LgN3lWC6R+DrfiLS9nCrhwQhQ
-egF/p+shTjrGAwav2BYz
-=L5im
+iQIcBAEBCAAGBQJTcx+qAAoJEMDTa8Ir7ZwVa/IP/07w47tDfmobz+LvBHefnRVu
+TlMbUPc+G76iSupuIkwMwqrZSQ7L6WkbX1/iXDl6VJC/58bOZIMTKIptgDuvbuKP
+ND0FKKseEXLWgvAUwiKZJeIHLW6yPasgq9t5C0z9AqYH4B3NHbp0ZP/7632Xtq1t
+tMugasjTmE93N5d7jkUj0pZ6b9BqM/RO3LRCGotdROjhiNwx4z1vtNXDr7e0xfe9
+MOjyLmbPgwrb0w36Q1dq+4es2YE2WVUA9nK9hcgx7YF7duyEhBHLv5W47BIBXb6v
+fr34IEiBNMGWhwdtPFAK8OfzSVVhNNTuHokajQTb0zp4hjJXrQF1M7bLXZ/Ri6jX
+PO8dNdosbzjyjVmwzIPvw5DTKSELsXgtoyEaBML6WCLY2YmRTnJmY3vcN/hxw6A5
+byRpGxdzGyCIlOm4aR9KC/fPFiNL9fKkydqCvnm1hmv5WNvut9rlOZ7N/T931MRF
+SSWMxLTIKpW9nNYbLzxTT1GhGZkOFSqF8bsSQbkXmKNRFw3iR6XHsZs6CGvtwRcE
+carNi+jtHNX9TZTrMZRr1ndgcOawfvsG3fnhsVpbzsn4KMq3kWsRkBV9NrLolBep
+m9HJIaqhIL9ZWLWuQWnPYvivXgpPwlwivjV+debgg5Mq0ZnI06f+mIXf7AWUHCCs
+wBJltZtq3tSinL4o6k8b
+=7YfV
 -----END PGP SIGNATURE-----
 
---Sig_/x8CcuEJdLbLWVk4nF0o+zEA--
+--Sig_/Kq._m=Eyug.o66EvUr4vXOx--
