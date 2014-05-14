@@ -1,50 +1,42 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Tejun Heo <tj@kernel.org>
 Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 14 May 2014 14:55:20 -0700
-Message-ID: <20140514145520.f010e4593071cf5a756ddc5b@linux-foundation.org>
+Date: Wed, 14 May 2014 17:57:07 -0400
+Message-ID: <20140514215707.GG15690@htj.dyndns.org>
 References: <20140514174749.1ec4d37f@canb.auug.org.au>
+ <20140514145520.f010e4593071cf5a756ddc5b@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140514174749.1ec4d37f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qg0-f51.google.com ([209.85.192.51]:37268 "EHLO
+	mail-qg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752442AbaENV5L (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2014 17:57:11 -0400
+Content-Disposition: inline
+In-Reply-To: <20140514145520.f010e4593071cf5a756ddc5b@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>
 
-On Wed, 14 May 2014 17:47:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hello,
 
-> Hi Andrew,
+On Wed, May 14, 2014 at 02:55:20PM -0700, Andrew Morton wrote:
+> > @@ -6026,7 +6026,7 @@ static struct cftype mem_cgroup_files[] = {
+> >  	{
+> >  		.name = "low_limit_in_bytes",
+> >  		.private = MEMFILE_PRIVATE(_MEM, RES_LOW_LIMIT),
+> > -		.write_string = mem_cgroup_write,
+> > +		.write = mem_cgroup_write,
+> >  		.read_u64 = mem_cgroup_read_u64,
+> >  	},
 > 
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Renaming buffer to buf was rather unneeded.
 > 
-> mm/memcontrol.c: In function 'mem_cgroup_write':
-> mm/memcontrol.c:5088:45: error: 'buffer' undeclared (first use in this function)
->    ret = res_counter_memparse_write_strategy(buffer, &val);
->                                              ^
-> mm/memcontrol.c: At top level:
-> /scratch/sfr/next/mm/memcontrol.c:6029:3: error: unknown field 'write_string' specified in initializer
->    .write_string = mem_cgroup_write,
->    ^
-> 
-> Caused by commit a4bf584ed8c2 ("memcg: allow setting low_limit")
-> interacting with commit 451af504df0c ("cgroup: replace
-> cftype->write_string() with cftype->write()") from the cgroup tree.
-> (I love API changes and unnecessary variable renaming :-()
-> 
-> ...
->
-> @@ -6026,7 +6026,7 @@ static struct cftype mem_cgroup_files[] = {
->  	{
->  		.name = "low_limit_in_bytes",
->  		.private = MEMFILE_PRIVATE(_MEM, RES_LOW_LIMIT),
-> -		.write_string = mem_cgroup_write,
-> +		.write = mem_cgroup_write,
->  		.read_u64 = mem_cgroup_read_u64,
->  	},
+> I have 24 patches here against mm/memcontrol.c.  Go gently, please.
 
-Renaming buffer to buf was rather unneeded.
+Yeah, sorry about that.  That conflict wasn't necessary.
 
-I have 24 patches here against mm/memcontrol.c.  Go gently, please.
+Thanks.
+
+-- 
+tejun
