@@ -1,48 +1,50 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 14 (tty/serial/men_z135_uart.c)
-Date: Wed, 14 May 2014 09:31:10 -0700
-Message-ID: <53739A4E.2040009@infradead.org>
-References: <20140514182649.33e63e49@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 14 May 2014 14:55:20 -0700
+Message-ID: <20140514145520.f010e4593071cf5a756ddc5b@linux-foundation.org>
+References: <20140514174749.1ec4d37f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <20140514182649.33e63e49@canb.auug.org.au>
-Sender: linux-serial-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Thumshirn <johannes.thumshirn@men.de>, linux-serial@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140514174749.1ec4d37f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-On 05/14/2014 01:26 AM, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 14 May 2014 17:47:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Andrew,
 > 
-> Changes since 20140513:
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
+> mm/memcontrol.c: In function 'mem_cgroup_write':
+> mm/memcontrol.c:5088:45: error: 'buffer' undeclared (first use in this function)
+>    ret = res_counter_memparse_write_strategy(buffer, &val);
+>                                              ^
+> mm/memcontrol.c: At top level:
+> /scratch/sfr/next/mm/memcontrol.c:6029:3: error: unknown field 'write_string' specified in initializer
+>    .write_string = mem_cgroup_write,
+>    ^
+> 
+> Caused by commit a4bf584ed8c2 ("memcg: allow setting low_limit")
+> interacting with commit 451af504df0c ("cgroup: replace
+> cftype->write_string() with cftype->write()") from the cgroup tree.
+> (I love API changes and unnecessary variable renaming :-()
+> 
+> ...
+>
+> @@ -6026,7 +6026,7 @@ static struct cftype mem_cgroup_files[] = {
+>  	{
+>  		.name = "low_limit_in_bytes",
+>  		.private = MEMFILE_PRIVATE(_MEM, RES_LOW_LIMIT),
+> -		.write_string = mem_cgroup_write,
+> +		.write = mem_cgroup_write,
+>  		.read_u64 = mem_cgroup_read_u64,
+>  	},
 
-on x86_64:
+Renaming buffer to buf was rather unneeded.
 
-CONFIG_SERIAL_CORE=m
-but SERIAL_MEN_Z135=y.
-
-drivers/built-in.o: In function `men_z135_remove':
-men_z135_uart.c:(.text+0x5bc53): undefined reference to `uart_remove_one_port'
-drivers/built-in.o: In function `men_z135_set_termios':
-men_z135_uart.c:(.text+0x5c3b5): undefined reference to `uart_get_baud_rate'
-men_z135_uart.c:(.text+0x5c415): undefined reference to `uart_update_timeout'
-drivers/built-in.o: In function `men_z135_handle_tx':
-men_z135_uart.c:(.text+0x5c8f4): undefined reference to `uart_write_wakeup'
-drivers/built-in.o: In function `men_z135_intr':
-men_z135_uart.c:(.text+0x5ce28): undefined reference to `uart_handle_dcd_change'
-men_z135_uart.c:(.text+0x5ce51): undefined reference to `uart_handle_cts_change'
-drivers/built-in.o: In function `men_z135_probe':
-men_z135_uart.c:(.text+0x5cf96): undefined reference to `uart_add_one_port'
-drivers/built-in.o: In function `men_z135_init':
-men_z135_uart.c:(.init.text+0x26e9): undefined reference to `uart_register_driver'
-men_z135_uart.c:(.init.text+0x2766): undefined reference to `uart_unregister_driver'
-drivers/built-in.o: In function `men_z135_exit':
-men_z135_uart.c:(.exit.text+0xe4): undefined reference to `uart_unregister_driver'
-make[1]: *** [vmlinux] Error 1
-
-
--- 
-~Randy
+I have 24 patches here against mm/memcontrol.c.  Go gently, please.
