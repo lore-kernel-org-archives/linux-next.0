@@ -1,90 +1,64 @@
-From: Or Gerlitz <ogerlitz@mellanox.com>
-Subject: Re: randconfig build error with next-20140515, in drivers/net/ethernet/mellanox/mlx4/eq.c
-Date: Thu, 15 May 2014 17:10:44 +0300
-Message-ID: <5374CAE4.2080305@mellanox.com>
-References: <CA+r1Zhg2eT=MxzTmrv=mrhRMRgmFQx3FETLSf42-gGQUxqLOaw@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 14 (tty/serial/men_z135_uart.c)
+Date: Thu, 15 May 2014 09:51:33 -0700
+Message-ID: <5374F095.3090107@infradead.org>
+References: <20140514182649.33e63e49@canb.auug.org.au> <53739A4E.2040009@infradead.org> <20140515061555.GA13254@jtlinux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <CA+r1Zhg2eT=MxzTmrv=mrhRMRgmFQx3FETLSf42-gGQUxqLOaw@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
-Cc: Yuval Atias <yuvala@mellanox.com>, Amir Vadai <amirv@mellanox.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:37353 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752278AbaEOQvj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2014 12:51:39 -0400
+In-Reply-To: <20140515061555.GA13254@jtlinux>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Johannes Thumshirn <johannes.thumshirn@men.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org
 
-On 15/05/2014 16:48, Jim Davis wrote:
-> Building with the attached random configuration file,
->
-> drivers/net/ethernet/mellanox/mlx4/eq.c:58:29: error: field =91notify=
-=92
-> has incomplete type
->    struct irq_affinity_notify notify;
->                               ^
-> In file included from include/linux/interrupt.h:5:0,
->                   from drivers/net/ethernet/mellanox/mlx4/eq.c:34:
-> drivers/net/ethernet/mellanox/mlx4/eq.c: In function =91mlx4_irq_noti=
-fier_notify=92:
-> include/linux/kernel.h:834:48: warning: initialization from
-> incompatible pointer type [enabled by default]
->    const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
->                                                  ^
-> drivers/net/ethernet/mellanox/mlx4/eq.c:1094:30: note: in expansion o=
-f
-> macro =91container_of=92
->    struct mlx4_irq_notify *n =3D container_of(notify,
->                                ^
-> include/linux/kernel.h:834:48: warning: (near initialization for =91n=
-=92)
-> [enabled by default]
->    const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
->                                                  ^
-> drivers/net/ethernet/mellanox/mlx4/eq.c:1094:30: note: in expansion o=
-f
-> macro =91container_of=92
->    struct mlx4_irq_notify *n =3D container_of(notify,
->                                ^
-> drivers/net/ethernet/mellanox/mlx4/eq.c:1104:24: error: dereferencing
-> pointer to incomplete type
->     if (cq->irq =3D=3D notify->irq)
->                          ^
-> In file included from include/linux/interrupt.h:5:0,
->                   from drivers/net/ethernet/mellanox/mlx4/eq.c:34:
-> drivers/net/ethernet/mellanox/mlx4/eq.c: In function
-> =91mlx4_release_irq_notifier=92:
-> include/linux/kernel.h:834:48: warning: initialization from
-> incompatible pointer type [enabled by default]
->    const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
->                                                  ^
-> drivers/net/ethernet/mellanox/mlx4/eq.c:1111:30: note: in expansion o=
-f
-> macro =91container_of=92
->    struct mlx4_irq_notify *n =3D container_of(ref, struct mlx4_irq_no=
-tify,
->                                ^
-> include/linux/kernel.h:834:48: warning: (near initialization for =91n=
-=92)
-> [enabled by default]
->    const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
->                                                  ^
-> drivers/net/ethernet/mellanox/mlx4/eq.c:1111:30: note: in expansion o=
-f
-> macro =91container_of=92
->    struct mlx4_irq_notify *n =3D container_of(ref, struct mlx4_irq_no=
-tify,
->                                ^
-> drivers/net/ethernet/mellanox/mlx4/eq.c: In function =91mlx4_assign_i=
-rq_notifier=92:
-> drivers/net/ethernet/mellanox/mlx4/eq.c:1133:2: error: implicit
-> declaration of function =91irq_set_affinity_notifier=92
-> [-Werror=3Dimplicit-function-declaration]
->    err =3D irq_set_affinity_notifier(irq, &irq_notifier->notify);
->    ^
-> cc1: some warnings being treated as errors
+On 05/14/2014 11:15 PM, Johannes Thumshirn wrote:
+> On Wed, May 14, 2014 at 09:31:10AM -0700, Randy Dunlap wrote:
+>> On 05/14/2014 01:26 AM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20140513:
+>>>
+>>
+>> on x86_64:
+>>
+>> CONFIG_SERIAL_CORE=m
+>> but SERIAL_MEN_Z135=y.
+>>
+>> drivers/built-in.o: In function `men_z135_remove':
+>> men_z135_uart.c:(.text+0x5bc53): undefined reference to `uart_remove_one_port'
+>> drivers/built-in.o: In function `men_z135_set_termios':
+>> men_z135_uart.c:(.text+0x5c3b5): undefined reference to `uart_get_baud_rate'
+>> men_z135_uart.c:(.text+0x5c415): undefined reference to `uart_update_timeout'
+>> drivers/built-in.o: In function `men_z135_handle_tx':
+>> men_z135_uart.c:(.text+0x5c8f4): undefined reference to `uart_write_wakeup'
+>> drivers/built-in.o: In function `men_z135_intr':
+>> men_z135_uart.c:(.text+0x5ce28): undefined reference to `uart_handle_dcd_change'
+>> men_z135_uart.c:(.text+0x5ce51): undefined reference to `uart_handle_cts_change'
+>> drivers/built-in.o: In function `men_z135_probe':
+>> men_z135_uart.c:(.text+0x5cf96): undefined reference to `uart_add_one_port'
+>> drivers/built-in.o: In function `men_z135_init':
+>> men_z135_uart.c:(.init.text+0x26e9): undefined reference to `uart_register_driver'
+>> men_z135_uart.c:(.init.text+0x2766): undefined reference to `uart_unregister_driver'
+>> drivers/built-in.o: In function `men_z135_exit':
+>> men_z135_uart.c:(.exit.text+0xe4): undefined reference to `uart_unregister_driver'
+>> make[1]: *** [vmlinux] Error 1
+>>
+> 
+> Hi Randy,
+> 
+> There is a not yet merged patch from Arnd Bergmann, which can be found here:
+> https://lkml.org/lkml/2014/4/29/529
+> 
+> I've just checked and it resolves the problem at my place, can you please
+> verify it as well.
 
-I can see the problem, irq_set_affinity_notifier isn't defined when CON=
-=46IG_SMP isn't set, I am copying here the developer and he would work =
-on a fix.
+Yes, that works for me also.  Thanks.
 
-Or.
+-- 
+~Randy
