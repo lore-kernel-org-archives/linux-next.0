@@ -1,60 +1,56 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: linux-next: manual merge of the clk tree with the renesas tree
-Date: Wed, 14 May 2014 23:33:55 -0700
-Message-ID: <20140515063355.9521.79464@quantum>
-References: <20140515161121.39998223@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net-next tree
+Date: Thu, 15 May 2014 16:47:03 +1000
+Message-ID: <20140515164703.73a1cf06@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:55685 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753265AbaEOGeD convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2014 02:34:03 -0400
-Received: by mail-pa0-f48.google.com with SMTP id rd3so663269pab.7
-        for <linux-next@vger.kernel.org>; Wed, 14 May 2014 23:34:02 -0700 (PDT)
-In-Reply-To: <20140515161121.39998223@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Simon Horman <horms@verge.net.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/h8m/DOTfu6s+AuTmazMByyL"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, WANG Cong <xiyou.wangcong@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Quoting Stephen Rothwell (2014-05-14 23:11:21)
-> Hi Mike,
-> 
-> Today's linux-next merge of the clk tree got a conflict in
-> Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> between commit b557deadc5cc ("ARM: shmobile: r7s72100: document MSTP
-> clock support") from the renesas tree and commit 5483bf698f42 ("clk:
-> shmobile: r8a7779: Add MSTP clock support") from the clk tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Sig_/h8m/DOTfu6s+AuTmazMByyL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi all,
 
-Your fix is correct, per Geert's email in another thread[1].
+After merging the net-next tree, today's linux-next build (powerpc
+allnoconfig) produced this warning:
 
-Regards,
-Mike
 
-[1] http://www.spinics.net/lists/linux-sh/msg31748.html
+include/net/ip.h:211:5: warning: "CONFIG_SYSCTL" is not defined [-Wundef]
+ #if CONFIG_SYSCTL
+     ^
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> index b5fc72621bfd,30df825d72ef..000000000000
-> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> @@@ -10,7 -10,7 +10,8 @@@ index in the group, from 0 to 31
->   Required Properties:
->   
->     - compatible: Must be one of the following
->  +    - "renesas,r7s72100-mstp-clocks" for R7S72100 (RZ) MSTP gate clocks
-> +     - "renesas,r8a7779-mstp-clocks" for R8A7779 (R-Car H1) MSTP gate clocks
->       - "renesas,r8a7790-mstp-clocks" for R8A7790 (R-Car H2) MSTP gate clocks
->       - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2) MSTP gate clocks
->       - "renesas,cpg-mstp-clock" for generic MSTP gate clocks
+Introduced by commit 122ff243f5f1 ("ipv4: make ip_local_reserved_ports
+per netns").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/h8m/DOTfu6s+AuTmazMByyL
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTdGLrAAoJEMDTa8Ir7ZwV5dkP/1ZGvu+aLJW1Myyclf5nKEpw
+ivlunv9MhTGWyvJzyFEneE8plDGsLeUU67iRwB7s1JJYmIBztFsDS5Sqme/0IwQT
+X3G5mdg4gKZ+oZGYTPeFAkMoWJGvtNTXI1NdZ0Ca4liVNVoeFp+KPlDeh/68sFee
+gYSpoZ68CUm3DJyKs2H+YLgZ/2IRb5fwvdcX5aLE/tTc8uEid/QQOC43O8Petz4k
+kORV/f3QRgWB+JHi6Dnct4UAykEGvlCkp3EbcXKcoOYt7ynr2MBEg3epv1wdwQKI
+pYcaM/kuW/gDdz5AT7TcywelPtfbYavUqEVrBbikRqiLrYWVToch9viLoNq/5u6B
+VPT/YMj8cFQoisNQNyZbxwbdp8sbOY7CkApYs+jNRig3FnYe5b1SRqr7TEuXHexv
+/3KlPapt4t4crXevdsS+LQ5XL8c6gS+6JrEWLO//wh2orY+fbslNojyW2rm3O+iz
+RsiJvbPYO+MlLLncAKYIeVTxnTPDXRZoxncyERAUIqs3zYjMi3CLx/V45Z9+hKbH
+6SuVYNXHpdktvzlfk027zW2szn59ypGebLjsSfuAX2BPfcR7/MCRzOgU8VJLhoYE
+qJB29DX92r0BVif3gGK1Z/2tqZyPapafVHKCgWb7urLzqXWvUeJNnF/LqR6RAEvG
+x4RddWFx2sxKXhP7GrWA
+=1uaA
+-----END PGP SIGNATURE-----
+
+--Sig_/h8m/DOTfu6s+AuTmazMByyL--
