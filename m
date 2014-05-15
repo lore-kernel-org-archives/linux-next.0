@@ -1,56 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net-next tree
-Date: Thu, 15 May 2014 16:47:03 +1000
-Message-ID: <20140515164703.73a1cf06@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the fsl tree
+Date: Thu, 15 May 2014 16:51:40 +1000
+Message-ID: <20140515165140.15a0d182@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/h8m/DOTfu6s+AuTmazMByyL"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, WANG Cong <xiyou.wangcong@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/fl0SRKCZcIN8uwnBX9lDjaR"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56541 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751430AbaEOGvr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 May 2014 02:51:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Scott Wood <scottwood@freescale.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stuart Yoder <stuart.yoder@freescale.com>
 
---Sig_/h8m/DOTfu6s+AuTmazMByyL
+--Sig_/fl0SRKCZcIN8uwnBX9lDjaR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Scott,
 
-After merging the net-next tree, today's linux-next build (powerpc
-allnoconfig) produced this warning:
+After merging the fsl tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
+arch/powerpc/kernel/epapr_paravirt.c:33:13: warning: 'epapr_has_idle' defin=
+ed but not used [-Wunused-variable]
+ static bool epapr_has_idle;
+             ^
 
-include/net/ip.h:211:5: warning: "CONFIG_SYSCTL" is not defined [-Wundef]
- #if CONFIG_SYSCTL
-     ^
+Introduced by commit f9eb581c63b2 ("powerpc: fix build of
+epapr_paravirt on 64-bit book3s").
 
-Introduced by commit 122ff243f5f1 ("ipv4: make ip_local_reserved_ports
-per netns").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/h8m/DOTfu6s+AuTmazMByyL
+--Sig_/fl0SRKCZcIN8uwnBX9lDjaR
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTdGLrAAoJEMDTa8Ir7ZwV5dkP/1ZGvu+aLJW1Myyclf5nKEpw
-ivlunv9MhTGWyvJzyFEneE8plDGsLeUU67iRwB7s1JJYmIBztFsDS5Sqme/0IwQT
-X3G5mdg4gKZ+oZGYTPeFAkMoWJGvtNTXI1NdZ0Ca4liVNVoeFp+KPlDeh/68sFee
-gYSpoZ68CUm3DJyKs2H+YLgZ/2IRb5fwvdcX5aLE/tTc8uEid/QQOC43O8Petz4k
-kORV/f3QRgWB+JHi6Dnct4UAykEGvlCkp3EbcXKcoOYt7ynr2MBEg3epv1wdwQKI
-pYcaM/kuW/gDdz5AT7TcywelPtfbYavUqEVrBbikRqiLrYWVToch9viLoNq/5u6B
-VPT/YMj8cFQoisNQNyZbxwbdp8sbOY7CkApYs+jNRig3FnYe5b1SRqr7TEuXHexv
-/3KlPapt4t4crXevdsS+LQ5XL8c6gS+6JrEWLO//wh2orY+fbslNojyW2rm3O+iz
-RsiJvbPYO+MlLLncAKYIeVTxnTPDXRZoxncyERAUIqs3zYjMi3CLx/V45Z9+hKbH
-6SuVYNXHpdktvzlfk027zW2szn59ypGebLjsSfuAX2BPfcR7/MCRzOgU8VJLhoYE
-qJB29DX92r0BVif3gGK1Z/2tqZyPapafVHKCgWb7urLzqXWvUeJNnF/LqR6RAEvG
-x4RddWFx2sxKXhP7GrWA
-=1uaA
+iQIcBAEBCAAGBQJTdGQAAAoJEMDTa8Ir7ZwV7OsP+wSRXYiuvu6+iEyQLpruIBFz
+3VfG0MzUTZ3WfnfmDDwdW0Kdzhon9YtZUaQRkCNzYLGEv9Ax6PnCnUUPrPrL1JiR
+XAFN5wS2MzNctF7px38PxAIDYzJ8Ju1dpFR+TSleb6+SpjL5yuYBVmXVRl+U+w/g
+uK67ah2oVqeUVJqQl6oZaMb9FuqjgcfDhUOr1niBqtZGaJJ8Lh0aK+Gz+DGiBW7H
+J6LMIOpdKB3pEWmTkUg0xJlW+8Qe109Q9+3MmPizM99aTtDc9Eyq59hFwk3T7ile
+26HeAqZJNPVOV6G7pW89bIgra2vv+G72OPkPyO+4NsvMCxPZG56309c3AHpIGKc6
+t4Gnn7M+yYXJZkN1lBRy6H1cfPQ1GYJJ3sojZwafM85S3GvI181TWrhkICoa/iL7
+FinEdwT2cKRxxQe9i2+MO54a8i2n52mOb6I66hDeYfQeIHoUy8eDAE1AinFQi45H
+gSxsPp3ZiILH3bo2l0M7+EbvLMiVU58q3uc3HvF7ZvGNrP1rzy+kuASWb3KuWHvJ
+m8LW8eC+Wzu28MrpOSIxLUzOBpRNsSzTTLp5s/vDbkLJ6a1BTUrO9SMKA5+F8E7n
+mn9q+NGlkpybA4rvDxKlgdatDr1IueVF4z1dQYuGicwvGnRc/59L0PG/yuTEuRVG
+K3KIddJ+yGsEstFpIdjT
+=4u6w
 -----END PGP SIGNATURE-----
 
---Sig_/h8m/DOTfu6s+AuTmazMByyL--
+--Sig_/fl0SRKCZcIN8uwnBX9lDjaR--
