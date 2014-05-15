@@ -1,64 +1,34 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 14 (tty/serial/men_z135_uart.c)
-Date: Thu, 15 May 2014 09:51:33 -0700
-Message-ID: <5374F095.3090107@infradead.org>
-References: <20140514182649.33e63e49@canb.auug.org.au> <53739A4E.2040009@infradead.org> <20140515061555.GA13254@jtlinux>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Thu, 15 May 2014 10:39:20 -0700
+Message-ID: <CAM_iQpU84BD4WjTEW0Yn6-R3ocHh25quAj_F8cmkVK=CRZd9Kg@mail.gmail.com>
+References: <20140515164703.73a1cf06@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:37353 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752278AbaEOQvj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2014 12:51:39 -0400
-In-Reply-To: <20140515061555.GA13254@jtlinux>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:44488 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752681AbaEORjV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2014 13:39:21 -0400
+In-Reply-To: <20140515164703.73a1cf06@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Thumshirn <johannes.thumshirn@men.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Linux Kernel Network Developers <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 05/14/2014 11:15 PM, Johannes Thumshirn wrote:
-> On Wed, May 14, 2014 at 09:31:10AM -0700, Randy Dunlap wrote:
->> On 05/14/2014 01:26 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20140513:
->>>
->>
->> on x86_64:
->>
->> CONFIG_SERIAL_CORE=m
->> but SERIAL_MEN_Z135=y.
->>
->> drivers/built-in.o: In function `men_z135_remove':
->> men_z135_uart.c:(.text+0x5bc53): undefined reference to `uart_remove_one_port'
->> drivers/built-in.o: In function `men_z135_set_termios':
->> men_z135_uart.c:(.text+0x5c3b5): undefined reference to `uart_get_baud_rate'
->> men_z135_uart.c:(.text+0x5c415): undefined reference to `uart_update_timeout'
->> drivers/built-in.o: In function `men_z135_handle_tx':
->> men_z135_uart.c:(.text+0x5c8f4): undefined reference to `uart_write_wakeup'
->> drivers/built-in.o: In function `men_z135_intr':
->> men_z135_uart.c:(.text+0x5ce28): undefined reference to `uart_handle_dcd_change'
->> men_z135_uart.c:(.text+0x5ce51): undefined reference to `uart_handle_cts_change'
->> drivers/built-in.o: In function `men_z135_probe':
->> men_z135_uart.c:(.text+0x5cf96): undefined reference to `uart_add_one_port'
->> drivers/built-in.o: In function `men_z135_init':
->> men_z135_uart.c:(.init.text+0x26e9): undefined reference to `uart_register_driver'
->> men_z135_uart.c:(.init.text+0x2766): undefined reference to `uart_unregister_driver'
->> drivers/built-in.o: In function `men_z135_exit':
->> men_z135_uart.c:(.exit.text+0xe4): undefined reference to `uart_unregister_driver'
->> make[1]: *** [vmlinux] Error 1
->>
-> 
-> Hi Randy,
-> 
-> There is a not yet merged patch from Arnd Bergmann, which can be found here:
-> https://lkml.org/lkml/2014/4/29/529
-> 
-> I've just checked and it resolves the problem at my place, can you please
-> verify it as well.
+On Wed, May 14, 2014 at 11:47 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the net-next tree, today's linux-next build (powerpc
+> allnoconfig) produced this warning:
+>
+>
+> include/net/ip.h:211:5: warning: "CONFIG_SYSCTL" is not defined [-Wundef]
+>  #if CONFIG_SYSCTL
+>      ^
+>
+> Introduced by commit 122ff243f5f1 ("ipv4: make ip_local_reserved_ports
+> per netns").
 
-Yes, that works for me also.  Thanks.
 
--- 
-~Randy
+Oops, blame my fat fingers... Just s/#if/#ifdef/. ;)
