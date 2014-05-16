@@ -1,42 +1,41 @@
-From: Jes Sorensen <Jes.Sorensen@redhat.com>
-Subject: Re: randconfig build error with next-20140516,
- in drivers/staging/rtl8723au/core/rtw_cmd.c
-Date: Fri, 16 May 2014 16:18:09 +0200
-Message-ID: <wrfjha4px0wu.fsf@ultrasam.lan.trained-monkey.org>
-References: <CA+r1Zhh8=cjcheZEzS_cn0-n11s2RoXzHZS65U7XN4bbozKrCA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Fri, 16 May 2014 17:54:42 +0200
+Message-ID: <CACRpkdYh+aFcEkOQ4Xti4JzprrcDK17JwNGfTp8ZN1hxcwfpHQ@mail.gmail.com>
+References: <20140514171309.64b49a45@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <CA+r1Zhh8=cjcheZEzS_cn0-n11s2RoXzHZS65U7XN4bbozKrCA@mail.gmail.com>
- (Jim Davis's message of "Fri, 16 May 2014 06:42:59 -0700")
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: devel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Larry.Finger@lwfinger.net
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140514171309.64b49a45@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee.jones@linaro.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-SmltIERhdmlzIDxqaW0uZXBvc3RAZ21haWwuY29tPiB3cml0ZXM6Cj4gQnVpbGRpbmcgd2l0aCB0
-aGUgYXR0YWNoZWQgcmFuZG9tIGNvbmZpZ3VyYXRpb24gZmlsZSwKPgo+IGRyaXZlcnMvc3RhZ2lu
-Zy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6IEluIGZ1bmN0aW9uIOKAmGMyaF9ldnRfaGRs4oCZ
-Ogo+IGRyaXZlcnMvc3RhZ2luZy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6MTMxNTo0OiBlcnJv
-cjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YKPiBmdW5jdGlvbiDigJhjMmhfaGFuZGxlcl84NzIz
-YeKAmSBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0KPiAgICAgcmV0ID0g
-YzJoX2hhbmRsZXJfODcyM2EoYWRhcHRlciwgYzJoX2V2dCk7Cj4gICAgIF4KPiBkcml2ZXJzL3N0
-YWdpbmcvcnRsODcyM2F1L2NvcmUvcnR3X2NtZC5jOiBJbiBmdW5jdGlvbiDigJhydHdfZXZ0X3dv
-cmvigJk6Cj4gZHJpdmVycy9zdGFnaW5nL3J0bDg3MjNhdS9jb3JlL3J0d19jbWQuYzoxMzQ5OjI6
-IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZgo+IGZ1bmN0aW9uIOKAmGMyaF9pZF9maWx0
-ZXJfY2N4Xzg3MjNh4oCZIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+
-ICAgaWYgKGMyaF9pZF9maWx0ZXJfY2N4Xzg3MjNhKGV3b3JrLT51LmMyaF9ldnQuaWQpID09IHRy
-dWUpIHsKPiAgIF4KPiBjYzE6IHNvbWUgd2FybmluZ3MgYmVpbmcgdHJlYXRlZCBhcyBlcnJvcnMK
-ClRoYW5rcyBmb3IgdGhlIHJlcG9ydCwgSSdsbCBoYXZlIGEgbG9vay4KCkplcwpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QK
-ZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVy
-cHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
+On Wed, May 14, 2014 at 9:13 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Linus,
+>
+> After merging the gpio tree, today's linux-next build (powerpc allyesconfig)
+> failed like this:
+>
+> drivers/mfd/stmpe.c: In function 'stmpe_irq_init':
+> drivers/mfd/stmpe.c:1000:15: error: 'struct stmpe' has no member named 'irq_base'
+>    base = stmpe->irq_base;
+>                ^
+>
+> Caused by commit 3ba1d516d5fe ("mfd: stmpe: root out static GPIO and
+> IRQ assignments").
+>
+> I have reverted that commit for today (and e013a5148882 "gpio: stmpe:
+> switch to use gpiolib irqchip helpers" that depends on it).
+>
+> Also, that commit has no Signed-off-by for its committer (Lee).
+
+Hm I know has struggled with this series sorry if it's all my fault :-/
+
+I've un-pulled that branch from the GPIO tree, let's get the immutable
+branch in MFD right first then.
+
+Yours,
+Linus Walleij
