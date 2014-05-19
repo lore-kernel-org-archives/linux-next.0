@@ -1,77 +1,73 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: linux-next: build warning after merge of the pinctrl tree
-Date: Mon, 19 May 2014 11:03:10 +0200
-Message-ID: <20140519090310.GD29466@lukather>
-References: <20140519165947.619886fc@canb.auug.org.au>
+From: Davidlohr Bueso <davidlohr@hp.com>
+Subject: Re: linux-next: build warning after merge of the akpm tree
+Date: Mon, 19 May 2014 08:13:16 -0700
+Message-ID: <1400512396.2560.9.camel@buesod1.americas.hpqcorp.net>
+References: <20140519181314.1b92c548@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dkEUBIird37B8yKS"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:49722 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752884AbaESJFO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 May 2014 05:05:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20140519165947.619886fc@canb.auug.org.au>
+Received: from g4t3427.houston.hp.com ([15.201.208.55]:17064 "EHLO
+	g4t3427.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751331AbaESPNY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 May 2014 11:13:24 -0400
+In-Reply-To: <20140519181314.1b92c548@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
-
---dkEUBIird37B8yKS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>
 
 Hi Stephen,
 
-On Mon, May 19, 2014 at 04:59:47PM +1000, Stephen Rothwell wrote:
-> Hi Linus,
->=20
-> After merging the pinctrl tree, today's linux-next build (x86_64
-> allmodconfig among others) produced this warning:
->=20
-> drivers/pinctrl/sunxi/Kconfig:3:error: recursive dependency detected!
-> drivers/pinctrl/sunxi/Kconfig:3:	symbol PINCTRL_SUNXI is selected by PINC=
-TRL_SUN4I_A10
-> drivers/pinctrl/sunxi/Kconfig:9:	symbol PINCTRL_SUN4I_A10 default value c=
-ontains PINCTRL_SUNXI
->=20
-> Introduced by commit 3b582f7e1542 ("pinctrl: sunxi: Enable the pinctrl
-> Kconfig options by default").
+On Mon, 2014-05-19 at 18:13 +1000, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm tree, today's linux-next build (arm
+> multi_v7_defconfig) produced these warnings:
+> 
+> 
+> ipc/ipcns_notifier.c:22:8: warning: excess elements in struct initializer [enabled by default]
+> ipc/ipcns_notifier.c:22:8: warning: (near initialization for 'ipcns_chain.rwsem') [enabled by default]
+> ipc/ipcns_notifier.c:22:8: warning: excess elements in struct initializer [enabled by default]
+> ipc/ipcns_notifier.c:22:8: warning: (near initialization for 'ipcns_chain.rwsem') [enabled by default]
+> 
+> and many more in other files ...
 
-This should be fixed with the patch I sent on saturday:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2014-May/257411.html
+Hmm are all the warning the same? Is this just on arm? have you seen it
+in other archs? (Could you please send me the .config)
+
+> Presumably a result of commit fe2038c57c03 ("rwsem: Support optimistic
+> spinning").
+
+If CONFIG_SMP, we add two new fields to the rwsem structure
+(include/linux/rwsem.h) and likewise we update the
+__RWSEM_INITIALIZER(name) macro. Afaict the only way to trigger
+something like that is to be using the spinlock variant
+(rwsem-spinlock.h).
+
+The fix for that would be:
+
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index 3e108f1..091d993 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -64,7 +64,7 @@ static inline int rwsem_is_locked(struct rw_semaphore *sem)
+ # define __RWSEM_DEP_MAP_INIT(lockname)
+ #endif
+ 
+-#ifdef CONFIG_SMP
++#if defined(CONFIG_SMP) && defined(CONFIG_RWSEM_XCHGADD_ALGORITHM)
+ #define __RWSEM_INITIALIZER(name)                      \
+        { RWSEM_UNLOCKED_VALUE,                         \
+          __RAW_SPIN_LOCK_UNLOCKED(name.wait_lock),     \
+
+
+
+> I reverted that commit (and
+> "rwsem-support-optimistic-spinning-checkpatch-fixes") for today.
+
+This was picked up today by -tip maintainers, so I guess it should also
+be removed from -mm.
 
 Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---dkEUBIird37B8yKS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTecjOAAoJEBx+YmzsjxAgwmAP/04lLUBVMLHcsEIFBjKSXojd
-GiFkXhwq6fZv0/6XZxRvPl4h1ggPe9kI5fygW2H6FbcUGrWqK9zQ13X7aqwQZVzO
-cdzEH8WoX2DSRDWviRaZ2CJlwV10ymEJJBp+piP98v479gYyxMg3rtuusvIOrXTq
-4yaK072w/dz2c15iL8nFXtV05hc+CEah8fuI/G0oN2rzU3PLavMRlsUtUL8fYNPZ
-VYL1CFuBzvy0uaikgyqiniBwt7hi+ZzYa5hG784XUGj1vJJFuNYbYdLCUeaxDU5T
-8G2+zxNSrntsWy4Clh0AXGGn+gNh8XRFat+/o/+lp3xonRJ1CdCNTfpHWnPFAjVB
-UrDwHN30gXeS0/3Z9eB/Z7Uq+80LpvlvBCDyX+HRuvuj7PIXTpxKh+OAjVHEvP/0
-KNya4ug4eFc3xzIaXixpgDgvE2ishTpy5XYc02isqQav3yMJYSnrFZp783DCnrXj
-Pxr1QypI+WJ8V475hwKHSAsYLmKJRwEaj/80h72+ohFaHa6Z9ieTTtPytb3VHfmc
-XFTF3gES7gV9M+Qwb6fv273KQt3XBCvwia50XHtFdb6eHwRSlkZKik6QAQGDRYQT
-olvLRpfaUJAm0TJ2R1PK5CkJ8FlTuVJJBJpkdY1MvpB37826QUiCQCzbFM5Lzv5x
-ZKZFx4l5QTeiXe+jmmoY
-=639x
------END PGP SIGNATURE-----
-
---dkEUBIird37B8yKS--
+Davidlohr
