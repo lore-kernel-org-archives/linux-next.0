@@ -1,107 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the samsung tree
-Date: Mon, 19 May 2014 12:51:24 +1000
-Message-ID: <20140519125124.6504764d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 19 May 2014 13:38:28 +1000
+Message-ID: <20140519133828.0ee2992b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n+GoYBpTr9ERl.sTIEYr/Og"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44963 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752370AbaESCve (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 18 May 2014 22:51:34 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+ boundary="Sig_/ByXZn7gcZulq9kSNygyJuXt"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/n+GoYBpTr9ERl.sTIEYr/Og
+--Sig_/ByXZn7gcZulq9kSNygyJuXt
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-Today's linux-next merge of the pm tree got conflicts in
-drivers/cpufreq/exynos-cpufreq.c and drivers/cpufreq/exynos-cpufreq.h
-between commit 2b07f4085479 ("cpufreq: exynos: Fix the compile error")
-from the samsung tree and commit e5eaa445b0dc ("cpufreq: exynos: Use
-dev_err/info function instead of pr_err/info") from the pm tree.
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig, gcc 4.6.3) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/built-in.o: In function `cdc_ncm_get_coalesce':
+ak8975.c:(.text+0x1ac994): undefined reference to `__aeabi_uldivmod'
 
+(The file name above seems to be rubbish, the above function is in
+drivers/net/usb/cdc_ncm.c)
+
+Probably caused by commit 6c4e548ff366 ("net: cdc_ncm: use ethtool to
+tune coalescing settings").  I assume that there are some 64 bit
+divides in that function.
+
+I have used the net-next tree from next-20140516 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/cpufreq/exynos-cpufreq.c
-index e8a4a7ed38c1,c3e55aa28cf8..000000000000
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@@ -164,22 -163,16 +164,24 @@@ static int exynos_cpufreq_probe(struct=20
-  	if (!exynos_info)
-  		return -ENOMEM;
- =20
-+ 	exynos_info->dev =3D &pdev->dev;
-+=20
- -	if (soc_is_exynos4210())
- +	if (of_machine_is_compatible("samsung,exynos4210")) {
- +		exynos_info->type =3D EXYNOS_SOC_4210;
-  		ret =3D exynos4210_cpufreq_init(exynos_info);
- -	else if (soc_is_exynos4212() || soc_is_exynos4412())
- +	} else if (of_machine_is_compatible("samsung,exynos4212")) {
- +		exynos_info->type =3D EXYNOS_SOC_4212;
-  		ret =3D exynos4x12_cpufreq_init(exynos_info);
- -	else if (soc_is_exynos5250())
- +	} else if (of_machine_is_compatible("samsung,exynos4412")) {
- +		exynos_info->type =3D EXYNOS_SOC_4412;
- +		ret =3D exynos4x12_cpufreq_init(exynos_info);
- +	} else if (of_machine_is_compatible("samsung,exynos5250")) {
- +		exynos_info->type =3D EXYNOS_SOC_5250;
-  		ret =3D exynos5250_cpufreq_init(exynos_info);
- -	else
- -		return 0;
- +	} else {
- +		pr_err("%s: Unknown SoC type\n", __func__);
- +		return -ENODEV;
- +	}
- =20
-  	if (ret)
-  		goto err_vdd_arm;
-diff --cc drivers/cpufreq/exynos-cpufreq.h
-index f189547bb447,b72ff10a040e..000000000000
---- a/drivers/cpufreq/exynos-cpufreq.h
-+++ b/drivers/cpufreq/exynos-cpufreq.h
-@@@ -41,7 -34,7 +41,8 @@@ struct apll_freq=20
-  };
- =20
-  struct exynos_dvfs_info {
-+ 	struct device	*dev;
- +	enum exynos_soc_type type;
-  	unsigned long	mpll_freq_khz;
-  	unsigned int	pll_safe_idx;
-  	struct clk	*cpu_clk;
-
---Sig_/n+GoYBpTr9ERl.sTIEYr/Og
+--Sig_/ByXZn7gcZulq9kSNygyJuXt
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTeXGyAAoJEMDTa8Ir7ZwV2L4P/3ADOIlnqY9zX2uFiy+5rjX+
-AGMy4rS3XexGAPzq5CVTDn3iwLeeKZH3zgMNyTJujziwwNJ4wFfQvYt1UO1cHOWV
-ipb5UDXimc5b1yrQR+41IXljFPxYiMi58L+MEsDUo45LY+RpnT5QfFJ0RIL/2bjR
-1/RedTuohh0kbcbF8cQEc9SwgF/MFoXKpSYb998/JVILgrYy3r5QEbyK6kaGBK7K
-+MAvqywagslYKqta8a1th9vrWXw1sHZO7bm+7tivGcH+8xsR0eBXcPGNFfD5bRgr
-0qoyf8BGkzHrsv3lLq8SQE+/WlTO4jBoYvkxgXHI7qBpW98NkiIfq3tN8OfsZbh7
-+vFldrUfRBS5uZWG1YVSkmfExaCIvuPJhsAjt8Zd2Ve1AnqizvvzHhZcp0glxfj2
-fNPJsVmU9vrqjYhzlYrJ4TkshzGCqlOjVg4D+d2APRfT4uLKAuhO/wQo5Y8mqI7I
-k94QepLvIY7KKoZTXY+vEEGQp7wq7Kyd554Xp1TEv5hcIcXFQgr/KCFYlFMNg1SR
-VB1mLT6rCjxZLyfdsgyE6uj9+22604EmLAFYR3MBWPZJo+ITe9FUHJWFIwJRtYdL
-nR63Gk8meX1E+W4axVzfkMggGCNv4vkKO/lW7jL3K7kjn04CjgjaZJL6AwPUpwtK
-f3cRGcCXv+SHT+hMZrxS
-=vAvp
+iQIcBAEBCAAGBQJTeXy5AAoJEMDTa8Ir7ZwVrAEP/1Dz8DE4XmPD5bCWS/3Rs3Cn
+oIKgMh87rI+ibwqz4e1HYBUypFZbd9+qO11KqwqsxdolW72HjWy9DKSx92uN+DtI
+znvW0wSgiWZeDuOjEGxjCY0dxZ01S6I2ReO7r7T9dH6jivb/1rQSPVR8NCinex8b
+pCO1kvsk/dj3JT27xUQe16wrUPSBh72+BW6S58VGCP8V/169QUxf9w1LeF47lgbI
+oYdKYK2icK+HwpBsGFHkClwE0dmpzY8CVNHr3nyeHQRYe0RCHK+ZPO+x8LMeHT3u
+qc+9MqYWxQXuwUa46iCJ2n7dTXaI7jzM3hMTkG4+V2wn92fD5K38qIwSqZ5dX0Nb
+RfDW0tN+UpUQSEVB7i5NunNB6PHezrD1GdCl0krJmgNPUq2XOE6BRpeaN1gWfKV1
+LznibdU80bzd3lLQr7H+zsQIUvwhvI/WrUQxjA0vmMlepGeHCMgPcH97opy7NkQw
+B5SXEsLRFaTKDIIypb6mXRc8to6BiwndJpoddJ5SxTAulfc4NqeiiK6zVHPs/z3U
+30WMfvhM9ED+QSeZhks9/jfku8/SXcPwJUhPW8FzLCMijuNeaNCbp4VEwtlQo8XO
+aBQQBggJ9S4YOu/Xwhjs02nvDbVL1ZmwJTOoD7thj41tqqJia4Yuaouvg8eJ2xVN
+sha1izeViRyy99ZSoQVk
+=Zzfd
 -----END PGP SIGNATURE-----
 
---Sig_/n+GoYBpTr9ERl.sTIEYr/Og--
+--Sig_/ByXZn7gcZulq9kSNygyJuXt--
