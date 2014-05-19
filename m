@@ -1,60 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Mon, 19 May 2014 13:38:28 +1000
-Message-ID: <20140519133828.0ee2992b@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the pinctrl tree
+Date: Mon, 19 May 2014 16:59:47 +1000
+Message-ID: <20140519165947.619886fc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ByXZn7gcZulq9kSNygyJuXt"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/IcpgeWNROA0=yrn6MrJlGWY"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43222 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750929AbaESG75 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 May 2014 02:59:57 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 
---Sig_/ByXZn7gcZulq9kSNygyJuXt
+--Sig_/IcpgeWNROA0=yrn6MrJlGWY
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Linus,
 
-After merging the net-next tree, today's linux-next build (arm
-multi_v7_defconfig, gcc 4.6.3) failed like this:
+After merging the pinctrl tree, today's linux-next build (x86_64
+allmodconfig among others) produced this warning:
 
-drivers/built-in.o: In function `cdc_ncm_get_coalesce':
-ak8975.c:(.text+0x1ac994): undefined reference to `__aeabi_uldivmod'
+drivers/pinctrl/sunxi/Kconfig:3:error: recursive dependency detected!
+drivers/pinctrl/sunxi/Kconfig:3:	symbol PINCTRL_SUNXI is selected by PINCTR=
+L_SUN4I_A10
+drivers/pinctrl/sunxi/Kconfig:9:	symbol PINCTRL_SUN4I_A10 default value con=
+tains PINCTRL_SUNXI
 
-(The file name above seems to be rubbish, the above function is in
-drivers/net/usb/cdc_ncm.c)
+Introduced by commit 3b582f7e1542 ("pinctrl: sunxi: Enable the pinctrl
+Kconfig options by default").
 
-Probably caused by commit 6c4e548ff366 ("net: cdc_ncm: use ethtool to
-tune coalescing settings").  I assume that there are some 64 bit
-divides in that function.
-
-I have used the net-next tree from next-20140516 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/ByXZn7gcZulq9kSNygyJuXt
+--Sig_/IcpgeWNROA0=yrn6MrJlGWY
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTeXy5AAoJEMDTa8Ir7ZwVrAEP/1Dz8DE4XmPD5bCWS/3Rs3Cn
-oIKgMh87rI+ibwqz4e1HYBUypFZbd9+qO11KqwqsxdolW72HjWy9DKSx92uN+DtI
-znvW0wSgiWZeDuOjEGxjCY0dxZ01S6I2ReO7r7T9dH6jivb/1rQSPVR8NCinex8b
-pCO1kvsk/dj3JT27xUQe16wrUPSBh72+BW6S58VGCP8V/169QUxf9w1LeF47lgbI
-oYdKYK2icK+HwpBsGFHkClwE0dmpzY8CVNHr3nyeHQRYe0RCHK+ZPO+x8LMeHT3u
-qc+9MqYWxQXuwUa46iCJ2n7dTXaI7jzM3hMTkG4+V2wn92fD5K38qIwSqZ5dX0Nb
-RfDW0tN+UpUQSEVB7i5NunNB6PHezrD1GdCl0krJmgNPUq2XOE6BRpeaN1gWfKV1
-LznibdU80bzd3lLQr7H+zsQIUvwhvI/WrUQxjA0vmMlepGeHCMgPcH97opy7NkQw
-B5SXEsLRFaTKDIIypb6mXRc8to6BiwndJpoddJ5SxTAulfc4NqeiiK6zVHPs/z3U
-30WMfvhM9ED+QSeZhks9/jfku8/SXcPwJUhPW8FzLCMijuNeaNCbp4VEwtlQo8XO
-aBQQBggJ9S4YOu/Xwhjs02nvDbVL1ZmwJTOoD7thj41tqqJia4Yuaouvg8eJ2xVN
-sha1izeViRyy99ZSoQVk
-=Zzfd
+iQIcBAEBCAAGBQJTeavqAAoJEMDTa8Ir7ZwVs+wP/24Gzjmh3pLSE9bzLrPTVfPF
+aIzpEfUOpc+ibpFn4FW9hfLn10Q+pcb1F9ENtswBszxxR380re+1cP+NwGFdzb3M
+AK9ITSoLMMOfzMiHyGJ/L8kFo+XSLfDFV1MLQkiuR0r9Qku1BwfNvbbA35DBTWPa
+LkhvopLi5a9Ub9ZYtzYXm6YMLQye9U7AejvAQ3Vj/lEtzOuO3uG1I1DErz/M64tz
+k+UtZtcfg80fpvR6lNfsUb30NtPIej6EI67GOL3WOmkg29OPZfZbpgDcgnK3BPbE
+T2A8psGaJX+Oqy8yMZ2nHzDx6PGT0OuOX16l9i5z8f3RMmt7O37PIZ/atFF/ib3m
+G8hmxBmk0pNNtHDraU74sjP4kCeCZuatMqLEEcuMoTG183uDn7M0KR7ZHBV4ORyd
+7W+53vVo0WsE03ICnKRADoOm2cDlosrzDB8sSiPLohr3/EyEK1PJy9nGSyy6HK4J
+Zum0Jmr/JYTiyds1xgnI07ihA3RJwEngaklHT2QIv2pJC55zdHsO6YZPzL+jk6Fs
+jXuZvQtLEjYLsiGuKR0zymfUxrB2h6U03zSo6oC9IpiWdoO7fU3DXzksPdqSEWuM
+Tj1qwF8L337jh0oMFORGkPToyiAMEWe6NYqjnCIA/hdyChHyZafL4hkOssLYkqUf
+zI0RK7cXWZbXIc6Ij8oP
+=x98i
 -----END PGP SIGNATURE-----
 
---Sig_/ByXZn7gcZulq9kSNygyJuXt--
+--Sig_/IcpgeWNROA0=yrn6MrJlGWY--
