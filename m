@@ -1,58 +1,52 @@
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Subject: Re: linux-next: manual merge of the dma-buf tree with the drm-intel tree
-Date: Tue, 20 May 2014 13:35:59 +0530
-Message-ID: <CAO_48GHfXW2wkaA0KNxa=66ERD5qzbH2gF6zosUc9WqUHYz95w@mail.gmail.com>
-References: <20140520165511.3f4bdc5d@canb.auug.org.au>
+From: Maarten Lankhorst <maarten.lankhorst@canonical.com>
+Subject: Re: linux-next: build failure after merge of the dma-buf tree
+Date: Tue, 20 May 2014 10:26:44 +0200
+Message-ID: <537B11C4.2010406@canonical.com>
+References: <20140520171351.736fb238@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140520165511.3f4bdc5d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maarten Lankhorst <maarten.lankhorst@canonical.com>, Chris Wilson <chris@chris-wilson.co.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:39788 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750819AbaETI1D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 May 2014 04:27:03 -0400
+In-Reply-To: <20140520171351.736fb238@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Sumit Semwal <sumit.semwal@linaro.org>, Thierry Reding <treding@nvidia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 20 May 2014 12:25, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hey,
+
+op 20-05-14 09:13, Stephen Rothwell schreef:
 > Hi Sumit,
 >
-> Today's linux-next merge of the dma-buf tree got a conflict in
-> drivers/gpu/drm/i915/i915_gem_dmabuf.c between commit 5cc9ed4b9a7a
-> ("drm/i915: Introduce mapping of user pages into video memory (userptr)
-> ioctl") from the drm-intel tree and commit 8dfb1f0f8103 ("dma-buf: use
-> reservation objects") from the dma-buf tree.
+> After merging the dma-buf tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 >
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> drivers/gpu/drm/tegra/gem.c: In function 'tegra_gem_prime_export':
+> drivers/gpu/drm/tegra/gem.c:423:15: error: macro "dma_buf_export" requires 5 arguments, but only 4 given
+> drivers/gpu/drm/tegra/gem.c:422:9: error: 'dma_buf_export' undeclared (first use in this function)
 >
-Hi Stephen!
+> Caused by commit 8dfb1f0f8103 ("dma-buf: use reservation objects").
+> Grep is your friend ...
+>
+> I have use the dma-buf tree from next-20140519 for today.
 
-This seems good, thanks!
+sumits can you amend the commit?
+---
 
-Best regards,
-~Sumit.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> diff --cc drivers/gpu/drm/i915/i915_gem_dmabuf.c
-> index 580aa42443ed,817ec444c976..000000000000
-> --- a/drivers/gpu/drm/i915/i915_gem_dmabuf.c
-> +++ b/drivers/gpu/drm/i915/i915_gem_dmabuf.c
-> @@@ -229,15 -233,8 +229,16 @@@ static const struct dma_buf_ops i915_dm
->   struct dma_buf *i915_gem_prime_export(struct drm_device *dev,
->                                       struct drm_gem_object *gem_obj, int flags)
->   {
->  +      struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
->  +
->  +      if (obj->ops->dmabuf_export) {
->  +              int ret = obj->ops->dmabuf_export(obj);
->  +              if (ret)
->  +                      return ERR_PTR(ret);
->  +      }
->  +
-> -       return dma_buf_export(gem_obj, &i915_dmabuf_ops, gem_obj->size, flags);
-> +       return dma_buf_export(gem_obj, &i915_dmabuf_ops, gem_obj->size, flags,
-> +                               NULL);
->   }
->
->   static int i915_gem_object_get_pages_dmabuf(struct drm_i915_gem_object *obj)
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index bcf9895cef9f..1e9de41a14ea 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -419,7 +419,7 @@ struct dma_buf *tegra_gem_prime_export(struct drm_device *drm,
+  				       int flags)
+  {
+  	return dma_buf_export(gem, &tegra_gem_prime_dmabuf_ops, gem->size,
+-			      flags);
++			      flags, NULL);
+  }
+  
+  struct drm_gem_object *tegra_gem_prime_import(struct drm_device *drm,
