@@ -1,104 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dma-buf tree with the
- drm-intel tree
-Date: Tue, 20 May 2014 16:55:11 +1000
-Message-ID: <20140520165511.3f4bdc5d@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the dma-buf tree with the staging
+ tree
+Date: Tue, 20 May 2014 16:06:05 +0900
+Message-ID: <20140520070605.GA7961@kroah.com>
+References: <20140520170031.1d27c26a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0725058450=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Maarten Lankhorst <maarten.lankhorst@canonical.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140520170031.1d27c26a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maarten Lankhorst <maarten.lankhorst@canonical.com>, Seunghun Lee <waydi1@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---===============0725058450==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/B1.AD==nBW5qASFl/hRZ5Z2"; protocol="application/pgp-signature"
+On Tue, May 20, 2014 at 05:00:31PM +1000, Stephen Rothwell wrote:
+> Hi Sumit,
+> 
+> Today's linux-next merge of the dma-buf tree got a conflict in
+> drivers/staging/android/sync.c between commit 10f62861b4a2 ("staging:
+> android: fix missing a blank line after declarations") from the staging
+> tree and commit 85958aff6184 ("android: convert sync to fence api, v5")
+> from the dma-buf tree.
+> 
+> I fixed it up (I just used the dma-buf tree version of conflicting
+> sections) and can carry the fix as necessary (no action is required).
 
---Sig_/B1.AD==nBW5qASFl/hRZ5Z2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Sounds good, thanks.
 
-Hi Sumit,
-
-Today's linux-next merge of the dma-buf tree got a conflict in
-drivers/gpu/drm/i915/i915_gem_dmabuf.c between commit 5cc9ed4b9a7a
-("drm/i915: Introduce mapping of user pages into video memory (userptr)
-ioctl") from the drm-intel tree and commit 8dfb1f0f8103 ("dma-buf: use
-reservation objects") from the dma-buf tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/i915/i915_gem_dmabuf.c
-index 580aa42443ed,817ec444c976..000000000000
---- a/drivers/gpu/drm/i915/i915_gem_dmabuf.c
-+++ b/drivers/gpu/drm/i915/i915_gem_dmabuf.c
-@@@ -229,15 -233,8 +229,16 @@@ static const struct dma_buf_ops i915_dm
-  struct dma_buf *i915_gem_prime_export(struct drm_device *dev,
-  				      struct drm_gem_object *gem_obj, int flags)
-  {
- +	struct drm_i915_gem_object *obj =3D to_intel_bo(gem_obj);
- +
- +	if (obj->ops->dmabuf_export) {
- +		int ret =3D obj->ops->dmabuf_export(obj);
- +		if (ret)
- +			return ERR_PTR(ret);
- +	}
- +
-- 	return dma_buf_export(gem_obj, &i915_dmabuf_ops, gem_obj->size, flags);
-+ 	return dma_buf_export(gem_obj, &i915_dmabuf_ops, gem_obj->size, flags,
-+ 				NULL);
-  }
- =20
-  static int i915_gem_object_get_pages_dmabuf(struct drm_i915_gem_object *o=
-bj)
-
---Sig_/B1.AD==nBW5qASFl/hRZ5Z2
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTevxTAAoJEMDTa8Ir7ZwVH+UP/jh/7K3U2jqRRMdvg7xo9qN5
-L0zlAfklKK4lQpxrP2zT2iEuSA3ypDX8WkqjbQ08wP7AskX+ZVJl4D72OF4MGYwG
-gM/McVjdEM91vGm93fYxSe0Y4WnVbEuoUNNk71TMHWANG3SDbqjckAsH8DMdaViz
-Bg7OFkyX3l6a5osct9OtS/6S6bIU+jAl3O7x4QYIM6Jzoh26yeXW0ohh2QLVdbhb
-HNkgiUXpkyNJtghsM64C/FNY8wX29tdd6n207bb0tJ+IzxOYJn/fmiaNBmDUWmYp
-KKuZJb12kSVA9D6JLrR91IwXaRmgDCEZeownShVdhVCVoQo8Q6E3huir4AM8M/nF
-mTJj1omSXhjQuxowcX+FRl+g/C693jpkOPVraqGAI6HEBryPoe6OBN6IPjxSlkMp
-zLZPx15/ywAmPtrPZPoHzQc75eU54sLZ+f+c0a6mH4rnuNMG+1JsySsk18zJ2t8R
-AkgljePlV2SJXXscJmEIY4aj0XrYxrC2qNe3TEc5BCFB+teb4fnj1ksA5Z+1zMpz
-OhowRBNZxCzYSkG5KX9aZInDVGmncfY2DVTfyC7hxSQzjj+oCRKiatTo7xytoSzA
-Xo8QbTZAOAl7BJ6xewobZi2+z/Opdp6vcvNk84OmNXKVXqXCoOl82HK+9ubymXD/
-ttMPhJGAltm4+izt6BfY
-=hSna
------END PGP SIGNATURE-----
-
---Sig_/B1.AD==nBW5qASFl/hRZ5Z2--
-
---===============0725058450==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Intel-gfx mailing list
-Intel-gfx@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/intel-gfx
-
---===============0725058450==--
+greg k-h
