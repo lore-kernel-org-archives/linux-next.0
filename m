@@ -1,63 +1,117 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the dma-buf tree
-Date: Tue, 20 May 2014 17:13:51 +1000
-Message-ID: <20140520171351.736fb238@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the input tree
+Date: Tue, 20 May 2014 17:45:13 +1000
+Message-ID: <20140520174513.26247582@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/J0fndYs2/RSBcvfXwq2mqU4"; protocol="application/pgp-signature"
+ boundary="Sig_/Ocshdhk+reSrLYg7U13RCD5"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57307 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33831 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750771AbaETHN6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 May 2014 03:13:58 -0400
+	id S1752520AbaETHpV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 May 2014 03:45:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>, Thierry Reding <treding@nvidia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maarten Lankhorst <maarten.lankhorst@canonical.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Dyer <nick.dyer@itdev.co.uk>
 
---Sig_/J0fndYs2/RSBcvfXwq2mqU4
+--Sig_/Ocshdhk+reSrLYg7U13RCD5
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sumit,
+Hi Dmitry,
 
-After merging the dma-buf tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the input tree, today's linux-next build (powerpc
+allyesconfig) produced these warnings:
 
-drivers/gpu/drm/tegra/gem.c: In function 'tegra_gem_prime_export':
-drivers/gpu/drm/tegra/gem.c:423:15: error: macro "dma_buf_export" requires =
-5 arguments, but only 4 given
-drivers/gpu/drm/tegra/gem.c:422:9: error: 'dma_buf_export' undeclared (firs=
-t use in this function)
-
-Caused by commit 8dfb1f0f8103 ("dma-buf: use reservation objects").
-Grep is your friend ...
-
-I have use the dma-buf tree from next-20140519 for today.
+drivers/input/touchscreen/atmel_mxt_ts.c: In function 'mxt_read_t9_resoluti=
+on':
+drivers/input/touchscreen/atmel_mxt_ts.c:1043:2: warning: passing argument =
+1 of '__swab16s' makes pointer from integer without a cast [enabled by defa=
+ult]
+  le16_to_cpus(range.x);
+  ^
+In file included from include/linux/swab.h:4:0,
+                 from include/uapi/linux/byteorder/big_endian.h:12,
+                 from include/linux/byteorder/big_endian.h:4,
+                 from arch/powerpc/include/uapi/asm/byteorder.h:13,
+                 from include/asm-generic/bitops/le.h:5,
+                 from arch/powerpc/include/asm/bitops.h:279,
+                 from include/linux/bitops.h:33,
+                 from include/linux/kernel.h:10,
+                 from include/asm-generic/bug.h:13,
+                 from arch/powerpc/include/asm/bug.h:127,
+                 from include/linux/bug.h:4,
+                 from include/linux/thread_info.h:11,
+                 from include/asm-generic/preempt.h:4,
+                 from arch/powerpc/include/generated/asm/preempt.h:1,
+                 from include/linux/preempt.h:18,
+                 from include/linux/spinlock.h:50,
+                 from include/linux/seqlock.h:35,
+                 from include/linux/time.h:5,
+                 from include/linux/stat.h:18,
+                 from include/linux/module.h:10,
+                 from drivers/input/touchscreen/atmel_mxt_ts.c:16:
+include/uapi/linux/swab.h:223:20: note: expected '__u16 *' but argument is =
+of type 'u16'
+ static inline void __swab16s(__u16 *p)
+                    ^
+drivers/input/touchscreen/atmel_mxt_ts.c:1044:2: warning: passing argument =
+1 of '__swab16s' makes pointer from integer without a cast [enabled by defa=
+ult]
+  le16_to_cpus(range.y);
+  ^
+In file included from include/linux/swab.h:4:0,
+                 from include/uapi/linux/byteorder/big_endian.h:12,
+                 from include/linux/byteorder/big_endian.h:4,
+                 from arch/powerpc/include/uapi/asm/byteorder.h:13,
+                 from include/asm-generic/bitops/le.h:5,
+                 from arch/powerpc/include/asm/bitops.h:279,
+                 from include/linux/bitops.h:33,
+                 from include/linux/kernel.h:10,
+                 from include/asm-generic/bug.h:13,
+                 from arch/powerpc/include/asm/bug.h:127,
+                 from include/linux/bug.h:4,
+                 from include/linux/thread_info.h:11,
+                 from include/asm-generic/preempt.h:4,
+                 from arch/powerpc/include/generated/asm/preempt.h:1,
+                 from include/linux/preempt.h:18,
+                 from include/linux/spinlock.h:50,
+                 from include/linux/seqlock.h:35,
+                 from include/linux/time.h:5,
+                 from include/linux/stat.h:18,
+                 from include/linux/module.h:10,
+                 from drivers/input/touchscreen/atmel_mxt_ts.c:16:
+include/uapi/linux/swab.h:223:20: note: expected '__u16 *' but argument is =
+of type 'u16'
+ static inline void __swab16s(__u16 *p)
+                    ^
+Introduced by commit de22385758fa ("Input: atmel_mxt_ts - read screen
+config from chip").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/J0fndYs2/RSBcvfXwq2mqU4
+--Sig_/Ocshdhk+reSrLYg7U13RCD5
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTewC0AAoJEMDTa8Ir7ZwVj+oP/0iOZ9sXcZOUoMkkvXFqrVPj
-7syGnb6v5acqlJ9g3y/8Kcsu5tgUkRK6YvPMZbL6NKly5+IllSCDWlIht77HvI96
-Je6ezJv7tFOG7myX0Ff037b/sXsodjiOXGd9Jx7ib9ljbqFlyHaqCfsFaeociDA8
-lnO+x/DqKneTpmOwFhbLFQLa9rhehnSi+J/gIjPpJTkNh42yW4kBLEubKmn5J8+W
-6912c87VE7A3t8pzZZoSuXpencGveEgqEcn6PeHU03Wme1H7J646vzKHqqNFuoTH
-JRDE0JuubtF5UTKiJLWakhjEwH1zrdiDuA5uUSeveksV2KskyB+kViIsXItsJ3HT
-xLGYbTnbjINECwEuIEScmPw/AsZu6zMrJBMqUNi+0z+qoK+IFM6GqbhuKzh1gvzt
-b7uQJ7YUW570zyl3isAPsj3tTtwM1g2t6GUD3gCQiM9JDrT6f0P+cOyWnk0TgnxD
-SUXi3lgF8btRz0EmOMyFqY6okmnvu7lf/w3lgDwbmV9a/t+eLdnJRW5UA1I3qtgs
-1AZkuZjdQRi7nRiVJTY9aGU9Ol3kPtnB6/mWKLmxO2NcqmSpra0R/WDmAGwsAiM0
-nS0O1qGmlFFd5TnxyKJ1AWxAnxLKJasNp/lBAU58+l0nozVrDvRs4/qlKf/X6SeB
-UgCTNN9v1PewM6ul1M3l
-=Epdz
+iQIcBAEBCAAGBQJTewgPAAoJEMDTa8Ir7ZwVEDAP/iWJ02uz8xcR8StrOwOwCqzp
+Jg7olnFCwRLD6wR2U+dJ4HgOQbl0DAnOevQEBw1/uux/T9JfVM3eV0+WqHECfjC2
+R0Oj0bKk0+8T6+BHeFErPEeQfOYmKDmwsvSJo+vy/FFFk73CbKwwu3kJdXKv8dts
+n8xgBoA4kFWQkCnlImoMLxO/JFvkAPTvJ/MKiNDRDD8u9Y9yEEhZSAFcyvI/DEWf
+yeYdhATBMVxjX2/jBYCIV9pkV9TitsoRlHPMl2BXRy96uGw+LbRtHYIbO8o8QmPE
+NMwB82/PLU73hv4G9vxXXiwPXbiyQmjfZyig1a6H3B2jO0NHc5Ae5PkqqGdzj2wv
+9XYaQpxlSuzcdpGPZHjp/CIMXt5yZZZ7iqLNlYhTO72mslTft0uV5Vx4klQGEpM5
+6NzJ2mdG0c2qVpniQMa3uZ05xcV5BKtL60Kiegy5ej6bFrYH0k3gE7a5Aibr2Rs0
+Aq2BIvE9pQspcUjDDQ9U6I/teE2WKhf9RGkB+xoE8TAdVkglopx+m88RBkp+F1WH
+2ZmS1nRpXjodJNdNsDvkM7WaUOSFRdg/1EYCFVFgd3/tQtG0V6hQN4o2kntkMhOZ
+NbSdg16RQGS15CvQ7Z5kEJSJszSfvVgm+G3P3momxOR5JtJag+ecnEbmr/7WAazf
+D2tP9mzVXLf1Z6wVIq0f
+=MdQi
 -----END PGP SIGNATURE-----
 
---Sig_/J0fndYs2/RSBcvfXwq2mqU4--
+--Sig_/Ocshdhk+reSrLYg7U13RCD5--
