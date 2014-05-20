@@ -1,46 +1,62 @@
-From: Vlad Yasevich <vyasevich@gmail.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Tue, 20 May 2014 10:50:58 -0400
-Message-ID: <537B6BD2.3060204@gmail.com>
-References: <20140520105952.73f6adab@canb.auug.org.au>
+From: Jes Sorensen <Jes.Sorensen@redhat.com>
+Subject: Re: randconfig build error with next-20140520,
+ in drivers/staging/rtl8723au/core/rtw_cmd.c
+Date: Tue, 20 May 2014 17:23:56 +0200
+Message-ID: <wrfj8upwpj77.fsf@ultrasam.lan.trained-monkey.org>
+References: <CA+r1ZhhhL5CB5_e_0g--biDfmqHEsC-C9RKg7uPSupYtSNLiQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140520105952.73f6adab@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Yasevich <vyasevic@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <CA+r1ZhhhL5CB5_e_0g--biDfmqHEsC-C9RKg7uPSupYtSNLiQw@mail.gmail.com>
+ (Jim Davis's message of "Tue, 20 May 2014 06:47:18 -0700")
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: devel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless <linux-wireless@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, "Larry.Finger" <Larry.Finger@lwfinger.net>
 List-Id: linux-next.vger.kernel.org
 
-On 05/19/2014 08:59 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> 
-> In file included from arch/powerpc/net/bpf_jit_comp.c:16:0:
-> include/linux/if_vlan.h: In function 'vlan_get_encap_level':
-> include/linux/if_vlan.h:491:2: error: implicit declaration of function 'vlan_dev_priv' [-Werror=implicit-function-declaration]
->   return vlan_dev_priv(dev)->nest_level;
->   ^
-> include/linux/if_vlan.h:491:27: error: invalid type argument of '->' (have 'int')
->   return vlan_dev_priv(dev)->nest_level;
->                            ^
-> 
-> Caused by commit 44a4085538c8 ("bonding: Fix stacked device detection
-> in arp monitoring").
-> 
-> vlan_dev_priv() is protected by:
-> 
-> #if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
-> 
-> but the newly added call in vlan_get_encap_level() is not.
-> 
-> I have used the net tree from next-20140519 for today.
-> 
-
-Right.  Apologies.  I missed the above fact.  Fix forthcoming.
-
--vlad
+SmltIERhdmlzIDxqaW0uZXBvc3RAZ21haWwuY29tPiB3cml0ZXM6Cj4gQnVpbGRpbmcgd2l0aCB0
+aGUgYXR0YWNoZWQgcmFuZG9tIGNvbmZpZ3VyYXRpb24gZmlsZSwKPgo+IGRyaXZlcnMvc3RhZ2lu
+Zy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6IEluIGZ1bmN0aW9uIOKAmGR5bmFtaWNfY2hrX3dr
+X2hkbOKAmToKPiBkcml2ZXJzL3N0YWdpbmcvcnRsODcyM2F1L2NvcmUvcnR3X2NtZC5jOjEwMzY6
+MjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mCj4gZnVuY3Rpb24g4oCYcnRsODcyM2Ff
+c3Jlc2V0X3htaXRfc3RhdHVzX2NoZWNr4oCZIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRl
+Y2xhcmF0Cj4gaW9uXQo+ICAgcnRsODcyM2Ffc3Jlc2V0X3htaXRfc3RhdHVzX2NoZWNrKHBhZGFw
+dGVyKTsKPiAgIF4KPiBkcml2ZXJzL3N0YWdpbmcvcnRsODcyM2F1L2NvcmUvcnR3X2NtZC5jOjEw
+NDE6MjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mCj4gZnVuY3Rpb24g4oCYcnRsODcy
+M2FfSGFsRG1XYXRjaERvZ+KAmSBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlv
+bl0KPiAgIHJ0bDg3MjNhX0hhbERtV2F0Y2hEb2cocGFkYXB0ZXIpOwo+ICAgXgo+IGRyaXZlcnMv
+c3RhZ2luZy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6IEluIGZ1bmN0aW9uIOKAmGMyaF9ldnRf
+aGRs4oCZOgo+IGRyaXZlcnMvc3RhZ2luZy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6MTMxNDo0
+OiBlcnJvcjogaW1wbGljaXQKPiBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhjMmhfaGFuZGxl
+cl84NzIzYeKAmQo+IFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+ICAg
+ICByZXQgPSBjMmhfaGFuZGxlcl84NzIzYShhZGFwdGVyLCBjMmhfZXZ0KTsKPiAgICAgXgo+IGRy
+aXZlcnMvc3RhZ2luZy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6IEluIGZ1bmN0aW9uIOKAmHJ0
+d19ldnRfd29ya+KAmToKPiBkcml2ZXJzL3N0YWdpbmcvcnRsODcyM2F1L2NvcmUvcnR3X2NtZC5j
+OjEzNDg6MjogZXJyb3I6IGltcGxpY2l0Cj4gZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYYzJo
+X2lkX2ZpbHRlcl9jY3hfODcyM2HigJkKPiBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNs
+YXJhdGlvbl0KPiAgIGlmIChjMmhfaWRfZmlsdGVyX2NjeF84NzIzYShld29yay0+dS5jMmhfZXZ0
+LmlkKSA9PSB0cnVlKSB7Cj4gICBeCj4gICBDQyAgICAgIGRyaXZlcnMvc3RhZ2luZy9ydGw4MTg4
+ZXUvaGFsL0hhbEhXSW1nODE4OEVfTUFDLm8KPiBjYzE6IHNvbWUgd2FybmluZ3MgYmVpbmcgdHJl
+YXRlZCBhcyBlcnJvcnMKPiBtYWtlWzNdOiAqKiogW2RyaXZlcnMvc3RhZ2luZy9ydGw4NzIzYXUv
+Y29yZS9ydHdfY21kLm9dIEVycm9yIDEKCkppbSwKClRoYW5rcyBmb3IgdGhlIHJlcG9ydC4KCkkg
+YWxyZWFkeSBwdXNoZWQgYSBmaXggZm9yIHRoZSBDT05GSUdfODcyM0FVX0JUX0NPRVhJU1Q9biBw
+cm9ibGVtLCBhbmQKdGhlIENPTkZJR184NzIzQVVfQVBfTU9ERT1uIGNhc2UgaXNuJ3QgY2F1c2lu
+ZyBidWlsZCBwcm9ibGVtcyBpbiBteSB0cmVlCmF0IHRoaXMgcG9pbnQuIEkgYmVsaWV2ZSB0aGlz
+IGlzIGR1ZSB0byBtb3ZpbmcgYSBudW1iZXIgb2YgZnVuY3Rpb25zCmFyb3VuZC4gVGhlcmUgd2Vy
+ZSBzb21lIHdhcm5pbmdzIGFib3V0IHVudXNlZCBmdW5jdGlvbnMgd2hpY2ggSSBmaXhlZCB1cApo
+ZXJlLCBidXQgbm90aGluZyBicmVha2luZyB0aGUgYnVpbGQuCgpJZiB5b3UgZG9uJ3QgbWluZCwg
+SSBwcmVmZXIgdG8gcHVzaCBpdCBhbGwgb3V0IHdpdGggbXkgbmV4dCBiYXRjaCBvZgpjaGFuZ2Vz
+IHJhdGhlciB0aGFuIHRyeWluZyB0byBmaXggdXAgdGhpcyBidWlsZCBjYXNlLgoKQ2hlZXJzLApK
+ZXMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwg
+bWFpbGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRl
+di5saW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVs
+Cg==
