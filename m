@@ -1,62 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd-lj tree
-Date: Tue, 20 May 2014 18:01:59 +1000
-Message-ID: <20140520180159.3a70193c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the dma-buf tree
+Date: Tue, 20 May 2014 17:13:51 +1000
+Message-ID: <20140520171351.736fb238@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QmC0ADOs9cbiX_WkMI1Op=f"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/J0fndYs2/RSBcvfXwq2mqU4"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57307 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750771AbaETHN6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 May 2014 03:13:58 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sumit Semwal <sumit.semwal@linaro.org>, Thierry Reding <treding@nvidia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maarten Lankhorst <maarten.lankhorst@canonical.com>
 
---Sig_/QmC0ADOs9cbiX_WkMI1Op=f
+--Sig_/J0fndYs2/RSBcvfXwq2mqU4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+Hi Sumit,
 
-After merging the mfd-lj tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the dma-buf tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-drivers/mfd/stmpe.c: In function 'stmpe_irq_init':
-drivers/mfd/stmpe.c:1000:15: error: 'struct stmpe' has no member named 'irq=
-_base'
-   base =3D stmpe->irq_base;
-               ^
+drivers/gpu/drm/tegra/gem.c: In function 'tegra_gem_prime_export':
+drivers/gpu/drm/tegra/gem.c:423:15: error: macro "dma_buf_export" requires =
+5 arguments, but only 4 given
+drivers/gpu/drm/tegra/gem.c:422:9: error: 'dma_buf_export' undeclared (firs=
+t use in this function)
 
-Caused by commit 3ba1d516d5fe ("mfd: stmpe: root out static GPIO and
-IRQ assignments").
+Caused by commit 8dfb1f0f8103 ("dma-buf: use reservation objects").
+Grep is your friend ...
 
-This is exactly the same error and commit I reported against the gpio
-tree on Friday.  Why has it come back?
-
-I have reverted that commit for today.
+I have use the dma-buf tree from next-20140519 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/QmC0ADOs9cbiX_WkMI1Op=f
+--Sig_/J0fndYs2/RSBcvfXwq2mqU4
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTewv8AAoJEMDTa8Ir7ZwVU3AP/31qWp2yRS8I91hIXlX1iZK7
-HTaztR0Z9dyLMUP5rArDWi3Z+ce3um3PcfrquzwZuQcw5A6GZ6wrvnkrBCwoGjjl
-kUUbrgIb+mFpGcdp4nFPwyR4vFLUi20p4TJsCrEn6P2Lnadc7BBft1F0DQeHy/4v
-mFsburQx2tB3UcHfRP2VpPxAP0/u/JfYFx21rgWG4jsSCPU4+Y/5xW5nmcImze56
-SEYqT0fYDPmGv9XlqNZM4D8SKbFJ+dqMKydw39aHqt5qhJ1AIb1GbjGMgHjRrivW
-y2UpDNKJNcQYy2QscPQPxsO8pnoYYk0U9vqDyK7CRDNqFmuJxH7WQxVBOWZKmRwd
-UO+Gy5h/QMNPhXqCjv+R//feNhbDgfeoGUTaPjzSX5lZiehXPR+bS+aCXsEPFbEc
-wVWeM2+JXqFX7F54RN7oeAcOqD+gM80tlrryDWfRYc7i3pHvj1kLJfoPfYuctjme
-xaodpJ0IxpibvcaCaJ8c2A5YDhi4YSUIMcVxFNXI/Dk8Xp5gNbtyQv+fb6a49sI7
-HLafx8Do1NKgDRj0Yce1G+4GTZF6sV0TBqsVfhrV4l/UQ/BGfmJT723q/CKUYPZU
-i42YHgbCmnyClEEMuZj4B6qtGJqD46xZhwfEGO2yTio4sl/Ug43b8G36/saHvwCP
-i6+XjHqMwpX1dBLw6vGi
-=jLW3
+iQIcBAEBCAAGBQJTewC0AAoJEMDTa8Ir7ZwVj+oP/0iOZ9sXcZOUoMkkvXFqrVPj
+7syGnb6v5acqlJ9g3y/8Kcsu5tgUkRK6YvPMZbL6NKly5+IllSCDWlIht77HvI96
+Je6ezJv7tFOG7myX0Ff037b/sXsodjiOXGd9Jx7ib9ljbqFlyHaqCfsFaeociDA8
+lnO+x/DqKneTpmOwFhbLFQLa9rhehnSi+J/gIjPpJTkNh42yW4kBLEubKmn5J8+W
+6912c87VE7A3t8pzZZoSuXpencGveEgqEcn6PeHU03Wme1H7J646vzKHqqNFuoTH
+JRDE0JuubtF5UTKiJLWakhjEwH1zrdiDuA5uUSeveksV2KskyB+kViIsXItsJ3HT
+xLGYbTnbjINECwEuIEScmPw/AsZu6zMrJBMqUNi+0z+qoK+IFM6GqbhuKzh1gvzt
+b7uQJ7YUW570zyl3isAPsj3tTtwM1g2t6GUD3gCQiM9JDrT6f0P+cOyWnk0TgnxD
+SUXi3lgF8btRz0EmOMyFqY6okmnvu7lf/w3lgDwbmV9a/t+eLdnJRW5UA1I3qtgs
+1AZkuZjdQRi7nRiVJTY9aGU9Ol3kPtnB6/mWKLmxO2NcqmSpra0R/WDmAGwsAiM0
+nS0O1qGmlFFd5TnxyKJ1AWxAnxLKJasNp/lBAU58+l0nozVrDvRs4/qlKf/X6SeB
+UgCTNN9v1PewM6ul1M3l
+=Epdz
 -----END PGP SIGNATURE-----
 
---Sig_/QmC0ADOs9cbiX_WkMI1Op=f--
+--Sig_/J0fndYs2/RSBcvfXwq2mqU4--
