@@ -1,66 +1,56 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [ath9k-devel] randconfig build error with next-20140519, in drivers/net/wireless/ath/ath9k/dfs.c
-Date: Wed, 21 May 2014 22:12:26 +1000
-Message-ID: <CAGRGNgXuS-ksFBAtmo8nLAPqPFKo2gHGDCsTcranU-k2-K3rfg@mail.gmail.com>
-References: <CA+r1ZhiM7EK08Y4kriXMugMc1Mbj5VDUPwKMq8-_k8Q8qhwPtw@mail.gmail.com>
- <20140521110143.GA2375@qca.qualcomm.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the pm tree with the samsung tree
+Date: Wed, 21 May 2014 22:32:47 +0900
+Message-ID: <036a01cf74f9$275d2c10$76178430$@samsung.com>
+References: <20140519125124.6504764d@canb.auug.org.au>
+ <1911725.FzcK6v311f@vostro.rjw.lan>
+ <013b01cf73c2$5bbe1fb0$133a5f10$@samsung.com>
+ <3571098.myqhuVX7FX@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qg0-f54.google.com ([209.85.192.54]:61321 "EHLO
-	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750972AbaEUMMr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2014 08:12:47 -0400
-In-Reply-To: <20140521110143.GA2375@qca.qualcomm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linville <linville@tuxdriver.com>, linux-wireless <linux-wireless@vger.kernel.org>, ath9k-devel@lists.ath9k.org, netdev <netdev@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <3571098.myqhuVX7FX@vostro.rjw.lan>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc: 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jonghwan Choi' <jhbird.choi@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Rajkumar,
-
-On Wed, May 21, 2014 at 9:01 PM, Rajkumar Manoharan
-<rmanohar@qti.qualcomm.com> wrote:
-> On Mon, May 19, 2014 at 09:31:16AM -0700, Jim Davis wrote:
->> Building with the attached random configuration file,
->>
->> In file included from drivers/net/wireless/ath/ath9k/eeprom.h:22:0,
->>                  from drivers/net/wireless/ath/ath9k/hw.h:27,
->>                  from drivers/net/wireless/ath/ath9k/dfs.c:18:
->> drivers/net/wireless/ath/ath9k/dfs.c: In function =E2=80=98ath9k_dfs=
-_process_phyerr=E2=80=99:
->> drivers/net/wireless/ath/ath9k/dfs.c:185:14: error: =E2=80=98struct =
-ath_softc=E2=80=99
->> has no member named =E2=80=98debug=E2=80=99
->>     pe.ts - sc->debug.stats.dfs_stats.last_ts);
->>               ^
->> drivers/net/wireless/ath/ath9k/../ath.h:273:41: note: in definition =
-of
->> macro =E2=80=98ath_dbg=E2=80=99
->>    ath_printk(KERN_DEBUG, common, fmt, ##__VA_ARGS__); \
->>                                          ^
->> drivers/net/wireless/ath/ath9k/dfs.c:186:5: error: =E2=80=98struct a=
-th_softc=E2=80=99
->> has no member named =E2=80=98debug=E2=80=99
->>    sc->debug.stats.dfs_stats.last_ts =3D pe.ts;
->>      ^
->> make[5]: *** [drivers/net/wireless/ath/ath9k/dfs.o] Error 1
->
-> Please select CONFIG_ATH9K_DEBUGFS.
-
-The point of randconfig builds is to ensure that there it's really
-unlikely that there are any config combinations that don't build, even
-if they're utterly insane.
-
-You should really change the ath9k Kconfig rules or move or add ifdefs
-to prevent this from being possible.
+Rafael J. Wysocki wrote:
+> 
+> On Tuesday, May 20, 2014 09:27:58 AM Kukjin Kim wrote:
+> > Rafael J. Wysocki wrote:
+> > >
+> > > On Monday, May 19, 2014 12:51:24 PM Stephen Rothwell wrote:
+> > > >
+> > > > --Sig_/n+GoYBpTr9ERl.sTIEYr/Og
+> > > > Content-Type: text/plain; charset=US-ASCII
+> > > > Content-Transfer-Encoding: quoted-printable
+> > > >
+> > > > Hi Rafael,
+> > > >
+> > > > Today's linux-next merge of the pm tree got conflicts in
+> > > > drivers/cpufreq/exynos-cpufreq.c and drivers/cpufreq/exynos-cpufreq.h
+> > > > between commit 2b07f4085479 ("cpufreq: exynos: Fix the compile error")
+> > > > from the samsung tree and commit e5eaa445b0dc ("cpufreq: exynos: Use
+> > > > dev_err/info function instead of pr_err/info") from the pm tree.
+> > > >
+> > > > I fixed it up (see below) and can carry the fix as necessary (no
+> action
+> > > > is required).
+> > >
+> > > Thanks for fixing that Stephen!
+> > >
+> > Same here ;-)
+> >
+> > > Kukjin, are you going to handle all Exynos cpufreq commits in the future?
+> > >
+> > If you're OK, would be better to us I think.
+> 
+> OK, I'll leave them to you, then.  Please ask Viresh for ACKs if needed. :-)
+> 
+I will.
 
 Thanks,
-
---=20
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
-=2EPlan: http://sites.google.com/site/juliancalaby/
+Kukjin
