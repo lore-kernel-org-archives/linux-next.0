@@ -1,36 +1,54 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
+From: Ingo Molnar <mingo@kernel.org>
 Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Tue, 20 May 2014 21:24:18 -0700
-Message-ID: <537C2A72.9030503@zytor.com>
+Date: Wed, 21 May 2014 08:01:00 +0200
+Message-ID: <20140521060100.GA5484@gmail.com>
 References: <20140521141249.6f87b7e7@canb.auug.org.au>
+ <537C2A72.9030503@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140521141249.6f87b7e7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ee0-f42.google.com ([74.125.83.42]:38654 "EHLO
+	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750972AbaEUGBF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2014 02:01:05 -0400
+Content-Disposition: inline
+In-Reply-To: <537C2A72.9030503@zytor.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On 05/20/2014 09:12 PM, Stephen Rothwell wrote:
-> Hi all,
+
+* H. Peter Anvin <hpa@zytor.com> wrote:
+
+> On 05/20/2014 09:12 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the tip tree got a conflict in 
+> > arch/x86/kernel/ldt.c between commit fa81511bb0bb ("x86-64,
+> > modify_ldt: Make support for 16-bit segments a runtime option")
+> > from Linus' tree and commit 34273f41d57e ("x86, espfix: Make it
+> > possible to disable 16-bit support") from the tip tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary (no
+> > action is required).
+> > 
 > 
-> Today's linux-next merge of the tip tree got a conflict in 
-> arch/x86/kernel/ldt.c between commit fa81511bb0bb ("x86-64,
-> modify_ldt: Make support for 16-bit segments a runtime option")
-> from Linus' tree and commit 34273f41d57e ("x86, espfix: Make it
-> possible to disable 16-bit support") from the tip tree.
+> This (and the previous one) is not the correct fix, although it will
+> work.  The correct fix is instead to completely revert fa81511bb0bb
+> before merging in tip:x86/espfix.
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no
-> action is required).
-> 
+> Sorry for the inconvenience.  Linus generally doesn't like it when we
+> fix up merges for him, or I'd set up a "clean" tip:x86/espfix branch.
 
-This (and the previous one) is not the correct fix, although it will
-work.  The correct fix is instead to completely revert fa81511bb0bb
-before merging in tip:x86/espfix.
+Please merge x86/urgent into x86/vdso while memories are still fresh - 
+fixing up conflicts between our own branches is entirely fine (I'm 
+doing it all the time to help the development flow) and it will make 
+life easier.
 
-Sorry for the inconvenience.  Linus generally doesn't like it when we
-fix up merges for him, or I'd set up a "clean" tip:x86/espfix branch.
+What Linus dislikes most are merges between completely _unrelated_ 
+topic branches, especially if they cross maintenance domains.
 
-	-hpa
+Thanks,
+
+	Ingo
