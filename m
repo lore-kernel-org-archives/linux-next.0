@@ -1,62 +1,77 @@
-From: Jes Sorensen <Jes.Sorensen@redhat.com>
-Subject: Re: randconfig build error with next-20140520,
- in drivers/staging/rtl8723au/core/rtw_cmd.c
-Date: Tue, 20 May 2014 17:23:56 +0200
-Message-ID: <wrfj8upwpj77.fsf@ultrasam.lan.trained-monkey.org>
-References: <CA+r1ZhhhL5CB5_e_0g--biDfmqHEsC-C9RKg7uPSupYtSNLiQw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Wed, 21 May 2014 14:12:31 +1000
+Message-ID: <20140521141231.5752baae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <CA+r1ZhhhL5CB5_e_0g--biDfmqHEsC-C9RKg7uPSupYtSNLiQw@mail.gmail.com>
- (Jim Davis's message of "Tue, 20 May 2014 06:47:18 -0700")
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: devel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless <linux-wireless@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, "Larry.Finger" <Larry.Finger@lwfinger.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/p_mjuqMg51itUvlnSq8w56K"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40979 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750784AbaEUEMk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 May 2014 00:12:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andy Lutomirski <luto@amacapital.net>
 
-SmltIERhdmlzIDxqaW0uZXBvc3RAZ21haWwuY29tPiB3cml0ZXM6Cj4gQnVpbGRpbmcgd2l0aCB0
-aGUgYXR0YWNoZWQgcmFuZG9tIGNvbmZpZ3VyYXRpb24gZmlsZSwKPgo+IGRyaXZlcnMvc3RhZ2lu
-Zy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6IEluIGZ1bmN0aW9uIOKAmGR5bmFtaWNfY2hrX3dr
-X2hkbOKAmToKPiBkcml2ZXJzL3N0YWdpbmcvcnRsODcyM2F1L2NvcmUvcnR3X2NtZC5jOjEwMzY6
-MjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mCj4gZnVuY3Rpb24g4oCYcnRsODcyM2Ff
-c3Jlc2V0X3htaXRfc3RhdHVzX2NoZWNr4oCZIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRl
-Y2xhcmF0Cj4gaW9uXQo+ICAgcnRsODcyM2Ffc3Jlc2V0X3htaXRfc3RhdHVzX2NoZWNrKHBhZGFw
-dGVyKTsKPiAgIF4KPiBkcml2ZXJzL3N0YWdpbmcvcnRsODcyM2F1L2NvcmUvcnR3X2NtZC5jOjEw
-NDE6MjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mCj4gZnVuY3Rpb24g4oCYcnRsODcy
-M2FfSGFsRG1XYXRjaERvZ+KAmSBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlv
-bl0KPiAgIHJ0bDg3MjNhX0hhbERtV2F0Y2hEb2cocGFkYXB0ZXIpOwo+ICAgXgo+IGRyaXZlcnMv
-c3RhZ2luZy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6IEluIGZ1bmN0aW9uIOKAmGMyaF9ldnRf
-aGRs4oCZOgo+IGRyaXZlcnMvc3RhZ2luZy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6MTMxNDo0
-OiBlcnJvcjogaW1wbGljaXQKPiBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhjMmhfaGFuZGxl
-cl84NzIzYeKAmQo+IFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+ICAg
-ICByZXQgPSBjMmhfaGFuZGxlcl84NzIzYShhZGFwdGVyLCBjMmhfZXZ0KTsKPiAgICAgXgo+IGRy
-aXZlcnMvc3RhZ2luZy9ydGw4NzIzYXUvY29yZS9ydHdfY21kLmM6IEluIGZ1bmN0aW9uIOKAmHJ0
-d19ldnRfd29ya+KAmToKPiBkcml2ZXJzL3N0YWdpbmcvcnRsODcyM2F1L2NvcmUvcnR3X2NtZC5j
-OjEzNDg6MjogZXJyb3I6IGltcGxpY2l0Cj4gZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYYzJo
-X2lkX2ZpbHRlcl9jY3hfODcyM2HigJkKPiBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNs
-YXJhdGlvbl0KPiAgIGlmIChjMmhfaWRfZmlsdGVyX2NjeF84NzIzYShld29yay0+dS5jMmhfZXZ0
-LmlkKSA9PSB0cnVlKSB7Cj4gICBeCj4gICBDQyAgICAgIGRyaXZlcnMvc3RhZ2luZy9ydGw4MTg4
-ZXUvaGFsL0hhbEhXSW1nODE4OEVfTUFDLm8KPiBjYzE6IHNvbWUgd2FybmluZ3MgYmVpbmcgdHJl
-YXRlZCBhcyBlcnJvcnMKPiBtYWtlWzNdOiAqKiogW2RyaXZlcnMvc3RhZ2luZy9ydGw4NzIzYXUv
-Y29yZS9ydHdfY21kLm9dIEVycm9yIDEKCkppbSwKClRoYW5rcyBmb3IgdGhlIHJlcG9ydC4KCkkg
-YWxyZWFkeSBwdXNoZWQgYSBmaXggZm9yIHRoZSBDT05GSUdfODcyM0FVX0JUX0NPRVhJU1Q9biBw
-cm9ibGVtLCBhbmQKdGhlIENPTkZJR184NzIzQVVfQVBfTU9ERT1uIGNhc2UgaXNuJ3QgY2F1c2lu
-ZyBidWlsZCBwcm9ibGVtcyBpbiBteSB0cmVlCmF0IHRoaXMgcG9pbnQuIEkgYmVsaWV2ZSB0aGlz
-IGlzIGR1ZSB0byBtb3ZpbmcgYSBudW1iZXIgb2YgZnVuY3Rpb25zCmFyb3VuZC4gVGhlcmUgd2Vy
-ZSBzb21lIHdhcm5pbmdzIGFib3V0IHVudXNlZCBmdW5jdGlvbnMgd2hpY2ggSSBmaXhlZCB1cApo
-ZXJlLCBidXQgbm90aGluZyBicmVha2luZyB0aGUgYnVpbGQuCgpJZiB5b3UgZG9uJ3QgbWluZCwg
-SSBwcmVmZXIgdG8gcHVzaCBpdCBhbGwgb3V0IHdpdGggbXkgbmV4dCBiYXRjaCBvZgpjaGFuZ2Vz
-IHJhdGhlciB0aGFuIHRyeWluZyB0byBmaXggdXAgdGhpcyBidWlsZCBjYXNlLgoKQ2hlZXJzLApK
-ZXMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwg
-bWFpbGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRl
-di5saW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVs
-Cg==
+--Sig_/p_mjuqMg51itUvlnSq8w56K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/vdso/vdso32-setup.c between commit fa81511bb0bb ("x86-64,
+modify_ldt: Make support for 16-bit segments a runtime option") from
+Linus' tree and commit 18d0a6fd2271 ("x86, vdso: Move the 32-bit vdso
+special pages after the text") from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/x86/vdso/vdso32-setup.c
+index e1f220e3ca68,c3ed708e50f4..000000000000
+--- a/arch/x86/vdso/vdso32-setup.c
++++ b/arch/x86/vdso/vdso32-setup.c
+@@@ -36,12 -21,6 +21,10 @@@
+  #define VDSO_DEFAULT	1
+  #endif
+ =20
+ +#ifdef CONFIG_X86_64
+- #define vdso_enabled			sysctl_vsyscall32
+- #define arch_setup_additional_pages	syscall32_setup_pages
+ +extern int sysctl_ldt16;
+ +#endif
+ +
+  /*
+   * Should the kernel map a VDSO page into processes and pass its
+   * address down to glibc upon exec()?
+
+--Sig_/p_mjuqMg51itUvlnSq8w56K
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTfCe1AAoJEMDTa8Ir7ZwVPuwP/2q8ochgYOtVoD//ifHSVOV9
+AASfWB9Kmjocr6phz4SMq0HOTlAgdKZ14flEeIQB7nhCA7L2nUhNbSIx8peiIenF
+iWDi2x/dZR0RBybVYhASJegjWiW8e37nKxCOptPET6DCQqw5ejsrBkoaERGZWtxS
+tlYe4X6k4ZIzFGlJOd4vX4CvdVKsKF3Hjxwe57QgLd0dQt6JxQhbdJxqqzXjtJ5O
+VgrQplqbgM8Yn2sk17LaP565crSpFJ7LwSH+FgZ7rr83BD3S3bWPFCXAxIIzffNm
+8sxWAuHfK2KLXAGbNw+Ldeewy/6Z5ZrP63WLN1b4ugRlqvV4kDfJcxTPSNXAeSix
+1wtI28wtmBLQX/F2oCR5P9IIBr55WowZ6KenYNu69A+f/LFyuFhYxIiGR0csHe8n
+oLcTvZMOkT5aFo2ceQ4EZLsMFc7GIlD3W5meOwwYUzqA7u6+dKVwJOc139TY9zCK
+ylxwYk/BnwRjNPSIDygXtgT0RFzQSmeixKDmshzP3NYCRh69aSPH2VflFKBQoFEF
+uXjWQz6lUEOUxI9ms1JaESk6f8JuRHFjMskg89NBiS7Lu68fosyHarGRV3XZ7kDj
+IHY1oTWxI6LUReXH0Dy95r+hyHzgOjs2/We+hTc3bSKeGP3KeuPA+FUGRMb6ZDQ4
+lXUGUk66QLMLDVOslK4Y
+=WZiL
+-----END PGP SIGNATURE-----
+
+--Sig_/p_mjuqMg51itUvlnSq8w56K--
