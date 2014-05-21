@@ -1,76 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Wed, 21 May 2014 14:12:49 +1000
-Message-ID: <20140521141249.6f87b7e7@canb.auug.org.au>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
+Date: Tue, 20 May 2014 21:24:18 -0700
+Message-ID: <537C2A72.9030503@zytor.com>
+References: <20140521141249.6f87b7e7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/awQA_J5v42zERPUCrAsu9.I"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140521141249.6f87b7e7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/awQA_J5v42zERPUCrAsu9.I
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 05/20/2014 09:12 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in 
+> arch/x86/kernel/ldt.c between commit fa81511bb0bb ("x86-64,
+> modify_ldt: Make support for 16-bit segments a runtime option")
+> from Linus' tree and commit 34273f41d57e ("x86, espfix: Make it
+> possible to disable 16-bit support") from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no
+> action is required).
+> 
 
-Hi all,
+This (and the previous one) is not the correct fix, although it will
+work.  The correct fix is instead to completely revert fa81511bb0bb
+before merging in tip:x86/espfix.
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/kernel/ldt.c between commit fa81511bb0bb ("x86-64, modify_ldt:
-Make support for 16-bit segments a runtime option") from Linus' tree
-and commit 34273f41d57e ("x86, espfix: Make it possible to disable
-16-bit support") from the tip tree.
+Sorry for the inconvenience.  Linus generally doesn't like it when we
+fix up merges for him, or I'd set up a "clean" tip:x86/espfix branch.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/x86/kernel/ldt.c
-index dcbbaa165bde,c37886d759cc..000000000000
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@@ -231,12 -229,7 +231,7 @@@ static int write_ldt(void __user *ptr,=20
-  		}
-  	}
- =20
-- 	/*
-- 	 * On x86-64 we do not support 16-bit segments due to
-- 	 * IRET leaking the high bits of the kernel stack address.
-- 	 */
-- #ifdef CONFIG_X86_64
-- 	if (!ldt_info.seg_32bit && !sysctl_ldt16) {
- -	if (!IS_ENABLED(CONFIG_X86_16BIT) && !ldt_info.seg_32bit) {
-++	if (!IS_ENABLED(CONFIG_X86_16BIT) && !ldt_info.seg_32bit && !sysctl_ldt1=
-6) {
-  		error =3D -EINVAL;
-  		goto out_unlock;
-  	}
-
---Sig_/awQA_J5v42zERPUCrAsu9.I
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTfCfBAAoJEMDTa8Ir7ZwV5MEP/iPaXkfB9NNX2gBXTw9C0Fr4
-5zwzs45j7BkWcfJGyz696i45KJGcqetlJpGmgq1rj8Jtpzrbv5VQJdYVmaEOcM6+
-JBMBiMfW2MsUQzUh8s5eyEpAGeUGBHkGL9VRDr4DcKdUSUoQeSGYN9ftTsrkihbq
-wZO7K3PpiKDTMsMuR/ZOV1WWNJXP6Zf/JvmxqWOpovzMGUUSpcCMgySbQ5RiCvIc
-tM/4+rIPyyhF1/0JARtXrpIbmuY6AUwxIIUKyAk/S+J7tU0wttWjlH/FGyNotkN3
-IW0H6drOJTm8ZnqV+PjxNtQsAEJ6B8eZZS2m3/NSeMA6CIfgVs02r/fI8/MUhXeZ
-Wj0PelUA4Lyrv/YRnnUGOk3NkwY0PvhVRvAnWZ+FP+ISA7X4PDq1OVykoscLzTqa
-tsDBTs8MzXRQ1KSJY6m8YXayX7lGcB1RmNSvHdvSJW320k70rmi1XatyH8pOMRzl
-JrctnEhffoYo0PuS/qpOyT3GITckPEQaSwEJWRKNUn2BQ+AJiGIu4Lguxw60hY9n
-2H+I0mkg2m5h+CUsNy269y1mnMtvFy2mtbcdDmGOrxIEcefqOdCLzZTIyZJ//pTq
-ocf6Irf8tcQeG+OhG4M/jSyODX9J5VyuNg/J/0iSKAr7hLecIh5kUertt7AM1DnX
-N+yP8avKhgFnk9nNg+fe
-=ZEkG
------END PGP SIGNATURE-----
-
---Sig_/awQA_J5v42zERPUCrAsu9.I--
+	-hpa
