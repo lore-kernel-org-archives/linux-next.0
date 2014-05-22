@@ -1,69 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 21
-Date: Fri, 23 May 2014 08:06:18 +1000
-Message-ID: <20140523080618.618a7eb7@canb.auug.org.au>
-References: <20140521175052.26721f72@canb.auug.org.au>
-	<CAHO5Pa0CDvUMdE1XZSzazdEDnt40_4nkkyopsa7Z-Um=MZn82Q@mail.gmail.com>
+Subject: Re: [PATCH] perf: delete unused variable tmp to fix new build
+ warning
+Date: Fri, 23 May 2014 08:10:52 +1000
+Message-ID: <20140523081052.51ffeb1b@canb.auug.org.au>
+References: <1400700787-11759-1-git-send-email-paul.gortmaker@windriver.com>
+	<20140522122142.GA6650@gmail.com>
+	<537DFF4E.4070503@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PJ8kWbv.OSOBEk_uXt2_jwc"; protocol="application/pgp-signature"
+ boundary="Sig_/X.q5Czg3XPzCqbazyXkl6Ch"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41880 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38437 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751243AbaEVWG1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2014 18:06:27 -0400
-In-Reply-To: <CAHO5Pa0CDvUMdE1XZSzazdEDnt40_4nkkyopsa7Z-Um=MZn82Q@mail.gmail.com>
+	id S1751315AbaEVWLA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2014 18:11:00 -0400
+In-Reply-To: <537DFF4E.4070503@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Paul Mackerras <paulus@samba.org>, linux-next@vger.kernel.org
 
---Sig_/PJ8kWbv.OSOBEk_uXt2_jwc
+--Sig_/X.q5Czg3XPzCqbazyXkl6Ch
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi Paul,
 
-On Thu, 22 May 2014 12:45:05 +0200 Michael Kerrisk <mtk.manpages@gmail.com>=
- wrote:
+On Thu, 22 May 2014 09:44:46 -0400 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
 >
-> On Wed, May 21, 2014 at 9:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > You should use "git fetch" as mentioned in the FAQ on the wiki
-> > (see below).
+> Indeed - and I now see that commit when I switch over to my tip repo.
 >=20
-> There does not seem to be anything in the rest of your message about
-> this. Did I miss something?
+> However 12665b35b0b4 is not present in linux-next of yesterday or today
+> (21/22) for some reason.  The tip/auto-latest merged into next has this:
+>=20
+> commit 1974363f7e899dc1b9e6e774dc885c7980a7159b
+> Merge: 67367e2c3f76 7fd44dacdd80
+> Author: Ingo Molnar <mingo@kernel.org>
+> Date:   Thu May 8 12:40:28 2014 +0200
+>=20
+>     Merge branch 'x86/x32'
+>=20
+> as its top commit.  Today's auto-latest in tip shows a similar merge, but
+> with today's date (and it contains Boris' warning fix too.)  Adding Steph=
+en
+> to CC in case it is something related to linux-next infrastructure.
 
-The wiki went away some time ago and so I removed the other reference
-to it, but missed this one.  I will try to revise this message today.
-Thanks for noticing - I sometimes wonder if anyone reads my release
-notes :-)
+Ingo and co like to give the tip tree components some pretty good
+testing before they expose it to linux-next, though usually there is
+not this long a break between updates.  The auto-latest branch has been
+updated for today's linux-next.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/PJ8kWbv.OSOBEk_uXt2_jwc
+--Sig_/X.q5Czg3XPzCqbazyXkl6Ch
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfnTgAAoJEMDTa8Ir7ZwVaLEP+gLQzIl3gTSWrqkZf/TDksYt
-wZhsfxs+5y1k3TTrE+/BD7p9SCspmK+5I4EcWSKuZwT+/tt6qjhZts5puDkJEIAE
-uiNLeTTtKhM0LLZ6e2yfrfPx81yy8hnWiAFEpaBbki48S5z0pZxemWJERK+WGKX2
-m3kc4wzGs6AnPWPpjl4Ha8PTgZpsIfyqtjpwKj9wDAm2/V01RVj6ttFCZjUy9i6D
-wxVf+DTTybxq6EaWLEGC965tIp3NNUoZ98jE0HEMY+wXz/MD6nehAud1ahjlxXVC
-FabHcK/g4GRE7wB5Qv6GqiA8AcXeq3xSllsYpqm0TUK68NMjzO1FnK89BgQI8WdR
-pE6ikylx+O1R0KUTJaDYAniau3IkdHO7brrMejeIolNIMiI8RXQC/oplEZUQJYCa
-ECMXk9tGWcdY+URqNeJNGjhCa5nuKJ0XSYU0XchuVJgvQBYmBWR46+XFfchlcRhN
-d4M1m6ioGsSM2jsPZ1UFLGsDf/FgDj72cW7IFSrsCvOoFkxaI5Sg7S2XfVpU+rRq
-X/pJOJVGlBa2QR53p88JRc0bHA5e/hLaMWAah3YICuiz7r3yI72IG1BPH9iN2d+f
-SEdqSsaKUkJ/Ujibk7D4DA6mTYnqe15+ZT1zGbMf9I++jom1RjtgK+sfVu4U7j0J
-wNcWc+K58WGrg9MaFkiG
-=3+8g
+iQIcBAEBCAAGBQJTfnXyAAoJEMDTa8Ir7ZwVgI0P/1TWmp7D2HS3IW8UBjnc+aBH
+QjV59yCIksVrHROOLipuh+GEog87XjX/wPHyq6JZ/CbdlyubptBelNN4RsG11gKm
+M91K+nkQ9EjE6TKQmy5E9IGNv6XKa0DWuPEIyyNCVecIgeM4Ek1MCuyTkxPqMxqY
+CuO7Kii55efCXEUczyKWYIWecHdPGCgoH/bNAt6byOtCSC3a29B8a+9wc5wAtSX2
+T0LtBdTpQ8Bj0JyfSYMW1SW3FCeb4WUZKlkpKt4Arq1xpGgEk7ZhcC6DNaS/Uyjt
+qfwaHlm9wE3uEQWsHPYFJQDhsa3dpoI2LAQBE9ZZmn2N1Q4iopDecNwJG2cFb+KP
+wpySF9dFNG9ujHKE1Nw8Qr4q20AeBw6zNISAJ+mUVnG+Mz/1sDEvxeIWS9GUYxLq
+PMspznWbctURKRrTJOHiPwPG9CJtuE9Sl3VKNeLIqwP2BrhM4gT+H39n5gMxPAIc
+ofSUCH0myJIK+WJe6JdMk/zfnB6ey5QRF6pj7VxTURYbvNyqxIrYOhHNXrdANR0Z
+VgF5NPlYYMjspABGnHh65qIgtox3wfwNRyHavjgWRsaUDaYGO4Ms2nbTdy3roRIj
+e+ONGxVanjWRyqQwBZW9zyz6wOPQ6ItWYIrmG18de7RMVACpXQGcqrS95RYxSGRI
+f6KNEeR2CvRpct6l7xvC
+=3Xcr
 -----END PGP SIGNATURE-----
 
---Sig_/PJ8kWbv.OSOBEk_uXt2_jwc--
+--Sig_/X.q5Czg3XPzCqbazyXkl6Ch--
