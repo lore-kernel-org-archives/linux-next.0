@@ -1,70 +1,31 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Thu, 22 May 2014 10:58:18 -0600
-Message-ID: <CAErSpo6BK=_4XhPVSjw==R0x2_GR4LHf0sZ4KaX_jVY+CXEh+g@mail.gmail.com>
-References: <20140522140916.1a5f3801@canb.auug.org.au> <alpine.LFD.2.11.1405220845150.1594@denkbrett>
+From: Govindarajulu Varadarajan <_govind@gmx.com>
+Subject: Re: randconfig build error with next-20140522, in
+ drivers/net/ethernet/cisco/enic/enic_main.c
+Date: Fri, 23 May 2014 01:49:22 +0530 (IST)
+Message-ID: <alpine.LNX.2.03.1405230148040.15994@ws.cisco>
+References: <CA+r1ZhgW_Du8VUCmOof-MYnOun8Pq0FYTu4cG5NAOt3vkztWBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.11.1405220845150.1594@denkbrett>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <CA+r1ZhgW_Du8VUCmOof-MYnOun8Pq0FYTu4cG5NAOt3vkztWBw@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, benve@cisco.com, ssujith@cisco.com, _govind@gmx.com, neepatel@cisco.com, netdev <netdev@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, May 22, 2014 at 12:49 AM, Sebastian Ott
-<sebott@linux.vnet.ibm.com> wrote:
-> Hello,
->
-> On Thu, 22 May 2014, Stephen Rothwell wrote:
->> Hi Bjorn,
->>
->> After merging the pci tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->>
->> drivers/pci/pci-sysfs.c: In function 'devspec_show':
->> drivers/pci/pci-sysfs.c:426:22: error: dereferencing pointer to incomplete type
->> drivers/pci/pci-sysfs.c:428:30: error: dereferencing pointer to incomplete type
->> drivers/pci/pci-sysfs.c:429:1: warning: control reaches end of non-void function [-Wreturn-type]
->>
->> Caused by commit da647bb30834 ("PCI: Move Open Firmware devspec
->> attribute to PCI common code").  Presumably a forgotten include.
->>
->> I have used the pci tree from next-20140521 for today.
->
-> Oops, sry for that one - this should fix it:
->
-> pci: fix compile failure on arm
->
-> Fix this compile error introduced by "PCI: Move Open Firmware
-> devspec attribute to PCI common code":
->
-> drivers/pci/pci-sysfs.c: In function 'devspec_show':
-> drivers/pci/pci-sysfs.c:426:22: error: dereferencing pointer to incomplete type
-> drivers/pci/pci-sysfs.c:428:30: error: dereferencing pointer to incomplete type
-> drivers/pci/pci-sysfs.c:429:1: warning: control reaches end of non-void function [-Wreturn-type]
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
 
-I folded this in and updated my "next" branch, thanks!
 
-> ---
->  drivers/pci/pci-sysfs.c | 1 +
->  1 file changed, 1 insertion(+)
+On Thu, 22 May 2014, Jim Davis wrote:
+
+> Building with the attached random configuration file,
 >
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 4e0acef..d6e61ae 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -29,6 +29,7 @@
->  #include <linux/slab.h>
->  #include <linux/vgaarb.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/of.h>
->  #include "pci.h"
+> drivers/built-in.o: In function `enic_poll_msix':
+> enic_main.c:(.text+0x48710a): undefined reference to `__udivdi3'
+> make: *** [vmlinux] Error 1
 >
->  static int sysfs_initialized;  /* = 0 */
-> --
-> 1.8.5.5
->
+
+Looks like 64 bit divide issue. Will look into it.
+
+Thanks for reporting.
+
+Govind
