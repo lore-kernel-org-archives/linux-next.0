@@ -1,63 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the l2-mtd tree
-Date: Thu, 22 May 2014 15:30:47 +1000
-Message-ID: <20140522153047.62c1721c@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Date: Thu, 22 May 2014 15:40:35 +1000
+Message-ID: <20140522154035.76113672@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lLXfgum7c+./6YuadbWZbbD"; protocol="application/pgp-signature"
+ boundary="Sig_/MIvERoTDkxZ_aV0eaX2tfFd"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56487 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48502 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750954AbaEVFa4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2014 01:30:56 -0400
+	id S1750958AbaEVFkm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2014 01:40:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vincenzo Aliberti <vincenzo.aliberti@gmail.com>, Brian Norris <computersforpeace@gmail.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
 
---Sig_/lLXfgum7c+./6YuadbWZbbD
+--Sig_/MIvERoTDkxZ_aV0eaX2tfFd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
+Hi Dave,
 
-After merging the l2-mtd tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/i915_gem.c between commit f93e94efebbe ("drm/i915:
+Fix dynamic allocation of physical handles") from the drm-intel-fixes
+tree and commit c8725f3dc091 ("drm/i915: Do not call retire_requests
+from wait_for_rendering") from the drm tree.
 
-drivers/mtd/lpddr/lpddr2_nvm.c: In function 'ow_enable':
-drivers/mtd/lpddr/lpddr2_nvm.c:149:2: error: implicit declaration of functi=
-on 'writel_relaxed' [-Werror=3Dimplicit-function-declaration]
-  writel_relaxed(build_mr_cfgmask(pcm_data->bus_width) | 0x18,
-  ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 96ba9dd65788 ("mtd: lpddr: add driver for LPDDR2-NVM
-PCM memories").
-
-I have used the l2-mtd tree from next-20140521 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/lLXfgum7c+./6YuadbWZbbD
+diff --cc drivers/gpu/drm/i915/i915_gem.c
+index 3326770c9ed2,e1fa919017e2..000000000000
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@@ -43,7 -43,14 +43,9 @@@ static void i915_gem_object_flush_cpu_w
+  static __must_check int
+  i915_gem_object_wait_rendering(struct drm_i915_gem_object *obj,
+  			       bool readonly);
++ static void
++ i915_gem_object_retire(struct drm_i915_gem_object *obj);
+ =20
+ -static int i915_gem_phys_pwrite(struct drm_device *dev,
+ -				struct drm_i915_gem_object *obj,
+ -				struct drm_i915_gem_pwrite *args,
+ -				struct drm_file *file);
+ -
+  static void i915_gem_write_fence(struct drm_device *dev, int reg,
+  				 struct drm_i915_gem_object *obj);
+  static void i915_gem_object_update_fence(struct drm_i915_gem_object *obj,
+
+--Sig_/MIvERoTDkxZ_aV0eaX2tfFd
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfYuMAAoJEMDTa8Ir7ZwVDmIP/3/Dt+mk/VtF1mBvSiJ2HaeY
-i01ZubtEMZWR39fXMmHK6b33SynEXjnO9o9bR39uN6PFFdgIplutbfbnPpbt2fS+
-Cg13SUlLJQzDF+g1dZKc0cBQmu/I+zdquaEzHfD1cJ8XlfkQdJt1cwBUUseUdAP7
-bXqCrpt9DWvOonasKKpzxROcv/LqrXMavSFgf39mnlAX82kJoudCaG026pAF99Q5
-LSPp8VJ04Un43B1GYCZVBFdH5iFUX7Kehj0OE32IbJKKDpuNhtBTDacZrYgAiH53
-p9UbLaihyvKoLj8yfkaSBfQoX5d2s5WygvumyqXETyyYttvN1oTOUDlKK6vhm075
-XDeok2cZRf696HycAG4yU8Mq1axlBRDxQkO37eqkj5YkhPt2cYzTMMGWt7CePBmR
-w6BUM+sa3bmpLQYLF3i5XOMEhdJ8Oy8B6ArNqNNzBevIbVCUwPK/iiexYViPwq5k
-jjCetGxic8+sGLMHRFHMm1qsRB2g+prxOpxJfrAZBjlFqKiXX5P7KHkAeyEwlGgo
-VlccIjgpL6zRtu+9+yD5D8pI/K91ALf7OWsqF/OYoviIedjh76hRPiP0U04j2GeX
-j3+PlaGcoWAVn0piLVlhMTI+duGdHPEk4H/4xjKAhVVGKysR6ksnofW1HXUWaV+n
-p0vE7wGTEjBPyoN23O9k
-=Um/C
+iQIcBAEBCAAGBQJTfY3YAAoJEMDTa8Ir7ZwVGpUP/RbXhrHuvj79eAfSY44KnV6w
+pZyeHeNk1ziSXBGf3rYynITEufrtbk5Zkdbf/4Ob5zcoqoD7wa9D3o7+/jIGu+wV
+RcsMML2gbCa5RPT/B4VpLRnFvFc+eCjpWg3+r0tmSVCmSEorvMEKqQqwTz4LWlEa
+aYGJjN19+Yp/EUX5TM+nIKSdLVmHoRd0XeLbI6BA4aNQqFUhiPwynSo8On6wStEb
+ICM6tGlhu3MGAnY+FJjYEyB5S1cgSlFOKZl05IylBF3wLfRlIpnMCmsyVtlgR5QP
+R81Swb/zqUxeoibhOt8i75KR2f5CjEqFMXJIf6PxDUh5gW5nyRLI+P9Jiph+N71r
+IX1Zk50T849+HFN1n9ILBHbEkht4sP1qF1uzA82UzAl+4cQ1x8N9yFZHRv7LP458
+7s1teilWcTSIPr+wrrznpGRt/kVktlD/WGabiepFpJDJBnWdto20d7u8iI+A0fc5
+LvBrw1mEfZHr1dt+LlzFw9kn4dI2MOP3wbdgluOvqOe+NMHfq1VAK+zLzgwRSwyN
+g9a7jjFjfYuf7I+v8ZLE2tqumdDMknDb5aBuOC1KgAyMebox9NvO7FWJecfMVlT9
++y75u//IlBgW+zczpqi0HjQrvy1mDk4YeTje+MpGciOFoT92MHgz+JArxb7BLpnb
+tdMle/A3E2E/tdeR5Jj1
+=SwwT
 -----END PGP SIGNATURE-----
 
---Sig_/lLXfgum7c+./6YuadbWZbbD--
+--Sig_/MIvERoTDkxZ_aV0eaX2tfFd--
