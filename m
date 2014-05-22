@@ -1,59 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the arm-soc tree
-Date: Thu, 22 May 2014 12:12:50 +1000
-Message-ID: <20140522121250.0648dfec@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Thu, 22 May 2014 14:09:16 +1000
+Message-ID: <20140522140916.1a5f3801@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eG9faOgSaC+6b8uERwIW38S"; protocol="application/pgp-signature"
+ boundary="Sig_/itG1h2Xxk33wR7lsq+DwrhN"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38927 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54745 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750965AbaEVCM6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 May 2014 22:12:58 -0400
+	id S1750886AbaEVEJ0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2014 00:09:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Ott <sebott@linux.vnet.ibm.com>
 
---Sig_/eG9faOgSaC+6b8uERwIW38S
+--Sig_/itG1h2Xxk33wR7lsq+DwrhN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+Hi Bjorn,
 
-Today's linux-next merge of the renesas tree got a conflict in
-arch/arm/boot/dts/r8a7790-lager.dts between commit 637193b2f22c ("Merge
-branch 'next/boards' into for-next") from the arm-soc tree and commit
-2a3bd7497db1 ("Merge branch 'heads/dt-scif-for-v3.16' into next") from
-the renesas tree.
+After merging the pci tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-I fixed it up (I used the latter since it kept the trailing semi-colon)
-and can carry the fix as necessary (no action is required).
+drivers/pci/pci-sysfs.c: In function 'devspec_show':
+drivers/pci/pci-sysfs.c:426:22: error: dereferencing pointer to incomplete =
+type
+drivers/pci/pci-sysfs.c:428:30: error: dereferencing pointer to incomplete =
+type
+drivers/pci/pci-sysfs.c:429:1: warning: control reaches end of non-void fun=
+ction [-Wreturn-type]
 
+Caused by commit da647bb30834 ("PCI: Move Open Firmware devspec
+attribute to PCI common code").  Presumably a forgotten include.
+
+I have used the pci tree from next-20140521 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/eG9faOgSaC+6b8uERwIW38S
+--Sig_/itG1h2Xxk33wR7lsq+DwrhN
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfV0nAAoJEMDTa8Ir7ZwVWgMP/jiZ1fgVBuelNao/vxaWbtp7
-SGi7T491nw5PO70KjrXqBgPp9W4bQX6HXAUa+2gyh38EefNmZJXJ7ikeaJ1VWG2r
-CLxnNTIeojq5/K9usflVRkWN0pjMWiNsDYSiYqw6TJKuxrQvo4hs2XvHH5qqcptI
-NHhcp34dRC9HcupE2CkqVIjwsF+YM8akQAbHu+og/L7ikgSVZAw7zGpwcFVHNUyQ
-KcUsdq8bjnWbnX6YuDBNw3zwPAxsqdhnMWUFNx8POmjVsDjpg0hR+kdK52aXGPAJ
-R1Q8QHolsv4Ik85vyRzhMxbdA1NRtpEiiGGNJJWmkZGoLHqUXhYw2hNRneoo+NY6
-3qtekC1veeZiLiaAWt+xjlHyLDYf5TiTRerR4Ds2G9ok/Zeu1eTEHv2KS4jP/vSk
-4MYEaCO8hycGEGYIEPXaZ6kwtbDDv0fD1T75CsI7ALWIf0Zx17LgF86geVA4axYJ
-K2064uslc+kQIXWJ/nZ6P5oAV66KEAuYnbraTRgSyKA6pXSYdV7YR01YaJHPHbHe
-QIMQsDX1JEq38ir8D9Y1uwsAtXgvypExxm5oDn2dq0zKWdMiBgpsKdME6cVQlVVi
-GBWOnBBUYNH8anDEVYbNAghn5Vq48cmk67LFLwQHunHlzwy0QCaNibRzR2AvF+2N
-nxz+/hbKk7ZqqTagA3P3
-=VBNc
+iQIcBAEBCAAGBQJTfXhxAAoJEMDTa8Ir7ZwVx5oQAIGGeUjIXRPWmaAkZtSe9OZD
+/7FViOW9KDMzrrs/6hjRJN0NvIrRABxmG9s10YL8KMfCeCUGgSPSUpR6zqcFtH2w
+Wx4k3qYwGv9UoHMwmN3AdzRe6T42kxQgwR2IO/lkfJrgwyWngvcbsC7oADqUepLK
+5RvGIULBm1wzTPWcS9G36pQnyFXB7iX/mUF6Ay7f0pRMm30MCuc1oCP93WT851JB
+urGAYitvwb0GRSwE1C2J4EqFYLRIFAcMJYB8U+Qzx2LLOXVe1qNNSQRT5zkADVuy
+WcKzypkkl4Usi0xyePRas8E0LahKXmelPsyXXrLYpkhgeqyvcdAvU0eB1pQgHUUx
+dvyaPtrkxlrRNorr+pndsWAJqgFbsAMKVPeG0DBFS60E0IUyhOn8evBxz01wDpyO
+/ZCwey3f4eEvU8r+lalm4OGL12eSyUwCAB4ClC/qGybuQod3ww7zieVRUqj6A42V
+VUzAnxOWOwryCnWcJac16K8BpYMRHv1UuIKjunBvF9GCYwg/Dkkxd4T/PMBIPcfD
+Oogbk2aSl+Z41sD75bfjXw9zr+ZAWV5H1JqqAlLp4LQFW25w7ldXUwTpzpGK07JS
+a9IirX24vx0mevLr9Aw87hdDl59TP6xhlE+WQBdKl1xOiCYkxIpYhw5SbgGbIVIT
+nG/6xpFLxhPPZBRi2m8o
+=KYP9
 -----END PGP SIGNATURE-----
 
---Sig_/eG9faOgSaC+6b8uERwIW38S--
+--Sig_/itG1h2Xxk33wR7lsq+DwrhN--
