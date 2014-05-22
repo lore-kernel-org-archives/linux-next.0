@@ -1,80 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] perf: delete unused variable tmp to fix new build
- warning
-Date: Fri, 23 May 2014 08:10:52 +1000
-Message-ID: <20140523081052.51ffeb1b@canb.auug.org.au>
-References: <1400700787-11759-1-git-send-email-paul.gortmaker@windriver.com>
-	<20140522122142.GA6650@gmail.com>
-	<537DFF4E.4070503@windriver.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mfd-lj tree
+Date: Fri, 23 May 2014 00:15:20 +0200
+Message-ID: <CACRpkdY9taDGRKj_ivkcYaHu+Jz8LnVDt-QQSntkwrcBuLitHA@mail.gmail.com>
+References: <20140520180159.3a70193c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/X.q5Czg3XPzCqbazyXkl6Ch"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38437 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751315AbaEVWLA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2014 18:11:00 -0400
-In-Reply-To: <537DFF4E.4070503@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Paul Mackerras <paulus@samba.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140520180159.3a70193c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee.jones@linaro.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/X.q5Czg3XPzCqbazyXkl6Ch
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 20, 2014 at 10:01 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Paul,
-
-On Thu, 22 May 2014 09:44:46 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
+> drivers/mfd/stmpe.c: In function 'stmpe_irq_init':
+> drivers/mfd/stmpe.c:1000:15: error: 'struct stmpe' has no member named 'irq_base'
+>    base = stmpe->irq_base;
+>                ^
 >
-> Indeed - and I now see that commit when I switch over to my tip repo.
->=20
-> However 12665b35b0b4 is not present in linux-next of yesterday or today
-> (21/22) for some reason.  The tip/auto-latest merged into next has this:
->=20
-> commit 1974363f7e899dc1b9e6e774dc885c7980a7159b
-> Merge: 67367e2c3f76 7fd44dacdd80
-> Author: Ingo Molnar <mingo@kernel.org>
-> Date:   Thu May 8 12:40:28 2014 +0200
->=20
->     Merge branch 'x86/x32'
->=20
-> as its top commit.  Today's auto-latest in tip shows a similar merge, but
-> with today's date (and it contains Boris' warning fix too.)  Adding Steph=
-en
-> to CC in case it is something related to linux-next infrastructure.
+> Caused by commit 3ba1d516d5fe ("mfd: stmpe: root out static GPIO and
+> IRQ assignments").
 
-Ingo and co like to give the tip tree components some pretty good
-testing before they expose it to linux-next, though usually there is
-not this long a break between updates.  The auto-latest branch has been
-updated for today's linux-next.
+Some mishap in merging these patches I think. I don't have that
+line in my branch with the latest patches, I'll get the proper
+versions to Lee somehow.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> This is exactly the same error and commit I reported against the gpio
+> tree on Friday.  Why has it come back?
 
---Sig_/X.q5Czg3XPzCqbazyXkl6Ch
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+It is supposed to come through both trees but I took the branch
+out of GPIO after the initial troubles, but it seems to remain in
+MFD.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTfnXyAAoJEMDTa8Ir7ZwVgI0P/1TWmp7D2HS3IW8UBjnc+aBH
-QjV59yCIksVrHROOLipuh+GEog87XjX/wPHyq6JZ/CbdlyubptBelNN4RsG11gKm
-M91K+nkQ9EjE6TKQmy5E9IGNv6XKa0DWuPEIyyNCVecIgeM4Ek1MCuyTkxPqMxqY
-CuO7Kii55efCXEUczyKWYIWecHdPGCgoH/bNAt6byOtCSC3a29B8a+9wc5wAtSX2
-T0LtBdTpQ8Bj0JyfSYMW1SW3FCeb4WUZKlkpKt4Arq1xpGgEk7ZhcC6DNaS/Uyjt
-qfwaHlm9wE3uEQWsHPYFJQDhsa3dpoI2LAQBE9ZZmn2N1Q4iopDecNwJG2cFb+KP
-wpySF9dFNG9ujHKE1Nw8Qr4q20AeBw6zNISAJ+mUVnG+Mz/1sDEvxeIWS9GUYxLq
-PMspznWbctURKRrTJOHiPwPG9CJtuE9Sl3VKNeLIqwP2BrhM4gT+H39n5gMxPAIc
-ofSUCH0myJIK+WJe6JdMk/zfnB6ey5QRF6pj7VxTURYbvNyqxIrYOhHNXrdANR0Z
-VgF5NPlYYMjspABGnHh65qIgtox3wfwNRyHavjgWRsaUDaYGO4Ms2nbTdy3roRIj
-e+ONGxVanjWRyqQwBZW9zyz6wOPQ6ItWYIrmG18de7RMVACpXQGcqrS95RYxSGRI
-f6KNEeR2CvRpct6l7xvC
-=3Xcr
------END PGP SIGNATURE-----
-
---Sig_/X.q5Czg3XPzCqbazyXkl6Ch--
+Yours,
+Linus Walleij
