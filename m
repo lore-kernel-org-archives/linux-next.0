@@ -1,32 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 23 May 2014 10:53:02 +1000
-Message-ID: <20140523105302.50b19c91@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the  tree
+Date: Fri, 23 May 2014 11:20:03 +1000
+Message-ID: <20140523112003.3da4b5f5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//6xRZN62JqvoKW.WMhsyJW="; protocol="application/pgp-signature"
+ boundary="Sig_/BQ.qXnhMtslwnXiMDFAFTb6"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38031 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56158 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750790AbaEWAxO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2014 20:53:14 -0400
+	id S1750823AbaEWBUK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2014 21:20:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>
 
---Sig_//6xRZN62JqvoKW.WMhsyJW=
+--Sig_/BQ.qXnhMtslwnXiMDFAFTb6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-vexpress/v2m.c between commit 86cb8830d957 ("ARM: l2c:
-vexpress: convert to generic l2c OF initialisation") from the arm tree
-and commits 3b9334ac835b ("mfd: vexpress: Convert custom func API to
-regmap") and d2606f81d563 ("ARM: vexpress: Simplify SMP operations for
-DT-powered system") from the arm-soc tree.
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/mach-exynos/exynos.c between commit 46bfc99c9225 ("ARM: l2c:
+exynos: convert to generic l2c OF initialisation (and thereby fix it)")
+from the arm tree and commit 3919fb954b3a ("ARM: EXYNOS: Remove
+exynos_subsys registration") from the samsung tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,118 +34,62 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-vexpress/v2m.c
-index b2fea70d412d,38f4f6f37770..000000000000
---- a/arch/arm/mach-vexpress/v2m.c
-+++ b/arch/arm/mach-vexpress/v2m.c
-@@@ -369,70 -370,10 +370,9 @@@ MACHINE_START(VEXPRESS, "ARM-Versatile=20
-  	.init_machine	=3D v2m_init,
-  MACHINE_END
- =20
-- static struct map_desc v2m_rs1_io_desc __initdata =3D {
-- 	.virtual	=3D V2M_PERIPH,
-- 	.pfn		=3D __phys_to_pfn(0x1c000000),
-- 	.length		=3D SZ_2M,
-- 	.type		=3D MT_DEVICE,
-- };
--=20
-- static int __init v2m_dt_scan_memory_map(unsigned long node, const char *=
-uname,
-- 		int depth, void *data)
-- {
-- 	const char **map =3D data;
--=20
-- 	if (strcmp(uname, "motherboard") !=3D 0)
-- 		return 0;
--=20
-- 	*map =3D of_get_flat_dt_prop(node, "arm,v2m-memory-map", NULL);
--=20
-- 	return 1;
-- }
--=20
-- void __init v2m_dt_map_io(void)
-- {
-- 	const char *map =3D NULL;
--=20
-- 	of_scan_flat_dt(v2m_dt_scan_memory_map, &map);
--=20
-- 	if (map && strcmp(map, "rs1") =3D=3D 0)
-- 		iotable_init(&v2m_rs1_io_desc, 1);
-- 	else
-- 		iotable_init(v2m_io_desc, ARRAY_SIZE(v2m_io_desc));
--=20
-- #if defined(CONFIG_SMP)
-- 	vexpress_dt_smp_map_io();
-- #endif
-- }
--=20
-- void __init v2m_dt_init_early(void)
-- {
-- 	u32 dt_hbi;
--=20
-- 	vexpress_sysreg_of_early_init();
--=20
-- 	/* Confirm board type against DT property, if available */
-- 	if (of_property_read_u32(of_allnodes, "arm,hbi", &dt_hbi) =3D=3D 0) {
-- 		u32 hbi =3D vexpress_get_hbi(VEXPRESS_SITE_MASTER);
--=20
-- 		if (WARN_ON(dt_hbi !=3D hbi))
-- 			pr_warning("vexpress: DT HBI (%x) is not matching "
-- 					"hardware (%x)!\n", dt_hbi, hbi);
-- 	}
--=20
-- 	versatile_sched_clock_init(vexpress_get_24mhz_clock_base(), 24000000);
-- }
--=20
-- static const struct of_device_id v2m_dt_bus_match[] __initconst =3D {
-- 	{ .compatible =3D "simple-bus", },
-- 	{ .compatible =3D "arm,amba-bus", },
-- 	{ .compatible =3D "arm,vexpress,config-bus", },
-- 	{}
-- };
--=20
-  static void __init v2m_dt_init(void)
-  {
-- 	of_platform_populate(NULL, v2m_dt_bus_match, NULL, NULL);
- -	l2x0_of_init(0x00400000, 0xfe0fffff);
-+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+diff --cc arch/arm/mach-exynos/exynos.c
+index afce154f83f9,93507ee98c86..000000000000
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@@ -241,17 -246,22 +243,6 @@@ void __init exynos_init_io(void
+  	exynos_map_io();
   }
  =20
-  static const char * const v2m_dt_match[] __initconst =3D {
-@@@ -442,11 -383,7 +382,9 @@@
- =20
-  DT_MACHINE_START(VEXPRESS_DT, "ARM-Versatile Express")
-  	.dt_compat	=3D v2m_dt_match,
- +	.l2c_aux_val	=3D 0x00400000,
- +	.l2c_aux_mask	=3D 0xfe0fffff,
-- 	.smp		=3D smp_ops(vexpress_smp_ops),
-+ 	.smp		=3D smp_ops(vexpress_smp_dt_ops),
-  	.smp_init	=3D smp_init_ops(vexpress_smp_init_ops),
-- 	.map_io		=3D v2m_dt_map_io,
-- 	.init_early	=3D v2m_dt_init_early,
-  	.init_machine	=3D v2m_dt_init,
-  MACHINE_END
+- struct bus_type exynos_subsys =3D {
+- 	.name		=3D "exynos-core",
+- 	.dev_name	=3D "exynos-core",
+- };
+-=20
+- static int __init exynos_core_init(void)
+ -static int __init exynos4_l2x0_cache_init(void)
+--{
+- 	return subsys_system_register(&exynos_subsys, NULL);
+ -	int ret;
+ -
+ -	ret =3D l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
+ -	if (ret)
+ -		return ret;
+ -
+ -	if (IS_ENABLED(CONFIG_S5P_SLEEP)) {
+ -		l2x0_regs_phys =3D virt_to_phys(&l2x0_saved_regs);
+ -		clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
+ -	}
+ -	return 0;
+--}
+- core_initcall(exynos_core_init);
+ -early_initcall(exynos4_l2x0_cache_init);
+--
+  static void __init exynos_dt_machine_init(void)
+  {
+  	struct device_node *i2c_np;
 
---Sig_//6xRZN62JqvoKW.WMhsyJW=
+--Sig_/BQ.qXnhMtslwnXiMDFAFTb6
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfpv3AAoJEMDTa8Ir7ZwVtmwP+wSJVB3QfKZ0FeTagoj2Q1El
-xLtZHWfRrNokOvFdSFhbfSJ14hA5kcCA65zBwzWk0cWNDxmmSqokGwZaactdozya
-Pn0LdOp36aWMKA/QbM8K0l69WrUFVois+OIN7gC099X6Rb1wT3sNMRNvWgxO5LdL
-oReTYdldsoi6+G1subh3v5wzH5S402GpMvrS3FzRk984xTMR+XfdMgdLeLmYNU4x
-v94k+3AHop7/hON3KYVYhw+lYBMDy8DFQcKM1Uvu8qHXEt/c0C4l0YSz4E0GpHaG
-FKBCPMChPX++az3ktlpQL+SAfWy0/gIPg9AEq3P634fSWZ+auzyleDSPGqkyePKw
-FAzErrbdZnWpDBCrMA2nuKqt81O1XmORKgEOnAPjDVCKjLd/iNofPfudoQKy+9c2
-fbBcN9eavdXqQP4/HknVPiJAcjYvFVEcjqGoOmWgtP+i6DAOxjF7lJi+KMEjgtfN
-L2TN7VV3z0xVmiG7s/HiM3qNAXOuC6LyEDxboa+f1RGo0vszZCjpGhJvymnd33V1
-xk+onngaenj4sWvableKvf7CpJqy2PT0gAKFIIlku/QRfMpeGJtHcnInBScwInUg
-kEFVvdWEOfanou2XXgZvEKA+jAZT225dNqvkgd9lAjl2oTTEeJMk5EjgBYLYfMoL
-So4wFTqDAPZFJVhHxd7j
-=/yUQ
+iQIcBAEBCAAGBQJTfqJIAAoJEMDTa8Ir7ZwV36gP/iwUuYXSJkA5I6uWKpg0enMz
+zQgIaAttEgu4XygXyes7YgUv1oah9q8nbdCBQHuiBhYfGIs+fO0goo2484FEsqix
+wBxyzCoCrTe3lsTQDKYv5oNR138Y4/AqmI82TS5KdJtfyxWwvzwrMwEFRofzv5LH
+rcc+R1uNrpBSemU/3SDlgMcY6PAg/bkLxRUp6QNgL8JZXT6gqgyu/zlB+5qRsqwb
+lzYBr16+S1HbvMZxSWHlRtBFv9nEgjCIk29lZMaJeoy9z2hndFelixBQaoq3Wm59
+D5dHWWSaAJQvkUpnFvxyrpqxquX7mYnxmOauzuLhPFFt5jyWL5mKNmjvWNYcuESr
+VTLhRfkf4Y/OGJQh+t0WEIisDAQNDJ7UCymppDgyi3ObY7TO39JsgMY6FUf6p8Qw
+KPR41Ol2oSuk3crqDr0LZQ4iirZDjlTkmXk0+JnuOEClHFZHscM2C4unmDy+3CG1
+m3TRzsSxgldEIGAkuaZgZYXdqldXjyJ9qfUXlaZmF8siWFK2iiYX2XgCvoUoZl2F
+Dis9KKh5Bs44faFWteE8XI95htgkKBovdjMpN/zfWPUwYlUEo1EsGefcTWCAf80C
+i59aYEOWKC/MX/ziKjdUIW2sEhE7GQV6GxtUqlDtT7RPO/80Cxsz/c4lmgMRccti
+AjWdk5BSpwgGRu9h/ti8
+=NQbG
 -----END PGP SIGNATURE-----
 
---Sig_//6xRZN62JqvoKW.WMhsyJW=--
+--Sig_/BQ.qXnhMtslwnXiMDFAFTb6--
