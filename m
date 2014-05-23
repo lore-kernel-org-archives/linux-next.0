@@ -1,31 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 23 May 2014 10:45:34 +1000
-Message-ID: <20140523104534.467b452b@canb.auug.org.au>
+Date: Fri, 23 May 2014 10:53:02 +1000
+Message-ID: <20140523105302.50b19c91@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fE4MEu.KO8c1fYRI9E7cmaq"; protocol="application/pgp-signature"
+ boundary="Sig_//6xRZN62JqvoKW.WMhsyJW="; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54055 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38031 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750897AbaEWApm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2014 20:45:42 -0400
+	id S1750790AbaEWAxO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2014 20:53:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>
 
---Sig_/fE4MEu.KO8c1fYRI9E7cmaq
+--Sig_//6xRZN62JqvoKW.WMhsyJW=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-mvebu/board-v7.c between commit 8ae2473d96f1 ("ARM: l2c:
-mvebu: convert to generic l2c OF initialisation") from the arm tree and
-commit 5686a1e5aa43 ("bus: mvebu: pass the coherency availability
-information at init time") from the arm-soc tree.
+arch/arm/mach-vexpress/v2m.c between commit 86cb8830d957 ("ARM: l2c:
+vexpress: convert to generic l2c OF initialisation") from the arm tree
+and commits 3b9334ac835b ("mfd: vexpress: Convert custom func API to
+regmap") and d2606f81d563 ("ARM: vexpress: Simplify SMP operations for
+DT-powered system") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,54 +35,118 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-mvebu/board-v7.c
-index 48169caa56ea,01cfce6ac20b..000000000000
---- a/arch/arm/mach-mvebu/board-v7.c
-+++ b/arch/arm/mach-mvebu/board-v7.c
-@@@ -57,8 -75,10 +75,9 @@@ static void __init mvebu_timer_and_clk_
+diff --cc arch/arm/mach-vexpress/v2m.c
+index b2fea70d412d,38f4f6f37770..000000000000
+--- a/arch/arm/mach-vexpress/v2m.c
++++ b/arch/arm/mach-vexpress/v2m.c
+@@@ -369,70 -370,10 +370,9 @@@ MACHINE_START(VEXPRESS, "ARM-Versatile=20
+  	.init_machine	=3D v2m_init,
+  MACHINE_END
+ =20
+- static struct map_desc v2m_rs1_io_desc __initdata =3D {
+- 	.virtual	=3D V2M_PERIPH,
+- 	.pfn		=3D __phys_to_pfn(0x1c000000),
+- 	.length		=3D SZ_2M,
+- 	.type		=3D MT_DEVICE,
+- };
+-=20
+- static int __init v2m_dt_scan_memory_map(unsigned long node, const char *=
+uname,
+- 		int depth, void *data)
+- {
+- 	const char **map =3D data;
+-=20
+- 	if (strcmp(uname, "motherboard") !=3D 0)
+- 		return 0;
+-=20
+- 	*map =3D of_get_flat_dt_prop(node, "arm,v2m-memory-map", NULL);
+-=20
+- 	return 1;
+- }
+-=20
+- void __init v2m_dt_map_io(void)
+- {
+- 	const char *map =3D NULL;
+-=20
+- 	of_scan_flat_dt(v2m_dt_scan_memory_map, &map);
+-=20
+- 	if (map && strcmp(map, "rs1") =3D=3D 0)
+- 		iotable_init(&v2m_rs1_io_desc, 1);
+- 	else
+- 		iotable_init(v2m_io_desc, ARRAY_SIZE(v2m_io_desc));
+-=20
+- #if defined(CONFIG_SMP)
+- 	vexpress_dt_smp_map_io();
+- #endif
+- }
+-=20
+- void __init v2m_dt_init_early(void)
+- {
+- 	u32 dt_hbi;
+-=20
+- 	vexpress_sysreg_of_early_init();
+-=20
+- 	/* Confirm board type against DT property, if available */
+- 	if (of_property_read_u32(of_allnodes, "arm,hbi", &dt_hbi) =3D=3D 0) {
+- 		u32 hbi =3D vexpress_get_hbi(VEXPRESS_SITE_MASTER);
+-=20
+- 		if (WARN_ON(dt_hbi !=3D hbi))
+- 			pr_warning("vexpress: DT HBI (%x) is not matching "
+- 					"hardware (%x)!\n", dt_hbi, hbi);
+- 	}
+-=20
+- 	versatile_sched_clock_init(vexpress_get_24mhz_clock_base(), 24000000);
+- }
+-=20
+- static const struct of_device_id v2m_dt_bus_match[] __initconst =3D {
+- 	{ .compatible =3D "simple-bus", },
+- 	{ .compatible =3D "arm,amba-bus", },
+- 	{ .compatible =3D "arm,vexpress,config-bus", },
+- 	{}
+- };
+-=20
+  static void __init v2m_dt_init(void)
   {
-  	of_clk_init(NULL);
-  	clocksource_of_init();
-+ 	mvebu_scu_enable();
-  	coherency_init();
-- 	BUG_ON(mvebu_mbus_dt_init());
-+ 	BUG_ON(mvebu_mbus_dt_init(coherency_available()));
- -	l2x0_of_init(0, ~0UL);
+- 	of_platform_populate(NULL, v2m_dt_bus_match, NULL, NULL);
+ -	l2x0_of_init(0x00400000, 0xfe0fffff);
++ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+  }
  =20
-  	if (of_machine_is_compatible("marvell,armada375"))
-  		hook_fault_code(16 + 6, armada_375_external_abort_wa, SIGBUS, 0,
-@@@ -121,9 -195,8 +196,10 @@@ static const char * const armada_375_dt
-  };
+  static const char * const v2m_dt_match[] __initconst =3D {
+@@@ -442,11 -383,7 +382,9 @@@
  =20
-  DT_MACHINE_START(ARMADA_375_DT, "Marvell Armada 375 (Device Tree)")
- +	.l2c_aux_val	=3D 0,
- +	.l2c_aux_mask	=3D ~0,
-  	.init_time	=3D mvebu_timer_and_clk_init,
-+ 	.init_machine	=3D mvebu_dt_init,
-  	.restart	=3D mvebu_restart,
-  	.dt_compat	=3D armada_375_dt_compat,
+  DT_MACHINE_START(VEXPRESS_DT, "ARM-Versatile Express")
+  	.dt_compat	=3D v2m_dt_match,
+ +	.l2c_aux_val	=3D 0x00400000,
+ +	.l2c_aux_mask	=3D 0xfe0fffff,
+- 	.smp		=3D smp_ops(vexpress_smp_ops),
++ 	.smp		=3D smp_ops(vexpress_smp_dt_ops),
+  	.smp_init	=3D smp_init_ops(vexpress_smp_init_ops),
+- 	.map_io		=3D v2m_dt_map_io,
+- 	.init_early	=3D v2m_dt_init_early,
+  	.init_machine	=3D v2m_dt_init,
   MACHINE_END
 
---Sig_/fE4MEu.KO8c1fYRI9E7cmaq
+--Sig_//6xRZN62JqvoKW.WMhsyJW=
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfpozAAoJEMDTa8Ir7ZwVoe4P+wQXx3OAJfT5h+BhDXAEtYf2
-+hQkd492AABHO5K+wjbgXRZ5of53N4aRq4dSsNCVkWqT/wZbP5mx1EI0I4UvrjDf
-NKUV9qLllu7NkBYWCvuDNbenvsn5T0rxLh+pJOuag4AtUZhoGBMimPZmnf5atKcX
-eKZEjZdEf2ODCDYaXC6mVPA5BJdaAHQQ0F/4cT8wL2DDJ1QZ7kWZ5NHnPanymhhf
-6wLEbD3z7yh8edcwnxHu0gku0yqtRZPIs/9tlRdyyHq1zJyEbPbUmS760haVGG94
-VcDJSl0F5AA+MiPwPkqV0QTJ5Ii24GPmky1admMVJYQie00Y3T5d9InIy1ezZs5D
-hAdvj7LwqBI7lCC7wW+9OmwpJIcPSqrhw8GwWWfkj+uemDE8QRL/FpdlaFMXtSps
-P657HqS+ftdQmU2wKbZmEaL3XfB1t883vNMFAw2r0L/8+yYBp5hgJAJAJ83ssHbF
-xeTsxHmK7l0CAV2nWdYx0Zi3Q2mThcXDwwlzxjT7ZMJuMccentXMXiwMnBglbaS+
-RRF8v1VxlynTnbaJFq7cpwOcn/8JDIBlFxWbKWIOXBkWvGxkUGsKegqNJZL0Flx0
-rW+qcATtKValBzP/IKGMP1VUCSKaBm/rvz12thAivNie1aMHvS0fII1MT/GylaOd
-OIDDJt4GjmloOG0UG4FR
-=9889
+iQIcBAEBCAAGBQJTfpv3AAoJEMDTa8Ir7ZwVtmwP+wSJVB3QfKZ0FeTagoj2Q1El
+xLtZHWfRrNokOvFdSFhbfSJ14hA5kcCA65zBwzWk0cWNDxmmSqokGwZaactdozya
+Pn0LdOp36aWMKA/QbM8K0l69WrUFVois+OIN7gC099X6Rb1wT3sNMRNvWgxO5LdL
+oReTYdldsoi6+G1subh3v5wzH5S402GpMvrS3FzRk984xTMR+XfdMgdLeLmYNU4x
+v94k+3AHop7/hON3KYVYhw+lYBMDy8DFQcKM1Uvu8qHXEt/c0C4l0YSz4E0GpHaG
+FKBCPMChPX++az3ktlpQL+SAfWy0/gIPg9AEq3P634fSWZ+auzyleDSPGqkyePKw
+FAzErrbdZnWpDBCrMA2nuKqt81O1XmORKgEOnAPjDVCKjLd/iNofPfudoQKy+9c2
+fbBcN9eavdXqQP4/HknVPiJAcjYvFVEcjqGoOmWgtP+i6DAOxjF7lJi+KMEjgtfN
+L2TN7VV3z0xVmiG7s/HiM3qNAXOuC6LyEDxboa+f1RGo0vszZCjpGhJvymnd33V1
+xk+onngaenj4sWvableKvf7CpJqy2PT0gAKFIIlku/QRfMpeGJtHcnInBScwInUg
+kEFVvdWEOfanou2XXgZvEKA+jAZT225dNqvkgd9lAjl2oTTEeJMk5EjgBYLYfMoL
+So4wFTqDAPZFJVhHxd7j
+=/yUQ
 -----END PGP SIGNATURE-----
 
---Sig_/fE4MEu.KO8c1fYRI9E7cmaq--
+--Sig_//6xRZN62JqvoKW.WMhsyJW=--
