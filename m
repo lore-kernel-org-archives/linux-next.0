@@ -1,65 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the target-updates tree
-Date: Fri, 23 May 2014 19:11:59 +1000
-Message-ID: <20140523191159.6a064678@canb.auug.org.au>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: manual merge of the tip tree with the arm64 tree
+Date: Fri, 23 May 2014 10:23:30 +0100
+Message-ID: <20140523092329.GB9252@arm.com>
+References: <20140523164402.37eceb11@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HRLxfAu0877iVtX2bl=vUzF"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:24368 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751178AbaEWJXq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 May 2014 05:23:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20140523164402.37eceb11@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "msalter@redhat.com" <msalter@redhat.com>, Matt Fleming <matt.fleming@intel.com>, Steve Capper <steve.capper@linaro.org>
 
---Sig_/HRLxfAu0877iVtX2bl=vUzF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 23, 2014 at 07:44:02AM +0100, Stephen Rothwell wrote:
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/arm64/mm/mmu.c between commit a501e32430d4 ("arm64: Clean up the
+> default pgprot setting") and 206a2a73a62d ("arm64: mm: Create gigabyte
+> kernel logical mappings where possible") from the arm64 tree and commit
+> d7ecbddf4cae ("arm64: Add function to create identity mappings") from
+> the tip tree.
+> 
+> I fixed it up (maybe - see below - this may not be complete) and can
+> carry the fix as necessary (no action is required).
 
-Hi Nicholas,
+Thanks for fixing it up, it is correct.
 
-After merging the target-updates tree, today's linux-next build
-(powerpc ppc64_defconfig) failed like this:
+(but I now have to go after the arm64 EFI_STUB guys as it breaks non-EFI
+booting).
 
-
-drivers/scsi/virtio_scsi.c: In function 'virtio_scsi_init_hdr_pi':
-drivers/scsi/virtio_scsi.c:491:48: error: dereferencing pointer to incomple=
-te type
-   cmd_pi->pi_bytesout =3D blk_rq_sectors(rq) * bi->tuple_size;
-                                                ^
-drivers/scsi/virtio_scsi.c:493:47: error: dereferencing pointer to incomple=
-te type
-   cmd_pi->pi_bytesin =3D blk_rq_sectors(rq) * bi->tuple_size;
-                                               ^
-
-Caused by commit 4baaa7d589e2 ("virtio-scsi: Enable DIF/DIX modes in
-SCSI host LLD").  A missing include of linux/blkdev.h.  See Rule 1 in
-Documentation/SubmitChecklist.
-
-I have used the target-updates tree from next-20140522 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/HRLxfAu0877iVtX2bl=vUzF
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTfxDkAAoJEMDTa8Ir7ZwVzLwQAIz7x0Sut3JLLgFBRJU4X8ol
-qdVUnnmHfrgKZniUtijqEByqQSZv6nEen4A3nYD273MyqhBeoOsN8oRW5sBD1CTh
-W3eiPn2IjVMIbOPGH8z9eUkRpW2TQzL6fkW6CS/lsS4rc/NU71j4Ed2sY5WsjXbo
-Td1CUJqW6Gj9l9gY4S0IyeuCfHQRL/kcbEPxL3lcrENYbOUrWcK648Y/QyU2oaRq
-BdMrbBZA2QvKmJetxcDwGa59CONRqUuAQRvYeHuyTwUn3XmNaxme0g6AByclnePk
-GIECwZ7uKTVqiqmQ6htZy/IAzmKg+ZzlHoFa/MZfKRb50w54tHDQ6hJ7jNV/+q8S
-JqZu8NtYxpVnCbFVuJV2if5X9EyMyj4+waY0MxIoO0pD3cYn2wuDYirOGjf3Jfce
-ZFob6SxjET7TNf48PkSNUQaRdAsmVz6YEXlO94kHZHL5/R2kmCOl6RznkJjKBPhv
-dlq4WU4nMXYx8D6h/a5RKI4vOJRz9K0DSfEvXjkBVj/LO+9IEmpPg3WlklWigu6I
-8T3SX1n6e5d8Z0YmjLcORjJIbTGmI2UoOAp6lJEVVLIWRiTpwMjWIIZvs2nfHV00
-TqHwRlTHNaog5axUStTfZIKehoYAwZ4mxuYJNT323y323zURzrltUAbUfcHd970x
-xYlvtsXgjfvCDikNHoj9
-=9eCB
------END PGP SIGNATURE-----
-
---Sig_/HRLxfAu0877iVtX2bl=vUzF--
+-- 
+Catalin
