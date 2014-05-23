@@ -1,77 +1,117 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tip tree with the arm64 tree
-Date: Fri, 23 May 2014 16:28:44 +1000
-Message-ID: <20140523162844.05e6ac65@canb.auug.org.au>
+Date: Fri, 23 May 2014 16:44:02 +1000
+Message-ID: <20140523164402.37eceb11@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qoZaKI.ox=EhOqq1DryYSkL"; protocol="application/pgp-signature"
+ boundary="Sig_/o1L+NY9/KG=Pl4znMo5x2aA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53094 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43349 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751902AbaEWG2x (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 May 2014 02:28:53 -0400
+	id S1752010AbaEWGoJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 May 2014 02:44:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>, Matt Fleming <matt.fleming@intel.com>, Steve Capper <steve.capper@linaro.org>
 
---Sig_/qoZaKI.ox=EhOqq1DryYSkL
+--Sig_/o1L+NY9/KG=Pl4znMo5x2aA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
 Today's linux-next merge of the tip tree got a conflict in
-arch/arm64/include/asm/thread_info.h between commit 449f81a4da4d
-("arm64: make a single hook to syscall_trace() for all syscall
-features") from the arm64 tree and commit 842514849a61 ("arm64: Remove
-TIF_POLLING_NRFLAG") from the tip tree.
+arch/arm64/mm/mmu.c between commit a501e32430d4 ("arm64: Clean up the
+default pgprot setting") and 206a2a73a62d ("arm64: mm: Create gigabyte
+kernel logical mappings where possible") from the arm64 tree and commit
+d7ecbddf4cae ("arm64: Add function to create identity mappings") from
+the tip tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (maybe - see below - this may not be complete) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/include/asm/thread_info.h
-index 9c086c63f911,7b8e3a2a00fb..000000000000
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@@ -103,12 -99,7 +102,11 @@@ static inline struct thread_info *curre
-  #define TIF_SIGPENDING		0
-  #define TIF_NEED_RESCHED	1
-  #define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
- +#define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
-  #define TIF_SYSCALL_TRACE	8
- +#define TIF_SYSCALL_AUDIT	9
- +#define TIF_SYSCALL_TRACEPOINT	10
- +#define TIF_SECCOMP		11
-- #define TIF_POLLING_NRFLAG	16
-  #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
-  #define TIF_FREEZE		19
-  #define TIF_RESTORE_SIGMASK	20
+diff --cc arch/arm64/mm/mmu.c
+index 3a729de96f15,4a829a210bb6..000000000000
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@@ -158,6 -192,17 +160,17 @@@ static void __init alloc_init_pmd(pud_
+  {
+  	pmd_t *pmd;
+  	unsigned long next;
++ 	pmdval_t prot_sect;
++ 	pgprot_t prot_pte;
++=20
++ 	if (map_io) {
++ 		prot_sect =3D PMD_TYPE_SECT | PMD_SECT_AF |
++ 			    PMD_ATTRINDX(MT_DEVICE_nGnRE);
++ 		prot_pte =3D __pgprot(PROT_DEVICE_nGnRE);
++ 	} else {
+ -		prot_sect =3D prot_sect_kernel;
+++		prot_sect =3D PROT_SECT_NORMAL_EXEC;
++ 		prot_pte =3D PAGE_KERNEL_EXEC;
++ 	}
+ =20
+  	/*
+  	 * Check for initial section mappings in the pgd/pud and remove them.
+@@@ -195,30 -242,7 +210,30 @@@ static void __init alloc_init_pud(pgd_
+ =20
+  	do {
+  		next =3D pud_addr_end(addr, end);
+ -		alloc_init_pmd(pud, addr, next, phys, map_io);
+ +
+ +		/*
+ +		 * For 4K granule only, attempt to put down a 1GB block
+ +		 */
+ +		if ((PAGE_SHIFT =3D=3D 12) &&
+ +		    ((addr | next | phys) & ~PUD_MASK) =3D=3D 0) {
+ +			pud_t old_pud =3D *pud;
+ +			set_pud(pud, __pud(phys | PROT_SECT_NORMAL_EXEC));
+ +
+ +			/*
+ +			 * If we have an old value for a pud, it will
+ +			 * be pointing to a pmd table that we no longer
+ +			 * need (from swapper_pg_dir).
+ +			 *
+ +			 * Look up the old pmd table and free it.
+ +			 */
+ +			if (!pud_none(old_pud)) {
+ +				phys_addr_t table =3D __pa(pmd_offset(&old_pud, 0));
+ +				memblock_free(table, PAGE_SIZE);
+ +				flush_tlb_all();
+ +			}
+ +		} else {
+- 			alloc_init_pmd(pud, addr, next, phys);
+++			alloc_init_pmd(pud, addr, next, phys, map_io);
+ +		}
+  		phys +=3D next - addr;
+  	} while (pud++, addr =3D next, addr !=3D end);
+  }
 
---Sig_/qoZaKI.ox=EhOqq1DryYSkL
+--Sig_/o1L+NY9/KG=Pl4znMo5x2aA
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfuqhAAoJEMDTa8Ir7ZwV9BkP/0EV8EuvWkiC/PVB8K6a7bHJ
-vlJVVNIJkwD8jLdhjhwTr3S5Dt2NwaBZNt1I5zC4y+ADqOp/RLPlnmK6pKDUUmx+
-BcCPcXOtNcsY4Kr00slmYbJyIa56Qq2ZqF1WUvKzQb+plwfsEVbQGrlxPa8q3BiK
-DQ1a5evq+ToX7xnj1GHdz9FBl8MHomdaYZKUIMJLfJbhY7NfH5WNomcXoWma4mtz
-xVX7Tqxid0ozLXrq8h0dOt0Q+m8jyXtnY8FqWpLoQX5k+8IHPx5kDtsyWfITAPEZ
-U6nRP7k19TzLviVbkzQy9raeNP4emdVQFSKVs9Zr8AjsUqqyzYWgr0VmPxyUL9v6
-1d7LzyG4mxwCVvDm8XIN+0BpmW+Z77+HMy0j06hi+9y/GbHp096SWjwrZms6fl9q
-LeM7INPsMNfptszxfO2yr1NViGz4TE5MvmFwDRmZiwNOZ7nTUNvGx2nTNzny9CmR
-nW4GwwUj6Tgfzdaho09C8YpilaLteO0dAaT35/3ZVbWc7hOXnlg95sLpfKqoz5dk
-6WjZYGqLuwFnA4Gin8zQ5qZX7cFJcs90MHmDnlzLEcc1Wnh9QbVd6SIAYBrwUH6z
-oGqk8MukiqCktghDVc4GEPOReJUvC6GtCyUeh7g5GucDI45+SXdjvmCyV9koQAvG
-mrvADaRLG9/FVFpfjcfq
-=uaWo
+iQIcBAEBCAAGBQJTfu43AAoJEMDTa8Ir7ZwVi3gP/A5Va4NWmxVYekFMSZoEHiGw
+yPRG7i4l3veCE+q31fkSsTG41fxcQH79S1gwHj44dfLtFlfpxqVaFGZZa8S2bxOY
+5UWNA9wTx4WG3dVCaSABPjFijPoDVr593pcW+xJNSnNp1QAKPpli/tV4hTxDE+jV
+AL8hVLKNEuQNH0iVOrm411zLxKIGrkUCX9fGmGl+On679QQCydDd6djzBAlOmDNI
+MvdlBrRpjBATUichzqgwF4yX/paN4P8z52PrWa1+WcHwRqGkDVxhKqIxGps37y3l
+oaeRkY+WxWdiP3YPgykd7hgQq13sq8UymJXjSya7GYuQZsQqIFiAnOfjuEXigS57
+qoEzNzXaFw1aZA+zxO84c5TxLr1r7uwmy6dLK3xJTqO6o9UUEq6dCf4RSmskIT+l
+87xjfc/qE56dwqHjK2D7v4FIKzYxlSlsAnLEZeMTFk8P034mlPHSJ66wl0xeFvPG
+MA2Wh821R77JebxLYULbAPBt8GePiutxvrXzQr1ezCYbDPki1zSate4gDMl2k8aj
+/EYv90uXQJgkpLcRFA1AUSnekHaZx7/6xRtzUctHHq9L2mCGm32Yxa+t09kKwQfo
+V1Yb0iueHl80l/UGEcABHFrZU7i7kxhPQ2EIcVic6T0TaSW5so9UDx8NGizSi/PD
+mpD5cLlt2YK8PairSV/M
+=p85v
 -----END PGP SIGNATURE-----
 
---Sig_/qoZaKI.ox=EhOqq1DryYSkL--
+--Sig_/o1L+NY9/KG=Pl4znMo5x2aA--
