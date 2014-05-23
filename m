@@ -1,78 +1,77 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the samsung tree with the  tree
-Date: Fri, 23 May 2014 11:02:16 +0900
-Message-ID: <017b01cf762b$05576a80$10063f80$@samsung.com>
-References: <20140523112003.3da4b5f5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Fri, 23 May 2014 13:45:55 +1000
+Message-ID: <20140523134555.1ea341db@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZGlYi+g=il30/yl50uO7ued"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:18200 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790AbaEWCCT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 May 2014 22:02:19 -0400
-In-reply-to: <20140523112003.3da4b5f5@canb.auug.org.au>
-Content-language: ko
+Received: from ozlabs.org ([103.22.144.67]:53407 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750985AbaEWDqE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2014 23:46:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Sachin Kamat' <sachin.kamat@linaro.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-Stephen Rothwell wrote:
-> 
-> Hi Kukjin,
-> 
-Hi Stephen,
+--Sig_/ZGlYi+g=il30/yl50uO7ued
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the samsung tree got a conflict in
-> arch/arm/mach-exynos/exynos.c between commit 46bfc99c9225 ("ARM: l2c:
-> exynos: convert to generic l2c OF initialisation (and thereby fix it)")
-> from the arm tree and commit 3919fb954b3a ("ARM: EXYNOS: Remove
-> exynos_subsys registration") from the samsung tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-Looks good to me, thanks.
+Hi all,
 
-- Kukjin
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/wireless/iwlwifi/mvm/mac80211.c between commit 7bacc782270f
+("iwlwifi: mvm: disable beacon filtering") from the wireless tree and
+commit 73e5f2c5d762 ("iwlwifi: remove IWL_UCODE_TLV_FLAGS_BF_UPDATED
+flag") from the net-next tree.
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/mach-exynos/exynos.c
-> index afce154f83f9,93507ee98c86..000000000000
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@@ -241,17 -246,22 +243,6 @@@ void __init exynos_init_io(void
->   	exynos_map_io();
->   }
-> 
-> - struct bus_type exynos_subsys = {
-> - 	.name		= "exynos-core",
-> - 	.dev_name	= "exynos-core",
-> - };
-> -
-> - static int __init exynos_core_init(void)
->  -static int __init exynos4_l2x0_cache_init(void)
-> --{
-> - 	return subsys_system_register(&exynos_subsys, NULL);
->  -	int ret;
->  -
->  -	ret = l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
->  -	if (ret)
->  -		return ret;
->  -
->  -	if (IS_ENABLED(CONFIG_S5P_SLEEP)) {
->  -		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
->  -		clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
->  -	}
->  -	return 0;
-> --}
-> - core_initcall(exynos_core_init);
->  -early_initcall(exynos4_l2x0_cache_init);
-> --
->   static void __init exynos_dt_machine_init(void)
->   {
->   	struct device_node *i2c_np;
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/iwlwifi/mvm/mac80211.c
+index 8735ef1f44ae,97c3deae6552..000000000000
+--- a/drivers/net/wireless/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/iwlwifi/mvm/mac80211.c
+@@@ -826,9 -825,8 +825,8 @@@ static int iwl_mvm_mac_add_interface(st
+  	if (ret)
+  		goto out_remove_mac;
+ =20
+ -	if (!mvm->bf_allowed_vif &&
+ +	if (!mvm->bf_allowed_vif && false &&
+- 	    vif->type =3D=3D NL80211_IFTYPE_STATION && !vif->p2p &&
+- 	    mvm->fw->ucode_capa.flags & IWL_UCODE_TLV_FLAGS_BF_UPDATED){
++ 	    vif->type =3D=3D NL80211_IFTYPE_STATION && !vif->p2p) {
+  		mvm->bf_allowed_vif =3D mvmvif;
+  		vif->driver_flags |=3D IEEE80211_VIF_BEACON_FILTER |
+  				     IEEE80211_VIF_SUPPORTS_CQM_RSSI;
+
+--Sig_/ZGlYi+g=il30/yl50uO7ued
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTfsR3AAoJEMDTa8Ir7ZwViCEP/0Yob9vxseJ4uDZtm0KeLkwx
+K6BlH60z+KZGMS8Ja2uUD6pRxg3EQ/EY41pckpYqMsfq3jdmRRDE/BJxmslsfGDr
+RswBd47K/DNH1dLxsDX09AX3pxb1yEsGD9YAUFFjrx58g9LWQqVAkURV46PZE1tT
+qQYtKuABw1mM7i1+vtqIVpOCVF2fJFcxyvf8iZAWkuWmihjlT95QVY8kmuX2UTsa
+6TpSNZpof4BjLcZctZer8lXWStQSvgegdkU80yIwPtz7DL8d0yMZc4lm5Mk+eN32
+BFMZmktiNZsw+gag1oK70VoKsgWVMxNh4jhhcVhE04V3z++xrc9HylzE1eZLF9jP
+v+z5pIsLyrCCSnLVM5HwVmnQMVFL2ALxDr3GTnOOjpFI1J/xQcT0+AzqC7CrjW8J
+hQAw7Dhtj7cmR2mCElYK0DarHGR8F8LeHjQ7vPr5GIZKHSUNM8/J1p1HvLXnIj7H
+VKoX62hPkcZEzhxlfilAFPdQBhaD2nqcNiP3tfrLHmoPjUNaVaHnEdEhABxAZPbJ
+Q6A9bkNYUyOohZmKxRf6+8Ig9h6lt1KzwWN7dw02ibhSFFG8kZtNP1q0X37ENfEJ
+j9jl/b8Xn5uXGHEmD1POs0IETmjwyXLGrfCseOqBkAlIHLt+THlw+dwSj7WL5zxO
+hBDImYZvMC70HmaXvLt1
+=i4qk
+-----END PGP SIGNATURE-----
+
+--Sig_/ZGlYi+g=il30/yl50uO7ued--
