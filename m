@@ -1,125 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-updates tree with the  tree
-Date: Fri, 23 May 2014 19:07:13 +1000
-Message-ID: <20140523190713.198c5d68@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the target-updates tree
+Date: Fri, 23 May 2014 19:11:59 +1000
+Message-ID: <20140523191159.6a064678@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/E4W2tqCkZ4iaUmGS=69h4k5"; protocol="application/pgp-signature"
+ boundary="Sig_/HRLxfAu0877iVtX2bl=vUzF"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/E4W2tqCkZ4iaUmGS=69h4k5
+--Sig_/HRLxfAu0877iVtX2bl=vUzF
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Nicholas,
 
-Today's linux-next merge of the target-updates tree got a conflict in
-drivers/scsi/virtio_scsi.c between commit b54197c43db8 ("virtio_scsi:
-use cmd_size") from the scsi tree and commit 4baaa7d589e2
-("virtio-scsi: Enable DIF/DIX modes in SCSI host LLD") from the
-target-updates tree.
+After merging the target-updates tree, today's linux-next build
+(powerpc ppc64_defconfig) failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
 
+drivers/scsi/virtio_scsi.c: In function 'virtio_scsi_init_hdr_pi':
+drivers/scsi/virtio_scsi.c:491:48: error: dereferencing pointer to incomple=
+te type
+   cmd_pi->pi_bytesout =3D blk_rq_sectors(rq) * bi->tuple_size;
+                                                ^
+drivers/scsi/virtio_scsi.c:493:47: error: dereferencing pointer to incomple=
+te type
+   cmd_pi->pi_bytesin =3D blk_rq_sectors(rq) * bi->tuple_size;
+                                               ^
+
+Caused by commit 4baaa7d589e2 ("virtio-scsi: Enable DIF/DIX modes in
+SCSI host LLD").  A missing include of linux/blkdev.h.  See Rule 1 in
+Documentation/SubmitChecklist.
+
+I have used the target-updates tree from next-20140522 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/scsi/virtio_scsi.c
-index d4727b339474,cc634b0e8f04..000000000000
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@@ -456,9 -537,10 +497,10 @@@ static int virtscsi_queuecommand(struc
-  				 struct virtio_scsi_vq *req_vq,
-  				 struct scsi_cmnd *sc)
-  {
- -	struct virtio_scsi_cmd *cmd;
- -	int ret, req_size;
- -
-++	int req_size;
-  	struct Scsi_Host *shost =3D virtio_scsi_host(vscsi->vdev);
- +	struct virtio_scsi_cmd *cmd =3D scsi_cmd_priv(sc);
- +
-  	BUG_ON(scsi_sg_count(sc) > shost->sg_tablesize);
- =20
-  	/* TODO: check feature bit and fail if unsupported?  */
-@@@ -467,27 -549,34 +509,25 @@@
-  	dev_dbg(&sc->device->sdev_gendev,
-  		"cmd %p CDB: %#02x\n", sc, sc->cmnd[0]);
- =20
- -	ret =3D SCSI_MLQUEUE_HOST_BUSY;
- -	cmd =3D mempool_alloc(virtscsi_cmd_pool, GFP_ATOMIC);
- -	if (!cmd)
- -		goto out;
- -
-  	memset(cmd, 0, sizeof(*cmd));
-  	cmd->sc =3D sc;
-- 	cmd->req.cmd =3D (struct virtio_scsi_cmd_req){
-- 		.lun[0] =3D 1,
-- 		.lun[1] =3D sc->device->id,
-- 		.lun[2] =3D (sc->device->lun >> 8) | 0x40,
-- 		.lun[3] =3D sc->device->lun & 0xff,
-- 		.tag =3D (unsigned long)sc,
-- 		.task_attr =3D VIRTIO_SCSI_S_SIMPLE,
-- 		.prio =3D 0,
-- 		.crn =3D 0,
-- 	};
- =20
-  	BUG_ON(sc->cmd_len > VIRTIO_SCSI_CDB_SIZE);
-- 	memcpy(cmd->req.cmd.cdb, sc->cmnd, sc->cmd_len);
- =20
-- 	if (virtscsi_kick_cmd(req_vq, cmd,
-- 			      sizeof cmd->req.cmd, sizeof cmd->resp.cmd,
-+ 	if (virtio_has_feature(vscsi->vdev, VIRTIO_SCSI_F_T10_PI)) {
-+ 		virtio_scsi_init_hdr_pi(&cmd->req.cmd_pi, sc);
-+ 		memcpy(cmd->req.cmd_pi.cdb, sc->cmnd, sc->cmd_len);
-+ 		req_size =3D sizeof(cmd->req.cmd_pi);
-+ 	} else {
-+ 		virtio_scsi_init_hdr(&cmd->req.cmd, sc);
-+ 		memcpy(cmd->req.cmd.cdb, sc->cmnd, sc->cmd_len);
-+ 		req_size =3D sizeof(cmd->req.cmd);
-+ 	}
-+=20
-+ 	if (virtscsi_kick_cmd(req_vq, cmd, req_size, sizeof(cmd->resp.cmd),
- -			      GFP_ATOMIC) =3D=3D 0)
- -		ret =3D 0;
- -	else
- -		mempool_free(cmd, virtscsi_cmd_pool);
- -
- -out:
- -	return ret;
- +			      GFP_ATOMIC) !=3D 0)
- +		return SCSI_MLQUEUE_HOST_BUSY;
- +	return 0;
-  }
- =20
-  static int virtscsi_queuecommand_single(struct Scsi_Host *sh,
-
---Sig_/E4W2tqCkZ4iaUmGS=69h4k5
+--Sig_/HRLxfAu0877iVtX2bl=vUzF
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfw/GAAoJEMDTa8Ir7ZwVfBUP/05EGZqhRXoKdcC7kbb8ZmkV
-RaOIHoGCtUMFCyX99orF6yPK7Q9F6kh8vU0KTAKSSmebYHMzUCF6fhznOYS6Lnv5
-mo69ftjgk5GtvwdZNU954X0sjH7RtrssoTcFIVLm6f9q+kkL98dMMYk/WfgJqafI
-o0hzwKzNhSnbYwxnfaA0mjHzVdzF6hv7Cd84BxqUPGWNIV+HIl1rOeAr8CC4uAgD
-V0RFeBBj1+gVA8jjdRJCV7P8CoCvCkg+K4BIQXFDkHeDdNjaT7sL2EjqWKgyrGbb
-+omkGPmiisUiMdpg0aXZh947dNeXYk1S+FEtoDEdt7yZRWJFJq4VN63fpZeZNChN
-MNCRCYEk/0feuHvH5Xzhi28dtAuHOkalcOrI3WDKQKr+0p32FliCQgctGWxSgNoR
-anoqkpqNMrdHj5NIIt0pGqYudlOcQdnLnDWbpFp6ggbtC9LTph3N2xx9eIty043P
-nvvMqLhsTRVcUCk6dvSmt5z1GCDA92unHuAgInOijPmXNN7qd5dR3DZqTh/aV8Jv
-5VcYarhOWkXa5YFuOlwPFI0cUx5etj/CFwlV6SX/Ku5fqG4hAXuKbq7hs+wH0w6G
-Z359VTBZNl6MNIK5Os7lMCYVR1GRHhD2EPFU3fl3qk+projDGio929TzTYdfadzt
-VA7kPs1YJpqzv9NauSF2
-=grno
+iQIcBAEBCAAGBQJTfxDkAAoJEMDTa8Ir7ZwVzLwQAIz7x0Sut3JLLgFBRJU4X8ol
+qdVUnnmHfrgKZniUtijqEByqQSZv6nEen4A3nYD273MyqhBeoOsN8oRW5sBD1CTh
+W3eiPn2IjVMIbOPGH8z9eUkRpW2TQzL6fkW6CS/lsS4rc/NU71j4Ed2sY5WsjXbo
+Td1CUJqW6Gj9l9gY4S0IyeuCfHQRL/kcbEPxL3lcrENYbOUrWcK648Y/QyU2oaRq
+BdMrbBZA2QvKmJetxcDwGa59CONRqUuAQRvYeHuyTwUn3XmNaxme0g6AByclnePk
+GIECwZ7uKTVqiqmQ6htZy/IAzmKg+ZzlHoFa/MZfKRb50w54tHDQ6hJ7jNV/+q8S
+JqZu8NtYxpVnCbFVuJV2if5X9EyMyj4+waY0MxIoO0pD3cYn2wuDYirOGjf3Jfce
+ZFob6SxjET7TNf48PkSNUQaRdAsmVz6YEXlO94kHZHL5/R2kmCOl6RznkJjKBPhv
+dlq4WU4nMXYx8D6h/a5RKI4vOJRz9K0DSfEvXjkBVj/LO+9IEmpPg3WlklWigu6I
+8T3SX1n6e5d8Z0YmjLcORjJIbTGmI2UoOAp6lJEVVLIWRiTpwMjWIIZvs2nfHV00
+TqHwRlTHNaog5axUStTfZIKehoYAwZ4mxuYJNT323y323zURzrltUAbUfcHd970x
+xYlvtsXgjfvCDikNHoj9
+=9eCB
 -----END PGP SIGNATURE-----
 
---Sig_/E4W2tqCkZ4iaUmGS=69h4k5--
+--Sig_/HRLxfAu0877iVtX2bl=vUzF--
