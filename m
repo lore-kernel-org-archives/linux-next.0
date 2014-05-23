@@ -1,117 +1,107 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm64 tree
-Date: Fri, 23 May 2014 16:44:02 +1000
-Message-ID: <20140523164402.37eceb11@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Fri, 23 May 2014 17:14:12 +1000
+Message-ID: <20140523171412.125adaa6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/o1L+NY9/KG=Pl4znMo5x2aA"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43349 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752010AbaEWGoJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 May 2014 02:44:09 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>, Matt Fleming <matt.fleming@intel.com>, Steve Capper <steve.capper@linaro.org>
+ boundary="Sig_/iP4qN7/ye5fu4ZKUxRFHMdk"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/o1L+NY9/KG=Pl4znMo5x2aA
+--Sig_/iP4qN7/ye5fu4ZKUxRFHMdk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/arm64/mm/mmu.c between commit a501e32430d4 ("arm64: Clean up the
-default pgprot setting") and 206a2a73a62d ("arm64: mm: Create gigabyte
-kernel logical mappings where possible") from the arm64 tree and commit
-d7ecbddf4cae ("arm64: Add function to create identity mappings") from
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+In file included from arch/arm/include/asm/outercache.h:24:0,
+                 from arch/arm/include/asm/barrier.h:5,
+                 from arch/arm/include/asm/bitops.h:28,
+                 from include/linux/bitops.h:33,
+                 from include/linux/kernel.h:10,
+                 from include/asm-generic/bug.h:13,
+                 from arch/arm/include/asm/bug.h:61,
+                 from arch/arm/include/asm/div64.h:63,
+                 from include/linux/math64.h:5,
+                 from include/linux/jiffies.h:4,
+                 from init/calibrate.c:7:
+include/linux/bug.h:91:47: warning: 'struct bug_entry' declared inside para=
+meter list [enabled by default]
+include/linux/bug.h:91:47: warning: its scope is only this definition or de=
+claration, which is probably not what you want [enabled by default]
+include/linux/bug.h: In function 'is_warning_bug':
+include/linux/bug.h:93:12: error: dereferencing pointer to incomplete type
+
+ ... and many, many more ...
+
+Probably caused by commit 030d0178bdbd ("arch,arm: Convert
+smp_mb__*()") which added an include of asm/barrier.h to
+arch/arm/include/asm/bitops.h.  This has interacted with commit
+59a3bc6d3343 ("ARM: outer cache: add WARN_ON() to outer_disable()")
+from the arm tree, which adds an include of linux/bug.h to
+arch/arm/include/asm/outercache.h.
+
+I added the below merge fix patch.  Russell, this should be applied to
+your tree directly.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 23 May 2014 17:10:12 +1000
+Subject: [PATCH] ARM: outer cache: no need for bug.h in outercache.h
+
+This fixes a cricular include dependency when combined with commits from
 the tip tree.
 
-I fixed it up (maybe - see below - this may not be complete) and can
-carry the fix as necessary (no action is required).
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/include/asm/outercache.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/include/asm/outercache.h b/arch/arm/include/asm/outer=
+cache.h
+index eaa8a28c6871..891a56b35bcf 100644
+--- a/arch/arm/include/asm/outercache.h
++++ b/arch/arm/include/asm/outercache.h
+@@ -21,7 +21,6 @@
+ #ifndef __ASM_OUTERCACHE_H
+ #define __ASM_OUTERCACHE_H
+=20
+-#include <linux/bug.h>
+ #include <linux/types.h>
+=20
+ struct outer_cache_fns {
+--=20
+2.0.0.rc4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/mm/mmu.c
-index 3a729de96f15,4a829a210bb6..000000000000
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@@ -158,6 -192,17 +160,17 @@@ static void __init alloc_init_pmd(pud_
-  {
-  	pmd_t *pmd;
-  	unsigned long next;
-+ 	pmdval_t prot_sect;
-+ 	pgprot_t prot_pte;
-+=20
-+ 	if (map_io) {
-+ 		prot_sect =3D PMD_TYPE_SECT | PMD_SECT_AF |
-+ 			    PMD_ATTRINDX(MT_DEVICE_nGnRE);
-+ 		prot_pte =3D __pgprot(PROT_DEVICE_nGnRE);
-+ 	} else {
- -		prot_sect =3D prot_sect_kernel;
-++		prot_sect =3D PROT_SECT_NORMAL_EXEC;
-+ 		prot_pte =3D PAGE_KERNEL_EXEC;
-+ 	}
- =20
-  	/*
-  	 * Check for initial section mappings in the pgd/pud and remove them.
-@@@ -195,30 -242,7 +210,30 @@@ static void __init alloc_init_pud(pgd_
- =20
-  	do {
-  		next =3D pud_addr_end(addr, end);
- -		alloc_init_pmd(pud, addr, next, phys, map_io);
- +
- +		/*
- +		 * For 4K granule only, attempt to put down a 1GB block
- +		 */
- +		if ((PAGE_SHIFT =3D=3D 12) &&
- +		    ((addr | next | phys) & ~PUD_MASK) =3D=3D 0) {
- +			pud_t old_pud =3D *pud;
- +			set_pud(pud, __pud(phys | PROT_SECT_NORMAL_EXEC));
- +
- +			/*
- +			 * If we have an old value for a pud, it will
- +			 * be pointing to a pmd table that we no longer
- +			 * need (from swapper_pg_dir).
- +			 *
- +			 * Look up the old pmd table and free it.
- +			 */
- +			if (!pud_none(old_pud)) {
- +				phys_addr_t table =3D __pa(pmd_offset(&old_pud, 0));
- +				memblock_free(table, PAGE_SIZE);
- +				flush_tlb_all();
- +			}
- +		} else {
-- 			alloc_init_pmd(pud, addr, next, phys);
-++			alloc_init_pmd(pud, addr, next, phys, map_io);
- +		}
-  		phys +=3D next - addr;
-  	} while (pud++, addr =3D next, addr !=3D end);
-  }
-
---Sig_/o1L+NY9/KG=Pl4znMo5x2aA
+--Sig_/iP4qN7/ye5fu4ZKUxRFHMdk
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfu43AAoJEMDTa8Ir7ZwVi3gP/A5Va4NWmxVYekFMSZoEHiGw
-yPRG7i4l3veCE+q31fkSsTG41fxcQH79S1gwHj44dfLtFlfpxqVaFGZZa8S2bxOY
-5UWNA9wTx4WG3dVCaSABPjFijPoDVr593pcW+xJNSnNp1QAKPpli/tV4hTxDE+jV
-AL8hVLKNEuQNH0iVOrm411zLxKIGrkUCX9fGmGl+On679QQCydDd6djzBAlOmDNI
-MvdlBrRpjBATUichzqgwF4yX/paN4P8z52PrWa1+WcHwRqGkDVxhKqIxGps37y3l
-oaeRkY+WxWdiP3YPgykd7hgQq13sq8UymJXjSya7GYuQZsQqIFiAnOfjuEXigS57
-qoEzNzXaFw1aZA+zxO84c5TxLr1r7uwmy6dLK3xJTqO6o9UUEq6dCf4RSmskIT+l
-87xjfc/qE56dwqHjK2D7v4FIKzYxlSlsAnLEZeMTFk8P034mlPHSJ66wl0xeFvPG
-MA2Wh821R77JebxLYULbAPBt8GePiutxvrXzQr1ezCYbDPki1zSate4gDMl2k8aj
-/EYv90uXQJgkpLcRFA1AUSnekHaZx7/6xRtzUctHHq9L2mCGm32Yxa+t09kKwQfo
-V1Yb0iueHl80l/UGEcABHFrZU7i7kxhPQ2EIcVic6T0TaSW5so9UDx8NGizSi/PD
-mpD5cLlt2YK8PairSV/M
-=p85v
+iQIcBAEBCAAGBQJTfvVNAAoJEMDTa8Ir7ZwVLlYP/jxHoUQMc8WqenfuYvJt4Mwn
+lagkZ1lhFSAMI77TpiBILsj+srJZnTBAvtcdRA/WdS20AboM3sD6x+2B84o8PgOX
+vbjx7aSsESqKkhYIKqom6A8JmjXaIAzazvhsvCZUOxhLmAA5S7thkN9Ijjje19yR
+8wzyEWcZORn8PYtBN41iweQPUg5IjfkZMiMuieQSKeJOfqNz0IoEtB7+7w7T+Uqe
+g9Iso7JU16WQqlObfg6nLiUDN76VeYq8YjxQHkJxwLYf4iwFGwoWzxXgEFIGH45t
+JsBg1VXvp4q6GR4M0Y7ZHif3DgBg6LQMFlLHoyeUdUHNn53/Ig2exl0eCHoP7W4s
+2Qp/i/qJyNWsEw12eq/QmBDbCWY0wv+htaxPavuFd3D/mqT7qIY1RLhq4uWD7NdX
+IRwCyKjFzsOws8QS7gLP55kUTsb2x9uE9/IH2JTPqhhKeKMAO3cFYEeUhjrzZMeG
+3+I8WSKUXa8anipm+VN5YyxGKMcN2B95zkYx86BBcI4SFdHpR6Eu/yeRWDO2qGYr
+EixYUy/cyowm5Q3FjupB2yzWjUsaJEuDXafBmnJNN59NOt9+6PCNpenw7hccRO1d
+HfG9OTfwHKFM2avo7GTuj8Oc/treG6j7gXM7Z0EeUUyJ9fE6W7qxkSod4X3Kv+ab
+UNWHgvGbNNVLyp80JeGi
+=XDpg
 -----END PGP SIGNATURE-----
 
---Sig_/o1L+NY9/KG=Pl4znMo5x2aA--
+--Sig_/iP4qN7/ye5fu4ZKUxRFHMdk--
