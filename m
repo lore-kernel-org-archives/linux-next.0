@@ -1,86 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 23 May 2014 13:46:02 +1000
-Message-ID: <20140523134602.4dac2f7c@canb.auug.org.au>
+Subject: linux-next: manual merge of the mmc tree with the slave-dma tree
+Date: Fri, 23 May 2014 15:23:10 +1000
+Message-ID: <20140523152310.05323045@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cX6KlGT21T5VfHXOv/cexa="; protocol="application/pgp-signature"
+ boundary="Sig_/jtCCf/dYflbXQurqZD24aRV"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54633 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57393 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751430AbaEWDqF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2014 23:46:05 -0400
+	id S1751598AbaEWFXS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 May 2014 01:23:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Yasevich <vyasevic@redhat.com>, Veaceslav Falico <vfalico@gmail.com>
+To: Chris Ball <chris@printf.net>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Balaji T K <balajitk@ti.com>
 
---Sig_/cX6KlGT21T5VfHXOv/cexa=
+--Sig_/jtCCf/dYflbXQurqZD24aRV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Chris,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/bonding/bond_alb.c between commit d0c21d43a5a1 ("bonding:
-Send ALB learning packets using the right source") from the net tree
-and commit 8557cd74ca8a ("bonding: replace SLAVE_IS_OK() with
-bond_slave_can_tx()") from the net-next tree.
+Today's linux-next merge of the mmc tree got a conflict in
+include/linux/omap-dma.h between commit a8246fedacad ("dmaengine: omap:
+hide filter_fn for built-in drivers") from the slave-dma tree and
+commit ee526d515ad1 ("mmc: omap_hsmmc: split omap-dma header file")
+from the mmc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I effectively applied the former commit to the new file)
+and can carry the fix as necessary (no action is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 23 May 2014 15:19:48 +1000
+Subject: [PATCH] dmaengine: omap: fix for code movement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/omap-dmaengine.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/omap-dmaengine.h b/include/linux/omap-dmaengine.h
+index 2b0b6aa01922..8e6906c72e90 100644
+--- a/include/linux/omap-dmaengine.h
++++ b/include/linux/omap-dmaengine.h
+@@ -10,7 +10,7 @@
+=20
+ struct dma_chan;
+=20
+-#if defined(CONFIG_DMA_OMAP) || defined(CONFIG_DMA_OMAP_MODULE)
++#if defined(CONFIG_DMA_OMAP) || (defined(CONFIG_DMA_OMAP_MODULE) && define=
+d(MODULE))
+ bool omap_dma_filter_fn(struct dma_chan *, void *);
+ #else
+ static inline bool omap_dma_filter_fn(struct dma_chan *c, void *d)
+--=20
+2.0.0.rc4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/bonding/bond_alb.c
-index 93580a47cc54,03e0bcade234..000000000000
---- a/drivers/net/bonding/bond_alb.c
-+++ b/drivers/net/bonding/bond_alb.c
-@@@ -1117,8 -1106,8 +1117,8 @@@ static void alb_fasten_mac_swap(struct=20
-  	ASSERT_RTNL();
- =20
-  	/* fasten the change in the switch */
-- 	if (SLAVE_IS_OK(slave1)) {
-+ 	if (bond_slave_can_tx(slave1)) {
- -		alb_send_learning_packets(slave1, slave1->dev->dev_addr);
- +		alb_send_learning_packets(slave1, slave1->dev->dev_addr, false);
-  		if (bond->alb_info.rlb_enabled) {
-  			/* inform the clients that the mac address
-  			 * has changed
-@@@ -1129,8 -1118,8 +1129,8 @@@
-  		disabled_slave =3D slave1;
-  	}
- =20
-- 	if (SLAVE_IS_OK(slave2)) {
-+ 	if (bond_slave_can_tx(slave2)) {
- -		alb_send_learning_packets(slave2, slave2->dev->dev_addr);
- +		alb_send_learning_packets(slave2, slave2->dev->dev_addr, false);
-  		if (bond->alb_info.rlb_enabled) {
-  			/* inform the clients that the mac address
-  			 * has changed
-
---Sig_/cX6KlGT21T5VfHXOv/cexa=
+--Sig_/jtCCf/dYflbXQurqZD24aRV
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTfsR7AAoJEMDTa8Ir7ZwVI0QQAJTr9nAQ+Q86+HzYZ3ni4vJi
-jR/U67DFNEFdcTNZ63lKgOume4weJT98x+/sLMNTeCJRJg00K1M63h34y1KL/41Q
-wazjdX9ma+l1BtVBO2Bo4Hy9SZINZ5nuXrm3MCRqe0utn7KWAz0GBkZ2UA3fPC3h
-QfsTk3vYa1Dnryq2NH3BPRJGFZcO0gxhCEkdzngnusteXzL6WygrQxB4aseegpIQ
-0VvsU36oF8LzNxcfM0+lKlgHQpYioMw8a6lLIjdfG4dQSmjjpfaSLjKzenPfixMt
-/Qr4KaxGL0l1s5uCxVcsK7aOPo2TsalM4OxIA2G/ObU2k2HFrO956JJSaBj1E04A
-GWUdGrZnwleNpY7wxeUketrtVE6pWlvCEFB9XvFxhW6QIfWHZkGLro5N7dKlHDyE
-0Hnkai15rC2RZrSe84DZXgkC4WZrw7OPQf5TjRWt/MInlh/SYus9TvV/C0RZWg/Y
-p3JxcLpu3g+PjLQ+U+klYq307QsfmJOihDV9Y2lkiQtLhhYD63hexMWsvwzo4jGl
-7ISBxZ9colBYp8ookSAJROfdxxqnrOoBFz0vEzScuFelCmXkgJ4w9R9iT4LnHZTn
-WjAyjNMuQTcKWbrMXRexSXk8Cn/C/99bUHC2ogLOdzWIuavOPjE6FoJ1x9XzKoRL
-frMXC9IV6MBLhC7FIDEF
-=HtIo
+iQIbBAEBCAAGBQJTfttEAAoJEMDTa8Ir7ZwVeRIP+I9y1wzGwF3HDrL8UAeApWD0
+HJax0H5mX+dGn8DeORmylM+hCucI3FV4gKv6GfJ25hRnIPMyZzLKC77aU0Hw8/Eh
+Ir6OjBhim2B7IEHiMlMpaBlROAXwoUmwv8zRlJza3S0lkr3QxhwVv0xfHsyVbX1f
+Twu0UevQ7nkSU7y/QkkPinwer+sHiIYpsISBRP7rT4WQYqVODP8gBoYIOHiQKcu0
+dIp1MyribpLFg46DimQb0Qn2wW7zZhpk8iJuOiHII63AFbfWu4B0iB/SF/k6z9+R
+wbByvjYgVKoPFWqtgpcyEqSmxvjN3Gq4E1qvWQYdoQQlbOnifZr7EG3iBA5mSQDk
+weZHEtcAwAilZ5420x/pyJgshV/c31v3ZvIIJpPWuTBrdUJ2DjWFBEIwinHtnutS
+nVxsUF5Iisq+h71a6qhFYE3nLKqm4vWmRdVt1pBInrA+Z4UCF845Rwct6rHg+p+3
+emjTQjYQx4leKSD10jkZxZGPaga6yP2ZMDVq1o1/9JtIbV+vg5NSvU5DoptqcVr0
+mSx8wyUUlQrOyY+PaQvHHcyMo1suo/Whi0RFcqUkTa0HE2KGU/W3avv7BUJudHy8
+eTEsLr/Z53IfADVRD+w9h2pHnUSNSOo17MwyP0L0B/mr07s9IhvG9mrEiapYfKpn
+1J9JGP622NAL+iuLn80=
+=83FN
 -----END PGP SIGNATURE-----
 
---Sig_/cX6KlGT21T5VfHXOv/cexa=--
+--Sig_/jtCCf/dYflbXQurqZD24aRV--
