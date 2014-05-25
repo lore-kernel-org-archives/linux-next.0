@@ -1,68 +1,118 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH linux-next] DRM: Armada: update dma_buf_export use
-Date: Sun, 25 May 2014 23:54:35 +0100
-Message-ID: <20140525225435.GZ3693@n2100.arm.linux.org.uk>
+Date: Mon, 26 May 2014 09:06:23 +1000
+Message-ID: <20140526090623.77186cdf@canb.auug.org.au>
 References: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
- <CANq1E4QdGeHeuCu9LvPkbGZX5C+ax4fWVqq4kJ5wMUBx5uWZrQ@mail.gmail.com>
+	<CANq1E4QdGeHeuCu9LvPkbGZX5C+ax4fWVqq4kJ5wMUBx5uWZrQ@mail.gmail.com>
+	<20140525225435.GZ3693@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CANq1E4QdGeHeuCu9LvPkbGZX5C+ax4fWVqq4kJ5wMUBx5uWZrQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Vincent =?iso-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hUaVbygK9B_rEKH.8w2c=w+"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36808 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751027AbaEYXGb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 May 2014 19:06:31 -0400
+In-Reply-To: <20140525225435.GZ3693@n2100.arm.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: David Herrmann <dh.herrmann@gmail.com>, Vincent =?UTF-8?B?U3RlaGzDqQ==?= <vincent.stehle@laposte.net>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, David Airlie <airlied@linux.ie>, Maarten Lankhorst <maarten.lankhorst@canonical.com>, Sumit Semwal <sumit.semwal@linaro.org>
 
-T24gU3VuLCBNYXkgMjUsIDIwMTQgYXQgMDI6MDg6NDhQTSArMDIwMCwgRGF2aWQgSGVycm1hbm4g
-d3JvdGU6Cj4gSGkKPiAKPiBPbiBTYXQsIE1heSAyNCwgMjAxNCBhdCAxMTowNSBQTSwgVmluY2Vu
-dCBTdGVobMOpCj4gPHZpbmNlbnQuc3RlaGxlQGxhcG9zdGUubmV0PiB3cm90ZToKPiA+IFRoZSBk
-bWFfYnVmX2V4cG9ydCBmdW5jdGlvbiB3YXMgdXBkYXRlZCBpbiBjb21taXQgNGJjZWM0NGZmYWY5
-ICdkbWEtYnVmOiB1c2UKPiA+IHJlc2VydmF0aW9uIG9iamVjdHMnIHRvIHRha2UgYSByZXNlcnZh
-dGlvbiBvYmplY3QgcGFyYW1ldGVyOyB1cGRhdGUgQXJtYWRhCj4gPiBleHBvcnQgbWV0aG9kIGFj
-Y29yZGluZ2x5Lgo+ID4KPiA+IFRoaXMgZml4ZXMgdGhlIGZvbGxvd2luZyBjb21waWxhdGlvbiBl
-cnJvcjoKPiA+Cj4gPiAgIGRyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX2dlbS5jOiBJbiBm
-dW5jdGlvbiDigJhhcm1hZGFfZ2VtX3ByaW1lX2V4cG9ydOKAmToKPiA+ICAgZHJpdmVycy9ncHUv
-ZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmM6NTQ0OjE2OiBlcnJvcjogbWFjcm8gImRtYV9idWZfZXhw
-b3J0IiByZXF1aXJlcyA1IGFyZ3VtZW50cywgYnV0IG9ubHkgNCBnaXZlbgo+ID4KPiA+IFNpZ25l
-ZC1vZmYtYnk6IFZpbmNlbnQgU3RlaGzDqSA8dmluY2VudC5zdGVobGVAbGFwb3N0ZS5uZXQ+Cj4g
-PiBDYzogUnVzc2VsbCBLaW5nIDxybWsra2VybmVsQGFybS5saW51eC5vcmcudWs+Cj4gPiBDYzog
-RGF2aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgo+ID4gQ2M6IE1hYXJ0ZW4gTGFua2hvcnN0
-IDxtYWFydGVuLmxhbmtob3JzdEBjYW5vbmljYWwuY29tPgo+ID4gQ2M6IFN1bWl0IFNlbXdhbCA8
-c3VtaXQuc2Vtd2FsQGxpbmFyby5vcmc+Cj4gCj4gUmV2aWV3ZWQtYnk6IERhdmlkIEhlcnJtYW5u
-IDxkaC5oZXJybWFubkBnbWFpbC5jb20+CgpBY2tlZC1ieTogUnVzc2VsbCBLaW5nIDxybWsra2Vy
-bmVsQGFybS5saW51eC5vcmcudWs+CgpBaXJsaWVkLCBjYW4geW91IG1lcmdlIHRoaXMgcGxlYXNl
-PyAgVGhhbmtzLgoKPiBUaGFua3MKPiBEYXZpZAo+IAo+ID4gLS0tCj4gPgo+ID4gSGksCj4gPgo+
-ID4gVGhpcyBjYW4gYmUgc2VlbiB3aXRoIGUuZy4gbGludXggbmV4dC0yMDE0MDUyMyBhbmQgYXJt
-IGFsbG1vZGNvbmZpZy4KPiA+Cj4gPiBCZXN0IHJlZ2FyZHMsCj4gPgo+ID4gVi4KPiA+Cj4gPiAg
-ZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMgfCAyICstCj4gPiAgMSBmaWxlIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gPgo+ID4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9hcm1hZGEvYXJtYWRhX2dlbS5jIGIvZHJpdmVycy9ncHUvZHJtL2Fy
-bWFkYS9hcm1hZGFfZ2VtLmMKPiA+IGluZGV4IDg4NzgxNmYuLjdhZGIwYzMgMTAwNjQ0Cj4gPiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYwo+ID4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMKPiA+IEBAIC01NDEsNyArNTQxLDcgQEAgYXJt
-YWRhX2dlbV9wcmltZV9leHBvcnQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9n
-ZW1fb2JqZWN0ICpvYmosCj4gPiAgICAgICAgIGludCBmbGFncykKPiA+ICB7Cj4gPiAgICAgICAg
-IHJldHVybiBkbWFfYnVmX2V4cG9ydChvYmosICZhcm1hZGFfZ2VtX3ByaW1lX2RtYWJ1Zl9vcHMs
-IG9iai0+c2l6ZSwKPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIE9fUkRXUik7Cj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBPX1JEV1IsIE5VTEwpOwo+ID4gIH0KPiA+
-Cj4gPiAgc3RydWN0IGRybV9nZW1fb2JqZWN0ICoKPiA+IC0tCj4gPiAyLjAuMC5yYzIKPiA+Cj4g
-PiAtLQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
-c3Vic2NyaWJlIGxpbnV4LWtlcm5lbCIgaW4KPiA+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBt
-YWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
-Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiA+IFBsZWFzZSByZWFkIHRo
-ZSBGQVEgYXQgIGh0dHA6Ly93d3cudHV4Lm9yZy9sa21sLwoKLS0gCkZUVEMgYnJvYWRiYW5kIGZv
-ciAwLjhtaWxlIGxpbmU6IG5vdyBhdCA5LjdNYnBzIGRvd24gNDYwa2JwcyB1cC4uLiBzbG93bHkK
-aW1wcm92aW5nLCBhbmQgZ2V0dGluZyB0b3dhcmRzIHdoYXQgd2FzIGV4cGVjdGVkIGZyb20gaXQu
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+--Sig_/hUaVbygK9B_rEKH.8w2c=w+
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Sun, 25 May 2014 23:54:35 +0100 Russell King - ARM Linux <linux@arm.linu=
+x.org.uk> wrote:
+>
+> On Sun, May 25, 2014 at 02:08:48PM +0200, David Herrmann wrote:
+> >=20
+> > On Sat, May 24, 2014 at 11:05 PM, Vincent Stehl=C3=A9
+> > <vincent.stehle@laposte.net> wrote:
+> > > The dma_buf_export function was updated in commit 4bcec44ffaf9 'dma-b=
+uf: use
+> > > reservation objects' to take a reservation object parameter; update A=
+rmada
+> > > export method accordingly.
+> > >
+> > > This fixes the following compilation error:
+> > >
+> > >   drivers/gpu/drm/armada/armada_gem.c: In function =E2=80=98armada_ge=
+m_prime_export=E2=80=99:
+> > >   drivers/gpu/drm/armada/armada_gem.c:544:16: error: macro "dma_buf_e=
+xport" requires 5 arguments, but only 4 given
+> > >
+> > > Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+> > > Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> > > Cc: David Airlie <airlied@linux.ie>
+> > > Cc: Maarten Lankhorst <maarten.lankhorst@canonical.com>
+> > > Cc: Sumit Semwal <sumit.semwal@linaro.org>
+> >=20
+> > Reviewed-by: David Herrmann <dh.herrmann@gmail.com>
+>=20
+> Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+>=20
+> Airlied, can you merge this please?  Thanks.
+
+Except that commit 4bcec44ffaf9 'dma-buf: use reservation objects'
+comes from the dma-buf tree, so Sumit needs to add this commit to his
+tree.
+
+> > > This can be seen with e.g. linux next-20140523 and arm allmodconfig.
+> > >
+> > > Best regards,
+> > >
+> > > V.
+> > >
+> > >  drivers/gpu/drm/armada/armada_gem.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/ar=
+mada/armada_gem.c
+> > > index 887816f..7adb0c3 100644
+> > > --- a/drivers/gpu/drm/armada/armada_gem.c
+> > > +++ b/drivers/gpu/drm/armada/armada_gem.c
+> > > @@ -541,7 +541,7 @@ armada_gem_prime_export(struct drm_device *dev, s=
+truct drm_gem_object *obj,
+> > >         int flags)
+> > >  {
+> > >         return dma_buf_export(obj, &armada_gem_prime_dmabuf_ops, obj-=
+>size,
+> > > -                             O_RDWR);
+> > > +                             O_RDWR, NULL);
+> > >  }
+> > >
+> > >  struct drm_gem_object *
+> > > --
+> > > 2.0.0.rc2
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/hUaVbygK9B_rEKH.8w2c=w+
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTgnd0AAoJEMDTa8Ir7ZwVXnsP/i2y8G1TUTCcvsLS7naVTK58
+eKd+2WO1XZEd6eiU12m/Tjcsxn7epFb5A27Mx69G6TahouHMDjNv+BIkmcKBBbFR
+VGjcOKVYwFdT/IVOGMl+Tunew67K9Z0tbKx/8ulMyqn/Wot1eosL8DMEGems5pSX
+nNpfv59l894j+hTbneswTSLJcuIbkWLJrEIuadlLCoBTQdMG/KEOKy+9KmvLYL58
+E3qG0b+x4fewCm9MD1/evw8xd73Q1ZAFWpzr66EL7rjWK9ihr2p2b8yLXx43B3S6
+SDWK6+2YeMRhovef5TGCOD9Kf3tydCKT2qpno+qLlSyrUUviw0keP9EAcIJYi6V7
+z4NRUmS3uNFUjizZiQ0o1+FUyVF3fXadnZGK9llYm30CEisEDkfpHF7s24Fqmq51
+osKNPJKTYcgmlqgvGdnzg77W33k/B1n/C5hgK2jnt9TheUP2x5VWZykdryXyvrpc
+i+onrJzqApulj8aCUuICpfcYLGhMKaZLvVNsQhPXSxo7Y1GD2B5hekGjPXJoYDtI
+1GUDus52z70uDrcRyjKWawywO8FJr7yLJONpkmP80WL8v3hiiNuv+Sz0Op8g4hO/
+BHKuksvlvSkvw7en00Y2OgOpbalfwZB0qkVkN4IC2teQ0r1i0/1B8fPhqBTvH837
++7yS9ZIuulyobhLOWzmp
+=8D2z
+-----END PGP SIGNATURE-----
+
+--Sig_/hUaVbygK9B_rEKH.8w2c=w+--
