@@ -1,59 +1,61 @@
-From: David Herrmann <dh.herrmann@gmail.com>
-Subject: Re: [PATCH linux-next] DRM: Armada: update dma_buf_export use
-Date: Sun, 25 May 2014 14:08:48 +0200
-Message-ID: <CANq1E4QdGeHeuCu9LvPkbGZX5C+ax4fWVqq4kJ5wMUBx5uWZrQ@mail.gmail.com>
-References: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Subject: [PATCH linux-next] imx-drm: imx-tve: remove unused variable
+Date: Sun, 25 May 2014 23:54:14 +0200
+Message-ID: <1401054854-20932-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Vincent_Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp3-g21.free.fr ([212.27.42.3]:58822 "EHLO smtp3-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750811AbaEYVya (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 May 2014 17:54:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Andrzej Hajda <a.hajda@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-SGkKCk9uIFNhdCwgTWF5IDI0LCAyMDE0IGF0IDExOjA1IFBNLCBWaW5jZW50IFN0ZWhsw6kKPHZp
-bmNlbnQuc3RlaGxlQGxhcG9zdGUubmV0PiB3cm90ZToKPiBUaGUgZG1hX2J1Zl9leHBvcnQgZnVu
-Y3Rpb24gd2FzIHVwZGF0ZWQgaW4gY29tbWl0IDRiY2VjNDRmZmFmOSAnZG1hLWJ1ZjogdXNlCj4g
-cmVzZXJ2YXRpb24gb2JqZWN0cycgdG8gdGFrZSBhIHJlc2VydmF0aW9uIG9iamVjdCBwYXJhbWV0
-ZXI7IHVwZGF0ZSBBcm1hZGEKPiBleHBvcnQgbWV0aG9kIGFjY29yZGluZ2x5Lgo+Cj4gVGhpcyBm
-aXhlcyB0aGUgZm9sbG93aW5nIGNvbXBpbGF0aW9uIGVycm9yOgo+Cj4gICBkcml2ZXJzL2dwdS9k
-cm0vYXJtYWRhL2FybWFkYV9nZW0uYzogSW4gZnVuY3Rpb24g4oCYYXJtYWRhX2dlbV9wcmltZV9l
-eHBvcnTigJk6Cj4gICBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYzo1NDQ6MTY6
-IGVycm9yOiBtYWNybyAiZG1hX2J1Zl9leHBvcnQiIHJlcXVpcmVzIDUgYXJndW1lbnRzLCBidXQg
-b25seSA0IGdpdmVuCj4KPiBTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQu
-c3RlaGxlQGxhcG9zdGUubmV0Pgo+IENjOiBSdXNzZWxsIEtpbmcgPHJtaytrZXJuZWxAYXJtLmxp
-bnV4Lm9yZy51az4KPiBDYzogRGF2aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgo+IENjOiBN
-YWFydGVuIExhbmtob3JzdCA8bWFhcnRlbi5sYW5raG9yc3RAY2Fub25pY2FsLmNvbT4KPiBDYzog
-U3VtaXQgU2Vtd2FsIDxzdW1pdC5zZW13YWxAbGluYXJvLm9yZz4KClJldmlld2VkLWJ5OiBEYXZp
-ZCBIZXJybWFubiA8ZGguaGVycm1hbm5AZ21haWwuY29tPgoKVGhhbmtzCkRhdmlkCgo+IC0tLQo+
-Cj4gSGksCj4KPiBUaGlzIGNhbiBiZSBzZWVuIHdpdGggZS5nLiBsaW51eCBuZXh0LTIwMTQwNTIz
-IGFuZCBhcm0gYWxsbW9kY29uZmlnLgo+Cj4gQmVzdCByZWdhcmRzLAo+Cj4gVi4KPgo+ICBkcml2
-ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQs
-IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFk
-YV9nZW0uYwo+IGluZGV4IDg4NzgxNmYuLjdhZGIwYzMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRh
-L2FybWFkYV9nZW0uYwo+IEBAIC01NDEsNyArNTQxLDcgQEAgYXJtYWRhX2dlbV9wcmltZV9leHBv
-cnQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9nZW1fb2JqZWN0ICpvYmosCj4g
-ICAgICAgICBpbnQgZmxhZ3MpCj4gIHsKPiAgICAgICAgIHJldHVybiBkbWFfYnVmX2V4cG9ydChv
-YmosICZhcm1hZGFfZ2VtX3ByaW1lX2RtYWJ1Zl9vcHMsIG9iai0+c2l6ZSwKPiAtICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBPX1JEV1IpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIE9fUkRXUiwgTlVMTCk7Cj4gIH0KPgo+ICBzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKgo+IC0t
-Cj4gMi4wLjAucmMyCj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
-IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1rZXJuZWwiIGluCj4gdGhlIGJvZHkgb2YgYSBt
-ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZv
-IGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiBQbGVhc2Ug
-cmVhZCB0aGUgRkFRIGF0ICBodHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Commit f9b0e251dfbf 'drm: make mode_valid callback optional' left varia=
+ble ret
+unused; remove it.
+
+This fixes the following compilation warning:
+
+  drivers/staging/imx-drm/imx-tve.c: In function =E2=80=98imx_tve_conne=
+ctor_mode_valid=E2=80=99:
+  drivers/staging/imx-drm/imx-tve.c:252:6: warning: unused variable =E2=
+=80=98ret=E2=80=99 [-Wunused-variable]
+
+Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+
+Hi,
+
+This can be seen with e.g. linux next-20140523 and arm allmodconfig.
+
+Best regards,
+
+V.
+
+ drivers/staging/imx-drm/imx-tve.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/staging/imx-drm/imx-tve.c b/drivers/staging/imx-dr=
+m/imx-tve.c
+index 3e8b0a1..4caef2b1 100644
+--- a/drivers/staging/imx-drm/imx-tve.c
++++ b/drivers/staging/imx-drm/imx-tve.c
+@@ -249,7 +249,6 @@ static int imx_tve_connector_mode_valid(struct drm_=
+connector *connector,
+ {
+ 	struct imx_tve *tve =3D con_to_tve(connector);
+ 	unsigned long rate;
+-	int ret;
+=20
+ 	/* pixel clock with 2x oversampling */
+ 	rate =3D clk_round_rate(tve->clk, 2000UL * mode->clock) / 2000;
+--=20
+2.0.0.rc2
