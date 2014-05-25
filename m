@@ -1,65 +1,59 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] DRM: Armada: update dma_buf_export use
-Date: Sat, 24 May 2014 23:05:44 +0200
-Message-ID: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
+From: David Herrmann <dh.herrmann@gmail.com>
+Subject: Re: [PATCH linux-next] DRM: Armada: update dma_buf_export use
+Date: Sun, 25 May 2014 14:08:48 +0200
+Message-ID: <CANq1E4QdGeHeuCu9LvPkbGZX5C+ax4fWVqq4kJ5wMUBx5uWZrQ@mail.gmail.com>
+References: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtpfb2-g21.free.fr ([212.27.42.10]:37293 "EHLO
-	smtpfb2-g21.free.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751254AbaEXVGK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 24 May 2014 17:06:10 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Russell King <rmk+kernel@arm.linux.org.uk>, David Airlie <airlied@linux.ie>, Maarten Lankhorst <maarten.lankhorst@canonical.com>, Sumit Semwal <sumit.semwal@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?Q?Vincent_Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-The dma_buf_export function was updated in commit 4bcec44ffaf9 'dma-buf=
-: use
-reservation objects' to take a reservation object parameter; update Arm=
-ada
-export method accordingly.
-
-This fixes the following compilation error:
-
-  drivers/gpu/drm/armada/armada_gem.c: In function =E2=80=98armada_gem_=
-prime_export=E2=80=99:
-  drivers/gpu/drm/armada/armada_gem.c:544:16: error: macro "dma_buf_exp=
-ort" requires 5 arguments, but only 4 given
-
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Maarten Lankhorst <maarten.lankhorst@canonical.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
----
-
-Hi,
-
-This can be seen with e.g. linux next-20140523 and arm allmodconfig.
-
-Best regards,
-
-V.
-
- drivers/gpu/drm/armada/armada_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/arma=
-da/armada_gem.c
-index 887816f..7adb0c3 100644
---- a/drivers/gpu/drm/armada/armada_gem.c
-+++ b/drivers/gpu/drm/armada/armada_gem.c
-@@ -541,7 +541,7 @@ armada_gem_prime_export(struct drm_device *dev, str=
-uct drm_gem_object *obj,
- 	int flags)
- {
- 	return dma_buf_export(obj, &armada_gem_prime_dmabuf_ops, obj->size,
--			      O_RDWR);
-+			      O_RDWR, NULL);
- }
-=20
- struct drm_gem_object *
---=20
-2.0.0.rc2
+SGkKCk9uIFNhdCwgTWF5IDI0LCAyMDE0IGF0IDExOjA1IFBNLCBWaW5jZW50IFN0ZWhsw6kKPHZp
+bmNlbnQuc3RlaGxlQGxhcG9zdGUubmV0PiB3cm90ZToKPiBUaGUgZG1hX2J1Zl9leHBvcnQgZnVu
+Y3Rpb24gd2FzIHVwZGF0ZWQgaW4gY29tbWl0IDRiY2VjNDRmZmFmOSAnZG1hLWJ1ZjogdXNlCj4g
+cmVzZXJ2YXRpb24gb2JqZWN0cycgdG8gdGFrZSBhIHJlc2VydmF0aW9uIG9iamVjdCBwYXJhbWV0
+ZXI7IHVwZGF0ZSBBcm1hZGEKPiBleHBvcnQgbWV0aG9kIGFjY29yZGluZ2x5Lgo+Cj4gVGhpcyBm
+aXhlcyB0aGUgZm9sbG93aW5nIGNvbXBpbGF0aW9uIGVycm9yOgo+Cj4gICBkcml2ZXJzL2dwdS9k
+cm0vYXJtYWRhL2FybWFkYV9nZW0uYzogSW4gZnVuY3Rpb24g4oCYYXJtYWRhX2dlbV9wcmltZV9l
+eHBvcnTigJk6Cj4gICBkcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYzo1NDQ6MTY6
+IGVycm9yOiBtYWNybyAiZG1hX2J1Zl9leHBvcnQiIHJlcXVpcmVzIDUgYXJndW1lbnRzLCBidXQg
+b25seSA0IGdpdmVuCj4KPiBTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQu
+c3RlaGxlQGxhcG9zdGUubmV0Pgo+IENjOiBSdXNzZWxsIEtpbmcgPHJtaytrZXJuZWxAYXJtLmxp
+bnV4Lm9yZy51az4KPiBDYzogRGF2aWQgQWlybGllIDxhaXJsaWVkQGxpbnV4LmllPgo+IENjOiBN
+YWFydGVuIExhbmtob3JzdCA8bWFhcnRlbi5sYW5raG9yc3RAY2Fub25pY2FsLmNvbT4KPiBDYzog
+U3VtaXQgU2Vtd2FsIDxzdW1pdC5zZW13YWxAbGluYXJvLm9yZz4KClJldmlld2VkLWJ5OiBEYXZp
+ZCBIZXJybWFubiA8ZGguaGVycm1hbm5AZ21haWwuY29tPgoKVGhhbmtzCkRhdmlkCgo+IC0tLQo+
+Cj4gSGksCj4KPiBUaGlzIGNhbiBiZSBzZWVuIHdpdGggZS5nLiBsaW51eCBuZXh0LTIwMTQwNTIz
+IGFuZCBhcm0gYWxsbW9kY29uZmlnLgo+Cj4gQmVzdCByZWdhcmRzLAo+Cj4gVi4KPgo+ICBkcml2
+ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0uYyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQs
+IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFk
+YV9nZW0uYwo+IGluZGV4IDg4NzgxNmYuLjdhZGIwYzMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRh
+L2FybWFkYV9nZW0uYwo+IEBAIC01NDEsNyArNTQxLDcgQEAgYXJtYWRhX2dlbV9wcmltZV9leHBv
+cnQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9nZW1fb2JqZWN0ICpvYmosCj4g
+ICAgICAgICBpbnQgZmxhZ3MpCj4gIHsKPiAgICAgICAgIHJldHVybiBkbWFfYnVmX2V4cG9ydChv
+YmosICZhcm1hZGFfZ2VtX3ByaW1lX2RtYWJ1Zl9vcHMsIG9iai0+c2l6ZSwKPiAtICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBPX1JEV1IpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIE9fUkRXUiwgTlVMTCk7Cj4gIH0KPgo+ICBzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKgo+IC0t
+Cj4gMi4wLjAucmMyCj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
+IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1rZXJuZWwiIGluCj4gdGhlIGJvZHkgb2YgYSBt
+ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZv
+IGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiBQbGVhc2Ug
+cmVhZCB0aGUgRkFRIGF0ICBodHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
