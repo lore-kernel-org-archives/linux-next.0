@@ -1,61 +1,35 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] imx-drm: imx-tve: remove unused variable
-Date: Sun, 25 May 2014 23:54:14 +0200
-Message-ID: <1401054854-20932-1-git-send-email-vincent.stehle@laposte.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH linux-next] imx-drm: imx-tve: remove unused variable
+Date: Sun, 25 May 2014 15:12:35 -0700
+Message-ID: <20140525221235.GA26619@kroah.com>
+References: <1401054854-20932-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp3-g21.free.fr ([212.27.42.3]:58822 "EHLO smtp3-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750811AbaEYVya (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 May 2014 17:54:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Andrzej Hajda <a.hajda@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <1401054854-20932-1-git-send-email-vincent.stehle@laposte.net>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Vincent =?iso-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>
+Cc: devel@driverdev.osuosl.org, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-Commit f9b0e251dfbf 'drm: make mode_valid callback optional' left varia=
-ble ret
-unused; remove it.
-
-This fixes the following compilation warning:
-
-  drivers/staging/imx-drm/imx-tve.c: In function =E2=80=98imx_tve_conne=
-ctor_mode_valid=E2=80=99:
-  drivers/staging/imx-drm/imx-tve.c:252:6: warning: unused variable =E2=
-=80=98ret=E2=80=99 [-Wunused-variable]
-
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-
-Hi,
-
-This can be seen with e.g. linux next-20140523 and arm allmodconfig.
-
-Best regards,
-
-V.
-
- drivers/staging/imx-drm/imx-tve.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/staging/imx-drm/imx-tve.c b/drivers/staging/imx-dr=
-m/imx-tve.c
-index 3e8b0a1..4caef2b1 100644
---- a/drivers/staging/imx-drm/imx-tve.c
-+++ b/drivers/staging/imx-drm/imx-tve.c
-@@ -249,7 +249,6 @@ static int imx_tve_connector_mode_valid(struct drm_=
-connector *connector,
- {
- 	struct imx_tve *tve =3D con_to_tve(connector);
- 	unsigned long rate;
--	int ret;
-=20
- 	/* pixel clock with 2x oversampling */
- 	rate =3D clk_round_rate(tve->clk, 2000UL * mode->clock) / 2000;
---=20
-2.0.0.rc2
+T24gU3VuLCBNYXkgMjUsIDIwMTQgYXQgMTE6NTQ6MTRQTSArMDIwMCwgVmluY2VudCBTdGVobMOp
+IHdyb3RlOgo+IENvbW1pdCBmOWIwZTI1MWRmYmYgJ2RybTogbWFrZSBtb2RlX3ZhbGlkIGNhbGxi
+YWNrIG9wdGlvbmFsJyBsZWZ0IHZhcmlhYmxlIHJldAo+IHVudXNlZDsgcmVtb3ZlIGl0Lgo+IAo+
+IFRoaXMgZml4ZXMgdGhlIGZvbGxvd2luZyBjb21waWxhdGlvbiB3YXJuaW5nOgo+IAo+ICAgZHJp
+dmVycy9zdGFnaW5nL2lteC1kcm0vaW14LXR2ZS5jOiBJbiBmdW5jdGlvbiDigJhpbXhfdHZlX2Nv
+bm5lY3Rvcl9tb2RlX3ZhbGlk4oCZOgo+ICAgZHJpdmVycy9zdGFnaW5nL2lteC1kcm0vaW14LXR2
+ZS5jOjI1Mjo2OiB3YXJuaW5nOiB1bnVzZWQgdmFyaWFibGUg4oCYcmV04oCZIFstV3VudXNlZC12
+YXJpYWJsZV0KCkl0IGRvZXNuJ3QgYXBwbHkgdG8gbXkgdHJlZSA6KApfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxA
+bGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVj
+dC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
