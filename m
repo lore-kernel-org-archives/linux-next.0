@@ -1,100 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
-Date: Mon, 26 May 2014 10:17:41 +1000
-Message-ID: <20140526101741.102768b2@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the samsung tree with the arm-soc
+ tree
+Date: Mon, 26 May 2014 10:37:15 +1000
+Message-ID: <20140526103715.09c491e3@canb.auug.org.au>
+References: <20140526101741.102768b2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=AkyU_JTnP6a=eUdbdpBUAe"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51007 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751105AbaEZARu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 May 2014 20:17:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Heiko Stuebner <heiko@sntech.de>
+ boundary="Sig_/oSKioG343S1swRJNdYJH.PM"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140526101741.102768b2@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Heiko Stuebner <heiko@sntech.de>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/=AkyU_JTnP6a=eUdbdpBUAe
+--Sig_/oSKioG343S1swRJNdYJH.PM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi all,
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/Kconfig.debug between commit 7098cff2a3f4 ("ARM: debug: qcom:
-make UART address selection configuration option") from the arm-soc
-tree and commit 1899de289497 ("ARM: S3C24XX: use generic
-DEBUG_UART_PHY/_VIRT in debug macro") from the samsung tree.
+On Mon, 26 May 2014 10:17:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the samsung tree got a conflict in
+> arch/arm/Kconfig.debug between commit 7098cff2a3f4 ("ARM: debug: qcom:
+> make UART address selection configuration option") from the arm-soc
+> tree and commit 1899de289497 ("ARM: S3C24XX: use generic
+> DEBUG_UART_PHY/_VIRT in debug macro") from the samsung tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>=20
+> diff --cc arch/arm/Kconfig.debug
+> index 6ff3dc661fdd,4678870f8ee8..000000000000
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@@ -966,10 -1007,10 +1003,11 @@@ config DEBUG_LL_INCLUD
+>   				 DEBUG_IMX51_UART || \
+>   				 DEBUG_IMX53_UART ||\
+>   				 DEBUG_IMX6Q_UART || \
+>  -				 DEBUG_IMX6SL_UART
+>  -	default "debug/msm.S" if DEBUG_MSM_UART
+>  +				 DEBUG_IMX6SL_UART || \
+>  +				 DEBUG_IMX6SX_UART
+>  +	default "debug/msm.S" if DEBUG_MSM_UART || DEBUG_QCOM_UARTDM
+>   	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
+> + 	default "debug/s3c24xx.S" if DEBUG_S3C24XX_UART
+>   	default "debug/sirf.S" if DEBUG_SIRFPRIMA2_UART1 || DEBUG_SIRFMARCO_UA=
+RT1
+>   	default "debug/sti.S" if DEBUG_STI_UART
+>   	default "debug/tegra.S" if DEBUG_TEGRA_UART
+> @@@ -1057,8 -1102,7 +1101,8 @@@ config DEBUG_UART_PHY
+>   	default 0xfffff700 if ARCH_IOP33X
+>   	depends on DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
+>   		DEBUG_LL_UART_EFM32 || \
+> - 		DEBUG_UART_8250 || DEBUG_UART_PL01X || \
+>  -		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART
+> ++		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART \
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I forgot the || at the end, sorry.  I fixed this up.
+
+>  +		DEBUG_MSM_UART || DEBUG_QCOM_UARTDM
+>  =20
+>   config DEBUG_UART_VIRT
+>   	hex "Virtual base address of debug UART"
+> @@@ -1118,8 -1166,7 +1168,8 @@@
+>   	default 0xff003000 if DEBUG_U300_UART
+>   	default DEBUG_UART_PHYS if !MMU
+>   	depends on DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
+> - 		DEBUG_UART_8250 || DEBUG_UART_PL01X || \
+>  -		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART
+> ++		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART \
+
+Same here.
+
+>  +		DEBUG_MSM_UART || DEBUG_QCOM_UARTDM
+>  =20
+>   config DEBUG_UART_8250_SHIFT
+>   	int "Register offset shift for the 8250 debug UART"
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig.debug
-index 6ff3dc661fdd,4678870f8ee8..000000000000
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@@ -966,10 -1007,10 +1003,11 @@@ config DEBUG_LL_INCLUD
-  				 DEBUG_IMX51_UART || \
-  				 DEBUG_IMX53_UART ||\
-  				 DEBUG_IMX6Q_UART || \
- -				 DEBUG_IMX6SL_UART
- -	default "debug/msm.S" if DEBUG_MSM_UART
- +				 DEBUG_IMX6SL_UART || \
- +				 DEBUG_IMX6SX_UART
- +	default "debug/msm.S" if DEBUG_MSM_UART || DEBUG_QCOM_UARTDM
-  	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
-+ 	default "debug/s3c24xx.S" if DEBUG_S3C24XX_UART
-  	default "debug/sirf.S" if DEBUG_SIRFPRIMA2_UART1 || DEBUG_SIRFMARCO_UART1
-  	default "debug/sti.S" if DEBUG_STI_UART
-  	default "debug/tegra.S" if DEBUG_TEGRA_UART
-@@@ -1057,8 -1102,7 +1101,8 @@@ config DEBUG_UART_PHY
-  	default 0xfffff700 if ARCH_IOP33X
-  	depends on DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
-  		DEBUG_LL_UART_EFM32 || \
-- 		DEBUG_UART_8250 || DEBUG_UART_PL01X || \
- -		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART
-++		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART \
- +		DEBUG_MSM_UART || DEBUG_QCOM_UARTDM
- =20
-  config DEBUG_UART_VIRT
-  	hex "Virtual base address of debug UART"
-@@@ -1118,8 -1166,7 +1168,8 @@@
-  	default 0xff003000 if DEBUG_U300_UART
-  	default DEBUG_UART_PHYS if !MMU
-  	depends on DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
-- 		DEBUG_UART_8250 || DEBUG_UART_PL01X || \
- -		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART
-++		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_S3C24XX_UART \
- +		DEBUG_MSM_UART || DEBUG_QCOM_UARTDM
- =20
-  config DEBUG_UART_8250_SHIFT
-  	int "Register offset shift for the 8250 debug UART"
-
---Sig_/=AkyU_JTnP6a=eUdbdpBUAe
+--Sig_/oSKioG343S1swRJNdYJH.PM
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTgogrAAoJEMDTa8Ir7ZwVI3YP/A5H4F0s23vSfjNAxugBp7KG
-RRB1cDOI6Qvx18m3JRtjb5Awqi+JEPCc9uh1T+hIA/JimbGlKV9CJGuAQwfmGdLj
-DVGfeRhKC1x1O3X9hqjV3Lnt1Ilnunmo6iMiJH2KZJZgyvskevREs6eRzsykxBhA
-YcW51/D/aMwEdBwA5wzxl9M8efiHV9ICkdm4jwN5Pc9lRPf9oMtqHzlAE9dwb+EB
-Y7NCELsMbkD7LYEfYCfx0mPVcABAX5HyHAJlj4Ad3+wmGrQyTnhzyf2GxLHENdD2
-OTHNHmfkqhlN21Mgf+bGJFSI1z5DJAJVc+mGKF6lVwyPZtjw76y9wx0N/p3KvRUA
-e5lz6ZJk3c+PWGEC0ms7GYkKcTpb95lOdgVfnhSI8VnKNq07dwMNWD35APflY2Mp
-LnS1RTTFY5Z8g+e+ZLy6iU05TqYAjCvGYGfFUtrK6TUyxPAo81laZvN91qT8KHEn
-r2x5kXB3Gt3oVKiewl4ZpIJYSib6EDZ19qp101rniiLr86k8vbfc8JYqFoj32gss
-2Suy8jjnNW+b24q6mhRCbYDRsubu5jCP2EXKX3AdnD4FVhfhBubDOiDdwH8eopel
-K+YmRRmF8NnbofAXe/+eCSqBfUKxOryxwyqGAIyzN7wslTumEHIBQmpzramv4XQz
-L3tP0OvK0dBotA3tB3vK
-=SVZt
+iQIcBAEBCAAGBQJTgoy/AAoJEMDTa8Ir7ZwV9NkQAIU3Gjxdq47feyJ3OM3ZmaCA
+bdUFsh7dI7GtibvWjx83s2U19Rqc9xArwe/BxmRG6aLUGKQ1V6zS89QtHmQZwHB2
+JMrttw2yXobIeMZYkQzgt9o/rTjuu8ol12looXKb/GTfz93gKLLOOqo7APzW9OCp
+t3pCKTqNfdbAoKfSQzn1T0kHo1ZLFF9xbn3LDRmhHrdAhCp3ZDdqg3ITvhLZPg/o
+B3/ZlKIF6C71DfzDB9RIsQu66a3QbgfJzhc9/bGvZg7iml3p2FQoNn5L3qTJyj6+
+mwRWm9UDNz0Wq4IyLxr0tlh+XDM3jz8gNCC0W1Uy+I6L0PQMXmW2HICk/xGTw1aA
+Q5hy8/s5Z0Z7xU10HPk6ad/GLT0bVpy+amrz0/Gcb62BdLZK09b/M1wljQyrbc0q
+OTbzkAXKiAmhtlgBKs4+uE0JdU6V+R6cX5pkrdXRfi/+07c2lEYT/YvnrlRGpJE7
+1ZzcBordqB8tlE8WS5QEirzDhe/VDk0k4prOH5P91/s7kbCPTJVa2terEgcImN+c
+ldd3R1AdIQD1n8IxHY4tX4Z9VsmhUDoTWfLSQLDMUmAybqBXN9YmR4qKyd9uAoxY
+cBIbSQ63feZ9gvkvCf4XFFlEsPKA4QY7867mrGP2VW9x6fmfCfGmxxfgRmdzoux2
+NMY3zuuh+Je9k80Q1M3a
+=TlXW
 -----END PGP SIGNATURE-----
 
---Sig_/=AkyU_JTnP6a=eUdbdpBUAe--
+--Sig_/oSKioG343S1swRJNdYJH.PM--
