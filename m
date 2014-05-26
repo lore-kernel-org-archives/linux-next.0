@@ -1,100 +1,23 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: manual merge of the mmc tree with the slave-dma
- tree
-Date: Mon, 26 May 2014 16:31:09 +0530
-Message-ID: <20140526110109.GD21128@intel.com>
-References: <20140523152310.05323045@canb.auug.org.au>
+From: "Yao Yuta" <lib@portobello.school.nz>
+Subject: Did you get my last message?
+Date: Mon, 26 May 2014 15:22:50 -0700
+Message-ID: <20140526152311.5C3B9CD4CF2__47488.230354111$1401120600$gmane$org@tintin.portobello.school.nz>
+Reply-To: <yaoyuta2014@126.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="l06SQqiZYCi8rTKz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140523152310.05323045@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chris Ball <chris@printf.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Balaji T K <balajitk@ti.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 219-89-113-121.adsl.xtra.co.nz ([219.89.113.121]:58714 "EHLO
+	tintin.portobello.school.nz" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752642AbaEZQJY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2014 12:09:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 
-
---l06SQqiZYCi8rTKz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 23, 2014 at 03:23:10PM +1000, Stephen Rothwell wrote:
-> Hi Chris,
->=20
-> Today's linux-next merge of the mmc tree got a conflict in
-> include/linux/omap-dma.h between commit a8246fedacad ("dmaengine: omap:
-> hide filter_fn for built-in drivers") from the slave-dma tree and
-> commit ee526d515ad1 ("mmc: omap_hsmmc: split omap-dma header file")
-> from the mmc tree.
->=20
-> I fixed it up (I effectively applied the former commit to the new file)
-> and can carry the fix as necessary (no action is required).
-Looks fine to me
-
-Thanks
---=20
-~Vinod
-
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 23 May 2014 15:19:48 +1000
-> Subject: [PATCH] dmaengine: omap: fix for code movement
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/omap-dmaengine.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/omap-dmaengine.h b/include/linux/omap-dmaengin=
-e.h
-> index 2b0b6aa01922..8e6906c72e90 100644
-> --- a/include/linux/omap-dmaengine.h
-> +++ b/include/linux/omap-dmaengine.h
-> @@ -10,7 +10,7 @@
-> =20
->  struct dma_chan;
-> =20
-> -#if defined(CONFIG_DMA_OMAP) || defined(CONFIG_DMA_OMAP_MODULE)
-> +#if defined(CONFIG_DMA_OMAP) || (defined(CONFIG_DMA_OMAP_MODULE) && defi=
-ned(MODULE))
->  bool omap_dma_filter_fn(struct dma_chan *, void *);
->  #else
->  static inline bool omap_dma_filter_fn(struct dma_chan *c, void *d)
-> --=20
-> 2.0.0.rc4
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-
-
-
---=20
-
---l06SQqiZYCi8rTKz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTgx71AAoJEHwUBw8lI4NHQA4P/izzQLTgaH58JTgoGir90X04
-AfD/DL1LcESav/Q36bANprAb03QhwG6DQE4sMXmc7R+CNazPzRWfuBnpNRgNXhcF
-u/Eg9YldwdB9RNL0ZWp8ov+NVo5/LBUMhVmjf99GGoZNt2zVuS8wpHPf9bhbcQuL
-M/FUKaLxlm8ix3xX8rXZ21vb3+77xbJy1+FsgHSktpDSQOe1VT3Ql3OGiqwhTHv+
-11RSUmPgABPgBBUEEzaUShg8Io7YZzpWDKI2ZiQN6v/5fetKso2p2/SCUCfUbSGP
-7nqeITd7N1nx+B3NObHGV1uWb6CVBSAaQk1tcPXPz16pNjfbmGkSkWvcwqelWXXf
-g7X1xdtQKEIiGI50R6PQHw+zsn1yNz6DhNh8Npm6jFvImmwfsE6izREpypPm9Rrw
-k4VPTwZqXWk2zqmDxaIWdD8z0f2NsxauOtnRkR9ugZ5E5FxrIA0WF8HWBCVPfpJ7
-coLtqPUhPcqJ6LS/MtP8AfM6fJwROtfCme30oSPxFqGrgi3NZ1je1cMouDTQ7FOe
-gZY8Wv3zZSvDyZlCnzrqNQNwuyci3lTxF7uGJJWfzIv7gEfLGy4uhUV7tjbLo+tn
-NzdqQS2flB7Kt4E0dVufTYmICv/YoCrmefIqbq8iWr5SuNaWr1RtHS6BlY5rSeIu
-VmqqhoW0jYQmtxrfpqy1
-=XfRf
------END PGP SIGNATURE-----
-
---l06SQqiZYCi8rTKz--
+Please I would like you to keep this proposal as a top secret and delete it if you are not interested and get back to me if you are interested for details as regards to the transfer of $24,500,000 to you. 
+This money initially belongs to a Libyan client who died in the libya crisis and had no next of kin in his account-opening package in my bank here in Hong kong where I am a bank director. 
+In other to achieve this, I shall require your full name, and telephone number to reach you.Most importantly, a confirmation of acceptance from you will be needed after which I shall furnish you with the full details of this transaction.
+Yours Truly,
+Yao Yuta
