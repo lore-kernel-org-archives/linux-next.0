@@ -1,91 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the devicetree tree
-Date: Mon, 26 May 2014 15:05:57 +1000
-Message-ID: <20140526150557.219ea08f@canb.auug.org.au>
+Subject: linux-next: manual merge of the clockevents tree with the arm-soc
+ tree
+Date: Mon, 26 May 2014 15:43:31 +1000
+Message-ID: <20140526154331.7fc6b30c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/paX6015SxamKmsbRbJUDQ/W"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/fnJgPSxbvrLc3RXv=182FNj"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33530 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751607AbaEZFnj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2014 01:43:39 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cosmin Stoica <cosminstefan.stoica@freescale.com>, Shawn Guo <shawn.guo@freescale.com>, Xiubo Li <Li.Xiubo@freescale.com>
 
---Sig_/paX6015SxamKmsbRbJUDQ/W
+--Sig_/fnJgPSxbvrLc3RXv=182FNj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi Daniel,
 
-After merging the devicetree tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the clockevents tree got a conflict in
+arch/arm/boot/dts/vf610.dtsi between commit 0517fe6aa880 ("ARM: dts:
+vf610-twr: Add support for sdhc1") from the arm-soc tree and commit
+07513e1330a9 ("ARM: dts: vf610: Add Freescale FlexTimer Module timer
+node") from the clockevents tree.
 
-drivers/of/base.c: In function 'of_update_property':
-drivers/of/base.c:1906:10: error: 'found' undeclared (first use in this fun=
-ction)
-   return found ? 0 : -ENODEV;
-          ^
-
-Caused by a bad automatic merge resolution between commits 582da6527da3
-("of: make of_update_property() usable earlier in the boot process")
-(merged into Linus' tree between v3.15-rc4 and rc5) and 947fdaad0627
-("of: fix race between search and remove in of_update_property()") from
-the devicetree tree.
-
-I have added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 26 May 2014 14:50:40 +1000
-Subject: [PATCH] of: fix bad merge of drivers/of/base.c
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/of/base.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 395ee2b3146d..03e7fc6c93e8 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1901,10 +1901,6 @@ int of_update_property(struct device_node *np, struc=
-t property *newprop)
- 	if (!of_kset)
- 		return 0;
-=20
--	/* At early boot, bail out and defer setup to of_init() */
--	if (!of_kset)
--		return found ? 0 : -ENODEV;
--
- 	/* Update the sysfs attribute */
- 	if (oldprop)
- 		sysfs_remove_bin_file(&np->kobj, &oldprop->attr);
---=20
-2.0.0.rc4
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/paX6015SxamKmsbRbJUDQ/W
+diff --cc arch/arm/boot/dts/vf610.dtsi
+index 73355ddc5186,3c91b84066a1..000000000000
+--- a/arch/arm/boot/dts/vf610.dtsi
++++ b/arch/arm/boot/dts/vf610.dtsi
+@@@ -360,17 -347,19 +360,30 @@@
+  				status =3D "disabled";
+  			};
+ =20
+ +			esdhc1: esdhc@400b2000 {
+ +				compatible =3D "fsl,imx53-esdhc";
+ +				reg =3D <0x400b2000 0x4000>;
+ +				interrupts =3D <0 28 0x04>;
+ +				clocks =3D <&clks VF610_CLK_IPG_BUS>,
+ +					<&clks VF610_CLK_PLATFORM_BUS>,
+ +					<&clks VF610_CLK_ESDHC1>;
+ +				clock-names =3D "ipg", "ahb", "per";
+ +				status =3D "disabled";
+ +			};
+ +
++ 			ftm: ftm@400b8000 {
++ 				compatible =3D "fsl,ftm-timer";
++ 				reg =3D <0x400b8000 0x1000 0x400b9000 0x1000>;
++ 				interrupts =3D <0 44 IRQ_TYPE_LEVEL_HIGH>;
++ 				clock-names =3D "ftm-evt", "ftm-src",
++ 					"ftm-evt-counter-en", "ftm-src-counter-en";
++ 				clocks =3D <&clks VF610_CLK_FTM2>,
++ 					<&clks VF610_CLK_FTM3>,
++ 					<&clks VF610_CLK_FTM2_EXT_FIX_EN>,
++ 					<&clks VF610_CLK_FTM3_EXT_FIX_EN>;
++ 				status =3D "disabled";
++ 			};
++=20
+  			fec0: ethernet@400d0000 {
+  				compatible =3D "fsl,mvf600-fec";
+  				reg =3D <0x400d0000 0x1000>;
+
+--Sig_/fnJgPSxbvrLc3RXv=182FNj
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTgsu6AAoJEMDTa8Ir7ZwVLL0P/3C7n/9wsz3DwR1vJKuDSqPh
-CN3HuVOc6srQhpfjoAYvsNXu2+qmRLjngD3qMA2ZIPVr7afjm0TqzQI36hGo7UUO
-lN+sM96My5+8eHNVwAqpZqbHMrOw3JPRzFBRFk2It+i3GyxXoU6VeEXuCm1TzUem
-+mzcD/WtfPjJvMt1dinrAc6pg3rT5OZWbzxNCltmM3Vyv45DNoPff+USQ33cDPnF
-hQ4dO4spQHCiwecjQJdd8qZk6U0Tkw5MIykufHFCNJTRu9tdOFZ4CmP7HLuFEEKS
-YevIACsUktKMmZmWBfyby6pwIdBKSbXAibvE7rs/+p1fuB8z8kyXR3HT/nZoIY6H
-KyKVjM/lWjBiiZlEsHFa1TAv2rxj2KAi72IJFr3TbtrlrEgeVg8ibvuQE7U+qNY+
-0qxfwE6SnYRxvXQ/dyEtqZB9DQYIkmtmMwZDk+qJgRbhDJvfJE5coCYDcyABUhHR
-UD4VsIwmW6vf2tmTr57kpYzCpH22uuzkG93Jk6re29RZ4FtIuKxIVKzj4iL07Gjz
-VLcn2QvHIKtaKQtxhILMBhW3iQnpO40VNT5P2zp42437u83+Cj9th91QRs8M+1fs
-EoGRIOdPe5G9TqBGKZIHCbQtUoHH4H3Q0PJQL7xAXqtxF7r7dRg5tWkr1UMShLsg
-pkiQ8nLVUSBgg0Ly5c2e
-=xWYU
+iQIcBAEBCAAGBQJTgtSIAAoJEMDTa8Ir7ZwVlA0P/0POL6vfY5pCCxiOIgIAXwXX
+WCpHd+yxKm3KrmxPXDf5TT63efkJmENLk4veUPT6bKL75nV7rCErP0RYeby3AWbR
+VeVGWYoXJj21eRCFxyfO6d4kRAPnE9+3kXGtloemTbrFWVsVQY6fcJ1cWVvUXBMm
+U13Q1DW04JfHtMfIurAQvwJS7KX8gPrse9UvGvaJcc9baty35u6QJvwf53cw0q5S
+cw8PWme/kZpsQ5lsHcyExeU7O9vnsB+ASoVwqfqxiAVA8AhGAkVtv2lfmoxpsb7H
+vbnBl/wCmYW2bVGvEXKESQ/DLn6IDGw0FKn0ET2yPLgkJRLt/+cvJL5ZUvLyTh/c
+ArhQuu9RIqofO3PyVLymcL/WxbbbdOa3r4bVPn+Vv0BY2kk85/nylB+uL6xham3y
+s/1GeLwgVcO9N50GWNEm3EY9Hs8LWcQ2lzD956cAsTb+VWak+FYMez7U0sceAI/B
+dLugcX8fFp1ylr/Jagh8Rll1hJ8hNgM317+UnAgkWkrWdjgRhP4oz3HumGjlebtc
+Ab4+2Qg7E67ZRc3ORXUR5KF8/aKI3wzr4lF/BDmrladWC0s5/Rf84BR0OthRkfo7
+0OngBMR8BK2YJ4LS04ki44V42LXNvRBNQ2/o7HKixpzdAeXvuELD8CtBuZLnduua
+L3bDLcjJUcTvPf3u0Y53
+=PJg3
 -----END PGP SIGNATURE-----
 
---Sig_/paX6015SxamKmsbRbJUDQ/W--
+--Sig_/fnJgPSxbvrLc3RXv=182FNj--
