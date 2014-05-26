@@ -1,63 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfsd tree
-Date: Mon, 26 May 2014 11:18:15 +1000
-Message-ID: <20140526111815.25153c0c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc tree
+Date: Mon, 26 May 2014 14:07:35 +1000
+Message-ID: <20140526140735.3f405672@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kOHIW.gRG1Y3L4DprM9YWcU"; protocol="application/pgp-signature"
+ boundary="Sig_/KzmGYHm9LCcuIKJ4PfNygRs"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33935 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33393 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751404AbaEZBSY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 May 2014 21:18:24 -0400
+	id S1750707AbaEZEHo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2014 00:07:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Ball <chris@printf.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 
---Sig_/kOHIW.gRG1Y3L4DprM9YWcU
+--Sig_/KzmGYHm9LCcuIKJ4PfNygRs
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bruce,
+Hi Chris,
 
-After merging the nfsd tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the mmc tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-fs/nfsd/nfs4proc.c: In function 'warn_on_nonidempotent_op':
-fs/nfsd/nfs4proc.c:1861:3: error: implicit declaration of function 'nfsd4_o=
-p_name' [-Werror=3Dimplicit-function-declaration]
-   pr_err("unable to encode reply to nonidempotent op %d (%s)\n",
-   ^
+drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_notify_change':
+drivers/mmc/host/sdhci-s3c.c:402:25: error: 'struct sdhci_host' has no memb=
+er named 'card_tasklet'
 
-Caused by commit 4d332a993e64 ("nfsd4: fix encoding of out-of-space replies=
-").
+Caused by commit 3560db8e247a ("mmc: sdhci: push card_tasklet into
+threaded irq handler").  This is the second left over one I found.
+Please check for any more (grep is your friend).
 
-I have used the nfsd tree from next-20140523 for today.
+I have used the mmc tree from next-20140522 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/kOHIW.gRG1Y3L4DprM9YWcU
+--Sig_/KzmGYHm9LCcuIKJ4PfNygRs
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTgpZcAAoJEMDTa8Ir7ZwVuGgP/A51PJKKkDx/UDlVMF1Z+iIG
-p3P5qBPgRBrDRPu+VWvVaezIiiAFFvoAC+KVN+1Q33TbdePbyKRdmwqOdyC+7I59
-2rByBRKvRRUoUQaqGMMherOAwhLluLLBSvC6pcdRVexBT7FNKgI6YCQLROtPsVjz
-+UPopAUwsqSZJC/FDCFrekKrpkxSCZKL92F2/MWr3Net/0s/l9SBceRoEg28JdMh
-Nq1W9J14qnxFGH7QWQ6olTlUwhsOA6f9Qs+KMHsx2id1VFVBqC/34qKdAGLrpXZP
-I2pgjokfjw3KLD6lNGQ2dYz0EbZr1FbFeRVHR+uRA/1MEclUebGhvcZwKLkc6PCx
-lt7C//nRaPDluXhgXKq349FI8IXe+OJpcZbYQ1VGFaH9JCWy389hohAeYyQLG/fi
-kVaCyFriNBHZgYDKwjutdg6RTA1cKNQGf5lC+BfbNCYyzTcUoF8DZyabVdmkjfbA
-X2ZqPpg59aAdGnnuSrFNf9/giDEBO+27RjZO1pHky1D9T9/KUJz+TWOIAz7i/rOo
-broZ9QBC1EPQDKsPavg9qZTcQhDhouj7WHsOZNRi2gIf0CBBylNPboxFGDnLkGXs
-Py8B0PI/8bIgAiKi0oyvcjsZEwZUWXH6/uRckolD+VpMomJTjP9qh64i9JtELG01
-aEQZ3kTEpDSk009bo1TL
-=zxuV
+iQIcBAEBCAAGBQJTgr4MAAoJEMDTa8Ir7ZwVXwIP/2dwyMqvpTqE6d/LXO7kIdeX
+UnvPA7SP9Z6MVDbphQlfzB2n98dFK0cl30100Nn9kJGQs5IHrDEYoeHGdTfUPASM
+4pjr2BXFJe3/lEgLFb84TIBI+Pjb/v3sUtTAjFACKl9FChTLfM4qIu1WBVTAl5/D
+ksmFRjsId5OdYChoMCEeiQOGR+kSTVJbvjHOC5++AIGnJ5fNMmGsOhsSMxBYl9al
+fxTN4Y8JiFAW2LaRDOtDDviM8llQwxMZbN590SbSUDTmCIHxHIlE1R8OBXb9jMtX
+x3/F3TFMyYbdSs4WJfwgnODAHyHDNp1VCN7Dp5mQ0uAZh9qOOCK3obQ5wu0sAXvH
+z6z2FcHijzEEvVihBe8oP8HMn/ICUbcQPQuTmAKJU0E7VqGTSfJ0ZQjwGxlNEzy3
+WuuOyZwOIN+vfjQSUfXUzHgf+rWP16brqRHk+NdTvu+7WAEeSg3t4xu9yYOs5txh
+w1Hn2JjVHSXDciOETa2l1W2q2gLdlCLjRn1OVCthu2AJnRnoW7eaMTGaVyhyoc5O
+liHThXyp+tNQfgDMDr1f53fIGCZj+CM6TnsUGf/31qkTBmZ05jZuylOgKLmtubzI
+jhpQIdopx0kvEr80DjycigJQgXualM2otBEJVwh3hE1Kb4hHYTlhmIAM6ip9iKcK
+oeFl/r1yhoPqSRPAex9A
+=dbTR
 -----END PGP SIGNATURE-----
 
---Sig_/kOHIW.gRG1Y3L4DprM9YWcU--
+--Sig_/KzmGYHm9LCcuIKJ4PfNygRs--
