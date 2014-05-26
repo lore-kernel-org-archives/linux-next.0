@@ -1,62 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mmc tree
-Date: Mon, 26 May 2014 14:07:35 +1000
-Message-ID: <20140526140735.3f405672@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the devicetree tree
+Date: Mon, 26 May 2014 15:05:57 +1000
+Message-ID: <20140526150557.219ea08f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KzmGYHm9LCcuIKJ4PfNygRs"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33393 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750707AbaEZEHo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 May 2014 00:07:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <chris@printf.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
+ boundary="Sig_/paX6015SxamKmsbRbJUDQ/W"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/KzmGYHm9LCcuIKJ4PfNygRs
+--Sig_/paX6015SxamKmsbRbJUDQ/W
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi Grant,
 
-After merging the mmc tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+After merging the devicetree tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_notify_change':
-drivers/mmc/host/sdhci-s3c.c:402:25: error: 'struct sdhci_host' has no memb=
-er named 'card_tasklet'
+drivers/of/base.c: In function 'of_update_property':
+drivers/of/base.c:1906:10: error: 'found' undeclared (first use in this fun=
+ction)
+   return found ? 0 : -ENODEV;
+          ^
 
-Caused by commit 3560db8e247a ("mmc: sdhci: push card_tasklet into
-threaded irq handler").  This is the second left over one I found.
-Please check for any more (grep is your friend).
+Caused by a bad automatic merge resolution between commits 582da6527da3
+("of: make of_update_property() usable earlier in the boot process")
+(merged into Linus' tree between v3.15-rc4 and rc5) and 947fdaad0627
+("of: fix race between search and remove in of_update_property()") from
+the devicetree tree.
 
-I have used the mmc tree from next-20140522 again for today.
+I have added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 May 2014 14:50:40 +1000
+Subject: [PATCH] of: fix bad merge of drivers/of/base.c
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/of/base.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 395ee2b3146d..03e7fc6c93e8 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1901,10 +1901,6 @@ int of_update_property(struct device_node *np, struc=
+t property *newprop)
+ 	if (!of_kset)
+ 		return 0;
+=20
+-	/* At early boot, bail out and defer setup to of_init() */
+-	if (!of_kset)
+-		return found ? 0 : -ENODEV;
+-
+ 	/* Update the sysfs attribute */
+ 	if (oldprop)
+ 		sysfs_remove_bin_file(&np->kobj, &oldprop->attr);
+--=20
+2.0.0.rc4
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/KzmGYHm9LCcuIKJ4PfNygRs
+--Sig_/paX6015SxamKmsbRbJUDQ/W
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTgr4MAAoJEMDTa8Ir7ZwVXwIP/2dwyMqvpTqE6d/LXO7kIdeX
-UnvPA7SP9Z6MVDbphQlfzB2n98dFK0cl30100Nn9kJGQs5IHrDEYoeHGdTfUPASM
-4pjr2BXFJe3/lEgLFb84TIBI+Pjb/v3sUtTAjFACKl9FChTLfM4qIu1WBVTAl5/D
-ksmFRjsId5OdYChoMCEeiQOGR+kSTVJbvjHOC5++AIGnJ5fNMmGsOhsSMxBYl9al
-fxTN4Y8JiFAW2LaRDOtDDviM8llQwxMZbN590SbSUDTmCIHxHIlE1R8OBXb9jMtX
-x3/F3TFMyYbdSs4WJfwgnODAHyHDNp1VCN7Dp5mQ0uAZh9qOOCK3obQ5wu0sAXvH
-z6z2FcHijzEEvVihBe8oP8HMn/ICUbcQPQuTmAKJU0E7VqGTSfJ0ZQjwGxlNEzy3
-WuuOyZwOIN+vfjQSUfXUzHgf+rWP16brqRHk+NdTvu+7WAEeSg3t4xu9yYOs5txh
-w1Hn2JjVHSXDciOETa2l1W2q2gLdlCLjRn1OVCthu2AJnRnoW7eaMTGaVyhyoc5O
-liHThXyp+tNQfgDMDr1f53fIGCZj+CM6TnsUGf/31qkTBmZ05jZuylOgKLmtubzI
-jhpQIdopx0kvEr80DjycigJQgXualM2otBEJVwh3hE1Kb4hHYTlhmIAM6ip9iKcK
-oeFl/r1yhoPqSRPAex9A
-=dbTR
+iQIcBAEBCAAGBQJTgsu6AAoJEMDTa8Ir7ZwVLL0P/3C7n/9wsz3DwR1vJKuDSqPh
+CN3HuVOc6srQhpfjoAYvsNXu2+qmRLjngD3qMA2ZIPVr7afjm0TqzQI36hGo7UUO
+lN+sM96My5+8eHNVwAqpZqbHMrOw3JPRzFBRFk2It+i3GyxXoU6VeEXuCm1TzUem
++mzcD/WtfPjJvMt1dinrAc6pg3rT5OZWbzxNCltmM3Vyv45DNoPff+USQ33cDPnF
+hQ4dO4spQHCiwecjQJdd8qZk6U0Tkw5MIykufHFCNJTRu9tdOFZ4CmP7HLuFEEKS
+YevIACsUktKMmZmWBfyby6pwIdBKSbXAibvE7rs/+p1fuB8z8kyXR3HT/nZoIY6H
+KyKVjM/lWjBiiZlEsHFa1TAv2rxj2KAi72IJFr3TbtrlrEgeVg8ibvuQE7U+qNY+
+0qxfwE6SnYRxvXQ/dyEtqZB9DQYIkmtmMwZDk+qJgRbhDJvfJE5coCYDcyABUhHR
+UD4VsIwmW6vf2tmTr57kpYzCpH22uuzkG93Jk6re29RZ4FtIuKxIVKzj4iL07Gjz
+VLcn2QvHIKtaKQtxhILMBhW3iQnpO40VNT5P2zp42437u83+Cj9th91QRs8M+1fs
+EoGRIOdPe5G9TqBGKZIHCbQtUoHH4H3Q0PJQL7xAXqtxF7r7dRg5tWkr1UMShLsg
+pkiQ8nLVUSBgg0Ly5c2e
+=xWYU
 -----END PGP SIGNATURE-----
 
---Sig_/KzmGYHm9LCcuIKJ4PfNygRs--
+--Sig_/paX6015SxamKmsbRbJUDQ/W--
