@@ -1,62 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the clockevents tree
-Date: Mon, 26 May 2014 16:07:59 +1000
-Message-ID: <20140526160759.7ccb7757@canb.auug.org.au>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: linux-next: build failure after merge of the devicetree tree
+Date: Mon, 26 May 2014 09:22:37 +0200
+Message-ID: <20140526092237.24631389@free-electrons.com>
+References: <20140526150557.219ea08f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3a93CqgYKFF2zDP=6mmc7DE"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51295 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751381AbaEZGIH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 May 2014 02:08:07 -0400
+Received: from top.free-electrons.com ([176.31.233.9]:35357 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751547AbaEZHWl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 May 2014 03:22:41 -0400
+In-Reply-To: <20140526150557.219ea08f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>
 
---Sig_/3a93CqgYKFF2zDP=6mmc7DE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Dear Stephen Rothwell,
 
-Hi Daniel,
+On Mon, 26 May 2014 15:05:57 +1000, Stephen Rothwell wrote:
 
-After merging the clockevents tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 395ee2b3146d..03e7fc6c93e8 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -1901,10 +1901,6 @@ int of_update_property(struct device_node *np, struct property *newprop)
+>  	if (!of_kset)
+>  		return 0;
+>  
+> -	/* At early boot, bail out and defer setup to of_init() */
+> -	if (!of_kset)
+> -		return found ? 0 : -ENODEV;
+> -
 
+Seems like this is in fact reverting my change entirely, so maybe Grant
+should drop my patch instead?
 
-drivers/clocksource/timer-sun5i.c: In function 'sun5i_timer_init':
-drivers/clocksource/timer-sun5i.c:167:2: error: implicit declaration of fun=
-ction 'of_reset_control_get' [-Werror=3Dimplicit-function-declaration]
+Thanks,
 
-Caused by commit e50a00be5c42 ("clocksource: sun5i: Add support for
-reset controller").
-
-I have used the clockevents tree from next-20140523 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/3a93CqgYKFF2zDP=6mmc7DE
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTgtpEAAoJEMDTa8Ir7ZwVGD8P/Ahah+Rf9fXUNc/+z0qx64/u
-Vfe8+2jinBD0Zf5lv+QS2myVvzV33oKZ0/+Euz5MLLoyPTT7e4k19UrVIdLwSWsr
-b4lBCQxl2bmnKuz3X21ycX8CpVhrIp58yYSGaQ3bFDrBGOHf8UVC83Z6/+t+tQLv
-Q0zlWAF1MfvW3JCuIEP2PynXcJDJtXWiKhElCoGJIS0akSclgWSvW65gC40+ZFUY
-yeXlqz2bVnzxQvag9yTTpxbxOpVxZd57rDPGWmTKW1v0ENienN8vy9Jjv4xPGhNE
-9eKCRzKmr4PdNqVUsQgCHbIWZgy+3VAxRTDjhx7UeDjeWdIVYBUO0IX1X8YxvQ7r
-JF+A1ndb9IQjXurT6TaoMtXRZ3rUKfmA1EjhL9qi7zM6wbOYxE2tyMdDEMTOgVHf
-eEuQwM39hT3pBD7yW0ebWSPRYic4ucyzaPHG6P0KQOxyMTm90iNxmNeBJZuWLUSh
-iJdmZNQAQ+uPQQqUM+AmF2Ahil84X5Au4Ti+3dXQXdncR2QM3xW+nshqE8oXhp0I
-ccGHeJg4Ix+FTQA7/DSJV/GEVbHVnohxuWXlY+fmNKz/HRUEY7Wm+zlScYGFzsYP
-W4ZYkVr6C9moIzF507GPTwD87Qkt9Q9OZYDHg+YxkbCxc6TimsZ41aw/Akb2cP4i
-MN+UanV8T8dQVo6CQv/P
-=Mt7C
------END PGP SIGNATURE-----
-
---Sig_/3a93CqgYKFF2zDP=6mmc7DE--
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
