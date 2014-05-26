@@ -1,78 +1,62 @@
-From: "Li.Xiubo@freescale.com" <Li.Xiubo@freescale.com>
-Subject: RE: linux-next: manual merge of the clockevents tree with the
- arm-soc tree
-Date: Mon, 26 May 2014 06:03:38 +0000
-Message-ID: <8c52af4f7de64210bb4e37e265e9e827@DM2PR03MB509.namprd03.prod.outlook.com>
-References: <20140526154331.7fc6b30c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the clockevents tree
+Date: Mon, 26 May 2014 16:07:59 +1000
+Message-ID: <20140526160759.7ccb7757@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140526154331.7fc6b30c@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Lezcano <daniel.lezcano@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cosminstefan.stoica@freescale.com" <cosminstefan.stoica@freescale.com>, Shawn Guo <Shawn.Guo@freescale.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3a93CqgYKFF2zDP=6mmc7DE"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51295 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751381AbaEZGIH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2014 02:08:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-> Subject: linux-next: manual merge of the clockevents tree with the arm-soc
-> tree
-> 
-> Hi Daniel,
-> 
-> Today's linux-next merge of the clockevents tree got a conflict in
-> arch/arm/boot/dts/vf610.dtsi between commit 0517fe6aa880 ("ARM: dts:
-> vf610-twr: Add support for sdhc1") from the arm-soc tree and commit
-> 07513e1330a9 ("ARM: dts: vf610: Add Freescale FlexTimer Module timer
-> node") from the clockevents tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
+--Sig_/3a93CqgYKFF2zDP=6mmc7DE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Xiubo Li <Li.Xiubo@freescale.com>
+Hi Daniel,
 
-Thanks,
+After merging the clockevents tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-BRs
-Xiubo
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/boot/dts/vf610.dtsi
-> index 73355ddc5186,3c91b84066a1..000000000000
-> --- a/arch/arm/boot/dts/vf610.dtsi
-> +++ b/arch/arm/boot/dts/vf610.dtsi
-> @@@ -360,17 -347,19 +360,30 @@@
->   				status = "disabled";
->   			};
-> 
->  +			esdhc1: esdhc@400b2000 {
->  +				compatible = "fsl,imx53-esdhc";
->  +				reg = <0x400b2000 0x4000>;
->  +				interrupts = <0 28 0x04>;
->  +				clocks = <&clks VF610_CLK_IPG_BUS>,
->  +					<&clks VF610_CLK_PLATFORM_BUS>,
->  +					<&clks VF610_CLK_ESDHC1>;
->  +				clock-names = "ipg", "ahb", "per";
->  +				status = "disabled";
->  +			};
->  +
-> + 			ftm: ftm@400b8000 {
-> + 				compatible = "fsl,ftm-timer";
-> + 				reg = <0x400b8000 0x1000 0x400b9000 0x1000>;
-> + 				interrupts = <0 44 IRQ_TYPE_LEVEL_HIGH>;
-> + 				clock-names = "ftm-evt", "ftm-src",
-> + 					"ftm-evt-counter-en", "ftm-src-counter-en";
-> + 				clocks = <&clks VF610_CLK_FTM2>,
-> + 					<&clks VF610_CLK_FTM3>,
-> + 					<&clks VF610_CLK_FTM2_EXT_FIX_EN>,
-> + 					<&clks VF610_CLK_FTM3_EXT_FIX_EN>;
-> + 				status = "disabled";
-> + 			};
-> +
->   			fec0: ethernet@400d0000 {
->   				compatible = "fsl,mvf600-fec";
->   				reg = <0x400d0000 0x1000>;
+drivers/clocksource/timer-sun5i.c: In function 'sun5i_timer_init':
+drivers/clocksource/timer-sun5i.c:167:2: error: implicit declaration of fun=
+ction 'of_reset_control_get' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit e50a00be5c42 ("clocksource: sun5i: Add support for
+reset controller").
+
+I have used the clockevents tree from next-20140523 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/3a93CqgYKFF2zDP=6mmc7DE
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTgtpEAAoJEMDTa8Ir7ZwVGD8P/Ahah+Rf9fXUNc/+z0qx64/u
+Vfe8+2jinBD0Zf5lv+QS2myVvzV33oKZ0/+Euz5MLLoyPTT7e4k19UrVIdLwSWsr
+b4lBCQxl2bmnKuz3X21ycX8CpVhrIp58yYSGaQ3bFDrBGOHf8UVC83Z6/+t+tQLv
+Q0zlWAF1MfvW3JCuIEP2PynXcJDJtXWiKhElCoGJIS0akSclgWSvW65gC40+ZFUY
+yeXlqz2bVnzxQvag9yTTpxbxOpVxZd57rDPGWmTKW1v0ENienN8vy9Jjv4xPGhNE
+9eKCRzKmr4PdNqVUsQgCHbIWZgy+3VAxRTDjhx7UeDjeWdIVYBUO0IX1X8YxvQ7r
+JF+A1ndb9IQjXurT6TaoMtXRZ3rUKfmA1EjhL9qi7zM6wbOYxE2tyMdDEMTOgVHf
+eEuQwM39hT3pBD7yW0ebWSPRYic4ucyzaPHG6P0KQOxyMTm90iNxmNeBJZuWLUSh
+iJdmZNQAQ+uPQQqUM+AmF2Ahil84X5Au4Ti+3dXQXdncR2QM3xW+nshqE8oXhp0I
+ccGHeJg4Ix+FTQA7/DSJV/GEVbHVnohxuWXlY+fmNKz/HRUEY7Wm+zlScYGFzsYP
+W4ZYkVr6C9moIzF507GPTwD87Qkt9Q9OZYDHg+YxkbCxc6TimsZ41aw/Akb2cP4i
+MN+UanV8T8dQVo6CQv/P
+=Mt7C
+-----END PGP SIGNATURE-----
+
+--Sig_/3a93CqgYKFF2zDP=6mmc7DE--
