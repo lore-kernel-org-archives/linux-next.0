@@ -1,33 +1,84 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [-next] Imminent merge conflict in Documentation/kernel-parameters.txt
-Date: Mon, 26 May 2014 23:03:33 +0200
-Message-ID: <CAMuHMdWbV23Bd4p7BzZ1n7ge+1oAgM0F8zywxyByBTRhUfmTWQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the l2-mtd tree
+Date: Tue, 27 May 2014 09:59:42 +1000
+Message-ID: <20140527095942.0a071e63@canb.auug.org.au>
+References: <20140522153047.62c1721c@canb.auug.org.au>
+	<20140526174225.GC5241@norris-Latitude-E6410>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3l56u0pJ/9PL17Jk2svQqCA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:40209 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232AbaEZVDe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 May 2014 17:03:34 -0400
+Received: from ozlabs.org ([103.22.144.67]:38412 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752200AbaEZX7u (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2014 19:59:50 -0400
+In-Reply-To: <20140526174225.GC5241@norris-Latitude-E6410>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next <linux-next@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vincenzo Aliberti <vincenzo.aliberti@gmail.com>
 
-Hi Stephen,
+--Sig_/3l56u0pJ/9PL17Jk2svQqCA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Just a heads up for today: the m68k tree will cause a small context conflict
-in Documentation/kernel-parameters.txt.
-"M68k" was added to "earlyprintk=", while some hunks have been inserted
-above by someone else.
+Hi Brian,
 
-Gr{oetje,eeting}s,
+On Mon, 26 May 2014 10:42:25 -0700 Brian Norris <computersforpeace@gmail.co=
+m> wrote:
+>
+> On Thu, May 22, 2014 at 03:30:47PM +1000, Stephen Rothwell wrote:
+> > Hi Artem,
+>=20
+> FYI, I'm managing this tree now, not Artem.
 
-                        Geert
+OK, noted.  Is there a different URL for the tree as well?  Currently
+it is git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master .
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Here is the legalese:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/3l56u0pJ/9PL17Jk2svQqCA
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTg9VzAAoJEMDTa8Ir7ZwVGOsP/2EPdtsinDw98F2BV1cIg+Ip
+xSrYQ+B3lU4NloNUcDPAnK4CTrbIlcvT3+mg0MT0oWJEfKp3wabFPfRS6nuhQ8Cc
+U2V+vWg1FfHubu6XPjSA4Wq43BC3iUJgN1ZtYEi8RnIAXo5JBSZDQi/RLh/YPKTg
+oCGJbkYyaBkwAQ+P4a1njmNE3RVsfNKKhy+mDRVfqYP0QueoLD7R1XBXPWt1LdBH
+P48PbI8ha6x7HXtb9QnEsmzAC8gmSVgDxlJtIA07+O1m1Sn09eGQpSjQjEBJWtPa
+QuWfrBBCVsDUyp6DxqtnaYYgPHt5yjt20uHTtQ/maKJfhNloxoD8+Gylwlj5E5ja
+Ya3Eh2RjAIyXnBio4AcCL62gu0O85PrJVuH9gG+WTcY4KxyQfy3/KQ8O+K7BxoJY
+7YLzc1iGuCWtgOM0WnFq+jFuMfMvI014H691UP0dfLBkAyf3UbmCklE4ryVfYahv
+OJUVTXVGK1a046h1QPPQvlOsDMIKwbAiDZtw98NDOEv/DlTkk9vVz7GGYVaeIwYk
+nI+txVqAQom+mnAcua2/Zzkb/ANJVRqSkUG7UDqQ447EDSWP37mL270Q+3dTYgoD
+KUclDKaUmZYUooXUhKIkhhDoibvTjtR1wViFc2DvAKXRnT7hhR86+0BmVsmk/AmS
+O9ogMjQjo1vbhewBAdiC
+=t0dn
+-----END PGP SIGNATURE-----
+
+--Sig_/3l56u0pJ/9PL17Jk2svQqCA--
