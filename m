@@ -1,46 +1,87 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: linux-next: build failure after merge of the devicetree tree
-Date: Mon, 26 May 2014 09:22:37 +0200
-Message-ID: <20140526092237.24631389@free-electrons.com>
-References: <20140526150557.219ea08f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cgroup tree with Linus' tree
+Date: Mon, 26 May 2014 17:45:22 +1000
+Message-ID: <20140526174522.391b5f31@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jUdNaDOeRqJFmZ.Yocm71Hh"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:35357 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751547AbaEZHWl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 May 2014 03:22:41 -0400
-In-Reply-To: <20140526150557.219ea08f@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:49422 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751231AbaEZHpb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2014 03:45:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>
 
-Dear Stephen Rothwell,
+--Sig_/jUdNaDOeRqJFmZ.Yocm71Hh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 26 May 2014 15:05:57 +1000, Stephen Rothwell wrote:
+Hi Tejun,
 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 395ee2b3146d..03e7fc6c93e8 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -1901,10 +1901,6 @@ int of_update_property(struct device_node *np, struct property *newprop)
->  	if (!of_kset)
->  		return 0;
->  
-> -	/* At early boot, bail out and defer setup to of_init() */
-> -	if (!of_kset)
-> -		return found ? 0 : -ENODEV;
-> -
+Today's linux-next merge of the cgroup tree got a conflict in
+mm/memcontrol.c between commit 6f6acb00514c ("memcg: fix swapcache
+charge from kernel thread context") from Linus' tree and commit
+ec903c0c858e ("cgroup: rename css_tryget*() to css_tryget_online*()")
+from the cgroup tree.
 
-Seems like this is in fact reverting my change entirely, so maybe Grant
-should drop my patch instead?
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+diff --cc mm/memcontrol.c
+index 5177c6d4a2dd,b6f91d61b3af..000000000000
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@@ -1077,19 -1074,10 +1074,19 @@@ static struct mem_cgroup *get_mem_cgrou
+ =20
+  	rcu_read_lock();
+  	do {
+ -		memcg =3D mem_cgroup_from_task(rcu_dereference(mm->owner));
+ -		if (unlikely(!memcg))
+ +		/*
+ +		 * Page cache insertions can happen withou an
+ +		 * actual mm context, e.g. during disk probing
+ +		 * on boot, loopback IO, acct() writes etc.
+ +		 */
+ +		if (unlikely(!mm))
+  			memcg =3D root_mem_cgroup;
+ +		else {
+ +			memcg =3D mem_cgroup_from_task(rcu_dereference(mm->owner));
+ +			if (unlikely(!memcg))
+ +				memcg =3D root_mem_cgroup;
+ +		}
+- 	} while (!css_tryget(&memcg->css));
++ 	} while (!css_tryget_online(&memcg->css));
+  	rcu_read_unlock();
+  	return memcg;
+  }
+
+--Sig_/jUdNaDOeRqJFmZ.Yocm71Hh
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTgvEYAAoJEMDTa8Ir7ZwVc9EP/1DrxrZ9bI8SRI8IbN1VxNm8
+tSc59dl1QRemdQksz8+GnjThNz8I9N8JxvEb/7wweLFwtRw5101+ToCbckzeHiJn
+0llcPn8ZWPp2nbvMFM5ceO4vhsu1+ffxrZUByY+UHwLgNXwnjBIo3kDgRGn0EQ5j
+dqTYFECPEVumn1Dj0FUVMHGU0IL/K0DZRH8GhDk93/3YCS8TAL23jUgYCfO3C2GD
+CDjpeqVHsgnbop3Zu7/hSQYNNZb6+9orgMNX96YVwJFTeX14Cl5gneSdcQgFNE1G
+F7tzsE0n6w6Mf+NQiTju123i2vQevYQwVGHEYfLVag0RDSXJy+tm11w0KUtli1gd
+MM0Fn9ybCStIWgE7jmUpujfeBTeTzyAkP1hd7xfo297Jh7Oe7Ix0WDm0OCOuJKcT
+4YoREfFHlSk4BdnnSFjMhGEU/BlWG6RsJB+dcep2UPfnbx8BHMY/aCEZv2sQDM7p
+GKiAy90Nczv3AvBbTKpPLlxODkyTUl7tv47hhPPmNfxuTwuCDjnaGqR30CCo0Wux
+bpKzIhez6OwdZV+7H7WxYIQpfQ02ADE2S8tcYyoti2NCl+/zFLdFfb0LTvOIz6eA
+uU4meQERKSKccA/jCJfmM7jI/uIlyAFxVsxiE8V7pR+2LF8jSWoRGtd+yd6Sr3rN
+Cm/bWHYao8+lSutW+Knc
+=vkXu
+-----END PGP SIGNATURE-----
+
+--Sig_/jUdNaDOeRqJFmZ.Yocm71Hh--
