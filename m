@@ -1,81 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the m68k tree
-Date: Tue, 27 May 2014 16:53:37 +1000
-Message-ID: <20140527165337.5c7d4fa4@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the ext4
+ tree
+Date: Tue, 27 May 2014 18:09:43 +1000
+Message-ID: <20140527180943.5926e3d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/7BpmMSANPORTr6BvVQpx_f3"; protocol="application/pgp-signature"
+ boundary="Sig_/kPG0an8NdimJWSWm7_OT82x"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55071 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34406 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751472AbaE0Gxp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2014 02:53:45 -0400
+	id S1752166AbaE0IJu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 May 2014 04:09:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>, Rob Herring <robh@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Matthew Wilcox <matthew.r.wilcox@intel.com>
 
---Sig_/7BpmMSANPORTr6BvVQpx_f3
+--Sig_/kPG0an8NdimJWSWm7_OT82x
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Andrew,
 
-Today's linux-next merge of the tty tree got a conflict in
-Documentation/kernel-parameters.txt between commit d5ebf7cc86a7 ("m68k:
-Multi-platform EARLY_PRINTK") from the m68k tree and commit
-0d3c673e7881 ("tty/serial: pl011: add generic earlycon support") from
-the tty tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+fs/ext4/page-io.c between commit a3f79014dc44 ("ext4: fix zeroing of
+page during writeback") from the ext4 tree and commit 97527831700a
+("fs/buffer.c: remove block_write_full_page_endio()") from the
+akpm-current tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
-is required).  Thanks Geert for the heads up.
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/kernel-parameters.txt
-index 73368ca1339c,4946d8e58d53..000000000000
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@@ -910,7 -893,15 +911,15 @@@ bytes respectively. Such letter suffixe
-  			(mmio) or 32-bit (mmio32).
-  			The options are the same as for ttyS, above.
+diff --cc fs/ext4/page-io.c
+index b6a3804a9855,1a64e7a52b84..000000000000
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@@ -422,17 -418,6 +422,17 @@@ int ext4_bio_write_page(struct ext4_io_
+  	ClearPageError(page);
  =20
-+ 		pl011,<addr>
-+ 			Start an early, polled-mode console on a pl011 serial
-+ 			port at the specified address. The pl011 serial port
-+ 			must already be setup and configured. Options are not
-+ 			yet supported.
-+=20
-+ 		smh	Use ARM semihosting calls for early console.
-+=20
- -	earlyprintk=3D	[X86,SH,BLACKFIN,ARM]
- +	earlyprintk=3D	[X86,SH,BLACKFIN,ARM,M68k]
-  			earlyprintk=3Dvga
-  			earlyprintk=3Defi
-  			earlyprintk=3Dxen
+  	/*
+- 	 * Comments copied from block_write_full_page_endio:
+++	 * Comments copied from block_write_full_page:
+ +	 *
+ +	 * The page straddles i_size.  It must be zeroed out on each and every
+ +	 * writepage invocation because it may be mmapped.  "A file is mapped
+ +	 * in multiples of the page size.  For a file that is not a multiple of
+ +	 * the page size, the remaining memory is zeroed when mapped, and
+ +	 * writes to that region are not written out to the file."
+ +	 */
+ +	if (len < PAGE_CACHE_SIZE)
+ +		zero_user_segment(page, len, PAGE_CACHE_SIZE);
+ +	/*
+  	 * In the first loop we prepare and mark buffers to submit. We have to
+  	 * mark all buffers in the page before submitting so that
+  	 * end_page_writeback() cannot be called from ext4_bio_end_io() when IO
 
---Sig_/7BpmMSANPORTr6BvVQpx_f3
+--Sig_/kPG0an8NdimJWSWm7_OT82x
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThDZ1AAoJEMDTa8Ir7ZwVeiYP/i1ysWXmRzJGfteasnyhaDap
-mJRZQTL7j8EGbx7Ii2Wj3Ta98wAmnEqNAjDquL0tt4bdoGnWjB+yEKdwO6xWnuYd
-QZbAEX73cn4nEJUTiLFH1nQQJ3YekmDhNEdQf4I8tsV35eypMOPn/s9Z+qO7Op6N
-Dqh5zx9aPMLP7nBsvZQSE3PN0dP/TNhKbtqbGSSFB6b/K9c+IEdHOwPUYzbQb4zi
-AAkw4+7uJ8/su1Eph2pMe0ooU5uFtI1cgQLphf2eaRaLWG0htkG8yS2EqiATv5QU
-psNw77TH7FMJ/UPDmJTxRadPMMA8o+CfiEU2Uu9bvmbiR3vFQLOP/AOJYX/RY2j9
-InOiKPsFVvU6x2KGC3Qdu86f7HIy0/ketVvQwq2e2VmtSIBQrmDtb0z1KEXpsEAr
-y08OHMsobiwueok1ee1+a18NXzAxWHCrlVthB9V7Mu64/N5Yf8ZlLq3+4PWwY4MC
-MZzq0RkSB9TtLa+Zcgm3+7afENZX3w/UbbgN+/4eeNzCdp7XoOGMMiJkaZnRYiwo
-s/cy3teLN4wef3oEK/+gzfLGRVQL40/ScC9apNinzpHKXGrEGIvNU0y5kxvSQ5C8
-XsSFbaWhUExr08cGwifW2KWLmZkYqkd7HHFq5NBuew45OFc/6BWMQOIkJSmZ68ZL
-IoAC0NCfh5caPd5cE0+y
-=K01c
+iQIcBAEBCAAGBQJThEhLAAoJEMDTa8Ir7ZwVOkMQAJO0FESDWM7zO31NqLM41do9
+WLR4KnnHoxTXTzVMWAe/6dWQbs/ML8j6fOWb9z8BRw1DSbgwW8r2HWGnr4BcCZtb
+dPM48XSrLtkotQmKmzbdK8rBt9febIZMT/G1Lnx6jPVYGaroMH63p5QFqPcE2c/6
+ep0XpGfQ3or6zGfnQAUEhdn4aFnp3r9g6VGOnYAIZ4IWRH3m1+H+FxOaIgSf6y57
+FHpB/DZIghYcDdjfJUOKHoceqAG7wtQvinbBIsPfI8rGcKXUBL0o0OtBmXeY5Y1F
+CEwBKC5ELbu6fgOAZTDhB6eApbMbOEQL36ic0QgxM5dAmS7UVXMQB7Z3dem7ZB1f
+ZIF3F65E8O49z32mBQR3Hch8UuAfas3884ooC/FTS9HMNBUp/vIvch4COE3eDrIy
+2cqFs3MTE2YspedMMKqleSZEmXSW7NtuuxK86QnnHJp0RNZh5cBPlQZ3x4tYlBUq
+7fz3+k5y0eQmCR9vUv8FntgQu3VIiEtbppX7gPNsww7GYBovLgroFtvK7sER7HPc
+U2h/spFjEtG9jb3KkBOfA6exrC4PTrINcdbasNmvf4bElUUNzwEvFeiLEwDNmAaa
+SNUh29OvxpDZQHsEFf9SKlloGRrucDZl/pLnFsHt9wQ7FqOC+Dh5Yf0AyP0fQhiz
+3HHxBWQxuXYkgoGkRiPR
+=9oat
 -----END PGP SIGNATURE-----
 
---Sig_/7BpmMSANPORTr6BvVQpx_f3--
+--Sig_/kPG0an8NdimJWSWm7_OT82x--
