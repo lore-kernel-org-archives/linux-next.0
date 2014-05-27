@@ -1,109 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 27 May 2014 10:52:48 +1000
-Message-ID: <20140527105248.546d95bf@canb.auug.org.au>
+From: Chen Gang <gang.chen.5i5j@gmail.com>
+Subject: [Consult] About only one Signed-of-by for the patches
+Date: Tue, 27 May 2014 09:23:38 +0800
+Message-ID: <5383E91A.4010208@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TUcNQml.hEsn0gockPuaN4W"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58928 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751466AbaE0Aw5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 May 2014 20:52:57 -0400
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:51433 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751443AbaE0BXn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 May 2014 21:23:43 -0400
+Received: by mail-pb0-f53.google.com with SMTP id md12so8356091pbc.40
+        for <linux-next@vger.kernel.org>; Mon, 26 May 2014 18:23:42 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
+To: Guan Xuetao <gxt@mprc.pku.edu.cn>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
 
---Sig_/TUcNQml.hEsn0gockPuaN4W
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Maintainers:
 
-Hi all,
+I find some of patches are only Signed-of-by me, are they OK?
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-zynq/common.c between commit e1e4ccb5b1b6 ("ARM: l2c:
-zynq: convert to generic l2c OF initialisation") from the arm tree and
-commit 00f7dc636366 ("ARM: zynq: Add support for SOC_BUS") from the
-arm-soc tree.
+e.g:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+commit d7de15786d1a10fa18b80fd44026d442e7a84bd2
+Author: Chen Gang <gang.chen.5i5j@gmail.com>
+Date:   Tue Apr 15 09:21:30 2014 +0800
 
+    arch:unicore32:mm: add devmem_is_allowed() to support STRICT_DEVMEM
+   =20
+    unicore32 supports STRICT_DEVMEM, so it needs devmem_is_allowed(), =
+like
+    some of other architectures have done (e.g. arm, powerpc, x86 ...).
+   =20
+    The related error with allmodconfig:
+   =20
+        CC      drivers/char/mem.o
+      drivers/char/mem.c: In function =E2<U+0080><U+0098>range_is_allow=
+ed=E2<U+0080><U+0099>:
+      drivers/char/mem.c:69: error: implicit declaration of function =E2=
+<U+0080><U+0098>devmem_is_allowed=E2<U+0080><U+0099>
+      make[2]: *** [drivers/char/mem.o] Error 1
+      make[1]: *** [drivers/char] Error 2
+      make: *** [drivers] Error 2
+   =20
+    Signed-off-by: Chen Gang <gang.chen.5i5j@gmail.com>
+    Acked-by: Xuetao Guan <gxt@mprc.pku.edu.cn>
+
+
+Thanks.
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Chen Gang
 
-diff --cc arch/arm/mach-zynq/common.c
-index d1e992e6403e,edbd9d83f407..000000000000
---- a/arch/arm/mach-zynq/common.c
-+++ b/arch/arm/mach-zynq/common.c
-@@@ -66,8 -105,43 +105,38 @@@ static int __init zynq_get_revision(voi
-  static void __init zynq_init_machine(void)
-  {
-  	struct platform_device_info devinfo =3D { .name =3D "cpufreq-cpu0", };
-+ 	struct soc_device_attribute *soc_dev_attr;
-+ 	struct soc_device *soc_dev;
-+ 	struct device *parent =3D NULL;
-+=20
- -	/*
- -	 * 64KB way size, 8-way associativity, parity disabled
- -	 */
- -	l2x0_of_init(0x02060000, 0xF0F0FFFF);
- -
-+ 	soc_dev_attr =3D kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-+ 	if (!soc_dev_attr)
-+ 		goto out;
-+=20
-+ 	system_rev =3D zynq_get_revision();
-+=20
-+ 	soc_dev_attr->family =3D kasprintf(GFP_KERNEL, "Xilinx Zynq");
-+ 	soc_dev_attr->revision =3D kasprintf(GFP_KERNEL, "0x%x", system_rev);
-+ 	soc_dev_attr->soc_id =3D kasprintf(GFP_KERNEL, "0x%x",
-+ 					 zynq_slcr_get_device_id());
-+=20
-+ 	soc_dev =3D soc_device_register(soc_dev_attr);
-+ 	if (IS_ERR(soc_dev)) {
-+ 		kfree(soc_dev_attr->family);
-+ 		kfree(soc_dev_attr->revision);
-+ 		kfree(soc_dev_attr->soc_id);
-+ 		kfree(soc_dev_attr);
-+ 		goto out;
-+ 	}
-+=20
-+ 	parent =3D soc_device_to_device(soc_dev);
- =20
-- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-+ out:
-+ 	/*
-+ 	 * Finished with the static registrations now; fill in the missing
-+ 	 * devices
-+ 	 */
-+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
- =20
-  	platform_device_register(&zynq_cpuidle_device);
-  	platform_device_register_full(&devinfo);
-
---Sig_/TUcNQml.hEsn0gockPuaN4W
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTg+HmAAoJEMDTa8Ir7ZwVqK0P/A5Vk/Ft3aSMj6VdsmsMs2Qf
-JZ26anoTplDny0gX3k9voHFqkiYmphuV/hx+2LjrpgmuDb+0ALFmakBhCGqNf+i7
-YfoLiFKFKytzOpflTEHV1R0n9PI68gbcOByKEx9AGpuM/eOoEmoFZSEZFLr9GcBO
-v8YeCNN7OWNFRzCeG6SOvt5EATpQFPVLktrUV3CGYb2o7JiDfA/Za+0aeso2vJ6K
-f5lWuPa4lPrXDukZPy/cA6Cf89LP8fl6mfpIRvygMJVgoRqjxTGNou7YtFqV62fv
-Gq6mqdIxT1dEPhMgFFHXQkK24gAxEZ+eKPCmKlz4Xa7PexVxExFDNqwod7b9Uc91
-vh6JIF/8Nr/cszlo6I7RwDnxlEVExF+JUr5OctusvMuc5kkA+SAG4XLqmUvmapzf
-k/Bvyid1349WrW8rjYlxHAAdeCPRVMtHIPDy/4KpDho2CuBEa7omu1WMTBgCI6mP
-CBinhogZ+yEnUgPZGmh0rZHEr6H1/VJWByZ85ZCpeegkr3G4zaQdzBGiDgbXsHxi
-Cs4TQGQdvuH+WPDWTpojptcxov0KMTfyIeB0rBNtBNWp/PZSEpF96RSg5pt5wwa9
-eSv5A5JAfPRun+2XQ0id+BQTYzOFrV7R5dLPs2a7eInUgP3d9BDY364TMLYmOa/6
-vXrL+M/fJEqXm/9V0h9r
-=w2uR
------END PGP SIGNATURE-----
-
---Sig_/TUcNQml.hEsn0gockPuaN4W--
+Open, share, and attitude like air, water, and life which God blessed
