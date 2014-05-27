@@ -1,63 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH linux-next] DRM: Armada: update dma_buf_export use
-Date: Tue, 27 May 2014 16:22:13 +1000
-Message-ID: <20140527162213.0ecfb9d4@canb.auug.org.au>
-References: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
-	<CANq1E4QdGeHeuCu9LvPkbGZX5C+ax4fWVqq4kJ5wMUBx5uWZrQ@mail.gmail.com>
-	<20140525225435.GZ3693@n2100.arm.linux.org.uk>
-	<20140526090623.77186cdf@canb.auug.org.au>
-	<CAPM=9twkXSA2uyVPfdz=qbpM5H96tHHaD8HnTf7YGpB0QX1WZw@mail.gmail.com>
+Subject: linux-next: manual merge of the tty tree with the m68k tree
+Date: Tue, 27 May 2014 16:53:37 +1000
+Message-ID: <20140527165337.5c7d4fa4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NhtPiUw9B9foMQRrg=1_=a3"; protocol="application/pgp-signature"
+ boundary="Sig_/7BpmMSANPORTr6BvVQpx_f3"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43197 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55071 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751756AbaE0GWV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2014 02:22:21 -0400
-In-Reply-To: <CAPM=9twkXSA2uyVPfdz=qbpM5H96tHHaD8HnTf7YGpB0QX1WZw@mail.gmail.com>
+	id S1751472AbaE0Gxp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 May 2014 02:53:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-kernel <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Vincent =?UTF-8?B?U3RlaGzDqQ==?= <vincent.stehle@laposte.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>, Rob Herring <robh@kernel.org>
 
---Sig_/NhtPiUw9B9foMQRrg=1_=a3
+--Sig_/7BpmMSANPORTr6BvVQpx_f3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Greg,
 
-On Tue, 27 May 2014 15:52:46 +1000 Dave Airlie <airlied@gmail.com> wrote:
->
-> Then we should cc him.
+Today's linux-next merge of the tty tree got a conflict in
+Documentation/kernel-parameters.txt between commit d5ebf7cc86a7 ("m68k:
+Multi-platform EARLY_PRINTK") from the m68k tree and commit
+0d3c673e7881 ("tty/serial: pl011: add generic earlycon support") from
+the tty tree.
 
-He was cc'd on my email that you replied to ...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).  Thanks Geert for the heads up.
 
-But I guess the extra prod won't hurt :-)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/NhtPiUw9B9foMQRrg=1_=a3
+diff --cc Documentation/kernel-parameters.txt
+index 73368ca1339c,4946d8e58d53..000000000000
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@@ -910,7 -893,15 +911,15 @@@ bytes respectively. Such letter suffixe
+  			(mmio) or 32-bit (mmio32).
+  			The options are the same as for ttyS, above.
+ =20
++ 		pl011,<addr>
++ 			Start an early, polled-mode console on a pl011 serial
++ 			port at the specified address. The pl011 serial port
++ 			must already be setup and configured. Options are not
++ 			yet supported.
++=20
++ 		smh	Use ARM semihosting calls for early console.
++=20
+ -	earlyprintk=3D	[X86,SH,BLACKFIN,ARM]
+ +	earlyprintk=3D	[X86,SH,BLACKFIN,ARM,M68k]
+  			earlyprintk=3Dvga
+  			earlyprintk=3Defi
+  			earlyprintk=3Dxen
+
+--Sig_/7BpmMSANPORTr6BvVQpx_f3
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThC8aAAoJEMDTa8Ir7ZwV2SQP/23E4woKA2BejAUqqWg4dT0x
-N0DmxpyIgTFI/yYYUWlXbeb6e33NGrQiWG0KJGEaqAAsWwHpQgEgzolw+w/TpugO
-6TMj0fX81ulVzWpo1exbMo7titEXsFadqGgX2rHyIkWGQk/p7c5685dZzHaheRf/
-0SPwWFmpv9V6btd5LKXEw9lOUvBYeIpAlRFuvJQAwWdt/vd0Bc+SX1EzPtLKQ6F+
-g0TjTWgdnYD3Se1TGpR8lSVgx1I/dIOZJlF5XfOPcKOVvFLBkfaaWX/W7xJO2viV
-c26LNRoj8F7MkTpDsD5Nz7hf5aut4A4ZhiIDtU9G0VppbmS2hTBIq+SqWh1zteAB
-bpqISa0Z0IL1bZFOHtbkUsBkXV6/WFaCNW6Uvl7MDwS8p26PoRvqnduXl1hlujKO
-htoWPqF5TvxeeMikHXIaFZhA6gF5jAKCAPRxk6q8NLvS1Fz0zJMiGa/VXgQxalFu
-n21CujjJ/Fa5qv4le6MlcwnHp13JfCeWsusMpX73G4E9F3FMLOoEbQEs+L5VDnYq
-mgShyoIjBrFBWTR/nKwlke8D7tz9NO0LoihkkJakHgJrbfpeLzRTnBvi5us4ZYup
-d7sRs9aHC5yWbeEY6bRSviw70rNAMbWo13h/Z6plic0TXf6HsFl5OtRycu0aXNfW
-XcyhZavnCeRGhveKwj9k
-=Nh4i
+iQIcBAEBCAAGBQJThDZ1AAoJEMDTa8Ir7ZwVeiYP/i1ysWXmRzJGfteasnyhaDap
+mJRZQTL7j8EGbx7Ii2Wj3Ta98wAmnEqNAjDquL0tt4bdoGnWjB+yEKdwO6xWnuYd
+QZbAEX73cn4nEJUTiLFH1nQQJ3YekmDhNEdQf4I8tsV35eypMOPn/s9Z+qO7Op6N
+Dqh5zx9aPMLP7nBsvZQSE3PN0dP/TNhKbtqbGSSFB6b/K9c+IEdHOwPUYzbQb4zi
+AAkw4+7uJ8/su1Eph2pMe0ooU5uFtI1cgQLphf2eaRaLWG0htkG8yS2EqiATv5QU
+psNw77TH7FMJ/UPDmJTxRadPMMA8o+CfiEU2Uu9bvmbiR3vFQLOP/AOJYX/RY2j9
+InOiKPsFVvU6x2KGC3Qdu86f7HIy0/ketVvQwq2e2VmtSIBQrmDtb0z1KEXpsEAr
+y08OHMsobiwueok1ee1+a18NXzAxWHCrlVthB9V7Mu64/N5Yf8ZlLq3+4PWwY4MC
+MZzq0RkSB9TtLa+Zcgm3+7afENZX3w/UbbgN+/4eeNzCdp7XoOGMMiJkaZnRYiwo
+s/cy3teLN4wef3oEK/+gzfLGRVQL40/ScC9apNinzpHKXGrEGIvNU0y5kxvSQ5C8
+XsSFbaWhUExr08cGwifW2KWLmZkYqkd7HHFq5NBuew45OFc/6BWMQOIkJSmZ68ZL
+IoAC0NCfh5caPd5cE0+y
+=K01c
 -----END PGP SIGNATURE-----
 
---Sig_/NhtPiUw9B9foMQRrg=1_=a3--
+--Sig_/7BpmMSANPORTr6BvVQpx_f3--
