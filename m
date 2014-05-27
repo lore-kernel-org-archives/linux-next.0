@@ -1,41 +1,116 @@
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Subject: Re: [PATCH linux-next] DRM: Armada: update dma_buf_export use
-Date: Tue, 27 May 2014 17:11:39 +0530
-Message-ID: <CAO_48GGprE5o5QTi01U2PuroQ671-dYoCaOpkz8miVU1wdx=ag@mail.gmail.com>
-References: <1400965544-20092-1-git-send-email-vincent.stehle@laposte.net>
- <CANq1E4QdGeHeuCu9LvPkbGZX5C+ax4fWVqq4kJ5wMUBx5uWZrQ@mail.gmail.com>
- <20140525225435.GZ3693@n2100.arm.linux.org.uk>
- <20140526090623.77186cdf@canb.auug.org.au>
- <CAPM=9twkXSA2uyVPfdz=qbpM5H96tHHaD8HnTf7YGpB0QX1WZw@mail.gmail.com>
- <20140527162213.0ecfb9d4@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH linux-next] imx-drm: imx-tve: remove unused variable
+Date: Tue, 27 May 2014 14:56:22 +0200
+Message-ID: <20140527125622.GA14841@phenom.ffwll.local>
+References: <1401054854-20932-1-git-send-email-vincent.stehle@laposte.net>
+ <20140525221235.GA26619@kroah.com>
+ <20140526091252.2a4496d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140527162213.0ecfb9d4@canb.auug.org.au>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-we0-f181.google.com ([74.125.82.181]:59833 "EHLO
+	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751869AbaE0M7V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 May 2014 08:59:21 -0400
+Received: by mail-we0-f181.google.com with SMTP id w61so9686171wes.12
+        for <linux-next@vger.kernel.org>; Tue, 27 May 2014 05:59:19 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20140526091252.2a4496d4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-kernel <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, =?UTF-8?Q?Vincent_Stehl=C3=A9?= <vincent.stehle@laposte.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vincent =?iso-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Andrzej Hajda <a.hajda@samsung.com>, Dave Airlie <airlied@linux.ie>
 
-T24gMjcgTWF5IDIwMTQgMTE6NTIsIFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3Jn
-LmF1PiB3cm90ZToKPiBIaSBEYXZlLAo+Cj4gT24gVHVlLCAyNyBNYXkgMjAxNCAxNTo1Mjo0NiAr
-MTAwMCBEYXZlIEFpcmxpZSA8YWlybGllZEBnbWFpbC5jb20+IHdyb3RlOgo+Pgo+PiBUaGVuIHdl
-IHNob3VsZCBjYyBoaW0uCj4KPiBIZSB3YXMgY2MnZCBvbiBteSBlbWFpbCB0aGF0IHlvdSByZXBs
-aWVkIHRvIC4uLgo+Cj4gQnV0IEkgZ3Vlc3MgdGhlIGV4dHJhIHByb2Qgd29uJ3QgaHVydCA6LSkK
-OikgdGhhbmtzIGZvciB0aGUgcHJvZCBTdGVwaGVuIQoKQWxsLAoKSSdsbCBtZXJnZSBpdCBpbiB0
-b2RheSdzIGZvci1uZXh0IGZvciBtZS4KCj4gLS0KPiBDaGVlcnMsCj4gU3RlcGhlbiBSb3Rod2Vs
-bCAgICAgICAgICAgICAgICAgICAgc2ZyQGNhbmIuYXV1Zy5vcmcuYXUKCi0tIApUaGFua3MgYW5k
-IHJlZ2FyZHMsCgpTdW1pdCBTZW13YWwKR3JhcGhpY3MgRW5naW5lZXIgLSBHcmFwaGljcyB3b3Jr
-aW5nIGdyb3VwCkxpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29D
-cwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, May 26, 2014 at 09:12:52AM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> On Sun, 25 May 2014 15:12:35 -0700 Greg Kroah-Hartman <gregkh@linuxfo=
+undation.org> wrote:
+> >
+> > On Sun, May 25, 2014 at 11:54:14PM +0200, Vincent Stehl=C3=A9 wrote=
+:
+> > > Commit f9b0e251dfbf 'drm: make mode_valid callback optional' left=
+ variable ret
+> > > unused; remove it.
+> > >=20
+> > > This fixes the following compilation warning:
+> > >=20
+> > >   drivers/staging/imx-drm/imx-tve.c: In function =E2=80=98imx_tve=
+_connector_mode_valid=E2=80=99:
+> > >   drivers/staging/imx-drm/imx-tve.c:252:6: warning: unused variab=
+le =E2=80=98ret=E2=80=99 [-Wunused-variable]
+> >=20
+> > It doesn't apply to my tree :(
+>=20
+> Yeah, commit f9b0e251dfbf 'drm: make mode_valid callback optional' is
+> in the drm tree, so this patch needs to go to Dave Airlie (cc'd).
+> Though Daniel Vetter may want to send it on.
+>=20
+> For Dave's benefit, here is the patch again:
+
+I've pulled it into my drm-stuff branch so it doesn't get lost. Should
+land in 3.16 one way or the other.
+
+Thanks, Daniel
+
+>=20
+> From:	Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+> Subject: [PATCH linux-next] imx-drm: imx-tve: remove unused variable
+> Date:	Sun, 25 May 2014 23:54:14 +0200
+>=20
+> Commit f9b0e251dfbf 'drm: make mode_valid callback optional' left var=
+iable ret
+> unused; remove it.
+>=20
+> This fixes the following compilation warning:
+>=20
+>   drivers/staging/imx-drm/imx-tve.c: In function =E2=80=98imx_tve_con=
+nector_mode_valid=E2=80=99:
+>   drivers/staging/imx-drm/imx-tve.c:252:6: warning: unused variable =E2=
+=80=98ret=E2=80=99 [-Wunused-variable]
+>=20
+> Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>=20
+> Hi,
+>=20
+> This can be seen with e.g. linux next-20140523 and arm allmodconfig.
+>=20
+> Best regards,
+>=20
+> V.
+>=20
+>  drivers/staging/imx-drm/imx-tve.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/staging/imx-drm/imx-tve.c b/drivers/staging/imx-=
+drm/imx-tve.c
+> index 3e8b0a1..4caef2b1 100644
+> --- a/drivers/staging/imx-drm/imx-tve.c
+> +++ b/drivers/staging/imx-drm/imx-tve.c
+> @@ -249,7 +249,6 @@ static int imx_tve_connector_mode_valid(struct dr=
+m_connector *connector,
+>  {
+>  	struct imx_tve *tve =3D con_to_tve(connector);
+>  	unsigned long rate;
+> -	int ret;
+> =20
+>  	/* pixel clock with 2x oversampling */
+>  	rate =3D clk_round_rate(tve->clk, 2000UL * mode->clock) / 2000;
+> --=20
+> 2.0.0.rc2
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
