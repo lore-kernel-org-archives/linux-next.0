@@ -1,66 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the regulator tree
-Date: Tue, 27 May 2014 14:41:23 +1000
-Message-ID: <20140527144123.2ae08251@canb.auug.org.au>
+From: =?gbk?B?WHVldGFvIEd1YW4g?= <gxt@pku.edu.cn>
+Subject: =?utf-8?Q?=E5=9B=9E=E5=A4=8D=EF=BC=9A_Re:_[Consult]_About_only_o?=
+ =?utf-8?Q?ne_Signed-of-by_for_the_patches?=
+Date: Tue, 27 May 2014 13:07:30 +0800 (CST)
+Message-ID: <458532278.27889.1401167250372.JavaMail.root@bj-mail03.pku.edu.cn>
+References: <20140527113400.6fa2eeee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nK3coX+YyU0Vw1og2paTjV0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56958 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751142AbaE0Eld (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2014 00:41:33 -0400
+Received: from mx11.pku.edu.cn ([162.105.129.174]:57675 "EHLO mail.pku.edu.cn"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751713AbaE0FQG convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 May 2014 01:16:06 -0400
+In-Reply-To: <20140527113400.6fa2eeee@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Lucas Stach <l.stach@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chen Gang <gang.chen.5i5j@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, linux-next@vger.kernel.org
 
---Sig_/nK3coX+YyU0Vw1og2paTjV0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+----- Stephen Rothwell <sfr@canb.auug.org.au> =E5=86=99=E9=81=93=EF=BC=9A
+> Hi Chen,
+>=20
+> On Tue, 27 May 2014 09:23:38 +0800 Chen Gang <gang.chen.5i5j@gmail.co=
+m> wrote:
+> >
+> > I find some of patches are only Signed-of-by me, are they OK?
+>=20
+> Actually, this one is not OK.  Anyone who handles a patch needs to ad=
+d a
+> Signed-off-by.  In the case below, that patch was commited to the tre=
+e
+> by Guan Xuetao <gxt@mprc.pku.edu.cn>, so there needs to be a
+> Signed-off-by from them as well.
+>=20
+> The same is true for all the commits in the unicore32 tree ...
 
-After merging the regulator tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Ok, I see.
 
-drivers/built-in.o: In function `ltc3589_probe':
-ltc3589.c:(.text+0xccf24): undefined reference to `devm_regmap_init_i2c'
-drivers/built-in.o: In function `ltc3589_driver_init':
-ltc3589.c:(.init.text+0x9ebc): undefined reference to `i2c_register_driver'
-drivers/built-in.o: In function `ltc3589_driver_exit':
-ltc3589.c:(.exit.text+0x2d1): undefined reference to `i2c_del_driver'
+Then, do I need to reply each mail with my sob? Or only replace acked-b=
+y by sob for all commits in my tree?
 
-Caused by commit 3eb2c7ecb7ea ("regulator: Add LTC3589 support").
+Xuetao
 
-Clearly some dependencies are incorrect.  Presumably the required
-interfaces are in modules for this build.
-
-I have used the regulator tree from next-20140526 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/nK3coX+YyU0Vw1og2paTjV0
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJThBd6AAoJEMDTa8Ir7ZwV32wP/2KkEqLnqTcjLCqWjfqgRhl9
-TLIprzsBGHSsb9oonA3oj7IFCF+BjWcveqodMiLud5/6aBH9TyHhTl7yjYJXUbnY
-tnB35zmvkZdrt+X/EBT3/guGyozU3TqnMujdhh4NW0AeUp/Y1Mzm6+5ddHOirb+z
-3lnJuKLWPtqvonA5fFZiyMlNad3HTW5Z23JBy9A7HfNOPRx1T9LaaeYQLLtCrcVU
-X16Y63v90qBDmSqpzMnIBRvAFD2INf9OQtTqoduTVbKUf6cuULCPvDLzJQOQEhzv
-788vSByd2hpVHGY9noii4BIfmzL44gxISoa4pjumy2S+ew02PckCU5V6rTpQ4i3z
-HIg7r6igOq04H/8Zs+4dPuYhiScvVoHKsuP7tr/5PyNoqsbEkr6qeW80dLZ93JVe
-FaxX95NQ6928zkxPU5wy8e78oE7wd46VmqQs0/pYCbQ3OPF2RfuFJhznk4yUCKQM
-HkL5wPs3p1o3NvBptW/kledV4OIlig+NaJlIoWHCkrV3KYSMJgx6CkjBKbrBjBsZ
-k4Hwled0N5KHES9KXEy0s8szdPSMjyRcj3AGySoH7hVdD2cZ8w1KaGpAn8pXgdvx
-zs3bxenIfN47Ft9WS/HNEmX5h/+SA1CBzVImueXNHqpfYvNcAxnONe5IYBxGq2zX
-2bMwoYSQUN0NXU4YASBC
-=jp7z
------END PGP SIGNATURE-----
-
---Sig_/nK3coX+YyU0Vw1og2paTjV0--
+>=20
+> > commit d7de15786d1a10fa18b80fd44026d442e7a84bd2
+> > Author: Chen Gang <gang.chen.5i5j@gmail.com>
+> > Date:   Tue Apr 15 09:21:30 2014 +0800
+> >=20
+> >     arch:unicore32:mm: add devmem_is_allowed() to support STRICT_DE=
+VMEM
+> >    =20
+> >     unicore32 supports STRICT_DEVMEM, so it needs devmem_is_allowed=
+(), like
+> >     some of other architectures have done (e.g. arm, powerpc, x86 .=
+=2E.).
+> >    =20
+> >     The related error with allmodconfig:
+> >    =20
+> >         CC      drivers/char/mem.o
+> >       drivers/char/mem.c: In function =C3=A2<U+0080><U+0098>range_i=
+s_allowed=C3=A2<U+0080><U+0099>:
+> >       drivers/char/mem.c:69: error: implicit declaration of functio=
+n =C3=A2<U+0080><U+0098>devmem_is_allowed=C3=A2<U+0080><U+0099>
+> >       make[2]: *** [drivers/char/mem.o] Error 1
+> >       make[1]: *** [drivers/char] Error 2
+> >       make: *** [drivers] Error 2
+> >    =20
+> >     Signed-off-by: Chen Gang <gang.chen.5i5j@gmail.com>
+> >     Acked-by: Xuetao Guan <gxt@mprc.pku.edu.cn>
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
