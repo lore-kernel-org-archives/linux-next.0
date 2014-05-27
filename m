@@ -1,38 +1,50 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: Request inclusion of HYP mode cpu_resume fix into linux-next
-Date: Tue, 27 May 2014 11:27:32 +0100
-Message-ID: <20140527102732.GA18476@e102568-lin.cambridge.arm.com>
-References: <20140306184303.GA31279@e102568-lin.cambridge.arm.com>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: build failure after merge of the l2-mtd tree
+Date: Tue, 27 May 2014 13:40:03 +0300
+Message-ID: <1401187203.1304.125.camel@sauron.fi.intel.com>
+References: <20140522153047.62c1721c@canb.auug.org.au>
+	 <20140526174225.GC5241@norris-Latitude-E6410>
+	 <20140527095942.0a071e63@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:60330 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308AbaE0K1k convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 May 2014 06:27:40 -0400
-In-Reply-To: <20140306184303.GA31279@e102568-lin.cambridge.arm.com>
-Content-Disposition: inline
+Received: from mga11.intel.com ([192.55.52.93]:31747 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751705AbaE0KkH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 May 2014 06:40:07 -0400
+In-Reply-To: <20140527095942.0a071e63@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Christoffer Dall <christoffer.dall@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Russell King <linux@arm.linux.org.uk>
+Cc: Brian Norris <computersforpeace@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vincenzo Aliberti <vincenzo.aliberti@gmail.com>
+
+On Tue, 2014-05-27 at 09:59 +1000, Stephen Rothwell wrote:
+> Hi Brian,
+> 
+> On Mon, 26 May 2014 10:42:25 -0700 Brian Norris <computersforpeace@gmail.com> wrote:
+> >
+> > On Thu, May 22, 2014 at 03:30:47PM +1000, Stephen Rothwell wrote:
+> > > Hi Artem,
+> > 
+> > FYI, I'm managing this tree now, not Artem.
+> 
+> OK, noted.  Is there a different URL for the tree as well?  Currently
+> it is git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master .
 
 Hi Stephen,
 
-On Thu, Mar 06, 2014 at 06:43:03PM +0000, Lorenzo Pieralisi wrote:
-> Hi Stephen,
-> 
-> can I ask you please to include the following branch into linux-next:
-> 
-> git://linux-arm.org/linux-2.6-lp.git arm-kvm-cpuresume
-> 
-> It contains a patch touching ARM PM core code that requires wider testing
-> coverage before I request a pull. It has been already publicly posted,
-> reviewed and tested.
+apologies for not informing you about the onwership changes in time. But
+yes, Brian takes care of this tree now.
 
-Patch now queued for mainline, please drop the branch from -next, it
-will reappear soon through the ARM tree.
+The URL you have is technically correct, but it is better to use this
+instead:
 
-Thanks,
-Lorenzo
+git://git.infradead.org/l2-mtd.git#master
+
+The old URL is just a symlink to the above one nowadays. Thanks!
+
+-- 
+Best Regards,
+Artem Bityutskiy
