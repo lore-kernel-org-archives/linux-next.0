@@ -1,56 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net-next tree
-Date: Wed, 28 May 2014 18:28:24 +1000
-Message-ID: <20140528182824.63672ad9@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with Linus' tree
+Date: Wed, 28 May 2014 19:00:11 +1000
+Message-ID: <20140528190011.302a2e52@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K.V47Y2h8HC5yHcLZwqcdZZ"; protocol="application/pgp-signature"
+ boundary="Sig_/TPwkKhNGZJT+1fBOMj5nWa/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>, Sachin Kamat <sachin.kamat@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Welling <mwelling@ieee.org>, Michael Stickel <ms@mycable.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/K.V47Y2h8HC5yHcLZwqcdZZ
+--Sig_/TPwkKhNGZJT+1fBOMj5nWa/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Linus,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/rtl8821ae/core.c between commit 77be2c54c5bd
-("mac80211: add vif to flush call") from the net-next tree and commit
-0cd05ba54a53 ("staging: rtl8821ae: core.c: Remove version specific
-code") from the staging tree.
+Today's linux-next merge of the gpio tree got a conflict in
+drivers/gpio/gpio-mcp23s08.c between commit 99e4b98dbe3a ("gpio:
+mcp23s08: Bug fix of SPI device tree registration") from Linus' tree
+and commit 3e3bed913e8b ("gpio: mcp23s08: fixed count variable for
+devicetree probing") from the gpio tree.
 
-I fixed it up (the former is a suberset of the latter for this
-particular conflict) and can carry the fix as necessary (no action is
-required).
+I fixed it up (one way - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/K.V47Y2h8HC5yHcLZwqcdZZ
+diff --cc drivers/gpio/gpio-mcp23s08.c
+index 3d53fd6880d1,00fbb30b9b10..000000000000
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@@ -894,11 -894,14 +894,12 @@@ static int mcp23s08_probe(struct spi_de
+  			dev_err(&spi->dev, "invalid spi-present-mask\n");
+  			return -ENODEV;
+  		}
++=20
+  		for (addr =3D 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
+- 			if ((spi_present_mask & (1 << addr)))
+- 				chips++;
+  			pullups[addr] =3D 0;
++ 			if (spi_present_mask & (1 << addr))
++ 				chips++;
+  		}
+ -		if (!chips)
+ -			return -ENODEV;
+  	} else {
+  		type =3D spi_get_device_id(spi)->driver_data;
+  		pdata =3D dev_get_platdata(&spi->dev);
+
+--Sig_/TPwkKhNGZJT+1fBOMj5nWa/
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThZ4tAAoJEMDTa8Ir7ZwVSLIP/Rvlj7PQQUiRMxyF6NJlwr9w
-SdUzpLz6d6+K/aJUAaLWTUrw/Sk3P8B8jI0/9z/N3wdNsBGwCpClvj46P+XajrDW
-YOt5CdrsRb1/1ZCDZVtGW7w7BWRhjGwawCec+Y0+zusChwn7q01lNl651T7ebIJw
-UmuSGN2K8zIPybysU+hvnJdd4vqM3rsFKn3j6e2pcrxkKb80c0FunyLJCqu5Tbc4
-SjOvMV3IuxJWf21OzmToF/afsZ/FNej+iYXeNModtpzuKEb+PL+9zHtMXjntyT4M
-QRava/VKA9RSFfKAxlhE/OHf4AWYn01INbrd7aHbho1HF/Ev6eo8y8oaW7pAobdi
-jddBlFMDqLRtIiRuNTpbRd/22xmEGmlO1GLlL53h0UzFGiT6t7htskel+MX7apUv
-kDRh6lCIM0hFR3QyroorZq/O8oN8OyQHmyFqkf78ZO0wWT2HOOla3WCfatqoe/t7
-Pe1VkMrSrTKEKnVWeX+Nxrp8FwVG7MKCC0XXDyzK1h8+704dRq92h8+I3FqDQfyl
-fro/KBCP9Oag8LlBwGCQT3FmftiWaEz6egE7iAqB/3lf1MjQN/40l5AhcNTB7gYh
-Lfpw1q1+r8ouz2P13uSL1vshli3SCGnKkdm7oM/vqB0eRO2HjAqXTRXSGR5ChFBy
-1gDEYn8U0idFOboJsG46
-=lWkz
+iQIcBAEBCAAGBQJThaWfAAoJEMDTa8Ir7ZwV0UEQAIBo6nZspFPtG7jMR8swlkL9
+kKZcam2RgJ4Q0RGu+M4BOuQA2aUEmyqLOlY0xVy8eZT9e/HETfxbFBnS8bTd+ZxG
+g/7VjZaM2OSuJxrcvfRRVjCy8IXm0tK/HUjLLwntmk79U4nK/kUTadNOUYD60BxU
+jwmSKAyoiDliOo4IeBsllYn0fbsQvl5vnESfTG4t8v8gEOoBbxnSEqPgq5XAp5fn
+vRRqmM7uPFr5ijep2D+AcpxOQeJywM0qtesgtvoJRp5FElERQQMNbvzrZHcPpDEF
+EchQECEF8zBPP5pqDKjLnPZBI5qkbBKC5yBy5hHqRYEm3asFlOfdqgZhes7t0M/U
+Tw1lf+CK60tZg9PjKTkSsesYSjbq+wv/d5GJvm1Lc6taUNyiXwaQjZGz7jv7f9sC
+P9oUFxZGwRWlxeXlWsJ9rTGOF6uyo40x1CPDLvu2DO/DKaly5FIbwXDHmf7jEgzD
+zPVcBjGVbsepuOLZG0Vmo8jlnQ0Uuc0hcjdwpiOUJR0IzIUtz40phnuerRmHyJZk
+hpVRjg8zMgLYXde8CSIpZBBydu+eqOymM+c9mxnrEr+xv/tKEFOYXj2z5g7W5jDN
+XtgdpxMlLNXJHC1bfWtdtnrtGWRHhjR0HhD8pH7J0+hzmpdrOuYnwjn0awEmM6n9
+QYwR9Ri+BNSj/vWAAZ+V
+=tc7a
 -----END PGP SIGNATURE-----
 
---Sig_/K.V47Y2h8HC5yHcLZwqcdZZ--
+--Sig_/TPwkKhNGZJT+1fBOMj5nWa/--
