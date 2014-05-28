@@ -1,86 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Wed, 28 May 2014 19:46:29 +1000
-Message-ID: <20140528194629.0757af1b@canb.auug.org.au>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Wed, 28 May 2014 11:57:21 +0200
+Message-ID: <1401271041.28714.22.camel@x220>
+References: <20140528194629.0757af1b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1XbJG+E=GmejHwnvSJahUib"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54547 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752202AbaE1Jqh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2014 05:46:37 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140528194629.0757af1b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/1XbJG+E=GmejHwnvSJahUib
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2014-05-28 at 19:46 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/staging/rtl8192u/ieee80211/ieee80211_tx.c:203:34: error: 'struct ieee80211_hdr' has no member named 'addr1'
+>            ieee->dev->name, header->addr1);
+>                                   ^
+> 
+> I can't easily see what caused this, so I just disabled the staging
+> tree driver:
 
-Hi all,
+That may be related to my "staging: rtl8192u: rename
+CONFIG_IEEE80211_CRYPT_TKIP" (see https://lkml.org/lkml/2014/5/26/531 .)
+My message states it was compile tested, but that would be on x86_64.
+Did it only break on powerpc or did powerpc hit this first?
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 28 May 2014 19:43:17 +1000
+> Subject: [PATCH] staging: rtl8192u: diable broken driver
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/staging/rtl8192u/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/rtl8192u/Kconfig b/drivers/staging/rtl8192u/Kconfig
+> index 3ee9d0d00fb6..ea5d02d8cca2 100644
+> --- a/drivers/staging/rtl8192u/Kconfig
+> +++ b/drivers/staging/rtl8192u/Kconfig
+> @@ -2,6 +2,7 @@ config RTL8192U
+>  	tristate "RealTek RTL8192U Wireless LAN NIC driver"
+>  	depends on PCI && WLAN && USB
+>  	depends on m
+> +	depends on BROKEN
+>  	select WIRELESS_EXT
+>  	select WEXT_PRIV
+>  	select CRYPTO
+> -- 
+> 2.0.0.rc4
 
-drivers/staging/rtl8192u/ieee80211/ieee80211_tx.c:203:34: error: 'struct ie=
-ee80211_hdr' has no member named 'addr1'
-           ieee->dev->name, header->addr1);
-                                  ^
+Thanks,
 
-I can't easily see what caused this, so I just disabled the staging
-tree driver:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 28 May 2014 19:43:17 +1000
-Subject: [PATCH] staging: rtl8192u: diable broken driver
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/rtl8192u/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/rtl8192u/Kconfig b/drivers/staging/rtl8192u/Kc=
-onfig
-index 3ee9d0d00fb6..ea5d02d8cca2 100644
---- a/drivers/staging/rtl8192u/Kconfig
-+++ b/drivers/staging/rtl8192u/Kconfig
-@@ -2,6 +2,7 @@ config RTL8192U
- 	tristate "RealTek RTL8192U Wireless LAN NIC driver"
- 	depends on PCI && WLAN && USB
- 	depends on m
-+	depends on BROKEN
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
- 	select CRYPTO
---=20
-2.0.0.rc4
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/1XbJG+E=GmejHwnvSJahUib
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJThbB7AAoJEMDTa8Ir7ZwVB3IP/RRpeZWUVpfxYqX/xhlMWNh1
-7pYpXsOGn1qh5uXPdeLzTfgDKhKkIyNPobbS03j4KAvC3op5Dto68W8JVdnG8xMl
-x4CPXNjLPLtsgv6nz66BsWaZRhyRPr0fYJpltgjin8BVM3hJTQ94nckPqPJ3XsUE
-ncaaT21KTFWAPXBaBCc342l2YVP+I2YbrgvuLEYrLjAuUnKBQeYJO1K6LMYkIXjX
-04KHdRHonHqMmkQmAlwH9rdbjpm/xurmkvhNQnXQAKHd2rxToO8o45GNOk8hakVC
-dqdtpTBK7s7QAHXWOEGmAa7tRVA/VyLMymNTOaqbsNL2hhlHTwG4G5cRKfCvdmq6
-4k5p4jNqWJXKC66HyQTbiaBBz2l6OeKW1QsD7KaH+DOVlgZtXh105KVoHzCUcW9c
-AgRmJD53Ncyevb/j5sjBxzB7633RmSW52FOAILnZsJLeTAYKlg6nf2t4jbpHEfDv
-1cvXWLRxP7yEPzd1oyAxbw7WDPhFnU2ICHtGsHts6BBQRsn0QR20DvUEs/zZVETG
-kSYqwogpkaCNjRI4zt/ydBoVZAntfPDKEpR9HmCp3Y2GOVW+WpfsL8NaO8LrjWpO
-xmETFObV11BbIlGp0O1LQiJVP7zOSho+s13YLuZGyxdftxEkJ3ckIP1cvpoHLxkF
-COwfP1C4KLiQWuwADXgb
-=6y+z
------END PGP SIGNATURE-----
-
---Sig_/1XbJG+E=GmejHwnvSJahUib--
+Paul Bolle
