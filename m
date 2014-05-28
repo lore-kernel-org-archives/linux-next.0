@@ -1,47 +1,67 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 28 May 2014 11:30:02 +0200
-Message-ID: <1401269402.4597.15.camel@chaos.site>
-References: <20140528180331.4abb99a0@canb.auug.org.au>
+From: Michael Welling <mwelling@ieee.org>
+Subject: Re: linux-next: manual merge of the gpio tree with Linus' tree
+Date: Wed, 28 May 2014 08:38:32 -0500
+Message-ID: <20140528133832.GA2541@deathray>
+References: <20140528190011.302a2e52@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:55326 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751363AbaE1LvY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2014 07:51:24 -0400
-In-Reply-To: <20140528180331.4abb99a0@canb.auug.org.au>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:36084 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751873AbaE1Nif (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 May 2014 09:38:35 -0400
+Content-Disposition: inline
+In-Reply-To: <20140528190011.302a2e52@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Stickel <ms@mycable.de>
 
-Hi Stephen, Greg,
+On Wed, May 28, 2014 at 07:00:11PM +1000, Stephen Rothwell wrote:
+> Hi Linus,
+> 
+> Today's linux-next merge of the gpio tree got a conflict in
+> drivers/gpio/gpio-mcp23s08.c between commit 99e4b98dbe3a ("gpio:
+> mcp23s08: Bug fix of SPI device tree registration") from Linus' tree
+> and commit 3e3bed913e8b ("gpio: mcp23s08: fixed count variable for
+> devicetree probing") from the gpio tree.
+> 
+> I fixed it up (one way - see below) and can carry the fix as necessary
+> (no action is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/gpio/gpio-mcp23s08.c
+> index 3d53fd6880d1,00fbb30b9b10..000000000000
+> --- a/drivers/gpio/gpio-mcp23s08.c
+> +++ b/drivers/gpio/gpio-mcp23s08.c
+> @@@ -894,11 -894,14 +894,12 @@@ static int mcp23s08_probe(struct spi_de
+>   			dev_err(&spi->dev, "invalid spi-present-mask\n");
+>   			return -ENODEV;
+>   		}
+> + 
+>   		for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
+> - 			if ((spi_present_mask & (1 << addr)))
+> - 				chips++;
+>   			pullups[addr] = 0;
+> + 			if (spi_present_mask & (1 << addr))
+> + 				chips++;
+>   		}
+>  -		if (!chips)
+>  -			return -ENODEV;
+>   	} else {
+>   		type = spi_get_device_id(spi)->driver_data;
+>   		pdata = dev_get_platdata(&spi->dev);
 
-Le Wednesday 28 May 2014 =C3=A0 18:03 +1000, Stephen Rothwell a =C3=A9c=
-rit :
-> Hi Greg,
->=20
-> After merging the driver-core tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> drivers/crypto/nx/nx-842.c: In function 'nx842_probe':
-> drivers/crypto/nx/nx-842.c:1200:6: error: void value not ignored as i=
-t ought to be
->   if (dev_set_drvdata(&viodev->dev, rcu_dereference(devdata))) {
->       ^
->=20
-> Caused by commit 2c1f1ff0f0d9 ("driver core: dev_set_drvdata returns
-> void").  Grep is better than hope :-)
 
-Oops, that would be my fault, sorry. I did grep for such cases but my
-grep command must have been poor, I only caught 2 of the 3 cases in the
-kernel tree. And make allmodconfig didn't help as the driver is
-ppc64-specific.
+Looking at the Linux next version, I am fairly certian that the following is
+redundant checking:
+                if (chips < 0) {
+                        dev_err(&spi->dev, "FATAL: invalid negative chip id\n");
+                        goto fail;
+                }
 
-I'll send a fix-up patch immediately, sorry for the trouble.
-
---=20
-Jean Delvare
-SUSE L3 Support
+The chips variable should equal the number of bits in the spi_present_mask variable.
+Or am I missing something?
