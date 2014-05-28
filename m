@@ -1,38 +1,63 @@
-From: Paul Bolle <pebolle@tiscali.nl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 28 May 2014 12:14:55 +0200
-Message-ID: <1401272095.28714.30.camel@x220>
+Date: Wed, 28 May 2014 20:24:11 +1000
+Message-ID: <20140528202411.0660759a@canb.auug.org.au>
 References: <20140528194629.0757af1b@canb.auug.org.au>
-	 <1401271041.28714.22.camel@x220>
+	<1401271041.28714.22.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/i1PiIVa99UlydVGCDDkV9VQ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cpsmtpb-ews02.kpnxchange.com ([213.75.39.5]:54855 "EHLO
-	cpsmtpb-ews02.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752019AbaE1KO6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2014 06:14:58 -0400
+Received: from ozlabs.org ([103.22.144.67]:54246 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751370AbaE1KYU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2014 06:24:20 -0400
 In-Reply-To: <1401271041.28714.22.camel@x220>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Paul Bolle <pebolle@tiscali.nl>
 Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2014-05-28 at 11:57 +0200, Paul Bolle wrote:
-> On Wed, 2014-05-28 at 19:46 +1000, Stephen Rothwell wrote:
+--Sig_/i1PiIVa99UlydVGCDDkV9VQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Paul,
+
+On Wed, 28 May 2014 11:57:21 +0200 Paul Bolle <pebolle@tiscali.nl> wrote:
+>=20
 > That may be related to my "staging: rtl8192u: rename
 > CONFIG_IEEE80211_CRYPT_TKIP" (see https://lkml.org/lkml/2014/5/26/531 .)
 > My message states it was compile tested, but that would be on x86_64.
 > Did it only break on powerpc or did powerpc hit this first?
 
-I must have compile tested this with CONFIG_LIB80211_CRYPT_TKIP=m while
-the code checks for CONFIG_LIB80211_CRYPT_TKIP only (ie, builtin only).
-I'll have to have a better look at this.
+The powerpc allyesconfig build was just where I found it - I don't do
+that many different builds during the day.
 
-Greg, can the cleaning up of this mess involve an entirely new patch? An
-incremental patch would leave this build error in a certain range of
-commits.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Sig_/i1PiIVa99UlydVGCDDkV9VQ
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-Paul Bolle
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJThblQAAoJEMDTa8Ir7ZwVMToP/3sPqESpU1XtOKKba0ByDRDM
+j85idBBR6ANW5+oBvvb34TwMvDwiH9kns8R+tzeaydqWTW5yM68NA7N5OfHXQj+8
+K6crYv9/x/b/OaCuenSdMmtThDs1wGzLQ0S1C40jbiaqUWdJtAE0OadeJThIFpK6
+RPmyaLGfVrw3/sXfccwrnunuh7ClMgmdLqGyttNffqdJkO88fzLaBrSi7v8JRkI7
+iLATn70Hybya7Fohd2W+0JIuWMriqZb5rrthEpL/2yHi8iZlnovXRsTBY8IK84RK
+B4p5b2RmNnqQXWIfe8mMdaWbm3+BFc33N0Q+MTVsQvv2MgkRIEN/pdh+XllsL1iK
+eGeKmsOFzSTFLzrxxy0WJb2QugyDx+xXVWbkPg/lh2KKcBgXN4TWYmmg6XTgNTIM
+67uSfOXQCIKJla8JHegDdNV/VOkhPIZyiNO7Jic7TOwedLzAuLyiOTkbd3+/IdTx
+CjPMqri1lgQ76upjfejXdBQWNJVotlEfC/ui/uCFgxWU+EyIKbPsl+H5C+Daxpfl
+frp/uyCNT1ALeX44V/VH4CHTcEvrm+P7GFLa+3LzBut35zFH0kbI9lYYdIFUJzOp
+mhWJ2jAIIteKw1ikECoULr1plnIzpZfkW8xhAvxtffdQOpmW3UOWzmexn1UK2gci
+xFCpCme0pqcYfT5NMLPY
+=K1o0
+-----END PGP SIGNATURE-----
+
+--Sig_/i1PiIVa99UlydVGCDDkV9VQ--
