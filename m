@@ -1,36 +1,47 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the iommu
- tree
-Date: Wed, 28 May 2014 11:35:23 -0700
-Message-ID: <20140528183523.GA16719@kroah.com>
-References: <20140528175531.4ce48afd@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Wed, 28 May 2014 14:57:00 -0400
+Message-ID: <20140528185700.GC22210@fieldses.org>
+References: <20140528120728.2bce9521@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56916 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751353AbaE1Sbt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2014 14:31:49 -0400
+Received: from fieldses.org ([174.143.236.118]:33141 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752163AbaE1S5C (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2014 14:57:02 -0400
 Content-Disposition: inline
-In-Reply-To: <20140528175531.4ce48afd@canb.auug.org.au>
+In-Reply-To: <20140528120728.2bce9521@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Joerg Roedel <joro@8bytes.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.de>, Cho KyongHo <pullip.cho@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 28, 2014 at 05:55:31PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Wed, May 28, 2014 at 12:07:28PM +1000, Stephen Rothwell wrote:
+> Hi Bruce,
 > 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/iommu/exynos-iommu.c between commit 7222e8db2d50
-> ("iommu/exynos: Fix build errors") from the iommu tree and commit
-> 8283b4919e00 ("driver core: dev_set_drvdata can no longer fail") from
-> the driver-core tree.
+> After merging the nfsd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> I fixed it up (the former removed the code changed by the latter) and
-> can carry the fix as necessary (no action is required).
+> 
+> fs/nfsd/nfs4xdr.c: In function 'nfsd4_encode_security_label':
+> fs/nfsd/nfs4xdr.c:1945:15: error: 'pp' undeclared (first use in this function)
+>   __be32 *p = *pp;
+>                ^
+> 
+> Caused by commit 8ea0abf0a992 ("nfsd4: use xdr_reserve_space in
+> attribute encoding").
 
-Sounds good, thanks.
+Fixed; thanks again.
 
-greg k-h
+> "This is a cosmetic change for now; no change in
+> behavior" :-(  They are the ones you have to be very careful of ...
+
+Hah, maybe.
+
+--b.
+
+> I have used the nfsd tree from next-20140523 and for today.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
