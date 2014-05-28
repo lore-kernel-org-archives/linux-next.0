@@ -1,70 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the l2-mtd tree
-Date: Wed, 28 May 2014 08:49:16 +1000
-Message-ID: <20140528084916.4e05cf26@canb.auug.org.au>
-References: <20140522153047.62c1721c@canb.auug.org.au>
-	<20140526174225.GC5241@norris-Latitude-E6410>
-	<20140527095942.0a071e63@canb.auug.org.au>
-	<1401187203.1304.125.camel@sauron.fi.intel.com>
+From: =?gbk?B?WHVldGFvIEd1YW4g?= <gxt@pku.edu.cn>
+Subject: =?utf-8?Q?=E5=9B=9E=E5=A4=8D=EF=BC=9A_Re:_?=
+ =?utf-8?Q?=E5=9B=9E=E5=A4=8D=EF=BC=9A_Re:_[?= =?utf-8?Q?Consult]_About_on?=
+ =?utf-8?Q?ly_one_Signed-of-by_for_the_patches?=
+Date: Wed, 28 May 2014 08:00:41 +0800 (CST)
+Message-ID: <1037987912.35395.1401235241988.JavaMail.root@bj-mail03.pku.edu.cn>
+References: <20140528084304.22a1a6c8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/s0JmTu3E.mEWT=h25Qc2W6d"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43159 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751966AbaE0Wta (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2014 18:49:30 -0400
-In-Reply-To: <1401187203.1304.125.camel@sauron.fi.intel.com>
+Received: from mx7.pku.edu.cn ([162.105.129.170]:49947 "EHLO mail.pku.edu.cn"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752071AbaE1AAw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 May 2014 20:00:52 -0400
+In-Reply-To: <20140528084304.22a1a6c8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dedekind1@gmail.com
-Cc: Brian Norris <computersforpeace@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vincenzo Aliberti <vincenzo.aliberti@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chen Gang <gang.chen.5i5j@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, linux-next@vger.kernel.org
 
---Sig_/s0JmTu3E.mEWT=h25Qc2W6d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
-
-On Tue, 27 May 2014 13:40:03 +0300 Artem Bityutskiy <dedekind1@gmail.com> w=
-rote:
->
-> apologies for not informing you about the onwership changes in time. But
-> yes, Brian takes care of this tree now.
-
-OK, thanks.
-
-> The URL you have is technically correct, but it is better to use this
-> instead:
+----- Stephen Rothwell <sfr@canb.auug.org.au> =E5=86=99=E9=81=93=EF=BC=9A
+> Hi,
 >=20
-> git://git.infradead.org/l2-mtd.git#master
+> On Tue, 27 May 2014 13:07:30 +0800 (CST) Xuetao Guan <gxt@pku.edu.cn>=
+ wrote:
+> >
+> >=20
+> > ----- Stephen Rothwell <sfr@canb.auug.org.au> =E5=86=99=E9=81=93=EF=
+=BC=9A
+> > > Hi Chen,
+> > >=20
+> > > On Tue, 27 May 2014 09:23:38 +0800 Chen Gang <gang.chen.5i5j@gmai=
+l.com> wrote:
+> > > >
+> > > > I find some of patches are only Signed-of-by me, are they OK?
+> > >=20
+> > > Actually, this one is not OK.  Anyone who handles a patch needs t=
+o add a
+> > > Signed-off-by.  In the case below, that patch was commited to the=
+ tree
+> > > by Guan Xuetao <gxt@mprc.pku.edu.cn>, so there needs to be a
+> > > Signed-off-by from them as well.
+> > >=20
+> > > The same is true for all the commits in the unicore32 tree ...
+> >=20
+> > Ok, I see.
+> >=20
+> > Then, do I need to reply each mail with my sob? Or only replace ack=
+ed-by by sob for all commits in my tree?
+>=20
+> You do not need to reply to each email, but any patch that you send o=
+n
+> to Linus (or someone else) needs to have your Signed-off-by.  Please
+> read the "Developer's Certificate of Origin" in section 12 of
+> Documentation/SubmittingPatches.
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-I have changed to use that.
+I see. What I misunderstood is that acked-by had similar functions.
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/s0JmTu3E.mEWT=h25Qc2W6d
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJThRZ4AAoJEMDTa8Ir7ZwVUjMP/3AhMPUU9PmRv/vPIe/hMmck
-0k1NUXxQaa0/HtvYMVj08LU0aKal+dxJ+jbQp+XQJcAJE1nD3B6F8V+Q2WOTeJNM
-2lBKERIksWYXFYR1wJVC9HqYm+OwmLOkXNSkkku5ZZK9tk7qrHUk0SNxjlOGJxz2
-FyxTckyQXcdB+aXdFZHXAyHRXJSp13L0XdYPfnP3IC9lxwoxa2FxG+TUIdUvz1dF
-AJgb9Wr92qU3LdsF4BQlg+fX2Dj+FE/ztltckvSkewkESDENKZx9Mjh5IN2RWIph
-e7eaof+CzEBf1A0XgyVelOMWMt3EWKpEXG2qrQqctb75TrjIiLdTAx11j2dGfoCL
-XZn15ADRDqV3zMFRDTOLP8FfYiDAn6AcgbzgC/IqKZE4uQiZbKvdkCqkBbNkEK1A
-0n7g0zVwBt43OliOPZxsEYrJPJ8fo9qfY7UW+25m7iCJ2qRujHLaTZPMeizrnA3/
-zyldnbxbATttECYZpC3slc6QPW0CdX8cFjg/nDoHxWCjrbholy6SdQIhQAzPVS7B
-zNgUXuzqRJtxgEfwFMYKx+mlA+4CLwxSbve9GwyAHJWVDOpLhqskDvw4hAZwDUMp
-aHOlZGc/IVfpRGC399GktIWXY62y4bxeSgMUCRX/5wz/oMZ6UCYA4rklCglTGtSV
-3kV6HHz8uPi7bQ1nLfLq
-=h9VV
------END PGP SIGNATURE-----
-
---Sig_/s0JmTu3E.mEWT=h25Qc2W6d--
+Xuetao
