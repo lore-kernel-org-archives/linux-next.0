@@ -1,77 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with Linus' tree
-Date: Wed, 28 May 2014 19:00:11 +1000
-Message-ID: <20140528190011.302a2e52@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Wed, 28 May 2014 19:46:29 +1000
+Message-ID: <20140528194629.0757af1b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TPwkKhNGZJT+1fBOMj5nWa/"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Welling <mwelling@ieee.org>, Michael Stickel <ms@mycable.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/1XbJG+E=GmejHwnvSJahUib"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54547 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752202AbaE1Jqh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2014 05:46:37 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/TPwkKhNGZJT+1fBOMj5nWa/
+--Sig_/1XbJG+E=GmejHwnvSJahUib
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi all,
 
-Today's linux-next merge of the gpio tree got a conflict in
-drivers/gpio/gpio-mcp23s08.c between commit 99e4b98dbe3a ("gpio:
-mcp23s08: Bug fix of SPI device tree registration") from Linus' tree
-and commit 3e3bed913e8b ("gpio: mcp23s08: fixed count variable for
-devicetree probing") from the gpio tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (one way - see below) and can carry the fix as necessary
-(no action is required).
+drivers/staging/rtl8192u/ieee80211/ieee80211_tx.c:203:34: error: 'struct ie=
+ee80211_hdr' has no member named 'addr1'
+           ieee->dev->name, header->addr1);
+                                  ^
+
+I can't easily see what caused this, so I just disabled the staging
+tree driver:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 28 May 2014 19:43:17 +1000
+Subject: [PATCH] staging: rtl8192u: diable broken driver
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/rtl8192u/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/rtl8192u/Kconfig b/drivers/staging/rtl8192u/Kc=
+onfig
+index 3ee9d0d00fb6..ea5d02d8cca2 100644
+--- a/drivers/staging/rtl8192u/Kconfig
++++ b/drivers/staging/rtl8192u/Kconfig
+@@ -2,6 +2,7 @@ config RTL8192U
+ 	tristate "RealTek RTL8192U Wireless LAN NIC driver"
+ 	depends on PCI && WLAN && USB
+ 	depends on m
++	depends on BROKEN
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	select CRYPTO
+--=20
+2.0.0.rc4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpio/gpio-mcp23s08.c
-index 3d53fd6880d1,00fbb30b9b10..000000000000
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@@ -894,11 -894,14 +894,12 @@@ static int mcp23s08_probe(struct spi_de
-  			dev_err(&spi->dev, "invalid spi-present-mask\n");
-  			return -ENODEV;
-  		}
-+=20
-  		for (addr =3D 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
-- 			if ((spi_present_mask & (1 << addr)))
-- 				chips++;
-  			pullups[addr] =3D 0;
-+ 			if (spi_present_mask & (1 << addr))
-+ 				chips++;
-  		}
- -		if (!chips)
- -			return -ENODEV;
-  	} else {
-  		type =3D spi_get_device_id(spi)->driver_data;
-  		pdata =3D dev_get_platdata(&spi->dev);
-
---Sig_/TPwkKhNGZJT+1fBOMj5nWa/
+--Sig_/1XbJG+E=GmejHwnvSJahUib
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThaWfAAoJEMDTa8Ir7ZwV0UEQAIBo6nZspFPtG7jMR8swlkL9
-kKZcam2RgJ4Q0RGu+M4BOuQA2aUEmyqLOlY0xVy8eZT9e/HETfxbFBnS8bTd+ZxG
-g/7VjZaM2OSuJxrcvfRRVjCy8IXm0tK/HUjLLwntmk79U4nK/kUTadNOUYD60BxU
-jwmSKAyoiDliOo4IeBsllYn0fbsQvl5vnESfTG4t8v8gEOoBbxnSEqPgq5XAp5fn
-vRRqmM7uPFr5ijep2D+AcpxOQeJywM0qtesgtvoJRp5FElERQQMNbvzrZHcPpDEF
-EchQECEF8zBPP5pqDKjLnPZBI5qkbBKC5yBy5hHqRYEm3asFlOfdqgZhes7t0M/U
-Tw1lf+CK60tZg9PjKTkSsesYSjbq+wv/d5GJvm1Lc6taUNyiXwaQjZGz7jv7f9sC
-P9oUFxZGwRWlxeXlWsJ9rTGOF6uyo40x1CPDLvu2DO/DKaly5FIbwXDHmf7jEgzD
-zPVcBjGVbsepuOLZG0Vmo8jlnQ0Uuc0hcjdwpiOUJR0IzIUtz40phnuerRmHyJZk
-hpVRjg8zMgLYXde8CSIpZBBydu+eqOymM+c9mxnrEr+xv/tKEFOYXj2z5g7W5jDN
-XtgdpxMlLNXJHC1bfWtdtnrtGWRHhjR0HhD8pH7J0+hzmpdrOuYnwjn0awEmM6n9
-QYwR9Ri+BNSj/vWAAZ+V
-=tc7a
+iQIcBAEBCAAGBQJThbB7AAoJEMDTa8Ir7ZwVB3IP/RRpeZWUVpfxYqX/xhlMWNh1
+7pYpXsOGn1qh5uXPdeLzTfgDKhKkIyNPobbS03j4KAvC3op5Dto68W8JVdnG8xMl
+x4CPXNjLPLtsgv6nz66BsWaZRhyRPr0fYJpltgjin8BVM3hJTQ94nckPqPJ3XsUE
+ncaaT21KTFWAPXBaBCc342l2YVP+I2YbrgvuLEYrLjAuUnKBQeYJO1K6LMYkIXjX
+04KHdRHonHqMmkQmAlwH9rdbjpm/xurmkvhNQnXQAKHd2rxToO8o45GNOk8hakVC
+dqdtpTBK7s7QAHXWOEGmAa7tRVA/VyLMymNTOaqbsNL2hhlHTwG4G5cRKfCvdmq6
+4k5p4jNqWJXKC66HyQTbiaBBz2l6OeKW1QsD7KaH+DOVlgZtXh105KVoHzCUcW9c
+AgRmJD53Ncyevb/j5sjBxzB7633RmSW52FOAILnZsJLeTAYKlg6nf2t4jbpHEfDv
+1cvXWLRxP7yEPzd1oyAxbw7WDPhFnU2ICHtGsHts6BBQRsn0QR20DvUEs/zZVETG
+kSYqwogpkaCNjRI4zt/ydBoVZAntfPDKEpR9HmCp3Y2GOVW+WpfsL8NaO8LrjWpO
+xmETFObV11BbIlGp0O1LQiJVP7zOSho+s13YLuZGyxdftxEkJ3ckIP1cvpoHLxkF
+COwfP1C4KLiQWuwADXgb
+=6y+z
 -----END PGP SIGNATURE-----
 
---Sig_/TPwkKhNGZJT+1fBOMj5nWa/--
+--Sig_/1XbJG+E=GmejHwnvSJahUib--
