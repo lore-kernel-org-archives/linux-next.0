@@ -1,45 +1,37 @@
-From: Michael Stickel <ms@mycable.de>
-Subject: Re: linux-next: manual merge of the gpio tree with Linus' tree
-Date: Wed, 28 May 2014 17:34:05 +0200
-Message-ID: <538601ED.8030601@mycable.de>
-References: <20140528190011.302a2e52@canb.auug.org.au> <20140528133832.GA2541@deathray>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the net-next
+ tree
+Date: Wed, 28 May 2014 08:49:42 -0700
+Message-ID: <20140528154942.GA12056@kroah.com>
+References: <20140528182824.63672ad9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140528133832.GA2541@deathray>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:37742 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753724AbaE1PqO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2014 11:46:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20140528182824.63672ad9@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>, Sachin Kamat <sachin.kamat@linaro.org>
 
-Am 28.05.2014 15:38, schrieb Michael Welling:
-> Looking at the Linux next version, I am fairly certian that the following is
-> redundant checking:
->                 if (chips < 0) {
->                         dev_err(&spi->dev, "FATAL: invalid negative chip id\n");
->                         goto fail;
->                 }
+On Wed, May 28, 2014 at 06:28:24PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> The chips variable should equal the number of bits in the spi_present_mask variable.
-> Or am I missing something?
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/rtl8821ae/core.c between commit 77be2c54c5bd
+> ("mac80211: add vif to flush call") from the net-next tree and commit
+> 0cd05ba54a53 ("staging: rtl8821ae: core.c: Remove version specific
+> code") from the staging tree.
+> 
+> I fixed it up (the former is a suberset of the latter for this
+> particular conflict) and can carry the fix as necessary (no action is
+> required).
 
-Can be left out. Was just a paranoid check, because with the missing
-increment in the of path it became negative.
+Sounds good, thanks.
 
-
--- 
-------------------------------------------------------------------------
-   Michael Stickel                Tel.   +49 4321 559 56-29
-   mycable GmbH                   Fax    +49 4321 559 56-10
-   Gartenstrasse 10
-   24534 Neumuenster, Germany     Email ms@mycable.de
-------------------------------------------------------------------------
-   mycable GmbH, Managing Director: Michael Carstens-Behrens
-   USt-IdNr: DE 214 231 199, Amtsgericht Kiel, HRB 1797 NM
-------------------------------------------------------------------------
-   This e-mail and any files transmitted with it are confidential and
-   intended solely for the use of the individual or entity to whom
-   they are addressed. If you have received this e-mail in error,
-   please notify the sender and delete all copies from your system.
-------------------------------------------------------------------------
+greg k-h
