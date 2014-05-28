@@ -1,47 +1,46 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Wed, 28 May 2014 14:57:00 -0400
-Message-ID: <20140528185700.GC22210@fieldses.org>
-References: <20140528120728.2bce9521@canb.auug.org.au>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Wed, 28 May 2014 22:21:28 +0200
+Message-ID: <1401308488.6186.10.camel@x220>
+References: <20140528194629.0757af1b@canb.auug.org.au>
+	 <1401271041.28714.22.camel@x220> <1401272095.28714.30.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:33141 "EHLO fieldses.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752163AbaE1S5C (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2014 14:57:02 -0400
-Content-Disposition: inline
-In-Reply-To: <20140528120728.2bce9521@canb.auug.org.au>
+Received: from cpsmtpb-ews03.kpnxchange.com ([213.75.39.6]:64920 "EHLO
+	cpsmtpb-ews03.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751432AbaE1UVa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2014 16:21:30 -0400
+In-Reply-To: <1401272095.28714.30.camel@x220>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 28, 2014 at 12:07:28PM +1000, Stephen Rothwell wrote:
-> Hi Bruce,
+Greg,
+
+On Wed, 2014-05-28 at 12:14 +0200, Paul Bolle wrote:
+> I must have compile tested this with CONFIG_LIB80211_CRYPT_TKIP=m while
+> the code checks for CONFIG_LIB80211_CRYPT_TKIP only (ie, builtin only).
+> I'll have to have a better look at this.
 > 
-> After merging the nfsd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> 
-> fs/nfsd/nfs4xdr.c: In function 'nfsd4_encode_security_label':
-> fs/nfsd/nfs4xdr.c:1945:15: error: 'pp' undeclared (first use in this function)
->   __be32 *p = *pp;
->                ^
-> 
-> Caused by commit 8ea0abf0a992 ("nfsd4: use xdr_reserve_space in
-> attribute encoding").
+> Greg, can the cleaning up of this mess involve an entirely new patch? An
+> incremental patch would leave this build error in a certain range of
+> commits.
 
-Fixed; thanks again.
+The pieces of the latest linux-next build were handed to me by Stephen
+as my patch managed to break it.
 
-> "This is a cosmetic change for now; no change in
-> behavior" :-(  They are the ones you have to be very careful of ...
+I'm assuming you'd like to include rtl8192u in linux-next's builds
+again. Currently I got nothing to offer to you but a request to either
+drop "staging: rtl8192u: rename CONFIG_IEEE80211_CRYPT_TKIP" from
+staging-next or, if that's not how staging-next works, a request to
+revert it. What do you prefer?
 
-Hah, maybe.
+Either way I'll see whether I can come up with a fix that allows me to
+take off that brown paper bag.
 
---b.
 
-> I have used the nfsd tree from next-20140523 and for today.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Paul Bolle
