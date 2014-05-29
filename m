@@ -1,55 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the  tree
-Date: Thu, 29 May 2014 19:04:47 +1000
-Message-ID: <20140529190447.42547aba@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
+Date: Thu, 29 May 2014 19:08:00 +1000
+Message-ID: <20140529190800.1d5f6ef7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8/VoqhjQUtJT/8mbVfBtJ6h"; protocol="application/pgp-signature"
+ boundary="Sig_/F9c8TILyZzSO8n0oBMX4=/4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>, Preeti U Murthy <preeti@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Fabian Frederick <fabf@skynet.be>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8/VoqhjQUtJT/8mbVfBtJ6h
+--Sig_/F9c8TILyZzSO8n0oBMX4=/4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in
-arch/powerpc/include/asm/topology.h between commit 4750afa2c568
-("powerpc: Fix comment around arch specific definition of
-RECLAIM_DISTANCE") from the powerpc tree and commit ba5b7fb4aebd ("mm:
-disable zone_reclaim_mode by default") from the akpm-current tree.
+kernel/kexec.c between commit 011e4b02f1da ("powerpc, kexec: Fix
+"Processor X is stuck" issue during kexec from ST mode") from Linus'
+tree and commit 51950fcb6d27 ("kernel/kexec.c: convert printk to
+pr_foo()") from the akpm-current tree.
 
-I fixed it up (I use th akpm-current tree version) and can carry the
-fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/8/VoqhjQUtJT/8mbVfBtJ6h
+diff --cc kernel/kexec.c
+index 28c57069ef68,bf0b929e7f94..000000000000
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@@ -1683,15 -1679,7 +1679,15 @@@ int kernel_kexec(void
+  		kexec_in_progress =3D true;
+  		kernel_restart_prepare(NULL);
+  		migrate_to_reboot_cpu();
+ +
+ +		/*
+ +		 * migrate_to_reboot_cpu() disables CPU hotplug assuming that
+ +		 * no further code needs to use CPU hotplug (which is true in
+ +		 * the reboot case). However, the kexec path depends on using
+ +		 * CPU hotplug again; so re-enable it here.
+ +		 */
+ +		cpu_hotplug_enable();
+- 		printk(KERN_EMERG "Starting new kernel\n");
++ 		pr_emerg("Starting new kernel\n");
+  		machine_shutdown();
+  	}
+ =20
+
+--Sig_/F9c8TILyZzSO8n0oBMX4=/4
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThvgzAAoJEMDTa8Ir7ZwV8hsP/jAl5XqweaX95XRd0MUMEa4L
-Z/Yyw2lkN7Igbpi6GbRkCAMRmMCxObOXNIY3C1qJva7PMxR9ENliKOpNZBPkEHtC
-9a4ucBCSqovx77zqwucqsFIEQuARuTpV+bcFxYiFyJ2VWDXOxW4B5D/jYqe53NLr
-PlvJcDKbNXp7VnZqJiZuMFkCBcKmxkdgueVeJRfiebUtj8Ju6CRfFW0TAInrtJxB
-H7AjCInnUPfQ8Eu++ajqY1qgZk2eLIpPlNAe2gbmhggLddMg3mZTgJoCfYcKNS4t
-jnj78zXzFLuXLcRUwrGeL3exJbFD6dgiT2jaMJ7yzaW/bYfpKUCWR3UywnJ5gy9M
-nwLCWykp52wEES5Xxrgvw9E081EHjrzkt/tA7nWbFJ0ZLYAAQlSYJe73PPNE8aIZ
-AyJ11nBhxQn31crf7L7aoECrNC1YXzM82fwnmNpZdHChU/FtAEP2JILWwcRW0IdB
-hA+omRMXiiclwOBzpUR8jfHCs8vv6GYzDaXl3TqdQoZf4TbSBXqRRBoHA9u8DhzJ
-EoLiccLrRKGGZe+Z3Vk6fr+AdWCEBRE33ZUyQBACdXa24Vaq8B5nM7IUt6QfvweQ
-rcIwYw//QI5oCBN7+O7PLxgk+iXMttEGoxNvnlOp0epTtrqbsoTR/7wqoE9+HMRl
-E4PyOF7rpej0UYEGg928
-=UL5c
+iQIcBAEBCAAGBQJThvj1AAoJEMDTa8Ir7ZwVFD0P/jd+RfbaMqLmfLJe6alAc5O7
+A2OTXTxr07tJ1D4wzNGNkD7aNydLmV7V1mVu+kuBlGWDrL731nELJ3ppd8As03pM
+2Lt1Gp/Y/vFHL2N1FF+aVCCxrOFm387wR00mW2sdezQVFK+n1jcuUuPniTEp++/O
+FFj8hEmpQlQnV1UOhBFn6jMj/ttnBI8kFsq3fdE1lz507YjQptHPAGo5yS8mYGkO
+ZqEd8HuJR7qedVtMTPBjSXZnVNfkos+nW6vr67Dp80JpvVjh1NwGsOziFT8GHZFD
+oyWto2ECeenAgNZ1yZ41wnhwDM81n2vBIYzwHV5CXQu0dVByCTZW2yxMwrf08hKz
+n/2vgyFQi5xMFBLkhFyUGMGZqx7/HvUxdKz/KwowgIOg2zp7ijYOhH83I55IFEgL
+rLhV1QzWFbdtXnhiihfSwzl5OEqSms1m6+XM/znGzw0Rux0Qqe0rlXmdv9g7sgPI
+3hBrOwO0/KDki9g05KzxpDdLfYthH0BOaK5iFNEi3XDM9MKfEbFaozX3aGzOf2bP
+PyJWSxBqV8rPc3XugUly+mzNVPWRiFertUVtikNajbDil8e1LW2XKMopz8AxgxXg
+3YmXWL0/CuEecsPs6Md/l5/ookxKw3wr1HMSu+S4K33SqoNKdUzywXU52tAV6VnX
+bVelajLFA6pDvk2sOGQ7
+=P4mB
 -----END PGP SIGNATURE-----
 
---Sig_/8/VoqhjQUtJT/8mbVfBtJ6h--
+--Sig_/F9c8TILyZzSO8n0oBMX4=/4--
