@@ -1,93 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the usb tree
-Date: Thu, 29 May 2014 19:01:29 +1000
-Message-ID: <20140529190129.6d3272fd@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the  tree
+Date: Thu, 29 May 2014 19:04:47 +1000
+Message-ID: <20140529190447.42547aba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DyuxjfIDecD/uNg=Z_3512X"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39452 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933696AbaE2JBj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 May 2014 05:01:39 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
+ boundary="Sig_/8/VoqhjQUtJT/8mbVfBtJ6h"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>, Preeti U Murthy <preeti@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/DyuxjfIDecD/uNg=Z_3512X
+--Sig_/8/VoqhjQUtJT/8mbVfBtJ6h
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Andrew,
 
-After merging the usb tree, today's linux-next build (sparc64 defconfig)
-failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in
+arch/powerpc/include/asm/topology.h between commit 4750afa2c568
+("powerpc: Fix comment around arch specific definition of
+RECLAIM_DISTANCE") from the powerpc tree and commit ba5b7fb4aebd ("mm:
+disable zone_reclaim_mode by default") from the akpm-current tree.
 
-drivers/usb/core/hub.c: In function 'port_event':
-drivers/usb/core/hub.c:4853:2: error: implicit declaration of function 'hub=
-_handle_remote_wakeup' [-Werror=3Dimplicit-function-declaration]
-
-Caused by commits af376a461cf0 ("usb: refactor port handling in
-hub_events()") and 7e73be227b15 ("usb: hub_handle_remote_wakeup()
-depends on CONFIG_PM_RUNTIME=3Dy") This build has CONFIG_PM not set ...
-
-I have added this fix patch for today (there is probably a better way):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 29 May 2014 18:55:06 +1000
-Subject: [PATCH] usb: hub_handle_remote_wakeup() only exists for CONFIG_PM=
-=3Dy
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/usb/core/hub.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 5672752bfd2c..879b66e13370 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -3977,6 +3977,12 @@ EXPORT_SYMBOL_GPL(usb_disable_ltm);
- void usb_enable_ltm(struct usb_device *udev) { }
- EXPORT_SYMBOL_GPL(usb_enable_ltm);
-=20
-+static int hub_handle_remote_wakeup(struct usb_hub *hub, unsigned int port,
-+		u16 portstatus, u16 portchange)
-+{
-+	return 0;
-+}
-+
- #endif	/* CONFIG_PM */
-=20
-=20
---=20
-2.0.0
+I fixed it up (I use th akpm-current tree version) and can carry the
+fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/DyuxjfIDecD/uNg=Z_3512X
+--Sig_/8/VoqhjQUtJT/8mbVfBtJ6h
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThvduAAoJEMDTa8Ir7ZwV+GwP/2GAzAZPnZqIKI48dUVm46xz
-NeKOVzaHoMAHFua3ikCTGHzJik7+NVe2edcxFZ+DeqnvJTx/qb69tHJ70sv+vvAO
-jTStoLP/54+vaM/ybFWyA6lYRo2qkCWdnh7PmT0STdhHwUd3qJHLkYq8+ehN/UQH
-fq5H6cIaMBN0a/hDGwSHqOsxlCbJn0ciAjb+DgUq+HwOxLpmimXaSci7dpF8fgGF
-Wm2t5ntv5u8/w07Lq86dUtge9AnCDnhsSPbTLSYvYKRABuabU26SMFzp8mUAQ/Ec
-bsa2DhGN547N0FQnsePObePwpvXFmTW7MyHJhrN0XQKZXnLRu6eKNYz3seazxD2z
-ZIynpo/q8x0uNwd72E5sjvp/sMRNxq0tHADemz8lKFnslQRATswYev7upgfHPWV7
-s4RM8Fl/tOVvdpngwwtOqnhvKasNesUhgSnLfPRNdsaMwjIsu1GYskACCwAqvVzV
-BiLWTbmHuMEH5YFiRp6pGPKyj3SCmyjdftEhDEWEiihXvEW9G/L71WDQ8jCcTlDz
-LnxNejE3aItuj3xaKKRLeuvQox8bp6xIjdBifjaW07clComPk4ddxPfeZ4GLbrLF
-T8PMJBSXD+xzTd2KUPdbolBJ3f+dJ9SX1H/y2Cy2nCDkmZi1UdgrMjpoBe7xn3L8
-nW4ksvM66/ajYKxdhSCh
-=JlWu
+iQIcBAEBCAAGBQJThvgzAAoJEMDTa8Ir7ZwV8hsP/jAl5XqweaX95XRd0MUMEa4L
+Z/Yyw2lkN7Igbpi6GbRkCAMRmMCxObOXNIY3C1qJva7PMxR9ENliKOpNZBPkEHtC
+9a4ucBCSqovx77zqwucqsFIEQuARuTpV+bcFxYiFyJ2VWDXOxW4B5D/jYqe53NLr
+PlvJcDKbNXp7VnZqJiZuMFkCBcKmxkdgueVeJRfiebUtj8Ju6CRfFW0TAInrtJxB
+H7AjCInnUPfQ8Eu++ajqY1qgZk2eLIpPlNAe2gbmhggLddMg3mZTgJoCfYcKNS4t
+jnj78zXzFLuXLcRUwrGeL3exJbFD6dgiT2jaMJ7yzaW/bYfpKUCWR3UywnJ5gy9M
+nwLCWykp52wEES5Xxrgvw9E081EHjrzkt/tA7nWbFJ0ZLYAAQlSYJe73PPNE8aIZ
+AyJ11nBhxQn31crf7L7aoECrNC1YXzM82fwnmNpZdHChU/FtAEP2JILWwcRW0IdB
+hA+omRMXiiclwOBzpUR8jfHCs8vv6GYzDaXl3TqdQoZf4TbSBXqRRBoHA9u8DhzJ
+EoLiccLrRKGGZe+Z3Vk6fr+AdWCEBRE33ZUyQBACdXa24Vaq8B5nM7IUt6QfvweQ
+rcIwYw//QI5oCBN7+O7PLxgk+iXMttEGoxNvnlOp0epTtrqbsoTR/7wqoE9+HMRl
+E4PyOF7rpej0UYEGg928
+=UL5c
 -----END PGP SIGNATURE-----
 
---Sig_/DyuxjfIDecD/uNg=Z_3512X--
+--Sig_/8/VoqhjQUtJT/8mbVfBtJ6h--
