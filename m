@@ -1,62 +1,66 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [tip:x86/vdso] x86, vdso: Reimplement vdso.so preparation in
- build-time C
-Date: Thu, 29 May 2014 12:46:29 -0700
-Message-ID: <CALCETrXef77JLoEp5hCXSdMAk7usWsL-sUG6NrcgLgrz3krfag@mail.gmail.com>
-References: <2c4fcf45524162a34d87fdda1eb046b2a5cecee7.1399317206.git.luto@amacapital.net>
- <tip-6f121e548f83674ab4920a4e60afb58d4f61b829@git.kernel.org>
- <CAP=VYLrzMP23B9NVnu4N3NYsoU+ai1K9HpAE_eXQzXESUUZ-Lg@mail.gmail.com>
- <CALCETrWuHGnekoYZKJ6DAGtE8fQRMiPz590VQGctunvgee+uuA@mail.gmail.com> <53878DCF.2050501@zytor.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
+Subject: Re: linux-next build failure on m68k in nfs code
+Date: Thu, 29 May 2014 16:32:27 -0400
+Message-ID: <CAHQdGtSAirYa=iWxkaP_0z6=7GVx9uLj7NnP42Zd85+OGkpBOw@mail.gmail.com>
+References: <53878D33.80107@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f182.google.com ([209.85.220.182]:58358 "EHLO
-	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755063AbaE2Tqu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 May 2014 15:46:50 -0400
-Received: by mail-vc0-f182.google.com with SMTP id id10so964509vcb.13
-        for <linux-next@vger.kernel.org>; Thu, 29 May 2014 12:46:49 -0700 (PDT)
-In-Reply-To: <53878DCF.2050501@zytor.com>
+Received: from mail-ve0-f176.google.com ([209.85.128.176]:34828 "EHLO
+	mail-ve0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751206AbaE2Uc2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 May 2014 16:32:28 -0400
+Received: by mail-ve0-f176.google.com with SMTP id jz11so1037231veb.21
+        for <linux-next@vger.kernel.org>; Thu, 29 May 2014 13:32:27 -0700 (PDT)
+In-Reply-To: <53878D33.80107@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "H. Peter Anvin" <hpa@linux.intel.com>, linux-tip-commits@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Weston Andros Adamson <dros@primarydata.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Thu, May 29, 2014 at 12:43 PM, H. Peter Anvin <hpa@zytor.com> wrote:
-> On 05/29/2014 12:32 PM, Andy Lutomirski wrote:
->> On Thu, May 29, 2014 at 12:17 PM, Paul Gortmaker
->> <paul.gortmaker@windriver.com> wrote:
->>> On Mon, May 5, 2014 at 6:25 PM, tip-bot for Andy Lutomirski
->>> <tipbot@zytor.com> wrote:
->>>> Commit-ID:  6f121e548f83674ab4920a4e60afb58d4f61b829
->>>> Gitweb:     http://git.kernel.org/tip/6f121e548f83674ab4920a4e60afb58d4f61b829
->>>> Author:     Andy Lutomirski <luto@amacapital.net>
->>>> AuthorDate: Mon, 5 May 2014 12:19:34 -0700
->>>> Committer:  H. Peter Anvin <hpa@linux.intel.com>
->>>> CommitDate: Mon, 5 May 2014 13:18:51 -0700
->>>>
->>>> x86, vdso: Reimplement vdso.so preparation in build-time C
->>>
->>> Just a heads up in case it hasn't been mentioned already;
->>> the x86 builds in linux-next which IIRC are done as cross
->>> compile on a powerpc box are failing as follows:
->>>
->>>   VDSO2C  arch/x86/vdso/vdso-image-64.c
->>> /bin/sh: line 1: 15995 Segmentation fault      arch/x86/vdso/vdso2c
->>> arch/x86/vdso/vdso64.so.dbg arch/x86/vdso/vdso-image-64.c
->>> make[3]: *** [arch/x86/vdso/vdso-image-64.c] Error 139
->>>
->>> http://kisskb.ellerman.id.au/kisskb/buildresult/11265454/
->>>
->>
->> Egads.  This wouldn't be a big-endian host by any chance?
->>
+Hi Paul
+
+On Thu, May 29, 2014 at 3:40 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> Hi Trond,
 >
-> He said PowerPC; most but not all PowerPC systems are bigendian.  Seems
-> like a fair assumption to make.
+> I'm seeing this on today's linux-next with m68k allmodconfig:
 >
+> ERROR: "__umoddi3" [fs/nfs/nfs_layout_nfsv41_files.ko] undefined!
+> make[1]: *** [__modpost] Error 1
+> make: *** [modules] Error 2
+>
+> Making this obviously incorrect change makes it go away:
+>
+>
+>         /* calculate remaining bytes in the current stripe */
+> -       stripe_offset = ((u64)req_offset(req) - segment_offset) % stripe_unit;
+> +       stripe_offset = 0; // ((u64)req_offset(req) - segment_offset) % stripe_unit;
+>
+>
+> The line above comes from:
+>
+> commit fa1165eda0eeaee57c292df3af1c98e10223f0f5
+> Author: Weston Andros Adamson <dros@primarydata.com>
+> Date:   Thu May 15 11:56:56 2014 -0400
+>
+>     pnfs: filelayout: support non page aligned layouts
+>
+> Looks like it needs to use the proper 64bit math wrappers.
 
-I suppose I shouldn't have assumed that code in arch/x86 would always
-run on little-endian machines.  I'll fix it.
+Yes. I already fixed up patch this morning in my linux-next branch, so
+I'm hoping it will be OK the next time you pull from Stephen's tree.
 
---Andy
+For the record, the correct fix should be to replace the above line with
+
+div_u64_rem((u64)req_offset(req) - segment_offset, stripe_unit, &stripe_offset);
+
+Thanks
+  Trond
+
+-- 
+Trond Myklebust
+
+Linux NFS client maintainer, PrimaryData
+
+trond.myklebust@primarydata.com
