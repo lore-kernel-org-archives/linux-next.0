@@ -1,37 +1,59 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 0/2] x86,vdso: vdso build fixes and improvements
-Date: Thu, 29 May 2014 15:49:52 -0700
-Message-ID: <CALCETrVSG7-=Q3sG87YTzDYOLXzEbkvW9Ws=HeJ5cAUGxQhdJA@mail.gmail.com>
-References: <CALCETrXef77JLoEp5hCXSdMAk7usWsL-sUG6NrcgLgrz3krfag@mail.gmail.com>
- <cover.1401400316.git.luto@amacapital.net> <5387B7A0.3030302@windriver.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: nommu build failures on ARM in linux-next
+Date: Fri, 30 May 2014 00:40:12 +0100
+Message-ID: <20140529234012.GL3693@n2100.arm.linux.org.uk>
+References: <5387661F.1050000@windriver.com> <20140529185534.GK3693@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5387B7A0.3030302@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:38730 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752020AbaE2Xlq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 May 2014 19:41:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20140529185534.GK3693@n2100.arm.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Josh Boyer <jwboyer@fedoraproject.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "linux-tip-commits@vger.kernel.org" <linux-tip-commits@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, May 29, 2014 at 3:41 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On 14-05-29 05:57 PM, Andy Lutomirski wrote:
->> Patch 1 causes make;make to behave similarly to make if vdso2c fails.
->> Patch 2 hopefully fixes x86 crossbuilds on big-endian machines.  I don't
->> have a big-endian machine to test on, though.
->
-> Since the x86 builds are unconditionally failing as-is now in
-> linux-next, perhaps Stephen [Cc'd] can layer these on the top of
-> the tree he'll be making within the next couple of hours to give
-> them a big-endian test.
+On Thu, May 29, 2014 at 07:55:34PM +0100, Russell King - ARM Linux wrote:
+> On Thu, May 29, 2014 at 12:53:51PM -0400, Paul Gortmaker wrote:
+> > Hi Russell,
+> > 
+> > The allnoconfig builds in linux-next fail because __clear_cr
+> > lives in mmu.c without any stub or similar in nommu.c
+> > 
+> > Introduced by:
+> > 
+> > commit 247e4fff3aa927ad069447e6da05bb966b70dece
+> > Author: Russell King <rmk+kernel@arm.linux.org.uk>
+> > Date:   Sun Apr 13 18:57:29 2014 +0100
+> > 
+> >     ARM: provide common method to clear bits in CPU control register
+> >     
+> > Sample failure:
+> >   http://kisskb.ellerman.id.au/kisskb/buildresult/11264405/
+> 
+> ALIGNMENT_TRAP depends on CPU_CP15_MMU, so it's quite reasonable that
+> __clear_cr should exist in this case - but it doesn't because it's in
+> mmu.c.  I guess we need __clear_cr moved to arch/arm/kernel/setup.c.
 
-Stephen, if you do this, could you also send me some of the build outputs:
+I've been looking at doing this, and while it can be done by applying
+a patch on top, that's not my preferred solution.
 
-arch/x86/vdso/*.so.dbg
-arch/x86/vdso/*-image-*.c
+However, my preferred solution (which is to fix the commit) needs a bit
+of rework of the patch series, and given the number of patches I'm
+carrying right now, I'm just going to drop the branch out of linux-next
+and hold it off until the following merge window instead.
 
-I'd like to verify that the output is correct.  It would be
-unfortunate if the cross-built kernel had some subtle error.
+Even so, I suspect even with this build problem solved, that's not going
+to be the end of the story for noMMU breakage... it's certainly something
+that gets very little testing by anyone.  I suspect it should be removed
+from the mainline kernel tree rather than being a constant source of these
+kinds of problems.
 
-Thanks,
-Andy
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
