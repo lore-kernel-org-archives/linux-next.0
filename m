@@ -1,31 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the powerpc tree with Linus' tree
-Date: Thu, 29 May 2014 12:04:48 +1000
-Message-ID: <20140529120448.1a90dd4a@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Thu, 29 May 2014 13:19:34 +1000
+Message-ID: <20140529131934.21302fff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_a/MzqsLpGCnGLvuqYeSMEw"; protocol="application/pgp-signature"
+ boundary="Sig_/FyQLvGJNsmsVESocvmh87k0"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45062 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36090 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753991AbaE2CE6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2014 22:04:58 -0400
+	id S1751264AbaE2DTq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2014 23:19:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@suse.cz>
 
---Sig_/_a/MzqsLpGCnGLvuqYeSMEw
+--Sig_/FyQLvGJNsmsVESocvmh87k0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the powerpc tree got a conflict in
-arch/powerpc/include/asm/sections.h between commit b18db0b80867 ("KVM
-guest: Make pv trampoline code executable") from the  tree and commit
-07de8377f748 ("powerpc: Fix ABIv2 issue with
-dereference_function_descriptor") from the powerpc tree.
+Today's linux-next merge of the vfs tree got a conflict in fs/splice.c
+between commitb6dd6f473883  ("vfs: fix vmplice_to_user()") from Linus'
+tree and commit 71d8e532b154 ("start adding the tag to iov_iter") from
+the vfs tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,50 +33,44 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/powerpc/include/asm/sections.h
-index 521790330672,d1bb96d5a298..000000000000
---- a/arch/powerpc/include/asm/sections.h
-+++ b/arch/powerpc/include/asm/sections.h
-@@@ -39,17 -39,7 +39,18 @@@ static inline int overlaps_kernel_text(
-  		(unsigned long)_stext < end;
-  }
+diff --cc fs/splice.c
+index e246954ea48c,9dc23de0f146..000000000000
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@@ -1546,10 -1556,9 +1556,10 @@@ static long vmsplice_to_user(struct fil
+  	ret =3D rw_copy_check_uvector(READ, uiov, nr_segs,
+  				    ARRAY_SIZE(iovstack), iovstack, &iov);
+  	if (ret <=3D 0)
+ -		return ret;
+ +		goto out;
  =20
- +static inline int overlaps_kvm_tmp(unsigned long start, unsigned long end)
- +{
- +#ifdef CONFIG_KVM_GUEST
- +	extern char kvm_tmp[];
- +	return start < (unsigned long)kvm_tmp &&
- +		(unsigned long)&kvm_tmp[1024 * 1024] < end;
- +#else
- +	return 0;
- +#endif
- +}
- +
-+ #if !defined(_CALL_ELF) || _CALL_ELF !=3D 2
-  #undef dereference_function_descriptor
-  static inline void *dereference_function_descriptor(void *ptr)
-  {
+ +	count =3D ret;
+- 	iov_iter_init(&iter, iov, nr_segs, count, 0);
++ 	iov_iter_init(&iter, READ, iov, nr_segs, count);
+ =20
+  	sd.len =3D 0;
+  	sd.total_len =3D count;
 
---Sig_/_a/MzqsLpGCnGLvuqYeSMEw
+--Sig_/FyQLvGJNsmsVESocvmh87k0
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThpXEAAoJEMDTa8Ir7ZwVN5EP/1a/1IkrYVfT47a2v1PZGbNA
-2pBoYeuuXU4Cq7qYlQ6sdhhudWyyNSYXJzdyM/Vz2sX5eu7gqEIzAXj5V/BBud7a
-LOGL6mfZ+7MKG15IXAr84ZuwFyVDew/AvSrsIo3pdiQtkw/zLZvXiIDd/eYXJcTH
-ottaAn1Grk++xl+6sQa8G+/kVYhWA/jveaABPAFFuevZsPVvLRW52m20F6Zkddem
-1YzqC5nN4ScpjPgghB6lwXKOlJG8VxcyBEoj8i8lQYRJq037c4MjsVaTF1rZUPSV
-qRZhkQDfSXwOMzW2xTOgl8SSt5iWn/BqfpWEutgi6maB+gBqBmWH8VQIvi63Nkqd
-EQkJ3++C7To8Keh3GfJ+OFy71eFg7vp6e1D+kmKu5IqXdS35d/Mkpu47QWXgojF4
-0sqDgiqmeqadAiskss9T3AgYvz7wvbb7nryJiV5jcAw4fnOwsV/XmoFl81uPhfFx
-l3ILsyBDrFJtR/3Di45PCEoh28GodnqCWYw9ahPGd2tYSrrpOwoLj5nXnv4/Z8Bm
-V26W0XAHS9s931mFGomuhAMXE0DS7SPJZKIUej+JMJl9qhZ5naTIk0yc9sqaJGBs
-ttVLoIuI07SgzMhqNJKQEk7h8NuGmxnR6e+j8AInH27hcBcB94BqNWpEjSD7CKiR
-CK9Ta9lsRVvUGdkQsgUC
-=6Ln7
+iQIcBAEBCAAGBQJThqdMAAoJEMDTa8Ir7ZwVlrAP/jPcDpNzWMhB8R31P3k7Y9jI
+YOIaHL6cWzZIqLkop6SJD7PbwqLVd4LQKCHkcKSj4OX109Y0TtBZULqPYGrAVDhI
+FEP8QYVCMoJQBU+/ReexXmyiXobfKkLL+whvRJVRJ48/t7DtqGpgXfNTCFOvg1Cs
+UnN8IEoPINc1sogoNHHLeQeMiU2g7Zsi95is3sjeEFHMtb2nz5uO4mUqzd2yENzW
+Vswf7eG7wJZGnr3qG0/Uf9rvjYaIiyh7vyB+DP5EWDvq1754WiDGwqbuvO3Ow5WL
+axhvQYtpz4iMeTdhP9XJUaWZFjr2szqe8wNcKSJZmh1bJUFq+k3CZlgc/lLRQA/t
+mQXpnvJYfAz6VMjg5klTK6nF6y8WljupfRFGLuPJrJXwaogVpKRWCvRuxgq5kd7y
+0buV/YueF2+yQK4uX6IqM4z6mkFWvBtY2rE15176AvMlmrVk4zTq3Xg5A27H4yy/
+9GKvfUHvfcVq6IqgbqBb8UkXsMzQQK0BTxcvjn+enJQfxccoySwtlLIgxD6/Oc9+
+dibnkfZ+OFClQmi/CLAtdR9s3egHjojpgps/Lk6nQQnngPMT8jYpYq2rSywCsTAY
+w1EV866FIaWJSreVuLx5Rcv4+NyKjhLBie6l3hiIfI7DFAM1J98UQepCKnO0Cr+G
+/mAliNlPRM2Xz+N/Rd9m
+=qRdl
 -----END PGP SIGNATURE-----
 
---Sig_/_a/MzqsLpGCnGLvuqYeSMEw--
+--Sig_/FyQLvGJNsmsVESocvmh87k0--
