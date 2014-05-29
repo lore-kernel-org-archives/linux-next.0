@@ -1,76 +1,225 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Thu, 29 May 2014 13:19:34 +1000
-Message-ID: <20140529131934.21302fff@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the  tree
+Date: Thu, 29 May 2014 13:25:35 +1000
+Message-ID: <20140529132535.40d6789e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FyQLvGJNsmsVESocvmh87k0"; protocol="application/pgp-signature"
+ boundary="Sig_/eGszSh918s/A6G=OcMEHT0v"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36090 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40712 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751264AbaE2DTq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2014 23:19:46 -0400
+	id S1755537AbaE2DZn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2014 23:25:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@suse.cz>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Weston Andros Adamson <dros@primarydata.com>, Anna Schumaker <Anna.Schumaker@netapp.com>
 
---Sig_/FyQLvGJNsmsVESocvmh87k0
+--Sig_/eGszSh918s/A6G=OcMEHT0v
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Al,
 
-Today's linux-next merge of the vfs tree got a conflict in fs/splice.c
-between commitb6dd6f473883  ("vfs: fix vmplice_to_user()") from Linus'
-tree and commit 71d8e532b154 ("start adding the tag to iov_iter") from
-the vfs tree.
+Today's linux-next merge of the vfs tree got a conflict in
+fs/nfs/direct.c between commit fab5fc25d230 ("nfs: remove
+->read_pageio_init from rpc ops") and possibly others from the nfs tree
+and commits 619d30b4b8c4 ("convert the guts of nfs_direct_IO() to
+iov_iter"), a6cbcd4a4a85 ("get rid of pointless iov_length() in
+->direct_IO()") and 91f79c43d1b5 ("new helper:
+iov_iter_get_pages_alloc()") from the vfs tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I hope - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/splice.c
-index e246954ea48c,9dc23de0f146..000000000000
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@@ -1546,10 -1556,9 +1556,10 @@@ static long vmsplice_to_user(struct fil
-  	ret =3D rw_copy_check_uvector(READ, uiov, nr_segs,
-  				    ARRAY_SIZE(iovstack), iovstack, &iov);
-  	if (ret <=3D 0)
- -		return ret;
- +		goto out;
+diff --cc fs/nfs/direct.c
+index 4ad7bc388679,b122fe21fea0..000000000000
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@@ -414,60 -322,37 +414,37 @@@ static const struct nfs_pgio_completion
+   * handled automatically by nfs_direct_read_result().  Otherwise, if
+   * no requests have been sent, just return an error.
+   */
+- static ssize_t nfs_direct_read_schedule_segment(struct nfs_pageio_descrip=
+tor *desc,
+- 						const struct iovec *iov,
+- 						loff_t pos, bool uio)
+- {
+- 	struct nfs_direct_req *dreq =3D desc->pg_dreq;
+- 	struct nfs_open_context *ctx =3D dreq->ctx;
+- 	struct inode *inode =3D ctx->dentry->d_inode;
+- 	unsigned long user_addr =3D (unsigned long)iov->iov_base;
+- 	size_t count =3D iov->iov_len;
+- 	size_t rsize =3D NFS_SERVER(inode)->rsize;
+- 	unsigned int pgbase;
+- 	int result;
+- 	ssize_t started =3D 0;
+- 	struct page **pagevec =3D NULL;
+- 	unsigned int npages;
+-=20
+- 	do {
+- 		size_t bytes;
+- 		int i;
  =20
- +	count =3D ret;
-- 	iov_iter_init(&iter, iov, nr_segs, count, 0);
-+ 	iov_iter_init(&iter, READ, iov, nr_segs, count);
+- 		pgbase =3D user_addr & ~PAGE_MASK;
+- 		bytes =3D min(max_t(size_t, rsize, PAGE_SIZE), count);
++ static ssize_t nfs_direct_read_schedule_iovec(struct nfs_direct_req *dreq,
++ 					      struct iov_iter *iter,
++ 					      loff_t pos)
++ {
++ 	struct nfs_pageio_descriptor desc;
++ 	struct inode *inode =3D dreq->inode;
++ 	ssize_t result =3D -EINVAL;
++ 	size_t requested_bytes =3D 0;
++ 	size_t rsize =3D max_t(size_t, NFS_SERVER(inode)->rsize, PAGE_SIZE);
  =20
-  	sd.len =3D 0;
-  	sd.total_len =3D count;
+- 		result =3D -ENOMEM;
+- 		npages =3D nfs_page_array_len(pgbase, bytes);
+- 		if (!pagevec)
+- 			pagevec =3D kmalloc(npages * sizeof(struct page *),
+- 					  GFP_KERNEL);
+- 		if (!pagevec)
+- 			break;
+- 		if (uio) {
+- 			down_read(&current->mm->mmap_sem);
+- 			result =3D get_user_pages(current, current->mm, user_addr,
+- 					npages, 1, 0, pagevec, NULL);
+- 			up_read(&current->mm->mmap_sem);
+- 			if (result < 0)
+- 				break;
+- 		} else {
+- 			WARN_ON(npages !=3D 1);
+- 			result =3D get_kernel_page(user_addr, 1, pagevec);
+- 			if (WARN_ON(result !=3D 1))
+- 				break;
+- 		}
+ -	NFS_PROTO(dreq->inode)->read_pageio_init(&desc, dreq->inode,
+++	nfs_pageio_init_read(&desc, dreq->inode, false,
++ 			     &nfs_direct_read_completion_ops);
++ 	get_dreq(dreq);
++ 	desc.pg_dreq =3D dreq;
++ 	atomic_inc(&inode->i_dio_count);
+ =20
+- 		if ((unsigned)result < npages) {
+- 			bytes =3D result * PAGE_SIZE;
+- 			if (bytes <=3D pgbase) {
+- 				nfs_direct_release_pages(pagevec, result);
+- 				break;
+- 			}
+- 			bytes -=3D pgbase;
+- 			npages =3D result;
+- 		}
++ 	while (iov_iter_count(iter)) {
++ 		struct page **pagevec;
++ 		size_t bytes;
++ 		size_t pgbase;
++ 		unsigned npages, i;
+ =20
++ 		result =3D iov_iter_get_pages_alloc(iter, &pagevec,=20
++ 						  rsize, &pgbase);
++ 		if (result < 0)
++ 			break;
++ =09
++ 		bytes =3D result;
++ 		iov_iter_advance(iter, bytes);
++ 		npages =3D (result + pgbase + PAGE_SIZE - 1) / PAGE_SIZE;
+  		for (i =3D 0; i < npages; i++) {
+  			struct nfs_page *req;
+  			unsigned int req_len =3D min_t(size_t, bytes, PAGE_SIZE - pgbase);
+@@@ -965,24 -719,58 +813,57 @@@ static ssize_t nfs_direct_write_schedul
+  	struct inode *inode =3D dreq->inode;
+  	ssize_t result =3D 0;
+  	size_t requested_bytes =3D 0;
+- 	unsigned long seg;
++ 	size_t wsize =3D max_t(size_t, NFS_SERVER(inode)->wsize, PAGE_SIZE);
+ =20
+ -	NFS_PROTO(inode)->write_pageio_init(&desc, inode, FLUSH_COND_STABLE,
+ +	nfs_pageio_init_write(&desc, inode, FLUSH_COND_STABLE, false,
+  			      &nfs_direct_write_completion_ops);
+  	desc.pg_dreq =3D dreq;
+  	get_dreq(dreq);
+  	atomic_inc(&inode->i_dio_count);
+ =20
+- 	NFS_I(dreq->inode)->write_io +=3D iov_length(iov, nr_segs);
+- 	for (seg =3D 0; seg < nr_segs; seg++) {
+- 		const struct iovec *vec =3D &iov[seg];
+- 		result =3D nfs_direct_write_schedule_segment(&desc, vec, pos, uio);
++ 	NFS_I(inode)->write_io +=3D iov_iter_count(iter);
++ 	while (iov_iter_count(iter)) {
++ 		struct page **pagevec;
++ 		size_t bytes;
++ 		size_t pgbase;
++ 		unsigned npages, i;
++=20
++ 		result =3D iov_iter_get_pages_alloc(iter, &pagevec,=20
++ 						  wsize, &pgbase);
+  		if (result < 0)
+  			break;
+- 		requested_bytes +=3D result;
+- 		if ((size_t)result < vec->iov_len)
++=20
++ 		bytes =3D result;
++ 		iov_iter_advance(iter, bytes);
++ 		npages =3D (result + pgbase + PAGE_SIZE - 1) / PAGE_SIZE;
++ 		for (i =3D 0; i < npages; i++) {
++ 			struct nfs_page *req;
++ 			unsigned int req_len =3D min_t(size_t, bytes, PAGE_SIZE - pgbase);
++=20
+ -			req =3D nfs_create_request(dreq->ctx, inode,
+ -						 pagevec[i],
+++			req =3D nfs_create_request(dreq->ctx, pagevec[i], NULL,
++ 						 pgbase, req_len);
++ 			if (IS_ERR(req)) {
++ 				result =3D PTR_ERR(req);
++ 				break;
++ 			}
++ 			nfs_lock_request(req);
++ 			req->wb_index =3D pos >> PAGE_SHIFT;
++ 			req->wb_offset =3D pos & ~PAGE_MASK;
++ 			if (!nfs_pageio_add_request(&desc, req)) {
++ 				result =3D desc.pg_error;
++ 				nfs_unlock_and_release_request(req);
++ 				break;
++ 			}
++ 			pgbase =3D 0;
++ 			bytes -=3D req_len;
++ 			requested_bytes +=3D req_len;
++ 			pos +=3D req_len;
++ 			dreq->bytes_left -=3D req_len;
++ 		}
++ 		nfs_direct_release_pages(pagevec, npages);
++ 		kvfree(pagevec);
++ 		if (result < 0)
+  			break;
+- 		pos +=3D vec->iov_len;
+  	}
+  	nfs_pageio_complete(&desc);
+ =20
 
---Sig_/FyQLvGJNsmsVESocvmh87k0
+--Sig_/eGszSh918s/A6G=OcMEHT0v
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJThqdMAAoJEMDTa8Ir7ZwVlrAP/jPcDpNzWMhB8R31P3k7Y9jI
-YOIaHL6cWzZIqLkop6SJD7PbwqLVd4LQKCHkcKSj4OX109Y0TtBZULqPYGrAVDhI
-FEP8QYVCMoJQBU+/ReexXmyiXobfKkLL+whvRJVRJ48/t7DtqGpgXfNTCFOvg1Cs
-UnN8IEoPINc1sogoNHHLeQeMiU2g7Zsi95is3sjeEFHMtb2nz5uO4mUqzd2yENzW
-Vswf7eG7wJZGnr3qG0/Uf9rvjYaIiyh7vyB+DP5EWDvq1754WiDGwqbuvO3Ow5WL
-axhvQYtpz4iMeTdhP9XJUaWZFjr2szqe8wNcKSJZmh1bJUFq+k3CZlgc/lLRQA/t
-mQXpnvJYfAz6VMjg5klTK6nF6y8WljupfRFGLuPJrJXwaogVpKRWCvRuxgq5kd7y
-0buV/YueF2+yQK4uX6IqM4z6mkFWvBtY2rE15176AvMlmrVk4zTq3Xg5A27H4yy/
-9GKvfUHvfcVq6IqgbqBb8UkXsMzQQK0BTxcvjn+enJQfxccoySwtlLIgxD6/Oc9+
-dibnkfZ+OFClQmi/CLAtdR9s3egHjojpgps/Lk6nQQnngPMT8jYpYq2rSywCsTAY
-w1EV866FIaWJSreVuLx5Rcv4+NyKjhLBie6l3hiIfI7DFAM1J98UQepCKnO0Cr+G
-/mAliNlPRM2Xz+N/Rd9m
-=qRdl
+iQIcBAEBCAAGBQJThqi0AAoJEMDTa8Ir7ZwV4EsP/2e/77rTekiJyDi+Gt53BuGB
+rKrkYWPpcAgQOhQWcRAZh9ThZYIFKy0Wpqqk/q01VYa4LplskNjAjMg+LXF+M51g
+yzD6W9EbISEZkUZXUsARwbfPNYrN3JApi2YAQlOU2SSpkaOcSbmUB7fWJtifAL2M
+tvD3ig8cIqpWpDBFROK6tXj84MGmm9roZUkJnwlZWeZOP2304HyLJk43/odKsZDu
+pw/Z4s7rHoSh2mjInkkHAuXW8C6ft1RvT+jk38NimabkEDf0kwHCPjz09zpjG6Bn
+kr450HN4pJSyYYxZnNADutvU3KrMdvQQUO6GlP+8jIIr9ZuOM6hpY1m4xjOXEjn7
+7EdqyQppFlWlAEl9Z4ZdyiRMHaKeJvqRaeGVTe+qULC8E06dcX5Y7bRGMQpWJ8KD
+/3a3BK9gKeoeZIJTs6XILIObdcQm/q2oL+3kwox+SyzuVwFCSe6M9bcOoJA6Uhri
+gMtPs5i8XaM6Fp5isJRaX7lG1rAUVFIScnZjkkybRLJVD6UEqiqSIoRxDUIp/4oR
+sABOTyiKQIgBPXvo5wznmgqjoslp7z87fwRlDpMNHTwUAJ1QZ7016RR/nL1Mxs4H
+9Dd9cDCPkw47ZgpTQGPR7xLyiY263849f1lYR4eiJTVZGZFWUWbr+FsWAbY+XiQA
+vJCwb3kb+QHM74AYsdhR
+=cAcy
 -----END PGP SIGNATURE-----
 
---Sig_/FyQLvGJNsmsVESocvmh87k0--
+--Sig_/eGszSh918s/A6G=OcMEHT0v--
