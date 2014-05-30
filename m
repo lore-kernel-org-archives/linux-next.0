@@ -1,24 +1,66 @@
-From: "Kong Hui" <huik@long.com.hk>
-Subject: Get back to me
-Date: Thu, 29 May 2014 16:36:50 -0700
-Message-ID: <20140529233555.6639FEF4675__3825.43452219597$1401410156$gmane$org@tintin.portobello.school.nz>
-Reply-To: <konghui2014@yeah.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc tree
+Date: Fri, 30 May 2014 13:23:24 +1000
+Message-ID: <20140530132324.757076ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/75Pg84MoVKxTgJg=.EQ_ATJ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 219-89-113-121.adsl.xtra.co.nz ([219.89.113.121]:64499 "EHLO
-	tintin.portobello.school.nz" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751538AbaE3AfQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 May 2014 20:35:16 -0400
+Received: from ozlabs.org ([103.22.144.67]:43504 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751543AbaE3DXc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 May 2014 23:23:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: Chris Ball <chris@printf.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David =?UTF-8?B?TGFuemVuZMO2cmZlcg==?= <david.lanzendoerfer@o2s.ch>, Hans de Goede <hdegoede@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, Mike Turquette <mturquette@linaro.org>
 
-I am a bank director from Hong Kong, I want you to be my partner in a
-business project of mutual benefit. Get back to me if interested.
+--Sig_/75Pg84MoVKxTgJg=.EQ_ATJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Chris,
 
-Thank you,
-Kong Hui.
+After merging the mmc tree, today's linux-next build (arm multi_v7_defconfi=
+g)
+failed like this:
+
+drivers/mmc/host/sunxi-mmc.c:25:29: fatal error: linux/clk/sunxi.h: No such=
+ file or directory
+
+Caused by commit 19b7f796c375 ("mmc: sunxi: Add driver for SD/MMC hosts
+found on Allwinner sunxi SoCs").  Something has changed to turn on
+CONFIG_ARCH_SUNXI in the arm multi_v7_defconfig build since yesterday.
+
+linux/clk/sunxi.h is created by a commit in the clk tree
+(git://git.linaro.org/people/mturquette/linux.git#clk-next) which I
+don't include in linux-next until much later than the mmc tree.
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/75Pg84MoVKxTgJg=.EQ_ATJ
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTh/mxAAoJEMDTa8Ir7ZwVJPsP/RDhZ2hsuABYExENx1XSnR0p
+MDfRNH7WBII0NKmniWGMtXeA/XfLwLry9j5yRPblaoAZbzcMbmoKDarTwOXW1LId
+3j5jRyEbS5MgjBk86Gwy/dzK5M0S/oU1+QwR+ApaNfwphtRVRoqaP33CCHdVAGRk
+5OJwu2y2WaSRURifVdVqdNvuUUXnCSMN5JWc4Sn9VIm4/L33Nb9/srL7sVwlG1wQ
+xHLYG/Yr1xeTIUMTpShPL/A1c3NSAqamQMHrXLcMKbby4YYYBZ8zYLgTIwmBYPws
+HhWBty1WzhaFGGiROjfvNWejQUmfGgWEu4khi9cyfzlj0xcDJuUOoj5p0HnLMOrD
+V9uMibIRvWVUlkIfPZbhkfxHxpsi1F/DefchwTRMAmLJLmu8myHoBp1vdo1oLh6y
+bKjvvwEvO0wSpsoOnheKfZOk/7vYU9L11gkta3WXHvZCwXgRu2zok1JYIEPjpIuU
+qaMfEDnUebAJia/nzEObO9RYgQQf5c7385z5LD065jzGkgLzseBIK0xRT3oLa3QY
+TctCgRBj/rJvIBZ+EsYlgO2Z4kpisujAI/xbK7i9XQOt+pjgjMkX3TjRE+qCRmgb
+blNFKIXLpW8eUnxIxMifXWsyolbKI4Fn2mlU03w+gvuRJzrZ4ttOwiVQPsOyzZvu
+yzdRTnudBs2XtsihTIWD
+=jzGX
+-----END PGP SIGNATURE-----
+
+--Sig_/75Pg84MoVKxTgJg=.EQ_ATJ--
