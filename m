@@ -1,38 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the pinctrl tree
-Date: Fri, 30 May 2014 10:19:12 +0200
-Message-ID: <CACRpkdaRFRwRHFUQ6oNLg0X5kJ-iigie+4t9Xu9ZcVpG9wMgww@mail.gmail.com>
-References: <20140530160859.54642243@canb.auug.org.au>
+From: Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 0/2] x86,vdso: vdso build fixes and improvements
+Date: Fri, 30 May 2014 08:40:57 -0700
+Message-ID: <CALCETrVooEK9beWde6b5rRO3OV995J+VHEQaJ=xzxTmJLT+ciA@mail.gmail.com>
+References: <CALCETrXef77JLoEp5hCXSdMAk7usWsL-sUG6NrcgLgrz3krfag@mail.gmail.com>
+ <cover.1401400316.git.luto@amacapital.net> <5387B7A0.3030302@windriver.com>
+ <CALCETrVSG7-=Q3sG87YTzDYOLXzEbkvW9Ws=HeJ5cAUGxQhdJA@mail.gmail.com> <20140530154229.46d76630@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:50402 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751665AbaE3ITN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2014 04:19:13 -0400
-Received: by mail-ob0-f172.google.com with SMTP id wp18so1480042obc.3
-        for <linux-next@vger.kernel.org>; Fri, 30 May 2014 01:19:12 -0700 (PDT)
-In-Reply-To: <20140530160859.54642243@canb.auug.org.au>
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:57043 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933502AbaE3PlS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2014 11:41:18 -0400
+Received: by mail-ve0-f178.google.com with SMTP id sa20so2317042veb.37
+        for <linux-next@vger.kernel.org>; Fri, 30 May 2014 08:41:17 -0700 (PDT)
+In-Reply-To: <20140530154229.46d76630@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "H. Peter Anvin" <hpa@zytor.com>, Josh Boyer <jwboyer@fedoraproject.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "linux-tip-commits@vger.kernel.org" <linux-tip-commits@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Fri, May 30, 2014 at 8:08 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Linus,
+On Thu, May 29, 2014 at 10:42 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Andy,
 >
-> After merging the pinctrl tree, today's linux-next build (arm multi_v7_defconfig)
-> failed like this:
+> On Thu, 29 May 2014 15:49:52 -0700 Andy Lutomirski <luto@amacapital.net> wrote:
+>>
+>> On Thu, May 29, 2014 at 3:41 PM, Paul Gortmaker
+>> <paul.gortmaker@windriver.com> wrote:
+>> > On 14-05-29 05:57 PM, Andy Lutomirski wrote:
+>> >> Patch 1 causes make;make to behave similarly to make if vdso2c fails.
+>> >> Patch 2 hopefully fixes x86 crossbuilds on big-endian machines.  I don't
+>> >> have a big-endian machine to test on, though.
+>> >
+>> > Since the x86 builds are unconditionally failing as-is now in
+>> > linux-next, perhaps Stephen [Cc'd] can layer these on the top of
+>> > the tree he'll be making within the next couple of hours to give
+>> > them a big-endian test.
 >
-> drivers/pinctrl/sirf/pinctrl-sirf.c: In function 'sirfsoc_gpio_handle_irq':
-> drivers/pinctrl/sirf/pinctrl-sirf.c:578:11: error: 'sgpio_chip' undeclared (first use in this function)
+> I added them just after the merge of the tip tree today and will keep
+> them there until they (or somo other solution) turn up some other way.
 >
-> Caused by commit 294d1351ff47 ("pinctrl: sirf: switch to using
-> allocated state container").
+>> Stephen, if you do this, could you also send me some of the build outputs:
+>>
+>> arch/x86/vdso/*.so.dbg
+>> arch/x86/vdso/*-image-*.c
+>>
+>> I'd like to verify that the output is correct.  It would be
+>> unfortunate if the cross-built kernel had some subtle error.
+>
+> OK, I will send them in a separate email.
 
-Grr a bad cherry-pick from my side. I've fixed it up today.
-Thanks a lot for this Stephen.
+For the benefit of the archives: the patches are bad.  New ones coming.
 
-Yours,
-Linus Walleij
+--Andy
+
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+
+-- 
+Andy Lutomirski
+AMA Capital Management, LLC
