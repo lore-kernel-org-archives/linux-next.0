@@ -1,34 +1,61 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: [PATCH v2 0/2] x86,vdso: vdso build fixes and improvements
-Date: Fri, 30 May 2014 08:48:47 -0700
-Message-ID: <cover.1401464755.git.luto@amacapital.net>
-References: <CALCETrXef77JLoEp5hCXSdMAk7usWsL-sUG6NrcgLgrz3krfag@mail.gmail.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 2/2] x86,vdso: Fix cross-compilation from big-endian
+ architectures
+Date: Fri, 30 May 2014 13:02:55 -0700
+Message-ID: <5388E3EF.6030700@zytor.com>
+References: <CALCETrXef77JLoEp5hCXSdMAk7usWsL-sUG6NrcgLgrz3krfag@mail.gmail.com> <cover.1401464755.git.luto@amacapital.net> <2cf258df123cb24bad63c274c8563c050547d99d.1401464755.git.luto@amacapital.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:46422 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933149AbaE3Psy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2014 11:48:54 -0400
-Received: by mail-pa0-f48.google.com with SMTP id rd3so1837926pab.35
-        for <linux-next@vger.kernel.org>; Fri, 30 May 2014 08:48:53 -0700 (PDT)
-In-Reply-To: <CALCETrXef77JLoEp5hCXSdMAk7usWsL-sUG6NrcgLgrz3krfag@mail.gmail.com>
+Received: from terminus.zytor.com ([198.137.202.10]:47336 "EHLO mail.zytor.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751338AbaE3UDa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 May 2014 16:03:30 -0400
+In-Reply-To: <2cf258df123cb24bad63c274c8563c050547d99d.1401464755.git.luto@amacapital.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Josh Boyer <jwboyer@fedoraproject.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "linux-tip-commits@vger.kernel.org" <linux-tip-commits@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andy Lutomirski <luto@amacapital.net>
+To: Andy Lutomirski <luto@amacapital.net>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Josh Boyer <jwboyer@fedoraproject.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "linux-tip-commits@vger.kernel.org" <linux-tip-commits@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-Patch 1 causes make;make to behave similarly to make if vdso2c fails.
-Patch 2 hopefully fixes x86 crossbuilds on big-endian machines.  I don't
-have a big-endian machine to test on, though.
+On 05/30/2014 08:48 AM, Andy Lutomirski wrote:
+> This adds a macro GET(x) to convert x from big-endian to
+> little-endian.  Hopefully I put it everywhere it needs to go and got
+> all the cases needed for everyone's linux/elf.h.
+> 
+> Signed-off-by: Andy Lutomirski <luto@amacapital.net>
+> ---
+>  arch/x86/vdso/vdso2c.c | 15 ++++++++++++
+>  arch/x86/vdso/vdso2c.h | 63 ++++++++++++++++++++++++++++----------------------
+>  2 files changed, 50 insertions(+), 28 deletions(-)
 
-Changes from v1: Add two missing endian fixes
+A couple of observations:
 
-Andy Lutomirski (2):
-  x86,vdso: When vdso2c fails, unlink the output
-  x86,vdso: Fix cross-compilation from big-endian architectures
+1. We shouldn't use double-underscore in host C code.
 
- arch/x86/vdso/vdso2c.c | 35 +++++++++++++++++-------
- arch/x86/vdso/vdso2c.h | 73 ++++++++++++++++++++++++++------------------------
- 2 files changed, 64 insertions(+), 44 deletions(-)
+2. It would be nice if we can take these sort of things (host-build
+   helper macros) and move them to some common file in the Linux kernel
+   eventually, so it would be a good thing to make the naming a little
+   less general.
 
--- 
-1.9.3
+3. Even though it isn't necessary, making it work on 8-bit values so
+   one doesn't have to worry about the type would seem like a good
+   thing.
+
+I came up with the following, it seems like a reasonable simplification:
+
+> #define _LE(x, bits, ifnot)						\
+> 	__builtin_choose_expr(						\
+> 		(sizeof(x) == bits/8),					\
+> 		(__typeof__(x))le##bits##toh(x), ifnot)
+> 
+> extern void bad_le(uint64_t);
+> #define _LAST_LE(x)							\
+> 	__builtin_choose_expr(sizeof(x) == 1, (x), bad_le(x))
+> 
+> #define LE(x)								\
+> 	_LE(x, 64, _LE(x, 32, _LE(x, 16, _LAST_LE(x))))
+
+What do you think?
+
+	-hpa
