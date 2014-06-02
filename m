@@ -1,63 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jun 2
-Date: Mon, 2 Jun 2014 19:30:18 +1000
-Message-ID: <20140602193018.79d4933b@canb.auug.org.au>
-References: <20140602192743.00f59f80@canb.auug.org.au>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Mon, 2 Jun 2014 11:31:55 +0200
+Message-ID: <CAPDyKFqp=quWV17MGZfvgZA-J_KPsWkza184+bjez_MQpOx6Xg@mail.gmail.com>
+References: <20140530132324.757076ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/s5UBzE.WCrSnP8GOP2jfc77"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59349 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753327AbaFBJah (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2014 05:30:37 -0400
-In-Reply-To: <20140602192743.00f59f80@canb.auug.org.au>
+Received: from mail-qa0-f47.google.com ([209.85.216.47]:33596 "EHLO
+	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753007AbaFBJb4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2014 05:31:56 -0400
+Received: by mail-qa0-f47.google.com with SMTP id s7so2279634qap.6
+        for <linux-next@vger.kernel.org>; Mon, 02 Jun 2014 02:31:55 -0700 (PDT)
+In-Reply-To: <20140530132324.757076ca@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Chris Ball <chris@printf.net>, Mike Turquette <mturquette@linaro.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?David_Lanzend=C3=B6rfer?= <david.lanzendoerfer@o2s.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, Hans de Goede <hdegoede@redhat.com>
 
---Sig_/s5UBzE.WCrSnP8GOP2jfc77
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 30 May 2014 05:23, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Chris,
+>
+> After merging the mmc tree, today's linux-next build (arm multi_v7_defconfig)
+> failed like this:
+>
+> drivers/mmc/host/sunxi-mmc.c:25:29: fatal error: linux/clk/sunxi.h: No such file or directory
+>
+> Caused by commit 19b7f796c375 ("mmc: sunxi: Add driver for SD/MMC hosts
+> found on Allwinner sunxi SoCs").  Something has changed to turn on
+> CONFIG_ARCH_SUNXI in the arm multi_v7_defconfig build since yesterday.
+>
+> linux/clk/sunxi.h is created by a commit in the clk tree
+> (git://git.linaro.org/people/mturquette/linux.git#clk-next) which I
+> don't include in linux-next until much later than the mmc tree.
+>
+> I have reverted that commit for today.
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-Hi all,
+Hi Mike, Chris,
 
-On Mon, 2 Jun 2014 19:27:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->=20
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
+So, the proper thing would be to let Mike to carry the above patch
+though his clk tree instead.
 
-Our build server is down today, so this linux-next will not get the
-usual builds done, sorry.
+Could we arrange that?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/s5UBzE.WCrSnP8GOP2jfc77
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTjEQvAAoJEMDTa8Ir7ZwVd6gP/iLZKFyzeeEJWlGLYkIDdcWf
-P7eAn8NGYwoqXdkMqeElWynktRHvqHX5lSTviG3bSfMPDVZI0l3MYxTG/G+z0uKw
-OOKo2jy6lbz1gpnYSIj782QBj5+EXFOgrAsH2iOZLIzRIf4A/UlQB8ud/6TrXWTa
-a4Safqaq9653/YB1Hou5Q0895P39tVP8AIcZq+VpwuwQYnPYMBKRv9q+LT61AnSq
-JgzGDhavZGtWYvYu0WCvp1tDgshq7tpxaFo3SB9slm+Jh/Xeb4o5ApkCIubdqU/F
-GjKzcDiCidf42Y9UvUwURCxtHNjwtdAIKBcwrGdrwsm3mS3Yw70bk1SjGMMCVViR
-Wo0TV1+ug12fZ3GB+aBjLDWYz7/Xt0woXBh3QkJ5N0k4JzKo6mGbqMFzGzmxxG6y
-iPP6GX41RD5Lee3SJii0QIGN4VTFI18g75R44bfWA6BaJYe2WyDlfKYmbh6wp+Ya
-dF/xAD5h+4qIWg9CuLtGLyMtrwgEKpG4S4UW2hL5TQaBgNuqIcvsvLyn/QJRdhu1
-3MQ+XS441wKexJD1vAlL1l+zXvY1Gw/zDvpI6S1ywtLXr8JEqIQg39Zb9586VFvR
-A1Zh55ppP/1gqZObfrxKy183XBpMznWAlD2lpWiLOhZ3qzMAIoYu+eHeKVf9Tu4T
-Kzk15fmB2pFLTjxEhiJt
-=8+Ra
------END PGP SIGNATURE-----
-
---Sig_/s5UBzE.WCrSnP8GOP2jfc77--
+Kind regards
+Ulf Hansson
