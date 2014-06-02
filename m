@@ -1,51 +1,57 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: nommu build failures on ARM in linux-next
-Date: Mon, 2 Jun 2014 09:19:05 +0200
-Message-ID: <20140602071905.GD11207@pengutronix.de>
-References: <5387661F.1050000@windriver.com>
- <20140529185534.GK3693@n2100.arm.linux.org.uk>
- <20140529234012.GL3693@n2100.arm.linux.org.uk>
- <20140530080257.GW20155@pengutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 2 Jun 2014 18:36:01 +1000
+Message-ID: <20140602183601.65742dfa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:47599 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751442AbaFBHTU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2014 03:19:20 -0400
-Content-Disposition: inline
-In-Reply-To: <20140530080257.GW20155@pengutronix.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Jonathan Austin <Jonathan.Austin@arm.com>, Kevin Hilman <khilman@deeprootsystems.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel@pengutronix.de, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cJNPMS80ZHeOaELJrIHw7ig"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hello,
+--Sig_/cJNPMS80ZHeOaELJrIHw7ig
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 30, 2014 at 10:02:57AM +0200, Uwe Kleine-K=F6nig wrote:
-> > Even so, I suspect even with this build problem solved, that's not =
-going
-> > to be the end of the story for noMMU breakage... it's certainly som=
-ething
-> > that gets very little testing by anyone.  I suspect it should be re=
-moved
-> > from the mainline kernel tree rather than being a constant source o=
-f these
-> > kinds of problems.
-> That would mean that support for Cortex-M3 would die, too, which woul=
-d
-> (IMHO) be sad.
-Just for your information: The problem in question here doesn't affect
-ARM-v7M (aka Cortex-M[34]) because the patch only touches areas
-protected by #ifdef CONFIG_CPU_CP15 which is off for these machines.
+Hi all,
 
-Best regards
-Uwe
+After merging the net-next tree, today's linux-next build (sparc64
+defconfig) failed like this:
 
+ERROR: "of_mdiobus_link_phydev" [drivers/net/phy/libphy.ko] undefined!
+
+Caused by commit 86f6cf41272d ("net: of_mdio: add
+of_mdiobus_link_phydev()") from te net-next tree.
+
+CONFIG_PHYLIB=3Dm for this build.
+
+I have reverted that commit for today.
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/cJNPMS80ZHeOaELJrIHw7ig
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTjDd3AAoJEMDTa8Ir7ZwVy6UP/1PiE3Q3x3Uy8/0yykAM/jm5
+io0m0YSsjoraoi9sYoPgFTAH88hK9CTJed0KEiCm36ZdJ0xxbl77XGC/dU5wJNyO
+bJuvLiJ0b/Mcx/ZjIMA1UhRa8DBjHohcnbl2Enc3IzJohc+1782u41xU4kC11u2N
+6G1as2BHz2ZFL0YxkepcGXYkQ6czfyLx/v4NxH4dJeBjpH0ZKty2xwUot2i6/WNu
+uLJKL6osTl9BhBIVOWe2L9uJfyOFVTCUXgqgF2mJhHD3KSg+wpToc/zoPnPVyxZh
+kZAQ8hpuUCb35kiBHQGGX1f2TXLIxRWSOKUBX3dVnkNhuR3VVFaQcheirNGU42s8
+MLTTQe2HY2HhwBVXt8klK9m5hO5yp0CdRPRxdGxVRKa7gV9R3gzwyOG3Tp4w4qbL
+GbjHBk1/pa8nKn7MzHkqRsG0GptPaxiaWTR+sHLgKLw7nIYWoBUpOwVWsQWXvb/i
+buWTIpIRwpAr0Srwjvd6ByczZeIQVyidWpacxSGtCwjUvEgS7r0wxxwEQxMN6IyN
+2WKxs3qVZZEghcJnRA1omjwrRULTczbOADXNUWdL42B6gr54rFJ6lau35PJazPOL
+2nsuYmOnFvvizcDt5A+ZPw5xaHU5EOIVoh/rd/sz7ecgIQUmldFcbQBxdWuaPLsO
+s9pfBQ6jUhoL7H719SsU
+=5UMp
+-----END PGP SIGNATURE-----
+
+--Sig_/cJNPMS80ZHeOaELJrIHw7ig--
