@@ -1,73 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Mon, 2 Jun 2014 15:11:41 +1000
-Message-ID: <20140602151141.084d3350@canb.auug.org.au>
-References: <20140526140735.3f405672@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with the  tree
+Date: Mon, 2 Jun 2014 16:34:29 +1000
+Message-ID: <20140602163429.357cf678@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t6C=HlnrAesft1a1OWd=U_z"; protocol="application/pgp-signature"
+ boundary="Sig_/d=DQypsFZSJn/uQjH9HeZYC"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36247 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42741 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751428AbaFBFLz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2014 01:11:55 -0400
-In-Reply-To: <20140526140735.3f405672@canb.auug.org.au>
+	id S1751407AbaFBGeg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2014 02:34:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <chris@printf.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
+To: Alexander Graf <agraf@suse.de>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anup Patel <anup.patel@linaro.org>
 
---Sig_/t6C=HlnrAesft1a1OWd=U_z
+--Sig_/d=DQypsFZSJn/uQjH9HeZYC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi Alexander,
 
-On Mon, 26 May 2014 14:07:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the mmc tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_notify_change':
-> drivers/mmc/host/sdhci-s3c.c:402:25: error: 'struct sdhci_host' has no me=
-mber named 'card_tasklet'
->=20
-> Caused by commit 3560db8e247a ("mmc: sdhci: push card_tasklet into
-> threaded irq handler").  This is the second left over one I found.
-> Please check for any more (grep is your friend).
->=20
-> I have used the mmc tree from next-20140522 again for today.
+Today's linux-next merge of the kvm-ppc tree got a conflict in
+include/uapi/linux/kvm.h between commit 717abd208dff ("KVM: Add
+capability to advertise PSCI v0.2 support") from the kvm-arm tree and
+commit f2e91042a807 ("KVM: PPC: Add CAP to indicate hcall fixes") from
+the kvm-ppc tree.
 
-This is back again.  I have no idea why I didn't get this failure on
-Friday. Please, guys, go through your tree and fix this problem once
-and for all.  Grep is your friend.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-I have used the mmc tree from next-20140522 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/t6C=HlnrAesft1a1OWd=U_z
+diff --cc include/uapi/linux/kvm.h
+index 32cf446f1911,16c923de85e7..000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -756,7 -748,7 +756,8 @@@ struct kvm_ppc_smmu_info=20
+  #define KVM_CAP_S390_IRQCHIP 99
+  #define KVM_CAP_IOEVENTFD_NO_LENGTH 100
+  #define KVM_CAP_VM_ATTRIBUTES 101
+ -#define KVM_CAP_PPC_FIXUP_HCALL 102
+ +#define KVM_CAP_ARM_PSCI_0_2 102
+++#define KVM_CAP_PPC_FIXUP_HCALL 103
+ =20
+  #ifdef KVM_CAP_IRQ_ROUTING
+ =20
+
+--Sig_/d=DQypsFZSJn/uQjH9HeZYC
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTjAeWAAoJEMDTa8Ir7ZwV+NcP/iayxrFcHHJGBdHxK5DNbBRd
-yBFxK0MzLGCKoTD7hON4NOVeIpOdLoRFeKXW7njFXXv8JTw2hVPwfCFnz1jSzMEH
-5dQbP1kmsUXKrH62S20ztFQd9MQQsg15XbFTZYrWwIEf+/w/QZFViXxFdqcuOm8q
-Hyw50KCkgaPdLVRDnbYw+8piDIDJadL4Y+OHzH9mmMTsw3pOuLpg/2t+vPoAqhpV
-P0ZLgiiDb3Ofdot2X+BgbCtiEs5RlqdYQHHpHxlPPhHEEpdjzn+P2ifBRh+0GgK8
-c7zhp7oY0SVYuvsLQcPRszdhsxaR9S6SdByZLI/7GrJeooqxn5LPbYSVlkG/+IOq
-TaJNWa9K9l/1mDkpuAiXcrosnsvxG/7m8sfqjoJpbCDUx2+EIRzHZhS1FPIZ9Jge
-nJTFmNF2nOHoSYyGcIMkStoOIzmeSGwbKaQUSOtMFplBOkVxsklEku9EBJVsUlec
-/NQBBqhNdFBnPXiWD/DBxFFN2QerwHTYaHCuRVV5e6+xjinJJd7bc7T8KbMEh/t6
-PVx+gxDr/cfDmb9EIgJrWzNTXTOSHcgLOeeVHOp1CWHwqMmr1SCVx7Sqde5cy/qu
-hUG2ItONX14zZJVCdATRt0GfqxFVwJWyZboYWy3L9DIOZqsqaKI6i17DHkAWVL05
-6dgANzQEdx8yVSeFsMmO
-=k6BG
+iQIcBAEBCAAGBQJTjBr5AAoJEMDTa8Ir7ZwVGhQP/RS5zAlJj/XeLOSzLoZ3LdKu
+Wfr0Ful5I+L2OhLurFnlYQFSQ2ileGWb2InqBSb1Hy4GLhrJD3Q5djMLV3KY4ZzE
+DWqREXN6a+xXAhwFPpx2HHHmpVKAREIUnc4Bm8XIhXG7Fbd6Eor/SYp8KfteoXBU
+7TaACqutS6zhcpv7O+ha17XNezj+bQAo3orPsONBMZJMIAsjDV0JWENnuDLkXMXE
+MzrbQbHU/Zz6D7IT6lvxIxl0XXCIojluFlNzoijgNiaIuCqKH/L99ZyJAdkbCraC
+PNP9AycEpc+TWGypLZFQR0Xgy2lcHgOPD/okfg6ETNLKT0/pxGlI3+gTGVHMrcS7
+K4Szqv+l0w7Gsj/rbkAIo+wQ1gv4anHkpuQ6+XWMnDhmyPvnZOPQSn08MkhEfDJF
+i1xlQ+YsXTKkcugWqU+bHaDkHM37vhcNMM5wdmBB+M+ydNHl4QQ9rOaZfuNnbADu
+/NXzrYu144DTbff9r3WCR2HYAHfo441s3NLa0Jfq9dEm0paf2eYWhoYq5XSZ7PCo
+X4tzJUT5y6LSur0saHZS1mhbv7pOekfSxqbTrIodoMgrtEb0XfacW5xrujA7YFHO
+d4FF4zafP5f83Kk7aKSeHkpt80DSwRNqYUERGomcpwWVzV3BjIGVsf3c9NH29weL
+ybkI9yBMJrJbTRuRvH6M
+=Up5Y
 -----END PGP SIGNATURE-----
 
---Sig_/t6C=HlnrAesft1a1OWd=U_z--
+--Sig_/d=DQypsFZSJn/uQjH9HeZYC--
