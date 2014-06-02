@@ -1,57 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Mon, 2 Jun 2014 18:36:01 +1000
-Message-ID: <20140602183601.65742dfa@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the arm tree
+Date: Mon, 2 Jun 2014 18:42:38 +1000
+Message-ID: <20140602184238.2672e610@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cJNPMS80ZHeOaELJrIHw7ig"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/wwp2gfl9Z8u9IuF1u_uZmtv"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50853 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752639AbaFBImp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2014 04:42:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Laura Abbott <lauraa@codeaurora.org>
 
---Sig_/cJNPMS80ZHeOaELJrIHw7ig
+--Sig_/wwp2gfl9Z8u9IuF1u_uZmtv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-After merging the net-next tree, today's linux-next build (sparc64
-defconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in
+arch/arm/include/asm/Kbuild between commit 8a87411b649c ("ARM: 8047/1:
+rwsem: use asm-generic rwsem implementation") from the arm tree and
+commit bca74b3faf68 ("lib/scatterlist: make ARCH_HAS_SG_CHAIN an actual
+Kconfig") from the akpm-current tree.
 
-ERROR: "of_mdiobus_link_phydev" [drivers/net/phy/libphy.ko] undefined!
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 86f6cf41272d ("net: of_mdio: add
-of_mdiobus_link_phydev()") from te net-next tree.
-
-CONFIG_PHYLIB=3Dm for this build.
-
-I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/cJNPMS80ZHeOaELJrIHw7ig
+diff --cc arch/arm/include/asm/Kbuild
+index f5a357601983,2d95820276fd..000000000000
+--- a/arch/arm/include/asm/Kbuild
++++ b/arch/arm/include/asm/Kbuild
+@@@ -21,7 -21,7 +21,8 @@@ generic-y +=3D parport.
+  generic-y +=3D poll.h
+  generic-y +=3D preempt.h
+  generic-y +=3D resource.h
+ +generic-y +=3D rwsem.h
++ generic-y +=3D scatterlist.h
+  generic-y +=3D sections.h
+  generic-y +=3D segment.h
+  generic-y +=3D sembuf.h
+
+--Sig_/wwp2gfl9Z8u9IuF1u_uZmtv
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTjDd3AAoJEMDTa8Ir7ZwVy6UP/1PiE3Q3x3Uy8/0yykAM/jm5
-io0m0YSsjoraoi9sYoPgFTAH88hK9CTJed0KEiCm36ZdJ0xxbl77XGC/dU5wJNyO
-bJuvLiJ0b/Mcx/ZjIMA1UhRa8DBjHohcnbl2Enc3IzJohc+1782u41xU4kC11u2N
-6G1as2BHz2ZFL0YxkepcGXYkQ6czfyLx/v4NxH4dJeBjpH0ZKty2xwUot2i6/WNu
-uLJKL6osTl9BhBIVOWe2L9uJfyOFVTCUXgqgF2mJhHD3KSg+wpToc/zoPnPVyxZh
-kZAQ8hpuUCb35kiBHQGGX1f2TXLIxRWSOKUBX3dVnkNhuR3VVFaQcheirNGU42s8
-MLTTQe2HY2HhwBVXt8klK9m5hO5yp0CdRPRxdGxVRKa7gV9R3gzwyOG3Tp4w4qbL
-GbjHBk1/pa8nKn7MzHkqRsG0GptPaxiaWTR+sHLgKLw7nIYWoBUpOwVWsQWXvb/i
-buWTIpIRwpAr0Srwjvd6ByczZeIQVyidWpacxSGtCwjUvEgS7r0wxxwEQxMN6IyN
-2WKxs3qVZZEghcJnRA1omjwrRULTczbOADXNUWdL42B6gr54rFJ6lau35PJazPOL
-2nsuYmOnFvvizcDt5A+ZPw5xaHU5EOIVoh/rd/sz7ecgIQUmldFcbQBxdWuaPLsO
-s9pfBQ6jUhoL7H719SsU
-=5UMp
+iQIcBAEBCAAGBQJTjDkDAAoJEMDTa8Ir7ZwVGiAQAJKtnZ8zTLbAvptHE4/N+BB4
+NuCgo5veqwfxPRC3ZwBIDFuuGAE+VWnlT/+Ds5sQSNTMYwUtPPSJmh6Skg8dYRzB
+o4C9/i/cJsUAMwBj3igsVarH5MwV7TIcBPGbg4wo1ZD7SXGckC9jLPHxpqZckODo
++5lPAuVZSQdk508rB/+5TnRVEU4LyV2KNmkQIg9MWzgsnQ97x4AEJtGbeqgGMd+S
+ocYxVNEGfq6KPe9rID3H6+FhqBeOPsyt2gJ4sWeLikqLTalpXj3z4XE/4sq5UKMZ
+eUTliwEQTss8xVd1inQv96mF2oTHiJCvzQXL6TfsRKfMXUsJkA1rKJlTNeVUQruq
+vaMEwBxMF/TTnstl7VgZGyiAxlVtVKAy33p5tAZgrVhsCuMZm6dWb3GEBSJyFmBJ
+DvyELNrg+PlRWXTh2EDLBjv0NklvAPkPdzK0xSo6i5CbsLiUhRiItz8GegaKcDaW
+92fXmp2zsv4GhpdHHQfhyhH38IcgaoPMeeiGcaseEYTBIEOBlPqHOQkrF2gC1Y9G
+OU81izAGLJX/mzIMemyEUXql+PVx8kuzuGNEuBTDsP5U20nDKlbbg12nZIFm6EOf
+lRlhRG7z6MAalOdw/6RCKqLeYyj+7PUtSaUf6y8cxuLcJaWQJLKOCUgSzFHoEYzN
+Za/D8UngTsp9+YWTGPeC
+=h4X2
 -----END PGP SIGNATURE-----
 
---Sig_/cJNPMS80ZHeOaELJrIHw7ig--
+--Sig_/wwp2gfl9Z8u9IuF1u_uZmtv--
