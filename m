@@ -1,74 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-ppc tree with the  tree
-Date: Mon, 2 Jun 2014 16:34:29 +1000
-Message-ID: <20140602163429.357cf678@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: nommu build failures on ARM in linux-next
+Date: Mon, 2 Jun 2014 09:19:05 +0200
+Message-ID: <20140602071905.GD11207@pengutronix.de>
+References: <5387661F.1050000@windriver.com>
+ <20140529185534.GK3693@n2100.arm.linux.org.uk>
+ <20140529234012.GL3693@n2100.arm.linux.org.uk>
+ <20140530080257.GW20155@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/d=DQypsFZSJn/uQjH9HeZYC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42741 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751407AbaFBGeg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2014 02:34:36 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:47599 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751442AbaFBHTU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2014 03:19:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20140530080257.GW20155@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Graf <agraf@suse.de>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anup Patel <anup.patel@linaro.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Jonathan Austin <Jonathan.Austin@arm.com>, Kevin Hilman <khilman@deeprootsystems.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel@pengutronix.de, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
---Sig_/d=DQypsFZSJn/uQjH9HeZYC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Alexander,
+On Fri, May 30, 2014 at 10:02:57AM +0200, Uwe Kleine-K=F6nig wrote:
+> > Even so, I suspect even with this build problem solved, that's not =
+going
+> > to be the end of the story for noMMU breakage... it's certainly som=
+ething
+> > that gets very little testing by anyone.  I suspect it should be re=
+moved
+> > from the mainline kernel tree rather than being a constant source o=
+f these
+> > kinds of problems.
+> That would mean that support for Cortex-M3 would die, too, which woul=
+d
+> (IMHO) be sad.
+Just for your information: The problem in question here doesn't affect
+ARM-v7M (aka Cortex-M[34]) because the patch only touches areas
+protected by #ifdef CONFIG_CPU_CP15 which is off for these machines.
 
-Today's linux-next merge of the kvm-ppc tree got a conflict in
-include/uapi/linux/kvm.h between commit 717abd208dff ("KVM: Add
-capability to advertise PSCI v0.2 support") from the kvm-arm tree and
-commit f2e91042a807 ("KVM: PPC: Add CAP to indicate hcall fixes") from
-the kvm-ppc tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Best regards
+Uwe
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc include/uapi/linux/kvm.h
-index 32cf446f1911,16c923de85e7..000000000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -756,7 -748,7 +756,8 @@@ struct kvm_ppc_smmu_info=20
-  #define KVM_CAP_S390_IRQCHIP 99
-  #define KVM_CAP_IOEVENTFD_NO_LENGTH 100
-  #define KVM_CAP_VM_ATTRIBUTES 101
- -#define KVM_CAP_PPC_FIXUP_HCALL 102
- +#define KVM_CAP_ARM_PSCI_0_2 102
-++#define KVM_CAP_PPC_FIXUP_HCALL 103
- =20
-  #ifdef KVM_CAP_IRQ_ROUTING
- =20
-
---Sig_/d=DQypsFZSJn/uQjH9HeZYC
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTjBr5AAoJEMDTa8Ir7ZwVGhQP/RS5zAlJj/XeLOSzLoZ3LdKu
-Wfr0Ful5I+L2OhLurFnlYQFSQ2ileGWb2InqBSb1Hy4GLhrJD3Q5djMLV3KY4ZzE
-DWqREXN6a+xXAhwFPpx2HHHmpVKAREIUnc4Bm8XIhXG7Fbd6Eor/SYp8KfteoXBU
-7TaACqutS6zhcpv7O+ha17XNezj+bQAo3orPsONBMZJMIAsjDV0JWENnuDLkXMXE
-MzrbQbHU/Zz6D7IT6lvxIxl0XXCIojluFlNzoijgNiaIuCqKH/L99ZyJAdkbCraC
-PNP9AycEpc+TWGypLZFQR0Xgy2lcHgOPD/okfg6ETNLKT0/pxGlI3+gTGVHMrcS7
-K4Szqv+l0w7Gsj/rbkAIo+wQ1gv4anHkpuQ6+XWMnDhmyPvnZOPQSn08MkhEfDJF
-i1xlQ+YsXTKkcugWqU+bHaDkHM37vhcNMM5wdmBB+M+ydNHl4QQ9rOaZfuNnbADu
-/NXzrYu144DTbff9r3WCR2HYAHfo441s3NLa0Jfq9dEm0paf2eYWhoYq5XSZ7PCo
-X4tzJUT5y6LSur0saHZS1mhbv7pOekfSxqbTrIodoMgrtEb0XfacW5xrujA7YFHO
-d4FF4zafP5f83Kk7aKSeHkpt80DSwRNqYUERGomcpwWVzV3BjIGVsf3c9NH29weL
-ybkI9yBMJrJbTRuRvH6M
-=Up5Y
------END PGP SIGNATURE-----
-
---Sig_/d=DQypsFZSJn/uQjH9HeZYC--
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
