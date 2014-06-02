@@ -1,61 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the infiniband tree with the net-next
- tree
-Date: Mon, 2 Jun 2014 13:46:18 +1000
-Message-ID: <20140602134618.6cb5e747@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Mon, 2 Jun 2014 15:11:41 +1000
+Message-ID: <20140602151141.084d3350@canb.auug.org.au>
+References: <20140526140735.3f405672@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mRobN0mJrb0Au./P44JdCYQ"; protocol="application/pgp-signature"
+ boundary="Sig_/t6C=HlnrAesft1a1OWd=U_z"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39692 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36247 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750853AbaFBDq0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Jun 2014 23:46:26 -0400
+	id S1751428AbaFBFLz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2014 01:11:55 -0400
+In-Reply-To: <20140526140735.3f405672@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Jack Morgenstein <jackm@dev.mellanox.co.il>
+To: Chris Ball <chris@printf.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 
---Sig_/mRobN0mJrb0Au./P44JdCYQ
+--Sig_/t6C=HlnrAesft1a1OWd=U_z
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Chris,
 
-Today's linux-next merge of the infiniband tree got a conflict in
-drivers/net/ethernet/mellanox/mlx4/cmd.c between commit 1a91de28831a
-("mellanox: Logging message cleanups") from the net-next tree and
-commit 97982f5a91e9 ("IB/mlx4: Preparation for VFs to issue/receive SMI
-(QP0) requests/responses") from the infiniband tree.
+On Mon, 26 May 2014 14:07:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the mmc tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>=20
+> drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_notify_change':
+> drivers/mmc/host/sdhci-s3c.c:402:25: error: 'struct sdhci_host' has no me=
+mber named 'card_tasklet'
+>=20
+> Caused by commit 3560db8e247a ("mmc: sdhci: push card_tasklet into
+> threaded irq handler").  This is the second left over one I found.
+> Please check for any more (grep is your friend).
+>=20
+> I have used the mmc tree from next-20140522 again for today.
 
-I fixed it up (the latter seems to be a superset of the former, so I
-just used that) and can carry the fix as necessary (no action is
-required).
+This is back again.  I have no idea why I didn't get this failure on
+Friday. Please, guys, go through your tree and fix this problem once
+and for all.  Grep is your friend.
 
+I have used the mmc tree from next-20140522 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/mRobN0mJrb0Au./P44JdCYQ
+--Sig_/t6C=HlnrAesft1a1OWd=U_z
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTi/OOAAoJEMDTa8Ir7ZwVfb4P/R5DOcfR+0KLeYvHxiNltReC
-+Ypw1fr48KcayqHuLBwnwncz8t9YmOopTAgoZuoTX7YSRnrskzDW7+5Gl4uV3iqB
-bBXBpq2uAJx4FwfMHqmAVwTZYLHLo7kyeXHmemZgdqMRpqEZZgJKCbK5KwaEG2fZ
-UbRJM57DGViFqEnncoR7RpBAHFP+prd7BXWKzUYe48Z7HjtiQTCG533XMnST+hXM
-5tjNVTrd0fWoJyHp4GdUy50ymryYwmfofsharwYEEbxs4XVoNETnyWXp8cDxZMoN
-2Fdk56Xu1RX+tBNIPT/jO9wf88GAhfGJDAkwm37Gk9bz+myy2qxFf/YuDJCa80HQ
-Dhe+GDLyDV/gtI1e3xvzp/3SJ9i3NXrkxq8Yy4pxAtmCMUwatxDMieIjQs1fbOhd
-iEQyHjpSQGHY8nLrkl2E/6ULqkqVoehpY2WCk4jIaayxeD8q8Zq8C27gmsIvwWNs
-l8EUh+925pVr+XlQqA5tDnw9QhTKDNW9aenIpQY97hqdlPdKqPmLaxMPpJeok+12
-5GzyCYFeM89/aNA9tlrMx29zH26hnRZ/h1G7QVEOGjrWAvp7wgSXIwnmjZMNFIWO
-1QcgwvU+xn5C3P3ihlTPCzlXJuizMsMlIQnGdmCNDwd5cQYX26sqU/sVZ64G9/zP
-leGrj7Zu21M9oSHQ7L9+
-=aVAm
+iQIcBAEBCAAGBQJTjAeWAAoJEMDTa8Ir7ZwV+NcP/iayxrFcHHJGBdHxK5DNbBRd
+yBFxK0MzLGCKoTD7hON4NOVeIpOdLoRFeKXW7njFXXv8JTw2hVPwfCFnz1jSzMEH
+5dQbP1kmsUXKrH62S20ztFQd9MQQsg15XbFTZYrWwIEf+/w/QZFViXxFdqcuOm8q
+Hyw50KCkgaPdLVRDnbYw+8piDIDJadL4Y+OHzH9mmMTsw3pOuLpg/2t+vPoAqhpV
+P0ZLgiiDb3Ofdot2X+BgbCtiEs5RlqdYQHHpHxlPPhHEEpdjzn+P2ifBRh+0GgK8
+c7zhp7oY0SVYuvsLQcPRszdhsxaR9S6SdByZLI/7GrJeooqxn5LPbYSVlkG/+IOq
+TaJNWa9K9l/1mDkpuAiXcrosnsvxG/7m8sfqjoJpbCDUx2+EIRzHZhS1FPIZ9Jge
+nJTFmNF2nOHoSYyGcIMkStoOIzmeSGwbKaQUSOtMFplBOkVxsklEku9EBJVsUlec
+/NQBBqhNdFBnPXiWD/DBxFFN2QerwHTYaHCuRVV5e6+xjinJJd7bc7T8KbMEh/t6
+PVx+gxDr/cfDmb9EIgJrWzNTXTOSHcgLOeeVHOp1CWHwqMmr1SCVx7Sqde5cy/qu
+hUG2ItONX14zZJVCdATRt0GfqxFVwJWyZboYWy3L9DIOZqsqaKI6i17DHkAWVL05
+6dgANzQEdx8yVSeFsMmO
+=k6BG
 -----END PGP SIGNATURE-----
 
---Sig_/mRobN0mJrb0Au./P44JdCYQ--
+--Sig_/t6C=HlnrAesft1a1OWd=U_z--
