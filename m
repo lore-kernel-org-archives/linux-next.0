@@ -1,50 +1,51 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Mon, 2 Jun 2014 11:31:55 +0200
-Message-ID: <CAPDyKFqp=quWV17MGZfvgZA-J_KPsWkza184+bjez_MQpOx6Xg@mail.gmail.com>
-References: <20140530132324.757076ca@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Daniel Mack <zonque@gmail.com>
+Subject: [PATCH 1/2] net: of_mdio: use int type for address variable
+Date: Mon,  2 Jun 2014 13:32:45 +0200
+Message-ID: <1401708766-5530-1-git-send-email-zonque@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:33596 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753007AbaFBJb4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2014 05:31:56 -0400
-Received: by mail-qa0-f47.google.com with SMTP id s7so2279634qap.6
-        for <linux-next@vger.kernel.org>; Mon, 02 Jun 2014 02:31:55 -0700 (PDT)
-In-Reply-To: <20140530132324.757076ca@canb.auug.org.au>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:42095 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752784AbaFBLdS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2014 07:33:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <chris@printf.net>, Mike Turquette <mturquette@linaro.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?David_Lanzend=C3=B6rfer?= <david.lanzendoerfer@o2s.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, Hans de Goede <hdegoede@redhat.com>
+To: linux-next@vger.kernel.org, davem@davemloft.net
+Cc: netdev@vger.kernel.org, sfr@canb.auug.org.au, Daniel Mack <zonque@gmail.com>
 
-On 30 May 2014 05:23, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Chris,
->
-> After merging the mmc tree, today's linux-next build (arm multi_v7_defconfig)
-> failed like this:
->
-> drivers/mmc/host/sunxi-mmc.c:25:29: fatal error: linux/clk/sunxi.h: No such file or directory
->
-> Caused by commit 19b7f796c375 ("mmc: sunxi: Add driver for SD/MMC hosts
-> found on Allwinner sunxi SoCs").  Something has changed to turn on
-> CONFIG_ARCH_SUNXI in the arm multi_v7_defconfig build since yesterday.
->
-> linux/clk/sunxi.h is created by a commit in the clk tree
-> (git://git.linaro.org/people/mturquette/linux.git#clk-next) which I
-> don't include in linux-next until much later than the mmc tree.
->
-> I have reverted that commit for today.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Use int rather than u32 to fix the following warning:
 
-Hi Mike, Chris,
+drivers/of/of_mdio.c:147 of_mdiobus_register() warn: unsigned 'addr' is
+never less than zero.
 
-So, the proper thing would be to let Mike to carry the above patch
-though his clk tree instead.
+Signed-off-by: Daniel Mack <zonque@gmail.com>
+Fixes: 8f8382888cba ("net: of_mdio: factor out code to parse a phy's 'reg' property")
+---
+David,
 
-Could we arrange that?
+this patch and the next one fix warnings and build breakage reported
+by Stephen and the build test system. They were both introduced by
+my patches that you applied lately.
 
-Kind regards
-Ulf Hansson
+Thanks,
+Daniel
+
+ drivers/of/of_mdio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index c719601..cb36018 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -147,9 +147,8 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ {
+ 	struct device_node *child;
+ 	const __be32 *paddr;
+-	u32 addr;
+ 	bool scanphys = false;
+-	int rc, i;
++	int addr, rc, i;
+ 
+ 	/* Mask out all PHYs from auto probing.  Instead the PHYs listed in
+ 	 * the device tree are populated after the bus has been registered */
+-- 
+1.9.0
