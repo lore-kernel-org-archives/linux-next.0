@@ -1,27 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH 1/2] net: of_mdio: use int type for address variable
-Date: Mon, 02 Jun 2014 10:43:23 -0700 (PDT)
-Message-ID: <20140602.104323.2040619784965255513.davem@davemloft.net>
-References: <1401708766-5530-1-git-send-email-zonque@gmail.com>
+From: Chris Ball <chris@printf.net>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Mon, 02 Jun 2014 22:43:56 +0100
+Message-ID: <86wqczoulf.fsf@void.printf.net>
+References: <20140530132324.757076ca@canb.auug.org.au>
+	<CAPDyKFqp=quWV17MGZfvgZA-J_KPsWkza184+bjez_MQpOx6Xg@mail.gmail.com>
+	<20140602214039.10062.15077@quantum>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1401708766-5530-1-git-send-email-zonque@gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: zonque@gmail.com
-Cc: linux-next@vger.kernel.org, netdev@vger.kernel.org, sfr@canb.auug.org.au
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:34974 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751036AbaFBVoA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2014 17:44:00 -0400
+In-Reply-To: <20140602214039.10062.15077@quantum> (Mike Turquette's message of
+	"Mon, 02 Jun 2014 14:40:39 -0700")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?utf-8?Q?David_Lanzend=C3=B6rfer?= <david.lanzendoerfer@o2s.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, Hans de Goede <hdegoede@redhat.com>
 
-From: Daniel Mack <zonque@gmail.com>
-Date: Mon,  2 Jun 2014 13:32:45 +0200
+Hi,
 
-> Use int rather than u32 to fix the following warning:
-> 
-> drivers/of/of_mdio.c:147 of_mdiobus_register() warn: unsigned 'addr' is
-> never less than zero.
-> 
-> Signed-off-by: Daniel Mack <zonque@gmail.com>
-> Fixes: 8f8382888cba ("net: of_mdio: factor out code to parse a phy's 'reg' property")
+On Mon, Jun 02 2014, Mike Turquette wrote:
+>> Hi Mike, Chris,
+>> 
+>> So, the proper thing would be to let Mike to carry the above patch
+>> though his clk tree instead.
+>> 
+>> Could we arrange that?
+>
+> I'm happy to take it with Chris' Acked-by.
 
-Applied.
+Thanks, please do:
+
+Acked-by: Chris Ball <chris@printf.net>
+
+(Ulf is now MMC co-maintainer so his ack works too.)
+
+- Chris.
+-- 
+Chris Ball   <http://printf.net/>
