@@ -1,55 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 3 Jun 2014 12:31:04 +1000
-Message-ID: <20140603123104.048d1bf7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vhost tree
+Date: Tue, 3 Jun 2014 18:38:38 +1000
+Message-ID: <20140603183838.6af4c0a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wbB6YTnblQWs4.z8NYf8xn+"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/XIFIOUyne=bMPmS4hGpceDy"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41219 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751094AbaFCIis (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Jun 2014 04:38:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/wbB6YTnblQWs4.z8NYf8xn+
+--Sig_/XIFIOUyne=bMPmS4hGpceDy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Michael,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/ipv6/output_core.c between commit 39c36094d78c ("net: fix
-inet_getid() and ipv6_select_ident() bugs") from the net tree and
-commit 73f156a6e8c1 ("inetpeer: get rid of ip_id_count") from the
-net-next tree.
+After merging the vhost tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
 
-I fixed it up (the latter removed the code that the former updated, so
-I did that) and can carry the fix as necessary (no action is required).
+In file included from arch/powerpc/include/asm/epapr_hcalls.h:53:0,
+                 from arch/powerpc/include/uapi/asm/kvm_para.h:81,
+                 from arch/powerpc/include/asm/kvm_para.h:22,
+                 from drivers/cpuidle/cpuidle-kvm.c:18:
+arch/powerpc/include/asm/kvm_para.h: In function 'kvm_arch_para_features':
+arch/powerpc/include/asm/kvm_para.h:58:40: error: 'KVM_HC_FEATURES' undecla=
+red (first use in this function)
+  if(epapr_hypercall0_1(KVM_HCALL_TOKEN(KVM_HC_FEATURES), &r))
+                                        ^
+arch/powerpc/include/uapi/asm/epapr_hcalls.h:74:51: note: in definition of =
+macro '_EV_HCALL_TOKEN'
+ #define _EV_HCALL_TOKEN(id, num) (((id) << 16) | (num))
+                                                   ^
+arch/powerpc/include/asm/kvm_para.h:58:24: note: in expansion of macro 'KVM=
+_HCALL_TOKEN'
+  if(epapr_hypercall0_1(KVM_HCALL_TOKEN(KVM_HC_FEATURES), &r))
+                        ^
+arch/powerpc/include/asm/kvm_para.h:58:40: note: each undeclared identifier=
+ is reported only once for each function it appears in
+  if(epapr_hypercall0_1(KVM_HCALL_TOKEN(KVM_HC_FEATURES), &r))
+                                        ^
+arch/powerpc/include/uapi/asm/epapr_hcalls.h:74:51: note: in definition of =
+macro '_EV_HCALL_TOKEN'
+ #define _EV_HCALL_TOKEN(id, num) (((id) << 16) | (num))
+                                                   ^
+arch/powerpc/include/asm/kvm_para.h:58:24: note: in expansion of macro 'KVM=
+_HCALL_TOKEN'
+  if(epapr_hypercall0_1(KVM_HCALL_TOKEN(KVM_HC_FEATURES), &r))
+                        ^
+drivers/cpuidle/cpuidle-kvm.c: In function 'kvm_enter_idle':
+drivers/cpuidle/cpuidle-kvm.c:66:2: error: implicit declaration of function=
+ 'arch_safe_halt' [-Werror=3Dimplicit-function-declaration]
+  safe_halt();
+  ^
 
+Caused by commit 89bfc4cdb438 ("cpuidle: kvm cpuidle").
+
+Given that the commit message for this commit includes "Very much a
+demo for now, downstream only." it should *not* be in linux-next.  It
+should especially not have turned up at this point (just before the
+merge window).  I also wonder about some of the other commits in that
+tree :-(
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/wbB6YTnblQWs4.z8NYf8xn+
+--Sig_/XIFIOUyne=bMPmS4hGpceDy
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTjTNtAAoJEMDTa8Ir7ZwVLp0P/RyNJi98kkj0HwD9Ba/eyhbd
-/x/aCatGZmVNAPjGmd8vsM2/+cxEf9DH8p2ExlQj9nw7TztW5l6hfpG6hx6AN4On
-kocQZkWUamn1FS5CP1fJTeaEhgNy6Du6meuT5LM0FpwysrHKbUHwzXVWPb7I65XV
-wFBxU3YAen8dvqCl+nj/JDTYB0onwCRct1/MfAu5HzOhWaUUtSWvaYqI2ld7OL7f
-iEtbdOU7AXVy8xVkz7S+MOiaPko3ZHRghkTeIqXbkroIutfeIGxiM2rypNfYmzqe
-xJI0MFeZluzA5o35Tnh6gGZAePPoJ/7zG0Ka6QGQKSdxfQSjS/lff6vx+LIRymxN
-Qi+y1+CmlJXHA5Q0gW6utsizDyyE0huVT9ejJSBvzpGBLyVSjxZr7hOufh+UT/sm
-NhSe/hf/c8Mjei09Ar2rQy67q2Pd/EXNkZrFTICA/MgmAcpaWDiRBlibGP1xc9T0
-G/t6Ahbtu4QMTGmW32MP0BjpCTgS3J/gvgLtsEWBTw2U1YGzmTrVYafXRhGdxp5z
-rndoZtmQMjVJ7Mfnn1bzmX2fNMbtkdKh938OacG3tHsNATRi+eju5PUZEy+k2Myn
-5AJwENwMMMVhKxpA8FZO25eXJj8TarFLFlcITCCkKD98zIIigExlyQ3jBY24ZfsK
-bqquLqJOxca6SUGINBr9
-=3G3F
+iQIcBAEBCAAGBQJTjYmUAAoJEMDTa8Ir7ZwVaeYP/39TUaRmZPeji4jNcBB3A/Kr
+Shjme09bff6NpDochHbQHVxkB9zB1vynkZfSXv3/+tQRjSZQyXBAK4sVkuKn21wy
+NZVgJCaiJY6tExtrVVvqR83J5IfM5m0/loEFkMafD4qeo1oQY8rx8YY6DVOQCavP
+a5BdZ+tpBR7Lhsr6igZ7j8qjXkFVzUMYnbeLBlqvgnoxvnByUJRSYumMQzGVrE0m
+J1mLRMy332xro2WxVrqQMHQ974sIMbabnbfQ0/RTdLDBwH7tKUJvUr7AAmcEz/I4
+OZlEDqfupIgvasaUr9R4iOyxaX3HvQVeuyQJBviI51/AMIMA5/oaVVwn50Kp9Mp6
+40O1YFYiZljtv2P96INBDZpzf6Am5hxR/yKDdBRR8eQE1llfmOKfCjbRlIjKV9Ct
+bgRxwXe93QMMtWT+Cx1roW/DqW5CxyHHFY0knie86ORxpYjoSKlAGssxVe/Ii1lq
+fMXKDVOfBFchciHJoZpRtn7MHofQuzRaxvXlqoxA7fEDYl8TsI2sBgZE9DsJTipX
+s+i8VRea5CgadU/uCrtxbrdWlmQJzA0WWX8eVWueUDTsqQ1NPdbx4UBRqZS9iwgk
+dxRuke0DW8bBwUFDR0UoD/4FwPDeyuTICTj8KikbOYr012S3hsmRTffyxnZgI7pW
+YxJ0WScEdT5a3AWVvGqX
+=aXTH
 -----END PGP SIGNATURE-----
 
---Sig_/wbB6YTnblQWs4.z8NYf8xn+--
+--Sig_/XIFIOUyne=bMPmS4hGpceDy--
