@@ -1,80 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Wed, 4 Jun 2014 08:52:22 +1000
-Message-ID: <20140604085222.50916c65@canb.auug.org.au>
-References: <20140526140735.3f405672@canb.auug.org.au>
-	<20140602151141.084d3350@canb.auug.org.au>
+Subject: linux-next: failed to fetch the aio tree
+Date: Wed, 4 Jun 2014 09:08:46 +1000
+Message-ID: <20140604090846.3b4fd54c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/d3JI4zejjJlRn7qAVv=NBjK"; protocol="application/pgp-signature"
+ boundary="Sig_/se58d1+qYFmoUH/0.h+.pMw"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50577 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52642 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751955AbaFCWwh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Jun 2014 18:52:37 -0400
-In-Reply-To: <20140602151141.084d3350@canb.auug.org.au>
+	id S934243AbaFCXIy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Jun 2014 19:08:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <chris@printf.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
+To: Benjamin LaHaise <bcrl@kvack.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/d3JI4zejjJlRn7qAVv=NBjK
+--Sig_/se58d1+qYFmoUH/0.h+.pMw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi Benjamin,
 
-On Mon, 2 Jun 2014 15:11:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Mon, 26 May 2014 14:07:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the mmc tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> >=20
-> > drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_notify_change':
-> > drivers/mmc/host/sdhci-s3c.c:402:25: error: 'struct sdhci_host' has no =
-member named 'card_tasklet'
-> >=20
-> > Caused by commit 3560db8e247a ("mmc: sdhci: push card_tasklet into
-> > threaded irq handler").  This is the second left over one I found.
-> > Please check for any more (grep is your friend).
-> >=20
-> > I have used the mmc tree from next-20140522 again for today.
->=20
-> This is back again.  I have no idea why I didn't get this failure on
-> Friday. Please, guys, go through your tree and fix this problem once
-> and for all.  Grep is your friend.
->=20
-> I have used the mmc tree from next-20140522 again for today.
+Fetching the aio tree (git://git.kvack.org/~bcrl/aio-next.git#master)
+for the past 3 days has produced this error:
 
-Just wondering if you are even receiving my email?
+fatal: unable to connect to git.kvack.org:
+git.kvack.org[0: 205.233.56.16]: errno=3DConnection refused
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/d3JI4zejjJlRn7qAVv=NBjK
+--Sig_/se58d1+qYFmoUH/0.h+.pMw
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTjlGyAAoJEMDTa8Ir7ZwVMvsP/jXuztg12MEVu+EUt0wXAPwE
-4x9U0KJloIUy6ZXvM5THVfsV0l0xN5L9a+U40EDNzyUCwADCWi3L3KpRVAdeL09z
-PMazm1S7zdTotX+P2isZuMjOgoEfLc40oBE+irEpt7580/hzfgUm7RMeMaKIjzxW
-vTivjgBH5yS8JdD9Ll5RfL++UmMutJ/bgirp5oFGlWwGQGkWJG/24rYcQRgr7ooJ
-x7Lk60zQQK3jQeQp2PMOiJuMSJQu9iPCn2kV2cD1fKMUlxwf9xXGnKZINYjHGFZ8
-kSn+ie3MktQZMxp5ufZd5Tql0qpbRucmVHqljyx0/LfwJlLZ+ynA+XVo9CTvTPzB
-I466fXLVfe+4M5yZiOMVeK6NWerIYDlS50I2VVSEEaI0nsdqEw9OWw3/3ungpOHM
-OJfOj6MmmoTrFOkSHhmVdDUAhIAOA974Zq7mCP/Jv38lQQDGhXWaSgiAyvfGowdG
-nyjHpK4lZm7cB9bQh3xTpGDZTKdiNpXaId6UfiWkhER1aXSdNoHklGjJr4ytlZLA
-dww0ZoDTpQq1X9NL9X+0ACN5+6QK9ohwRMYG5QdA7jj7TtqvamSgEYdY00rE276B
-cPKlKjT0XGmOw9laPS7oXl8WYUnF7/gRIVPk9tsPUPT+Fi6vMWkWjQK5wbgI6j/0
-j9yO0FDaVLBozAr0JHZf
-=Ltvv
+iQIcBAEBCAAGBQJTjlWDAAoJEMDTa8Ir7ZwVklwP/RqRlgEs/NGx7W26jv5mKY+G
+59xqJfi8mqdU1Uxb+b3SdJz8Ka8+d3P3mbCH5iPX0rlvqm8dZCUov1XC3icra/I6
+9aHQxgxqACDYCFjja28R4C3AI/KKVB3tJAbQm6UCqp1WcHfH+IjfB9SQjE4fflCX
+Yu0U1U6hNEQQQgSQpIn1EJapdNEjTekCrFpwumZyKldojoQttrbB+SFAb9sq41Vo
+35QnaJPdKrP7ZX3cPieHg63EwztpSzcBagnmKYgmaP2IUTR87WeKIdzGhQHQ3LVe
+9UV7zq1jd41gwSTCfDAYn7751vi2K2vuC5HO36uaOm39zEzOwc5xcPtZv86ljmWr
+pHIBoeXxEeYZ7hxmJ5n4FipDbTScIksaBGCv+C9BwQaXtWxU9YVIxBrp8VaIawzS
+57XqRSBbjAdnfSC01vV0sC+x5UZYd66VjJyzbeTKiVcmM7gY+I/3bttdBbGsZlyu
+szVPqgLeQUCpLwVMmFyTu4VE9iwOlyklMdaUQEIKZcTtKZe8Z6FGcrYuuGLXSo78
+RaHmAS24vJu1XWp5YgYgA7OiiDruK4NOJCGRLJryBLBgt4XVzBaKySnc60Hz232/
+FBDlN9ZX0wJ/9aCZMDh34NZkqQb7ZOK3UWDoAC3njl6Jzr3kbpHati9m+rcBmzfB
+9OhHhjovjPrgOd5dUG6+
+=e89n
 -----END PGP SIGNATURE-----
 
---Sig_/d3JI4zejjJlRn7qAVv=NBjK--
+--Sig_/se58d1+qYFmoUH/0.h+.pMw--
