@@ -1,61 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bad commits in the nfs tree
-Date: Wed, 4 Jun 2014 08:34:11 +1000
-Message-ID: <20140604083411.4296bcd5@canb.auug.org.au>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: bad commits in the nfs tree
+Date: Tue, 3 Jun 2014 18:46:17 -0400
+Message-ID: <CAABAsM4hpz_vCK=AbLUzBnVCr3-_5KhJUqif3YP3Yjp+-ojx8w@mail.gmail.com>
+References: <20140604083411.4296bcd5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/X0+hyxOyqDe1EHel2wHJ2wg"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39401 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750941AbaFCWeW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Jun 2014 18:34:22 -0400
+Received: from mail-qa0-f47.google.com ([209.85.216.47]:34093 "EHLO
+	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752069AbaFCWqS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jun 2014 18:46:18 -0400
+In-Reply-To: <20140604083411.4296bcd5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna Schumaker <Anna.Schumaker@Netapp.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna Schumaker <Anna.Schumaker@netapp.com>
 
---Sig_/X0+hyxOyqDe1EHel2wHJ2wg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 3, 2014 at 6:34 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Trond,
+>
+> I noticed in the nfs tree this morning 2 commits that have been
+> cherry-picked from Linus' tree:
+>
+> cc6d854967ce    Linux 3.15-rc8
+> 2b267bb3a8e5    powerpc: Wire renameat2() syscall
+>
+> These are part of a branch that you merged from Anna Schumaker.  It
+> looks like they may have been included when Anna was trying to rebase
+> the rest of the branch onto v3.15-rc8?
+>
+> Please fix this up before asking Linus to pull your tree.
+>
 
-Hi Trond,
+Thanks Stephen! We're still ironing out the kinks in a new process for
+the NFS client maintenance, and appreciate your patience.
 
-I noticed in the nfs tree this morning 2 commits that have been
-cherry-picked from Linus' tree:
+Anna, let's avoid the mess that is 3.15-rc8 for now. Please rebase on
+top of commit b5968725f46d (Push the file layout driver into a
+subdirectory) from my nfs-for-next branch and retag the resulting
+branch using the same commit information as earlier.
+I'll pull the new tag once you send the word that all is ready...
 
-cc6d854967ce	Linux 3.15-rc8
-2b267bb3a8e5	powerpc: Wire renameat2() syscall
-
-These are part of a branch that you merged from Anna Schumaker.  It
-looks like they may have been included when Anna was trying to rebase
-the rest of the branch onto v3.15-rc8?
-
-Please fix this up before asking Linus to pull your tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/X0+hyxOyqDe1EHel2wHJ2wg
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTjk1pAAoJEMDTa8Ir7ZwVTTQP/jOXkpDTKyt7U5wkuEN9cl1f
-MpSScV35gfD/b8zvwaZ/dvdlQEzh6vXeiBN+SAmuK87oR06XYojrF+fPuGRdwOQf
-xC+FiM0NdwE7MJu+/zSOiK2mdMzpmhTl6mXHymcpn0hYCqq7IfR1phmv0F9fVpfl
-qsDow/qaOh8QXcEs69Wwj+JUY6bcNE/zUhd4VvyoA42iGGjRnH4DVLMukisMey/N
-+rWFRuB3WCgLG9MHkhr5DcXuw0UmGXdS1/rHe9b4ObUyNMAJXlicwgse+k6rr6il
-DZT+jhrDAyGsDPIqec62EITc1798OOf3BUK6Pnl5eGKAR2ZhurQqoO7xxw5jkuGh
-ZCg8MgAsQzbgHP9gLDnNuc3QlrslKywUayMJgfBtbFbUOwwF2S3C66F6/H/wolpz
-OWdqMRYQyv2wxWFhrqMZCxh8yRijXDqCV8aistkg2njNzE2hUPAGK+EARLbgVnt9
-QXuZZRDuh281lYKeJtrkiZxf8YyqEpewyE9x5v9XnIuJdNXh4f8x7tD0rgu2rBN9
-YoYs/mKHT+5CEq36iXVGoO3zKztaI3gM/cDLhbm71qowENMnDa10FXGE1vgcM5Bf
-LwyOAJ9ezEFNAPieL4HiYExun0u7vhW34kxGjCORQ0AMIplMu6gNwCaz7BijOvC/
-WMFrnNfEQ12jp0z0jPF0
-=BJzb
------END PGP SIGNATURE-----
-
---Sig_/X0+hyxOyqDe1EHel2wHJ2wg--
+Thanks
+   Trond
