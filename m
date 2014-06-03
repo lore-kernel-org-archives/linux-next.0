@@ -1,76 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with Linus' tree
-Date: Tue, 3 Jun 2014 10:50:40 +1000
-Message-ID: <20140603105040.4fa16742@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 3 Jun 2014 12:28:29 +1000
+Message-ID: <20140603122829.4058d1ee@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uBgmu1iJ9bAfYhFq_s.F1pU"; protocol="application/pgp-signature"
+ boundary="Sig_/YwImn6Loq0he=2k4+8zOj7W"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33569 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55666 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932400AbaFCAuv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2014 20:50:51 -0400
+	id S1751518AbaFCC2g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2014 22:28:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markos Chandras <markos.chandras@imgtec.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
 
---Sig_/uBgmu1iJ9bAfYhFq_s.F1pU
+--Sig_/YwImn6Loq0he=2k4+8zOj7W
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi all,
 
-Today's linux-next merge of the mips tree got a conflict in
-arch/mips/mti-malta/malta-memory.c between commit 2ff89d64f23e ("MIPS:
-malta: memory.c: Initialize the 'memsize' variable") from Linus' tree
-and commit acd8bc1a70ff ("MIPS: malta: Remove 'maybe_unused' attribute
-from ememsize{, _str}") from the mips tree.
+Today's linux-next merge of the net-next tree got a conflict in
+include/net/inetpeer.h between commit 39c36094d78c ("net: fix
+inet_getid() and ipv6_select_ident() bugs") from the  tree and commit
+73f156a6e8c1 ("inetpeer: get rid of ip_id_count") from the net-next
+tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the latter removed the code that the former updated, so
+I did that) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/mips/mti-malta/malta-memory.c
-index f2364e419682,1ca34887d990..000000000000
---- a/arch/mips/mti-malta/malta-memory.c
-+++ b/arch/mips/mti-malta/malta-memory.c
-@@@ -26,8 -26,8 +26,8 @@@ unsigned long physical_memsize =3D 0L
- =20
-  fw_memblock_t * __init fw_getmdesc(int eva)
-  {
-- 	char *memsize_str, *ememsize_str __maybe_unused =3D NULL, *ptr;
-- 	unsigned long memsize =3D 0, ememsize __maybe_unused =3D 0;
-+ 	char *memsize_str, *ememsize_str =3D NULL, *ptr;
- -	unsigned long memsize, ememsize =3D 0;
-++	unsigned long memsize =3D 0, ememsize =3D 0;
-  	static char cmdline[COMMAND_LINE_SIZE] __initdata;
-  	int tmp;
- =20
-
---Sig_/uBgmu1iJ9bAfYhFq_s.F1pU
+--Sig_/YwImn6Loq0he=2k4+8zOj7W
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTjRvoAAoJEMDTa8Ir7ZwVGlcP/0inDanZDzlhhH8GUKNAZKab
-HTGtn86BUpcfO/NPeBikWwMjJLV1I/dYpvQ5ul3rwsm2wC1/fTz+CdheiYFUYPMv
-VRhfDlb913hnzP42Rsd1+1Px0bDRrYZKvhWcN10v9K8hd+1y2hbVsg31GdNfAgJU
-vC34z7G2n5S2i9amgd6ibx+OazK1tB3eMhD1MD0C2ccX/c2AEwJvFNyZ/P406A5J
-s72NWV2LhMwfKejxf0yD5BlftgI7V5OwfMrP7WXMhicMME2niGkdbQPAbYFDSJYz
-E51QQu4Y+83xv6jyo0y8nZwmXaHUZhy3autZnO1jqnMtt4hxSvxT/ClYtYSKBJXB
-3tLY1575u1w6ZxmOpp6DtQoJd+J+W/r+bkLAC1iS5xLz5rKPaX3C75ckOvYPoWV8
-4tKdrmuW/THIZoLDMnK+znMjpUSO3pAG6fGBCbTBFUhqhyHB+PbD01Y1a2Gur5Br
-HOId6Ef4Q8tvCtsKhn2MUmMK8grXRs+hkrn8UmPxo6DStHlSsumCy0x1OK5z7qde
-2wEHOJHz06jkPj3utcct0+7iY2m3M7VNATWr7C6WEN7WC6fCC7OCYT7Inn5/U7bq
-Tyjf3dpwKC2kFXy3VaELgWh7VooQarPt3W2BN+8XbMGiSWEarFkKFRLXOKZjqIVT
-tKQr8AjjCOufpmTOjsIk
-=xUvy
+iQIcBAEBCAAGBQJTjTLRAAoJEMDTa8Ir7ZwVeZUP/jo5v89meL/uuiYpiAgJLlSA
+7y8BBsYgMrtmQLjdLX4ZiqRhredivfWGHY/7QzdzCfHIBtOUM+cdBUz7O0R9T6hg
+VrelTdVB9POMfdseCgi1QeuyHh7TZcTasKQz2nsV8AJ3zyU64111w7jgF9RW7wJv
+ZGJu0TaEqaNzjcdR/eGvFYILElr6V7KLd8QjrcDZKpZxMDkBKesyrdVcEzlKYhNe
+ykqWLeTDCPVgjWXmTg23k21Mxv54cKFmKJ4ui5hmv9aH+yavZ6AFinqcKAQgaGaj
+HjQITKbsNLTXCYbP0IUjTvuZ62FAxkMzhZ6nza6DGYT6n528eMzZ0DsV/UnMy4PR
+E+hXCANuk+KAGueCRkkiyrG1yB4HdaOlUALOhAYUxRXh4MhyBb8A2cL+OBWZ3KBG
+b5+hZK7dh4n9q2+DtsqasnVghYmzbR3AiiHESiftOiNPEOBUJK8FZ6qnioby1G/k
+RRWZZLFbE8jP2sVletD1D7lo2uyGVGN8eEOm2DLYCmvglCNN2zrh02fxQDNXsa9l
+Q0A2LF+BQhDWhHDmtVjgPPYIO/1/i8ildQfzaSscHTstyD3PuFwUtvGvhqEflHww
+273a78UP0NgbiQap76YiKZjSKS9wpW5hFzsl1Lk07+QFIdasV+2/d+wQlBlLG4Jp
+jmihKm9Ec9nGKa7GHYfX
+=UgTG
 -----END PGP SIGNATURE-----
 
---Sig_/uBgmu1iJ9bAfYhFq_s.F1pU--
+--Sig_/YwImn6Loq0he=2k4+8zOj7W--
