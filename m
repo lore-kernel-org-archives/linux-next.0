@@ -1,42 +1,76 @@
-From: Chris Ball <chris@printf.net>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Mon, 02 Jun 2014 22:43:56 +0100
-Message-ID: <86wqczoulf.fsf@void.printf.net>
-References: <20140530132324.757076ca@canb.auug.org.au>
-	<CAPDyKFqp=quWV17MGZfvgZA-J_KPsWkza184+bjez_MQpOx6Xg@mail.gmail.com>
-	<20140602214039.10062.15077@quantum>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with Linus' tree
+Date: Tue, 3 Jun 2014 10:50:40 +1000
+Message-ID: <20140603105040.4fa16742@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uBgmu1iJ9bAfYhFq_s.F1pU"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:34974 "EHLO void.printf.net"
+Received: from ozlabs.org ([103.22.144.67]:33569 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751036AbaFBVoA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2014 17:44:00 -0400
-In-Reply-To: <20140602214039.10062.15077@quantum> (Mike Turquette's message of
-	"Mon, 02 Jun 2014 14:40:39 -0700")
+	id S932400AbaFCAuv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2014 20:50:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?utf-8?Q?David_Lanzend=C3=B6rfer?= <david.lanzendoerfer@o2s.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, Hans de Goede <hdegoede@redhat.com>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markos Chandras <markos.chandras@imgtec.com>
 
-Hi,
+--Sig_/uBgmu1iJ9bAfYhFq_s.F1pU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 02 2014, Mike Turquette wrote:
->> Hi Mike, Chris,
->> 
->> So, the proper thing would be to let Mike to carry the above patch
->> though his clk tree instead.
->> 
->> Could we arrange that?
->
-> I'm happy to take it with Chris' Acked-by.
+Hi Ralf,
 
-Thanks, please do:
+Today's linux-next merge of the mips tree got a conflict in
+arch/mips/mti-malta/malta-memory.c between commit 2ff89d64f23e ("MIPS:
+malta: memory.c: Initialize the 'memsize' variable") from Linus' tree
+and commit acd8bc1a70ff ("MIPS: malta: Remove 'maybe_unused' attribute
+from ememsize{, _str}") from the mips tree.
 
-Acked-by: Chris Ball <chris@printf.net>
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-(Ulf is now MMC co-maintainer so his ack works too.)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-- Chris.
--- 
-Chris Ball   <http://printf.net/>
+diff --cc arch/mips/mti-malta/malta-memory.c
+index f2364e419682,1ca34887d990..000000000000
+--- a/arch/mips/mti-malta/malta-memory.c
++++ b/arch/mips/mti-malta/malta-memory.c
+@@@ -26,8 -26,8 +26,8 @@@ unsigned long physical_memsize =3D 0L
+ =20
+  fw_memblock_t * __init fw_getmdesc(int eva)
+  {
+- 	char *memsize_str, *ememsize_str __maybe_unused =3D NULL, *ptr;
+- 	unsigned long memsize =3D 0, ememsize __maybe_unused =3D 0;
++ 	char *memsize_str, *ememsize_str =3D NULL, *ptr;
+ -	unsigned long memsize, ememsize =3D 0;
+++	unsigned long memsize =3D 0, ememsize =3D 0;
+  	static char cmdline[COMMAND_LINE_SIZE] __initdata;
+  	int tmp;
+ =20
+
+--Sig_/uBgmu1iJ9bAfYhFq_s.F1pU
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTjRvoAAoJEMDTa8Ir7ZwVGlcP/0inDanZDzlhhH8GUKNAZKab
+HTGtn86BUpcfO/NPeBikWwMjJLV1I/dYpvQ5ul3rwsm2wC1/fTz+CdheiYFUYPMv
+VRhfDlb913hnzP42Rsd1+1Px0bDRrYZKvhWcN10v9K8hd+1y2hbVsg31GdNfAgJU
+vC34z7G2n5S2i9amgd6ibx+OazK1tB3eMhD1MD0C2ccX/c2AEwJvFNyZ/P406A5J
+s72NWV2LhMwfKejxf0yD5BlftgI7V5OwfMrP7WXMhicMME2niGkdbQPAbYFDSJYz
+E51QQu4Y+83xv6jyo0y8nZwmXaHUZhy3autZnO1jqnMtt4hxSvxT/ClYtYSKBJXB
+3tLY1575u1w6ZxmOpp6DtQoJd+J+W/r+bkLAC1iS5xLz5rKPaX3C75ckOvYPoWV8
+4tKdrmuW/THIZoLDMnK+znMjpUSO3pAG6fGBCbTBFUhqhyHB+PbD01Y1a2Gur5Br
+HOId6Ef4Q8tvCtsKhn2MUmMK8grXRs+hkrn8UmPxo6DStHlSsumCy0x1OK5z7qde
+2wEHOJHz06jkPj3utcct0+7iY2m3M7VNATWr7C6WEN7WC6fCC7OCYT7Inn5/U7bq
+Tyjf3dpwKC2kFXy3VaELgWh7VooQarPt3W2BN+8XbMGiSWEarFkKFRLXOKZjqIVT
+tKQr8AjjCOufpmTOjsIk
+=xUvy
+-----END PGP SIGNATURE-----
+
+--Sig_/uBgmu1iJ9bAfYhFq_s.F1pU--
