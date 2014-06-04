@@ -1,37 +1,45 @@
-From: Chris Ball <chris@printf.net>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Wed, 04 Jun 2014 20:21:40 +0100
-Message-ID: <86egz4pjjv.fsf@void.printf.net>
-References: <20140526140735.3f405672@canb.auug.org.au>
-	<20140602151141.084d3350@canb.auug.org.au>
-	<20140604085222.50916c65@canb.auug.org.au>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Wed, 4 Jun 2014 22:02:17 +0200 (CEST)
+Message-ID: <alpine.DEB.2.10.1406042157220.18296@nanos>
+References: <20140604160522.1d788c1e@canb.auug.org.au> <alpine.DEB.2.10.1406041134070.3319@nanos> <CAOesGMhGT30QN2LeVp2sgzY0BjbguW=iw3x1PH8RVB-Rj-GZNQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:35061 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751374AbaFDTVn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Jun 2014 15:21:43 -0400
-In-Reply-To: <20140604085222.50916c65@canb.auug.org.au> (Stephen Rothwell's
-	message of "Wed, 4 Jun 2014 08:52:22 +1000")
+Received: from www.linutronix.de ([62.245.132.108]:41056 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751290AbaFDUCe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jun 2014 16:02:34 -0400
+In-Reply-To: <CAOesGMhGT30QN2LeVp2sgzY0BjbguW=iw3x1PH8RVB-Rj-GZNQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
+To: Olof Johansson <olof@lixom.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Linus Torvalds <torvalds@linux-foundation.org>
 
-Hi Stephen,
+On Wed, 4 Jun 2014, Olof Johansson wrote:
+> On Wed, Jun 4, 2014 at 3:49 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> So, we'll dial back and stop taking these patches through our tree
+> without an explicit ack or shared branch from you (or Daniel on
+> clocksource). Not a problem at all.
 
-On Tue, Jun 03 2014, Stephen Rothwell wrote:
->> This is back again.  I have no idea why I didn't get this failure on
->> Friday. Please, guys, go through your tree and fix this problem once
->> and for all.  Grep is your friend.
->> 
->> I have used the mmc tree from next-20140522 again for today.
->
-> Just wondering if you are even receiving my email?
+I prefer the shared branch (for clocksource and irqchip) either from
+me or from Daniel(clocksource) / Jason (irqchip).
 
-Sorry about this, I'm working on it now.
+That way you can proceed and we can do our unrelated changes without
+creating merge dependencies.
 
-- Chris.
--- 
-Chris Ball   <http://printf.net/>
+> On the other hand, it would have been a lot easier
+> to handle had the code on your end landed a bit sooner than in the
+> middle of the merge window.
+
+I know. I was just burried in futex wreckage for almost a week...
+
+> Not much I can say besides what's above and that I owe you a few beers
+> at the next conference.
+
+Don't worry. I let off steam and all is good if we can avoid this in
+the future. Though I'm certainly up for a few beers :)
+
+Thanks,
+
+	tglx
