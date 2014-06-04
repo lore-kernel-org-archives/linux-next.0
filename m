@@ -1,82 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the ftrace tree
-Date: Thu, 5 Jun 2014 02:49:13 +1000
-Message-ID: <20140605024913.4c8cad55@canb.auug.org.au>
-References: <20140604160921.4f4e69c4@canb.auug.org.au>
-	<20140604122612.366e2874@gandalf.local.home>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH] i2c: pca954x: Fix compilation without CONFIG_GPIOLIB
+Date: Wed,  4 Jun 2014 18:56:32 +0200
+Message-ID: <1401900992-16581-1-git-send-email-laurent.pinchart@ideasonboard.com>
+References: <CA+r1Zhi9Qd4aZ2WJ02K4Gv=zg7QvG+r=t2VpiXRKXcYRc1vt=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/7nP0D4XMq1Tf5TdH_jJgh7z"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37000 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752060AbaFDQtU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Jun 2014 12:49:20 -0400
-In-Reply-To: <20140604122612.366e2874@gandalf.local.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+r1Zhi9Qd4aZ2WJ02K4Gv=zg7QvG+r=t2VpiXRKXcYRc1vt=A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, wsa@the-dreams.de, khali@linux-fr.org, linus.walleij@linaro.org, paul.gortmaker@windriver.com, jg1.han@samsung.com, laurent.pinchart@ideasonboard.com, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/7nP0D4XMq1Tf5TdH_jJgh7z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pca954x driver recently switched to the GPIO descriptor API without
+including the correct <linux/gpio/consumer.h> header. This breaks
+compilation without CONFIG_GPIOLIB.
 
-Hi Steve,
+drivers/i2c/muxes/i2c-mux-pca954x.c: In function =E2=80=98pca954x_probe=
+=E2=80=99:
+drivers/i2c/muxes/i2c-mux-pca954x.c:204:2: error: implicit declaration
+of function =E2=80=98devm_gpiod_get=E2=80=99 [-Werror=3Dimplicit-functi=
+on-declaration]
+  gpio =3D devm_gpiod_get(&client->dev, "reset");
+  ^
+drivers/i2c/muxes/i2c-mux-pca954x.c:204:7: warning: assignment makes
+pointer from integer without a cast [enabled by default]
+  gpio =3D devm_gpiod_get(&client->dev, "reset");
+       ^
+drivers/i2c/muxes/i2c-mux-pca954x.c:206:3: error: implicit declaration
+of function =E2=80=98gpiod_direction_output=E2=80=99
+[-Werror=3Dimplicit-function-declaration]
+   gpiod_direction_output(gpio, 0);
+   ^
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/i2c/muxes/i2c-mux-pca954x.o] Error 1
 
-On Wed, 4 Jun 2014 12:26:12 -0400 Steven Rostedt <rostedt@goodmis.org> wrot=
-e:
->
-> On Wed, 4 Jun 2014 16:09:21 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > After merging the ftrace tree, today's linux-next build (x86_64 allmodc=
-onfig)
-> > produced this warning:
-> >=20
-> > kernel/trace/trace_benchmark.c: In function 'trace_do_benchmark':
-> > kernel/trace/trace_benchmark.c:38:6: warning: unused variable 'seedsq' =
-[-Wunused-variable]
-> >   u64 seedsq;
-> >       ^
-> >=20
-> > Introduced by commit 81dc9f0ef21e ("tracing: Add tracepoint benchmark t=
-racepoint").
->=20
-> Hmm, I don't know why my tests missed this. I do a allmodconfig looking
-> for new warning messages too. Oh, but I do need to add this config to my
-> regular testing config :-/
->=20
-> I'm surprised Wu's bot didn't report it either.
->=20
-> I'm not going to rebase, but I'll add a patch to nuke it.
+=46ix it by including the right header.
 
-Correct behaviour!  :-)
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/i2c/muxes/i2c-mux-pca954x.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2=
+c-mux-pca954x.c
+index c2c443f..9bd4212 100644
+--- a/drivers/i2c/muxes/i2c-mux-pca954x.c
++++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
+@@ -36,12 +36,11 @@
+  */
+=20
+ #include <linux/device.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-mux.h>
+ #include <linux/i2c/pca954x.h>
+ #include <linux/module.h>
+-#include <linux/of_gpio.h>
+ #include <linux/slab.h>
+=20
+ #define PCA954X_MAX_NCHANS 8
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Regards,
 
---Sig_/7nP0D4XMq1Tf5TdH_jJgh7z
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBCAAGBQJTj04OAAoJEMDTa8Ir7ZwVa/oP/jgzbOjJUhP4aUHvIjdqnLyE
-ByP+nBngi1/WM+z9lrZeUrunVbYh6oG8CZkHqJ8VlUFXtZeBa41GvsN99iTxolE7
-fU90wmMfWB4jQX771P/zV2FbgkehaxVecNFq2n30iKQsXC/Zt3W+CvJmMIPYEbRq
-9ne/ineHBGMkF4ESgaA1yIyVlU7m+2nHGsYszOdy0+uiHOLba9PR+Cy1LrRvSRmR
-iit4td0ORrHnjUv3xkD5Umfovn/OPtBo84YPMlbnL99DFk7c1SGe4EPrjWg8m4tK
-xC5z1SczbB9WF5iRMKt0Gnv+pRnBM8Jdf9LtMI/tGPMkWG4uP4EZYNqmxQb/OUku
-ETLjTkr9cCaSW3n19PZmjwOZJmkAvhpWMvboyhPIyKK1xuy2rHxludeJCyMoB+ff
-43eyNVdPqtuc5Jf8wWGMXZG0ADjej60klyimFx9WQoWPX754twLRUWej2BE6qslX
-j3+Gl2dAg4BNlkpXMk9V0Ht1CK0Pv3dKkNGLN8QkAkx6oOMkkUvP17A+/wqASFI3
-AE6tkgsMHLdTiHKBmqRCbrx7tSrVLJTcE626sckt1YFJJsRSKIL+hLmsHVVu7DqN
-2jDBNRGXOzpLzAE1eY3dskuoQTuLDtxBVZIEnKiBL+tJ2vS96cv9k+HKIVHRlVDm
-yasvfekQZaSAKRu9vpOp
-=lRl5
------END PGP SIGNATURE-----
-
---Sig_/7nP0D4XMq1Tf5TdH_jJgh7z--
+Laurent Pinchart
