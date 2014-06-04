@@ -1,73 +1,96 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jun 4
-Date: Wed, 4 Jun 2014 20:07:01 +1000
-Message-ID: <20140604200701.2998dd60@canb.auug.org.au>
-References: <20140604182904.5344de91@canb.auug.org.au>
-	<CAHkRjk5JQud+E7+Ny=urd2=0moSdTorS7FziMh+jD-Bp07TTJw@mail.gmail.com>
-	<CAPvkgC3n1XENdGJ94NpPuoo71AOwic_ZzybHyfsW7m=1MQmkJw@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Wed, 4 Jun 2014 12:49:27 +0200 (CEST)
+Message-ID: <alpine.DEB.2.10.1406041134070.3319@nanos>
+References: <20140604160522.1d788c1e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Rr.pHnExSKsrxflTWL8.p4I"; protocol="application/pgp-signature"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40528 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751332AbaFDKHE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Jun 2014 06:07:04 -0400
-In-Reply-To: <CAPvkgC3n1XENdGJ94NpPuoo71AOwic_ZzybHyfsW7m=1MQmkJw@mail.gmail.com>
+Received: from www.linutronix.de ([62.245.132.108]:34451 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750992AbaFDKtq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jun 2014 06:49:46 -0400
+In-Reply-To: <20140604160522.1d788c1e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve Capper <steve.capper@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Olof Johansson <olof@lixom.net>, Linus Torvalds <torvalds@linux-foundation.org>
 
---Sig_/Rr.pHnExSKsrxflTWL8.p4I
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 4 Jun 2014, Stephen Rothwell wrote:
 
-Hi Steve,
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> 
+> drivers/clocksource/versatile.c: In function 'versatile_sched_clock_init':
+> drivers/clocksource/versatile.c:37:2: error: implicit declaration of function 'setup_sched_clock' [-Werror=implicit-function-declaration]
+> 
+> Caused by commit c04ae71c9c26 ("sched_clock: Remove deprecated
+> setup_sched_clock() API") from the tip tree.  The usage was only added
+> to Linus' tree today by commit 220e2a8d22cd ("clocksource: Sched clock
+> source for Versatile Express") (but this commit has been in linux-next
+> since May 22 at least).
+> 
+> I have reverted the tip tree commit for today.
 
-On Wed, 4 Jun 2014 09:56:57 +0100 Steve Capper <steve.capper@linaro.org> wr=
-ote:
->
-> On 4 June 2014 09:52, Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > Hi Stephen,
-> >
-> > On 4 June 2014 09:29, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> Merging arm64-hugepages/for-next/hugepages (af07484863e0 ARM64: mm: TH=
-P support.)
-> >
-> > This was a tree from Steve Capper but it's been merged into mainline
-> > for about a year now. I think it should be fine to drop it, unless
-> > Steve plans to push anything else (though they would normally go in
-> > via the arm64 tree).
->=20
-> Whoops, many apologies, yes please do drop the arm64-hugepages tree Steph=
-en.
+Dammit. Why the heck can ARM folks not route their stuff through the
+relevant maintainers? Because ARM is a different universe with
+different rules or what?
 
-OK, will do.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Of course this crap is already in Linus next branch, so it essentially
+blocks me from sending my pending timers/core branch.
 
---Sig_/Rr.pHnExSKsrxflTWL8.p4I
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Patch below. Linus, can you please apply this?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+I've ranted about this before. It's not the first time that ARM breaks
+stuff I maintain.
 
-iQIcBAEBCAAGBQJTju/FAAoJEMDTa8Ir7ZwV+H4QAIwayW5JIyVYZEere+bY5mFp
-Catrp69XjZmWXQLr8GnK7s2gqQmWEMuouZhFF30X+AN4siOvx1v6QvY9K9B3qO7e
-79NUQh+STPSGBY3jvWg4R1PMkZXXYNqD6kAgFPFSR4+POF6GF01Hs+ACihZC23K4
-x4W0z9HbcT7OGFRBc/f4aX2p6k1GvVhOPJO7XMjB0mVkSvbCNpess52yDg0tQCGu
-xDF+58wcmZe7R520Fl3G48R920+ReZvJfB1l679mw+P8RYIfVRjxVk0ADfhPV6jn
-TGvjndIvet+seeshETV+ho9PFMvuIyVPQYKeIVdPraP/b/7duLUTWEdgnZkA+A4q
-VbCK+1N7eLCC1f2TF+OEOKAFUk5/gMCFrrNwuyN8KUOLbEXj3rgqkBMQjeYSOmi1
-drQmQ39TImipaVToEvFNFhdZRziwDACK868vJ0yg/BmpuL8kzmsZ6TNQAqglOVWm
-NS+BucmBnvYFRtf/sEvWC1DOv+rEFp0pTw/ZkdPvusWYlUshjPZf4flqLjtNFzCH
-MpxHJC2rsN5npudce+mCJP0/AcxJe5I8xFJVpoIjUoqRZJqb1rjbA3LwaGyDZzOb
-OpdY0nBCoemsopoGyKtmAxh6maJDozfbA8YXCB9h8crZdHsinb1LN5WssjZeWoXS
-60XyeE7oZUguSrHye/Qm
-=t42Q
------END PGP SIGNATURE-----
+Again: Send your stuff against drivers/clocksource and drivers/irqchip
+to the maintainers. 
 
---Sig_/Rr.pHnExSKsrxflTWL8.p4I--
+I'm happy to provide you a separate branch to pull that stuff from me,
+if you have dependencies on that, but I really don't want to see any
+of this again, ever.
+
+Yours seriously grumpy
+
+      tglx
+
+------------>
+Subject: clocksource: versatile: Use sched_clock_register()
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Wed, 04 Jun 2014 12:34:15 +0200
+
+The newly merged versatile sched clock support uses a deprecated
+interface. Of course that patch got routed through the ARM tree
+instead of going through the relevant maintainer tree.
+
+Use the proper interface so we can get rid of the cruft.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+diff --git a/drivers/clocksource/versatile.c b/drivers/clocksource/versatile.c
+index e4c50ad..2798e74 100644
+--- a/drivers/clocksource/versatile.c
++++ b/drivers/clocksource/versatile.c
+@@ -20,7 +20,7 @@
+ 
+ static void __iomem *versatile_sys_24mhz;
+ 
+-static u32 notrace versatile_sys_24mhz_read(void)
++static u64 notrace versatile_sys_24mhz_read(void)
+ {
+ 	return readl(versatile_sys_24mhz);
+ }
+@@ -34,7 +34,7 @@ static void __init versatile_sched_clock_init(struct device_node *node)
+ 
+ 	versatile_sys_24mhz = base + SYS_24MHZ;
+ 
+-	setup_sched_clock(versatile_sys_24mhz_read, 32, 24000000);
++	sched_clock_register(versatile_sys_24mhz_read, 32, 24000000);
+ }
+ CLOCKSOURCE_OF_DECLARE(versatile, "arm,vexpress-sysreg",
+-		versatile_sched_clock_init);
++		       versatile_sched_clock_init);
