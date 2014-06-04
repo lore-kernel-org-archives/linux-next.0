@@ -1,96 +1,52 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 4 Jun 2014 12:49:27 +0200 (CEST)
-Message-ID: <alpine.DEB.2.10.1406041134070.3319@nanos>
-References: <20140604160522.1d788c1e@canb.auug.org.au>
+From: Anna Schumaker <Anna.Schumaker@netapp.com>
+Subject: Re: linux-next: bad commits in the nfs tree
+Date: Wed, 4 Jun 2014 08:38:57 -0400
+Message-ID: <538F1361.6060400@netapp.com>
+References: <20140604083411.4296bcd5@canb.auug.org.au> <CAABAsM4hpz_vCK=AbLUzBnVCr3-_5KhJUqif3YP3Yjp+-ojx8w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:34451 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750992AbaFDKtq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jun 2014 06:49:46 -0400
-In-Reply-To: <20140604160522.1d788c1e@canb.auug.org.au>
+Received: from mx12.netapp.com ([216.240.18.77]:19463 "EHLO mx12.netapp.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752359AbaFDMjE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Jun 2014 08:39:04 -0400
+In-Reply-To: <CAABAsM4hpz_vCK=AbLUzBnVCr3-_5KhJUqif3YP3Yjp+-ojx8w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Olof Johansson <olof@lixom.net>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 4 Jun 2014, Stephen Rothwell wrote:
-
-> Hi all,
+On 06/03/2014 06:46 PM, Trond Myklebust wrote:
+> On Tue, Jun 3, 2014 at 6:34 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi Trond,
+>>
+>> I noticed in the nfs tree this morning 2 commits that have been
+>> cherry-picked from Linus' tree:
+>>
+>> cc6d854967ce    Linux 3.15-rc8
+>> 2b267bb3a8e5    powerpc: Wire renameat2() syscall
+>>
+>> These are part of a branch that you merged from Anna Schumaker.  It
+>> looks like they may have been included when Anna was trying to rebase
+>> the rest of the branch onto v3.15-rc8?
+>>
+>> Please fix this up before asking Linus to pull your tree.
+>>
 > 
-> After merging the tip tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+> Thanks Stephen! We're still ironing out the kinks in a new process for
+> the NFS client maintenance, and appreciate your patience.
 > 
+> Anna, let's avoid the mess that is 3.15-rc8 for now. Please rebase on
+> top of commit b5968725f46d (Push the file layout driver into a
+> subdirectory) from my nfs-for-next branch and retag the resulting
+> branch using the same commit information as earlier.
+> I'll pull the new tag once you send the word that all is ready...
+
+Sure.  I'll take care of that right away!
+
+Anna
 > 
-> drivers/clocksource/versatile.c: In function 'versatile_sched_clock_init':
-> drivers/clocksource/versatile.c:37:2: error: implicit declaration of function 'setup_sched_clock' [-Werror=implicit-function-declaration]
+> Thanks
+>    Trond
 > 
-> Caused by commit c04ae71c9c26 ("sched_clock: Remove deprecated
-> setup_sched_clock() API") from the tip tree.  The usage was only added
-> to Linus' tree today by commit 220e2a8d22cd ("clocksource: Sched clock
-> source for Versatile Express") (but this commit has been in linux-next
-> since May 22 at least).
-> 
-> I have reverted the tip tree commit for today.
-
-Dammit. Why the heck can ARM folks not route their stuff through the
-relevant maintainers? Because ARM is a different universe with
-different rules or what?
-
-Of course this crap is already in Linus next branch, so it essentially
-blocks me from sending my pending timers/core branch.
-
-Patch below. Linus, can you please apply this?
-
-I've ranted about this before. It's not the first time that ARM breaks
-stuff I maintain.
-
-Again: Send your stuff against drivers/clocksource and drivers/irqchip
-to the maintainers. 
-
-I'm happy to provide you a separate branch to pull that stuff from me,
-if you have dependencies on that, but I really don't want to see any
-of this again, ever.
-
-Yours seriously grumpy
-
-      tglx
-
------------->
-Subject: clocksource: versatile: Use sched_clock_register()
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Wed, 04 Jun 2014 12:34:15 +0200
-
-The newly merged versatile sched clock support uses a deprecated
-interface. Of course that patch got routed through the ARM tree
-instead of going through the relevant maintainer tree.
-
-Use the proper interface so we can get rid of the cruft.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-diff --git a/drivers/clocksource/versatile.c b/drivers/clocksource/versatile.c
-index e4c50ad..2798e74 100644
---- a/drivers/clocksource/versatile.c
-+++ b/drivers/clocksource/versatile.c
-@@ -20,7 +20,7 @@
- 
- static void __iomem *versatile_sys_24mhz;
- 
--static u32 notrace versatile_sys_24mhz_read(void)
-+static u64 notrace versatile_sys_24mhz_read(void)
- {
- 	return readl(versatile_sys_24mhz);
- }
-@@ -34,7 +34,7 @@ static void __init versatile_sched_clock_init(struct device_node *node)
- 
- 	versatile_sys_24mhz = base + SYS_24MHZ;
- 
--	setup_sched_clock(versatile_sys_24mhz_read, 32, 24000000);
-+	sched_clock_register(versatile_sys_24mhz_read, 32, 24000000);
- }
- CLOCKSOURCE_OF_DECLARE(versatile, "arm,vexpress-sysreg",
--		versatile_sched_clock_init);
-+		       versatile_sched_clock_init);
