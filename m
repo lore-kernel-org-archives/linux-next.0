@@ -1,45 +1,57 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 4 Jun 2014 22:02:17 +0200 (CEST)
-Message-ID: <alpine.DEB.2.10.1406042157220.18296@nanos>
-References: <20140604160522.1d788c1e@canb.auug.org.au> <alpine.DEB.2.10.1406041134070.3319@nanos> <CAOesGMhGT30QN2LeVp2sgzY0BjbguW=iw3x1PH8RVB-Rj-GZNQ@mail.gmail.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: [PATCH] i2c: pca954x: Fix compilation without CONFIG_GPIOLIB
+Date: Wed, 4 Jun 2014 23:02:09 +0200
+Message-ID: <20140604230209.21182dd3@endymion.delvare>
+References: <CA+r1Zhi9Qd4aZ2WJ02K4Gv=zg7QvG+r=t2VpiXRKXcYRc1vt=A@mail.gmail.com>
+	<1401900992-16581-1-git-send-email-laurent.pinchart@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:41056 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751290AbaFDUCe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jun 2014 16:02:34 -0400
-In-Reply-To: <CAOesGMhGT30QN2LeVp2sgzY0BjbguW=iw3x1PH8RVB-Rj-GZNQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1401900992-16581-1-git-send-email-laurent.pinchart@ideasonboard.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, wsa@the-dreams.de, linus.walleij@linaro.org, paul.gortmaker@windriver.com, jg1.han@samsung.com, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 4 Jun 2014, Olof Johansson wrote:
-> On Wed, Jun 4, 2014 at 3:49 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> So, we'll dial back and stop taking these patches through our tree
-> without an explicit ack or shared branch from you (or Daniel on
-> clocksource). Not a problem at all.
+On Wed,  4 Jun 2014 18:56:32 +0200, Laurent Pinchart wrote:
+> The pca954x driver recently switched to the GPIO descriptor API witho=
+ut
+> including the correct <linux/gpio/consumer.h> header. This breaks
+> compilation without CONFIG_GPIOLIB.
+>=20
+> drivers/i2c/muxes/i2c-mux-pca954x.c: In function =E2=80=98pca954x_pro=
+be=E2=80=99:
+> drivers/i2c/muxes/i2c-mux-pca954x.c:204:2: error: implicit declaratio=
+n
+> of function =E2=80=98devm_gpiod_get=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+>   gpio =3D devm_gpiod_get(&client->dev, "reset");
+>   ^
+> drivers/i2c/muxes/i2c-mux-pca954x.c:204:7: warning: assignment makes
+> pointer from integer without a cast [enabled by default]
+>   gpio =3D devm_gpiod_get(&client->dev, "reset");
+>        ^
+> drivers/i2c/muxes/i2c-mux-pca954x.c:206:3: error: implicit declaratio=
+n
+> of function =E2=80=98gpiod_direction_output=E2=80=99
+> [-Werror=3Dimplicit-function-declaration]
+>    gpiod_direction_output(gpio, 0);
+>    ^
+> cc1: some warnings being treated as errors
+> make[3]: *** [drivers/i2c/muxes/i2c-mux-pca954x.o] Error 1
+>=20
+> Fix it by including the right header.
+>=20
+> Reported-by: Jim Davis <jim.epost@gmail.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  drivers/i2c/muxes/i2c-mux-pca954x.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> (...)
 
-I prefer the shared branch (for clocksource and irqchip) either from
-me or from Daniel(clocksource) / Jason (irqchip).
+Acked-by: Jean Delvare <jdelvare@suse.de>
 
-That way you can proceed and we can do our unrelated changes without
-creating merge dependencies.
-
-> On the other hand, it would have been a lot easier
-> to handle had the code on your end landed a bit sooner than in the
-> middle of the merge window.
-
-I know. I was just burried in futex wreckage for almost a week...
-
-> Not much I can say besides what's above and that I owe you a few beers
-> at the next conference.
-
-Don't worry. I let off steam and all is good if we can avoid this in
-the future. Though I'm certainly up for a few beers :)
-
-Thanks,
-
-	tglx
+--=20
+Jean Delvare
+SUSE L3 Support
