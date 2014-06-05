@@ -1,64 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Thu, 5 Jun 2014 14:12:27 +1000
-Message-ID: <20140605141227.7449bb38@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Thu, 5 Jun 2014 14:28:48 +1000
+Message-ID: <20140605142848.67fb6ec7@canb.auug.org.au>
+References: <20140605141227.7449bb38@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OPW+P51QxJBdWP_AoTzaiwe"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35253 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751098AbaFEEMf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Jun 2014 00:12:35 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@intel.com>
+ boundary="Sig_/tRWI6BAPDsWmwFqvhkIRHoG"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140605141227.7449bb38@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Jani Nikula <jani.nikula@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/OPW+P51QxJBdWP_AoTzaiwe
+--Sig_/tRWI6BAPDsWmwFqvhkIRHoG
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Daniel,
 
-After merging the drm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Thu, 5 Jun 2014 14:12:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the drm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/gpu/drm/i915/intel_fbdev.c: In function 'intel_fb_initial_config':
+> drivers/gpu/drm/i915/intel_fbdev.c:392:4: error: implicit declaration of =
+function 'drm_get_connector_name' [-Werror=3Dimplicit-function-declaration]
+>     DRM_DEBUG_KMS("using first mode listed on connector %s\n",
+>     ^
+>=20
+> Caused by commits c0c97622c1bd ("drm/i915: Use the connector name in
+> fbdev debug messages") and c23cc4178dd1 ("drm/i915: replace
+> drm_get_connector_name() with direct name field use").
+>=20
+> I have used the drm tree from next-20140604 for today.
 
-drivers/gpu/drm/i915/intel_fbdev.c: In function 'intel_fb_initial_config':
-drivers/gpu/drm/i915/intel_fbdev.c:392:4: error: implicit declaration of fu=
-nction 'drm_get_connector_name' [-Werror=3Dimplicit-function-declaration]
-    DRM_DEBUG_KMS("using first mode listed on connector %s\n",
-    ^
+This affected the drm-intel tree as well, so it is back to
+next-20140604.
 
-Caused by commits c0c97622c1bd ("drm/i915: Use the connector name in
-fbdev debug messages") and c23cc4178dd1 ("drm/i915: replace
-drm_get_connector_name() with direct name field use").
-
-I have used the drm tree from next-20140604 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/OPW+P51QxJBdWP_AoTzaiwe
+--Sig_/tRWI6BAPDsWmwFqvhkIRHoG
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTj+4xAAoJEMDTa8Ir7ZwVUUsQAIMw0BeoY5LTowxSOUdOm2eC
-/zT1kdTuhuSSJHYRd5/uo2uCOmZcdjFXBid9JJ6LLKXn/fY+JI36U0Ye56VNVaVO
-Vn4tml8zu4UDWRUkX7U7DDVfqjeG7ZD5ci833cyIhiB7gUbSg/Bm4rjvqaQk3+Ex
-sGpa88IZBAw3eAcxWRuIOwYmVL9fcdILYGw4H+V5zcSd/RwdHQbAQhBoAJ6Rmmrk
-gz6b774vln7VX9c6RpKXzs76IoUp9S0YZbZzfJefIymr/taKlT6YZZCHf7g+1QvR
-aEm5/TlivkE6+JkQFzF4nJceKJnw48pTO7eIS1HE72NwOs4+2cQ4SBnkxf9XsaYm
-/KNOsHNv6uaSOieSIEWJ4DQ7ftcHGlv6Xhg8XhZ/AP759SN7nTcqeWedTkjbboBX
-gAeFrW0oxeDy5dnMNYzeDT6p6A0R5Q7WUPkMTTJQx5KZNdznDsj+m/X8lYhgoKId
-J3cBzUWaaYxTuUR+49FCqzTpfy5EcWzICP/84v724AGb+yR78iK+fbdDpfE3MKDx
-xPN2ZUyxtIrTjhMeAeLyKDZPPZcGU3L0DmxHsn2R7nVDhBwbdVXNRiqdntxwiO8k
-R4z9MIrAuSz+Vjeyb6ShhK4DBF/Ayud+FuOUDvPcn3ZQS9LfupLvQ6G8Ih51RfgI
-4c2sQWavQeaJzdWB76Iz
-=02d+
+iQIcBAEBCAAGBQJTj/IGAAoJEMDTa8Ir7ZwVfCIP/32utRNtpDEQFyzif0Of1GLT
+1lQSZSYx3x1r/RnH9Z9mzYxowFDFzy1UkVK8eOjImVytnbOQNTiU86uz8tVSLkfY
+f9jdLnzpNiZpS82yfOu/fPYb81xdCy+WJPfOtc8PN+JTotq0p/IOdDkNpFDhDQAq
+W1qUDEEVsqI4gR+lT9UqYLTYsyWKx5kUtcU3WjWY5PQYDHqOqsPjXAHdQmnvdUmV
+F7N0+Eu5Ta6iCx6eq68UkrZmxFJYas6A1mGtLYo+KpkdwQ+AMf8F59IQWeDGn9lU
+7/2FlTnjg04tU4AZF7IXPNG3ptPWMEGByVI5NKEQ99zLH6dM7JUsE1rvzF1cEEQ5
+OcgljZuUmVzkKHASruvuODlFaCfAdU83ppSLVhrskSfXDYa7wYtfGbt10bv0/Qs7
+i2Bt74sYZdhc2x/WCRYOvX4yLnURXvJhmXUxEjQvbLWc9Iqinxz309c4cgY9ESGe
+gOJS9YWAZEIYIMCnINzJVjjj0WOJwfNWgZC6sRBj/8wshJNvKJeCmMR8NHJ58UUe
+W3BssaJzLnR82R4IHhyWo01hwirwpyC+2k2H988HFs8wMdZwrvxrT/D1ukUvLPHf
+fDNF5ibto/q8ILNtgdUS+I32PparCLCfW7w8QNeA0FYixlaY5uzhULgR2FQFClpI
+HHpCEvIAzqZp81rVx83n
+=EoHi
 -----END PGP SIGNATURE-----
 
---Sig_/OPW+P51QxJBdWP_AoTzaiwe--
+--Sig_/tRWI6BAPDsWmwFqvhkIRHoG--
