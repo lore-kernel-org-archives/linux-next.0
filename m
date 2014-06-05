@@ -1,53 +1,62 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 Subject: Re: linux-next: build warning after merge of the ftrace tree
-Date: Thu, 5 Jun 2014 11:03:34 +0800
-Message-ID: <20140605030334.GA20774@localhost>
+Date: Wed, 4 Jun 2014 23:13:51 -0400
+Message-ID: <20140604231351.0ef391cd@gandalf.local.home>
 References: <20140604160921.4f4e69c4@canb.auug.org.au>
- <20140604122612.366e2874@gandalf.local.home>
- <20140605002012.GA10446@localhost>
- <20140604210016.4766adba@gandalf.local.home>
- <20140605010353.GA13193@localhost>
- <20140604211202.0eb5d147@gandalf.local.home>
- <20140605013300.GA13341@localhost>
- <20140604213932.5a48112d@gandalf.local.home>
- <20140605021457.GA19061@localhost>
- <20140604223624.6d338b5b@gandalf.local.home>
+	<20140604122612.366e2874@gandalf.local.home>
+	<20140605002012.GA10446@localhost>
+	<20140604210016.4766adba@gandalf.local.home>
+	<20140605010353.GA13193@localhost>
+	<20140604211202.0eb5d147@gandalf.local.home>
+	<20140605013300.GA13341@localhost>
+	<20140604213932.5a48112d@gandalf.local.home>
+	<20140605021457.GA19061@localhost>
+	<20140604223624.6d338b5b@gandalf.local.home>
+	<20140605030334.GA20774@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:28913 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751339AbaFEDD5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Jun 2014 23:03:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20140604223624.6d338b5b@gandalf.local.home>
+Received: from cdptpa-outbound-snat.email.rr.com ([107.14.166.229]:2368 "EHLO
+	cdptpa-oedge-vip.email.rr.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750944AbaFEDOB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jun 2014 23:14:01 -0400
+In-Reply-To: <20140605030334.GA20774@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
+To: Fengguang Wu <fengguang.wu@intel.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 04, 2014 at 10:36:24PM -0400, Steven Rostedt wrote:
-> On Thu, 5 Jun 2014 10:14:57 +0800
-> Fengguang Wu <fengguang.wu@intel.com> wrote:
-> 
-> > > I wonder if the "(Red Hat)" part is causing an issue. Can you send
-> > > directly to my email "rostedt@goodmis.org" and strip the name part?
+On Thu, 5 Jun 2014 11:03:34 +0800
+Fengguang Wu <fengguang.wu@intel.com> wrote:
+
+> On Wed, Jun 04, 2014 at 10:36:24PM -0400, Steven Rostedt wrote:
+> > On Thu, 5 Jun 2014 10:14:57 +0800
+> > Fengguang Wu <fengguang.wu@intel.com> wrote:
 > > 
-> > OK. I've committed the change. Let's see how well it will work.
+> > > > I wonder if the "(Red Hat)" part is causing an issue. Can you send
+> > > > directly to my email "rostedt@goodmis.org" and strip the name part?
+> > > 
+> > > OK. I've committed the change. Let's see how well it will work.
+> > 
+> > OK, I never received an error message for my buggy commit I posted
+> > before you did this change. I fixed the buggy commit and added another
+> > bug. I'll now wait again to see if I get notified.
 > 
-> OK, I never received an error message for my buggy commit I posted
-> before you did this change. I fixed the buggy commit and added another
-> bug. I'll now wait again to see if I get notified.
+> FYI, we got two error reports
+> 
+> [trace:test-wu-bot 28/29] kernel/trace/trace.c:6683:1: error: expected '; ' before '}' token
+> [trace:test-wu-bot 29/29] kernel/trace/trace.c:6701:9: error: 'x' undeclared
+> 
+> in
+> 
+> https://lists.01.org/pipermail/kbuild-all/2014-June/004839.html
+> https://lists.01.org/pipermail/kbuild-all/2014-June/004840.html
+> 
 
-FYI, we got two error reports
+And I received no emails :-(
 
-[trace:test-wu-bot 28/29] kernel/trace/trace.c:6683:1: error: expected '; ' before '}' token
-[trace:test-wu-bot 29/29] kernel/trace/trace.c:6701:9: error: 'x' undeclared
+I wonder why it's failing. What changed since March? I can't think of
+anything on my end.
 
-in
-
-https://lists.01.org/pipermail/kbuild-all/2014-June/004839.html
-https://lists.01.org/pipermail/kbuild-all/2014-June/004840.html
-
-Thanks,
-Fengguang
+-- Steve
