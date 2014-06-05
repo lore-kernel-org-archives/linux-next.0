@@ -1,52 +1,111 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: kisskb not updated?
-Date: Thu, 5 Jun 2014 09:09:53 +0200
-Message-ID: <CAMuHMdUy9c75uYS9-xVkOofZqH6zc1coxncV8LYZiuCSK7J6PA@mail.gmail.com>
-References: <CAMuHMdWwBP6mmWMF3QAvjqo7HQQAB8KZ2QUW5kHZ6iHMMLNYuQ@mail.gmail.com>
-	<20140604182812.6ec4b06b@canb.auug.org.au>
-	<1401938509.17669.9.camel@concordia>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with the btrfs tree
+Date: Thu, 5 Jun 2014 17:28:24 +1000
+Message-ID: <20140605172824.31ecb811@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GgDUxb3PRtTURIbPtvWguhG"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:46892 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750765AbaFEHJy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jun 2014 03:09:54 -0400
-In-Reply-To: <1401938509.17669.9.camel@concordia>
+Received: from ozlabs.org ([103.22.144.67]:33043 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750715AbaFEH2c (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Jun 2014 03:28:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Sterba <dsterba@suse.cz>
 
-Hi Michael,
+--Sig_/GgDUxb3PRtTURIbPtvWguhG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 5, 2014 at 5:21 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> On Wed, 2014-06-04 at 18:28 +1000, Stephen Rothwell wrote:
->> On Wed, 4 Jun 2014 10:21:06 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> > kisskb.ellerman.id.au/kisskb/head/page1/ doesn't seem to be updated
->> > anymore? E.g. v3.15-rc8 is missing.
->>
->> Yeah, our machine room suffered an airconditioning failure and our
->> build host is one of the machines that we can't afford to run at the
->> moment.
->
-> Yeah sorry I was going to put up an "Out of order" notice, but then there was
-> talk of restarting the server, but then that never happened.
->
-> Not sure what the ETA is at the moment.
+Hi Eric,
 
-OK, will wait and see...
+Today's linux-next merge of the userns tree got a conflict in
+fs/btrfs/ioctl.c between commit e4e7602f3304 ("btrfs: protect snapshots
+from deleting during send") from the btrfs tree and commit 23135a9bd700
+("vfs: Make d_invalidate return void") from the userns tree.
 
-My first thought was: Oh no, it crashed due to the new "next" branch in
-Linus' repo ;-)
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).  Thanks, Chris for the resolution.
 
-Gr{oetje,eeting}s,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-                        Geert
+diff --cc fs/btrfs/ioctl.c
+index 99431aa5371f,349848bd54e2..000000000000
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@@ -2334,30 -2229,7 +2334,28 @@@ static noinline int btrfs_ioctl_snap_de
+  	}
+ =20
+  	mutex_lock(&inode->i_mutex);
+ +
+ +	/*
+ +	 * Don't allow to delete a subvolume with send in progress. This is
+ +	 * inside the i_mutex so the error handling that has to drop the bit
+ +	 * again is not run concurrently.
+ +	 */
+ +	spin_lock(&dest->root_item_lock);
+ +	root_flags =3D btrfs_root_flags(&dest->root_item);
+ +	if (dest->send_in_progress =3D=3D 0) {
+ +		btrfs_set_root_flags(&dest->root_item,
+ +				root_flags | BTRFS_ROOT_SUBVOL_DEAD);
+ +		spin_unlock(&dest->root_item_lock);
+ +	} else {
+ +		spin_unlock(&dest->root_item_lock);
+ +		btrfs_warn(root->fs_info,
+ +			"Attempt to delete subvolume %llu during send",
+ +			dest->root_key.objectid);
+ +		err =3D -EPERM;
+ +		goto out_dput;
+ +	}
+ +
+- 	err =3D d_invalidate(dentry);
+- 	if (err)
+- 		goto out_unlock;
++ 	d_invalidate(dentry);
+ =20
+  	down_write(&root->fs_info->subvol_sem);
+ =20
+@@@ -2442,14 -2314,6 +2440,14 @@@ out_release
+  	btrfs_subvolume_release_metadata(root, &block_rsv, qgroup_reserved);
+  out_up_write:
+  	up_write(&root->fs_info->subvol_sem);
+- out_unlock:
+++
+ +	if (err) {
+ +		spin_lock(&dest->root_item_lock);
+ +		root_flags =3D btrfs_root_flags(&dest->root_item);
+ +		btrfs_set_root_flags(&dest->root_item,
+ +				root_flags & ~BTRFS_ROOT_SUBVOL_DEAD);
+ +		spin_unlock(&dest->root_item_lock);
+ +	}
+  	mutex_unlock(&inode->i_mutex);
+  	if (!err) {
+  		shrink_dcache_sb(root->fs_info->sb);
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--Sig_/GgDUxb3PRtTURIbPtvWguhG
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTkBwdAAoJEMDTa8Ir7ZwV5kEP/A/S4/8QvErNSIuQAz2/Jn7J
+qYpXlGLr/StTxu5MVy4P/cvFaGA5TyLRm7C8giQzN+Xk8N6VC2RiO6GJpkEtKrwh
+PZ/TCpgjWToGR2XLxjBzzirr5Du7KyIhLZ+ndGBkm0OgmWipSSrPaGMA45rG0P9d
+n1B2jjoAV0X6rIaUyvQVsybSQiVMcjhTBa13D1dWINeDvdbL7LYwu/fRVbFGXu0u
+fW201iyHwlmp66cyJbITaEOrWmQ/3GL/g9JEmQB4Ls7Pw65VIFdeZ9XEsrRTBmDq
+yyLZVj1i10zZ0N+IzPhrV93cn8ea0ys92evBYAFEMci5lnfklfaxFBaHl7Rm2kY0
+sYvAZC1kjZU6hwKRL4IWNxgL6eq2SwXDHX2U7HDLnBPMEg7yAWTsVoEgyeyBY8EQ
+FEe8OEcjp4OG7XUHoylJZAxKWddZYG5X7ysmOH21C4S1KJTktWI7xX4M3iuSH1gl
+sWjd6Ie+IBaa1faiZW+7thY52W2sEhZU2Z52SGZAmqmU86z89q4/a219ksWVPRB/
+5qzdSfTQ72Zj+WQkBtGdND3xkanXLAACTekUkDFsgvhy+a13ZNeEjaUyv5xs3Z+q
+W5PcSEpy+tQDB2z/6yqelRSsigypvmb7ejX1eYHCD3j67GHukF/9T1sQaCQDakG9
+YC9ONAyZkTGxwjCAnXRA
+=SlMQ
+-----END PGP SIGNATURE-----
+
+--Sig_/GgDUxb3PRtTURIbPtvWguhG--
