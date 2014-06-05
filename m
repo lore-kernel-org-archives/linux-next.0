@@ -1,69 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Thu, 5 Jun 2014 14:28:48 +1000
-Message-ID: <20140605142848.67fb6ec7@canb.auug.org.au>
-References: <20140605141227.7449bb38@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: kisskb not updated?
+Date: Thu, 5 Jun 2014 09:09:53 +0200
+Message-ID: <CAMuHMdUy9c75uYS9-xVkOofZqH6zc1coxncV8LYZiuCSK7J6PA@mail.gmail.com>
+References: <CAMuHMdWwBP6mmWMF3QAvjqo7HQQAB8KZ2QUW5kHZ6iHMMLNYuQ@mail.gmail.com>
+	<20140604182812.6ec4b06b@canb.auug.org.au>
+	<1401938509.17669.9.camel@concordia>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tRWI6BAPDsWmwFqvhkIRHoG"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140605141227.7449bb38@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Jani Nikula <jani.nikula@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:46892 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765AbaFEHJy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jun 2014 03:09:54 -0400
+In-Reply-To: <1401938509.17669.9.camel@concordia>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
 
---Sig_/tRWI6BAPDsWmwFqvhkIRHoG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Michael,
 
-Hi Daniel,
-
-On Thu, 5 Jun 2014 14:12:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Thu, Jun 5, 2014 at 5:21 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> On Wed, 2014-06-04 at 18:28 +1000, Stephen Rothwell wrote:
+>> On Wed, 4 Jun 2014 10:21:06 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> > kisskb.ellerman.id.au/kisskb/head/page1/ doesn't seem to be updated
+>> > anymore? E.g. v3.15-rc8 is missing.
+>>
+>> Yeah, our machine room suffered an airconditioning failure and our
+>> build host is one of the machines that we can't afford to run at the
+>> moment.
 >
-> After merging the drm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/gpu/drm/i915/intel_fbdev.c: In function 'intel_fb_initial_config':
-> drivers/gpu/drm/i915/intel_fbdev.c:392:4: error: implicit declaration of =
-function 'drm_get_connector_name' [-Werror=3Dimplicit-function-declaration]
->     DRM_DEBUG_KMS("using first mode listed on connector %s\n",
->     ^
->=20
-> Caused by commits c0c97622c1bd ("drm/i915: Use the connector name in
-> fbdev debug messages") and c23cc4178dd1 ("drm/i915: replace
-> drm_get_connector_name() with direct name field use").
->=20
-> I have used the drm tree from next-20140604 for today.
+> Yeah sorry I was going to put up an "Out of order" notice, but then there was
+> talk of restarting the server, but then that never happened.
+>
+> Not sure what the ETA is at the moment.
 
-This affected the drm-intel tree as well, so it is back to
-next-20140604.
+OK, will wait and see...
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+My first thought was: Oh no, it crashed due to the new "next" branch in
+Linus' repo ;-)
 
---Sig_/tRWI6BAPDsWmwFqvhkIRHoG
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+                        Geert
 
-iQIcBAEBCAAGBQJTj/IGAAoJEMDTa8Ir7ZwVfCIP/32utRNtpDEQFyzif0Of1GLT
-1lQSZSYx3x1r/RnH9Z9mzYxowFDFzy1UkVK8eOjImVytnbOQNTiU86uz8tVSLkfY
-f9jdLnzpNiZpS82yfOu/fPYb81xdCy+WJPfOtc8PN+JTotq0p/IOdDkNpFDhDQAq
-W1qUDEEVsqI4gR+lT9UqYLTYsyWKx5kUtcU3WjWY5PQYDHqOqsPjXAHdQmnvdUmV
-F7N0+Eu5Ta6iCx6eq68UkrZmxFJYas6A1mGtLYo+KpkdwQ+AMf8F59IQWeDGn9lU
-7/2FlTnjg04tU4AZF7IXPNG3ptPWMEGByVI5NKEQ99zLH6dM7JUsE1rvzF1cEEQ5
-OcgljZuUmVzkKHASruvuODlFaCfAdU83ppSLVhrskSfXDYa7wYtfGbt10bv0/Qs7
-i2Bt74sYZdhc2x/WCRYOvX4yLnURXvJhmXUxEjQvbLWc9Iqinxz309c4cgY9ESGe
-gOJS9YWAZEIYIMCnINzJVjjj0WOJwfNWgZC6sRBj/8wshJNvKJeCmMR8NHJ58UUe
-W3BssaJzLnR82R4IHhyWo01hwirwpyC+2k2H988HFs8wMdZwrvxrT/D1ukUvLPHf
-fDNF5ibto/q8ILNtgdUS+I32PparCLCfW7w8QNeA0FYixlaY5uzhULgR2FQFClpI
-HHpCEvIAzqZp81rVx83n
-=EoHi
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---Sig_/tRWI6BAPDsWmwFqvhkIRHoG--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
