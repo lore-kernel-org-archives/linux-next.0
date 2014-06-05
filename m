@@ -1,86 +1,57 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] i2c: pca954x: Fix compilation without CONFIG_GPIOLIB
-Date: Thu, 05 Jun 2014 10:57:41 +0900
-Message-ID: <007001cf8061$89337e30$9b9a7a90$%han@samsung.com>
-References: <CA+r1Zhi9Qd4aZ2WJ02K4Gv=zg7QvG+r=t2VpiXRKXcYRc1vt=A@mail.gmail.com>
- <1401900992-16581-1-git-send-email-laurent.pinchart@ideasonboard.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Subject: Re: linux-next: build warning after merge of the ftrace tree
+Date: Thu, 5 Jun 2014 10:14:57 +0800
+Message-ID: <20140605021457.GA19061@localhost>
+References: <20140604160921.4f4e69c4@canb.auug.org.au>
+ <20140604122612.366e2874@gandalf.local.home>
+ <20140605002012.GA10446@localhost>
+ <20140604210016.4766adba@gandalf.local.home>
+ <20140605010353.GA13193@localhost>
+ <20140604211202.0eb5d147@gandalf.local.home>
+ <20140605013300.GA13341@localhost>
+ <20140604213932.5a48112d@gandalf.local.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25784 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751440AbaFEB54 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jun 2014 21:57:56 -0400
-In-reply-to: <1401900992-16581-1-git-send-email-laurent.pinchart@ideasonboard.com>
-Content-language: ko
+Received: from mga11.intel.com ([192.55.52.93]:58576 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751660AbaFECPA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Jun 2014 22:15:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20140604213932.5a48112d@gandalf.local.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>, linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, wsa@the-dreams.de, khali@linux-fr.org, linus.walleij@linaro.org, paul.gortmaker@windriver.com, 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Jim Davis' <jim.epost@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday, June 05, 2014 1:57 AM, Laurent Pinchart write/l
->=20
-> The pca954x driver recently switched to the GPIO descriptor API witho=
-ut
-> including the correct <linux/gpio/consumer.h> header. This breaks
-> compilation without CONFIG_GPIOLIB.
->=20
-> drivers/i2c/muxes/i2c-mux-pca954x.c: In function =E2=80=98pca954x_pro=
-be=E2=80=99:
-> drivers/i2c/muxes/i2c-mux-pca954x.c:204:2: error: implicit declaratio=
-n
-> of function =E2=80=98devm_gpiod_get=E2=80=99 [-Werror=3Dimplicit-func=
-tion-declaration]
->   gpio =3D devm_gpiod_get(&client->dev, "reset");
->   ^
-> drivers/i2c/muxes/i2c-mux-pca954x.c:204:7: warning: assignment makes
-> pointer from integer without a cast [enabled by default]
->   gpio =3D devm_gpiod_get(&client->dev, "reset");
->        ^
-> drivers/i2c/muxes/i2c-mux-pca954x.c:206:3: error: implicit declaratio=
-n
-> of function =E2=80=98gpiod_direction_output=E2=80=99
-> [-Werror=3Dimplicit-function-declaration]
->    gpiod_direction_output(gpio, 0);
->    ^
-> cc1: some warnings being treated as errors
-> make[3]: *** [drivers/i2c/muxes/i2c-mux-pca954x.o] Error 1
->=20
-> Fix it by including the right header.
->=20
-> Reported-by: Jim Davis <jim.epost@gmail.com>
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Wed, Jun 04, 2014 at 09:39:32PM -0400, Steven Rostedt wrote:
+> On Thu, 5 Jun 2014 09:33:00 +0800
+> Fengguang Wu <fengguang.wu@intel.com> wrote:
+> 
+> 
+> > Here are the recent emails sent to you:
+> > 
+> >  439   F May 10 To Steven Rostedt (4440:1) [trace:ftrace/next-3.17 29/29] kernel/trace/ftrace.c:108:27: warning: 'removed_ops' defined but not used
+> >  446   F May 10 To Steven Rostedt (3531:1) [trace:ftrace/next-3.17 29/29] kernel/trace/ftrace.c:5358:12: error: 'struct ftrace_ops' has no member named 'trampoline'
+> > 1207   F May 31 To Steven Rostedt (  43:0) [trace:ftrace/core 29/32] kernel/trace/trace_benchmark.c:38:6: warning: unused variable 'seedsq'
+> > 1210   F May 31 To Steven Rostedt (  29:0) [trace:ftrace/core 29/32] kernel/trace/trace_benchmark.c:84:3: warning: comparison of distinct pointer types lacks a cast
+> 
+> I don't have any of those :-(
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+Ah..
 
-Best regards,
-Jingoo Han
+> > > I may add a bad commit to one of my branches and see if I get a
+> > > response from you just to test it out. I really hope we can fix this
+> > > because I've gotten someone dependent on your reports. :-/
+> > 
+> > Yes we need to fix it. The same lost email issue has happened for
+> > someone else, which was fixed by changing the email address. I can
+> > conveniently redirect reports to any other email addresses you have.
+> 
+> I wonder if the "(Red Hat)" part is causing an issue. Can you send
+> directly to my email "rostedt@goodmis.org" and strip the name part?
 
-> ---
->  drivers/i2c/muxes/i2c-mux-pca954x.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/=
-i2c-mux-pca954x.c
-> index c2c443f..9bd4212 100644
-> --- a/drivers/i2c/muxes/i2c-mux-pca954x.c
-> +++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
-> @@ -36,12 +36,11 @@
->   */
->=20
->  #include <linux/device.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
->  #include <linux/i2c-mux.h>
->  #include <linux/i2c/pca954x.h>
->  #include <linux/module.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/slab.h>
->=20
->  #define PCA954X_MAX_NCHANS 8
-> --
-> Regards,
->=20
-> Laurent Pinchart
+OK. I've committed the change. Let's see how well it will work.
+
+Thanks,
+Fengguang
