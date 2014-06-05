@@ -1,38 +1,67 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: kisskb not updated?
-Date: Thu, 05 Jun 2014 13:21:49 +1000
-Message-ID: <1401938509.17669.9.camel@concordia>
-References: <CAMuHMdWwBP6mmWMF3QAvjqo7HQQAB8KZ2QUW5kHZ6iHMMLNYuQ@mail.gmail.com>
-	 <20140604182812.6ec4b06b@canb.auug.org.au>
+From: KY Srinivasan <kys@microsoft.com>
+Subject: RE: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Thu, 5 Jun 2014 03:26:45 +0000
+Message-ID: <1290247eb26c49229a7fcb49021a365f@BY2PR03MB299.namprd03.prod.outlook.com>
+References: <20140605131359.771694b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60437 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751293AbaFEDVv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Jun 2014 23:21:51 -0400
-In-Reply-To: <20140604182812.6ec4b06b@canb.auug.org.au>
+Received: from [207.46.163.143] ([207.46.163.143]:52346 "EHLO
+	na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751505AbaFED2O convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jun 2014 23:28:14 -0400
+In-Reply-To: <20140605131359.771694b6@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stephen hemminger <stephen@networkplumber.org>
 
-On Wed, 2014-06-04 at 18:28 +1000, Stephen Rothwell wrote:
-> Hi Geert,
+
+
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Wednesday, June 4, 2014 8:14 PM
+> To: David Miller; netdev@vger.kernel.org
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; KY Srinivasan;
+> Greg Kroah-Hartman; stephen hemminger
+> Subject: linux-next: manual merge of the net-next tree with Linus' tree
 > 
-> On Wed, 4 Jun 2014 10:21:06 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> >
-> > kisskb.ellerman.id.au/kisskb/head/page1/ doesn't seem to be updated
-> > anymore? E.g. v3.15-rc8 is missing.
+> Hi all,
 > 
-> Yeah, our machine room suffered an airconditioning failure and our
-> build host is one of the machines that we can't afford to run at the
-> moment.
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/hv/channel_mgmt.c between commit d3ba720dd58c ("Drivers: hv:
+> Eliminate the channel spinlock in the callback path") from Linus' tree and
+> commit 1b9d48f2a579 ("hyper-v: make uuid_le const") from the net-next
+> tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action is
+> required).
 
-Yeah sorry I was going to put up an "Out of order" notice, but then there was
-talk of restarting the server, but then that never happened.
+Thanks Stephen.
 
-Not sure what the ETA is at the moment.
+Regards,
 
-cheers
+K. Y
+> 
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/hv/channel_mgmt.c
+> index 6c8b032cacba,90d654556437..000000000000
+> --- a/drivers/hv/channel_mgmt.c
+> +++ b/drivers/hv/channel_mgmt.c
+> @@@ -404,7 -365,7 +404,7 @@@ static u32  next_vp
+>    * performance critical channels (IDE, SCSI and Network) will be uniformly
+>    * distributed across all available CPUs.
+>    */
+> - static void init_vp_index(struct vmbus_channel *channel, uuid_le
+> *type_guid)  -static u32 get_vp_index(const uuid_le *type_guid)
+> ++static void init_vp_index(struct vmbus_channel *channel, const uuid_le
+> ++*type_guid)
+>   {
+>   	u32 cur_cpu;
+>   	int i;
