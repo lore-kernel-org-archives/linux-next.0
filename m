@@ -1,36 +1,39 @@
 From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Fri, 6 Jun 2014 08:21:39 -0500
-Message-ID: <5391C063.3010207@amd.com>
-References: <20140606164543.6c5bbe67@canb.auug.org.au>
+Subject: [PATCH] amd-xgbe: Remove unnecessary include
+Date: Fri, 6 Jun 2014 08:52:19 -0500
+Message-ID: <20140606135219.32017.96806.stgit@tlendack-t1.amdoffice.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140606164543.6c5bbe67@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bn1lp0144.outbound.protection.outlook.com ([207.46.163.144]:15174
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751601AbaFFNwZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2014 09:52:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: netdev@vger.kernel.org, davem@davemloft.net, sfr@canb.auug.org.au
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-On 06/06/2014 01:45 AM, Stephen Rothwell wrote:
-> Hi all,
->
-> After merging the net-next tree, today's linux-next build (powerpc allyesconfig)
-> failed like this:
->
->
-> drivers/net/ethernet/amd/xgbe/xgbe-dev.c:119:25: fatal error: asm/cputype.h: No such file or directory
->   #include <asm/cputype.h>
->                           ^
+The include of asm/cputype.h breaks the powerpc build. This
+include was accidentally left in from driver debugging and
+can be removed.
 
-I accidentally left this in from driver debugging and it is not
-necessary.  Patch to follow.
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+---
+ drivers/net/ethernet/amd/xgbe/xgbe-dev.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-Tom
-
->
-> Caused by commit c5aa9e3b8156 ("amd-xgbe: Initial AMD 10GbE platform driver").
->
-> I reverted commit 54a4ca8e3730 ("Merge branch 'amd-xgbe'") for today.
->
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+index 36bc86e..002293b 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+@@ -116,7 +116,6 @@
+ 
+ #include <linux/phy.h>
+ #include <linux/clk.h>
+-#include <asm/cputype.h>
+ 
+ #include "xgbe.h"
+ #include "xgbe-common.h"
