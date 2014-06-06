@@ -1,64 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Fri, 6 Jun 2014 16:45:43 +1000
-Message-ID: <20140606164543.6c5bbe67@canb.auug.org.au>
+Subject: Re: linux-integrity
+Date: Fri, 6 Jun 2014 17:21:09 +1000
+Message-ID: <20140606172109.26f59fdd@canb.auug.org.au>
+References: <1402026956.5458.130.camel@dhcp-9-2-203-236.watson.ibm.com>
+	<20140606142255.76bc38f1@canb.auug.org.au>
+	<1402031469.5458.162.camel@dhcp-9-2-203-236.watson.ibm.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gEOv7KSFIxcAdbyY343hlAJ"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49191 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750908AbaFFGpq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2014 02:45:46 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+ boundary="Sig_/v.jye7URIh=/91GY/HctXj3"; protocol="application/pgp-signature"
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <1402031469.5458.162.camel@dhcp-9-2-203-236.watson.ibm.com>
+Sender: linux-security-module-owner@vger.kernel.org
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-security-module <linux-security-module@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/gEOv7KSFIxcAdbyY343hlAJ
+--Sig_/v.jye7URIh=/91GY/HctXj3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mimi,
 
-After merging the net-next tree, today's linux-next build (powerpc allyesco=
-nfig)
-failed like this:
+On Fri, 06 Jun 2014 01:11:09 -0400 Mimi Zohar <zohar@linux.vnet.ibm.com> wr=
+ote:
+>
+> On Fri, 2014-06-06 at 14:22 +1000, Stephen Rothwell wrote:=20
+> >=20
+> > On Thu, 05 Jun 2014 23:55:56 -0400 Mimi Zohar <zohar@linux.vnet.ibm.com=
+> wrote:
+> > >
+> > > Please include
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity
+> > > #next in linux-next.
+> >=20
+> > OK, it would be good to know what that tree is about=20
+>=20
+> The linux-integrity measures, appraises and enforces local file
+> integrity, and audit logs file hashes based on policy.  The
+> linux-integrity subsystem is upstreamed and pulled into linux-next via
+> linux-security.  A suggestion was made to have the linux-integrity
+> subsystem pulled directly into linux-next.
+>=20
+> > ... also it is
+> > really late for inclusion in v3.16 even - I generally do not add trees
+> > to linux-next during the merge window.  This does not mean I won't
+> > include it if you can convince me otherwise ...
+>=20
+> 8 patches, mostly bugs fixes, are queued to be upstreamed
+> http://marc.info/?l=3Dlinux-security-module&m=3D140128032831578&w=3D2
+> Please add the linux-integrity subsystem at the next feasible
+> opportunity.=20
 
+I was unaware of the other discussion, so no worries - I will add your
+tree from Tuesday (as Monday is a Public Holiday here).  I hope that
+will help.
 
-drivers/net/ethernet/amd/xgbe/xgbe-dev.c:119:25: fatal error: asm/cputype.h=
-: No such file or directory
- #include <asm/cputype.h>
-                         ^
-
-Caused by commit c5aa9e3b8156 ("amd-xgbe: Initial AMD 10GbE platform driver=
-").
-
-I reverted commit 54a4ca8e3730 ("Merge branch 'amd-xgbe'") for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/gEOv7KSFIxcAdbyY343hlAJ
+--Sig_/v.jye7URIh=/91GY/HctXj3
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTkWOXAAoJEMDTa8Ir7ZwV0z4P/itAG4q6wAp/nEHe1J9qfwVK
-/qfGRKwIK3saKbLlUdwCFXz3LsOvqnnxH7qT6apaV9ZGNUfFibwptgqoH4zAv8Mx
-TP/3N5n5Y8FBFNUWHCV53L+J5m1lLMNFv7gCj/Y6p1Pjr/U1Aa++CUvkva9jRE/n
-6NmqjCwQy7N/GNskvZt+bkDNYjQLyeQUNLMlBxcU1w9lRSXRhruEuKlS3Ry+buum
-5SoR1G9Mp5etLk0dMh2uuT9UPLgMHRgHAzSnjHUkjh5hP6JuqMAW4oEFFYfS7LYT
-PxZjdTlgjLqxl7CJx+m5nScrYB7uPuCbQBnhuPGVHfLmIydaObFGWjEwHFGsItmh
-uUgtMRtUxjz352eke/FWsAuYzKI6mmBkE70c/qFUwFrIbnxK3KkTnDdOUaVjjxPu
-T2Q8w0HprfQocvInCT6WUrB9ivqWpPLDsaFC+MxoOqUcBjus6aBwHUCrvI/2NJsA
-y2Ci8BRXXQBcOIqE/21eMN/Tg6vimgBVK3VnKxYuTNtSIaPoiJSvp7SS/4ZnXeBS
-dc3J0/yoThmHRjujje/H5YxQqK+aGEae4pX0X9yp2MFEZgTAJ0cR5I82vFlSYlWY
-0ZiHYfyEG8qy5iN09+qXrMEvSx3N9QIcgDcV0nIScB/f4j/RxCf/oegIh7sthFHJ
-0wZUt6ay1qYVzUS7RNLF
-=CSFu
+iQIcBAEBCAAGBQJTkWvqAAoJEMDTa8Ir7ZwVPSgP/RdCrALO0Rj66tfaDUhS3Hxs
+lpCxQqAoNosMV6APc8WV9Al8v6p8oIDonmv5rM6kCp6kK5uAzQJjgCO/243t6VSq
+tWRG9IwnHovPGg3/rKsn+ov0TqOfZJon4zg2ey8roOwwOFm3k/8zUCQ+9OiE20Xw
+Lebq98WufPv48TxxSs3fdhjTtQ50PfwJrYq0VddFpv2+DnLEq4VUNVlNUa0hg3Bv
+BPXDAmwawtcOvntLZtQjNstu7RcfeEzgBaxNFiSPcbtCKU3I1TdQVOvYzwHGD03i
+eMDGAKY8Ql8PXkTUX7066jtG0TTZi4ZTAuZr5CC5XgPkCQngcJWxXlu/c1Mp0uG7
+q+S73s/sSdb3hdWSDotuaqs1kQXzbM5mRu2im+trzFrNTIq58tcWaLdIP4RcC8nF
+hxNVuE2KojTbnqg/AgutiUsnmi+nSvrlwl1eKzSibwXwfel0InwTWM2FnCRV0zHj
+r/QRMjVc6CX5EIozBiOjB1xVSvN1geMlcchA/N6MKVaLlGuvoaPmgwmgIPmptFbM
+nqE6PsZeqK51WoDHFuBm1WUm24+wZINl4pQg+XlkG7kRb5oMxoZnwuxxf1UiXBQj
+kmIngdcgTtXSplhIw9y9HrPrsCQ5f8rcPxfg6A3966AShJuluBm14YBAzWs6Mw3L
+CaXuXZD/VF/8uQBMU8d8
+=9X/a
 -----END PGP SIGNATURE-----
 
---Sig_/gEOv7KSFIxcAdbyY343hlAJ--
+--Sig_/v.jye7URIh=/91GY/HctXj3--
