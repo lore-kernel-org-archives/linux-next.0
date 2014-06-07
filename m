@@ -1,82 +1,72 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] staging: r8192ee: Adapt flush function prototype
-Date: Sat,  7 Jun 2014 19:39:19 +0200
-Message-ID: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH linux-next] staging: r8192ee: Adapt flush function
+ prototype
+Date: Sat, 07 Jun 2014 18:52:50 -0500
+Message-ID: <5393A5D2.2090104@lwfinger.net>
+References: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp3-g21.free.fr ([212.27.42.3]:6687 "EHLO smtp3-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752850AbaFGRjj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 7 Jun 2014 13:39:39 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>
-
-Commit 77be2c54c5bd 'mac80211: add vif to flush call' modifies the flus=
-h
-operation prototype. Update r8192ee function accordingly.
-
-This fixes the following compilation warnings:
-
-  drivers/staging/rtl8192ee/core.c: At top level:
-  drivers/staging/rtl8192ee/core.c:1599:2: warning: initialization from=
- incompatible pointer type [enabled by default]
-    .flush =3D rtl_op_flush,
-    ^
-  drivers/staging/rtl8192ee/core.c:1599:2: warning: (near initializatio=
-n for =E2=80=98rtl92e_ops.flush=E2=80=99) [enabled by default]
-
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: =?UTF-8?B?VmluY2VudCBTdGVobMOp?= <vincent.stehle@laposte.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>
----
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-Linux next gives a "heads up" that the flush function of staging driver=
- r8192ee
-needs to be adapted soon.
-
-This can be seen with e.g. linux next-20140606 and x86 allmodconfig.
-
-Also, r8192ee would benefit from the following patch:
-http://www.spinics.net/lists/linux-driver-devel/msg47690.html
-
-Best regards,
-
-V.
-
- drivers/staging/rtl8192ee/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8192ee/core.c b/drivers/staging/rtl8192=
-ee/core.c
-index 76ea356..7f6accd 100644
---- a/drivers/staging/rtl8192ee/core.c
-+++ b/drivers/staging/rtl8192ee/core.c
-@@ -322,7 +322,7 @@ static void _rtl_add_wowlan_patterns(struct ieee802=
-11_hw *hw,
- 	struct rtl_mac *mac =3D &(rtlpriv->mac80211);
- 	struct cfg80211_pkt_pattern *patterns =3D wow->patterns;
- 	struct rtl_wow_pattern rtl_pattern;
--	u8 *pattern_os, *mask_os;
-+	const u8 *pattern_os, *mask_os;
- 	u8 mask[MAX_WOL_BIT_MASK_SIZE] =3D {0};
- 	u8 content[MAX_WOL_PATTERN_SIZE] =3D {0};
- 	u8 broadcast_addr[6] =3D {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-@@ -1561,7 +1561,7 @@ static void rtl_op_rfkill_poll(struct ieee80211_h=
-w *hw)
-  * before switch channle or power save, or tx buffer packet
-  * maybe send after offchannel or rf sleep, this may cause
-  * dis-association by AP */
--static void rtl_op_flush(struct ieee80211_hw *hw,
-+static void rtl_op_flush(struct ieee80211_hw *hw, struct ieee80211_vif=
- *vif,
- 			 u32 queues, bool drop)
- {
- 	struct rtl_priv *rtlpriv =3D rtl_priv(hw);
---=20
-2.0.0.rc2
+T24gMDYvMDcvMjAxNCAxMjozOSBQTSwgVmluY2VudCBTdGVobMOpIHdyb3RlOgo+IENvbW1pdCA3
+N2JlMmM1NGM1YmQgJ21hYzgwMjExOiBhZGQgdmlmIHRvIGZsdXNoIGNhbGwnIG1vZGlmaWVzIHRo
+ZSBmbHVzaAo+IG9wZXJhdGlvbiBwcm90b3R5cGUuIFVwZGF0ZSByODE5MmVlIGZ1bmN0aW9uIGFj
+Y29yZGluZ2x5Lgo+Cj4gVGhpcyBmaXhlcyB0aGUgZm9sbG93aW5nIGNvbXBpbGF0aW9uIHdhcm5p
+bmdzOgo+Cj4gICAgZHJpdmVycy9zdGFnaW5nL3J0bDgxOTJlZS9jb3JlLmM6IEF0IHRvcCBsZXZl
+bDoKPiAgICBkcml2ZXJzL3N0YWdpbmcvcnRsODE5MmVlL2NvcmUuYzoxNTk5OjI6IHdhcm5pbmc6
+IGluaXRpYWxpemF0aW9uIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZSBbZW5hYmxlZCBi
+eSBkZWZhdWx0XQo+ICAgICAgLmZsdXNoID0gcnRsX29wX2ZsdXNoLAo+ICAgICAgXgo+ICAgIGRy
+aXZlcnMvc3RhZ2luZy9ydGw4MTkyZWUvY29yZS5jOjE1OTk6Mjogd2FybmluZzogKG5lYXIgaW5p
+dGlhbGl6YXRpb24gZm9yIOKAmHJ0bDkyZV9vcHMuZmx1c2jigJkpIFtlbmFibGVkIGJ5IGRlZmF1
+bHRdCj4KPiBTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQuc3RlaGxlQGxh
+cG9zdGUubmV0Pgo+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRp
+b24ub3JnPgo+IENjOiBMYXJyeSBGaW5nZXIgPExhcnJ5LkZpbmdlckBsd2Zpbmdlci5uZXQ+CgpB
+aCB5ZXMsIGFsbCB0aGUgImJlbmVmaXRzIiBvZiBhZGRpbmcgYSBuZXcgZHJpdmVyIGluIG9uZSB0
+cmVlIChzdGFnaW5nKSB0aGF0IApkZXBlbmRzIG9mIGNoYW5nZXMgaW4gYW5vdGhlciAod2lyZWxl
+c3MpLiBJIGhhdmUgYmVlbiBtYWludGFpbmluZyB0aGlzIHBhdGNoIGluIApteSBvd24gc291cmNl
+IGZvciBzZXZlcmFsIHdlZWtzLgoKQWNrZWQtYnk6IExhcnJ5IEZpbmdlciA8TGFycnkuRmluZ2Vy
+QGx3ZmluZ2VyLm5ldD4KClRoYW5rcywKCkxhcnJ5Cgo+IC0tLQo+Cj4gSGksCj4KPiBMaW51eCBu
+ZXh0IGdpdmVzIGEgImhlYWRzIHVwIiB0aGF0IHRoZSBmbHVzaCBmdW5jdGlvbiBvZiBzdGFnaW5n
+IGRyaXZlciByODE5MmVlCj4gbmVlZHMgdG8gYmUgYWRhcHRlZCBzb29uLgo+Cj4gVGhpcyBjYW4g
+YmUgc2VlbiB3aXRoIGUuZy4gbGludXggbmV4dC0yMDE0MDYwNiBhbmQgeDg2IGFsbG1vZGNvbmZp
+Zy4KPgo+IEFsc28sIHI4MTkyZWUgd291bGQgYmVuZWZpdCBmcm9tIHRoZSBmb2xsb3dpbmcgcGF0
+Y2g6Cj4gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1kcml2ZXItZGV2ZWwvbXNn
+NDc2OTAuaHRtbAo+Cj4gQmVzdCByZWdhcmRzLAo+Cj4gVi4KPgo+ICAgZHJpdmVycy9zdGFnaW5n
+L3J0bDgxOTJlZS9jb3JlLmMgfCA0ICsrLS0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKyksIDIgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL3J0
+bDgxOTJlZS9jb3JlLmMgYi9kcml2ZXJzL3N0YWdpbmcvcnRsODE5MmVlL2NvcmUuYwo+IGluZGV4
+IDc2ZWEzNTYuLjdmNmFjY2QgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3J0bDgxOTJl
+ZS9jb3JlLmMKPiArKysgYi9kcml2ZXJzL3N0YWdpbmcvcnRsODE5MmVlL2NvcmUuYwo+IEBAIC0z
+MjIsNyArMzIyLDcgQEAgc3RhdGljIHZvaWQgX3J0bF9hZGRfd293bGFuX3BhdHRlcm5zKHN0cnVj
+dCBpZWVlODAyMTFfaHcgKmh3LAo+ICAgCXN0cnVjdCBydGxfbWFjICptYWMgPSAmKHJ0bHByaXYt
+Pm1hYzgwMjExKTsKPiAgIAlzdHJ1Y3QgY2ZnODAyMTFfcGt0X3BhdHRlcm4gKnBhdHRlcm5zID0g
+d293LT5wYXR0ZXJuczsKPiAgIAlzdHJ1Y3QgcnRsX3dvd19wYXR0ZXJuIHJ0bF9wYXR0ZXJuOwo+
+IC0JdTggKnBhdHRlcm5fb3MsICptYXNrX29zOwo+ICsJY29uc3QgdTggKnBhdHRlcm5fb3MsICpt
+YXNrX29zOwo+ICAgCXU4IG1hc2tbTUFYX1dPTF9CSVRfTUFTS19TSVpFXSA9IHswfTsKPiAgIAl1
+OCBjb250ZW50W01BWF9XT0xfUEFUVEVSTl9TSVpFXSA9IHswfTsKPiAgIAl1OCBicm9hZGNhc3Rf
+YWRkcls2XSA9IHsweGZmLCAweGZmLCAweGZmLCAweGZmLCAweGZmLCAweGZmfTsKPiBAQCAtMTU2
+MSw3ICsxNTYxLDcgQEAgc3RhdGljIHZvaWQgcnRsX29wX3Jma2lsbF9wb2xsKHN0cnVjdCBpZWVl
+ODAyMTFfaHcgKmh3KQo+ICAgICogYmVmb3JlIHN3aXRjaCBjaGFubmxlIG9yIHBvd2VyIHNhdmUs
+IG9yIHR4IGJ1ZmZlciBwYWNrZXQKPiAgICAqIG1heWJlIHNlbmQgYWZ0ZXIgb2ZmY2hhbm5lbCBv
+ciByZiBzbGVlcCwgdGhpcyBtYXkgY2F1c2UKPiAgICAqIGRpcy1hc3NvY2lhdGlvbiBieSBBUCAq
+Lwo+IC1zdGF0aWMgdm9pZCBydGxfb3BfZmx1c2goc3RydWN0IGllZWU4MDIxMV9odyAqaHcsCj4g
+K3N0YXRpYyB2b2lkIHJ0bF9vcF9mbHVzaChzdHJ1Y3QgaWVlZTgwMjExX2h3ICpodywgc3RydWN0
+IGllZWU4MDIxMV92aWYgKnZpZiwKPiAgIAkJCSB1MzIgcXVldWVzLCBib29sIGRyb3ApCj4gICB7
+Cj4gICAJc3RydWN0IHJ0bF9wcml2ICpydGxwcml2ID0gcnRsX3ByaXYoaHcpOwo+CgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxp
+c3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJp
+dmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
