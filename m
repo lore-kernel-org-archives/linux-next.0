@@ -1,72 +1,44 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: [PATCH linux-next] staging: r8192ee: Adapt flush function
- prototype
-Date: Sat, 07 Jun 2014 18:52:50 -0500
-Message-ID: <5393A5D2.2090104@lwfinger.net>
-References: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: randconfig build error with next-20140604, in drivers/i2c/muxes/i2c-mux-pca954x.c
+Date: Mon, 9 Jun 2014 15:12:01 +0200
+Message-ID: <CACRpkdZO_vE1VnJ6=gEdX8P-qNADsskJkMOdaRDg-TabTSySCQ@mail.gmail.com>
+References: <CA+r1Zhi9Qd4aZ2WJ02K4Gv=zg7QvG+r=t2VpiXRKXcYRc1vt=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: =?UTF-8?B?VmluY2VudCBTdGVobMOp?= <vincent.stehle@laposte.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+r1Zhi9Qd4aZ2WJ02K4Gv=zg7QvG+r=t2VpiXRKXcYRc1vt=A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Jingoo Han <jg1.han@samsung.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gMDYvMDcvMjAxNCAxMjozOSBQTSwgVmluY2VudCBTdGVobMOpIHdyb3RlOgo+IENvbW1pdCA3
-N2JlMmM1NGM1YmQgJ21hYzgwMjExOiBhZGQgdmlmIHRvIGZsdXNoIGNhbGwnIG1vZGlmaWVzIHRo
-ZSBmbHVzaAo+IG9wZXJhdGlvbiBwcm90b3R5cGUuIFVwZGF0ZSByODE5MmVlIGZ1bmN0aW9uIGFj
-Y29yZGluZ2x5Lgo+Cj4gVGhpcyBmaXhlcyB0aGUgZm9sbG93aW5nIGNvbXBpbGF0aW9uIHdhcm5p
-bmdzOgo+Cj4gICAgZHJpdmVycy9zdGFnaW5nL3J0bDgxOTJlZS9jb3JlLmM6IEF0IHRvcCBsZXZl
-bDoKPiAgICBkcml2ZXJzL3N0YWdpbmcvcnRsODE5MmVlL2NvcmUuYzoxNTk5OjI6IHdhcm5pbmc6
-IGluaXRpYWxpemF0aW9uIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZSBbZW5hYmxlZCBi
-eSBkZWZhdWx0XQo+ICAgICAgLmZsdXNoID0gcnRsX29wX2ZsdXNoLAo+ICAgICAgXgo+ICAgIGRy
-aXZlcnMvc3RhZ2luZy9ydGw4MTkyZWUvY29yZS5jOjE1OTk6Mjogd2FybmluZzogKG5lYXIgaW5p
-dGlhbGl6YXRpb24gZm9yIOKAmHJ0bDkyZV9vcHMuZmx1c2jigJkpIFtlbmFibGVkIGJ5IGRlZmF1
-bHRdCj4KPiBTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQuc3RlaGxlQGxh
-cG9zdGUubmV0Pgo+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRp
-b24ub3JnPgo+IENjOiBMYXJyeSBGaW5nZXIgPExhcnJ5LkZpbmdlckBsd2Zpbmdlci5uZXQ+CgpB
-aCB5ZXMsIGFsbCB0aGUgImJlbmVmaXRzIiBvZiBhZGRpbmcgYSBuZXcgZHJpdmVyIGluIG9uZSB0
-cmVlIChzdGFnaW5nKSB0aGF0IApkZXBlbmRzIG9mIGNoYW5nZXMgaW4gYW5vdGhlciAod2lyZWxl
-c3MpLiBJIGhhdmUgYmVlbiBtYWludGFpbmluZyB0aGlzIHBhdGNoIGluIApteSBvd24gc291cmNl
-IGZvciBzZXZlcmFsIHdlZWtzLgoKQWNrZWQtYnk6IExhcnJ5IEZpbmdlciA8TGFycnkuRmluZ2Vy
-QGx3ZmluZ2VyLm5ldD4KClRoYW5rcywKCkxhcnJ5Cgo+IC0tLQo+Cj4gSGksCj4KPiBMaW51eCBu
-ZXh0IGdpdmVzIGEgImhlYWRzIHVwIiB0aGF0IHRoZSBmbHVzaCBmdW5jdGlvbiBvZiBzdGFnaW5n
-IGRyaXZlciByODE5MmVlCj4gbmVlZHMgdG8gYmUgYWRhcHRlZCBzb29uLgo+Cj4gVGhpcyBjYW4g
-YmUgc2VlbiB3aXRoIGUuZy4gbGludXggbmV4dC0yMDE0MDYwNiBhbmQgeDg2IGFsbG1vZGNvbmZp
-Zy4KPgo+IEFsc28sIHI4MTkyZWUgd291bGQgYmVuZWZpdCBmcm9tIHRoZSBmb2xsb3dpbmcgcGF0
-Y2g6Cj4gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1kcml2ZXItZGV2ZWwvbXNn
-NDc2OTAuaHRtbAo+Cj4gQmVzdCByZWdhcmRzLAo+Cj4gVi4KPgo+ICAgZHJpdmVycy9zdGFnaW5n
-L3J0bDgxOTJlZS9jb3JlLmMgfCA0ICsrLS0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKyksIDIgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL3J0
-bDgxOTJlZS9jb3JlLmMgYi9kcml2ZXJzL3N0YWdpbmcvcnRsODE5MmVlL2NvcmUuYwo+IGluZGV4
-IDc2ZWEzNTYuLjdmNmFjY2QgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3J0bDgxOTJl
-ZS9jb3JlLmMKPiArKysgYi9kcml2ZXJzL3N0YWdpbmcvcnRsODE5MmVlL2NvcmUuYwo+IEBAIC0z
-MjIsNyArMzIyLDcgQEAgc3RhdGljIHZvaWQgX3J0bF9hZGRfd293bGFuX3BhdHRlcm5zKHN0cnVj
-dCBpZWVlODAyMTFfaHcgKmh3LAo+ICAgCXN0cnVjdCBydGxfbWFjICptYWMgPSAmKHJ0bHByaXYt
-Pm1hYzgwMjExKTsKPiAgIAlzdHJ1Y3QgY2ZnODAyMTFfcGt0X3BhdHRlcm4gKnBhdHRlcm5zID0g
-d293LT5wYXR0ZXJuczsKPiAgIAlzdHJ1Y3QgcnRsX3dvd19wYXR0ZXJuIHJ0bF9wYXR0ZXJuOwo+
-IC0JdTggKnBhdHRlcm5fb3MsICptYXNrX29zOwo+ICsJY29uc3QgdTggKnBhdHRlcm5fb3MsICpt
-YXNrX29zOwo+ICAgCXU4IG1hc2tbTUFYX1dPTF9CSVRfTUFTS19TSVpFXSA9IHswfTsKPiAgIAl1
-OCBjb250ZW50W01BWF9XT0xfUEFUVEVSTl9TSVpFXSA9IHswfTsKPiAgIAl1OCBicm9hZGNhc3Rf
-YWRkcls2XSA9IHsweGZmLCAweGZmLCAweGZmLCAweGZmLCAweGZmLCAweGZmfTsKPiBAQCAtMTU2
-MSw3ICsxNTYxLDcgQEAgc3RhdGljIHZvaWQgcnRsX29wX3Jma2lsbF9wb2xsKHN0cnVjdCBpZWVl
-ODAyMTFfaHcgKmh3KQo+ICAgICogYmVmb3JlIHN3aXRjaCBjaGFubmxlIG9yIHBvd2VyIHNhdmUs
-IG9yIHR4IGJ1ZmZlciBwYWNrZXQKPiAgICAqIG1heWJlIHNlbmQgYWZ0ZXIgb2ZmY2hhbm5lbCBv
-ciByZiBzbGVlcCwgdGhpcyBtYXkgY2F1c2UKPiAgICAqIGRpcy1hc3NvY2lhdGlvbiBieSBBUCAq
-Lwo+IC1zdGF0aWMgdm9pZCBydGxfb3BfZmx1c2goc3RydWN0IGllZWU4MDIxMV9odyAqaHcsCj4g
-K3N0YXRpYyB2b2lkIHJ0bF9vcF9mbHVzaChzdHJ1Y3QgaWVlZTgwMjExX2h3ICpodywgc3RydWN0
-IGllZWU4MDIxMV92aWYgKnZpZiwKPiAgIAkJCSB1MzIgcXVldWVzLCBib29sIGRyb3ApCj4gICB7
-Cj4gICAJc3RydWN0IHJ0bF9wcml2ICpydGxwcml2ID0gcnRsX3ByaXYoaHcpOwo+CgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxp
-c3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJp
-dmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
+On Wed, Jun 4, 2014 at 6:44 PM, Jim Davis <jim.epost@gmail.com> wrote:
+
+> Building with the attached random configuration file,
+>
+> drivers/i2c/muxes/i2c-mux-pca954x.c: In function =E2=80=98pca954x_pro=
+be=E2=80=99:
+> drivers/i2c/muxes/i2c-mux-pca954x.c:204:2: error: implicit declaratio=
+n
+> of function =E2=80=98devm_gpiod_get=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+>   gpio =3D devm_gpiod_get(&client->dev, "reset");
+>   ^
+> drivers/i2c/muxes/i2c-mux-pca954x.c:204:7: warning: assignment makes
+> pointer from integer without a cast [enabled by default]
+>   gpio =3D devm_gpiod_get(&client->dev, "reset");
+>        ^
+> drivers/i2c/muxes/i2c-mux-pca954x.c:206:3: error: implicit declaratio=
+n
+> of function =E2=80=98gpiod_direction_output=E2=80=99
+> [-Werror=3Dimplicit-function-declaration]
+>    gpiod_direction_output(gpio, 0);
+>    ^
+> cc1: some warnings being treated as errors
+> make[3]: *** [drivers/i2c/muxes/i2c-mux-pca954x.o] Error 1
+
+I've sent a patch for this to Wolfram and the i2c discuss list.
+
+Yours,
+Linus Walleij
