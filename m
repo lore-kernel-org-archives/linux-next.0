@@ -1,68 +1,56 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vhost tree
-Date: Tue, 10 Jun 2014 12:38:06 +0300
-Message-ID: <20140610093806.GB7423@redhat.com>
-References: <20140610141217.50d98cd6@canb.auug.org.au>
+From: Chen Gang <gang.chen.5i5j@gmail.com>
+Subject: [PATCH] drivers: Kconfig: Add HAS_IOMEM dependency for allmodconfig
+ under score architecture
+Date: Tue, 10 Jun 2014 20:04:58 +0800
+Message-ID: <5396F46A.30805@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:43679 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750837AbaFJJhp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2014 05:37:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20140610141217.50d98cd6@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nicholas Bellinger <nab@linux-iscsi.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: jkosina@suse.cz, kishon@ti.com
+Cc: linux-input@vger.kernel.org, linux-next@vger.kernel.org, liqin.linux@gmail.com, lennox.wu@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 10, 2014 at 02:12:17PM +1000, Stephen Rothwell wrote:
-> Hi Michael,
-> 
-> After merging the vhost tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/vhost/scsi.c: In function 'vhost_scsi_handle_vq':
-> drivers/vhost/scsi.c:1043:14: error: 'struct vhost_dev' has no member named 'acked_features'
->    if (vs->dev.acked_features & VIRTIO_SCSI_F_T10_PI) {
->               ^
-> 
-> Commit 95e7c4341b8e ("vhost/scsi: Enable T10 PI IOV -> SGL memory
-> mapping") from the target-updates tree interacting with commit
-> 10350a292160 ("vhost: move acked_features to VQs") from the vhost tree.
-> 
-> I applied the following patch which seems right, but may not be.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 10 Jun 2014 14:08:21 +1000
-> Subject: [PATCH] vhost/scsi: fixup for acked_features move
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+When NO_IOMEM is enabled (e.g. score architecture), some drivers which
+need HAS_IOMEM need notice about it, or it will report related warning:
 
-This is exactly the correct resolution of this conflict.
-ACK
+  scripts/kconfig/conf --allmodconfig Kconfig
+  kernel/time/Kconfig:162:warning: range is invalid
+  warning: (PINCTRL_ROCKCHIP && PINCTRL_DOVE && POWER_RESET_KEYSTONE && S3C2410_WATCHDOG && VIDEO_S5P_FIMC && PHY_SAMSUNG_USB2) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
+  warning: (GPIO_SCH && GPIO_ICH && GPIO_VX855 && GPIO_RDC321X && IE6XX_WDT && RADIO_WL1273 && HID_SENSOR_HUB && MFD_NVEC) selects MFD_CORE which has unmet direct dependencies (HAS_IOMEM)
 
-> ---
->  drivers/vhost/scsi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-> index 78ff1f64d759..6d7dd85365fe 100644
-> --- a/drivers/vhost/scsi.c
-> +++ b/drivers/vhost/scsi.c
-> @@ -1040,7 +1040,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
->  			break;
->  		}
->  
-> -		if (vs->dev.acked_features & VIRTIO_SCSI_F_T10_PI) {
-> +		if (vhost_has_feature(vq, VIRTIO_SCSI_F_T10_PI)) {
->  			req = &v_req_pi;
->  			lunp = &v_req_pi.lun[0];
->  			target = &v_req_pi.lun[1];
-> -- 
-> 2.0.0
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+
+Signed-off-by: Chen Gang <gang.chen.5i5j@gmail.com>
+---
+ drivers/hid/Kconfig | 2 +-
+ drivers/phy/Kconfig | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 800c8b6..5e79c6a 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -810,7 +810,7 @@ config HID_ZYDACRON
+ 
+ config HID_SENSOR_HUB
+ 	tristate "HID Sensors framework support"
+-	depends on HID
++	depends on HID && HAS_IOMEM
+ 	select MFD_CORE
+ 	default n
+ 	---help---
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 16a2f06..fcdfe7c 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -122,6 +122,7 @@ config PHY_SUN4I_USB
+ 
+ config PHY_SAMSUNG_USB2
+ 	tristate "Samsung USB 2.0 PHY driver"
++	depends on HAS_IOMEM
+ 	select GENERIC_PHY
+ 	select MFD_SYSCON
+ 	help
+-- 
+1.9.2.459.g68773ac
