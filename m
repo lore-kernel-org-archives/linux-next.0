@@ -1,58 +1,83 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: randconfig build error with next-20140604, in drivers/i2c/muxes/i2c-mux-pca954x.c
-Date: Mon, 09 Jun 2014 15:31:40 +0200
-Message-ID: <14609786.lXROpz1lS8@avalon>
-References: <CA+r1Zhi9Qd4aZ2WJ02K4Gv=zg7QvG+r=t2VpiXRKXcYRc1vt=A@mail.gmail.com> <CACRpkdZO_vE1VnJ6=gEdX8P-qNADsskJkMOdaRDg-TabTSySCQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the f2fs tree
+Date: Tue, 10 Jun 2014 11:23:04 +1000
+Message-ID: <20140610112304.5ef43a2a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZO_vE1VnJ6=gEdX8P-qNADsskJkMOdaRDg-TabTSySCQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "Jean Delvare (PC drivers, core)" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/b6qwC9WSYdIB8U3k+XoD8BJ"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54488 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754320AbaFJBXL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Jun 2014 21:23:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Monday 09 June 2014 15:12:01 Linus Walleij wrote:
-> On Wed, Jun 4, 2014 at 6:44 PM, Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote=
-:
-> > Building with the attached random configuration file,
-> >=20
-> > drivers/i2c/muxes/i2c-mux-pca954x.c: In function =E2=80=98pca954x_p=
-robe=E2=80=99:
-> > drivers/i2c/muxes/i2c-mux-pca954x.c:204:2: error: implicit declarat=
-ion
-> > of function =E2=80=98devm_gpiod_get=E2=80=99 [-Werror=3Dimplicit-fu=
-nction-declaration]
-> >=20
-> >   gpio =3D devm_gpiod_get(&client->dev, "reset");
-> >   ^
-> >=20
-> > drivers/i2c/muxes/i2c-mux-pca954x.c:204:7: warning: assignment make=
-s
-> > pointer from integer without a cast [enabled by default]
-> >=20
-> >   gpio =3D devm_gpiod_get(&client->dev, "reset");
-> >  =20
-> >        ^
-> >=20
-> > drivers/i2c/muxes/i2c-mux-pca954x.c:206:3: error: implicit declarat=
-ion
-> > of function =E2=80=98gpiod_direction_output=E2=80=99
-> > [-Werror=3Dimplicit-function-declaration]
-> >=20
-> >    gpiod_direction_output(gpio, 0);
-> >    ^
-> >=20
-> > cc1: some warnings being treated as errors
-> > make[3]: *** [drivers/i2c/muxes/i2c-mux-pca954x.o] Error 1
->=20
-> I've sent a patch for this to Wolfram and the i2c discuss list.
+--Sig_/b6qwC9WSYdIB8U3k+XoD8BJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-https://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/commit/?h=3D=
-i2c/for-next&id=3D642653d16a0f8e78b7a25d930b62aa771ebc939c
+Hi Al,
+
+Today's linux-next merge of the vfs tree got a conflict in
+fs/f2fs/data.c between commit b6fe5873cb42 ("f2fs: fix to recover data
+written by dio") from the f2fs tree and commits d8d3d94b80aa ("pass
+iov_iter to ->direct_IO()") and 31b140398ce5 ("switch
+{__,}blockdev_direct_IO() to iov_iter") from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
-Regards,
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Laurent Pinchart
+diff --cc fs/f2fs/data.c
+index c1fb6dd10911,1d2e7e9624d2..000000000000
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@@ -1044,14 -1018,11 +1043,14 @@@ static ssize_t f2fs_direct_IO(int rw, s
+  	if (f2fs_has_inline_data(inode))
+  		return 0;
+ =20
+- 	if (check_direct_IO(inode, rw, iov, offset, nr_segs))
++ 	if (check_direct_IO(inode, rw, iter, offset))
+  		return 0;
+ =20
+ +	/* clear fsync mark to recover these blocks */
+ +	fsync_mark_clear(F2FS_SB(inode->i_sb), inode->i_ino);
+ +
+- 	return blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
+- 							get_data_block);
++ 	return blockdev_direct_IO(rw, iocb, inode, iter, offset,
++ 				  get_data_block);
+  }
+ =20
+  static void f2fs_invalidate_data_page(struct page *page, unsigned int off=
+set,
+
+--Sig_/b6qwC9WSYdIB8U3k+XoD8BJ
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBCAAGBQJTll39AAoJEMDTa8Ir7ZwV/QkP/jFwASXQjY9I15O4WEDLwRwW
+YzOkUhxbCXIxKzZGKKL4RjCGnHdc3FwbNBHKbWwvEqO1Mjqgqmk1NjMypQ3jPhKo
+jtIOO42AIBizH2cwf5eUfq37xMebRC/4Z8KSkZM4boQhcy4rvU2KOp9Tl1AXQXPC
+fWHVtvoP1I4sG8Qt+QljaSqs8ht42TwwGLRWSyPl1X9ZVxIqdORB+UDQi9V9bRof
+NGigwOyJ9Z6yN8M9DFa3AjJasWu6z/0Dp2MoZORVJU/dGgznSOyYD+JkM15x6lHj
+5tG1rVmxkWYrKG9CbECLl+/LVqhyNSglFaTJbJxx23/4xYlsJz1LI9GE2LsEacfB
+WkHlaqoVPHvaM3TxOYfGMMy/wVeXX+R5Fivh+W3gC4Sxh7qg8LkwsJlAhapo7jYo
+1vvZqY7mVpWGTK+Hnc60HrxSmUNVGW9+/pEsKR0w2m99O6YdtoAGlcQLi0XNM8jb
+gNyccv8I6vA+NGr2xtG3HrGPGENcV6wDQZH5IkYE9sda7agDGi2Qzz61S+gbJcRd
+lNS9pEzuYirmK38CtFPy1Cb7Y5QQ2jS1GAryZnOq+Ehe9i07lTzmxZKadWYTI4JV
+B8syVZtF0W/XZGNzHIoMarTgA0W0tLKbVt8oSxUCV1lpqmTPXQM0ouMyn/+MYzhf
+4Bh0DaQMjsF7IeVAiPNf
+=FnN3
+-----END PGP SIGNATURE-----
+
+--Sig_/b6qwC9WSYdIB8U3k+XoD8BJ--
