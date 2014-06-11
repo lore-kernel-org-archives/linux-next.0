@@ -1,39 +1,29 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [next] ASoC fsl-ssi change breaks mpc85xx_defconfig build
-Date: Wed, 11 Jun 2014 17:55:17 -0400
-Message-ID: <5398D045.3060906@windriver.com>
+From: Eva Perez <leadstheway2483@gmail.com>
+Subject: Looking for Quality Leads?
+Date: Wed, 11 Jun 2014 14:59:09 -0700
+Message-ID: <CAP1hYGCTHRXGPR+p2+A3AdbqkB7xY-ef3k=pD+0D_z4KhUf4DQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:36971 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752657AbaFKVzP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2014 17:55:15 -0400
+Received: from mail-yk0-f177.google.com ([209.85.160.177]:54521 "EHLO
+	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751797AbaFKV7K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2014 17:59:10 -0400
+Received: by mail-yk0-f177.google.com with SMTP id 10so356713ykt.22
+        for <linux-next@vger.kernel.org>; Wed, 11 Jun 2014 14:59:10 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Michael Grzeschik <mgr@pengutronix.de>, Mark Brown <broonie@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: leadstheway2483@gmail.com
 
-Hi Markus,
+Hi,
 
-A bisection shows that this commit:
+Are you currently in need of help in generating leads or appointments
+for your business? We can help you through our sales calling campaign.
 
-432481220101166a0b33dc6f951b38a8af3d281c is the first bad commit
-commit 432481220101166a0b33dc6f951b38a8af3d281c
-Author: Markus Pargmann <mpa@pengutronix.de>
-Date:   Tue May 27 10:24:25 2014 +0200
+I'd be happy to talk to you and discuss our program. Please let me
+know the best way for us to connect.
 
-    ASoC: fsl-ssi: Use regmap
+Regards,
 
-found in linux-next causes the 85xx powerpc build to fail with:
-
-sound/soc/fsl/fsl_dma.c: In function 'fsl_soc_dma_probe':
-sound/soc/fsl/fsl_dma.c:926:34: error: invalid use of undefined type 'struct ccsr_ssi'
-sound/soc/fsl/fsl_dma.c:927:34: error: invalid use of undefined type 'struct ccsr_ssi'
-
-You can see the failure here as well:
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/11308076/
-
-Paul.    
+EVA PEREZ
+310-362-3194
