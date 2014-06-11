@@ -1,69 +1,64 @@
-From: Chen Gang <gang.chen.5i5j@gmail.com>
-Subject: Re: [PATCH] drivers: Kconfig: Add HAS_IOMEM dependency for allmodconfig
- under score architecture
-Date: Tue, 10 Jun 2014 20:20:02 +0800
-Message-ID: <5396F7F2.7080202@gmail.com>
-References: <5396F46A.30805@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Wed, 11 Jun 2014 12:02:49 +1000
+Message-ID: <20140611120249.56a64953@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <5396F46A.30805@gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: jkosina@suse.cz, kishon@ti.com
-Cc: linux-input@vger.kernel.org, linux-next@vger.kernel.org, liqin.linux@gmail.com, lennox.wu@gmail.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Hi/5dUDwwaz_YidG2sgYPqN"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60510 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752290AbaFKCDD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jun 2014 22:03:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ryan Desfosses <ryan@desfo.org>
+
+--Sig_/Hi/5dUDwwaz_YidG2sgYPqN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Bjorn,
+
+After merging the pci tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
 
+ERROR: ".pci_try_set_mwi" [drivers/scsi/qla2xxx/qla2xxx.ko] undefined!
+ERROR: ".pci_clear_mwi" [drivers/scsi/qla2xxx/qla2xxx.ko] undefined!
+ERROR: ".pci_try_set_mwi" [drivers/scsi/lpfc/lpfc.ko] undefined!
 
-On 06/10/2014 08:04 PM, Chen Gang wrote:
-> When NO_IOMEM is enabled (e.g. score architecture), some drivers which
-> need HAS_IOMEM need notice about it, or it will report related warning:
-> 
->   scripts/kconfig/conf --allmodconfig Kconfig
->   kernel/time/Kconfig:162:warning: range is invalid
-    ^
-Oh, sorry, this line above need be removed, it is not for this patch, if
-still necessary to send patch v2 for it, please let me know, thanks.
+Caused by commit 9259d755975f ("PCI: Move EXPORT_SYMBOL so it
+immediately follows function/variable").
+arch/powerpc/include/asm/pci.h defines PCI_DISABLE_MWI and there are
+two version of those functions depending on the setting of that symbol.
 
->   warning: (PINCTRL_ROCKCHIP && PINCTRL_DOVE && POWER_RESET_KEYSTONE && S3C2410_WATCHDOG && VIDEO_S5P_FIMC && PHY_SAMSUNG_USB2) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
->   warning: (GPIO_SCH && GPIO_ICH && GPIO_VX855 && GPIO_RDC321X && IE6XX_WDT && RADIO_WL1273 && HID_SENSOR_HUB && MFD_NVEC) selects MFD_CORE which has unmet direct dependencies (HAS_IOMEM)
-> 
-> 
-> Signed-off-by: Chen Gang <gang.chen.5i5j@gmail.com>
-> ---
->  drivers/hid/Kconfig | 2 +-
->  drivers/phy/Kconfig | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 800c8b6..5e79c6a 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -810,7 +810,7 @@ config HID_ZYDACRON
->  
->  config HID_SENSOR_HUB
->  	tristate "HID Sensors framework support"
-> -	depends on HID
-> +	depends on HID && HAS_IOMEM
->  	select MFD_CORE
->  	default n
->  	---help---
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 16a2f06..fcdfe7c 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -122,6 +122,7 @@ config PHY_SUN4I_USB
->  
->  config PHY_SAMSUNG_USB2
->  	tristate "Samsung USB 2.0 PHY driver"
-> +	depends on HAS_IOMEM
->  	select GENERIC_PHY
->  	select MFD_SYSCON
->  	help
-> 
+I have used the pci tree from next-20140610 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Chen Gang
+--Sig_/Hi/5dUDwwaz_YidG2sgYPqN
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-Open, share, and attitude like air, water, and life which God blessed
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTl7jOAAoJEMDTa8Ir7ZwVjpIP/3pcxUMJwa3k1Q0soTvAC7gM
+JCf/dDV57bGp/7jWywObOA4Yp7Q0rUNWvxf+TgoUHXYQxCrR79/cVnz5iw77V4Pz
+4hsnZGn8LBAsJf839NvNSwnsxbUXL9i76T5QKiTjeOuBKNUxQG+HrR6bT+/kuhjQ
+cgX5OqFW33Z+9hOT9ZhbCnxEcitPLAVsBsZAKbGq58E9TNEqDt98o0HUM5BfNk0z
+2wfwA6MeFpAgBPTkgLNUcBvJY7B0EKSJDLOFRSNf3sMdPk8GrpA5F8V3oJwnghMu
+vs98nkIUHOCD/b/DHvrlGsLAquZDXvT/9rOziPz7LfQ1PNePlL/gSbkliC7ZoQK9
+ltU8S0DrhHcnc704fgL7L5bT/F/eLCnTBhCdt9U/yHAjx/0ts3uVPRbWxzsfINkU
+rh3rD3ncCZNjqfiGHXiK+UuP2u86gfaA3sTTAAlKKFzNBMHb+MP/KFf+X/cUfz0l
+JKMva7LrYLopO1rPJREKUSWzmlKxJ7SMPHhjr22Cx5vQJWJ8S6gNAxUwhQ1ezPp2
+1VnyopCC302kCWv2oLgzcSdlQdWHuZsS+T/vSOFwbl4U/4GhmH0DwVFMUzFL+xHM
+SYkpCtKZOasKCcR20jJRENP6UiD9P1VtF096iuq6uFgAn2/XILfZxgj763+yvGoo
+IpcgnF3v4bXJHJ7D998F
+=PPlQ
+-----END PGP SIGNATURE-----
+
+--Sig_/Hi/5dUDwwaz_YidG2sgYPqN--
