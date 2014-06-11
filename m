@@ -1,35 +1,39 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [PATCH] drivers: Kconfig: Add HAS_IOMEM dependency for allmodconfig
- under score architecture
-Date: Wed, 11 Jun 2014 10:53:35 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1406111053180.1321@pobox.suse.cz>
-References: <5396F46A.30805@gmail.com> <5396F7F2.7080202@gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [next] ASoC fsl-ssi change breaks mpc85xx_defconfig build
+Date: Wed, 11 Jun 2014 17:55:17 -0400
+Message-ID: <5398D045.3060906@windriver.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:49526 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751015AbaFKIxk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2014 04:53:40 -0400
-In-Reply-To: <5396F7F2.7080202@gmail.com>
+Received: from mail1.windriver.com ([147.11.146.13]:36971 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752657AbaFKVzP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2014 17:55:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chen Gang <gang.chen.5i5j@gmail.com>
-Cc: kishon@ti.com, linux-input@vger.kernel.org, linux-next@vger.kernel.org, liqin.linux@gmail.com, lennox.wu@gmail.com
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Michael Grzeschik <mgr@pengutronix.de>, Mark Brown <broonie@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Tue, 10 Jun 2014, Chen Gang wrote:
+Hi Markus,
 
-> > When NO_IOMEM is enabled (e.g. score architecture), some drivers which
-> > need HAS_IOMEM need notice about it, or it will report related warning:
-> > 
-> >   scripts/kconfig/conf --allmodconfig Kconfig
-> >   kernel/time/Kconfig:162:warning: range is invalid
->     ^
-> Oh, sorry, this line above need be removed, it is not for this patch, if
-> still necessary to send patch v2 for it, please let me know, thanks.
+A bisection shows that this commit:
 
-I have fixed it up (together with adding a proper subject) and applied.
+432481220101166a0b33dc6f951b38a8af3d281c is the first bad commit
+commit 432481220101166a0b33dc6f951b38a8af3d281c
+Author: Markus Pargmann <mpa@pengutronix.de>
+Date:   Tue May 27 10:24:25 2014 +0200
 
--- 
-Jiri Kosina
-SUSE Labs
+    ASoC: fsl-ssi: Use regmap
+
+found in linux-next causes the 85xx powerpc build to fail with:
+
+sound/soc/fsl/fsl_dma.c: In function 'fsl_soc_dma_probe':
+sound/soc/fsl/fsl_dma.c:926:34: error: invalid use of undefined type 'struct ccsr_ssi'
+sound/soc/fsl/fsl_dma.c:927:34: error: invalid use of undefined type 'struct ccsr_ssi'
+
+You can see the failure here as well:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/11308076/
+
+Paul.    
