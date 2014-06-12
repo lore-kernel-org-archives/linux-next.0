@@ -1,59 +1,146 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with Linus' tree
-Date: Thu, 12 Jun 2014 10:43:46 +1000
-Message-ID: <20140612104346.4da3f0b5@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Thu, 12 Jun 2014 12:01:46 +1000
+Message-ID: <20140612120146.74f55b1d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6wZpVH.C8HyZeDUuU5pbY0N"; protocol="application/pgp-signature"
+ boundary="Sig_/uDDBZh3NHhtG.3fg7OWwddM"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33797 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41494 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754129AbaFLAnx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2014 20:43:53 -0400
+	id S1755197AbaFLCB5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2014 22:01:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shukla <santosh.shukla@linaro.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, Hariprasad Shenai <hariprasad@chelsio.com>
 
---Sig_/6wZpVH.C8HyZeDUuU5pbY0N
+--Sig_/uDDBZh3NHhtG.3fg7OWwddM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi all,
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/mach-exynos/sleep.S between commit 25a9ef63cd2b ("ARM: l2c:
-exynos: convert to common l2c310 early resume functionality") from
-Linus' tree and commit af728bd84cc8 ("ARM: EXYNOS: Fix build error with
-thumb2") from the samsung tree.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/infiniband/hw/cxgb4/cm.c between commits 11b8e22d4d09
+("RDMA/cxgb4: Fix vlan support") and 9eccfe109b27 ("RDMA/cxgb4: Add
+support for iWARP Port Mapper user space service") from Linus' tree and
+commits 92e7ae71726c ("iw_cxgb4: Choose appropriate hw mtu index and
+ISS for iWARP connections") and b408ff282dda ("iw_cxgb4: don't truncate
+the recv window size") from the net-next tree.
 
-I fixed it up (the former removed the code updated by the latter) and
-can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/6wZpVH.C8HyZeDUuU5pbY0N
+diff --cc drivers/infiniband/hw/cxgb4/cm.c
+index 96d7131ab974,965eaafd5851..000000000000
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@@ -533,38 -532,17 +537,49 @@@ static int send_abort(struct c4iw_ep *e
+  	return c4iw_l2t_send(&ep->com.dev->rdev, skb, ep->l2t);
+  }
+ =20
+ +/*
+ + * c4iw_form_pm_msg - Form a port mapper message with mapping info
+ + */
+ +static void c4iw_form_pm_msg(struct c4iw_ep *ep,
+ +				struct iwpm_sa_data *pm_msg)
+ +{
+ +	memcpy(&pm_msg->loc_addr, &ep->com.local_addr,
+ +		sizeof(ep->com.local_addr));
+ +	memcpy(&pm_msg->rem_addr, &ep->com.remote_addr,
+ +		sizeof(ep->com.remote_addr));
+ +}
+ +
+ +/*
+ + * c4iw_form_reg_msg - Form a port mapper message with dev info
+ + */
+ +static void c4iw_form_reg_msg(struct c4iw_dev *dev,
+ +				struct iwpm_dev_data *pm_msg)
+ +{
+ +	memcpy(pm_msg->dev_name, dev->ibdev.name, IWPM_DEVNAME_SIZE);
+ +	memcpy(pm_msg->if_name, dev->rdev.lldi.ports[0]->name,
+ +				IWPM_IFNAME_SIZE);
+ +}
+ +
+ +static void c4iw_record_pm_msg(struct c4iw_ep *ep,
+ +			struct iwpm_sa_data *pm_msg)
+ +{
+ +	memcpy(&ep->com.mapped_local_addr, &pm_msg->mapped_loc_addr,
+ +		sizeof(ep->com.mapped_local_addr));
+ +	memcpy(&ep->com.mapped_remote_addr, &pm_msg->mapped_rem_addr,
+ +		sizeof(ep->com.mapped_remote_addr));
+ +}
+ +
++ static void best_mtu(const unsigned short *mtus, unsigned short mtu,
++ 		     unsigned int *idx, int use_ts)
++ {
++ 	unsigned short hdr_size =3D sizeof(struct iphdr) +
++ 				  sizeof(struct tcphdr) +
++ 				  (use_ts ? 12 : 0);
++ 	unsigned short data_size =3D mtu - hdr_size;
++=20
++ 	cxgb4_best_aligned_mtu(mtus, hdr_size, data_size, 8, idx);
++ }
++=20
+  static int send_connect(struct c4iw_ep *ep)
+  {
+  	struct cpl_act_open_req *req;
+@@@ -583,14 -561,11 +598,15 @@@
+  	int sizev6 =3D is_t4(ep->com.dev->rdev.lldi.adapter_type) ?
+  				sizeof(struct cpl_act_open_req6) :
+  				sizeof(struct cpl_t5_act_open_req6);
+ -	struct sockaddr_in *la =3D (struct sockaddr_in *)&ep->com.local_addr;
+ -	struct sockaddr_in *ra =3D (struct sockaddr_in *)&ep->com.remote_addr;
+ -	struct sockaddr_in6 *la6 =3D (struct sockaddr_in6 *)&ep->com.local_addr;
+ -	struct sockaddr_in6 *ra6 =3D (struct sockaddr_in6 *)&ep->com.remote_addr;
+ +	struct sockaddr_in *la =3D (struct sockaddr_in *)
+ +				 &ep->com.mapped_local_addr;
+ +	struct sockaddr_in *ra =3D (struct sockaddr_in *)
+ +				 &ep->com.mapped_remote_addr;
+ +	struct sockaddr_in6 *la6 =3D (struct sockaddr_in6 *)
+ +				   &ep->com.mapped_local_addr;
+ +	struct sockaddr_in6 *ra6 =3D (struct sockaddr_in6 *)
+ +				   &ep->com.mapped_remote_addr;
++ 	int win;
+ =20
+  	wrlen =3D (ep->com.remote_addr.ss_family =3D=3D AF_INET) ?
+  			roundup(sizev4, 16) :
+@@@ -1796,7 -1821,8 +1862,8 @@@ static int import_ep(struct c4iw_ep *ep
+  		step =3D cdev->rdev.lldi.nrxq /
+  			cdev->rdev.lldi.nchan;
+  		ep->rss_qid =3D cdev->rdev.lldi.rxq_ids[
+ -			cxgb4_port_idx(n->dev) * step];
+ +			cxgb4_port_idx(pdev) * step];
++ 		set_tcp_window(ep, (struct port_info *)netdev_priv(pdev));
+ =20
+  		if (clear_mpa_v1) {
+  			ep->retry_with_mpa_v1 =3D 0;
+
+--Sig_/uDDBZh3NHhtG.3fg7OWwddM
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTmPfHAAoJEMDTa8Ir7ZwVfTQP/0a1VkuMmgutmQlgUo3cXExB
-y7K4F3eozqNKVhfUNN5FulpfRZYeSVXgWOM4KoEghtmvXpckVTN7Ehy4JWNScRab
-YP4u8r7WvEdxvpc9ouoWYacgg4LvQKLwllXbCKoe/NwM9EOUz45dGIx6BPYAIais
-UpS8U9C5N7QVhjGgWjzFKXy6KcJ6nZ+SVcemKp4FdnGpRWLMKDEdT8xyT2d3F9lO
-fNgCUEBXutHtLkjNGlsyiqLXajj8qWJctL2DPY9bAjerqjytUjBr9neR7o6dXPCv
-LaqstBmPa34wE3iwAsfGSiloafd+W86ntyUY5WM0m1hTyjKpa9ulKYH9Chmo0V2W
-JV3dM9Anpn3ABhHaT0i7KQBzpM9oPADuJY38/AFgQeaai0uC2/42gL65VZTGdHfK
-cvcxbo13hiy1hs1sFud9ZhGSRpfoQEeXkErjXoDo9omn+v8oCzjwHmGHn8dv7VJT
-hJokrQzNE3sVJ//1b1M8zLKoJi7ikiSIH48Dnqv61ppLMmjA+c6SzEKQMR6eXb/z
-xcZxRL/+O6fcLHRPA0QEhAxMnTrLCA3Z6yL/m3985hUTgY/oqXUSbfxCtemLlG7K
-eVXS5VyvV+yf3xGeas6GJGlNgelBpj2SBI7FKSsv5bT9Xdcx/xxBU8NOxZW1qJe2
-mz4DxS8Rs8+NvvjWiU3t
-=C12Z
+iQIcBAEBCAAGBQJTmQoPAAoJEMDTa8Ir7ZwVb9MP/inAPHgZ3+Zb6t/5TPc6qPfK
+LjS3tLXTQcJK1wkjahO+tPhb8UuiZNnhgQS7VoGDUlbtgMXUA2xTP9+B/q8hk4Of
+ZH5zI3SsfQ08X8iiS+XbqeVQMgciBoREUJRno2O4ZryA5GqDZXbdjBloy0utSHM6
+EtvcquP4u+U8CkxuyfanNGVtdaJpVCKgOLDRrbs+El5ZuP6s4nOnn4zDI5+CbZFv
+a3Q6zXelsm6LFY1Esad0uqw+6XJ6jvTnhHKUaFeHBdwUPtSv0JtqFmklegImk87i
+6jkL8xYbHlB/y5rKXv3EcxWBU4iINj7gPZvI6nUKyfShzr38VqEqLg2ek944W73N
+ixG4DlLF2QyPuzwXxArxSH9v3Gg+jMN3qHbw38X6t+kBc2TmbnTpFYvJz15v98R7
+Dl3ijfWDDZFVjxMvbRRDMhWxveOayYyqW7TbCQ1FF9HVHR01iJE4HhHZu+RnGYpp
+c8DbQtU+K+tq4AIFhNTDs06BC7xjicDw/C052A8ypgFiiOd8YTpaplmjPazSxgNl
+/nEboJEsym6fibzMlF+uXPFFtPC9Jt/A0k3fLdAC/mLRElv477IaKt7X2A8iVmEE
+fmbA3FEzDuwAYZbu/XOnXf18ne2vzchIYuWBOvV7/+3ZyzV9VEEJ6Bs9LI6ATkNF
+6CqMWfdHbtr3HrK7EZFq
+=m3Ok
 -----END PGP SIGNATURE-----
 
---Sig_/6wZpVH.C8HyZeDUuU5pbY0N--
+--Sig_/uDDBZh3NHhtG.3fg7OWwddM--
