@@ -1,111 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Thu, 12 Jun 2014 12:14:05 +1000
-Message-ID: <20140612121405.29828461@canb.auug.org.au>
+Subject: linux-next: manual merge of the virtio tree with Linus' tree
+Date: Thu, 12 Jun 2014 13:37:02 +1000
+Message-ID: <20140612133702.58473968@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mutqB3Sa9oEFTbX8sn6949V"; protocol="application/pgp-signature"
+ boundary="Sig_/VdeWwv33SraHT5b2Nmpwe8A"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55936 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54789 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752449AbaFLCOO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2014 22:14:14 -0400
+	id S1752751AbaFLDhR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2014 23:37:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus =?UTF-8?B?TMO8c3Npbmc=?= <linus.luessing@web.de>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
---Sig_/mutqB3Sa9oEFTbX8sn6949V
+--Sig_/VdeWwv33SraHT5b2Nmpwe8A
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Rusty,
 
-After merging the net-next tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the virtio tree got a conflict in
+drivers/scsi/virtio_scsi.c between commit b54197c43db8 ("virtio_scsi:
+use cmd_size") from Linus' tree and commit c77fba9ab058 ("virtio_scsi:
+don't call virtqueue_add_sgs(... GFP_NOIO) holding spinlock") from the
+virtio tree.
 
-net/bridge/br_multicast.c: In function 'br_multicast_has_querier_adjacent':
-net/bridge/br_multicast.c:2248:25: error: 'struct net_bridge' has no member=
- named 'ip6_other_query'
-   if (!timer_pending(&br->ip6_other_query.timer) ||
-                         ^
-In file included from include/linux/idr.h:18:0,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:15,
-                 from include/linux/kobject.h:21,
-                 from include/linux/device.h:17,
-                 from include/linux/dma-mapping.h:5,
-                 from arch/powerpc/include/asm/machdep.h:14,
-                 from arch/powerpc/include/asm/archrandom.h:6,
-                 from include/linux/random.h:81,
-                 from include/linux/net.h:22,
-                 from include/linux/skbuff.h:27,
-                 from include/linux/if_ether.h:23,
-                 from net/bridge/br_multicast.c:15:
-net/bridge/br_multicast.c:2249:25: error: 'struct net_bridge' has no member=
- named 'ip6_querier'
-       rcu_dereference(br->ip6_querier.port) =3D=3D port)
-                         ^
-net/bridge/br_multicast.c:2249:25: error: 'struct net_bridge' has no member=
- named 'ip6_querier'
-       rcu_dereference(br->ip6_querier.port) =3D=3D port)
-                         ^
-In file included from include/linux/err.h:4:0,
-                 from net/bridge/br_multicast.c:13:
-net/bridge/br_multicast.c:2249:25: error: 'struct net_bridge' has no member=
- named 'ip6_querier'
-       rcu_dereference(br->ip6_querier.port) =3D=3D port)
-                         ^
-net/bridge/br_multicast.c:2249:25: error: 'struct net_bridge' has no member=
- named 'ip6_querier'
-       rcu_dereference(br->ip6_querier.port) =3D=3D port)
-                         ^
-In file included from include/linux/idr.h:18:0,
-                 from include/linux/kernfs.h:14,
-                 from include/linux/sysfs.h:15,
-                 from include/linux/kobject.h:21,
-                 from include/linux/device.h:17,
-                 from include/linux/dma-mapping.h:5,
-                 from arch/powerpc/include/asm/machdep.h:14,
-                 from arch/powerpc/include/asm/archrandom.h:6,
-                 from include/linux/random.h:81,
-                 from include/linux/net.h:22,
-                 from include/linux/skbuff.h:27,
-                 from include/linux/if_ether.h:23,
-                 from net/bridge/br_multicast.c:15:
-net/bridge/br_multicast.c:2249:25: error: 'struct net_bridge' has no member=
- named 'ip6_querier'
-       rcu_dereference(br->ip6_querier.port) =3D=3D port)
-                         ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 2cd4143192e8 ("bridge: memorize and export selected
-IGMP/MLD querier port").  This build has CONFIG_IPV6 not set.
-
-I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/mutqB3Sa9oEFTbX8sn6949V
+diff --cc drivers/scsi/virtio_scsi.c
+index d4727b339474,e2a68aece3da..000000000000
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@@ -484,10 -529,13 +483,9 @@@ static int virtscsi_queuecommand(struc
+  	memcpy(cmd->req.cmd.cdb, sc->cmnd, sc->cmd_len);
+ =20
+  	if (virtscsi_kick_cmd(req_vq, cmd,
+- 			      sizeof cmd->req.cmd, sizeof cmd->resp.cmd,
+- 			      GFP_ATOMIC) !=3D 0)
+ -			      sizeof cmd->req.cmd, sizeof cmd->resp.cmd) =3D=3D 0)
+ -		ret =3D 0;
+ -	else
+ -		mempool_free(cmd, virtscsi_cmd_pool);
+ -
+ -out:
+ -	return ret;
+++			      sizeof cmd->req.cmd, sizeof cmd->resp.cmd) !=3D 0)
+ +		return SCSI_MLQUEUE_HOST_BUSY;
+ +	return 0;
+  }
+ =20
+  static int virtscsi_queuecommand_single(struct Scsi_Host *sh,
+
+--Sig_/VdeWwv33SraHT5b2Nmpwe8A
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTmQzyAAoJEMDTa8Ir7ZwVoasP/18eb3g7lmiVBUH2WNK8HXbU
-sl9xTFefW5j0nTV1ZdmgTuukxoyj9LpykAywo+e90MXk44ABXpTTh7vTUO5jTf9D
-v7ivmd3illypy//r49iSa5KMbqYVmSZAOy9yELdxiwAlppWnz5tlkyHwQ+H0v/z0
-4YIKYj1lcXdKR1jlnyJCRYHAHgM5DuYUSMtrQafI1DcgYdC1GxHFUU4lQF20P+8k
-Jy5igjz6PB6GdahaftXEE/jSOjdhnebP4F0tC+OkT/isLl26oJnSMcqvGLGmbWod
-ZvUo4e1gCUSG/Nd0dA3vhWYTTqgCcDa/a27hLysVZ7Sk9NyzJLg4b498FJbris3S
-1T/+aL/0vsSIirjj/LXGKeQC57jaBU5fZGbAWLaE0mvKJxofLQL9tACZkuvEEylg
-NORS8K23IxsIdnPmwSMCE5oFvX0knUAXUakrKv7gT0KUeUmvmGxWBifYHcQ1jhnk
-J06VoR83vkxOcQXq9CgTrGjbbTwgooxqNdvH+KHyrkoYTbq7osivFKaFK4mTiyI7
-dm0mFWfWyXnGH9y1z/2A7w7DHUM1+mOd2MKHj0eqXHKIPlHBPFbSLMlGFo2rArh6
-woxPVBefrKair5oQwxKESjW4gQvcwQapsb/RVyxC2U+bZYYKEBoFYNnNMdRv+nxw
-dUS7exuBWlsMCXssRGOq
-=LMOH
+iQIcBAEBCAAGBQJTmSBlAAoJEMDTa8Ir7ZwVK+AP/RQTgdjYD/OwuMekjpQFS+Zl
+K9B8E/6qxWdbnTf8nHFf9aYGrlMAKUjGH4ml+f/Ew4i3CCip7U9djL828ld6dL0J
+bAUo6RW1AWormdkLTdtVln1qXpp1pxGNKezMkWyG0YTW3PFPVy+nFkXihruNQA5u
+U5t/129smpfoFExHC5wi1gfodPIXC9jS/Th18MzmHYoR8Zpv1lS9kYkzT/neZ54R
+g7zMODAEh4vpMBpYr2eyxYHf00S+FUP0bgmAd58s0crBxPF2gmav5cV6TcJ4Wm/+
+/7n7PsF7FiNTyH0pgY+Qobfh1n40/Tsvhs+6B/NCPVuo1GHJODLXZRPTGWeyU9JK
+546pdPzxmznGm1sXjL/H0L8/5qI0aG8XHCPGCK7VmZUkVVQ9hkqInKd732jFhX+4
+7w9YVm/PGwnsFCXNaXkTJTDmJ1xLpCvxmTSIqSZ7jd487RRlG3gks48LS3VQ78nF
+zJK1SieDq3XQft4mOxIhYbRaKBNk3D1n/xOw4U/YNspzoK8CVQwutOGzYCNp0KV/
+hhvTXMjRA7kOv5gatnDIcvWtIBx+bacool7m7BDzZTe16YwLNLpHiMGJcfMEfFx7
+TyYb3TyxlcwiTDYsh7l3i+fazhXwym/WQ6LDjiovfoiIe5gIiElbnklgV7eZ9BYL
+CJiSsgGd4fdSDWpa33DJ
+=Od6E
 -----END PGP SIGNATURE-----
 
---Sig_/mutqB3Sa9oEFTbX8sn6949V--
+--Sig_/VdeWwv33SraHT5b2Nmpwe8A--
