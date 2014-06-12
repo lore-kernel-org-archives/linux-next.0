@@ -1,161 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-updates tree with the virtio
- tree
-Date: Thu, 12 Jun 2014 14:17:32 +1000
-Message-ID: <20140612141732.22e5fc6d@canb.auug.org.au>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [next] ASoC fsl-ssi change breaks mpc85xx_defconfig build
+Date: Thu, 12 Jun 2014 07:24:11 +0200
+Message-ID: <20140612052411.GA24404@pengutronix.de>
+References: <5398D045.3060906@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZMOOzCAbMFCi5zQVCnj_Gmd"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35853 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750787AbaFLERk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Jun 2014 00:17:40 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:41913 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751089AbaFLFYU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jun 2014 01:24:20 -0400
+Content-Disposition: inline
+In-Reply-To: <5398D045.3060906@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Michael Grzeschik <mgr@pengutronix.de>, Mark Brown <broonie@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>
 
---Sig_/ZMOOzCAbMFCi5zQVCnj_Gmd
-Content-Type: text/plain; charset=US-ASCII
+
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicholas,
+Hi Paul,
 
-Today's linux-next merge of the target-updates tree got a conflict in
-drivers/scsi/virtio_scsi.c between commit c77fba9ab058 ("virtio_scsi:
-don't call virtqueue_add_sgs(... GFP_NOIO) holding spinlock") from the
-virtio tree and commit e6dc783a38ec ("virtio-scsi: Enable DIF/DIX modes
-in SCSI host LLD") from the target-updates tree.
+On Wed, Jun 11, 2014 at 05:55:17PM -0400, Paul Gortmaker wrote:
+> Hi Markus,
+>=20
+> A bisection shows that this commit:
+>=20
+> 432481220101166a0b33dc6f951b38a8af3d281c is the first bad commit
+> commit 432481220101166a0b33dc6f951b38a8af3d281c
+> Author: Markus Pargmann <mpa@pengutronix.de>
+> Date:   Tue May 27 10:24:25 2014 +0200
+>=20
+>     ASoC: fsl-ssi: Use regmap
+>=20
+> found in linux-next causes the 85xx powerpc build to fail with:
+>=20
+> sound/soc/fsl/fsl_dma.c: In function 'fsl_soc_dma_probe':
+> sound/soc/fsl/fsl_dma.c:926:34: error: invalid use of undefined type 'str=
+uct ccsr_ssi'
+> sound/soc/fsl/fsl_dma.c:927:34: error: invalid use of undefined type 'str=
+uct ccsr_ssi'
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Guenter also noticed this build failure and sent a patch which was
+applied by Mark yesterday. [1]
+
+Thanks,
+
+Markus
+
+[1] http://thread.gmane.org/gmane.linux.ports.ppc.embedded/70977
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
-diff --cc drivers/scsi/virtio_scsi.c
-index 99fdb9403944,1c326b63ca55..000000000000
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@@ -396,10 -438,11 +398,10 @@@ static void virtscsi_event_done(struct=20
-   */
-  static int virtscsi_add_cmd(struct virtqueue *vq,
-  			    struct virtio_scsi_cmd *cmd,
- -			    size_t req_size, size_t resp_size, gfp_t gfp)
- +			    size_t req_size, size_t resp_size)
-  {
-  	struct scsi_cmnd *sc =3D cmd->sc;
-- 	struct scatterlist *sgs[4], req, resp;
-+ 	struct scatterlist *sgs[6], req, resp;
-  	struct sg_table *out, *in;
-  	unsigned out_num =3D 0, in_num =3D 0;
- =20
-@@@ -425,10 -472,14 +431,14 @@@
-  	sgs[out_num + in_num++] =3D &resp;
- =20
-  	/* Data-in buffer */
-- 	if (in)
-+ 	if (in) {
-+ 		/* Place READ protection SGLs before Data IN payload */
-+ 		if (scsi_prot_sg_count(sc))
-+ 			sgs[out_num + in_num++] =3D scsi_prot_sglist(sc);
-  		sgs[out_num + in_num++] =3D in->sgl;
-+ 	}
- =20
- -	return virtqueue_add_sgs(vq, sgs, out_num, in_num, cmd, gfp);
- +	return virtqueue_add_sgs(vq, sgs, out_num, in_num, cmd, GFP_ATOMIC);
-  }
- =20
-  static int virtscsi_kick_cmd(struct virtio_scsi_vq *vq,
-@@@ -455,9 -538,10 +497,10 @@@ static int virtscsi_queuecommand(struc
-  				 struct virtio_scsi_vq *req_vq,
-  				 struct scsi_cmnd *sc)
-  {
- -	struct virtio_scsi_cmd *cmd;
- -	int ret, req_size;
- -
-  	struct Scsi_Host *shost =3D virtio_scsi_host(vscsi->vdev);
- +	struct virtio_scsi_cmd *cmd =3D scsi_cmd_priv(sc);
-++	int req_size;
- +
-  	BUG_ON(scsi_sg_count(sc) > shost->sg_tablesize);
- =20
-  	/* TODO: check feature bit and fail if unsupported?  */
-@@@ -466,26 -550,34 +509,24 @@@
-  	dev_dbg(&sc->device->sdev_gendev,
-  		"cmd %p CDB: %#02x\n", sc, sc->cmnd[0]);
- =20
- -	ret =3D SCSI_MLQUEUE_HOST_BUSY;
- -	cmd =3D mempool_alloc(virtscsi_cmd_pool, GFP_ATOMIC);
- -	if (!cmd)
- -		goto out;
- -
-  	memset(cmd, 0, sizeof(*cmd));
-  	cmd->sc =3D sc;
-- 	cmd->req.cmd =3D (struct virtio_scsi_cmd_req){
-- 		.lun[0] =3D 1,
-- 		.lun[1] =3D sc->device->id,
-- 		.lun[2] =3D (sc->device->lun >> 8) | 0x40,
-- 		.lun[3] =3D sc->device->lun & 0xff,
-- 		.tag =3D (unsigned long)sc,
-- 		.task_attr =3D VIRTIO_SCSI_S_SIMPLE,
-- 		.prio =3D 0,
-- 		.crn =3D 0,
-- 	};
- =20
-  	BUG_ON(sc->cmd_len > VIRTIO_SCSI_CDB_SIZE);
-- 	memcpy(cmd->req.cmd.cdb, sc->cmnd, sc->cmd_len);
- =20
-- 	if (virtscsi_kick_cmd(req_vq, cmd,
-- 			      sizeof cmd->req.cmd, sizeof cmd->resp.cmd) !=3D 0)
-+ 	if (virtio_has_feature(vscsi->vdev, VIRTIO_SCSI_F_T10_PI)) {
-+ 		virtio_scsi_init_hdr_pi(&cmd->req.cmd_pi, sc);
-+ 		memcpy(cmd->req.cmd_pi.cdb, sc->cmnd, sc->cmd_len);
-+ 		req_size =3D sizeof(cmd->req.cmd_pi);
-+ 	} else {
-+ 		virtio_scsi_init_hdr(&cmd->req.cmd, sc);
-+ 		memcpy(cmd->req.cmd.cdb, sc->cmnd, sc->cmd_len);
-+ 		req_size =3D sizeof(cmd->req.cmd);
-+ 	}
-+=20
- -	if (virtscsi_kick_cmd(req_vq, cmd, req_size, sizeof(cmd->resp.cmd),
- -			      GFP_ATOMIC) =3D=3D 0)
- -		ret =3D 0;
- -	else
- -		mempool_free(cmd, virtscsi_cmd_pool);
- -
- -out:
- -	return ret;
-++	if (virtscsi_kick_cmd(req_vq, cmd, req_size, sizeof cmd->resp.cmd) !=3D =
-0)
- +		return SCSI_MLQUEUE_HOST_BUSY;
- +	return 0;
-  }
- =20
-  static int virtscsi_queuecommand_single(struct Scsi_Host *sh,
-
---Sig_/ZMOOzCAbMFCi5zQVCnj_Gmd
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--KsGdsel6WgEHnImy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJTmSniAAoJEMDTa8Ir7ZwVppQQAIhNSxcDzr7tatuCcfXU6a2J
-DCOAQnNw+tTbRcikYYgIH1bePRrqQRrfg+xOT0476v6cwW4OrLhJVPXqu0Qf18IA
-8O0j+yPPRGtCdYsKDfUhOWnzZgzmI7FgE6Kq8dZcD2c9+lekcL0H+DVyJ0XLPAtE
-IHYEh3tzl0Bdmjoj8ZW30bogBLP5QJpVv4y9NasTANrDUWg4uA3q+LdXCsbBKytW
-Qk/BixAA5Rw7iC7AB6iGZaqriL7Djlj+1LWjbETcF10yk5tof6jxxnR5dKAVkqeD
-YzKWnUusG6j9RqusAOpkLBPjvm6/hMkCg71uxTSgo/or4hRH8KitRhnewSrGAtYP
-ifu6LnuKi9Iplv2gse8tkRHR6kH3zLwZnTJUFX1MqTKdDOgvLl0TALIjocT9eUqL
-speJUL2j3GfBCPygMjw1IISRGJmxhq1PgKUChWtNmN0kdvvVHJejugJ9M4Xdp8tq
-p8nhWh5SuKYEun+L7O/nZTSi+2McwBm77MAmp2U6kL8FTRDY4SdmcKkw3aUidoZt
-hbOsovWpTPGRC08hQC1mQI/eXkI08z817VhPFXO2C4a0AORPYMkhGtElzJjck+tx
-zFiZAnEWr+KsTOezjewH23At7xQG59MGfFJEkOkKEmLlzTttFuWSOUr5HJTPwS4V
-FIlaCRstS34uPovXkQZt
-=ecZt
+iQIcBAEBAgAGBQJTmTl7AAoJEEpcgKtcEGQQ5cIP/iJ4g066+wYxDe6izXjPh5Pb
+Tqk/9xjiB/4eaVfO0vs7a/EXge4cHvYRrBqzzcOf9xHsN31cBYCUaRKpwbFvL0Ez
+bLwAnVpQuGVOYpcwvtu/uq70HQk0Oxty/nf0KdFWTQupExNcTr4mxw3d9HtSKAmi
+kkzsVBnOY1rSIxfsPYqs8dJcDm9LksBQAdHPoyjIcvVWcHvMTSLIc113VMgsNb7o
+cI7+rdDBkPdtsGI92HTUOFTesgqI0ZMukbKxcn7ObcK/lu4spu2E/u6+JrmGwrVO
+do4pInvG0MDCYgmuXNwaeLRwoVa+JJieWzdyuhI6305+oZ13ExYkcg52twIm83rR
+asvyIsAO9NfTIyUGRuF+Bftsmx+u1E9Dr8qM1WBA/anNLtbeG5VX9R7ZqC1TfTxK
+EH7h4k6D2apTPaXqXD012ZeQNmFJGKqFxmxxeAMDObT8mjGJtPOf9KQbEM2HUk+w
+p92aLl7T8dOw+Ea+l3iqtd2+3EyvvBWCdmpF7BkRkrjuUCAc0lXq70d1p1K6thj/
+KZ01DknkvCAuwRIwOSzi+e4kktaK/PtTycuF/1lUdHGkd2uk2ogfX4QaPNvW+CcS
+FUInSBntVYsbz+7u9EVcKc+0sVV+X9SCaxhlFs6L7K6TYuoES7l7RkIBuJHg62ZY
++6dsfGE776PcCsn8fP0v
+=Qgm0
 -----END PGP SIGNATURE-----
 
---Sig_/ZMOOzCAbMFCi5zQVCnj_Gmd--
+--KsGdsel6WgEHnImy--
