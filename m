@@ -1,53 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: time to start cleaning up
-Date: Fri, 13 Jun 2014 12:06:29 +1000
-Message-ID: <20140613120629.68527777@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 13 Jun 2014 15:05:50 +1000
+Message-ID: <20140613150550.7b2e2c4c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/G.k8irYGqjYt4wnznDBgQYB"; protocol="application/pgp-signature"
+ boundary="Sig_//9tE.7nrX3cRPAfk9D_Ce_y"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45081 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33472 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751160AbaFMCGm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Jun 2014 22:06:42 -0400
+	id S1751629AbaFMFF5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Jun 2014 01:05:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
---Sig_/G.k8irYGqjYt4wnznDBgQYB
+--Sig_//9tE.7nrX3cRPAfk9D_Ce_y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-See $subject.  Especially those of you who sent Linus something
-different to what you have sent me :-(
+After merging the akpm-current tree, today's linux-next build (powerpc ppc6=
+4_defconfig)
+failed like this:
 
+fs/proc/task_mmu.c: In function 'smaps_pmd':
+include/linux/compiler.h:363:38: error: call to '__compiletime_assert_505' =
+declared with attribute error: BUILD_BUG failed
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+                                      ^
+include/linux/compiler.h:346:4: note: in definition of macro '__compiletime=
+_assert'
+    prefix ## suffix();    \
+    ^
+include/linux/compiler.h:363:2: note: in expansion of macro '_compiletime_a=
+ssert'
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^
+include/linux/bug.h:50:37: note: in expansion of macro 'compiletime_assert'
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^
+include/linux/bug.h:84:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+ #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+                     ^
+include/linux/huge_mm.h:167:27: note: in expansion of macro 'BUILD_BUG'
+ #define HPAGE_PMD_SIZE ({ BUILD_BUG(); 0; })
+                           ^
+fs/proc/task_mmu.c:505:39: note: in expansion of macro 'HPAGE_PMD_SIZE'
+  smaps_pte((pte_t *)pmd, addr, addr + HPAGE_PMD_SIZE, walk);
+                                       ^
+
+Caused by commit b0e08c526179 ("mm/pagewalk: move pmd_trans_huge_lock()
+from callbacks to common code").
+
+The reference to HPAGE_PMD_SIZE (which contains a BUILD_BUG() when
+CONFIG_TRANSPARENT_HUGEPAGE is not defined) used to be protected by a
+call to pmd_trans_huge_lock() (a static inline function that was
+contact 0 when CONFIG_TRANSPARENT_HUGEPAGE is not defined) so gcc did
+not see the reference and the BUG_ON.  That protection has been
+removed ...
+
+I have reverted that commit and commit 2dc554765dd1
+("mm-pagewalk-move-pmd_trans_huge_lock-from-callbacks-to-common-code-checkp=
+atch-fixes")
+that depend on it for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/G.k8irYGqjYt4wnznDBgQYB
+--Sig_//9tE.7nrX3cRPAfk9D_Ce_y
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTmlywAAoJEMDTa8Ir7ZwVEZcP/3D2V9CXB4fSLtH2YR+6C5tC
-QHR6pM2rrWDJuOQz/D9SkVUQw+4evY6O3N3kI1pQDwR8tAN311Bd1MoDtqq4m/cw
-difNaCcJZ7at3jY6jZLfT0a/+YlKxpV0INoEhMp/1Us1uHg2Nk0BotujgUnKgFG/
-tx4LmakHvAnrk8nbTsr0V1HqP63VnokKjJjvNYwPPmWk2GeemH/rcC2rglbvASNe
-Wq9i0HvFFY+pkF+DDNwYwv4VIJtmJQ+hABA8AL64eC1KW01VLkl7bIYMDDtCuSyu
-FTraBqya61q5PKti19+nW9/1Q36tDibZQybf/JeTikGOjotcqog3IKXe1KUSKXdy
-TQTlDJi25n/5WxJfLVKFaI9eoqroa6j/B/53zwuCsEE+2OdXop9kQUjUWYysxTd3
-QLSO7vBOPCcAPl8tjhfP1Nrn9BH0gMOYoo1q4eAWgkHgryzRUBQ07aoJ3X/haoG8
-d7kyzzEHN/BKeYPatwebwKIqdKmEGwAJnWpiAJHKVluCequdtLJFfQWZxasPKB5W
-jawvrvi2Yq94cS2fi3U+0qCS5c9vpWsKDupohNhE4cLift3PQe9V3SzHQchX6BlF
-At95Y8bX/3kDzFrz3nZomYcH+P+nz9oTalX27DrTdofjw5FcYjS0GMbgIfGVKv4l
-Ov8mdnFFo/33Y+VwuZiB
-=XmVD
+iQIcBAEBCAAGBQJTmoazAAoJEMDTa8Ir7ZwVmKUP+wdKLyKvb5SWKGktBgL4EHV+
+eLIfOazdrKirriEdVBdJ5abd8kMC4slplFyk1I86+z2zTd72OA1r1yJY7X/9yujc
+CFNlOZeximBqp0YZiRPlTuDEDE81xc8No365zYIGyXSMvFNPdbkr5AxixOSsB7Ts
+ECfWzBal+3dv21Lih3x9eYi7k47QNGi6shKd+NZWWgaZsS5Hd90GDqDr42u9osqV
+eoWu71Z8qAISHJIXAk+6GDgl2Z/+Kn/w/uunHWYXHtCwYGjQtK2dzCTnu8OWIhnW
+W9lknAaasU8+fj6SvuKxlb3ze/j9Cf4NKmnQ4xTPJiG2n/4W6bGRmOD9HFRsT21d
+Mhtthu5HrIEO9EiuaQ9yGCrBmRBd+nyUD6/n8XLo1poTjyVIpz8rysTcSKe01o8p
+1mLpyAlB9S9iAdDhKeMZkSKKQe/TaxFbhBzSnhrj+ZxSpc4fAVP697G28i9HkCiz
+ep7jrt2Z+mChI20H4yqI/drNNhEdF2Qmel6tcrzXJDadOCCX/GLyUw3dy0VVJq7Y
+kri/JUCEGz8AWJLuHERIhTLZ7EOA3wz7NSrcNGhB65CnmdpmzEOqtXa2VyyWF3CU
+gAQIEXvUy7FAXSU+tr3N+074WLYBvXUOMtxLSNJ6Q0SfV2Gu5OzbM+XTTwLxBW+9
+bH45v5a0Bkb/fZigsz3P
+=NLx9
 -----END PGP SIGNATURE-----
 
---Sig_/G.k8irYGqjYt4wnznDBgQYB--
+--Sig_//9tE.7nrX3cRPAfk9D_Ce_y--
