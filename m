@@ -1,52 +1,53 @@
-From: Tom Herbert <therbert@google.com>
-Subject: Re: [-next] Regression: ssh log in slowdown
-Date: Thu, 12 Jun 2014 17:59:03 -0700
-Message-ID: <CA+mtBx9BSe2M7-ALT9AL1J0qPXzJP2LcFG5dCJ3DASnh6-p9gA@mail.gmail.com>
-References: <CAMuHMdU6rrpx6xFw71HKexDJUZtfFtL+um6dxZ=EaycgVO312A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: time to start cleaning up
+Date: Fri, 13 Jun 2014 12:06:29 +1000
+Message-ID: <20140613120629.68527777@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU6rrpx6xFw71HKexDJUZtfFtL+um6dxZ=EaycgVO312A@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Linux-Next <linux-next@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/G.k8irYGqjYt4wnznDBgQYB"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45081 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751160AbaFMCGm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2014 22:06:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
->     net: Save software checksum complete
->
->     In skb_checksum complete, if we need to compute the checksum for the
->     packet (via skb_checksum) save the result as CHECKSUM_COMPLETE.
->     Subsequent checksum verification can use this.
->
->     Also, added csum_complete_sw flag to distinguish between software and
->     hardware generated checksum complete, we should always be able to trust
->     the software computation.
->
->     Signed-off-by: Tom Herbert <therbert@google.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
->
-> Reverting this commit fixes the issue.
->
-> Anyone with a clue?
->
-Hi Geert,
+--Sig_/G.k8irYGqjYt4wnznDBgQYB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm very sorry that I seemed to have missed your initial bug report,
-thanks for bisecting the problem. I have posted a fix for this, please
-verify it if you can
+Hi all,
 
-Thanks,
-Tom
+See $subject.  Especially those of you who sent Linus something
+different to what you have sent me :-(
 
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/G.k8irYGqjYt4wnznDBgQYB
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTmlywAAoJEMDTa8Ir7ZwVEZcP/3D2V9CXB4fSLtH2YR+6C5tC
+QHR6pM2rrWDJuOQz/D9SkVUQw+4evY6O3N3kI1pQDwR8tAN311Bd1MoDtqq4m/cw
+difNaCcJZ7at3jY6jZLfT0a/+YlKxpV0INoEhMp/1Us1uHg2Nk0BotujgUnKgFG/
+tx4LmakHvAnrk8nbTsr0V1HqP63VnokKjJjvNYwPPmWk2GeemH/rcC2rglbvASNe
+Wq9i0HvFFY+pkF+DDNwYwv4VIJtmJQ+hABA8AL64eC1KW01VLkl7bIYMDDtCuSyu
+FTraBqya61q5PKti19+nW9/1Q36tDibZQybf/JeTikGOjotcqog3IKXe1KUSKXdy
+TQTlDJi25n/5WxJfLVKFaI9eoqroa6j/B/53zwuCsEE+2OdXop9kQUjUWYysxTd3
+QLSO7vBOPCcAPl8tjhfP1Nrn9BH0gMOYoo1q4eAWgkHgryzRUBQ07aoJ3X/haoG8
+d7kyzzEHN/BKeYPatwebwKIqdKmEGwAJnWpiAJHKVluCequdtLJFfQWZxasPKB5W
+jawvrvi2Yq94cS2fi3U+0qCS5c9vpWsKDupohNhE4cLift3PQe9V3SzHQchX6BlF
+At95Y8bX/3kDzFrz3nZomYcH+P+nz9oTalX27DrTdofjw5FcYjS0GMbgIfGVKv4l
+Ov8mdnFFo/33Y+VwuZiB
+=XmVD
+-----END PGP SIGNATURE-----
+
+--Sig_/G.k8irYGqjYt4wnznDBgQYB--
