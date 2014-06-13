@@ -1,83 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 13 Jun 2014 15:16:52 +1000
-Message-ID: <20140613151652.69bb6961@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 13 Jun 2014 15:28:46 +1000
+Message-ID: <20140613152846.3c9bd9b1@canb.auug.org.au>
+References: <20140613150550.7b2e2c4c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S.itoS1wE4mYrbk5B0niN5n"; protocol="application/pgp-signature"
+ boundary="Sig_/NkonlRImtHtsobQhaAuANvu"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57380 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38434 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750886AbaFMFRU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Jun 2014 01:17:20 -0400
+	id S1750828AbaFMF2x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Jun 2014 01:28:53 -0400
+In-Reply-To: <20140613150550.7b2e2c4c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
---Sig_/S.itoS1wE4mYrbk5B0niN5n
+--Sig_/NkonlRImtHtsobQhaAuANvu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Fri, 13 Jun 2014 15:05:50 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> The reference to HPAGE_PMD_SIZE (which contains a BUILD_BUG() when
+> CONFIG_TRANSPARENT_HUGEPAGE is not defined) used to be protected by a
+> call to pmd_trans_huge_lock() (a static inline function that was
+> contact 0 when CONFIG_TRANSPARENT_HUGEPAGE is not defined) so gcc did
+  ^^^^^^^
+constant
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> not see the reference and the BUG_ON.  That protection has been
+> removed ...
 
-mm/memcontrol.c:6674:3: note: each undeclared identifier is reported only o=
-nce for each function it appears in
-mm/memcontrol.c: In function 'mem_cgroup_move_charge_pmd':
-mm/memcontrol.c:6906:37: error: 'ptl' undeclared (first use in this functio=
-n)
-  if (pmd_trans_huge_lock(pmd, vma, &ptl) =3D=3D 1) {
-                                     ^
-
-Caused by commit ce1c26c7ca47 ("memcg: separate
-mem_cgroup_move_charge_pte_range()") - uncovered by my previous reverts.
-
-I have reverted that commit and commit 2fba70f78e45
-("memcg-separate-mem_cgroup_move_charge_pte_range-checkpatch-fixes")
-that depends on it for today.
-
-Which lead to:
-
-mm/memcontrol.c: In function 'mem_cgroup_count_precharge_pmd':
-mm/memcontrol.c:6674:3: error: 'skip' undeclared (first use in this functio=
-n)
-   skip->control =3D PTWALK_DOWN;
-   ^
-
-Caused by commit 7170d5e9623b ("mm/pagewalk: replace mm_walk->skip with
-more general mm_walk->control").
-
-At this point I got fed up and just dropped the akpm trees completely for t=
-oday.
-
-Was this stuff really meant for v3.16?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/S.itoS1wE4mYrbk5B0niN5n
+--Sig_/NkonlRImtHtsobQhaAuANvu
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTmolNAAoJEMDTa8Ir7ZwVzjYP/i+QPlcDgq3rFA59G6/9l39d
-btB2K7BFphLQt6WS/wUFBXmkeR6W8zRZvUZzBx0yGpElODOHS0PDq+QvKItqDrNC
-YZQX1eTlpDuir58Y2wFvRFFFnzmyN7mdzc+Jaf1tQd3JWfZWPfk8W+g+fiP8uXU8
-Fx9xgv2oIuZjspkxcz66Z/sqHTtFHWgYYpjoYUEfNotiQCq5MIdjbtgHptnO+wQ6
-iScJ5fZ2xQlEhLItHIYOxe7GvPHXy206/eSjvylfKr8VZVFA3vJpCAuxgFPWb67I
-aBdwYm+nzZGJUZvr5BMOVQieW99kWgwoXsQhy3tzUT02dMcZbBDAPz2r6D3oczBQ
-+CO26XQHUgWo7oTZOlYZ0OePSLgKalH1ENY1NIN5plbFtlPBydlRSlvxN3WYv9XS
-mnlN/jWqeAX00gpeOMx6dlF714uTy5ycTXj6cXDJud6tOqTenAgSs0qGu6XlX+f2
-M96EfcNrX52X2MzsGKcCkOdFYH9pWSkqGpep4CGshy1IM4iLTGBv3EwhdRCNOD8u
-d+ooHgN1qJsXv5UjwGRTRC/zXN+AEr+IvHus9wtbFxIKzOMRHfzRtK2WFyoVOsMW
-+jYNJeDtqrMJ9X4YFh5NRfQhzoXAQr79kydg5JRF6LlFSBUF4wtaxOEbi/Y/OBaW
-XcR3fN1HhoevTwyvSZsr
-=vYnd
+iQIbBAEBCAAGBQJTmowTAAoJEMDTa8Ir7ZwVNnAP9i5uNY5HsBloZYKbMRXqe5ez
+Vi+um2oNC9tCJ32wand4TBpJDKxP6nGPQXy9zSLEsXBPFLUeOlrbkDF15GhZZoF5
+/sDus7GQyntHcnKmIDtrdpqNu9pco3JqossX0lUT7+Ci4U2NCopmjV14hCiI+zA+
+GYQhogx84z/fW7M9kcWfpUFr6P6OTOdk68GZS6zJZYIDCywVT9RrFx5yexy/TRIL
+8KUao3cIt5nW4iy08u7f/DoFfaniZS9PxcJM5vsF3WUQs2FcO136SWxgRtlv7kRH
+NWEO+zA07Y9lSxKlcpm1Rh1KNlYG6MbIHp0l5qtpCIjjxFfrDB8qSOVD1RC2KuA8
+RDwxNL/cKn2MyzuVVlL/hZuwGdZsUEAwfgpPOiJtblJcwIjmzLnbHr7gFznPNIW8
+hWMbia/jOjqN6W8RHs7OZtH0+e4WWiSTx2+emyr22M8BS48/6lXRVRjfz7aZ+XoI
+/fxc3ZFoJIY/SabQ6eK1wOcez9OuiihWW71OwV+jz2nrTiAkiQ/4zvIBZrA1jz8E
+9jMMSLrBt0RlpMIGa3In6uqWv8EiIJQV8uEKFiDUSIr5ol54kjLvooeYAk6vGEQO
+vjQeixucAyUH1uINfUCcZxUBwaQJBuBJKeKO6U2GI1sMlofrmDPf9EoUpHFhralI
+1OqHN180fzNsrcyGBtc=
+=wuU6
 -----END PGP SIGNATURE-----
 
---Sig_/S.itoS1wE4mYrbk5B0niN5n--
+--Sig_/NkonlRImtHtsobQhaAuANvu--
