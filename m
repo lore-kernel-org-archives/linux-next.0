@@ -1,65 +1,52 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [-next] Regression: ssh log in slowdown
-Date: Fri, 13 Jun 2014 09:27:20 +0200
-Message-ID: <CAMuHMdUQ-jX+khDtVpOm6XocVG+F3ThH2qM+1BgAtRWzgAsqfQ@mail.gmail.com>
-References: <CAMuHMdU6rrpx6xFw71HKexDJUZtfFtL+um6dxZ=EaycgVO312A@mail.gmail.com>
-	<CA+mtBx9BSe2M7-ALT9AL1J0qPXzJP2LcFG5dCJ3DASnh6-p9gA@mail.gmail.com>
+From: Tom Herbert <therbert@google.com>
+Subject: [-next] Regression: ssh log in slowdown
+Date: Fri, 13 Jun 2014 01:21:57 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1406130111280.1551@tomh.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CA+mtBx9BSe2M7-ALT9AL1J0qPXzJP2LcFG5dCJ3DASnh6-p9gA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Tom Herbert <therbert@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Linux-Next <linux-next@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qa0-f73.google.com ([209.85.216.73]:58708 "EHLO
+	mail-qa0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752954AbaFMIV6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Jun 2014 04:21:58 -0400
+Received: by mail-qa0-f73.google.com with SMTP id m5so354219qaj.0
+        for <linux-next@vger.kernel.org>; Fri, 13 Jun 2014 01:21:58 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: geert@linux-m68k.org
+Cc: davem@davemloft.net, linux-next@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-Hi Tom,
-
-cc lkml, as this is now in mainline
-
-On Fri, Jun 13, 2014 at 2:59 AM, Tom Herbert <therbert@google.com> wrote:
->>     net: Save software checksum complete
->>
->>     In skb_checksum complete, if we need to compute the checksum for the
->>     packet (via skb_checksum) save the result as CHECKSUM_COMPLETE.
->>     Subsequent checksum verification can use this.
->>
->>     Also, added csum_complete_sw flag to distinguish between software and
->>     hardware generated checksum complete, we should always be able to trust
->>     the software computation.
->>
->>     Signed-off-by: Tom Herbert <therbert@google.com>
->>     Signed-off-by: David S. Miller <davem@davemloft.net>
->>
->> Reverting this commit fixes the issue.
->>
->> Anyone with a clue?
->>
-> Hi Geert,
 >
-> I'm very sorry that I seemed to have missed your initial bug report,
-> thanks for bisecting the problem. I have posted a fix for this, please
-> verify it if you can
+> I assume this is the series "[PATCH 0/4] Checksum fixes"
+> (marc.info/?l=linux-netdev&m=140261417832399&w=2)?
+>
+Yes.
 
-Thanks for your patches!
+> As I'm not subscribed to netdev, I cannot reply to that thread.
+>
+> "[PATCH 1/4] net: Fix save software checksum complete" fixes the issue
+> for me.
+> However, "[PATCH 2/4] udp: call __skb_checksum_complete when doing full
+> checksum" reintroduces the exact same bad behavior :-(
+>
+This implies the problem is happening in UDP path. AFAICT skb->csum is 
+correct, and I don't seem to be able to reproduce the issue on my setup. 
+It is possible that an skb copy is happening in which case we don't copy
+csum_valid so that checksum_unnecessary would fail in this case.
 
-I assume this is the series "[PATCH 0/4] Checksum fixes"
-(marc.info/?l=linux-netdev&m=140261417832399&w=2)?
+Can you try with the patch below. Thanks!
 
-As I'm not subscribed to netdev, I cannot reply to that thread.
-
-"[PATCH 1/4] net: Fix save software checksum complete" fixes the issue
-for me.
-However, "[PATCH 2/4] udp: call __skb_checksum_complete when doing full
-checksum" reintroduces the exact same bad behavior :-(
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index bf92824..9cd5344 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -689,6 +689,9 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+ 	new->ooo_okay		= old->ooo_okay;
+ 	new->no_fcs		= old->no_fcs;
+ 	new->encapsulation	= old->encapsulation;
++	new->encap_hdr_csum	= old->encap_hdr_csum;
++	new->csum_valid		= old->csum_valid;
++	new->csum_complete_sw	= old->csum_complete_sw;
+ #ifdef CONFIG_XFRM
+ 	new->sp			= secpath_get(old->sp);
+ #endif
