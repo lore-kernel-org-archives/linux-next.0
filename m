@@ -1,40 +1,28 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Subject: RE: [-next] Regression: ssh log in slowdown
-Date: Fri, 13 Jun 2014 10:05:42 +0000
-Message-ID: <063D6719AE5E284EB5DD2968C1650D6D1725C2C3@AcuExch.aculab.com>
-References: <alpine.DEB.2.02.1406130111280.1551@tomh.mtv.corp.google.com>
-	<CAMuHMdW4kYeqEby3iABzdbjyAkPKq=x4dyopokFbHWT0Q4fjcw@mail.gmail.com>
-	<063D6719AE5E284EB5DD2968C1650D6D1725C134@AcuExch.aculab.com>
- <CAMuHMdXOY8NF78gnpqHdNueDKDs5kTZ+xqV+dVXCYCu8MkSFng@mail.gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: time to start cleaning up
+Date: Fri, 13 Jun 2014 08:56:26 -0600
+Message-ID: <CAErSpo5JdQ2xZ1bnvFt2chb2jTUzBHGig4imFj3C+Yn7Ux6nZg@mail.gmail.com>
+References: <20140613120629.68527777@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXOY8NF78gnpqHdNueDKDs5kTZ+xqV+dVXCYCu8MkSFng@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20140613120629.68527777@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Geert Uytterhoeven' <geert@linux-m68k.org>
-Cc: Tom Herbert <therbert@google.com>, "David S. Miller" <davem@davemloft.net>, Linux-Next <linux-next@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-RnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuDQo+IEhpIERhdmlkLA0KPiANCj4gT24gRnJpLCBKdW4g
-MTMsIDIwMTQgYXQgMTA6NDkgQU0sIERhdmlkIExhaWdodCA8RGF2aWQuTGFpZ2h0QGFjdWxhYi5j
-b20+IHdyb3RlOg0KPiA+IEZyb206IE9mIEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiA+IC4uLg0KPiA+
-PiBOb3RlIHRoYXQgSSdtIGFsc28gdXNpbmcgTkZTIHJvb3QsIHdoaWNoIGRvZXNuJ3Qgc2VlbSB0
-byBiZSBhZmZlY3RlZC4NCj4gPj4gSSBjYW4gaGFwcGlseSBydW4gImxzIC1SIC8iIG9uIHRoZSBz
-ZXJpYWwgY29uc29sZSBkdXJpbmcgdGhlIDEwIHMgZGVsYXkgaW4gc3NoLg0KPiA+DQo+ID4gQXJl
-IHlvdSBzdXJlIHRoYXQgdGhlIGRlbGF5IGR1cmluZyBzc2ggbG9naW4gaXNuJ3QganVzdA0KPiA+
-IGEgcmV2ZXJzZSBETlMgdGltZW91dD8NCj4gDQo+IEluZGVlZCwgdGhlIHNzaCBzZXJ2ZXIgc2Vu
-ZHMgYSByZXZlcnNlIEROUyByZXF1ZXN0IHR3aWNlLCB3aXRoIDVzIGluIGJldHdlZW46DQouLi4g
-DQo+IEludGVyZXN0aW5nbHksIEkgZG9uJ3Qgc2VlIHRoZSBmb3J3YXJkIEROUyByZXF1ZXN0IGFm
-dGVyIHRoYXQsIHdoaWNoDQo+IGRvZXMgaGFwcGVuIGluIHRoZSBnb29kIGNhc2UuDQoNClRoZSBm
-b3J3YXJkcyByZXF1ZXN0IGlzIHByb2JhYmx5IGp1c3QgY29weWluZyBzb21lIHN0cmFuZ2UgY29k
-ZSBmcm9tICdyc2hkJw0KdGhhdCB0cmllZCB0byB2ZXJpZnkgdGhlIHJldmVyc2UgbG9va3VwIGJ5
-IGRvaW5nIGEgZm9yd2FyZHMgbG9va3VwIG9uIHRoZQ0KcmVzdWx0Lg0KVGhhdCBpbiBpdHNlbGYg
-dXNlZCB0byBjYXVzZSB1cyBncmllZi4NClRoZSBSRE5TIHdvdWxkIChjb3JyZWN0bHkpIGdlbmVy
-YXRlIGhvc3QuYmFyLmJhei5jby51aywgc2luY2UgdGhlICdkb21haW4nDQppbiBldGMvcmVzb2x2
-LmNvbmYgd2FzIGJhci5iYXouY28udWsgdGhlIGZvcndhcmRzIGxvb2t1cCBmaXJzdCB0cmllZA0K
-aG9zdC5iYXIuYmF6LmNvLnVrLmJhci5iYXouY28udWsgdGhlbiBob3N0LmJhci5iYXouY28udWsu
-YmF6LmNvLnVrDQpvbmUgb2Ygd2hpY2ggYWx3YXlzIHRpbWVkIG91dCA6LSgNCihXaGVuIHRoZSAn
-c2VhcmNoJyBjb21tYW5kIHdhcyBhZGRlZCB3ZSBjb3VsZCBhdm9pZCB0aGUgcmVxdWVzdCB0aGF0
-DQp0aW1lZCBvdXQuKQ0KDQoJRGF2aWQNCg0K
+On Thu, Jun 12, 2014 at 8:06 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> See $subject.  Especially those of you who sent Linus something
+> different to what you have sent me :-(
+
+Hi Stephen,
+
+Sorry to be dense here, but do you have something in particular in
+mind?  As far as I know, everything I've sent to Linus is in
+linux-next, but if there's something else you'd like me to clean up,
+let me know what it is.
+
+Bjorn
