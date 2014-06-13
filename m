@@ -1,73 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: time to start cleaning up
-Date: Sat, 14 Jun 2014 01:13:16 +1000
-Message-ID: <20140614011316.03c37c1b@canb.auug.org.au>
-References: <20140613120629.68527777@canb.auug.org.au>
-	<CAErSpo5JdQ2xZ1bnvFt2chb2jTUzBHGig4imFj3C+Yn7Ux6nZg@mail.gmail.com>
+From: Tom Herbert <therbert@google.com>
+Subject: [-next] Regression: ssh log in slowdown
+Date: Fri, 13 Jun 2014 08:37:51 -0700 (PDT)
+Message-ID: <alpine.DEB.2.02.1406130829370.23090@tomh.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gKNZ+.zRaX7Hx08lmEiCRAa"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57463 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752788AbaFMPNY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Jun 2014 11:13:24 -0400
-In-Reply-To: <CAErSpo5JdQ2xZ1bnvFt2chb2jTUzBHGig4imFj3C+Yn7Ux6nZg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next list <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: geert@linux-m68k.org
+Cc: davem@davemloft.net, linux-next@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/gKNZ+.zRaX7Hx08lmEiCRAa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Bjorn,
-
-On Fri, 13 Jun 2014 08:56:26 -0600 Bjorn Helgaas <bhelgaas@google.com> wrot=
-e:
+> Thanks, I applied the series "[PATCH 0/4] Checksum fixes", and the fix
+> above, but it doesn't help.
 >
-> On Thu, Jun 12, 2014 at 8:06 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-\> >
-> > See $subject.  Especially those of you who sent Linus something
-> > different to what you have sent me :-(
->=20
-> Sorry to be dense here, but do you have something in particular in
-> mind?  As far as I know, everything I've sent to Linus is in
-> linux-next, but if there's something else you'd like me to clean up,
-> let me know what it is.
+> Note that I'm also using NFS root, which doesn't seem to be affected.
+> I can happily run "ls -R /" on the serial console during the 10 s delay 
+in ssh.
+>
+Geert,
 
-There is nothing for you (in particular) to do.  My comments were
-mainly aimed at those who rebased (or otherwise rewrote) the commits in
-their branch just before sending it to Linus, but then neglected to
-update the branch in linux-next.  I see this as conflicts some of the
-time ...
+Thanks for your patience!
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Can you try one more patch below with the series applied? Also, can you 
+look at 'netstat -s' to see if UDP checksum errors are being reported.
 
---Sig_/gKNZ+.zRaX7Hx08lmEiCRAa
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Thanks,
+Tom 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJTmxURAAoJEMDTa8Ir7ZwVCowQAJUNx5t1b/OwRayIQrcLheSa
-Us9j3+8RM3XPDEVpmvTEoKsW4dxA34pFc9WXXBIgoNSyPl7bVyg3TD5H8BkER+QS
-CfrxAaKVuv0qPls/QNDk/MgOgv/xY2KHNGiziRjtNwH7feqCIF5H2aEzYVdLoAhD
-tL5qIilw/02CsJr/KISlc8pvN+AVAENhD1SlXrg+aLzsIDNPhLAWmGsM6aA+RttH
-fgdeZdpTZczlHhXJA4d/9jwIs2Rg9DxeBbtfPQGv1NIED2/lixaCYsq4KLPaLVcH
-GqUrNnZB/xSnprv36AIa18kN9cwGDWlHO6vIYaTm9HKGlHFmUHcwu/1b7DaVoPTI
-ta1dq39JMx7XvW2IvUaXkuEPJ9UA5pfq3CwQoTs6e1BZwBNkWkR8yntq75hRPXkA
-/8+MVSPdMS+B6EuAXzFx/TTLEvpV7CW5H72aI4hRtNa8yqNHk0WEJRBPNUOIY3E4
-FeGJTa1Vck+zOIj2TK8pI9M2EqVv729MRR9IVeA8LjWwaWTuWdNUGy5/N5kK3+Qn
-/XB8rsO5NZekuBTUJLD0FqKmGqWyMkdWdH03n8v2fX7IDvfydsLc610ObMDYcAXl
-YW8TnMNvmKO39fAmiQSN+SGypf5gE5gaxSZBI5GET7bwfimUlDDV8HFan8+QY3Vx
-lo63QMfnC0QxPG/iQPp+
-=uLeR
------END PGP SIGNATURE-----
-
---Sig_/gKNZ+.zRaX7Hx08lmEiCRAa--
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index fdb510c..4b722bc 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2820,8 +2820,8 @@ static inline __sum16 __skb_checksum_validate_complete(struct sk_buff *skb,
+ 	if (complete || skb->len <= CHECKSUM_BREAK) {
+ 		__sum16 csum;
+ 
++		/* skb->csum valid set in __skb_checksum_complete */
+ 		csum = __skb_checksum_complete(skb);
+-		skb->csum_valid = !csum;
+ 		return csum;
+ 	}
+ 
+diff --git a/net/core/datagram.c b/net/core/datagram.c
+index cf6cc4e..488dd1a 100644
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -744,6 +744,7 @@ __sum16 __skb_checksum_complete_head(struct sk_buff *skb, int len)
+ 		    !skb->csum_complete_sw)
+ 			netdev_rx_csum_fault(skb->dev);
+ 	}
++	skb->csum_valid = !sum;
+ 	return sum;
+ }
+ EXPORT_SYMBOL(__skb_checksum_complete_head);
+@@ -767,6 +768,7 @@ __sum16 __skb_checksum_complete(struct sk_buff *skb)
+ 	skb->csum = csum;
+ 	skb->ip_summed = CHECKSUM_COMPLETE;
+ 	skb->csum_complete_sw = 1;
++	skb->csum_valid = !sum;
+ 
+ 	return sum;
+ }
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index bf92824..9cd5344 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -689,6 +689,9 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+ 	new->ooo_okay		= old->ooo_okay;
+ 	new->no_fcs		= old->no_fcs;
+ 	new->encapsulation	= old->encapsulation;
++	new->encap_hdr_csum	= old->encap_hdr_csum;
++	new->csum_valid		= old->csum_valid;
++	new->csum_complete_sw	= old->csum_complete_sw;
+ #ifdef CONFIG_XFRM
+ 	new->sp			= secpath_get(old->sp);
+ #endif
