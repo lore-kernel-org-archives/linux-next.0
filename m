@@ -1,45 +1,77 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [-next] Regression: ssh log in slowdown
-Date: Sun, 15 Jun 2014 10:42:57 +0200
-Message-ID: <CAMuHMdV+wjdEqKANwu4b=LX1t6X8dhfZKdyCkWB-9KXztPmNhg@mail.gmail.com>
-References: <alpine.DEB.2.02.1406130829370.23090@tomh.mtv.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the  tree
+Date: Mon, 16 Jun 2014 09:59:28 +1000
+Message-ID: <20140616095928.1f21f8af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/t4dUruJqaDWz5DhGfyPsIWp"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.02.1406130829370.23090@tomh.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Herbert <therbert@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Linux-Next <linux-next@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Shawn Guo <shawn.guo@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Tom,
+--Sig_/t4dUruJqaDWz5DhGfyPsIWp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2014 at 5:37 PM, Tom Herbert <therbert@google.com> wrote:
->> Thanks, I applied the series "[PATCH 0/4] Checksum fixes", and the fix
->> above, but it doesn't help.
->>
->> Note that I'm also using NFS root, which doesn't seem to be affected.
->> I can happily run "ls -R /" on the serial console during the 10 s delay
-> in ssh.
->
-> Can you try one more patch below with the series applied? Also, can you
+Hi Shawn,
 
-This patch fixes the issue. Thanks!
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/mach-imx/Kconfig between commit e49d9b375628 ("ARM: Remove
+ARCH_HAS_CPUFREQ config option") from the arm-soc tree and commit
+7de46855b1e7 ("ARM: imx5: move SOC_IMX5 and SOC_IMX51 into 'Device tree
+only'") from the imx-mxs tree.
 
-> look at 'netstat -s' to see if UDP checksum errors are being reported.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Indeed, errors are reported under Udp/InCsumErrors.
-With this new patch, no errors are reported.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks!
+diff --cc arch/arm/mach-imx/Kconfig
+index 28fa2fa49e5d,3b2a5c58cf91..000000000000
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@@ -700,9 -691,15 +688,14 @@@ if ARCH_MULTI_V
+ =20
+  comment "Device tree only"
+ =20
++ config SOC_IMX5
++ 	bool
+ -	select ARCH_HAS_CPUFREQ
++ 	select ARCH_HAS_OPP
++ 	select HAVE_IMX_SRC
++ 	select MXC_TZIC
++=20
+  config	SOC_IMX50
+  	bool "i.MX50 support"
+- 	select HAVE_IMX_SRC
+  	select PINCTRL_IMX50
+  	select SOC_IMX5
+ =20
 
-Gr{oetje,eeting}s,
+--Sig_/t4dUruJqaDWz5DhGfyPsIWp
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iQIcBAEBCAAGBQJTnjNoAAoJEMDTa8Ir7ZwV15gP/2eGlu++bt+HqDVWGygYgaMz
+soSL2wcQUgMi5l3HyPc6NR9++FidLh0TEPPxROaWHyouBbWngaBb2/I86kHfGsnO
+qcjeqzWZnEKyIqWaamFu6tjrVSHpfmvriThPAUdNWPfx6BCvOUsLpdsqBRNUB6vt
+ur6y0aXCbMwWMRPKmaLer1wYSZSC0wz6OxZTQCP4hCnuvcpi0cDUzMEB66nAyVKw
+GIaS4EO9BMYSRGb410QVVhNGa4NssF/CqIC1ANfI8SZ4PnGabdBfrFc3pP8cTQVN
+7oRfNoJ9kICETdUlKnD9E5Ejt1XMoSNrk2Fdx2Pq9ASp5zMuu3xoe9SJx4QECPC0
+KZXhH/Iv1fAHuKAKOR11+Ot41PpggV5R5xNnVjtjVgx0rzKHRflRkMFmsUFUcil9
+lVLmfmIyEXX2O1cgt4KTD703aKhgg2lBb+l9WFXPS3q+VAjD5W0EU2kaUya71YR4
+cvhz+Brs+kGSWGgMGKAOjdSEpGxEG18RluDMTmV1bCzOY9xD1T+Ft0K7oW8Jxdvq
+ZE3WG6oIlmHiY2dIEHIYaKZpNAH0Y3f6NjTMxex1JuQEmzmwe6tmnJ2m8oDUt+Jw
+wevjNhL5DUyUDTu/bpe4QG/NK2m3tGxA1V6fsMsils0kY7DEeZ9imgMAa0vU2vzJ
+wptohuiECeLfpSiteExR
+=0Rp7
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Sig_/t4dUruJqaDWz5DhGfyPsIWp--
