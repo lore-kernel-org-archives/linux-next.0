@@ -1,77 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the  tree
-Date: Mon, 16 Jun 2014 09:59:28 +1000
-Message-ID: <20140616095928.1f21f8af@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Mon, 16 Jun 2014 11:57:09 +1000
+Message-ID: <20140616115709.3fce3a2a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t4dUruJqaDWz5DhGfyPsIWp"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/Mif+B93xJF2aCM2Wyj3jgHx"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51819 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752114AbaFPB5R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Jun 2014 21:57:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>
 
---Sig_/t4dUruJqaDWz5DhGfyPsIWp
+--Sig_/Mif+B93xJF2aCM2Wyj3jgHx
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shawn,
+Hi all,
 
-Today's linux-next merge of the imx-mxs tree got a conflict in
-arch/arm/mach-imx/Kconfig between commit e49d9b375628 ("ARM: Remove
-ARCH_HAS_CPUFREQ config option") from the arm-soc tree and commit
-7de46855b1e7 ("ARM: imx5: move SOC_IMX5 and SOC_IMX51 into 'Device tree
-only'") from the imx-mxs tree.
+After merging the tip tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from arch/x86/crypto/camellia_aesni_avx_glue.c:23:0:
+arch/x86/include/asm/xsave.h:73:12: warning: 'xsave_state_booting' defined =
+but not used [-Wunused-function]
+ static int xsave_state_booting(struct xsave_struct *fx, u64 mask)
+            ^
+
+Lots of these ...
+
+Introduced by commit adb9d526e982 ("x86/xsaves: Add xsaves and xrstors
+support for booting time").  Forgotten "inline" :-(
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-imx/Kconfig
-index 28fa2fa49e5d,3b2a5c58cf91..000000000000
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@@ -700,9 -691,15 +688,14 @@@ if ARCH_MULTI_V
- =20
-  comment "Device tree only"
- =20
-+ config SOC_IMX5
-+ 	bool
- -	select ARCH_HAS_CPUFREQ
-+ 	select ARCH_HAS_OPP
-+ 	select HAVE_IMX_SRC
-+ 	select MXC_TZIC
-+=20
-  config	SOC_IMX50
-  	bool "i.MX50 support"
-- 	select HAVE_IMX_SRC
-  	select PINCTRL_IMX50
-  	select SOC_IMX5
- =20
-
---Sig_/t4dUruJqaDWz5DhGfyPsIWp
+--Sig_/Mif+B93xJF2aCM2Wyj3jgHx
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTnjNoAAoJEMDTa8Ir7ZwV15gP/2eGlu++bt+HqDVWGygYgaMz
-soSL2wcQUgMi5l3HyPc6NR9++FidLh0TEPPxROaWHyouBbWngaBb2/I86kHfGsnO
-qcjeqzWZnEKyIqWaamFu6tjrVSHpfmvriThPAUdNWPfx6BCvOUsLpdsqBRNUB6vt
-ur6y0aXCbMwWMRPKmaLer1wYSZSC0wz6OxZTQCP4hCnuvcpi0cDUzMEB66nAyVKw
-GIaS4EO9BMYSRGb410QVVhNGa4NssF/CqIC1ANfI8SZ4PnGabdBfrFc3pP8cTQVN
-7oRfNoJ9kICETdUlKnD9E5Ejt1XMoSNrk2Fdx2Pq9ASp5zMuu3xoe9SJx4QECPC0
-KZXhH/Iv1fAHuKAKOR11+Ot41PpggV5R5xNnVjtjVgx0rzKHRflRkMFmsUFUcil9
-lVLmfmIyEXX2O1cgt4KTD703aKhgg2lBb+l9WFXPS3q+VAjD5W0EU2kaUya71YR4
-cvhz+Brs+kGSWGgMGKAOjdSEpGxEG18RluDMTmV1bCzOY9xD1T+Ft0K7oW8Jxdvq
-ZE3WG6oIlmHiY2dIEHIYaKZpNAH0Y3f6NjTMxex1JuQEmzmwe6tmnJ2m8oDUt+Jw
-wevjNhL5DUyUDTu/bpe4QG/NK2m3tGxA1V6fsMsils0kY7DEeZ9imgMAa0vU2vzJ
-wptohuiECeLfpSiteExR
-=0Rp7
+iQIcBAEBCAAGBQJTnk76AAoJEMDTa8Ir7ZwVX4UP/jUkHdGq9S8u9uZfYwruMwMP
+LoCIjiE6ixp49KzbA1sNFF+CngAsT5GUl1G/o/wvJc/MN/VEnV/bRocj8sta5AJf
+9zUDDGMsNser1J7vjMXRrKp+3JZQ83j5WPRlvNMIVGecqEg2QP+D2Wh/hytLoFKl
+BgA5TCR8NPId1GzQAtvL/fnh16m1VZn6UouXgXSsYu6yDSsLPeJpRlbRXgwNZa2m
+FguLbuRMl6c0TUNxP0ohexFZALXBM6hTomplt1F7YskqMtl4cu2bvZjwGX1Q1MkV
+rTdkuls7T1mPXBbKA2eU8GbrwQqzB2zJ3Z1wA+pHJOhh4stAGidh/AHTUu2l3jIc
+5gqJTGQSYZgL0LnNE6cPi1u2z7IdciTO+bzaMa8HrDfFFWf2zR4x4df6B4XkNEpI
+nL6pLL2/Fz/eTe3PmVe+1npyb3jj+jZ2ZpsMQPfsQX1ucmrI2tchJqPXHyQWzbsh
+nxhJ8DXMOcOBlgEdFLxFU0L2284qK8bi9Wvc2fTBA9F986BSZxG19aLJKSIKBdxr
+FvlFK5k86Y5k/dyz+k+ldYug7N2ayq46xeVyoUftBXTQVl/ybH7lgOlNYfypOVty
+pBZY5ETXfA+55r/rJYxvJ8kK3IppTnHFWggF4OtVOMePwRADhPMwLlF0hgZO9uEt
+p6ijnuubAWp5iVfXhjE4
+=YOWm
 -----END PGP SIGNATURE-----
 
---Sig_/t4dUruJqaDWz5DhGfyPsIWp--
+--Sig_/Mif+B93xJF2aCM2Wyj3jgHx--
