@@ -1,77 +1,60 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 16 Jun 2014 16:31:21 -0700
-Message-ID: <20140616163121.27e1cd1f4a90ab5c129df4d2@linux-foundation.org>
-References: <20140613151652.69bb6961@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the nfs tree
+Date: Tue, 17 Jun 2014 11:26:44 +1000
+Message-ID: <20140617112644.56c925f2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20140613151652.69bb6961@canb.auug.org.au>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, linux-mm@kvack.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8dmgjwwI7dQo39.RVT/QRZ9"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Weston Andros Adamson <dros@primarydata.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 13 Jun 2014 15:16:52 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/8dmgjwwI7dQo39.RVT/QRZ9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> At this point I got fed up and just dropped the akpm trees completely for today.
-> 
-> Was this stuff really meant for v3.16?
+Hi Trond,
 
-3.14 actually.  Then 3.15.  Now 3.16.
+After merging the nfs tree, today's linux-next build (powerpc
+ppc44x_defconfig and probably others) produced this warning:
 
-It's been quiet a burden and seems to have been hitting more problems
-lately.  It's unclear than it does much for efficiency and while the
-end result may be clearer to a newcomer, there's a cost to existing
-developers in churning the code around.
+fs/nfs/pagelist.c: In function 'nfs_initiate_pgio':
+fs/nfs/pagelist.c:555:16: warning: unused variable 'inode' [-Wunused-variab=
+le]
+  struct inode *inode =3D hdr->inode;
+                ^
 
-So...  I think I'll drop this version of the patchset.  Naoya, please
-grab all the patches as they fly past and ensure that nothing gets lost
-in any future version, thanks.
+Introduced by commit 30e4c73543b0 ("nfs: merge nfs_pgio_data into
+_header").
 
-I'll retain 
+"inode" is only used in a dprintk().
 
-mm-hugetlbfs-fix-rmapping-for-anonymous-hugepages-with-page_pgoff.patch
-mm-hugetlbfs-fix-rmapping-for-anonymous-hugepages-with-page_pgoff-v2.patch
-mm-hugetlbfs-fix-rmapping-for-anonymous-hugepages-with-page_pgoff-v3.patch
-mm-hugetlbfs-fix-rmapping-for-anonymous-hugepages-with-page_pgoff-v3-fix.patch
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-and shall drop
+--Sig_/8dmgjwwI7dQo39.RVT/QRZ9
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-pagewalk-update-page-table-walker-core.patch
-pagewalk-update-page-table-walker-core-fix-end-address-calculation-in-walk_page_range.patch
-pagewalk-update-page-table-walker-core-fix-end-address-calculation-in-walk_page_range-fix.patch
-pagewalk-update-page-table-walker-core-fix.patch
-pagewalk-add-walk_page_vma.patch
-smaps-redefine-callback-functions-for-page-table-walker.patch
-clear_refs-redefine-callback-functions-for-page-table-walker.patch
-pagemap-redefine-callback-functions-for-page-table-walker.patch
-pagemap-redefine-callback-functions-for-page-table-walker-fix.patch
-numa_maps-redefine-callback-functions-for-page-table-walker.patch
-memcg-redefine-callback-functions-for-page-table-walker.patch
-arch-powerpc-mm-subpage-protc-use-walk_page_vma-instead-of-walk_page_range.patch
-pagewalk-remove-argument-hmask-from-hugetlb_entry.patch
-pagewalk-remove-argument-hmask-from-hugetlb_entry-fix.patch
-pagewalk-remove-argument-hmask-from-hugetlb_entry-fix-fix.patch
-mempolicy-apply-page-table-walker-on-queue_pages_range.patch
-mm-pagewalkc-move-pte-null-check.patch
-mm-prom-pid-clear_refs-avoid-split_huge_page.patch
-mm-pagewalk-remove-pgd_entry-and-pud_entry.patch
-mm-pagewalk-replace-mm_walk-skip-with-more-general-mm_walk-control.patch
-mm-pagewalk-replace-mm_walk-skip-with-more-general-mm_walk-control-fix.patch
-madvise-cleanup-swapin_walk_pmd_entry.patch
-madvise-cleanup-swapin_walk_pmd_entry-fix.patch
-memcg-separate-mem_cgroup_move_charge_pte_range.patch
-memcg-separate-mem_cgroup_move_charge_pte_range-checkpatch-fixes.patch
-arch-powerpc-mm-subpage-protc-cleanup-subpage_walk_pmd_entry.patch
-mm-pagewalk-move-pmd_trans_huge_lock-from-callbacks-to-common-code.patch
-mm-pagewalk-move-pmd_trans_huge_lock-from-callbacks-to-common-code-checkpatch-fixes.patch
-mincore-apply-page-table-walker-on-do_mincore.patch
-mincore-apply-page-table-walker-on-do_mincore-fix.patch
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+iQIcBAEBCAAGBQJTn5lZAAoJEMDTa8Ir7ZwVHj8P/ixiNUnMBnKPxf/iAk0YTUHC
+7Ix+rb31RkgnRJGIHvsfCFYlnzkVotjEQml0YOYO+Qj5E+6sODajbvwaNCoulPtB
+h8qZE69cOdRhQd11vUN+ozatVzx9D3fqrYUqRalOC9i6PqVFeHq/8v73cEtPu97g
+B6IFquEcRrOnTqs57hwybqGln62ucCf6chyTj76CxU4+0AbvrcejiDtcUNanzhaS
+RILOhMpniPHVDLKTwg4jVHLlAMMN7JtV1zyoE5qDwelb+l5Rf2vTJqzYFz6p7E2l
+6bX+M9xCZOSXpDOIqhZNvctyiVgDyUvxI8TerRwOFQb0kkIkXhxKGJN++6qK0/ZA
+2AUYaND5n8G9KsDNfAY73e39WHkuuOLisNm4LI3gFqzSM0BxZ6dfLfuHJBSZ/AOt
+lmVT3mI4Q2//TkTSHNotgOp/0m2lhKPr2o+pEzesjINCsFj+tX3e6LNovkUN4B5W
+/ViVNwN5vVdvCv3MNi8NSsH6swhKj1jSRM0Ln+JWvYeXMMsCI3etsNpCd4ZyChl2
+tSBbquFwoJb77JxAcBUAywT+NOXvgSg9xLm4NN/2yJQPq7YSLoz4VDFFMbHLy//r
+UwwEmHxqQ3lgACVK+R3beZ0snjJRAExYpYM3zK7MYHaii4cL7cON1VFUG+E6N/IJ
+ZBl2f5O4ER/IehiS7DTC
+=+vqB
+-----END PGP SIGNATURE-----
+
+--Sig_/8dmgjwwI7dQo39.RVT/QRZ9--
