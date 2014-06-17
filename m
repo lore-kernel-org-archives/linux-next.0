@@ -1,53 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: the selinux tree needs cleaning up
-Date: Wed, 18 Jun 2014 08:40:46 +1000
-Message-ID: <20140618084046.1bce12cc@canb.auug.org.au>
+Subject: linux-next: the cgroup tree has an unnecessary merge
+Date: Wed, 18 Jun 2014 08:49:21 +1000
+Message-ID: <20140618084921.07c3b391@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mpC1UCafwyvkeyBMK41XvF4"; protocol="application/pgp-signature"
+ boundary="Sig_/ABg9P+6gYD0JuDacTjLrBia"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Moore <paul@paul-moore.com>
+To: Tejun Heo <tj@kernel.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/mpC1UCafwyvkeyBMK41XvF4
+--Sig_/ABg9P+6gYD0JuDacTjLrBia
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Tejun,
 
-The selinux tree (git://git.infradead.org/users/pcmoore/selinux#next)
-contains some commits going back to January and also has merges of
-v3.13, v3.14 and v3.15 in it.  If you rebase that tree onto v3.16-rc1,
-you find that it has onlt 2 unique commits (the most recent 2) which
-means that the others were merged upstream after being rewritten.  :-(
+The cgroup tree has a merge of 963649d735c8 and c731ae1d0f02 both of
+which are already merged into v3.16-rc1.  Why did you just not use
+v3.16-rc1 itself (or the point where Linus merged your tree) (and then
+add the other commit on top?  That would have removed any chance that
+you resolved the merged differently to how it was resolved in Linus'
+tree (I don't know if there is a difference, but I have had conflicts
+from different merge resolutions in the past).
 
-Please clean this up.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/mpC1UCafwyvkeyBMK41XvF4
+--Sig_/ABg9P+6gYD0JuDacTjLrBia
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJToMP0AAoJEMDTa8Ir7ZwVV8UP/RbVpgHfvJ3x+08+M0CxV38m
-6BcsoD/DiOLHoE14KSdjwPhT5cF6aVpjW0lxeuOT4O2pjyuSR7HxXo8krzNgU2zB
-rc+XnWvN367w68uhlCPithA7AwqhCxYBwHXuo7fLnEt6kmFmA9x9hm+iChgpGsmw
-EzG+8SkHBO0dNQGD1Ui3kPLHGqfDHCQaRfZLdI8izGnht7WlK7ZSpKk2lgHn96fQ
-4RhjIgsvkD4nFY/RSF9cyhQawml4Yb/VsjotW3R3POVa97eCWPLhcbSObiUMO7hu
-+j+hkbd1fv6l3+dPPZODtQ/3rGC5GiBuh6Dwue1u33UIJdqrAbl0eh813bcoQITf
-L7l+GOhQe45NKcXYCDHvsp6crUIu38/1MfrbeJt4Ad/OgVVsJ4t9rIXvVmSOLWwE
-P/PCWnlo6ZejeSWQxqzOLIY18VuaAbtqJdrYsc5PPKeiSfYhLELX3pEDWCwvbP+Q
-VyfQxUqzmhyREZ3iSktLNKR32GI1A8IfKNR0UtZROiXqFaRu2Ja1J/eOC6qPQiAY
-6+pyAxKbAd9giiG+JmrX5qUoTHAa1umlhqNW1nJF0pNbqGOe/gntiOV8F9YJ9Zmt
-6cpLU+qgHTjYpRIPknJq9gLbUu2VS1dX8tHL2bTA3wAjS0VjG9rCIh6JmvfOS3F9
-V3LblGemn7tEjY09HdhY
-=0PR1
+iQIcBAEBCAAGBQJToMX7AAoJEMDTa8Ir7ZwVZy8QAI9Q+WGFT4lfguPftwK1J/c6
+fq3RjC81hEjhheo3+tqoonASO5ySifCH/TH2Ow90ono4mvPh6jT3GrQPpPTvp3lZ
+F1DliAIdHh37RumNes2ECTyiXv+mOaQ4bl+Oo6W9zA/ni5+rvvCE+G5Z9QcDBFzH
+jZ2SRSJpU28JMDI16HW56kzAsROYBmf+nNcdTt7LDv3lUvquAhPqAcYG6PC9ltyS
+JZjjL1zXfWNRMIorXsdCtodONRiFJ9HCC/VLT9W7Lt/B7Q44oTXjqAj/5vGBhlyL
+ZQYV+dzS7RWMyuFZRWcRR5BNQU5Tbk8WWCX9OR9ye1CYk+rcOzh8kNHmvEsi1/fT
+HGLeTmJtYgBz+YB13IbY1jHHBtnY4Q+aQpjf5sZ62R7JufJQt4zo54CC9a5e9pUd
+snovff7xuqrR3QBIeQ6bwtoqX0v4CSTkQbiEQdow5yZF9TlX/ujYDd6MmYK/zdYu
+XUFpRPb5RNGzI36HiEWolMcynNS3SLIYYaXDANXFUBt0v5qUtZgj7KfKyLDJ2Tlg
+MNtOoIWbwKmj/9hh2D1GK3qT/Oo4Cu/4WU6Au7bOzSnzmNDNOCyDK/4TxlGrEF2t
+oxc3DKF9v8QMlc2iNbDAXRchULmoJooCDLNBoS0GHbCmijRQfitAP4YqDEXW7vQM
+bu16ndceE3grPn5snwy/
+=ySI5
 -----END PGP SIGNATURE-----
 
---Sig_/mpC1UCafwyvkeyBMK41XvF4--
+--Sig_/ABg9P+6gYD0JuDacTjLrBia--
