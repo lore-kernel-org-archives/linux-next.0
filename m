@@ -1,37 +1,51 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: the cgroup tree has an unnecessary merge
-Date: Tue, 17 Jun 2014 18:54:03 -0400
-Message-ID: <20140617225403.GB8838@mtj.dyndns.org>
-References: <20140618084921.07c3b391@canb.auug.org.au>
- <20140617225159.GA8838@mtj.dyndns.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: the vfs tree needs cleaning up
+Date: Wed, 18 Jun 2014 08:55:35 +1000
+Message-ID: <20140618085535.689388ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/p5KmPTLCRZ0pjhDlWpzi1zH"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140617225159.GA8838@mtj.dyndns.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 17, 2014 at 06:51:59PM -0400, Tejun Heo wrote:
-> Hello, Stephen.
-> 
-> On Wed, Jun 18, 2014 at 08:49:21AM +1000, Stephen Rothwell wrote:
-> > The cgroup tree has a merge of 963649d735c8 and c731ae1d0f02 both of
-> > which are already merged into v3.16-rc1.  Why did you just not use
-> > v3.16-rc1 itself (or the point where Linus merged your tree) (and then
-> > add the other commit on top?  That would have removed any chance that
-> > you resolved the merged differently to how it was resolved in Linus'
-> > tree (I don't know if there is a difference, but I have had conflicts
-> > from different merge resolutions in the past).
-> 
-> Oops, my mistake.  Reset to for-3.16-fixes.
+--Sig_/p5KmPTLCRZ0pjhDlWpzi1zH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Heh, the mistake was in cgroup/for-3.16-fixes.  I branched it off the
-wrong base.  Thanks for noticing it early.  Fixed now.
+Hi Al,
 
-Thanks.
+If I rebase the vfs tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git#for-next)
+onto v3.16-rc1, it ends up empty which means that its commits were all
+rewritten before Linus merged them.  Please clean up your tree.
 
--- 
-tejun
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/p5KmPTLCRZ0pjhDlWpzi1zH
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJToMdsAAoJEMDTa8Ir7ZwV0KgQAJA/E/3jiXXDAGTmjH6QLXYG
+rqZDzYZflKNJGByQsg5uzCPl0HiLpcAWF09JMVmixQn7/RP1zE0gwj5fKT/uxv5U
+EU4YrttI2/5AiaMBkYjWy5lUMbB0Mwl5to/3/RrMW2XdjFB9Kx7858ckqyph5jWz
+6hVY4sEuFGJ+M47/oG5ZHAcbWPtgHnLe1lYZg0q4TEuhq9wQ3mVGrog7U9dI1Aqp
+N6NmhRt9OcXmBcl9RSv71wC46zcExPqGsWTSQ4n6CoPosYikUmfZKNBmS5HWo8dd
+2lKGp0Wr8K/StNh1o67L60qjiQYLX/U+OXjUCjXKy4LGX7DvoUtPeTBO6w+i3j/Z
+nJvSv1PQMBnLlcvDSoyUx7gMK0GLyf4sNTzT42LqVwpGuSp6MfF7FKjpFRZXCVB7
+VGLIyozamUPgjKi+mtwCJ/rpjsoEQUCEhABZXj6XeON2L3y/WOEGKuCIn2Mtvl8o
+D27iU3XLRNlLGcPWq7ZX4HuFXjX5ubW3IbsmxOB6U579uVq3lPkM3d6XsMtzEhEQ
+dlubZpDRipVHHF7+/iTbZQ+YBemq5zLGbh1Gvv2s9zUO/lPouwWtziijuT92JgBv
+Qs3Q7J+HQ0zsorAKSjx1Fu/dFNypX5wQ9iNMTbO7oSYK8PoJv2feW9GIxYSwSPbD
+T7eHJhRPqzZPC5D274rO
+=zNV8
+-----END PGP SIGNATURE-----
+
+--Sig_/p5KmPTLCRZ0pjhDlWpzi1zH--
