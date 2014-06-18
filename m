@@ -1,61 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: the cgroup tree has an unnecessary merge
-Date: Wed, 18 Jun 2014 08:58:16 +1000
-Message-ID: <20140618085816.09a261f0@canb.auug.org.au>
-References: <20140618084921.07c3b391@canb.auug.org.au>
-	<20140617225159.GA8838@mtj.dyndns.org>
-	<20140617225403.GB8838@mtj.dyndns.org>
+Subject: linux-next: the logfs tree needs some work or merging
+Date: Wed, 18 Jun 2014 10:44:14 +1000
+Message-ID: <20140618104414.068119a7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lZ_Pdy4Rg/w9r9zBKEeFj6w"; protocol="application/pgp-signature"
+ boundary="Sig_//x5IX6sougfU7EYf99oKUT="; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46689 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36590 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932442AbaFQW6X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jun 2014 18:58:23 -0400
-In-Reply-To: <20140617225403.GB8838@mtj.dyndns.org>
+	id S1753268AbaFRAoV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2014 20:44:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
+To: Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?SsO2cm4=?= Engel <joern@logfs.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/lZ_Pdy4Rg/w9r9zBKEeFj6w
+--Sig_//x5IX6sougfU7EYf99oKUT=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi all,
 
-On Tue, 17 Jun 2014 18:54:03 -0400 Tejun Heo <tj@kernel.org> wrote:
->
-> Heh, the mistake was in cgroup/for-3.16-fixes.  I branched it off the
-> wrong base.  Thanks for noticing it early.  Fixed now.
-
-Thanks.
+The top commit in the logfs tree
+(git://github.com/prasad-joshi/logfs_upstream.git#master) was committed
+in November, 2012!  Is there any work going on with logfs?  Are the 2
+commits in this tree still relevant?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/lZ_Pdy4Rg/w9r9zBKEeFj6w
+--Sig_//x5IX6sougfU7EYf99oKUT=
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJToMgNAAoJEMDTa8Ir7ZwVIJYP/jijdwSYxuCZGTxE/Ri7/vhM
-wWBjykqYtbs4lmu9WOKKdI6/L1dxuLTH133RGmBQmmpbhA9Vu+Vc4XphYDvijuxT
-ip/h9ekRocMR1H1o68qiVfEPFfPYNEgYfxUp3jJg2bkgZSo7K6xYkyA0ocxixmx1
-MQbbphBWqmEt+cyqK5P9PqVTRFEy9QOKgJx5IxNqAeJim1TItCr1vqYHFx0Gh5EY
-wSf3Dhb7HqjFy7MhTBWqWAMJwrM4Ki3Ln8p1ykJCQfsOIaV36q1XN0VWD018mtxB
-8nJ3OEfbe9bvkiRbHSNyaNojAQbcJKGCQ2uOiJOGDCiFuog4wgeLYhZLn8sUjpWD
-ip4tze1J9kiVPfP/MGLzyFHjMdNeHmsHyojMpB7GPvSsN9uFXA32PhRW7L8dfeil
-qmLgLkR5cMomA+9DF+HwbVuA5iIHZVp4G8tfxKGy+6Hx7J52MO6o/CTsG3dDFyLM
-p9dqklREZMuHr9tVsvfKPRq6jMNH9S5AVrcXByGWPFyY+41LFORco2u8tgtz6jUi
-YxlET/m1QXHMokOOAIYAT+B3ihZ46KvE6dSc/8HCKp6sNUcjS56a+Os0gs9rcJFr
-zD1mmIeZQuYJmyr2BJIuza1vprtRk/w70pvRvkU5xE6cIhWhnyGS/daJxf45YgOf
-BXSVklMZQa6/ogcYao+i
-=z79q
+iQIcBAEBCAAGBQJToODjAAoJEMDTa8Ir7ZwVonkP/1QIJU6+oxPG1nMniST5FEQ1
+2XdaiarUp3wsII0RGzUXVM1oPuT0kUdOf07WCWJynrvFU0TQrN8mCjDg7NLtsM8i
+uVAaxPTUv+OIeJahMH3OWXNCB7XthqN354uSUoAIDYWUPwaCTILVjd3pEIHY0gF4
+GOVF6V1bP/L2rtYYjeBngJT3HkYXf7XShTb9LJ1Uw8MdS8vCGNzrabzAdch8YCM0
+4nUr0yUxUSf5oKjN3yRHIo48bY+L7ogbG5syguwtUZfTPPt09UlgsR7RGMwxOP9C
+yd0h/VhgQDWc7Nlz6Avf6z3/DgldmvNYlcOIxDvaKD1w6vwTjDHojIJAsMVtBILA
+YK/DM9KvmLQ3v7/bDL6DUTyXa+ldtItCgcAnHy2dE65eKj2CCsqGFjBNbxxPXvO+
+KiSg5bV8Rc/LuTsdcasPFiIp3xEqhKy8e0hB/+Z3B5XUBapW8BC+IfWxwq6GmDcV
+JjpztiOZZ01T+hsbck5P09gqx0MN6ML/ovwfyu1IMBTTe7WeXm/xBiUnWRsM/ikt
+TiVys4JlyT3511gua9zRAeL9WMk5AQQt4o0g9h+b2cY1t0cVGCG5kLQISmOmUf4C
+GLGzLWC4lB33jwcaL0obH2+OboiKjeT7yeuINFBb1yTczX9QpSpKT6KSUxAg6IC8
+4pzhQYRJNSpO2Jqfgrza
+=i3a4
 -----END PGP SIGNATURE-----
 
---Sig_/lZ_Pdy4Rg/w9r9zBKEeFj6w--
+--Sig_//x5IX6sougfU7EYf99oKUT=--
