@@ -1,45 +1,62 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Sachin Kamat <sachin.kamat@samsung.com>
 Subject: Re: Build error - vmlinux.lds [Re: linux-next: Tree for Jun 18]
-Date: Wed, 18 Jun 2014 12:56:02 +0100
-Message-ID: <20140618115602.GA32514@n2100.arm.linux.org.uk>
+Date: Wed, 18 Jun 2014 17:38:14 +0530
+Message-ID: <CAK5sBcEg1XYQmzshxdLDHFCYFiawV0d8rt7aeAkPoiPhNMX1CQ@mail.gmail.com>
 References: <CAK5sBcEpXboRVD-KzzjBJMi+LF-jhdt_HUYEz7wkJtFAv+BLcg@mail.gmail.com>
+	<20140618115602.GA32514@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:33875 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S934001AbaFRL4L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Jun 2014 07:56:11 -0400
-Content-Disposition: inline
-In-Reply-To: <CAK5sBcEpXboRVD-KzzjBJMi+LF-jhdt_HUYEz7wkJtFAv+BLcg@mail.gmail.com>
+Received: from mail-la0-f47.google.com ([209.85.215.47]:32833 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966020AbaFRMIQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jun 2014 08:08:16 -0400
+In-Reply-To: <20140618115602.GA32514@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Kamat <sachin.kamat@samsung.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Wed, Jun 18, 2014 at 04:50:43PM +0530, Sachin Kamat wrote:
-> Hi,
-> 
-> I observe the following build error while building uImage for ARM.
-> 
->   Kernel: arch/arm/boot/Image is ready
-> make[2]: *** No rule to make target
-> `arch/arm/boot/compressed/vmlinux.lds', needed by
-> `arch/arm/boot/compressed/vmlinux'.  Stop.
-> make[1]: *** [arch/arm/boot/compressed/vmlinux] Error 2
-> make: *** [uImage] Error 2
+On Wed, Jun 18, 2014 at 5:26 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Wed, Jun 18, 2014 at 04:50:43PM +0530, Sachin Kamat wrote:
+>> Hi,
+>>
+>> I observe the following build error while building uImage for ARM.
+>>
+>>   Kernel: arch/arm/boot/Image is ready
+>> make[2]: *** No rule to make target
+>> `arch/arm/boot/compressed/vmlinux.lds', needed by
+>> `arch/arm/boot/compressed/vmlinux'.  Stop.
+>> make[1]: *** [arch/arm/boot/compressed/vmlinux] Error 2
+>> make: *** [uImage] Error 2
+>
+> Works fine here against an empty object tree:
+>
+> http://www.arm.linux.org.uk/developer/build/file.php?lid=9591
+>
+> Are you building into an already-built object tree or rebuilding an
+> already built tree?
 
-Works fine here against an empty object tree:
+I did a clean build after updating the tree to next-20140618.
+git status show me the following after doing make clean
 
-http://www.arm.linux.org.uk/developer/build/file.php?lid=9591
+# On branch master
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#    deleted:    arch/arm/boot/compressed/vmlinux.lds.S
 
-Are you building into an already-built object tree or rebuilding an
-already built tree?
 
-This is likely caused by make getting confused over the dependencies.
-I suggest making clean to recover from this error.
+My tip of kernel points to commit 4ca1fbc122fcb ("Add linux-next specific
+files for 20140618")
 
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+>
+> This is likely caused by make getting confused over the dependencies.
+> I suggest making clean to recover from this error.
+
+I get this error when I do a clean build too.
+
+Regards,
+Sachin.
