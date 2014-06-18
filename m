@@ -1,63 +1,45 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: Build error - vmlinux.lds [Re: linux-next: Tree for Jun 18]
-Date: Wed, 18 Jun 2014 13:20:21 +0100
-Message-ID: <20140618122020.GB32514@n2100.arm.linux.org.uk>
-References: <CAK5sBcEpXboRVD-KzzjBJMi+LF-jhdt_HUYEz7wkJtFAv+BLcg@mail.gmail.com> <20140618115602.GA32514@n2100.arm.linux.org.uk> <CAK5sBcEg1XYQmzshxdLDHFCYFiawV0d8rt7aeAkPoiPhNMX1CQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: the selinux tree needs cleaning up
+Date: Wed, 18 Jun 2014 14:26:27 -0400
+Message-ID: <1446656.4HCLD295vV@sifl>
+References: <20140618084046.1bce12cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAK5sBcEg1XYQmzshxdLDHFCYFiawV0d8rt7aeAkPoiPhNMX1CQ@mail.gmail.com>
+In-Reply-To: <20140618084046.1bce12cc@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 18, 2014 at 05:38:14PM +0530, Sachin Kamat wrote:
-> On Wed, Jun 18, 2014 at 5:26 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > On Wed, Jun 18, 2014 at 04:50:43PM +0530, Sachin Kamat wrote:
-> >> Hi,
-> >>
-> >> I observe the following build error while building uImage for ARM.
-> >>
-> >>   Kernel: arch/arm/boot/Image is ready
-> >> make[2]: *** No rule to make target
-> >> `arch/arm/boot/compressed/vmlinux.lds', needed by
-> >> `arch/arm/boot/compressed/vmlinux'.  Stop.
-> >> make[1]: *** [arch/arm/boot/compressed/vmlinux] Error 2
-> >> make: *** [uImage] Error 2
-> >
-> > Works fine here against an empty object tree:
-> >
-> > http://www.arm.linux.org.uk/developer/build/file.php?lid=9591
-> >
-> > Are you building into an already-built object tree or rebuilding an
-> > already built tree?
+On Wednesday, June 18, 2014 08:40:46 AM Stephen Rothwell wrote:
+> Hi Paul,
 > 
-> I did a clean build after updating the tree to next-20140618.
-> git status show me the following after doing make clean
-> 
-> # On branch master
-> # Changes not staged for commit:
-> #   (use "git add/rm <file>..." to update what will be committed)
-> #   (use "git checkout -- <file>..." to discard changes in working directory)
-> #
-> #    deleted:    arch/arm/boot/compressed/vmlinux.lds.S
-> 
-> 
-> My tip of kernel points to commit 4ca1fbc122fcb ("Add linux-next specific
-> files for 20140618")
-> 
-> >
-> > This is likely caused by make getting confused over the dependencies.
-> > I suggest making clean to recover from this error.
-> 
-> I get this error when I do a clean build too.
+> The selinux tree (git://git.infradead.org/users/pcmoore/selinux#next)
+> contains some commits going back to January and also has merges of
+> v3.13, v3.14 and v3.15 in it.  If you rebase that tree onto v3.16-rc1,
+> you find that it has onlt 2 unique commits (the most recent 2) which
+> means that the others were merged upstream after being rewritten.  :-(
 
-Hmm.  Please try removing vmlinux.lds.S from extra-y in
-arch/arm/boot/compressed/Makefile and restoring the deleted file.
+Without going through each of the differences between the SELinux tree and 
+what is in Linus' tree in this email, I can assure you there is nothing 
+nefarious going on here, just some differences in tree management between 
+James' Linux Security tree and the SELinux tree which resulted in some 
+backports and other mess.  The good news is that James' and the rest of us 
+under the Linux Security tree have now established a protocol moving forward 
+which should avoid these nasties.
+
+So, back to your concerns - what do you want to see in linux-next?  My 
+practice for the SELinux #next branch has been to apply patches on top of the 
+latest "major" release from Linus, e.g. 3.15, and when a new major release is 
+made I merge it into #next and restart the process.  I generally send James' a 
+pull request in the -rc6/7 timeframe using the #next branch.  While this has 
+resulted in some ugliness (see above comments) it keeps the SELinux #next 
+branch steady so others can pull from it without major problems.
+
+Does this approach not work for you and linux-next?
 
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+paul moore
+www.paul-moore.com
