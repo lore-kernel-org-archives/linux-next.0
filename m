@@ -1,103 +1,100 @@
-From: Paul Moore <paul@paul-moore.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: the selinux tree needs cleaning up
-Date: Thu, 19 Jun 2014 15:47:01 -0400
-Message-ID: <3494783.s5KPIUO972@sifl>
-References: <20140618084046.1bce12cc@canb.auug.org.au> <1446656.4HCLD295vV@sifl> <20140620010837.692e5472@canb.auug.org.au>
+Date: Fri, 20 Jun 2014 08:59:31 +1000
+Message-ID: <20140620085931.6427678d@canb.auug.org.au>
+References: <20140618084046.1bce12cc@canb.auug.org.au>
+	<1446656.4HCLD295vV@sifl>
+	<20140620010837.692e5472@canb.auug.org.au>
+	<3494783.s5KPIUO972@sifl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/V6HksuFMCbdmoS87h+.cZKl"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:42202 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752051AbaFSTrK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jun 2014 15:47:10 -0400
-Received: by mail-qg0-f42.google.com with SMTP id e89so2581923qgf.15
-        for <linux-next@vger.kernel.org>; Thu, 19 Jun 2014 12:47:09 -0700 (PDT)
-In-Reply-To: <20140620010837.692e5472@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:55335 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S964958AbaFSW7k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Jun 2014 18:59:40 -0400
+In-Reply-To: <3494783.s5KPIUO972@sifl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>
 
-On Friday, June 20, 2014 01:08:37 AM Stephen Rothwell wrote:
-> Hi Paul,
+--Sig_/V6HksuFMCbdmoS87h+.cZKl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Howdy.
+Hi Paul,
 
-> On Wed, 18 Jun 2014 14:26:27 -0400 Paul Moore <paul@paul-moore.com> wrote:
-> > On Wednesday, June 18, 2014 08:40:46 AM Stephen Rothwell wrote:
+On Thu, 19 Jun 2014 15:47:01 -0400 Paul Moore <paul@paul-moore.com> wrote:
+>
+> I want to avoid use a -rcX release as the foundation of any of my trees; =
+the -
+> rc releases aren't as stable and it goes against what we're trying to do =
+with=20
+> the different Linux Security trees.  Unfortunately, based on what I've re=
+ad=20
+> above, this seems to be incompatible with linux-next.
 
-I'm going to chop up your email a bit so it makes more sense when replying, my 
-apologies if I make things worse.
+The problem with basing your development for v3.17 on v3.15 is that
+you  do not take into account any of the changes done by others during
+v3.16-rc1 (or even your upstream tree) some of which may be core API
+changes.
 
-> As for your current tree, it contains the following commits:
-> 
-> (1) 5c7001b84be5 SELinux: use ARRAY_SIZE
-> (2) aa65506f198c selinux, kbuild: remove unnecessary $(hostprogs-y) from
-> clean-files 170b5910d9fb Merge tag 'v3.15' into next
-> (3) 47dd0b76ace9 selinux: conditionally reschedule in hashtab_insert while
-> loading selinux policy (4) 612c353178c4 selinux: conditionally reschedule
-> in mls_convert_context while loading selinux policy (5) 4f189988a0a5
-> selinux: reject setexeccon() on MNT_NOSUID applications with -EACCES (6)
-> 626b9740fa73 selinux:  Report permissive mode in avc: denied messages.
-> 6d32c850621b Merge tag 'v3.14' into next
-> (7) eee3094683fb selinux: correctly label /proc inodes in use before the
-> policy is loaded (8) 0909c0ae999c selinux: put the mmap() DAC controls
-> before the MAC controls (9) 81c94e76ce8e selinux: fix the output of
-> ./scripts/get_maintainer.pl for SELinux 41be702a542a Merge tag 'v3.13' into
-> next
-> 
-> 1 and 2 are new
+> While I hate to split my development branch from the #next branch, it see=
+ms=20
 
-Yes, these are the "new" SELinux patches that should be in linux-next.
+I don't want that either ...
 
-> 3 is in Linus' tree as commit ed1c96429a6a
-> 4                             9a591f39a9d1
-> 5                             5b589d44fad1
-> 6                             ca7786a2f916
-> 7                             f64410ec6654
-> 8 and 9 are subsumed by something in Linus' tree.
+> like that is the only way to accomplish both a reasonably current and sta=
+ble=20
+> development tree and get the patches into linux-next.  Unless you, or any=
+one=20
+> else for that matter, has a different suggestion I'm going to go ahead an=
+d=20
+> turn the current SELinux #next branch into a development branch and creat=
+e a=20
+> new #next branch that will be based on the most current -rc1, this new #n=
+ext=20
+> branch will be created new for each major release.  Not exactly what I wa=
+s=20
+> hoping for, but will that work?
 
-These are likely caused by the problems we talked about earlier.
+Do you mean that your #next branch will just be a merge of -rc1 and
+your development branch?  That would not actually change anything
+(except that you would possibly take care of some conflicts for me).
 
-> > So, back to your concerns - what do you want to see in linux-next?  My
-> > practice for the SELinux #next branch has been to apply patches on top of
-> > the latest "major" release from Linus, e.g. 3.15, and when a new major
-> > release is made I merge it into #next and restart the process.  I
-> > generally send James' a pull request in the -rc6/7 timeframe using the
-> > #next branch.  While this has resulted in some ugliness (see above
-> > comments) it keeps the SELinux #next branch steady so others can pull
-> > from it without major problems.
-> > 
-> > Does this approach not work for you and linux-next?
-> 
-> OK, you should probably base your tree on -rc1 or 2, that way all your
-> stuff for the previous merge window is upstream and you don't need to
-> worry about it any more.
+At the core, what is in linux-next should just be exactly what will be
+merged by your upstream.  My real point here is that that is not what
+has happened recently.  The patches in your tree have been
+cherry-picked or rebased into James' or Serge's trees, not merged so we
+now have duplication.  This is what you need to solve with James and
+Serge.  linux-next is a side issue - I can cope with a lot.
 
-...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> So, the easiest way for you to clean up from this is to now rebase onto
-> v3.16-rc1 (which will leave you with just commits 1 and 2) and then
-> ensure that in the future James (or whoever is handling the security
-> tree) pulls your tree (and doesn't cherry-pick the patches).  Then
-> after that has happened, you can fast forward your tree onto that
-> upstream tree, or wait until the next -rc1 and fast forward to that.
+--Sig_/V6HksuFMCbdmoS87h+.cZKl
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-I want to avoid use a -rcX release as the foundation of any of my trees; the -
-rc releases aren't as stable and it goes against what we're trying to do with 
-the different Linux Security trees.  Unfortunately, based on what I've read 
-above, this seems to be incompatible with linux-next.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-While I hate to split my development branch from the #next branch, it seems 
-like that is the only way to accomplish both a reasonably current and stable 
-development tree and get the patches into linux-next.  Unless you, or anyone 
-else for that matter, has a different suggestion I'm going to go ahead and 
-turn the current SELinux #next branch into a development branch and create a 
-new #next branch that will be based on the most current -rc1, this new #next 
-branch will be created new for each major release.  Not exactly what I was 
-hoping for, but will that work?
+iQIcBAEBCAAGBQJTo2tYAAoJEMDTa8Ir7ZwVvBsP/iaD9clMzjw3fSpeR5i0vYif
+/lDeX/46lqyEJcn/qYeax5Murc/+oXgwllhyNpjkaCZsDMZzUhlBmR4KiZvNx36G
+dkyOacmOGMJP2rWEaRS5qXWuW2A1tBFlhmYiGkjb8HqBOfT+r0faonxivXNymLD6
+vfcV48cVb9rXa+IhmXlXF1GTmkJVJVHPWcEoKqsaP+12wZKeb3NoMYs8tVSR1KPg
+3TUhv+k62idy66qKRNlbQvlOdGfZegQj+FO65qo+9DVc42C69qYf+gkAeEi6eKBw
+RahS6V3rJEMeSS5YNKwInuJ9kaToJB9dlM3Wj2OT674pmMi4bk4XfyHzVLm6eXW0
+FXFO9wwYF4kjSQMvfwp7WxeT1VnChaz/IeTcEd4x5Tl7v/MHCJuACHh8aP3VJ+pW
+a02MlVCk8uw4eENI9BwkKUvFzJ+N9rrSpzTt0vYF96SbHZCva+sBI+wo5HboivXG
+rRSmG0IfRGBuYUlmsOsRh8rHPBUGbDtNlUGfj21qH+rHivvacafn2VtkD+uva52R
+teZhoA7dC/Jnwkc60rphAo+LLjCqmtKdjKmCslxhr8S0mCv/S1mvoxbS4bkpCYzd
+LnKpwYKl9Iv86iKwUH3WePOFKqSxpV8wJljrFYssYCJuLTFZ+/OoDyRzAnVz+AIV
+4fos8y7Uh+OoHrsmhNp3
+=ApKi
+-----END PGP SIGNATURE-----
 
--- 
-paul moore
-www.paul-moore.com
+--Sig_/V6HksuFMCbdmoS87h+.cZKl--
