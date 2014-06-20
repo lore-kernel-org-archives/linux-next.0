@@ -1,70 +1,72 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: the selinux tree needs cleaning up
-Date: Fri, 20 Jun 2014 05:43:56 +0200
-Message-ID: <20140620034356.GB20601@mail.hallyn.com>
+Date: Fri, 20 Jun 2014 13:59:12 +1000
+Message-ID: <20140620135912.48ee1dff@canb.auug.org.au>
 References: <20140618084046.1bce12cc@canb.auug.org.au>
- <1446656.4HCLD295vV@sifl>
- <20140620010837.692e5472@canb.auug.org.au>
- <3494783.s5KPIUO972@sifl>
- <20140620085931.6427678d@canb.auug.org.au>
+	<1446656.4HCLD295vV@sifl>
+	<20140620010837.692e5472@canb.auug.org.au>
+	<3494783.s5KPIUO972@sifl>
+	<20140620085931.6427678d@canb.auug.org.au>
+	<20140620034356.GB20601@mail.hallyn.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/v7GFN_S9u6LCFG4FFv827D4"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from static.92.5.9.176.clients.your-server.de ([176.9.5.92]:55252
-	"EHLO mail.hallyn.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933593AbaFTDn6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jun 2014 23:43:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20140620085931.6427678d@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:48781 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932480AbaFTD7U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Jun 2014 23:59:20 -0400
+In-Reply-To: <20140620034356.GB20601@mail.hallyn.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Moore <paul@paul-moore.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>
 
-Quoting Stephen Rothwell (sfr@canb.auug.org.au):
-> Hi Paul,
-> 
-> On Thu, 19 Jun 2014 15:47:01 -0400 Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > I want to avoid use a -rcX release as the foundation of any of my trees; the -
-> > rc releases aren't as stable and it goes against what we're trying to do with 
-> > the different Linux Security trees.  Unfortunately, based on what I've read 
-> > above, this seems to be incompatible with linux-next.
-> 
-> The problem with basing your development for v3.17 on v3.15 is that
-> you  do not take into account any of the changes done by others during
-> v3.16-rc1 (or even your upstream tree) some of which may be core API
-> changes.
-> 
-> > While I hate to split my development branch from the #next branch, it seems 
-> 
-> I don't want that either ...
-> 
-> > like that is the only way to accomplish both a reasonably current and stable 
-> > development tree and get the patches into linux-next.  Unless you, or anyone 
-> > else for that matter, has a different suggestion I'm going to go ahead and 
-> > turn the current SELinux #next branch into a development branch and create a 
-> > new #next branch that will be based on the most current -rc1, this new #next 
-> > branch will be created new for each major release.  Not exactly what I was 
-> > hoping for, but will that work?
-> 
-> Do you mean that your #next branch will just be a merge of -rc1 and
-> your development branch?  That would not actually change anything
-> (except that you would possibly take care of some conflicts for me).
-> 
-> At the core, what is in linux-next should just be exactly what will be
-> merged by your upstream.  My real point here is that that is not what
-> has happened recently.  The patches in your tree have been
-> cherry-picked or rebased into James' or Serge's trees, not merged so we
-> now have duplication.  This is what you need to solve with James and
-> Serge.  linux-next is a side issue - I can cope with a lot.
+--Sig_/v7GFN_S9u6LCFG4FFv827D4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The duplicates were the result of several misunderstandings and general
-naivity all on my part.  I'm actually still not clear on what usually
-happens with the selinux tree - it feeds into linux-next, then gets
-'pull'ed by James into security-next for a pull request?  Do you usually
-send a request to James when ready, he pulls, then he sends pull request
-to Linus?  (Or am I wrong, and you usually send your own requests to
-Linus?)
+Hi Serge,
 
--serge
+On Fri, 20 Jun 2014 05:43:56 +0200 "Serge E. Hallyn" <serge@hallyn.com> wro=
+te:
+>
+> The duplicates were the result of several misunderstandings and general
+> naivity all on my part.  I'm actually still not clear on what usually
+> happens with the selinux tree - it feeds into linux-next, then gets
+> 'pull'ed by James into security-next for a pull request?  Do you usually
+> send a request to James when ready, he pulls, then he sends pull request
+> to Linus?  (Or am I wrong, and you usually send your own requests to
+> Linus?)
+
+If "you" is Paul, then I am pretty sure he asks James to pull and then
+James in turn asks Linus to pull.
+
+If "you" is me, then no :-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/v7GFN_S9u6LCFG4FFv827D4
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTo7GVAAoJEMDTa8Ir7ZwVEc0P/AzS0UmvVo+hOfZYWflQH5Kc
+VuSQ/OC5oRInuMBdbYEIv/lrh/6lenBmmVlZzCOWVw2SoAL0sq0Ish+tCU7zYuEW
+xFTJ8mdJAtvsFlCfT3OOkrefB/FSvugTUc2YpY2atl+RAoBMPZrhccXa4MguvO0o
+DyZ7R1bsMcZ6qW5/ZJ/9/ZAnlfOb+44YacCwPL4JZTkBfMc0Zr5G6Sw9C4wIeJsE
+Zo+L9zmad7RGuiJyp2YwN+yp9IDpKkwA7GjkA5lYbGUq9K+uQsdYio9lb16KFXLO
+PRJ6hSNZhTcLUd6riZMJ0dtrUr5geuIkGPmmzBKPiheu7PQ4mT1FJrePiMvZRpjM
+2pygzxvkX7Gns+Aa16SsVQSpN6wXIZv0Ti0E5gfU9G3mmbKe6DhYUKgSRcBWZsvf
+owvyI5LJ84bFCw86JPZGPRkq5PnXoGRtL0Jyq6wQ05HQeaHQxANuITHzGHdx/Wfn
+V2ov8ua96RdzujVCQiZzm5cIdKfZLGdWng56mKnn5UAMdDMyhNYwytjPPvZD7cul
+m7WlV5XTIEbcPSlNQL+pMj48TYuJP9MMrBdXjQAsoOQBIlOmHcNJ4BqRkNuC2T9F
+1MdEdBEC5I0fRHIs0QJCnOdNKngencMiFbrtiwmlK2Xen/TkeSTAYEybsrqi3QSk
+TSakyIrEeUtG1oRu/adH
+=7Cae
+-----END PGP SIGNATURE-----
+
+--Sig_/v7GFN_S9u6LCFG4FFv827D4--
