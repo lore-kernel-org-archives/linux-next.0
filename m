@@ -1,29 +1,64 @@
-From: "Kondratiev, Vladimir" <vkondrat@qti.qualcomm.com>
-Subject: RE: randconfig build error with next-20140604, in
- drivers/net/wireless/ath/wil6210/debugfs.c
-Date: Fri, 20 Jun 2014 16:43:38 +0000
-Message-ID: <A5CA08B46412E243958C77F3825F4395270AB72A@NASANEXD02E.na.qualcomm.com>
-References: <CA+r1ZhiT6hHwA2urc-DXUxucvJYaYdq-dZZSAFrgd3du_DDrww@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Fri, 20 Jun 2014 09:53:53 -0700
+Message-ID: <20140620165353.GA3433@kroah.com>
+References: <20140620141807.45761bd0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:25784 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756923AbaFTQnk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jun 2014 12:43:40 -0400
-In-Reply-To: <CA+r1ZhiT6hHwA2urc-DXUxucvJYaYdq-dZZSAFrgd3du_DDrww@mail.gmail.com>
-Content-Language: en-US
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:54556 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934855AbaFTQt7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2014 12:49:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20140620141807.45761bd0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, qca_vkondrat <qca_vkondrat@qca.qualcomm.com>, "linville@tuxdriver.com" <linville@tuxdriver.com>, linux-wireless <linux-wireless@vger.kernel.org>, wil6210 <wil6210@qca.qualcomm.com>, netdev <netdev@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>
 
-Building with the attached random configuration file,
+On Fri, Jun 20, 2014 at 02:18:07PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the staging tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/staging/board/board.c: In function 'find_by_address':
+> drivers/staging/board/board.c:14:3: error: implicit declaration of function 'of_can_translate_address' [-Werror=implicit-function-declaration]
+>    if (of_can_translate_address(dn)
+>    ^
+> 
+> Caused by commit 382063d91e15 ("staging: board: Initial board staging
+> support").
+> 
+> I have disabled that driver for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 20 Jun 2014 14:14:17 +1000
+> Subject: [PATCH] staging: board: disable
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/staging/board/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/board/Kconfig b/drivers/staging/board/Kconfig
+> index 09d94b48c9c9..7eda0b8b7aab 100644
+> --- a/drivers/staging/board/Kconfig
+> +++ b/drivers/staging/board/Kconfig
+> @@ -1,6 +1,7 @@
+>  config STAGING_BOARD
+>  	boolean "Staging Board Support"
+>  	depends on OF_ADDRESS
+> +	depends on BROKEN
+>  	help
+>  	  Select to enable per-board staging support code.
+>  
 
-drivers/built-in.o: In function `wil_vring_debugfs_show':
-debugfs.c:(.text+0x3a331c): undefined reference to `__udivdi3'
-make: *** [vmlinux] Error 1
+Magnus, can you send me a proper patch for this to get the code back to
+building condition?
 
-Patch already sent.
+thanks,
 
-Thanks, Vladimir
+greg k-h
