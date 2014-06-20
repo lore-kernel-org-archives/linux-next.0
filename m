@@ -1,104 +1,29 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: the selinux tree needs cleaning up
-Date: Fri, 20 Jun 2014 12:06:28 -0400
-Message-ID: <1474416.aEfMv8Ny53@sifl>
-References: <20140618084046.1bce12cc@canb.auug.org.au> <3494783.s5KPIUO972@sifl> <20140620085931.6427678d@canb.auug.org.au>
+From: Hartley Sweeten <HartleyS@visionengravers.com>
+Subject: RE: [-next] comedi I/O accessor name clashes
+Date: Fri, 20 Jun 2014 16:20:27 +0000
+Message-ID: <DC148C5AA1CEBA4E87973D432B1C2D8825EB28CA@P3PWEX4MB008.ex4.secureserver.net>
+References: <CAMuHMdVhU6JZFzuPkx=wtLcPYc7wwaMFwCrZu=zG7PmCYssy-g@mail.gmail.com>
+	<53A41720.9020609@mev.co.uk>
+ <CAMuHMdXiwJqCHP0+BPaVn2f2B4eTe957Vun=2ue6FOZk60kPKw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yk0-f171.google.com ([209.85.160.171]:65010 "EHLO
-	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753505AbaFTQHL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jun 2014 12:07:11 -0400
-Received: by mail-yk0-f171.google.com with SMTP id 200so2838373ykr.30
-        for <linux-next@vger.kernel.org>; Fri, 20 Jun 2014 09:07:10 -0700 (PDT)
-In-Reply-To: <20140620085931.6427678d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXiwJqCHP0+BPaVn2f2B4eTe957Vun=2ue6FOZk60kPKw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Ian Abbott <abbotti@mev.co.uk>
+Cc: Greg KH <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Friday, June 20, 2014 08:59:31 AM Stephen Rothwell wrote:
-> Hi Paul,
-
-Hello again.
-
-> On Thu, 19 Jun 2014 15:47:01 -0400 Paul Moore <paul@paul-moore.com> wrote:
-> > I want to avoid use a -rcX release as the foundation of any of my trees;
-> > the -rc releases aren't as stable and it goes against what we're trying
-> > to do with the different Linux Security trees.  Unfortunately, based on
-> > what I've read above, this seems to be incompatible with linux-next.
-> 
-> The problem with basing your development for v3.17 on v3.15 is that
-> you  do not take into account any of the changes done by others during
-> v3.16-rc1 (or even your upstream tree) some of which may be core API
-> changes.
-
-The way I currently do things - merge the latest major release on top of the 
-existing #next and then start applying the new #next patches - does leave the 
-SELinux tree a bit behind when it comes to other subsystems, but it does at 
-least include all of the SELinux relevant patches.
-
-I'll admit it isn't perfect, but it seems to work reasonably well for SELinux 
-development, and it was the process used by the previous SELinux maintainer.
-
-> > While I hate to split my development branch from the #next branch, it
-> > seems
-> 
-> I don't want that either ...
-> 
-> > like that is the only way to accomplish both a reasonably current and
-> > stable development tree and get the patches into linux-next.  Unless you,
-> > or anyone else for that matter, has a different suggestion I'm going to
-> > go ahead and turn the current SELinux #next branch into a development
-> > branch and create a new #next branch that will be based on the most
-> > current -rc1, this new #next branch will be created new for each major
-> > release.  Not exactly what I was hoping for, but will that work?
-> 
-> Do you mean that your #next branch will just be a merge of -rc1 and
-> your development branch?  That would not actually change anything
-> (except that you would possibly take care of some conflicts for me).
-
-Sort of, I would basically create a new #next branch for linux-next which 
-would be created fresh from the latest -rc1 and I would cherry-pick the 
-patches for linux-next from my development branch.  It would be a bit of a 
-mess to be honest, but I'm trying to reconcile the SELinux development 
-needs/wants with the linux-next needs/wants. 
-
-> At the core, what is in linux-next should just be exactly what will be
-> merged by your upstream.
-
-That has been, and remains the goal for me as well.  However, there have been 
-a number of problems with this in the past, even excluding the latest merge 
-window; I believe these past problems are what you are seeing now.
-
-I am hopeful that these issues are behind us now, at least for the most part.
-
-> My real point here is that that is not what has happened recently.  The
-> patches in your tree have been cherry-picked or rebased into James' or
-> Serge's trees, not merged so we now have duplication.  This is what you need
-> to solve with James and Serge.  linux-next is a side issue - I can cope with
-> a lot.
-
-See above.  This issue has been solved with James a few months ago, this merge 
-window was actually on track to go off without a problem, and it sorta did, 
-but there were some out-of-band issues which caused some confusion in the 
-linux-security world.  Let's try to move on a bit, discussing why the SELinux 
-#next branch has some cruft in it doesn't help us resolve things since we all 
-acknowledge there were problems for a while that should now be resolved ...
-
-Stephen, assuming for a moment that I created a fresh branch, based against 
-3.15, and then added the SELinux patches for 3.16 (basically the few new 
-patches that were in the ole #next branch) would that serve as a reasonable 
-basis for a new SELinux #next branch?  Around the -rc5/6/7 timeframe I would 
-send a pull request to James to pull from this next branch into the Linux 
-Security branch for 3.17.  Once 3.16 is released, I would merge that into this 
-new #next branch and continue with the next round of patches.
-
-FYI, more or less, the above is the process we've settled upon for all of the 
-trees that get accumulated into the Linux Security tree.
-
--- 
-paul moore
-www.paul-moore.com
+T24gRnJpZGF5LCBKdW5lIDIwLCAyMDE0IDQ6MjAgQU0sIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90
+ZToNCj4gT24gRnJpLCBKdW4gMjAsIDIwMTQgYXQgMToxMiBQTSwgSWFuIEFiYm90dCA8YWJib3R0
+aUBtZXYuY28udWs+IHdyb3RlOg0KPj4+IGRyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9u
+aV9hdG1pby5jOjMxODozODogZXJyb3I6IG1hY3JvDQo+Pj4gIndyaXRldyIgcGFzc2VkIDMgYXJn
+dW1lbnRzLCBidXQgdGFrZXMganVzdCAyDQo+DQo+PiBUaGFua3MsIGJ1dCBIYXJ0bGV5IGhhcyBh
+bHJlYWR5IGZpeGVkIGl0IGFuZCBHcmVnIGhhcyBhcHBsaWVkIGl0IHRvIGhpcw0KPj4gc3RhZ2lu
+Zy1uZXh0IGJyYW5jaC4gIEl0IHNob3VsZCB3ZW5kIGl0J3MgbWVycnkgd2F5IHRvIGxpbnV4LW5l
+eHQgaW4gdGhlDQo+PiBub3QtdG9vLWRpc3RhbnQgZnV0dXJlLg0KPg0KPiBUaGFua3MsIGdvb2Qg
+dG8gaGVhciB0aGF0IQ0KDQpHZWVydCAvIElhbiwNCg0KVGhlIHBhdGNoZXMgdG8gZml4IHRoaXMg
+YXJlIGluIG5leHQtMjAxNDA2MjAuDQoNClNvcnJ5IGZvciB0aGUgdHJvdWJsZSwNCkhhcnRsZXkN
+Cg0K
