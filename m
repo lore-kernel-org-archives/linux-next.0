@@ -1,72 +1,90 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 20 Jun 2014 15:27:15 +1000
-Message-ID: <20140620152715.24baa4ce@canb.auug.org.au>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Thu, 19 Jun 2014 22:29:49 -0700
+Message-ID: <CAE9FiQVN1BcZmdwjaKF5-K=acC11jP=mWoFT67udH-b7iVjqHw@mail.gmail.com>
+References: <20140620152703.157a66fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8lsjlsECMLJ6Dfdz2Jqs3yc"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joonsoo Kim <iamjoonsoo.kim@lge.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/mixed; boundary=047d7b10ca0140aed004fc3dc87e
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:41249 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934263AbaFTF3u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jun 2014 01:29:50 -0400
+In-Reply-To: <20140620152703.157a66fd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
---Sig_/8lsjlsECMLJ6Dfdz2Jqs3yc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--047d7b10ca0140aed004fc3dc87e
+Content-Type: text/plain; charset=UTF-8
 
-Hi Andrew,
+On Thu, Jun 19, 2014 at 10:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Andrew,
+>
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> Introduced by commit 8d9dfa4b0125 ("initramfs: support initramfs that
+> is more than 2G").  Grep is your friend :-(
 
-After merging the akpm-current tree, today's linux-next build (arm
-defconfig) failed like this:
+Please check if attached patch fix the problem.
 
-In file included from /scratch/sfr/next/arch/arm/mm/dma-mapping.c:29:0:
-/scratch/sfr/next/include/linux/cma.h:8:28: error: 'CONFIG_CMA_AREAS' undec=
-lared here (not in a function)
- #define MAX_CMA_AREAS (1 + CONFIG_CMA_AREAS)
-                            ^
-/scratch/sfr/next/arch/arm/mm/dma-mapping.c:434:54: note: in expansion of m=
-acro 'MAX_CMA_AREAS'
- static struct dma_contig_early_reserve dma_mmu_remap[MAX_CMA_AREAS] __init=
-data;
-                                                      ^
+Yinghai
 
-Caused by commit f495d267b2e0 ("CMA: generalize CMA reserved area
-management functionality").
+--047d7b10ca0140aed004fc3dc87e
+Content-Type: text/x-patch; charset=US-ASCII; name="fix_uLong_print.patch"
+Content-Disposition: attachment; filename="fix_uLong_print.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_hwn247jz1
 
-I have reverted that commit and these commits that depend on it
-
-57d551e70a38 ("mm, CMA: clean-up log message")
-d75ab106aef5 ("mm, CMA: change cma_declare_contiguous() to obey coding conv=
-ention")
-f693a5424631 ("mm, CMA: clean-up CMA allocation error path")
-e58e263e5254 ("PPC, KVM, CMA: use general CMA reserved area management fram=
-ework")
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/8lsjlsECMLJ6Dfdz2Jqs3yc
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJTo8YzAAoJEMDTa8Ir7ZwVTwgP/0W1S9fW4rmaAlY0LCwR80uo
-JW4EdSlf/iVrsVGe4p449z3ugJnlUeZjMJ5IgiMlvw2moWTSw/5Hg3b41dv7LMKj
-PiV3wH0bHfW0meDs/uFHvoLDYStWPSs6Jb3XYbdjnjxAuddqoqhTPxorlQv81xTK
-n+1SdeXyauded4Va6aflNXAWytbIY7+HO+Sd+HArC+h6gVbMXywJXWvRzoG1PHSv
-BZNwTV0FZNZBHpkh7OjB5fXuDvdHBVS//oBs9yI8B2A6IirLsZJnjb6KUmP6iJht
-3o5qgkYE2FaevRq6ebeHCkJO2p0XXZgSdDYRgE/S8D+YYMnNJulGUienSq0lYNHx
-vOVk9PVXpJc4B/L+d/Vc/UkOgjBFnq1M48e4QpPqetQlyuwg8Akvnegm1/yIUt9W
-EP8YX1OBXbxWhGdMOI+WGlb6+TieNDmT8ffBHfOQiIapsfRpsK5z2BQSsJjLeecp
-p948n6zytkl8ShjyNZtTYr9UdOkFikIP3qbT5lk7cUAxJJ8UaQvC5iHAQQOCYgl8
-xvSOCSoIalQMWBR/uqKZYS/OsJB4xpFv0TVoya6TuBugb6da6Ol4FRqrbVoGmvrR
-ZABdeEhU2ldT/416NQdtJSQ5F3mJUltlebRhRKBzHBkcg4myNebWZadoT9jdXwl+
-2MkVdFBMWql0vOlRPcXx
-=8aDG
------END PGP SIGNATURE-----
-
---Sig_/8lsjlsECMLJ6Dfdz2Jqs3yc--
+ZGlmZiAtLWdpdCBhL2NyeXB0by96bGliLmMgYi9jcnlwdG8vemxpYi5jCmluZGV4IDA2YjYyZTUu
+LmM5ZWU2ODEgMTAwNjQ0Ci0tLSBhL2NyeXB0by96bGliLmMKKysrIGIvY3J5cHRvL3psaWIuYwpA
+QCAtMTY4LDcgKzE2OCw3IEBAIHN0YXRpYyBpbnQgemxpYl9jb21wcmVzc191cGRhdGUoc3RydWN0
+IGNyeXB0b19wY29tcCAqdGZtLAogCX0KIAogCXJldCA9IHJlcS0+YXZhaWxfb3V0IC0gc3RyZWFt
+LT5hdmFpbF9vdXQ7Ci0JcHJfZGVidWcoImF2YWlsX2luICV1LCBhdmFpbF9vdXQgJXUgKGNvbnN1
+bWVkICV1LCBwcm9kdWNlZCAldSlcbiIsCisJcHJfZGVidWcoImF2YWlsX2luICVsdSwgYXZhaWxf
+b3V0ICVsdSAoY29uc3VtZWQgJWx1LCBwcm9kdWNlZCAldSlcbiIsCiAJCSBzdHJlYW0tPmF2YWls
+X2luLCBzdHJlYW0tPmF2YWlsX291dCwKIAkJIHJlcS0+YXZhaWxfaW4gLSBzdHJlYW0tPmF2YWls
+X2luLCByZXQpOwogCXJlcS0+bmV4dF9pbiA9IHN0cmVhbS0+bmV4dF9pbjsKQEAgLTE5OCw3ICsx
+OTgsNyBAQCBzdGF0aWMgaW50IHpsaWJfY29tcHJlc3NfZmluYWwoc3RydWN0IGNyeXB0b19wY29t
+cCAqdGZtLAogCX0KIAogCXJldCA9IHJlcS0+YXZhaWxfb3V0IC0gc3RyZWFtLT5hdmFpbF9vdXQ7
+Ci0JcHJfZGVidWcoImF2YWlsX2luICV1LCBhdmFpbF9vdXQgJXUgKGNvbnN1bWVkICV1LCBwcm9k
+dWNlZCAldSlcbiIsCisJcHJfZGVidWcoImF2YWlsX2luICVsdSwgYXZhaWxfb3V0ICVsdSAoY29u
+c3VtZWQgJWx1LCBwcm9kdWNlZCAldSlcbiIsCiAJCSBzdHJlYW0tPmF2YWlsX2luLCBzdHJlYW0t
+PmF2YWlsX291dCwKIAkJIHJlcS0+YXZhaWxfaW4gLSBzdHJlYW0tPmF2YWlsX2luLCByZXQpOwog
+CXJlcS0+bmV4dF9pbiA9IHN0cmVhbS0+bmV4dF9pbjsKQEAgLTI4Myw3ICsyODMsNyBAQCBzdGF0
+aWMgaW50IHpsaWJfZGVjb21wcmVzc191cGRhdGUoc3RydWN0IGNyeXB0b19wY29tcCAqdGZtLAog
+CX0KIAogCXJldCA9IHJlcS0+YXZhaWxfb3V0IC0gc3RyZWFtLT5hdmFpbF9vdXQ7Ci0JcHJfZGVi
+dWcoImF2YWlsX2luICV1LCBhdmFpbF9vdXQgJXUgKGNvbnN1bWVkICV1LCBwcm9kdWNlZCAldSlc
+biIsCisJcHJfZGVidWcoImF2YWlsX2luICVsdSwgYXZhaWxfb3V0ICVsdSAoY29uc3VtZWQgJWx1
+LCBwcm9kdWNlZCAldSlcbiIsCiAJCSBzdHJlYW0tPmF2YWlsX2luLCBzdHJlYW0tPmF2YWlsX291
+dCwKIAkJIHJlcS0+YXZhaWxfaW4gLSBzdHJlYW0tPmF2YWlsX2luLCByZXQpOwogCXJlcS0+bmV4
+dF9pbiA9IHN0cmVhbS0+bmV4dF9pbjsKQEAgLTMzMSw3ICszMzEsNyBAQCBzdGF0aWMgaW50IHps
+aWJfZGVjb21wcmVzc19maW5hbChzdHJ1Y3QgY3J5cHRvX3Bjb21wICp0Zm0sCiAJfQogCiAJcmV0
+ID0gcmVxLT5hdmFpbF9vdXQgLSBzdHJlYW0tPmF2YWlsX291dDsKLQlwcl9kZWJ1ZygiYXZhaWxf
+aW4gJXUsIGF2YWlsX291dCAldSAoY29uc3VtZWQgJXUsIHByb2R1Y2VkICV1KVxuIiwKKwlwcl9k
+ZWJ1ZygiYXZhaWxfaW4gJWx1LCBhdmFpbF9vdXQgJWx1IChjb25zdW1lZCAlbHUsIHByb2R1Y2Vk
+ICV1KVxuIiwKIAkJIHN0cmVhbS0+YXZhaWxfaW4sIHN0cmVhbS0+YXZhaWxfb3V0LAogCQkgcmVx
+LT5hdmFpbF9pbiAtIHN0cmVhbS0+YXZhaWxfaW4sIHJldCk7CiAJcmVxLT5uZXh0X2luID0gc3Ry
+ZWFtLT5uZXh0X2luOwpkaWZmIC0tZ2l0IGEvZnMvamZmczIvY29tcHJfemxpYi5jIGIvZnMvamZm
+czIvY29tcHJfemxpYi5jCmluZGV4IDBiOWExZTQuLjExZWExZWUgMTAwNjQ0Ci0tLSBhL2ZzL2pm
+ZnMyL2NvbXByX3psaWIuYworKysgYi9mcy9qZmZzMi9jb21wcl96bGliLmMKQEAgLTk0LDExICs5
+NCwxMSBAQCBzdGF0aWMgaW50IGpmZnMyX3psaWJfY29tcHJlc3ModW5zaWduZWQgY2hhciAqZGF0
+YV9pbiwKIAogCXdoaWxlIChkZWZfc3RybS50b3RhbF9vdXQgPCAqZHN0bGVuIC0gU1RSRUFNX0VO
+RF9TUEFDRSAmJiBkZWZfc3RybS50b3RhbF9pbiA8ICpzb3VyY2VsZW4pIHsKIAkJZGVmX3N0cm0u
+YXZhaWxfb3V0ID0gKmRzdGxlbiAtIChkZWZfc3RybS50b3RhbF9vdXQgKyBTVFJFQU1fRU5EX1NQ
+QUNFKTsKLQkJZGVmX3N0cm0uYXZhaWxfaW4gPSBtaW4oKHVuc2lnbmVkKSgqc291cmNlbGVuLWRl
+Zl9zdHJtLnRvdGFsX2luKSwgZGVmX3N0cm0uYXZhaWxfb3V0KTsKLQkJamZmczJfZGJnKDEsICJj
+YWxsaW5nIGRlZmxhdGUgd2l0aCBhdmFpbF9pbiAlZCwgYXZhaWxfb3V0ICVkXG4iLAorCQlkZWZf
+c3RybS5hdmFpbF9pbiA9IG1pbigodW5zaWduZWQgbG9uZykoKnNvdXJjZWxlbi1kZWZfc3RybS50
+b3RhbF9pbiksIGRlZl9zdHJtLmF2YWlsX291dCk7CisJCWpmZnMyX2RiZygxLCAiY2FsbGluZyBk
+ZWZsYXRlIHdpdGggYXZhaWxfaW4gJWxkLCBhdmFpbF9vdXQgJWxkXG4iLAogCQkJICBkZWZfc3Ry
+bS5hdmFpbF9pbiwgZGVmX3N0cm0uYXZhaWxfb3V0KTsKIAkJcmV0ID0gemxpYl9kZWZsYXRlKCZk
+ZWZfc3RybSwgWl9QQVJUSUFMX0ZMVVNIKTsKLQkJamZmczJfZGJnKDEsICJkZWZsYXRlIHJldHVy
+bmVkIHdpdGggYXZhaWxfaW4gJWQsIGF2YWlsX291dCAlZCwgdG90YWxfaW4gJWxkLCB0b3RhbF9v
+dXQgJWxkXG4iLAorCQlqZmZzMl9kYmcoMSwgImRlZmxhdGUgcmV0dXJuZWQgd2l0aCBhdmFpbF9p
+biAlbGQsIGF2YWlsX291dCAlbGQsIHRvdGFsX2luICVsZCwgdG90YWxfb3V0ICVsZFxuIiwKIAkJ
+CSAgZGVmX3N0cm0uYXZhaWxfaW4sIGRlZl9zdHJtLmF2YWlsX291dCwKIAkJCSAgZGVmX3N0cm0u
+dG90YWxfaW4sIGRlZl9zdHJtLnRvdGFsX291dCk7CiAJCWlmIChyZXQgIT0gWl9PSykgewo=
+--047d7b10ca0140aed004fc3dc87e--
