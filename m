@@ -1,85 +1,30 @@
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 20 Jun 2014 14:50:09 +0900
-Message-ID: <20140620055009.GA8869@js1304-P5Q-DELUXE>
-References: <20140620152715.24baa4ce@canb.auug.org.au>
+From: Vincent <vincent.stehle@laposte.net>
+Subject: Re: [PATCH linux-next] staging: r8192ee: Adapt flush function prototype
+Date: Fri, 20 Jun 2014 09:42:38 +0200
+Message-ID: <53A3E5EE.6090006@bergerie>
+References: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net> <20140620001921.GA22619@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lgeamrelo02.lge.com ([156.147.1.126]:38890 "EHLO
-	lgeamrelo02.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932561AbaFTFpn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jun 2014 01:45:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20140620152715.24baa4ce@canb.auug.org.au>
+Received: from smtp3-g21.free.fr ([212.27.42.3]:2645 "EHLO smtp3-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934161AbaFTHml (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2014 03:42:41 -0400
+In-Reply-To: <20140620001921.GA22619@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
-On Fri, Jun 20, 2014 at 03:27:15PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (arm
-> defconfig) failed like this:
-> 
-> In file included from /scratch/sfr/next/arch/arm/mm/dma-mapping.c:29:0:
-> /scratch/sfr/next/include/linux/cma.h:8:28: error: 'CONFIG_CMA_AREAS' undeclared here (not in a function)
->  #define MAX_CMA_AREAS (1 + CONFIG_CMA_AREAS)
->                             ^
-> /scratch/sfr/next/arch/arm/mm/dma-mapping.c:434:54: note: in expansion of macro 'MAX_CMA_AREAS'
->  static struct dma_contig_early_reserve dma_mmu_remap[MAX_CMA_AREAS] __initdata;
->                                                       ^
-> 
-> Caused by commit f495d267b2e0 ("CMA: generalize CMA reserved area
-> management functionality").
-> 
-> I have reverted that commit and these commits that depend on it
-> 
-> 57d551e70a38 ("mm, CMA: clean-up log message")
-> d75ab106aef5 ("mm, CMA: change cma_declare_contiguous() to obey coding convention")
-> f693a5424631 ("mm, CMA: clean-up CMA allocation error path")
-> e58e263e5254 ("PPC, KVM, CMA: use general CMA reserved area management framework")
-> 
+On 06/20/2014 02:19 AM, Greg Kroah-Hartman wrote:
+(..)
+> This doesn't apply as I think it's already done part of a merge...
 
-Hello,
+You are right, it seems to be in f9da455b93f6.
 
-If below patch fixes above problem, is it possible to retain above patches
-in linux-next?
+Thanks for your concern!
 
-Thanks.
+Best regards,
 
----------8<----------------
->From e5c519c4b74914067e43cb55e232f19de9967324 Mon Sep 17 00:00:00 2001
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Date: Fri, 20 Jun 2014 13:30:56 +0900
-Subject: [PATCH] CMA: fix ARM build failure related to MAX_CMA_AREAS
- definition
-
-If CMA is disabled, CONFIG_CMA_AREAS isn't defined so compile error
-happens. To fix it, define MAX_CMA_AREAS if CONFIG_CMA_AREAS
-isn't defined.
-
-Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-
-diff --git a/include/linux/cma.h b/include/linux/cma.h
-index 32cab7a..371b930 100644
---- a/include/linux/cma.h
-+++ b/include/linux/cma.h
-@@ -5,8 +5,14 @@
-  * There is always at least global CMA area and a few optional
-  * areas configured in kernel .config.
-  */
-+#ifdef CONFIG_CMA_AREAS
- #define MAX_CMA_AREAS	(1 + CONFIG_CMA_AREAS)
- 
-+#else
-+#define MAX_CMA_AREAS	(0)
-+
-+#endif
-+
- struct cma;
- 
- extern phys_addr_t cma_get_base(struct cma *cma);
--- 
-1.7.9.5
+V.
