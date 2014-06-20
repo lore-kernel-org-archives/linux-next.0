@@ -1,55 +1,70 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH linux-next] staging: r8192ee: Adapt flush function
- prototype
-Date: Thu, 19 Jun 2014 17:19:21 -0700
-Message-ID: <20140620001921.GA22619@kroah.com>
-References: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net>
+From: "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: linux-next: the selinux tree needs cleaning up
+Date: Fri, 20 Jun 2014 05:43:56 +0200
+Message-ID: <20140620034356.GB20601@mail.hallyn.com>
+References: <20140618084046.1bce12cc@canb.auug.org.au>
+ <1446656.4HCLD295vV@sifl>
+ <20140620010837.692e5472@canb.auug.org.au>
+ <3494783.s5KPIUO972@sifl>
+ <20140620085931.6427678d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53305 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753646AbaFTAPU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jun 2014 20:15:20 -0400
+Received: from static.92.5.9.176.clients.your-server.de ([176.9.5.92]:55252
+	"EHLO mail.hallyn.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933593AbaFTDn6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jun 2014 23:43:58 -0400
 Content-Disposition: inline
-In-Reply-To: <1402162759-17074-1-git-send-email-vincent.stehle@laposte.net>
+In-Reply-To: <20140620085931.6427678d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vincent =?iso-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Moore <paul@paul-moore.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>
 
-On Sat, Jun 07, 2014 at 07:39:19PM +0200, Vincent Stehl=C3=A9 wrote:
-> Commit 77be2c54c5bd 'mac80211: add vif to flush call' modifies the fl=
-ush
-> operation prototype. Update r8192ee function accordingly.
->=20
-> This fixes the following compilation warnings:
->=20
->   drivers/staging/rtl8192ee/core.c: At top level:
->   drivers/staging/rtl8192ee/core.c:1599:2: warning: initialization fr=
-om incompatible pointer type [enabled by default]
->     .flush =3D rtl_op_flush,
->     ^
->   drivers/staging/rtl8192ee/core.c:1599:2: warning: (near initializat=
-ion for =E2=80=98rtl92e_ops.flush=E2=80=99) [enabled by default]
->=20
-> Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Larry Finger <Larry.Finger@lwfinger.net>
-> ---
->=20
-> Hi,
->=20
-> Linux next gives a "heads up" that the flush function of staging driv=
-er r8192ee
-> needs to be adapted soon.
->=20
-> This can be seen with e.g. linux next-20140606 and x86 allmodconfig.
->=20
-> Also, r8192ee would benefit from the following patch:
-> http://www.spinics.net/lists/linux-driver-devel/msg47690.html
+Quoting Stephen Rothwell (sfr@canb.auug.org.au):
+> Hi Paul,
+> 
+> On Thu, 19 Jun 2014 15:47:01 -0400 Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > I want to avoid use a -rcX release as the foundation of any of my trees; the -
+> > rc releases aren't as stable and it goes against what we're trying to do with 
+> > the different Linux Security trees.  Unfortunately, based on what I've read 
+> > above, this seems to be incompatible with linux-next.
+> 
+> The problem with basing your development for v3.17 on v3.15 is that
+> you  do not take into account any of the changes done by others during
+> v3.16-rc1 (or even your upstream tree) some of which may be core API
+> changes.
+> 
+> > While I hate to split my development branch from the #next branch, it seems 
+> 
+> I don't want that either ...
+> 
+> > like that is the only way to accomplish both a reasonably current and stable 
+> > development tree and get the patches into linux-next.  Unless you, or anyone 
+> > else for that matter, has a different suggestion I'm going to go ahead and 
+> > turn the current SELinux #next branch into a development branch and create a 
+> > new #next branch that will be based on the most current -rc1, this new #next 
+> > branch will be created new for each major release.  Not exactly what I was 
+> > hoping for, but will that work?
+> 
+> Do you mean that your #next branch will just be a merge of -rc1 and
+> your development branch?  That would not actually change anything
+> (except that you would possibly take care of some conflicts for me).
+> 
+> At the core, what is in linux-next should just be exactly what will be
+> merged by your upstream.  My real point here is that that is not what
+> has happened recently.  The patches in your tree have been
+> cherry-picked or rebased into James' or Serge's trees, not merged so we
+> now have duplication.  This is what you need to solve with James and
+> Serge.  linux-next is a side issue - I can cope with a lot.
 
-This doesn't apply as I think it's already done part of a merge...
+The duplicates were the result of several misunderstandings and general
+naivity all on my part.  I'm actually still not clear on what usually
+happens with the selinux tree - it feeds into linux-next, then gets
+'pull'ed by James into security-next for a pull request?  Do you usually
+send a request to James when ready, he pulls, then he sends pull request
+to Linus?  (Or am I wrong, and you usually send your own requests to
+Linus?)
 
-greg k-h
+-serge
