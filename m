@@ -1,78 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with Linus' tree
-Date: Mon, 23 Jun 2014 10:57:41 +1000
-Message-ID: <20140623105741.70094961@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Mon, 23 Jun 2014 11:49:42 +1000
+Message-ID: <20140623114942.6a937466@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/00uqVYu.f2WHX56R/es3R/k"; protocol="application/pgp-signature"
+ boundary="Sig_/q6Zz=5V_d.m099D7ehHsv1U"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35402 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38223 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750941AbaFWA5t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Jun 2014 20:57:49 -0400
+	id S1751275AbaFWBtt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Jun 2014 21:49:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tadeusz Struk <tadeusz.struk@intel.com>
 
---Sig_/00uqVYu.f2WHX56R/es3R/k
+--Sig_/q6Zz=5V_d.m099D7ehHsv1U
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Herbert,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-arch/arm/mach-mvebu/Kconfig between commit 21278aeafbfa ("ARM: use
-menuconfig for sub-arch menus") from Linus' tree and commit
-55fc83023212 ("ARM: Kirkwood: Add setup file for netxbig LEDs") from
-the mvebu tree.
+After merging the crypto tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
 
+drivers/crypto/qat/qat_dh895xcc/adf_dh895xcc_hw_data.c:47:31: fatal error: =
+adf_accel_devices.h: No such file or directory
+ #include <adf_accel_devices.h>
+                               ^
+drivers/crypto/qat/qat_dh895xcc/adf_isr.c:54:31: fatal error: adf_accel_dev=
+ices.h: No such file or directory
+ #include <adf_accel_devices.h>
+                               ^
+drivers/crypto/qat/qat_dh895xcc/adf_drv.c:60:31: fatal error: adf_accel_dev=
+ices.h: No such file or directory
+ #include <adf_accel_devices.h>
+                               ^
+
+Caused by commit 7afa232e76ce ("crypto: qat - Intel(R) QAT DH895xcc
+accelerator").
+
+I have used the crypto tree from next-20140620 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-mvebu/Kconfig
-index 4a7c250c9a30,8e3b5f12cd7c..000000000000
---- a/arch/arm/mach-mvebu/Kconfig
-+++ b/arch/arm/mach-mvebu/Kconfig
-@@@ -94,4 -99,13 +96,11 @@@ config MACH_KIRKWOO
-  	  Say 'Y' here if you want your kernel to support boards based
-  	  on the Marvell Kirkwood device tree.
- =20
-+ config MACH_NETXBIG
-+ 	bool "LaCie 2Big and 5Big Network v2"
-+ 	depends on MACH_KIRKWOOD
-+ 	help
-+ 	  Say 'Y' here if you want your kernel to support the
-+ 	  LaCie 2Big and 5Big Network v2
-+=20
- -endmenu
- -
-  endif
-
---Sig_/00uqVYu.f2WHX56R/es3R/k
+--Sig_/q6Zz=5V_d.m099D7ehHsv1U
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTp3uLAAoJEMDTa8Ir7ZwVmDwP/2Vr3fmqtZYUI385YkGOPIo9
-d2lI4xlrq1u7rLZuxIo9WehYQHy0j264msVp5eV2AHdmVbiXybeUtenQJiC3XtUH
-ySY/JdgMv5b6PJ4UXQeq1jPlkrUb1MeIQhTZh9b0hY7/nlKWKNqZMVwwPkYJLRrb
-RRX501AmibvQE1UyiQ+FuUugvTDtFDiMzxBhxvcJn0zyNTCAdklf4RjiWDE1BSoD
-L8FQNwLkfSqJipwo4lKfI9bz7hmJhOormNRyg8b1YYY7xacib+axTFwUm8yseK5E
-aV9MSdjjBWm5n5deABbBadk7YKMXQUxoGVCQarzqYJAG+w/tkpJVEa4K6Ja1cPqW
-PkqWFIbUxEEju0G1lploTG1ttpopYIV2/G1JMqsDlqw3cvh/sf5W9k9lNhPtJCnL
-X0biqEbFLHfAwMn2Gc8CKcGR//+GKOmKhDXojrlHWbBPNga4DRxyDuXGc/BKpjIa
-m1zlxQPTxzXdM1okBp4Kyn5IHsXShTnHc1uucs21ZHzxZ0KI5E13C3YcYRQANz5D
-oZmAq2TYZMFL8//1obkyxR9nUN1zKs7XZnMNkRvW5T0NV0SHTAvXaaYtL6aijsMp
-n3DPpYKHtkWnmVnTJO/by2NZhUZfsxFEcJmo3U8hTTrOxk1gmGRIRnD811LZ1QEL
-rG72fr3x+0dY6s0ac6PB
-=h8E/
+iQIcBAEBCAAGBQJTp4e7AAoJEMDTa8Ir7ZwVp6cQAIsdfCr660Y70YakIYB6Lr+4
+U3FPdUxw2KbiPSsYwes6ImvU5y/zUkuvazXEIXBPH7S6zx2MTiaBrRFFh8Sag/S1
+Aab7mfjeFAM9ewVstiKbyhoNNIeAmAHfFdmcfKQaXC0LNNPuBjCabs4k10BXHbmC
+3bJhYVzyPU5Uh766HfvneYr3dILDje6bcLZpZDRKCvmJKJuOq9eSE0i1egfwu1+c
+5ep6hzhCbYHUpMd4eiS8dksGP125NViekirEOCOTFP0ZfaN6T5TcIJ35yT8v9Jia
+QL0fIH/5/gBuGpnWey1lUl/y3yE4ymRVDQ9A3pArwXbNzTHBEmkIhmcIKmDObNI6
+mAe5c1LcW1hsJAzHImypL45a1Y7wvKC+8wMluiog8BrdLlOCP4oOla3H8fTVaUlR
+pr6dyL0r48aoZEfLjOhPhqi7ZbnkQYnNOwendlsRf67fbO/i4sNRLA8PH0SK/lv+
+r+R4PruRQonjXtpsUZH67FzZyaguUjLy7yrdCX/kAAuJ+IIYavKY6Wa6By9jppF0
+SwbhhbptovtHDut4eajEoZUNBQEHw1Mw0bBLpVeNOPBc617SvLiNs8GhRixrIZlv
+EChu8VA9ZBZDnuAYLyz9LNqtCJYx1PXvz7UMQodIu+XQnH0dOA5IQifPRNDofrqU
+C0uMAzJeAisjhd4MrAN+
+=QEiN
 -----END PGP SIGNATURE-----
 
---Sig_/00uqVYu.f2WHX56R/es3R/k--
+--Sig_/q6Zz=5V_d.m099D7ehHsv1U--
