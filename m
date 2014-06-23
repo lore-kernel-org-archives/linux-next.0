@@ -1,71 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the crypto tree
-Date: Mon, 23 Jun 2014 11:49:42 +1000
-Message-ID: <20140623114942.6a937466@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the char-misc tree
+Date: Mon, 23 Jun 2014 14:33:04 +1000
+Message-ID: <20140623143304.79917bfa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/q6Zz=5V_d.m099D7ehHsv1U"; protocol="application/pgp-signature"
+ boundary="Sig_/V3aXV9NSoR2GCvlIGzg/WSM"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38223 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51069 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751275AbaFWBtt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Jun 2014 21:49:49 -0400
+	id S1751014AbaFWEdO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jun 2014 00:33:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tadeusz Struk <tadeusz.struk@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fjodor Schelichow <fjodor.schelichow@hotmail.com>, Levente Kurusa <levex@linux.com>
 
---Sig_/q6Zz=5V_d.m099D7ehHsv1U
+--Sig_/V3aXV9NSoR2GCvlIGzg/WSM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Andrew,
 
-After merging the crypto tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/w1/w1_int.c between commit fdc9167a7853 ("w1: use pr_* instead
+of printk") from the char-misc tree and commit "drivers/w1/w1_int.c:
+call put_device if device_register fails" from the akpm tree.
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-drivers/crypto/qat/qat_dh895xcc/adf_dh895xcc_hw_data.c:47:31: fatal error: =
-adf_accel_devices.h: No such file or directory
- #include <adf_accel_devices.h>
-                               ^
-drivers/crypto/qat/qat_dh895xcc/adf_isr.c:54:31: fatal error: adf_accel_dev=
-ices.h: No such file or directory
- #include <adf_accel_devices.h>
-                               ^
-drivers/crypto/qat/qat_dh895xcc/adf_drv.c:60:31: fatal error: adf_accel_dev=
-ices.h: No such file or directory
- #include <adf_accel_devices.h>
-                               ^
-
-Caused by commit 7afa232e76ce ("crypto: qat - Intel(R) QAT DH895xcc
-accelerator").
-
-I have used the crypto tree from next-20140620 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/q6Zz=5V_d.m099D7ehHsv1U
+diff --cc drivers/w1/w1_int.c
+index 47249a30eae3,ec3fc9335f0d..000000000000
+--- a/drivers/w1/w1_int.c
++++ b/drivers/w1/w1_int.c
+@@@ -90,10 -91,9 +90,9 @@@ static struct w1_master *w1_alloc_dev(u
+ =20
+  	err =3D device_register(&dev->dev);
+  	if (err) {
+ -		printk(KERN_ERR "Failed to register master device. err=3D%d\n", err);
+ +		pr_err("Failed to register master device. err=3D%d\n", err);
+- 		memset(dev, 0, sizeof(struct w1_master));
+- 		kfree(dev);
+- 		dev =3D NULL;
++ 		put_device(&dev->dev);
++ 		return NULL;
+  	}
+ =20
+  	return dev;
+
+--Sig_/V3aXV9NSoR2GCvlIGzg/WSM
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTp4e7AAoJEMDTa8Ir7ZwVp6cQAIsdfCr660Y70YakIYB6Lr+4
-U3FPdUxw2KbiPSsYwes6ImvU5y/zUkuvazXEIXBPH7S6zx2MTiaBrRFFh8Sag/S1
-Aab7mfjeFAM9ewVstiKbyhoNNIeAmAHfFdmcfKQaXC0LNNPuBjCabs4k10BXHbmC
-3bJhYVzyPU5Uh766HfvneYr3dILDje6bcLZpZDRKCvmJKJuOq9eSE0i1egfwu1+c
-5ep6hzhCbYHUpMd4eiS8dksGP125NViekirEOCOTFP0ZfaN6T5TcIJ35yT8v9Jia
-QL0fIH/5/gBuGpnWey1lUl/y3yE4ymRVDQ9A3pArwXbNzTHBEmkIhmcIKmDObNI6
-mAe5c1LcW1hsJAzHImypL45a1Y7wvKC+8wMluiog8BrdLlOCP4oOla3H8fTVaUlR
-pr6dyL0r48aoZEfLjOhPhqi7ZbnkQYnNOwendlsRf67fbO/i4sNRLA8PH0SK/lv+
-r+R4PruRQonjXtpsUZH67FzZyaguUjLy7yrdCX/kAAuJ+IIYavKY6Wa6By9jppF0
-SwbhhbptovtHDut4eajEoZUNBQEHw1Mw0bBLpVeNOPBc617SvLiNs8GhRixrIZlv
-EChu8VA9ZBZDnuAYLyz9LNqtCJYx1PXvz7UMQodIu+XQnH0dOA5IQifPRNDofrqU
-C0uMAzJeAisjhd4MrAN+
-=QEiN
+iQIcBAEBCAAGBQJTp64HAAoJEMDTa8Ir7ZwVgy4P/1qoOZZA9b8ieU8q7VXMG5gL
+cCis0pW5+m5SPRQ5QKW/e2xwMMgNWwPA6Pdk3fPxL2y1Gh+1sa28O32B767yau/5
+FWk1tgsJ1WmgZzAoFlfcCbexTZczDFB1IQwm79mGfuqDzZ+OT+8ckY9kC+30yyiA
+lv/JPjIAtIjP3URsfpXN7WyEqWtLnPa5c9vQTEeuoubOfet4eJDhbJq/FDSuKNOM
+Qo4+kam46PAyPGHm2olYiuiBKthjH3JW0ukrxT7f7M7Lm6Nf9/YSzUxWMt7rFAuz
+yY5A8gyL97nQG6WeXBhw/Nqzfkl2nn2JbnVgeBGWKmy7C16oAhVI7zvUm53WXLvN
+Q2m7LrE7i9ubQod8sU+y1hsMSUyEKsXBh37bELq8MA82SmrOkYLp/t5SNOKcNP9s
+5B1f3zRYH9mWqiveG7o9I5vW3IfDysx7mYOUctJIYL3H8rkun2PqsmGXKqtSDlLp
+yE4HLJB7NWmcMuxOyjMUQNOvnztyXpT7hlkHOWljB65r+mey/ebg1jnttlbkcjxR
+ifbzj942BvueIBCenufk8EJ2qV9xRiXDdy6XLyYULkfYTLNFtgWMeYz8fkyYck3i
+pa5t5IiHK9nnRjofE8XXv44Ya22AOCfy5DGcocd/9bWv+XUmvsV7tKs4EDmabmm6
+XoY5XmsLxAQEjR0+WU40
+=l3kP
 -----END PGP SIGNATURE-----
 
---Sig_/q6Zz=5V_d.m099D7ehHsv1U--
+--Sig_/V3aXV9NSoR2GCvlIGzg/WSM--
