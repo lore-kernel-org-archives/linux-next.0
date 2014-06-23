@@ -1,58 +1,69 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Mon, 23 Jun 2014 20:27:47 +0800
-Message-ID: <20140623122747.GA21213@gondor.apana.org.au>
+Date: Mon, 23 Jun 2014 23:15:31 +1000
+Message-ID: <20140623231531.26c67841@canb.auug.org.au>
 References: <20140623114942.6a937466@canb.auug.org.au>
+	<20140623122747.GA21213@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140623114942.6a937466@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kIw4ZiB1vFNer6GCZoFjEbd"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:44093 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752787AbaFWNPm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jun 2014 09:15:42 -0400
+In-Reply-To: <20140623122747.GA21213@gondor.apana.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tadeusz Struk <tadeusz.struk@intel.com>
-List-Id: linux-next.vger.kernel.org
 
-Hi Stephen:
+--Sig_/kIw4ZiB1vFNer6GCZoFjEbd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2014 at 11:49:42AM +1000, Stephen Rothwell wrote:
-> 
-> After merging the crypto tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> 
-> drivers/crypto/qat/qat_dh895xcc/adf_dh895xcc_hw_data.c:47:31: fatal error: adf_accel_devices.h: No such file or directory
->  #include <adf_accel_devices.h>
->                                ^
-> drivers/crypto/qat/qat_dh895xcc/adf_isr.c:54:31: fatal error: adf_accel_devices.h: No such file or directory
->  #include <adf_accel_devices.h>
->                                ^
-> drivers/crypto/qat/qat_dh895xcc/adf_drv.c:60:31: fatal error: adf_accel_devices.h: No such file or directory
->  #include <adf_accel_devices.h>
->                                ^
-> 
-> Caused by commit 7afa232e76ce ("crypto: qat - Intel(R) QAT DH895xcc
-> accelerator").
-> 
-> I have used the crypto tree from next-20140620 for today.
+Hi Herbert,
 
-That's weird as it built correctly here.  This looks like a
-make/gcc issue as the missing header file is meant to be found
-with an additional -I.
+On Mon, 23 Jun 2014 20:27:47 +0800 Herbert Xu <herbert@gondor.apana.org.au>=
+ wrote:
+>
+> That's weird as it built correctly here.  This looks like a
+> make/gcc issue as the missing header file is meant to be found
+> with an additional -I.
+>=20
+> Could you do a make V=3D1 for me and show me what the gcc command-line
+> looks like?
 
-Could you do a make V=1 for me and show me what the gcc command-line
-looks like?
+Not until tomorrow.  In the mean time, could you try it with an
+external object dir i.e. "make O=3D..."
 
-FWIW mine is:
+If that breaks, I think you need to change CURDIR to srcdir or some
+such ...
 
-  gcc -Wp,-MD,drivers/crypto/qat/qat_dh895xcc/.adf_dh895xcc_hw_data.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.7/include -I./arch/x86/include -Iarch/x86/include/generated  -Iinclude -I./arch/x86/include/uapi -Iarch/x86/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -m64 -mno-mmx -mno-sse -mno-80387 -mno-fp-ret-in-387 -march=core2 -mno-red-zone -mcmodel=kernel -funit-at-a-time -maccumulate-outgoing-args -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_FXSAVEQ=1 -DCONFIG_AS_CRC32=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -pipe -Wno-sign-com
- pare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fno-delete-null-pointer-checks -O2 -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -DCC_HAVE_ASM_GOTO -I/home/gondost/herbert/src/build/kernel/test-64/drivers/crypto/qat/qat_common  -DMODULE  -D"KBUILD_STR(s)=#s" -D"KBUILD_BASENAME=KBUILD_STR(adf_dh895xcc_hw_data)"  -D"KBUILD_MODNAME=KBUILD_STR(qat_dh895xcc)" -c -o drivers/crypto/qat/qat_dh895xcc/.tmp_adf_dh895xcc_hw_data.o drivers/crypto/qat/qat_dh895xcc/adf_dh895xcc_hw_data.c
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Note the -I for qat_common which is where that header file is.
+--Sig_/kIw4ZiB1vFNer6GCZoFjEbd
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTqCh6AAoJEMDTa8Ir7ZwVBSUP/Atj1EXxH7+hhr+GkialxE72
+ZPbXFUcKINbyUURlxRZOhlFYrRy9/rGatt14p72nHOX0Z//G9kACO9WsJDZx8W34
+py3Ln65cQ1brKAj4rxqcQuMB4iJDj6Bp0VU/ZMt5jcdnSZFzKaL2/SSgWOVMpoc3
+ypXgU8tyhOqzvl7durPYWKOBNNLzUhHpqX+SzQHYsYa3rOqpaMADY+Ra45/fd9zz
+LPRvoeBzhamKTYT+7qs/3baRo6ndFpZBHgYx4ouQ/BmHhcSzjnyLT4g4aSVRJex/
+4pgJDUc4FJKMaZgO8agqqtt7uPXk7toJa2/VdwupAiJY6ZdHW8NL58D4soWogXaG
+jrAAjFPxI/+vtKMBYvrZ5JBtkXctiEtSQ6owSxE15j5FyRiBPCvI5nWCZs4YhBKg
+3RjtH5b6gTKJfKMAs9fMqclnjiTy7kBONjfu5rx+bWgwVyY2vTKdl+FFNGvjWKfr
+qdHz1ElD9Cf94BtrGd2syguprY+TAUcDVQpOwc5yxK/dt9usenyiEpvZn95oHLf0
+9m4tuVzr9GZ5g3q7o6cwOefWn+VpOcd9MMr6YzQHYma+69BCw+yyPP9hVQLZb63H
+BFStxVrkva63g0Az+SZJMsw9z/+2SFBn2OwVe/HSv4LnLYVQIDFCM1SIXLNomIZb
+jvVlB8nc+4u6e7OSxc2h
+=ORUO
+-----END PGP SIGNATURE-----
+
+--Sig_/kIw4ZiB1vFNer6GCZoFjEbd--
