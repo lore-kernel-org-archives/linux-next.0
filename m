@@ -1,60 +1,88 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: Tree for Jun 19 (drm/i915)
-Date: Wed, 25 Jun 2014 01:01:36 +0200
-Message-ID: <9626816.NOau5dZfmB@vostro.rjw.lan>
-References: <20140619161632.58b442e4@canb.auug.org.au> <53A31CDA.20207@infradead.org> <87y4wm8reh.fsf@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: the selinux tree needs cleaning up
+Date: Wed, 25 Jun 2014 09:59:28 +1000
+Message-ID: <20140625095928.3161ebe1@canb.auug.org.au>
+References: <20140618084046.1bce12cc@canb.auug.org.au>
+	<20140620085931.6427678d@canb.auug.org.au>
+	<1474416.aEfMv8Ny53@sifl>
+	<32647147.KmAPzBrbMT@sifl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/B=lbAxXCGsgWy6geVO_AYlu"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:54755 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751211AbaFXWnw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Jun 2014 18:43:52 -0400
-In-Reply-To: <87y4wm8reh.fsf@intel.com>
+Received: from ozlabs.org ([103.22.144.67]:41480 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751963AbaFXX7h (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Jun 2014 19:59:37 -0400
+In-Reply-To: <32647147.KmAPzBrbMT@sifl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx <intel-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, Imre Deak <imre.deak@intel.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>
 
-On Tuesday, June 24, 2014 02:43:02 PM Jani Nikula wrote:
-> On Thu, 19 Jun 2014, Randy Dunlap <rdunlap@infradead.org> wrote:
-> > On 06/18/14 23:16, Stephen Rothwell wrote:
-> >> Hi all,
-> >> 
-> >> The powerpc allyesconfig is again broken more than usual.
-> >> 
-> >> Changes since 20140618:
-> >> 
-> >
-> > on i386:
-> >
-> > CONFIG_ACPI is not enabled.
-> >
-> >   CC      drivers/gpu/drm/i915/i915_drv.o
-> > ../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_freeze':
-> > ../drivers/gpu/drm/i915/i915_drv.c:547:2: error: implicit declaration of function 'acpi_target_system_state' [-Werror=implicit-function-declaration]
-> > ../drivers/gpu/drm/i915/i915_drv.c:547:36: error: 'ACPI_STATE_S3' undeclared (first use in this function)
-> > ../drivers/gpu/drm/i915/i915_drv.c:547:36: note: each undeclared identifier is reported only once for each function it appears in
-> >   CC      net/dccp/qpolicy.o
-> > cc1: some warnings being treated as errors
-> > make[5]: *** [drivers/gpu/drm/i915/i915_drv.o] Error 1
-> 
-> Thanks for the report, we'll fix it.
-> 
-> Can anyone explain why include/linux/acpi_bus.h has #ifdef
-> CONFIG_ACPI_SLEEP and conditional build for a dummy inline version of
-> acpi_target_system_state(), *but* that does not get included or used if
-> CONFIG_ACPI=n? Additionally, the combination of CONFIG_ACPI=y and
-> CONFIG_ACPI_SLEEP=n does not seem to work at all.
+--Sig_/B=lbAxXCGsgWy6geVO_AYlu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-These two things look like bugs to me.  Most likely not tested thoruoughly
-enough.
+Hi Paul,
 
-> So we'll really have to sprinkle #ifdef CONFIG_ACPI all over, instead of
-> neatly using the dummy versions that someone has gone through the
-> trouble of adding?
+On Tue, 24 Jun 2014 14:03:08 -0400 Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Friday, June 20, 2014 12:06:28 PM Paul Moore wrote:
+>=20
+> {big snip}
+>=20
+> > Stephen, assuming for a moment that I created a fresh branch, based aga=
+inst
+> > 3.15, and then added the SELinux patches for 3.16 (basically the few new
+> > patches that were in the ole #next branch) would that serve as a reason=
+able
+> > basis for a new SELinux #next branch?  Around the -rc5/6/7 timeframe I =
+would
+> > send a pull request to James to pull from this next branch into the Lin=
+ux
+> > Security branch for 3.17.  Once 3.16 is released, I would merge that in=
+to
+> > this new #next branch and continue with the next round of patches.
+> >=20
+> > FYI, more or less, the above is the process we've settled upon for all =
+of
+> > the trees that get accumulated into the Linux Security tree.
+>=20
+> Does the above work for you in linux-next?  I'd like to try and resolve t=
+his=20
+> sooner rather than later and I imagine you feel the same ...
 
-No, we don't have to.
+Well, I see that James has pulled your tree, so past problems are now
+moot. He has some duplicate commits in his tree now and Linus will get
+a few more when he next pulls James' tree.  We just need to avoid this
+going forward.  And given that James or Serge will, from now on, *pull*
+your tree (not cherry-pick from it), things should be fine.
 
-Rafael
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/B=lbAxXCGsgWy6geVO_AYlu
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTqhDnAAoJEMDTa8Ir7ZwV6VkP/3Ww0fkWRIfibWMbeHNzdImS
+zdksO+M9iRIKGRklU2W3Ccu6wAPGCe6qNSEqr4DhCFLLxk3aKJ5XgMr3GkflFZj8
+kGj2hf1R+Tf6FOfOoBSudhcIyt0yV5ZtwnCtN40yetZybG2uEokvQUYJoxPyuach
+HotiyWBw+LK9ObD8/ASFyToweGW06oqBURlzKKjzOXT6ENZgPj4MW2VoKuF/NrhX
+KVEzaX5LhRkxXAfTxlyG5AMGPbgMHvCXScryO7u9kxtT33O5i8T/GYrV6IuY35vY
+H/hwdGLxeI7TZ/6Va9Tw2CTwssEOmHUS9Qvt+DBL7Y0Vv6jwTogVIQvR2MAOsIuV
+FaEJJ5N8JwvLegWe8b3jZSq4Ngvs4rS/kyMR5qua1mqykhSdWKXiYfgeSk+fZAPB
+6lJMFZk4ffQUMdtdZEeNL11GJ7cQPjPnezcjFNbCenI63MdgZrFagmOZW3tu4KbG
+fahzech1D7TPEj4M45bpgaBRtGQ2QWKQgp1sROLdoTDFQpJgi5b4+GdDtr8GAy8H
+HC4VsDmUDKnkPyjgF7cXzoUmy3h5UnnxlrLQ23SuNkDqydTm4LoINE2IdapL7nGV
+d1h8XNs7yUbv+QM6vS3nd6+o0VYPW0D2cq9F2D0upEnokohuUsW4XwjiH2+cmwqq
+uqo/niiVWu4tTX+qC2X+
+=dnts
+-----END PGP SIGNATURE-----
+
+--Sig_/B=lbAxXCGsgWy6geVO_AYlu--
