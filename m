@@ -1,44 +1,39 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: the selinux tree needs cleaning up
-Date: Tue, 24 Jun 2014 14:03:08 -0400
-Message-ID: <32647147.KmAPzBrbMT@sifl>
-References: <20140618084046.1bce12cc@canb.auug.org.au> <20140620085931.6427678d@canb.auug.org.au> <1474416.aEfMv8Ny53@sifl>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: mfd: sec-core requires regulators
+Date: Tue, 24 Jun 2014 20:09:07 +0200
+Message-ID: <6906564.1ehoeq1QjB@wuerfel>
+References: <CA+r1ZhhFYip3Jp2c3d8tNpD-vK8Pkf7DzrKTtk6Gy8uOOO3Ucw@mail.gmail.com> <29237234.T7oGEGKuvp@wuerfel> <20140624154833.GR13803@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f169.google.com ([209.85.216.169]:54621 "EHLO
-	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753450AbaFXSDM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Jun 2014 14:03:12 -0400
-Received: by mail-qc0-f169.google.com with SMTP id c9so647765qcz.14
-        for <linux-next@vger.kernel.org>; Tue, 24 Jun 2014 11:03:11 -0700 (PDT)
-In-Reply-To: <1474416.aEfMv8Ny53@sifl>
+Received: from mout.kundenserver.de ([212.227.126.130]:56356 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753122AbaFXSJM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Jun 2014 14:09:12 -0400
+In-Reply-To: <20140624154833.GR13803@lee--X1>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Jim Davis <jim.epost@gmail.com>, sfr@canb.auug.org.au, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, sbkim73@samsung.com, sameo@linux.intel.com, grant.likely@linaro.org, robh+dt@kernel.org, devicetree <devicetree@vger.kernel.org>
 
-On Friday, June 20, 2014 12:06:28 PM Paul Moore wrote:
+The newly added sec-core mfd module calls the regulator_suspend_prepare()
+function, which is only available if the regulator API is provided. This
+matches the usage of the driver, so we can just add a Kconfig dependency.
 
-{big snip}
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> Stephen, assuming for a moment that I created a fresh branch, based against
-> 3.15, and then added the SELinux patches for 3.16 (basically the few new
-> patches that were in the ole #next branch) would that serve as a reasonable
-> basis for a new SELinux #next branch?  Around the -rc5/6/7 timeframe I would
-> send a pull request to James to pull from this next branch into the Linux
-> Security branch for 3.17.  Once 3.16 is released, I would merge that into
-> this new #next branch and continue with the next round of patches.
-> 
-> FYI, more or less, the above is the process we've settled upon for all of
-> the trees that get accumulated into the Linux Security tree.
-
-Hi Stephen,
-
-Does the above work for you in linux-next?  I'd like to try and resolve this 
-sooner rather than later and I imagine you feel the same ...
-
--- 
-paul moore
-www.paul-moore.com
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 207c433..1caa3c5 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -582,7 +582,7 @@ config MFD_RC5T583
+ 
+ config MFD_SEC_CORE
+        bool "SAMSUNG Electronics PMIC Series Support"
+-       depends on I2C=y
++       depends on I2C=y && REGULATOR
+        select MFD_CORE
+        select REGMAP_I2C
+        select REGMAP_IRQ
