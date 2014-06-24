@@ -1,39 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: mfd: sec-core requires regulators
-Date: Tue, 24 Jun 2014 20:09:07 +0200
-Message-ID: <6906564.1ehoeq1QjB@wuerfel>
-References: <CA+r1ZhhFYip3Jp2c3d8tNpD-vK8Pkf7DzrKTtk6Gy8uOOO3Ucw@mail.gmail.com> <29237234.T7oGEGKuvp@wuerfel> <20140624154833.GR13803@lee--X1>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
+Date: Tue, 24 Jun 2014 14:33:41 -0600
+Message-ID: <53A9E0A5.5040402@wwwdotorg.org>
+References: <1402413309-3415-1-git-send-email-fweisbec@gmail.com> <1402413309-3415-3-git-send-email-fweisbec@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:56356 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753122AbaFXSJM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Jun 2014 14:09:12 -0400
-In-Reply-To: <20140624154833.GR13803@lee--X1>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Jim Davis <jim.epost@gmail.com>, sfr@canb.auug.org.au, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, sbkim73@samsung.com, sameo@linux.intel.com, grant.likely@linaro.org, robh+dt@kernel.org, devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1402413309-3415-3-git-send-email-fweisbec@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-The newly added sec-core mfd module calls the regulator_suspend_prepare()
-function, which is only available if the regulator API is provided. This
-matches the usage of the driver, so we can just add a Kconfig dependency.
+On 06/10/2014 09:15 AM, Frederic Weisbecker wrote:
+> irq work currently only supports local callbacks. However its code
+> is mostly ready to run remote callbacks and we have some potential user.
+> 
+> The full nohz subsystem currently open codes its own remote irq work
+> on top of the scheduler ipi when it wants a CPU to reevaluate its next
+> tick. However this ad hoc solution bloats the scheduler IPI.
+> 
+> Lets just extend the irq work subsystem to support remote queuing on top
+> of the generic SMP IPI to handle this kind of user. This shouldn't add
+> noticeable overhead.
 
-Reported-by: Jim Davis <jim.epost@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+I'm running next-20140624 on an ARM system, and this patch causes CPU
+hot(un)plug to Oops for me; the following fires:
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 207c433..1caa3c5 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -582,7 +582,7 @@ config MFD_RC5T583
- 
- config MFD_SEC_CORE
-        bool "SAMSUNG Electronics PMIC Series Support"
--       depends on I2C=y
-+       depends on I2C=y && REGULATOR
-        select MFD_CORE
-        select REGMAP_I2C
-        select REGMAP_IRQ
+void irq_work_run(void)
+{
+	BUG_ON(!in_irq());
+
+I found that Linus's master (8b8f5d971584 "Merge tag 'compress-3.16-rc3'
+of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core")
+works fine. I found that this commit inside the tip(?) tree works fine
+(478850160636 "irq_work: Implement remote queueing"). However, if I
+merge the two together, I hit that BUG_ON.
+
+I think the issue is:
+
+This commit adds a call from
+generic_smp_call_function_single_interrupt() to irq_work_run().
+
+Srivatsa's patch adds a call from hotplug_cfd() to
+flush_smp_call_function_queue() to, which I imagine happens in
+non-interrupt context. Note that this patch moves most of the body of
+generic_smp_call_function_single_interrupt() into
+flush_smp_call_function_queue().
