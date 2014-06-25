@@ -1,70 +1,27 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] enic: Make dummy rfs functions inline to fix !CONFIG_RFS_ACCEL build
-Date: Wed, 25 Jun 2014 10:31:09 +0200
-Message-ID: <1403685069-20198-1-git-send-email-geert@linux-m68k.org>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:51409 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753302AbaFYIbV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jun 2014 04:31:21 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Govindarajulu Varadarajan <_govind@gmx.com>, "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
+Date: Wed, 25 Jun 2014 11:36:57 +0200
+Message-ID: <20140625093657.GN19860@laptop.programming.kicks-ass.net>
+References: <1402413309-3415-1-git-send-email-fweisbec@gmail.com>
+ <1402413309-3415-3-git-send-email-fweisbec@gmail.com>
+ <53A9E0A5.5040402@wwwdotorg.org>
+ <20140625051234.GD6758@twins.programming.kicks-ass.net>
+ <20140625051721.GG3588@twins.programming.kicks-ass.net>
+ <53AA6E11.1000404@linux.vnet.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53AA6E11.1000404@linux.vnet.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-If CONFIG_RFS_ACCEL=n:
+On Wed, Jun 25, 2014 at 12:07:05PM +0530, Srivatsa S. Bhat wrote:
+> I don't think irqs_disabled() is the problematic condition, since
+> hotplug_cfg() invokes irq_work_run() from CPU_DYING context (which has
+> irqs disabled). I guess you meant to remove the in_irq() check inside
+> irq_work_run() instead?
 
-drivers/net/ethernet/cisco/enic/enic_main.c: In function 'enic_open':
-drivers/net/ethernet/cisco/enic/enic_main.c:1603:2: error: implicit declaration of function 'enic_rfs_flw_tbl_init' [-Werror=implicit-function-declaration]
-drivers/net/ethernet/cisco/enic/enic_main.c: In function 'enic_stop':
-drivers/net/ethernet/cisco/enic/enic_main.c:1630:2: error: implicit declaration of function 'enic_rfs_flw_tbl_free' [-Werror=implicit-function-declaration]
-
-Introduced in commit a145df23ef32c7b933875f334ba28791ee75766e ("enic: Add
-Accelerated RFS support").
-
-Dummy functions are provided, but their prototypes are missing, causing the
-build failure.  Provide dummy static inline functions instead to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-kisskb.ellerman.id.au/kisskb/buildresult/11381101/
----
- drivers/net/ethernet/cisco/enic/enic_clsf.c | 10 ----------
- drivers/net/ethernet/cisco/enic/enic_clsf.h |  3 +++
- 2 files changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/cisco/enic/enic_clsf.c b/drivers/net/ethernet/cisco/enic/enic_clsf.c
-index c2322adfccdc..bc451baac4cd 100644
---- a/drivers/net/ethernet/cisco/enic/enic_clsf.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_clsf.c
-@@ -266,14 +266,4 @@ ret_unlock:
- 	return res;
- }
- 
--#else
--
--void enic_rfs_flw_tbl_init(struct enic *enic)
--{
--}
--
--void enic_rfs_flw_tbl_free(struct enic *enic)
--{
--}
--
- #endif /* CONFIG_RFS_ACCEL */
-diff --git a/drivers/net/ethernet/cisco/enic/enic_clsf.h b/drivers/net/ethernet/cisco/enic/enic_clsf.h
-index 76a85bb0bb73..d572704cd117 100644
---- a/drivers/net/ethernet/cisco/enic/enic_clsf.h
-+++ b/drivers/net/ethernet/cisco/enic/enic_clsf.h
-@@ -14,6 +14,9 @@ void enic_rfs_flw_tbl_init(struct enic *enic);
- void enic_rfs_flw_tbl_free(struct enic *enic);
- int enic_rx_flow_steer(struct net_device *dev, const struct sk_buff *skb,
- 		       u16 rxq_index, u32 flow_id);
-+#else
-+static inline void enic_rfs_flw_tbl_init(struct enic *enic) {}
-+static inline void enic_rfs_flw_tbl_free(struct enic *enic) {}
- #endif /* CONFIG_RFS_ACCEL */
- 
- #endif /* _ENIC_CLSF_H_ */
--- 
-1.9.1
+Yes, clearly I should not get up at 6am.. :-) Let me go do a new one.
