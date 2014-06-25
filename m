@@ -1,72 +1,72 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
-Date: Wed, 25 Jun 2014 22:27:24 +0530
-Message-ID: <53AAFF74.8090308@linux.vnet.ibm.com>
-References: <53A9E0A5.5040402@wwwdotorg.org> <20140625051234.GD6758@twins.programming.kicks-ass.net> <20140625051721.GG3588@twins.programming.kicks-ass.net> <53AA6E11.1000404@linux.vnet.ibm.com> <20140625093657.GN19860@laptop.programming.kicks-ass.net> <20140625093944.GV16155@laptop.programming.kicks-ass.net> <53AA9B68.4050104@linux.vnet.ibm.com> <53AA9C43.3020903@linux.vnet.ibm.com> <20140625101915.GO19860@laptop.programming.kicks-ass.net> <53AAF779.8060006@wwwdotorg.org> <20140625163820.GC3935@laptop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: the selinux tree needs cleaning up
+Date: Thu, 26 Jun 2014 08:12:32 +1000
+Message-ID: <20140626081232.52cb51da@canb.auug.org.au>
+References: <20140618084046.1bce12cc@canb.auug.org.au>
+	<20140620085931.6427678d@canb.auug.org.au>
+	<1474416.aEfMv8Ny53@sifl>
+	<32647147.KmAPzBrbMT@sifl>
+	<20140625095928.3161ebe1@canb.auug.org.au>
+	<53AAA9BF.4090205@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/_o1oOzxuQ.AewR_x/1+R1Sl"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp01.au.ibm.com ([202.81.31.143]:51627 "EHLO
-	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757815AbaFYQ7J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jun 2014 12:59:09 -0400
-Received: from /spool/local
-	by e23smtp01.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
-	Thu, 26 Jun 2014 02:59:07 +1000
-In-Reply-To: <20140625163820.GC3935@laptop>
+Received: from ozlabs.org ([103.22.144.67]:54636 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756849AbaFYWMo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2014 18:12:44 -0400
+In-Reply-To: <53AAA9BF.4090205@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: James Morris <james.l.morris@oracle.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>
 
-On 06/25/2014 10:08 PM, Peter Zijlstra wrote:
-> On Wed, Jun 25, 2014 at 10:23:21AM -0600, Stephen Warren wrote:
->> On 06/25/2014 04:19 AM, Peter Zijlstra wrote:
->>> On Wed, Jun 25, 2014 at 03:24:11PM +0530, Srivatsa S. Bhat wrote:
->>>> Wait, that was a stupid idea. hotplug_cfd() already invokes irq_work_run
->>>> indirectly via flush_smp_call_function_queue(). So irq_work_cpu_notify()
->>>> doesn't need to invoke it again, AFAIU. So perhaps we can get rid of
->>>> irq_work_cpu_notify() altogether?
->>>
->>> Just so...
->>>
->>> getting up at 6am and sitting in an airport terminal doesn't seem to
->>> agree with me; any more silly fail here?
->>>
->>> ---
->>> Subject: irq_work: Remove BUG_ON in irq_work_run()
->>> From: Peter Zijlstra <peterz@infradead.org>
->>> Date: Wed Jun 25 07:13:07 CEST 2014
->>>
->>> Because of a collision with 8d056c48e486 ("CPU hotplug, smp: flush any
->>> pending IPI callbacks before CPU offline"), which ends up calling
->>> hotplug_cfd()->flush_smp_call_function_queue()->irq_work_run(), which
->>> is not from IRQ context.
->>>
->>> And since that already calls irq_work_run() from the hotplug path,
->>> remove our entire hotplug handling.
->>
->> Tested-by: Stephen Warren <swarren@nvidia.com>
->>
->> [with the s/static// already mentioned in this thread, obviously:-)]
-> 
-> Right; I pushed out a fixed version right before loosing my tubes at the
-> airport :-)
-> 
-> https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git/commit/?h=timers/nohz&id=921d8b81281ecdca686369f52165d04fa3505bd7
-> 
+--Sig_/_o1oOzxuQ.AewR_x/1+R1Sl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This version looks good.
+Hi James,
 
-Reviewed-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+On Wed, 25 Jun 2014 20:51:43 +1000 James Morris <james.l.morris@oracle.com>=
+ wrote:
+>
+> I haven't pulled in Paul's tree, I merged with the latest Linus release.
 
-Regards,
-Srivatsa S. Bhat
+Ummm, yesterday your security tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git#n=
+ext)
+moved from commit 2fd4e6698f08 ("Merge branch 'smack-for-3.16' of
+git://git.gitorious.org/smack-next/kernel into next") (which is
+included in v3.16-rc1) to commit f01387d26938 ("Merge commit 'v3.15'
+into next").  The commit between those 2 commits is 92953ff38ba5
+("Merge branch 'next' of git://git.infradead.org/users/pcmoore/selinux
+into next").
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> I've not gotten wu build bot spam on it so it must be good ;-)
-> 
-> In any case, I'll add your tested-by and update later this evening.
-> 
+--Sig_/_o1oOzxuQ.AewR_x/1+R1Sl
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTq0laAAoJEMDTa8Ir7ZwVLGoP/j/6BjC80ssWq5j+IoTTz7fE
+AT58DW3/9NDzxaF9+fnTx97JvHjp9KCCyuGr08QLiAHKRLv3hbkac3iz5TJ5uMPj
+reyqegEI7zxK+T1pxhOqwKDjpu13WmoxZ5N++11jiLmVWVYHaci4Wfjjbl7WDSjQ
+atfApznpgqmaGPvqKMB4VYtQtkbnodsS31YwQtmTwbTeGY2TOIHfHk1CsreAJIYx
+5HUFVsYYh9GxbST8+hOe4Jj+Mq85JbcHk/5x5/DAuM0w7lLqiYCnjL/WD1Akp7e2
+QO3LOaKLjvLsgYAp9bziXv3pPEkEyci0gnvcTqtrNjPeaV0e/kWTQOCI+B1ixBta
+ovZpteplgQiy79jhZMuq9ciZ9o0mYuUtsjz+jGDfwPruglFN5LXXuMONgWgN45BK
+Xr4IN0OMnQ3/ylqoQ1aCSE6imoTYaT4IzYV/Zg+9q0qX21FZkSuVht8JEw5g+tu6
+J8wHe6br+/Y0qi+sbVDgUNnxlNaavi23nWO/g8/ooutO4X/gwddyFfz+fKaRp2TW
+kba35djcODZklNbL/VMC0f5srlwa7FtYuaXuivIGGqdSGKcqu5wSF5EyQ4tWjHb2
+aseOts+ngLhQ7FNFa6zH71iisyAZzUHXx3Ug9N3oSt90agmOzrLxUXOLX6rrdw/A
+6oWASC/gKH50Sv/qD/CB
+=3DgB
+-----END PGP SIGNATURE-----
+
+--Sig_/_o1oOzxuQ.AewR_x/1+R1Sl--
