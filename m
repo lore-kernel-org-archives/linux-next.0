@@ -1,122 +1,46 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
-Date: Wed, 25 Jun 2014 12:19:15 +0200
-Message-ID: <20140625101915.GO19860@laptop.programming.kicks-ass.net>
-References: <1402413309-3415-1-git-send-email-fweisbec@gmail.com>
- <1402413309-3415-3-git-send-email-fweisbec@gmail.com>
- <53A9E0A5.5040402@wwwdotorg.org>
- <20140625051234.GD6758@twins.programming.kicks-ass.net>
- <20140625051721.GG3588@twins.programming.kicks-ass.net>
- <53AA6E11.1000404@linux.vnet.ibm.com>
- <20140625093657.GN19860@laptop.programming.kicks-ass.net>
- <20140625093944.GV16155@laptop.programming.kicks-ass.net>
- <53AA9B68.4050104@linux.vnet.ibm.com>
- <53AA9C43.3020903@linux.vnet.ibm.com>
+From: James Morris <james.l.morris@oracle.com>
+Subject: Re: linux-next: the selinux tree needs cleaning up
+Date: Wed, 25 Jun 2014 20:51:43 +1000
+Message-ID: <53AAA9BF.4090205@oracle.com>
+References: <20140618084046.1bce12cc@canb.auug.org.au> <20140620085931.6427678d@canb.auug.org.au> <1474416.aEfMv8Ny53@sifl> <32647147.KmAPzBrbMT@sifl> <20140625095928.3161ebe1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53AA9C43.3020903@linux.vnet.ibm.com>
+In-Reply-To: <20140625095928.3161ebe1@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Moore <paul@paul-moore.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 25, 2014 at 03:24:11PM +0530, Srivatsa S. Bhat wrote:
-> Wait, that was a stupid idea. hotplug_cfd() already invokes irq_work_run
-> indirectly via flush_smp_call_function_queue(). So irq_work_cpu_notify()
-> doesn't need to invoke it again, AFAIU. So perhaps we can get rid of
-> irq_work_cpu_notify() altogether?
+On 06/25/2014 09:59 AM, Stephen Rothwell wrote:
+> Hi Paul,
+>
+> On Tue, 24 Jun 2014 14:03:08 -0400 Paul Moore <paul@paul-moore.com> wrote:
+>>
+>> On Friday, June 20, 2014 12:06:28 PM Paul Moore wrote:
+>>
+>> {big snip}
+>>
+>>> Stephen, assuming for a moment that I created a fresh branch, based against
+>>> 3.15, and then added the SELinux patches for 3.16 (basically the few new
+>>> patches that were in the ole #next branch) would that serve as a reasonable
+>>> basis for a new SELinux #next branch?  Around the -rc5/6/7 timeframe I would
+>>> send a pull request to James to pull from this next branch into the Linux
+>>> Security branch for 3.17.  Once 3.16 is released, I would merge that into
+>>> this new #next branch and continue with the next round of patches.
+>>>
+>>> FYI, more or less, the above is the process we've settled upon for all of
+>>> the trees that get accumulated into the Linux Security tree.
+>>
+>> Does the above work for you in linux-next?  I'd like to try and resolve this
+>> sooner rather than later and I imagine you feel the same ...
+>
+> Well, I see that James has pulled your tree, so past problems are now
+> moot. He has some duplicate commits in his tree now and Linus will get
+> a few more when he next pulls James' tree.  We just need to avoid this
+> going forward.  And given that James or Serge will, from now on, *pull*
+> your tree (not cherry-pick from it), things should be fine.
+>
 
-Just so...
-
-getting up at 6am and sitting in an airport terminal doesn't seem to
-agree with me; any more silly fail here?
-
----
-Subject: irq_work: Remove BUG_ON in irq_work_run()
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed Jun 25 07:13:07 CEST 2014
-
-Because of a collision with 8d056c48e486 ("CPU hotplug, smp: flush any
-pending IPI callbacks before CPU offline"), which ends up calling
-hotplug_cfd()->flush_smp_call_function_queue()->irq_work_run(), which
-is not from IRQ context.
-
-And since that already calls irq_work_run() from the hotplug path,
-remove our entire hotplug handling.
-
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Reported-by: Stephen Warren <swarren@wwwdotorg.org>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/n/tip-busatzs2gvz4v62258agipuf@git.kernel.org
----
- kernel/irq_work.c |   48 +++++-------------------------------------------
- 1 file changed, 5 insertions(+), 43 deletions(-)
-
-Index: linux-2.6/kernel/irq_work.c
-===================================================================
---- linux-2.6.orig/kernel/irq_work.c
-+++ linux-2.6/kernel/irq_work.c
-@@ -160,20 +160,14 @@ static void irq_work_run_list(struct lli
- 	}
- }
- 
--static void __irq_work_run(void)
--{
--	irq_work_run_list(&__get_cpu_var(raised_list));
--	irq_work_run_list(&__get_cpu_var(lazy_list));
--}
--
- /*
-- * Run the irq_work entries on this cpu. Requires to be ran from hardirq
-- * context with local IRQs disabled.
-+ * hotplug calls this through:
-+ *  hotplug_cfs() -> flush_smp_call_function_queue()
-  */
--void irq_work_run(void)
-+static void irq_work_run(void)
- {
--	BUG_ON(!in_irq());
--	__irq_work_run();
-+	irq_work_run_list(&__get_cpu_var(raised_list));
-+	irq_work_run_list(&__get_cpu_var(lazy_list));
- }
- EXPORT_SYMBOL_GPL(irq_work_run);
- 
-@@ -189,35 +183,3 @@ void irq_work_sync(struct irq_work *work
- 		cpu_relax();
- }
- EXPORT_SYMBOL_GPL(irq_work_sync);
--
--#ifdef CONFIG_HOTPLUG_CPU
--static int irq_work_cpu_notify(struct notifier_block *self,
--			       unsigned long action, void *hcpu)
--{
--	long cpu = (long)hcpu;
--
--	switch (action) {
--	case CPU_DYING:
--		/* Called from stop_machine */
--		if (WARN_ON_ONCE(cpu != smp_processor_id()))
--			break;
--		__irq_work_run();
--		break;
--	default:
--		break;
--	}
--	return NOTIFY_OK;
--}
--
--static struct notifier_block cpu_notify;
--
--static __init int irq_work_init_cpu_notifier(void)
--{
--	cpu_notify.notifier_call = irq_work_cpu_notify;
--	cpu_notify.priority = 0;
--	register_cpu_notifier(&cpu_notify);
--	return 0;
--}
--device_initcall(irq_work_init_cpu_notifier);
--
--#endif /* CONFIG_HOTPLUG_CPU */
+I haven't pulled in Paul's tree, I merged with the latest Linus release.
