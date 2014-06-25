@@ -1,82 +1,70 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
-Date: Wed, 25 Jun 2014 12:07:05 +0530
-Message-ID: <53AA6E11.1000404@linux.vnet.ibm.com>
-References: <1402413309-3415-1-git-send-email-fweisbec@gmail.com> <1402413309-3415-3-git-send-email-fweisbec@gmail.com> <53A9E0A5.5040402@wwwdotorg.org> <20140625051234.GD6758@twins.programming.kicks-ass.net> <20140625051721.GG3588@twins.programming.kicks-ass.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] enic: Make dummy rfs functions inline to fix !CONFIG_RFS_ACCEL build
+Date: Wed, 25 Jun 2014 10:31:09 +0200
+Message-ID: <1403685069-20198-1-git-send-email-geert@linux-m68k.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:40255 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751415AbaFYGi4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jun 2014 02:38:56 -0400
-Received: from /spool/local
-	by e23smtp07.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
-	Wed, 25 Jun 2014 16:38:54 +1000
-In-Reply-To: <20140625051721.GG3588@twins.programming.kicks-ass.net>
+Received: from mail-we0-f176.google.com ([74.125.82.176]:51409 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753302AbaFYIbV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jun 2014 04:31:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Govindarajulu Varadarajan <_govind@gmx.com>, "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On 06/25/2014 10:47 AM, Peter Zijlstra wrote:
-> On Wed, Jun 25, 2014 at 07:12:34AM +0200, Peter Zijlstra wrote:
->> On Tue, Jun 24, 2014 at 02:33:41PM -0600, Stephen Warren wrote:
->>> On 06/10/2014 09:15 AM, Frederic Weisbecker wrote:
->>>> irq work currently only supports local callbacks. However its code
->>>> is mostly ready to run remote callbacks and we have some potential user.
+If CONFIG_RFS_ACCEL=n:
 
-[...]
+drivers/net/ethernet/cisco/enic/enic_main.c: In function 'enic_open':
+drivers/net/ethernet/cisco/enic/enic_main.c:1603:2: error: implicit declaration of function 'enic_rfs_flw_tbl_init' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/cisco/enic/enic_main.c: In function 'enic_stop':
+drivers/net/ethernet/cisco/enic/enic_main.c:1630:2: error: implicit declaration of function 'enic_rfs_flw_tbl_free' [-Werror=implicit-function-declaration]
 
->> Right you are.. I think I'll just remove the BUG_ON(), Frederic?
-> 
-> Something a little so like:
-> 
-> ---
-> Subject: irq_work: Remove BUG_ON in irq_work_run_list()
+Introduced in commit a145df23ef32c7b933875f334ba28791ee75766e ("enic: Add
+Accelerated RFS support").
 
-I think this should be irq_work_run(), see below...
+Dummy functions are provided, but their prototypes are missing, causing the
+build failure.  Provide dummy static inline functions instead to fix this.
 
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Wed Jun 25 07:13:07 CEST 2014
-> 
-> Because of a collision with 8d056c48e486 ("CPU hotplug, smp: flush any
-> pending IPI callbacks before CPU offline"), which ends up calling
-> hotplug_cfd()->flush_smp_call_function_queue()->run_irq_work(), which
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+kisskb.ellerman.id.au/kisskb/buildresult/11381101/
+---
+ drivers/net/ethernet/cisco/enic/enic_clsf.c | 10 ----------
+ drivers/net/ethernet/cisco/enic/enic_clsf.h |  3 +++
+ 2 files changed, 3 insertions(+), 10 deletions(-)
 
-
-s/run_irq_work/irq_work_run
-
-
-> is not from IRQ context.
-> 
-> Cc: Frederic Weisbecker <fweisbec@gmail.com>
-> Reported-by: Stephen Warren <swarren@wwwdotorg.org>
-> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-> ---
->  kernel/irq_work.c |    2 --
->  1 file changed, 2 deletions(-)
-> 
-> --- a/kernel/irq_work.c
-> +++ b/kernel/irq_work.c
-> @@ -130,8 +130,6 @@ static void irq_work_run_list(struct lli
->  	struct irq_work *work;
->  	struct llist_node *llnode;
->  
-> -	BUG_ON(!irqs_disabled());
-> -
-
-I don't think irqs_disabled() is the problematic condition, since
-hotplug_cfg() invokes irq_work_run() from CPU_DYING context (which has
-irqs disabled). I guess you meant to remove the in_irq() check inside
-irq_work_run() instead?
-
-Regards,
-Srivatsa S. Bhat
-
->  	if (llist_empty(list))
->  		return;
->  
-> 
+diff --git a/drivers/net/ethernet/cisco/enic/enic_clsf.c b/drivers/net/ethernet/cisco/enic/enic_clsf.c
+index c2322adfccdc..bc451baac4cd 100644
+--- a/drivers/net/ethernet/cisco/enic/enic_clsf.c
++++ b/drivers/net/ethernet/cisco/enic/enic_clsf.c
+@@ -266,14 +266,4 @@ ret_unlock:
+ 	return res;
+ }
+ 
+-#else
+-
+-void enic_rfs_flw_tbl_init(struct enic *enic)
+-{
+-}
+-
+-void enic_rfs_flw_tbl_free(struct enic *enic)
+-{
+-}
+-
+ #endif /* CONFIG_RFS_ACCEL */
+diff --git a/drivers/net/ethernet/cisco/enic/enic_clsf.h b/drivers/net/ethernet/cisco/enic/enic_clsf.h
+index 76a85bb0bb73..d572704cd117 100644
+--- a/drivers/net/ethernet/cisco/enic/enic_clsf.h
++++ b/drivers/net/ethernet/cisco/enic/enic_clsf.h
+@@ -14,6 +14,9 @@ void enic_rfs_flw_tbl_init(struct enic *enic);
+ void enic_rfs_flw_tbl_free(struct enic *enic);
+ int enic_rx_flow_steer(struct net_device *dev, const struct sk_buff *skb,
+ 		       u16 rxq_index, u32 flow_id);
++#else
++static inline void enic_rfs_flw_tbl_init(struct enic *enic) {}
++static inline void enic_rfs_flw_tbl_free(struct enic *enic) {}
+ #endif /* CONFIG_RFS_ACCEL */
+ 
+ #endif /* _ENIC_CLSF_H_ */
+-- 
+1.9.1
