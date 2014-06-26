@@ -1,35 +1,75 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] enic: Make dummy rfs functions inline to fix
- !CONFIG_RFS_ACCEL build
-Date: Wed, 25 Jun 2014 18:04:55 -0700 (PDT)
-Message-ID: <20140625.180455.1940740529236282662.davem@davemloft.net>
-References: <1403685069-20198-1-git-send-email-geert@linux-m68k.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 26 Jun 2014 16:22:57 +1000
+Message-ID: <20140626162257.45f8e2aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403685069-20198-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: _govind@gmx.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4iev0dQvO52y3YmY+_m3rjm"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51422 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752790AbaFZGXF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Jun 2014 02:23:05 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>, Petr Mladek <pmladek@suse.cz>
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Jun 2014 10:31:09 +0200
+--Sig_/4iev0dQvO52y3YmY+_m3rjm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> If CONFIG_RFS_ACCEL=n:
-> 
-> drivers/net/ethernet/cisco/enic/enic_main.c: In function 'enic_open':
-> drivers/net/ethernet/cisco/enic/enic_main.c:1603:2: error: implicit declaration of function 'enic_rfs_flw_tbl_init' [-Werror=implicit-function-declaration]
-> drivers/net/ethernet/cisco/enic/enic_main.c: In function 'enic_stop':
-> drivers/net/ethernet/cisco/enic/enic_main.c:1630:2: error: implicit declaration of function 'enic_rfs_flw_tbl_free' [-Werror=implicit-function-declaration]
-> 
-> Introduced in commit a145df23ef32c7b933875f334ba28791ee75766e ("enic: Add
-> Accelerated RFS support").
-> 
-> Dummy functions are provided, but their prototypes are missing, causing the
-> build failure.  Provide dummy static inline functions instead to fix this.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Hi Andrew,
 
-Applied, thanks Geert.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
+
+kernel/printk/printk.c: In function 'log_buf_add_cpu':
+kernel/printk/printk.c:269:37: error: 'CONFIG_LOG_CPU_MAX_BUF_SHIFT' undecl=
+ared (first use in this function)
+ #define __LOG_CPU_MAX_BUF_LEN (1 << CONFIG_LOG_CPU_MAX_BUF_SHIFT)
+                                     ^
+kernel/printk/printk.c:864:42: note: in expansion of macro '__LOG_CPU_MAX_B=
+UF_LEN'
+  cpu_extra =3D (num_possible_cpus() - 1) * __LOG_CPU_MAX_BUF_LEN;
+                                          ^
+kernel/printk/printk.c:269:37: note: each undeclared identifier is reported=
+ only once for each function it appears in
+ #define __LOG_CPU_MAX_BUF_LEN (1 << CONFIG_LOG_CPU_MAX_BUF_SHIFT)
+                                     ^
+kernel/printk/printk.c:864:42: note: in expansion of macro '__LOG_CPU_MAX_B=
+UF_LEN'
+  cpu_extra =3D (num_possible_cpus() - 1) * __LOG_CPU_MAX_BUF_LEN;
+                                          ^
+
+Caused by commit 58209adf633e ("printk: allow increasing the ring
+buffer depending on the number of CPUs").  CONFIG_LOG_CPU_MAX_BUF_SHIFT
+is not defined for this configuration.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/4iev0dQvO52y3YmY+_m3rjm
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTq7xGAAoJEMDTa8Ir7ZwV57MP/2Qp3HzZctBV+3t2jcpBHRKS
+laNDfOjUno5ILbzyr6uY0ravTYS7ytwb7p4AduQS6ImHOY9f0d85ym32bqF5ePCp
+B6j5IJUJAlX5OP4Emaq0B1De74MrhttqEgMpDYjznKBHjtrFDIy/X16gBnvfNPiB
+t8SpuYMhG4RPn3g+9XskxtgWp8SLZExP9nzvrEk+gT3aaoWI3CT94lyYTFVBU3f7
+GiCGhu4NtMBW1SNB28qkqSOCXDUN3U8EO/oyWWI4YS6XwibXaHgpwbll50w2lWn6
+EyKMdOc62ov19vncG8lkOT1c/yvvczD0qVg2DlsDBJWY+owc1mcDeaRsgCkRaF+Z
+tTbyazIORt/aH/aUK0zTZS4HgRb7hwrfFYM+ajl5MVuja5Rwty0CkR4lWSvMugXO
+IjNkGPrIsEFoNfui5EIbtFzbBdoFjybBAckwkE5d7KGg2gqOXcq9Fuw+AdPryMi0
+Nq4hZejOShwiNa/UnBwYcT62kSLJTdi2kjc7uA9Tog+fv25+Hd7YgfzNK1BjNsnt
+f3ylcAqz4DjBkjp/b5z2qlUYPYea+BNQCndJDOQwsQVO8FcoYzgHOlNGAaldOcSk
+17TTa8USFVP0IuMpdgpSiobSkvndtSh0X1IF+wyUfWiv6d2+ZKnZhK4W9IErJYin
+Jg8u21m8XiimwkfSNukk
+=+uBF
+-----END PGP SIGNATURE-----
+
+--Sig_/4iev0dQvO52y3YmY+_m3rjm--
