@@ -1,38 +1,114 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
-Date: Sat, 28 Jun 2014 20:19:31 +0200
-Message-ID: <20140628181931.GB6357@pd.tnic>
-References: <20140625051721.GG3588@twins.programming.kicks-ass.net>
- <53AA6E11.1000404@linux.vnet.ibm.com>
- <20140625093657.GN19860@laptop.programming.kicks-ass.net>
- <20140625093944.GV16155@laptop.programming.kicks-ass.net>
- <53AA9B68.4050104@linux.vnet.ibm.com>
- <53AA9C43.3020903@linux.vnet.ibm.com>
- <20140625101915.GO19860@laptop.programming.kicks-ass.net>
- <53AAF779.8060006@wwwdotorg.org>
- <20140625163820.GC3935@laptop>
- <53AAFF74.8090308@linux.vnet.ibm.com>
+From: Stephan Mueller <smueller@chronox.de>
+Subject: [PATCH 4/4] DRBG: Call CTR DRBG DF function only once
+Date: Sat, 28 Jun 2014 22:04:25 +0200
+Message-ID: <3742446.V1bYQC64FA@myon.chronox.de>
+References: <4927386.WYHrRe3NJm@myon.chronox.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53AAFF74.8090308@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, Stephen Warren <swarren@wwwdotorg.org>, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <4927386.WYHrRe3NJm@myon.chronox.de>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild@01.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-crypto@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 25, 2014 at 10:27:24PM +0530, Srivatsa S. Bhat wrote:
-> > https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git/commit/?h=timers/nohz&id=921d8b81281ecdca686369f52165d04fa3505bd7
+The CTR DRBG requires the update function to be called twice when
+generating a random number. In both cases, update function must process
+the additional information string by using the DF function. As the DF
+produces the same result in both cases, we can save one invocation of
+the DF function when the first DF function result is reused.
 
-Just hit it here too. Cherry-picking it ontop of latest tip fixes the
-issue, thanks.
+The result of the DF function is stored in the scratchpad storage. The
+patch ensures that the scratchpad is not cleared when we want to reuse
+the DF result. For achieving this, the CTR DRBG update function must
+know by whom and in which scenario it is called. This information is
+provided with the reseed parameter to the update function.
 
-Tested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+---
+ crypto/drbg.c | 41 ++++++++++++++++++++++-------------------
+ 1 file changed, 22 insertions(+), 19 deletions(-)
 
+diff --git a/crypto/drbg.c b/crypto/drbg.c
+index 4593b3c..53ff20d 100644
+--- a/crypto/drbg.c
++++ b/crypto/drbg.c
+@@ -565,7 +565,21 @@ out:
+ 	return ret;
+ }
+ 
+-/* update function of CTR DRBG as defined in 10.2.1.2 */
++/*
++ * update function of CTR DRBG as defined in 10.2.1.2
++ *
++ * The reseed variable has an enhanced meaning compared to the update
++ * functions of the other DRBGs as follows:
++ * 0 => initial seed from initialization
++ * 1 => reseed via drbg_seed
++ * 2 => first invocation from drbg_ctr_update when addtl is present. In
++ *      this case, the df_data scratchpad is not deleted so that it is
++ *      available for another calls to prevent calling the DF function
++ *      again.
++ * 3 => second invocation from drbg_ctr_update. When the update function
++ *      was called with addtl, the df_data memory already contains the
++ *      DFed addtl information and we do not need to call DF again.
++ */
+ static int drbg_ctr_update(struct drbg_state *drbg, struct list_head *seed,
+ 			   int reseed)
+ {
+@@ -580,7 +594,8 @@ static int drbg_ctr_update(struct drbg_state *drbg, struct list_head *seed,
+ 	unsigned char prefix = DRBG_PREFIX1;
+ 
+ 	memset(temp, 0, drbg_statelen(drbg) + drbg_blocklen(drbg));
+-	memset(df_data, 0, drbg_statelen(drbg));
++	if (3 > reseed)
++		memset(df_data, 0, drbg_statelen(drbg));
+ 
+ 	/* 10.2.1.3.2 step 2 and 10.2.1.4.2 step 2 */
+ 	if (seed) {
+@@ -622,7 +637,8 @@ static int drbg_ctr_update(struct drbg_state *drbg, struct list_head *seed,
+ 
+ out:
+ 	memset(temp, 0, drbg_statelen(drbg) + drbg_blocklen(drbg));
+-	memset(df_data, 0, drbg_statelen(drbg));
++	if (2 != reseed)
++		memset(df_data, 0, drbg_statelen(drbg));
+ 	return ret;
+ }
+ 
+@@ -647,7 +663,7 @@ static int drbg_ctr_generate(struct drbg_state *drbg,
+ 		LIST_HEAD(addtllist);
+ 
+ 		list_add_tail(&addtl->list, &addtllist);
+-		ret = drbg_ctr_update(drbg, &addtllist, 1);
++		ret = drbg_ctr_update(drbg, &addtllist, 2);
+ 		if (ret)
+ 			return 0;
+ 	}
+@@ -678,21 +694,8 @@ static int drbg_ctr_generate(struct drbg_state *drbg,
+ 			drbg_add_buf(drbg->V, drbg_blocklen(drbg), &prefix, 1);
+ 	}
+ 
+-	/*
+-	 * 10.2.1.5.2 step 6
+-	 * The following call invokes the DF function again which could be
+-	 * optimized. In step 2, the "additional_input" after step 2 is the
+-	 * output of the DF function. If this result would be saved, the DF
+-	 * function would not need to be invoked again at this point.
+-	 */
+-	if (addtl && 0 < addtl->len) {
+-		LIST_HEAD(addtllist);
+-
+-		list_add_tail(&addtl->list, &addtllist);
+-		ret = drbg_ctr_update(drbg, &addtllist, 1);
+-	} else {
+-		ret = drbg_ctr_update(drbg, NULL, 1);
+-	}
++	/* 10.2.1.5.2 step 6 */
++	ret = drbg_ctr_update(drbg, NULL, 3);
+ 	if (ret)
+ 		len = ret;
+ 
 -- 
-Regards/Gruss,
-    Boris.
-
-Sent from a fat crate under my desk. Formatting is fine.
---
+1.9.3
