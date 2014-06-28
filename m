@@ -1,11 +1,13 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] staging: emxx_udc: replace strict_strtol call
-Date: Sat, 28 Jun 2014 19:00:23 +0200
-Message-ID: <1403974823-23578-1-git-send-email-vincent.stehle@laposte.net>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH linux-next] staging: emxx_udc: replace strict_strtol call
+Date: Sat, 28 Jun 2014 10:09:35 -0700
+Message-ID: <1403975375.9064.29.camel@joe-AO725>
+References: <1403974823-23578-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1403974823-23578-1-git-send-email-vincent.stehle@laposte.net>
 List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
 List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
@@ -15,32 +17,63 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: linux-next@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Magnus Damm <damm+renesas@opensource.se>, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+To: Vincent =?ISO-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Q29tbWl0IDU4MmU5ZDM3YTlhMyAnaW5jbHVkZS9saW51eDogcmVtb3ZlIHN0cmljdF9zdHJ0byog
-ZGVmaW5pdGlvbnMnIGhhcwpvYnNvbGV0ZWQgdGhlIHN0cmljdF9zdHJ0b2wgZnVuY3Rpb24uIFVz
-ZSBrc3RydG9sIGluc3RlYWQuCgpUaGlzIGZpeGVzIHRoZSBmb2xsb3dpbmcgY29tcGlsYXRpb24g
-ZXJyb3I6CgogIGRyaXZlcnMvc3RhZ2luZy9lbXh4X3VkYy9lbXh4X3VkYy5jOiBJbiBmdW5jdGlv
-biDigJhuYnUyc3NfZHJ2X3NldF9lcF9pbmZv4oCZOgogIGRyaXZlcnMvc3RhZ2luZy9lbXh4X3Vk
-Yy9lbXh4X3VkYy5jOjMyODc6MzogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0
-aW9uIOKAmHN0cmljdF9zdHJ0b2zigJkgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFy
-YXRpb25dCgpTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQuc3RlaGxlQGxh
-cG9zdGUubmV0PgoKQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlv
-bi5vcmc+CkNjOiBNYWdudXMgRGFtbSA8ZGFtbStyZW5lc2FzQG9wZW5zb3VyY2Uuc2U+Ci0tLQoK
-SGksCgpUaGlzIGNvbXBpbGF0aW9uIGVycm9yIGNhbiBiZSBzZWVuIHdpdGggZS5nLiBsaW51eCBu
-ZXh0LTIwMTQwNjI3IGFuZCBhcm0KYWxsbW9kY29uZmlnLgoKQmVzdCByZWdhcmRzLAoKVi4KCiBk
-cml2ZXJzL3N0YWdpbmcvZW14eF91ZGMvZW14eF91ZGMuYyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3Rh
-Z2luZy9lbXh4X3VkYy9lbXh4X3VkYy5jIGIvZHJpdmVycy9zdGFnaW5nL2VteHhfdWRjL2VteHhf
-dWRjLmMKaW5kZXggZWUwMDk0ZC4uYjVjMTUxMSAxMDA2NDQKLS0tIGEvZHJpdmVycy9zdGFnaW5n
-L2VteHhfdWRjL2VteHhfdWRjLmMKKysrIGIvZHJpdmVycy9zdGFnaW5nL2VteHhfdWRjL2VteHhf
-dWRjLmMKQEAgLTMyODUsNyArMzI4NSw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBuYnUyc3NfZHJ2
-X3NldF9lcF9pbmZvKAogCiAJCXRlbXBidWZbMF0gPSBuYW1lWzJdOwogCQl0ZW1wYnVmWzFdID0g
-J1wwJzsKLQkJcmVzID0gc3RyaWN0X3N0cnRvbCh0ZW1wYnVmLCAxNiwgJm51bSk7CisJCXJlcyA9
-IGtzdHJ0b2wodGVtcGJ1ZiwgMTYsICZudW0pOwogCiAJCWlmIChudW0gPT0gMCkKIAkJCWVwLT5l
-cC5tYXhwYWNrZXQgPSBFUDBfUEFDS0VUU0laRTsKLS0gCjIuMC4wCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxA
-bGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVj
-dC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
+On Sat, 2014-06-28 at 19:00 +0200, Vincent Stehl=E9 wrote:
+> Commit 582e9d37a9a3 'include/linux: remove strict_strto* definitions' has
+> obsoleted the strict_strtol function. Use kstrtol instead.
+[]
+> diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_u=
+dc/emxx_udc.c
+[]
+> @@ -3285,7 +3285,7 @@ static void __init nbu2ss_drv_set_ep_info(
+>  =
+
+>  		tempbuf[0] =3D name[2];
+>  		tempbuf[1] =3D '\0';
+> -		res =3D strict_strtol(tempbuf, 16, &num);
+> +		res =3D kstrtol(tempbuf, 16, &num);
+
+
+The whole block if code is obtuse and should be simplified to:
+---
+ drivers/staging/emxx_udc/emxx_udc.c | 20 +++-----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc=
+/emxx_udc.c
+index c92ded8..f41831e 100644
+--- a/drivers/staging/emxx_udc/emxx_udc.c
++++ b/drivers/staging/emxx_udc/emxx_udc.c
+@@ -3276,24 +3276,10 @@ static void __init nbu2ss_drv_set_ep_info(
+ 	ep->ep.name =3D name;
+ 	ep->ep.ops =3D &nbu2ss_ep_ops;
+ =
+
+-	if (isdigit(name[2])) {
+-
+-		long	num;
+-		int	res;
+-		char	tempbuf[2];
+-
+-		tempbuf[0] =3D name[2];
+-		tempbuf[1] =3D '\0';
+-		res =3D strict_strtol(tempbuf, 16, &num);
+-
+-		if (num =3D=3D 0)
+-			ep->ep.maxpacket =3D EP0_PACKETSIZE;
+-		else
+-			ep->ep.maxpacket =3D EP_PACKETSIZE;
+-
+-	} else {
++	if (name[2] =3D=3D '0')
++		ep->ep.maxpacket =3D EP0_PACKETSIZE;
++	else
+ 		ep->ep.maxpacket =3D EP_PACKETSIZE;
+-	}
+ =
+
+ 	list_add_tail(&ep->ep.ep_list, &udc->gadget.ep_list);
+ 	INIT_LIST_HEAD(&ep->queue);
