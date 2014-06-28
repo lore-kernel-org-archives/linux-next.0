@@ -1,64 +1,46 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: mfd: sec-core requires regulators
-Date: Fri, 27 Jun 2014 11:19:40 +0100
-Message-ID: <20140627101940.GJ19645@lee--X1>
-References: <CA+r1ZhhFYip3Jp2c3d8tNpD-vK8Pkf7DzrKTtk6Gy8uOOO3Ucw@mail.gmail.com>
- <29237234.T7oGEGKuvp@wuerfel>
- <20140624154833.GR13803@lee--X1>
- <6906564.1ehoeq1QjB@wuerfel>
- <20140627090957.GG19645@lee--X1>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Subject: [PATCH linux-next] staging: emxx_udc: replace strict_strtol call
+Date: Sat, 28 Jun 2014 19:00:23 +0200
+Message-ID: <1403974823-23578-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:43193 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752825AbaF0KTq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Jun 2014 06:19:46 -0400
-Received: by mail-ie0-f175.google.com with SMTP id tp5so4070777ieb.6
-        for <linux-next@vger.kernel.org>; Fri, 27 Jun 2014 03:19:46 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20140627090957.GG19645@lee--X1>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jim Davis <jim.epost@gmail.com>, sfr@canb.auug.org.au, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, sbkim73@samsung.com, sameo@linux.intel.com, grant.likely@linaro.org, robh+dt@kernel.org, devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: linux-next@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Magnus Damm <damm+renesas@opensource.se>, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 27 Jun 2014, Lee Jones wrote:
-
-> On Tue, 24 Jun 2014, Arnd Bergmann wrote:
->=20
-> > The newly added sec-core mfd module calls the regulator_suspend_pre=
-pare()
-> > function, which is only available if the regulator API is provided.=
- This
-> > matches the usage of the driver, so we can just add a Kconfig depen=
-dency.
-> >=20
-> > Reported-by: Jim Davis <jim.epost@gmail.com>
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->=20
-> Thanks for re-sending Arnd, patch applied.
-
-Slight change of plan - this appears to have been fixed by 591123e.
-
-> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > index 207c433..1caa3c5 100644
-> > --- a/drivers/mfd/Kconfig
-> > +++ b/drivers/mfd/Kconfig
-> > @@ -582,7 +582,7 @@ config MFD_RC5T583
-> > =20
-> >  config MFD_SEC_CORE
-> >         bool "SAMSUNG Electronics PMIC Series Support"
-> > -       depends on I2C=3Dy
-> > +       depends on I2C=3Dy && REGULATOR
-> >         select MFD_CORE
-> >         select REGMAP_I2C
-> >         select REGMAP_IRQ
->=20
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Q29tbWl0IDU4MmU5ZDM3YTlhMyAnaW5jbHVkZS9saW51eDogcmVtb3ZlIHN0cmljdF9zdHJ0byog
+ZGVmaW5pdGlvbnMnIGhhcwpvYnNvbGV0ZWQgdGhlIHN0cmljdF9zdHJ0b2wgZnVuY3Rpb24uIFVz
+ZSBrc3RydG9sIGluc3RlYWQuCgpUaGlzIGZpeGVzIHRoZSBmb2xsb3dpbmcgY29tcGlsYXRpb24g
+ZXJyb3I6CgogIGRyaXZlcnMvc3RhZ2luZy9lbXh4X3VkYy9lbXh4X3VkYy5jOiBJbiBmdW5jdGlv
+biDigJhuYnUyc3NfZHJ2X3NldF9lcF9pbmZv4oCZOgogIGRyaXZlcnMvc3RhZ2luZy9lbXh4X3Vk
+Yy9lbXh4X3VkYy5jOjMyODc6MzogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0
+aW9uIOKAmHN0cmljdF9zdHJ0b2zigJkgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFy
+YXRpb25dCgpTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IFN0ZWhsw6kgPHZpbmNlbnQuc3RlaGxlQGxh
+cG9zdGUubmV0PgoKQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlv
+bi5vcmc+CkNjOiBNYWdudXMgRGFtbSA8ZGFtbStyZW5lc2FzQG9wZW5zb3VyY2Uuc2U+Ci0tLQoK
+SGksCgpUaGlzIGNvbXBpbGF0aW9uIGVycm9yIGNhbiBiZSBzZWVuIHdpdGggZS5nLiBsaW51eCBu
+ZXh0LTIwMTQwNjI3IGFuZCBhcm0KYWxsbW9kY29uZmlnLgoKQmVzdCByZWdhcmRzLAoKVi4KCiBk
+cml2ZXJzL3N0YWdpbmcvZW14eF91ZGMvZW14eF91ZGMuYyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3Rh
+Z2luZy9lbXh4X3VkYy9lbXh4X3VkYy5jIGIvZHJpdmVycy9zdGFnaW5nL2VteHhfdWRjL2VteHhf
+dWRjLmMKaW5kZXggZWUwMDk0ZC4uYjVjMTUxMSAxMDA2NDQKLS0tIGEvZHJpdmVycy9zdGFnaW5n
+L2VteHhfdWRjL2VteHhfdWRjLmMKKysrIGIvZHJpdmVycy9zdGFnaW5nL2VteHhfdWRjL2VteHhf
+dWRjLmMKQEAgLTMyODUsNyArMzI4NSw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBuYnUyc3NfZHJ2
+X3NldF9lcF9pbmZvKAogCiAJCXRlbXBidWZbMF0gPSBuYW1lWzJdOwogCQl0ZW1wYnVmWzFdID0g
+J1wwJzsKLQkJcmVzID0gc3RyaWN0X3N0cnRvbCh0ZW1wYnVmLCAxNiwgJm51bSk7CisJCXJlcyA9
+IGtzdHJ0b2wodGVtcGJ1ZiwgMTYsICZudW0pOwogCiAJCWlmIChudW0gPT0gMCkKIAkJCWVwLT5l
+cC5tYXhwYWNrZXQgPSBFUDBfUEFDS0VUU0laRTsKLS0gCjIuMC4wCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxA
+bGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVj
+dC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
