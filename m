@@ -1,97 +1,73 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: Re: [PATCH 2/4] DRBG: cleanup of preprocessor macros
-Date: Sun, 29 Jun 2014 13:37:05 +0200
-Message-ID: <1616464.nTZ4WdyPoM@myon.chronox.de>
-References: <4927386.WYHrRe3NJm@myon.chronox.de> <3104100.drOBnqUFp8@myon.chronox.de> <53AFC322.2060109@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 30 Jun 2014 12:47:50 +1000
+Message-ID: <20140630124750.0aad0c82@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <53AFC322.2060109@infradead.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>, kbuild test robot <fengguang.wu@intel.com>, kbuild@01.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-crypto@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/VJceZM/kZSHofSPljmo4_NY"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:38473 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753607AbaF3CsF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Jun 2014 22:48:05 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
 
-Am Sonntag, 29. Juni 2014, 00:41:22 schrieb Randy Dunlap:
+--Sig_/VJceZM/kZSHofSPljmo4_NY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi all,
 
-> On 06/28/14 22:07, Stephan Mueller wrote:
-> > Am Sonntag, 29. Juni 2014, 12:20:15 schrieb Stephen Rothwell:
-> > 
-> > Hi Stephen,
-> > 
-> >> Hi Stephan,
-> >> 
-> >> On Sat, 28 Jun 2014 22:00:07 +0200 Stephan Mueller <smueller@chronox.de>
-> > 
-> > wrote:
-> >>> diff --git a/crypto/drbg.c b/crypto/drbg.c
-> >>> index 6679a26..03a230e 100644
-> >>> --- a/crypto/drbg.c
-> >>> +++ b/crypto/drbg.c
-> >>> @@ -102,8 +102,13 @@
-> >>> 
-> >>>  #if !defined(CONFIG_CRYPTO_DRBG_HASH) && \
-> >>>  
-> >>>  	!defined(CONFIG_CRYPTO_DRBG_HMAC) && \
-> >>>  	!defined(CONFIG_CRYPTO_DRBG_CTR)
-> >>> 
-> >>> -#warning "The DRBG code is useless without compiling at least one DRBG
-> >>> type" -#endif
-> >>> +#define CRYPTO_DRBG_NONE_STRING "none "
-> >>> +static int __init drbg_init(void)
-> >>> +{
-> >>> +	pr_warn("DRBG: no DRBG core was compiled!\n");
-> >>> +	return -EFAULT;
-> >>> +}
-> >>> +#else
-> >> 
-> >> Wouldn't this be better handled by Kconfig so that we don't even try to
-> >> build this unless one of the required core modules is chosen?
-> > 
-> > I tried that, but it seems that my Kconfig Foo is not too well: adding the
-> > DRBG cores to the depends line of CRYPTO_DRBG as indicated in the
-> > following, I have a circular dependency. With that circular dependency,
-> > the DRBG entries do not show up in make menuconfig.
-> > 
-> > menuconfig CRYTPO_DRBG
-> > 
-> >         tristate "NIST SP800-90A DRBG"
-> >         depends on CRYPTO && (CRYPTO_DRBG_HMAC || CRYPTO_DRBG_CTR ||
-> > 
-> > CRYPTO_DRBG_HASH)
-> > ...
-> > 
-> > if CRYTPO_DRBG
-> > 
-> > config CRYPTO_DRBG_HMAC
-> > 
-> >         bool "Enable HMAC DRBG"
-> >         default y
-> >         depends on CRYTPO_DRBG
-> > 
-> > Do you have a working solution in mind? The goal is that once CRYPTO_DRBG
-> > is selected, at least one of the DRBG cores must be selected.
-> 
-> That sounds like a 'choice' Kconfig could be used.
-> Have you looked at that possibility?
-> 
-> See Documentation/kbuild/kconfig-language.txt and search for 'choice'.
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-When looking into the documentation and trying it I found:
+In file included from include/net/inet_connection_sock.h:23:0,
+                 from include/linux/tcp.h:24,
+                 from include/net/tcp.h:24,
+                 from net/ipv4/tcp_input.c:72:
+net/ipv4/tcp_input.c: In function 'pr_drop_req':
+include/net/inet_sock.h:77:41: error: 'struct sock_common' has no member na=
+med 'skc_v6_daddr'
+ #define ir_v6_rmt_addr  req.__req_common.skc_v6_daddr
+                                         ^
+include/net/sock.h:2273:57: note: in expansion of macro 'ir_v6_rmt_addr'
+  do { if (net_msg_warn && net_ratelimit()) printk(fmt,##args); } while(0)
+                                                         ^
+net/ipv4/tcp_input.c:5889:3: note: in expansion of macro 'LIMIT_NETDEBUG'
+   LIMIT_NETDEBUG(KERN_DEBUG pr_fmt("drop open request from %pI6/%u\n"),
+   ^
 
-- bool choices allow me to only select one option, and only one
+Caused by commit 1fb6f159fd21 ("tcp: add tcp_conn_request").  This
+build has CONFIG_IPV6 unset.
 
-- tristate choices allow me to only select one option, if the initial tristate 
-is set to yes. If the initial tristate is set to module, it allows zero to all 
-options to be set.
+I have used the net-next tree from next-20140627 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-That said, neither covers my requirement here: require that at least one 
-option is set, but allow more options.
+--Sig_/VJceZM/kZSHofSPljmo4_NY
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-Thanks
-Stephan
--- 
-| Cui bono? |
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTsM/fAAoJEMDTa8Ir7ZwVl1oP/jXgyvUq17AfiQBGrn9C+s0x
+UXxFoGgtzjad461wUsvdg6NR6Kgq9FYMDVi1Eu6lkRMvTCNxaR5rOAU9U1TC759X
+5L2F2qhly7bPMlbNlJgssbYtkWYktdBf9uCHYoZUuV4oO2y5t2JisnA65EuMNea8
+OIJjX/JdrklBPUImmih8XfNeJIbf1eFcB6p19GhiXDYyIQJH+Y+ajgXOhAYe/DGz
+Za9r+qdxGnTZCi/Y3zT1swBWLPm4juUPGPJU5ZkJrlLylFcjfClJ8jjnMSH6cqX4
+Lcm0KB+iK/s4+eX0mLwi09k6DQ6fotJmJ8X70y/5jheVLxnJV0bYdx/aT3nJVz2q
+vZim8bWDlgaFJEUG66/F9heNIJhA7AS6/iwP4FTxbT2PWF/j2YDttM+zz4pbi0bu
+yxnCIhyBahWx6v46yeQp/civLXnhfq4yDEovPkV8kBPShCPyCa1JNeJ2PM+qIdRT
+MdnSndKHM+Xr8dU9ZtktRt9py5HHq+mgqic6WKFArYElkv/lbIGcjn8cQwYx+IU8
+84/C+opaaVXetbroLl203A+sg2z9/CW07u7LmauDfpRRcY67vXOs5P/XImmI9bTz
+xiTA3w5J+7739KTVUINMGN7fVLTie7gRKDnGgwSwm7Smuyj+eAGdK2zw0760MfEp
+8D9gcpbPl+duWRtghaVP
+=XcTH
+-----END PGP SIGNATURE-----
+
+--Sig_/VJceZM/kZSHofSPljmo4_NY--
