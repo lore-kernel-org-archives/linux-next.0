@@ -1,30 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with the  tree
-Date: Wed, 2 Jul 2014 15:15:49 +1000
-Message-ID: <20140702151549.00183ad4@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the block
+ tree
+Date: Wed, 2 Jul 2014 16:06:31 +1000
+Message-ID: <20140702160631.240b44d0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/pKl.Yquj8Y7IzFc+f02=P2i"; protocol="application/pgp-signature"
+ boundary="Sig_/60pHM+ZYKRbJJu32FruTFNC"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35124 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60693 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751455AbaGBFP5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Jul 2014 01:15:57 -0400
+	id S1750888AbaGBGGi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2014 02:06:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Douglas Gilbert <dgilbert@interlog.com>Douglas Gilbert <dgilbert@interlog.com>, Christoph Hellwig <hch@lst.de>
+To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>, Ming Lei <ming.lei@canonical.com>
 
---Sig_/pKl.Yquj8Y7IzFc+f02=P2i
+--Sig_/60pHM+ZYKRbJJu32FruTFNC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Andrew,
 
-Today's linux-next merge of the scsi tree got a conflict in
-include/scsi/sg.h between commit d15156138dad ("block SG_IO: add
-SG_FLAG_Q_AT_HEAD flag") from the block tree and commit b15b9fab9f32
-("sg: add SG_FLAG_Q_AT_TAIL flag") from the scsi tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+block/bio.c between commit 254c4407cb84 ("bio: modify __bio_add_page()
+to accept pages that don't start a new segment") from the block tree
+and commit b5e51c564fb2 ("bio: modify __bio_add_page() to accept pages
+that don't start a new segment") from the akpm-current tree.
 
 I fixed it up (I used the version from the block tree) and can carry the
 fix as necessary (no action is required).
@@ -33,26 +35,26 @@ fix as necessary (no action is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/pKl.Yquj8Y7IzFc+f02=P2i
+--Sig_/60pHM+ZYKRbJJu32FruTFNC
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTs5WKAAoJEMDTa8Ir7ZwV67sP/0+iYRvDm3owjoe7+gFNNJOe
-TOPdo1QFa0dYuQBU3tM+UwHR/9Avt3qvrAg+TfairRKHFu8Kubp2L7JXOh7RYNcp
-CCmHenivaCpg5z7iVUQy6RYPjYDlisuUmpyRHbcmi9om4aEhD1NOgVPkWz8x+Hzt
-9SCLrvNmRXUlBH+Tzxu8rxynyuetIHv254fo1EG6EtByZYcdkCVlRM9W+FsF7vIL
-aHszgckkErQ9rzz4w9s2i/3Vo9e04CqIQm1luD2cfUlIyC3iVn8MLyh4LjhCodAc
-nR7bSe5CZGIzwE5/bLzOJglHe8NgW9rkcGCUMPJsPxWzYjyLn/JSIsrMDr2bsSwZ
-RAfoPw018Ww065sXwP9XKeN1SZZ3iuRQ0c1PaKhJzORMtHSv0vKxm1mykAGqc3UQ
-C8s4/E7+H1+O2v8Hqmpb8AC/CRFyWNfNd/EP5tAgAGSwd4UqvNUWpVTBQ/bbn4md
-uC9EG+ZnktVPKzu8R6tEznTnM25JpBRfyBjdYFlYu1sAM+P0M/07UNb41LGTozZK
-/SAGk8bFoKyL5EGIJImeEfKiI36psY5ePS5QEiGOFpFJ2WEHssC/knD+z/NaRzQI
-Cg5YOLeCimr96gAa2FDds+nSKPf4q/jlMPNzyB0sVepDQUi5U9Eq22D9LQUSsaVX
-xkRN73H8kZb85CQJb1rv
-=bTsv
+iQIcBAEBCAAGBQJTs6FsAAoJEMDTa8Ir7ZwV1psP/2XeXTXviVegPR52LaIStYZx
+bUidzEdmL7vO6ihcO1XmE09mSlH/7e79iJcFxl1uqc50q2oLotf9XYKFuPtcL3f1
+XgY8/Tw7O4DF9P6rX28GrIB8FAJG9+SR1+V0embHV5TbbuAjYTl84J5XcbY/WeDz
+LD7pE6lFquixJVm7QEVkmGiy7rg3KQxxFm9+U42ZYImlFfNbktcsyXARmhrlcpI2
+0gyOynRJlzbpqm9shbN7gr6Xqzh9cKGi3zPc83yT4UmzhWc1ddRiREonPIEFol39
+x9QXY56z58koj+kE8gtsX3RvKY17QIh1ixA2w9fOgIERN9xRGhU9HgyWDibbh6Mk
+c+wtPiKLTwUeXY1bhsBTi+vy4BlNiRfaiD+y2Xb5gKuSFCtSoaElvvRPp+4KUmJZ
+Se6ZZRPrCRmJSW4O1I46jSjVGTWigtswI5UO7UX/MUpB0kfVkiFI8RPifbJ4SFnZ
+syhvfwNvUA5oNE81nJg2BQ9YlLhKOhMCASzBJBBkV/ywvIsv/cdb5frX4RytLHsD
+AOYt3mAB+5TOsQEbHLvBCVNIc/QX4H4pVgOZat7w81YZcLTJymARAXCFQNRcI5U4
+BV02jgX/Lkv5EGQtFaIo0IwM7oirtkMzKnhlHow5f2rYRfnVBwIP1f1VCruC6ppA
+qr+jNUyos3TpGVGy0Xto
+=5riL
 -----END PGP SIGNATURE-----
 
---Sig_/pKl.Yquj8Y7IzFc+f02=P2i--
+--Sig_/60pHM+ZYKRbJJu32FruTFNC--
