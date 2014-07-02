@@ -1,134 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-perf tree with the arm tree
-Date: Wed, 2 Jul 2014 11:17:08 +1000
-Message-ID: <20140702111708.0a209b87@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the  tree
+Date: Wed, 2 Jul 2014 15:15:49 +1000
+Message-ID: <20140702151549.00183ad4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tZDx5G3tJTSjOIFc2lGlE9E"; protocol="application/pgp-signature"
+ boundary="Sig_/pKl.Yquj8Y7IzFc+f02=P2i"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48472 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35124 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752165AbaGBBRV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2014 21:17:21 -0400
+	id S1751455AbaGBFP5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2014 01:15:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Douglas Gilbert <dgilbert@interlog.com>Douglas Gilbert <dgilbert@interlog.com>, Christoph Hellwig <hch@lst.de>
 
---Sig_/tZDx5G3tJTSjOIFc2lGlE9E
+--Sig_/pKl.Yquj8Y7IzFc+f02=P2i
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Will,
+Hi James,
 
-Today's linux-next merge of the arm-perf tree got a conflict in
-arch/arm/kernel/perf_event_cpu.c between commit 324bbc0804ac ("ARM:
-make it easier to check the CPU part number correctly") from the arm
-tree and commit 6f73e8ababdd ("arm: perf: clean up PMU names") from the
-arm-perf tree.
+Today's linux-next merge of the scsi tree got a conflict in
+include/scsi/sg.h between commit d15156138dad ("block SG_IO: add
+SG_FLAG_Q_AT_HEAD flag") from the block tree and commit b15b9fab9f32
+("sg: add SG_FLAG_Q_AT_TAIL flag") from the scsi tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I used the version from the block tree) and can carry the
+fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-diff --cc arch/arm/kernel/perf_event_cpu.c
-index c02c2e8c877d,c63dc4201a7f..000000000000
---- a/arch/arm/kernel/perf_event_cpu.c
-+++ b/arch/arm/kernel/perf_event_cpu.c
-@@@ -254,35 -259,38 +257,39 @@@ static int probe_current_pmu(struct arm
- =20
-  	pr_info("probing PMU on CPU %d\n", cpu);
- =20
- +	switch (read_cpuid_part()) {
-  	/* ARM Ltd CPUs. */
- -	if (implementor =3D=3D ARM_CPU_IMP_ARM) {
- -		switch (part_number) {
- -		case ARM_CPU_PART_ARM1136:
- -			ret =3D armv6_1136_pmu_init(pmu);
- -			break;
- -		case ARM_CPU_PART_ARM1156:
- -			ret =3D armv6_1156_pmu_init(pmu);
- -			break;
- -		case ARM_CPU_PART_ARM1176:
- -			ret =3D armv6_1176_pmu_init(pmu);
- -			break;
- -		case ARM_CPU_PART_ARM11MPCORE:
- -			ret =3D armv6mpcore_pmu_init(pmu);
- -			break;
- -		case ARM_CPU_PART_CORTEX_A8:
- -			ret =3D armv7_a8_pmu_init(pmu);
- -			break;
- -		case ARM_CPU_PART_CORTEX_A9:
- -			ret =3D armv7_a9_pmu_init(pmu);
- -			break;
- -		}
- -	/* Intel CPUs [xscale]. */
- -	} else if (implementor =3D=3D ARM_CPU_IMP_INTEL) {
- -		switch (xscale_cpu_arch_version()) {
- -		case ARM_CPU_XSCALE_ARCH_V1:
- -			ret =3D xscale1pmu_init(pmu);
- -			break;
- -		case ARM_CPU_XSCALE_ARCH_V2:
- -			ret =3D xscale2pmu_init(pmu);
- -			break;
- +	case ARM_CPU_PART_ARM1136:
-++		ret =3D armv6_1136_pmu_init(pmu);
-++		break;
- +	case ARM_CPU_PART_ARM1156:
-++		ret =3D armv6_1156_pmu_init(pmu);
-++		break;
- +	case ARM_CPU_PART_ARM1176:
-- 		ret =3D armv6pmu_init(pmu);
-++		ret =3D armv6_1176_pmu_init(pmu);
- +		break;
- +	case ARM_CPU_PART_ARM11MPCORE:
- +		ret =3D armv6mpcore_pmu_init(pmu);
- +		break;
- +	case ARM_CPU_PART_CORTEX_A8:
- +		ret =3D armv7_a8_pmu_init(pmu);
- +		break;
- +	case ARM_CPU_PART_CORTEX_A9:
- +		ret =3D armv7_a9_pmu_init(pmu);
- +		break;
- +
- +	default:
- +		if (read_cpuid_implementor() =3D=3D ARM_CPU_IMP_INTEL) {
- +			switch (xscale_cpu_arch_version()) {
- +			case ARM_CPU_XSCALE_ARCH_V1:
- +				ret =3D xscale1pmu_init(pmu);
- +				break;
- +			case ARM_CPU_XSCALE_ARCH_V2:
- +				ret =3D xscale2pmu_init(pmu);
- +				break;
- +			}
-  		}
- +		break;
-  	}
- =20
-  	put_cpu();
 
---Sig_/tZDx5G3tJTSjOIFc2lGlE9E
+--Sig_/pKl.Yquj8Y7IzFc+f02=P2i
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTs12eAAoJEMDTa8Ir7ZwVFjcP/214L4ZSNZLnxWH0B75+LHeM
-L8+pfvuwO3n2RY35x8U6VlJq9EGrUNWt/YMyckwp5XqP7f6CEMSyJJ5sdgO0QVja
-+dxnVpv1LbBmJMgZlJyqtFD1RBVUgN6N6Eq5R7vwwlzLKiI/QC7a/4fvP4qKS7Am
-2TAt0H4Zc10Yq0u1M5wuncoE99uRt8mfhGQxSvEzrPcWpqu3gqh2bleTr9c/9XKf
-0lipGubPL3b2svv+RJhxIffSEb0IWihoaA2DYVtPWHoriSzgvUl1L+F0k6EMJIIw
-kmEyxnZl0ghYOG7epvn91kwG8ZYAh/GSQVcE2b5pIBvqttBfY5kM1aP2vIFhMT6F
-mNDrYRs2dGftiUpPnyuPUp84AjF1BomFhwyshIpmCIXEvrcsFbbu79yCNgFirTn3
-hJBH6tk4C8ofPMHwjoFM17LWrgdk2UeejuXeMpzqBWlPOyLILAgXTgoq8Yh6Am8s
-GHDLj5XmVNQ+ppadJz2xlmyNzSZt/SYDkvwTdzR/dzisxkCc7dKrGeF5ym5szBFG
-jMtaHcjre+6XI6jlTmXDkyPRY8tAjtbxVaeerP9prwaKYT+aG5kISWGnINkfsbr6
-ASCaZu6y4L7/iDVw3RYi8X3fRyNWty041j4QOS2pqCLfVLnjmSZbj4S49ggRuczG
-H6iBiX0BeWhO/sADbFWr
-=+2NS
+iQIcBAEBCAAGBQJTs5WKAAoJEMDTa8Ir7ZwV67sP/0+iYRvDm3owjoe7+gFNNJOe
+TOPdo1QFa0dYuQBU3tM+UwHR/9Avt3qvrAg+TfairRKHFu8Kubp2L7JXOh7RYNcp
+CCmHenivaCpg5z7iVUQy6RYPjYDlisuUmpyRHbcmi9om4aEhD1NOgVPkWz8x+Hzt
+9SCLrvNmRXUlBH+Tzxu8rxynyuetIHv254fo1EG6EtByZYcdkCVlRM9W+FsF7vIL
+aHszgckkErQ9rzz4w9s2i/3Vo9e04CqIQm1luD2cfUlIyC3iVn8MLyh4LjhCodAc
+nR7bSe5CZGIzwE5/bLzOJglHe8NgW9rkcGCUMPJsPxWzYjyLn/JSIsrMDr2bsSwZ
+RAfoPw018Ww065sXwP9XKeN1SZZ3iuRQ0c1PaKhJzORMtHSv0vKxm1mykAGqc3UQ
+C8s4/E7+H1+O2v8Hqmpb8AC/CRFyWNfNd/EP5tAgAGSwd4UqvNUWpVTBQ/bbn4md
+uC9EG+ZnktVPKzu8R6tEznTnM25JpBRfyBjdYFlYu1sAM+P0M/07UNb41LGTozZK
+/SAGk8bFoKyL5EGIJImeEfKiI36psY5ePS5QEiGOFpFJ2WEHssC/knD+z/NaRzQI
+Cg5YOLeCimr96gAa2FDds+nSKPf4q/jlMPNzyB0sVepDQUi5U9Eq22D9LQUSsaVX
+xkRN73H8kZb85CQJb1rv
+=bTsv
 -----END PGP SIGNATURE-----
 
---Sig_/tZDx5G3tJTSjOIFc2lGlE9E--
+--Sig_/pKl.Yquj8Y7IzFc+f02=P2i--
