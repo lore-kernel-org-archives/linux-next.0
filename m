@@ -1,51 +1,134 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
-Date: Tue, 01 Jul 2014 13:13:49 -0600
-Message-ID: <53B3086D.8050600@wwwdotorg.org>
-References: <1402413309-3415-1-git-send-email-fweisbec@gmail.com> <1402413309-3415-3-git-send-email-fweisbec@gmail.com> <53A9E0A5.5040402@wwwdotorg.org> <20140625051234.GD6758@twins.programming.kicks-ass.net> <20140625051721.GG3588@twins.programming.kicks-ass.net> <53AA6E11.1000404@linux.vnet.ibm.com> <20140625093657.GN19860@laptop.programming.kicks-ass.net> <20140625093944.GV16155@laptop.programming.kicks-ass.net> <53AA9B68.4050104@linux.vnet.ibm.com> <53AA9C43.3020903@linux.vnet.ibm.com> <20140625101915.GO19860@laptop.programming.kicks-ass.net> <53AAF779.8060006@wwwdotorg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-perf tree with the arm tree
+Date: Wed, 2 Jul 2014 11:17:08 +1000
+Message-ID: <20140702111708.0a209b87@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/tZDx5G3tJTSjOIFc2lGlE9E"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:47506 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758093AbaGATNx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2014 15:13:53 -0400
-In-Reply-To: <53AAF779.8060006@wwwdotorg.org>
+Received: from ozlabs.org ([103.22.144.67]:48472 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752165AbaGBBRV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2014 21:17:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>
 
-On 06/25/2014 10:23 AM, Stephen Warren wrote:
-> On 06/25/2014 04:19 AM, Peter Zijlstra wrote:
->> On Wed, Jun 25, 2014 at 03:24:11PM +0530, Srivatsa S. Bhat wrote:
->>> Wait, that was a stupid idea. hotplug_cfd() already invokes irq_work_run
->>> indirectly via flush_smp_call_function_queue(). So irq_work_cpu_notify()
->>> doesn't need to invoke it again, AFAIU. So perhaps we can get rid of
->>> irq_work_cpu_notify() altogether?
->>
->> Just so...
->>
->> getting up at 6am and sitting in an airport terminal doesn't seem to
->> agree with me; any more silly fail here?
->>
->> ---
->> Subject: irq_work: Remove BUG_ON in irq_work_run()
->> From: Peter Zijlstra <peterz@infradead.org>
->> Date: Wed Jun 25 07:13:07 CEST 2014
->>
->> Because of a collision with 8d056c48e486 ("CPU hotplug, smp: flush any
->> pending IPI callbacks before CPU offline"), which ends up calling
->> hotplug_cfd()->flush_smp_call_function_queue()->irq_work_run(), which
->> is not from IRQ context.
->>
->> And since that already calls irq_work_run() from the hotplug path,
->> remove our entire hotplug handling.
-> 
-> Tested-by: Stephen Warren <swarren@nvidia.com>
-> 
-> [with the s/static// already mentioned in this thread, obviously:-)]
+--Sig_/tZDx5G3tJTSjOIFc2lGlE9E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-next-20140701 still seems to fail CPU hotplug. I assume this patch
-hasn't yet been applied for some reason?
+Hi Will,
+
+Today's linux-next merge of the arm-perf tree got a conflict in
+arch/arm/kernel/perf_event_cpu.c between commit 324bbc0804ac ("ARM:
+make it easier to check the CPU part number correctly") from the arm
+tree and commit 6f73e8ababdd ("arm: perf: clean up PMU names") from the
+arm-perf tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+diff --cc arch/arm/kernel/perf_event_cpu.c
+index c02c2e8c877d,c63dc4201a7f..000000000000
+--- a/arch/arm/kernel/perf_event_cpu.c
++++ b/arch/arm/kernel/perf_event_cpu.c
+@@@ -254,35 -259,38 +257,39 @@@ static int probe_current_pmu(struct arm
+ =20
+  	pr_info("probing PMU on CPU %d\n", cpu);
+ =20
+ +	switch (read_cpuid_part()) {
+  	/* ARM Ltd CPUs. */
+ -	if (implementor =3D=3D ARM_CPU_IMP_ARM) {
+ -		switch (part_number) {
+ -		case ARM_CPU_PART_ARM1136:
+ -			ret =3D armv6_1136_pmu_init(pmu);
+ -			break;
+ -		case ARM_CPU_PART_ARM1156:
+ -			ret =3D armv6_1156_pmu_init(pmu);
+ -			break;
+ -		case ARM_CPU_PART_ARM1176:
+ -			ret =3D armv6_1176_pmu_init(pmu);
+ -			break;
+ -		case ARM_CPU_PART_ARM11MPCORE:
+ -			ret =3D armv6mpcore_pmu_init(pmu);
+ -			break;
+ -		case ARM_CPU_PART_CORTEX_A8:
+ -			ret =3D armv7_a8_pmu_init(pmu);
+ -			break;
+ -		case ARM_CPU_PART_CORTEX_A9:
+ -			ret =3D armv7_a9_pmu_init(pmu);
+ -			break;
+ -		}
+ -	/* Intel CPUs [xscale]. */
+ -	} else if (implementor =3D=3D ARM_CPU_IMP_INTEL) {
+ -		switch (xscale_cpu_arch_version()) {
+ -		case ARM_CPU_XSCALE_ARCH_V1:
+ -			ret =3D xscale1pmu_init(pmu);
+ -			break;
+ -		case ARM_CPU_XSCALE_ARCH_V2:
+ -			ret =3D xscale2pmu_init(pmu);
+ -			break;
+ +	case ARM_CPU_PART_ARM1136:
+++		ret =3D armv6_1136_pmu_init(pmu);
+++		break;
+ +	case ARM_CPU_PART_ARM1156:
+++		ret =3D armv6_1156_pmu_init(pmu);
+++		break;
+ +	case ARM_CPU_PART_ARM1176:
+- 		ret =3D armv6pmu_init(pmu);
+++		ret =3D armv6_1176_pmu_init(pmu);
+ +		break;
+ +	case ARM_CPU_PART_ARM11MPCORE:
+ +		ret =3D armv6mpcore_pmu_init(pmu);
+ +		break;
+ +	case ARM_CPU_PART_CORTEX_A8:
+ +		ret =3D armv7_a8_pmu_init(pmu);
+ +		break;
+ +	case ARM_CPU_PART_CORTEX_A9:
+ +		ret =3D armv7_a9_pmu_init(pmu);
+ +		break;
+ +
+ +	default:
+ +		if (read_cpuid_implementor() =3D=3D ARM_CPU_IMP_INTEL) {
+ +			switch (xscale_cpu_arch_version()) {
+ +			case ARM_CPU_XSCALE_ARCH_V1:
+ +				ret =3D xscale1pmu_init(pmu);
+ +				break;
+ +			case ARM_CPU_XSCALE_ARCH_V2:
+ +				ret =3D xscale2pmu_init(pmu);
+ +				break;
+ +			}
+  		}
+ +		break;
+  	}
+ =20
+  	put_cpu();
+
+--Sig_/tZDx5G3tJTSjOIFc2lGlE9E
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTs12eAAoJEMDTa8Ir7ZwVFjcP/214L4ZSNZLnxWH0B75+LHeM
+L8+pfvuwO3n2RY35x8U6VlJq9EGrUNWt/YMyckwp5XqP7f6CEMSyJJ5sdgO0QVja
++dxnVpv1LbBmJMgZlJyqtFD1RBVUgN6N6Eq5R7vwwlzLKiI/QC7a/4fvP4qKS7Am
+2TAt0H4Zc10Yq0u1M5wuncoE99uRt8mfhGQxSvEzrPcWpqu3gqh2bleTr9c/9XKf
+0lipGubPL3b2svv+RJhxIffSEb0IWihoaA2DYVtPWHoriSzgvUl1L+F0k6EMJIIw
+kmEyxnZl0ghYOG7epvn91kwG8ZYAh/GSQVcE2b5pIBvqttBfY5kM1aP2vIFhMT6F
+mNDrYRs2dGftiUpPnyuPUp84AjF1BomFhwyshIpmCIXEvrcsFbbu79yCNgFirTn3
+hJBH6tk4C8ofPMHwjoFM17LWrgdk2UeejuXeMpzqBWlPOyLILAgXTgoq8Yh6Am8s
+GHDLj5XmVNQ+ppadJz2xlmyNzSZt/SYDkvwTdzR/dzisxkCc7dKrGeF5ym5szBFG
+jMtaHcjre+6XI6jlTmXDkyPRY8tAjtbxVaeerP9prwaKYT+aG5kISWGnINkfsbr6
+ASCaZu6y4L7/iDVw3RYi8X3fRyNWty041j4QOS2pqCLfVLnjmSZbj4S49ggRuczG
+H6iBiX0BeWhO/sADbFWr
+=+2NS
+-----END PGP SIGNATURE-----
+
+--Sig_/tZDx5G3tJTSjOIFc2lGlE9E--
