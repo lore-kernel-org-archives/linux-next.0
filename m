@@ -1,58 +1,91 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2014-07-02-15-07 uploaded (stack protector)
-Date: Wed, 02 Jul 2014 18:42:53 -0700
-Message-ID: <53B4B51D.2060508@infradead.org>
-References: <53b482d3.gR7nYB/K7hPREviI%akpm@linux-foundation.org> <53B493E2.2030905@infradead.org> <20140703005719.GJ5412@outflux.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 3 Jul 2014 14:59:40 +1000
+Message-ID: <20140703145940.002b7056@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=ttZzPY9/.AYNox9B.t4pIM"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:52344 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753175AbaGCBmz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2014 21:42:55 -0400
-In-Reply-To: <20140703005719.GJ5412@outflux.net>
+Received: from ozlabs.org ([103.22.144.67]:37664 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754629AbaGCE7s (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jul 2014 00:59:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <kees@outflux.net>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Andi Kleen <ak@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
 
-On 07/02/14 17:57, Kees Cook wrote:
-> Hi Randy,
-> 
-> And to explain more specifically what's happening:
-> 
-> On Wed, Jul 02, 2014 at 04:21:06PM -0700, Randy Dunlap wrote:
->> config-r8736:CONFIG_CC_STACKPROTECTOR_STRONG=y
->> [...]
->> build-r8736.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
->> build-r8736.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
->> gcc: error: unrecognized command line option '-fstack-protector-strong'
-> 
-> That makes sense: a feature that requires a specific compiler version was
-> chosen, so you get a warning and a failed build. (The first warning was
-> during the .config parsing pass, the second warning was during the binary
-> build pass.)
-> 
->> config-r8737:# CONFIG_CC_STACKPROTECTOR_STRONG is not set
->> [...]
->> build-r8737.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
-> 
-> This is the same issue: the prior .config was still there with STRONG set,
-> but after finishing the new .config parsing pass, everything is happy for
-> the binary build pass. And, I assume, the r8737 didn't fail to build.
+--Sig_/=ttZzPY9/.AYNox9B.t4pIM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-True, r8737 built successfully.
+Hi Andrew,
 
-Maybe I should use 'make mrproper' instead of 'make clean' between each randconfig
-build.
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Thanks.
+/bin/sh: /scratch/sfr/next/scripts/basic/bin2c: No such file or directory
 
-> 
-> The trouble seems to be how kbuild handle .config changes, but I was never
-> able to sort it out.
+Presumably caused by commit 572a8e0147f8 ("bin2c: move bin2c in
+scripts/basic") and commit 1b4c30351f49 ("purgatory: core purgatory
+functionality").  Note that the directory above is the *source*
+directory (I build with O=3D...).  bin2c is in my object directory (in
+scripts/basicbin2c).
+
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 3 Jul 2014 14:56:25 +1000
+Subject: [PATCH] purgatory: run host built programs from objtree
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/purgatory/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+index e5829ddbca2b..7fde9ee438a4 100644
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -18,7 +18,7 @@ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+ targets +=3D kexec-purgatory.c
+=20
+ quiet_cmd_bin2c =3D BIN2C   $@
+-      cmd_bin2c =3D cat $(obj)/purgatory.ro | $(srctree)/scripts/basic/bin=
+2c kexec_purgatory > $(obj)/kexec-purgatory.c
++      cmd_bin2c =3D cat $(obj)/purgatory.ro | $(objtree)/scripts/basic/bin=
+2c kexec_purgatory > $(obj)/kexec-purgatory.c
+=20
+ $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+ 	$(call if_changed,bin2c)
+--=20
+2.0.0
 
 
--- 
-~Randy
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/=ttZzPY9/.AYNox9B.t4pIM
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTtONBAAoJEMDTa8Ir7ZwVKnYP+wYcc1wW0F5w8m7oA5eiiNES
+UJ6Uct/EJhUoanP7UobZdpnBqGCgHLeHONxSqMuhdf9Z/nRgdgRQD1kZO/sq7RH1
+KedhFZBQHgtOHHlSW4aKQXeQNhcV1Z5fDmGTWJZrmVEtOeD80y606jvgPmoYuCpy
+5pWJYJlSziEt52ztFYHv2+DVGZTQkf5X+OnyXyW7w8jdCTG3rzbpVunCrCQFEiFg
+/I0rgow7rXgRVxPBud/lVfDZZYYrVm7FuvaEJcx+WqvhY0dvAwxkNXCaK5E7Fssm
+UfsbsXf/M/3LPkN+LXRm9o7kKwaoTawk+czfMCVnpg6dVBeGGcPclJuheJxKQ83L
+w5IWfM++FVEKYs758Fhxz29av4TR7UCz4hD55d6XMLgOxBrwkVv49rqzONSbx69z
+sr9NSXRhYV9xR3kAbI0P/DBQFNGxyiqLydfmNaKUrM30BfEtlGFWleV0/4m39vgY
+vvKO+gxB3o1VwNqivFV+n3lbQUWVa56zcMkS4fZcaSrP+WmXuigiO3KdxDgEQqQq
+/2iutASJrsjQtmVq5Si8IqjsObk6IPrqFl1kA5JofaOd4X5j/w9M0z8XUf4BwL4W
+Rmo1zl86L162Nwsd52VfBMkS2oZLhoR0wh/5iqaqU38nLRBfZBc/Nd68lVhbPPt5
+TEUTmBQTzTrtgGYXfUlS
+=/6g2
+-----END PGP SIGNATURE-----
+
+--Sig_/=ttZzPY9/.AYNox9B.t4pIM--
