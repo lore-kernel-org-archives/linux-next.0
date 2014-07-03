@@ -1,51 +1,44 @@
-From: Kees Cook <kees@outflux.net>
+From: Andi Kleen <ak@linux.intel.com>
 Subject: Re: mmotm 2014-07-02-15-07 uploaded (stack protector)
-Date: Wed, 2 Jul 2014 17:57:19 -0700
-Message-ID: <20140703005719.GJ5412@outflux.net>
+Date: Wed, 2 Jul 2014 18:00:19 -0700
+Message-ID: <20140703010019.GS19781@tassilo.jf.intel.com>
 References: <53b482d3.gR7nYB/K7hPREviI%akpm@linux-foundation.org>
  <53B493E2.2030905@infradead.org>
+ <20140703002231.GR19781@tassilo.jf.intel.com>
+ <20140703005100.GI5412@outflux.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.outflux.net ([198.145.64.163]:34351 "EHLO smtp.outflux.net"
+Received: from mga02.intel.com ([134.134.136.20]:56115 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753920AbaGCA5r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Jul 2014 20:57:47 -0400
+	id S1750828AbaGCBA2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2014 21:00:28 -0400
 Content-Disposition: inline
-In-Reply-To: <53B493E2.2030905@infradead.org>
+In-Reply-To: <20140703005100.GI5412@outflux.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Andi Kleen <ak@linux.intel.com>
+To: Kees Cook <kees@outflux.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
 
-Hi Randy,
+> The problem is that if you make kbuild hard-fail when selecting this missing
+> compiler option, you can never switch it back because "make menuconfig" will
+> refuse to build since the compiler option would be missing. Being silent
+> about the missing option (and/or falling back to other options) means that
+> you could get two different kernel features selection with the same CONFIG_*
+> set, depending on the kernel, which is extremely bad ("I selected
+> stack-protector-strong but it built without it?!").
 
-And to explain more specifically what's happening:
+The assumption that every flag in a .config has been consciouscly 
+selected by a human is a quite dubious one ...
 
-On Wed, Jul 02, 2014 at 04:21:06PM -0700, Randy Dunlap wrote:
-> config-r8736:CONFIG_CC_STACKPROTECTOR_STRONG=y
-> [...]
-> build-r8736.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
-> build-r8736.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
-> gcc: error: unrecognized command line option '-fstack-protector-strong'
+LTO just turns itself off if the toolchain doesn't support it.
 
-That makes sense: a feature that requires a specific compiler version was
-chosen, so you get a warning and a failed build. (The first warning was
-during the .config parsing pass, the second warning was during the binary
-build pass.)
+> So, the middle ground was to warn about it during the kbuild logic so
+> you could find the source of the problem, but ultimately fail the build
+> when the compiler doesn't support it so there weren't any silent failure
+> modes.
 
-> config-r8737:# CONFIG_CC_STACKPROTECTOR_STRONG is not set
-> [...]
-> build-r8737.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
+Longer term it would be of course best to move all the cc-options
+probing into Kconfig. I bet that would speed up builds too.
 
-This is the same issue: the prior .config was still there with STRONG set,
-but after finishing the new .config parsing pass, everything is happy for
-the binary build pass. And, I assume, the r8737 didn't fail to build.
-
-The trouble seems to be how kbuild handle .config changes, but I was never
-able to sort it out.
-
--Kees
-
--- 
-Kees Cook                                            @outflux.net
+-Andi
