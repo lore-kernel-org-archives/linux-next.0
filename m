@@ -1,54 +1,51 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Kees Cook <kees@outflux.net>
 Subject: Re: mmotm 2014-07-02-15-07 uploaded (stack protector)
-Date: Wed, 2 Jul 2014 17:56:35 -0700
-Message-ID: <20140702175635.79d54c44.akpm@linux-foundation.org>
+Date: Wed, 2 Jul 2014 17:57:19 -0700
+Message-ID: <20140703005719.GJ5412@outflux.net>
 References: <53b482d3.gR7nYB/K7hPREviI%akpm@linux-foundation.org>
-	<53B493E2.2030905@infradead.org>
-	<20140703002231.GR19781@tassilo.jf.intel.com>
-	<20140703005100.GI5412@outflux.net>
+ <53B493E2.2030905@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37306 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751587AbaGCA5B (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2014 20:57:01 -0400
-In-Reply-To: <20140703005100.GI5412@outflux.net>
+Received: from smtp.outflux.net ([198.145.64.163]:34351 "EHLO smtp.outflux.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753920AbaGCA5r (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2014 20:57:47 -0400
+Content-Disposition: inline
+In-Reply-To: <53B493E2.2030905@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <kees@outflux.net>
-Cc: Andi Kleen <ak@linux.intel.com>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Andi Kleen <ak@linux.intel.com>
 
-On Wed, 2 Jul 2014 17:51:00 -0700 Kees Cook <kees@outflux.net> wrote:
+Hi Randy,
 
-> > It's hard to tell what the original author wanted, perhaps they wanted
-> > it to error out. It looks intentional. Clearly they didn't think of randconfig
-> > though.
-> 
-> The problem is that if you make kbuild hard-fail when selecting this missing
-> compiler option, you can never switch it back because "make menuconfig" will
-> refuse to build since the compiler option would be missing. Being silent
-> about the missing option (and/or falling back to other options) means that
-> you could get two different kernel features selection with the same CONFIG_*
-> set, depending on the kernel, which is extremely bad ("I selected
-> stack-protector-strong but it built without it?!").
-> 
-> So, the middle ground was to warn about it during the kbuild logic so
-> you could find the source of the problem, but ultimately fail the build
-> when the compiler doesn't support it so there weren't any silent failure
-> modes.
+And to explain more specifically what's happening:
 
---- a/Makefile~a
-+++ a/Makefile
-@@ -630,6 +630,9 @@ KBUILD_CFLAGS += $(call cc-option,-Wfram
- endif
- 
- # Handle stack protector mode.
-+#
-+# This space reserved for Kees
-+#
- ifdef CONFIG_CC_STACKPROTECTOR_REGULAR
-   stackp-flag := -fstack-protector
-   ifeq ($(call cc-option, $(stackp-flag)),)
-_
+On Wed, Jul 02, 2014 at 04:21:06PM -0700, Randy Dunlap wrote:
+> config-r8736:CONFIG_CC_STACKPROTECTOR_STRONG=y
+> [...]
+> build-r8736.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
+> build-r8736.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
+> gcc: error: unrecognized command line option '-fstack-protector-strong'
+
+That makes sense: a feature that requires a specific compiler version was
+chosen, so you get a warning and a failed build. (The first warning was
+during the .config parsing pass, the second warning was during the binary
+build pass.)
+
+> config-r8737:# CONFIG_CC_STACKPROTECTOR_STRONG is not set
+> [...]
+> build-r8737.out:/local/lnx/MM/mmotm-2014-0702-1507/Makefile:662: Cannot use CONFIG_CC_STACKPROTECTOR_STRONG: -fstack-protector-strong not supported by compiler
+
+This is the same issue: the prior .config was still there with STRONG set,
+but after finishing the new .config parsing pass, everything is happy for
+the binary build pass. And, I assume, the r8737 didn't fail to build.
+
+The trouble seems to be how kbuild handle .config changes, but I was never
+able to sort it out.
+
+-Kees
+
+-- 
+Kees Cook                                            @outflux.net
