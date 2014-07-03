@@ -1,71 +1,42 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
-Date: Thu, 3 Jul 2014 16:52:04 +0200
-Message-ID: <20140703145201.GB9520@localhost.localdomain>
-References: <20140625051234.GD6758@twins.programming.kicks-ass.net>
- <20140625051721.GG3588@twins.programming.kicks-ass.net>
- <53AA6E11.1000404@linux.vnet.ibm.com>
- <20140625093657.GN19860@laptop.programming.kicks-ass.net>
- <20140625093944.GV16155@laptop.programming.kicks-ass.net>
- <53AA9B68.4050104@linux.vnet.ibm.com>
- <53AA9C43.3020903@linux.vnet.ibm.com>
- <20140625101915.GO19860@laptop.programming.kicks-ass.net>
- <53AAF779.8060006@wwwdotorg.org>
- <20140625163820.GC3935@laptop>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jul 3 (staging/unisys)
+Date: Thu, 03 Jul 2014 08:32:12 -0700
+Message-ID: <53B5777C.2050307@infradead.org>
+References: <20140703155305.416bf8c7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:39243 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964897AbaGCOwN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2014 10:52:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20140625163820.GC3935@laptop>
+Received: from bombadil.infradead.org ([198.137.202.9]:56709 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754485AbaGCPcN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2014 11:32:13 -0400
+In-Reply-To: <20140703155305.416bf8c7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Ben Romer <sparmaintainer@unisys.com>, Ken Cox <jkc@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Wed, Jun 25, 2014 at 06:38:20PM +0200, Peter Zijlstra wrote:
-> On Wed, Jun 25, 2014 at 10:23:21AM -0600, Stephen Warren wrote:
-> > On 06/25/2014 04:19 AM, Peter Zijlstra wrote:
-> > > On Wed, Jun 25, 2014 at 03:24:11PM +0530, Srivatsa S. Bhat wrote:
-> > >> Wait, that was a stupid idea. hotplug_cfd() already invokes irq_work_run
-> > >> indirectly via flush_smp_call_function_queue(). So irq_work_cpu_notify()
-> > >> doesn't need to invoke it again, AFAIU. So perhaps we can get rid of
-> > >> irq_work_cpu_notify() altogether?
-> > > 
-> > > Just so...
-> > > 
-> > > getting up at 6am and sitting in an airport terminal doesn't seem to
-> > > agree with me; any more silly fail here?
-> > > 
-> > > ---
-> > > Subject: irq_work: Remove BUG_ON in irq_work_run()
-> > > From: Peter Zijlstra <peterz@infradead.org>
-> > > Date: Wed Jun 25 07:13:07 CEST 2014
-> > > 
-> > > Because of a collision with 8d056c48e486 ("CPU hotplug, smp: flush any
-> > > pending IPI callbacks before CPU offline"), which ends up calling
-> > > hotplug_cfd()->flush_smp_call_function_queue()->irq_work_run(), which
-> > > is not from IRQ context.
-> > > 
-> > > And since that already calls irq_work_run() from the hotplug path,
-> > > remove our entire hotplug handling.
-> > 
-> > Tested-by: Stephen Warren <swarren@nvidia.com>
-> > 
-> > [with the s/static// already mentioned in this thread, obviously:-)]
+On 07/02/14 22:53, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Right; I pushed out a fixed version right before loosing my tubes at the
-> airport :-)
+> Changes since 20140702:
 > 
-> https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git/commit/?h=timers/nohz&id=921d8b81281ecdca686369f52165d04fa3505bd7
-> 
-> I've not gotten wu build bot spam on it so it must be good ;-)
-> 
-> In any case, I'll add your tested-by and update later this evening.
 
-Ack! Thanks for fixing this.
+on x86_64:
 
-In case you're AFK, do you need any help for pushing the patch or so?
+CONFIG_UNISYSSPAR=y
+CONFIG_UNISYS_VISORUTIL=m
+# CONFIG_UNISYS_VISORCHANNEL is not set
+CONFIG_UNISYS_CHANNELSTUB=y
+
+drivers/built-in.o: In function `channel_mod_init':
+chanstub.c:(.init.text+0x10a8f): undefined reference to `unisys_spar_platform'
+
+
+because CHANNELSTUB=y and VISORUTIL=m.
+
+
+
+-- 
+~Randy
