@@ -1,82 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 3/4] DRBG: Fix format string for debugging
-	statements
-Date: Fri, 4 Jul 2014 14:21:16 +0300
-Message-ID: <20140704112116.GC25934@mwanda>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH 1/4] DRBG: use of kernel linked list
+Date: Fri, 4 Jul 2014 22:11:36 +0800
+Message-ID: <20140704141135.GA27229@gondor.apana.org.au>
 References: <4927386.WYHrRe3NJm@myon.chronox.de>
- <10901956.0EDQunEZJL@myon.chronox.de>
- <20140629122402.0fd014d8@canb.auug.org.au>
- <4311965.FMe9YfRAnU@myon.chronox.de>
- <1404013999.9064.50.camel@joe-AO725>
+ <40132217.1npinMrGoS@myon.chronox.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <kbuild-bounces@lists.01.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1404013999.9064.50.camel@joe-AO725>
-List-Unsubscribe: <https://lists.01.org/mailman/options/kbuild>,
- <mailto:kbuild-request@lists.01.org?subject=unsubscribe>
-List-Archive: <http://lists.01.org/pipermail/kbuild/>
-List-Post: <mailto:kbuild@lists.01.org>
-List-Help: <mailto:kbuild-request@lists.01.org?subject=help>
-List-Subscribe: <https://lists.01.org/mailman/listinfo/kbuild>,
- <mailto:kbuild-request@lists.01.org?subject=subscribe>
-Errors-To: kbuild-bounces@lists.01.org
-Sender: "kbuild" <kbuild-bounces@lists.01.org>
-To: Joe Perches <joe@perches.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>, Stephan Mueller <smueller@chronox.de>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, kbuild@01.org, linux-crypto@vger.kernel.org
+In-Reply-To: <40132217.1npinMrGoS@myon.chronox.de>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Stephan Mueller <smueller@chronox.de>
+Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild@01.org, Dan Carpenter <dan.carpenter@oracle.com>, linux-crypto@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Jun 28, 2014 at 08:53:19PM -0700, Joe Perches wrote:
-> On Sun, 2014-06-29 at 05:46 +0200, Stephan Mueller wrote:
-> > Am Sonntag, 29. Juni 2014, 12:24:02 schrieb Stephen Rothwell:
-> > 
-> > Hi Stephen,
-> > 
-> > > Hi Stephan,
-> > > 
-> > > On Sat, 28 Jun 2014 22:01:46 +0200 Stephan Mueller <smueller@chronox.de> 
-> > wrote:
-> > > > @@ -1987,8 +1987,9 @@ static int __init drbg_init(void)
-> > > > 
-> > > >  	if (ARRAY_SIZE(drbg_cores) * 2 > ARRAY_SIZE(drbg_algs)) {
-> > > >  	
-> > > >  		pr_info("DRBG: Cannot register all DRBG types"
-> > > > 
-> > > > -			"(slots needed: %lu, slots available: %lu)\n",
-> > > > -			ARRAY_SIZE(drbg_cores) * 2, ARRAY_SIZE(drbg_algs));
-> > > > +			"(slots needed: %u, slots available: %u)\n",
-> > > > +			(unsigned int)ARRAY_SIZE(drbg_cores) * 2,
-> > > > +			(unsigned int)ARRAY_SIZE(drbg_algs));
-> > > 
-> > > Doesn't ARRAY_SIZE() always return a size_t?  In which case surely we
-> > > need no casts, but need to us %zu in the format string.
-> > 
-> > Unfortunately not at all. On my x86_64, I get the compiler warning that 
-> > ARRAY_SIZE is a long unsigned int without the cast.
+On Sat, Jun 28, 2014 at 09:58:24PM +0200, Stephan Mueller wrote:
+> The DRBG-style linked list to manage input data that is fed into the
+> cipher invocations is replaced with the kernel linked list
+> implementation.
 > 
-> This should fix that.
-> ---
->  include/linux/kernel.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> The change is transparent to users of the interfaces offered by the
+> DRBG. Therefore, no changes to the testmgr code is needed.
 > 
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index 6e3d497..58bc57d 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -51,7 +51,8 @@
->  #define PTR_ALIGN(p, a)		((typeof(p))ALIGN((unsigned long)(p), (a)))
->  #define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
->  
-> -#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-> +#define ARRAY_SIZE(arr)						\
-> +	(sizeof(arr) / sizeof((arr)[0]) + (size_t)__must_be_array(arr))
+> Reported-by: kbuild test robot <fengguang.wu@intel.com>
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
 
-
-This change is a no-op isn't it?  I think Stephen Rothwell's suggestion
-is correct.  In linux-next this was changed to %lu which also works...
-
-Are there arches %zu and %lu are different?
-
-regards,
-dan carpenter
+Patch applied.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
