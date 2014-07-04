@@ -1,82 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with the
- usb.current tree
-Date: Fri, 4 Jul 2014 14:51:27 +1000
-Message-ID: <20140704145127.30008370@canb.auug.org.au>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCH 2/6] irq_work: Implement remote queueing
+Date: Fri, 4 Jul 2014 10:40:30 +0530
+Message-ID: <CAK5sBcG5R6kyUydpGB_mQy5oFy-D_5hNuGnAiiJbWRiX_s_Mgg@mail.gmail.com>
+References: <53A9E0A5.5040402@wwwdotorg.org>
+	<20140625051234.GD6758@twins.programming.kicks-ass.net>
+	<20140625051721.GG3588@twins.programming.kicks-ass.net>
+	<53AA6E11.1000404@linux.vnet.ibm.com>
+	<20140625093657.GN19860@laptop.programming.kicks-ass.net>
+	<20140625093944.GV16155@laptop.programming.kicks-ass.net>
+	<53AA9B68.4050104@linux.vnet.ibm.com>
+	<53AA9C43.3020903@linux.vnet.ibm.com>
+	<20140625101915.GO19860@laptop.programming.kicks-ass.net>
+	<53AAF779.8060006@wwwdotorg.org>
+	<20140625163820.GC3935@laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5w9Um9aForBeZoI_HhigBRi"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Daniel Mack <zonque@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:44438 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751081AbaGDFKc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2014 01:10:32 -0400
+In-Reply-To: <20140625163820.GC3935@laptop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Ingo Molnar <mingo@kernel.org>, Kevin Hilman <khilman@linaro.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Sig_/5w9Um9aForBeZoI_HhigBRi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 25, 2014 at 10:08 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Wed, Jun 25, 2014 at 10:23:21AM -0600, Stephen Warren wrote:
+>> On 06/25/2014 04:19 AM, Peter Zijlstra wrote:
+>> > On Wed, Jun 25, 2014 at 03:24:11PM +0530, Srivatsa S. Bhat wrote:
+>> >> Wait, that was a stupid idea. hotplug_cfd() already invokes irq_work_run
+>> >> indirectly via flush_smp_call_function_queue(). So irq_work_cpu_notify()
+>> >> doesn't need to invoke it again, AFAIU. So perhaps we can get rid of
+>> >> irq_work_cpu_notify() altogether?
+>> >
+>> > Just so...
+>> >
+>> > getting up at 6am and sitting in an airport terminal doesn't seem to
+>> > agree with me; any more silly fail here?
+>> >
+>> > ---
+>> > Subject: irq_work: Remove BUG_ON in irq_work_run()
+>> > From: Peter Zijlstra <peterz@infradead.org>
+>> > Date: Wed Jun 25 07:13:07 CEST 2014
+>> >
+>> > Because of a collision with 8d056c48e486 ("CPU hotplug, smp: flush any
+>> > pending IPI callbacks before CPU offline"), which ends up calling
+>> > hotplug_cfd()->flush_smp_call_function_queue()->irq_work_run(), which
+>> > is not from IRQ context.
+>> >
+>> > And since that already calls irq_work_run() from the hotplug path,
+>> > remove our entire hotplug handling.
+>>
+>> Tested-by: Stephen Warren <swarren@nvidia.com>
+>>
+>> [with the s/static// already mentioned in this thread, obviously:-)]
+>
+> Right; I pushed out a fixed version right before loosing my tubes at the
+> airport :-)
+>
+> https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git/commit/?h=timers/nohz&id=921d8b81281ecdca686369f52165d04fa3505bd7
 
-Hi Felipe,
+This patch fixes boot issue on Exynos5420/5800 based boards with bL
+switcher enabled.
 
-Today's linux-next merge of the usb-gadget tree got a conflict in
-drivers/usb/musb/musb_cppi41.c between commit c58d80f523ff ("usb: musb:
-Ensure that cppi41 timer gets armed on premature DMA TX irq") from the
-usb.current tree and commit 50aea6fca771 ("usb: musb: cppi41: fire
-hrtimer according to programmed channel length") from the usb-gadget
-tree.
+FWIW,
+Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/usb/musb/musb_cppi41.c
-index 5341bb223b7c,adfffe884891..000000000000
---- a/drivers/usb/musb/musb_cppi41.c
-+++ b/drivers/usb/musb/musb_cppi41.c
-@@@ -312,15 -271,13 +271,13 @@@ static void cppi41_dma_callback(void *p
-  				goto out;
-  			}
-  		}
-- 		if (is_isoc(hw_ep, 0)) {
-- 			schedule_work(&cppi41_channel->dma_completion);
-- 			goto out;
-- 		}
-  		list_add_tail(&cppi41_channel->tx_check,
-  				&controller->early_tx_list);
- -		if (!hrtimer_active(&controller->early_tx)) {
- +		if (!hrtimer_is_queued(&controller->early_tx)) {
-+ 			unsigned long usecs =3D cppi41_channel->total_len / 10;
-+=20
-  			hrtimer_start_range_ns(&controller->early_tx,
-- 				ktime_set(0, 140 * NSEC_PER_USEC),
-+ 				ktime_set(0, usecs * NSEC_PER_USEC),
-  				40 * NSEC_PER_USEC,
-  				HRTIMER_MODE_REL);
-  		}
-
---Sig_/5w9Um9aForBeZoI_HhigBRi
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJTtjLWAAoJEMDTa8Ir7ZwVQ2QP/jLvDZwzP+rsIuDjHaqgiKSB
-xTn9+G0cdmaUf78/PFDVmZ+U9rgaxTUfQhBkxRlcMG3bgSkMShfK5EG7BgFYFzYA
-9ixHIW8WGLMJZPu+j3mPFmGTSRNK4ITn5yny3MJRa9bqAJMCv+gXqeaf3uYZpYY7
-IXI2sXchYy4actuJO49aStNq8K+D31DdbTwsxaKn7BRlwfoZi7calw1FMknSLnhF
-L2YyhlJTW4iKwAdBPut6iWyoGA7Ny9fx6DYodjdDpRrqPjJTEHWkF3GI+OZn3bBp
-CwqX+EXtfRiTh8lN+sAlMyRna71/pTAaSLuOJHD2XHoaLHTlX8lWRprVXkC0w2Ey
-vg5PC5peyGHFdBP2vFyKz+YB628ffL8DP9xjWt6YOALDZWqy29e05cgRRJBONkQt
-EiSjKXyAsgvyd2MpQpH9UEyKf98F55huNZTHfJPkaLNtmyfDdrp1gBlelNl39UOh
-cApGgnBZM0ovkGA6thI5vIKj59mOD4JKn+gXvYFQN55XM3U3DVN1pLkG2ynOQzJt
-jJmqkVQdc+G/LT6YWt9QzbDKVfh1vlurye/+JTIxJIANbCp74fC1UE7ZBRqilLG+
-G/1FUh075fIRxQWPb5mL4FKC35CCxL+4DwFlghk+zQ5Xkw+X+gLLH1dho/ngQmtV
-ZjV689iqheMr1sDYxhhC
-=ENee
------END PGP SIGNATURE-----
-
---Sig_/5w9Um9aForBeZoI_HhigBRi--
+-- 
+Regards,
+Sachin.
