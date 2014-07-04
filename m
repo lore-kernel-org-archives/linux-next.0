@@ -1,50 +1,56 @@
-From: Ken Cox <jkc@redhat.com>
-Subject: Re: linux-next: Tree for Jul 3 (staging/unisys)
-Date: Thu, 03 Jul 2014 10:41:39 -0500
-Message-ID: <53B579B3.8040004@redhat.com>
-References: <20140703155305.416bf8c7@canb.auug.org.au>
- <53B5777C.2050307@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Fri, 4 Jul 2014 11:39:07 +1000
+Message-ID: <20140704113907.468a366a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <53B5777C.2050307@infradead.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ben Romer <sparmaintainer@unisys.com>, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/mPhV9I_S1UurY/j49mWzn5I"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vince Bridgers <vbridgers2013@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On 07/03/2014 10:32 AM, Randy Dunlap wrote:
-> On 07/02/14 22:53, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20140702:
->>
-> on x86_64:
->
-> CONFIG_UNISYSSPAR=y
-> CONFIG_UNISYS_VISORUTIL=m
-> # CONFIG_UNISYS_VISORCHANNEL is not set
-> CONFIG_UNISYS_CHANNELSTUB=y
->
-> drivers/built-in.o: In function `channel_mod_init':
-> chanstub.c:(.init.text+0x10a8f): undefined reference to `unisys_spar_platform'
->
->
-> because CHANNELSTUB=y and VISORUTIL=m.
-Hi Randy,
+--Sig_/mPhV9I_S1UurY/j49mWzn5I
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have submitted a patch to fix this.
+Hi all,
 
-Thanks for the reply.
+After merging the net tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
---
-Ken
+ERROR: "phy_resume" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefin=
+ed!
+
+Caused by commit 0acf16768740 ("net: stmmac: add platform init/exit for
+Altera's ARM socfpga").
+
+I reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/mPhV9I_S1UurY/j49mWzn5I
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTtgXAAAoJEMDTa8Ir7ZwVeZcP/0n0d6L9lzzHZp/ACozLMYoH
+bIi+TUaRSqdOx7O1MkoGZR4NlRokMkggf0Wpju2NTjA40r2vHK7Q7dOwpbWF6e5k
+2uVNRCFJdyVI6LepHJirPiVAZWqdzvwT8fv3nVDCEWHe8ptN9wyZHS4XLAukkane
+xpEXt/KWFoJJcZjkH95A+G9fl/qiUHJKI1wvB0vHy4JrwyS873S/csUWtxvL1cIn
+8vYivymvhD/EgrhgWEIdtdKHIQQ+eMsuk+24cb8/sB6ykjRKpQl9LzJRvrxGNBRh
+5NC8ebcQYiIT5GfDXP6C9w7oeVXZhhjyj/qLAgOvGNUAz8Q0TPDxjlUVsaa9Vq2A
+XXG/SiFxtVBSjSTaSyeCoAadDV/mOilL4WUMQz5FpxNdsXrnzP+/UjELKkfTchqO
+9yTnPLiHO24OsL8zdgga3T+iRfhwgxE2Lvct0jaJi8opd4Er+SscqXA1NE9zNkYG
+rzzAYQtAC4Ua1Ajs4mZWxSEvYzF5mz90jDYjkQVePd+h3j1GHJuztF6Xla3CnCvy
+IoSqFJNxdLsBHSa1OiNVnUMNHOLVEnMM7TZH7PCBsyQXMiYGmNcMVqSRjX77Y5oe
+OCwFewhw+QRy4xKqEUKF98MKHmbgj5Tqlf7MaX1ccRojYEFNCOXtzmCiEoTjiZUL
+nku6ogTa0Lr5X3pylaTP
+=Ir2W
+-----END PGP SIGNATURE-----
+
+--Sig_/mPhV9I_S1UurY/j49mWzn5I--
