@@ -1,56 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Fri, 4 Jul 2014 11:39:07 +1000
-Message-ID: <20140704113907.468a366a@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ usb.current tree
+Date: Fri, 4 Jul 2014 14:51:27 +1000
+Message-ID: <20140704145127.30008370@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mPhV9I_S1UurY/j49mWzn5I"; protocol="application/pgp-signature"
+ boundary="Sig_/5w9Um9aForBeZoI_HhigBRi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vince Bridgers <vbridgers2013@gmail.com>
+To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Daniel Mack <zonque@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/mPhV9I_S1UurY/j49mWzn5I
+--Sig_/5w9Um9aForBeZoI_HhigBRi
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Felipe,
 
-After merging the net tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/musb/musb_cppi41.c between commit c58d80f523ff ("usb: musb:
+Ensure that cppi41 timer gets armed on premature DMA TX irq") from the
+usb.current tree and commit 50aea6fca771 ("usb: musb: cppi41: fire
+hrtimer according to programmed channel length") from the usb-gadget
+tree.
 
-ERROR: "phy_resume" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefin=
-ed!
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 0acf16768740 ("net: stmmac: add platform init/exit for
-Altera's ARM socfpga").
-
-I reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/mPhV9I_S1UurY/j49mWzn5I
+diff --cc drivers/usb/musb/musb_cppi41.c
+index 5341bb223b7c,adfffe884891..000000000000
+--- a/drivers/usb/musb/musb_cppi41.c
++++ b/drivers/usb/musb/musb_cppi41.c
+@@@ -312,15 -271,13 +271,13 @@@ static void cppi41_dma_callback(void *p
+  				goto out;
+  			}
+  		}
+- 		if (is_isoc(hw_ep, 0)) {
+- 			schedule_work(&cppi41_channel->dma_completion);
+- 			goto out;
+- 		}
+  		list_add_tail(&cppi41_channel->tx_check,
+  				&controller->early_tx_list);
+ -		if (!hrtimer_active(&controller->early_tx)) {
+ +		if (!hrtimer_is_queued(&controller->early_tx)) {
++ 			unsigned long usecs =3D cppi41_channel->total_len / 10;
++=20
+  			hrtimer_start_range_ns(&controller->early_tx,
+- 				ktime_set(0, 140 * NSEC_PER_USEC),
++ 				ktime_set(0, usecs * NSEC_PER_USEC),
+  				40 * NSEC_PER_USEC,
+  				HRTIMER_MODE_REL);
+  		}
+
+--Sig_/5w9Um9aForBeZoI_HhigBRi
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTtgXAAAoJEMDTa8Ir7ZwVeZcP/0n0d6L9lzzHZp/ACozLMYoH
-bIi+TUaRSqdOx7O1MkoGZR4NlRokMkggf0Wpju2NTjA40r2vHK7Q7dOwpbWF6e5k
-2uVNRCFJdyVI6LepHJirPiVAZWqdzvwT8fv3nVDCEWHe8ptN9wyZHS4XLAukkane
-xpEXt/KWFoJJcZjkH95A+G9fl/qiUHJKI1wvB0vHy4JrwyS873S/csUWtxvL1cIn
-8vYivymvhD/EgrhgWEIdtdKHIQQ+eMsuk+24cb8/sB6ykjRKpQl9LzJRvrxGNBRh
-5NC8ebcQYiIT5GfDXP6C9w7oeVXZhhjyj/qLAgOvGNUAz8Q0TPDxjlUVsaa9Vq2A
-XXG/SiFxtVBSjSTaSyeCoAadDV/mOilL4WUMQz5FpxNdsXrnzP+/UjELKkfTchqO
-9yTnPLiHO24OsL8zdgga3T+iRfhwgxE2Lvct0jaJi8opd4Er+SscqXA1NE9zNkYG
-rzzAYQtAC4Ua1Ajs4mZWxSEvYzF5mz90jDYjkQVePd+h3j1GHJuztF6Xla3CnCvy
-IoSqFJNxdLsBHSa1OiNVnUMNHOLVEnMM7TZH7PCBsyQXMiYGmNcMVqSRjX77Y5oe
-OCwFewhw+QRy4xKqEUKF98MKHmbgj5Tqlf7MaX1ccRojYEFNCOXtzmCiEoTjiZUL
-nku6ogTa0Lr5X3pylaTP
-=Ir2W
+iQIcBAEBCAAGBQJTtjLWAAoJEMDTa8Ir7ZwVQ2QP/jLvDZwzP+rsIuDjHaqgiKSB
+xTn9+G0cdmaUf78/PFDVmZ+U9rgaxTUfQhBkxRlcMG3bgSkMShfK5EG7BgFYFzYA
+9ixHIW8WGLMJZPu+j3mPFmGTSRNK4ITn5yny3MJRa9bqAJMCv+gXqeaf3uYZpYY7
+IXI2sXchYy4actuJO49aStNq8K+D31DdbTwsxaKn7BRlwfoZi7calw1FMknSLnhF
+L2YyhlJTW4iKwAdBPut6iWyoGA7Ny9fx6DYodjdDpRrqPjJTEHWkF3GI+OZn3bBp
+CwqX+EXtfRiTh8lN+sAlMyRna71/pTAaSLuOJHD2XHoaLHTlX8lWRprVXkC0w2Ey
+vg5PC5peyGHFdBP2vFyKz+YB628ffL8DP9xjWt6YOALDZWqy29e05cgRRJBONkQt
+EiSjKXyAsgvyd2MpQpH9UEyKf98F55huNZTHfJPkaLNtmyfDdrp1gBlelNl39UOh
+cApGgnBZM0ovkGA6thI5vIKj59mOD4JKn+gXvYFQN55XM3U3DVN1pLkG2ynOQzJt
+jJmqkVQdc+G/LT6YWt9QzbDKVfh1vlurye/+JTIxJIANbCp74fC1UE7ZBRqilLG+
+G/1FUh075fIRxQWPb5mL4FKC35CCxL+4DwFlghk+zQ5Xkw+X+gLLH1dho/ngQmtV
+ZjV689iqheMr1sDYxhhC
+=ENee
 -----END PGP SIGNATURE-----
 
---Sig_/mPhV9I_S1UurY/j49mWzn5I--
+--Sig_/5w9Um9aForBeZoI_HhigBRi--
