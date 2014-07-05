@@ -1,46 +1,49 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: Re: [PATCH 3/4] DRBG: Fix format string for debugging statements
-Date: Sat, 05 Jul 2014 02:27:27 +0200
-Message-ID: <2812156.9vUu6vDFVa@myon.chronox.de>
-References: <4927386.WYHrRe3NJm@myon.chronox.de> <3976291.2Ne0xJphcZ@myon.chronox.de> <1404519849.6384.32.camel@joe-AO725>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: Tree for Jul 4
+Date: Fri, 4 Jul 2014 20:48:47 -0400
+Message-ID: <20140705004846.GA11659@fieldses.org>
+References: <20140704164251.7dc67e07@canb.auug.org.au>
+ <CAK5sBcGq54sOSzJKXrEbhAUTZZh=+9NuVh294Qxn0dQvbh-G8w@mail.gmail.com>
+ <20140705011058.198ae810@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <1404519849.6384.32.camel@joe-AO725>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>, kbuild test robot <fengguang.wu@intel.com>, kbuild@01.org, linux-crypto@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from fieldses.org ([174.143.236.118]:43077 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760351AbaGEAst (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Jul 2014 20:48:49 -0400
+Content-Disposition: inline
+In-Reply-To: <20140705011058.198ae810@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sachin Kamat <spk.linux@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Am Freitag, 4. Juli 2014, 17:24:09 schrieb Joe Perches:
-
-Hi Joe,
-
-> On Sat, 2014-07-05 at 02:15 +0200, Stephan Mueller wrote:
-> > Am Freitag, 4. Juli 2014, 17:09:33 schrieb Joe Perches:
-> > > On Sat, 2014-07-05 at 01:57 +0200, Stephan Mueller wrote:
-> > > > And I also get the same output. Yet I am not sure how that code can be
-> > > > compared to the code in the kernel.
-> > > 
-> > > What that code shows is that the ARRAY_SIZE
-> > > type is size_t.
-> > > 
-> > > The difference is ARRAY_SIZE in the kernel
-> > > should be output with %zu.
+On Sat, Jul 05, 2014 at 01:10:58AM +1000, Stephen Rothwell wrote:
+> Hi Sachin,
+> 
+> On Fri, 4 Jul 2014 14:12:11 +0530 Sachin Kamat <spk.linux@gmail.com> wrote:
+> >
+> > Was bisecting a kernel crash on Arndale octa board (Exynos5420). It
+> > points to a merge
+> > commit:
+> > 40556a4c485d12d324f1ea196cc30f590e564237 is the first bad commit
+> > ("Merge remote-tracking branch 'nfsd/nfsd-next'").
 > > 
-> > Using %zu works without a warning on my 64 bit machine. So you are saying
-> > that ARRAY_SIZE will always be size_t on every architecture? If yes, I
-> > will update my patch.
+> > How do I proceed with this?
 > 
-> Hi again.
-> 
-> ARRAY_SIZE is size_t in all architectures.
+> I guess we get the owner of the tree (possibly) in question involved
+> (cc'd).
 
-Thank you very much, this is the answer I was looking for :-)
+Looking at the total diffstat for that branch, it's almost all contained
+in fs/nfsd with a little in include/linux/sunrpc/ and net/sunrpc.  So
+it's extremely unlikely that it would be causing a problem unless you're
+actually testing nfsd.
 
-I will update the patch accordingly.
+> You should also post your information about the crash you are
+> diagnosing as others may have seen it as well - or know what may cause
+> it.
 
--- 
-Ciao
-Stephan
+Yes, please.
+
+--b.
