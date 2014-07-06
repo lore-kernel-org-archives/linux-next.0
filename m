@@ -1,49 +1,48 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: linux-next: Tree for Jul 4
-Date: Sat, 5 Jul 2014 20:27:39 +0530
-Message-ID: <CAK5sBcF72eYPL6=h9JttsWa6MF4cafJb-WO3+JOAh5X4-knKqw@mail.gmail.com>
-References: <20140704164251.7dc67e07@canb.auug.org.au>
-	<CAK5sBcGq54sOSzJKXrEbhAUTZZh=+9NuVh294Qxn0dQvbh-G8w@mail.gmail.com>
-	<20140705011058.198ae810@canb.auug.org.au>
-	<20140705004846.GA11659@fieldses.org>
+From: Stephan Mueller <smueller@chronox.de>
+Subject: [PATCH 6/6] DRBG: HMAC-SHA1 DRBG has crypto strength of 128 bits
+Date: Sun, 06 Jul 2014 02:26:37 +0200
+Message-ID: <2038501.NQxD5ZZc1H@myon.chronox.de>
+References: <2266932.bfVPMOTOeI@myon.chronox.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:40913 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753307AbaGEO5l (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Jul 2014 10:57:41 -0400
-In-Reply-To: <20140705004846.GA11659@fieldses.org>
+Received: from mail.eperm.de ([89.247.134.16]:53333 "EHLO mail.eperm.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750818AbaGFAfT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 5 Jul 2014 20:35:19 -0400
+Received: from myon.chronox.de
+	by mail.eperm.de with [XMail 1.27 ESMTP Server]
+	id <S24F> for <linux-next@vger.kernel.org> from <smueller@chronox.de>;
+	Sun, 6 Jul 2014 02:34:28 +0200
+In-Reply-To: <2266932.bfVPMOTOeI@myon.chronox.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: herbert@gondor.apana.org.au
+Cc: joe@perches.com, dan.carpenter@oracle.com, Stephen Rothwell <sfr@canb.auug.org.au>, fengguang.wu@intel.com, Randy Dunlap <rdunlap@infradead.org>, linux-crypto@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, aris@redhat.com
 
-On Sat, Jul 5, 2014 at 6:18 AM, J. Bruce Fields <bfields@fieldses.org> wrote:
-> On Sat, Jul 05, 2014 at 01:10:58AM +1000, Stephen Rothwell wrote:
->> Hi Sachin,
->>
->> On Fri, 4 Jul 2014 14:12:11 +0530 Sachin Kamat <spk.linux@gmail.com> wrote:
->> >
->> > Was bisecting a kernel crash on Arndale octa board (Exynos5420). It
->> > points to a merge
->> > commit:
->> > 40556a4c485d12d324f1ea196cc30f590e564237 is the first bad commit
->> > ("Merge remote-tracking branch 'nfsd/nfsd-next'").
->> >
->> > How do I proceed with this?
->>
->> I guess we get the owner of the tree (possibly) in question involved
->> (cc'd).
->
-> Looking at the total diffstat for that branch, it's almost all contained
-> in fs/nfsd with a little in include/linux/sunrpc/ and net/sunrpc.  So
-> it's extremely unlikely that it would be causing a problem unless you're
-> actually testing nfsd.
+The patch corrects the security strength of the HMAC-SHA1 DRBG to 128
+bits. This strength defines the size of the seed required for the DRBG.
+Thus, the patch lowers the seeding requirement from 256 bits to 128 bits
+for HMAC-SHA1.
 
-I found it surprising too as I do not use nfsd. I will try out the things
-suggested by Stephen and update.
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+---
+ crypto/drbg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/crypto/drbg.c b/crypto/drbg.c
+index a76b3cb..84478cb 100644
+--- a/crypto/drbg.c
++++ b/crypto/drbg.c
+@@ -184,7 +184,7 @@ static const struct drbg_core drbg_cores[] = {
+ #endif /* CONFIG_CRYPTO_DRBG_HASH */
+ #ifdef CONFIG_CRYPTO_DRBG_HMAC
+ 	{
+-		.flags = DRBG_HMAC | DRBG_STRENGTH256,
++		.flags = DRBG_HMAC | DRBG_STRENGTH128,
+ 		.statelen = 20, /* block length of cipher */
+ 		.max_addtllen = 35,
+ 		.max_bits = 19,
 -- 
-Regards,
-Sachin.
+1.9.3
