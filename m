@@ -1,36 +1,62 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: [PATCH 0/6] DRBG: Rebasing unapplied patches
-Date: Sun, 06 Jul 2014 02:22:29 +0200
-Message-ID: <2266932.bfVPMOTOeI@myon.chronox.de>
+From: Nick Krause <xerofoify@gmail.com>
+Subject: Re: linux-next: Tree for Jul 4
+Date: Sun, 6 Jul 2014 00:54:34 -0400
+Message-ID: <CAPDOMVhxh2pcs0Z3j-0=9-2csojtD7BBKs1oxZgJANe-LsT+aw@mail.gmail.com>
+References: <20140704164251.7dc67e07@canb.auug.org.au>
+	<CAK5sBcGq54sOSzJKXrEbhAUTZZh=+9NuVh294Qxn0dQvbh-G8w@mail.gmail.com>
+	<20140705011058.198ae810@canb.auug.org.au>
+	<20140705004846.GA11659@fieldses.org>
+	<CAK5sBcF72eYPL6=h9JttsWa6MF4cafJb-WO3+JOAh5X4-knKqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: herbert@gondor.apana.org.au
-Cc: joe@perches.com, dan.carpenter@oracle.com, Stephen Rothwell <sfr@canb.auug.org.au>, fengguang.wu@intel.com, Randy Dunlap <rdunlap@infradead.org>, linux-crypto@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, aris@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ve0-f181.google.com ([209.85.128.181]:54311 "EHLO
+	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751315AbaGFEyf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Jul 2014 00:54:35 -0400
+In-Reply-To: <CAK5sBcF72eYPL6=h9JttsWa6MF4cafJb-WO3+JOAh5X4-knKqw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sachin Kamat <spk.linux@gmail.com>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Hi,
+Hey guys ,
+I checking Sachin Karmat's tests and fixing compile issues with
+patches if need be. In my next email I am going to give a up to date
+log of still failing builds for arm.
+Cheers Nick
 
-This patchset superseeds the patch sets submitted with [1] and [2]. It
-rebases all non-applied patches to the current Herbert Xu's
-cryptodev-2.6 tree.
-
-[1] https://lkml.org/lkml/2014/6/28/497
-[2] https://lkml.org/lkml/2014/7/1/332
-
-Stephan Mueller (6):
-  DRBG: cleanup of preprocessor macros
-  DRBG: Fix format string for debugging statements
-  DRBG: Call CTR DRBG DF function only once
-  DRBG: Select correct DRBG core for stdrng
-  DRBG: Mix a time stamp into DRBG state
-  DRBG: HMAC-SHA1 DRBG has crypto strength of 128 bits
-
- crypto/drbg.c         | 134 +++++++++++++++++++++++++++++---------------------
- include/crypto/drbg.h |   2 +-
- 2 files changed, 78 insertions(+), 58 deletions(-)
-
--- 
-1.9.3
+On Sat, Jul 5, 2014 at 10:57 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+> On Sat, Jul 5, 2014 at 6:18 AM, J. Bruce Fields <bfields@fieldses.org> wrote:
+>> On Sat, Jul 05, 2014 at 01:10:58AM +1000, Stephen Rothwell wrote:
+>>> Hi Sachin,
+>>>
+>>> On Fri, 4 Jul 2014 14:12:11 +0530 Sachin Kamat <spk.linux@gmail.com> wrote:
+>>> >
+>>> > Was bisecting a kernel crash on Arndale octa board (Exynos5420). It
+>>> > points to a merge
+>>> > commit:
+>>> > 40556a4c485d12d324f1ea196cc30f590e564237 is the first bad commit
+>>> > ("Merge remote-tracking branch 'nfsd/nfsd-next'").
+>>> >
+>>> > How do I proceed with this?
+>>>
+>>> I guess we get the owner of the tree (possibly) in question involved
+>>> (cc'd).
+>>
+>> Looking at the total diffstat for that branch, it's almost all contained
+>> in fs/nfsd with a little in include/linux/sunrpc/ and net/sunrpc.  So
+>> it's extremely unlikely that it would be causing a problem unless you're
+>> actually testing nfsd.
+>
+> I found it surprising too as I do not use nfsd. I will try out the things
+> suggested by Stephen and update.
+>
+> --
+> Regards,
+> Sachin.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
