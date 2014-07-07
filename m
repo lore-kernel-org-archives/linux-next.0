@@ -1,39 +1,73 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the mvebu tree with the arm tree
-Date: Mon, 7 Jul 2014 09:22:36 +0100
-Message-ID: <20140707082236.GX21766@n2100.arm.linux.org.uk>
-References: <20140707112853.7f5a9323@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: Tree for Jun 19 (drm/i915)
+Date: Mon, 7 Jul 2014 16:54:23 +0200
+Message-ID: <20140707145423.GB5821@phenom.ffwll.local>
+References: <20140619161632.58b442e4@canb.auug.org.au>
+ <53A31CDA.20207@infradead.org>
+ <87y4wm8reh.fsf@intel.com>
+ <9626816.NOau5dZfmB@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:56882 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750855AbaGGIWr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jul 2014 04:22:47 -0400
+Received: from mail-we0-f176.google.com ([74.125.82.176]:37811 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752928AbaGGOyP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jul 2014 10:54:15 -0400
+Received: by mail-we0-f176.google.com with SMTP id u56so4481041wes.35
+        for <linux-next@vger.kernel.org>; Mon, 07 Jul 2014 07:54:13 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20140707112853.7f5a9323@canb.auug.org.au>
+In-Reply-To: <9626816.NOau5dZfmB@vostro.rjw.lan>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx <intel-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, Imre Deak <imre.deak@intel.com>
 
-On Mon, Jul 07, 2014 at 11:28:53AM +1000, Stephen Rothwell wrote:
-> diff --cc arch/arm/mach-mvebu/headsmp-a9.S
-> index 7c91ddb6f1f7,da5bb292b91c..000000000000
-> --- a/arch/arm/mach-mvebu/headsmp-a9.S
-> +++ b/arch/arm/mach-mvebu/headsmp-a9.S
-> @@@ -14,8 -14,9 +14,10 @@@
->   
->   #include <linux/linkage.h>
->   #include <linux/init.h>
->  +#include <asm/assembler.h>
->   
-> + #include <asm/assembler.h>
-> + 
+On Wed, Jun 25, 2014 at 01:01:36AM +0200, Rafael J. Wysocki wrote:
+> On Tuesday, June 24, 2014 02:43:02 PM Jani Nikula wrote:
+> > On Thu, 19 Jun 2014, Randy Dunlap <rdunlap@infradead.org> wrote:
+> > > On 06/18/14 23:16, Stephen Rothwell wrote:
+> > >> Hi all,
+> > >> 
+> > >> The powerpc allyesconfig is again broken more than usual.
+> > >> 
+> > >> Changes since 20140618:
+> > >> 
+> > >
+> > > on i386:
+> > >
+> > > CONFIG_ACPI is not enabled.
+> > >
+> > >   CC      drivers/gpu/drm/i915/i915_drv.o
+> > > ../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_freeze':
+> > > ../drivers/gpu/drm/i915/i915_drv.c:547:2: error: implicit declaration of function 'acpi_target_system_state' [-Werror=implicit-function-declaration]
+> > > ../drivers/gpu/drm/i915/i915_drv.c:547:36: error: 'ACPI_STATE_S3' undeclared (first use in this function)
+> > > ../drivers/gpu/drm/i915/i915_drv.c:547:36: note: each undeclared identifier is reported only once for each function it appears in
+> > >   CC      net/dccp/qpolicy.o
+> > > cc1: some warnings being treated as errors
+> > > make[5]: *** [drivers/gpu/drm/i915/i915_drv.o] Error 1
+> > 
+> > Thanks for the report, we'll fix it.
+> > 
+> > Can anyone explain why include/linux/acpi_bus.h has #ifdef
+> > CONFIG_ACPI_SLEEP and conditional build for a dummy inline version of
+> > acpi_target_system_state(), *but* that does not get included or used if
+> > CONFIG_ACPI=n? Additionally, the combination of CONFIG_ACPI=y and
+> > CONFIG_ACPI_SLEEP=n does not seem to work at all.
+> 
+> These two things look like bugs to me.  Most likely not tested thoruoughly
+> enough.
+> 
+> > So we'll really have to sprinkle #ifdef CONFIG_ACPI all over, instead of
+> > neatly using the dummy versions that someone has gone through the
+> > trouble of adding?
+> 
+> No, we don't have to.
 
-Obviously not quite correct - this looks like an automatic merge, something
-that will have to be kept an eye on during the proper merge window.
-
+Back from my vacation and I didn't see a conclusion to this issue here.
+Rafael, have you fixed this in your acpi tree or do I need to do something
+in drm-intel?
+-Daniel
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
