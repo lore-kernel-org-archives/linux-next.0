@@ -1,110 +1,91 @@
-From: Nick Krause <xerofoify@gmail.com>
-Subject: Re: linux-next: Tree for Jul 4
-Date: Sun, 6 Jul 2014 01:42:42 -0400
-Message-ID: <CAPDOMViziMQ3YEsXEtwS=x0B4C=eukDy16wNW9RCWP5rGYkQow@mail.gmail.com>
-References: <20140704164251.7dc67e07@canb.auug.org.au>
-	<CAK5sBcGq54sOSzJKXrEbhAUTZZh=+9NuVh294Qxn0dQvbh-G8w@mail.gmail.com>
-	<20140705011058.198ae810@canb.auug.org.au>
-	<20140705004846.GA11659@fieldses.org>
-	<CAK5sBcF72eYPL6=h9JttsWa6MF4cafJb-WO3+JOAh5X4-knKqw@mail.gmail.com>
-	<CAPDOMVhxh2pcs0Z3j-0=9-2csojtD7BBKs1oxZgJANe-LsT+aw@mail.gmail.com>
-	<CAPDOMVheB0OWkGKVNqWW=k1mm5MQmRR-Vc2pZJYY6SSszVPqQA@mail.gmail.com>
-	<CAPDOMVhNZRcCCqUsUXuPa0MmvbGmSMm467FTYPeC9MWfZFVh-A@mail.gmail.com>
-	<CAPDOMVj2whs6K1H_bMivAu4d587BK6b6rbj5nufsAE8i7cLtVA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mvebu tree with the arm tree
+Date: Mon, 7 Jul 2014 11:28:53 +1000
+Message-ID: <20140707112853.7f5a9323@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/YglyQG_rdpx5i/S736bT0BN"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:58671 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751177AbaGFFmn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Jul 2014 01:42:43 -0400
-In-Reply-To: <CAPDOMVj2whs6K1H_bMivAu4d587BK6b6rbj5nufsAE8i7cLtVA@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:40660 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752246AbaGGB3A (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Jul 2014 21:29:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Kamat <spk.linux@gmail.com>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Both tests for powerpc I can't test as I don't known where the configs
-for all yes and random are for powerpc.
-Cheers Nick
+--Sig_/YglyQG_rdpx5i/S736bT0BN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Sun, Jul 6, 2014 at 1:34 AM, Nick Krause <xerofoify@gmail.com> wrote:
-> Here are my test logs for arm. Most of the failures from these builds
-> not having default configures or  make one by one errors. Below are
-> my typed results. In the next message I will be sending logs for powerpc.
-> Results
-> iop13xx_defconfig - Successes in my tests
-> mackerel_defconfig - Fails in my tests
-> nuc910_defconfig - Fails in my tests
-> nuc950_defconfig -Fails in my tests
-> nuc960_defconfig - Fails in my tests
-> s5p64x0_defconfig - Fails in my tests
-> s5p64x0_defconfig - Fails in my tests
-> arm-randconfig -Fails in my tests
-> Cheers Nick
->
-> On Sun, Jul 6, 2014 at 1:21 AM, Nick Krause <xerofoify@gmail.com> wrote:
->> Sorry my mistake some of this are wrong I will resend.
->> Cheers Nick
->>
->> On Sun, Jul 6, 2014 at 1:17 AM, Nick Krause <xerofoify@gmail.com> wrote:
->>> Here are my test logs for arm. Most of the failures from these builds
->>> not having default configures or  make one by one errors. Below are
->>> my typed results.
->>> Results
->>> iop13xx_defconfig - Successes in my tests
->>> mackerel_defconfig - Fails in my tests
->>> nuc910_defconfig - Fails in my tests
->>> nuc950_defconfig -Fails in my tests
->>> nuc960_defconfig - Fails in my tests
->>> s5p64x0_defconfig - Fails in my tests
->>> s5p64x0_defconfig - Fails in my tests
->>> arm-randconfig -Fails in my tests
->>> BF561-ACVILON_defconfig -Fails in my tests
->>> BlackStamp_defconfig - Fails in my tests
->>> TCM-BF518_defconfig - Fails in my tests
->>>
->>> Cheers Nick
->>>
->>> On Sun, Jul 6, 2014 at 12:54 AM, Nick Krause <xerofoify@gmail.com> wrote:
->>>> Hey guys ,
->>>> I checking Sachin Karmat's tests and fixing compile issues with
->>>> patches if need be. In my next email I am going to give a up to date
->>>> log of still failing builds for arm.
->>>> Cheers Nick
->>>>
->>>> On Sat, Jul 5, 2014 at 10:57 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
->>>>> On Sat, Jul 5, 2014 at 6:18 AM, J. Bruce Fields <bfields@fieldses.org> wrote:
->>>>>> On Sat, Jul 05, 2014 at 01:10:58AM +1000, Stephen Rothwell wrote:
->>>>>>> Hi Sachin,
->>>>>>>
->>>>>>> On Fri, 4 Jul 2014 14:12:11 +0530 Sachin Kamat <spk.linux@gmail.com> wrote:
->>>>>>> >
->>>>>>> > Was bisecting a kernel crash on Arndale octa board (Exynos5420). It
->>>>>>> > points to a merge
->>>>>>> > commit:
->>>>>>> > 40556a4c485d12d324f1ea196cc30f590e564237 is the first bad commit
->>>>>>> > ("Merge remote-tracking branch 'nfsd/nfsd-next'").
->>>>>>> >
->>>>>>> > How do I proceed with this?
->>>>>>>
->>>>>>> I guess we get the owner of the tree (possibly) in question involved
->>>>>>> (cc'd).
->>>>>>
->>>>>> Looking at the total diffstat for that branch, it's almost all contained
->>>>>> in fs/nfsd with a little in include/linux/sunrpc/ and net/sunrpc.  So
->>>>>> it's extremely unlikely that it would be causing a problem unless you're
->>>>>> actually testing nfsd.
->>>>>
->>>>> I found it surprising too as I do not use nfsd. I will try out the things
->>>>> suggested by Stephen and update.
->>>>>
->>>>> --
->>>>> Regards,
->>>>> Sachin.
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>> Please read the FAQ at  http://www.tux.org/lkml/
+Today's linux-next merge of the mvebu tree got a conflict in
+arch/arm/mach-mvebu/headsmp-a9.S between commit 8a3a9dd50dd9 ("ARM:
+convert all "mov.* pc, reg" to "bx reg" for ARMv6+") from the arm tree
+and commit 0e2be4c1121a ("ARM: mvebu: fix SMP boot for Armada 38x and
+Armada 375 Z1 in big endian") from the mvebu tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-mvebu/headsmp-a9.S
+index 7c91ddb6f1f7,da5bb292b91c..000000000000
+--- a/arch/arm/mach-mvebu/headsmp-a9.S
++++ b/arch/arm/mach-mvebu/headsmp-a9.S
+@@@ -14,8 -14,9 +14,10 @@@
+ =20
+  #include <linux/linkage.h>
+  #include <linux/init.h>
+ +#include <asm/assembler.h>
+ =20
++ #include <asm/assembler.h>
++=20
+  	__CPUINIT
+  #define CPU_RESUME_ADDR_REG 0xf10182d4
+ =20
+@@@ -23,9 -24,13 +25,13 @@@
+  .global armada_375_smp_cpu1_enable_code_end
+ =20
+  armada_375_smp_cpu1_enable_code_start:
+- 	ldr     r0, [pc, #4]
++ ARM_BE8(setend	be)
++ 	adr     r0, 1f
++ 	ldr	r0, [r0]
+  	ldr     r1, [r0]
++ ARM_BE8(rev	r1, r1)
+ -	mov     pc, r1
+ +	ret     r1
++ 1:
+  	.word   CPU_RESUME_ADDR_REG
+  armada_375_smp_cpu1_enable_code_end:
+ =20
+
+--Sig_/YglyQG_rdpx5i/S736bT0BN
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTuffZAAoJEMDTa8Ir7ZwVOOUQAIDu8vBNmNqB1oDrjKnGutS0
+ffZbYLXpAC5Z/JuxsbuvX1U7XcKZrK26ycZLRYbbzq+GlEfYjL5n1NPfs/gQMKQE
+my/GcFSkeNRSJDTvkb525kqzSC6CTYZ6sFqY3dLn2avHFpJ/yGm9spqNaDjAnK4S
+9NRwOjNCm2afkMByIuo6lW+VNGqcyaIyqaEFtlh/5KhN4S7aAHqPPOSokDQsdhZb
+FoxRgXGWTPYgBfQpdL8xUiJ9uYk5zB3TQPam1nyUBgSWJsWUAzF/+BiIM6reQeNY
+OaI1+wX5i/BOCqJIgWJh8buRegiGYKyjdTLZ2R+eHghgkdjFINeBq4hOGSXdr9U0
+QdvdJbjGJ8rWJ95XShQaIDBNTcSYkFFjvg0ksISQWtGpx6t3pnM6Bo0hDCXLiqTt
+E6AP02v7S+3DM1LgCXFLpA6DN+szLlj/DFaoPsPZg4K8nE7h04KLJ2SMAo4vYzAt
+UvPIvlvdlTxDTmc0Zq0vmyGvm1l4CHYyHfqfQ6itk2OLgIv71BYzEahYGQvuWbA0
+qQtNBqiHRjo+daKd8+6jR0VJ5YVPqxuN81NHd1nh/avPFq8IoK9bE2Xri0CTjfRX
+5AkxLyVWNzVdpCeQ6xUsb4U/MaNUHc/ZdtPhLeoSFnzO0onNmif5+v3ARjw79uNI
+zla3y+0CH335npTKcXXb
+=MzWO
+-----END PGP SIGNATURE-----
+
+--Sig_/YglyQG_rdpx5i/S736bT0BN--
