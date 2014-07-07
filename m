@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the arm tree
-Date: Mon, 7 Jul 2014 11:28:53 +1000
-Message-ID: <20140707112853.7f5a9323@canb.auug.org.au>
+Subject: linux-next: manual merge of the renesas tree with the arm tree
+Date: Mon, 7 Jul 2014 11:32:43 +1000
+Message-ID: <20140707113243.3c3dfdfe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YglyQG_rdpx5i/S736bT0BN"; protocol="application/pgp-signature"
+ boundary="Sig_/5b2.vCKWrB9W+XfzQ1oy_b."; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40660 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53511 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752246AbaGGB3A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 6 Jul 2014 21:29:00 -0400
+	id S1752230AbaGGBcu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Jul 2014 21:32:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Simon Horman <horms@verge.net.au>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>
 
---Sig_/YglyQG_rdpx5i/S736bT0BN
+--Sig_/5b2.vCKWrB9W+XfzQ1oy_b.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Simon,
 
-Today's linux-next merge of the mvebu tree got a conflict in
-arch/arm/mach-mvebu/headsmp-a9.S between commit 8a3a9dd50dd9 ("ARM:
+Today's linux-next merge of the renesas tree got a conflict in
+arch/arm/mach-shmobile/headsmp.S between commit 8a3a9dd50dd9 ("ARM:
 convert all "mov.* pc, reg" to "bx reg" for ARMv6+") from the arm tree
-and commit 0e2be4c1121a ("ARM: mvebu: fix SMP boot for Armada 38x and
-Armada 375 Z1 in big endian") from the mvebu tree.
+and commit 8b438bcb9009 ("ARM: shmobile: Allow use of boot code for
+non-SMP case") from the renesas tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,58 +34,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-mvebu/headsmp-a9.S
-index 7c91ddb6f1f7,da5bb292b91c..000000000000
---- a/arch/arm/mach-mvebu/headsmp-a9.S
-+++ b/arch/arm/mach-mvebu/headsmp-a9.S
-@@@ -14,8 -14,9 +14,10 @@@
- =20
-  #include <linux/linkage.h>
+diff --cc arch/arm/mach-shmobile/headsmp.S
+index 293007579b8e,faf82144a262..000000000000
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@@ -10,11 -10,12 +10,13 @@@
+   * it under the terms of the GNU General Public License version 2 as
+   * published by the Free Software Foundation.
+   */
+- #include <linux/linkage.h>
   #include <linux/init.h>
++ #include <linux/linkage.h>
++ #include <linux/threads.h>
  +#include <asm/assembler.h>
+  #include <asm/memory.h>
  =20
-+ #include <asm/assembler.h>
-+=20
-  	__CPUINIT
-  #define CPU_RESUME_ADDR_REG 0xf10182d4
- =20
-@@@ -23,9 -24,13 +25,13 @@@
-  .global armada_375_smp_cpu1_enable_code_end
- =20
-  armada_375_smp_cpu1_enable_code_start:
-- 	ldr     r0, [pc, #4]
-+ ARM_BE8(setend	be)
-+ 	adr     r0, 1f
-+ 	ldr	r0, [r0]
-  	ldr     r1, [r0]
-+ ARM_BE8(rev	r1, r1)
- -	mov     pc, r1
- +	ret     r1
-+ 1:
-  	.word   CPU_RESUME_ADDR_REG
-  armada_375_smp_cpu1_enable_code_end:
- =20
++ #ifdef CONFIG_SMP
+  ENTRY(shmobile_invalidate_start)
+  	bl	v7_invalidate_l1
+  	b	secondary_startup
 
---Sig_/YglyQG_rdpx5i/S736bT0BN
+--Sig_/5b2.vCKWrB9W+XfzQ1oy_b.
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTuffZAAoJEMDTa8Ir7ZwVOOUQAIDu8vBNmNqB1oDrjKnGutS0
-ffZbYLXpAC5Z/JuxsbuvX1U7XcKZrK26ycZLRYbbzq+GlEfYjL5n1NPfs/gQMKQE
-my/GcFSkeNRSJDTvkb525kqzSC6CTYZ6sFqY3dLn2avHFpJ/yGm9spqNaDjAnK4S
-9NRwOjNCm2afkMByIuo6lW+VNGqcyaIyqaEFtlh/5KhN4S7aAHqPPOSokDQsdhZb
-FoxRgXGWTPYgBfQpdL8xUiJ9uYk5zB3TQPam1nyUBgSWJsWUAzF/+BiIM6reQeNY
-OaI1+wX5i/BOCqJIgWJh8buRegiGYKyjdTLZ2R+eHghgkdjFINeBq4hOGSXdr9U0
-QdvdJbjGJ8rWJ95XShQaIDBNTcSYkFFjvg0ksISQWtGpx6t3pnM6Bo0hDCXLiqTt
-E6AP02v7S+3DM1LgCXFLpA6DN+szLlj/DFaoPsPZg4K8nE7h04KLJ2SMAo4vYzAt
-UvPIvlvdlTxDTmc0Zq0vmyGvm1l4CHYyHfqfQ6itk2OLgIv71BYzEahYGQvuWbA0
-qQtNBqiHRjo+daKd8+6jR0VJ5YVPqxuN81NHd1nh/avPFq8IoK9bE2Xri0CTjfRX
-5AkxLyVWNzVdpCeQ6xUsb4U/MaNUHc/ZdtPhLeoSFnzO0onNmif5+v3ARjw79uNI
-zla3y+0CH335npTKcXXb
-=MzWO
+iQIcBAEBCAAGBQJTufi/AAoJEMDTa8Ir7ZwVBNEP/1e1gpnqm5PJrShkLw/ND7ED
+N/Xxnf3zLuLyUHsNmoa0icDes52YlyX8huGpKXbazUQjILBjB4DIE9RCCApVUeAy
+Ii6S6cBYxeCE1J4Pgrf4C8NvDhzDmz/LmjGbvqdGLY1q4EXYldwlOAfhIk/zJwnr
+S5aFiLH4nV+V/gfmcqIFJ7OG73yp2QjAtdfd8LFnc3DlsMWucsLk+pzk/y8gIfkh
+XgbTt0IMzQsd3JgpeDHId11vlpb1Ywm2LIY7tkrO8MbcZDAkSGvC2MsNooI1i5cn
+Shx81OPjKk+DSh021Ov9mrjhTQu+VDiKoVhGy2xdNc5XS9MPk9rZyDYCtWEIm/hK
++RHoA+xiH8v1xHt3aswMnDgYansfgx1TsWAiG5Bc3dzb4D/KIRaXnmkjJAr/ucpR
+l1vvBkELW9pNgzBEds1gEQ+M7WgoK0GVQEs6WFHn0GSzqBUJsm7SPHmig/mTGvrk
+vp31D5/9zmkfh2a7ylz1ap6qJ0YdpSOWRrR3vSW2BULUdmO0Y0co1MzOcytYizvg
+TdoXJt1b6Ng3OoBe1TApuEBZ0C90A/fLNxKzBid/0EyHmsVCMb+oYYk7IjTcJu/e
+PIVD0n8lgndXpQU1REMnOkGsEtsVErp0biPIPt4zQnVYR+Vf6hJRv1hlpmakNA9v
+NwDGioGr1WHVMtTffDKD
+=yRWt
 -----END PGP SIGNATURE-----
 
---Sig_/YglyQG_rdpx5i/S736bT0BN--
+--Sig_/5b2.vCKWrB9W+XfzQ1oy_b.--
