@@ -1,38 +1,36 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH 0/6] DRBG: Rebasing unapplied patches
-Date: Tue, 8 Jul 2014 21:21:47 +0800
-Message-ID: <20140708132147.GD24110@gondor.apana.org.au>
-References: <2266932.bfVPMOTOeI@myon.chronox.de>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Tue, 8 Jul 2014 09:28:54 -0700
+Message-ID: <CAGVrzcbRDFhbaUFnXtPHm0v0gtMatX7knPoPKB7Q5KuxoNXeJw@mail.gmail.com>
+References: <20140704113907.468a366a@canb.auug.org.au> <20140707.195330.1593299312055099195.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2266932.bfVPMOTOeI@myon.chronox.de>
+In-Reply-To: <20140707.195330.1593299312055099195.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephan Mueller <smueller@chronox.de>
-Cc: joe@perches.com, dan.carpenter@oracle.com, Stephen Rothwell <sfr@canb.auug.org.au>, fengguang.wu@intel.com, Randy Dunlap <rdunlap@infradead.org>, linux-crypto@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafael Aquini <aquini@redhat.com>, aris@redhat.com
+To: David Miller <davem@davemloft.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vince Bridgers <vbridgers2013@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Jul 06, 2014 at 02:22:29AM +0200, Stephan Mueller wrote:
-> Hi,
-> 
-> This patchset superseeds the patch sets submitted with [1] and [2]. It
-> rebases all non-applied patches to the current Herbert Xu's
-> cryptodev-2.6 tree.
-> 
-> [1] https://lkml.org/lkml/2014/6/28/497
-> [2] https://lkml.org/lkml/2014/7/1/332
-> 
-> Stephan Mueller (6):
->   DRBG: cleanup of preprocessor macros
->   DRBG: Fix format string for debugging statements
->   DRBG: Call CTR DRBG DF function only once
->   DRBG: Select correct DRBG core for stdrng
->   DRBG: Mix a time stamp into DRBG state
->   DRBG: HMAC-SHA1 DRBG has crypto strength of 128 bits
+2014-07-07 19:53 GMT-07:00 David Miller <davem@davemloft.net>:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 4 Jul 2014 11:39:07 +1000
+>
+>> After merging the net tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "phy_resume" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefined!
+>>
+>> Caused by commit 0acf16768740 ("net: stmmac: add platform init/exit for
+>> Altera's ARM socfpga").
+>>
+>> I reverted that commit for today.
+>
+> Vince you haven't made any effort to fix this build failure, so I am reverting
+> your changes.
 
-All applied.  Thanks Stephan!
+I'll take care of this, since I am also using phy_suspend/resume in
+the systemport driver, and the kbuild test robot reported a linker
+failure.
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Florian
