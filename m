@@ -1,76 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the regulator tree
-Date: Tue, 8 Jul 2014 13:10:57 +1000
-Message-ID: <20140708131057.6bad8c66@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the iommu tree
+Date: Tue, 8 Jul 2014 14:02:46 +1000
+Message-ID: <20140708140246.72b72682@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gH5mkncaHJkD.eCo.JzjLWS"; protocol="application/pgp-signature"
+ boundary="Sig_/wYju90pWi_NtUsj2=dqeIY_"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43067 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53416 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751236AbaGHDLG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2014 23:11:06 -0400
+	id S1751641AbaGHEDA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2014 00:03:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Beniamino Galvani <b.galvani@gmail.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>
 
---Sig_/gH5mkncaHJkD.eCo.JzjLWS
+--Sig_/wYju90pWi_NtUsj2=dqeIY_
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Joerg,
 
-After merging the regulator tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the iommu tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/regulator/act8865-regulator.c: In function 'act8865_pmic_probe':
-drivers/regulator/act8865-regulator.c:291:13: error: 'act8846_matches' unde=
-clared (first use in this function)
-   matches =3D act8846_matches;
-             ^
-drivers/regulator/act8865-regulator.c:291:13: note: each undeclared identif=
-ier is reported only once for each function it appears in
-drivers/regulator/act8865-regulator.c:296:13: error: 'act8865_matches' unde=
-clared (first use in this function)
-   matches =3D act8865_matches;
-             ^
-drivers/regulator/act8865-regulator.c:311:9: error: too many arguments to f=
-unction 'act8865_pdata_from_dt'
-   ret =3D act8865_pdata_from_dt(dev, of_node, &pdata_of, matches,
-         ^
-drivers/regulator/act8865-regulator.c:239:19: note: declared here
- static inline int act8865_pdata_from_dt(struct device *dev,
-                   ^
+arch/powerpc/platforms/built-in.o:(.opd+0x29e8): multiple definition of `io=
+mmu_device_destroy'
+arch/powerpc/kernel/built-in.o:(.opd+0x5628): first defined here
+arch/powerpc/platforms/built-in.o: In function `.iommu_device_unlink':
+(.text+0x13240): multiple definition of `.iommu_device_unlink'
+arch/powerpc/kernel/built-in.o:(.text+0x2b240): first defined here
+arch/powerpc/platforms/built-in.o: In function `.iommu_device_create':
+(.text+0x13210): multiple definition of `.iommu_device_create'
+arch/powerpc/kernel/built-in.o:(.text+0x2b210): first defined here
+arch/powerpc/platforms/built-in.o: In function `.iommu_device_destroy':
+(.text+0x13220): multiple definition of `.iommu_device_destroy'
+arch/powerpc/kernel/built-in.o:(.text+0x2b220): first defined here
+arch/powerpc/platforms/built-in.o: In function `.iommu_device_link':
+(.text+0x13230): multiple definition of `.iommu_device_link'
+arch/powerpc/kernel/built-in.o:(.text+0x2b230): first defined here
+arch/powerpc/platforms/built-in.o:(.opd+0x2a00): multiple definition of `io=
+mmu_device_link'
+arch/powerpc/kernel/built-in.o:(.opd+0x5640): first defined here
+arch/powerpc/platforms/built-in.o:(.opd+0x2a18): multiple definition of `io=
+mmu_device_unlink'
+arch/powerpc/kernel/built-in.o:(.opd+0x5658): first defined here
+arch/powerpc/platforms/built-in.o:(.opd+0x29d0): multiple definition of `io=
+mmu_device_create'
+arch/powerpc/kernel/built-in.o:(.opd+0x5610): first defined here
 
-Caused by commit 7160912a8c55 ("regulator: act8865: add support for
-act8846").
+Caused by commit c61959ecbbc6 ("iommu: Add sysfs support for IOMMUs").
+CONFIG_IOMMU_API is not set for this build.  Forgotten "static
+inline"s :-(
 
-I have used the regulator tree from next-20140707 for today.
+I have used the iommu tree from next-20140707 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/gH5mkncaHJkD.eCo.JzjLWS
+--Sig_/wYju90pWi_NtUsj2=dqeIY_
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTu2FGAAoJEMDTa8Ir7ZwVFo4P/1ekf0y7tzl2l4jmeo+yEXDE
-DVCkLTxO5w3KXrWBkU8VgoyCgjh5HJciFOTnXtCdxLhiCO3ZAVNwZ/MfYmre6Ocf
-eITFCALWv5xCpNxA2lnm106ot7OAEXsZwMI52j6s4oDYQVHN2f6/c18/kn0G3NR3
-OYXO3OAqeHzIyHgPIFXYSU7XbHuMiRjcHi/bEDNK6qkHzVbLR439CXorMVkhrxmb
-D7FIfqfcAhzkqvsojGNXr0Vmserauuur/1itbJI6p5RL6Z8nDmMo6v/ol5zN2L7b
-AxPRso5id/9cRS4AwD2+ekaHZWf+NV6QrmxxET8OJGSlmkNY1q4ExBIiEcx/yj8V
-hFOH0OhVQY9mLrEzPLl5MwZ6ckUJojbZac8/jOyRTbbzQBmb2BvDhmvkgwMh1vJB
-d3h5gailfGxW+rVKUNiM/405ag0is/qQLK9PtmAwfOEdN3ABoy9QdJ0xteaIMzTH
-LzPiycFMJBbdfIZI+IyyrmqUE7O3lG8/3jMZNl+eu0iuZfhyNhboAGyCWHI2s9/l
-kdLG3R+yc122554d1z6O96nsNixUYevIO2JI6oV8OY4tca4hZHN+6wg1B8eAord2
-2vBUa7VvzXQXcAOrvkS2XKbMBJpdCshFdPraY04aJljPC4qFNpV224/nVL9tYuJP
-/+fdAX/HkYL1Q0KpUex2
-=2q9e
+iQIcBAEBCAAGBQJTu21sAAoJEMDTa8Ir7ZwVOc8P/30DE2ot+kzjMus4lresXAKD
+/UvSmRb7OvT2WY7felMJ/LRfGUOvYkvxIlVXTAyI51LCjTf5Jow5LqKnBo3gr58s
+Nw842DoWklFP4dmV6FEtqmSpQk6V5k4QaDVG28xnHOaS+vvPpoXJ9Fsk574mTrJ+
+yfZi4kEj+FuzRcNXtWEzEgyanEkey5DqiPeIIrHGzpDq7pficQhNKYpW+5kduYRs
+3LzZjHQ72+3+WnngbRvrxSN3sNJpMgp6NTVGXsI426LJ+xW/klV3ktv8k0qLHfOg
+UW4/9nUu9hzA5eCabSrQUatD26w5wBER5yp2gQMZQglaFP3DabCMwKJkUvq/u0KT
+gp17zEBGvXw143X4pSqoQMv0az5l+/clDzxR3/GMqp1zbpnlR/iXFHjhDlOE9inA
+6Le2181/e34lUxcCMH6RRHQhP+GkRCoAJ5aCAYcVpoRqle6sJeoKWvVOTyFk+ZAt
+EeU2tbxPnUZpaPIh2bfj+o9FQEMo+7h0rkCW0cObp8/Xbj7WwfdljuGyC6lbNgLq
+TzZDGvp5/SVNPAAlqtLipkTJa7VE1MPcTbAjio7D6S2z6bWaSG0n2ssFgWo+M9ox
+oktCKCqhU1tpxkRAYqQZcCIgsXtyh2eBpTudw7WYi6xOfPASkEzGP9YZ2E3HwS/Y
+ohxFNsqe7xFcn/tpTss/
+=pmJJ
 -----END PGP SIGNATURE-----
 
---Sig_/gH5mkncaHJkD.eCo.JzjLWS--
+--Sig_/wYju90pWi_NtUsj2=dqeIY_--
