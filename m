@@ -1,32 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Wed, 9 Jul 2014 14:06:16 +1000
-Message-ID: <20140709140616.28db3a01@canb.auug.org.au>
+Subject: linux-next: manual merge of the rd-docs tree with the trivial tree
+Date: Wed, 9 Jul 2014 17:14:14 +1000
+Message-ID: <20140709171414.5d995396@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NjQkMcXrVM.xC=3UTXYQdX1"; protocol="application/pgp-signature"
+ boundary="Sig_/.Q.BxtoPTey=h+ObpmG1C2D"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40201 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36015 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750718AbaGIEGX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Jul 2014 00:06:23 -0400
+	id S1753923AbaGIHOV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Jul 2014 03:14:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Clint Taylor <clinton.a.taylor@intel.com>, Rodrigo Vivi <rodrigo.vivi@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Pali =?UTF-8?B?Um9o?= =?UTF-8?B?w6Fy?= <pali.rohar@gmail.com>
 
---Sig_/NjQkMcXrVM.xC=3UTXYQdX1
+--Sig_/.Q.BxtoPTey=h+ObpmG1C2D
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Randy,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/intel_drv.h between commit 72f5fd2a9815
-("drm/i915/vlv: T12 eDP panel timing enforcement during reboot") from
-the drm-intel-fixes tree and commit 6118efe5968c ("drm/i915: move
-psr_setup_done to psr struct") from the drm tree.
+Today's linux-next merge of the rd-docs tree got a conflict in
+Documentation/laptops/freefall.c between commit d5ae11dc402f ("doc:
+hpfall.c: fix missing null-terminate after strncpy call") from the
+trivial tree and commit 0af05db576e9 ("Dell kernel driver dell-smo8800
+provides same freefall interface as hp_accel so") from the rd-docs tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,41 +34,42 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_drv.h
-index f67340ed2c12,5f7c7bd94d90..000000000000
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@@ -537,9 -541,6 +541,8 @@@ struct intel_dp=20
-  	unsigned long last_power_cycle;
-  	unsigned long last_power_on;
-  	unsigned long last_backlight_off;
-- 	bool psr_setup_done;
- +	struct notifier_block edp_notifier;
- +
-  	bool use_tps3;
-  	struct intel_connector *attached_connector;
+diff --cc Documentation/laptops/freefall.c
+index 67084321dab4,aab2ff09e868..000000000000
+--- a/Documentation/laptops/freefall.c
++++ b/Documentation/laptops/freefall.c
+@@@ -27,8 -33,8 +33,9 @@@ static int set_unload_heads_path(char *
  =20
+  	if (strlen(device) <=3D 5 || strncmp(device, "/dev/", 5) !=3D 0)
+  		return -EINVAL;
+- 	strncpy(devname, device + 5, sizeof(devname));
++ 	strncpy(devname, device + 5, sizeof(devname) - 1);
+ +	devname[sizeof(devname) - 1] =3D '\0';
++ 	strncpy(device_path, device, sizeof(device_path) - 1);
+ =20
+  	snprintf(unload_heads_path, sizeof(unload_heads_path) - 1,
+  				"/sys/block/%s/device/unload_heads", devname);
 
---Sig_/NjQkMcXrVM.xC=3UTXYQdX1
+--Sig_/.Q.BxtoPTey=h+ObpmG1C2D
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTvL+8AAoJEMDTa8Ir7ZwVBwAP/0zcugRoR0fd3uMzZgtTiSAI
-640tl7fflwupvLFqkC4YYs8iU2J5IJm0VURX/QUfyqJcxtUsRDyj5QI2wnB7s1zB
-As2749C+J55xfZsIjXuSuNCvQTuUV0dMkLN6q5IRtTq29Kfwpt+TOwYFAuiBNJAP
-F1k60y1//5zWQcNnOyuGR1f3PhPPOVsSeTPFmm0IMDujNQ+vzcECUZyf9dgGWOIz
-ARzCJ8kNQN28g9psJMUkSszXzaaSIGrNRrGVZN5p2eCHkHJzl+NBwGssGh3Opwig
-IsuCk4M91HlS8h0ko+AnptreZc7k2AI/nmEutTrWjSB/Dw5tyyPSl3JNIrTb3dEp
-ttVflm+wybaOPKyjocibgu7G5BXN3J2nrb3jf94kL+oVzdl4+2nSj6PwUXv7TNUe
-rcyfYILP1aZMlAkotolCR0XJxZILBgg3Ol38k8E1hfwAUmGbY/mLolcIOd4RkTpM
-WJInI1xsAaBCHx4y61BWxmqg90AX+FprcV8wCHoKH3xmyRojGpmxAKCd8qub1I5l
-hadK8+joSzKn4fBFfB561FW7XPwU7DvHE4Wc/Ewx7aroWQChptjZLMbEPLU69n0T
-PnD0ujpSE2SvUM93Cije3Sru+S9MS/BPou8kbUJJQDxvJ9W9S2YKENvzFA3tls2o
-735u1afseaqypK9HW8WU
-=mtF/
+iQIcBAEBCAAGBQJTvOvLAAoJEMDTa8Ir7ZwV/NoP/0mQjnIUWvZTwBmxnIumk1Fr
+VS3hZAIm1g5mW+7XszUTDQnzCB56JIIeubPA3rk2v2FLyaf/zwXxQTQkIflI5SJD
+bb2eTPSdSHIdJU/vnvJimsvtmGQZ5lMaspWMZE0gpkfCB3AOILOkrJs51b7u/mTE
+YOAyy/gqvpbErhkphWiY4vu5gqNtQzXhhI3fMaQrtorMZYerpyn4iKn5vOavcJ36
+TxXSp37usjZcbOzdldp4XpPJyZ7OSHEXZcaY1dLU2N/EQg/gkrXdI6fQFox8cdHv
+a0/heP1myFAMSD//16kLML4wxQdui+qMacinIKYhiREA6AKqVmfAa+9R3eqGEPb+
+Hg8KH2a/5EKDen7XP/W5Z/ZSFfB1yi2AOFzSbX1apR2+5/lR/fY54ksXbS5Yt4ag
+PlrZ78kkWAcLrJq/LD28B5hYvTulRe33kZNDziQrZhkai0xS2PzgeqV2hLbYks2p
+Y8uA+roHQPKTajAJIMWdkJNHXMBhhep6NOeS3l6/Tqbi/Wb5W0ie2+LFEh3CLnoU
+BiOw2Xdy39fiaoYli0y6cXnwZjBnhngnhyRSuRuJ8x1etSSmOZsdRg5pYwaLABnu
+jmEFmDBBCUv5XBUh2gW7TqSQjqVtMjSXeadOzkPlB25AXHw+zJXz5IABJtCZhpRe
+usd7qy12uvnIOgxqfnRS
+=NWLj
 -----END PGP SIGNATURE-----
 
---Sig_/NjQkMcXrVM.xC=3UTXYQdX1--
+--Sig_/.Q.BxtoPTey=h+ObpmG1C2D--
