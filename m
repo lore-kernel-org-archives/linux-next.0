@@ -1,139 +1,82 @@
-From: Nick Krause <xerofoify@gmail.com>
-Subject: Fwd: linux-next: Tree for Jul 7
-Date: Tue, 8 Jul 2014 21:07:08 -0400
-Message-ID: <CAPDOMVjraUPaAx5N4wp2MfG=n7ptQm7swizD6Aou40c2+5XsNg@mail.gmail.com>
-References: <20140707164244.18699ce8@canb.auug.org.au>
-	<CAPDOMVgiR2kKpOmnWv70fUFcMyDzaxxHrec6eSOWF8qW38nc3w@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Wed, 9 Jul 2014 13:26:19 +1000
+Message-ID: <20140709132619.19eb3f6a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=001a1133f770c8b03e04fdb8536f
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//LD23Ml/Efg.AWxd8mRK1zy"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ve0-f178.google.com ([209.85.128.178]:58439 "EHLO
-	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751085AbaGIBHJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2014 21:07:09 -0400
-Received: by mail-ve0-f178.google.com with SMTP id oy12so6650913veb.9
-        for <linux-next@vger.kernel.org>; Tue, 08 Jul 2014 18:07:08 -0700 (PDT)
-In-Reply-To: <CAPDOMVgiR2kKpOmnWv70fUFcMyDzaxxHrec6eSOWF8qW38nc3w@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:45898 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751104AbaGID03 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2014 23:26:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Herbert <therbert@google.com>
 
---001a1133f770c8b03e04fdb8536f
-Content-Type: text/plain; charset=UTF-8
+--Sig_//LD23Ml/Efg.AWxd8mRK1zy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Rowell wrote on  Mon, Jul 7, 2014 at 2:42 AM
-Subject: linux-next: Tree for Jul 7
-To: linux-next@vger.kernel.org
-Cc:linux-next@vger.kernel.org
 Hi all,
 
-Changes since 20140704:
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-My fixes tree contains:
-        powerpc: Disable RELOCATABLE for COMPILE_TEST with PPC64
+In file included from include/linux/tcp.h:23:0,
+                 from include/linux/ipv6.h:63,
+                 from include/net/ipv6.h:16,
+                 from include/linux/sunrpc/clnt.h:27,
+                 from include/linux/nfs_fs.h:30,
+                 from init/do_mounts.c:32:
+include/net/ipv6.h: In function 'ip6_set_txhash':
+include/net/sock.h:327:33: error: 'struct sock_common' has no member named =
+'skc_v6_daddr'
+ #define sk_v6_daddr  __sk_common.skc_v6_daddr
+                                 ^
+include/net/ipv6.h:695:49: note: in expansion of macro 'sk_v6_daddr'
+  keys.dst =3D (__force __be32)ipv6_addr_hash(&sk->sk_v6_daddr);
+                                                 ^
+In file included from include/linux/sunrpc/clnt.h:27:0,
+                 from include/linux/nfs_fs.h:30,
+                 from init/do_mounts.c:32:
+include/net/ipv6.h: In function 'ip6_make_flowlabel':
+include/net/ipv6.h:705:37: error: 'struct net' has no member named 'ipv6'
+  if (!flowlabel && (autolabel || net->ipv6.sysctl.auto_flowlabels)) {
+                                     ^
 
-The net tree still had its build failure for which I reverted a commit.
+And lots more ...
 
-The mvebu tree gained a conflict against the arm tree.
+Caused by commits b73c3d0e4f0e ("net: Save TX flow hash in sock and set
+in skbuf on xmit") and cb1ce2ef387b ("ipv6: Implement automatic flow
+label generation on transmit").  This build has CONFIG_IPV6 unset.
 
-The renesas tree gained a conflict against the arm tree.
-
-The staging tree still had its build failure for which I disabled a driver.
-
-The akpm-current tree still had its build failure for which I applied a
-patch.
-
-Non-merge commits (relative to Linus' tree): 3683
- 3559 files changed, 139800 insertions(+), 187348 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64 and a
-multi_v7_defconfig for arm. After the final fixups (if any), it is also
-built with powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig and
-allyesconfig (this fails its final link) and i386, sparc, sparc64 and arm
-defconfig.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 222 trees (counting Linus' and 30 trees of patches
-pending for Linus' tree).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---
+I have used the net-next tree from next-20140708 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Sig_//LD23Ml/Efg.AWxd8mRK1zy
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-I am testing your tests again for the failing cases. Below is my list
-of what failing tests
-are pasting for me and which are still failing.
-Cheers Nick
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAEBCAAGBQJTvLZgAAoJEMDTa8Ir7ZwVTlMP/RJiDnsiPndLfxDp159bHFsU
+549Oj2Mfrm/bAUiFchg/3kPbbHv3GqVdV66PvTbJuLipB9tgCduv01YYn/dOkpBb
+CSbsE0OMJkXSdDxAn/4Y35c/4P61RsBpxcmFBvKL6H9rvWYEriJ1iGWnKlGyN/W6
+q5MPa+VAnrBXy56URTPUd86iwXgCMZZvN1LRpf7oluJjrMLL4lKz6vTECRWDwHb3
+4W5v2xUYy1o+DBlxhHspSsNYyRUVWPrmVXXhyywMV6D5Onro4NROeKow8NitNLv4
+VVPxcInXeA5vdhogbDtlcvV32+cRfww4sgR2RBdpcZe5QBgSgSTJygG6gro8mIGU
+WpH8ogdtcZ+zoybz+HUsLO6qAmKet0USuYD4fcsUO9doMqy4L6cBvnuab5/N2I/t
+NWLTm4HG27dOG/E5IuoBDU1ZHX23dPbYhX8n8YD2fSD0/SzaUcpBEIY7MJMspffh
+rK/kxuTYXDw5aBe8ajulT8sWa3+dHG+GOlN0bylhSxAUUXuWhQ08VaJ1oQxqrqMz
+1t16APGCuhP5ugVOKa0D9se1xCcITQgij4ddZCBg/0YW1xB79HVDhQWMZPddpoIm
+eQX+PzT/NkwjPsgkjy91yb7AJIDfyZPQRjb+NuKbo/4dQrCeMXr47dnAAf3zM9n3
+/mRIiP8/Pcs1eq8ZoZRr
+=3ZgA
+-----END PGP SIGNATURE-----
 
-Arm - All succeed
-Blackfin - BF561-ACVILON_defconfig fails , BlackStamp_defconfig Fails
-, TCM-BF518_defconfig succeeds
-Cris - cris-allmodconfig fails ,cris-allyesconfig fails
-or32 -no compiler
-powerpc - allyesconfig fails without a patch I have sent to maintainer
-of this arch
-s390 - s390-allnoconfig succeeds
-sh4- rsk7203_defconfig fails, se7722_defconfig succeeds,
-shx3_defconfig fails ,ecovec24-romimage_defconfig succeeds
-,kfr2r09-romimage_defconfig succeeds,
-kfr2r09_defconfig succeeds , sh7724_generic_defconfig succeeds,
-sh7770_generic_defconfig succeeds, sh-allmodconfig fails,
-sh-allyesconfig fails
-Sparc64 - sparc-allmodconfig seems to pass
-1386-um -  um-defconfig succeeds
-
-In addition you seem to be using a very old toolchain gcc 4.2.3 I
-would upgrade as that
-may be an issue.
-Cheers Nick
-
---001a1133f770c8b03e04fdb8536f
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Disposition: attachment; filename="signature.asc"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: 76c207c52da00d4f_0.1
-
-LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0NClZlcnNpb246IEdudVBHIHYyDQoNCmlRSWNC
-QUVCQ0FBR0JRSlR1a0ZzQUFvSkVNRFRhOElyN1p3VnlLOFAvajVmZE9yUHR2K0JBdXNVUzlkWG1M
-RzgNClYwbnQ0d09ORXdrRW1TS1JiWXZFd2ZTT1hYZk85ZnQxbCtTTFkybDNLOEZUYStPNlo1S002
-ejRjdURUdmk4NzENClRWd1RGUTNvVHFQNncyajYwd1E0WXJOSkZWeUd0dk9TQU10aTFSb1c3c292
-WTNwNklkZHl1b0h2NDFtWUNRNmcNCndiNWk1a25BYWpGSUp2SHBucGUyV1hvZUFzcnBMamNYV0RW
-endSQm9tMk9vdWUwRk0zUlgveWU5ZFZibU1DT2oNClpCbk5nSk9RTllSVDhzVWhzY2hiRkcwMFVT
-Y0V5VjdDRVhpMEFicU9BQzVydFZQalY4ZDc2MVlIS3NnQ0RzMVANCnJ6YUlkcENyV1VXbWt0L25C
-MncrdWdhUTJRSm5PalB4anBCd3hLS0wvcHBIRFJwd3NGSzROUjRlOThKM0tndnYNCkltRDZQN1c5
-clRyc0t4S1d5c0k5VmtSL3NkUVFFREdnUHRLSHcybW1jWTB6Y3k5dmlVV3R5bGs2N255VFhtc0EN
-CmJmN1FPaDVVSXE1M0xMTk5KMFliVEZabGdaTHMxODJpMk1SVzZTN2hQaVBLQ1dtQ0k5Y2JRWmZ0
-M3g2TjNpL1QNCkU4ZE10SzArZGtRNCtkRHZVSDVDSEFhaWQzR2MwNHhXYTQ4engvYWxpOWk2blhh
-MUJFNHNHd2w3VmcrS1cvK1gNCkh0S2ZGQmV5NkEvZjJkV0M2OTRUeHNlZEc0Sk9PMXR2clRuU3Q5
-alhGV3oxR2o0eTV4VGgrbTFGWEZRSjhBa1cNCldmM1JaZVI1WEltNTBEMWxXT0EveHBIdFlzR0h5
-SENMSjNDZHlMajhnU3U5S3o2bGxKODBlVjgxTCt6VDc2MCsNClZ0KzE4VFVxUXJYd0pEWCt0NFAz
-DQo9QkcvSw0KLS0tLS1FTkQgUEdQIFNJR05BVFVSRS0tLS0tDQo=
---001a1133f770c8b03e04fdb8536f--
+--Sig_//LD23Ml/Efg.AWxd8mRK1zy--
