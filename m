@@ -1,28 +1,31 @@
 From: Nick Krause <xerofoify@gmail.com>
 Subject: Fwd: linux-next: Tree for Jul 7
-Date: Tue, 8 Jul 2014 14:30:59 -0400
-Message-ID: <CAPDOMVgiR2kKpOmnWv70fUFcMyDzaxxHrec6eSOWF8qW38nc3w@mail.gmail.com>
+Date: Tue, 8 Jul 2014 21:07:08 -0400
+Message-ID: <CAPDOMVjraUPaAx5N4wp2MfG=n7ptQm7swizD6Aou40c2+5XsNg@mail.gmail.com>
 References: <20140707164244.18699ce8@canb.auug.org.au>
+	<CAPDOMVgiR2kKpOmnWv70fUFcMyDzaxxHrec6eSOWF8qW38nc3w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=bcaec548a7a313f5ce04fdb2cb83
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140707164244.18699ce8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary=001a1133f770c8b03e04fdb8536f
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:58439 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751085AbaGIBHJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2014 21:07:09 -0400
+Received: by mail-ve0-f178.google.com with SMTP id oy12so6650913veb.9
+        for <linux-next@vger.kernel.org>; Tue, 08 Jul 2014 18:07:08 -0700 (PDT)
+In-Reply-To: <CAPDOMVgiR2kKpOmnWv70fUFcMyDzaxxHrec6eSOWF8qW38nc3w@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---bcaec548a7a313f5ce04fdb2cb83
+--001a1133f770c8b03e04fdb8536f
 Content-Type: text/plain; charset=UTF-8
 
----------- Forwarded message ----------
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, Jul 7, 2014 at 2:42 AM
+Stephen Rowell wrote on  Mon, Jul 7, 2014 at 2:42 AM
 Subject: linux-next: Tree for Jul 7
 To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
-
+Cc:linux-next@vger.kernel.org
 Hi all,
 
 Changes since 20140704:
@@ -107,7 +110,12 @@ sh-allyesconfig fails
 Sparc64 - sparc-allmodconfig seems to pass
 1386-um -  um-defconfig succeeds
 
---bcaec548a7a313f5ce04fdb2cb83
+In addition you seem to be using a very old toolchain gcc 4.2.3 I
+would upgrade as that
+may be an issue.
+Cheers Nick
+
+--001a1133f770c8b03e04fdb8536f
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Disposition: attachment; filename="signature.asc"
 Content-Transfer-Encoding: base64
@@ -128,4 +136,4 @@ MUJFNHNHd2w3VmcrS1cvK1gNCkh0S2ZGQmV5NkEvZjJkV0M2OTRUeHNlZEc0Sk9PMXR2clRuU3Q5
 alhGV3oxR2o0eTV4VGgrbTFGWEZRSjhBa1cNCldmM1JaZVI1WEltNTBEMWxXT0EveHBIdFlzR0h5
 SENMSjNDZHlMajhnU3U5S3o2bGxKODBlVjgxTCt6VDc2MCsNClZ0KzE4VFVxUXJYd0pEWCt0NFAz
 DQo9QkcvSw0KLS0tLS1FTkQgUEdQIFNJR05BVFVSRS0tLS0tDQo=
---bcaec548a7a313f5ce04fdb2cb83--
+--001a1133f770c8b03e04fdb8536f--
