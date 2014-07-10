@@ -1,32 +1,48 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: randconfig build error with next-20140710, in net/ipv4/ipconfig.c
-Date: Thu, 10 Jul 2014 10:15:56 -0700
-Message-ID: <CAGVrzcYc+B-tsvGBspD3mujYf_mMsyRx2VoYJj3hEvwkZffX1Q@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: randconfig build error with next-20140710, in
+ net/ipv4/ipconfig.c
+Date: Thu, 10 Jul 2014 12:54:42 -0700 (PDT)
+Message-ID: <20140710.125442.1730351591773172988.davem@davemloft.net>
 References: <CA+r1ZhhJxs_EL3UbtL8qAK4_JAqo3sJ3fF3KJ_3=NcRhnJiYjg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:43098 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752275AbaGJTyn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2014 15:54:43 -0400
 In-Reply-To: <CA+r1ZhhJxs_EL3UbtL8qAK4_JAqo3sJ3fF3KJ_3=NcRhnJiYjg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, Patrick McHardy <kaber@trash.net>, netdev <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: jim.epost@gmail.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org
 
-2014-07-10 10:07 GMT-07:00 Jim Davis <jim.epost@gmail.com>:
-> Building with the attached random configuration file,
->
-> net/ipv4/ipconfig.c: In function =E2=80=98ic_dynamic=E2=80=99:
-> net/ipv4/ipconfig.c:1221:3: error: =E2=80=98ic_dev_xid=E2=80=99 undec=
-lared (first use
-> in this function)
->    ic_dev_xid =3D d->xid;
->    ^
-> net/ipv4/ipconfig.c:1221:3: note: each undeclared identifier is
-> reported only once for each function it appears in
-> make[2]: *** [net/ipv4/ipconfig.o] Error 1
-
-Looks like David just fixed it with: http://patchwork.ozlabs.org/patch/=
-368463/
---=20
-=46lorian
+RnJvbTogSmltIERhdmlzIDxqaW0uZXBvc3RAZ21haWwuY29tPg0KRGF0ZTogVGh1LCAxMCBKdWwg
+MjAxNCAxMDowNzo1MCAtMDcwMA0KDQo+IEJ1aWxkaW5nIHdpdGggdGhlIGF0dGFjaGVkIHJhbmRv
+bSBjb25maWd1cmF0aW9uIGZpbGUsDQo+IA0KPiBuZXQvaXB2NC9pcGNvbmZpZy5jOiBJbiBmdW5j
+dGlvbiChaWNfZHluYW1pY6I6DQo+IG5ldC9pcHY0L2lwY29uZmlnLmM6MTIyMTozOiBlcnJvcjog
+oWljX2Rldl94aWSiIHVuZGVjbGFyZWQgKGZpcnN0IHVzZQ0KPiBpbiB0aGlzIGZ1bmN0aW9uKQ0K
+PiAgICBpY19kZXZfeGlkID0gZC0+eGlkOw0KPiAgICBeDQo+IG5ldC9pcHY0L2lwY29uZmlnLmM6
+MTIyMTozOiBub3RlOiBlYWNoIHVuZGVjbGFyZWQgaWRlbnRpZmllciBpcw0KPiByZXBvcnRlZCBv
+bmx5IG9uY2UgZm9yIGVhY2ggZnVuY3Rpb24gaXQgYXBwZWFycyBpbg0KPiBtYWtlWzJdOiAqKiog
+W25ldC9pcHY0L2lwY29uZmlnLm9dIEVycm9yIDENCg0KU2hvdWxkIGJlIGZpeGVkIGJ5Og0KDQpG
+cm9tIDQwNWZkNzA3MTk2ZDU5NmY1OWE1MTBkMTc2ZGVkYzk3OWMxYWUzNGIgTW9uIFNlcCAxNyAw
+MDowMDowMCAyMDAxDQpGcm9tOiAiRGF2aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5l
+dD4NCkRhdGU6IFdlZCwgOSBKdWwgMjAxNCAyMjoyNToxOCAtMDcwMA0KU3ViamVjdDogW1BBVENI
+XSBpcGNvbmZpZzogT25seSBib290cCBwYXRocyBzaG91bGQgcmVmZXJlbmNlIGljX2Rldl94aWQu
+DQoNCkl0IGlzIG9ubHkgdGVzdGVkLCBhbmQgZGVjbGFyZWQsIGluIHRoZSBib290cCBjb2RlLg0K
+DQpTbywgaW4gaWNfZHluYW1pYygpIGd1YXJkIGl0J3Mgc2V0dGluZyB3aXRoIElQQ09ORklHX0JP
+T1RQLg0KDQpTaWduZWQtb2ZmLWJ5OiBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5u
+ZXQ+DQotLS0NCiBuZXQvaXB2NC9pcGNvbmZpZy5jIHwgMiArLQ0KIDEgZmlsZSBjaGFuZ2VkLCAx
+IGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvbmV0L2lwdjQvaXBj
+b25maWcuYyBiL25ldC9pcHY0L2lwY29uZmlnLmMNCmluZGV4IGYwMmY1OTQuLjViYmVmNGYgMTAw
+NjQ0DQotLS0gYS9uZXQvaXB2NC9pcGNvbmZpZy5jDQorKysgYi9uZXQvaXB2NC9pcGNvbmZpZy5j
+DQpAQCAtMTIxNywxMCArMTIxNywxMCBAQCBzdGF0aWMgaW50IF9faW5pdCBpY19keW5hbWljKHZv
+aWQpDQogCWdldF9yYW5kb21fYnl0ZXMoJnRpbWVvdXQsIHNpemVvZih0aW1lb3V0KSk7DQogCXRp
+bWVvdXQgPSBDT05GX0JBU0VfVElNRU9VVCArICh0aW1lb3V0ICUgKHVuc2lnbmVkIGludCkgQ09O
+Rl9USU1FT1VUX1JBTkRPTSk7DQogCWZvciAoOzspIHsNCisjaWZkZWYgSVBDT05GSUdfQk9PVFAN
+CiAJCS8qIFRyYWNrIHRoZSBkZXZpY2Ugd2UgYXJlIGNvbmZpZ3VyaW5nICovDQogCQlpY19kZXZf
+eGlkID0gZC0+eGlkOw0KIA0KLSNpZmRlZiBJUENPTkZJR19CT09UUA0KIAkJaWYgKGRvX2Jvb3Rw
+ICYmIChkLT5hYmxlICYgSUNfQk9PVFApKQ0KIAkJCWljX2Jvb3RwX3NlbmRfaWYoZCwgamlmZmll
+cyAtIHN0YXJ0X2ppZmZpZXMpOw0KICNlbmRpZg0KLS0gDQoxLjcuMTEuNw0KDQo=
