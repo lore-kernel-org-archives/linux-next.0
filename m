@@ -1,50 +1,30 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] m68k: Export mach_random_get_entropy to modules
-Date: Thu, 10 Jul 2014 18:05:53 +0200
-Message-ID: <1405008353-10359-1-git-send-email-geert@linux-m68k.org>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:60362 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225AbaGJQGE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2014 12:06:04 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-m68k@lists.linux-m68k.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the staging tree
+Date: Thu, 10 Jul 2014 09:12:05 -0700
+Message-ID: <20140710161205.GB20239@kroah.com>
+References: <20140710162750.60496f52@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140710162750.60496f52@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Kamat <sachin.kamat@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-When a module calls random_get_entropy():
+On Thu, Jul 10, 2014 at 04:27:50PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/staging/emxx_udc/emxx_udc.c between commit 6de2a1a7b9e2
+> ("staging: emxx_udc: Fix build error") from the staging tree and commit
+> "drivers/staging/emxx_udc/emxx_udc.c: replace strict_strto() with
+> kstrto()" from the akpm tree.
+> 
+> I fixed it up (I just used the version from the staging tree) and can
+> carry the fix as necessary (no action is required).
 
-    ERROR: "mach_random_get_entropy" [crypto/drbg.ko] undefined!
-    make[1]: *** [__modpost] Error 1
+Sounds good, thanks.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-To be queued for 3.17
-
-kisskb.ellerman.id.au/kisskb/buildresult/11449343/
----
- arch/m68k/kernel/time.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/m68k/kernel/time.c b/arch/m68k/kernel/time.c
-index 958f1adb9d0c..3857737e3958 100644
---- a/arch/m68k/kernel/time.c
-+++ b/arch/m68k/kernel/time.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/errno.h>
-+#include <linux/export.h>
- #include <linux/module.h>
- #include <linux/sched.h>
- #include <linux/kernel.h>
-@@ -30,6 +31,7 @@
- 
- 
- unsigned long (*mach_random_get_entropy)(void);
-+EXPORT_SYMBOL_GPL(mach_random_get_entropy);
- 
- 
- /*
--- 
-1.9.1
+greg k-h
