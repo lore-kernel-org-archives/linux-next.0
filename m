@@ -1,33 +1,50 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: linux-next: build failure after merge of the tty.current tree
-Date: Fri, 11 Jul 2014 11:06:56 -0400
-Message-ID: <53BFFD90.5010405@hurleysoftware.com>
-References: <20140711112108.7631911b@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jul 11 (media/pci/ttpci/av7110)
+Date: Fri, 11 Jul 2014 11:31:19 -0700
+Message-ID: <53C02D77.4070809@infradead.org>
+References: <20140711171844.39fcbb50@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout32.mail01.mtsvc.net ([216.70.64.70]:54584 "EHLO
-	n23.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752301AbaGKPHA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jul 2014 11:07:00 -0400
-In-Reply-To: <20140711112108.7631911b@canb.auug.org.au>
+Received: from bombadil.infradead.org ([198.137.202.9]:36644 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755100AbaGKSbW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jul 2014 14:31:22 -0400
+In-Reply-To: <20140711171844.39fcbb50@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Holger Waechtler <holger@convergence.de>, Oliver Endriss <o.endriss@gmx.de>
 
-On 07/10/2014 09:21 PM, Stephen Rothwell wrote:
-> Hi Greg,
->
-> After merging the tty.current tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-[...]
-> Caused by commit c557d392fbf5 ("serial: Test for no tx data on tx
-> restart").  That can't have been build tested :-(
+On 07/11/14 00:18, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20140710:
+> 
 
-Sorry about that. I don't have a full cross-compiler setup for
-build testing. Looks like that's something I'm going to have to add.
+on x86_64:
 
-Regards,
-Peter Hurley
+CONFIG_DVB_AV7110=y
+CONFIG_INPUT_EVDEV=m
+
+drivers/built-in.o: In function `av7110_emit_keyup':
+av7110_ir.c:(.text+0x76b608): undefined reference to `input_event'
+av7110_ir.c:(.text+0x76b61a): undefined reference to `input_event'
+drivers/built-in.o: In function `av7110_emit_key':
+av7110_ir.c:(.text+0x76b6b4): undefined reference to `input_event'
+av7110_ir.c:(.text+0x76b6cd): undefined reference to `input_event'
+av7110_ir.c:(.text+0x76b7b0): undefined reference to `input_event'
+drivers/built-in.o:av7110_ir.c:(.text+0x76b7ca): more undefined references to `input_event' follow
+drivers/built-in.o: In function `av7110_ir_init':
+(.text+0x76bcdb): undefined reference to `input_allocate_device'
+drivers/built-in.o: In function `av7110_ir_init':
+(.text+0x76bf93): undefined reference to `input_register_device'
+drivers/built-in.o: In function `av7110_ir_init':
+(.text+0x76c073): undefined reference to `input_free_device'
+drivers/built-in.o: In function `av7110_ir_exit':
+(.text+0x76c1db): undefined reference to `input_unregister_device'
+
+
+-- 
+~Randy
