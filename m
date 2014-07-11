@@ -1,48 +1,103 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: randconfig build error with next-20140710, in
- net/ipv4/ipconfig.c
-Date: Thu, 10 Jul 2014 12:54:42 -0700 (PDT)
-Message-ID: <20140710.125442.1730351591773172988.davem@davemloft.net>
-References: <CA+r1ZhhJxs_EL3UbtL8qAK4_JAqo3sJ3fF3KJ_3=NcRhnJiYjg@mail.gmail.com>
+From: Jianqun <xjq-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: randconfig build error with next-20140710, in sound/soc/rockchip/rockchip_i2s.c
+Date: Fri, 11 Jul 2014 08:07:20 +0800
+Message-ID: <53BF2AB8.7050307@rock-chips.com>
+References: <CA+r1ZhgB=BG5jsSaWBLMvRUjZ=X4gKJzv6KysyvPSOtFuUTbng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:43098 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752275AbaGJTyn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2014 15:54:43 -0400
-In-Reply-To: <CA+r1ZhhJxs_EL3UbtL8qAK4_JAqo3sJ3fF3KJ_3=NcRhnJiYjg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: jim.epost@gmail.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+r1ZhgB=BG5jsSaWBLMvRUjZ=X4gKJzv6KysyvPSOtFuUTbng-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jim Davis <jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org, linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-RnJvbTogSmltIERhdmlzIDxqaW0uZXBvc3RAZ21haWwuY29tPg0KRGF0ZTogVGh1LCAxMCBKdWwg
-MjAxNCAxMDowNzo1MCAtMDcwMA0KDQo+IEJ1aWxkaW5nIHdpdGggdGhlIGF0dGFjaGVkIHJhbmRv
-bSBjb25maWd1cmF0aW9uIGZpbGUsDQo+IA0KPiBuZXQvaXB2NC9pcGNvbmZpZy5jOiBJbiBmdW5j
-dGlvbiChaWNfZHluYW1pY6I6DQo+IG5ldC9pcHY0L2lwY29uZmlnLmM6MTIyMTozOiBlcnJvcjog
-oWljX2Rldl94aWSiIHVuZGVjbGFyZWQgKGZpcnN0IHVzZQ0KPiBpbiB0aGlzIGZ1bmN0aW9uKQ0K
-PiAgICBpY19kZXZfeGlkID0gZC0+eGlkOw0KPiAgICBeDQo+IG5ldC9pcHY0L2lwY29uZmlnLmM6
-MTIyMTozOiBub3RlOiBlYWNoIHVuZGVjbGFyZWQgaWRlbnRpZmllciBpcw0KPiByZXBvcnRlZCBv
-bmx5IG9uY2UgZm9yIGVhY2ggZnVuY3Rpb24gaXQgYXBwZWFycyBpbg0KPiBtYWtlWzJdOiAqKiog
-W25ldC9pcHY0L2lwY29uZmlnLm9dIEVycm9yIDENCg0KU2hvdWxkIGJlIGZpeGVkIGJ5Og0KDQpG
-cm9tIDQwNWZkNzA3MTk2ZDU5NmY1OWE1MTBkMTc2ZGVkYzk3OWMxYWUzNGIgTW9uIFNlcCAxNyAw
-MDowMDowMCAyMDAxDQpGcm9tOiAiRGF2aWQgUy4gTWlsbGVyIiA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5l
-dD4NCkRhdGU6IFdlZCwgOSBKdWwgMjAxNCAyMjoyNToxOCAtMDcwMA0KU3ViamVjdDogW1BBVENI
-XSBpcGNvbmZpZzogT25seSBib290cCBwYXRocyBzaG91bGQgcmVmZXJlbmNlIGljX2Rldl94aWQu
-DQoNCkl0IGlzIG9ubHkgdGVzdGVkLCBhbmQgZGVjbGFyZWQsIGluIHRoZSBib290cCBjb2RlLg0K
-DQpTbywgaW4gaWNfZHluYW1pYygpIGd1YXJkIGl0J3Mgc2V0dGluZyB3aXRoIElQQ09ORklHX0JP
-T1RQLg0KDQpTaWduZWQtb2ZmLWJ5OiBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5u
-ZXQ+DQotLS0NCiBuZXQvaXB2NC9pcGNvbmZpZy5jIHwgMiArLQ0KIDEgZmlsZSBjaGFuZ2VkLCAx
-IGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvbmV0L2lwdjQvaXBj
-b25maWcuYyBiL25ldC9pcHY0L2lwY29uZmlnLmMNCmluZGV4IGYwMmY1OTQuLjViYmVmNGYgMTAw
-NjQ0DQotLS0gYS9uZXQvaXB2NC9pcGNvbmZpZy5jDQorKysgYi9uZXQvaXB2NC9pcGNvbmZpZy5j
-DQpAQCAtMTIxNywxMCArMTIxNywxMCBAQCBzdGF0aWMgaW50IF9faW5pdCBpY19keW5hbWljKHZv
-aWQpDQogCWdldF9yYW5kb21fYnl0ZXMoJnRpbWVvdXQsIHNpemVvZih0aW1lb3V0KSk7DQogCXRp
-bWVvdXQgPSBDT05GX0JBU0VfVElNRU9VVCArICh0aW1lb3V0ICUgKHVuc2lnbmVkIGludCkgQ09O
-Rl9USU1FT1VUX1JBTkRPTSk7DQogCWZvciAoOzspIHsNCisjaWZkZWYgSVBDT05GSUdfQk9PVFAN
-CiAJCS8qIFRyYWNrIHRoZSBkZXZpY2Ugd2UgYXJlIGNvbmZpZ3VyaW5nICovDQogCQlpY19kZXZf
-eGlkID0gZC0+eGlkOw0KIA0KLSNpZmRlZiBJUENPTkZJR19CT09UUA0KIAkJaWYgKGRvX2Jvb3Rw
-ICYmIChkLT5hYmxlICYgSUNfQk9PVFApKQ0KIAkJCWljX2Jvb3RwX3NlbmRfaWYoZCwgamlmZmll
-cyAtIHN0YXJ0X2ppZmZpZXMpOw0KICNlbmRpZg0KLS0gDQoxLjcuMTEuNw0KDQo=
+Hi Heiko:
+
+Is it caused by the headfile ?
+#include <linux/module.h>
+
+Adviced by the maintainers, I tried not to include the headfile one by =
+one, then to compile
+driver each time, I found that is success to compile it without module.=
+h, of course
+I just compiled driver with command "ARCH=3Darm".
+
+Look up the codes, I found the functions like
+	MODULE_DESCRIPTION
+will be defined as
+	#define MODULE_DESCRIPTION(x)	/* x */
+so the code in rockchip iis driver
+	"MODULE_DESCRIPTION("ROCKCHIP IIS ASoC Interface") "
+will be defined as
+	"ROCKCHIP IIS ASoC Interface"
+that should cause the error while robot to compile.
+
+Am I right ?
+
+If it is, do I need to make a new patch or just reply to the mail ? or =
+how ...
+
+
+On 2014=E5=B9=B407=E6=9C=8810=E6=97=A5 21:53, Jim Davis wrote:
+> Building with the attached random configuration file,
+>=20
+> sound/soc/rockchip/rockchip_i2s.c:526:20: error: expected declaration=
+ specifiers
+>  or =E2=80=98...=E2=80=99 before string constant
+>  MODULE_DESCRIPTION("ROCKCHIP IIS ASoC Interface");
+>                     ^
+> sound/soc/rockchip/rockchip_i2s.c:527:15: error: expected declaration=
+ specifiers
+>  or =E2=80=98...=E2=80=99 before string constant
+>  MODULE_AUTHOR("jianqun <jay.xu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>");
+>                ^
+> sound/soc/rockchip/rockchip_i2s.c:528:16: error: expected declaration=
+ specifiers
+>  or =E2=80=98...=E2=80=99 before string constant
+>  MODULE_LICENSE("GPL v2");
+>                 ^
+> sound/soc/rockchip/rockchip_i2s.c:529:14: error: expected declaration=
+ specifiers
+>  or =E2=80=98...=E2=80=99 before string constant
+>  MODULE_ALIAS("platform:" DRV_NAME);
+>               ^
+> sound/soc/rockchip/rockchip_i2s.c:530:1: warning: data definition has=
+ no type or
+>  storage class [enabled by default]
+>  MODULE_DEVICE_TABLE(of, rockchip_i2s_match);
+>  ^
+> sound/soc/rockchip/rockchip_i2s.c:530:1: error: type defaults to =E2=80=
+=98int=E2=80=99
+> in declaration of =E2=80=98MODULE_DEVICE_TABLE=E2=80=99 [-Werror=3Dim=
+plicit-int]
+> sound/soc/rockchip/rockchip_i2s.c:530:1: warning: parameter names (wi=
+thout types
+> ) in function declaration [enabled by default]
+> cc1: some warnings being treated as errors
+> make[3]: *** [sound/soc/rockchip/rockchip_i2s.o] Error 1
+>=20
+
+--=20
+-------------
+=E8=AE=B8 =E5=89=91 =E7=BE=A4 Jay
+Rockchip Electronics Co.Ltd
+***********************************************************************=
+*****
+*IMPORTANT NOTICE:*This email is from Fuzhou Rockchip Electronics Co.,
+Ltd .The contents of this email and any attachments may contain
+information that is privileged, confidential and/or exempt from
+disclosure under applicable law and relevant NDA. If you are not the
+intended recipient, you are hereby notified that any disclosure,
+copying, distribution, or use of the information is STRICTLY PROHIBITED=
+=2E
+Please immediately contact the sender as soon as possible and destroy
+the material in its entirety in any format. Thank you.
+***********************************************************************=
+*****
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
