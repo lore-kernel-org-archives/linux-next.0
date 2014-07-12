@@ -1,67 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tty.current tree
-Date: Sat, 12 Jul 2014 11:20:12 +1000
-Message-ID: <20140712112012.69befaf0@canb.auug.org.au>
-References: <20140711112108.7631911b@canb.auug.org.au>
-	<53BFFD90.5010405@hurleysoftware.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] serial: imx: Fix build breakage
+Date: Fri, 11 Jul 2014 19:00:48 -0700
+Message-ID: <53C096D0.3000005@infradead.org>
+References: <20140711112108.7631911b@canb.auug.org.au> <1405046206-14495-1-git-send-email-peter@hurleysoftware.com> <20140712004248.GA24760@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hoqn81_sTW5PymSGc6OSp4G"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40165 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752585AbaGLBUW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2014 21:20:22 -0400
-In-Reply-To: <53BFFD90.5010405@hurleysoftware.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Peter Hurley <peter@hurleysoftware.com>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140712004248.GA24760@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Hurley <peter@hurleysoftware.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/hoqn81_sTW5PymSGc6OSp4G
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 07/11/14 17:42, Greg Kroah-Hartman wrote:
+> On Thu, Jul 10, 2014 at 10:36:46PM -0400, Peter Hurley wrote:
+>> Fix breakage introduced by
+>> commit c557d392fbf5badd693ea1946a4317c87a26a716,
+>> 'serial: Test for no tx data on tx restart'.
+>>
+>> Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
+> 
+> You forgot a "Reported-by:" tag.
+> 
+> I'll go add it...
 
-Hi Peter,
+It's not clear to me that Peter forgot it.
+Someone else brought this up -- it seems to me that
+Documentation/SubmittingPatches is a little too strong about needing
+permission to use Reported-by:
 
-On Fri, 11 Jul 2014 11:06:56 -0400 Peter Hurley <peter@hurleysoftware.com> =
-wrote:
->
-> Sorry about that. I don't have a full cross-compiler setup for
-> build testing. Looks like that's something I'm going to have to add.
+If this patch fixes a problem reported by somebody else, consider adding a
+Reported-by: tag to credit the reporter for their contribution.  Please
+note that this tag should not be added without the reporter's permission,
+especially if the problem was not reported in a public forum.  That said,
+if we diligently credit our bug reporters, they will, hopefully, be
+inspired to help us again in the future.
 
-see https://www.kernel.org/pub/tools/crosstool/
 
-These are only good for building the kernel (no libc).
+Sure, if a problem was reported privately, then we need to have permission
+to use Reported-by, but if it was reported in a public forum, that should be
+implicit permission (IMHO).
 
-You don't necessarily need to build the whole kernel but often just
-building the particular drivers is enough.  Especially if they are
-directly modified ...
+eh?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/hoqn81_sTW5PymSGc6OSp4G
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJTwI1SAAoJEMDTa8Ir7ZwVP+cP/iSoJPo2DkkOEWRRuJjcKcMd
-8kDjK6bbxHlr061TuXI7MdQFbtSPdRTZcsrWakf15+RwjyOQL5obQe6QlQIfoYjK
-nOTDr4kZNNs0t9WfRMzf787zy8ruxY4W8tZO0ymb0hCL0oE4JSkuknw8ElXIYkz0
-LR4ZXmKKPb8ZS3WELYsFhOTvCa5GhmbsAjR5rpNmsyffo7MEluNOJxgtWP8V4UC7
-P+la295S0qb30KH7G72ZXnt7rWSSGHgwK8w2ZWyMy97Np+FSDcPWRtfnuHU0HPgP
-Pd6/hR7kulNzrg/MqHpF6v8HAtZMoX0vpwMpTRB1fknHAo1Nfhs8Z0se6op3CGWH
-sqmMxwFBC6f/A98oW0KaNCtauDP3b1De08d4mgDUYKTOCCInicU3VnUx5aH8gFlu
-oQCB7AfoVRGzzFq0QHpP6aU5s3ApIXK3AWs+kC3dgZ1NRxzR9yLLDER8SoD8g/mP
-vSJdq+lJt8Gc7J7WMLdyLdLiQizhnde/NMVhhVOF3AE+bcc+3aOklfFTissyhCh8
-swChVTr/Spe/xegXRjaJhPuTF03ZT0N6TiqJXxht+DNU8xx+5/rb09rXQI6c/FLZ
-YjVA2fPKk/CwnOaZwbAiwkARmT7yVqBX+lzSWlR25PD+ADoSBoBtILVE6uALSsSo
-Ectqq2IqFtQDmyIL9B+h
-=78fX
------END PGP SIGNATURE-----
-
---Sig_/hoqn81_sTW5PymSGc6OSp4G--
+-- 
+~Randy
