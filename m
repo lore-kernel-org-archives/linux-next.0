@@ -1,50 +1,26 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 11 (media/pci/ttpci/av7110)
-Date: Fri, 11 Jul 2014 11:31:19 -0700
-Message-ID: <53C02D77.4070809@infradead.org>
-References: <20140711171844.39fcbb50@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] serial: imx: Fix build breakage
+Date: Fri, 11 Jul 2014 17:42:48 -0700
+Message-ID: <20140712004248.GA24760@kroah.com>
+References: <20140711112108.7631911b@canb.auug.org.au>
+ <1405046206-14495-1-git-send-email-peter@hurleysoftware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:36644 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755100AbaGKSbW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jul 2014 14:31:22 -0400
-In-Reply-To: <20140711171844.39fcbb50@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Holger Waechtler <holger@convergence.de>, Oliver Endriss <o.endriss@gmx.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1405046206-14495-1-git-send-email-peter@hurleysoftware.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Hurley <peter@hurleysoftware.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 07/11/14 00:18, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Jul 10, 2014 at 10:36:46PM -0400, Peter Hurley wrote:
+> Fix breakage introduced by
+> commit c557d392fbf5badd693ea1946a4317c87a26a716,
+> 'serial: Test for no tx data on tx restart'.
 > 
-> Changes since 20140710:
-> 
+> Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
 
-on x86_64:
+You forgot a "Reported-by:" tag.
 
-CONFIG_DVB_AV7110=y
-CONFIG_INPUT_EVDEV=m
-
-drivers/built-in.o: In function `av7110_emit_keyup':
-av7110_ir.c:(.text+0x76b608): undefined reference to `input_event'
-av7110_ir.c:(.text+0x76b61a): undefined reference to `input_event'
-drivers/built-in.o: In function `av7110_emit_key':
-av7110_ir.c:(.text+0x76b6b4): undefined reference to `input_event'
-av7110_ir.c:(.text+0x76b6cd): undefined reference to `input_event'
-av7110_ir.c:(.text+0x76b7b0): undefined reference to `input_event'
-drivers/built-in.o:av7110_ir.c:(.text+0x76b7ca): more undefined references to `input_event' follow
-drivers/built-in.o: In function `av7110_ir_init':
-(.text+0x76bcdb): undefined reference to `input_allocate_device'
-drivers/built-in.o: In function `av7110_ir_init':
-(.text+0x76bf93): undefined reference to `input_register_device'
-drivers/built-in.o: In function `av7110_ir_init':
-(.text+0x76c073): undefined reference to `input_free_device'
-drivers/built-in.o: In function `av7110_ir_exit':
-(.text+0x76c1db): undefined reference to `input_unregister_device'
-
-
--- 
-~Randy
+I'll go add it...
