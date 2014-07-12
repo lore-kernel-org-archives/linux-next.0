@@ -1,30 +1,29 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the  tree
-Date: Sat, 12 Jul 2014 09:53:49 -0700
-Message-ID: <20140712165349.GC12148@kroah.com>
-References: <20140711152130.45a6978f@canb.auug.org.au>
+From: bronwen hanvey <bronwenhanveey2@gmail.com>
+Subject: Hi
+Date: Sat, 12 Jul 2014 06:48:33 -1200
+Message-ID: <CAOcZiPwO+bO=JuPLe97y9e3ssUFZAWtSQ6GxqRrC1fHNVu2Auw@mail.gmail.com>
+Reply-To: jamesmadann@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140711152130.45a6978f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hurley <peter@hurleysoftware.com>, Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qg0-f67.google.com ([209.85.192.67]:53688 "EHLO
+	mail-qg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752214AbaGLSse convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 12 Jul 2014 14:48:34 -0400
+Received: by mail-qg0-f67.google.com with SMTP id f51so675698qge.2
+        for <linux-next@vger.kernel.org>; Sat, 12 Jul 2014 11:48:33 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 
-On Fri, Jul 11, 2014 at 03:21:30PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/dgrp/dgrp_tty.c between commit e359a4e38d22 ("tty:
-> Remove tty_hung_up_p() tests from tty drivers' open()") from the tty
-> tree and commit 19b1e7695be8 ("staging: dgrp: remove driver") from the
-> staging tree.
-> 
-> I fixed it up (by just removing the file) and can carry the fix as
-> necessary (no action is required).
+Hi,
 
-That sounds fine, thanks.
-
-greg k-h
+Compliment of the day to you, I sent you an email a couple of days ago
+about a transaction and haven=E2=80=99t heard from you since then. The =
+message
+was to solicit your partnership to transfer the sum of (Ten Million
+=46ive Hundred Thousand us dollars). I shall send you more information
+and procedures when I receive a positive response from you.I look
+forward to hear from you.
+Yours sincerely,
+James madan
