@@ -1,99 +1,60 @@
-From: Nick Krause <xerofoify@gmail.com>
-Subject: Re: linux-next: Tree for Jul 11
-Date: Sun, 13 Jul 2014 00:08:48 -0400
-Message-ID: <CAPDOMVi1fb5Moj8QYLW4bk07KysBoObtW8Y+vxssuz9LR3Ef+Q@mail.gmail.com>
-References: <20140711171844.39fcbb50@canb.auug.org.au>
-	<CAPDOMVgi8Cw8z_i7bTEXQSRWbOiu7kQSpAnnDkyWCkr=yf7xsQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mvebu tree with Linus' tree
+Date: Mon, 14 Jul 2014 11:06:05 +1000
+Message-ID: <20140714110605.045e5cf5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uWBeAOIUlHZX+cjcjBOSvYM"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:38226 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750711AbaGMEIw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jul 2014 00:08:52 -0400
-In-Reply-To: <CAPDOMVgi8Cw8z_i7bTEXQSRWbOiu7kQSpAnnDkyWCkr=yf7xsQ@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:59882 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751225AbaGNBGP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 13 Jul 2014 21:06:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Sat, Jul 12, 2014 at 6:26 PM, Nick Krause <xerofoify@gmail.com> wrote:
-> On Fri, Jul 11, 2014 at 3:18 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> Changes since 20140710:
->>
->> My fixes tree contains:
->>         powerpc: Disable RELOCATABLE for COMPILE_TEST with PPC64
->>
->> The tty.current tree gained a build failure so I used the version from
->> next-20140710.
->>
->> The irqchip tree gained a conflict against the arm64 tree.
->>
->> The staging tree lost its build failure and gained a conflict against
->> the tty tree.
->>
->> Non-merge commits (relative to Linus' tree): 5114
->>  4474 files changed, 191199 insertions(+), 226003 deletions(-)
->>
->> ----------------------------------------------------------------------------
->>
->> I have created today's linux-next tree at
->> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
->> are tracking the linux-next tree using git, you should not use "git pull"
->> to do so as that will try to merge the new linux-next release with the
->> old one.  You should use "git fetch" and checkout or reset to the new
->> master.
->>
->> You can see which trees have been included by looking in the Next/Trees
->> file in the source.  There are also quilt-import.log and merge.log files
->> in the Next directory.  Between each merge, the tree was built with
->> a ppc64_defconfig for powerpc and an allmodconfig for x86_64 and a
->> multi_v7_defconfig for arm. After the final fixups (if any), it is also
->> built with powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig and
->> allyesconfig (this fails its final link) and i386, sparc, sparc64 and arm
->> defconfig.
->>
->> Below is a summary of the state of the merge.
->>
->> I am currently merging 222 trees (counting Linus' and 30 trees of patches
->> pending for Linus' tree).
->>
->> Stats about the size of the tree over time can be seen at
->> http://neuling.org/linux-next-size.html .
->>
->> Status of my local build tests will be at
->> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
->> advice about cross compilers/configs that work, we are always open to add
->> more builds.
->>
->> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
->> Gortmaker for triage and bug fixes.
->>
->> --
->> Cheers,
->> Stephen Rothwell                    sfr@canb.auug.org.au
->>
+--Sig_/uWBeAOIUlHZX+cjcjBOSvYM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> I am been trying your tests for a while. Seems most of your failing
-> tests work for me.
-> Can you test a newer compiler in the 4.8 release series for gcc to see
-> if this fixes your
-> issues.
-> Cheers Nick
-I am also attaching logs of build I have that are succeeding to help
-you.Furthermore I run the builds in two steps listed below using
-compilers for
-Ubuntu 14.04 and Fedora 20 turned into dpkgs to work with Debian
-distros.Below are the steps.
-1. make ARCH=x y_defconfig
-2.ARCH= x CROSS_COMPILE=z make -j 8 2> error_file
-x = cpu architecture  I am building
-y=configuration I am building
-z= gcc I am builds this architecture
-error_file = file I am tracing errors and warnings to send if build
-fails to maintainers of that architecture
-If you have any other questions please ask me.
-Cheers Nick
+Hi all,
+
+Today's linux-next merge of the mvebu tree got a conflict in
+arch/arm/Kconfig between commit 19682f72f5db ("ARM: Remove
+ARCH_HAS_CPUFREQ config option") from Linus' tree and commit
+ba364fc752da ("ARM: Kirkwood: Remove mach-kirkwood") from the mvebu
+tree.
+
+I fixed it up (The latter just removed the whole ARCH_KIRKWOOD entry,
+so I did that) and can carry the fix as necessary (no action is
+required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/uWBeAOIUlHZX+cjcjBOSvYM
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTwy0CAAoJEMDTa8Ir7ZwVSssP/0/4OAEr1AjkTGSJX5JmFfGO
+cAQwQ/qeiQ41+nyv+XMAi3x4mjgDacbRwqlzzqYb0JIzxfgWLIYYWLCiJEAcMXDK
+PaJU/7p7geHjTWoIjkI2ru5vlQtlEZvUpxxKUqKxYR0ielBuVTGArK+SRrZ8bmRs
+4CbR6sz7KLVFe76W1Wp+yKS0NEaFMnzOdt9VoeB442ELrINWX7/TH/VVXn10+fQ6
+CHHF4gfBOPZ3j5tHXBgY5sX9cqZnAKmKJPY+ceKqsBbxJE3DyNId38eUPsZL0mdm
+0OK7+0hPRiF7QRAUBw8kiVzl6HGVkItrBThTXVkZPNzmQRPgEUU4/fVKTTcOb7Hs
+JpqA02xlXeIGUu4RQhRm4Pw1jwNExHBuHxKbvfcyU0Ktqzg6PUAWxo5y5EoDh5mx
+hJVd/DEpfGucYgMt5aANvbYaurV/JTnG9bWfVZs1wJXarJooD9DvWSuiDvKstmHR
+d/4eUSfSPGB8AOLANtZyrH28gqSTDaBqyhSlDUGxRyscFK6gfM8QiMrAKjPM+fY5
+NbHryPP/OWfQCrztSQvkS7sSnQpJOaJXsL5ZO6kwhvD0NTX9MxNGqoP1T0XqU+4L
+IDEF1uMpLj+LNzszHWs8OP8WzBjQrJFCgzYtJH/4awaBQ7Bkm7ev+yAWcsPMI08D
+96hy2f3dkXgzBI3i+bdm
+=/spD
+-----END PGP SIGNATURE-----
+
+--Sig_/uWBeAOIUlHZX+cjcjBOSvYM--
