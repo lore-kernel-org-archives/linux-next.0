@@ -1,86 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Tue, 15 Jul 2014 15:55:47 +1000
-Message-ID: <20140715155547.25959587@canb.auug.org.au>
-References: <20140715132946.771def89@canb.auug.org.au>
-	<53C4BF8E.4010509@roeck-us.net>
+Subject: linux-next: manual merge of the char-misc tree with the ia64 tree
+Date: Tue, 15 Jul 2014 16:43:49 +1000
+Message-ID: <20140715164349.5807b892@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nhdjPNs9e4c5Noeh5l8+4ib"; protocol="application/pgp-signature"
+ boundary="Sig_/aecLEYhkRiEar43u.35Gn4o"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41038 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39833 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751739AbaGOFzy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Jul 2014 01:55:54 -0400
-In-Reply-To: <53C4BF8E.4010509@roeck-us.net>
+	id S1757279AbaGOGn6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Jul 2014 02:43:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, "Chen, Gong" <gong.chen@linux.intel.com>, Tony Luck <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>
 
---Sig_/nhdjPNs9e4c5Noeh5l8+4ib
+--Sig_/aecLEYhkRiEar43u.35Gn4o
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hi all,
 
-On Mon, 14 Jul 2014 22:43:42 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 07/14/2014 08:29 PM, Stephen Rothwell wrote:
-> >
-> > After merging the v4l-dvb tree, today's linux-next build (powerpc ppc64=
-_defconfig)
-> > failed like this:
-> >
-> > arch/powerpc/kernel/smp.c:764:2: error: initialization from incompatibl=
-e pointer type [-Werror]
-> >    { cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT) },
-> >    ^
-> > arch/powerpc/kernel/smp.c:764:2: error: (near initialization for 'power=
-pc_topology[0].sd_flags') [-Werror]
-> >
-> > Caused by commit 6a0b50087a89 ("Merge branch 'patchwork' into
-> > to_next").  The change to include/linux/sched.h in this merge commit
-> > does not seem to appear in either of the parents of the merge.
-> >
-> > Its also a change that (when suggested) was shown to cause more
-> > problems than it was worth and dropped.  I can't imagine how it ended
-> > up in the merge commit.
-> >
->=20
-> Do you mean b6220ad66 (sched: Fix compiler warnings) ? I thought that was=
- accepted
-> a week or so ago.
+Today's linux-next merge of the char-misc tree got conflicts in
+drivers/Kconfig and drivers/Makefile between commit 76ac8275f296
+("trace, RAS: Add basic RAS trace event") from the ia64 tree and commit
+16603153666d ("thunderbolt: Add initial cactus ridge NHI support") from
+the char-misc tree.
 
-That is in the tip tree and includes the fixups to powerpc and arm.  I
-don't merge the tip tree till well after the v4l-dvb tree.  The merge
-in the v4l-dvb tree included only the change to include/linus/sched.h
-and neither parent fo that merge was based on the tip tree ...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/nhdjPNs9e4c5Noeh5l8+4ib
+diff --cc drivers/Kconfig
+index 4e6e66c3c8d6,9b2dcc2ea663..000000000000
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@@ -176,6 -176,6 +176,8 @@@ source "drivers/powercap/Kconfig
+ =20
+  source "drivers/mcb/Kconfig"
+ =20
+ +source "drivers/ras/Kconfig"
+ +
++ source "drivers/thunderbolt/Kconfig"
++=20
+  endmenu
+diff --cc drivers/Makefile
+index 8a72e1cc2afa,37b9ed4cd2d6..000000000000
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@@ -159,4 -158,4 +159,5 @@@ obj-$(CONFIG_NTB)		+=3D ntb
+  obj-$(CONFIG_FMC)		+=3D fmc/
+  obj-$(CONFIG_POWERCAP)		+=3D powercap/
+  obj-$(CONFIG_MCB)		+=3D mcb/
+ +obj-$(CONFIG_RAS)		+=3D ras/
++ obj-$(CONFIG_THUNDERBOLT)	+=3D thunderbolt/
+
+--Sig_/aecLEYhkRiEar43u.35Gn4o
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTxMJnAAoJEMDTa8Ir7ZwV3ykP/1KC6Mmp7crgth0cs2ptk4D8
-cpHUdhAI5t8jA1L5WayReEfiNlAos9sn7+ubP3c8Tl6SrSBGQO0Ah/86lSmdZRU/
-YJZeK/FE9sheuBM+iU/BHiWAl7gtE86Gsn/kWf+6XmnQ3sd0gYoqoptujazygS3l
-QgAtjPlYPjnXilH4GVLlT9URiNc0sSRR3fkwn0wtbEvECT+1ZscTFooEMHCuAJV1
-gQJUok71ql4DOp1pCyXHUiSJrSK8HbxoKOFsW+fE0A7S7AWumNq4v867oWuwU2aL
-erz9Hc/Nmz1VNkULOd3pa/fCVLvRVm4866PvMGs2PFv2X3F4q82/TQknH0eNpjDK
-VvVW7cAj2SIu14S05eH2M9AIpUinwOZlulLf2g3wtWqvfRmlxZ0fu1d01mybqpgk
-TOaTwX8VCT2psu2mG9BqGAlunuI7oayFdwzedR3vUJMIWXXLQHKs/nxphPGFkaa0
-FUabZYVJhU5YlhO0fUUjbDo4f4ucyv+70SrV2LJVDJT8F0jb/RKrl4ao0FVVR08f
-cmdSOCOQtFTp9u3z0pC31yVHo/D2oPMtgf7HbSbmffl2kJZYAL6VbcZnKehgN07Z
-vtK57R5PL1dGjJTXN0lm2ohZzQ2lBgnG706kQMd9qh5H2zearF0tNxFkRj7VwGba
-qfUJX2L4pwAT2QtaoYOt
-=qLRB
+iQIcBAEBCAAGBQJTxM2sAAoJEMDTa8Ir7ZwVAigP/A/48YsM7rCg9Xzx+Tn+BGMU
+sBjgbU9yUfNRO1oTwz+vXXSUG54X3t3jP9Qrt1V4wNV20aAFQYe6yicI+RooVZJM
+27DxrYYhj1+c/IitOfb4wzo5BV4SEaH2Gm3ISZTlmMYTiMKdBCMoIoctQvdK/xVe
+KCDrCMtIDZL1gIdARvRzqyzC9WWV+5YQSdusRWpc+1BBXuxvAf7rjh5hEh6VkMPC
+YUs+QzaqB/DqxDoQWLnWFsY37ky3wTlNzPmWAWmoV9Ub/EcWZNuyfr9TFnHoLZAU
+z/L8Dv1eMqLS0c7R0Tflu4RDypL6ayH5yCv8W1mvgg6rjnF6reKYffe1bFRlAert
+kRgOrc9W9ZESeBMNwOH8PCuQ6v/IHTxd5S4dYTvUxYwYzK+dOntqJRs1uxVXccda
+6t1umT2lShUSCOGYvZATfdRc57GXL0zqpZIMIuSuuuIdgihubV0+vDnNqFVQ7VC/
+73iPGYBdZwZdmHweWRIGc2+XuJrdPChOPthok9GgXMyelFHwdrZlD9oQGUSy7y5I
+A/5ioW/GW/qngfYEwHlbN/CqkRSTwugLVF1DroSGyMm8UGq2CdSgfTvqsSIWXRVu
+BbijJ3/WT754j2bhj+F6q3XIrkX5ZWBfD4yZj1Yi9SSXrYNUwaG1yX9FN8u2L+lS
+WetFN3xDfQBI6Jx0PKEY
+=I5ri
 -----END PGP SIGNATURE-----
 
---Sig_/nhdjPNs9e4c5Noeh5l8+4ib--
+--Sig_/aecLEYhkRiEar43u.35Gn4o--
