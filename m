@@ -1,54 +1,123 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: linux-next: build failure after merge of the tty.current tree
-Date: Tue, 15 Jul 2014 13:49:39 -0400
-Message-ID: <53C569B3.2080805@hurleysoftware.com>
-References: <20140711112108.7631911b@canb.auug.org.au>	<53BFFD90.5010405@hurleysoftware.com> <20140712112012.69befaf0@canb.auug.org.au> <53C131EA.2020502@hurleysoftware.com>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Tue, 15 Jul 2014 15:08:01 -0300
+Message-ID: <20140715150801.7f8099b1@recife.lan>
+References: <20140715132946.771def89@canb.auug.org.au>
+	<53C4BF8E.4010509@roeck-us.net>
+	<20140715155547.25959587@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ boundary="Sig_/Sak35ldwC4.qG_Q8EpC/0h3"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout32.mail01.mtsvc.net ([216.70.64.70]:47934 "EHLO
-	n23.mail01.mtsvc.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755173AbaGORtq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jul 2014 13:49:46 -0400
-In-Reply-To: <53C131EA.2020502@hurleysoftware.com>
+Received: from bombadil.infradead.org ([198.137.202.9]:60969 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932078AbaGOSIR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jul 2014 14:08:17 -0400
+In-Reply-To: <20140715155547.25959587@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shuah Khan <shuah.kh@samsung.com>, driverdev-devel@linuxdriverproject.org, debian-embedded@lists.debian.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/12/2014 09:02 AM, Peter Hurley wrote:
-> On 07/11/2014 09:20 PM, Stephen Rothwell wrote:
->> Hi Peter,
->>
->> On Fri, 11 Jul 2014 11:06:56 -0400 Peter Hurley <peter@hurleysoftware.com> wrote:
->>>
->>> Sorry about that. I don't have a full cross-compiler setup for
->>> build testing. Looks like that's something I'm going to have to add.
->>
->> see https://www.kernel.org/pub/tools/crosstool/
->>
->> These are only good for building the kernel (no libc).
->>
->> You don't necessarily need to build the whole kernel but often just
->> building the particular drivers is enough.  Especially if they are
->> directly modified ...
->
-> Hi Stephen,
->
-> Thanks for the link. I had found Shuah Khan's slideshow pdf on cross-compiler
-> packages earlier and so have already started down that path.
+--Sig_/Sak35ldwC4.qG_Q8EpC/0h3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Just an fyi,
+Hi Guenter,
 
-The cross-compiler packages of the emdebian project in the unstable (aka, "sid")
-distribution have broken dependencies.
+Em Tue, 15 Jul 2014 15:55:47 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
-So the instructions here
-http://events.linuxfoundation.org/sites/events/files/slides/Shuah_Khan_cross_compile_linux.pdf
-and here
-http://linuxdriverproject.org/mediawiki/index.php/Cross-compiling_Linux_kernel_on_x86_64#Installation_Steps
-are no longer applicable.
+> Hi Guenter,
+>=20
+> On Mon, 14 Jul 2014 22:43:42 -0700 Guenter Roeck <linux@roeck-us.net> wro=
+te:
+> >
+> > On 07/14/2014 08:29 PM, Stephen Rothwell wrote:
+> > >
+> > > After merging the v4l-dvb tree, today's linux-next build (powerpc ppc=
+64_defconfig)
+> > > failed like this:
+> > >
+> > > arch/powerpc/kernel/smp.c:764:2: error: initialization from incompati=
+ble pointer type [-Werror]
+> > >    { cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT) },
+> > >    ^
+> > > arch/powerpc/kernel/smp.c:764:2: error: (near initialization for 'pow=
+erpc_topology[0].sd_flags') [-Werror]
+> > >
+> > > Caused by commit 6a0b50087a89 ("Merge branch 'patchwork' into
+> > > to_next").  The change to include/linux/sched.h in this merge commit
+> > > does not seem to appear in either of the parents of the merge.
+> > >
+> > > Its also a change that (when suggested) was shown to cause more
+> > > problems than it was worth and dropped.  I can't imagine how it ended
+> > > up in the merge commit.
+> > >
 
-Regards,
-Peter Hurley
+Sorry, it was merged there by mistake. I had to apply that quick hack
+to be able check if everything was ok on my tree before pushing it
+upstream (as I do my tests with W=3D1). Without that hack, it is almost
+impossible to see anything at the compilation logs, as it generates
+hundreds of warnings like:
+
+In file included from include/linux/i2c.h:31:0,
+                 from drivers/staging/media/go7007/go7007-fw.c:31:
+include/linux/sched.h:875:25: warning: type qualifiers ignored on function =
+return type [-Wignored-qualifiers]
+ static inline const int cpu_smt_flags(void)
+                         ^
+include/linux/sched.h:882:25: warning: type qualifiers ignored on function =
+return type [-Wignored-qualifiers]
+ static inline const int cpu_core_flags(void)
+                         ^
+include/linux/sched.h:1002:21: warning: type qualifiers ignored on function=
+ return type [-Wignored-qualifiers]
+ typedef const int (*sched_domain_flags_f)(void);
+                     ^
+
+even when compiling just drivers/media and drivers/staging/media.
+
+> >=20
+> > Do you mean b6220ad66 (sched: Fix compiler warnings) ? I thought that w=
+as accepted
+> > a week or so ago.
+>=20
+> That is in the tip tree and includes the fixups to powerpc and arm.  I
+> don't merge the tip tree till well after the v4l-dvb tree.  The merge
+> in the v4l-dvb tree included only the change to include/linus/sched.h
+> and neither parent fo that merge was based on the tip tree ...
+>=20
+Stephen,=20
+
+Do you know if/when this patch will be merged upstream? It doesn't
+seem to be at 2.6.16-rc5. Otherwise, I'll likely cherry-pick it on
+my trees, as the lack of this fixup is making hard for me to check
+if a media tree patch isn't introducing new warnings.
+
+Thanks,
+Mauro
+
+--Sig_/Sak35ldwC4.qG_Q8EpC/0h3
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTxW4KAAoJEAhfPr2O5OEVVuoP/RzrjuYSI8kFNBD1Mwh9+5w/
+au2X/AcKmy457ia5wGifgkGQys25/sC+pOsBNT5Jzu0lh6q6VRsDkadEnYVLt682
+7yCPDS4oekgqlSPBrLAe/mqdCFt9N5ZKpjXUF2kq+egppep4IDLf/Yn/NnU+MMpP
+TUXyer4UxAwuhJ9wxTAV//o58i1TTwAlWpya8VPS6V0TyYdzrhsPxpwh6sy2IKZM
+KzHA3BlCAnv6/4Bvsex7wDLOnVwo8t8M7VApwaRX1UeY948goxiIVymjhY78GKkT
+mKLb3XfvVOvghJDgLpTrQCx1gXPaKtMCy4c8/ewJb9hpJYYLdVG3HWxgasQyHfjn
+Nqki81LJ74DrvOhuU/FmG+BCoR/bGfPNLGyX2oCklYmPyXiAbZsFdzzfB519VKEs
+B5hS496e0ok9QO8AJZXFw6XYAWS8HDjeTnm64wgzLP7L/bQkScKP1PWkd0REWCQ0
+6m/4Agq3XYGviSbRDxwuuTMCbNi/SZ1tV61Xn8fjOL7KDY7av6REzBb9aApPLcPa
+LNl5kFDPK2qApYxgPBlgn4rsdOUOlFuVzuy9DlAY/K3w7jDuTp0cdhySPOKpcET3
+r2ENJbJOKcpqvY6QD78HH46+LJhJ8x8xCNljeLOwJGlo5ZqB/cl2vwQ8DPE+3/TH
+T1i8qh7XjcYnX54wdAZ+
+=mNws
+-----END PGP SIGNATURE-----
+
+--Sig_/Sak35ldwC4.qG_Q8EpC/0h3--
