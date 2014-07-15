@@ -1,83 +1,135 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the ia64 tree
-Date: Tue, 15 Jul 2014 16:43:49 +1000
-Message-ID: <20140715164349.5807b892@canb.auug.org.au>
+Subject: linux-next: manual merge of the random tree with the crypto-current
+ tree
+Date: Tue, 15 Jul 2014 17:30:25 +1000
+Message-ID: <20140715173025.0aaa9a51@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/aecLEYhkRiEar43u.35Gn4o"; protocol="application/pgp-signature"
+ boundary="Sig_/dLIUgCjKlCQ45Uw0j6BhD//"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39833 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60974 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757279AbaGOGn6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Jul 2014 02:43:58 -0400
+	id S1757712AbaGOHad (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Jul 2014 03:30:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, "Chen, Gong" <gong.chen@linux.intel.com>, Tony Luck <tony.luck@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>
+To: Theodore Ts'o <tytso@mit.edu>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Shah <amit.shah@redhat.com>, Torsten Duwe <duwe@lst.de>
 
---Sig_/aecLEYhkRiEar43u.35Gn4o
+--Sig_/dLIUgCjKlCQ45Uw0j6BhD//
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Theodore,
 
-Today's linux-next merge of the char-misc tree got conflicts in
-drivers/Kconfig and drivers/Makefile between commit 76ac8275f296
-("trace, RAS: Add basic RAS trace event") from the ia64 tree and commit
-16603153666d ("thunderbolt: Add initial cactus ridge NHI support") from
-the char-misc tree.
+Today's linux-next merge of the random tree got a conflict in
+drivers/char/hw_random/core.c between commit d3cc7996473a ("hwrng:
+fetch randomness only after device init") from the crypto-current tree
+and commit b77e62203be2 ("hwrng: create filler thread") and
+53f52341d87b ("hwrng: add per-device entropy derating") from the random
+tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/Kconfig
-index 4e6e66c3c8d6,9b2dcc2ea663..000000000000
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@@ -176,6 -176,6 +176,8 @@@ source "drivers/powercap/Kconfig
- =20
-  source "drivers/mcb/Kconfig"
- =20
- +source "drivers/ras/Kconfig"
- +
-+ source "drivers/thunderbolt/Kconfig"
+diff --cc drivers/char/hw_random/core.c
+index c4419ea1ab07,349a3b852be9..000000000000
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@@ -53,42 -55,42 +55,62 @@@ static struct task_struct *hwrng_fill
+  static LIST_HEAD(rng_list);
+  static DEFINE_MUTEX(rng_mutex);
+  static int data_avail;
+- static u8 *rng_buffer;
++ static u8 *rng_buffer, *rng_fillbuf;
++ static unsigned short current_quality;
++ static unsigned short default_quality; /* =3D 0; default to "off" */
 +=20
-  endmenu
-diff --cc drivers/Makefile
-index 8a72e1cc2afa,37b9ed4cd2d6..000000000000
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@@ -159,4 -158,4 +159,5 @@@ obj-$(CONFIG_NTB)		+=3D ntb
-  obj-$(CONFIG_FMC)		+=3D fmc/
-  obj-$(CONFIG_POWERCAP)		+=3D powercap/
-  obj-$(CONFIG_MCB)		+=3D mcb/
- +obj-$(CONFIG_RAS)		+=3D ras/
-+ obj-$(CONFIG_THUNDERBOLT)	+=3D thunderbolt/
++ module_param(current_quality, ushort, 0644);
++ MODULE_PARM_DESC(current_quality,
++ 		 "current hwrng entropy estimation per mill");
++ module_param(default_quality, ushort, 0644);
++ MODULE_PARM_DESC(default_quality,
++ 		 "default entropy content of hwrng per mill");
++=20
++ static void start_khwrngd(void);
+ =20
+ +static inline int rng_get_data(struct hwrng *rng, u8 *buffer, size_t size,
+ +			       int wait);
+ +
+  static size_t rng_buffer_size(void)
+  {
+  	return SMP_CACHE_BYTES < 32 ? 32 : SMP_CACHE_BYTES;
+  }
+ =20
+ -static inline int hwrng_init(struct hwrng *rng)
+ +static void add_early_randomness(struct hwrng *rng)
+  {
+ -	int err;
+ +	unsigned char bytes[16];
+ +	int bytes_read;
+ +
+ +	/*
+ +	 * Currently only virtio-rng cannot return data during device
+ +	 * probe, and that's handled in virtio-rng.c itself.  If there
+ +	 * are more such devices, this call to rng_get_data can be
+ +	 * made conditional here instead of doing it per-device.
+ +	 */
+ +	bytes_read =3D rng_get_data(rng, bytes, sizeof(bytes), 1);
+ +	if (bytes_read > 0)
+ +		add_device_randomness(bytes, bytes_read);
+ +}
+ =20
+ +static inline int hwrng_init(struct hwrng *rng)
+ +{
+  	if (rng->init) {
+ -		err =3D rng->init(rng);
+ -		if (err)
+ -			return err;
+ +		int ret;
+ +
+ +		ret =3D  rng->init(rng);
+ +		if (ret)
+ +			return ret;
+  	}
+ +	add_early_randomness(rng);
++=20
++ 	current_quality =3D rng->quality ? : default_quality;
++ 	current_quality &=3D 1023;
++=20
++ 	if (current_quality =3D=3D 0 && hwrng_fill)
++ 		kthread_stop(hwrng_fill);
++ 	if (current_quality > 0 && !hwrng_fill)
++ 		start_khwrngd();
++=20
+  	return 0;
+  }
+ =20
 
---Sig_/aecLEYhkRiEar43u.35Gn4o
+--Sig_/dLIUgCjKlCQ45Uw0j6BhD//
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTxM2sAAoJEMDTa8Ir7ZwVAigP/A/48YsM7rCg9Xzx+Tn+BGMU
-sBjgbU9yUfNRO1oTwz+vXXSUG54X3t3jP9Qrt1V4wNV20aAFQYe6yicI+RooVZJM
-27DxrYYhj1+c/IitOfb4wzo5BV4SEaH2Gm3ISZTlmMYTiMKdBCMoIoctQvdK/xVe
-KCDrCMtIDZL1gIdARvRzqyzC9WWV+5YQSdusRWpc+1BBXuxvAf7rjh5hEh6VkMPC
-YUs+QzaqB/DqxDoQWLnWFsY37ky3wTlNzPmWAWmoV9Ub/EcWZNuyfr9TFnHoLZAU
-z/L8Dv1eMqLS0c7R0Tflu4RDypL6ayH5yCv8W1mvgg6rjnF6reKYffe1bFRlAert
-kRgOrc9W9ZESeBMNwOH8PCuQ6v/IHTxd5S4dYTvUxYwYzK+dOntqJRs1uxVXccda
-6t1umT2lShUSCOGYvZATfdRc57GXL0zqpZIMIuSuuuIdgihubV0+vDnNqFVQ7VC/
-73iPGYBdZwZdmHweWRIGc2+XuJrdPChOPthok9GgXMyelFHwdrZlD9oQGUSy7y5I
-A/5ioW/GW/qngfYEwHlbN/CqkRSTwugLVF1DroSGyMm8UGq2CdSgfTvqsSIWXRVu
-BbijJ3/WT754j2bhj+F6q3XIrkX5ZWBfD4yZj1Yi9SSXrYNUwaG1yX9FN8u2L+lS
-WetFN3xDfQBI6Jx0PKEY
-=I5ri
+iQIcBAEBCAAGBQJTxNiXAAoJEMDTa8Ir7ZwVjxwP/AsSIiX+lOu52xeiaTGLVEul
+ElJVfhz4Yzrn4oMfn/CxehqTRVgGgl5IZrbnC6siOIsBtVcf+OmaICM0QgflWV0Z
+IoXtSNjdBJSSqknIml7sIgwBRuChHxS+M5FTbVWoUAr4OrnFSADckaU73Az46nwK
+0qLBsDFXrl5cqI2j/YsISDnWXNSt1it7F9z5q19qU4bsJpGn43Qye50Eco3zlHVi
+29RSpMEq0APSCOJdtugrVAxpJAu/ARi/63hkOxP5NKgXMsFqQ0PbiFXS+JlV3XFG
+/zDXFhR2CkzVT/9WWM5v3P1iZXRMDTZmUmlXKnzAu6QQwrYX7hQb0O38hj1w3d1J
+tXsNhycUpoO+s9ncm9BfQ7vF44s4ybBhQG74vViwgS1K/w+WCUj/UDPAYcJYWkrJ
+NNu6Wj4BCsgsOnV6X94c0Jr5jm68Tu02KXsSZnAy0gXlH5+g+2ccML5FRRVjG3JJ
+hU0csX1bJcXjTApwJSdZBnCOW5wDBB+q7gWowosV6N2gg2fh1XlQNbnqK4czxy5x
+r1pUSuladklcBjF8ARd+T+3F1slpP/Sz4owJEvr4zpgwvDkF+YOHG4aVtsIyKidm
+s4od8kMcWqHlRQGRlpAghK+YoRU1jFUJ1jxTsCmgpFwpN5UadlZXJwBqi5ruiK7L
+ahYycRQxaLQhnEWSHt+y
+=jmXk
 -----END PGP SIGNATURE-----
 
---Sig_/aecLEYhkRiEar43u.35Gn4o--
+--Sig_/dLIUgCjKlCQ45Uw0j6BhD//--
