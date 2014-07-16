@@ -1,58 +1,64 @@
-From: Ingo Molnar <mingo@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Wed, 16 Jul 2014 15:21:14 +0200
-Message-ID: <20140716132114.GA17163@gmail.com>
+Date: Wed, 16 Jul 2014 23:22:43 +1000
+Message-ID: <20140716232243.3cf8efed@canb.auug.org.au>
 References: <20140715132946.771def89@canb.auug.org.au>
- <53C4BF8E.4010509@roeck-us.net>
- <20140715155547.25959587@canb.auug.org.au>
- <20140715150801.7f8099b1@recife.lan>
- <20140715190807.GA26057@roeck-us.net>
- <20140716130434.6b09b2e1@canb.auug.org.au>
+	<53C4BF8E.4010509@roeck-us.net>
+	<20140715155547.25959587@canb.auug.org.au>
+	<20140715150801.7f8099b1@recife.lan>
+	<20140715190807.GA26057@roeck-us.net>
+	<20140716130434.6b09b2e1@canb.auug.org.au>
+	<20140716132114.GA17163@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140716130434.6b09b2e1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1xd+swPQc48sLkCOXYGuaEe"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:49116 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758139AbaGPNWv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2014 09:22:51 -0400
+In-Reply-To: <20140716132114.GA17163@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
 Cc: Guenter Roeck <linux@roeck-us.net>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
 
+--Sig_/1xd+swPQc48sLkCOXYGuaEe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Ingo,
 
-> Hi Guenter,
-> 
-> On Tue, 15 Jul 2014 12:08:07 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > > > > Do you mean b6220ad66 (sched: Fix compiler warnings) ? I thought that was accepted
-> > > > > a week or so ago.
-> > > > 
-> > > > That is in the tip tree and includes the fixups to powerpc and arm.  I
-> > > > don't merge the tip tree till well after the v4l-dvb tree.  The merge
-> > > > in the v4l-dvb tree included only the change to include/linus/sched.h
-> > > > and neither parent fo that merge was based on the tip tree ...
-> > > > 
-> > > Stephen, 
-> > > 
-> > > Do you know if/when this patch will be merged upstream? It doesn't
-> > > seem to be at 2.6.16-rc5. Otherwise, I'll likely cherry-pick it on
-> > 	s/2.16/3.16/
-> > > my trees, as the lack of this fixup is making hard for me to check
-> > > if a media tree patch isn't introducing new warnings.
-> > 
-> > Only queued for 3.17 as far as I can see, and not scheduled for 3.16.
-> 
-> Its in the sched/urgent branch of the tip tree, so hopefully it will go
-> to Linus shortly.
-> 
-> [ccing various tip tree maintainers ...]
-> 
-> Hi guys, this commit (b6220ad66 (sched: Fix compiler warnings)) fixes
-> lots of W=1 build warnings ... just wondering when it will progress?
+On Wed, 16 Jul 2014 15:21:14 +0200 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> FYI, I sent the fix to Linus earlier today.
 
-FYI, I sent the fix to Linus earlier today.
+Excellent, thanks.
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-	Ingo
+--Sig_/1xd+swPQc48sLkCOXYGuaEe
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTxnyoAAoJEMDTa8Ir7ZwVO6oP/RpTr7Pdzx75YlLq6XH3j1YM
+TRSqCGQqtdV03pFFzyiJUpHt40DKP+53nXGnK46zEJEmW7zeM+oz/jZ/502f38dG
+AWDmnY51Nb5PEGc2PlYL1o48dkS3U3cPz8fGvCQmUgEOVKwIqAwK8fv1nIHA94be
+mJy5H6Sn10kYLE2PAaW2Uqnx7jQRNRoZalS8onbD9zd28hSCUPlAgQnbxwk0TFjZ
+5tqrfZvB408R+QFh1MEKnKsQIoVbyXfhi/9GjNp9Xg1QX1B9WL4XrOu9Nr9PuBaT
+tDYEqcqb/68NasVausSCyHTqG2P0Kz+6WOCB3csvArjYcKYhf4sJgOIxsxqxssE7
+vAIBvkO17tIWnonESwyWRiaimSn+qsBlrpgAfQEbxd2VH2E83BHOGuTUAcX0wsVX
+aFsdSZgKPiSjKo+eKqRefttLLpx0lfb74SNmK9nb856Xv6kKzafk1n3S+/aH+OxY
+bSvYapfVbjSJPOJ7kJ6GzMjHR5GZJhVu/I+zxEb5/6s7qY6J4mcT9HGWbv9RSC0d
+rBEg4rssvS/DqMJtprTZGlG1TsKoTMvPyLAsFWZjPNOjY8hIZnKaV1+i74G33UP9
+IQ8CjxTpoxT30tnHHJjd8FySnrwA56jRge6P5+vUNqND0hpf9+Gz7TWZDZkwxrQo
+vYm2DbXPylmhyLsaT2ua
+=XvaL
+-----END PGP SIGNATURE-----
+
+--Sig_/1xd+swPQc48sLkCOXYGuaEe--
