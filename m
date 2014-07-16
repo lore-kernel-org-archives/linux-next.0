@@ -1,65 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless-next tree
-Date: Wed, 16 Jul 2014 13:28:51 +1000
-Message-ID: <20140716132851.5b974707@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: manual merge of the infiniband tree with the net-next
+ tree
+Date: Wed, 16 Jul 2014 13:53:20 +1000
+Message-ID: <20140716135320.4011c6c8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n9D+SMf1hjfo5ju.as/a=P4"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34111 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759199AbaGPD26 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Jul 2014 23:28:58 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Raphael Silva <rapphil@gmail.com>
+ boundary="Sig_/vgw9m8+VmK4jRFpS8g.bNdB"; protocol="application/pgp-signature"
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hariprasad Shenai <hariprasad-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/n9D+SMf1hjfo5ju.as/a=P4
+--Sig_/vgw9m8+VmK4jRFpS8g.bNdB
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi all,
 
-After merging the wireless-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the infiniband tree got a conflict in
+drivers/infiniband/hw/cxgb4/device.c between commit 7730b4c7e32c
+("cxgb4/iw_cxgb4: work request logging feature") from the net-next tree
+and commit 6b54d54dea82 ("RDMA/cxgb4: Initialize the device status
+page") from the infiniband tree.
 
-drivers/staging/rtl8723au/core/rtw_sta_mgt.c: In function 'rtw_free_stainfo=
-23a':
-drivers/staging/rtl8723au/core/rtw_sta_mgt.c:254:27: error: expected expres=
-sion before ';' token
-  pstapriv->asoc_sta_count-;
-                           ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 3dd51964026e ("rtl8723au: Corrections in the coding
-style") (its always the cleanup patches that cause problems :-))
-Please unit test *all* patches.
-
-I have used the wireless-next tree from next-20140715 for today.
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
 
---Sig_/n9D+SMf1hjfo5ju.as/a=P4
+diff --cc drivers/infiniband/hw/cxgb4/device.c
+index df1f1b52c7ec,7db82b24302b..000000000000
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@@ -843,16 -696,7 +843,17 @@@ static int c4iw_rdev_open(struct c4iw_r
+  		pr_err(MOD "error allocating status page\n");
+  		goto err4;
+  	}
+ +	if (c4iw_wr_log) {
+ +		rdev->wr_log =3D kzalloc((1 << c4iw_wr_log_size_order) *
+ +				       sizeof(*rdev->wr_log), GFP_KERNEL);
+ +		if (rdev->wr_log) {
+ +			rdev->wr_log_size =3D 1 << c4iw_wr_log_size_order;
+ +			atomic_set(&rdev->wr_log_idx, 0);
+ +		} else {
+ +			pr_err(MOD "error allocating wr_log. Logging disabled\n");
+ +		}
+ +	}
++ 	rdev->status_page->db_off =3D 0;
+  	return 0;
+  err4:
+  	c4iw_rqtpool_destroy(rdev);
+
+--Sig_/vgw9m8+VmK4jRFpS8g.bNdB
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTxfF4AAoJEMDTa8Ir7ZwVgxkP/j6d6vLFUOFOMJCxW8zo3QlO
-58dd4KcP4BCrqWaSHKPcC1Ih5kzVNH1VXTRaNcL8mk6OFra3UXVpJ89b4qxksFvW
-+htqDluHEz5VnIXK02XFCzDRvaLqkkuo7kGRWo2gYVSbqSKqAlb/eX5pi0EAwVed
-YChAc+Efr1EM5HQ1mhHH9XsP2nxGbm94dO2XKlEL/i0qnzPRaAdNwnZcDtglLM7L
-86yApQTT2HhQeOdv8thJFWcMOgRGzob884O98/m8m5Yx/tmXgCVddsNFzM26X78n
-heCqoEpbpy4MVlf3zAZUdp9O9BPJbnFcfw/ua4/tN/BmdoVZUcTmz9boC1qkqhfy
-K9ihFHebvXGZ+I8POBMztzb2toBuZiSjRGJpGNCW6KolXDzy9rXo+KzTcd5vDSQl
-w8j9QU9FtSx2ux07+6BoDGt4iR7lYFYvtg3Ad5/uI20Xbh6hGbagovl3tntahTcP
-wFnLL17xWuTtjvqatWvUNQoPG/0x30PaX9YT/RiHYliLpvz+klo4+Pw3eBuunQW+
-yNorZfWQ0oMGXFHn3NzvKn1IyfGmEFWT11o9EzTw3NE/7XI4G19O+KCi+3jxLK38
-NAJchHGYWswRCZiwLiIwjPhHOpEbox1Sipr+1MiQntCgwewFe5tnWDzU343Px15K
-3hfsP8VZt7hbXZ4KrzDa
-=ptH7
+iQIcBAEBCAAGBQJTxfc0AAoJEMDTa8Ir7ZwVFzMP/izJ3B4E7kKLRfXjJn+3HGjF
+wnWQpY+8zzHXeiT1Y/8AZSC5c1Dxy2FAPE9WrLHOX+2l43tz3py/pGG8zbyIaXqb
+uIr6SSkoAJ0zoWYma891tIrVVzABvwgYBhPbKgt/kxLFh9IlexIrSbS/+OuYmRs5
+5kOyBJa7Wn2IwjH2WqcxFiquZtvohIWtD5Yu43VBBbQnPmfn3ywDK/VZuTtAIv3r
+TPXzb4BrWOcxJxN8hMHKyKB1/qBNp5Fl2EzB6fWKKY9lfogCpYUuVzH3PINei1yW
+Wd295ZaqfrlEiCPjqIJ3BTdpfecft4lcdPJBcOPcYK24BTCdIexT91jiGBlo75lb
+sL3Qnyj3MbYf51fM2RAj0GX+beE2l6XhxgKb3RyqIvHkcGHE+EHeX9NFmBUfdr3z
+1vvXe5eCgRB5Gk4qjgUDeTkULd97niAABmESUAHRLbwpnsM2fxFCyQvnIDGGJYJo
+5p5xRnWCU55VjdR8aZQyXLNZFS7WlzRiQfO5AotqJGdQzjn5WZbfFMNmtOYgR2tY
+NJCeQaBfEga2IoQM9cWNjzVs2uY6utpGzVn6JQRMXVHyr0k5fQmMhZgW2h09lXVz
+SepUmmAQNW3FpMoR5p4QN0a1i3X60JCig0KcEv3jE186XdAdEhzKPAzE/ay4hem+
+WYgpBOi+UG7qkp9K6yZW
+=HbYj
 -----END PGP SIGNATURE-----
 
---Sig_/n9D+SMf1hjfo5ju.as/a=P4--
+--Sig_/vgw9m8+VmK4jRFpS8g.bNdB--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
