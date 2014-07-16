@@ -1,72 +1,58 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Wed, 16 Jul 2014 10:54:02 +0200
-Message-ID: <20140716085402.GD7121@dhcp22.suse.cz>
-References: <20140716182641.5c27a6be@canb.auug.org.au>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Wed, 16 Jul 2014 15:21:14 +0200
+Message-ID: <20140716132114.GA17163@gmail.com>
+References: <20140715132946.771def89@canb.auug.org.au>
+ <53C4BF8E.4010509@roeck-us.net>
+ <20140715155547.25959587@canb.auug.org.au>
+ <20140715150801.7f8099b1@recife.lan>
+ <20140715190807.GA26057@roeck-us.net>
+ <20140716130434.6b09b2e1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140716182641.5c27a6be@canb.auug.org.au>
+In-Reply-To: <20140716130434.6b09b2e1@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Guenter Roeck <linux@roeck-us.net>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed 16-07-14 18:26:41, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> mm/memcontrol.c:5269:12: error: 'CFTYPE_INSANE' undeclared here (not in a function)
->    .flags = CFTYPE_INSANE,
->             ^
-> 
-> Caused by commit 8fa6a8baeffc ("memcg: deprecate memory.force_empty
-> knob") interacting with commits a8ddc8215e1a ("cgroup: distinguish the
-> default and legacy hierarchies when handling cftypes") and 05ebb6e60f04
-> ("cgroup: make CFTYPE_ONLY_ON_DFL and CFTYPE_NO_ internal to cgroup
-> core") from the cgroup tree.
->
-> I applied the following fix up patch:
 
-This basically means dropping the page from Andrew's tree after the
-above cgroups changes. I am sorry but I was really busy last few weeks
-so I didn't follow cgroups changes closely. I will post a patch that
-deals with the dfl hierarchy.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 16 Jul 2014 18:20:59 +1000
-> Subject: [PATCH] memcg-deprecate-memoryforce_empty-knob-fix2
+> Hi Guenter,
 > 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  mm/memcontrol.c | 1 -
->  1 file changed, 1 deletion(-)
+> On Tue, 15 Jul 2014 12:08:07 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > > > > Do you mean b6220ad66 (sched: Fix compiler warnings) ? I thought that was accepted
+> > > > > a week or so ago.
+> > > > 
+> > > > That is in the tip tree and includes the fixups to powerpc and arm.  I
+> > > > don't merge the tip tree till well after the v4l-dvb tree.  The merge
+> > > > in the v4l-dvb tree included only the change to include/linus/sched.h
+> > > > and neither parent fo that merge was based on the tip tree ...
+> > > > 
+> > > Stephen, 
+> > > 
+> > > Do you know if/when this patch will be merged upstream? It doesn't
+> > > seem to be at 2.6.16-rc5. Otherwise, I'll likely cherry-pick it on
+> > 	s/2.16/3.16/
+> > > my trees, as the lack of this fixup is making hard for me to check
+> > > if a media tree patch isn't introducing new warnings.
+> > 
+> > Only queued for 3.17 as far as I can see, and not scheduled for 3.16.
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 8fa6602a32cd..e1c9699b157b 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5266,7 +5266,6 @@ static struct cftype mem_cgroup_files[] = {
->  	},
->  	{
->  		.name = "force_empty",
-> -		.flags = CFTYPE_INSANE,
->  		.write = mem_cgroup_force_empty_write,
->  	},
->  	{
-> -- 
-> 2.0.1
+> Its in the sched/urgent branch of the tip tree, so hopefully it will go
+> to Linus shortly.
 > 
+> [ccing various tip tree maintainers ...]
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> Hi guys, this commit (b6220ad66 (sched: Fix compiler warnings)) fixes
+> lots of W=1 build warnings ... just wondering when it will progress?
 
+FYI, I sent the fix to Linus earlier today.
 
+Thanks,
 
--- 
-Michal Hocko
-SUSE Labs
+	Ingo
