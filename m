@@ -1,37 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
- tree
-Date: Wed, 16 Jul 2014 13:52:39 -0700
-Message-ID: <20140716205239.GB14387@kroah.com>
-References: <20140716164654.67300e1a@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: manual merge of the pm tree with the ia64 tree
+Date: Wed, 16 Jul 2014 23:53:26 +0200
+Message-ID: <1945215.v4beMAkkaN@vostro.rjw.lan>
+References: <20140715135620.2e68ee57@canb.auug.org.au> <2083565.B2UV9LfG6j@vostro.rjw.lan> <1AE640813FDE7649BE1B193DEA596E8802641B27@SHSMSX101.ccr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:35692 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752478AbaGPUxG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2014 16:53:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20140716164654.67300e1a@canb.auug.org.au>
+Received: from v094114.home.net.pl ([79.96.170.134]:62423 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751359AbaGPVfL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2014 17:35:11 -0400
+In-Reply-To: <1AE640813FDE7649BE1B193DEA596E8802641B27@SHSMSX101.ccr.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Arnd Bergmann <arnd@arndb.de>
+To: "Zheng, Lv" <lv.zheng@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Luck, Tony" <tony.luck@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Chen, Gong" <gong.chen@linux.intel.com>
 
-On Wed, Jul 16, 2014 at 04:46:54PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Wednesday, July 16, 2014 03:06:13 AM Zheng, Lv wrote:
+> Hi,
 > 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/media/sn9c102/Kconfig between commit c0e11a2a24db
-> ("[media] sn9c102: remove deprecated driver") from the v4l-dvb tree and
-> commit cfa880069d09 ("staging: sn9c102 depends on USB") from the
-> staging tree.
+> > From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
+> > Sent: Tuesday, July 15, 2014 8:15 PM
+> > 
+> > On Tuesday, July 15, 2014 01:56:20 PM Stephen Rothwell wrote:
+> > >
+> > > --Sig_/Cs291xJCrI1kc_+PiCdNT0M
+> > > Content-Type: text/plain; charset=US-ASCII
+> > > Content-Transfer-Encoding: quoted-printable
+> > >
+> > > Hi Rafael,
+> > >
+> > > Today's linux-next merge of the pm tree got a conflict in
+> > > drivers/acpi/acpi_extlog.c between commits 2dfb7d51a61d ("trace, RAS:
+> > > Add eMCA trace event interface") and d6cae935ec5b ("trace, eMCA: Add a
+> > > knob to adjust where to save event log") from the ia64 tree and commit
+> > > 0a00fd5e20fd ("ACPICA: Restore error table definitions to reduce code
+> > > differences between Linux and ACPICA upstream") from the pm tree.
+> > >
+> > > I fixed it up (hopefully - see below) and can carry the fix as
+> > > necessary (no action is required).
+> > 
+> > Thanks for fixing this up!
+> > 
+> > Lv, can you please check if acpi_extlog.c is fine in linux-next?
 > 
-> I fixed it up (I just removed the file) and can carry the fix as
-> necessary (no action is required).
+> I checked.
+> 
+> There is no problem in rafael/linux-pm.git/linux-next branch.
+> The 2 commits:
+>   trace, RAS: Add eMCA trace event interface
+>   trace, eMCA: Add a knob to adjust where to save event log
+> are not in torvalds/linux.git/master branch, I found them in aegl/linux.git/next branch.
+> 
+> So if torvalds/linux.git/master merges rafael/linux-pm.git/linux-next before merging aegl/linux.git/next, we will need the following fix.
+> And the following collision fix is correct.
 
-Thanks, lots of staging drivers are getting deleted here, which is a
-good thing :)
+Thanks for checking!
 
-greg k-h
+Rafael
