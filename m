@@ -1,50 +1,58 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Tue, 15 Jul 2014 21:29:03 -0700
-Message-ID: <53C5FF8F.8040402@roeck-us.net>
-References: <20140715132946.771def89@canb.auug.org.au>	<53C4BF8E.4010509@roeck-us.net>	<20140715155547.25959587@canb.auug.org.au>	<20140715150801.7f8099b1@recife.lan>	<20140715190807.GA26057@roeck-us.net> <20140716130434.6b09b2e1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Wed, 16 Jul 2014 16:43:22 +1000
+Message-ID: <20140716164322.472de7c7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NxFSIUSMY2k5bljjAX4QPYO"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:56833 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964822AbaGPE3F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2014 00:29:05 -0400
-In-Reply-To: <20140716130434.6b09b2e1@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:60739 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932875AbaGPGna (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2014 02:43:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Gundersen <teg@jklm.no>, Kristina =?UTF-8?B?TWFydMWhZW5rbw==?= <kristina.martsenko@gmail.com>
 
-On 07/15/2014 08:04 PM, Stephen Rothwell wrote:
-> Hi Guenter,
->
-> On Tue, 15 Jul 2014 12:08:07 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->>
->>>>> Do you mean b6220ad66 (sched: Fix compiler warnings) ? I thought that was accepted
->>>>> a week or so ago.
->>>>
->>>> That is in the tip tree and includes the fixups to powerpc and arm.  I
->>>> don't merge the tip tree till well after the v4l-dvb tree.  The merge
->>>> in the v4l-dvb tree included only the change to include/linus/sched.h
->>>> and neither parent fo that merge was based on the tip tree ...
->>>>
->>> Stephen,
->>>
->>> Do you know if/when this patch will be merged upstream? It doesn't
->>> seem to be at 2.6.16-rc5. Otherwise, I'll likely cherry-pick it on
->> 	s/2.16/3.16/
->>> my trees, as the lack of this fixup is making hard for me to check
->>> if a media tree patch isn't introducing new warnings.
->>
->> Only queued for 3.17 as far as I can see, and not scheduled for 3.16.
->
-> Its in the sched/urgent branch of the tip tree, so hopefully it will go
-> to Linus shortly.
->
+--Sig_/NxFSIUSMY2k5bljjAX4QPYO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Excellent, glad to hear that I was wrong. Looking forward to it.
+Hi Greg,
 
-Thanks,
-Guenter
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/cxt1e1/linux.c between commit c835a6773314 ("net: set
+name_assign_type in alloc_netdev()") from the net-next tree and commit
+14b596c9d80b ("staging: cxt1e1: remove driver") from the staging tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/NxFSIUSMY2k5bljjAX4QPYO
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTxh8PAAoJEMDTa8Ir7ZwVMw0P/05jTQh4OobsTpXerH/ebdUZ
+zN8LVRvDiK/iyp7UAKp6XXKPoSqTYtm8o6Gj6ZXUGS3gUY5ct9B1DhhSySjQV9Vj
+UAr0ZIHlFQ98ks35pyO3lkKQV73nIMpk0ElkNmGpm1d2xdE4y95N/RBYqSLV2Hoo
+1EX0apw+YR+o5zs9XOjf9giSBHRyQUQ4eP5v/gTZ/uc2s9m/zhQsns6jauPJXyuY
+ckpnqhxwjnd70cFj8zLRCKDmJq5fQp1jCt+lxsCEIAANKR4MnR63q6OflCy20OzR
+Rh7nf/NZgWI+iGYGFPQe0/oGibARsPxPFfW5G7B6yLHjMp70Bdiec7URKw09DeLz
+7YX4g8IA4xpR+3D5Ly7kkjwupjDcWQhtbYUHFuMLMjTwK3X6OTF7JuJlhWrFMmJ1
+zKWeblDXvO2M6lTA41m4+7DUacaRZ2elpdAPYyekalvwz+wWIAlqnS6BWHx6F1uL
+PTkGF3/BjC2NgvpJB69rfWIKSzNFNOCBpDxnWRDyzCxPV8H4zlkoycmnE+oVdkOK
+SDOMQLknYRXHA9O52VXYe61u5SS7jkQx/d5RGaDLbmn6bLNcTwqpkhIBw3nt7Hrs
+oJQUKO4x+oJeTNnRTgDlPvnffEHBe4eoN6mCsoiKCqhq6nz+CkqbmYQ9Ff6Mhpiz
+qGcjfQ+3ca1ofMZRp6Vb
+=79nJ
+-----END PGP SIGNATURE-----
+
+--Sig_/NxFSIUSMY2k5bljjAX4QPYO--
