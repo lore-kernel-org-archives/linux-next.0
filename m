@@ -1,83 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jul 16
-Date: Thu, 17 Jul 2014 11:47:18 +1000
-Message-ID: <20140717114718.3895d851@canb.auug.org.au>
-References: <20140716184550.18b6da3f@canb.auug.org.au>
-	<CAPDOMViywcY=cYFT9EM3N3wESXQUX7uWa3jLLLKpv=QGF-Dtmw@mail.gmail.com>
-	<20140717105144.2cb29989@canb.auug.org.au>
-	<CAPDOMVh5_JXKwPQ9EwtXHLYnqNRhEMedF5F5K7H+PEqMuCZa8Q@mail.gmail.com>
+Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
+Date: Thu, 17 Jul 2014 11:54:09 +1000
+Message-ID: <20140717115409.03b7fb40@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CVPgom+r5bv=gRV=+YvZf+s"; protocol="application/pgp-signature"
+ boundary="Sig_/HPMNHKueOWJ+JeJghvp_QrN"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44552 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50241 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751267AbaGQBr0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2014 21:47:26 -0400
-In-Reply-To: <CAPDOMVh5_JXKwPQ9EwtXHLYnqNRhEMedF5F5K7H+PEqMuCZa8Q@mail.gmail.com>
+	id S1751263AbaGQByP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2014 21:54:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Krause <xerofoify@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
---Sig_/CVPgom+r5bv=gRV=+YvZf+s
+--Sig_/HPMNHKueOWJ+JeJghvp_QrN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nick,
+Hi Kukjin,
 
-On Wed, 16 Jul 2014 21:16:16 -0400 Nick Krause <xerofoify@gmail.com> wrote:
->
-> > On Wed, 16 Jul 2014 20:45:25 -0400 Nick Krause <xerofoify@gmail.com> wr=
-ote:
-> >>
-> >> On Wed, Jul 16, 2014 at 4:45 AM, Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> >> >
-> >> > Status of my local build tests will be at
-> >> > http://kisskb.ellerman.id.au/linux-next .
-> >
-> >> I am trying to get the maintainers to clean up still failing builds.
-> >> When you get time I wondering
-> >> if you can send me a list  of still failing builds and warnings of
-> >> interest in the kernel that is'
-> >> up to date for me to help clean up these outstanding issues with the
-> >> maintainers support as needed.
-> >
-> > See above ...
->=20
-> There seems to be a few that are still succeeding for me that aren't for.
-> Would you mind testing some of them again to see if they are succeeding
-> with a gcc compiler that is newer then version 4.7.
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/Kconfig between commit 2fd48f94426d ("ARM: mach-s5p: get rid
+of all <mach/gpio.h> headers") from the arm-soc tree and commit
+72dc5e8f84b0 ("ARM: S5PV210: Enable multi-platform build support") from
+the samsung tree.
 
-Please tell us exactly what you are testing: what kernel version, what
-compiler/binutils version.  The kernel is meant to be able to be built
-with gcc 4.7 (and some earlier) - barring compiler bugs, of course.
+I fixed it up (the latter is a superset of the former) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/CVPgom+r5bv=gRV=+YvZf+s
+--Sig_/HPMNHKueOWJ+JeJghvp_QrN
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTxysqAAoJEMDTa8Ir7ZwVqTQP/AhmEzSR2qcD7qr69Z1Jq0W9
-Ek1uSlrar8yFM0rK8bvwkE4pl7vwtuhP2r4ltoI5/xCPgbqUOPqPNUO3GrvxgzN3
-9DL9SzyqxXNzhOZKKIJWrmzRxnx9l1Hs8COmV12vuTRN5vqeMGUoMiM/7eBrXKUZ
-GvXaQgaxa0C15wrA0J6puzig3UIaF15Ajoaq91Ycpgnffjz5Ed47hGq6DPqrOC9y
-9v5DDoZpsh+K/sKxtbOKqyRd9RHn5UgO64oEejmxJnkREizWoduPSJ2AK/48e6sQ
-oTySxb4pP3PStT/tKtbAXctoYYpBG541LA+aKvBW0NaQ1oFBHIzNdz9wCSteesyy
-F2QdCvme83VWojZMJjd7dUzapNrBjl0YGRYCqHUGPAWhp/HjRqLT4BCNvr6b7yf4
-nzqNORX0WPJJP8rMZJ56qpEHqo8vx/SaF/34wfQtHSlRywmJr0e1jjnJIzR+bNNU
-4aVLJJ0JdgIAhKaNB8gOH/viXxT5j7wD1Bulb2AOf1nsrSNpHpHTFAf0Bk+iUQ/c
-GaQC/SlckJPGAz1s5GHyWTnyteKs51i6PnBKLHusW8lwyWm5VexbTaLquQchvvsF
-0DKkaKgbI/qOmPC2+N7Q1Xyrnbfn60cfatd85O/zRIYjqsj5UNDIUkXqKCq7jv50
-FTnd04e2OCM8Fnm1qCyW
-=6oCx
+iQIcBAEBCAAGBQJTxyzFAAoJEMDTa8Ir7ZwV5UIP/RLfWMMh6TYTxee1t4jknKkf
+9d5uEjBsnQUnRn6FpJu0dTidFXxjPKzp+spSJ7oKpaQuQg0aeFl8CGyG+vl92PIc
+4XbGd2ibM7Mc++uo/GaHwZ5btk9TMOGST++vv0dVV0SxIHS8AvFvNCm+r86i0QVI
++HW8985OrI5bBKFhdCOjTnOgiYFL2OQitsnBH6+GuxJH3C+Ow5IcmTbniQHN0xLl
+ovIi28I/81bFAslgt6AWnoJFWZS0wweHvYE3zqAu4AFdkI2LELjPgqe1BqHBkuTp
+LWpfI4BlXTGe+2NqIzfJ+KviK+u3mVPHRuwrQ/SqWJNuMg93dIWzqV3JEvrRiiYD
+eqkMJMJu+w7NlrTJItV6Bz/KfB549kZfbMeLFsIxTAOVknfY1Y9NW/P7OyhIQtDF
+6pGUgWOwElVhnJf3p9XQrGufBFkh/3gCQ6FKkWbO690WM3SbG2eJQi8CfgT0nRkL
+X6mx+/KUhnyJY9dACiwEk32CG8VumIhquz6st0FG2ByXTEvALRzb/EAjjTSzUmtk
+iJsquvlHWREmmLjRjO5TdKs3TKRBIexwT5fDykSG9jvuiCH2ySKm6PQo9XbCSLhT
+5d8mwjQMRy8y7o+kclbEI+xae/zjdHdQPH7K3qsi4rayZDptyYta+p8+OtWQCxm9
+RDWqwZixgpvKq6GRfryL
+=+OtF
 -----END PGP SIGNATURE-----
 
---Sig_/CVPgom+r5bv=gRV=+YvZf+s--
+--Sig_/HPMNHKueOWJ+JeJghvp_QrN--
