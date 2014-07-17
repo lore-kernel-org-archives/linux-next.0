@@ -1,45 +1,59 @@
-From: Nick Krause <xerofoify@gmail.com>
-Subject: Re: linux-next: Tree for Jul 16
-Date: Wed, 16 Jul 2014 21:16:16 -0400
-Message-ID: <CAPDOMVh5_JXKwPQ9EwtXHLYnqNRhEMedF5F5K7H+PEqMuCZa8Q@mail.gmail.com>
-References: <20140716184550.18b6da3f@canb.auug.org.au>
-	<CAPDOMViywcY=cYFT9EM3N3wESXQUX7uWa3jLLLKpv=QGF-Dtmw@mail.gmail.com>
-	<20140717105144.2cb29989@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mvebu tree with the arm tree
+Date: Thu, 17 Jul 2014 11:39:57 +1000
+Message-ID: <20140717113957.199f8e94@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8hK/grGIJAM3QWGPbAtScax"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:52196 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbaGQBQQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2014 21:16:16 -0400
-In-Reply-To: <20140717105144.2cb29989@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:45516 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750750AbaGQBkF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2014 21:40:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
->
-> On Wed, 16 Jul 2014 20:45:25 -0400 Nick Krause <xerofoify@gmail.com> wrote:
->>
->> On Wed, Jul 16, 2014 at 4:45 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> >
->> > Status of my local build tests will be at
->> > http://kisskb.ellerman.id.au/linux-next .
->
->> I am trying to get the maintainers to clean up still failing builds.
->> When you get time I wondering
->> if you can send me a list  of still failing builds and warnings of
->> interest in the kernel that is'
->> up to date for me to help clean up these outstanding issues with the
->> maintainers support as needed.
->
-> See above ...
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--Sig_/8hK/grGIJAM3QWGPbAtScax
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There seems to be a few that are still succeeding for me that aren't for.
-Would you mind testing some of them again to see if they are succeeding
-with a gcc compiler that is newer then version 4.7.
-Cheers Nick
+Hi all,
+
+Today's linux-next merge of the mvebu tree got a conflict in
+arch/arm/mach-mvebu/headsmp-a9.S between commit e77a0969a99e ("ARM:
+convert all "mov.* pc, reg" to "bx reg" for ARMv6+") from the arm tree
+and commit 435b4642e49f ("ARM: mvebu: use the common function for
+Armada 375 SMP workaround") from the mvebu tree.
+
+I fixed it up (the latter removed the code modified by the former) and
+can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/8hK/grGIJAM3QWGPbAtScax
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTxylzAAoJEMDTa8Ir7ZwVvkoP/AliaaLAgMAhj5jFKUj/Q0+/
+v2seEEOFElo2WvqUs3Daiw+XSPIcZczxp+s9YZfzEdCOzIoiHQPSeDCW2PYS5mu0
+QqwYqUGdfTHt/iIHpo9CvlIylyg23ASBFobzJUo3anCUs0LiLXB3yyR/vo2Is8YV
+g8jVOiH6YjgstwVnjP4pVlDySPENvamfxFBSDPnrTLK/gnL6NB7weZQwaZykAH1S
+AfoyNBAKcO9sMjU/4MTvmF4dToJeXGJckNcLlj555Px0VlhcxnGLKnRlgXeTevRk
+++QKOzIESNul4sK720WrndZiyAWB2bgCklLrsjMpkuxqJ9Lw5uGa03CempKgeLWq
+iT8ruuh6jTqF1hQ2Gb8Zv9cfvPtimcfhm/GLNuSrWMzVNsoMxEwEws+1sruYHEqD
+I3qYUnUz36iSbuMa5ds7d69C5AIp9YTwW7wp5kZQTCAboeyFCtejt9l9ej/EnIjj
+Fs8QBsPIB8811KUiXLUAX0lLAVXfmGB9gZZUI6s42JOvbHHKVMJtPdF5zGQjC82K
+1tANKiXE1Sw7a+uUtKpdZZrfXBNaGyAI4LRZzmelIZeJICDwW9UsifyfPDy8BX2p
+KOW+alsOtFOWvaUuLueniN6L4USxCOuP+1fin9kAo2m48rPc0dw4dW9j7n6cKVV9
+9mIuvY0tIDAGil/3JFwG
+=+4zU
+-----END PGP SIGNATURE-----
+
+--Sig_/8hK/grGIJAM3QWGPbAtScax--
