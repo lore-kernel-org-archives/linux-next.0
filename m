@@ -1,59 +1,110 @@
-From: Nick Krause <xerofoify@gmail.com>
-Subject: Re: linux-next: Tree for Jul 16
-Date: Wed, 16 Jul 2014 23:39:30 -0400
-Message-ID: <CAPDOMVjsmEVjyAaOgyLA3ybe+tCXwjrdJk3w=abEV1rNQ5zURg@mail.gmail.com>
-References: <20140716184550.18b6da3f@canb.auug.org.au>
-	<CAPDOMViywcY=cYFT9EM3N3wESXQUX7uWa3jLLLKpv=QGF-Dtmw@mail.gmail.com>
-	<20140717105144.2cb29989@canb.auug.org.au>
-	<CAPDOMVh5_JXKwPQ9EwtXHLYnqNRhEMedF5F5K7H+PEqMuCZa8Q@mail.gmail.com>
-	<20140717114718.3895d851@canb.auug.org.au>
-	<CAPDOMVipLjtRCyZUYCEYLsaKWUaEwM1KbRSS9COUtdHj0rodWw@mail.gmail.com>
-	<20140717131457.15f3fb4d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with Linus' tree
+Date: Thu, 17 Jul 2014 16:52:38 +1000
+Message-ID: <20140717165238.2e056cba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AcrTNHBEI669Ml7DJOT7IdL"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:64820 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750994AbaGQDjb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2014 23:39:31 -0400
-In-Reply-To: <20140717131457.15f3fb4d@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:38522 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752504AbaGQGwp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Jul 2014 02:52:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-On Wed, Jul 16, 2014 at 11:14 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Nick,
->
-> On Wed, 16 Jul 2014 22:01:35 -0400 Nick Krause <xerofoify@gmail.com> wrote:
->>
->> Absolutely , I am using the latest kernel rc from git. I am using gcc
->> 4.8.3 and binutils 2.83.91.
->
-> Then that has nothing to do with me ... I am the linux-next
-> maintainer.  I just happen to use the same build test system as is also
-> used to test Linus' tree (kisskb).  I hope you are looking at the right
-> result pages for what you are testing.  The URL I gave you was for the
-> linux-next builds, not Linus' tree.
->
->> In addition I am using  the default configurations as you are in less
->> I am doing it differently.
->> By the way xtensa-defconfig seems to fail because of binutils as I
->> discussed this with
->> the maintainers and they seemed to have tested it with a newer upstream binutils
->> then I am using and it succeeded it the linking failures I am seeing with it.
->
-> Maybe we need per architecture minimum tools versions (instead of
-> current global one).
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--Sig_/AcrTNHBEI669Ml7DJOT7IdL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Felipe,
 
-That seems like a good idea. I am also curious if when there is a
-build failure in
-the mainline kernel if we can mail the logs to the maintainers of that
-arch as if
-we do it seems to get resolved much faster, usually in a day or two,
-Cheers Nick
+Today's linux-next merge of the usb-gadget tree got a conflict in
+include/uapi/linux/usb/functionfs.h between commit 091221417853 ("usb:
+gadget: f_fs: resurect usb_functionfs_descs_head structure") from
+Linus' tree and commit f0175ab51993 ("usb: gadget: f_fs: OS descriptors
+support") from the usb-gadget tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/uapi/linux/usb/functionfs.h
+index 24b68c59dcf8,b66fae77c08c..000000000000
+--- a/include/uapi/linux/usb/functionfs.h
++++ b/include/uapi/linux/usb/functionfs.h
+@@@ -33,14 -32,37 +32,45 @@@ struct usb_endpoint_descriptor_no_audi
+  	__u8  bInterval;
+  } __attribute__((packed));
+ =20
++ /* MS OS Descriptor header */
++ struct usb_os_desc_header {
++ 	__u8	interface;
++ 	__le32	dwLength;
++ 	__le16	bcdVersion;
++ 	__le16	wIndex;
++ 	union {
++ 		struct {
++ 			__u8	bCount;
++ 			__u8	Reserved;
++ 		};
++ 		__le16	wCount;
++ 	};
++ } __attribute__((packed));
++=20
++ struct usb_ext_compat_desc {
++ 	__u8	bFirstInterfaceNumber;
++ 	__u8	Reserved1;
++ 	__u8	CompatibleID[8];
++ 	__u8	SubCompatibleID[8];
++ 	__u8	Reserved2[6];
++ };
++=20
++ struct usb_ext_prop_desc {
++ 	__le32	dwSize;
++ 	__le32	dwPropertyDataType;
++ 	__le16	wPropertyNameLength;
++ } __attribute__((packed));
++=20
++ #ifndef __KERNEL__
++=20
+ +/* Legacy format, deprecated as of 3.14. */
+ +struct usb_functionfs_descs_head {
+ +	__le32 magic;
+ +	__le32 length;
+ +	__le32 fs_count;
+ +	__le32 hs_count;
+ +} __attribute__((packed, deprecated));
+ +
+  /*
+   * Descriptors format:
+   *
+
+--Sig_/AcrTNHBEI669Ml7DJOT7IdL
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTx3K7AAoJEMDTa8Ir7ZwVTH0P/Av+mD7TttaVFeRSf3oR53Uo
+OqjCeBcN8dbZDnlyHVRpEwd8CqvPmtfRWDOTJmhsCstHswswci60bq2U6NTDwUAk
+ByUc/Nv+GmFybt//X5A8/amB7VVOTopIZdhrknXbJffBpLxW0t3FxAMcBFgw4WKm
+zrHsncWVwvI30EwvQ9PUAVUbpDTzzcK0BdC/D++BcIAe3brJDP/83gwXNVxCx0OU
+oCZW26lHWKenkuV84LEV2TT4/SThuxHd6UEldV8bnoWSkxBWIxvI/E+Ehm9Rpxus
+pkSBO1nMYuYv6Q3Ti7ITkYWiwSmN6Zo18a98uaxXSaNDEkTaVcmf3ocO5MtF9STj
+Y0Dpt5jnTo1wIBenwNrKo0OLU4iydH5QNYRYmpEIH9SftOOFX80+5fOWAtU8tjSS
+KOaFlhA5PUiOmR9AOLp7fZKS8WkTvHg/UvYd8tdM7uS7SeVf5e2df4wzf56UGMep
+copyh98Bywc4F3/ryp9Krq96AV0G53Drk7tW+6yQduAogGPx/VT8ZRA5F8eJ3D6w
+PH6jn5eA4AKYwQK0lSOTHXfwhtlsuqGEidn6g2VVU3x58TQkUSEM27/egSXjG1NV
+12KMqLAplN1/J5EN1HUVWXZ3tDti4SWRhXXCWE6RYFcyv2xRF8FPtK/hwbTlfroQ
+Nvq9zJ+TszdOxKzZMJUr
+=kmV/
+-----END PGP SIGNATURE-----
+
+--Sig_/AcrTNHBEI669Ml7DJOT7IdL--
