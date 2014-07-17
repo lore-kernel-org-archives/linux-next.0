@@ -1,69 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Nick Krause <xerofoify@gmail.com>
 Subject: Re: linux-next: Tree for Jul 16
-Date: Thu, 17 Jul 2014 10:51:44 +1000
-Message-ID: <20140717105144.2cb29989@canb.auug.org.au>
+Date: Wed, 16 Jul 2014 21:16:16 -0400
+Message-ID: <CAPDOMVh5_JXKwPQ9EwtXHLYnqNRhEMedF5F5K7H+PEqMuCZa8Q@mail.gmail.com>
 References: <20140716184550.18b6da3f@canb.auug.org.au>
 	<CAPDOMViywcY=cYFT9EM3N3wESXQUX7uWa3jLLLKpv=QGF-Dtmw@mail.gmail.com>
+	<20140717105144.2cb29989@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K+_07ABXV2V_EeefFawZQeV"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDOMViywcY=cYFT9EM3N3wESXQUX7uWa3jLLLKpv=QGF-Dtmw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nick Krause <xerofoify@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:52196 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891AbaGQBQQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2014 21:16:16 -0400
+In-Reply-To: <20140717105144.2cb29989@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
---Sig_/K+_07ABXV2V_EeefFawZQeV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Nick,
-
-[Please trim your replies to just the bit (if any) that you are
-referring to]
-
-On Wed, 16 Jul 2014 20:45:25 -0400 Nick Krause <xerofoify@gmail.com> wrote:
 >
-> On Wed, Jul 16, 2014 at 4:45 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> >
-> > Status of my local build tests will be at
-> > http://kisskb.ellerman.id.au/linux-next .
+> On Wed, 16 Jul 2014 20:45:25 -0400 Nick Krause <xerofoify@gmail.com> wrote:
+>>
+>> On Wed, Jul 16, 2014 at 4:45 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> >
+>> > Status of my local build tests will be at
+>> > http://kisskb.ellerman.id.au/linux-next .
+>
+>> I am trying to get the maintainers to clean up still failing builds.
+>> When you get time I wondering
+>> if you can send me a list  of still failing builds and warnings of
+>> interest in the kernel that is'
+>> up to date for me to help clean up these outstanding issues with the
+>> maintainers support as needed.
+>
+> See above ...
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-> I am trying to get the maintainers to clean up still failing builds.
-> When you get time I wondering
-> if you can send me a list  of still failing builds and warnings of
-> interest in the kernel that is'
-> up to date for me to help clean up these outstanding issues with the
-> maintainers support as needed.
-
-See above ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/K+_07ABXV2V_EeefFawZQeV
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJTxx4kAAoJEMDTa8Ir7ZwVMvIP/1ZDyD5okiq38Jw0gGnQMxa9
-pljLFm8wUy6ERCRD/zwYaD9IA/416s+URDgeeYyuMjFeVarl0bSWb4OXNI7uUQ/A
-YjoseW7n3VspzE2h5XhDiM+4cJy/aWAJw/YAGA6dkChXdIBQ5S9cOk/WRgKzTIV4
-5qPPpgsHV8CH2ybgfmWqeUkdzps/hHl9Req2IpxDTsCmkCl5LvTKgj8c7DP/mN+B
-tYmAhFmYvgOei1mp7FXKPqefj0YOI2aaS46CMfxqMw1YfzoC36kErUamiUYGHGvz
-1lsNWuUdXMCjfnLdPYStpGxuFEZSrP9YrvZ0pqbkOgqItnW93/cYVhC0RSFo74PZ
-p4gB5u4JjsWiHmYrWCyI0p8CsHL8vnZ1Xname2QKnGY9s0TeVBswDSI6egJW5oUi
-ySZCouzUk08lh/n05XnbgdzaYwRispavHEgjZxmoycmr8ADna6E654FqD1IomuqR
-GLxurIyYH+zmy2tkAvRJWia6Cv8ViMhodc5QGrUCgLc5yqr7uKouepYt2gcHWNRW
-n9ysHfWAlCY+s3Q+NLgRpn7NlAXmQIgQc9exVaNrbqSc60Rak5Fd9AzWHIhRMH/Y
-LyofQJAtugsv8X7+WV2GpBDLIgxis/XA7OgLnK1Qi0iaB40Qdxya4fYEYDXV4xvJ
-lZf5rU1m5Zkb2C5wrNRg
-=16+9
------END PGP SIGNATURE-----
-
---Sig_/K+_07ABXV2V_EeefFawZQeV--
+There seems to be a few that are still succeeding for me that aren't for.
+Would you mind testing some of them again to see if they are succeeding
+with a gcc compiler that is newer then version 4.7.
+Cheers Nick
