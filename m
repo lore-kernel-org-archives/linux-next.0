@@ -1,59 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the arm tree
-Date: Thu, 17 Jul 2014 11:39:57 +1000
-Message-ID: <20140717113957.199f8e94@canb.auug.org.au>
+Subject: linux-next: manual merge of the mvebu tree with Linus' tree
+Date: Thu, 17 Jul 2014 11:44:44 +1000
+Message-ID: <20140717114444.15d99fc2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8hK/grGIJAM3QWGPbAtScax"; protocol="application/pgp-signature"
+ boundary="Sig_/c2ySEUNRYniU/PLmfOWmc8y"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45516 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59695 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750750AbaGQBkF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2014 21:40:05 -0400
+	id S1751311AbaGQBov (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2014 21:44:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
---Sig_/8hK/grGIJAM3QWGPbAtScax
+--Sig_/c2ySEUNRYniU/PLmfOWmc8y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
 Today's linux-next merge of the mvebu tree got a conflict in
-arch/arm/mach-mvebu/headsmp-a9.S between commit e77a0969a99e ("ARM:
-convert all "mov.* pc, reg" to "bx reg" for ARMv6+") from the arm tree
-and commit 435b4642e49f ("ARM: mvebu: use the common function for
-Armada 375 SMP workaround") from the mvebu tree.
+drivers/cpuidle/cpuidle-armada-370-xp.c between commit dc559aabe2d4
+("cpuidle: mvebu: Fix the name of the states") from Linus' tree and
+commit 742450174037 ("cpuidle: mvebu: rename the driver from
+armada-370-xp to mvebu-v7") from the mvebu tree.
 
-I fixed it up (the latter removed the code modified by the former) and
-can carry the fix as necessary (no action is required).
+The former patch appears to have been applied to the
+renamed file, so there was nothing to do (except remove the git created
+version of the old file).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/8hK/grGIJAM3QWGPbAtScax
+--Sig_/c2ySEUNRYniU/PLmfOWmc8y
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTxylzAAoJEMDTa8Ir7ZwVvkoP/AliaaLAgMAhj5jFKUj/Q0+/
-v2seEEOFElo2WvqUs3Daiw+XSPIcZczxp+s9YZfzEdCOzIoiHQPSeDCW2PYS5mu0
-QqwYqUGdfTHt/iIHpo9CvlIylyg23ASBFobzJUo3anCUs0LiLXB3yyR/vo2Is8YV
-g8jVOiH6YjgstwVnjP4pVlDySPENvamfxFBSDPnrTLK/gnL6NB7weZQwaZykAH1S
-AfoyNBAKcO9sMjU/4MTvmF4dToJeXGJckNcLlj555Px0VlhcxnGLKnRlgXeTevRk
-++QKOzIESNul4sK720WrndZiyAWB2bgCklLrsjMpkuxqJ9Lw5uGa03CempKgeLWq
-iT8ruuh6jTqF1hQ2Gb8Zv9cfvPtimcfhm/GLNuSrWMzVNsoMxEwEws+1sruYHEqD
-I3qYUnUz36iSbuMa5ds7d69C5AIp9YTwW7wp5kZQTCAboeyFCtejt9l9ej/EnIjj
-Fs8QBsPIB8811KUiXLUAX0lLAVXfmGB9gZZUI6s42JOvbHHKVMJtPdF5zGQjC82K
-1tANKiXE1Sw7a+uUtKpdZZrfXBNaGyAI4LRZzmelIZeJICDwW9UsifyfPDy8BX2p
-KOW+alsOtFOWvaUuLueniN6L4USxCOuP+1fin9kAo2m48rPc0dw4dW9j7n6cKVV9
-9mIuvY0tIDAGil/3JFwG
-=+4zU
+iQIcBAEBCAAGBQJTxyqRAAoJEMDTa8Ir7ZwVJScP/0bkFXIU0trwoU+5ZuM6OOnp
+Q1ONoYy1RDVVW2Ztc8du9FCive1CUiCMYoziiIo16Tg1kb/oql0eL6LeBZcdIsgM
+hu3GtkkiSR896ci90PiFDMjqmk7XzZ1OES4cVanEtwqamYMDzeMfC918QZgs+GO+
+t8Kw9Ga8yvk/RWQ9mvT2aFcyedANvJKxeVMva50wGZRZl8HmFVHNHwKhxqltqQTN
+gkZtFAD6BH4PH2e8ZSVbVP2oc6ALBXsLZsXqWad8OHvC7c7iR0iNOWppNB5dE+09
+0ucxRMxJaLoXBjew2kHE6m8x7ks7A5Gk7ksrbhmMwnTpLRegwWRZnN7gGGOI52yw
+0lwFK0psGkoutdJ4N81E3Ns/41txAvUdluiOfzAXQPBnpJtSxFpsgUSQcb0N5YvB
+8l5K2RwTqw0mdUeHOpQPOlrHryJZJmdajiACPw1gudOmWcRrfh+zd4mH3j8qE2mY
+A1mUK563Td5iXn9fXuszGLabH6LTAmKo032bmC3JxsHU632q3VjF3O2yGGDpqhc8
+l9SZmsN4oOhe7gpO5C4kz/ILnHfSqrZzIU+tgt3aAbZq+rKavb5YO/oluNNgPcnc
+xvKC5T+kN/8VjJBANal8JC2URExm1L2Duzke5R7i/D7UlwzABdFg5zzMmTnh25lx
+/J4q4LadS905DNM2CV9j
+=ZGrL
 -----END PGP SIGNATURE-----
 
---Sig_/8hK/grGIJAM3QWGPbAtScax--
+--Sig_/c2ySEUNRYniU/PLmfOWmc8y--
