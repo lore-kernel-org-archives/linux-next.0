@@ -1,71 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
-Date: Thu, 17 Jul 2014 12:06:31 +1000
-Message-ID: <20140717120631.4bc75d13@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jul 16
+Date: Thu, 17 Jul 2014 13:14:57 +1000
+Message-ID: <20140717131457.15f3fb4d@canb.auug.org.au>
+References: <20140716184550.18b6da3f@canb.auug.org.au>
+	<CAPDOMViywcY=cYFT9EM3N3wESXQUX7uWa3jLLLKpv=QGF-Dtmw@mail.gmail.com>
+	<20140717105144.2cb29989@canb.auug.org.au>
+	<CAPDOMVh5_JXKwPQ9EwtXHLYnqNRhEMedF5F5K7H+PEqMuCZa8Q@mail.gmail.com>
+	<20140717114718.3895d851@canb.auug.org.au>
+	<CAPDOMVipLjtRCyZUYCEYLsaKWUaEwM1KbRSS9COUtdHj0rodWw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rVWd7GgWbMHPOh.rAriy7QI"; protocol="application/pgp-signature"
+ boundary="Sig_/E0B3fP2AJT.sWZAxMwz1JOv"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58902 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34278 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750956AbaGQCGi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2014 22:06:38 -0400
+	id S1752077AbaGQDPF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2014 23:15:05 -0400
+In-Reply-To: <CAPDOMVipLjtRCyZUYCEYLsaKWUaEwM1KbRSS9COUtdHj0rodWw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Nick Krause <xerofoify@gmail.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Sig_/rVWd7GgWbMHPOh.rAriy7QI
+--Sig_/E0B3fP2AJT.sWZAxMwz1JOv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Nick,
 
-Today's linux-next merge of the samsung tree got conflicts in
-arch/arm/mach-s5pv210/dev-audio.c,
-arch/arm/mach-s5pv210/include/mach/gpio-samsung.h,
-arch/arm/mach-s5pv210/mach-aquila.c, arch/arm/mach-s5pv210/mach-goni.c,
-arch/arm/mach-s5pv210/mach-smdkv210.c,
-arch/arm/mach-s5pv210/setup-fb-24bpp.c,
-arch/arm/mach-s5pv210/setup-fimc.c, arch/arm/mach-s5pv210/setup-i2c0.c,
-arch/arm/mach-s5pv210/setup-i2c1.c, arch/arm/mach-s5pv210/setup-i2c2.c,
-arch/arm/mach-s5pv210/setup-ide.c,
-arch/arm/mach-s5pv210/setup-keypad.c,
-arch/arm/mach-s5pv210/setup-sdhci-gpio.c,
-arch/arm/mach-s5pv210/setup-spi.c and
-arch/arm/plat-samsung/s5p-irq-eint.c between commit 2fd48f94426d ("ARM:
-mach-s5p: get rid of all <mach/gpio.h> headers") from the arm-soc tree
-and commits 36278bb98dc7 ("ARM: S5PV210: Remove support for board
-files") and 2722091e711f ("ARM: SAMSUNG: Remove remaining legacy code")
-from the samsung tree.
+On Wed, 16 Jul 2014 22:01:35 -0400 Nick Krause <xerofoify@gmail.com> wrote:
+>
+> Absolutely , I am using the latest kernel rc from git. I am using gcc
+> 4.8.3 and binutils 2.83.91.
 
-I fixed it up (I just removed the files removed by the latter commits)
-and can carry the fix as necessary (no action is required).
+Then that has nothing to do with me ... I am the linux-next
+maintainer.  I just happen to use the same build test system as is also
+used to test Linus' tree (kisskb).  I hope you are looking at the right
+result pages for what you are testing.  The URL I gave you was for the
+linux-next builds, not Linus' tree.
+
+> In addition I am using  the default configurations as you are in less
+> I am doing it differently.
+> By the way xtensa-defconfig seems to fail because of binutils as I
+> discussed this with
+> the maintainers and they seemed to have tested it with a newer upstream b=
+inutils
+> then I am using and it succeeded it the linking failures I am seeing with=
+ it.
+
+Maybe we need per architecture minimum tools versions (instead of
+current global one).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/rVWd7GgWbMHPOh.rAriy7QI
+--Sig_/E0B3fP2AJT.sWZAxMwz1JOv
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTxy+sAAoJEMDTa8Ir7ZwVveYP+wdN4yltysXSwRKrVZGop1ES
-GgZDO1EwkutBg7AjneA4obb+s9x63YFSHSMTjKSZxiukJGhLfE7VcPVhIbX1LYmn
-7pYgIKB5k/KWBreP3pjm4ymef3AyrIB87vfV2SxD3TlCN1LmiASk8YPmBqZjNCVQ
-ZBWkGwEE6RFFmMyE7EvPHrhPSAdfsQzaFWdbaroysiA+XGI2umilr2xacSWOgxqM
-cl39/nifmOrhOrhcShcBOIsNGV8PPCzCu2TF7OAZBWViAseGLkmyraQTwQIXaDhV
-AAWVTifMvwvB3xTWSa3+f5Fzlnjg7cmt4rU+lhGfhFXanCqQwN+f26loy9rLJSUL
-dEKz+j78rqkoxp/u1yo1SFmNC/EDsdmeRdszCuzelxUPTwAf+KBnZbuDe8eEKXCY
-BuA2MnMGMxbERneg2WOP6TyU0WuWaWUiVvW2rw39biMQNETPDZXPS7ZolSFVaMj0
-zjLJji2iYrJAXj2x7ZA04RozSQrg/KU5IhegIhsI8eySvGdtiFyVV1VbhCMmFXGJ
-WFFIly4noTfuvRdXJ6K7FFdJ+4k8kipQSuJwP2UpMrpRTOfHQjNS5bazIcXtiKM0
-ZzvMUS2H0H1F8pa0q949fYWlcKzOUSAahLAtHu0YQLeH1u2T8iaEvyZDUYc1opml
-S8LCe+JNiS0ncvvN+lV1
-=Ndny
+iQIcBAEBCAAGBQJTxz+2AAoJEMDTa8Ir7ZwVNS4P/i9djsFFXaUyFrNyQXfXaV1a
+HJwxFmw/U51uRtqkrJI/vdrAQVIBUcO/teQAkwkuB9rEbRs17CSHbWPxdAxEkPyt
+wBmn8I2hw42YkT5vfY59n21VmC3Y0nrF1EHWgFxWeiFhdSQdya54gHHcKO729q8q
+DCssQk8yQx8uzsrc1GS51A7BHKpOiQap07841dhYwaA/F+KFBtOeeQqf0Goi8q/v
+beT2ZNHPoQOiccFc3SoH9ZqHij6v/x0G239Gf5MZMCRpDYPUbB5RLrseRF5GWWaz
+rb6MMnB84Ag6IC3GgHjDXw+XqnXx8yRjcdE4+d9ufsboBlYi0YBA1R86yXuSfRG5
+u9DPdPsnFmsKJE4D+U7XSlweiT+53exH/eyR/e343V0nlEvdvhV+t14DQTqJ+nFg
+rr2DcKHaR85A+EVgBu6wlcZPtRuCXXk+xqWLulVy0t7bT7V+BBjKa1pGtismdVeM
+V65rawaX0vAPh79eVmNqxBHEcHkmAbnrcEwc6y6qBV9NqkbEs52gOOHp665+P9ka
+/ojPQMHIf+GE4ifFYs8vBiHSXZfo+HGKzfIW7T1MQUoqn+i6OBAIH4T1pLFeHO8I
+wG49tTkWTxnZ1lvzQnKZsxFh6HhAZNsDQhwixCGm5RVyJ0/vcx2vK38YqJz5/WQK
+7SZJ3aLPX/ufmiAGFqAz
+=z5i1
 -----END PGP SIGNATURE-----
 
---Sig_/rVWd7GgWbMHPOh.rAriy7QI--
+--Sig_/E0B3fP2AJT.sWZAxMwz1JOv--
