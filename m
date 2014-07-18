@@ -1,73 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Nick Krause <xerofoify@gmail.com>
 Subject: Re: Build allyesconfig for PowerPc tested
-Date: Fri, 18 Jul 2014 09:03:25 +1000
-Message-ID: <20140718090325.32eb36bb@canb.auug.org.au>
+Date: Thu, 17 Jul 2014 22:58:59 -0400
+Message-ID: <CAPDOMVjOVW3y9cc-6wnh0wtoX9F8AMCNZ4WDV5QJFn4riQ2WXg@mail.gmail.com>
 References: <CAPDOMViJfR2qqNRkx_mKpQ0FWd76YN77ev3M=0boZFW6NvS3Pg@mail.gmail.com>
+	<20140718090325.32eb36bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Cyk./Nqng5BIvl49ec8t8fU"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55653 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757990AbaGQXDd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Jul 2014 19:03:33 -0400
-In-Reply-To: <CAPDOMViJfR2qqNRkx_mKpQ0FWd76YN77ev3M=0boZFW6NvS3Pg@mail.gmail.com>
+Received: from mail-vc0-f182.google.com ([209.85.220.182]:58158 "EHLO
+	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751964AbaGRC7B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2014 22:59:01 -0400
+In-Reply-To: <20140718090325.32eb36bb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Krause <xerofoify@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Sig_/Cyk./Nqng5BIvl49ec8t8fU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Nick,
-
-On Thu, 17 Jul 2014 14:49:29 -0400 Nick Krause <xerofoify@gmail.com> wrote:
+On Thu, Jul 17, 2014 at 7:03 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Nick,
 >
-> For a while allyesconfig for powerpc seemed to fail building I ran the
-> test today to check if
-> it builds. It seems to build for me but with warnings. Furthermore
-> there seem to be a few
-> warnings that need clean up. I can either send another email to the
-> maintainers of the powerpc
-> architecture branch or you can with my logs as I am attaching them here,
+> On Thu, 17 Jul 2014 14:49:29 -0400 Nick Krause <xerofoify@gmail.com> wrote:
+>>
+>> For a while allyesconfig for powerpc seemed to fail building I ran the
+>> test today to check if
+>> it builds. It seems to build for me but with warnings. Furthermore
+>> there seem to be a few
+>> warnings that need clean up. I can either send another email to the
+>> maintainers of the powerpc
+>> architecture branch or you can with my logs as I am attaching them here,
+>
+> Powerpc allyesconfig will not build completely, this has been known for
+> a long time.  Even your log shows it failing, so I do not understand
+> what you are saying.  (BTW, that is not the normal way for the build to
+> fail, it will always fail when trying to link vmlinux.  Maybe you are
+> missing some tool to build the kernel signing keys?)
+>
+> You should report warnings/failures in subsystems to the appropriate
+> subsyetem maintainer, just because you get these for a particular
+> architecture does not mean that they are the responsibility of that
+> architecture maintainer.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-Powerpc allyesconfig will not build completely, this has been known for
-a long time.  Even your log shows it failing, so I do not understand
-what you are saying.  (BTW, that is not the normal way for the build to
-fail, it will always fail when trying to link vmlinux.  Maybe you are
-missing some tool to build the kernel signing keys?)
 
-You should report warnings/failures in subsystems to the appropriate
-subsyetem maintainer, just because you get these for a particular
-architecture does not mean that they are the responsibility of that
-architecture maintainer.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/Cyk./Nqng5BIvl49ec8t8fU
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJTyFZDAAoJEMDTa8Ir7ZwVDPYP/0CLgml9b3E9KHlLZl+NGonE
-BO4iCdUIxzCpAf+siX5pO9QYZwSmPrTz8IfchzXAa7/qFLJcBa+hRPVMD/UFQTXU
-SPAXaI4myuq1lzF9iJrU94n6Zy4G4E4kXFIwvtbSvMw6T5ANHJFuuRMjg+vcuMP3
-OYJODcdqUt/+P+9zGyfNU5k0I05xtu5qGUdKw5r9UvC7PcF73yGYjcmhyZmIySNg
-8Mrd/G9O/FU5Dv2wPtCpjOWw6YTpzEF32x9kO2lC2GUrd9YcaFo9WyekwWLrgndo
-wlRt2MgukGWiD/ppay8hgOC4ovuolPqg7KoO6uFhS7uqRcsjQ6QX9Yy7u0ZiiXnS
-FUjHXHUd5k6+iM4uTgYe/xMNIBPW5ESR9Spyk3p03+Q/Ux4/+Nux0u781uRGROvr
-TS8xSBDm/Zvvh4zPYf6/NLHwYQmhuHVPp/4JfoYLhQqiF45Uue+wpxHej3Sv810z
-K+OCUQ5igOjdT71p8a5ZDuOoxakcve4MOetgDwo7kPesKf/vIkRohwVs1xwRjOHd
-MFUSowZdNX0KTCepreD7eCF/I/KGQ2GuEO0XAFfxzUr8eL4yXbPt35eUeD1iqBK7
-yqTN4Ha+QesFUiPW3VJnIkc4rdJpxwpNXn2Mb9qoAS4OG75HkgZHeWHAnpkra9Z8
-zQ5w8db+c4dpqzJIfc0R
-=gB2Z
------END PGP SIGNATURE-----
-
---Sig_/Cyk./Nqng5BIvl49ec8t8fU--
+That's fine I will send this to the maintainer of the powerpc architecture .
+I would like to see this get mixed soon.
+Cheers Nick
