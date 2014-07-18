@@ -1,17 +1,64 @@
-From: Anish Bhatt <anish@chelsio.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Fri, 18 Jul 2014 04:35:01 +0000
-Message-ID: <525DB349B3FB5444AE057A887CB2A8D85444C8@nice.asicdesigners.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Fri, 18 Jul 2014 15:00:05 +1000
+Message-ID: <20140718150005.73db8eb9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Content-ID: <942B9CE1E8BEE248A71EC57BC2541E51@chelsio.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Manoj Malviya <manojmalviya@chelsio.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Karen Xie <kxie@chelsio.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KcKYX/G5U9H1l=lDOn9ZQr0"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:38902 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753184AbaGRFAm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2014 01:00:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>
 
-VGhpcyBpcyB0b3RhbGx5IG15IGJhZC4gQWxyZWFkeSBwb3N0ZWQgdGhlIGZpeCBzb21lIHRpbWUg
-YWdvLg0K
+--Sig_/KcKYX/G5U9H1l=lDOn9ZQr0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
+
+In file included from arch/x86/vdso/vdso2c.c:161:0:
+arch/x86/vdso/vdso2c.c: In function 'main':
+arch/x86/vdso/vdso2c.h:118:6: warning: assuming signed overflow does not oc=
+cur when assuming that (X + c) < X is always false [-Wstrict-overflow]
+In file included from arch/x86/vdso/vdso2c.c:165:0:
+arch/x86/vdso/vdso2c.h:118:6: warning: assuming signed overflow does not oc=
+cur when assuming that (X + c) < X is always false [-Wstrict-overflow]
+
+Probably introduced by commit e6577a7ce99a ("x86, vdso: Move the vvar
+area before the vdso text").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/KcKYX/G5U9H1l=lDOn9ZQr0
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTyKnfAAoJEMDTa8Ir7ZwVv7oP/RdW2QzH+rDLsB4kgTiVoiiM
+cv762WJC4N5KEVZEjA4zrzxvs5RWXBqbQ1/SH+/GYxtoZg5rUowxbuJ6rNff5Ymd
+NOptEyMJ14YDWlXbhyZAogQDUSKHc1G1WQmlZUp2hniQQbAAiESRN0N3SfUnzxBW
+XQ5ofxxdjBoAF00oS3truY0mKoyIf/pBbhaKemKVrdUgI/wlAxFjH8D8lVhrMt7e
+UIjGai0kIpWgnfhkF3coePpDV490b9/sZ7JodO4bTSR3TNUAqpfgpYm7Dr7Zq2KH
+6EsgHA1q94zhVryCmcSP1xeSygvmozTzWWEgW9jnBedPvjR8KZRH495LUU5k0/av
+Gfb6+8pvkoJV2jX3cwhIaIlE10guokkbcWgbmpBtwEYqjgEJ4NwpFrFUaket3e97
+o09dxd9xZzra88OYRdftvqSvhmZJIuGp56G5paql2eYoeqz709qibTO9B7Eh2xL8
+0SFMGXjGXAXa4XmHtuFG8PIDuxnI3SornkGuH8oUB99kQV7bZsTMGNGTAvxkDE2/
+mlgtEMCtG9RLqtDCpJsSZoPXJSLr4BuCNh08C2EnP9dN3wQxiiZ/dUedwXH1GsRG
+evhCewrydpIfgdOyRFQtAleTZc9ZeCEXNh0vEtLl2+/al3rjcg1GzIr2EEvpzIqA
+OO5ziVxzdyR5R2aixioo
+=iy2g
+-----END PGP SIGNATURE-----
+
+--Sig_/KcKYX/G5U9H1l=lDOn9ZQr0--
