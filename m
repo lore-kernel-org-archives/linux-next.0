@@ -1,59 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the irqchip tree with the trivial tree
-Date: Fri, 18 Jul 2014 15:23:04 +1000
-Message-ID: <20140718152304.3daf648a@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the random
+ tree
+Date: Fri, 18 Jul 2014 17:44:16 +1000
+Message-ID: <20140718174416.56c61be2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yc1Ki.IPPz2vg_71VD66BN4"; protocol="application/pgp-signature"
+ boundary="Sig_/TyO0asr3SGm3eMV_ld5eL=t"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34300 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45828 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752837AbaGRFXS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2014 01:23:18 -0400
+	id S1750777AbaGRHoX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2014 03:44:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
 
---Sig_/yc1Ki.IPPz2vg_71VD66BN4
+--Sig_/TyO0asr3SGm3eMV_ld5eL=t
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+Hi Andrew,
 
-Today's linux-next merge of the irqchip tree got a conflict in
-drivers/irqchip/irq-gic.c between commit d31e373d0778 ("irq-gic: remove
-file name from heading comment") from the trivial tree and commit
-fe7ac63fe539 ("irqchip: gic: Restructuring ARM GIC code") from the
-irqchip tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+arch/x86/syscalls/syscall_64.tbl between commit 69d7b7939c24 ("random:
+introduce getrandom(2) system call") from the random tree and commit
+f5e74a5d7743 ("kexec: new syscall kexec_file_load() declaration") from
+the akpm-current tree.
 
-I fixed it up (I just removed the file name from the comment) and can
-carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/yc1Ki.IPPz2vg_71VD66BN4
+diff --cc arch/x86/syscalls/syscall_64.tbl
+index 6705032c0520,6d3545914821..000000000000
+--- a/arch/x86/syscalls/syscall_64.tbl
++++ b/arch/x86/syscalls/syscall_64.tbl
+@@@ -323,7 -323,7 +323,8 @@@
+  314	common	sched_setattr		sys_sched_setattr
+  315	common	sched_getattr		sys_sched_getattr
+  316	common	renameat2		sys_renameat2
+ -317	common	kexec_file_load		sys_kexec_file_load
+ +317	common	getrandom		sys_getrandom
+++318	common	kexec_file_load		sys_kexec_file_load
+ =20
+  #
+  # x32-specific system call numbers start at 512 to avoid cache impact
+
+--Sig_/TyO0asr3SGm3eMV_ld5eL=t
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTyK9AAAoJEMDTa8Ir7ZwVRVUP/jsmFaWVgiYu9rJnVPyOL0Vg
-MnFZXAJ8dZxuGiS2F34hbkk/gv5/IOki5v86EVnG6K95WiwA6Hp9cjtFMwRcy/AS
-dNWTF2RzUU7Rv6MpHFtJrQvX8N8KlxjCHJdfll50fcDLDp39Riw8tOC+KvVIK0lL
-uy3rkJ1Z3pPr8aZ6yDBGPInCUmD96uScVEGhcKKNLa/3WrGf6CQcEf5nfntNECKv
-6mUQaZgl1jKF53AqovKQY2E+hdcRq4fviEEIFqbEcFd+LN+5/cXeMpCRnFawGHAn
-ocTooQp6mCu+4dsvmlPQienlE3LLSeC0KV5bww9gTf7TU4AYQkoIhYbCJ/ua7y1n
-ftgNjYZPvFCJHfz+qUFOpmIHLNDT6+SRV/RabRdpG02BfJ2TeyGmkzzWpiqq6WRr
-NU6megSNNxMbvmZTwW+C2f7m10GlqjCbK+ulsUtlIRkOcC8ei6vJT26l0HVdS6i6
-/ZJ1Y8Cb5NB310c00pBOAn4ARcoYx9ClGoLHHZqh8ATX35q1XaSXqjOaRhTHZUSR
-SCPTRGcIh2Q19kJ71eEIPIwlKwLyDbAUvgykWL4IJyu2pl4at6T/4q4phiXLcYqY
-YDA6axQ1L8vTrkkKaB5+ZVz510aEfzoPiWhGqKRlZm9ckvNkwRIXEez2CwO3xULa
-oyOLkbjvUzsEBUeSSpFg
-=akol
+iQIcBAEBCAAGBQJTyNBVAAoJEMDTa8Ir7ZwVB7MP/0P9qAUpxk2UYENQkF+pRxQi
+sBU4N9mcnG4J9r3yDA4Jh9mfI545wYjtlvKsV+JzUlQ8p0nI6LCptrxMiNVOknTt
+HAlYbdA3BCYEdUQF/hTFakFXc6Nsj1R+HQN2cGZtR9ngHpb+M9zjgFZf9MCr+GI6
+c8xQhRZQXFUxYLMl8lpqpTocSMgxAu5oOHjrCsemrWz29K9g/CqoGL7QAFXIe3y3
+zU66Zo2P9UazT2CdVgURaRYe/w5ZdqO7t433LS9yuln29rqmsy50lkj4dFErdXAh
+3q30CLD7ioIuhUphcoNjZ1/kTefX2aIO84hHmVi+fPN82CtzwI/ncIGgu8ucOCFA
+2gGAbobN3I5KcpY45q+Mo9zc6U0hL483gqckrPf/Tp6D8IeSnjs9RaCjVOCciF2d
+AOb19RVavw3ISRnKux1fdRaeHcjhrSoHwTCTs1rAmVFrzdAgQq1WJhW1NvnOx/kX
+9ZUQNe2dBYRKvUJXXaZEcDxiXlk8kms5qsoaAcquRwegH46vIB5BOqMSqYF9aBqT
+6Kj5kQrHZP42gJRSQ7gNYxg1nCkWc9wEZAoiJcUeZweAEkdRaBKyuamDfk1pk9Ki
+X0bWPoAXivzykTycPSPgTwr1lLqRjtdgQ9Umabg/DoJQo1TtMlq9thas/lLL15dq
+6Twrg4j1AA3g/vyyFkaE
+=Cgff
 -----END PGP SIGNATURE-----
 
---Sig_/yc1Ki.IPPz2vg_71VD66BN4--
+--Sig_/TyO0asr3SGm3eMV_ld5eL=t--
