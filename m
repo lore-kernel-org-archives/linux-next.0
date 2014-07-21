@@ -1,39 +1,135 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Fri, 18 Jul 2014 13:50:39 -0700
-Message-ID: <53C9889F.3040107@zytor.com>
-References: <20140718150005.73db8eb9@canb.auug.org.au> <53C97287.5020509@zytor.com> <CALCETrXs4fdKDA1C4ts3qzgbB6PrmCZZyK3R4cBLaO9RbBp0YA@mail.gmail.com> <53C97E0F.6090601@zytor.com> <CALCETrXP+Rz8wi_N2G7WLwnGuFMC8zeo5o+jgGmvpZkndrM+2Q@mail.gmail.com> <53C98055.5070301@zytor.com> <CALCETrVWSjqBJyEC4k6qAfa2PcoKq6LWR8HH2WyuMBU+98pJsQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm-soc tree
+Date: Mon, 21 Jul 2014 11:13:24 +1000
+Message-ID: <20140721111324.1f5ed9b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/MZS7jU.s6FxQpJ201sZ2Efu"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:43775 "EHLO mail.zytor.com"
+Received: from ozlabs.org ([103.22.144.67]:56966 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762161AbaGRUvX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2014 16:51:23 -0400
-In-Reply-To: <CALCETrVWSjqBJyEC4k6qAfa2PcoKq6LWR8HH2WyuMBU+98pJsQ@mail.gmail.com>
+	id S1751573AbaGUBNb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Jul 2014 21:13:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On 07/18/2014 01:20 PM, Andy Lutomirski wrote:
->>
->> The reason this is a concern is that: (x > x + n) and its variants is
->> often used to mean (x > INT_MAX - n) without the type knowledge, but
->> that is actually invalid standard C because signed types are not
->> guaranteed to wrap.
-> 
-> Right, but the constant in this case is *much* less than INT_MAX.
-> Anyway, this is moot.
+--Sig_/MZS7jU.s6FxQpJ201sZ2Efu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It isn't about the constant (n) at all, it is about the value of x.
+Hi Kukjin,
 
-> I do wonder whether the kind of people who build hardened kernels
-> should enable -fwrapv, though.
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/mach-exynos/pm.c between commit 7310d99ffcd1 ("ARM: EXYNOS:
+Fix build breakge with PM_SLEEP=3Dn") from the arm-soc tree and commit
+66df3ce29804 ("ARM: EXYNOS: Refactored code for using PMU address via
+DT") from the samsung tree.
 
--fwrapv in gcc makes signed arithmetic strict 2's-complement, which is
-what I think we want in the kernel.  Someone would just have to make
-sure there isn't some key codepath in the kernel which gets pessimized.
+I fixed it up (the code modified by the latter was moved by the former,
+so I applied the following patch to the new file) and can carry the fix
+as necessary (no action is required).
 
-	-hpa
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 21 Jul 2014 11:11:17 +1000
+Subject: [PATCH] ARM: EXYNOS: fixup for code movement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/mach-exynos/platsmp.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 8b66a9e02b87..1e43b53d23b7 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -43,7 +43,7 @@ extern void exynos4_secondary_startup(void);
+  */
+ void exynos_cpu_power_down(int cpu)
+ {
+-	__raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++	pmu_raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+ }
+=20
+ /**
+@@ -54,8 +54,8 @@ void exynos_cpu_power_down(int cpu)
+  */
+ void exynos_cpu_power_up(int cpu)
+ {
+-	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+-		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++	pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
++		       EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+ }
+=20
+ /**
+@@ -65,7 +65,7 @@ void exynos_cpu_power_up(int cpu)
+  */
+ int exynos_cpu_power_state(int cpu)
+ {
+-	return (__raw_readl(EXYNOS_ARM_CORE_STATUS(cpu)) &
++	return (pmu_raw_readl(EXYNOS_ARM_CORE_STATUS(cpu)) &
+ 			S5P_CORE_LOCAL_PWR_EN);
+ }
+=20
+@@ -75,7 +75,7 @@ int exynos_cpu_power_state(int cpu)
+  */
+ void exynos_cluster_power_down(int cluster)
+ {
+-	__raw_writel(0, EXYNOS_COMMON_CONFIGURATION(cluster));
++	pmu_raw_writel(0, EXYNOS_COMMON_CONFIGURATION(cluster));
+ }
+=20
+ /**
+@@ -84,8 +84,8 @@ void exynos_cluster_power_down(int cluster)
+  */
+ void exynos_cluster_power_up(int cluster)
+ {
+-	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+-		     EXYNOS_COMMON_CONFIGURATION(cluster));
++	pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
++		       EXYNOS_COMMON_CONFIGURATION(cluster));
+ }
+=20
+ /**
+@@ -95,7 +95,7 @@ void exynos_cluster_power_up(int cluster)
+  */
+ int exynos_cluster_power_state(int cluster)
+ {
+-	return (__raw_readl(EXYNOS_COMMON_STATUS(cluster)) &
++	return (pmu_raw_readl(EXYNOS_COMMON_STATUS(cluster)) &
+ 			S5P_CORE_LOCAL_PWR_EN);
+ }
+=20
+--=20
+2.0.1
+
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/MZS7jU.s6FxQpJ201sZ2Efu
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTzGk4AAoJEMDTa8Ir7ZwVUyQP/RoG1m65PgppU2Nu9mYXOVGj
+m6y64H3ROROozhSRPmhQfK6Tv+00voKSViG8KQYhRBQxl9thsVFCxMbSAtJfJLGA
+pf/+gHxnvwhum2k+vspo3RXN+0SxEE4p59/plH6Z7I4l/S2TlOBJhLMKps+SDvVW
+NlZtuMGPvDD4ctC1Edu5Xar0riz7NjmJGm58uRNPCreXRxl9GN12MwEw/ZkmM86F
+6R7xSRwRx18KI0F0QEGiGfsmEqWVRl8a0fQaH3uKCcQWOlmF6JUApV45gIXWe8y2
+V98udjKxsFWwjerbcbc3SWypHqBG2KTp2jJEkWp7sgLaAgmBeHP5q8f2zxBcKeUf
+zjgonW8tmWUpyPYOeBdKc5x6ZZtcGy3OZ7qDAfpWIJ+YfYkNHOOA8J3aSHzLLekS
+316Ecs/IWmj2iXKZeJQmrTrv1XR3nr6CmBkdhMDu5HjiZPXuZOjnlUH3vgehf2Jh
+TC2KhITqvNl/kFQJzUArGnbnZ2z5R1P0jtgQer9T1jvK9MofGxBPOLnSeRKOm9Pi
+zyFm0pOUvz/PnVCV5DBOxPDsz+b4AOIGqnqXDJ0Rwx+OSzv0AU/OsaQNYx5kH7h9
+NBI/eS4NfTQIlFqyCZCCX0eCbzr5+vcm7IwYfOQssGQzQC0A4v/sCoo+XynzHbYQ
+3JyuJ1MLIJWXluMr1rYo
+=m3EI
+-----END PGP SIGNATURE-----
+
+--Sig_/MZS7jU.s6FxQpJ201sZ2Efu--
