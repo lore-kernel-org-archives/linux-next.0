@@ -1,62 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the random tree
-Date: Mon, 21 Jul 2014 17:49:13 +1000
-Message-ID: <20140721174913.09d5de01@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the security
+ tree
+Date: Mon, 21 Jul 2014 18:16:02 +1000
+Message-ID: <20140721181602.2ce40371@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0EdBJA5nAhChs1z7=l7yNmJ"; protocol="application/pgp-signature"
+ boundary="Sig_/N9+as9ChQ/A/S9RAsrZgRh9"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44047 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50959 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752140AbaGUHtU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Jul 2014 03:49:20 -0400
+	id S1752198AbaGUIYH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Jul 2014 04:24:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>, Kees Cook <keescook@chromium.org>
 
---Sig_/0EdBJA5nAhChs1z7=l7yNmJ
+--Sig_/N9+as9ChQ/A/S9RAsrZgRh9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ted,
+Hi Andrew,
 
-After merging the random tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the akpm-current tree got a conflict in
+arch/x86/syscalls/syscall_64.tbl between commit 48dc92b9fc39 ("seccomp:
+add "seccomp" syscall") from the security tree and commit f5e74a5d7743
+("kexec: new syscall kexec_file_load() declaration") from the
+akpm-current tree.
 
-drivers/char/random.c: In function 'SYSC_getrandom':
-drivers/char/random.c:1526:6: warning: unused variable 'r' [-Wunused-variab=
-le]
-  int r;
-      ^
-
-Introduced by commit 386474e168a8 ("random: introduce getrandom(2) system c=
-all").
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/0EdBJA5nAhChs1z7=l7yNmJ
+diff --cc arch/x86/syscalls/syscall_64.tbl
+index 252c804bb1aa,6d3545914821..000000000000
+--- a/arch/x86/syscalls/syscall_64.tbl
++++ b/arch/x86/syscalls/syscall_64.tbl
+@@@ -323,8 -323,7 +323,9 @@@
+  314	common	sched_setattr		sys_sched_setattr
+  315	common	sched_getattr		sys_sched_getattr
+  316	common	renameat2		sys_renameat2
+ -317	common	kexec_file_load		sys_kexec_file_load
+ +317	common	seccomp			sys_seccomp
+ +318	common	getrandom		sys_getrandom
+++319	common	kexec_file_load		sys_kexec_file_load
+ =20
+  #
+  # x32-specific system call numbers start at 512 to avoid cache impact
+
+--Sig_/N9+as9ChQ/A/S9RAsrZgRh9
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTzMX+AAoJEMDTa8Ir7ZwVjd0P/i8qFgiAe1tRX6JfRoLyu+AX
-IygVK+VEFJnvLXpXgevV6OvVPmKCAcw0C0xFhFj5z0qop0H/5q8HsC7tRSc75wc+
-7PjEPIkndnVbmVcRhJ6gt4FkL/rBKlcp8mn5GPCb2OzM/rNj/MdBORJ6mbWFTZmq
-/9v8KTvs2HlLc5L8e7Ar5+jQDDnt7f0HKWeM+RuOKZV0LExRYEObNQU7jnhxqv1k
-YX1/Dgfa76Y71Xr2SUoETt9fjKYtE0Autz9NtR1P3aqZ/8HHfHkgVdvvYpZ1BptF
-C4AzRTERiU3eYQ31lwWahsUGyf5JnxNJ8UPjm+pIcx+HHY3dzGfvuhE3Wo7x23NJ
-dGK/t36mWAxLa6F/tOntrB9+g20UQF0TuOIDNtInlgXNiaiGZoVcmD+rOJOg3CKn
-wuFaFRI//A8Xx7i5+j9J/gPjFRijN5BQ0SmXt6wxCck2ijBrCHJmbEsliXt2lhj6
-XSYUu1LgvqxLokCoprCCwUlcnGr2qjHXZpKp8Uwo8m2G+1eAhbRdDMz+CJNTYiDD
-Oocq3L7lrbCiyZm1C8S+A9bm5fAs1TWHysFvTO1OrFRATTu+0DWrG4LsW61wfB2n
-TwgzOZzL9mUAByaI76Uq1S7+CD54t9wFZWXimGcKEED7enM3AnaanueTc2QlBC7N
-lCoX915EaSHRoLhyYnQC
-=tWC+
+iQIcBAEBCAAGBQJTzMxHAAoJEMDTa8Ir7ZwV+fUP/jyO7wsAuMjOoxWSSAdIPPYz
+xXL3hLHum99LksVCYYIr92VsvPYvYxLkBjBpIW6WNNVyecVblTi04KefvTCcVmeW
+zGZghqZI95ioP80POC2+cPctBCN6EiKtS1/xgKccgP0Rh+86jXNL9nvUBoK5MpE9
+3+NdLc59vz699wPaCto9xOYdKjvKaiIzZpvBdiUiY+FyfO9lCfZIkm6+kPRi5ATP
+RiShG6x/H2FXG/8IZkgHLqpqn3Yx/4aZzlx+fNXQ9KmAQEvhEkGuY7lQBC3d49uJ
+u6LIaV+pmsheDWCL+cYMJEq3wAC8rS8eza5TFj3d4Cf1obZtUDim/r02ZraR/84o
+ujdPL5fTYPGBhRWaBwzIPgKCP4KqKKey6eCXpv9JvJ8CAErVclFHRR/L2h0tSZ7v
+Kk8e4tLW8q7iQLYpTLPRZqc8PhEmsiUeCjNeQ/a7IqPD/jgqIk4dLEoJsHHVjcvA
+7jpIE1P+LnVhd+xvKr9rA3jiouy8dQ+ACaF5T/hlF5Yq2aZZVcW+QlGVF5iciMSX
+mxQJ9i6zusbq+ibLhMLUPMTUC7Fp7y08bIQI3oKn4oWU3GkjAUlYnYfU6FuGlr5B
+261tldRdx8Mb5Ke9Uv7neVaETN/q002eOk/GZi2PTI7Hgp7Z7yih97W5nURF/ixq
+jXFJ0eODzJfOfqhalw0Y
+=NXcL
 -----END PGP SIGNATURE-----
 
---Sig_/0EdBJA5nAhChs1z7=l7yNmJ--
+--Sig_/N9+as9ChQ/A/S9RAsrZgRh9--
