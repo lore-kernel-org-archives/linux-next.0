@@ -1,25 +1,52 @@
-From: "Billy Hill" <ryackel@acsnet.com>
-Subject: Greetings
-Date: Tue, 22 Jul 2014 15:32:43 +1000
-Message-ID: <201407220521.s6M4qeXO009634@smtp.acsnet.com>
-Reply-To: billyzhill@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no release today
+Date: Tue, 22 Jul 2014 16:49:05 +1000
+Message-ID: <20140722164905.1e67eb75@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SVDflKA40Dukmtg7AH4mhCV"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailfoundry.acsnet.com ([66.172.235.7]:55562 "EHLO
-	mailfoundry.acsnet.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932AbaGVGqh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2014 02:46:37 -0400
-Received: From smtp.acsnet.com (66.172.236.130) by mailfoundry.acsnet.com (MAILFOUNDRY) id F1hN0hFgEeSrIAAl for linux-next@vger.kernel.org; Tue, 22 Jul 2014 05:21:53 -0000 (GMT)
-Received: from SERVER (gtkplu.lnk.telstra.net [120.151.249.154])
-	(authenticated bits=0)
-	by smtp.acsnet.com (8.13.8/8.13.8) with ESMTP id s6M4qeXO009634
-	for <linux-next@vger.kernel.org>; Tue, 22 Jul 2014 00:21:49 -0500
+Received: from ozlabs.org ([103.22.144.67]:40318 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751302AbaGVGtR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2014 02:49:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/SVDflKA40Dukmtg7AH4mhCV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Am Billy Hill, a Banker, Please permit me to discuss an inheritance deal connected to your second name if interested Reply to: billyzhill@gmail.com for more details.
+Hi all,
+
+Hopefully normal service will resume tomorrow.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/SVDflKA40Dukmtg7AH4mhCV
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJTzglqAAoJEMDTa8Ir7ZwVuL8P/0DaTcUOD++2/RgY7GgSUnmL
+h8YKRKrnwDbjmOjRZs/b6iaLb48q1WPu6J4+cKV4zj8SAia6OGDKqj3EWbccdpWk
+E4axHFht34fsJ0L4np/xoKRobvgSSYs6pTKOrO1zHL2zfx7YGWhNhRBJCM0INaV6
+1mlMS4SiPErIt6aZdzwoUknDFKMVqRlwIo0QQL9NHwi5kVylXByZyJkjC+znPf+G
+yTdur2VNtCCfeyoraBfGvLTchdKDPeoz4Nkk0yLl7qTau9B/aOAUWxYLHQcDOwkh
+5GJQebxqV/TxCIh0HBZ+cKBsLLUSZk1npo1PKtCvDDcPyUIXyQBoS3/KlAXpkFyP
+ohvEwpPWrVjx4xSg9O5BrB9hMrDQMCdhxpq/whn2vGGcoknBkcWqIfEWQI09sORw
+3PUOpxE3/yp49ghbxESpbYzRAkkF6kX3o7mu1ErDTxHCTfmB8sSzCXeghNKJrtOr
+xvxEYCecfp5QdlTwG+jYTXsZ/ZNsK//Y4/r9EOF9N8P+HI468F/w0k3+C5FVSL9F
+pk4/A3lojNh/8T/1YMFw1s8uaLSuzUgWJTNZeCHC0oQJ9g7ylQvTszEFE5eXofGV
+ht8wVXFpAzysJRm+zHytbCM9zUlyIx1MGzFuUBL3DLqnWdrkE4f396ON/bhjqVXt
+l1/fuXS1F5DKV+6Cn0uc
+=t3uK
+-----END PGP SIGNATURE-----
+
+--Sig_/SVDflKA40Dukmtg7AH4mhCV--
