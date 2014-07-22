@@ -1,52 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no release today
-Date: Tue, 22 Jul 2014 16:49:05 +1000
-Message-ID: <20140722164905.1e67eb75@canb.auug.org.au>
+Subject: Re: Another tree in Linux -next
+Date: Wed, 23 Jul 2014 08:43:14 +1000
+Message-ID: <20140723084314.34870f0e@canb.auug.org.au>
+References: <20130731101119.GC13298@lee--X1>
+	<20130801094146.2266f4ff61ddac67cd449f53@canb.auug.org.au>
+	<20140722092208.GG28529@lee--X1>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SVDflKA40Dukmtg7AH4mhCV"; protocol="application/pgp-signature"
+ boundary="Sig_/m/VssNg0LXbpkKpBCkwjvID"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40318 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50495 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751302AbaGVGtR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2014 02:49:17 -0400
+	id S932154AbaGVWnV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2014 18:43:21 -0400
+In-Reply-To: <20140722092208.GG28529@lee--X1>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Sig_/SVDflKA40Dukmtg7AH4mhCV
+--Sig_/m/VssNg0LXbpkKpBCkwjvID
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Lee,
 
-Hopefully normal service will resume tomorrow.
+On Tue, 22 Jul 2014 10:22:08 +0100 Lee Jones <lee.jones@linaro.org> wrote:
+>
+> Can I have another branch in -next please?
+>=20
+> > Sure, if you think you meet the criteria, then send me a URL:
+> >=20
+> > You will need to ensure that the patches/commits in your tree/series ha=
+ve
+> > been:
+> >      * submitted under GPL v2 (or later) and include the Contributor's
+> > 	Signed-off-by,
+> >      * posted to the relevant mailing list,
+> >      * reviewed by you (or another maintainer of your subsystem tree),
+> >      * successfully unit tested, and=20
+> >      * destined for the current or next Linux merge window.
+>=20
+> The new branch also matches the critera.
+>=20
+> Repo:   git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git
+> Branch: for-backlight-next
+
+Added from today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/SVDflKA40Dukmtg7AH4mhCV
+--Sig_/m/VssNg0LXbpkKpBCkwjvID
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTzglqAAoJEMDTa8Ir7ZwVuL8P/0DaTcUOD++2/RgY7GgSUnmL
-h8YKRKrnwDbjmOjRZs/b6iaLb48q1WPu6J4+cKV4zj8SAia6OGDKqj3EWbccdpWk
-E4axHFht34fsJ0L4np/xoKRobvgSSYs6pTKOrO1zHL2zfx7YGWhNhRBJCM0INaV6
-1mlMS4SiPErIt6aZdzwoUknDFKMVqRlwIo0QQL9NHwi5kVylXByZyJkjC+znPf+G
-yTdur2VNtCCfeyoraBfGvLTchdKDPeoz4Nkk0yLl7qTau9B/aOAUWxYLHQcDOwkh
-5GJQebxqV/TxCIh0HBZ+cKBsLLUSZk1npo1PKtCvDDcPyUIXyQBoS3/KlAXpkFyP
-ohvEwpPWrVjx4xSg9O5BrB9hMrDQMCdhxpq/whn2vGGcoknBkcWqIfEWQI09sORw
-3PUOpxE3/yp49ghbxESpbYzRAkkF6kX3o7mu1ErDTxHCTfmB8sSzCXeghNKJrtOr
-xvxEYCecfp5QdlTwG+jYTXsZ/ZNsK//Y4/r9EOF9N8P+HI468F/w0k3+C5FVSL9F
-pk4/A3lojNh/8T/1YMFw1s8uaLSuzUgWJTNZeCHC0oQJ9g7ylQvTszEFE5eXofGV
-ht8wVXFpAzysJRm+zHytbCM9zUlyIx1MGzFuUBL3DLqnWdrkE4f396ON/bhjqVXt
-l1/fuXS1F5DKV+6Cn0uc
-=t3uK
+iQIcBAEBCAAGBQJTzukHAAoJEMDTa8Ir7ZwVVKIP+wSf2RNkYjttKbHaiY1oQrcj
+MjVt0sMg1kKuKq3nzCq4LxKGzRQZ5zqKW13Em08+uhPGmSRVZESstteft3mh0x4i
+C6p/OXpOLJ5xlE7VDraXacEGaqHwKSDUAkG9SLi+NK4Ydw82xIXA6pxOQ0TKZ6X1
+C4COoho+PfXXxVYhGEpbaj6ZwUjfmTlBLUwrVGrUiggDDLpIO6O72RMicTyMXrvE
+Kd2Sh5c8GA7nFpjYjp72ApeqMbKYk4nTGeilzvEMoKUNROV4rUKVtomEZk5mQgwD
+/HeufnrUoMzD0YwVe1D5b/70BDAp8y/Lel2/ZDZIwvCBPJZMxaLp9thmXl+ot1CC
+NYa/2Wie3SR45whyCnymeygrralStM67iUQMn4Yd85VkOzG3XscLcFs/9yxypVeu
+oLzY/7o5RZ8DmsLUiLR6Q06yUduM6F8OTnj9gjj/BID6jmps6rrBAp5a2qK1Grv1
+N9upzHgbky9QDc9RwcyICZiLxklbiCL9pbv1i6uK5dp5Na30H105qWcHckIZ4l5S
+XrlTfQl+eBN8YCpbMamBqdOWPHaocJaBav0+qw/U8rt5ojTiehH+BRmyhqaFVECM
+Ea02eZVwCIx9C+OuojF6wj18Oc2gt8sRixVs81Qvsiw0nFo5wcP78HHGE0KV1YHS
+cc5zlqB09tk8q+cFzz6/
+=dHPL
 -----END PGP SIGNATURE-----
 
---Sig_/SVDflKA40Dukmtg7AH4mhCV--
+--Sig_/m/VssNg0LXbpkKpBCkwjvID--
