@@ -1,57 +1,42 @@
-From: Karen Xie <kxie@chelsio.com>
-Subject: RE: linux-next: manual merge of the scsi tree with the net-next tree
-Date: Wed, 23 Jul 2014 15:54:27 +0000
-Message-ID: <1442C3287A121140B690F7F20F94463D05BB32@nice.asicdesigners.com>
-References: <20140723164049.413272e8@canb.auug.org.au>
+From: Vince Bridgers <vbridgers2013@gmail.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Wed, 23 Jul 2014 13:38:01 -0500
+Message-ID: <CAOwfj2PsBhW3j4Tm4UMc1iCf=-xX8bhKcNLuo+iMzQw=jZog+A@mail.gmail.com>
+References: <20140704113907.468a366a@canb.auug.org.au>
+	<20140707.195330.1593299312055099195.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 99-65-72-228.uvs.sntcca.sbcglobal.net ([99.65.72.228]:15117
-	"EHLO stargate.chelsio.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1756924AbaGWPyk convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2014 11:54:40 -0400
-In-Reply-To: <20140723164049.413272e8@canb.auug.org.au>
-Content-Language: en-US
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:49563 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932618AbaGWSiE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2014 14:38:04 -0400
+In-Reply-To: <20140707.195330.1593299312055099195.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Anish Bhatt <anish@chelsio.com>, Manoj Malviya <manojmalviya@chelsio.com>, Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>
+To: David Miller <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: sfr@canb.auug.org.au, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen, thanks a lot!
-________________________________________
-From: Stephen Rothwell [sfr@canb.auug.org.au]
-Sent: Tuesday, July 22, 2014 11:40 PM
-To: James Bottomley; David Miller; netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Anish Bhatt; Karen Xie; Manoj Malviya; Hannes Reinecke; Christoph Hellwig
-Subject: linux-next: manual merge of the scsi tree with the net-next tree
+Hi all,
 
-Hi James,
+On Mon, Jul 7, 2014 at 9:53 PM, David Miller <davem@davemloft.net> wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 4 Jul 2014 11:39:07 +1000
+>
+>> After merging the net tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "phy_resume" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefined!
+>>
+>> Caused by commit 0acf16768740 ("net: stmmac: add platform init/exit for
+>> Altera's ARM socfpga").
+>>
+>> I reverted that commit for today.
+>
+> Vince you haven't made any effort to fix this build failure, so I am reverting
+> your changes.
 
-Today's linux-next merge of the scsi tree got a conflict in
-drivers/scsi/cxgbi/libcxgbi.h between commit fc8d0590d914 ("libcxgbi:
-Add ipv6 api to driver") from the net-next tree and commit 1abf635d2f33
-("scsi: use 64-bit value for 'max_luns'") from the scsi tree.
+My apologies, I was out on vacation and I should have checked for this
+before submitting. I have a corrected patch that I'm ready to submit.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/scsi/cxgbi/libcxgbi.h
-index 8ad73d913f02,538d7a64e138..000000000000
---- a/drivers/scsi/cxgbi/libcxgbi.h
-+++ b/drivers/scsi/cxgbi/libcxgbi.h
-@@@ -708,8 -692,7 +708,8 @@@ struct cxgbi_device *cxgbi_device_regis
-  void cxgbi_device_unregister(struct cxgbi_device *);
-  void cxgbi_device_unregister_all(unsigned int flag);
-  struct cxgbi_device *cxgbi_device_find_by_lldev(void *);
- +struct cxgbi_device *cxgbi_device_find_by_netdev(struct net_device *, int *);
-- int cxgbi_hbas_add(struct cxgbi_device *, unsigned int, unsigned int,
-+ int cxgbi_hbas_add(struct cxgbi_device *, u64, unsigned int,
-                        struct scsi_host_template *,
-                        struct scsi_transport_template *);
-  void cxgbi_hbas_remove(struct cxgbi_device *);
+Vince
