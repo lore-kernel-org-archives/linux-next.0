@@ -1,57 +1,116 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Wed, 23 Jul 2014 12:38:56 +1000
-Message-ID: <20140723123856.3836daae@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with the
+	drm tree
+Date: Wed, 23 Jul 2014 13:06:41 +1000
+Message-ID: <20140723130641.480be385@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/x90joV1SMF=kFFShtkUpD7T"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Content-Type: multipart/mixed; boundary="===============1918661251=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@linux.ie>
+Cc: Borun Fu <borun.fu@intel.com>, linux-next@vger.kernel.org, Sagar Kamble <sagar.a.kamble@intel.com>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/x90joV1SMF=kFFShtkUpD7T
+--===============1918661251==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/p3AIIOIk1oU0mWO7uFkJ1Kq"; protocol="application/pgp-signature"
+
+--Sig_/p3AIIOIk1oU0mWO7uFkJ1Kq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/i915_gem_render_state.c between commit
-88b982873567 ("drm/i915: fix freeze with blank screen booting highmem")
-from the drm-intel-fixes tree and commit 1ce826d436f3 ("drm/i915:
-Simplify processing of the golden render context state") from the drm
-tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_display.c between commit d05410f9a450
+("drm/i915: split conversion function out into separate function") from
+the drm tree and commit 6b09e72050b4 ("drm/i915: Power gating display
+wells during i915_pm_suspend") from the drm-intel tree.
 
-I fixed it up (the latter appears to supercede the former, so I used
-that) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
+P.S. Daniel, that drm-intel tree commit has no Signed-off-by from its
+author ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/x90joV1SMF=kFFShtkUpD7T
+diff --cc drivers/gpu/drm/i915/intel_display.c
+index a5af732b87b8,1389d8a30f0a..000000000000
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@@ -4314,27 -4300,6 +4314,23 @@@ static void i9xx_pfit_enable(struct int
+  	I915_WRITE(BCLRPAT(crtc->pipe), 0);
+  }
+ =20
+ +static enum intel_display_power_domain port_to_power_domain(enum port por=
+t)
+ +{
+ +	switch (port) {
+ +	case PORT_A:
+ +		return POWER_DOMAIN_PORT_DDI_A_4_LANES;
+ +	case PORT_B:
+ +		return POWER_DOMAIN_PORT_DDI_B_4_LANES;
+ +	case PORT_C:
+ +		return POWER_DOMAIN_PORT_DDI_C_4_LANES;
+ +	case PORT_D:
+ +		return POWER_DOMAIN_PORT_DDI_D_4_LANES;
+ +	default:
+ +		WARN_ON_ONCE(1);
+ +		return POWER_DOMAIN_PORT_OTHER;
+ +	}
+ +}
+ +
+- #define for_each_power_domain(domain, mask)				\
+- 	for ((domain) =3D 0; (domain) < POWER_DOMAIN_NUM; (domain)++)	\
+- 		if ((1 << (domain)) & (mask))
+-=20
+  enum intel_display_power_domain
+  intel_display_port_power_domain(struct intel_encoder *intel_encoder)
+  {
+
+--Sig_/p3AIIOIk1oU0mWO7uFkJ1Kq
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJTzyBHAAoJEMDTa8Ir7ZwVqO8P/jsTO3G96YcuPUJjVQgQP/5R
-oW8vNr3APilntoEsRHzrmYkJaFK1xisA+pfDnRiuSa7lznNhrPuI6ndle3etTkC5
-6lOR9ceZVQ2z4pRsk78EqVfSiYwQkVbvV3DBAdY7WNr9SNGU9e29RHxW0PjnNAzd
-3T0frW0lZ2QoU1XFCPqi6V36m/UAUWLYh6zeAxeQOHHZojf9M+dH0DJQmCqDlZML
-HtyGyyngXngFn61n09h/keQdjJPQZGMWjZXYY/ATwS+CkhPYiROkVPqQobHCJFka
-dGBtZXBXkE2TgUQzwN8tfZqlCNQfTsxSwoj1HRKpdg8zEdHZGZoCiOw82z1/nf0J
-mMMBsQOv2f4ZADgAvdxVBqxJZE0hLnugPimRlWQbChiovwxSaZnCE9OtF3fWHIRw
-4It/O+DS2yOdPa5q1sm7xwTH2Hhk5yY3n4YO1V/TXk9hgJ5bXp8z+g/ZVtG536T4
-Y33KztSQB37I2YqKNvmtYtM5yeR6feQ8P8dRFEf/igKD5orjQyFpTPhjV+bpTS73
-0WyQIokJCdiiaJowJ2UYjSRnsvJyJxFQusgIL4Pv321r9ChXzpN2zPf+ZkVfHlU8
-Z6h5wCAO8Q6rwRrko6uUQdgUtTe1Ww5/NnbTYa92Czlcr9UOr7gM1DjUwhXE9b52
-jUrMnhhT0cuw2Dliack6
-=Eo1y
+iQIcBAEBCAAGBQJTzybGAAoJEMDTa8Ir7ZwVbcsP/0x+/eC5TlJHspRGyvhY7HjW
+ktglRuCJlLnC5PZ7KatVJHTSF9bzmkgqOy1W/YqS0PLcRQ4HnVXc0B3DsDxaizVm
+ue3K4tdmtzIATKMk35iqtv8yW3aVNmMz4OYf67uP28s3SXxzGF36/CLaSH78Nq5E
+DeWEsVkLxVOFDCGB3eVIy07HKT3VBkPn+WW25Uki4r+NUAMw7Cyej2AbBFmEXn4r
+An4opXTL7J3zIdsAeccN4sV3rb8dVCzl749i3n9BmPAdqdKmjUSIwBzo0NPPvIxg
+sQuQ1SbAxpvrEFl/L+eyfyN6FeTkR2oHXzoaRK4NxISKArVLX0HWKsF35XDIgoVV
+4Z7MbM8XGGJzCfmpsYwMlMxvosih1ZrzlOs/8MRwa3J/LUVjbkjNWD78iHW2HwVv
+/27OODoewMgF+47ruuAsUxPu1+z8sYICY+xdOCXBcoyZzixMPUYKIMw58JiUxlM9
+iZN3c6vzuZReyE6S0pGvSmPM/64EdZYuy52VCN8QmpXfA/C+t8GsTSI4b0SDwNxp
+m/XiurdNiFftYW6a5UHx15pNzf6BKoR8rjef4iVEMv70eDD6c9l3bo3c97Uu/UVX
+XyU5EUd97EokFjQV0cunM3zeQ20Q1F+FgxBWPwS/9dCK90BmR1oJ7DCroyR+do8j
+20VJ5dkCa82YnT2Yffdp
+=9LdS
 -----END PGP SIGNATURE-----
 
---Sig_/x90joV1SMF=kFFShtkUpD7T--
+--Sig_/p3AIIOIk1oU0mWO7uFkJ1Kq--
+
+--===============1918661251==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Intel-gfx mailing list
+Intel-gfx@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/intel-gfx
+
+--===============1918661251==--
