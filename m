@@ -1,161 +1,66 @@
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Thu, 24 Jul 2014 08:37:36 -0500
-Message-ID: <53D10C20.3020101@amd.com>
-References: <20140724130801.3dce9bb7@canb.auug.org.au>
- <53D0B005.8050400@infradead.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the usb tree with the arm-soc tree
+Date: Thu, 24 Jul 2014 08:39:30 -0700
+Message-ID: <CAOesGMgZHHKLMeyGKq_ZfSxWsRcLL3a=ogbW8s=KTUrjf6L3qA@mail.gmail.com>
+References: <20140724162811.5e12107a@canb.auug.org.au>
+	<20140724163329.03002387@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bn1blp0182.outbound.protection.outlook.com ([207.46.163.182]:1905
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756834AbaGXNhx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2014 09:37:53 -0400
-In-Reply-To: <53D0B005.8050400@infradead.org>
+Received: from mail-vc0-f179.google.com ([209.85.220.179]:39362 "EHLO
+	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759390AbaGXPjc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jul 2014 11:39:32 -0400
+Received: by mail-vc0-f179.google.com with SMTP id hq11so5325014vcb.10
+        for <linux-next@vger.kernel.org>; Thu, 24 Jul 2014 08:39:31 -0700 (PDT)
+In-Reply-To: <20140724163329.03002387@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pratyush Anand <pratyush.anand@st.com>, Viresh Kumar <viresh.kumar@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>
 
-On 07/24/2014 02:04 AM, Randy Dunlap wrote:
-> On 07/23/2014 08:08 PM, Stephen Rothwell wrote:
->> Hi Herbert,
+On Wed, Jul 23, 2014 at 11:33 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Greg,
+>
+> On Thu, 24 Jul 2014 16:28:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >>
->> After merging the crypto tree, today's linux-next build (powerpc
->> ppc64_defconfig) produced these messages:
+>> Today's linux-next merge of the usb tree got a conflict in
+>> drivers/phy/Kconfig between commit 64562e99477f ("phy: Add drivers for
+>> PCIe and SATA phy on SPEAr13xx") from the arm-soc tree and commit
+>> 1de990d8a169 ("phy: qcom: Add driver for QCOM APQ8064 SATA PHY") from
+>> the usb tree.
 >>
->> fs/sysfs/Kconfig:1:error: recursive dependency detected!
->> fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
->> drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
->> drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
->> drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
->> drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
->> drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
+>> I fixed it up (see below) and can carry the fix as necessary (no action
+>> is required).
 >
-> Don't know if it will help, but we
-> aren't supposed to use 'select' for subsystems, like USB above.
+> Also drivers/phy/Makefile
 >
->> drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
->> drivers/input/Kconfig:8:	symbol INPUT is selected by VT
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 >
-> That one ^^^ is also questionable.
->
->> drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
->> drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
->> drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
->> drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS_CMA_HELPER
->> drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TILCDC
->> drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
->> drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
->> drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
->> crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
->
-> That one ^^^ could be questionable...
->
->> net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
->> fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
->>
->> The x86_64 allmodconfig build produced these:
->>
->> scripts/kconfig/conf --allmodconfig Kconfig
->> drivers/usb/Kconfig:41:error: recursive dependency detected!
->> drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
->> drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
->> drivers/input/Kconfig:8:	symbol INPUT is selected by VT
->> drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
->> drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
->> drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
->> drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS_CMA_HELPER
->> drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TILCDC
->> drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
->> drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
->> drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
+> diff --cc drivers/phy/Makefile
+> index 241c741e6e39,971ad0aac388..000000000000
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@@ -18,8 -21,7 +21,10 @@@ phy-exynos-usb2-y                    += phy-samsung-usb2
+>   phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4210_USB2) += phy-exynos4210-usb2.o
+>   phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2) += phy-exynos4x12-usb2.o
+>   phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2) += phy-exynos5250-usb2.o
+>  +phy-exynos-usb2-$(CONFIG_PHY_S5PV210_USB2)    += phy-s5pv210-usb2.o
+>   obj-$(CONFIG_PHY_EXYNOS5_USBDRD)      += phy-exynos5-usbdrd.o
+>   obj-$(CONFIG_PHY_XGENE)                       += phy-xgene.o
+>  +obj-$(CONFIG_PHY_ST_SPEAR1310_MIPHY)  += phy-spear1310-miphy.o
+>  +obj-$(CONFIG_PHY_ST_SPEAR1340_MIPHY)  += phy-spear1340-miphy.o
+> + obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)   += phy-qcom-apq8064-sata.o
+> + obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)   += phy-qcom-ipq806x-sata.o
 
-I submitted a patch to Herbert to remove the "select OF if ARM64" that
-caused this.  He applied it early this morning.  OF is selected by
-ARM64 so it wasn't really needed. I'm surprised that this error occurs
-when the select is protected by an "if ARM64" and none of these builds
-is ARCH=arm64.
 
-Thanks,
-Tom
+We've both been sinners here. New entries should be added in
+alphabetical order to avoid these conflicts, and neither of us caught
+it.
 
->> crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
->> net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
->> fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
->> fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
->> drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
->> drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
->> drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
->> drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
->>
->> And then the arm multi_v7_defconfig build produced these:
->>
->> drivers/usb/Kconfig:41:error: recursive dependency detected!
->> drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
->> drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
->> drivers/input/Kconfig:8:	symbol INPUT is selected by VT
->> drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
->> drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
->> drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
->> drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS_CMA_HELPER
->> drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TILCDC
->> drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
->> drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
->> drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
->> crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
->> net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
->> fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
->> fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
->> drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
->> drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
->> drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
->> drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
->> #
->> # configuration written to .config
->> #
->> WITHOUT_CCACHE:
->> WITHOUT_DISTCC:
->> ARCH=arm
->> CCVER=4.9.0
->> drivers/usb/Kconfig:41:error: recursive dependency detected!
->> drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
->> drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
->> drivers/input/Kconfig:8:	symbol INPUT is selected by VT
->> drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
->> drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
->> drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
->> drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS_CMA_HELPER
->> drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TILCDC
->> drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
->> drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
->> drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
->> crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
->> net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
->> fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
->> fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
->> drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
->> drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
->> drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
->> drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
->> *
->> * Restart config...
->> *
->> *
->> * USB HID Boot Protocol drivers
->> *
->> USB HIDBP Keyboard (simple Boot) support (USB_KBD) [N/m/y/?] (NEW) aborted!
->>
->> Console input/output is redirected. Run 'make oldconfig' to update configuration.
->>
->>
->> I am not sure exactly what caused all this, but it is probably commit
->> 126ae9adc1ec ("crypto: ccp - Base AXI DMA cache settings on device
->> tree").
->>
->> I have used the version of the crypto tree from next-20140723 for today.
->>
->
->
+Resolution looks OK though.
+
+
+-Olof
