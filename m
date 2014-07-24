@@ -1,56 +1,95 @@
-From: Vince Bridgers <vbridgers2013@gmail.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 23 Jul 2014 13:42:55 -0500
-Message-ID: <CAOwfj2O8wZWcWsjvTFX+uXEqS9pA5z4vh9szPfGcuQSYcoCgew@mail.gmail.com>
-References: <20140704113907.468a366a@canb.auug.org.au>
-	<20140707.195330.1593299312055099195.davem@davemloft.net>
-	<CAOwfj2PsBhW3j4Tm4UMc1iCf=-xX8bhKcNLuo+iMzQw=jZog+A@mail.gmail.com>
-	<CAGVrzcZWGQiSjBs0iKofLvnk7wFth2VkZ02ycaic855O5EzxFw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Thu, 24 Jul 2014 12:47:00 +1000
+Message-ID: <20140724124700.602081e7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Qleug8pSeulOUMoaXBG9p.p"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:41750 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932697AbaGWSm5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2014 14:42:57 -0400
-In-Reply-To: <CAGVrzcZWGQiSjBs0iKofLvnk7wFth2VkZ02ycaic855O5EzxFw@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:47270 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758466AbaGXCrL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2014 22:47:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: David Miller <davem@davemloft.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>, Johannes Berg <johannes.berg@intel.com>
 
-On Wed, Jul 23, 2014 at 1:40 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> 2014-07-23 11:38 GMT-07:00 Vince Bridgers <vbridgers2013@gmail.com>:
->> Hi all,
->>
->> On Mon, Jul 7, 2014 at 9:53 PM, David Miller <davem@davemloft.net> wrote:
->>> From: Stephen Rothwell <sfr@canb.auug.org.au>
->>> Date: Fri, 4 Jul 2014 11:39:07 +1000
->>>
->>>> After merging the net tree, today's linux-next build (x86_64
->>>> allmodconfig) failed like this:
->>>>
->>>> ERROR: "phy_resume" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefined!
->>>>
->>>> Caused by commit 0acf16768740 ("net: stmmac: add platform init/exit for
->>>> Altera's ARM socfpga").
->>>>
->>>> I reverted that commit for today.
->>>
->>> Vince you haven't made any effort to fix this build failure, so I am reverting
->>> your changes.
->>
->> My apologies, I was out on vacation and I should have checked for this
->> before submitting. I have a corrected patch that I'm ready to submit.
->
-> net-next does contain a change that adds EXPORT_SYMBOLE() to
-> phy_resume and phy_suspend, you might be able to get along with just
-> re-submitting your patches if they still apply cleanly?
-> --
-> Florian
+--Sig_/Qleug8pSeulOUMoaXBG9p.p
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ok, I was just parsing the other email thread. I'll try that.
+Hi all,
 
-Cheers
+Today's linux-next merge of the net-next tree got a conflict in
+net/mac80211/cfg.c between commit fa8f136fe9a8 ("mac80211: fix crash on
+getting sta info with uninitialized rate control") from the wireless
+tree and commit b7ffbd7ef675 ("cfg80211: make ethtool the driver's
+responsibility") from the net-next tree.
 
-Vince
+I fixed it up (the latter moved the code modified by the former, so I
+removed the code and added the following patch) and can carry the fix
+as necessary (no action is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 24 Jul 2014 12:32:49 +1000
+Subject: [PATCH] mac80211: fix for code movement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/mac80211/sta_info.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/sta_info.c b/net/mac80211/sta_info.c
+index f41177f58b30..c6ee2139fbc5 100644
+--- a/net/mac80211/sta_info.c
++++ b/net/mac80211/sta_info.c
+@@ -1724,12 +1724,15 @@ void sta_set_sinfo(struct sta_info *sta, struct sta=
+tion_info *sinfo)
+ {
+ 	struct ieee80211_sub_if_data *sdata =3D sta->sdata;
+ 	struct ieee80211_local *local =3D sdata->local;
+-	struct rate_control_ref *ref =3D local->rate_ctrl;
++	struct rate_control_ref *ref =3D NULL;
+ 	struct timespec uptime;
+ 	u64 packets =3D 0;
+ 	u32 thr =3D 0;
+ 	int i, ac;
+=20
++	if (test_sta_flag(sta, WLAN_STA_RATE_CONTROL))
++		ref =3D local->rate_ctrl;
++
+ 	sinfo->generation =3D sdata->local->sta_generation;
+=20
+ 	sinfo->filled =3D STATION_INFO_INACTIVE_TIME |
+--=20
+2.0.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/Qleug8pSeulOUMoaXBG9p.p
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT0HOqAAoJEMDTa8Ir7ZwVKawP/1Z1lSxXUEXS3R2tWygxbpQP
+4nuxdnZ976GOaDS1I306jPbYAFQ2NbA4/UwBxRBUKq5aH6r4Uyo8Xy4fUSwsvVY+
+dmgJ772N+7avIkPkWejXn1mk5A0MEvI2HPr5poqTjj48W050/OwJiAQtpQfYVExs
+zykm8uHlV0KwEWPzuytdpWrCEFlkqA+SxXu3AIPfvU1C1Wd6iFU5I79vWC4SUsR5
+WhHRkZPLSMi1f13sUkOezVvIlBpf8TWvRPK8C981I8bEvEtdovPZWvdu5oDnnHyp
+1YuJFwWe1o4hbKcyKoukCyf0nFcHqrN3qMA0hznGRMCZ4D3N0fgB2oK33L7eYZ8x
+amPRz5zCjBdwHfS8CmmVHqqrnu325sKE7xH2yCVBumu82n3UYvKCbhxLNTsKkNLl
+giXUMCl1EaI8fNU29B0gewktYGIt3P5WKAxJ8uZsnvXcCkcmY0+syD9DlJwVAFdI
+XYvrtrKPtgTblJo9k0o3xmfDNExZuWtcZ/nuLJZNDBrCjbQrireDuFyJTee4wKwn
+QYyfrfycE5JVgb1xbrj1rNX2UGpIPAlq4Suj4xDnr8nYLXR+Sf8g22Njk8LXITem
+6GHRDbanhk8KBBHvT764HE31JvPOI3cTiIGk4R8hnZXNREpoDM3Rssk/nCzqL8dO
+epG0yx9CwJziVkBmdt23
+=a2Cg
+-----END PGP SIGNATURE-----
+
+--Sig_/Qleug8pSeulOUMoaXBG9p.p--
