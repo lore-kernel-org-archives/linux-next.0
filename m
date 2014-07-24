@@ -1,95 +1,173 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the wireless
- tree
-Date: Thu, 24 Jul 2014 12:47:00 +1000
-Message-ID: <20140724124700.602081e7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Thu, 24 Jul 2014 13:08:01 +1000
+Message-ID: <20140724130801.3dce9bb7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Qleug8pSeulOUMoaXBG9p.p"; protocol="application/pgp-signature"
+ boundary="Sig_/V5kR1b69Nx6Rr86sSz=DDjw"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47270 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60742 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758466AbaGXCrL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2014 22:47:11 -0400
+	id S1758463AbaGXDIJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2014 23:08:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>, Johannes Berg <johannes.berg@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>
 
---Sig_/Qleug8pSeulOUMoaXBG9p.p
+--Sig_/V5kR1b69Nx6Rr86sSz=DDjw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Herbert,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/mac80211/cfg.c between commit fa8f136fe9a8 ("mac80211: fix crash on
-getting sta info with uninitialized rate control") from the wireless
-tree and commit b7ffbd7ef675 ("cfg80211: make ethtool the driver's
-responsibility") from the net-next tree.
+After merging the crypto tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these messages:
 
-I fixed it up (the latter moved the code modified by the former, so I
-removed the code and added the following patch) and can carry the fix
-as necessary (no action is required).
+fs/sysfs/Kconfig:1:error: recursive dependency detected!
+fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
+drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
+drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
+drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
+drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
+drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
+drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
+drivers/input/Kconfig:8:	symbol INPUT is selected by VT
+drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
+drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
+drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS=
+_CMA_HELPER
+drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TI=
+LCDC
+drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
+drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
+drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
+crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
+net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
+fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 24 Jul 2014 12:32:49 +1000
-Subject: [PATCH] mac80211: fix for code movement
+The x86_64 allmodconfig build produced these:
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/mac80211/sta_info.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+scripts/kconfig/conf --allmodconfig Kconfig
+drivers/usb/Kconfig:41:error: recursive dependency detected!
+drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
+drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
+drivers/input/Kconfig:8:	symbol INPUT is selected by VT
+drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
+drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
+drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS=
+_CMA_HELPER
+drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TI=
+LCDC
+drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
+drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
+drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
+crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
+net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
+fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
+fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
+drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
+drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
+drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
+drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
 
-diff --git a/net/mac80211/sta_info.c b/net/mac80211/sta_info.c
-index f41177f58b30..c6ee2139fbc5 100644
---- a/net/mac80211/sta_info.c
-+++ b/net/mac80211/sta_info.c
-@@ -1724,12 +1724,15 @@ void sta_set_sinfo(struct sta_info *sta, struct sta=
-tion_info *sinfo)
- {
- 	struct ieee80211_sub_if_data *sdata =3D sta->sdata;
- 	struct ieee80211_local *local =3D sdata->local;
--	struct rate_control_ref *ref =3D local->rate_ctrl;
-+	struct rate_control_ref *ref =3D NULL;
- 	struct timespec uptime;
- 	u64 packets =3D 0;
- 	u32 thr =3D 0;
- 	int i, ac;
-=20
-+	if (test_sta_flag(sta, WLAN_STA_RATE_CONTROL))
-+		ref =3D local->rate_ctrl;
-+
- 	sinfo->generation =3D sdata->local->sta_generation;
-=20
- 	sinfo->filled =3D STATION_INFO_INACTIVE_TIME |
---=20
-2.0.1
+And then the arm multi_v7_defconfig build produced these:
+
+drivers/usb/Kconfig:41:error: recursive dependency detected!
+drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
+drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
+drivers/input/Kconfig:8:	symbol INPUT is selected by VT
+drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
+drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
+drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS=
+_CMA_HELPER
+drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TI=
+LCDC
+drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
+drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
+drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
+crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
+net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
+fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
+fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
+drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
+drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
+drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
+drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
+#
+# configuration written to .config
+#
+WITHOUT_CCACHE:=20
+WITHOUT_DISTCC:=20
+ARCH=3Darm
+CCVER=3D4.9.0
+drivers/usb/Kconfig:41:error: recursive dependency detected!
+drivers/usb/Kconfig:41:	symbol USB is selected by MOUSE_APPLETOUCH
+drivers/input/mouse/Kconfig:162:	symbol MOUSE_APPLETOUCH depends on INPUT
+drivers/input/Kconfig:8:	symbol INPUT is selected by VT
+drivers/tty/Kconfig:12:	symbol VT is selected by FB_STI
+drivers/video/fbdev/Kconfig:652:	symbol FB_STI depends on FB
+drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:39:	symbol DRM_KMS_FB_HELPER is selected by DRM_KMS=
+_CMA_HELPER
+drivers/gpu/drm/Kconfig:74:	symbol DRM_KMS_CMA_HELPER is selected by DRM_TI=
+LCDC
+drivers/gpu/drm/tilcdc/Kconfig:1:	symbol DRM_TILCDC depends on OF
+drivers/of/Kconfig:4:	symbol OF is selected by CRYPTO_DEV_CCP_DD
+drivers/crypto/ccp/Kconfig:1:	symbol CRYPTO_DEV_CCP_DD depends on CRYPTO
+crypto/Kconfig:15:	symbol CRYPTO is selected by IP_SCTP
+net/sctp/Kconfig:5:	symbol IP_SCTP is selected by DLM
+fs/dlm/Kconfig:1:	symbol DLM depends on SYSFS
+fs/sysfs/Kconfig:1:	symbol SYSFS is selected by AT91_ADC
+drivers/iio/adc/Kconfig:110:	symbol AT91_ADC depends on IIO
+drivers/iio/Kconfig:5:	symbol IIO is selected by RTC_DRV_HID_SENSOR_TIME
+drivers/rtc/Kconfig:1370:	symbol RTC_DRV_HID_SENSOR_TIME depends on USB_HID
+drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on USB
+*
+* Restart config...
+*
+*
+* USB HID Boot Protocol drivers
+*
+USB HIDBP Keyboard (simple Boot) support (USB_KBD) [N/m/y/?] (NEW) aborted!
+
+Console input/output is redirected. Run 'make oldconfig' to update configur=
+ation.
+
+
+I am not sure exactly what caused all this, but it is probably commit
+126ae9adc1ec ("crypto: ccp - Base AXI DMA cache settings on device
+tree").
+
+I have used the version of the crypto tree from next-20140723 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Qleug8pSeulOUMoaXBG9p.p
+--Sig_/V5kR1b69Nx6Rr86sSz=DDjw
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT0HOqAAoJEMDTa8Ir7ZwVKawP/1Z1lSxXUEXS3R2tWygxbpQP
-4nuxdnZ976GOaDS1I306jPbYAFQ2NbA4/UwBxRBUKq5aH6r4Uyo8Xy4fUSwsvVY+
-dmgJ772N+7avIkPkWejXn1mk5A0MEvI2HPr5poqTjj48W050/OwJiAQtpQfYVExs
-zykm8uHlV0KwEWPzuytdpWrCEFlkqA+SxXu3AIPfvU1C1Wd6iFU5I79vWC4SUsR5
-WhHRkZPLSMi1f13sUkOezVvIlBpf8TWvRPK8C981I8bEvEtdovPZWvdu5oDnnHyp
-1YuJFwWe1o4hbKcyKoukCyf0nFcHqrN3qMA0hznGRMCZ4D3N0fgB2oK33L7eYZ8x
-amPRz5zCjBdwHfS8CmmVHqqrnu325sKE7xH2yCVBumu82n3UYvKCbhxLNTsKkNLl
-giXUMCl1EaI8fNU29B0gewktYGIt3P5WKAxJ8uZsnvXcCkcmY0+syD9DlJwVAFdI
-XYvrtrKPtgTblJo9k0o3xmfDNExZuWtcZ/nuLJZNDBrCjbQrireDuFyJTee4wKwn
-QYyfrfycE5JVgb1xbrj1rNX2UGpIPAlq4Suj4xDnr8nYLXR+Sf8g22Njk8LXITem
-6GHRDbanhk8KBBHvT764HE31JvPOI3cTiIGk4R8hnZXNREpoDM3Rssk/nCzqL8dO
-epG0yx9CwJziVkBmdt23
-=a2Cg
+iQIcBAEBCAAGBQJT0HiWAAoJEMDTa8Ir7ZwVZyoP/i9R8m4ekJLTt7gok1DeQWi1
+HN7WgEaMWIiUjGHz3zcga6p5hfcRfJyWSFDN0BtIjYCwZCNoINZWad7TtH6fYDJl
+FNoROjGptPYdnz8tajsTjlhr1lDSkMsptFqBCvNFwGQWzeyQeP3y8/CHeKu5DppH
+QNNpX+Z1R5ilEjf5IVE5zoaJD3WwmoUb+mt1VA5rgcQU1BmhYGBChmV/jvC/lX1+
+ZOcxBpTQD/E8LvoZMrgeVVUPl8CAetnpLqKq12Cm5OMktfAzQKlXT/TEcUxT9LQe
+kBztqzXkP6gHj9Wo4hLcNZ0V50G/QF19tRtq+zo2ChUufXjO7XgoUOmXTn7Hk7vO
+mUr2VnkaMpcCEXkbElBPc0mGiT4RUZzFdLphw2kEZ4z+UMZc8+4wVAiv63DtAK6Y
+zGY6mPKiFhHxzE59oJtfCxNU3eWY4oPvz00JPkcZHg6FRWvNJ6AT0VwA7BiTFzTl
+HphCMhVwd2le+O1AThyy0F8pfr1vLOKKKQFUO69BtDHLtKMIqZdgIwglqWGbwvfq
+6De2NChxascjLcuFubaC8nX+K7NLlbCK32f3veB047Q9yazTCY7kr8+AedxEx1YD
+BygUKrYoYcaBwOWpIqGRq611ToLOQCFHd2louAgyMrdyU3WqVMK4ghwtEIpY8trL
+b2W7kZjRtfCFH+4YefcZ
+=RDfL
 -----END PGP SIGNATURE-----
 
---Sig_/Qleug8pSeulOUMoaXBG9p.p--
+--Sig_/V5kR1b69Nx6Rr86sSz=DDjw--
