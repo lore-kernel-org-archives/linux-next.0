@@ -1,73 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the samsung tree
-Date: Thu, 24 Jul 2014 16:22:32 +1000
-Message-ID: <20140724162232.68747558@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the drm
+ tree
+Date: Wed, 23 Jul 2014 23:23:23 -0700
+Message-ID: <20140724062323.GC19567@kroah.com>
+References: <20140724155630.2727ad65@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Td0eVk86la6HqyHEhS8i56m"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55509 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756176AbaGXGWo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2014 02:22:44 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:44085 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934045AbaGXGXu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2014 02:23:50 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by gateway1.nyi.internal (Postfix) with ESMTP id 2AC162104D
+	for <linux-next@vger.kernel.org>; Thu, 24 Jul 2014 02:23:48 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20140724155630.2727ad65@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mateusz Krawczuk <mat.krawczuk@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>
 
---Sig_/Td0eVk86la6HqyHEhS8i56m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 24, 2014 at 03:56:30PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> drivers/gpu/drm/armada/armada_crtc.c between commit d8c96083cf5e
+> ("drm/armada: permit CRTCs to be registered as separate devices") from
+> the drm tree and commit c9d53c0f2d23 ("devres: remove
+> devm_request_and_ioremap()") from the driver-core tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi Greg,
+Looks good, thanks.
 
-Today's linux-next merge of the usb tree got a conflict in
-Documentation/devicetree/bindings/phy/samsung-phy.txt between commit
-949ccc3a9363 ("phy: Add support for S5PV210 to the Exynos USB 2.0 PHY
-driver") from the samsung tree and commit 016e0d3cb72c ("drivers: phy:
-exynos-usb2: add support for Exynos 3250") from the usb tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 7dce043a6e29,6099a5c94283..000000000000
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@@ -26,7 -26,7 +26,8 @@@ Samsung S5P/EXYNOS SoC series USB PH
- =20
-  Required properties:
-  - compatible : should be one of the listed compatibles:
- +	- "samsung,s5pv210-usb2-phy"
-+ 	- "samsung,exynos3250-usb2-phy"
-  	- "samsung,exynos4210-usb2-phy"
-  	- "samsung,exynos4x12-usb2-phy"
-  	- "samsung,exynos5250-usb2-phy"
-
---Sig_/Td0eVk86la6HqyHEhS8i56m
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT0KYuAAoJEMDTa8Ir7ZwV9GYP/i0mYEJisdOlaXgSXNicBuXq
-tlVi8NNXg5/1L86qz4TUdOSGmD+oph+LwsrWiobGt01zuxUtQxltr4i8pk4fhigf
-b9AysNzET4uX6R7Zzq/3PdB+4oSdLwUjSIYjqneJHemnhjWqaKeiuAPxKXzDF0rX
-bZEXUo+/AtyXIGDQ/GrrAwHNrPeLx0Fez517AbSJeE7Htne2hqodPDLS9ANcVbxV
-DaUUxNGn9PIq3LZ3csgqMzMJVx34rfEp2haSuJqoyblgld0isQ/xWqCiNxrtlxJH
-6/rwXR9vaIsFs/zJwULhS74pKBuJxDaCwphHFHfZ6Po/kyIxjVLtvxBSkmNe29UG
-PLu3DYzultncK2jCTnqhItIiqqVZ1jr5vXrXN+/3OWLYDIbtnNWPSvmZz8aocbaU
-r+59ATXXjB/Ec41hNvy+HL7xaDkIdRc4MWGdAvvYJ0HS762ez3cGqJyA4g+UaihH
-E9GqhrgPm2wYIjNeSLUlIUKlu7Qc1AztK7uePy45yFPaLAYZDQ2YFuvsdOUGihGN
-Bc/NSuibf6HmQYcvginQznTexh7pqtXYn2H3Y4yzZ+9mDJo91zUTlTw/SWiC0skW
-ek40kx7It2kmOdGrfLTyZOFUz81wzrhXD1kn6dRdS4FjlHjkauvi+ATWFUX/YZTG
-p2HqwYZAR4FS7OlOeF1x
-=PlcX
------END PGP SIGNATURE-----
-
---Sig_/Td0eVk86la6HqyHEhS8i56m--
+greg k-h
