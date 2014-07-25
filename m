@@ -1,32 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 25 Jul 2014 10:13:55 +1000
-Message-ID: <20140725101355.7946e4b9@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm tree
+Date: Fri, 25 Jul 2014 10:24:10 +1000
+Message-ID: <20140725102410.44ffa99d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZD7VHkHvLn0p3L1SxKu0dPj"; protocol="application/pgp-signature"
+ boundary="Sig_/oR0i4vRFn6CNj+ZhWdw5D3W"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37008 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55308 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934843AbaGYAOC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2014 20:14:02 -0400
+	id S934483AbaGYAYS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2014 20:24:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Tomasz Figa <t.figa@samsung.com>
 
---Sig_/ZD7VHkHvLn0p3L1SxKu0dPj
+--Sig_/oR0i4vRFn6CNj+ZhWdw5D3W
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-integrator/include/mach/memory.h between commit
-3ae4e9812941 ("ARM: 8113/1: remove remaining definitions of
-PLAT_PHYS_OFFSET from <mach/memory.h>") from the arm tree and commit
-e6dc195c1c69 ("ARM: integrator: get rid of <mach/memory.h>") from the
-arm-soc tree.
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/mach-s5pv210/include/mach/memory.h between commit 3ae4e9812941
+("ARM: 8113/1: remove remaining definitions of PLAT_PHYS_OFFSET from
+<mach/memory.h>") from the arm tree and commit d78c16ccde96 ("ARM:
+SAMSUNG: Remove remaining legacy code") from the samsung tree.
 
 I fixed it up (I just removed the file) and can carry the fix as
 necessary (no action is required).
@@ -35,26 +34,26 @@ necessary (no action is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/ZD7VHkHvLn0p3L1SxKu0dPj
+--Sig_/oR0i4vRFn6CNj+ZhWdw5D3W
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT0aFHAAoJEMDTa8Ir7ZwVSiUP/1MVQ/MZcszu2nFFCDqce4rp
-Nk/BVhBtpa8wPZPwHAzJcSiVffd73LYPuiNgjubyM0ZSIMm0ryyu7kCSGY+TjIXO
-nwlQfNvoZlCsQ/h7gHvOlvx3AtnlBIhH4ZaGxAvAKeKZv6OzS/qzys3W/Z+pTuDI
-MvFMhdxe3Y+3FpVBZUHxDpj52V+bGw6kwF66kf4vPreeQKDq61ENcqX919QkgMyj
-DIbN7M0W/Kjvc/2W0dqIbIJOR4DyyJgawPNaXBH0ZQ1JuXY7AlY9oG7JPkOodNBL
-4KSkjpFOeXIe3oz7AKRpo7O+FAajnHo0qQu/Bh+iPtPw2mcykfCIcyUp8W1IfwAj
-DnJG9apWg1O4NT1uxvmB3QXk6KSyUELkYL/XB8jHtXOxARuc8Ouz7lR2ixqZlbBk
-wAwxwm6DXymDVTUH3QlH2M99EnkkiX0mYY9Ghc6Ba4HrG5504lWIU4dfk54A97ik
-3bBU/+VDctG/e1Vp6dwFuFN+3604DeJLsh1NEfC4SEiBM/MGALgAMhgsSnxv/lxy
-gowe0KLrG/10dXPLbgkmzWZpJxYWuS772XIyvBc3Ub/wq2VTt0yFxeBQYTqkJm5W
-ayEILrCMwG0Oj5g8pQW5TILXcnxZIj+ZoDCVPB/bsVbQZCXza52hcqrYLZKrWqkE
-hMY7H7fOtQjlEuoULeGs
-=B/WC
+iQIcBAEBCAAGBQJT0aOwAAoJEMDTa8Ir7ZwVMKUP/j30PEgC+DeM9hI2jS4/+x3i
+qP3+tchJ3DFG/+02F/ie6gGA/V4+B7TUJhbawTAcEUSpAMOGW2rke24BLLzjOADF
+iPpa+ni626sgIMXrqTQcIYyLnSE8Q8PZzcccKfzmv0IcVyGHH4ycs2e9LvDN/Jw3
+wpX4hd8M+PsTT5N1pNdXDcGbMCcOb5/ZHR9YHpE5g7/AigWyiKdsXA4GIPWdEl+M
+7RKaxNsoWQE5IF/TOgnHkJ/9vTNSGZE38dS6YpHMohupDA5NmfWgIrDPrry3m2mX
+Tbt7Se1q2JIPbPexJzBAfTeO3in0CkSx5Qy2x5d+fQn95EZ9R/w/WvjaeHIh4ooG
+adWC4SlFlv9FgwASq0g5g5aKOgUEDxbi6jZKxTLIboZAF342XZ054fV8KEhvdi6Z
+SMvm++4J41Pz2F5T9osWz7kbUMDK8jwjkyh6BvjljnnCf4wJnSo5YbL8a7R7F5Hn
+L1NhSzRgIeB8UDICkrPlg5zcYmlNDCskXdkAweASyOSISIHA0217vG+cjxbx8+Wb
+e80q+xnuaCxtOWZgJ+xajul5MSe4bFmkk+hz64xQ8isBOpckdkpI+KKkJo4Ostk/
+q3QEbGTXQY6drAjFRsIu8gwddBzRKW5UEzOwVWXS1I3D5fWrfwTJkG9Lc+2elUqP
+WNOAnzoGWeCqSB9RZNv2
+=78PA
 -----END PGP SIGNATURE-----
 
---Sig_/ZD7VHkHvLn0p3L1SxKu0dPj--
+--Sig_/oR0i4vRFn6CNj+ZhWdw5D3W--
