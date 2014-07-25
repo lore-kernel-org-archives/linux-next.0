@@ -1,62 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Fri, 25 Jul 2014 14:45:22 +1000
-Message-ID: <20140725144522.32c1f6b5@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the renesas
+ tree
+Date: Fri, 25 Jul 2014 16:23:53 +1000
+Message-ID: <20140725162353.04cacc71@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/09x8C0AWfck5zql6v/03jxQ"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/s0MJ06qQf95EOYE=V4OjEde"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51560 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751298AbaGYGYI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Jul 2014 02:24:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Simon Horman <horms@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---Sig_/09x8C0AWfck5zql6v/03jxQ
+--Sig_/s0MJ06qQf95EOYE=V4OjEde
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-After merging the tip tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the driver-core tree got a conflict in
+arch/arm/mach-shmobile/setup-r7s72100.c between commit 9394af431455
+("ARM: shmobile: genmai-reference: Enable MTU2 in device tree") from
+the renesas tree and commit d2168146c222 ("platform: Remove most
+references to platform_bus device") from the driver-core tree.
 
-arch/powerpc/kernel/time.c:743:6: error: conflicting types for 'update_vsys=
-call_old'
- void update_vsyscall_old(struct timespec *wall_time, struct timespec *wtm,
-      ^
-In file included from arch/powerpc/kernel/time.c:77:0:
-include/linux/timekeeper_internal.h:114:13: note: previous declaration of '=
-update_vsyscall_old' was here
- extern void update_vsyscall_old(struct timespec *ts, struct timespec *wtm,
-             ^
+I fixed it up (the former removed the code that the latter modified)
+and can carry the fix as necessary (no action is required).
 
-Caused by commit 4a0e637738f0 ("clocksource: Get rid of cycle_last").
-
-I have used the tip tree from next-20140724 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/09x8C0AWfck5zql6v/03jxQ
+
+--Sig_/s0MJ06qQf95EOYE=V4OjEde
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT0eDtAAoJEMDTa8Ir7ZwVL9cP/iXis3u4igJeEhcAA4LaucY6
-F1Tmi2FyQbmxZBlFKmbC/5df69ydRxHNepw/UygaTiFxx9vLE4lsBchCxWb4g+or
-3OMmOoPUu38cfGmJSoEQjyVKLmksz9lYa38HdVmwNJ41CdMMx5rrAoLqa1sFz3I0
-vv7jfRkMmJRCxx3wHUtAb7PskGhVvf64hd5c+9EBAO4Z/z6YmLuzn/mpt6ohDMj/
-0mml9z71T+Dm/ZnHA3q29s219chkrkqgVENMkML3eeDMjLNWBvuJYUm5wdcTYxg6
-ShbOpn8OFY+fbbP8JI5eaFVxmR2hNLrGOEqDJZfD0LR2zgMUrcCdNVHRoc+RC042
-HLnYBfWVX1nuN6UdYWd/82tLii2TTpVRoKadKkRt/7vxkXLzemy2OI4Z9yensdAj
-IWt6g9puX7nhCbzvWnDj9BhgI7tsiW98xlh6T+F0WNh/RcOel3lZYBOhNMjqvTvu
-kRQwAEm+BGvembzlvm0K+Pn3kQzAxgtbDK4yPCyjzeiuUvotRQD0BQgOTQIPn18w
-Y66UIEa0Pfu3y2HedONH+RV+SsuxG5u21ZofDKB3EzzeP/Q5KVhaaQShSSzNKBez
-gktWBtPm42Y4WO/DDz4FIQFt2mDDUAnbxTaLy8kTYIT7oc4XJGtA6PE6bzUmBO6u
-RBN/ZmxP2ILf/8oxWFkb
-=YkH3
+iQIcBAEBCAAGBQJT0fgFAAoJEMDTa8Ir7ZwV/EAP/RZrO9txBN+uisZEuQP67SIg
+xM9fwWAK7YyETrXvsDxLfaTuEGIiAOKkWhD7Yw604gKtbgIj6CEGUnjRX6X6JG2T
+3dGNbHgtwUbbbt+xWsmwposXGxCoaJAMKTZD8unaBfPwpJgQpsNiFz1kIELA3U9K
+FJjcBWLPIDxOQRgkgfEAuLoP3dDDj33mRxEbPtwTcFpAmGh+yRSx6VHdTJd9ub9M
+fW3WTUUAyRN4tCs6WNutlueOwugAGVeV5zqDxbfBPYY1ctHaTMD2yOTyKMyGrItK
+/ZJo549JyZra63c9kg9KkRiwZVKgmM+PaWqVZZwnY5NSAAGQRZ0I0MuHeM5AJ8qi
+HDGR2ttFMMUMtUiOXwv+zNFsouyyH+GaRGp0qL2wJYtRtd7JuBcfYmzZxqQ+ayCI
+h+JYymKt1FMz5xO3MayhnwcDfIMlGMCepQgGyq2zXgQDj53A0Z+Bww/M0SQCNtr3
+RQdRryZ5RtMBoS8c6Swzn5zd0RCMPRuBTivTeDP4vP0i2PYluf/erRtZWiY7L6dV
+cebzLzTlqkxFrfeEqmWW8gKIa+Z5cSGyfWfxV5rocstT0FIrnQfG+McEpguYU0IM
+ql+YZtcSKkw6K7y40n6WKzJH9byGXuyg7Qoxsj68WUP4XlHRZCZSU6f8c789JGDl
+D9SaYu9SdBGZSXB5Uc1C
+=LU2m
 -----END PGP SIGNATURE-----
 
---Sig_/09x8C0AWfck5zql6v/03jxQ--
+--Sig_/s0MJ06qQf95EOYE=V4OjEde--
