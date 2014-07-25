@@ -1,63 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Fri, 25 Jul 2014 12:23:17 +1000
-Message-ID: <20140725122317.4f96c131@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Fri, 25 Jul 2014 14:38:15 +1000
+Message-ID: <20140725143815.370009a8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fmNidk6n=By4cXhtBMYjdoO"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39062 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757022AbaGYCXZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2014 22:23:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David =?UTF-8?B?SMOkcmRlbWFu?= <david@hardeman.nu>
+ boundary="Sig_/vymejafDC.Gg0=d5.T/XQf0"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Felix Fietkau <nbd@openwrt.org>, Rajkumar Manoharan <rmanohar@qti.qualcomm.com>, John Stultz <john.stultz@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/fmNidk6n=By4cXhtBMYjdoO
+--Sig_/vymejafDC.Gg0=d5.T/XQf0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi all,
 
-After merging the v4l-dvb tree, today's linux-next build (x86_64 allmodconf=
-ig)
-failed like this:
+Today's linux-next merge of the tip tree got a conflict in
+drivers/net/wireless/ath/ath9k/hw.c between commit 8d7e09dda821
+("ath9k: save tsf in channel context") from the net-next tree and
+commit 6438e0ddc870 ("wireless: ath9k: Get rid of timespec
+conversions") from the tip tree.
 
-drivers/hid/hid-picolcd_cir.c: In function 'picolcd_init_cir':
-drivers/hid/hid-picolcd_cir.c:117:6: error: 'struct rc_dev' has no member n=
-amed 'allowed_protos'
-  rdev->allowed_protos   =3D RC_BIT_ALL;
-      ^
+The former changes made the latter conversions much harder, so I
+effectively dropped the tip tree commit.  Please discuss with the
+wireless maintainer ...
 
-Caused by commit 0dd0e92836cc ("[media] rc-core: remove protocol arrays").
-
-I have used the v4l-dvb tree from next-20410724 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/fmNidk6n=By4cXhtBMYjdoO
+--Sig_/vymejafDC.Gg0=d5.T/XQf0
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT0b+aAAoJEMDTa8Ir7ZwVxcUQAI5ZlB/lcf55VdRdFyqFtRWZ
-EvBwbCF4CdTXdA1BrU7uoli+FB+c29gbVkPqAIXbgD8143WOt+tIe2B3/bBlrnVz
-Dhu3Gsmmx+KIbsHaClhATFDz7dg6ZrkUi9mkUmOeTgZpIWlWI5yqAOshxR0Fd3XY
-T8Jk7oh1OSagdUY/M+KrD/dyQTFqUGGRRSEnt7puruHSsbUKi8v/JRxr1ug0ar9G
-y/39bSQldQHebhSpTWgylcz+QRfMSrz3Qv5lUs0GuF8DoOxhosaxED5bX5sjDFfX
-FEZ4mormihHITKK4WZQjyXKoUDxeZ4wRxicKQCoL2Uzml1ET7Ls9VJw11TB7OXot
-FrcUABPRA1OgGH0cY/TPlEvOuJiAgEihMT8LiVBLQ8gLM5EL5l4WNWP7zjDKwuvw
-WxO2bA4ksFAwAEg0iBmt7b7Dhn+U7G1JFK7kG1W63UmolhDWXyVzPHbF3GbjdSEt
-gint4x4mfnIDsmK8hSsRTdwuSBeLi6SRg7jt3JM6xPpBkvBLI07qSKW6UNAp/FxE
-UhV6BsEy4hAcKTqq+CBbFEEYe74X9B4apMtml902yH+db4QAlSWR8H4f04MWT5nU
-qOHSD3DgKgQtqVKM8TaVXxXnm4JQv5gRpYAmMxVG2BxQNlb7cknByt9cqZERRFNo
-y1H9d9eav7LFrw8vhZvO
-=/x6h
+iQIcBAEBCAAGBQJT0d89AAoJEMDTa8Ir7ZwVcWEP/0L/MdfYTrSjdVCeLLvz0/Hx
+Os+geKLwamFGHCsEs0xDEucq+V+Pgi+ES5Z+s8xwtw6AvFV1rtVj4msSLVsMy8tT
+e+j8LleKZ/JShKW5u+X/ZNkZDqv3XeeTrmkV98/I4dTC8YpFBkjDaNsR7ydX+Wz2
+2V4nSItb30JZJ2KPj+9IxyM3IAqkUODopwlA8/qbviif/iaqbjEk5a2ZKkFM9M6R
+pDtq10N2UPYDIzpGfcrzwnGo5pNr6wlgMiF4Tof+PWtfH1Ip/65zpb+OuWH9wu1G
+zdbhD9HF6zsIcSkurhvnm7VM6jDiIkfPvAuaLFXa5ywP2NYcJOFcg6OMsyCnsjAi
+GYG4m1mXr3RRw99E6ILKxwbdC9pjC1fgnzzpOiymLXTl/SQWelX33yiCoCa4inAF
+TedoUnStEMKoAbeze+XC3Q1Y3nR2R3JMKuD+oAJ52EmR1qSL9/kEuDOqMi1RcuLt
+XQkIxTz3T5MFmvLXiE5TU2bT1Gmu2UBOCFQORd3PhieLeO5zmeuW8kOLVlC+2yk7
+hibwwZnoqmlckWohckVl6zuEsMLbT8/SWwvfnYMlwKzmgs2fQsv2bPvjYNgkUCDr
+ZNa/TMMu2kUze1A5UD/MJ/41ipBo8b0yia8VLYk5zijcVF6EAP1pVxhcnrQSmHMD
+PBqt9gmCwUPnT9OM6nML
+=7gni
 -----END PGP SIGNATURE-----
 
---Sig_/fmNidk6n=By4cXhtBMYjdoO--
+--Sig_/vymejafDC.Gg0=d5.T/XQf0--
