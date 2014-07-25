@@ -1,59 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the arm tree
-Date: Fri, 25 Jul 2014 10:24:10 +1000
-Message-ID: <20140725102410.44ffa99d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Fri, 25 Jul 2014 12:23:17 +1000
+Message-ID: <20140725122317.4f96c131@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oR0i4vRFn6CNj+ZhWdw5D3W"; protocol="application/pgp-signature"
+ boundary="Sig_/fmNidk6n=By4cXhtBMYjdoO"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55308 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39062 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934483AbaGYAYS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2014 20:24:18 -0400
+	id S1757022AbaGYCXZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2014 22:23:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Tomasz Figa <t.figa@samsung.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David =?UTF-8?B?SMOkcmRlbWFu?= <david@hardeman.nu>
 
---Sig_/oR0i4vRFn6CNj+ZhWdw5D3W
+--Sig_/fmNidk6n=By4cXhtBMYjdoO
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Mauro,
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/mach-s5pv210/include/mach/memory.h between commit 3ae4e9812941
-("ARM: 8113/1: remove remaining definitions of PLAT_PHYS_OFFSET from
-<mach/memory.h>") from the arm tree and commit d78c16ccde96 ("ARM:
-SAMSUNG: Remove remaining legacy code") from the samsung tree.
+After merging the v4l-dvb tree, today's linux-next build (x86_64 allmodconf=
+ig)
+failed like this:
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary (no action is required).
+drivers/hid/hid-picolcd_cir.c: In function 'picolcd_init_cir':
+drivers/hid/hid-picolcd_cir.c:117:6: error: 'struct rc_dev' has no member n=
+amed 'allowed_protos'
+  rdev->allowed_protos   =3D RC_BIT_ALL;
+      ^
 
+Caused by commit 0dd0e92836cc ("[media] rc-core: remove protocol arrays").
+
+I have used the v4l-dvb tree from next-20410724 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/oR0i4vRFn6CNj+ZhWdw5D3W
+--Sig_/fmNidk6n=By4cXhtBMYjdoO
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT0aOwAAoJEMDTa8Ir7ZwVMKUP/j30PEgC+DeM9hI2jS4/+x3i
-qP3+tchJ3DFG/+02F/ie6gGA/V4+B7TUJhbawTAcEUSpAMOGW2rke24BLLzjOADF
-iPpa+ni626sgIMXrqTQcIYyLnSE8Q8PZzcccKfzmv0IcVyGHH4ycs2e9LvDN/Jw3
-wpX4hd8M+PsTT5N1pNdXDcGbMCcOb5/ZHR9YHpE5g7/AigWyiKdsXA4GIPWdEl+M
-7RKaxNsoWQE5IF/TOgnHkJ/9vTNSGZE38dS6YpHMohupDA5NmfWgIrDPrry3m2mX
-Tbt7Se1q2JIPbPexJzBAfTeO3in0CkSx5Qy2x5d+fQn95EZ9R/w/WvjaeHIh4ooG
-adWC4SlFlv9FgwASq0g5g5aKOgUEDxbi6jZKxTLIboZAF342XZ054fV8KEhvdi6Z
-SMvm++4J41Pz2F5T9osWz7kbUMDK8jwjkyh6BvjljnnCf4wJnSo5YbL8a7R7F5Hn
-L1NhSzRgIeB8UDICkrPlg5zcYmlNDCskXdkAweASyOSISIHA0217vG+cjxbx8+Wb
-e80q+xnuaCxtOWZgJ+xajul5MSe4bFmkk+hz64xQ8isBOpckdkpI+KKkJo4Ostk/
-q3QEbGTXQY6drAjFRsIu8gwddBzRKW5UEzOwVWXS1I3D5fWrfwTJkG9Lc+2elUqP
-WNOAnzoGWeCqSB9RZNv2
-=78PA
+iQIcBAEBCAAGBQJT0b+aAAoJEMDTa8Ir7ZwVxcUQAI5ZlB/lcf55VdRdFyqFtRWZ
+EvBwbCF4CdTXdA1BrU7uoli+FB+c29gbVkPqAIXbgD8143WOt+tIe2B3/bBlrnVz
+Dhu3Gsmmx+KIbsHaClhATFDz7dg6ZrkUi9mkUmOeTgZpIWlWI5yqAOshxR0Fd3XY
+T8Jk7oh1OSagdUY/M+KrD/dyQTFqUGGRRSEnt7puruHSsbUKi8v/JRxr1ug0ar9G
+y/39bSQldQHebhSpTWgylcz+QRfMSrz3Qv5lUs0GuF8DoOxhosaxED5bX5sjDFfX
+FEZ4mormihHITKK4WZQjyXKoUDxeZ4wRxicKQCoL2Uzml1ET7Ls9VJw11TB7OXot
+FrcUABPRA1OgGH0cY/TPlEvOuJiAgEihMT8LiVBLQ8gLM5EL5l4WNWP7zjDKwuvw
+WxO2bA4ksFAwAEg0iBmt7b7Dhn+U7G1JFK7kG1W63UmolhDWXyVzPHbF3GbjdSEt
+gint4x4mfnIDsmK8hSsRTdwuSBeLi6SRg7jt3JM6xPpBkvBLI07qSKW6UNAp/FxE
+UhV6BsEy4hAcKTqq+CBbFEEYe74X9B4apMtml902yH+db4QAlSWR8H4f04MWT5nU
+qOHSD3DgKgQtqVKM8TaVXxXnm4JQv5gRpYAmMxVG2BxQNlb7cknByt9cqZERRFNo
+y1H9d9eav7LFrw8vhZvO
+=/x6h
 -----END PGP SIGNATURE-----
 
---Sig_/oR0i4vRFn6CNj+ZhWdw5D3W--
+--Sig_/fmNidk6n=By4cXhtBMYjdoO--
