@@ -1,55 +1,62 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Fri, 25 Jul 2014 18:50:05 -0300
-Message-ID: <20140725185005.6b5230f9@recife.lan>
-References: <20140725122317.4f96c131@canb.auug.org.au>
-	<9f4bd671-cbe0-4e11-997e-e369c52589f9@email.android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:42156 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760273AbaGYVuO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Jul 2014 17:50:14 -0400
-In-Reply-To: <9f4bd671-cbe0-4e11-997e-e369c52589f9@email.android.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David =?UTF-8?B?SMOkcmRlbWFu?= <david@hardeman.nu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: ARC fails to boot on linux-next of 20140711
+Date: Fri, 25 Jul 2014 23:33:44 -0600
+Message-ID: <20140726053344.95800C40C93@trevor.secretlab.ca>
+References: <C2D7FE5348E1B147BCA15975FBA230753C4B67CF@IN01WEMBXA.internal.synopsys.com>
+	<CAL_JsqJ2q0RSvXQW03RqwwBi_TKQ7Zt6DsUbsUruzh5oqYi5Cg@mail.gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqJ2q0RSvXQW03RqwwBi_TKQ7Zt6DsUbsUruzh5oqYi5Cg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>, Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: linux-next <linux-next@vger.kernel.org>, Anton Kolesov <Anton.Kolesov@synopsys.com>, lkml <linux-kernel@vger.kernel.org>, greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Em Fri, 25 Jul 2014 07:25:05 +0200
-David H=C3=A4rdeman <david@hardeman.nu> escreveu:
-
-> Mauro,
->=20
-> On July 25, 2014 4:23:17 AM CEST, Stephen Rothwell <sfr@canb.auug.org=
-=2Eau> wrote:
-> >Hi Mauro,
+On Fri, 25 Jul 2014 09:15:22 -0500, Rob Herring <robherring2@gmail.com> wrote:
+> On Fri, Jul 25, 2014 at 6:02 AM, Vineet Gupta
+> <Vineet.Gupta1@synopsys.com> wrote:
+> > Hi Grant,
 > >
-> >After merging the v4l-dvb tree, today's linux-next build (x86_64
-> >allmodconfig)
-> >failed like this:
+> > linux-next has a series for arc_uart (via tty tree) which converts it to generic
+> > earlycon and specifies console via /chosen/stdout-path vs.  an explicit param in
+> > /chose/bootargs
 > >
-> >drivers/hid/hid-picolcd_cir.c: In function 'picolcd_init_cir':
-> >drivers/hid/hid-picolcd_cir.c:117:6: error: 'struct rc_dev' has no
-> >member named 'allowed_protos'
-> >  rdev->allowed_protos   =3D RC_BIT_ALL;
-> >      ^
+> > 2014-06-24 9da433c0a0b5 ARC: [arcfpga] stdout-path now suffices for earlycon/console
+> >
+> > This relied on prev commit of yours (from linux next of 20140711), which seem to
+> > have disappeared now.
+> >
+> > 2014-03-27 a9296cf2d0b6 of: Create of_console_check() for selecting a console
+> > specified in /chosen
+> > 2014-03-27 cfa9cacc5dd3 of: Enable console on serial ports specified by
+> > /chosen/stdout-path
+> >
+> > Is there a specific reason for dropping these patches (or perhaps a merge to be
+> > merged). I cherry-picked both but still doesn't work.
+> >
+> > Can you please advise next step forward, before I go off debugging with those
+> > patches in.
+> 
+> There's an issue that if you have stdout-path and "earlycon" on the
+> command line, the kernel will switch to tty0 and disable the earlycon.
+> 
+> This is the "fix", but I don't like adding the DT dependency into generic code:
 
-Sorry for not noticing. I generally don't do full builds, as doing it
-for all archs would require a bigger compilation system than what I
-have here. I generally do only partial builds for (almost) all archs
-before pushing at linux-next, because it is very hare that a change
-on media would break anything outside it.
+Yes, I'm not fond of it either. I've not been able to test it though and
+work out a proper bug fix. As far as I can understand, the earlycon code
+only works on aarch64, correct? I haven't been able to get an aarch64
+boot working in QEMU yet.
 
-> I'll have time to look at it on Monday/Tuesday unless you beat me to =
-it.
->=20
+g.
 
-Well, I can beat you on that ;) it should be allowed_protocols. I'll
-fix it here and do a full build to see if you made this mistake on
-some other file, as this is the second file where you typed it wrong ;)
-
-Regards,
-Mauro
+> 
+> @@ -2382,7 +2386,7 @@ void register_console(struct console *newcon)
+>                 if (newcon->setup == NULL ||
+>                     newcon->setup(newcon, NULL) == 0) {
+>                         newcon->flags |= CON_ENABLED;
+> -                       if (newcon->device) {
+> +                       if (newcon->device  && !of_stdout) {
+>                                 newcon->flags |= CON_CONSDEV;
+>                                 preferred_console = 0;
+>                         }
+> 
+> Rob
