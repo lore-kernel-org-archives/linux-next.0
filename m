@@ -1,55 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
 Subject: Re: of: Make OF_DYNAMIC user selectable
-Date: Mon, 28 Jul 2014 09:35:26 +1000
-Message-ID: <20140728093526.38d8e732@canb.auug.org.au>
+Date: Mon, 28 Jul 2014 00:51:58 +0100
+Message-ID: <yw1xegx6742p.fsf@unicorn.mansr.com>
+References: <20140728093526.38d8e732@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VaepzBHQZva+sQmpb/+w6G_"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55259 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750934AbaG0Xfe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Jul 2014 19:35:34 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140728093526.38d8e732@canb.auug.org.au> (Stephen Rothwell's
+	message of "Mon, 28 Jul 2014 09:35:26 +1000")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/VaepzBHQZva+sQmpb/+w6G_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Hi Grant,
+> Hi Grant,
+>
+> I noticed the subject commit in the devicetree tree in linux-next tod=
+ay.
+> The commit message gives us no idea why we would want to make this
+> change.  We already have lots of user selectable CONFIG_ options ... =
+do
+> we really need this one as well?
 
-I noticed the subject commit in the devicetree tree in linux-next today.
-The commit message gives us no idea why we would want to make this
-change.  We already have lots of user selectable CONFIG_ options ... do
-we really need this one as well?
+You say that like user-selectable options are somehow evil.  The kernel
+is not Gnome.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/VaepzBHQZva+sQmpb/+w6G_
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT1YzDAAoJEMDTa8Ir7ZwVEEkP/j1EImUJF3WsO3EILCQJuoKd
-RBpk/juZpmRQkKSt13CXy2zvC+wL2Ul0hQLJ79Tih9mOURNFWQ5Oy6IxlXOw7CKj
-7d7B4N/GvFmMzLrTrIAXN9r3N+iv7Vce221QfpPCj9JUVZi11qzjBLrQKGnwZbGy
-3OsUDkHCBuCb+C9/NlyTlUKNc+UQ58tR1/lm4W7p2ChLJ76XXjxkjs5QoXiAnN8F
-ZtvAbIb6/VJTtkCJDfZvMBVe82i2Re7nk2p1Hovqj/n3+BuzEaxwdr1vwzho+NST
-txfPUJmO7hdFXam2wjti8Cr6Rpzsj5jRx76vQclri0ltAtKbbVnpsyek5PWyY9JM
-XU7j+plqOPdGIasnj9h68XjF6TYPpNlD7EUaXHC7N3W7xI+bVNpDWM1hEK2QOpiW
-nKhd+tuMS71sgM4i8kGwUMzgETAnU3OOte+EvxX6PUV+XUgGaa57+C6X4F6lRJY9
-UMNP/GS3J9uY2e24YEyTeYo0wANr8Ajo9hl34EhukoBnvxrDV2+Em/O1LDOAWgZf
-nyjBw3RBrE84F5MTxQUjnx05I5rCsuj7iyvCjwms2lwf9AurMM346D9sxr3909cM
-W4Cc8mhNEvhPNNascAYN0sB/WsNNY+f34W+tlk0n6a+5pE76RuhIDl/soPwxyGax
-zcKLPMXEqEiJf/raDsU1
-=1Z4d
------END PGP SIGNATURE-----
-
---Sig_/VaepzBHQZva+sQmpb/+w6G_--
+M=E5ns Rullg=E5rd
+mans@mansr.com
