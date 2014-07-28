@@ -1,136 +1,124 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-ppc tree with the kvm tree
-Date: Mon, 28 Jul 2014 16:53:00 +1000
-Message-ID: <20140728165300.164ae107@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Mon, 28 Jul 2014 12:46:22 +0530
+Message-ID: <20140728071622.GY8181@intel.com>
+References: <20140728121856.56d0162e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//lz4HD=xsJephe.R8P4nHT/"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Graf <agraf@suse.de>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, Paul Mackerras <paulus@samba.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iVCmgExH7+hIHJ1A"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga03.intel.com ([143.182.124.21]:18833 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750996AbaG1HXo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2014 03:23:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20140728121856.56d0162e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 
---Sig_//lz4HD=xsJephe.R8P4nHT/
-Content-Type: text/plain; charset=US-ASCII
+
+--iVCmgExH7+hIHJ1A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alexander,
+On Mon, Jul 28, 2014 at 12:18:56PM +1000, Stephen Rothwell wrote:
+> Hi Vinod,
+>=20
+> After merging the slave-dma tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/dma/sun6i-dma.c: In function 'sun6i_dma_dump_chan_regs':
+> drivers/dma/sun6i-dma.c:203:2: error: implicit declaration of function '_=
+_virt_to_phys' [-Werror=3Dimplicit-function-declaration]
+>   phys_addr_t reg =3D __virt_to_phys((unsigned long)pchan->base);
+>   ^
+>=20
+> Caused by commit 555859308723 ("dmaengine: sun6i: Add driver for the
+> Allwinner A31 DMA controller").  Presumably missing an include file.
+>=20
+> I have used the slave-dma tree from next-20140725 for today.
 
-Today's linux-next merge of the kvm-ppc tree got a conflict in
-Documentation/virtual/kvm/api.txt between commit 8a366a4bae15 ("KVM:
-s390: document KVM_CAP_S390_IRQCHIP") from the kvm tree and commit
-dfc17cc2ded1 ("KVM: PPC: Book3S: Controls for in-kernel sPAPR hypercall
-handling") from the kvm-ppc tree.
+Thanks, Feng's robot also gave such warning. SInce maxime didnt send any
+fixes it, I am applying below to fix this.
+We shouldnt have used __virt_to_phys here
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+--x8---
+=46rom: Vinod Koul <vinod.koul@intel.com>
+Date: Mon, 28 Jul 2014 11:57:25 +0530
+Subject: [PATCH 1/2] dmaengine: sun6i: fix build failure on x86, xilinx tar=
+gets
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
+Since the driver defined COMPILE_TEST, it gets compiled for different arch'=
+s.
+The driver uses __virt_to_phys() insteadof virt_to_phys, so replace it
+
+drivers/dma/sun6i-dma.c: In function =E2=80=98sun6i_dma_dump_chan_regs=E2=
+=80=99:
+drivers/dma/sun6i-dma.c:203: error: implicit declaration of function '__vir=
+t_to_phys'
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+---
+ drivers/dma/sun6i-dma.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
+index ce8d5d1..e9f99bb 100644
+--- a/drivers/dma/sun6i-dma.c
++++ b/drivers/dma/sun6i-dma.c
+@@ -200,7 +200,7 @@ static inline void sun6i_dma_dump_com_regs(struct sun6i=
+_dma_dev *sdev)
+ static inline void sun6i_dma_dump_chan_regs(struct sun6i_dma_dev *sdev,
+ 					    struct sun6i_pchan *pchan)
+ {
+-	phys_addr_t reg =3D __virt_to_phys((unsigned long)pchan->base);
++	phys_addr_t reg =3D virt_to_phys(pchan->base);
+=20
+ 	dev_dbg(sdev->slave.dev, "Chan %d reg: %pa\n"
+ 		"\t___en(%04x): \t0x%08x\n"
+@@ -330,7 +330,7 @@ static inline int sun6i_dma_cfg_lli(struct sun6i_dma_ll=
+i *lli,
+ static inline void sun6i_dma_dump_lli(struct sun6i_vchan *vchan,
+ 				      struct sun6i_dma_lli *lli)
+ {
+-	phys_addr_t p_lli =3D __virt_to_phys((unsigned long)lli);
++	phys_addr_t p_lli =3D virt_to_phys(lli);
+=20
+ 	dev_dbg(chan2dev(&vchan->vc.chan),
+ 		"\n\tdesc:   p - %pa v - 0x%p\n"
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+1.7.0.4
 
-diff --cc Documentation/virtual/kvm/api.txt
-index 68cda1fc3d52,69553183ef0f..000000000000
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@@ -2931,13 -2863,12 +2931,13 @@@ The fields in each entry are defined a
-           this function/index combination
- =20
- =20
-- 6. Capabilities that can be enabled
-- -----------------------------------
-+ 6. Capabilities that can be enabled on vCPUs
-+ --------------------------------------------
- =20
- -There are certain capabilities that change the behavior of the virtual CP=
-U when
- -enabled. To enable them, please see section 4.37. Below you can find a li=
-st of
- -capabilities and what their effect on the vCPU is when enabling them.
- +There are certain capabilities that change the behavior of the virtual CP=
-U or
- +the virtual machine when enabled. To enable them, please see section 4.37.
- +Below you can find a list of capabilities and what their effect on the vC=
-PU or
- +the virtual machine is when enabling them.
- =20
-  The following information is provided along with the description:
- =20
-@@@ -3083,11 -3003,43 +3083,51 @@@ Parameters: args[0] is the XICS device=20
- =20
-  This capability connects the vcpu to an in-kernel XICS device.
- =20
- +6.8 KVM_CAP_S390_IRQCHIP
- +
- +Architectures: s390
- +Target: vm
- +Parameters: none
- +
- +This capability enables the in-kernel irqchip for s390. Please refer to
- +"4.24 KVM_CREATE_IRQCHIP" for details.
-+=20
-+ 7. Capabilities that can be enabled on VMs
-+ ------------------------------------------
-+=20
-+ There are certain capabilities that change the behavior of the virtual
-+ machine when enabled. To enable them, please see section 4.37. Below
-+ you can find a list of capabilities and what their effect on the VM
-+ is when enabling them.
-+=20
-+ The following information is provided along with the description:
-+=20
-+   Architectures: which instruction set architectures provide this ioctl.
-+       x86 includes both i386 and x86_64.
-+=20
-+   Parameters: what parameters are accepted by the capability.
-+=20
-+   Returns: the return value.  General error numbers (EBADF, ENOMEM, EINVA=
-L)
-+       are not detailed, but errors with specific meanings are.
-+=20
-+=20
-+ 7.1 KVM_CAP_PPC_ENABLE_HCALL
-+=20
-+ Architectures: ppc
-+ Parameters: args[0] is the sPAPR hcall number
-+ 	    args[1] is 0 to disable, 1 to enable in-kernel handling
-+=20
-+ This capability controls whether individual sPAPR hypercalls (hcalls)
-+ get handled by the kernel or not.  Enabling or disabling in-kernel
-+ handling of an hcall is effective across the VM.  On creation, an
-+ initial set of hcalls are enabled for in-kernel handling, which
-+ consists of those hcalls for which in-kernel handlers were implemented
-+ before this capability was implemented.  If disabled, the kernel will
-+ not to attempt to handle the hcall, but will always exit to userspace
-+ to handle it.  Note that it may not make sense to enable some and
-+ disable others of a group of related hcalls, but KVM does not prevent
-+ userspace from doing that.
-+=20
-+ If the hcall number specified is not one that has an in-kernel
-+ implementation, the KVM_ENABLE_CAP ioctl will fail with an EINVAL
-+ error.
 
---Sig_//lz4HD=xsJephe.R8P4nHT/
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--iVCmgExH7+hIHJ1A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQIcBAEBCAAGBQJT1fNSAAoJEMDTa8Ir7ZwV2OYP/0ViWdCF1h1mV/4kBrAWEZWe
-AB4AO/Z3jcD25UDQOLScs8BF+9uy4DBwT/WKpe8ERNaJTmfBNJreCbj8/4SpVX6l
-x7Gh7TK+ZGqnZ3PUFEPTsIAVyzdnPVkvMSCLXCuGa2hdhGxFfDsRZXpVnr4g0TAF
-lDvxFYoU+ugfY/aPDwpptfTRCadkrMo6XazCV8UlhCL3caKxiDHbkUaWsBEY6Lbj
-tjp8YEgklUHNN175lijY/fdutswJYs6hiSotN9kXqPHdjviVpPKub/PgOu273QRV
-TnvfjPsQsuq7XDceusdRCuspCd6GeqhwxumYC9n2jTefgWPsJek5WhZ1/2fuXIDg
-6lXpaYyvY31ZmPoRUQKd1PeoVWh5ndhI5S8WOUZrPhR/9eeN0NYRyv9umO998hx1
-zPxkf2X6Q9M8D8r4NVTppwYmmagbmJoTkP0dqbHphX74jPfF+nIVp/lE8eX3/w8h
-6PHT0UNpU0api5cCskWba15svkHtfs0ZdnzNpLEmsfET2gBztKzki1OO2owtEF55
-GfQ6Va6M65RoWXmYN7a5FcyN56/ObSpptaKpvuM2g8kkrZddv6ABcOAvPBFpmO7U
-f9R10hubGaEMoygiSqE/lUosT87miJs23Ub4NYEaS7Hu1ITGYvV+7scBztmH/cHd
-LFz8GpOZGgmeQZRHLS7S
-=krNN
+iQIcBAEBAgAGBQJT1fjGAAoJEHwUBw8lI4NHuGkP+wZvizLhvuTMD+AFfEBTNlES
+mGh5t3tVmYotWmKuagpHc4oJCzC3Zeg1OiPoX2lIVXrrtcuZreKzZOshOgflDGZl
+YW/MkSWCxNuEkQiPX3o8GAE/1NTSxxtc4yZLvfXOlWX+Ly2izxif1abeMgomvzuQ
+yN1Gmssrj/AzSi1Y0aTPAmyR1KBaR/r1l2DEHsZ2JvFTQ2bMh08sPCxKU/YoF6Bm
+aTgOPvWcuS8LJtv+OoAygIV8YC6WIyJwcYouIJ9AfB5qhxmjKVfUMQIrO866JLBc
+Cy8GVBl0xiWc8E36iZWMWH3sbhUJ/GxIaNl32yeIBm9T84gugcMqXN6IAA6zHSZv
+0kfJuNfgD3UZjDGOU5+t2R65zu+i+PBIQmgXFpqoTcM66rAdkyNOKxB1Xoi70SN4
+SGDH8BpWZEBnSd5Puzgh1tyRvAtsrpdG/AgNxe+kmVLLmvLS2xEeeBVypnv97Rzw
+7xJxwOsORKs5NxoiL/+rH6G1rs12SeUZDrwJ6Kj1jArWduUWxybbgmbtBjxQH1x6
+3ZbKG63SUTWnrkEqw7Me8QThcWkQBIXWArMF/s6NsVt2NMp/gos3spB1bJy/UKkD
+dzj2jo24GwLB3sXCi8/Wi18l2raQTfwI5zFPxaLsuNOGpqNqUWjKBn9L5m/N20nd
+aw0WwnaNH4IDUd3vd+wX
+=EnG0
 -----END PGP SIGNATURE-----
 
---Sig_//lz4HD=xsJephe.R8P4nHT/--
+--iVCmgExH7+hIHJ1A--
