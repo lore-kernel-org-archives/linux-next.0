@@ -1,118 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the random tree with the security tree
-Date: Mon, 28 Jul 2014 18:54:08 +1000
-Message-ID: <20140728185408.4d288309@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the regulator tree
+Date: Mon, 28 Jul 2014 20:32:33 +1000
+Message-ID: <20140728203233.26341abf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/b5ez6FDW7a9Je.Z1S_AxTEo"; protocol="application/pgp-signature"
+ boundary="Sig_/7k69u1LqMXVUBZde=3W.0MM"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47132 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45917 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751324AbaG1IyR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2014 04:54:17 -0400
+	id S1751365AbaG1Kcl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2014 06:32:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 
---Sig_/b5ez6FDW7a9Je.Z1S_AxTEo
+--Sig_/7k69u1LqMXVUBZde=3W.0MM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi all,
 
-Today's linux-next merge of the random tree got conflicts in
-arch/x86/syscalls/syscall_32.tbl, arch/x86/syscalls/syscall_64.tbl,
-include/linux/syscalls.h and include/uapi/asm-generic/unistd.h between
-commit 48dc92b9fc39 ("seccomp: add "seccomp" syscall") from the
-security tree and commit fd6f349345c7 ("random: introduce getrandom(2)
-system call") from the random tree.
+After merging the regulator tree, today's linux-next build (i386
+defconfig among others) produced these warnings:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from include/linux/regulator/machine.h:18:0,
+                 from drivers/acpi/bus.c:36:
+include/linux/regulator/consumer.h:468:23: warning: 'regulator_get_regmap' =
+defined but not used [-Wunused-function]
+ static struct regmap *regulator_get_regmap(struct regulator *regulator)
+                       ^
+include/linux/regulator/consumer.h:473:12: warning: 'regulator_get_hardware=
+_vsel_register' defined but not used [-Wunused-function]
+ static int regulator_get_hardware_vsel_register(struct regulator *regulato=
+r,
+            ^
+include/linux/regulator/consumer.h:480:12: warning: 'regulator_list_hardwar=
+e_vsel' defined but not used [-Wunused-function]
+ static int regulator_list_hardware_vsel(struct regulator *regulator,
+            ^
 
+And more like that.
+
+Introduced by commit 04eca28cde52 ("regulator: Add helpers for
+low-level register access").  Missing "static inline"s ...  I suspect
+this is becoming more common due to the lack of "extern"s in our header
+files now. :-(
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/syscalls/syscall_32.tbl
-index 7527eac24122,5b46a618aeb1..000000000000
---- a/arch/x86/syscalls/syscall_32.tbl
-+++ b/arch/x86/syscalls/syscall_32.tbl
-@@@ -360,4 -360,4 +360,5 @@@
-  351	i386	sched_setattr		sys_sched_setattr
-  352	i386	sched_getattr		sys_sched_getattr
-  353	i386	renameat2		sys_renameat2
- +354	i386	seccomp			sys_seccomp
-+ 355	i386	getrandom		sys_getrandom
-diff --cc arch/x86/syscalls/syscall_64.tbl
-index 16272a6c12b7,0dc4bf891460..000000000000
---- a/arch/x86/syscalls/syscall_64.tbl
-+++ b/arch/x86/syscalls/syscall_64.tbl
-@@@ -323,7 -323,7 +323,8 @@@
-  314	common	sched_setattr		sys_sched_setattr
-  315	common	sched_getattr		sys_sched_getattr
-  316	common	renameat2		sys_renameat2
- +317	common	seccomp			sys_seccomp
-+ 318	common	getrandom		sys_getrandom
- =20
-  #
-  # x32-specific system call numbers start at 512 to avoid cache impact
-diff --cc include/linux/syscalls.h
-index 1713977ee26f,43324a897cf2..000000000000
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@@ -866,6 -866,7 +866,9 @@@ asmlinkage long sys_process_vm_writev(p
-  asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
-  			 unsigned long idx1, unsigned long idx2);
-  asmlinkage long sys_finit_module(int fd, const char __user *uargs, int fl=
-ags);
- +asmlinkage long sys_seccomp(unsigned int op, unsigned int flags,
- +			    const char __user *uargs);
-+ asmlinkage long sys_getrandom(char __user *buf, size_t count,
-+ 			      unsigned int flags);
-+=20
-  #endif
-diff --cc include/uapi/asm-generic/unistd.h
-index 65acbf0e2867,1d104a2ca643..000000000000
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@@ -699,11 -699,11 +699,13 @@@ __SYSCALL(__NR_sched_setattr, sys_sched
-  __SYSCALL(__NR_sched_getattr, sys_sched_getattr)
-  #define __NR_renameat2 276
-  __SYSCALL(__NR_renameat2, sys_renameat2)
- +#define __NR_seccomp 277
- +__SYSCALL(__NR_seccomp, sys_seccomp)
-+ #define __NR_getrandom 278
-+ __SYSCALL(__NR_getrandom, sys_getrandom)
- =20
-  #undef __NR_syscalls
-- #define __NR_syscalls 278
-+ #define __NR_syscalls 279
- =20
-  /*
-   * All syscalls below here should go away really,
 
---Sig_/b5ez6FDW7a9Je.Z1S_AxTEo
+--Sig_/7k69u1LqMXVUBZde=3W.0MM
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT1g+2AAoJEMDTa8Ir7ZwV/FgP/0RwuG0o3TwnD5yXt/XvC7+C
-dKjIytGCa7l53m98G00uwCFh/APjlMbDqlKmOD4zw+2XHPmZF/jhGJlL/EIhYulm
-3qZH3MEwEBSPjtb48909f1DETgThSs0Nkcji38FlCIRGPKaDnx/3QRgT7LVglj/X
-YiFQRnePX1Wm5Z6ggciY+CiyM15BSCyz+Q2IgQAZBw8i6DVav7x+9vpPRKAUQSIX
-8qNeystsNRCJJ5GnYup+W1jebeVn0mudURlk93mXvml2YxE94sXwXBc/kGuzVoA0
-grCv/iPAvzgD7wNpHNtcNe683jl753hGvecHVgp7BdK82GaEF+x2rXdI/4UcfZl+
-UZ8gBV5hNCV2Ojl/Z0ETo2B9MgHQQV7zoaheMmXCl/OZeDHnBpiUd20an7PygibG
-siKtIInNcw37LSdEgtEkDk99hxPenUeF0/ALNlDehyrTLRe/bnZzUHxx9MnxmFP1
-2+ErivU3YF8y3pIukqI5T+VfE3/feqETxA6V+DnDOTr9CsSdG+hQUlBdYdoMr37K
-P4kFRV5ALnW61KkamM5Vt9sKnqvf27mElQS8yIG7vo6GLt5UdKRpXdJZx0LjkXkO
-gndT1TzwqZKBrosuScNvCuu1/nCo/Q3BnwfmnhQIB58/uzaen5qHTbtLeH/jAPm3
-0ckbTaeBHNP6OMrU8sJr
-=GuxE
+iQIcBAEBCAAGBQJT1ibHAAoJEMDTa8Ir7ZwVDlgP/2/dvg/va3ag5asoKKdOrlf/
+2+uDmO3CR5+cjEzI+80+xeFVAZFjNaTR/Gjh9vHVsRnwWqDQ7Y4523VyLuUre212
+M0cFupPyK8P+y92Yc9dsKRoCJV67eyT+I1F+GxgUJV3cRQb578JU1dvDrwQUd6ym
+CEm7HEttTYKscRvwKbfeolrvgfjZUkg5xX++onmetUm6egC+KzZDlO3K0lEFdKTm
+6g47igsRxfdM7pv3jD1u1SbxtaQVOSiYwfSJTIe9eCpCr+SuR9FR1D7cmjLUb7ib
+IpWep5r23kfOlyYb+HbcQGxkwhC72eiJA8ykVzLLSJ5Mn/3r4mABMvTmOuTU+Y+L
+d8gYCcnFSUitcM/v8SzGJAUg+JOglYmZwKPmNE7SS5DeeKHqCtSpNSC+8sJSkFhD
+21pRSztgEgVY9IZlpuJqcQ/ndtv9ZrJJGgkIr5UzT5eOe23f7If8dl5BhLG5TFxQ
+Ff4++68CBiQ7Z70V7lfXZiJXmzkM76clwQwDoMlzTzxQejxdi2wAMd++h0KpcRGm
+GNWKI6m23TBYtizP/uWrdfe6rwTtubju9BNxCwMYsIINlxswmsUab72FANXJbe8o
+8AjI/4ONm1BvWiNWyF4VqLCB7U1zxUseDWFJqIpwMeBSvlwyd8K+zIrHMtfR3N+p
+Lie4h5ursUImIODxoP4U
+=JhZo
 -----END PGP SIGNATURE-----
 
---Sig_/b5ez6FDW7a9Je.Z1S_AxTEo--
+--Sig_/7k69u1LqMXVUBZde=3W.0MM--
