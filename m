@@ -1,33 +1,63 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Subject: Re: of: Make OF_DYNAMIC user selectable
-Date: Mon, 28 Jul 2014 00:51:58 +0100
-Message-ID: <yw1xegx6742p.fsf@unicorn.mansr.com>
-References: <20140728093526.38d8e732@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the slave-dma tree
+Date: Mon, 28 Jul 2014 12:18:56 +1000
+Message-ID: <20140728121856.56d0162e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140728093526.38d8e732@canb.auug.org.au> (Stephen Rothwell's
-	message of "Mon, 28 Jul 2014 09:35:26 +1000")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vHs8cy=O/ffZSFBj5+xZJWF"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57784 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751028AbaG1CTH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Jul 2014 22:19:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Sig_/vHs8cy=O/ffZSFBj5+xZJWF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Grant,
->
-> I noticed the subject commit in the devicetree tree in linux-next tod=
-ay.
-> The commit message gives us no idea why we would want to make this
-> change.  We already have lots of user selectable CONFIG_ options ... =
-do
-> we really need this one as well?
+Hi Vinod,
 
-You say that like user-selectable options are somehow evil.  The kernel
-is not Gnome.
+After merging the slave-dma tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/dma/sun6i-dma.c: In function 'sun6i_dma_dump_chan_regs':
+drivers/dma/sun6i-dma.c:203:2: error: implicit declaration of function '__v=
+irt_to_phys' [-Werror=3Dimplicit-function-declaration]
+  phys_addr_t reg =3D __virt_to_phys((unsigned long)pchan->base);
+  ^
+
+Caused by commit 555859308723 ("dmaengine: sun6i: Add driver for the
+Allwinner A31 DMA controller").  Presumably missing an include file.
+
+I have used the slave-dma tree from next-20140725 for today.
 --=20
-M=E5ns Rullg=E5rd
-mans@mansr.com
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/vHs8cy=O/ffZSFBj5+xZJWF
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT1bMWAAoJEMDTa8Ir7ZwVTKkP/3tf+YU8dspMs8UGRe513JAc
+md3sRfduDAhwTWzim4UnZmf5gCt/VTID6QQpqgVU2Cu38LOUuAfSxRwVuAfBNXef
+cxsN9sbQsnVl9A6dEMKAri5k9ZSoJ2uRhJYWePGXbmBL/gPyZ5gA9sSyXeUClG97
+2Q8M+LIh9NeL7tJ9af6M3NWUPgiWXubla8yvW8fwt3M3/S57DmbAcO65ITsH+DyB
+fknGq0oMrBq5/QspYErEZGkJEKFLPsHGzONmVixPVh2oTC0BYqQVPcj807O3jpzo
+/GoARQStbiefpvM7gByiX0VM2tYH8o0Hblfh3yl7UOO5901x/x607eSvMwiR6jS+
+U5tDMmylj7rawmin/Ma70dXrx1lU7Nk0FoG4nYCbiMpzm69GuR9MiLwPyBBkNtsi
++KsShzx6KMcmzTgObcQbVBK2R7iwb/jtqvuWx07eT3b8YW+VLzxtujwhAX2zDH2m
+2bKkCX9Ttv8ocVq6ENfKuAHSAWZrnzk164emQDi7ErjhZCb/Zkl/W+SDMo0k4G86
+7BiBc6+zpmXrMqjIbGNXBRZIIiJRj1K1X4IwE4b7Xx4nLolCVKHLi2UyJyG/vjcZ
+bysDiwp0FVXxRA0A21fE7zLojo+7kJjy1YNTACqg3oxSzdkmS0293iZAhWkYkCAJ
+mj5s9cYffexp1OveXIEl
+=RP8L
+-----END PGP SIGNATURE-----
+
+--Sig_/vHs8cy=O/ffZSFBj5+xZJWF--
