@@ -1,63 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mmc-uh tree
-Date: Mon, 28 Jul 2014 14:46:08 +1000
-Message-ID: <20140728144608.7d9ac736@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ renesas tree
+Date: Sun, 27 Jul 2014 23:09:35 -0700
+Message-ID: <20140728060935.GA753@kroah.com>
+References: <20140725162353.04cacc71@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qE5TVZNiBFye5C1xmgY3c2v"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40264 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750945AbaG1EqS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2014 00:46:18 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45340 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751216AbaG1GKG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2014 02:10:06 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by gateway1.nyi.internal (Postfix) with ESMTP id AE9F820AB8
+	for <linux-next@vger.kernel.org>; Mon, 28 Jul 2014 02:10:04 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20140725162353.04cacc71@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sonny Rao <sonnyrao@chromium.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Simon Horman <horms@verge.net.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---Sig_/qE5TVZNiBFye5C1xmgY3c2v
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 25, 2014 at 04:23:53PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> arch/arm/mach-shmobile/setup-r7s72100.c between commit 9394af431455
+> ("ARM: shmobile: genmai-reference: Enable MTU2 in device tree") from
+> the renesas tree and commit d2168146c222 ("platform: Remove most
+> references to platform_bus device") from the driver-core tree.
+> 
+> I fixed it up (the former removed the code that the latter modified)
+> and can carry the fix as necessary (no action is required).
 
-Hi Ulf,
+Sounds good, thanks.
 
-After merging the mmc-uh tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-drivers/mmc/host/dw_mmc.c: In function 'dw_mci_reset':
-drivers/mmc/host/dw_mmc.c:2262:3: error: implicit declaration of function '=
-dw_mci_idmac_reset' [-Werror=3Dimplicit-function-declaration]
-   dw_mci_idmac_reset(host);
-   ^
-
-Caused by commit 25f7dadbd982 ("mmc: dw_mmc: change to use recommended
-reset procedure").
-
-I have used the mmc-uh tree from next-20140725 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/qE5TVZNiBFye5C1xmgY3c2v
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT1dWXAAoJEMDTa8Ir7ZwVN8kP/20cyDoQGVxgE6nxYTeGA+D7
-3Y67ZKuv125icmD5zRfb8zMsxZy8bbWWlj1D+eo5hR1cw6THjEt+xjkIKM9PISpQ
-H5uJFpNAwYn239gduOEV92bZdAt6KADldXvMbxt/UGfixhpPdHxikIC9oNBN4xgn
-ZMRBKmB/mreKwDRiiWpc6fC7z+XwvaUYl3B2Og0oHJ8mqJ4A86n9CVJMcqu1H0n0
-ejQY7+qKrgfDfGFBtSuflyrxTMF8Yz9SZb9yaxUz+XymCNMwnsEphejWySrjGrRo
-3sOfNfP/HsRiAqCcLzcxbDWw82Kyde7lWU6Fmns88roJkT2EhDzsLDVRoZLX5SrG
-2SRxKZGpc1cLBWAl72M7ORWpRzjIMFx3v7Wi4c1laeA3oHOooXf58kFu3y+ppuGJ
-CWwY91WtyKcTZcB7/AZ1+E5vKMS64QjcS/syoxZEE5PqafBKkZGwZ+nyi7IAg+fd
-1AUB4jgzPejfK+KR7QL9OnxS8OCP99gVr239Gmj/cvTHzUrmX6FNH83ELQm501VD
-hhX0MzzqOhoJqkXvAjV5sl+2ItIyj431s61htmW7t6tHkRUHfNg+an8HIW+FFhjX
-ybSVr7hOMHuQ0Au/FWO50i64m12swja1GZfN5l3e2mudzJJkLeWkucXryCqOwaCK
-mUapo6hYttzGkUPWh/+N
-=9nA/
------END PGP SIGNATURE-----
-
---Sig_/qE5TVZNiBFye5C1xmgY3c2v--
+greg k-h
