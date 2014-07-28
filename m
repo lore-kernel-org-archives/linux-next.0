@@ -1,124 +1,118 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: build failure after merge of the slave-dma tree
-Date: Mon, 28 Jul 2014 12:46:22 +0530
-Message-ID: <20140728071622.GY8181@intel.com>
-References: <20140728121856.56d0162e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the random tree with the security tree
+Date: Mon, 28 Jul 2014 18:54:08 +1000
+Message-ID: <20140728185408.4d288309@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="iVCmgExH7+hIHJ1A"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/b5ez6FDW7a9Je.Z1S_AxTEo"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:18833 "EHLO mga03.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:47132 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750996AbaG1HXo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2014 03:23:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20140728121856.56d0162e@canb.auug.org.au>
+	id S1751324AbaG1IyR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2014 04:54:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
 
-
---iVCmgExH7+hIHJ1A
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--Sig_/b5ez6FDW7a9Je.Z1S_AxTEo
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 28, 2014 at 12:18:56PM +1000, Stephen Rothwell wrote:
-> Hi Vinod,
->=20
-> After merging the slave-dma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/dma/sun6i-dma.c: In function 'sun6i_dma_dump_chan_regs':
-> drivers/dma/sun6i-dma.c:203:2: error: implicit declaration of function '_=
-_virt_to_phys' [-Werror=3Dimplicit-function-declaration]
->   phys_addr_t reg =3D __virt_to_phys((unsigned long)pchan->base);
->   ^
->=20
-> Caused by commit 555859308723 ("dmaengine: sun6i: Add driver for the
-> Allwinner A31 DMA controller").  Presumably missing an include file.
->=20
-> I have used the slave-dma tree from next-20140725 for today.
+Hi Theodore,
 
-Thanks, Feng's robot also gave such warning. SInce maxime didnt send any
-fixes it, I am applying below to fix this.
-We shouldnt have used __virt_to_phys here
+Today's linux-next merge of the random tree got conflicts in
+arch/x86/syscalls/syscall_32.tbl, arch/x86/syscalls/syscall_64.tbl,
+include/linux/syscalls.h and include/uapi/asm-generic/unistd.h between
+commit 48dc92b9fc39 ("seccomp: add "seccomp" syscall") from the
+security tree and commit fd6f349345c7 ("random: introduce getrandom(2)
+system call") from the random tree.
 
---x8---
-=46rom: Vinod Koul <vinod.koul@intel.com>
-Date: Mon, 28 Jul 2014 11:57:25 +0530
-Subject: [PATCH 1/2] dmaengine: sun6i: fix build failure on x86, xilinx tar=
-gets
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Since the driver defined COMPILE_TEST, it gets compiled for different arch'=
-s.
-The driver uses __virt_to_phys() insteadof virt_to_phys, so replace it
-
-drivers/dma/sun6i-dma.c: In function =E2=80=98sun6i_dma_dump_chan_regs=E2=
-=80=99:
-drivers/dma/sun6i-dma.c:203: error: implicit declaration of function '__vir=
-t_to_phys'
-
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
----
- drivers/dma/sun6i-dma.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/sun6i-dma.c b/drivers/dma/sun6i-dma.c
-index ce8d5d1..e9f99bb 100644
---- a/drivers/dma/sun6i-dma.c
-+++ b/drivers/dma/sun6i-dma.c
-@@ -200,7 +200,7 @@ static inline void sun6i_dma_dump_com_regs(struct sun6i=
-_dma_dev *sdev)
- static inline void sun6i_dma_dump_chan_regs(struct sun6i_dma_dev *sdev,
- 					    struct sun6i_pchan *pchan)
- {
--	phys_addr_t reg =3D __virt_to_phys((unsigned long)pchan->base);
-+	phys_addr_t reg =3D virt_to_phys(pchan->base);
-=20
- 	dev_dbg(sdev->slave.dev, "Chan %d reg: %pa\n"
- 		"\t___en(%04x): \t0x%08x\n"
-@@ -330,7 +330,7 @@ static inline int sun6i_dma_cfg_lli(struct sun6i_dma_ll=
-i *lli,
- static inline void sun6i_dma_dump_lli(struct sun6i_vchan *vchan,
- 				      struct sun6i_dma_lli *lli)
- {
--	phys_addr_t p_lli =3D __virt_to_phys((unsigned long)lli);
-+	phys_addr_t p_lli =3D virt_to_phys(lli);
-=20
- 	dev_dbg(chan2dev(&vchan->vc.chan),
- 		"\n\tdesc:   p - %pa v - 0x%p\n"
 --=20
-1.7.0.4
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc arch/x86/syscalls/syscall_32.tbl
+index 7527eac24122,5b46a618aeb1..000000000000
+--- a/arch/x86/syscalls/syscall_32.tbl
++++ b/arch/x86/syscalls/syscall_32.tbl
+@@@ -360,4 -360,4 +360,5 @@@
+  351	i386	sched_setattr		sys_sched_setattr
+  352	i386	sched_getattr		sys_sched_getattr
+  353	i386	renameat2		sys_renameat2
+ +354	i386	seccomp			sys_seccomp
++ 355	i386	getrandom		sys_getrandom
+diff --cc arch/x86/syscalls/syscall_64.tbl
+index 16272a6c12b7,0dc4bf891460..000000000000
+--- a/arch/x86/syscalls/syscall_64.tbl
++++ b/arch/x86/syscalls/syscall_64.tbl
+@@@ -323,7 -323,7 +323,8 @@@
+  314	common	sched_setattr		sys_sched_setattr
+  315	common	sched_getattr		sys_sched_getattr
+  316	common	renameat2		sys_renameat2
+ +317	common	seccomp			sys_seccomp
++ 318	common	getrandom		sys_getrandom
+ =20
+  #
+  # x32-specific system call numbers start at 512 to avoid cache impact
+diff --cc include/linux/syscalls.h
+index 1713977ee26f,43324a897cf2..000000000000
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@@ -866,6 -866,7 +866,9 @@@ asmlinkage long sys_process_vm_writev(p
+  asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
+  			 unsigned long idx1, unsigned long idx2);
+  asmlinkage long sys_finit_module(int fd, const char __user *uargs, int fl=
+ags);
+ +asmlinkage long sys_seccomp(unsigned int op, unsigned int flags,
+ +			    const char __user *uargs);
++ asmlinkage long sys_getrandom(char __user *buf, size_t count,
++ 			      unsigned int flags);
++=20
+  #endif
+diff --cc include/uapi/asm-generic/unistd.h
+index 65acbf0e2867,1d104a2ca643..000000000000
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@@ -699,11 -699,11 +699,13 @@@ __SYSCALL(__NR_sched_setattr, sys_sched
+  __SYSCALL(__NR_sched_getattr, sys_sched_getattr)
+  #define __NR_renameat2 276
+  __SYSCALL(__NR_renameat2, sys_renameat2)
+ +#define __NR_seccomp 277
+ +__SYSCALL(__NR_seccomp, sys_seccomp)
++ #define __NR_getrandom 278
++ __SYSCALL(__NR_getrandom, sys_getrandom)
+ =20
+  #undef __NR_syscalls
+- #define __NR_syscalls 278
++ #define __NR_syscalls 279
+ =20
+  /*
+   * All syscalls below here should go away really,
 
---iVCmgExH7+hIHJ1A
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+--Sig_/b5ez6FDW7a9Je.Z1S_AxTEo
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT1fjGAAoJEHwUBw8lI4NHuGkP+wZvizLhvuTMD+AFfEBTNlES
-mGh5t3tVmYotWmKuagpHc4oJCzC3Zeg1OiPoX2lIVXrrtcuZreKzZOshOgflDGZl
-YW/MkSWCxNuEkQiPX3o8GAE/1NTSxxtc4yZLvfXOlWX+Ly2izxif1abeMgomvzuQ
-yN1Gmssrj/AzSi1Y0aTPAmyR1KBaR/r1l2DEHsZ2JvFTQ2bMh08sPCxKU/YoF6Bm
-aTgOPvWcuS8LJtv+OoAygIV8YC6WIyJwcYouIJ9AfB5qhxmjKVfUMQIrO866JLBc
-Cy8GVBl0xiWc8E36iZWMWH3sbhUJ/GxIaNl32yeIBm9T84gugcMqXN6IAA6zHSZv
-0kfJuNfgD3UZjDGOU5+t2R65zu+i+PBIQmgXFpqoTcM66rAdkyNOKxB1Xoi70SN4
-SGDH8BpWZEBnSd5Puzgh1tyRvAtsrpdG/AgNxe+kmVLLmvLS2xEeeBVypnv97Rzw
-7xJxwOsORKs5NxoiL/+rH6G1rs12SeUZDrwJ6Kj1jArWduUWxybbgmbtBjxQH1x6
-3ZbKG63SUTWnrkEqw7Me8QThcWkQBIXWArMF/s6NsVt2NMp/gos3spB1bJy/UKkD
-dzj2jo24GwLB3sXCi8/Wi18l2raQTfwI5zFPxaLsuNOGpqNqUWjKBn9L5m/N20nd
-aw0WwnaNH4IDUd3vd+wX
-=EnG0
+iQIcBAEBCAAGBQJT1g+2AAoJEMDTa8Ir7ZwV/FgP/0RwuG0o3TwnD5yXt/XvC7+C
+dKjIytGCa7l53m98G00uwCFh/APjlMbDqlKmOD4zw+2XHPmZF/jhGJlL/EIhYulm
+3qZH3MEwEBSPjtb48909f1DETgThSs0Nkcji38FlCIRGPKaDnx/3QRgT7LVglj/X
+YiFQRnePX1Wm5Z6ggciY+CiyM15BSCyz+Q2IgQAZBw8i6DVav7x+9vpPRKAUQSIX
+8qNeystsNRCJJ5GnYup+W1jebeVn0mudURlk93mXvml2YxE94sXwXBc/kGuzVoA0
+grCv/iPAvzgD7wNpHNtcNe683jl753hGvecHVgp7BdK82GaEF+x2rXdI/4UcfZl+
+UZ8gBV5hNCV2Ojl/Z0ETo2B9MgHQQV7zoaheMmXCl/OZeDHnBpiUd20an7PygibG
+siKtIInNcw37LSdEgtEkDk99hxPenUeF0/ALNlDehyrTLRe/bnZzUHxx9MnxmFP1
+2+ErivU3YF8y3pIukqI5T+VfE3/feqETxA6V+DnDOTr9CsSdG+hQUlBdYdoMr37K
+P4kFRV5ALnW61KkamM5Vt9sKnqvf27mElQS8yIG7vo6GLt5UdKRpXdJZx0LjkXkO
+gndT1TzwqZKBrosuScNvCuu1/nCo/Q3BnwfmnhQIB58/uzaen5qHTbtLeH/jAPm3
+0ckbTaeBHNP6OMrU8sJr
+=GuxE
 -----END PGP SIGNATURE-----
 
---iVCmgExH7+hIHJ1A--
+--Sig_/b5ez6FDW7a9Je.Z1S_AxTEo--
