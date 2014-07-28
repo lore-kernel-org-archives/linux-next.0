@@ -1,113 +1,63 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: ARC fails to boot on linux-next of 20140711
-Date: Mon, 28 Jul 2014 04:38:38 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA230753C4B8155@IN01WEMBXA.internal.synopsys.com>
-References: <C2D7FE5348E1B147BCA15975FBA230753C4B67CF@IN01WEMBXA.internal.synopsys.com>
-	<CAL_JsqJ2q0RSvXQW03RqwwBi_TKQ7Zt6DsUbsUruzh5oqYi5Cg@mail.gmail.com>
-	<C2D7FE5348E1B147BCA15975FBA230753C4B7DD5@IN01WEMBXA.internal.synopsys.com>
- <20140726165055.D3E64C43E0B@trevor.secretlab.ca>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc-uh tree
+Date: Mon, 28 Jul 2014 14:46:08 +1000
+Message-ID: <20140728144608.7d9ac736@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-serial-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-serial-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <robherring2@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, Anton Kolesov <Anton.Kolesov@synopsys.com>, lkml <linux-kernel@vger.kernel.org>, greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qE5TVZNiBFye5C1xmgY3c2v"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40264 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750945AbaG1EqS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2014 00:46:18 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sonny Rao <sonnyrao@chromium.org>
 
-On Saturday 26 July 2014 10:21 PM, Grant Likely wrote:
-> On Sat, 26 Jul 2014 06:52:36 +0000, Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
->> Hi Rob,
->>
->> On Friday 25 July 2014 07:45 PM, Rob Herring wrote:
->>> On Fri, Jul 25, 2014 at 6:02 AM, Vineet Gupta
->>> <Vineet.Gupta1@synopsys.com> wrote:
->>>>> Hi Grant,
->>>>>
->>>>> linux-next has a series for arc_uart (via tty tree) which converts it to generic
->>>>> earlycon and specifies console via /chosen/stdout-path vs.  an explicit param in
->>>>> /chose/bootargs
->>>>>
->>>>> 2014-06-24 9da433c0a0b5 ARC: [arcfpga] stdout-path now suffices for earlycon/console
->>>>>
->>>>> This relied on prev commit of yours (from linux next of 20140711), which seem to
->>>>> have disappeared now.
->>>>>
->>>>> 2014-03-27 a9296cf2d0b6 of: Create of_console_check() for selecting a console
->>>>> specified in /chosen
->>>>> 2014-03-27 cfa9cacc5dd3 of: Enable console on serial ports specified by
->>>>> /chosen/stdout-path
->>>>>
->>>>> Is there a specific reason for dropping these patches (or perhaps a merge to be
->>>>> merged). I cherry-picked both but still doesn't work.
->>>>>
->>>>> Can you please advise next step forward, before I go off debugging with those
->>>>> patches in.
->>> There's an issue that if you have stdout-path and "earlycon" on the
->>> command line, the kernel will switch to tty0 and disable the earlycon.
->>>
->>> This is the "fix", but I don't like adding the DT dependency into generic code:
->>>
->>> @@ -2382,7 +2386,7 @@ void register_console(struct console *newcon)
->>>                 if (newcon->setup == NULL ||
->>>                     newcon->setup(newcon, NULL) == 0) {
->>>                         newcon->flags |= CON_ENABLED;
->>> -                       if (newcon->device) {
->>> +                       if (newcon->device  && !of_stdout) {
->>>                                 newcon->flags |= CON_CONSDEV;
->>>                                 preferred_console = 0;
->>>                         }
->> The DT settings relevant for ARC, which enable generic-earlycon and
->> console-with-stdout-path are as follows
->>
->>         chosen {
->>                 bootargs = "earlycon";
->>                 stdout-path = &arcuart0;
->>         };
->>
->> ....
->>                 arcuart0: serial@c0fc1000 {
->>                         compatible = "snps,arc-uart";
->>
->> And it works w/o above hunk, provided the 2 patches from Grant exist in linux-next
->> which they don't at the moment. I'm pretty confused how the hunk above comes into
->> picture.
->>
->> And if not then I will have to get the ARC std-out patch reverted in tty-next as
->> it is broken.
-> You need to revert it anyway, the dependency chain is broken. Just
-> because something is in linux-next doesn't mean it will be merged.
-> Dependencies must always be in the branch to which you commit.
->
-> If that doesn't happen (like here) then bisecting is broken and the
-> dependencies may not actually get merged.
->
-> When this happens, what you're supposed to do is tell the maintainers
-> what commits the patch depends on so that it can be applied to the
-> correct tree. In this case I could take it through my devicetree branch
-> that contains the console patches.
+--Sig_/qE5TVZNiBFye5C1xmgY3c2v
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I understand all of that. Actually 9 out of 10 of my changes were for switching to
-earlycon for which corresponding core changes from Rob were already in mainline.
-When reviewing my code, Rob pointed me to your on going work on use of stdout-path
-so my mistake was to pile that up in the same series vs. asking you to add that
-patch in ur tree for precisely the multi dependency reason.
+Hi Ulf,
 
-> If a patch depends on commits in several branches then it is a bit more
-> complex. What we usually do is create a new branch that merges in each
-> branch that is depended on, and then apply the commit on top of that.
->
-> As for the console patches, I'm only going to be putting them back if I
-> can devise a good fix for the earlycon duplication issue.
+After merging the mmc-uh tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-If you have an internal branch for this work, can you please add the patch below
-to it so that we don't forget abt it.
+drivers/mmc/host/dw_mmc.c: In function 'dw_mci_reset':
+drivers/mmc/host/dw_mmc.c:2262:3: error: implicit declaration of function '=
+dw_mci_idmac_reset' [-Werror=3Dimplicit-function-declaration]
+   dw_mci_idmac_reset(host);
+   ^
 
-https://lkml.org/lkml/2014/6/24/127
+Caused by commit 25f7dadbd982 ("mmc: dw_mmc: change to use recommended
+reset procedure").
 
-I'll ask Greg to revert it from tty tree !
+I have used the mmc-uh tree from next-20140725 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thx,
--Vineet
+--Sig_/qE5TVZNiBFye5C1xmgY3c2v
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT1dWXAAoJEMDTa8Ir7ZwVN8kP/20cyDoQGVxgE6nxYTeGA+D7
+3Y67ZKuv125icmD5zRfb8zMsxZy8bbWWlj1D+eo5hR1cw6THjEt+xjkIKM9PISpQ
+H5uJFpNAwYn239gduOEV92bZdAt6KADldXvMbxt/UGfixhpPdHxikIC9oNBN4xgn
+ZMRBKmB/mreKwDRiiWpc6fC7z+XwvaUYl3B2Og0oHJ8mqJ4A86n9CVJMcqu1H0n0
+ejQY7+qKrgfDfGFBtSuflyrxTMF8Yz9SZb9yaxUz+XymCNMwnsEphejWySrjGrRo
+3sOfNfP/HsRiAqCcLzcxbDWw82Kyde7lWU6Fmns88roJkT2EhDzsLDVRoZLX5SrG
+2SRxKZGpc1cLBWAl72M7ORWpRzjIMFx3v7Wi4c1laeA3oHOooXf58kFu3y+ppuGJ
+CWwY91WtyKcTZcB7/AZ1+E5vKMS64QjcS/syoxZEE5PqafBKkZGwZ+nyi7IAg+fd
+1AUB4jgzPejfK+KR7QL9OnxS8OCP99gVr239Gmj/cvTHzUrmX6FNH83ELQm501VD
+hhX0MzzqOhoJqkXvAjV5sl+2ItIyj431s61htmW7t6tHkRUHfNg+an8HIW+FFhjX
+ybSVr7hOMHuQ0Au/FWO50i64m12swja1GZfN5l3e2mudzJJkLeWkucXryCqOwaCK
+mUapo6hYttzGkUPWh/+N
+=9nA/
+-----END PGP SIGNATURE-----
+
+--Sig_/qE5TVZNiBFye5C1xmgY3c2v--
