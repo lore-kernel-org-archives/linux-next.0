@@ -1,84 +1,70 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: linux-next: manual merge of the gpio tree with the arm-soc tree
-Date: Tue, 29 Jul 2014 10:26:46 +0200
-Message-ID: <20140729082645.GC31360@ulmo.nvidia.com>
-References: <20140729181949.427a7fb5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Tue, 29 Jul 2014 18:31:53 +1000
+Message-ID: <20140729183153.0e77a6f6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZwgA9U+XZDXt4+m+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140729181949.427a7fb5@canb.auug.org.au>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ND75AaXd3eD72uQWfGBoCRD"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34515 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751281AbaG2IcA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2014 04:32:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 
---ZwgA9U+XZDXt4+m+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/ND75AaXd3eD72uQWfGBoCRD
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2014 at 10:19:49AM +0200, Stephen Rothwell wrote:
-> * PGP Signed by an unknown key
->=20
-> Hi Linus,
->=20
-> Today's linux-next merge of the gpio tree got a conflict in
-> arch/arm/mach-tegra/board-paz00.c between commit a0524acc94c9 ("ARM:
-> tegra: Sort includes alphabetically") from the arm-soc tree and commit
-> 0a6d315827ee ("gpio: split gpiod board registration into machine
-> header") from the gpio tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc arch/arm/mach-tegra/board-paz00.c
-> index bb4782a32713,91fd858ced0d..000000000000
-> --- a/arch/arm/mach-tegra/board-paz00.c
-> +++ b/arch/arm/mach-tegra/board-paz00.c
-> @@@ -17,10 -17,9 +17,10 @@@
->    *
->    */
->  =20
-> - #include <linux/gpio/driver.h>
->  -#include <linux/platform_device.h>
-> + #include <linux/gpio/machine.h>
->  +#include <linux/platform_device.h>
->   #include <linux/rfkill-gpio.h>
->  +
->   #include "board.h"
->  =20
->   static struct rfkill_gpio_platform_data wifi_rfkill_platform_data =3D {
+Hi Linus,
 
-Looks good to me.
+After merging the gpio tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Thanks,
-Thierry
+In file included from arch/arm/mach-tegra/board-paz00.c:20:0:
+include/linux/gpio/machine.h:24:2: error: unknown type name 'u16'
+  u16 chip_hwnum;
+  ^
+include/linux/gpio/machine.h:31:19: error: field 'list' has incomplete type
+  struct list_head list;
+                   ^
 
---ZwgA9U+XZDXt4+m+
-Content-Type: application/pgp-signature
+Caused by commit 0a6d315827ee ("gpio: split gpiod board registration
+into machine header") or an interaction of that with commit
+a0524acc94c9 ("ARM: tegra: Sort includes alphabetically") from the
+arm-soc tree.
+
+linux/gpio/machine.h needs to include some of the same files that
+linux/gpio/driver.h does.  See Rule 1 in Documentation/SubmitChecklist.
+
+I have used the version of the gpio tree from next-20140728 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/ND75AaXd3eD72uQWfGBoCRD
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT11rFAAoJEN0jrNd/PrOhTLsP/Rkd6Y8QxgP9lOnnoUOjiSG4
-bdSDR4OV99v2901RRf2lPqf1DjXOiFubFssqlUp31rt5gyHq+hG5URkwahFbS3Fp
-DNJAvBD1CWg9PJfdRyxkLFAlLvat02BJCcNA3EZtyh85j4rezy1bWLUOWgCPBo7D
-IlnVdP3p4a/XpGbNVNmJz+zPtVmgnumpyeODuGjbf67qKH1upsGqX4Xmr5miRajt
-TEKHuZF158Q5k2J8UklUnf9Kk0AsjdLAoWJGv4bQ1GFADoDL751Mmwn/WP3F5bKq
-sexogIA+LmBcoOtBhLb0VkZriOxZkZ5/3zZv42Kjti76vzrluZZUEQrrvDMUldh2
-v9hVE1Uqmsqr4Yyo2OF7leFUxiSXnXuVoSjBfIgC1mSZDjfCHwSdz8tLwpMWq8+K
-D9HNQ6fXkyA+dsWmRNpLm3aUH25/A7gUsuRJvLNM/Png4dSQ2HbL/e8m05WFGGxn
-jZd3OXURY5Pge7aO9fPGHChkpCwZ/ewI4B+4Pt+yGZwyWMYIjKJ/tRRS0JkxPj2o
-pMygh2hES1xAlIN7jabdnFFzxoDJtRMlhsUQ/ERukOWemFvwrKanxg85J8+xsd7K
-cbLh6ERq6SHOxqBsAqaAcXY5IRbYBHdwS+e5KB6+2xhZigi8QA2gT/bRQeV5yNNf
-fj0hbdKJcnTV1q6Xj6I7
-=KCGD
+iQIcBAEBCAAGBQJT11v+AAoJEMDTa8Ir7ZwVOSsP/0roHkJHLb5c1D87YzvznsIw
+SwPiEeyRQ7KvkZAO3rRJH9H1fYLJ/+nyA5cV4nLDgHg4fMPlsw/LPzA48+yHh7Wd
+sR55bupZI2j9jNZd9nh+/SibaI1pEaiXGvnLGfazYt5Hl+MBD21Drsk/Fot1708f
+K/EkbKHjlKtbl1LzzSM5exLpZ/wb8//C4In7DYItOcd1gRt/g8OdtWHAG+lcyRgf
+5D/jqO40kzbKN4lMp+rLPHCc/NBADm0jecijh3YPsrSKJZx6l+QLpqe5yZob0jq3
+hW5JshQAbAxz1PiMJU27E9q0ajRHqk6XKFWxLBFRHsT51Kr1pzkyeck/jOh1BD0u
+U7gdgHzmai+Rjw6wuja35d3WQn3YQrDxZipPTg3l5yby+a1Sf6vNcUdhTj7gipaG
+B7vUwKv6e0NqXjzFYL4XqNLuL9UPl6dZeLV9iKK30qB1V7koAjfLQS+J6/HdRE4s
+svtlS5Jftp0IQrVkM6pULNbEPQtp72gWrhV7PifF2C46PGVpsgQ4onJB4mejOCeM
+FUxHc2BMpb22zZtS66RJRYifK2qDsIzIcbGAt/Wb0fi+jXphV3FPL2olpVI4J9/I
+HhmMJyDBNFt1BupSC4qMCEcN2akzqvBWyfb3qvHUrU3BB93XoyVRDQZ5ghRq01d2
+qgQ5QjaJEeG2F6eNvJ87
+=8zQG
 -----END PGP SIGNATURE-----
 
---ZwgA9U+XZDXt4+m+--
+--Sig_/ND75AaXd3eD72uQWfGBoCRD--
