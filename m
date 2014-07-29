@@ -1,33 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the slave-dma
- tree
-Date: Tue, 29 Jul 2014 17:38:24 +1000
-Message-ID: <20140729173824.51e94ce2@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the arm-soc tree
+Date: Tue, 29 Jul 2014 18:19:49 +1000
+Message-ID: <20140729181949.427a7fb5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EhXV6tAerJvRiv_e7EAuYv3"; protocol="application/pgp-signature"
+ boundary="Sig_/8jVaTAtv_zGX=9MpMoKYX1v"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58553 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36940 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751281AbaG2Hif (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Jul 2014 03:38:35 -0400
+	id S1751038AbaG2IT6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2014 04:19:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Siva Yerramreddy <yshivakrishna@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 
---Sig_/EhXV6tAerJvRiv_e7EAuYv3
+--Sig_/8jVaTAtv_zGX=9MpMoKYX1v
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Linus,
 
-Today's linux-next merge of the char-misc tree got a conflict in
-drivers/dma/Makefile between commit 555859308723 ("dmaengine: sun6i:
-Add driver for the Allwinner A31 DMA controller") from the slave-dma tree a=
-nd
-commit 95b4ecbf759a ("dma: MIC X100 DMA Driver") from the char-misc
-tree.
+Today's linux-next merge of the gpio tree got a conflict in
+arch/arm/mach-tegra/board-paz00.c between commit a0524acc94c9 ("ARM:
+tegra: Sort includes alphabetically") from the arm-soc tree and commit
+0a6d315827ee ("gpio: split gpiod board registration into machine
+header") from the gpio tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -36,37 +34,44 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/dma/Makefile
-index d08bd966da13,bd9e7fa928bd..000000000000
---- a/drivers/dma/Makefile
-+++ b/drivers/dma/Makefile
-@@@ -47,4 -47,4 +47,5 @@@ obj-$(CONFIG_MOXART_DMA) +=3D moxart-dma.
-  obj-$(CONFIG_FSL_EDMA) +=3D fsl-edma.o
-  obj-$(CONFIG_QCOM_BAM_DMA) +=3D qcom_bam_dma.o
-  obj-y +=3D xilinx/
- +obj-$(CONFIG_DMA_SUN6I) +=3D sun6i-dma.o
-+ obj-$(CONFIG_INTEL_MIC_X100_DMA) +=3D mic_x100_dma.o
+diff --cc arch/arm/mach-tegra/board-paz00.c
+index bb4782a32713,91fd858ced0d..000000000000
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@@ -17,10 -17,9 +17,10 @@@
+   *
+   */
+ =20
+- #include <linux/gpio/driver.h>
+ -#include <linux/platform_device.h>
++ #include <linux/gpio/machine.h>
+ +#include <linux/platform_device.h>
+  #include <linux/rfkill-gpio.h>
+ +
+  #include "board.h"
+ =20
+  static struct rfkill_gpio_platform_data wifi_rfkill_platform_data =3D {
 
---Sig_/EhXV6tAerJvRiv_e7EAuYv3
+--Sig_/8jVaTAtv_zGX=9MpMoKYX1v
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT1091AAoJEMDTa8Ir7ZwVQ9EP/28vlwJTtNIDVjug8/YPgl1I
-NVm5Pgrgy1TgbwqHa2LWHumhDcDWP4TW5THchZbmqiKt9DTkJxZ1KvduP2XT9kyn
-fXzGiH8piUG6AGC87cPvzfk05Toh028b1SigPFhbSsq1H3se67jnSvVeEAtXLP6O
-hgGecrqMfm9wPNDeu1zXmeTJ2PMdl/oqkRDyuiVoZ8Uo0ScFsMYLWb7ca24hIqFY
-ZmTo52RAEWGKiT+tIr/uivJKuSY9TosmENTOsFqULG765iJTXqZy8nPWKty4XGE4
-VZKoS72rVxPvwkXQoHIt3e1e2yzZMD7Y22fUrmOuSj2gLXONXXPhNCZ1cRtA/9YY
-r9KwzpgFqWHWSThsxcg528LrepnYBatac1bVvuwAwxxGqfj3MS8LjKbv9RUdyNvg
-dWTLw+osGA6NKSXtcx3QkzxwS18t9N4vI/Jwc9OGb20aif4qNRnG/rNj13ER6/HY
-7Ayk+XQFly8DAmyAnZuYYGl4Dxij9VyrUTBFjBxY6q/1rBcprK8KmBPVEUPvcHQu
-hazclYNMo8S3rrs3Nq93Cz0k4g6ItVIJYg7mVvMIO6i93gKPVI1SA0/BAiGItmXF
-u5DFUqrjvZyKezgT+B9YCoEfqYL1AUxDDtKE1behWdij+nwg9LBzOCLnHp2ELjIQ
-4KIOZp0lt8f7f8NM5kkx
-=2LIc
+iQIcBAEBCAAGBQJT11krAAoJEMDTa8Ir7ZwVKQIP/2pQVsM3P9Y6eCyTaxrc+24H
+KW2AyR30PHSpyCUaolfiQmz3RiqAI6Ceq+2oDHkYxNQXFRQF0QMwTcm5zNRy0g8u
+B4Y+rA257l7intACU7iMQtPdeP5+s4NBn+RIgKQVrZOZ1FfZTqsaBHlymjSfVX3y
+6dXvzk37gJ0KcpzeqE18Ir1Dg3O/269l7GKXGs3b5WUgekpQ8Rs4bnB3EpdYaeYs
+wkg0F10dLIx5oeoUnzeEPXy186rNazDg3wxwh1Dsy2HhosUBfMhUqsL5Pp72e71F
+lf5yt49qFR4/lZ8RlP6Pdp2mhodSbbCcP6xffzRs2NDsS7ffEcAB6/J++fCxKYRG
+7t/RGm+G4f+hFKJzIktaJpvodQWUXthPH+1AwHn3NHfScpk3ZK6dzkgqcAquE+s4
+R9f8RON+o7iyI2ssn3zmWgm72yJwdvOThIBQLkeA0jzcKr6MsOn+M8lmThrIuVIf
+j8ys9uIJ0iXnjU9YU647o6O86Wv0e+PXTOl4I4XChmMbZTbrtgPJ6cctq/x9yamO
+yJS79zeLU9CIFJQvAxVl/WCZh7EvOzsDJRLP4EitbCjwCHVLrT/m5MqPL/LHTMfO
+Q2/+xWIwnvMQk5lovimZlzaL7wodWUmRY1sZ8nvIjZaKz3RtXuvM3wVxVu69HltB
+/FqoyUUu4dOf7B7smmPW
+=R7F3
 -----END PGP SIGNATURE-----
 
---Sig_/EhXV6tAerJvRiv_e7EAuYv3--
+--Sig_/8jVaTAtv_zGX=9MpMoKYX1v--
