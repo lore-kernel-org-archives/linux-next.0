@@ -1,27 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the irqchip tree with the arm-soc tree
-Date: Tue, 29 Jul 2014 15:53:02 +1000
-Message-ID: <20140729155302.3c1d5437@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the slave-dma
+ tree
+Date: Tue, 29 Jul 2014 17:38:24 +1000
+Message-ID: <20140729173824.51e94ce2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cDZdTduRx+6i1wcFhpCSIY4"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Carino <marc.ceeeee@gmail.com>, Matt Porter <mporter@linaro.org>, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/EhXV6tAerJvRiv_e7EAuYv3"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58553 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751281AbaG2Hif (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2014 03:38:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Siva Yerramreddy <yshivakrishna@gmail.com>
 
---Sig_/cDZdTduRx+6i1wcFhpCSIY4
+--Sig_/EhXV6tAerJvRiv_e7EAuYv3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+Hi all,
 
-Today's linux-next merge of the irqchip tree got a conflict in
-Documentation/devicetree/bindings/arm/gic.txt between commit
-f80b71397d09 ("ARM: brcmstb: gic: add compatible string for Broadcom
-Brahma15") from the arm-soc tree and commit 3e44358c12cc ("") from the
-irqchip tree.
+Today's linux-next merge of the char-misc tree got a conflict in
+drivers/dma/Makefile between commit 555859308723 ("dmaengine: sun6i:
+Add driver for the Allwinner A31 DMA controller") from the slave-dma tree a=
+nd
+commit 95b4ecbf759a ("dma: MIC X100 DMA Driver") from the char-misc
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -30,42 +36,37 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/arm/gic.txt
-index c7d2fa156678,d2eea0b75580..000000000000
---- a/Documentation/devicetree/bindings/arm/gic.txt
-+++ b/Documentation/devicetree/bindings/arm/gic.txt
-@@@ -16,8 -17,9 +17,10 @@@ Main node required properties
-  	"arm,cortex-a9-gic"
-  	"arm,cortex-a7-gic"
-  	"arm,arm11mp-gic"
- +	"brcm,brahma-b15-gic"
-+=20
-  - interrupt-controller : Identifies the node as an interrupt controller
-+=20
-  - #interrupt-cells : Specifies the number of cells needed to encode an
-    interrupt source.  The type shall be a <u32> and the value shall be 3.
- =20
+diff --cc drivers/dma/Makefile
+index d08bd966da13,bd9e7fa928bd..000000000000
+--- a/drivers/dma/Makefile
++++ b/drivers/dma/Makefile
+@@@ -47,4 -47,4 +47,5 @@@ obj-$(CONFIG_MOXART_DMA) +=3D moxart-dma.
+  obj-$(CONFIG_FSL_EDMA) +=3D fsl-edma.o
+  obj-$(CONFIG_QCOM_BAM_DMA) +=3D qcom_bam_dma.o
+  obj-y +=3D xilinx/
+ +obj-$(CONFIG_DMA_SUN6I) +=3D sun6i-dma.o
++ obj-$(CONFIG_INTEL_MIC_X100_DMA) +=3D mic_x100_dma.o
 
---Sig_/cDZdTduRx+6i1wcFhpCSIY4
+--Sig_/EhXV6tAerJvRiv_e7EAuYv3
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT1zbEAAoJEMDTa8Ir7ZwVMGoP/jfHRcNayCMivuExNfloBclK
-f6pgGRBpG1A/RzqReIohGdeidoeb/VxUF88mlqd+g0gKCjRZssUlL65XiVJQWCbB
-vFP4cl1bNYdSQpk0UbYChRb6TYeyPgE1bqeUY9I7MQL+HJcen+MQDNE5SMDigMqI
-7Lew4BX71/5XUErtwrxFsYqLrmw7hW828pl4M1by3b6uW2+v62vBe9fwVIKjgggS
-yQN6HsPTEywplZAWyfWx13rvmfbpzpq9QeOTyj3Dxgf3aMIV0pbf2OA5Wg2ZbVo0
-OAxPStXDUxTCXbN9Apq+cyqbdywNPEUOiFpTIH22IGLjpa6QmpTiCvHkaFzV6c00
-BeCmGNmyyb4KPxd3oBuirMNXx0OduFLUHvB9QaDGQuzCEnRkrkzD+8IgJdjSMFIy
-1/cSDIGny5+U4tXs0NkGdZQkXJveE7cnbZ+EKxxZ8ThMnQpaHgVzFOvUrtLqaqbY
-yjtD0YNlbggOCKZULt6tnwGvU6OMvlAynUQ7pH3niDZ6E6Kc2CHUQjcDPdmhdpVm
-DF73id9+nn+oL+xVIetxEOhhjenJg+cjBhxz09xWN4GZeGQkCNkMuEjwdjQHBlGx
-FFBwZ2AqiosNAUJ3gGrclKSnVnAyDF9/5DbFnRRueAGUaeMPG5wubWTK5Dfqe35T
-ks8xIbzpYMLw/6NXQW/I
-=YJYM
+iQIcBAEBCAAGBQJT1091AAoJEMDTa8Ir7ZwVQ9EP/28vlwJTtNIDVjug8/YPgl1I
+NVm5Pgrgy1TgbwqHa2LWHumhDcDWP4TW5THchZbmqiKt9DTkJxZ1KvduP2XT9kyn
+fXzGiH8piUG6AGC87cPvzfk05Toh028b1SigPFhbSsq1H3se67jnSvVeEAtXLP6O
+hgGecrqMfm9wPNDeu1zXmeTJ2PMdl/oqkRDyuiVoZ8Uo0ScFsMYLWb7ca24hIqFY
+ZmTo52RAEWGKiT+tIr/uivJKuSY9TosmENTOsFqULG765iJTXqZy8nPWKty4XGE4
+VZKoS72rVxPvwkXQoHIt3e1e2yzZMD7Y22fUrmOuSj2gLXONXXPhNCZ1cRtA/9YY
+r9KwzpgFqWHWSThsxcg528LrepnYBatac1bVvuwAwxxGqfj3MS8LjKbv9RUdyNvg
+dWTLw+osGA6NKSXtcx3QkzxwS18t9N4vI/Jwc9OGb20aif4qNRnG/rNj13ER6/HY
+7Ayk+XQFly8DAmyAnZuYYGl4Dxij9VyrUTBFjBxY6q/1rBcprK8KmBPVEUPvcHQu
+hazclYNMo8S3rrs3Nq93Cz0k4g6ItVIJYg7mVvMIO6i93gKPVI1SA0/BAiGItmXF
+u5DFUqrjvZyKezgT+B9YCoEfqYL1AUxDDtKE1behWdij+nwg9LBzOCLnHp2ELjIQ
+4KIOZp0lt8f7f8NM5kkx
+=2LIc
 -----END PGP SIGNATURE-----
 
---Sig_/cDZdTduRx+6i1wcFhpCSIY4--
+--Sig_/EhXV6tAerJvRiv_e7EAuYv3--
