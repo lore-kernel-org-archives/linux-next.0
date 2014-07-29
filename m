@@ -1,55 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: URL change for mfd tree?
-Date: Wed, 30 Jul 2014 09:24:53 +1000
-Message-ID: <20140730092453.089e1094@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Wed, 30 Jul 2014 09:56:42 +1000
+Message-ID: <20140730095642.5f68e01d@canb.auug.org.au>
+References: <20140725144522.32c1f6b5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mn1iYSp1kdcZdd_4sOMW7D0"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/jUG3yYENU/XGCvEVAizmTNB"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43357 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754020AbaG2X4u (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2014 19:56:50 -0400
+In-Reply-To: <20140725144522.32c1f6b5@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>
 
---Sig_/mn1iYSp1kdcZdd_4sOMW7D0
+--Sig_/jUG3yYENU/XGCvEVAizmTNB
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+Hi all,
 
-I noticed commit 71e297b17bb6 ("MAINTAINERS: Update MFD repo location")
-in the mfd-lj tree today.  In linux-next, I have the following mfd
-trees:
+On Fri, 25 Jul 2014 14:45:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi all,
+>=20
+> After merging the tip tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> arch/powerpc/kernel/time.c:743:6: error: conflicting types for 'update_vs=
+yscall_old'
+>  void update_vsyscall_old(struct timespec *wall_time, struct timespec *wt=
+m,
+>       ^
+> In file included from arch/powerpc/kernel/time.c:77:0:
+> include/linux/timekeeper_internal.h:114:13: note: previous declaration of=
+ 'update_vsyscall_old' was here
+>  extern void update_vsyscall_old(struct timespec *ts, struct timespec *wt=
+m,
+>              ^
+>=20
+> Caused by commit 4a0e637738f0 ("clocksource: Get rid of cycle_last").
+>=20
+> I have used the tip tree from next-20140724 for today.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/sameo/mfd-fixes.git#master
-git://git.kernel.org/pub/scm/linux/kernel/git/sameo/mfd-next.git#master
-git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+Ping?
 
-Does your commit mean that I should remove the first two?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/mn1iYSp1kdcZdd_4sOMW7D0
+--Sig_/jUG3yYENU/XGCvEVAizmTNB
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT2C1LAAoJEMDTa8Ir7ZwVTMQP/AvnNqZmDkNe2ZIqUbcTsmms
-Ce63sKeDkUqe9CLJqi0k9QuL8JkTEqEXsAwqKQX9vcggvfhCLvrroRpEyDAR5ilF
-U+bx2VvSxLA/WOZKScNPDI6g2NpDtRVRMnAVfaMX6Q2nRHMECMyq/yx/UBmo9yuh
-gBjb9qS+NGoFbS2B5dHld0KfzU2/0XlbHjTUk6lZIcAj4LNoAuuFEIf5xqPVTIXU
-cLuAnS1xl4n/W7wDyK2cQmBBlygXwrkm0uOMCK80LvkWJl6s34KHOR1/9wFM6ytP
-ShwokR2Fl//b1TYBshi+CfBqCc2QOX5AuNl5k79z8yyZ/jApihHZuW9lfuCwFnix
-iRklPJBk8gAcdi4mG4ECFHtpV7KIUwEwVbK6y3dX2f8zmd1YMMc3eu4Ab/D8KrSC
-7HggRsdVHOrTlvvbkKyaQd7CFQrJdGclvX1Q2TEjxC1rqpV2/+tyk+1DvZGAI6Wn
-Juv3KGlqoEXwxKeA7dZZbQkHJ+kIcX+G+ocxi48D4y9xRcmBnW/SXtIdinodUg8p
-iGVolLuRpi5r83hAYda7uJAKDnILOzYwYFeDayTziHNfJ3v8bi0AuUA5cAhk9ZbG
-jjSrKJtesunsJHuUyqNyDdVrfXk7fL5j3vgGdkN0A1IZ27/mIDPjcqimLKUV54nV
-+ccw6s2JNSEX4wSqvYaH
-=f9rK
+iQIcBAEBCAAGBQJT2DTAAAoJEMDTa8Ir7ZwVHRQP/jFuWakuVUabUPR2MF8WTTq5
+1SaRylZ2PRW4Qzt28oJvaZbFLuqBcrgs8+LI6FsdKTKF3GUV91OSFAeHuk7W0bms
+/KzCKdwg/JzO8O6jsnAR+c26xl2HvfE2/DaVHRDJ4xD8gcKY++O+Qq1IHLZe8P9N
+WSIp4EgFIvbDWe4ATlJLp2NVAIXTwPKWk8QBl63aECqu7kMD9vs2FmqPZZ7E0sr+
+X4GMsX7sxFDUZ6SXA1KX5rkAElc4QPQTh0VuVJaRktEi9UCuLPev0PdybMb/svQr
+0Bi1OzLUZKW7SOIQtXUKyznRSMZCYoe2kTTelFINIHYbcS8nc4Dx9SdDb9mfMT8m
+ta3gezfai1JilYlhXuJUoWtO0Fnu4kALq47cCo1tZL6+xHC32XfMSB1wH2KbqIl/
+vUQthnI/wV4fz8TXtHHCuAvA5zQOizK7jDDVd/7YVu3jFVDQQbPHpSLQdMZYEXAv
+IBisql5IK4Ur4kAn8a/PwmjOtac/g18uAMQaMS6zrMEKQq6P7xq+3saKQmXQ6y6S
+TN51tI98Gkg1D1pC2NPOMpsVnbZ0jh0JKNV6O6B98XDETAknLM5JpahAuQ63aqdT
+AEzV/ES8zHbP+vGx9qpEmMa3WF+R17jIJ6UxK1Ex6rvxyZKwJzA3hGO7FTADiVWE
+N5RNUeEhzCVTVczZAscP
+=Ppve
 -----END PGP SIGNATURE-----
 
---Sig_/mn1iYSp1kdcZdd_4sOMW7D0--
+--Sig_/jUG3yYENU/XGCvEVAizmTNB--
