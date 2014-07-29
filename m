@@ -1,56 +1,71 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: Re: linux-next: build failure after merge of the mmc-uh tree
-Date: Mon, 28 Jul 2014 10:58:47 -0700
-Message-ID: <CAPz6YkWO=cJSrPk2+Xy_Euxv9tMt6EHc-k+NTNAoPmVvxCE4-A@mail.gmail.com>
-References: <20140728144608.7d9ac736@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the irqchip tree with the arm-soc tree
+Date: Tue, 29 Jul 2014 15:53:02 +1000
+Message-ID: <20140729155302.3c1d5437@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:36681 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751625AbaG1R7J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jul 2014 13:59:09 -0400
-Received: by mail-ie0-f176.google.com with SMTP id tr6so6808484ieb.7
-        for <linux-next@vger.kernel.org>; Mon, 28 Jul 2014 10:59:08 -0700 (PDT)
-In-Reply-To: <20140728144608.7d9ac736@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cDZdTduRx+6i1wcFhpCSIY4"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Carino <marc.ceeeee@gmail.com>, Matt Porter <mporter@linaro.org>, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Jul 27, 2014 at 9:46 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Ulf,
->
-> After merging the mmc-uh tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> drivers/mmc/host/dw_mmc.c: In function 'dw_mci_reset':
-> drivers/mmc/host/dw_mmc.c:2262:3: error: implicit declaration of function 'dw_mci_idmac_reset' [-Werror=implicit-function-declaration]
->    dw_mci_idmac_reset(host);
->    ^
+--Sig_/cDZdTduRx+6i1wcFhpCSIY4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi, sorry about that.  It looks like it fails to build when
-CONFIG_MMC_DW_IDMAC is not set.
-I changed that bit of code from using #ifdef to using just C if
-statement, but I think in this case the function being called doesn't
-exist when CONFIG_MMC_DW_IDMAC is not set, so that was incorrect and
-we should go back to using something like:
+Hi Jason,
 
-#if IS_ENABLED(CONFIG_MMC_DW_IDMAC)
-        /* It is also recommended that we reset and reprogram idmac */
-        dw_mci_idmac_reset(host);
-#endif
+Today's linux-next merge of the irqchip tree got a conflict in
+Documentation/devicetree/bindings/arm/gic.txt between commit
+f80b71397d09 ("ARM: brcmstb: gic: add compatible string for Broadcom
+Brahma15") from the arm-soc tree and commit 3e44358c12cc ("") from the
+irqchip tree.
 
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Ulf, I can respin the patch if you'd like or feel free to fix it
-yourself too.  Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc Documentation/devicetree/bindings/arm/gic.txt
+index c7d2fa156678,d2eea0b75580..000000000000
+--- a/Documentation/devicetree/bindings/arm/gic.txt
++++ b/Documentation/devicetree/bindings/arm/gic.txt
+@@@ -16,8 -17,9 +17,10 @@@ Main node required properties
+  	"arm,cortex-a9-gic"
+  	"arm,cortex-a7-gic"
+  	"arm,arm11mp-gic"
+ +	"brcm,brahma-b15-gic"
++=20
+  - interrupt-controller : Identifies the node as an interrupt controller
++=20
+  - #interrupt-cells : Specifies the number of cells needed to encode an
+    interrupt source.  The type shall be a <u32> and the value shall be 3.
+ =20
 
->
-> Caused by commit 25f7dadbd982 ("mmc: dw_mmc: change to use recommended
-> reset procedure").
->
-> I have used the mmc-uh tree from next-20140725 for today.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--Sig_/cDZdTduRx+6i1wcFhpCSIY4
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT1zbEAAoJEMDTa8Ir7ZwVMGoP/jfHRcNayCMivuExNfloBclK
+f6pgGRBpG1A/RzqReIohGdeidoeb/VxUF88mlqd+g0gKCjRZssUlL65XiVJQWCbB
+vFP4cl1bNYdSQpk0UbYChRb6TYeyPgE1bqeUY9I7MQL+HJcen+MQDNE5SMDigMqI
+7Lew4BX71/5XUErtwrxFsYqLrmw7hW828pl4M1by3b6uW2+v62vBe9fwVIKjgggS
+yQN6HsPTEywplZAWyfWx13rvmfbpzpq9QeOTyj3Dxgf3aMIV0pbf2OA5Wg2ZbVo0
+OAxPStXDUxTCXbN9Apq+cyqbdywNPEUOiFpTIH22IGLjpa6QmpTiCvHkaFzV6c00
+BeCmGNmyyb4KPxd3oBuirMNXx0OduFLUHvB9QaDGQuzCEnRkrkzD+8IgJdjSMFIy
+1/cSDIGny5+U4tXs0NkGdZQkXJveE7cnbZ+EKxxZ8ThMnQpaHgVzFOvUrtLqaqbY
+yjtD0YNlbggOCKZULt6tnwGvU6OMvlAynUQ7pH3niDZ6E6Kc2CHUQjcDPdmhdpVm
+DF73id9+nn+oL+xVIetxEOhhjenJg+cjBhxz09xWN4GZeGQkCNkMuEjwdjQHBlGx
+FFBwZ2AqiosNAUJ3gGrclKSnVnAyDF9/5DbFnRRueAGUaeMPG5wubWTK5Dfqe35T
+ks8xIbzpYMLw/6NXQW/I
+=YJYM
+-----END PGP SIGNATURE-----
+
+--Sig_/cDZdTduRx+6i1wcFhpCSIY4--
