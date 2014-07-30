@@ -1,92 +1,39 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Wed, 30 Jul 2014 14:55:04 +0200
-Message-ID: <2943176.NOpchz9a7V@vostro.rjw.lan>
-References: <20140730122305.7b1b7838@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the clk tree with the driver-core
+ tree
+Date: Wed, 30 Jul 2014 15:35:59 -0700
+Message-ID: <20140730223559.GB9004@kroah.com>
+References: <20140730185708.12a99f00@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:55473 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752864AbaG3Mgd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jul 2014 08:36:33 -0400
-In-Reply-To: <20140730122305.7b1b7838@canb.auug.org.au>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45903 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754085AbaG3Wg3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2014 18:36:29 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+	by gateway1.nyi.internal (Postfix) with ESMTP id C742625CD0
+	for <linux-next@vger.kernel.org>; Wed, 30 Jul 2014 18:36:27 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20140730185708.12a99f00@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chander Kashyap <chander.kashyap@linaro.org>, Sachin Kamat <sachin.kamat@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kim Phillips <kim.phillips@freescale.com>
 
-On Wednesday, July 30, 2014 12:23:05 PM Stephen Rothwell wrote:
+On Wed, Jul 30, 2014 at 06:57:08PM +1000, Stephen Rothwell wrote:
+> Hi Mike,
 > 
-> --Sig_/ACOdpNyKdCGq/4_bRoeLLze
-> Content-Type: text/plain; charset=US-ASCII
-> Content-Transfer-Encoding: quoted-printable
-> 
-> Hi Rafael,
-
-Hi Stephen,
-
-> Today's linux-next merge of the pm tree got a conflict in
-> drivers/cpuidle/Kconfig.arm between commit 2aaafcdb6883 ("cpuidle:
-> big.LITTLE: Add ARCH_EXYNOS entry in config") from the arm-soc tree and
-> commit 6ee7f5dd57fc ("cpuidle: big_little: Fix build error") from the
-> pm tree.
+> Today's linux-next merge of the clk tree got a conflict in
+> drivers/base/platform.c between commit 3d713e0e382e ("driver core:
+> platform: add device binding path 'driver_override'") from the
+> driver-core tree and commit 86be408bfbd8 ("clk: Support for clock
+> parents and rates assigned from device tree") from the clk tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary (no action
 > is required).
 
-Thanks for the fix!
+Looks good, thanks.
 
-
-> diff --cc drivers/cpuidle/Kconfig.arm
-> index 33fc0ff0af1c,a186dec8e5df..000000000000
-> --- a/drivers/cpuidle/Kconfig.arm
-> +++ b/drivers/cpuidle/Kconfig.arm
-> @@@ -1,9 -1,16 +1,10 @@@
->   #
->   # ARM CPU Idle drivers
->   #
->  -config ARM_ARMADA_370_XP_CPUIDLE
->  -	bool "CPU Idle Driver for Armada 370/XP family processors"
->  -	depends on ARCH_MVEBU
->  -	help
->  -	  Select this to enable cpuidle on Armada 370/XP processors.
->  -
->   config ARM_BIG_LITTLE_CPUIDLE
->   	bool "Support for ARM big.LITTLE processors"
->  -	depends on ARCH_VEXPRESS_TC2_PM
->  +	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
-> + 	depends on MCPM
->   	select ARM_CPU_SUSPEND
->   	select CPU_IDLE_MULTIPLE_DRIVERS
->   	help
-> 
-> --Sig_/ACOdpNyKdCGq/4_bRoeLLze
-> Content-Type: application/pgp-signature; name=signature.asc
-> Content-Disposition: attachment; filename=signature.asc
-> 
-> -----BEGIN PGP SIGNATURE-----
-> Version: GnuPG v2
-> 
-> iQIcBAEBCAAGBQJT2FcWAAoJEMDTa8Ir7ZwVpXAP/i6U5VfuEjywNOnyq2GF13qx
-> gpKWy6BNWg6TACRERzfngwOBID7nUVeQH3ksri2ReiDJkjM655dOnR2T1d4q+Txc
-> CYc+TYp1x37ErXOVarlrnoVSqeNKSiARQdKLSE0ztLWfg/s+zmAuCjznbbBkFwyo
-> tEbfa7kkMRo6TBopPVHevQ/Pe/s0ZVFXqS8KNyd5XImgeEmUAnvGl0KBSetA+b8u
-> 1zB/U8V7d4cnWH6jRiijVDOBBs1RlmTJHV12NeKWzukjjEWd8QJ2cQHLRo/aS/js
-> AVwCMUE5Q5AFAOj+aLtETpo2wc3VPNkq6QwFk4sJgmizvISQ5l/8nveBJgGU457m
-> XQAHlgvhWAArtD2uowLP/aGhUJE3D3MBDs/6r/eMxfYeTBJSgfLllz9jXTayfshM
-> 7saBQtwh+npKK2M4tDivUGE0zFoRj/qcCdiSB/+r0XYGaFwGIqoqEHnlsS/YElUF
-> HJBCQgUPpzv832JXuJUuR5RnCOiGYiWlTGBs+WHoWXgVpVyIpZOfOPGinTbaOgIa
-> 23OHAdHLTdWTg+adfKmrTGPu++OTxI985oooYhqHsmpp6MPLxC6ABgqlWlUh15zb
-> sNs02B6XLBvm6Sa4v3w2anYAZCtwrO3TcihsL5mFhLHxForyq+U45qbktcZ6CBbF
-> xI0c32N77d98oZMV81vN
-> =U/IC
-> -----END PGP SIGNATURE-----
-> 
-> --Sig_/ACOdpNyKdCGq/4_bRoeLLze--
-> 
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+greg k-h
