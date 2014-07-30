@@ -1,82 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Wed, 30 Jul 2014 12:23:05 +1000
-Message-ID: <20140730122305.7b1b7838@canb.auug.org.au>
+From: John Stultz <john.stultz@linaro.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 29 Jul 2014 20:10:30 -0700
+Message-ID: <53D86226.7020207@linaro.org>
+References: <20140725144522.32c1f6b5@canb.auug.org.au> <20140730095642.5f68e01d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ACOdpNyKdCGq/4_bRoeLLze"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57228 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755241AbaG3CXU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Jul 2014 22:23:20 -0400
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:34455 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754999AbaG3DKd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Jul 2014 23:10:33 -0400
+Received: by mail-pd0-f176.google.com with SMTP id y10so681653pdj.7
+        for <linux-next@vger.kernel.org>; Tue, 29 Jul 2014 20:10:33 -0700 (PDT)
+In-Reply-To: <20140730095642.5f68e01d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chander Kashyap <chander.kashyap@linaro.org>, Sachin Kamat <sachin.kamat@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/ACOdpNyKdCGq/4_bRoeLLze
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 07/29/2014 04:56 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> On Fri, 25 Jul 2014 14:45:22 +1000 Stephen Rothwell
+<sfr@canb.auug.org.au> wrote:
+>>
+>> Hi all,
+>>
+>> After merging the tip tree, today's linux-next build (powerpc
+>> ppc64_defconfig) failed like this:
+>>
+>> arch/powerpc/kernel/time.c:743:6: error: conflicting types for
+'update_vsyscall_old'
+>>  void update_vsyscall_old(struct timespec *wall_time, struct timespec
+*wtm,
+>>       ^
+>> In file included from arch/powerpc/kernel/time.c:77:0:
+>> include/linux/timekeeper_internal.h:114:13: note: previous
+declaration of 'update_vsyscall_old' was here
+>>  extern void update_vsyscall_old(struct timespec *ts, struct timespec
+*wtm,
+>>              ^
+>>
+>> Caused by commit 4a0e637738f0 ("clocksource: Get rid of cycle_last").
+>>
+>> I have used the tip tree from next-20140724 for today.
+>
+> Ping?
+So I sent a fix for this the other day ([PATCH] timekeeping: Fixup typo
+in update_vsyscall_old definition), but I've not heard anything from
+anyone on it.
 
-Hi Rafael,
 
-Today's linux-next merge of the pm tree got a conflict in
-drivers/cpuidle/Kconfig.arm between commit 2aaafcdb6883 ("cpuidle:
-big.LITTLE: Add ARCH_EXYNOS entry in config") from the arm-soc tree and
-commit 6ee7f5dd57fc ("cpuidle: big_little: Fix build error") from the
-pm tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/cpuidle/Kconfig.arm
-index 33fc0ff0af1c,a186dec8e5df..000000000000
---- a/drivers/cpuidle/Kconfig.arm
-+++ b/drivers/cpuidle/Kconfig.arm
-@@@ -1,9 -1,16 +1,10 @@@
-  #
-  # ARM CPU Idle drivers
-  #
- -config ARM_ARMADA_370_XP_CPUIDLE
- -	bool "CPU Idle Driver for Armada 370/XP family processors"
- -	depends on ARCH_MVEBU
- -	help
- -	  Select this to enable cpuidle on Armada 370/XP processors.
- -
-  config ARM_BIG_LITTLE_CPUIDLE
-  	bool "Support for ARM big.LITTLE processors"
- -	depends on ARCH_VEXPRESS_TC2_PM
- +	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
-+ 	depends on MCPM
-  	select ARM_CPU_SUSPEND
-  	select CPU_IDLE_MULTIPLE_DRIVERS
-  	help
-
---Sig_/ACOdpNyKdCGq/4_bRoeLLze
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT2FcWAAoJEMDTa8Ir7ZwVpXAP/i6U5VfuEjywNOnyq2GF13qx
-gpKWy6BNWg6TACRERzfngwOBID7nUVeQH3ksri2ReiDJkjM655dOnR2T1d4q+Txc
-CYc+TYp1x37ErXOVarlrnoVSqeNKSiARQdKLSE0ztLWfg/s+zmAuCjznbbBkFwyo
-tEbfa7kkMRo6TBopPVHevQ/Pe/s0ZVFXqS8KNyd5XImgeEmUAnvGl0KBSetA+b8u
-1zB/U8V7d4cnWH6jRiijVDOBBs1RlmTJHV12NeKWzukjjEWd8QJ2cQHLRo/aS/js
-AVwCMUE5Q5AFAOj+aLtETpo2wc3VPNkq6QwFk4sJgmizvISQ5l/8nveBJgGU457m
-XQAHlgvhWAArtD2uowLP/aGhUJE3D3MBDs/6r/eMxfYeTBJSgfLllz9jXTayfshM
-7saBQtwh+npKK2M4tDivUGE0zFoRj/qcCdiSB/+r0XYGaFwGIqoqEHnlsS/YElUF
-HJBCQgUPpzv832JXuJUuR5RnCOiGYiWlTGBs+WHoWXgVpVyIpZOfOPGinTbaOgIa
-23OHAdHLTdWTg+adfKmrTGPu++OTxI985oooYhqHsmpp6MPLxC6ABgqlWlUh15zb
-sNs02B6XLBvm6Sa4v3w2anYAZCtwrO3TcihsL5mFhLHxForyq+U45qbktcZ6CBbF
-xI0c32N77d98oZMV81vN
-=U/IC
------END PGP SIGNATURE-----
-
---Sig_/ACOdpNyKdCGq/4_bRoeLLze--
+thanks
+-john
