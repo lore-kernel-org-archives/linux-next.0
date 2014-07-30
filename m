@@ -1,31 +1,73 @@
-From: Oliver Neukum <oneukum@suse.de>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 30 Jul 2014 10:26:20 +0200
-Message-ID: <1406708780.5347.9.camel@linux-fkkt.site>
-References: <20140730103617.1a9690de@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the driver-core tree
+Date: Wed, 30 Jul 2014 18:57:08 +1000
+Message-ID: <20140730185708.12a99f00@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/MJAAzOcNE.bvnm./NZ5_ffa"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:60813 "EHLO mx2.suse.de"
+Received: from ozlabs.org ([103.22.144.67]:53271 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750782AbaG3I0X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Jul 2014 04:26:23 -0400
-In-Reply-To: <20140730103617.1a9690de@canb.auug.org.au>
+	id S1751386AbaG3I5Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2014 04:57:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kim Phillips <kim.phillips@freescale.com>
 
-On Wed, 2014-07-30 at 10:36 +1000, Stephen Rothwell wrote:
+--Sig_/MJAAzOcNE.bvnm./NZ5_ffa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Caused by commit 20fbe3ae990f ("cdc_subset: deal with a device that
-> needs reset for timeout").
-> 
-> I have used the net tree from next-20140729 for today (i.e. up to
-> commit fe26566d8a0515 ("bnx2x: fix crash during TSO tunneling")).
+Hi Mike,
 
-Thank you. Patch is on the way.
+Today's linux-next merge of the clk tree got a conflict in
+drivers/base/platform.c between commit 3d713e0e382e ("driver core:
+platform: add device binding path 'driver_override'") from the
+driver-core tree and commit 86be408bfbd8 ("clk: Support for clock
+parents and rates assigned from device tree") from the clk tree.
 
-	Regards
-		Oliver
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/base/platform.c
+index 7cc7440b014d,ac47643b1b69..000000000000
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@@ -23,7 -23,7 +23,8 @@@
+  #include <linux/pm_runtime.h>
+  #include <linux/idr.h>
+  #include <linux/acpi.h>
+ +#include <linux/limits.h>
++ #include <linux/clk/clk-conf.h>
+ =20
+  #include "base.h"
+  #include "power/power.h"
+
+--Sig_/MJAAzOcNE.bvnm./NZ5_ffa
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT2LNpAAoJEMDTa8Ir7ZwVw3kP/0UlwnmAVLXXbFNRqViOGjmm
+WubjNEvHVqtZM76G2/OXI91jfVrugEdkPEG6wPVuNKrTJI4YH8mBFb6o5VCI9hAa
+pUrQN7op2h/5ci7Z4WkyEJC6wET26MTZq9qG2et4cyAXsfvMOSIFdVjPHGOqAnSU
+zl7IFg0RwLJi6ahNcSHnqMt1J3q9pv8XUqYQl11KxbtGu5CGlBbL5vMMOh0/Giw0
+YI1vAlPwQorAJt1OIePQybw+s5SolLtt3Gfeh+R4YCIcsbk8moHQxv26gRNv24kJ
++8w7H1vD7ddMoVTyWYgBelZ5yJM4GB2kC85sfzx0241J/HdT9SLFun9fdCFrStY/
+aTti2KkJgDNWWq3uMowzsgxd5lOJ/gexZ9uWjY+14flC+ObviiKWLwpldMx6LxAL
+p8elqfxs0EPVB3tQ449GiBOcuQBJ1/n0FVrje283pTszGBcfhVQXeuO2hvTb+rkq
+zW11730skj8btkPaoxitwivcNca6OMPAEmYsH2wadpTdBxDW0MWp321PSFqKIfqw
+CuvTdnTUMfWHKyA0d8K4SR1iEyCa7gtc5E4lsKSKEPnYWQXXMaJ04Kxm6N+aQGAD
+viPPt5DWoNBEu0vIO9uTaiuxpTxxRXn2xe7pyjNTQ+HDGq9HA1ZdCGFzHKlqJvd6
+IEDTY23y4TfXViwCWVtj
+=M3Q5
+-----END PGP SIGNATURE-----
+
+--Sig_/MJAAzOcNE.bvnm./NZ5_ffa--
