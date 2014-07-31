@@ -1,55 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with Linus' tree
-Date: Thu, 31 Jul 2014 16:30:04 +1000
-Message-ID: <20140731163004.474501fb@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the tip tree
+Date: Thu, 31 Jul 2014 17:07:35 +1000
+Message-ID: <20140731170735.5cf2062b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m7KGpMGMqLmZz4zkVy7oExR"; protocol="application/pgp-signature"
+ boundary="Sig_//ZUfVbT=irnzWLeV+vtEufW"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
+To: Greg KH <greg@kroah.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, David Riley <davidriley@chromium.org>, John Stultz <john.stultz@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/m7KGpMGMqLmZz4zkVy7oExR
+--Sig_//ZUfVbT=irnzWLeV+vtEufW
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in
-virt/kvm/arm/vgic.c between commit 63afbe7a0ac1 ("kvm: arm64: vgic: fix
-hyp panic with 64k pages on juno platform") from Linus' tree and commit
-8f186d522c69 ("KVM: ARM: vgic: split GICv2 backend from the main vgic
-code") and others from the kvm-arm tree.
+Today's linux-next merge of the driver-core tree got a conflict in
+lib/Kconfig.debug between commit e704f93af5a0 ("kernel: time: Add
+udelay_test module to validate udelay") from the tip tree and commit
+0a8adf584759 ("test: add firmware_class loader test") from the
+driver-core tree.
 
-I fixed it up (the latter extensively rewrites the function, so I just
-used that) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/m7KGpMGMqLmZz4zkVy7oExR
+diff --cc lib/Kconfig.debug
+index 7cc4e8aff5df,213cd9f7e957..000000000000
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@@ -1659,15 -1649,19 +1659,28 @@@ config TEST_BP
+ =20
+  	  If unsure, say N.
+ =20
++ config TEST_FIRMWARE
++ 	tristate "Test firmware loading via userspace interface"
++ 	default n
++ 	depends on FW_LOADER
++ 	help
++ 	  This builds the "test_firmware" module that creates a userspace
++ 	  interface for testing firmware loading. This can be used to
++ 	  control the triggering of firmware loading without needing an
++ 	  actual firmware-using device. The contents can be rechecked by
++ 	  userspace.
++=20
++ 	  If unsure, say N.
++=20
+ +config TEST_UDELAY
+ +	tristate "udelay test driver"
+ +	default n
+ +	help
+ +	  This builds the "udelay_test" module that helps to make sure
+ +	  that udelay() is working properly.
+ +
+ +	  If unsure, say N.
+ +
+  source "samples/Kconfig"
+ =20
+  source "lib/Kconfig.kgdb"
+
+--Sig_//ZUfVbT=irnzWLeV+vtEufW
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT2eJyAAoJEMDTa8Ir7ZwVvG8QAJXlbnvzgGiBMPDRgzbeuOvl
-IsZTZdmjtyOiXl35zNfd5gGr1c3iHBTfkxwgCvjo4YyGphhmkShWEOqvwrqsMPzt
-BENzU2Z8QjnlhroJlF+wLzCUFGoWVwyZvmi0/e6TL2tKvFzKTeq2urjzCuyE6IfN
-bOzBmE77WgLvlVfHSmC/mhhpu5MaCPapRbXzqOgMbmQJxCCMlfpJjjToU+PSstsI
-s6L/1kNxvSAM6789apXFMF28ZoghuoOXoXAKtP4g/8KZl95tnIPfvVATBQP0QpUm
-m/7KPeYT7ZUXdyo+KSuCEeDqx9lQnajv02haMedo7x3nEGBIOLDKUBkg1fVswsiY
-rstC1KPfbfE6G3dhODdpvdg0pNS4FXiBB1conk4D9hx46Vxkc39FkXtsZ5IHNuXx
-BM2UpK3tG6GNtMweGsnvinzAZe99CUHHOHzb7artZM8hKQNOlQMoTwivnWkLjqSo
-1W71ZiaN9pPjQkj/CzFAJ7+RjHYwUe3vN2KjRd3SAb0//FUkmLi1z4P+SgJO8J6X
-4TYtEKtyqywvJpOHb8YF72H23yF2Bm0M3vW713v/K5HoD3wIlY0ReDAeJ5DB0OdG
-4mvnarIqCD6CY4SdIFL7ooCkWWOzyhqnm/wbKYhlINjkM9OvcmKHsTO2hGbepjD2
-lNph/Kfb68Vm8jf/gq55
-=v2S1
+iQIcBAEBCAAGBQJT2es4AAoJEMDTa8Ir7ZwVJUkP/Rij3M95nq21JFFFQPC/yrdF
+e9oYmiNUxlbiyY+tVgujAFglZM7UMSA6QaDsLZIiitX/XOxwj2MoMeD4tsAKZUgB
+IcVbCmi6n+deiPlCh4tD0kra/8+d5OIq4O9YHDtbH0818n+nB32J1OrtGN5ayJHq
+L1gTIR6DTfMeYFSM34UsA2pMj1qWboHYWYQUpoLNmyjzK5RiIVDGRiaX1snVuD+r
+QypfI29eNfcp/XMAPrrMuHoDLDFElamPbmovWABpz8XRxpHVQEXzy8cPF7+cg05q
+fGYQTw3NbajTCuWxSGUy0gSYBo952A3hni3fQRMOARyYOHPfRmmJvSUTrHFf6pNr
+tz4oB6SM16qH5S8fAsbH5LvEbQO0uhDoaKm+WpAkPSiVDQsa8d7TTUif4avmfHcu
+D28JnJUtI0fYjAWaUa/NogFlBD0S0utNPBd+MeN+uc/EtguKIx4BY08XKdy3N2YN
+bQEkAE+AUtQS4qKsR6Wp1iRaQ/MnE0ia2xSdPKEWWFi6XQebbpma/qNcAjhPzFK8
+yGozXr/2eTg4Zps0jdKJV22iPadbvzIWDY+9kv2HGcrS+vj+hvjP8X4myh0IUO60
+W0Qy/w65x+a+eH6nAKwT2d6b+Zobl1gyEaxD6KEKNlnIa9dQOGAgoTOh9crY8Oeq
+7dx9C1vmR7d1naxzW23H
+=CWyw
 -----END PGP SIGNATURE-----
 
---Sig_/m7KGpMGMqLmZz4zkVy7oExR--
+--Sig_//ZUfVbT=irnzWLeV+vtEufW--
