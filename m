@@ -1,89 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the tip tree
-Date: Thu, 31 Jul 2014 17:07:35 +1000
-Message-ID: <20140731170735.5cf2062b@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: URL change for mfd tree?
+Date: Thu, 31 Jul 2014 08:25:45 +0100
+Message-ID: <20140731072545.GG9030@lee--X1>
+References: <20140730092453.089e1094@canb.auug.org.au>
+ <20140730071254.GC9030@lee--X1>
+ <20140731090116.01e54d15@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//ZUfVbT=irnzWLeV+vtEufW"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, David Riley <davidriley@chromium.org>, John Stultz <john.stultz@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:35882 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932112AbaGaHZv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Jul 2014 03:25:51 -0400
+Received: by mail-ig0-f172.google.com with SMTP id h15so8859404igd.17
+        for <linux-next@vger.kernel.org>; Thu, 31 Jul 2014 00:25:50 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20140731090116.01e54d15@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_//ZUfVbT=irnzWLeV+vtEufW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 31 Jul 2014, Stephen Rothwell wrote:
+> On Wed, 30 Jul 2014 08:12:54 +0100 Lee Jones <lee.jones@linaro.org> w=
+rote:
+> >
+> > > I noticed commit 71e297b17bb6 ("MAINTAINERS: Update MFD repo loca=
+tion")
+> > > in the mfd-lj tree today.  In linux-next, I have the following mf=
+d
+> > > trees:
+> > >=20
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/sameo/mfd-fixes.git=
+#master
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/sameo/mfd-next.git#=
+master
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd=
+-next
+> > >=20
+> > > Does your commit mean that I should remove the first two?
+> >=20
+> > Yes please.  They haven't been used for ~6 months and aren't likely=
+ to
+> > be used again.
+>=20
+> I have removed them and renamed mfd-lj to mfd.
 
-Hi Greg,
-
-Today's linux-next merge of the driver-core tree got a conflict in
-lib/Kconfig.debug between commit e704f93af5a0 ("kernel: time: Add
-udelay_test module to validate udelay") from the tip tree and commit
-0a8adf584759 ("test: add firmware_class loader test") from the
-driver-core tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Perfect, much obliged.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc lib/Kconfig.debug
-index 7cc4e8aff5df,213cd9f7e957..000000000000
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@@ -1659,15 -1649,19 +1659,28 @@@ config TEST_BP
- =20
-  	  If unsure, say N.
- =20
-+ config TEST_FIRMWARE
-+ 	tristate "Test firmware loading via userspace interface"
-+ 	default n
-+ 	depends on FW_LOADER
-+ 	help
-+ 	  This builds the "test_firmware" module that creates a userspace
-+ 	  interface for testing firmware loading. This can be used to
-+ 	  control the triggering of firmware loading without needing an
-+ 	  actual firmware-using device. The contents can be rechecked by
-+ 	  userspace.
-+=20
-+ 	  If unsure, say N.
-+=20
- +config TEST_UDELAY
- +	tristate "udelay test driver"
- +	default n
- +	help
- +	  This builds the "udelay_test" module that helps to make sure
- +	  that udelay() is working properly.
- +
- +	  If unsure, say N.
- +
-  source "samples/Kconfig"
- =20
-  source "lib/Kconfig.kgdb"
-
---Sig_//ZUfVbT=irnzWLeV+vtEufW
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT2es4AAoJEMDTa8Ir7ZwVJUkP/Rij3M95nq21JFFFQPC/yrdF
-e9oYmiNUxlbiyY+tVgujAFglZM7UMSA6QaDsLZIiitX/XOxwj2MoMeD4tsAKZUgB
-IcVbCmi6n+deiPlCh4tD0kra/8+d5OIq4O9YHDtbH0818n+nB32J1OrtGN5ayJHq
-L1gTIR6DTfMeYFSM34UsA2pMj1qWboHYWYQUpoLNmyjzK5RiIVDGRiaX1snVuD+r
-QypfI29eNfcp/XMAPrrMuHoDLDFElamPbmovWABpz8XRxpHVQEXzy8cPF7+cg05q
-fGYQTw3NbajTCuWxSGUy0gSYBo952A3hni3fQRMOARyYOHPfRmmJvSUTrHFf6pNr
-tz4oB6SM16qH5S8fAsbH5LvEbQO0uhDoaKm+WpAkPSiVDQsa8d7TTUif4avmfHcu
-D28JnJUtI0fYjAWaUa/NogFlBD0S0utNPBd+MeN+uc/EtguKIx4BY08XKdy3N2YN
-bQEkAE+AUtQS4qKsR6Wp1iRaQ/MnE0ia2xSdPKEWWFi6XQebbpma/qNcAjhPzFK8
-yGozXr/2eTg4Zps0jdKJV22iPadbvzIWDY+9kv2HGcrS+vj+hvjP8X4myh0IUO60
-W0Qy/w65x+a+eH6nAKwT2d6b+Zobl1gyEaxD6KEKNlnIa9dQOGAgoTOh9crY8Oeq
-7dx9C1vmR7d1naxzW23H
-=CWyw
------END PGP SIGNATURE-----
-
---Sig_//ZUfVbT=irnzWLeV+vtEufW--
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
