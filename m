@@ -1,79 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the  tree
-Date: Fri, 1 Aug 2014 16:21:42 +1000
-Message-ID: <20140801162142.24086152@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the  tree
+Date: Fri, 1 Aug 2014 00:38:00 -0700
+Message-ID: <20140801073800.GB31866@kroah.com>
+References: <20140801162142.24086152@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kgiKMbccyYVOg2b2Zm2QGIN"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55239 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753624AbaHAGVu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 Aug 2014 02:21:50 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:48387 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750892AbaHAHic (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2014 03:38:32 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+	by gateway1.nyi.internal (Postfix) with ESMTP id 2C4D222F42
+	for <linux-next@vger.kernel.org>; Fri,  1 Aug 2014 03:38:30 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20140801162142.24086152@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Kristina =?UTF-8?B?TWFydMWhZW5rbw==?= <kristina.martsenko@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@gmail.com>
 
---Sig_/kgiKMbccyYVOg2b2Zm2QGIN
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 01, 2014 at 04:21:42PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> MAINTAINERS between commit 7eea35fe3df8 ("[media] MAINTAINERS: Update
+> go7007 pattern") from the v4l-dvb tree and commit 0d317b91d6d8
+> ("staging: frontier: remove driver") from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi Greg,
+Looks good to me, thanks.
 
-Today's linux-next merge of the staging tree got a conflict in
-MAINTAINERS between commit 7eea35fe3df8 ("[media] MAINTAINERS: Update
-go7007 pattern") from the v4l-dvb tree and commit 0d317b91d6d8
-("staging: frontier: remove driver") from the staging tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc MAINTAINERS
-index 10390ced5206,6d2c52ea407d..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -8685,11 -8542,11 +8661,6 @@@ M:	Marek Belisko <marek.belisko@gmail.c
-  S:	Odd Fixes
-  F:	drivers/staging/ft1000/
- =20
-- STAGING - FRONTIER TRANZPORT AND ALPHATRACK
-- M:	David T=C3=A4ht <d@teklibre.com>
-- S:	Odd Fixes
-- F:	drivers/staging/frontier/
- -STAGING - GO7007 MPEG CODEC
- -M:	Hans Verkuil <hans.verkuil@cisco.com>
- -S:	Maintained
- -F:	drivers/staging/media/go7007/
---
-  STAGING - INDUSTRIAL IO
-  M:	Jonathan Cameron <jic23@kernel.org>
-  L:	linux-iio@vger.kernel.org
-
---Sig_/kgiKMbccyYVOg2b2Zm2QGIN
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT2zH7AAoJEMDTa8Ir7ZwVUkMP/2g+m5pGSWe/GWlw0pHYBTVp
-F4qmHixYQ221Itm7ba9TZNUF9w3zE4FDapP1v12sCMmu6ii7aEbVFzrLoBbsmE/K
-BcI/cz0OAthEJTWMPQIsHyK4yUg3Wnz/Ny6qZ0WaQ3jmpBlYu8sD9cJueIs6rwVd
-QqzqBiYaDKhcmqwARLqi13ZHQ75u1AtzXhrqN9sQpXgONTm0kLlfBLDkyWdHD7fX
-nJm5o0KJHQQjpiFcSxMmG9bxWv6cg74XYy7RYdjimkAq3Jc8oFX6x9fyLYKTVF8C
-wNFxENs6OzNsU1r+7T+mlfWiT20O1dLl8P0+6qfnVTJyCOcNG/RkSne+cIPq9YxU
-ZANkfFMyUYJoOwX25Ka/4yKL168EREbpK0WibdJq4hWNhAJ7HGhTw6YGZUALVXpZ
-fJDnK0e330xSISHbDOp2oaZxckwP4HrllQ3h5PpuQomveMc09TrbzCk7pfKl/DPW
-tC3VfOsb2Dk5yp/I2Y/T4/+bPp0mAuavMPq42d1kDSIp0koeci9pdGolzGCiZOEj
-SBQT01ANITWpD15YOwqoDmZf8TQ/YNdSorFYmMt118OXPs+m0TRZhEIWmTdXCRLV
-nVaiEyEwAc2+de4rm+jZIY+77uG9BZge+Z9+1ADeHXPSrNdXlQgjr449nNCX4PNY
-TJftzxtW/0ViZQc43qla
-=sxH7
------END PGP SIGNATURE-----
-
---Sig_/kgiKMbccyYVOg2b2Zm2QGIN--
+greg k-h
