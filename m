@@ -1,59 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the ftrace tree
-Date: Fri, 1 Aug 2014 14:44:20 +1000
-Message-ID: <20140801144420.4ba1c011@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with Linus' tree
+Date: Fri, 1 Aug 2014 15:21:41 +1000
+Message-ID: <20140801152141.15d028c1@canb.auug.org.au>
+References: <20140731163004.474501fb@canb.auug.org.au>
+	<CAEDV+gJ1oSPzgZMO=kdFDNPnzy-EOHGuLxHqTB8KO6d_8yPrxQ@mail.gmail.com>
+	<87mwbpiv0z.fsf@approximate.cambridge.arm.com>
+	<20140731142347.GB589@cbox>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/aI.ALIqRkdhyln5l74Pl+kf"; protocol="application/pgp-signature"
+ boundary="Sig_/=g8B=AAE41pOt58oODPQxwr"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41753 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53793 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750770AbaHAEo3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 Aug 2014 00:44:29 -0400
+	id S1750770AbaHAFVv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 Aug 2014 01:21:51 -0400
+In-Reply-To: <20140731142347.GB589@cbox>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark D Rustad <mark.d.rustad@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Paolo Bonzini <pbonzini@redhat.com>
+To: Christoffer Dall <cdall@cs.columbia.edu>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Christoffer Dall <christofferdall@christofferdall.dk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Will Deacon <Will.Deacon@arm.com>
 
---Sig_/aI.ALIqRkdhyln5l74Pl+kf
+--Sig_/=g8B=AAE41pOt58oODPQxwr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Christoffer,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/kvm/mmutrace.h between commit 7b039cb4c5a9 ("tracing: Add
-trace_seq_buffer_ptr() helper function") from the ftrace tree and
-commit 42cbc04fd3b5 ("x86/kvm: Resolve shadow warnings in macro
-expansion") from the kvm tree.
+On Thu, 31 Jul 2014 16:23:47 +0200 Christoffer Dall <cdall@cs.columbia.edu>=
+ wrote:
+>
+> Stephen, did you pick up the resolution provided by Marc for the gicv2
+> fix patch so that it applies to tomorrow's next/kvmarm merge?
 
-I fixed it up (I dropped the ftrace tree's change to this file) and can
-carry the fix as necessary (no action is required).
+Yes, I have.  You will need to produce the same for Linus eventually,
+or do the merge yourself as I suggested.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/aI.ALIqRkdhyln5l74Pl+kf
+--Sig_/=g8B=AAE41pOt58oODPQxwr
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT2xspAAoJEMDTa8Ir7ZwVuHUQAJHLisz/E4W5cB5J0Dp2t8L9
-1VDbmS+03rEjVqurjkla9AwueDaAbIM4DlEqhzbqLbC17LNxx2jcAGA7d8Rdv27L
-xD5VQeY/6Ab4mxVgr4RMZlaMQ79z9XIlNbep9nKfHM006eBPHpD++yGlcpuOdTsD
-sxYZ2Ui8GgjTAAF3xj6x+kDcuXG3C7Dl1zWFyBVmpe24f9ZbI4ntAzSXpq0bC+Py
-BYIhpYBnDefhCdhN7/EMMGUFBkKy78mywNYthIKlT4uLas1FBF0ppC2kgVq+zFnR
-NzlVuAfGcZ6cpbwQO/WicyZ5dIPF5AC2FqsbaRT6vxSa7msndP0EQZpGprcWzprd
-OpvsAJ5OnDQPZIjyfvSvaGyNN7eYIGQO9YCTjTNQYHGdq+ubObF3RT9r1y5JgEhu
-IKWdPDgJStAJnOsIB++wK15rCGi+qx+YgIegDOrOYTlL4uCSKo+dsxk9Yo2revWV
-BchM81C/BXHzrbaLn6OFUhnL82/7V/8w+m6iEjvDcxsKw97GekyJviuAqtbIuEoU
-UJmReVWB3UQElqImWc4IuqxTFV7RuVF45M2MJutAmqbokf5VYgivtqvcU52JHEW7
-oniyEoFsVukD/7nZrGn/Ct2Ftx4q1CW/PqCgK04K+h4lgI3xAfNbFuhJeDPrYw0L
-zvQ7kZSMQOp5Cup6zqPk
-=kMUJ
+iQIcBAEBCAAGBQJT2yPsAAoJEMDTa8Ir7ZwVQ30P/3eD/3MZBY7NTzcFVRSy8knr
+JVta4BccjTrO2yOgsyPvNjnLA1DjuMiQCW3C9KyaP2AVbMl+TLBQ+t+25gP0qiSZ
+B+pESo3YGJP8S4xNY8sg32f9DZWqBViOmmX+xTDSrXRKuEoUjouNtRZWd8uGVz8a
+2R0KhhQqt1vhhQXokvZ7scWATXUaK+7jH3Ajxnsa4nhawdKKKRRlIbGvKju9/KEM
+xhV2R+wqCblDaiRmiai2bOaZpoPf3+BKvg3Pv4g6d1YTHQN+hxper21GBRYlJpnd
+VUqqvub7hG+gQvo40JoiXbT3JZriSEeaYwDU525196vq5H3uUe1eiiLoocQnqV8L
+2DUCC+2iK149cu0fnMST8y+ZuVBPLaYRABCSa1X1/P+u8N7+3KaGEEbD6/4u4r+k
+O8IkG2x2IzgZdxYAIth3c1Cz3tVEBWgV4usaNQdbCfqhdfH+9IvfVLolR/CZK24D
+CWveQKMrjcY8v75xTZPS6Daw0IL61tnGlVAsj5TwLCntMaXLDaBiOZmAfHc+J3re
+wWFyPnHd5o8GDSy0gAc8rPWr2c/spyg8VgIMWMtrhxMz7+WkDultyWw4V5e9Yabr
+YAm9IFEUJldtYw6zG24WWa80AA5Pos9SlfMN+Lx0vpnLPbenwCdvOAXhGM9T7GIv
+c+EMdVtuYZN820l0OSqd
+=XOml
 -----END PGP SIGNATURE-----
 
---Sig_/aI.ALIqRkdhyln5l74Pl+kf--
+--Sig_/=g8B=AAE41pOt58oODPQxwr--
