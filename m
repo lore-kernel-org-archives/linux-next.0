@@ -1,39 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the tip
- tree
-Date: Thu, 31 Jul 2014 17:20:17 -0700
-Message-ID: <20140801002017.GA2945@kroah.com>
-References: <20140731170735.5cf2062b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the ftrace tree
+Date: Fri, 1 Aug 2014 14:44:20 +1000
+Message-ID: <20140801144420.4ba1c011@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/aI.ALIqRkdhyln5l74Pl+kf"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37162 "EHLO
-	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751759AbaHAAUt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Jul 2014 20:20:49 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by gateway1.nyi.internal (Postfix) with ESMTP id BDDB821DF5
-	for <linux-next@vger.kernel.org>; Thu, 31 Jul 2014 20:20:46 -0400 (EDT)
-Content-Disposition: inline
-In-Reply-To: <20140731170735.5cf2062b@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:41753 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750770AbaHAEo3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 Aug 2014 00:44:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, David Riley <davidriley@chromium.org>, John Stultz <john.stultz@linaro.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark D Rustad <mark.d.rustad@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Thu, Jul 31, 2014 at 05:07:35PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> lib/Kconfig.debug between commit e704f93af5a0 ("kernel: time: Add
-> udelay_test module to validate udelay") from the tip tree and commit
-> 0a8adf584759 ("test: add firmware_class loader test") from the
-> driver-core tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Sig_/aI.ALIqRkdhyln5l74Pl+kf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good, thanks.
+Hi all,
 
-greg k-h
+Today's linux-next merge of the kvm tree got a conflict in
+arch/x86/kvm/mmutrace.h between commit 7b039cb4c5a9 ("tracing: Add
+trace_seq_buffer_ptr() helper function") from the ftrace tree and
+commit 42cbc04fd3b5 ("x86/kvm: Resolve shadow warnings in macro
+expansion") from the kvm tree.
+
+I fixed it up (I dropped the ftrace tree's change to this file) and can
+carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/aI.ALIqRkdhyln5l74Pl+kf
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT2xspAAoJEMDTa8Ir7ZwVuHUQAJHLisz/E4W5cB5J0Dp2t8L9
+1VDbmS+03rEjVqurjkla9AwueDaAbIM4DlEqhzbqLbC17LNxx2jcAGA7d8Rdv27L
+xD5VQeY/6Ab4mxVgr4RMZlaMQ79z9XIlNbep9nKfHM006eBPHpD++yGlcpuOdTsD
+sxYZ2Ui8GgjTAAF3xj6x+kDcuXG3C7Dl1zWFyBVmpe24f9ZbI4ntAzSXpq0bC+Py
+BYIhpYBnDefhCdhN7/EMMGUFBkKy78mywNYthIKlT4uLas1FBF0ppC2kgVq+zFnR
+NzlVuAfGcZ6cpbwQO/WicyZ5dIPF5AC2FqsbaRT6vxSa7msndP0EQZpGprcWzprd
+OpvsAJ5OnDQPZIjyfvSvaGyNN7eYIGQO9YCTjTNQYHGdq+ubObF3RT9r1y5JgEhu
+IKWdPDgJStAJnOsIB++wK15rCGi+qx+YgIegDOrOYTlL4uCSKo+dsxk9Yo2revWV
+BchM81C/BXHzrbaLn6OFUhnL82/7V/8w+m6iEjvDcxsKw97GekyJviuAqtbIuEoU
+UJmReVWB3UQElqImWc4IuqxTFV7RuVF45M2MJutAmqbokf5VYgivtqvcU52JHEW7
+oniyEoFsVukD/7nZrGn/Ct2Ftx4q1CW/PqCgK04K+h4lgI3xAfNbFuhJeDPrYw0L
+zvQ7kZSMQOp5Cup6zqPk
+=kMUJ
+-----END PGP SIGNATURE-----
+
+--Sig_/aI.ALIqRkdhyln5l74Pl+kf--
