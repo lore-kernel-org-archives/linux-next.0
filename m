@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Mon, 4 Aug 2014 16:55:41 +1000
-Message-ID: <20140804165541.592d51fb@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the nfs tree
+Date: Mon, 4 Aug 2014 17:19:06 +1000
+Message-ID: <20140804171906.2c2b4470@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/phG03f/j_RwoW_Ck_zsPrYd"; protocol="application/pgp-signature"
+ boundary="Sig_/jo/HQGV9uQXJiyc2xyjFfMl"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58027 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45218 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751122AbaHDGzt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Aug 2014 02:55:49 -0400
+	id S1750986AbaHDHTO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Aug 2014 03:19:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Nowicki <tomasz.nowicki@linaro.org>, Graeme Gregory <graeme.gregory@linaro.org>, Hanjun Guo <hanjun.guo@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Weston Andros Adamson <dros@primarydata.com>, NeilBrown <neilb@suse.de>
 
---Sig_/phG03f/j_RwoW_Ck_zsPrYd
+--Sig_/jo/HQGV9uQXJiyc2xyjFfMl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
 Today's linux-next merge of the tip tree got a conflict in
-arch/x86/Kconfig between commit 8a1664be0b92 ("ACPI: add config for
-BIOS table scan") from the pm tree and commit 44a69f619562 ("acpi, apei,
-ghes: Make NMI error notification to be GHES architecture extension")
-from the tip tree.
+fs/nfs/pagelist.c between commit e7029206ff43 ("nfs: check
+wait_on_bit_lock err in page_group_lock") from the nfs tree and commit
+743162013d40 ("sched: Remove proliferation of wait_on_bit() action
+functions") from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,41 +34,47 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/Kconfig
-index ac5a788d2432,4559c4e114d1..000000000000
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@@ -133,7 -132,8 +133,9 @@@ config X8
-  	select GENERIC_CPU_AUTOPROBE
-  	select HAVE_ARCH_AUDITSYSCALL
-  	select ARCH_SUPPORTS_ATOMIC_RMW
- +	select ACPI_LEGACY_TABLES_LOOKUP if ACPI
-+ 	select HAVE_ACPI_APEI if ACPI
-+ 	select HAVE_ACPI_APEI_NMI if ACPI
+diff --cc fs/nfs/pagelist.c
+index 9425118e91d7,0be5050638f7..000000000000
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@@ -158,14 -149,8 +152,13 @@@ nfs_page_group_lock(struct nfs_page *re
  =20
-  config INSTRUCTION_DECODER
-  	def_bool y
+  	WARN_ON_ONCE(head !=3D head->wb_head);
+ =20
+ -	wait_on_bit_lock(&head->wb_flags, PG_HEADLOCK,
+ +	do {
+ +		ret =3D wait_on_bit_lock(&head->wb_flags, PG_HEADLOCK,
+- 			nfs_wait_bit_uninterruptible,
+  			TASK_UNINTERRUPTIBLE);
+ +	} while (wait && ret !=3D 0);
+ +
+ +	WARN_ON_ONCE(ret > 0);
+ +	return ret;
+  }
+ =20
+  /*
 
---Sig_/phG03f/j_RwoW_Ck_zsPrYd
+--Sig_/jo/HQGV9uQXJiyc2xyjFfMl
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT3y5zAAoJEMDTa8Ir7ZwVhBgP/0P+sCzKxxOPZ9cUhuVpywn/
-8uJH1cYJcMerdHS6R4bLccEI0itOqFRRVguM4cl2MHqKnIeNSgN13ofI2gKO5ZcA
-qQmZDqOJFTOGQ4W9Lf0EIfPVxiI11Hp8FyIR0qmWUYSizRtB+RhOvTvTiOIwqyIC
-zg2ljn6EBDgIK77tz8Bp9eJRvp+eoHaG+S2Oc2AkIIGcgxo8Hh2ymZ7xAWuYTTUf
-IO1yRq654v7k1b7BXXpQAc9zCxdEBh0AmYe2vGMU18+6hdWAApdXm4GaCsAYNJDg
-53U2mu041VniBVl9+xga//g5BC4lCIZeqAOCgCxUpFxfm28xNq4BIggQfWrXhjJz
-KQ/3dWfEISqO6pXB8m3j5P+hD1VChf4CO42ubWvWmv3OGLz0FwbtM9624ceCvc0o
-UHK3WrWdpu1FP+gYmxfw7YUabiND8D4oZh0H+60GfJuLUPE3+3VCVwoKMKmfALas
-yH+Rlv5vk3B0cNrM9H/qDld6+jOV6dLbnZoLtI+RlrlGww1J9DsV9neCRj6OEEnV
-iJrTnaqhtxYvR7wjjCNHervJ8A2Vs6/CdS/57vNEWJ3wGvso3P/5xpbnjQBXyEo+
-3cri+H0+N+RraRFaxe2+Gd5TDjbVuQ58+sTBp1aJrGg2wvYtxg/2twL9U4HRAA2D
-b7BMrSTHnRJhDaiHR2QG
-=bF74
+iQIcBAEBCAAGBQJT3zPvAAoJEMDTa8Ir7ZwVucoP+wWii1fEHNL0NxlIsbH/G46l
+CB2/9JoMY0ohjXgDmLHeUttXj1ZclvkRO8NWFpEdEhg0kb46d2e5TN/yhOdFudWv
+sNnzlsxbp8n3M/EAZ0WHNNfuZY1kLIP4Vt+dML7BHceiyvj4U7x6A196/qLUa9sq
+gKBeTFxZj8ziGkHAGujnP3qXa04L5clZxb4/YfD1uIxAZAQOJme6wjj4i/kC55P6
+1GZrVRo1SdZQs5FyYPdQAzCviSWyScPjJA0QwXfidlIEdlYIdfU3QR6CaoCJ3C7A
+TbRrQMAJI0faFyhxhlsXJhNW0qnWoXhAqzI2z14r0jZChhUMuSE6k5ASIWR+60dg
+Vi13W1Bnw7WRl/vP31p0r7Z8R8DGR218qIxDA6nKUo3SNjR2MGebnW23fqhJP65S
+4ukc01nJyY2jCYHi98E7iWUg3RD/iKT8zwOMdFDoshhexRiQ+S1ZqpQzqbtEZ4MM
+lc+HEGUXgNeX0mEoVfHaFQ5LM/vEC/uL59Hh/eXvnLS0LE5BChngq/Z1NJOEbbTB
+DdViIGhQMdedRXmhFEpPiSR4bnE9EiogEijLCfQtQBOE7ZNJQS7FTNHOfedyRIZk
+JogBpJV853ZKKmUPQf7RShUaaoLDR1WVGIOW9svTaSUR2bwRsq+IvVuqHQ2SzvMX
+oV1PlW7+FV/TRa0q74bQ
+=qYhd
 -----END PGP SIGNATURE-----
 
---Sig_/phG03f/j_RwoW_Ck_zsPrYd--
+--Sig_/jo/HQGV9uQXJiyc2xyjFfMl--
