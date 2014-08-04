@@ -1,413 +1,55 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] time: Rename udelay_test.c to test_udelay.c
-Date: Mon, 4 Aug 2014 12:35:57 -0700
-Message-ID: <CAGXu5jLS1SGo9dsoYAbjNOSJ-oCHpy_UD-_1Me+jhRGMu7TAZA@mail.gmail.com>
-References: <CAGXu5jKD5X4ZZreierjWsB659pXJgc9eXJX==Wm+-R22nKY+xQ@mail.gmail.com>
-	<1407177340-29359-1-git-send-email-john.stultz@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: trouble fetching the mips tree
+Date: Tue, 5 Aug 2014 08:36:53 +1000
+Message-ID: <20140805083653.34b23d89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407177340-29359-1-git-send-email-john.stultz@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: John Stultz <john.stultz@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Linux-Next <linux-next@vger.kernel.org>, David Riley <davidriley@chromium.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/c/2xlTZXA8msY0NbCRQ1c39"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60284 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751498AbaHDWhD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Aug 2014 18:37:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 4, 2014 at 11:35 AM, John Stultz <john.stultz@linaro.org> wrote:
-> Kees requested that this test module be renamed for consistency sake,
-> so this patch renames the udelay_test.c file (recently added to
-> tip/timers/core for 3.17) to test_udelay.c
->
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Greg KH <greg@kroah.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@elte.hu>
-> Cc: Linux-Next <linux-next@vger.kernel.org>
-> Cc: David Riley <davidriley@chromium.org>
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+--Sig_/c/2xlTZXA8msY0NbCRQ1c39
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thank you! :)
+Hi Ralf,
 
-Acked-by: Kees Cook <keescook@chromium.org>
+I have had trouble fetching the mips tree
+(git://git.linux-mips.org/pub/scm/ralf/upstream-sfr.git#mips-for-linux-next)
+yesterday and today.  The "git fetch" connects, but it seems to just
+hang for many minutes (eventually, I just kill it).
 
--Kees
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> ---
->  kernel/time/Makefile      |   2 +-
->  kernel/time/test_udelay.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++
->  kernel/time/udelay_test.c | 168 ----------------------------------------------
->  3 files changed, 169 insertions(+), 169 deletions(-)
->  create mode 100644 kernel/time/test_udelay.c
->  delete mode 100644 kernel/time/udelay_test.c
->
-> diff --git a/kernel/time/Makefile b/kernel/time/Makefile
-> index 7347426..f622cf2 100644
-> --- a/kernel/time/Makefile
-> +++ b/kernel/time/Makefile
-> @@ -13,7 +13,7 @@ obj-$(CONFIG_TICK_ONESHOT)                    += tick-oneshot.o
->  obj-$(CONFIG_TICK_ONESHOT)                     += tick-sched.o
->  obj-$(CONFIG_TIMER_STATS)                      += timer_stats.o
->  obj-$(CONFIG_DEBUG_FS)                         += timekeeping_debug.o
-> -obj-$(CONFIG_TEST_UDELAY)                      += udelay_test.o
-> +obj-$(CONFIG_TEST_UDELAY)                      += test_udelay.o
->
->  $(obj)/time.o: $(obj)/timeconst.h
->
-> diff --git a/kernel/time/test_udelay.c b/kernel/time/test_udelay.c
-> new file mode 100644
-> index 0000000..e622ba3
-> --- /dev/null
-> +++ b/kernel/time/test_udelay.c
-> @@ -0,0 +1,168 @@
-> +/*
-> + * udelay() test kernel module
-> + *
-> + * Test is executed by writing and reading to /sys/kernel/debug/udelay_test
-> + * Tests are configured by writing: USECS ITERATIONS
-> + * Tests are executed by reading from the same file.
-> + * Specifying usecs of 0 or negative values will run multiples tests.
-> + *
-> + * Copyright (C) 2014 Google, Inc.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/debugfs.h>
-> +#include <linux/delay.h>
-> +#include <linux/ktime.h>
-> +#include <linux/module.h>
-> +#include <linux/uaccess.h>
-> +
-> +#define DEFAULT_ITERATIONS 100
-> +
-> +#define DEBUGFS_FILENAME "udelay_test"
-> +
-> +static DEFINE_MUTEX(udelay_test_lock);
-> +static struct dentry *udelay_test_debugfs_file;
-> +static int udelay_test_usecs;
-> +static int udelay_test_iterations = DEFAULT_ITERATIONS;
-> +
-> +static int udelay_test_single(struct seq_file *s, int usecs, uint32_t iters)
-> +{
-> +       int min = 0, max = 0, fail_count = 0;
-> +       uint64_t sum = 0;
-> +       uint64_t avg;
-> +       int i;
-> +       /* Allow udelay to be up to 0.5% fast */
-> +       int allowed_error_ns = usecs * 5;
-> +
-> +       for (i = 0; i < iters; ++i) {
-> +               struct timespec ts1, ts2;
-> +               int time_passed;
-> +
-> +               ktime_get_ts(&ts1);
-> +               udelay(usecs);
-> +               ktime_get_ts(&ts2);
-> +               time_passed = timespec_to_ns(&ts2) - timespec_to_ns(&ts1);
-> +
-> +               if (i == 0 || time_passed < min)
-> +                       min = time_passed;
-> +               if (i == 0 || time_passed > max)
-> +                       max = time_passed;
-> +               if ((time_passed + allowed_error_ns) / 1000 < usecs)
-> +                       ++fail_count;
-> +               WARN_ON(time_passed < 0);
-> +               sum += time_passed;
-> +       }
-> +
-> +       avg = sum;
-> +       do_div(avg, iters);
-> +       seq_printf(s, "%d usecs x %d: exp=%d allowed=%d min=%d avg=%lld max=%d",
-> +                       usecs, iters, usecs * 1000,
-> +                       (usecs * 1000) - allowed_error_ns, min, avg, max);
-> +       if (fail_count)
-> +               seq_printf(s, " FAIL=%d", fail_count);
-> +       seq_puts(s, "\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static int udelay_test_show(struct seq_file *s, void *v)
-> +{
-> +       int usecs;
-> +       int iters;
-> +       int ret = 0;
-> +
-> +       mutex_lock(&udelay_test_lock);
-> +       usecs = udelay_test_usecs;
-> +       iters = udelay_test_iterations;
-> +       mutex_unlock(&udelay_test_lock);
-> +
-> +       if (usecs > 0 && iters > 0) {
-> +               return udelay_test_single(s, usecs, iters);
-> +       } else if (usecs == 0) {
-> +               struct timespec ts;
-> +
-> +               ktime_get_ts(&ts);
-> +               seq_printf(s, "udelay() test (lpj=%ld kt=%ld.%09ld)\n",
-> +                               loops_per_jiffy, ts.tv_sec, ts.tv_nsec);
-> +               seq_puts(s, "usage:\n");
-> +               seq_puts(s, "echo USECS [ITERS] > " DEBUGFS_FILENAME "\n");
-> +               seq_puts(s, "cat " DEBUGFS_FILENAME "\n");
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static int udelay_test_open(struct inode *inode, struct file *file)
-> +{
-> +       return single_open(file, udelay_test_show, inode->i_private);
-> +}
-> +
-> +static ssize_t udelay_test_write(struct file *file, const char __user *buf,
-> +               size_t count, loff_t *pos)
-> +{
-> +       char lbuf[32];
-> +       int ret;
-> +       int usecs;
-> +       int iters;
-> +
-> +       if (count >= sizeof(lbuf))
-> +               return -EINVAL;
-> +
-> +       if (copy_from_user(lbuf, buf, count))
-> +               return -EFAULT;
-> +       lbuf[count] = '\0';
-> +
-> +       ret = sscanf(lbuf, "%d %d", &usecs, &iters);
-> +       if (ret < 1)
-> +               return -EINVAL;
-> +       else if (ret < 2)
-> +               iters = DEFAULT_ITERATIONS;
-> +
-> +       mutex_lock(&udelay_test_lock);
-> +       udelay_test_usecs = usecs;
-> +       udelay_test_iterations = iters;
-> +       mutex_unlock(&udelay_test_lock);
-> +
-> +       return count;
-> +}
-> +
-> +static const struct file_operations udelay_test_debugfs_ops = {
-> +       .owner = THIS_MODULE,
-> +       .open = udelay_test_open,
-> +       .read = seq_read,
-> +       .write = udelay_test_write,
-> +       .llseek = seq_lseek,
-> +       .release = single_release,
-> +};
-> +
-> +static int __init udelay_test_init(void)
-> +{
-> +       mutex_lock(&udelay_test_lock);
-> +       udelay_test_debugfs_file = debugfs_create_file(DEBUGFS_FILENAME,
-> +                       S_IRUSR, NULL, NULL, &udelay_test_debugfs_ops);
-> +       mutex_unlock(&udelay_test_lock);
-> +
-> +       return 0;
-> +}
-> +
-> +module_init(udelay_test_init);
-> +
-> +static void __exit udelay_test_exit(void)
-> +{
-> +       mutex_lock(&udelay_test_lock);
-> +       debugfs_remove(udelay_test_debugfs_file);
-> +       mutex_unlock(&udelay_test_lock);
-> +}
-> +
-> +module_exit(udelay_test_exit);
-> +
-> +MODULE_AUTHOR("David Riley <davidriley@chromium.org>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/kernel/time/udelay_test.c b/kernel/time/udelay_test.c
-> deleted file mode 100644
-> index e622ba3..0000000
-> --- a/kernel/time/udelay_test.c
-> +++ /dev/null
-> @@ -1,168 +0,0 @@
-> -/*
-> - * udelay() test kernel module
-> - *
-> - * Test is executed by writing and reading to /sys/kernel/debug/udelay_test
-> - * Tests are configured by writing: USECS ITERATIONS
-> - * Tests are executed by reading from the same file.
-> - * Specifying usecs of 0 or negative values will run multiples tests.
-> - *
-> - * Copyright (C) 2014 Google, Inc.
-> - *
-> - * This software is licensed under the terms of the GNU General Public
-> - * License version 2, as published by the Free Software Foundation, and
-> - * may be copied, distributed, and modified under those terms.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> -
-> -#include <linux/debugfs.h>
-> -#include <linux/delay.h>
-> -#include <linux/ktime.h>
-> -#include <linux/module.h>
-> -#include <linux/uaccess.h>
-> -
-> -#define DEFAULT_ITERATIONS 100
-> -
-> -#define DEBUGFS_FILENAME "udelay_test"
-> -
-> -static DEFINE_MUTEX(udelay_test_lock);
-> -static struct dentry *udelay_test_debugfs_file;
-> -static int udelay_test_usecs;
-> -static int udelay_test_iterations = DEFAULT_ITERATIONS;
-> -
-> -static int udelay_test_single(struct seq_file *s, int usecs, uint32_t iters)
-> -{
-> -       int min = 0, max = 0, fail_count = 0;
-> -       uint64_t sum = 0;
-> -       uint64_t avg;
-> -       int i;
-> -       /* Allow udelay to be up to 0.5% fast */
-> -       int allowed_error_ns = usecs * 5;
-> -
-> -       for (i = 0; i < iters; ++i) {
-> -               struct timespec ts1, ts2;
-> -               int time_passed;
-> -
-> -               ktime_get_ts(&ts1);
-> -               udelay(usecs);
-> -               ktime_get_ts(&ts2);
-> -               time_passed = timespec_to_ns(&ts2) - timespec_to_ns(&ts1);
-> -
-> -               if (i == 0 || time_passed < min)
-> -                       min = time_passed;
-> -               if (i == 0 || time_passed > max)
-> -                       max = time_passed;
-> -               if ((time_passed + allowed_error_ns) / 1000 < usecs)
-> -                       ++fail_count;
-> -               WARN_ON(time_passed < 0);
-> -               sum += time_passed;
-> -       }
-> -
-> -       avg = sum;
-> -       do_div(avg, iters);
-> -       seq_printf(s, "%d usecs x %d: exp=%d allowed=%d min=%d avg=%lld max=%d",
-> -                       usecs, iters, usecs * 1000,
-> -                       (usecs * 1000) - allowed_error_ns, min, avg, max);
-> -       if (fail_count)
-> -               seq_printf(s, " FAIL=%d", fail_count);
-> -       seq_puts(s, "\n");
-> -
-> -       return 0;
-> -}
-> -
-> -static int udelay_test_show(struct seq_file *s, void *v)
-> -{
-> -       int usecs;
-> -       int iters;
-> -       int ret = 0;
-> -
-> -       mutex_lock(&udelay_test_lock);
-> -       usecs = udelay_test_usecs;
-> -       iters = udelay_test_iterations;
-> -       mutex_unlock(&udelay_test_lock);
-> -
-> -       if (usecs > 0 && iters > 0) {
-> -               return udelay_test_single(s, usecs, iters);
-> -       } else if (usecs == 0) {
-> -               struct timespec ts;
-> -
-> -               ktime_get_ts(&ts);
-> -               seq_printf(s, "udelay() test (lpj=%ld kt=%ld.%09ld)\n",
-> -                               loops_per_jiffy, ts.tv_sec, ts.tv_nsec);
-> -               seq_puts(s, "usage:\n");
-> -               seq_puts(s, "echo USECS [ITERS] > " DEBUGFS_FILENAME "\n");
-> -               seq_puts(s, "cat " DEBUGFS_FILENAME "\n");
-> -       }
-> -
-> -       return ret;
-> -}
-> -
-> -static int udelay_test_open(struct inode *inode, struct file *file)
-> -{
-> -       return single_open(file, udelay_test_show, inode->i_private);
-> -}
-> -
-> -static ssize_t udelay_test_write(struct file *file, const char __user *buf,
-> -               size_t count, loff_t *pos)
-> -{
-> -       char lbuf[32];
-> -       int ret;
-> -       int usecs;
-> -       int iters;
-> -
-> -       if (count >= sizeof(lbuf))
-> -               return -EINVAL;
-> -
-> -       if (copy_from_user(lbuf, buf, count))
-> -               return -EFAULT;
-> -       lbuf[count] = '\0';
-> -
-> -       ret = sscanf(lbuf, "%d %d", &usecs, &iters);
-> -       if (ret < 1)
-> -               return -EINVAL;
-> -       else if (ret < 2)
-> -               iters = DEFAULT_ITERATIONS;
-> -
-> -       mutex_lock(&udelay_test_lock);
-> -       udelay_test_usecs = usecs;
-> -       udelay_test_iterations = iters;
-> -       mutex_unlock(&udelay_test_lock);
-> -
-> -       return count;
-> -}
-> -
-> -static const struct file_operations udelay_test_debugfs_ops = {
-> -       .owner = THIS_MODULE,
-> -       .open = udelay_test_open,
-> -       .read = seq_read,
-> -       .write = udelay_test_write,
-> -       .llseek = seq_lseek,
-> -       .release = single_release,
-> -};
-> -
-> -static int __init udelay_test_init(void)
-> -{
-> -       mutex_lock(&udelay_test_lock);
-> -       udelay_test_debugfs_file = debugfs_create_file(DEBUGFS_FILENAME,
-> -                       S_IRUSR, NULL, NULL, &udelay_test_debugfs_ops);
-> -       mutex_unlock(&udelay_test_lock);
-> -
-> -       return 0;
-> -}
-> -
-> -module_init(udelay_test_init);
-> -
-> -static void __exit udelay_test_exit(void)
-> -{
-> -       mutex_lock(&udelay_test_lock);
-> -       debugfs_remove(udelay_test_debugfs_file);
-> -       mutex_unlock(&udelay_test_lock);
-> -}
-> -
-> -module_exit(udelay_test_exit);
-> -
-> -MODULE_AUTHOR("David Riley <davidriley@chromium.org>");
-> -MODULE_LICENSE("GPL");
-> --
-> 1.9.1
->
+--Sig_/c/2xlTZXA8msY0NbCRQ1c39
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAEBCAAGBQJT4AsLAAoJEMDTa8Ir7ZwVmA4P/iRJe9dOtkxpNeLJEefi+yCa
+QHLRmk+WEGjTXWgYDiDVDxPCwf0q6qYOGBiTy4ewqQrGMhsFdjEbX3LZTlFnpsbM
+8aqCxEC/C2Filk00+aS0CJKy33yxSv+QMkyojfLf7xWg1Xn2ezC2VEbUOLJR+sHy
+XIx+7TjW/tgdcEjkdVhRtZF2IyfdxEex+H2QRpydmwk+ctDQdtef2oBRXm6WrIst
+JKh1/3AZNveerJFQAUwj7sdelPfdLM/1F6HrczbfbMa/7ZCYgkwVB58Juy8wrZB9
+yxMwuLDwhwC3qFvyC0n7N1hcRJAi+sJodGBfg0m1NCftN4TCYcY5Kuo4tRtMey/K
+cP40uBAXKzeedJMkT1wz+W7IUMoW6/gkrFtJqAVAfqtfS3iLVW46Y6CwCkD+Q+sS
+ta9XATjQFDGk5mVlLtklmAJylCU6/CfQEcgm7qyFihdNQPhqrbR8Sr4b3zPmAcsU
+usck+yBZNTDQ6ntf60XZN3owhUaz+ZDld14mI4Oi/SLZiA6hhT7Bshk78+c13vbB
+J8tvF3wV8ar9iXJjsOjy+CmQtCBUdNS8wgGjfgvTTrJEQeyYpFaDHfEVdAteij5g
+PhzLklz1UwRUMLbphKT52QH5MapNY36SRMH+Pji3QezqAfEVMQ5P5XmY3b0ECprJ
+I5MlkCWl0IMjs5kYedrZ
+=8y6a
+-----END PGP SIGNATURE-----
 
--- 
-Kees Cook
-Chrome OS Security
+--Sig_/c/2xlTZXA8msY0NbCRQ1c39--
