@@ -1,66 +1,46 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mmc-uh tree
-Date: Mon, 4 Aug 2014 15:44:48 +0200
-Message-ID: <CAPDyKFq2isO+DKMuLT9Ud8B9reFZiVYKG6LL8ysF0ZTNGfY8Nw@mail.gmail.com>
-References: <20140728144608.7d9ac736@canb.auug.org.au>
-	<CAPz6YkWO=cJSrPk2+Xy_Euxv9tMt6EHc-k+NTNAoPmVvxCE4-A@mail.gmail.com>
+From: John Stultz <john.stultz@linaro.org>
+Subject: Re: linux-next: manual merge of the driver-core tree with the tip tree
+Date: Mon, 4 Aug 2014 11:27:03 -0700
+Message-ID: <CALAqxLUgeyn6MobUQ=wrQRBjfBPF7OHTSxJuSsYeYKC-U2KMGA@mail.gmail.com>
+References: <20140731170735.5cf2062b@canb.auug.org.au>
+	<20140801002017.GA2945@kroah.com>
+	<CAGXu5jKD5X4ZZreierjWsB659pXJgc9eXJX==Wm+-R22nKY+xQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:42326 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752033AbaHDNou (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2014 09:44:50 -0400
-Received: by mail-lb0-f176.google.com with SMTP id u10so5282233lbd.7
-        for <linux-next@vger.kernel.org>; Mon, 04 Aug 2014 06:44:48 -0700 (PDT)
-In-Reply-To: <CAPz6YkWO=cJSrPk2+Xy_Euxv9tMt6EHc-k+NTNAoPmVvxCE4-A@mail.gmail.com>
+Received: from mail-qa0-f50.google.com ([209.85.216.50]:63954 "EHLO
+	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750896AbaHDS1F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2014 14:27:05 -0400
+Received: by mail-qa0-f50.google.com with SMTP id s7so7175784qap.37
+        for <linux-next@vger.kernel.org>; Mon, 04 Aug 2014 11:27:04 -0700 (PDT)
+In-Reply-To: <CAGXu5jKD5X4ZZreierjWsB659pXJgc9eXJX==Wm+-R22nKY+xQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sonny Rao <sonnyrao@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, David Riley <davidriley@chromium.org>
 
-On 28 July 2014 19:58, Sonny Rao <sonnyrao@chromium.org> wrote:
-> On Sun, Jul 27, 2014 at 9:46 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi Ulf,
+On Fri, Aug 1, 2014 at 4:38 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Jul 31, 2014 at 8:20 PM, Greg KH <greg@kroah.com> wrote:
+>> On Thu, Jul 31, 2014 at 05:07:35PM +1000, Stephen Rothwell wrote:
+>>> Hi Greg,
+>>>
+>>> Today's linux-next merge of the driver-core tree got a conflict in
+>>> lib/Kconfig.debug between commit e704f93af5a0 ("kernel: time: Add
+>>> udelay_test module to validate udelay") from the tip tree and commit
+>>> 0a8adf584759 ("test: add firmware_class loader test") from the
+>>> driver-core tree.
+>>>
+>>> I fixed it up (see below) and can carry the fix as necessary (no action
+>>> is required).
 >>
->> After merging the mmc-uh tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->>
->> drivers/mmc/host/dw_mmc.c: In function 'dw_mci_reset':
->> drivers/mmc/host/dw_mmc.c:2262:3: error: implicit declaration of function 'dw_mci_idmac_reset' [-Werror=implicit-function-declaration]
->>    dw_mci_idmac_reset(host);
->>    ^
+>> Looks good, thanks.
 >
-> Hi, sorry about that.  It looks like it fails to build when
-> CONFIG_MMC_DW_IDMAC is not set.
-> I changed that bit of code from using #ifdef to using just C if
-> statement, but I think in this case the function being called doesn't
-> exist when CONFIG_MMC_DW_IDMAC is not set, so that was incorrect and
-> we should go back to using something like:
->
-> #if IS_ENABLED(CONFIG_MMC_DW_IDMAC)
->         /* It is also recommended that we reset and reprogram idmac */
->         dw_mci_idmac_reset(host);
-> #endif
->
->
-> Ulf, I can respin the patch if you'd like or feel free to fix it
-> yourself too.  Thanks.
+> For keeping things regularized, could this module instead be named
+> "test_udelay", to match the rest of most of the test modules?
+> (Starting with "test_".)
 
-I haven't got the time to fix this yet, sorry.
+Sure. I'll spin up a patch to change it and will submit here shortly.
 
-It would simplify a bit if you respin the patch, so please do so.
-
-Kind regards
-Uffe
-
->
->
->>
->> Caused by commit 25f7dadbd982 ("mmc: dw_mmc: change to use recommended
->> reset procedure").
->>
->> I have used the mmc-uh tree from next-20140725 for today.
->> --
->> Cheers,
->> Stephen Rothwell                    sfr@canb.auug.org.au
+thanks
+-john
