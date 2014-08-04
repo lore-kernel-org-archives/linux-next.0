@@ -1,69 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Mon, 4 Aug 2014 14:28:47 +1000
-Message-ID: <20140804142847.408921cf@canb.auug.org.au>
-References: <20140729183153.0e77a6f6@canb.auug.org.au>
-	<20140729084237.GE31360@ulmo.nvidia.com>
-	<CAAVeFuJmHX351WQpEo43sQUf+4BHk9QRJqZfJMsgWf8AXH=_8w@mail.gmail.com>
+Subject: linux-next: build warning after merge of the security tree
+Date: Mon, 4 Aug 2014 16:25:49 +1000
+Message-ID: <20140804162549.28c9889d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bdGJJKDNvBDt9cNX4NpuqnW"; protocol="application/pgp-signature"
+ boundary="Sig_/HbtxpO+evLniD+aWqn_4kmv"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44633 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54527 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750925AbaHDE24 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Aug 2014 00:28:56 -0400
-In-Reply-To: <CAAVeFuJmHX351WQpEo43sQUf+4BHk9QRJqZfJMsgWf8AXH=_8w@mail.gmail.com>
+	id S1751053AbaHDGZ6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Aug 2014 02:25:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>
 
---Sig_/bdGJJKDNvBDt9cNX4NpuqnW
+--Sig_/HbtxpO+evLniD+aWqn_4kmv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alexandre,
+Hi James,
 
-On Mon, 4 Aug 2014 13:10:14 +0900 Alexandre Courbot <gnurou@gmail.com> wrot=
-e:
->
-> I have sent a patch to fix this. In the meantime, if the merge
-> conflict of the GPIO tree on board-paz00.c is solved by taking the
-> GPIO version, there is no build error.
->=20
-> There are a few important patches pending in the GPIO tree that should
-> undergo testing - Stephen, do you think you could resolve the conflict
-> that way to enable the latest GPIO tree to be tested again?
+After merging the security tree, today's linux-next build (powerpc ppc64_de=
+fconfig)
+produced this warning:
 
-No, but I will apply that fix patch in my merge of the gpio tree - just
-make sure it is applied to the gpio tree before Linus (Torvalds) is
-asked to pull it.
+In file included from include/net/cipso_ipv4.h:41:0,
+                 from net/ipv4/sysctl_net_ipv4.c:24:
+include/net/netlabel.h:527:12: warning: 'netlbl_catmap_setlong' defined but=
+ not used [-Wunused-function]
+ static int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
+            ^
+
+Introduced by commit 4b8feff251da ("netlabel: fix the horribly broken
+catmap functions").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/bdGJJKDNvBDt9cNX4NpuqnW
+--Sig_/HbtxpO+evLniD+aWqn_4kmv
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT3wwFAAoJEMDTa8Ir7ZwVlXkP/A185U/AtHzbqIFwN4YST3vH
-cbPuOn2EPB0OohgKO3gil5u6pb1hey1NKzHJbnQjgdU+lhDswSok/A+l5CCZqCiT
-z0PtQSGsSkOaZcQoTo21kfGUX0CdKZo0huGnOnflghcgNmCWwEY9MjQ2XSyvTE0n
-RrcNPbQceZz6A6lKNIRFI7yDBJexUjzSfqdbCo47XXlhkgaOsWWxe4IV2ILh5S0y
-EQuOPpBeSmLKp/asbdfMHoSWjCsBELL66l9skUkQbwZr+9Euqku3nuAurHdcLRMt
-8MP8Y3pxsqHubMuiI+IW+IM/KqWXDgCsiGow0s9iy6cGwnzc2vJRC/3OKbW9/dvx
-ExUgve2ua+pehVuiNXGCwnnq691wbrBlNLrPMRkzG4/BWaw9I+SxLYnX94RwMz4v
-0/4aX3ET0VY3yNFun1SQmUgO5dzrewKBJjLBF/B57AhoK7WCnlfgkcWbfRoLvCoN
-yIFoHu+wdJJcv22/ox6btwOxAylBiZDrZLH1p3UOfM1KlSSjttlz9bv8ud/11Buz
-SVMqtJnx8Pw0bLbxfYXSxdM8/BcfLVavV5kaHLNJA9WbgncQhqIPoHd3RBPY0X/z
-Jcp+9Ct58n/BP0e+/FtCoVErWSgvI/XP0hFSpHD+Ewpw7f71/+wm8J/1Ewe6jzLB
-rQZbTkP1tM3Z84EBEnq3
-=Oq6H
+iQIcBAEBCAAGBQJT3ydzAAoJEMDTa8Ir7ZwVRmkP/1uwVTFvoRtYR0njV9wnqg6M
+dVZEW6Btgu1FHhPTbqgHP3+xPAoF9oQ7s0ml90l7aentIdd0UIELrrpO58m8mIdu
+DLGnQk4sBg4cse9M2rPa2wvibMfzZpGc1F3nsGIog1LEZmjZ9kmlZjuXNdG5D+ky
+fl7DGts7Q2ONXd7gZsRvi533eIc0IzcQLI2MJ/K0daWpMv1V/0xbjCXwqIHckBqJ
+3uZswHQfMNe07O74lXXVx+WT69NRuDBZ39Wd6bDEKS5W09gGLADjrebyi4zmDNV8
+/1fDZ+QauTXz5Ls0vu6kySuCBcoOaSs92WsUokSFMkMgxzGDkJZOfg1xHKulYhbe
+YXPewL5bmS0M8PfD7fBRJI8ckPks2hDv+PlHBv/Ui0nOh4fA4KoHij+6JP2+t3P4
+jlZZlNV39T32Fv1AMk2XGyNtlxfaKBDU4vl3nZmBTyEf5M/vzM30kHFZHNDGOG4W
+yT3/q8m5zaQIxKXdvfpPdXmuW2HRERHFDQA8Zq/MIupP5qo4+YI3rBfJTQ/Diy+E
+iPzRDwI8Q6XNiIivfjVD4aFFVq50LOZ8hXpWcY9ajnt/1fEXD+CnVd+RLfx6TYlm
+O5xDcuYAOzOG9hW2eGao3ae3/okHlbV4xfgP0n6Ul75QHLWG01cfAp1f1RlPeZu8
+8C6vLURMqEkvlw0Rs28W
+=Acn5
 -----END PGP SIGNATURE-----
 
---Sig_/bdGJJKDNvBDt9cNX4NpuqnW--
+--Sig_/HbtxpO+evLniD+aWqn_4kmv--
