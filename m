@@ -1,95 +1,62 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: linux-next: manual merge of the infiniband tree with the net-next
- tree
-Date: Mon, 4 Aug 2014 14:03:29 +1000
-Message-ID: <20140804140329.180c862c@canb.auug.org.au>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Mon, 4 Aug 2014 13:10:14 +0900
+Message-ID: <CAAVeFuJmHX351WQpEo43sQUf+4BHk9QRJqZfJMsgWf8AXH=_8w@mail.gmail.com>
+References: <20140729183153.0e77a6f6@canb.auug.org.au> <20140729084237.GE31360@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OIAGg8M_jB+cDAnBWQgiEVC"; protocol="application/pgp-signature"
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Jack Morgenstein <jackm-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Amir Vadai <amirv-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:50055 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751077AbaHDEKf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2014 00:10:35 -0400
+In-Reply-To: <20140729084237.GE31360@ulmo.nvidia.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <treding@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Sig_/OIAGg8M_jB+cDAnBWQgiEVC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+I have sent a patch to fix this. In the meantime, if the merge
+conflict of the GPIO tree on board-paz00.c is solved by taking the
+GPIO version, there is no build error.
 
-Hi all,
+There are a few important patches pending in the GPIO tree that should
+undergo testing - Stephen, do you think you could resolve the conflict
+that way to enable the latest GPIO tree to be tested again?
 
-Today's linux-next merge of the infiniband tree got a conflict in
-include/linux/mlx4/device.h between commit 2599d8580f93
-("net/mlx4_core: Use low memory profile on kdump kernel") from the
-net-next tree and commit e630664c8383 ("mlx4_core: Add helper functions
-to support MR re-registration") from the infiniband tree.
+Thanks,
+Alex.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
-
-diff --cc include/linux/mlx4/device.h
-index e15b1544ea83,bac002167ace..000000000000
---- a/include/linux/mlx4/device.h
-+++ b/include/linux/mlx4/device.h
-@@@ -1254,11 -1244,19 +1255,26 @@@ int mlx4_vf_smi_enabled(struct mlx4_de
-  int mlx4_vf_get_enable_smi_admin(struct mlx4_dev *dev, int slave, int por=
-t);
-  int mlx4_vf_set_enable_smi_admin(struct mlx4_dev *dev, int slave, int por=
-t,
-  				 int enable);
-+ int mlx4_mr_hw_get_mpt(struct mlx4_dev *dev, struct mlx4_mr *mmr,
-+ 		       struct mlx4_mpt_entry ***mpt_entry);
-+ int mlx4_mr_hw_write_mpt(struct mlx4_dev *dev, struct mlx4_mr *mmr,
-+ 			 struct mlx4_mpt_entry **mpt_entry);
-+ int mlx4_mr_hw_change_pd(struct mlx4_dev *dev, struct mlx4_mpt_entry *mpt=
-_entry,
-+ 			 u32 pdn);
-+ int mlx4_mr_hw_change_access(struct mlx4_dev *dev,
-+ 			     struct mlx4_mpt_entry *mpt_entry,
-+ 			     u32 access);
-+ void mlx4_mr_hw_put_mpt(struct mlx4_dev *dev,
-+ 			struct mlx4_mpt_entry **mpt_entry);
-+ void mlx4_mr_rereg_mem_cleanup(struct mlx4_dev *dev, struct mlx4_mr *mr);
-+ int mlx4_mr_rereg_mem_write(struct mlx4_dev *dev, struct mlx4_mr *mr,
-+ 			    u64 iova, u64 size, int npages,
-+ 			    int page_shift, struct mlx4_mpt_entry *mpt_entry);
- +
- +/* Returns true if running in low memory profile (kdump kernel) */
- +static inline bool mlx4_low_memory_profile(void)
- +{
- +	return reset_devices;
- +}
- +
-  #endif /* MLX4_DEVICE_H */
-
---Sig_/OIAGg8M_jB+cDAnBWQgiEVC
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT3wYWAAoJEMDTa8Ir7ZwVR7sP/00gnPVaymNcSgBH2QCSadsx
-HO4H9WnGBB1ytDXow4OI6LmxAge+C0i+AGDFP2D8iiPBO9mTgXX8vZPDZpWq/Sl3
-Ilms2EkUM1HeE21rok7w11EsTem1MnXq1uKZoEOal8mxK6lxYkHENXyqEiBf5fwH
-mKQL29JLKBoyDuKI15oy2pn2vkVup1caoIPCSDP2je+L7TE6aeYfBr6Wl6NTn7IX
-OvdG+xfd2I0gM6EBYYS40UjmrQoGuUCoejdKvGbK3QXVVE+zFqDvPaRZmR/lg0l8
-s7GwO6cv9nUAOtMJP33StFNSGaocNwhCm2mD6dsFAc78W0W0XHKx5Xf/GRtFPzUS
-WOTBWIVsMR0r9OSNT30NOg2MU7ISHgfHpqefOopz6VZQi2eS2oNEJHaRlkW6pVC5
-b4iKLrADtN6Zzgy4EF+87Gz15w3fBRDuY1je+EFS/Yg0flZiKg9fhVaHFQHDuFzl
-cMHSv4DEK9c2sBXxzh8k1DDXUDlLAO2xZZe8sBcbAZnCN8Fj8sKeKMgHsJnXKj1d
-SYq+JojKaRTXfPz8zfGxVw+iZzSPEDCrGlL8ZlWpLqtA6mNpNBMLxVjD6FtvXrtH
-6zrFQN/cLlJEIle74eTYjWWbMQzG0fJaI0GguT7Mmii3+WwldjHhOIAYNPOSraCz
-FF6HdNic19wEgOH2RvW0
-=mC2m
------END PGP SIGNATURE-----
-
---Sig_/OIAGg8M_jB+cDAnBWQgiEVC--
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tue, Jul 29, 2014 at 5:42 PM, Thierry Reding <treding@nvidia.com> wrote:
+> On Tue, Jul 29, 2014 at 10:31:53AM +0200, Stephen Rothwell wrote:
+>> * PGP Signed by an unknown key
+>>
+>> Hi Linus,
+>>
+>> After merging the gpio tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>>
+>> In file included from arch/arm/mach-tegra/board-paz00.c:20:0:
+>> include/linux/gpio/machine.h:24:2: error: unknown type name 'u16'
+>>   u16 chip_hwnum;
+>>   ^
+>> include/linux/gpio/machine.h:31:19: error: field 'list' has incomplete type
+>>   struct list_head list;
+>>                    ^
+>>
+>> Caused by commit 0a6d315827ee ("gpio: split gpiod board registration
+>> into machine header") or an interaction of that with commit
+>> a0524acc94c9 ("ARM: tegra: Sort includes alphabetically") from the
+>> arm-soc tree.
+>>
+>> linux/gpio/machine.h needs to include some of the same files that
+>> linux/gpio/driver.h does.  See Rule 1 in Documentation/SubmitChecklist.
+>>
+>> I have used the version of the gpio tree from next-20140728 for today.
+>
+> I think linux/gpio/machine.h needs at least linux/types.h (for u16,
+> though I guess that "dependency" could be removed by simply making
+> gpiod_lookup.chip_hwnum an unsigned int) and linux/list.h for struct
+> list_head.
+>
+> Thierry
