@@ -1,82 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-tegra tree
-Date: Mon, 4 Aug 2014 14:18:32 +1000
-Message-ID: <20140804141832.442adee8@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Mon, 4 Aug 2014 14:28:47 +1000
+Message-ID: <20140804142847.408921cf@canb.auug.org.au>
+References: <20140729183153.0e77a6f6@canb.auug.org.au>
+	<20140729084237.GE31360@ulmo.nvidia.com>
+	<CAAVeFuJmHX351WQpEo43sQUf+4BHk9QRJqZfJMsgWf8AXH=_8w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GQ4OTh+virfOB6rSznuJe7F"; protocol="application/pgp-signature"
+ boundary="Sig_/bdGJJKDNvBDt9cNX4NpuqnW"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52121 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44633 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750881AbaHDETA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Aug 2014 00:19:00 -0400
+	id S1750925AbaHDE24 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Aug 2014 00:28:56 -0400
+In-Reply-To: <CAAVeFuJmHX351WQpEo43sQUf+4BHk9QRJqZfJMsgWf8AXH=_8w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@chromium.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Sig_/GQ4OTh+virfOB6rSznuJe7F
+--Sig_/bdGJJKDNvBDt9cNX4NpuqnW
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+Hi Alexandre,
 
-After merging the drm-tegra tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+On Mon, 4 Aug 2014 13:10:14 +0900 Alexandre Courbot <gnurou@gmail.com> wrot=
+e:
+>
+> I have sent a patch to fix this. In the meantime, if the merge
+> conflict of the GPIO tree on board-paz00.c is solved by taking the
+> GPIO version, there is no build error.
+>=20
+> There are a few important patches pending in the GPIO tree that should
+> undergo testing - Stephen, do you think you could resolve the conflict
+> that way to enable the latest GPIO tree to be tested again?
 
-In file included from include/asm-generic/bug.h:13:0,
-                 from arch/arm/include/asm/bug.h:61,
-                 from include/linux/bug.h:4,
-                 from include/linux/scatterlist.h:5,
-                 from include/linux/dma-buf.h:29,
-                 from drivers/gpu/drm/tegra/gem.c:16:
-drivers/gpu/drm/tegra/gem.c: In function 'tegra_bo_dumb_create':
-drivers/gpu/drm/tegra/gem.c:265:39: error: dereferencing pointer to incompl=
-ete type
-  min_pitch =3D round_up(min_pitch, tegra->pitch_align);
-                                       ^
-include/linux/kernel.h:62:46: note: in definition of macro '__round_mask'
- #define __round_mask(x, y) ((__typeof__(x))((y)-1))
-                                              ^
-drivers/gpu/drm/tegra/gem.c:265:14: note: in expansion of macro 'round_up'
-  min_pitch =3D round_up(min_pitch, tegra->pitch_align);
-              ^
-drivers/gpu/drm/tegra/dc.c: In function 'tegra_dc_init':
-drivers/gpu/drm/tegra/dc.c:1300:29: error: 'tegra' undeclared (first use in=
- this function)
-  if (dc->soc->pitch_align > tegra->pitch_align)
-                             ^
-drivers/gpu/drm/tegra/dc.c:1300:29: note: each undeclared identifier is rep=
-orted only once for each function it appears in
+No, but I will apply that fix patch in my merge of the gpio tree - just
+make sure it is applied to the gpio tree before Linus (Torvalds) is
+asked to pull it.
 
-Caused by commit 26861f43da4e ("drm/tegra: Properly align stride for
-framebuffers").
-
-I have used the drm-tegra tree from next-20140801 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/GQ4OTh+virfOB6rSznuJe7F
+--Sig_/bdGJJKDNvBDt9cNX4NpuqnW
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT3wmxAAoJEMDTa8Ir7ZwVeLMP/1ta9lVyiKm9RLeOzo8lTFuq
-5H/uXsq7/ehVPz7K2Vf3c/udmI+enGYa80E28jLC6c480RkHhJNEtLIY5mzG94D6
-HBd1jKR1fZIL/Ryojt0POokDrefCUeGqsTlUVnQjYaxSW+r7EkznBJLjCXiiQg/W
-1+LJahXt93iyCR+YJW73lfN5gSJQg6SBu3riMHK/yYQdgDKeTtVKxb1ew4KQid8Q
-xy7XPS+ZOLYzdSMXiwt99vyIn3Yhk1RkqvKEH1GvA08/vEhlWGTnm+QZvhrOXfbb
-CLF8gld2a8EH4BR1MhcOlF9rVaMOZM57jGAIJX1Mt6nKPE/phXVBIRZsWfo+iZQD
-sx/x1L/d/zzcKUFjZiz09HKM+i4MMePU0MO2Z66qOAq0lmomAd4gzfXR+ZyNc7fY
-MaaHhKhDEa7gR0sl5m0KhR8pTl90/s8Pga4vUJ+csDmnrdc4uxAGq9WG/QxXBHhv
-XkJI1lhIcCN68dXpGB/qoYnH+2kRICRb5QrsrmxzLbjozl77sH7jCakRfUwNzuIf
-OoWG7ygjaYu40+nygpC0nEwkYDBTN8K/ftPLnDayFB9qyP/etC2yFDZopL3EIpdv
-ld+VZwSKI+Wyf1pIQF4QsAG3Z5Pbd3+aTQdPR/IMSZnIs3AG0tKvyShBdT3AzS7n
-0uSnIe1EXXsGLPqa3fTD
-=WZXb
+iQIcBAEBCAAGBQJT3wwFAAoJEMDTa8Ir7ZwVlXkP/A185U/AtHzbqIFwN4YST3vH
+cbPuOn2EPB0OohgKO3gil5u6pb1hey1NKzHJbnQjgdU+lhDswSok/A+l5CCZqCiT
+z0PtQSGsSkOaZcQoTo21kfGUX0CdKZo0huGnOnflghcgNmCWwEY9MjQ2XSyvTE0n
+RrcNPbQceZz6A6lKNIRFI7yDBJexUjzSfqdbCo47XXlhkgaOsWWxe4IV2ILh5S0y
+EQuOPpBeSmLKp/asbdfMHoSWjCsBELL66l9skUkQbwZr+9Euqku3nuAurHdcLRMt
+8MP8Y3pxsqHubMuiI+IW+IM/KqWXDgCsiGow0s9iy6cGwnzc2vJRC/3OKbW9/dvx
+ExUgve2ua+pehVuiNXGCwnnq691wbrBlNLrPMRkzG4/BWaw9I+SxLYnX94RwMz4v
+0/4aX3ET0VY3yNFun1SQmUgO5dzrewKBJjLBF/B57AhoK7WCnlfgkcWbfRoLvCoN
+yIFoHu+wdJJcv22/ox6btwOxAylBiZDrZLH1p3UOfM1KlSSjttlz9bv8ud/11Buz
+SVMqtJnx8Pw0bLbxfYXSxdM8/BcfLVavV5kaHLNJA9WbgncQhqIPoHd3RBPY0X/z
+Jcp+9Ct58n/BP0e+/FtCoVErWSgvI/XP0hFSpHD+Ewpw7f71/+wm8J/1Ewe6jzLB
+rQZbTkP1tM3Z84EBEnq3
+=Oq6H
 -----END PGP SIGNATURE-----
 
---Sig_/GQ4OTh+virfOB6rSznuJe7F--
+--Sig_/bdGJJKDNvBDt9cNX4NpuqnW--
