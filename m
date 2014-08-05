@@ -1,55 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: trouble fetching the mips tree
-Date: Tue, 5 Aug 2014 08:36:53 +1000
-Message-ID: <20140805083653.34b23d89@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Tue, 5 Aug 2014 10:58:39 +1000
+Message-ID: <20140805105839.35555b3b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/c/2xlTZXA8msY0NbCRQ1c39"; protocol="application/pgp-signature"
+ boundary="Sig_/uSj5hiqW.EH5YDVanoGmKhL"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60284 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41037 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751498AbaHDWhD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Aug 2014 18:37:03 -0400
+	id S1752723AbaHEA6v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Aug 2014 20:58:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
 
---Sig_/c/2xlTZXA8msY0NbCRQ1c39
+--Sig_/uSj5hiqW.EH5YDVanoGmKhL
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi all,
 
-I have had trouble fetching the mips tree
-(git://git.linux-mips.org/pub/scm/ralf/upstream-sfr.git#mips-for-linux-next)
-yesterday and today.  The "git fetch" connects, but it seems to just
-hang for many minutes (eventually, I just kill it).
+After merging the tip tree, the linux-next build (x86_64 allmodconfig)
+for some time has produced this warning:
+
+fs/cifs/misc.c:578:1: warning: 'cifs_oplock_break_wait' defined but not use=
+d [-Wunused-function]
+ cifs_oplock_break_wait(void *unused)
+ ^
+
+Introduced by commit 743162013d40 ("sched: Remove proliferation of
+wait_on_bit() action functions").  This commit is now in Linus' tree -
+sorry for not noticing earlier.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/c/2xlTZXA8msY0NbCRQ1c39
+--Sig_/uSj5hiqW.EH5YDVanoGmKhL
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT4AsLAAoJEMDTa8Ir7ZwVmA4P/iRJe9dOtkxpNeLJEefi+yCa
-QHLRmk+WEGjTXWgYDiDVDxPCwf0q6qYOGBiTy4ewqQrGMhsFdjEbX3LZTlFnpsbM
-8aqCxEC/C2Filk00+aS0CJKy33yxSv+QMkyojfLf7xWg1Xn2ezC2VEbUOLJR+sHy
-XIx+7TjW/tgdcEjkdVhRtZF2IyfdxEex+H2QRpydmwk+ctDQdtef2oBRXm6WrIst
-JKh1/3AZNveerJFQAUwj7sdelPfdLM/1F6HrczbfbMa/7ZCYgkwVB58Juy8wrZB9
-yxMwuLDwhwC3qFvyC0n7N1hcRJAi+sJodGBfg0m1NCftN4TCYcY5Kuo4tRtMey/K
-cP40uBAXKzeedJMkT1wz+W7IUMoW6/gkrFtJqAVAfqtfS3iLVW46Y6CwCkD+Q+sS
-ta9XATjQFDGk5mVlLtklmAJylCU6/CfQEcgm7qyFihdNQPhqrbR8Sr4b3zPmAcsU
-usck+yBZNTDQ6ntf60XZN3owhUaz+ZDld14mI4Oi/SLZiA6hhT7Bshk78+c13vbB
-J8tvF3wV8ar9iXJjsOjy+CmQtCBUdNS8wgGjfgvTTrJEQeyYpFaDHfEVdAteij5g
-PhzLklz1UwRUMLbphKT52QH5MapNY36SRMH+Pji3QezqAfEVMQ5P5XmY3b0ECprJ
-I5MlkCWl0IMjs5kYedrZ
-=8y6a
+iQIcBAEBCAAGBQJT4CxIAAoJEMDTa8Ir7ZwV2N0QAI16sFXbc6JPGBnnSZQhJjYc
+b0u6Hc/IUNP8hVpC940qF0Nq6zXppXM9xgrQcxSrGHpVlgbp4Z04lwM3STxmFhDD
+kwV667MsXGqdSfBIq5haUo9qHBr971LA9XkCsKCvSTBoqBMPGLYNdxx/CUtQIG0+
+uTj4tKV3BhTe2uJliDpWeqJqzZM5arzaxnXCW1YJNeYCLB/r2lLvp+6rtwweF7qk
+4PWjxYUVOc8+pcCdA+JhCI3C7eHofukuG3yRkqNjQZ0QGJjjqGH8K2gxgn9BAxkC
+5M/dn3qpBDX9GX6IP+u0sadg6Zrkzykikgwfaa6Xw2pOGXHKzB5pKtMQCZjcmBeL
+las6TVgEx1Jil52aKeYLF/408ueAcQ4ePu69pTLQoksWtgX9QaGfsj433OAavxiJ
+HjZlQw5FAEDJ3OiTCnXz9HTswwVgxkyz2mW3/yw2HmLjnBnKsZzcLrNfoU3eTJiL
+OWeg8DlH5bFagwFc6syrB5rlOWoRPgsLreY7zXJ9d+fd+tHeY9PS72X1iKxSeAT9
+Bwp+EKacGoS5PkC9+A0M15wWjumDlAlDQFENnQDioluCuNhQTXG4Aux45xrNPYIL
+q6FjECw5o6xAdIzBFUKu4CKvew5ZCOaKDYYGFIeLzY5Mehm2qv4Nkpdpgd/phEOM
+J/RCg5b2trhf1zcFZLPz
+=H5uu
 -----END PGP SIGNATURE-----
 
---Sig_/c/2xlTZXA8msY0NbCRQ1c39--
+--Sig_/uSj5hiqW.EH5YDVanoGmKhL--
