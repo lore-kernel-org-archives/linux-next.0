@@ -1,54 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: is the kgdb tree still relevant?
-Date: Tue, 5 Aug 2014 14:03:07 +1000
-Message-ID: <20140805140307.3a208980@canb.auug.org.au>
+From: Dave Airlie <airlied@linux.ie>
+Subject: Re: linux-next: build failures after merge of the drm tree
+Date: Tue, 5 Aug 2014 05:20:25 +0100 (IST)
+Message-ID: <alpine.DEB.2.00.1408050519270.22643@skynet.skynet.ie>
+References: <20140805130926.4e8c8fe5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8=D+qaqoPP=qjfzISv2ixip"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38112 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753492AbaHEEDS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2014 00:03:18 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140805130926.4e8c8fe5@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Wood <thomas.wood@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Russell King <rmk+kernel@arm.linux.org.uk>, YoungJun Cho <yj44.cho@samsung.com>, Inki Dae <daeinki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/8=D+qaqoPP=qjfzISv2ixip
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+> Hi Dave,
+> 
+> After merging the drm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: "drm_sysfs_connector_remove" [drivers/gpu/drm/i2c/tda998x.ko] undefined!
+> ERROR: "drm_sysfs_connector_add" [drivers/gpu/drm/i2c/tda998x.ko] undefined!
+> 
 
-I have noticed that the kgdb tree contains 10 commits the last of which
-was committed on March 3, 2013.  Should I drop this tree form
-linux-next?
+I've fixed this, caught it myself a few mins after push,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+The other I'm not sure about, I'll hope the exynos guys know what is going 
+on.
 
---Sig_/8=D+qaqoPP=qjfzISv2ixip
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT4FeAAAoJEMDTa8Ir7ZwVHMMQAJcDzBBjoo7liFM6rWvrMry9
-ciI+mtWnDehlPILXJYEJ5cJkvjk8nHUtkXey3n6r2CAiRtAfGq5MiCVQZc0YWhqy
-Qyfpgj0eEdEBvaEx0ZHCbnXzNWprGLE6MfqUqrlkKjCqmWJadqENf2VNHfGhasnH
-nK7/TD4tyEOBwdc2bt5ZWj8eNn0LU8KsGFkgwWwEW/lCI6NugLAGN8utdm4BPSW7
-LyQC1+XImALnYDRj+5LKo2fquiRA5N+EudRFfzl6LzPW1whVdL+UZEXkOESizI3O
-jZOemYrq57GPePC8erwM17PP2V7pn2Byvqrs6bq+LVmbEZpej5nEDkLuiqS18+E7
-oN5lsKSt4GA3FIXnS6oNBv+tPUkJAG6uMEQ0xBhrzc8/aEvfNINElp8Cp9H/QAac
-KC/+2dhoEEbTPfyG5g8BEnS1N+MZXNUfYJdXCV4dOKInLd091OIFoYFEYPg3FQZt
-24B9kDGcZ/S9sIWA/WZ5YQOlkI171Ah6AtM4vMGS4PQz4pQn0gTQxf/AcHMwcGE7
-AY5Z3Ruhxk9aCu/NTqz1d4gpkFomAOw6I04PTFWhLheRLa2G1vstH4JxeStzTVyW
-OZNhx9FcqAUCbGnh+mvS7HGW2fa9EmcpNLqTJ+9M0Lc98Fm9//gV4bvWI+umYvrT
-cig/GHi1jqocSmiSC+oB
-=vGLd
------END PGP SIGNATURE-----
-
---Sig_/8=D+qaqoPP=qjfzISv2ixip--
+Thanks,
+Dave.
