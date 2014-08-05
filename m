@@ -1,66 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kvm-ppc tree with the kvm tree
-Date: Tue, 5 Aug 2014 20:13:42 +1000
-Message-ID: <20140805201342.6b8a8ca4@canb.auug.org.au>
-References: <20140804180403.3cfdbadf@canb.auug.org.au>
-	<53E0AB44.90804@imgtec.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sTE27_DkLfDeTpDWjOR5fnE"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53E0AB44.90804@imgtec.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Alexander Graf <agraf@suse.de>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH] KVM: PPC: drop duplicate tracepoint
+Date: Tue,  5 Aug 2014 12:35:56 +0200
+Message-ID: <1407234956-743-1-git-send-email-pbonzini@redhat.com>
+Return-path: <kvm-ppc-owner@vger.kernel.org>
+Sender: kvm-ppc-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: agraf@suse.de, kvm@vger.kernel.org, linux-next@vger.kernel.org, kvm-ppc@vger.kernel.org, sfr@canb.auug.org.au
 List-Id: linux-next.vger.kernel.org
 
---Sig_/sTE27_DkLfDeTpDWjOR5fnE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit 29577fc00ba4 ("KVM: PPC: HV: Remove generic instruction emulation")
+caused a build failure:
 
-Hi James,
+arch/powerpc/kvm/kvm-pr.o:(__tracepoints+0xa8): multiple definition of `__tracepoint_kvm_ppc_instr'
+arch/powerpc/kvm/kvm.o:(__tracepoints+0x1c0): first defined here
 
-On Tue, 5 Aug 2014 11:00:36 +0100 James Hogan <james.hogan@imgtec.com> wrot=
-e:
->
-> On 04/08/14 09:04, Stephen Rothwell wrote:
-> >  +  PPC   | KVM_REG_PPC_LPCR              | 64
->=20
-> I think due to a0840240c0c6 this one should be s/64/32/.
->=20
-> > ++  PPC   | KVM_REG_PPC_LPCR_64		| 64
->=20
-> And I suppose it'd be nice to replace tabs with spaces for consistency
-> (since that's one of the things bf5590f37919 did).
->=20
-> How about this fixup patch?
+due to a duplicate definition of the tracepoint in trace.h and
+trace_pr.h.  Because the tracepoint is still used by Book3S HV
+code, and because the PR code does include trace.h, just remove
+the duplicate definition from trace_pr.h, and export it from
+kvm.o.
 
-Thanks for that I have applied it to my merge resolution.
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/powerpc/kvm/emulate.c  |  2 ++
+ arch/powerpc/kvm/trace_pr.h | 20 --------------------
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/sTE27_DkLfDeTpDWjOR5fnE
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT4K5dAAoJEMDTa8Ir7ZwVwx4P/2VxXEST6HuqukNrivTOjBKc
-Vw0606IKPRmgC3/dK0UM2ZYkTT8cUjNpgqNZCejh7CyYGZdsAN5BmCEx24DKt/tp
-m53FVuoKxglQEcd2fbCRyGmgA5A1rKD5hAO5ObXPuS9I4TqLO0NDSxIu0l/F7bzx
-mdezvu/yLVB8yJ8Zv0tfa/Sy1U0sjKm2y7Fa9IjzjXRX9R0sX1/y1ESkB3YfUSTE
-1S9A4/Lcq1Pd3a1LiXtCGLL6tEPlzScbnPfcVlkUdQRcd4ZvJzskrLazflXzNdLY
-5lupqlQOsYtO+ur9pJuQVZ3oOMf73uDtBcttT4xDUAqeq6KTHJIZnDucDXXmlu1p
-Kp9nKEvaSRiIQwk5Nti+OywyC/eMjN4Sg8Dyy+5/PQ3sE0iIEmyEuO6e7CLRjxd+
-btmdzI43E6z3VFOaKhmRYwP41/w7l7O7EBO1lA5EpV8iDDkLmHBy61a85JyPiyL1
-7MyMDwtf2ovktSS2gzvKrtZKPL+RoUAdlmHuH3f1HvsTynW8fb1OBsjKpZHfe40M
-lQKgABJz7s/t0c/iSDbJHJPlzRGjTuUR5NJbplVeYqtofH3Nik5uSX/bHrpuUb7i
-IStOHzyCU+6047Wc2wshC7slHH27Xa9IGYMI1rut3M32INZKkrwelhT47D4613Uf
-HcGMneMJAzxq1Ubad5R3
-=CoS1
------END PGP SIGNATURE-----
-
---Sig_/sTE27_DkLfDeTpDWjOR5fnE--
+diff --git a/arch/powerpc/kvm/emulate.c b/arch/powerpc/kvm/emulate.c
+index e96b50d0bdab..2325168ad1ff 100644
+--- a/arch/powerpc/kvm/emulate.c
++++ b/arch/powerpc/kvm/emulate.c
+@@ -300,3 +300,5 @@ int kvmppc_emulate_instruction(struct kvm_run *run, struct kvm_vcpu *vcpu)
+ 	return emulated;
+ }
+ EXPORT_SYMBOL_GPL(kvmppc_emulate_instruction);
++
++EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_ppc_instr);
+diff --git a/arch/powerpc/kvm/trace_pr.h b/arch/powerpc/kvm/trace_pr.h
+index a674f090dfb8..e1357cd8dc1f 100644
+--- a/arch/powerpc/kvm/trace_pr.h
++++ b/arch/powerpc/kvm/trace_pr.h
+@@ -291,26 +291,6 @@ TRACE_EVENT(kvm_unmap_hva,
+ 	TP_printk("unmap hva 0x%lx\n", __entry->hva)
+ );
+ 
+-TRACE_EVENT(kvm_ppc_instr,
+-	TP_PROTO(unsigned int inst, unsigned long _pc, unsigned int emulate),
+-	TP_ARGS(inst, _pc, emulate),
+-
+-	TP_STRUCT__entry(
+-		__field(	unsigned int,	inst		)
+-		__field(	unsigned long,	pc		)
+-		__field(	unsigned int,	emulate		)
+-	),
+-
+-	TP_fast_assign(
+-		__entry->inst		= inst;
+-		__entry->pc		= _pc;
+-		__entry->emulate	= emulate;
+-	),
+-
+-	TP_printk("inst %u pc 0x%lx emulate %u\n",
+-		  __entry->inst, __entry->pc, __entry->emulate)
+-);
+-
+ #endif /* _TRACE_KVM_H */
+ 
+ /* This part must be outside protection */
+-- 
+1.8.3.1
