@@ -1,100 +1,72 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: linux-next: build failures after merge of the drm tree
-Date: Tue, 05 Aug 2014 15:02:22 +0900
-Message-ID: <53E0736E.7030901@samsung.com>
-References: <20140805130926.4e8c8fe5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the slave-dma
+ tree
+Date: Tue, 5 Aug 2014 16:28:43 +1000
+Message-ID: <20140805162843.054e1383@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5JscFLzfWH7fGNAnF908wen"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60128 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754609AbaHEGCg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Aug 2014 02:02:36 -0400
-In-reply-to: <20140805130926.4e8c8fe5@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:48712 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753817AbaHEG2x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2014 02:28:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Wood <thomas.wood@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Russell King <rmk+kernel@arm.linux.org.uk>, Inki Dae <daeinki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Siva Yerramreddy <yshivakrishna@gmail.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
-Hi Stephen and Dave,
+--Sig_/5JscFLzfWH7fGNAnF908wen
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 08/05/2014 12:09 PM, Stephen Rothwell wrote:
-> Hi Dave,
->
-> After merging the drm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ERROR: "drm_sysfs_connector_remove" [drivers/gpu/drm/i2c/tda998x.ko] undefined!
-> ERROR: "drm_sysfs_connector_add" [drivers/gpu/drm/i2c/tda998x.ko] undefined!
->
-> Caused by commit c707c3619ca8 ("drm/i2c: tda998x: add component
-> support") interacting with commit 34ea3d386347 ("drm: add register and
-> unregister functions for connectors").  Maybe it should have been fixed
-> up in the merge commit 920f946428b7 ("Merge branch 'tda998x-devel' of
-> git://ftp.arm.linux.org.uk/~rmk/linux-cubox into drm-next")?
->
-> I reverted commit c707c3619ca8 for today.
->
-> But then the arm multi_v7_defconfig build produced these errors:
->
-> ERROR (phandle_references): Reference to non-existent node or label "disp_pd"
->
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/exynos5420-arndale-octa.dtb] Error 2
-> make[2]: *** Waiting for unfinished jobs....
-> ERROR (phandle_references): Reference to non-existent node or label "disp_pd"
->
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/exynos5420-smdk5420.dtb] Error 2
-> ERROR (phandle_references): Reference to non-existent node or label "disp_pd"
->
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> ERROR (phandle_references): Reference to non-existent node or label "disp_pd"
->
-> make[2]: *** [arch/arm/boot/dts/exynos5800-peach-pi.dtb] Error 2
-> ERROR: Input tree has errors, aborting (use -f to force output)
->
-> Caused by commit 5a8da524049c ("ARM: dts: exynos5420: add dsi node")
-> interacting with commit d51cad7df871 ("ARM: dts: remove display power
-> domain for exynos5420") from the arm-soc tree.
->
+Hi all,
 
-I missed the patch "ARM: dts: remove display power domain for 
-exynos5420" in linux-samsung-soc mail thread.
+Today's linux-next merge of the char-misc tree got a conflict in
+drivers/dma/Makefile between commit b45b262cefd5 ("dmaengine: add a
+driver for AMBA AXI NBPF DMAC IP cores") from the slave-dma tree and
+commit 95b4ecbf759a ("dma: MIC X100 DMA Driver") from the char-misc
+tree.
 
-In my test without power domain property, the exynos5420 dsi master 
-driver works well.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> I applied this merge fix patch:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 5 Aug 2014 13:03:01 +1000
-> Subject: [PATCH] ARM: dts: exynos5420: remove disp_pd
->
-> per comit d51cad7df871 ("ARM: dts: remove display power
-> domain for exynos5420").
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->   arch/arm/boot/dts/exynos5420.dtsi | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 95ec37dff3e8..bfe056d9148c 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -525,7 +525,6 @@
->   		compatible = "samsung,exynos5410-mipi-dsi";
->   		reg = <0x14500000 0x10000>;
->   		interrupts = <0 82 0>;
-> -		samsung,power-domain = <&disp_pd>;
->   		phys = <&mipi_phy 1>;
->   		phy-names = "dsim";
->   		clocks = <&clock CLK_DSIM1>, <&clock CLK_SCLK_MIPI1>;
->
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Tested-by: YoungJun Cho <yj44.cho@samsung.com>
+diff --cc drivers/dma/Makefile
+index f2b831a994cf,bd9e7fa928bd..000000000000
+--- a/drivers/dma/Makefile
++++ b/drivers/dma/Makefile
+@@@ -47,5 -47,4 +47,6 @@@ obj-$(CONFIG_MOXART_DMA) +=3D moxart-dma.
+  obj-$(CONFIG_FSL_EDMA) +=3D fsl-edma.o
+  obj-$(CONFIG_QCOM_BAM_DMA) +=3D qcom_bam_dma.o
+  obj-y +=3D xilinx/
+ +obj-$(CONFIG_NBPFAXI_DMA) +=3D nbpfaxi.o
+ +obj-$(CONFIG_DMA_SUN6I) +=3D sun6i-dma.o
++ obj-$(CONFIG_INTEL_MIC_X100_DMA) +=3D mic_x100_dma.o
 
-Thank you.
-Best regards YJ
+--Sig_/5JscFLzfWH7fGNAnF908wen
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT4HmhAAoJEMDTa8Ir7ZwVlmwP/iyA/jqZDrpmsUyvg4Qp9Sk4
+RFCC6oxceeXaxDxKfRXfeNytRBphBlSv7AxhMPVlkUGJFdQ1aEIyHBRl2hvSk4r5
+HwuzbHSL3XPDXkxWaiGtKw0yHucEc5JsAsCVt8NC6iGtWQ2sUuzAHm7HxRdgaDtd
+uWwa0lv6dVe9s5VSl1Trr2tSLAGkhfRPObF2o0e8tmK17p8WVtWck4TxChp/Z+j9
+joiX5/n1W0HGk7dnedqJG2rZzMF5+7apx1FgEqaClF0I1tHT/0ZG4kZnq85BXd/O
+FNYgZDa/YLj8v5nCWOUPpF8ZAJWGJ/mCtZtpOqrIO+wyb+QpCzAMUvj14o+jzZ0+
+Qg9J/IW3rEbOjWhTk8mIUc0zuAcd8y2Q/eLSE+PojCq2ds5hE4N2Day32ohF8TES
+k5IBfDf/AMAgFvK8jf5wY8uq6W43kjra+whLp4yZDmRcByqVH7e/vpqY2PhKYpsp
+e42bDt4xMX9yJeXOEl21WJHrxOH0Mc4UOb9L+6lEaT2prVdWi373UvELHrfv+M+2
+HLSp5/dckF5Zp6ns/RcqpVirw3hx4XJ3bI7o+qdRSs9H4pcnt8R3dWSAzurOv04X
++KBHI/xSYungthbFKpXqhAhrROno2e3XBFy5GirKU1e4r2ufOy6zzcaXYqDwGo7I
+FHotVOPcKSrczUJBIveF
+=T7rS
+-----END PGP SIGNATURE-----
+
+--Sig_/5JscFLzfWH7fGNAnF908wen--
