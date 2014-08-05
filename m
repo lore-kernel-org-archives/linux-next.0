@@ -1,71 +1,51 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: build failure after merge of the kvm-ppc tree
-Date: Tue, 05 Aug 2014 11:19:22 +0200
-Message-ID: <53E0A19A.4060504@redhat.com>
-References: <20140804203618.67a5ba54@canb.auug.org.au>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: linux-next: manual merge of the kvm-ppc tree with the kvm tree
+Date: Tue, 5 Aug 2014 11:00:36 +0100
+Message-ID: <53E0AB44.90804@imgtec.com>
+References: <20140804180403.3cfdbadf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:59166 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932792AbaHEJTd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Aug 2014 05:19:33 -0400
-In-Reply-To: <20140804203618.67a5ba54@canb.auug.org.au>
+Received: from mailapp01.imgtec.com ([195.59.15.196]:58819 "EHLO
+	mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933078AbaHEKAj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Aug 2014 06:00:39 -0400
+In-Reply-To: <20140804180403.3cfdbadf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Graf <agraf@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Graf <agraf@suse.de>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Alexey Kardashevskiy <aik@ozlabs.ru>
 
-Il 04/08/2014 12:36, Stephen Rothwell ha scritto:
-> Hi Alexander,
-> 
-> After merging the kvm-ppc tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> arch/powerpc/kvm/kvm-pr.o:(__tracepoints+0xa8): multiple definition of `__tracepoint_kvm_ppc_instr'
-> arch/powerpc/kvm/kvm.o:(__tracepoints+0x1c0): first defined here
-> 
-> Caused by commit 29577fc00ba4 ("KVM: PPC: HV: Remove generic
-> instruction emulation").  I note that this commit has no Reviewed-by,
-> Tested-by or Acked-by tags and only one Signed-off-by tag.
-> 
-> I have reverted that commit for today.
+Hi Stephen,
 
-Thanks for the heads up.  I will apply this, and wait for tomorrow's
-linux-next build before sending the result to Linus:
+On 04/08/14 09:04, Stephen Rothwell wrote:
+>  +  PPC   | KVM_REG_PPC_LPCR              | 64
 
-diff --git a/arch/powerpc/kvm/trace_pr.h b/arch/powerpc/kvm/trace_pr.h
-index a674f090dfb8..e1357cd8dc1f 100644
---- a/arch/powerpc/kvm/trace_pr.h
-+++ b/arch/powerpc/kvm/trace_pr.h
-@@ -291,26 +291,6 @@ TRACE_EVENT(kvm_unmap_hva,
- 	TP_printk("unmap hva 0x%lx\n", __entry->hva)
- );
- 
--TRACE_EVENT(kvm_ppc_instr,
--	TP_PROTO(unsigned int inst, unsigned long _pc, unsigned int emulate),
--	TP_ARGS(inst, _pc, emulate),
--
--	TP_STRUCT__entry(
--		__field(	unsigned int,	inst		)
--		__field(	unsigned long,	pc		)
--		__field(	unsigned int,	emulate		)
--	),
--
--	TP_fast_assign(
--		__entry->inst		= inst;
--		__entry->pc		= _pc;
--		__entry->emulate	= emulate;
--	),
--
--	TP_printk("inst %u pc 0x%lx emulate %u\n",
--		  __entry->inst, __entry->pc, __entry->emulate)
--);
--
- #endif /* _TRACE_KVM_H */
- 
- /* This part must be outside protection */
+I think due to a0840240c0c6 this one should be s/64/32/.
 
+> ++  PPC   | KVM_REG_PPC_LPCR_64		| 64
 
-Paolo
+And I suppose it'd be nice to replace tabs with spaces for consistency
+(since that's one of the things bf5590f37919 did).
+
+How about this fixup patch?
+
+Cheers
+James
+
+diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+index dc226e1867e1..2863f02b0efb 100644
+--- a/Documentation/virtual/kvm/api.txt
++++ b/Documentation/virtual/kvm/api.txt
+@@ -1895,8 +1895,8 @@ registers, find a list below:
+   PPC   | KVM_REG_PPC_PID               | 64
+   PPC   | KVM_REG_PPC_ACOP              | 64
+   PPC   | KVM_REG_PPC_VRSAVE            | 32
+-  PPC   | KVM_REG_PPC_LPCR              | 64
+-  PPC   | KVM_REG_PPC_LPCR_64		| 64
++  PPC   | KVM_REG_PPC_LPCR              | 32
++  PPC   | KVM_REG_PPC_LPCR_64           | 64
+   PPC   | KVM_REG_PPC_PPR               | 64
+   PPC   | KVM_REG_PPC_ARCH_COMPAT       | 32
+   PPC   | KVM_REG_PPC_DABRX             | 32
