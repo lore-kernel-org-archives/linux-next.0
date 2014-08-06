@@ -1,112 +1,74 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Tue, 5 Aug 2014 21:04:50 -0700
-Message-ID: <20140806040450.GA7859@kroah.com>
-References: <20140724170755.035cea1c@canb.auug.org.au>
- <20140724074452.GB11963@kroah.com>
- <20140806113935.6728d15c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Wed, 6 Aug 2014 14:39:04 +1000
+Message-ID: <20140806143904.6e935789@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140806113935.6728d15c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pratyush Anand <pratyush.anand@st.com>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <treding@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/B=vuFyObA=molfM80itDfoL"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:55695 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751045AbaHFEjM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Aug 2014 00:39:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Paolo Bonzini <pbonzini@redhat.com>, Eric Auger <eric.auger@linaro.org>, Cornelia Huck <cornelia.huck@de.ibm.com>
 
-On Wed, Aug 06, 2014 at 11:39:35AM +1000, Stephen Rothwell wrote:
-> Hi,
-> 
-> On Thu, 24 Jul 2014 00:44:52 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Thu, Jul 24, 2014 at 05:07:55PM +1000, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > > 
-> > > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > > 
-> > > drivers/phy/phy-spear1310-miphy.c: In function 'spear1310_miphy_probe':
-> > > drivers/phy/phy-spear1310-miphy.c:232:14: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
-> > >   priv->phy = devm_phy_create(dev, &spear1310_miphy_ops, NULL);
-> > >               ^
-> > > In file included from drivers/phy/phy-spear1310-miphy.c:21:0:
-> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'struct phy_ops *'
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > drivers/phy/phy-spear1310-miphy.c:232:14: error: too few arguments to function 'devm_phy_create'
-> > >   priv->phy = devm_phy_create(dev, &spear1310_miphy_ops, NULL);
-> > >               ^
-> > > In file included from drivers/phy/phy-spear1310-miphy.c:21:0:
-> > > include/linux/phy/phy.h:164:13: note: declared here
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > drivers/phy/phy-spear1340-miphy.c: In function 'spear1340_miphy_probe':
-> > > drivers/phy/phy-spear1340-miphy.c:264:14: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
-> > >   priv->phy = devm_phy_create(dev, &spear1340_miphy_ops, NULL);
-> > >               ^
-> > > In file included from drivers/phy/phy-spear1340-miphy.c:21:0:
-> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'struct phy_ops *'
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > drivers/phy/phy-spear1340-miphy.c:264:14: error: too few arguments to function 'devm_phy_create'
-> > >   priv->phy = devm_phy_create(dev, &spear1340_miphy_ops, NULL);
-> > >               ^
-> > > In file included from drivers/phy/phy-spear1340-miphy.c:21:0:
-> > > include/linux/phy/phy.h:164:13: note: declared here
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > 
-> > > Caused by commit f0ed817638b5 ("phy: core: Let node ptr of PHY point to
-> > > PHY and not of PHY provider") interacting with commit 64562e99477f
-> > > ("phy: Add drivers for PCIe and SATA phy on SPEAr13xx") from the
-> > > arm-soc tree.
-> > > 
-> > > I fixed that up and then got:
-> > > 
-> > > drivers/pinctrl/pinctrl-tegra-xusb.c: In function 'tegra_xusb_padctl_probe':
-> > > drivers/pinctrl/pinctrl-tegra-xusb.c:913:8: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
-> > >   phy = devm_phy_create(&pdev->dev, &pcie_phy_ops, NULL);
-> > >         ^
-> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
-> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'const struct phy_ops *'
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > drivers/pinctrl/pinctrl-tegra-xusb.c:913:8: error: too few arguments to function 'devm_phy_create'
-> > >   phy = devm_phy_create(&pdev->dev, &pcie_phy_ops, NULL);
-> > >         ^
-> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
-> > > include/linux/phy/phy.h:164:13: note: declared here
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > drivers/pinctrl/pinctrl-tegra-xusb.c:922:8: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
-> > >   phy = devm_phy_create(&pdev->dev, &sata_phy_ops, NULL);
-> > >         ^
-> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
-> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'const struct phy_ops *'
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > drivers/pinctrl/pinctrl-tegra-xusb.c:922:8: error: too few arguments to function 'devm_phy_create'
-> > >   phy = devm_phy_create(&pdev->dev, &sata_phy_ops, NULL);
-> > >         ^
-> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
-> > > include/linux/phy/phy.h:164:13: note: declared here
-> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
-> > >              ^
-> > > 
-> > > From an interaction with commit dc0a39386687 ("pinctrl: Add NVIDIA
-> > > Tegra XUSB pad controller support") from the arm-soc tree.
-> > > 
-> > > Final merge fix patch:
-> > 
-> > Ugh, what a mess, sorry about that.  I'll keep this around for if I end
-> > up merging with Linus after these other trees get merged.
-> 
-> Since the usb tree has gone upstream, this merge fix patch is now
-> needed when the arm-soc tree is merged.
+--Sig_/B=vuFyObA=molfM80itDfoL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'll let the arm developers worry about this :)
+Hi all,
 
-thanks,
+After merging the kvm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-greg k-h
+
+In file included from /scratch/sfr/next/include/linux/preempt.h:10:0,
+                 from /scratch/sfr/next/include/linux/preempt_mask.h:4,
+                 from /scratch/sfr/next/include/linux/hardirq.h:4,
+                 from /scratch/sfr/next/include/linux/kvm_host.h:10,
+                 from /scratch/sfr/next/arch/powerpc/kvm/../../../virt/kvm/=
+eventfd.c:24:
+/scratch/sfr/next/arch/powerpc/kvm/../../../virt/kvm/eventfd.c: In function=
+ 'kvm_irq_has_notifier':
+/scratch/sfr/next/arch/powerpc/kvm/../../../virt/kvm/eventfd.c:879:38: erro=
+r: 'struct kvm' has no member named 'irq_ack_notifier_list'
+   hlist_for_each_entry_rcu(kian, &kvm->irq_ack_notifier_list,
+                                      ^
+
+And several more of the same ...
+
+Caused by commit e4d57e1ee1ab ("KVM: Move irq notifier implementation
+into eventfd.c").  This build does not have CONFIG_HAVE_KVM_IRQCHIP
+set ...
+
+I have used the kvm tree from next-20140805 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/B=vuFyObA=molfM80itDfoL
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT4bFtAAoJEMDTa8Ir7ZwVWTUP+wWWFuYBR0yptkn5YXHO4ClF
+nEqBT4EptnceyTH4XNr7ixITXfSaNnwrKehD9yJ37Hn6Bn4H8UqeIRiRwW4HZ51Z
+os6XfgVmyH11GIGhtCNZte+Go/AbTHdLBJTCo1KlNRej9WJcyiTaX9rUIhr+JQ/y
+UHwqyXuXcemaF1Hk188gvz6lm1SQR54CuKMznGzZOSQfXYYl4UyPmiODD7JFHyhW
+EYTGifnVWbMDjRGHBjN1Z3TXK7xMAhwzawV70NyPsbm3byVa1vfEy6Cg4SuDbzuN
+AcmoGX0/RtD7dtI3f6tLT/Z5Bnzl6iz33/4RLEkEYDzoU1g1M0LM3UGu/Ot5s3sf
+Nv86BDihYLmiUTytL2Uma7bgJlpqIIuOBWdrg79bNRcHJ1EGhHEaXMcDz9ZW0V9j
+/QLXoX93BOfCI8/PrSzKncJThmJhhS8x+qr9f3Tx8eCKG2LvKK3LXdAQsTpzmQrE
+KRIb0v0jbDaCPI2/Z/duhTLaCG0P7vZmIRlRNIjzeuibFOJEACUhRw6kN1gzAmXD
+izgliNY5IsI5YoIMhrGoKBE5YZmYOLSxD0HpKMH+TGWnCvyDhtmC2JtYhLeKlGI7
+ca/IAhfiUJtyS3a2AmgV7mNA6LhAO3LrkTgW1kERkZEmfgNldqPjOjQFqmm75NF2
+Af9N3SiCK47ezYBLwD0+
+=/L4S
+-----END PGP SIGNATURE-----
+
+--Sig_/B=vuFyObA=molfM80itDfoL--
