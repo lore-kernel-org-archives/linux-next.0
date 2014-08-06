@@ -1,82 +1,112 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the security tree with the mips tree
-Date: Wed, 6 Aug 2014 12:52:26 +1000
-Message-ID: <20140806125226.6c6e60d1@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Tue, 5 Aug 2014 21:04:50 -0700
+Message-ID: <20140806040450.GA7859@kroah.com>
+References: <20140724170755.035cea1c@canb.auug.org.au>
+ <20140724074452.GB11963@kroah.com>
+ <20140806113935.6728d15c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/soj63ZE43i1fEDi5byzXE.j"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53208 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753763AbaHFCwd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2014 22:52:33 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Dmitry Kasatkin <d.kasatkin@samsung.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140806113935.6728d15c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pratyush Anand <pratyush.anand@st.com>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <treding@nvidia.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/soj63ZE43i1fEDi5byzXE.j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 06, 2014 at 11:39:35AM +1000, Stephen Rothwell wrote:
+> Hi,
+> 
+> On Thu, 24 Jul 2014 00:44:52 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > On Thu, Jul 24, 2014 at 05:07:55PM +1000, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > > 
+> > > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> > > failed like this:
+> > > 
+> > > drivers/phy/phy-spear1310-miphy.c: In function 'spear1310_miphy_probe':
+> > > drivers/phy/phy-spear1310-miphy.c:232:14: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
+> > >   priv->phy = devm_phy_create(dev, &spear1310_miphy_ops, NULL);
+> > >               ^
+> > > In file included from drivers/phy/phy-spear1310-miphy.c:21:0:
+> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'struct phy_ops *'
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > drivers/phy/phy-spear1310-miphy.c:232:14: error: too few arguments to function 'devm_phy_create'
+> > >   priv->phy = devm_phy_create(dev, &spear1310_miphy_ops, NULL);
+> > >               ^
+> > > In file included from drivers/phy/phy-spear1310-miphy.c:21:0:
+> > > include/linux/phy/phy.h:164:13: note: declared here
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > drivers/phy/phy-spear1340-miphy.c: In function 'spear1340_miphy_probe':
+> > > drivers/phy/phy-spear1340-miphy.c:264:14: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
+> > >   priv->phy = devm_phy_create(dev, &spear1340_miphy_ops, NULL);
+> > >               ^
+> > > In file included from drivers/phy/phy-spear1340-miphy.c:21:0:
+> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'struct phy_ops *'
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > drivers/phy/phy-spear1340-miphy.c:264:14: error: too few arguments to function 'devm_phy_create'
+> > >   priv->phy = devm_phy_create(dev, &spear1340_miphy_ops, NULL);
+> > >               ^
+> > > In file included from drivers/phy/phy-spear1340-miphy.c:21:0:
+> > > include/linux/phy/phy.h:164:13: note: declared here
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > 
+> > > Caused by commit f0ed817638b5 ("phy: core: Let node ptr of PHY point to
+> > > PHY and not of PHY provider") interacting with commit 64562e99477f
+> > > ("phy: Add drivers for PCIe and SATA phy on SPEAr13xx") from the
+> > > arm-soc tree.
+> > > 
+> > > I fixed that up and then got:
+> > > 
+> > > drivers/pinctrl/pinctrl-tegra-xusb.c: In function 'tegra_xusb_padctl_probe':
+> > > drivers/pinctrl/pinctrl-tegra-xusb.c:913:8: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
+> > >   phy = devm_phy_create(&pdev->dev, &pcie_phy_ops, NULL);
+> > >         ^
+> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'const struct phy_ops *'
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > drivers/pinctrl/pinctrl-tegra-xusb.c:913:8: error: too few arguments to function 'devm_phy_create'
+> > >   phy = devm_phy_create(&pdev->dev, &pcie_phy_ops, NULL);
+> > >         ^
+> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > > include/linux/phy/phy.h:164:13: note: declared here
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > drivers/pinctrl/pinctrl-tegra-xusb.c:922:8: warning: passing argument 2 of 'devm_phy_create' from incompatible pointer type
+> > >   phy = devm_phy_create(&pdev->dev, &sata_phy_ops, NULL);
+> > >         ^
+> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' but argument is of type 'const struct phy_ops *'
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > drivers/pinctrl/pinctrl-tegra-xusb.c:922:8: error: too few arguments to function 'devm_phy_create'
+> > >   phy = devm_phy_create(&pdev->dev, &sata_phy_ops, NULL);
+> > >         ^
+> > > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > > include/linux/phy/phy.h:164:13: note: declared here
+> > >  struct phy *devm_phy_create(struct device *dev, struct device_node *node,
+> > >              ^
+> > > 
+> > > From an interaction with commit dc0a39386687 ("pinctrl: Add NVIDIA
+> > > Tegra XUSB pad controller support") from the arm-soc tree.
+> > > 
+> > > Final merge fix patch:
+> > 
+> > Ugh, what a mess, sorry about that.  I'll keep this around for if I end
+> > up merging with Linus after these other trees get merged.
+> 
+> Since the usb tree has gone upstream, this merge fix patch is now
+> needed when the arm-soc tree is merged.
 
-Hi James,
+I'll let the arm developers worry about this :)
 
-Today's linux-next merge of the security tree got a conflict in
-Documentation/kernel-parameters.txt between commit fd1bb4c9fc2c ("MIPS:
-Document the cca=3D command-line parameter") from the mips tree and
-commit ffb70f61bab1 ("KEYS: validate certificate trust only with
-selected key") from the security tree.
+thanks,
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc Documentation/kernel-parameters.txt
-index 00d5a756152b,90c12c591168..000000000000
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@@ -566,12 -566,11 +566,17 @@@ bytes respectively. Such letter suffixe
-  			possible to determine what the correct size should be.
-  			This option provides an override for these situations.
- =20
-+ 	ca_keys=3D	[KEYS] This parameter identifies a specific key(s) on
-+ 			the system trusted keyring to be used for certificate
-+ 			trust validation.
-+ 			format: { id:<keyid> | builtin }
-+=20
- +	cca=3D		[MIPS] Override the kernel pages' cache coherency
- +			algorithm.  Accepted values range from 0 to 7
- +			inclusive. See arch/mips/include/asm/pgtable-bits.h
- +			for platform specific values (SB1, Loongson3 and
- +			others).
- +
-  	ccw_timeout_log [S390]
-  			See Documentation/s390/CommonIO for details.
- =20
-
---Sig_/soj63ZE43i1fEDi5byzXE.j
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT4ZhvAAoJEMDTa8Ir7ZwVYggP/ji+an3f8dVJQORCwfmEI2wp
-KtLKSnZOZ1VreqUGqcXfsd7KQuoR+/LKSbeC8Dv4ZjWcXAsU4pMec8vPE3JuPYMg
-F2NJ9vZvKRsmZyap6I8m3iwHABjWDl610Xi+F7x9tNTcBBJzS8+N68nQclfSZnJT
-zhnU5NIiVOvffF9WE5HecWGXQ7cEeI4aKqGVKCQvR/sepTfiSJ3+NFpvnJiDmXFy
-uclT6LePLl46eDCyBU0o8JEr3pYt/nhe2oY87TZDCUM0d4l/LKqZLdRRUccgZIVs
-CAbYp0E1XMw90uY7RwF+iSss3YA1n0a/zVUgI23bEU7wll8tAOtgUjLDAr2dvMd/
-tBWZdCP73JjR5biBZgvUzMNTA9tM4BIfnuHt0mVdi8gcqaEAkcZLwu1Bodj4mt7u
-eQ9S7trbVeNIsQoKtr7LwWXYnmkctE6WUYuF5baxvFLfqBxer3ckpd44Dmjl4fWW
-GHWK/qZWIhQ7eE9VgYtSaKUbZejWQUXVOOeGIhZ6Z6+qSqvOPVS9NUq/lnVcvJtL
-U5JE0F/1mB+wE2IQyE4ySzVvbgPhdq3U0Ts4k1IVdVApRN5g7Q5No9AtjTVQPkzE
-oJUbW0pCN4/8OhChbkrb8Mso2nH4dpESx+O3s0v91ooXDeAyJ9ARFRf0Fyo5Flss
-OIYrMY6PCvihMWqTk343
-=BefD
------END PGP SIGNATURE-----
-
---Sig_/soj63ZE43i1fEDi5byzXE.j--
+greg k-h
