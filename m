@@ -1,154 +1,162 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sparc-next tree with the sparc tree
-Date: Wed, 6 Aug 2014 09:58:45 +1000
-Message-ID: <20140806095845.25491f00@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Wed, 6 Aug 2014 11:39:35 +1000
+Message-ID: <20140806113935.6728d15c@canb.auug.org.au>
+References: <20140724170755.035cea1c@canb.auug.org.au>
+	<20140724074452.GB11963@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1pFgn4189QotAELIPQ12rP/"; protocol="application/pgp-signature"
+ boundary="Sig_/l9Zh7_pExo38Nh.L_/_Ohy3"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50127 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43406 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751179AbaHEX6x (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2014 19:58:53 -0400
+	id S1755107AbaHFBjo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2014 21:39:44 -0400
+In-Reply-To: <20140724074452.GB11963@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, bob picco <bpicco@meloft.net>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: Greg KH <greg@kroah.com>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pratyush Anand <pratyush.anand@st.com>, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <treding@nvidia.com>
 
---Sig_/1pFgn4189QotAELIPQ12rP/
+--Sig_/l9Zh7_pExo38Nh.L_/_Ohy3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi,
 
-Today's linux-next merge of the sparc-next tree got a conflict in
-arch/sparc/mm/init_64.c between commit 4ca9a23765da ("sparc64: Guard
-against flushing openfirmware mappings") from the sparc tree and commit
-f6d4fb5cc047 ("sparc64 - add mem to iomem resource") from the
-sparc-next tree.
+On Thu, 24 Jul 2014 00:44:52 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> On Thu, Jul 24, 2014 at 05:07:55PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> >=20
+> > After merging the usb tree, today's linux-next build (x86_64 allmodconf=
+ig)
+> > failed like this:
+> >=20
+> > drivers/phy/phy-spear1310-miphy.c: In function 'spear1310_miphy_probe':
+> > drivers/phy/phy-spear1310-miphy.c:232:14: warning: passing argument 2 o=
+f 'devm_phy_create' from incompatible pointer type
+> >   priv->phy =3D devm_phy_create(dev, &spear1310_miphy_ops, NULL);
+> >               ^
+> > In file included from drivers/phy/phy-spear1310-miphy.c:21:0:
+> > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' b=
+ut argument is of type 'struct phy_ops *'
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> > drivers/phy/phy-spear1310-miphy.c:232:14: error: too few arguments to f=
+unction 'devm_phy_create'
+> >   priv->phy =3D devm_phy_create(dev, &spear1310_miphy_ops, NULL);
+> >               ^
+> > In file included from drivers/phy/phy-spear1310-miphy.c:21:0:
+> > include/linux/phy/phy.h:164:13: note: declared here
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> > drivers/phy/phy-spear1340-miphy.c: In function 'spear1340_miphy_probe':
+> > drivers/phy/phy-spear1340-miphy.c:264:14: warning: passing argument 2 o=
+f 'devm_phy_create' from incompatible pointer type
+> >   priv->phy =3D devm_phy_create(dev, &spear1340_miphy_ops, NULL);
+> >               ^
+> > In file included from drivers/phy/phy-spear1340-miphy.c:21:0:
+> > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' b=
+ut argument is of type 'struct phy_ops *'
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> > drivers/phy/phy-spear1340-miphy.c:264:14: error: too few arguments to f=
+unction 'devm_phy_create'
+> >   priv->phy =3D devm_phy_create(dev, &spear1340_miphy_ops, NULL);
+> >               ^
+> > In file included from drivers/phy/phy-spear1340-miphy.c:21:0:
+> > include/linux/phy/phy.h:164:13: note: declared here
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> >=20
+> > Caused by commit f0ed817638b5 ("phy: core: Let node ptr of PHY point to
+> > PHY and not of PHY provider") interacting with commit 64562e99477f
+> > ("phy: Add drivers for PCIe and SATA phy on SPEAr13xx") from the
+> > arm-soc tree.
+> >=20
+> > I fixed that up and then got:
+> >=20
+> > drivers/pinctrl/pinctrl-tegra-xusb.c: In function 'tegra_xusb_padctl_pr=
+obe':
+> > drivers/pinctrl/pinctrl-tegra-xusb.c:913:8: warning: passing argument 2=
+ of 'devm_phy_create' from incompatible pointer type
+> >   phy =3D devm_phy_create(&pdev->dev, &pcie_phy_ops, NULL);
+> >         ^
+> > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' b=
+ut argument is of type 'const struct phy_ops *'
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> > drivers/pinctrl/pinctrl-tegra-xusb.c:913:8: error: too few arguments to=
+ function 'devm_phy_create'
+> >   phy =3D devm_phy_create(&pdev->dev, &pcie_phy_ops, NULL);
+> >         ^
+> > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > include/linux/phy/phy.h:164:13: note: declared here
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> > drivers/pinctrl/pinctrl-tegra-xusb.c:922:8: warning: passing argument 2=
+ of 'devm_phy_create' from incompatible pointer type
+> >   phy =3D devm_phy_create(&pdev->dev, &sata_phy_ops, NULL);
+> >         ^
+> > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > include/linux/phy/phy.h:164:13: note: expected 'struct device_node *' b=
+ut argument is of type 'const struct phy_ops *'
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> > drivers/pinctrl/pinctrl-tegra-xusb.c:922:8: error: too few arguments to=
+ function 'devm_phy_create'
+> >   phy =3D devm_phy_create(&pdev->dev, &sata_phy_ops, NULL);
+> >         ^
+> > In file included from drivers/pinctrl/pinctrl-tegra-xusb.c:18:0:
+> > include/linux/phy/phy.h:164:13: note: declared here
+> >  struct phy *devm_phy_create(struct device *dev, struct device_node *no=
+de,
+> >              ^
+> >=20
+> > From an interaction with commit dc0a39386687 ("pinctrl: Add NVIDIA
+> > Tegra XUSB pad controller support") from the arm-soc tree.
+> >=20
+> > Final merge fix patch:
+>=20
+> Ugh, what a mess, sorry about that.  I'll keep this around for if I end
+> up merging with Linus after these other trees get merged.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Since the usb tree has gone upstream, this merge fix patch is now
+needed when the arm-soc tree is merged.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/sparc/mm/init_64.c
-index 2cfb0f25e0ed,9f4f532e2627..000000000000
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@@ -2708,25 -2701,66 +2709,89 @@@ void hugetlb_setup(struct pt_regs *regs
-  }
-  #endif
- =20
- +#ifdef CONFIG_SMP
- +#define do_flush_tlb_kernel_range	smp_flush_tlb_kernel_range
- +#else
- +#define do_flush_tlb_kernel_range	__flush_tlb_kernel_range
- +#endif
- +
- +void flush_tlb_kernel_range(unsigned long start, unsigned long end)
- +{
- +	if (start < HI_OBP_ADDRESS && end > LOW_OBP_ADDRESS) {
- +		if (start < LOW_OBP_ADDRESS) {
- +			flush_tsb_kernel_range(start, LOW_OBP_ADDRESS);
- +			do_flush_tlb_kernel_range(start, LOW_OBP_ADDRESS);
- +		}
- +		if (end > HI_OBP_ADDRESS) {
- +			flush_tsb_kernel_range(end, HI_OBP_ADDRESS);
- +			do_flush_tlb_kernel_range(end, HI_OBP_ADDRESS);
- +		}
- +	} else {
- +		flush_tsb_kernel_range(start, end);
- +		do_flush_tlb_kernel_range(start, end);
- +	}
- +}
-++
-+ static struct resource code_resource =3D {
-+ 	.name	=3D "Kernel code",
-+ 	.flags	=3D IORESOURCE_BUSY | IORESOURCE_MEM
-+ };
-+=20
-+ static struct resource data_resource =3D {
-+ 	.name	=3D "Kernel data",
-+ 	.flags	=3D IORESOURCE_BUSY | IORESOURCE_MEM
-+ };
-+=20
-+ static struct resource bss_resource =3D {
-+ 	.name	=3D "Kernel bss",
-+ 	.flags	=3D IORESOURCE_BUSY | IORESOURCE_MEM
-+ };
-+=20
-+ static inline resource_size_t compute_kern_paddr(void *addr)
-+ {
-+ 	return (resource_size_t) (addr - KERNBASE + kern_base);
-+ }
-+=20
-+ static void __init kernel_lds_init(void)
-+ {
-+ 	code_resource.start =3D compute_kern_paddr(_text);
-+ 	code_resource.end   =3D compute_kern_paddr(_etext - 1);
-+ 	data_resource.start =3D compute_kern_paddr(_etext);
-+ 	data_resource.end   =3D compute_kern_paddr(_edata - 1);
-+ 	bss_resource.start  =3D compute_kern_paddr(__bss_start);
-+ 	bss_resource.end    =3D compute_kern_paddr(_end - 1);
-+ }
-+=20
-+ static int __init report_memory(void)
-+ {
-+ 	int i;
-+ 	struct resource *res;
-+=20
-+ 	kernel_lds_init();
-+=20
-+ 	for (i =3D 0; i < pavail_ents; i++) {
-+ 		res =3D kzalloc(sizeof(struct resource), GFP_KERNEL);
-+=20
-+ 		if (!res) {
-+ 			pr_warn("Failed to allocate source.\n");
-+ 			break;
-+ 		}
-+=20
-+ 		res->name =3D "System RAM";
-+ 		res->start =3D pavail[i].phys_addr;
-+ 		res->end =3D pavail[i].phys_addr + pavail[i].reg_size - 1;
-+ 		res->flags =3D IORESOURCE_BUSY | IORESOURCE_MEM;
-+=20
-+ 		if (insert_resource(&iomem_resource, res) < 0) {
-+ 			pr_warn("Resource insertion failed.\n");
-+ 			break;
-+ 		}
-+=20
-+ 		insert_resource(res, &code_resource);
-+ 		insert_resource(res, &data_resource);
-+ 		insert_resource(res, &bss_resource);
-+ 	}
-+=20
-+ 	return 0;
-+ }
-+ device_initcall(report_memory);
-
---Sig_/1pFgn4189QotAELIPQ12rP/
+--Sig_/l9Zh7_pExo38Nh.L_/_Ohy3
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT4W+6AAoJEMDTa8Ir7ZwVcRYP/j/tqSA20IdbF4t5IPTb2dFa
-vWDKFl+T9YfcjIMRfI2r4r3aOlUu1qiMs+/ssR8Q+ilA12iV9XOgy1n9GQLH9LgL
-cFDIx06X6uUBvL3rZSkjtcRzARW6asdVksui+K9cbtR/fylkhxgkqDIKa112BSwR
-8UGoiH6lgsBG+CsVDtIITXU+MVWx8GWsyi0ycEn5HQTybiC1y1Y9RNYqK2PgHhhk
-sEs/dtlFBhZjJRw+CWI8YyWnq8uj6v5+Cpfx56gF+QKayfZBxBzHZ0fXB9HDyjtr
-LXmcCS03muGQU3Xjjo3v/uSc5q1j4ZeFl3mf1UxBSo1nbgY4QHrBcg9vljcYL13G
-pEdSO2tw63ModKjd7+E4bS6Ez/0T4FvGXe9eEOQnqpK+bx1jcQL+RIfDE5fIn5fR
-Nr9kHVB29f1a8Q09dJluYNQoLBNk/Vv1K4mSutWBfA3HaU0SjJ3USWr+LTdPplJI
-oz/vxQCM7lH6vEltheMSoO8bgJVRyXD7S4ruFPBnbx7fy2bih7AOanj34cHnW0Z7
-qzACODI8ZBz1UhmHWOP9Hkp1p/VMKavwDBMWIH/bN16/e9lI5nf2o7cQHd4n/TVd
-7MCh90vo8vkP6eh4ngIsSWHtn92DLlrArUq+i1+803EHSRMRAjO3wqkXrasCEQ8w
-YNmkV1ZlJDKyZqySnjYT
-=kB8G
+iQIcBAEBCAAGBQJT4YddAAoJEMDTa8Ir7ZwV5I0QAIXVtJ1570jYuRjamkLFSMmP
+JaThgXjZw2GsH121g0G+2vtF/nuvRqkV/0rO80CujeVhXsHfaFpJ2IDMEb+p/UIb
+B1ZL1hLmYFedXl1XbRZwckrZwUKOz1f8y174nWF0+3pbizIKMOf8f+8lZJkBQ2/1
+UsYUHTyQA5mYIGoslUq3SnAvtZu0HawvhYA23bpHmTIhWpsqiISNppl52ZW28K+7
+C7x3FJcFmaFQsZketBNLRWM0pAeip4nQGXMlBWxS9BoVYgB4srJwoGEST3j/5tE9
+uEzSOnlXrfPGz4aIR1Ak8WYq0UBF0WztLSC/gw/uD8+SDHYC4iwTH1iEkvKVkLSQ
+h8xDol2b4512Bw7fDKkcZCoJ+vz3oEW9eVaaxIMgX45QUYpQpBBPrkHCsDvoXL/B
+LF7vMpeh1YVoGD6r82Reef06cBKRQQNHFym7/hJmmt6eSZhWngA5XLTttj+jNrqF
+f0UlBF5+mudsZrhpjVICHUdJ48c/MifTuo3FwfwwcuP4bRdE8y0W54V3lEcRenL1
+BBpsQvztd0dusYm79u34en5QmsilIY4ZNoglY8Qni3E7lb2FjAewdCs0wZr8NB88
+TAlSY43s1LQo/mpqHKQLl/B4ZjQny1k9r7pyOGmQqxeyyd/55IkWIZ70disfn8KP
+2BtJhJn0IU93Lr9+O/8c
+=GZd1
 -----END PGP SIGNATURE-----
 
---Sig_/1pFgn4189QotAELIPQ12rP/--
+--Sig_/l9Zh7_pExo38Nh.L_/_Ohy3--
