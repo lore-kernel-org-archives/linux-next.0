@@ -1,57 +1,62 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Thu, 07 Aug 2014 21:07:20 +0930
-Message-ID: <87tx5ocyz3.fsf@rustcorp.com.au>
+Date: Thu, 7 Aug 2014 23:03:42 +1000
+Message-ID: <20140807230342.52e3a52c@canb.auug.org.au>
 References: <20140807132017.2ec9e2ad@canb.auug.org.au>
+	<87tx5ocyz3.fsf@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140807132017.2ec9e2ad@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bRDHPQnNVMcYpHa06iQ.CaC"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59628 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754413AbaHGNEE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2014 09:04:04 -0400
+In-Reply-To: <87tx5ocyz3.fsf@rustcorp.com.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> Hi Rusty,
+--Sig_/bRDHPQnNVMcYpHa06iQ.CaC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Rusty,
+
+On Thu, 07 Aug 2014 21:07:20 +0930 Rusty Russell <rusty@rustcorp.com.au> wr=
+ote:
 >
-> After merging the modules tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> arch/powerpc/platforms/powernv/opal-elog.c:85:28: error: macro "__ATTR_RO" passed 2 arguments, but takes just 1
->   __ATTR_RO(id, elog_id_show);
+> Ah, crap.  I really hate that macro magic :(
+>=20
+> I amended to the minimal fix, so we can pretend that never happened.
 
-Ah, crap.  I really hate that macro magic :(
+How about arch/powerpc/platforms/powernv/opal-dump.c as well?
 
-I amended to the minimal fix, so we can pretend that never happened.
-
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-commit 6656c21ca10e54a84673d0ec2f0cf5f676e66a40
-Author: Rusty Russell <rusty@rustcorp.com.au>
-Date:   Wed Aug 6 10:15:36 2014 +0930
+--Sig_/bRDHPQnNVMcYpHa06iQ.CaC
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-    arch/powerpc/platforms/powernv/opal-elog.c: fix world-writable sysfs files
-    
-    If you don't have a store function, you're not writable anyway!
-    
-    Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
-    Acked-by: Stewart Smith <stewart@linux.vnet.ibm.com>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/arch/powerpc/platforms/powernv/opal-elog.c b/arch/powerpc/platforms/powernv/opal-elog.c
-index 10268c41d830..925bad993e30 100644
---- a/arch/powerpc/platforms/powernv/opal-elog.c
-+++ b/arch/powerpc/platforms/powernv/opal-elog.c
-@@ -82,9 +82,9 @@ static ssize_t elog_ack_store(struct elog_obj *elog_obj,
- }
- 
- static struct elog_attribute id_attribute =
--	__ATTR(id, 0666, elog_id_show, NULL);
-+	__ATTR(id, S_IRUGO, elog_id_show, NULL);
- static struct elog_attribute type_attribute =
--	__ATTR(type, 0666, elog_type_show, NULL);
-+	__ATTR(type, S_IRUGO, elog_type_show, NULL);
- static struct elog_attribute ack_attribute =
- 	__ATTR(acknowledge, 0660, elog_ack_show, elog_ack_store);
- 
+iQIcBAEBCAAGBQJT43lBAAoJEMDTa8Ir7ZwVLM8QAIFkK9bA6NGZHdKtyE7WV32T
+s9uJ9MiZJ+/NSdKzaZnGdzN5b1bLZjYbergn1Gy7KG/HNqkzHKeXzDMVryQi9GDL
+zIKuBcXrB3Xb9B/rDTtUCxYbH/9X7DcpS4uEeb7qf5JqLxrichWj2qLlZpCa69oW
+mv5dBW3CB0Sh+RfWqDgbzpA4IcuWRXTCjNhNqs6LfhPIpAAKAhuXinzzN6sxvvd1
+ErwBJ9Co3faPmuOgOp/PNHyesEUj9RqoPMAQBQx5uU3Ipx/v9Dusuk7WbWwM6o2H
+e1L9c+CaSUH7V8WjaSp0iKoNiQIv/PIUrsOSqk9j5gWuj2/HZksIpWANOhtUA5+r
+4wxzUsSsTD1+ERPg8IKjYEFTWqEPbNrhrQBOhQ0BsI5WwStGZPmbOIuWXMBda5yz
+0thfpFXaWYnhi5txdpXv1U6iw+gQKjDayly8t1QA7t0ZsbCPHN65EFGG+0eUyiNw
+hX4/9oyb1MSNBIXSjotFaCMExSMdOG3WJPZ++O/wLz2KoTRHUFHJGWX35ZEGO3d3
+JI/d5oZM0Rhp98hs6BrLJa0hnMZU7f90XnhY57WNexsPJZ9o2TqlKRmWXbkK7yoc
+2q1iLcRr+f9MkX43lAkx+HM79DLTzwlpoenwCkO25iT06PGmnhZ3pWgKtR7o4yM7
+2r4skL887CgGHRCaXtd3
+=swws
+-----END PGP SIGNATURE-----
+
+--Sig_/bRDHPQnNVMcYpHa06iQ.CaC--
