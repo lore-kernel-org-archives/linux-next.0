@@ -1,77 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the modules tree
-Date: Thu, 7 Aug 2014 13:20:17 +1000
-Message-ID: <20140807132017.2ec9e2ad@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
+Date: Thu, 7 Aug 2014 16:51:36 +1000
+Message-ID: <20140807165136.60cbaf44@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m+wFdk.w6RaqEicndyYXp72"; protocol="application/pgp-signature"
+ boundary="Sig_//ud=Rf09rjtE0Jd_JMe3Y3z"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57859 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45494 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754999AbaHGDUY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Aug 2014 23:20:24 -0400
+	id S1753519AbaHGGvn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2014 02:51:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sven Eckelmann <sven@narfation.org>, Antonio Quartulli <antonio@meshcoding.com>, Marek Lindner <mareklindner@neomailbox.ch>, Ken Helias <kenhelias@firemail.de>
 
---Sig_/m+wFdk.w6RaqEicndyYXp72
+--Sig_//ud=Rf09rjtE0Jd_JMe3Y3z
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Andrew,
 
-After merging the modules tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in
+net/batman-adv/fragmentation.c between commit d9124268d84a
+("batman-adv: Fix out-of-order fragmentation support") from Linus' tree
+and commit ffe04af00b27 ("list: fix order of arguments for
+hlist_add_after(_rcu)") from the akpm-current tree.
 
-arch/powerpc/platforms/powernv/opal-elog.c:85:28: error: macro "__ATTR_RO" =
-passed 2 arguments, but takes just 1
-  __ATTR_RO(id, elog_id_show);
-                            ^
-arch/powerpc/platforms/powernv/opal-elog.c:85:2: error: '__ATTR_RO' undecla=
-red here (not in a function)
-  __ATTR_RO(id, elog_id_show);
-  ^
-arch/powerpc/platforms/powernv/opal-elog.c:87:32: error: macro "__ATTR_RO" =
-passed 2 arguments, but takes just 1
-  __ATTR_RO(type, elog_type_show);
-                                ^
-
-And it went down hill from there ...
-
-Caused by commit ba987e9b8ab1
-("arch/powerpc/platforms/powernv/opal-elog.c: fix world-writable sysfs
-files").
-
-I have used the modules tree from next-20140725 again for today.
-
-There is still the error in
-arch/powerpc/platforms/powernv/opal-dump.c ...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/m+wFdk.w6RaqEicndyYXp72
+diff --cc net/batman-adv/fragmentation.c
+index 022d18ab27a6,16dd40910c65..000000000000
+--- a/net/batman-adv/fragmentation.c
++++ b/net/batman-adv/fragmentation.c
+@@@ -181,14 -180,11 +181,14 @@@ static bool batadv_frag_insert_packet(s
+  			ret =3D true;
+  			goto out;
+  		}
+ +
+ +		/* store current entry because it could be the last in list */
+ +		frag_entry_last =3D frag_entry_curr;
+  	}
+ =20
+ -	/* Reached the end of the list, so insert after 'frag_entry_curr'. */
+ -	if (likely(frag_entry_curr)) {
+ -		hlist_add_behind(&frag_entry_new->list, &frag_entry_curr->list);
+ +	/* Reached the end of the list, so insert after 'frag_entry_last'. */
+ +	if (likely(frag_entry_last)) {
+- 		hlist_add_after(&frag_entry_last->list, &frag_entry_new->list);
+++		hlist_add_behind(&frag_entry_new->list, &frag_entry_last->list);
+  		chain->size +=3D skb->len - hdr_size;
+  		chain->timestamp =3D jiffies;
+  		ret =3D true;
+
+--Sig_//ud=Rf09rjtE0Jd_JMe3Y3z
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT4vB2AAoJEMDTa8Ir7ZwVZtAP/0BcXxCbeAdQ2twrwRK7u3he
-a5pqAoLBrMgBi6KWTc6NZ5OFfnhN+W3aJtCtqK1bxsPfX+OmDtNHg/mpU12LM6Nl
-E3CkRQQUHFxhHgg9hBW0FwhjLNiUTYA7003zWj9iZXQJnIRXM5aV7r1QsWJHIQqY
-5BtB1SPUOBhijxYic5ucx7gK//+KxL5WQTcRohYIIRk7HE3Fow0lisrmMIUo/TG1
-Z+CELDm/xNLX2w4b+cKFZGQho8wBitWynOCxQDK1PakhV+i3O1XCUCDpITcB1BG5
-bZjnN1Rb/5j+3VD9AKLCYJSWA90hw3NXjsgFKkcpw96IzeYHAlXSNzUqgR/EJPGr
-ctS+FHVh1jG6C8+OKDuCw6AbeAfJSVxU2tLeXlnEILNvUMUAur6HyJEW5i4nLX7j
-jFOV3gMeEEpdXrf7lDiSq8BHlKpiyOeDYKy2AX6wkOTiI0zjoPtyE7N/N5he8NAc
-qUA7i+ixy3iVOecbwwG4oxC3MG781nDXfuzGU7fSdj7O4mzYeQ+SK/FXgFSLgajp
-yJVtcbqCRsd2KN2tCUMALUCdhZh53+E3Dv/fTVuNxgqKUMrOOti8i/K5vqgJisrx
-9kc616OWXYVOAKkS0gev3L3Rx+ZD3NlbHS4+MHrT2kKAaAq4P4VXlJTAOP4nDVB5
-2rnYpSCmaBIn259ijgn9
-=xjB7
+iQIcBAEBCAAGBQJT4yH8AAoJEMDTa8Ir7ZwV4Q4QAJFEFUgY5o2Et8ufaG2tzhwQ
+g0MsDvjlnemYIK47N3Xk0TKYYZqpyW5dcCaKZfjkRM4WZXUWBesZEXnJsAih0eOb
+P4fLCghjeL8/ChIb80b40HnJqLf9aieJ5sEl92mwpl+Z6ZeAgpn1deXb+SZISYkb
+ipklnIEaz2f0sqMMJ156jfphNEn4hPX2wCWvMDLXRSu3SKeJZ0CNSOMn6o0H/06S
+FFTFZf1uDkSj6TwNO1/G+M82YdRsen6bpU6f3rbKesMrmFWru9QAbt6Mupq9iBQT
+n9LwK+gsqFtBZNd26XcttcBd+UcY+sby0HDdKVUpUMDi4sPl5Clx0wBvF4M0MSLT
+9qp7vCHTTUdFXHG1v8qS6TG5wCy8BfQ0+xf8livaxmTN3Z/fRKaNCQW5lOaIJsqg
+lWHd0dQ3UsIDK7bYftOBeH5yO2hLilsuujPE+TfCDaF/SiryDr1hgViTHe2RmM07
+/ew32MV+3b5O20u1BN7YR58lSfjnNXqnn784+eqP5LM24BAfWvHY8rRIUWfuUHjC
+b2OEBCqyaiFsvoHt+u8VCDvSfViZFycboXNKV8z8mCi2zcESz/Sul9uiR+1pe0Wd
+3Gg3O5PkiWGFyUbvYhyfcfNXgp5+Y/sTETqA05edhe0WStYTOcCrMAVs6CMZOavO
+RnWootYA/2k+0K413T4v
+=iL3b
 -----END PGP SIGNATURE-----
 
---Sig_/m+wFdk.w6RaqEicndyYXp72--
+--Sig_//ud=Rf09rjtE0Jd_JMe3Y3z--
