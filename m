@@ -1,59 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext3 tree
-Date: Fri, 8 Aug 2014 11:52:26 +1000
-Message-ID: <20140808115226.3f4fbeb7@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mmc-uh tree
+Date: Fri, 8 Aug 2014 13:25:10 +1000
+Message-ID: <20140808132510.68e8ae66@canb.auug.org.au>
+References: <20140728144608.7d9ac736@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y"; protocol="application/pgp-signature"
+ boundary="Sig_/wLfKbuap5S4o2FSqr1GOM+n"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51612 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53567 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754815AbaHHBwc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Aug 2014 21:52:32 -0400
+	id S1755016AbaHHDZR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2014 23:25:17 -0400
+In-Reply-To: <20140728144608.7d9ac736@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sonny Rao <sonnyrao@chromium.org>
 
---Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y
+--Sig_/wLfKbuap5S4o2FSqr1GOM+n
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi all,
 
-After merging the ext3 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Mon, 28 Jul 2014 14:46:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the mmc-uh tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>=20
+> drivers/mmc/host/dw_mmc.c: In function 'dw_mci_reset':
+> drivers/mmc/host/dw_mmc.c:2262:3: error: implicit declaration of function=
+ 'dw_mci_idmac_reset' [-Werror=3Dimplicit-function-declaration]
+>    dw_mci_idmac_reset(host);
+>    ^
+>=20
+> Caused by commit 25f7dadbd982 ("mmc: dw_mmc: change to use recommended
+> reset procedure").
+>=20
+> I have used the mmc-uh tree from next-20140725 for today.
 
-ERROR: "new_inode_pseudo" [fs/reiserfs/reiserfs.ko] undefined!
+Ping.  We are nearly half way through the merge window and there has
+been a patch posted for this, but the tree is still broken ...
 
-Caused by commit 523096294315 ("reiserfs: Avoid warning from unlock_new_ino=
-de()").
-
-I have used the ext3 tree from next-20140807 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y
+--Sig_/wLfKbuap5S4o2FSqr1GOM+n
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT5C1eAAoJEMDTa8Ir7ZwVaRsP/AwVJiQw2Bixx/hb9agE4H2m
-WN+lYVAPFy0B1C8yFt1DAnymwWRccb8dkquUgBTJSYhyFfZrAIkrkZkKKhiYiU6c
-6P5gHIbE1eqdiUlWzcvro9ZpUx/uYnPfr91NCh6HndiH6h/0QRr2hpOMfO1FYjiU
-tqDXxvRZWSeBs+C+Oyh+er9sou2u1wR/oMckC7vm9xUnZlYc0inckr2FPO8qHnOG
-zjPVpoGIbhHeJmp5/D1JqgSUa06+Uecr4ytn1bn6LfvHuXSGEdy6xVhxuNdmbItk
-sS0PWuhdfFGfbgBiq7E00B2fyvRT7wl+rajX0/osMrWEHKhgU+XD/+qDcZgh1uLJ
-jM/lxapmam1li73C3aWSfj/0IIakjxzwQDnbsq4yupmzDz+zxqnnnOw94Ehxohca
-3wT1EZsKXYCbtB15Lr3NmJkIarj1OEUTSBbsyFrCPkmfmbTAlOwsvVHxh+F+LZNJ
-cFF/f8WCv0ani7iDZVec8OUHVnmXT1TFd27ls9l14fN/epwaJXlLGWpxep/z5rE6
-xD8ctLfAia6P/iKZkxlvtoZUoO4Pmtqk8OEoBNZtbhZieZyP6mvKMqGK9cFkbK2q
-ISe5q4GwEKhZRCnpTuVpflBVqYXXDjnmM5l+ZU755W7qJDijbIp5skGMPCbLAtFG
-KP/yFZuW/cFwTtS78Cp4
-=YjKg
+iQIcBAEBCAAGBQJT5EMbAAoJEMDTa8Ir7ZwVjAkP/2LxCLfCqtUGNNZVUyrmk9zZ
+/N9y/DCEdPxrjMhOIkNmLRQiitJUADKozrSowDT34/qgTkaGknkvzzNm8lVhztzN
+kBvs3ffpXPh3KL3lPbjg08w6M2Q9dzFZBkZdwGMItRC28/IJcLa9KfoEkeQR+IPL
+dBo2IHIpNyaw5OVB5HBR8r8Q2mOpWqnky/wkPOTTQSRV6L8EMSYLQnMjF9gGZ49b
+RhzT6K4h10mQ5ku/foUAX/VeLbs6SVUdzR+kQ240yof/XYaO1mov7Vm4z554rj3Y
+MW6FSYuqf8s7btGxdHEDaX44m6dkvWONEub3TOvQU5BxiqyB9a3VVFS8In0ARGar
+iDDT3CG4f0pkxZFyGYmLXCku9rmDI8hGcEwNZe5apUWgisYoDURNL8nTxNrSe1kv
+jM38eaIxS75APO0MfglYzcTcWVqy0t/S4dzV3haSgueMuy9GUd1RwfH4tDFqeJw0
+uFojKmrJE9uPkYK/rcxXmm/hg2lvbjfMEbZ6pu1Hb/b0QExW119NAdK6Dc0gHu0t
+zjCg31f2J/zmKzSMcynMJ+6ROSFlP1uyO8EwI+dk6BIUQ85UtN9/sKjMihgr79nM
+TSyOh90HS8QWQn03xR2KF6W3KQwCNi5bXiVUelqbvzj5cur5W7sTernF85/eyIip
+rW/k7Be2YqpBxbC6PLTH
+=uywk
 -----END PGP SIGNATURE-----
 
---Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y--
+--Sig_/wLfKbuap5S4o2FSqr1GOM+n--
