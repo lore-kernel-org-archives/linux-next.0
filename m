@@ -1,79 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Fri, 8 Aug 2014 11:33:07 +1000
-Message-ID: <20140808113307.4f505bba@canb.auug.org.au>
-References: <20140807132017.2ec9e2ad@canb.auug.org.au>
-	<87tx5ocyz3.fsf@rustcorp.com.au>
-	<20140807230342.52e3a52c@canb.auug.org.au>
-	<87a97gcus9.fsf@rustcorp.com.au>
+Subject: linux-next: build failure after merge of the ext3 tree
+Date: Fri, 8 Aug 2014 11:52:26 +1000
+Message-ID: <20140808115226.3f4fbeb7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WAf/iwj1xNJ1u6/qC3WMTLa"; protocol="application/pgp-signature"
+ boundary="Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52706 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51612 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755313AbaHHBdO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Aug 2014 21:33:14 -0400
-In-Reply-To: <87a97gcus9.fsf@rustcorp.com.au>
+	id S1754815AbaHHBwc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2014 21:52:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stewart Smith <stewart@linux.vnet.ibm.com>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/WAf/iwj1xNJ1u6/qC3WMTLa
+--Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Jan,
 
-On Thu, 07 Aug 2014 22:37:50 +0930 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> > Hi Rusty,
-> >
-> > On Thu, 07 Aug 2014 21:07:20 +0930 Rusty Russell <rusty@rustcorp.com.au=
-> wrote:
-> >>
-> >> Ah, crap.  I really hate that macro magic :(
-> >>=20
-> >> I amended to the minimal fix, so we can pretend that never happened.
-> >
-> > How about arch/powerpc/platforms/powernv/opal-dump.c as well?
->=20
-> Hmm, I didn't see that one.
+After merging the ext3 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-It was in the original report, but I guess a bit hidden by all the guff
-the gcc spews out these days.
+ERROR: "new_inode_pseudo" [fs/reiserfs/reiserfs.ko] undefined!
 
-> I've done that as a separate patch.
+Caused by commit 523096294315 ("reiserfs: Avoid warning from unlock_new_ino=
+de()").
 
-Thanks.
-
+I have used the ext3 tree from next-20140807 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/WAf/iwj1xNJ1u6/qC3WMTLa
+--Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT5CjYAAoJEMDTa8Ir7ZwV0uEQAJb9if9ScMmA6AbU8P13Vdsi
-VLTedbLJluRO0XnlbQIBh87kWlAXl5BNyqg46rMNx4odHqUJz51L0jcM9TITjxup
-DoZL/t03kRjJdpfFmhKdq/UJSjyeWmlQNBV7lquEYRLgwLkmgdGAE1omd6m8SVs1
-6N3xAbW2KGH2fZM8POaQo22s9QTkFwOAkao7rYnQrWqBV+Ub4WPlEhPwxBaot7AA
-a+Q2qdHE+UG8iDMQb7lXorzvHDhjMIlBs7/EoCzvOkHqowNrx+VtnFSKY2+88wFy
-bGua2UXnTdnVkbPxqVBI5My+I6QhABQ5Ot+tbUu8Jo0vI+DQvewTMgEDAB/yQcKt
-YnP5uwDaWsub9vOx+VSiEmlMs1iUtPs3JTeNBIeAVlYKuO9ymwcVtc8OzM6ZQX8p
-5zl31/6Av8NMUBLUrtKViPc/9Lzh7vy8ljrHOL+JmjBE24fiu/at0ZTwTtQcMltI
-JxSIEYTw/72f88CKpcQggD6R9/PiQyGoH0RFMHl7qNeV8xxkEles0NiB9iTLg7vX
-7m5qikm53MbYkJ7WssZsapWC/Knl5DCHJEPP0UNWj8zhy0hbUk2jO8FAOW4QcUJm
-6uSTSL3gAW6CYAC8gwLiW5KxtSl4rZpP+n3/DX1coKvSEnWFVbsj6nZ6aqo/Yf5t
-QbJe2QS1NzxSMYl8fScP
-=bQ5W
+iQIcBAEBCAAGBQJT5C1eAAoJEMDTa8Ir7ZwVaRsP/AwVJiQw2Bixx/hb9agE4H2m
+WN+lYVAPFy0B1C8yFt1DAnymwWRccb8dkquUgBTJSYhyFfZrAIkrkZkKKhiYiU6c
+6P5gHIbE1eqdiUlWzcvro9ZpUx/uYnPfr91NCh6HndiH6h/0QRr2hpOMfO1FYjiU
+tqDXxvRZWSeBs+C+Oyh+er9sou2u1wR/oMckC7vm9xUnZlYc0inckr2FPO8qHnOG
+zjPVpoGIbhHeJmp5/D1JqgSUa06+Uecr4ytn1bn6LfvHuXSGEdy6xVhxuNdmbItk
+sS0PWuhdfFGfbgBiq7E00B2fyvRT7wl+rajX0/osMrWEHKhgU+XD/+qDcZgh1uLJ
+jM/lxapmam1li73C3aWSfj/0IIakjxzwQDnbsq4yupmzDz+zxqnnnOw94Ehxohca
+3wT1EZsKXYCbtB15Lr3NmJkIarj1OEUTSBbsyFrCPkmfmbTAlOwsvVHxh+F+LZNJ
+cFF/f8WCv0ani7iDZVec8OUHVnmXT1TFd27ls9l14fN/epwaJXlLGWpxep/z5rE6
+xD8ctLfAia6P/iKZkxlvtoZUoO4Pmtqk8OEoBNZtbhZieZyP6mvKMqGK9cFkbK2q
+ISe5q4GwEKhZRCnpTuVpflBVqYXXDjnmM5l+ZU755W7qJDijbIp5skGMPCbLAtFG
+KP/yFZuW/cFwTtS78Cp4
+=YjKg
 -----END PGP SIGNATURE-----
 
---Sig_/WAf/iwj1xNJ1u6/qC3WMTLa--
+--Sig_/Zk3GQEhAPOPYq9vfTjYLA8Y--
