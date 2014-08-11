@@ -1,216 +1,63 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Mon, 11 Aug 2014 09:55:24 +0200
-Message-ID: <CAPDyKFoGy+rd1NeUnOYRyTa96+xR2fLzGq1U+zunx3DK37TTNg@mail.gmail.com>
-References: <CAPDyKFq2isO+DKMuLT9Ud8B9reFZiVYKG6LL8ysF0ZTNGfY8Nw@mail.gmail.com>
-	<1407201590-26740-1-git-send-email-sonnyrao@chromium.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: linux-next: build failures after merge of the drm tree
+Date: Mon, 11 Aug 2014 11:00:17 +0100
+Message-ID: <20140811100017.GA30401@n2100.arm.linux.org.uk>
+References: <20140805130926.4e8c8fe5@canb.auug.org.au> <53E0736E.7030901@samsung.com> <CAOesGMjjLHOaBJZwFENaWW41KFsNZ3pUqiYk0jtet=8NFvce3g@mail.gmail.com> <CAOesGMg=kFM_9ksgoOXgqLFjzoE38tCuPy7pxbG5F_j5KovkVA@mail.gmail.com> <alpine.DEB.2.00.1408100856270.32072@skynet.skynet.ie> <CAK5sBcHceBqYQOQrWw9D0CviVpnXOdAtfgh7pFkT=L53Gfbe6g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qg0-f49.google.com ([209.85.192.49]:51758 "EHLO
-	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751604AbaHKHzZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Aug 2014 03:55:25 -0400
-Received: by mail-qg0-f49.google.com with SMTP id j107so8124408qga.36
-        for <linux-next@vger.kernel.org>; Mon, 11 Aug 2014 00:55:24 -0700 (PDT)
-In-Reply-To: <1407201590-26740-1-git-send-email-sonnyrao@chromium.org>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:46697 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752084AbaHKKAz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Aug 2014 06:00:55 -0400
+Content-Disposition: inline
+In-Reply-To: <CAK5sBcHceBqYQOQrWw9D0CviVpnXOdAtfgh7pFkT=L53Gfbe6g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sonny Rao <sonnyrao@chromium.org>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Grant Grundler <grundler@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Sachin Kamat <spk.linux@gmail.com>
+Cc: Dave Airlie <airlied@linux.ie>, Inki Dae <daeinki@gmail.com>, Olof Johansson <olof@lixom.net>, YoungJun Cho <yj44.cho@samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Wood <thomas.wood@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 5 August 2014 03:19, Sonny Rao <sonnyrao@chromium.org> wrote:
-> This patch changes the fifo reset code to follow the reset procedure
-> outlined in the documentation of Synopsys Mobile storage host databook.
->
-> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> [sonnyrao: fix compile for !CONFIG_MMC_DW_IDMAC case]
+On Mon, Aug 11, 2014 at 09:26:00AM +0530, Sachin Kamat wrote:
+> On Sun, Aug 10, 2014 at 1:28 PM, Dave Airlie <airlied@linux.ie> wrote:
+> >>
+> >
+> > Been on holidays, but ack for anything DT related,
+> >
+> > Look I wishI knew how DT worked, and what tree is canonical for changes to
+> > it, I'm not sure its well defined enough or sub maintaniers know enough,
+> > so I do just trust the exynos guys with this.
+> >
+> 
+> Inki,
+> 
+> Can you please get your tree included in linux-next so that these kind of
+> issues could be detected much earlier (even before they hit Dave's tree)?
 
-Thanks! Applied for next!
+The answer is not always "stuff your tree into linux-next", but it can
+be "learn what's required of maintaining a git tree and/or patch sets".
 
-Kind regards
-Uffe
+arm-soc people have asked for a long time that DT updates should go via
+themselves rather than through subsystem trees because conflicts there
+are rather horrid to deal with, and it's very easy for things to end up
+getting out of hand.
 
-> ---
->  drivers/mmc/host/dw_mmc.c | 87 ++++++++++++++++++++++++++++++++++-------------
->  drivers/mmc/host/dw_mmc.h |  5 +++
->  2 files changed, 69 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 1ac227c..39cf54f 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -111,8 +111,7 @@ static const u8 tuning_blk_pattern_8bit[] = {
->         0xff, 0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee,
->  };
->
-> -static inline bool dw_mci_fifo_reset(struct dw_mci *host);
-> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host);
-> +static bool dw_mci_reset(struct dw_mci *host);
->
->  #if defined(CONFIG_DEBUG_FS)
->  static int dw_mci_req_show(struct seq_file *s, void *v)
-> @@ -1235,7 +1234,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
->                  * After an error, there may be data lingering
->                  * in the FIFO
->                  */
-> -               dw_mci_fifo_reset(host);
-> +               dw_mci_reset(host);
->         } else {
->                 data->bytes_xfered = data->blocks * data->blksz;
->                 data->error = 0;
-> @@ -1352,7 +1351,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
->
->                         /* CMD error in data command */
->                         if (mrq->cmd->error && mrq->data)
-> -                               dw_mci_fifo_reset(host);
-> +                               dw_mci_reset(host);
->
->                         host->cmd = NULL;
->                         host->data = NULL;
-> @@ -1963,14 +1962,8 @@ static void dw_mci_work_routine_card(struct work_struct *work)
->                         }
->
->                         /* Power down slot */
-> -                       if (present == 0) {
-> -                               /* Clear down the FIFO */
-> -                               dw_mci_fifo_reset(host);
-> -#ifdef CONFIG_MMC_DW_IDMAC
-> -                               dw_mci_idmac_reset(host);
-> -#endif
-> -
-> -                       }
-> +                       if (present == 0)
-> +                               dw_mci_reset(host);
->
->                         spin_unlock_bh(&host->lock);
->
-> @@ -2208,8 +2201,11 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
->         return false;
->  }
->
-> -static inline bool dw_mci_fifo_reset(struct dw_mci *host)
-> +static bool dw_mci_reset(struct dw_mci *host)
->  {
-> +       u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
-> +       bool ret = false;
-> +
->         /*
->          * Reseting generates a block interrupt, hence setting
->          * the scatter-gather pointer to NULL.
-> @@ -2219,15 +2215,60 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->                 host->sg = NULL;
->         }
->
-> -       return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
-> -}
-> +       if (host->use_dma)
-> +               flags |= SDMMC_CTRL_DMA_RESET;
->
-> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
-> -{
-> -       return dw_mci_ctrl_reset(host,
-> -                                SDMMC_CTRL_FIFO_RESET |
-> -                                SDMMC_CTRL_RESET |
-> -                                SDMMC_CTRL_DMA_RESET);
-> +       if (dw_mci_ctrl_reset(host, flags)) {
-> +               /*
-> +                * In all cases we clear the RAWINTS register to clear any
-> +                * interrupts.
-> +                */
-> +               mci_writel(host, RINTSTS, 0xFFFFFFFF);
-> +
-> +               /* if using dma we wait for dma_req to clear */
-> +               if (host->use_dma) {
-> +                       unsigned long timeout = jiffies + msecs_to_jiffies(500);
-> +                       u32 status;
-> +                       do {
-> +                               status = mci_readl(host, STATUS);
-> +                               if (!(status & SDMMC_STATUS_DMA_REQ))
-> +                                       break;
-> +                               cpu_relax();
-> +                       } while (time_before(jiffies, timeout));
-> +
-> +                       if (status & SDMMC_STATUS_DMA_REQ) {
-> +                               dev_err(host->dev,
-> +                                       "%s: Timeout waiting for dma_req to "
-> +                                       "clear during reset\n", __func__);
-> +                               goto ciu_out;
-> +                       }
-> +
-> +                       /* when using DMA next we reset the fifo again */
-> +                       if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET))
-> +                               goto ciu_out;
-> +               }
-> +       } else {
-> +               /* if the controller reset bit did clear, then set clock regs */
-> +               if (!(mci_readl(host, CTRL) & SDMMC_CTRL_RESET)) {
-> +                       dev_err(host->dev, "%s: fifo/dma reset bits didn't "
-> +                               "clear but ciu was reset, doing clock update\n",
-> +                               __func__);
-> +                       goto ciu_out;
-> +               }
-> +       }
-> +
-> +#if IS_ENABLED(CONFIG_MMC_DW_IDMAC)
-> +       /* It is also recommended that we reset and reprogram idmac */
-> +       dw_mci_idmac_reset(host);
-> +#endif
-> +
-> +       ret = true;
-> +
-> +ciu_out:
-> +       /* After a CTRL reset we need to have CIU set clock registers  */
-> +       mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
-> +
-> +       return ret;
->  }
->
->  #ifdef CONFIG_OF
-> @@ -2425,7 +2466,7 @@ int dw_mci_probe(struct dw_mci *host)
->         }
->
->         /* Reset all blocks */
-> -       if (!dw_mci_ctrl_all_reset(host))
-> +       if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS))
->                 return -ENODEV;
->
->         host->dma_ops = host->pdata->dma_ops;
-> @@ -2612,7 +2653,7 @@ int dw_mci_resume(struct dw_mci *host)
->                 }
->         }
->
-> -       if (!dw_mci_ctrl_all_reset(host)) {
-> +       if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS)) {
->                 ret = -ENODEV;
->                 return ret;
->         }
-> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-> index 738fa24..08fd956 100644
-> --- a/drivers/mmc/host/dw_mmc.h
-> +++ b/drivers/mmc/host/dw_mmc.h
-> @@ -129,6 +129,7 @@
->  #define SDMMC_CMD_INDX(n)              ((n) & 0x1F)
->  /* Status register defines */
->  #define SDMMC_GET_FCNT(x)              (((x)>>17) & 0x1FFF)
-> +#define SDMMC_STATUS_DMA_REQ           BIT(31)
->  /* FIFOTH register defines */
->  #define SDMMC_SET_FIFOTH(m, r, t)      (((m) & 0x7) << 28 | \
->                                          ((r) & 0xFFF) << 16 | \
-> @@ -150,6 +151,10 @@
->  /* Card read threshold */
->  #define SDMMC_SET_RD_THLD(v, x)                (((v) & 0x1FFF) << 16 | (x))
->
-> +/* All ctrl reset bits */
-> +#define SDMMC_CTRL_ALL_RESET_FLAGS \
-> +       (SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET | SDMMC_CTRL_DMA_RESET)
-> +
->  /* Register access macros */
->  #define mci_readl(dev, reg)                    \
->         __raw_readl((dev)->regs + SDMMC_##reg)
-> --
-> 1.8.3.2
->
+Moreover, stuffing a tree into linux-next can cause more harm than good
+if the tree owner does not respect the kernel development cycle.  For
+example, I notice today that we have new breakage which has appeared in
+linux-next which seems to be a change which was never even _compile
+tested_ before it was became visible to linux-next, because builds
+complain about misplaced ";" and "}".
+
+linux-next is not a build-testing tree; it is an integration tree - it's
+there to help tree maintainers find /conflicts/ between their development
+trees and resolve those conflicts.  It is not a subsitute for proper
+compile testing, it is also not a subsitute for talking to your fellow
+developers, and it certainly is not a subsitute for knowing where in the
+kernel development cycle things are and knowing what the implications of
+that mean for linux-next (and if your tree is part of linux-next, what
+it will also mean for /your/ tree.)
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
