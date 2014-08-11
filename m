@@ -1,23 +1,19 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 11 (net/ethernet/intel/i40e)
-Date: Mon, 11 Aug 2014 09:17:45 -0700
-Message-ID: <53E8ECA9.6060806@infradead.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Aug 11
+Date: Mon, 11 Aug 2014 10:05:10 -0700
+Message-ID: <20140811170510.GA19750@roeck-us.net>
 References: <20140811155213.0aa083ce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:59475 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751402AbaHKQRq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Aug 2014 12:17:46 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20140811155213.0aa083ce@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, e1000-devel@lists.sourceforge.net, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux.nics@intel.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 08/10/14 22:52, Stephen Rothwell wrote:
+On Mon, Aug 11, 2014 at 03:52:13PM +1000, Stephen Rothwell wrote:
 > Hi all,
 > 
 > Please do not add code intended for v3.18 until after v3.17-rc1 is
@@ -25,16 +21,35 @@ On 08/10/14 22:52, Stephen Rothwell wrote:
 > 
 > Changes since 20140808:
 > 
+> The ext3 tree lost its build failure.
+> 
+> The pm tree gained conflicts against Linus' tree and a build failure for
+> which I applied a merge fix patch.
+> 
+> The mmc-uh tree still had its build failure so I used the version from
+> next-20140725.
+> 
+> The akpm tree lost several patches that turned up in Linus' tree.
+> 
+> Non-merge commits (relative to Linus' tree): 1547
+>  1041 files changed, 31446 insertions(+), 15956 deletions(-)
+> 
 
-on i386 and x86_64:
+New build failures:
 
-../drivers/net/ethernet/intel/i40e/i40e_fcoe.c: In function 'i40e_get_fcoe_tc_map':
-../drivers/net/ethernet/intel/i40e/i40e_fcoe.c:354:23: error: 'IEEE_8021QAZ_APP_SEL_ETHERTYPE' undeclared (first use in this function)
-   if (app.selector == IEEE_8021QAZ_APP_SEL_ETHERTYPE &&
+Building arm:s5pv210_defconfig ... failed
+--------------
+Error log:
+arch/arm/mach-s5pv210/pm.c:150:12: error: 'suspend_valid_only_mem' undeclared
+here (not in a function)
+make[1]: *** [arch/arm/mach-s5pv210/pm.o] Error 1
 
+Building arm:pxa910_defconfig ... failed
+--------------
+Error log:
+arch/arm/mach-mmp/pm-pxa910.c: In function 'pxa910_pm_valid':
+arch/arm/mach-mmp/pm-pxa910.c:243:65: error: expected ')' before ';' token
+arch/arm/mach-mmp/pm-pxa910.c:244:1: error: expected ';' before '}' token
+make[1]: *** [arch/arm/mach-mmp/pm-pxa910.o] Error 1
 
-Needs to #include <uapi/linux/dcbnl.h> ??
-
-
--- 
-~Randy
+Guenter
