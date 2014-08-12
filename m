@@ -1,49 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [linux-nics] linux-next: Tree for Aug 11
- (net/ethernet/intel/i40e)
-Date: Mon, 11 Aug 2014 15:20:20 -0700 (PDT)
-Message-ID: <20140811.152020.1502253914281568304.davem@davemloft.net>
-References: <1407786786.2189.0.camel@jtkirshe-mobl.jf.intel.com>
-	<20140811.145454.185028525560881583.davem@davemloft.net>
-	<1407795392.2189.13.camel@jtkirshe-mobl.jf.intel.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Tue, 12 Aug 2014 03:10:28 +0200
+Message-ID: <2030987.QX9qPAsCsv@vostro.rjw.lan>
+References: <20140811115726.0bcf3b66@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <e1000-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <1407795392.2189.13.camel@jtkirshe-mobl.jf.intel.com>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
-	<mailto:e1000-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=e1000-devel>
-List-Post: <mailto:e1000-devel@lists.sourceforge.net>
-List-Help: <mailto:e1000-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
-	<mailto:e1000-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: e1000-devel-bounces@lists.sourceforge.net
-To: jeffrey.t.kirsher@intel.com
-Cc: sfr@canb.auug.org.au, linux.nics@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, rdunlap@infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:57862 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751512AbaHLAvk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Aug 2014 20:51:40 -0400
+In-Reply-To: <20140811115726.0bcf3b66@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee.jones@linaro.org>
 
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Date: Mon, 11 Aug 2014 15:16:32 -0700
-
-> On Mon, 2014-08-11 at 14:54 -0700, David Miller wrote:
->> I see no such change in my tree.
+On Monday, August 11, 2014 11:57:26 AM Stephen Rothwell wrote:
 > 
-> http://patchwork.ozlabs.org/patch/376699/
+> --Sig_/+JDUwDarNoGtzkfUjWIyaKJ
+> Content-Type: text/plain; charset=US-ASCII
+> Content-Transfer-Encoding: quoted-printable
 > 
-> This is what I was referring to, it looks like you set the patch status
-> to "Awaiting upstream" yet you responded that you applied it.  So my
-> bad, I thought you had already sucked it into you tree.  I get this
-> resolved and send you this and a few other fixes later today.
+> Hi Rafael,
+> 
+> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/mfd/sec-core.c: In function 'sec_pmic_suspend':
+> drivers/mfd/sec-core.c:438:29: error: 'PM_SUSPEND_MEM' undeclared (first us=
+> e in this function)
+>    regulator_suspend_prepare(PM_SUSPEND_MEM);
+>                              ^
+> 
+> Caused by commit bb3274b6442d ("PM / sleep: Rename symbols, functions
+> and variables related to sleep") interacting with commit b7cde7078d23
+> ("mfd: sec-core: Prepare regulators for suspend state to reduce
+> power-consumption") from Linus' tree.
 
-My bad, I mis-replied to that patch, and indeed I do expect to get it
-upstream via your tree.
+I dropped that commit from linux-next, sorry for the breakage.
 
-Thanks for catching that Jeff.
-
-------------------------------------------------------------------------------
-_______________________________________________
-E1000-devel mailing list
-E1000-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/e1000-devel
-To learn more about Intel&#174; Ethernet, visit http://communities.intel.com/community/wired
+Rafael
