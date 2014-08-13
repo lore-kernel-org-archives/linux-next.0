@@ -1,7 +1,7 @@
 From: akpm@linux-foundation.org
-Subject: mmotm 2014-08-13-13-13 uploaded
-Date: Wed, 13 Aug 2014 13:14:33 -0700
-Message-ID: <53ebc729.Nj3LvIuMvJFj68+A%akpm@linux-foundation.org>
+Subject: mmotm 2014-08-13-14-29 uploaded
+Date: Wed, 13 Aug 2014 14:30:44 -0700
+Message-ID: <53ebd904.2Mcm8776rCbhNYjx%akpm@linux-foundation.org>
 Reply-To: linux-kernel@vger.kernel.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -11,7 +11,7 @@ Sender: mm-commits-owner@vger.kernel.org
 To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2014-08-13-13-13 has been uploaded to
+The mm-of-the-moment snapshot 2014-08-13-14-29 has been uploaded to
 
    http://www.ozlabs.org/~akpm/mmotm/
 
@@ -96,6 +96,8 @@ This mmotm tree contains the following patches against 3.16:
 * mm-actually-clear-pmd_numa-before-invalidating.patch
 * lib-turn-config_stacktrace-into-an-actual-option.patch
 * drivers-gpu-drm-nouveau-fix-build.patch
+* zram-fix-incorrectly-stat-with-failed_reads.patch
+* mm-zpool-use-prefixed-module-loading.patch
 * x86mem-hotplug-pass-sync_global_pgds-a-correct-argument-in-remove_pagetable.patch
 * x86mem-hotplug-modify-pgd-entry-when-removing-memory.patch
 * x86-numa-setup_node_data-drop-dead-code-and-rename-function.patch
@@ -123,6 +125,9 @@ This mmotm tree contains the following patches against 3.16:
 * bio-integrity-remove-the-needless-fail-handle-of-bip_slab-creating.patch
 * block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
   mm.patch
+* fix-checkpatch-errors-for-mm-mmapc.patch
+* memory-hotplug-add-sysfs-zones_online_to-attribute.patch
+* memory-hotplug-add-sysfs-zones_online_to-attribute-fix.patch
 * vmstat-on-demand-vmstat-workers-v8.patch
 * vmstat-on-demand-vmstat-workers-v8-fix.patch
 * vmstat-on-demand-vmstat-workers-v8-do-not-open-code-alloc_cpumask_var.patch
@@ -142,10 +147,14 @@ This mmotm tree contains the following patches against 3.16:
 * include-kernelh-rewrite-min3-max3-and-clamp-using-min-and-max-fix.patch
 * drivers-misc-ti-st-st_corec-fix-null-dereference-on-protocol-type-check.patch
 * lib-vsprintf-add-%pt-format-specifier.patch
+* maintainers-assing-systemace-driver-to-xilinx.patch
 * drivers-video-backlight-backlightc-remove-backlight-sysfs-uevent.patch
 * mm-utilc-add-kstrimdup.patch
 * lib-add-crc64-ecma-module.patch
 * hfsplus-fix-longname-handling.patch
+* kexec-create-a-new-config-option-config_kexec_file-for-new-syscall.patch
+* kexec-remove-config_kexec-dependency-on-crypto.patch
+* ipc-always-handle-a-new-value-of-auto_msgmni.patch
   linux-next.patch
 * drivers-gpio-gpio-zevioc-fix-build.patch
 * x86-vdso-fix-vdso2cs-special_pages-error-checking.patch
