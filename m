@@ -1,42 +1,30 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 14 (mm/memory_hotplug.c and drivers/base/memory.c)
-Date: Thu, 14 Aug 2014 08:02:22 -0700
-Message-ID: <53ECCF7E.2090305@infradead.org>
-References: <20140814152749.24d43663@canb.auug.org.au>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: since-3.16 branch opened for mm git tree (was: Re: mmotm
+ 2014-08-13-14-29 uploaded)
+Date: Thu, 14 Aug 2014 18:10:01 +0200
+Message-ID: <20140814161001.GB19405@dhcp22.suse.cz>
+References: <53ebd904.2Mcm8776rCbhNYjx%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20140814152749.24d43663@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <53ebd904.2Mcm8776rCbhNYjx%akpm@linux-foundation.org>
 Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux MM <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
 List-Id: linux-next.vger.kernel.org
 
-On 08/13/14 22:27, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Please do not add code intended for v3.18 until after v3.17-rc1 is
-> released.
-> 
-> Changes since 20140813:
-> 
+I have just created since-3.16 branch in mm git tree
+(http://git.kernel.org/?p=linux/kernel/git/mhocko/mm.git;a=summary). It
+is based on v3.16 tag in Linus tree and mmotm-2014-08-13-14-29.
 
-on x86_64:
+I have pulled some cgroup wide changes from Tejun on top.
 
-drivers/built-in.o: In function `show_zones_online_to':
-memory.c:(.text+0x13f306): undefined reference to `test_pages_in_a_zone'
-
-in drivers/base/memory.c
-
-when CONFIG_MEMORY_HOTREMOVE is not enabled.
-
-The function implementation in mm/memory_hotplug.c is only built if
-CONFIG_MEMORY_HOTREMOVE is enabled.
-
-
+As usual mmotm trees are tagged with signed tag
+(finger print BB43 1E25 7FB8 660F F2F1 D22D 48E2 09A2 B310 E347)
 -- 
-~Randy
+Michal Hocko
+SUSE Labs
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
