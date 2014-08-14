@@ -1,57 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: new stuff in the btrfs tree
-Date: Thu, 14 Aug 2014 10:07:50 +1000
-Message-ID: <20140814100750.5c6368f1@canb.auug.org.au>
+Subject: linux-next: problem importing the akpm-current tree
+Date: Thu, 14 Aug 2014 10:27:54 +1000
+Message-ID: <20140814102754.29ecc247@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9_AEYAbPdzcGmqtO2B/LMsi"; protocol="application/pgp-signature"
+ boundary="Sig_/WEHDyBpc_iZeNH2ld3PU2BX"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41365 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53099 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752422AbaHNAIE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Aug 2014 20:08:04 -0400
+	id S1752726AbaHNA2B (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Aug 2014 20:28:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/9_AEYAbPdzcGmqtO2B/LMsi
+--Sig_/WEHDyBpc_iZeNH2ld3PU2BX
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Are all the commits just added to the btrfs tree really intended for
-v3.17?  If not then please remove them until after v3.17-rc1 is
-released.  If so, then they are very late :-(
+While importing mmotm 2014-08-13-14-29, I get the following:
 
-I suspect the latter because some of them seem to date from June (and a
-few even from February).
+$ git am --patch-format=3Dmbox ../mmotm/broken-out/drivers-gpu-drm-nouveau-=
+fix-build.patch
+Applying: drivers/gpu/drm/nouveau: fix build
+error: patch failed: drivers/gpu/drm/nouveau/core/include/nvif/unpack.h:1
+error: drivers/gpu/drm/nouveau/core/include/nvif/unpack.h: patch does not a=
+pply
+Patch failed at 0001 drivers/gpu/drm/nouveau: fix build
+
+the problem is that the files altered by that patch are symlinks in the
+git tree and the patch tries to turn them into real files with #includes
+of the symlink target.
+
+I skipped the patch and I guess your problem arose from applying a git
+patch to a non git tree which created real files whose contents were
+just the symlink target names.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/9_AEYAbPdzcGmqtO2B/LMsi
+--Sig_/WEHDyBpc_iZeNH2ld3PU2BX
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT6/3hAAoJEMDTa8Ir7ZwVNssP/08mj8FUVa74aBZtM8Xxf+L9
-/0ipudRVDwRX1uEOW4pEitx66VfZ2pj5r65LCbOtsqQMeazqAwBcJmpSXHSlad2g
-2EaIM45Vv7l8AVSNJjxOAIepwxoM2rvlwXD96HQ80SYx9kKrYGtnnnogzOjNkGr0
-TKjvJ+dnczwJL5QtnTiK3eOlSgPnUAFAjP6DkOCQGzo5upFNZ1El8j4AtRd0pLeF
-QEi2lMcUgWas4AnZhXiKHBa2cJRfFKUH+ORgW5l8/idbk9IcrlDqFlBTbSiPlCDT
-Mtw/3VEtzyRhKQ+8UDkyfbBbh9fZOMwhvdwA3FwrT3U3nP2cgC+bg6zfZfxA89Mo
-1UrZkfPHAJliIpGgsQ7qiuYm3BEPqiHVIuer77fgK9bCRAMYsf9zt9j1jG9YYHwu
-JU/ChvqYMzDLZ3zsdSxrvUMGs+fi8fXcR0utngGGtc8fkG+P/t/9ZQOgz3j+hN1H
-wx5pRKyNnpXB5C+spAVLXZijC6e5l1y4LmI8zDC5ObGmkdjmfQV0RgaHNb29rvJN
-l4o6P5qMfwejeIPJmUfBoCMSvlKGJMJcU/nh6QmV7Ox+SHyTA4hEG8kMkAgE217k
-m6dWjoAEtcG9Qv1fTkZkICPbHnJyvnUbVBS3BD7IAKc15QcR2d2BhQzTB7C7MpJS
-gO5JQsUgN2l2cx6NZKwO
-=BhVX
+iQIcBAEBCAAGBQJT7AKPAAoJEMDTa8Ir7ZwV1BYP/36PI+oLxx1sovXLMivUte09
+bmGpQPyttxA8e+OowCdljVaJDZsr/BuzRF9BdULadILB0dg0bUwabPvKqT9DnFcG
+W1P6NZ7sw3kicUHli0+UYrc8b/p0zT5zibSkFbwi8DM8+NkYX8SwX/yvBa010moK
+1qujR4LA+nGnOqo+W7uHoEArBGkHaBsTBpmqKB8rQ8oaEM+pi4Jrk6awgNsjYQvy
+E43hjiycmUsYNsqpznuk1nuu1Fu/LN1I83Rfef0za4UPBoWBrPXhoFqB4C7uJRp2
+D8P8F43S3OV5+Frw+RtGqZ4agIAIRtQINT0uSEnLCTisbiXeN8927ZZ/56spTux6
+LWxStbbYS61mGJTXZw6UUV1g0MSHPjK8EfBa7VpU8k1brbog1yWgiAxJ5JSiJPna
+aFNZ5//w+5WKsR8XX+fIbvBcJ16Ef81d3Pk1xrSkJocHPxXPxGhhN/dT3eyngMVK
+uSNffzPVBV0d3a9X8EzTOx9V7M1XNI0VPrr11NOvvNrU/nVVU72mGdQcP5JrsXHb
+iipSS22WyGalWavPgY8fd2hC9UJFtoZCZl1+xoBXbRZ1qUaqsokzdJ45X4oUt0V0
+uYkLRXmsGhRut5+DMBtGI2U83HV/Q+AAXExMFw8Bt3kIBXWNNrs02RjyVinKytI1
+vi5WPlk/7iDqdhhGVA+t
+=LGvV
 -----END PGP SIGNATURE-----
 
---Sig_/9_AEYAbPdzcGmqtO2B/LMsi--
+--Sig_/WEHDyBpc_iZeNH2ld3PU2BX--
