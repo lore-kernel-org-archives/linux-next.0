@@ -1,55 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: few releases for the next week
-Date: Fri, 15 Aug 2014 17:15:24 +1000
-Message-ID: <20140815171524.5b7e197d@canb.auug.org.au>
-References: <20140815134711.7d63bcc5@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH -next] extcon: fix extcon-sm5502 build when CONFIG_I2C=m
+Date: Fri, 15 Aug 2014 16:36:08 -0700
+Message-ID: <53EE9968.1000800@infradead.org>
+References: <53EB122E.3050407@infradead.org> <53EB1681.9040602@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Z+z140MBQvxKA9TRBQHaRA5"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49665 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751172AbaHOHPb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Aug 2014 03:15:31 -0400
-In-Reply-To: <20140815134711.7d63bcc5@canb.auug.org.au>
+Received: from bombadil.infradead.org ([198.137.202.9]:58327 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751138AbaHOXgL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Aug 2014 19:36:11 -0400
+In-Reply-To: <53EB1681.9040602@samsung.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
---Sig_/Z+z140MBQvxKA9TRBQHaRA5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 08/13/14 00:40, Chanwoo Choi wrote:
+> Dear Randy,
+> 
+> Thanks for your report.
+> 
+> I catched this issue. So, I fix this bug already. You can check it on following url:
+> - http://git.kernel.org/cgit/linux/kernel/git/chanwoo/extcon.git/commit/?h=extcon-test&id=5e519b04db6c5b42f8d8ee246c16903c130b5fd5
+> 
 
-Hi all,
+linux-next of 20140815 still has this build error.
+Please get this patch into linux-next.
 
-linux-next releases will be intermittent at best over the next week
-while I, and others, are at Kernel Summit.
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> Best Regards,
+> Chanwoo Choi
+> 
+> On 08/13/2014 04:22 PM, Randy Dunlap wrote:
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> Fix build errors in extcon-sm5502.c by making EXTCON_SM5502 depend
+>> on I2C since it selects REGMAP_I2C.  The build errors happen when
+>> CONFIG_I2C=m and CONFIG_EXTCON_SM5502=y. This Kconfig change causes
+>> CONFIG_EXTCON_SM5502 to be =m when CONFIG_I2C=m.
+>>
+>> drivers/built-in.o: In function `regmap_smbus_byte_reg_read':
+>> regmap-i2c.c:(.text+0x5030a): undefined reference to `i2c_smbus_read_byte_data'
+>> drivers/built-in.o: In function `regmap_smbus_byte_reg_write':
+>> regmap-i2c.c:(.text+0x50338): undefined reference to `i2c_smbus_write_byte_data'
+>> drivers/built-in.o: In function `regmap_smbus_word_reg_read':
+>> regmap-i2c.c:(.text+0x50356): undefined reference to `i2c_smbus_read_word_data'
+>> drivers/built-in.o: In function `regmap_smbus_word_reg_write':
+>> regmap-i2c.c:(.text+0x50384): undefined reference to `i2c_smbus_write_word_data'
+>> drivers/built-in.o: In function `regmap_i2c_read':
+>> regmap-i2c.c:(.text+0x503cf): undefined reference to `i2c_transfer'
+>> drivers/built-in.o: In function `regmap_i2c_gather_write':
+>> regmap-i2c.c:(.text+0x50442): undefined reference to `i2c_transfer'
+>> drivers/built-in.o: In function `regmap_i2c_write':
+>> regmap-i2c.c:(.text+0x50474): undefined reference to `i2c_master_send'
+>> drivers/built-in.o: In function `sm5502_muic_i2c_init':
+>> extcon-sm5502.c:(.init.text+0x6630): undefined reference to `i2c_register_driver'
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Cc:	MyungJoo Ham <myungjoo.ham@samsung.com>
+>> Cc:	Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>  drivers/extcon/Kconfig |    1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> Index: linux-next-20140813/drivers/extcon/Kconfig
+>> ===================================================================
+>> --- linux-next-20140813.orig/drivers/extcon/Kconfig
+>> +++ linux-next-20140813/drivers/extcon/Kconfig
+>> @@ -72,6 +72,7 @@ config EXTCON_PALMAS
+>>  
+>>  config EXTCON_SM5502
+>>  	tristate "SM5502 EXTCON support"
+>> +	depends on I2C
+>>  	select IRQ_DOMAIN
+>>  	select REGMAP_I2C
+>>  	select REGMAP_IRQ
+>>
+> 
+> --
 
---Sig_/Z+z140MBQvxKA9TRBQHaRA5
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT7bORAAoJEMDTa8Ir7ZwVKFYP/RI2LJELksPIuihqnm+gqs5W
-uXCD21m25c0ApEngk+NimlFBrEMVRWqDImlH+yC/ujLGdsNnm8Yhvkx3KaOFXIFx
-CsLlzw50732tHIbzwK0xBZhn+SmUDmp0MaSv13+A32n0dsPflOL5F5HUL9oDIhA5
-LRYnNJyCjhwqCL2H/j2ueyRb2jPFayyFMp5rpwowN1UsWlxHWivq8yP+LW5D67oc
-TXZXz39C1dGK2TrCtop/4/Xg7pyKOwTSql4vZY9kjjfKmqmimEaYC8BzpVQI+2u8
-jbGquqacIwR2ErjoaweAQQCRHpg6keRTKAYpsS+4cj80RlMM8VjmwwFwA/za+Vg/
-S/YdnTSa7bl7d4Hg0X1Z7N/ceLvuAvNjUMxUlpRGfRCSMPm/Vf6L2NiBXVZinEBX
-oH0qgGCffgS5pqPPiYsp2P980RX3CZvaUK4QMO7stEhf7CZUj0hHcN5hLcalyHzJ
-RtaNEIAyqV9wifZzbKj+ev966tPdagpBNuKVuNnDF2uChAGCGIpFSojw7W0my829
-2cVPRBlZOurzKdsaCLmUhKkVTghHadrBj/95nG+oeqAKocj3U10/7w5wVa4RDNyp
-G8frVmHg4LRCrVV/P5sjsWc6N/mAQTljj1yk544iL4aSFyS42mh1ziOwHaROIbo3
-M1io+2k/UWnm3U27Goqd
-=TXS9
------END PGP SIGNATURE-----
-
---Sig_/Z+z140MBQvxKA9TRBQHaRA5--
+-- 
+~Randy
