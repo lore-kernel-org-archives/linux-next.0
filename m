@@ -1,65 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the regulator tree
-Date: Mon, 18 Aug 2014 06:41:43 +1000
-Message-ID: <20140818064143.37bd4743@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 18 Aug 2014 08:30:55 +1000
+Message-ID: <20140818083055.7cedc567@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko"; protocol="application/pgp-signature"
+ boundary="Sig_/zlufTVKnGMd=PeaFMkF0Zo7"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guodong Xu <guodong.xu@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Cross <xobs@kosagi.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko
+--Sig_/zlufTVKnGMd=PeaFMkF0Zo7
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the regulator tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the sound-asoc tree, today's linux-next build (powerpc allyes=
+config)
+failed like this:
 
-drivers/regulator/mc13892-regulator.c: In function 'mc13892_regulator_probe=
-':
-drivers/regulator/mc13892-regulator.c:586:3: error: assignment of member 's=
-et_mode' in read-only object
-   =3D mc13892_vcam_set_mode;
-   ^
-drivers/regulator/mc13892-regulator.c:588:3: error: assignment of member 'g=
-et_mode' in read-only object
-   =3D mc13892_vcam_get_mode;
-   ^
+sound/soc/fsl/imx-pcm-fiq.c:31:21: fatal error: asm/fiq.h: No such file or =
+directory
+ #include <asm/fiq.h>
+                     ^
 
-Caused by commit 272e2315fac3 ("regulator: core: add const qualifier to
-ops in struct regulator_desc").
+Caused by commit 7e7292dba215 ("ASoC: fsl: add imx-es8328 machine
+driver").  Presumably it will only build on arm?
 
-I have used the regulator tree from next-20140815 for today.
-
+I reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko
+--Sig_/zlufTVKnGMd=PeaFMkF0Zo7
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT8ROMAAoJEMDTa8Ir7ZwV76gP/3h90zs4R51iGI5ZLxaGRqte
-vMgWMM2RbpkoYX5ykrHi9JGq87MNq1j94Exban1n98qiVNJoEeg/16yBlsl2Nuhu
-x1L45/hmIugHUCx5Mi2cA3CwElOVQk6oLDy5JjPDUTyNH1C2JjhusxeoFnWY5/t0
-AwQoiU+GNVB9lE8DR+wTHlBz1WstaLfsE/SPRyZJixSNEhALkrJUod7ziFBAn1Xy
-BjCsIw8sdTffofkLICT/HVMqIN37nbbjQ9VA/DH88MCrBB9gOexlCAmg/o/S2I5q
-U8PvlG/444qDIa2LE/lk8cKRCvaAWConVcjzIokQZYv1QgUyK3Bz6SQ2Kk2od9eu
-gM75/YPqYJsVrftihYON4d3iH4eaY1D6WNbamPbFgxOQ6DxYjNkexttaxez7unfi
-3sglHGEY7oudHHPTkAsRzTRN8/50uSRHnaNEmvwtExuhWC5LyoyDhKpuAsHxZ6NP
-gjyepFkQtLearqEWTdnOmQKfDaRvsMsAByUuL4NUNUy+RhfGSzpoB2r6W9Xz2G0S
-+dXj8cVwcFWqkYXegGZhRatl5UJuJYlWvywnC+9xwN2ZkScfZrxGHsvkcbuqQxCT
-pi8g2+jKpELeV1Dp3LsrzbuJ9DThMG471bQzCgBZjO6KHJBsVdb63kkk2AtfnWMe
-JDllRqdOMwt91GwVLby+
-=8GQn
+iQIcBAEBCAAGBQJT8S0kAAoJEMDTa8Ir7ZwVgmYP/30c5f0HgF0DyEmixUb2hflt
+90CJKU8x1Lwts750Xt7b5DCIy7qy8c52gItiik8JPE5OQOqqBNFMeSBNVUiDPw+V
+8Rdtlufjckw3TwqiE40JqnIQPtT+7hxvmL/0c06zyUZvkn81JwDoTr3nYMH7luWx
+5bIvPh4hR4X/6VAxa6xS8s8IVYPBVVtEOTDbvb1FtDRNVrV1p/mL9hADsQAk6xk2
+HRshSAgV1ID+aAKAaSjGzEblAm2D+AY9EeBmmZbs/dqIr286fCit1BQYnMiW9UVO
+O98LwbWcvJPR7oxdl6Ttamj5flzWONhGzPJIQMdBfnQpRp7HgB5w8mK8iwoO2RFb
+arM92nzhMa6Yr+bsuWYCjsjJdscov+HismMT7SPHldG00zVqH6eDbcWNJCCESNwH
+II16AvSxmOlXttnwpEpXkN2gI3RvQrgHXno0xGz27cbcbAsE6/il60ZEutUu2Fum
+OT1brT+Eb0X3xyEG34Ssx5NDfkQ5qydgeJrw+cUupgOLvulvnShJ1C8rV2XoAGT5
+3DLN4jZ/EztP3D/5WKzahInMnxYRGtZBzL82VhyAF8EjM1A4r1t2wsfrOtExR0jJ
+oRHTYwq0L1KXMUTR1kAhhHj1edp/RA4Kn56C7/BE/6nLw/1kd1i611LCIOSRfUTY
+vfmXxg8/EfcovcRTjzr7
+=iZPv
 -----END PGP SIGNATURE-----
 
---Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko--
+--Sig_/zlufTVKnGMd=PeaFMkF0Zo7--
