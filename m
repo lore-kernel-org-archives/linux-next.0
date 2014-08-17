@@ -1,88 +1,65 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH -next] extcon: fix extcon-sm5502 build when CONFIG_I2C=m
-Date: Fri, 15 Aug 2014 16:36:08 -0700
-Message-ID: <53EE9968.1000800@infradead.org>
-References: <53EB122E.3050407@infradead.org> <53EB1681.9040602@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the regulator tree
+Date: Mon, 18 Aug 2014 06:41:43 +1000
+Message-ID: <20140818064143.37bd4743@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:58327 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751138AbaHOXgL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Aug 2014 19:36:11 -0400
-In-Reply-To: <53EB1681.9040602@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guodong Xu <guodong.xu@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On 08/13/14 00:40, Chanwoo Choi wrote:
-> Dear Randy,
-> 
-> Thanks for your report.
-> 
-> I catched this issue. So, I fix this bug already. You can check it on following url:
-> - http://git.kernel.org/cgit/linux/kernel/git/chanwoo/extcon.git/commit/?h=extcon-test&id=5e519b04db6c5b42f8d8ee246c16903c130b5fd5
-> 
+--Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-linux-next of 20140815 still has this build error.
-Please get this patch into linux-next.
+Hi all,
 
-Thanks.
+After merging the regulator tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> 
-> Best Regards,
-> Chanwoo Choi
-> 
-> On 08/13/2014 04:22 PM, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix build errors in extcon-sm5502.c by making EXTCON_SM5502 depend
->> on I2C since it selects REGMAP_I2C.  The build errors happen when
->> CONFIG_I2C=m and CONFIG_EXTCON_SM5502=y. This Kconfig change causes
->> CONFIG_EXTCON_SM5502 to be =m when CONFIG_I2C=m.
->>
->> drivers/built-in.o: In function `regmap_smbus_byte_reg_read':
->> regmap-i2c.c:(.text+0x5030a): undefined reference to `i2c_smbus_read_byte_data'
->> drivers/built-in.o: In function `regmap_smbus_byte_reg_write':
->> regmap-i2c.c:(.text+0x50338): undefined reference to `i2c_smbus_write_byte_data'
->> drivers/built-in.o: In function `regmap_smbus_word_reg_read':
->> regmap-i2c.c:(.text+0x50356): undefined reference to `i2c_smbus_read_word_data'
->> drivers/built-in.o: In function `regmap_smbus_word_reg_write':
->> regmap-i2c.c:(.text+0x50384): undefined reference to `i2c_smbus_write_word_data'
->> drivers/built-in.o: In function `regmap_i2c_read':
->> regmap-i2c.c:(.text+0x503cf): undefined reference to `i2c_transfer'
->> drivers/built-in.o: In function `regmap_i2c_gather_write':
->> regmap-i2c.c:(.text+0x50442): undefined reference to `i2c_transfer'
->> drivers/built-in.o: In function `regmap_i2c_write':
->> regmap-i2c.c:(.text+0x50474): undefined reference to `i2c_master_send'
->> drivers/built-in.o: In function `sm5502_muic_i2c_init':
->> extcon-sm5502.c:(.init.text+0x6630): undefined reference to `i2c_register_driver'
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc:	MyungJoo Ham <myungjoo.ham@samsung.com>
->> Cc:	Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/extcon/Kconfig |    1 +
->>  1 file changed, 1 insertion(+)
->>
->> Index: linux-next-20140813/drivers/extcon/Kconfig
->> ===================================================================
->> --- linux-next-20140813.orig/drivers/extcon/Kconfig
->> +++ linux-next-20140813/drivers/extcon/Kconfig
->> @@ -72,6 +72,7 @@ config EXTCON_PALMAS
->>  
->>  config EXTCON_SM5502
->>  	tristate "SM5502 EXTCON support"
->> +	depends on I2C
->>  	select IRQ_DOMAIN
->>  	select REGMAP_I2C
->>  	select REGMAP_IRQ
->>
-> 
-> --
+drivers/regulator/mc13892-regulator.c: In function 'mc13892_regulator_probe=
+':
+drivers/regulator/mc13892-regulator.c:586:3: error: assignment of member 's=
+et_mode' in read-only object
+   =3D mc13892_vcam_set_mode;
+   ^
+drivers/regulator/mc13892-regulator.c:588:3: error: assignment of member 'g=
+et_mode' in read-only object
+   =3D mc13892_vcam_get_mode;
+   ^
 
+Caused by commit 272e2315fac3 ("regulator: core: add const qualifier to
+ops in struct regulator_desc").
 
--- 
-~Randy
+I have used the regulator tree from next-20140815 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT8ROMAAoJEMDTa8Ir7ZwV76gP/3h90zs4R51iGI5ZLxaGRqte
+vMgWMM2RbpkoYX5ykrHi9JGq87MNq1j94Exban1n98qiVNJoEeg/16yBlsl2Nuhu
+x1L45/hmIugHUCx5Mi2cA3CwElOVQk6oLDy5JjPDUTyNH1C2JjhusxeoFnWY5/t0
+AwQoiU+GNVB9lE8DR+wTHlBz1WstaLfsE/SPRyZJixSNEhALkrJUod7ziFBAn1Xy
+BjCsIw8sdTffofkLICT/HVMqIN37nbbjQ9VA/DH88MCrBB9gOexlCAmg/o/S2I5q
+U8PvlG/444qDIa2LE/lk8cKRCvaAWConVcjzIokQZYv1QgUyK3Bz6SQ2Kk2od9eu
+gM75/YPqYJsVrftihYON4d3iH4eaY1D6WNbamPbFgxOQ6DxYjNkexttaxez7unfi
+3sglHGEY7oudHHPTkAsRzTRN8/50uSRHnaNEmvwtExuhWC5LyoyDhKpuAsHxZ6NP
+gjyepFkQtLearqEWTdnOmQKfDaRvsMsAByUuL4NUNUy+RhfGSzpoB2r6W9Xz2G0S
++dXj8cVwcFWqkYXegGZhRatl5UJuJYlWvywnC+9xwN2ZkScfZrxGHsvkcbuqQxCT
+pi8g2+jKpELeV1Dp3LsrzbuJ9DThMG471bQzCgBZjO6KHJBsVdb63kkk2AtfnWMe
+JDllRqdOMwt91GwVLby+
+=8GQn
+-----END PGP SIGNATURE-----
+
+--Sig_/Ij2SYyJw9Ag=p+pmA+EF9ko--
