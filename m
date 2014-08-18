@@ -1,60 +1,93 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 18
-Date: Mon, 18 Aug 2014 13:52:02 +1000
-Message-ID: <20140818135202.41cd38b3@canb.auug.org.au>
-References: <20140818133259.3d1182fd@canb.auug.org.au>
+From: Sean Cross <xobs@kosagi.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 18 Aug 2014 14:51:15 +0800
+Message-ID: <53F1A263.3030000@kosagi.com>
+References: <20140818083055.7cedc567@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9Wj+JPu6gU5f5QD8.qOZNip"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="UWcA2x7OoOob6L110NhwJC1Q6iPTe9WU9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60351 "EHLO ozlabs.org"
+Received: from mail1.g1.pair.com ([66.39.3.162]:24069 "EHLO mail1.g1.pair.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751716AbaHRDwK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Aug 2014 23:52:10 -0400
-In-Reply-To: <20140818133259.3d1182fd@canb.auug.org.au>
+	id S1751903AbaHRG5f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Aug 2014 02:57:35 -0400
+In-Reply-To: <20140818083055.7cedc567@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/9Wj+JPu6gU5f5QD8.qOZNip
-Content-Type: text/plain; charset=US-ASCII
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--UWcA2x7OoOob6L110NhwJC1Q6iPTe9WU9
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Mon, 18 Aug 2014 13:32:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On 08/18/14 06:30, Stephen Rothwell wrote:
+> Hi all,
 >
-> Please do not add code intended for v3.18 until after v3.17-rc1 is
-> released.
+> After merging the sound-asoc tree, today's linux-next build (powerpc al=
+lyesconfig)
+> failed like this:
+>
+> sound/soc/fsl/imx-pcm-fiq.c:31:21: fatal error: asm/fiq.h: No such file=
+ or directory
+>  #include <asm/fiq.h>
+>                      ^
+>
+> Caused by commit 7e7292dba215 ("ASoC: fsl: add imx-es8328 machine
+> driver").  Presumably it will only build on arm?
+>
+> I reverted that commit for today.
+The following patch should fix the problem:
 
-Which it is, of course ...
+diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+index c0ace69..13199b5 100644
+--- a/sound/soc/fsl/Kconfig
++++ b/sound/soc/fsl/Kconfig
+@@ -237,8 +237,6 @@ config SND_SOC_IMX_ES8328
+     select SND_SOC_IMX_PCM_DMA
+     select SND_SOC_IMX_AUDMUX
+     select SND_SOC_FSL_SSI
+-    select SND_SOC_FSL_UTILS
+-    select SND_SOC_IMX_PCM_FIQ
+     help
+       Say Y if you want to add support for the ES8328 audio codec connec=
+ted
+       via SSI/I2S over either SPI or I2C.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+That gives it almost the exact same kernel config as the SGTL5000.
 
---Sig_/9Wj+JPu6gU5f5QD8.qOZNip
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Is this the sort of thing you can apply on your end, or would you like
+me to resubmit a v12 with just this file?  I'm afraid I don't have a PPC
+toolchain to test with.
+
+
+Sean
+
+
+--UWcA2x7OoOob6L110NhwJC1Q6iPTe9WU9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
+Comment: Using GnuPG with Icedove - http://www.enigmail.net/
 
-iQIcBAEBCAAGBQJT8XhmAAoJEMDTa8Ir7ZwVcOIP/2NrRNn2GeWrpvlVf9xoBmFt
-BtQOHE8evQr6vQR29IAgEtD1s+nOhiwUapREPMlmEzyusrt4LK77DHUm/U/FSnc2
-fAFl+kabQ4Qr2FsLJXgHXSMCCdpvWdReqnVqNpNG7ikG/QWQOs/VPbl2vhouD3mJ
-tHsO+1MBGUDMniM0NTA6UWiPqnyLeNKESVWojH0FSZm2YlDnDRL58Lbs/ljePEJq
-8gRnAUWz1ZstMJPhW7mhQftzPqLenvitK2EpAIySvNLLBP9xmPfd9waaoQP6vQBj
-mW2AE0h/HRhavfbl6UrSLI9NR02Pr0wlXHu4p5elEwf17t7D/0eq/gOSI/nnRoNS
-3RVdpo1bhfkmj7BimzuxfH9Vk1tnUT7k0wtqE17IzBGbnkViWO+SGiX+RR/C3XB7
-Yg9/9LWRXGRwy8KPB39NRU7pcAmh033S5X8wbRJWhgSjtjdZPuRVgyqjx4+9b7WI
-WYXgFqCz5WlnpLzc58BcHUXEcrZi3XF6wLwLpe6GakYxnpiIZxGXz5KGsgctCSyw
-UFruUAvRHOsWDsGaFRc32sF3yuYSCE/w+q2foZqyzjSEBi16+JMEor2xhfxQr3K0
-7vp2PzpAYo/MCg13wHDfEERG164aSlxQCMXlrLE/uRNhy1QGDpW3ScNnBWrYa0kL
-LRm6Z+A6ybtij4sRsMDM
-=fy2f
+iQIcBAEBAgAGBQJT8aJtAAoJEKuwFcVr1hraIi4P/1gfbYC2+ti2OfMNvPQZ+pon
+FTC0qTDWSaOSh9lo9Guh68tr3PuBXlugE6tMs0ihHPuGneBpm27z4BnWw37Co840
+cPLymJvCssUQFniH2B9PyyVBuDMsJ5s9N6vPZpusUWrq2hjJJZt2hNaKCxb/MRfl
+fGlxcigfV7lUoI+WN5Cwl+cucHTO8+V5S5/E/bx3yNpR6FD3ouBjr/Ejx34bfOlf
+Gic1q0pTamvUy15ZbFSjVIJ9Eeg4CPNbkF0E4IcfPl9Rz2ti6MzrAIkyiZWTDiuT
+xPPvKD42eBvUcyS+Q3Qalx2+s2QX2+YYIaMFyf2Pp7hPonLZ89MSz+ZVvn+v1If4
+17fpWhOhAIUiTHrrXffSIWxS7dhWcAcUK00QNhta1pqy3ICTKaivvVjhF/xXMAZK
+EJCyvvTPAunph6LRDUGSvvNlJbVuHP6p8l2ZWjBz1Vw+2vnfGnWoG0xiC5nMnoTj
+DZiNT23yWBI3SQN1T19+RStxyy6HUDJZ4WHDy/UzCFz+YVq0osIc23kN8xXA0xI9
+Jq5ykuFpWkpD+7mVubQ0h8FM3BgA4KE2yTojd5FCh5QIDswdJWpx45A+hr4v3NKW
+Jpe/qykIMkUsluoG0S8v/VAwDDmII9FUSVotgaIjAZW3brr83lovsA5dGVu5pATA
+/SD64C4Vi8Z7XC5jYym+
+=8aEr
 -----END PGP SIGNATURE-----
 
---Sig_/9Wj+JPu6gU5f5QD8.qOZNip--
+--UWcA2x7OoOob6L110NhwJC1Q6iPTe9WU9--
