@@ -1,44 +1,59 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 18
-Date: Tue, 19 Aug 2014 08:24:26 -0700
-Message-ID: <20140819152426.GA19665@roeck-us.net>
-References: <20140818133259.3d1182fd@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] regmap: fix of_regmap_get_endian()
+Date: Tue, 19 Aug 2014 10:34:51 -0500
+Message-ID: <20140819153451.GB24407@sirena.org.uk>
+References: <1408400044-2560-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:41283 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752925AbaHSPYg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Aug 2014 11:24:36 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48847 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752096AbaHSPfw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Aug 2014 11:35:52 -0400
 Content-Disposition: inline
-In-Reply-To: <20140818133259.3d1182fd@canb.auug.org.au>
+In-Reply-To: <1408400044-2560-1-git-send-email-swarren@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Xiubo Li <Li.Xiubo@freescale.com>
 
-On Mon, Aug 18, 2014 at 01:32:59PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Please do not add code intended for v3.18 until after v3.17-rc1 is
-> released.
-> 
-> Changes since 20140815:
-> 
-> The sound-asoc tree gained a build failure for which I reverted a commit.
-> 
-> The regulator tree gained a build failure so I used the verison from
-> next-20140815.
-> 
-> The staging tree gained a build failure for which I applied a fix patch.
-> 
-> Non-merge commits (relative to Linus' tree): 1010
->  955 files changed, 25072 insertions(+), 21100 deletions(-)
-> 
-Something in this tree appears to be completely broken. All my qemu tests
-fail with it. It _seems_ that the problem is related to either mount related
-or to locking related code. Someone might want to have a look. Given that
-all of my runtime tests crash, it is probably easy to reproduce by just
-trying to load an image on an x86 system.
 
-Guenter
+--TakKZr9L6Hm6aLOc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Aug 18, 2014 at 04:14:04PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> Commit d647c199510c ("regmap: add DT endianness binding support") has
+> some issues. Specifically, if config->reg_format_endian is not explicitly
+> set, it will be zero, i.e. REGMAP_ENDIAN_DEFAULT. The switch statement
+
+Please respin this against current code, as Xiubo said Javier fixed some
+of this already.
+
+--TakKZr9L6Hm6aLOc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT826YAAoJELSic+t+oim9564P/1X7X+dE/fgXtYF8HbAjPg8M
+FEE9PXIj/YlGTqu8to5ZSeemMd8gVyGKqH6EQ40+OHfd8EADi98sfD46gZ/dqb8P
+0ZzGZ8fxKAo34AZ7bmD6QOG6zUeJ7aGiW73DrluKVFzYpPpblMLtbWqHL8A05kL9
+ALfsszbpwiaoSQfKoKa1gaufd4DwkEM7nrx7Hok7ayUHWOf/YJRRZ7Fr0bB4PPLs
+UHcaJYAK/6Y5koVyejSx7gRsCxiAk7xtLs3Yo5sH6nuzeLxYweEg6vCNVP5o9Z5p
+OVnE4g5qaY1ZiWMJfJQIsYwxJ9oqhrDKYaksws0Fv4wbF3vd0UKtGlkAwMUxjNBZ
+o6DJxRONvxGdjYMKtZEgIaiznFuslor5PIxpYHicl/2IzGiFFyI4+RVTeoopYxMX
+eIa13DY/c4oiV9KZF6VTxxVVAT6XE6MAorYhvbCMKGbEKaJZlpKCq6zkpA0mbp13
+IXFx6UVtb/BTcLYTjgWTzEUbYK0P6mg2FbvQ4BxgoWmHXkUqid1rdG3H3cDPN/vI
+ztA2IsMOwlwBWICF/ZoWirJ3LpkESkc0mt1ZpNQ+AQ4j04ih5nZcydxXMsNExYTG
+5ghrPABrTgpCL7jMKgPiKtrZSEh74lybh1+sSmS+3v2rhm7M0t7+sqS1UAtsgLE2
+YalOYJEijYx/NA8Lh70t
+=++yZ
+-----END PGP SIGNATURE-----
+
+--TakKZr9L6Hm6aLOc--
