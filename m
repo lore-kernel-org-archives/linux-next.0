@@ -1,168 +1,65 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V2] regmap: of_regmap_get_endian() cleanup
-Date: Tue, 19 Aug 2014 10:49:07 -0600
-Message-ID: <1408466947-26593-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Aug 18
+Date: Wed, 20 Aug 2014 04:42:44 +1000
+Message-ID: <20140820044244.7e58b9f3@canb.auug.org.au>
+References: <20140818133259.3d1182fd@canb.auug.org.au>
+	<20140819152426.GA19665@roeck-us.net>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/G5rjfs3RlvrBIW00zLx65/m"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:53657 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751151AbaHSQsw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Aug 2014 12:48:52 -0400
+Received: from ozlabs.org ([103.22.144.67]:58264 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753355AbaHSSmz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Aug 2014 14:42:55 -0400
+In-Reply-To: <20140819152426.GA19665@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Xiubo Li <Li.Xiubo@freescale.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+--Sig_/G5rjfs3RlvrBIW00zLx65/m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Commit d647c199510c ("regmap: add DT endianness binding support") had
-some issues. Commit ba1b53feb8ca ("regmap: Fix DT endianess parsing
-logic") fixed the main problem. This patch fixes the other.
+Hi Guenter,
 
-Specifically, restore the overall default of REGMAP_ENDIAN_BIG if none of
-the config, DT, or the bus specify any endianness. Without this,
-of_regmap_get_endian() could return REGMAP_ENDIAN_DEFAULT, which the
-calling code can't handle. Since all busses do specify an endianness in
-the current code, this makes no difference right now, but I saw no
-justification in the patch description for removing this final default.
+On Tue, 19 Aug 2014 08:24:26 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> Something in this tree appears to be completely broken. All my qemu tests
+> fail with it. It _seems_ that the problem is related to either mount rela=
+ted
+> or to locking related code. Someone might want to have a look. Given that
+> all of my runtime tests crash, it is probably easy to reproduce by just
+> trying to load an image on an x86 system.
 
-Also, clean up the code a bit:
+Hopefully you are seeing what will be fixed by Hugh Dickins' patch in
+today's linux-next.
 
-* s/of_regmap_get_endian/regmap_get_endian/ since the function isn't DT-
-  specific, even if the reason it was originally added was to add some
-  DT-specific features.
-* After potentially reading an endianess specification from DT, the code
-  checks whether DT did specify an endianness, and if so, returns it. Move
-  this test outside the whole switch statement so that if the
-  REGMAP_ENDIAN_REG case ever modifies *endian, this check will pick that
-  up. This partially reverts part of commit ba1b53feb8ca ("regmap: Fix DT
-  endianess parsing logic"), while maintaining the bug-fix that commit
-  made to this code.
-* Make the comments briefer, and only refer to the specific action taken
-  at their location. This makes most of the comments independent of DT,
-  and easier to follow.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Cc: Xiubo Li <Li.Xiubo@freescale.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Thierry Reding <treding@nvidia.com>
-Fixes: d647c199510c ("regmap: add DT endianness binding support")
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-V2: Rebase on Javier's earlier fix, amend commit description due to this.
+--Sig_/G5rjfs3RlvrBIW00zLx65/m
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
- drivers/base/regmap/regmap.c | 54 ++++++++++++++++----------------------------
- 1 file changed, 20 insertions(+), 34 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 055a9c3a3b12..bb4502a48be5 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -454,7 +454,7 @@ enum regmap_endian_type {
- 	REGMAP_ENDIAN_VAL,
- };
- 
--static int of_regmap_get_endian(struct device *dev,
-+static int regmap_get_endian(struct device *dev,
- 				const struct regmap_bus *bus,
- 				const struct regmap_config *config,
- 				enum regmap_endian_type type,
-@@ -465,15 +465,7 @@ static int of_regmap_get_endian(struct device *dev,
- 	if (!endian || !config)
- 		return -EINVAL;
- 
--	/*
--	 * Firstly, try to parse the endianness from driver's config,
--	 * this is to be compatible with the none DT or the old drivers.
--	 * From the driver's config the endianness value maybe:
--	 *   REGMAP_ENDIAN_BIG,
--	 *   REGMAP_ENDIAN_LITTLE,
--	 *   REGMAP_ENDIAN_NATIVE,
--	 *   REGMAP_ENDIAN_DEFAULT.
--	 */
-+	/* Retrieve the endianness specification from the regmap config */
- 	switch (type) {
- 	case REGMAP_ENDIAN_REG:
- 		*endian = config->reg_format_endian;
-@@ -485,31 +477,17 @@ static int of_regmap_get_endian(struct device *dev,
- 		return -EINVAL;
- 	}
- 
--	/*
--	 * If the endianness parsed from driver config is
--	 * REGMAP_ENDIAN_DEFAULT, that means maybe we are using the DT
--	 * node to specify the endianness information.
--	 */
-+	/* If the regmap config specified a non-default value, use that */
- 	if (*endian != REGMAP_ENDIAN_DEFAULT)
- 		return 0;
- 
--	/*
--	 * Secondly, try to parse the endianness from DT node if the
--	 * driver config does not specify it.
--	 * From the DT node the endianness value maybe:
--	 *   REGMAP_ENDIAN_BIG,
--	 *   REGMAP_ENDIAN_LITTLE,
--	 */
-+	/* Parse the device's DT node for an endianness specification */
- 	switch (type) {
- 	case REGMAP_ENDIAN_VAL:
- 		if (of_property_read_bool(np, "big-endian"))
- 			*endian = REGMAP_ENDIAN_BIG;
- 		else if (of_property_read_bool(np, "little-endian"))
- 			*endian = REGMAP_ENDIAN_LITTLE;
--
--		if (*endian != REGMAP_ENDIAN_DEFAULT)
--			return 0;
--
- 		break;
- 	case REGMAP_ENDIAN_REG:
- 		break;
-@@ -517,10 +495,11 @@ static int of_regmap_get_endian(struct device *dev,
- 		return -EINVAL;
- 	}
- 
--	/*
--	 * Finally, try to parse the endianness from regmap bus config
--	 * if in device's DT node the endianness property is absent.
--	 */
-+	/* If the endianness was specified in DT, use that */
-+	if (*endian != REGMAP_ENDIAN_DEFAULT)
-+		return 0;
-+
-+	/* Retrieve the endianness specification from the bus config */
- 	switch (type) {
- 	case REGMAP_ENDIAN_REG:
- 		if (bus && bus->reg_format_endian_default)
-@@ -534,6 +513,13 @@ static int of_regmap_get_endian(struct device *dev,
- 		return -EINVAL;
- 	}
- 
-+	/* If the bus specified a non-default value, use that */
-+	if (*endian != REGMAP_ENDIAN_DEFAULT)
-+		return 0;
-+
-+	/* Use this if no other value was found */
-+	*endian = REGMAP_ENDIAN_BIG;
-+
- 	return 0;
- }
- 
-@@ -640,13 +626,13 @@ struct regmap *regmap_init(struct device *dev,
- 		map->reg_read  = _regmap_bus_read;
- 	}
- 
--	ret = of_regmap_get_endian(dev, bus, config, REGMAP_ENDIAN_REG,
--				   &reg_endian);
-+	ret = regmap_get_endian(dev, bus, config, REGMAP_ENDIAN_REG,
-+				&reg_endian);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	ret = of_regmap_get_endian(dev, bus, config, REGMAP_ENDIAN_VAL,
--				   &val_endian);
-+	ret = regmap_get_endian(dev, bus, config, REGMAP_ENDIAN_VAL,
-+				&val_endian);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--- 
-1.9.1
+iQIcBAEBCAAGBQJT85qpAAoJEMDTa8Ir7ZwVkuYP/iBg+eZtXzqibU5eJ2WNwEQ0
+ztAkG3kqm20zvnx7/TaMN86pYzht5lvlo+MIC+zRqX2PkD251QUvPieiMQ8vqQWk
+oD5ezgfnkBrQghbKRL3wYLOhka5xtZcARJPwSoyHoHVn/owuMYsR5Qv2Cg9PkDce
+zpHa9gwbgvmsMLmo4vf9RD9c8eVtJ5loinjT1dIZxyUs/dswSanjJsLirsA+Z+a7
+I9xWcPG39w2Mtjp8VOlQTjsyYZAc2FmE50r8ght/DvEeheaIOFIkSNIFE2QIMDEG
+fOo/1MlX3giRdUdfoc/ZZ7/+XzBRW8MzKuZ47fzekUvmkT8Vsce8Ez25R/K/AKIl
+5E85kRX5JM+9JBEO+Qcyo1dIFraquYr/U4TUx62L88xkF9QzDyuhSKZYAVQaylH2
+RQPB4/I9JX3JWFXzYbX3mR799rtkGlBICW0qKJPSijr2Y6f9Vsbcx8JF6kZVH8yA
+GENSrMf2fAcDjGNzMSLfMD9r+lkyQwWdGLZho00erXJDux/sJvsXQgsISw1NvWV9
+6LdZwY5YIwrxTigMAJyRqBxKACKBmZlFlexH/29wJD9xAzZZSyLqr7z45hcIL4Uv
+bakAW4zBm/ushbwOhbOz1EPsLD2hGZQTHGHk1rR7jSTXvgWxRWrCmllLjnsqUO1S
+At6yu/+f9E2lxAuYPPDT
+=myqo
+-----END PGP SIGNATURE-----
+
+--Sig_/G5rjfs3RlvrBIW00zLx65/m--
