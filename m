@@ -1,32 +1,64 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] regmap: fix of_regmap_get_endian()
-Date: Tue, 19 Aug 2014 10:14:45 -0600
-Message-ID: <53F377F5.4080304@wwwdotorg.org>
-References: <1408400044-2560-1-git-send-email-swarren@wwwdotorg.org> <20140819153451.GB24407@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfsd tree
+Date: Wed, 20 Aug 2014 02:38:44 +1000
+Message-ID: <20140820023844.6077bc09@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8XoK80TkjC+kg8vn50vRVzX"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:36217 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752244AbaHSQO0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Aug 2014 12:14:26 -0400
-In-Reply-To: <20140819153451.GB24407@sirena.org.uk>
+Received: from ozlabs.org ([103.22.144.67]:59007 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752055AbaHSQi4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Aug 2014 12:38:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Xiubo Li <Li.Xiubo@freescale.com>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@primarydata.com>
 
-On 08/19/2014 09:34 AM, Mark Brown wrote:
-> On Mon, Aug 18, 2014 at 04:14:04PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> Commit d647c199510c ("regmap: add DT endianness binding support") has
->> some issues. Specifically, if config->reg_format_endian is not explicitly
->> set, it will be zero, i.e. REGMAP_ENDIAN_DEFAULT. The switch statement
->
-> Please respin this against current code, as Xiubo said Javier fixed some
-> of this already.
+--Sig_/8XoK80TkjC+kg8vn50vRVzX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sure. For some reason, my email client's search for of_regmap_get_endian 
-didn't find the message even though that word is part of it:-/
+Hi,
+
+After merging the nfsd tree, today's linux-next build (powerpc ppc64_defcon=
+fig)
+failed like this:
+
+net/sunrpc/svc_xprt.c: In function 'svc_recv':
+net/sunrpc/svc_xprt.c:776:20: error: 'current_task' undeclared (first use i=
+n this function)
+   rqstp->rq_task =3D current_task;
+                    ^
+
+Caused by commit 983c684466e0 ("SUNRPC: get rid of the request wait
+queue").
+
+I have used the nfsd tree from next-20140818 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/8XoK80TkjC+kg8vn50vRVzX
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT832aAAoJEMDTa8Ir7ZwVMLkP/jHZdr10FRoGt8xXc8klOICs
+IAiKitVsMTs2MqJEzckM/S3mu26ATT973WRrXkubxW7qUNoO9gCSylbUUXdbwaTy
+thy3apTIKvTtLs+uHn1WzWWmmxR8/rYFCL07W0nFjibMqcH0pKv2MZMvA/jbg/hA
+rsex0gd0DA18sZG7r/+ohibYAUFpNYRQYCe4jPWEne4RFQdDzozEcUEn2Lhd/bIj
+DRORT8mmod5c7fzfZ+W8/ivhlIT475034O6rZev/smB0xsx/I6+6lGpwZk4KxD6y
+QyBT/1YeR6HQ6UTj4QX2f7udgYGH+8vEsXkOMu8s16Hh2AAeDA8Aw8o5EAgVUgnU
+w30ohLCcK5D2aWqOwF9qk8XxDhLc3YhxJuMNWG61l47jE8pc/9WO6bJg8wLutc+W
+6TF+NBJkadUQOTLSQob39Ky8B7sEwC/b0uEGibdxneF9bgCM3LTWUYbvpbBQTM2o
+HziUfszoUlW3j1+dgSF3FwDAiaknK5Tl/ZrAwKkLJW+EG5QKJu+K8dlMynvcqeff
+yhu81YaV6cFwl71QyQgjHqCKHM19GaCKWxgy2y6FluhLOIfQU7wp3rQWMT4OCRHl
+4gUquR1SYIuUCUyNBugHt1XChhwa7xKD3LV0tBqTkb9p9BPyr4oEsLd6gH56YCo4
+gIEFxppm5TvcTBZDxj0N
+=mH3E
+-----END PGP SIGNATURE-----
+
+--Sig_/8XoK80TkjC+kg8vn50vRVzX--
