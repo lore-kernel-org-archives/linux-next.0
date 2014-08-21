@@ -1,78 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: linux-next: Tree for Aug 20
-Date: Fri, 22 Aug 2014 00:34:40 +1000
-Message-ID: <20140822003440.3ffc15c4@canb.auug.org.au>
+Date: Thu, 21 Aug 2014 09:52:42 -0500
+Message-ID: <20140821145242.GJ24407@sirena.org.uk>
 References: <20140820061703.6128f99c@canb.auug.org.au>
-	<20140820155222.GA24407@sirena.org.uk>
-	<5248cecd-03f6-407b-a4a7-1d2989ee0469@email.android.com>
+ <20140820155222.GA24407@sirena.org.uk>
+ <5248cecd-03f6-407b-a4a7-1d2989ee0469@email.android.com>
+ <20140822003440.3ffc15c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//DV0sjgtgZ_yO/WorxD6JRr"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uLcrxnkzOGy8pA6s"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53088 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750729AbaHUOey (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Aug 2014 10:34:54 -0400
-In-Reply-To: <5248cecd-03f6-407b-a4a7-1d2989ee0469@email.android.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53178 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751016AbaHUOxC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Aug 2014 10:53:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20140822003440.3ffc15c4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_//DV0sjgtgZ_yO/WorxD6JRr
-Content-Type: text/plain; charset=US-ASCII
+
+--uLcrxnkzOGy8pA6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+On Fri, Aug 22, 2014 at 12:34:40AM +1000, Stephen Rothwell wrote:
+> On Wed, 20 Aug 2014 13:53:56 -0500 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
 
-On Wed, 20 Aug 2014 13:53:56 -0500 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On August 20, 2014 10:52:22 AM CDT, Mark Brown <broonie@kernel.org> wrote:
-> >On Wed, Aug 20, 2014 at 06:17:03AM +1000, Stephen Rothwell wrote:
-> >
-> >> The sound-asoc tree still had its build failure for which I reverted
-> >> a commit.
-> >
-> >Are you sure about this?  There's a bunch of updates to the tree
-> >including one that's supposed to have fixed the build failure on
+> > >Are you sure about this?  There's a bunch of updates to the tree
+> > >including one that's supposed to have fixed the build failure on
 > >PowerPC
-> >which haven't made it into the tree, was there a problem with the fetch
-> >perhaps?  I just checked and cgit says I pushed 23 hours ago so it
-> >doesn't look like a problem with the push.
->=20
-> I thought I checked, but I may have missed it, sorry.  I will check again=
- before the next linux-next.
+> > >which haven't made it into the tree, was there a problem with the fetch
+> > >perhaps?  I just checked and cgit says I pushed 23 hours ago so it
+> > >doesn't look like a problem with the push.
+> >=20
+> > I thought I checked, but I may have missed it, sorry.  I will check aga=
+in before the next linux-next.
 
-The fix appears to be there today, but I dont; think it was for the
-previous linux-next.  Does it matter that I am currently in Chicago
-(despite what the date on this email says :-))?  I guess I must have
-fetched your tree earlier than you may have expected.
+> The fix appears to be there today, but I dont; think it was for the
+> previous linux-next.  Does it matter that I am currently in Chicago
+> (despite what the date on this email says :-))?  I guess I must have
+> fetched your tree earlier than you may have expected.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Right, that's why I checked that the push really had been the day before
+as I had expected before I mailed - I'm in Chicago too.  Very odd.
 
---Sig_//DV0sjgtgZ_yO/WorxD6JRr
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--uLcrxnkzOGy8pA6s
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT9gOJAAoJEMDTa8Ir7ZwV754P/2JWu0tPnDrgzm15djkNcjqt
-ruRk9ZCz//8sJ/s+uUYDePLnZapnQnwcOW5LktmdYd01gW2iokDoG7yo9m+HYQ9d
-sLYNc0Hlkf8fcc0pi8k9KcNLun001EE+EXuMAE4/Eu6kE6mt7Q5JOFSwCR4j4orb
-pitTm74K+hqWePZkMeAaGT3D8FowwZcXvHE+HCtyZF5wYLATvWPSym9KvpdpeAZa
-pwVojVGdT9uUXA3PapWbjEMHl0t2ioP/SXT34ywyiAWHhgJUNZ7cnuwQg0lB3W70
-iGlM2Or+pKcv9eK1TJXTbLwBZMroe5/eJLK8Q2ypfCYhzYVN2RWpkz5a1XNaYY+t
-T9fKo3yKy79tnB2CWGqEkcNWpeN0+hqbDTl0Uud5n+bIanhy6zy2v4c4FVb+LA8Y
-DBoQdTQI4ig+8aLXQI7tDlQk3fyjSk+AH9ovEugbTxEgPUTvBEBv30US912ixqFK
-x7nyXlsmmZyBquYNCFeqogpjdjg8kPSMrMqGdrBqR+nM5kv4LX3Ao0Dp2DTSmbud
-UWK4z/AM3fABqsMGuqeUecYPB1mUt01c37pNRS6HkqvxYFMN1905XIkyGJ4NQHTO
-DJLcSqoSHQdzqpet2Xk4SQCe9Q8YrFneEfrmnqgKGd+4bcRAE+SWaMndBPIAjn2q
-yuF443FFWBXLa8Hp5qnA
-=/N6o
+iQIcBAEBAgAGBQJT9ge3AAoJELSic+t+oim9AOYP/0FfywmN4PXhiVOFp7eFhPsc
+Pi95quB2iNO1koWnTOuzW8VLVrv1stmJ2f22DxXUJgXGcCntmi4zxlGDT7B9QurA
+85Ix1LB0oBOqFR0xElW2qeTPVMtkrWphqOvKCgvpe5eZh8MWZR2Ro5Su3/J2ZCKM
+1hcDYaZOxwMVVvHiDzREJwcISRJsIS2MLzfJSz9WsEwU2eRBAKjzf6xnIZ9XMZBg
+EE647wTkLFySPEe6O7p7oGAhSbBZ0NqED+lgIM0PGGMQoxO1prf6zqb65J6Th8au
+5HD1sMr1pBVLnef5hnYmu//BmnLdZ3rbJ6uVmU98Ah2rghPnYRd8jVMhqnjLBcKk
+MKV22qMAfwFgHYaelGxJhpRphDtg+CJGxQqX2dV6R0BbJBGOrtdZgAaybkLFajbX
+KW2i8/ZAPGwnZ6fgUk1WpV5vrVK7VsXYYbg4S7VpqNuf2Q/fmnyyHTTO+TW4hE9p
+X0joaalAa6UEaUpd0XwyILiJNCn8kioF/VpkNsqATmOwBxk3GonN34Zt0nZFTAWo
+xWLJDNhdqYehRnyWL2GlL/xPCtDW2F0dnSTsgjN+SBcGQRj8EGAbk9YgBN9Z97ef
+FEd0IytkM4gIIbw6jvQvyZRG84plnQKFaKl2GWL/radl7bZkb+GOg1Z71zW13+78
+1aDCs/YiKb3z9bOm0/nt
+=EBHL
 -----END PGP SIGNATURE-----
 
---Sig_//DV0sjgtgZ_yO/WorxD6JRr--
+--uLcrxnkzOGy8pA6s--
