@@ -1,59 +1,78 @@
-From: Mark Brown <broonie@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Aug 20
-Date: Wed, 20 Aug 2014 10:52:22 -0500
-Message-ID: <20140820155222.GA24407@sirena.org.uk>
+Date: Fri, 22 Aug 2014 00:34:40 +1000
+Message-ID: <20140822003440.3ffc15c4@canb.auug.org.au>
 References: <20140820061703.6128f99c@canb.auug.org.au>
+	<20140820155222.GA24407@sirena.org.uk>
+	<5248cecd-03f6-407b-a4a7-1d2989ee0469@email.android.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9aHjqRFB8NC1b71K"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//DV0sjgtgZ_yO/WorxD6JRr"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51410 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751744AbaHTQ3Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2014 12:29:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20140820061703.6128f99c@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:53088 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750729AbaHUOey (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Aug 2014 10:34:54 -0400
+In-Reply-To: <5248cecd-03f6-407b-a4a7-1d2989ee0469@email.android.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Sig_//DV0sjgtgZ_yO/WorxD6JRr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---9aHjqRFB8NC1b71K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Mark,
 
-On Wed, Aug 20, 2014 at 06:17:03AM +1000, Stephen Rothwell wrote:
+On Wed, 20 Aug 2014 13:53:56 -0500 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On August 20, 2014 10:52:22 AM CDT, Mark Brown <broonie@kernel.org> wrote:
+> >On Wed, Aug 20, 2014 at 06:17:03AM +1000, Stephen Rothwell wrote:
+> >
+> >> The sound-asoc tree still had its build failure for which I reverted
+> >> a commit.
+> >
+> >Are you sure about this?  There's a bunch of updates to the tree
+> >including one that's supposed to have fixed the build failure on
+> >PowerPC
+> >which haven't made it into the tree, was there a problem with the fetch
+> >perhaps?  I just checked and cgit says I pushed 23 hours ago so it
+> >doesn't look like a problem with the push.
+>=20
+> I thought I checked, but I may have missed it, sorry.  I will check again=
+ before the next linux-next.
 
-> The sound-asoc tree still had its build failure for which I reverted
-> a commit.
+The fix appears to be there today, but I dont; think it was for the
+previous linux-next.  Does it matter that I am currently in Chicago
+(despite what the date on this email says :-))?  I guess I must have
+fetched your tree earlier than you may have expected.
 
-Are you sure about this?  There's a bunch of updates to the tree
-including one that's supposed to have fixed the build failure on PowerPC
-which haven't made it into the tree, was there a problem with the fetch
-perhaps?  I just checked and cgit says I pushed 23 hours ago so it
-doesn't look like a problem with the push.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---9aHjqRFB8NC1b71K
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_//DV0sjgtgZ_yO/WorxD6JRr
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT9MQtAAoJELSic+t+oim9b/QP/Rjlm9TTwFF8iQMeQCJfa9IV
-jj/3wsIxlnRgcC4GQz8Nx3gYQsS/rIixD9XtlhwhcdCj21DtpD+yILSHez+y/nvb
-HiiHj/j3Re1HaBF8cPmA05J8GXwx6B2mMH7+LWv4xSaK51sIIDAGxcCd1LAD32DP
-0o3AVq+wttc9FT43FrRfGdT1RvqqsFHeook4Cop6VSIQJV2ja9qK6C6YaMhJbbUD
-vtOijiKfRYYB04CJoPbxYiA8HYib0D8oyPm4DqWIOWgDiKQPZHe/Uh8Ew9fgbaBh
-Te/f3aPowomq3IVQK6A9d7YyyO9Ncx/19JHdnEDu/1asQ3PJW4thWISyxCj2s0Fm
-h5CuiJh+AB1RanSxKeUAK6mlbuMPICPbOeLE0tXwu0aNfPbncyFF7aXb2G9Dll4Z
-NfK5n14zHkcTNqzta1q4vDAdce8vy8XjLBaVwzMdZ6aOwQGFgodmaAYg9k++OiMo
-+4qRVcw6JAnNWQOCckM6+giTKb8Dh0kSk4Ise+Buv/FRVG9RAiAcIY7B6Vp92hKC
-dYAhco2QGUMm3+/ptnyoYsq9UgTthP9LikuVeHrIk28sTPbAbYBI2Ea9fyNEe9D1
-gPEPim462NpUWvGEUuybpC3noigxmlgxO6iELz2KS92hkJ6Z/7kjSw/eLe+6oLea
-Hq8cR8/NUOpEm3cpH0/A
-=QEM1
+iQIcBAEBCAAGBQJT9gOJAAoJEMDTa8Ir7ZwV754P/2JWu0tPnDrgzm15djkNcjqt
+ruRk9ZCz//8sJ/s+uUYDePLnZapnQnwcOW5LktmdYd01gW2iokDoG7yo9m+HYQ9d
+sLYNc0Hlkf8fcc0pi8k9KcNLun001EE+EXuMAE4/Eu6kE6mt7Q5JOFSwCR4j4orb
+pitTm74K+hqWePZkMeAaGT3D8FowwZcXvHE+HCtyZF5wYLATvWPSym9KvpdpeAZa
+pwVojVGdT9uUXA3PapWbjEMHl0t2ioP/SXT34ywyiAWHhgJUNZ7cnuwQg0lB3W70
+iGlM2Or+pKcv9eK1TJXTbLwBZMroe5/eJLK8Q2ypfCYhzYVN2RWpkz5a1XNaYY+t
+T9fKo3yKy79tnB2CWGqEkcNWpeN0+hqbDTl0Uud5n+bIanhy6zy2v4c4FVb+LA8Y
+DBoQdTQI4ig+8aLXQI7tDlQk3fyjSk+AH9ovEugbTxEgPUTvBEBv30US912ixqFK
+x7nyXlsmmZyBquYNCFeqogpjdjg8kPSMrMqGdrBqR+nM5kv4LX3Ao0Dp2DTSmbud
+UWK4z/AM3fABqsMGuqeUecYPB1mUt01c37pNRS6HkqvxYFMN1905XIkyGJ4NQHTO
+DJLcSqoSHQdzqpet2Xk4SQCe9Q8YrFneEfrmnqgKGd+4bcRAE+SWaMndBPIAjn2q
+yuF443FFWBXLa8Hp5qnA
+=/N6o
 -----END PGP SIGNATURE-----
 
---9aHjqRFB8NC1b71K--
+--Sig_//DV0sjgtgZ_yO/WorxD6JRr--
