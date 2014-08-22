@@ -1,85 +1,72 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the pwm tree
-Date: Sat, 23 Aug 2014 00:15:54 +0200
-Message-ID: <20140822221540.GC24037@mithrandir>
+Date: Sat, 23 Aug 2014 08:30:09 +1000
+Message-ID: <20140823083009.395b76ba@canb.auug.org.au>
 References: <20140823070737.371f09fb@canb.auug.org.au>
- <20140822220610.GB24037@mithrandir>
+	<20140822220610.GB24037@mithrandir>
+	<20140822221540.GC24037@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qjNfmADvan18RZcF"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/MOGe435veQ=+x4MA_=C8=F9"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:47572 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751913AbaHVWP6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Aug 2014 18:15:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20140822220610.GB24037@mithrandir>
+Received: from ozlabs.org ([103.22.144.67]:44574 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751882AbaHVWaS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2014 18:30:18 -0400
+In-Reply-To: <20140822221540.GC24037@mithrandir>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-
---qjNfmADvan18RZcF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/MOGe435veQ=+x4MA_=C8=F9
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 23, 2014 at 12:06:16AM +0200, Thierry Reding wrote:
-> On Sat, Aug 23, 2014 at 07:07:37AM +1000, Stephen Rothwell wrote:
-> > Hi Thierry,
+Hi Thierry,
+
+On Sat, 23 Aug 2014 00:15:54 +0200 Thierry Reding <thierry.reding@gmail.com=
+> wrote:
+>
+> On Sat, Aug 23, 2014 at 12:06:16AM +0200, Thierry Reding wrote:
 > >=20
-> > After merging the pwm tree, today's linux-next build (powerpc allyescon=
-fig)
-> > failed like this:
-> >=20
-> > drivers/pwm/pwm-lpss.c: In function 'pwm_lpss_config':
-> > drivers/pwm/pwm-lpss.c:81:2: error: implicit declaration of function 'r=
-eadl' [-Werror=3Dimplicit-function-declaration]
-> >   ctrl =3D readl(lpwm->regs + PWM);
-> >   ^
-> > drivers/pwm/pwm-lpss.c:87:2: error: implicit declaration of function 'w=
-ritel' [-Werror=3Dimplicit-function-declaration]
-> >   writel(ctrl, lpwm->regs + PWM);
-> >   ^
-> >=20
-> > Caused by commit 28160b18787b ("pwm: lpss: Properly split driver to
-> > parts").
-> >=20
-> > I have reverted that commit for today (and 06c7b5394e21 ("pwm: lpss:
-> > pci: Move to use pcim_enable_device()") which depends on it).
+> > Ugh, that's unfortunate. I have a set of scripts I use to build-test
+> > before pushing, but I don't usually do full allyesconfig builds. It
+> > seems like pwm-lpss.c might only be missing a linux/io.h include. It
+> > will likely be Monday before I find the time to properly test and fix
+> > this, do you want me to remove the commits from the pwm/for-next branch
+> > so you don't have to revert it again?
 >=20
-> Ugh, that's unfortunate. I have a set of scripts I use to build-test
-> before pushing, but I don't usually do full allyesconfig builds. It
-> seems like pwm-lpss.c might only be missing a linux/io.h include. It
-> will likely be Monday before I find the time to properly test and fix
-> this, do you want me to remove the commits from the pwm/for-next branch
-> so you don't have to revert it again?
+> Just confirmed that adding a linux/io.h include fixes the build. Will
+> push a fix in a minute.
 
-Just confirmed that adding a linux/io.h include fixes the build. Will
-push a fix in a minute.
+The revert would have happened automatically, but if it is fixed I will
+remove it, thanks.
 
-Thierry
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---qjNfmADvan18RZcF
-Content-Type: application/pgp-signature
+--Sig_/MOGe435veQ=+x4MA_=C8=F9
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT98EMAAoJEN0jrNd/PrOhxNEQAKAuhTODMFZKeZKSTQfJI8Ck
-KbofA4MZTvsAtQb1BqS3uev5HY84OOddnAk4YI+T+0cdFCOgY6yrWFPWs7R9ejf/
-WfZViMt4c06xs/137UCORLCkl+SOzhDDwaWnI5emEERaKPhqOXcnsxTJHQ5I97Zu
-aRjDkJW08SP0BRNWAZ3MKmmWcJW1qrTBHtZ6sveNTVtOGZDF5DMdwQoQ85IhAa+x
-enxvueqWf2e3JDf6sOiIq+0NfHHF9uC/Kj5omqGzN+wskYGMEn7aIljcr8RYUuWh
-MmUuiTuJxchE2ek5C1AjdjYMfH82FUUze7rzqF0EdIW8huCC7KTVM5iRiGjNeX4z
-W1FzSVy3GvvUzSlj0vG+2TlxWYjLWPCPGojhKNgDyqqdDk6fgUcfvWgo272Fo+Ys
-4DPF638T3NyZBZ12v9AQEhN0hpI2je/KPafLipOZ03OSOzGIU0QlAqUdSwd/keFJ
-Ss1ZRUnQFYMJtA9t+ptjMtqcq8fLQSj4AXDk8S4h4mAueURQnIgd14F5r90TNeV+
-3p2fdVDt2WF8OqFjqt4a2n6iK/qJwE2p4XAXp4yLDfoO8UpIWqDKiWPjoe0awx4y
-Efr9Nb73TqiNOZMlxD5zv24dnaQSXz5NrXU7+ytD1CWYopOS9nihdYZjUT2xFjMb
-vl2YPRp/BF4EF63Uzn/P
-=dcys
+iQIcBAEBCAAGBQJT98R2AAoJEMDTa8Ir7ZwVlkQP/iSTJqq6u2QKmyxanFkdKe/L
+AcRM9Nc0puC4SlKaZrSMhsfKI80cC/+RQ+0Slr92qkZLaXPxh3FnXo7dYxQHd4EK
+zmS+anS1sOIkEZzhafxRhMbIBMgm1678Y4FtDEdyceFfSiEBClp9N7OWehma3BrG
+AZOWPeRAWXvguFJDKAAycZUG46KnUrNAb50ZYdexCOGPq/7idCVjI36dh5Ce8AIg
+bpKj3VoHyo/N97pn2IIIZoymf5RuJU10CWgpio0hWsuLSwLVqQDTMVEOKU8r4fuE
+xwuIYb0sA4arzmRDge9/duloqzOfPoQyonPOL2zi2oET1tswGUNhWh8oNXTSWrj5
+k/LwGBATN7bKSnH1avs39huC+Z+XaWAJose7JJV1RcTSSPR4gDn8CF41A2XF4a2R
+b5N+aojG+oNOvbqPGzUqv45sqsgHD5c0sx1MvGXMtb++1VEezrksyKqU+WsYNUeT
+AoIhRsFd0GUJkL9OY9KofPogSdMaw8IoXT5z7bqeXrckXKdDntD1OyXITQouyTDf
+p1GgQRrx7i/pEwntihJ0hrlI4o3yp1Ritnh1X29yhInF/J7OC4R3xVWJTZ5Ph+2y
+x8nOL+ru4cb+hoN2eNV7zWmCJA6TpolanafvoQnH8yzUExnpdeeG/Ti1vKEz6Y92
+JEOKTnTxSHQqtffmkd4z
+=BsEz
 -----END PGP SIGNATURE-----
 
---qjNfmADvan18RZcF--
+--Sig_/MOGe435veQ=+x4MA_=C8=F9--
