@@ -1,51 +1,76 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Fri, 22 Aug 2014 20:09:20 +0100
-Message-ID: <20140822190920.GX4266@lee--X1>
-References: <20140823025616.690f0c83@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ usb-gadget-fixes tree
+Date: Sat, 23 Aug 2014 05:57:23 +1000
+Message-ID: <20140823055723.1bbfe099@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/rc0cu0JvMw0tHyCs4nlw.GE"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:65263 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750831AbaHVTJZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Aug 2014 15:09:25 -0400
-Received: by mail-ie0-f179.google.com with SMTP id rl12so7034301iec.38
-        for <linux-next@vger.kernel.org>; Fri, 22 Aug 2014 12:09:24 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20140823025616.690f0c83@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:35332 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751149AbaHVT5f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2014 15:57:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Felipe Balbi <balbi@ti.com>Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-On Sat, 23 Aug 2014, Stephen Rothwell wrote:
+--Sig_/rc0cu0JvMw0tHyCs4nlw.GE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Lee,
->=20
-> After merging the mfd tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->=20
-> ERROR: "wm8994_base_regmap_config" [drivers/mfd/wm8994-core.ko] undef=
-ined!
-> ERROR: "wm8994_irq_init" [drivers/mfd/wm8994-core.ko] undefined!
-> ERROR: "wm1811_regmap_config" [drivers/mfd/wm8994-core.ko] undefined!
-> ERROR: "wm8958_regmap_config" [drivers/mfd/wm8994-core.ko] undefined!
-> ERROR: "wm8994_regmap_config" [drivers/mfd/wm8994-core.ko] undefined!
->=20
-> Presumably caused by commit a3ee6a4e2729 ("mfd: wm8994: Allow modular
-> build").
->=20
-> I have used the mfd tree from next-20140822 for today.
+Hi Felipe,
 
-I fixed this at 10 o'clock this morning?
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/phy/phy-samsung-usb.h between commit bbc66e140bab ("usb:
+phy: samsung: Fix wrong bit mask for PHYPARAM1_PCS_TXDEEMPH") from the
+usb-gadget-fixes tree and commit 0dafc3d94596 ("usb: phy: samsung:
+Remove unnecessary lines of register bit definitions") from the
+usb-gadget tree.
 
-When did you pull?
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/usb/phy/phy-samsung-usb.h
+index 80eedd45a20a,4eef45555971..000000000000
+--- a/drivers/usb/phy/phy-samsung-usb.h
++++ b/drivers/usb/phy/phy-samsung-usb.h
+@@@ -215,8 -185,7 +185,7 @@@
+  #define PHYPARAM0_REF_LOSLEVEL			(0x9 << 26)
+ =20
+  #define EXYNOS5_DRD_PHYPARAM1			(0x20)
+-=20
+ -#define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x1f << 0)
+ +#define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x3f << 0)
+  #define PHYPARAM1_PCS_TXDEEMPH			(0x1c)
+ =20
+  #define EXYNOS5_DRD_PHYTERM			(0x24)
+
+--Sig_/rc0cu0JvMw0tHyCs4nlw.GE
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT96CoAAoJEMDTa8Ir7ZwVqfwP/2B8DG6SFvJO0GuOxEo7YnOS
+p3JUf9ss/k5AV0cG6/t29mOVNcpmOHOXFnG+FdjNuMD7evlGKZAnTWejho93J9qn
+rCc7Vlfd1sd1TWIowUY9R5eWft+jxwktusBRkX3fzTYwWml4M/S3TClWjH+BeqWs
+5De8/fFnoYyI3+A0AAxQMThP4juJxUwXNl5Y1xec+Ow9VeSTPCbqdzz1lsNuZlUb
+g92rX7UxN94wuUDnlpzqyQLqEKVv+Zqjw501Gd4u/VW+uF/ZHvFMDnVIEfbjxthI
+fKlDKygA6XfbZQBRl6pqvS/yU7aGidkdXzQ8zzPJueaauSvnOQmWAkzZxhyJWtU4
+ADdctDHL/AIIaetnM8t/s9xF7+ZoFPqqByuv+a451W76ddcYkLZh/jcKkL88Df+L
+X1ET0YyoAgFfBqqgwFRbqo1/hj2aAu69GNkE5exG21ytgrXQ+n//e6wizvZQ7FTw
+5/2wC2TnHry+dl5/hHWImIY8t/aSJffHUXvV3HOBnNM/hYvcOFmfRObgR+w5avW3
+o9yyjcpV1foloQe16M+QmShTYOcrarH68pnPX81v25szDDvVnL4jLPi52IILisU8
+5rY45c7LQwVIbBz5oUz6w0dCkK79O+8tJBEShjUItf5eAdJiLxyOi1XXjtTjFYay
+wE+4bfpts3/ftbx+tWXv
+=vKZ3
+-----END PGP SIGNATURE-----
+
+--Sig_/rc0cu0JvMw0tHyCs4nlw.GE--
