@@ -1,60 +1,55 @@
-From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Subject: [PATCH linux-next] irq: export handle_fasteoi_irq
-Date: Fri, 22 Aug 2014 01:31:20 +0200
-Message-ID: <1408663880-29179-1-git-send-email-vincent.stehle@laposte.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: error while fetching the mips tree
+Date: Sat, 23 Aug 2014 00:59:25 +1000
+Message-ID: <20140823005925.159d4f58@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/E720twxdUSFEDsuo=BWFulU"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6-g21.free.fr ([212.27.42.6]:25827 "EHLO smtp6-g21.free.fr"
+Received: from ozlabs.org ([103.22.144.67]:53511 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753161AbaHUXbg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Aug 2014 19:31:36 -0400
+	id S1756303AbaHVO7i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2014 10:59:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Thomas Gleixner <tglx@linutronix.de>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Export handle_fasteoi_irq to be able to use it in e.g. the Zynq gpio dr=
-iver
-since commit 6dd859508336 ("gpio: zynq: Fix IRQ handlers").
+--Sig_/E720twxdUSFEDsuo=BWFulU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This fixes the following link issue:
+Hi Ralf,
 
-  ERROR: "handle_fasteoi_irq" [drivers/gpio/gpio-zynq.ko] undefined!
+Fetching the mips tree produces this error:
 
-Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
----
+fatal: unable to connect to git.linux-mips.org:
+git.linux-mips.org[0: 78.24.191.183]: errno=3DConnection refused
 
-Hi,
-
-This can be seen in Linux next-20140822 with e.g. arm allmodconfig.
-
-Zync gpio seems to be the first code to use handle_fasteoi_irq, which c=
-an be
-compiled as a module.
-
-Best regards,
-
-V.
-
- kernel/irq/chip.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index a2b28a2..6223fab 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -517,6 +517,7 @@ out:
- 		chip->irq_eoi(&desc->irq_data);
- 	raw_spin_unlock(&desc->lock);
- }
-+EXPORT_SYMBOL_GPL(handle_fasteoi_irq);
-=20
- /**
-  *	handle_edge_irq - edge type IRQ handler
 --=20
-2.1.0.rc1
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/E720twxdUSFEDsuo=BWFulU
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT91rTAAoJEMDTa8Ir7ZwVoFMP/3yDxCI0blArLTPK9J8SgvqD
+HvESmLwG6WOjlQn2lltCQD0qvEQ1HzGXLZFteZEqdEOKIuu2/idDTpzyUNqlk4sE
+6WRSTL2szbzFAEebhQ1DrXoAcdqDFMSwFeKJh7FC74+YaDaJiMlZzW+DbFvrfET7
+7LTAyltFo8m05kr687N24N2yBFUULn7Zsrdk92MXLjtTX/KzcBxAuazp+Djwsgtj
+K7C/R5u0Fo2lYN7sl0Mhdss6o8HEwukM00wvfeolf3Ydpshg9p5EcWdWTli/AvuY
+i70XL9l8qAfr8ct+fyqPBcXQTnYEiNEgJVjL+Q9D7weyh0QaC9OFNdOlaMYNcblF
+qqgqaWyrHIG0oOueMA9X95R2usRmnYHxgqO4GWqKU+pzoWr4RV3yB5dFHHWOv12m
+3o7vGgG7V+GKVehwldBQRhTxJLDydrhqU+M66A8vUYlXuUzXRrP7jlQ8wntc3kUt
+0gCI8o/SFTe1D64hTtXNspLwFruI72s3XelKzpD0lZO/D8TG9OGiqGJvUk8NVWhP
+0bXQ+28wxvD89HMhbp5xt1QhsQOqEYBOWOkDsHK91LZWzJIAABAf+KALogNGZVcg
+E+Dlc0kcQUdwkoyvg2tMHm1ZYog3xdcIDQo8o32ypRXx405HoCi2lfgjazF56Hr9
+AQ4ojZhugiIWFF3G9kfj
+=pOF9
+-----END PGP SIGNATURE-----
+
+--Sig_/E720twxdUSFEDsuo=BWFulU--
