@@ -1,55 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: error while fetching the mips tree
-Date: Sat, 23 Aug 2014 00:59:25 +1000
-Message-ID: <20140823005925.159d4f58@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Sat, 23 Aug 2014 02:56:16 +1000
+Message-ID: <20140823025616.690f0c83@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/E720twxdUSFEDsuo=BWFulU"; protocol="application/pgp-signature"
+ boundary="Sig_/uAeledwA1CpxMp_vKkXO66_"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53511 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36447 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756303AbaHVO7i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Aug 2014 10:59:38 -0400
+	id S932959AbaHVQ4Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2014 12:56:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
---Sig_/E720twxdUSFEDsuo=BWFulU
+--Sig_/uAeledwA1CpxMp_vKkXO66_
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Lee,
 
-Fetching the mips tree produces this error:
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-fatal: unable to connect to git.linux-mips.org:
-git.linux-mips.org[0: 78.24.191.183]: errno=3DConnection refused
+ERROR: "wm8994_base_regmap_config" [drivers/mfd/wm8994-core.ko] undefined!
+ERROR: "wm8994_irq_init" [drivers/mfd/wm8994-core.ko] undefined!
+ERROR: "wm1811_regmap_config" [drivers/mfd/wm8994-core.ko] undefined!
+ERROR: "wm8958_regmap_config" [drivers/mfd/wm8994-core.ko] undefined!
+ERROR: "wm8994_regmap_config" [drivers/mfd/wm8994-core.ko] undefined!
 
+Presumably caused by commit a3ee6a4e2729 ("mfd: wm8994: Allow modular
+build").
+
+I have used the mfd tree from next-20140822 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/E720twxdUSFEDsuo=BWFulU
+--Sig_/uAeledwA1CpxMp_vKkXO66_
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT91rTAAoJEMDTa8Ir7ZwVoFMP/3yDxCI0blArLTPK9J8SgvqD
-HvESmLwG6WOjlQn2lltCQD0qvEQ1HzGXLZFteZEqdEOKIuu2/idDTpzyUNqlk4sE
-6WRSTL2szbzFAEebhQ1DrXoAcdqDFMSwFeKJh7FC74+YaDaJiMlZzW+DbFvrfET7
-7LTAyltFo8m05kr687N24N2yBFUULn7Zsrdk92MXLjtTX/KzcBxAuazp+Djwsgtj
-K7C/R5u0Fo2lYN7sl0Mhdss6o8HEwukM00wvfeolf3Ydpshg9p5EcWdWTli/AvuY
-i70XL9l8qAfr8ct+fyqPBcXQTnYEiNEgJVjL+Q9D7weyh0QaC9OFNdOlaMYNcblF
-qqgqaWyrHIG0oOueMA9X95R2usRmnYHxgqO4GWqKU+pzoWr4RV3yB5dFHHWOv12m
-3o7vGgG7V+GKVehwldBQRhTxJLDydrhqU+M66A8vUYlXuUzXRrP7jlQ8wntc3kUt
-0gCI8o/SFTe1D64hTtXNspLwFruI72s3XelKzpD0lZO/D8TG9OGiqGJvUk8NVWhP
-0bXQ+28wxvD89HMhbp5xt1QhsQOqEYBOWOkDsHK91LZWzJIAABAf+KALogNGZVcg
-E+Dlc0kcQUdwkoyvg2tMHm1ZYog3xdcIDQo8o32ypRXx405HoCi2lfgjazF56Hr9
-AQ4ojZhugiIWFF3G9kfj
-=pOF9
+iQIcBAEBCAAGBQJT93Y1AAoJEMDTa8Ir7ZwVSukP/3mY5dG9zShuOzutAiSLtz9n
+zjvXdz66ImfJ879QpfGS+UuwSjyHdjG0z4qv+8gnmbqi6jFMQNS0tr88nHyM1Nau
+rInetyZd8JVr362p22GIFhg/Z22PlViVRK2lz9JxZPFYlz0DG099d3K0nbEKP4GB
+fEjQjdKEkiTrv/2dZ3js4i/teAhsl+yJZz/0K1NoIFfbybK6/0WG8H8J0CNnaz2K
+hqxJ3n01tV5M7Zn5ZSc4Dr4LBln6gxZRF+l56NyKtXUGErnBSHvw9yMw8Anp5Lok
+8/1ZuRs+KjAxNi5VJMvmpXOyCF3fImDNOh3fjWfunfea28w9sHJgNtD+rAnc5wGZ
+NtVVMmMsP4285zkQ6rqnr3DW3aw4jNRLp/pkdLlt/umHTsph6hWy2DQFu1P4UWI5
+Go8qEtxlCS+VGOZaPLvAtGJ9GZKKGWY9cR7sp7+ViH4EdcNMOKsWq+K8VgmtbyLO
+C6jnhGnxmqlFA8W9sRsN5cmXD8Y719DSfb10dgn9IHQvimSSyseOETiupMpy4ZUR
+NdoJ8wG680rruzCl76R2Pjuyl8MeQnmE+vq0EM6exmB7SrQNK3QG+MshFTsC3Yyq
+1H53G99DF1O07XwnuTrBKV1ESLq3qZdP6fO4kQsccAz0vzXZ8brU8aUzGJJ8oFuf
+XBSku2AFYBNHnW+lcmJk
+=w5rS
 -----END PGP SIGNATURE-----
 
---Sig_/E720twxdUSFEDsuo=BWFulU--
+--Sig_/uAeledwA1CpxMp_vKkXO66_--
