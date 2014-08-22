@@ -1,69 +1,68 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with the
- usb-gadget-fixes tree
-Date: Fri, 22 Aug 2014 15:48:41 -0500
-Message-ID: <20140822204841.GK27616@saruman.home>
-References: <20140823055723.1bbfe099@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pwm tree
+Date: Sat, 23 Aug 2014 07:07:37 +1000
+Message-ID: <20140823070737.371f09fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="73fGQZLCrFzENemP"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//nJ0M/NQMUUAeP11+vmtLNn"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:51063 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751809AbaHVUs4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Aug 2014 16:48:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20140823055723.1bbfe099@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:46318 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751234AbaHVVHt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2014 17:07:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
---73fGQZLCrFzENemP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_//nJ0M/NQMUUAeP11+vmtLNn
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 23, 2014 at 05:57:23AM +1000, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> Today's linux-next merge of the usb-gadget tree got a conflict in
-> drivers/usb/phy/phy-samsung-usb.h between commit bbc66e140bab ("usb:
-> phy: samsung: Fix wrong bit mask for PHYPARAM1_PCS_TXDEEMPH") from the
-> usb-gadget-fixes tree and commit 0dafc3d94596 ("usb: phy: samsung:
-> Remove unnecessary lines of register bit definitions") from the
-> usb-gadget tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi Thierry,
 
-Thank you, I'll fix it up the same way once my fixes branch is merged
-upstream :-)
+After merging the pwm tree, today's linux-next build (powerpc allyesconfig)
+failed like this:
 
+drivers/pwm/pwm-lpss.c: In function 'pwm_lpss_config':
+drivers/pwm/pwm-lpss.c:81:2: error: implicit declaration of function 'readl=
+' [-Werror=3Dimplicit-function-declaration]
+  ctrl =3D readl(lpwm->regs + PWM);
+  ^
+drivers/pwm/pwm-lpss.c:87:2: error: implicit declaration of function 'write=
+l' [-Werror=3Dimplicit-function-declaration]
+  writel(ctrl, lpwm->regs + PWM);
+  ^
+
+Caused by commit 28160b18787b ("pwm: lpss: Properly split driver to
+parts").
+
+I have reverted that commit for today (and 06c7b5394e21 ("pwm: lpss:
+pci: Move to use pcim_enable_device()") which depends on it).
 --=20
-balbi
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---73fGQZLCrFzENemP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_//nJ0M/NQMUUAeP11+vmtLNn
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT96ypAAoJEIaOsuA1yqREFFwP/2fq8sm5yDmmrra+YseEi6kQ
-ZvPJlJwb6RWsZc/uXbUUIXYd9kUZZTSW2k2Vb49RmLkTjE6k6JCcMrpL4nMXc472
-Mx3k3qx6e22CrRtdsVf1NLx77g1H8kxkkCc6NaXb7yvVw7bOx6sSRzdrHLKC8oGa
-gPClEeLL/LneYbjGnu1CEhecMT1nleElbmgSwaoLZTl6t2xEq/zkMZNWrEfeL77L
-b4XsIMedz9Fw6ux9pydQHS8+qhlcIePR4UL6fu8+1pwCGBzhhpal/oSRpKu77Oeh
-jA0cEcM5kRgfCYNGVoboQogwMtjj1fy+caTifeK5v7BlbcLi+9ogENRHlfXK5v4Q
-0ftrw9LS4mXZouz2GEbQdEqRoyS8nr6Dp3HyB1FyO0LLtDYrraTmCapEn77uPhL+
-9wZshWKRxdY8lWbSG5ealY35GA7qEOzm1uAaTyOEmgJmis5UXpOm2KeUOOKmP3iZ
-E9SKaRApJzYTG1mpNyijvFfcIkYSyEs9XYvTXougS2PelT70FhakbqXuRjxI8jr4
-DgHL8Fir4G34hgXFfw+lXaBJX75TRKI8zrq8o0LQE+2sB72MPD2w+GUfjCfXFxST
-UkXichwuf1q0xcf2JRXzj0come7IOFoQ/fORzV4oE+Ea66dWMzIf90SZHhvt0Gsu
-FR/ShkNzRy32a9lcgm+T
-=9FJy
+iQIcBAEBCAAGBQJT97EfAAoJEMDTa8Ir7ZwVzxQP/2Sqz8OZeTj9FEoHFydq5dKx
+yiu2CTJQFL4xxuOHZyZq4rqzhRlGvTyqupPi2pDKGXHLMZxx2pyfvdmV9X2YpAz/
+eCZJOwqEzZj3FbEvxmh2/PP7eDi30gm7hpHpPTpxculsDPscTmJN0c3DTulQUSBn
+2sYCG0M3kA1uXV3exUC9PnEr4xfwZ89BWQF9Gpvtq7LYZZ2gPE4xSX1XiJ3L7beV
+Eb1pSYpu6e70Gzo00v2bs9XtUbMikenD8O7sA06N0eYlLVzmMWOn50y8u7tyzmwY
+wPvpFRCLCwmzz/Hfg5qZNWdg+gnqUoKep2Gi4RiVH+FM3N9O2rIimKNzSOkqNZnb
+B6Zxek9HMsr5aM/DBH9kUbDIEb+dPtzo0pCun9XMbS4PCJ2QGRM04yApfJ3Y2Upt
+C7rD4XHI9SxXOyFNDWsDGBZSY7qXnrdZNht/uCXLmIV7xiaomOsL7OcqmOk8LJVu
+R3KBRQ1zhwFFF5O7A4mTSQ20JWapVXRH4vQZCdeekPAkjvdfrkFIW2zMKuGwiTm1
+ic3ZF79bTt3OOsN343Up/T4iKUI1wmL/AsEoLI/nz/BtE5xg44K/PDwhW7BG0kNo
+laSIV5Mc0hsZ+jk0lTPlybrGVNSSR5FDf+c13lk/bQAvtHS+6wc65BU1TEycCRlK
+pC6DfkGqueRpYuaB25a1
+=MTop
 -----END PGP SIGNATURE-----
 
---73fGQZLCrFzENemP--
+--Sig_//nJ0M/NQMUUAeP11+vmtLNn--
