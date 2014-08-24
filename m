@@ -1,33 +1,43 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH linux-next] irq: export handle_fasteoi_irq
-Date: Sun, 24 Aug 2014 22:17:40 +0200
-Message-ID: <4865705.6YRejgXUhp@wuerfel>
-References: <1408663880-29179-1-git-send-email-vincent.stehle@laposte.net>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: arm64 audit build failures in -next
+Date: Sun, 24 Aug 2014 16:35:34 -0400
+Message-ID: <1408912534.4481.1.camel@localhost>
+References: <E1XLCyO-0007E5-P1@cassiel.sirena.org.uk>
+	 <20140823155043.GM24407@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1408663880-29179-1-git-send-email-vincent.stehle@laposte.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Vincent =?ISO-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:12498 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752750AbaHXUgM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Aug 2014 16:36:12 -0400
+In-Reply-To: <20140823155043.GM24407@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Richard Guy Briggs <rgb@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-audit@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
 
-On Friday 22 August 2014 01:31:20 Vincent Stehl=E9 wrote:
-> Export handle_fasteoi_irq to be able to use it in e.g. the Zynq gpio =
-driver
-> since commit 6dd859508336 ("gpio: zynq: Fix IRQ handlers").
->=20
-> This fixes the following link issue:
->=20
->   ERROR: "handle_fasteoi_irq" [drivers/gpio/gpio-zynq.ko] undefined!
->=20
-> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@laposte.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
->=20
+I just pushed a clean copy of Linus' tree to my audit tree.  So my API
+change is gone when he next pull for -next.  I'm on vacation this week
+and really wanted to get it fixed right before I left.  It didn't
+happen.  when I push a new tree into next I will pick up the arm audit
+patch and fix the api in my tree.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+-Eric
 
-I saw the same thing here and came up with the same fix.
+On Sat, 2014-08-23 at 10:50 -0500, Mark Brown wrote:
+> On Sat, Aug 23, 2014 at 04:11:20PM +0100, Build bot for Mark Brown wrote:
+> 
+> > 	arm64-allmodconfig
+> > ../arch/arm64/kernel/ptrace.c:1120:3: error: too many arguments to function 'audit_syscall_entry'
+> 
+> This has now been broken in -next for about a month with a fix available
+> and since the merge window the arm64 audit support is in mainline so the
+> fix can be directly applied without cross tree issues (the audit changes
+> didn't get sent during the merge window).  Catalin and Will have also
+> indicated that they want to remove the workaround that's in -next
+> currently to allow defconfig to build which would make the situation
+> even more pressing.
+> 
+> Do we have any idea when it will be possible to get a fix into -next?
