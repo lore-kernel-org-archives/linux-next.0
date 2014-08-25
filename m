@@ -1,75 +1,39 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 23
-Date: Sun, 24 Aug 2014 21:57:41 -0700
-Message-ID: <20140825045741.GA29723@roeck-us.net>
-References: <20140823080422.7895575c@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Aug 25
+Date: Sun, 24 Aug 2014 22:21:35 -0700
+Message-ID: <20140825052135.GA1878@roeck-us.net>
+References: <20140825145133.019ca740@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:47762 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751780AbaHYE5t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2014 00:57:49 -0400
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:38571 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751197AbaHYFVj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2014 01:21:39 -0400
 Content-Disposition: inline
-In-Reply-To: <20140823080422.7895575c@canb.auug.org.au>
+In-Reply-To: <20140825145133.019ca740@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 23, 2014 at 08:04:22AM +1000, Stephen Rothwell wrote:
+On Mon, Aug 25, 2014 at 02:51:33PM +1000, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Changes since 20140822:
+> Changes since 20140823:
 > 
-> The mfd tree gained a build failure so I used the version from
+> The mfd tree still had its build failure so I used the version from
 > next-20140822.
 > 
-> The usb-gadget tree gained a conflict against the usb-gadget-fixes tree.
-> 
-> The pwm tree gained a build failure for which I reverted a couple of
-> commits.
+> The pwm tree last its build failure.
 > 
 > The staging tree still had its build failure for which I applied a
 > fix patch.
 > 
-> Non-merge commits (relative to Linus' tree): 1435
->  1372 files changed, 34371 insertions(+), 25442 deletions(-)
+> Non-merge commits (relative to Linus' tree): 1539
+>  1489 files changed, 40632 insertions(+), 27956 deletions(-)
 > 
 
-Images build from this tree crash in mips, mips64, and sparc64 qemu tests
-with memory allocation errors. For mips, bisect points to commit ef31563e950c
-(locking,arch,mips: Fold atomic_ops).
-
-# bad: [eeed658b5a92d957aab7bdb7c469a90016420c7d] Add linux-next specific files for 20140823
-# good: [7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9] Linux 3.17-rc1
-git bisect start 'HEAD' 'v3.17-rc1'
-# good: [a364ac83d553cd223cf1b898a738594f866242ac] Merge remote-tracking branch 'input/next'
-git bisect good a364ac83d553cd223cf1b898a738594f866242ac
-# bad: [6804e0868ce1f5f55a16270de65587e35b80231e] Merge remote-tracking branch 'usb-gadget/next'
-git bisect bad 6804e0868ce1f5f55a16270de65587e35b80231e
-# bad: [8590e100eca66f5763b4c8a5775e38e4a0c9939d] Merge branch 'x86/xsave'
-git bisect bad 8590e100eca66f5763b4c8a5775e38e4a0c9939d
-# good: [e71e79457b79a52827039d9d7f253321bfd342bd] perf symbols: Don't demangle parameters and such by default
-git bisect good e71e79457b79a52827039d9d7f253321bfd342bd
-# bad: [100b1cb29333c8ac37e68025b291e4b273c8ad43] Merge branch 'locking/core'
-git bisect bad 100b1cb29333c8ac37e68025b291e4b273c8ad43
-# bad: [c6470150dff9aff682063890c9b8eac71b695def] locking,arch,sh: Fold atomic_ops
-git bisect bad c6470150dff9aff682063890c9b8eac71b695def
-# good: [50f853e38b0b90a5703ab14b70e20eb5a8ccd5de] locking,arch,hexagon: Fold atomic_ops
-git bisect good 50f853e38b0b90a5703ab14b70e20eb5a8ccd5de
-# good: [d6dfe2509da935a15583cace7cd3837b1e8addef] locking,arch,metag: Fold atomic_ops
-git bisect good d6dfe2509da935a15583cace7cd3837b1e8addef
-# bad: [e69a0ef76627005e3e83d0e086e6bb1d247bb65b] locking,arch,mn10300: Fold atomic_ops
-git bisect bad e69a0ef76627005e3e83d0e086e6bb1d247bb65b
-# bad: [ef31563e950c60bb41b97c2b61c32de874f3c949] locking,arch,mips: Fold atomic_ops
-git bisect bad ef31563e950c60bb41b97c2b61c32de874f3c949
-# first bad commit: [ef31563e950c60bb41b97c2b61c32de874f3c949] locking,arch,mips: Fold atomic_ops
-
-Reverting the first bad commit fixes the problem for mips and mips64.
-
-For sparc64, given the above, I did not bother to bisect, but just reverted
-commit 4f3316c (locking,arch,sparc: Fold atomic_ops). This fixes the problem
-for sparc64.
+Quick test shows same problems (and fixes) as with 8/23 tree.
 
 Guenter
