@@ -1,46 +1,32 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build warnings after merge of the crypto tree
-Date: Tue, 26 Aug 2014 14:38:12 +0800
-Message-ID: <20140826063812.GA3555@gondor.apana.org.au>
-References: <20140826161456.7ad100e3@canb.auug.org.au>
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Tue, 26 Aug 2014 10:40:48 +0400
+Message-ID: <20140826064048.GA3063@moon>
+References: <20140826163502.33a837fc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.apana.org.au ([209.40.204.226]:51491 "EHLO
-	helcar.apana.org.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752889AbaHZGiS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2014 02:38:18 -0400
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:49045 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757182AbaHZGkv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2014 02:40:51 -0400
 Content-Disposition: inline
-In-Reply-To: <20140826161456.7ad100e3@canb.auug.org.au>
+In-Reply-To: <20140826163502.33a837fc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephan Mueller <smueller@chronox.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Vagin <avagin@openvz.org>, Serge Hallyn <serge.hallyn@canonical.com>
 
-On Tue, Aug 26, 2014 at 04:14:56PM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
+On Tue, Aug 26, 2014 at 04:35:02PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> After merging the crypto tree, today's linux-next build (powerpc
-> ppc44x_defconfig, i386 defconfig and sparc defconfig) produced these
-> warnings:
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> In file included from crypto/testmgr.c:30:0:
-> include/crypto/drbg.h: In function 'drbg_max_addtl':
-> include/crypto/drbg.h:157:2: warning: left shift count >= width of type
->   return (1UL<<35);
->   ^
-> include/crypto/drbg.h: In function 'drbg_max_requests':
-> include/crypto/drbg.h:163:2: warning: left shift count >= width of type
->   return (1UL<<48);
->   ^
-> 
-> Introduced by commit 05c81ccd9087 ("crypto: drbg - remove configuration
-> of fixed values").  These are all 32 bit builds.
+> ./usr/include/linux/prctl.h:132: found __[us]{8,16,32,64} type without #include <linux/types.h>
+> In file included from /usr/include/x86_64-linux-gnu/sys/prctl.h:23:0,
+>                  from Documentation/prctl/disable-tsc-test.c:14:
+> ./usr/include/linux/prctl.h:132:2: error: unknown type name '__u64'
+...
 
-Stephan, could you take a look at this?
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks for report, Stephen! I'll fix.
