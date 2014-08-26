@@ -1,51 +1,66 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: Re: linux-next: build warnings after merge of the crypto tree
-Date: Tue, 26 Aug 2014 09:00:25 +0200
-Message-ID: <2854432.6G8zoS5xdJ@tauon>
-References: <20140826161456.7ad100e3@canb.auug.org.au> <20140826063812.GA3555@gondor.apana.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Tue, 26 Aug 2014 17:18:18 +1000
+Message-ID: <20140826171818.719c4e6a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Z.Ss58ZUbCqyBcPX2Ue8RyV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140826063812.GA3555@gondor.apana.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulrich Obergfell <uobergfe@redhat.com>, Andrew Jones <drjones@redhat.com>, Don Zickus <dzickus@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Am Dienstag, 26. August 2014, 14:38:12 schrieb Herbert Xu:
+--Sig_/Z.Ss58ZUbCqyBcPX2Ue8RyV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Andrew,
 
->On Tue, Aug 26, 2014 at 04:14:56PM +1000, Stephen Rothwell wrote:
->> Hi Herbert,
->> 
->> After merging the crypto tree, today's linux-next build (powerpc
->> ppc44x_defconfig, i386 defconfig and sparc defconfig) produced these
->> warnings:
->> 
->> In file included from crypto/testmgr.c:30:0:
->> include/crypto/drbg.h: In function 'drbg_max_addtl':
->> include/crypto/drbg.h:157:2: warning: left shift count >= width of
->> type> 
->>   return (1UL<<35);
->>   ^
->> 
->> include/crypto/drbg.h: In function 'drbg_max_requests':
->> include/crypto/drbg.h:163:2: warning: left shift count >= width of
->> type> 
->>   return (1UL<<48);
->>   ^
->> 
->> Introduced by commit 05c81ccd9087 ("crypto: drbg - remove
->> configuration of fixed values").  These are all 32 bit builds.
->
->Stephan, could you take a look at this?
+After merging the akpm tree, today's linux-next build (sparc64
+defconfig) failed like this:
 
-I am on it. Thanks.
->
->Thanks,
+kernel/built-in.o: In function `proc_dowatchdog':
+(.text+0x6a620): undefined reference to `watchdog_hardlockup_detector_is_en=
+abled'
+kernel/built-in.o: In function `proc_dowatchdog':
+(.text+0x6a6a8): undefined reference to `watchdog_enable_hardlockup_detecto=
+r'
+kernel/built-in.o: In function `proc_dowatchdog':
+(.text+0x6a79c): undefined reference to `watchdog_enable_hardlockup_detecto=
+r'
 
+Caused by commit 72355eed4bd7 ("kernel/watchdog.c: control hard lockup
+detection default").  This build has CONFIG_HAVE_NMI_WATCHDOG=3Dy,
+CONFIG_HARDLOCKUP_DETECTOR not set.
 
-Ciao
-Stephan
+I have reverted that commit (and commits
+"watchdog-control-hard-lockup-detection-default-fix" and "kvm: ensure
+hard lockup detection is disabled by default" that follow it) for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/Z.Ss58ZUbCqyBcPX2Ue8RyV
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT/DS+AAoJEMDTa8Ir7ZwVBAgP/R9zyLgdvioWneLLPV2d7tB+
+DVmnCE/GZt5ylKW9BtjuJospk8GiJn41QLWauNKryQkcb56VJU5tk4gwyjIooKS/
+AzVmeN/+vHynS9jezwhL+fMBMMrppSpIwbEGcepYUJKR+I+7C6x92CeWWc0n3/M0
+1vtoR5S4wY4RaHG7sxKXRQ+ANx8prp6ciLcB2VJf43+u6q6pOBByZswdInwKWLUM
+avUKGcE69RJItRLCeAF7L7a0srzV0K7/IGcGLLRQnRfWQvEjE65vM7Sq4cDC1ljq
+Lzs4HRcZmfV9D8fzEo1shlHMkx1ohXqfiPa1oCRbe8Lee72vLJ3tHRn+H/fpk0MJ
+5uiuZEPyCT2IOqoIGOyt2oellZAZS6C2tr+aB4X3il7Ebq0VgfIEYwGu2O85Vxjr
+rAQIMGfYPlBYPoKTw1jru/HGXX7Be2hJSvK1V8fN2UjFnpG2oh5eX/Yg1QLo2ph0
+NSo5AU/XWFZmX1jEwIOyfCVLiCWZ5AvXwGoFAV9JsrcxeRHBPHQhwLAP+qI6Ilju
+rcEW0gootqDcdy3EMXZ9S/34J1qra6FKW9CHjl7tHFWIWNcrsdA+7bpoV8KQsF4d
+s5ALeyGh9o4obfm4nk2k28e1ABlg7pZ5uK3d15FaoramK19u/ptcVdytYNuz39v1
+wY3GWt7eih1o8Zs5JjkV
+=ErbU
+-----END PGP SIGNATURE-----
+
+--Sig_/Z.Ss58ZUbCqyBcPX2Ue8RyV--
