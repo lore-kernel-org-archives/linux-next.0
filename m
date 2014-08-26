@@ -1,59 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Tue, 26 Aug 2014 12:05:11 +1000
-Message-ID: <20140826120511.5b5dabef@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Mon, 25 Aug 2014 20:22:22 -0700 (PDT)
+Message-ID: <20140825.202222.2274651017865689445.davem@davemloft.net>
+References: <20140826120511.5b5dabef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PUCpg+miztOfQP2ls2B2JY8"; protocol="application/pgp-signature"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20140826120511.5b5dabef@canb.auug.org.au>
 Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Yasevich <vyasevich@gmail.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vyasevich@gmail.com
 List-Id: linux-next.vger.kernel.org
 
---Sig_/PUCpg+miztOfQP2ls2B2JY8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 26 Aug 2014 12:05:11 +1000
 
-Hi all,
+> Hi all,
+> 
+> After merging the net tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> drivers/net/ethernet/marvell/mvneta.c: In function 'mvneta_skb_tx_csum':
+> drivers/net/ethernet/marvell/mvneta.c:1374:3: error: implicit declaration of function 'vlan_get_protocol' [-Werror=implicit-function-declaration]
+>    __be16 l3_proto = vlan_get_protocol(skb);
+>    ^
+> 
+> Caused by commit 817dbfa5d1bc ("mvneta: Fix TSO and checksum for
+> non-acceleration vlan traffic").
+> 
+> I have reverted that commit for today.
 
-After merging the net tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Sorry about that, I just pushed the following to fix it:
+
+====================
+[PATCH] mvneta: Add missing if_vlan.h include.
 
 drivers/net/ethernet/marvell/mvneta.c: In function 'mvneta_skb_tx_csum':
-drivers/net/ethernet/marvell/mvneta.c:1374:3: error: implicit declaration o=
-f function 'vlan_get_protocol' [-Werror=3Dimplicit-function-declaration]
-   __be16 l3_proto =3D vlan_get_protocol(skb);
+drivers/net/ethernet/marvell/mvneta.c:1374:3: error: implicit declaration of function 'vlan_get_protocol' [-Werror=implicit-function-declaration]
+   __be16 l3_proto = vlan_get_protocol(skb);
    ^
 
-Caused by commit 817dbfa5d1bc ("mvneta: Fix TSO and checksum for
-non-acceleration vlan traffic").
+Reporeted-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ethernet/marvell/mvneta.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/PUCpg+miztOfQP2ls2B2JY8
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT++tcAAoJEMDTa8Ir7ZwVR6EP/jPO4JgHtVCOT6VtpS/mYOD0
-PSabkz+gKkOHoVdIYT85ctaf/b3X30534Q1vsn8MMnIudwfSJRxLwkP8Wmsp7Eev
-Tqbu4UQW1QJf+EN/WjBen8t4pROgRYek0Mk1vtY2BK3fa7G4CumhTEAr/GvpdlY8
-nCt7Fs3s+GFvDuvCE7aDYBDd/zMynKEpL0vvaghdIqK8UbSdQINCVk3GIp5rqP/+
-0vUjD4uc97s2TvbJpjTQ839rx3dfi3PJJX5rAjDXy4GwgKm4Bx9bF36AoTz0n/4M
-ddaPLZ19BAM2f4MSLy8TSDA4BQNqXZLnTlJLYIb35SfHApjAm2wQkLYL8QwLpEVX
-fKl66W44jHBqn2J0O2cnwP4xdtWiwuMnuw0t58O9o6wKUg8xdHK3A9SDiG8fNVFn
-WgCT7xWb3VDRwodo2Pu8ot8zHZVH+91n5flINx4vLJmGWNhsMTgHPdplzi49DOWn
-5h1Wn98JHLALyzl4VeTj/08C6xUBwwtghJ8666aw2qxB4SPGvUfFcx37sE0+8MMr
-QeF1AOO9z45TwcY1YiNflHuy/7xhvdbM4vyg6iFv0wIcn+0akMrPeOm87Y5LQKU5
-CLRIlY3zfgLUbELZFBGzThu7MElDHUr0h2GY2k0jKy7HDVcVRxxVLf266cINc09N
-UH8T6APxQQFMppUsoVaQ
-=xHJk
------END PGP SIGNATURE-----
-
---Sig_/PUCpg+miztOfQP2ls2B2JY8--
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 133f8c6..ade067d 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -20,6 +20,7 @@
+ #include <linux/mbus.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
++#include <linux/if_vlan.h>
+ #include <net/ip.h>
+ #include <net/ipv6.h>
+ #include <linux/io.h>
+-- 
+1.7.11.7
