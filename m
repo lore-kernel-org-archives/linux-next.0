@@ -1,117 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 26 Aug 2014 16:35:02 +1000
-Message-ID: <20140826163502.33a837fc@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build warnings after merge of the crypto tree
+Date: Tue, 26 Aug 2014 14:38:12 +0800
+Message-ID: <20140826063812.GA3555@gondor.apana.org.au>
+References: <20140826161456.7ad100e3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hB8BQbDSsyc2nlAvML6icyi"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50920 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754384AbaHZGfK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Aug 2014 02:35:10 -0400
+Received: from helcar.apana.org.au ([209.40.204.226]:51491 "EHLO
+	helcar.apana.org.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752889AbaHZGiS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2014 02:38:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20140826161456.7ad100e3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrill Gorcunov <gorcunov@openvz.org>, Andrew Vagin <avagin@openvz.org>, Serge Hallyn <serge.hallyn@canonical.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephan Mueller <smueller@chronox.de>
 
---Sig_/hB8BQbDSsyc2nlAvML6icyi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 26, 2014 at 04:14:56PM +1000, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> After merging the crypto tree, today's linux-next build (powerpc
+> ppc44x_defconfig, i386 defconfig and sparc defconfig) produced these
+> warnings:
+> 
+> In file included from crypto/testmgr.c:30:0:
+> include/crypto/drbg.h: In function 'drbg_max_addtl':
+> include/crypto/drbg.h:157:2: warning: left shift count >= width of type
+>   return (1UL<<35);
+>   ^
+> include/crypto/drbg.h: In function 'drbg_max_requests':
+> include/crypto/drbg.h:163:2: warning: left shift count >= width of type
+>   return (1UL<<48);
+>   ^
+> 
+> Introduced by commit 05c81ccd9087 ("crypto: drbg - remove configuration
+> of fixed values").  These are all 32 bit builds.
 
-Hi Andrew,
+Stephan, could you take a look at this?
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-./usr/include/linux/prctl.h:132: found __[us]{8,16,32,64} type without #inc=
-lude <linux/types.h>
-In file included from /usr/include/x86_64-linux-gnu/sys/prctl.h:23:0,
-                 from Documentation/prctl/disable-tsc-test.c:14:
-./usr/include/linux/prctl.h:132:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:133:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:134:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:135:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:136:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:137:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:138:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:139:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:140:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:141:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:142:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:143:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:144:2: error: unknown type name '__u32'
-./usr/include/linux/prctl.h:145:2: error: unknown type name '__u32'
-In file included from /usr/include/x86_64-linux-gnu/sys/prctl.h:23:0,
-                 from Documentation/prctl/disable-tsc-ctxt-sw-stress-test.c=
-:19:
-./usr/include/linux/prctl.h:132:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:133:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:134:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:135:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:136:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:137:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:138:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:139:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:140:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:141:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:142:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:143:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:144:2: error: unknown type name '__u32'
-./usr/include/linux/prctl.h:145:2: error: unknown type name '__u32'
-make[3]: *** [Documentation/prctl/disable-tsc-test] Error 1
-make[3]: *** [Documentation/prctl/disable-tsc-ctxt-sw-stress-test] Error 1
-In file included from /usr/include/x86_64-linux-gnu/sys/prctl.h:23:0,
-                 from Documentation/prctl/disable-tsc-on-off-stress-test.c:=
-19:
-./usr/include/linux/prctl.h:132:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:133:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:134:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:135:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:136:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:137:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:138:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:139:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:140:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:141:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:142:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:143:2: error: unknown type name '__u64'
-./usr/include/linux/prctl.h:144:2: error: unknown type name '__u32'
-./usr/include/linux/prctl.h:145:2: error: unknown type name '__u32'
-make[3]: *** [Documentation/prctl/disable-tsc-on-off-stress-test] Error 1
-make[2]: *** [Documentation/prctl] Error 2
-
-Caused by commit 802d335c0f7f ("prctl: PR_SET_MM -- introduce
-PR_SET_MM_MAP operation").
-
-I have reverted that commit (and commit c2e04b241d40
-("prctl-pr_set_mm-introduce-pr_set_mm_map-operation-v3-fix") that
-follows it) for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Sig_/hB8BQbDSsyc2nlAvML6icyi
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT/CqbAAoJEMDTa8Ir7ZwV5QkP/1JZjUlUwe8PtRlOpLvYbk8e
-B+mvt8UbjaXPJSgFM9gEzLAVhXPLlei4HquSCEEbHp3scXPVBQTRE9ZDbgNgnJ6P
-U+Xc3wekv76IPSalu1Wyl9mObzNi4IXFC40ahuJPafFI5pvZnTtHOG2A/KaHtJBJ
-zWs9YLlwuEIhmvs+GKTHOhq9uSsACMgYe3RBoQ5yfKc5zlsWHywmzkzhx+Vi8im2
-lqYgfyWFrmq/YnOzqBtUBsJPOswpEfOy/+gX1DgTr3IwfUZyQVk1LKKZlnExTnKo
-8xvfd/0k/aspIFaxnVLjX9Kq74yqsgBC+cUzfuxzRFyy5VKkAf9v3N9qllBvCV8T
-jTKNP/41o7PdKyPGfYz7LRHNv5IHETXecqkaKiXK7hlMtodajSu3v/2dtwex89/R
-3Z86O6/Q5NmQfwyiEMpqwFmL2Gp4ej+viIruz7DiQZRWC3hYwCmxC+pICcNyfoNw
-o1u+3Eae0GwD3hahCPJmHu7BYbhsHSYdGF/8TOgurAqxWkbZ/5mkJWBFPh48j81a
-uG7/GW8bcPHC1ruo94bHYpGmQLSrPdDb4KZ5aWHZk6VIXAwqhP79+mav3oopV/MQ
-Sg4SnWr6XN/xCYanPYjSx2Aom9VEMTACzxQ65ROwZpP6xHZrdDyO7zbn/xCsoNn/
-n/7jV0GlNje3QUpYpTia
-=lk8d
------END PGP SIGNATURE-----
-
---Sig_/hB8BQbDSsyc2nlAvML6icyi--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
