@@ -1,80 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the akpm-current tree
-Date: Tue, 26 Aug 2014 17:22:08 +1000
-Message-ID: <20140826172208.1dbc37db@canb.auug.org.au>
+From: Stephan Mueller <smueller@chronox.de>
+Subject: [PATCH] DRBG: fix bit shifting on 32 bit systems
+Date: Tue, 26 Aug 2014 09:31:02 +0200
+Message-ID: <6371777.WdUEAKFPYo@myon.chronox.de>
+References: <20140826161456.7ad100e3@canb.auug.org.au> <20140826063812.GA3555@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ITFg8dzlG6xLYXX=P+6RpQO"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46778 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755535AbaHZHWT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Aug 2014 03:22:19 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xishi Qiu <qiuxishi@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140826063812.GA3555@gondor.apana.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/ITFg8dzlG6xLYXX=P+6RpQO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Use ULL to mark a 64 bit value.
 
-Hi Andrew,
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+---
+ include/crypto/drbg.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-After merging the akpm-current tree, today's linux-next build (arm
-defconfig) produced these warnings:
-
-In file included from /scratch/sfr/next/include/asm-generic/bug.h:13:0,
-                 from /scratch/sfr/next/arch/arm/include/asm/bug.h:61,
-                 from /scratch/sfr/next/include/linux/bug.h:4,
-                 from /scratch/sfr/next/include/linux/thread_info.h:11,
-                 from /scratch/sfr/next/include/asm-generic/preempt.h:4,
-                 from arch/arm/include/generated/asm/preempt.h:1,
-                 from /scratch/sfr/next/include/linux/preempt.h:18,
-                 from /scratch/sfr/next/include/linux/spinlock.h:50,
-                 from /scratch/sfr/next/include/linux/mmzone.h:7,
-                 from /scratch/sfr/next/include/linux/gfp.h:5,
-                 from /scratch/sfr/next/include/linux/slab.h:14,
-                 from /scratch/sfr/next/mm/nobootmem.c:13:
-/scratch/sfr/next/mm/nobootmem.c: In function 'free_low_memory_core_early':
-/scratch/sfr/next/include/linux/kernel.h:29:20: warning: large integer impl=
-icitly truncated to unsigned type [-Woverflow]
- #define ULLONG_MAX (~0ULL)
-                    ^
-/scratch/sfr/next/mm/nobootmem.c:122:28: note: in expansion of macro 'ULLON=
-G_MAX'
-  memblock_clear_hotplug(0, ULLONG_MAX);
-                            ^
-
-Introduced by commit 6e162b4c49f7 ("mem-hotplug: let memblock skip the
-hotpluggable memory regions in __next_mem_range()").  The second
-argument to memblock_clear_hotplug() is a phys_addr_t, which varies in
-size between architectures/platforms.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/ITFg8dzlG6xLYXX=P+6RpQO
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJT/DWoAAoJEMDTa8Ir7ZwVX20P/3+oUj3I3jL4TPUoiX2YEZnM
-79sC0OHhsjD33KQusspYcCA1htjNhehK6tyT5czZ4HVhJjR5IYdW1gFMELtlgkMt
-F60J/WR94HJo9Z474XhRIfWBLrH5cjgIcXI3UcMPCZaRRRsxUyeAEbMuyuQGX+tO
-ONKHnVREEiSpEnRFGqdynUAHZK/vK69MFN4jyxP29oZJ0ZfZ0epBDNHTK69GRBSM
-ddzODw23/4JwAYIK3NYlPhrAb8EEPx6opNmNI0U5jPKPTyaKJcABWjqvQPgUJrX/
-VTAF3KT4o4ZL6ARHtTPz/qmfDPBGdoh1RrenrMDy5FQ3qCSNJvznS8RLWryu8gP4
-uWOqOl7eQljQxWZBh9vyw922Pbk/1H8f0NLshsPMNGwp9o357UTylPzKOzmjWo3l
-RCaSBhoNnm9tv81+EyENtjjEzjvNVzNKuVlT4DAI9Nd8o2VjTAzuQhvs64i4fX8k
-WjhJC37vDlTEKiKjH9KjgofY+axQ8ZN6T7eLt3uxPo3qnl1ksDmSNOx8B198yuBt
-kfIdBC7FK0FoJCLl5K/bKP8jWm125fzz8fkWkMabPMguUUq2ET3GuGB08zlLfDSw
-Mt377AGN2tm3Q0Eg0yCHpOXpCBKr7CFcpdZBWGvd7FieeNuQPRnoeZFLZMpFUj2F
-hgoCoDaQGyZk7LE3Byw3
-=TtnT
------END PGP SIGNATURE-----
-
---Sig_/ITFg8dzlG6xLYXX=P+6RpQO--
+diff --git a/include/crypto/drbg.h b/include/crypto/drbg.h
+index 3d8e73a..dd52aee 100644
+--- a/include/crypto/drbg.h
++++ b/include/crypto/drbg.h
+@@ -154,13 +154,13 @@ static inline size_t drbg_max_request_bytes(struct drbg_state *drbg)
+ static inline size_t drbg_max_addtl(struct drbg_state *drbg)
+ {
+ 	/* SP800-90A requires 2**35 bytes additional info str / pers str */
+-	return (1UL<<35);
++	return (1ULL<<35);
+ }
+ 
+ static inline size_t drbg_max_requests(struct drbg_state *drbg)
+ {
+ 	/* SP800-90A requires 2**48 maximum requests before reseeding */
+-	return (1UL<<48);
++	return (1ULL<<48);
+ }
+ 
+ /*
+-- 
+1.9.3
