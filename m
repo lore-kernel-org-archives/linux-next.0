@@ -1,58 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with Linus' tree
-Date: Tue, 26 Aug 2014 14:29:10 +1000
-Message-ID: <20140826142910.2e8c496e@canb.auug.org.au>
+Subject: linux-next: manual merge of the rd-docs tree with the trivial tree
+Date: Tue, 26 Aug 2014 15:48:23 +1000
+Message-ID: <20140826154823.086bed75@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sGCh49bY2+c_BOa9o=fETPH"; protocol="application/pgp-signature"
+ boundary="Sig_/16cjYLbg74fXzyuVHgepO4f"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52787 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57255 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753781AbaHZE3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Aug 2014 00:29:17 -0400
+	id S1750804AbaHZFsa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Aug 2014 01:48:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>, Christoph Lameter <cl@linux.com>
 
---Sig_/sGCh49bY2+c_BOa9o=fETPH
+--Sig_/16cjYLbg74fXzyuVHgepO4f
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Randy,
 
-Today's linux-next merge of the trivial tree got a conflict in
-mm/memcontrol.c between commit 747db954cab6 ("mm: memcontrol: use page
-lists for uncharge batching") from Linus' tree and commit cc5ac3e15fa5
-("mm: memcontrol: fix comment") from the trivial tree.
+Today's linux-next merge of the rd-docs tree got a conflict in
+Documentation/this_cpu_ops.txt between commit 0c3ed93c1c2c ("doc: fix
+acronym for read-modify-write") from the trivial tree and commit
+1a62db155b94 ("doc: this_cpu_ops.txt: Update description of
+this_cpu_ops") from the rd-docs tree.
 
-I fixed it up (the former removed the comment changed by the latter)
-and can carry the fix as necessary (no action is required).
+I fixed it up (the latter is a superset of the former) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/sGCh49bY2+c_BOa9o=fETPH
+--Sig_/16cjYLbg74fXzyuVHgepO4f
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT/A0aAAoJEMDTa8Ir7ZwVoZwP/0wmI048dVKGmunFPAcBIAyB
-HhBZjqvU0n9NgO1EfAcdVcJnwHRMKTCDlUZJKDOTTpofbq3QSMDlvlmd7SozqDhH
-f16TkY1yLle5nM/SVzmtz2FbGjeRjSJqexUiTstL+tiUoTuxIaTHkTYjpWYrNtRO
-KSIHD99w9D2Wi+H5cBbmuwt7uXomynDjf/J6RwFLZibXL+ZXPJjefGXbJtO63jDd
-Hx+r5ef8M5J73qWwuJya8Z6ScqrJQZOw5H479ncG3XbFfdv3cJje4sDkeNA6O4zJ
-Hi6GS9GPNt3bA0PdFxX25WrrAKhKemjYdAPHVtuBG5HfeVFchnzbEj+XM6pS2C8g
-/F0VCtcP6Ks+UIyjtP0lEEsS0nSThtmqikdJesyp1sqoKrrwtx6lcKz/OTdG8INj
-gRFd1jC93L9jwWAiiibwx8iCFYIT3RkXrcFK4KRojgHAtxvVCCxb/ZjaCDdHKlls
-RlHzUFm4PSkl1NbuHXNPCTsS/ffVL5rOuvBLmkwy62xDT0eft/gjVt+RzSQt1jpB
-cVIxo62HLmK7ygQwIOMD3DI1MKVtN5F7rXnixA2LTFGOYJrvk8b6/AAk+GgYVXJ3
-UvY84mPQ8/e5k59MqFfagSbeNGCcQjONVeQy/CddzZggQXiNqA/duZQMGXW8bGtg
-D9kwthnHBdWBOuoZnkHi
-=BUTN
+iQIcBAEBCAAGBQJT/B+rAAoJEMDTa8Ir7ZwVBnEP/AkwEVEeV9WDHrF+vSXzWoJR
+yPLkRe/uxj3a5xEU0T8wqIfFBneGMkZcvxcnBq46QUtD7yIkp1YxHCP8P1keffAs
++02QMZYamOFuz/SJ4Jc+KxMRlhE4U24/K6fPrw/QzwfeNbnvBiV2YPQfg1cqeN22
+yW8sRc2axhMiNp7/hmQyKtc0y+jgAL6AMiI8h/+m030ScE7YCoBCWo/afUe831NK
+6sM5Um6hnQPnYYalVGT1xLm3zluh/LYiMoT24m9iVQo89DWwLpO/vI94i4/PUlVx
+HBalA6zuZ4j/agUWJIPIJOJdNIpnAVs5/1Tbz+btMKvnxzK6q6eTXqxFkQ+217+r
+IwSgS5fcxWz13CgCueB7hckarkoeiJ1x7AKdiXGPbR2mnxWBqXrS9QWHeDXZLYDf
+TvhpRN7PErS5YvhY88VkJ5PXfGc36vsEIWoqfYbujtmn3hCBqn5swtZ5kHBk2h+p
+fxfNJnK108N+YHTQa7zzxCoa9NQywAUIBVHJA24GIJ/uGGIKlOcCzR9TzxW4sNF7
+egihjiRA8tblD9wSyvGdPQhpoiUCQO3PKZ+1kFXvNkSx+MQjvxKNHC02cClp7t0V
+oXJE9vfvuRgNBY5yejUxyQ7kh2cJ3YQ7ycuqL1Y9G7ZvmV4qpdfa4xh653Gy6z3K
+zOV5Z4QrTJwKeCnNxlbE
+=bSgW
 -----END PGP SIGNATURE-----
 
---Sig_/sGCh49bY2+c_BOa9o=fETPH--
+--Sig_/16cjYLbg74fXzyuVHgepO4f--
