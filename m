@@ -1,55 +1,51 @@
-From: Yuval Mintz <Yuval.Mintz@qlogic.com>
-Subject: RE: randconfig build error with next-20140825, in
- drivers/net/ethernet/broadcom/bnx2x
-Date: Tue, 26 Aug 2014 06:48:45 +0000
-Message-ID: <B5657A6538887040AD3A81F1008BEC63B2D063@avmb3.qlogic.org>
-References: <CA+r1Zhg7=9-tijyfm6604A6jieX1GCj+xdo20ZDUpjLOAUUpRw@mail.gmail.com>
- <20140826061311.GB2622@sudip-PC>
+From: Stephan Mueller <smueller@chronox.de>
+Subject: Re: linux-next: build warnings after merge of the crypto tree
+Date: Tue, 26 Aug 2014 09:00:25 +0200
+Message-ID: <2854432.6G8zoS5xdJ@tauon>
+References: <20140826161456.7ad100e3@canb.auug.org.au> <20140826063812.GA3555@gondor.apana.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-0016ce01.pphosted.com ([67.231.156.153]:4256 "EHLO
-	mx0b-0016ce01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754354AbaHZGsz convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Aug 2014 02:48:55 -0400
-In-Reply-To: <20140826061311.GB2622@sudip-PC>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ariel Elior <Ariel.Elior@qlogic.com>, netdev <netdev@vger.kernel.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140826063812.GA3555@gondor.apana.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-> > Building with the attached random configuration file,
-> >
-> > drivers/built-in.o: In function `__bnx2x_remove':
-> > /home/jim/linux/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:13409:
-> > undefined reference to `ptp_clock_unregister'
-> > drivers/built-in.o: In function `bnx2x_register_phc':
-> > /home/jim/linux/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:13202:
-> > undefined reference to `ptp_clock_register'
-> > drivers/built-in.o: In function `bnx2x_get_ts_info':
-> >
-> /home/jim/linux/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c:3498:
-> > undefined reference to `ptp_clock_index'
-> > make: *** [vmlinux] Error 1
-> 
-> Hi,I tried to build next-20140825 with your configuration file , but I didn't get any
-> error.
-> BUILD   arch/x86/boot/bzImage
-> Setup is 17068 bytes (padded to 17408 bytes).
-> System is 4946 kB
-> CRC 13f0e24
-> Kernel: arch/x86/boot/bzImage is ready  (#2)
-> 
-> Am I missing something in the build ?
-> 
-> Thanks
-> Sudip
+Am Dienstag, 26. August 2014, 14:38:12 schrieb Herbert Xu:
 
-I believe this is already fixed by commit f79918afb714
-("bnx2x: fix build error with ptp") that was submitted a couple of hours ago.
+Hi Herbert,
 
-Cheers,
-Yuval
+>On Tue, Aug 26, 2014 at 04:14:56PM +1000, Stephen Rothwell wrote:
+>> Hi Herbert,
+>> 
+>> After merging the crypto tree, today's linux-next build (powerpc
+>> ppc44x_defconfig, i386 defconfig and sparc defconfig) produced these
+>> warnings:
+>> 
+>> In file included from crypto/testmgr.c:30:0:
+>> include/crypto/drbg.h: In function 'drbg_max_addtl':
+>> include/crypto/drbg.h:157:2: warning: left shift count >= width of
+>> type> 
+>>   return (1UL<<35);
+>>   ^
+>> 
+>> include/crypto/drbg.h: In function 'drbg_max_requests':
+>> include/crypto/drbg.h:163:2: warning: left shift count >= width of
+>> type> 
+>>   return (1UL<<48);
+>>   ^
+>> 
+>> Introduced by commit 05c81ccd9087 ("crypto: drbg - remove
+>> configuration of fixed values").  These are all 32 bit builds.
+>
+>Stephan, could you take a look at this?
+
+I am on it. Thanks.
+>
+>Thanks,
+
+
+Ciao
+Stephan
