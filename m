@@ -1,32 +1,55 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 26 Aug 2014 10:40:48 +0400
-Message-ID: <20140826064048.GA3063@moon>
-References: <20140826163502.33a837fc@canb.auug.org.au>
+From: Yuval Mintz <Yuval.Mintz@qlogic.com>
+Subject: RE: randconfig build error with next-20140825, in
+ drivers/net/ethernet/broadcom/bnx2x
+Date: Tue, 26 Aug 2014 06:48:45 +0000
+Message-ID: <B5657A6538887040AD3A81F1008BEC63B2D063@avmb3.qlogic.org>
+References: <CA+r1Zhg7=9-tijyfm6604A6jieX1GCj+xdo20ZDUpjLOAUUpRw@mail.gmail.com>
+ <20140826061311.GB2622@sudip-PC>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:49045 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757182AbaHZGkv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2014 02:40:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20140826163502.33a837fc@canb.auug.org.au>
+Received: from mx0b-0016ce01.pphosted.com ([67.231.156.153]:4256 "EHLO
+	mx0b-0016ce01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754354AbaHZGsz convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Aug 2014 02:48:55 -0400
+In-Reply-To: <20140826061311.GB2622@sudip-PC>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Vagin <avagin@openvz.org>, Serge Hallyn <serge.hallyn@canonical.com>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ariel Elior <Ariel.Elior@qlogic.com>, netdev <netdev@vger.kernel.org>
 
-On Tue, Aug 26, 2014 at 04:35:02PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
+> > Building with the attached random configuration file,
+> >
+> > drivers/built-in.o: In function `__bnx2x_remove':
+> > /home/jim/linux/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:13409:
+> > undefined reference to `ptp_clock_unregister'
+> > drivers/built-in.o: In function `bnx2x_register_phc':
+> > /home/jim/linux/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:13202:
+> > undefined reference to `ptp_clock_register'
+> > drivers/built-in.o: In function `bnx2x_get_ts_info':
+> >
+> /home/jim/linux/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c:3498:
+> > undefined reference to `ptp_clock_index'
+> > make: *** [vmlinux] Error 1
 > 
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Hi,I tried to build next-20140825 with your configuration file , but I didn't get any
+> error.
+> BUILD   arch/x86/boot/bzImage
+> Setup is 17068 bytes (padded to 17408 bytes).
+> System is 4946 kB
+> CRC 13f0e24
+> Kernel: arch/x86/boot/bzImage is ready  (#2)
 > 
-> ./usr/include/linux/prctl.h:132: found __[us]{8,16,32,64} type without #include <linux/types.h>
-> In file included from /usr/include/x86_64-linux-gnu/sys/prctl.h:23:0,
->                  from Documentation/prctl/disable-tsc-test.c:14:
-> ./usr/include/linux/prctl.h:132:2: error: unknown type name '__u64'
-...
+> Am I missing something in the build ?
+> 
+> Thanks
+> Sudip
 
-Thanks for report, Stephen! I'll fix.
+I believe this is already fixed by commit f79918afb714
+("bnx2x: fix build error with ptp") that was submitted a couple of hours ago.
+
+Cheers,
+Yuval
