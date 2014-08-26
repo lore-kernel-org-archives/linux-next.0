@@ -1,39 +1,35 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] KVM: Only export kvm_ple_window for x86_64
-Date: Tue, 26 Aug 2014 09:54:44 -0400
-Message-ID: <20140826095444.5f2b2423@gandalf.local.home>
-References: <20140825191035.59673878@gandalf.local.home>
-	<53FC6A15.5090209@redhat.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Change to the Tegra URL for linux-next
+Date: Tue, 26 Aug 2014 09:29:14 -0600
+Message-ID: <53FCA7CA.7040105@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53FC6A15.5090209@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Gleb Natapov <gleb@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:37234 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752722AbaHZP2r (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2014 11:28:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thierry Reding <treding@nvidia.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Tue, 26 Aug 2014 13:05:57 +0200
-Paolo Bonzini <pbonzini@redhat.com> wrote:
+Stephen,
 
-> Il 26/08/2014 01:10, Steven Rostedt ha scritto:
-> > Commit 7b46268d2954 "KVM: trace kvm_ple_window grow/shrink"
-> > Added the tracepoint kvm_ple_window under a #ifdef CONFIG_X86_64 but
-> > left the export for that tracepoint unprotected, which would cause it
-> > to fail to compile when X86_32 is set.
-> > 
-> > Link: http://lkml.kernel.org/p/20140825172204.769ab4e6@gandalf.local.home
-> > 
-> > Reported-by: Jim Davis <jim.epost@gmail.com>
-> > tested-by: Jim Davis <jim.epost@gmail.com>
-> > Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-> 
-> The current KVM branch should have fixed this already---it leaves the
-> tracepoint outside CONFIG_X86_64, which was the right thing to do in the
-> first place.
-> 
+Can you please adjust the Tegra tree's URL in linux-next. The current 
+URL is:
 
-Fair enough. I was wondering why this was unique to x86_64.
+git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git#for-next
 
--- Steve
+The new URL is:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git#for-next
+
+It's the same repo (the swarren path is just an alias for the tegra path 
+now), but the tegra path is the new canonical location.
+
+BTW, any issues with this repo should now additionally be reported to 
+Thierry Reding <treding@nvidia.com>.
+
+Thanks!
