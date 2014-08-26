@@ -1,59 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Tue, 26 Aug 2014 13:33:24 +1000
-Message-ID: <20140826133324.1f4d472f@canb.auug.org.au>
-References: <20140826120511.5b5dabef@canb.auug.org.au>
-	<20140825.202222.2274651017865689445.davem@davemloft.net>
+Subject: linux-next: manual merge of the trivial tree with Linus' tree
+Date: Tue, 26 Aug 2014 14:29:10 +1000
+Message-ID: <20140826142910.2e8c496e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/k4q=r_g31y1U8SgX.9M1e7="; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20140825.202222.2274651017865689445.davem@davemloft.net>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vyasevich@gmail.com
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/sGCh49bY2+c_BOa9o=fETPH"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52787 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753781AbaHZE3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Aug 2014 00:29:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Sig_/k4q=r_g31y1U8SgX.9M1e7=
+--Sig_/sGCh49bY2+c_BOa9o=fETPH
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Jiri,
 
-On Mon, 25 Aug 2014 20:22:22 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> Sorry about that, I just pushed the following to fix it:
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [PATCH] mvneta: Add missing if_vlan.h include.
+Today's linux-next merge of the trivial tree got a conflict in
+mm/memcontrol.c between commit 747db954cab6 ("mm: memcontrol: use page
+lists for uncharge batching") from Linus' tree and commit cc5ac3e15fa5
+("mm: memcontrol: fix comment") from the trivial tree.
 
-Thanks.
+I fixed it up (the former removed the comment changed by the latter)
+and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/k4q=r_g31y1U8SgX.9M1e7=
+--Sig_/sGCh49bY2+c_BOa9o=fETPH
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT/AAIAAoJEMDTa8Ir7ZwV4igP/iTQBIi5u8kL7myBMbohZcOI
-ZA0ND1iJ2bZPyV6sxTfte9F01SNoFc0+mL13YnaO5ZpjB44OtWba8D7CY4nrYpvf
-uGboAEfHBSr6y2wBSBXs+aK0gggt4sDiIjo05dIcO2Xbb+I3QeGNu9sYj8PV5zi5
-4LkmuQbn3x23BKUNWtucVYoNt10KHBzlxDMOfa9JYlAX9A/hjyQTE6e8e5XJcVj4
-SOpwLtuKPRjCbMRajofQZyljOIVamdcqNRec8YMYoD8v+fZy+8FxhBV1eWTEW6Jf
-ooGqmgQlrN1wTl3c/PyEmYtNRdYxML8e0hA2Uu4CYTLAaC3zBRH2gAmAiWh3YdDD
-yFHnqfMC1HFMuYlkB9HO6OfU+syK3lSk/Utz30cofXuKTam46/D+TDDEmRp8jth0
-cjqceO+cjd3HEX3no07ufV+OyildYJ0WRWJZvZG9pMfuovB9WlJ+LximjnobtNHa
-JnTIt0Grnefrs2WySIZMWVw8OdIE+vjQZ7o5P7myJnSPsO1/FdtE9o53uqOdqHuQ
-xaxc7NwkTLWzK9vxyL+T3oSCCk+OwpwSeMjyMs7r4x+rVApjr56xTQktnxIQL2dZ
-5cRKgdFjbDXgbQK8xX8999VZx8mgQ14G5LqOIitr1/So9q2dcPWQgm448zo+V6+o
-GZgZT7MXGR14zCYl80ef
-=CPJ5
+iQIcBAEBCAAGBQJT/A0aAAoJEMDTa8Ir7ZwVoZwP/0wmI048dVKGmunFPAcBIAyB
+HhBZjqvU0n9NgO1EfAcdVcJnwHRMKTCDlUZJKDOTTpofbq3QSMDlvlmd7SozqDhH
+f16TkY1yLle5nM/SVzmtz2FbGjeRjSJqexUiTstL+tiUoTuxIaTHkTYjpWYrNtRO
+KSIHD99w9D2Wi+H5cBbmuwt7uXomynDjf/J6RwFLZibXL+ZXPJjefGXbJtO63jDd
+Hx+r5ef8M5J73qWwuJya8Z6ScqrJQZOw5H479ncG3XbFfdv3cJje4sDkeNA6O4zJ
+Hi6GS9GPNt3bA0PdFxX25WrrAKhKemjYdAPHVtuBG5HfeVFchnzbEj+XM6pS2C8g
+/F0VCtcP6Ks+UIyjtP0lEEsS0nSThtmqikdJesyp1sqoKrrwtx6lcKz/OTdG8INj
+gRFd1jC93L9jwWAiiibwx8iCFYIT3RkXrcFK4KRojgHAtxvVCCxb/ZjaCDdHKlls
+RlHzUFm4PSkl1NbuHXNPCTsS/ffVL5rOuvBLmkwy62xDT0eft/gjVt+RzSQt1jpB
+cVIxo62HLmK7ygQwIOMD3DI1MKVtN5F7rXnixA2LTFGOYJrvk8b6/AAk+GgYVXJ3
+UvY84mPQ8/e5k59MqFfagSbeNGCcQjONVeQy/CddzZggQXiNqA/duZQMGXW8bGtg
+D9kwthnHBdWBOuoZnkHi
+=BUTN
 -----END PGP SIGNATURE-----
 
---Sig_/k4q=r_g31y1U8SgX.9M1e7=--
+--Sig_/sGCh49bY2+c_BOa9o=fETPH--
