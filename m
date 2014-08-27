@@ -1,51 +1,39 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH V2] regmap: of_regmap_get_endian() cleanup
-Date: Wed, 27 Aug 2014 15:14:21 +0200
-Message-ID: <CAMuHMdW1Ev9uTnWXTQxE0S+1SX2ahA7hFjHvb6JC5iRzgLJGFw@mail.gmail.com>
-References: <1408466947-26593-1-git-send-email-swarren@wwwdotorg.org>
-	<20140819211704.GS24407@sirena.org.uk>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v2] DRBG: fix maximum value checks on 32 bit systems
+Date: Wed, 27 Aug 2014 21:35:28 +0800
+Message-ID: <20140827133528.GA15871@gondor.apana.org.au>
+References: <20140826161456.7ad100e3@canb.auug.org.au>
+ <2049245.HpByroTSUp@myon.chronox.de>
+ <20140826085853.GA4646@gondor.apana.org.au>
+ <1471416.zGlxQVbHUr@myon.chronox.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:37313 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933270AbaH0NOW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2014 09:14:22 -0400
-In-Reply-To: <20140819211704.GS24407@sirena.org.uk>
+Received: from helcar.apana.org.au ([209.40.204.226]:60371 "EHLO
+	helcar.apana.org.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933661AbaH0Nfk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2014 09:35:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1471416.zGlxQVbHUr@myon.chronox.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <treding@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Xiubo Li <Li.Xiubo@freescale.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Stephan Mueller <smueller@chronox.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-On Tue, Aug 19, 2014 at 11:17 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Aug 19, 2014 at 10:49:07AM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> Commit d647c199510c ("regmap: add DT endianness binding support") had
->> some issues. Commit ba1b53feb8ca ("regmap: Fix DT endianess parsing
->> logic") fixed the main problem. This patch fixes the other.
+On Tue, Aug 26, 2014 at 11:36:54AM +0200, Stephan Mueller wrote:
 >
-> Applied, thanks.
+> The max_addtllen and max_req are defined in drbg_cores[] in crypto/drbg.c for 
+> each DRBG type. As size_t on a 32 bit system is 32 bit the bit shifts would 
+> not work either.
+> 
+> Thus, I am wondering whether the just applied patch would need to go to Linus 
+> tree too? I would think that the following patch would be in order:
 
-Doh, wish I'd seen this thread earlier...
+Have you actually tested this on a 32-bit box? If so and it
+actually works then I'd be happy to push it.
 
-This morning I was greeted by some crashes, as your spi/for-next branch
-has just pulled in spi/topic/fsl-dspi, which contains regmap/dt-endian, but
-not the fixes :-(
-
-You may want to pull those in, too.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
