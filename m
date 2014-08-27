@@ -1,94 +1,54 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: Re: [PATCHv7 3/5] common: dma-mapping: Introduce common remapping
- functions
-Date: Wed, 27 Aug 2014 17:01:18 -0400
-Message-ID: <1409173278.9919.29.camel@deneb.redhat.com>
-References: <1407800431-21566-1-git-send-email-lauraa@codeaurora.org>
-		<1407800431-21566-4-git-send-email-lauraa@codeaurora.org>
-	 <CAAG0J99=wrz4+c49HeDvL0W9rDZKk2HNLdVtHv4ZJxU4-OjewA@mail.gmail.com>
-	 <53FCBCC3.5040901@codeaurora.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2] regmap: of_regmap_get_endian() cleanup
+Date: Wed, 27 Aug 2014 22:07:49 +0100
+Message-ID: <20140827210749.GF17528@sirena.org.uk>
+References: <1408466947-26593-1-git-send-email-swarren@wwwdotorg.org>
+ <20140819211704.GS24407@sirena.org.uk>
+ <CAMuHMdW1Ev9uTnWXTQxE0S+1SX2ahA7hFjHvb6JC5iRzgLJGFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <53FCBCC3.5040901@codeaurora.org>
-Sender: owner-linux-mm@kvack.org
-To: Laura Abbott <lauraa@codeaurora.org>
-Cc: James Hogan <james.hogan@imgtec.com>, Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>, LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, Ritesh Harjain <ritesh.harjani@gmail.com>, David Riley <davidriley@chromium.org>, ARM Kernel List <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NYD4lA55rUu1ktUD"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW1Ev9uTnWXTQxE0S+1SX2ahA7hFjHvb6JC5iRzgLJGFw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <treding@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Xiubo Li <Li.Xiubo@freescale.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2014-08-26 at 09:58 -0700, Laura Abbott wrote:
-> On 8/26/2014 3:05 AM, James Hogan wrote:
-> > On 12 August 2014 00:40, Laura Abbott <lauraa@codeaurora.org> wrote:
-> >>
-> >> For architectures without coherent DMA, memory for DMA may
-> >> need to be remapped with coherent attributes. Factor out
-> >> the the remapping code from arm and put it in a
-> >> common location to reduce code duplication.
-> >>
-> >> As part of this, the arm APIs are now migrated away from
-> >> ioremap_page_range to the common APIs which use map_vm_area for rema=
-pping.
-> >> This should be an equivalent change and using map_vm_area is more
-> >> correct as ioremap_page_range is intended to bring in io addresses
-> >> into the cpu space and not regular kernel managed memory.
-> >>
-> >> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> >> Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
-> >=20
-> > This commit in linux-next () breaks the build for metag:
-> >=20
-> > drivers/base/dma-mapping.c: In function =E2=80=98dma_common_contiguou=
-s_remap=E2=80=99:
-> > drivers/base/dma-mapping.c:294: error: implicit declaration of
-> > function =E2=80=98dma_common_pages_remap=E2=80=99
-> > drivers/base/dma-mapping.c:294: warning: assignment makes pointer fro=
-m
-> > integer without a cast
-> > drivers/base/dma-mapping.c: At top level:
-> > drivers/base/dma-mapping.c:308: error: conflicting types for
-> > =E2=80=98dma_common_pages_remap=E2=80=99
-> > drivers/base/dma-mapping.c:294: error: previous implicit declaration
-> > of =E2=80=98dma_common_pages_remap=E2=80=99 was here
-> >=20
-> > Looks like metag isn't alone either:
-> >=20
-> > $ git grep -L dma-mapping-common arch/*/include/asm/dma-mapping.h
-> > arch/arc/include/asm/dma-mapping.h
-> > arch/avr32/include/asm/dma-mapping.h
-> > arch/blackfin/include/asm/dma-mapping.h
-> > arch/c6x/include/asm/dma-mapping.h
-> > arch/cris/include/asm/dma-mapping.h
-> > arch/frv/include/asm/dma-mapping.h
-> > arch/m68k/include/asm/dma-mapping.h
-> > arch/metag/include/asm/dma-mapping.h
-> > arch/mn10300/include/asm/dma-mapping.h
-> > arch/parisc/include/asm/dma-mapping.h
-> > arch/xtensa/include/asm/dma-mapping.h
-> >=20
-> > I've checked a couple of these arches (blackfin, xtensa) which don't
-> > include dma-mapping-common.h and their builds seem to be broken too.
-> >=20
-> > Cheers
-> > James
-> >=20
->=20
-> Thanks for the report. Would you mind giving the following patch
-> a test (this is theoretical only but I think it should work)
 
-There's a further problem with c6x (no  MMU):
+--NYD4lA55rUu1ktUD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-drivers/built-in.o: In function `dma_common_pages_remap':
-(.text+0x220c4): undefined reference to `get_vm_area_caller'
-drivers/built-in.o: In function `dma_common_pages_remap':
-(.text+0x22108): undefined reference to `map_vm_area'
-drivers/built-in.o: In function `dma_common_free_remap':
-(.text+0x22278): undefined reference to `find_vm_area'
+On Wed, Aug 27, 2014 at 03:14:21PM +0200, Geert Uytterhoeven wrote:
 
+> This morning I was greeted by some crashes, as your spi/for-next branch
+> has just pulled in spi/topic/fsl-dspi, which contains regmap/dt-endian, but
+> not the fixes :-(
 
+Yes, probably.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
+--NYD4lA55rUu1ktUD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT/kiiAAoJELSic+t+oim92foP/R2ekLf88k8SjRPYnv99WQci
+DoG8OrjEauH1SlJMLVdfCZfaDgZaV2A2oE4336xw2fD5aDaTOOEEP1cc5wpDW3CW
+nhXBwYVRdFjXeBX6CcpYr0IkB1fDOuJYO1MoZti/bLL7UGYlozn09R+Qr24rl2yJ
+gSJ/rSzYrHTm6P/3I9OWQR2Cv3k75A6AI48mweQWNxcawuJQ4WRckS/JDuw97w17
+QDb16PtB0sTRzPKx93FV+0knIDSUFi/sQhoJZYHjWtH+30WwQVRDC2MrLzXMS/p2
+xRqDaE8Xm5PllyTNfc2OlHq3gxf9Dbjbseed2o58wvmKaG9aHOwYPkt+Xw8BvLfU
+pLESlXosmV2kISdtcq7FAQ00ti7EhQJuStRt8qkO2Atx1ItxAxtbqk3xYhKJZ4Dx
+krqJXdD9/GkUFpnOwIJSdCywI4hgbex3WP7LYBWV4p1Q4S/DFypuTbSq/2s4RIcZ
+6rSlG0uQAg1FSfU96LvJZLgGVHq0MLEXP09F2YCrYKgXq6Q5A1BVMjWqUFtBK1MG
+jkimMS02OO2+yUWIMphwz+Q4eIrh3vy/m8x7FRuGkKd0N5YNgBO9LnRCoLpILhry
+e0KoDlHlO3i3HqjAKEBt3yIJnItUFW65YZXnSFMD0u/eyOB/9JDygXtjQJR4Symx
+iqd58nr+G3pQKOuX0NqM
+=e5mD
+-----END PGP SIGNATURE-----
+
+--NYD4lA55rUu1ktUD--
