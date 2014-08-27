@@ -1,45 +1,109 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: Re: [PATCH v2] DRBG: fix maximum value checks on 32 bit systems
-Date: Wed, 27 Aug 2014 15:40:06 +0200
-Message-ID: <12812557.76Zd8kO297@tauon>
-References: <20140826161456.7ad100e3@canb.auug.org.au> <1471416.zGlxQVbHUr@myon.chronox.de> <20140827133528.GA15871@gondor.apana.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: randconfig build error with next-20140826, in Documentation/video4linux
+Date: Wed, 27 Aug 2014 07:36:05 -0700
+Message-ID: <53FDECD5.7000804@infradead.org>
+References: <CA+r1Zhh5n3p8Zg+Uvqvjeb3S859iejXkqStnnOuezTTm9UCT8g@mail.gmail.com> <20140827105838.GA6522@sudip-PC>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.eperm.de ([89.247.134.16]:46965 "EHLO mail.eperm.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934192AbaH0NkL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Aug 2014 09:40:11 -0400
-Received: from tauon.localnet
-	by mail.eperm.de with [XMail 1.27 ESMTP Server]
-	id <S34E> for <linux-next@vger.kernel.org> from <smueller@chronox.de>;
-	Wed, 27 Aug 2014 15:40:07 +0200
-In-Reply-To: <20140827133528.GA15871@gondor.apana.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140827105838.GA6522@sudip-PC>
+Sender: linux-doc-owner@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "m.chehab" <m.chehab@samsung.com>, linux-media <linux-media@vger.kernel.org>, linux-doc <linux-doc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Am Mittwoch, 27. August 2014, 21:35:28 schrieb Herbert Xu:
+On 08/27/14 03:58, Sudip Mukherjee wrote:
+> On Tue, Aug 26, 2014 at 09:50:43AM -0700, Jim Davis wrote:
+>> Building with the attached random configuration file,
+>>
+>> ERROR: "vb2_ops_wait_finish"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ops_wait_prepare"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_event_unsubscribe"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_ctrl_subscribe_event"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_ctrl_log_status"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_streamoff"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_streamon"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_create_bufs"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_dqbuf"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_expbuf"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_qbuf"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_querybuf"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_ioctl_reqbufs"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_fop_release"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_fh_open" [Documentation/video4linux/v4l2-pci-skeleton.ko]
+>> undefined!
+>> ERROR: "vb2_fop_mmap" [Documentation/video4linux/v4l2-pci-skeleton.ko]
+>> undefined!
+>> ERROR: "video_ioctl2" [Documentation/video4linux/v4l2-pci-skeleton.ko]
+>> undefined!
+>> ERROR: "vb2_fop_poll" [Documentation/video4linux/v4l2-pci-skeleton.ko]
+>> undefined!
+>> ERROR: "vb2_fop_read" [Documentation/video4linux/v4l2-pci-skeleton.ko]
+>> undefined!
+>> ERROR: "vb2_buffer_done"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "__video_register_device"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "video_device_release_empty"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_dma_contig_init_ctx"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_queue_init"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_dma_contig_memops"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_ctrl_new_std"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_ctrl_handler_init_class"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_device_register"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_match_dv_timings"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_find_dv_timings_cap"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_valid_dv_timings"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_enum_dv_timings_cap"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "video_devdata"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_device_unregister"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "vb2_dma_contig_cleanup_ctx"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "v4l2_ctrl_handler_free"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> ERROR: "video_unregister_device"
+>> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+>> make[1]: *** [__modpost] Error 1
+>> make: *** [modules] Error 2
+>>
+>> Similar to a build error from January 7th:
+>> https://lists.01.org/pipermail/kbuild-all/2014-January/002566.html
+> 
+> Hi,
+> I tried to build next-20140826 with your given config file . But for me everything was fine.
+> And I was just wondering why the skeleton code in the Documentation is building ?
 
-Hi Herbert,
-
->On Tue, Aug 26, 2014 at 11:36:54AM +0200, Stephan Mueller wrote:
->> The max_addtllen and max_req are defined in drbg_cores[] in
->> crypto/drbg.c for each DRBG type. As size_t on a 32 bit system is 32
->> bit the bit shifts would not work either.
->> 
->> Thus, I am wondering whether the just applied patch would need to go
->> to Linus
->> tree too? I would think that the following patch would be in order:
->Have you actually tested this on a 32-bit box? If so and it
->actually works then I'd be happy to push it.
-
-I will have it tested by tomorrow.
->
->Cheers,
+It builds if the Kconfig symbol BUILD_DOCSRC is enabled.
+Building of this module was just added to linux-next.
 
 
-Ciao
-Stephan
+-- 
+~Randy
