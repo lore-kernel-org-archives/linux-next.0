@@ -1,106 +1,51 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: randconfig build error with next-20140826, in
- Documentation/video4linux
-Date: Wed, 27 Aug 2014 16:28:38 +0530
-Message-ID: <20140827105838.GA6522@sudip-PC>
-References: <CA+r1Zhh5n3p8Zg+Uvqvjeb3S859iejXkqStnnOuezTTm9UCT8g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH V2] regmap: of_regmap_get_endian() cleanup
+Date: Wed, 27 Aug 2014 15:14:21 +0200
+Message-ID: <CAMuHMdW1Ev9uTnWXTQxE0S+1SX2ahA7hFjHvb6JC5iRzgLJGFw@mail.gmail.com>
+References: <1408466947-26593-1-git-send-email-swarren@wwwdotorg.org>
+	<20140819211704.GS24407@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1Zhh5n3p8Zg+Uvqvjeb3S859iejXkqStnnOuezTTm9UCT8g@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "m.chehab" <m.chehab@samsung.com>, Randy Dunlap <rdunlap@infradead.org>, linux-media <linux-media@vger.kernel.org>, linux-doc <linux-doc@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:37313 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933270AbaH0NOW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2014 09:14:22 -0400
+In-Reply-To: <20140819211704.GS24407@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <treding@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Xiubo Li <Li.Xiubo@freescale.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Tue, Aug 26, 2014 at 09:50:43AM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
-> 
-> ERROR: "vb2_ops_wait_finish"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ops_wait_prepare"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_event_unsubscribe"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_ctrl_subscribe_event"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_ctrl_log_status"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_streamoff"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_streamon"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_create_bufs"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_dqbuf"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_expbuf"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_qbuf"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_querybuf"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_ioctl_reqbufs"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_fop_release"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_fh_open" [Documentation/video4linux/v4l2-pci-skeleton.ko]
-> undefined!
-> ERROR: "vb2_fop_mmap" [Documentation/video4linux/v4l2-pci-skeleton.ko]
-> undefined!
-> ERROR: "video_ioctl2" [Documentation/video4linux/v4l2-pci-skeleton.ko]
-> undefined!
-> ERROR: "vb2_fop_poll" [Documentation/video4linux/v4l2-pci-skeleton.ko]
-> undefined!
-> ERROR: "vb2_fop_read" [Documentation/video4linux/v4l2-pci-skeleton.ko]
-> undefined!
-> ERROR: "vb2_buffer_done"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "__video_register_device"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "video_device_release_empty"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_dma_contig_init_ctx"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_queue_init"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_dma_contig_memops"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_ctrl_new_std"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_ctrl_handler_init_class"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_device_register"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_match_dv_timings"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_find_dv_timings_cap"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_valid_dv_timings"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_enum_dv_timings_cap"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "video_devdata"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_device_unregister"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "vb2_dma_contig_cleanup_ctx"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "v4l2_ctrl_handler_free"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> ERROR: "video_unregister_device"
-> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
-> make[1]: *** [__modpost] Error 1
-> make: *** [modules] Error 2
-> 
-> Similar to a build error from January 7th:
-> https://lists.01.org/pipermail/kbuild-all/2014-January/002566.html
+Hi Mark,
 
-Hi,
-I tried to build next-20140826 with your given config file . But for me everything was fine.
-And I was just wondering why the skeleton code in the Documentation is building ?
+On Tue, Aug 19, 2014 at 11:17 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Aug 19, 2014 at 10:49:07AM -0600, Stephen Warren wrote:
+>> From: Stephen Warren <swarren@nvidia.com>
+>>
+>> Commit d647c199510c ("regmap: add DT endianness binding support") had
+>> some issues. Commit ba1b53feb8ca ("regmap: Fix DT endianess parsing
+>> logic") fixed the main problem. This patch fixes the other.
+>
+> Applied, thanks.
 
-thanks
-sudip
+Doh, wish I'd seen this thread earlier...
 
+This morning I was greeted by some crashes, as your spi/for-next branch
+has just pulled in spi/topic/fsl-dspi, which contains regmap/dt-endian, but
+not the fixes :-(
+
+You may want to pull those in, too.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
