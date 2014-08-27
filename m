@@ -1,31 +1,43 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: [PATCH percpu/for-3.18-consistent-ops] Revert "powerpc: Replace
- __get_cpu_var uses"
-Date: Wed, 27 Aug 2014 18:23:28 -0500 (CDT)
-Message-ID: <alpine.DEB.2.11.1408271823040.25336@gentwo.org>
-References: <20140827142243.6277eaff@canb.auug.org.au> <20140827152609.GA379@htj.dyndns.org> <alpine.DEB.2.11.1408271055030.17080@gentwo.org> <20140828074937.47020590@canb.auug.org.au>
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the usb.current tree
+Date: Wed, 27 Aug 2014 16:55:16 -0700
+Message-ID: <20140827235516.GA12987@kroah.com>
+References: <20140827110322.5f8a7742@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qmta06.emeryville.ca.mail.comcast.net ([76.96.30.56]:33596 "EHLO
-	qmta06.emeryville.ca.mail.comcast.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965092AbaH0XXb (ORCPT
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56910 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965351AbaH0XzS (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Aug 2014 19:23:31 -0400
-In-Reply-To: <20140828074937.47020590@canb.auug.org.au>
+	Wed, 27 Aug 2014 19:55:18 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+	by gateway2.nyi.internal (Postfix) with ESMTP id 1FF27208B6
+	for <linux-next@vger.kernel.org>; Wed, 27 Aug 2014 19:55:18 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20140827110322.5f8a7742@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>, Michael Welling <mwelling@emacinc.com>, Alan Stern <stern@rowland.harvard.edu>
 
-On Thu, 28 Aug 2014, Stephen Rothwell wrote:
+On Wed, Aug 27, 2014 at 11:03:22AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the usb.current tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/usb/core/hub.c: In function 'hub_probe':
+> drivers/usb/core/hub.c:1735:21: error: 'struct dev_pm_info' has no member named 'autosuspend_delay'
+>   if (hdev->dev.power.autosuspend_delay >= 0)
+>                      ^
+> 
+> Caused by commit bdd405d2a528 ("usb: hub: Prevent hub autosuspend if
+> usbcore.autosuspend is -1").  CONFIG_PM_RUNTIME is not set in this
+> build.
+> 
+> I have reverted that commit for today.
 
-> > Ok. Once I figure out what went wrong. This went through Feng's build
-> > system and I though he did a powerpc build. So it must be a difference
-> > configuration on powerpc.
->
-> Were the patches tested on top of v3.17-rc1?  My build was a powerpc
-> ppc64_defconfig.  It is possible that some other change interacted with
-> this, but there are not many other arch/powerpc changes after v3.17-rc1
-> and none seem obvious.
+Thanks, I'll work on fixing this later on today...
 
-Yes the latest build test by Feng was on rc1.
+greg k-h
