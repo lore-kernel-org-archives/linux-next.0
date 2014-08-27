@@ -1,44 +1,67 @@
-From: Tejun Heo <tj@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH percpu/for-3.18-consistent-ops] Revert "powerpc: Replace
  __get_cpu_var uses"
-Date: Wed, 27 Aug 2014 17:49:46 -0400
-Message-ID: <20140827214946.GA21396@mtj.dyndns.org>
+Date: Thu, 28 Aug 2014 07:49:37 +1000
+Message-ID: <20140828074937.47020590@canb.auug.org.au>
 References: <20140827142243.6277eaff@canb.auug.org.au>
- <20140827152609.GA379@htj.dyndns.org>
- <20140828074349.10e86372@canb.auug.org.au>
+	<20140827152609.GA379@htj.dyndns.org>
+	<alpine.DEB.2.11.1408271055030.17080@gentwo.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:47008 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932246AbaH0Vtw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2014 17:49:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20140828074349.10e86372@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6LbnKcWnXvg9yC_aXB7Bscb"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.11.1408271055030.17080@gentwo.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Lameter <cl@linux.com>
+Cc: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 28, 2014 at 07:43:49AM +1000, Stephen Rothwell wrote:
-> Hi Tejun,
-> 
-> On Wed, 27 Aug 2014 11:26:09 -0400 Tejun Heo <tj@kernel.org> wrote:
-> >
-> > From 23f66e2d661b4d3226d16e25910a9e9472ce2410 Mon Sep 17 00:00:00 2001
-> > From: Tejun Heo <tj@kernel.org>
-> > Date: Wed, 27 Aug 2014 11:18:29 -0400
-> > 
-> > This reverts commit 5828f666c069af74e00db21559f1535103c9f79a due to
-> > build failure after merging with pending powerpc changes.
-> 
-> I can't see any pending powerpc changes that would obviously affect
-> this ...
+--Sig_/6LbnKcWnXvg9yC_aXB7Bscb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Weird, the build-bot reported success on all powerpc configs on the
-percpu branches w/o the revert.  I wonder what's going on.
+Hi Christoph,
 
-Thanks.
+On Wed, 27 Aug 2014 10:56:27 -0500 (CDT) Christoph Lameter <cl@linux.com> w=
+rote:
+>
+> On Wed, 27 Aug 2014, Tejun Heo wrote:
+>=20
+> > Chrisoph, let's route the updated patch through powerpc tree.
+>=20
+> Ok. Once I figure out what went wrong. This went through Feng's build
+> system and I though he did a powerpc build. So it must be a difference
+> configuration on powerpc.
 
--- 
-tejun
+Were the patches tested on top of v3.17-rc1?  My build was a powerpc
+ppc64_defconfig.  It is possible that some other change interacted with
+this, but there are not many other arch/powerpc changes after v3.17-rc1
+and none seem obvious.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/6LbnKcWnXvg9yC_aXB7Bscb
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT/lJ2AAoJEMDTa8Ir7ZwVh2sP/3SjFwo9P87mUYZBVwXr2gTQ
+8i+1xBTtvNzAoPMLBgjNvZTLrohKMDRpHMtFW9TtUDZBlH+PmKxWl6BDpG93C6JY
+szXJEDjs+ASLgV3j3q4lnebnHNVvztODGqyEf+QrgxVRMOJOmaH79fCdMI11SRN2
+yyCx1Rxx4LAeGFMu637tngyD8wbGa7DCujNqdPP8CImvoIJUPrJFY6EqcZB1itzW
+jXPNMCnuBBuD94dob5mIFgfWB7ZJHh54Dlo29oQ8M2rOkPVHqONcPpuRhUicYyAB
+BsT+0GZsTN4rL9kWW54LMonboXlUEIUVkiH1YXX62/+DxuZuAorURer5QzEBTiif
+sYIk3wAJzvz9QsgPU05sYtTG41KW4+NbKaVAg98klL0BXZK1lBN8842ALuQRnS2g
+cHSkE+mF+3EIpSr4WhdXI3lbMv6CIiNapATOv1kLYrk/ebSNxFSqDiKiTAzZ2W1l
+AlgdrzreDi424938GrzYQJi/qL401D9Ya6Kmnq+3IyXCPigUTBQSj5Fcj2y29se+
+tMck0oMLGIJo+UYfKNT88eVTc3I8CpSJc9I7aRDQ/mNxNj0hsKaT/HlX2wtxy0Pk
+sJCvst3K9TWqi4N5CtJpUV2KJICn5AwkD1WAoV9vRRhPYLacw2bOq8XVvba4fzAh
+ezI6oUq2nMMXxz+4ZS9D
+=//yM
+-----END PGP SIGNATURE-----
+
+--Sig_/6LbnKcWnXvg9yC_aXB7Bscb--
