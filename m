@@ -1,60 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the usb.current tree
-Date: Wed, 27 Aug 2014 11:03:22 +1000
-Message-ID: <20140827110322.5f8a7742@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the percpu tree
+Date: Wed, 27 Aug 2014 14:22:43 +1000
+Message-ID: <20140827142243.6277eaff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9j_3kwmnoE49b=if.2x1x=p"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>, Michael Welling <mwelling@emacinc.com>, Alan Stern <stern@rowland.harvard.edu>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/KsNXNA5Z1zohZIcanEE+h4k"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41736 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751270AbaH0EWu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Aug 2014 00:22:50 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
 
---Sig_/9j_3kwmnoE49b=if.2x1x=p
+--Sig_/KsNXNA5Z1zohZIcanEE+h4k
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-After merging the usb.current tree, today's linux-next build (powerpc
+After merging the percpu tree, today's linux-next build (powerpc
 ppc64_defconfig) failed like this:
 
-drivers/usb/core/hub.c: In function 'hub_probe':
-drivers/usb/core/hub.c:1735:21: error: 'struct dev_pm_info' has no member n=
-amed 'autosuspend_delay'
-  if (hdev->dev.power.autosuspend_delay >=3D 0)
-                     ^
+In file included from arch/powerpc/include/asm/xics.h:9:0,
+                 from arch/powerpc/kernel/asm-offsets.c:47:
+include/linux/interrupt.h:372:0: warning: "set_softirq_pending" redefined
+ #define set_softirq_pending(x) (local_softirq_pending() =3D (x))
+ ^
+In file included from include/linux/hardirq.h:8:0,
+                 from include/linux/memcontrol.h:24,
+                 from include/linux/swap.h:8,
+                 from include/linux/suspend.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:24:
+arch/powerpc/include/asm/hardirq.h:25:0: note: this is the location of the =
+previous definition
+ #define set_softirq_pending(x) __this_cpu_write(irq_stat._softirq_pending,=
+ (x))
+ ^
 
-Caused by commit bdd405d2a528 ("usb: hub: Prevent hub autosuspend if
-usbcore.autosuspend is -1").  CONFIG_PM_RUNTIME is not set in this
-build.
+I got lots (and lots :-() of these and some were considered errors
+(powerpc is built with -Werr in arch/powerpc).
 
-I have reverted that commit for today.
+Caused by commit 5828f666c069 ("powerpc: Replace __get_cpu_var uses").
+
+I have used the percpu tree from next-20140826 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/9j_3kwmnoE49b=if.2x1x=p
+--Sig_/KsNXNA5Z1zohZIcanEE+h4k
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJT/S5fAAoJEMDTa8Ir7ZwV/VgQAJA0eXHY6zg3QvFK+0rRCAwH
-Q01+/m9AsBdXhNo5DjcuqTllCgLAH+cKw1D39E53UATTimYwa1EQBdWrjYqrdB0W
-TiMiFkOcl9l8Aalri4AHj5h5LUTdlYH2uuaVdw/IvCWUwhtIuRtQmlsL/B9PTJPA
-f7hvdz7Zy6+l1ywC3ZgGXsKHxMzm4Uldbrm1U5q8BltmbUthM6uvl5DTpDj5Rbm1
-FHDajofbyxW++hE/29Fk+A3ZFuLZGrv3Ta0YTaTIvzq0V5xXIfalz04oAd4Ur46M
-JOhpR9MAhkB1AoTcXLh7o0nHtPJbiOdlQu5wmN/CLSAWFO/XIkht47/050ItNu6U
-kOwUqFjIpaCn27bt3VwoGKYjcBBDtl/DxRSbBkkRyqhbWzBI8N8zg97J8MUhWXLq
-KUe5P+oGCv47d2DdRtSwTCCG1bROGGBjTTuhVMG2MDObuAODj9GF7/ZYMc8AxPoW
-MG8JM4/x+OhDcGnWpyA/hkvrtdJxwUoH8Sz/YueAZJHk5hTje78t8T9SNdzvGFHP
-6TDu7C9mPRE7PU0Hp4+kRux3eHAEjpmzEewslw0a5aYj44YRFBWSBHQH7SXHM9l/
-QNJYiQ0cWrJFlQIb3c6wpS5niubLOUX3IFBvQ88eFVLfs9X+YFRccnmkUFNxUrVu
-UkDpnUo4cQ6HUXbACgk4
-=7lQC
+iQIcBAEBCAAGBQJT/V0XAAoJEMDTa8Ir7ZwVgAcP/1XcTon/nCqbryu99hiHm2L6
+amQ8+2B6fP0AEbKeX68QnCjJjLeVRSCkNn5+mR2AgC75W9HAd/qL/6IwjECVpPn0
+ziHIDK6DHRBjgoblzaU+BhzgAJN9DuncGIlZ/ffuLERja1uu1hHSYklRtwAHxYgC
+JdOyd3Ex5Ux8ad1JpRHrt/xD3EoCcszNZFeqQE0L52DsxeSSznLpDsKw8bqjz6ue
+h0tARKmyoE9vqbWQ2da0OmUtrZkPHUbpQH/cvvugkKw5q33ObtvtD2SUvLSe2eKz
+CcHPAA8F/zQfdYRTr8HzIxtMjmNYqL9FUVNbnGe+lBFjUKCcOEcf/5G8Wcg0+LKa
+lsFz8fhz1ai0RjaaZyUz7hrldK4HMYZImy+YO74poZOn2gsPnhkqmaVpvQZJo4+e
+dmF6qSuAQCdXqSS71Q3+jo/gpKwDSFRam9eSMtz2QGGTWk9FI0Wn5HC9hqKlstFg
+t5WRTF5131iYgh+apXTypBJBf0nOTnPM4+pn/M+sHIxOzz9XXDDK75RflHBsW0GT
+s2dwMuIXS7kRETx4Q0xCCObmo/C9omou4XKMJU/LCUwwfVF4ICB2GtZj8qzdbzPd
+P5gkhzs2b2D5zfxUE3RU7sUNe9o5Sp4JUzK4rmZe8IuWUF6Xz/fsgvdtjLx549nK
+DvH3AsNikM/L/3fgdwHU
+=NERl
 -----END PGP SIGNATURE-----
 
---Sig_/9j_3kwmnoE49b=if.2x1x=p--
+--Sig_/KsNXNA5Z1zohZIcanEE+h4k--
