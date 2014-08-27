@@ -1,54 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2] regmap: of_regmap_get_endian() cleanup
-Date: Wed, 27 Aug 2014 22:07:49 +0100
-Message-ID: <20140827210749.GF17528@sirena.org.uk>
-References: <1408466947-26593-1-git-send-email-swarren@wwwdotorg.org>
- <20140819211704.GS24407@sirena.org.uk>
- <CAMuHMdW1Ev9uTnWXTQxE0S+1SX2ahA7hFjHvb6JC5iRzgLJGFw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH percpu/for-3.18-consistent-ops] Revert "powerpc: Replace
+ __get_cpu_var uses"
+Date: Thu, 28 Aug 2014 07:43:49 +1000
+Message-ID: <20140828074349.10e86372@canb.auug.org.au>
+References: <20140827142243.6277eaff@canb.auug.org.au>
+	<20140827152609.GA379@htj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NYD4lA55rUu1ktUD"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW1Ev9uTnWXTQxE0S+1SX2ahA7hFjHvb6JC5iRzgLJGFw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <treding@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Xiubo Li <Li.Xiubo@freescale.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/v9C9XSejlPdll_VzAr9GM0m"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37069 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932246AbaH0VoM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Aug 2014 17:44:12 -0400
+In-Reply-To: <20140827152609.GA379@htj.dyndns.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
 
+--Sig_/v9C9XSejlPdll_VzAr9GM0m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---NYD4lA55rUu1ktUD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Tejun,
 
-On Wed, Aug 27, 2014 at 03:14:21PM +0200, Geert Uytterhoeven wrote:
+On Wed, 27 Aug 2014 11:26:09 -0400 Tejun Heo <tj@kernel.org> wrote:
+>
+> From 23f66e2d661b4d3226d16e25910a9e9472ce2410 Mon Sep 17 00:00:00 2001
+> From: Tejun Heo <tj@kernel.org>
+> Date: Wed, 27 Aug 2014 11:18:29 -0400
+>=20
+> This reverts commit 5828f666c069af74e00db21559f1535103c9f79a due to
+> build failure after merging with pending powerpc changes.
 
-> This morning I was greeted by some crashes, as your spi/for-next branch
-> has just pulled in spi/topic/fsl-dspi, which contains regmap/dt-endian, but
-> not the fixes :-(
+I can't see any pending powerpc changes that would obviously affect
+this ...
 
-Yes, probably.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---NYD4lA55rUu1ktUD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/v9C9XSejlPdll_VzAr9GM0m
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT/kiiAAoJELSic+t+oim92foP/R2ekLf88k8SjRPYnv99WQci
-DoG8OrjEauH1SlJMLVdfCZfaDgZaV2A2oE4336xw2fD5aDaTOOEEP1cc5wpDW3CW
-nhXBwYVRdFjXeBX6CcpYr0IkB1fDOuJYO1MoZti/bLL7UGYlozn09R+Qr24rl2yJ
-gSJ/rSzYrHTm6P/3I9OWQR2Cv3k75A6AI48mweQWNxcawuJQ4WRckS/JDuw97w17
-QDb16PtB0sTRzPKx93FV+0knIDSUFi/sQhoJZYHjWtH+30WwQVRDC2MrLzXMS/p2
-xRqDaE8Xm5PllyTNfc2OlHq3gxf9Dbjbseed2o58wvmKaG9aHOwYPkt+Xw8BvLfU
-pLESlXosmV2kISdtcq7FAQ00ti7EhQJuStRt8qkO2Atx1ItxAxtbqk3xYhKJZ4Dx
-krqJXdD9/GkUFpnOwIJSdCywI4hgbex3WP7LYBWV4p1Q4S/DFypuTbSq/2s4RIcZ
-6rSlG0uQAg1FSfU96LvJZLgGVHq0MLEXP09F2YCrYKgXq6Q5A1BVMjWqUFtBK1MG
-jkimMS02OO2+yUWIMphwz+Q4eIrh3vy/m8x7FRuGkKd0N5YNgBO9LnRCoLpILhry
-e0KoDlHlO3i3HqjAKEBt3yIJnItUFW65YZXnSFMD0u/eyOB/9JDygXtjQJR4Symx
-iqd58nr+G3pQKOuX0NqM
-=e5mD
+iQIcBAEBCAAGBQJT/lEpAAoJEMDTa8Ir7ZwVSJQQAI11s87rXAq2tFeFq4Sp68/N
+e61NZEJZL01zYZay7wR54t1OVVUJAVhaMVMgLGBXH+3noDq7UYClgaJeHKbbVcUI
+Fl9TOUyLVQ/IxU54uhhTAMge+PQ1657Yxwb+PFUPWcAgTSW3MamxOx9rLgXUDuFK
+rrZ1O7oQCclc0LOr00EuYFeUGf4l+PxZYI840d3iyRhOahBW5rcgIopq1UbNQRSH
+bB/++eK7JC7zNBq3lgPp/XA5l/FzUxLB728xByBwmZrp9iGcUjnPmZp4DT3h0k7Z
+n2HHcDVgynuClLZFjFCFVUmd1kgqibMAPb+ML1+d1GjNMpGMWwnojJjz/4eKKnHU
+F7Q+LF93tNl7Aq/UHruslawnPD/EAf791vZi7G8LCM21vtAXziWxli9K/3wPgWIh
+Er75kayywlX61beXVoQIxmKfR8Iki+kEParVuIut7B2LJEbr65T6aT3dxQ8Fzz4e
+w9vyIHBWe7WaXAMOT+OuLpq+FvcljCWUgD9jJ0C9nSh7E6cO/vy++a9FcO9XK/pF
+h6hkxWp7ySnqtp/1s3VNFS/AJQQAbb3QaeuaovLqJ6ncNSBPN/JQH3Hax3DgG5tz
+KeD1sCrr0mYW2f9apRTQCQK3tPhpLHwOl5xo310asJWhoo/mqbDn+S/Y1uvZrqsE
+aY4jpA1qcYAlDKu7UvUG
+=2nka
 -----END PGP SIGNATURE-----
 
---NYD4lA55rUu1ktUD--
+--Sig_/v9C9XSejlPdll_VzAr9GM0m--
