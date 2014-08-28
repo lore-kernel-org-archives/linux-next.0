@@ -1,53 +1,58 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: DRBG: remove test for uninitialized DRBG handle
-Date: Thu, 28 Aug 2014 09:17:03 +0200
-Message-ID: <2837552.tiNKQxI8Xu@myon.chronox.de>
-References: <20140826161456.7ad100e3@canb.auug.org.au> <1471416.zGlxQVbHUr@myon.chronox.de> <20140827133528.GA15871@gondor.apana.org.au>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: randconfig build error with next-20140826, in
+ Documentation/video4linux
+Date: Thu, 28 Aug 2014 13:29:19 +0530
+Message-ID: <20140828075919.GA4506@sudip-PC>
+References: <CA+r1Zhh5n3p8Zg+Uvqvjeb3S859iejXkqStnnOuezTTm9UCT8g@mail.gmail.com>
+ <20140827105838.GA6522@sudip-PC>
+ <CA+r1Zhh10fMu4yvFwz__5wt1X3hUZeOpy5yviXy7NY_w+Ugb6w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.eperm.de ([89.247.134.16]:46985 "EHLO mail.eperm.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932523AbaH1HRH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Aug 2014 03:17:07 -0400
-Received: from myon.chronox.de
-	by mail.eperm.de with [XMail 1.27 ESMTP Server]
-	id <S352> for <linux-next@vger.kernel.org> from <smueller@chronox.de>;
-	Thu, 28 Aug 2014 09:17:04 +0200
-In-Reply-To: <20140827133528.GA15871@gondor.apana.org.au>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:59769 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935552AbaH1H7g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Aug 2014 03:59:36 -0400
+Content-Disposition: inline
+In-Reply-To: <CA+r1Zhh10fMu4yvFwz__5wt1X3hUZeOpy5yviXy7NY_w+Ugb6w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "m.chehab" <m.chehab@samsung.com>, Randy Dunlap <rdunlap@infradead.org>, linux-media <linux-media@vger.kernel.org>, linux-doc <linux-doc@vger.kernel.org>
 
-The drbg_healthcheck() contains a test to call the DRBG with an
-uninitialized DRBG cipher handle. As this is an inappropriate use of the
-kernel crypto API to try to generate random numbers before
-initialization, checks verifying for an initialized DRBG during the
-generate function have been removed in previous patches.
+On Wed, Aug 27, 2014 at 10:33:46AM -0700, Jim Davis wrote:
+> On Wed, Aug 27, 2014 at 3:58 AM, Sudip Mukherjee
+> <sudipm.mukherjee@gmail.com> wrote:
+> 
+> > Hi,
+> > I tried to build next-20140826 with your given config file . But for me everything was fine.
+> 
+> Well, you should be able to reproduce it.  Do these steps work for you?
+> 
+> jim@krebstar:~/linux2$ git checkout next-20140826
+> HEAD is now at 1c9e4561f3b2... Add linux-next specific files for 20140826
+> jim@krebstar:~/linux2$ git clean -fdx
+> jim@krebstar:~/linux2$ cp ~/randconfig-1409069188.txt .config
+> jim@krebstar:~/linux2$ make oldconfig
+>   HOSTCC  scripts/basic/fixdep
+>   HOSTCC  scripts/kconfig/conf.o
+>   SHIPPED scripts/kconfig/zconf.tab.c
+>   SHIPPED scripts/kconfig/zconf.lex.c
+>   SHIPPED scripts/kconfig/zconf.hash.c
+>   HOSTCC  scripts/kconfig/zconf.tab.o
+>   HOSTLD  scripts/kconfig/conf
+> scripts/kconfig/conf --oldconfig Kconfig
+> #
+> # configuration written to .config
+> #
+> jim@krebstar:~/linux2$ make -j4 >buildlog.txt 2>&1
+> jim@krebstar:~/linux2$ grep ERROR buildlog.txt
+> ERROR: "vb2_ops_wait_finish"
+> [Documentation/video4linux/v4l2-pci-skeleton.ko] undefined!
+> 
+> (followed by many more similar lines).
 
-Now, the drbg_healthcheck test trying to generate random numbers with
-an uninstantiated DRBG must also be removed.
+yes , it worked. thanks . i was missing the oldconfig .
 
-Signed-off-by: Stephan Mueller <smueller@chronox.de>
----
- crypto/drbg.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/crypto/drbg.c b/crypto/drbg.c
-index 39ed918..54cfd48 100644
---- a/crypto/drbg.c
-+++ b/crypto/drbg.c
-@@ -1872,9 +1872,6 @@ static inline int __init drbg_healthcheck_sanity(void)
- 	/* overflow max addtllen with personalization string */
- 	ret = drbg_instantiate(drbg, &addtl, coreref, pr);
- 	BUG_ON(0 == ret);
--	/* test uninstantated DRBG */
--	len = drbg_generate(drbg, buf, (max_request_bytes + 1), NULL);
--	BUG_ON(0 < len);
- 	/* all tests passed */
- 	rc = 0;
- 
--- 
-1.9.3
+thanks
+sudip
