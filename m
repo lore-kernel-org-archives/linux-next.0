@@ -1,60 +1,65 @@
-From: Laura Abbott <lauraa@codeaurora.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Aug 27
-Date: Wed, 27 Aug 2014 17:56:13 -0700
-Message-ID: <53FE7E2D.9060408@codeaurora.org>
-References: <20140827161021.298aede6@canb.auug.org.au>	<20140827235809.GA9598@roeck-us.net> <20140828104830.4447c5e5@canb.auug.org.au>
+Date: Thu, 28 Aug 2014 11:17:46 +1000
+Message-ID: <20140828111746.0ad32c48@canb.auug.org.au>
+References: <20140827161021.298aede6@canb.auug.org.au>
+	<20140827235809.GA9598@roeck-us.net>
+	<20140828104830.4447c5e5@canb.auug.org.au>
+	<53FE7E2D.9060408@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JPXcmQXk5Rk9lB+uTTYz8io"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:39734 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755639AbaH1A4P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2014 20:56:15 -0400
-In-Reply-To: <20140828104830.4447c5e5@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:52535 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756356AbaH1BRy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Aug 2014 21:17:54 -0400
+In-Reply-To: <53FE7E2D.9060408@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laura Abbott <lauraa@codeaurora.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 8/27/2014 5:48 PM, Stephen Rothwell wrote:
-> Hi all,
->
-> On Wed, 27 Aug 2014 16:58:09 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> I see a large number of build failures with this kernel.
->>
->> drivers/base/dma-mapping.c: In function 'dma_common_contiguous_remap':
->> drivers/base/dma-mapping.c:294:2: error: implicit declaration of function
->> 'dma_common_pages_remap' [-Werror=implicit-function-declaration]
->> drivers/base/dma-mapping.c:294:6: warning: assignment makes pointer from integer
->> without a cast [enabled by default]
->> drivers/base/dma-mapping.c: At top level:
->> drivers/base/dma-mapping.c:305:7: error: conflicting types for
->> 'dma_common_pages_remap'
->> drivers/base/dma-mapping.c:294:8: note: previous implicit declaration of
->> 'dma_common_pages_remap' was here
->> cc1: some warnings being treated as errors
->> make[2]: *** [drivers/base/dma-mapping.o] Error 1
->
-> Caused by commit fa44abcad042 ("common: dma-mapping: introduce common
-> remapping functions") from the akpm-current tree.  I will attempt to
-> revert that commit today, but I may need to also revert the following 2
-> commits as well:
->
-> arm: use genalloc for the atomic pool
-> arm64: add atomic pool for non-coherent and CMA allocations
->
-> though I am not sure.  Hopefully someone will let me know in the next
-> few hours ...
->
+--Sig_/JPXcmQXk5Rk9lB+uTTYz8io
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I sent fixes for this to Andrew yesterday, did those not get picked up
-or fix the problem?
+Hi Laura,
 
-Thanks,
-Laura
+On Wed, 27 Aug 2014 17:56:13 -0700 Laura Abbott <lauraa@codeaurora.org> wro=
+te:
+>
+> I sent fixes for this to Andrew yesterday, did those not get picked up
+> or fix the problem?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+Things do not migrate to mmotm (and hence linux-next) very quickly
+(depending on Andrew's load).  I don't remember seeing the fix
+patch(es).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/JPXcmQXk5Rk9lB+uTTYz8io
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJT/oM/AAoJEMDTa8Ir7ZwVhlYP/14FfK+HjLWHAy6W2mSUwLnq
+xmvWHm5aL2Xp3GS4F7v4bwBXTnVSEG+MoVDogFm7+qrVprresBkaXJeTCZemv7uW
+o/SdsPftT4wLSomHykucj68gX3FypWqmxZna7AFt34JfktEfjN0rjKKIDgfd+hqv
+4g7sWhscXsRsFg0dKb6aEPFsZpT0hvgKUm+/1WxT4sAcXAlg57CSHyFjq9IQ6o+T
+gFKDlTMK4PqIWT9Fs961NrIMfPTGm+9tPUfBCaECh7HubYpkW/hEdcHfXoCdYWVI
+ipiQeNNxjl6wAQfQDrFLsNhIowJrlDm+SXxWzBcpJ4ddRBnLwZ5gr5YAplu1zuPp
+FttkCEPlhIMAqVZLKAc16ivmj5naXElJe9fAsZTfp07LeQgxjZDh4ejhslFT5YCK
+rSPWYik82eFUOiZxqp/gPgI7dYigQRUsindgQoW8H25iSZLzvsJq4OlM6CLIDgVp
+h6akphc7SundxXtnRbBwW+U8Z5gAsIzRlWqS8+LcIh+Si4kulaeqGSh75xSxS/HO
+YfHy14PnmWDEH1hxSriQc+pPkgpJC1iwjFevwvGoAh6d8V/Qb8C+orF5qyhArTM/
+olemSnoLsrAPBlV81VrkNPXfZ/o4nHgYds7uEzbPtZ6zUwklkSxW2pEbUFaF2Lxs
+TYJFWfdJ+arKQRY3q/rs
+=OL5g
+-----END PGP SIGNATURE-----
+
+--Sig_/JPXcmQXk5Rk9lB+uTTYz8io--
