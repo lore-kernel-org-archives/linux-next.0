@@ -1,42 +1,57 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: : drop kirkwood from nightly build coverage.
-Date: Sat, 30 Aug 2014 23:58:43 -0400
-Message-ID: <20140831035843.GA26632@windriver.com>
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: Re: randconfig build error with next-20140829, in
+	drivers/media/usb/dvb-usb/technisat-usb2.c
+Date: Sun, 31 Aug 2014 06:58:01 +0200
+Message-ID: <20140831045801.GL3347@wotan.suse.de>
+References: <CA+r1ZhhfV+fLKY6X0fp2QevQGZMx4g=okSeZjPN9Z3LZJqykGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:62358 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750738AbaHaD6k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Aug 2014 23:58:40 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org
+In-Reply-To: <CA+r1ZhhfV+fLKY6X0fp2QevQGZMx4g=okSeZjPN9Z3LZJqykGg@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "m.chehab" <m.chehab@samsung.com>, hans.verkuil@cisco.com, felipensp@gmail.com, mkrufky@linuxtv.org, crazycat69@narod.ru, linux-media <linux-media@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Fri, Aug 29, 2014 at 09:19:42AM -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
+> 
+>   LD      init/built-in.o
+> drivers/built-in.o: In function `technisat_usb2_set_voltage':
+> technisat-usb2.c:(.text+0x3b4919): undefined reference to `stv090x_set_gpio'
+> make: *** [vmlinux] Error 1
 
-When you restart build coverage after vacation, the kirkwood should be
-dropped.  Log summary here:
+This is because MEDIA_SUBDRV_AUTOSELECT is designed to let you
+pick and choose, technically we should just have:
 
-http://kisskb.ellerman.id.au/kisskb/target/8110/
+diff --git a/drivers/media/usb/dvb-usb/Kconfig b/drivers/media/usb/dvb-usb/Kconfig
+index c5d9566..5a4e82e 100644
+--- a/drivers/media/usb/dvb-usb/Kconfig
++++ b/drivers/media/usb/dvb-usb/Kconfig
+@@ -313,7 +313,7 @@ config DVB_USB_AZ6027
+ config DVB_USB_TECHNISAT_USB2
+ 	tristate "Technisat DVB-S/S2 USB2.0 support"
+ 	depends on DVB_USB
+-	select DVB_STV090x if MEDIA_SUBDRV_AUTOSELECT
++	select DVB_STV090x
+ 	select DVB_STV6110x if MEDIA_SUBDRV_AUTOSELECT
+ 	help
+ 	  Say Y here to support the Technisat USB2 DVB-S/S2 device
 
-shows failures since July because it was removed from mainline.
+and that would fix the issue you saw but then again if we do that
+we might as well also do the same for DVB_STV6110x and a slew of
+different Kconfig entries on that file.
 
-commit ee39028df14ca3220c8af08a5230a0a910900b41
-Author: Andrew Lunn <andrew@lunn.ch>
-Date:   Thu Jul 10 23:36:22 2014 +0200
+Someone needs to make a judgement call and either fix all these
+Kconfig entries or document that MEDIA_SUBDRV_AUTOSELECT will
+let you shoot yourself in the foot at build time. Then what
+I recommend in the meantime is simply to not trust randomconfig
+builds unless you are always enabling MEDIA_SUBDRV_AUTOSELECT.
 
-    ARM: Kirkwood: Remove kirkwood_defconfig
-    
-    This is no longer needed now that kirkwood lives inside mach-mvebu.
-    
-    Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-    Link: https://lkml.kernel.org/r/1405028192-9623-3-git-send-email-andrew@lunn.ch
-    Signed-off-by: Jason Cooper <jason@lakedaemon.net>
+I think its fair to expect for 'make randomconfig' to give you
+a configuration that lets you build things without issue so
+I see this more of an issue with MEDIA_SUBDRV_AUTOSELECT and
+this sloppy embedded craze.
 
-:100644 000000 b9e480c... 0000000... D  arch/arm/configs/kirkwood_defconfig
-
-Thanks,
-Paul.
+  Luis
