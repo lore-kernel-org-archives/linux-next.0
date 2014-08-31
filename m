@@ -1,57 +1,62 @@
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: randconfig build error with next-20140829, in
-	drivers/media/usb/dvb-usb/technisat-usb2.c
-Date: Sun, 31 Aug 2014 06:58:01 +0200
-Message-ID: <20140831045801.GL3347@wotan.suse.de>
-References: <CA+r1ZhhfV+fLKY6X0fp2QevQGZMx4g=okSeZjPN9Z3LZJqykGg@mail.gmail.com>
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Subject: Re: [PATCH -mmotm] mm: fix kmemcheck.c build errors
+Date: Sun, 31 Aug 2014 15:36:18 +0400
+Message-ID: <CAPAsAGz4458YgHN0b04Z4fTwvo-guh+ESNAXy7j=c-bc7v4gcA@mail.gmail.com>
+References: <5400fba1.732YclygYZprDXeI%akpm@linux-foundation.org>
+	<54012D74.7010302@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhhfV+fLKY6X0fp2QevQGZMx4g=okSeZjPN9Z3LZJqykGg@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "m.chehab" <m.chehab@samsung.com>, hans.verkuil@cisco.com, felipensp@gmail.com, mkrufky@linuxtv.org, crazycat69@narod.ru, linux-media <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <54012D74.7010302@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Randy Dunlap <rdunlap@infradead.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, LKML <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Pekka Enberg <penberg@kernel.org>, Vegard Nossum <vegardno@ifi.uio.no>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 29, 2014 at 09:19:42AM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
-> 
->   LD      init/built-in.o
-> drivers/built-in.o: In function `technisat_usb2_set_voltage':
-> technisat-usb2.c:(.text+0x3b4919): undefined reference to `stv090x_set_gpio'
-> make: *** [vmlinux] Error 1
+2014-08-30 5:48 GMT+04:00 Randy Dunlap <rdunlap@infradead.org>:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Add header file to fix kmemcheck.c build errors:
+>
+> ../mm/kmemcheck.c:70:7: error: dereferencing pointer to incomplete type
+> ../mm/kmemcheck.c:83:15: error: dereferencing pointer to incomplete type
+> ../mm/kmemcheck.c:95:8: error: dereferencing pointer to incomplete type
+> ../mm/kmemcheck.c:95:21: error: dereferencing pointer to incomplete type
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>  mm/kmemcheck.c |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> Index: mmotm-2014-0829-1515/mm/kmemcheck.c
+> ===================================================================
+> --- mmotm-2014-0829-1515.orig/mm/kmemcheck.c
+> +++ mmotm-2014-0829-1515/mm/kmemcheck.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/mm_types.h>
+>  #include <linux/mm.h>
+>  #include <linux/slab.h>
+> +#include <linux/slab_def.h>
 
-This is because MEDIA_SUBDRV_AUTOSELECT is designed to let you
-pick and choose, technically we should just have:
+This will work only for CONFIG_SLAB=y. struct kmem_cache definition
+was moved to internal header [*],
+so you need to include it here:
+#include "slab.h"
 
-diff --git a/drivers/media/usb/dvb-usb/Kconfig b/drivers/media/usb/dvb-usb/Kconfig
-index c5d9566..5a4e82e 100644
---- a/drivers/media/usb/dvb-usb/Kconfig
-+++ b/drivers/media/usb/dvb-usb/Kconfig
-@@ -313,7 +313,7 @@ config DVB_USB_AZ6027
- config DVB_USB_TECHNISAT_USB2
- 	tristate "Technisat DVB-S/S2 USB2.0 support"
- 	depends on DVB_USB
--	select DVB_STV090x if MEDIA_SUBDRV_AUTOSELECT
-+	select DVB_STV090x
- 	select DVB_STV6110x if MEDIA_SUBDRV_AUTOSELECT
- 	help
- 	  Say Y here to support the Technisat USB2 DVB-S/S2 device
+[*] http://ozlabs.org/~akpm/mmotm/broken-out/mm-slab_common-move-kmem_cache-definition-to-internal-header.patch
 
-and that would fix the issue you saw but then again if we do that
-we might as well also do the same for DVB_STV6110x and a slew of
-different Kconfig entries on that file.
+>  #include <linux/kmemcheck.h>
+>
+>  void kmemcheck_alloc_shadow(struct page *page, int order, gfp_t flags, int node)
+>
 
-Someone needs to make a judgement call and either fix all these
-Kconfig entries or document that MEDIA_SUBDRV_AUTOSELECT will
-let you shoot yourself in the foot at build time. Then what
-I recommend in the meantime is simply to not trust randomconfig
-builds unless you are always enabling MEDIA_SUBDRV_AUTOSELECT.
 
-I think its fair to expect for 'make randomconfig' to give you
-a configuration that lets you build things without issue so
-I see this more of an issue with MEDIA_SUBDRV_AUTOSELECT and
-this sloppy embedded craze.
+-- 
+Best regards,
+Andrey Ryabinin
 
-  Luis
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
