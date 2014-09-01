@@ -1,76 +1,33 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 29
-Date: Mon, 1 Sep 2014 10:35:21 -0700
-Message-ID: <20140901173521.GA8259@roeck-us.net>
-References: <20140829150713.50d78c30@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Aug 23
+Date: Mon, 1 Sep 2014 21:04:38 +0200
+Message-ID: <20140901190438.GB5806@worktop.ger.corp.intel.com>
+References: <20140823080422.7895575c@canb.auug.org.au>
+ <20140825045741.GA29723@roeck-us.net>
+ <20140901155804.GT27892@worktop.ger.corp.intel.com>
+ <5404A2F2.3090908@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:55439 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754784AbaIARf0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2014 13:35:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.9]:49839 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751558AbaIATEn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2014 15:04:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20140829150713.50d78c30@canb.auug.org.au>
+In-Reply-To: <5404A2F2.3090908@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>, Tejun Heo <tj@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, "David S. Miller" <davem@davemloft.net>
 
-On Fri, Aug 29, 2014 at 03:07:13PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Sep 01, 2014 at 09:46:42AM -0700, Guenter Roeck wrote:
+> Yes, the problem is still seen in next-140829. See qemu test results at
+> http://server.roeck-us.net:8010/builders.
 > 
-> I will be on vacation for the next week, so the next linux-next that I
-> will release will be next-20140908.  Sorry for the inconvenience.
+> I provided sparc64 images at http://server.roeck-us.net/qemu/sparc64/.
+> The README file includes instructions on how to run the image in qemu
+> and how to build a kernel.
 > 
-> Changes since 20140828:
-> 
-> The staging tree still had its build failure for which I applied a
-> fix patch.
-> 
-> Non-merge commits (relative to Linus' tree): 2327
->  2465 files changed, 66838 insertions(+), 40620 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-ia64:defconfig is broken with this build and results in the following error
-message.
+> I can do the same for mips and mips64 if needed; let me know.
 
-arch/ia64/sn/kernel/setup.c: In function 'sn_cpu_init':
-arch/ia64/sn/kernel/setup.c:632:13: error: lvalue required as left operand of assignment
-make[1]: *** [arch/ia64/sn/kernel/setup.o] Error 1
-make: *** [arch/ia64/sn/kernel/setup.o] Error 2
-
-bisect points to commit 6065a244a039 ('ia64: Replace __get_cpu_var uses').
-
-$ git bisect log
-# bad: [d7cf2b3139909a354a71e2885c942e21a60ea062] Add linux-next specific files for 20140829
-# good: [52addcf9d6669fa439387610bc65c92fa0980cef] Linux 3.17-rc2
-git bisect start 'HEAD' 'v3.17-rc2'
-# good: [a065408138b1e9876a95c30153087617e9ef56df] Merge remote-tracking branch 'crypto/master'
-git bisect good a065408138b1e9876a95c30153087617e9ef56df
-# good: [8032bd58d53bf68cc618ed3c945654d495a3381e] Merge remote-tracking branch 'xen-tip/linux-next'
-git bisect good 8032bd58d53bf68cc618ed3c945654d495a3381e
-# bad: [937c09a4fafaa87793584723a9c78070ba1313c7] Merge remote-tracking branch 'staging/staging-next'
-git bisect bad 937c09a4fafaa87793584723a9c78070ba1313c7
-# good: [09d6dd7490ee7f1dda926e309df370e28679a71c] staging: comedi: 8255: add a comedi_device param to the (*io) callback
-git bisect good 09d6dd7490ee7f1dda926e309df370e28679a71c
-# bad: [436011f94749fe990ca1fafbdb28d5dc4abe9120] Merge remote-tracking branch 'regmap/for-next'
-git bisect bad 436011f94749fe990ca1fafbdb28d5dc4abe9120
-# bad: [0b3fd10cf0cda8f319eae27adffb8b7a45431702] Merge remote-tracking branch 'workqueues/for-next'
-git bisect bad 0b3fd10cf0cda8f319eae27adffb8b7a45431702
-# bad: [6065a244a039a23d933e4b803a4e052da2849208] ia64: Replace __get_cpu_var uses
-git bisect bad 6065a244a039a23d933e4b803a4e052da2849208
-# good: [903ceff7ca7b4d80c083a80ee5163b74e9fa359f] net: Replace get_cpu_var through this_cpu_ptr
-git bisect good 903ceff7ca7b4d80c083a80ee5163b74e9fa359f
-# good: [e16321709c8270f9803bbfdb51e5e02235078c7f] uv: Replace __get_cpu_var
-git bisect good e16321709c8270f9803bbfdb51e5e02235078c7f
-# good: [35898716b4d3382791d219be317faace580b6a41] mips: Replace __get_cpu_var uses
-git bisect good 35898716b4d3382791d219be317faace580b6a41
-# good: [0bf7fcf155160fd483af7ffdc50efd4be96f1c96] s390: cio driver &__get_cpu_var replacements
-git bisect good 0bf7fcf155160fd483af7ffdc50efd4be96f1c96
-# first bad commit: [6065a244a039a23d933e4b803a4e052da2849208] ia64: Replace __get_cpu_var uses
-
-Reverting the bad commit fixes the problem.
-
-Guenter
+Thanks, that's enough to get started.
