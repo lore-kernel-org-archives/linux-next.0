@@ -1,122 +1,54 @@
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: Re: [PATCH -mmotm v2] mm: fix kmemcheck.c build errors
-Date: Mon, 1 Sep 2014 09:29:58 +0900
-Message-ID: <20140901002958.GE25599@js1304-P5Q-DELUXE>
-References: <5400fba1.732YclygYZprDXeI%akpm@linux-foundation.org>
- <54012D74.7010302@infradead.org>
- <CAPAsAGz4458YgHN0b04Z4fTwvo-guh+ESNAXy7j=c-bc7v4gcA@mail.gmail.com>
- <540335C5.3030905@infradead.org>
- <5403B0B8.8010507@infradead.org>
- <20140901001312.GA25599@js1304-P5Q-DELUXE>
- <5403BB0A.8040000@infradead.org>
+From: Stephan Mueller <smueller@chronox.de>
+Subject: [PATCH v2] DRBG: remove check for uninitialized DRBG handle
+Date: Mon, 01 Sep 2014 07:11:20 +0200
+Message-ID: <1461606.SUPpCYm782@myon.chronox.de>
+References: <20140826161456.7ad100e3@canb.auug.org.au> <20140827133528.GA15871@gondor.apana.org.au> <2837552.tiNKQxI8Xu@myon.chronox.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <5403BB0A.8040000@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, LKML <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Pekka Enberg <penberg@kernel.org>, Vegard Nossum <vegardno@ifi.uio.no>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.eperm.de ([89.247.134.16]:46995 "EHLO mail.eperm.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750865AbaIAFLZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Sep 2014 01:11:25 -0400
+Received: from myon.chronox.de
+	by mail.eperm.de with [XMail 1.27 ESMTP Server]
+	id <S373> for <linux-next@vger.kernel.org> from <smueller@chronox.de>;
+	Mon, 1 Sep 2014 07:11:21 +0200
+In-Reply-To: <2837552.tiNKQxI8Xu@myon.chronox.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Aug 31, 2014 at 05:17:14PM -0700, Randy Dunlap wrote:
-> On 08/31/14 17:13, Joonsoo Kim wrote:
-> > On Sun, Aug 31, 2014 at 04:33:12PM -0700, Randy Dunlap wrote:
-> >> On 08/31/14 07:48, Randy Dunlap wrote:
-> >>> On 08/31/14 04:36, Andrey Ryabinin wrote:
-> >>>> 2014-08-30 5:48 GMT+04:00 Randy Dunlap <rdunlap@infradead.org>:
-> >>>>> From: Randy Dunlap <rdunlap@infradead.org>
-> >>>>>
-> >>>>> Add header file to fix kmemcheck.c build errors:
-> >>>>>
-> >>>>> ../mm/kmemcheck.c:70:7: error: dereferencing pointer to incomplete type
-> >>>>> ../mm/kmemcheck.c:83:15: error: dereferencing pointer to incomplete type
-> >>>>> ../mm/kmemcheck.c:95:8: error: dereferencing pointer to incomplete type
-> >>>>> ../mm/kmemcheck.c:95:21: error: dereferencing pointer to incomplete type
-> >>>>>
-> >>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> >>>>> ---
-> >>>>>  mm/kmemcheck.c |    1 +
-> >>>>>  1 file changed, 1 insertion(+)
-> >>>>>
-> >>>>> Index: mmotm-2014-0829-1515/mm/kmemcheck.c
-> >>>>> ===================================================================
-> >>>>> --- mmotm-2014-0829-1515.orig/mm/kmemcheck.c
-> >>>>> +++ mmotm-2014-0829-1515/mm/kmemcheck.c
-> >>>>> @@ -2,6 +2,7 @@
-> >>>>>  #include <linux/mm_types.h>
-> >>>>>  #include <linux/mm.h>
-> >>>>>  #include <linux/slab.h>
-> >>>>> +#include <linux/slab_def.h>
-> >>>>
-> >>>> This will work only for CONFIG_SLAB=y. struct kmem_cache definition
-> >>>> was moved to internal header [*],
-> >>>> so you need to include it here:
-> >>>> #include "slab.h"
-> >>>>
-> >>>> [*] http://ozlabs.org/~akpm/mmotm/broken-out/mm-slab_common-move-kmem_cache-definition-to-internal-header.patch
-> >>>
-> >>> Thanks.  That makes sense.  [testing]  mm/kmemcheck.c still has a build error:
-> >>>
-> >>> In file included from ../mm/kmemcheck.c:5:0:
-> >>> ../mm/slab.h: In function 'cache_from_obj':
-> >>> ../mm/slab.h:283:2: error: implicit declaration of function 'memcg_kmem_enabled' [-Werror=implicit-function-declaration]
-> >>>
-> >>
-> >> Naughty header file.  It uses something from <linux/memcontrol.h> without
-> >> #including that header file...
-> > 
-> > 
-> > Hello.
-> > 
-> > Indeed...
-> > Thanks for catching this.
-> > 
-> >>
-> >> Working patch is below.
-> > 
-> > With your patch, build also failed if CONFIG_MEMCG_KMEM=y.
-> > Right fix is something like below.
-> > 
-> > Thanks.
-> > 
-> > --------->8----------
-> > diff --git a/mm/kmemcheck.c b/mm/kmemcheck.c
-> > index fd814fd..cab58bb 100644
-> > --- a/mm/kmemcheck.c
-> > +++ b/mm/kmemcheck.c
-> > @@ -2,6 +2,7 @@
-> >  #include <linux/mm_types.h>
-> >  #include <linux/mm.h>
-> >  #include <linux/slab.h>
-> > +#include "slab.h"
-> >  #include <linux/kmemcheck.h>
-> >  
-> >  void kmemcheck_alloc_shadow(struct page *page, int order, gfp_t flags, int node)
-> > diff --git a/mm/slab.h b/mm/slab.h
-> > index 13845d0..963a3f8 100644
-> > --- a/mm/slab.h
-> > +++ b/mm/slab.h
-> > @@ -37,6 +37,8 @@ struct kmem_cache {
-> >  #include <linux/slub_def.h>
-> >  #endif
-> >  
-> > +#include <linux/memcontrol.h>
-> > +
-> >  /*
-> >   * State of the slab allocator.
-> >   *
-> > --
-> 
-> Um, yeah, looks equivalent to what I sent as v2.
-> 
+The drbg_healthcheck() contained a test to call the DRBG with an
+uninitialized DRBG cipher handle. As this is an inappropriate use of the
+kernel crypto API to try to generate random numbers before
+initialization, checks verifying for an initialized DRBG have been
+removed in previous patches.
 
-The only difference is that memcg header is slightly move up in mm/slab.h. :)
+Now, the drbg_healthcheck test must also be removed.
 
-Thanks.
+Changes V2: Added patch marker to email subject line.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+---
+ crypto/drbg.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/crypto/drbg.c b/crypto/drbg.c
+index 39ed918..54cfd48 100644
+--- a/crypto/drbg.c
++++ b/crypto/drbg.c
+@@ -1872,9 +1872,6 @@ static inline int __init drbg_healthcheck_sanity(void)
+ 	/* overflow max addtllen with personalization string */
+ 	ret = drbg_instantiate(drbg, &addtl, coreref, pr);
+ 	BUG_ON(0 == ret);
+-	/* test uninstantated DRBG */
+-	len = drbg_generate(drbg, buf, (max_request_bytes + 1), NULL);
+-	BUG_ON(0 < len);
+ 	/* all tests passed */
+ 	rc = 0;
+ 
+-- 
+1.9.3
