@@ -1,40 +1,57 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 29
-Date: Mon, 01 Sep 2014 15:00:01 -0700
-Message-ID: <5404EC61.9060907@roeck-us.net>
-References: <20140829150713.50d78c30@canb.auug.org.au> <20140901173521.GA8259@roeck-us.net> <alpine.DEB.2.11.1409011615210.22966@gentwo.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the akpm-current tree with the  tree
+Date: Mon, 1 Sep 2014 23:54:16 +0100
+Message-ID: <20140901235416.5181ece8487f3365511bbf93@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__1_Sep_2014_23_54_16_+0100_oSe7sZrUv.4ZSw.S"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:63103 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752333AbaIAWAH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2014 18:00:07 -0400
-In-Reply-To: <alpine.DEB.2.11.1409011615210.22966@gentwo.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45425 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752031AbaIAWye (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2014 18:54:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/01/2014 02:15 PM, Christoph Lameter wrote:
-> On Mon, 1 Sep 2014, Guenter Roeck wrote:
->
->> arch/ia64/sn/kernel/setup.c: In function 'sn_cpu_init':
->> arch/ia64/sn/kernel/setup.c:632:13: error: lvalue required as left operand of assignment
->> make[1]: *** [arch/ia64/sn/kernel/setup.o] Error 1
->> make: *** [arch/ia64/sn/kernel/setup.o] Error 2
->
->
-> Subject: ia64: sn_nodepda cannot be assigned to after this_cpu conversion. Use __this_cpu_write.
->
-> There must be an explit statement to modify the percpu variable after the conversion of the
-> sn_nodpda macro to use this_cpu_read.
->
-> Signed-off-by: Christoph Lameter <cl@linux.com>
->
-FWIW: Compile-tested-by: Guenter Roeck <linux@roeck-us.net>
+--Signature=_Mon__1_Sep_2014_23_54_16_+0100_oSe7sZrUv.4ZSw.S
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Too bad there is no ia64 support in qemu; this could use some "real" testing.
+Hi Andrew,
 
-Guenter
+Today's linux-next merge of the akpm-current tree got a conflict in scripts=
+/checkpatch.pl between commit 8678fa326053d41 ("checkpatch: relax check for=
+ length of git commit IDs") from Linus' tree and what looks like the same c=
+ommit from the akpm-current tree.
+
+I fixed it up by taking Linus' version and can carry as required.
+
+Thanks,
+Mark
+
+--Signature=_Mon__1_Sep_2014_23_54_16_+0100_oSe7sZrUv.4ZSw.S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUBPkYAAoJELSic+t+oim9MUQP/iD3ayVhQ1LjYar9c+UJ8BDn
+6Zyeo7WBSoTd8vztZdwuKqR9N6K+KzTRGx0DGk/cbPCQ+sG6tjmH5zuWrgS2naux
+4Pv7f67LMbAL2I+JEwgVMAK2YRHDckxv1vOXnBHpN33DWjfNUkDheqk1eLHARpXt
+Lbgx7my5zjbS5ZloN2y8BY/lT4+5tEnEjxwv9Xgfn6m4JZg5FxjM5Kq6eIVgi5iG
+l3CK7thGoxdnyZKXD9dvKjZtzH56D0fzHWLu4tE5Ftoq9Etgw0mle6dm+ITNpgKJ
+OZczyd/oT/o8DmN/o+zgkwKFUltP9DRrlJiBwAWhwM6KTvmPuWv8YjTBGxDg0RhQ
+7cL92bML+NkCAvCZ/0+Od60clXnmatAQeNyHl0ro2MHGFaLwNhXmAhoiImKZfdrH
+k1Ot+n+AiG32C9E5VFWytJRP+QcZb5mkVnkGZ8E/nvIVmm5zowXJR0zrCTSDVNu1
+Nq1p8vA7r7lACkKde6wk5F3UCVG+RVj+/YN0qAxAAeWTeZFhkAfgijI08fO1tKNS
+7RlBPkkHOGBpudFIV7HxHixFgJW9XWOiFhEsnRIlV+OO4usgQziRAps+q/j/9hOq
+2UhXeH4Zhh6MxiaTuwGAeDINXf2gLc04xUb+laKvN2d+pnLH33AiXU/faxzYw0dH
+ClvPLJmoYwyEdGG0pSoJ
+=VQpg
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__1_Sep_2014_23_54_16_+0100_oSe7sZrUv.4ZSw.S--
