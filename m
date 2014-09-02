@@ -1,77 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: Tree for Sep 1
-Date: Tue, 2 Sep 2014 00:07:28 +0100
-Message-ID: <20140901230728.GM29327@sirena.org.uk>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: linux-next: jdelvare-hwmon tree unfetchable
+Date: Tue, 2 Sep 2014 09:54:55 +0200
+Message-ID: <20140902095455.77a91b40@endymion.delvare>
+References: <20140901132808.c7b08f4ffa7055dc28e6dac7@kernel.org>
+	<54049590.6060500@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ura8jf0QYTXVPAoa"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45437 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752031AbaIAXHh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2014 19:07:37 -0400
-Content-Disposition: inline
+Received: from cantor2.suse.de ([195.135.220.15]:34696 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750903AbaIBHy7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Sep 2014 03:54:59 -0400
+In-Reply-To: <54049590.6060500@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
+Hi all,
 
---ura8jf0QYTXVPAoa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, 01 Sep 2014 08:49:36 -0700, Guenter Roeck wrote:
+> On 09/01/2014 05:28 AM, Mark Brown wrote:
+> > Today's linux-next merge of the jdelvare-hwmon tree got a conflict with Linus'
+> > tree which appeared to be due to the hwmon quilt series I got from Stephen being
+> > based on v3.14-rc3 and subsequent changes from mainline interacting badly with
+> > it. In addition I'm not able to check the original series since linux-fr.org does
+> > not resolve for me.
+> 
+> Jean dropped the linux-fr.org domain, and his old e-mail address probably
+> won't work anymore.
 
-Changes since 20140829:
+I can confirm that. linux-fr.org is history, from now on I'll be using
+my @suse.de address for all open source related work. I thought I had
+already updated all references and let everyone involved know about the
+change, but apparently I failed to do so, sorry about that.
 
-The akpm-current gained a conflict against Linus' tree.
+> The alternate (and temporary) pointer he gave me
+> is http://jdelvare.nerim.net/devel/linux-3/jdelvare-hwmon/. It is empty,
+> so you did not miss anything.
 
-Non-merge commits (relative to Linus' tree): 2553
- 2686 files changed, 98625 insertions(+), 79475 deletions(-)
+That's right. As many temporary things, I'm afraid it's there to
+last ;-)
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git .
-If you are tracking the linux-next tree using git, you should not use
-"git pull" to do so as that will try to merge the new linux-next release
-with the old one.  You should use "git fetch" and checkout or reset to
-the new master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with an
-allmodconfig for x86_64 and a multi_v7_defconfig for arm.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 214 trees (counting Linus' and 30 trees of patches
-pending for Linus' tree).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of Stephen's local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
---ura8jf0QYTXVPAoa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIbBAEBAgAGBQJUBPwtAAoJELSic+t+oim9NHAP9jegzsmmNFcyWEeqZprh1xML
-IyyrelCCMQgfZ3v5N4BuxVBwW8VZuRWIoM7ecxdzmlrHxBmVxiSyZKY563cph7xt
-b4YGB+jijGzYmpj1RaX9HAdzwbqxiSo9U8eOl617MF86xP+Q3UTDySP2EhuwImK9
-s30YY4Gj501v+7ns3d3F2sMQb2LjEfU0awNblyPNRFzcrQYfUmoDkQaTOv+4wXEP
-+CMqepy+U7rAZlDTAuGri348B0TEhUWum1859bsFGa3dVYV2fB2vpBIeA8GTSkWN
-OOFIvLgu5mNA4kkrzfzVjjsBC15RR5A+kn091QSFiY4T02bR85s/qC6TN3qKzfyg
-Rt+WOLEIF6gHlYlosI8qOvna5dWJq+HqhNQwV+ATD35SXii4ne7ogx3FqSmpbVYB
-sXvz/Z5FdldW0kCxLt+vYwn4MhrhclpKv2tVbrTyLJlvc2nmzJlfjMCYs56qZrTQ
-Pq0AE4juymkvMos4zkwwb1kftmW0Ddl0oRBofViXA7jHrlQy6/QNTFzWNmOrKo+Y
-yuplU56S+QXDStvdCqXpK3sSOhvKLV5lo+8hkLdXLhrY/f17FRs/H7DeC3TRp5Dd
-aAAtUqoSF7SDYwbn3ImpodV5lTCLDpXkFGXWr+mNLkNUKrJpvKvtRZlXKQoslPeR
-jhMY73cBJVjTMQQ5Jb4=
-=WBmw
------END PGP SIGNATURE-----
-
---ura8jf0QYTXVPAoa--
+-- 
+Jean Delvare
+SUSE L3 Support
