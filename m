@@ -1,77 +1,78 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 23
-Date: Tue, 2 Sep 2014 10:59:02 -0700
-Message-ID: <20140902175902.GA8829@roeck-us.net>
-References: <20140823080422.7895575c@canb.auug.org.au>
- <20140825045741.GA29723@roeck-us.net>
- <20140901155804.GT27892@worktop.ger.corp.intel.com>
- <5404A2F2.3090908@roeck-us.net>
- <20140901190438.GB5806@worktop.ger.corp.intel.com>
- <20140902094016.GD31157@worktop.ger.corp.intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: Tree for Sep 2
+Date: Tue, 2 Sep 2014 19:36:17 +0100
+Message-ID: <20140902183617.GD29327@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iaYIJ+kOC8t17Zqq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:37269 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754991AbaIBR7I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2014 13:59:08 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46905 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752455AbaIBSgd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2014 14:36:33 -0400
 Content-Disposition: inline
-In-Reply-To: <20140902094016.GD31157@worktop.ger.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, "David S. Miller" <davem@davemloft.net>
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 02, 2014 at 11:40:16AM +0200, Peter Zijlstra wrote:
-> On Mon, Sep 01, 2014 at 09:04:38PM +0200, Peter Zijlstra wrote:
-> > On Mon, Sep 01, 2014 at 09:46:42AM -0700, Guenter Roeck wrote:
-> > > Yes, the problem is still seen in next-140829. See qemu test results at
-> > > http://server.roeck-us.net:8010/builders.
-> > > 
-> > > I provided sparc64 images at http://server.roeck-us.net/qemu/sparc64/.
-> > > The README file includes instructions on how to run the image in qemu
-> > > and how to build a kernel.
-> > > 
-> > > I can do the same for mips and mips64 if needed; let me know.
-> > 
-> > Thanks, that's enough to get started.
-> 
-> This makes sparc64 go again, silly oversight indeed.
-> 
-> ---
-> Subject: sparc64: Fix atomics
-> 
-> The patch folding the atomic ops had a silly fail in the _return primitives.
-> 
-> Fixes: 4f3316c2b5fe ("locking,arch,sparc: Fold atomic_ops")
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Confirmed working.
+--iaYIJ+kOC8t17Zqq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Changes since 20140901:
 
-> ---
-> diff --git a/arch/sparc/lib/atomic_64.S b/arch/sparc/lib/atomic_64.S
-> index 96d70b4..05dac43 100644
-> --- a/arch/sparc/lib/atomic_64.S
-> +++ b/arch/sparc/lib/atomic_64.S
-> @@ -37,7 +37,7 @@ ENTRY(atomic_##op##_return) /* %o0 = increment, %o1 = atomic_ptr */	\
->  	cas	[%o1], %g1, %g7;					\
->  	cmp	%g1, %g7;						\
->  	bne,pn	%icc, BACKOFF_LABEL(2f, 1b);				\
-> -	 add	%g1, %o0, %g1;						\
-> +	 op	%g1, %o0, %g1;						\
->  	retl;								\
->  	 sra	%g1, 0, %o0;						\
->  2:	BACKOFF_SPIN(%o2, %o3, 1b);					\
-> @@ -76,7 +76,7 @@ ENTRY(atomic64_##op##_return) /* %o0 = increment, %o1 = atomic_ptr */	\
->  	bne,pn	%xcc, BACKOFF_LABEL(2f, 1b);				\
->  	 nop;								\
->  	retl;								\
-> -	 add	%g1, %o0, %o0;						\
-> +	 op	%g1, %o0, %o0;						\
->  2:	BACKOFF_SPIN(%o2, %o3, 1b);					\
->  ENDPROC(atomic64_##op##_return);
->  
-> 
-> 
+The akpm-current tree lost its conflict against Linus' tree and two
+patches from it got applied.
+
+Non-merge commits (relative to Linus' tree): 3078
+ 2790 files changed, 105584 insertions(+), 81173 deletions(-)
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git .
+If you are tracking the linux-next tree using git, you should not use
+git pull" to do so as that will try to merge the new linux-next release
+with the old one.  You should use "git fetch" and checkout or reset to
+the new master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with an
+allmodconfig for x86_64 and a multi_v7_defconfig for arm.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 214 trees (counting Linus' and 30 trees of patches
+pending for Linus' tree).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of Stephen's local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+--iaYIJ+kOC8t17Zqq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUBg4eAAoJELSic+t+oim9LdsP/jOxRP0JY+QwUZwB0vQDeJ1F
+z1epalXIQCmuJZz87+zzOeTalZb1AWy+Fuh18iDWZBFuUva6vwM4SMqeQXAS2bDf
+qMC/bdCTkI8aVT+6n22BzXYkmHDMRFMU/B2rJwtLw0UBZ8pNH+wC1T3+Xp3XyiAg
+Nqnw+A5x9VvYPWmT1WgO8iGylp2iU0ULCd34LW7OdOADgBa0d9Cpa4orAYscJTLZ
+ZD2q6r0ZXI0ai9ndUNFuHESWHD1awlqhYOJYqLshm20uSbR1X3vtSCRzezuxn/lN
+VAf9H7/bv5Tz0OdQJlW8KTgF696c4bdo2nsMV0ANoxwzqSBAthxVPLAP20nfziLY
+Fnx+2zKIGrBH867JO4xrb714YBqxO8gEkGzumeDykD7Ls9FXWTQakbYG73766zwN
+1BPRk5G/ErixNkjKAqJM6BPMddCS0U/z70qNdHuumNYdZHTm2/yVET2Tsff4TBoi
+kjIKJ/HKDTXmpBlO2+rVUdhWz68T1DDDCeF8zTsUQLB+nNhQTZ1NRohcb3JZLO8M
+LerWlSHeeeNN3gie9+3nOQe9GDHhnl2C3vNqe33DV0GR+1TFhNQiFXoCYPPwGhxh
+3JcgsaLQswurPvi5IyqMCEHWNG89Jhtrw1J6Cch5Q0hqnI0f6d+m7zwZFgR1cXPp
+zSCOuX2C+kE61iu+5plW
+=h1F6
+-----END PGP SIGNATURE-----
+
+--iaYIJ+kOC8t17Zqq--
