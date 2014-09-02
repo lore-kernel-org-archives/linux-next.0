@@ -1,52 +1,43 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: linux-next: Tree for Sep 1
-Date: Tue, 2 Sep 2014 10:00:07 -0500 (CDT)
-Message-ID: <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
-References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org>
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: Tree for Aug 29
+Date: Tue, 2 Sep 2014 11:54:03 -0400
+Message-ID: <20140902155403.GC17424@htj.dyndns.org>
+References: <20140829150713.50d78c30@canb.auug.org.au>
+ <20140901173521.GA8259@roeck-us.net>
+ <alpine.DEB.2.11.1409011615210.22966@gentwo.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qmta11.emeryville.ca.mail.comcast.net ([76.96.27.211]:60760
-	"EHLO qmta11.emeryville.ca.mail.comcast.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753885AbaIBPAK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2014 11:00:10 -0400
-In-Reply-To: <alpine.DEB.2.11.1409020857110.9201@gentwo.org>
+Received: from mail-qg0-f51.google.com ([209.85.192.51]:59218 "EHLO
+	mail-qg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753889AbaIBPyM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2014 11:54:12 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.11.1409011615210.22966@gentwo.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Russell King <rmk+kernel@arm.linux.org.uk>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Christoph Lameter <cl@linux.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2 Sep 2014, Christoph Lameter wrote:
+On Mon, Sep 01, 2014 at 04:15:52PM -0500, Christoph Lameter wrote:
+> On Mon, 1 Sep 2014, Guenter Roeck wrote:
+> 
+> > arch/ia64/sn/kernel/setup.c: In function 'sn_cpu_init':
+> > arch/ia64/sn/kernel/setup.c:632:13: error: lvalue required as left operand of assignment
+> > make[1]: *** [arch/ia64/sn/kernel/setup.o] Error 1
+> > make: *** [arch/ia64/sn/kernel/setup.o] Error 2
+> 
+> 
+> Subject: ia64: sn_nodepda cannot be assigned to after this_cpu conversion. Use __this_cpu_write.
+> 
+> There must be an explit statement to modify the percpu variable after the conversion of the
+> sn_nodpda macro to use this_cpu_read.
+> 
+> Signed-off-by: Christoph Lameter <cl@linux.com>
 
-> Oww.. This is double indirection deal there. A percpu offset pointing to
-> a pointer?
->
-> Generally the following is true (definition from
-> include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
->
-> #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
+Applied to percpu/for-3.18-consistent-ops.
 
-I think what the issue is that we dropped the fetch of the percpu offset
-in the patch. Instead we are using the address of the variable that
-contains the offset. Does this patch fix it?
+Thanks.
 
-
-Subject: irqchip: Properly fetch the per cpu offset
-
-The raw_cpu_read() conversion dropped the fetch of the offset
-from base->percpu_base in gic_get_percpu_base.
-
-Signed-off-by: Christoph Lameter <cl@linux.com>
-
-Index: linux/drivers/irqchip/irq-gic.c
-===================================================================
---- linux.orig/drivers/irqchip/irq-gic.c
-+++ linux/drivers/irqchip/irq-gic.c
-@@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
- #ifdef CONFIG_GIC_NON_BANKED
- static void __iomem *gic_get_percpu_base(union gic_base *base)
- {
--	return raw_cpu_read(base->percpu_base);
-+	return raw_cpu_read(*base->percpu_base);
- }
-
- static void __iomem *gic_get_common_base(union gic_base *base)
+-- 
+tejun
