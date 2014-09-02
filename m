@@ -1,48 +1,68 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: linux-next: jdelvare-hwmon tree unfetchable
-Date: Tue, 2 Sep 2014 09:54:55 +0200
-Message-ID: <20140902095455.77a91b40@endymion.delvare>
-References: <20140901132808.c7b08f4ffa7055dc28e6dac7@kernel.org>
-	<54049590.6060500@roeck-us.net>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Aug 23
+Date: Tue, 2 Sep 2014 11:40:16 +0200
+Message-ID: <20140902094016.GD31157@worktop.ger.corp.intel.com>
+References: <20140823080422.7895575c@canb.auug.org.au>
+ <20140825045741.GA29723@roeck-us.net>
+ <20140901155804.GT27892@worktop.ger.corp.intel.com>
+ <5404A2F2.3090908@roeck-us.net>
+ <20140901190438.GB5806@worktop.ger.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34696 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750903AbaIBHy7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Sep 2014 03:54:59 -0400
-In-Reply-To: <54049590.6060500@roeck-us.net>
+Received: from casper.infradead.org ([85.118.1.10]:32882 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750722AbaIBJkV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2014 05:40:21 -0400
+Content-Disposition: inline
+In-Reply-To: <20140901190438.GB5806@worktop.ger.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Guenter Roeck <linux@roeck-us.net>
-Cc: Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, "David S. Miller" <davem@davemloft.net>
 
-Hi all,
-
-On Mon, 01 Sep 2014 08:49:36 -0700, Guenter Roeck wrote:
-> On 09/01/2014 05:28 AM, Mark Brown wrote:
-> > Today's linux-next merge of the jdelvare-hwmon tree got a conflict with Linus'
-> > tree which appeared to be due to the hwmon quilt series I got from Stephen being
-> > based on v3.14-rc3 and subsequent changes from mainline interacting badly with
-> > it. In addition I'm not able to check the original series since linux-fr.org does
-> > not resolve for me.
+On Mon, Sep 01, 2014 at 09:04:38PM +0200, Peter Zijlstra wrote:
+> On Mon, Sep 01, 2014 at 09:46:42AM -0700, Guenter Roeck wrote:
+> > Yes, the problem is still seen in next-140829. See qemu test results at
+> > http://server.roeck-us.net:8010/builders.
+> > 
+> > I provided sparc64 images at http://server.roeck-us.net/qemu/sparc64/.
+> > The README file includes instructions on how to run the image in qemu
+> > and how to build a kernel.
+> > 
+> > I can do the same for mips and mips64 if needed; let me know.
 > 
-> Jean dropped the linux-fr.org domain, and his old e-mail address probably
-> won't work anymore.
+> Thanks, that's enough to get started.
 
-I can confirm that. linux-fr.org is history, from now on I'll be using
-my @suse.de address for all open source related work. I thought I had
-already updated all references and let everyone involved know about the
-change, but apparently I failed to do so, sorry about that.
+This makes sparc64 go again, silly oversight indeed.
 
-> The alternate (and temporary) pointer he gave me
-> is http://jdelvare.nerim.net/devel/linux-3/jdelvare-hwmon/. It is empty,
-> so you did not miss anything.
+---
+Subject: sparc64: Fix atomics
 
-That's right. As many temporary things, I'm afraid it's there to
-last ;-)
+The patch folding the atomic ops had a silly fail in the _return primitives.
 
--- 
-Jean Delvare
-SUSE L3 Support
+Fixes: 4f3316c2b5fe ("locking,arch,sparc: Fold atomic_ops")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+diff --git a/arch/sparc/lib/atomic_64.S b/arch/sparc/lib/atomic_64.S
+index 96d70b4..05dac43 100644
+--- a/arch/sparc/lib/atomic_64.S
++++ b/arch/sparc/lib/atomic_64.S
+@@ -37,7 +37,7 @@ ENTRY(atomic_##op##_return) /* %o0 = increment, %o1 = atomic_ptr */	\
+ 	cas	[%o1], %g1, %g7;					\
+ 	cmp	%g1, %g7;						\
+ 	bne,pn	%icc, BACKOFF_LABEL(2f, 1b);				\
+-	 add	%g1, %o0, %g1;						\
++	 op	%g1, %o0, %g1;						\
+ 	retl;								\
+ 	 sra	%g1, 0, %o0;						\
+ 2:	BACKOFF_SPIN(%o2, %o3, 1b);					\
+@@ -76,7 +76,7 @@ ENTRY(atomic64_##op##_return) /* %o0 = increment, %o1 = atomic_ptr */	\
+ 	bne,pn	%xcc, BACKOFF_LABEL(2f, 1b);				\
+ 	 nop;								\
+ 	retl;								\
+-	 add	%g1, %o0, %o0;						\
++	 op	%g1, %o0, %o0;						\
+ 2:	BACKOFF_SPIN(%o2, %o3, 1b);					\
+ ENDPROC(atomic64_##op##_return);
+ 
