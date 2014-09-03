@@ -1,34 +1,46 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the drm-intel tree with the  tree
-Date: Wed, 3 Sep 2014 14:31:46 +0100
-Message-ID: <20140903143146.88d4b3ada1e3098989139540@kernel.org>
+Subject: Re: linux-next: manual merge of the drm-intel tree with the  tree
+Date: Wed, 3 Sep 2014 14:37:29 +0100
+Message-ID: <20140903133729.GM29327@sirena.org.uk>
+References: <20140903143146.88d4b3ada1e3098989139540@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vYlOGI1a8wP+YbIl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48125 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48133 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932321AbaICNcC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 09:32:02 -0400
+	with ESMTP id S932414AbaICNhg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 09:37:36 -0400
+Content-Disposition: inline
+In-Reply-To: <20140903143146.88d4b3ada1e3098989139540@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5
-Content-Type: text/plain; charset=US-ASCII
+
+--vYlOGI1a8wP+YbIl
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Sep 03, 2014 at 02:31:46PM +0100, Mark Brown wrote:
 
-Today's linux-next merge of the drm-intel tree got a conflict which I'm not=
- really sure of and commit b47d1189da119e ("drm/i915: Use dev_priv as first=
- argument of for_each_pipe()") from the drm-intel tree.
+> @@ -3923,7 +3942,9 @@ static void valleyview_irq_uninstall(struct drm_dev=
+ice *dev)
+> =20
+>  	I915_WRITE(VLV_MASTER_IER, 0);
+> =20
+> -	for_each_pipe(pipe)
+> +	intel_hpd_irq_uninstall(dev_priv);
+> +
+> +	for_each_pipe(dev_priv, pipe)
+>  		I915_WRITE(PIPESTAT(pipe), 0xffff);
+> =20
+>  	I915_WRITE(HWSTAM, 0xffffffff);
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+=2E..or actually this since the above doesn't build, I was too hasty:
+
 
 @@ -3923,7 +3942,9 @@ static void valleyview_irq_uninstall(struct drm_devic=
 e *dev)
@@ -36,32 +48,32 @@ e *dev)
  	I915_WRITE(VLV_MASTER_IER, 0);
 =20
 -	for_each_pipe(pipe)
-+	intel_hpd_irq_uninstall(dev_priv);
 +
 +	for_each_pipe(dev_priv, pipe)
  		I915_WRITE(PIPESTAT(pipe), 0xffff);
 =20
  	I915_WRITE(HWSTAM, 0xffffffff);
 
---Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5
-Content-Type: application/pgp-signature
+--vYlOGI1a8wP+YbIl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUBxhCAAoJELSic+t+oim9FA0P/1+354RULGdrMhEf9syQks4A
-J6POATmnC1l4SgVlyyu5DKTYjefVUkt2B6SLgFhSi0E33n3Co6gblnoiyRftT5Jz
-fLTcjRH+7CL+KUx9uUnq86DzWO0eMExStUB1AKDSDcpLeoyvlz3U9Si94EAR93ye
-vdAwiXVh8wpPwl7Gqap7UmrCoVj0IfxVvY9IeA6SpCl4WpMH7fms6nq6HnWXPf99
-mrtfT47FTY32AN/hx+bdx8vD5b9sVzNASH5rmye8WiWf0reIxjYxHk4vnqe5qXLM
-RmPRul0FzAzW7U3y+wfz3yF+msyBDPoNMPf7pNgS7vbdXDNPF7Tt5+lPQ3PKzmxe
-XRKJEilZJUpATuXyDg+958U2ku1ekqXgStmkpqQtLtz5KwRBVLi0Ljc4ctBTiV89
-o9dgehRjwMThC889ZvZhqq7UHtybLO6e8loKg+fv1JhmYh5+MDNsVW9B4VNIpzEs
-2Sqr3tRDdvsPgC1bKhcYLrvQMHsNyEW61/eYhiEjEOo5TvVbCSyGa0jE8qwSSwuo
-ezNjvDdEls27BSskq6ZArU5U5jrFKdbKQKMUeYV5gMIzcuLIu063e72O9JgxFKks
-pGwvlhbdQ/eWiad29bvfsQGkmOC7xvpVgoR16kKCyQznB/mZIjA+SzcPRIxKrXmR
-nMlUATv2MlqsTFom47SC
-=J4ZH
+iQIcBAEBAgAGBQJUBxmWAAoJELSic+t+oim9k5sP/itbgjrEkcfzVOngmJgkNeAE
+5db7Cfi8FBvqu45HCpNjdIngnl3VnvhaH3Y4G3MhZU6Ioz1Pcpvv2pIFCtMmrsjq
+0U4VRTT39oO0ZGKs1FTf+MDf8ve1mKW5G/6aMmRmW3bySBay/T/fHAGsRUQB5+FW
+i+oASE6f6+3atNQWyR1KIrIXgpBnczmevXKNPD6u1BhZHOZOYpQT6hdFHdLBbq4U
+63LWHyouwf+sOSwTAdSCuhKnyGYIXoF5kmAgnfcUb3hc8n4a1WRrIyfAZ0ylcAy/
+3ZGUi31MmetUvQKKI9DEtHrDvh14A7dhf4aZRSajbZc9j8CdWNofUgwEbPnBIFkW
+BaFEJSJu8NWjPrSL6Npbbvn3T6C/XiBTPSR0L8fC60siDUaSfZmepS79EhHPsAX8
+vFrQKuRhElTNOT7+laEcm62TMJSrkzStMfUdnYYxWK2FL4+xsnEdg6klfFzldUVg
+OV4tdI8ZUo7lDzSZ6u5fogrYLrrn2+PLHRQGoUIUyXN4NZSBO2eRT9ruBEXRDg1u
+hYmER5BJGLgAPhkOROwpJeDtw7G5a+ANLIrnzBFR/0TagJC1kXs5OvQIFU33dZU+
+zxZzXiCedsbMGPD/ZcAHbIBML3ZmUDyx+ui+J/pwOT7fXXuPtBqJh8HM/raly4aC
+PxTtSAtZ9M4UkxMwrv9q
+=Pywr
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5--
+--vYlOGI1a8wP+YbIl--
