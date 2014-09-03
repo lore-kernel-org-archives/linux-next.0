@@ -1,74 +1,74 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: Tree for Sep 2
-Date: Wed, 3 Sep 2014 20:01:45 +0100
-Message-ID: <20140903190145.GD29327@sirena.org.uk>
+Subject: Re: linux-next: New platform-drivers-x86 tree
+Date: Wed, 3 Sep 2014 20:18:07 +0100
+Message-ID: <20140903191807.GE29327@sirena.org.uk>
+References: <20140903052120.GA39165@vmdeb7>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KXlsDDyIxzhAJBYd"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="dds9jO4idXToq0wP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48701 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753305AbaICTS3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 15:18:29 -0400
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20140903052120.GA39165@vmdeb7>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Darren Hart <dvhart@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
 
---KXlsDDyIxzhAJBYd
+--dds9jO4idXToq0wP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since 20140902:
+On Tue, Sep 02, 2014 at 10:21:20PM -0700, Darren Hart wrote:
+> Hi Stephen,
+>=20
+> I searched the documentation (development-process/*) but found the linux-=
+next
+> wiki to be down (for a while now it seems). Apologies if I'm missing some=
+thing
+> documented there.
 
-The akpm-current tree lost its conflict against Linus' tree and two
-patches from it got applied.
+This is pretty much the process.  Stephen's on holiday this week, I've
+updated the configuration for the trees I'm building this week but you
+might want to check that this gets carried over when he's back on
+Monday.
 
-Non-merge commits (relative to Linus' tree): 3475
- 2949 files changed, 116735 insertions(+), 88213 deletions(-)
+> I have subscribed to the linux-next mailing list. Is there more I need to=
+ be
+> doing? Do I need to send you pull requests, or do you pull a list of bran=
+ches
+> automatically?
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git .
-If you are tracking the linux-next tree using git, you should not use
-git pull" to do so as that will try to merge the new linux-next release
-with the old one.  You should use "git fetch" and checkout or reset to
-the new master.
+It's all done automatically - for-next will be fetched for each -next
+build.  Stephen's form letter for this can be found in the archives, the
+main rule is that you should only be putting code there intended to go
+in during the merge window.
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with an
-allmodconfig for x86_64 and a multi_v7_defconfig for arm.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 214 trees (counting Linus' and 30 trees of patches
-pending for Linus' tree).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of Stephen's local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
---KXlsDDyIxzhAJBYd
+--dds9jO4idXToq0wP
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUB2WWAAoJELSic+t+oim9J3QP/33WshgX12ARgNL0Cm2e74nx
-XHv/BWdMitfAxJTyHsoij9F76z41AS8rD3//x2TpBR02GwR4O2d0VevH/R4ySUiI
-zx9B+8SlZhQ+n0ANIY3gfj6yla66iIQwYGvUAnq4BT/LrfWE8Y4oPZNN0Zdg3Mv1
-j0e+nNLTUEgE8EAmQIEsdM2ez++M/VEv284gHYJAhQXD5r31aVAHBdYM6ikUiOgf
-1NhhDeNiYWNMK4yuHWNs2dwQ8vjPw6rIJLxpw5JkzW1w3+f2kGh1s4SFkfkgQUzB
-TvJercbtspHsJ+MzYn0b2BZqY3AASTmvhmenWnrGKxqq2U5Jo7ukDqe3AE9W/FK0
-m3D5I71KVf7fRGaGHh6xRkje6ygTuV8lKBGdmLoluZHmdSlwkW8D0CPNz4cXtpTd
-5v1HET+Kj6KI3TDrGBhJphN6mMzbOMWca/AXekhRvBWf+6WqNlkIBOz76XUAZ6C9
-YxAxkhMipPd6XOL1Qrtyf8xEeF8RmFA43+fx/WGayZoD7QabalnK5lPovZT6aBBw
-qS6DIwBorw8uQas+Y8UA9EmzZCiACYb/avBZMVTBRtmrTu395NO1jqFdR/DPsrD3
-VU7IgivKxbuQgcvjEkKDSiBfhaCmA0h10Os5X5yYcDLDxkLebdw/MQ7Sddf/Cia+
-vBCh/8am8BfcS5r1YAwb
-=xO2T
+iQIcBAEBAgAGBQJUB2lsAAoJELSic+t+oim9gssQAJzGK6nQgOmuf/7BpHD1aZPy
+CaDTibTA8YD3T3q3ZFgv6dLNKg+ODc+twXojmZLd+sEsZ9puVCZKN1yFn5hGLvnj
+8sDmuXdvd6Gm/5xyBWCIJvq+iJ/Zn5WHAoYAAXk+BRESX2SrK/49bi07cUV7hnOi
+xadAdLNQ79JYAC6hQY4W7HSgqmGXcL6NhrfXS1F1/D+GR41EaeTme07gIstne2xX
+R5B4xQd0pd8Yh+hyYfqMq4X0kc8YfqkXBDivxMfuMCMcWM2wSz6DBB+pfkHHFLy0
+W62fJi5oVdaBu+6I4F0waCmPCYJ4SFHyR25yHlO6m+4ZHO2Mr4Ky10IbwZ3Q2DPH
+IPJOnFLAv1SP++aF867ojJc5RIMuamdHVr2SdmDnKUtpclz/Ux18rIAXmTgl9nTi
+LSLxvEQJ7hKp8FFmTIMc1NA9tiMyPnB8OiQ88dNYmjehC9zRAb30183LQKJ/PE8g
+PM/UhFTo0+GQPX1K0Me8mv2zV9ko/Ug2UBb73lEfB//l42/G6stHEUpBsct7UVYp
+68jbG9rbzQdi5NsI8RQxpdqQlipXS86bRdC5zA4ERtToy73hhCi0AmgAAJY9Fbm5
+HNRgEib0zU2vfs8reFF9KLPy9bAaDP2zT3EaKWJD9m2QHk2kGsXEBH6daBlpnh0t
+V3mY5QF2el1/q14FQFaD
+=zk3t
 -----END PGP SIGNATURE-----
 
---KXlsDDyIxzhAJBYd--
+--dds9jO4idXToq0wP--
