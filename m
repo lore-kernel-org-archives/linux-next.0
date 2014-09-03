@@ -1,88 +1,73 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Aug 23
-Date: Tue, 2 Sep 2014 16:50:38 -0700
-Message-ID: <20140902235038.GA23286@roeck-us.net>
-References: <20140823080422.7895575c@canb.auug.org.au>
- <20140825045741.GA29723@roeck-us.net>
- <20140901155804.GT27892@worktop.ger.corp.intel.com>
- <5404A2F2.3090908@roeck-us.net>
- <20140901190438.GB5806@worktop.ger.corp.intel.com>
- <20140902094016.GD31157@worktop.ger.corp.intel.com>
- <20140902095553.GE31157@worktop.ger.corp.intel.com>
- <20140902190445.GB8829@roeck-us.net>
- <20140902202126.GA3190@worktop.ger.corp.intel.com>
+From: Stephan Mueller <smueller@chronox.de>
+Subject: Re: [PATCH v2] DRBG: remove check for uninitialized DRBG handle
+Date: Wed, 03 Sep 2014 03:33:16 +0200
+Message-ID: <3575659.BooajjTQie@myon.chronox.de>
+References: <20140826161456.7ad100e3@canb.auug.org.au> <2837552.tiNKQxI8Xu@myon.chronox.de> <1461606.SUPpCYm782@myon.chronox.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:37980 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752429AbaIBXun (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2014 19:50:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20140902202126.GA3190@worktop.ger.corp.intel.com>
+Received: from mail.eperm.de ([89.247.134.16]:47004 "EHLO mail.eperm.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755238AbaICBdY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Sep 2014 21:33:24 -0400
+Received: from myon.chronox.de
+	by mail.eperm.de with [XMail 1.27 ESMTP Server]
+	id <S378> for <linux-next@vger.kernel.org> from <smueller@chronox.de>;
+	Wed, 3 Sep 2014 03:33:19 +0200
+In-Reply-To: <1461606.SUPpCYm782@myon.chronox.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, "David S. Miller" <davem@davemloft.net>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 02, 2014 at 10:21:26PM +0200, Peter Zijlstra wrote:
-> On Tue, Sep 02, 2014 at 12:04:45PM -0700, Guenter Roeck wrote:
-> 
-> > I provided qemu images and instructions as follows.
-> > 	http://server.roeck-us.net/qemu/mipsel/		MIPS 32 bit, little endian
-> > 	http://server.roeck-us.net/qemu/mips64el/	MIPS 64 bit, little endian
-> > 
-> > Let me know if you also need big endian images.
-> 
-> Thanks! Does the below work? It appears to work for the mips64 build I did.
-> I'll send a proper patch tomorrow; sleep time :-)
-> 
-Yes, this fixes the problem for both mips32 and mips64.
+Am Montag, 1. September 2014, 07:11:20 schrieb Stephan Mueller:
 
-Guenter
+Hi Herbert,
 
+may I ask for consideration of this patch as this covers an oops FIPS mode?
+
+In addition, may I ask for guidance on how to fix the 32 bit code path in 
+Linus' tree as asked on 28.8? To quote: "Thus, the fix in 
+b9347aff91ce4789619168539f08202d8d6a1177 works. However, this 
+patch is based on 05c81ccd9087d238c10b234eadb55632742e5518. So, if we want to 
+fix Linus' tree with minimal impact, either these two patches are pushed to 
+Linus or I have to port b9347aff91ce4789619168539f08202d8d6a1177 to the 
+current Linus tree."
+
+Thanks a lot
+Stephan
+
+> The drbg_healthcheck() contained a test to call the DRBG with an
+> uninitialized DRBG cipher handle. As this is an inappropriate use of the
+> kernel crypto API to try to generate random numbers before
+> initialization, checks verifying for an initialized DRBG have been
+> removed in previous patches.
+> 
+> Now, the drbg_healthcheck test must also be removed.
+> 
+> Changes V2: Added patch marker to email subject line.
+> 
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
 > ---
-> diff --git a/arch/mips/configs/malta_defconfig b/arch/mips/configs/malta_defconfig
-> index e18741e..869efe7 100644
-> --- a/arch/mips/configs/malta_defconfig
-> +++ b/arch/mips/configs/malta_defconfig
-> @@ -441,3 +441,6 @@ CONFIG_CRYPTO_TEA=m
->  CONFIG_CRYPTO_TWOFISH=m
->  # CONFIG_CRYPTO_ANSI_CPRNG is not set
->  CONFIG_CRC16=m
-> +CONFIG_BLK_DEV_INITRD=y
-> +CONFIG_CPU_MIPS64_R1=y
-> +CONFIG_64BIT=y
-> diff --git a/arch/mips/include/asm/atomic.h b/arch/mips/include/asm/atomic.h
-> index 476fe3b..f3ee721 100644
-> --- a/arch/mips/include/asm/atomic.h
-> +++ b/arch/mips/include/asm/atomic.h
-> @@ -93,7 +93,7 @@ static __inline__ int atomic_##op##_return(int i, atomic_t * v)			\
->  		"	" #asm_op " %0, %1, %3				\n"	\
->  		"	sc	%0, %2					\n"	\
->  		"	beqzl	%0, 1b					\n"	\
-> -		"	addu	%0, %1, %3				\n"	\
-> +		"	" #asm_op " %0, %1, %3				\n"	\
->  		"	.set	mips0					\n"	\
->  		: "=&r" (result), "=&r" (temp), "+m" (v->counter)		\
->  		: "Ir" (i));							\
-> @@ -111,7 +111,7 @@ static __inline__ int atomic_##op##_return(int i, atomic_t * v)			\
->  			: "Ir" (i));						\
->  		} while (unlikely(!result));					\
->  										\
-> -		result = temp + i;						\
-> +		result = temp; result c_op i;					\
->  	} else {								\
->  		unsigned long flags;						\
->  										\
-> @@ -387,7 +387,7 @@ static __inline__ long atomic64_##op##_return(long i, atomic64_t * v)		\
->  			: "memory");						\
->  		} while (unlikely(!result));					\
->  										\
-> -		result = temp + i;						\
-> +		result = temp; result c_op i;					\
->  	} else {								\
->  		unsigned long flags;						\
->  										\
+>  crypto/drbg.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> 
+> diff --git a/crypto/drbg.c b/crypto/drbg.c
+> index 39ed918..54cfd48 100644
+> --- a/crypto/drbg.c
+> +++ b/crypto/drbg.c
+> @@ -1872,9 +1872,6 @@ static inline int __init drbg_healthcheck_sanity(void)
+> /* overflow max addtllen with personalization string */
+>  	ret = drbg_instantiate(drbg, &addtl, coreref, pr);
+>  	BUG_ON(0 == ret);
+> -	/* test uninstantated DRBG */
+> -	len = drbg_generate(drbg, buf, (max_request_bytes + 1), NULL);
+> -	BUG_ON(0 < len);
+>  	/* all tests passed */
+>  	rc = 0;
+
+
+-- 
+Ciao
+Stephan
