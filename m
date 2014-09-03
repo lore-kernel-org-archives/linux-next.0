@@ -1,115 +1,74 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the akpm-current tree with the  tree
-Date: Wed, 3 Sep 2014 17:23:26 +0100
-Message-ID: <20140903172326.51b4b19f0cc7b901bcaaf218@kernel.org>
+Subject: linux-next: Tree for Sep 2
+Date: Wed, 3 Sep 2014 20:01:45 +0100
+Message-ID: <20140903190145.GD29327@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48497 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750953AbaICQYW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 12:24:22 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Heiko =?ISO-8859-1?Q?St=FCb?= =?ISO-8859-1?Q?ner?= <heiko@sntech.de>, Mike Turquette <mturquette@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KXlsDDyIxzhAJBYd"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in drivers=
-/clk/rockchip/clk.h and drivers/clk/rockchip/clk.c between commits like fe9=
-4f974e9c8b8 ("clk: rockchip: protect critical clocks from getting disabled"=
-) from the clk tree and "clk: rockchip: add restart handler" from the akpm-=
-current tree.
+--KXlsDDyIxzhAJBYd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Changes since 20140902:
 
-diff --cc drivers/clk/rockchip/clk.c
-index d9c6db2151ba,aa41433eb34f..000000000000
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@@ -297,15 -244,26 +298,39 @@@ void __init rockchip_clk_register_branc
-  	}
-  }
- =20
- +void __init rockchip_clk_protect_critical(const char *clocks[], int ncloc=
-ks)
- +{
- +	int i;
- +
- +	/* Protect the clocks that needs to stay on */
- +	for (i =3D 0; i < nclocks; i++) {
- +		struct clk *clk =3D __clk_lookup(clocks[i]);
- +
- +		if (clk)
- +			clk_prepare_enable(clk);
- +	}
- +}
-++
-+ static unsigned int reg_restart;
-+ static int rockchip_restart_notify(struct notifier_block *this,
-+ 				   unsigned long mode, void *cmd)
-+ {
-+ 	writel(0xfdb9, reg_base + reg_restart);
-+ 	return NOTIFY_DONE;
-+ }
-+=20
-+ static struct notifier_block rockchip_restart_handler =3D {
-+ 	.notifier_call =3D rockchip_restart_notify,
-+ 	.priority =3D 128,
-+ };
-+=20
-+ void __init rockchip_register_restart_notifier(unsigned int reg)
-+ {
-+ 	int ret;
-+=20
-+ 	reg_restart =3D reg;
-+ 	ret =3D register_restart_handler(&rockchip_restart_handler);
-+ 	if (ret)
-+ 		pr_err("%s: cannot register restart handler, %d\n",
-+ 		       __func__, ret);
-+ }
-diff --cc drivers/clk/rockchip/clk.h
-index 2b0bca19db47,0b5eab5b521f..000000000000
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@@ -329,7 -329,7 +329,8 @@@ void rockchip_clk_register_branches(str
-  				    unsigned int nr_clk);
-  void rockchip_clk_register_plls(struct rockchip_pll_clock *pll_list,
-  				unsigned int nr_pll, int grf_lock_offset);
- +void rockchip_clk_protect_critical(const char *clocks[], int nclocks);
-+ void rockchip_register_restart_notifier(unsigned int reg);
- =20
-  #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
- =20
+The akpm-current tree lost its conflict against Linus' tree and two
+patches from it got applied.
 
---Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO
-Content-Type: application/pgp-signature
+Non-merge commits (relative to Linus' tree): 3475
+ 2949 files changed, 116735 insertions(+), 88213 deletions(-)
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git .
+If you are tracking the linux-next tree using git, you should not use
+git pull" to do so as that will try to merge the new linux-next release
+with the old one.  You should use "git fetch" and checkout or reset to
+the new master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with an
+allmodconfig for x86_64 and a multi_v7_defconfig for arm.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 214 trees (counting Linus' and 30 trees of patches
+pending for Linus' tree).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of Stephen's local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+--KXlsDDyIxzhAJBYd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUB0B+AAoJELSic+t+oim99LQP/jzTLCyYE39kHriPSOuW+wyP
-EC7anhOeJL8PMZH+zPZ6quP1JjSoOe6jSMB0g1JgPgJWVQzMAjrk72VDTTnpMRmq
-fgZfN3y+5uiDGMEbWLaxUKN/cUDUD4lk4vwW3+m4oKLpDRqcrdhDLpG9vYEbYV0B
-PwJYXXtdbHpMtgoXINb8MwnDct8nX8J6RrqdoipwFSTTEufMHa9DluO+9j3fbb5m
-GHeJ2NrWGoBM22Q9bxigd0qeq31ddqDhsHyoR1WyTeXl8laf9iLv9AnbvHY6JmjY
-cTQzVFh6J4JKG3zh8XZr8aj12B6G1ChPekIl0Tkm/kZ03UqTtvXktb8DYu4OB07X
-4ngjVTs4UUDHxdSz31Mri3H2J6cIumLO3NkPO4bnVQfFJHpQotu7P8EeFtbddZuT
-ushqmjYIdfV0mnG5uyxjtIYTF1JnqllHLl0TPUqOu81EDGT7ekbJsNEKx/+Aasqd
-pa7BUyvbbKCAyMqVEdcO1KPXeVs73Lxka/9xx8L24JYN9qLkBLQfc06kefPpfz6J
-Lt22XhifDqIO8NBr0eeVqaiUSsl3YfMK+RpeuYxi0pTUfxtLEgKWS4gwjLlSmAdM
-R6Ayl73ropQXuSsxOH/LVOBAyNSt3K0cidU2IbayE6nMgvcYvCK2N3keuH/7iPXU
-WXg6s7XqtRFSqctJMFxN
-=3BeQ
+iQIcBAEBAgAGBQJUB2WWAAoJELSic+t+oim9J3QP/33WshgX12ARgNL0Cm2e74nx
+XHv/BWdMitfAxJTyHsoij9F76z41AS8rD3//x2TpBR02GwR4O2d0VevH/R4ySUiI
+zx9B+8SlZhQ+n0ANIY3gfj6yla66iIQwYGvUAnq4BT/LrfWE8Y4oPZNN0Zdg3Mv1
+j0e+nNLTUEgE8EAmQIEsdM2ez++M/VEv284gHYJAhQXD5r31aVAHBdYM6ikUiOgf
+1NhhDeNiYWNMK4yuHWNs2dwQ8vjPw6rIJLxpw5JkzW1w3+f2kGh1s4SFkfkgQUzB
+TvJercbtspHsJ+MzYn0b2BZqY3AASTmvhmenWnrGKxqq2U5Jo7ukDqe3AE9W/FK0
+m3D5I71KVf7fRGaGHh6xRkje6ygTuV8lKBGdmLoluZHmdSlwkW8D0CPNz4cXtpTd
+5v1HET+Kj6KI3TDrGBhJphN6mMzbOMWca/AXekhRvBWf+6WqNlkIBOz76XUAZ6C9
+YxAxkhMipPd6XOL1Qrtyf8xEeF8RmFA43+fx/WGayZoD7QabalnK5lPovZT6aBBw
+qS6DIwBorw8uQas+Y8UA9EmzZCiACYb/avBZMVTBRtmrTu395NO1jqFdR/DPsrD3
+VU7IgivKxbuQgcvjEkKDSiBfhaCmA0h10Os5X5yYcDLDxkLebdw/MQ7Sddf/Cia+
+vBCh/8am8BfcS5r1YAwb
+=xO2T
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO--
+--KXlsDDyIxzhAJBYd--
