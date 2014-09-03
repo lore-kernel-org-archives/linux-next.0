@@ -1,69 +1,115 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: linux-next: Tree for Sep 1
-Date: Wed, 03 Sep 2014 18:09:56 +0200
-Message-ID: <37101991.sqIYnPZ4ga@amdc1032>
-References: <20140901230728.GM29327@sirena.org.uk>
- <alpine.DEB.2.11.1409020857110.9201@gentwo.org>
- <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the akpm-current tree with the  tree
+Date: Wed, 3 Sep 2014 17:23:26 +0100
+Message-ID: <20140903172326.51b4b19f0cc7b901bcaaf218@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52908 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753297AbaICQKD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 12:10:03 -0400
-In-reply-to: <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48497 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750953AbaICQYW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 12:24:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Russell King <rmk+kernel@arm.linux.org.uk>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Heiko =?ISO-8859-1?Q?St=FCb?= =?ISO-8859-1?Q?ner?= <heiko@sntech.de>, Mike Turquette <mturquette@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Andrew,
 
-On Tuesday, September 02, 2014 10:00:07 AM Christoph Lameter wrote:
-> On Tue, 2 Sep 2014, Christoph Lameter wrote:
-> 
-> > Oww.. This is double indirection deal there. A percpu offset pointing to
-> > a pointer?
-> >
-> > Generally the following is true (definition from
-> > include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
-> >
-> > #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
-> 
-> I think what the issue is that we dropped the fetch of the percpu offset
-> in the patch. Instead we are using the address of the variable that
-> contains the offset. Does this patch fix it?
+Today's linux-next merge of the akpm-current tree got a conflict in drivers=
+/clk/rockchip/clk.h and drivers/clk/rockchip/clk.c between commits like fe9=
+4f974e9c8b8 ("clk: rockchip: protect critical clocks from getting disabled"=
+) from the clk tree and "clk: rockchip: add restart handler" from the akpm-=
+current tree.
 
-Yes, it fixes the problem.  Thank you.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+diff --cc drivers/clk/rockchip/clk.c
+index d9c6db2151ba,aa41433eb34f..000000000000
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@@ -297,15 -244,26 +298,39 @@@ void __init rockchip_clk_register_branc
+  	}
+  }
+ =20
+ +void __init rockchip_clk_protect_critical(const char *clocks[], int ncloc=
+ks)
+ +{
+ +	int i;
+ +
+ +	/* Protect the clocks that needs to stay on */
+ +	for (i =3D 0; i < nclocks; i++) {
+ +		struct clk *clk =3D __clk_lookup(clocks[i]);
+ +
+ +		if (clk)
+ +			clk_prepare_enable(clk);
+ +	}
+ +}
+++
++ static unsigned int reg_restart;
++ static int rockchip_restart_notify(struct notifier_block *this,
++ 				   unsigned long mode, void *cmd)
++ {
++ 	writel(0xfdb9, reg_base + reg_restart);
++ 	return NOTIFY_DONE;
++ }
++=20
++ static struct notifier_block rockchip_restart_handler =3D {
++ 	.notifier_call =3D rockchip_restart_notify,
++ 	.priority =3D 128,
++ };
++=20
++ void __init rockchip_register_restart_notifier(unsigned int reg)
++ {
++ 	int ret;
++=20
++ 	reg_restart =3D reg;
++ 	ret =3D register_restart_handler(&rockchip_restart_handler);
++ 	if (ret)
++ 		pr_err("%s: cannot register restart handler, %d\n",
++ 		       __func__, ret);
++ }
+diff --cc drivers/clk/rockchip/clk.h
+index 2b0bca19db47,0b5eab5b521f..000000000000
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@@ -329,7 -329,7 +329,8 @@@ void rockchip_clk_register_branches(str
+  				    unsigned int nr_clk);
+  void rockchip_clk_register_plls(struct rockchip_pll_clock *pll_list,
+  				unsigned int nr_pll, int grf_lock_offset);
+ +void rockchip_clk_protect_critical(const char *clocks[], int nclocks);
++ void rockchip_register_restart_notifier(unsigned int reg);
+ =20
+  #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
+ =20
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+--Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO
+Content-Type: application/pgp-signature
 
-> Subject: irqchip: Properly fetch the per cpu offset
-> 
-> The raw_cpu_read() conversion dropped the fetch of the offset
-> from base->percpu_base in gic_get_percpu_base.
-> 
-> Signed-off-by: Christoph Lameter <cl@linux.com>
-> 
-> Index: linux/drivers/irqchip/irq-gic.c
-> ===================================================================
-> --- linux.orig/drivers/irqchip/irq-gic.c
-> +++ linux/drivers/irqchip/irq-gic.c
-> @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
->  #ifdef CONFIG_GIC_NON_BANKED
->  static void __iomem *gic_get_percpu_base(union gic_base *base)
->  {
-> -	return raw_cpu_read(base->percpu_base);
-> +	return raw_cpu_read(*base->percpu_base);
->  }
-> 
->  static void __iomem *gic_get_common_base(union gic_base *base)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUB0B+AAoJELSic+t+oim99LQP/jzTLCyYE39kHriPSOuW+wyP
+EC7anhOeJL8PMZH+zPZ6quP1JjSoOe6jSMB0g1JgPgJWVQzMAjrk72VDTTnpMRmq
+fgZfN3y+5uiDGMEbWLaxUKN/cUDUD4lk4vwW3+m4oKLpDRqcrdhDLpG9vYEbYV0B
+PwJYXXtdbHpMtgoXINb8MwnDct8nX8J6RrqdoipwFSTTEufMHa9DluO+9j3fbb5m
+GHeJ2NrWGoBM22Q9bxigd0qeq31ddqDhsHyoR1WyTeXl8laf9iLv9AnbvHY6JmjY
+cTQzVFh6J4JKG3zh8XZr8aj12B6G1ChPekIl0Tkm/kZ03UqTtvXktb8DYu4OB07X
+4ngjVTs4UUDHxdSz31Mri3H2J6cIumLO3NkPO4bnVQfFJHpQotu7P8EeFtbddZuT
+ushqmjYIdfV0mnG5uyxjtIYTF1JnqllHLl0TPUqOu81EDGT7ekbJsNEKx/+Aasqd
+pa7BUyvbbKCAyMqVEdcO1KPXeVs73Lxka/9xx8L24JYN9qLkBLQfc06kefPpfz6J
+Lt22XhifDqIO8NBr0eeVqaiUSsl3YfMK+RpeuYxi0pTUfxtLEgKWS4gwjLlSmAdM
+R6Ayl73ropQXuSsxOH/LVOBAyNSt3K0cidU2IbayE6nMgvcYvCK2N3keuH/7iPXU
+WXg6s7XqtRFSqctJMFxN
+=3BeQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Sep_2014_17_23_26_+0100_RlN+axJ0a3CGFADO--
