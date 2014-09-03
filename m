@@ -1,43 +1,67 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: linux-next: New platform-drivers-x86 tree
-Date: Tue, 2 Sep 2014 22:21:20 -0700
-Message-ID: <20140903052120.GA39165@vmdeb7>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the drm-intel tree with the  tree
+Date: Wed, 3 Sep 2014 14:31:46 +0100
+Message-ID: <20140903143146.88d4b3ada1e3098989139540@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:46340 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750833AbaICFV2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 01:21:28 -0400
-Content-Disposition: inline
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48125 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932321AbaICNcC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2014 09:32:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I searched the documentation (development-process/*) but found the linux-next
-wiki to be down (for a while now it seems). Apologies if I'm missing something
-documented there.
+Hi all,
 
-I picked up maintenance of platform-drivers-x86 from Matthew Garrett. I wanted
-to point you at my latest tree and make sure I understood the process for
-working with linux-next.
+Today's linux-next merge of the drm-intel tree got a conflict which I'm not=
+ really sure of and commit b47d1189da119e ("drm/i915: Use dev_priv as first=
+ argument of for_each_pipe()") from the drm-intel tree.
 
-The new tree is here:
-git://git.infradead.org/users/dvhart/linux-platform-drivers-x86.git
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-I'm planning on pushing patches I'm considering for pull requests to the
-'for-next' branch - unless you direct me otherwise. This is typically after they
-pass LKP testing in the 'testing' branch.
+@@ -3923,7 +3942,9 @@ static void valleyview_irq_uninstall(struct drm_devic=
+e *dev)
+=20
+ 	I915_WRITE(VLV_MASTER_IER, 0);
+=20
+-	for_each_pipe(pipe)
++	intel_hpd_irq_uninstall(dev_priv);
++
++	for_each_pipe(dev_priv, pipe)
+ 		I915_WRITE(PIPESTAT(pipe), 0xffff);
+=20
+ 	I915_WRITE(HWSTAM, 0xffffffff);
 
-I have subscribed to the linux-next mailing list. Is there more I need to be
-doing? Do I need to send you pull requests, or do you pull a list of branches
-automatically?
+--Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5
+Content-Type: application/pgp-signature
 
-Regards,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
---
-Darren Hart
-Intel Open Source Technology Center
+iQIcBAEBAgAGBQJUBxhCAAoJELSic+t+oim9FA0P/1+354RULGdrMhEf9syQks4A
+J6POATmnC1l4SgVlyyu5DKTYjefVUkt2B6SLgFhSi0E33n3Co6gblnoiyRftT5Jz
+fLTcjRH+7CL+KUx9uUnq86DzWO0eMExStUB1AKDSDcpLeoyvlz3U9Si94EAR93ye
+vdAwiXVh8wpPwl7Gqap7UmrCoVj0IfxVvY9IeA6SpCl4WpMH7fms6nq6HnWXPf99
+mrtfT47FTY32AN/hx+bdx8vD5b9sVzNASH5rmye8WiWf0reIxjYxHk4vnqe5qXLM
+RmPRul0FzAzW7U3y+wfz3yF+msyBDPoNMPf7pNgS7vbdXDNPF7Tt5+lPQ3PKzmxe
+XRKJEilZJUpATuXyDg+958U2ku1ekqXgStmkpqQtLtz5KwRBVLi0Ljc4ctBTiV89
+o9dgehRjwMThC889ZvZhqq7UHtybLO6e8loKg+fv1JhmYh5+MDNsVW9B4VNIpzEs
+2Sqr3tRDdvsPgC1bKhcYLrvQMHsNyEW61/eYhiEjEOo5TvVbCSyGa0jE8qwSSwuo
+ezNjvDdEls27BSskq6ZArU5U5jrFKdbKQKMUeYV5gMIzcuLIu063e72O9JgxFKks
+pGwvlhbdQ/eWiad29bvfsQGkmOC7xvpVgoR16kKCyQznB/mZIjA+SzcPRIxKrXmR
+nMlUATv2MlqsTFom47SC
+=J4ZH
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Sep_2014_14_31_46_+0100_jUvYtdnv1WHmpfT5--
