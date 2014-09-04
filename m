@@ -1,54 +1,23 @@
-From: Jason Cooper <jason@lakedaemon.net>
+From: Christoph Lameter <cl@linux.com>
 Subject: Re: linux-next: Tree for Sep 1
-Date: Fri, 5 Sep 2014 07:31:14 -0400
-Message-ID: <20140905113114.GS30467@titan.lakedaemon.net>
-References: <20140901230728.GM29327@sirena.org.uk>
- <1627064.QhxvejlWdk@amdc1032>
- <alpine.DEB.2.11.1409020857110.9201@gentwo.org>
- <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
- <20140904171123.GD26364@mtj.dyndns.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Date: Thu, 4 Sep 2014 12:59:39 -0500 (CDT)
+Message-ID: <alpine.DEB.2.11.1409041259110.14314@gentwo.org>
+References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org> <alpine.DEB.2.11.1409020958530.9608@gentwo.org> <20140904171123.GD26364@mtj.dyndns.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:47393 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756622AbaIELb2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2014 07:31:28 -0400
-Content-Disposition: inline
+Received: from qmta11.emeryville.ca.mail.comcast.net ([76.96.27.211]:50075
+	"EHLO qmta11.emeryville.ca.mail.comcast.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750825AbaIEQpn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2014 12:45:43 -0400
 In-Reply-To: <20140904171123.GD26364@mtj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Christoph Lameter <cl@linux.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Russell King <rmk+kernel@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Russell King <rmk+kernel@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Tejun, Christoph,
+On Fri, 5 Sep 2014, Tejun Heo wrote:
 
-On Fri, Sep 05, 2014 at 02:11:23AM +0900, Tejun Heo wrote:
-> On Tue, Sep 02, 2014 at 10:00:07AM -0500, Christoph Lameter wrote:
-> > Subject: irqchip: Properly fetch the per cpu offset
-> > 
-> > The raw_cpu_read() conversion dropped the fetch of the offset
-> > from base->percpu_base in gic_get_percpu_base.
-> > 
-> > Signed-off-by: Christoph Lameter <cl@linux.com>
-> > 
-> > Index: linux/drivers/irqchip/irq-gic.c
-> > ===================================================================
-> > --- linux.orig/drivers/irqchip/irq-gic.c
-> > +++ linux/drivers/irqchip/irq-gic.c
-> > @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
-> >  #ifdef CONFIG_GIC_NON_BANKED
-> >  static void __iomem *gic_get_percpu_base(union gic_base *base)
-> >  {
-> > -	return raw_cpu_read(base->percpu_base);
-> > +	return raw_cpu_read(*base->percpu_base);
-> 
 > I suppose this should go through percpu/for-3.18-consistent-ops?  Can
 > we please cc irq folks and get acks?
 
-Could Thomas and I get a pointer to the original patch and thread that
-caused the error?
-
-thx,
-
-Jason.
+Russell and Nicolas were cced. This is arm specific.
