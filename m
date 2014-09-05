@@ -1,64 +1,105 @@
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: [PATCH -mmotm] mm: fix kmemcheck.c build errors
-Date: Fri,  5 Sep 2014 16:28:06 +0900
-Message-ID: <1409902086-32311-1-git-send-email-iamjoonsoo.kim@lge.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lgeamrelo01.lge.com ([156.147.1.125]:58095 "EHLO
-	lgeamrelo01.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750765AbaIEH1Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2014 03:27:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Pekka Enberg <penberg@kernel.org>, Vegard Nossum <vegardno@ifi.uio.no>, Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Randy Dunlap <rdunlap@infradead.org>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v2] DRBG: remove check for uninitialized DRBG handle
+Date: Fri, 5 Sep 2014 15:55:49 +0800
+Message-ID: <20140905075549.GA13225@gondor.apana.org.au>
+References: <20140826161456.7ad100e3@canb.auug.org.au>
+ <3575659.BooajjTQie@myon.chronox.de>
+ <20140903232129.GA32264@gondor.apana.org.au>
+ <8246803.Qk7EMfoFYT@myon.chronox.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <8246803.Qk7EMfoFYT@myon.chronox.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephan Mueller <smueller@chronox.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-mm-slab_common-move-kmem_cache-definition-to-internal-header.patch
-in mmotm makes following build failure.
+On Thu, Sep 04, 2014 at 01:50:32AM +0200, Stephan Mueller wrote:
+> Am Donnerstag, 4. September 2014, 07:21:29 schrieb Herbert Xu:
+> 
+> Hi Herbert,
+> 
+> > On Wed, Sep 03, 2014 at 03:33:16AM +0200, Stephan Mueller wrote:
+> > > Am Montag, 1. September 2014, 07:11:20 schrieb Stephan Mueller:
+> > > 
+> > > Hi Herbert,
+> > > 
+> > > may I ask for consideration of this patch as this covers an oops FIPS
+> > > mode?
+> > > 
+> > > In addition, may I ask for guidance on how to fix the 32 bit code path in
+> > > Linus' tree as asked on 28.8? To quote: "Thus, the fix in
+> > > b9347aff91ce4789619168539f08202d8d6a1177 works. However, this
+> > > patch is based on 05c81ccd9087d238c10b234eadb55632742e5518. So, if we want
+> > > to fix Linus' tree with minimal impact, either these two patches are
+> > > pushed to Linus or I have to port
+> > > b9347aff91ce4789619168539f08202d8d6a1177 to the current Linus tree."
+> > 
+> > I will take care of this.
+> 
+> Thank you.
 
-../mm/kmemcheck.c:70:7: error: dereferencing pointer to incomplete type
-../mm/kmemcheck.c:83:15: error: dereferencing pointer to incomplete type
-../mm/kmemcheck.c:95:8: error: dereferencing pointer to incomplete type
-../mm/kmemcheck.c:95:21: error: dereferencing pointer to incomplete type
+Here is the patch I will add for 3.17:
 
-../mm/slab.h: In function 'cache_from_obj':
-../mm/slab.h:283:2: error: implicit declaration of function
-'memcg_kmem_enabled' [-Werror=implicit-function-declaration]
+commit fb38ab4cd05e11184fd2c3ef916fa106ecc505fc
+Author: Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Fri Sep 5 15:52:28 2014 +0800
 
-Add header files to fix kmemcheck.c build errors.
+    crypto: drbg - backport "fix maximum value checks on 32 bit systems"
+    
+    This is a backport of commit b9347aff91ce4789619168539f08202d8d6a1177.
+    This backport is needed as without it the code will crash on 32-bit
+    systems.
+    
+    The maximum values for additional input string or generated blocks is
+    larger than 1<<32. To ensure a sensible value on 32 bit systems, return
+    SIZE_MAX on 32 bit systems. This value is lower than the maximum
+    allowed values defined in SP800-90A. The standard allow lower maximum
+    values, but not larger values.
+    
+    SIZE_MAX - 1 is used for drbg_max_addtl to allow
+    drbg_healthcheck_sanity to check the enforcement of the variable
+    without wrapping.
+    
+    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+    Reported-by: kbuild test robot <fengguang.wu@intel.com>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-[iamjoonsoo.kim@lge.com] move up memcontrol.h header
-to fix build failure if CONFIG_MEMCG_KMEM=y too.
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
----
- mm/kmemcheck.c |    1 +
- mm/slab.h      |    2 ++
- 2 files changed, 3 insertions(+)
-
-diff --git a/mm/kmemcheck.c b/mm/kmemcheck.c
-index fd814fd..cab58bb 100644
---- a/mm/kmemcheck.c
-+++ b/mm/kmemcheck.c
-@@ -2,6 +2,7 @@
- #include <linux/mm_types.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
-+#include "slab.h"
- #include <linux/kmemcheck.h>
+diff --git a/include/crypto/drbg.h b/include/crypto/drbg.h
+index 831d786..882675e 100644
+--- a/include/crypto/drbg.h
++++ b/include/crypto/drbg.h
+@@ -162,12 +162,25 @@ static inline size_t drbg_max_request_bytes(struct drbg_state *drbg)
  
- void kmemcheck_alloc_shadow(struct page *page, int order, gfp_t flags, int node)
-diff --git a/mm/slab.h b/mm/slab.h
-index 13845d0..963a3f8 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -37,6 +37,8 @@ struct kmem_cache {
- #include <linux/slub_def.h>
- #endif
+ static inline size_t drbg_max_addtl(struct drbg_state *drbg)
+ {
++#if (__BITS_PER_LONG == 32)
++	/*
++	 * SP800-90A allows smaller maximum numbers to be returned -- we
++	 * return SIZE_MAX - 1 to allow the verification of the enforcement
++	 * of this value in drbg_healthcheck_sanity.
++	 */
++	return (SIZE_MAX - 1);
++#else
+ 	return (1UL<<(drbg->core->max_addtllen));
++#endif
+ }
  
-+#include <linux/memcontrol.h>
-+
+ static inline size_t drbg_max_requests(struct drbg_state *drbg)
+ {
++#if (__BITS_PER_LONG == 32)
++	return SIZE_MAX;
++#else
+ 	return (1UL<<(drbg->core->max_req));
++#endif
+ }
+ 
  /*
-  * State of the slab allocator.
-  *
+
+Cheers,
 -- 
-1.7.9.5
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
