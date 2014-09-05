@@ -1,128 +1,54 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: Re: [PATCH v2] DRBG: remove check for uninitialized DRBG handle
-Date: Fri, 05 Sep 2014 13:25:29 +0200
-Message-ID: <8982542.15qJOCEf3S@tauon>
-References: <20140826161456.7ad100e3@canb.auug.org.au> <8246803.Qk7EMfoFYT@myon.chronox.de> <20140905075549.GA13225@gondor.apana.org.au>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: linux-next: Tree for Sep 1
+Date: Fri, 5 Sep 2014 07:31:14 -0400
+Message-ID: <20140905113114.GS30467@titan.lakedaemon.net>
+References: <20140901230728.GM29327@sirena.org.uk>
+ <1627064.QhxvejlWdk@amdc1032>
+ <alpine.DEB.2.11.1409020857110.9201@gentwo.org>
+ <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
+ <20140904171123.GD26364@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.eperm.de ([89.247.134.16]:47018 "EHLO mail.eperm.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756575AbaIELZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Sep 2014 07:25:38 -0400
-Received: from tauon.localnet
-	by mail.eperm.de with [XMail 1.27 ESMTP Server]
-	id <S394> for <linux-next@vger.kernel.org> from <smueller@chronox.de>;
-	Fri, 5 Sep 2014 13:25:32 +0200
-In-Reply-To: <20140905075549.GA13225@gondor.apana.org.au>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:47393 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756622AbaIELb2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2014 07:31:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20140904171123.GD26364@mtj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Christoph Lameter <cl@linux.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Russell King <rmk+kernel@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Am Freitag, 5. September 2014, 15:55:49 schrieb Herbert Xu:
+Tejun, Christoph,
 
-Hi Herbert,
+On Fri, Sep 05, 2014 at 02:11:23AM +0900, Tejun Heo wrote:
+> On Tue, Sep 02, 2014 at 10:00:07AM -0500, Christoph Lameter wrote:
+> > Subject: irqchip: Properly fetch the per cpu offset
+> > 
+> > The raw_cpu_read() conversion dropped the fetch of the offset
+> > from base->percpu_base in gic_get_percpu_base.
+> > 
+> > Signed-off-by: Christoph Lameter <cl@linux.com>
+> > 
+> > Index: linux/drivers/irqchip/irq-gic.c
+> > ===================================================================
+> > --- linux.orig/drivers/irqchip/irq-gic.c
+> > +++ linux/drivers/irqchip/irq-gic.c
+> > @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
+> >  #ifdef CONFIG_GIC_NON_BANKED
+> >  static void __iomem *gic_get_percpu_base(union gic_base *base)
+> >  {
+> > -	return raw_cpu_read(base->percpu_base);
+> > +	return raw_cpu_read(*base->percpu_base);
+> 
+> I suppose this should go through percpu/for-3.18-consistent-ops?  Can
+> we please cc irq folks and get acks?
 
->On Thu, Sep 04, 2014 at 01:50:32AM +0200, Stephan Mueller wrote:
->> Am Donnerstag, 4. September 2014, 07:21:29 schrieb Herbert Xu:
->> 
->> Hi Herbert,
->> 
->> > On Wed, Sep 03, 2014 at 03:33:16AM +0200, Stephan Mueller wrote:
->> > > Am Montag, 1. September 2014, 07:11:20 schrieb Stephan Mueller:
->> > > 
->> > > Hi Herbert,
->> > > 
->> > > may I ask for consideration of this patch as this covers an oops
->> > > FIPS
->> > > mode?
->> > > 
->> > > In addition, may I ask for guidance on how to fix the 32 bit code
->> > > path in Linus' tree as asked on 28.8? To quote: "Thus, the fix
->> > > in
->> > > b9347aff91ce4789619168539f08202d8d6a1177 works. However, this
->> > > patch is based on 05c81ccd9087d238c10b234eadb55632742e5518. So,
->> > > if we want to fix Linus' tree with minimal impact, either these
->> > > two patches are pushed to Linus or I have to port
->> > > b9347aff91ce4789619168539f08202d8d6a1177 to the current Linus
->> > > tree."
->> > 
->> > I will take care of this.
->> 
->> Thank you.
->
->Here is the patch I will add for 3.17:
->
->commit fb38ab4cd05e11184fd2c3ef916fa106ecc505fc
->Author: Herbert Xu <herbert@gondor.apana.org.au>
->Date:   Fri Sep 5 15:52:28 2014 +0800
->
->    crypto: drbg - backport "fix maximum value checks on 32 bit
->systems"
->
->    This is a backport of commit
->b9347aff91ce4789619168539f08202d8d6a1177. This backport is needed as
->without it the code will crash on 32-bit systems.
+Could Thomas and I get a pointer to the original patch and thread that
+caused the error?
 
-The kernel / module will not crash, It will simply refuse to work by 
-always returning an error. I have tested the 3.17-rc1 code on 32 bit 
-which returned always the error unless I apply this patch.
->
->    The maximum values for additional input string or generated blocks
->is larger than 1<<32. To ensure a sensible value on 32 bit systems,
->return SIZE_MAX on 32 bit systems. This value is lower than the
->maximum allowed values defined in SP800-90A. The standard allow lower
->maximum values, but not larger values.
->
->    SIZE_MAX - 1 is used for drbg_max_addtl to allow
->    drbg_healthcheck_sanity to check the enforcement of the variable
->    without wrapping.
->
->    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->    Reported-by: kbuild test robot <fengguang.wu@intel.com>
->    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
->
->diff --git a/include/crypto/drbg.h b/include/crypto/drbg.h
->index 831d786..882675e 100644
->--- a/include/crypto/drbg.h
->+++ b/include/crypto/drbg.h
->@@ -162,12 +162,25 @@ static inline size_t
->drbg_max_request_bytes(struct drbg_state *drbg)
->
-> static inline size_t drbg_max_addtl(struct drbg_state *drbg)
-> {
->+#if (__BITS_PER_LONG == 32)
->+	/*
->+	 * SP800-90A allows smaller maximum numbers to be returned -- we
->+	 * return SIZE_MAX - 1 to allow the verification of the 
-enforcement
->+	 * of this value in drbg_healthcheck_sanity.
->+	 */
->+	return (SIZE_MAX - 1);
->+#else
-> 	return (1UL<<(drbg->core->max_addtllen));
->+#endif
-> }
->
-> static inline size_t drbg_max_requests(struct drbg_state *drbg)
-> {
->+#if (__BITS_PER_LONG == 32)
->+	return SIZE_MAX;
->+#else
-> 	return (1UL<<(drbg->core->max_req));
->+#endif
-> }
->
-> /*
->
->Cheers,
+thx,
 
-Thank you very much!
-
-Acked-by: Stephan Mueller <smueller@chronox.de>
-
-
-Ciao
-Stephan
+Jason.
