@@ -1,23 +1,74 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: linux-next: Tree for Sep 1
-Date: Thu, 4 Sep 2014 12:59:39 -0500 (CDT)
-Message-ID: <alpine.DEB.2.11.1409041259110.14314@gentwo.org>
-References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org> <alpine.DEB.2.11.1409020958530.9608@gentwo.org> <20140904171123.GD26364@mtj.dyndns.org>
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qmta11.emeryville.ca.mail.comcast.net ([76.96.27.211]:50075
-	"EHLO qmta11.emeryville.ca.mail.comcast.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750825AbaIEQpn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2014 12:45:43 -0400
-In-Reply-To: <20140904171123.GD26364@mtj.dyndns.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Russell King <rmk+kernel@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: Tree for Sep 5
+Date: Fri, 5 Sep 2014 17:50:52 +0100
+Message-ID: <20140905165052.GF29327@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8ysciihHaYDTQsg3"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 5 Sep 2014, Tejun Heo wrote:
 
-> I suppose this should go through percpu/for-3.18-consistent-ops?  Can
-> we please cc irq folks and get acks?
+--8ysciihHaYDTQsg3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Russell and Nicolas were cced. This is arm specific.
+Changes since 20140904:
+
+None.
+
+Non-merge commits (relative to Linus' tree): 3727
+ 3261 files changed, 133225 insertions(+), 99782 deletions(-)
+=20
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git .
+If you are tracking the linux-next tree using git, you should not use
+git pull" to do so as that will try to merge the new linux-next release
+with the old one.  You should use "git fetch" and checkout or reset to
+the new master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with an
+allmodconfig for x86_64 and a multi_v7_defconfig for arm.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 215 trees (counting Linus' and 30 trees of patches
+pending for Linus' tree).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of Stephen's local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+--8ysciihHaYDTQsg3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUCenpAAoJELSic+t+oim9bX8P/3k6mDnMZQqvjMlHn5NnkFj0
+P9gYh4gsYyWy9QV33ev/8pnMb5F4o7BXdM+WftBvIJ3tUeiMSuOOViwxO+PB1Xg0
+KMicyd9RmzFKIg319PtxtAW89OHEXKcq7DG57ndCUsaeaTG3qkpObdHrM0Wn7xVj
+wFQ6OMH7doEEwgwFSt5CEXwJwlozDOOk05dWe2w3y/O2HLB0Ska1jfRVI+bb4gPi
+Wig4BcJiM9EtBSUx7r+7sR6NAE/r/QWqyi7fe9ER5PcSCZRB5QqmDwc5X70uRhWS
+UDyMS+Y9NnUNf28C7tKi6UqNOB7mTgSWbm94r4WO1vJZJQeA8PLR1jnpZBS9ZJhJ
+IGgeu9EFcAFl4W3RCde+pNfntkiRGMMgyfKcVsDuXvBoWeOzsj64iNRBZtgDFiyl
+OzK28FxHe0zTmOE780BVIW6O25VUuZfs3y2utisD3yA0qGkg+puOoi/0RQIHqlF0
+P/rQsBL3vCjM5g17AU/jl7b5Ma/wTOEoFde2ALLWxHBMSAIeyZ0UYh06kc6tJhMF
+RT5Du/0kBijbOZyw88M62RChjevuH94sNegl28o2R3RdMsnpp781Yn91xUij0TzW
+s4uptYzfjY7f0YtXS6RYYHSt7pOSAyzx3tukMWZk1BTOQkMIhJKBxsq2QWbNcDo/
+Tq5ir1mckuLciAXglS3b
+=I/kV
+-----END PGP SIGNATURE-----
+
+--8ysciihHaYDTQsg3--
