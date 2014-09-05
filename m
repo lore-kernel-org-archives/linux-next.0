@@ -1,77 +1,64 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: Tree for Sep 3
-Date: Thu, 4 Sep 2014 23:57:03 +0100
-Message-ID: <20140904225703.GA29327@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OhJ1ewkhZtPPLZD8"
+From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: [PATCH -mmotm] mm: fix kmemcheck.c build errors
+Date: Fri,  5 Sep 2014 16:28:06 +0900
+Message-ID: <1409902086-32311-1-git-send-email-iamjoonsoo.kim@lge.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50609 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750793AbaIDW5L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2014 18:57:11 -0400
-Content-Disposition: inline
+Received: from lgeamrelo01.lge.com ([156.147.1.125]:58095 "EHLO
+	lgeamrelo01.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765AbaIEH1Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2014 03:27:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Pekka Enberg <penberg@kernel.org>, Vegard Nossum <vegardno@ifi.uio.no>, Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Randy Dunlap <rdunlap@infradead.org>
 
+mm-slab_common-move-kmem_cache-definition-to-internal-header.patch
+in mmotm makes following build failure.
 
---OhJ1ewkhZtPPLZD8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+../mm/kmemcheck.c:70:7: error: dereferencing pointer to incomplete type
+../mm/kmemcheck.c:83:15: error: dereferencing pointer to incomplete type
+../mm/kmemcheck.c:95:8: error: dereferencing pointer to incomplete type
+../mm/kmemcheck.c:95:21: error: dereferencing pointer to incomplete type
 
-Changes since 20140903:
+../mm/slab.h: In function 'cache_from_obj':
+../mm/slab.h:283:2: error: implicit declaration of function
+'memcg_kmem_enabled' [-Werror=implicit-function-declaration]
 
-The LED tree gained a conflict against Linus' tree which I resolved.
+Add header files to fix kmemcheck.c build errors.
 
-Non-merge commits (relative to Linus' tree): 3552
- 3034 files changed, 118938 insertions(+), 89190 deletions(-)
+[iamjoonsoo.kim@lge.com] move up memcontrol.h header
+to fix build failure if CONFIG_MEMCG_KMEM=y too.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+---
+ mm/kmemcheck.c |    1 +
+ mm/slab.h      |    2 ++
+ 2 files changed, 3 insertions(+)
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git .
-If you are tracking the linux-next tree using git, you should not use
-git pull" to do so as that will try to merge the new linux-next release
-with the old one.  You should use "git fetch" and checkout or reset to
-the new master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with an
-allmodconfig for x86_64 and a multi_v7_defconfig for arm.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 215 trees (counting Linus' and 30 trees of patches
-pending for Linus' tree).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of Stephen's local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
---OhJ1ewkhZtPPLZD8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUCO48AAoJELSic+t+oim9saYP/3tWhzIXvytStEQ2E6tKeJYV
-zHnTROqEQbYLyQ65IDcLwvdDeUM92LuH8sw8uV0F3ELM2hFFFwhynQVxd25Clwzt
-oC+JStk+yBIMLW0PP+kxBrGtKV0Cpc6CraI4uvvCmq8BzSl1P+NKYTiJNOQTjbwk
-Go9+e+w/f0FhR8pB4pUkonvRn00zhphOJ+3WZ7MgwIJR4pfZw4Ek07VXj56H9THH
-V1lpkP1AGvlRlZnUMcFrhe2OLNMBkAZuYwnIwi/6hTPhYmd5C/x7p2OvnzDz/mGR
-9sKi07L6PzhIUPnO4k2dNUupKlzoVRrG2fqSYD4POyKGpnNerSohq8yE//0s4jvP
-E4WGtxSbcYOdwsw5j+QIH5Bn2zrWHK4BkjH9moX9xDwhvhdFBkJ4PlIeYGhc3QFV
-U7EeMvYkmNPS1OfQ2es87DQDcluOj4Lab8/njNB1JA19sdvusmyNxvi2VLgFBiT1
-wFI2EsonqVI80+xL1SkdpwWPMopTI7Qmg8SAZW7Ib4p/rsGCJ2IridNgv36P33gj
-91xgv4O5LnRq66Y2HGdrjOaQDbAzq6fOHbY6wpN7V1U8w0ADkexcaSdUr4cFMQ3G
-oKCktwe1UiFmJimHKPry8U/pqjf8rFMPPH/yiOV07FDwvyUVlCWonhDpclQXCUKh
-9EY2ITe8PbozBGTQ7CnI
-=zQhZ
------END PGP SIGNATURE-----
-
---OhJ1ewkhZtPPLZD8--
+diff --git a/mm/kmemcheck.c b/mm/kmemcheck.c
+index fd814fd..cab58bb 100644
+--- a/mm/kmemcheck.c
++++ b/mm/kmemcheck.c
+@@ -2,6 +2,7 @@
+ #include <linux/mm_types.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
++#include "slab.h"
+ #include <linux/kmemcheck.h>
+ 
+ void kmemcheck_alloc_shadow(struct page *page, int order, gfp_t flags, int node)
+diff --git a/mm/slab.h b/mm/slab.h
+index 13845d0..963a3f8 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -37,6 +37,8 @@ struct kmem_cache {
+ #include <linux/slub_def.h>
+ #endif
+ 
++#include <linux/memcontrol.h>
++
+ /*
+  * State of the slab allocator.
+  *
+-- 
+1.7.9.5
