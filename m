@@ -1,37 +1,54 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 Subject: Re: linux-next: Tree for Sep 1
-Date: Fri, 5 Sep 2014 19:17:31 +0100
-Message-ID: <20140905181731.GK30401@n2100.arm.linux.org.uk>
-References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org> <alpine.DEB.2.11.1409020958530.9608@gentwo.org> <20140904171123.GD26364@mtj.dyndns.org> <alpine.DEB.2.11.1409041259110.14314@gentwo.org>
+Date: Fri, 5 Sep 2014 15:27:51 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1409051525440.16533@knanqh.ubzr>
+References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org> <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:44635 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750744AbaIESRt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2014 14:17:49 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.11.1409041259110.14314@gentwo.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Christoph Lameter <cl@linux.com>
-Cc: Tejun Heo <tj@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 04, 2014 at 12:59:39PM -0500, Christoph Lameter wrote:
-> On Fri, 5 Sep 2014, Tejun Heo wrote:
+On Tue, 2 Sep 2014, Christoph Lameter wrote:
+
+> On Tue, 2 Sep 2014, Christoph Lameter wrote:
 > 
-> > I suppose this should go through percpu/for-3.18-consistent-ops?  Can
-> > we please cc irq folks and get acks?
+> > Oww.. This is double indirection deal there. A percpu offset pointing to
+> > a pointer?
+> >
+> > Generally the following is true (definition from
+> > include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
+> >
+> > #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
 > 
-> Russell and Nicolas were cced. This is arm specific.
+> I think what the issue is that we dropped the fetch of the percpu offset
+> in the patch. Instead we are using the address of the variable that
+> contains the offset. Does this patch fix it?
+> 
+> 
+> Subject: irqchip: Properly fetch the per cpu offset
+> 
+> The raw_cpu_read() conversion dropped the fetch of the offset
+> from base->percpu_base in gic_get_percpu_base.
+> 
+> Signed-off-by: Christoph Lameter <cl@linux.com>
+> 
+> Index: linux/drivers/irqchip/irq-gic.c
+> ===================================================================
+> --- linux.orig/drivers/irqchip/irq-gic.c
+> +++ linux/drivers/irqchip/irq-gic.c
+> @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
+>  #ifdef CONFIG_GIC_NON_BANKED
+>  static void __iomem *gic_get_percpu_base(union gic_base *base)
+>  {
+> -	return raw_cpu_read(base->percpu_base);
+> +	return raw_cpu_read(*base->percpu_base);
 
-Sorry, but I don't have much to do with ARM IRQ stuff anymore -
-everything that gets moved out of arch/arm has responsibility
-automatically transferred to someone else without any referral to
-me.
+Isn't the pointer dereference supposed to be performed _outside_ the per 
+CPU accessor?
 
-Hence, it's up to the genirq/irqchip maintainers now.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Nicolas
