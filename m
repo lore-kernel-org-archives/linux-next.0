@@ -1,83 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: jdelvare-hwmon tree unfetchable
-Date: Mon, 8 Sep 2014 10:55:44 +1000
-Message-ID: <20140908105544.61149a89@canb.auug.org.au>
-References: <20140901132808.c7b08f4ffa7055dc28e6dac7@kernel.org>
-	<54049590.6060500@roeck-us.net>
-	<20140902095455.77a91b40@endymion.delvare>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Mon, 8 Sep 2014 14:26:31 +1000
+Message-ID: <20140908142631.6cb967a3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/g2sZ8m4kGqelYAJANX4gO6M"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140902095455.77a91b40@endymion.delvare>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/eaFtsqWPGZBhmcGrt2l6GYA"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57323 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750845AbaIHE0k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 00:26:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paulo Zanoni <paulo.r.zanoni@intel.com>, Jani Nikula <jani.nikula@intel.com>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
---Sig_/g2sZ8m4kGqelYAJANX4gO6M
+--Sig_/eaFtsqWPGZBhmcGrt2l6GYA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jean,
+Hi Dave,
 
-On Tue, 2 Sep 2014 09:54:55 +0200 Jean Delvare <jdelvare@suse.de> wrote:
->
-> On Mon, 01 Sep 2014 08:49:36 -0700, Guenter Roeck wrote:
-> > On 09/01/2014 05:28 AM, Mark Brown wrote:
-> > > Today's linux-next merge of the jdelvare-hwmon tree got a conflict wi=
-th Linus'
-> > > tree which appeared to be due to the hwmon quilt series I got from St=
-ephen being
-> > > based on v3.14-rc3 and subsequent changes from mainline interacting b=
-adly with
-> > > it. In addition I'm not able to check the original series since linux=
--fr.org does
-> > > not resolve for me.
-> >=20
-> > Jean dropped the linux-fr.org domain, and his old e-mail address probab=
-ly
-> > won't work anymore.
->=20
-> I can confirm that. linux-fr.org is history, from now on I'll be using
-> my @suse.de address for all open source related work. I thought I had
-> already updated all references and let everyone involved know about the
-> change, but apparently I failed to do so, sorry about that.
->=20
-> > The alternate (and temporary) pointer he gave me
-> > is http://jdelvare.nerim.net/devel/linux-3/jdelvare-hwmon/. It is empty,
-> > so you did not miss anything.
->=20
-> That's right. As many temporary things, I'm afraid it's there to
-> last ;-)
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-OK, I have switched to using this as well and updated your contact
-address.
+drivers/gpu/drm/i915/intel_display.c: In function 'intel_crtc_cursor_set_ob=
+j':
+drivers/gpu/drm/i915/intel_display.c:8302:24: error: 'dev_priv' undeclared =
+(first use in this function)
+   intel_runtime_pm_get(dev_priv);
+                        ^
+
+Caused by commit d7ce484eeec4 ("drm/i915: Move CURSIZE setup to
+i845_update_cursor()") interacting with commit d6dd6843ff4a ("drm/i915:
+fix plane/cursor handling when runtime suspended") from Linus' tree.
+
+I am not sure why this hasn't failed before as both commits have been
+in linux-next since (at least) Sept 3.
+
+I have applied this merge fix patch (which reverts part of d7ce484eeec4):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 8 Sep 2014 14:17:21 +1000
+Subject: [PATCH] drm/i915: fix up for recent merge
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/i915/intel_display.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/in=
+tel_display.c
+index a1acf8376c0f..18da8349a070 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -8253,6 +8253,7 @@ static int intel_crtc_cursor_set_obj(struct drm_crtc =
+*crtc,
+ 				     uint32_t width, uint32_t height)
+ {
+ 	struct drm_device *dev =3D crtc->dev;
++	struct drm_i915_private *dev_priv =3D dev->dev_private;
+ 	struct intel_crtc *intel_crtc =3D to_intel_crtc(crtc);
+ 	enum pipe pipe =3D intel_crtc->pipe;
+ 	unsigned old_width, stride;
+--=20
+2.1.0
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/g2sZ8m4kGqelYAJANX4gO6M
+--Sig_/eaFtsqWPGZBhmcGrt2l6GYA
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDP6VAAoJEMDTa8Ir7ZwVU6IP/2zQMlKn/1YVgZin0BU87DgO
-Xqsbo2XVxOag0w6aSjYGYIU8b0U30O3Z6sXKsvMWx+4f0sVgiN22j/IfdrKMo0rZ
-m67F2spFWuGBgH6jqtVOyUpHVr3mkiOzOX6YfrfAND4ZYXU65sySXh4pQg7CFgqa
-GDhjtX1OG35olEegz8p7N39LJGmbqDIqPUkT7XPZPcTpBRTvx1gyfOIV5LUDWRh9
-/ULOswEbPOk9TfvPVZN26CQzyfkpe7qcZMNHj/4Gqs2dSNassVEeMZUYjZrSoeVW
-K0bJuymbSP0Aj2WBy5SSRwRM9QzZHMjHrCq1KfvzUfHjOcm0aPKeL8oaw+grChQ5
-z1hCPiOaEZ9CnblSMZ+ldg/Fh48TMwY0hX6JJ7nvyWTl7xf5WjE42Yf5ZzIuNeJj
-APwrFTxKd/GPTJg/9FU4341XrqKuf+n5hUOHqkkTnueehCjTDETGJLXoPHAJFdWJ
-5fNF2vWS7OBhoxRFzjQ/q2aR+Vnlta3sr65DGLQfVRm9Zh0L6y4fBe8NacJQEbCT
-5j00r6uDj1htvYCL0DwaeZ1l0YK9m5ni5umtojlGrMW+ok7XKQA6FSKQsPSrjq/g
-o+XfP4uqvEM8WJtze0lG824MxoTZ6YGwWxeejYipsIGHZpIPyH/lvYvNUXD6pMmk
-+0qLenA+2nxwHWp9XmkB
-=vmce
+iQIcBAEBCAAGBQJUDS/8AAoJEMDTa8Ir7ZwVcuoP/RvYBSzPxkGbM30rOT226/y/
+YrZgeErfRUK8cYDvqb9zTbXa4TPGxN0CdIkGHtcxFKtrwjPTkaAiqHWJxsNKKxDe
+eZIF1R1TOkVjf2mRXH7NGdYlFyh0dM/KVON8NilNE4dIi1UEp0CdAgXrJKAsWpHI
+GyS4laASQtBGzrkJKdXidljLzGCvkrygOmn/1nK5yr87veo2LI1mEulCm5yLBqVY
+FBG1S/gG6LlFFgR86XO55saRauR6n4ah2PGNiX4DMXTXXnyQJX1+w5KD+/YAbP2k
+XOg7yikJyvh2CqYf4nHEwQRbtfFwqVLRmnAxdxR1dghprjCFaEDiBpC0HWkO6MVN
+/ihUm6dyUXL4CbcvarxrUjD1NKwTnjxL+peI9eRhapHZ3uoOOxh2aT7whEeAvhDx
+x4eE2jIb6AcPOz1zF7iDHfbApuFrEgV1wSKudVWfRqobv+LQR61JgI5K8oRR7LKH
+dg6v1ICxZul3dBcCSigQOmVyLMG4KzLKvsDx6SJxQFWJpWnFgY//gaEHLpoFI12i
+mWWUDmwXnkLtk98oQWmcURGTLHfVc9R2PM4D/gfMGK4fJZwbH6E3DztE4+IuyQlu
+ugnvk3QytIadZSdIXvDlxO9myEjIEYHjHD2ft3R7sezFPgfOd+6oCK9qTr9Z1BH0
+NacE0ETvlwZgq49IIeTt
+=YwNh
 -----END PGP SIGNATURE-----
 
---Sig_/g2sZ8m4kGqelYAJANX4gO6M--
+--Sig_/eaFtsqWPGZBhmcGrt2l6GYA--
