@@ -1,99 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the percpu tree with the ext4 tree
-Date: Mon, 8 Sep 2014 16:41:14 +1000
-Message-ID: <20140908164114.262bb178@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ usb.current tree
+Date: Mon, 8 Sep 2014 17:02:12 +1000
+Message-ID: <20140908170212.133cb6e0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+kQfF.xFU4/IgZ2W1GuD4Q9"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zheng Liu <wenqing.lz@taobao.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/Sf2_//T5eV/7Szq077FJb.m"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50247 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751424AbaIHHCW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 03:02:22 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@freescale.com>, Stefan Agner <stefan@agner.ch>
 
---Sig_/+kQfF.xFU4/IgZ2W1GuD4Q9
+--Sig_/Sf2_//T5eV/7Szq077FJb.m
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Felipe,
 
-Today's linux-next merge of the percpu tree got a conflict in
-fs/ext4/super.c between commit eb68d0e2fc5a ("ext4: track extent status
-tree shrinker delay statictics") from the ext4 tree and commit
-908c7f1949cb ("percpu_counter: add @gfp to percpu_counter_init()") from
-the percpu tree.
+Today's linux-next merge of the usb-gadget tree got a conflict in
+Documentation/devicetree/bindings/usb/mxs-phy.txt between commit
+36687e305651 ("doc: dt: mxs-phy: add compatible string for
+imx6sx-usbphy") from the usb.current tree and commit d0ee68b59e6a
+("usb: phy: mxs: Add VF610 USB PHY support") from the usb-gadget tree.
 
-I fixed it up (the former removed a reference to percpu_counter_init)
-and can carry the fix as necessary (no action is required).
-
-That commit also added two references in fs/ext4/extents_status.c (thus
-proving that modifying a little used API causes it to be used
-more :-)), so I added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 8 Sep 2014 16:25:46 +1000
-Subject: [PATCH] percpu_counter: fix for ext4 updates
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/ext4/extents_status.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 09fd57667262..3777f7eda5cf 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -13,6 +13,7 @@
- #include <linux/list_sort.h>
- #include <linux/proc_fs.h>
- #include <linux/seq_file.h>
-+#include <linux/gfp.h>
- #include "ext4.h"
- #include "extents_status.h"
-=20
-@@ -1189,10 +1190,10 @@ int ext4_es_register_shrinker(struct ext4_sb_info *=
-sbi)
- 	sbi->s_es_stats.es_stats_cache_misses =3D 0;
- 	sbi->s_es_stats.es_stats_scan_time =3D 0;
- 	sbi->s_es_stats.es_stats_max_scan_time =3D 0;
--	err =3D percpu_counter_init(&sbi->s_es_stats.es_stats_all_cnt, 0);
-+	err =3D percpu_counter_init(&sbi->s_es_stats.es_stats_all_cnt, 0, GFP_KER=
-NEL);
- 	if (err)
- 		return err;
--	err =3D percpu_counter_init(&sbi->s_es_stats.es_stats_lru_cnt, 0);
-+	err =3D percpu_counter_init(&sbi->s_es_stats.es_stats_lru_cnt, 0, GFP_KER=
-NEL);
- 	if (err)
- 		goto err1;
-=20
---=20
-2.1.0
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/+kQfF.xFU4/IgZ2W1GuD4Q9
+diff --cc Documentation/devicetree/bindings/usb/mxs-phy.txt
+index 96681c93b86d,fe3eed89e4c3..000000000000
+--- a/Documentation/devicetree/bindings/usb/mxs-phy.txt
++++ b/Documentation/devicetree/bindings/usb/mxs-phy.txt
+@@@ -5,7 -5,7 +5,8 @@@ Required properties
+  	* "fsl,imx23-usbphy" for imx23 and imx28
+  	* "fsl,imx6q-usbphy" for imx6dq and imx6dl
+  	* "fsl,imx6sl-usbphy" for imx6sl
+ +	* "fsl,imx6sx-usbphy" for imx6sx
++ 	* "fsl,vf610-usbphy" for Vybrid vf610
+    "fsl,imx23-usbphy" is still a fallback for other strings
+  - reg: Should contain registers location and length
+  - interrupts: Should contain phy interrupt
+
+--Sig_/Sf2_//T5eV/7Szq077FJb.m
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDU+QAAoJEMDTa8Ir7ZwVbCIP/1djJ3itqnb7r2qtLkGlgHNf
-33rcaeRReP+8InsiSILxZTtO1AL8yPQs+vxdNfnf4z2ho7T4tpFsJCFwV/ieiTfx
-3j8acFliN/h6QdaHtnH+1uaDFO0Te1FHBjiSBGrGEoILhrWdGxvXRa2mXRjRoQJE
-MJATjsEAJYbeEo49udL8q5sK3u6cUCNajfG3iRjEHUC53Lp8JvwU8GOHGFOLOjqJ
-0NELqGukiKUXqTG9oh/Fw9rf7t+o6tY2RXUySWBBe/bpR8ZbIzZLPFtIwQKeyj58
-ApMiKXluj4ukipsTIg1q4ONEl/rEy4I0xrPMHumS0kBmZAKvPQT7Tmgm3C2zqzuS
-Ycn4Aan6hAboLyUNOnVw3TshdSvGzA2l9Fl3qLoXEptCKU4jxiSldyu1MhtG3R+n
-Kv9FMrUxYuxcoT2vKXpAMHJKCrJvFsAXoyRo8jUAkNxmMp6QG/oBLAv9gFsUu194
-f/XfdHTuN8qCNndIaxHqaMpvg0Ln/MCiK+cywxQ7wkk1qR62l3hSDG/Qp6zkRzAc
-nCa3AZKl/IWn6LKRV8hZuxH01r1ZtUO5/7IBCmzPgvb9+p28Xz0dQ8n4HtNMMn9W
-Y6+7osQj50o3ayfMPu+8O+tJi9Isjvbid0OIrQ+jQD1Oitu6oAfn58qLq62YLW++
-zIqArsLtRjhgfDHyPQLP
-=dkVS
+iQIcBAEBCAAGBQJUDVR5AAoJEMDTa8Ir7ZwVBLEP/RxrPysRucC+MG6/sEmIxPa/
+hOMMelYvRH/Fsnn87Fdaca1alEqv3G7a/Y2CioqbytUoACfrU+0Flol9vmdhysme
+D3vBJsIgOCRB4RalEAn7I8jkDn20QrBeA1SCLbHyLkPkXbcEiq5SP4b+0XTrw+Rl
+PVAnBXfQgOd1szaA/s1R+m9nAng9lmz9LG8tpGnIlMYTK+R/fI7+xAX+CYZEvKQu
+7Y6Zd9rkocap8/2MFmr8ORPDbKD8AXtBxMwB0S1CvO3EZyWeV71zz72XeqS+TeoJ
+98eU7nGTFSnSNOQ1vYxVk6I/cRGth+jmgnVYpN4hnE9fSN33saV6or15j6ig/Z/o
+5LHApAmbsxcLl/Iq9KFRVPs70anxUxxhP//En1v7K8LgzqbZyZCfUADj6cRkDPJ8
+xYcnKkklSQ+3hsWHS0NZMtSyWIxAps8qwmDVy4JmENs1nzfLb99PuFBwS4guvBO3
+r3fZJp0l45NGJUw3pPCb9GkT9o2XFu76fnJj/dkOTnkUoP8bo6MmUGuRLOSTY+E+
+8l1KP0r2V3Ysc7XR/S/OJFZ0I8Jolcfk8sdDJfJEGTyanGK4G0byIJhJZft+EeUs
+15QsV9Yw64/rXj+kGG2vRebDMcj4ler/MeOOPUAEHKtHb2cbZZ0gWg2STxWa6fuV
++pZ/9LeNR78fmKjs7CLd
+=PwqZ
 -----END PGP SIGNATURE-----
 
---Sig_/+kQfF.xFU4/IgZ2W1GuD4Q9--
+--Sig_/Sf2_//T5eV/7Szq077FJb.m--
