@@ -1,59 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with Linus' tree
-Date: Mon, 8 Sep 2014 17:13:11 +1000
-Message-ID: <20140908171311.414b05d2@canb.auug.org.au>
+Subject: linux-next: manual merge of the rd-docs tree with the net-next tree
+Date: Mon, 8 Sep 2014 17:59:13 +1000
+Message-ID: <20140908175913.42603191@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TPOxAYe.RyoFrSbSMf70jVy"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45940 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751404AbaIHHNU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Sep 2014 03:13:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+ boundary="Sig_/ubLhkEWkDM/WYMowOA=QCiz"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Peter Foley <pefoley2@pefoley.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/TPOxAYe.RyoFrSbSMf70jVy
+--Sig_/ubLhkEWkDM/WYMowOA=QCiz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Felipe,
+Hi Randy,
 
-Today's linux-next merge of the usb-gadget tree got a conflict in
-drivers/usb/phy/phy-samsung-usb.h between commit bbc66e140bab ("usb:
-phy: samsung: Fix wrong bit mask for PHYPARAM1_PCS_TXDEEMPH") from
-Linus' tree and commit ea2fdf842365 ("usb: phy: samsung: remove old
-common USB PHY code") from the usb-gadget tree.
+Today's linux-next merge of the rd-docs tree got a conflict in
+Documentation/networking/timestamping/Makefile between commit
+8fe2f761cae9 ("net-timestamp: expand documentation") from the net-next
+tree and commits 429cbe7863ad ("Documentation: use subdir-y to avoid
+unnecessary built-in.o files") and b07a884ea14d ("Documentation: add
+makefiles for more targets") from the rd-docs tree.
 
-I fixed it up (the latter just removed the file, so I did that) and can
-carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/TPOxAYe.RyoFrSbSMf70jVy
+diff --cc Documentation/networking/timestamping/Makefile
+index 95e239c70076,52ac67da9315..000000000000
+--- a/Documentation/networking/timestamping/Makefile
++++ b/Documentation/networking/timestamping/Makefile
+@@@ -1,20 -1,8 +1,14 @@@
+ +# To compile, from the source root
+ +#
+ +#    make headers_install
+ +#    make M=3Ddocumentation
+ +
+- # kbuild trick to avoid linker error. Can be omitted if a module is built.
+- obj- :=3D dummy.o
+-=20
+  # List of programs to build
+- hostprogs-y :=3D timestamping txtimestamp hwtstamp_config
+ -hostprogs-y :=3D hwtstamp_config timestamping
+++hostprogs-y :=3D hwtstamp_config timestamping txtimestamp
+ =20
+  # Tell kbuild to always build the programs
+  always :=3D $(hostprogs-y)
+ =20
+  HOSTCFLAGS_timestamping.o +=3D -I$(objtree)/usr/include
+ +HOSTCFLAGS_txtimestamp.o +=3D -I$(objtree)/usr/include
+  HOSTCFLAGS_hwtstamp_config.o +=3D -I$(objtree)/usr/include
+-=20
+- clean:
+- 	rm -f timestamping txtimestamp hwtstamp_config
+
+--Sig_/ubLhkEWkDM/WYMowOA=QCiz
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDVcMAAoJEMDTa8Ir7ZwVH28P/1LhqM+dXyisnGdyPeAtBpEq
-GohGWyhCB+M8S7stFtfQoF3XkCqfNfy2Xwvwu0Dm4QmCjrZvgeHCzzfovpjxqHh6
-HlRHUpH6dGNAD/FXwOcqbwCJqRTsz02EQv7GyonpsDm2A2tMXFv9FXpAxykUEPmR
-JwSksRD0+wFMDFwD64t9dy4C0GdH61uF0/E/RvdKw/IOUzRZxfOF9bW7OBYPr9kx
-USK3qprd50xGCMKNK6HeI0AcW9BHAwMbqq+U+tPWDjjKtDnRtCM/owU2Yp7sjJh3
-dSK1z8OO55ErA5cVXzXLcY0yubPI8fI0fju8gfmGV35g8mmNh5FwsnrPaic9oqNT
-QMvn/6a+R0yidlRV+AfGsCc1XKNVeiAzSYngg5ePeJJ527uD0u5bSS/42m9qtNqm
-6mggq1DbQBRJFN5HTv70rypc073lWFxBpbsShN9nPu/k/5suPaDbL4+UAC0LPmgQ
-k+LpbVaQPrwbrE1/l195JOWZpMhIdrTVvcdLEgze1Uwn2k9ilCySaMBTvbVpu5zf
-JhBTLJw+cVVgPmUQ/RgPzT0Fqyk/iBbL8Md36E49hCBHKRqs2p9La+jNJnXwZuct
-4MwhG/4oaCB/o+1eyKV5TBwV6CVUj1QJo4v0DhPRCJa85qAs3+PlpUb2n7rcALF6
-L/u/QBTLTc2uz5JwE+pf
-=tgp7
+iQIcBAEBCAAGBQJUDWHWAAoJEMDTa8Ir7ZwVLKQP/2pDg7ZUUQaBG14pqSJk6H3/
+A9I5c1sve+pUcLOmJyUSEDZ6etd4s25nmTS2e00eGnFv7mcrefMMP4E547f8tYqg
+5dK1WZzRTB02AGWjq41iRMbscipxFpEGkPeaNCOR82EYOXeVysVyREpXuPX9jD+N
+R73/y+8ilr/z1UbvtJAe0Rm6Jnsh5nthJ0KPW3IN3iYtgICrGIlTMIaMPg3zxNnr
+dAqoZMg6PlCOzxoJxgETq1Yi84CCVZ08Q/BCAc5aX+4ezNj45TnbuS0xj8jECOiz
+1X2r1w0thbbFKDMP1l1vXzDceuJ3VpMCzfXYVIFkXKZRRS0fst3/e5zpqqB8ehxO
+Zhn0boNpSFG7uC6qmUt2vazzAtVy68IGDq2d/jITCI1YjKmOrCPEZuiRefCLnE2k
+BU7LtA2e2FgluQ4woLGvwTyBaRaVZiIuZ6FPn/uEs9arYxm62JarzFeJdbNeLztC
+OBb0kwkw5GoSoY7ZxlR0haOk5X/E++Qyjg1sKFcFg7gUy1PVWDRLy3mLPKrU/U6d
+KKyqzj1vFRPdlsl3bD0+Oyo0Y1k4b24VLMaXttkv5n87V/vA4AoOW7M31YEfAWaX
+H+biJFBKHvYVClOSCIJJLbpPIetg+s8QlnBvDD/MLO5BJ/OMIUTabq3Qy5M08T74
+S3z9GBTs0pouZL8IwpZq
+=GC/k
 -----END PGP SIGNATURE-----
 
---Sig_/TPOxAYe.RyoFrSbSMf70jVy--
+--Sig_/ubLhkEWkDM/WYMowOA=QCiz--
