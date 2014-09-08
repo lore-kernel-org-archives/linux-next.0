@@ -1,84 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rd-docs tree with the net-next tree
-Date: Mon, 8 Sep 2014 17:59:13 +1000
-Message-ID: <20140908175913.42603191@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the regulator tree
+Date: Mon, 8 Sep 2014 18:33:50 +1000
+Message-ID: <20140908183350.5a4e357c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ubLhkEWkDM/WYMowOA=QCiz"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Peter Foley <pefoley2@pefoley.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/zoC2oSA/zefwwB98hUQTfbI"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48288 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752934AbaIHId7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 04:33:59 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>
 
---Sig_/ubLhkEWkDM/WYMowOA=QCiz
+--Sig_/zoC2oSA/zefwwB98hUQTfbI
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi all,
 
-Today's linux-next merge of the rd-docs tree got a conflict in
-Documentation/networking/timestamping/Makefile between commit
-8fe2f761cae9 ("net-timestamp: expand documentation") from the net-next
-tree and commits 429cbe7863ad ("Documentation: use subdir-y to avoid
-unnecessary built-in.o files") and b07a884ea14d ("Documentation: add
-makefiles for more targets") from the rd-docs tree.
+After merging the regulator tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/regulator/rk808-regulator.c:312:18: warning: 'struct rk808_board' d=
+eclared inside parameter list
+           struct rk808_board *pdata)
+                  ^
+drivers/regulator/rk808-regulator.c:312:18: warning: its scope is only this=
+ definition or declaration, which is probably not what you want
+drivers/regulator/rk808-regulator.c: In function 'rk808_regulator_dts':
+drivers/regulator/rk808-regulator.c:340:8: error: dereferencing pointer to =
+incomplete type
+   pdata->rk808_init_data[i] =3D rk808_reg_matches[i].init_data;
+        ^
+drivers/regulator/rk808-regulator.c:341:8: error: dereferencing pointer to =
+incomplete type
+   pdata->of_node[i] =3D rk808_reg_matches[i].of_node;
+        ^
+drivers/regulator/rk808-regulator.c: In function 'rk808_regulator_probe':
+drivers/regulator/rk808-regulator.c:359:43: error: dereferencing pointer to=
+ incomplete type
+   pdata =3D devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+                                           ^
+drivers/regulator/rk808-regulator.c:364:8: warning: passing argument 2 of '=
+rk808_regulator_dts' from incompatible pointer type
+  ret =3D rk808_regulator_dts(client, pdata);
+        ^
+drivers/regulator/rk808-regulator.c:311:12: note: expected 'struct rk808_bo=
+ard *' but argument is of type 'struct rk808_board *'
+ static int rk808_regulator_dts(struct i2c_client *client,
+            ^
+drivers/regulator/rk808-regulator.c:370:19: error: dereferencing pointer to=
+ incomplete type
+   reg_data =3D pdata->rk808_init_data[i];
+                   ^
+drivers/regulator/rk808-regulator.c:379:26: error: dereferencing pointer to=
+ incomplete type
+    config.of_node =3D pdata->of_node[i];
+                          ^
+
+Caused by commit 2cd64ae3d57b ("regulator: RK808: Add regulator driver
+for RK808").
+
+I have reverted that commit and all the following ones in the regulator
+tree that touch this file.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/networking/timestamping/Makefile
-index 95e239c70076,52ac67da9315..000000000000
---- a/Documentation/networking/timestamping/Makefile
-+++ b/Documentation/networking/timestamping/Makefile
-@@@ -1,20 -1,8 +1,14 @@@
- +# To compile, from the source root
- +#
- +#    make headers_install
- +#    make M=3Ddocumentation
- +
-- # kbuild trick to avoid linker error. Can be omitted if a module is built.
-- obj- :=3D dummy.o
--=20
-  # List of programs to build
-- hostprogs-y :=3D timestamping txtimestamp hwtstamp_config
- -hostprogs-y :=3D hwtstamp_config timestamping
-++hostprogs-y :=3D hwtstamp_config timestamping txtimestamp
- =20
-  # Tell kbuild to always build the programs
-  always :=3D $(hostprogs-y)
- =20
-  HOSTCFLAGS_timestamping.o +=3D -I$(objtree)/usr/include
- +HOSTCFLAGS_txtimestamp.o +=3D -I$(objtree)/usr/include
-  HOSTCFLAGS_hwtstamp_config.o +=3D -I$(objtree)/usr/include
--=20
-- clean:
-- 	rm -f timestamping txtimestamp hwtstamp_config
-
---Sig_/ubLhkEWkDM/WYMowOA=QCiz
+--Sig_/zoC2oSA/zefwwB98hUQTfbI
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDWHWAAoJEMDTa8Ir7ZwVLKQP/2pDg7ZUUQaBG14pqSJk6H3/
-A9I5c1sve+pUcLOmJyUSEDZ6etd4s25nmTS2e00eGnFv7mcrefMMP4E547f8tYqg
-5dK1WZzRTB02AGWjq41iRMbscipxFpEGkPeaNCOR82EYOXeVysVyREpXuPX9jD+N
-R73/y+8ilr/z1UbvtJAe0Rm6Jnsh5nthJ0KPW3IN3iYtgICrGIlTMIaMPg3zxNnr
-dAqoZMg6PlCOzxoJxgETq1Yi84CCVZ08Q/BCAc5aX+4ezNj45TnbuS0xj8jECOiz
-1X2r1w0thbbFKDMP1l1vXzDceuJ3VpMCzfXYVIFkXKZRRS0fst3/e5zpqqB8ehxO
-Zhn0boNpSFG7uC6qmUt2vazzAtVy68IGDq2d/jITCI1YjKmOrCPEZuiRefCLnE2k
-BU7LtA2e2FgluQ4woLGvwTyBaRaVZiIuZ6FPn/uEs9arYxm62JarzFeJdbNeLztC
-OBb0kwkw5GoSoY7ZxlR0haOk5X/E++Qyjg1sKFcFg7gUy1PVWDRLy3mLPKrU/U6d
-KKyqzj1vFRPdlsl3bD0+Oyo0Y1k4b24VLMaXttkv5n87V/vA4AoOW7M31YEfAWaX
-H+biJFBKHvYVClOSCIJJLbpPIetg+s8QlnBvDD/MLO5BJ/OMIUTabq3Qy5M08T74
-S3z9GBTs0pouZL8IwpZq
-=GC/k
+iQIcBAEBCAAGBQJUDWnzAAoJEMDTa8Ir7ZwV2eAP/2ocNK+Kg3vtAZsx2WNTAMpa
+yOnbfRkMITY/HgoRBrHgCzyxny/+F1IRdoV7LSmzS0twOBDs4AwQHG8xMBkaDgrs
+9XTH7ztXtIqnP28ff1IZTUCCMuVQ8i5ObrotkL3HZed8Xtmpg/912L23Z3MebNcd
+yLwsquIrFOFPS5+qmXQOlDMLoXNeGfhDxDL/Ar4kz+49rERW+ql9PgbNc2t6OEUo
+62yLH2ADE8tJ0C9a5AGgH+pFl4pryZNn9Iw4QhP3ftllM/twW+YL0sl94K5xXzfw
+rHAXRUrJxAL2D+2IE69ZSQ4Az9Y/307bsCHGcP0oguEFXPmeFl/teOpYC2K7Gb3G
+ffRHtZA2B0P6w9xdfR9ExR3wpkxbM792P6yvzNeiDG8GiMIzcwAHEpKHbDWcdWO2
+jib/tbynQXhNEfx3e4gHl9bw1biXJ+FMKR7lnPW4rvW+3OPhPijwlmvk2hseJ94K
+o9rI8Zco5LPhyConKAycp9QzMyU81P6+1Gr15zP9ivbWSfSIideQ0rVUwWFVfnoG
+nq4w77Mwu5YtLvMjtrr1Ch1Ro3rZjwgUbQ4uqN/UuK+C9W7829F9HAU9p10A9vUT
+KeGEYXTzYNoyokpOVWJDaOVYa9DYDbntfWR+wUDG6ZnJxgLY5/G7e7kCwoxGoUMG
+3YPO/T/z9KT20En74e0W
+=X1AE
 -----END PGP SIGNATURE-----
 
---Sig_/ubLhkEWkDM/WYMowOA=QCiz--
+--Sig_/zoC2oSA/zefwwB98hUQTfbI--
