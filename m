@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the integrity tree with the nfsd tree
-Date: Mon, 8 Sep 2014 15:12:01 +1000
-Message-ID: <20140908151201.333065c6@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with the kvm tree
+Date: Mon, 8 Sep 2014 16:04:30 +1000
+Message-ID: <20140908160430.21c67797@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zxMy0eaiHVm+GFm=Q33ssw/"; protocol="application/pgp-signature"
+ boundary="Sig_/bLm3+CVE_0St3Gb_0CUmdIV"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47064 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45017 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751398AbaIHFMJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Sep 2014 01:12:09 -0400
+	id S1751685AbaIHGEm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 02:04:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <d.kasatkin@samsung.com>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kinglong Mee <kinglongmee@gmail.com>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Will Deacon <will.deacon@arm.com>
 
---Sig_/zxMy0eaiHVm+GFm=Q33ssw/
+--Sig_/bLm3+CVE_0St3Gb_0CUmdIV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the integrity tree got a conflict in
-fs/nfsd/vfs.c between commit 9b638b816081 ("NFSD: Put file after
-ima_file_check fail in nfsd_open()") from the nfsd tree and commit
-e8442e203c25 ("ima: pass 'opened' flag to identify newly created
-files") from the integrity tree.
+Today's linux-next merge of the kvm-arm tree got a conflict in
+arch/arm64/include/asm/kvm_host.h between commit 656473003bc7 ("KVM:
+forward declare structs in kvm_types.h") from the kvm tree and commit
+6951e48bff0b ("KVM: ARM/arm64: fix non-const declaration of function
+returning const") from the kvm-arm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,68 +34,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/nfsd/vfs.c
-index 89d1ae3bcff7,d49c778faecb..000000000000
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@@ -704,25 -704,19 +704,25 @@@ nfsd_open(struct svc_rqst *rqstp, struc
-  		else
-  			flags =3D O_WRONLY|O_LARGEFILE;
-  	}
- -	*filp =3D dentry_open(&path, flags, current_cred());
- -	if (IS_ERR(*filp)) {
- -		host_err =3D PTR_ERR(*filp);
- -		*filp =3D NULL;
- -	} else {
- -		host_err =3D ima_file_check(*filp, may_flags, 0);
+diff --cc arch/arm64/include/asm/kvm_host.h
+index be9970a59497,50431d36732b..000000000000
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@@ -43,7 -41,8 +43,7 @@@
  =20
- -		if (may_flags & NFSD_MAY_64BIT_COOKIE)
- -			(*filp)->f_mode |=3D FMODE_64BITHASH;
- -		else
- -			(*filp)->f_mode |=3D FMODE_32BITHASH;
- +	file =3D dentry_open(&path, flags, current_cred());
- +	if (IS_ERR(file)) {
- +		host_err =3D PTR_ERR(file);
- +		goto out_nfserr;
-  	}
+  #define KVM_VCPU_MAX_FEATURES 3
  =20
-- 	host_err =3D ima_file_check(file, may_flags);
-++	host_err =3D ima_file_check(file, may_flags, 0);
- +	if (host_err) {
- +		nfsd_close(file);
- +		goto out_nfserr;
- +	}
- +
- +	if (may_flags & NFSD_MAY_64BIT_COOKIE)
- +		file->f_mode |=3D FMODE_64BITHASH;
- +	else
- +		file->f_mode |=3D FMODE_32BITHASH;
- +
- +	*filp =3D file;
-  out_nfserr:
-  	err =3D nfserrno(host_err);
-  out:
+- int kvm_target_cpu(void);
+ -struct kvm_vcpu;
++ int __attribute_const__ kvm_target_cpu(void);
+  int kvm_reset_vcpu(struct kvm_vcpu *vcpu);
+  int kvm_arch_dev_ioctl_check_extension(long ext);
+ =20
 
---Sig_/zxMy0eaiHVm+GFm=Q33ssw/
+--Sig_/bLm3+CVE_0St3Gb_0CUmdIV
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDTqmAAoJEMDTa8Ir7ZwVf4YP/2n3apoXrGKFp5/uzc0cJ3qf
-9ev4nNbH0rIyhnb+nDLguT8PzVed9gDG/0Evl0+k/8edP7XkX6vBy7ntPCBzW786
-BSwMOZKKtFYWEnJLh8dLsjWB0J1M8ebZhSraj7am8U9QN0Nd2Gz21N5qXXcAqM1B
-8b6LJamYwDRzDxZqudSGJ8HSaMGiKeToOCJrAw2wwHkWV4hLLzklyiUdDXvRhZcG
-kPmKLWWujH+7R1oZk0EEgnuja1SLZklDRZR6Xz0chCDUkDpyr9KO+Psyb8ojP2nR
-V/mmSk6okJMIIZuk58cWuSz34JtcS7TuyqqFJM7p+iMQ/6Ikpflpo1D/ZytHWuIR
-4HVNoGugAZkzqC+4NiodFkqf1VDVDS5bSWuOXqLc32JTho9j5qKJBgmqnvywVgS+
-KJkiUKH6u/5Dop89wEicc9xfMCzgyLD4Nc2Rpybqa08Xq8xCQ9XrPg7kH+gD6Hed
-iESzfSD/sAVFB3eFG5XsEn9d0Ut4v1FKG9rCRensVYsrsXD93KJPmrxxy7eupkFg
-SpQppmq3S3zZ7xQML8xHsJ47VF6DmcNvc7X+QXIgiSf1RmGbr2FsOuj9ma8tsCX+
-h002PvxVDV9/gGIe+CK0/9SJPrzkbx/x2MhVK2ZlImlEO0ijsZfRUDbeuhpwi5c7
-742IYKATE17bRHKSFzpH
-=9sEZ
+iQIcBAEBCAAGBQJUDUbyAAoJEMDTa8Ir7ZwVsekP/0JQvJ9ukYyxEf7XwAhquII8
+DwjMpUcztJn6Y0Mlk3nm4R4nFqmyFauVUVJbVg69f91p7x/GOYRL92uAw1LXItw1
+boVByzGj8ybct6nwKF+GHy/UDpdVvxw55QzulGHgYBGAyFO2C9U/eu4OoknnaCCy
+qXlJps5iZda/Qn1CWApCqoHXJWysSFeJmCDkNoM2WFYpy03Rz5m6WEelP6BuzYSg
+AmVzqekzkiQA0L+AuqyMgN3OnNiL85S0yvq0tT6RsOZSV+Cg4DhQQ0t6qdVT0P0R
+5/DvYwz4tQkoO90pTb90F98KUGjs5Hw92Lr28ifjUVXHqdtZ2AXyFZ/9qPHj9hDo
+M/Q6CIvEclBhx/T+0x78f7mc7c4A8B6ww1xLCM/qsdhSaNrf+PWaVkTRacHGqnBe
+v5ELk9EEQWE6ddtWZTagMzCvr8TN9IM8eQysB9lgzh3kIz794hypSrdTjxDOVGKN
+HE8P/AijTWf8wBPniRz13vnX8St6PE30rO4jJmq6LrFBiFPwfrl0ylHv4CsYYoIw
+S8wT+XP1W/5Aylmopl/Aaxv6bSABiEo9eKalVebdN+bRJGvbdCacpMNo3gY4O+iX
+hlAU7KwTojJoy6rS2lDXUBWYM4vEUMnnVSfhLrOE6CFDkHxYVUq8Kg5caT5WQtfJ
+4z7ytjRFA3PsKm1Bi7MM
+=AufA
 -----END PGP SIGNATURE-----
 
---Sig_/zxMy0eaiHVm+GFm=Q33ssw/--
+--Sig_/bLm3+CVE_0St3Gb_0CUmdIV--
