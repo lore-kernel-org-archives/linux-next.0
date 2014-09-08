@@ -1,60 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Sep 8
-Date: Tue, 9 Sep 2014 01:51:43 +1000
-Message-ID: <20140909015143.0eb18145@canb.auug.org.au>
-References: <20140908195309.1d883a30@canb.auug.org.au>
+Subject: Re: Request to add linux-kselftest to linux-next
+Date: Tue, 9 Sep 2014 08:58:41 +1000
+Message-ID: <20140909085841.2ec2871e@canb.auug.org.au>
+References: <540DC2BD.7030506@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/x.uMqznq36WNy0QW5yLa0xq"; protocol="application/pgp-signature"
+ boundary="Sig_/3pRDc6lJ=X1CNEYVfBqVhMc"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44266 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55207 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753681AbaIHPvv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Sep 2014 11:51:51 -0400
-In-Reply-To: <20140908195309.1d883a30@canb.auug.org.au>
+	id S1755023AbaIHW6z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 18:58:55 -0400
+In-Reply-To: <540DC2BD.7030506@osg.samsung.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, greg Kroah-Hartman <gregkh@linuxfoundation.org>, fengguang.wu@intel.com
 
---Sig_/x.uMqznq36WNy0QW5yLa0xq
+--Sig_/3pRDc6lJ=X1CNEYVfBqVhMc
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shuah,
 
-On Mon, 8 Sep 2014 19:53:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Mon, 08 Sep 2014 08:52:45 -0600 Shuah Khan <shuahkh@osg.samsung.com> wro=
+te:
 >
-> Changes since 20140905:
+> Could you please add linux-kselftest tree to linux-next.
+> I plan to maintain two branches:
+>=20
+> linux-kselftest for Kselftest Framework
+>=20
+> fixes - Contains changes intended for merging before the next major
+>         release, including fixes for regressions introduced during
+>         merge window.
+> next  - Contains changes intended for merging during the next merge
+>         window between a major release and -rc1.
 
-In my haste to get home for dinner, I forgot to thank Mark Brown for
-stepping in again last week - the break was much appreciated.
+Umm, a git URL would be helpful :-)
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/x.uMqznq36WNy0QW5yLa0xq
+--Sig_/3pRDc6lJ=X1CNEYVfBqVhMc
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDdCVAAoJEMDTa8Ir7ZwVwhYP/3gaHcCIzegZsqeUFcRgQ8uC
-FDc5RXNhfK6kYyIGaJNrDVa4l9Bzd2JaELXW/r+sh2EW2udqxITZyrPOjL5/L+mC
-HLSC77jVFzX724/4kNCA366Yfgs/UaTxC2ZFtGDjA0QQXAxY9rgbm7h28ddRBpSb
-x6nxJ79kOKool2OjTMvA7zOKUFd/qmbEpG8D+izgZ27CD9/3Z/pYHolWWumDPhRK
-Cbp9OBL51s/VpSJdw8LjZwH5Ty5dfcBV1epPbibHkFpkxokfdFhwzN2/u6miyClV
-xwfR706hA8/SJip4VYuxrr2TpVzSp0NdAK3xj1u94OGBEBOBQxZqDRxblIlghiWY
-r1uCoYvhMl7Lq9jTBte3duPIPNFIfHx9YkuDHmFLH0r0jyTJZGEM4tAan55YSS4O
-E8IXJxdYLI++C3kxpkdKQE2WbJ419DbZ/6uZ/A9sfENl4aQBPJK/KxxmZ7ui4U6a
-Pkr736qZxsLQwGtCoxvrD95HQohvyLY9ja+dXqnHEFClKcMiIJiA9B4LVddp3VPt
-UKvPtPy1SmOMJ0v/kcMdJ4125YWeojtOWioZLhhsT73HXvvv2RfNtYIb5wIScGD6
-spC2YgZrL2AjFZvZgDgstZZJbhHOiFQKv8b0J/tt7PfGwpFfk5FUo5qnbCZZKeyX
-FkR2Tu2rObivBjsij2tt
-=6cCa
+iQIcBAEBCAAGBQJUDjStAAoJEMDTa8Ir7ZwVwMoQAJWFVdIBcQ/GGdl1HpoW9PDC
+cRQRCTGGWhcBBrvnhFsuw8996ciFCd/X5LuVOlEe4tNCrRriQwBOMU4IXMUBJVlM
+yev1AOhZPofdrZTeukUJJqrRLHyLqmq5fitZIiXcGgLBGOh7Y9+fP2ySKM55+KV7
+dAuqcJQrTEGNlHSMN75r+sUeKDij1amL0/fbl0uFOy9gklBeuOgewER1DPtLvw+F
+mVYmImFRQGpF0ccMhO9qyx8gtBqMX1inyRRr6kX3yi+ke58h1S+I5AnM8rSoTXGk
+eUvwCitfwIc60h48eT+GbSvAC5c/e19VNbnTNnJrwax+hITzHBYwB2T/3TTDORia
+3un0D9J22u4qFmbgCpdFlOMqYBe1sTrJnlxVfzJzqHfJDI5HsmLHQnbPNu2SDMUt
+yUya8kzeyN1cFzG4f7KZvxjNQRewUezoqfoxfax/DmFXCj7FMmrrzxb+mNsRZN3r
+wC2fR1Ykrwd4y/EACR3wy3AkR1nSkktcB9MyzxnqCfZBX/0btvJCbtPTOIopNHOD
+8iAkBdgJwI3hmubnfb9cxTasdUkoD6IGS9e1XWhT6WcJnaO5KyttlikDQ+yVL8Sq
+naG+uX8VXT7KoX7AG4pvGmeXu58I4DpCmkpfTHLz9NxVWC3Z1Q39Qc23B7KZ+e69
+nwEzsc6wbAsaAcOW5hsa
+=TmWw
 -----END PGP SIGNATURE-----
 
---Sig_/x.uMqznq36WNy0QW5yLa0xq--
+--Sig_/3pRDc6lJ=X1CNEYVfBqVhMc--
