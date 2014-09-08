@@ -1,74 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with the
- usb.current tree
-Date: Mon, 8 Sep 2014 17:02:12 +1000
-Message-ID: <20140908170212.133cb6e0@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with Linus' tree
+Date: Mon, 8 Sep 2014 17:06:59 +1000
+Message-ID: <20140908170659.1ec79726@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Sf2_//T5eV/7Szq077FJb.m"; protocol="application/pgp-signature"
+ boundary="Sig_/8_ECue.VeiFsHT.TH9Ht3ja"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50247 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44765 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751424AbaIHHCW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Sep 2014 03:02:22 -0400
+	id S1751404AbaIHHHH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 03:07:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@freescale.com>, Stefan Agner <stefan@agner.ch>
+To: Felipe Balbi <balbi@ti.com>, Yegor Yefremov <yegorslists@googlemail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philippe Reynes <tremyfr@gmail.com>
 
---Sig_/Sf2_//T5eV/7Szq077FJb.m
+--Sig_/8_ECue.VeiFsHT.TH9Ht3ja
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Felipe,
 
-Today's linux-next merge of the usb-gadget tree got a conflict in
-Documentation/devicetree/bindings/usb/mxs-phy.txt between commit
-36687e305651 ("doc: dt: mxs-phy: add compatible string for
-imx6sx-usbphy") from the usb.current tree and commit d0ee68b59e6a
-("usb: phy: mxs: Add VF610 USB PHY support") from the usb-gadget tree.
+Today's linux-next merge of the usb-gadget tree got conflicts in
+drivers/usb/gadget/Makefile, drivers/usb/gadget/legacy/Makefile and
+drivers/usb/gadget/function/Makefile between commit 5d19703822da ("usb:
+gadget: remove $(PWD) in ccflags-y") from Linus' tree and commit
+fa31409a82ee ("usb: gadget: use $(srctree) instead of $(PWD) for
+includes") from the usb-gadget tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (I used the version from the usb-gadget tree) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/usb/mxs-phy.txt
-index 96681c93b86d,fe3eed89e4c3..000000000000
---- a/Documentation/devicetree/bindings/usb/mxs-phy.txt
-+++ b/Documentation/devicetree/bindings/usb/mxs-phy.txt
-@@@ -5,7 -5,7 +5,8 @@@ Required properties
-  	* "fsl,imx23-usbphy" for imx23 and imx28
-  	* "fsl,imx6q-usbphy" for imx6dq and imx6dl
-  	* "fsl,imx6sl-usbphy" for imx6sl
- +	* "fsl,imx6sx-usbphy" for imx6sx
-+ 	* "fsl,vf610-usbphy" for Vybrid vf610
-    "fsl,imx23-usbphy" is still a fallback for other strings
-  - reg: Should contain registers location and length
-  - interrupts: Should contain phy interrupt
-
---Sig_/Sf2_//T5eV/7Szq077FJb.m
+--Sig_/8_ECue.VeiFsHT.TH9Ht3ja
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDVR5AAoJEMDTa8Ir7ZwVBLEP/RxrPysRucC+MG6/sEmIxPa/
-hOMMelYvRH/Fsnn87Fdaca1alEqv3G7a/Y2CioqbytUoACfrU+0Flol9vmdhysme
-D3vBJsIgOCRB4RalEAn7I8jkDn20QrBeA1SCLbHyLkPkXbcEiq5SP4b+0XTrw+Rl
-PVAnBXfQgOd1szaA/s1R+m9nAng9lmz9LG8tpGnIlMYTK+R/fI7+xAX+CYZEvKQu
-7Y6Zd9rkocap8/2MFmr8ORPDbKD8AXtBxMwB0S1CvO3EZyWeV71zz72XeqS+TeoJ
-98eU7nGTFSnSNOQ1vYxVk6I/cRGth+jmgnVYpN4hnE9fSN33saV6or15j6ig/Z/o
-5LHApAmbsxcLl/Iq9KFRVPs70anxUxxhP//En1v7K8LgzqbZyZCfUADj6cRkDPJ8
-xYcnKkklSQ+3hsWHS0NZMtSyWIxAps8qwmDVy4JmENs1nzfLb99PuFBwS4guvBO3
-r3fZJp0l45NGJUw3pPCb9GkT9o2XFu76fnJj/dkOTnkUoP8bo6MmUGuRLOSTY+E+
-8l1KP0r2V3Ysc7XR/S/OJFZ0I8Jolcfk8sdDJfJEGTyanGK4G0byIJhJZft+EeUs
-15QsV9Yw64/rXj+kGG2vRebDMcj4ler/MeOOPUAEHKtHb2cbZZ0gWg2STxWa6fuV
-+pZ/9LeNR78fmKjs7CLd
-=PwqZ
+iQIcBAEBCAAGBQJUDVWXAAoJEMDTa8Ir7ZwVhlwP/1ydk5G1YHyOh/Aa1twGYBSE
+Q6ahr5sdngs1BLiBQZ8vZXOA7E7CsPDfmp6/pAW7FvXCQ6gjBX+5M/zaBFHYc24M
+TzLlwJO/oHUaVtvSjUlmnMjgCCHu2t7S6BmTjV0X1bCgaeyfkDhPc6+F+bvDOm7n
+Y62QfsJxKd6dGsnvkWxYuz4hc2b85JjqMaOaFnRS4E+6txoH9ETXs2hlRRRbOifp
+xUOZswRkKnbCmnGr8FaDPCkNMv6cJcQVGDwUA2u1E91EfM/PCRq6a6OfLpKeGEPW
+Z9kcUnuE5SUCknWWIiFnX5CeDbRsmJzGypM+ZMncuLSLOZH8siEbq/+a0WrW53Kz
+sIiCEEfHnX/8Yac7OHgN58s7pcEvyonZYZRR+GLU392I3nL1VPu13Pqh+P/tlDeR
+HSLXHmfaPHVTekPrRIX6bCVU7jDE3MNv5WMQXCL49Kp7O9tr3hHWf2s4PK2ORvUn
+Bk5APRwX8Nhh2SNoJBCUD/rlrkT73LPGgbCRFEcyWWwIbSzLFbYu8uxCniGreZJK
+hQTx8dGks0EdUp/a5+qQ/XL783/doT9L4twqVxlbt6E0P1pKVlDby16ukkkKdGko
+tnoWaMFIeXyNqBfirvp5fJQH9+TjmAJM/nVqQYG/DsbGKFiqhJ4tGnTJ1LIO71lF
+8+NuftWRLyH5FH4p7RnD
+=agzU
 -----END PGP SIGNATURE-----
 
---Sig_/Sf2_//T5eV/7Szq077FJb.m--
+--Sig_/8_ECue.VeiFsHT.TH9Ht3ja--
