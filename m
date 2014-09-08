@@ -1,62 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Date: Mon, 8 Sep 2014 18:57:47 +1000
-Message-ID: <20140908185747.133b3a0f@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 8 Sep 2014 19:45:57 +1000
+Message-ID: <20140908194557.21b3fc2e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t=q.5VKKIIW+2ehID/WdjaA"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58331 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753125AbaIHI55 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Sep 2014 04:57:57 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Sig_/0B6ThQ0Bqv/j.cvOndC2d2z"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Zhen <zhenzhang.zhang@huawei.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/t=q.5VKKIIW+2ehID/WdjaA
+--Sig_/0B6ThQ0Bqv/j.cvOndC2d2z
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the akpm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-drivers/base/memory.c: In function 'show_valid_zones':
-drivers/base/memory.c:384:22: warning: unused variable 'zone_prev' [-Wunuse=
-d-variable]
-  struct zone *zone, *zone_prev;
-                      ^
+mm/page_alloc.c: In function 'dump_vma':
+mm/page_alloc.c:6742:46: error: request for member 'pgprot' in something no=
+t a structure or union
+   vma->vm_prev, vma->vm_mm, vma->vm_page_prot.pgprot,
+                                              ^
 
-Introduced by commit 46d9999e7374 ("memory-hotplug: fix not enough
-check of valid zones").
+Caused by commit d1305f0fa17f ("mm: introduce dump_vma").  pgprot_t on
+PPC is normally (i.e. unless STRICT_MM_TYPECHECKS is explicitly
+defined) just an "unsigned long" (see
+arch/powerpc/include/asm/page.h).  This is true for several other
+architectures as well.
+
+I added this fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 8 Sep 2014 19:41:54 +1000
+Subject: [PATCH] mm: introduce dump_vma fix 2
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/page_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cb510c08073b..0de60769bcf6 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6739,7 +6739,7 @@ void dump_vma(const struct vm_area_struct *vma)
+ 		"prot %lx anon_vma %p vm_ops %p\n"
+ 		"pgoff %lx file %p private_data %p\n",
+ 		vma, (void *)vma->vm_start, (void *)vma->vm_end, vma->vm_next,
+-		vma->vm_prev, vma->vm_mm, vma->vm_page_prot.pgprot,
++		vma->vm_prev, vma->vm_mm, pgprot_val(vma->vm_page_prot),
+ 		vma->anon_vma, vma->vm_ops, vma->vm_pgoff,
+ 		vma->vm_file, vma->vm_private_data);
+ 	dump_flags(vma->vm_flags, vmaflags_names, ARRAY_SIZE(vmaflags_names));
+--=20
+2.1.0
+
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/t=q.5VKKIIW+2ehID/WdjaA
+--Sig_/0B6ThQ0Bqv/j.cvOndC2d2z
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDW+SAAoJEMDTa8Ir7ZwVlQAP/RGg8SxyEIe+liZSI8STvRmO
-oLWD9brn0/fbuji7eQvyE8DJhg1wPobK8b8B9t1D89ho3pEK4Z3Uz4y72gPxA0SS
-Vt271L39Lg2m5JAwQ2IjJbxCGK/o8KEdusQ8jSWnhLI+Ivoy/cQ3GMNMoYB4ATNH
-yrW7VP3HvSwOfIJ7v9wgmQ3mWdRgC4B8Wu4CAKyTHECo1v60RWQz11qyrLL4KkXO
-z6pkrFJEZP2ooCzLR0EqvJbJ66ydCd2vHrFJgMx6GAF0GCJsGLXGxBCZmEYOvw4l
-sjt9pzxBQzpLjLVWfwE/OC9pxKPFn/HU2v5Q9vwY2myv6cwDiyLTLi5UqT6KnxWx
-AhL8ND9C/5haQBRskx+zwpiIcglz58Se7mh8bWh+jgGq7J8b0IHVAxEUPsHUjORU
-VUzaULCLwhIKptnScoWnL9CmhtFF92V7XAM2r5WGV0DasyMDWSV1aVj6eCuT8eQB
-w+tfY4prVErECnygyFQz3rCRtRSrUCEo7bDwWvAK+/YQ5yQcgkRzS/nyVYQvX22r
-UEXurY9eRpuPLKl0CaLuLJYfLD3nncxTZGO+27lWcbO/0zrtCyZEZgqtSW1/Uqmb
-IkC33gM4TMB0KTZMRu8ZrOSlL/XGQ7ghUv65+temPPR1gkP9qOo3VzlynOQmk6nq
-UIUQXyL+S0lVDOMlHHPX
-=OVc+
+iQIcBAEBCAAGBQJUDXrZAAoJEMDTa8Ir7ZwVNEYP/idSeCGW7mOA9OGqdSXs9Wmj
+Ya/wJHHIZxX550lus9XYxe/9t5XsmC4nJ+eBwTrGitof4x/eDqBCW4tUBCZOiUo8
+Br1RfVahIFJvKcuanwwW4iALYdJxSOcr0hGisKT4ti1IKUZto+pic+FT2ji1WXlw
+VIbee+LYulC8XYmDibIVSKCvg1VgW5Ebsopw5HRh1FTnU8uZaQ+HtuLi13UMnW1R
+S69vJUqxLffTtn3dK7wA4zEZ93AnYSLP0QDrGYHagO/lNeFkT0NAednwkX7h50WA
+LWfZ5MAo7a+oGdTyu1p4H+/GrqTgO43KD39iI1yQaih9BdWw7vTy+J8RDMt01it5
+4zVq4qWGKC1qS55gZ8tAvHXKIOcYIp7cBhSBGzfGuCVsfto8OwvoRMYznSrLh7+L
+qsYVLVUl10/R3DUBu8KBw5blmhUEJp8S8UDx20uGgOWs5RgHe6uqspRyHRJfy/GS
+sr45fKP7RHHgAxj6eQ9mFlDPa2ju+qd+lo/K/MSAGE/YvMO6ahDLuCz8gpIXumTm
+J7n1FPP0tuPCytcNlRW9pxXUJA3f1dqJz51VHUM3C6REGLdQXi/8A6dHmnEc925n
+2Pf8x21q1tUK2yC3HaJ7OLQtYpBqJixZYmhqpk2Jvct8koO1w9uyKi1G5W0374WP
+nDsaMawuYdl1R+2RKuR9
+=oTes
 -----END PGP SIGNATURE-----
 
---Sig_/t=q.5VKKIIW+2ehID/WdjaA--
+--Sig_/0B6ThQ0Bqv/j.cvOndC2d2z--
