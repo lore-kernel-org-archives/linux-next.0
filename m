@@ -1,66 +1,24 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with Linus' tree
-Date: Mon, 8 Sep 2014 08:28:14 -0500
-Message-ID: <20140908132814.GD22409@saruman.home>
-References: <20140908171311.414b05d2@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kvUQC+jR9YzypDnK"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:45483 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752973AbaIHN2e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Sep 2014 09:28:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20140908171311.414b05d2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+From: Christoph Lameter <cl@linux.com>
+Subject: Re: linux-next: Tree for Sep 1
+Date: Mon, 8 Sep 2014 09:15:40 -0500 (CDT)
+Message-ID: <alpine.DEB.2.11.1409080914370.20388@gentwo.org>
+References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org> <alpine.DEB.2.11.1409020958530.9608@gentwo.org> <alpine.LFD.2.11.1409051525440.16533@knanqh.ubzr>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LFD.2.11.1409051525440.16533@knanqh.ubzr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---kvUQC+jR9YzypDnK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 5 Sep 2014, Nicolas Pitre wrote:
 
-On Mon, Sep 08, 2014 at 05:13:11PM +1000, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> Today's linux-next merge of the usb-gadget tree got a conflict in
-> drivers/usb/phy/phy-samsung-usb.h between commit bbc66e140bab ("usb:
-> phy: samsung: Fix wrong bit mask for PHYPARAM1_PCS_TXDEEMPH") from
-> Linus' tree and commit ea2fdf842365 ("usb: phy: samsung: remove old
-> common USB PHY code") from the usb-gadget tree.
->=20
-> I fixed it up (the latter just removed the file, so I did that) and can
-> carry the fix as necessary (no action is required).
+> > -	return raw_cpu_read(base->percpu_base);
+> > +	return raw_cpu_read(*base->percpu_base);
+>
+> Isn't the pointer dereference supposed to be performed _outside_ the per
+> CPU accessor?
 
-Thank you. Guess I'll just merge current -rc in my next branch :-)
-
---=20
-balbi
-
---kvUQC+jR9YzypDnK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUDa7uAAoJEIaOsuA1yqREewQQALKe53JAMZInuFs96LQzUDC4
-phI8DhtcYOsyj+BGr+EWsjL1caXJFSg3e14OZFitccFk5QNWru0JHQbfJ1Bynj0Z
-K0dSZqOCnFLAIBASYPdn9oGEXyLwuvlT30WwdQbS5FfDVtkL1SALNebKCF8xDIPg
-7uIMdJFWLXJv+m0M9iUz+leXYkDgr5s1P1oMIPWQUT2BR6BhUdWdGCCrhl2H2TNb
-LVoiHNX6vuln65vaA7G/7fKTjNhWWf9VA83QwSeV+GDtv3n64ZTMXYi9yYKngFyJ
-/+Fub2sJO1fNwQzJORDvjuTRpHF9fr2dIVQYCNT+X/8r3GdNA5VI6AqFdkPnXAHW
-vEJQmbfQCc486w/FqBBw5zFsAg+cx30ztYqG7B4ph0VhufRDrZKyMZuPlkuLBG5Q
-OeM6UujBAM3cJZus7T3T4hfyL5sPJz7j0S7/Gv3hPlf56ua7ls0PhRijCrg/zfVL
-UKdcrWIij/cf+sf3a4kGncPLpeVLIOir9yZ6Y29i7b1W+jhxdK9PZVXzuKmpkINz
-4crKGJRBPHWdpZVifMSCaHNvqUr/selydxmG0OKLnhkV5oCWGUUM4EqOt3YJGwz6
-9gR56grLSvxpi+PBAZeLDzd3K28fHfIEWzJFcd6xpnsAt0GzJRlm+9jtZGuKe0T9
-Lb4euzIV5mI4ntOtMeTk
-=u6Vn
------END PGP SIGNATURE-----
-
---kvUQC+jR9YzypDnK--
+It looks like percpu_base is a regular pointer to an offset. This is the
+correct way to refer to get the offset and load the value that the offset
+points to.
