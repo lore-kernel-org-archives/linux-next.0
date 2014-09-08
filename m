@@ -1,103 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: New platform-drivers-x86 tree
-Date: Mon, 8 Sep 2014 10:46:57 +1000
-Message-ID: <20140908104657.0743df3a@canb.auug.org.au>
-References: <20140903052120.GA39165@vmdeb7>
-	<20140903191807.GE29327@sirena.org.uk>
+Subject: Re: linux-next: jdelvare-hwmon tree unfetchable
+Date: Mon, 8 Sep 2014 10:55:44 +1000
+Message-ID: <20140908105544.61149a89@canb.auug.org.au>
+References: <20140901132808.c7b08f4ffa7055dc28e6dac7@kernel.org>
+	<54049590.6060500@roeck-us.net>
+	<20140902095455.77a91b40@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/i84YPwHWiQndb9tH+OxoCqW"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50000 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750911AbaIHArG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 7 Sep 2014 20:47:06 -0400
-In-Reply-To: <20140903191807.GE29327@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Darren Hart <dvhart@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org
+ boundary="Sig_/g2sZ8m4kGqelYAJANX4gO6M"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140902095455.77a91b40@endymion.delvare>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/i84YPwHWiQndb9tH+OxoCqW
+--Sig_/g2sZ8m4kGqelYAJANX4gO6M
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Darren,
+Hi Jean,
 
-On Wed, 3 Sep 2014 20:18:07 +0100 Mark Brown <broonie@kernel.org> wrote:
+On Tue, 2 Sep 2014 09:54:55 +0200 Jean Delvare <jdelvare@suse.de> wrote:
 >
-> On Tue, Sep 02, 2014 at 10:21:20PM -0700, Darren Hart wrote:
+> On Mon, 01 Sep 2014 08:49:36 -0700, Guenter Roeck wrote:
+> > On 09/01/2014 05:28 AM, Mark Brown wrote:
+> > > Today's linux-next merge of the jdelvare-hwmon tree got a conflict wi=
+th Linus'
+> > > tree which appeared to be due to the hwmon quilt series I got from St=
+ephen being
+> > > based on v3.14-rc3 and subsequent changes from mainline interacting b=
+adly with
+> > > it. In addition I'm not able to check the original series since linux=
+-fr.org does
+> > > not resolve for me.
 > >=20
-> > I searched the documentation (development-process/*) but found the linu=
-x-next
-> > wiki to be down (for a while now it seems). Apologies if I'm missing so=
-mething
-> > documented there.
+> > Jean dropped the linux-fr.org domain, and his old e-mail address probab=
+ly
+> > won't work anymore.
 >=20
-> This is pretty much the process.  Stephen's on holiday this week, I've
-> updated the configuration for the trees I'm building this week but you
-> might want to check that this gets carried over when he's back on
-> Monday.
-
-I have updated my config files as well.
-
-> > I have subscribed to the linux-next mailing list. Is there more I need =
-to be
-> > doing? Do I need to send you pull requests, or do you pull a list of br=
-anches
-> > automatically?
+> I can confirm that. linux-fr.org is history, from now on I'll be using
+> my @suse.de address for all open source related work. I thought I had
+> already updated all references and let everyone involved know about the
+> change, but apparently I failed to do so, sorry about that.
 >=20
-> It's all done automatically - for-next will be fetched for each -next
-> build.  Stephen's form letter for this can be found in the archives, the
-> main rule is that you should only be putting code there intended to go
-> in during the merge window.
+> > The alternate (and temporary) pointer he gave me
+> > is http://jdelvare.nerim.net/devel/linux-3/jdelvare-hwmon/. It is empty,
+> > so you did not miss anything.
+>=20
+> That's right. As many temporary things, I'm afraid it's there to
+> last ;-)
 
-What Mark said :-)
-
-The only other thing is the following legalese:
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+OK, I have switched to using this as well and updated your contact
+address.
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/i84YPwHWiQndb9tH+OxoCqW
+--Sig_/g2sZ8m4kGqelYAJANX4gO6M
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDPyFAAoJEMDTa8Ir7ZwVLV4QAIfpz7o9bvgTMUnivL59bvJC
-SrgPh9zAJn4ha4RKpjYdMNM63wJnW/J2DXHW8gcVVXVkyh+4/8uD3D+OoBObi9U4
-8jaIreeLFMl7sVPUL0FZZhm5FaDq/r2Fd24fxAPWMStHheDG2b6km+6N85iJEIFY
-doy27R3gXN2LeL0KelQojrQgTch2Vs6YZ/BIPcncAAo3rzd4Cq/BlMHOIjPzIqHk
-1UEboZFtMDb0LFMyZvkwRHeh7x5ZSlnNm+GObUtPQUgItuqrFcB2t6OwBukNXrY/
-Sx9oopBKHo+zWaf/Ndp8IPsc2XdI+wln3yL0bfG1pAxSHWaFtWPTEScyecMcJQSc
-LvIUNLaeVkhVxuOzUpao0UhjSo/dPlsU2xOc6P8mZi+FKdIKWk01+wB6CEIkZU5i
-USzYPpuhRjg01D1BO6btmqWCRac1GU9zYg4k24SurPwjGoYNdMfo5nbSHlr+F2V4
-j4pvvjIYKQbjP0VbH9ywdp0jJ7sIulX5ETSsG6koa8n6onASKbs+QVEDrkuhmena
-9W2tKErEr2wATxR6GTyK8xm65IEfdM2d+PZBEwINEPQnXfV/eGiO7SeTMsL0H3/3
-vVAqNgnMbfHvdonxfY9a9EY/Xt7byL/YlC/cvFYFK4TTZJGq41uLy21cUmo4NqTf
-0zCHwZZ8Hftf4zQffq4u
-=Bj54
+iQIcBAEBCAAGBQJUDP6VAAoJEMDTa8Ir7ZwVU6IP/2zQMlKn/1YVgZin0BU87DgO
+Xqsbo2XVxOag0w6aSjYGYIU8b0U30O3Z6sXKsvMWx+4f0sVgiN22j/IfdrKMo0rZ
+m67F2spFWuGBgH6jqtVOyUpHVr3mkiOzOX6YfrfAND4ZYXU65sySXh4pQg7CFgqa
+GDhjtX1OG35olEegz8p7N39LJGmbqDIqPUkT7XPZPcTpBRTvx1gyfOIV5LUDWRh9
+/ULOswEbPOk9TfvPVZN26CQzyfkpe7qcZMNHj/4Gqs2dSNassVEeMZUYjZrSoeVW
+K0bJuymbSP0Aj2WBy5SSRwRM9QzZHMjHrCq1KfvzUfHjOcm0aPKeL8oaw+grChQ5
+z1hCPiOaEZ9CnblSMZ+ldg/Fh48TMwY0hX6JJ7nvyWTl7xf5WjE42Yf5ZzIuNeJj
+APwrFTxKd/GPTJg/9FU4341XrqKuf+n5hUOHqkkTnueehCjTDETGJLXoPHAJFdWJ
+5fNF2vWS7OBhoxRFzjQ/q2aR+Vnlta3sr65DGLQfVRm9Zh0L6y4fBe8NacJQEbCT
+5j00r6uDj1htvYCL0DwaeZ1l0YK9m5ni5umtojlGrMW+ok7XKQA6FSKQsPSrjq/g
+o+XfP4uqvEM8WJtze0lG824MxoTZ6YGwWxeejYipsIGHZpIPyH/lvYvNUXD6pMmk
++0qLenA+2nxwHWp9XmkB
+=vmce
 -----END PGP SIGNATURE-----
 
---Sig_/i84YPwHWiQndb9tH+OxoCqW--
+--Sig_/g2sZ8m4kGqelYAJANX4gO6M--
