@@ -1,32 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Mon, 8 Sep 2014 14:32:56 +1000
-Message-ID: <20140908143256.44287543@canb.auug.org.au>
+Subject: linux-next: manual merge of the integrity tree with the nfsd tree
+Date: Mon, 8 Sep 2014 15:12:01 +1000
+Message-ID: <20140908151201.333065c6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zQVrlaIBdQkcJy97TsNCh/I"; protocol="application/pgp-signature"
+ boundary="Sig_/zxMy0eaiHVm+GFm=Q33ssw/"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47786 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47064 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750845AbaIHEdD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Sep 2014 00:33:03 -0400
+	id S1751398AbaIHFMJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 01:12:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <d.kasatkin@samsung.com>, "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kinglong Mee <kinglongmee@gmail.com>
 
---Sig_/zQVrlaIBdQkcJy97TsNCh/I
+--Sig_/zxMy0eaiHVm+GFm=Q33ssw/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in
-drivers/gpu/drm/i915/intel_display.c between commit a4bf214ffc72
-("drm/i915: Move intel_ddi_set_vc_payload_alloc(false) to
-haswell_crtc_disable()") from Linus' tree and commit 575f7ab754c4
-("drm/i915: Pass intel_crtc to intel_disable_pipe() and
-intel_wait_for_pipe_off()") from the drm-intel tree.
+Today's linux-next merge of the integrity tree got a conflict in
+fs/nfsd/vfs.c between commit 9b638b816081 ("NFSD: Put file after
+ima_file_check fail in nfsd_open()") from the nfsd tree and commit
+e8442e203c25 ("ima: pass 'opened' flag to identify newly created
+files") from the integrity tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,57 +34,68 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/i915/intel_display.c
-index 18da8349a070,b912107a1392..000000000000
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@@ -4168,7 -4253,11 +4264,7 @@@ static void ironlake_crtc_disable(struc
-  	if (intel_crtc->config.has_pch_encoder)
-  		intel_set_pch_fifo_underrun_reporting(dev, pipe, false);
+diff --cc fs/nfsd/vfs.c
+index 89d1ae3bcff7,d49c778faecb..000000000000
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@@ -704,25 -704,19 +704,25 @@@ nfsd_open(struct svc_rqst *rqstp, struc
+  		else
+  			flags =3D O_WRONLY|O_LARGEFILE;
+  	}
+ -	*filp =3D dentry_open(&path, flags, current_cred());
+ -	if (IS_ERR(*filp)) {
+ -		host_err =3D PTR_ERR(*filp);
+ -		*filp =3D NULL;
+ -	} else {
+ -		host_err =3D ima_file_check(*filp, may_flags, 0);
  =20
-- 	intel_disable_pipe(dev_priv, pipe);
-+ 	intel_disable_pipe(intel_crtc);
- -
- -	if (intel_crtc->config.dp_encoder_is_mst)
- -		intel_ddi_set_vc_payload_alloc(crtc, false);
- -
-  	ironlake_pfit_disable(intel_crtc);
+ -		if (may_flags & NFSD_MAY_64BIT_COOKIE)
+ -			(*filp)->f_mode |=3D FMODE_64BITHASH;
+ -		else
+ -			(*filp)->f_mode |=3D FMODE_32BITHASH;
+ +	file =3D dentry_open(&path, flags, current_cred());
+ +	if (IS_ERR(file)) {
+ +		host_err =3D PTR_ERR(file);
+ +		goto out_nfserr;
+  	}
  =20
-  	for_each_encoder_on_crtc(dev, crtc, encoder)
-@@@ -4231,11 -4319,8 +4326,11 @@@ static void haswell_crtc_disable(struc
- =20
-  	if (intel_crtc->config.has_pch_encoder)
-  		intel_set_pch_fifo_underrun_reporting(dev, TRANSCODER_A, false);
-- 	intel_disable_pipe(dev_priv, pipe);
-+ 	intel_disable_pipe(intel_crtc);
- =20
- +	if (intel_crtc->config.dp_encoder_is_mst)
- +		intel_ddi_set_vc_payload_alloc(crtc, false);
+- 	host_err =3D ima_file_check(file, may_flags);
+++	host_err =3D ima_file_check(file, may_flags, 0);
+ +	if (host_err) {
+ +		nfsd_close(file);
+ +		goto out_nfserr;
+ +	}
  +
-  	intel_ddi_disable_transcoder_func(dev_priv, cpu_transcoder);
- =20
-  	ironlake_pfit_disable(intel_crtc);
+ +	if (may_flags & NFSD_MAY_64BIT_COOKIE)
+ +		file->f_mode |=3D FMODE_64BITHASH;
+ +	else
+ +		file->f_mode |=3D FMODE_32BITHASH;
+ +
+ +	*filp =3D file;
+  out_nfserr:
+  	err =3D nfserrno(host_err);
+  out:
 
---Sig_/zQVrlaIBdQkcJy97TsNCh/I
+--Sig_/zxMy0eaiHVm+GFm=Q33ssw/
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUDTF9AAoJEMDTa8Ir7ZwVAYsP/jQSU6CLjgJq5ENoUMBve22n
-ZgRaqPZUap8VUGGjSSlBWig9Sh41LEFZTc8B3b+yXC+hRCNLJfVlNdMnmnRq3+OP
-YHIW/cAWFKYQqE//jh2epIdNOZ5ndjvJDXpMC0II6kmLjE5xQ3NrYqO9EjRnHhA1
-1Hb+WNHtesVR+V708A/r1ydrPZMiSOUdzEv3FpVVSh2NRcossrq8uzKwI1ptOUTp
-ilGBNV17BplubGC/HC3lRgON40DS8SA9SHv//ppAfVdLn5G4sQtiv1c6Ho15DSVN
-CEln8TRJXDGcYq0kT3qWl1TW0VOEVo0WcbAEgJhXz53gGmPw1WvB4uEVTXLvkqpC
-s8dvso3ofE9HZeMrmAkyJIMKlZ6zlsTecsPmrHWwwc0/mPF6EZB+1r3ie49Aqj/r
-rmGSEDJ/UJGY+f3uj138MNsjJj7PfXEbBuCdIR+tIwFNAs2t+Il6g9MBIzD7ygg+
-s9fOKq2xbsJehRQli3K88nbisKP3QhAz9BSaSd9oTaQqgUkqWmPyrojTipQlNfkM
-MgSj5Y5+W5nfq7BcWF3GlWSY7IKfiDg3fJERkuScs3WqWPLTlOc8KbhtwskIoPg5
-h50Ukpw5rc+gQDgg7PWb7qafCBrU/tXQBgfVH5UOwEsAYIcZX6WbMU9n0TvTrgaJ
-5u8oRwOrky4Pi2iVCccV
-=UeSY
+iQIcBAEBCAAGBQJUDTqmAAoJEMDTa8Ir7ZwVf4YP/2n3apoXrGKFp5/uzc0cJ3qf
+9ev4nNbH0rIyhnb+nDLguT8PzVed9gDG/0Evl0+k/8edP7XkX6vBy7ntPCBzW786
+BSwMOZKKtFYWEnJLh8dLsjWB0J1M8ebZhSraj7am8U9QN0Nd2Gz21N5qXXcAqM1B
+8b6LJamYwDRzDxZqudSGJ8HSaMGiKeToOCJrAw2wwHkWV4hLLzklyiUdDXvRhZcG
+kPmKLWWujH+7R1oZk0EEgnuja1SLZklDRZR6Xz0chCDUkDpyr9KO+Psyb8ojP2nR
+V/mmSk6okJMIIZuk58cWuSz34JtcS7TuyqqFJM7p+iMQ/6Ikpflpo1D/ZytHWuIR
+4HVNoGugAZkzqC+4NiodFkqf1VDVDS5bSWuOXqLc32JTho9j5qKJBgmqnvywVgS+
+KJkiUKH6u/5Dop89wEicc9xfMCzgyLD4Nc2Rpybqa08Xq8xCQ9XrPg7kH+gD6Hed
+iESzfSD/sAVFB3eFG5XsEn9d0Ut4v1FKG9rCRensVYsrsXD93KJPmrxxy7eupkFg
+SpQppmq3S3zZ7xQML8xHsJ47VF6DmcNvc7X+QXIgiSf1RmGbr2FsOuj9ma8tsCX+
+h002PvxVDV9/gGIe+CK0/9SJPrzkbx/x2MhVK2ZlImlEO0ijsZfRUDbeuhpwi5c7
+742IYKATE17bRHKSFzpH
+=9sEZ
 -----END PGP SIGNATURE-----
 
---Sig_/zQVrlaIBdQkcJy97TsNCh/I--
+--Sig_/zxMy0eaiHVm+GFm=Q33ssw/--
