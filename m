@@ -1,49 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/3] [media] s5p-jpeg: Fix compilation with COMPILE_TEST
-Date: Tue, 09 Sep 2014 19:54:19 +0200
-Message-ID: <60097822.tu6OncvLxQ@wuerfel>
-References: <20140909124306.2d5a0d76@canb.auug.org.au>
- <540F15B2.3000902@samsung.com> <20140909120936.527bd852.m.chehab@samsung.com>
+From: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 3/3] [media] vpif: Fix compilation with allmodconfig
+Date: Tue, 9 Sep 2014 19:30:58 +0100
+Message-ID: <CA+V-a8vXAWyRo+-LuEhMNfn1KWDfvy38pROYspPmRBckbFpj7A@mail.gmail.com>
+References: <20140909124306.2d5a0d76@canb.auug.org.au> <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
+ <c522bdd8972633e0eb481ffc5ebb7da98b190fa7.1410273306.git.m.chehab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140909120936.527bd852.m.chehab@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <c522bdd8972633e0eb481ffc5ebb7da98b190fa7.1410273306.git.m.chehab@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, dlos <davinci-linux-open-source@linux.davincidsp.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-On Tuesday 09 September 2014 12:09:36 Mauro Carvalho Chehab wrote:
-> -exynos4.c
-> > > index e51c078360f5..01eeacf28843 100644
-> > > --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-> > > +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-> > > @@ -23,7 +23,9 @@ void exynos4_jpeg_sw_reset(void __iomem *base)
-> > >     reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
-> > >     writel(reg & ~EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
-> > >  
-> > > +#ifndef CONFIG_COMPILE_TEST
-> > >     ndelay(100000);
-> > > +#endif
-> > 
-> > Wouldn't be a better fix to replace ndelay(100000); with udelay(100),
-> > rather than sticking in a not so pretty #ifndef ?
-> 
-> Works for me. I'll submit a new version.
+On Tue, Sep 9, 2014 at 3:38 PM, Mauro Carvalho Chehab
+<m.chehab@samsung.com> wrote:
+> When vpif is compiled as module, those errors happen:
+>
+> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_display.ko] undefined!
+> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_capture.ko] undefined!
+>
+> That's because vpif_lock symbol is not exported.
+>
 
-New version looks good to me. On a more general level, I would argue
-that we should not disable code based on COMPILE_TEST. The typical
-use of this symbol is to make it possible to compile more code, not
-to change the behavior of code on machines that were able to build
-it already.
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 
-	Arnd
+Regards,
+--Prabhakar Lad
+
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
+>
+> diff --git a/drivers/media/platform/davinci/vpif.c b/drivers/media/platform/davinci/vpif.c
+> index cd08e5248387..3dad5bd7fe0a 100644
+> --- a/drivers/media/platform/davinci/vpif.c
+> +++ b/drivers/media/platform/davinci/vpif.c
+> @@ -38,6 +38,7 @@ MODULE_LICENSE("GPL");
+>  #define VPIF_CH3_MAX_MODES     2
+>
+>  spinlock_t vpif_lock;
+> +EXPORT_SYMBOL_GPL(vpif_lock);
+>
+>  void __iomem *vpif_base;
+>  EXPORT_SYMBOL_GPL(vpif_base);
+> --
+> 1.9.3
+>
