@@ -1,50 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the regulator tree
-Date: Tue, 9 Sep 2014 23:39:52 +0100
-Message-ID: <20140909223952.GL2601@sirena.org.uk>
-References: <20140908183350.5a4e357c@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: randconfig build error with next-20140909, in drivers/net/ethernet/broadcom/cnic.c
+Date: Tue, 09 Sep 2014 15:56:02 -0700
+Message-ID: <540F8582.50703@infradead.org>
+References: <CA+r1ZhhZynUKSeZnya67z9sph4+tpjO4E7jLZKc0EG4azxFdYA@mail.gmail.com>	 <525DB349B3FB5444AE057A887CB2A8D88E0BFB@nice.asicdesigners.com>,<1410295676.7520.4.camel@LTIRV-MCHAN1.corp.ad.broadcom.com> <525DB349B3FB5444AE057A887CB2A8D88E3CEC@nice.asicdesigners.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GcxvFOCtgbxoSrcp"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59886 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751268AbaIIWk2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Sep 2014 18:40:28 -0400
-Content-Disposition: inline
-In-Reply-To: <20140908183350.5a4e357c@canb.auug.org.au>
+Received: from bombadil.infradead.org ([198.137.202.9]:41301 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbaIIW4H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Sep 2014 18:56:07 -0400
+In-Reply-To: <525DB349B3FB5444AE057A887CB2A8D88E3CEC@nice.asicdesigners.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>
+To: Anish Bhatt <anish@chelsio.com>, Michael Chan <mchan@broadcom.com>, "eddie.wai@broadcom.com" <eddie.wai@broadcom.com>
+Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, netdev <netdev@vger.kernel.org>, James Bottomley <jbottomley@parallels.com>
 
+On 09/09/14 14:08, Anish Bhatt wrote:
+> 
+>> Adding depends on IPV6 || IPV6=n doesn't work for SCSI_BNX2X_FCOE, but
+>> works for SCSI_BNX2_ISCSI?
+> 
+> It fixes the config issue for both, but with FCOE; make scripts will complain about recursive dependencies with the following :
+> 
+> scripts/kconfig/conf --silentoldconfig Kconfig
+> net/Kconfig:5:error: recursive dependency detected!
+> net/Kconfig:5:  symbol NET is selected by SCSI_NETLINK
+> drivers/scsi/Kconfig:43:        symbol SCSI_NETLINK is selected by SCSI_FC_ATTRS
+> drivers/scsi/Kconfig:258:       symbol SCSI_FC_ATTRS is selected by LIBFC
+> drivers/scsi/Kconfig:586:       symbol LIBFC is selected by SCSI_BNX2X_FCOE
+> drivers/scsi/bnx2fc/Kconfig:1:  symbol SCSI_BNX2X_FCOE depends on IPV6
+> net/ipv6/Kconfig:6:     symbol IPV6 depends on NET
 
---GcxvFOCtgbxoSrcp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It would be really good if SCSI_NETLINK depended on NET instead of selected NET.
+We shouldn't have kconfig symbols that use 'select' on entire subsystems.
 
-On Mon, Sep 08, 2014 at 06:33:50PM +1000, Stephen Rothwell wrote:
-
-> drivers/regulator/rk808-regulator.c:312:18: warning: 'struct rk808_board' declared inside parameter list
->            struct rk808_board *pdata)
-
-Chris, as previously requested please send me any changes needed to
-update for the changes in the MFD driver.
-
---GcxvFOCtgbxoSrcp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUD4G0AAoJECTWi3JdVIfQ1H4H/R6HNDQ19wS2b0Zi4ZxFlCpf
-Bdyo8/by1EZUW+0jq6y2XLHHxQ/BPd/tXK/9QmMbmmUD/zCS/S3mNwkBmbYrxKXb
-t6m8Iy/vwnpfZZOMo9NwnbiwlUmSIWuyGXoNDKk5ACu+8xpu0zWuOFH6P5ERtIJx
-ciAVZKmBrN127U90ZhP78jhpd3iL/5Rc7aWgixlsb51PwSb8EYOHCuamuHFLN93j
-+TvvrFNPYS5e6y1bkqgTRWzoGg90+e3iNN0/cl+7lbvu+C0XxdsfjEh7qIKqeF1q
-q1vpCtJ/KIX0L4LP1uepyvFA5xFGpxYwOYyAqMVzCHH79ZF0xfZlzc4HfPsXwaQ=
-=Ya+u
------END PGP SIGNATURE-----
-
---GcxvFOCtgbxoSrcp--
+-- 
+~Randy
