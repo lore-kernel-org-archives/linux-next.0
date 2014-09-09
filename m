@@ -1,40 +1,36 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: randconfig build error with next-20140909, in drivers/net/ethernet/broadcom/cnic.c
-Date: Tue, 09 Sep 2014 15:56:02 -0700
-Message-ID: <540F8582.50703@infradead.org>
-References: <CA+r1ZhhZynUKSeZnya67z9sph4+tpjO4E7jLZKc0EG4azxFdYA@mail.gmail.com>	 <525DB349B3FB5444AE057A887CB2A8D88E0BFB@nice.asicdesigners.com>,<1410295676.7520.4.camel@LTIRV-MCHAN1.corp.ad.broadcom.com> <525DB349B3FB5444AE057A887CB2A8D88E3CEC@nice.asicdesigners.com>
+From: Anish Bhatt <anish@chelsio.com>
+Subject: RE: randconfig build error with next-20140909, in
+ drivers/net/ethernet/broadcom/cnic.c
+Date: Tue, 9 Sep 2014 23:16:43 +0000
+Message-ID: <525DB349B3FB5444AE057A887CB2A8D88E3E42@nice.asicdesigners.com>
+References: <CA+r1ZhhZynUKSeZnya67z9sph4+tpjO4E7jLZKc0EG4azxFdYA@mail.gmail.com>
+	 <525DB349B3FB5444AE057A887CB2A8D88E0BFB@nice.asicdesigners.com>,<1410295676.7520.4.camel@LTIRV-MCHAN1.corp.ad.broadcom.com>
+ <525DB349B3FB5444AE057A887CB2A8D88E3CEC@nice.asicdesigners.com>,<540F8582.50703@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:41301 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013AbaIIW4H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Sep 2014 18:56:07 -0400
-In-Reply-To: <525DB349B3FB5444AE057A887CB2A8D88E3CEC@nice.asicdesigners.com>
+Received: from 99-65-72-228.uvs.sntcca.sbcglobal.net ([99.65.72.228]:12399
+	"EHLO stargate.chelsio.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752732AbaIIXRr convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Sep 2014 19:17:47 -0400
+In-Reply-To: <540F8582.50703@infradead.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anish Bhatt <anish@chelsio.com>, Michael Chan <mchan@broadcom.com>, "eddie.wai@broadcom.com" <eddie.wai@broadcom.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Michael Chan <mchan@broadcom.com>, "eddie.wai@broadcom.com" <eddie.wai@broadcom.com>
 Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, netdev <netdev@vger.kernel.org>, James Bottomley <jbottomley@parallels.com>
 
-On 09/09/14 14:08, Anish Bhatt wrote:
-> 
->> Adding depends on IPV6 || IPV6=n doesn't work for SCSI_BNX2X_FCOE, but
->> works for SCSI_BNX2_ISCSI?
-> 
-> It fixes the config issue for both, but with FCOE; make scripts will complain about recursive dependencies with the following :
-> 
-> scripts/kconfig/conf --silentoldconfig Kconfig
-> net/Kconfig:5:error: recursive dependency detected!
-> net/Kconfig:5:  symbol NET is selected by SCSI_NETLINK
-> drivers/scsi/Kconfig:43:        symbol SCSI_NETLINK is selected by SCSI_FC_ATTRS
-> drivers/scsi/Kconfig:258:       symbol SCSI_FC_ATTRS is selected by LIBFC
-> drivers/scsi/Kconfig:586:       symbol LIBFC is selected by SCSI_BNX2X_FCOE
-> drivers/scsi/bnx2fc/Kconfig:1:  symbol SCSI_BNX2X_FCOE depends on IPV6
-> net/ipv6/Kconfig:6:     symbol IPV6 depends on NET
+> It would be really good if SCSI_NETLINK depended on NET instead of selected NET.
+> We shouldn't have kconfig symbols that use 'select' on entire subsystems.
 
-It would be really good if SCSI_NETLINK depended on NET instead of selected NET.
-We shouldn't have kconfig symbols that use 'select' on entire subsystems.
+As a test, I was able to fix this by this approach : change SCSI_NETLINK to depend  
+on NET instead of selecting NET, and replacing 'select NETDEVICES ETHERNET 
+NET_VENDOR_BROADCOM CNIC' to 'depends on CNIC' in bnx2i & bnx2fc. (as CNIC 
+already has a dependency on those). This removes the need to check for IPV6 in 
+bnx2i/fc Kconfigs as well.
 
--- 
-~Randy
+The side effect is that you won't see BNX2 drivers unless CNIC is selected, similar
+for SCSI_NETLINK as well, not sure if there are any other implications.
+-Anish
