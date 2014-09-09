@@ -1,52 +1,90 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: Tree for Sep 1
-Date: Tue, 9 Sep 2014 09:37:29 +0900
-Message-ID: <20140909003729.GA11706@mtj.dyndns.org>
-References: <20140901230728.GM29327@sirena.org.uk>
- <1627064.QhxvejlWdk@amdc1032>
- <alpine.DEB.2.11.1409020857110.9201@gentwo.org>
- <alpine.DEB.2.11.1409020958530.9608@gentwo.org>
- <20140904171123.GD26364@mtj.dyndns.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Tue, 9 Sep 2014 12:43:06 +1000
+Message-ID: <20140909124306.2d5a0d76@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sPsHYl2js_flSE/tgXQJb3X"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:47881 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754562AbaIIAhe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Sep 2014 20:37:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20140904171123.GD26364@mtj.dyndns.org>
+Received: from ozlabs.org ([103.22.144.67]:39618 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754512AbaIICnQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Sep 2014 22:43:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.pitre@linaro.org, Russell King <rmk+kernel@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 05, 2014 at 02:11:23AM +0900, Tejun Heo wrote:
-> On Tue, Sep 02, 2014 at 10:00:07AM -0500, Christoph Lameter wrote:
-> > Subject: irqchip: Properly fetch the per cpu offset
-> > 
-> > The raw_cpu_read() conversion dropped the fetch of the offset
-> > from base->percpu_base in gic_get_percpu_base.
-> > 
-> > Signed-off-by: Christoph Lameter <cl@linux.com>
-> > 
-> > Index: linux/drivers/irqchip/irq-gic.c
-> > ===================================================================
-> > --- linux.orig/drivers/irqchip/irq-gic.c
-> > +++ linux/drivers/irqchip/irq-gic.c
-> > @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
-> >  #ifdef CONFIG_GIC_NON_BANKED
-> >  static void __iomem *gic_get_percpu_base(union gic_base *base)
-> >  {
-> > -	return raw_cpu_read(base->percpu_base);
-> > +	return raw_cpu_read(*base->percpu_base);
-> 
-> I suppose this should go through percpu/for-3.18-consistent-ops?  Can
-> we please cc irq folks and get acks?
+--Sig_/sPsHYl2js_flSE/tgXQJb3X
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Christoph, please drive this forward.
+Hi Mauro,
 
-Thanks.
+After merging the v4l-dvb tree, today's linux-next build (x86_64 allmodconf=
+ig)
+failed like this:
 
--- 
-tejun
+ERROR: "omap_stop_dma" [drivers/media/platform/soc_camera/omap1_camera.ko] =
+undefined!
+ERROR: "omap_start_dma" [drivers/media/platform/soc_camera/omap1_camera.ko]=
+ undefined!
+ERROR: "omap_dma_link_lch" [drivers/media/platform/soc_camera/omap1_camera.=
+ko] undefined!
+ERROR: "omap_set_dma_dest_burst_mode" [drivers/media/platform/soc_camera/om=
+ap1_camera.ko] undefined!
+ERROR: "omap_set_dma_src_params" [drivers/media/platform/soc_camera/omap1_c=
+amera.ko] undefined!
+ERROR: "omap_request_dma" [drivers/media/platform/soc_camera/omap1_camera.k=
+o] undefined!
+ERROR: "omap_set_dma_transfer_params" [drivers/media/platform/soc_camera/om=
+ap1_camera.ko] undefined!
+ERROR: "omap_set_dma_dest_params" [drivers/media/platform/soc_camera/omap1_=
+camera.ko] undefined!
+ERROR: "omap_free_dma" [drivers/media/platform/soc_camera/omap1_camera.ko] =
+undefined!
+ERROR: "__bad_ndelay" [drivers/media/platform/s5p-jpeg/s5p-jpeg.ko] undefin=
+ed!
+ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_display.ko] undefin=
+ed!
+ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_capture.ko] undefin=
+ed!
+
+I have used the v4l-dvb tree from next-20140908 for today.
+
+There were also lots of new warnings like:
+
+drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c: In function 's5p_mfc_get_c=
+rop_info_h_v6':
+drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c:2039:3: warning: cast from =
+pointer to integer of different size [-Wpointer-to-int-cast]
+   (unsigned int) ctx->dev->mfc_regs->d_display_crop_info1);
+   ^
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/sPsHYl2js_flSE/tgXQJb3X
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUDmlBAAoJEMDTa8Ir7ZwVUScQAJD5Gg3WHokB/NjVnyDiZM+M
+AM02zwBuYFBXqURlep/vagqqD8bZfK64a9ITI8sNQZdhM9BM+GNUTJfHPrgTLBnY
+yPCsnoaUm8TdY/Vy2mZx0LxaV7EfnxEC3KISLWDAJfVNLIQMk5PU0KzwUkKZmulf
+svK5w6oDwe9LkQmJ0cYIMXbTtddxcBjNYIBX6l6xPUgJUxJnoKjj00gb4S+6RTdm
++1t0vxltQrBRi0rz+ELrK3WWzNdgoSOPaLm40X7DharDTluhX1HuBa+g0TvomP8+
+g71vcuyyfkhv1hq5lchgMd8yoIx1+GgUQL18/Ca+28R7swpNIWnXwsh5LRZVQNmm
+TBXlyxUcpNGic9eUpzX3NWeYnCPyxzUE628D6OAOhmKBEWDRPBgodFH1dTOMcE/i
+ECu9fAxKiRIJpQX4aIxTVvqtZxiJmmdJ+/uudcRy8JwVH7+37Si9xUV5AqCwqku7
+6YXw9jhVEXml5GV3h/53Iy1+VSo4xXdgai0MRrONTFDG3X9jNCuc3JyEQ9OKPxEP
+ksjHZhUCHNw5hSVrgv3QAl4lE2C34tSvuVK9xno2ZG9MWyxrUlqH+fqXX+RfAYxK
+aNPplb5n14mYigk/7whvvOU7z5Jb0mq9HFCiw9Hjx4RhzHNF/sMocuSs6rJ7cQM9
+KqZ57GDviiHch/e7YL3l
+=dZBi
+-----END PGP SIGNATURE-----
+
+--Sig_/sPsHYl2js_flSE/tgXQJb3X--
