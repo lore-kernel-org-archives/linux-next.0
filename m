@@ -1,109 +1,59 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Tue, 9 Sep 2014 00:05:09 -0300
-Message-ID: <20140909000509.13d83a83@recife.lan>
-References: <20140909124306.2d5a0d76@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with the nfs tree
+Date: Tue, 9 Sep 2014 15:36:38 +1000
+Message-ID: <20140909153638.6c10fc0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/=e04jII9HXpAwXZobskLxgs"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/I32VTzT+WIgZiPwIB6SOX6s"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:46623 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754931AbaIIDFe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Sep 2014 23:05:34 -0400
-In-Reply-To: <20140909124306.2d5a0d76@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:39316 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755350AbaIIFgp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Sep 2014 01:36:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>
 
---Sig_/=e04jII9HXpAwXZobskLxgs
+--Sig_/I32VTzT+WIgZiPwIB6SOX6s
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Eric,
 
-Em Tue, 9 Sep 2014 12:43:06 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+Today's linux-next merge of the userns tree got a conflict in
+fs/nfs/client.c between commit 21e81002f978 ("nfs: fix kernel warning
+when removing proc entry") from the nfs tree and commit a1998908ba46
+("nfs: fix kernel warning when removing proc entry") from the userns
+tree.  Slightly different version of the same fix.
 
-> Hi Mauro,
->=20
-> After merging the v4l-dvb tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->=20
-> ERROR: "omap_stop_dma" [drivers/media/platform/soc_camera/omap1_camera.ko=
-] undefined!
-> ERROR: "omap_start_dma" [drivers/media/platform/soc_camera/omap1_camera.k=
-o] undefined!
-> ERROR: "omap_dma_link_lch" [drivers/media/platform/soc_camera/omap1_camer=
-a.ko] undefined!
-> ERROR: "omap_set_dma_dest_burst_mode" [drivers/media/platform/soc_camera/=
-omap1_camera.ko] undefined!
-> ERROR: "omap_set_dma_src_params" [drivers/media/platform/soc_camera/omap1=
-_camera.ko] undefined!
-> ERROR: "omap_request_dma" [drivers/media/platform/soc_camera/omap1_camera=
-.ko] undefined!
-> ERROR: "omap_set_dma_transfer_params" [drivers/media/platform/soc_camera/=
-omap1_camera.ko] undefined!
-> ERROR: "omap_set_dma_dest_params" [drivers/media/platform/soc_camera/omap=
-1_camera.ko] undefined!
-> ERROR: "omap_free_dma" [drivers/media/platform/soc_camera/omap1_camera.ko=
-] undefined!
-> ERROR: "__bad_ndelay" [drivers/media/platform/s5p-jpeg/s5p-jpeg.ko] undef=
-ined!
-> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_display.ko] undef=
-ined!
-> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_capture.ko] undef=
-ined!
->=20
+I fixed it up (I used the version from the nfs tree) and can carry the
+fix as necessary (no action is required).
 
-Yeah, there are several drivers that are now enabled with COMPILE_TEST.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Not sure what's the best thing to do with those errors. Perhaps I should
-add some stub functions for those drivers to not complain about linking
-issues if COMPILE_TEST.
-
-> I have used the v4l-dvb tree from next-20140908 for today.
-
->=20
-> There were also lots of new warnings like:
->=20
-> drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c: In function 's5p_mfc_get=
-_crop_info_h_v6':
-> drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c:2039:3: warning: cast fro=
-m pointer to integer of different size [-Wpointer-to-int-cast]
->    (unsigned int) ctx->dev->mfc_regs->d_display_crop_info1);
->    ^
->=20
-
-Those warnings are harmless in practice, but they should be fixed.
-
-I'll be handling them before the next merge window.
-
-Regards,
-Mauro
-
---Sig_/=e04jII9HXpAwXZobskLxgs
+--Sig_/I32VTzT+WIgZiPwIB6SOX6s
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUDm5tAAoJEAhfPr2O5OEV/sAP/0RWkAGX5C7ZuyXIa28SHAvp
-cHHJHWhGSHmaCQErJxLEeK0veVSIQsE40tnKo4K1NgTGXj+Qec3vkizs33T7vKkl
-y0Ub9p0tCwTW6MT6vniEQEKg/JX2tAWUgAkFQ+y4PqFDNE+BChzCW4H50oEXyF+s
-9idPWW/zRuaD7MT3hfuQTCERytRKuILsB4AK5cRAOiGVojCt3RMiD6/agkNuXAqr
-tOV5PABs6QZErJCEZoSLA6UibIYTJ4n5GMaulW8PRmYr/QoXUAiIkOiHfg5UnMDm
-WaWWAhROFpmEUl2Uou4RQcYEkFDhpE/9IndegbXnPmZq8Eab7clJfr9to7zFMhKE
-dlC21m/v5RHEsEXwRcQs9Ac0OtCy2jnwTwls6vUT2mJ+21G6lvbTBrha9fCtoaTC
-ivlba35VmG0uWh9+lWDQqNa7bt+ZZEW8wFvtoaGNpiCYfTo2KIy/OIhimEdGdZez
-/9vLB/+4JaEpLmBQIJs/gdFuz9pnfh1hDJsOChshmWn8SFPpyXpDmcuA7xhiXk6L
-VRKJTjVr+Vu9HoZaFobjD/6MwtAEpnGGtIGngUS99KzU252IjY/VJ0kv9wq/7aFN
-IiQUFEfdJH60rxYO3nLxOD2k5BwmIY+cEEDcuMi39SeS9nvto128Y4tRQg+6k3g9
-R5ab4YFSjLPxk2zcpkpk
-=WySB
+iQIcBAEBCAAGBQJUDpHrAAoJEMDTa8Ir7ZwVz5UP/jv8S9HZxzksjirVXQ3yldLr
+esCbkAbosMcHvBc9i+IyJ7BXyv59QdppHNnnD31aabBBiS0daQtk24W18PLIIYXs
+Tv1GYIKrx+LmiVF9eCc8+SWYY2STWqN8LbEf0UOrzD0mZvAD3JEk5h3z406+BVM+
+wf6WkT3dd7MFlCSfIMV+zacCidIEWUK9FV6xRr62MIwCXlli7PJ240pes4v+Eo4E
+p1JxR40aclQaos+O7E6WUxlx+sr1e3Yqm4YSHjNPOSKkIKmFWmSZI676XX9kdh2d
+w6GMpaYGrhr5lYmDtIHlw0avAr4YYY2KuQmxpRGWLGx0yPApJnzANeXLLQ6LH0Em
+493c6dcibr4URX948anjJ8BR3l4Fco0RG2F34oO2qEFnOWIMAJfE8cLPBWxAfPo6
+ghIB8YYYJV/JXK0n6DiQJl5PiKDDiiq/nDw81rn37xpkE9+3dG9zsNVXYS/g0eSn
+swGA55jnItiGnTbkqlcucNwtapBgmXTcVbwI3/sjohqQDpPsmMPkc77D3hPg++ey
+VmnpXdyr9wcw1G0hnU+hjkbIfD4tiN8iomWud2ZN7cOPMMUPDWb5vxEweuACbpf4
+tx4dlbEF1A+lxVwCY8FwYzRZ+AJAEeMYaPAiB3HxNTPouwPp2hY/E8HNIC/qIQm+
+oHkhrv3Eb6TQj+24gENJ
+=jZhF
 -----END PGP SIGNATURE-----
 
---Sig_/=e04jII9HXpAwXZobskLxgs--
+--Sig_/I32VTzT+WIgZiPwIB6SOX6s--
