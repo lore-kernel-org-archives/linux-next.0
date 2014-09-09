@@ -1,50 +1,53 @@
-From: Anish Bhatt <anish@chelsio.com>
-Subject: RE: randconfig build error with next-20140909, in
- drivers/net/ethernet/broadcom/cnic.c
-Date: Tue, 9 Sep 2014 20:24:21 +0000
-Message-ID: <525DB349B3FB5444AE057A887CB2A8D88E0BFB@nice.asicdesigners.com>
-References: <CA+r1ZhhZynUKSeZnya67z9sph4+tpjO4E7jLZKc0EG4azxFdYA@mail.gmail.com>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: [PATCHv3 1/3] [media] disable OMAP1 COMPILE_TEST
+Date: Tue, 9 Sep 2014 22:36:19 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.1409092235160.9452@axis700.grange>
+References: <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
+ <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 99-65-72-228.uvs.sntcca.sbcglobal.net ([99.65.72.228]:19536
-	"EHLO stargate.chelsio.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752438AbaIIUYb convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Sep 2014 16:24:31 -0400
-In-Reply-To: <CA+r1ZhhZynUKSeZnya67z9sph4+tpjO4E7jLZKc0EG4azxFdYA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "mchan@broadcom.com" <mchan@broadcom.com>, "David S. Miller" <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-This is caused by c99d667e8527  ("cnic : Cleanup CONFIG_IPV6 & VLAN check")
+Thanks, Mauro,
 
-So I'm not really sure what the fix for this is. CNIC will properly only support 
-[m] or [n] when IPV6 is compiled as a module, but if you set SCSI_BNX2X_FCOE or 
-SCSI_BNX2_ISCSI to be in built, there is a 'select CNIC' that forces CNIC to be 
-inbuilt, even though this is not supported by Kconfig. I was under the 
-assumption that select will not forcibly change m to inbuilt (or perhaps I'm 
-missing some syntax suboption ?)
+On Tue, 9 Sep 2014, Mauro Carvalho Chehab wrote:
 
-This is still fixable in SCSI_BNX2_ISCSI using the same logic used in the above 
-mentioned commit, but not so in SCSI_BNX2X_FCOE where it causes a recursive 
-dependency error (thought it is fixing the issue nevertheless), and none of the 
- other solutions I tried seemed to work either.
+> This driver depends on a legacy OMAP DMA API. So, it won't
+> compile-test on other archs.
+> 
+> While we might add stubs to the functions, this is not a
+> good idea, as the hole API should be replaced.
+> 
+> So, for now, let's just remove COMPILE_TEST and wait for
+> some time for people to fix. If not fixed, then we'll end
+> by removing this driver as a hole.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
 
-Looking at previous code, the earlier approach used to just disable ipv6 code 
-in such a situation.
--Anish
+Acked-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
-________________________________________
-From: Jim Davis [jim.epost@gmail.com]
-Sent: Tuesday, September 09, 2014 7:38 AM
-To: Stephen Rothwell; linux-next; linux-kernel; Anish Bhatt; mchan@broadcom.com; David S. Miller; netdev
-Subject: randconfig build error with next-20140909, in drivers/net/ethernet/broadcom/cnic.c
+Regards
+Guennadi
 
-Building with the attached random configuration file,
-
-drivers/built-in.o: In function `cnic_get_v6_route':
-cnic.c:(.text+0x3a4168): undefined reference to `ip6_route_output'
-make: *** [vmlinux] Error 1
+> 
+> diff --git a/drivers/media/platform/soc_camera/Kconfig b/drivers/media/platform/soc_camera/Kconfig
+> index 6af6c6dccda8..f2776cd415ca 100644
+> --- a/drivers/media/platform/soc_camera/Kconfig
+> +++ b/drivers/media/platform/soc_camera/Kconfig
+> @@ -63,7 +63,7 @@ config VIDEO_SH_MOBILE_CEU
+>  config VIDEO_OMAP1
+>  	tristate "OMAP1 Camera Interface driver"
+>  	depends on VIDEO_DEV && SOC_CAMERA
+> -	depends on ARCH_OMAP1 || COMPILE_TEST
+> +	depends on ARCH_OMAP1
+>  	depends on HAS_DMA
+>  	select VIDEOBUF_DMA_CONTIG
+>  	select VIDEOBUF_DMA_SG
+> -- 
+> 1.9.3
+> 
