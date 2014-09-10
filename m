@@ -1,62 +1,146 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCHv3 1/3] [media] disable OMAP1 COMPILE_TEST
-Date: Wed, 10 Sep 2014 10:04:12 +0200
-Message-ID: <3055703.v1cXzV8T6U@amdc1032>
-References: <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
- <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Subject: Re: randconfig build error with next-20140909, in
+ drivers/tty/serial/serial_mctrl_gpio.c
+Date: Wed, 10 Sep 2014 10:05:58 +0200
+Message-ID: <20140910080558.GB14260@distanz.ch>
+References: <CA+r1ZhjCZBWjkxjoJz=PO-YZg6LbghQV75tGnpiSOrHM9CaygA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15474 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751998AbaIJIES (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 04:04:18 -0400
-In-reply-to: <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CA+r1ZhjCZBWjkxjoJz=PO-YZg6LbghQV75tGnpiSOrHM9CaygA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, jslaby@suse.cz, linux-serial@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+On 2014-09-10 at 00:32:25 +0200, Jim Davis <jim.epost@gmail.com> wrote:
+> Building with the attached random configuration file,
+>=20
+> drivers/tty/serial/serial_mctrl_gpio.c:44:6: error: redefinition of
+> =E2=80=98mctrl_gpio_set=E2=80=99
+>  void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
+>       ^
+> In file included from drivers/tty/serial/serial_mctrl_gpio.c:23:0:
+> drivers/tty/serial/serial_mctrl_gpio.h:80:6: note: previous definitio=
+n
+> of =E2=80=98mctrl_gpio_set=E2=80=99 was here
+>  void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
+>       ^
+> drivers/tty/serial/serial_mctrl_gpio.c:59:19: error: redefinition of
+> =E2=80=98mctrl_gpio_to_gpiod=E2=80=99
+>  struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
+>                    ^
+> In file included from drivers/tty/serial/serial_mctrl_gpio.c:23:0:
+> drivers/tty/serial/serial_mctrl_gpio.h:91:19: note: previous
+> definition of =E2=80=98mctrl_gpio_to_gpiod=E2=80=99 was here
+>  struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
+>                    ^
+> drivers/tty/serial/serial_mctrl_gpio.c:69:14: error: redefinition of
+> =E2=80=98mctrl_gpio_get=E2=80=99
+>  unsigned int mctrl_gpio_get(struct mctrl_gpios *gpios, unsigned int =
+*mctrl)
+>               ^
+> In file included from drivers/tty/serial/serial_mctrl_gpio.c:23:0:
+> drivers/tty/serial/serial_mctrl_gpio.h:85:14: note: previous
+> definition of =E2=80=98mctrl_gpio_get=E2=80=99 was here
+>  unsigned int mctrl_gpio_get(struct mctrl_gpios *gpios, unsigned int =
+*mctrl)
+>               ^
+> drivers/tty/serial/serial_mctrl_gpio.c:93:21: error: redefinition of
+> =E2=80=98mctrl_gpio_init=E2=80=99
+>  struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int=
+ idx)
+>                      ^
+> In file included from drivers/tty/serial/serial_mctrl_gpio.c:23:0:
+> drivers/tty/serial/serial_mctrl_gpio.h:98:21: note: previous
+> definition of =E2=80=98mctrl_gpio_init=E2=80=99 was here
+>  struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int=
+ idx)
+>                      ^
+> drivers/tty/serial/serial_mctrl_gpio.c:131:6: error: redefinition of
+> =E2=80=98mctrl_gpio_free=E2=80=99
+>  void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
+>       ^
+> In file included from drivers/tty/serial/serial_mctrl_gpio.c:23:0:
+> drivers/tty/serial/serial_mctrl_gpio.h:104:6: note: previous
+> definition of =E2=80=98mctrl_gpio_free=E2=80=99 was here
+>  void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
+>       ^
+>   CC [M]  drivers/net/wireless/ti/wl1251/io.o
+> make[3]: *** [drivers/tty/serial/serial_mctrl_gpio.o] Error 1
 
-Hi,
+The problem seems to be that if GPIOLIB is not selected, the noop
+functions from serial_mctrl_gpio.h are pulled in, but
+serial_mctrl_gpio.c is still compiled. Since all drivers that include
+serial_mctrl_gpio.h also depend on SERIAL_MCTRL_GPIO I'd suggest adding
+a "select GPIOLIB" to config SERIAL_MCTRL_GPIO and removing the
+noop functions alltogether, see patch below:
 
-On Tuesday, September 09, 2014 03:54:04 PM Mauro Carvalho Chehab wrote:
-> This driver depends on a legacy OMAP DMA API. So, it won't
-> compile-test on other archs.
-> 
-> While we might add stubs to the functions, this is not a
-> good idea, as the hole API should be replaced.
-
-This is also not a good idea becaouse it would break the driver
-for OMAP1 once somebody enables COMPILE_TEST option while also
-having ARCH_OMAP1 enabled (which is perfectly fine and shouldn't
-cause the driver breakage).  In general COMPILE_TEST option is
-completely independent from the arch specific ones and it should
-not change behaviour of the existing code.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> So, for now, let's just remove COMPILE_TEST and wait for
-> some time for people to fix. If not fixed, then we'll end
-> by removing this driver as a hole.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
-> 
-> diff --git a/drivers/media/platform/soc_camera/Kconfig b/drivers/media/platform/soc_camera/Kconfig
-> index 6af6c6dccda8..f2776cd415ca 100644
-> --- a/drivers/media/platform/soc_camera/Kconfig
-> +++ b/drivers/media/platform/soc_camera/Kconfig
-> @@ -63,7 +63,7 @@ config VIDEO_SH_MOBILE_CEU
->  config VIDEO_OMAP1
->  	tristate "OMAP1 Camera Interface driver"
->  	depends on VIDEO_DEV && SOC_CAMERA
-> -	depends on ARCH_OMAP1 || COMPILE_TEST
-> +	depends on ARCH_OMAP1
->  	depends on HAS_DMA
->  	select VIDEOBUF_DMA_CONTIG
->  	select VIDEOBUF_DMA_SG
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 8079f52..5f1ea62 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1575,5 +1575,6 @@ endmenu
+=20
+ config SERIAL_MCTRL_GPIO
+ 	tristate
++	select GPIOLIB
+=20
+ endif # TTY
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.h b/drivers/tty/seria=
+l/serial_mctrl_gpio.h
+index 400ba04..5e4c96a 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.h
++++ b/drivers/tty/serial/serial_mctrl_gpio.h
+@@ -40,8 +40,6 @@ enum mctrl_gpio_idx {
+  */
+ struct mctrl_gpios;
+=20
+-#ifdef CONFIG_GPIOLIB
+-
+ /*
+  * Set state of the modem control output lines via GPIOs.
+  */
+@@ -74,37 +72,4 @@ struct mctrl_gpios *mctrl_gpio_init(struct device *d=
+ev, unsigned int idx);
+  */
+ void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios);
+=20
+-#else /* GPIOLIB */
+-
+-static inline
+-void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
+-{
+-}
+-
+-static inline
+-unsigned int mctrl_gpio_get(struct mctrl_gpios *gpios, unsigned int *m=
+ctrl)
+-{
+-	return *mctrl;
+-}
+-
+-static inline
+-struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
+-				      enum mctrl_gpio_idx gidx)
+-{
+-	return ERR_PTR(-ENOSYS);
+-}
+-
+-static inline
+-struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int i=
+dx)
+-{
+-	return ERR_PTR(-ENOSYS);
+-}
+-
+-static inline
+-void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
+-{
+-}
+-
+-#endif /* GPIOLIB */
+-
+ #endif
