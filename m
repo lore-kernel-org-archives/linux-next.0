@@ -1,33 +1,120 @@
-From: Daniel Borkmann <dborkman@redhat.com>
-Subject: Re: linux-next: Tree for Sep 10 (bpf)
-Date: Wed, 10 Sep 2014 19:06:06 +0200
-Message-ID: <541084FE.6020408@redhat.com>
-References: <20140910185920.336180d4@canb.auug.org.au> <5410815E.4080608@infradead.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: linux-next: Tree for Sep 1
+Date: Wed, 10 Sep 2014 18:41:41 +0100
+Message-ID: <20140910174141.GH12361@n2100.arm.linux.org.uk>
+References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org> <alpine.DEB.2.11.1409020958530.9608@gentwo.org> <alpine.LFD.2.11.1409051525440.16533@knanqh.ubzr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:18845 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750935AbaIJRGf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Sep 2014 13:06:35 -0400
-In-Reply-To: <5410815E.4080608@infradead.org>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:50379 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750882AbaIJRl7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Sep 2014 13:41:59 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.11.1409051525440.16533@knanqh.ubzr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Nicolas Pitre <nicolas.pitre@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Christoph Lameter <cl@linux.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 09/10/2014 06:50 PM, Randy Dunlap wrote:
-> On 09/10/14 01:59, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20140909:
->
-> When CONFIG_MODULES is not enabled:  (seen on i386 and x86_64)
->
-> kernel/built-in.o: In function `bpf_jit_binary_alloc':
-> (.text+0x7689d): undefined reference to `module_alloc'
-> kernel/built-in.o: In function `bpf_jit_binary_free':
-> (.text+0x768f0): undefined reference to `module_free'
+On Fri, Sep 05, 2014 at 03:27:51PM -0400, Nicolas Pitre wrote:
+> On Tue, 2 Sep 2014, Christoph Lameter wrote:
+> 
+> > On Tue, 2 Sep 2014, Christoph Lameter wrote:
+> > 
+> > > Oww.. This is double indirection deal there. A percpu offset pointing to
+> > > a pointer?
+> > >
+> > > Generally the following is true (definition from
+> > > include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
+> > >
+> > > #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
+> > 
+> > I think what the issue is that we dropped the fetch of the percpu offset
+> > in the patch. Instead we are using the address of the variable that
+> > contains the offset. Does this patch fix it?
+> > 
+> > 
+> > Subject: irqchip: Properly fetch the per cpu offset
+> > 
+> > The raw_cpu_read() conversion dropped the fetch of the offset
+> > from base->percpu_base in gic_get_percpu_base.
+> > 
+> > Signed-off-by: Christoph Lameter <cl@linux.com>
+> > 
+> > Index: linux/drivers/irqchip/irq-gic.c
+> > ===================================================================
+> > --- linux.orig/drivers/irqchip/irq-gic.c
+> > +++ linux/drivers/irqchip/irq-gic.c
+> > @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
+> >  #ifdef CONFIG_GIC_NON_BANKED
+> >  static void __iomem *gic_get_percpu_base(union gic_base *base)
+> >  {
+> > -	return raw_cpu_read(base->percpu_base);
+> > +	return raw_cpu_read(*base->percpu_base);
+> 
+> Isn't the pointer dereference supposed to be performed _outside_ the per 
+> CPU accessor?
 
-[ Sorry for that, patch has already been submitted to netdev. ]
+I think this is correct.
+
+Let's start from the depths of raw_cpu_read(), where the pointer is
+verified to be the correct type:
+
+#define __verify_pcpu_ptr(ptr)                                          \
+do {                                                                    \
+        const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
+        (void)__vpp_verify;                                             \
+} while (0)
+
+So, "ptr" should be of type "const void __percpu *" (note the __percpu
+annotation there, which makes it sparse-checkable.)
+
+The next level up is this:
+
+#define __pcpu_size_call_return(stem, variable)                         \
+({                                                                      \
+        typeof(variable) pscr_ret__;                                    \
+        __verify_pcpu_ptr(&(variable));                                 \
+
+So, we pass the address of the variable to the verification function.
+That makes it a void-typed variable - "const void __percpu".
+
+#define raw_cpu_read(pcp)   __pcpu_size_call_return(raw_cpu_read_, pcp)
+
+So this also makes "pcp" a "const void __percpu".
+
+Now, what type is base->percpu_base?
+
+        void __percpu * __iomem *percpu_base;
+
+The thing we want to be per-cpu is a "void __iomem *" pointer.  However,
+we have a pointer to the per-cpu instance.  That's the "void __percpu *"
+bit.
+
+So, for this to match the requirements for raw_cpu_read(), we need to
+do one dereference to end up with "void __percpu".
+
+Hence, to me, the patch looks correct.
+
+Whether it works or not is a /completely/ different matter.  As has been
+pointed out, the only place this code gets used is on a very small number
+of platforms, which I don't have, and that gives me zero way to test it.
+If it's Exynos which is affected by this, we need to call on Samsung to
+test this patch.
+
+Now, this code was introduced by Marc Zyngier in order to support Exynos,
+probably the result of another patch on the mailing list from Samsung.
+(I've added Marc and another Samsung guy to the Cc list.)  Whatever,
+*someone* needs to verify this but it needs to be done with the affected
+hardware.  Whether Marc can, or whether it has to be someone from Samsung,
+I don't care which.
+
+/Or/ we deem the code unmaintained, broken, and untestable, and we start
+considering ripping it out of the mainline kernel on the basis that no
+one cares about it anymore.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
