@@ -1,54 +1,69 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCHv3 1/3] [media] disable OMAP1 COMPILE_TEST
-Date: Wed, 10 Sep 2014 10:19:41 +0200
-Message-ID: <1959112.4FzR3bzOGa@amdc1032>
-References: <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
- <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
- <3055703.v1cXzV8T6U@amdc1032>
+From: Markos Chandras <Markos.Chandras@imgtec.com>
+Subject: Re: [PATCH linux-next] MIPS: ioctls: Add missing TIOC{S,G}RS485 definitions
+Date: Wed, 10 Sep 2014 09:25:09 +0100
+Message-ID: <54100AE5.6050401@imgtec.com>
+References: <1410263575-26720-1-git-send-email-markos.chandras@imgtec.com> <20140909191736.GA7467@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <3055703.v1cXzV8T6U@amdc1032>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailapp01.imgtec.com ([195.59.15.196]:19307 "EHLO
+	mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbaIJIZN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 04:25:13 -0400
+In-Reply-To: <20140909191736.GA7467@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-mips@linux-mips.org, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 
-On Wednesday, September 10, 2014 10:04:12 AM Bartlomiej Zolnierkiewicz wrote:
+On 09/09/2014 08:17 PM, Greg KH wrote:
+> On Tue, Sep 09, 2014 at 12:52:55PM +0100, Markos Chandras wrote:
+>> Commit e676253b19b2d269cccf67fdb1592120a0cd0676
+>> (serial/8250: Add support for RS485 IOCTLs) added cases for the
+>> TIOC{S,G}RS485 commands but this broke the build for MIPS:
+>>
+>> drivers/tty/serial/8250/8250_core.c: In function 'serial8250_ioctl':
+>> drivers/tty/serial/8250/8250_core.c:2874:7: error: 'TIOCSRS485' undeclared
+>> (first use in this function)
+>> drivers/tty/serial/8250/8250_core.c:2886:7: error: 'TIOCGRS485' undeclared
+>> (first use in this function)
+>>
+>> This patch adds these missing definitions
+>>
+>> Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+>> Cc: <linux-next@vger.kernel.org>
+>> Cc: <linux-kernel@vger.kernel.org>
+>> Cc: <linux-serial@vger.kernel.org>
+>> Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
+>> ---
+>>  arch/mips/include/uapi/asm/ioctls.h | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/mips/include/uapi/asm/ioctls.h b/arch/mips/include/uapi/asm/ioctls.h
+>> index b1e637757fe3..34050cb6b631 100644
+>> --- a/arch/mips/include/uapi/asm/ioctls.h
+>> +++ b/arch/mips/include/uapi/asm/ioctls.h
+>> @@ -76,6 +76,8 @@
+>>  
+>>  #define TIOCSBRK	0x5427	/* BSD compatibility */
+>>  #define TIOCCBRK	0x5428	/* BSD compatibility */
+>> +#define TIOCGRS485	0x542E
+>> +#define TIOCSRS485	0x542F
 > 
-> Hi,
+> Any reason you aren't using the _IOR() type macros here?
 > 
-> On Tuesday, September 09, 2014 03:54:04 PM Mauro Carvalho Chehab wrote:
-> > This driver depends on a legacy OMAP DMA API. So, it won't
-> > compile-test on other archs.
-> > 
-> > While we might add stubs to the functions, this is not a
-> > good idea, as the hole API should be replaced.
+> thanks,
 > 
-> This is also not a good idea becaouse it would break the driver
-> for OMAP1 once somebody enables COMPILE_TEST option while also
-> having ARCH_OMAP1 enabled (which is perfectly fine and shouldn't
-> cause the driver breakage).  In general COMPILE_TEST option is
-> completely independent from the arch specific ones and it should
-> not change behaviour of the existing code.
+> greg k-h
+> 
+Hi Greg,
 
-Small clarification:
+Not really. I am being consistent with what
+include/uapi/asm-generic/ioctls.h is using, and with the xtensa patch
+that was posted yesterday
 
-I was of course referring to the original patch for the issue:
+https://lkml.org/lkml/2014/9/9/27
 
-  https://lkml.org/lkml/2014/9/9/498
-
-stubs can be added properly with using 
-
-  #if defined(CONFIG_COMPILE_TEST) && !defined(CONFIG_ARCH_OMAP1)
-
-similarly like it is handled for ARCH_QCOM in
-
-  drivers/gpu/drm/msm/msm_drv.h
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-- 
+markos
