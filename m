@@ -1,138 +1,131 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: Tree for Sep 1
-Date: Wed, 10 Sep 2014 19:11:10 +0100
-Message-ID: <5410943E.3050505@arm.com>
-References: <20140901230728.GM29327@sirena.org.uk> <1627064.QhxvejlWdk@amdc1032> <alpine.DEB.2.11.1409020857110.9201@gentwo.org> <alpine.DEB.2.11.1409020958530.9608@gentwo.org> <alpine.LFD.2.11.1409051525440.16533@knanqh.ubzr> <20140910174141.GH12361@n2100.arm.linux.org.uk>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Sep 10
+Date: Wed, 10 Sep 2014 12:37:32 -0700
+Message-ID: <20140910193732.GA29618@roeck-us.net>
+References: <20140910185920.336180d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:33841 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752188AbaIJSLQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 14:11:16 -0400
-In-Reply-To: <20140910174141.GH12361@n2100.arm.linux.org.uk>
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:33705 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752954AbaIJThh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 15:37:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20140910185920.336180d4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Christoph Lameter <cl@linux.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Russell,
+On Wed, Sep 10, 2014 at 06:59:20PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Changes since 20140909:
+>=20
+> New tree: powerpc-merge-mpe
+>=20
+> The pm tree gained conflicts against the mvebu and arm-soc trees.
+>=20
+> The v4l-dvb tree still had its build failure so I used the version fr=
+om
+> next-20140908.
+>=20
+> The net-next tree gained a conflict against the arm-soc tree.
+>=20
+> The wireless-next tree lost its build failure.
+>=20
+> The drm tree still had its build failure for which I applied a merge
+> fix patch.
+>=20
+> The regulator tree still had its build failure for which I reverted
+> several commits.
+>=20
+> The trivial tree gained a conflict against the block tree.
+>=20
+> The clk tree gained a conflict against the renesas tree.
+>=20
+> The akpm-current tree lost its build failure.
+>=20
+> Non-merge commits (relative to Linus' tree): 4389
+>  4067 files changed, 140816 insertions(+), 93267 deletions(-)
+>=20
 
-On 10/09/14 18:41, Russell King - ARM Linux wrote:
-> On Fri, Sep 05, 2014 at 03:27:51PM -0400, Nicolas Pitre wrote:
->> On Tue, 2 Sep 2014, Christoph Lameter wrote:
->>
->>> On Tue, 2 Sep 2014, Christoph Lameter wrote:
->>>
->>>> Oww.. This is double indirection deal there. A percpu offset pointing to
->>>> a pointer?
->>>>
->>>> Generally the following is true (definition from
->>>> include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
->>>>
->>>> #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
->>>
->>> I think what the issue is that we dropped the fetch of the percpu offset
->>> in the patch. Instead we are using the address of the variable that
->>> contains the offset. Does this patch fix it?
->>>
->>>
->>> Subject: irqchip: Properly fetch the per cpu offset
->>>
->>> The raw_cpu_read() conversion dropped the fetch of the offset
->>> from base->percpu_base in gic_get_percpu_base.
->>>
->>> Signed-off-by: Christoph Lameter <cl@linux.com>
->>>
->>> Index: linux/drivers/irqchip/irq-gic.c
->>> ===================================================================
->>> --- linux.orig/drivers/irqchip/irq-gic.c
->>> +++ linux/drivers/irqchip/irq-gic.c
->>> @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
->>>  #ifdef CONFIG_GIC_NON_BANKED
->>>  static void __iomem *gic_get_percpu_base(union gic_base *base)
->>>  {
->>> -	return raw_cpu_read(base->percpu_base);
->>> +	return raw_cpu_read(*base->percpu_base);
->>
->> Isn't the pointer dereference supposed to be performed _outside_ the per 
->> CPU accessor?
-> 
-> I think this is correct.
-> 
-> Let's start from the depths of raw_cpu_read(), where the pointer is
-> verified to be the correct type:
-> 
-> #define __verify_pcpu_ptr(ptr)                                          \
-> do {                                                                    \
->         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
->         (void)__vpp_verify;                                             \
-> } while (0)
-> 
-> So, "ptr" should be of type "const void __percpu *" (note the __percpu
-> annotation there, which makes it sparse-checkable.)
-> 
-> The next level up is this:
-> 
-> #define __pcpu_size_call_return(stem, variable)                         \
-> ({                                                                      \
->         typeof(variable) pscr_ret__;                                    \
->         __verify_pcpu_ptr(&(variable));                                 \
-> 
-> So, we pass the address of the variable to the verification function.
-> That makes it a void-typed variable - "const void __percpu".
-> 
-> #define raw_cpu_read(pcp)   __pcpu_size_call_return(raw_cpu_read_, pcp)
-> 
-> So this also makes "pcp" a "const void __percpu".
-> 
-> Now, what type is base->percpu_base?
-> 
->         void __percpu * __iomem *percpu_base;
-> 
-> The thing we want to be per-cpu is a "void __iomem *" pointer.  However,
-> we have a pointer to the per-cpu instance.  That's the "void __percpu *"
-> bit.
-> 
-> So, for this to match the requirements for raw_cpu_read(), we need to
-> do one dereference to end up with "void __percpu".
-> 
-> Hence, to me, the patch looks correct.
-> 
-> Whether it works or not is a /completely/ different matter.  As has been
-> pointed out, the only place this code gets used is on a very small number
-> of platforms, which I don't have, and that gives me zero way to test it.
-> If it's Exynos which is affected by this, we need to call on Samsung to
-> test this patch.
-> 
-> Now, this code was introduced by Marc Zyngier in order to support Exynos,
-> probably the result of another patch on the mailing list from Samsung.
-> (I've added Marc and another Samsung guy to the Cc list.)  Whatever,
-> *someone* needs to verify this but it needs to be done with the affected
-> hardware.  Whether Marc can, or whether it has to be someone from Samsung,
-> I don't care which.
+I see a large number of build failures.
 
-Thanks for looping me in. I indeed introduced this as an alternative to
-an utterly broken patch that was submitted at the time.
+Build results:
+	total: 133 pass: 95 fail: 38
+=46ailed builds:
+	alpha:defconfig
+	alpha:allmodconfig
+	arm:shmobile_defconfig
+	arm:bcm2835_defconfig
+	arm:efm32_defconfig
+	arm:clps711x_defconfig
+	cris:defconfig
+	cris:etrax-100lx_defconfig
+	cris:artpec_3_defconfig
+	cris:etraxfs_defconfig
+	frv:defconfig
+	hexagon:defconfig
+	ia64:defconfig
+	m68k:allmodconfig
+	m68k:m5272c3_defconfig
+	m68k:m5307c3_defconfig
+	m68k:m5249evb_defconfig
+	mips:allmodconfig
+	mips:bcm47xx_defconfig
+	mips:bcm63xx_defconfig
+	mips:nlm_xlp_defconfig
+	mips:ath79_defconfig
+	mips:ar7_defconfig
+	mips:fuloong2e_defconfig
+	mips:cavium_octeon_defconfig
+	mips:malta_defconfig
+	mn10300:asb2303_defconfig
+	parisc:defconfig
+	parisc:generic-32bit_defconfig
+	parisc:a500_defconfig
+	parisc:generic-64bit_defconfig
+	powerpc:85xx/sbc8548_defconfig
+	sh:microdev_defconfig
+	sparc64:allmodconfig
+	unicore32:defconfig
+	xtensa:defconfig
+	xtensa:allmodconfig
 
-As far as I can tell, and by reading your analysis, this patch looks
-perfectly sensible.
+Key build failures:
 
-Now, I have long given up on trying to run *anything* on a Samsung
-platform other than my Chromebook - the various maintainers don't seem
-to care at all. I may be able to revive an Origen board though (I think
-I have one collecting the proverbial dust in a cupboard), assuming I can
-locate a bootloader for it.
+kernel/built-in.o: In function `irq_work_sync':
+(.text+0x2cfd8): undefined reference to `module_alloc'
+kernel/built-in.o: In function `irq_work_sync':
+(.text+0x2cfe0): undefined reference to `module_free'
 
-> /Or/ we deem the code unmaintained, broken, and untestable, and we start
-> considering ripping it out of the mainline kernel on the basis that no
-> one cares about it anymore.
+This is seen for several architectures and drivers.
 
-That's an alternative. I personally wouldn't shed a tear.
+---
+drivers/tty/serial/8250/8250_core.c: In function =E2=80=98serial8250_io=
+ctl=E2=80=99:
+drivers/tty/serial/8250/8250_core.c:2874:7: error:
+		=E2=80=98TIOCSRS485=E2=80=99 undeclared (first use in this function)
+drivers/tty/serial/8250/8250_core.c:2886:7: error:
+		=E2=80=98TIOCGRS485=E2=80=99 undeclared (first use in this function)
 
-Thanks,
+Seen for several architectures. For some of the affected architectures
+I have seen patches on lkml, others such as alpha are still unpatched
+as far as I can see.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+---
+=46or sparc64, we also have
+
+In file included from drivers/tty/serial/serial_mctrl_gpio.c:21:0:
+include/uapi/asm-generic/termios.h:22:8: error:
+		redefinition of 'struct termio'
+=2E/arch/sparc/include/uapi/asm/termbits.h:16:8: note:
+		originally defined here
+
+I didn't bother trying runtime tests.
+
+Details are available at http://server.roeck-us.net:8010/builders.
+
+Guenter
