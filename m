@@ -1,51 +1,33 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: linux-next: manual merge of the clk tree with the renesas tree
-Date: Wed, 10 Sep 2014 09:56:49 -0700
-Message-ID: <20140910165649.19023.66202@quantum>
-References: <20140910173335.594bf533@canb.auug.org.au>
+From: Daniel Borkmann <dborkman@redhat.com>
+Subject: Re: linux-next: Tree for Sep 10 (bpf)
+Date: Wed, 10 Sep 2014 19:06:06 +0200
+Message-ID: <541084FE.6020408@redhat.com>
+References: <20140910185920.336180d4@canb.auug.org.au> <5410815E.4080608@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140910173335.594bf533@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Simon Horman <horms@verge.net.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:18845 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750935AbaIJRGf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Sep 2014 13:06:35 -0400
+In-Reply-To: <5410815E.4080608@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-Quoting Stephen Rothwell (2014-09-10 00:33:35)
-> Hi Mike,
-> 
-> Today's linux-next merge of the clk tree got a conflict in
-> Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> between commit b32c44b93af3 ("clk: shmobile: Add r8a7740, sh73a0 SoCs
-> to MSTP bindings") from the renesas tree and commit 5acb7bbbab7c ("ARM:
-> shmobile: r8a7794: document MSTP clock support") from the clk tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+On 09/10/2014 06:50 PM, Randy Dunlap wrote:
+> On 09/10/14 01:59, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20140909:
+>
+> When CONFIG_MODULES is not enabled:  (seen on i386 and x86_64)
+>
+> kernel/built-in.o: In function `bpf_jit_binary_alloc':
+> (.text+0x7689d): undefined reference to `module_alloc'
+> kernel/built-in.o: In function `bpf_jit_binary_free':
+> (.text+0x768f0): undefined reference to `module_free'
 
-We expected this, since the r8a7794 clock stuff is going through the
-renesas tree. Looks good to me.
-
-Thanks,
-Mike
-
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> index 8f1424f0fa43,a03c8c029a94..000000000000
-> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> @@@ -15,7 -14,7 +15,8 @@@ Required Properties
->       - "renesas,r8a7779-mstp-clocks" for R8A7779 (R-Car H1) MSTP gate clocks
->       - "renesas,r8a7790-mstp-clocks" for R8A7790 (R-Car H2) MSTP gate clocks
->       - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2) MSTP gate clocks
-> +     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
->  +    - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
->       - "renesas,cpg-mstp-clock" for generic MSTP gate clocks
->     - reg: Base address and length of the I/O mapped registers used by the MSTP
->       clocks. The first register is the clock control register and is mandatory.
+[ Sorry for that, patch has already been submitted to netdev. ]
