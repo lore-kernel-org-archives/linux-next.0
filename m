@@ -1,55 +1,94 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the regulator tree
-Date: Wed, 10 Sep 2014 11:54:58 +0100
-Message-ID: <20140910105458.GA7960@sirena.org.uk>
-References: <20140908183350.5a4e357c@canb.auug.org.au>
- <20140909223952.GL2601@sirena.org.uk>
- <540FB86C.6010900@rock-chips.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] tty: serial: serial_mctrl_gpio: Fix build error for
+ !GPIOLIB
+Date: Wed, 10 Sep 2014 06:57:16 -0700
+Message-ID: <20140910135716.GA23074@kroah.com>
+References: <CA+r1ZhjCZBWjkxjoJz=PO-YZg6LbghQV75tGnpiSOrHM9CaygA@mail.gmail.com>
+ <20140910080657.GC14260@distanz.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
+Content-Type: multipart/mixed; boundary="OgqxwSJOaUobr8KG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60804 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751635AbaIJKzL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 06:55:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54820 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751887AbaIJN6D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 09:58:03 -0400
 Content-Disposition: inline
-In-Reply-To: <540FB86C.6010900@rock-chips.com>
+In-Reply-To: <20140910080657.GC14260@distanz.ch>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tobias Klauser <tklauser@distanz.ch>, Alexander Shiyan <shc_work@mail.ru>
+Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, jslaby@suse.cz, linux-serial@vger.kernel.org
 
 
---RnlQjJ0d97Da+TV1
+--OgqxwSJOaUobr8KG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Sep 10, 2014 at 10:33:16AM +0800, Chris Zhong wrote:
+On Wed, Sep 10, 2014 at 10:06:58AM +0200, Tobias Klauser wrote:
+> If SERIAL_MCTRL_GPIO is selected but GPIOLIB is not, the noop functions
+> from serial_mctrl_gpio.h are pulled in. However, serial_mctrl_gpio.c is
+> still compiled, leading to function redefinition build errors. Since all
+> drivers that include serial_mctrl_gpio.h also depend on
+> SERIAL_MCTRL_GPIO, let it depend on GPIOLIB as well remove the noop
+> functions alltogether.
+> 
+> Reported-by: Jim Davis <jim.epost@gmail.com>
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+> ---
+>  drivers/tty/serial/Kconfig             |  1 +
+>  drivers/tty/serial/serial_mctrl_gpio.h | 35 ----------------------------------
+>  2 files changed, 1 insertion(+), 35 deletions(-)
 
-> Yes, I have modified the rk808.h, so rk808-regulator.c lacks some structure
-> now.
-> Please help me review the patch "[PATCH v10 3/3] regulator: RK808: Remove
-> pdata from the regulator"
-> It contains the corresponding changes.
+I fixed this yesterday with commit below from Alexander, which does
+things a bit differently than you.  Any objections to it?
 
-...which you sent to me overnight.  It's applied now so -next should be
-fine tomorrow, thanks.
+thanks,
 
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+greg k-h
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+--OgqxwSJOaUobr8KG
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0004-serial-clps711x-Fix-COMPILE_TEST-build-for-target-wi.patch"
 
-iQEcBAEBAgAGBQJUEC4BAAoJECTWi3JdVIfQSIAH/0XpL8B5TWX1HbRMsvnM2sJb
-GNnyVspL/SZsUio6/R3eChHlr3S34+J8Db3xSTQvYbjsODbq2rdi+kXGAvRz++QH
-5l/wwxfx//ba0DEhDJTKLFjjAXlxya4xrqu+ZOqb6qUYNcp0p7x8u85iBvMEx/GY
-z3AzCYvnbD3GlK7vCwXwsLRfimKZh3VP6vn51K/6CsmsyC3O+/Aw7f1QN5+RxxB2
-MlH2rR1Pvr8AJ5+phhpNAczzLx08DtxqYcdAU0b50nYqI9R3swaQhSmGBx2MzuPU
-cdX0avZG3bshVMFld0EgmnkjAwSXAYsxTAAS55qd5IKF6c1AO2aCNJkYJ32txOw=
-=HwkY
------END PGP SIGNATURE-----
+>From efb089517d2f34a58aceb600ab58b0ca3db1fa07 Mon Sep 17 00:00:00 2001
+From: Alexander Shiyan <shc_work@mail.ru>
+Date: Tue, 9 Sep 2014 08:14:36 +0400
+Subject: serial: clps711x: Fix COMPILE_TEST build for target without GPIOLIB
+ support
 
---RnlQjJ0d97Da+TV1--
+The patch fixes the following build error of CLPS711X serial driver for
+targets without GPIOLIB support:
+
+>> drivers/tty/serial/serial_mctrl_gpio.c:44:6: error: redefinition of 'mctrl_gpio_set'
+  void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
+      ^
+  In file included from drivers/tty/serial/serial_mctrl_gpio.c:23:0:
+  drivers/tty/serial/serial_mctrl_gpio.h:80:6: note: previous definition of 'mctrl_gpio_set' was here
+  void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
+      ^
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/tty/serial/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 8079f5225575..81f6ee7d4223 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -222,7 +222,7 @@ config SERIAL_CLPS711X
+ 	tristate "CLPS711X serial port support"
+ 	depends on ARCH_CLPS711X || COMPILE_TEST
+ 	select SERIAL_CORE
+-	select SERIAL_MCTRL_GPIO
++	select SERIAL_MCTRL_GPIO if GPIOLIB
+ 	help
+ 	  This enables the driver for the on-chip UARTs of the Cirrus
+ 	  Logic EP711x/EP721x/EP731x processors.
+-- 
+2.1.0
+
+
+--OgqxwSJOaUobr8KG--
