@@ -1,59 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Wed, 10 Sep 2014 14:18:50 +1000
-Message-ID: <20140910141850.34c07f72@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the arm-soc tree
+Date: Wed, 10 Sep 2014 14:48:37 +1000
+Message-ID: <20140910144837.5e3089e1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/p5sUDb/LzwXpdD0HIT2XWTN"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47019 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751715AbaIJES6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Sep 2014 00:18:58 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, viresh kumar <viresh.kumar@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>
+ boundary="Sig_/lTJg7MWLjv6szNbPy0aQ3N9"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Romain Perier <romain.perier@gmail.com>, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/p5sUDb/LzwXpdD0HIT2XWTN
+--Sig_/lTJg7MWLjv6szNbPy0aQ3N9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-Today's linux-next merge of the pm tree got a conflict in
-arch/arm/mach-shmobile/setup-sh73a0.c between commit aa0bdc303b0f
-("ARM: shmobile: sh73a0: Remove duplicate CPUFreq bits") from the
-arm-soc tree and commit 978027e170fb ("cpufreq: cpu0: rename driver and
-internals to 'cpufreq_dt'") from the pm tree.
+Today's linux-next merge of the net-next tree got a conflict in
+arch/arm/boot/dts/rk3188-radxarock.dts between commit 4721ab855d1a
+("ARM: dts: rockchip: add hym8563 rtc to Radxa Rock board") from the
+arm-soc tree and commit c6ec956b73db ("ARM: dts: Enable emac node on
+the rk3188-radxarock boards") from the net-next tree.
 
-I fixed it up (the former removed the lines that were updated by the
-latter) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/p5sUDb/LzwXpdD0HIT2XWTN
+diff --cc arch/arm/boot/dts/rk3188-radxarock.dts
+index 2c2313ff67c6,d63d685ea6cc..000000000000
+--- a/arch/arm/boot/dts/rk3188-radxarock.dts
++++ b/arch/arm/boot/dts/rk3188-radxarock.dts
+@@@ -209,12 -217,12 +225,18 @@@
+  		};
+  	};
+ =20
+ +	hym8563 {
+ +		rtc_int: rtc-int {
+ +			rockchip,pins =3D <RK_GPIO0 0 RK_FUNC_GPIO &pcfg_pull_up>;
+ +		};
+ +	};
+ +
++ 	lan8720a  {
++ 		phy_int: phy-int {
++ 			rockchip,pins =3D <RK_GPIO3 26 RK_FUNC_GPIO &pcfg_pull_up>;
++ 		};
++ 	};
++=20
+  	ir-receiver {
+  		ir_recv_pin: ir-recv-pin {
+  			rockchip,pins =3D <RK_GPIO0 10 RK_FUNC_GPIO &pcfg_pull_none>;
+
+--Sig_/lTJg7MWLjv6szNbPy0aQ3N9
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUD9EvAAoJEMDTa8Ir7ZwVqGgP/RThxcD3MHNFfMsDNoYBs9fU
-fgTsa1+XG30/HT7rJRfIJ7qlLG80mgXutbjd85nf8UV832HCkkmdeVjuGSDxUg0W
-EB2M5DDKX4UwIwpFlzO3SkzwPiZAOvN0WY5zyGSGutyVBFMKpzvkT+Up71maeLJW
-BnJl1Gg3AbqDcUlu6Z6gWxyBUpBnmV9tHHkaEAey9nu5tI/qw+9vctPfVLlXQkjX
-siq3+Aovfr/PJwzXQOmQsdpRnzqq6p3Gm1uFKwXZNg9tjCQXuiZbRiu6Wrs6GFsF
-hMJplQGneRTvd5uydl5Jgho2YIeYvY7idMU6Hbg9iLI+En1UTEwEy23IfBUl2xOV
-wP1G7JlebDmBaSNDonbh0WFClrmDBoJqcm7mSxIaEbIV3eV6OVz2TzXBhqP3TX53
-8eomVBE8Cem7DE3o+6EzlExAsvuI5mqxv72Nd8pu7f4+FQ9Oc17qoO3r8STpNalL
-9mQC9nlpuBw9Pnw/bQnZir3QbvBduBj1w8izCAKlDGlW9RTz5Q23wqvTK/x/jmQ8
-pfPf/6PRF12Z5bDDzW8D8ZmFx/kxyMNBjBT63T2jolNvYnZqYuEEGK3ZsM0x73LJ
-DTWaav390aHveTFXqAM7olOXZqEL8QUdBWmE5kVkZJlHVt6sKawC3V3CveIGuoj2
-WpcT2dzg6MZdjf77nCT3
-=k/JF
+iQIcBAEBCAAGBQJUD9grAAoJEMDTa8Ir7ZwVmv0P/3IPwA7Cgk3g9+wvGQrNr0kT
+5H7eLfWgopi++a+yorbOjqD0V3O4I71o04AwTqUmc5WOTHvQOSMLQMApxko4fTy9
+cW8+iXCj+VUBH3WQtq4d3vfgN1n1Grs+ca8hOnqYoh5WfK0VC0OQXiulvEzkCywb
+L8y1oCfQybnxjmFLgPH1Ad4frrN0He3H5XdyfTkHsz5A87HJJKprpxlG2QlRIGiu
+xXv7riC+QHhyRXjJu4Gylp0C4sPO6bm2xeZww6+DYOE+vwi63n0BdvF0RZTHAV1S
+zZWPvxAnSnPTKL0NSciLafvfsIE7NrQUAc4GoAN0BRAd+SVz84rhGmA6x09qJqDJ
+Qflo8D4ghd2TFDuAVGM9sW505qsnGJEcHMs8sfTdfK8JDezVHfWbgDgxYJBTJLyr
+RZ+sRwuN1uXDgv2TacAYgJ0BG+3mOEE78aEUneuIeGpKtMSLRcM/Wpyy1O1Vxd9+
+VQ1cRWsVRiRVxlyJuh0naUMk99TZAYUqhyBjGrSEQYA9VrBth9/AbT1c9lSpXt+t
+vvVhU+hROHiX43qOGWZltXU3hE3mvzxxhxuzbefsHl7XD6nhoCzPnrCSYLz7zHje
+d5N/9TPTVx/v92Oekv2FPTVZgtblURiXj6DWPVmLdUR8KRd1Qr0UTB+WRBDkuu2X
+uiD0s4TVPe+lrw+ufMeq
+=ujzH
 -----END PGP SIGNATURE-----
 
---Sig_/p5sUDb/LzwXpdD0HIT2XWTN--
+--Sig_/lTJg7MWLjv6szNbPy0aQ3N9--
