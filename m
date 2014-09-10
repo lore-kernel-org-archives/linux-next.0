@@ -1,79 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the arm-soc tree
-Date: Wed, 10 Sep 2014 14:48:37 +1000
-Message-ID: <20140910144837.5e3089e1@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the block tree
+Date: Wed, 10 Sep 2014 16:02:25 +1000
+Message-ID: <20140910160225.4f41985f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lTJg7MWLjv6szNbPy0aQ3N9"; protocol="application/pgp-signature"
+ boundary="Sig_/nQYNWgMnDcwvCu3qW5fb3g7"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Romain Perier <romain.perier@gmail.com>, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Jiri Kosina <jkosina@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Joe Lawrence <joe.lawrence@stratus.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/lTJg7MWLjv6szNbPy0aQ3N9
+--Sig_/nQYNWgMnDcwvCu3qW5fb3g7
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jiri,
 
-Today's linux-next merge of the net-next tree got a conflict in
-arch/arm/boot/dts/rk3188-radxarock.dts between commit 4721ab855d1a
-("ARM: dts: rockchip: add hym8563 rtc to Radxa Rock board") from the
-arm-soc tree and commit c6ec956b73db ("ARM: dts: Enable emac node on
-the rk3188-radxarock boards") from the net-next tree.
+Today's linux-next merge of the trivial tree got a conflict in
+block/blk-core.c between commit a492f075450f ("block,scsi: fixup
+blk_get_request dead queue scenarios") from the block tree and commit
+da3dae54e4ff ("Documentation: Docbook: Fix generated
+DocBook/kernel-api.xml") from the trivial tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the former also fixed a few places that were fixed in
+the latter) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/rk3188-radxarock.dts
-index 2c2313ff67c6,d63d685ea6cc..000000000000
---- a/arch/arm/boot/dts/rk3188-radxarock.dts
-+++ b/arch/arm/boot/dts/rk3188-radxarock.dts
-@@@ -209,12 -217,12 +225,18 @@@
-  		};
-  	};
- =20
- +	hym8563 {
- +		rtc_int: rtc-int {
- +			rockchip,pins =3D <RK_GPIO0 0 RK_FUNC_GPIO &pcfg_pull_up>;
- +		};
- +	};
- +
-+ 	lan8720a  {
-+ 		phy_int: phy-int {
-+ 			rockchip,pins =3D <RK_GPIO3 26 RK_FUNC_GPIO &pcfg_pull_up>;
-+ 		};
-+ 	};
-+=20
-  	ir-receiver {
-  		ir_recv_pin: ir-recv-pin {
-  			rockchip,pins =3D <RK_GPIO0 10 RK_FUNC_GPIO &pcfg_pull_none>;
-
---Sig_/lTJg7MWLjv6szNbPy0aQ3N9
+--Sig_/nQYNWgMnDcwvCu3qW5fb3g7
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUD9grAAoJEMDTa8Ir7ZwVmv0P/3IPwA7Cgk3g9+wvGQrNr0kT
-5H7eLfWgopi++a+yorbOjqD0V3O4I71o04AwTqUmc5WOTHvQOSMLQMApxko4fTy9
-cW8+iXCj+VUBH3WQtq4d3vfgN1n1Grs+ca8hOnqYoh5WfK0VC0OQXiulvEzkCywb
-L8y1oCfQybnxjmFLgPH1Ad4frrN0He3H5XdyfTkHsz5A87HJJKprpxlG2QlRIGiu
-xXv7riC+QHhyRXjJu4Gylp0C4sPO6bm2xeZww6+DYOE+vwi63n0BdvF0RZTHAV1S
-zZWPvxAnSnPTKL0NSciLafvfsIE7NrQUAc4GoAN0BRAd+SVz84rhGmA6x09qJqDJ
-Qflo8D4ghd2TFDuAVGM9sW505qsnGJEcHMs8sfTdfK8JDezVHfWbgDgxYJBTJLyr
-RZ+sRwuN1uXDgv2TacAYgJ0BG+3mOEE78aEUneuIeGpKtMSLRcM/Wpyy1O1Vxd9+
-VQ1cRWsVRiRVxlyJuh0naUMk99TZAYUqhyBjGrSEQYA9VrBth9/AbT1c9lSpXt+t
-vvVhU+hROHiX43qOGWZltXU3hE3mvzxxhxuzbefsHl7XD6nhoCzPnrCSYLz7zHje
-d5N/9TPTVx/v92Oekv2FPTVZgtblURiXj6DWPVmLdUR8KRd1Qr0UTB+WRBDkuu2X
-uiD0s4TVPe+lrw+ufMeq
-=ujzH
+iQIbBAEBCAAGBQJUD+l2AAoJEMDTa8Ir7ZwVvD0P+Nr7lNR3x87CJERIw1BSubUh
+MFcvqx7EmItpesDfB3XAa6qm+3OE238skfgff4w8LbRFRTJ6QF7FYYqVNOA3jSzY
+C+7yxRy6+o5QqeWpDUgJWL/oFM3KA4kNJmPRxkScFMrQGEQif4V4dUlB9qRq9lOj
+Uq55BJkgMzxsNaLq6w3cTLQZD46isgpsnWKhO9aIz+GueLIKi2Aro4EHmrMgUOPD
+PN00LmCXzViXitQOpvM+hhqP/mc5qBp2UFqIzM9dwn2WJAHGnfhbKMkSxiDqpU26
+F21xyeEXyfspVmjjgAftg1W5ZARw5v3p/CkH6WgCRLpvlV8rB4CDesTouz5Cwrkx
+b6MdelWoJIFKJtdcaPjZwMJq0oCkYDYkVquV495N6IHVOOxTEBv4lfAK6/YNozYc
+KMbA4rhf17nf49lfgccWVoMJPdWIjHOsMU8j/CfTubekrEO+6k74RuTw95nNHIuH
+UMJl/9WWqq0MLxLxeasEmz9A3cVPlKyTtmKvQbjtPjcD1XRzVbnUwNB9FdVf2X5l
+SC31U9WoZVIeY4jowC91lJGza3vQvcyCQt4eLiHiLXXlDh5pJgZwJkx/0TT/5a74
+yjSR+ttSTmKLD+Gs6uNWKf5uJj/ldYV4BNWQgkTm0v8Xeu+wU7/MSGDDhlUluNxZ
+KSqglTHm2vtgd/UnEuw=
+=vc/q
 -----END PGP SIGNATURE-----
 
---Sig_/lTJg7MWLjv6szNbPy0aQ3N9--
+--Sig_/nQYNWgMnDcwvCu3qW5fb3g7--
