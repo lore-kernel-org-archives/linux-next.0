@@ -1,53 +1,55 @@
-From: Markos Chandras <Markos.Chandras@imgtec.com>
-Subject: Re: [PATCH linux-next] MIPS: ioctls: Add missing TIOC{S,G}RS485 definitions
-Date: Wed, 10 Sep 2014 10:14:36 +0100
-Message-ID: <5410167C.2070305@imgtec.com>
-References: <1410263575-26720-1-git-send-email-markos.chandras@imgtec.com> <20140909191736.GA7467@kroah.com> <54100AE5.6050401@imgtec.com> <CAPybu_128PsDN7wywntyTuCCfenBWTiS60P2g6_Hk68EMQc1CQ@mail.gmail.com> <54100FB0.1000308@imgtec.com> <CAPybu_03BDC5+d5-Wmwz+x==5sbKHgU8Rr0JimK16yRnN65x8Q@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the regulator tree
+Date: Wed, 10 Sep 2014 11:54:58 +0100
+Message-ID: <20140910105458.GA7960@sirena.org.uk>
+References: <20140908183350.5a4e357c@canb.auug.org.au>
+ <20140909223952.GL2601@sirena.org.uk>
+ <540FB86C.6010900@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <CAPybu_03BDC5+d5-Wmwz+x==5sbKHgU8Rr0JimK16yRnN65x8Q@mail.gmail.com>
-Sender: linux-serial-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Greg KH <greg@kroah.com>, linux-mips@linux-mips.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60804 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751635AbaIJKzL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 06:55:11 -0400
+Content-Disposition: inline
+In-Reply-To: <540FB86C.6010900@rock-chips.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/10/2014 10:05 AM, Ricardo Ribalda Delgado wrote:
-> Hello Markos
-> 
-> Sorry for the mess. I have already send a new patch for mips using the
-> _IO* macros
-> 
-> Just to put things a bit into context:
-> 
-> I did made the patch for serial and tested it only in x86. I wrongly
-> infer that the IOCTLS were defined for all the arches (sorry :S)
-> 
-> Then when the patch was applied on tty-next the build-bot throw some
-> errors for xtensa, that I fixed without using the IO_ macros
-> 
-> Then you came with your patch,
-> 
-> I realized that this could be wrong for mor arches, so I check the
-> rest and make patches for them.
-> 
-> Greg then pointed out that I should use _IO instead of numbers, so I
-> remade my patches using the _IO macros. I did not want to step into
-> your patch so I did not prepare a new one for mips
-> 
-> All the _IO patches (except mips) are now merged into tty-next.
-> 
-> Hopefully that one also get merged soon :)
-> 
-> 
-> Thanks for your help and sorry for any disturbance.
-> 
-> 
 
-Hi Ricardo,
+--RnlQjJ0d97Da+TV1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-No problem :) Thanks for taking care of that
+On Wed, Sep 10, 2014 at 10:33:16AM +0800, Chris Zhong wrote:
 
--- 
-markos
+> Yes, I have modified the rk808.h, so rk808-regulator.c lacks some structure
+> now.
+> Please help me review the patch "[PATCH v10 3/3] regulator: RK808: Remove
+> pdata from the regulator"
+> It contains the corresponding changes.
+
+...which you sent to me overnight.  It's applied now so -next should be
+fine tomorrow, thanks.
+
+--RnlQjJ0d97Da+TV1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUEC4BAAoJECTWi3JdVIfQSIAH/0XpL8B5TWX1HbRMsvnM2sJb
+GNnyVspL/SZsUio6/R3eChHlr3S34+J8Db3xSTQvYbjsODbq2rdi+kXGAvRz++QH
+5l/wwxfx//ba0DEhDJTKLFjjAXlxya4xrqu+ZOqb6qUYNcp0p7x8u85iBvMEx/GY
+z3AzCYvnbD3GlK7vCwXwsLRfimKZh3VP6vn51K/6CsmsyC3O+/Aw7f1QN5+RxxB2
+MlH2rR1Pvr8AJ5+phhpNAczzLx08DtxqYcdAU0b50nYqI9R3swaQhSmGBx2MzuPU
+cdX0avZG3bshVMFld0EgmnkjAwSXAYsxTAAS55qd5IKF6c1AO2aCNJkYJ32txOw=
+=HwkY
+-----END PGP SIGNATURE-----
+
+--RnlQjJ0d97Da+TV1--
