@@ -1,55 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Wed, 10 Sep 2014 14:14:50 +1000
-Message-ID: <20140910141450.49d692c1@canb.auug.org.au>
+Date: Wed, 10 Sep 2014 14:18:50 +1000
+Message-ID: <20140910141850.34c07f72@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O23jWnfOGKUTkil6LgpgvaA"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/p5sUDb/LzwXpdD0HIT2XWTN"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47019 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751715AbaIJES6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Sep 2014 00:18:58 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, viresh kumar <viresh.kumar@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>
-List-Id: linux-next.vger.kernel.org
 
---Sig_/O23jWnfOGKUTkil6LgpgvaA
+--Sig_/p5sUDb/LzwXpdD0HIT2XWTN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Rafael,
 
 Today's linux-next merge of the pm tree got a conflict in
-arch/arm/mach-shmobile/board-ape6evm-reference.c between commit
-664b4c172209 ("ARM: shmobile: ape6evm: Remove duplicate CPUFreq bits")
-from the arm-soc tree and commit 978027e170fb ("cpufreq: cpu0: rename
-driver and internals to 'cpufreq_dt'") from the pm tree.
+arch/arm/mach-shmobile/setup-sh73a0.c between commit aa0bdc303b0f
+("ARM: shmobile: sh73a0: Remove duplicate CPUFreq bits") from the
+arm-soc tree and commit 978027e170fb ("cpufreq: cpu0: rename driver and
+internals to 'cpufreq_dt'") from the pm tree.
 
-I fixed it up (the former removed the line updated by the latter) and
-can carry the fix as necessary (no action is required).
+I fixed it up (the former removed the lines that were updated by the
+latter) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/O23jWnfOGKUTkil6LgpgvaA
+--Sig_/p5sUDb/LzwXpdD0HIT2XWTN
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUD9A+AAoJEMDTa8Ir7ZwVmrAQAJHUaCchMOReqocLua3l3gy6
-u4h09x/rAfr2eMPwjQMUzK/0a9d3ldLzFtdmrStVwjaXLK/YtNhEyJjn4iTpPuIb
-yzwKTB8y3DY5/jgbcoby7wiHsmzmaNXrMpkfMNMq1VfU+jiqKvK5uK/gQm4AzTXu
-TkWX3XLCyQ3y1WZ9VZGGhcKRKB/MlbAKzPPN2CD1QR11QGKNWSXJuLZglrCd+bdU
-nOFZHMRP+YJTdbSrCDh/wnKweTT2TxST2DkrjDa4oXzYM7uXNoMVCrbe0ITyyovx
-sjEw0venmY61WolarzL1W3e3JkO6uBhReAPDPxYNK06gOwkkpNj893fxnEV1VlYq
-e7Qu0rkWaq3BIAqtpo0g8YLVk20GiYh0H0y4uwizfJoOt89L04dWzLayRlQ0YL2G
-TFACDUQk+kVPvtKjH7lT5l8U30+QCgQ6Y26m+ykhEbWYhIHUyNQuZ5zbyYEmJHAJ
-cLXrCjbYsH92oFmN3IOFu1n7/y0+vT8rjfasQHXbxZRV2fq+fb0aEJX1JOYV+BYg
-KkNCcEq0ECZqwqMgVRblPz+FeKqOjQ3PxUtMX8Kxnc9NhnegUaToXXqeiwhpsVF+
-+iMM3UleligVI2TW6nrgb9TS8426v2/BAmADSRs6nO5kfKc5x6+B2BL97DsvMDHd
-xvdf2u6WNixoV5RPbq0d
-=68nW
+iQIcBAEBCAAGBQJUD9EvAAoJEMDTa8Ir7ZwVqGgP/RThxcD3MHNFfMsDNoYBs9fU
+fgTsa1+XG30/HT7rJRfIJ7qlLG80mgXutbjd85nf8UV832HCkkmdeVjuGSDxUg0W
+EB2M5DDKX4UwIwpFlzO3SkzwPiZAOvN0WY5zyGSGutyVBFMKpzvkT+Up71maeLJW
+BnJl1Gg3AbqDcUlu6Z6gWxyBUpBnmV9tHHkaEAey9nu5tI/qw+9vctPfVLlXQkjX
+siq3+Aovfr/PJwzXQOmQsdpRnzqq6p3Gm1uFKwXZNg9tjCQXuiZbRiu6Wrs6GFsF
+hMJplQGneRTvd5uydl5Jgho2YIeYvY7idMU6Hbg9iLI+En1UTEwEy23IfBUl2xOV
+wP1G7JlebDmBaSNDonbh0WFClrmDBoJqcm7mSxIaEbIV3eV6OVz2TzXBhqP3TX53
+8eomVBE8Cem7DE3o+6EzlExAsvuI5mqxv72Nd8pu7f4+FQ9Oc17qoO3r8STpNalL
+9mQC9nlpuBw9Pnw/bQnZir3QbvBduBj1w8izCAKlDGlW9RTz5Q23wqvTK/x/jmQ8
+pfPf/6PRF12Z5bDDzW8D8ZmFx/kxyMNBjBT63T2jolNvYnZqYuEEGK3ZsM0x73LJ
+DTWaav390aHveTFXqAM7olOXZqEL8QUdBWmE5kVkZJlHVt6sKawC3V3CveIGuoj2
+WpcT2dzg6MZdjf77nCT3
+=k/JF
 -----END PGP SIGNATURE-----
 
---Sig_/O23jWnfOGKUTkil6LgpgvaA--
+--Sig_/p5sUDb/LzwXpdD0HIT2XWTN--
