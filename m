@@ -1,93 +1,54 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Subject: [PATCH] tty: serial: serial_mctrl_gpio: Fix build error for !GPIOLIB
-Date: Wed, 10 Sep 2014 10:06:58 +0200
-Message-ID: <20140910080657.GC14260@distanz.ch>
-References: <CA+r1ZhjCZBWjkxjoJz=PO-YZg6LbghQV75tGnpiSOrHM9CaygA@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCHv3 1/3] [media] disable OMAP1 COMPILE_TEST
+Date: Wed, 10 Sep 2014 10:19:41 +0200
+Message-ID: <1959112.4FzR3bzOGa@amdc1032>
+References: <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
+ <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
+ <3055703.v1cXzV8T6U@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhjCZBWjkxjoJz=PO-YZg6LbghQV75tGnpiSOrHM9CaygA@mail.gmail.com>
+In-reply-to: <3055703.v1cXzV8T6U@amdc1032>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, jslaby@suse.cz, linux-serial@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-If SERIAL_MCTRL_GPIO is selected but GPIOLIB is not, the noop functions
-from serial_mctrl_gpio.h are pulled in. However, serial_mctrl_gpio.c is
-still compiled, leading to function redefinition build errors. Since all
-drivers that include serial_mctrl_gpio.h also depend on
-SERIAL_MCTRL_GPIO, let it depend on GPIOLIB as well remove the noop
-functions alltogether.
+On Wednesday, September 10, 2014 10:04:12 AM Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+> On Tuesday, September 09, 2014 03:54:04 PM Mauro Carvalho Chehab wrote:
+> > This driver depends on a legacy OMAP DMA API. So, it won't
+> > compile-test on other archs.
+> > 
+> > While we might add stubs to the functions, this is not a
+> > good idea, as the hole API should be replaced.
+> 
+> This is also not a good idea becaouse it would break the driver
+> for OMAP1 once somebody enables COMPILE_TEST option while also
+> having ARCH_OMAP1 enabled (which is perfectly fine and shouldn't
+> cause the driver breakage).  In general COMPILE_TEST option is
+> completely independent from the arch specific ones and it should
+> not change behaviour of the existing code.
 
-Reported-by: Jim Davis <jim.epost@gmail.com>
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/tty/serial/Kconfig             |  1 +
- drivers/tty/serial/serial_mctrl_gpio.h | 35 ----------------------------------
- 2 files changed, 1 insertion(+), 35 deletions(-)
+Small clarification:
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 8079f52..5f1ea62 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1575,5 +1575,6 @@ endmenu
- 
- config SERIAL_MCTRL_GPIO
- 	tristate
-+	select GPIOLIB
- 
- endif # TTY
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.h b/drivers/tty/serial/serial_mctrl_gpio.h
-index 400ba04..5e4c96a 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.h
-+++ b/drivers/tty/serial/serial_mctrl_gpio.h
-@@ -40,8 +40,6 @@ enum mctrl_gpio_idx {
-  */
- struct mctrl_gpios;
- 
--#ifdef CONFIG_GPIOLIB
--
- /*
-  * Set state of the modem control output lines via GPIOs.
-  */
-@@ -74,37 +72,4 @@ struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int idx);
-  */
- void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios);
- 
--#else /* GPIOLIB */
--
--static inline
--void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
--{
--}
--
--static inline
--unsigned int mctrl_gpio_get(struct mctrl_gpios *gpios, unsigned int *mctrl)
--{
--	return *mctrl;
--}
--
--static inline
--struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
--				      enum mctrl_gpio_idx gidx)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
--static inline
--struct mctrl_gpios *mctrl_gpio_init(struct device *dev, unsigned int idx)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
--static inline
--void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
--{
--}
--
--#endif /* GPIOLIB */
--
- #endif
--- 
-2.0.1
+I was of course referring to the original patch for the issue:
+
+  https://lkml.org/lkml/2014/9/9/498
+
+stubs can be added properly with using 
+
+  #if defined(CONFIG_COMPILE_TEST) && !defined(CONFIG_ARCH_OMAP1)
+
+similarly like it is handled for ARCH_QCOM in
+
+  drivers/gpu/drm/msm/msm_drv.h
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
