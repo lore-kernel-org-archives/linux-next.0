@@ -1,59 +1,144 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/3] omap-dma: Allow compile-testing omap1_camera driver
-Date: Thu, 11 Sep 2014 11:45:18 +0100
-Message-ID: <20140911104518.GA12379@n2100.arm.linux.org.uk>
-References: <20140909124306.2d5a0d76@canb.auug.org.au> <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com> <20140909144157.GF12361@n2100.arm.linux.org.uk> <20140909123654.37d60f38.m.chehab@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: linux-next: Tree for Sep 1
+Date: Thu, 11 Sep 2014 13:01:43 +0200
+Message-ID: <3931811.uoPC70E0Og@amdc1032>
+References: <20140901230728.GM29327@sirena.org.uk>
+ <20140910174141.GH12361@n2100.arm.linux.org.uk> <5410943E.3050505@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140909123654.37d60f38.m.chehab@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Tony Lindgren <tony@atomide.com>, Vinod Koul <vinod.koul@intel.com>, Arnd Bergmann <arnd@arndb.de>, Peter Griffin <peter.griffin@linaro.org>, Balaji T K <balajitk@ti.com>, Nishanth Menon <nm@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>, linux-omap <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5410943E.3050505@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Christoph Lameter <cl@linux.com>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 09, 2014 at 12:36:54PM -0300, Mauro Carvalho Chehab wrote:
-> Hmm... it seems that there are still several drivers still relying on
-> the functions declared at: omap-dma.h:
+
+Hi,
+
+On Wednesday, September 10, 2014 07:11:10 PM Marc Zyngier wrote:
+> Hi Russell,
 > 
-> $ grep extern include/linux/omap-dma.h |perl -ne 'print "$1\n" if (m/extern\s\S+\s(.*)\(/)' >funcs && git grep -f funcs -l
-> arch/arm/mach-omap1/pm.c
-> arch/arm/mach-omap2/pm24xx.c
-> arch/arm/plat-omap/dma.c
-> drivers/dma/omap-dma.c
-> drivers/media/platform/omap/omap_vout_vrfb.c
-> drivers/media/platform/omap3isp/isphist.c
-> drivers/media/platform/soc_camera/omap1_camera.c
-> drivers/mtd/onenand/omap2.c
-> drivers/usb/gadget/udc/omap_udc.c
-> drivers/usb/musb/tusb6010_omap.c
-> drivers/video/fbdev/omap/omapfb_main.c
-> include/linux/omap-dma.h
+> On 10/09/14 18:41, Russell King - ARM Linux wrote:
+> > On Fri, Sep 05, 2014 at 03:27:51PM -0400, Nicolas Pitre wrote:
+> >> On Tue, 2 Sep 2014, Christoph Lameter wrote:
+> >>
+> >>> On Tue, 2 Sep 2014, Christoph Lameter wrote:
+> >>>
+> >>>> Oww.. This is double indirection deal there. A percpu offset pointing to
+> >>>> a pointer?
+> >>>>
+> >>>> Generally the following is true (definition from
+> >>>> include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
+> >>>>
+> >>>> #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
+> >>>
+> >>> I think what the issue is that we dropped the fetch of the percpu offset
+> >>> in the patch. Instead we are using the address of the variable that
+> >>> contains the offset. Does this patch fix it?
+> >>>
+> >>>
+> >>> Subject: irqchip: Properly fetch the per cpu offset
+> >>>
+> >>> The raw_cpu_read() conversion dropped the fetch of the offset
+> >>> from base->percpu_base in gic_get_percpu_base.
+> >>>
+> >>> Signed-off-by: Christoph Lameter <cl@linux.com>
+> >>>
+> >>> Index: linux/drivers/irqchip/irq-gic.c
+> >>> ===================================================================
+> >>> --- linux.orig/drivers/irqchip/irq-gic.c
+> >>> +++ linux/drivers/irqchip/irq-gic.c
+> >>> @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
+> >>>  #ifdef CONFIG_GIC_NON_BANKED
+> >>>  static void __iomem *gic_get_percpu_base(union gic_base *base)
+> >>>  {
+> >>> -	return raw_cpu_read(base->percpu_base);
+> >>> +	return raw_cpu_read(*base->percpu_base);
+> >>
+> >> Isn't the pointer dereference supposed to be performed _outside_ the per 
+> >> CPU accessor?
+> > 
+> > I think this is correct.
+> > 
+> > Let's start from the depths of raw_cpu_read(), where the pointer is
+> > verified to be the correct type:
+> > 
+> > #define __verify_pcpu_ptr(ptr)                                          \
+> > do {                                                                    \
+> >         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
+> >         (void)__vpp_verify;                                             \
+> > } while (0)
+> > 
+> > So, "ptr" should be of type "const void __percpu *" (note the __percpu
+> > annotation there, which makes it sparse-checkable.)
+> > 
+> > The next level up is this:
+> > 
+> > #define __pcpu_size_call_return(stem, variable)                         \
+> > ({                                                                      \
+> >         typeof(variable) pscr_ret__;                                    \
+> >         __verify_pcpu_ptr(&(variable));                                 \
+> > 
+> > So, we pass the address of the variable to the verification function.
+> > That makes it a void-typed variable - "const void __percpu".
+> > 
+> > #define raw_cpu_read(pcp)   __pcpu_size_call_return(raw_cpu_read_, pcp)
+> > 
+> > So this also makes "pcp" a "const void __percpu".
+> > 
+> > Now, what type is base->percpu_base?
+> > 
+> >         void __percpu * __iomem *percpu_base;
+> > 
+> > The thing we want to be per-cpu is a "void __iomem *" pointer.  However,
+> > we have a pointer to the per-cpu instance.  That's the "void __percpu *"
+> > bit.
+> > 
+> > So, for this to match the requirements for raw_cpu_read(), we need to
+> > do one dereference to end up with "void __percpu".
+> > 
+> > Hence, to me, the patch looks correct.
+> > 
+> > Whether it works or not is a /completely/ different matter.  As has been
+> > pointed out, the only place this code gets used is on a very small number
+> > of platforms, which I don't have, and that gives me zero way to test it.
+> > If it's Exynos which is affected by this, we need to call on Samsung to
+> > test this patch.
+> > 
+> > Now, this code was introduced by Marc Zyngier in order to support Exynos,
+> > probably the result of another patch on the mailing list from Samsung.
+> > (I've added Marc and another Samsung guy to the Cc list.)  Whatever,
+> > *someone* needs to verify this but it needs to be done with the affected
+> > hardware.  Whether Marc can, or whether it has to be someone from Samsung,
+> > I don't care which.
 > 
-> Perhaps we can remove the header and mark all the above as BROKEN.
+> Thanks for looping me in. I indeed introduced this as an alternative to
+> an utterly broken patch that was submitted at the time.
+> 
+> As far as I can tell, and by reading your analysis, this patch looks
+> perfectly sensible.
+> 
+> Now, I have long given up on trying to run *anything* on a Samsung
+> platform other than my Chromebook - the various maintainers don't seem
+> to care at all. I may be able to revive an Origen board though (I think
+> I have one collecting the proverbial dust in a cupboard), assuming I can
+> locate a bootloader for it.
 
-Not quite.  You'll notice that drivers/dma/omap-dma.c appears in that
-list.  That is because right now, the new code has to co-operate with
-the old legacy code to ensure that both do not try and operate on the
-same hardware channel simultaneously.
+Well, I'm not a maintainer but I try keep linux-next working on at least:
 
-Right now, when anyone tries to use any of the drivers using the legacy
-APIs, they will get a warning printed in their kernel message log.  This
-is part of my attempt to try and find out:
+Origen (Exynos4210)
+Origen Quad (Exynos4412)
+ODROID U3 (Exynos4412)
+Trats2 (Exynos4412)
+Arndale (Exynos5250)
 
-(a) whether anyone is using these drivers
-(b) whether we can delete these drivers
+If you have problems booting linux-next on any of the above boards please
+let me know.
 
-That warning has not been in the kernel long enough to be certain of
-anything - it was merged during the last merge window (despite me
-having it ready to go since the previous merge window, it would not
-have been correct to introduce a new warning during the -rc period.)
-
-What I recommend is that you just don't mark the OMAP drivers for
-compile testing right now, especially as their future is rather
-uncertain.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
