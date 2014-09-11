@@ -1,65 +1,83 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Thu, 11 Sep 2014 01:29:29 +0200
-Message-ID: <24748175.vQ81Vho3N1@vostro.rjw.lan>
-References: <20140910141850.34c07f72@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with the net tree
+Date: Thu, 11 Sep 2014 12:16:21 +1000
+Message-ID: <20140911121621.4946da46@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2936667.Qb1nb5oQlB"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9C7OTosQke2reBX2F=/=u_B"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:57944 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751541AbaIJXKG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Sep 2014 19:10:06 -0400
-In-Reply-To: <20140910141850.34c07f72@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:54088 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751222AbaIKCQb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Sep 2014 22:16:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, viresh kumar <viresh.kumar@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>
+To: Catalin Marinas <catalin.marinas@arm.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zi Shen Lim <zlim.lnx@gmail.com>, Will Deacon <will.deacon@arm.com>
 
-
---nextPart2936667.Qb1nb5oQlB
+--Sig_/9C7OTosQke2reBX2F=/=u_B
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Wednesday, September 10, 2014 02:18:50 PM Stephen Rothwell wrote:
-> Hi Rafael,
->=20
-> Today's linux-next merge of the pm tree got a conflict in
-> arch/arm/mach-shmobile/setup-sh73a0.c between commit aa0bdc303b0f
-> ("ARM: shmobile: sh73a0: Remove duplicate CPUFreq bits") from the
-> arm-soc tree and commit 978027e170fb ("cpufreq: cpu0: rename driver a=
-nd
-> internals to 'cpufreq_dt'") from the pm tree.
->=20
-> I fixed it up (the former removed the lines that were updated by the
-> latter) and can carry the fix as necessary (no action is required).
+Hi Catalin,
 
-Thanks!
+Today's linux-next merge of the arm64 tree got a conflict in
+Documentation/networking/filter.txt between commit 1d7efe9dfaa6
+("Documentation: filter: Add MIPS to architectures with BPF JIT") from
+the net tree and commit e54bcde3d69d ("arm64: eBPF JIT compiler") from
+the arm64 tree.
 
-=2D-=20
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
---nextPart2936667.Qb1nb5oQlB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc Documentation/networking/filter.txt
+index d16f424c5e8d,1842d4f8ae13..000000000000
+--- a/Documentation/networking/filter.txt
++++ b/Documentation/networking/filter.txt
+@@@ -462,9 -462,9 +462,9 @@@ JIT compile
+  ------------
+ =20
+  The Linux kernel has a built-in BPF JIT compiler for x86_64, SPARC, Power=
+PC,
+- ARM, MIPS and s390 and can be enabled through CONFIG_BPF_JIT. The JIT com=
+piler
+ -ARM, ARM64 and s390 and can be enabled through CONFIG_BPF_JIT. The JIT co=
+mpiler
+--is transparently invoked for each attached filter from user space or for
+--internal kernel users if it has been previously enabled by root:
+++ARM, ARM64, MIPS and s390 and can be enabled through CONFIG_BPF_JIT. The =
+JIT
+++compiler is transparently invoked for each attached filter from user spac=
+e or
+++for internal kernel users if it has been previously enabled by root:
+ =20
+    echo 1 > /proc/sys/net/core/bpf_jit_enable
+ =20
+
+--Sig_/9C7OTosQke2reBX2F=/=u_B
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v2
 
-iQIcBAABCAAGBQJUEN7fAAoJEILEb/54YlRxTVYQAKrmbVrzV342dd9rj/y8ZUVj
-/htZs/7kI0c/qcciat93NANMEYPDvwH3UtSG0D61aaH59L3fTzUvHivzHMB3hcE6
-gQsWl6ZbwyFvoYd5hiLOkTL6hX1XtbXTc58Y1/mOiASP3APoYRIjKqaLAd+c89qC
-3sQkxSTAlc6MoDVA4oo3g4E3uUt7I65rSLngQ94NKPR3JC2IBuKJ19BHNBSoFVZX
-/WVYjEBUFDBojfP81LpyKZzqgkWpHXsL7Zvp5+5z5k7d9nqXqy4pkqXUmq+nnk+m
-H1evCvWMg1ibDlonE5k9fAhQ9kO2R7d83tdtlhtKJvMlcK0l/oViC0KTKPFMAs3u
-OfIxoHGCn3kSBdzLEAdqyr45NeZi5ThyBNRdA/6vCu4nGFqDSTPjVnIKyBLnRQkJ
-6vQIW7kxkQSBqxxdcwzFB2lI8shTcP5LOHoZhOhivbYkKiZFnrVV5wzxAxJVtWL9
-nU3upk4CdQC30d9/fsC5PsaoMMx4xYklFXkgzHAIjdLpz9OyleUkiWTHE/dpOMar
-meLD1ka5G3Duem6oSNRuenJlkNYoPkxRrfMHBj/njT618QYPduVsztslsIaSXTCI
-ruVO1X1/keAt64r2SBBGzWoAOZ7a8/bUHQ3VxBqG2L6PjuiXxpCS7k+FifkXpgU2
-NU93KqzPDpx4u//d3BW9
-=zgCa
+iQIcBAEBCAAGBQJUEQX8AAoJEMDTa8Ir7ZwVDKwP/R/YlfrBu2DFF7YNLR5Wuugq
+KXwcqCZ4FxGyWizO2WPLlyq5KPLttcVs5FhGDBeB1fjVoSgLPGBlotSkaUhRMuHf
+4rNCsV7MPE0PutCvKXKMf062WT85AtRhQFotTtREAF1rvanoNbB3FR8Zy5Tqu3A8
+g3jDxBPIETw8E7yfQ8sGv5wbXD0cC65mlI1QNtywAi1EJQy4t/Cpp0thCc8QQqDG
+XYhfjSimPDFec+z+0DbwilkcwdoS6s6Lw1XCgy5QUB+P2lisdI3H2oe2f3mTjBfC
+oMQuFOUv3Vqi12mZCn9dTpkxKvSx1g5UIkX/CylH2k44BHyv4R1YNproAAOYTlZM
+o4g0BT6NrQWn67ODDe/Symw9+/nlzdLMzayOL4SLVLRc3SnfwxPZ+rmuszM6sI2k
+SPeFhxxmdEduVIqHpVSROg46pPWr3OM2ezt7TzgHfwfDjoJAkXHM9G/BaKnCHor1
+vXSCYsBwsbWyJK0itaeyRNRyQSqOXKVTz6sf2IO9ITXOUdNK9yseVk/woKq5LWC0
+r70r2bzwmFoXfG1hXEU52XqX9bibDEVQH7faxZtlzZPacRdq1aZ1MQ/hPvYlaT6e
+vnZ/y1miOjUR0p0N0c/02JhS8v7ZxroAOV/6ozVBWlVSalbKmD6oNAN8g5b3TIju
+tQp0FVG8/tzDO710l3xA
+=DGVx
 -----END PGP SIGNATURE-----
 
---nextPart2936667.Qb1nb5oQlB--
+--Sig_/9C7OTosQke2reBX2F=/=u_B--
