@@ -1,144 +1,155 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 Subject: Re: linux-next: Tree for Sep 1
-Date: Thu, 11 Sep 2014 13:01:43 +0200
-Message-ID: <3931811.uoPC70E0Og@amdc1032>
-References: <20140901230728.GM29327@sirena.org.uk>
- <20140910174141.GH12361@n2100.arm.linux.org.uk> <5410943E.3050505@arm.com>
+Date: Thu, 11 Sep 2014 12:17:47 +0100
+Message-ID: <541184DB.1050606@arm.com>
+References: <20140901230728.GM29327@sirena.org.uk> <20140910174141.GH12361@n2100.arm.linux.org.uk> <5410943E.3050505@arm.com> <3931811.uoPC70E0Og@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5410943E.3050505@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:46098 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752844AbaIKLRu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Sep 2014 07:17:50 -0400
+In-Reply-To: <3931811.uoPC70E0Og@amdc1032>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Christoph Lameter <cl@linux.com>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
-List-Id: linux-next.vger.kernel.org
 
+Hi Bartlomiej,
 
-Hi,
-
-On Wednesday, September 10, 2014 07:11:10 PM Marc Zyngier wrote:
-> Hi Russell,
+On 11/09/14 12:01, Bartlomiej Zolnierkiewicz wrote:
 > 
-> On 10/09/14 18:41, Russell King - ARM Linux wrote:
-> > On Fri, Sep 05, 2014 at 03:27:51PM -0400, Nicolas Pitre wrote:
-> >> On Tue, 2 Sep 2014, Christoph Lameter wrote:
-> >>
-> >>> On Tue, 2 Sep 2014, Christoph Lameter wrote:
-> >>>
-> >>>> Oww.. This is double indirection deal there. A percpu offset pointing to
-> >>>> a pointer?
-> >>>>
-> >>>> Generally the following is true (definition from
-> >>>> include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
-> >>>>
-> >>>> #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
-> >>>
-> >>> I think what the issue is that we dropped the fetch of the percpu offset
-> >>> in the patch. Instead we are using the address of the variable that
-> >>> contains the offset. Does this patch fix it?
-> >>>
-> >>>
-> >>> Subject: irqchip: Properly fetch the per cpu offset
-> >>>
-> >>> The raw_cpu_read() conversion dropped the fetch of the offset
-> >>> from base->percpu_base in gic_get_percpu_base.
-> >>>
-> >>> Signed-off-by: Christoph Lameter <cl@linux.com>
-> >>>
-> >>> Index: linux/drivers/irqchip/irq-gic.c
-> >>> ===================================================================
-> >>> --- linux.orig/drivers/irqchip/irq-gic.c
-> >>> +++ linux/drivers/irqchip/irq-gic.c
-> >>> @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
-> >>>  #ifdef CONFIG_GIC_NON_BANKED
-> >>>  static void __iomem *gic_get_percpu_base(union gic_base *base)
-> >>>  {
-> >>> -	return raw_cpu_read(base->percpu_base);
-> >>> +	return raw_cpu_read(*base->percpu_base);
-> >>
-> >> Isn't the pointer dereference supposed to be performed _outside_ the per 
-> >> CPU accessor?
-> > 
-> > I think this is correct.
-> > 
-> > Let's start from the depths of raw_cpu_read(), where the pointer is
-> > verified to be the correct type:
-> > 
-> > #define __verify_pcpu_ptr(ptr)                                          \
-> > do {                                                                    \
-> >         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
-> >         (void)__vpp_verify;                                             \
-> > } while (0)
-> > 
-> > So, "ptr" should be of type "const void __percpu *" (note the __percpu
-> > annotation there, which makes it sparse-checkable.)
-> > 
-> > The next level up is this:
-> > 
-> > #define __pcpu_size_call_return(stem, variable)                         \
-> > ({                                                                      \
-> >         typeof(variable) pscr_ret__;                                    \
-> >         __verify_pcpu_ptr(&(variable));                                 \
-> > 
-> > So, we pass the address of the variable to the verification function.
-> > That makes it a void-typed variable - "const void __percpu".
-> > 
-> > #define raw_cpu_read(pcp)   __pcpu_size_call_return(raw_cpu_read_, pcp)
-> > 
-> > So this also makes "pcp" a "const void __percpu".
-> > 
-> > Now, what type is base->percpu_base?
-> > 
-> >         void __percpu * __iomem *percpu_base;
-> > 
-> > The thing we want to be per-cpu is a "void __iomem *" pointer.  However,
-> > we have a pointer to the per-cpu instance.  That's the "void __percpu *"
-> > bit.
-> > 
-> > So, for this to match the requirements for raw_cpu_read(), we need to
-> > do one dereference to end up with "void __percpu".
-> > 
-> > Hence, to me, the patch looks correct.
-> > 
-> > Whether it works or not is a /completely/ different matter.  As has been
-> > pointed out, the only place this code gets used is on a very small number
-> > of platforms, which I don't have, and that gives me zero way to test it.
-> > If it's Exynos which is affected by this, we need to call on Samsung to
-> > test this patch.
-> > 
-> > Now, this code was introduced by Marc Zyngier in order to support Exynos,
-> > probably the result of another patch on the mailing list from Samsung.
-> > (I've added Marc and another Samsung guy to the Cc list.)  Whatever,
-> > *someone* needs to verify this but it needs to be done with the affected
-> > hardware.  Whether Marc can, or whether it has to be someone from Samsung,
-> > I don't care which.
+> Hi,
 > 
-> Thanks for looping me in. I indeed introduced this as an alternative to
-> an utterly broken patch that was submitted at the time.
+> On Wednesday, September 10, 2014 07:11:10 PM Marc Zyngier wrote:
+>> Hi Russell,
+>>
+>> On 10/09/14 18:41, Russell King - ARM Linux wrote:
+>>> On Fri, Sep 05, 2014 at 03:27:51PM -0400, Nicolas Pitre wrote:
+>>>> On Tue, 2 Sep 2014, Christoph Lameter wrote:
+>>>>
+>>>>> On Tue, 2 Sep 2014, Christoph Lameter wrote:
+>>>>>
+>>>>>> Oww.. This is double indirection deal there. A percpu offset pointing to
+>>>>>> a pointer?
+>>>>>>
+>>>>>> Generally the following is true (definition from
+>>>>>> include/asm-generic/percpu.h that is used for ARM for raw_cpu_read):
+>>>>>>
+>>>>>> #define raw_cpu_read_4(pcp)             (*raw_cpu_ptr(&(pcp)))
+>>>>>
+>>>>> I think what the issue is that we dropped the fetch of the percpu offset
+>>>>> in the patch. Instead we are using the address of the variable that
+>>>>> contains the offset. Does this patch fix it?
+>>>>>
+>>>>>
+>>>>> Subject: irqchip: Properly fetch the per cpu offset
+>>>>>
+>>>>> The raw_cpu_read() conversion dropped the fetch of the offset
+>>>>> from base->percpu_base in gic_get_percpu_base.
+>>>>>
+>>>>> Signed-off-by: Christoph Lameter <cl@linux.com>
+>>>>>
+>>>>> Index: linux/drivers/irqchip/irq-gic.c
+>>>>> ===================================================================
+>>>>> --- linux.orig/drivers/irqchip/irq-gic.c
+>>>>> +++ linux/drivers/irqchip/irq-gic.c
+>>>>> @@ -102,7 +102,7 @@ static struct gic_chip_data gic_data[MAX
+>>>>>  #ifdef CONFIG_GIC_NON_BANKED
+>>>>>  static void __iomem *gic_get_percpu_base(union gic_base *base)
+>>>>>  {
+>>>>> -	return raw_cpu_read(base->percpu_base);
+>>>>> +	return raw_cpu_read(*base->percpu_base);
+>>>>
+>>>> Isn't the pointer dereference supposed to be performed _outside_ the per 
+>>>> CPU accessor?
+>>>
+>>> I think this is correct.
+>>>
+>>> Let's start from the depths of raw_cpu_read(), where the pointer is
+>>> verified to be the correct type:
+>>>
+>>> #define __verify_pcpu_ptr(ptr)                                          \
+>>> do {                                                                    \
+>>>         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
+>>>         (void)__vpp_verify;                                             \
+>>> } while (0)
+>>>
+>>> So, "ptr" should be of type "const void __percpu *" (note the __percpu
+>>> annotation there, which makes it sparse-checkable.)
+>>>
+>>> The next level up is this:
+>>>
+>>> #define __pcpu_size_call_return(stem, variable)                         \
+>>> ({                                                                      \
+>>>         typeof(variable) pscr_ret__;                                    \
+>>>         __verify_pcpu_ptr(&(variable));                                 \
+>>>
+>>> So, we pass the address of the variable to the verification function.
+>>> That makes it a void-typed variable - "const void __percpu".
+>>>
+>>> #define raw_cpu_read(pcp)   __pcpu_size_call_return(raw_cpu_read_, pcp)
+>>>
+>>> So this also makes "pcp" a "const void __percpu".
+>>>
+>>> Now, what type is base->percpu_base?
+>>>
+>>>         void __percpu * __iomem *percpu_base;
+>>>
+>>> The thing we want to be per-cpu is a "void __iomem *" pointer.  However,
+>>> we have a pointer to the per-cpu instance.  That's the "void __percpu *"
+>>> bit.
+>>>
+>>> So, for this to match the requirements for raw_cpu_read(), we need to
+>>> do one dereference to end up with "void __percpu".
+>>>
+>>> Hence, to me, the patch looks correct.
+>>>
+>>> Whether it works or not is a /completely/ different matter.  As has been
+>>> pointed out, the only place this code gets used is on a very small number
+>>> of platforms, which I don't have, and that gives me zero way to test it.
+>>> If it's Exynos which is affected by this, we need to call on Samsung to
+>>> test this patch.
+>>>
+>>> Now, this code was introduced by Marc Zyngier in order to support Exynos,
+>>> probably the result of another patch on the mailing list from Samsung.
+>>> (I've added Marc and another Samsung guy to the Cc list.)  Whatever,
+>>> *someone* needs to verify this but it needs to be done with the affected
+>>> hardware.  Whether Marc can, or whether it has to be someone from Samsung,
+>>> I don't care which.
+>>
+>> Thanks for looping me in. I indeed introduced this as an alternative to
+>> an utterly broken patch that was submitted at the time.
+>>
+>> As far as I can tell, and by reading your analysis, this patch looks
+>> perfectly sensible.
+>>
+>> Now, I have long given up on trying to run *anything* on a Samsung
+>> platform other than my Chromebook - the various maintainers don't seem
+>> to care at all. I may be able to revive an Origen board though (I think
+>> I have one collecting the proverbial dust in a cupboard), assuming I can
+>> locate a bootloader for it.
 > 
-> As far as I can tell, and by reading your analysis, this patch looks
-> perfectly sensible.
+> Well, I'm not a maintainer but I try keep linux-next working on at least:
 > 
-> Now, I have long given up on trying to run *anything* on a Samsung
-> platform other than my Chromebook - the various maintainers don't seem
-> to care at all. I may be able to revive an Origen board though (I think
-> I have one collecting the proverbial dust in a cupboard), assuming I can
-> locate a bootloader for it.
+> Origen (Exynos4210)
+> Origen Quad (Exynos4412)
+> ODROID U3 (Exynos4412)
+> Trats2 (Exynos4412)
+> Arndale (Exynos5250)
+> 
+> If you have problems booting linux-next on any of the above boards please
+> let me know.
 
-Well, I'm not a maintainer but I try keep linux-next working on at least:
+My first problem is getting mainline u-boot to work on the Origen (the
+4210 flavour). I compiled "something", but how you get that to run is a
+mystery. If I can get that to work, then I'll try to move on to the
+kernel...
 
-Origen (Exynos4210)
-Origen Quad (Exynos4412)
-ODROID U3 (Exynos4412)
-Trats2 (Exynos4412)
-Arndale (Exynos5250)
+Thanks,
 
-If you have problems booting linux-next on any of the above boards please
-let me know.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+	M.
+-- 
+Jazz is not dead. It just smells funny...
