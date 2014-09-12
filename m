@@ -1,67 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Move berlin/for-next from github to infradead
-Date: Fri, 12 Sep 2014 08:09:28 +1000
-Message-ID: <20140912080928.4d9ead2b@canb.auug.org.au>
-References: <541215D0.2020104@gmail.com>
+Subject: linux-next: build failure after merge of the slave-dma tree
+Date: Fri, 12 Sep 2014 13:17:55 +1000
+Message-ID: <20140912131755.7a181cc6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MbgjZrOWzo.aDexI5BPMP8."; protocol="application/pgp-signature"
+ boundary="Sig_/TqzrKwxGKEKo+95zvA_8e9W"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47508 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49799 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750899AbaIKWJh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Sep 2014 18:09:37 -0400
-In-Reply-To: <541215D0.2020104@gmail.com>
+	id S1753767AbaILDSI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Sep 2014 23:18:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mark Brown <broonie@linaro.org>
 
---Sig_/MbgjZrOWzo.aDexI5BPMP8.
+--Sig_/TqzrKwxGKEKo+95zvA_8e9W
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sebastian,
+Hi Vinod,
 
-On Thu, 11 Sep 2014 23:36:16 +0200 Sebastian Hesselbarth <sebastian.hesselb=
-arth@gmail.com> wrote:
->
-> I moved mach-berlin repositories from github over to infradead
-> a while ago. To save me the extra git push to github,
->=20
-> can you please change berlin's URL from
->=20
-> git://github.com/shesselba/linux-berlin.git#berlin/for-next
->=20
-> to
->=20
-> git://git.infradead.org/users/hesselba/linux-berlin.git#berlin/for-next
+After merging the slave-dma tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Done.
+
+drivers/spi/spi-pxa2xx-pci.c:70:3: error: unknown field 'max_clk_rate' spec=
+ified in initializer
+   .max_clk_rate =3D 50000000,
+   ^
+
+Caused by commit bfe607a528ba ("spi/pxa2xx-pci: Add support for Intel
+Braswell").
+
+I have used the slave-dma tree from next-20140911 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/MbgjZrOWzo.aDexI5BPMP8.
+--Sig_/TqzrKwxGKEKo+95zvA_8e9W
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUEh2eAAoJEMDTa8Ir7ZwV6KkP/2gi+EZ5rnawqqF6fJUl4lYw
-vqrlnZX0ODCkXBH9uV+Bu4Nv+pWqqnRGLB85EzA+GfH0Vkwdtk5wT9zDc80o/cle
-KG46BuJDwWd7VlIRZbIw0yzvP8hI6j7H9vCl7LFpi9dS8ekQSCgCRCjnc77oE1om
-HL2Z+15ce1jpD7GY0Khtd9W6V+OAR83qYo5SeN4UxFQHf22cemar8Q8xhzBFMSkX
-3cDLMJHFLNyqHJaK4NslsrgWv7sE5B+Z8x9+jsR3DdZ9yv112suzV4zn5fkT7Srb
-A8ertjF6ExyAdXtfi4nsBwHtEVUDPl5S4tP5S5E87uZtXsdWLZ2Y/3ZwQO2ys3Xr
-03dHpETj02ZloLmo2a8tOgOPV5FfABwS5id/kstUCg3wdZQ12zWiYZbPsojWU8Tr
-0LrfajC8X5RpnHHi7JaRzKoCsh7W5CQsKpDjMnJ8RiWrjphXTEX3gjV2R4HDoRKm
-3TQf4GhW5Q9CjdkQPNq6btKAobBsl/6Jiev3QDg+YRBDoXXJoyZu+zdMsUcrWZvU
-B+pVWyQmu87FTN2nrW5l3mcYZAdB16DtDY3FUx7KaI+7sF8Hs0W/hx8TXhyD7ZKx
-EAMnBANRllUl8TDlFNE3Edb2YiNe8dbjIGD9AdiMjnEXCyJmgOgTk0sORS+uoPc1
-niAnOP8Ohi1nPeiprjyX
-=bq4Q
+iQIcBAEBCAAGBQJUEmXtAAoJEMDTa8Ir7ZwVuEsP/R8/XQWxiFRp1G1EL4+eVuGw
+GSmr3itsLyzY/sJ4o2HUWfOFpxuSlpL9jcDSLbUTynrnGS4NQv1FghYJsrURB3CB
+/ysLdkqC6ShDrY409OU74t3k6m6oQQfUB7vlG4aMxb6Y7CaDstaQ+pXXbJOle7V3
+ue1asC7HdDPyerXNOamGqBlfD9U7CHZ3da8ibaxo/rKApf0T+P4I3KOLZgGAo/xB
+6Zo9+O/n0xgtl8jyjeMFLX1sgJSTnBIuTj1T0708JsXR0LyqIFgZLa7pSnQOxZzu
+WDCkOdBIGDsKVgaTHe8SYO07+9v9sDE0oUt+Oym/vBUF4Yt6GHTv0mE/o+OVJtM7
+Cf8DPrJ3l3zbiPheS/rK1hUHs9Re5RisI07EIqRiPwhNjfqhVigrFVshqkmSfFRq
+RoMOEkL8NcFb/GoT+uw7zC2JHKEPNv/a2E1thb7VDgAZTJ7IKIVbVDYKPVRruMYY
+6v/0ESHBL6bwToH2YpOOaLjX0VoA71uFfzn7DAkY1O4/MJoX1+XJp+w1+SbZxdYz
+2xBBLYneV31nV9IFu6Eq5+I0HgOTT3Yc8BiPPJ3WGmlt2IyNU715Ls/d8QUU84EJ
+k4IcDecRHFFLQS6v/v888OaHkbApXELz1kd+aSKdTwJ8ld0cnuN+8m1EsrmYBrXJ
+4hq6odPEsF38aTM6xjuc
+=KQsD
 -----END PGP SIGNATURE-----
 
---Sig_/MbgjZrOWzo.aDexI5BPMP8.--
+--Sig_/TqzrKwxGKEKo+95zvA_8e9W--
