@@ -1,38 +1,34 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: randconfig build error with next-20140912, in
- drivers/staging/lustre/lustre/obdclass
-Date: Fri, 12 Sep 2014 09:37:28 -0700
-Message-ID: <20140912163728.GA27559@kroah.com>
-References: <CA+r1ZhiLP+JTnV2w=PgWTHgW6KbcPuactc6Mr9OkSXdERFGMtg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 12
+Date: Fri, 12 Sep 2014 10:39:19 -0700
+Message-ID: <54132FC7.1080004@infradead.org>
+References: <20140912173817.3c719e7d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhiLP+JTnV2w=PgWTHgW6KbcPuactc6Mr9OkSXdERFGMtg@mail.gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: devel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, andreas.dilger@intel.com, linux-kernel <linux-kernel@vger.kernel.org>, oleg.drokin@intel.com, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:44996 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881AbaILRjU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Sep 2014 13:39:20 -0400
+In-Reply-To: <20140912173817.3c719e7d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Fri, Sep 12, 2014 at 09:25:01AM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
+On 09/12/14 00:38, Stephen Rothwell wrote:
+> Hi all,
 > 
-> ERROR: "obd_memory"
-> [drivers/staging/lustre/lustre/obdclass/obdclass.ko] undefined!
-> make[1]: *** [__modpost] Error 1
+> Changes since 20140911:
+> 
+---------------------------------------------------------------------
+> 
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).
 
-You are bit slower than the 0-day bot, the proper developers have
-already been notified of this :)
+No patch tarball?
 
-thanks,
-
-greg k-h
+-- 
+~Randy
