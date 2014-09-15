@@ -1,62 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the llvmlinux tree with the  tree
-Date: Mon, 15 Sep 2014 16:38:13 +1000
-Message-ID: <20140915163813.490886b4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Mon, 15 Sep 2014 17:04:53 +1000
+Message-ID: <20140915170453.0e8d4e85@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qxA6LJAdmVkQvJWDMl1+fn+"; protocol="application/pgp-signature"
+ boundary="Sig_/IbQG_eWMVj=qp7ZVnuefNoH"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41713 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48018 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751540AbaIOGiX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Sep 2014 02:38:23 -0400
+	id S1752546AbaIOHFA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Sep 2014 03:05:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Behan Webster <behanw@converseincode.com>, llvmlinux@lists.linuxfoundation.org, Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Charlebois <charlebm@gmail.com>, Rob Clark <robdclark@gmail.com>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
---Sig_/qxA6LJAdmVkQvJWDMl1+fn+
+--Sig_/IbQG_eWMVj=qp7ZVnuefNoH
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Trond,
 
-Today's linux-next merge of the llvmlinux tree got a conflict in
-drivers/gpu/drm/msm/hdmi/hdmi.c between commit fc886107c556 ("drm/msm:
-Change nested function to static function") from the watchdog tree and
-commit 8f2c494adad0 ("msm, hdmi: LLVMLinux: Remove nested function from
-HDMI driver") from the llvmlinux tree.
+After merging the nfs tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (these patches are doing the same thing, so I used the
-version in the watchdog tree) and can carry the fix as necessary (no
-action is required).
+fs/nfs/blocklayout/extent_tree.c: In function 'ext_tree_prepare_commit':
+fs/nfs/blocklayout/extent_tree.c:540:3: error: implicit declaration of func=
+tion '__vmalloc' [-Werror=3Dimplicit-function-declaration]
+   start_p =3D __vmalloc(buffer_size, GFP_NOFS, PAGE_KERNEL);
+   ^
+fs/nfs/blocklayout/extent_tree.c:540:11: warning: assignment makes pointer =
+from integer without a cast
+   start_p =3D __vmalloc(buffer_size, GFP_NOFS, PAGE_KERNEL);
+           ^
 
-P.S. Behan, I noticed that the llvmlinux patch has no Signed-off-by
-from you even though you committed it ...
+Caused by commit 34dc93c2fc04 ("pnfs/blocklayout: allocate separate
+pages for the layoutcommit payload").
+
+I added the following fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 15 Sep 2014 17:01:32 +1000
+Subject: [PATCH] pnfs/blocklayout: include vmalloc.h for __vmalloc
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/nfs/blocklayout/extent_tree.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/nfs/blocklayout/extent_tree.c b/fs/nfs/blocklayout/extent_t=
+ree.c
+index 93193616205a..31d0b5e53dfd 100644
+--- a/fs/nfs/blocklayout/extent_tree.c
++++ b/fs/nfs/blocklayout/extent_tree.c
+@@ -2,6 +2,8 @@
+  * Copyright (c) 2014 Christoph Hellwig.
+  */
+=20
++#include <linux/vmalloc.h>
++
+ #include "blocklayout.h"
+=20
+ #define NFSDBG_FACILITY		NFSDBG_PNFS_LD
+--=20
+2.1.0
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/qxA6LJAdmVkQvJWDMl1+fn+
+--Sig_/IbQG_eWMVj=qp7ZVnuefNoH
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUFoldAAoJEMDTa8Ir7ZwVqK0P/iX7t42ZJcbgUwyAxCX1Wg5w
-LaZCC4D9UVEVROVwf+b4Bkg7rGErndyrUwSV6ps4xwR3ET0b1KJ3iI0eq3O0aRTt
-acqWFohsT5xSqtzgRaCCfXrDYi423X9R2hnsvO4cccwp4QGAHCWibtLIKL9G5tAW
-dajZYvWwnCBru86RXqXvm7HkWwyU8hlPSXjKNwmGBmcF7M09sx56kzlTH77a/tsr
-YzwVvsy9QpcN/gqyqXQ3NqkjtOPBoyqpdUyNsHwvwa/HA5wo+FZr/VzKU9VwrJDq
-0NhWM8G4dioeeuOWjO/njWSQHr/ruhN8O24GJ27Vp5C33qDfuu1kTY9vMEwhAX8+
-QbivyHH6Kj2Kuqcto7WGSefgS4kyMHRuhDDUimsMgyv5PA1W8GCNbLN+QKXX8ySM
-loFI/PQyb7kt7qPoxiFXk2KZdfwKW/CQEA0dCreUyuWcnKWzmzDNFcNWQyvtrxSx
-Mdtl1yvpsNSdGE+612ITBxmnTl+SMH5bGh4yiq5y+vdBpwfpGhJfCgzh36AuV5m8
-k9+XSIJWfq3IE9foLFSw8BvzcxTtJtRY+o+x7A0i6njDhlcik2gaUkwRIGHuXH3R
-Y/CDaisiuvlP6FxO8GI1I6m8zTj/C3SX+Xt24BtTUlOnz+QL3S4jsQXTM+76nQTR
-eUMv9Bl00TIKLjwb/U4U
-=aLQH
+iQIcBAEBCAAGBQJUFo+aAAoJEMDTa8Ir7ZwVNuwP/3CeGubkoEz5GDCSeM3WVcPi
+DzPJ+K3uKahjiUx/CK05UCivIWIi728IA7lyDZb72IvO7LyiwHCSE38RIpkub4Uf
+KKi+rL7loEFLSXN6OPtWmYg+zwZ857khoiF0sGedjVPrE9pv8eGH5IfFwc5jwWZR
+n18F5Tf3ozFgksuPZnxw4U7hnc5DRLoz5aOqwigHTU+MAotXTNJA+SDumRG+TOBW
+7m/fAZxa+nCdUDP2GPxUy7Mp3NAWtFVaOIyaqpzvENqf7OXSZIu7gZLDUQGP9pvJ
+hNYjHX6H1LlH7ziBHZ2O0jI9gsP9BTzLIIPmyJhMXlrP+x+HQpUkP/+Wi8/ZdLpy
+/FCAmlOWLfcPKf+dzEtWRmb8yPC+H12Ddk0hmAc5UvN6JtYzaFgzsD0gT9ajRL1G
+SW2lax/49xtZg2B4003bTLW7qovCNB/dQy4jrHY+iCRjAPLtlponCRBAAxQDwUKi
+u/rfurSGau4gvjCNTaHhtgCAiPIQzMWUrg/tZAIV4mWHGc0L5zdCa0YCrljkqHrE
+Y7ma0cZ3fnKZwMMo9sL53+Aas4h6G8WZzsZkWSFCrAFBPhJkkVjVRyd98k1I1ntB
+EzSMAgHQC2Hby8qXzB2twoBNc1oHIr1qJcHudbd4cGlXFceGpP2kAzbYolUtMXtE
+ChkVNrIiuXKtejL6tSf8
+=KyuS
 -----END PGP SIGNATURE-----
 
---Sig_/qxA6LJAdmVkQvJWDMl1+fn+--
+--Sig_/IbQG_eWMVj=qp7ZVnuefNoH--
