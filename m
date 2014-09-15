@@ -1,145 +1,60 @@
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: Re: [PATCH -mmotm] mm: fix kmemcheck.c build errors
-Date: Mon, 15 Sep 2014 10:49:39 +0900
-Message-ID: <20140915014939.GB2676@js1304-P5Q-DELUXE>
-References: <1409902086-32311-1-git-send-email-iamjoonsoo.kim@lge.com>
- <20140905130102.f6b8866115f83a0bacedb899@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the mips tree
+Date: Mon, 15 Sep 2014 13:19:01 +1000
+Message-ID: <20140915131901.0f3c8a09@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20140905130102.f6b8866115f83a0bacedb899@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Pekka Enberg <penberg@kernel.org>, Vegard Nossum <vegardno@ifi.uio.no>, Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Randy Dunlap <rdunlap@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/C.yhC3eF0NnKQDJtoqdZMi_"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37770 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752151AbaIODTJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Sep 2014 23:19:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Frederic Sowa <hannes@stressinduktion.org>, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Fri, Sep 05, 2014 at 01:01:02PM -0700, Andrew Morton wrote:
-> On Fri,  5 Sep 2014 16:28:06 +0900 Joonsoo Kim <iamjoonsoo.kim@lge.com> wrote:
-> 
-> > mm-slab_common-move-kmem_cache-definition-to-internal-header.patch
-> > in mmotm makes following build failure.
-> > 
-> > ../mm/kmemcheck.c:70:7: error: dereferencing pointer to incomplete type
-> > ../mm/kmemcheck.c:83:15: error: dereferencing pointer to incomplete type
-> > ../mm/kmemcheck.c:95:8: error: dereferencing pointer to incomplete type
-> > ../mm/kmemcheck.c:95:21: error: dereferencing pointer to incomplete type
-> > 
-> > ../mm/slab.h: In function 'cache_from_obj':
-> > ../mm/slab.h:283:2: error: implicit declaration of function
-> > 'memcg_kmem_enabled' [-Werror=implicit-function-declaration]
-> > 
-> > Add header files to fix kmemcheck.c build errors.
-> > 
-> > [iamjoonsoo.kim@lge.com] move up memcontrol.h header
-> > to fix build failure if CONFIG_MEMCG_KMEM=y too.
-> 
-> Looking at this line
-> 
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> and at this line
-> 
-> > Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> 
-> I am suspecting that this patch was authored by Randy.  But there was
-> no From: line at start-of-changelog to communicate this?
-> 
-> > diff --git a/mm/slab.h b/mm/slab.h
-> > index 13845d0..963a3f8 100644
-> > --- a/mm/slab.h
-> > +++ b/mm/slab.h
-> > @@ -37,6 +37,8 @@ struct kmem_cache {
-> >  #include <linux/slub_def.h>
-> >  #endif
-> >  
-> > +#include <linux/memcontrol.h>
-> > +
-> >  /*
-> >   * State of the slab allocator.
-> >   *
-> 
-> It seems a bit wrong to include a fairly high-level memcontol.h into a
-> fairly low-level slab.h, but I expect it will work.
-> 
-> I can't really see how
-> mm-slab_common-move-kmem_cache-definition-to-internal-header.patch
-> caused the breakage.  I don't know how you were triggering this build
-> failure - please always include such info in the changelogs.
+--Sig_/C.yhC3eF0NnKQDJtoqdZMi_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi all,
 
-Sorry for all mistakes.
-Here goes new one having proper commit description and authorship.
+Today's linux-next merge of the net-next tree got a conflict in
+arch/mips/net/bpf_jit.c between commit 98fb24af5e68
+("arch/mips/net/bpf_jit.c: fix failure check") from the mips tree and
+commit 233577a22089 ("net: filter: constify detection of
+pkt_type_offset") from the net-next tree.
 
------------->8------------------
->From d2026b2cf932ae459fb421a66923288352993e74 Mon Sep 17 00:00:00 2001
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Fri, 5 Sep 2014 16:18:13 +0900
-Subject: [PATCH] mm/slab: fix kmemcheck.c build errors
+I fixed it up (the latter removed the code fixed up by the former, so I
+effectively reverted the former and just used the latter) and can carry
+the fix as necessary (no action is required).
 
-If we turn on CONFIG_KMEMCHECK,
-mm-slab_common-move-kmem_cache-definition-to-internal-header.patch
-in mmotm makes following build failure.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-../mm/kmemcheck.c:70:7: error: dereferencing pointer to incomplete type
-../mm/kmemcheck.c:83:15: error: dereferencing pointer to incomplete type
-../mm/kmemcheck.c:95:8: error: dereferencing pointer to incomplete type
-../mm/kmemcheck.c:95:21: error: dereferencing pointer to incomplete type
+--Sig_/C.yhC3eF0NnKQDJtoqdZMi_
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-Reason for this failure is that kmemcheck uses internal fields of struct
-kmem_cache and above patch moves these struct kmem_cache definitions to
-mm/slab.h, so kmemcheck which only includes include/linux/slab.h can't
-dereference them.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Add header file mm/slab.h in kmemcheck.c to fix kmemcheck.c build errors.
+iQIcBAEBCAAGBQJUFlqqAAoJEMDTa8Ir7ZwVbTgP/R//Yqetbd+E9ind02CU8LD9
+w3DIbQrERgp8t4+nHCKR3cpNBm8TWVW3qdKUFp0Wv4IyzzCjGiO3f3Y2c7ldP+vC
+fBD2Lu1PWbb4tPOQIbHdzMGBObEK3OeyFLWW/q+TBOnRcNeVUeKzhzpCJ3/pU5Jz
+UnjZUZ/oX8ZiXnSeWsnEkFbxurRLI4WkmritjsUZRKemjXVSAcuNxmayvDZ5lM7J
+AbSeOLuPyo1K47U5/LGxNSEWmgGgRlpwNSTZqPheXrhl/ASCfY1OlgNqRThPjy4l
+Q5kVhGY/sJwwWdstyU/TlCrHK1tHGrPIw8daxwqsw0faUvluj7xuGj3UQ8KgjfV6
+X/KFdUDYbry5HeQLmj+lk0inbCNz2rTyjk+cidYlT5vQ8KsxcPW3vGI2Iy3lISbH
+lhe8r1yRF5R9h67Bhng5zYjFVR97PWUwVSy94DUeBdH874DYyHCa8HIUe5UncKF3
+lMjANPGkCt05xSOJeEjUk8awnOAs56Y+ceVCAvgOExyJX3O/JG3GjY+LBuAP+/4/
+UIr+RSQTHQByq67KznBnXrhYTuk/t9I3FtLJkpPalJzNFP3yEP/HikcUez22VcVb
+v90lFw5toDvujXc+pWooBtK8vnrVFw/sJrQ3/KQiqV8B6yI0Wrc2p5r0sBLqsOND
+aF7aZq+zn3I7n0oix7as
+=1lP8
+-----END PGP SIGNATURE-----
 
-There is one more problem revealing from this change.
-mm/slab.h uses memcg's internal fields so it needs memcontrol.h. Util now,
-only sl[aou]b use mm/slab.h header, and they luckilly include memcontrol.h
-through swap.h so no problems happen. Unfortunately, kmemcheck doesn't
-include memcontrol.h so problem happens if we add mm/slab.h in kmemcheck.c.
-To fix it too, add memcontrol.h into mm/slab.h.
-
-[iamjoonsoo.kim@lge.com] add commit description and move up memcontrol.h
-header to fix build failure if CONFIG_MEMCG_KMEM=y too.
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
----
- mm/kmemcheck.c |    1 +
- mm/slab.h      |    2 ++
- 2 files changed, 3 insertions(+)
-
-diff --git a/mm/kmemcheck.c b/mm/kmemcheck.c
-index fd814fd..cab58bb 100644
---- a/mm/kmemcheck.c
-+++ b/mm/kmemcheck.c
-@@ -2,6 +2,7 @@
- #include <linux/mm_types.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
-+#include "slab.h"
- #include <linux/kmemcheck.h>
- 
- void kmemcheck_alloc_shadow(struct page *page, int order, gfp_t flags, int node)
-diff --git a/mm/slab.h b/mm/slab.h
-index 13845d0..963a3f8 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -37,6 +37,8 @@ struct kmem_cache {
- #include <linux/slub_def.h>
- #endif
- 
-+#include <linux/memcontrol.h>
-+
- /*
-  * State of the slab allocator.
-  *
--- 
-1.7.9.5
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Sig_/C.yhC3eF0NnKQDJtoqdZMi_--
