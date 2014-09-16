@@ -1,36 +1,71 @@
-From: Peter Foley <pefoley2@pefoley.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the rd-docs tree
-Date: Tue, 16 Sep 2014 13:19:07 -0400
-Message-ID: <CAOFdcFMDnR50cS-Geb0S1S2VRPzZqDr9zzqUp-DpMYLfF0qtvQ@mail.gmail.com>
+Date: Wed, 17 Sep 2014 09:00:20 +1000
+Message-ID: <20140917090020.1f3c2c30@canb.auug.org.au>
 References: <20140916171102.61509be5@canb.auug.org.au>
+	<CAOFdcFMDnR50cS-Geb0S1S2VRPzZqDr9zzqUp-DpMYLfF0qtvQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/f=yz.PyeO7utT1hbO05K.KE"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:36074 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754031AbaIPRT3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Sep 2014 13:19:29 -0400
-Received: by mail-la0-f41.google.com with SMTP id s18so228003lam.28
-        for <linux-next@vger.kernel.org>; Tue, 16 Sep 2014 10:19:27 -0700 (PDT)
-In-Reply-To: <20140916171102.61509be5@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:45913 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754081AbaIPXAg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Sep 2014 19:00:36 -0400
+In-Reply-To: <CAOFdcFMDnR50cS-Geb0S1S2VRPzZqDr9zzqUp-DpMYLfF0qtvQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Peter Foley <pefoley2@pefoley.com>
 Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Sep 16, 2014 at 3:11 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Randy,
->
-> After merging the rd-docs tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> Documentation/vDSO/vdso_test.c:15:22: fatal error: sys/auxv.h: No such file or directory
->
+--Sig_/f=yz.PyeO7utT1hbO05K.KE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-What glibc version are you running?
-It appears the function getauxval (and I assume the missing header)
-were only added in glibc 2.16.
+Hi Peter,
 
-Thanks,
+On Tue, 16 Sep 2014 13:19:07 -0400 Peter Foley <pefoley2@pefoley.com> wrote:
+>
+> On Tue, Sep 16, 2014 at 3:11 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> >
+> > After merging the rd-docs tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >
+> > Documentation/vDSO/vdso_test.c:15:22: fatal error: sys/auxv.h: No such =
+file or directory
+> >
+>=20
+> What glibc version are you running?
+> It appears the function getauxval (and I assume the missing header)
+> were only added in glibc 2.16.
 
-Peter
+My build machine runs Debian stable which only has libc6 version 2.13.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/f=yz.PyeO7utT1hbO05K.KE
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUGMESAAoJEMDTa8Ir7ZwVWysP/R1FORLGxa068qJ7Jp6RTrCa
+gvhUcOZ0cJ09O0YFT11x/sOd7Q9NHFspf7tHln+/zw6y253UUiVFbo4sdKJlb/AU
+suPZo5CnDaVAhiZ/1Glv3XcAaYsTOyqxjkzMVUqpRRrJYbMw+l91c2BlrVOSM2eK
+VOyr8/ILOMEo+bcpN5ARz0tm6l6mhHcxgAEgI9nVthACTqGovjEo4C7tSJvpPNRv
+tvB9UsAFVy67BC98fGUbCBfZM3wLOC0b8icb8P1QlziI1+pb//RqDEKouiZY7UdP
+H+tm/zzfAGoBPj19u8T1tpbSmVVKC7rkAKoSwJAGYc5IAzbCw7HLaWZGErt7TQ8+
+8ub+nLqwr342HTIFRozJteNo5LohQZLOV6L95jLElc1Z3RlBHaOJIku0B9rPHFi/
+LtFBZ/gpJhCEq/pb8xquZEI5yxOVPPmmucXgau8fKfAvsuOjzfv5JEQD7kGsV79u
+lBK8cKAvqRfIkTrTM6NhO3CTJv5YD/A3qyNXvBgWW0w9smo+USF69nVMvNHoI3Bc
+quWfEzdlJwRCwpYUhwMDkOhF8kXKkEKOqaveCBiFYQVTzCiahosrF8bxLubgo4mD
+lM2u+2uE8GcONC2AlWEXvXXny+xrNXmTWwyJvs5USeseHE/ujYY4QIr1DWYLf4w+
+gbiibr9t/Ft2OcCkMHPs
+=8Sek
+-----END PGP SIGNATURE-----
+
+--Sig_/f=yz.PyeO7utT1hbO05K.KE--
