@@ -1,56 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rd-docs tree
-Date: Tue, 16 Sep 2014 17:11:02 +1000
-Message-ID: <20140916171102.61509be5@canb.auug.org.au>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [slave-dma:for-linus 20/20] drivers/spi/spi-pxa2xx-pci.c:70:3:
+ error: unknown field 'max_clk_rate' specified in initializer
+Date: Tue, 16 Sep 2014 10:35:55 +0300
+Message-ID: <1410852955.7023.50.camel@linux.intel.com>
+References: <5411735d.SAoL/AZyi+bJWC6n%fengguang.wu@intel.com>
+	 <20140911101750.GP13406@lahna.fi.intel.com>
+	 <20140913170053.GO7960@sirena.org.uk>
+	 <20140915080640.GM10854@lahna.fi.intel.com>
+	 <20140916045243.GM3131@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yYOWvEpnuIeQ1se6.wNeKQp"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Foley <pefoley2@pefoley.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:63118 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752347AbaIPHgH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Sep 2014 03:36:07 -0400
+In-Reply-To: <20140916045243.GM3131@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.jf.intel.com>, Mark Brown <broonie@kernel.org>, kbuild test robot <fengguang.wu@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.jf.intel.com>, kbuild-all@01.org, linux-next@vger.kernel.org
 
---Sig_/yYOWvEpnuIeQ1se6.wNeKQp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2014-09-16 at 10:22 +0530, Vinod Koul wrote:
+> On Mon, Sep 15, 2014 at 11:06:40AM +0300, Mika Westerberg wrote:
+> > On Sat, Sep 13, 2014 at 10:00:53AM -0700, Mark Brown wrote:
+> > > On Thu, Sep 11, 2014 at 01:17:50PM +0300, Mika Westerberg wrote:
+> > > 
+> > > > Vinod, this has dependency to the SPI tree. I suppose right way to
+> > > > handle this is to merge Mark's topic/pxa2xx branch into this. Or
+> > > > alternatively Mark can make an immutable branch containing the missing
+> > > > commit that you can merge.
+> > > 
+> > > I've tagged this here, please do remember to coordinate dependencies
+> > > when making this sort of multi-tree change:
+> > 
+> > Thanks Mark!
+> > 
+> > Vinod, can you pull this to your -next branch?
+> Done, can you verify merge was okay as I had few conflicts.
 
-Hi Randy,
+There is one line missed:
 
-After merging the rd-docs tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
++               .max_clk_rate = 50000000,
 
-Documentation/vDSO/vdso_test.c:15:22: fatal error: sys/auxv.h: No such file=
- or directory
+In the PORT_BYT section of the spi_info_configs[].
 
-Caused by commit e9cb990eff15 ("Documentation: update vDSO makefile to
-build portable examples").
+> 
+> -- 
+> ~Vinod
+> > 
+> > And sorry about this, we will make sure that next time we state all
+> > the dependencies beforehand.
+> > 
+> > > 
+> > > The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
+> > > 
+> > >   Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-pxa2xx-clk
+> > > 
+> > > for you to fetch changes up to afa93c9017fd48d4d5265854c75f5fcde0871548:
+> > > 
+> > >   spi/pxa2xx-pci: Add common clock framework support in PCI glue layer (2014-08-16 17:19:50 -0500)
+> > > 
+> > > ----------------------------------------------------------------
+> > > spi/pxa2xx: Add clock support
+> > > 
+> > > ----------------------------------------------------------------
+> > > Chew, Chiau Ee (1):
+> > >       spi/pxa2xx-pci: Add common clock framework support in PCI glue layer
+> > > 
+> > >  drivers/spi/Kconfig          |  2 +-
+> > >  drivers/spi/spi-pxa2xx-pci.c | 21 ++++++++++++++++++++-
+> > >  2 files changed, 21 insertions(+), 2 deletions(-)
+> > 
+> > 
+> 
 
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/yYOWvEpnuIeQ1se6.wNeKQp
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUF+KMAAoJEMDTa8Ir7ZwV90IP/3T01HPTvz3VKzaKp6nn4wyL
-iuzrNRG6ibyGFQAt9XhN/dhcftRHB59uCAXxlxPs3NKE5hkykS6mQbgI3RDzdjFZ
-X1csCAvxoye7XCGo074pKdionHXrvucE+mqzJkRrkMdAzmL/1N8khIf0E9/7hdx3
-h8qFG71pTLpOXfjM1lw9UY1PNixCU4GOK+T5MrjBBNDCEkSlmYOw4nVEwgF2N7FT
-+OR5bAW4Zg7ODIxw+N13bWllH4792Tfr9mBLAv6gW6WTB1f1yNVhR4BLxeaE7Quw
-b/SxV0cApNk5frHE3TRyvuxlCjImwDIY5AZOoOF4hvivLASmlCI2ePVdPt/+ajk7
-mxKDECfDPH71tSUj2jLyv3bsPGSHJfIdaOmxfKixwV9/Yg1l82oTJ4CI215BEmze
-Bp30NJSW9P77c4RYTPSvW4Ch/3T8DYOTfJC814pD6cHxMQXojTsH+rcVzN4O5/GT
-R3dPqIvqP2p7KV5KZfBEbNzMwu+3HUk1CdgPb8B3+Faxe9dGzBHGO6IBVL5Xel9m
-+6zwvoejT+yOhu5UDNSgH/Ig0z/AUPgmAbuVrgeOymhyLI9ANABFwlqPfF7IXNgs
-MkeABl3Ucn1+xVbYE14CEcSqIVxjzanqEl0Ezffrvz9ZvaHZzFuSjXLgW73vOhVw
-YoJPIg4Pjb1AXUbarvKK
-=52LX
------END PGP SIGNATURE-----
-
---Sig_/yYOWvEpnuIeQ1se6.wNeKQp--
+-- 
+Andy Shevchenko <andriy.shevchenko@intel.com>
+Intel Finland Oy
