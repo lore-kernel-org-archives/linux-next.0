@@ -1,73 +1,88 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [slave-dma:for-linus 20/20] drivers/spi/spi-pxa2xx-pci.c:70:3:
- error: unknown field 'max_clk_rate' specified in initializer
-Date: Tue, 16 Sep 2014 10:22:43 +0530
-Message-ID: <20140916045243.GM3131@intel.com>
-References: <5411735d.SAoL/AZyi+bJWC6n%fengguang.wu@intel.com>
- <20140911101750.GP13406@lahna.fi.intel.com>
- <20140913170053.GO7960@sirena.org.uk>
- <20140915080640.GM10854@lahna.fi.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the llvmlinux tree with the kbuild tree
+Date: Tue, 16 Sep 2014 16:46:07 +1000
+Message-ID: <20140916164607.3627ee85@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/B32aST+ZilUJe+8Ig/cI_LE"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:57960 "EHLO mga14.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:33584 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752423AbaIPFRn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Sep 2014 01:17:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20140915080640.GM10854@lahna.fi.intel.com>
+	id S1752158AbaIPGqW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Sep 2014 02:46:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mika Westerberg <mika.westerberg@linux.jf.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, kbuild test robot <fengguang.wu@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.jf.intel.com>, kbuild-all@01.org, linux-next@vger.kernel.org
+To: Behan Webster <behanw@converseincode.com>, llvmlinux@lists.linuxfoundation.org, Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
-On Mon, Sep 15, 2014 at 11:06:40AM +0300, Mika Westerberg wrote:
-> On Sat, Sep 13, 2014 at 10:00:53AM -0700, Mark Brown wrote:
-> > On Thu, Sep 11, 2014 at 01:17:50PM +0300, Mika Westerberg wrote:
-> > 
-> > > Vinod, this has dependency to the SPI tree. I suppose right way to
-> > > handle this is to merge Mark's topic/pxa2xx branch into this. Or
-> > > alternatively Mark can make an immutable branch containing the missing
-> > > commit that you can merge.
-> > 
-> > I've tagged this here, please do remember to coordinate dependencies
-> > when making this sort of multi-tree change:
-> 
-> Thanks Mark!
-> 
-> Vinod, can you pull this to your -next branch?
-Done, can you verify merge was okay as I had few conflicts.
+--Sig_/B32aST+ZilUJe+8Ig/cI_LE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
--- 
-~Vinod
-> 
-> And sorry about this, we will make sure that next time we state all
-> the dependencies beforehand.
-> 
-> > 
-> > The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
-> > 
-> >   Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-pxa2xx-clk
-> > 
-> > for you to fetch changes up to afa93c9017fd48d4d5265854c75f5fcde0871548:
-> > 
-> >   spi/pxa2xx-pci: Add common clock framework support in PCI glue layer (2014-08-16 17:19:50 -0500)
-> > 
-> > ----------------------------------------------------------------
-> > spi/pxa2xx: Add clock support
-> > 
-> > ----------------------------------------------------------------
-> > Chew, Chiau Ee (1):
-> >       spi/pxa2xx-pci: Add common clock framework support in PCI glue layer
-> > 
-> >  drivers/spi/Kconfig          |  2 +-
-> >  drivers/spi/spi-pxa2xx-pci.c | 21 ++++++++++++++++++++-
-> >  2 files changed, 21 insertions(+), 2 deletions(-)
-> 
-> 
+Hi all,
 
--- 
+Today's linux-next merge of the llvmlinux tree got a conflict in
+Makefile between commit 19a3cc83353e ("Kbuild, lto: Add Link Time
+Optimization support v3") from the kbuild tree and commit 6d9203642de6
+("kbuild, LLVMLinux: Add better clang cross build support") from the
+llvmlinux tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc Makefile
+index 6b5e010d91e2,aa642d244f19..000000000000
+--- a/Makefile
++++ b/Makefile
+@@@ -360,14 -360,18 +360,23 @@@ include $(srctree)/scripts/Kbuild.inclu
+  # Make variables (CC, etc...)
+  AS		=3D $(CROSS_COMPILE)as
+  LD		=3D $(CROSS_COMPILE)ld
+ +LDFINAL	=3D $(LD)
++ ifeq ($(COMPILER),clang)
++ ifneq ($(CROSS_COMPILE),)
++ CC		+=3D -target $(CROSS_COMPILE:%-=3D%)
++ endif
++ ifneq ($(GCC_TOOLCHAIN),)
++ CC		+=3D -gcc-toolchain $(GCC_TOOLCHAIN)
++ endif
++ else
+  CC		=3D $(CROSS_COMPILE)gcc
++ endif
+  CPP		=3D $(CC) -E
+ +ifdef CONFIG_LTO
+ +AR		=3D $(CROSS_COMPILE)gcc-ar
+ +else
+  AR		=3D $(CROSS_COMPILE)ar
+ +endif
+  NM		=3D $(CROSS_COMPILE)nm
+  STRIP		=3D $(CROSS_COMPILE)strip
+  OBJCOPY		=3D $(CROSS_COMPILE)objcopy
+
+--Sig_/B32aST+ZilUJe+8Ig/cI_LE
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUF9y5AAoJEMDTa8Ir7ZwVq5gQAIe9ZOLXuy9Ug6qw2AZcSMwX
+xee+sDIY9vDit3swE0zbrJzDdWVtejuh0jV9pcTEo7p5pQnvItoGfINDeTN83DhH
+ULgi9jkHGM+92LXfSpbsGPbORQBzP2JNlKsf+IeNH4Qr1q8bqF4i4kS+1Jk2elFd
+WSEIfU31l+m1DGxYViRWQiR33yz10cmvxvLogzQQtpiX+87MvN4wlejCh0+OdwFg
+Ss8IEKg/xUSKjDVWOvDLsnqJsn84Od1I3zuL1P+L1spIxy8vD1xiisbqR/U+ukfO
+urP+CKc8gCmaHxshgWoSHbUQrZuKenfquZui+hOnu0uqMDfCQXtF94KPZ/xrDirx
+JkSRiEk5P8hvEZXmk1L/SWJ0gYXIMHkJYJYkT0rZVQS/8Vduezw8trc+n5/du3yt
+I3+h5tMCTu+8kq+ptEjBQ4cCSxXP/1SGtP2v/1+CKHOeCjgCWN1gimmVwcXNhwGW
+BT4XoL3lET15wTnT9V6nCw81SB0gRm8rICLblPEKSmyItuTpb4xpwV3sHs4qbloI
+XcjOWCAl058VyHDbloCmzCsNAKlGvJ2ezWt0POc+9e0rW+nblWIigqNowMK/BpFA
+/HN5JA+/7B9tCRtaDEHRPrjc+OoZ4xB95azdZSY0OAr6OYsqksxqf3lkyO0hk1sY
+ZlaQhhg1xguCK3yw73Z/
+=Nsi2
+-----END PGP SIGNATURE-----
+
+--Sig_/B32aST+ZilUJe+8Ig/cI_LE--
