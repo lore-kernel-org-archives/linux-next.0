@@ -1,108 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Tue, 16 Sep 2014 10:24:28 +1000
-Message-ID: <20140916102428.5d1a3367@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [slave-dma:for-linus 20/20] drivers/spi/spi-pxa2xx-pci.c:70:3:
+ error: unknown field 'max_clk_rate' specified in initializer
+Date: Tue, 16 Sep 2014 10:22:43 +0530
+Message-ID: <20140916045243.GM3131@intel.com>
+References: <5411735d.SAoL/AZyi+bJWC6n%fengguang.wu@intel.com>
+ <20140911101750.GP13406@lahna.fi.intel.com>
+ <20140913170053.GO7960@sirena.org.uk>
+ <20140915080640.GM10854@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xpxdLrFlrwCQlt5dXD5+dnh"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anish Bhatt <anish@chelsio.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:57960 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752423AbaIPFRn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Sep 2014 01:17:43 -0400
+Content-Disposition: inline
+In-Reply-To: <20140915080640.GM10854@lahna.fi.intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.jf.intel.com>
+Cc: Mark Brown <broonie@kernel.org>, kbuild test robot <fengguang.wu@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.jf.intel.com>, kbuild-all@01.org, linux-next@vger.kernel.org
 
---Sig_/xpxdLrFlrwCQlt5dXD5+dnh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 15, 2014 at 11:06:40AM +0300, Mika Westerberg wrote:
+> On Sat, Sep 13, 2014 at 10:00:53AM -0700, Mark Brown wrote:
+> > On Thu, Sep 11, 2014 at 01:17:50PM +0300, Mika Westerberg wrote:
+> > 
+> > > Vinod, this has dependency to the SPI tree. I suppose right way to
+> > > handle this is to merge Mark's topic/pxa2xx branch into this. Or
+> > > alternatively Mark can make an immutable branch containing the missing
+> > > commit that you can merge.
+> > 
+> > I've tagged this here, please do remember to coordinate dependencies
+> > when making this sort of multi-tree change:
+> 
+> Thanks Mark!
+> 
+> Vinod, can you pull this to your -next branch?
+Done, can you verify merge was okay as I had few conflicts.
 
-Hi all,
+-- 
+~Vinod
+> 
+> And sorry about this, we will make sure that next time we state all
+> the dependencies beforehand.
+> 
+> > 
+> > The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
+> > 
+> >   Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-pxa2xx-clk
+> > 
+> > for you to fetch changes up to afa93c9017fd48d4d5265854c75f5fcde0871548:
+> > 
+> >   spi/pxa2xx-pci: Add common clock framework support in PCI glue layer (2014-08-16 17:19:50 -0500)
+> > 
+> > ----------------------------------------------------------------
+> > spi/pxa2xx: Add clock support
+> > 
+> > ----------------------------------------------------------------
+> > Chew, Chiau Ee (1):
+> >       spi/pxa2xx-pci: Add common clock framework support in PCI glue layer
+> > 
+> >  drivers/spi/Kconfig          |  2 +-
+> >  drivers/spi/spi-pxa2xx-pci.c | 21 ++++++++++++++++++++-
+> >  2 files changed, 21 insertions(+), 2 deletions(-)
+> 
+> 
 
-After merging the net tree, today's linux-next build
-(powerpc ppc64_defconfig) failed like this:
-
-warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && EIGER &=
-& 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMII which=
- has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440EPX && 4=
-40GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII which has =
-unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) selects I=
-BM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHERNET && =
-NET_VENDOR_IBM)
-warning: (SCSI_FC_ATTRS) selects SCSI_NETLINK which has unmet direct depend=
-encies (NET)
-warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX && 440SPe=
- && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 which has u=
-nmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-warning: (SCSI_FC_ATTRS) selects SCSI_NETLINK which has unmet direct depend=
-encies (NET)
-warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440EPX && 4=
-40GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII which has =
-unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && EIGER &=
-& 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMII which=
- has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) selects I=
-BM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHERNET && =
-NET_VENDOR_IBM)
-warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX && 440SPe=
- && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 which has u=
-nmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-drivers/built-in.o: In function `.scsi_nl_rcv_msg':
-scsi_netlink.c:(.text+0x16455c): undefined reference to `.netlink_ack'
-scsi_netlink.c:(.text+0x16456c): undefined reference to `.skb_pull'
-scsi_netlink.c:(.text+0x1645e0): undefined reference to `.netlink_capable'
-drivers/built-in.o: In function `.scsi_netlink_init':
-(.text+0x16471c): undefined reference to `.__netlink_kernel_create'
-drivers/built-in.o: In function `.scsi_netlink_exit':
-(.text+0x16477c): undefined reference to `.netlink_kernel_release'
-drivers/built-in.o: In function `.fc_host_post_event':
-(.text+0x16ac1c): undefined reference to `.__alloc_skb'
-drivers/built-in.o: In function `.fc_host_post_event':
-(.text+0x16ac60): undefined reference to `.__nlmsg_put'
-drivers/built-in.o: In function `.fc_host_post_event':
-(.text+0x16ace0): undefined reference to `.netlink_broadcast'
-drivers/built-in.o: In function `.fc_host_post_event':
-(.text+0x16ad24): undefined reference to `.kfree_skb'
-drivers/built-in.o: In function `.fc_host_post_vendor_event':
-(.text+0x16ae48): undefined reference to `.__alloc_skb'
-drivers/built-in.o: In function `.fc_host_post_vendor_event':
-(.text+0x16ae90): undefined reference to `.__nlmsg_put'
-drivers/built-in.o: In function `.fc_host_post_vendor_event':
-(.text+0x16af1c): undefined reference to `.netlink_broadcast'
-drivers/built-in.o: In function `.fc_host_post_vendor_event':
-(.text+0x16af84): undefined reference to `.kfree_skb'
-drivers/built-in.o:(.toc+0x0): undefined reference to `init_net'
-
-Presumably caused by commit 5d6be6a5d486 ("scsi_netlink : Make
-SCSI_NETLINK dependent on NET instead of selecting NET").
-
-I used the version of the net tree from next-20140915 (i.e. up to
-commit 9e07a422383c ("Merge branch 'bridge_vlan_filtering'")) for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/xpxdLrFlrwCQlt5dXD5+dnh
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUF4NDAAoJEMDTa8Ir7ZwVMQkP/2nJOBJ41gGiyc1Krt4mxpPv
-QtpScVav2BmHxHOr9ihAcs2AV76nOiSy1Qeu6CMseQdpeQfZ+41KCPxwO0np4smE
-yqyi+LyJ/dW0+YfoJfV8kjYgyLV+0Gt2Y9lx3qEoFJOyAtQVJeszS2YwG5uWwvVT
-8mpClp97U8n7lM2ZEcqI65FpR1IOAkMi7Iv0TuByyYWlv+FPJG+uWCnQ5TBuDryc
-MWP5mYlA6W5ut9yfnz2DWRngZJ38Vdknx7grWPROUL6bmpWzDriurpfNj7IDHd8g
-Hco/CJ4yTqQDqIDQs1axq2jNpBfTk0WpDckCtUIputFisq0J1QJ1I5Qm53Dx3AnD
-iiacATNKx8gWGHVaVUb5jOYw5twWSDuCg2C4pR4PGNuYPbgbB90alzs/GGfKu0Bq
-7IK8F/PnhCZhnUU0vcs1nUj2E95F1gQxHcpKBUTyfvwd4PPHmtXAWoVR7Ds8Tl/R
-LXSMAgiHU9D/l5YELsLmAdUN7qv249Z6ubAbvgEP+LfAnyrPNkdPLmHDMQIP4E2V
-00X3Ydf6Pr2q4GmpOzQm0DXspEiuH8zhPiu8/hYTXPFd9rROBs6+Pg8q+NrJsJsv
-qaM0uXXvqdEoIivpkF++20I/irfrnOGH7ppcapmMk8Omr2+/Fm7DAco08PqSsRDH
-dTOkiyYX1bg34NtnyUFC
-=v8Zm
------END PGP SIGNATURE-----
-
---Sig_/xpxdLrFlrwCQlt5dXD5+dnh--
+-- 
