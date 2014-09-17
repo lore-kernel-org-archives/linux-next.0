@@ -1,90 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Wed, 17 Sep 2014 13:47:40 +1000
-Message-ID: <20140917134740.32dae50b@canb.auug.org.au>
-References: <20140909124306.2d5a0d76@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the vfs tree
+Date: Wed, 17 Sep 2014 16:16:58 +1000
+Message-ID: <20140917161658.2e4eb3f1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rpL3zsI5C.XEYuJq/0jx+ep"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58661 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753886AbaIQDrs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Sep 2014 23:47:48 -0400
-In-Reply-To: <20140909124306.2d5a0d76@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/8G_xRFuK7qZHFIHrB9T/Myr"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Baldyga <r.baldyga@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/rpL3zsI5C.XEYuJq/0jx+ep
+--Sig_/8G_xRFuK7qZHFIHrB9T/Myr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Felipe,
 
-On Tue, 9 Sep 2014 12:43:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the v4l-dvb tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->=20
-> ERROR: "omap_stop_dma" [drivers/media/platform/soc_camera/omap1_camera.ko=
-] undefined!
-> ERROR: "omap_start_dma" [drivers/media/platform/soc_camera/omap1_camera.k=
-o] undefined!
-> ERROR: "omap_dma_link_lch" [drivers/media/platform/soc_camera/omap1_camer=
-a.ko] undefined!
-> ERROR: "omap_set_dma_dest_burst_mode" [drivers/media/platform/soc_camera/=
-omap1_camera.ko] undefined!
-> ERROR: "omap_set_dma_src_params" [drivers/media/platform/soc_camera/omap1=
-_camera.ko] undefined!
-> ERROR: "omap_request_dma" [drivers/media/platform/soc_camera/omap1_camera=
-.ko] undefined!
-> ERROR: "omap_set_dma_transfer_params" [drivers/media/platform/soc_camera/=
-omap1_camera.ko] undefined!
-> ERROR: "omap_set_dma_dest_params" [drivers/media/platform/soc_camera/omap=
-1_camera.ko] undefined!
-> ERROR: "omap_free_dma" [drivers/media/platform/soc_camera/omap1_camera.ko=
-] undefined!
-> ERROR: "__bad_ndelay" [drivers/media/platform/s5p-jpeg/s5p-jpeg.ko] undef=
-ined!
-> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_display.ko] undef=
-ined!
-> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_capture.ko] undef=
-ined!
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/gadget/function/f_fs.c between commit 8322215aa91c ("f_fs:
+saner API for ffs_sb_create_file()") from the vfs tree and commit
+1b0bf88fd8b8 ("usb: gadget: f_fs: virtual endpoint address mapping")
+from the usb-gadget tree.
 
-Still getting these ...
-
-> I have used the v4l-dvb tree from next-20140908 for today.
-
-So this still applies.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/rpL3zsI5C.XEYuJq/0jx+ep
+diff --cc drivers/usb/gadget/function/f_fs.c
+index 4726e278e557,4ad11e03cf54..000000000000
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@@ -1529,11 -1557,13 +1552,14 @@@ static int ffs_epfiles_create(struct ff
+  		epfile->ffs =3D ffs;
+  		mutex_init(&epfile->mutex);
+  		init_waitqueue_head(&epfile->wait);
+- 		sprintf(epfiles->name, "ep%u",  i);
++ 		if (ffs->user_flags & FUNCTIONFS_VIRTUAL_ADDR)
++ 			sprintf(epfiles->name, "ep%02x", ffs->eps_addrmap[i]);
++ 		else
++ 			sprintf(epfiles->name, "ep%u", i);
+ -		if (!unlikely(ffs_sb_create_file(ffs->sb, epfiles->name, epfile,
+ -						 &ffs_epfile_operations,
+ -						 &epfile->dentry))) {
+ +		epfile->dentry =3D ffs_sb_create_file(ffs->sb, epfiles->name,
+ +						 epfile,
+ +						 &ffs_epfile_operations);
+ +		if (unlikely(!epfile->dentry)) {
+  			ffs_epfiles_destroy(epfiles, i - 1);
+  			return -ENOMEM;
+  		}
+
+--Sig_/8G_xRFuK7qZHFIHrB9T/Myr
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUGQRhAAoJEMDTa8Ir7ZwVeN0QAJatBYn5HBWmet/x+Zr+rzK7
-o2zt8krLEgcNZDCW2YdTHsMMNdxXZg2j8CqC1WK3VmFn2t/ZzXPH3N0HzjMHlz+n
-bewnkiIsAjH0TxL0SAW7GCgGlvU4nvGqv54Hr8v83qCEZXB0JILNehzT5CFdlS5e
-+pVX91uRyP/CTndNY0k97SNcl2cz+QaqNZB9CLITWF/6X+7lR5CckcTzlBuAdhrQ
-6G6ioRa0dNeSEztpwzXjBRQxTEbzWl+iKLfrixGrk5XkQ1zF4GcZPMBnnwoPC10S
-JxgNxhb47kE/P9/bWd2pZDCgKcYbTnDYtKfd6L/c9/zCsMybNK1NXfmDtEaBtZPy
-UUWjh+M6sLPnrS5b/3aGhbbNncIZdKEFjtvSBviQMWgYw7MCCkIS39Zap/wnSYpo
-eIM+HBkDa7UzOxfScJOrFcv7N3R3+0iXTBnLljwGKpR7GaXRCKYRvzEU0pOrw8Jr
-in+NP33f6cguZ/qjpYd8Uq0WB/S7YqknlNY0aN+F5uxSId1SEGDDItcC+4PKrpIU
-FlWANX/uRiR0LWqBimUhw2P/fC78KbyN9am+fNZJCptRHYEBr5VnA4I6255n2BUn
-KMnwyNJEQZ4iUdyCjEouEJi6A3E+oPh5udsGRTwBYFdFQI0RLCRkKY1R+cgDcr8m
-zs+b/ApNiP/Nx3GPikS7
-=3WBV
+iQIcBAEBCAAGBQJUGSdeAAoJEMDTa8Ir7ZwVxGQP/0TTQ2tNMqYUF21vlVsuNBBU
+1Un+dVvl0Q2ZHH/2Tnb68wKm6y0tFtLvukMc3yr4enByC5LtrYzGsRmWpzuPvRly
+p40VlVB0vpauuwaNeqSMz8QMmfcbL3tw2zN57WHRkguLqlw0kQA0XOewYAhR6FB/
+NYYIN/OckDS16TtsL1580eL81+HRSXUBMfbQpI7iicD6S4fJFVzUKVw9yiUB+wvU
+XYUlbsEtuZJyBuKQLfPStR1/caJmY9aooZBDHS2Rd99DlIGKDr90mN6fnDwlyHBn
+sRT20+OHL94uwe9e5G/9U0YnFJXrJbwTmNJyxVCkN/ylsVcactqODloVF90WyXcQ
+QtdE8zDSKyvbdlgw9xcY4CwkLEuQ7Lkz7Y15KzsX3whGvb49BtfMpzvQcZ7q7WIr
+sPJrBCQnEBX+zibzamssg0TVSbN4879FVdhOSfVhfXekP8nF9uJ8rs1jr08BowOm
+4IOX7OHfX3cef7X5QtD2TpKdqJ5FUHtgVmfZPPhTmDd5+ZuOGh6u7oz8Gnv96N0I
+E6YPDlt6akLDExLjhMXviT3erlZ0Q+2a9HqGHGG5frqAXeoCnmlmn7oXMnl5XE56
+10dJAAJd4Mr8XgIKMz8y9gvnEiuRUtA83XYTBP7xnwxgpXl57EdmK9TDT/Y9qi/Z
+zo+8/VA909wsZapC1O1t
+=QGi4
 -----END PGP SIGNATURE-----
 
---Sig_/rpL3zsI5C.XEYuJq/0jx+ep--
+--Sig_/8G_xRFuK7qZHFIHrB9T/Myr--
