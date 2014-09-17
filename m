@@ -1,83 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 17 Sep 2014 12:18:08 +1000
-Message-ID: <20140917121808.27977073@canb.auug.org.au>
-References: <20140917110454.399a7841@canb.auug.org.au>
-	<20140916.214859.1906368469534009374.davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Wed, 17 Sep 2014 13:47:40 +1000
+Message-ID: <20140917134740.32dae50b@canb.auug.org.au>
+References: <20140909124306.2d5a0d76@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/C1dOj0=f.Gtgr.IlFc622L2"; protocol="application/pgp-signature"
+ boundary="Sig_/rpL3zsI5C.XEYuJq/0jx+ep"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60898 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:58661 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753283AbaIQCSP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Sep 2014 22:18:15 -0400
-In-Reply-To: <20140916.214859.1906368469534009374.davem@davemloft.net>
+	id S1753886AbaIQDrs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Sep 2014 23:47:48 -0400
+In-Reply-To: <20140909124306.2d5a0d76@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, anish@chelsio.com
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/C1dOj0=f.Gtgr.IlFc622L2
+--Sig_/rpL3zsI5C.XEYuJq/0jx+ep
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-On Tue, 16 Sep 2014 21:48:59 -0400 (EDT) David Miller <davem@davemloft.net>=
- wrote:
+On Tue, 9 Sep 2014 12:43:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 17 Sep 2014 11:04:54 +1000
+> After merging the v4l-dvb tree, today's linux-next build (x86_64 allmodco=
+nfig)
+> failed like this:
 >=20
-> > This is a bit different to yesterday's failure but I assume it is still
-> > related to commit 5d6be6a5d486 ("scsi_netlink : Make SCSI_NETLINK
-> > dependent on NET instead of selecting NET").
-> >=20
-> > I used the net tree from next-20140915 again today.
->=20
-> Should be fixed by:
->=20
-> commit 6a38792ca8a5da28f65dc42eeb73d9a431f8d0fd
-> Author: Randy Dunlap <rdunlap@infradead.org>
-> Date:   Tue Sep 16 13:47:41 2014 -0700
->=20
->     scsi: use 'depends' instead of 'select' for SCSI_FC_ATTRS
->    =20
->     There are other kconfig symbols which use SCSI_FC_ATTRS.
->     In order to maintain sanity and prevent kconfig warnings, change
->     all of these from using 'select' to using 'depends on' so that
->     proper symbol dependencies will be honored and circular depends
->     problems will be avoided.
->     This fixes kconfig warnings and build errors:
+> ERROR: "omap_stop_dma" [drivers/media/platform/soc_camera/omap1_camera.ko=
+] undefined!
+> ERROR: "omap_start_dma" [drivers/media/platform/soc_camera/omap1_camera.k=
+o] undefined!
+> ERROR: "omap_dma_link_lch" [drivers/media/platform/soc_camera/omap1_camer=
+a.ko] undefined!
+> ERROR: "omap_set_dma_dest_burst_mode" [drivers/media/platform/soc_camera/=
+omap1_camera.ko] undefined!
+> ERROR: "omap_set_dma_src_params" [drivers/media/platform/soc_camera/omap1=
+_camera.ko] undefined!
+> ERROR: "omap_request_dma" [drivers/media/platform/soc_camera/omap1_camera=
+.ko] undefined!
+> ERROR: "omap_set_dma_transfer_params" [drivers/media/platform/soc_camera/=
+omap1_camera.ko] undefined!
+> ERROR: "omap_set_dma_dest_params" [drivers/media/platform/soc_camera/omap=
+1_camera.ko] undefined!
+> ERROR: "omap_free_dma" [drivers/media/platform/soc_camera/omap1_camera.ko=
+] undefined!
+> ERROR: "__bad_ndelay" [drivers/media/platform/s5p-jpeg/s5p-jpeg.ko] undef=
+ined!
+> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_display.ko] undef=
+ined!
+> ERROR: "vpif_lock" [drivers/media/platform/davinci/vpif_capture.ko] undef=
+ined!
 
-OK, thanks.  That was not in the net tree I fetched this morning, so
-should be good tomorrow.
+Still getting these ...
+
+> I have used the v4l-dvb tree from next-20140908 for today.
+
+So this still applies.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/C1dOj0=f.Gtgr.IlFc622L2
+--Sig_/rpL3zsI5C.XEYuJq/0jx+ep
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUGO9kAAoJEMDTa8Ir7ZwV0D4P/2TaL3IDRucJ9wG0lmpxJxXu
-Mn23DMYSmVqfWBC/3SAa2had30q0OozZEyLGLRtelKwtikX2dCvBtE5cX+winX7T
-hcRGqn1WOoZlk4xzGOmsJT9BiDiR5ZkOyWt4KCsJx7HhlwlWDok/EdLi0LguzS63
-ygDxDQdRa3k83XxKghPWhbdPIovuQ9aD9pFq6JPKLvSgrJcKsbcgq+mRS6F1UxmD
-njVq+LWSmIJgUzbSMheiRExBfRGuvm14OoinTfzkttAgdAQKZasOtCa5CtSvnhoN
-JdjFNnQJBeYOQt3NV50+jZHlRG+Rp4TGquBG28I7Mlmzf1wmJBfAyL2nh+IEqZER
-ZMbUwAmnRkpvZQOKH9TFGObP00z6pprSUwYOV2K10ifKkn3Zwa6axF/TA5CJWQG0
-9FztZqfrCE3zXv62a8yhvkbzAgJJlZ7pfawU5gNzwp8yhCf5GCc/3y3SKTJrLC1t
-fxlYdFmyO2ve9sM8j07iTOauGStVegN6VYtdm5Sod5nVfkCVs4MJrocnJgzYhGmB
-p9XQBtEvzj/c334/k1X44aEI7G3FINsef/WJmbRWUQHG2/r5Ud6lK2ITGpKSnmuz
-KQyEvAjfx2nNGVAWCRjVd0sL40YRIziLhW4NF6kcyQZMNBnC1KKUoJVASR3sxxAq
-EPlIIOUWX4yJN9fxBGFP
-=Jgf3
+iQIcBAEBCAAGBQJUGQRhAAoJEMDTa8Ir7ZwVeN0QAJatBYn5HBWmet/x+Zr+rzK7
+o2zt8krLEgcNZDCW2YdTHsMMNdxXZg2j8CqC1WK3VmFn2t/ZzXPH3N0HzjMHlz+n
+bewnkiIsAjH0TxL0SAW7GCgGlvU4nvGqv54Hr8v83qCEZXB0JILNehzT5CFdlS5e
++pVX91uRyP/CTndNY0k97SNcl2cz+QaqNZB9CLITWF/6X+7lR5CckcTzlBuAdhrQ
+6G6ioRa0dNeSEztpwzXjBRQxTEbzWl+iKLfrixGrk5XkQ1zF4GcZPMBnnwoPC10S
+JxgNxhb47kE/P9/bWd2pZDCgKcYbTnDYtKfd6L/c9/zCsMybNK1NXfmDtEaBtZPy
+UUWjh+M6sLPnrS5b/3aGhbbNncIZdKEFjtvSBviQMWgYw7MCCkIS39Zap/wnSYpo
+eIM+HBkDa7UzOxfScJOrFcv7N3R3+0iXTBnLljwGKpR7GaXRCKYRvzEU0pOrw8Jr
+in+NP33f6cguZ/qjpYd8Uq0WB/S7YqknlNY0aN+F5uxSId1SEGDDItcC+4PKrpIU
+FlWANX/uRiR0LWqBimUhw2P/fC78KbyN9am+fNZJCptRHYEBr5VnA4I6255n2BUn
+KMnwyNJEQZ4iUdyCjEouEJi6A3E+oPh5udsGRTwBYFdFQI0RLCRkKY1R+cgDcr8m
+zs+b/ApNiP/Nx3GPikS7
+=3WBV
 -----END PGP SIGNATURE-----
 
---Sig_/C1dOj0=f.Gtgr.IlFc622L2--
+--Sig_/rpL3zsI5C.XEYuJq/0jx+ep--
