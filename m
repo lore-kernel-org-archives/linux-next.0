@@ -1,36 +1,60 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Wed, 17 Sep 2014 17:35:06 -0700
-Message-ID: <541A28BA.1060201@infradead.org>
-References: <20140918103200.12b79941@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the fsl tree
+Date: Thu, 18 Sep 2014 10:47:01 +1000
+Message-ID: <20140918104701.1f99aa6b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20140918103200.12b79941@canb.auug.org.au>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2i6rv9ARndZSc+IqzaRCCeW"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52691 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752994AbaIRArJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Sep 2014 20:47:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Scott Wood <scottwood@freescale.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/17/14 17:32, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
-> 
-> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440EPX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) selects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX && 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440EPX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) selects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX && 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> 
+--Sig_/2i6rv9ARndZSc+IqzaRCCeW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have looked into these and don't see why there is a problem.
-Any help would be appreciated.
+Hi Scott,
 
--- 
-~Randy
+After merging the fsl tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+arch/powerpc/kernel/built-in.o: In function `.dma_direct_alloc_coherent':
+(.text+0x14bc8): undefined reference to `.dma_pfn_limit_to_zone'
+
+Probably caused by commit 1c98025c6c95 ("powerpc: Dynamic DMA zone
+limits").
+
+I have used the fsl tree from next-20140917 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/2i6rv9ARndZSc+IqzaRCCeW
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUGiuKAAoJEMDTa8Ir7ZwVrokP/i8gpNlGCiaQSjBqQLKkZlUJ
+pY73GPyDg9doTTWxPzAWSCjKqI47uBoEh+rGbwkQyv8NiZ8wdLd53IChN4Q8VUR8
+tewKPRzNHzWPSDNUCPAVZo6LTTSNtU1Jqp5Ci7yarBWRUYRMwrMc+lM/Mw0DzEmp
+5+qfYK0Da/6PMTWnxh7DCYb4pKmpT3RThONhpd4qc3yY6+6qxHwSfCoLd1/Z+j5F
+blyZ2eynmD8BGFJO42mcAiyTRNNSRrEuXrm0H/5Sqgs7uAp5f1xKdYK1ajok8RR8
+o8ZN3px4wEUCJga96Dsyx+8TyifGGD6e1SatQddvmfA0WjXotoaB18ezXCLLZSsd
+nHTDSkj6kNR6J4AGTH0/j08k3UjfYcsvfl2EKYe8zca+FSdQLYcId0UXem01ad5+
+FDYSeZ8978KxDFqJHpJ0skjkJ2llgIG4a3UFgrmOajM2YrxZR+mUfAgJ4w2UsP2A
+SbdzjjZFolxAGWW71jRfwsQXK7QsjUtasAvvBmHuZ2MQ0QofMMV+TJ78ph3Aewgc
+fMGW8cgPV8oYm0NggttRaG94NyjwWDiTrW2xTDbU042jI2YxLxe2nE0iU1lhZC+R
+8bxD3rOiAyfGRLxxXw/YLTddcY6uaBrdv8NijyQGLhpFpNaEJRTcZfPzWE1LQ413
+a9hvA6xARtcfbN6hnpMq
+=lL5b
+-----END PGP SIGNATURE-----
+
+--Sig_/2i6rv9ARndZSc+IqzaRCCeW--
