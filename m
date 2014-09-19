@@ -1,21 +1,37 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 19
-Date: Fri, 19 Sep 2014 15:21:53 -0700
-Message-ID: <541CAC81.9040404@infradead.org>
-References: <20140919165817.225eb8b8@canb.auug.org.au> <20140919211404.GA24856@roeck-us.net>
+From: Anish Bhatt <anish@chelsio.com>
+Subject: RE: linux-next: Tree for Sep 19
+Date: Fri, 19 Sep 2014 22:28:07 +0000
+Message-ID: <525DB349B3FB5444AE057A887CB2A8D88EF5BD@nice.asicdesigners.com>
+References: <20140919165817.225eb8b8@canb.auug.org.au>
+ <20140919211404.GA24856@roeck-us.net>,<541CAC81.9040404@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:43673 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932362AbaISWWA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Sep 2014 18:22:00 -0400
-In-Reply-To: <20140919211404.GA24856@roeck-us.net>
+Received: from 99-65-72-228.uvs.sntcca.sbcglobal.net ([99.65.72.228]:16531
+	"EHLO stargate.chelsio.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1757837AbaISW3F convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 19 Sep 2014 18:29:05 -0400
+In-Reply-To: <541CAC81.9040404@infradead.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anish Bhatt <anish@chelsio.com>, "David S. Miller" <davem@davemloft.net>, "James E.J. Bottomley" <JBottomley@parallels.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "James E.J. Bottomley" <JBottomley@parallels.com>
+
+Is it completely acceptable to have default configs that select menu entries 
+but not their dependencies ? Since essentially earlier the select on 
+SCSI_NETLINK select used to select NET but no longer does, so I'm wondering
+ if this was an oversight earlier.  Is this something that's supposed to be 
+automatically resolved ?
+-Anish
+________________________________________
+From: Randy Dunlap [rdunlap@infradead.org]
+Sent: Friday, September 19, 2014 3:21 PM
+To: Guenter Roeck; Stephen Rothwell
+Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Anish Bhatt; David S. Miller; James E.J. Bottomley
+Subject: Re: linux-next: Tree for Sep 19
 
 On 09/19/14 14:14, Guenter Roeck wrote:
 > On Fri, Sep 19, 2014 at 04:58:17PM +1000, Stephen Rothwell wrote:
@@ -36,9 +52,9 @@ On 09/19/14 14:14, Guenter Roeck wrote:
 >> ----------------------------------------------------------------------------
 >>
 > Guess this is most difficult one.
-> 
+>
 > mips:nlm_xlp_defconfig:
-> 
+>
 > warning: (SCSI_BNX2X_FCOE && LIBFCOE && TCM_QLA2XXX) selects LIBFC which has
 > unmet direct dependencies (SCSI_LOWLEVEL && SCSI && SCSI_FC_ATTRS)
 > warning: (SCSI_BNX2X_FCOE && LIBFCOE && TCM_QLA2XXX) selects LIBFC which has
@@ -72,7 +88,7 @@ Thanks.
 
 
 > followed by:
-> 
+>
 > ERROR: "scsi_is_fc_rport" [drivers/scsi/libfc/libfc.ko] undefined!
 > ERROR: "fc_get_event_number" [drivers/scsi/libfc/libfc.ko] undefined!
 > ERROR: "skb_trim" [drivers/scsi/libfc/libfc.ko] undefined!
@@ -102,24 +118,24 @@ Thanks.
 > ERROR: "dev_queue_xmit" [drivers/scsi/fcoe/libfcoe.ko] undefined!
 > ERROR: "skb_put" [drivers/scsi/fcoe/libfcoe.ko] undefined!
 > ERROR: "dev_get_stats" [drivers/scsi/fcoe/libfcoe.ko] undefined!
-> 
+>
 > The problem is that there are many different errors seen at various stages
 > during bisect, making a bisect a bit tricky.
-> 
+>
 > --------
 > At commit 'xfrm: Generate blackhole routes only from route lookup functions',
 > the error is:
-> 
+>
 > drivers/scsi/scsi_transport_fc.c: In function 'fc_host_post_event':
 > drivers/scsi/scsi_transport_fc.c:543:7: error: 'scsi_nl_sock' undeclared
 > drivers/scsi/scsi_transport_fc.c: In function 'fc_host_post_vendor_event':
 > drivers/scsi/scsi_transport_fc.c:611:7: error: 'scsi_nl_sock' undeclared
-> 
+>
 > --------
 > At commit 'bnx2i/bnx2fc : fix randconfig error in next-20140909' and
 > 'scsi_netlink : Make SCSI_NETLINK dependent on NET instead of selecting NET',
 > the error is:
-> 
+>
 > drivers/built-in.o: In function `scsi_nl_rcv_msg':
 > drivers/scsi/scsi_netlink.c:114: undefined reference to `netlink_ack'
 > drivers/scsi/scsi_netlink.c:116: undefined reference to `skb_pull'
@@ -130,12 +146,12 @@ Thanks.
 > include/linux/netlink.h:60: undefined reference to `__netlink_kernel_create'
 > drivers/built-in.o: In function `scsi_netlink_exit':
 > drivers/scsi/scsi_netlink.c:153: undefined reference to `netlink_kernel_release'
-> 
+>
 > -------
-> 
+>
 > Bisect reports commit 5d6be6a5d486 ('scsi_netlink : Make SCSI_NETLINK dependent
 > on NET instead of selecting NET') as first bad commit.
 
 
--- 
+--
 ~Randy
