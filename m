@@ -1,35 +1,68 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Sep 19
-Date: Fri, 19 Sep 2014 14:14:04 -0700
-Message-ID: <20140919211404.GA24856@roeck-us.net>
-References: <20140919165817.225eb8b8@canb.auug.org.au>
+From: Anish Bhatt <anish@chelsio.com>
+Subject: RE: linux-next: Tree for Sep 19
+Date: Fri, 19 Sep 2014 21:42:47 +0000
+Message-ID: <525DB349B3FB5444AE057A887CB2A8D88EF4BB@nice.asicdesigners.com>
+References: <20140919165817.225eb8b8@canb.auug.org.au>,<20140919211404.GA24856@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140919165817.225eb8b8@canb.auug.org.au>
+In-Reply-To: <20140919211404.GA24856@roeck-us.net>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anish Bhatt <anish@chelsio.com>, "David S. Miller" <davem@davemloft.net>, "James E.J. Bottomley" <JBottomley@parallels.com>
+To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "rdunlap@infradead.org" <rdunlap@infradead.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "James E.J. Bottomley" <JBottomley@parallels.com>
 List-Id: linux-next.vger.kernel.org
+
+If you're just bisecting, you probably want my very first commit that started this :
+https://git.kernel.org/cgit/linux/kernel/git/davem/net.git/commit/?id=c99d667e852766afc755fa4430be64bb94e5ea1c
+
+Essentially, the bnx2 modules would silently disable ipv6 support if ipv6 was 
+compiled as a module, but cnic was inbuilt. Then it turned out that the select
+on CNIC would override the tristate for CNIC, causing build failures.
+
+The fix for CNIC caused introduced recursive dependencies, requiring this :
+https://git.kernel.org/cgit/linux/kernel/git/davem/net.git/commit/?id=5d6be6a5d4864712832822efeb9c2d54e4063949
+
+which further required this :
+https://git.kernel.org/cgit/linux/kernel/git/davem/net.git/commit/?id=95cd6f488d164de462a8279e802a0ad05c33d167
+
+Turns out this was not enough either, requiring this fix :
+https://git.kernel.org/cgit/linux/kernel/git/davem/net.git/commit/?id=6a38792ca8a5da28f65dc42eeb73d9a431f8d0fd
+
+and so on and so forth. According to the last message, Randy might be
+ working on a proper fix for this :
+http://www.spinics.net/lists/linux-scsi/msg78416.html
+
+Most of this seems to be that the default configs do not select NET, but select SCSI_FC* 
+which used to previously select NET on it's own (via SCSI_NET_LINK), maybe this 
+is wrong too ?
+-Anish
+
+________________________________________
+From: Guenter Roeck [groeck7@gmail.com] on behalf of Guenter Roeck [linux@roeck-us.net]
+Sent: Friday, September 19, 2014 2:14 PM
+To: Stephen Rothwell
+Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Anish Bhatt; David S. Miller; James E.J. Bottomley
+Subject: Re: linux-next: Tree for Sep 19
 
 On Fri, Sep 19, 2014 at 04:58:17PM +1000, Stephen Rothwell wrote:
 > Hi all,
-> 
+>
 > Changes since 20140917:
-> 
+>
 > The fsl tree still had its build failure so I used the version from
 > next-20140917.
-> 
+>
 > The v4l-dvb tree lost its build failure.
-> 
+>
 > The security tree gained a conflict against the file-locks tree.
-> 
+>
 > Non-merge commits (relative to Linus' tree): 6014
 >  5488 files changed, 217522 insertions(+), 129375 deletions(-)
-> 
+>
 > ----------------------------------------------------------------------------
-> 
+>
 Guess this is most difficult one.
 
 mips:nlm_xlp_defconfig:
