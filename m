@@ -1,65 +1,71 @@
-From: Guenter Roeck <linux@roeck-us.net>
+From: Helge Deller <deller@gmx.de>
 Subject: Re: linux-next: Tree for Sep 19
-Date: Fri, 19 Sep 2014 19:40:45 -0700
-Message-ID: <541CE92D.70301@roeck-us.net>
-References: <541CC721.2010207@roeck-us.net>	<541CD3C3.3010905@infradead.org>	<525DB349B3FB5444AE057A887CB2A8D88EF892@nice.asicdesigners.com> <20140919.220856.2166907140359359148.davem@davemloft.net>
+Date: Sat, 20 Sep 2014 21:36:52 +0200
+Message-ID: <541DD754.4040000@gmx.de>
+References: <20140919165817.225eb8b8@canb.auug.org.au> <20140919191514.GA5358@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:59519 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758216AbaITCkz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Sep 2014 22:40:55 -0400
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1XVAbX-003Wfy-Bz
-	for linux-next@vger.kernel.org; Sat, 20 Sep 2014 02:40:55 +0000
-In-Reply-To: <20140919.220856.2166907140359359148.davem@davemloft.net>
+Received: from mout.gmx.net ([212.227.15.18]:61012 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754691AbaITThG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 20 Sep 2014 15:37:06 -0400
+In-Reply-To: <20140919191514.GA5358@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, anish@chelsio.com
-Cc: rdunlap@infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, JBottomley@parallels.com, mchan@broadcom.com
+To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
 
-On 09/19/2014 07:08 PM, David Miller wrote:
-> From: Anish Bhatt <anish@chelsio.com>
-> Date: Sat, 20 Sep 2014 01:43:05 +0000
->
->> Original config causing issues can be seen here :
->> https://lkml.org/lkml/2014/9/9/500
+Hi G=FCnter,
+
+On 09/19/2014 09:15 PM, Guenter Roeck wrote:
+> On Fri, Sep 19, 2014 at 04:58:17PM +1000, Stephen Rothwell wrote:
+>> Changes since 20140917:
 >>
->> As CNIC depends on IPV6, CNIC can be only compiled as a module when IPV6 is
->> compiled as a module. This was the patch I originally commited. Previous
->> behaviour was to disable all ipv6 code in such a case. However, having bnx2fc/i
->>   as built-in overrides CNIC's tristate from m to built-in (as they select CNIC),
->>   causing build issues. As far as I know, there is no way to control the state
->> that select sets.
+>> The fsl tree still had its build failure so I used the version from
+>> next-20140917.
+>>
+>> The v4l-dvb tree lost its build failure.
+>>
+>> The security tree gained a conflict against the file-locks tree.
+>>
+>> Non-merge commits (relative to Linus' tree): 6014
+>>   5488 files changed, 217522 insertions(+), 129375 deletions(-)
+>>
+>> --------------------------------------------------------------------=
+--------
+>>
 >
-> Really, nothing that has dependencies should be "select"'d, ever.
+> parisc:defconfig, parisc:generic-32bit_defconfig:
 >
-> What people hack up is that they try to do this, and "make it work"
-> by "select"'ing all of the selected object's dependencies.  And
-> then you have to do this recursively for dependencies which have
-> dependencies.
+> --------------
+> Error log:
+> arch/parisc/kernel/ptrace.c: In function 'do_syscall_trace_enter':
+> arch/parisc/kernel/ptrace.c:274:2: error: implicit declaration of fun=
+ction
+> 'secure_computing' [-Werror=3Dimplicit-function-declaration]
+> cc1: some warnings being treated as errors
+> make[1]: *** [arch/parisc/kernel/ptrace.o] Error 1
 >
-> This is really incredibly stupid.
->
-> And once something in that chain gains a new dependency, all of
-> these "select" instances break.
->
-> I really want all of these netlink users to "depend" on "NET"
-> rather than "select" it, and so on and so forth down to the
-> users of these netlink using subsystems.
->
+> Bisect points to commit 273299fb6380 ('Merge branch 'x86/seccomp') wh=
+ich
+> obviously doesn't help much. Suspected culprit is c90f06943e05 ('pari=
+sc: Wire up
+> seccomp, getrandom and memfd_create syscalls') which seems to be miss=
+ing an
+> include file.
 
-Sure, that makes sense on some level, but you would have to make sure
-that any changes made are clean and don't break existing configurations,
-and/or you would have to make sure that all affected configurations are
-updated as needed. A single-line change in a configuration file, to hell
-with the consequences, just doesn't cut it.
+I could not reproduce this error with current git head.
 
-We already know that 11 out of 55 mips configurations are broken in
-linux-next. I don't even want to know what else is broken. That is
-a pretty high price to pay to achieve purity.
+Nevertheless, it probably makes sense to #include <linux/seccomp.h> in =
+ptrace.c to
+avoid a dependency on other header files to include it instead.
+I've added this patch to my for-next tree:
+http://git.kernel.org/cgit/linux/kernel/git/deller/parisc-linux.git/com=
+mit/?h=3Dfor-next&id=3D0f18557b017b3469e1f8edf5cf34c1cba856fdbe
 
-Guenter
+Could you try again?
+
+Helge
