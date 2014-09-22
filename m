@@ -1,74 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 22 Sep 2014 11:52:40 +1000
-Message-ID: <20140922115240.51c9a6fd@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the nfs tree
+Date: Mon, 22 Sep 2014 13:31:56 +1000
+Message-ID: <20140922133156.454481f9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw"; protocol="application/pgp-signature"
+ boundary="Sig_/HWJk7xCnoYb9+7N5y_CCi.Z"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56017 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35076 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751325AbaIVBwu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Sep 2014 21:52:50 -0400
+	id S1752688AbaIVDcM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Sep 2014 23:32:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>, Marc Kleine-Budde <mkl@pengutronix.de>, Stefan Agner <stefan@agner.ch>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kirill Tkhai <ktkhai@parallels.com>, Christoph Hellwig <hch@lst.de>
 
---Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw
+--Sig_/HWJk7xCnoYb9+7N5y_CCi.Z
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/can/flexcan.c between commit fc05b884a31d ("can: flexcan:
-correctly initialize mailboxes") from the net tree and commit
-cdce844865be ("can: flexcan: add vf610 support for FlexCAN") from the
-net-next tree.
+Today's linux-next merge of the tip tree got conflicts in
+fs/nfs/blocklayout/blocklayoutdev.c and
+fs/nfs/blocklayout/blocklayoutdm.c between commit 871760ce97a9
+("pnfs/blocklayout: move all rpc_pipefs related code into a single
+file") from the nfs tree and commit f139caf2e897 ("sched, cleanup,
+treewide: Remove set_current_state(TASK_RUNNING) after schedule()")
+from the tip tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the former move the code in these two files into
+fs/nfs/blocklayout/rpc_pipefs.c, so I deleted the 2 files and applied
+the following merge fix patch) and can carry the fix as necessary (no
+action is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 22 Sep 2014 13:29:19 +1000
+Subject: [PATCH] pnfs: merge fixup for sched cleanup of set_current_state(T=
+ASK_RUNNING)
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/nfs/blocklayout/rpc_pipefs.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/nfs/blocklayout/rpc_pipefs.c b/fs/nfs/blocklayout/rpc_pipef=
+s.c
+index 8d04bda2bd2e..e966c023b1b7 100644
+--- a/fs/nfs/blocklayout/rpc_pipefs.c
++++ b/fs/nfs/blocklayout/rpc_pipefs.c
+@@ -92,7 +92,6 @@ bl_resolve_deviceid(struct nfs_server *server, struct pnf=
+s_block_volume *b,
+=20
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	schedule();
+-	__set_current_state(TASK_RUNNING);
+ 	remove_wait_queue(&nn->bl_wq, &wq);
+=20
+ 	if (reply->status !=3D BL_DEVICE_REQUEST_PROC) {
+--=20
+2.1.0
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/can/flexcan.c
-index 6586309329e6,2700865efcad..000000000000
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@@ -824,8 -859,7 +883,8 @@@ static int flexcan_chip_start(struct ne
-  	struct flexcan_priv *priv =3D netdev_priv(dev);
-  	struct flexcan_regs __iomem *regs =3D priv->base;
-  	int err;
-- 	u32 reg_mcr, reg_ctrl;
-+ 	u32 reg_mcr, reg_ctrl, reg_crl2, reg_mecr;
- +	int i;
- =20
-  	/* enable module */
-  	err =3D flexcan_chip_enable(priv);
-
---Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw
+--Sig_/HWJk7xCnoYb9+7N5y_CCi.Z
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUH4DvAAoJEMDTa8Ir7ZwV1YsP/jFx2tjNgR/WURmwaW2Lpiss
-p9Cw8vJckzLu80lgcYZmXhp8+ROv2Qe6GFUkU3pHsNBM1YOqM6gYsL+ib71OIdcg
-b07EWyRuJ8RROtSUvE3iiRxEJCJQ1Gl6XjIzndKJL69z0v6zeYtZ75ORuHgzwlo1
-LhIPkmBx8/YG2rBLmN+PXFSvypYooa4Ze0DmpGezMTxoG+Y+YIjdQ2Bh6GOX8FVv
-4efComZTz2kssa1rKEy1PZ/G9Cce/PWfsu8pRmeyQmr1m9OflvCvg6Pc/63ys3FQ
-7ULqFKd5XlzQSFm1R2n+RqGnFko712gqJVMxqr35K0l7+iJ2lsTpFYt5tJtl69El
-XWxbeoM3Q6q0pO/13c6cWfMziqEkabTeEBgBzt+UHyDxXqXEOjnDJdRe1p8e8gqf
-n5RJZYiQIuBU7+gE1yC+8qcno6ZARzqHI9h4T0KcysYN6JfCyEiFxZwc9zm1/OpV
-y+MyVrzWJP8WwxiPUwu3EpsODSO6A81Y1WaphUiIYkxYLJxLbcR/pybkrZ8cs6vc
-V6707yqgZyI4gM8HwNfXUaw7beDDBp8WYlkMSJdEPePE3GpoecuajCh4rDWMiVK8
-AjUQP9Csv1x7XLwE8rlaCYkjpjUTN8f6KjN5Jh86Odzn2PR3rVBRfFVZOp+1BO0M
-wkDIEkosNOTC1qWL6s6O
-=xjoc
+iQIcBAEBCAAGBQJUH5g5AAoJEMDTa8Ir7ZwV1ZYP/jLxnkdNkLjKTR3qA1O1sPG1
+eNVBylzFpffeengF2g8XPh5Ngbbx36zWBWRa+dYi4+4e7vPXjCXqAkfPv+RR0sEO
+CRzORljgpYnEv5P76Y43tz4gUYrcDLH2mOCqMK3qpQyn48DZiq751DbzKMjS68VZ
+TJN7M2rBySZ/Z720pu3nQcgprJNYJ4emlAqlKhz2v7OeWlxbbT5HesPeufWKOcPD
+IA01/iQayCDAtS9zpJrXgukpE0URwchDDV4eEQAkK6jcoBOe37P5kTDrliRq5hI+
++CA2dUdNNZbGuuke57VB6T2PL9FQaLL3xcEXiDoG/anztaMlcoDQ7OWsj63/EWt3
+m5XiJkdQw4gyqhS3viyPLJeRWYOzBkZVj+q2DIdZybOywfAgoCANYox7WLdlW4Ut
+SyOEAjlkRAdkzb27+6jssEOzIQeh0VN1rDQbJJZajv5u4xjyReXOGxhfxmk3h/iJ
+xBFfGauOIfJqUUJU1hmbWNvxRSz6cCVWY3wTPh8Bd32lOIhfGmlEMvvzbdvxijgd
+KOPJvKw9Qv2RpeJpa+qbaBjojjbrAGnpLuSeRIjLx3Wd8fPxRjVfwF/W8OU5VXIO
+gWogxWrlopuwsfbLYKrG97LtPyYo3aoLL2Lwb+Fc5hhDiWpQJ7y+FvcoPPd9MlYG
+mDiCx+zkjWPDUMFgkW5x
+=Vws5
 -----END PGP SIGNATURE-----
 
---Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw--
+--Sig_/HWJk7xCnoYb9+7N5y_CCi.Z--
