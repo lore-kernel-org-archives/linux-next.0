@@ -1,96 +1,74 @@
-From: Helge Deller <deller@gmx.de>
-Subject: Re: linux-next: Tree for Sep 19
-Date: Sun, 21 Sep 2014 21:43:46 +0200
-Message-ID: <541F2A72.8030007@gmx.de>
-References: <20140919165817.225eb8b8@canb.auug.org.au> <20140919191514.GA5358@roeck-us.net> <541DD754.4040000@gmx.de> <541DEB33.2070508@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 22 Sep 2014 11:52:40 +1000
+Message-ID: <20140922115240.51c9a6fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:61020 "EHLO mout.gmx.net"
+Received: from ozlabs.org ([103.22.144.67]:56017 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751374AbaIUTn6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Sep 2014 15:43:58 -0400
-In-Reply-To: <541DEB33.2070508@roeck-us.net>
+	id S1751325AbaIVBwu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Sep 2014 21:52:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>, Marc Kleine-Budde <mkl@pengutronix.de>, Stefan Agner <stefan@agner.ch>
 
-Hi G=FCnter,
+--Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 09/20/2014 11:01 PM, Guenter Roeck wrote:
-> On 09/20/2014 12:36 PM, Helge Deller wrote:
->> Hi G=FCnter,
->>
->> On 09/19/2014 09:15 PM, Guenter Roeck wrote:
->>> On Fri, Sep 19, 2014 at 04:58:17PM +1000, Stephen Rothwell wrote:
->>>> Changes since 20140917:
->>>>
->>>> The fsl tree still had its build failure so I used the version fro=
-m
->>>> next-20140917.
->>>>
->>>> The v4l-dvb tree lost its build failure.
->>>>
->>>> The security tree gained a conflict against the file-locks tree.
->>>>
->>>> Non-merge commits (relative to Linus' tree): 6014
->>>>   5488 files changed, 217522 insertions(+), 129375 deletions(-)
->>>>
->>>> ------------------------------------------------------------------=
-----------
->>>>
->>>
->>> parisc:defconfig, parisc:generic-32bit_defconfig:
->>>
->>> --------------
->>> Error log:
->>> arch/parisc/kernel/ptrace.c: In function 'do_syscall_trace_enter':
->>> arch/parisc/kernel/ptrace.c:274:2: error: implicit declaration of f=
-unction
->>> 'secure_computing' [-Werror=3Dimplicit-function-declaration]
->>> cc1: some warnings being treated as errors
->>> make[1]: *** [arch/parisc/kernel/ptrace.o] Error 1
->>>
->>> Bisect points to commit 273299fb6380 ('Merge branch 'x86/seccomp') =
-which
->>> obviously doesn't help much. Suspected culprit is c90f06943e05 ('pa=
-risc: Wire up
->>> seccomp, getrandom and memfd_create syscalls') which seems to be mi=
-ssing an
->>> include file.
->
->> I've added this patch to my for-next tree:
->> http://git.kernel.org/cgit/linux/kernel/git/deller/parisc-linux.git/=
-commit/?h=3Dfor-next&id=3D0f18557b017b3469e1f8edf5cf34c1cba856fdbe
->
-> That doesn't solve the problem for me, most likely because
-> HAVE_ARCH_SECCOMP_FILTER is not set for parisc in next-20140919.
-> This is what seccomp.h does with it:
->
-> #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
-> static inline int secure_computing(void) { return 0; }
-> #else
-> static inline void secure_computing_strict(int this_syscall) { return=
-; }
-> #endif
->
-> You don't have this flag in your tree. It was introduced in -next wit=
-h
-> commit 'seccomp,x86,arm,mips,s390: Remove nr parameter from secure_co=
-mputing'.
+Hi all,
 
-Thanks for the hint!
-Since parisc currently only supports the strict mode, I've changed the =
-code
-to call secure_computing_strict() instead of secure_computing() with th=
-is commit in my for-next tree:
-http://git.kernel.org/cgit/linux/kernel/git/deller/parisc-linux.git/com=
-mit/?h=3Dfor-next&id=3Dfe5c873459a973e59854bd235a7e6b3eaa8e5fe0
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/can/flexcan.c between commit fc05b884a31d ("can: flexcan:
+correctly initialize mailboxes") from the net tree and commit
+cdce844865be ("can: flexcan: add vf610 support for FlexCAN") from the
+net-next tree.
 
-It now builds cleanly with the next-20140919 tree.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Thanks!
-Helge
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/can/flexcan.c
+index 6586309329e6,2700865efcad..000000000000
+--- a/drivers/net/can/flexcan.c
++++ b/drivers/net/can/flexcan.c
+@@@ -824,8 -859,7 +883,8 @@@ static int flexcan_chip_start(struct ne
+  	struct flexcan_priv *priv =3D netdev_priv(dev);
+  	struct flexcan_regs __iomem *regs =3D priv->base;
+  	int err;
+- 	u32 reg_mcr, reg_ctrl;
++ 	u32 reg_mcr, reg_ctrl, reg_crl2, reg_mecr;
+ +	int i;
+ =20
+  	/* enable module */
+  	err =3D flexcan_chip_enable(priv);
+
+--Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUH4DvAAoJEMDTa8Ir7ZwV1YsP/jFx2tjNgR/WURmwaW2Lpiss
+p9Cw8vJckzLu80lgcYZmXhp8+ROv2Qe6GFUkU3pHsNBM1YOqM6gYsL+ib71OIdcg
+b07EWyRuJ8RROtSUvE3iiRxEJCJQ1Gl6XjIzndKJL69z0v6zeYtZ75ORuHgzwlo1
+LhIPkmBx8/YG2rBLmN+PXFSvypYooa4Ze0DmpGezMTxoG+Y+YIjdQ2Bh6GOX8FVv
+4efComZTz2kssa1rKEy1PZ/G9Cce/PWfsu8pRmeyQmr1m9OflvCvg6Pc/63ys3FQ
+7ULqFKd5XlzQSFm1R2n+RqGnFko712gqJVMxqr35K0l7+iJ2lsTpFYt5tJtl69El
+XWxbeoM3Q6q0pO/13c6cWfMziqEkabTeEBgBzt+UHyDxXqXEOjnDJdRe1p8e8gqf
+n5RJZYiQIuBU7+gE1yC+8qcno6ZARzqHI9h4T0KcysYN6JfCyEiFxZwc9zm1/OpV
+y+MyVrzWJP8WwxiPUwu3EpsODSO6A81Y1WaphUiIYkxYLJxLbcR/pybkrZ8cs6vc
+V6707yqgZyI4gM8HwNfXUaw7beDDBp8WYlkMSJdEPePE3GpoecuajCh4rDWMiVK8
+AjUQP9Csv1x7XLwE8rlaCYkjpjUTN8f6KjN5Jh86Odzn2PR3rVBRfFVZOp+1BO0M
+wkDIEkosNOTC1qWL6s6O
+=xjoc
+-----END PGP SIGNATURE-----
+
+--Sig_/Jk5dDN7Z2zuV9vOMi2iwbmw--
