@@ -1,90 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the nfs tree
-Date: Mon, 22 Sep 2014 13:31:56 +1000
-Message-ID: <20140922133156.454481f9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm-arm tree
+Date: Mon, 22 Sep 2014 14:06:45 +1000
+Message-ID: <20140922140645.7c2ad9c8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HWJk7xCnoYb9+7N5y_CCi.Z"; protocol="application/pgp-signature"
+ boundary="Sig_/rPnD0DCrgG_QuSZzGsCY1/y"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35076 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46154 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752688AbaIVDcM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Sep 2014 23:32:12 -0400
+	id S1750723AbaIVEGx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Sep 2014 00:06:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kirill Tkhai <ktkhai@parallels.com>, Christoph Hellwig <hch@lst.de>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Auger <eric.auger@linaro.org>
 
---Sig_/HWJk7xCnoYb9+7N5y_CCi.Z
+--Sig_/rPnD0DCrgG_QuSZzGsCY1/y
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got conflicts in
-fs/nfs/blocklayout/blocklayoutdev.c and
-fs/nfs/blocklayout/blocklayoutdm.c between commit 871760ce97a9
-("pnfs/blocklayout: move all rpc_pipefs related code into a single
-file") from the nfs tree and commit f139caf2e897 ("sched, cleanup,
-treewide: Remove set_current_state(TASK_RUNNING) after schedule()")
-from the tip tree.
+After merging the kvm-arm tree, today's linux-next build (x86_64 allmodconf=
+ig)
+failed like this:
 
-I fixed it up (the former move the code in these two files into
-fs/nfs/blocklayout/rpc_pipefs.c, so I deleted the 2 files and applied
-the following merge fix patch) and can carry the fix as necessary (no
-action is required).
+arch/x86/kvm/../../../virt/kvm/eventfd.c: In function 'kvm_register_irq_ack=
+_notifier':
+arch/x86/kvm/../../../virt/kvm/eventfd.c:493:2: error: implicit declaration=
+ of function 'kvm_vcpu_request_scan_ioapic' [-Werror=3Dimplicit-function-de=
+claration]
+  kvm_vcpu_request_scan_ioapic(kvm);
+  ^
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 22 Sep 2014 13:29:19 +1000
-Subject: [PATCH] pnfs: merge fixup for sched cleanup of set_current_state(T=
-ASK_RUNNING)
+Probably caused by commit 0ba09511ddc3 ("KVM: EVENTFD: remove inclusion
+of irq.h").
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/nfs/blocklayout/rpc_pipefs.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/nfs/blocklayout/rpc_pipefs.c b/fs/nfs/blocklayout/rpc_pipef=
-s.c
-index 8d04bda2bd2e..e966c023b1b7 100644
---- a/fs/nfs/blocklayout/rpc_pipefs.c
-+++ b/fs/nfs/blocklayout/rpc_pipefs.c
-@@ -92,7 +92,6 @@ bl_resolve_deviceid(struct nfs_server *server, struct pnf=
-s_block_volume *b,
-=20
- 	set_current_state(TASK_UNINTERRUPTIBLE);
- 	schedule();
--	__set_current_state(TASK_RUNNING);
- 	remove_wait_queue(&nn->bl_wq, &wq);
-=20
- 	if (reply->status !=3D BL_DEVICE_REQUEST_PROC) {
---=20
-2.1.0
-
+I have used the kvm-arm tree from next-20140919 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/HWJk7xCnoYb9+7N5y_CCi.Z
+--Sig_/rPnD0DCrgG_QuSZzGsCY1/y
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUH5g5AAoJEMDTa8Ir7ZwV1ZYP/jLxnkdNkLjKTR3qA1O1sPG1
-eNVBylzFpffeengF2g8XPh5Ngbbx36zWBWRa+dYi4+4e7vPXjCXqAkfPv+RR0sEO
-CRzORljgpYnEv5P76Y43tz4gUYrcDLH2mOCqMK3qpQyn48DZiq751DbzKMjS68VZ
-TJN7M2rBySZ/Z720pu3nQcgprJNYJ4emlAqlKhz2v7OeWlxbbT5HesPeufWKOcPD
-IA01/iQayCDAtS9zpJrXgukpE0URwchDDV4eEQAkK6jcoBOe37P5kTDrliRq5hI+
-+CA2dUdNNZbGuuke57VB6T2PL9FQaLL3xcEXiDoG/anztaMlcoDQ7OWsj63/EWt3
-m5XiJkdQw4gyqhS3viyPLJeRWYOzBkZVj+q2DIdZybOywfAgoCANYox7WLdlW4Ut
-SyOEAjlkRAdkzb27+6jssEOzIQeh0VN1rDQbJJZajv5u4xjyReXOGxhfxmk3h/iJ
-xBFfGauOIfJqUUJU1hmbWNvxRSz6cCVWY3wTPh8Bd32lOIhfGmlEMvvzbdvxijgd
-KOPJvKw9Qv2RpeJpa+qbaBjojjbrAGnpLuSeRIjLx3Wd8fPxRjVfwF/W8OU5VXIO
-gWogxWrlopuwsfbLYKrG97LtPyYo3aoLL2Lwb+Fc5hhDiWpQJ7y+FvcoPPd9MlYG
-mDiCx+zkjWPDUMFgkW5x
-=Vws5
+iQIcBAEBCAAGBQJUH6BaAAoJEMDTa8Ir7ZwVYrcP/it/1+Tm2sEyL4pChioepPUo
+Nh4NFHpsgyT5s3H/S6qHl4Dnquk97Yco+MVNULVhSA92U6g6t7xllNXI4Vrp5Q0f
+bUeeMtnW8JqGGZHR52Rq99D+t0s/AfwU8NGUBNI7ScP60XnkXksCk2aUjK9f6JuB
+QkLRLIOe8KgOzyqxz7nuoydwje53yIuqPFbbWoV112Kb/V5L0bnTMtxpscn7AusH
+TGhLtMLOq655J+1HthxPqNqYQc4DmW7+K3cPiBOkM9vkDuLEzHHs38zpR3YyKIip
+XpDVM3YlVnxYeJKATvG0TUvAv2P95j5/AC9KdqFjSd0zLRnNPf3Yh/RTO/e0wIwo
+iQmtjjz2sdk6uWMGnpLA4XTszAS08Y+yRRPBXBDLib1o8wFo/NKXm5RndKWvYnkh
+FX4gHsIPHo8GQnuJxq/oxis6qGnBGdP17OcB7OFVzGiaBARB/XCLoXsOjNfeG5Uo
+vLRC1r4mpCqetyp1LVSicfjev1sccJF3kQ3gBgaI/4O0vVIHmK/e73OQWYD1RyWu
+54E9gBF3BpZ31lz9hEBXebPkKnWCUUOHVKNHdRRt/AdMc+1Us2fB3ptrIrq32Ig2
+I+vseW1uK87JUJYN2HaR3/UAxlQlBo2Rk32zfF1lAnSQBs/kyAeF5YXG1X6kzrkc
+3wdCtcokDdjUYhErA6y4
+=Aapl
 -----END PGP SIGNATURE-----
 
---Sig_/HWJk7xCnoYb9+7N5y_CCi.Z--
+--Sig_/rPnD0DCrgG_QuSZzGsCY1/y--
