@@ -1,46 +1,66 @@
-From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Subject: Re: [PATCH] xen: make pvscsi frontend dependant on xenbus frontend
-Date: Tue, 23 Sep 2014 15:06:52 +0100
-Message-ID: <alpine.DEB.2.02.1409231506390.15268@kaball.uk.xensource.com>
-References: <1410756301-23340-1-git-send-email-jgross@suse.com>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: build warning after merge of the net tree
+Date: Tue, 23 Sep 2014 16:59:59 +0200
+Message-ID: <54218AEF.5090200@suse.cz>
+References: <20140918103200.12b79941@canb.auug.org.au> <541A28BA.1060201@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1410756301-23340-1-git-send-email-jgross@suse.com>
+In-Reply-To: <541A28BA.1060201@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Juergen Gross <jgross@suse.com>
-Cc: jim.epost@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, konrad.wilk@oracle.com, boris.ostrovsky@oracle.com, david.vrabel@citrix.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 15 Sep 2014, Juergen Gross wrote:
-> The pvscsi frontend driver requires the xenbus frontend driver. Reflect
-> this in Kconfig.
+On 2014-09-18 02:35, Randy Dunlap wrote:
+> On 09/17/14 17:32, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the net tree, today's linux-next build (powerpc
+>> ppc64_defconfig) produced these warnings:
+>>
+>> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440EPX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) selects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX && 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440EPX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMII which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) selects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX && 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+>>
 > 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+> I have looked into these and don't see why there is a problem.
+> Any help would be appreciated.
 
-Reviewed-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+This is a side effect of 5d6be6a5 ("scsi_netlink : Make SCSI_NETLINK
+dependent on NET instead of selecting NET"). Previously, SCSI_FC_ATTRS
+would select SCSI_NETLINK which would select CONFIG_NET. The above
+warnings are just a tip of the iceberg, the more serious issue is that
+ppc64_defconfig is lacking networking support. This is the downside of
+savedefconfig, because the 'select' implications can disappear over
+time. Looks like more defconfigs are affected by this:
 
->  drivers/scsi/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> index 9130df1..ff62dc1 100644
-> --- a/drivers/scsi/Kconfig
-> +++ b/drivers/scsi/Kconfig
-> @@ -579,6 +579,7 @@ config VMWARE_PVSCSI
->  config XEN_SCSI_FRONTEND
->  	tristate "XEN SCSI frontend driver"
->  	depends on SCSI && XEN
-> +	select XEN_XENBUS_FRONTEND
->  	help
->  	  The XEN SCSI frontend driver allows the kernel to access SCSI Devices
->  	  within another guest OS (usually Dom0).
-> -- 
-> 1.8.4.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://secure-web.cisco.com/1jE8NNDhHwOASDbIzbn-azzuN8MKBMP1e4rCG2hGFpNvqSN8uwPwleK_Lmj9tzbaylXigSiLek5R_LJBvhlKaVWIjN_cB2SWcOB2WEXe4nDTKNaIEC6vNV5stEFM1SLzyMntl4a2YTHo6X7bvUsZQqYkXr5h_oDDR84iBHb2dum8/http%3A%2F%2Fwww.tux.org%2Flkml%2F
-> 
+$ grep -rL CONFIG_NET= arch/*/configs/ | xargs grep -l CONFIG_SCSI_FC_ATTRS=
+arch/ia64/configs/generic_defconfig
+arch/ia64/configs/gensparse_defconfig
+arch/mips/configs/ip27_defconfig
+arch/mips/configs/malta_defconfig
+arch/mips/configs/rm200_defconfig
+arch/mips/configs/malta_kvm_guest_defconfig
+arch/mips/configs/gpr_defconfig
+arch/mips/configs/jazz_defconfig
+arch/mips/configs/mtx1_defconfig
+arch/mips/configs/malta_kvm_defconfig
+arch/mips/configs/loongson3_defconfig
+arch/parisc/configs/c8000_defconfig
+arch/powerpc/configs/pseries_defconfig
+arch/powerpc/configs/pseries_le_defconfig
+arch/powerpc/configs/ppc64e_defconfig
+arch/powerpc/configs/ppc64_defconfig
+arch/powerpc/configs/pmac32_defconfig
+arch/sh/configs/sh2007_defconfig
+arch/sh/configs/sdk7780_defconfig
+arch/sparc/configs/sparc64_defconfig
+
+Michal
