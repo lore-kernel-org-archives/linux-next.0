@@ -1,64 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tiny tree
-Date: Tue, 23 Sep 2014 14:57:11 +1000
-Message-ID: <20140923145711.5c1ca775@canb.auug.org.au>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
+Date: Tue, 23 Sep 2014 07:43:28 +0200
+Message-ID: <20140923054328.GA28790@gmail.com>
+References: <20140923143232.5ffff46e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sJTJKn5x2GuFqwRuZYNwNpB"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45152 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751247AbaIWE5R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Sep 2014 00:57:17 -0400
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:62447 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753189AbaIWFne (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Sep 2014 01:43:34 -0400
+Content-Disposition: inline
+In-Reply-To: <20140923143232.5ffff46e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Josh Triplett <josh@joshtriplett.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
 
---Sig_/sJTJKn5x2GuFqwRuZYNwNpB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Josh,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-After merging the tiny tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+> Hi Josh,
+> 
+> Today's linux-next merge of the tiny tree got conflicts in
+> arch/x86/kernel/process_32.c and arch/x86/kernel/process_64.c between
+> commits dc56c0f9b870 ("x86, fpu: Shift "fpu_counter = 0" from
+> copy_thread() to arch_dup_task_struct()") and 6f46b3aef003 ("x86:
+> copy_thread: Don't nullify ->ptrace_bps twice") from the tip tree and
+> commits a1cf09f93e66 ("x86: process: Unify 32-bit and 64-bit
+> copy_thread I/O bitmap handling") and e4a191d1e05b ("x86: Support
+> compiling out userspace I/O (iopl and ioperm)") from the tiny tree.
 
-mm/built-in.o: In function `.isolate_migratepages_range':
-(.text+0x2fbd8): undefined reference to `.balloon_page_isolate'
-mm/built-in.o: In function `.putback_movable_pages':
-(.text+0x713c4): undefined reference to `.balloon_page_putback'
-mm/built-in.o: In function `.migrate_pages':
-(.text+0x72a00): undefined reference to `.balloon_page_migrate'
+Why are such changes in the 'tiny' tree? These are sensitive 
+arch/x86 files, and any unification and compilation-out support 
+patches need to go through the proper review channels and be 
+merged upstream via the x86 tree if accepted...
 
-Caused by commit b37a3fee8450 ("mm: Disable mm/balloon_compaction.c
-completely when !CONFIG_VIRTIO_BALLOON").
+In particular the graticious sprinking of #ifdef 
+CONFIG_X86_IOPORTs around x86 code looks ugly.
 
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Josh, don't do that, this route is really unacceptable. Please 
+resubmit the latest patches and remove these from linux-next.
 
---Sig_/sJTJKn5x2GuFqwRuZYNwNpB
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUIP2rAAoJEMDTa8Ir7ZwV8bIP/1T/So44K6wcjoUDEzOnIgsH
-djiW9wS7M5mks2tbv2OL/hP1WDQXs2UtWypJ7qAkvxOvI9wckoKHzHF3fk85aZVC
-KTb5yMZmF2qqBedU5lYw/8aUIeAIx47PbrBHKoWxETDGE7ADx0fCRtm8p1d7Lhjx
-JM85eYD0IG1BBQK7kh+7+Pn4m9MBk71+lofFLqppeGo6Kcab6ud9Pf5oPjag1W3y
-4k0bnb/nYT3xSgtOcfBwMtmLyN+LSanotfgUZ99K6ps0AIM7CgdqeFtXXPg+X3rQ
-KzeH8lEXn/GaNaxKCoBBU3cjyZRVgboeNAVEKeoci1J05jxko3+Q9BNyRlM51eqX
-q57romp8xDEYIr0A7JcXnRSgm/qykeRgXVvJ+hnyY2GUYb6JcWfDdhObEJKjA+H0
-Jgh/hlB2zjENBVyOGjghpSUfQbHH1YIm9kaDZnsG2spIA/o0KMbkdiIbBzUqnq6I
-fk2AqbSx95j7+ykzC/YmqSFVQbTcwQI7BdTZGIZP6lHvWfgLwgKNWf63xHAr+KqN
-UB08mCBXAYE1v54/Ps+hry6/U9sXkQOApj+YTsRt8ZRfc3DWEQgfJAwJptqIBgIe
-6v93FiHo35sBjh3biV5MrSM3phNFmkAJ1NdLNGn0drgqichRKWIdd1qcaoxfwQOa
-bmYCibljQvX0yWi3AQxO
-=djqu
------END PGP SIGNATURE-----
-
---Sig_/sJTJKn5x2GuFqwRuZYNwNpB--
+	Ingo
