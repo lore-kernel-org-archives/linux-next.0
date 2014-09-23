@@ -1,46 +1,60 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: [PATCH 1/5] mips: Set CONFIG_NET=y in defconfigs
-Date: Tue, 23 Sep 2014 18:06:04 +0200
-Message-ID: <54219A6C.7000407@suse.cz>
-References: <54218AEF.5090200@suse.cz>  <1411487044-14071-1-git-send-email-mmarek@suse.cz> <20140923.120237.1788295912902036193.davem@davemloft.net>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: [PATCH] mm, debug: mm-introduce-vm_bug_on_mm-fix-fix.patch
+Date: Tue, 23 Sep 2014 12:19:49 -0400
+Message-ID: <83907.1411489189@turing-police.cc.vt.edu>
+References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org> <1411464279-20158-1-git-send-email-mhocko@suse.cz>
+            <20140923112848.GA10046@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: multipart/signed; boundary="==_Exmh_1411489189_2175P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20140923.120237.1788295912902036193.davem@davemloft.net>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, rdunlap@infradead.org, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-mips@linux-mips.org
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: Your message of "Tue, 23 Sep 2014 13:28:48 +0200."
+             <20140923112848.GA10046@dhcp22.suse.cz>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Michal Hocko <mhocko@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, Sasha Levin <sasha.levin@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
-On 2014-09-23 18:02, David Miller wrote:
-> From: Michal Marek <mmarek@suse.cz>
-> Date: Tue, 23 Sep 2014 17:44:00 +0200
-> 
->> Commit 5d6be6a5 ("scsi_netlink : Make SCSI_NETLINK dependent on NET
->> instead of selecting NET") removed what happened to be the only instance
->> of 'select NET'. Defconfigs that were relying on the select now lack
->> networking support.
->>
->> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> Cc: linux-mips@linux-mips.org
->> Signed-off-by: Michal Marek <mmarek@suse.cz>
-> 
-> On the contrary, since NET was being selected for them indirectly
-> previously, weren't they depending instead upon NET being enabled?
-> 
-> Likewise for SCSI_NETLINK, SCSI_FC_ATTRS, and whatever was triggering
-> the select upon them?
+--==_Exmh_1411489189_2175P
+Content-Type: text/plain; charset=us-ascii
 
-They have SCSI_FC_ATTRS=y/m and were relying on the select statements
-turning this into SCSI_NETLINK=y and CONFIG_NET=y.
+On Tue, 23 Sep 2014 13:28:48 +0200, Michal Hocko said:
+> And there is another one hitting during randconfig. The patch makes my
+> eyes bleed
 
-Michal
+Amen.  But I'm not seeing a better fix either.
+
+>  #if defined(CONFIG_NUMA_BALANCING) || defined(CONFIG_COMPACTION)
+> -		"tlb_flush_pending %d\n",
+> +		"tlb_flush_pending %d\n"
+>  #endif
+> -		mm, mm->mmap, mm->vmacache_seqnum, mm->task_size,
+> +		, mm, mm->mmap, mm->vmacache_seqnum, mm->task_size,
+
+I'm surprised that checkpatch doesn't explode on this.  And I'm starting
+a pool on how soon somebody submits a patch to "fix" this. :)
+
+--==_Exmh_1411489189_2175P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+Comment: Exmh version 2.5 07/13/2001
+
+iQIVAwUBVCGdpQdmEQWDXROgAQLLKBAAiTSdExIo2aogwb191B7h7hkYPyPVu8ne
+lyHn0dfT7JDVht3nsQBmDHn48qL/h4d+GvU0priCoHlvXG+17p5asW/bcaOttavH
+xPSagNrH7sCUGhZyupe9n5ZFfw4Mer41uA9H4cFqMOVJCoSJyCMvCPB9ilKWDOZl
+dTbzN/XyRVhFR6nHoecXGWlAsHFWi2zstPPYi98fmM9VqZQ/025wpr5Fb0Ffdphr
+csIwovxR2blTVQpGUSZhPRYbGaPPL6S4JJ8waC7IDmAWqdyvj7vY3Z5L5n44vu+d
+QeRUsCD30w0B14QdBO2fFl2LE2LppsEjjmQ2RrGoRpB9MSKhXdK2wF4uL6xzLIWL
+CGYoPkR6mvPmDX5rOJMN7AWx5wTcB6jhp1xnDyhK3IlfzurOmZaqi/YuzHqXUwkV
+DQL1VYz1FTBd1yRyqY6OCRcjaZHopijNiyAvrSwvcpylELDCLqg6Sm+6zQG8Nmw4
+CFLi6fRhYZUr0ypQQwsyk9KHQBWMkOi+gYGalM2ahD/TnfeLx+T2FA79Tb2rTW5w
+jtoPo5nryghgWSeF2oaWE13iJNEjyZUb6PjWcUn+lhbr+6lcCr0FCCXapSAlR80A
+++W/jsSBDNPbNNskbKzuvJxN+hxDzYWxNJLlhCqJeu5yydgS8Is5jXOa7N3dwKS3
+Esg0LBXwHp4=
+=2FOW
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1411489189_2175P--
