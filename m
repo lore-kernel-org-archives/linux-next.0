@@ -1,54 +1,34 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: [PATCH] mm, debug: mm-introduce-vm_bug_on_mm-fix-fix.patch
-Date: Tue, 23 Sep 2014 16:12:04 -0400
-Message-ID: <20140923201204.GB4252@redhat.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: mmotm 2014-09-22-16-57 uploaded
+Date: Tue, 23 Sep 2014 17:13:29 -0300
+Message-ID: <CAOMZO5CdVenLgOFvPXpQB9f1H_ATayDDk5e9Rhrf-32OweqO2w@mail.gmail.com>
 References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
- <1411464279-20158-1-git-send-email-mhocko@suse.cz>
- <20140923112848.GA10046@dhcp22.suse.cz>
+	<20140923190222.GA4662@roeck-us.net>
+	<20140923130128.79f5931ac03dbb31f53be805@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20140923112848.GA10046@dhcp22.suse.cz>
+In-Reply-To: <20140923130128.79f5931ac03dbb31f53be805@linux-foundation.org>
 Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, Sasha Levin <sasha.levin@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, mhocko@suse.cz, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Sasha Levin <sasha.levin@oracle.com>, Anish Bhatt <anish@chelsio.com>, David Miller <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 23, 2014 at 01:28:48PM +0200, Michal Hocko wrote:
- > And there is another one hitting during randconfig. The patch makes my
- > eyes bleed but I don't know about other way without breaking out the
- > thing into separate parts sounds worse because we can mix with other
- > messages then.
+On Tue, Sep 23, 2014 at 5:01 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
 
-how about something along the lines of..
+>> arm:imx_v6_v7_defconfig
+>> arm:imx_v4_v5_defconfig
+>>
+>> drivers/media/platform/coda/coda-bit.c: In function 'coda_fill_bitstream':
+>> drivers/media/platform/coda/coda-bit.c:231:4: error: implicit declaration of function 'kmalloc'
+>> drivers/media/platform/coda/coda-bit.c: In function 'coda_alloc_framebuffers':
+>> drivers/media/platform/coda/coda-bit.c:312:3: error: implicit declaration of function 'kfree'
+>
+> That's odd - it includes slab.h.  Cc Fabio.
 
- bufptr = buffer = kmalloc()
-
- #if defined(CONFIG_NUMA_BALANCING) || defined(CONFIG_COMPACTION)
-	bufptr += sprintf(bufptr, "tlb_flush_pending %d\n",
-			mm->tlb_flush_pending);
- #endif
-
- #ifdef CONFIG_MMU
-	bufptr += sprintf(bufptr, "...
- #endif
-
- ...
-
- printk(KERN_EMERG "%s", buffer);
-
- free(buffer);
-
-
-Still ugly, but looks less like a trainwreck, and keeps the variables
-with the associated text.
-
-It does introduce an allocation though, which may be problematic
-in this situation. Depending how big this gets, perhaps make it static
-instead?
-
-	Dave
+linux-next 20140923 has commit c0aaf696d45e2a72 which included slab.h
+and fixed these errors.
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
