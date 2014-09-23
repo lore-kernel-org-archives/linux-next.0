@@ -1,82 +1,63 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
-Date: Tue, 23 Sep 2014 10:36:03 +0200
-Message-ID: <20140923083603.GA31876@gmail.com>
-References: <20140923143232.5ffff46e@canb.auug.org.au>
- <20140923054328.GA28790@gmail.com>
- <20140923062125.GB6900@thin>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: [PATCH] mm, debug: mm-introduce-vm_bug_on_mm-fix.patch
+Date: Tue, 23 Sep 2014 11:24:39 +0200
+Message-ID: <1411464279-20158-1-git-send-email-mhocko@suse.cz>
+References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140923062125.GB6900@thin>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, Sasha Levin <sasha.levin@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
+dump_mm wants to dump mm->owner even when CONFIG_MEMCG is not defined
+which leads to a compilation error:
+mm/debug.c: In function =E2=80=98dump_mm=E2=80=99:
+mm/debug.c:212:5: error: =E2=80=98const struct mm_struct=E2=80=99 has no =
+member named =E2=80=98owner=E2=80=99
+   mm->owner, mm->exe_file,
 
-* Josh Triplett <josh@joshtriplett.org> wrote:
+Signed-off-by: Michal Hocko <mhocko@suse.cz>
+---
+ mm/debug.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-> On Tue, Sep 23, 2014 at 07:43:28AM +0200, Ingo Molnar wrote:
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > Today's linux-next merge of the tiny tree got conflicts in
-> > > arch/x86/kernel/process_32.c and arch/x86/kernel/process_64.c between
-> > > commits dc56c0f9b870 ("x86, fpu: Shift "fpu_counter = 0" from
-> > > copy_thread() to arch_dup_task_struct()") and 6f46b3aef003 ("x86:
-> > > copy_thread: Don't nullify ->ptrace_bps twice") from the tip tree and
-> > > commits a1cf09f93e66 ("x86: process: Unify 32-bit and 64-bit
-> > > copy_thread I/O bitmap handling") and e4a191d1e05b ("x86: Support
-> > > compiling out userspace I/O (iopl and ioperm)") from the tiny tree.
-> > 
-> > Why are such changes in the 'tiny' tree? These are sensitive 
-> > arch/x86 files, and any unification and compilation-out support 
-> > patches need to go through the proper review channels and be 
-> > merged upstream via the x86 tree if accepted...
-> > 
-> > In particular the graticious sprinking of #ifdef 
-> > CONFIG_X86_IOPORTs around x86 code looks ugly.
-> > 
-> > Josh, don't do that, this route is really unacceptable. Please 
-> > resubmit the latest patches and remove these from linux-next.
-> 
-> I'd previously submitted these patches for review; the last 
-> round of feedback seemed entirely positive (with some explicit 
-> acks) on the 32/64 unification patches, and generally positive 
-> on the last patch of the series (apart from a misunderstanding 
-> about this being configurable but still default y).  I CCed you 
-> on that submission, and hadn't seen any of this feedback from 
-> you at that time (nor a suggestion of which tree this should go 
-> through).  My intention with adding these patches to tiny/next 
-> tree was purely for an integration check with -next, and I'd 
-> planned to resend these by email shortly for an additional 
-> round of review with an explicit question of what route they 
-> should take into the kernel.
+diff --git a/mm/debug.c b/mm/debug.c
+index 281abb2edddd..63aba9dcfb4e 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -181,7 +181,10 @@ void dump_mm(const struct mm_struct *mm)
+ #ifdef CONFIG_AIO
+ 		"ioctx_table %p\n"
+ #endif
+-		"owner %p exe_file %p\n"
++#ifdef CONFIG_MEMCG
++		"owner %p "
++#endif
++		"exe_file %p\n"
+ #ifdef CONFIG_MMU_NOTIFIER
+ 		"mmu_notifier_mm %p\n"
+ #endif
+@@ -209,7 +212,10 @@ void dump_mm(const struct mm_struct *mm)
+ #ifdef CONFIG_AIO
+ 		mm->ioctx_table,
+ #endif
+-		mm->owner, mm->exe_file,
++#ifdef CONFIG_MEMCG
++		mm->owner,
++#endif
++		mm->exe_file,
+ #ifdef CONFIG_MMU_NOTIFIER
+ 		mm->mmu_notifier_mm,
+ #endif
+--=20
+2.1.0
 
-That's perfectly fine, thanks!
-
-> I've dropped tiny/no-io from tiny/next; I'll poke at it further 
-> and resubmit for the x86 tree later, likely not for the next 
-> merge window at this point.
-> 
-> Thanks for the feedback on process; this is day 1 of having a 
-> merge-window-bound tree in -next for the first time. :)
-
-Sorry about the harshness of my initial email - I was unsure 
-about the background and we are close to the merge window. I have 
-no objections against the -tiny tree in linux-next, it's a good 
-effort.
-
-I think we could cut down on the #ifdef uglies if we made the 
-ioperm callback pointer unconditional. That's just a tiny amount 
-of extra bloat, but should remove half of the #ifdefs or so? The 
-rest of the patches look fine.
-
-Usually hpa handles the x86 ioperm area, but he's swamped right 
-now, so I'll look at picking them up once you have submitted the 
-latest version. If you send it in the next day or two then they 
-could make the v3.18 merge window.
-
-Thanks,
-
-	Ingo
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
