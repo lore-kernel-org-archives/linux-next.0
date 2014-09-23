@@ -1,69 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the tiny tree
-Date: Tue, 23 Sep 2014 17:48:03 +1000
-Message-ID: <20140923174803.1c20314b@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the akpm-current tree
+Date: Tue, 23 Sep 2014 18:18:41 +1000
+Message-ID: <20140923181841.44b3355c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.7BX=CEvPP2HJFb2uqOKdkS"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Josh Triplett <josh@joshtriplett.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/Fbv9DYWLC6YpZ.l3SG4f3QM"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34366 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754630AbaIWISt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Sep 2014 04:18:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
 
---Sig_/.7BX=CEvPP2HJFb2uqOKdkS
+--Sig_/Fbv9DYWLC6YpZ.l3SG4f3QM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in mm/Makefile
-between commit d3ac21cacc24 ("mm: Support compiling out madvise and
-fadvise") from the tiny tree and commit "mm: replace remap_file_pages()
-syscall with emulation" from the akpm tree.
+After merging the akpm-current tree, today's linux-next build (powerpc
+allyesconfig) produced these warnings:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/rtc/rtc-bq32k.c: In function 'trickle_charger_of_init':
+drivers/rtc/rtc-bq32k.c:155:7: warning: assignment makes pointer from integ=
+er without a cast
+   reg =3D 0x05;
+       ^
+drivers/rtc/rtc-bq32k.c:165:7: warning: assignment makes pointer from integ=
+er without a cast
+   reg =3D 0x25;
+       ^
+drivers/rtc/rtc-bq32k.c:177:6: warning: assignment makes pointer from integ=
+er without a cast
+  reg =3D 0x20;
+      ^
+
+Introduced by commit 7bb72683b170 ("rtc: bq32000: add trickle charger
+option, with device tree binding").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/Makefile
-index f8ed7ab417b1,20ff8c39d064..000000000000
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@@ -3,7 -3,7 +3,7 @@@
-  #
- =20
-  mmu-y			:=3D nommu.o
-- mmu-$(CONFIG_MMU)	:=3D fremap.o gup.o highmem.o memory.o mincore.o \
- -mmu-$(CONFIG_MMU)	:=3D gup.o highmem.o madvise.o memory.o mincore.o \
-++mmu-$(CONFIG_MMU)	:=3D gup.o highmem.o memory.o mincore.o \
-  			   mlock.o mmap.o mprotect.o mremap.o msync.o rmap.o \
-  			   vmalloc.o pagewalk.o pgtable-generic.o
- =20
-
---Sig_/.7BX=CEvPP2HJFb2uqOKdkS
+--Sig_/Fbv9DYWLC6YpZ.l3SG4f3QM
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUISW7AAoJEMDTa8Ir7ZwVasAQAJX9SfW1P73K48BghOn7eL/r
-4lopmDYcyp20d/VEW3qnOqzEZUfch7kg/Re+itQIzgexvnmNYKaS2kT+d7fB6xRV
-75eBtJD3nG17ToRR3puFxjFbfVim3olKrN8Ia8EqRvdK/xOQIIIjM75PT1MiRvXL
-zkGVPU4pRpi5JZIXOujLdAKwVR29eE3GKbrB+TWXNv2LXZHa2BYnc7xJv3DlI6XW
-7UJAYjJ2YgdjkXHcmKjPQimZDBUPUMUnfWgwaczMnxKgmT52XtNkri6+To2Qng3V
-o16otrROKzvNEuPJ5AHMnsCkoWYzGWv505sxlivNM9KCHwik52938EKHDyVZcny9
-UqR96bmiH7AxYltItTlEIzQ0ylRfKxriNrzkwOT+TLhftK+q1430C2EeErCsp9yk
-D+c/mfA+VoFGI1rOVRRXldjmym38qZpAsTmCK8MpeERx4Nq2nHRWn9XCyvL7f1Qe
-Htthi27yoEJWGRBTiOnCS0tzDcPa1qa4f2deQx0RmXGV5H0mDGB9taUwSX98O3gC
-c4fe7VCw5O4GAIG6EFPlWbuyAwMiAq+3TVsmUcmjyfLY4aJVthC0fY0HaxdmJU1/
-QNQgTOtohbBQ1JMhfHoM7Y/t97Co+J66KpvO1gzmek7s4WfZLmnk/DuDZYMJnvbQ
-O6B4tVLHzBEL7JeT50U7
-=bd76
+iQIcBAEBCAAGBQJUISzmAAoJEMDTa8Ir7ZwV2XsQAIzFvl1MUHQHkZipGLcz+vbk
+NXNhYtw9nPDCCXp/hk1r5R/EC6k00688AsyWEVoRn0VQpY9NdUGrSYSN6CLRFkZz
+M9A5grDWb8NSohH5Agc2VnyydRbZAOi8Xs1ORuh0caXGOD3em/8im6H3TR7p2FMe
+regLKu1M/P+MVNButYvTEg8V68PI18/JdwnXx72w/XujVOr9EY+SEJ01p6ocvf2Z
+GRUDTkQngyHGfkoM67E0M/BoJM9RR+E7m5wNtPDC1PMzRBRGZAnK9ct0bzm6lzQs
+/ka23PB3Mmf2MtGfHhJEn4BZiUx0JF4YRNs0oFRkGaI9UH694zj3z15Mj4tsrPPF
++MQSu5HYIkPZPFEfbHWGVgI3b1ziZDQ9qUHRXW+rVvi5fDcZfs757DBExwkwsMto
+qoviBK0Ubj7cgGVacHjSYviKR1SsmGZIl/VavRz6UXEIq9/TnfohEcKrl523Ciir
+vmVX2LcFfXEqaJ8mscy33PAsnrzgqoiNHjMI9NHxoGTmHt9hH0r1K5yt0iFrkhWy
+t0pxPFVYZYDJmdkiaDXqdBA31rWVFT7FB9uy6Rs074VroNCpNQR3cF1X1CdE97pA
+hHcY5IxfLjsiTwzccATo/7BBcwubyLzyDzKij/VEh20hqzkda7OqFn1VeMVJTt9e
+US3oi0pNYUk7RDlDpbVa
+=K6jI
 -----END PGP SIGNATURE-----
 
---Sig_/.7BX=CEvPP2HJFb2uqOKdkS--
+--Sig_/Fbv9DYWLC6YpZ.l3SG4f3QM--
