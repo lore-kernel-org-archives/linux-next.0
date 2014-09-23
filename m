@@ -1,38 +1,61 @@
 From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build failure after merge of the tiny tree
-Date: Mon, 22 Sep 2014 22:59:27 -0700
-Message-ID: <20140923055927.GA6900@thin>
-References: <20140923145711.5c1ca775@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
+Date: Mon, 22 Sep 2014 23:21:25 -0700
+Message-ID: <20140923062125.GB6900@thin>
+References: <20140923143232.5ffff46e@canb.auug.org.au>
+ <20140923054328.GA28790@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:34342 "EHLO
+	relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299AbaIWGVg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Sep 2014 02:21:36 -0400
 Content-Disposition: inline
-In-Reply-To: <20140923145711.5c1ca775@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20140923054328.GA28790@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
 
-On Tue, Sep 23, 2014 at 02:57:11PM +1000, Stephen Rothwell wrote:
-> Hi Josh,
+On Tue, Sep 23, 2014 at 07:43:28AM +0200, Ingo Molnar wrote:
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Today's linux-next merge of the tiny tree got conflicts in
+> > arch/x86/kernel/process_32.c and arch/x86/kernel/process_64.c between
+> > commits dc56c0f9b870 ("x86, fpu: Shift "fpu_counter = 0" from
+> > copy_thread() to arch_dup_task_struct()") and 6f46b3aef003 ("x86:
+> > copy_thread: Don't nullify ->ptrace_bps twice") from the tip tree and
+> > commits a1cf09f93e66 ("x86: process: Unify 32-bit and 64-bit
+> > copy_thread I/O bitmap handling") and e4a191d1e05b ("x86: Support
+> > compiling out userspace I/O (iopl and ioperm)") from the tiny tree.
 > 
-> After merging the tiny tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> Why are such changes in the 'tiny' tree? These are sensitive 
+> arch/x86 files, and any unification and compilation-out support 
+> patches need to go through the proper review channels and be 
+> merged upstream via the x86 tree if accepted...
 > 
-> mm/built-in.o: In function `.isolate_migratepages_range':
-> (.text+0x2fbd8): undefined reference to `.balloon_page_isolate'
-> mm/built-in.o: In function `.putback_movable_pages':
-> (.text+0x713c4): undefined reference to `.balloon_page_putback'
-> mm/built-in.o: In function `.migrate_pages':
-> (.text+0x72a00): undefined reference to `.balloon_page_migrate'
+> In particular the graticious sprinking of #ifdef 
+> CONFIG_X86_IOPORTs around x86 code looks ugly.
 > 
-> Caused by commit b37a3fee8450 ("mm: Disable mm/balloon_compaction.c
-> completely when !CONFIG_VIRTIO_BALLOON").
-> 
-> I have reverted that commit for today.
+> Josh, don't do that, this route is really unacceptable. Please 
+> resubmit the latest patches and remove these from linux-next.
 
-Strange.  That commit compiled just fine here with several
-configurations; I'll investigate what's up with ppc64_defconfig.
-Will revert for now.
+I'd previously submitted these patches for review; the last round of
+feedback seemed entirely positive (with some explicit acks) on the 32/64
+unification patches, and generally positive on the last patch of the
+series (apart from a misunderstanding about this being configurable but
+still default y).  I CCed you on that submission, and hadn't seen any of
+this feedback from you at that time (nor a suggestion of which tree this
+should go through).  My intention with adding these patches to tiny/next
+tree was purely for an integration check with -next, and I'd planned to
+resend these by email shortly for an additional round of review with an
+explicit question of what route they should take into the kernel.
+
+I've dropped tiny/no-io from tiny/next; I'll poke at it further and
+resubmit for the x86 tree later, likely not for the next merge window at
+this point.
+
+Thanks for the feedback on process; this is day 1 of having a
+merge-window-bound tree in -next for the first time. :)
 
 - Josh Triplett
