@@ -1,138 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tiny tree with the tip tree
-Date: Tue, 23 Sep 2014 14:32:32 +1000
-Message-ID: <20140923143232.5ffff46e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tiny tree
+Date: Tue, 23 Sep 2014 14:57:11 +1000
+Message-ID: <20140923145711.5c1ca775@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/W0PVaB=RE712MmUYgW_dV/5"; protocol="application/pgp-signature"
+ boundary="Sig_/sJTJKn5x2GuFqwRuZYNwNpB"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48528 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45152 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751539AbaIWEcj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Sep 2014 00:32:39 -0400
+	id S1751247AbaIWE5R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Sep 2014 00:57:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/W0PVaB=RE712MmUYgW_dV/5
+--Sig_/sJTJKn5x2GuFqwRuZYNwNpB
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Josh,
 
-Today's linux-next merge of the tiny tree got conflicts in
-arch/x86/kernel/process_32.c and arch/x86/kernel/process_64.c between
-commits dc56c0f9b870 ("x86, fpu: Shift "fpu_counter =3D 0" from
-copy_thread() to arch_dup_task_struct()") and 6f46b3aef003 ("x86:
-copy_thread: Don't nullify ->ptrace_bps twice") from the tip tree and
-commits a1cf09f93e66 ("x86: process: Unify 32-bit and 64-bit
-copy_thread I/O bitmap handling") and e4a191d1e05b ("x86: Support
-compiling out userspace I/O (iopl and ioperm)") from the tiny tree.
+After merging the tiny tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+mm/built-in.o: In function `.isolate_migratepages_range':
+(.text+0x2fbd8): undefined reference to `.balloon_page_isolate'
+mm/built-in.o: In function `.putback_movable_pages':
+(.text+0x713c4): undefined reference to `.balloon_page_putback'
+mm/built-in.o: In function `.migrate_pages':
+(.text+0x72a00): undefined reference to `.balloon_page_migrate'
 
+Caused by commit b37a3fee8450 ("mm: Disable mm/balloon_compaction.c
+completely when !CONFIG_VIRTIO_BALLOON").
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/kernel/process_32.c
-index 8f3ebfe710d0,e37f006fda6e..000000000000
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@@ -153,7 -153,9 +154,7 @@@ int copy_thread(unsigned long clone_fla
-  		childregs->orig_ax =3D -1;
-  		childregs->cs =3D __KERNEL_CS | get_kernel_rpl();
-  		childregs->flags =3D X86_EFLAGS_IF | X86_EFLAGS_FIXED;
-- 		p->thread.io_bitmap_ptr =3D NULL;
- -		p->thread.fpu_counter =3D 0;
-+ 		clear_thread_io_bitmap(p);
- -		memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
-  		return 0;
-  	}
-  	*childregs =3D *current_pt_regs();
-@@@ -164,22 -166,12 +165,9 @@@
-  	p->thread.ip =3D (unsigned long) ret_from_fork;
-  	task_user_gs(p) =3D get_user_gs(current_pt_regs());
- =20
-- 	p->thread.io_bitmap_ptr =3D NULL;
- -	p->thread.fpu_counter =3D 0;
-+ 	clear_thread_io_bitmap(p);
-  	tsk =3D current;
-- 	err =3D -ENOMEM;
--=20
-- 	if (unlikely(test_tsk_thread_flag(tsk, TIF_IO_BITMAP))) {
-- 		p->thread.io_bitmap_ptr =3D kmemdup(tsk->thread.io_bitmap_ptr,
-- 						IO_BITMAP_BYTES, GFP_KERNEL);
-- 		if (!p->thread.io_bitmap_ptr) {
-- 			p->thread.io_bitmap_max =3D 0;
-- 			return -ENOMEM;
-- 		}
-- 		set_tsk_thread_flag(p, TIF_IO_BITMAP);
-- 	}
--=20
-- 	err =3D 0;
- =20
- -	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
- -
-  	/*
-  	 * Set a new TLS for the child thread?
-  	 */
-diff --cc arch/x86/kernel/process_64.c
-index 3ed4a68d4013,80f348659edd..000000000000
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@@ -163,7 -164,8 +164,7 @@@ int copy_thread(unsigned long clone_fla
-  	p->thread.sp =3D (unsigned long) childregs;
-  	p->thread.usersp =3D me->thread.usersp;
-  	set_tsk_thread_flag(p, TIF_FORK);
-- 	p->thread.io_bitmap_ptr =3D NULL;
- -	p->thread.fpu_counter =3D 0;
-+ 	clear_thread_io_bitmap(p);
- =20
-  	savesegment(gs, p->thread.gsindex);
-  	p->thread.gs =3D p->thread.gsindex ? 0 : me->thread.gs;
-@@@ -191,17 -193,8 +192,6 @@@
-  	if (sp)
-  		childregs->sp =3D sp;
- =20
-- 	err =3D -ENOMEM;
-- 	if (unlikely(test_tsk_thread_flag(me, TIF_IO_BITMAP))) {
-- 		p->thread.io_bitmap_ptr =3D kmemdup(me->thread.io_bitmap_ptr,
-- 						  IO_BITMAP_BYTES, GFP_KERNEL);
-- 		if (!p->thread.io_bitmap_ptr) {
-- 			p->thread.io_bitmap_max =3D 0;
-- 			return -ENOMEM;
-- 		}
-- 		set_tsk_thread_flag(p, TIF_IO_BITMAP);
-- 	}
- -	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
---
-  	/*
-  	 * Set a new TLS for the child thread?
-  	 */
-
---Sig_/W0PVaB=RE712MmUYgW_dV/5
+--Sig_/sJTJKn5x2GuFqwRuZYNwNpB
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUIPfkAAoJEMDTa8Ir7ZwVMmQP/3Q3r9PNTzf14poTxHvUe26O
-gc3EO6L9PERiHq4zFLYD+SCDOdlwULebIG5V9d7E1HznPXH34EYH24f+VtbnA03G
-HAaSYoqCRasQBxVLJuHCbTu5YJVXPsWM24eRoBmdrVce3bYJygjBabYl01kC+/h/
-UqamcefPmzJaJQ+SUXUrAB6yuOi0Zdx8oyQ/2YJB2Ul6N8dcdUGeAeqa+0w+ca/T
-RV6kYJ2pwuvNuRUzqePTurmvJPyoO/1FFRyhbp0tjL2Ou5BoKY7xHmm5ad+GzZg+
-TBopQI2YZxYWIDoKvzknofBJ/dlphU7b9TZCI+wHKx0iObq/OAPsT7v7zxRt1LpT
-lqPfCB7fRVmM6U+VIYjIfPPEkKZK8H3bIrMdXV7zxtsc5UX36ewWyhGGZXLwxUYH
-EbOlE8//llIHH5YyKq2yZ64UqM/vhMBye9l8yJwOyXgPRC8WMFTYthFQAkrV074M
-oIH8DNB7jS6c3iobASFCzFy3wdALbFStO3jFne0y2GGB5X1ygUPfF6gQ/++BCA2U
-p2NDHBTnVbQy2lzjtPf8FtbWiPTbWhONXxLqL0zKc+XlpVI82d7ulHguN9A6TIcm
-mgTytRvlK+QKP3p4elf40SZltj7SfP2YW9oft2STWAu+Qjh6PGEdbrXSn2wP3vFO
-psnmJCnC4asZwOPFWEuz
-=d8w6
+iQIcBAEBCAAGBQJUIP2rAAoJEMDTa8Ir7ZwV8bIP/1T/So44K6wcjoUDEzOnIgsH
+djiW9wS7M5mks2tbv2OL/hP1WDQXs2UtWypJ7qAkvxOvI9wckoKHzHF3fk85aZVC
+KTb5yMZmF2qqBedU5lYw/8aUIeAIx47PbrBHKoWxETDGE7ADx0fCRtm8p1d7Lhjx
+JM85eYD0IG1BBQK7kh+7+Pn4m9MBk71+lofFLqppeGo6Kcab6ud9Pf5oPjag1W3y
+4k0bnb/nYT3xSgtOcfBwMtmLyN+LSanotfgUZ99K6ps0AIM7CgdqeFtXXPg+X3rQ
+KzeH8lEXn/GaNaxKCoBBU3cjyZRVgboeNAVEKeoci1J05jxko3+Q9BNyRlM51eqX
+q57romp8xDEYIr0A7JcXnRSgm/qykeRgXVvJ+hnyY2GUYb6JcWfDdhObEJKjA+H0
+Jgh/hlB2zjENBVyOGjghpSUfQbHH1YIm9kaDZnsG2spIA/o0KMbkdiIbBzUqnq6I
+fk2AqbSx95j7+ykzC/YmqSFVQbTcwQI7BdTZGIZP6lHvWfgLwgKNWf63xHAr+KqN
+UB08mCBXAYE1v54/Ps+hry6/U9sXkQOApj+YTsRt8ZRfc3DWEQgfJAwJptqIBgIe
+6v93FiHo35sBjh3biV5MrSM3phNFmkAJ1NdLNGn0drgqichRKWIdd1qcaoxfwQOa
+bmYCibljQvX0yWi3AQxO
+=djqu
 -----END PGP SIGNATURE-----
 
---Sig_/W0PVaB=RE712MmUYgW_dV/5--
+--Sig_/sJTJKn5x2GuFqwRuZYNwNpB--
