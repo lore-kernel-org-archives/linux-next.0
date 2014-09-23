@@ -1,52 +1,53 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: build failure after merge of the kvm-arm tree
-Date: Wed, 24 Sep 2014 12:05:12 +0200
-Message-ID: <54229758.5060109@redhat.com>
-References: <20140922140645.7c2ad9c8@canb.auug.org.au> <20140924165030.41c90baf@canb.auug.org.au> <20140924070612.GA15794@cbox>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Subject: Re: mmotm 2014-09-22-16-57 uploaded
+Date: Tue, 23 Sep 2014 16:20:02 -0400
+Message-ID: <20140923202002.GA22362@nhori>
+References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
+ <20140923190222.GA4662@roeck-us.net>
+ <20140923130128.79f5931ac03dbb31f53be805@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:62028 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751620AbaIXKFg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Sep 2014 06:05:36 -0400
-In-Reply-To: <20140924070612.GA15794@cbox>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Auger <eric.auger@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20140923130128.79f5931ac03dbb31f53be805@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Sasha Levin <sasha.levin@oracle.com>, Anish Bhatt <anish@chelsio.com>, David Miller <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>
+List-Id: linux-next.vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-Il 24/09/2014 09:06, Christoffer Dall ha scritto:
->>> Still getting this failure.
->>> 
-> Commit e9142e3b69c2ae8a699463e219e5b029ff0d652b in kvm/queue fixes
-> this, but it hasn't gone to next yet.
+On Tue, Sep 23, 2014 at 01:01:28PM -0700, Andrew Morton wrote:
+> On Tue, 23 Sep 2014 12:02:22 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
+...
+> > 
+> > arch/powerpc/mm/hugetlbpage.c:710:1: error: conflicting types for 'follow_huge_pud'
+> >  follow_huge_pud(struct mm_struct *mm, unsigned long address,
+> >   ^
+> > In file included from arch/powerpc/mm/hugetlbpage.c:14:0: include/linux/hugetlb.h:103:14:
+> > 	note: previous declaration of 'follow_huge_pud' was here
+> >    struct page *follow_huge_pud(struct mm_struct *mm, unsigned long address,
+>                  ^
 > 
-> Paolo, I know there's a scary commit in queue but there's a bunch
-> of scary stuff in the kvmarm/next too that I'd like to see in next,
-> any chance you can put a subset of queue into next?
+> Naoya, please check:
+> 
+> --- a/arch/powerpc/mm/hugetlbpage.c~mm-hugetlb-reduce-arch-dependent-code-around-follow_huge_-fix
+> +++ a/arch/powerpc/mm/hugetlbpage.c
+> @@ -708,7 +708,7 @@ follow_huge_pmd(struct mm_struct *mm, un
+>  
+>  struct page *
+>  follow_huge_pud(struct mm_struct *mm, unsigned long address,
+> -		pmd_t *pmd, int write)
+> +		pud_t *pud, int write)
+>  {
+>  	BUG();
+>  	return NULL;
+> _
 
-Yes, I will put the commit in next and rebase queue on top of it.
+Yes, this is a right fix. Thanks.
 
-Paolo
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Naoya
 
-iQIcBAEBAgAGBQJUIpdYAAoJEBvWZb6bTYbyAkwP/jwno7pOt/sHUaa+p45Uouse
-oFS2aej8ZVLz3LMy6KjFuIME1bJjQytIZrFaGn+UksGd6cfhECydVO8hlJxWUDbc
-PrWpnwzX/u4sorewmX+hq9EoFBfIEzC86NyrUaujiL6ojLjoJ4mkoRc9LRCm/K7j
-dPJFGEQqifs0HelWSQPxH4ei/YyHk/TcaKgepQGlG4Aw/crLHmEajbrnGLge7isW
-H/EtBW5iJToG8mxB+ipSwFCADUkXC+FUrEblX5Nxma/949roXg8LPuZUBxCxWwyr
-Voi5/lU1sZMRYixoCHhhKaWPDfoSspjPU4JNEUMj4qtrZrBD9W27+bjyQBTdLjU7
-erI1pQCmZsU52RdAtZiUBuSbRxb8is+WlRHJy7dhlb+SBcgXNWw/k9sxV2U6PZ+T
-Z4A0ngZM12ZTd6XWgiE+3mMR0XGBsjh7TYq+ybQReCgKeNy/Q3FL6fS4E9me7MWF
-CWIfqV327GYfH/eU8Bd1/VHGEZfDefDXZrdANa+A5FhaGTLIZbPHfEo2BCc85LhS
-RRlKjIg1LeByCHDRaQ8parl0xgZRLuENfHn5gso4ZsAKgLyUp8IIGanxH8GD2sRO
-F2AtAFfLSlXUo/FsxaW0bQOxnBB9L/UX5QmMT/YwG7QoP97Wa4fDBV1ruHTiJ9SO
-s/nkZE3pcbAFSv/0rXlG
-=ln4T
------END PGP SIGNATURE-----
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
