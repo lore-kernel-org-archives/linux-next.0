@@ -1,52 +1,139 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: randconfig build error with next-20140923, in
- drivers/media/mmc/siano/smssdio.c
-Date: Tue, 23 Sep 2014 19:59:26 +0200
-Message-ID: <1411495166.24045.7.camel@x220>
-References: <CA+r1ZhhmizMMUkAABL9xT=XstAwhP1O-bs=7YBLBvi_=8TZ9Ng@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: mmotm 2014-09-22-16-57 uploaded
+Date: Tue, 23 Sep 2014 12:02:22 -0700
+Message-ID: <20140923190222.GA4662@roeck-us.net>
+References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+r1ZhhmizMMUkAABL9xT=XstAwhP1O-bs=7YBLBvi_=8TZ9Ng@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, "m.chehab" <m.chehab@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2014-09-23 at 09:38 -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
+On Mon, Sep 22, 2014 at 05:02:56PM -0700, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2014-09-22-16-57 has been uploaded to
 > 
-> drivers/built-in.o: In function `smssdio_remove':
-> smssdio.c:(.text+0x14751c): undefined reference to `smscore_putbuffer'
-> smssdio.c:(.text+0x147526): undefined reference to `smscore_unregister_device'
-> drivers/built-in.o: In function `smssdio_interrupt':
-> smssdio.c:(.text+0x1475aa): undefined reference to `smscore_getbuffer'
-> smssdio.c:(.text+0x147695): undefined reference to `smscore_putbuffer'
-> smssdio.c:(.text+0x1476f3): undefined reference to `smscore_putbuffer'
-> smssdio.c:(.text+0x14772a): undefined reference to `smsendian_handle_rx_message'
-> smssdio.c:(.text+0x147737): undefined reference to `smscore_onresponse'
-> drivers/built-in.o: In function `smssdio_sendrequest':
-> smssdio.c:(.text+0x14776c): undefined reference to `smsendian_handle_tx_message'
-> drivers/built-in.o: In function `smssdio_probe':
-> smssdio.c:(.text+0x14786c): undefined reference to `sms_get_board'
-> smssdio.c:(.text+0x14788a): undefined reference to `smscore_register_device'
-> smssdio.c:(.text+0x1478a1): undefined reference to `smscore_set_board_id'
-> smssdio.c:(.text+0x1478fa): undefined reference to `smscore_start_device'
-> smssdio.c:(.text+0x14792d): undefined reference to `smscore_unregister_device'
-> make: *** [vmlinux] Error 1
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+Sine I started testing this branch, I figure I might as well share the results.
 
-#
-# Automatically generated file; DO NOT EDIT.
-# Linux/x86 3.17.0-rc6 Kernel Configuration
-#
-[...]
-CONFIG_SMS_SDIO_DRV=y
-[...]
-CONFIG_SMS_SIANO_MDTV=m
-[...]
+Build results:
+	total: 133 pass: 115 fail: 18
+Failed builds:
+	alpha:defconfig
+	alpha:allmodconfig
+	arm:imx_v6_v7_defconfig
+	arm:imx_v4_v5_defconfig
+	i386:allyesconfig
+	i386:allmodconfig
+	m68k:allmodconfig
+	mips:nlm_xlp_defconfig
+	parisc:a500_defconfig
+	powerpc:cell_defconfig
+	powerpc:ppc6xx_defconfig
+	powerpc:mpc85xx_defconfig
+	powerpc:mpc85xx_smp_defconfig
+	tile:tilegx_defconfig
 
-Should SMS_SDIO_DRV depend on SMS_SIANO_MDTV?
+Qemu test results:
+	total: 24 pass: 23 fail: 1
+Failed tests:
+	alpha:alpha_defconfig
 
+More information is available at http://server.roeck-us.net:8010/builders.
+Note that powerpc failures are counted twice because they are built twice,
+once with binutils 2.23 and once with 2.24.
 
-Paul Bolle
+The most scary problem (in my opinion) is the failed mips:nlm_xlp_defconfig
+build.  It is caused by 'scsi_netlink : Make SCSI_NETLINK dependent on NET
+instead of selecting NET', which effectively disables CONFIG_NET for around
+30 configurations (assuming I found them all). The practical impact is that
+the affected configurations won't really work anymore, even if they compile. 
+
+Guenter
+
+---
+Details:
+
+alpha (including qemu)
+
+drivers/tty/serial/8250/8250_core.c: In function 'serial8250_ioctl':
+drivers/tty/serial/8250/8250_core.c:2874:7: error: 'TIOCSRS485' undeclared
+
+arm:imx_v6_v7_defconfig
+arm:imx_v4_v5_defconfig
+
+drivers/media/platform/coda/coda-bit.c: In function 'coda_fill_bitstream':
+drivers/media/platform/coda/coda-bit.c:231:4: error: implicit declaration of function 'kmalloc'
+drivers/media/platform/coda/coda-bit.c: In function 'coda_alloc_framebuffers':
+drivers/media/platform/coda/coda-bit.c:312:3: error: implicit declaration of function 'kfree'
+
+i386:allyesconfig
+
+drivers/built-in.o: In function `_scsih_qcmd':
+mpt2sas_scsih.c:(.text+0xf5327d): undefined reference to `__udivdi3'
+mpt2sas_scsih.c:(.text+0xf532b0): undefined reference to `__umoddi3'
+
+i386:allmodconfig
+
+ERROR: "__udivdi3" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+ERROR: "__umoddi3" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+
+m68k:allmodconfig
+
+drivers/tty/serial/st-asc.c: In function 'asc_in':
+drivers/tty/serial/st-asc.c:154:2: error: implicit declaration of function 'readl_relaxed'
+
+mips:nlm_xlp_defconfig
+
+ERROR: "scsi_is_fc_rport" [drivers/scsi/libfc/libfc.ko] undefined!
+ERROR: "fc_get_event_number" [drivers/scsi/libfc/libfc.ko] undefined!
+ERROR: "skb_trim" [drivers/scsi/libfc/libfc.ko] undefined!
+ERROR: "fc_host_post_event" [drivers/scsi/libfc/libfc.ko] undefined!
+
+[and many more]
+
+parisc:a500_defconfig
+
+ERROR: "csum_partial" [drivers/scsi/scsi_debug.ko] undefined!
+
+powerpc:cell_defconfig
+powerpc:mpc85xx_defconfig
+powerpc:mpc85xx_smp_defconfig
+
+arch/powerpc/mm/hugetlbpage.c:710:1: error: conflicting types for 'follow_huge_pud'
+ follow_huge_pud(struct mm_struct *mm, unsigned long address,
+  ^
+In file included from arch/powerpc/mm/hugetlbpage.c:14:0: include/linux/hugetlb.h:103:14:
+	note: previous declaration of 'follow_huge_pud' was here
+   struct page *follow_huge_pud(struct mm_struct *mm, unsigned long address,
+                 ^
+
+powerpc:ppc6xx_defconfig
+
+In file included from include/linux/kernel.h:13:0, from mm/debug.c:8:
+mm/debug.c: In function 'dump_mm':
+mm/debug.c:212:5: error: 'const struct mm_struct' has no member named 'owner'
+
+tile:tilegx_defconfig
+
+mm/debug.c: In function 'dump_mm':
+mm/debug.c:169:2: error: expected ')' before 'mm'
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
