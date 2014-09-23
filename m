@@ -1,69 +1,32 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2014-09-22-16-57 uploaded
-Date: Tue, 23 Sep 2014 13:57:07 -0700
-Message-ID: <20140923205707.GA14428@roeck-us.net>
+From: Anish Bhatt <anish@chelsio.com>
+Subject: RE: mmotm 2014-09-22-16-57 uploaded
+Date: Tue, 23 Sep 2014 21:08:54 +0000
+Message-ID: <525DB349B3FB5444AE057A887CB2A8D88F1F9D@nice.asicdesigners.com>
 References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
  <20140923190222.GA4662@roeck-us.net>
- <5421D8B1.1030504@infradead.org>
+ <20140923130128.79f5931ac03dbb31f53be805@linux-foundation.org>
+ <20140923203832.GA1112@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5421D8B1.1030504@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20140923203832.GA1112@roeck-us.net>
+Content-Language: en-US
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "mhocko@suse.cz" <mhocko@suse.cz>, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Sasha Levin <sasha.levin@oracle.com>, David Miller <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>, Randy Dunlap <rdunlap@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 23, 2014 at 01:31:45PM -0700, Randy Dunlap wrote:
-> On 09/23/14 12:02, Guenter Roeck wrote:
-> > On Mon, Sep 22, 2014 at 05:02:56PM -0700, akpm@linux-foundation.org wrote:
-> >> The mm-of-the-moment snapshot 2014-09-22-16-57 has been uploaded to
-> >>
-> >>    http://www.ozlabs.org/~akpm/mmotm/
-> >>
-> >> mmotm-readme.txt says
-> >>
-> >> README for mm-of-the-moment:
-> >>
-> >> http://www.ozlabs.org/~akpm/mmotm/
-> >>
-> >> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> >> more than once a week.
-> >>
-> > Sine I started testing this branch, I figure I might as well share the results.
-> > 
-> > i386:allyesconfig
-> > 
-> > drivers/built-in.o: In function `_scsih_qcmd':
-> > mpt2sas_scsih.c:(.text+0xf5327d): undefined reference to `__udivdi3'
-> > mpt2sas_scsih.c:(.text+0xf532b0): undefined reference to `__umoddi3'
-> > 
-> > i386:allmodconfig
-> > 
-> > ERROR: "__udivdi3" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
-> > ERROR: "__umoddi3" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
-> 
-> A patch has been posted for that and I believe that Christoph Hellwig has
-> merged it.
-> 
-> > mips:nlm_xlp_defconfig
-> > 
-> > ERROR: "scsi_is_fc_rport" [drivers/scsi/libfc/libfc.ko] undefined!
-> > ERROR: "fc_get_event_number" [drivers/scsi/libfc/libfc.ko] undefined!
-> > ERROR: "skb_trim" [drivers/scsi/libfc/libfc.ko] undefined!
-> > ERROR: "fc_host_post_event" [drivers/scsi/libfc/libfc.ko] undefined!
-> > 
-> > [and many more]
-> 
-> I have posted a patch for these build errors.
-> 
-mips:nlm_xlp_defconfig builds in next-20140923, but it doesn't configure
-CONFIG_NET. I don't see a patch which would address that problem.
-In case I am missing it, can you point me to your patch ?
+> > cc'ing Anish Bhatt.
+> >
+> He knows about it, as do David Miller and Randy Dunlap (who proposed it)
+> [1].
+> There just doesn't seem to be an agreement on how to fix the problem.
+> A simple revert doesn't work anymore since there are multiple follow-up
+> patches, and if I understand correctly David is opposed to a revert anyway.
 
-On the other side, maybe it is just me thinking that taking CONFIG_NET out
-of standard configurations might be a problem. If so, apologies for the noise.
+Dave is working on  a patch based on Randy's last solution :
+http://www.spinics.net/lists/netdev/msg297593.html
 
-Thanks,
-Guenter
+Not sure of the current status.
+-Anish
