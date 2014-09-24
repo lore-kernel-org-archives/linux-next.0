@@ -1,75 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the samsung tree
-Date: Wed, 24 Sep 2014 15:53:36 +1000
-Message-ID: <20140924155336.6e64b952@canb.auug.org.au>
-References: <20140924110836.209bc8e2@canb.auug.org.au>
-	<00fb01cfd7a4$45eb4a50$d1c1def0$@kernel.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: mmotm 2014-09-22-16-57 uploaded
+Date: Wed, 24 Sep 2014 02:24:10 -0400 (EDT)
+Message-ID: <20140924.022410.1707532643268164791.davem@davemloft.net>
+References: <5421E7E1.80203@infradead.org>
+	<20140923215356.GA15481@roeck-us.net>
+	<20140924043423.GA28993@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HiwnqnrhXI5ikFTbgHHSuFo"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55593 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750806AbaIXFxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Sep 2014 01:53:44 -0400
-In-Reply-To: <00fb01cfd7a4$45eb4a50$d1c1def0$@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20140924043423.GA28993@roeck-us.net>
+Sender: owner-linux-mm@kvack.org
+To: linux@roeck-us.net
+Cc: rdunlap@infradead.org, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
+List-Id: linux-next.vger.kernel.org
 
---Sig_/HiwnqnrhXI5ikFTbgHHSuFo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Tue, 23 Sep 2014 21:34:23 -0700
 
-Hi Kukjin,
+> On Tue, Sep 23, 2014 at 02:53:56PM -0700, Guenter Roeck wrote:
+>> 
+>> > Neither of these patches enables CONFIG_NET.  They just add dependencies.
+>> > 
+>> This means CONFIG_NET is now disabled in at least 31 configurations where
+>> it used to be enabled before (per my count), and there may be additional
+>> impact due to the additional changes of "select X" to "depends on X".
+>> 
+>> 3.18 is going to be interesting.
+>> 
+> Actually, turns out the changes are already in 3.17.
+> 
+> In case anyone is interested, here is a list of now broken configurations
+> (where 'broken' is defined as "CONFIG NET used to be defined, but
+> is not defined anymore"). No guarantee for completeness or correctness.
 
-On Wed, 24 Sep 2014 12:04:36 +0900 Kukjin Kim <kgene@kernel.org> wrote:
->
-> > After merging the samsung tree, today's linux-next build (arm multi_v7_=
-defconfig)
-> > failed like this:
-> >=20
-> > arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/c=
-lock/maxim,max77686.h: No such
-> > file or directory
-> >  #include <dt-bindings/clock/maxim,max77686.h>
-> >                                               ^
-> >=20
-> + Mike
->=20
-> Hmm... I think, inclusion of the header file should be included in Mike's=
- clk
-> tree...What's wrong?
+I'll sort this out completely tomorrow.
 
-Mike's clk tree is included in linux-next well after your tree ... and
-does Mike's tree get included in the arm-soc tree like your does?  So,
-clearly you can't build this tree on its own?
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/HiwnqnrhXI5ikFTbgHHSuFo
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUIlxkAAoJEMDTa8Ir7ZwVn8cP/AxGEMRRDJT9LqQAN4DQNQjb
-1po5b8YQuzm3UMDF8eGWPh+WSKHfrKYfafvC0uHV9dhf804EmSsWWbFQpIWfBYmq
-Xy12BR3RzuG91o9DL+zvGYdr2f1PRbbEtl+JhCELcIfcrjSMpJZnWbshWRgWEwPm
-yQ+ejuNG4n3xqvW/BFad0mYP20SNwYyKUuFOj5TOMtKWSjgwAQhel0Sy2TAGNlFf
-UZWNlZnA8uNdlP4v2kNInM9CVFv0ozJl2U4pUnZkvjyKoHPJwPvbzUtu3153Bkoc
-aUXIISeS7cJME+/hUY0a+qn5dCLSohIAF77e5Qj/Evx6/9rDW0w5sEZruv9kiFZf
-PXFxazLlIE+FiAm9RvI57CFZqn1ucKQzAJdJQ6oE+CJao8SvcYoXYp5EXoW0blDl
-+z31EhmaiG5TnGB4xMLy1wcxLTAethpuesvD1fn7XT0b4ycPPpmo9QhHwOzG1bZe
-jhmEDKXARam+rXwXS/ljCg6EojvO/U12wxagPDO9L8T3qt9Rr8q4blcClJdHtv2w
-Dy+H7g9KHXEpA0gM49ZA4C4lHPbAObKzyXdfFsGjRYg+YbVCes5+r+GPxXH+vXkC
-1OkctAgz9i9nRIXh3iPv7d3N9wjIMaiEhspZf36id6mBcgzaKAvGmS83hNhmG0AN
-R0jpZpYWk29IrEQ28f5G
-=1lQp
------END PGP SIGNATURE-----
-
---Sig_/HiwnqnrhXI5ikFTbgHHSuFo--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
