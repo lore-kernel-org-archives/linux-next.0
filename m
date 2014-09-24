@@ -1,53 +1,49 @@
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Subject: Re: mmotm 2014-09-22-16-57 uploaded
-Date: Tue, 23 Sep 2014 16:20:02 -0400
-Message-ID: <20140923202002.GA22362@nhori>
-References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
- <20140923190222.GA4662@roeck-us.net>
- <20140923130128.79f5931ac03dbb31f53be805@linux-foundation.org>
+From: Andy Lutomirski <luto@amacapital.net>
+Subject: Re: linux-next: manual merge of the tip tree with the audit tree
+Date: Wed, 24 Sep 2014 11:12:09 -0700
+Message-ID: <CALCETrWED3LzZzRwVL+X2dtLGVcQ7fPijbObJa-UvyARySoDeQ@mail.gmail.com>
+References: <20140924154737.50db90eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20140923130128.79f5931ac03dbb31f53be805@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Sasha Levin <sasha.levin@oracle.com>, Anish Bhatt <anish@chelsio.com>, David Miller <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-la0-f50.google.com ([209.85.215.50]:57388 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751742AbaIXSMb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Sep 2014 14:12:31 -0400
+Received: by mail-la0-f50.google.com with SMTP id ty20so11360768lab.9
+        for <linux-next@vger.kernel.org>; Wed, 24 Sep 2014 11:12:29 -0700 (PDT)
+In-Reply-To: <20140924154737.50db90eb@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Eric Paris <eparis@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Sep 23, 2014 at 01:01:28PM -0700, Andrew Morton wrote:
-> On Tue, 23 Sep 2014 12:02:22 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
-...
-> > 
-> > arch/powerpc/mm/hugetlbpage.c:710:1: error: conflicting types for 'follow_huge_pud'
-> >  follow_huge_pud(struct mm_struct *mm, unsigned long address,
-> >   ^
-> > In file included from arch/powerpc/mm/hugetlbpage.c:14:0: include/linux/hugetlb.h:103:14:
-> > 	note: previous declaration of 'follow_huge_pud' was here
-> >    struct page *follow_huge_pud(struct mm_struct *mm, unsigned long address,
->                  ^
-> 
-> Naoya, please check:
-> 
-> --- a/arch/powerpc/mm/hugetlbpage.c~mm-hugetlb-reduce-arch-dependent-code-around-follow_huge_-fix
-> +++ a/arch/powerpc/mm/hugetlbpage.c
-> @@ -708,7 +708,7 @@ follow_huge_pmd(struct mm_struct *mm, un
->  
->  struct page *
->  follow_huge_pud(struct mm_struct *mm, unsigned long address,
-> -		pmd_t *pmd, int write)
-> +		pud_t *pud, int write)
->  {
->  	BUG();
->  	return NULL;
-> _
+On Tue, Sep 23, 2014 at 10:47 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/x86/kernel/ptrace.c between commit 91397401bb50 ("ARCH: AUDIT:
+> audit_syscall_entry() should not require the arch") from the audit tree
+> and commit e0ffbaabc46d ("x86: Split syscall_trace_enter into two
+> phases") from the tip tree.
+>
+> I fixed it up (see below - there is more cleanup possible since
+> do_audit_syscall_entry() no longer needs its "arch" argument) and can
+> carry the fix as necessary (no action is required).
 
-Yes, this is a right fix. Thanks.
+[mainly for Eric]
 
-Naoya
+This appears to re-introduce the bug fixed in:
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+commit 81f49a8fd7088cfcb588d182eeede862c0e3303e
+Author: Andy Lutomirski <luto@amacapital.net>
+Date:   Fri Sep 5 15:13:52 2014 -0700
+
+    x86, x32, audit: Fix x32's AUDIT_ARCH wrt audit
+
+This bug is not currently observable because enabling x32 disables
+syscall auditing.
+
+Eric, do you want to fix this or should I?
+
+--Andy
