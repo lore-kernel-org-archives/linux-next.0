@@ -1,107 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Wed, 24 Sep 2014 10:36:11 +1000
-Message-ID: <20140924103611.07175304@canb.auug.org.au>
-References: <20140918103200.12b79941@canb.auug.org.au>
-	<541A28BA.1060201@infradead.org>
-	<54218AEF.5090200@suse.cz>
-	<20140924072306.799005a3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the samsung tree
+Date: Wed, 24 Sep 2014 11:08:36 +1000
+Message-ID: <20140924110836.209bc8e2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/I0ZNQyCAKnGr0nx9fMn+nL."; protocol="application/pgp-signature"
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20140924072306.799005a3@canb.auug.org.au>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/ORd1ovzNsNEEbmYX6il_y_K"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52654 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751801AbaIXBIn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Sep 2014 21:08:43 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
---Sig_/I0ZNQyCAKnGr0nx9fMn+nL.
+--Sig_/ORd1ovzNsNEEbmYX6il_y_K
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-On Wed, 24 Sep 2014 07:23:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 23 Sep 2014 16:59:59 +0200 Michal Marek <mmarek@suse.cz> wrote:
-> >
-> > On 2014-09-18 02:35, Randy Dunlap wrote:
-> > > On 09/17/14 17:32, Stephen Rothwell wrote:
-> > >> Hi all,
-> > >>
-> > >> After merging the net tree, today's linux-next build (powerpc
-> > >> ppc64_defconfig) produced these warnings:
-> > >>
-> > >> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && =
-EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMI=
-I which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR=
-_IBM)
-> > >> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440E=
-PX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII whi=
-ch has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> > >> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) se=
-lects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHER=
-NET && NET_VENDOR_IBM)
-> > >> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX &&=
- 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 whic=
-h has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> > >> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440E=
-PX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII whi=
-ch has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> > >> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && =
-EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMI=
-I which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR=
-_IBM)
-> > >> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) se=
-lects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHER=
-NET && NET_VENDOR_IBM)
-> > >> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX &&=
- 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 whic=
-h has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
-> > >>
-> > >=20
-> > > I have looked into these and don't see why there is a problem.
-> > > Any help would be appreciated.
-> >=20
-> > This is a side effect of 5d6be6a5 ("scsi_netlink : Make SCSI_NETLINK
-> > dependent on NET instead of selecting NET"). Previously, SCSI_FC_ATTRS
-> > would select SCSI_NETLINK which would select CONFIG_NET. The above
-> > warnings are just a tip of the iceberg, the more serious issue is that
-> > ppc64_defconfig is lacking networking support. This is the downside of
-> > savedefconfig, because the 'select' implications can disappear over
-> > time. Looks like more defconfigs are affected by this:
->=20
-> And since 5d6be6a5 is now in Linus' tree, we need Michal's 5 patches
-> (at least) to be sent to Linus ASAP ...
+After merging the samsung tree, today's linux-next build (arm multi_v7_defc=
+onfig)
+failed like this:
 
-I have put those 5 patches in my fixes tree for today ...
+arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock=
+/maxim,max77686.h: No such file or directory
+ #include <dt-bindings/clock/maxim,max77686.h>
+                                              ^
 
+Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc on ex=
+ynos5250-snow").
+
+In file included from arch/arm/mach-tegra/cpuidle-tegra114.c:17:0:
+arch/arm/mach-tegra/cpuidle-tegra114.c: In function 'tegra114_idle_power_do=
+wn':
+arch/arm/include/asm/firmware.h:64:24: error: too few arguments to function=
+ 'firmware_ops->do_idle'
+  ((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
+                        ^
+arch/arm/mach-tegra/cpuidle-tegra114.c:52:6: note: in expansion of macro 'c=
+all_firmware_op'
+  if (call_firmware_op(do_idle) =3D=3D -ENOSYS)
+      ^
+
+Caused by commit f5217f3b9332 ("ARM: EXYNOS: add AFTR mode support to
+firmware do_idle method").
+
+I have used the samsung tree from next-20140923 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/I0ZNQyCAKnGr0nx9fMn+nL.
+--Sig_/ORd1ovzNsNEEbmYX6il_y_K
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUIhH/AAoJEMDTa8Ir7ZwVdN0P/RsKOOMt/CI12FFkY2iBBPC1
-zDfTguPVGBLyUeE7mjrR9//J1j/4DYPFyHsAOrIR5JjKs8tHObbNCrMGOD3PX82G
-crPmGZVqlYWvNsjwetOLNKL2TAJB4SQtwEaglQWhKT7aqcNgUNngKCf8J9cwaKFK
-AKniLCEIuDuLFDgvqXd1bYmzQBO1dxP7QvE5s4Ay4O9DwhCZPChDqCPc2iRKDtVK
-VCXjMMGATM2i0Wp9aeddWM8gctDLv8VY08ghP8WDKfiJ2REI0ZHS6BIih+OpdJs9
-zAFJnEDDWMAQWzUZ334IFaZFf6HG4L29lm+Vd2dJNCVMTR1/dwc8UytZdi6Eezb/
-iCbCtkTVGycSywvIOp3w9CwDp6mxTcVXJ669K3HOsOMp+7Kjn2Ib3uIRvzcLT6A9
-ufQQiejZMkcmo6BpVry18JgLIByethmzLkC0Vc+AXXGm6AEOzr1ay68UHhs3PSGv
-N6EHOFEbphAHRXfpoOOYekkGlYge4G5DJWsn7os1A4Mu2JrOYbJ4AclGRr1Wi1wG
-DmYtR9lRm5QaOMRYx4Nej/F+UQ30xkIudfYJNbQaKXz0rlU0ZgaKcowgi4RTocdg
-ftcWh9/CHERPNO8E1TgNmlXf6PUNFhgdhxafZMcW3G1WePrIN7FvTwWlBximsq7u
-IfqcWhqBTg6QMRvzmBYs
-=cn1z
+iQIcBAEBCAAGBQJUIhmYAAoJEMDTa8Ir7ZwVNn8P+gNGIhSUNlxImewT3Laemmie
+Sn/eFI/pO4+uK6oR7W2C46c8vlFBDeGJLhcS2hSgrvhRD4X2Nv7l8iRkW4HZDEgR
+vBofZj4Y1C0c8C/ZuC33COxerEMYoBqVnApVnosNMCU1VQZFX1I5FYA+esnt25MK
+7nVcMeFVdsAUkbpiUkAGt6q4/iqncxpfwatCmFUH3or7s2huZWTMS5ScdY7qjssG
+43cg0WGmWA/+MsZkKkBoEU22059uwvNQCaMKW8N5OqHujOq+lOVQ+tHipaqym8e1
+ymDdiq4Em4qOwR318dEB55BBg/AFBrsmEmaVcgDgzLL4H90ugbwlVTYqMorAvTSR
+MxYfNHer+WyQIUR2zCu1WeyMlaqd/2bTjkh9dHP8hlxY7Wh/00soF5Jjcp9mzlFv
+1S0gA21bkLkshwYBUcxW+rg0OyXLtY3Gks8cPfqAecdFBu4RNA9rLgctqoyj9SSL
+z4y7bJzaPTOt5DaiO0fykaEzvCvLr1K49gj/PVn0yrDuO4JUbjnBCjCxTp+/gyUg
+v9Jf0tJNtAhaT8AI0MeUV4uonadca6WUoRYLA3HTt+Fr4oBQOtwsGxd6X9NrBeU0
+hOuw9NQQJXFkZmybSgVvyiUxOJhN/vx7JEBFElAJQpEpU5s30azbeDe7UXbPuayf
+nJADVflJgVLEH0Jj+5NJ
+=qLzR
 -----END PGP SIGNATURE-----
 
---Sig_/I0ZNQyCAKnGr0nx9fMn+nL.--
+--Sig_/ORd1ovzNsNEEbmYX6il_y_K--
