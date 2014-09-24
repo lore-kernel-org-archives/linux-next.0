@@ -1,73 +1,56 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2014-09-22-16-57 uploaded
-Date: Tue, 23 Sep 2014 21:34:23 -0700
-Message-ID: <20140924043423.GA28993@roeck-us.net>
-References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
- <20140923190222.GA4662@roeck-us.net>
- <5421D8B1.1030504@infradead.org>
- <20140923205707.GA14428@roeck-us.net>
- <5421E7E1.80203@infradead.org>
- <20140923215356.GA15481@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the audit tree
+Date: Wed, 24 Sep 2014 15:38:57 +1000
+Message-ID: <20140924153857.191a97a4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20140923215356.GA15481@roeck-us.net>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, David Miller <davem@davemloft.net>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5RuMqHSjQxWmZ2iYe6Bek_J"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>, Andy Lutomirski <luto@amacapital.net>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 23, 2014 at 02:53:56PM -0700, Guenter Roeck wrote:
-> 
-> > Neither of these patches enables CONFIG_NET.  They just add dependencies.
-> > 
-> This means CONFIG_NET is now disabled in at least 31 configurations where
-> it used to be enabled before (per my count), and there may be additional
-> impact due to the additional changes of "select X" to "depends on X".
-> 
-> 3.18 is going to be interesting.
-> 
-Actually, turns out the changes are already in 3.17.
+--Sig_/5RuMqHSjQxWmZ2iYe6Bek_J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In case anyone is interested, here is a list of now broken configurations
-(where 'broken' is defined as "CONFIG NET used to be defined, but
-is not defined anymore"). No guarantee for completeness or correctness.
+Hi all,
 
-mips:gpr_defconfig
-mips:ip27_defconfig
-mips:jazz_defconfig
-mips:loongson3_defconfig
-mips:malta_defconfig
-mips:malta_kvm_defconfig
-mips:malta_kvm_guest_defconfig
-mips:mtx1_defconfig
-mips:nlm_xlp_defconfig
-mips:nlm_xlr_defconfig
-mips:rm200_defconfig
-parisc:a500_defconfig
-parisc:c8000_defconfig
-powerpc:c2k_defconfig
-powerpc:pmac32_defconfig
-powerpc:ppc64_defconfig
-powerpc:ppc64e_defconfig
-powerpc:pseries_defconfig
-powerpc:pseries_le_defconfig
-s390:default_defconfig
-s390:gcov_defconfig
-s390:performance_defconfig
-s390:zfcpdump_defconfig
-sh:sdk7780_defconfig
-sh:sh2007_defconfig
-sparc:sparc64_defconfig
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/kernel/entry_64.S between commit b4f0d3755c5e ("audit: x86:
+drop arch from __audit_syscall_entry() interface") from the audit tree
+and commit 1dcf74f6edfc ("x86_64, entry: Use split-phase
+syscall_trace_enter for 64-bit syscalls") from the tip tree.
 
-Several ia64 configurations were affected as well, but that
-has already been fixed.
+I fixed it up (probably incorrectly - I removed the auditsys section
+as that is what the latter did) and can carry the fix as necessary (no
+action is required).
 
-Guenter
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--Sig_/5RuMqHSjQxWmZ2iYe6Bek_J
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUIlj3AAoJEMDTa8Ir7ZwVXrMQAJLqwRsUszFniIgdVsSDoK3r
+lGyMt537l175TqijSpiebnJZKuylUgsFldn58phRW1N+YQ8gE7RlvOE42lJEOjJW
+zV/vEMQCEfmDpZVMCq1VRtJt4xwVPN4I2TCzy/ET8GFVZh2Vfw637P+5hF4qtJZK
+yLPfMPifjPFHXKC5uIFYTclG+3KYIIRuIUWPv7gVAGe7C/1oHao0IUEGFr6eQZ1e
+wVXToHI697GZdd8mRunJSUPIxqImdBxzQxLFyacTHMr5s+cpyLrLVL49wWTjTzBN
+rBNPYZ9kKwtm4XAs6c3J4wJ5x7HaRyk33VueU3XkhLZ+yMosHsMPXbVBMobeolbh
+40K9iZFoAhxezwxvunbYqDfHglGqf/CrQ+b8w8bWAUAU3H47MtS1vBCIETgRW9fJ
++xFo0PJfS1nJYCMSH1TbdKAEsPxvufIdNPwTvHDc7ncUeCY/TChZyEfs2pWECYVZ
+/1fEX97mcFnT/NhV7TQWwoYqTULB/z3tHCSqBlrWnH4nBeNdfxtO57mjKbC2l0sJ
+9R1iI4xiL8prJY6WUIp8szaIRozRKu1f6ShW9/ZeCTAI9GPmPaJXkz+UQF9NiXwV
+/JKhtIh29jV09GYZq8RLx48wli0jIt9nsXhboEjUbJj7L3y8+zsmm+yKMc0G1a/L
+ErUIb2tMe3wCHPnV6zW4
+=nlMt
+-----END PGP SIGNATURE-----
+
+--Sig_/5RuMqHSjQxWmZ2iYe6Bek_J--
