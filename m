@@ -1,89 +1,107 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2014-09-22-16-57 uploaded
-Date: Tue, 23 Sep 2014 14:53:56 -0700
-Message-ID: <20140923215356.GA15481@roeck-us.net>
-References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
- <20140923190222.GA4662@roeck-us.net>
- <5421D8B1.1030504@infradead.org>
- <20140923205707.GA14428@roeck-us.net>
- <5421E7E1.80203@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the net tree
+Date: Wed, 24 Sep 2014 10:36:11 +1000
+Message-ID: <20140924103611.07175304@canb.auug.org.au>
+References: <20140918103200.12b79941@canb.auug.org.au>
+	<541A28BA.1060201@infradead.org>
+	<54218AEF.5090200@suse.cz>
+	<20140924072306.799005a3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:42863 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756593AbaIWVyB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Sep 2014 17:54:01 -0400
-Content-Disposition: inline
-In-Reply-To: <5421E7E1.80203@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, David Miller <davem@davemloft.net>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/I0ZNQyCAKnGr0nx9fMn+nL."; protocol="application/pgp-signature"
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <20140924072306.799005a3@canb.auug.org.au>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: Randy Dunlap <rdunlap@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 23, 2014 at 02:36:33PM -0700, Randy Dunlap wrote:
-> On 09/23/14 13:57, Guenter Roeck wrote:
-> > On Tue, Sep 23, 2014 at 01:31:45PM -0700, Randy Dunlap wrote:
-> >> On 09/23/14 12:02, Guenter Roeck wrote:
-> >>> On Mon, Sep 22, 2014 at 05:02:56PM -0700, akpm@linux-foundation.org wrote:
-> >>>> The mm-of-the-moment snapshot 2014-09-22-16-57 has been uploaded to
-> >>>>
-> >>>>    http://www.ozlabs.org/~akpm/mmotm/
-> >>>>
-> >>>> mmotm-readme.txt says
-> >>>>
-> >>>> README for mm-of-the-moment:
-> >>>>
-> >>>> http://www.ozlabs.org/~akpm/mmotm/
-> >>>>
-> >>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> >>>> more than once a week.
-> >>>>
-> >>> Sine I started testing this branch, I figure I might as well share the results.
-> >>>
-> >>> i386:allyesconfig
-> >>>
-> >>> drivers/built-in.o: In function `_scsih_qcmd':
-> >>> mpt2sas_scsih.c:(.text+0xf5327d): undefined reference to `__udivdi3'
-> >>> mpt2sas_scsih.c:(.text+0xf532b0): undefined reference to `__umoddi3'
-> >>>
-> >>> i386:allmodconfig
-> >>>
-> >>> ERROR: "__udivdi3" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
-> >>> ERROR: "__umoddi3" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
-> >>
-> >> A patch has been posted for that and I believe that Christoph Hellwig has
-> >> merged it.
-> >>
-> >>> mips:nlm_xlp_defconfig
-> >>>
-> >>> ERROR: "scsi_is_fc_rport" [drivers/scsi/libfc/libfc.ko] undefined!
-> >>> ERROR: "fc_get_event_number" [drivers/scsi/libfc/libfc.ko] undefined!
-> >>> ERROR: "skb_trim" [drivers/scsi/libfc/libfc.ko] undefined!
-> >>> ERROR: "fc_host_post_event" [drivers/scsi/libfc/libfc.ko] undefined!
-> >>>
-> >>> [and many more]
-> >>
-> >> I have posted a patch for these build errors.
-> >>
-> > mips:nlm_xlp_defconfig builds in next-20140923, but it doesn't configure
-> > CONFIG_NET. I don't see a patch which would address that problem.
-> > In case I am missing it, can you point me to your patch ?
-> 
-> I was referring to this one:
-> http://marc.info/?l=linux-scsi&m=141117068414761&w=2
-> 
-> although I think that Dave is also working on a patch that is a little
-> different from mine.
-> 
-His patch is in next-20140923.
+--Sig_/I0ZNQyCAKnGr0nx9fMn+nL.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Neither of these patches enables CONFIG_NET.  They just add dependencies.
-> 
-This means CONFIG_NET is now disabled in at least 31 configurations where
-it used to be enabled before (per my count), and there may be additional
-impact due to the additional changes of "select X" to "depends on X".
+Hi all,
 
-3.18 is going to be interesting.
+On Wed, 24 Sep 2014 07:23:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Tue, 23 Sep 2014 16:59:59 +0200 Michal Marek <mmarek@suse.cz> wrote:
+> >
+> > On 2014-09-18 02:35, Randy Dunlap wrote:
+> > > On 09/17/14 17:32, Stephen Rothwell wrote:
+> > >> Hi all,
+> > >>
+> > >> After merging the net tree, today's linux-next build (powerpc
+> > >> ppc64_defconfig) produced these warnings:
+> > >>
+> > >> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && =
+EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMI=
+I which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR=
+_IBM)
+> > >> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440E=
+PX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII whi=
+ch has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+> > >> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) se=
+lects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHER=
+NET && NET_VENDOR_IBM)
+> > >> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX &&=
+ 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 whic=
+h has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+> > >> warning: (PPC_CELL_NATIVE && CANYONLANDS && GLACIER && 440EP && 440E=
+PX && 440GRX && 440GP && 440GX && 460SX && 405GP) selects IBM_EMAC_ZMII whi=
+ch has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+> > >> warning: (PPC_CELL_NATIVE && BLUESTONE && CANYONLANDS && GLACIER && =
+EIGER && 440EPX && 440GRX && 440GX && 460SX && 405EX) selects IBM_EMAC_RGMI=
+I which has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR=
+_IBM)
+> > >> warning: (PPC_CELL_NATIVE && 440GX && 460EX && 460SX && APM821xx) se=
+lects IBM_EMAC_TAH which has unmet direct dependencies (NETDEVICES && ETHER=
+NET && NET_VENDOR_IBM)
+> > >> warning: (PPC_CELL_NATIVE && AKEBONO && 440EPX && 440GRX && 440GX &&=
+ 440SPe && 460EX && 460SX && APM821xx && 405EX) selects IBM_EMAC_EMAC4 whic=
+h has unmet direct dependencies (NETDEVICES && ETHERNET && NET_VENDOR_IBM)
+> > >>
+> > >=20
+> > > I have looked into these and don't see why there is a problem.
+> > > Any help would be appreciated.
+> >=20
+> > This is a side effect of 5d6be6a5 ("scsi_netlink : Make SCSI_NETLINK
+> > dependent on NET instead of selecting NET"). Previously, SCSI_FC_ATTRS
+> > would select SCSI_NETLINK which would select CONFIG_NET. The above
+> > warnings are just a tip of the iceberg, the more serious issue is that
+> > ppc64_defconfig is lacking networking support. This is the downside of
+> > savedefconfig, because the 'select' implications can disappear over
+> > time. Looks like more defconfigs are affected by this:
+>=20
+> And since 5d6be6a5 is now in Linus' tree, we need Michal's 5 patches
+> (at least) to be sent to Linus ASAP ...
 
-Guenter
+I have put those 5 patches in my fixes tree for today ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/I0ZNQyCAKnGr0nx9fMn+nL.
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUIhH/AAoJEMDTa8Ir7ZwVdN0P/RsKOOMt/CI12FFkY2iBBPC1
+zDfTguPVGBLyUeE7mjrR9//J1j/4DYPFyHsAOrIR5JjKs8tHObbNCrMGOD3PX82G
+crPmGZVqlYWvNsjwetOLNKL2TAJB4SQtwEaglQWhKT7aqcNgUNngKCf8J9cwaKFK
+AKniLCEIuDuLFDgvqXd1bYmzQBO1dxP7QvE5s4Ay4O9DwhCZPChDqCPc2iRKDtVK
+VCXjMMGATM2i0Wp9aeddWM8gctDLv8VY08ghP8WDKfiJ2REI0ZHS6BIih+OpdJs9
+zAFJnEDDWMAQWzUZ334IFaZFf6HG4L29lm+Vd2dJNCVMTR1/dwc8UytZdi6Eezb/
+iCbCtkTVGycSywvIOp3w9CwDp6mxTcVXJ669K3HOsOMp+7Kjn2Ib3uIRvzcLT6A9
+ufQQiejZMkcmo6BpVry18JgLIByethmzLkC0Vc+AXXGm6AEOzr1ay68UHhs3PSGv
+N6EHOFEbphAHRXfpoOOYekkGlYge4G5DJWsn7os1A4Mu2JrOYbJ4AclGRr1Wi1wG
+DmYtR9lRm5QaOMRYx4Nej/F+UQ30xkIudfYJNbQaKXz0rlU0ZgaKcowgi4RTocdg
+ftcWh9/CHERPNO8E1TgNmlXf6PUNFhgdhxafZMcW3G1WePrIN7FvTwWlBximsq7u
+IfqcWhqBTg6QMRvzmBYs
+=cn1z
+-----END PGP SIGNATURE-----
+
+--Sig_/I0ZNQyCAKnGr0nx9fMn+nL.--
