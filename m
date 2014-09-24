@@ -1,48 +1,61 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Tue, 23 Sep 2014 21:58:58 -0400 (EDT)
-Message-ID: <20140923.215858.1862286673062032624.davem@davemloft.net>
-References: <541A28BA.1060201@infradead.org>
-	<54218AEF.5090200@suse.cz>
-	<20140924072306.799005a3@canb.auug.org.au>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: linux-next: build failure after merge of the samsung tree
+Date: Wed, 24 Sep 2014 12:04:36 +0900
+Message-ID: <00fb01cfd7a4$45eb4a50$d1c1def0$@kernel.org>
+References: <20140924110836.209bc8e2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:40778 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753457AbaIXB7E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Sep 2014 21:59:04 -0400
-In-Reply-To: <20140924072306.799005a3@canb.auug.org.au>
+Received: from mailout1.samsung.com ([203.254.224.24]:30561 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753883AbaIXDEo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Sep 2014 23:04:44 -0400
+In-reply-to: <20140924110836.209bc8e2@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: mmarek@suse.cz, rdunlap@infradead.org, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, torvalds@linux-foundation.org
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 24 Sep 2014 07:23:06 +1000
+Stephen Rothwell wrote:
+> 
+> Hi Kukjin,
+> 
+Hi Stephen,
 
-> Dave, this is a bit slack of you since I reported that problem a week
-> ago in the net tree and yet it has not been completely fixed before you
-> asked Linus to pull your tree :-(
+> After merging the samsung tree, today's linux-next build (arm multi_v7_defconfig)
+> failed like this:
+> 
+> arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock/maxim,max77686.h: No such
+> file or directory
+>  #include <dt-bindings/clock/maxim,max77686.h>
+>                                               ^
+> 
++ Mike
 
-There were build failures I saw due to some misbalanced select/depends
-issues which I fixed in:
+Hmm... I think, inclusion of the header file should be included in Mike's clk
+tree...What's wrong?
 
-commit df568d8e5250bf24e38c69ad4374baf0f8d279ba
-Author: David S. Miller <davem@davemloft.net>
-Date:   Mon Sep 22 13:14:33 2014 -0400
+> Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow").
+> 
+> In file included from arch/arm/mach-tegra/cpuidle-tegra114.c:17:0:
+> arch/arm/mach-tegra/cpuidle-tegra114.c: In function 'tegra114_idle_power_down':
+> arch/arm/include/asm/firmware.h:64:24: error: too few arguments to function 'firmware_ops->do_idle'
+>   ((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
+>                         ^
+> arch/arm/mach-tegra/cpuidle-tegra114.c:52:6: note: in expansion of macro 'call_firmware_op'
+>   if (call_firmware_op(do_idle) == -ENOSYS)
+>       ^
+> 
+> Caused by commit f5217f3b9332 ("ARM: EXYNOS: add AFTR mode support to
+> firmware do_idle method").
 
-    scsi: Use 'depends' with LIBFC instead of 'select'.
+OK, I'll revert it firstly. Thanks.
 
-which went in yesterday.  I thought that would resolve all of your
-problems.
+> 
+> I have used the samsung tree from next-20140923 for today.
 
-Believe me, it is a tragic surprise that several defconfigs absolutely
-depended upon this broken usage of select in the scsi layer, to of all
-things make CONFIG_NET=y implicit.
+OK.
 
-I'll do my best to sort this out, but I hope that this short term pain
-is worth it in the end.
-
-Thanks for your understanding.
+- Kukjin
