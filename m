@@ -1,68 +1,73 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: linux-next: build failure after merge of the samsung tree
-Date: Wed, 24 Sep 2014 12:54:05 +0900
-Message-ID: <010701cfd7ab$2f7acc30$8e706490$@kernel.org>
-References: <20140924110836.209bc8e2@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: mmotm 2014-09-22-16-57 uploaded
+Date: Tue, 23 Sep 2014 21:34:23 -0700
+Message-ID: <20140924043423.GA28993@roeck-us.net>
+References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
+ <20140923190222.GA4662@roeck-us.net>
+ <5421D8B1.1030504@infradead.org>
+ <20140923205707.GA14428@roeck-us.net>
+ <5421E7E1.80203@infradead.org>
+ <20140923215356.GA15481@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40142 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751990AbaIXDyH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Sep 2014 23:54:07 -0400
-In-reply-to: 
-Content-language: ko
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20140923215356.GA15481@roeck-us.net>
+Sender: owner-linux-mm@kvack.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, David Miller <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
-Kukjin Kim wrote:
+On Tue, Sep 23, 2014 at 02:53:56PM -0700, Guenter Roeck wrote:
 > 
-> Stephen Rothwell wrote:
-> >
-> > Hi Kukjin,
-> >
-> Hi Stephen,
+> > Neither of these patches enables CONFIG_NET.  They just add dependencies.
+> > 
+> This means CONFIG_NET is now disabled in at least 31 configurations where
+> it used to be enabled before (per my count), and there may be additional
+> impact due to the additional changes of "select X" to "depends on X".
 > 
-> > After merging the samsung tree, today's linux-next build (arm multi_v7_defconfig)
-> > failed like this:
-> >
-> > arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock/maxim,max77686.h: No
-> such
-> > file or directory
-> >  #include <dt-bindings/clock/maxim,max77686.h>
-> >                                               ^
-> >
-> + Mike
+> 3.18 is going to be interesting.
 > 
-> Hmm... I think, inclusion of the header file should be included in Mike's clk
-> tree...What's wrong?
-> 
-Just note, I've merged Mike's clk-next into my -next tree.
+Actually, turns out the changes are already in 3.17.
 
-> > Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow").
-> >
-> > In file included from arch/arm/mach-tegra/cpuidle-tegra114.c:17:0:
-> > arch/arm/mach-tegra/cpuidle-tegra114.c: In function 'tegra114_idle_power_down':
-> > arch/arm/include/asm/firmware.h:64:24: error: too few arguments to function 'firmware_ops->do_idle'
-> >   ((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
-> >                         ^
-> > arch/arm/mach-tegra/cpuidle-tegra114.c:52:6: note: in expansion of macro 'call_firmware_op'
-> >   if (call_firmware_op(do_idle) == -ENOSYS)
-> >       ^
-> >
-> > Caused by commit f5217f3b9332 ("ARM: EXYNOS: add AFTR mode support to
-> > firmware do_idle method").
-> 
-> OK, I'll revert it firstly. Thanks.
-> 
-Reverted just now.
+In case anyone is interested, here is a list of now broken configurations
+(where 'broken' is defined as "CONFIG NET used to be defined, but
+is not defined anymore"). No guarantee for completeness or correctness.
 
-> >
-> > I have used the samsung tree from next-20140923 for today.
-> 
-> OK.
-> 
-> - Kukjin
+mips:gpr_defconfig
+mips:ip27_defconfig
+mips:jazz_defconfig
+mips:loongson3_defconfig
+mips:malta_defconfig
+mips:malta_kvm_defconfig
+mips:malta_kvm_guest_defconfig
+mips:mtx1_defconfig
+mips:nlm_xlp_defconfig
+mips:nlm_xlr_defconfig
+mips:rm200_defconfig
+parisc:a500_defconfig
+parisc:c8000_defconfig
+powerpc:c2k_defconfig
+powerpc:pmac32_defconfig
+powerpc:ppc64_defconfig
+powerpc:ppc64e_defconfig
+powerpc:pseries_defconfig
+powerpc:pseries_le_defconfig
+s390:default_defconfig
+s390:gcov_defconfig
+s390:performance_defconfig
+s390:zfcpdump_defconfig
+sh:sdk7780_defconfig
+sh:sh2007_defconfig
+sparc:sparc64_defconfig
+
+Several ia64 configurations were affected as well, but that
+has already been fixed.
+
+Guenter
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
