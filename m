@@ -1,55 +1,62 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: mmotm 2014-09-22-16-57 uploaded
-Date: Wed, 24 Sep 2014 09:18:46 +0200
-Message-ID: <CAMuHMdW3J17CpH3LAfCdNsVuBqsqcWVCrAFt+7aewB-xzzzuiA@mail.gmail.com>
-References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
-	<20140923190222.GA4662@roeck-us.net>
-	<5421D8B1.1030504@infradead.org>
-	<20140923205707.GA14428@roeck-us.net>
-	<5421E7E1.80203@infradead.org>
-	<20140923215356.GA15481@roeck-us.net>
-	<20140924043423.GA28993@roeck-us.net>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the nfs tree
+Date: Wed, 24 Sep 2014 09:32:42 +0200
+Message-ID: <20140924073242.GA1962@gmail.com>
+References: <20140922133156.454481f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:64113 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752247AbaIXHSt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Sep 2014 03:18:49 -0400
-In-Reply-To: <20140924043423.GA28993@roeck-us.net>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:52592 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752813AbaIXHcq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Sep 2014 03:32:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20140922133156.454481f9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Michal Hocko <mhocko@suse.cz>, David Miller <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kirill Tkhai <ktkhai@parallels.com>, Christoph Hellwig <hch@lst.de>
 
-On Wed, Sep 24, 2014 at 6:34 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Tue, Sep 23, 2014 at 02:53:56PM -0700, Guenter Roeck wrote:
->> > Neither of these patches enables CONFIG_NET.  They just add dependencies.
->> >
->> This means CONFIG_NET is now disabled in at least 31 configurations where
->> it used to be enabled before (per my count), and there may be additional
->> impact due to the additional changes of "select X" to "depends on X".
->>
->> 3.18 is going to be interesting.
->>
-> Actually, turns out the changes are already in 3.17.
->
-> In case anyone is interested, here is a list of now broken configurations
-> (where 'broken' is defined as "CONFIG NET used to be defined, but
-> is not defined anymore"). No guarantee for completeness or correctness.
 
-Fortunately (for m68k) I always work with the full defconfig files, and
-regenerate the minimal ones from the full ones on every -rc release locally.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-That way you see the churn...
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got conflicts in
+> fs/nfs/blocklayout/blocklayoutdev.c and
+> fs/nfs/blocklayout/blocklayoutdm.c between commit 871760ce97a9
+> ("pnfs/blocklayout: move all rpc_pipefs related code into a single
+> file") from the nfs tree and commit f139caf2e897 ("sched, cleanup,
+> treewide: Remove set_current_state(TASK_RUNNING) after schedule()")
+> from the tip tree.
+> 
+> I fixed it up (the former move the code in these two files into
+> fs/nfs/blocklayout/rpc_pipefs.c, so I deleted the 2 files and applied
+> the following merge fix patch) and can carry the fix as necessary (no
+> action is required).
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 22 Sep 2014 13:29:19 +1000
+> Subject: [PATCH] pnfs: merge fixup for sched cleanup of set_current_state(TASK_RUNNING)
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/nfs/blocklayout/rpc_pipefs.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/nfs/blocklayout/rpc_pipefs.c b/fs/nfs/blocklayout/rpc_pipefs.c
+> index 8d04bda2bd2e..e966c023b1b7 100644
+> --- a/fs/nfs/blocklayout/rpc_pipefs.c
+> +++ b/fs/nfs/blocklayout/rpc_pipefs.c
+> @@ -92,7 +92,6 @@ bl_resolve_deviceid(struct nfs_server *server, struct pnfs_block_volume *b,
+>  
+>  	set_current_state(TASK_UNINTERRUPTIBLE);
+>  	schedule();
+> -	__set_current_state(TASK_RUNNING);
+>  	remove_wait_queue(&nn->bl_wq, &wq);
+>  
+>  	if (reply->status != BL_DEVICE_REQUEST_PROC) {
 
-Gr{oetje,eeting}s,
+Looks good, thanks Stephen!
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Ingo
