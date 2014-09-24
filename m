@@ -1,72 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Christoffer Dall <cdall@cs.columbia.edu>
 Subject: Re: linux-next: build failure after merge of the kvm-arm tree
-Date: Wed, 24 Sep 2014 16:50:30 +1000
-Message-ID: <20140924165030.41c90baf@canb.auug.org.au>
+Date: Wed, 24 Sep 2014 09:06:12 +0200
+Message-ID: <20140924070612.GA15794@cbox>
 References: <20140922140645.7c2ad9c8@canb.auug.org.au>
+ <20140924165030.41c90baf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/192MeR9bTmk4VsjCJO8.nus"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140922140645.7c2ad9c8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Auger <eric.auger@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:34974 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751383AbaIXHFr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Sep 2014 03:05:47 -0400
+Received: by mail-lb0-f180.google.com with SMTP id b12so10156551lbj.11
+        for <linux-next@vger.kernel.org>; Wed, 24 Sep 2014 00:05:46 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20140924165030.41c90baf@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Auger <eric.auger@linaro.org>, Paolo Bonzini <pbonzini@redhat.com>
 
---Sig_/192MeR9bTmk4VsjCJO8.nus
-Content-Type: text/plain; charset=US-ASCII
+
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Mon, 22 Sep 2014 14:06:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
+On Wed, Sep 24, 2014 at 04:50:30PM +1000, Stephen Rothwell wrote:
 > Hi all,
 >=20
-> After merging the kvm-arm tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
+> On Mon, 22 Sep 2014 14:06:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Hi all,
+> >=20
+> > After merging the kvm-arm tree, today's linux-next build (x86_64 allmod=
+config)
+> > failed like this:
+> >=20
+> > arch/x86/kvm/../../../virt/kvm/eventfd.c: In function 'kvm_register_irq=
+_ack_notifier':
+> > arch/x86/kvm/../../../virt/kvm/eventfd.c:493:2: error: implicit declara=
+tion of function 'kvm_vcpu_request_scan_ioapic' [-Werror=3Dimplicit-functio=
+n-declaration]
+> >   kvm_vcpu_request_scan_ioapic(kvm);
+> >   ^
+> >=20
+> > Probably caused by commit 0ba09511ddc3 ("KVM: EVENTFD: remove inclusion
+> > of irq.h").
+> >=20
+> > I have used the kvm-arm tree from next-20140919 for today.
 >=20
-> arch/x86/kvm/../../../virt/kvm/eventfd.c: In function 'kvm_register_irq_a=
-ck_notifier':
-> arch/x86/kvm/../../../virt/kvm/eventfd.c:493:2: error: implicit declarati=
-on of function 'kvm_vcpu_request_scan_ioapic' [-Werror=3Dimplicit-function-=
-declaration]
->   kvm_vcpu_request_scan_ioapic(kvm);
->   ^
+> Still getting this failure.
 >=20
-> Probably caused by commit 0ba09511ddc3 ("KVM: EVENTFD: remove inclusion
-> of irq.h").
->=20
-> I have used the kvm-arm tree from next-20140919 for today.
+Commit e9142e3b69c2ae8a699463e219e5b029ff0d652b in kvm/queue fixes this,
+but it hasn't gone to next yet.
 
-Still getting this failure.
+Paolo, I know there's a scary commit in queue but there's a bunch of
+scary stuff in the kvmarm/next too that I'd like to see in next, any
+chance you can put a subset of queue into next?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks,
+-Christoffer
 
---Sig_/192MeR9bTmk4VsjCJO8.nus
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAEBCAAGBQJUImm+AAoJEMDTa8Ir7ZwVILgP/0QSK6aPjzRXBcG7zuHLchu8
-DtNNNftbm2eYJ1q3zbqHWaSKKMi8ud/YeqewVbPURGWKCUlYPKQoS3Zr+lVk+V0X
-/d3nXMLcQvgWPlD1xmNfsA5qcRjhCmBULg1B3UWrZ0RUU/jBDkEct2ETyoiljflT
-6S39qhwO75igX2XwbUlDNhkgpKBOFM7SDkOwKkgjQzzumBSRRhUcBEakldtX5LwD
-ay1+DGSiJAoCCMLRZCGtV4jemCflSJDvxJbW9vEnVY1OD0ngRCwkYF6Vi25uj5EE
-Z4JIKih+GK/p/ayoFYoY96GWtAKM1V5gMrmiO/MyjxGW2GmFHBhw/4MOJcZKFO9T
-SVkNfJwQc6hQT2QgNMGwTeA3JUk2KouQMpFC44qz+cUL155kuOefJ7xZRucFGGQX
-zN1xVJKNiZCtNZBU9iSy9lNfMg5juLWg4eH4BAQCetF1ud1qaXvcCBxZsES5i1oo
-P5W5gwWh8whGck80mdm2yGoivmTVRUTS2fJEvFyUy/ZWk/kI262HwWDFF/MDZ0Pq
-JABm2QIYRYCeQJms0IGL34yCRP4PX83H7l2kLz5xo/njaqGaG1pUopcBkxwZjQ8e
-UuEOgczNtf6lEvD7sOIxIej18Y2ykOYYd+pCAeBIvr2UNCcgrqjXWX3ax0x+Zbfr
-Z2hZy2LgSgSU9w1u6tkY
-=UbSn
+iQEcBAEBAgAGBQJUIm1kAAoJEEtpOizt6ddy1v8H/2cav2en0ZsQaE00/oJKlP/3
+FvzNP47nyqBHDHrtB59wClgGb7JH7JRHQXETMbB35J2CJKM7N4yG2RpdC30E+JWC
+A4tneXTYywtXJE2t7ItWLOW8s7g6stNEMKAz3BfWBK7Z7qLwTvj9G0MkB349INOm
+jWhVyNBBVKEfAgyYZ5PAKzCyBRrKIqfEs+7gaQLT4tZt1IyJWf/M6ifGN18XQAk/
+q/S0ncjwrnlEYFMJreayMZyxiVYn8T3Dx1qNtSc1PzVE+8U93J22oaN8F+slCm3d
+YBULJglWxg/pVCWL1WmOq/udqhugrhU+IQkU3YFExAtBEPKMheGVpuUshgm2Le8=
+=yqr2
 -----END PGP SIGNATURE-----
 
---Sig_/192MeR9bTmk4VsjCJO8.nus--
+--3MwIy2ne0vdjdPXF--
