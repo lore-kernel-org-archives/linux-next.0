@@ -1,43 +1,72 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: mmotm 2014-09-22-16-57 uploaded
-Date: Wed, 24 Sep 2014 02:24:10 -0400 (EDT)
-Message-ID: <20140924.022410.1707532643268164791.davem@davemloft.net>
-References: <5421E7E1.80203@infradead.org>
-	<20140923215356.GA15481@roeck-us.net>
-	<20140924043423.GA28993@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the kvm-arm tree
+Date: Wed, 24 Sep 2014 16:50:30 +1000
+Message-ID: <20140924165030.41c90baf@canb.auug.org.au>
+References: <20140922140645.7c2ad9c8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20140924043423.GA28993@roeck-us.net>
-Sender: owner-linux-mm@kvack.org
-To: linux@roeck-us.net
-Cc: rdunlap@infradead.org, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/192MeR9bTmk4VsjCJO8.nus"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140922140645.7c2ad9c8@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Auger <eric.auger@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 23 Sep 2014 21:34:23 -0700
+--Sig_/192MeR9bTmk4VsjCJO8.nus
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Sep 23, 2014 at 02:53:56PM -0700, Guenter Roeck wrote:
->> 
->> > Neither of these patches enables CONFIG_NET.  They just add dependencies.
->> > 
->> This means CONFIG_NET is now disabled in at least 31 configurations where
->> it used to be enabled before (per my count), and there may be additional
->> impact due to the additional changes of "select X" to "depends on X".
->> 
->> 3.18 is going to be interesting.
->> 
-> Actually, turns out the changes are already in 3.17.
-> 
-> In case anyone is interested, here is a list of now broken configurations
-> (where 'broken' is defined as "CONFIG NET used to be defined, but
-> is not defined anymore"). No guarantee for completeness or correctness.
+Hi all,
 
-I'll sort this out completely tomorrow.
+On Mon, 22 Sep 2014 14:06:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi all,
+>=20
+> After merging the kvm-arm tree, today's linux-next build (x86_64 allmodco=
+nfig)
+> failed like this:
+>=20
+> arch/x86/kvm/../../../virt/kvm/eventfd.c: In function 'kvm_register_irq_a=
+ck_notifier':
+> arch/x86/kvm/../../../virt/kvm/eventfd.c:493:2: error: implicit declarati=
+on of function 'kvm_vcpu_request_scan_ioapic' [-Werror=3Dimplicit-function-=
+declaration]
+>   kvm_vcpu_request_scan_ioapic(kvm);
+>   ^
+>=20
+> Probably caused by commit 0ba09511ddc3 ("KVM: EVENTFD: remove inclusion
+> of irq.h").
+>=20
+> I have used the kvm-arm tree from next-20140919 for today.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Still getting this failure.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/192MeR9bTmk4VsjCJO8.nus
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUImm+AAoJEMDTa8Ir7ZwVILgP/0QSK6aPjzRXBcG7zuHLchu8
+DtNNNftbm2eYJ1q3zbqHWaSKKMi8ud/YeqewVbPURGWKCUlYPKQoS3Zr+lVk+V0X
+/d3nXMLcQvgWPlD1xmNfsA5qcRjhCmBULg1B3UWrZ0RUU/jBDkEct2ETyoiljflT
+6S39qhwO75igX2XwbUlDNhkgpKBOFM7SDkOwKkgjQzzumBSRRhUcBEakldtX5LwD
+ay1+DGSiJAoCCMLRZCGtV4jemCflSJDvxJbW9vEnVY1OD0ngRCwkYF6Vi25uj5EE
+Z4JIKih+GK/p/ayoFYoY96GWtAKM1V5gMrmiO/MyjxGW2GmFHBhw/4MOJcZKFO9T
+SVkNfJwQc6hQT2QgNMGwTeA3JUk2KouQMpFC44qz+cUL155kuOefJ7xZRucFGGQX
+zN1xVJKNiZCtNZBU9iSy9lNfMg5juLWg4eH4BAQCetF1ud1qaXvcCBxZsES5i1oo
+P5W5gwWh8whGck80mdm2yGoivmTVRUTS2fJEvFyUy/ZWk/kI262HwWDFF/MDZ0Pq
+JABm2QIYRYCeQJms0IGL34yCRP4PX83H7l2kLz5xo/njaqGaG1pUopcBkxwZjQ8e
+UuEOgczNtf6lEvD7sOIxIej18Y2ykOYYd+pCAeBIvr2UNCcgrqjXWX3ax0x+Zbfr
+Z2hZy2LgSgSU9w1u6tkY
+=UbSn
+-----END PGP SIGNATURE-----
+
+--Sig_/192MeR9bTmk4VsjCJO8.nus--
