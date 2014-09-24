@@ -1,83 +1,90 @@
-From: Christoffer Dall <cdall@cs.columbia.edu>
-Subject: Re: linux-next: build failure after merge of the kvm-arm tree
-Date: Wed, 24 Sep 2014 09:06:12 +0200
-Message-ID: <20140924070612.GA15794@cbox>
-References: <20140922140645.7c2ad9c8@canb.auug.org.au>
- <20140924165030.41c90baf@canb.auug.org.au>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH] mm, debug: mm-introduce-vm_bug_on_mm-fix-fix.patch
+Date: Wed, 24 Sep 2014 09:09:39 +0200
+Message-ID: <20140924070939.GA26917@dhcp22.suse.cz>
+References: <5420b8b0.9HdYLyyuTikszzH8%akpm@linux-foundation.org>
+ <1411464279-20158-1-git-send-email-mhocko@suse.cz>
+ <20140923112848.GA10046@dhcp22.suse.cz>
+ <83907.1411489189@turing-police.cc.vt.edu>
+ <20140923135258.faf628403a58701da5a981df@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:34974 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751383AbaIXHFr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Sep 2014 03:05:47 -0400
-Received: by mail-lb0-f180.google.com with SMTP id b12so10156551lbj.11
-        for <linux-next@vger.kernel.org>; Wed, 24 Sep 2014 00:05:46 -0700 (PDT)
+Received: from cantor2.suse.de ([195.135.220.15]:56334 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750717AbaIXHJn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Sep 2014 03:09:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20140924165030.41c90baf@canb.auug.org.au>
+In-Reply-To: <20140923135258.faf628403a58701da5a981df@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Auger <eric.auger@linaro.org>, Paolo Bonzini <pbonzini@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Valdis.Kletnieks@vt.edu, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, Sasha Levin <sasha.levin@oracle.com>
 
+On Tue 23-09-14 13:52:58, Andrew Morton wrote:
+> On Tue, 23 Sep 2014 12:19:49 -0400 Valdis.Kletnieks@vt.edu wrote:
+> 
+> > On Tue, 23 Sep 2014 13:28:48 +0200, Michal Hocko said:
+> > > And there is another one hitting during randconfig. The patch makes my
+> > > eyes bleed
+> > 
+> > Amen.  But I'm not seeing a better fix either.
+> > 
+> > >  #if defined(CONFIG_NUMA_BALANCING) || defined(CONFIG_COMPACTION)
+> > > -		"tlb_flush_pending %d\n",
+> > > +		"tlb_flush_pending %d\n"
+> > >  #endif
+> > > -		mm, mm->mmap, mm->vmacache_seqnum, mm->task_size,
+> > > +		, mm, mm->mmap, mm->vmacache_seqnum, mm->task_size,
+> > 
+> > I'm surprised that checkpatch doesn't explode on this.  And I'm starting
+> > a pool on how soon somebody submits a patch to "fix" this. :)
+> 
+> It is all pretty godawful.  We can eliminate the tricks with the comma
+> separators by adding an always-there, does-nothing argument:
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+yes, this is safer if we have more conditional fields in mm_struct later
+on. It is also less awful. Thanks!
 
-On Wed, Sep 24, 2014 at 04:50:30PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Mon, 22 Sep 2014 14:06:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > Hi all,
-> >=20
-> > After merging the kvm-arm tree, today's linux-next build (x86_64 allmod=
-config)
-> > failed like this:
-> >=20
-> > arch/x86/kvm/../../../virt/kvm/eventfd.c: In function 'kvm_register_irq=
-_ack_notifier':
-> > arch/x86/kvm/../../../virt/kvm/eventfd.c:493:2: error: implicit declara=
-tion of function 'kvm_vcpu_request_scan_ioapic' [-Werror=3Dimplicit-functio=
-n-declaration]
-> >   kvm_vcpu_request_scan_ioapic(kvm);
-> >   ^
-> >=20
-> > Probably caused by commit 0ba09511ddc3 ("KVM: EVENTFD: remove inclusion
-> > of irq.h").
-> >=20
-> > I have used the kvm-arm tree from next-20140919 for today.
->=20
-> Still getting this failure.
->=20
-Commit e9142e3b69c2ae8a699463e219e5b029ff0d652b in kvm/queue fixes this,
-but it hasn't gone to next yet.
+> 
+> --- a/mm/debug.c~mm-debug-mm-introduce-vm_bug_on_mm-fix-fixpatch-fix
+> +++ a/mm/debug.c
+> @@ -197,7 +197,9 @@ void dump_mm(const struct mm_struct *mm)
+>  #if defined(CONFIG_NUMA_BALANCING) || defined(CONFIG_COMPACTION)
+>  		"tlb_flush_pending %d\n"
+>  #endif
+> -		, mm, mm->mmap, mm->vmacache_seqnum, mm->task_size,
+> +		"%s",	/* This is here to hold the comma */
+> +
+> +		mm, mm->mmap, mm->vmacache_seqnum, mm->task_size,
+>  #ifdef CONFIG_MMU
+>  		mm->get_unmapped_area,
+>  #endif
+> @@ -218,16 +220,17 @@ void dump_mm(const struct mm_struct *mm)
+>  #ifdef CONFIG_MEMCG
+>  		mm->owner,
+>  #endif
+> -		mm->exe_file
+> +		mm->exe_file,
+>  #ifdef CONFIG_MMU_NOTIFIER
+> -		, mm->mmu_notifier_mm
+> +		mm->mmu_notifier_mm,
+>  #endif
+>  #ifdef CONFIG_NUMA_BALANCING
+> -		, mm->numa_next_scan, mm->numa_scan_offset, mm->numa_scan_seq
+> +		mm->numa_next_scan, mm->numa_scan_offset, mm->numa_scan_seq,
+>  #endif
+>  #if defined(CONFIG_NUMA_BALANCING) || defined(CONFIG_COMPACTION)
+> -		, mm->tlb_flush_pending
+> +		mm->tlb_flush_pending,
+>  #endif
+> +		""		/* This is here to not have a comma! */
+>  		);
+>  
+>  		dump_flags(mm->def_flags, vmaflags_names,
+> _
+> 
 
-Paolo, I know there's a scary commit in queue but there's a bunch of
-scary stuff in the kvmarm/next too that I'd like to see in next, any
-chance you can put a subset of queue into next?
-
-Thanks,
--Christoffer
-
---3MwIy2ne0vdjdPXF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJUIm1kAAoJEEtpOizt6ddy1v8H/2cav2en0ZsQaE00/oJKlP/3
-FvzNP47nyqBHDHrtB59wClgGb7JH7JRHQXETMbB35J2CJKM7N4yG2RpdC30E+JWC
-A4tneXTYywtXJE2t7ItWLOW8s7g6stNEMKAz3BfWBK7Z7qLwTvj9G0MkB349INOm
-jWhVyNBBVKEfAgyYZ5PAKzCyBRrKIqfEs+7gaQLT4tZt1IyJWf/M6ifGN18XQAk/
-q/S0ncjwrnlEYFMJreayMZyxiVYn8T3Dx1qNtSc1PzVE+8U93J22oaN8F+slCm3d
-YBULJglWxg/pVCWL1WmOq/udqhugrhU+IQkU3YFExAtBEPKMheGVpuUshgm2Le8=
-=yqr2
------END PGP SIGNATURE-----
-
---3MwIy2ne0vdjdPXF--
+-- 
+Michal Hocko
+SUSE Labs
