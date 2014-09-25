@@ -1,58 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the kvm tree
-Date: Thu, 25 Sep 2014 15:32:01 +1000
-Message-ID: <20140925153201.2e56229d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Thu, 25 Sep 2014 16:30:36 +1000
+Message-ID: <20140925163036.5f3281eb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vm6=.C6Q4KQBjFY6+gnQtUH"; protocol="application/pgp-signature"
+ boundary="Sig_/.A_wmVP3E71tbhIbrSJIdz7"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57064 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47631 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750808AbaIYFcP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Sep 2014 01:32:15 -0400
+	id S1751328AbaIYGao (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Sep 2014 02:30:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Eric Auger <eric.auger@linaro.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hurley <peter@hurleysoftware.com>
 
---Sig_/vm6=.C6Q4KQBjFY6+gnQtUH
+--Sig_/.A_wmVP3E71tbhIbrSJIdz7
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in
-virt/kvm/eventfd.c between commit 29f1b65b5984 ("KVM: EVENTFD: Remove
-inclusion of irq.h") from the kvm tree and commit 0ba09511ddc3 ("KVM:
-EVENTFD: remove inclusion of irq.h") from the kvm-arm tree.
+After merging the tty tree, today's linux-next build (arm multi_v7_defconfi=
+g)
+failed like this:
 
-I fixed it up (I used the kvm tree version) and can carry the fix as
-necessary (no action is required).
-git diff
+In file included from init/do_mounts.c:15:0:
+include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
+         unused:62;
+         ^
+include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
+         unused_ctrl:55;
+         ^
+In file included from init/main.c:28:0:
+include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
+         unused:62;
+         ^
+include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
+         unused_ctrl:55;
+         ^
+In file included from include/linux/serial_core.h:29:0,
+                 from include/linux/serial_s3c.h:236,
+                 from arch/arm/mach-exynos/exynos.c:15:
+include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
+         unused:62;
+         ^
+include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
+         unused_ctrl:55;
+         ^
+In file included from include/linux/serial_core.h:29:0,
+                 from include/linux/platform_data/serial-omap.h:20,
+                 from arch/arm/mach-omap2/serial.c:30:
+include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
+         unused:62;
+         ^
+include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
+         unused_ctrl:55;
+         ^
+
+Caused by commits c545b66c6922 ("tty: Serialize tcflow() with other tty
+flow control changes") and 99416322dd16 ("tty: Workaround Alpha
+non-atomic byte storage in tty_struct").  There are still 32 bit
+architectures out there!  ;-)
+
+I have used the tty tree from next-20140924 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/vm6=.C6Q4KQBjFY6+gnQtUH
+--Sig_/.A_wmVP3E71tbhIbrSJIdz7
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUI6jWAAoJEMDTa8Ir7ZwVuZ0P+wcfuCeFUmE5o4zhEK4OZzZZ
-UkXJ5kHjs8asGBs3xNe/vJ3Cd4mQCalNfJk46aeOllAE4NfW4uCdcgnvvQuzFTvC
-QhV7D+lNWZoSCuFPdPbIzi0tnccqt9l+ZoC4SOgVgdEejV760N9EczW5jlOo+Hiv
-GIS33Lx1ZCOpbfqPMfry94DmezKtmERFV0M44MsUq0TsLcP3U+sfaVLE4ZUb89Lr
-35V5w82gkoSd11cY4I+ycwjNZ0Wfa5TlyDVeWm8CSC+UylVkpO4OkO1Z+tsfkNaH
-k4j5dWUPCwjWqgBTRGunN9h8xcuc744IZ7VdkoC7ny5uL6xn5QTfLpb+oTU8Nmry
-0WtU0U0jR0lLRgF8CATLcazzZDgzBRL7w83khMjMOTATKiFPCwt4Fk+Wj5HmwMcl
-AdR0F263CuJyYbgL+rKP/mLZIUii7GY0L9M62CJarY61nFcg6CgZMRqZkaJ1Ibnu
-djVjno4lD0bEUzKM5n+EpABYt1Wwhfq7YoSHA4anuthuRjuRNUUlfahRSgrWmOCl
-J+lYiX2pk20bGRnpfS9unOutFTCBVsBGXUpJbL9VDOi9crPensECqve8WF41JoEW
-3HzGiF8efvktfXVn/lIWm8oCXz0sfCn6IysBAhOB7RJJepQjzqijwrFFhpSZF4ow
-VH/ZsjmJkOO20HH/qIkP
-=tXfV
+iQIcBAEBCAAGBQJUI7aRAAoJEMDTa8Ir7ZwV7/cP/0oD7hIp8Q2N59nuKlXW3SAZ
+yAqUVW8B4jkQobUhznBaQK609unUGvn7uykPZPhu+o3GXZ6Wu8WGyrg9+1/CZ82I
+cW0Vw0+M2vmJ62Ina4LPB3vJpzlZ+80RU1to4qkyBxcZlHlKihftubqM+GLzPvKg
+Lgsrxt5HigMgcrzLkGKARC9C9crdVZWb2QDSmof2UVl3SF3/ZLrfXNGfK6+1cCPe
+O4mCmsYUyBEEA3iKyiztskyCZNgg4wy4Mhq7JVQg2GonOpCelPocfgq6BzeBmeNp
+0KA+JxKr4i84lU/STjwfZg/bTLnguGWomYpdgeVttPCzx6Oa8qFwz5nQlUO+Tyof
+7s5nZ+f/9Ma59FUnujqBWzP9YeW/yiBLpNNXatbLdZscQQ+GUHxDUIJwIaGoLOQH
+qXC/gDJJaH0A7BuV4wWsdm760SXJxSaZ0gG8CA4TiLGXbxGbeJnDOYJFk7kHMNwl
+RkxuM2yQd8Mo5yixyRj7pX/nw2OcUKnRsT5uuOzdfE3cQuDJvBFdTbrgTpnER5cr
+u1d5tpxMzRZN9HbfhqWFw07PkDgOoSq88o3p/zy8xEGYfyWLa8J1r6+PtbhDk38L
+XL35yljlawNXtDhyA7OlSLScaYGroLWTQwAn5/VJS58Q+bkVXSvJYlxcxQZK801q
+g7D2lCigwq+OVE6t9Hvu
+=Z+hz
 -----END PGP SIGNATURE-----
 
---Sig_/vm6=.C6Q4KQBjFY6+gnQtUH--
+--Sig_/.A_wmVP3E71tbhIbrSJIdz7--
