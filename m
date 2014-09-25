@@ -1,93 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Thu, 25 Sep 2014 16:30:36 +1000
-Message-ID: <20140925163036.5f3281eb@canb.auug.org.au>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: linux-next: build warning after merge of the battery tree
+Date: Thu, 25 Sep 2014 09:00:34 +0200
+Message-ID: <1411628434.16755.3.camel@AMDC1943>
+References: <20140925142206.5ebea1eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.A_wmVP3E71tbhIbrSJIdz7"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47631 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751328AbaIYGao (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Sep 2014 02:30:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hurley <peter@hurleysoftware.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140925142206.5ebea1eb@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/.A_wmVP3E71tbhIbrSJIdz7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On czw, 2014-09-25 at 14:22 +1000, Stephen Rothwell wrote:
+> Hi Sebastian,
+> 
+> After merging the battery tree, today's linux-next build (powerpc
+> ppc64_defconfig and x86_64 allmodconfig) produced this warning:
+> 
+> fs/sysfs/Kconfig:1:error: recursive dependency detected!
+> fs/sysfs/Kconfig:1:	symbol SYSFS is selected by CHARGER_MAX14577
+> drivers/power/Kconfig:327:	symbol CHARGER_MAX14577 depends on POWER_SUPPLY
+> drivers/power/Kconfig:1:	symbol POWER_SUPPLY is selected by HID_SONY
+> drivers/hid/Kconfig:649:	symbol HID_SONY depends on NEW_LEDS
+> drivers/leds/Kconfig:8:	symbol NEW_LEDS is selected by SENSORS_APPLESMC
+> drivers/hwmon/Kconfig:299:	symbol SENSORS_APPLESMC depends on HWMON
+> drivers/hwmon/Kconfig:5:	symbol HWMON is selected by EEEPC_LAPTOP
+> drivers/platform/x86/Kconfig:496:	symbol EEEPC_LAPTOP depends on HOTPLUG_PCI
+> drivers/pci/hotplug/Kconfig:5:	symbol HOTPLUG_PCI depends on SYSFS
+> 
+> Caused by commit e30110e9c96f ("charger: max14577: Configure
+> battery-dependent settings from DTS and sysfs").  Consider depending on
+> SYSFS instead of selecting it ... or maybe making your driver work even
+> without it.
 
-Hi Greg,
+I'll send a patch changing to "depends on".
 
-After merging the tty tree, today's linux-next build (arm multi_v7_defconfi=
-g)
-failed like this:
-
-In file included from init/do_mounts.c:15:0:
-include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
-         unused:62;
-         ^
-include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
-         unused_ctrl:55;
-         ^
-In file included from init/main.c:28:0:
-include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
-         unused:62;
-         ^
-include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
-         unused_ctrl:55;
-         ^
-In file included from include/linux/serial_core.h:29:0,
-                 from include/linux/serial_s3c.h:236,
-                 from arch/arm/mach-exynos/exynos.c:15:
-include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
-         unused:62;
-         ^
-include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
-         unused_ctrl:55;
-         ^
-In file included from include/linux/serial_core.h:29:0,
-                 from include/linux/platform_data/serial-omap.h:20,
-                 from arch/arm/mach-omap2/serial.c:30:
-include/linux/tty.h:267:9: error: width of 'unused' exceeds its type
-         unused:62;
-         ^
-include/linux/tty.h:271:9: error: width of 'unused_ctrl' exceeds its type
-         unused_ctrl:55;
-         ^
-
-Caused by commits c545b66c6922 ("tty: Serialize tcflow() with other tty
-flow control changes") and 99416322dd16 ("tty: Workaround Alpha
-non-atomic byte storage in tty_struct").  There are still 32 bit
-architectures out there!  ;-)
-
-I have used the tty tree from next-20140924 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/.A_wmVP3E71tbhIbrSJIdz7
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUI7aRAAoJEMDTa8Ir7ZwV7/cP/0oD7hIp8Q2N59nuKlXW3SAZ
-yAqUVW8B4jkQobUhznBaQK609unUGvn7uykPZPhu+o3GXZ6Wu8WGyrg9+1/CZ82I
-cW0Vw0+M2vmJ62Ina4LPB3vJpzlZ+80RU1to4qkyBxcZlHlKihftubqM+GLzPvKg
-Lgsrxt5HigMgcrzLkGKARC9C9crdVZWb2QDSmof2UVl3SF3/ZLrfXNGfK6+1cCPe
-O4mCmsYUyBEEA3iKyiztskyCZNgg4wy4Mhq7JVQg2GonOpCelPocfgq6BzeBmeNp
-0KA+JxKr4i84lU/STjwfZg/bTLnguGWomYpdgeVttPCzx6Oa8qFwz5nQlUO+Tyof
-7s5nZ+f/9Ma59FUnujqBWzP9YeW/yiBLpNNXatbLdZscQQ+GUHxDUIJwIaGoLOQH
-qXC/gDJJaH0A7BuV4wWsdm760SXJxSaZ0gG8CA4TiLGXbxGbeJnDOYJFk7kHMNwl
-RkxuM2yQd8Mo5yixyRj7pX/nw2OcUKnRsT5uuOzdfE3cQuDJvBFdTbrgTpnER5cr
-u1d5tpxMzRZN9HbfhqWFw07PkDgOoSq88o3p/zy8xEGYfyWLa8J1r6+PtbhDk38L
-XL35yljlawNXtDhyA7OlSLScaYGroLWTQwAn5/VJS58Q+bkVXSvJYlxcxQZK801q
-g7D2lCigwq+OVE6t9Hvu
-=Z+hz
------END PGP SIGNATURE-----
-
---Sig_/.A_wmVP3E71tbhIbrSJIdz7--
+Best regards,
+Krzysztof
