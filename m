@@ -1,41 +1,87 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: linux-next: build warning after merge of the battery tree
-Date: Thu, 25 Sep 2014 09:00:34 +0200
-Message-ID: <1411628434.16755.3.camel@AMDC1943>
-References: <20140925142206.5ebea1eb@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the pci tree
+Date: Thu, 25 Sep 2014 17:47:30 +1000
+Message-ID: <20140925174730.302842e6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140925142206.5ebea1eb@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fYCfO8lzaTM.Z24wmdhnwWh"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36650 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750977AbaIYHrl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Sep 2014 03:47:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liviu Dudau <Liviu.Dudau@arm.com>, Peter Feiner <pfeiner@google.com>
 
-On czw, 2014-09-25 at 14:22 +1000, Stephen Rothwell wrote:
-> Hi Sebastian,
-> 
-> After merging the battery tree, today's linux-next build (powerpc
-> ppc64_defconfig and x86_64 allmodconfig) produced this warning:
-> 
-> fs/sysfs/Kconfig:1:error: recursive dependency detected!
-> fs/sysfs/Kconfig:1:	symbol SYSFS is selected by CHARGER_MAX14577
-> drivers/power/Kconfig:327:	symbol CHARGER_MAX14577 depends on POWER_SUPPLY
-> drivers/power/Kconfig:1:	symbol POWER_SUPPLY is selected by HID_SONY
-> drivers/hid/Kconfig:649:	symbol HID_SONY depends on NEW_LEDS
-> drivers/leds/Kconfig:8:	symbol NEW_LEDS is selected by SENSORS_APPLESMC
-> drivers/hwmon/Kconfig:299:	symbol SENSORS_APPLESMC depends on HWMON
-> drivers/hwmon/Kconfig:5:	symbol HWMON is selected by EEEPC_LAPTOP
-> drivers/platform/x86/Kconfig:496:	symbol EEEPC_LAPTOP depends on HOTPLUG_PCI
-> drivers/pci/hotplug/Kconfig:5:	symbol HOTPLUG_PCI depends on SYSFS
-> 
-> Caused by commit e30110e9c96f ("charger: max14577: Configure
-> battery-dependent settings from DTS and sysfs").  Consider depending on
-> SYSFS instead of selecting it ... or maybe making your driver work even
-> without it.
+--Sig_/fYCfO8lzaTM.Z24wmdhnwWh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'll send a patch changing to "depends on".
+Hi Andrew,
 
-Best regards,
-Krzysztof
+Today's linux-next merge of the akpm-current tree got a conflict in
+include/asm-generic/pgtable.h between commit b766eafe6828 ("PCI: Add
+pci_remap_iospace() to map bus I/O resources") from the pci tree and
+commit 4cc2f91f2636 ("mm: softdirty: enable write notifications on VMAs
+after VM_SOFTDIRTY cleared") from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/asm-generic/pgtable.h
+index 977e545a64c3,f6acf1195182..000000000000
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@@ -249,10 -249,18 +249,22 @@@ static inline int pmd_same(pmd_t pmd_a
+  #define pgprot_writecombine pgprot_noncached
+  #endif
+ =20
+ +#ifndef pgprot_device
+ +#define pgprot_device pgprot_noncached
+ +#endif
+ +
++ #ifndef pgprot_modify
++ #define pgprot_modify pgprot_modify
++ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
++ {
++ 	if (pgprot_val(oldprot) =3D=3D pgprot_val(pgprot_noncached(oldprot)))
++ 		newprot =3D pgprot_noncached(newprot);
++ 	if (pgprot_val(oldprot) =3D=3D pgprot_val(pgprot_writecombine(oldprot)))
++ 		newprot =3D pgprot_writecombine(newprot);
++ 	return newprot;
++ }
++ #endif
++=20
+  /*
+   * When walking page tables, get the address of the next boundary,
+   * or the end address of the range if that comes earlier.  Although no
+
+--Sig_/fYCfO8lzaTM.Z24wmdhnwWh
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUI8iaAAoJEMDTa8Ir7ZwVAcYP/jxS7kTI7EymZz9NvnNWA1W2
+5HKSWWx/ldifffV0JcbGGKkOrP290TfB8Rl/bR5gJKn1nL1v3r5IK8e8OP9NqeQv
+aYL8kP8dhGx1UzdZNAi7vJVMwKfXcGkp6+iRxTKP0tMsTu4dnsIcvriky5ToQLrz
+dlKIcO1BqkGjaY+TWYaIkK3lQJXII1XR30JlFx6OliMVN+KQgr05IZQ8RFrtWkRR
+qZaNIJvp8hS8zPcPxKt+jRUXvbrYIp6TXF562dWXbM4sVTqpdG3n1KmYbVHVvNe4
++kflDaC6sk3qra+uSCjkfAdyJynfInGYSJW3PBn7R0mCFX5aWlfZPMoHIMtqURRT
+26exfhZI+9fKJ7UXsK7/3kAoyJEcyFrgGNMSREZP0coer5+NhXvmbaLO628AQGLh
+7v0MVJNyCGmssSvFrPQIkixBFEBZg001I/wHM+ACZzNqicKGTa05ZZ9KM5mvBg7V
+zBgwV05gVd3wjkD9JwezG7pUK4TwYMB1Dq7rxypi60GiZTdb8BS9O+T7DzP0QuW1
+aOwlgPKCiuaFSDj/8JvvXIuf5C5wbhgTJMMJXNPJgCeRB2ZAzNlpBq+3dQxdaF1+
+ieMANfLiTWvagrs7yWrxx9H9V8Nw3zbG+JEuq9VAF64EAIxcJylb5OHIX3kYTByv
+Wkw5W+GPeVZq69HVKzVD
+=D/w7
+-----END PGP SIGNATURE-----
+
+--Sig_/fYCfO8lzaTM.Z24wmdhnwWh--
