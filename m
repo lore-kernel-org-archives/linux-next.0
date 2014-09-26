@@ -1,90 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 26 Sep 2014 20:17:04 +1000
-Message-ID: <20140926201704.1e2a62c3@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the battery tree
+Date: Fri, 26 Sep 2014 20:30:12 +1000
+Message-ID: <20140926203012.1d150cd3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gMG+g90X5iFQ3IQMXiDcGKk"; protocol="application/pgp-signature"
+ boundary="Sig_/p9bA17IZEtg9wnoRSjQPks8"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Oleg Nesterov <oleg@redhat.com>, Josh Triplett <josh@joshtriplett.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Sebastian Reichel <sre@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/gMG+g90X5iFQ3IQMXiDcGKk
+--Sig_/p9bA17IZEtg9wnoRSjQPks8
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/power/Kconfig between commit 6a91e854442c ("power: max14577:
+Fix circular config SYSFS dependency") from the battery tree and commit
+821246576e03 ("drivers/power/Kconfig: revert part of "charger:
+max14577: Add support for MAX77836 charger"") from the akpm tree.
 
-In file included from arch/powerpc/kernel/asm-offsets.c:16:0:
-include/linux/signal.h: In function 'sigisemptyset':
-include/linux/signal.h:79:3: error: implicit declaration of function 'BUILD=
-_BUG' [-Werror=3Dimplicit-function-declaration]
-   BUILD_BUG();
-   ^
-
-Caused by commit 7e52cdba7e69 ("signal: use BUILD_BUG() instead of
-_NSIG_WORDS_is_unsupported_size()").
-
-See Rule 1 in Documentation/SubmitChecklist.
-
-Thanks to Guenter for the heads up.
-
-I have added the following patch for today (hopefully it does not cause
-more problems).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 26 Sep 2014 20:08:12 +1000
-Subject: [PATCH] signal.h: using BUILD_BUG requires including bug.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/signal.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/signal.h b/include/linux/signal.h
-index 14acfd59ed1b..ab1e0392b5ac 100644
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -2,6 +2,7 @@
- #define _LINUX_SIGNAL_H
-=20
- #include <linux/list.h>
-+#include <linux/bug.h>
- #include <uapi/linux/signal.h>
-=20
- struct task_struct;
---=20
-2.1.1
+I dropped the akpm tree patch as the battery tree patch fixes the same
+problem.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/gMG+g90X5iFQ3IQMXiDcGKk
+--Sig_/p9bA17IZEtg9wnoRSjQPks8
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUJT0pAAoJEMDTa8Ir7ZwVDqkP/AtQ+pkeMzbTrSqgo2zRtUHz
-fLxQQzxY6QEDmsLYGjOXWaeU/WzDDx1B6SSatbkgB7uyYfrfVJ+JjwAnC0yqaOXN
-MxOCZT0QTHVdoMeY/7Rc62liAoJnfGRiwwjgbKMTeQEG7jJnJQQ+q4IL+AX3BLvw
-509L+QZmVrEpLSmdZ0vU4CjZCi0LJlGifBN3HjjQhR4SD63XMQj74s0lNElMZa2J
-ksLhmaSKHTGzYiY5XuPIPxQ2QqY5xnAompaqFsKN2nczItIE5Cuabf4qYQb3yYKb
-H4aW9OwkY5dZakk6zqusa3814eJD4UhdUbYsD5UkTQf27YEi3CwerKWP58gGqGmp
-LrWR5ZVEMGh1Lpptm4vvHDxUjQfVfZNzHop9EQ2LJU1c62TDAckIEKp7lwhR54WX
-FnArErzH/Gd+EGhjoadbY7IAgK5/Kda/oOqLwBluqJOeNp2QcwAWLERAtciTcJHg
-K9p3SnyU1o1fI53KMvsgtB84Y14zyqjGQxDWGwYlB5XE74ha78h4I18LwkmJfyvB
-/99ItvOAr4A6vz+MGVg9wxutW3THhUSlYsRsNts2zrwgMH3ye23IEPr+nbSURbNI
-A8ZbbsP7T7aGeOsgexJxnLRjoEy0+GnyPWHCKMxHqeK3x4IP3fd1aN75UgwCQ4A/
-eYmhSSOff8UC29W68dQG
-=K6DH
+iQIcBAEBCAAGBQJUJUA5AAoJEMDTa8Ir7ZwVSGAP/jTc5v+0AguuS5XIJLzZltZ9
+AhOl6DA72usjjmOe5VimKAaZPTohYKMoWh7hYOOQqbSCyJpxcOGzGgRkxN2vtSha
+CMFJ0qDMoEzN26S/gvP8WWvN9WgnmNyoXE6iyUpE9PJ7xahVrKVJRLIyokoh8HxT
+Fl57bMvhUoqGfzy3a6eenrEHILDeeZKMef5dw9lacqb8S/GFa2G5eHmUDEQuXv7u
+TBz/aJqIFW+g42dGPmZVUwR9zGYsKbiXTrBlAWaWCykMtQ/y7YQd8DzBzf9Rq/Tc
+UHLKn0ZFHaBZKo/s3UAdZHeQvR9AokaYc5OW2y1i8vdu8NkWV4V4UB86dZNVkqTc
+Josd056qidx+rQj+r7/akbQBMnnXEHzwF+tgNJhkPdZVU5F7Lbgk3g+oL2w9J1lT
+mq7BI9G6R6TMyb3Vb6PmF1e8tZ6M6/J5eub2O/eoSaEMFXv1XT4TnM6Yq6rS0Rej
+NKKSnvkzoUroNVlcfEdYvLiPLpXptoA3SGzfTaDM+Mqx5t2DeQSW8DzAY4rAURvV
+tqwFcPukO7qi2ORHdg1fTzsQ845Dx08bwlGYBu2ruJM71HoYKfH920OY7ws+TvQj
+fH1g3sQ9GcKNBMzu+Xsl1MTwEWQ/eetvAPr/MQ5JVA+RkO08eKd93Dz3DmfkwcU3
+FunLU12lP2Zf4DXohvfN
+=0DTc
 -----END PGP SIGNATURE-----
 
---Sig_/gMG+g90X5iFQ3IQMXiDcGKk--
+--Sig_/p9bA17IZEtg9wnoRSjQPks8--
