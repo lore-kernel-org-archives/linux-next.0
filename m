@@ -1,66 +1,46 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 26 Sep 2014 14:52:10 +0100
-Message-ID: <20140926135210.GU5182@n2100.arm.linux.org.uk>
-References: <20140926112344.3ee87d2f@canb.auug.org.au> <20140926081804.GH5182@n2100.arm.linux.org.uk> <54253195.5040003@linaro.org>
+From: Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: linux-next: manual merge of the tip tree with the audit tree
+Date: Fri, 26 Sep 2014 11:01:57 -0400
+Message-ID: <20140926150157.GU1992@madcap2.tricolour.ca>
+References: <20140924153857.191a97a4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:44083 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751753AbaIZNw0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Sep 2014 09:52:26 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <54253195.5040003@linaro.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>, Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>, Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20140924153857.191a97a4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Sep 26, 2014 at 10:27:49AM +0100, Daniel Thompson wrote:
-> On 26/09/14 09:18, Russell King - ARM Linux wrote:
-> > On Fri, Sep 26, 2014 at 11:23:44AM +1000, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> Today's linux-next merge of the arm-soc tree got a conflict in
-> >> arch/arm/Kconfig.debug between commits 0889a9e35bd3 ("ARM: 8142/1:
-> >> ks8695: Migrate debug_ll macros to shared directory"), e38c399ca584
-> >> ("ARM: 8144/2: netx: Migrate DEBUG_LL macros to shared directory"),
-> >> 6741cacfa3f1 ("ARM: 8145/1: sa1100: Migrate DEBUG_LL macros to shared
-> >> directory") and debf843bf7ee ("ARM: 8146/1: Seperate DEBUG_UART_PHYS
-> >> from DEBUG_LL on EP93XX") from the arm tree and commits d8a00916b303
-> >> ("ARM: meson: debug: add debug UART for earlyprintk support"),
-> >> b125170a39ea ("CNS3xxx: Fix debug UART") and b51312bebfa4 ("ARM:
-> >> BCM63XX: add low-level UART debug support") from the arm-soc tree.
-> >>
-> >> I fixed it up (hopefully - see below) and can carry the fix as
-> >> necessary (no action is required).
-> >>
-> >> You may be able to clean some of this up by using intermediate config
-> >> symbols that are selected by the low level symbols and depended upon by
-> >> the higher level config symbols.
-> > 
-> > Actually, I'll drop the patch set I have.  I didn't spot this earlier,
-> > but people seem to have a hard time sorting stuff numerically:
-> > 
-> >         default 0xffd82340 if ARCH_IOP13XX
-> > +       default 0xfffb0000 if DEBUG_OMAP1UART1 || DEBUG_OMAP7XXUART1
-> > +       default 0xfffb0800 if DEBUG_OMAP1UART2 || DEBUG_OMAP7XXUART2
-> > +       default 0xfffb9800 if DEBUG_OMAP1UART3 || DEBUG_OMAP7XXUART3
-> >         default 0xfff36000 if DEBUG_HIGHBANK_UART
+On 14/09/24, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Oops. This is disappointing from my point-of-view but there's no one to
-> blame but me.
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/x86/kernel/entry_64.S between commit b4f0d3755c5e ("audit: x86:
+> drop arch from __audit_syscall_entry() interface") from the audit tree
+> and commit 1dcf74f6edfc ("x86_64, entry: Use split-phase
+> syscall_trace_enter for 64-bit syscalls") from the tip tree.
 > 
-> I have fixed this in my tree and will requeue for 3.19.
+> I fixed it up (probably incorrectly - I removed the auditsys section
+> as that is what the latter did) and can carry the fix as necessary (no
+> action is required).
 
-Okay, I've dropped 8141/1 onwards, so the only patches I have from your
-series are:
+The fix looks fine to me.  The auditsys section was no longer needed
+since it was taken care of via the phase1 and phase2 calls.  It was the
+part in ptrace.c that was important (it would not have compiled) and you
+updated that fine to remove the arch arg.
 
-ep93xx: Enable DEBUG_LL_UART_PL01X
-versatile: Enable DEBUG_LL_UART_PL01X
+Thanks, Stephen.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+
+- RGB
+
+--
+Richard Guy Briggs <rbriggs@redhat.com>
+Senior Software Engineer, Kernel Security, AMER ENG Base Operating Systems, Red Hat
+Remote, Ottawa, Canada
+Voice: +1.647.777.2635, Internal: (81) 32635, Alt: +1.613.693.0684x3545
