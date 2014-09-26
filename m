@@ -1,64 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the watchdog tree
-Date: Fri, 26 Sep 2014 16:34:12 +1000
-Message-ID: <20140926163412.4135c44a@canb.auug.org.au>
-References: <20140926154031.4bc4dc39@canb.auug.org.au>
-	<5424FFF4.4010506@smartplayin.com>
-	<542503B1.9090206@roeck-us.net>
+Subject: linux-next: manual merge of the tiny tree with the tip tree
+Date: Fri, 26 Sep 2014 16:45:19 +1000
+Message-ID: <20140926164519.49a0f395@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tbBIDPKZlYg5RZlho5kpaPC"; protocol="application/pgp-signature"
+ boundary="Sig_/vIebW7odEsTsFxNiV_QsVfw"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40560 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43406 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753266AbaIZGeU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Sep 2014 02:34:20 -0400
-In-Reply-To: <542503B1.9090206@roeck-us.net>
+	id S1753015AbaIZGp0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Sep 2014 02:45:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Pramod Gurav <pramod.gurav@smartplayin.com>, Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Josh Triplett <josh@joshtriplett.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>
 
---Sig_/tbBIDPKZlYg5RZlho5kpaPC
+--Sig_/vIebW7odEsTsFxNiV_QsVfw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Guenter,
+Hi Josh,
 
-On Thu, 25 Sep 2014 23:12:01 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Someone suggested that I should create an immutable tree with the
-> restart handler patchset, which everyone using the restart handlers
-> could merge. Is that an option ? I could technically do that,
-> but I would want to pick the patches from Andrew's tree to retain
-> his sign-off. Andrew, any thoughts/comments ?
+Today's linux-next merge of the tiny tree got a conflict in
+arch/x86/boot/compressed/Makefile between commit 84be880560fb ("Revert
+"efi/x86: efistub: Move shared dependencies to <asm/efi.h>"") from the
+tip tree and commit 9a1cb47112ef ("x86, boot: Use the usual -y -n
+mechanism for objects in vmlinux") from the tiny tree.
 
-That is exactly what you should do.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/tbBIDPKZlYg5RZlho5kpaPC
+diff --cc arch/x86/boot/compressed/Makefile
+index 0fcd9133790c,20db5b3609de..000000000000
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@@ -32,11 -35,10 +35,9 @@@ vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) +
+ =20
+  $(obj)/eboot.o: KBUILD_CFLAGS +=3D -fshort-wchar -mno-red-zone
+ =20
+- ifeq ($(CONFIG_EFI_STUB), y)
+- 	VMLINUX_OBJS +=3D $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o
+- endif
+ -vmlinux-objs-$(CONFIG_EFI_STUB) +=3D $(obj)/eboot.o $(obj)/efi_stub_$(BIT=
+S).o \
+ -	$(objtree)/drivers/firmware/efi/libstub/lib.a
+++vmlinux-objs-$(CONFIG_EFI_STUB) +=3D $(obj)/eboot.o $(obj)/efi_stub_$(BIT=
+S).o
+ =20
+- $(obj)/vmlinux: $(VMLINUX_OBJS) FORCE
++ $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
+  	$(call if_changed,ld)
+  	@:
+ =20
+
+--Sig_/vIebW7odEsTsFxNiV_QsVfw
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUJQjpAAoJEMDTa8Ir7ZwVepcP/je69hglH97vOI9Qq5nweTZ4
-vBY57w4NEeiKfnwlxqejUMHeBOLZo7TGZ4MQZQCN8dyTyeHF4tmGADYp1hyTTauo
-4wPpEg37uMiqEXGB7j2dlbf2pFgsnqgazAEHALwCYS/VOOrwky3QbfOXiG1gEeyJ
-IsaeczhzfQ+Xq2x9qCIj1pBhO1CKZ1Id2jT0U6VzBFNi1iUj6CH7UGCNYaRIKCAB
-9IN2aU1eBd85bqWJYYZ+B6urfpxYSny9VlZyq61S/2dfF7mCwHMWtLEM2jMju/fl
-Wa20+lfaGJSL/hBLVXYYKdV4nRLThrgUmyxAxnPE0JKM4Nd7II+OyqD5cfRFB7s9
-XG02age3Jetr42ldB8yDzfV1d9DyU0UnbcI/CmpWuJB3/sKMP/minN4OvwfGR8VY
-64pFhGjzgaIwFp6D1eZlHSKTwh9JUq8pJN3qHSBV4ZtjBexkQ0pzQCiXHZLJLSQ7
-jXTr7NBMzOvCVZkn5MyQu6aqo8b7B1w70qpcG7P4+xUItrPYPjLCHXnxeXp67tkJ
-fYi9S9P9zPgOFzOuM3vop/A5MG4JLbDCgOIDXEqsCK/oQFrFx9kZGbrGRa0bvTpt
-HMjvzuLP2Onv5r1JjZnSVeGYhod7IS5iWioM3mXgvbhSwhZ4/q28glfgy5WQSAxE
-NdBWDxQaafUZCtHIG6FZ
-=798Y
+iQIcBAEBCAAGBQJUJQuEAAoJEMDTa8Ir7ZwV0zIP+gKjTU6S/cAuKWYmI4TtiGNu
+RzAmBtzYe8VKQ4H8AOaJOrtMwYbqw+XvYAv/O8unxnh04XIzLJpEuD21gTXSBXsy
+ky1t/7XmLHMCARrVNmQSu8Ot4mVim7/PCeaAK+QE3qgBirxqDSXkrQ3gezUyzZvb
+bUqJuU6FnENvGiZL2xo6gUHLScTS4sSgFFjtzAMOtHys0cjWzvWOzRiqf99+zenU
+TASiL7v1fs8gnSd0bKPYBL6wlsRWmbG8/qegIAE19XzPpGw8uBBH1EqT6X8fgdXr
+QfRL2FLIDNpJu+nxidXgQt9lwC8H5mWizTSSSLdItbXgU3DTMitslLBP0qjPr65f
+RtCTCK+ppigggsBOYe1qdQGq7Cyc0gmehGO7wZg3KY4Nr+Bj/31ESuxFu2eUlupA
+aucCOee/Mx51x4Xr4kELcQxP7bSzWPHFHsOtjUbIManKf9yNBgAQhXHsOSTca9tN
+W43JGYqFrF2RZb7DEJfMajTLCHIovnUEwEq2EY2dC3ar0CTvaDRmKLS2RNYaGs1N
+LoQINpLiGLrjq/MkMl4Cq46M1y1kBFrWh3dG+a2OMGbr+392IklyA1Z4v2kBdavi
+7bK4JdFzqDVgc2Us6ZbjQTPV2etDy9woNWsxNxLvLQfJ2UUQ7+ncvxmJ1MpUqMf/
+UF9w/gYoz674Zd676Dt4
+=YjZA
 -----END PGP SIGNATURE-----
 
---Sig_/tbBIDPKZlYg5RZlho5kpaPC--
+--Sig_/vIebW7odEsTsFxNiV_QsVfw--
