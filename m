@@ -1,65 +1,65 @@
-From: Brian King <brking@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Fri, 26 Sep 2014 07:43:13 -0500
-Message-ID: <54255F61.4060302@linux.vnet.ibm.com>
-References: <20140926183450.7474b448@canb.auug.org.au> <20140926083632.GA19463@lst.de> <1411725461.2183.2.camel@jarvis>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: New build failures in Sep 25 tree
+Date: Fri, 26 Sep 2014 06:32:33 -0700
+Message-ID: <54256AF1.6030800@roeck-us.net>
+References: <20140925202559.GA1750@roeck-us.net> <CAMuHMdXE4aU1qZ9iGBT48QfMv5v7gsBZSjL_1_D8p=JBJfeN6A@mail.gmail.com> <20140926075859.GA21697@chokladfabriken.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e9.ny.us.ibm.com ([32.97.182.139]:55181 "EHLO e9.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754374AbaIZMnT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Sep 2014 08:43:19 -0400
-Received: from /spool/local
-	by e9.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <brking@linux.vnet.ibm.com>;
-	Fri, 26 Sep 2014 08:43:18 -0400
-In-Reply-To: <1411725461.2183.2.camel@jarvis>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:42674 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755052AbaIZNcv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Sep 2014 09:32:51 -0400
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1XXVdi-0018Ms-7o
+	for linux-next@vger.kernel.org; Fri, 26 Sep 2014 13:32:50 +0000
+In-Reply-To: <20140926075859.GA21697@chokladfabriken.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Christoph Hellwig <hch@lst.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiong <wenxiong@linux.vnet.ibm.com>
+To: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ulf Hansson <ulf.hansson@linaro.org>, Vineet Gupta <vgupta@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, linux <linux@lists.openrisc.net>, Eric Paris <eparis@redhat.com>
 
-On 09/26/2014 04:57 AM, James Bottomley wrote:
-> On Fri, 2014-09-26 at 10:36 +0200, Christoph Hellwig wrote:
->> On Fri, Sep 26, 2014 at 06:34:50PM +1000, Stephen Rothwell wrote:
->>> Hi James,
->>>
->>> After merging the scsi tree, today's linux-next build (powerpc
->>> ppc64_defconfig) failed like this:
->>>
->>> drivers/scsi/ipr.c: In function 'ipr_handle_log_data':
->>> drivers/scsi/ipr.c:2468:15: error: 'IPR_IOASC_HW_CMD_FAILED' undeclared (first use in this function)
->>>   if (ioasc == IPR_IOASC_HW_CMD_FAILED &&
->>>                ^
->>>
->>> Caused by commit 3185ea63907c ("ipr: don't log error messages when
->>> applications issues illegal requests").  Someone typoed that name in
->>> ipr.h ...
->>>
->>> I have reverted that commit for today.
+On 09/26/2014 12:59 AM, Stefan Kristiansson wrote:
+> On Fri, Sep 26, 2014 at 08:30:57AM +0200, Geert Uytterhoeven wrote:
+>> Hi G=FCnther,
 >>
->> Thanks.  The fix should be here:
+>> [cc openrisc]
 >>
->> http://git.infradead.org/users/hch/scsi-queue.git/commitdiff/d247a70a4d67623eb738176ee703a7bb8b6c325c
-> 
-> OK, Pushed out.
-> 
-> I'll wait for the next couple of build cycles before pushing (assuming
-> merge window opens on Sunday) just in case more things show up.
+>> On Thu, Sep 25, 2014 at 10:25 PM, Guenter Roeck <linux@roeck-us.net>=
+ wrote:
+>>> New build failures:
+>>
+>>> openrisc-defconfig
+>>>
+>>> In file included from arch/openrisc/kernel/signal.c:31:0:
+>>> ./arch/openrisc/include/asm/syscall.h: In function 'syscall_get_arc=
+h':
+>>> ./arch/openrisc/include/asm/syscall.h:77:9: error: 'EM_OPENRISC' un=
+declared
+>>
+>> That's not a new one. It's been failing for half or year or so.
+>>
+>> If you only see it now, that means something else got fixed ;-)
+>>
+>
+>>From what I can see, it's caused by
+> ce5d112827e5 ("ARCH: AUDIT: implement syscall_get_arch for all arches=
+")
+> that got (re?)introduced two days ago.
+>
+> To me it seems that the problem is that EM_OPENRISC is
+> missing in include/uapi/linux/elf-em.h, but if that's the case,
+> I think microblaze have the same problem with that patch applied.
+>
 
-Hi James,
+Microblaze builds for some reason. But, yes, that commit is from March.
+Maybe that is where I remember it from.
 
-Anything preventing this patch set from getting picked up? Do you need a resend?
+You are right, it builds if I add the define. I'll submit a patch to fi=
+x
+the problem if the resulting image builds.
 
-http://marc.info/?l=linux-scsi&m=140657929221696&w=2
-
-Thanks,
-
-Brian
-
--- 
-Brian King
-Power Linux I/O
-IBM Linux Technology Center
+Guenter
