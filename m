@@ -1,49 +1,61 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2014-09-25-16-28 uploaded
-Date: Fri, 26 Sep 2014 00:31:23 -0700
-Message-ID: <20140926073123.GA3033@roeck-us.net>
-References: <5424a53b.o+nym6SX0Tg7EdW6%akpm@linux-foundation.org>
+From: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Subject: Re: linux-next: New build failures in Sep 25 tree
+Date: Fri, 26 Sep 2014 10:59:00 +0300
+Message-ID: <20140926075859.GA21697@chokladfabriken.org>
+References: <20140925202559.GA1750@roeck-us.net>
+	<CAMuHMdXE4aU1qZ9iGBT48QfMv5v7gsBZSjL_1_D8p=JBJfeN6A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:61289 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753584AbaIZHb3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Sep 2014 03:31:29 -0400
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-bounces@lists.openrisc.net>
 Content-Disposition: inline
-In-Reply-To: <5424a53b.o+nym6SX0Tg7EdW6%akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
+In-Reply-To: <CAMuHMdXE4aU1qZ9iGBT48QfMv5v7gsBZSjL_1_D8p=JBJfeN6A@mail.gmail.com>
+List-Unsubscribe: <http://lists.openrisc.net/options/linux>,
+	<mailto:linux-request@lists.openrisc.net?subject=unsubscribe>
+List-Archive: <http://lists.openrisc.net/pipermail/linux>
+List-Post: <mailto:linux@lists.openrisc.net>
+List-Help: <mailto:linux-request@lists.openrisc.net?subject=help>
+List-Subscribe: <http://lists.openrisc.net/listinfo/linux>,
+	<mailto:linux-request@lists.openrisc.net?subject=subscribe>
+Sender: linux-bounces@lists.openrisc.net
+Errors-To: linux-bounces@lists.openrisc.net
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ulf Hansson <ulf.hansson@linaro.org>, Vineet Gupta <vgupta@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>, Linux-Next <linux-next@vger.kernel.org>, linux <linux@lists.openrisc.net>, Guenter Roeck <linux@roeck-us.net>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 25, 2014 at 04:28:59PM -0700, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2014-09-25-16-28 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
+On Fri, Sep 26, 2014 at 08:30:57AM +0200, Geert Uytterhoeven wrote:
+> Hi G=FCnther,
+> =
 
-Build results:
-	total: 133 pass: 10 fail: 123
+> [cc openrisc]
+> =
 
-I won't list all the broken builds.
+> On Thu, Sep 25, 2014 at 10:25 PM, Guenter Roeck <linux@roeck-us.net> wrot=
+e:
+> > New build failures:
+> =
 
-problem is due to
+> > openrisc-defconfig
+> >
+> > In file included from arch/openrisc/kernel/signal.c:31:0:
+> > ./arch/openrisc/include/asm/syscall.h: In function 'syscall_get_arch':
+> > ./arch/openrisc/include/asm/syscall.h:77:9: error: 'EM_OPENRISC' undecl=
+ared
+> =
 
-include/linux/signal.h: In function 'sigisemptyset':
-include/linux/signal.h:79:3: error: implicit declaration of function 'BUILD_BUG'
+> That's not a new one. It's been failing for half or year or so.
+> =
 
-as far as I can see.
+> If you only see it now, that means something else got fixed ;-)
+> =
 
-Detailed build results are available at http://server.roeck-us.net:8010/builders.
 
-Guenter
+>From what I can see, it's caused by
+ce5d112827e5 ("ARCH: AUDIT: implement syscall_get_arch for all arches")
+that got (re?)introduced two days ago.
+
+To me it seems that the problem is that EM_OPENRISC is
+missing in include/uapi/linux/elf-em.h, but if that's the case,
+I think microblaze have the same problem with that patch applied.
+
+Stefan
