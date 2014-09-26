@@ -1,66 +1,27 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error trying to fetch the devicetree tree
-Date: Fri, 26 Sep 2014 11:57:34 +1000
-Message-ID: <20140926115734.15aef23e@canb.auug.org.au>
-References: <20140925144432.1794fdbe@canb.auug.org.au>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: Re: linux-next: New build failures in Sep 25 tree
+Date: Fri, 26 Sep 2014 02:23:19 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA230753C5DECF4@IN01WEMBXA.internal.synopsys.com>
+References: <20140925202559.GA1750@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uZ8GbnzS_TguzzatoxU8Udj"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56240 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753321AbaIZB5p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Sep 2014 21:57:45 -0400
-In-Reply-To: <20140925144432.1794fdbe@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/uZ8GbnzS_TguzzatoxU8Udj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Grant,
-
-On Thu, 25 Sep 2014 14:44:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Friday 26 September 2014 01:56 AM, Guenter Roeck wrote:
+> arc:defconfig
 >
-> Fetching the devicetree tree
-> (git://git.secretlab.ca/git/linux-2.6#devicetree/next) failes like this:
->=20
-> fatal: Could not read from remote repository.
->=20
-> Please make sure you have the correct access rights
-> and the repository exists.
+> arch/arc/kernel/setup.c: In function 'customize_machine':
+> arch/arc/kernel/setup.c:354: error: implicit declaration of function 'of_clk_init'
 
-I changed to using git://git.secretlab.ca/git/linux (since that is what
-you asked Linus to pull) and that seems to work.
+This is now fixed/pushed.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/uZ8GbnzS_TguzzatoxU8Udj
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUJMgXAAoJEMDTa8Ir7ZwVqhAP+wWlFPl8rLBtlgmOeKhNICZp
-G49w9G7hg9DsKKWZlK9Im/kkE/89p1FnX8Wmf1qxBNpin8qNT4Jh2gjcL/2PBeJC
-qzMizibOyDsxduCzL2/kKKmxZ1dQDaZ1UFI/ZZKuHIAaMp547aGSsFSkyG6aPC/W
-BucLq0iTW5Fp/Pnsr65wbYxOsK5iJE1YuPmW5PS9TKQY+How0XGcUbMbYD8F2Iqx
-+fcxan3lfR4zqLSNUejIXkoHs/JH27/Ns1NYBtRobcG0Kq2CIoMa6HnQLroRFlTO
-gW3ilWMZ1RxAubKBGbjXXVujrVv+TzGWJ2CB7nG0+iShtSXUsdhoCYbYjlzEplAA
-PtYE+RKWve84EeDcddLGWYpo76GY/Dgkv7FF1fMtLvEM5oF54BKOv7cmPgGJ/9tq
-OQdCs7GAIYSIZvJ+Lh7sJXNcnEmnKTRDP2XJbnufIEvZEYT+mRDSwTEbKS87l3WW
-m0AItgX0AGpWHDxqLXgwLL6WRVwej9sYAlOoevROVqDfBwPiV91YtIrvGUKWGMtZ
-4kPK/EbKSxRwCHb7ANa2oDynrinaviTGAWo9PpJroC4N26oMdz+thNbM+/hh+cja
-nGCIZVMgSWgUznyGQpi79e7ObFXCHj/MGF4oe6kYP9pEM4sEJ2ItzKndHAESc7ZF
-dlhbxel89zR97GnrAtPP
-=qXE8
------END PGP SIGNATURE-----
-
---Sig_/uZ8GbnzS_TguzzatoxU8Udj--
+Thx,
+-Vineet
