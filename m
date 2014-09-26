@@ -1,46 +1,44 @@
-From: Richard Guy Briggs <rgb@redhat.com>
-Subject: Re: linux-next: manual merge of the tip tree with the audit tree
-Date: Fri, 26 Sep 2014 11:01:57 -0400
-Message-ID: <20140926150157.GU1992@madcap2.tricolour.ca>
-References: <20140924153857.191a97a4@canb.auug.org.au>
+From: Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH -mm]
+	signal-use-build_bug-instead-of-_nsig_words_is_unsupported_size.fix
+Date: Fri, 26 Sep 2014 17:02:04 +0200
+Message-ID: <20140926150204.GA29926@redhat.com>
+References: <20140926201704.1e2a62c3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140924153857.191a97a4@canb.auug.org.au>
+In-Reply-To: <20140926201704.1e2a62c3@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Josh Triplett <josh@joshtriplett.org>
 List-Id: linux-next.vger.kernel.org
 
-On 14/09/24, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/x86/kernel/entry_64.S between commit b4f0d3755c5e ("audit: x86:
-> drop arch from __audit_syscall_entry() interface") from the audit tree
-> and commit 1dcf74f6edfc ("x86_64, entry: Use split-phase
-> syscall_trace_enter for 64-bit syscalls") from the tip tree.
-> 
-> I fixed it up (probably incorrectly - I removed the auditsys section
-> as that is what the latter did) and can carry the fix as necessary (no
-> action is required).
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-The fix looks fine to me.  The auditsys section was no longer needed
-since it was taken care of via the phase1 and phase2 calls.  It was the
-part in ptrace.c that was important (it would not have compiled) and you
-updated that fine to remove the arch arg.
+Fixes signal-use-build_bug-instead-of-_nsig_words_is_unsupported_size.patch
+which caused the build failure on powerpc.
 
-Thanks, Stephen.
+Add missing "include <linux/bug.h>" which defines BUILD_BUG()
+used by that patch.
 
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ include/linux/signal.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-
-
-- RGB
-
---
-Richard Guy Briggs <rbriggs@redhat.com>
-Senior Software Engineer, Kernel Security, AMER ENG Base Operating Systems, Red Hat
-Remote, Ottawa, Canada
-Voice: +1.647.777.2635, Internal: (81) 32635, Alt: +1.613.693.0684x3545
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 14acfd5..ab1e039 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -2,6 +2,7 @@
+ #define _LINUX_SIGNAL_H
+ 
+ #include <linux/list.h>
++#include <linux/bug.h>
+ #include <uapi/linux/signal.h>
+ 
+ struct task_struct;
+-- 
+1.5.5.1
