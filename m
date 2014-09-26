@@ -1,87 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the watchdog tree
-Date: Fri, 26 Sep 2014 16:29:42 +1000
-Message-ID: <20140926162942.161863df@canb.auug.org.au>
-References: <20140926154031.4bc4dc39@canb.auug.org.au>
-	<5424FEE0.2020806@roeck-us.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: New build failures in Sep 25 tree
+Date: Fri, 26 Sep 2014 08:30:57 +0200
+Message-ID: <CAMuHMdXE4aU1qZ9iGBT48QfMv5v7gsBZSjL_1_D8p=JBJfeN6A@mail.gmail.com>
+References: <20140925202559.GA1750@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XMl8chorLXyJpCqQTPib50W"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33548 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753692AbaIZG3t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Sep 2014 02:29:49 -0400
-In-Reply-To: <5424FEE0.2020806@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-bounces@lists.openrisc.net>
+In-Reply-To: <20140925202559.GA1750@roeck-us.net>
+List-Unsubscribe: <http://lists.openrisc.net/options/linux>,
+	<mailto:linux-request@lists.openrisc.net?subject=unsubscribe>
+List-Archive: <http://lists.openrisc.net/pipermail/linux>
+List-Post: <mailto:linux@lists.openrisc.net>
+List-Help: <mailto:linux-request@lists.openrisc.net?subject=help>
+List-Subscribe: <http://lists.openrisc.net/listinfo/linux>,
+	<mailto:linux-request@lists.openrisc.net?subject=subscribe>
+Sender: linux-bounces@lists.openrisc.net
+Errors-To: linux-bounces@lists.openrisc.net
 To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ulf Hansson <ulf.hansson@linaro.org>, Vineet Gupta <vgupta@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, linux <linux@lists.openrisc.net>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/XMl8chorLXyJpCqQTPib50W
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Guenter,
-
-On Thu, 25 Sep 2014 22:51:28 -0700 Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 09/25/2014 10:40 PM, Stephen Rothwell wrote:
-> > Hi Wim,
-> >
-> > After merging the watchdog tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> >
-> >
-> > drivers/watchdog/meson_wdt.c: In function 'meson_wdt_probe':
-> > drivers/watchdog/meson_wdt.c:178:2: error: implicit declaration of func=
-tion 'register_restart_handler' [-Werror=3Dimplicit-function-declaration]
-> >    err =3D register_restart_handler(&meson_wdt->restart_handler);
-> >    ^
-> > drivers/watchdog/meson_wdt.c: In function 'meson_wdt_remove':
-> > drivers/watchdog/meson_wdt.c:193:2: error: implicit declaration of func=
-tion 'unregister_restart_handler' [-Werror=3Dimplicit-function-declaration]
-> >    unregister_restart_handler(&meson_wdt->restart_handler);
-> >    ^
-> >
-> > Caused by commit 575f4153957b ("ARM: meson: add watchdog driver").
-> >
-> > I have reverted that commit for today.
-> >
->=20
-> Those functions are defined by patches which reside in Andrew's tree.
-> Is that merged later ?
-
-Yes, Andrew's tree is merged last and part of it depends on linux-next
-itself ...
-
-We really don't want these inter tree dependencies (especially with
-Andrew's tree).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/XMl8chorLXyJpCqQTPib50W
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUJQfbAAoJEMDTa8Ir7ZwVZlQQAINqPfxnM2puTwNaEDCmGPuc
-TuJX0c2LU9QpSMOBzBlRaoJ2Oa0PE9/2cPkfjidg2Lg12UzAqgFEx5VUG0iWO/am
-u4jz04ugSxeKp/uEjNwcQbVVCIdtmmykLgmeNp/kpf/D8NxxIahi2iu87rbfWZY8
-4X/LZzFVbJ5FH6QJHbKy0NAl9Ee7rjK3XogEqM0n8oc2LWbt66KNYKdA0YTkB8qI
-1t5t4WAIktRjDiuh0J4K1tP9uu89yHqEW1ECzdykQF4al4FU1UXqc7BwalmH1OPG
-wYKtUmRMbm/yK4acJpxd+32QeLpf9Z6mirkDfoF/hCecsni1KmR+lAeB2JPGGbeW
-9efrkU6O26nW/SVjXoYqp7Ug/M+nZ7BVy/NKNsbiPuGUxAbbyOHTDCdFlt/Y/nwk
-fMzyx488cM2Tn0oopwNt/jEYgaJn+m0nZNfoKAvx1rx+0dJM2UMLnGl3S8L2XPHM
-GEr+rIHjvcZBBK3skZGnhxVpO8zMqgR9O+yYdsidVSzuVki3yjROucClP74eOrWp
-84kDxC8XJ5wCjZ+D+x2cIX4weYe9XpdSU5pbnbl9k0s0YCiXrOiaiFRh1xjDJEff
-9NY36RMU5QQJt875ffS20JzFaI3EbwI49uyedtqWSEJvddr3wKQyDOioJoxzd0YK
-TVAd3ZHWM+Iwhiy5Qes1
-=1i4D
------END PGP SIGNATURE-----
-
---Sig_/XMl8chorLXyJpCqQTPib50W--
+SGkgR8O8bnRoZXIsCgpbY2Mgb3BlbnJpc2NdCgpPbiBUaHUsIFNlcCAyNSwgMjAxNCBhdCAxMDoy
+NSBQTSwgR3VlbnRlciBSb2VjayA8bGludXhAcm9lY2stdXMubmV0PiB3cm90ZToKPiBOZXcgYnVp
+bGQgZmFpbHVyZXM6Cgo+IG9wZW5yaXNjLWRlZmNvbmZpZwo+Cj4gSW4gZmlsZSBpbmNsdWRlZCBm
+cm9tIGFyY2gvb3BlbnJpc2Mva2VybmVsL3NpZ25hbC5jOjMxOjA6Cj4gLi9hcmNoL29wZW5yaXNj
+L2luY2x1ZGUvYXNtL3N5c2NhbGwuaDogSW4gZnVuY3Rpb24gJ3N5c2NhbGxfZ2V0X2FyY2gnOgo+
+IC4vYXJjaC9vcGVucmlzYy9pbmNsdWRlL2FzbS9zeXNjYWxsLmg6Nzc6OTogZXJyb3I6ICdFTV9P
+UEVOUklTQycgdW5kZWNsYXJlZAoKVGhhdCdzIG5vdCBhIG5ldyBvbmUuIEl0J3MgYmVlbiBmYWls
+aW5nIGZvciBoYWxmIG9yIHllYXIgb3Igc28uCgpJZiB5b3Ugb25seSBzZWUgaXQgbm93LCB0aGF0
+IG1lYW5zIHNvbWV0aGluZyBlbHNlIGdvdCBmaXhlZCA7LSkKCkdye29ldGplLGVldGluZ31zLAoK
+ICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQKCi0tCkdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBU
+aGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcK
+CkluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwg
+bXlzZWxmIGEgaGFja2VyLiBCdXQKd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1
+c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0LgogICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4IG1haWxpbmcgbGlzdApMaW51eEBsaXN0
+cy5vcGVucmlzYy5uZXQKaHR0cDovL2xpc3RzLm9wZW5yaXNjLm5ldC9saXN0aW5mby9saW51eAo=
