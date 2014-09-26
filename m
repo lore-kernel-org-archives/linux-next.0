@@ -1,55 +1,68 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next tree addition request -- doc.git
-Date: Fri, 26 Sep 2014 12:41:59 +0200
-Message-ID: <CA+icZUVi-FWM+6kK5PsK=o-RLO7OCcjA8N1Kwr3cc44j8_d37A@mail.gmail.com>
-References: <alpine.LNX.2.00.1409261132330.22196@pobox.suse.cz>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Date: Fri, 26 Sep 2014 20:42:00 +1000
+Message-ID: <20140926204200.3e2175cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1409261132330.22196@pobox.suse.cz>
-Sender: linux-doc-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jd3.swu3bv8WKJ4wmtv3GTe"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41966 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755167AbaIZKmH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Sep 2014 06:42:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-T: git g
+--Sig_/jd3.swu3bv8WKJ4wmtv3GTe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2014 at 11:37 AM, Jiri Kosina <jkosina@suse.cz> wrote:
-> Hi Stephen,
->
-> as a followup to Randy stepping down as a documentation maintainer [1],
-> could you please add
->
->         git://git.kernel.org/pub/scm/linux/kernel/git/jikos/doc.git#for-next
->
-> to the pile that gets pulled into linux-next?
->
-> Thanks.
->
-> [1] d671e42457e1fef70ad0df07084207078633a9e8
->
+Hi Andrew,
 
-I guess you want that in [1] and MAINTAINERS file...
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-[ MAINTAINERS ]
-...
-DOCUMENTATION
-M: Jiri Kosina <jkosina@suse.cz>
-L: linux-doc@vger.kernel.org
-T: git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/doc.git
-S: Maintained
-F: Documentation/
-X: Documentation/ABI/
+drivers/of/of_reserved_mem.c: In function 'of_reserved_mem_device_init':
+drivers/of/of_reserved_mem.c:253:3: warning: 'return' with no value, in fun=
+ction returning non-void [-Wreturn-type]
+   return;
+   ^
+drivers/of/of_reserved_mem.c:259:3: warning: 'return' with no value, in fun=
+ction returning non-void [-Wreturn-type]
+   return;
+   ^
 
-- Sedat -
+Caused by commit 1a29544cc8c9 ("drivers: of: add return value to
+of_reserved_mem_device_init").  This patch changed the return type of a
+function but did not update any or the return statements in that
+function.
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> --
-> Jiri Kosina
-> SUSE Labs
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Sig_/jd3.swu3bv8WKJ4wmtv3GTe
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUJUL9AAoJEMDTa8Ir7ZwV/ecQAI8BMSU1HwNrBCzpwhS0SK2+
+5nb6o5GilDnKCus/Q3m/WxSuE3KFdG8rzstPMG4r3AgnAVacv4aXQUrmsE7oTAo/
+n0I1HYG7v+l7+okWDPqh8ELShSr9zGBM5xZwwg/GGseN21JwxmWBe7yl9JcvjQYF
+ZJBE61iP5wWQgoQ5qnKQaJKR+WML2T4z0uE53F2v8x3vlhYNVoAH4pUjmWZ3qjdf
+M3PF1Genkb0v8dA3ul2BRCZekFqidOSpj0kaS0ObdkbqtFJWGJTlg8X3AXySJxiC
+rhRc3ssM2aasaC0EgSOkOA0wzGfn452sqiVcyFGm5IA17Wi4ym9G8RcbIZWZdcHa
+bjyOtjPVcOB3exfVQz9qxN+MSW7A+Fm0YP5V6/cRxfk1MGd5Kbbyw9sbHtxGKtAd
+RbhMT8mkj46VdCLwJWg2IJ6oCgYlxFgNitGmc/5bUXbUbNhOxKNC5n9MHXrK55H4
+8oHrICNWUiO8dU5hEM5fcQ+hE+Khx6l1uSIbYzpN+ChT5eGR/Hi1f7tPiocdnviv
+2jnQz8qyj+t8vB1KfSDkl7bD52gWBzWQ9j7ybHCvyl98Qhyp6hZgIZD4jkzQlVFa
+KFcfSD33UgBO62ncPTxkoctgC/YdJXHfKCpEpeyEI4etWnPar2zti6hNqZufSLJr
+/xTY9kqbsiC7ilmgjDY6
+=YeU2
+-----END PGP SIGNATURE-----
+
+--Sig_/jd3.swu3bv8WKJ4wmtv3GTe--
