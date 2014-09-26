@@ -1,78 +1,189 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH v2] next: openrisc: Fix build
-Date: Fri, 26 Sep 2014 13:53:01 -0400
-Message-ID: <1411753981.2739.16.camel@redhat.com>
-References: <1411747539-28308-1-git-send-email-linux@roeck-us.net>
+From: Andy Lutomirski <luto@amacapital.net>
+Subject: Re: linux-next: manual merge of the tip tree with the audit tree
+Date: Fri, 26 Sep 2014 11:02:27 -0700
+Message-ID: <CALCETrUFHZuhG5qHaJ3yi8P06hLYSo+76y5ZcqXwHahQSUZt-A@mail.gmail.com>
+References: <20140924154737.50db90eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1411747539-28308-1-git-send-email-linux@roeck-us.net>
+In-Reply-To: <20140924154737.50db90eb@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jonas Bonn <jonas@southpole.se>, linux@openrisc.net, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, linux-next@vger.kernel.org, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Eric Paris <eparis@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Would you like me to carry this in the audit tree, since I'm the one who
-broke it?
+On Tue, Sep 23, 2014 at 10:47 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/x86/kernel/ptrace.c between commit 91397401bb50 ("ARCH: AUDIT:
+> audit_syscall_entry() should not require the arch") from the audit tree
+> and commit e0ffbaabc46d ("x86: Split syscall_trace_enter into two
+> phases") from the tip tree.
+>
+> I fixed it up (see below - there is more cleanup possible since
+> do_audit_syscall_entry() no longer needs its "arch" argument) and can
+> carry the fix as necessary (no action is required).
 
--Eric
+I don't think that more cleanup is possible after all.
+do_audit_syscall_entry may not need to pass the arch parameter to the
+audit code, but it still needs it to choose the set of registers to
+use.
 
-On Fri, 2014-09-26 at 09:05 -0700, Guenter Roeck wrote:
-> openrisc:defconfig fails to build in next-20140926 with the following error.
-> 
-> In file included from arch/openrisc/kernel/signal.c:31:0:
-> ./arch/openrisc/include/asm/syscall.h: In function 'syscall_get_arch':
-> ./arch/openrisc/include/asm/syscall.h:77:9: error: 'EM_OPENRISC' undeclared
-> 
-> Fix by moving EM_OPENRISC to include/uapi/linux/elf-em.h.
-> 
-> Fixes: ce5d112827e5 ("ARCH: AUDIT: implement syscall_get_arch for all arches")
-> Cc: Eric Paris <eparis@redhat.com>
-> Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> v2: Only move EM_OPENRISC.
-> 
-> Another possible solution for the problem would be to include asm/elf.h
-> in arch/openrisc/kernel/signal.c. I had actually submitted a patch with
-> that fix back in August (maybe that is where I remembered the problem from).
-> Wonder what happened with that patch.
-> 
-> Would it make sense to drop EM_OR32 and replace it with EM_OPENRISC where
-> it is used ? binutils seems to suggest that EM_OPENRISC is the "official"
-> definition.
-> 
->  arch/openrisc/include/uapi/asm/elf.h | 3 +--
->  include/uapi/linux/elf-em.h          | 1 +
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/openrisc/include/uapi/asm/elf.h b/arch/openrisc/include/uapi/asm/elf.h
-> index f02ea58..8884276 100644
-> --- a/arch/openrisc/include/uapi/asm/elf.h
-> +++ b/arch/openrisc/include/uapi/asm/elf.h
-> @@ -55,9 +55,8 @@ typedef elf_greg_t elf_gregset_t[ELF_NGREG];
->  /* A placeholder; OR32 does not have fp support yes, so no fp regs for now.  */
->  typedef unsigned long elf_fpregset_t;
->  
-> -/* This should be moved to include/linux/elf.h */
-> +/* EM_OPENRISC is defined in linux/elf-em.h */
->  #define EM_OR32         0x8472
-> -#define EM_OPENRISC     92     /* OpenRISC 32-bit embedded processor */
->  
->  /*
->   * These are used to set parameters in the core dumps.
-> diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
-> index 01529bd..aa90bc9 100644
-> --- a/include/uapi/linux/elf-em.h
-> +++ b/include/uapi/linux/elf-em.h
-> @@ -32,6 +32,7 @@
->  #define EM_V850		87	/* NEC v850 */
->  #define EM_M32R		88	/* Renesas M32R */
->  #define EM_MN10300	89	/* Panasonic/MEI MN10300, AM33 */
-> +#define EM_OPENRISC     92     /* OpenRISC 32-bit embedded processor */
->  #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
->  #define EM_TI_C6000	140	/* TI C6X DSPs */
->  #define EM_AARCH64	183	/* ARM 64 bit */
+--Andy
+
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --cc arch/x86/kernel/ptrace.c
+> index eb1c87f0b03b,29576c244699..000000000000
+> --- a/arch/x86/kernel/ptrace.c
+> +++ b/arch/x86/kernel/ptrace.c
+> @@@ -1441,24 -1441,126 +1441,126 @@@ void send_sigtrap(struct task_struct *t
+>         force_sig_info(SIGTRAP, &info, tsk);
+>   }
+>
+> -
+> - #ifdef CONFIG_X86_32
+> - # define IS_IA32      1
+> - #elif defined CONFIG_IA32_EMULATION
+> - # define IS_IA32      is_compat_task()
+> - #else
+> - # define IS_IA32      0
+> + static void do_audit_syscall_entry(struct pt_regs *regs, u32 arch)
+> + {
+> + #ifdef CONFIG_X86_64
+> +       if (arch == AUDIT_ARCH_X86_64) {
+>  -              audit_syscall_entry(arch, regs->orig_ax, regs->di,
+> ++              audit_syscall_entry(regs->orig_ax, regs->di,
+> +                                   regs->si, regs->dx, regs->r10);
+> +       } else
+>   #endif
+> +       {
+>  -              audit_syscall_entry(arch, regs->orig_ax, regs->bx,
+> ++              audit_syscall_entry(regs->orig_ax, regs->bx,
+> +                                   regs->cx, regs->dx, regs->si);
+> +       }
+> + }
+>
+>   /*
+> -  * We must return the syscall number to actually look up in the table.
+> -  * This can be -1L to skip running any syscall at all.
+> +  * We can return 0 to resume the syscall or anything else to go to phase
+> +  * 2.  If we resume the syscall, we need to put something appropriate in
+> +  * regs->orig_ax.
+> +  *
+> +  * NB: We don't have full pt_regs here, but regs->orig_ax and regs->ax
+> +  * are fully functional.
+> +  *
+> +  * For phase 2's benefit, our return value is:
+> +  * 0:                 resume the syscall
+> +  * 1:                 go to phase 2; no seccomp phase 2 needed
+> +  * anything else:     go to phase 2; pass return value to seccomp
+>    */
+> - long syscall_trace_enter(struct pt_regs *regs)
+> + unsigned long syscall_trace_enter_phase1(struct pt_regs *regs, u32 arch)
+> + {
+> +       unsigned long ret = 0;
+> +       u32 work;
+> +
+> +       BUG_ON(regs != task_pt_regs(current));
+> +
+> +       work = ACCESS_ONCE(current_thread_info()->flags) &
+> +               _TIF_WORK_SYSCALL_ENTRY;
+> +
+> +       /*
+> +        * If TIF_NOHZ is set, we are required to call user_exit() before
+> +        * doing anything that could touch RCU.
+> +        */
+> +       if (work & _TIF_NOHZ) {
+> +               user_exit();
+> +               work &= ~TIF_NOHZ;
+> +       }
+> +
+> + #ifdef CONFIG_SECCOMP
+> +       /*
+> +        * Do seccomp first -- it should minimize exposure of other
+> +        * code, and keeping seccomp fast is probably more valuable
+> +        * than the rest of this.
+> +        */
+> +       if (work & _TIF_SECCOMP) {
+> +               struct seccomp_data sd;
+> +
+> +               sd.arch = arch;
+> +               sd.nr = regs->orig_ax;
+> +               sd.instruction_pointer = regs->ip;
+> + #ifdef CONFIG_X86_64
+> +               if (arch == AUDIT_ARCH_X86_64) {
+> +                       sd.args[0] = regs->di;
+> +                       sd.args[1] = regs->si;
+> +                       sd.args[2] = regs->dx;
+> +                       sd.args[3] = regs->r10;
+> +                       sd.args[4] = regs->r8;
+> +                       sd.args[5] = regs->r9;
+> +               } else
+> + #endif
+> +               {
+> +                       sd.args[0] = regs->bx;
+> +                       sd.args[1] = regs->cx;
+> +                       sd.args[2] = regs->dx;
+> +                       sd.args[3] = regs->si;
+> +                       sd.args[4] = regs->di;
+> +                       sd.args[5] = regs->bp;
+> +               }
+> +
+> +               BUILD_BUG_ON(SECCOMP_PHASE1_OK != 0);
+> +               BUILD_BUG_ON(SECCOMP_PHASE1_SKIP != 1);
+> +
+> +               ret = seccomp_phase1(&sd);
+> +               if (ret == SECCOMP_PHASE1_SKIP) {
+> +                       regs->orig_ax = -1;
+> +                       ret = 0;
+> +               } else if (ret != SECCOMP_PHASE1_OK) {
+> +                       return ret;  /* Go directly to phase 2 */
+> +               }
+> +
+> +               work &= ~_TIF_SECCOMP;
+> +       }
+> + #endif
+> +
+> +       /* Do our best to finish without phase 2. */
+> +       if (work == 0)
+> +               return ret;  /* seccomp and/or nohz only (ret == 0 here) */
+> +
+> + #ifdef CONFIG_AUDITSYSCALL
+> +       if (work == _TIF_SYSCALL_AUDIT) {
+> +               /*
+> +                * If there is no more work to be done except auditing,
+> +                * then audit in phase 1.  Phase 2 always audits, so, if
+> +                * we audit here, then we can't go on to phase 2.
+> +                */
+> +               do_audit_syscall_entry(regs, arch);
+> +               return 0;
+> +       }
+> + #endif
+> +
+> +       return 1;  /* Something is enabled that we can't handle in phase 1 */
+> + }
+> +
+> + /* Returns the syscall nr to run (which should match regs->orig_ax). */
+> + long syscall_trace_enter_phase2(struct pt_regs *regs, u32 arch,
+> +                               unsigned long phase1_result)
+>   {
+>         long ret = 0;
+> +       u32 work = ACCESS_ONCE(current_thread_info()->flags) &
+> +               _TIF_WORK_SYSCALL_ENTRY;
+>
+> -       user_exit();
+> +       BUG_ON(regs != task_pt_regs(current));
+>
+>         /*
+>          * If we stepped into a sysenter/syscall insn, it trapped in
+
+
+
+-- 
+Andy Lutomirski
+AMA Capital Management, LLC
