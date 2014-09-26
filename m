@@ -1,53 +1,84 @@
-From: Wei Xu <xuwei5@hisilicon.com>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Fri, 26 Sep 2014 10:57:54 +0800
-Message-ID: <5424D632.4000004@hisilicon.com>
-References: <20140926115539.6873630b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with the asm-generic tree
+Date: Fri, 26 Sep 2014 13:29:02 +1000
+Message-ID: <20140926132902.603fb9f8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ow5xe+EKyE8fo+vUZAtbux3"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:22458 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752386AbaIZC6O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Sep 2014 22:58:14 -0400
-In-Reply-To: <20140926115539.6873630b@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:55688 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753253AbaIZD3K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Sep 2014 23:29:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@linaro.org>, Jiancheng Xue <xuejiancheng@huawei.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Liviu Dudau <Liviu.Dudau@arm.com>
 
+--Sig_/ow5xe+EKyE8fo+vUZAtbux3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Bjorn,
 
-On 2014/9/26 9:55, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the arm-soc tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> Error: arch/arm/boot/dts/hisi-x5hd2.dtsi:374.22-23 syntax error
-> FATAL ERROR: Unable to parse input tree
-> 
-> There are a series of new commits to this file today and I have no idea
-> which one caused the problem.
+Today's linux-next merge of the pci tree got a conflict in
+include/asm-generic/io.h between commit 4005bfe0aa45
+("asm-generic/io.h: Implement generic {read,write}s*()") from the
+asm-generic tree and commit 3aad9c969c09 ("asm-generic/io.h: Fix
+ioport_map() for !CONFIG_GENERIC_IOMAP") from the pci tree.
 
-Hi Stephen,
+I fixed it up (the only difference is that the latter castes the result
+to void __iomem * - see below) and can carry the fix as necessary (no
+action is required).
 
-Sorry for that.
-It is caused by this commit: 610bd8722ef4 "ARM: dts: hix5hd2: add wdg node".
-And Olof has already helped to reverted this commit.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Best Regards,
-Wei
+diff --cc include/asm-generic/io.h
+index 3e976be3bdd4,2e2161b0c795..000000000000
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@@ -756,16 -329,11 +756,16 @@@ static inline void iounmap(void __iome
+ =20
+  #ifdef CONFIG_HAS_IOPORT_MAP
+  #ifndef CONFIG_GENERIC_IOMAP
+ +#ifndef ioport_map
+ +#define ioport_map ioport_map
+  static inline void __iomem *ioport_map(unsigned long port, unsigned int n=
+r)
+  {
+- 	return PCI_IOBASE + (port & IO_SPACE_LIMIT);
++ 	return (void __iomem *)(PCI_IOBASE + (port & IO_SPACE_LIMIT));
+  }
+ +#endif
+ =20
+ +#ifndef ioport_unmap
+ +#define ioport_unmap ioport_unmap
+  static inline void ioport_unmap(void __iomem *p)
+  {
+  }
 
-> I reverted:
-> 
-> 610bd8722ef4	"ARM: dts: hix5hd2: add wdg node"
-> 6868feb6dd97	"ARM: dts: hix5hd2: add gpio node"
-> 420a2d55f046	"ARM: dts: hix5hd2: add sata node"
-> f16c7fb2f3ff	"ARM: dts: hix5hd2: add usb node"
-> b196e1ca400d	"ARM: dts: hix5hd2: add mmc node"
-> de8b6054780e	"ARM: dts: hix5hd2: add gmac node"
-> 
-> which fixed the build problem.
-> 
+--Sig_/ow5xe+EKyE8fo+vUZAtbux3
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUJN2DAAoJEMDTa8Ir7ZwV9vgP/3BnKrDma9zJlMeUR3Celdgw
+6nO4CvZeQhM9GktOJA4gXGcIj0aq1x1fYNoEOcNO5BBzoNPqw6/4Btj845tarBWX
+624IBKQNdvIc4kYWlsHso/ylMS1ItpTZnnvmstamhmfFlgterDYBBosA/DYC+v8I
+UK0vA0HFA2CdbNF6B1FNHF6VkZdUgiZq/eb4VhIb+ANlF08VY2N73f/x2gLjxiAy
+qe/9NUzzkXtWcr+HKvFXlwsaz+VE6W60dyTnUADnqcO6YdClSQAg9Lovuohp2Ocv
+DiESfCt2DAfrX3Csdx7VbPKdGhd7aQCMOcz8ry8a4mOGgqDL/FAf0oyuDrTcJ6jQ
+ECfWb6H/ZMjrycKDDZrHVcJQgUVC4oajY9s+iNS6uTGc3s87xSCZfTRiM6XBVC3p
+EKl5fC8p/7RmABlE2gz3HBJ2jDNwwvQbrN73upRi549d6SD4jWSNNBGY9yvTj1AF
+Ct0LWN2/ibf2kSKeMHIeRCLpX16u0YcYzpHHu0XwXVtYNb+Y/934j5fkN3pkv9vF
+HZ9eME6WFkCVWQF7x9ooNH5VICu5JUiQJAdkoC3fnWQnW2B5qaWNxF1weSKpIazd
+amYW4LP+T97P/SHZBEQC/QdZBxzohRQsbPz+IEGA/n+6AeLqte6w83oJFxjRjxHg
+gtnLhI47NHphAcRkEgLw
+=HTA/
+-----END PGP SIGNATURE-----
+
+--Sig_/ow5xe+EKyE8fo+vUZAtbux3--
