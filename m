@@ -1,55 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the battery tree
-Date: Fri, 26 Sep 2014 20:30:12 +1000
-Message-ID: <20140926203012.1d150cd3@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next tree addition request -- doc.git
+Date: Fri, 26 Sep 2014 12:41:59 +0200
+Message-ID: <CA+icZUVi-FWM+6kK5PsK=o-RLO7OCcjA8N1Kwr3cc44j8_d37A@mail.gmail.com>
+References: <alpine.LNX.2.00.1409261132330.22196@pobox.suse.cz>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/p9bA17IZEtg9wnoRSjQPks8"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Sebastian Reichel <sre@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <alpine.LNX.2.00.1409261132330.22196@pobox.suse.cz>
+Sender: linux-doc-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/p9bA17IZEtg9wnoRSjQPks8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+T: git g
 
-Hi Andrew,
+On Fri, Sep 26, 2014 at 11:37 AM, Jiri Kosina <jkosina@suse.cz> wrote:
+> Hi Stephen,
+>
+> as a followup to Randy stepping down as a documentation maintainer [1],
+> could you please add
+>
+>         git://git.kernel.org/pub/scm/linux/kernel/git/jikos/doc.git#for-next
+>
+> to the pile that gets pulled into linux-next?
+>
+> Thanks.
+>
+> [1] d671e42457e1fef70ad0df07084207078633a9e8
+>
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/power/Kconfig between commit 6a91e854442c ("power: max14577:
-Fix circular config SYSFS dependency") from the battery tree and commit
-821246576e03 ("drivers/power/Kconfig: revert part of "charger:
-max14577: Add support for MAX77836 charger"") from the akpm tree.
+I guess you want that in [1] and MAINTAINERS file...
 
-I dropped the akpm tree patch as the battery tree patch fixes the same
-problem.
+[ MAINTAINERS ]
+...
+DOCUMENTATION
+M: Jiri Kosina <jkosina@suse.cz>
+L: linux-doc@vger.kernel.org
+T: git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/doc.git
+S: Maintained
+F: Documentation/
+X: Documentation/ABI/
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+- Sedat -
 
---Sig_/p9bA17IZEtg9wnoRSjQPks8
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+[1] http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUJUA5AAoJEMDTa8Ir7ZwVSGAP/jTc5v+0AguuS5XIJLzZltZ9
-AhOl6DA72usjjmOe5VimKAaZPTohYKMoWh7hYOOQqbSCyJpxcOGzGgRkxN2vtSha
-CMFJ0qDMoEzN26S/gvP8WWvN9WgnmNyoXE6iyUpE9PJ7xahVrKVJRLIyokoh8HxT
-Fl57bMvhUoqGfzy3a6eenrEHILDeeZKMef5dw9lacqb8S/GFa2G5eHmUDEQuXv7u
-TBz/aJqIFW+g42dGPmZVUwR9zGYsKbiXTrBlAWaWCykMtQ/y7YQd8DzBzf9Rq/Tc
-UHLKn0ZFHaBZKo/s3UAdZHeQvR9AokaYc5OW2y1i8vdu8NkWV4V4UB86dZNVkqTc
-Josd056qidx+rQj+r7/akbQBMnnXEHzwF+tgNJhkPdZVU5F7Lbgk3g+oL2w9J1lT
-mq7BI9G6R6TMyb3Vb6PmF1e8tZ6M6/J5eub2O/eoSaEMFXv1XT4TnM6Yq6rS0Rej
-NKKSnvkzoUroNVlcfEdYvLiPLpXptoA3SGzfTaDM+Mqx5t2DeQSW8DzAY4rAURvV
-tqwFcPukO7qi2ORHdg1fTzsQ845Dx08bwlGYBu2ruJM71HoYKfH920OY7ws+TvQj
-fH1g3sQ9GcKNBMzu+Xsl1MTwEWQ/eetvAPr/MQ5JVA+RkO08eKd93Dz3DmfkwcU3
-FunLU12lP2Zf4DXohvfN
-=0DTc
------END PGP SIGNATURE-----
-
---Sig_/p9bA17IZEtg9wnoRSjQPks8--
+> --
+> Jiri Kosina
+> SUSE Labs
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
