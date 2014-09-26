@@ -1,53 +1,71 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: build failure after merge of the watchdog tree
-Date: Thu, 25 Sep 2014 23:12:01 -0700
-Message-ID: <542503B1.9090206@roeck-us.net>
-References: <20140926154031.4bc4dc39@canb.auug.org.au> <5424FFF4.4010506@smartplayin.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the arm-soc tree
+Date: Fri, 26 Sep 2014 16:25:12 +1000
+Message-ID: <20140926162512.07ef4957@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4JAOwzqUquCHY52QtU4T675"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5424FFF4.4010506@smartplayin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pramod Gurav <pramod.gurav@smartplayin.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Carlo Caione <carlo@caione.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>
 List-Id: linux-next.vger.kernel.org
 
-On 09/25/2014 10:56 PM, Pramod Gurav wrote:
-> On Friday 26 September 2014 11:10 AM, Stephen Rothwell wrote:
->> Hi Wim,
->>
->> After merging the watchdog tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->>
->>
->> drivers/watchdog/meson_wdt.c: In function 'meson_wdt_probe':
->> drivers/watchdog/meson_wdt.c:178:2: error: implicit declaration of function 'register_restart_handler' [-Werror=implicit-function-declaration]
->>    err = register_restart_handler(&meson_wdt->restart_handler);
->>    ^
->> drivers/watchdog/meson_wdt.c: In function 'meson_wdt_remove':
->> drivers/watchdog/meson_wdt.c:193:2: error: implicit declaration of function 'unregister_restart_handler' [-Werror=implicit-function-declaration]
->>    unregister_restart_handler(&meson_wdt->restart_handler);
->>    ^
->>
-> This is because Guenter Roeck's restart_notifier mechanism [1] has not
-> yet made it to linux-next.
->
-No, that isn't it; it is there, coming from Andrew Morton's tree.
-I think the problem is that the functions are not in Wim's tree,
-and neither is ARCH_MESON. For this reason, the driver does not
-build in Wim's tree, nor in my tree, which in turn explains why
-we don't see the error. Maybe Stephen merges Andrew's tree after the
-watchdog tree, and builds the watchdog code immediately after pulling it.
-If the MESON code is already merged at that time we would see that error.
+--Sig_/4JAOwzqUquCHY52QtU4T675
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Question is how to handle that kind of situation. An idea, anyone ?
+Hi all,
 
-Someone suggested that I should create an immutable tree with the
-restart handler patchset, which everyone using the restart handlers
-could merge. Is that an option ? I could technically do that,
-but I would want to pick the patches from Andrew's tree to retain
-his sign-off. Andrew, any thoughts/comments ?
+Today's linux-next merge of the tip tree got a conflict in
+arch/arm/mach-omap2/irq.c between commit 8598066cddd1 ("arm: omap: irq:
+move irq.c to drivers/irqchip/") from the arm-soc tree and commit
+f978999f6096 ("Use the new handle_domain_irq method to handle
+interrupts") from the tip tree.
 
-Thanks,
-Guenter
+I fixed it up (I applied the latter patch to the moved file - see
+below) and can carry the fix as necessary (no action is required).
+
+diff --git a/drivers/irqchip/irq-omap-intc.c b/drivers/irqchip/irq-omap-int=
+c.c
+index f3814e79192d..28718d3e8281 100644
+--- a/drivers/irqchip/irq-omap-intc.c
++++ b/drivers/irqchip/irq-omap-intc.c
+@@ -334,8 +334,7 @@ out:
+ 		irqnr &=3D ACTIVEIRQ_MASK;
+=20
+ 		if (irqnr) {
+-			irqnr =3D irq_find_mapping(domain, irqnr);
+-			handle_IRQ(irqnr, regs);
++			handle_domain_irq(domain, irqnr, regs);
+ 			handled_irq =3D 1;
+ 		}
+ 	} while (irqnr);
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/4JAOwzqUquCHY52QtU4T675
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUJQbNAAoJEMDTa8Ir7ZwVqhQP/1JAY7Uo1vZg2PEc4Al1rfXL
+D/vFAeGwbVcjlDdj4NU6/QgFdgnQ7zrq3jeYVl518SyoYG41kPwUI2tBwUmWGu0H
++tG/c4EX7t5mORY9CFWzYBEQrATnAs7cM3EBsvc3zKvehnhDM2th9CCR0DdT+BhC
+Cncha4nG4UmqdO8vMuCs0A3oWdrTa+HaClaF041teb/qpO8oWchmsDF/BQzFDY4z
+B2sMEkO48IdwU1HXkuGqGarFgp6f8iv8xoWeyWzZdV8Vpo9kxkRikQfgL/VNKzF2
+AqLq+JhcP4ICa2vnNsVFHBRtuDh56wVZEPB2Pqybm3U26pS3DtAcszVJ00mIZYPm
+i/G56DxiS3YzUhJu2NIyIV+h0MetFIsw78zQc77jpL2Yd7CDNFd0LHlJPrmnFVfH
+ax/5seb71Jcc6xTdD8tFQMYgPL363r6ViYZR6Z7dMFoAWcyP6/D1gyfluQh5mXmG
+CeHph/n8OgkasuucbsTrtFcC2HOZQhOS3R7eQXJx4FDCajEfmQDZiAf0k5+0+rQY
+GTaVaabapk5KZGRjTQJ85ZHe1icrZIaSfUlK/5ZblrO24mCYgJOrU+FHXXMlTZbY
+2nlTM7QXFcJM+PMJOnVjN8AwJpIsDt8I5TWUh7RPFtDxA/t0yET0siguv+qQKI15
+fyyKJNN7NWJQh/rPogER
+=p3h8
+-----END PGP SIGNATURE-----
+
+--Sig_/4JAOwzqUquCHY52QtU4T675--
