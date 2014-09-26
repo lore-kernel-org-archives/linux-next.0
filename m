@@ -1,76 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the llvmlinux tree with the arm tree
-Date: Fri, 26 Sep 2014 19:21:45 +1000
-Message-ID: <20140926192145.701bde05@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the pci tree with the asm-generic
+ tree
+Date: Fri, 26 Sep 2014 19:26:32 +1000
+Message-ID: <20140926192632.31fb96fd@canb.auug.org.au>
+References: <20140926132902.603fb9f8@canb.auug.org.au>
+	<20140926070022.GA31002@ulmo>
+	<20140926091357.GL841@e106497-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hD+s0qfETB3t/8YfIjzzOk9"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Behan Webster <behanw@converseincode.com>, llvmlinux@lists.linuxfoundation.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/mc3SRbiOUe._V1GbCX8oVo8"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43471 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753880AbaIZJ0j (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Sep 2014 05:26:39 -0400
+In-Reply-To: <20140926091357.GL841@e106497-lin.cambridge.arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
 
---Sig_/hD+s0qfETB3t/8YfIjzzOk9
+--Sig_/mc3SRbiOUe._V1GbCX8oVo8
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Liviu,
 
-Today's linux-next merge of the llvmlinux tree got a conflict in
-arch/arm/kernel/return_address.c between commit 95e750c0bac4 ("ARM:
-8160/1: drop warning about return_address not using unwind tables")
-from the arm tree and commit eeb5c3a69694 ("arm: LLVMLinux: use static
-inline in ARM ftrace.h") from the llvmlinux tree (which also exists in
-the arm tree).
+On Fri, 26 Sep 2014 10:13:57 +0100 Liviu Dudau <Liviu.Dudau@arm.com> wrote:
+>
+> I agree with Thierry's solution.
+>=20
+> I don't know how these cases are handled. Should I send Bjorn a patch for=
+ his tree?
 
-I fixed it up (I took out the now empty #else clause ... see below) and
-can carry the fix as necessary (no action is required).
+They need to be fixed in one or other of the trees, so yes.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/kernel/return_address.c
-index 98ea4b7eb406,b7de88a40176..000000000000
---- a/arch/arm/kernel/return_address.c
-+++ b/arch/arm/kernel/return_address.c
-@@@ -57,8 -56,12 +56,6 @@@ void *return_address(unsigned int level
-  		return NULL;
-  }
- =20
---#else /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND) =
-*/
- -
- -#if defined(CONFIG_ARM_UNWIND)
- -#warning "TODO: return_address should use unwind tables"
- -#endif
---
-  #endif /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND)=
- / else */
- =20
-  EXPORT_SYMBOL_GPL(return_address);
-
---Sig_/hD+s0qfETB3t/8YfIjzzOk9
+--Sig_/mc3SRbiOUe._V1GbCX8oVo8
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUJTAyAAoJEMDTa8Ir7ZwVBGgP/i+eQq+HY20FW0t2sO1dkns8
-6eyKcxRlakxb6Yc33bvMNJBcm5btrtLytOZ/PlUusyr5bKk3WAL4DdauwBWZIucC
-0J3jshzNcRLF+MM9E11H/AboWQzYKUSiGpZJcLTTReWTBZzlV5hDP0EDo2GRpsvS
-YPmbax7rs+5rj18AOHSwklRNEb6aNrWTdKv7zMK9F2nzReFNmIjBH2veea1WR5oZ
-WUBMxOxEnZuuHKtdyclE/Q5tt6IzVRSJNWYG7uuaIlbEb6bIgxL1CajzadfwmI9W
-gFPI/DgcOnaIPFcJHzWPBogDHT8uG+7i/Vz4JepbWBjWki+c+ut6J0TE5fyKo5Ub
-GmhgHua7q31hTGoFFXuDj/wlT/9EyUdeBnBczPFwJ8AMZXQryDuQY6u44V2wLZsV
-SOPPBpFcS2bQ7CX67/jJJf+axtQJ/K9ytRTySs8fQAzN50NdNrMSRWhniDr0R8hv
-otRuCxnQCFGYUa9+58aEkyJNDiHVxqznUOw97uk4mHRSu/A4Mz8KNXx/zY5icK5F
-VTdC4aQkQI2+ugI6S/0x+n4LXjYV34Plp3W8nb0Rb08SiZFgq/YQqf8zuv/EPZ6p
-c4VbQBP8gUjE+YnDYYeSmQm3owUTw/awOMcxl/mOhh/krqNch/1y6bVLETj073xB
-IswNTSxhSB1pJy9cxtx7
-=vchH
+iQIcBAEBCAAGBQJUJTFNAAoJEMDTa8Ir7ZwV94wQAII4XGIyoDbhF5lkr/o683re
+0Kc4H7leNKeR3u0mQc71P5xBorb6jRuJ5FSrk0CKOW/zIyZgdgnjYRLALAwE9duj
+tfH9Va4YqCFwEahjqcw1W9SSFjWdW6tzEPGoSMPx/46f8ggqdIXol0izVGpezvaR
+kD/ebS9gxf3YZPB/PJvrB7NpPZSVhnFRT11IuwAmnpJCU/ZCVVya8CODdpgYZ1yY
+Ip6REfEJLp0LDNIeLMNzQ3uz4yp616JO3TRDVCrKWCkYARba9F1xNgX8KuiU1e4F
+pCT96pDcIEcZnX9lkfZ5dVFboGCVL9Qn6nteM9Qz0GreIC8yYvVcaFAH7HvNtWtb
+5ZF9jidXpc7pYSChBQAomhqheBHTpuL6tC16MV7e2Vdz27AQYfKW8c0XEBB0JYsD
+AYjs/aJqaXRaZr5VfMbXZLWxtwWxquCacXFJGZBaKIt/Hl5k2TWUzb7OahxamY5h
+vsBnEuXbl2H+VohCiJYd7mgzS6x8FiGsu6UOEUHozRxXan9Vd/nadB6inPlXqKDO
+GQO0qh+Ini0HxDKoj6YlFHDUvRrrZKf5n9OwvFaaEWiIE49NEw+RwhmALoetPDMP
+bQtAAwwZ72AQNupME6xTNN8MuUJ05nERACZQJ7qil4yAmwH37dTGUedBSJSVaG/O
+nt42/ojAFnLMOWMfY+yK
+=8Jeq
 -----END PGP SIGNATURE-----
 
---Sig_/hD+s0qfETB3t/8YfIjzzOk9--
+--Sig_/mc3SRbiOUe._V1GbCX8oVo8--
