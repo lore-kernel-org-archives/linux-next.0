@@ -1,89 +1,76 @@
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: Re: linux-next: manual merge of the pci tree with the asm-generic
- tree
-Date: Fri, 26 Sep 2014 10:13:57 +0100
-Message-ID: <20140926091357.GL841@e106497-lin.cambridge.arm.com>
-References: <20140926132902.603fb9f8@canb.auug.org.au>
- <20140926070022.GA31002@ulmo>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the llvmlinux tree with the arm tree
+Date: Fri, 26 Sep 2014 19:21:45 +1000
+Message-ID: <20140926192145.701bde05@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hD+s0qfETB3t/8YfIjzzOk9"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140926070022.GA31002@ulmo>
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
+To: Behan Webster <behanw@converseincode.com>, llvmlinux@lists.linuxfoundation.org, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Sep 26, 2014 at 08:00:23AM +0100, Thierry Reding wrote:
-> On Fri, Sep 26, 2014 at 01:29:02PM +1000, Stephen Rothwell wrote:
-> > Hi Bjorn,
-> >=20
-> > Today's linux-next merge of the pci tree got a conflict in
-> > include/asm-generic/io.h between commit 4005bfe0aa45
-> > ("asm-generic/io.h: Implement generic {read,write}s*()") from the
-> > asm-generic tree and commit 3aad9c969c09 ("asm-generic/io.h: Fix
-> > ioport_map() for !CONFIG_GENERIC_IOMAP") from the pci tree.
-> >=20
-> > I fixed it up (the only difference is that the latter castes the re=
-sult
-> > to void __iomem * - see below) and can carry the fix as necessary (=
-no
-> > action is required).
-> >=20
-> > --=20
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
-> >=20
-> > diff --cc include/asm-generic/io.h
-> > index 3e976be3bdd4,2e2161b0c795..000000000000
-> > --- a/include/asm-generic/io.h
-> > +++ b/include/asm-generic/io.h
-> > @@@ -756,16 -329,11 +756,16 @@@ static inline void iounmap(void __i=
-ome
-> >  =20
-> >   #ifdef CONFIG_HAS_IOPORT_MAP
-> >   #ifndef CONFIG_GENERIC_IOMAP
-> >  +#ifndef ioport_map
-> >  +#define ioport_map ioport_map
-> >   static inline void __iomem *ioport_map(unsigned long port, unsign=
-ed int nr)
-> >   {
-> > - 	return PCI_IOBASE + (port & IO_SPACE_LIMIT);
-> > + 	return (void __iomem *)(PCI_IOBASE + (port & IO_SPACE_LIMIT));
->=20
-> I don't think that cast is necessary. All instances of PCI_IOBASE are
-> already defined to be void __iomem *.
->=20
-> Or at least they were until a few days ago. Commit f3dfddf7bd85 (ARM:
-> Define PCI_IOBASE as the base of virtual PCI IO space) introduces one
-> variant for ARM which isn't actually void __iomem *. I think what we
-> should do is standardize the type of PCI_IOBASE.
->=20
-> So how about we remove commit 3aad9c969c09 (asm-generic/io.h: Fix
-> ioport_map() for !CONFIG_GENERIC_IOMAP) and move the cast to void
-> __iomem * to Liviu's definition of PCI_IOBASE for ARM?
->=20
-> Thierry
+--Sig_/hD+s0qfETB3t/8YfIjzzOk9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi all,
 
-I agree with Thierry's solution.
+Today's linux-next merge of the llvmlinux tree got a conflict in
+arch/arm/kernel/return_address.c between commit 95e750c0bac4 ("ARM:
+8160/1: drop warning about return_address not using unwind tables")
+from the arm tree and commit eeb5c3a69694 ("arm: LLVMLinux: use static
+inline in ARM ftrace.h") from the llvmlinux tree (which also exists in
+the arm tree).
 
-I don't know how these cases are handled. Should I send Bjorn a patch f=
-or his tree?
-
-Best regards,
-Liviu
-
+I fixed it up (I took out the now empty #else clause ... see below) and
+can carry the fix as necessary (no action is required).
 
 --=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    =C2=AF\_(=E3=83=84)_/=C2=AF
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/kernel/return_address.c
+index 98ea4b7eb406,b7de88a40176..000000000000
+--- a/arch/arm/kernel/return_address.c
++++ b/arch/arm/kernel/return_address.c
+@@@ -57,8 -56,12 +56,6 @@@ void *return_address(unsigned int level
+  		return NULL;
+  }
+ =20
+--#else /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND) =
+*/
+ -
+ -#if defined(CONFIG_ARM_UNWIND)
+ -#warning "TODO: return_address should use unwind tables"
+ -#endif
+--
+  #endif /* if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND)=
+ / else */
+ =20
+  EXPORT_SYMBOL_GPL(return_address);
+
+--Sig_/hD+s0qfETB3t/8YfIjzzOk9
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUJTAyAAoJEMDTa8Ir7ZwVBGgP/i+eQq+HY20FW0t2sO1dkns8
+6eyKcxRlakxb6Yc33bvMNJBcm5btrtLytOZ/PlUusyr5bKk3WAL4DdauwBWZIucC
+0J3jshzNcRLF+MM9E11H/AboWQzYKUSiGpZJcLTTReWTBZzlV5hDP0EDo2GRpsvS
+YPmbax7rs+5rj18AOHSwklRNEb6aNrWTdKv7zMK9F2nzReFNmIjBH2veea1WR5oZ
+WUBMxOxEnZuuHKtdyclE/Q5tt6IzVRSJNWYG7uuaIlbEb6bIgxL1CajzadfwmI9W
+gFPI/DgcOnaIPFcJHzWPBogDHT8uG+7i/Vz4JepbWBjWki+c+ut6J0TE5fyKo5Ub
+GmhgHua7q31hTGoFFXuDj/wlT/9EyUdeBnBczPFwJ8AMZXQryDuQY6u44V2wLZsV
+SOPPBpFcS2bQ7CX67/jJJf+axtQJ/K9ytRTySs8fQAzN50NdNrMSRWhniDr0R8hv
+otRuCxnQCFGYUa9+58aEkyJNDiHVxqznUOw97uk4mHRSu/A4Mz8KNXx/zY5icK5F
+VTdC4aQkQI2+ugI6S/0x+n4LXjYV34Plp3W8nb0Rb08SiZFgq/YQqf8zuv/EPZ6p
+c4VbQBP8gUjE+YnDYYeSmQm3owUTw/awOMcxl/mOhh/krqNch/1y6bVLETj073xB
+IswNTSxhSB1pJy9cxtx7
+=vchH
+-----END PGP SIGNATURE-----
+
+--Sig_/hD+s0qfETB3t/8YfIjzzOk9--
