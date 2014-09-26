@@ -1,39 +1,64 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Fri, 26 Sep 2014 10:36:33 +0200
-Message-ID: <20140926083632.GA19463@lst.de>
-References: <20140926183450.7474b448@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Fri, 26 Sep 2014 18:39:35 +1000
+Message-ID: <20140926183935.4a4eec89@canb.auug.org.au>
+References: <20140926112344.3ee87d2f@canb.auug.org.au>
+	<CAOQ7t2Z8SgjMMM_QgUuAgezMXDBYyJM4kez-3WzGE4jgutjX6g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2WMXvzKSeSmnJ6kAj/9srmc"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:58883 "EHLO newverein.lst.de"
+Received: from ozlabs.org ([103.22.144.67]:42567 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753181AbaIZIgg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Sep 2014 04:36:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20140926183450.7474b448@canb.auug.org.au>
+	id S1753732AbaIZIjm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Sep 2014 04:39:42 -0400
+In-Reply-To: <CAOQ7t2Z8SgjMMM_QgUuAgezMXDBYyJM4kez-3WzGE4jgutjX6g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian King <brking@linux.vnet.ibm.com>, Christoph Hellwig <hch@lst.de>, Xiong <wenxiong@linux.vnet.ibm.com>
+To: Carlo Caione <carlo@caione.org>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Krzysztof =?UTF-8?B?SGHFgmFzYQ==?= <khalasa@piap.pl>, Florian Fainelli <f.fainelli@gmail.com>
 
-On Fri, Sep 26, 2014 at 06:34:50PM +1000, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/scsi/ipr.c: In function 'ipr_handle_log_data':
-> drivers/scsi/ipr.c:2468:15: error: 'IPR_IOASC_HW_CMD_FAILED' undeclared (first use in this function)
->   if (ioasc == IPR_IOASC_HW_CMD_FAILED &&
->                ^
-> 
-> Caused by commit 3185ea63907c ("ipr: don't log error messages when
-> applications issues illegal requests").  Someone typoed that name in
-> ipr.h ...
-> 
-> I have reverted that commit for today.
+--Sig_/2WMXvzKSeSmnJ6kAj/9srmc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.  The fix should be here:
+Hi Carlo,
 
-http://git.infradead.org/users/hch/scsi-queue.git/commitdiff/d247a70a4d67623eb738176ee703a7bb8b6c325c
+On Fri, 26 Sep 2014 10:19:43 +0200 Carlo Caione <carlo@caione.org> wrote:
+>
+> Am I going blind or these two lines are missing from d8a00916b303
+>=20
+> +       default 0xc81004c0 if DEBUG_MESON_UARTAO
+> ...
+> +       default 0xf31004c0 if DEBUG_MESON_UARTAO
+
+They are in the final version of arch/arm/Kconfig.debug, just not shown
+in the conflict resolution above.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/2WMXvzKSeSmnJ6kAj/9srmc
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUJSZLAAoJEMDTa8Ir7ZwV/BUP/j7DXwan84p26bUhLQnd3UNd
+OrV1qi+zOQtDWdhoWJ+7qxBZ+jdzbitZs5YnwS7YU++SdOl5VYxD0ILFkXnlPcGO
+PDruDmA8ehJfLe4zwpZwAK+/zDRz2DFVD20BNa2c+VPK3VhKz20HujjDVxTfy0OM
+CtfvOwbq0BBjDJ+wOrBdhfZOnPxsStbxxhYcBmVa5O9Wh9lm7ADoNeSb33Q8bVrJ
+DDQzXBTFfRd566xWm57DjrULsPe6s9NPXRg8c/F6Iz65qwe1o+GZ+4SJiaKSK6p9
+lWKK/RR0PdTK0YNFeWMw0rqf2LuxlAorNvyWOA1sYmdt3teCMJX2nP4AV/Hu7hQU
+rCDeUt4VVPgYPLyvf46Y3MMU3kETgXh5/161RUPLaqidEmyaeqfEnkJIB7/ncaJ2
+WaPGSBEPyOwdGCV3r6Z1DweFfceh5jKohgij8S+F1EMGGbfWGblaJhXxOUHhuRZO
+Zco6weOGNfIijr/pPgM9I3lYjBHOB8ACHTWR4Wyd7q33qmE0cTs31zjgxEa0W+PU
++jpADUyGJ/1O6XBMWmpaLqlL8NiAFXDCA6+601Bvjf2ZKAJb35TPvYMjOHJXq+s3
+/vkrC3nkTNtY7/ZwIs+uvmW4/bvys3KFVu3jix3QvCdzluUJOf5zyDwSmX+rlnjU
+1Z+b1TZnf6m66sWAZNvc
+=Rec5
+-----END PGP SIGNATURE-----
+
+--Sig_/2WMXvzKSeSmnJ6kAj/9srmc--
