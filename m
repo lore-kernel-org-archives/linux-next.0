@@ -1,96 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the asm-generic tree
-Date: Fri, 26 Sep 2014 20:02:51 +1000
-Message-ID: <20140926200251.78f0d713@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 26 Sep 2014 20:17:04 +1000
+Message-ID: <20140926201704.1e2a62c3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yb+8xIKGiuav0vrI.v1y4lU"; protocol="application/pgp-signature"
+ boundary="Sig_/gMG+g90X5iFQ3IQMXiDcGKk"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, "David S. Miller" <davem@davemloft.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Oleg Nesterov <oleg@redhat.com>, Josh Triplett <josh@joshtriplett.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/yb+8xIKGiuav0vrI.v1y4lU
+--Sig_/gMG+g90X5iFQ3IQMXiDcGKk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi Andrew,
 
-After merging the asm-generic tree, today's linux-next build (sparc
-defconfig) failed like this:
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-In file included from /scratch/sfr/next/include/linux/clocksource.h:19:0,
-                 from /scratch/sfr/next/arch/sparc/include/asm/timer_32.h:1=
-1,
-                 from /scratch/sfr/next/arch/sparc/include/asm/timer.h:6,
-                 from /scratch/sfr/next/arch/sparc/kernel/sun4m_irq.c:14:
-/scratch/sfr/next/arch/sparc/include/asm/io.h:14:0: error: "readb_relaxed" =
-redefined [-Werror]
- #define readb_relaxed(__addr)  readb(__addr)
- ^
-In file included from /scratch/sfr/next/arch/sparc/include/asm/io_32.h:13:0,
-                 from /scratch/sfr/next/arch/sparc/include/asm/io.h:6,
-                 from /scratch/sfr/next/include/linux/clocksource.h:19,
-                 from /scratch/sfr/next/arch/sparc/include/asm/timer_32.h:1=
-1,
-                 from /scratch/sfr/next/arch/sparc/include/asm/timer.h:6,
-                 from /scratch/sfr/next/arch/sparc/kernel/sun4m_irq.c:14:
-/scratch/sfr/next/include/asm-generic/io.h:182:0: note: this is the locatio=
-n of the previous definition
- #define readb_relaxed readb
- ^
+In file included from arch/powerpc/kernel/asm-offsets.c:16:0:
+include/linux/signal.h: In function 'sigisemptyset':
+include/linux/signal.h:79:3: error: implicit declaration of function 'BUILD=
+_BUG' [-Werror=3Dimplicit-function-declaration]
+   BUILD_BUG();
+   ^
 
-And so on several hundred times ... :-(
+Caused by commit 7e52cdba7e69 ("signal: use BUILD_BUG() instead of
+_NSIG_WORDS_is_unsupported_size()").
 
-Caused by commits 95a668b0452e ("sparc: io: implement dummy relaxed
-accessor macros for writes") and 4c255791ffd6 ("asm-generic: io:
-implement relaxed accessor macros as conditional wrappers").
+See Rule 1 in Documentation/SubmitChecklist.
 
-arch/sparc/include/asm_32.h includes asm-generic/io.h which means it is
-include before the arch specific versions of the relaxed functions are
-defined ...
+Thanks to Guenter for the heads up.
 
-I have added this patch for today:
+I have added the following patch for today (hopefully it does not cause
+more problems).
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 26 Sep 2014 19:57:03 +1000
-Subject: [PATCH] sparc: io: fix for asm-generic: io: implement relaxed
- accessor macros as conditional wrappers
+Date: Fri, 26 Sep 2014 20:08:12 +1000
+Subject: [PATCH] signal.h: using BUILD_BUG requires including bug.h
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/sparc/include/asm/io.h | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ include/linux/signal.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/sparc/include/asm/io.h b/arch/sparc/include/asm/io.h
-index 493f22c4684f..79b167674010 100644
---- a/arch/sparc/include/asm/io.h
-+++ b/arch/sparc/include/asm/io.h
-@@ -1,10 +1,5 @@
- #ifndef ___ASM_SPARC_IO_H
- #define ___ASM_SPARC_IO_H
--#if defined(__sparc__) && defined(__arch64__)
--#include <asm/io_64.h>
--#else
--#include <asm/io_32.h>
--#endif
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 14acfd59ed1b..ab1e0392b5ac 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -2,6 +2,7 @@
+ #define _LINUX_SIGNAL_H
 =20
- /*
-  * Defines used for both SPARC32 and SPARC64
-@@ -19,6 +14,12 @@
- #define writew_relaxed(__w, __addr)	writew(__w, __addr)
- #define writel_relaxed(__l, __addr)	writel(__l, __addr)
+ #include <linux/list.h>
++#include <linux/bug.h>
+ #include <uapi/linux/signal.h>
 =20
-+#if defined(__sparc__) && defined(__arch64__)
-+#include <asm/io_64.h>
-+#else
-+#include <asm/io_32.h>
-+#endif
-+
- /* Big endian versions of memory read/write routines */
- #define readb_be(__addr)	__raw_readb(__addr)
- #define readw_be(__addr)	__raw_readw(__addr)
+ struct task_struct;
 --=20
 2.1.1
 
@@ -98,26 +65,26 @@ index 493f22c4684f..79b167674010 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/yb+8xIKGiuav0vrI.v1y4lU
+--Sig_/gMG+g90X5iFQ3IQMXiDcGKk
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUJTnQAAoJEMDTa8Ir7ZwVzZcQAIIlPmj9pGDPqbRFIRISqv4R
-zAb0LkEN/FLxPnPyihurSVA0R8DbtC2Hsi68sgcSShLNdOLRsQbqZ4JxmMexNKyJ
-i9UNdBBkK7I4fKNDwp+/LxN9+Fn9ZeEP0lwS+Z02DRWnaOKbadCemHN8JSJGyJHU
-OaXgSA+6u2z2rpUlRrbVi0NkUCFBWohV3Tt6Puz6uMgP10/aFT0ejJBZ4eG7Z0vi
-1j28ifnb5PDYb6kVj1YTaw1CHhclWSWLE0URHtIKTC2YE3tLGz4LL55GopUMDXHU
-saFsUlqyIxCv+xnFgiCyI9s/DRincSXpOLKF1ehDD+8Acs+bf94e7A5A2cbZw0Ee
-thMyzBeIHat0RiRZHiI/wkzX7EQN99IU7VladI/tVUOAh/TeeHf+oFWnXphcY9cr
-4ns1lF4Tiwh+ZTJZF+JwLcxQEUaKQsTOJIQOHC5CPNL8bIGVU3GOBQlA/Lf0HdTF
-ZPmuvMx/P8KUNNKZib7HjNdMyalHf8YOeHbnSCnwp+tz8iXKFCKrjAqrcp09/Fxk
-JQYDPMlk3RPEO15FpLqTKCiTkqBYFYl54730nYs2wX+4W74lLzGMLXW7xm2Y7ZsP
-vynlgzlpIGL/uMW2JtTzycfpBHrIKYdKlakbwtRa9I8/VGbAje40vbnLDluqRNkv
-xxiNcOOyLd6l4HFs7S3d
-=aPJY
+iQIcBAEBCAAGBQJUJT0pAAoJEMDTa8Ir7ZwVDqkP/AtQ+pkeMzbTrSqgo2zRtUHz
+fLxQQzxY6QEDmsLYGjOXWaeU/WzDDx1B6SSatbkgB7uyYfrfVJ+JjwAnC0yqaOXN
+MxOCZT0QTHVdoMeY/7Rc62liAoJnfGRiwwjgbKMTeQEG7jJnJQQ+q4IL+AX3BLvw
+509L+QZmVrEpLSmdZ0vU4CjZCi0LJlGifBN3HjjQhR4SD63XMQj74s0lNElMZa2J
+ksLhmaSKHTGzYiY5XuPIPxQ2QqY5xnAompaqFsKN2nczItIE5Cuabf4qYQb3yYKb
+H4aW9OwkY5dZakk6zqusa3814eJD4UhdUbYsD5UkTQf27YEi3CwerKWP58gGqGmp
+LrWR5ZVEMGh1Lpptm4vvHDxUjQfVfZNzHop9EQ2LJU1c62TDAckIEKp7lwhR54WX
+FnArErzH/Gd+EGhjoadbY7IAgK5/Kda/oOqLwBluqJOeNp2QcwAWLERAtciTcJHg
+K9p3SnyU1o1fI53KMvsgtB84Y14zyqjGQxDWGwYlB5XE74ha78h4I18LwkmJfyvB
+/99ItvOAr4A6vz+MGVg9wxutW3THhUSlYsRsNts2zrwgMH3ye23IEPr+nbSURbNI
+A8ZbbsP7T7aGeOsgexJxnLRjoEy0+GnyPWHCKMxHqeK3x4IP3fd1aN75UgwCQ4A/
+eYmhSSOff8UC29W68dQG
+=K6DH
 -----END PGP SIGNATURE-----
 
---Sig_/yb+8xIKGiuav0vrI.v1y4lU--
+--Sig_/gMG+g90X5iFQ3IQMXiDcGKk--
