@@ -1,122 +1,55 @@
-From: Jonas Bonn <jonas@southpole.se>
-Subject: Re: [PATCH v2] next: openrisc: Fix build
-Date: Fri, 26 Sep 2014 20:18:42 +0200
-Message-ID: <d9945098-9057-4b7f-ac83-19cd248b7422@email.android.com>
-References: <1411747539-28308-1-git-send-email-linux@roeck-us.net>
-	<1411753981.2739.16.camel@redhat.com>
-	<20140926180813.GA19291@roeck-us.net>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: linux-next: Tree for Sep 26 (media/pci/pt3)
+Date: Fri, 26 Sep 2014 21:48:09 -0300
+Message-ID: <20140926214809.6443ea21@recife.lan>
+References: <20140926211014.6491e1ee@canb.auug.org.au>
+	<54259BFB.6010301@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-bounces@lists.openrisc.net>
-In-Reply-To: <20140926180813.GA19291@roeck-us.net>
-List-Unsubscribe: <http://lists.openrisc.net/options/linux>,
-	<mailto:linux-request@lists.openrisc.net?subject=unsubscribe>
-List-Archive: <http://lists.openrisc.net/pipermail/linux>
-List-Post: <mailto:linux@lists.openrisc.net>
-List-Help: <mailto:linux-request@lists.openrisc.net?subject=help>
-List-Subscribe: <http://lists.openrisc.net/listinfo/linux>,
-	<mailto:linux-request@lists.openrisc.net?subject=subscribe>
-Sender: linux-bounces@lists.openrisc.net
-Errors-To: linux-bounces@lists.openrisc.net
-To: Guenter Roeck <linux@roeck-us.net>, Eric Paris <eparis@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-api@vger.kernel.org, linux@openrisc.net, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <54259BFB.6010301@infradead.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, Akihiro Tsukada <tskd08@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Antti Palosaari <crope@iki.fi>
 List-Id: linux-next.vger.kernel.org
 
+Em Fri, 26 Sep 2014 10:01:47 -0700
+Randy Dunlap <rdunlap@infradead.org> escreveu:
 
--- 
-Sent from my Android phone with K-9 Mail. Please excuse my brevity.
+> On 09/26/14 04:10, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > There will be no linux-next release on Monday.
+> > 
+> > This has not been a good day :-(
+> > 
+> > Changes since 20140925:
+> 
+> 
+> on x86_64:
+> when CONFIG_MODULES is not enabled:
+> 
+> ../drivers/media/pci/pt3/pt3.c: In function 'pt3_attach_fe':
+> ../drivers/media/pci/pt3/pt3.c:433:6: error: implicit declaration of function 'module_is_live' [-Werror=implicit-function-declaration]
 
-On September 26, 2014 8:08:13 PM CEST, Guenter Roeck <linux@roeck-us.net> wrote:
->On Fri, Sep 26, 2014 at 01:53:01PM -0400, Eric Paris wrote:
->> Would you like me to carry this in the audit tree, since I'm the one
->who
->> broke it?
->> 
->Hi Eric,
->
->guess you are asking Jonas, but it would make sense to me.
 
-Hi Eric,
-Yes, please take this via the audit tree.
-/Jonas
+:(
 
->
->Guenter
->
->> -Eric
->> 
->> On Fri, 2014-09-26 at 09:05 -0700, Guenter Roeck wrote:
->> > openrisc:defconfig fails to build in next-20140926 with the
->following error.
->> > 
->> > In file included from arch/openrisc/kernel/signal.c:31:0:
->> > ./arch/openrisc/include/asm/syscall.h: In function
->'syscall_get_arch':
->> > ./arch/openrisc/include/asm/syscall.h:77:9: error: 'EM_OPENRISC'
->undeclared
->> > 
->> > Fix by moving EM_OPENRISC to include/uapi/linux/elf-em.h.
->> > 
->> > Fixes: ce5d112827e5 ("ARCH: AUDIT: implement syscall_get_arch for
->all arches")
->> > Cc: Eric Paris <eparis@redhat.com>
->> > Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
->> > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
->> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
->> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> > ---
->> > v2: Only move EM_OPENRISC.
->> > 
->> > Another possible solution for the problem would be to include
->asm/elf.h
->> > in arch/openrisc/kernel/signal.c. I had actually submitted a patch
->with
->> > that fix back in August (maybe that is where I remembered the
->problem from).
->> > Wonder what happened with that patch.
->> > 
->> > Would it make sense to drop EM_OR32 and replace it with EM_OPENRISC
->where
->> > it is used ? binutils seems to suggest that EM_OPENRISC is the
->"official"
->> > definition.
->> > 
->> >  arch/openrisc/include/uapi/asm/elf.h | 3 +--
->> >  include/uapi/linux/elf-em.h          | 1 +
->> >  2 files changed, 2 insertions(+), 2 deletions(-)
->> > 
->> > diff --git a/arch/openrisc/include/uapi/asm/elf.h
->b/arch/openrisc/include/uapi/asm/elf.h
->> > index f02ea58..8884276 100644
->> > --- a/arch/openrisc/include/uapi/asm/elf.h
->> > +++ b/arch/openrisc/include/uapi/asm/elf.h
->> > @@ -55,9 +55,8 @@ typedef elf_greg_t elf_gregset_t[ELF_NGREG];
->> >  /* A placeholder; OR32 does not have fp support yes, so no fp regs
->for now.  */
->> >  typedef unsigned long elf_fpregset_t;
->> >  
->> > -/* This should be moved to include/linux/elf.h */
->> > +/* EM_OPENRISC is defined in linux/elf-em.h */
->> >  #define EM_OR32         0x8472
->> > -#define EM_OPENRISC     92     /* OpenRISC 32-bit embedded
->processor */
->> >  
->> >  /*
->> >   * These are used to set parameters in the core dumps.
->> > diff --git a/include/uapi/linux/elf-em.h
->b/include/uapi/linux/elf-em.h
->> > index 01529bd..aa90bc9 100644
->> > --- a/include/uapi/linux/elf-em.h
->> > +++ b/include/uapi/linux/elf-em.h
->> > @@ -32,6 +32,7 @@
->> >  #define EM_V850		87	/* NEC v850 */
->> >  #define EM_M32R		88	/* Renesas M32R */
->> >  #define EM_MN10300	89	/* Panasonic/MEI MN10300, AM33 */
->> > +#define EM_OPENRISC     92     /* OpenRISC 32-bit embedded
->processor */
->> >  #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
->> >  #define EM_TI_C6000	140	/* TI C6X DSPs */
->> >  #define EM_AARCH64	183	/* ARM 64 bit */
->> 
->> 
+I didn't notice that weird I2C attach code on this driver.
+
+Akihiro, could you please fix it? The entire I2C attach code at
+pt3_attach looks weird. We should soon add support for the I2C
+tuner attach code for all DVB drivers on a common place, just like
+what we do for V4L drivers. That's why I didn't spend much time on
+that piece of the code.
+
+Yet, while we don't have it, please take a look at 
+drivers/media/v4l2-core/v4l2-device.c and do (almost) the same on
+your driver, if possible, putting the I2C load module on a function.
+That will make easier for us to replace such function when we'll add 
+core support for it. The function at v4l2-device for you to take
+a look is: v4l2_device_register_subdev().
+
+Thank you,
+Mauro
