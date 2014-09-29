@@ -1,48 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the tip tree with the arm-soc tree
-Date: Mon, 29 Sep 2014 11:12:59 -0700
-Message-ID: <20140929181258.GF3122@atomide.com>
-References: <20140926162512.07ef4957@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Mon, 29 Sep 2014 14:30:24 -0700
+Message-ID: <20140929143024.55ef9b2c3b6bf54d7d6e1758@linux-foundation.org>
+References: <20140926204200.3e2175cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140926162512.07ef4957@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41756 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751214AbaI2VaZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Sep 2014 17:30:25 -0400
+In-Reply-To: <20140926204200.3e2175cc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>, Felipe Balbi <balbi@ti.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [140925 23:26]:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/arm/mach-omap2/irq.c between commit 8598066cddd1 ("arm: omap: irq:
-> move irq.c to drivers/irqchip/") from the arm-soc tree and commit
-> f978999f6096 ("Use the new handle_domain_irq method to handle
-> interrupts") from the tip tree.
-> 
-> I fixed it up (I applied the latter patch to the moved file - see
-> below) and can carry the fix as necessary (no action is required).
-> 
-> diff --git a/drivers/irqchip/irq-omap-intc.c b/drivers/irqchip/irq-omap-intc.c
-> index f3814e79192d..28718d3e8281 100644
-> --- a/drivers/irqchip/irq-omap-intc.c
-> +++ b/drivers/irqchip/irq-omap-intc.c
-> @@ -334,8 +334,7 @@ out:
->  		irqnr &= ACTIVEIRQ_MASK;
->  
->  		if (irqnr) {
-> -			irqnr = irq_find_mapping(domain, irqnr);
-> -			handle_IRQ(irqnr, regs);
-> +			handle_domain_irq(domain, irqnr, regs);
->  			handled_irq = 1;
->  		}
->  	} while (irqnr);
-> 
+On Fri, 26 Sep 2014 20:42:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Thanks I've verified things are booting fine with linux next.
+> Hi Andrew,
+> 
+> After merging the akpm tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> drivers/of/of_reserved_mem.c: In function 'of_reserved_mem_device_init':
+> drivers/of/of_reserved_mem.c:253:3: warning: 'return' with no value, in function returning non-void [-Wreturn-type]
+>    return;
+>    ^
+> drivers/of/of_reserved_mem.c:259:3: warning: 'return' with no value, in function returning non-void [-Wreturn-type]
+>    return;
+>    ^
+> 
+> Caused by commit 1a29544cc8c9 ("drivers: of: add return value to
+> of_reserved_mem_device_init").  This patch changed the return type of a
+> function but did not update any or the return statements in that
+> function.
 
-Regards,
-
-Tony
+OK, thanks, I dropped it.  I could have fixed it but it doesn't appear
+to be well tested.
