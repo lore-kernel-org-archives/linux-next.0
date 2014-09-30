@@ -1,61 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the wireless-next tree
-Date: Tue, 30 Sep 2014 18:46:07 +1000
-Message-ID: <20140930184607.081d38de@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the clk tree
+Date: Tue, 30 Sep 2014 19:37:52 +1000
+Message-ID: <20140930193752.3f0ae731@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ky82CY1m2a09NxseJ6Rtz6n"; protocol="application/pgp-signature"
+ boundary="Sig_/iuXtqNkrcYsa+O=nvAp=lmY"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47042 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46133 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751056AbaI3IqQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Sep 2014 04:46:16 -0400
+	id S1751017AbaI3JiA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Sep 2014 05:38:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>, Greg KH <greg@kroah.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Mike Turquette <mturquette@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
 
---Sig_/Ky82CY1m2a09NxseJ6Rtz6n
+--Sig_/iuXtqNkrcYsa+O=nvAp=lmY
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Andrew,
 
-After merging the wireless-next tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/clk/rockchip/clk.h between commit f6fba5f6967d ("clk: rockchip:
+add new clock-type for the cpuclk") from the clk tree and commit "clk:
+rockchip: add restart handler" from the akpm tree.
 
-WARNING: drivers/staging/rtl8192ee/r8192ee: 'rtl_evm_dbm_jaguar' exported t=
-wice. Previous export was in drivers/net/wireless/rtlwifi/rtlwifi.ko
-
-Introduced by commit f3a97e93814a ("rtlwifi: Finish modifying core
-routines for new drivers").
-
-I suspect that there is a staging driver that needs removing/updating?
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Ky82CY1m2a09NxseJ6Rtz6n
+diff --cc drivers/clk/rockchip/clk.h
+index f4791fbb3da9,2f0236a00664..000000000000
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@@ -361,11 -329,7 +361,12 @@@ void rockchip_clk_register_branches(str
+  				    unsigned int nr_clk);
+  void rockchip_clk_register_plls(struct rockchip_pll_clock *pll_list,
+  				unsigned int nr_pll, int grf_lock_offset);
+ +void rockchip_clk_register_armclk(unsigned int lookup_id, const char *nam=
+e,
+ +			const char **parent_names, u8 num_parents,
+ +			const struct rockchip_cpuclk_reg_data *reg_data,
+ +			const struct rockchip_cpuclk_rate_table *rates,
+ +			int nrates);
++ void rockchip_register_restart_notifier(unsigned int reg);
+  void rockchip_clk_protect_critical(const char *clocks[], int nclocks);
+ =20
+  #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
+
+--Sig_/iuXtqNkrcYsa+O=nvAp=lmY
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUKm3VAAoJEMDTa8Ir7ZwVqOAP/AmhEJ6TU7HAXqKR2l0bulK/
-FE5Pmm8Yz6jFw6dl56Pv88Va/lPf6OO48rP+DNEQjOfrM/Osb4FM+KsZ4EB46vLm
-izAiQvOpoajXxWDaFUnjWXESj4jtAih7+OWxNFwKlTJua6PpZPkGZDGZ3CdcFeFV
-862+FGuRnRAzYHaACuS18GB8+DvtO4y8wosszTW45OCq8ll5X/7Ky41kgft/7uYv
-ypP7n0FelXl9Y3qDvW2kqa8iJBKynIIASEttfZLhvnkin9pWq8HhGl5b81OkIXS/
-gtt6hlDdIH3F4otGsiQ2VqDGHXCT9pkx8gqTZV38qR4b9fhtQgcGuC4rvTsTkLVO
-nALFza/+hrEAKzrugqaf9o/Fqq323qfQd90qwnjuI6+jDTgWiBlK5bfJa6oZyBbt
-a/W1y+lzbF6BayxvMrTkLjQuwExhDwTl+wMOEh0X4qpWWZAc2bUiYPRuGbNq2+HG
-FxUfxQuA5JVgsR9ztyelwLcyJWQgZ9nk5oN3SOpFgR+DFbKCJQ3utPnAWDjxCLUl
-e4ObAnCt192rW4A0uFNhFtQq+HISXOa6UQDTYIzx5dTmZpggCsnfmB0YRiynaVE1
-rep9e2K89KTJ2/k3f42DsLZAWUnMOhooNlsmYU8NGtdmARxBFo1ZJchaV6NU/PP8
-SLP+8kElyOzkIz9QWwnM
-=ibSm
+iQIcBAEBCAAGBQJUKnn0AAoJEMDTa8Ir7ZwVbkEP/2RBap5w4ke29k0v8hTgxGNn
+WXUhbJEU7AzHFuvcUH40Aw+70RSgO5TDGiebF06BqFLYwBbMMwzidFBf3v/DpNDG
+Nml+RV7k+ZwyUR2ZxdLxI9bBKm7oiCRD5SDbkxEv/6Sf1dnmMQ9agJkyNiXfS+dY
+Q2dvXbrYfd6xTbvevBdTqxtV7PCQyVnekUIYczn21p+rFpTYzpCAzR47YtcV322s
+QmPk9wG7i4AYhuwHW5lc4Ok3I3YOszOfc/wd2w3vdyrqMOCUTLgJbtxtFV7iZA8F
+p3AcBnhKJOMaHKpMWLd/HBuKrlX8LzQ2qWpPNeSmYGmSO5wPHKOpf/GADBg2lnLs
+d//Bry5rLWgJ50BftGMwcKCwuxP9nsrq0/qTeJynEqbIdihpzbcrbbHclNsgPH5o
+59EOODl3N2s25FgBirIZTIOb6u8Wd1antRTjiTpAeiOsK4ygsB4rraVKm5n2P1AF
+IBe705/RMF+JpUY5YxfKMUpn9vsQaX+hZag7bGgT2oVc5W5E9uFNvjymlvVJSek1
+Tve7a1TprQM6gJojRpdrjtkLHqPIPlsBCSH0a2OoLGOZBKWWq3GE3EzEsdAL2dtL
+HId6j+ztoSTkm6bUXfvID1oaBzs+Y3lUVqgc2Nikd0xJWw1kZT1RK3BE4OCOof7/
+rCMUbX0z11AKjUmVJVPM
+=Cx5H
 -----END PGP SIGNATURE-----
 
---Sig_/Ky82CY1m2a09NxseJ6Rtz6n--
+--Sig_/iuXtqNkrcYsa+O=nvAp=lmY--
