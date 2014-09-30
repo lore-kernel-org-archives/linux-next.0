@@ -1,85 +1,97 @@
-From: Wei Xu <xuwei5@hisilicon.com>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Tue, 30 Sep 2014 09:45:49 +0800
-Message-ID: <542A0B4D.5060209@hisilicon.com>
-References: <20140926115539.6873630b@canb.auug.org.au> <20140930101200.1239cd52@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 30 Sep 2014 12:51:52 +1000
+Message-ID: <20140930125152.7c005583@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Geg8Xt0dMPYe2yGXMSjmQOh"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:31410 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754977AbaI3BqI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Sep 2014 21:46:08 -0400
-In-Reply-To: <20140930101200.1239cd52@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:56939 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753926AbaI3CwC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Sep 2014 22:52:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@linaro.org>, Jiancheng Xue <xuejiancheng@huawei.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hayeswang <hayeswang@realtek.com>
 
+--Sig_/Geg8Xt0dMPYe2yGXMSjmQOh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2014/9/30 8:12, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Fri, 26 Sep 2014 11:55:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the arm-soc tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->>
->> Error: arch/arm/boot/dts/hisi-x5hd2.dtsi:374.22-23 syntax error
->> FATAL ERROR: Unable to parse input tree 
-> OK, now I get:
-> 
-> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:417.21-22 syntax error
-> FATAL ERROR: Unable to parse input tree
-> Are you guys really testing this stuff? :-(
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/usb/r8152.c between commit 445f7f4d6262 ("r8152: fix the
+carrier off when autoresuming") from the net tree and commit
+b209af9981ee ("r8152: check code with checkpatch.pl") from the net-next
+tree.
 
-Hi Stephen, Olof, Arnd,
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Sorry for my fault and bring so much trouble to all of you.
-I sent this pull request before the clock patch set being accepted.
-And I did forget to compile the dtb. 
-But I will make sure it will *not* happen next time.
-Arnd has already helped to revert the series of this patch set in arm-soc.git:next/dt.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Hi Arnd, Olof,
+diff --cc drivers/net/usb/r8152.c
+index e0394427e372,a4d4c4a1354f..000000000000
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@@ -2067,10 -2080,11 +2097,10 @@@ static void rtl_disable(struct r8152 *t
+  	for (i =3D 0; i < 1000; i++) {
+  		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_TCR0) & TCR0_TX_EMPTY)
+  			break;
+- 		mdelay(1);
++ 		usleep_range(1000, 2000);
+  	}
+ =20
+ -	for (i =3D 0; i < RTL8152_MAX_RX; i++)
+ -		usb_kill_urb(tp->rx_info[i].urb);
+ +	rtl_stop_rx(tp);
+ =20
+  	rtl8152_nic_reset(tp);
+  }
+@@@ -3131,12 -3211,13 +3229,13 @@@ static int rtl8152_resume(struct usb_in
+  		} else {
+  			tp->rtl_ops.up(tp);
+  			rtl8152_set_speed(tp, AUTONEG_ENABLE,
+- 				tp->mii.supports_gmii ? SPEED_1000 : SPEED_100,
+- 				DUPLEX_FULL);
++ 					  tp->mii.supports_gmii ?
++ 					  SPEED_1000 : SPEED_100,
++ 					  DUPLEX_FULL);
+ +			tp->speed =3D 0;
+ +			netif_carrier_off(tp->netdev);
+ +			set_bit(WORK_ENABLE, &tp->flags);
+  		}
+ -		tp->speed =3D 0;
+ -		netif_carrier_off(tp->netdev);
+ -		set_bit(WORK_ENABLE, &tp->flags);
+  		usb_submit_urb(tp->intr_urb, GFP_KERNEL);
+  	}
+ =20
 
-Could you please help to revert this series of patch set in arm-soc.git:for-next?
-Thanks!
+--Sig_/Geg8Xt0dMPYe2yGXMSjmQOh
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-Best Regards,
-Wei
- 
->> There are a series of new commits to this file today and I have no idea
->> which one caused the problem.
->>
->> I reverted:
->>
->> 610bd8722ef4	"ARM: dts: hix5hd2: add wdg node"
-> 
-> Reverted in the arm-soc tree.
-> 
->> 6868feb6dd97	"ARM: dts: hix5hd2: add gpio node"
-> 
-> Error is now:
-> 
-> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:183.21-22 syntax error
-> 
->> 420a2d55f046	"ARM: dts: hix5hd2: add sata node"
-> 
-> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:183.21-22 syntax error
-> 
-> 
->> f16c7fb2f3ff	"ARM: dts: hix5hd2: add usb node"
-> 
-> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:183.21-22 syntax error
-> 
->> b196e1ca400d	"ARM: dts: hix5hd2: add mmc node"
-> 
-> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:174.21-22 syntax error
-> 
->> de8b6054780e	"ARM: dts: hix5hd2: add gmac node"
-> 
-> no more errors.
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUKhrOAAoJEMDTa8Ir7ZwVptUP/RVr+HasqmxxDaQOOd7b2mXx
+eur8suEkEjML19nq0H1pOhA41nrPoODyUuC6GAq7XdHjfAoPATKLheupO3heLEL8
+8wcn0QAu7FffSpJuocA79apRkw33I97DKHXXcY+rZ1VuUQwKCq2DJU+wdFDpV+Va
+PUNvLxbSadaMr4hwzqEiplf4u3P2D3Uh7OvPNVbU6n8Wc3bCjv+a9vf16RUpJkJD
+9SAuIMkvFdzE78RyxgxFp8zOqV6pySYykeRMIomcJ921HZnhUlGH5cBfYZjT2OQJ
+ubUFvyUek2Rf4w3iofQYNlpk5k6vYPGMLxVkGKqamqG1U/ul5xgq2HqpqCJBHEZZ
+7g+/1gQE7jouRPI56XIcBZFkJ5eiFFas/hXWwZXSac6MdT2SQhQl8dC//f4bPrJz
+juU/g1qfXO4ZEpXClH6//dvX5IUKbE1n0GseyUyViHJNckDco/A35Jr5vR3X2j0z
+cr3yHuxHvXBYe+MapZJL2zsdINoHZY56pvsudu4Jd5CgviKQVz8aX3QTMcBdn65q
+wkVjfWfsz/zawgKOZlLfoGBhY/VuNEB9XiO1Huxr4rKtrxdBrSmVCVktlfPKN2Rg
+lqkqpNk1RVLgS4NEW3cYGy3P4MU4xI2XNkdYvu1x1mTE7wnSrzOjsTxkzESvTf+K
+zRqMHa24O6/ydUn/BcPd
+=JhU5
+-----END PGP SIGNATURE-----
+
+--Sig_/Geg8Xt0dMPYe2yGXMSjmQOh--
