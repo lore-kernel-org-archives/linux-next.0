@@ -1,60 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the staging tree
-Date: Tue, 30 Sep 2014 18:04:16 +1000
-Message-ID: <20140930180416.5ae64587@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Tue, 30 Sep 2014 18:09:38 +1000
+Message-ID: <20140930180938.283897d2@canb.auug.org.au>
+References: <20140930173900.51839e76@canb.auug.org.au>
+	<20140930075239.GA28481@linutronix.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/J5+WwcI5a13hTmNLCGK7RP6"; protocol="application/pgp-signature"
+ boundary="Sig_/fpnbBckKspFqOpNBREBl=L6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140930075239.GA28481@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tapasweni Pathak <tapaswenipathak@gmail.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/J5+WwcI5a13hTmNLCGK7RP6
+--Sig_/fpnbBckKspFqOpNBREBl=L6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Sebastian,
 
-After merging the staging tree, today's linux-next build (x86_64 allmodconf=
-ig)
-failed like this:
+On Tue, 30 Sep 2014 09:52:39 +0200 Sebastian Andrzej Siewior <bigeasy@linut=
+ronix.de> wrote:
+>
+> this should have been fixed by commit baeb7ef34952f ("tty: serial: 8250:
+> use 32bit variable for rpm_tx_active") in Greg's tty-next tree. Isn't
+> this the case or did you fetch the tty tree before Greg pushed it?
 
-drivers/staging/media/cxd2099/cxd2099.c: In function 'slot_reset':
-drivers/staging/media/cxd2099/cxd2099.c:537:4: error: expected ';' before '=
-if'
-    if (ci->ready)
-    ^
+Presumably the latter, in which case I will see the fix tomorrow.
 
-Caused by commit 7b86477c0e5b ("staging: media: cxd2099: use
-usleep_range()").
-
-I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/J5+WwcI5a13hTmNLCGK7RP6
+--Sig_/fpnbBckKspFqOpNBREBl=L6
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUKmQGAAoJEMDTa8Ir7ZwV08EP/jcgCUJOJ8h2EGHdbtd4qwua
-fp+tDzgHgQcy9qe8+ER/9ImL5NWy6ORwyepVrv+yAmGDn6eOcZrY96pfrk3Ry40X
-8SmzzUFZrH+WgIkfvw5XXOiNVf1dQPZ79sVPT7v4y9a6oacDD0QYEhy3kRqZcOS9
-0i7ExMJteJmEycif5R2rJFEm/hBlHT4chzY9eWNCZOW+xOgKYUqRyZzs5NHJsIxF
-52PZaFSc7L86vinhsjZm8bF7m2QgGVjJIJ1JN0qolMyakcWrA+POXkiO4FtGAxFa
-wZSNfQtah8NHwhZi6Dtz8n7Xa89bdASvUUs1vLaJqWMqMhpABb25DYcIUhEN+Rnb
-kVR1uTpndn4n1SVib0qYrCtYbR4JyPDAs8rg03HuzKpe0zF6+XmxbrVCqFlbG9WE
-DZlMJeR2Th0kfUt4fgHetzGjDTmztmdMeD1FWkzNiS+0OrUdUQnG5n0MbqMPJdg2
-HZD0hrPeutPGnncfg/VOB4TIDjz4/QiMk6IxVARPujZsnZhCWlYLi0jbI3XXQCTu
-vGritbomRd7s98wM8+rRWeqz//M/sj9wUicV85i/WGok4oua2HCxJfuA1sA2wAST
-9BJP0eqXfCJxC9zJqQmNMuNjp3RcfC74/2l2rKc++a5ULIrQix7BWSZyQz13tHLp
-5c4ovbvqiivoBm6+9yZ3
-=oK+y
+iQIcBAEBCAAGBQJUKmVGAAoJEMDTa8Ir7ZwVT5sQAIFiyzP02bJFN0bDtuM0eB6z
+FONNdO+6zc8K1BQX+FxF89GKMzs/lQyK3cbvyIOYkXpKxtrSudwv6UoYMhqAOyBq
+Y2NfmsiZaxc//xkHf+aJ3u8RUoBg76LhTM3B0O2SZAbTjDOZ0mVdeOANIhQLU7xY
+tp4xMXmvUa1ErMh9lrvC/of1KUHQpq4839BKfF7kH31e9AFKkBlBcQb5fi8emJK4
+56HDDlmRbC1ztRgHD5etViBfzNvrhgit4Jox83gxHrf83a5xR+6rNkv9wpWsNBLk
+C6pxEWEtOtFgsB/tWw64RNT0JEQ9xt4Hoo/KvA92gteqDyPlQleh00jA952D2Ynv
+wUvBSuDR1UvTHAwm4CfdMY3+WCaYFHtx+ySpm3Hi1YnoQLACYq6AAlWfBCmNW5qq
+CJcN7u1BPeBD3JmNoI2+TKME5O/M7ma9RocE+56PWGtdU8KCzq1enBYCAI/prlG2
+9uq9GNAcEJhbtI6AGrsJmNbZlJSSsFcW9CCGp5hLHQf9YKdjLU3PdtQMEOW+dBgO
+KSzeSzzsRkXmbQ0v9mRTl1vfcOb2vDipczdHpIOs413Ys0cTBJa4h2yrulY9dDOc
+tkQ+QuHEVaq2HRC9ymluG3URdKFRFwC+IbSn/i2KQhrjyqxDN9xI8y/daTpcdcjZ
+ACv7rQ4b3iH6QklQ0Toc
+=RbGa
 -----END PGP SIGNATURE-----
 
---Sig_/J5+WwcI5a13hTmNLCGK7RP6--
+--Sig_/fpnbBckKspFqOpNBREBl=L6--
