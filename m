@@ -1,51 +1,78 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: linux-next: Tree for Sep 30 (uml)
-Date: Tue, 30 Sep 2014 20:59:22 +0200
-Message-ID: <542AFD8A.8060806@nod.at>
-References: <20140930201244.0a4596ec@canb.auug.org.au> <542AFB5E.7040308@infradead.org>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Subject: [PATCH linux-next] clk-gpio-gate: include gpio/consumer to fix build
+Date: Tue, 30 Sep 2014 21:36:43 +0200
+Message-ID: <1412105803-9954-1-git-send-email-vincent.stehle@laposte.net>
+References: <20140930162635.GA7135@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from a.ns.miles-group.at ([95.130.255.143]:65275 "EHLO radon.swed.at"
+Received: from smtp3-g21.free.fr ([212.27.42.3]:13418 "EHLO smtp3-g21.free.fr"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751436AbaI3S72 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Sep 2014 14:59:28 -0400
-In-Reply-To: <542AFB5E.7040308@infradead.org>
+	id S1750760AbaI3Tgy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Sep 2014 15:36:54 -0400
+In-Reply-To: <20140930162635.GA7135@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Daniel Walter <dwalter@google.com>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>, Jyri Sarha <jsarha@ti.com>, Mike Turquette <mturquette@linaro.org>
 
-Am 30.09.2014 20:50, schrieb Randy Dunlap:
-> On 09/30/14 03:12, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20140926:
->>
-> 
-> uml defconfig on i386 and x86_64:
-> 
-> In file included from ../arch/x86/um/asm/processor.h:31:0,
->                  from ../arch/um/include/asm/uaccess.h:16,
->                  from ../arch/um/include/asm/thread_info.h:13,
->                  from ../include/linux/thread_info.h:54,
->                  from ../include/asm-generic/current.h:4,
->                  from arch/um/include/generated/asm/current.h:1,
->                  from ../include/linux/mutex.h:13,
->                  from ../include/linux/kernfs.h:13,
->                  from ../include/linux/sysfs.h:15,
->                  from ../include/linux/kobject.h:21,
->                  from ../include/linux/device.h:17,
->                  from ../include/linux/platform_device.h:14,
->                  from ../drivers/base/platform.c:14:
-> ../arch/um/include/asm/processor-generic.h:107:19: error: expected identifier or '(' before '&' token
->  #define cpu_data (&boot_cpu_data)
->                    ^
-> ../include/linux/pm_domain.h:74:23: note: in expansion of macro 'cpu_data'
->   struct gpd_cpu_data *cpu_data;
+This fixes the following build error:
 
-Thank you Randy, will look into this tomorrow.
+  drivers/clk/clk-gpio-gate.c: In function =E2=80=98clk_gpio_gate_enabl=
+e=E2=80=99:
+  drivers/clk/clk-gpio-gate.c:36:2: error: implicit declaration of func=
+tion =E2=80=98gpiod_set_value=E2=80=99 [-Werror=3Dimplicit-function-dec=
+laration]
+  drivers/clk/clk-gpio-gate.c: In function =E2=80=98clk_gpio_gate_is_en=
+abled=E2=80=99:
+  drivers/clk/clk-gpio-gate.c:52:2: error: implicit declaration of func=
+tion =E2=80=98gpiod_get_value=E2=80=99 [-Werror=3Dimplicit-function-dec=
+laration]
+  drivers/clk/clk-gpio-gate.c: In function =E2=80=98clk_register_gpio_g=
+ate=E2=80=99:
+  drivers/clk/clk-gpio-gate.c:79:2: error: implicit declaration of func=
+tion =E2=80=98gpiod_is_active_low=E2=80=99 [-Werror=3Dimplicit-function=
+-declaration]
+  drivers/clk/clk-gpio-gate.c:85:3: error: implicit declaration of func=
+tion =E2=80=98desc_to_gpio=E2=80=99 [-Werror=3Dimplicit-function-declar=
+ation]
+  drivers/clk/clk-gpio-gate.c:125:2: error: implicit declaration of fun=
+ction =E2=80=98gpiod_put=E2=80=99 [-Werror=3Dimplicit-function-declarat=
+ion]
+  drivers/clk/clk-gpio-gate.c: In function =E2=80=98of_clk_gpio_gate_de=
+layed_register_get=E2=80=99:
+  drivers/clk/clk-gpio-gate.c:169:2: error: implicit declaration of fun=
+ction =E2=80=98gpio_to_desc=E2=80=99 [-Werror=3Dimplicit-function-decla=
+ration]
 
-Thanks,
-//richard
+Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+---
+
+Hi,
+
+This can be seen with e.g. linux next-20140930 and arm alldefconfig.
+
+Best regards,
+
+V.
+
+ drivers/clk/clk-gpio-gate.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
+index 9dde885..08e4322 100644
+--- a/drivers/clk/clk-gpio-gate.c
++++ b/drivers/clk/clk-gpio-gate.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/of_gpio.h>
+ #include <linux/err.h>
+ #include <linux/device.h>
+--=20
+2.1.0
