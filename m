@@ -1,27 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the battery tree with the arm-soc tree
-Date: Tue, 30 Sep 2014 14:46:56 +1000
-Message-ID: <20140930144656.35afeae4@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the slave-dma tree
+Date: Tue, 30 Sep 2014 17:26:32 +1000
+Message-ID: <20140930172632.78398c4f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/j3mS2Vu7Y+VoJr3jhhTCtDG"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Christophe Kerello <christophe.kerello@st.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/5luF3=_qzQJpTbudsRp6FLe"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34723 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751268AbaI3H0m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Sep 2014 03:26:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
---Sig_/j3mS2Vu7Y+VoJr3jhhTCtDG
+--Sig_/5luF3=_qzQJpTbudsRp6FLe
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sebastian,
+Hi Greg,
 
-Today's linux-next merge of the battery tree got conflicts in
-drivers/power/reset/Kconfig and drivers/power/reset/Makefile between
-commit 0e545f57b708 ("power: reset: driver for the Versatile syscon
-reboot") from the arm-soc tree and commit f0745f3696e8 ("power: reset:
-Add restart functionality for STiH41x platforms") from the battery tree.
+Today's linux-next merge of the tty tree got a conflict in
+drivers/tty/serial/8250/8250_pci.c between commit 29897087d901 ("Add
+new PCI IDs to cover newer Intel SoCs such as Braswell") from the
+slave-dma tree and commit 1ede7dcca3c4 ("serial: 8250: Add Quark X1000
+to 8250_pci.c") from the tty tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -30,84 +34,57 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/power/reset/Kconfig
-index 527a0f47ef44,a178e9c50a20..000000000000
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@@ -69,9 -59,16 +77,16 @@@ config POWER_RESET_MS
-  	help
-  	  Power off and restart support for Qualcomm boards.
- =20
-+ config POWER_RESET_LTC2952
-+ 	bool "LTC2952 PowerPath power-off driver"
-+ 	depends on OF_GPIO && POWER_RESET
-+ 	help
-+ 	  This driver supports an external powerdown trigger and board power
-+ 	  down via the LTC2952. Bindings are made in the device tree.
-+=20
-  config POWER_RESET_QNAP
-  	bool "QNAP power-off driver"
- -	depends on OF_GPIO && POWER_RESET && PLAT_ORION
- +	depends on OF_GPIO && PLAT_ORION
-  	help
-  	  This driver supports turning off QNAP NAS devices by sending
-  	  commands to the microcontroller which controls the main power.
-@@@ -92,15 -89,13 +107,21 @@@ config POWER_RESET_SUN6
-  	help
-  	  Reboot support for the Allwinner A31 SoCs.
- =20
-+ config POWER_RESET_ST
-+ 	bool "ST restart power-off driver"
-+ 	depends on POWER_RESET && ARCH_STI
-+ 	help
-+ 	  Power off and reset support for STMicroelectronics boards.
-+=20
- +config POWER_RESET_VERSATILE
- +	bool "ARM Versatile family reboot driver"
- +	depends on ARM
- +	depends on MFD_SYSCON
- +	depends on OF
- +	help
- +	  Power off and restart support for ARM Versatile family of
- +	  reference boards.
- +
-  config POWER_RESET_VEXPRESS
-  	bool "ARM Versatile Express power-off and reset driver"
-  	depends on ARM || ARM64
-diff --cc drivers/power/reset/Makefile
-index 73221009f2bf,ab8cd348a099..000000000000
---- a/drivers/power/reset/Makefile
-+++ b/drivers/power/reset/Makefile
-@@@ -9,7 -9,7 +11,8 @@@ obj-$(CONFIG_POWER_RESET_LTC2952) +=3D lt
-  obj-$(CONFIG_POWER_RESET_QNAP) +=3D qnap-poweroff.o
-  obj-$(CONFIG_POWER_RESET_RESTART) +=3D restart-poweroff.o
-  obj-$(CONFIG_POWER_RESET_SUN6I) +=3D sun6i-reboot.o
-+ obj-$(CONFIG_POWER_RESET_ST) +=3D st-poweroff.o
- +obj-$(CONFIG_POWER_RESET_VERSATILE) +=3D arm-versatile-reboot.o
-  obj-$(CONFIG_POWER_RESET_VEXPRESS) +=3D vexpress-poweroff.o
-  obj-$(CONFIG_POWER_RESET_XGENE) +=3D xgene-reboot.o
-  obj-$(CONFIG_POWER_RESET_KEYSTONE) +=3D keystone-reset.o
+diff --cc drivers/tty/serial/8250/8250_pci.c
+index 85a2eb986ffe,4f1cd296f1b1..000000000000
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@@ -1934,18 -1888,11 +1922,25 @@@ static struct pci_serial_quirk pci_seri
+  	},
+  	{
+  		.vendor		=3D PCI_VENDOR_ID_INTEL,
+ +		.device		=3D PCI_DEVICE_ID_INTEL_BSW_UART1,
+ +		.subvendor	=3D PCI_ANY_ID,
+ +		.subdevice	=3D PCI_ANY_ID,
+ +		.setup		=3D byt_serial_setup,
+ +	},
+ +	{
+ +		.vendor		=3D PCI_VENDOR_ID_INTEL,
+ +		.device		=3D PCI_DEVICE_ID_INTEL_BSW_UART2,
+ +		.subvendor	=3D PCI_ANY_ID,
+ +		.subdevice	=3D PCI_ANY_ID,
+ +		.setup		=3D byt_serial_setup,
+ +	},
+++	{
+++		.vendor		=3D PCI_VENDOR_ID_INTEL,
++ 		.device		=3D PCI_DEVICE_ID_INTEL_QRK_UART,
++ 		.subvendor	=3D PCI_ANY_ID,
++ 		.subdevice	=3D PCI_ANY_ID,
++ 		.setup		=3D pci_default_setup,
++ 	},
+  	/*
+  	 * ITE
+  	 */
 
---Sig_/j3mS2Vu7Y+VoJr3jhhTCtDG
+--Sig_/5luF3=_qzQJpTbudsRp6FLe
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUKjXTAAoJEMDTa8Ir7ZwVvGoP/RFb+56rT4UJIluUNnIA72ZY
-Y2D6JDCE9Qq2aoAKJ8VIPgIn7FBh0L/R+PQXVHhwZVTdrR+qJi5RINN3UXbZxqZ+
-5VnzxgpLPsSaVz5y1Bk+9wENRkNdtCm6hDmPjEpxuUTxE7bf4/AObg9Hfp6ZW/Mj
-MtfMcRvSC5VQmwM3PUkMGOo4Fa1C/FGNUa0oczDtJ1lGKU8bI6xWZ3k+on2DIqks
-WFJ7auvr7jTiLgqut71skKWXiqBdE1u8PWAA0vBS8/pywGmXRJf12gzkAwVnAhFn
-f/pgWXbZiIliOYBnxiR+HJ9oxkRPZpSP2g9fAyn8+QVftPKUHV+GOs9LMe8Hjkku
-GfxOaSeavbpZPsmMwXS0ouiLPmnL+z4dJ9fI6H48ClvXOm8LkmvAvvrnWaKZdvVW
-0AKjHx7E3u7iP++XXkODnyTOpme0GxdE3UzbvUL1h/shAOlO4KmosRlhraL0cvDM
-dHj2D7MALS2dnz6/4rUL1QKAkFtfylmtsrmrUKQknGGlgHkGgY5VUzo4nxNDZi4C
-2mNgt4Z0njB1Ceig+SWYLIXiRgqBrEgpUp3eeoISSI48jxOi9SUHnsYztUMsXXxa
-a96GNmnAFlaQDr9ceGNIm/5PY3JQl3uqF/rzSuNf03NEX18nEqu1/z6mNGZ1uFIE
-KsHTZruYi4t7FOhkyPSF
-=SsnX
+iQIcBAEBCAAGBQJUKlsuAAoJEMDTa8Ir7ZwVI5wP/iRSeUdhiKNE9kb+sdtif8nh
+hZSv6nyi7ZRA3qeEJni+g5xpI0S3ng/o65Y7wshb1eJAPcMCNFHN31Dvjvu3sYgj
+F33mxDhjjGbzDb420D25PV6YoXG0m/+VILIG4nMDQt2nVJWbCcERtgu9cBCPZ1An
+S0R9eyVCjwnHtIgScmzicJfC72+dFip9f3vIDWekawB2iS/7sRgJMWl4VeBx9Zcx
+I+g/cMC/WnZv6Tx/uLcEeakBHMCSCX/qOpPt9bSQp8kpA84ezzYq49rH87rtONZ7
+vdtEbp/Wi2UOBopKQfpIWGlooDQou31BA3jE1ZUkBqjAuo2Y0svtu0gaElM8FpRA
+LwCkSesjTnbFGDqU7LKIUNVPz8l9fdOLhbZGzLdTkRIg1+2Q8uyWf1OuVLSQO+hs
+pHcQ4LK/nEOL1hTVTVOyRQ0MUUJYZH/TDnVp8Qz9Qczy9/HvcOv3ns64b5yOmcu8
+AMIGxNVO1VaFfSHRIjEH8JzofWLL8RvSFQzKfVuxjrovheldxctooMqI9As6mAHE
+t5xnACipyU0bcyTQEPpjfgyqpH1o1vQT2sJRHFj5Ewpo629L22N3uEip62iBRcgH
+x7/aQgeFqwTVLDwI/6SUE2CB++VEK2kJ5TWMVHSF5H0D8FIIdDc5IXNwx5nWZODa
+nJfDQedVYFk1AWtp8so6
+=54AO
 -----END PGP SIGNATURE-----
 
---Sig_/j3mS2Vu7Y+VoJr3jhhTCtDG--
+--Sig_/5luF3=_qzQJpTbudsRp6FLe--
