@@ -1,58 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: error trying to fetch the mpc5xxx tree
-Date: Wed, 1 Oct 2014 09:01:15 +1000
-Message-ID: <20141001090115.44146aa9@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the berlin tree
+Date: Wed, 1 Oct 2014 11:22:12 +1000
+Message-ID: <20141001112212.44f53d35@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mT7hq8F1hZa0nG6GxGaE2cM"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54629 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750717AbaI3XBZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Sep 2014 19:01:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Anatolij Gustschin <agust@denx.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/ftAcntMq/oDUWj6ABnmsbtt"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antoine =?UTF-8?B?VMOpbmFydA==?= <antoine.tenart@free-electrons.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/mT7hq8F1hZa0nG6GxGaE2cM
+--Sig_/ftAcntMq/oDUWj6ABnmsbtt
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anatolij,
+Hi all,
 
-Attempting to fetch the mpc5xxx tree
-(git://git.denx.de/linux-2.6-agust.git#next) produces this error:
+Today's linux-next merge of the net-next tree got a conflict in
+arch/arm/boot/dts/berlin2q-marvell-dmp.dts between commit 461316fca705
+("ARM: berlin: enable the eSATA interface on the BG2Q DMP") from the
+berlin tree and commit 75215193b975 ("ARM: dts: berlin: enable the
+Ethernet port on the BG2Q DMP") from the net-next tree.
 
-fatal: Could not read from remote repository.
-
-Please make sure you have the correct access rights
-and the repository exists.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/mT7hq8F1hZa0nG6GxGaE2cM
+diff --cc arch/arm/boot/dts/berlin2q-marvell-dmp.dts
+index 1958cbfe61fa,ea1f99b8eed6..000000000000
+--- a/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
++++ b/arch/arm/boot/dts/berlin2q-marvell-dmp.dts
+@@@ -46,10 -46,6 +46,14 @@@
+  	status =3D "okay";
+  };
+ =20
+ +&sata0 {
+ +	status =3D "okay";
+ +};
+ +
+ +&sata_phy {
+ +	status =3D "okay";
+ +};
+++
++ &eth0 {
++ 	status =3D "okay";
++ };
+
+--Sig_/ftAcntMq/oDUWj6ABnmsbtt
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUKzZAAAoJEMDTa8Ir7ZwVTCYP/AjAbzkUJO3eyvODr85B5bgH
-7hMCv7opVrMPpeCqK37pYn1hizg4Jlaxk5Chma2Mot7Qe+7w6zBhu5rXh8PgTXjR
-7XztKQmeKdy2VOSWumd34ljIEiFuuuSf413lv09UWtgrXRZ/n1PtKCjUblBAIS4g
-BrXGISCE9BcXpC3qwymjhaTbcw06h9/aYGkAQ0n+FnaBY05yKOWnwzGT1VcdZZqT
-9JShujQYn9VqHFwJvtcj2e1LvQEd7b45BmaSvVBzlV9djhyfB4JpgIOkUtdfAKk1
-hIWLR/9FESMYF7u5foI79N8gTi+00vtudM90lTkiEEURcW7yiViu3/mIuM4iYZqG
-dolrKhkmxqYRtqjgwUytk0O8pKqIsX5VArdb7kH43c7goms2bC3TSlZXlmyrr+KK
-VVNGFHtOoNLFKrmwSsq7NVR7P8KnZrpWwyOf7NcY08AjKr7xXY0aQQ3faGQfxStg
-qQK/hiC/hrl+DQq5g1D+B5xZi/XDwWNIpEb2QSqrXVWvnrtpNMU9t/yAlX+Y+MEA
-4QsOiGLKYvwor1lonrhV1XllZoEqrhRkd5IBkyd7alwQ6xiD/SInRtJ8XEfNjMPW
-VaJZK5LBLP33kIwfOikIrFyfEyYKncfjiFfqJueAPCD9H83oq+LInkjE+p2VoHZF
-J2zNB243aNnMLKPqLedp
-=UZvU
+iQIcBAEBCAAGBQJUK1dKAAoJEMDTa8Ir7ZwVtQwP/RJKjWU+wRtI4OdNYxuOQe/R
+ZwcgIjXqgsgnZ+/NDftFwq6eOiN7Rt5crxU76Nl4wVaUJwxMC3w12DUdQUa+fX0y
+bxCrTEISFZ8f/M596UFQ1pDVktZIvefKK8eKmYY8uwa8nZmGzpCc1J+W2EbdYhk5
+4NIfw7vdQOANKg5N3m2HBsnkarkhXM/ky7QTWHscPXFNAFSaLQxB2sHhbUHVbmJ8
+pHSpeOpazNgg0d/3BcMxregYUWV4PQn9E1W6I4PLpDylpTG9DMs1SkAy0RveLw+q
+0vNshxd709eva+fph6kLcvMTEbFVtj/soeXLzU4A8x/5SF14BFuFs3W1Age38MY3
+Sb7IHM2+QbMWa5nkLmrhNeuvjCVGUqBJoiCN+BX1JBI9gggPDE19iODfuCH5kmUl
+9/fvUqrmJEM4xJSfe0mcfrhn94I3txX4pPDe5h3yuodPqKJ1jGCe34SkpEDqK3e/
+WoXmzaJ3bJMojoXI7Vm90MbiYRSkWD+Y+d6qGW2ACZS7DC1pSAZTZqfOS9nokEL/
+namkLG7kW9aQmSEcqphf6t+Qbls2JNHYVqvEvIxYRZ3KyqP729+ipTcM7sK8c4ZF
+I8CjvtEYFfmNBT8MFu42RWrZE6rsl0SvAX1SRUfdF2aVDuA7kRGhK054YIJu/lP8
+SMSr2ZgvJ1LKkLSPBXYy
+=Yj+h
 -----END PGP SIGNATURE-----
 
---Sig_/mT7hq8F1hZa0nG6GxGaE2cM--
+--Sig_/ftAcntMq/oDUWj6ABnmsbtt--
