@@ -1,84 +1,106 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the pinctrl tree
-Date: Wed, 1 Oct 2014 16:01:46 +1000
-Message-ID: <20141001160146.3649b2f8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Wed, 1 Oct 2014 17:04:03 +1000
+Message-ID: <20141001170403.7a319458@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5k=dW4iNGSjWAF+5jx8weK."; protocol="application/pgp-signature"
+ boundary="Sig_/s1LlBwVLeXabUhepYtuqBvK"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53707 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43356 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751053AbaJAGBz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Oct 2014 02:01:55 -0400
+	id S1750925AbaJAHET (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Oct 2014 03:04:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Cartwright <joshc@codeaurora.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Duyck <alexander.h.duyck@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
---Sig_/5k=dW4iNGSjWAF+5jx8weK.
+--Sig_/s1LlBwVLeXabUhepYtuqBvK
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi all,
 
-Today's linux-next merge of the gpio tree got a conflict in
-drivers/pinctrl/qcom/pinctrl-msm.c between commit cf1fc1876289
-("pinctrl: qcom: use restart_notifier mechanism for ps_hold") from the
-pinctrl tree and commit 2fcea6cecbc9 ("pinctrl: remove remaining users
-of gpiochip_remove() retval") from the gpio tree.
+After merging the net-next tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/net/ethernet/xilinx/ll_temac_main.c: In function 'temac_start_xmit_=
+done':
+drivers/net/ethernet/xilinx/ll_temac_main.c:633:22: warning: cast to pointe=
+r from integer of different size [-Wint-to-pointer-cast]
+    dev_kfree_skb_irq((struct sk_buff *)cur_p->app4);
+                      ^
+drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c: In function 'fm10k_set_ri=
+ngparam':
+drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c:477:2: error: implicit dec=
+laration of function 'vmalloc' [-Werror=3Dimplicit-function-declaration]
+  temp_ring =3D vmalloc(i * sizeof(struct fm10k_ring));
+  ^
+drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c:477:12: warning: assignmen=
+t makes pointer from integer without a cast
+  temp_ring =3D vmalloc(i * sizeof(struct fm10k_ring));
+            ^
+drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c:546:2: error: implicit dec=
+laration of function 'vfree' [-Werror=3Dimplicit-function-declaration]
+  vfree(temp_ring);
+  ^
+
+Caused by commit 82dd0f7ee9a3 ("fm10k: Add ethtool support").  See Rule
+1 in Documentation/SubmitChecklist.
+
+I have added the following fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 1 Oct 2014 17:00:49 +1000
+Subject: [PATCH] fm10k: using vmalloc requires including linux/vmalloc.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c b/drivers/net=
+/ethernet/intel/fm10k/fm10k_ethtool.c
+index a9bbe60347d8..2d04464e6aa3 100644
+--- a/drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c
++++ b/drivers/net/ethernet/intel/fm10k/fm10k_ethtool.c
+@@ -18,6 +18,8 @@
+  * Intel Corporation, 5200 N.E. Elam Young Parkway, Hillsboro, OR 97124-64=
+97
+  */
+=20
++#include <linux/vmalloc.h>
++
+ #include "fm10k.h"
+=20
+ struct fm10k_stats {
+--=20
+2.1.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/qcom/pinctrl-msm.c
-index d30dddd21323,041677113a48..000000000000
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@@ -936,18 -903,9 +936,10 @@@ EXPORT_SYMBOL(msm_pinctrl_probe)
-  int msm_pinctrl_remove(struct platform_device *pdev)
-  {
-  	struct msm_pinctrl *pctrl =3D platform_get_drvdata(pdev);
-- 	int ret;
--=20
-- 	ret =3D gpiochip_remove(&pctrl->chip);
-- 	if (ret) {
-- 		dev_err(&pdev->dev, "Failed to remove gpiochip\n");
-- 		return ret;
-- 	}
- =20
-+ 	gpiochip_remove(&pctrl->chip);
-  	pinctrl_unregister(pctrl->pctrl);
--=20
- +	unregister_restart_handler(&pctrl->restart_nb);
--=20
-  	return 0;
-  }
-  EXPORT_SYMBOL(msm_pinctrl_remove);
-
---Sig_/5k=dW4iNGSjWAF+5jx8weK.
+--Sig_/s1LlBwVLeXabUhepYtuqBvK
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUK5jPAAoJEMDTa8Ir7ZwVq6wP/jP2EApPmQxvynBDvW/oEMsw
-UpfOZDYpUytQME/NjmfEpM2JG861M0W+H8QgeMNQ4ySmu4Gn61EAf4v5co8XFrIY
-Bomdr4fX0JuC2A7nCR9FK7RfPPnspAWUhqPi31E5A08W20h/Po0fOB3deN5MIx8q
-QYkZ0OIhnNRnBtJj8jwMpq2gPps6hXoGOpuZNgCycgBtBUBGXL+GsCXlxfSQ7yA3
-5lMVzd+eyhNgfp0KmTaSHZfsc8H3ZslpmliasaIUfHrsEO6tMMDTz73iVS8KMaEg
-aUMhlJfoY+zKkGITJYn9uIAI273vprLBuWi/jOR0f7HUnxPykLm7YyAgmRiWQsGB
-p1e117PDuEA74if7ftlYbuXkB6WV+bhjaKoKEir7QwCxH3NqVtfZOgOKgG9e7yDh
-zDPSaGTviZwOyDiMjJCnH5iJqFbN2/FJvt72xBPFq9GqfIto/TxW/vgw+qou03BG
-pLHVCSWk4fUv6JeSbOWM50S+zf/BbA/+PglWtcDTvrtiZ4OmJgPUvonslSgUbks3
-wFHrU5r/mgUyJ2mfNalrncLsQOoqBmfFuQPCMrCovtoASZfoD5Yl6EQRufiGAF7B
-CBsth2ZJPiFZvf1I4p5bjTyBIb/ju/0NADZi4S7aWdogYmVhboFseK8azCN5Q8sT
-fZclS15jtTJHpCM4xFq+
-=brnf
+iQIcBAEBCAAGBQJUK6dpAAoJEMDTa8Ir7ZwVcisP/iR/xYdFkbm6DBb+jYxD/ZQW
+IDMIAT1TY7IYy7v4bcVQX3Z6kpzMwRiUQrByOHsu4x0pk7BE8Y+3JDatZIQiXd8A
+APoiG6wWdkCmsYUrzeg86p/1y/oygDJslPAFmkA7gOTV2Lny+qKui11fUxNZNMIG
+gHthDgJ1TEBZFglOiMsH3BOkjjfFn1xw5cRwAD3IN9JQu/bOwk7LwtaT9HBwOr12
+uHYXwXQSpkN04kYvcnvnEU+HgD9tg2ZzJV05U+mfQFBbq488VjXE/73mjP7FJRTQ
+UQMlYU1OXiLnEbHgJOGZ0kU9TthInV/zIscWlsy2gogLAJd4fHsL+K03WKVZSl/E
+RhqfXCNbBdxa1fRrbswdvR6cpmYn3/Gk9WHVFhJSVqzmYlXdt22xij6zdv+FqW7x
+crfAB41h3B7J/m1eqD7MCyabIpnibRAid+T7ReDUxD7xFN2Q8EALUjaQ1gj1aYIB
+89WPUTzLGoaA0u6PN5Mc4gJvGpfHv1Lm5lWuWvQRklcN2c2/7F9S47N9/RFFFao3
+yXZA4uuahu9uu8w+qQ278tcG7KSpAsLDvS49YMdL9BYWYiqcJcqwQom8NjWRuGfp
+xwp5xi49o4RXqreC3wdRa+7gDSFAaF6rB9/TCiF2vxt6j5aer+T7XQ7h3jd2UMJk
+X7yMcm7h3UaCG6NvDY3l
+=Lwfd
 -----END PGP SIGNATURE-----
 
---Sig_/5k=dW4iNGSjWAF+5jx8weK.--
+--Sig_/s1LlBwVLeXabUhepYtuqBvK--
