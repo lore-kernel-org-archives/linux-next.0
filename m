@@ -1,80 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfio tree with the pci tree
-Date: Thu, 2 Oct 2014 08:52:33 +1000
-Message-ID: <20141002085233.286f6f22@canb.auug.org.au>
-References: <20141001131421.64cab8d7@canb.auug.org.au>
-	<1412183174.7360.218.camel@ul30vt.home>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: randconfig build error with next-20141001, in drivers/i2c/algos/i2c-algo-bit.c
+Date: Wed, 01 Oct 2014 16:26:11 -0700
+Message-ID: <542C8D93.8090008@infradead.org>
+References: <CA+r1ZhiL1y9aeLeJjpd_1DtzOG_oyoPg7XsTPJ9G-XY5G2DfCQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/koEWQpYk3jxHyRKlaw8rv6B"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33962 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751612AbaJAWwl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Oct 2014 18:52:41 -0400
-In-Reply-To: <1412183174.7360.218.camel@ul30vt.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gavin Shan <gwshan@linux.vnet.ibm.com>, Yijing Wang <wangyijing@huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-can-owner@vger.kernel.org>
+In-Reply-To: <CA+r1ZhiL1y9aeLeJjpd_1DtzOG_oyoPg7XsTPJ9G-XY5G2DfCQ@mail.gmail.com>
+Sender: linux-can-owner@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, wsa@the-dreams.de, khali@linux-fr.org, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-i2c@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-can@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/koEWQpYk3jxHyRKlaw8rv6B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/01/14 14:37, Jim Davis wrote:
+> Building with the attached random configuration file,
 
-Hi Alex,
+Also:
+warning: (CAN_PEAK_PCIEC && SFC && IGB && VIDEO_TW68 && DRM && FB_DDC &=
+& FB_VIA) selects I2C_ALGOBIT which has unmet direct dependencies (I2C)
 
-On Wed, 01 Oct 2014 11:06:14 -0600 Alex Williamson <alex.williamson@redhat.=
-com> wrote:
->
-> On Wed, 2014-10-01 at 13:14 +1000, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the vfio tree got a conflict in
-> > drivers/pci/msi.c between commits a160fe94cb53 ("PCI/MSI: Remove unused
-> > get_cached_msi_msg()") and 18ef822c59f6 ("PCI/MSI: Rename
-> > __get_cached_msi_msg() to get_cached_msi_msg()") from the pci tree and
-> > commit 3b307ffe3faa ("PCI: Export MSI message relevant functions") from
-> > the vfio tree.
-> >=20
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).  And then I added this merge fix patch (I should probably
-> > also have added an include of linux/irq.h):
->=20
-> Thanks for the heads-up and manual merge.  I've reviewed the changes to
-> the MSI API that got us into this conflict and I disagree with them.
-> I've posted a series to revert a selection of changes currently coming
-> in through pci/next that should make for a clean merge should Bjorn come
-> to the same conclusion.  If you need to re-apply the fix in the
-> meantime, please do include <linux/irq.h> since it generated a build
-> failure on arm without it.  Thanks!
+> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_bus=92:
+> drivers/i2c/algos/i2c-algo-bit.c:658:33: error: =91i2c_add_adapter=92
+> undeclared (first use in this function)
+>   return __i2c_bit_add_bus(adap, i2c_add_adapter);
+>                                  ^
+> drivers/i2c/algos/i2c-algo-bit.c:658:33: note: each undeclared
+> identifier is reported only once for each function it appears in
+> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_numbered=
+_bus=92:
+> drivers/i2c/algos/i2c-algo-bit.c:664:33: error:
+> =91i2c_add_numbered_adapter=92 undeclared (first use in this function=
+)
+>   return __i2c_bit_add_bus(adap, i2c_add_numbered_adapter);
+>                                  ^
+>   CC      net/openvswitch/actions.o
+> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_bus=92:
+> drivers/i2c/algos/i2c-algo-bit.c:659:1: warning: control reaches end =
+of non-void
+>  function [-Wreturn-type]
+>  }
+>  ^
+> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_numbered=
+_bus=92:
+> drivers/i2c/algos/i2c-algo-bit.c:665:1: warning: control reaches end =
+of non-void
+>  function [-Wreturn-type]
+>  }
+>  ^
+> make[3]: *** [drivers/i2c/algos/i2c-algo-bit.o] Error 1
 
-Seems Bjorn has removed the conflicting commits from the pci tree.
-Thanks.
+In drivers/media/pci/tw68/Kconfig, VIDEO_TW68 should depend on I2C in o=
+rder
+to make it safe to select I2C_ALGOBIT.
+
+In drivers/net/can/sja1000/Kconfig, CAN_PEAK_PCIEC should depend on I2C
+instead of selecting I2C (and change the help text).
+
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/koEWQpYk3jxHyRKlaw8rv6B
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJULIW2AAoJEMDTa8Ir7ZwVRQsP/i82deFQM2mp11Gsw66sKzs1
-Akus/Sk/NTyuBRprodWRm64XwtJJmb3gSHFsEZqK1C4ZNSRMxIgB6XV7GboRN5ux
-EGPj/mmCOWaLy3yceZHAOgKYZdIVBChuORiWxn9SsR/UyPgEm03zsDAx+A8LSZk8
-9L1HHv4Q9+sNG1FRMScUe84a5TzVQn/95eG+ZgeGeLkSuuMBsvjhyx055wXAKsGc
-P1bVhNbO3qyyEWyVJA9TlN3LoCiOwabEjWqECnsBq+P5b/P5wepwzS9cGXL1gQ6r
-4NSVwK6uvv5expk9kWPDWLKWl4oCWJBn4KcwHKUBO7SNV0Pc+0M0iGCkEU3p3YWw
-2620mEzF1bR0dnVHKrpzIQEL1dJrtWjEK8EsAirUSI4k7Ih5lj/TgOGl8l4brGLQ
-n5zwFDgmo/7dmizVXzTk8++419i/bnNLbewgXieT0WXo3a84PF0QmO4SLRpcf0LD
-tKlXhf7x0R4z9RgEDW740tW7TlqGAl6bxzTgLFsjYi9hig32kGeewgKdH9hRUMBW
-JD4HPvJkJuZm59pWllrivAsmI4pFBXyPMFAdXs67FMxHCwqgfT3bElevuMaJXbZM
-7yr4XY6t92Av1EjR/aRUSbe9njP2eIhQBn7yxSTgj38CMC48hRZtapnUvTaBciAC
-zm3UxAUb3Ihhj0IYWEiq
-=4Y1N
------END PGP SIGNATURE-----
-
---Sig_/koEWQpYk3jxHyRKlaw8rv6B--
+~Randy
