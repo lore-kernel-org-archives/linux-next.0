@@ -1,57 +1,34 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: randconfig build error with next-20141001,
-	in drivers/gpu/drm/i915
-Date: Wed, 01 Oct 2014 11:23:47 -0700
-Message-ID: <542C46B3.2020901@infradead.org>
-References: <CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com>
- <87fvf73c6g.fsf@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the berlin
+ tree
+Date: Wed, 01 Oct 2014 20:31:54 +0200
+Message-ID: <542C489A.6020207@gmail.com>
+References: <20141001112212.44f53d35@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <87fvf73c6g.fsf@intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>, daniel.vetter@intel.com, intel-gfx@lists.freedesktop.org, dri-devel <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:49347 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751582AbaJASb7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Oct 2014 14:31:59 -0400
+In-Reply-To: <20141001112212.44f53d35@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?windows-1252?Q?Antoine_T=E9nart?= <antoine.tenart@free-electrons.com>
 
-On 10/01/14 10:57, Jani Nikula wrote:
-> On Wed, 01 Oct 2014, Jim Davis <jim.epost@gmail.com> wrote:
->> Building with the attached random configuration file,
->>
->> warning: (VIDEO_TIMBERDALE) selects TIMB_DMA which has unmet direct
->> dependencies (DMADEVICES && MFD_TIMBERDALE)
->> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
->> which has unmet direct dependencies (USB_SUPPORT && USB && PM_RUNTIME)
->>
->> drivers/built-in.o: In function `intel_panel_setup_backlight':
->> (.text+0x11855d): undefined reference to `backlight_device_register'
->> drivers/built-in.o: In function `intel_panel_destroy_backlight':
->> (.text+0x118624): undefined reference to `backlight_device_unregister'
->> make: *** [vmlinux] Error 1
-> 
-> It's the combination:
-> 
->> CONFIG_DRM_I915=y
->> CONFIG_BACKLIGHT_CLASS_DEVICE=m
-> 
-> Not sure what the Kconfig magic spell needs to be when we don't want to
-> depend on CONFIG_BACKLIGHT_CLASS_DEVICE but we'll use it if it's enabled
-> (y or m).
+On 01.10.2014 03:22, Stephen Rothwell wrote:
+> Today's linux-next merge of the net-next tree got a conflict in
+> arch/arm/boot/dts/berlin2q-marvell-dmp.dts between commit 461316fca705
+> ("ARM: berlin: enable the eSATA interface on the BG2Q DMP") from the
+> berlin tree and commit 75215193b975 ("ARM: dts: berlin: enable the
+> Ethernet port on the BG2Q DMP") from the net-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Something like:
+Looks good to me,
 
-	depends on BACKLIGHT_CLASS_DEVICE || BACKLIGHT_CLASS_DEVICE=n
+Thanks Stephen!
 
-is what we usually use.
-
-
--- 
-~Randy
+Sebastian
