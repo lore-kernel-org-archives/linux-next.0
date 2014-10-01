@@ -1,29 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 01 Oct 2014 13:42:07 -0400 (EDT)
-Message-ID: <20141001.134207.1431827965473600903.davem@davemloft.net>
-References: <20141001170403.7a319458@canb.auug.org.au>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: randconfig build error with next-20141001, in drivers/gpu/drm/i915
+Date: Wed, 01 Oct 2014 20:57:43 +0300
+Message-ID: <87fvf73c6g.fsf@intel.com>
+References: <CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:34631 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751763AbaJARmL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Oct 2014 13:42:11 -0400
-In-Reply-To: <20141001170403.7a319458@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com, jeffrey.t.kirsher@intel.com
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>, daniel.vetter@intel.com, intel-gfx@lists.freedesktop.org, dri-devel <dri-devel@lists.freedesktop.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 1 Oct 2014 17:04:03 +1000
+On Wed, 01 Oct 2014, Jim Davis <jim.epost@gmail.com> wrote:
+> Building with the attached random configuration file,
+>
+> warning: (VIDEO_TIMBERDALE) selects TIMB_DMA which has unmet direct
+> dependencies (DMADEVICES && MFD_TIMBERDALE)
+> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
+> which has unmet direct dependencies (USB_SUPPORT && USB && PM_RUNTIME)
+>
+> drivers/built-in.o: In function `intel_panel_setup_backlight':
+> (.text+0x11855d): undefined reference to `backlight_device_register'
+> drivers/built-in.o: In function `intel_panel_destroy_backlight':
+> (.text+0x118624): undefined reference to `backlight_device_unregister'
+> make: *** [vmlinux] Error 1
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 1 Oct 2014 17:00:49 +1000
-> Subject: [PATCH] fm10k: using vmalloc requires including linux/vmalloc.h
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+It's the combination:
 
-Applied, thanks Stephen.
+> CONFIG_DRM_I915=y
+> CONFIG_BACKLIGHT_CLASS_DEVICE=m
+
+Not sure what the Kconfig magic spell needs to be when we don't want to
+depend on CONFIG_BACKLIGHT_CLASS_DEVICE but we'll use it if it's enabled
+(y or m).
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
