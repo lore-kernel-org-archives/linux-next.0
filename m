@@ -1,27 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with Linus Torlvads' tree
-Date: Wed, 1 Oct 2014 15:58:18 +1000
-Message-ID: <20141001155818.53abfcb2@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the pinctrl tree
+Date: Wed, 1 Oct 2014 16:01:46 +1000
+Message-ID: <20141001160146.3649b2f8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/==e08Ajrmt=tTrLlbhKd=fg"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/5k=dW4iNGSjWAF+5jx8weK."; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53707 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751053AbaJAGBz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Oct 2014 02:01:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarkko Nikula <jarkko.nikula@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Cartwright <joshc@codeaurora.org>
 
---Sig_/==e08Ajrmt=tTrLlbhKd=fg
+--Sig_/5k=dW4iNGSjWAF+5jx8weK.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
 Today's linux-next merge of the gpio tree got a conflict in
-drivers/gpio/gpiolib.c between commit 324b0398781e ("gpio: Fix
-potential NULL handler data in chained irqchip handler") from Linus
-Torvalds' tree and commit 3f97d5fcf99c ("gpio: handle also nested
-irqchips in the chained handler set-up") from the gpio tree.
+drivers/pinctrl/qcom/pinctrl-msm.c between commit cf1fc1876289
+("pinctrl: qcom: use restart_notifier mechanism for ps_hold") from the
+pinctrl tree and commit 2fcea6cecbc9 ("pinctrl: remove remaining users
+of gpiochip_remove() retval") from the gpio tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -30,64 +34,51 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpio/gpiolib.c
-index c68d037de656,6e00c82be142..000000000000
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@@ -413,12 -407,25 +407,25 @@@ void gpiochip_set_chained_irqchip(struc
-  		return;
-  	}
+diff --cc drivers/pinctrl/qcom/pinctrl-msm.c
+index d30dddd21323,041677113a48..000000000000
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@@ -936,18 -903,9 +936,10 @@@ EXPORT_SYMBOL(msm_pinctrl_probe)
+  int msm_pinctrl_remove(struct platform_device *pdev)
+  {
+  	struct msm_pinctrl *pctrl =3D platform_get_drvdata(pdev);
+- 	int ret;
+-=20
+- 	ret =3D gpiochip_remove(&pctrl->chip);
+- 	if (ret) {
+- 		dev_err(&pdev->dev, "Failed to remove gpiochip\n");
+- 		return ret;
+- 	}
  =20
-- 	/*
-- 	 * The parent irqchip is already using the chip_data for this
-- 	 * irqchip, so our callbacks simply use the handler_data.
-- 	 */
-- 	irq_set_handler_data(parent_irq, gpiochip);
-- 	irq_set_chained_handler(parent_irq, parent_handler);
-+ 	if (parent_handler) {
-+ 		if (gpiochip->can_sleep) {
-+ 			chip_err(gpiochip,
-+ 				 "you cannot have chained interrupts on a "
-+ 				 "chip that may sleep\n");
-+ 			return;
-+ 		}
- -		irq_set_chained_handler(parent_irq, parent_handler);
-+ 		/*
-+ 		 * The parent irqchip is already using the chip_data for this
-+ 		 * irqchip, so our callbacks simply use the handler_data.
-+ 		 */
-+ 		irq_set_handler_data(parent_irq, gpiochip);
-++		irq_set_chained_handler(parent_irq, parent_handler);
-+ 	}
-+=20
-+ 	/* Set the parent IRQ for all affected IRQs */
-+ 	for (offset =3D 0; offset < gpiochip->ngpio; offset++)
-+ 		irq_set_parent(irq_find_mapping(gpiochip->irqdomain, offset),
-+ 			       parent_irq);
++ 	gpiochip_remove(&pctrl->chip);
+  	pinctrl_unregister(pctrl->pctrl);
+-=20
+ +	unregister_restart_handler(&pctrl->restart_nb);
+-=20
+  	return 0;
   }
-  EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
- =20
+  EXPORT_SYMBOL(msm_pinctrl_remove);
 
---Sig_/==e08Ajrmt=tTrLlbhKd=fg
+--Sig_/5k=dW4iNGSjWAF+5jx8weK.
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUK5gAAAoJEMDTa8Ir7ZwVkNYP/RQTiD0QcAIUkT96vc2HV5sy
-nV/ptJhYa76UgXsYHxZehtxMHn2Mlt6Ng7pLkKB2K+hLlSxvqifOMrbIhJRbVM8f
-DQLK4WwkVsYulVe4Q05MScZTIjseijr4Z0Gc/cJhG/EQk0pwmSpwWuxxlizzaTMb
-Y6AGzHHrK5jLQnl7NVTkq3tcyVO3pdBZBKSXBbrvsXbtjq0FfdXhJDG5Hg4WE6qh
-bqIShfboSF6q4xndP47gOrL2zt++0kP9pETuA0gshLucSfkrvZl/IedZ9MAkUNEq
-7KxZGtB+pIiqhBRLquSXn+JmzRHzQlXIj6EtBaSIldOgV2SDloTMj9JWMKSwaYsp
-ZW3U5iPJbUPi+EXq1HUsExH1RId2vZqECNF8Wni7/wfWM1/H1ioiHXrSWSdKtTpM
-O5lZNlQ5am7dPbvDxJtIFETe+1YBaj5YmusuURvEr1msWijx0lUWk8lSHBPpyaer
-CsRGp/mLMjOnmDmnMM9LV9CcIt1UrtjANTfgZxdaYhsZL2BMqeq7tcHoSbqULJJ1
-TJWa5uIeG9RO9erU9A5AGkBFRCyzTONYG0ZjY1dnqQOf1JRi93RSBYM37sLo2jiY
-r4RI0Wa3C+GRpqj+k/omHKHoDJoNXZUtxwVabOuAnPeAhLwLWEMfS9IeIv8o5RuQ
-qMgHPdgD9maRFXEFvq20
-=uhjV
+iQIcBAEBCAAGBQJUK5jPAAoJEMDTa8Ir7ZwVq6wP/jP2EApPmQxvynBDvW/oEMsw
+UpfOZDYpUytQME/NjmfEpM2JG861M0W+H8QgeMNQ4ySmu4Gn61EAf4v5co8XFrIY
+Bomdr4fX0JuC2A7nCR9FK7RfPPnspAWUhqPi31E5A08W20h/Po0fOB3deN5MIx8q
+QYkZ0OIhnNRnBtJj8jwMpq2gPps6hXoGOpuZNgCycgBtBUBGXL+GsCXlxfSQ7yA3
+5lMVzd+eyhNgfp0KmTaSHZfsc8H3ZslpmliasaIUfHrsEO6tMMDTz73iVS8KMaEg
+aUMhlJfoY+zKkGITJYn9uIAI273vprLBuWi/jOR0f7HUnxPykLm7YyAgmRiWQsGB
+p1e117PDuEA74if7ftlYbuXkB6WV+bhjaKoKEir7QwCxH3NqVtfZOgOKgG9e7yDh
+zDPSaGTviZwOyDiMjJCnH5iJqFbN2/FJvt72xBPFq9GqfIto/TxW/vgw+qou03BG
+pLHVCSWk4fUv6JeSbOWM50S+zf/BbA/+PglWtcDTvrtiZ4OmJgPUvonslSgUbks3
+wFHrU5r/mgUyJ2mfNalrncLsQOoqBmfFuQPCMrCovtoASZfoD5Yl6EQRufiGAF7B
+CBsth2ZJPiFZvf1I4p5bjTyBIb/ju/0NADZi4S7aWdogYmVhboFseK8azCN5Q8sT
+fZclS15jtTJHpCM4xFq+
+=brnf
 -----END PGP SIGNATURE-----
 
---Sig_/==e08Ajrmt=tTrLlbhKd=fg--
+--Sig_/5k=dW4iNGSjWAF+5jx8weK.--
