@@ -1,61 +1,68 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: randconfig build error with next-20141001, in drivers/i2c/algos/i2c-algo-bit.c
-Date: Wed, 01 Oct 2014 16:26:11 -0700
-Message-ID: <542C8D93.8090008@infradead.org>
-References: <CA+r1ZhiL1y9aeLeJjpd_1DtzOG_oyoPg7XsTPJ9G-XY5G2DfCQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: error trying to fetch the mpc5xxx tree
+Date: Thu, 2 Oct 2014 10:58:08 +1000
+Message-ID: <20141002105808.24f6196a@canb.auug.org.au>
+References: <20141001090115.44146aa9@canb.auug.org.au>
+	<20141001091125.40546254@crub>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-can-owner@vger.kernel.org>
-In-Reply-To: <CA+r1ZhiL1y9aeLeJjpd_1DtzOG_oyoPg7XsTPJ9G-XY5G2DfCQ@mail.gmail.com>
-Sender: linux-can-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, wsa@the-dreams.de, khali@linux-fr.org, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-i2c@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-can@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.7nK/I9iARov=BLHuUUQWZN"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141001091125.40546254@crub>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anatolij Gustschin <agust@denx.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 10/01/14 14:37, Jim Davis wrote:
-> Building with the attached random configuration file,
+--Sig_/.7nK/I9iARov=BLHuUUQWZN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Also:
-warning: (CAN_PEAK_PCIEC && SFC && IGB && VIDEO_TW68 && DRM && FB_DDC &=
-& FB_VIA) selects I2C_ALGOBIT which has unmet direct dependencies (I2C)
+Hi Anatolij,
 
-> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_bus=92:
-> drivers/i2c/algos/i2c-algo-bit.c:658:33: error: =91i2c_add_adapter=92
-> undeclared (first use in this function)
->   return __i2c_bit_add_bus(adap, i2c_add_adapter);
->                                  ^
-> drivers/i2c/algos/i2c-algo-bit.c:658:33: note: each undeclared
-> identifier is reported only once for each function it appears in
-> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_numbered=
-_bus=92:
-> drivers/i2c/algos/i2c-algo-bit.c:664:33: error:
-> =91i2c_add_numbered_adapter=92 undeclared (first use in this function=
-)
->   return __i2c_bit_add_bus(adap, i2c_add_numbered_adapter);
->                                  ^
->   CC      net/openvswitch/actions.o
-> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_bus=92:
-> drivers/i2c/algos/i2c-algo-bit.c:659:1: warning: control reaches end =
-of non-void
->  function [-Wreturn-type]
->  }
->  ^
-> drivers/i2c/algos/i2c-algo-bit.c: In function =91i2c_bit_add_numbered=
-_bus=92:
-> drivers/i2c/algos/i2c-algo-bit.c:665:1: warning: control reaches end =
-of non-void
->  function [-Wreturn-type]
->  }
->  ^
-> make[3]: *** [drivers/i2c/algos/i2c-algo-bit.o] Error 1
+On Wed, 1 Oct 2014 09:11:25 +0200 Anatolij Gustschin <agust@denx.de> wrote:
+>
+> On Wed, 1 Oct 2014 09:01:15 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> ...
+> > Attempting to fetch the mpc5xxx tree
+> > (git://git.denx.de/linux-2.6-agust.git#next) produces this error:
+> >=20
+> > fatal: Could not read from remote repository.
+> >=20
+> > Please make sure you have the correct access rights
+> > and the repository exists.
+>=20
+> the repository has been moved just recently. Could you please change
+> the linux-next tree to pull from
+>=20
+>  git://git.denx.de/linux-denx-agust.git#next
 
-In drivers/media/pci/tw68/Kconfig, VIDEO_TW68 should depend on I2C in o=
-rder
-to make it safe to select I2C_ALGOBIT.
-
-In drivers/net/can/sja1000/Kconfig, CAN_PEAK_PCIEC should depend on I2C
-instead of selecting I2C (and change the help text).
-
-
+I have updated to that, thanks.
 --=20
-~Randy
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/.7nK/I9iARov=BLHuUUQWZN
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJULKMoAAoJEMDTa8Ir7ZwVNdAP/AiEgCakqUkiByghQcmrSlP3
+6+LbcBHCLPtJ9wEUrkrfEOYN+xE+GnY20ToC2cT7Hh7gBKZ/D55GiVqleMfZ4UtZ
+zbo94rQoDfO0NeG8NXc1MK1p07NHM6DZILrVbQjQEkS+0g4dVHgQHg7Aemgh8HeZ
+5jEkJ/xucabo67zApM1K5Uops5AowFqAyIV3WOnnH30VOprtvLTOf63QAGj0PwAx
+jKzvTgHWqyZPasUhrG/jj91jcHFKJppIRKtdYJFaZlmOEJRA5nbNJHmwzZn9FX5L
+/weeWJQcqlKv8qhm79u6527q6QlHR4OVBGGpFcraARzQ702OqxqstyYpJBoK+9Cm
+ifMBM1bMHY/msnvbtSZgjjGY7FYvndaDmIj6AIf6FvkRNttGc2fOOft82oAmtuVh
+ivPPSXf8qMP43PZ0+eMHAZO1zOmWqguAIhbhE6aOpHl2Gi2yDauFeYMj0OOK39NI
+OraYI9S/zX62i73EPG2r5raJWgnNay3SJLEipSGBipqIndIl8kGA0sn4kRufUJcN
+44pkF7W/R0gB8I7QY17GuCGqNJsRZ6uSBHOdY6wr6x1DQNUlnS9PUm5xieV51A70
+RveRsopMvqn+YpgC1uEVma+Su1Os2lXD/8EgR2IB6+rsuaEsTz6n6SX/blURTZV/
+VdMYa1giHDsTqwd8Sgm7
+=lvap
+-----END PGP SIGNATURE-----
+
+--Sig_/.7nK/I9iARov=BLHuUUQWZN--
