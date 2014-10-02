@@ -1,134 +1,119 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: randconfig build error with next-20141001, in drivers/gpu/drm/i915
-Date: Thu, 02 Oct 2014 10:46:52 +0300
-Message-ID: <87eguq6hhv.fsf@intel.com>
-References: <CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com> <87fvf73c6g.fsf@intel.com> <542C46B3.2020901@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the target-updates tree with the scsi
+ tree
+Date: Thu, 2 Oct 2014 18:31:11 +1000
+Message-ID: <20141002183111.5eb998a7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pp_jn3utfzg+2+N6=EZxl_K"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:5663 "EHLO mga02.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:47862 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751958AbaJBHq5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Oct 2014 03:46:57 -0400
-In-Reply-To: <542C46B3.2020901@infradead.org>
+	id S1751319AbaJBIbT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Oct 2014 04:31:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>, daniel.vetter@intel.com, intel-gfx@lists.freedesktop.org, dri-devel <dri-devel@lists.freedesktop.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joern Engel <joern@logfs.org>, Quinn Tran <quinn.tran@qlogic.com>, Christoph Hellwig <hch@lst.de>
 
-On Wed, 01 Oct 2014, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 10/01/14 10:57, Jani Nikula wrote:
->> On Wed, 01 Oct 2014, Jim Davis <jim.epost@gmail.com> wrote:
->>> Building with the attached random configuration file,
->>>
->>> warning: (VIDEO_TIMBERDALE) selects TIMB_DMA which has unmet direct
->>> dependencies (DMADEVICES && MFD_TIMBERDALE)
->>> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
->>> which has unmet direct dependencies (USB_SUPPORT && USB && PM_RUNTIME)
->>>
->>> drivers/built-in.o: In function `intel_panel_setup_backlight':
->>> (.text+0x11855d): undefined reference to `backlight_device_register'
->>> drivers/built-in.o: In function `intel_panel_destroy_backlight':
->>> (.text+0x118624): undefined reference to `backlight_device_unregister'
->>> make: *** [vmlinux] Error 1
->> 
->> It's the combination:
->> 
->>> CONFIG_DRM_I915=y
->>> CONFIG_BACKLIGHT_CLASS_DEVICE=m
->> 
->> Not sure what the Kconfig magic spell needs to be when we don't want to
->> depend on CONFIG_BACKLIGHT_CLASS_DEVICE but we'll use it if it's enabled
->> (y or m).
->
-> Something like:
->
-> 	depends on BACKLIGHT_CLASS_DEVICE || BACKLIGHT_CLASS_DEVICE=n
->
-> is what we usually use.
+--Sig_/pp_jn3utfzg+2+N6=EZxl_K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Oh boy this gets ugly. Trying
+Hi Nicholas,
 
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index 4e39ab34eb1c..daa453c62aa6 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -3,6 +3,7 @@ config DRM_I915
- 	depends on DRM
- 	depends on X86 && PCI
- 	depends on (AGP || AGP=n)
-+	depends on (BACKLIGHT_CLASS_DEVICE || BACKLIGHT_CLASS_DEVICE=n)
- 	select INTEL_GTT
- 	select AGP_INTEL if AGP
- 	select INTERVAL_TREE
+Today's linux-next merge of the target-updates tree got a conflict in
+drivers/scsi/qla2xxx/qla_target.c between commit 33e799775593
+("qla2xxx: Add support for QFull throttling and Term Exchange retry")
+from the scsi tree and commit 55a9066fffd2 ("qla_target: make some
+global functions static") from the target-updates tree.
 
-leads to
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-scripts/kconfig/conf --olddefconfig Kconfig
-drivers/gpu/drm/i915/Kconfig:1:error: recursive dependency detected!
-drivers/gpu/drm/i915/Kconfig:1:	symbol DRM_I915 depends on BACKLIGHT_CLASS_DEVICE
-drivers/video/backlight/Kconfig:156:	symbol BACKLIGHT_CLASS_DEVICE is selected by DRM_I915
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-because we depend on ACPI_VIDEO when ACPI is enabled, originally done in
+diff --cc drivers/scsi/qla2xxx/qla_target.c
+index 829752cfd73f,68c90ad441f4..000000000000
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@@ -108,10 -101,7 +108,11 @@@ static void qlt_send_term_exchange(stru
+  	*cmd, struct atio_from_isp *atio, int ha_locked);
+  static void qlt_reject_free_srr_imm(struct scsi_qla_host *ha,
+  	struct qla_tgt_srr_imm *imm, int ha_lock);
+ +static void qlt_abort_cmd_on_host_reset(struct scsi_qla_host *vha,
+ +	struct qla_tgt_cmd *cmd);
+ +static void qlt_alloc_qfull_cmd(struct scsi_qla_host *vha,
+ +	struct atio_from_isp *atio, uint16_t status, int qfull);
++ static void qlt_disable_vha(struct scsi_qla_host *vha);
+  /*
+   * Global Variables
+   */
+@@@ -189,28 -179,7 +190,28 @@@ struct scsi_qla_host *qlt_find_host_by_
+  	return NULL;
+  }
+ =20
+ +static inline void qlt_incr_num_pend_cmds(struct scsi_qla_host *vha)
+ +{
+ +	unsigned long flags;
+ +
+ +	spin_lock_irqsave(&vha->hw->tgt.q_full_lock, flags);
+ +
+ +	vha->hw->tgt.num_pend_cmds++;
+ +	if (vha->hw->tgt.num_pend_cmds > vha->hw->qla_stats.stat_max_pend_cmds)
+ +		vha->hw->qla_stats.stat_max_pend_cmds =3D
+ +			vha->hw->tgt.num_pend_cmds;
+ +	spin_unlock_irqrestore(&vha->hw->tgt.q_full_lock, flags);
+ +}
+ +static inline void qlt_decr_num_pend_cmds(struct scsi_qla_host *vha)
+ +{
+ +	unsigned long flags;
+ +
+ +	spin_lock_irqsave(&vha->hw->tgt.q_full_lock, flags);
+ +	vha->hw->tgt.num_pend_cmds--;
+ +	spin_unlock_irqrestore(&vha->hw->tgt.q_full_lock, flags);
+ +}
+ +
+- void qlt_24xx_atio_pkt_all_vps(struct scsi_qla_host *vha,
++ static void qlt_24xx_atio_pkt_all_vps(struct scsi_qla_host *vha,
+  	struct atio_from_isp *atio)
+  {
+  	ql_dbg(ql_dbg_tgt, vha, 0xe072,
+@@@ -3085,10 -2924,8 +3084,9 @@@ static void qlt_do_ctio_completion(stru
+ =20
+  	se_cmd =3D &cmd->se_cmd;
+  	tfo =3D se_cmd->se_tfo;
+ +	cmd->cmd_sent_to_fw =3D 0;
+ =20
+- 	if (cmd->sg_mapped)
+- 		qlt_unmap_sg(vha, cmd);
++ 	qlt_unmap_sg(vha, cmd);
+ =20
+  	if (unlikely(status !=3D CTIO_SUCCESS)) {
+  		switch (status & 0xFFFF) {
 
-commit ecb4aed78dcf09e48c8c34c8c2fa7f5c69344be6
-Author: Len Brown <len.brown@intel.com>
-Date:   Fri Apr 24 11:33:47 2009 -0400
+--Sig_/pp_jn3utfzg+2+N6=EZxl_K
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-    ACPI, i915: build fix
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Now, trying to fix that with what seems to me like the obvious
-dependency, conveying what we really want
+iQIcBAEBCAAGBQJULQ1UAAoJEMDTa8Ir7ZwVIcYP/3RjVSAhn8ooUN6MeEkifq89
+zQuPx1lFbHxBGjxqAuhWO+MPCE/IoVFRGY+2khlmF3VJ+X08iZPFaUZ5QSRaZFxZ
+LV4HES2c2fjEr1PMs3iX4+CjrJBLyKFebR9zth2FETyCzcY0EFGSrpiBmAR9pun8
+yj3dKyFXfjS91BnAXCPMxUpg3XKWBhW3U2PLPRl4zGacItrxxaR6TmrIL90wm9wr
+fWgY5kUvoaW5ayZgEZMQl8RhYD8q46tqI9Hh3L06FmU7iS4AxbU3a4aUniWD3mVS
+VWIDCFFE8hxyS+kw2iY1RHa29raWz5VWvt6NFb6in6q5c89vvwwuD1QD9p2EIKUs
+TRO+9CukQMpvDAI533OpXu+81yQ6kh4ZaRYFDzyUzg0hS8qJYE/DYR8AT7m+HFhR
+mvRnJvktBHLmaXqM9TP3YqtNZ5/yatAuRJ/WYCMbmVjSlOUg5cw9eRC5M2wDNy45
+fuQdBP5COpVVl+YFjfpzotT9c4/gpqYebdj53JNgjGOVjZMJqIRnl2RxwO0JaFoO
+8Q/USeQY9DGsm/NhLX4UXeFkVBaubCCr+bEHO0zzEVOFiQ2A0fkJiHmv93RgIYnY
+g3qQEf970JnZKhIOKE41eEUTDPanmTbH91oVWamr095z5KWfUGuw+ydZsY8yBzes
+pG1r4lsdy1JZjOiMlq+5
+=1XUd
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index 4e39ab34eb1c..f5a1ee37603e 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -3,6 +3,7 @@ config DRM_I915
- 	depends on DRM
- 	depends on X86 && PCI
- 	depends on (AGP || AGP=n)
-+	depends on ((ACPI && ACPI_VIDEO) || ACPI=n)
- 	select INTEL_GTT
- 	select AGP_INTEL if AGP
- 	select INTERVAL_TREE
-@@ -11,13 +12,6 @@ config DRM_I915
- 	select SHMEM
- 	select TMPFS
- 	select DRM_KMS_HELPER
--	# i915 depends on ACPI_VIDEO when ACPI is enabled
--	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
--	select BACKLIGHT_LCD_SUPPORT if ACPI
--	select BACKLIGHT_CLASS_DEVICE if ACPI
--	select INPUT if ACPI
--	select ACPI_VIDEO if ACPI
--	select ACPI_BUTTON if ACPI
- 	help
- 	  Choose this option if you have a system that has "Intel Graphics
- 	  Media Accelerator" or "HD Graphics" integrated graphics,
-
-leads to more fun
-
-scripts/kconfig/conf --olddefconfig Kconfig
-drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
-drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
-drivers/gpu/drm/Kconfig:34:	symbol DRM_KMS_FB_HELPER is selected by DRM_I915_FBDEV
-drivers/gpu/drm/i915/Kconfig:40:	symbol DRM_I915_FBDEV depends on DRM_I915
-drivers/gpu/drm/i915/Kconfig:1:	symbol DRM_I915 depends on ACPI_VIDEO
-drivers/acpi/Kconfig:130:	symbol ACPI_VIDEO is selected by BACKLIGHT_CLASS_DEVICE
-drivers/video/backlight/Kconfig:156:	symbol BACKLIGHT_CLASS_DEVICE is selected by FB_BACKLIGHT
-drivers/video/fbdev/Kconfig:188:	symbol FB_BACKLIGHT is selected by PMAC_BACKLIGHT
-drivers/macintosh/Kconfig:135:	symbol PMAC_BACKLIGHT depends on FB
-
-and the rabbit hole gets deeper than I thought. I guess it always does.
-
-At this point the question is whether "depends on ((ACPI && ACPI_VIDEO)
-|| ACPI=n)" is worth pursuing and makes more sense than the "select foo
-if ACPI" lines, or do we need to build hacks upon hacks to get this
-fixed.
-
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+--Sig_/pp_jn3utfzg+2+N6=EZxl_K--
