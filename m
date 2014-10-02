@@ -1,71 +1,79 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: linux-next: build failure after merge of the arm-soc tree
-Date: Thu, 02 Oct 2014 11:36:05 +0900
-Message-ID: <019c01cfdde9$9eb22ff0$dc168fd0$@kernel.org>
-References: <20141002113742.2b521495@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Oct 1
+Date: Wed, 1 Oct 2014 20:59:24 -0700
+Message-ID: <20141002035924.GA18144@roeck-us.net>
+References: <20141001175411.00be9683@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20141002113742.2b521495@canb.auug.org.au>
-Content-language: ko
+Content-Disposition: inline
+In-Reply-To: <20141001175411.00be9683@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-+ Mike
-
-Stephen Rothwell wrote:
-> 
+On Wed, Oct 01, 2014 at 05:54:11PM +1000, Stephen Rothwell wrote:
 > Hi all,
 > 
-Hi,
+> Changes since 20140930:
+> 
+> The arm-soc tree still had its build failure for which I reverted
+> 5 commits.
+> 
+> The net-next tree gained a conflict against the berlin tree, lost
+> its build failure but gained another for which I applied a patch.
+> 
+> The vfio tree gained a conflict against the pci tree.
+> 
+> The tty tree lost its build failure.
+> 
+> The staging tree still had its build failure for which I reverted
+> a commit.
+> 
+> The gpio tree gained conflicts against Linus' tree and the pinctrl tree.
+> 
+> The akpm tree lost a patch that turned up elsewhere.
+> 
+> Non-merge commits (relative to Linus' tree): 8953
+>  7726 files changed, 354879 insertions(+), 267353 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
+Building arm:cm_x2xx_defconfig ... failed
 
-> After merging the arm-soc tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock/maxim,max77686.h: No such
-> file or directory
->  #include <dt-bindings/clock/maxim,max77686.h>
->                                               ^
-> 
-> Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc
-> on exynos5250-snow").
-> 
-> Presumably there is some dependency on some tree that someone has
-> forgotten to merge :-(
-> 
-Hmm...I thought it should be fine once Mike's clk tree is landing into the
--next tree. Firstly sorry about that and how should I do in this case?
+drivers/built-in.o: In function `clk_set_rate':
+:(.text+0xdef44): multiple definition of `clk_set_rate'
+arch/arm/mach-pxa/built-in.o::(.text+0xf78): first defined here
+drivers/built-in.o:(___ksymtab_gpl+clk_disable+0x0): multiple definition of
+`__ksymtab_clk_disable'
+arch/arm/mach-pxa/built-in.o:(___ksymtab+clk_disable+0x0): first defined here
+drivers/built-in.o: In function `clk_disable':
+:(.text+0xddf30): multiple definition of `clk_disable'
+arch/arm/mach-pxa/built-in.o::(.text+0xfbc): first defined here
 
-> I reverted that commit for today.
-> 
-> Which then got to:
-> 
-> /scratch/sfr/next/arch/arm/boot/dts/exynos5420-peach-pit.dts:15:46: fatal error: dt-
-> bindings/clock/maxim,max77802.h: No such file or directory
->  #include <dt-bindings/clock/maxim,max77802.h>
->                                               ^
-> compilation terminated.
-> /scratch/sfr/next/arch/arm/boot/dts/exynos5800-peach-pi.dts:15:46: fatal error: dt-
-> bindings/clock/maxim,max77802.h: No such file or directory
->  #include <dt-bindings/clock/maxim,max77802.h>
->                                               ^
-> compilation terminated.
-> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:417.21-22 syntax error
-> FATAL ERROR: Unable to parse input tree
-> 
-> Caused by 8bd43b6e6df7 ("ARM: dts: Add rtc_src clk for s3c-rtc on
-> exynos Peach boards").
-> 
-> I give up ... please test your trees better ...
-> 
-So sorry, actually it's my fault, I missed the information to arm-soc when I
-sent a pull-request, just I thought arm-soc were aware of that before happening
-the error when samsung tree merged...
+[and more]
 
-- Kukjin
+---
+Building m68k:allmodconfig ... failed
 
-> I have used the arm-soc tree form next-20141001 for today (which still
-> needs 5 reverts to get it to build :-().
+drivers/media/rc/ir-hix5hd2.c: In function 'hix5hd2_ir_config':
+drivers/media/rc/ir-hix5hd2.c:100:2: error: implicit declaration of function 'readl_relaxed'
+
+---
+Building mn10300:asb2303_defconfig ... failed
+Building um:defconfig ... failed
+
+In file included from drivers/base/platform.c:24:0:
+include/linux/pm_domain.h:74:23: error: expected identifier or '(' before '&' token
+make[2]: *** [drivers/base/platform.o] Error 1
+
+---
+Building sparc64:allmodconfig ... failed
+
+drivers/bcma/main.c: In function 'bcma_of_find_child_device':
+drivers/bcma/main.c:150:3: error: implicit declaration of function 'of_translate_address'
+
+---
+
+Guenter
