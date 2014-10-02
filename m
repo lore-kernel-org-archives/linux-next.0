@@ -1,69 +1,41 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Thu, 02 Oct 2014 16:32:42 +0200
-Message-ID: <14357384.nIoLZkacVq@wuerfel>
-References: <20141002113742.2b521495@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Thu, 2 Oct 2014 09:31:49 -0700
+Message-ID: <20141002163149.GA1056@kroah.com>
+References: <20140930180416.5ae64587@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:65500 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752615AbaJBOdR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Oct 2014 10:33:17 -0400
-In-Reply-To: <20141002113742.2b521495@canb.auug.org.au>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:49235 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750901AbaJBQbz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Oct 2014 12:31:55 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by gateway2.nyi.internal (Postfix) with ESMTP id A357820BDB
+	for <linux-next@vger.kernel.org>; Thu,  2 Oct 2014 12:31:50 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20140930180416.5ae64587@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tapasweni Pathak <tapaswenipathak@gmail.com>
 
-On Thursday 02 October 2014 11:37:42 Stephen Rothwell wrote:
-> After merging the arm-soc tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+On Tue, Sep 30, 2014 at 06:04:16PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock/maxim,max77686.h: No such file or directory
->  #include <dt-bindings/clock/maxim,max77686.h>
->                                               ^
+> After merging the staging tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc
-> on exynos5250-snow").
+> drivers/staging/media/cxd2099/cxd2099.c: In function 'slot_reset':
+> drivers/staging/media/cxd2099/cxd2099.c:537:4: error: expected ';' before 'if'
+>     if (ci->ready)
+>     ^
 > 
-> Presumably there is some dependency on some tree that someone has
-> forgotten to merge 
+> Caused by commit 7b86477c0e5b ("staging: media: cxd2099: use
+> usleep_range()").
 > 
-> I reverted that commit for today.
-> 
-> Which then got to:
-> 
-> /scratch/sfr/next/arch/arm/boot/dts/exynos5420-peach-pit.dts:15:46: fatal error: dt-bindings/clock/maxim,max77802.h: No such file or directory
->  #include <dt-bindings/clock/maxim,max77802.h>
->                                               ^
-> compilation terminated.
-> /scratch/sfr/next/arch/arm/boot/dts/exynos5800-peach-pi.dts:15:46: fatal error: dt-bindings/clock/maxim,max77802.h: No such file or directory
->  #include <dt-bindings/clock/maxim,max77802.h>
->                                               ^
-> compilation terminated.
-> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:417.21-22 syntax error
-> FATAL ERROR: Unable to parse input tree
-> 
-> Caused by 8bd43b6e6df7 ("ARM: dts: Add rtc_src clk for s3c-rtc on
-> exynos Peach boards").
-> 
-> I give up ... please test your trees better ...
+> I have reverted that commit for today.
 
-I'm deeply sorry about that. I actually saw the problem here but was too
-tired to fix it up again by redoing all the merges in our next/late
-branch.
+Now fixed, thanks.
 
-I've changed the for-next branch now to drop all of next/late, I think
-we're better off not sending any of it for 3.18, especially as I found
-some other problems as well.
-
-> I have used the arm-soc tree form next-20141001 for today (which still
-> needs 5 reverts to get it to build :-().
-
-D'oh. I actually fixed these already last friday in the next/dt branch
-but for some reason forgot to include it in for-next.
-I've made sure that everything is included now.
-
-	Arnd
+greg k-h
