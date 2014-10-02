@@ -1,68 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error trying to fetch the mpc5xxx tree
-Date: Thu, 2 Oct 2014 10:58:08 +1000
-Message-ID: <20141002105808.24f6196a@canb.auug.org.au>
-References: <20141001090115.44146aa9@canb.auug.org.au>
-	<20141001091125.40546254@crub>
+Subject: linux-next: build failure after merge of the arm-soc tree
+Date: Thu, 2 Oct 2014 11:37:42 +1000
+Message-ID: <20141002113742.2b521495@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.7nK/I9iARov=BLHuUUQWZN"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141001091125.40546254@crub>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anatolij Gustschin <agust@denx.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/ChhR2Qe+0/rSLYqZaEZBDhR"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56078 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752068AbaJBBht (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Oct 2014 21:37:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
---Sig_/.7nK/I9iARov=BLHuUUQWZN
+--Sig_/ChhR2Qe+0/rSLYqZaEZBDhR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anatolij,
+Hi all,
 
-On Wed, 1 Oct 2014 09:11:25 +0200 Anatolij Gustschin <agust@denx.de> wrote:
->
-> On Wed, 1 Oct 2014 09:01:15 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> ...
-> > Attempting to fetch the mpc5xxx tree
-> > (git://git.denx.de/linux-2.6-agust.git#next) produces this error:
-> >=20
-> > fatal: Could not read from remote repository.
-> >=20
-> > Please make sure you have the correct access rights
-> > and the repository exists.
->=20
-> the repository has been moved just recently. Could you please change
-> the linux-next tree to pull from
->=20
->  git://git.denx.de/linux-denx-agust.git#next
+After merging the arm-soc tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-I have updated to that, thanks.
+arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock=
+/maxim,max77686.h: No such file or directory
+ #include <dt-bindings/clock/maxim,max77686.h>
+                                              ^
+
+Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc
+on exynos5250-snow").
+
+Presumably there is some dependency on some tree that someone has
+forgotten to merge :-(
+
+I reverted that commit for today.
+
+Which then got to:
+
+/scratch/sfr/next/arch/arm/boot/dts/exynos5420-peach-pit.dts:15:46: fatal e=
+rror: dt-bindings/clock/maxim,max77802.h: No such file or directory
+ #include <dt-bindings/clock/maxim,max77802.h>
+                                              ^
+compilation terminated.
+/scratch/sfr/next/arch/arm/boot/dts/exynos5800-peach-pi.dts:15:46: fatal er=
+ror: dt-bindings/clock/maxim,max77802.h: No such file or directory
+ #include <dt-bindings/clock/maxim,max77802.h>
+                                              ^
+compilation terminated.
+Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:417.21-22 syntax=
+ error
+FATAL ERROR: Unable to parse input tree
+
+Caused by 8bd43b6e6df7 ("ARM: dts: Add rtc_src clk for s3c-rtc on
+exynos Peach boards").
+
+I give up ... please test your trees better ...
+
+I have used the arm-soc tree form next-20141001 for today (which still
+needs 5 reverts to get it to build :-().
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/.7nK/I9iARov=BLHuUUQWZN
+--Sig_/ChhR2Qe+0/rSLYqZaEZBDhR
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJULKMoAAoJEMDTa8Ir7ZwVNdAP/AiEgCakqUkiByghQcmrSlP3
-6+LbcBHCLPtJ9wEUrkrfEOYN+xE+GnY20ToC2cT7Hh7gBKZ/D55GiVqleMfZ4UtZ
-zbo94rQoDfO0NeG8NXc1MK1p07NHM6DZILrVbQjQEkS+0g4dVHgQHg7Aemgh8HeZ
-5jEkJ/xucabo67zApM1K5Uops5AowFqAyIV3WOnnH30VOprtvLTOf63QAGj0PwAx
-jKzvTgHWqyZPasUhrG/jj91jcHFKJppIRKtdYJFaZlmOEJRA5nbNJHmwzZn9FX5L
-/weeWJQcqlKv8qhm79u6527q6QlHR4OVBGGpFcraARzQ702OqxqstyYpJBoK+9Cm
-ifMBM1bMHY/msnvbtSZgjjGY7FYvndaDmIj6AIf6FvkRNttGc2fOOft82oAmtuVh
-ivPPSXf8qMP43PZ0+eMHAZO1zOmWqguAIhbhE6aOpHl2Gi2yDauFeYMj0OOK39NI
-OraYI9S/zX62i73EPG2r5raJWgnNay3SJLEipSGBipqIndIl8kGA0sn4kRufUJcN
-44pkF7W/R0gB8I7QY17GuCGqNJsRZ6uSBHOdY6wr6x1DQNUlnS9PUm5xieV51A70
-RveRsopMvqn+YpgC1uEVma+Su1Os2lXD/8EgR2IB6+rsuaEsTz6n6SX/blURTZV/
-VdMYa1giHDsTqwd8Sgm7
-=lvap
+iQIcBAEBCAAGBQJULKxrAAoJEMDTa8Ir7ZwV4lUP/01egfn0hUE+tqutQrUyqb2r
+CYLcJnesfyE0GpUMBLJJFRppEuPi7cYw8dnc9W69g1z0r3D64Op0YPT7B6X59K59
++nVJ4hYAHFr2/4g0KEBokWIKMqvJFdZKwaEr9YfqGkd6eGgQhYX/rpf4wRNoeurb
+ryHepYJ9ylC1A6ePL3rxhcwbVkVgdzkbe5py70FNrVEmHW5MuEUKn97bTGkoFxyS
+25hwz5exDKTLxxqcESTYaOlP/7uoCBEcrvTOnaQsT1Y8hbaC6TQjAxw8VWZUNI+n
+r/DBAT53CojFkaDuqkDf27j1iMKyV86VSNmD0b178g1YFe6zMLkEGfB4jZZabgom
+RO84Sn4HVBmvk0+HfxqjjU+b1WzfeF2k0umPHVoJBh95Zqcp3GFUF5EPI1qP265L
+KLUsvOujcn/2JaWW12AfMZUN4OF3SsDhBocRPjoYymUlweR4k+dVGmliUmrKLQ2Z
+N7jMaIWz/m7EXX1IFX7476rh/NtZpCBGxxMVc0+3grNSs3063a/MGANUQVWtflJY
+XxTyE/W9F4n7LcsY6mL7nUNtixsA88kZrv2foxJJ4vA5qmCCsLgUlGyNF/8iwUbt
+AHP7A7d1EVGnJXeHLdDd/dR4lOrbdNO5ixaoieT2GbKSliHCJQx8s0LQmS4cVOCG
+PdEU+nzVX26lgcJ5UNGm
+=dD66
 -----END PGP SIGNATURE-----
 
---Sig_/.7nK/I9iARov=BLHuUUQWZN--
+--Sig_/ChhR2Qe+0/rSLYqZaEZBDhR--
