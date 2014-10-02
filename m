@@ -1,261 +1,134 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the pci tree
-Date: Thu, 2 Oct 2014 14:41:13 +1000
-Message-ID: <20141002144113.2e1d92a8@canb.auug.org.au>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: randconfig build error with next-20141001, in drivers/gpu/drm/i915
+Date: Thu, 02 Oct 2014 10:46:52 +0300
+Message-ID: <87eguq6hhv.fsf@intel.com>
+References: <CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com> <87fvf73c6g.fsf@intel.com> <542C46B3.2020901@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Nb5t_uRT+n03JH575uBFZE0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44987 "EHLO ozlabs.org"
+Received: from mga02.intel.com ([134.134.136.20]:5663 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751857AbaJBElU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Oct 2014 00:41:20 -0400
+	id S1751958AbaJBHq5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Oct 2014 03:46:57 -0400
+In-Reply-To: <542C46B3.2020901@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tanmay Inamdar <tinamdar@apm.com>, Feng Kan <fkan@apm.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>, daniel.vetter@intel.com, intel-gfx@lists.freedesktop.org, dri-devel <dri-devel@lists.freedesktop.org>
 
---Sig_/Nb5t_uRT+n03JH575uBFZE0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 01 Oct 2014, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 10/01/14 10:57, Jani Nikula wrote:
+>> On Wed, 01 Oct 2014, Jim Davis <jim.epost@gmail.com> wrote:
+>>> Building with the attached random configuration file,
+>>>
+>>> warning: (VIDEO_TIMBERDALE) selects TIMB_DMA which has unmet direct
+>>> dependencies (DMADEVICES && MFD_TIMBERDALE)
+>>> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
+>>> which has unmet direct dependencies (USB_SUPPORT && USB && PM_RUNTIME)
+>>>
+>>> drivers/built-in.o: In function `intel_panel_setup_backlight':
+>>> (.text+0x11855d): undefined reference to `backlight_device_register'
+>>> drivers/built-in.o: In function `intel_panel_destroy_backlight':
+>>> (.text+0x118624): undefined reference to `backlight_device_unregister'
+>>> make: *** [vmlinux] Error 1
+>> 
+>> It's the combination:
+>> 
+>>> CONFIG_DRM_I915=y
+>>> CONFIG_BACKLIGHT_CLASS_DEVICE=m
+>> 
+>> Not sure what the Kconfig magic spell needs to be when we don't want to
+>> depend on CONFIG_BACKLIGHT_CLASS_DEVICE but we'll use it if it's enabled
+>> (y or m).
+>
+> Something like:
+>
+> 	depends on BACKLIGHT_CLASS_DEVICE || BACKLIGHT_CLASS_DEVICE=n
+>
+> is what we usually use.
 
-Hi Herbert,
+Oh boy this gets ugly. Trying
 
-Today's linux-next merge of the crypto tree got a conflict in
-arch/arm64/boot/dts/apm-storm.dtsi between commit 84ac1f2ca41f ("arm64:
-dts: Add APM X-Gene PCIe device tree nodes") from the pci tree and
-commit ab81873974af ("arm64: dts: add random number generator dts node
-to APM X-Gene platform") from the crypto tree.
+diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+index 4e39ab34eb1c..daa453c62aa6 100644
+--- a/drivers/gpu/drm/i915/Kconfig
++++ b/drivers/gpu/drm/i915/Kconfig
+@@ -3,6 +3,7 @@ config DRM_I915
+ 	depends on DRM
+ 	depends on X86 && PCI
+ 	depends on (AGP || AGP=n)
++	depends on (BACKLIGHT_CLASS_DEVICE || BACKLIGHT_CLASS_DEVICE=n)
+ 	select INTEL_GTT
+ 	select AGP_INTEL if AGP
+ 	select INTERVAL_TREE
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+leads to
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+scripts/kconfig/conf --olddefconfig Kconfig
+drivers/gpu/drm/i915/Kconfig:1:error: recursive dependency detected!
+drivers/gpu/drm/i915/Kconfig:1:	symbol DRM_I915 depends on BACKLIGHT_CLASS_DEVICE
+drivers/video/backlight/Kconfig:156:	symbol BACKLIGHT_CLASS_DEVICE is selected by DRM_I915
 
-diff --cc arch/arm64/boot/dts/apm-storm.dtsi
-index 403197a0e621,f391972ad135..000000000000
---- a/arch/arm64/boot/dts/apm-storm.dtsi
-+++ b/arch/arm64/boot/dts/apm-storm.dtsi
-@@@ -270,170 -270,18 +270,183 @@@
-  				clock-output-names =3D "rtcclk";
-  			};
- =20
-+ 			rngpkaclk: rngpkaclk@17000000 {
-+ 				compatible =3D "apm,xgene-device-clock";
-+ 				#clock-cells =3D <1>;
-+ 				clocks =3D <&socplldiv2 0>;
-+ 				reg =3D <0x0 0x17000000 0x0 0x2000>;
-+ 				reg-names =3D "csr-reg";
-+ 				csr-offset =3D <0xc>;
-+ 				csr-mask =3D <0x10>;
-+ 				enable-offset =3D <0x10>;
-+ 				enable-mask =3D <0x10>;
-+ 				clock-output-names =3D "rngpkaclk";
-+ 			};
-++
- +			pcie0clk: pcie0clk@1f2bc000 {
- +				status =3D "disabled";
- +				compatible =3D "apm,xgene-device-clock";
- +				#clock-cells =3D <1>;
- +				clocks =3D <&socplldiv2 0>;
- +				reg =3D <0x0 0x1f2bc000 0x0 0x1000>;
- +				reg-names =3D "csr-reg";
- +				clock-output-names =3D "pcie0clk";
- +			};
- +
- +			pcie1clk: pcie1clk@1f2cc000 {
- +				status =3D "disabled";
- +				compatible =3D "apm,xgene-device-clock";
- +				#clock-cells =3D <1>;
- +				clocks =3D <&socplldiv2 0>;
- +				reg =3D <0x0 0x1f2cc000 0x0 0x1000>;
- +				reg-names =3D "csr-reg";
- +				clock-output-names =3D "pcie1clk";
- +			};
- +
- +			pcie2clk: pcie2clk@1f2dc000 {
- +				status =3D "disabled";
- +				compatible =3D "apm,xgene-device-clock";
- +				#clock-cells =3D <1>;
- +				clocks =3D <&socplldiv2 0>;
- +				reg =3D <0x0 0x1f2dc000 0x0 0x1000>;
- +				reg-names =3D "csr-reg";
- +				clock-output-names =3D "pcie2clk";
- +			};
- +
- +			pcie3clk: pcie3clk@1f50c000 {
- +				status =3D "disabled";
- +				compatible =3D "apm,xgene-device-clock";
- +				#clock-cells =3D <1>;
- +				clocks =3D <&socplldiv2 0>;
- +				reg =3D <0x0 0x1f50c000 0x0 0x1000>;
- +				reg-names =3D "csr-reg";
- +				clock-output-names =3D "pcie3clk";
- +			};
- +
- +			pcie4clk: pcie4clk@1f51c000 {
- +				status =3D "disabled";
- +				compatible =3D "apm,xgene-device-clock";
- +				#clock-cells =3D <1>;
- +				clocks =3D <&socplldiv2 0>;
- +				reg =3D <0x0 0x1f51c000 0x0 0x1000>;
- +				reg-names =3D "csr-reg";
- +				clock-output-names =3D "pcie4clk";
- +			};
- +		};
- +
- +		pcie0: pcie@1f2b0000 {
- +			status =3D "disabled";
- +			device_type =3D "pci";
- +			compatible =3D "apm,xgene-storm-pcie", "apm,xgene-pcie";
- +			#interrupt-cells =3D <1>;
- +			#size-cells =3D <2>;
- +			#address-cells =3D <3>;
- +			reg =3D < 0x00 0x1f2b0000 0x0 0x00010000   /* Controller registers */
- +				0xe0 0xd0000000 0x0 0x00040000>; /* PCI config space */
- +			reg-names =3D "csr", "cfg";
- +			ranges =3D <0x01000000 0x00 0x00000000 0xe0 0x10000000 0x00 0x00010000=
-   /* io */
- +				  0x02000000 0x00 0x80000000 0xe1 0x80000000 0x00 0x80000000>; /* mem=
- */
- +			dma-ranges =3D <0x42000000 0x80 0x00000000 0x80 0x00000000 0x00 0x8000=
-0000
- +				      0x42000000 0x00 0x00000000 0x00 0x00000000 0x80 0x00000000>;
- +			interrupt-map-mask =3D <0x0 0x0 0x0 0x7>;
- +			interrupt-map =3D <0x0 0x0 0x0 0x1 &gic 0x0 0xc2 0x1
- +					 0x0 0x0 0x0 0x2 &gic 0x0 0xc3 0x1
- +					 0x0 0x0 0x0 0x3 &gic 0x0 0xc4 0x1
- +					 0x0 0x0 0x0 0x4 &gic 0x0 0xc5 0x1>;
- +			dma-coherent;
- +			clocks =3D <&pcie0clk 0>;
- +		};
- +
- +		pcie1: pcie@1f2c0000 {
- +			status =3D "disabled";
- +			device_type =3D "pci";
- +			compatible =3D "apm,xgene-storm-pcie", "apm,xgene-pcie";
- +			#interrupt-cells =3D <1>;
- +			#size-cells =3D <2>;
- +			#address-cells =3D <3>;
- +			reg =3D < 0x00 0x1f2c0000 0x0 0x00010000   /* Controller registers */
- +				0xd0 0xd0000000 0x0 0x00040000>; /* PCI config space */
- +			reg-names =3D "csr", "cfg";
- +			ranges =3D <0x01000000 0x0 0x00000000 0xd0 0x10000000 0x00 0x00010000 =
-  /* io  */
- +				  0x02000000 0x0 0x80000000 0xd1 0x80000000 0x00 0x80000000>; /* mem =
-*/
- +			dma-ranges =3D <0x42000000 0x80 0x00000000 0x80 0x00000000 0x00 0x8000=
-0000
- +				      0x42000000 0x00 0x00000000 0x00 0x00000000 0x80 0x00000000>;
- +			interrupt-map-mask =3D <0x0 0x0 0x0 0x7>;
- +			interrupt-map =3D <0x0 0x0 0x0 0x1 &gic 0x0 0xc8 0x1
- +					 0x0 0x0 0x0 0x2 &gic 0x0 0xc9 0x1
- +					 0x0 0x0 0x0 0x3 &gic 0x0 0xca 0x1
- +					 0x0 0x0 0x0 0x4 &gic 0x0 0xcb 0x1>;
- +			dma-coherent;
- +			clocks =3D <&pcie1clk 0>;
- +		};
- +
- +		pcie2: pcie@1f2d0000 {
- +			status =3D "disabled";
- +			device_type =3D "pci";
- +			compatible =3D "apm,xgene-storm-pcie", "apm,xgene-pcie";
- +			#interrupt-cells =3D <1>;
- +			#size-cells =3D <2>;
- +			#address-cells =3D <3>;
- +			reg =3D  < 0x00 0x1f2d0000 0x0 0x00010000   /* Controller registers */
- +				 0x90 0xd0000000 0x0 0x00040000>; /* PCI config space */
- +			reg-names =3D "csr", "cfg";
- +			ranges =3D <0x01000000 0x0 0x00000000 0x90 0x10000000 0x0 0x00010000  =
- /* io  */
- +				  0x02000000 0x0 0x80000000 0x91 0x80000000 0x0 0x80000000>; /* mem */
- +			dma-ranges =3D <0x42000000 0x80 0x00000000 0x80 0x00000000 0x00 0x8000=
-0000
- +				      0x42000000 0x00 0x00000000 0x00 0x00000000 0x80 0x00000000>;
- +			interrupt-map-mask =3D <0x0 0x0 0x0 0x7>;
- +			interrupt-map =3D <0x0 0x0 0x0 0x1 &gic 0x0 0xce 0x1
- +					 0x0 0x0 0x0 0x2 &gic 0x0 0xcf 0x1
- +					 0x0 0x0 0x0 0x3 &gic 0x0 0xd0 0x1
- +					 0x0 0x0 0x0 0x4 &gic 0x0 0xd1 0x1>;
- +			dma-coherent;
- +			clocks =3D <&pcie2clk 0>;
- +		};
- +
- +		pcie3: pcie@1f500000 {
- +			status =3D "disabled";
- +			device_type =3D "pci";
- +			compatible =3D "apm,xgene-storm-pcie", "apm,xgene-pcie";
- +			#interrupt-cells =3D <1>;
- +			#size-cells =3D <2>;
- +			#address-cells =3D <3>;
- +			reg =3D < 0x00 0x1f500000 0x0 0x00010000   /* Controller registers */
- +				0xa0 0xd0000000 0x0 0x00040000>; /* PCI config space */
- +			reg-names =3D "csr", "cfg";
- +			ranges =3D <0x01000000 0x0 0x00000000 0xa0 0x10000000 0x0 0x00010000  =
- /* io   */
- +				  0x02000000 0x0 0x80000000 0xa1 0x80000000 0x0 0x80000000>; /* mem  =
-*/
- +			dma-ranges =3D <0x42000000 0x80 0x00000000 0x80 0x00000000 0x00 0x8000=
-0000
- +				      0x42000000 0x00 0x00000000 0x00 0x00000000 0x80 0x00000000>;
- +			interrupt-map-mask =3D <0x0 0x0 0x0 0x7>;
- +			interrupt-map =3D <0x0 0x0 0x0 0x1 &gic 0x0 0xd4 0x1
- +					 0x0 0x0 0x0 0x2 &gic 0x0 0xd5 0x1
- +					 0x0 0x0 0x0 0x3 &gic 0x0 0xd6 0x1
- +					 0x0 0x0 0x0 0x4 &gic 0x0 0xd7 0x1>;
- +			dma-coherent;
- +			clocks =3D <&pcie3clk 0>;
- +		};
- +
- +		pcie4: pcie@1f510000 {
- +			status =3D "disabled";
- +			device_type =3D "pci";
- +			compatible =3D "apm,xgene-storm-pcie", "apm,xgene-pcie";
- +			#interrupt-cells =3D <1>;
- +			#size-cells =3D <2>;
- +			#address-cells =3D <3>;
- +			reg =3D < 0x00 0x1f510000 0x0 0x00010000   /* Controller registers */
- +				0xc0 0xd0000000 0x0 0x00200000>; /* PCI config space */
- +			reg-names =3D "csr", "cfg";
- +			ranges =3D <0x01000000 0x0 0x00000000 0xc0 0x10000000 0x0 0x00010000  =
- /* io  */
- +				  0x02000000 0x0 0x80000000 0xc1 0x80000000 0x0 0x80000000>; /* mem */
- +			dma-ranges =3D <0x42000000 0x80 0x00000000 0x80 0x00000000 0x00 0x8000=
-0000
- +				      0x42000000 0x00 0x00000000 0x00 0x00000000 0x80 0x00000000>;
- +			interrupt-map-mask =3D <0x0 0x0 0x0 0x7>;
- +			interrupt-map =3D <0x0 0x0 0x0 0x1 &gic 0x0 0xda 0x1
- +					 0x0 0x0 0x0 0x2 &gic 0x0 0xdb 0x1
- +					 0x0 0x0 0x0 0x3 &gic 0x0 0xdc 0x1
- +					 0x0 0x0 0x0 0x4 &gic 0x0 0xdd 0x1>;
- +			dma-coherent;
- +			clocks =3D <&pcie4clk 0>;
-  		};
- =20
-  		serial0: serial@1c020000 {
+because we depend on ACPI_VIDEO when ACPI is enabled, originally done in
 
---Sig_/Nb5t_uRT+n03JH575uBFZE0
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+commit ecb4aed78dcf09e48c8c34c8c2fa7f5c69344be6
+Author: Len Brown <len.brown@intel.com>
+Date:   Fri Apr 24 11:33:47 2009 -0400
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+    ACPI, i915: build fix
 
-iQIcBAEBCAAGBQJULNdtAAoJEMDTa8Ir7ZwVgGoP/2JgYHCYkrXFICTO10ZF0lDh
-Fog9NzOdmGB+Ijo9Bx2QmUXLiBgZH83zUouNcoK5t7R6a76/r5emkzF4kFXS7vwh
-r3iC1aK7dL5M4ErJfZdc+1onue5V/DcqlGwCavQ2+PWu9P+Ho6vsXHlhB6tQoP5S
-VPQjVtsW5HQbmFUcsMdgF06U2/msVE/WIiCuiPXXqJbIBGmRyNaV5ek0igrv+lfb
-xc1gvKiIoI1GU4fO2j5QxaMH1HQfxx51ShtrU+See4zGW8pHPrzSQdyrxJz+GbMI
-kUNgc+Nokrtp0yv74IG0ZcNN79uz/S7dC1WOdRLJTEpP8QdXL+3YpEns0PIGg9tz
-m0v1upTQOO+XY200J8LypwBikmC2OH64UtBp/6L1W6klZKgDfCF3eWD5bwcvn4Nq
-pICoXe1w01yEaD145yMI2XPwYt0FET/zIIAjSvZMxYJLPo2tjNu3sFiddz6tgDmt
-LsqqrfulTEMPoMeRzn2/MSlelK8GKHccYDQu1+cJ9ehC8N5tW/vFm86wwkFspZq8
-lrAeIzuOJZyX2hjubDBXuFls33+TWkPcUmruds+VpIT06+Ba4VpKKvmaHjoXPIxe
-rAyA0y1rKxeXjQhqUoB6uKIKWWqRPTa7vT8BZX5v6dvMPW8SxtKvMH9wtaJX8nG0
-Yy9Rj9Nhn6BoTAfFXbDl
-=1djS
------END PGP SIGNATURE-----
+Now, trying to fix that with what seems to me like the obvious
+dependency, conveying what we really want
 
---Sig_/Nb5t_uRT+n03JH575uBFZE0--
+diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+index 4e39ab34eb1c..f5a1ee37603e 100644
+--- a/drivers/gpu/drm/i915/Kconfig
++++ b/drivers/gpu/drm/i915/Kconfig
+@@ -3,6 +3,7 @@ config DRM_I915
+ 	depends on DRM
+ 	depends on X86 && PCI
+ 	depends on (AGP || AGP=n)
++	depends on ((ACPI && ACPI_VIDEO) || ACPI=n)
+ 	select INTEL_GTT
+ 	select AGP_INTEL if AGP
+ 	select INTERVAL_TREE
+@@ -11,13 +12,6 @@ config DRM_I915
+ 	select SHMEM
+ 	select TMPFS
+ 	select DRM_KMS_HELPER
+-	# i915 depends on ACPI_VIDEO when ACPI is enabled
+-	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
+-	select BACKLIGHT_LCD_SUPPORT if ACPI
+-	select BACKLIGHT_CLASS_DEVICE if ACPI
+-	select INPUT if ACPI
+-	select ACPI_VIDEO if ACPI
+-	select ACPI_BUTTON if ACPI
+ 	help
+ 	  Choose this option if you have a system that has "Intel Graphics
+ 	  Media Accelerator" or "HD Graphics" integrated graphics,
+
+leads to more fun
+
+scripts/kconfig/conf --olddefconfig Kconfig
+drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:34:	symbol DRM_KMS_FB_HELPER is selected by DRM_I915_FBDEV
+drivers/gpu/drm/i915/Kconfig:40:	symbol DRM_I915_FBDEV depends on DRM_I915
+drivers/gpu/drm/i915/Kconfig:1:	symbol DRM_I915 depends on ACPI_VIDEO
+drivers/acpi/Kconfig:130:	symbol ACPI_VIDEO is selected by BACKLIGHT_CLASS_DEVICE
+drivers/video/backlight/Kconfig:156:	symbol BACKLIGHT_CLASS_DEVICE is selected by FB_BACKLIGHT
+drivers/video/fbdev/Kconfig:188:	symbol FB_BACKLIGHT is selected by PMAC_BACKLIGHT
+drivers/macintosh/Kconfig:135:	symbol PMAC_BACKLIGHT depends on FB
+
+and the rabbit hole gets deeper than I thought. I guess it always does.
+
+At this point the question is whether "depends on ((ACPI && ACPI_VIDEO)
+|| ACPI=n)" is worth pursuing and makes more sense than the "select foo
+if ACPI" lines, or do we need to build hacks upon hacks to get this
+fixed.
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
