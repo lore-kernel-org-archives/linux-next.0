@@ -1,146 +1,29 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: randconfig build error with next-20141001,
-	in drivers/gpu/drm/i915
-Date: Thu, 02 Oct 2014 09:56:27 -0700
-Message-ID: <542D83BB.9060104@infradead.org>
-References: <CA+r1ZhhmT4DrWtf6MbRQo5EqXwx+LxCqh15Vsu_d9WpftLhnxw@mail.gmail.com>
- <87fvf73c6g.fsf@intel.com> <542C46B3.2020901@infradead.org>
- <87eguq6hhv.fsf@intel.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 02 Oct 2014 11:27:08 -0700 (PDT)
+Message-ID: <20141002.112708.1359594783225203915.davem@davemloft.net>
+References: <20141002141641.0e43a18e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <87eguq6hhv.fsf@intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>, daniel.vetter@intel.com, intel-gfx@lists.freedesktop.org, dri-devel <dri-devel@lists.freedesktop.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141002141641.0e43a18e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hayeswang@realtek.com
 List-Id: linux-next.vger.kernel.org
 
-On 10/02/14 00:46, Jani Nikula wrote:
-> On Wed, 01 Oct 2014, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 10/01/14 10:57, Jani Nikula wrote:
->>> On Wed, 01 Oct 2014, Jim Davis <jim.epost@gmail.com> wrote:
->>>> Building with the attached random configuration file,
->>>>
->>>> warning: (VIDEO_TIMBERDALE) selects TIMB_DMA which has unmet direct
->>>> dependencies (DMADEVICES && MFD_TIMBERDALE)
->>>> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
->>>> which has unmet direct dependencies (USB_SUPPORT && USB && PM_RUNTIME)
->>>>
->>>> drivers/built-in.o: In function `intel_panel_setup_backlight':
->>>> (.text+0x11855d): undefined reference to `backlight_device_register'
->>>> drivers/built-in.o: In function `intel_panel_destroy_backlight':
->>>> (.text+0x118624): undefined reference to `backlight_device_unregister'
->>>> make: *** [vmlinux] Error 1
->>>
->>> It's the combination:
->>>
->>>> CONFIG_DRM_I915=y
->>>> CONFIG_BACKLIGHT_CLASS_DEVICE=m
->>>
->>> Not sure what the Kconfig magic spell needs to be when we don't want to
->>> depend on CONFIG_BACKLIGHT_CLASS_DEVICE but we'll use it if it's enabled
->>> (y or m).
->>
->> Something like:
->>
->> 	depends on BACKLIGHT_CLASS_DEVICE || BACKLIGHT_CLASS_DEVICE=n
->>
->> is what we usually use.
-> 
-> Oh boy this gets ugly. Trying
-> 
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index 4e39ab34eb1c..daa453c62aa6 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -3,6 +3,7 @@ config DRM_I915
->  	depends on DRM
->  	depends on X86 && PCI
->  	depends on (AGP || AGP=n)
-> +	depends on (BACKLIGHT_CLASS_DEVICE || BACKLIGHT_CLASS_DEVICE=n)
->  	select INTEL_GTT
->  	select AGP_INTEL if AGP
->  	select INTERVAL_TREE
-> 
-> leads to
-> 
-> scripts/kconfig/conf --olddefconfig Kconfig
-> drivers/gpu/drm/i915/Kconfig:1:error: recursive dependency detected!
-> drivers/gpu/drm/i915/Kconfig:1:	symbol DRM_I915 depends on BACKLIGHT_CLASS_DEVICE
-> drivers/video/backlight/Kconfig:156:	symbol BACKLIGHT_CLASS_DEVICE is selected by DRM_I915
-> 
-> because we depend on ACPI_VIDEO when ACPI is enabled, originally done in
-> 
-> commit ecb4aed78dcf09e48c8c34c8c2fa7f5c69344be6
-> Author: Len Brown <len.brown@intel.com>
-> Date:   Fri Apr 24 11:33:47 2009 -0400
-> 
->     ACPI, i915: build fix
-> 
-> Now, trying to fix that with what seems to me like the obvious
-> dependency, conveying what we really want
-> 
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index 4e39ab34eb1c..f5a1ee37603e 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -3,6 +3,7 @@ config DRM_I915
->  	depends on DRM
->  	depends on X86 && PCI
->  	depends on (AGP || AGP=n)
-> +	depends on ((ACPI && ACPI_VIDEO) || ACPI=n)
->  	select INTEL_GTT
->  	select AGP_INTEL if AGP
->  	select INTERVAL_TREE
-> @@ -11,13 +12,6 @@ config DRM_I915
->  	select SHMEM
->  	select TMPFS
->  	select DRM_KMS_HELPER
-> -	# i915 depends on ACPI_VIDEO when ACPI is enabled
-> -	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
-> -	select BACKLIGHT_LCD_SUPPORT if ACPI
-> -	select BACKLIGHT_CLASS_DEVICE if ACPI
-> -	select INPUT if ACPI
-> -	select ACPI_VIDEO if ACPI
-> -	select ACPI_BUTTON if ACPI
->  	help
->  	  Choose this option if you have a system that has "Intel Graphics
->  	  Media Accelerator" or "HD Graphics" integrated graphics,
-> 
-> leads to more fun
-> 
-> scripts/kconfig/conf --olddefconfig Kconfig
-> drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
-> drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
-> drivers/gpu/drm/Kconfig:34:	symbol DRM_KMS_FB_HELPER is selected by DRM_I915_FBDEV
-> drivers/gpu/drm/i915/Kconfig:40:	symbol DRM_I915_FBDEV depends on DRM_I915
-> drivers/gpu/drm/i915/Kconfig:1:	symbol DRM_I915 depends on ACPI_VIDEO
-> drivers/acpi/Kconfig:130:	symbol ACPI_VIDEO is selected by BACKLIGHT_CLASS_DEVICE
-> drivers/video/backlight/Kconfig:156:	symbol BACKLIGHT_CLASS_DEVICE is selected by FB_BACKLIGHT
-> drivers/video/fbdev/Kconfig:188:	symbol FB_BACKLIGHT is selected by PMAC_BACKLIGHT
-> drivers/macintosh/Kconfig:135:	symbol PMAC_BACKLIGHT depends on FB
-> 
-> and the rabbit hole gets deeper than I thought. I guess it always does.
-> 
-> At this point the question is whether "depends on ((ACPI && ACPI_VIDEO)
-> || ACPI=n)" is worth pursuing and makes more sense than the "select foo
-> if ACPI" lines, or do we need to build hacks upon hacks to get this
-> fixed.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 2 Oct 2014 14:16:41 +1000
 
-I certainly prefer the depends that you added to all of those selects.
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/usb/r8152.c between commit 204c87041289 ("r8152: remove
+> clearing bp") from the net tree and commit 8ddfa07778af ("r8152: use
+> usleep_range") from the net-next tree.
+> 
+> I fixed it up (the former removed some of the code updated by the
+> latter) and can carry the fix as necessary (no action is required).
 
-I'm afraid that I can't help you much here other than to say that if you
-can express the driver needs with depends instead of select, you should
-come out ahead by removing some of the depth of the rabbit hole.
+I'm merging net into net-next today and thus resolving this.
 
-
--- 
-~Randy
+Thanks Stephen!
