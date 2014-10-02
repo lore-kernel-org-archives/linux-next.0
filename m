@@ -1,79 +1,58 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Oct 1
-Date: Wed, 1 Oct 2014 20:59:24 -0700
-Message-ID: <20141002035924.GA18144@roeck-us.net>
-References: <20141001175411.00be9683@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 2 Oct 2014 14:16:41 +1000
+Message-ID: <20141002141641.0e43a18e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141001175411.00be9683@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/E3brFBiNUF194zD6TFlN5BC"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:49184 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750992AbaJBEQu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Oct 2014 00:16:50 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hayeswang <hayeswang@realtek.com>
 
-On Wed, Oct 01, 2014 at 05:54:11PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20140930:
-> 
-> The arm-soc tree still had its build failure for which I reverted
-> 5 commits.
-> 
-> The net-next tree gained a conflict against the berlin tree, lost
-> its build failure but gained another for which I applied a patch.
-> 
-> The vfio tree gained a conflict against the pci tree.
-> 
-> The tty tree lost its build failure.
-> 
-> The staging tree still had its build failure for which I reverted
-> a commit.
-> 
-> The gpio tree gained conflicts against Linus' tree and the pinctrl tree.
-> 
-> The akpm tree lost a patch that turned up elsewhere.
-> 
-> Non-merge commits (relative to Linus' tree): 8953
->  7726 files changed, 354879 insertions(+), 267353 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-Building arm:cm_x2xx_defconfig ... failed
+--Sig_/E3brFBiNUF194zD6TFlN5BC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/built-in.o: In function `clk_set_rate':
-:(.text+0xdef44): multiple definition of `clk_set_rate'
-arch/arm/mach-pxa/built-in.o::(.text+0xf78): first defined here
-drivers/built-in.o:(___ksymtab_gpl+clk_disable+0x0): multiple definition of
-`__ksymtab_clk_disable'
-arch/arm/mach-pxa/built-in.o:(___ksymtab+clk_disable+0x0): first defined here
-drivers/built-in.o: In function `clk_disable':
-:(.text+0xddf30): multiple definition of `clk_disable'
-arch/arm/mach-pxa/built-in.o::(.text+0xfbc): first defined here
+Hi all,
 
-[and more]
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/usb/r8152.c between commit 204c87041289 ("r8152: remove
+clearing bp") from the net tree and commit 8ddfa07778af ("r8152: use
+usleep_range") from the net-next tree.
 
----
-Building m68k:allmodconfig ... failed
+I fixed it up (the former removed some of the code updated by the
+latter) and can carry the fix as necessary (no action is required).
 
-drivers/media/rc/ir-hix5hd2.c: In function 'hix5hd2_ir_config':
-drivers/media/rc/ir-hix5hd2.c:100:2: error: implicit declaration of function 'readl_relaxed'
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
----
-Building mn10300:asb2303_defconfig ... failed
-Building um:defconfig ... failed
+--Sig_/E3brFBiNUF194zD6TFlN5BC
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-In file included from drivers/base/platform.c:24:0:
-include/linux/pm_domain.h:74:23: error: expected identifier or '(' before '&' token
-make[2]: *** [drivers/base/platform.o] Error 1
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
----
-Building sparc64:allmodconfig ... failed
+iQIcBAEBCAAGBQJULNGuAAoJEMDTa8Ir7ZwVOHgQAIaqqqtMDhVhBSal1iB+5d/3
+MpaLGNiWn6wzr0h1T4VGeKrtyudGm7QnTOebtO5+j+kOa7XYNsz6B0PrIB34f+ai
+lrioB/X3rkT7JbL/8VEWhn6Tc2ORSh92YIh5r8VJShkvMt8qOxBMk4JyJJHTw7JY
+LHC7wxqzQBklC0iU6UFsFg5ocRgXqkCRAp6NXICp/n7LgZRByXg7HovFj/0qVyeX
+VA9kZFZtH0GhTZ/lOcrpJyd6oDXkMnoW8bRGZA3FWiZtBZtG2N7iGzzHUaciI088
+umthiPaq4FekHX23WLTuXv9QUxRr/lhoRWOpCr0x4mGz6Upz7sdWev0FPjS0y4dx
+LEpSB0o67gBVWbJ8AfNu0X6A5arlArIUL2ia9WIvyhFW0EswQ3Z95NCgPvwk7LBm
+dnq4z18OaKXTbKh3J0WSF9M+kIQrzErjxGyUYKNeWi3CqF4IBRGyqIMSaIzqkfHv
+NpDRDM0e1+o76BpQYaABduA8YPJ1mtpM2d1aZpjF7BI5LDlhzFfoOVirVKjTLtUW
+OGP+rln3vBxL9U+jh7nVP8MvFqd/htxdD8GICr+hmpTAxbh4sAzsJZBUa2tPh6qV
++vKMtu/P5al7Q9P5LRUspJSr15bmRbNZTsWKshidH7PJgftcdZimwWCAAYchhhWd
+1HTJfJntUZwstgX+OsFm
+=JXs1
+-----END PGP SIGNATURE-----
 
-drivers/bcma/main.c: In function 'bcma_of_find_child_device':
-drivers/bcma/main.c:150:3: error: implicit declaration of function 'of_translate_address'
-
----
-
-Guenter
+--Sig_/E3brFBiNUF194zD6TFlN5BC--
