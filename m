@@ -1,68 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the akpm-current tree
-Date: Fri, 3 Oct 2014 17:30:04 +1000
-Message-ID: <20141003173004.7ac4edce@canb.auug.org.au>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Fri, 3 Oct 2014 08:56:23 +0100
+Message-ID: <20141003075623.GU5182@n2100.arm.linux.org.uk>
+References: <20141002113742.2b521495@canb.auug.org.au> <14357384.nIoLZkacVq@wuerfel> <542E4721.8040300@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5miqDsxQp2pRr5vKXDL+Eey"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39251 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750814AbaJCHaM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Oct 2014 03:30:12 -0400
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:51761 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750823AbaJCH4s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Oct 2014 03:56:48 -0400
+Content-Disposition: inline
+In-Reply-To: <542E4721.8040300@collabora.co.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Michal Nazarewicz <mina86@mina86.com>, Grant Likely <grant.likely@linaro.org>, Laura Abbott <lauraa@codeaurora.org>, Josh Cartwright <joshc@codeaurora.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/5miqDsxQp2pRr5vKXDL+Eey
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 03, 2014 at 08:50:09AM +0200, Javier Martinez Canillas wrote:
+> Hello Arnd, Stephen,
+> 
+> I'm so sorry about the breakage, when I posted this patch I mentioned that
+> it was meant for the 3.18-rc cycle once 3.18-rc1 was released [0]. Because
+> it fixes a regression caused by a patch queued in the clock tree for 3.18.
+> I should had been more explicit about the dependencies to avoid confusions.
 
-Hi Andrew,
+If a patch is known to cause a regression, it shouldn't be going in during
+the merge window _or_ the fix patch should also go in during the merge
+window via the same route to resolve the regression before it's noticable.
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) produced these warnings:
+Given the number of changes which go in during the merge window, waiting
+for -rc to fix a known bug *before* the merge window is not on - it breaks
+the ability to bisect during the period where bisect really is needed.
 
-drivers/base/dma-contiguous.c:244:2: warning: initialization from incompati=
-ble pointer type
-  .device_init =3D rmem_cma_device_init,
-  ^
-drivers/base/dma-contiguous.c:244:2: warning: (near initialization for 'rme=
-m_cma_ops.device_init')
-drivers/base/dma-coherent.c:303:2: warning: initialization from incompatibl=
-e pointer type
-  .device_init =3D rmem_dma_device_init,
-  ^
-
-Introduced by commit e92f6296f3a2 ("drivers: dma-coherent: add
-initialization from device tree").  This init routine is supposed to
-return void ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/5miqDsxQp2pRr5vKXDL+Eey
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJULlCBAAoJEMDTa8Ir7ZwVmjcP/ivoW8UvsDXtfaF3dJTmUu71
-zgGB4qTWk8XVf9jZEty9+t5lmxmH8/9wcmr7IdYi879EWBuB0fkWb70nYRvEQy1v
-fJ6zZWh2YyIb2wf4gDLE+PqSx1iF8EPxBA49ybwg0S/ljc6c9QUAx2mU4lJ7ujkr
-byk+f+mGQzNuNC9cJ3DPnAtMGgFZH6ceDUk1FU+1jVKCvPIDiKeNv96afzIrV5F9
-13qtXrck+0Ptu86fSEHNsgQk6h5Pu55TMeOsgbFK1ouueFUKd/Lcv5I/A4vmLr+t
-mwfadp4z7vZF3SizFsiLYOLRJSfigRrAf1ZfKXTjiNk6Li5WBRjyrqnGevFutafa
-kZtIRWuc5PkOKX3QK2gEK7OsUV96y226N5n7r4NnSfKfvEUwidLdme8xOsJf2rbD
-YLq8027lws9f/uoYiEd6PJJ8k/8WyEgns0POliPWkI/K8rUphQbOSBNGjibqeV+A
-kYaeih4Vj7RWfCkM7pvR+pZIUSRyOWZduIcWFxF+iW06+Jb1ci855pjQXWmHcGpC
-k0AodJEF9ijqCyntmnvjPa4DNYDk/2JldRG0fRfNdmMw29iDZ7J8ZBj8/v1a3ioN
-IEEO6ofdsFd88IeC1vbPu0vaGiWloHO/FYgY2JYvxYqWY3YwDuirLSK8yFHDPGnA
-f22DMADSPMuJTbm0leyF
-=2Zeh
------END PGP SIGNATURE-----
-
---Sig_/5miqDsxQp2pRr5vKXDL+Eey--
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
