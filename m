@@ -1,105 +1,90 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2014-10-02-16-22 uploaded
-Date: Thu, 2 Oct 2014 22:49:23 -0700
-Message-ID: <20141003054923.GA13328@roeck-us.net>
-References: <542dde4c.uoQAbw1Ng2akSWKx%akpm@linux-foundation.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Fri, 03 Oct 2014 08:50:09 +0200
+Message-ID: <542E4721.8040300@collabora.co.uk>
+References: <20141002113742.2b521495@canb.auug.org.au> <14357384.nIoLZkacVq@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <542dde4c.uoQAbw1Ng2akSWKx%akpm@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:50611 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731AbaJCGuT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Oct 2014 02:50:19 -0400
+In-Reply-To: <14357384.nIoLZkacVq@wuerfel>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 02, 2014 at 04:22:52PM -0700, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2014-10-02-16-22 has been uploaded to
+Hello Arnd, Stephen,
+
+On 10/02/2014 04:32 PM, Arnd Bergmann wrote:
+> On Thursday 02 October 2014 11:37:42 Stephen Rothwell wrote:
+>> After merging the arm-soc tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>> 
+>> arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock/maxim,max77686.h: No such file or directory
+>>  #include <dt-bindings/clock/maxim,max77686.h>
+>>                                               ^
+>> 
+>> Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc
+>> on exynos5250-snow").
+>> 
+>> Presumably there is some dependency on some tree that someone has
+>> forgotten to merge 
+>> 
+>> I reverted that commit for today.
+>> 
+>> Which then got to:
+>> 
+>> /scratch/sfr/next/arch/arm/boot/dts/exynos5420-peach-pit.dts:15:46: fatal error: dt-bindings/clock/maxim,max77802.h: No such file or directory
+>>  #include <dt-bindings/clock/maxim,max77802.h>
+>>                                               ^
+>> compilation terminated.
+>> /scratch/sfr/next/arch/arm/boot/dts/exynos5800-peach-pi.dts:15:46: fatal error: dt-bindings/clock/maxim,max77802.h: No such file or directory
+>>  #include <dt-bindings/clock/maxim,max77802.h>
+>>                                               ^
+>> compilation terminated.
+>> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:417.21-22 syntax error
+>> FATAL ERROR: Unable to parse input tree
+>> 
+>> Caused by 8bd43b6e6df7 ("ARM: dts: Add rtc_src clk for s3c-rtc on
+>> exynos Peach boards").
+>> 
+>> I give up ... please test your trees better ...
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
+> I'm deeply sorry about that. I actually saw the problem here but was too
+> tired to fix it up again by redoing all the merges in our next/late
+> branch.
 > 
-> mmotm-readme.txt says
+
+I'm so sorry about the breakage, when I posted this patch I mentioned that
+it was meant for the 3.18-rc cycle once 3.18-rc1 was released [0]. Because
+it fixes a regression caused by a patch queued in the clock tree for 3.18.
+I should had been more explicit about the dependencies to avoid confusions.
+
+> I've changed the for-next branch now to drop all of next/late, I think
+> we're better off not sending any of it for 3.18, especially as I found
+> some other problems as well.
 > 
-> README for mm-of-the-moment:
+
+Do you think that it may be possible to send this for the 3.18-rc cycle
+or should it have to wait for 3.19? Without this the real time clock does
+not work on the Peach Chromebooks and your next/late branch contains other
+fixes as well (e.g: the Exynos USB dr_mode DT patches).
+
+>> I have used the arm-soc tree form next-20141001 for today (which still
+>> needs 5 reverts to get it to build :-().
 > 
-> http://www.ozlabs.org/~akpm/mmotm/
+> D'oh. I actually fixed these already last friday in the next/dt branch
+> but for some reason forgot to include it in for-next.
+> I've made sure that everything is included now.
 > 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-Build summary:
-	total: 133 pass: 127 fail: 6
-Failed builds:
-	arm:cm_x2xx_defconfig
-	avr32:defconfig
-	m68k:allmodconfig
-	mn10300:asb2303_defconfig
-	sparc64:allmodconfig
-	um:defconfig
+> 	Arnd
+>
 
-Qemu tests:
-	total: 26 pass: 26 fail: 0
+Thanks a lot and best regards,
+Javier
 
----
-avr32:defconfig has a new build failure.
-
-drivers/input/leds.o: In function `init_module':
-leds.c:(.init.text+0x0): multiple definition of `init_module'
-drivers/input/input.o:input.c:(.init.text+0x0): first defined here
-drivers/input/leds.o: In function `cleanup_module':
-leds.c:(.exit.text+0x0): multiple definition of `cleanup_module'
-drivers/input/input.o:input.c:(.exit.text+0x0): first defined here
-make[2]: *** [drivers/input/input-core.o] Error 1
-
----
-powerpc qemu tests create a number of tracebacks, all similar to the following.
-
-------------[ cut here ]------------
-WARNING: at kernel/workqueue.c:1360
-Modules linked in:
-CPU: 0 PID: 32 Comm: kadbprobe Not tainted 3.17.0-rc7-mm1-yocto-standard+ #1
-task: c79f29a0 ti: c7ac2000 task.ti: c7ac2000
-NIP: c0045274 LR: c004533c CTR: c04af658
-REGS: c7ac3ae0 TRAP: 0700   Not tainted  (3.17.0-rc7-mm1-yocto-standard+)
-MSR: 00021032 <ME,IR,DR,RI>  CR: 82008082  XER: 00000000
-
-GPR00: c004533c c7ac3b90 c79f29a0 00000001 00000000 c099c140 00000000 c0900000 
-GPR08: 00000000 00000001 00000002 00000000 82008082 00000000 c004bdd8 c79d1a20 
-GPR16: 00000000 00000000 00000000 00000003 00000000 c79daa5c 00000001 c08e89e4 
-GPR24: c08e7fa4 00000000 c08f784c c7ac2000 c099c144 c781cc00 c0aab500 c099c140 
-NIP [c0045274] __queue_work+0xf8/0x3e8
-LR [c004533c] __queue_work+0x1c0/0x3e8
-Call Trace:
-[c7ac3b90] [c004533c] __queue_work+0x1c0/0x3e8 (unreliable)
-[c7ac3bc0] [c00455cc] queue_work_on+0x68/0x88
-[c7ac3bd0] [c05113dc] led_trigger_event+0x4c/0xa8
-[c7ac3bf0] [c0434660] kbd_ledstate_trigger_activate+0x7c/0xa4
-[c7ac3c00] [c0511594] led_trigger_set+0x15c/0x1dc
-[c7ac3c30] [c0511840] led_trigger_set_default+0x90/0xd4
-[c7ac3c50] [c0511004] led_classdev_register+0x108/0x12c
-[c7ac3c60] [c04af8fc] input_led_connect+0xd4/0x250
-[c7ac3ca0] [c04ac350] input_register_device+0x42c/0x4b4
-[c7ac3cc0] [c045ecac] adbhid_input_register+0x4e0/0x62c
-[c7ac3d00] [c045eea0] adbhid_input_reregister+0xa8/0xac
-[c7ac3d20] [c045efdc] adbhid_probe+0x138/0x4fc
-[c7ac3de0] [c045f860] adb_message_handler+0x30/0xec
-[c7ac3e00] [c004ceb8] notifier_call_chain+0x78/0xc0
-[c7ac3e20] [c004d424] __blocking_notifier_call_chain+0x5c/0x80
-[c7ac3e40] [c0460eb0] do_adb_reset_bus+0x11c/0x3c4
-[c7ac3ee0] [c0461180] adb_probe_task+0x28/0x58
-[c7ac3ef0] [c004bea0] kthread+0xc8/0xdc
-[c7ac3f40] [c00106fc] ret_from_kernel_thread+0x5c/0x64
-Instruction dump:
-419e019c 3f40c08f 3b5a784c 813a0018 2f890000 419d021c 813f0004 3b9f0004 
-7f894a78 7d290034 5529d97e 69290001 <0f090000> 2f890000 409e008c 80be0008 
----[ end trace 76dca08f6b486638 ]---
-
----
-
-Guenter
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+[0]: https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36702.html
