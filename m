@@ -1,90 +1,68 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Fri, 03 Oct 2014 08:50:09 +0200
-Message-ID: <542E4721.8040300@collabora.co.uk>
-References: <20141002113742.2b521495@canb.auug.org.au> <14357384.nIoLZkacVq@wuerfel>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the akpm-current tree
+Date: Fri, 3 Oct 2014 17:30:04 +1000
+Message-ID: <20141003173004.7ac4edce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5miqDsxQp2pRr5vKXDL+Eey"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:50611 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731AbaJCGuT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Oct 2014 02:50:19 -0400
-In-Reply-To: <14357384.nIoLZkacVq@wuerfel>
+Received: from ozlabs.org ([103.22.144.67]:39251 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750814AbaJCHaM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Oct 2014 03:30:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Michal Nazarewicz <mina86@mina86.com>, Grant Likely <grant.likely@linaro.org>, Laura Abbott <lauraa@codeaurora.org>, Josh Cartwright <joshc@codeaurora.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hello Arnd, Stephen,
+--Sig_/5miqDsxQp2pRr5vKXDL+Eey
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 10/02/2014 04:32 PM, Arnd Bergmann wrote:
-> On Thursday 02 October 2014 11:37:42 Stephen Rothwell wrote:
->> After merging the arm-soc tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->> 
->> arch/arm/boot/dts/exynos5250-snow.dts:13:46: fatal error: dt-bindings/clock/maxim,max77686.h: No such file or directory
->>  #include <dt-bindings/clock/maxim,max77686.h>
->>                                               ^
->> 
->> Caused by commit c04c92ed5614 ("ARM: dts: Add rtc_src clk for s3c-rtc
->> on exynos5250-snow").
->> 
->> Presumably there is some dependency on some tree that someone has
->> forgotten to merge 
->> 
->> I reverted that commit for today.
->> 
->> Which then got to:
->> 
->> /scratch/sfr/next/arch/arm/boot/dts/exynos5420-peach-pit.dts:15:46: fatal error: dt-bindings/clock/maxim,max77802.h: No such file or directory
->>  #include <dt-bindings/clock/maxim,max77802.h>
->>                                               ^
->> compilation terminated.
->> /scratch/sfr/next/arch/arm/boot/dts/exynos5800-peach-pi.dts:15:46: fatal error: dt-bindings/clock/maxim,max77802.h: No such file or directory
->>  #include <dt-bindings/clock/maxim,max77802.h>
->>                                               ^
->> compilation terminated.
->> Error: /scratch/sfr/next/arch/arm/boot/dts/hisi-x5hd2.dtsi:417.21-22 syntax error
->> FATAL ERROR: Unable to parse input tree
->> 
->> Caused by 8bd43b6e6df7 ("ARM: dts: Add rtc_src clk for s3c-rtc on
->> exynos Peach boards").
->> 
->> I give up ... please test your trees better ...
-> 
-> I'm deeply sorry about that. I actually saw the problem here but was too
-> tired to fix it up again by redoing all the merges in our next/late
-> branch.
-> 
+Hi Andrew,
 
-I'm so sorry about the breakage, when I posted this patch I mentioned that
-it was meant for the 3.18-rc cycle once 3.18-rc1 was released [0]. Because
-it fixes a regression caused by a patch queued in the clock tree for 3.18.
-I should had been more explicit about the dependencies to avoid confusions.
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) produced these warnings:
 
-> I've changed the for-next branch now to drop all of next/late, I think
-> we're better off not sending any of it for 3.18, especially as I found
-> some other problems as well.
-> 
+drivers/base/dma-contiguous.c:244:2: warning: initialization from incompati=
+ble pointer type
+  .device_init =3D rmem_cma_device_init,
+  ^
+drivers/base/dma-contiguous.c:244:2: warning: (near initialization for 'rme=
+m_cma_ops.device_init')
+drivers/base/dma-coherent.c:303:2: warning: initialization from incompatibl=
+e pointer type
+  .device_init =3D rmem_dma_device_init,
+  ^
 
-Do you think that it may be possible to send this for the 3.18-rc cycle
-or should it have to wait for 3.19? Without this the real time clock does
-not work on the Peach Chromebooks and your next/late branch contains other
-fixes as well (e.g: the Exynos USB dr_mode DT patches).
+Introduced by commit e92f6296f3a2 ("drivers: dma-coherent: add
+initialization from device tree").  This init routine is supposed to
+return void ...
 
->> I have used the arm-soc tree form next-20141001 for today (which still
->> needs 5 reverts to get it to build :-().
-> 
-> D'oh. I actually fixed these already last friday in the next/dt branch
-> but for some reason forgot to include it in for-next.
-> I've made sure that everything is included now.
-> 
-> 	Arnd
->
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks a lot and best regards,
-Javier
+--Sig_/5miqDsxQp2pRr5vKXDL+Eey
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-[0]: https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36702.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJULlCBAAoJEMDTa8Ir7ZwVmjcP/ivoW8UvsDXtfaF3dJTmUu71
+zgGB4qTWk8XVf9jZEty9+t5lmxmH8/9wcmr7IdYi879EWBuB0fkWb70nYRvEQy1v
+fJ6zZWh2YyIb2wf4gDLE+PqSx1iF8EPxBA49ybwg0S/ljc6c9QUAx2mU4lJ7ujkr
+byk+f+mGQzNuNC9cJ3DPnAtMGgFZH6ceDUk1FU+1jVKCvPIDiKeNv96afzIrV5F9
+13qtXrck+0Ptu86fSEHNsgQk6h5Pu55TMeOsgbFK1ouueFUKd/Lcv5I/A4vmLr+t
+mwfadp4z7vZF3SizFsiLYOLRJSfigRrAf1ZfKXTjiNk6Li5WBRjyrqnGevFutafa
+kZtIRWuc5PkOKX3QK2gEK7OsUV96y226N5n7r4NnSfKfvEUwidLdme8xOsJf2rbD
+YLq8027lws9f/uoYiEd6PJJ8k/8WyEgns0POliPWkI/K8rUphQbOSBNGjibqeV+A
+kYaeih4Vj7RWfCkM7pvR+pZIUSRyOWZduIcWFxF+iW06+Jb1ci855pjQXWmHcGpC
+k0AodJEF9ijqCyntmnvjPa4DNYDk/2JldRG0fRfNdmMw29iDZ7J8ZBj8/v1a3ioN
+IEEO6ofdsFd88IeC1vbPu0vaGiWloHO/FYgY2JYvxYqWY3YwDuirLSK8yFHDPGnA
+f22DMADSPMuJTbm0leyF
+=2Zeh
+-----END PGP SIGNATURE-----
+
+--Sig_/5miqDsxQp2pRr5vKXDL+Eey--
