@@ -1,85 +1,82 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: randconfig build error with next-20141001, in drivers/i2c/algos/i2c-algo-bit.c
-Date: Mon, 06 Oct 2014 11:09:44 -0700
-Message-ID: <5432DAE8.5030509@infradead.org>
-References: <CA+r1ZhiL1y9aeLeJjpd_1DtzOG_oyoPg7XsTPJ9G-XY5G2DfCQ@mail.gmail.com> <542C8D93.8090008@infradead.org> <54324D68.6070309@hartkopp.net> <5432C8C6.7060506@infradead.org> <5432D3E6.9020805@hartkopp.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kbuild tree with the arm-soc tree
+Date: Tue, 7 Oct 2014 12:39:26 +1100
+Message-ID: <20141007123926.0e14810b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <5432D3E6.9020805@hartkopp.net>
-Sender: netdev-owner@vger.kernel.org
-To: Oliver Hartkopp <socketcan@hartkopp.net>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, Stephane Grosjean <s.grosjean@peak-system.com>, linux-i2c@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-can@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+W4x89nc9=D05=apSN6n0y+"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58455 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751213AbaJGBje (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Oct 2014 21:39:34 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michal Marek <mmarek@suse.cz>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.m@jp.panasonic.com>, Boris BREZILLON <boris.brezillon@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-On 10/06/14 10:39, Oliver Hartkopp wrote:
-> 
-> 
-> On 10/06/2014 06:52 PM, Randy Dunlap wrote:
->> On 10/06/14 01:06, Oliver Hartkopp wrote:
->>> Hello all,
->>>
->>> just to get it right:
->>>
->>> So far it looks like this in linux/drivers/net/can/sja1000/Kconfig
->>>
->>> config CAN_PEAK_PCIEC
->>>         bool "PEAK PCAN-ExpressCard Cards"
->>>         depends on CAN_PEAK_PCI
->>>         select I2C
->>>         select I2C_ALGOBIT
->>>
->>> If one would change the
->>>
->>>         select I2C
->>>
->>> into
->>>
->>>         depends on I2C
->>>
->>> IMHO the CAN_PEAK_PCIEC hardware would *only* be visible and selectable when
->>> I2C was selected before (from anyone else?).
->>
->> That is correct.
->>
->>> So what it wrong on the current Kconfig entry?
->>> Is 'select' deprecated?
->>
->> No, it's not deprecated.  It's just dangerous.  and driver configs should not
->> enable entire subsystems via 'select'.
->>
->>> Or did randconfig generate a configuration that would not be possible by
->>> properly generating the config file with 'make menuconfig' ??
->>
->> randconfig generated a config for another driver which causes a build error,
->> not for a CAN driver.  The CAN driver does not have a build error AFAIK.
->> Its Kconfig is just doing something with a very big & ugly stick.
-> 
-> But when it is not done like this, we might have an invisible config option in
-> the corner case that I2C is not enabled by anyone else.
-> 
-> So what would you propose then?
-> 
-> AFAICS there is 'just' a style problem as 'configs should not enable entire
-> subsystems'. But it finally is a correct and valid Kconfig, right?
+--Sig_/+W4x89nc9=D05=apSN6n0y+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, right.
+Hi Michal,
 
-> When I2C is already enabled - fine. If (unlikely) I2C is not enabled, we need
-> to pull the ugly stick. So what is dangerous on this? Was there any misuse of
-> select statements before?
+Today's linux-next merge of the kbuild tree got a conflict in
+arch/arm/mach-at91/Makefile between commit 91a55d4f6900 ("ARM: at91:
+introduce OLD_IRQ_AT91 Kconfig option") from the arm-soc tree and
+commit ac84eb47cc19 ("kbuild: remove unnecessary variable
+initializaions") from the kbuild tree.
 
-No syntactic misuse, more of a style thing, like you say.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-The danger is in select being a big stick that does not check for symbol
-dependencies.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-In the unlikely case that I2C is not enabled, the user should have to enable
-it instead of a solitary driver enabling it.  IOW, if a subsystem is disabled,
-the user probably wanted it that way and a single driver should not override
-that setting.
+diff --cc arch/arm/mach-at91/Makefile
+index ac99d87ffefe,75033839fc08..000000000000
+--- a/arch/arm/mach-at91/Makefile
++++ b/arch/arm/mach-at91/Makefile
+@@@ -2,13 -2,12 +2,10 @@@
+  # Makefile for the linux kernel.
+  #
+ =20
+ -obj-y		:=3D irq.o gpio.o setup.o sysirq_mask.o
+ +obj-y		:=3D gpio.o setup.o sysirq_mask.o
+- obj-m		:=3D
+- obj-n		:=3D
+- obj-		:=3D
+ =20
+ +obj-$(CONFIG_OLD_IRQ_AT91)	+=3D irq.o
+  obj-$(CONFIG_OLD_CLK_AT91)	+=3D clock.o
+ -obj-$(CONFIG_AT91_SAM9_ALT_RESET) +=3D at91sam9_alt_reset.o
+ -obj-$(CONFIG_AT91_SAM9G45_RESET) +=3D at91sam9g45_reset.o
+ -obj-$(CONFIG_AT91_SAM9_TIME)	+=3D at91sam926x_time.o
+  obj-$(CONFIG_SOC_AT91SAM9)	+=3D sam9_smc.o
+ =20
+  # CPU-specific support
 
+--Sig_/+W4x89nc9=D05=apSN6n0y+
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
--- 
-~Randy
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUM0RSAAoJEMDTa8Ir7ZwVYxkP/1MFmY9NknTqf2Tlcq4wkpbp
+YWgnWQN3Nq//1/hxiVvIuHIlNUJS308TEd3KI6lV7pls8cIWIny732EGZBYbJCxd
+A56KtkOSKA2lOqqIrmqWTbOh1RMkUFmi34Gj98XSt0HzL6HUPBEthc9BT/UfJ5PF
+hCyV8VuXERYlSUsfDyjZGY5nSphgP5uoX40ChWA9zYfpZEQe6TunlkzbXDBL5ozk
+ky5d4IGacHMSTpWw+kDOZRxVbWx+dfrn8U9mI7egQSDhWmzaoe5250R8g0jTOOVZ
+EkRjwauvBRbkeG7qA/NFIiGDB2fQnu9YDOWb1LxDjDoDUp27ESUCkdKpP+IV6qWx
+g0z2/l22v4zPXm5OcOak8SMnTybk+ZJpJmvVseKOKzO1GI6Z+ZZKKhk7AKIEajTq
+gH9DAw/q1xcsUxU8EmMmpYUJWmYrUcaVL5NynDhti32ObUMriNfha1dRiK+43tLr
+kheBGIurvdNukF4nXf5WHF4hqYnFimtG+oFtA/QkG7zeN5g+6Bv9W4QEu5LzAOOF
+lUd6a9j+GgdiTpKK3u1FjuU4/ipYl5TOtTzyjWOFtxbKluK1FzbiUiCA+jp1EQkp
+z/sQuMnLITfYrezB7TKI+kIKgRgu4M0Ih/OEHxWgA9w2r0NI6xr2fAg6nn06Zvd7
+Hjhwxs2hw4foLYq60lHF
+=CYoF
+-----END PGP SIGNATURE-----
+
+--Sig_/+W4x89nc9=D05=apSN6n0y+--
