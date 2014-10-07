@@ -1,61 +1,55 @@
-From: Andy Zhou <azhou@nicira.com>
-Subject: Re: [ovs-dev] linux-next: Tree for Oct 7 (openvswitch)
-Date: Tue, 7 Oct 2014 12:45:19 -0700
-Message-ID: <CACzMAJK+_GkDxSWpim764EafuDTgb3rAxNzMenNC1sP1wX7s9Q@mail.gmail.com>
-References: <20141007194454.10502188@canb.auug.org.au>
-	<54341BD7.3070207@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: error fetching the devicetree tree
+Date: Wed, 8 Oct 2014 09:48:58 +1100
+Message-ID: <20141008094858.759d0597@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <54341BD7.3070207@infradead.org>
-Sender: netdev-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "dev@openvswitch.org" <dev@openvswitch.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/QBCVPwLY+LEwVrYQ6N9u7w9"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48425 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750895AbaJGWtJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Oct 2014 18:49:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This issue should have been fixed with commit
-7c5df8fa1921450d2210db9928f43cf4f414982c
+--Sig_/QBCVPwLY+LEwVrYQ6N9u7w9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fix a openvswitch compilation error when CONFIG_INET is not set:
+Hi Grant,
 
-    =====================================================
-       In file included from include/net/geneve.h:4:0,
-                           from net/openvswitch/flow_netlink.c:45:
-                          include/net/udp_tunnel.h: In function 'udp_tunnel_hand
-                          >> include/net/udp_tunnel.h:100:2: error: implicit dec
-                          >>      return iptunnel_handle_offloads(skb, udp_csum,
-                          >>           ^
-                          >>           >> include/net/udp_tunnel.h:100:2: warnin
-                          >>           >>    cc1: some warnings being treated as
+Fetching the devicetree tree this morning produced this error:
 
-    =====================================================
+fatal: unable to connect to git.secretlab.ca:
+git.secretlab.ca[0: 208.123.74.12]: errno=3DConnection timed out
 
-    Reported-by: kbuild test robot <fengguang.wu@intel.com>
-    Signed-off-by: Andy Zhou <azhou@nicira.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-On Tue, Oct 7, 2014 at 9:59 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 10/07/14 01:44, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20141003:
->>
->
-> on i386 or x86_64:
->
-> In file included from ../include/net/geneve.h:4:0,
->                  from ../net/openvswitch/flow_netlink.c:45:
-> ../include/net/udp_tunnel.h: In function 'udp_tunnel_handle_offloads':
-> ../include/net/udp_tunnel.h:100:2: error: implicit declaration of function 'iptunnel_handle_offloads' [-Werror=implicit-function-declaration]
->   return iptunnel_handle_offloads(skb, udp_csum, type);
->   ^
-> ../include/net/udp_tunnel.h:100:2: warning: return makes pointer from integer without a cast [enabled by default]
->
->
->
-> --
-> ~Randy
-> _______________________________________________
-> dev mailing list
-> dev@openvswitch.org
-> http://openvswitch.org/mailman/listinfo/dev
+--Sig_/QBCVPwLY+LEwVrYQ6N9u7w9
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUNG3iAAoJEMDTa8Ir7ZwVcoIP/1hrLM0hJXPzMtvHbo4cjuNi
+zAQ/wGnaG4UzKm9xb2xHW2zsvxQ/Ehj8Kmp7e0WC4WEx8Mp6NjFbP3A7ROgjDhYR
+VPyXlAy59hveDDAZHPdKSF5ObVjzbOLMyPMB/bImA/Sp6JbgGC3hXkGWK+aVjX9A
+W2Lik5E8fzflyMnCDTmoPgNaFoRJo5INLpCBOVQrAj1PvlmcpQ7KciUsObxPyyC/
+rkFsIJijS9RNclnDMCdcBMKurmxSLTozVs4g/kcYnZnqIFGl9V+68tL8ieOB96Um
+a6Uu5twJJl0+t6buWi7BffKPGjLS79ShBDVIjGC3GFOxDSrFaYu+0/BRYH3lQFT3
+4yPZ9IX4VvwHs0GyGOznmVzOpcVZnCK0Bl5DMm8g0rQHXCaPJEnwBPY7+c9teX0l
+zWsQenmG11GXgZToPwZHC55ul0qYmWKH3XYdh+x5hoM5y4fHea4XH8RWl+ApxwgQ
+b1NpO71SRe0cgAxPJsHT9P4JpX262+sCrNEK5tPx3BC9W7cT+Jv1c0hY6KNYe5Lm
+PPl6PLIB9RfMBbR7Yt0XdOjOCXoE2andmanV+U3us2AWAghM0IneLDkp1tsyfofn
+3Md5ptNnUvB9wUcVxXrtqGdiGXUfSTlm3XInImXZysS4vArq3Ke+5wyZN0m950VI
+tQhKXrZz3iWvowZm983q
+=gZ5o
+-----END PGP SIGNATURE-----
+
+--Sig_/QBCVPwLY+LEwVrYQ6N9u7w9--
