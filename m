@@ -1,73 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the percpu tree with the s390 tree
-Date: Tue, 7 Oct 2014 16:37:42 +1100
-Message-ID: <20141007163742.2ab51fd7@canb.auug.org.au>
+Date: Tue, 7 Oct 2014 16:46:29 +1100
+Message-ID: <20141007164629.38d68eff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1HHB5T1456N359mkuNFuEWP"; protocol="application/pgp-signature"
+ boundary="Sig_/yrw6Ds2DSR5SE_2lyQWmxG4"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43508 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55879 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753740AbaJGFhv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Oct 2014 01:37:51 -0400
+	id S1753632AbaJGFqi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Oct 2014 01:46:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/1HHB5T1456N359mkuNFuEWP
+--Sig_/yrw6Ds2DSR5SE_2lyQWmxG4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
 Today's linux-next merge of the percpu tree got a conflict in
-arch/s390/kernel/processor.c between commit dfcc8c377711 ("s390/vtime:
-do not reset idle data on CPU hotplug") from the s390 tree and commit
-eb7e7d766326 ("s390: Replace __get_cpu_var uses") from the percpu tree.
+arch/s390/kernel/vtime.c between commit 4dc0f1e9c0a9 ("s390/idle:
+consolidate idle functions and definitions") from the s390 tree and
+commit eb7e7d766326 ("s390: Replace __get_cpu_var uses") from the
+percpu tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the former moved the code modified by the latter into a
+new file, so I just removed the code and added the patch below) and can
+carry the fix as necessary (no action is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 7 Oct 2014 16:44:38 +1100
+Subject: [PATCH] s390: fixup for Replace __get_cpu_var uses
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/s390/kernel/idle.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/s390/kernel/idle.c b/arch/s390/kernel/idle.c
+index c75fbae1e37e..9d19a91dc6a6 100644
+--- a/arch/s390/kernel/idle.c
++++ b/arch/s390/kernel/idle.c
+@@ -20,7 +20,7 @@ static DEFINE_PER_CPU(struct s390_idle_data, s390_idle);
+=20
+ void __kprobes enabled_wait(void)
+ {
+-	struct s390_idle_data *idle =3D &__get_cpu_var(s390_idle);
++	struct s390_idle_data *idle =3D this_cpu_ptr(&s390_idle);
+ 	unsigned long long idle_time;
+ 	unsigned long psw_mask;
+=20
+--=20
+2.1.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/s390/kernel/processor.c
-index edefead3b43a,f0305b1189aa..000000000000
---- a/arch/s390/kernel/processor.c
-+++ b/arch/s390/kernel/processor.c
-@@@ -23,7 -23,8 +23,7 @@@ static DEFINE_PER_CPU(struct cpuid, cpu
-   */
-  void cpu_init(void)
-  {
-- 	struct cpuid *id =3D &__get_cpu_var(cpu_id);
- -	struct s390_idle_data *idle =3D this_cpu_ptr(&s390_idle);
-+ 	struct cpuid *id =3D this_cpu_ptr(&cpu_id);
- =20
-  	get_cpu_id(id);
-  	atomic_inc(&init_mm.mm_count);
-
---Sig_/1HHB5T1456N359mkuNFuEWP
+--Sig_/yrw6Ds2DSR5SE_2lyQWmxG4
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUM3wrAAoJEMDTa8Ir7ZwVqF0P/3ZbkTGdmr1UQkn56gyyLQEC
-n66IsDyEyq9OZDgb0PG+63qZHeJXD0713uXjDjdrnXJSkv/PJiT+VTEp7JzmRlcL
-YHvHewxDwKKbKjy/D2XoQy75Bed9t1bRG80TvXPcU0UZKlCJtKSDcMSjQ6uL52FK
-R9WvPqlPzhSx1Ce/Wq77JhNSL0pIjXYd7gURC/heNFy/xgIY4jiPsBSsyG6jv5Sq
-f+uyrLGojmI/FzF8C9bOhalAf94y4kf0z8yl3sUQrhHSLH0BAeUvEhnk6DesdPc0
-Mq3a27qMNyRrWXX/OIstPRtKgyPtU/WjH9RGhIEDhUejk5KQ9RMTmA4hvH38Efcz
-FlbIPQkrWUQSRd4sLgWbN7Y+xBIZPnfW5TO9Y6Xg0CUONOk69XhWHV1o+WlYfKFj
-0uNcQZHN/Vdq4RpGVRu9vvloXxzrIHlKZzJYWSIGZwyDPD00jJ5mjYQ/2HbPCbJn
-CLbL67FBZHPafxF/JwPS5Tnmem97Z5H1d29gehtqUZIwKX4jXFrDTP8Z5U8Xg2L3
-SfFyFaPwR98awhCT5XEtBTfbcko64q/HEpEOPO2Lz4jnhevKzel66D6jzzlqUzPm
-UJnhrxEv2HKNcLNVFP6ym9lxO0pjd2BmjC6sXiptqyere5a2uQyM0r7gH+YJIr54
-bd49s6Vh/x8NlSkOUQFB
-=gzom
+iQIcBAEBCAAGBQJUM346AAoJEMDTa8Ir7ZwV6IEP/2RXzm44HJyNdwYdNXKM7g4g
+esAM6UoezO9xLGGf3Gy7oeiCJn3po0S0D1ULoo+1+ipa20MldVKBkQBQBQoQpjfQ
+3XNV/nqwZ5877hX3ZxUA+p3ROvXrzYWx+ilC2xIh0P4U3B7aHvqMGWqNhfJKPO5Y
+iNtbu0uXg7ayqFoAWH24GaKirhKYqlHGP0xucop/dLTWcFLSKz6M8A902It0iaF5
+SW3QrEgEBXEO4SO9lG5xCn5nW+R4xtKLuY+/66GaWFNGhLuIgveKfpvlA4BKQUXV
+/y6vO/tm2IoFNZ9l3X5koefg7upt7XPXCHJdbWSn/LevnbNXkJo5KBeEf+A7JUPW
+0P0/GK4fgagXZQS3bzwnF3mKlR2eJTBxAc0G2CLe2s8CXusDQA9GFetjD2c1qumk
+GrIL1ipDZjRa+jE9fQLbnN49pHvPf5tAw6yWMl+DVzI9djxcyW2PA0/BrHzSdn3r
+b/2/y3V4oZX4R/FvctR3LkOJ2cPGRfXwGR++4PVBWcUHzm/YWBfxyUBew0Pvkx55
+tqKPyedTjpVjSuaXnPYPS9tyeLKd4cNEOXH0UVJlwplOW4Vfe9GIE5jJtp59V5Qq
+/RbQZnufkKotOvNE2dGIvFc/TamrINarTTq4+WMhV1dQ/4aVMKqYkEnoVkgWtmIb
+gb6K1bFivOIe/BnLjDtG
+=CAo0
 -----END PGP SIGNATURE-----
 
---Sig_/1HHB5T1456N359mkuNFuEWP--
+--Sig_/yrw6Ds2DSR5SE_2lyQWmxG4--
