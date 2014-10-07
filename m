@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kbuild tree with the arm-soc tree
-Date: Tue, 7 Oct 2014 12:39:26 +1100
-Message-ID: <20141007123926.0e14810b@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the s390 tree
+Date: Tue, 7 Oct 2014 15:59:26 +1100
+Message-ID: <20141007155926.7ac19cdf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+W4x89nc9=D05=apSN6n0y+"; protocol="application/pgp-signature"
+ boundary="Sig_/qh.VIviW9_f=h8Zxi/8=d8R"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58455 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52742 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751213AbaJGBje (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Oct 2014 21:39:34 -0400
+	id S1752656AbaJGE7g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Oct 2014 00:59:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.m@jp.panasonic.com>, Boris BREZILLON <boris.brezillon@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Dingel <dingel@linux.vnet.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>
 
---Sig_/+W4x89nc9=D05=apSN6n0y+
+--Sig_/qh.VIviW9_f=h8Zxi/8=d8R
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+Hi all,
 
-Today's linux-next merge of the kbuild tree got a conflict in
-arch/arm/mach-at91/Makefile between commit 91a55d4f6900 ("ARM: at91:
-introduce OLD_IRQ_AT91 Kconfig option") from the arm-soc tree and
-commit ac84eb47cc19 ("kbuild: remove unnecessary variable
-initializaions") from the kbuild tree.
+Today's linux-next merge of the kvm tree got a conflict in
+arch/s390/mm/pgtable.c between commit 9511571c4f0e ("s390: mm: fixing
+calls of pte_unmap_unlock") from the s390 tree and commit dc77d344b41f
+("KVM: s390/mm: fix up indentation of set_guest_storage_key") from the
+kvm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,49 +34,150 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-at91/Makefile
-index ac99d87ffefe,75033839fc08..000000000000
---- a/arch/arm/mach-at91/Makefile
-+++ b/arch/arm/mach-at91/Makefile
-@@@ -2,13 -2,12 +2,10 @@@
-  # Makefile for the linux kernel.
-  #
+diff --cc arch/s390/mm/pgtable.c
+index a0f934a435e2,296b61a4af59..000000000000
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@@ -644,82 -656,29 +656,29 @@@ void __gmap_zap(struct gmap *gmap, unsi
+  	}
+  	pgste_set_unlock(ptep, pgste);
+  out_pte:
+ -	pte_unmap_unlock(*ptep, ptl);
+ +	pte_unmap_unlock(ptep, ptl);
+  }
+-=20
+- /*
+-  * this function is assumed to be called with mmap_sem held
+-  */
+- void __gmap_zap(unsigned long address, struct gmap *gmap)
+- {
+- 	unsigned long *table, *segment_ptr;
+- 	unsigned long segment, pgstev, ptev;
+- 	struct gmap_pgtable *mp;
+- 	struct page *page;
+-=20
+- 	segment_ptr =3D gmap_table_walk(address, gmap);
+- 	if (IS_ERR(segment_ptr))
+- 		return;
+- 	segment =3D *segment_ptr;
+- 	if (segment & _SEGMENT_ENTRY_INVALID)
+- 		return;
+- 	page =3D pfn_to_page(segment >> PAGE_SHIFT);
+- 	mp =3D (struct gmap_pgtable *) page->index;
+- 	address =3D mp->vmaddr | (address & ~PMD_MASK);
+- 	/* Page table is present */
+- 	table =3D (unsigned long *)(segment & _SEGMENT_ENTRY_ORIGIN);
+- 	table =3D table + ((address >> 12) & 0xff);
+- 	pgstev =3D table[PTRS_PER_PTE];
+- 	ptev =3D table[0];
+- 	/* quick check, checked again with locks held */
+- 	if (((pgstev & _PGSTE_GPS_USAGE_MASK) =3D=3D _PGSTE_GPS_USAGE_UNUSED) ||
+- 	    ((pgstev & _PGSTE_GPS_ZERO) && (ptev & _PAGE_INVALID)))
+- 		gmap_zap_unused(gmap->mm, address);
+- }
+  EXPORT_SYMBOL_GPL(__gmap_zap);
  =20
- -obj-y		:=3D irq.o gpio.o setup.o sysirq_mask.o
- +obj-y		:=3D gpio.o setup.o sysirq_mask.o
-- obj-m		:=3D
-- obj-n		:=3D
-- obj-		:=3D
+- void gmap_discard(unsigned long from, unsigned long to, struct gmap *gmap)
++ void gmap_discard(struct gmap *gmap, unsigned long from, unsigned long to)
+  {
+-=20
+- 	unsigned long *table, address, size;
++ 	unsigned long gaddr, vmaddr, size;
+  	struct vm_area_struct *vma;
+- 	struct gmap_pgtable *mp;
+- 	struct page *page;
  =20
- +obj-$(CONFIG_OLD_IRQ_AT91)	+=3D irq.o
-  obj-$(CONFIG_OLD_CLK_AT91)	+=3D clock.o
- -obj-$(CONFIG_AT91_SAM9_ALT_RESET) +=3D at91sam9_alt_reset.o
- -obj-$(CONFIG_AT91_SAM9G45_RESET) +=3D at91sam9g45_reset.o
- -obj-$(CONFIG_AT91_SAM9_TIME)	+=3D at91sam926x_time.o
-  obj-$(CONFIG_SOC_AT91SAM9)	+=3D sam9_smc.o
+  	down_read(&gmap->mm->mmap_sem);
+- 	address =3D from;
+- 	while (address < to) {
+- 		/* Walk the gmap address space page table */
+- 		table =3D gmap->table + ((address >> 53) & 0x7ff);
+- 		if (unlikely(*table & _REGION_ENTRY_INVALID)) {
+- 			address =3D (address + PMD_SIZE) & PMD_MASK;
+- 			continue;
+- 		}
+- 		table =3D (unsigned long *)(*table & _REGION_ENTRY_ORIGIN);
+- 		table =3D table + ((address >> 42) & 0x7ff);
+- 		if (unlikely(*table & _REGION_ENTRY_INVALID)) {
+- 			address =3D (address + PMD_SIZE) & PMD_MASK;
++ 	for (gaddr =3D from; gaddr < to;
++ 	     gaddr =3D (gaddr + PMD_SIZE) & PMD_MASK) {
++ 		/* Find the vm address for the guest address */
++ 		vmaddr =3D (unsigned long)
++ 			radix_tree_lookup(&gmap->guest_to_host,
++ 					  gaddr >> PMD_SHIFT);
++ 		if (!vmaddr)
+  			continue;
+- 		}
+- 		table =3D (unsigned long *)(*table & _REGION_ENTRY_ORIGIN);
+- 		table =3D table + ((address >> 31) & 0x7ff);
+- 		if (unlikely(*table & _REGION_ENTRY_INVALID)) {
+- 			address =3D (address + PMD_SIZE) & PMD_MASK;
+- 			continue;
+- 		}
+- 		table =3D (unsigned long *)(*table & _REGION_ENTRY_ORIGIN);
+- 		table =3D table + ((address >> 20) & 0x7ff);
+- 		if (unlikely(*table & _SEGMENT_ENTRY_INVALID)) {
+- 			address =3D (address + PMD_SIZE) & PMD_MASK;
+- 			continue;
+- 		}
+- 		page =3D pfn_to_page(*table >> PAGE_SHIFT);
+- 		mp =3D (struct gmap_pgtable *) page->index;
+- 		vma =3D find_vma(gmap->mm, mp->vmaddr);
+- 		size =3D min(to - address, PMD_SIZE - (address & ~PMD_MASK));
+- 		zap_page_range(vma, mp->vmaddr | (address & ~PMD_MASK),
+- 			       size, NULL);
+- 		address =3D (address + PMD_SIZE) & PMD_MASK;
++ 		vmaddr |=3D gaddr & ~PMD_MASK;
++ 		/* Find vma in the parent mm */
++ 		vma =3D find_vma(gmap->mm, vmaddr);
++ 		size =3D min(to - gaddr, PMD_SIZE - (gaddr & ~PMD_MASK));
++ 		zap_page_range(vma, vmaddr, size, NULL);
+  	}
+  	up_read(&gmap->mm->mmap_sem);
+  }
+@@@ -994,13 -943,13 +943,13 @@@ retry
+  	}
+  	if (!(pte_val(*ptep) & _PAGE_INVALID) &&
+  	     (pte_val(*ptep) & _PAGE_PROTECT)) {
+- 			pte_unmap_unlock(ptep, ptl);
+- 			if (fixup_user_fault(current, mm, addr, FAULT_FLAG_WRITE)) {
+- 				up_read(&mm->mmap_sem);
+- 				return -EFAULT;
+- 			}
+- 			goto retry;
+ -		pte_unmap_unlock(*ptep, ptl);
+++		pte_unmap_unlock(ptep, ptl);
++ 		if (fixup_user_fault(current, mm, addr, FAULT_FLAG_WRITE)) {
++ 			up_read(&mm->mmap_sem);
++ 			return -EFAULT;
+  		}
++ 		goto retry;
++ 	}
  =20
-  # CPU-specific support
+  	new =3D old =3D pgste_get_lock(ptep);
+  	pgste_val(new) &=3D ~(PGSTE_GR_BIT | PGSTE_GC_BIT |
 
---Sig_/+W4x89nc9=D05=apSN6n0y+
+--Sig_/qh.VIviW9_f=h8Zxi/8=d8R
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUM0RSAAoJEMDTa8Ir7ZwVYxkP/1MFmY9NknTqf2Tlcq4wkpbp
-YWgnWQN3Nq//1/hxiVvIuHIlNUJS308TEd3KI6lV7pls8cIWIny732EGZBYbJCxd
-A56KtkOSKA2lOqqIrmqWTbOh1RMkUFmi34Gj98XSt0HzL6HUPBEthc9BT/UfJ5PF
-hCyV8VuXERYlSUsfDyjZGY5nSphgP5uoX40ChWA9zYfpZEQe6TunlkzbXDBL5ozk
-ky5d4IGacHMSTpWw+kDOZRxVbWx+dfrn8U9mI7egQSDhWmzaoe5250R8g0jTOOVZ
-EkRjwauvBRbkeG7qA/NFIiGDB2fQnu9YDOWb1LxDjDoDUp27ESUCkdKpP+IV6qWx
-g0z2/l22v4zPXm5OcOak8SMnTybk+ZJpJmvVseKOKzO1GI6Z+ZZKKhk7AKIEajTq
-gH9DAw/q1xcsUxU8EmMmpYUJWmYrUcaVL5NynDhti32ObUMriNfha1dRiK+43tLr
-kheBGIurvdNukF4nXf5WHF4hqYnFimtG+oFtA/QkG7zeN5g+6Bv9W4QEu5LzAOOF
-lUd6a9j+GgdiTpKK3u1FjuU4/ipYl5TOtTzyjWOFtxbKluK1FzbiUiCA+jp1EQkp
-z/sQuMnLITfYrezB7TKI+kIKgRgu4M0Ih/OEHxWgA9w2r0NI6xr2fAg6nn06Zvd7
-Hjhwxs2hw4foLYq60lHF
-=CYoF
+iQIcBAEBCAAGBQJUM3MyAAoJEMDTa8Ir7ZwVWkoP/jgnNohJfMYOk9FkC5ZNnE5j
+G2aKVoXuPIdeatS2y/UPkWB/k4dfdReM5k9qpUXjQ8Ag51s8ez4SIVZg0+NAnkTg
+oOmirTgS5ZB8F82n+p/ywL9AEbtvtDECcMmnKSVpVAF+J8n48rz/HuIcsHP3UvRi
+78vNocm16Je2olcI3++7XTF3ADsfh5m9eWFiIWR4/LxipLYfWvaOC899h2Fm2zJ7
+h2o6RGPZqqNrp2dHW6Hmk3Z0qBGRhePHpPTDRj4B9+klspDQaXH+xnzcRs9hA+lu
+V9Ft7NwXwfBVHfYmRhy9xVfV33lEhjQ8SiewehzwMjmoMquvwJFKuUp75CUosxeq
+DyUt9xDTMkq5qKOCDnVw1ZNoIA6RBNOjTnru3RHGDMaX3KHf4AocMkyXOxkT4uHH
+ykpmo9moymuWC83+S0kx0lXpYDDUboyXPgpWiSWMR6VUFq8mzP6yyHrMyit8UHOf
+xOuYp87qNtDICJJELLxh58J/aBsohIRI7/SuFhAx2EbKGqtrWreVFKDlv6iELyZd
+6IhiRSewZWF47NdtF44cvU5wIAs0hagd3h32bH83KdBtqXXbAtEbJ5BF+bWXaZ/E
+qhsjK2RFhEKjCLmrCwa8TNfLyIKhTZF27id+gVfETUiLHwcdxr7ti8ff+kJLhKfd
+/nQeTFgcwaO2rIvNw3uk
+=YaVE
 -----END PGP SIGNATURE-----
 
---Sig_/+W4x89nc9=D05=apSN6n0y+--
+--Sig_/qh.VIviW9_f=h8Zxi/8=d8R--
