@@ -1,63 +1,65 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH v2] Staging: octeon: ethernet-tx: fixed coding style
- warnings, missing blank lines
-Date: Wed, 8 Oct 2014 16:57:41 -0400
-Message-ID: <5435A545.9040402@windriver.com>
-References: <1412795924-17759-1-git-send-email-robertoxmed@gmail.com>
- <543592FD.9010900@windriver.com> <543594AF.4030507@gmail.com>
- <20141008205242.GA4606@drone.musicnaut.iki.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: status of the logfs tree?
+Date: Thu, 9 Oct 2014 10:54:18 +1100
+Message-ID: <20141009105418.32aad6ab@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20141008205242.GA4606@drone.musicnaut.iki.fi>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, Roberto Medina <robertoxmed@gmail.com>
-Cc: devel@driverdev.osuosl.org, josh@joshtripplet.org, gregkh@linuxfoundation.org, linux-next@vger.kernel.org, ebiederm@xmission.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/m+iv15T6OF.euIMgDwp06m/"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41946 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750979AbaJHXy1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Oct 2014 19:54:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?SsO2cm4=?= Engel <joern@logfs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 14-10-08 04:52 PM, Aaro Koskinen wrote:
-> Hi,
-> 
-> On Wed, Oct 08, 2014 at 09:46:55PM +0200, Roberto Medina wrote:
->> Thank you very much for your feedback. I just want to let you know that I
->> didn't ignore that annotation from the last patch. I actually added the
->> white line because checkpatch shows a warning there.
->>
->> WARNING: Missing a blank line after declarations
->> #553: FILE: drivers/staging/octeon/ethernet-tx.c:553:
->> +	cvmx_wqe_t *work = cvmx_fpa_alloc(CVMX_FPA_WQE_POOL);
->> +	if (unlikely(work == NULL)) {
->>
->> I don't see why I shouldn't insert a line there.
-> 
-> Maybe something like this would be more readable:
-> 
->  	void *copy_location;
-> +	cvmx_wqe_t *work;
->  
->  	/* Get a work queue entry */
-> -	cvmx_wqe_t *work = cvmx_fpa_alloc(CVMX_FPA_WQE_POOL);
-> +	work = cvmx_fpa_alloc(CVMX_FPA_WQE_POOL);
-> 	if (unlikely(work == NULL)) {
-> 
-> Then declarations would be correctly separated from the code...
+--Sig_/m+iv15T6OF.euIMgDwp06m/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It probably wouldn't hurt -- what I failed to notice when giving
-it a quick scan was that it was a clunky typedef in use to create
-the variable declaration vs. a sane "struct blah_work *work = ...."
-so yes, checkpatch was right in this case.
+Hi all,
 
-Paul.
---
-> 
-> A.
-> 
+The top commit in the logfs tree was committed in November 2012.  Is
+there any intention to ask Linus to merge this tree?  Or should I just
+drop it completely?
+
+It is a pain because it takes considerable time for git to actually
+merge it.
+
+$ git log --oneline origin/master..logfs/master =20
+339466142b3f Fix the call to BUG() caused by no free segment found
+ab2ec19f42dc logfs: fix possible memory leak in logfs_mtd_can_write_buf()
+$ git diff --stat origin/master...logfs/master=20
+ fs/logfs/dev_mtd.c | 2 +-
+ fs/logfs/super.c   | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/m+iv15T6OF.euIMgDwp06m/
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUNc6vAAoJEMDTa8Ir7ZwVF7sP/Rd/F+Pazrhsw7ULLy53Viph
+GNJk7i9YpOtum+Tu0IpiqVsdC2Ee4F4k78ESWP4y1RlO6WBdvZY+1SYK139dUTsE
+HHbM5AZ4KiQTz+JnY2RjWDmPK7j+nam2zpCud4Exg8RxvR2rQGueSHuhafXOWwfs
+RCrDrV4V4N03SLats8d3gI4a5asI0X03HDA3HHT9VnqsgtN24H7T2ZG/KorjYiYp
+Oj6+lwRx+dk8JYSuw/l8GYT6zGlUBjz2dbm2tArGTiPDPGJRe4N5ZcJQaqYRoZVg
+Hm4lFSwap7lF40CdfyS0BP61eyta140IyeSc7CdnzrSPXC2/KEBo+pxG4lrbOmuC
+tFdXo8mm9Q5ZugFEcrRhbYf25qCbPMx8TgyFmM7AHLWzrKJZrelsbcg/zsVTJNU7
+ONkNNrAHH/KKYG2huor4J0HK7x3bS5NGNs0ZLRG9n0Fs8ZvQVRUMa5Bms9oRNnJr
+0DylY9y5kt3snrX6Awy5A8j5k1IkUvtcYAQzqbfQFHIbVE1VePJSqQpFO0aGtFiC
+S1r2L3nw36brrexeWDLlhIKI1iEtPUu0Nim8lv0d+YwTIa3T6H0Dlm7TMpgIkT3A
+FRQ8nPDXmAuBJnnT0nNj5lfTJOeenu1pxpzVlvS8j41f2j4NZDxnOXEmBUkAN2Ry
+sM3M+aFRVDxG6Sqpp4FD
+=dHx1
+-----END PGP SIGNATURE-----
+
+--Sig_/m+iv15T6OF.euIMgDwp06m/--
