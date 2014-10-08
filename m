@@ -1,96 +1,61 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: [PATCH net-next] net: add
- netdev_txq_bql_{enqueue,complete}_prefetchw() helpers
-Date: Wed, 08 Oct 2014 08:19:27 -0700
-Message-ID: <1412781567.11091.182.camel@edumazet-glaptop2.roam.corp.google.com>
-References: <CA+r1ZhiU6uzE-CQcTJoH2JxrS06H+5Paaofz+3Ugzon02mxD8Q@mail.gmail.com>
-	 <1412779746.11091.176.camel@edumazet-glaptop2.roam.corp.google.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Oct 8 (media/usb/gspca)
+Date: Wed, 08 Oct 2014 10:13:39 -0700
+Message-ID: <543570C3.9080207@infradead.org>
+References: <20141008174923.76786a03@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1412779746.11091.176.camel@edumazet-glaptop2.roam.corp.google.com>
-Sender: netdev-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>, David Miller <davem@davemloft.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, amirv@mellanox.com, netdev <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:60741 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751976AbaJHRNk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Oct 2014 13:13:40 -0400
+In-Reply-To: <20141008174923.76786a03@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-media <linux-media@vger.kernel.org>
 
-From: Eric Dumazet <edumazet@google.com>
+On 10/07/14 23:49, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Please do not add any material intended for v3.19 to you linux-next
+> included trees until after v3.18-rc1 has been released.
+> 
+> Changes since 20141007:
+> 
 
-Add two helpers so that drivers do not have to care of BQL being
-available or not.
+I saw these build errors in gspca when CONFIG_INPUT=m but the gspca
+sub-drivers are builtin:
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Jim Davis <jim.epost@gmail.com>
-Fixes: 29d40c903247 ("net/mlx4_en: Use prefetch in tx path")
----
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_tx.c b/drivers/net/ethernet/mellanox/mlx4/en_tx.c
-index 8726a4aee5a7..34c137878545 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_tx.c
-@@ -392,7 +392,8 @@ static bool mlx4_en_process_tx_cq(struct net_device *dev,
- 	if (!priv->port_up)
- 		return true;
- 
--	prefetchw(&ring->tx_queue->dql.limit);
-+	netdev_txq_bql_complete_prefetchw(ring->tx_queue);
-+
- 	index = cons_index & size_mask;
- 	cqe = mlx4_en_get_cqe(buf, index, priv->cqe_size) + factor;
- 	last_nr_txbb = ACCESS_ONCE(ring->last_nr_txbb);
-@@ -737,7 +738,7 @@ netdev_tx_t mlx4_en_xmit(struct sk_buff *skb, struct net_device *dev)
- 		vlan_tag = vlan_tx_tag_get(skb);
- 
- 
--	prefetchw(&ring->tx_queue->dql);
-+	netdev_txq_bql_enqueue_prefetchw(ring->tx_queue);
- 
- 	/* Track current inflight packets for performance analysis */
- 	AVG_PERF_COUNTER(priv->pstats.inflight_avg,
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 3a4315b39d20..afc0a9194de6 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -30,6 +30,7 @@
- #include <linux/bug.h>
- #include <linux/delay.h>
- #include <linux/atomic.h>
-+#include <linux/prefetch.h>
- #include <asm/cache.h>
- #include <asm/byteorder.h>
- 
-@@ -2480,6 +2481,34 @@ netif_xmit_frozen_or_drv_stopped(const struct netdev_queue *dev_queue)
- 	return dev_queue->state & QUEUE_STATE_DRV_XOFF_OR_FROZEN;
- }
- 
-+/**
-+ *	netdev_txq_bql_enqueue_prefetchw - prefetch bql data for write
-+ *	@dev_queue: pointer to transmit queue
-+ *
-+ * BQL enabled drivers might use this helper in their ndo_start_xmit(),
-+ * to give appropriate hint to the cpu.
-+ */
-+static inline void netdev_txq_bql_enqueue_prefetchw(struct netdev_queue *dev_queue)
-+{
-+#ifdef CONFIG_BQL
-+	prefetchw(&dev_queue->dql.num_queued);
-+#endif
-+}
-+
-+/**
-+ *	netdev_txq_bql_complete_prefetchw - prefetch bql data for write
-+ *	@dev_queue: pointer to transmit queue
-+ *
-+ * BQL enabled drivers might use this helper in their TX completion path,
-+ * to give appropriate hint to the cpu.
-+ */
-+static inline void netdev_txq_bql_complete_prefetchw(struct netdev_queue *dev_queue)
-+{
-+#ifdef CONFIG_BQL
-+	prefetchw(&dev_queue->dql.limit);
-+#endif
-+}
-+
- static inline void netdev_tx_sent_queue(struct netdev_queue *dev_queue,
- 					unsigned int bytes)
- {
+drivers/built-in.o: In function `gspca_dev_probe2':
+(.text+0x10ef43): undefined reference to `input_allocate_device'
+drivers/built-in.o: In function `gspca_dev_probe2':
+(.text+0x10efdd): undefined reference to `input_register_device'
+drivers/built-in.o: In function `gspca_dev_probe2':
+(.text+0x10f002): undefined reference to `input_free_device'
+drivers/built-in.o: In function `gspca_dev_probe2':
+(.text+0x10f0ac): undefined reference to `input_unregister_device'
+drivers/built-in.o: In function `gspca_disconnect':
+(.text+0x10f186): undefined reference to `input_unregister_device'
+drivers/built-in.o: In function `sd_int_pkt_scan':
+se401.c:(.text+0x11373d): undefined reference to `input_event'
+se401.c:(.text+0x11374e): undefined reference to `input_event'
+drivers/built-in.o: In function `sd_pkt_scan':
+t613.c:(.text+0x119f0e): undefined reference to `input_event'
+t613.c:(.text+0x119f1f): undefined reference to `input_event'
+drivers/built-in.o: In function `sd_stopN':
+t613.c:(.text+0x11a047): undefined reference to `input_event'
+drivers/built-in.o:t613.c:(.text+0x11a058): more undefined references to `input_event' follow
+
+These could be fixed in Kconfig by something like (for each sub-driver that tests
+CONFIG_INPUT):
+
+	depends on INPUT || INPUT=n
+
+Do you have another preference for fixing this?
+
+thanks,
+-- 
+~Randy
