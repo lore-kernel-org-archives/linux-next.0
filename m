@@ -1,148 +1,62 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: linux-next: Tree for Oct 8 (media/usb/gspca)
-Date: Thu, 9 Oct 2014 08:52:07 -0300
-Message-ID: <20141009085207.70d6b1d1@recife.lan>
-References: <20141008174923.76786a03@canb.auug.org.au>
-	<543570C3.9080207@infradead.org>
-	<20141008153105.2fe82fca@recife.lan>
-	<5435A44D.2050609@infradead.org>
-	<20141008225011.2d034c1e@recife.lan>
-	<1412837128.21441.9.camel@x220>
-	<20141009073052.0ddc3e97@recife.lan>
-	<1412853970.21441.32.camel@x220>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: linux-next: manual merge of the percpu tree with the tip tree
+Date: Thu, 9 Oct 2014 15:13:31 +0200
+Message-ID: <20141009131328.GB25790@lerouge>
+References: <20141009155018.0b8f26f6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:40070 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750839AbaJILwN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Oct 2014 07:52:13 -0400
-In-Reply-To: <1412853970.21441.32.camel@x220>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:52570 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754656AbaJINNl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Oct 2014 09:13:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20141009155018.0b8f26f6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-media <linux-media@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-Em Thu, 09 Oct 2014 13:26:10 +0200
-Paul Bolle <pebolle@tiscali.nl> escreveu:
-
-> On Thu, 2014-10-09 at 07:30 -0300, Mauro Carvalho Chehab wrote:
-> > Em Thu, 09 Oct 2014 08:45:28 +0200
-> > Paul Bolle <pebolle@tiscali.nl> escreveu:
-> > > The above discussion meanders a bit, and I just stumbled onto it, but
-> > > would
-> > >     #if IS_BUILTIN(CONFIG_INPUT) || (IS_MODULE(CONFIG_INPUT) && defined(MODULE))
-> > > 
-> > > cover your requirements when using macros?
-> > 
-> > No. What we need to do, for all gspca sub-drivers that have optional
-> > support for buttons is to only enable the buttons support if:
-> > 
-> > 	CONFIG_INPUT=y
-> > or
-> > 	CONFIG_INPUT=m and CONFIG_USB_GSPCA_submodule=m
-> > 
-> > If we use a reverse logic, we need to disable the code if:
-> > 	# CONFIG_INPUT is not set
-> > or
-> > 	CONFIG_INPUT=m and CONFIG_USB_GSPCA_submodule=y
-> > 
-> > The rationale for disabling the code on the last expression is that a
-> > builtin code cannot call a function inside a module.
-> > 
-> > Also, as the submodule is already being compiled, we know that
-> > CONFIG_USB_GSPCA_submodule is either module or builtin.
-> > 
-> > So, either one of those expressions should work:
-> > 	#if (IS_BUILTIN(CONFIG_INPUT)) || (IS_ENABLED(CONFIG_INPUT) && !IS_BUILTIN(CONFIG_USB_GSPCA_submodule))
-> > or
-> > 	#if (IS_BUILTIN(CONFIG_INPUT)) || (IS_MODULE(CONFIG_INPUT) && IS_MODULE(CONFIG_USB_GSPCA_submodule) && defined(MODULE))
+On Thu, Oct 09, 2014 at 03:50:18PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> I thought MODULE was only defined for code that will be part of a
-> module. So "IS_MODULE(CONFIG_USB_GSPCA_submodule)" and "defined(MODULE)"
-> should be equal when used _inside_ [...]/usb/gspca/that_submodule.c,
-
-Ah, I didn't know that. In such case, your suggestion is indeed better,
-as it is easier to write the patch.
-
-> shouldn't they? That would make this option basically identical to my
-> suggestion. Or are you thinking about using these tests outside of these
-> submodules themselves?
-
+> Today's linux-next merge of the percpu tree got a conflict in
+> kernel/irq_work.c between commit 76a33061b932 ("irq_work: Force raised
+> irq work to run on irq work interrupt") from the tip tree and commit
+> 22127e93c587 ("time: Replace __get_cpu_var uses") from the percpu tree.
 > 
-> > or
-> > 	#if (IS_BUILTIN(CONFIG_INPUT)) || (IS_ENABLED(CONFIG_INPUT) && IS_MODULE(CONFIG_USB_GSPCA_submodule))
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 > 
-> I think it's clearer to use
->     IS_BUILTIN(CONFIG_FOO) || (IS_MODULE(CONFIG_FOO) && [...])
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 > 
-> Ditto above. Perhaps just a matter of taste.
-> 
-> (Depending on INPUT is apparently not possible for these submodules. 
+> diff --cc kernel/irq_work.c
+> index 385b85aded19,345d19edcdae..000000000000
+> --- a/kernel/irq_work.c
+> +++ b/kernel/irq_work.c
+> @@@ -113,12 -113,10 +113,12 @@@ bool irq_work_needs_cpu(void
+>   {
+>   	struct llist_head *raised, *lazy;
+>   
+> - 	raised = &__get_cpu_var(raised_list);
+> - 	lazy = &__get_cpu_var(lazy_list);
+> + 	raised = this_cpu_ptr(&raised_list);
+> + 	lazy = this_cpu_ptr(&lazy_list);
 
-No, because the main functionality (webcam support) doesn't depend on
-INPUT.
+Ah thanks! The conflict is compile time rather than merge time, thanks
+for spotting it!
 
-> So
-> obviously any solution needs to check whether input is available, say
-> like
->     if (IS_MODULE(CONFIG_INPUT))
->         if (!is_input_loaded())
->             goto no_input;
-> 
-> Doesn't it?)
+Should we notify Linus about it? That's certainly something that should
+be applied with the percpu tree.
 
-Yeah, but the thing is that it breaks at compilation time, because
-the builtin module would try to use some symbols that are defined only
-at runtime.
-
-So, the above won't solve the issue.
-
-One possibility for future Kernels would be to add some logic that would
-automatically load the module if a call to one of those symbols defined
-inside a module happens inside a builtin module.
-
-The DVB subsystem actually does that for I2C frontend drivers, 
-using those macros:
-
-#define dvb_attach(FUNCTION, ARGS...) ({ \
-	void *__r = NULL; \
-	typeof(&FUNCTION) __a = symbol_request(FUNCTION); \
-	if (__a) { \
-		__r = (void *) __a(ARGS); \
-		if (__r == NULL) \
-			symbol_put(FUNCTION); \
-	} else { \
-		printk(KERN_ERR "DVB: Unable to find symbol "#FUNCTION"()\n"); \
-	} \
-	__r; \
-})
-
-#define dvb_detach(FUNC)	symbol_put_addr(FUNC)
-
-The above works reasonably fine when there's just one symbol needed
-from the module driver.
-
-There are, however, some issues with such approach:
-
-1) as symbol_request increments refcount, this works very badly when
-   there's more than one symbol needed, as symbol_put() would need
-   to be called as many times as symbol_request() is called;
-
-2) lsmod doesn't list what module is actually requesting such symbol
-   (if the caller is also a module). It just increments refcounting.
-    There were some patches meant to fix that, send a long time ago,
-    but were never merged. Can't remember why:
-	http://linuxtv.org/pipermail/linux-dvb/2006-August/012322.html
-
-Due to the above issues, and because we want to better use the I2C
-binding model, we're currently trying to get rid of such approach for
-the DVB subsystem, but there are too many changes to get rid of it.
-So, the migration is slow.
-
-Anyway, IMHO, having such sort of logic would help to solve the issues
-with some weird configs like INPUT=m.
-
-Regards,
-Mauro
+>  -	if (llist_empty(raised) && llist_empty(lazy))
+>  -		return false;
+>  +
+>  +	if (llist_empty(raised) || arch_irq_work_has_interrupt())
+>  +		if (llist_empty(lazy))
+>  +			return false;
+>   
+>   	/* All work should have been flushed before going offline */
+>   	WARN_ON_ONCE(cpu_is_offline(smp_processor_id()));
