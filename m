@@ -1,126 +1,70 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: linux-next: Tree for Oct 8 (media/usb/gspca)
-Date: Wed, 8 Oct 2014 22:50:11 -0300
-Message-ID: <20141008225011.2d034c1e@recife.lan>
-References: <20141008174923.76786a03@canb.auug.org.au>
-	<543570C3.9080207@infradead.org>
-	<20141008153105.2fe82fca@recife.lan>
-	<5435A44D.2050609@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the mips tree
+Date: Thu, 9 Oct 2014 15:09:39 +1100
+Message-ID: <20141009150939.263c6c75@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qwMyD_CsCJ31aNUu_T3o9pK"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+List-Id: linux-next.vger.kernel.org
+
+--Sig_/qwMyD_CsCJ31aNUu_T3o9pK
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:40019 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751370AbaJIBuT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Oct 2014 21:50:19 -0400
-In-Reply-To: <5435A44D.2050609@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-media <linux-media@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 08 Oct 2014 13:53:33 -0700
-Randy Dunlap <rdunlap@infradead.org> escreveu:
+Hi all,
 
-> On 10/08/14 11:31, Mauro Carvalho Chehab wrote:
-> > Em Wed, 08 Oct 2014 10:13:39 -0700
-> > Randy Dunlap <rdunlap@infradead.org> escreveu:
-> > 
-> >> On 10/07/14 23:49, Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Please do not add any material intended for v3.19 to you linux-next
-> >>> included trees until after v3.18-rc1 has been released.
-> >>>
-> >>> Changes since 20141007:
-> >>>
-> >>
-> >> I saw these build errors in gspca when CONFIG_INPUT=m but the gspca
-> >> sub-drivers are builtin:
-> >>
-> >> drivers/built-in.o: In function `gspca_dev_probe2':
-> >> (.text+0x10ef43): undefined reference to `input_allocate_device'
-> >> drivers/built-in.o: In function `gspca_dev_probe2':
-> >> (.text+0x10efdd): undefined reference to `input_register_device'
-> >> drivers/built-in.o: In function `gspca_dev_probe2':
-> >> (.text+0x10f002): undefined reference to `input_free_device'
-> >> drivers/built-in.o: In function `gspca_dev_probe2':
-> >> (.text+0x10f0ac): undefined reference to `input_unregister_device'
-> >> drivers/built-in.o: In function `gspca_disconnect':
-> >> (.text+0x10f186): undefined reference to `input_unregister_device'
-> >> drivers/built-in.o: In function `sd_int_pkt_scan':
-> >> se401.c:(.text+0x11373d): undefined reference to `input_event'
-> >> se401.c:(.text+0x11374e): undefined reference to `input_event'
-> >> drivers/built-in.o: In function `sd_pkt_scan':
-> >> t613.c:(.text+0x119f0e): undefined reference to `input_event'
-> >> t613.c:(.text+0x119f1f): undefined reference to `input_event'
-> >> drivers/built-in.o: In function `sd_stopN':
-> >> t613.c:(.text+0x11a047): undefined reference to `input_event'
-> >> drivers/built-in.o:t613.c:(.text+0x11a058): more undefined references to `input_event' follow
-> >>
-> >> These could be fixed in Kconfig by something like (for each sub-driver that tests
-> >> CONFIG_INPUT):
-> >>
-> >> 	depends on INPUT || INPUT=n
-> >>
-> >> Do you have another preference for fixing this?
-> > 
-> > Hmm... The code at the gspca subdrivers looks like:
-> > 
-> > #if IS_ENABLED(CONFIG_INPUT)
-> 
-> For builtin only, that should be
-> 
-> #if IS_BUILTIN(CONFIG_INPUT)
-> 
-> > 		if (data[0] & 0x20) {
-> > 			input_report_key(gspca_dev->input_dev, KEY_CAMERA, 1);
-> > 			input_sync(gspca_dev->input_dev);
-> > 			input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
-> > 			input_sync(gspca_dev->input_dev);
-> > 		}
-> > #endif
-> > 
-> > As we never got any report about such bug, and this is there for a long
-> > time, I suspect that maybe the IS_ENABLED() macro had some changes on
-> > its behavior. So, IMHO, we should first check if something changed there.
-> 
-> I don't see any changes in <linux/kconfig.h>.
+Today's linux-next merge of the tip tree got a conflict in
+arch/arm64/include/asm/Kbuild between commit 2f06dbe4e4fc ("arm64: use
+generic dma-contiguous.h") from the mips tree and commit c5c38ef3d703
+("irq_work: Introduce arch_irq_work_has_interrupt()") from the tip tree.
 
-Perhaps some changes at the Kbuild source code or scripts badly affected it.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> 
-> > From gpsca's PoV, IMHO, it should be fine to disable the webcam buttons if
-> > the webcam was compiled as builtin and the input subsystem is compiled as 
-> > module. The core feature expected on a camera is to capture streams. 
-> > Buttons are just a plus.
-> > 
-> > Also, most cams don't even have buttons. The gspca subdriver has support 
-> > for buttons for the few models that have it.
-> > 
-> > So, IMHO, it should be ok to have GSPCA=y and INPUT=m, provided that 
-> > the buttons will be disabled.
-> 
-> Then all of the sub-drivers that use IS_ENABLED(CONFIG_INPUT) should be
-> changed to use IS_BUILTIN(CONFIG_INPUT).
-> 
-> But that is too restrictive IMO.  The input subsystem will work fine when
-> CONFIG_INPUT=m and the GSPCA drivers are also loadable modules.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Agreed.
+diff --cc arch/arm64/include/asm/Kbuild
+index 55c179b32dd9,c1968475cc4e..000000000000
+--- a/arch/arm64/include/asm/Kbuild
++++ b/arch/arm64/include/asm/Kbuild
+@@@ -9,9 -9,8 +9,9 @@@ generic-y +=3D current.
+  generic-y +=3D delay.h
+  generic-y +=3D div64.h
+  generic-y +=3D dma.h
+ +generic-y +=3D dma-contiguous.h
+- generic-y +=3D emergency-restart.h
+  generic-y +=3D early_ioremap.h
++ generic-y +=3D emergency-restart.h
+  generic-y +=3D errno.h
+  generic-y +=3D ftrace.h
+  generic-y +=3D hash.h
 
-Maybe the solution would be something more complex like 
-(for drivers/media/usb/gspca/zc3xx.c):
+--Sig_/qwMyD_CsCJ31aNUu_T3o9pK
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-#if (IS_BUILTIN(CONFIG_INPUT)) || (IS_ENABLED(CONFIG_INPUT) && !IS_BUILTIN(CONFIG_USB_GSPCA_ZC3XX))
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Probably the best would be to write another macro that would evaluate
-like the above.
+iQIcBAEBCAAGBQJUNgqIAAoJEMDTa8Ir7ZwVwbEP/3Bb7K86ZtqzQx7/G/0vCDVD
+f6L2tPbSb9MvhThP4gHx8CNgvrL2fgHz/Fc93aQdnhii6N6/YynUh+nmr6XuAfQI
+uNZtzTCL2wISZhn1aGH4bwsqo0YsH7ihmGBwVhpmr/9wRbo1lt/J/YkmVQShFKhS
+/M7CW4PpTC++OS03L5tEAk3xrjqeyQhovRTinghtXXGylhEn/kWjElNLg9NdZwbu
+xaEU4AsVmc9IKIqy0J1MtUMthpbPaSSEtHieM13fRP20mMYcGU8gTJLcHftLdDOy
+4/5mvz+cRp1MNgI6lQUmbTnw9e39Krf3ohw33E27+pTGtJnl4QG4/dOcUx6V5mYU
+IMAtwLT4lauk9W2EbHea1QFFYlZJi09UhU0t4DAkBg5sVW8kSFCmWmzFDd7pagDm
+IPJtBQBW8fqmYo63XcIVCoUPI0A8ZAse95gE3j+kTd9p/are0eqZcZVocBV0flGW
+JLSW9a8RNd6uOPGVJtLq/wJyymUtgTY5NOb15dA1TxDEp3t7cJGbbxdXY8kUk/VH
+ECKO2OSGPOKrsUCiyWmHsk0YOtkehC/E6gsOXg8OVd5R7rj2T4woHJLZje2GJu2v
+D5E6F3jvqRCQ8dl57j1VSb8nyrtahBn+gP9zmEkHbrkJlRaDRiA9WouxiQaaVihZ
+paBFyCslfFqfkFaT+Vm6
+=4RyK
+-----END PGP SIGNATURE-----
 
-> That's simple to express in Kconfig language but probly more messy in CPP.
-> 
-> 
-> Thanks.
-> 
-> 
+--Sig_/qwMyD_CsCJ31aNUu_T3o9pK--
