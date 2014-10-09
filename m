@@ -1,26 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the mips tree
-Date: Thu, 9 Oct 2014 15:09:39 +1100
-Message-ID: <20141009150939.263c6c75@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with the tip tree
+Date: Thu, 9 Oct 2014 15:50:18 +1100
+Message-ID: <20141009155018.0b8f26f6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qwMyD_CsCJ31aNUu_T3o9pK"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/iG5sr5sZ1a8J7qcJrqkN+pp"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53357 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750705AbaJIEuf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Oct 2014 00:50:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
 
---Sig_/qwMyD_CsCJ31aNUu_T3o9pK
+--Sig_/iG5sr5sZ1a8J7qcJrqkN+pp
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/arm64/include/asm/Kbuild between commit 2f06dbe4e4fc ("arm64: use
-generic dma-contiguous.h") from the mips tree and commit c5c38ef3d703
-("irq_work: Introduce arch_irq_work_has_interrupt()") from the tip tree.
+Today's linux-next merge of the percpu tree got a conflict in
+kernel/irq_work.c between commit 76a33061b932 ("irq_work: Force raised
+irq work to run on irq work interrupt") from the tip tree and commit
+22127e93c587 ("time: Replace __get_cpu_var uses") from the percpu tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -29,42 +33,48 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/include/asm/Kbuild
-index 55c179b32dd9,c1968475cc4e..000000000000
---- a/arch/arm64/include/asm/Kbuild
-+++ b/arch/arm64/include/asm/Kbuild
-@@@ -9,9 -9,8 +9,9 @@@ generic-y +=3D current.
-  generic-y +=3D delay.h
-  generic-y +=3D div64.h
-  generic-y +=3D dma.h
- +generic-y +=3D dma-contiguous.h
-- generic-y +=3D emergency-restart.h
-  generic-y +=3D early_ioremap.h
-+ generic-y +=3D emergency-restart.h
-  generic-y +=3D errno.h
-  generic-y +=3D ftrace.h
-  generic-y +=3D hash.h
+diff --cc kernel/irq_work.c
+index 385b85aded19,345d19edcdae..000000000000
+--- a/kernel/irq_work.c
++++ b/kernel/irq_work.c
+@@@ -113,12 -113,10 +113,12 @@@ bool irq_work_needs_cpu(void
+  {
+  	struct llist_head *raised, *lazy;
+ =20
+- 	raised =3D &__get_cpu_var(raised_list);
+- 	lazy =3D &__get_cpu_var(lazy_list);
++ 	raised =3D this_cpu_ptr(&raised_list);
++ 	lazy =3D this_cpu_ptr(&lazy_list);
+ -	if (llist_empty(raised) && llist_empty(lazy))
+ -		return false;
+ +
+ +	if (llist_empty(raised) || arch_irq_work_has_interrupt())
+ +		if (llist_empty(lazy))
+ +			return false;
+ =20
+  	/* All work should have been flushed before going offline */
+  	WARN_ON_ONCE(cpu_is_offline(smp_processor_id()));
 
---Sig_/qwMyD_CsCJ31aNUu_T3o9pK
+--Sig_/iG5sr5sZ1a8J7qcJrqkN+pp
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUNgqIAAoJEMDTa8Ir7ZwVwbEP/3Bb7K86ZtqzQx7/G/0vCDVD
-f6L2tPbSb9MvhThP4gHx8CNgvrL2fgHz/Fc93aQdnhii6N6/YynUh+nmr6XuAfQI
-uNZtzTCL2wISZhn1aGH4bwsqo0YsH7ihmGBwVhpmr/9wRbo1lt/J/YkmVQShFKhS
-/M7CW4PpTC++OS03L5tEAk3xrjqeyQhovRTinghtXXGylhEn/kWjElNLg9NdZwbu
-xaEU4AsVmc9IKIqy0J1MtUMthpbPaSSEtHieM13fRP20mMYcGU8gTJLcHftLdDOy
-4/5mvz+cRp1MNgI6lQUmbTnw9e39Krf3ohw33E27+pTGtJnl4QG4/dOcUx6V5mYU
-IMAtwLT4lauk9W2EbHea1QFFYlZJi09UhU0t4DAkBg5sVW8kSFCmWmzFDd7pagDm
-IPJtBQBW8fqmYo63XcIVCoUPI0A8ZAse95gE3j+kTd9p/are0eqZcZVocBV0flGW
-JLSW9a8RNd6uOPGVJtLq/wJyymUtgTY5NOb15dA1TxDEp3t7cJGbbxdXY8kUk/VH
-ECKO2OSGPOKrsUCiyWmHsk0YOtkehC/E6gsOXg8OVd5R7rj2T4woHJLZje2GJu2v
-D5E6F3jvqRCQ8dl57j1VSb8nyrtahBn+gP9zmEkHbrkJlRaDRiA9WouxiQaaVihZ
-paBFyCslfFqfkFaT+Vm6
-=4RyK
+iQIcBAEBCAAGBQJUNhQRAAoJEMDTa8Ir7ZwVueoP/ReceBSkl2xZU0r/s1U5RLMU
+5/d3Ll0prby3YRl7njOuz9XHlRyYGRpspdS9p9J24su586f/3uoQmQM2YiyAbTiu
+6WIVaVehby+faCeLRcCVRrPZ1WurWwjoCLYFRhcshTvACAvEpNQAluaNAiDwwPp1
+e4MUMXfHT4n0pt4Uw2LOKnHIHmzTJUDo7FkzGOc71XVxFYVt7FeXwyPAa5CzwBJ3
+70o1zrs/6CmCW9D30eyCSTssFdQ1kR3XszW0hV0TyPXvv9xvsJyMf1MlAQYol00p
+vyceFWYGEjntMZpu+NrmwmL/mulFlFaXt4VB69Uah0J2OzLQ98guITohsYPQFmKq
+8J11O+d3rf5TBsjPIlT/bA9hnSMSDbopQOppLD6/sFx1DEcV6lMKHay2My7s5o1e
+fnlkl5A/Otbfy0h05gGKF81xwdA79gV7lW08qpEznjiqu6QVXpSZ/d6EDmyc66pQ
+OZkvhcVYzCunWR2OLS7fMJCI0q/fRxN8EIFnukDPcBCf+e4lAXZtjPQv/7to2QQ2
+a/XHFrYQCYL2p63TyaPS2Imeh6I81RylE0COYRxoKKTQET9P7t5tLIxPsEH/fNli
+1ABBpfiiiudil5xm69RCGssogt6c5VLNcpuji1Z7HmfWN9jSlRT3cdHC60P35vqJ
+I9fUeKTWeuN0aeDcGFTo
+=IbwC
 -----END PGP SIGNATURE-----
 
---Sig_/qwMyD_CsCJ31aNUu_T3o9pK--
+--Sig_/iG5sr5sZ1a8J7qcJrqkN+pp--
