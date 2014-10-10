@@ -1,73 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the thermal tree
-Date: Fri, 10 Oct 2014 12:14:35 +1100
-Message-ID: <20141010121435.1a614c2b@canb.auug.org.au>
+Subject: linux-next: manual merge of the mmc-uh tree with Linus' tree
+Date: Fri, 10 Oct 2014 12:58:09 +1100
+Message-ID: <20141010125809.54245801@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9UVXgtOhySKI8rGiGejYV9E"; protocol="application/pgp-signature"
+ boundary="Sig_/LUG/Zo6b0g23HVPTy=KDjOm"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39260 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60885 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750979AbaJJBOo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Oct 2014 21:14:44 -0400
+	id S1751064AbaJJB6R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Oct 2014 21:58:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
---Sig_/9UVXgtOhySKI8rGiGejYV9E
+--Sig_/LUG/Zo6b0g23HVPTy=KDjOm
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Zhang,
+Hi Ulf,
 
-After merging the thermal tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the mmc-uh tree got a conflict in
+arch/arm/boot/dts/exynos5420-arndale-octa.dts between commit
+aaa25a5a33cb ("ARM: dts: unuse the slot-node and deprecate the
+supports-highspeed for dw-mmc in exynos") from Linus' tree and commit
+583f958b8a23 ("ARM: dts: fix MMC2 regulators for Exynos5420 Arndale
+Octa board") from the mmc-uh tree.
 
-In file included from /scratch/sfr/next/init/main.c:27:0:
-/scratch/sfr/next/include/linux/acpi.h: In function 'acpi_create_platform_d=
-evice':
-/scratch/sfr/next/include/linux/acpi.h:528:12: error: parameter name omitted
-     struct acpi_device *)
-            ^
-In file included from /scratch/sfr/next/drivers/i2c/i2c-core.c:54:0:
-/scratch/sfr/next/include/linux/acpi.h: In function 'acpi_create_platform_d=
-evice':
-/scratch/sfr/next/include/linux/acpi.h:528:12: error: parameter name omitted
-     struct acpi_device *)
-            ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-And so on ...
-
-Caused by commit 55fe2ff57c7e ("ACPI: make
-acpi_create_platform_device() an external API").  This build does not
-have CONFIG_ACPI set.  This has come along a bit late. :-(
-
-I have used the thermal tree from next-20141009 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/9UVXgtOhySKI8rGiGejYV9E
+diff --cc arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 75080996ec76,1255d833d576..000000000000
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@@ -69,9 -74,13 +69,10 @@@
+  		samsung,dw-mshc-ddr-timing =3D <1 2>;
+  		pinctrl-names =3D "default";
+  		pinctrl-0 =3D <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+- 		vmmc-supply =3D <&ldo10_reg>;
++ 		vmmc-supply =3D <&ldo19_reg>;
++ 		vqmmc-supply =3D <&ldo13_reg>;
+ -
+ -		slot@0 {
+ -			reg =3D <0>;
+ -			bus-width =3D <4>;
+ -		};
+ +		bus-width =3D <4>;
+ +		cap-sd-highspeed;
+  	};
+ =20
+  	hsi2c_4: i2c@12CA0000 {
+
+--Sig_/LUG/Zo6b0g23HVPTy=KDjOm
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUNzMAAAoJEMDTa8Ir7ZwVuXkP/jw0w8kAhVTDsjqzT/nuAsDO
-xKPyjlhLdvZlmzH8tcAxwQR+2aBEYkUtkxRhI7DtKgp06N4sHT+p4m3G9gzd2Ez1
-xVM2rga22pnEFbsV/0AOjxKnzP8Q+cyT++AydPqiakF38PhbXijyFmpeL/JmtkdR
-3kNGs8cwtQwacC0MLybC+FFR91BWDrU1pfOIACAO10pK5iOq4ClNosKEgY6tyC6S
-Eq9NiQSktS03AYsq09tfoYQ038c4wfiRptKwyLJ59Dsv0XoY/qyzHG8W69V4zx1k
-7uu93n5FhKfeTiOdfEipmmoRsObudUrn2vdT6/pjCpPj0XL6+rJRWMIql3PfYxSV
-tHJIzMvETnHg0th3d2oXbtlEMAl7dEPv5GKfYXYZv2Z+X5dHC5ByNcOOrxDkISl1
-mqpFWzrXjiJvY7I239jxvtLJSXZR3uWC7x+rVpvq08RM1MD2MkL36xINuUSeGPxO
-P5VNGflQUHWkW0hQkx8WYYPXiKSxyi3IbWHzOIcVaxS9IKn7FNmvtuaMVupebVpg
-ulu2jFvMfacOkXpBp2l88gY8MaviqB60m8jcZjkvw8AcDMmayiWHozECPNrUiogo
-7BHOOst3MscKOGX6wVu/t4Z48Ejw6Arq96E5mw/JVkTye2OeBXhvAzoDmb2fHKke
-gnK6gP0jWQex3nzSc192
-=+S1n
+iQIcBAEBCAAGBQJUNz02AAoJEMDTa8Ir7ZwV6GMP/itMIFHVAev3pt3LwjOiCMwM
+Tt0D7TcdgNBB0Ja1BYund/yQ7I6Qe4l/LmWkawqV3CAVoLTEStIwYoY2zEPO8euG
+Ck/Izn2CEzlZrV7N/yPaQKP8AlYuL6O5DcXRTtlM91UFJoXQTPu0cJ4QdyRUHyZV
+PXd/8gAB2xCfDYBWId71p2h2SMPi1/1RXws/pOxwJrxASmfdAvzNym61AeS9O3A0
+SSWOIcolf5eca4vhaIbpHwHAdz+0Z+Q2XLh/EoePGv4paJje2n8iYRqqWoYLa0Eq
+mw4b7USNmJe4ECg7XuZFHhm4SZppZpLvD+PJLfzDNOZGf3Mkm+ofkJqbvqNUCZkb
+UJKFEw3x+ceJhGKOTafp8erlw8xjqb67oUJHBhqgFvCp8/MhjQA3oRn2zrmLVKJ3
+MwmCIsII9sEIIaIsysZ5N80WnvaOQ5Kx9rAtCm+FOSAzOZzwAYqfZSJ7+ZW/4Vjv
+Sc47x0ASndA1K1M722VaAJ7mEhuIzjSF+F/8SzyuglZrHl0SDuRxcZYZq1CdHrk0
+yZVicdusOFjMlAWzBaIQkbC8tVKF4xk5P/odwHoex21HLMBZjYCDZsohdg6utLTW
+N/eKsUu/JQE3x4FT1ZUha0eA0U7CfRqTFtF25RkWItd/U8tScY7w1PKYLRGNG1km
+BMpdxe8IyRKsSl54blMm
+=OddG
 -----END PGP SIGNATURE-----
 
---Sig_/9UVXgtOhySKI8rGiGejYV9E--
+--Sig_/LUG/Zo6b0g23HVPTy=KDjOm--
