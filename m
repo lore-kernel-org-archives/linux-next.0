@@ -1,68 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: status of the logfs tree?
-Date: Mon, 13 Oct 2014 11:33:04 +1100
-Message-ID: <20141013113304.599de9d2@canb.auug.org.au>
-References: <20141009105418.32aad6ab@canb.auug.org.au>
+Subject: linux-next: manual merge of the leds tree with the pm tree
+Date: Mon, 13 Oct 2014 13:46:55 +1100
+Message-ID: <20141013134655.2407e8c5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4qXPz9rBroCFXM4RAs1m40f"; protocol="application/pgp-signature"
+ boundary="Sig_/LDtErMbhm8MvBZgUv4lLyOp"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141009105418.32aad6ab@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4qXPz9rBroCFXM4RAs1m40f
+--Sig_/LDtErMbhm8MvBZgUv4lLyOp
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Bryan,
 
-On Thu, 9 Oct 2014 10:54:18 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> The top commit in the logfs tree was committed in November 2012.  Is
-> there any intention to ask Linus to merge this tree?  Or should I just
-> drop it completely?
->=20
-> It is a pain because it takes considerable time for git to actually
-> merge it.
->=20
-> $ git log --oneline origin/master..logfs/master =20
-> 339466142b3f Fix the call to BUG() caused by no free segment found
-> ab2ec19f42dc logfs: fix possible memory leak in logfs_mtd_can_write_buf()
-> $ git diff --stat origin/master...logfs/master=20
->  fs/logfs/dev_mtd.c | 2 +-
->  fs/logfs/super.c   | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
+Today's linux-next merge of the leds tree got a conflict in
+drivers/leds/leds-gpio.c between commits 8b0d4dc3d449 ("leds:
+leds-gpio: Add support for GPIO descriptors") and c108837ca096 ("leds:
+leds-gpio: Make use of device property API") from the pm tree and
+commits 4cc72346f05e ("led: gpio: Sort include headers alphabetically")
+and a4c84e6aafda ("leds: gpio: cleanup the leds-gpio driver") from the
+leds tree.
 
-Ping?
+I fixed it up (see below - sorry I put one of the include in the wrong
+place :-() and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/4qXPz9rBroCFXM4RAs1m40f
+diff --cc drivers/leds/leds-gpio.c
+index 112c2a11c46d,b4518c8751c8..000000000000
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@@ -10,16 -10,17 +10,16 @@@
+   * published by the Free Software Foundation.
+   *
+   */
+- #include <linux/kernel.h>
+- #include <linux/platform_device.h>
++ #include <linux/err.h>
+  #include <linux/gpio.h>
+- #include <linux/gpio/consumer.h>
++ #include <linux/kernel.h>
+  #include <linux/leds.h>
+- #include <linux/slab.h>
+- #include <linux/workqueue.h>
+  #include <linux/module.h>
+- #include <linux/err.h>
+ -#include <linux/of.h>
+ -#include <linux/of_gpio.h>
+ -#include <linux/of_platform.h>
+++#include <linux/gpio/consumer.h>
++ #include <linux/platform_device.h>
+ +#include <linux/property.h>
++ #include <linux/slab.h>
++ #include <linux/workqueue.h>
+ =20
+  struct gpio_led_data {
+  	struct led_classdev cdev;
+
+--Sig_/LDtErMbhm8MvBZgUv4lLyOp
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUOx3FAAoJEMDTa8Ir7ZwVVt4P/2JOQUTn8J9zEEtdhRMYek0s
-BgUycR7sA63xdc+tXOAbZElwP1D7SJl9EwacNz2Z7qWY/GVHr/Ys/ESf3yHvr05A
-aI8lQXY14TO7g7IQm1X2iIeeQv6sAKAotizdtEOcyxEbyZLIhzMFiCGM/HMVwdS7
-llFI6SHA+cVc4taDyC/4bop8WOwfZBIk0MlbhDLdLA1HJVINHLz5zsvD+vFT10hW
-OuIHvLTLImIm5mlfp0C67FZM17ilMiyftI61lz6c26vWW2qmvgD50cAbT90ZRzDG
-2jw2ozwuMkOGx5T81hgKw6HJyuxi24bNUXdOpLXdi2+ogjU1BHIueR1yFc3MYDy+
-DJTe3r0ZYJuvqhzTR0OZMqjqixEeMXIrt8DGznP7fUhO5gOc0S9id5OpTU6kdGXz
-mpbTG1bvGHwfTvEgwk5tPL9fFUm/TjKBwZvLEEhLNl929KZxGPvOaqK/LVAMimIQ
-D/yXv3wkqzZU16QRFCIZA+QIAPJyoQTGKrPe0sAfQ65cdrTOtn9t1cLz/uFd/Bai
-g0EwZpjdpM5sw7VXk0Lj/0mlopb2WJVJthmVsYRE/V3g1T7AE6M8tsP8HV5ZC92m
-cQJC1QFlogjcKaRe0OcVMcyOZkXDp2r3NxAueudOi2mTjpVcM8R6oNHOyLAB/R7y
-5ldTesNkQ+nehpN+yny8
-=VDKc
+iQIcBAEBCAAGBQJUOz0jAAoJEMDTa8Ir7ZwVtosP/3fO010El1KQzDU2XukP+zZd
+ZTtTwMWO8aytnwKeyJ113CS97Er9zkc/c1i4QLZK5MUhicJA6Sike7CiDFgVh1Mb
+JBCkVtDJ+BBjnCf0cXhlbQwIJXZBQyhWFZwqxA3oyxucDqiKctGc2qDmAyBuf9lc
+N4QfqVDZboy8oKB4/Vh6wWlA1wLgmh6TEb23BCcl2OrEkrEF84MveGp+felgDXi6
+WhPPmBIc80nKYSqay8gxQi1Nr+2uu74taCjqD24e4Nh2RtoVX7BG9E+d7A7RRBlB
+pb4t4qqD1TMbOVTmlpMcA9TZxS/YGVvor+/CBIHl0hEtX9gq10hGFgVNOpwcO6UM
+7zd7/NqOxjY8UEJe5Is8FBus4S1w3GBj74JbDIxdMTsouFVOUoJ0Y8q+zVytm/IC
+LFMUFLAI9H7tX8j2XdtWYJFkh4C8K3lGds9AXY1rNnFJ+lOJpS0uRRO7zJlyYsvH
+Kzi3aGmxnTWCwTojzMBk3+9eJ9gt23uc/ElI0/vFf1ggMKG0Fdi0woa1n0xGa//l
+K54MUqhQk7a2Wa4IdxlLiDOggQoZqdkOlMxWjd8RjMGQnpJNaTEtF5l4G+LP5u7s
+9YEGqbIq2lgMjKcrxWSFyekr1hx5jBONIC0zwmry+Ql8k+qO3xz0LdcmBIZxGcH3
+zxxbwdybt/zMzGa9TsEZ
+=9K0h
 -----END PGP SIGNATURE-----
 
---Sig_/4qXPz9rBroCFXM4RAs1m40f--
+--Sig_/LDtErMbhm8MvBZgUv4lLyOp--
