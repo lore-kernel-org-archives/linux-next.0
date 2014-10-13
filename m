@@ -1,59 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: status of the signal-cleanup tree
-Date: Mon, 13 Oct 2014 17:33:01 +1100
-Message-ID: <20141013173301.0664c8ac@canb.auug.org.au>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: linux-next: status of the signal-cleanup tree
+Date: Mon, 13 Oct 2014 16:38:36 +0200
+Message-ID: <543BE3EC.9010601@nod.at>
+References: <20141013173301.0664c8ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SBmHiDWyvlq=Zett1HN5S_J"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="n7lMnmHlkOMmSOrvO9JUF5WXVAo3mJ78E"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60422 "EHLO ozlabs.org"
+Received: from a.ns.miles-group.at ([95.130.255.143]:65276 "EHLO radon.swed.at"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751603AbaJMGdL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Oct 2014 02:33:11 -0400
+	id S1751574AbaJMOis (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Oct 2014 10:38:48 -0400
+In-Reply-To: <20141013173301.0664c8ac@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Weinberger <richard@nod.at>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/SBmHiDWyvlq=Zett1HN5S_J
-Content-Type: text/plain; charset=US-ASCII
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--n7lMnmHlkOMmSOrvO9JUF5WXVAo3mJ78E
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
-Hi Richard,
+Am 13.10.2014 um 08:33 schrieb Stephen Rothwell:
+> Hi Richard,
+>=20
+> The signal-cleanup tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/rw/misc.git#signal_v4)
+> has not bee touched since July and when merged into Linus' tree,
+> produces no changes (same patches different commits :-().  So all it is=
 
-The signal-cleanup tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/rw/misc.git#signal_v4)
-has not bee touched since July and when merged into Linus' tree,
-produces no changes (same patches different commits :-().  So all it is
-doing at the moment is producing unnecessary conflicts :-(
+> doing at the moment is producing unnecessary conflicts :-(
+>=20
+> Can you clean it up, please?  Or should I just remove it
+> from linux-next completely.
 
-Can you clean it up, please?  Or should I just remove it
-from linux-next completely.
+Just remove it. The "feature" was merged.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks,
+//richard
 
---Sig_/SBmHiDWyvlq=Zett1HN5S_J
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+
+--n7lMnmHlkOMmSOrvO9JUF5WXVAo3mJ78E
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJUO3IiAAoJEMDTa8Ir7ZwVCc8P/R6wytPJi7OZcecOA9091qNg
-hXkLuqrsPMIe3i1f0d/9EnrIXxBdq/CqbpU+8miQ/XtONI+ZtBT4V11QV9GjpPix
-sYUYbwP/1DE5odOT1829+LvUvSpRbrCOFPVWIUvCyc5Cub+kegR96LmP1eWeQiWo
-5iPYiP46PaTTBIkE2BzPz79J70GaYverFlM/Kk7u8S81674gL/vTgyJ5yu6v18K/
-i/qrEfbLAYHHP15jpOhJ2jZ4HeGsvDdZyH7RVihJmsKHVMPR9+tL8MEHs+MYpOmL
-/YW8IO2DNqyUcqO3mVV+rNTMSZxXs1UW04n7cF3fuCtmA6Jk5YURFhhJkn0UVEXG
-IvD94+7OqyHf7EYqMusksjsgdOgfMpSd0WBT8bpkyksQF8LF3jwVm2W4/ZVJxt5g
-ye5cbnbbkTuQA6/aK2wOBcVokCLCPrt5SWngdMJmc39FdlPjljcTu0fBI571P4yT
-gdUGzpFTcvshW+DBwr1bMeRLW4Dy7geTxEMJpPVLYy4jGYD6Ijm45848clJMajSp
-Q+YZxYQsysXTS7tBkaJK8Stj31CXnkk3dhnh3Ffx4f8qpTuB35/7XYylt5YSEP6D
-i9QQm6HGy6ZgD5NoT8YCdXKVUuzCxoEIkZVuX+bFUlERlAgbKOyaMfnE/L6sSg/C
-zxRo43nUsaHpIMzHj8uQ
-=74xi
+iQIcBAEBAgAGBQJUO+PzAAoJEPmeIjfg4UaadN4QAIgk8ejiOYQqZh7LjJy7A1d7
+1xanFzrieQJXNQUofE1lF2rp41zd5N7DNWdoFYXhGpfDCS9fASgpntVV5ZzFDBWx
+pQmzCcHWMuEUnSI/go26GVVlMGyVnekEboQdHqADo6EaptZ0AOBB4Rat4qo+HoJJ
+D4h3KT+VR8lrytChm/O+B2tqrkFiJZWAUClsFCGJvQOsA+nx2OxEfym0X1LaFCSl
+3YTLox+WiE20cW0qvAkDxkSxdcFFcuXgjGxdUkEe+HYCs+dg7l0K4TJYNDQ/zKMc
+JtuOOaHpF5Y+ITCMyBF8UPBSBYvBjxBcvpIF7igTKzrJKO6EOGHX12VR94Xw2AFC
++qOclvFPpZc+YsC5x3LdjARujF9gDuZjNPvKbmjCTQ3UHKO1YaQmypcmwiEoPUP8
+rPOy65sfHHJ0R8Ac/jN9HpdDhT5IkbJ+XWd6yrr3CWV+GuZP7iEygwetM64dG2+H
+BpCa1fkNhGfNA3zbt6wIvQSSPH3VVyFVNzJIsDwJE97nBi45EULVN7rCSuB5jBTs
+/+nWKWBEk6LW+I3w0q2+7kzC5QtXcMg5lz2lz9aHenPNxo/qSA4ZFnaxsHiIWrI3
+8sawbs+rXCdvrd2B0FEFQpkeneB9FASQWJL3jjLLyHagip1zkVAWD4X7BrqdLWoG
+LkYGinm2MDATANvyl5L+
+=eSor
 -----END PGP SIGNATURE-----
 
---Sig_/SBmHiDWyvlq=Zett1HN5S_J--
+--n7lMnmHlkOMmSOrvO9JUF5WXVAo3mJ78E--
