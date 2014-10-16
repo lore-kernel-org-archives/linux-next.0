@@ -1,79 +1,138 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the thermal tree
-Date: Thu, 16 Oct 2014 12:53:21 +1100
-Message-ID: <20141016125321.20509c53@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 16 Oct 2014 15:56:57 +1100
+Message-ID: <20141016155657.1b4ea40d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HRYdY8r3JID.Axv=KS1gLVn"; protocol="application/pgp-signature"
+ boundary="Sig_/d=WGpqgi.UegLCM+3Z/0gGU"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55237 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46632 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750820AbaJPBxa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Oct 2014 21:53:30 -0400
+	id S1750719AbaJPE5M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Oct 2014 00:57:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
 
---Sig_/HRYdY8r3JID.Axv=KS1gLVn
+--Sig_/d=WGpqgi.UegLCM+3Z/0gGU
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Zhang,
+Hi Andrew,
 
-After merging the thermal tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the akpm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-drivers/thermal/thermal_core.c:1183:1: error: redefinition of 'thermal_cool=
-ing_device_register'
- thermal_cooling_device_register(char *type, void *devdata,
- ^
-In file included from drivers/thermal/thermal_core.c:34:0:
-include/linux/thermal.h:345:46: note: previous definition of 'thermal_cooli=
-ng_device_register' was here
- static inline struct thermal_cooling_device *thermal_cooling_device_regist=
-er(
-                                              ^
-drivers/thermal/thermal_core.c:1221:6: error: redefinition of 'thermal_cool=
-ing_device_unregister'
- void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
-      ^
-In file included from drivers/thermal/thermal_core.c:34:0:
-include/linux/thermal.h:351:20: note: previous definition of 'thermal_cooli=
-ng_device_unregister' was here
- static inline void thermal_cooling_device_unregister(struct thermal_coolin=
-g_device *cdev)
-                    ^
+In file included from mm/memcontrol.c:28:0:
+include/linux/page_counter.h: In function 'page_counter_init':
+include/linux/page_counter.h:19:27: error: 'LONG_MAX' undeclared (first use=
+ in this function)
+ #define PAGE_COUNTER_MAX (LONG_MAX / PAGE_SIZE)
+                           ^
+include/linux/page_counter.h:26:19: note: in expansion of macro 'PAGE_COUNT=
+ER_MAX'
+  counter->limit =3D PAGE_COUNTER_MAX;
+                   ^
+include/linux/page_counter.h:19:27: note: each undeclared identifier is rep=
+orted only once for each function it appears in
+ #define PAGE_COUNTER_MAX (LONG_MAX / PAGE_SIZE)
+                           ^
+include/linux/page_counter.h:26:19: note: in expansion of macro 'PAGE_COUNT=
+ER_MAX'
+  counter->limit =3D PAGE_COUNTER_MAX;
+                   ^
+include/linux/page_counter.h:19:38: error: 'PAGE_SIZE' undeclared (first us=
+e in this function)
+ #define PAGE_COUNTER_MAX (LONG_MAX / PAGE_SIZE)
+                                      ^
+include/linux/page_counter.h:26:19: note: in expansion of macro 'PAGE_COUNT=
+ER_MAX'
+  counter->limit =3D PAGE_COUNTER_MAX;
+                   ^
+In file included from mm/page_counter.c:7:0:
+include/linux/page_counter.h: In function 'page_counter_init':
+include/linux/page_counter.h:19:27: error: 'LONG_MAX' undeclared (first use=
+ in this function)
+ #define PAGE_COUNTER_MAX (LONG_MAX / PAGE_SIZE)
+                           ^
+include/linux/page_counter.h:26:19: note: in expansion of macro 'PAGE_COUNT=
+ER_MAX'
+  counter->limit =3D PAGE_COUNTER_MAX;
+                   ^
+include/linux/page_counter.h:19:27: note: each undeclared identifier is rep=
+orted only once for each function it appears in
+ #define PAGE_COUNTER_MAX (LONG_MAX / PAGE_SIZE)
+                           ^
+include/linux/page_counter.h:26:19: note: in expansion of macro 'PAGE_COUNT=
+ER_MAX'
+  counter->limit =3D PAGE_COUNTER_MAX;
+                   ^
+include/linux/page_counter.h:19:38: error: 'PAGE_SIZE' undeclared (first us=
+e in this function)
+ #define PAGE_COUNTER_MAX (LONG_MAX / PAGE_SIZE)
+                                      ^
+include/linux/page_counter.h:26:19: note: in expansion of macro 'PAGE_COUNT=
+ER_MAX'
+  counter->limit =3D PAGE_COUNTER_MAX;
+                   ^
 
-Caused by commit 571ed5a8177a ("Thermal: int340x thermal: fix a Kconfig
-dependency error").
+Caused by commit 36a1bfb2a772 ("mm: memcontrol: lockless page
+counters").  See Rule 1 in Documentation/SubmitChecklist.
 
-I have reverted that commit for today.
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 16 Oct 2014 15:49:08 +1100
+Subject: [PATCH] mm: memcontrol: add includes for page_counter.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/page_counter.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
+index a878ef61d073..785640e4efec 100644
+--- a/include/linux/page_counter.h
++++ b/include/linux/page_counter.h
+@@ -2,6 +2,9 @@
+ #define _LINUX_PAGE_COUNTER_H
+=20
+ #include <linux/atomic.h>
++#include <linux/kernel.h>
++
++#include <asm/page.h>
+=20
+ struct page_counter {
+ 	atomic_long_t count;
+--=20
+2.1.1
+
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Sig_/HRYdY8r3JID.Axv=KS1gLVn
+--Sig_/d=WGpqgi.UegLCM+3Z/0gGU
 Content-Type: application/pgp-signature; name=signature.asc
 Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUPyUWAAoJEMDTa8Ir7ZwVk4sP/0CdbOy+PdOVLQDE+oNHhnFz
-DxYCBQ1NrRc7brjtpmb5LeM1xc2UB11HSNGQpSR4QChImARy7bz3Lm9tWX2lCly4
-3neDBzRS5bM71er3hB3mrUVeQMiz7As632rOFJlZGVMXvKLgXup9HNo9sNF8xRVb
-bznf7m+cDoDEasWMt6XEdsFl/mcKFOuloxdRK5ToKtXX1+PZ8s5x8o8w3q4fJjJb
-D9yUrCyqkl56tMFaS30M4yDoLF5aSTwz5G2XM3LO7b3+ebsdZRzxqoWYEcwKFYuG
-tLhBcM1iRW0npKb4lfIfNZGnasl4FeUlPmnRHCHaN8BPCDQOMwAdXm7hye6ut6/7
-1jLMw/E15UONRvTqzNa/Pp5j3RcGeQJVQHsVHEb6a1pCYtL1Pv3wTw3zoqTf0fSI
-/srAxOjLcJ/j+EF5Na8LKFOoo9TrSUdt0RI84lXHJu4FubUSebshl5HJ6hG7O1rb
-JwdYv9zDr+TV51yqQfiK3JcP+vhHuvEgFDL0++22X6CaFF+Aoat4/ZlSad3Odw8V
-gPr+M5OQP12OtEBR2soCKqCel3h5hk9vx/0QWodYrAfN8S8k4ZDfsuafg3Geoo9S
-vsNjUAvWyOWFLzHXjxzveYTG34/rX9htJ4pjqQuRFJwNEHTE49Hu37ytH7uPo2bo
-5wx1jEcCVbXXw0ioMRBy
-=xnD5
+iQIcBAEBCAAGBQJUP1AhAAoJEMDTa8Ir7ZwVl3oP/ibT2AWF8hk0fVOW1z7sWpsb
+xeHw9+2Oa4480bFL4AFd77W+fjB6QkSbWUnqVjvHjv32IDMh28rKK6OObyBZZHRT
+RpTjHhT145IKZQRjLbr4JkDodqJieDQKR13ieqIot8GZ6LCxs/UOWepi0aj8zgdR
+aYm/rP6F2fqluIbllJMGZdoAw3rBBliOSSdEZRvINbkv4uVB+q39QkDvoi3bUawR
+ROKu1jkis26UehoRocY8TPV/BE2I20klU3WLOa2w4DhAGA3DPuDKfvWGXTus2LDT
+LglNH86ij65KZ9M6KWn+bKuaONa3YAB9Z+Nnki6nIktrF5unir8I1eIBe29FpSve
+fldLmCMd2MvsxUD9KfAfzK457A0vBkFl/nMCxVSI8aQlYOfTatJF4tuKRwr8ixvd
++jgj6uQYenVdDqyDdnJ3h0M+QqOLnbNGK922h72zGuxHOny0QwVhjzSrGt2Bmr1d
+EwzmdIIG1bmch52zeoM0PVUCOlLdSwZWSxmlnTRRDfoilCdcHFh8w/rX8gnqxu76
+XJdOnB5YE3hZwUlouVrLxFSfcvGGaBNDND0CQvq9WFHOiieIRG58BDr4GrGIjzv/
+7MA7slLzJgni5RRzO/mwRCiWjJ22qMXg90ePopZOHvns663kY1f1entkRsy7+eN4
+EAKEbqZ9fC9hj/+D2mnS
+=Jz03
 -----END PGP SIGNATURE-----
 
---Sig_/HRYdY8r3JID.Axv=KS1gLVn--
+--Sig_/d=WGpqgi.UegLCM+3Z/0gGU--
