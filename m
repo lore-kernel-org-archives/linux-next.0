@@ -1,106 +1,60 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Oct 16
-Date: Thu, 16 Oct 2014 10:15:53 -0700
-Message-ID: <20141016171552.GA19765@roeck-us.net>
-References: <20141016161128.3be4aa13@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with Linus' tree
+Date: Fri, 17 Oct 2014 12:47:30 +1100
+Message-ID: <20141017124730.6df8beb3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=WTJO1K3l0bG=pSNQaqcEp2"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:50256 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751472AbaJPRP6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Oct 2014 13:15:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20141016161128.3be4aa13@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:42941 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751643AbaJQBri (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Oct 2014 21:47:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 16, 2014 at 04:11:28PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Please do not add any material intended for v3.19 to your linux-next
-> included trees until after v3.18-rc1 has been released.
-> 
-> Changes since 20141015:
-> 
-> The net tree lost its build failure.
-> 
-> The thermal tree gained a build failure for which I reverted a commit.
-> 
-> The akpm-current tree gained a build failure for which I applied a patch.
-> 
-> The akpm tree lost a patch that turned up elsewhere.
-> 
-> Non-merge commits (relative to Linus' tree): 1106
->  1073 files changed, 32703 insertions(+), 16141 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
+--Sig_/=WTJO1K3l0bG=pSNQaqcEp2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There are some new build failures, so here is a complete list of all the
-problems I am seeing in my builds.
+Hi all,
 
-Guenter
----
+Today's linux-next merge of the kvm-arm tree got a conflict in
+virt/kvm/arm/vgic-v2.c between commit 1f2bb4acc125 ("arm/arm64: KVM:
+Fix unaligned access bug on gicv2 access") from Linus' tree and commit
+2df36a5dd679 ("arm/arm64: KVM: Fix BE accesses to GICv2 EISR and ELRSR
+regs") from the kvm-arm tree.
 
-arm:at91_dt_defconfig
-arm:sama5_defconfig
-arm:at91rm9200_defconfig
+I fixed it up (since I don't know any better, I just used the kvm-arm
+tree version) and can carry the fix as necessary (no action is
+required).
 
-drivers/tty/serial/atmel_serial.c:717:3:
-	error: implicit declaration of function 'dmaengine_terminate_all'
-drivers/tty/serial/atmel_serial.c:724:2:
-	error: implicit declaration of function 'async_tx_ack'
-drivers/tty/serial/atmel_serial.c: In function 'atmel_release_tx_dma':
-drivers/tty/serial/atmel_serial.c:746:3:
-	error: implicit declaration of function 'dma_release_channel'
-drivers/tty/serial/atmel_serial.c: In function 'atmel_tx_dma':
-drivers/tty/serial/atmel_serial.c:790:3:
-	error: implicit declaration of function 'dmaengine_prep_slave_sg'
-drivers/tty/serial/atmel_serial.c:793:7: error: 'DMA_MEM_TO_DEV' undeclared
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-and more similar problems.
+--Sig_/=WTJO1K3l0bG=pSNQaqcEp2
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
----
-arm64:defconfig
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-mm/gup.c: In function '__get_user_pages_fast':
-mm/gup.c:963:3: error: implicit declaration of function 'pgd_huge'
+iQIcBAEBCAAGBQJUQHU3AAoJEMDTa8Ir7ZwVYtwQAIHmDgFKXNwazRTGec3T6zU3
+ICpQi8Uuc7jHnYw0jMm55/Z1D1O6YOxsekluI9prkf7AAezxHO8wkArsUbHNMk2P
+qtE6WtvcylS8IJO+UUEToPXczxLzIbU0zcGNkJOyCvlG/qBrUw/JiX2vcvx5k6wf
+lgg3fL0Ivkk7Bss0JAG3+esuLwJKNnq47SEL5/RbTFjCGB0GTNNbV0Dl/QnSoVCh
+4JDLszDyHj75jfC7B2jB+Qdw9jIUSM4X1HqHY+eiTLQiQ3i8KK2XtePeV3WYr7QQ
+zD4H0kZSvLgfUhdrXRkJ7scp4ZvdFNHPZJvzgZtcz/UzV2AmFATlDpWn+wCm/yjH
+4y3KYauXNiRyemkJ+6R4WrePHrdHJ8/Hdscga6B2T3sKwVLjZaoUM04ceFVASuyY
+8540q90OxuVI7J9mYws/daGhRUck9yFBLUI9qot5gACu1gSdYF6mU4+kN1QfNyeJ
+N7pWVfnbl6RhoO8LxlhgkdfEL8+bKs0nLDKIVzdvpxQuFLnlMVO6LhvBPsTu3u+l
+l8c36uj8N6aT1liNa3MLjErZtrsMyULMK37hhbDK7FcncBW0xL858hIAc2HEkw/d
+/V+mjI8/0/brsIXHG9PZ0PPvMKuqsjDqQcut2VKVkPVDYY8oc5FZ7lV6ST5cM6H2
+xUYBAHAUnFoB4F5PNRZM
+=jDQQ
+-----END PGP SIGNATURE-----
 
----
-avr32:defconfig
-
-drivers/input/leds.o: In function `init_module':
-leds.c:(.init.text+0x0): multiple definition of `init_module'
-drivers/input/input.o:input.c:(.init.text+0x0): first defined here
-drivers/input/leds.o: In function `cleanup_module':
-leds.c:(.exit.text+0x0): multiple definition of `cleanup_module'
-drivers/input/input.o:input.c:(.exit.text+0x0): first defined here
-
----
-avr32:merisc_defconfig
-avr32:atngw100mkii_evklcd101_defconfig
-
-drivers/tty/serial/atmel_serial.c: In function 'atmel_get_lines_status':
-drivers/tty/serial/atmel_serial.c:254:
-	error: 'struct atmel_uart_port' has no member named 'gpios'
-
-drivers/tty/serial/atmel_serial.c: In function 'atmel_config_rs485':
-drivers/tty/serial/atmel_serial.c:301:
-	error: 'struct atmel_uart_port' has no member named 'tx_done_mask'
-drivers/tty/serial/atmel_serial.c:308:
-	error: 'struct atmel_uart_port' has no member named 'rs485'
-
-and many more similar problems. Also there are the same dma related errors as
-for the arm builds.
-
----
-sparc64:allmodconfig
-
-drivers/bcma/main.c: In function 'bcma_of_find_child_device':
-drivers/bcma/main.c:150:3:
-	error: implicit declaration of function 'of_translate_address'
-
----
+--Sig_/=WTJO1K3l0bG=pSNQaqcEp2--
