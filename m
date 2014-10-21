@@ -1,60 +1,64 @@
-From: Andreas Ruprecht <rupran@einserver.de>
-Subject: Re: randconfig build error with next-20141020, in drivers/media/platform/marvell-ccic/mcam-core.c
-Date: Tue, 21 Oct 2014 00:56:57 +0200
-Message-ID: <54459339.8010009@einserver.de>
-References: <CA+r1ZhgyOubWFZE+B0LnOLJNA7VVvPDDSmUjnRW7=z9cZBb0rA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 21 Oct 2014 11:33:14 +1100
+Message-ID: <20141021113314.7d335e3a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+r1ZhgyOubWFZE+B0LnOLJNA7VVvPDDSmUjnRW7=z9cZBb0rA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, "m.chehab" <m.chehab@samsung.com>, hverkuil@xs4all.nl
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/QvyAVVOSIts1rD.7_C3RzFS"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59195 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752177AbaJUAdW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Oct 2014 20:33:22 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oder Chiou <oder_chiou@realtek.com>
 
-Hi,
+--Sig_/QvyAVVOSIts1rD.7_C3RzFS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-after a lot of staring at the configuration it seems like this boils
-down to an issue within the Kconfig constraint description.
+Hi all,
 
-Broken down to the important bits:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-- CONFIG_VIDEO_TW68 and CONFIG_VIDEO_SAA7134 *select*
-CONFIG_VIDEOBUF2_DMA_SG
+sound/soc/codecs/rt5677-spi.o: In function `rt5677_spi_driver_init':
+rt5677-spi.c:(.init.text+0x0): multiple definition of `init_module'
+sound/soc/codecs/rt5677.o:rt5677.c:(.init.text+0x0): first defined here
+sound/soc/codecs/rt5677-spi.o: In function `rt5677_spi_driver_exit':
+rt5677-spi.c:(.exit.text+0x0): multiple definition of `cleanup_module'
+sound/soc/codecs/rt5677.o:rt5677.c:(.exit.text+0x0): first defined here
 
-- Both of these options are set to "*m*" in the configuration provided,
-which means that CONFIG_VIDEOBUF2_DMA_SG will also be selected as "m".
-According to Documentation/kbuild/kconfig-language.txt, line 101, "m" is
-set as the minimal value for CONFIG_VIDEOBUF2_DMA_SG by the selects, and
-as no other options select it as "y", it stays "m".
+Probably caused by commit af48f1d08a54 ("ASoC: rt5677: Support DSP
+function for VAD application").
 
-- CONFIG_VIDEO_CAFE_CCIC is set to "*y*".
-The header file at drivers/media/platform/marvell-ccic/mcam-core.h then
-sets an internal preprocessor variable in line 28:
+I have used the sound-asoc tree from next-20141020 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-#if IS_ENABLED(CONFIG_VIDEOBUF2_DMA_SG)
-#define MCAM_MODE_DMA_SG 1
-#endif
+--Sig_/QvyAVVOSIts1rD.7_C3RzFS
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
-The source code right around line 1299 in
-drivers/media/platform/marvell-ccic/mcam-core.c, where the undefined
-reference occurs, depends on MCAM_MODE_DMA_SG.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-This means that CONFIG_VIDEOBUF2_DMA_SG is compiled as an LKM, thus the
-reference for vb2_dma_sg_memops from mcam-core.c (which is statically
-compiled) can not be resolved in the builtin.o files and vmlinux.
+iQIcBAEBCAAGBQJURanOAAoJEMDTa8Ir7ZwVMwwQAI2T+Ip/FTWKpKr3XUl3Xlow
+C0Dy03A4EBQ2hUb/bScdzaUEjekEl72nolS/zF07Cx3wr4yvNVvAU3QI4WfY7/Pw
++1ire4o2sGkbZUEe12q4xhU0CKcdayghDwLIEqP9aErD1dp39RLLsyneysXjjqJ4
+YsYyKbIajHARq0bMyT5UIrY9vXg1diCw6NwUMNMp2X0SIIlH08JXVz7p5IkIpfJ2
+Lm7xXYr/g5Qd4dJly65VLH98ezHgryZOjS3O0eDVZ+zcPLtXUGsdorAjSNFXBn/n
+u7Wb3je5O7KJOjRUem7jvhCk/wncdgEKfO77NrK99L92jn1S5y+dfyZziZbcAbaE
+ytCxYNE7wurHnKE+vbYHwyFD3Ro5u39kXdBsl5VQN09V0vWZeyMTYPdZqdlgmAl5
+xeWnBYJOyfO7dLZsf5f1+4qni1tFlsL413ffYCAjKDKtjCDCIiajFzqLFDz4debW
+o8y4/FgvO3kwsJ0DgJ+2N4oE+u+P7e6zzs6en6xuzr8iVatXG6O6GIjw9p7fChAK
+YtpU3/IRIVK5nBwZGvqPeR+EKS0TxsIC2L1XOm6j2eHTALiCybOX+A2cLoUQN6lo
+5/wSuf14rqCoezEkl8IXh+/YYF72KxExHb1hVljdPx+lrEChy3ILwtBPCt9C0a1i
+Z6yqP9269Qri/pEFt/zh
+=BrRl
+-----END PGP SIGNATURE-----
 
-Unfortunately, I haven't got a solution on how to resolve that, but
-maybe this summary helps someone else to come up with one.
-
-Best regards,
-  Andreas
-
-On 20.10.2014 19:52, Jim Davis wrote:
-> Building with the attached random configuration file,
-> 
-> drivers/built-in.o: In function `mcam_setup_vb2':
-> /home/jim/linux/drivers/media/platform/marvell-ccic/mcam-core.c:1299: undefined
-> reference to `vb2_dma_sg_memops'
-> make: *** [vmlinux] Error 1
-> 
+--Sig_/QvyAVVOSIts1rD.7_C3RzFS--
