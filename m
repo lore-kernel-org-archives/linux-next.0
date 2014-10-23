@@ -1,54 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Oct 23
-Date: Thu, 23 Oct 2014 23:47:50 +1100
-Message-ID: <20141023234750.012b1f56@canb.auug.org.au>
-References: <20141023152129.28558ddf@canb.auug.org.au>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the pm
+ tree
+Date: Thu, 23 Oct 2014 15:06:31 +0200
+Message-ID: <20141023130631.GE23011@dhcp22.suse.cz>
+References: <20141023140905.3bd78e51@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PDxh8CfcSyxr84x.ri8CDFf"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52309 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755323AbaJWMr7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Oct 2014 08:47:59 -0400
-In-Reply-To: <20141023152129.28558ddf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20141023140905.3bd78e51@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/PDxh8CfcSyxr84x.ri8CDFf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu 23-10-14 14:09:05, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm-current tree got a conflict in
+> include/linux/oom.h, kernel/power/process.c and mm/oom_kill.c between
+> commit 5695be142e20 ("OOM, PM: OOM killed task shouldn't escape PM
+> suspend") from the pm tree and commit e039ae202d34 ("OOM, PM: OOM
+> killed task cannot escape PM suspend") from the akpm-current tree.
+> 
+> I fixed it up (the pm tree version seems to be newer, so I used that)
+> and can carry the fix as necessary (no action is required).
 
-Hi all,
+Yes that is correct. I thought Andrew has dropped the previous version
+of the patch from his tree. Rafael has merged his in the meantime.
 
-I neglected to mention that there will be no linux-next tomorrow.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/PDxh8CfcSyxr84x.ri8CDFf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUSPj7AAoJEMDTa8Ir7ZwVZ2wP/3JtcxN7tGaojUihFj6cQRQq
-Q+R186u9AQ0pHHHnz1Bh59U/n+b/bseMkjoVayQdMGuGTX3kbRzwHAGJii3YA+cL
-UC+b2I6SbzAq3t0yQuecFYYpCrUzQBC83hrYEMEjFoIGNxyIAaTIaKiOWKYjsf+1
-3pQ1BAIMe2Traxl9AyCy4Pw0w/Y7GIYxSo4uEUQJ2UsNU6Q4vj9ninwE9RoPN7K2
-npmiOqBwK4q6NU8xPKjDJJx87ONVo2b4ChMXFi0xfDT/B2VybEqDHBN4wqhIMtdc
-VfQzJIAufHN7U2/0oncGqrbkgmyCDQBLqfRhvT0s907v0h+I9OwcjLcMQVtbPKZg
-L6SDJuWR1DKGLArSb3+Kf17UxW6Oa4MmLoiCsrfOvSOjDuWyPPAUE60o5VpLxHzv
-TvHMvjrzpbZInHZFSru+nwtBxCkdwsVuJUnX9MpiCTmKTUUS5b4a9x195FFJFx/y
-13WUNRgpaDT9VOE5ZwoCiWFQTHml2FT+MMksp0+Fl83iW8bDN7JNyCv46WJFjIT9
-eBr6BLAdn4vLjmMd0Ud5dq7oXuOHO1jOeQIUPaVv49QF/Ra72cfiH71vneeUcBxK
-4rDcbvHCwB5B7UZH7fBaeTE+Xg3mrG4n3mDZIt18Pw4epx1ey+KU+98xztgPr3k7
-45KcT5Y2IcVfmzdhm8iO
-=3uoX
------END PGP SIGNATURE-----
-
---Sig_/PDxh8CfcSyxr84x.ri8CDFf--
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
