@@ -1,126 +1,70 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: [PATCH RESEND] tc: Error handling clean-ups
-Date: Sun, 26 Oct 2014 15:22:33 +0000 (GMT)
-Message-ID: <alpine.LFD.2.11.1410222234050.21390@eddie.linux-mips.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH RESEND] tc: Error handling clean-ups
+Date: Mon, 27 Oct 2014 10:10:17 +1100
+Message-ID: <20141027101017.6af4e810@canb.auug.org.au>
 References: <alpine.LFD.2.11.1404062030280.15266@eddie.linux-mips.org>
+	<alpine.LFD.2.11.1410222234050.21390@eddie.linux-mips.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/y+IRGFnVFnplogTnJ+nNqSE"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eddie.linux-mips.org ([148.251.95.138]:46646 "EHLO
-	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751049AbaJZPWf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Oct 2014 11:22:35 -0400
-In-Reply-To: <alpine.LFD.2.11.1404062030280.15266@eddie.linux-mips.org>
+Received: from ozlabs.org ([103.22.144.67]:46910 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751605AbaJZXK3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Oct 2014 19:10:29 -0400
+In-Reply-To: <alpine.LFD.2.11.1410222234050.21390@eddie.linux-mips.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Rewrite TURBOchannel error handling to use a common failure path, making 
-sure put_device is called for devices that failed initialization.  While 
-at it update printk calls to use pr_err rather than KERN_ERR.  Finally 
-avoid printk format warnings on resource_size_t type variables.
+--Sig_/y+IRGFnVFnplogTnJ+nNqSE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
----
-The checkpatch.pl warning deliberately ignored, I'm not going to go past 
-79 columns.
+Hi Maciej,
 
-Stephen,
+On Sun, 26 Oct 2014 15:22:33 +0000 (GMT) "Maciej W. Rozycki" <macro@linux-m=
+ips.org> wrote:
+>
+>  I posted this fix originally to linux-mips@linux-mips.org back in April,=
+=20
+> but it got lost and I don't want to give Ralf more stuff to handle than=20
+> absolutely necessary, he is really busy these days.  Can you please take=
+=20
+> it directly to linux-next then?  There's nothing specific to MIPS in this=
+=20
+> code really.
 
- I posted this fix originally to linux-mips@linux-mips.org back in April, 
-but it got lost and I don't want to give Ralf more stuff to handle than 
-absolutely necessary, he is really busy these days.  Can you please take 
-it directly to linux-next then?  There's nothing specific to MIPS in this 
-code really.
+I don't take patches directly into linux-next (unless they are very
+specific bug fixes for things that affect my builds - and even then I
+only keep them until a maintainer picks them up).
 
- Thanks,
+Sorry.  You could try sending it to Linus or Andrew Morton.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-  Maciej
+--Sig_/y+IRGFnVFnplogTnJ+nNqSE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-linux-tc-init-fix.patch
-Index: linux-20140329-4maxp64/drivers/tc/tc.c
-===================================================================
---- linux-20140329-4maxp64.orig/drivers/tc/tc.c
-+++ linux-20140329-4maxp64/drivers/tc/tc.c
-@@ -83,8 +83,7 @@ static void __init tc_bus_add_devices(st
- 		/* Found a board, allocate it an entry in the list */
- 		tdev = kzalloc(sizeof(*tdev), GFP_KERNEL);
- 		if (!tdev) {
--			printk(KERN_ERR "tc%x: unable to allocate tc_dev\n",
--			       slot);
-+			pr_err("tc%x: unable to allocate tc_dev\n", slot);
- 			goto out_err;
- 		}
- 		dev_set_name(&tdev->dev, "tc%x", slot);
-@@ -117,10 +116,10 @@ static void __init tc_bus_add_devices(st
- 			tdev->resource.start = extslotaddr;
- 			tdev->resource.end = extslotaddr + devsize - 1;
- 		} else {
--			printk(KERN_ERR "%s: Cannot provide slot space "
--			       "(%dMiB required, up to %dMiB supported)\n",
--			       dev_name(&tdev->dev), devsize >> 20,
--			       max(slotsize, extslotsize) >> 20);
-+			pr_err("%s: Cannot provide slot space "
-+			       "(%ldMiB required, up to %ldMiB supported)\n",
-+			       dev_name(&tdev->dev), (long)(devsize >> 20),
-+			       (long)(max(slotsize, extslotsize) >> 20));
- 			kfree(tdev);
- 			goto out_err;
- 		}
-@@ -147,14 +146,12 @@ static int __init tc_init(void)
- {
- 	/* Initialize the TURBOchannel bus */
- 	if (tc_bus_get_info(&tc_bus))
--		return 0;
-+		goto out_err;
- 
- 	INIT_LIST_HEAD(&tc_bus.devices);
- 	dev_set_name(&tc_bus.dev, "tc");
--	if (device_register(&tc_bus.dev)) {
--		put_device(&tc_bus.dev);
--		return 0;
--	}
-+	if (device_register(&tc_bus.dev))
-+		goto out_err_device;
- 
- 	if (tc_bus.info.slot_size) {
- 		unsigned int tc_clock = tc_get_speed(&tc_bus) / 100000;
-@@ -172,8 +169,8 @@ static int __init tc_init(void)
- 		tc_bus.resource[0].flags = IORESOURCE_MEM;
- 		if (request_resource(&iomem_resource,
- 				     &tc_bus.resource[0]) < 0) {
--			printk(KERN_ERR "tc: Cannot reserve resource\n");
--			return 0;
-+			pr_err("tc: Cannot reserve resource\n");
-+			goto out_err_device;
- 		}
- 		if (tc_bus.ext_slot_size) {
- 			tc_bus.resource[1].start = tc_bus.ext_slot_base;
-@@ -184,10 +181,8 @@ static int __init tc_init(void)
- 			tc_bus.resource[1].flags = IORESOURCE_MEM;
- 			if (request_resource(&iomem_resource,
- 					     &tc_bus.resource[1]) < 0) {
--				printk(KERN_ERR
--				       "tc: Cannot reserve resource\n");
--				release_resource(&tc_bus.resource[0]);
--				return 0;
-+				pr_err("tc: Cannot reserve resource\n");
-+				goto out_err_resource;
- 			}
- 		}
- 
-@@ -195,6 +190,13 @@ static int __init tc_init(void)
- 	}
- 
- 	return 0;
-+
-+out_err_resource:
-+	release_resource(&tc_bus.resource[0]);
-+out_err_device:
-+	put_device(&tc_bus.dev);
-+out_err:
-+	return 0;
- }
- 
- subsys_initcall(tc_init);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUTX9fAAoJEMDTa8Ir7ZwVarMP/A9MbC9oqT3NanWmLCoR0pOb
+BK14048BlWcqu0HRfh0s6B04z7QlhqdGmPKKmisX+cSpMXA9+SvYhptV18kJuV9o
+PIw+Ho6qqGPyKudIECVWI+begzkznPuP8po5Tdd+FHUEI39WE0v+R9ut1JdnO56s
+UOd3i6qEM6eM/eRrsgPx3jL4vgknCB0pWcFKM+coduPh7+rE90ARElqdaND+nQne
+9JbjuVEiCVL//4mxARqYuo4uN/2ePADT2fuc9tojZw0HgGEC0k7oftpEUdYV9SRA
+Uihnjgqnwdczbeq7NzXi5+wVOaFpC3u/C2pA79/Q15nMu1PA+orDKKLSWWg+4IsJ
+gR/7fT+/3DVr/caOFzk4xJ01xdlxrX3bCvL45dYnOcGsOtz8rlEXqSK/MCWsQpQM
+3FEmO9Mr1zPtEyp7qUJj8MioUONGcGPMYn4uiMwofthNVVMF+IXpyOONzlZxSKM+
+9NiNoQZxFpQ92Avzn6EUZgYmqgRla+ge1UyjookarsuI43KkkY9304zbq4D6rhW+
+HCrRc7MBSY9Hxlr1t+QAHQ/eoHiQOnpTr6V1cn3oaqcSP/e3fbesY6OUuT+dwfg8
+XV6OtYcLJ8Ih0eHUj5KQsudEp+zlAQeOx3QAPdWGpKa/5AoAP1zkfC0FKVSHTXQe
+ylMBCzV3vmRZLFGCM3I/
+=h+7S
+-----END PGP SIGNATURE-----
+
+--Sig_/y+IRGFnVFnplogTnJ+nNqSE--
