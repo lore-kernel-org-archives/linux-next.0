@@ -1,74 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pinctrl tree
-Date: Mon, 27 Oct 2014 14:35:09 +1100
-Message-ID: <20141027143509.550b8545@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 27 Oct 2014 15:30:57 +1100
+Message-ID: <20141027153057.791696a8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/C1BSpUh2I3mVNTU03U7UEow"; protocol="application/pgp-signature"
+ boundary="Sig_/geKQCoCh2OQJq8hKyjrmm2C"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56607 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47067 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751984AbaJ0DfR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Oct 2014 23:35:17 -0400
+	id S1750761AbaJ0EbG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Oct 2014 00:31:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 
---Sig_/C1BSpUh2I3mVNTU03U7UEow
+--Sig_/geKQCoCh2OQJq8hKyjrmm2C
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Andrew,
 
-After merging the pinctrl tree, today's linux-next build (arm multi_v7_defc=
-onfig)
-failed like this:
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/pinctrl/samsung/pinctrl-exynos.c:1194:43: error: array type has inc=
-omplete element type
- static const struct samsung_pin_bank_data exynos7_pin_banks0[] __initconst=
- =3D {
-                                           ^
-drivers/pinctrl/samsung/pinctrl-exynos.c:1195:2: error: field name not in r=
-ecord or union initializer
-  EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-  ^
-drivers/pinctrl/samsung/pinctrl-exynos.c:1195:2: error: (near initializatio=
-n for 'exynos7_pin_banks0')
-drivers/pinctrl/samsung/pinctrl-exynos.c:1195:2: error: field name not in r=
-ecord or union initializer
+mm/cma.c: In function 'cma_declare_contiguous':
+mm/cma.c:288:4: error: implicit declaration of function 'phys_to_virt' [-We=
+rror=3Dimplicit-function-declaration]
+    kmemleak_ignore(phys_to_virt(addr));
+    ^
 
-And so on ...
+Caused by commit 2a70e5a78672 ("mm/cma: ake kmemleak ignore CMA regions").
 
-Caused by commit 9d3de28d785f ("pinctrl: exynos: Add initial driver
-data for Exynos7").
+I added the following fix patch:
 
-I have used the pinctrl tree from next-20141023 for today.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 27 Oct 2014 15:25:09 +1100
+Subject: [PATCH] mm/cma: include linux/io.h for phys_to_virt()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/cma.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/cma.c b/mm/cma.c
+index 471fcfef043b..c22d7a8e0e3b 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -33,6 +33,7 @@
+ #include <linux/log2.h>
+ #include <linux/cma.h>
+ #include <linux/highmem.h>
++#include <linux/io.h>
+=20
+ struct cma {
+ 	unsigned long	base_pfn;
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/C1BSpUh2I3mVNTU03U7UEow
+--Sig_/geKQCoCh2OQJq8hKyjrmm2C
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUTb1xAAoJEMDTa8Ir7ZwVJMIQAI1OOG8NNXaMrovW4i0hSHNg
-lqJMuqSlEn9cUIMnO80i15lb0n8ZDgi2H47jGQhN4dJnPjfLncrIrtjKPOQ7LIXY
-oBw8cNqfqyOCO7rLVXmUsg31jJKfNx+MgAHqR6TmTcPG0IFgVgC6Y8LNkEnaIvG9
-BryUlKu8u5I2HKpRbKrA6tQMloM0XpbFRqf+ZApbqw/nBQLlPuH+vbZfSgxBcSUL
-qG/9l3NWIH/Q6Y48BAF4H048P1qmEQhcUTKG8Tp72H1+cfjIh4nzmVtbKT1LPCbl
-tj7TRUvL1zZSqGuTKwWOXAQSlW2qRX9omorOhwWTJfZLd4UqY6nVLgp9PU3UtSW+
-mBQ4oQF5ciEzXJPM1+ucxccz1TufW98OAiA6k2Uj92++oFVAHaqZBWtd4N3Iq/73
-yKVe2j49atPw3bnUOmJr3xORadLiTZGZ3rVgiyzk6V/WLY/TPKjTakEUPccY+kP8
-qfUir4ntUYBzcLP8pv04MeabCXz23gycHLmdf3nSLgAsWWylt8xWwdNcNqCmUZT7
-2sZ6GAksP0JursKh5vZqBjdAOQdP4A7mwX6lI+VU3zkSW6dU4flc5hnBa4aj7b4p
-Kgj4iq/lieJyuGxuyNq2lUErnuHxzbK2u6NW/OO1cl6E50L0BI4Dp6CNbnLGwPO4
-hYmXDV/asCwE/9+hkMpj
-=Oh+d
+iQIcBAEBCAAGBQJUTcqGAAoJEMDTa8Ir7ZwVr4gQAIx97MMuyZrSOg8ZRrAYj4zp
+eeJ1F7pafdD6BU4RbOXvu7MbajstxXGoQAMuSi2pnG0lUYF4a9ngXtTAjaRrxqGd
+GuJT80Rd3I6uCe13o36X++Jg7OftKdkh74raMbFUcYDvj5MRap3jrMsHV6Sxrw8D
+tYniv8Jo/cCvnRoD4nDgtwcnWI8R6tJfTf1XHvnfY5wrBHIyFpD2KhLqfHHOcflA
+O3O0JB9ojavj0ShgHud+ZlO7VGzsEXuPrVakEmT1skRhIHILPLbsD/H0asI3CCR7
+be3K/dmiZx4vYAmBGxgt/ff/n8Ylb90BAhAH3D/OYoLb6W4MVfZEDIKHgfhJeva1
+DL/My9M98YzbMqpCyxKrTG4d9nBZ83DpT2Sw2ePHSNjq0fQTU8tmoFdt/dTRZ11W
+i4iykNSCUBFW6JokLJ1W7haJIo4wnClafk3rBC8BBGk4PF4mQ1ZgbwbmpaaATdDG
+0fB3suFaVo2ckbYz1tadEaLPxipfsaibmgAAoWZsMxUewPe2k2APH+X6N6nvQECk
+Qv+MLop/Jc+/wj6ARpDhwO0UiALcsD/Tta/uyzOLRTQb5hz+07B6/Z9AGIEvBf+6
+dpRzS/hWF86rs1B3SlOoYDp7FAbzR6xt28zHXwVKn8yhctcw2EUaBfR61+9dCw95
+qqJcrbfSUMopCXxUEq62
+=irr1
 -----END PGP SIGNATURE-----
 
---Sig_/C1BSpUh2I3mVNTU03U7UEow--
+--Sig_/geKQCoCh2OQJq8hKyjrmm2C--
