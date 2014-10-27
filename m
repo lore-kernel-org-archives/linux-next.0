@@ -1,70 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH RESEND] tc: Error handling clean-ups
-Date: Mon, 27 Oct 2014 10:10:17 +1100
-Message-ID: <20141027101017.6af4e810@canb.auug.org.au>
-References: <alpine.LFD.2.11.1404062030280.15266@eddie.linux-mips.org>
-	<alpine.LFD.2.11.1410222234050.21390@eddie.linux-mips.org>
+Subject: linux-next: build failure after merge of the bluetooth tree
+Date: Mon, 27 Oct 2014 13:19:56 +1100
+Message-ID: <20141027131956.68b62e5e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/y+IRGFnVFnplogTnJ+nNqSE"; protocol="application/pgp-signature"
+ boundary="Sig_/CJQ8pJL_ynmO042=+mnD8Gq"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46910 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53614 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751605AbaJZXK3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Oct 2014 19:10:29 -0400
-In-Reply-To: <alpine.LFD.2.11.1410222234050.21390@eddie.linux-mips.org>
+	id S1751923AbaJ0CUH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Oct 2014 22:20:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hedberg <johan.hedberg@intel.com>
 
---Sig_/y+IRGFnVFnplogTnJ+nNqSE
+--Sig_/CJQ8pJL_ynmO042=+mnD8Gq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Maciej,
+Hi Gustavo,
 
-On Sun, 26 Oct 2014 15:22:33 +0000 (GMT) "Maciej W. Rozycki" <macro@linux-m=
-ips.org> wrote:
->
->  I posted this fix originally to linux-mips@linux-mips.org back in April,=
-=20
-> but it got lost and I don't want to give Ralf more stuff to handle than=20
-> absolutely necessary, he is really busy these days.  Can you please take=
-=20
-> it directly to linux-next then?  There's nothing specific to MIPS in this=
-=20
-> code really.
+After merging the bluetooth tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I don't take patches directly into linux-next (unless they are very
-specific bug fixes for things that affect my builds - and even then I
-only keep them until a maintainer picks them up).
+net/bluetooth/smp.o: In function `test_smp':
+smp.c:(.init.text+0x0): multiple definition of `init_module'
+net/bluetooth/af_bluetooth.o:af_bluetooth.c:(.init.text+0x0): first defined=
+ here
 
-Sorry.  You could try sending it to Linus or Andrew Morton.
+Probably caused by commit 4cd3362da899 ("Bluetooth: Add skeleton for
+SMP self-tests").
+
+I have used the bluetooth tree from next-20141023 for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/y+IRGFnVFnplogTnJ+nNqSE
+--Sig_/CJQ8pJL_ynmO042=+mnD8Gq
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUTX9fAAoJEMDTa8Ir7ZwVarMP/A9MbC9oqT3NanWmLCoR0pOb
-BK14048BlWcqu0HRfh0s6B04z7QlhqdGmPKKmisX+cSpMXA9+SvYhptV18kJuV9o
-PIw+Ho6qqGPyKudIECVWI+begzkznPuP8po5Tdd+FHUEI39WE0v+R9ut1JdnO56s
-UOd3i6qEM6eM/eRrsgPx3jL4vgknCB0pWcFKM+coduPh7+rE90ARElqdaND+nQne
-9JbjuVEiCVL//4mxARqYuo4uN/2ePADT2fuc9tojZw0HgGEC0k7oftpEUdYV9SRA
-Uihnjgqnwdczbeq7NzXi5+wVOaFpC3u/C2pA79/Q15nMu1PA+orDKKLSWWg+4IsJ
-gR/7fT+/3DVr/caOFzk4xJ01xdlxrX3bCvL45dYnOcGsOtz8rlEXqSK/MCWsQpQM
-3FEmO9Mr1zPtEyp7qUJj8MioUONGcGPMYn4uiMwofthNVVMF+IXpyOONzlZxSKM+
-9NiNoQZxFpQ92Avzn6EUZgYmqgRla+ge1UyjookarsuI43KkkY9304zbq4D6rhW+
-HCrRc7MBSY9Hxlr1t+QAHQ/eoHiQOnpTr6V1cn3oaqcSP/e3fbesY6OUuT+dwfg8
-XV6OtYcLJ8Ih0eHUj5KQsudEp+zlAQeOx3QAPdWGpKa/5AoAP1zkfC0FKVSHTXQe
-ylMBCzV3vmRZLFGCM3I/
-=h+7S
+iQIcBAEBCAAGBQJUTavTAAoJEMDTa8Ir7ZwVP94P/jLxrX8EA4jElruTe2d/0IIK
+H6Zjk2agXSY3Np3V4RUXyqUZBzUsGqj0+eUBauJ47EY3cXPlJ27AEeFImQm65MWv
+yQjrmRrh3IogUMGMANsKug4yqGiq+h3ZzVRVvqtzaOMr8S3cMYBY356MEDUx2mjc
+6L7kS6n7h3xb6SIDczjwCZCMPv3t8loVf2O8LTbMQ8L0VwJZB0NnukzPFOsQhwP9
+JLccevMlImomLTEODQDidUUR13ZfEmNCf2tCuC2F+L6gJ91b1rV9JYa6R6z1eCEA
+YFm/nv3huWh8vOwVCcstrFpYJBcWUgmaMttaZH/wJ9PMR2n8TpLFLGqSTFj+If6c
+7C3b/A3o42GouQeQStcAn+vaWSynz0uKhV3+rQldFeOLXmAIMyUsXH9J50P4PAa0
+scZaHiX6qCz4xSQ5lPFM0cx0vl+sSUYGh5v0oMISJA6pMUhKANVR04OFXJMHzygj
+M1mQhDAAAx6DjcW0dWuhYhAnuxXGQTLzaVsZzcoNWaomNG5ZS7QhpmGegFRzu51Q
+bH8lu8ihOl1NNSeF08z1kNfdnejvDCIynPv+s7KfAFF4Dm0hbrlZsXiYrSIFu6VS
+uiZrDZVv3JVyX6JroujivY5RB2W6/6dmGpAY0oTRwJF2/TprCYVhMCgcoCn5l4K0
+zlG9xwnNunUjMyVfzqT9
+=VPuR
 -----END PGP SIGNATURE-----
 
---Sig_/y+IRGFnVFnplogTnJ+nNqSE--
+--Sig_/CJQ8pJL_ynmO042=+mnD8Gq--
