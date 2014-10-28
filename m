@@ -1,62 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error fetching the cris tree
-Date: Tue, 28 Oct 2014 23:27:48 +1100
-Message-ID: <20141028232748.5503b635@canb.auug.org.au>
-References: <20141028110857.06bfae62@canb.auug.org.au>
-	<20141028083002.GK30087@axis.com>
+From: Johan Hedberg <johan.hedberg@intel.com>
+Subject: Re: linux-next: build failure after merge of the bluetooth tree
+Date: Tue, 28 Oct 2014 15:49:33 +0100
+Message-ID: <20141028144933.GA22555@t440s>
+References: <20141027131956.68b62e5e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8TsfFQ=zHzRWd0VrUmAv_Hz"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38999 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753918AbaJ1M16 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2014 08:27:58 -0400
-In-Reply-To: <20141028083002.GK30087@axis.com>
+Received: from mail-lb0-f182.google.com ([209.85.217.182]:39683 "EHLO
+	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750857AbaJ1Otq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Oct 2014 10:49:46 -0400
+Received: by mail-lb0-f182.google.com with SMTP id f15so791467lbj.41
+        for <linux-next@vger.kernel.org>; Tue, 28 Oct 2014 07:49:45 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20141027131956.68b62e5e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Jesper Nilsson <jespern@axis.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, marcel@holtmann.org
 
---Sig_/8TsfFQ=zHzRWd0VrUmAv_Hz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Jesper,
+On Mon, Oct 27, 2014, Stephen Rothwell wrote:
+> After merging the bluetooth tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> net/bluetooth/smp.o: In function `test_smp':
+> smp.c:(.init.text+0x0): multiple definition of `init_module'
+> net/bluetooth/af_bluetooth.o:af_bluetooth.c:(.init.text+0x0): first defined here
+> 
+> Probably caused by commit 4cd3362da899 ("Bluetooth: Add skeleton for
+> SMP self-tests").
+> 
+> I have used the bluetooth tree from next-20141023 for today.
 
-On Tue, 28 Oct 2014 09:30:03 +0100 Jesper Nilsson <jesper.nilsson@axis.com>=
- wrote:
->
-> However, it might be better to switch over linux-next for cris
-> to use the for-next branch of this tree:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/jesper/cris.git
+We've applied a revert patch for the SMP self-tests to the
+bluetooth-next tree until we figure out how to fix this properly.
 
-I have changed to use that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/8TsfFQ=zHzRWd0VrUmAv_Hz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUT4vJAAoJEMDTa8Ir7ZwVtWUP/0uDjYxv8VTkh434JVjLw2Ec
-op/1hlUONEpiXxSROAMxAQqxBUG8rE1civcuQeyQ1yfU/oj/Sp3l5x11FDIK+y4B
-bV4ss+kzW7fD2dJWnTQxyvxYG5YUKHvTJLKY7dF3P49iEjZRo+mZbENiZ/+A/2F2
-Plpeg1XGOij26+3C7j9X6jCE5hg4hRzNDQ9+GHWndSJdRQS2zOyR1qjERoOWKATv
-+7u8FCo1bRasXIG2FR0dcEdjQLrbYv0wdH4UiYKUVXZVhZI9zHGIERxSB1NWDz2+
-/RsLY+U4NjysOqhm6NanwCNJlZ05lO2XqdgD6Is06KYeD35/huurUsj/TDDAdIXj
-G0xXNuggofH8PL3RL+qJwIy8tHHKUxg7m6G2+HNjEKKCdj8UmdF4rocOYQwE1AyL
-6MOo64aMBpXRrNxqcsOFUXrgZvrpKWqRXr8bKR9KrCN5x3kU2OgFN394nro85msD
-A5hY0VoMNFoBZxE/ANquEqaoRKzsmLgyimrgBJm9zolnd8ph44DsUoCkZKk2NKpx
-gA0+P1EsBcrHwhMt4UAeWJCU71G4fHt/X7KlWBMBdSW1SC9XFXdvLTQu12cHoOkj
-yBuYoBUbutkNRCsAEnGnIdwg/O92cZdkoZnu/npSLwZgqAQGUf57F1rbxnNkChW8
-vua64iS0pGKTyV7Kf/wt
-=UWSc
------END PGP SIGNATURE-----
-
---Sig_/8TsfFQ=zHzRWd0VrUmAv_Hz--
+Johan
