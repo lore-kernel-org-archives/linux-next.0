@@ -1,43 +1,44 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- dma-mapping tree
-Date: Tue, 28 Oct 2014 07:54:09 +0100
-Message-ID: <544F3D91.1070604@samsung.com>
-References: <20141028152444.79bd9fe9@canb.auug.org.au>
- <20141027232910.952850f8.akpm@linux-foundation.org>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Subject: Re: linux-next: error fetching the cris tree
+Date: Tue, 28 Oct 2014 09:30:03 +0100
+Message-ID: <20141028083002.GK30087@axis.com>
+References: <20141028110857.06bfae62@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20141027232910.952850f8.akpm@linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <20141028110857.06bfae62@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <treding@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesper Nilsson <jespern@axis.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+On Tue, Oct 28, 2014 at 01:08:57AM +0100, Stephen Rothwell wrote:
+> Hi Jesper,
 
-On 2014-10-28 07:29, Andrew Morton wrote:
-> On Tue, 28 Oct 2014 15:24:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
->> Today's linux-next merge of the akpm-current tree got a conflict in
->> mm/cma.c between commit 16195ddd4ebc ("mm: cma: Ensure that
->> reservations never cross the low/high mem boundary") from the
->> dma-mapping tree and commit 2a70e5a78672 ("mm/cma: ake kmemleak ignore
->> CMA regions") from the akpm-current tree.
-> hm, we have multiple trees altering mm/cma.c?
->
-> I'm a bit surprised that this series was merged, given that Laurent
-> said he would be sending out a v2...
+Hi Stephen!
 
-v2 of Laurent's patches has been posted on 24th October
-(https://lkml.org/lkml/2014/10/24/207 ), but since I didn't notice them 
-to be taken
-I thought that it would make sense to get them via my tree and send them 
-to Linus
-during the 3.18-rc cycle. If this was not appropriate, I will drop my tree.
+> Fetching the cris tree (git://www.jni.nu/cris.git#for-next) this
+> morning produced this error:
+> 
+> fatal: Couldn't find remote ref refs/heads/for-next
 
-Best regards
+Ah sorry, my bad, I just changed the cris-mirror to copy from my
+kernel.org tree, which had no for-next branch. Re-pushed now,
+so it should be ok after the mirror has updated.
+
+However, it might be better to switch over linux-next for cris
+to use the for-next branch of this tree:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jesper/cris.git
+
+Should go a bit faster from there. The old mirror (repo.or.cz) will still
+be there, but the tree at jni.nu will probably not come back.
+
+> I will use the cris tree from yesterday.
+
+Thanks,
+
+/^JN - Jesper Nilsson
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+               Jesper Nilsson -- jesper.nilsson@axis.com
