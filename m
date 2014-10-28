@@ -1,128 +1,28 @@
-From: Aaron Lu <aaron.lu@intel.com>
-Subject: [PATCH v4] Thermal: int3406_thermal: solve the dependency build error
-Date: Tue, 28 Oct 2014 14:11:59 +0800
-Message-ID: <544F33AF.1000704@intel.com>
-References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com> <543F88BE.4090307@intel.com> <20141017070620.GA1538@aaronlu.sh.intel.com> <20141017072236.GA12504@aaronlu.sh.intel.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ dma-mapping tree
+Date: Mon, 27 Oct 2014 23:29:10 -0700
+Message-ID: <20141027232910.952850f8.akpm@linux-foundation.org>
+References: <20141028152444.79bd9fe9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141017072236.GA12504@aaronlu.sh.intel.com>
+In-Reply-To: <20141028152444.79bd9fe9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <treding@nvidia.com>
 List-Id: linux-next.vger.kernel.org
 
-Jim found that the current kernel may trigger a build error with some
-config: drivers/built-in.o: In function `int3406_thermal_probe':
-int3406_thermal.c:(.text+0x1d10b8): undefined reference to
-`acpi_video_get_levels'. The problem happens when CONFIG_THERMAL=y and
-CONFIG_ACPI_VIDEO=m. Solve the problem by separating a kernel config for
-int3406 thermal driver and add dependency on ACPI video for it.
+On Tue, 28 Oct 2014 15:24:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Reported-by: Jim Davis <jim.epost@gmail.com>
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
----
-v4: rebased on v3.18-rc2.
+> Today's linux-next merge of the akpm-current tree got a conflict in
+> mm/cma.c between commit 16195ddd4ebc ("mm: cma: Ensure that
+> reservations never cross the low/high mem boundary") from the
+> dma-mapping tree and commit 2a70e5a78672 ("mm/cma: ake kmemleak ignore
+> CMA regions") from the akpm-current tree.
 
- drivers/thermal/Kconfig                  | 26 +++-----------------
- drivers/thermal/int340x_thermal/Kconfig  | 41 ++++++++++++++++++++++++++++++++
- drivers/thermal/int340x_thermal/Makefile |  1 +
- 3 files changed, 45 insertions(+), 23 deletions(-)
- create mode 100644 drivers/thermal/int340x_thermal/Kconfig
+hm, we have multiple trees altering mm/cma.c?
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index f554d25b4399..ac391d8d76b4 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -229,29 +229,9 @@ config INTEL_SOC_DTS_THERMAL
- 	  notification methods.The other trip is a critical trip point, which
- 	  was set by the driver based on the TJ MAX temperature.
- 
--config INT340X_THERMAL
--	tristate "ACPI INT340X thermal drivers"
--	depends on X86 && ACPI
--	select THERMAL_GOV_USER_SPACE
--	select ACPI_THERMAL_REL
--	select ACPI_FAN
--	help
--	  Newer laptops and tablets that use ACPI may have thermal sensors and
--	  other devices with thermal control capabilities outside the core
--	  CPU/SOC, for thermal safety reasons.
--	  They are exposed for the OS to use via the INT3400 ACPI device object
--	  as the master, and INT3401~INT340B ACPI device objects as the slaves.
--	  Enable this to expose the temperature information and cooling ability
--	  from these objects to userspace via the normal thermal framework.
--	  This means that a wide range of applications and GUI widgets can show
--	  the information to the user or use this information for making
--	  decisions. For example, the Intel Thermal Daemon can use this
--	  information to allow the user to select his laptop to run without
--	  turning on the fans.
--
--config ACPI_THERMAL_REL
--	tristate
--	depends on ACPI
-+menu "ACPI INT340X thermal drivers"
-+source drivers/thermal/int340x_thermal/Kconfig
-+endmenu
- 
- menu "Texas Instruments thermal drivers"
- source "drivers/thermal/ti-soc-thermal/Kconfig"
-diff --git a/drivers/thermal/int340x_thermal/Kconfig b/drivers/thermal/int340x_thermal/Kconfig
-new file mode 100644
-index 000000000000..b92892a6afe0
---- /dev/null
-+++ b/drivers/thermal/int340x_thermal/Kconfig
-@@ -0,0 +1,41 @@
-+#
-+# ACPI INT340x thermal drivers configuration
-+#
-+
-+config INT340X_THERMAL
-+	tristate "ACPI INT340X thermal drivers"
-+	depends on X86 && ACPI
-+	select THERMAL_GOV_USER_SPACE
-+	select ACPI_THERMAL_REL
-+	select ACPI_FAN
-+	help
-+	  Newer laptops and tablets that use ACPI may have thermal sensors and
-+	  other devices with thermal control capabilities outside the core
-+	  CPU/SOC, for thermal safety reasons.
-+	  They are exposed for the OS to use via the INT3400 ACPI device object
-+	  as the master, and INT3401~INT340B ACPI device objects as the slaves.
-+	  Enable this to expose the temperature information and cooling ability
-+	  from these objects to userspace via the normal thermal framework.
-+	  This means that a wide range of applications and GUI widgets can show
-+	  the information to the user or use this information for making
-+	  decisions. For example, the Intel Thermal Daemon can use this
-+	  information to allow the user to select his laptop to run without
-+	  turning on the fans.
-+
-+if INT340X_THERMAL
-+
-+config ACPI_THERMAL_REL
-+	tristate
-+	depends on ACPI
-+
-+config INT3406_THERMAL
-+	tristate "ACPI INT3406 display thermal driver"
-+	depends on ACPI_VIDEO
-+	help
-+	  The display thermal device represents the LED/LCD display panel
-+	  that may or may not include touch support. The main function of
-+	  the display thermal device is to allow control of the display
-+	  brightness in order to address a thermal condition or to reduce
-+	  power consumed by display device.
-+
-+endif
-diff --git a/drivers/thermal/int340x_thermal/Makefile b/drivers/thermal/int340x_thermal/Makefile
-index ffe40bffaf1a..a9d0429be412 100644
---- a/drivers/thermal/int340x_thermal/Makefile
-+++ b/drivers/thermal/int340x_thermal/Makefile
-@@ -1,4 +1,5 @@
- obj-$(CONFIG_INT340X_THERMAL)	+= int3400_thermal.o
- obj-$(CONFIG_INT340X_THERMAL)	+= int3402_thermal.o
- obj-$(CONFIG_INT340X_THERMAL)	+= int3403_thermal.o
-+obj-$(CONFIG_INT3406_THERMAL)	+= int3406_thermal.o
- obj-$(CONFIG_ACPI_THERMAL_REL)	+= acpi_thermal_rel.o
--- 
-1.9.3
+I'm a bit surprised that this series was merged, given that Laurent
+said he would be sending out a v2...
