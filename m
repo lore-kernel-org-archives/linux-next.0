@@ -1,107 +1,59 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- dma-mapping tree
-Date: Tue, 28 Oct 2014 13:26:17 -0700
-Message-ID: <20141028132617.12dc0fb45f33103fe9f6b04b@linux-foundation.org>
-References: <20141028152444.79bd9fe9@canb.auug.org.au>
-	<20141027232910.952850f8.akpm@linux-foundation.org>
-	<544F3D91.1070604@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the usb-gadget-fixes tree
+Date: Wed, 29 Oct 2014 09:58:48 +1100
+Message-ID: <20141029095848.12be411e@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IU0DTIM77L__jCCUkbZl/b6"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-next.vger.kernel.org
+
+--Sig_/IU0DTIM77L__jCCUkbZl/b6
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32917 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750786AbaJ1U0R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Oct 2014 16:26:17 -0400
-In-Reply-To: <544F3D91.1070604@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyungmin Park <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Thierry Reding <treding@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 28 Oct 2014 07:54:09 +0100 Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+Hi Felipe,
 
-> Hello,
-> 
-> On 2014-10-28 07:29, Andrew Morton wrote:
-> > On Tue, 28 Oct 2014 15:24:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> >> Today's linux-next merge of the akpm-current tree got a conflict in
-> >> mm/cma.c between commit 16195ddd4ebc ("mm: cma: Ensure that
-> >> reservations never cross the low/high mem boundary") from the
-> >> dma-mapping tree and commit 2a70e5a78672 ("mm/cma: ake kmemleak ignore
-> >> CMA regions") from the akpm-current tree.
-> > hm, we have multiple trees altering mm/cma.c?
-> >
-> > I'm a bit surprised that this series was merged, given that Laurent
-> > said he would be sending out a v2...
-> 
-> v2 of Laurent's patches has been posted on 24th October
-> (https://lkml.org/lkml/2014/10/24/207 ), but since I didn't notice them 
-> to be taken
-> I thought that it would make sense to get them via my tree and send them 
-> to Linus
-> during the 3.18-rc cycle. If this was not appropriate, I will drop my tree.
+After merging the usb-gadget-fixes tree, today's linux-next build
+(x86_64 allmodconfig) failed like this:
 
-I think I got it all sorted out.  Thierry's "mm/cma: make kmemleak
-ignore CMA regions" needed a bit of rework - please check.
+drivers/usb/dwc2/gadget.c: In function 's3c_hsotg_suspend':
+drivers/usb/dwc2/gadget.c:3633:2: error: implicit declaration of function '=
+s3c_hsotg_core_disconnect' [-Werror=3Dimplicit-function-declaration]
+  s3c_hsotg_core_disconnect(hsotg);
+  ^
 
+Caused by commit 9f2104db1295 ("usb: dwc2: gadget: fix calls to phy
+control functions in suspend/resume code").
 
-From: Thierry Reding <treding@nvidia.com>
-Subject: mm/cma: make kmemleak ignore CMA regions
+I have used the usb-gadget-fixes tree from next-20141028 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-kmemleak will add allocations as objects to a pool.  The memory allocated
-for each object in this pool is periodically searched for pointers to
-other allocated objects.  This only works for memory that is mapped into
-the kernel's virtual address space, which happens not to be the case for
-most CMA regions.  
+--Sig_/IU0DTIM77L__jCCUkbZl/b6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Furthermore, CMA regions are typically used to store data transferred to
-or from a device and therefore don't contain pointers to other objects.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Without this, the kernel crashes on the first execution of the
-scan_gray_list() because it tries to access highmem.  Perhaps a more
-appropriate fix would be to reject any object that can't map to a kernel
-virtual address?
+iQIcBAEBCAAGBQJUUB+tAAoJEMDTa8Ir7ZwVX28P/2F7cTP4bs8N6hejjVG1n6pu
+hAF7HEOsSQ/dVDFUji20tHpFpXpTQntczjpkLg52eRdZQLGlY5QRY8lo5ng7FIQs
+rU9d5vueY2LwuP5TQjH7gUkjoUK1ObYujbe4jx8/7+MDTJz2fbxWP23YIGq0JpZS
+o3jUz8qrXokXAIv1MJzlmBitR95z6R7ZYJ19pj0REjMac9yUqGTH21iPncd8u3mW
+hF5Ecw8MR4Zz01kXeGkOwGlQhpiW83pPAJaqhktZ+3ZSXRRaJD8/Yj6LqKzywAbT
+AnSe/H4lCSijPFuenqdQdlwRuLzRREqRr6nSx+eUnDm1346GHurcmcHm0ljG/61R
+sR6p8XV9/qVYpAFkfi+RqIe3IImIWXnB3OdsbbAJn67Q0W0NB8Xv6GdCveRMSQxa
+KLpZnN/inIm0/fbhNO9aOalLRSx1cz0yjxksdhi5L0l4T4TqPUZLNTlHPnngMlzE
+isYokb+ai6JrDQnrmAdF8kVCYv2qtXu6mEIbxhWvX42Xq1vrnIm92mudL0LZe2mc
+oRzppnR4l+3JMgLA/Se1hqS+uR+zc3pQM/yron4rL8XlguQoyz4RH669HnSaYvLk
+wgImfkoUXfC9e0jNqzzfRFcEmGRJr/gJxVVVZW+scf1X8RiS26RUsCaE1fJqJSmG
+4X72N8z9JSbNI3L8Sy9D
+=2SKm
+-----END PGP SIGNATURE-----
 
-[akpm@linux-foundation.org: add comment]
-[akpm@linux-foundation.org: fix comment, per Catalin]
-[sfr@canb.auug.org.au: include linux/io.h for phys_to_virt()]
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Cc: Michal Nazarewicz <mina86@mina86.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- mm/cma.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff -puN mm/cma.c~mm-cma-make-kmemleak-ignore-cma-regions mm/cma.c
---- a/mm/cma.c~mm-cma-make-kmemleak-ignore-cma-regions
-+++ a/mm/cma.c
-@@ -33,6 +33,7 @@
- #include <linux/log2.h>
- #include <linux/cma.h>
- #include <linux/highmem.h>
-+#include <linux/io.h>
- 
- struct cma {
- 	unsigned long	base_pfn;
-@@ -301,6 +302,11 @@ int __init cma_declare_contiguous(phys_a
- 			}
- 		}
- 
-+		/*
-+		 * kmemleak scans/reads tracked objects for pointers to other
-+		 * objects but this address isn't mapped and accessible
-+		 */
-+		kmemleak_ignore(phys_to_virt(addr));
- 		base = addr;
- 	}
- 
-_
+--Sig_/IU0DTIM77L__jCCUkbZl/b6--
