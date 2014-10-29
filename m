@@ -1,56 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 29 Oct 2014 11:14:53 +1100
-Message-ID: <20141029111453.32165a2e@canb.auug.org.au>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: build failure after merge of the usb-gadget-fixes
+ tree
+Date: Tue, 28 Oct 2014 19:29:08 -0500
+Message-ID: <20141029002908.GA29769@saruman>
+References: <20141029095848.12be411e@canb.auug.org.au>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wiQZoDvmjQdL2I7LrqNiQ5q"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vince Bridgers <vbridger@opensource.altera.com>, Viet Nga Dao <vndao@altera.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:39836 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753414AbaJ2A3h (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Oct 2014 20:29:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20141029095848.12be411e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
---Sig_/wiQZoDvmjQdL2I7LrqNiQ5q
-Content-Type: text/plain; charset=US-ASCII
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Oct 29, 2014 at 09:58:48AM +1100, Stephen Rothwell wrote:
+> Hi Felipe,
+>=20
+> After merging the usb-gadget-fixes tree, today's linux-next build
+> (x86_64 allmodconfig) failed like this:
+>=20
+> drivers/usb/dwc2/gadget.c: In function 's3c_hsotg_suspend':
+> drivers/usb/dwc2/gadget.c:3633:2: error: implicit declaration of function=
+ 's3c_hsotg_core_disconnect' [-Werror=3Dimplicit-function-declaration]
+>   s3c_hsotg_core_disconnect(hsotg);
+>   ^
+>=20
+> Caused by commit 9f2104db1295 ("usb: dwc2: gadget: fix calls to phy
+> control functions in suspend/resume code").
+>=20
+> I have used the usb-gadget-fixes tree from next-20141028 for today.
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/phy/marvell.c between commit 99d881f993f0 ("net: phy: Add
-SGMII Configuration for Marvell 88E1145 Initialization") from the net
-tree and commit b02241755d0e ("net: phy: Adding SGMII support for
-Marvell 88ee1145 driver") from the net-next tree.
-
-I fixed it up (they are basically the same patch :-( so I just fixed up
-the differences and basically used the net tree version) and can carry
-the fix as necessary (no action is required).
+I dropped that commit for now. I guess I forgot to build test that one,
+sorry.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+balbi
 
---Sig_/wiQZoDvmjQdL2I7LrqNiQ5q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAEBCAAGBQJUUDGBAAoJEMDTa8Ir7ZwVT8YP/3uMfozo5hj3ZC62a+O7hn2X
-0iD9ytLL7wc+WJjlFDoNj+SRvaHb5JIaGX57ny1oboGNmO8SvhLcuVDdBNA9Sv6N
-BSHwqv/H5bydQVtsJLc8YTat78ib8wugN4nPu/lkOFYRZdHbarmryDn3SjGmDjtx
-SSqPzx70ghFWbyo/2vOdzJ78nKO17sJUY4lGUk8jhOyl3y3jcDrY3nnllRUUwFN1
-ja7yA5tRclkIalYGW0A/9i5/rH/gN7Ug5PXfu/MadvAbNs1C3HKVAN7NvgM9LScC
-Wy/mTBt8z232AUpiAK9S64Aiyy1G2m9UKAcddFb/5Y37sngNG7MaEh5AhFz7C0Kg
-Qx5A9yfWVIZCNCt4I4ZpUS1pSkw4csTM56dP1Ue5N1Ptw1zkcCUpb0mA9aaBgO/v
-E62oz32fuuQGVRt8wAHoIo88wJCnY3347+/2G+tRzoUbnUPXmDhLuD5C6k6+LjDH
-P0ThbEA+7dEy8oZ7QIbabPDcK9hXJ0M4FWtllmB8RCgNWy2IUs5vlH1VwKxyc72y
-rLxaQmKrpbhghklawJY6Jj3udzctfP5ygW6uWSdjjJEWvf/ms5ezV9uhfxklSVt3
-oPzoILkuJKuwEAhojoJ3zAXMGWJskbOIbkQTXqm7JAkTy3oGVJoNWUUn9FJ5rk7Z
-O6LqFvvwhGSr0Lfk2OwB
-=/2Io
+iQIcBAEBAgAGBQJUUDTUAAoJEIaOsuA1yqREdtUQAJPLY8TmkgKM31y/Vk9lK5VB
+QrGJ9ZtNcUWyLe6iGCvXWC+tisJS+EsYpYXrJ0v4YZHrP3k4RqLheJOpSB4L7p6v
+3yLMbP0nDowWwkcxYJDu+pgG+OxKogEVq4wIT3YC6AFemUojAvhKxKbCCahRtV5H
+Tn1vsOsTtyA4wCcx812jlZq04Lb+HM7Zy5/gfNop9PY7Z0AXdRhZkI2Cm20TzogL
+pHlHrhHIPnSjCuEfB//c9sqUa8Q20bSSZaNd+9r5sW86XJkmvDtGRCUIKyXDE3rl
+oirTrJwBZg/rFepNp8vWmmgimwn0ntfbzrutOn2T2UlMBu0NWXRORbzd70eONa9E
+iWBCtm72lbFJjhuxLgBouERm3R8La+mQVts8LqkUHP+k6E9UZlBZf0/x6ChwDUiK
+d2QyZ0XTdlNrr80f2kJvBgZ88Qk3ynJra6R5IJJAXaUm4aXj6Lvm4kuU6iRbEQVg
+f4rFC+0P1+JlswRaBOiiyMYUuhr+MpjRNxwmlDFU7KMFG+iDplMU6UwVSpAwt7zx
+vACHM64h7OakGcF5aOwjIY7CqjvterhJtqma2XJml5e5qMtYNdupjffZb9Bbo8Ap
+GDWLyTVfVyjRdfT7a0XO38DwajVQZIld3dGyGFCe+2O1g8+gw94t/wwgQ9Y3CjMK
+kdoDpuebBGn/mft6DsWz
+=8wpv
 -----END PGP SIGNATURE-----
 
---Sig_/wiQZoDvmjQdL2I7LrqNiQ5q--
+--gKMricLos+KVdGMg--
