@@ -1,67 +1,52 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build warning after merge of the pm tree
-Date: Wed, 29 Oct 2014 16:56:31 +0100
-Message-ID: <9916235.6HBFDgl0sY@vostro.rjw.lan>
-References: <20141029135129.40193e14@canb.auug.org.au> <1548287.VkQosq7gyk@vostro.rjw.lan> <20141029152338.GA9571@wfg-t540p.sh.intel.com>
+From: Josh Triplett <josh@joshtriplett.org>
+Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
+Date: Wed, 29 Oct 2014 08:52:09 -0700
+Message-ID: <20141029155209.GA7287@thin>
+References: <20140923143232.5ffff46e@canb.auug.org.au>
+ <20140923054328.GA28790@gmail.com>
+ <20140923062125.GB6900@thin>
+ <20140923083603.GA31876@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:65284 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S933413AbaJ2Pf5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Oct 2014 11:35:57 -0400
-In-Reply-To: <20141029152338.GA9571@wfg-t540p.sh.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140923083603.GA31876@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wednesday, October 29, 2014 11:23:38 PM Fengguang Wu wrote:
-> On Wed, Oct 29, 2014 at 03:55:19PM +0100, Rafael J. Wysocki wrote:
-> > On Wednesday, October 29, 2014 01:51:29 PM Stephen Rothwell wrote:
-> > > Hi Rafael,
+On Tue, Sep 23, 2014 at 10:36:03AM +0200, Ingo Molnar wrote:
+> * Josh Triplett <josh@joshtriplett.org> wrote:
+> > I've dropped tiny/no-io from tiny/next; I'll poke at it further 
+> > and resubmit for the x86 tree later, likely not for the next 
+> > merge window at this point.
 > > 
-> > Hi,
-> > 
-> > > After merging the pm tree, today's linux-next build (arm
-> > > multi_v7_defconfig) produced this warning:
-> > > 
-> > > drivers/of/base.c: In function 'of_property_read_string_array':
-> > > drivers/of/base.c:1472:1: warning: control reaches end of non-void function [-Wreturn-type]
-> > >  }
-> > >  ^
-> > > 
-> > > Introduced by commit ef23586751cd ("Driver core: Unified device
-> > > properties interface for platform firmware").
-> > 
-> > Thanks for reporting this!
-> > 
-> > > Please don't ignore new warnings ...
-> > 
-> > I don't as a rule.  I'm not sure why I haven't seen that before (and the kbuild
-> > robot reports BUILD SUCCESS for that branch).
+> > Thanks for the feedback on process; this is day 1 of having a 
+> > merge-window-bound tree in -next for the first time. :)
 > 
-> I do find the build error id:
+> Sorry about the harshness of my initial email - I was unsure 
+> about the background and we are close to the merge window. I have 
+> no objections against the -tiny tree in linux-next, it's a good 
+> effort.
 > 
-> -rw-rw-r-- 1 kbuild kbuild  272 2014-10-29 23:11 /kbuild-tests/build-error/drivers-of-base.c:warning:control-reaches-end-of-non-void-function
-> 
-> However there happens to be an old one half year ago. Since I never
-> delete old warnings, it prevents the reporting of the new warning on
-> your tree..
-> 
-> % cat /kbuild-tests/build-error/drivers-of-base.c:warning:control-reaches-end-of-non-void-function
-> drivers/of/base.c:1147:1: warning: control reaches end of non-void function [-Wreturn-type]
-> 
-> 2014-04-17 02:59:49 lkp-ib04 socfpga-nex:socfpga_for_next_dts_overlays:bdb1f0c2cbe39db8f4a2ac4794001ba2e99cb65b i386-randconfig-i001-0414 f11752c03ccfd747a1f0740955682a
-> 304933361c                         
-> 
-> The easiest way to fix it is to delete any old error/warnings that
-> have been *inactive* for more than 2 months (which means they are
-> likely fixed).
+> I think we could cut down on the #ifdef uglies if we made the 
+> ioperm callback pointer unconditional. That's just a tiny amount 
+> of extra bloat, but should remove half of the #ifdefs or so? The 
+> rest of the patches look fine.
 
-That could be done more aggressively even in my view.  If something is inactive
-for two weeks, then it probably has been fixed (this way or another).
+I've revised the patch to eliminate quite a few #ifdefs, and in
+particular almost all of those in .c files, by adding a macro
+INIT_SET_IOPL_MASK to use in place of the initializer for set_iopl_mask,
+and using __maybe_unused rather than wrapping function definitions in
+#ifdef.  I'll send a new version momentarily.
 
-Kind regards,
-Rafael
+> Usually hpa handles the x86 ioperm area, but he's swamped right 
+> now, so I'll look at picking them up once you have submitted the 
+> latest version. If you send it in the next day or two then they 
+> could make the v3.18 merge window.
+
+Other things came up (LinuxCon / Plumbers), but hopefully the new
+version can go into 3.19.
+
+- Josh Triplett
