@@ -1,59 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the usb-gadget-fixes tree
-Date: Wed, 29 Oct 2014 09:58:48 +1100
-Message-ID: <20141029095848.12be411e@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 29 Oct 2014 11:14:53 +1100
+Message-ID: <20141029111453.32165a2e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IU0DTIM77L__jCCUkbZl/b6"; protocol="application/pgp-signature"
+ boundary="Sig_/wiQZoDvmjQdL2I7LrqNiQ5q"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vince Bridgers <vbridger@opensource.altera.com>, Viet Nga Dao <vndao@altera.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/IU0DTIM77L__jCCUkbZl/b6
+--Sig_/wiQZoDvmjQdL2I7LrqNiQ5q
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Felipe,
+Hi all,
 
-After merging the usb-gadget-fixes tree, today's linux-next build
-(x86_64 allmodconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/phy/marvell.c between commit 99d881f993f0 ("net: phy: Add
+SGMII Configuration for Marvell 88E1145 Initialization") from the net
+tree and commit b02241755d0e ("net: phy: Adding SGMII support for
+Marvell 88ee1145 driver") from the net-next tree.
 
-drivers/usb/dwc2/gadget.c: In function 's3c_hsotg_suspend':
-drivers/usb/dwc2/gadget.c:3633:2: error: implicit declaration of function '=
-s3c_hsotg_core_disconnect' [-Werror=3Dimplicit-function-declaration]
-  s3c_hsotg_core_disconnect(hsotg);
-  ^
+I fixed it up (they are basically the same patch :-( so I just fixed up
+the differences and basically used the net tree version) and can carry
+the fix as necessary (no action is required).
 
-Caused by commit 9f2104db1295 ("usb: dwc2: gadget: fix calls to phy
-control functions in suspend/resume code").
-
-I have used the usb-gadget-fixes tree from next-20141028 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/IU0DTIM77L__jCCUkbZl/b6
+--Sig_/wiQZoDvmjQdL2I7LrqNiQ5q
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUUB+tAAoJEMDTa8Ir7ZwVX28P/2F7cTP4bs8N6hejjVG1n6pu
-hAF7HEOsSQ/dVDFUji20tHpFpXpTQntczjpkLg52eRdZQLGlY5QRY8lo5ng7FIQs
-rU9d5vueY2LwuP5TQjH7gUkjoUK1ObYujbe4jx8/7+MDTJz2fbxWP23YIGq0JpZS
-o3jUz8qrXokXAIv1MJzlmBitR95z6R7ZYJ19pj0REjMac9yUqGTH21iPncd8u3mW
-hF5Ecw8MR4Zz01kXeGkOwGlQhpiW83pPAJaqhktZ+3ZSXRRaJD8/Yj6LqKzywAbT
-AnSe/H4lCSijPFuenqdQdlwRuLzRREqRr6nSx+eUnDm1346GHurcmcHm0ljG/61R
-sR6p8XV9/qVYpAFkfi+RqIe3IImIWXnB3OdsbbAJn67Q0W0NB8Xv6GdCveRMSQxa
-KLpZnN/inIm0/fbhNO9aOalLRSx1cz0yjxksdhi5L0l4T4TqPUZLNTlHPnngMlzE
-isYokb+ai6JrDQnrmAdF8kVCYv2qtXu6mEIbxhWvX42Xq1vrnIm92mudL0LZe2mc
-oRzppnR4l+3JMgLA/Se1hqS+uR+zc3pQM/yron4rL8XlguQoyz4RH669HnSaYvLk
-wgImfkoUXfC9e0jNqzzfRFcEmGRJr/gJxVVVZW+scf1X8RiS26RUsCaE1fJqJSmG
-4X72N8z9JSbNI3L8Sy9D
-=2SKm
+iQIcBAEBCAAGBQJUUDGBAAoJEMDTa8Ir7ZwVT8YP/3uMfozo5hj3ZC62a+O7hn2X
+0iD9ytLL7wc+WJjlFDoNj+SRvaHb5JIaGX57ny1oboGNmO8SvhLcuVDdBNA9Sv6N
+BSHwqv/H5bydQVtsJLc8YTat78ib8wugN4nPu/lkOFYRZdHbarmryDn3SjGmDjtx
+SSqPzx70ghFWbyo/2vOdzJ78nKO17sJUY4lGUk8jhOyl3y3jcDrY3nnllRUUwFN1
+ja7yA5tRclkIalYGW0A/9i5/rH/gN7Ug5PXfu/MadvAbNs1C3HKVAN7NvgM9LScC
+Wy/mTBt8z232AUpiAK9S64Aiyy1G2m9UKAcddFb/5Y37sngNG7MaEh5AhFz7C0Kg
+Qx5A9yfWVIZCNCt4I4ZpUS1pSkw4csTM56dP1Ue5N1Ptw1zkcCUpb0mA9aaBgO/v
+E62oz32fuuQGVRt8wAHoIo88wJCnY3347+/2G+tRzoUbnUPXmDhLuD5C6k6+LjDH
+P0ThbEA+7dEy8oZ7QIbabPDcK9hXJ0M4FWtllmB8RCgNWy2IUs5vlH1VwKxyc72y
+rLxaQmKrpbhghklawJY6Jj3udzctfP5ygW6uWSdjjJEWvf/ms5ezV9uhfxklSVt3
+oPzoILkuJKuwEAhojoJ3zAXMGWJskbOIbkQTXqm7JAkTy3oGVJoNWUUn9FJ5rk7Z
+O6LqFvvwhGSr0Lfk2OwB
+=/2Io
 -----END PGP SIGNATURE-----
 
---Sig_/IU0DTIM77L__jCCUkbZl/b6--
+--Sig_/wiQZoDvmjQdL2I7LrqNiQ5q--
