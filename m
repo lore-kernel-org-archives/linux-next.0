@@ -1,66 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unnecessary merges in the v4l-dvb tree
-Date: Thu, 30 Oct 2014 09:24:45 +1100
-Message-ID: <20141030092445.519a86ba@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 30 Oct 2014 15:03:04 +1100
+Message-ID: <20141030150304.3c8cb7d6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/f9bX2SmEm1e.SVTQn4CG.Ke"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55432 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756291AbaJ2WYy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Oct 2014 18:24:54 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/+eLneu1LV8sVaMOIiAdoM=H"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vishnu Pratap Singh <vishnu.ps@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/f9bX2SmEm1e.SVTQn4CG.Ke
+--Sig_/+eLneu1LV8sVaMOIiAdoM=H
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Andrew,
 
-I noticed that you have two unnecessary merges in the v4l-dvb tree
-(git://linuxtv.org/mchehab/media-next.git#master).  This is not
-entirely your fault.  Unfortunately, when you do
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-git merge <signed tag>
+lib/show_mem.c: In function 'show_mem':
+lib/show_mem.c:43:45: error: 'totalcma_pages' undeclared (first use in this=
+ function)
+  printk("%lu pages reserved\n", (reserved - totalcma_pages));
+                                             ^
 
-git will produce a merge commit even if it could have fast
-forwarded :-(.  Consequently, you have commits 1ef24960ab78 ("Merge tag
-'v3.18-rc1' into patchwork") and d6d41ba1cb38 ("Merge remote-tracking
-branch 'linus/master' into patchwork") even though the patchwork branch
-in each case is included in the tag being merged.
+Caused by commit b4e3647bb59d ("lib/show_mem.c: adds cma reserved
+information").  totalcma_pages exists nowhere except these added lines.
 
-The only ways I know around this is to either merge the commit
-associated with the tag or do a (hard) reset to the tag.
-
-Linus, any thoughts?
+I have reverted that commit (and its following fix) for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/f9bX2SmEm1e.SVTQn4CG.Ke
+--Sig_/+eLneu1LV8sVaMOIiAdoM=H
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUUWkzAAoJEMDTa8Ir7ZwVhFQP/jzdyCkxPaWBOmV0YO9vxeke
-Mk+Di7YvfQcG+DZdrW8a/7cxneO9+TXGw+FhI1f82v4EQSsL/cDfpuCZ8mAxxx/x
-Ka68gZlcFyI5Hrl7CyRJCKcU0dj4gP3zPLJZyH7WvAapXf/TEzZWdL8mxyle4EIn
-wM4MNn2bmfv4SqgMuS6cdHLXXH1qO4jnmLj7lBc6ljwrS4hGSL1W+BbBYY3RP4Mc
-lX3mGuANeNXUFG8tNuP20sxXzwHwWMf+Owp6QylUf/fCz13ESD1w6G6/rt2W8lpi
-zW0deIeeiF75fqjgONpMVffFYw7KEgrN6nA4XwU5CUFJjtKaW0WDhtW0AYZep7lW
-2J9aLaVo01JGjfcW4+TQMcYLZdrOt1ubqJwPgTs4iUVr4zMPpcst1lRuTDJwTbVg
-iyN0r7WVph+y4pGB/qOVmmzT1AJtbrxw9iUayBLzD6kXn94PUNFqkZv9GxFWcqZp
-Ewuhsb4Xw4H9qV6W22awNwMRZls8I+EaNoxQa3lalGvsZVQQnszWUu7oLC5/dree
-7CmF1rWph7leR6y0qyZIsT+dFxd/snvuJr1obwVDnTdm+3++7xNagTjgBdfLu2Ql
-izLNUSFIkujrVHHTm8dyK4NnouMFJ34RGNM8iaqBXp3Wq81hf7tcQ5uk0WUYppSt
-3wBNqs89LRp7aRsyRhde
-=sOCI
+iQIcBAEBCAAGBQJUUbh8AAoJEMDTa8Ir7ZwVvXgP/jDBMhrj4GNXzQi4mU2duWqV
+h0kspZsYsTGQKmSwQiJ5pw3ykG9K+XmLTBfcnJvfuoxIQZydCVCGndvSU4kz3R2l
+ubsqfAdBhDwJRfWyI99lzUAfZ6bicSZI1REOdRqL2D/JlwlTV4Tg576ICkmXCp9V
+dmeW31qqhN0RVm+Qto6Ooe++ZmN5eMQz2tPAuWELBEU8UnCpqhAe/ok8tPAbbKWD
+ODols1hdMxhUsIKY+mdhsYD5cnqsCPNInrF9dxz9MXId5ChoGkBMabxNOrovdD5a
+LGdifYMMFUFNf1hfYA8rJJMfqpsJ9ZxDiBGWJziSK6tDGsRkw7gHnw4pUQc+/9ib
+WHU/Ms985QIzzo8UYrTjhNjlNStSUlTqcPy/bmq75zJtvvsgtk4qrsTRN1kHyW+J
+bjl83yxJMHnbJ11B22HZfmawO4HUMg/hv91+DJMWN/nB5fmOQnJqT2kZA33Notiv
+ZU3L+o0PwlKMA4LBFOnzPN5iLkmnzGba5b5sHkdOzS69HDvQG5693+nCLEhj8ip8
+GeJcr2GkNQOWsmY+YgwHxkJheUTZXvaHXVxhyHWYBR5tRn0EaUdqU8WSr4XJJaRd
+o5kd8QrNvpzQLG/Sv3yAMmGPviOkoD8EotJ+Dq6yPzkpkjq13EeZsMqSnoSwPReS
+0WxO+NTzkCYO9sJQQLsu
+=5urM
 -----END PGP SIGNATURE-----
 
---Sig_/f9bX2SmEm1e.SVTQn4CG.Ke--
+--Sig_/+eLneu1LV8sVaMOIiAdoM=H--
