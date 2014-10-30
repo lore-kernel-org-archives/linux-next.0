@@ -1,64 +1,40 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH] mm-cma-make-kmemleak-ignore-cma-regions-fix
-Date: Thu, 30 Oct 2014 09:56:23 +0100
-Message-ID: <20141030085623.GC4664@dhcp22.suse.cz>
-References: <54515a25.46WrYSce5BExT3V4%akpm@linux-foundation.org>
- <1414658824-16480-1-git-send-email-mhocko@suse.cz>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Thu, 30 Oct 2014 14:30:39 +0530
+Message-ID: <87lhny7wzs.fsf@linux.vnet.ibm.com>
+References: <20141030161921.0e204257@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:32786 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758438AbaJ3I40 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Oct 2014 04:56:26 -0400
-Content-Disposition: inline
-In-Reply-To: <1414658824-16480-1-git-send-email-mhocko@suse.cz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thierry Reding <treding@nvidia.com>, Michal Nazarewicz <mina86@mina86.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Catalin Marinas <catalin.marinas@arm.com>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141030161921.0e204257@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu 30-10-14 09:47:04, Michal Hocko wrote:
-> include linux/io.h to get phys_to_virt declaration and fix the follow=
-ing
-> compile error:
-> mm/cma.c:288:4: error: implicit declaration of function =E2=80=98phys=
-_to_virt=E2=80=99 [-Werror=3Dimplicit-function-declaration]
->     kmemleak_ignore(phys_to_virt(addr));
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Ohh, skip this. It seems that this has been merged into
-mm-cma-make-kmemleak-ignore-cma-regions.patch already. Just my scripts
-haven't noticed.
+> Hi Andrew,
+>
+> After merging the akpm tree, today's linux-next build (arm multi_v7_defconfig)
+> produced this warning:
+>
+> In file included from include/linux/mm.h:52:0,
+>                  from mm/gup.c:7:
+> arch/arm/include/asm/pgtable.h:184:0: warning: "pgd_huge" redefined
+>  #define pgd_huge(pgd)  (0)
+>  ^
+> In file included from mm/gup.c:6:0:
+> include/linux/hugetlb.h:183:0: note: this is the location of the previous definition
+>  #define pgd_huge(x) 0
+>  ^
+>
+> Introduced by commit fee025d5dd4e ("mm: update generic gup
+> implementation to handle hugepage directory").
 
-Sorry about the noise.
 
-> Signed-off-by: Michal Hocko <mhocko@suse.cz>
-> ---
->  mm/cma.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/mm/cma.c b/mm/cma.c
-> index 9bc687a20495..daec407d1057 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -33,6 +33,7 @@
->  #include <linux/log2.h>
->  #include <linux/cma.h>
->  #include <linux/highmem.h>
-> +#include <linux/io.h>
-> =20
->  struct cma {
->  	unsigned long	base_pfn;
-> --=20
-> 2.1.1
->=20
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
+Should be fixed by.
+http://mid.gmane.org/1414570785-18966-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com
+IIUC the changes are going via powerpc tree. So not sure how it gets updated.
 
---=20
-Michal Hocko
-SUSE Labs
+-aneesh
