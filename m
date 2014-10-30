@@ -1,90 +1,87 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: unnecessary merges in the v4l-dvb tree
-Date: Thu, 30 Oct 2014 08:09:34 -0200
-Message-ID: <20141030080934.154ff729@recife.lan>
+Date: Thu, 30 Oct 2014 21:59:39 +1100
+Message-ID: <20141030215939.5ab46078@canb.auug.org.au>
 References: <20141030092445.519a86ba@canb.auug.org.au>
+	<20141030080934.154ff729@recife.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/DJ1v5vn2Tc2bp4VJHQ+S8vV"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/0Qo1J/UNvrq6gTOp686CGsP"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:51167 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756976AbaJ3KJt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Oct 2014 06:09:49 -0400
-In-Reply-To: <20141030092445.519a86ba@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:52229 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932744AbaJ3K7s (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Oct 2014 06:59:48 -0400
+In-Reply-To: <20141030080934.154ff729@recife.lan>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
 Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/DJ1v5vn2Tc2bp4VJHQ+S8vV
+--Sig_/0Qo1J/UNvrq6gTOp686CGsP
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Mauro,
 
-Em Thu, 30 Oct 2014 09:24:45 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
-
-> Hi Mauro,
+On Thu, 30 Oct 2014 08:09:34 -0200 Mauro Carvalho Chehab <mchehab@infradead=
+.org> wrote:
+>
+> Em Thu, 30 Oct 2014 09:24:45 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 >=20
-> I noticed that you have two unnecessary merges in the v4l-dvb tree
-> (git://linuxtv.org/mchehab/media-next.git#master).  This is not
-> entirely your fault.  Unfortunately, when you do
+> > The only ways I know around this is to either merge the commit
+> > associated with the tag or do a (hard) reset to the tag.
 >=20
-> git merge <signed tag>
+> A hard reset to the tag would likely be a bad idea, as it would break
+> the sub-maintainers trees that are based on my tree.
+
+I should have said that I don't expect you to change your tree at the
+moment, just for that reason.  But maybe next time.
+
+> I generally use "git pull" for that, as the man page says that the
+> default behavior is to do fast forward:
+>        "--ff
+>            When the merge resolves as a fast-forward, only update
+> 	   the branch pointer, without creating a merge commit.=20
+> 	   This is the default behavior."
 >=20
-> git will produce a merge commit even if it could have fast
-> forwarded :-(.  Consequently, you have commits 1ef24960ab78 ("Merge tag
-> 'v3.18-rc1' into patchwork") and d6d41ba1cb38 ("Merge remote-tracking
-> branch 'linus/master' into patchwork") even though the patchwork branch
-> in each case is included in the tag being merged.
->=20
-> The only ways I know around this is to either merge the commit
-> associated with the tag or do a (hard) reset to the tag.
+> It seems that the man page is then outdated for signed tags, or,
+> eventually, we need to make --ff explicit on this case.
 
-A hard reset to the tag would likely be a bad idea, as it would break
-the sub-maintainers trees that are based on my tree.
+I think that --ff overrides this behaviour.  Doing "git merge
+'<tag>^{}'" works, but you can't use that with "git pull".
 
-I generally use "git pull" for that, as the man page says that the
-default behavior is to do fast forward:
-       "--ff
-           When the merge resolves as a fast-forward, only update
-	   the branch pointer, without creating a merge commit.=20
-	   This is the default behavior."
+> I'll try the approach of merging the associated commit next time,
+> but this is something that it is easy to forget.
 
-It seems that the man page is then outdated for signed tags, or,
-eventually, we need to make --ff explicit on this case.
+I don't think it is a really big problem but it would be nicer for
+everyone.
 
-I'll try the approach of merging the associated commit next time,
-but this is something that it is easy to forget.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->=20
-> Linus, any thoughts?
-
-Regards,
-Mauro
-
---Sig_/DJ1v5vn2Tc2bp4VJHQ+S8vV
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--Sig_/0Qo1J/UNvrq6gTOp686CGsP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUUg5mAAoJEAhfPr2O5OEV2FYP/1NdlzMt6scV1xO6MsDpU5/D
-spxTMG/SxdWJWYinUinROBWUYHZTyYjSQWYZR9KDJdtMgC9/gldb0PJDF8ntL081
-5upYLzpyMbbrxN7Z0BTzHIQDlxz7rwCA0G6u/pSvPmwPJlfC7Ym0Hix5VE9J4sHg
-EfQMwG5hflZlVIHGb0bzrlVBp8pu1IGlhVxVGt5+H3Kzg8TnButbkmxoDWyIHcSy
-MAQR9/N50/A0sknKWbijqBATxIT+1vrtmMu/KkfMeJlwhFbK+m+ftqW+YIqsrMzY
-3OTwCxgcek4yAM/3JbuP83TYY7NX1cGkeU3rRyltAD3jbTiDfWkkqNV6Q05Htwmp
-dwkKCmGc5jAw4t42KzXsuPnU8+iQlFwiXrXS9o9BxAPdCzjJXZ1n0KlfGWjqevdz
-DmA/lyXMq660Lgy+3aSGOBBj8XJ0rN7O4VSzmmLQO1g1FeTVx/XiGi7ASjaVR4wr
-LeAKLAJ4u53vz1W3Q8OFBDrGsG2OZpBX1QxgPCLFPHKbAkYoeW6x8SBr0erDglcN
-bqwHiKRXrS+dUosOeAbe1WE4g2avKVA5vWhIxf5DNOGbK5EZOkCdLo6S8GczumIK
-LRQ7haCC6L/MFXd1b3W4ypdJpInR9COY+mcMclycyatO2IekixJVVWW6GWk1WEFz
-FCxB078CCZkOoj3kn3lE
-=Q6cJ
+iQIcBAEBCAAGBQJUUhohAAoJEMDTa8Ir7ZwV87YP/Ah97/AsB2Lg6H4X1eULzYtR
+kfHepUKbI+F/8b+mXZSey8Nn+APDhSiaT8Q1L1dra607wEYeDfGIdTgNFlsrW5Bq
+5qSJBE6FTtzenyZ01zx5vQzvadand8eENp7Zn4Mrqa37BG3sfWRBLlqRuhBXYi82
+YWppNenfev65ySQjNRHFWk/43VVYJ9okwhMsIPwjBw+FcVnVGzVH+tOKLEZvqhwj
+zSCvpVqN5ZBtqMV3Qo4bdPbRYJAxBEJjiky8LTHP+jX1yWNQCRKiNjnsjDt2ZnFJ
+Dh7erpvIgEc8JHfVitFmp3j5BY8tGP/y72Yu5aXQn5QKwDvWoStz5huE5jZe+sKD
+xOkt/YndmuHN8rsTc3W3UMhLMF3n5vlqBTWMzjvxn61ianyE0Kvc6fWnsaZH2nr6
+EbsqdIq6LvjWoBISeZ1U/I8cNLZM6Ig7rMwz3uTVQ4ha4XNdixn0/VmxYsP5QIuw
+k+NX6O+qSRV7sX9ZI92Oy0cnZCKYewus5RbGLmnG48hCAf4c0dOoiNh/lMRcVIKp
+DkUGE7zrJLejEBXBNZrHwnjIF406DxQCc5fb44Mxrkue07cFjPJ8V7xFmkZIt3ZS
+9mTR8voJDId8n/ZKjk3us/xUs1NMlcs9M4GJQOJlZf/u6o6Ob4wn/F3rMqfVZVnn
+GVCbENF9dEXWPCPvDr5k
+=aLHg
 -----END PGP SIGNATURE-----
 
---Sig_/DJ1v5vn2Tc2bp4VJHQ+S8vV--
+--Sig_/0Qo1J/UNvrq6gTOp686CGsP--
