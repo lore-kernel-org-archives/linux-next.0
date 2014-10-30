@@ -1,87 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unnecessary merges in the v4l-dvb tree
-Date: Thu, 30 Oct 2014 21:59:39 +1100
-Message-ID: <20141030215939.5ab46078@canb.auug.org.au>
-References: <20141030092445.519a86ba@canb.auug.org.au>
-	<20141030080934.154ff729@recife.lan>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: randconfig build error with next-20141028, in net/bridge
+Date: Thu, 30 Oct 2014 10:17:08 -0700
+Message-ID: <20141030101708.12113903@urahara>
+References: <CA+r1ZhjGo_pWi5hsxra65fCm0kwLfit4ai4_sAiwKKj0fPLxVg@mail.gmail.com>
+	<20141029.153745.182320154112584088.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0Qo1J/UNvrq6gTOp686CGsP"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52229 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932744AbaJ3K7s (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Oct 2014 06:59:48 -0400
-In-Reply-To: <20141030080934.154ff729@recife.lan>
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:64568 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757832AbaJ3RRW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Oct 2014 13:17:22 -0400
+Received: by mail-pd0-f175.google.com with SMTP id y13so5539167pdi.20
+        for <linux-next@vger.kernel.org>; Thu, 30 Oct 2014 10:17:22 -0700 (PDT)
+In-Reply-To: <20141029.153745.182320154112584088.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: jim.epost@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, bridge@lists.linux-foundation.org, kyeyoonp@codeaurora.org
 
---Sig_/0Qo1J/UNvrq6gTOp686CGsP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 29 Oct 2014 15:37:45 -0400 (EDT)
+David Miller <davem@davemloft.net> wrote:
 
-Hi Mauro,
+> From: Jim Davis <jim.epost@gmail.com>
+> Date: Tue, 28 Oct 2014 07:52:47 -0700
+> 
+> > Building with the attached random configuration file,
+> > 
+> > net/built-in.o: In function `br_handle_frame_finish':
+> > (.text+0x40edf): undefined reference to `arp_tbl'
+> > net/built-in.o: In function `br_handle_frame_finish':
+> > (.text+0x40f3a): undefined reference to `arp_send'
+> > make: *** [vmlinux] Error 1
+> 
+> Kyeyoon-ssi, you will need to do something about this.
+> 
+> Your choices are either selecting INET (and thus also
+> CRYPTO and CRYPTO_AES, since INET needs those in order
+> to build properly), making bridging depeng on INET,
+> or protecting the new proxy-arp code with INET ifdef
+> checks.
 
-On Thu, 30 Oct 2014 08:09:34 -0200 Mauro Carvalho Chehab <mchehab@infradead=
-.org> wrote:
->
-> Em Thu, 30 Oct 2014 09:24:45 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
->=20
-> > The only ways I know around this is to either merge the commit
-> > associated with the tag or do a (hard) reset to the tag.
->=20
-> A hard reset to the tag would likely be a bad idea, as it would break
-> the sub-maintainers trees that are based on my tree.
-
-I should have said that I don't expect you to change your tree at the
-moment, just for that reason.  But maybe next time.
-
-> I generally use "git pull" for that, as the man page says that the
-> default behavior is to do fast forward:
->        "--ff
->            When the merge resolves as a fast-forward, only update
-> 	   the branch pointer, without creating a merge commit.=20
-> 	   This is the default behavior."
->=20
-> It seems that the man page is then outdated for signed tags, or,
-> eventually, we need to make --ff explicit on this case.
-
-I think that --ff overrides this behaviour.  Doing "git merge
-'<tag>^{}'" works, but you can't use that with "git pull".
-
-> I'll try the approach of merging the associated commit next time,
-> but this is something that it is easy to forget.
-
-I don't think it is a really big problem but it would be nicer for
-everyone.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/0Qo1J/UNvrq6gTOp686CGsP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUUhohAAoJEMDTa8Ir7ZwV87YP/Ah97/AsB2Lg6H4X1eULzYtR
-kfHepUKbI+F/8b+mXZSey8Nn+APDhSiaT8Q1L1dra607wEYeDfGIdTgNFlsrW5Bq
-5qSJBE6FTtzenyZ01zx5vQzvadand8eENp7Zn4Mrqa37BG3sfWRBLlqRuhBXYi82
-YWppNenfev65ySQjNRHFWk/43VVYJ9okwhMsIPwjBw+FcVnVGzVH+tOKLEZvqhwj
-zSCvpVqN5ZBtqMV3Qo4bdPbRYJAxBEJjiky8LTHP+jX1yWNQCRKiNjnsjDt2ZnFJ
-Dh7erpvIgEc8JHfVitFmp3j5BY8tGP/y72Yu5aXQn5QKwDvWoStz5huE5jZe+sKD
-xOkt/YndmuHN8rsTc3W3UMhLMF3n5vlqBTWMzjvxn61ianyE0Kvc6fWnsaZH2nr6
-EbsqdIq6LvjWoBISeZ1U/I8cNLZM6Ig7rMwz3uTVQ4ha4XNdixn0/VmxYsP5QIuw
-k+NX6O+qSRV7sX9ZI92Oy0cnZCKYewus5RbGLmnG48hCAf4c0dOoiNh/lMRcVIKp
-DkUGE7zrJLejEBXBNZrHwnjIF406DxQCc5fb44Mxrkue07cFjPJ8V7xFmkZIt3ZS
-9mTR8voJDId8n/ZKjk3us/xUs1NMlcs9M4GJQOJlZf/u6o6Ob4wn/F3rMqfVZVnn
-GVCbENF9dEXWPCPvDr5k
-=aLHg
------END PGP SIGNATURE-----
-
---Sig_/0Qo1J/UNvrq6gTOp686CGsP--
+Maybe make ARP proxy a config option under bridge and have
+it depend on INET?
