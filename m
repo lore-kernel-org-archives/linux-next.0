@@ -1,59 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 30 Oct 2014 15:03:04 +1100
-Message-ID: <20141030150304.3c8cb7d6@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Date: Thu, 30 Oct 2014 16:19:21 +1100
+Message-ID: <20141030161921.0e204257@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+eLneu1LV8sVaMOIiAdoM=H"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/5PF5IDHTxHxGAS0buGLKRkW"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33278 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752367AbaJ3FT3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Oct 2014 01:19:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vishnu Pratap Singh <vishnu.ps@samsung.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 
---Sig_/+eLneu1LV8sVaMOIiAdoM=H
+--Sig_/5PF5IDHTxHxGAS0buGLKRkW
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the akpm tree, today's linux-next build (arm multi_v7_defconf=
+ig)
+produced this warning:
 
-lib/show_mem.c: In function 'show_mem':
-lib/show_mem.c:43:45: error: 'totalcma_pages' undeclared (first use in this=
- function)
-  printk("%lu pages reserved\n", (reserved - totalcma_pages));
-                                             ^
+In file included from include/linux/mm.h:52:0,
+                 from mm/gup.c:7:
+arch/arm/include/asm/pgtable.h:184:0: warning: "pgd_huge" redefined
+ #define pgd_huge(pgd)  (0)
+ ^
+In file included from mm/gup.c:6:0:
+include/linux/hugetlb.h:183:0: note: this is the location of the previous d=
+efinition
+ #define pgd_huge(x) 0
+ ^
 
-Caused by commit b4e3647bb59d ("lib/show_mem.c: adds cma reserved
-information").  totalcma_pages exists nowhere except these added lines.
-
-I have reverted that commit (and its following fix) for today.
+Introduced by commit fee025d5dd4e ("mm: update generic gup
+implementation to handle hugepage directory").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/+eLneu1LV8sVaMOIiAdoM=H
+--Sig_/5PF5IDHTxHxGAS0buGLKRkW
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUUbh8AAoJEMDTa8Ir7ZwVvXgP/jDBMhrj4GNXzQi4mU2duWqV
-h0kspZsYsTGQKmSwQiJ5pw3ykG9K+XmLTBfcnJvfuoxIQZydCVCGndvSU4kz3R2l
-ubsqfAdBhDwJRfWyI99lzUAfZ6bicSZI1REOdRqL2D/JlwlTV4Tg576ICkmXCp9V
-dmeW31qqhN0RVm+Qto6Ooe++ZmN5eMQz2tPAuWELBEU8UnCpqhAe/ok8tPAbbKWD
-ODols1hdMxhUsIKY+mdhsYD5cnqsCPNInrF9dxz9MXId5ChoGkBMabxNOrovdD5a
-LGdifYMMFUFNf1hfYA8rJJMfqpsJ9ZxDiBGWJziSK6tDGsRkw7gHnw4pUQc+/9ib
-WHU/Ms985QIzzo8UYrTjhNjlNStSUlTqcPy/bmq75zJtvvsgtk4qrsTRN1kHyW+J
-bjl83yxJMHnbJ11B22HZfmawO4HUMg/hv91+DJMWN/nB5fmOQnJqT2kZA33Notiv
-ZU3L+o0PwlKMA4LBFOnzPN5iLkmnzGba5b5sHkdOzS69HDvQG5693+nCLEhj8ip8
-GeJcr2GkNQOWsmY+YgwHxkJheUTZXvaHXVxhyHWYBR5tRn0EaUdqU8WSr4XJJaRd
-o5kd8QrNvpzQLG/Sv3yAMmGPviOkoD8EotJ+Dq6yPzkpkjq13EeZsMqSnoSwPReS
-0WxO+NTzkCYO9sJQQLsu
-=5urM
+iQIcBAEBCAAGBQJUUcpeAAoJEMDTa8Ir7ZwVOLAP/jj/ytM7C1c6dCM1IlBX8b6s
+m2BIXDukmvWquMwyB0VQh4Qzs/P8Ys7p5+O8jFpjlEetv0P5CxraRF7rBkzEP3TM
+Dg+ua/HwwLqpuS0DkYJEy5BwMhfh8LLixKXHxPK9mygFRB+P40v/cpgnTSbPvgpJ
+hKha6gte29F0mO8tAEU0EDULCDxjMAVkMSHMttPQVIBvI1y+IfAX+6iTvU6u7gTT
+FT+6E+Jvwi5VdY/afjxa4rLrKxCcqBowI189kq46GOd7yUG1u/lQoUjCibvtOmcT
+bgu7zSCe+qaK27NrnUd5rEhMOvXIqcf0LcYZHIAiWMs75Sj8xzvb3BH6nStCkuLr
+S6nr5j3wDdAk4YxjsEu1U07z0WUb523aIdkk8jD1yvxfaPT7Iiboxs3YwRV+MJnz
+F7grNwGGTDK7+N0q2X4zlHTj5W8MO9UmVeJv6+knHAtyOlUiLpiAYjf6Lv6sHF31
+MsF9woDqircxVeBD3Pc+Kfq7hpXanewocUv40qEHC1DaIWBmnfhS8c8Ug7lnlK4v
+xllczXhjREoE+xmCzDQwgtprydbY5a7hyV4fD/bqOwzOY+qLaND0HdWPMDxtn2tI
+Yn8sBRod27ufxXNZt7od6jfdUlXS5XiaVQsYhJeB7orQw77r/ClTvZPqjJHejtU5
+F2Y5XB6USqcRLbmI87b0
+=rkff
 -----END PGP SIGNATURE-----
 
---Sig_/+eLneu1LV8sVaMOIiAdoM=H--
+--Sig_/5PF5IDHTxHxGAS0buGLKRkW--
