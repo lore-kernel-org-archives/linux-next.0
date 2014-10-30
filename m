@@ -1,40 +1,44 @@
-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Date: Thu, 30 Oct 2014 14:30:39 +0530
-Message-ID: <87lhny7wzs.fsf@linux.vnet.ibm.com>
-References: <20141030161921.0e204257@canb.auug.org.au>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: mmotm 2014-10-29-14-19 uploaded
+Date: Thu, 30 Oct 2014 10:02:15 +0100
+Message-ID: <CAFLxGvwGRz8Z2=eD53VjVgUf5zdM3KCyLcUZN1g_Po2D2xQ4DA@mail.gmail.com>
+References: <54515a25.46WrYSce5BExT3V4%akpm@linux-foundation.org>
+	<alpine.DEB.2.11.1410292233340.5308@nanos>
+	<1414619976.2542.1.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141030161921.0e204257@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1414619976.2542.1.camel@perches.com>
+Sender: owner-linux-mm@kvack.org
+To: Joe Perches <joe@perches.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org, "linux-mm@kvack.org" <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Michal Hocko <mhocko@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-
-> Hi Andrew,
+On Wed, Oct 29, 2014 at 10:59 PM, Joe Perches <joe@perches.com> wrote:
+> On Wed, 2014-10-29 at 22:37 +0100, Thomas Gleixner wrote:
+>> On Wed, 29 Oct 2014, akpm@linux-foundation.org wrote:
+>> > This mmotm tree contains the following patches against 3.18-rc2:
+>> > (patches marked "*" will be included in linux-next)
+>> >
+>> > * kernel-posix-timersc-code-clean-up.patch
+>>
+>> Can you please drop this pointless churn? We really can replace all
+>> that stuff with a shell script and let it run over the tree every now
+>> and then.
 >
-> After merging the akpm tree, today's linux-next build (arm multi_v7_defconfig)
-> produced this warning:
->
-> In file included from include/linux/mm.h:52:0,
->                  from mm/gup.c:7:
-> arch/arm/include/asm/pgtable.h:184:0: warning: "pgd_huge" redefined
->  #define pgd_huge(pgd)  (0)
->  ^
-> In file included from mm/gup.c:6:0:
-> include/linux/hugetlb.h:183:0: note: this is the location of the previous definition
->  #define pgd_huge(x) 0
->  ^
->
-> Introduced by commit fee025d5dd4e ("mm: update generic gup
-> implementation to handle hugepage directory").
+> Should any automated code reformatting really be done
+> by an unsupervised or unreviewed shell script?
 
+As many users of "checkpatch.pl -f" behave anyway like
+unsupervised/unreviewed shell scripts
+it would not matter. ;-)
 
-Should be fixed by.
-http://mid.gmane.org/1414570785-18966-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com
-IIUC the changes are going via powerpc tree. So not sure how it gets updated.
+-- 
+Thanks,
+//richard
 
--aneesh
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
