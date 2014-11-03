@@ -1,66 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Nov 3
-Date: Tue, 4 Nov 2014 10:18:54 +1100
-Message-ID: <20141104101854.2cb9b8f4@canb.auug.org.au>
-References: <20141103161403.79bde878@canb.auug.org.au>
-	<20141103214943.GA20210@roeck-us.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
+Date: Mon, 3 Nov 2014 15:57:24 -0800
+Message-ID: <20141103235724.GA31372@kroah.com>
+References: <20141103132914.2a86667d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.P7Qt5hgny_=IfAgGLnvoR3"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39562 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750706AbaKCXTC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 Nov 2014 18:19:02 -0500
-In-Reply-To: <20141103214943.GA20210@roeck-us.net>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:48145 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751162AbaKCX50 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Nov 2014 18:57:26 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailout.nyi.internal (Postfix) with ESMTP id 51DE3209E1
+	for <linux-next@vger.kernel.org>; Mon,  3 Nov 2014 18:57:26 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20141103132914.2a86667d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tina Ruchandani <ruchandani.tina@gmail.com>
 
---Sig_/.P7Qt5hgny_=IfAgGLnvoR3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 03, 2014 at 01:29:14PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/lustre/lustre/llite/file.c between commit bc281d072ba9
+> ("lustre: opened file can't have negative dentry") from the vfs tree
+> and commit 57303e76c225 ("staging: lustre: Fix checkpatch.pl
+> spacing-related errors") from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi Guenter,
+Thanks for all of these fixes, they look correct to me.
 
-On Mon, 3 Nov 2014 13:50:01 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Something is fishy with this tree. I get either warnings or complete fail=
-ures
-> with qemu runs on all platforms.
->=20
-> x86_64:
->=20
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at fs/dcache.c:255 __d_free+0x43/0x50()
-
-This should be fixed in today's tree (Al has fixed it up).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/.P7Qt5hgny_=IfAgGLnvoR3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUWA1iAAoJEMDTa8Ir7ZwVURMP/Ri2VaBl7jw0wroMIZ5YDUx8
-VOcGk5fgZlVZizVMdgeJPFNbajY5ZUEFYdhMaHE8mEDq/YUo+ClF6gx5bSYMG7Op
-XvMsBkTD4/VpUk7w8getmIL6ODNKucwqMcqZW35WjBn+FoQw+UNeBx6Ol1X78eo4
-MmXqKbJWfQGhhRzfDMOn4BaW6K1mIVimsaHcjOXmfyVnG1Mi/Pvqlz/3l2N3qDQ7
-lVV5Beg77cupwLuqPzI2uymqrs3cwq+F7w4xtW4HM9ZEhWBm7O2X0MKWvLRy0PeB
-es+J8hE0bwPSiFVIhe6VzrRGzsS/T+90exOTG4xks33vNd9dsGDn45HbeG8tR0Yr
-+YV2mmWiapYrJYwuMs6OIzW11lr3KDHUrPD5zSF+kSSp9MXAF19+LuQ7roM3k203
-z05VzwcMdsWfqU/jFicaWxCS5Oy+SbT7PQKz/ic4XLiGK0tLbCgd4GklAfTey9zG
-EE0k9ogE9ReVPjvPh1vZyaXVtVJAIvQbmgOldBu/pz50yhgjghCXXIvgaONysswi
-X8BFjOZCz0O9rX7gPWxghOnFisGc0tqhbS16JjwRzd39DI1VCAYwJSqPXxlOHPco
-i53tO8D6AiQQkUzKwW8Jvu0wTsB5ElYBEMXx895LNIqe/QTlAUkTK5sKi8POO6OW
-qEicyvaVpCkp21esRzX+
-=Q3MP
------END PGP SIGNATURE-----
-
---Sig_/.P7Qt5hgny_=IfAgGLnvoR3--
+greg k-h
