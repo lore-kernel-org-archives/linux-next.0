@@ -1,72 +1,103 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Tue, 4 Nov 2014 15:43:20 +1100
-Message-ID: <20141104154320.2919bf64@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Tue, 4 Nov 2014 16:40:05 +1100
+Message-ID: <20141104164005.1a45ad46@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wy/dvRL0Jh3Bl.7ttsN289G"; protocol="application/pgp-signature"
+ boundary="Sig_/TWnCtqxca2B7h=6Z0t2nb3/"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52201 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37981 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751475AbaKDEn3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 Nov 2014 23:43:29 -0500
+	id S1750989AbaKDFk2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2014 00:40:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>, Robert Elliott <elliott@hp.com>, Christoph Hellwig <hch@lst.de>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
---Sig_/wy/dvRL0Jh3Bl.7ttsN289G
+--Sig_/TWnCtqxca2B7h=6Z0t2nb3/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi all,
 
-After merging the scsi tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+After merging the mfd tree, today's linux-next build (powerpc allyesconfig)
+failed like this:
 
-In file included from include/linux/sched.h:17:0,
-                 from include/linux/blkdev.h:4,
-                 from drivers/scsi/constants.c:10:
-drivers/scsi/constants.c: In function 'scsi_opcode_sa_name':
-include/linux/kernel.h:54:32: error: invalid application of 'sizeof' to inc=
-omplete type 'const char *[]'
- #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(=
-arr))
-                                ^
-drivers/scsi/constants.c:300:15: note: in expansion of macro 'ARRAY_SIZE'
-  if (opcode < ARRAY_SIZE(cdb_byte0_names))
-               ^
+drivers/regulator/max77686.c:432:13: warning: 'struct max77686_platform_dat=
+a' declared inside parameter list
+      struct max77686_platform_data *pdata)
+             ^
+drivers/regulator/max77686.c:432:13: warning: its scope is only this defini=
+tion or declaration, which is probably not what you want
+drivers/regulator/max77686.c: In function 'max77686_pmic_dt_parse_pdata':
+drivers/regulator/max77686.c:447:7: error: dereferencing pointer to incompl=
+ete type
+  pdata->num_regulators =3D ARRAY_SIZE(regulators);
+       ^
+drivers/regulator/max77686.c:448:42: error: dereferencing pointer to incomp=
+lete type
+  rdata =3D devm_kzalloc(&pdev->dev, sizeof(*rdata) *
+                                          ^
+drivers/regulator/max77686.c:449:14: error: dereferencing pointer to incomp=
+lete type
+         pdata->num_regulators, GFP_KERNEL);
+              ^
+drivers/regulator/max77686.c:455:23: error: dereferencing pointer to incomp=
+lete type
+  for (i =3D 0; i < pdata->num_regulators; i++) {
+                       ^
+drivers/regulator/max77686.c:460:3: error: invalid use of undefined type 's=
+truct max77686_regulator_data'
+   rdata[i].initdata =3D rmatch.init_data;
+   ^
+drivers/regulator/max77686.c:460:8: error: dereferencing pointer to incompl=
+ete type
+   rdata[i].initdata =3D rmatch.init_data;
+        ^
+drivers/regulator/max77686.c:461:3: error: invalid use of undefined type 's=
+truct max77686_regulator_data'
+   rdata[i].of_node =3D rmatch.of_node;
+   ^
+drivers/regulator/max77686.c:461:8: error: dereferencing pointer to incompl=
+ete type
+   rdata[i].of_node =3D rmatch.of_node;
+        ^
+drivers/regulator/max77686.c:464:7: error: dereferencing pointer to incompl=
+ete type
+  pdata->regulators =3D rdata;
+       ^
 
-Caused by 94bafab0008c ("scsi: consolidate opcode lookup in
-scsi_opcode_sa_name()").  This build does not have
-CONFIG_SCSI_CONSTANTS set.
+And so on ...
 
-I have used the scsi tree from next-20141031 again (since yesterday's
-tree had a different build problem).
+Caused by commit 9d5f4c2c748e ("mfd: max77686/802: Remove support for
+board files") from the mfd tree.
+
+I reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/wy/dvRL0Jh3Bl.7ttsN289G
+--Sig_/TWnCtqxca2B7h=6Z0t2nb3/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUWFltAAoJEMDTa8Ir7ZwVGdoP/12arQwBPQCDJ2r+gKsy8+ge
-puMmMd1ATTxpHwXaaHkM3XYl3V39E/FnrOJwZbFGml1wR+23hpFt8RRFJRSj5G/S
-6k+2IGe8xnRXvAXipIt541H4nmZbrRxKLeUbWU+Ilp0YuRa5Ah2XuvBdNb0TD6yn
-P9022FYc2GTO+9IHaG4yoDNSSwMJQwiOZopzcYrR3WnheI9HYzpsJMr5FLgxqvC8
-I7cHj0hj3QsVCpkKjPaWkgTahDkQgvlsxn/70Blw0MlFZdSkeLK+qqzFP3y9Z1/0
-UCmw1NcjL6diIxfeDF/ag0nKPC1XMB8BtdNuYNgUHCkwTYrUMg/GbajOkV1UsRW0
-embYcXnLHOjnZ+oUF7MZCIMWc79WPRSGRf673gBj1RyC5BWB44WGyL8PswqxsGDW
-cqlGcrn/Ft8mEVraCOmeBK39eOQ6J7R3StUWcpHZkez/g+zGms79f1H2spRxgAAs
-n/mDXaFd1knLqRxl26oikq45RejYw8zFr35kkVBj2965MMVcuzTAtJthCJqvlRtF
-jpZ7awOfAScitBcfYGrDpOYgXBGMOKk2fhePJzMO6+IgOEfdAl4nGPzgL07tugn9
-R3yLxHx+7fV6WKktwy27+Krbw66eir13f+z7xBE4ljfFSXRbHo2qARpNuPKXoDBz
-D6AYnvKqIqIn/F4tl62t
-=rHWC
+iQIcBAEBCAAGBQJUWGa7AAoJEMDTa8Ir7ZwVcY0P/RXPwiFBeVlgRdBBqSatw85v
+PyFkHIRgdo0aI9y7F6xd3UKO2y9F7GNQni9ge8oIZRB5JRjiFUuGzGDMfwaficI6
+ri7/I2aK+WHHwRh34nT1Rpa47i9kOES88z0JKfN0gd3BvRqloIXrgpRVc1MYWLkS
+MQ92k3CxndswDO5cU5BRlds1vujcv2umNWMtpQa124jMBp/iFYH8BDlwWN60FNiQ
+mEy3GLHrTu2rP7NU4V93ZFJL+l+CDbxLPyuyhwEXiSIiZWGoOuJJSpib0l1mNOnc
+TcMKAl+vHb8CQlRyBJXIHPA5Uc6JANEavNDR6xRJk0xpKul4vcZg19rlJFTFudcc
+ySXRqc8vwuBMBNPyH1dNJqB+b9BtiPwQP6Ax44QuImX0mfcqMbQFPDGlD2jMrgYC
+haP6FFl2T40h8duZX5pUHTi3e6a8KKr1i8lWHMYoOG6QFMj/Q5fLQXCduV4+FTkK
+QDFddAAA3kfF6/DlHcGU7RytCrm/qN6fLZUesoMA18eaEhhcxnalACQq2CmWMyZr
+tvIt3bgiIY6rVL8yPUy4QdEkPugAQQwy1z2oObBXHCeQsLNb72WTJvyksCvGfJls
+cECYv0TlEEao7zqXDx3XOwJdLUX2sukVRUJ/0iGHqnbg+JNjQYUSdHMIXiUNYDVZ
+jdBB8YThQqTmGtWjuQxX
+=JUus
 -----END PGP SIGNATURE-----
 
---Sig_/wy/dvRL0Jh3Bl.7ttsN289G--
+--Sig_/TWnCtqxca2B7h=6Z0t2nb3/--
