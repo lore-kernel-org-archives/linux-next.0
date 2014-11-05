@@ -1,35 +1,68 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Tree for Nov 4
-Date: Wed, 05 Nov 2014 13:07:38 +1100
-Message-ID: <1415153258.7440.0.camel@concordia>
-References: <20141104173624.67dd3286@canb.auug.org.au>
-	 <CAMuHMdVfTK4xEu33YMay9naTThvhRLdCpVCQLHW1FSW643mSAw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the iommu tree
+Date: Wed, 5 Nov 2014 13:47:31 +1100
+Message-ID: <20141105134731.799a1a3d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Nzz4gyi3FMw/SdAxw8nTwAn"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53207 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59682 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751506AbaKECHn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2014 21:07:43 -0500
-In-Reply-To: <CAMuHMdVfTK4xEu33YMay9naTThvhRLdCpVCQLHW1FSW643mSAw@mail.gmail.com>
+	id S1751506AbaKECri (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2014 21:47:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olav Haugan <ohaugan@codeaurora.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-On Tue, 2014-11-04 at 22:56 +0100, Geert Uytterhoeven wrote:
-> Hi Stephen, Michael,
-> 
-> On Tue, Nov 4, 2014 at 7:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Status of my local build tests will be at
-> > http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> > advice about cross compilers/configs that work, we are always open to add
-> > more builds.
-> 
-> Looks like the build results got stuck on Nov 3? There are also no
-> results for v3.18-rc3 yet.
+--Sig_/Nzz4gyi3FMw/SdAxw8nTwAn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm working on it :)
+Hi Joerg,
 
-cheers
+After merging the iommu tree, today's linux-next build (powerpc
+pc64_defconfig) failed like this:
+
+In file included from arch/powerpc/platforms/powernv/pci.c:33:0:
+arch/powerpc/include/asm/iommu.h:140:12: error: conflicting types for 'iomm=
+u_map_sg'
+ extern int iommu_map_sg(struct device *dev, struct iommu_table *tbl,
+            ^
+In file included from arch/powerpc/platforms/powernv/pci.c:23:0:
+include/linux/iommu.h:311:22: note: previous definition of 'iommu_map_sg' w=
+as here
+ static inline size_t iommu_map_sg(struct iommu_domain *domain,
+                      ^
+
+Caused by commit 315786ebbf4a ("iommu: Add iommu_map_sg() function").
+Grep is your friend ...
+
+I have used the iommu tree from next-20141104 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/Nzz4gyi3FMw/SdAxw8nTwAn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUWY/HAAoJEMDTa8Ir7ZwVWlUP/2xm4CG2Vu9zK8V79BB9zXH6
+GEQk0u4Ow2TrGB+tbDab+tBsESaUpB51mVqq80WLSB05pkk39kviBM7Ra7O6ygOg
+28aMo0+GO7Nx4VPwIam8l1/OZqwmrBkNq8UzvIDLmZmeiWQ1ORMbQQDvEHkmGUdT
+05nTxaftgj9v7i5ENnGI/q+LCmTuXADPK+A0YYvdw2HRK0Zgc/gZYd8/W5qca4Ya
+OZCZq+yPjkE2GKCqPeUCxZscZJliQSZYOx1bUexvPrH0k4mojnZrXmpqJyLTHrVm
+ohWYULHVkDyOgLF5cnh6Hqgi7+FqFk3Jfxs9WGs8DF6jV8KlXRO41xgdh75HUDQV
+REOZP6S+gtOxk8yV59AxvJfbQ8HWp5bGub8WkRhCyA6AlsSeVinNVNFtwlhtYKpn
+FwVWrax0LUU4GEn+sW+KVi613E23yqIxzCAHF9bveeSubyUkT/JHxw1GBy9d4Xkh
+NuHfHxe1b6jxeaBzOgBiXkfGJbscW/y6E3qRfA2FESHi51qxsDUw93PET87+OKb4
+Xat9ivrIzit/i+HCwo/A1ZPu2eGolZbXD1+/zUjMJQOK5Hm+eQ6eikuFjt00/utu
+Ya//qgJDso5xE3LMsbGlaKrDOauM3tjPADwfYyxsXYBJl5MpPCK/LkobOqHE4Ooy
+CgKsM/YwY13DToXqSQ9V
+=KoTk
+-----END PGP SIGNATURE-----
+
+--Sig_/Nzz4gyi3FMw/SdAxw8nTwAn--
