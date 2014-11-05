@@ -1,59 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the usb.current tree
-Date: Wed, 5 Nov 2014 15:18:25 +1100
-Message-ID: <20141105151825.26c53948@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
+Date: Wed, 5 Nov 2014 15:29:11 +1100
+Message-ID: <20141105152911.69bd1a14@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Xm7sXO5zU+kDxsJCpZEa_oj"; protocol="application/pgp-signature"
+ boundary="Sig_/kcyJMDlk.GrKCGudnEiYIG="; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41465 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48032 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751129AbaKEESk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2014 23:18:40 -0500
+	id S1751129AbaKEE3S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2014 23:29:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amber Thrall <amber.rose.thrall@gmail.com>, Aya Mahfouz <mahfouz.saif.elyazal@gmail.com>
 
---Sig_/Xm7sXO5zU+kDxsJCpZEa_oj
+--Sig_/kcyJMDlk.GrKCGudnEiYIG=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/host/Kconfig between commit cd6e245a2d06 ("usb: Remove
-references to non-existent PLAT_S5P symbol") from the usb.current tree
-and commit dd3cf17488b1 ("usb: host: Remove optional dependencies on
-PLAT_S5P") from the usb tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/media/lirc/lirc_imon.c between commit f3a75505ab5f
+("[media] Staging: media: lirc: cleaned up packet dump in 2 files")
+from the v4l-dvb tree and commit 732ba199ab07 ("staging: media: lirc:
+lirc_imon.c: replace printk by dev_dbg") from the staging tree.
 
-I fixed it up (I used the usb tree version) and can carry the fix as
-necessary (no action is required).
+I fixed it up (the staging tree patch was not complete, so I did the
+below) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Xm7sXO5zU+kDxsJCpZEa_oj
+diff --cc drivers/staging/media/lirc/lirc_imon.c
+index 232edd5b1742,f98418cd2305..000000000000
+--- a/drivers/staging/media/lirc/lirc_imon.c
++++ b/drivers/staging/media/lirc/lirc_imon.c
+@@@ -619,8 -597,13 +596,9 @@@ static void imon_incoming_packet(struc
+  		return;
+  	}
+ =20
+ -	if (debug) {
+ -		dev_info(dev, "raw packet: ");
+ -		for (i =3D 0; i < len; ++i)
+ -			dev_dbg(dev, "%02x ", buf[i]);
+ -		dev_dbg(dev, "\n");
+ -	}
+ +	if (debug)
+- 		dev_info(dev, "raw packet: %*ph\n", len, buf);
+++		dev_dbg(dev, "raw packet: %*ph\n", len, buf);
++=20
+  	/*
+  	 * Translate received data to pulse and space lengths.
+  	 * Received data is active low, i.e. pulses are 0 and
+
+--Sig_/kcyJMDlk.GrKCGudnEiYIG=
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUWaUWAAoJEMDTa8Ir7ZwVTxQP/1t2G9cRmBKARaiuJ/4k96XC
-AmtCRwEFHKlaPCW5Ew5QKiugYuoI7IEr+4VixH1bpwSm7/J3Oj0Z20HjZT+ysqPx
-Siojedgh6YHdC9hAtMjLoSw0dTSCNw0IJD+RDc9xmk37bmdXF2Yn4/KBwprLKfZJ
-IL/HDCTziV4x3vtBDJjYgndWCknwe8+kOWVP+H0HUvyL2wyyE2KQBuQD/dauMX6h
-SZ1vMXck1lNZqYqJvzKqBhnJrRXMQ1aLuH9sj7mCf+kgrw3+foEnO7wncMH2dTvm
-RG7dhHpPbIl2fB3INs6ht7oEJQsxs9OA+JdoJjkPzJcuxPNjt7THIXNB36wYZOD5
-bDaQETjZDQWO/+qN40Nxz2tzCE2xrH2PbfqWZR29zS1fyDCJlUQwVno4DE5MGP4r
-dhv8luLK+SQawLpBidt04V3Rgi+P4KO+5OzS8l7YizCDHgypa0hDGK0kd/0LBxfL
-+i7XTbqu9SRQnW7EvamqbuP/Iqx0PYDksoFRu3hatc6xesB7y0reZy6v6bLWtOk7
-JNIlwejOziiPD2yvGxgLhWLffvNkknpdV3JTImdh74stVPyCXrpI1Js1LvvOplz6
-Botfs0NwizcpP+zi36XKUJp/90hioIXGSbTrARQMjuP1UzZRrasmKrkCLLwiOPBC
-6yapkyhMmk7c7uI461Fd
-=2DAI
+iQIcBAEBCAAGBQJUWaebAAoJEMDTa8Ir7ZwV/PQP/0A4I4l9kPeJmOaGPKFNF1xS
+wtO1c3jW8a8uL1c/Y6q3PQX9T3rXt/G0O0ukVezaW1/ixSMZKPXJcSQKgPXN0g4p
+MH3+wyz3pRYB3nG0g6GvDbhlsax7xKmGuLamvXCn6vR38QEYFunr7Z7ZvqSC5TCv
+8HE+IlBY/NUdB9BBQz/TQLDipKsjefdiqFxFEnWSbbGONWCb3uEuEW8RYR6Os47J
+Nfk/uV5ibVIg2RKU2NXrmoMFe4+kWvZJrIjCAwWavynM2NkZuFG5KuFBCLu2gOEq
+qIVZn98nWRd8r1toJ2YRohqcZX0PWZRmhePKJIm4pPC/NSsF8WYEy92pldHjOkpB
+9RaJps54aPXnaYJPdTu2G69BoSLarAX0lQU9zhOv67dMYGiTf2Q8HotGdhRaZntw
+uK0Z/4VcKmSXD0DBNoTMRfUyqdcj9zIeq1HRK44f2h/czzUH0P/p8QLPpuZu9MtX
+jqV1CHRACrsGLKEbHPpmC7UqXMZC+2Oy5ooRJYgc0NS7hoeTpOOXKviELcLW3ySC
+vvIgqNeFag7bMJzn8zdex0Gk5cLgVsRw4+rbBu4RdEJxc8XC63s4Y7C+3lrbTcSO
+BkBXZAEic6EwQdcpiQ4dQSFVeQdcMQi5qiAZlFq1HQRU/PADh/ZEjAeOo3p/yXWc
+jk6eRs/R57c5bbwXDT0T
+=J8jF
 -----END PGP SIGNATURE-----
 
---Sig_/Xm7sXO5zU+kDxsJCpZEa_oj--
+--Sig_/kcyJMDlk.GrKCGudnEiYIG=--
