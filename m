@@ -1,80 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Date: Wed, 5 Nov 2014 15:37:04 +1100
-Message-ID: <20141105153704.3af595f9@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Wed, 5 Nov 2014 15:48:26 +1100
+Message-ID: <20141105154826.24390751@canb.auug.org.au>
+References: <20141104154320.2919bf64@canb.auug.org.au>
+	<54587B47.2080309@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Stqo7ads/1GeHnF.8WcoN1d"; protocol="application/pgp-signature"
+ boundary="Sig_/dT6j6IT5oZbtxtyJL9lAgGR"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58374 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56220 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751421AbaKEEhL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2014 23:37:11 -0500
+	id S1752530AbaKEEsd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2014 23:48:33 -0500
+In-Reply-To: <54587B47.2080309@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amber Thrall <amber.rose.thrall@gmail.com>, Aybuke Ozdemir <aybuke.147@gmail.com>
+To: Hannes Reinecke <hare@suse.de>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Elliott <elliott@hp.com>, Christoph Hellwig <hch@lst.de>
 
---Sig_/Stqo7ads/1GeHnF.8WcoN1d
+--Sig_/dT6j6IT5oZbtxtyJL9lAgGR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Hannes,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/media/lirc/lirc_sasem.c between commit f3a75505ab5f
-("[media] Staging: media: lirc: cleaned up packet dump in 2 files")
-from the v4l-dvb tree and commit eca6a8872a04 ("staging: media: lirc:
-Use pr_* instead of printk") from the staging tree.
+On Tue, 04 Nov 2014 08:07:51 +0100 Hannes Reinecke <hare@suse.de> wrote:
+>
+> On 11/04/2014 05:43 AM, Stephen Rothwell wrote:
+> >=20
+> > After merging the scsi tree, today's linux-next build (arm=20
+> > multi_v7_defconfig) failed like this:
+> >=20
+> > In file included from include/linux/sched.h:17:0, from
+> > include/linux/blkdev.h:4, from drivers/scsi/constants.c:10:=20
+> > drivers/scsi/constants.c: In function 'scsi_opcode_sa_name':=20
+> > include/linux/kernel.h:54:32: error: invalid application of
+> > 'sizeof' to incomplete type 'const char *[]' #define
+> > ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
+> > __must_be_array(arr)) ^ drivers/scsi/constants.c:300:15: note:
+> > in expansion of macro 'ARRAY_SIZE' if (opcode <
+> > ARRAY_SIZE(cdb_byte0_names)) ^
+> >=20
+> > Caused by 94bafab0008c ("scsi: consolidate opcode lookup in=20
+> > scsi_opcode_sa_name()").  This build does not have=20
+> > CONFIG_SCSI_CONSTANTS set.
+> >=20
+> > I have used the scsi tree from next-20141031 again (since
+> > yesterday's tree had a different build problem).
+> >=20
+> Sorry. Here's the patch.
 
-I fixed it up (I just used the v4l-dvb tree version - see below) and
-can carry the fix as necessary (no action is required).
+I applied that patch to linux-next today (pending James adding it to
+the scsi tree).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/media/lirc/lirc_sasem.c
-index 2f0463eb9887,123ddf68b587..000000000000
---- a/drivers/staging/media/lirc/lirc_sasem.c
-+++ b/drivers/staging/media/lirc/lirc_sasem.c
-@@@ -581,8 -582,13 +581,9 @@@ static void incoming_packet(struct sase
-  		return;
-  	}
- =20
- -	if (debug) {
- -		pr_info("Incoming data: ");
- -		for (i =3D 0; i < 8; ++i)
- -			pr_cont("%02x ", buf[i]);
- -		pr_cont("\n");
- -	}
- +	if (debug)
- +		dev_info(&context->dev->dev, "Incoming data: %*ph\n", len, buf);
-+=20
-  	/*
-  	 * Lirc could deal with the repeat code, but we really need to block it
-  	 * if it arrives too late.  Otherwise we could repeat the wrong code.
-
---Sig_/Stqo7ads/1GeHnF.8WcoN1d
+--Sig_/dT6j6IT5oZbtxtyJL9lAgGR
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUWal1AAoJEMDTa8Ir7ZwVpgkQAIrxoOyKI/77M3U7YcHxUgoD
-MPIMVhloopqUDSesvpmqpXb+BWNjsqvhdd7HJyKWyqiJKIf0EgoNL2gpUiCCrwPu
-4lM3Tks9VrB9/ABAR0Ka7i5bRFj6BL5shdmU2hRXQXZfxN4N69uaAtZBX0Ma4Fag
-67tnUrmaFdbtqpdR834UMd5hKPpCgThJNCJb18OMVTRWqP/QkYF8leYA0EUDXB90
-m3mAikP5LqEPcSjhTfi2RdNdsleoxKAPgPhpquro+RXzjFGM/Gbu9kbiE5w+8zzm
-NaIZpcSXFz4gLoA/e8I2cmFD6XQXojkAUqhpFyNQE/wFkj5r74acMD4ZRxEAUWt8
-E6kQtr499R5w20dm3rEVVdNqtM7qBFKQl4wjkc7MXkBzAmEtfyw9pHkQvlk5htX4
-1YfR+EaAe5Xar4x53gmlMbhKHx2Bhr63JAmytBRdQSzk1szVIXRBGD+XJ6NiXbcR
-3IBTsPH2o+ypgpHJsDP8J8OO2JA67Qn7yOJAh/2+oUqjii2lunNswPbssh2NpjXA
-AamjUrY2vavYBq4rTdh/iiQUSjtq3fvV+j9/VW3MbdaL7FuZl6MLWhnifvMKSRh3
-HWFYLodhkMGnsCvIEnaOWIOxIMAAGGQoiRIJfeDxv8C70mAJI34KEeX4pOFnafZB
-pti1NXU0F+pbq9Znv7Xb
-=EOrr
+iQIcBAEBCAAGBQJUWaweAAoJEMDTa8Ir7ZwVaUIQAIB/0DcC2BuqnDpO2vMOunqr
+WLSi9KyBmJVwBiENJAIvor6Rbq2ptnJ/FA4dpedqZLU2lG5osz+xiJIRA5xVIPrq
+x0ls3qwVFj4l0fP+gJVDdf5CVewlqk5DoLCYYU2MTidaMBpyk0tl2Ms90jSigoI7
+kmfjAMglNyeNsGxP+fJ77L8IxJskw6KpshlNnf01wtOM+IO05tGk3F/ObxxxXyvR
+PqKflEHtPMDIQLjqv68g3bGFdWjEJTf3iewVep2UhvDQrPeUancDJESPUnZVYKP7
+uNfWn/nG/FA89uUgYPznkgb3MsnpYWNi80F3kCvQj+DVtmxniTdeYNewyoXV5468
+3Ya0NhtzwkaHssUPhuwxeFKeqm+TxKaqM/egTuX6+iWclD3RNyOQeW2L8Q7J6ZxA
+Xr5D7Q7yhwQP2vPHkJ9nhXq8vcHQMYxMOjuDEgrD5jQAkqD2MSQIz3zgtRFvVIld
+Knb/nGxzRYGH2/73sLd13nR3XXzXgkQoy1BXeqdU9efTWfdIH7XyUUxTnw01eKI8
+TXK/jircZnpwAi09T0gla0vR4oAekracZqYaOHAsidUE66TxKVfOmkmyv+JsMWyg
+7GZ8JFIhg5v0ZMSx/hUtP9FuKMhCOfz9UpThwgGHIvtMwxTsHduFQ7KfpRnKm6FK
+1nBJR9RZ6G4mIUU1wVOf
+=fTk7
 -----END PGP SIGNATURE-----
 
---Sig_/Stqo7ads/1GeHnF.8WcoN1d--
+--Sig_/dT6j6IT5oZbtxtyJL9lAgGR--
