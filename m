@@ -1,68 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the iommu tree
-Date: Wed, 5 Nov 2014 13:47:31 +1100
-Message-ID: <20141105134731.799a1a3d@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Wed, 5 Nov 2014 15:18:25 +1100
+Message-ID: <20141105151825.26c53948@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Nzz4gyi3FMw/SdAxw8nTwAn"; protocol="application/pgp-signature"
+ boundary="Sig_/Xm7sXO5zU+kDxsJCpZEa_oj"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59682 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41465 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751506AbaKECri (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2014 21:47:38 -0500
+	id S1751129AbaKEESk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2014 23:18:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olav Haugan <ohaugan@codeaurora.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---Sig_/Nzz4gyi3FMw/SdAxw8nTwAn
+--Sig_/Xm7sXO5zU+kDxsJCpZEa_oj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Joerg,
+Hi Greg,
 
-After merging the iommu tree, today's linux-next build (powerpc
-pc64_defconfig) failed like this:
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/Kconfig between commit cd6e245a2d06 ("usb: Remove
+references to non-existent PLAT_S5P symbol") from the usb.current tree
+and commit dd3cf17488b1 ("usb: host: Remove optional dependencies on
+PLAT_S5P") from the usb tree.
 
-In file included from arch/powerpc/platforms/powernv/pci.c:33:0:
-arch/powerpc/include/asm/iommu.h:140:12: error: conflicting types for 'iomm=
-u_map_sg'
- extern int iommu_map_sg(struct device *dev, struct iommu_table *tbl,
-            ^
-In file included from arch/powerpc/platforms/powernv/pci.c:23:0:
-include/linux/iommu.h:311:22: note: previous definition of 'iommu_map_sg' w=
-as here
- static inline size_t iommu_map_sg(struct iommu_domain *domain,
-                      ^
+I fixed it up (I used the usb tree version) and can carry the fix as
+necessary (no action is required).
 
-Caused by commit 315786ebbf4a ("iommu: Add iommu_map_sg() function").
-Grep is your friend ...
-
-I have used the iommu tree from next-20141104 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Nzz4gyi3FMw/SdAxw8nTwAn
+--Sig_/Xm7sXO5zU+kDxsJCpZEa_oj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUWY/HAAoJEMDTa8Ir7ZwVWlUP/2xm4CG2Vu9zK8V79BB9zXH6
-GEQk0u4Ow2TrGB+tbDab+tBsESaUpB51mVqq80WLSB05pkk39kviBM7Ra7O6ygOg
-28aMo0+GO7Nx4VPwIam8l1/OZqwmrBkNq8UzvIDLmZmeiWQ1ORMbQQDvEHkmGUdT
-05nTxaftgj9v7i5ENnGI/q+LCmTuXADPK+A0YYvdw2HRK0Zgc/gZYd8/W5qca4Ya
-OZCZq+yPjkE2GKCqPeUCxZscZJliQSZYOx1bUexvPrH0k4mojnZrXmpqJyLTHrVm
-ohWYULHVkDyOgLF5cnh6Hqgi7+FqFk3Jfxs9WGs8DF6jV8KlXRO41xgdh75HUDQV
-REOZP6S+gtOxk8yV59AxvJfbQ8HWp5bGub8WkRhCyA6AlsSeVinNVNFtwlhtYKpn
-FwVWrax0LUU4GEn+sW+KVi613E23yqIxzCAHF9bveeSubyUkT/JHxw1GBy9d4Xkh
-NuHfHxe1b6jxeaBzOgBiXkfGJbscW/y6E3qRfA2FESHi51qxsDUw93PET87+OKb4
-Xat9ivrIzit/i+HCwo/A1ZPu2eGolZbXD1+/zUjMJQOK5Hm+eQ6eikuFjt00/utu
-Ya//qgJDso5xE3LMsbGlaKrDOauM3tjPADwfYyxsXYBJl5MpPCK/LkobOqHE4Ooy
-CgKsM/YwY13DToXqSQ9V
-=KoTk
+iQIcBAEBCAAGBQJUWaUWAAoJEMDTa8Ir7ZwVTxQP/1t2G9cRmBKARaiuJ/4k96XC
+AmtCRwEFHKlaPCW5Ew5QKiugYuoI7IEr+4VixH1bpwSm7/J3Oj0Z20HjZT+ysqPx
+Siojedgh6YHdC9hAtMjLoSw0dTSCNw0IJD+RDc9xmk37bmdXF2Yn4/KBwprLKfZJ
+IL/HDCTziV4x3vtBDJjYgndWCknwe8+kOWVP+H0HUvyL2wyyE2KQBuQD/dauMX6h
+SZ1vMXck1lNZqYqJvzKqBhnJrRXMQ1aLuH9sj7mCf+kgrw3+foEnO7wncMH2dTvm
+RG7dhHpPbIl2fB3INs6ht7oEJQsxs9OA+JdoJjkPzJcuxPNjt7THIXNB36wYZOD5
+bDaQETjZDQWO/+qN40Nxz2tzCE2xrH2PbfqWZR29zS1fyDCJlUQwVno4DE5MGP4r
+dhv8luLK+SQawLpBidt04V3Rgi+P4KO+5OzS8l7YizCDHgypa0hDGK0kd/0LBxfL
++i7XTbqu9SRQnW7EvamqbuP/Iqx0PYDksoFRu3hatc6xesB7y0reZy6v6bLWtOk7
+JNIlwejOziiPD2yvGxgLhWLffvNkknpdV3JTImdh74stVPyCXrpI1Js1LvvOplz6
+Botfs0NwizcpP+zi36XKUJp/90hioIXGSbTrARQMjuP1UzZRrasmKrkCLLwiOPBC
+6yapkyhMmk7c7uI461Fd
+=2DAI
 -----END PGP SIGNATURE-----
 
---Sig_/Nzz4gyi3FMw/SdAxw8nTwAn--
+--Sig_/Xm7sXO5zU+kDxsJCpZEa_oj--
