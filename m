@@ -1,38 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
- tree
-Date: Wed, 5 Nov 2014 18:19:53 -0800
-Message-ID: <20141106021953.GC17253@kroah.com>
-References: <20141105152911.69bd1a14@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the usb tree
+Date: Thu, 6 Nov 2014 14:58:32 +1100
+Message-ID: <20141106145832.633bb8c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/RuyYQXlLL8qyo+kQGxlVcYG"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58763 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751299AbaKFCTz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2014 21:19:55 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-	by mailout.nyi.internal (Postfix) with ESMTP id F3F01209E9
-	for <linux-next@vger.kernel.org>; Wed,  5 Nov 2014 21:19:54 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20141105152911.69bd1a14@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:45418 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750999AbaKFD6n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Nov 2014 22:58:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amber Thrall <amber.rose.thrall@gmail.com>, Aya Mahfouz <mahfouz.saif.elyazal@gmail.com>
+To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@freescale.com>
 
-On Wed, Nov 05, 2014 at 03:29:11PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/media/lirc/lirc_imon.c between commit f3a75505ab5f
-> ("[media] Staging: media: lirc: cleaned up packet dump in 2 files")
-> from the v4l-dvb tree and commit 732ba199ab07 ("staging: media: lirc:
-> lirc_imon.c: replace printk by dev_dbg") from the staging tree.
-> 
-> I fixed it up (the staging tree patch was not complete, so I did the
-> below) and can carry the fix as necessary (no action is required).
+--Sig_/RuyYQXlLL8qyo+kQGxlVcYG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for all 3 of these, they look fine.
+Hi Felipe,
 
-greg k-h
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/chipidea/otg_fsm.c between commit 51f1741fcc16 ("usb:
+chipidea: otg_fsm: delete unnecessary 'out of memory' messages") from
+the usb tree and commit ef44cb4226d1 ("usb: allow to supply the PHY in
+the drivers when using HCD") from the usb-gadget tree.
+
+I fixed it up (the latter removed the code modified by the former) and
+can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/RuyYQXlLL8qyo+kQGxlVcYG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUWvHwAAoJEMDTa8Ir7ZwVcYYP/i1L4v+/5we48QB0nU7or5BA
+k3zG97i2RMGJbstAvmee5lZDOQ8HDvCG4gsBx4LtfaUDWHIw379YYv8zYxlVHnBU
+hoQUPDLV691q7ibDs+Rpcj3v/+AKkjj0c9+/H5eXfefkoxbADhBI8PJbAw85LS/C
+HXpQ9QAPuQyluByGuK1gdrpEF/fudrtlsNLgGjaO/AVxvQtszedtmK+YKeyDkAPQ
+Pyv68uKAOF41OMECenUBWuHe7+AiIjLBUkHEy6Kq1M8YyEU+DvsI6yLUfIMGYa6j
+DaFqE3VVfKhf22KdNuamoIBRJhsWk0JdcPyd+CpvouhPz85gO9ruiCaReciIW6od
+MEdlZH0zWN0mQVxAKkIT6VMRPXnSSdURDqMG5zmaIss5gQmPN1zWBRmCBVr2W13C
+8ezUssr6JUDZI459PgwKnsbo8HT+3AE25AdZ/yj8q5TqFAH9x5UCP/Dc9bmw8AoH
+ycFp3+syS11ql1vQ2njVwNI0UgR+Hc2D6D7dhMwoz4lPEpeRh4IMx8KBsaBu4WIm
+AwjVmby66T7tgp7JgjrT0WqQ41NKDrJhuGXk3MxOn2qNIhnNc6uA/Zcj/FTBblkF
+hVKaNC016eXuntpUyVFo9xCwqZCJPmeLplTZnGuGa/imOWscBw5WYjUQLHNEq5EH
+vUoDmMtfT3y6j9ticAxw
+=TspF
+-----END PGP SIGNATURE-----
+
+--Sig_/RuyYQXlLL8qyo+kQGxlVcYG--
