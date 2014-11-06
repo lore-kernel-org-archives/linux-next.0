@@ -1,31 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the y2038 tree with the staging tree
-Date: Thu, 6 Nov 2014 15:48:15 +1100
-Message-ID: <20141106154815.27f53970@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the y2038 tree with the staging
+ tree
+Date: Thu, 6 Nov 2014 15:51:12 +1100
+Message-ID: <20141106155112.47bf4988@canb.auug.org.au>
+References: <20141106154815.27f53970@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kY0J36ac1wNC3wmg=1biF8I"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/gF1Z3S4y4CPHV3U_k2.YlRG"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60628 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751084AbaKFEvV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Nov 2014 23:51:21 -0500
+In-Reply-To: <20141106154815.27f53970@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tapasweni Pathak <tapaswenipathak@gmail.com>, Joe Perches <joe@perches.com>
-List-Id: linux-next.vger.kernel.org
 
---Sig_/kY0J36ac1wNC3wmg=1biF8I
+--Sig_/gF1Z3S4y4CPHV3U_k2.YlRG
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Arnd,
 
-Today's linux-next merge of the y2038 tree got a conflict in
-drivers/staging/ft1000/ft1000-usb/ft1000_debug.c between commit
-ecdd21c7b982 ("staging: ft1000: Whitespace neatening") from the staging
-tree and commit 4115d2b27a50 ("staging: ft1000: Replace timeval and
-time_t with time64_t") from the y2038 tree.
+On Thu, 6 Nov 2014 15:48:15 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the y2038 tree got a conflict in
+> drivers/staging/ft1000/ft1000-usb/ft1000_debug.c between commit
+> ecdd21c7b982 ("staging: ft1000: Whitespace neatening") from the staging
+> tree and commit 4115d2b27a50 ("staging: ft1000: Replace timeval and
+> time_t with time64_t") from the y2038 tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
+Sorry, see below for proper diff.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
@@ -34,7 +45,7 @@ diff --cc drivers/staging/ft1000/ft1000-usb/ft1000_debug.c
 index c8d278229940,287c8b3c18fc..000000000000
 --- a/drivers/staging/ft1000/ft1000-usb/ft1000_debug.c
 +++ b/drivers/staging/ft1000/ft1000-usb/ft1000_debug.c
-@@@ -391,339 -394,344 +391,429 @@@ static unsigned int ft1000_poll_dev(str
+@@@ -391,339 -394,344 +391,339 @@@ static unsigned int ft1000_poll_dev(str
   }
  =20
   /*
@@ -162,7 +173,105 @@ ent); */
  command, (u32)argument); */
  +		get_ver_data.drv_ver =3D FT1000_DRV_VER;
  =20
-++<<<<<<< HEAD
+ -	info =3D file->private_data;
+ -	ft1000dev =3D info->priv;
+ -    cmd =3D _IOC_NR(command);
+ -    /* DEBUG("FT1000:ft1000_ioctl:cmd =3D 0x%x\n", cmd); */
+ -
+ -    /* process the command */
+ -    switch (cmd) {
+ -    case IOCTL_REGISTER_CMD:
+ -            DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_REGISTER called\n");
+ -            result =3D get_user(tempword, (__u16 __user*)argp);
+ -            if (result) {
+ -                DEBUG("result =3D %d failed to get_user\n", result);
+ -                break;
+ -            }
+ -            if (tempword =3D=3D DSPBCMSGID) {
+ -                /* Search for matching file object */
+ -                for (i=3D0; i<MAX_NUM_APP; i++) {
+ -                    if (ft1000dev->app_info[i].fileobject =3D=3D &file->f=
+_owner) {
+ -                        ft1000dev->app_info[i].DspBCMsgFlag =3D 1;
+ -                        DEBUG("FT1000:ft1000_ioctl:Registered for broadca=
+st messages\n");
+ -                        break;
+ -                    }
+ -                }
+ -            }
+ -            break;
+ -
+ -    case IOCTL_GET_VER_CMD:
+ -        DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_GET_VER called\n");
+ -
+ -        get_ver_data.drv_ver =3D FT1000_DRV_VER;
+ -
+ -        if (copy_to_user(argp, &get_ver_data, sizeof(get_ver_data))) {
+ -            DEBUG("FT1000:ft1000_ioctl: copy fault occurred\n");
+ -            result =3D -EFAULT;
+ -            break;
+ -        }
+ -
+ -        DEBUG("FT1000:ft1000_ioctl:driver version =3D 0x%x\n",(unsigned i=
+nt)get_ver_data.drv_ver);
+ -
+ -        break;
+ -    case IOCTL_CONNECT:
+ -        /* Connect Message */
+ -        DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_CONNECT\n");
+ -        ConnectionMsg[79] =3D 0xfc;
+ -			   result =3D card_send_command(ft1000dev, (unsigned short *)Connectio=
+nMsg, 0x4c);
+ -
+ -        break;
+ -    case IOCTL_DISCONNECT:
+ -        /* Disconnect Message */
+ -        DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_DISCONNECT\n");
+ -        ConnectionMsg[79] =3D 0xfd;
+ -			   result =3D card_send_command(ft1000dev, (unsigned short *)Connectio=
+nMsg, 0x4c);
+ -        break;
+ -    case IOCTL_GET_DSP_STAT_CMD:
+ -        /* DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_GET_DSP_STAT called\n=
+"); */
+ -	memset(&get_stat_data, 0, sizeof(get_stat_data));
+ -        memcpy(get_stat_data.DspVer, info->DspVer, DSPVERSZ);
+ -        memcpy(get_stat_data.HwSerNum, info->HwSerNum, HWSERNUMSZ);
+ -        memcpy(get_stat_data.Sku, info->Sku, SKUSZ);
+ -        memcpy(get_stat_data.eui64, info->eui64, EUISZ);
+ -
+ -            if (info->ProgConStat !=3D 0xFF) {
+ -                ft1000_read_dpram16(ft1000dev, FT1000_MAG_DSP_LED, (u8 *)=
+&ledStat, FT1000_MAG_DSP_LED_INDX);
+ -                get_stat_data.LedStat =3D ntohs(ledStat);
+ -                DEBUG("FT1000:ft1000_ioctl: LedStat =3D 0x%x\n", get_stat=
+_data.LedStat);
+ -                ft1000_read_dpram16(ft1000dev, FT1000_MAG_DSP_CON_STATE, =
+(u8 *)&conStat, FT1000_MAG_DSP_CON_STATE_INDX);
+ -                get_stat_data.ConStat =3D ntohs(conStat);
+ -                DEBUG("FT1000:ft1000_ioctl: ConStat =3D 0x%x\n", get_stat=
+_data.ConStat);
+ -            } else {
+ -                get_stat_data.ConStat =3D 0x0f;
+ -            }
+ -
+ -
+ -        get_stat_data.nTxPkts =3D info->stats.tx_packets;
+ -        get_stat_data.nRxPkts =3D info->stats.rx_packets;
+ -        get_stat_data.nTxBytes =3D info->stats.tx_bytes;
+ -        get_stat_data.nRxBytes =3D info->stats.rx_bytes;
+ -	time =3D get_seconds();
+ -	get_stat_data.ConTm =3D time - info->ConTm;
+ -        DEBUG("Connection Time =3D %d\n", (int)get_stat_data.ConTm);
+ -        if (copy_to_user(argp, &get_stat_data, sizeof(get_stat_data))) {
+ -            DEBUG("FT1000:ft1000_ioctl: copy fault occurred\n");
+ -            result =3D -EFAULT;
+ -            break;
+ -        }
+ -        DEBUG("ft1000_chioctl: GET_DSP_STAT succeed\n");
+ -        break;
+ -    case IOCTL_SET_DPRAM_CMD:
+ -        {
  +		if (copy_to_user(argp, &get_ver_data, sizeof(get_ver_data))) {
  +			pr_debug("copy fault occurred\n");
  +			result =3D -EFAULT;
@@ -228,107 +337,6 @@ t, FT1000_MAG_DSP_CON_STATE_INDX);
  +		break;
  +	case IOCTL_SET_DPRAM_CMD:
  +	{
-++=3D=3D=3D=3D=3D=3D=3D
-+ 	info =3D file->private_data;
-+ 	ft1000dev =3D info->priv;
-+     cmd =3D _IOC_NR(command);
-+     /* DEBUG("FT1000:ft1000_ioctl:cmd =3D 0x%x\n", cmd); */
-+=20
-+     /* process the command */
-+     switch (cmd) {
-+     case IOCTL_REGISTER_CMD:
-+             DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_REGISTER called\n");
-+             result =3D get_user(tempword, (__u16 __user*)argp);
-+             if (result) {
-+                 DEBUG("result =3D %d failed to get_user\n", result);
-+                 break;
-+             }
-+             if (tempword =3D=3D DSPBCMSGID) {
-+                 /* Search for matching file object */
-+                 for (i=3D0; i<MAX_NUM_APP; i++) {
-+                     if (ft1000dev->app_info[i].fileobject =3D=3D &file->f=
-_owner) {
-+                         ft1000dev->app_info[i].DspBCMsgFlag =3D 1;
-+                         DEBUG("FT1000:ft1000_ioctl:Registered for broadca=
-st messages\n");
-+                         break;
-+                     }
-+                 }
-+             }
-+             break;
-+=20
-+     case IOCTL_GET_VER_CMD:
-+         DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_GET_VER called\n");
-+=20
-+         get_ver_data.drv_ver =3D FT1000_DRV_VER;
-+=20
-+         if (copy_to_user(argp, &get_ver_data, sizeof(get_ver_data))) {
-+             DEBUG("FT1000:ft1000_ioctl: copy fault occurred\n");
-+             result =3D -EFAULT;
-+             break;
-+         }
-+=20
-+         DEBUG("FT1000:ft1000_ioctl:driver version =3D 0x%x\n",(unsigned i=
-nt)get_ver_data.drv_ver);
-+=20
-+         break;
-+     case IOCTL_CONNECT:
-+         /* Connect Message */
-+         DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_CONNECT\n");
-+         ConnectionMsg[79] =3D 0xfc;
-+ 			   result =3D card_send_command(ft1000dev, (unsigned short *)Connectio=
-nMsg, 0x4c);
-+=20
-+         break;
-+     case IOCTL_DISCONNECT:
-+         /* Disconnect Message */
-+         DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_DISCONNECT\n");
-+         ConnectionMsg[79] =3D 0xfd;
-+ 			   result =3D card_send_command(ft1000dev, (unsigned short *)Connectio=
-nMsg, 0x4c);
-+         break;
-+     case IOCTL_GET_DSP_STAT_CMD:
-+         /* DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_GET_DSP_STAT called\n=
-"); */
-+ 	memset(&get_stat_data, 0, sizeof(get_stat_data));
-+         memcpy(get_stat_data.DspVer, info->DspVer, DSPVERSZ);
-+         memcpy(get_stat_data.HwSerNum, info->HwSerNum, HWSERNUMSZ);
-+         memcpy(get_stat_data.Sku, info->Sku, SKUSZ);
-+         memcpy(get_stat_data.eui64, info->eui64, EUISZ);
-+=20
-+             if (info->ProgConStat !=3D 0xFF) {
-+                 ft1000_read_dpram16(ft1000dev, FT1000_MAG_DSP_LED, (u8 *)=
-&ledStat, FT1000_MAG_DSP_LED_INDX);
-+                 get_stat_data.LedStat =3D ntohs(ledStat);
-+                 DEBUG("FT1000:ft1000_ioctl: LedStat =3D 0x%x\n", get_stat=
-_data.LedStat);
-+                 ft1000_read_dpram16(ft1000dev, FT1000_MAG_DSP_CON_STATE, =
-(u8 *)&conStat, FT1000_MAG_DSP_CON_STATE_INDX);
-+                 get_stat_data.ConStat =3D ntohs(conStat);
-+                 DEBUG("FT1000:ft1000_ioctl: ConStat =3D 0x%x\n", get_stat=
-_data.ConStat);
-+             } else {
-+                 get_stat_data.ConStat =3D 0x0f;
-+             }
-+=20
-+=20
-+         get_stat_data.nTxPkts =3D info->stats.tx_packets;
-+         get_stat_data.nRxPkts =3D info->stats.rx_packets;
-+         get_stat_data.nTxBytes =3D info->stats.tx_bytes;
-+         get_stat_data.nRxBytes =3D info->stats.rx_bytes;
- -	time =3D get_seconds();
- -	get_stat_data.ConTm =3D time - info->ConTm;
-+         DEBUG("Connection Time =3D %d\n", (int)get_stat_data.ConTm);
-+         if (copy_to_user(argp, &get_stat_data, sizeof(get_stat_data))) {
-+             DEBUG("FT1000:ft1000_ioctl: copy fault occurred\n");
-+             result =3D -EFAULT;
-+             break;
-+         }
-+         DEBUG("ft1000_chioctl: GET_DSP_STAT succeed\n");
-+         break;
-+     case IOCTL_SET_DPRAM_CMD:
-+         {
-++>>>>>>> y2038/y2038
   		struct IOCTL_DPRAM_BLK *dpram_data =3D NULL;
   		/* struct IOCTL_DPRAM_COMMAND dpram_command; */
  -            u16 qtype;
@@ -340,41 +348,42 @@ _data.ConStat);
  -            u16 total_len;
  -            u16 app_index;
  -            u16 status;
- -
- -            /* DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_SET_DPRAM called\=
-n");*/
  +		u16 *pmsg;
  +		u16 total_len;
  +		u16 app_index;
  +		u16 status;
  =20
+ -            /* DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_SET_DPRAM called\=
+n");*/
  +		/* pr_debug("IOCTL_FT1000_SET_DPRAM called\n");*/
+ =20
  =20
  -            if (ft1000_flarion_cnt =3D=3D 0) {
  -                return (-EBADF);
  -            }
+ +		if (ft1000_flarion_cnt =3D=3D 0)
+ +			return -EBADF;
  =20
  -            if (ft1000dev->DrvMsgPend) {
  -                return (-ENOTTY);
  -            }
- +		if (ft1000_flarion_cnt =3D=3D 0)
- +			return -EBADF;
+ +		if (ft1000dev->DrvMsgPend)
+ +			return -ENOTTY;
  =20
  -            if (ft1000dev->fProvComplete =3D=3D 0) {
  -                return (-EACCES);
  -            }
- +		if (ft1000dev->DrvMsgPend)
- +			return -ENOTTY;
- =20
- -            ft1000dev->fAppMsgPend =3D 1;
  +		if (ft1000dev->fProvComplete =3D=3D 0)
  +			return -EACCES;
  =20
- -            if (info->CardReady) {
+ -            ft1000dev->fAppMsgPend =3D 1;
  +		ft1000dev->fAppMsgPend =3D 1;
  =20
- -               /* DEBUG("FT1000:ft1000_ioctl: try to SET_DPRAM \n"); */
+ -            if (info->CardReady) {
  +		if (info->CardReady) {
+ =20
+ -               /* DEBUG("FT1000:ft1000_ioctl: try to SET_DPRAM \n"); */
+ +			/* pr_debug("try to SET_DPRAM\n"); */
  =20
  -                /* Get the length field to see how many bytes to copy */
  -                result =3D get_user(msgsz, (__u16 __user *)argp);
@@ -383,25 +392,25 @@ n");*/
  -                msgsz =3D ntohs(msgsz);
  -                /* DEBUG("FT1000:ft1000_ioctl: length of message =3D %d\n=
 ", msgsz); */
- +			/* pr_debug("try to SET_DPRAM\n"); */
- =20
+ -
  -                if (msgsz > MAX_CMD_SQSIZE) {
  -                    DEBUG("FT1000:ft1000_ioctl: bad message length =3D %d=
 \n", msgsz);
  -                    result =3D -EINVAL;
  -                    break;
  -                }
+ -
+ -		result =3D -ENOMEM;
+ -		dpram_data =3D kmalloc(msgsz + 2, GFP_KERNEL);
+ -		if (!dpram_data)
+ -			break;
  +			/* Get the length field to see how many bytes to copy */
  +			result =3D get_user(msgsz, (__u16 __user *)argp);
  +			if (result)
  +				break;
  +			msgsz =3D ntohs(msgsz);
  +			/* pr_debug("length of message =3D %d\n", msgsz); */
- =20
- -		result =3D -ENOMEM;
- -		dpram_data =3D kmalloc(msgsz + 2, GFP_KERNEL);
- -		if (!dpram_data)
- -			break;
+ +
  +			if (msgsz > MAX_CMD_SQSIZE) {
  +				pr_debug("bad message length =3D %d\n", msgsz);
  +				result =3D -EINVAL;
@@ -525,6 +534,11 @@ n");
  -                result =3D -EACCES;
  -            }
  -	    kfree(dpram_data);
+ -
+ -        }
+ -        break;
+ -    case IOCTL_GET_DPRAM_CMD:
+ -        {
  +			result =3D -ENOMEM;
  +			dpram_data =3D kmalloc(msgsz + 2, GFP_KERNEL);
  +			if (!dpram_data)
@@ -628,11 +642,7 @@ a, total_len+2);
  +			result =3D -EACCES;
  +		}
  +		kfree(dpram_data);
- =20
- -        }
- -        break;
- -    case IOCTL_GET_DPRAM_CMD:
- -        {
+ +
  +	}
  +	break;
  +	case IOCTL_GET_DPRAM_CMD:
@@ -643,13 +653,11 @@ a, total_len+2);
  -
  -            /* DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_GET_DPRAM called\=
 n"); */
- +		int msglen;
- =20
+ -
  -            if (ft1000_flarion_cnt =3D=3D 0) {
  -                return (-EBADF);
  -            }
- +		/* pr_debug("IOCTL_FT1000_GET_DPRAM called\n"); */
- =20
+ -
  -            /* Search for matching file object */
  -            for (i=3D0; i<MAX_NUM_APP; i++) {
  -                if (ft1000dev->app_info[i].fileobject =3D=3D &file->f_own=
@@ -659,9 +667,7 @@ er) {
  -                    break;
  -                }
  -            }
- +		if (ft1000_flarion_cnt =3D=3D 0)
- +			return -EBADF;
- =20
+ -
  -            /* Could not find application info block */
  -            if (i =3D=3D MAX_NUM_APP) {
  -                DEBUG("FT1000:ft1000_ioctl:Could not find application inf=
@@ -669,15 +675,7 @@ o block\n");
  -                result =3D -EBADF;
  -                break;
  -            }
- +		/* Search for matching file object */
- +		for (i =3D 0; i < MAX_NUM_APP; i++) {
- +			if (ft1000dev->app_info[i].fileobject =3D=3D &file->f_owner) {
- +				/*pr_debug("Message is for AppId =3D %d\n", ft1000dev->app_info[i].ap=
-p_id); */
- +				break;
- +			}
- +		}
- =20
+ -
  -            result =3D 0;
  -            pioctl_dpram =3D argp;
  -            if (list_empty(&ft1000dev->app_info[i].app_sqlist) =3D=3D 0) {
@@ -694,11 +692,7 @@ n", i, ft1000dev->app_info[i].NumOfMsg); */
  -                msglen =3D ntohs(*(u16 *)pdpram_blk->pbuffer) + PSEUDOSZ;
  -                result =3D get_user(msglen, &pioctl_dpram->total_len);
  -		if (result)
- +		/* Could not find application info block */
- +		if (i =3D=3D MAX_NUM_APP) {
- +			pr_debug("Could not find application info block\n");
- +			result =3D -EBADF;
-  			break;
+ -			break;
  -		msglen =3D htons(msglen);
  -                /* DEBUG("FT1000:ft1000_ioctl:msg length =3D %x\n", msgle=
 n); */
@@ -706,17 +700,30 @@ n); */
 buffer, msglen)) {
  -					DEBUG("FT1000:ft1000_ioctl: copy fault occurred\n");
  -			result =3D -EFAULT;
- -			break;
+ +		int msglen;
+ +
+ +		/* pr_debug("IOCTL_FT1000_GET_DPRAM called\n"); */
+ +
+ +		if (ft1000_flarion_cnt =3D=3D 0)
+ +			return -EBADF;
+ +
+ +		/* Search for matching file object */
+ +		for (i =3D 0; i < MAX_NUM_APP; i++) {
+ +			if (ft1000dev->app_info[i].fileobject =3D=3D &file->f_owner) {
+ +				/*pr_debug("Message is for AppId =3D %d\n", ft1000dev->app_info[i].ap=
+p_id); */
+ +				break;
+ +			}
+ +		}
+ +
+ +		/* Could not find application info block */
+ +		if (i =3D=3D MAX_NUM_APP) {
+ +			pr_debug("Could not find application info block\n");
+ +			result =3D -EBADF;
+  			break;
  -				}
  +		}
- =20
- -                ft1000_free_buffer(pdpram_blk, &freercvpool);
- -                result =3D msglen;
- -            }
- -            /* DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_GET_DPRAM no mess=
-age\n"); */
- -        }
- -        break;
+ +
  +		result =3D 0;
  +		pioctl_dpram =3D argp;
  +		if (list_empty(&ft1000dev->app_info[i].app_sqlist) =3D=3D 0) {
@@ -741,7 +748,22 @@ NumOfMsg); */
  +				result =3D -EFAULT;
  +				break;
  +			}
+ +
+ +			ft1000_free_buffer(pdpram_blk, &freercvpool);
+ +			result =3D msglen;
+ +		}
+ +		/* pr_debug("IOCTL_FT1000_GET_DPRAM no message\n"); */
+ +	}
+ +	break;
  =20
+ -                ft1000_free_buffer(pdpram_blk, &freercvpool);
+ -                result =3D msglen;
+ -            }
+ -            /* DEBUG("FT1000:ft1000_ioctl: IOCTL_FT1000_GET_DPRAM no mess=
+age\n"); */
+ -        }
+ -        break;
+ -
  -    default:
  -        DEBUG("FT1000:ft1000_ioctl:unknown command: 0x%x\n", command);
  -        result =3D -ENOTTY;
@@ -749,13 +771,6 @@ NumOfMsg); */
  -    }
  -    ft1000dev->fAppMsgPend =3D 0;
  -    return result;
- +			ft1000_free_buffer(pdpram_blk, &freercvpool);
- +			result =3D msglen;
- +		}
- +		/* pr_debug("IOCTL_FT1000_GET_DPRAM no message\n"); */
- +	}
- +	break;
- +
  +	default:
  +		pr_debug("unknown command: 0x%x\n", command);
  +		result =3D -ENOTTY;
@@ -767,26 +782,26 @@ NumOfMsg); */
  =20
   /*
 
---Sig_/kY0J36ac1wNC3wmg=1biF8I
+--Sig_/gF1Z3S4y4CPHV3U_k2.YlRG
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUWv2UAAoJEMDTa8Ir7ZwVCJMQAJSKUkcPLgptZVB2T4j8e6x1
-1irg9oro7puoe2m3t+pMOhHa9kb+kFUy91EJkoEtzCDOGEnKAb5TCEv5YjRLUeV3
-rcVB+9xZCMYDpv1eMo66TMAjqbBXthvEq+G8bCDeUAQ2xsCciFWDq6OxWZcEgw+X
-RhmGtE2w+k7a8MMyZVa+qQYx4NZiaYVubZtCMEQLV+X5IL3HSI1OFWkA83BAhSpV
-p86rVgFQ7lmJ2jc7UcSbVlVqEsKQVVEfOroWfP+tmjWwSHjgmn9TK0OKQ5iPmyBd
-5Bn4uZhddMivsuSxXs3v+8Hn1H2IySkRgMyznr9ouSF5ZkrxuooYv1ZgLe0MWN9j
-KQLXtY7OeTJQ1NlshLDKNyXRciP/Ry5egq9gHGNhpzT2UvpPql7jDlU6BBxz7La/
-CCTBeVTkLeeNSyQzQFQasDoXoNuuRaFMlCBS2eWAhvZbhVft9e83c1twKsIESNO4
-qk4oYbsYsKVWiDZDpmBHPfw/CZbEn4tXolYKRGOjdpeflVzJofCk8sI6ST3DhdBF
-p8UcobZMtsDqSVOtxLm4jQbqxir7YQbsRDTTNI/nQVEqnDhgVd9x32JnsOQ47QZ3
-3IwZAz/CHQLhtT+iuWePWlGpGZ5+IDmkqsBH7nPMA6JQe60i+/dHE6m9XQaCBeiJ
-f7Is077F1wohWEy7qHKe
-=Sln/
+iQIcBAEBCAAGBQJUWv5EAAoJEMDTa8Ir7ZwVO1kP/jnBWROzqVB6vXTBkP7IZURY
+te8X1L1OORWLmZbn3b8W7TY0vJoVNA8cA8eusuXi6+Dah6FBofwTKTrBITmNPjuT
+rEHtI3Emj/QLnAaDIrFUF5JGl4YDyVRr9ILY3KhQrIH2q+gRsisTdM6eXFJxHwXn
+r69OrsCNOoFOcfNHPjKj1U4qrGyF7XQLrHZOC/SWKW0Z7puKcjZ6ICJrWtYfI8FC
+1A4fexARdkE9tsfbzKlGOY5HF0OAKY9Cv6uH2B+mIFp4NnAQx2vmfDtgauOOIjp2
+OWKIOeitCgyELZaXcS6oqklOce8Nia7RRhPqUQ7M4rfJO60lpCecnYWREzd0OZ/s
+3RM7DQHPpn4g3WgpsgaW9JcjpJv0KYatNPPaPRBLbp+7WMa/NbMMzrl7heUvD8B6
+kI1hKWqZ0tzOw85fDtqdxc70YXEn+paXGDAIe6eYPX8a3JFxCRRTYy0jLZeUVl0W
+MICTHskHeKQTMKMduyp6PIpEgW/gqBVLhyawVDRZrK3Y/EctUX1uXv1Ai6gDAx9f
+dQ0DLCrl0yD61qSvuOyWyuDUZPeXhN2zDgSGMR8aRxKRWSOtL4nE//aAgewP97j0
+QVqfkKox86bt7m/iHLws4eGwTj+MfeWVQ0hSZP2G7dGhoqgXStCzP+lmzlu3Cax1
+/rdjDoQfAU0Z+TEflOzL
+=43DM
 -----END PGP SIGNATURE-----
 
---Sig_/kY0J36ac1wNC3wmg=1biF8I--
+--Sig_/gF1Z3S4y4CPHV3U_k2.YlRG--
