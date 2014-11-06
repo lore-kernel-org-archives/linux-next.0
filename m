@@ -1,79 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the usb tree with the usb.current
- tree
-Date: Thu, 6 Nov 2014 16:02:03 +1100
-Message-ID: <20141106160203.244759be@canb.auug.org.au>
-References: <20141105151825.26c53948@canb.auug.org.au>
-	<20141105043030.GB10613@kroah.com>
-	<1415176413.20372.206.camel@x220>
-	<20141106021934.GB17253@kroah.com>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 6 Nov 2014 16:44:44 +1100
+Message-ID: <20141106164444.2123e6d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JCUwSS/MkDJoraWT4eyKVzn"; protocol="application/pgp-signature"
+ boundary="Sig_/SQkIU+9a3=4JgIXNI2LX1AA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48853 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:58347 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751299AbaKFFCN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Nov 2014 00:02:13 -0500
-In-Reply-To: <20141106021934.GB17253@kroah.com>
+	id S1750768AbaKFFov (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Nov 2014 00:44:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Paul Bolle <pebolle@tiscali.nl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>
 
---Sig_/JCUwSS/MkDJoraWT4eyKVzn
+--Sig_/SQkIU+9a3=4JgIXNI2LX1AA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-On Wed, 5 Nov 2014 18:19:34 -0800 Greg KH <greg@kroah.com> wrote:
->
-> On Wed, Nov 05, 2014 at 09:33:33AM +0100, Paul Bolle wrote:
-> > On Tue, 2014-11-04 at 20:30 -0800, Greg KH wrote:
-> > > On Wed, Nov 05, 2014 at 03:18:25PM +1100, Stephen Rothwell wrote:=20
-> > > > Today's linux-next merge of the usb tree got a conflict in
-> > > > drivers/usb/host/Kconfig between commit cd6e245a2d06 ("usb: Remove
-> > > > references to non-existent PLAT_S5P symbol") from the usb.current t=
-ree
-> > > > and commit dd3cf17488b1 ("usb: host: Remove optional dependencies on
-> > > > PLAT_S5P") from the usb tree.
-> > > >=20
-> > > > I fixed it up (I used the usb tree version) and can carry the fix as
-> > > > necessary (no action is required).
-> > >=20
-> > > That's the correct fix, thanks for doing that.
-> >=20
-> > Shouldn't that be the other way round?
->=20
-> Sorry, you are right, I read the merge backwards.
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-OK, I did that in today'y tree.
+mm/fremap.c: In function 'SYSC_remap_file_pages':
+mm/fremap.c:241:22: error: 'struct address_space' has no member named 'i_mm=
+ap_mutex'
+   mutex_lock(&mapping->i_mmap_mutex);
+                      ^
+mm/fremap.c:247:24: error: 'struct address_space' has no member named 'i_mm=
+ap_mutex'
+   mutex_unlock(&mapping->i_mmap_mutex);
+                        ^
+
+Caused by commit 1f8c97e79f66 ("mm: convert i_mmap_mutex to rwsem").
+
+I applied this patch for today (not sure if there is a better way):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 6 Nov 2014 16:26:41 +1100
+Subject: [PATCH] mm: convert i_mmap_mutex to rwsem fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/fremap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/fremap.c b/mm/fremap.c
+index 9129013732d7..2805d71cf476 100644
+--- a/mm/fremap.c
++++ b/mm/fremap.c
+@@ -238,13 +238,13 @@ get_write_lock:
+ 			}
+ 			goto out_freed;
+ 		}
+-		mutex_lock(&mapping->i_mmap_mutex);
++		i_mmap_lock_write(mapping);
+ 		flush_dcache_mmap_lock(mapping);
+ 		vma->vm_flags |=3D VM_NONLINEAR;
+ 		vma_interval_tree_remove(vma, &mapping->i_mmap);
+ 		vma_nonlinear_insert(vma, &mapping->i_mmap_nonlinear);
+ 		flush_dcache_mmap_unlock(mapping);
+-		mutex_unlock(&mapping->i_mmap_mutex);
++		i_mmap_unlock_write(mapping);
+ 	}
+=20
+ 	if (vma->vm_flags & VM_LOCKED) {
+--=20
+2.1.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/JCUwSS/MkDJoraWT4eyKVzn
+--Sig_/SQkIU+9a3=4JgIXNI2LX1AA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUWwDQAAoJEMDTa8Ir7ZwV2noQAILkwtWqadLDRQw7QzOX7AMH
-O2I6fdJNsFMkgyDlFpHbQJDuOuLT0o/jAMj2Ci2gPPpE+2AYsJ1dU+HBgbPAZPaq
-b6qZoAneSBy2eekiG1yd9LAKWUXA9GoC6uULR4IDYztidWmKvLqx0KRMCTTy9Btx
-mKAaGdyzXtxeryCGEOtUc0rheeiSX2dJL5xHorQdHD2ASjjSLWK8MZ8AU09ncvwO
-5kPKZelgam2cKiH7DHIqY3L50P88rRTPbVdIt7s/wX7A6zltHu7RBeCRSmnpsVZm
-nx8xnkjeSKGFrsNRYHxos5u3qeuO/hlSkdf17tCPe4OYfwUPaA1MY2fEjNNcL99R
-vDsweprV3ZGjBZp/xfm2tV6cBWKEVyTQMRODNSbS3pWnsmzlXwPR/ZjMLd2rgblg
-rAgluBIcSMwDKUoSIVyy6NIccnO3GrVroyn4Jq1mQ7vd0iZeK7sA2gUPvmNRABuV
-x3xzramXrhyVSOQoXY+/BDnd7pJpQ/IJ2gop37fvRjwafr83NDUwBqAkpTg2Dg6v
-l1dKrCqAWGqtRJG1PiBaaqMSYuku5NJkxQeIfzRT+iAwZHtMsg5lc/5RSHwJQbpF
-JTAvVyYDFOHGYG4FTORICXRSuM8ZO1o4FwjWmcQt9MeCl0BGVkeIHAn9E6t8qew5
-H5I7LeH6jHJRPiIvPaT7
-=TQ+c
+iQIcBAEBCAAGBQJUWwrQAAoJEMDTa8Ir7ZwVZdMP/1ounCfXn1ZPfxzdn0JFyuyL
+L5SvDu4ZdJ1sC5ITaxh1idluh/PdQ+yS3Woz/GsM08WIE8DYBkzPJZurZ7KQyO07
+9ReI2vzr/4iWuoIBcrzbq0ObgatbP4rt6unY/nzFv9ALx6S6ZJMfXKeMCLfb8P1N
+TEw4yl4Lx4d5ohaYH+pB5UeMkVYb2uc5l6D3drMkV7bsGsrGGSpCPLqgKXN4/Jhh
++8F+EwfcqiJ/OpxCThyqHek6/3voTD3krSTCXIWGGUj3Khpqu/iUh7hebJKzKg48
+XUXfhfn6CGHwvQ3mzXVPvUew7TCfXGs7+plDFUYaiUAmxA74f3jMv1ggG5vUinQn
+8WaciZMlK+qoJa9iYZQW+8RCttoBaqfOHyGy532rbUzaN9uqcqx2lu8arHpKD162
+PL2g0Xoc1QVrJP18Ly/aSHG8vMuxKIE+U1njztVN889T/mjSTsVr0Kgo5a9TfBgN
+eUppGLa5JbbHEMb40XwIkWd4fJfa663o2XH5g4rO1QdR30BD0b8MFESUKHwdIPd0
+7102ki0mBbnpx6mu8OYqkKvNrX1mzpKdd0ZX5aOg2SDmmALPT//FjdRNm6uMd9Ui
+vvmHT68DG0LlVI1O87a9X5KbkghJMbQ8lT6tgLacZWnImz7xkymuz9Tt44IZlepP
+/R6BLlhUP13rDTGFwFPr
+=pyd6
 -----END PGP SIGNATURE-----
 
---Sig_/JCUwSS/MkDJoraWT4eyKVzn--
+--Sig_/SQkIU+9a3=4JgIXNI2LX1AA--
