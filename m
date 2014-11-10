@@ -1,74 +1,119 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with the driver-core
- tree
-Date: Mon, 10 Nov 2014 17:29:21 +1100
-Message-ID: <20141110172921.1e2c12d9@canb.auug.org.au>
+Subject: linux-next: manual merge of the pinctrl tree with the arm-soc tree
+Date: Mon, 10 Nov 2014 17:34:25 +1100
+Message-ID: <20141110173425.6962fc1c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LJszOZElMo9TTMOQeyORs_m"; protocol="application/pgp-signature"
+ boundary="Sig_//jn8PmuRO.tf9w5QFc5OzRt"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53800 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48279 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750814AbaKJG32 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Nov 2014 01:29:28 -0500
+	id S1751297AbaKJGeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2014 01:34:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Chris Zhong <zyw@rock-chips.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/LJszOZElMo9TTMOQeyORs_m
+--Sig_//jn8PmuRO.tf9w5QFc5OzRt
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
 Today's linux-next merge of the pinctrl tree got a conflict in
-drivers/pinctrl/pinctrl-rockchip.c between commit 9198f509c888
-("pinctrl: rockchip: add suspend/resume functions") from the
-driver-core tree and commit 5c759d73b022 ("pinctrl: drop owner
-assignment from platform_drivers") from the pinctrl tree.
+arch/arm/boot/dts/ste-nomadik-stn8815.dtsi between commit 2096eb80e446
+("ARM: nomadik: move GPIO I2C to S8815 board file") and 43c4034963d6
+("ARM: nomadik: set up MCDATDIR2") from the arm-soc tree and commits
+68d41f23ce8d ("pinctrl: nomadik: force-convert to generic mux
+bindings") and 1637d480f873 ("pinctrl: nomadik: force-convert to
+generic config bindings") from the pinctrl tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
+
+I also added this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 10 Nov 2014 17:30:59 +1100
+Subject: [PATCH] pinctrl: nomadik: fix up for binding changes
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/boot/dts/ste-nomadik-s8815.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/ste-nomadik-s8815.dts b/arch/arm/boot/dts/st=
+e-nomadik-s8815.dts
+index 7a7e2443503f..85d3b95dfdba 100644
+--- a/arch/arm/boot/dts/ste-nomadik-s8815.dts
++++ b/arch/arm/boot/dts/ste-nomadik-s8815.dts
+@@ -43,7 +43,7 @@
+ 		gpioi2c {
+ 			gpioi2c_default_mode: gpioi2c_default {
+ 				gpioi2c_default_cfg {
+-					ste,pins =3D "GPIO73_C21", "GPIO74_C20";
++					pins =3D "GPIO73_C21", "GPIO74_C20";
+ 					ste,input =3D <0>;
+ 				};
+ 			};
+--=20
+2.1.3
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pinctrl/pinctrl-rockchip.c
-index 71d5835d864b,40970c305dd0..000000000000
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@@ -1982,6 -2053,8 +2053,7 @@@ static struct platform_driver rockchip_
-  	.probe		=3D rockchip_pinctrl_probe,
-  	.driver =3D {
-  		.name	=3D "rockchip-pinctrl",
- -		.owner	=3D THIS_MODULE,
-+ 		.pm =3D &rockchip_pinctrl_dev_pm_ops,
-  		.of_match_table =3D rockchip_pinctrl_dt_match,
-  	},
-  };
+diff --cc arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
+index f435ff20aefe,c8b4a93180f8..000000000000
+--- a/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
++++ b/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
+@@@ -116,8 -116,8 +116,8 @@@
+  		mmcsd {
+  			mmcsd_default_mux: mmcsd_mux {
+  				mmcsd_default_mux {
+- 					ste,function =3D "mmcsd";
+- 					ste,pins =3D "mmcsd_a_1", "mmcsd_b_1";
++ 					function =3D "mmcsd";
+ -					groups =3D "mmcsd_a_1";
+++					groups =3D "mmcsd_a_1", "mmcsd_b_1";
+  				};
+  			};
+  			mmcsd_default_mode: mmcsd_default {
+@@@ -127,9 -127,9 +127,9 @@@
+  					ste,output =3D <0>;
+  				};
+  				mmcsd_default_cfg2 {
+ -					/* MCCMDDIR, MCDAT0DIR, MCDAT31DIR */
+ +					/* MCCMDDIR, MCDAT0DIR, MCDAT31DIR, MCDATDIR2 */
+- 					ste,pins =3D "GPIO10_C11", "GPIO15_A12",
++ 					pins =3D "GPIO10_C11", "GPIO15_A12",
+ -					"GPIO16_C13";
+ +					"GPIO16_C13", "GPIO23_D15";
+  					ste,output =3D <1>;
+  				};
+  				mmcsd_default_cfg3 {
 
---Sig_/LJszOZElMo9TTMOQeyORs_m
+--Sig_//jn8PmuRO.tf9w5QFc5OzRt
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYFtGAAoJEMDTa8Ir7ZwVap0P/19w6EZkBRwfwdk7sEX97669
-SGwdtAiKTfORHUd65tsBeAymcEpBezmtO+2Fz7d+0q1x3R0ZY93rbUGgodKaFZwl
-PCmyCiT4SYhRrR5KEz5JOqrsUQoMHBupIzEoAQW8cw863UzuHIMrbk2AFcTL4eA/
-e7dRo4ArtJ22euqeOcIkcOd3PPVymeJGOn7t6+LivDTuzf71+runEhm/v6ILgN23
-sKGYXVlWw923fMXTle+IxxDZC0lQvQP2sxpTw6E/DP3NHHgwOtY8rXZos7/RiZgt
-f8qeywQUaRp0LRBT7zIH/23OBKGBGk5/O8fH0fJVm/2UlAtVKZdIDlI7RWh//zua
-rKPsNWyCK6PU6zinQV0vvlasgo9M5Q7+k+dE3VbC1k6cVJBkhYrbhmlB8Xm4yjLz
-ykIEnAraCmQ2gihp9lD5eqng8Noio+GdjOz3kXF/gwI9bCQU1uRcn6DicXMGaOzj
-vmPLSf72KXFXVjZL5mA50DzQXvvVobSa/A4Guy+EsxNmIJjZJAj3jQCeJFIoZG2j
-CaZiMEU8iNo4lFaAQWutryBxAC9lKqdAwfecZAOyOixhkveSQ+hzPYlhVbHxdYGg
-pqGno2kYgY59M63ykzCh7ZUXLKAE7E7l+zLx4KeGHy5Y1yxSUwUB9WGEJUOhe1fk
-fnGT1ZCKBMEhP/qME48Z
-=miKk
+iQIcBAEBCAAGBQJUYFx1AAoJEMDTa8Ir7ZwV0TIQAIzyAwa8Gyyduj9wIAbzwyyT
+b/C4aZwoamkxFaEsZdqOyfvDeIxHo8RmUEokl0xZc52DwecidlHwEahn7FV6o9BN
+vWO9gDMJjP3alZuGssLTBfdF/bMxBqd+Cr0lmxKdPP1Q+MCU8ODo2LlvfkY5iyTJ
+NF/I27L4qNNueWwCTL9k/z2unChxLxZUFxLNj3kzEPTqv4cm0YDZj8gLzGtAc0AY
+1OGZPsGIdhjk36+KF51H2kfUHn3KO9RXEXul+myViluJ9dcioDBOEn5WXazuqZgv
+lI6CfUWAdGhJxrOWBIYUDTvWrUAk2+s/BG4j7JyiWPjDD7Rk+5bNXDhrqlmyRuHj
+uwCurnB0vioUi1VPOW++RazwiunFCQToQAN4lJpsxXAaCuk3myp0KdQgV+Rd3CLa
+8VZF0OD5fc4/hr7e9J+lOoRFwtfuoZ5teEcN2Dcn79I8xVAur0T/RI5LYhbkbP7w
+hdd9U3v66K9RWCcvDF01ZW4s+q852sCOlmSgRp/YMaOwz3yvQDHbX/Lwh85Rh03z
+kynh1MLwbMLMDig1Vsm9IVhf/FnWvmNFMw6NWei13yJONLzMN5dhc5gs58lCSGP2
+DfIVdPM62DwbDINgxh+eOhTKwHJXLpvpqvIeQv6gXbdXPBdYj8Y0a7Ai6l2w+0Q/
+rK+vKfM2psABdhWVwlJA
+=V+TI
 -----END PGP SIGNATURE-----
 
---Sig_/LJszOZElMo9TTMOQeyORs_m--
+--Sig_//jn8PmuRO.tf9w5QFc5OzRt--
