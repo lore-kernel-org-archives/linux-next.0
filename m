@@ -1,39 +1,71 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build failure after merge of the tiny tree
-Date: Sun, 9 Nov 2014 23:56:04 -0800
-Message-ID: <20141110075604.GA1085@thin>
-References: <20141110181716.3c9604fe@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ driver-core tree
+Date: Mon, 10 Nov 2014 19:55:19 +1100
+Message-ID: <20141110195519.10cef790@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:55186 "EHLO
-	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750933AbaKJH4O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 02:56:14 -0500
-Content-Disposition: inline
-In-Reply-To: <20141110181716.3c9604fe@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalina Mocanu <catalina.mocanu@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XftjK14EULK=GZH7=donj1="; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Johan Hovold <johan@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Nov 10, 2014 at 06:17:16PM +1100, Stephen Rothwell wrote:
-> Hi Josh,
-> 
-> After merging the tiny tree, today's linux-next build (powerpc64 allnoconfig)
-> failed like this:
-> 
-> arch/powerpc/kernel/built-in.o: In function `sys_call_table':
-> (.rodata+0xd58): undefined reference to `.compat_sys_adjtimex'
-> arch/powerpc/kernel/built-in.o: In function `sys_call_table':
-> (.rodata+0x1b48): undefined reference to `.compat_sys_clock_adjtime'
-> 
-> Caused by commit be1e48a8e48f ("kernel: time: Compile out NTP support").
+--Sig_/XftjK14EULK=GZH7=donj1=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Good catch, thanks.  Not clear why that build failure didn't show up on
-x86.
+Hi Andrew,
 
-Looks like the two compat syscalls need cond_syscall lines as well.
-I'll add those to the patch.
+Today's linux-next merge of the akpm-current tree got a conflict in
+drivers/rtc/rtc-omap.c between commit 0929ae376ef3 ("rtc: drop owner
+assignment from platform_drivers") from the driver-core tree and commit
+700abe25a31a ("rtc: omap: remove DRIVER_NAME macro") from the
+akpm-current tree.
 
-- Josh Triplett
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/rtc/rtc-omap.c
+index ae444a8bd602,fba13e53c278..000000000000
+--- a/drivers/rtc/rtc-omap.c
++++ b/drivers/rtc/rtc-omap.c
+@@@ -568,7 -718,8 +718,7 @@@ static struct platform_driver omap_rtc_
+  	.remove		=3D __exit_p(omap_rtc_remove),
+  	.shutdown	=3D omap_rtc_shutdown,
+  	.driver		=3D {
+- 		.name	=3D DRIVER_NAME,
++ 		.name	=3D "omap_rtc",
+ -		.owner	=3D THIS_MODULE,
+  		.pm	=3D &omap_rtc_pm_ops,
+  		.of_match_table =3D omap_rtc_of_match,
+  	},
+
+--Sig_/XftjK14EULK=GZH7=donj1=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUYH18AAoJEMDTa8Ir7ZwVT8MP+gOgT0hkhk5kL97dDg+vFjXV
+hvxIbIIhUdO6QWjI5pjhWdpVcTMX2xPV1gfPj0mflWU/r6Z3yjekZtknIMPe3Aee
+d9fHRL71byGTAMCmraeIbQ9DQIEJIdLfmZFNuTopK7dD+N8LR1SitZOK8nPAnZIX
+WBLf0NLqADwsNmurfzFVmzosN5ugadhsK6FfQtQK3swJxcHH8ymQyRZ0NwXild4j
+wmHzNh9vIKh8rMb+ueRU0VV4HfE6UN1xOgtLZutjrs9mRgjGj89IrcU+FNOqD99P
+HQ87UAu9bwSHwg6z+3XtZXTtTl1f+x0RHHLDZh8uyCrPo2ge6gT+bvZIAY6XhR5i
+mkv+adxscjE4IGpcmCv6EkGqrWhg5MexNzisJKJZSwBD7NP9rZQR8TGOudJWcww9
+YrGJhTmKYG7bwZZEphLxU3tk8lOEBOHhZ4BOajmUDFbvgUPApqYnyuqFG+a6COiC
+4uzzAXYa6r+/ofY7+F5wozAtn0r8yfKv+YhrAAOGEK4Cu39PiqVTa9a0wwi3Pr5b
+YicDEAtYq4dNuUY+iuqQ3B2F2UlFBnXGxtoDoQMmPI+Lpct8x/svoAR/XGhqNhih
+rGCNqkNfBwOtS8ffzOgDKDSB1+WUALdhwUHn7F3FJGpozaF4B30674IWLXeCO+Jk
+9qSunYmAvqVpHB8O9v1O
+=HzvC
+-----END PGP SIGNATURE-----
+
+--Sig_/XftjK14EULK=GZH7=donj1=--
