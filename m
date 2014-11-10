@@ -1,48 +1,36 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: randconfig build error with next-20141110, in drivers/platform/x86/hp_accel.c
-Date: Mon, 10 Nov 2014 09:19:15 -0800
-Message-ID: <56A55F6D-4EA5-4A54-8727-97D3E4A875A5@infradead.org>
-References: <CA+r1Zhio+KeBH0FFHwj=_fTFjqzebeE7Y2O_vsvMco49Sp56jw@mail.gmail.com> <5460EF02.3000904@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: randconfig build error with next-20141110, in drivers/tty/vt/vt.c
+Date: Tue, 11 Nov 2014 03:09:29 +0900
+Message-ID: <20141110180929.GA13084@kroah.com>
+References: <CA+r1ZhjfVNHOL_ZON2bpt9y6CB0J5rtrNhuV0XNRWqc2hGA57Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:50843 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751694AbaKJSE3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 13:04:29 -0500
-In-Reply-To: <5460EF02.3000904@gmail.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42927 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751138AbaKJSKu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 13:10:50 -0500
+Content-Disposition: inline
+In-Reply-To: <CA+r1ZhjfVNHOL_ZON2bpt9y6CB0J5rtrNhuV0XNRWqc2hGA57Q@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Giedrius Statkevicius <giedrius.statkevicius@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, eric.piel@tremplin-utc.net, platform-driver-x86@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jiri Slaby <jslaby@suse.cz>, peter@hurleysoftware.com
 
+On Mon, Nov 10, 2014 at 09:13:25AM -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
+>=20
+> drivers/tty/vt/vt.c: In function =E2=80=98tioclinux=E2=80=99:
+> drivers/tty/vt/vt.c:2703:4: error: implicit declaration of function
+> =E2=80=98vt_get_kmsg_redirect=E2=80=99 [-Werror=3Dimplicit-function-d=
+eclaration]
+>     data =3D vt_get_kmsg_redirect();
+>     ^
+> cc1: some warnings being treated as errors
+> make[3]: *** [drivers/tty/vt/vt.o] Error 1
 
+This is due to a patch from Peter Hurley, but I can't work out what to
+do to fix it...
 
-On November 10, 2014 8:59:46 AM PST, Giedrius Statkevicius <giedrius.statkevicius@gmail.com> wrote:
->Hi Jim,
->
->On 2014.11.10 18:20, Jim Davis wrote:
->> Building with the attached random configuration file,
->> 
->> drivers/built-in.o: In function `lis3lv02d_remove':
->> /home/jim/linux/drivers/platform/x86/hp_accel.c:389: undefined
->> reference to `i8042_remove_filter'
->> drivers/built-in.o: In function `lis3lv02d_add':
->> /home/jim/linux/drivers/platform/x86/hp_accel.c:370: undefined
->> reference to `i8042_install_filter'
->> make: *** [vmlinux] Error 1
->> 
->
->Oops, sorry. Forgot to add a depend on i8042 per this patch in Kconfig:
->https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=a4c724d0723b078e4ab4670e557cda1795036a7a
->
->This patch should fix it. After applying and using your .config I
->compiled the kernel without those undefined references. Should I make a
->new thread where it's submitted in the proper form? 
-
-Yes please.
-
-
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Peter?
