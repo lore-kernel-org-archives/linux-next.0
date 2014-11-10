@@ -1,30 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tiny tree with Linus' tree
-Date: Mon, 10 Nov 2014 14:28:03 +1100
-Message-ID: <20141110142803.0dd121b3@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Mon, 10 Nov 2014 15:18:56 +1100
+Message-ID: <20141110151856.0b644fb3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/H3ib.XDcVPJzPdoX6j9mt6k"; protocol="application/pgp-signature"
+ boundary="Sig_/42O_w7HlK2co7k9T9GMiGKO"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58885 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44636 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751059AbaKJD2L (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 9 Nov 2014 22:28:11 -0500
+	id S1751101AbaKJETF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 Nov 2014 23:19:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalina Mocanu <catalina.mocanu@gmail.com>, Alexei Starovoitov <ast@plumgrid.com>
+To: Greg KH <greg@kroah.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Aaron Lu <aaron.lu@intel.com>
 
---Sig_/H3ib.XDcVPJzPdoX6j9mt6k
+--Sig_/42O_w7HlK2co7k9T9GMiGKO
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Josh,
+Hi Greg,
 
-Today's linux-next merge of the tiny tree got a conflict in net/Kconfig
-between commit f89b7755f517 ("bpf: split eBPF out of NET") from Linus'
-tree and commit 4ecea0db79ef ("lib: rhashtable: Make rhashtable.c
-optional") from the tiny tree.
+Today's linux-next merge of the driver-core tree got a conflict in
+drivers/input/keyboard/gpio_keys_polled.c between commit b26d4e2283b6
+("input: gpio_keys_polled: Make use of device property API") from the
+pm tree and commit 1d05726c315c ("input: keyboard: drop owner
+assignment from platform_drivers") from the driver-core tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -33,41 +34,41 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/Kconfig
-index 99815b5454bf,02badd46823f..000000000000
---- a/net/Kconfig
-+++ b/net/Kconfig
-@@@ -6,7 -6,8 +6,8 @@@ menuconfig NE
-  	bool "Networking support"
-  	select NLATTR
-  	select GENERIC_NET_UTILS
- -	select ANON_INODES
- +	select BPF
-+ 	select RHASHTABLE
-  	---help---
-  	  Unless you really know what you are doing, you should say Y here.
-  	  The reason is that some programs need kernel networking support even
+diff --cc drivers/input/keyboard/gpio_keys_polled.c
+index c9c1c8ca7267,10f0098f3c77..000000000000
+--- a/drivers/input/keyboard/gpio_keys_polled.c
++++ b/drivers/input/keyboard/gpio_keys_polled.c
+@@@ -297,8 -307,7 +297,7 @@@ static struct platform_driver gpio_keys
+  	.probe	=3D gpio_keys_polled_probe,
+  	.driver	=3D {
+  		.name	=3D DRV_NAME,
+- 		.owner	=3D THIS_MODULE,
+ -		.of_match_table =3D of_match_ptr(gpio_keys_polled_of_match),
+ +		.of_match_table =3D gpio_keys_polled_of_match,
+  	},
+  };
+  module_platform_driver(gpio_keys_polled_driver);
 
---Sig_/H3ib.XDcVPJzPdoX6j9mt6k
+--Sig_/42O_w7HlK2co7k9T9GMiGKO
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYDDIAAoJEMDTa8Ir7ZwVZ4YP/ieQ4DS8O4++ThvRU0/411nQ
-sAE9EPp+D+MpDjDsI2wocoSQFIp9oHpqHMeLUtxiRARBPefJcE2EAPWiwQIab/Rb
-3WDrp//gGmRDCKxG7e040gYR+/qS98hjO9bVt42/qLrY3wbOaAi4XC44hZa2TScU
-6pYJiwhjNWPT8+35plbVkxKa2v3PEsdvy74u/FzavOZQskFkQXfazGJHbGmF8LQ/
-n0+1EpBmjosM6gSZDRjVffXq3a47CJPzIlyCzJJLRc/EwaMTwDE8RQCsxTRP6y2t
-g/7zBOxSm4PPOP1Pym2ynGASDST94vGUlDIQKeZpwdB4kmy7aAkTEW/R88FooHI8
-eGbV1vggJgr+QRXtcxswzoHqx6X9+eHMEpnxRqx7p/0A8bv7wHENc4uOrtRYL9S4
-H45qZo9pOk542MdtlegEB7GcgbpharaC6YjJbFVhj3kwRDLRY+XMBJFquwhU2jee
-NoliqSKjSgJRhxgEIDIXWB21PSElRJqGFAVFp3HXk2hej+ZcJUqtwbUYIIjMa1TG
-+OtK8CL4yUaMWfvSXXzZuNmTtTTSoMSCxgIqAcTm9VbWWa61JtQoJEv6VanLnsVa
-NN5CVA4FHXKlLEnWNIxltVeGndlB/MMcYNr+23HfagdPJ2RaR8vOF+batiMiSNPJ
-go3PN6qdg4XAzE6PYlD9
-=Yicf
+iQIcBAEBCAAGBQJUYDy1AAoJEMDTa8Ir7ZwVc9MP/0K/i/3g7n+NDa1jl0+kGad3
+fvD3y8JLOHTKYBx2pFwLL4JROviUNCmLE0THrz8lyrD9ldHR5z42OnbOgJpHlLZH
+LPKPmP6KHpv6NrW16qEOFQoEVecVAZ1khghxWfUmtkb3s35YigriCU4doFErbWBK
+KQkUkX7T7dtCWvYjUXwvg9mjX3yRxcyJSasxH2yjic/ej6ojtfwGiqV8NZXPh/IC
+ZruYsdO7wMqIx9Y66g60sst/x8aU4K+dSVf0OIShcsd0fTYMfaE3xARu7uyzO3TT
+4dRzZum/BL0htwRCCGBpj+bTgJhERXbk6RIkAyOrJFcJCGHZ7f//oz1IIbMjp4kM
+0fWbY8ARW1LaI/ukrspF4Rq0rsL3VVFNy+8uuK2FDTA+Zgg+tv8qAcF389oiM1NQ
+yi0rjfaJJe4mqwNDpHPaHk7unE6IBlz6N7bYitalOPOIWpHRBzej0kwi9ir9D0QW
+CJAqV88Z1je8D/7Wwm6FfadO73G9zmP3kKlaCLrJcYiZ1qZmj4AKNzSwCKGd3Zca
+UfcKW6dIv2lfpteH8awxqwyi6wgzWcgw54PjHYPns4WKxN23Ii61yF9hVEg8XwkV
+5pxkZiOShSlMd2D9IgdmtNAohIdOHtg/cENqDCy3C3UMS2hBg3nQQdl0eYCxeEQc
+gfWyn2ROLmSFpx/pLfh5
+=3nrY
 -----END PGP SIGNATURE-----
 
---Sig_/H3ib.XDcVPJzPdoX6j9mt6k--
+--Sig_/42O_w7HlK2co7k9T9GMiGKO--
