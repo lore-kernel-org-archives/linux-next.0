@@ -1,101 +1,74 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: build failure after merge of the slave-dma tree
-Date: Mon, 10 Nov 2014 10:36:16 +0530
-Message-ID: <20141110050616.GA18555@intel.com>
-References: <20141110115846.390ce45e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ driver-core tree
+Date: Mon, 10 Nov 2014 16:08:24 +1100
+Message-ID: <20141110160824.50addb94@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WXbalkUE_wB0k4Vm=k41yj7"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:59487 "EHLO mga09.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:51560 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750941AbaKJFF3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Nov 2014 00:05:29 -0500
-Content-Disposition: inline
-In-Reply-To: <20141110115846.390ce45e@canb.auug.org.au>
+	id S1750850AbaKJFIb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2014 00:08:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/WXbalkUE_wB0k4Vm=k41yj7
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2014 at 11:58:46AM +1100, Stephen Rothwell wrote:
-> Hi Vinod,
->=20
-> After merging the slave-dma tree, today's linux-next build (x86_64 allmod=
-config)
-> failed like this:
->=20
-> drivers/dma/at_xdmac.c: In function 'at_xdmac_off':
-> drivers/dma/at_xdmac.c:317:2: error: implicit declaration of function 'wr=
-itel_relaxed' [-Werror=3Dimplicit-function-declaration]
->   at_xdmac_write(atxdmac, AT_XDMAC_GD, -1L);
->   ^
->=20
-> Caused by commit e1f7c9eee707 ("dmaengine: at_xdmac: creation of the
-> atmel eXtended DMA Controller driver").
-Thanks Stephen,
+Hi Felipe,
 
-I have fixed this error and warning, the tree is updated now
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/gadget/udc/pxa27x_udc.c between commit 6d3f5f2d895b ("usb:
+gadget: udc: drop owner assignment from platform_drivers") from the
+driver-core tree and commit 1803fe15ad54 ("usb: gadget: pxa27x_udc: add
+devicetree support") from the usb-gadget tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
-~Vinod
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->=20
-> Also, lots of warnings like:
->=20
-> drivers/dma/at_xdmac.c: In function 'at_xdmac_prep_slave_sg':
-> include/linux/dynamic_debug.h:64:16: warning: format '%x' expects argumen=
-t of type 'unsigned int', but argument 5 has type 'dma_addr_t' [-Wformat=3D]
->   static struct _ddebug  __aligned(8)   \
->                 ^
-> include/linux/dynamic_debug.h:84:2: note: in expansion of macro 'DEFINE_D=
-YNAMIC_DEBUG_METADATA'
->   DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
->   ^
-> include/linux/device.h:1107:2: note: in expansion of macro 'dynamic_dev_d=
-bg'
->   dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
->   ^
-> drivers/dma/at_xdmac.c:621:3: note: in expansion of macro 'dev_dbg'
->    dev_dbg(chan2dev(chan),
->    ^
->=20
-> I have used the slave-dma tree from next-20141106 for today.
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+diff --cc drivers/usb/gadget/udc/pxa27x_udc.c
+index 61bceedf515d,69e7b816d880..000000000000
+--- a/drivers/usb/gadget/udc/pxa27x_udc.c
++++ b/drivers/usb/gadget/udc/pxa27x_udc.c
+@@@ -2614,6 -2589,8 +2589,7 @@@ MODULE_ALIAS("platform:pxa27x-udc")
+  static struct platform_driver udc_driver =3D {
+  	.driver		=3D {
+  		.name	=3D "pxa27x-udc",
+ -		.owner	=3D THIS_MODULE,
++ 		.of_match_table =3D of_match_ptr(udc_pxa_dt_ids),
+  	},
+  	.probe		=3D pxa_udc_probe,
+  	.remove		=3D pxa_udc_remove,
 
-
-
---=20
-
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+--Sig_/WXbalkUE_wB0k4Vm=k41yj7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUYEfIAAoJEHwUBw8lI4NHQmYP/RhmGGLqUGVYAGdbNntQwvnE
-HTDZ11muOkvRGv4B0ndcQlR7M1gFEAEuIDAdzVd9xyRko7/RWzOLB8/3eBtAk5T6
-GLMU36w0PPrH/YRRnAArHOjXgNyx2pYUPBANIoS26on0TNu68fphFveuI57zG7Re
-uzuN/mJXhW7IDGJktgaWpoGycapxs7IVqu6ruPvt5wBav6lgr2D1vRlpVpW3lVUi
-CB7ctIdywveCik1tSi4qlR/Gs2Xi9GANpCiep0pdQThzlb6/ToHKx/KLOOUfDq+G
-DUDD6E2dp1kJyglElYObBtcDm52rkEzVRP8Pyyu1e7m88nOC76y3GuFn5VVGSZ/1
-CMZJiWgHKbXknT0UYwz4iHD80kpoggWe4bBsukEutBTPKeeCjV8yieXTgRX2Hh8m
-FzXb/JTM63cpHmHhLBqQ9Wt4d7bycr1amYHgjsbdXPsweU91RtVhV00DSU9DZ5tl
-KQhTERiNKEEiSlwwDCxAxfzgJJ4MJ5JWCAdC03iRFQE7hTqKbwu4iS27CPqbzvOD
-oIP23e96+ZenZeZw30Tkv1hJOb7Rq6MxnKI/FL82wpr9lLKLDRe9Ti59S4auxK3j
-BMBvv2440cMeq86NyafPb94NFJPOdzujnfyabvMSp4yXx8CPalGtOr3adxitnahI
-snpH5VvYQm5mbeLy1k/+
-=kdkT
+iQIcBAEBCAAGBQJUYEhNAAoJEMDTa8Ir7ZwVVAEP/0jH0nGhfG2HL5Tqv5o4xfpt
+6vU9SmWcxRwDzCzYdvYOOaUbVIHQ1ZYSAowYZsIJ9YqvzCorJatKV1PAK/fIGHVR
+xnJnZw/KdD5iQ4/ZiPRRxWG+KjvHxE34WGQBT30haNTLEYJfuVdmvEnDO+fsDsTx
+5i3Kk3ov/CEIIU3Tgw8v1nQ43/LOVr1aItZVCCO4SBkfFUEoAd84WkIW/aQ+OV5D
+G/H9hjU1IDo/RXKJQ64YbQVu2G90DZZ7pO5v5IGkid2cn16+C8L2zvcozIIyg94w
+wu4PWyveXfBsfeihhEDr82y8CrN83v7q17Co4+ckyICkS4Vuy/ywz/blOLIv2qg5
+UZzOt/n5J9YmyOOynGLlwDmPwBx5SUabAYJn4er0p0sM8DfmOF8Smu/3MqmHJ9r5
+g7udAjt5UFPAuVj3Dzo9B1M0GAtLO6O4dZCRXq3t+0wvY1sf/Ws247h7l9l+pdYA
+AyofCrJfSWK93bQxFtSdk5QbxZPIL3PHe7WsR8PE1Qtt/rdyd0QNgEVaoGFncxHY
+UyrVBvMtZ6zHa4Ps5Va1+gyxIXw83XglcjYtDK77/Z3ouPpVqQ5Bry+ArYjyS54X
+EhqldHQx9itRdJzqQUjx2lFvoU4hGhbuHyKwG1/QRYsykST4tEKI0TmMpJ2KN/n5
+2H9qPtd10n1BRgdplDkC
+=0YuO
 -----END PGP SIGNATURE-----
 
---7JfCtLOvnd9MIVvH--
+--Sig_/WXbalkUE_wB0k4Vm=k41yj7--
