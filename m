@@ -1,43 +1,57 @@
 From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build failure after merge of the tiny tree
-Date: Mon, 10 Nov 2014 09:54:03 -0800
-Message-ID: <20141110175403.GA18766@thin>
-References: <20141110181716.3c9604fe@canb.auug.org.au>
- <20141110075604.GA1085@thin>
+Subject: Re: linux-next: manual merge of the tiny tree with the net-next tree
+Date: Mon, 10 Nov 2014 09:56:28 -0800
+Message-ID: <20141110175628.GB18766@thin>
+References: <20141110142511.03354f6a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:33020 "EHLO
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:34673 "EHLO
 	relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753415AbaKJRyL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 12:54:11 -0500
+	with ESMTP id S1753257AbaKJR4g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 12:56:36 -0500
 Content-Disposition: inline
-In-Reply-To: <20141110075604.GA1085@thin>
+In-Reply-To: <20141110142511.03354f6a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalina Mocanu <catalina.mocanu@gmail.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Frederic Sowa <hannes@stressinduktion.org>, Catalina Mocanu <catalina.mocanu@gmail.com>
 
-On Sun, Nov 09, 2014 at 11:56:04PM -0800, Josh Triplett wrote:
-> On Mon, Nov 10, 2014 at 06:17:16PM +1100, Stephen Rothwell wrote:
-> > Hi Josh,
-> > 
-> > After merging the tiny tree, today's linux-next build (powerpc64 allnoconfig)
-> > failed like this:
-> > 
-> > arch/powerpc/kernel/built-in.o: In function `sys_call_table':
-> > (.rodata+0xd58): undefined reference to `.compat_sys_adjtimex'
-> > arch/powerpc/kernel/built-in.o: In function `sys_call_table':
-> > (.rodata+0x1b48): undefined reference to `.compat_sys_clock_adjtime'
-> > 
-> > Caused by commit be1e48a8e48f ("kernel: time: Compile out NTP support").
+On Mon, Nov 10, 2014 at 02:25:11PM +1100, Stephen Rothwell wrote:
+> Hi Josh,
 > 
-> Good catch, thanks.  Not clear why that build failure didn't show up on
-> x86.
+> Today's linux-next merge of the tiny tree got a conflict in
+> lib/Makefile between commit e5a2c8999576 ("fast_hash: avoid indirect
+> function calls") from the net-next tree and commit 4ecea0db79ef ("lib:
+> rhashtable: Make rhashtable.c optional") from the tiny tree.
 > 
-> Looks like the two compat syscalls need cond_syscall lines as well.
-> I'll add those to the patch.
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Done in current tiny/next.
+This resolution looks correct to me.
 
 - Josh Triplett
+
+> diff --cc lib/Makefile
+> index 04e53dd16070,47b8305288e2..000000000000
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@@ -22,11 -22,14 +22,14 @@@ lib-$(CONFIG_SMP) += cpumask.
+>   lib-y	+= kobject.o klist.o
+>   obj-y	+= lockref.o
+>   
+> - obj-y += bcd.o div64.o sort.o parser.o halfmd4.o debug_locks.o random32.o \
+> + obj-y += bcd.o div64.o sort.o parser.o debug_locks.o random32.o \
+>   	 bust_spinlocks.o hexdump.o kasprintf.o bitmap.o scatterlist.o \
+> - 	 gcd.o lcm.o list_sort.o uuid.o flex_array.o iovec.o clz_ctz.o \
+> + 	 gcd.o lcm.o list_sort.o uuid.o iovec.o clz_ctz.o \
+>   	 bsearch.o find_last_bit.o find_next_bit.o llist.o memweight.o kfifo.o \
+> - 	 percpu-refcount.o percpu_ida.o rhashtable.o
+>  -	 percpu-refcount.o percpu_ida.o hash.o
+> ++	 percpu-refcount.o percpu_ida.o
+> + obj-$(CONFIG_FLEX_ARRAY) += flex_array.o
+> + obj-$(CONFIG_HALFMD4) += halfmd4.o
+> + obj-$(CONFIG_RHASHTABLE) += rhashtable.o
+>   obj-y += string_helpers.o
+>   obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
+>   obj-y += kstrtox.o
