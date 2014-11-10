@@ -1,119 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pinctrl tree with the arm-soc tree
-Date: Mon, 10 Nov 2014 17:34:25 +1100
-Message-ID: <20141110173425.6962fc1c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tiny tree
+Date: Mon, 10 Nov 2014 18:17:16 +1100
+Message-ID: <20141110181716.3c9604fe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//jn8PmuRO.tf9w5QFc5OzRt"; protocol="application/pgp-signature"
+ boundary="Sig_/trrt3ELlGlJWTm3CfQiR7NM"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48279 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43638 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751297AbaKJGeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Nov 2014 01:34:31 -0500
+	id S1751853AbaKJHRX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2014 02:17:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalina Mocanu <catalina.mocanu@gmail.com>
 
---Sig_//jn8PmuRO.tf9w5QFc5OzRt
+--Sig_/trrt3ELlGlJWTm3CfQiR7NM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Josh,
 
-Today's linux-next merge of the pinctrl tree got a conflict in
-arch/arm/boot/dts/ste-nomadik-stn8815.dtsi between commit 2096eb80e446
-("ARM: nomadik: move GPIO I2C to S8815 board file") and 43c4034963d6
-("ARM: nomadik: set up MCDATDIR2") from the arm-soc tree and commits
-68d41f23ce8d ("pinctrl: nomadik: force-convert to generic mux
-bindings") and 1637d480f873 ("pinctrl: nomadik: force-convert to
-generic config bindings") from the pinctrl tree.
+After merging the tiny tree, today's linux-next build (powerpc64 allnoconfi=
+g)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+arch/powerpc/kernel/built-in.o: In function `sys_call_table':
+(.rodata+0xd58): undefined reference to `.compat_sys_adjtimex'
+arch/powerpc/kernel/built-in.o: In function `sys_call_table':
+(.rodata+0x1b48): undefined reference to `.compat_sys_clock_adjtime'
 
-I also added this merge fix patch:
+Caused by commit be1e48a8e48f ("kernel: time: Compile out NTP support").
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 10 Nov 2014 17:30:59 +1100
-Subject: [PATCH] pinctrl: nomadik: fix up for binding changes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/boot/dts/ste-nomadik-s8815.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/ste-nomadik-s8815.dts b/arch/arm/boot/dts/st=
-e-nomadik-s8815.dts
-index 7a7e2443503f..85d3b95dfdba 100644
---- a/arch/arm/boot/dts/ste-nomadik-s8815.dts
-+++ b/arch/arm/boot/dts/ste-nomadik-s8815.dts
-@@ -43,7 +43,7 @@
- 		gpioi2c {
- 			gpioi2c_default_mode: gpioi2c_default {
- 				gpioi2c_default_cfg {
--					ste,pins =3D "GPIO73_C21", "GPIO74_C20";
-+					pins =3D "GPIO73_C21", "GPIO74_C20";
- 					ste,input =3D <0>;
- 				};
- 			};
---=20
-2.1.3
-
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
-index f435ff20aefe,c8b4a93180f8..000000000000
---- a/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
-+++ b/arch/arm/boot/dts/ste-nomadik-stn8815.dtsi
-@@@ -116,8 -116,8 +116,8 @@@
-  		mmcsd {
-  			mmcsd_default_mux: mmcsd_mux {
-  				mmcsd_default_mux {
-- 					ste,function =3D "mmcsd";
-- 					ste,pins =3D "mmcsd_a_1", "mmcsd_b_1";
-+ 					function =3D "mmcsd";
- -					groups =3D "mmcsd_a_1";
-++					groups =3D "mmcsd_a_1", "mmcsd_b_1";
-  				};
-  			};
-  			mmcsd_default_mode: mmcsd_default {
-@@@ -127,9 -127,9 +127,9 @@@
-  					ste,output =3D <0>;
-  				};
-  				mmcsd_default_cfg2 {
- -					/* MCCMDDIR, MCDAT0DIR, MCDAT31DIR */
- +					/* MCCMDDIR, MCDAT0DIR, MCDAT31DIR, MCDATDIR2 */
-- 					ste,pins =3D "GPIO10_C11", "GPIO15_A12",
-+ 					pins =3D "GPIO10_C11", "GPIO15_A12",
- -					"GPIO16_C13";
- +					"GPIO16_C13", "GPIO23_D15";
-  					ste,output =3D <1>;
-  				};
-  				mmcsd_default_cfg3 {
-
---Sig_//jn8PmuRO.tf9w5QFc5OzRt
+--Sig_/trrt3ELlGlJWTm3CfQiR7NM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYFx1AAoJEMDTa8Ir7ZwV0TIQAIzyAwa8Gyyduj9wIAbzwyyT
-b/C4aZwoamkxFaEsZdqOyfvDeIxHo8RmUEokl0xZc52DwecidlHwEahn7FV6o9BN
-vWO9gDMJjP3alZuGssLTBfdF/bMxBqd+Cr0lmxKdPP1Q+MCU8ODo2LlvfkY5iyTJ
-NF/I27L4qNNueWwCTL9k/z2unChxLxZUFxLNj3kzEPTqv4cm0YDZj8gLzGtAc0AY
-1OGZPsGIdhjk36+KF51H2kfUHn3KO9RXEXul+myViluJ9dcioDBOEn5WXazuqZgv
-lI6CfUWAdGhJxrOWBIYUDTvWrUAk2+s/BG4j7JyiWPjDD7Rk+5bNXDhrqlmyRuHj
-uwCurnB0vioUi1VPOW++RazwiunFCQToQAN4lJpsxXAaCuk3myp0KdQgV+Rd3CLa
-8VZF0OD5fc4/hr7e9J+lOoRFwtfuoZ5teEcN2Dcn79I8xVAur0T/RI5LYhbkbP7w
-hdd9U3v66K9RWCcvDF01ZW4s+q852sCOlmSgRp/YMaOwz3yvQDHbX/Lwh85Rh03z
-kynh1MLwbMLMDig1Vsm9IVhf/FnWvmNFMw6NWei13yJONLzMN5dhc5gs58lCSGP2
-DfIVdPM62DwbDINgxh+eOhTKwHJXLpvpqvIeQv6gXbdXPBdYj8Y0a7Ai6l2w+0Q/
-rK+vKfM2psABdhWVwlJA
-=V+TI
+iQIcBAEBCAAGBQJUYGaAAAoJEMDTa8Ir7ZwVU5sP/1B9cqDny5jAziaRuD+B+r0L
+Kt9DLjAmX3QO4DB53QQB/5wx7igFTfs1wuESo7v9sGIc9kpLuaGarFxbZ37IyRX3
+QYmNLiXleGnK+TqGWJ92Vskbgb/dsnAOaMr46EwGdyc/YfUVdgdZBQH91QWUHzWt
+kvrYSw/wF1HkzSSEN12TY9k1Q1NMZAwo74Bgt2Bnx9b+mwHP2sbrdTQP8X1dMTan
+oIDa4X5Tdd07nQuiSU53XU7NN+V8ZfD8OMex2SLtjigdxUpulTi8yA5hbpVFarvO
+VqH5NFhs9/Qn5P5O11PtB2i8YGGT1lYmPxfzZ1tF2ah/gvIvezFVFLZRJmKnD3Mg
+LvOlo8g47FW6b2otgElnuShnL6SkRLvETOG/pMNPb61tbM1uL5rzqUerB6/exVtM
+PH1zsOC/j2Ns/gAb1bKK1hJ87Mj0o1H1TALi+iteudaqsiQlo5i7wmi6fIDZ69ms
+n/Nx4I1txnGaDM9tSVlv2phaumoKlg2s/exVzremFMAamxvG3Dhcx8mpAJOn4JxF
+9djOt0EqFuxchIDZ3Dhg+dWBQkh14hYFX11zbzfjEPgYAPIfq7tyDitCx6u2SJj/
+swak3XQOUE6RziitBoO0zOBJ+MDz7CJ3F8ePwbn9pjpM5wz3FwOwyXaQPRLPdUOL
+Rsh1EisuWFxuN0MM8QMz
+=ChfC
 -----END PGP SIGNATURE-----
 
---Sig_//jn8PmuRO.tf9w5QFc5OzRt--
+--Sig_/trrt3ELlGlJWTm3CfQiR7NM--
