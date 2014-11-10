@@ -1,50 +1,101 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the  tree
-Date: Mon, 10 Nov 2014 13:40:43 +0900
-Message-ID: <20141110044043.GB17099@kroah.com>
-References: <20141110152125.73e33634@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Mon, 10 Nov 2014 10:36:16 +0530
+Message-ID: <20141110050616.GA18555@intel.com>
+References: <20141110115846.390ce45e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:59487 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750941AbaKJFF3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2014 00:05:29 -0500
 Content-Disposition: inline
-In-Reply-To: <20141110152125.73e33634@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20141110115846.390ce45e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-On Mon, Nov 10, 2014 at 03:21:25PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/leds/leds-gpio.c between commit a43f2cbbb009 ("leds: leds-gpio:
-> Make use of device property API") from the  tree and commit
-> 81902d5f658f ("leds: drop owner assignment from platform_drivers") from
-> the driver-core tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-> -- 
+
+--7JfCtLOvnd9MIVvH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 10, 2014 at 11:58:46AM +1100, Stephen Rothwell wrote:
+> Hi Vinod,
+>=20
+> After merging the slave-dma tree, today's linux-next build (x86_64 allmod=
+config)
+> failed like this:
+>=20
+> drivers/dma/at_xdmac.c: In function 'at_xdmac_off':
+> drivers/dma/at_xdmac.c:317:2: error: implicit declaration of function 'wr=
+itel_relaxed' [-Werror=3Dimplicit-function-declaration]
+>   at_xdmac_write(atxdmac, AT_XDMAC_GD, -1L);
+>   ^
+>=20
+> Caused by commit e1f7c9eee707 ("dmaengine: at_xdmac: creation of the
+> atmel eXtended DMA Controller driver").
+Thanks Stephen,
+
+I have fixed this error and warning, the tree is updated now
+
+--=20
+~Vinod
+
+>=20
+> Also, lots of warnings like:
+>=20
+> drivers/dma/at_xdmac.c: In function 'at_xdmac_prep_slave_sg':
+> include/linux/dynamic_debug.h:64:16: warning: format '%x' expects argumen=
+t of type 'unsigned int', but argument 5 has type 'dma_addr_t' [-Wformat=3D]
+>   static struct _ddebug  __aligned(8)   \
+>                 ^
+> include/linux/dynamic_debug.h:84:2: note: in expansion of macro 'DEFINE_D=
+YNAMIC_DEBUG_METADATA'
+>   DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
+>   ^
+> include/linux/device.h:1107:2: note: in expansion of macro 'dynamic_dev_d=
+bg'
+>   dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
+>   ^
+> drivers/dma/at_xdmac.c:621:3: note: in expansion of macro 'dev_dbg'
+>    dev_dbg(chan2dev(chan),
+>    ^
+>=20
+> I have used the slave-dma tree from next-20141106 for today.
+> --=20
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/leds/leds-gpio.c
-> index b3c5d9d6a42b,ac4768f2b2b4..000000000000
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@@ -281,8 -287,7 +281,7 @@@ static struct platform_driver gpio_led_
->   	.remove		= gpio_led_remove,
->   	.driver		= {
->   		.name	= "leds-gpio",
-> - 		.owner	= THIS_MODULE,
->  -		.of_match_table = of_match_ptr(of_gpio_leds_match),
->  +		.of_match_table = of_gpio_leds_match,
->   	},
->   };
->   
 
 
-Looks good, thanks.
 
-greg k-h
+--=20
+
+--7JfCtLOvnd9MIVvH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQIcBAEBAgAGBQJUYEfIAAoJEHwUBw8lI4NHQmYP/RhmGGLqUGVYAGdbNntQwvnE
+HTDZ11muOkvRGv4B0ndcQlR7M1gFEAEuIDAdzVd9xyRko7/RWzOLB8/3eBtAk5T6
+GLMU36w0PPrH/YRRnAArHOjXgNyx2pYUPBANIoS26on0TNu68fphFveuI57zG7Re
+uzuN/mJXhW7IDGJktgaWpoGycapxs7IVqu6ruPvt5wBav6lgr2D1vRlpVpW3lVUi
+CB7ctIdywveCik1tSi4qlR/Gs2Xi9GANpCiep0pdQThzlb6/ToHKx/KLOOUfDq+G
+DUDD6E2dp1kJyglElYObBtcDm52rkEzVRP8Pyyu1e7m88nOC76y3GuFn5VVGSZ/1
+CMZJiWgHKbXknT0UYwz4iHD80kpoggWe4bBsukEutBTPKeeCjV8yieXTgRX2Hh8m
+FzXb/JTM63cpHmHhLBqQ9Wt4d7bycr1amYHgjsbdXPsweU91RtVhV00DSU9DZ5tl
+KQhTERiNKEEiSlwwDCxAxfzgJJ4MJ5JWCAdC03iRFQE7hTqKbwu4iS27CPqbzvOD
+oIP23e96+ZenZeZw30Tkv1hJOb7Rq6MxnKI/FL82wpr9lLKLDRe9Ti59S4auxK3j
+BMBvv2440cMeq86NyafPb94NFJPOdzujnfyabvMSp4yXx8CPalGtOr3adxitnahI
+snpH5VvYQm5mbeLy1k/+
+=kdkT
+-----END PGP SIGNATURE-----
+
+--7JfCtLOvnd9MIVvH--
