@@ -1,36 +1,37 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: randconfig build error with next-20141110, in drivers/tty/vt/vt.c
-Date: Tue, 11 Nov 2014 03:09:29 +0900
-Message-ID: <20141110180929.GA13084@kroah.com>
-References: <CA+r1ZhjfVNHOL_ZON2bpt9y6CB0J5rtrNhuV0XNRWqc2hGA57Q@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Nov 10 (net/ipv4/ip_tunnel.c)
+Date: Mon, 10 Nov 2014 10:15:11 -0800
+Message-ID: <546100AF.40201@infradead.org>
+References: <20141110205945.51af32a6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42927 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751138AbaKJSKu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 13:10:50 -0500
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhjfVNHOL_ZON2bpt9y6CB0J5rtrNhuV0XNRWqc2hGA57Q@mail.gmail.com>
+Received: from casper.infradead.org ([85.118.1.10]:60135 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751119AbaKJSPS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 13:15:18 -0500
+In-Reply-To: <20141110205945.51af32a6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jiri Slaby <jslaby@suse.cz>, peter@hurleysoftware.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On Mon, Nov 10, 2014 at 09:13:25AM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
->=20
-> drivers/tty/vt/vt.c: In function =E2=80=98tioclinux=E2=80=99:
-> drivers/tty/vt/vt.c:2703:4: error: implicit declaration of function
-> =E2=80=98vt_get_kmsg_redirect=E2=80=99 [-Werror=3Dimplicit-function-d=
-eclaration]
->     data =3D vt_get_kmsg_redirect();
->     ^
-> cc1: some warnings being treated as errors
-> make[3]: *** [drivers/tty/vt/vt.o] Error 1
+On 11/10/14 01:59, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20141106:
+> 
 
-This is due to a patch from Peter Hurley, but I can't work out what to
-do to fix it...
+on x86_64:
+when CONFIG_NET_IP_TUNNEL=y and CONFIG_NET_FOU=m:
 
-Peter?
+net/built-in.o: In function `ip_tunnel_encap':
+(.text+0xb04d8): undefined reference to `gue_build_header'
+net/built-in.o: In function `ip_tunnel_encap':
+(.text+0xb04ea): undefined reference to `fou_build_header'
+
+
+
+-- 
+~Randy
