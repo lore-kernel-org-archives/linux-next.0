@@ -1,78 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with the
- usb-gadget-fixes tree
-Date: Tue, 11 Nov 2014 16:23:22 +1100
-Message-ID: <20141111162322.7be1fade@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the tiny tree
+Date: Tue, 11 Nov 2014 17:43:04 +1100
+Message-ID: <20141111174304.69b9ed45@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UYhITqcUA2wdGIu+Q_TCWiz"; protocol="application/pgp-signature"
+ boundary="Sig_/Em6oQDHW=RxLHcc2/ISiHsA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36466 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39044 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750924AbaKKFXe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Nov 2014 00:23:34 -0500
+	id S1751705AbaKKGnM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Nov 2014 01:43:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalina Mocanu <catalina.mocanu@gmail.com>
 
---Sig_/UYhITqcUA2wdGIu+Q_TCWiz
+--Sig_/Em6oQDHW=RxLHcc2/ISiHsA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Felipe,
+Hi Josh,
 
-Today's linux-next merge of the usb-gadget tree got a conflict in
-drivers/usb/dwc3/ep0.c between commit 520fe7633692 ("usb: dwc3: ep0:
-fix for dead code") from the usb-gadget-fixes tree and commit
-ccb072de5702 ("usb: dwc3: ep0: trace ep0 TRBs too") from the usb-gadget
-tree.
+After merging the tiny tree, today's linux-next build (powerpc64
+allnoconfig) produced these warnings:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+kernel/compat.c:33:12: warning: 'compat_get_timex' defined but not used [-W=
+unused-function]
+ static int compat_get_timex(struct timex *txc, struct compat_timex __user =
+*utp)
+            ^
+kernel/compat.c:63:12: warning: 'compat_put_timex' defined but not used [-W=
+unused-function]
+ static int compat_put_timex(struct compat_timex __user *utp, struct timex =
+*txc)
+            ^
+
+Introduced by commit 7beb114f18e0 ("kernel: time: Compile out NTP
+support").  Neither of these functions is needed if CONFIG_NTP is not
+set.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/usb/dwc3/ep0.c
-index df38e7ef4976,4c86772126ed..000000000000
---- a/drivers/usb/dwc3/ep0.c
-+++ b/drivers/usb/dwc3/ep0.c
-@@@ -791,10 -793,8 +793,12 @@@ static void dwc3_ep0_complete_data(stru
- =20
-  	trb =3D dwc->ep0_trb;
- =20
-+ 	trace_dwc3_complete_trb(ep0, trb);
-+=20
- +	r =3D next_request(&ep0->request_list);
- +	if (!r)
- +		return;
- +
-  	status =3D DWC3_TRB_SIZE_TRBSTS(trb->size);
-  	if (status =3D=3D DWC3_TRBSTS_SETUP_PENDING) {
-  		dwc3_trace(trace_dwc3_ep0, "Setup Pending received");
-
---Sig_/UYhITqcUA2wdGIu+Q_TCWiz
+--Sig_/Em6oQDHW=RxLHcc2/ISiHsA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYZ1UAAoJEMDTa8Ir7ZwV54gP/icWj1SxfA/Qs3UUgLRAhdth
-GyLMotV7754WAQYf/RES8nZAZ/R5xC5gQyNUfsIwxGgr5Kv47ggx0x0SD7PnnneT
-vFCzWigXmyuGnU8vBU4+MFLw+/3/LQIlYBFqOyZ10WonZPCBxThHLyqLQdTyerC7
-NxZzLDTkxiOj/v+d1UTMxIEPrGFVFdF63gCLAVzObr5e/eBIi70/WLdcn5PwatQ4
-B9W2dpg5DIrKJhzN30Trglqk96b6XnxJgn6R1MssVkC0zwgnQZMD5BI9UKnfEUtO
-aWBLAlHTYod82OtVb6SSr93OFE4eycb+cfySzTH7hmJrCY7W0TCTeli1n8p1Qf+/
-mKMUquq5RqVLQQxl0bSOYX0OXUVT972Xcg8gzRcy9wBqwdMYezdnqjmRFkiMjm4n
-akdqAa08i1eru1GA3+n6s9dlNKrVTgSPR1sC9uayj6+N7ewAe6u/vpAk1DwRoN08
-exwL1YMjFqlfhiBvMXHzYuDdZKOLyxItB9RJopd655uqx/klN2IfY/FlszhIaQV5
-ku1AvNVLw+1NrCT4y6Ux6gOd6fhoNXFLsFmCu5GZgX8JpC2LFskJ75iwGRUuGz7j
-x9vmX0M8JuqWOVWFm6M0kV3pilBmjfoqj7+jU+m4u6WcmFOEV4dh4WKpBOzoRV8b
-SL/JYwa8X+RJ7/kDXRZK
-=C4kx
+iQIcBAEBCAAGBQJUYa/9AAoJEMDTa8Ir7ZwVMQ8P/2oAK7b/lUOuHXwH8wFY4Bi9
+WxTVsjf39FlGUJMuWc5Yp6PdyqRinzU2QbJ73Mz46LUAuIbgt5RaDbA3czOEOjl1
+iREV+4c6wDcEWkeLaxD/8RcnMyiW2PgJzyYCZjYCgKP4K+Ok3bSlci9On3OBba37
+SySkJ0mIDFBPbhdFtYan3jzcnecbhOo0dsO8Gt8TWDnG19OjHI3fU1q8/Q3imxeW
+Ghbj79x89Rzhah2E9jED8p5hH3YdwQF31VIzWXdpNwnM6PDUGTAHRmazM28eRmSh
+R3fI+aWc5ocl2iPHwIBJH/iKmndRXKSvPaSBMsM+zdt0jAfV2cdUNRTybRWnWBQu
+trtK1VyHxPy7AD9v4NIZlfD03lmWV+ffoIDx9oxK8M+pPA4wCnuaOha5W/ZeGYHH
+qNwM26eqK/n04zdyN6cD6+ELb2yg5hccyIrD6owXPR1VXwZnhQtt+sexVJ4nOq+r
+Ta07l/b2QwahQ62Sm6Urg9xwejT5VQ2UHFhULlKF6NzO7wGtPOPzA175FwkN8b4G
+6q88ikQNiSbCHqSzHjepIMa3+cAxjEPzUyS2DwAq/HQo29UqUtMnAEsP3hGEdhTZ
+WTQMw7IAxjXqDnEOGpFFOAdnOvTYTAH7+T8qXFkOLbtKTd5L0ZLkiplaicQCdwua
+3f/10TpSOPNecRHM+rkB
+=x5YZ
 -----END PGP SIGNATURE-----
 
---Sig_/UYhITqcUA2wdGIu+Q_TCWiz--
+--Sig_/Em6oQDHW=RxLHcc2/ISiHsA--
