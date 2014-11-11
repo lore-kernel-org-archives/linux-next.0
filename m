@@ -1,64 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Tue, 11 Nov 2014 13:32:15 +1100
-Message-ID: <20141111133215.66f578ec@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Tue, 11 Nov 2014 15:41:46 +1100
+Message-ID: <20141111154146.3fb1dfa3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cPbEhK5Dc897LMP0HIPFVlH"; protocol="application/pgp-signature"
+ boundary="Sig_/YqgJzm.eEOG+gkScCnQvb2U"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52796 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59271 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751178AbaKKCcZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Nov 2014 21:32:25 -0500
+	id S1751373AbaKKEl5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2014 23:41:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gyungoh Yoo <jack.yoo@skyworksinc.com>
+To: Greg KH <greg@kroah.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
 
---Sig_/cPbEhK5Dc897LMP0HIPFVlH
+--Sig_/YqgJzm.eEOG+gkScCnQvb2U
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+Hi Greg,
 
-After merging the mfd tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the driver-core tree got a conflict in
+drivers/base/Makefile between commit b31384fa5de3 ("Driver core:
+Unified device properties interface for platform firmware") from the pm
+tree and commit 246246cbde5e ("drivers: base: support cpu cache
+information interface to userspace via sysfs") from the driver-core
+tree.
 
-In file included from drivers/mfd/sky81452.c:29:0:
-include/linux/mfd/sky81452.h:24:52: fatal error: linux/platform_data/sky814=
-52-backlight.h: No such file or directory
- #include <linux/platform_data/sky81452-backlight.h>
-                                                    ^
-
-Caused by commit f4eaf386bcf1 ("mfd: Add support for Skyworks SKY81452
-driver").
-
-I have used the mfd tree from next-20141110 for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/cPbEhK5Dc897LMP0HIPFVlH
+diff --cc drivers/base/Makefile
+index 53c3fe1aeb29,e81a55ca513c..000000000000
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@@ -4,7 -4,7 +4,7 @@@ obj-y			:=3D component.o core.o bus.o dd.
+  			   driver.o class.o platform.o \
+  			   cpu.o firmware.o init.o map.o devres.o \
+  			   attribute_container.o transport_class.o \
+- 			   topology.o container.o property.o
+ -			   topology.o container.o cacheinfo.o
+++			   topology.o container.o property.o cacheinfo.o
+  obj-$(CONFIG_DEVTMPFS)	+=3D devtmpfs.o
+  obj-$(CONFIG_DMA_CMA) +=3D dma-contiguous.o
+  obj-y			+=3D power/
+
+--Sig_/YqgJzm.eEOG+gkScCnQvb2U
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYXU1AAoJEMDTa8Ir7ZwVK0YP/iv82y1O4hGze4hwCO/zmpzH
-NyVUJDgZKQyZ2SM6xeEixNeHfAi6nlUSvbQGz5YowCkTVJ/HKjQnFDXTo4+4hNCY
-FBAbHT++2v9Qr0DSm8cmN9xpNnB1dZ/9iim3oEweYDn5Dw/nceM51QGjLD1VMX1Z
-Rku18zXE0LDy9RduhIWbS0jmget1NDtqV8YC+6alvJtdt93wpqvkyYuFf4IWE6MH
-PbjPZu4/zLu/Tc2kgSJj23AitC3BSdHXRjnNS9j2i5dLFzhIqUqR7gP+iQwURD8Q
-NifjtcjcqaFsGWADZMMdL9G8QC9zC417syWoYReRSukrRDKL2SDGX9tms/TNCVkt
-ycJBPsUDJXhiYUbz1+BRkEKRFPJxxaE9dBCkoyou/QuOw8jOtBy9opKvtdgVEv7A
-OgNOv+x/PrfbAdv2BWQZ3EBcsdEUKsEt6MTX7o3ijvqT2V4dcYyURO9n6Gr0wf8O
-vomrSm+t663O/2OXXLBMavp1eqyyOHNhp2Ak1yJwfNhlJg9AvRyyfX80vsp1vuzB
-hyrSUTsG58g15Bs715Wf0d/k5nX73VP+ARbkQl0rXkKV8UAxMt24zxJ9HUOhdaLZ
-NDX0Q4Tos1waJIfXo8+7JpuXbbxfuctsd5DWLWcLH5aiu3zmB9quHriZ/z4OI/Hj
-b/8q5uMMxaQaz6F+uftX
-=sset
+iQIcBAEBCAAGBQJUYZOSAAoJEMDTa8Ir7ZwVRT0P/A3xDBTY6xLaYSuLN600Fh6I
+QKr+a6zEPfthx6PlEARKLj3kih4EBgDY8W0PlObxuYf5WDNxwMTKlT9VLFewkr/M
+CrNgInS1F0LvJ+Znx3HoM1D+JFyjYIF8FwNr+200AxDVh0GOFHZJ2CTdzgTBTm6q
+NUgOgxwNWCzsRnnVInzC9sBlnYGd8h6Lz6/uCnmoZPAcIhux3g1xHoe0etu3nzos
+LTqXh7DKmTEWf61vbABRq8+dSNMvQolQzBtxIyd+0FsWfHEG80i9HHnNGjdA58j4
+Zxh+t4PVl/XjolOWzFPqHylKuXjsHBV6mCo414X3rJm+aGGSuca+5I1b+L1LBeGC
+XPkKhtd2OWjJUMLlQCj1pbnxWWr4Y94/gQz46Lq4PDGyEbesfklVcoGzGuHru6nN
+OWtoPHbbVLMVIG1Wx0w8+zf+rr+DHiC9tr9n/f5v4pNlO/NpANURESls2Q1d69JY
+//99IQyuG2wJ+qv+bnlbms6eaUtK9GTk76uDN0q+JrLGkVWwY+Ob9tPhyCyZPEWb
+2Pd8Me+hAVxLsV5nGNegRCJGz4EnaSOPYAafU8lyxDcplJ6BcSrsosZJwzKq4erY
+e/UGQQ6/jUXqflZ9qyPbpR3mmYldWJKGzwMCxosnHLbxV2BH/2NsKzc5mBi/v6Qv
+2SnspUlIfoGVJg+rNzdr
+=usz4
 -----END PGP SIGNATURE-----
 
---Sig_/cPbEhK5Dc897LMP0HIPFVlH--
+--Sig_/YqgJzm.eEOG+gkScCnQvb2U--
