@@ -1,137 +1,88 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Nov 10
-Date: Mon, 10 Nov 2014 14:17:48 -0800
-Message-ID: <20141110221748.GA25100@roeck-us.net>
-References: <20141110205945.51af32a6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Tue, 11 Nov 2014 13:12:16 +1100
+Message-ID: <20141111131216.3742d156@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:35489 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751193AbaKJWR6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2014 17:17:58 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1XnxHa-000SRm-7o
-	for linux-next@vger.kernel.org; Mon, 10 Nov 2014 22:17:58 +0000
-Content-Disposition: inline
-In-Reply-To: <20141110205945.51af32a6@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/L.YyEyKKm3UkHSwFgiv2tvb"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabian Frederick <fabf@skynet.be>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Nov 10, 2014 at 08:59:45PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20141106:
-> 
-> New tree: nios2
-> 
-> The slave-dma tree gained a build failure so I used the version from
-> next-20141106.
-> 
-> The mmc-uh tree gained a conflict against the arm-soc tree.
-> 
-> The tiny tree gained conflicts against Linus' and the net-next trees.
-> 
-> The driver-core tree gained conflicts against the pm, mfd, l2-mtd,
-> sound-asoc and wireless-next trees.
-> 
-> The tty tree gained conflicts against the tip and tty.current trees.
-> 
-> The usb-gadget tree gained a conflict against the driver-core tree.
-> 
-> The char-misc tree gained a conflict agsinst the staging tree.
-> 
-> The scsi tree gained a build failure so I used teh version from
-> next-20141106.
-> 
-> The pinctrl tree gained conflicts against the arm-soc and driver-core
-> trees.
-> 
-> The tiny tree gained a build failure for which I reverted a commit.
-> 
-> The akpm-current tree gained conflicts against the driver-core and tiny
-> trees and still had its build failures for which I applied two patches.
-> 
-> Non-merge commits (relative to Linus' tree): 5350
->  5611 files changed, 164785 insertions(+), 151258 deletions(-)
-> 
-Build results:
-	total: 133 pass: 129 fail: 4
-Failed builds:
-	arm:davinci_all_defconfig
-	arm:orion5x_defconfig
-	hexagon:defconfig
-	sparc64:allmodconfig
+--Sig_/L.YyEyKKm3UkHSwFgiv2tvb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Qemu tests:
-	total: 30 pass: 29 fail: 1
-Failed tests:
-	x86:x86_pc_nosmp_defconfig
+Hi Jens,
 
----
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-hexagon:defconfig:
+drivers/built-in.o: In function `cdrom_sysctl_handler':
+cdrom_sysctl.c:(.text+0x156d92): undefined reference to `cdrom_mutex'
+cdrom_sysctl.c:(.text+0x156da0): undefined reference to `cdrom_autoclose'
+cdrom_sysctl.c:(.text+0x156dae): undefined reference to `cdrom_autoeject'
+cdrom_sysctl.c:(.text+0x156dbc): undefined reference to `cdrom_debug'
+cdrom_sysctl.c:(.text+0x156dca): undefined reference to `cdrom_lockdoor'
+cdrom_sysctl.c:(.text+0x156dd8): undefined reference to `cdrom_check_media_=
+type'
+cdrom_sysctl.c:(.text+0x156e0b): undefined reference to `cdrom_list'
+cdrom_sysctl.c:(.text+0x156e37): undefined reference to `cdrom_autoclose'
+cdrom_sysctl.c:(.text+0x156e57): undefined reference to `cdrom_autoeject'
+cdrom_sysctl.c:(.text+0x156e77): undefined reference to `cdrom_check_media_=
+type'
+cdrom_sysctl.c:(.text+0x156ea4): undefined reference to `cdrom_lockdoor'
+cdrom_sysctl.c:(.text+0x156eb5): undefined reference to `cdrom_list'
+cdrom_sysctl.c:(.text+0x15702e): undefined reference to `cdrom_mutex'
+drivers/built-in.o: In function `cdrom_print_info.constprop.0':
+cdrom_sysctl.c:(.text+0x1570f3): undefined reference to `cdrom_list'
+cdrom_sysctl.c:(.text+0x157189): undefined reference to `cdrom_list'
+drivers/built-in.o: In function `cdrom_sysctl_info':
+cdrom_sysctl.c:(.text+0x1572c3): undefined reference to `cdrom_mutex'
+cdrom_sysctl.c:(.text+0x1576dc): undefined reference to `cdrom_mutex'
+drivers/built-in.o: In function `cdrom_sysctl_register':
+(.text+0x157765): undefined reference to `cdrom_autoclose'
+drivers/built-in.o: In function `cdrom_sysctl_register':
+(.text+0x157781): undefined reference to `cdrom_autoeject'
+drivers/built-in.o: In function `cdrom_sysctl_register':
+(.text+0x15778e): undefined reference to `cdrom_debug'
+drivers/built-in.o: In function `cdrom_sysctl_register':
+(.text+0x15779b): undefined reference to `cdrom_lockdoor'
+drivers/built-in.o: In function `cdrom_sysctl_register':
+(.text+0x1577a8): undefined reference to `cdrom_check_media_type'
 
-In file included from ./arch/hexagon/include/asm/io.h:33:0,
-                 from include/linux/io.h:22,
-                 from include/linux/irq.h:23,
-                 from include/asm-generic/hardirq.h:12,
-                 from arch/hexagon/include/generated/asm/hardirq.h:1,
-                 from include/linux/hardirq.h:8,
-                 from include/linux/memcontrol.h:24,
-                 from include/linux/swap.h:8,
-                 from ./arch/hexagon/include/asm/pgtable.h:27,
-                 from include/linux/mm.h:52,
-                 from arch/hexagon/kernel/asm-offsets.c:28:
-./arch/hexagon/include/asm/cacheflush.h: In function 'copy_to_user_page':
-./arch/hexagon/include/asm/cacheflush.h:89:22: error: 'VM_EXEC' undeclared (first use in this function)
-./arch/hexagon/include/asm/cacheflush.h:89:22: note: each undeclared identifier is reported only once for each function it appears in
-make[1]: *** [arch/hexagon/kernel/asm-offsets.s] Error 1
-make: *** [prepare0] Error 2
+Probably caused by commit d01681d1457c ("cdrom: export sysctl code").
+This build has CONFIG_SYSCTL=3Dy, CONFIG_BLK_DEV_IDECD=3Dm,
+CONFIG_BLK_DEV_SR=3Dm, CONFIG_PARIDE_PCD=3Dm, CONFIG_CDROM_PKTCDVD=3Dm,
+CONFIG_GDROM=3Dn.
 
----
-sparc64:allmodconfig:
+I have used the block tree from next-20141110 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-In file included from ./arch/sparc/include/asm/pgtable.h:4:0,
-                 from include/linux/mm.h:52,
-                 from include/linux/pid_namespace.h:6,
-                 from include/linux/ptrace.h:8,
-                 from include/linux/ftrace.h:13,
-                 from include/linux/init_task.h:8,
-                 from init/init_task.c:1:
-./arch/sparc/include/asm/pgtable_64.h: In function 'pmd_dirty':
-./arch/sparc/include/asm/pgtable_64.h:674:2: error: incompatible types when returning type 'long unsigned int' but 'pmd_t' was expected
+--Sig_/L.YyEyKKm3UkHSwFgiv2tvb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
----
-arm:davinci_all_defconfig:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-drivers/tty/vt/vt.c: In function 'tioclinux':
-drivers/tty/vt/vt.c:2703:4: error: implicit declaration of function
-'vt_get_kmsg_redirect' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[3]: *** [drivers/tty/vt/vt.o] Error 1
+iQIcBAEBCAAGBQJUYXCEAAoJEMDTa8Ir7ZwVtUQQAJNYcMamEpXrKpk5VaDkx/3j
+aZp0Uv/6xHdMgEDjj28pX9ArK6NsTppv/AfbLTh9CgpZjTRWWMmkUc4bJOi/fwjk
+MWU9HGTUcrSreNeUo/JIvAV5oY6Po/dyvQzIVFxRGlTSCVMLEXDojhdRvwP9SEkj
+IN5eOKGwAv7IEnfLgTf96HXZ95IYX1kxXXUlwdN1ibS0jOWnajjxMlJf/kysq6wN
+6cmMhle8jj7Fxh3ittWTH34rhcodjV7oRCjwMzQxoIIUcYI6Apd7n14EWR5Dc5ZZ
+vt5fZgj+oinNduyFxXZbq7jP+Lw794ttNXfryQtZpkvrwjox7WlXKY9SRInz9Xjy
+PrHZCoq6/S9XZfSvoLlbkgdwCw3onApmi/RUoIKFBGasNGP4RXfF/CxTZCSVHOCr
+UWM9cTkc6kY00tyGBGt47Nd4Wk2bUZ8TXQvVr1sZTB2cYyKod5wsaQZr7zwd65NT
+ROGFA1Lj+V+yjvkiGIUM5Lu6E624wy33qFCcyU+DykUuBCxLQDxVhV+EXiqfLgMk
+nL0AtgsEc6oOXlAMsqII9SImqw2vqPbRKPQnIGqx3HQXfFU0qXt/+IuNzLVc8oL3
+3SbMrGFB9G4LR5gr7Evxc/UDN4enL9rSgjT5RfR/4MsyAyMmUJgNolEGb6fI3coA
+zDUEznC/uj6IVQRw0sMY
+=XwRd
+-----END PGP SIGNATURE-----
 
----
-arm:orion5x_defconfig:
-
-arch/arm/plat-orion/gpio.c: In function 'orion_gpio_unmask_irq':
-arch/arm/plat-orion/gpio.c:509:2: error: too few arguments to function
-'irq_reg_readl'
-
-and many similar follow-up errors.
-
----
-x86:qemu_x86_pc_nosmp_defconfig:
-
-Stalls until killed. There are several messages such as
-	Driver 'serial' needs an owner
-in the log.
-
----
-
-Details at http://server.roeck-us.net:8010/builders.
-
-Guenter
+--Sig_/L.YyEyKKm3UkHSwFgiv2tvb--
