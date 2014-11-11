@@ -1,88 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Tue, 11 Nov 2014 13:12:16 +1100
-Message-ID: <20141111131216.3742d156@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Tue, 11 Nov 2014 13:32:15 +1100
+Message-ID: <20141111133215.66f578ec@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/L.YyEyKKm3UkHSwFgiv2tvb"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabian Frederick <fabf@skynet.be>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/cPbEhK5Dc897LMP0HIPFVlH"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52796 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751178AbaKKCcZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2014 21:32:25 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gyungoh Yoo <jack.yoo@skyworksinc.com>
 
---Sig_/L.YyEyKKm3UkHSwFgiv2tvb
+--Sig_/cPbEhK5Dc897LMP0HIPFVlH
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Lee,
 
-After merging the block tree, today's linux-next build (x86_64
+After merging the mfd tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/built-in.o: In function `cdrom_sysctl_handler':
-cdrom_sysctl.c:(.text+0x156d92): undefined reference to `cdrom_mutex'
-cdrom_sysctl.c:(.text+0x156da0): undefined reference to `cdrom_autoclose'
-cdrom_sysctl.c:(.text+0x156dae): undefined reference to `cdrom_autoeject'
-cdrom_sysctl.c:(.text+0x156dbc): undefined reference to `cdrom_debug'
-cdrom_sysctl.c:(.text+0x156dca): undefined reference to `cdrom_lockdoor'
-cdrom_sysctl.c:(.text+0x156dd8): undefined reference to `cdrom_check_media_=
-type'
-cdrom_sysctl.c:(.text+0x156e0b): undefined reference to `cdrom_list'
-cdrom_sysctl.c:(.text+0x156e37): undefined reference to `cdrom_autoclose'
-cdrom_sysctl.c:(.text+0x156e57): undefined reference to `cdrom_autoeject'
-cdrom_sysctl.c:(.text+0x156e77): undefined reference to `cdrom_check_media_=
-type'
-cdrom_sysctl.c:(.text+0x156ea4): undefined reference to `cdrom_lockdoor'
-cdrom_sysctl.c:(.text+0x156eb5): undefined reference to `cdrom_list'
-cdrom_sysctl.c:(.text+0x15702e): undefined reference to `cdrom_mutex'
-drivers/built-in.o: In function `cdrom_print_info.constprop.0':
-cdrom_sysctl.c:(.text+0x1570f3): undefined reference to `cdrom_list'
-cdrom_sysctl.c:(.text+0x157189): undefined reference to `cdrom_list'
-drivers/built-in.o: In function `cdrom_sysctl_info':
-cdrom_sysctl.c:(.text+0x1572c3): undefined reference to `cdrom_mutex'
-cdrom_sysctl.c:(.text+0x1576dc): undefined reference to `cdrom_mutex'
-drivers/built-in.o: In function `cdrom_sysctl_register':
-(.text+0x157765): undefined reference to `cdrom_autoclose'
-drivers/built-in.o: In function `cdrom_sysctl_register':
-(.text+0x157781): undefined reference to `cdrom_autoeject'
-drivers/built-in.o: In function `cdrom_sysctl_register':
-(.text+0x15778e): undefined reference to `cdrom_debug'
-drivers/built-in.o: In function `cdrom_sysctl_register':
-(.text+0x15779b): undefined reference to `cdrom_lockdoor'
-drivers/built-in.o: In function `cdrom_sysctl_register':
-(.text+0x1577a8): undefined reference to `cdrom_check_media_type'
+In file included from drivers/mfd/sky81452.c:29:0:
+include/linux/mfd/sky81452.h:24:52: fatal error: linux/platform_data/sky814=
+52-backlight.h: No such file or directory
+ #include <linux/platform_data/sky81452-backlight.h>
+                                                    ^
 
-Probably caused by commit d01681d1457c ("cdrom: export sysctl code").
-This build has CONFIG_SYSCTL=3Dy, CONFIG_BLK_DEV_IDECD=3Dm,
-CONFIG_BLK_DEV_SR=3Dm, CONFIG_PARIDE_PCD=3Dm, CONFIG_CDROM_PKTCDVD=3Dm,
-CONFIG_GDROM=3Dn.
+Caused by commit f4eaf386bcf1 ("mfd: Add support for Skyworks SKY81452
+driver").
 
-I have used the block tree from next-20141110 for today.
+I have used the mfd tree from next-20141110 for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/L.YyEyKKm3UkHSwFgiv2tvb
+--Sig_/cPbEhK5Dc897LMP0HIPFVlH
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYXCEAAoJEMDTa8Ir7ZwVtUQQAJNYcMamEpXrKpk5VaDkx/3j
-aZp0Uv/6xHdMgEDjj28pX9ArK6NsTppv/AfbLTh9CgpZjTRWWMmkUc4bJOi/fwjk
-MWU9HGTUcrSreNeUo/JIvAV5oY6Po/dyvQzIVFxRGlTSCVMLEXDojhdRvwP9SEkj
-IN5eOKGwAv7IEnfLgTf96HXZ95IYX1kxXXUlwdN1ibS0jOWnajjxMlJf/kysq6wN
-6cmMhle8jj7Fxh3ittWTH34rhcodjV7oRCjwMzQxoIIUcYI6Apd7n14EWR5Dc5ZZ
-vt5fZgj+oinNduyFxXZbq7jP+Lw794ttNXfryQtZpkvrwjox7WlXKY9SRInz9Xjy
-PrHZCoq6/S9XZfSvoLlbkgdwCw3onApmi/RUoIKFBGasNGP4RXfF/CxTZCSVHOCr
-UWM9cTkc6kY00tyGBGt47Nd4Wk2bUZ8TXQvVr1sZTB2cYyKod5wsaQZr7zwd65NT
-ROGFA1Lj+V+yjvkiGIUM5Lu6E624wy33qFCcyU+DykUuBCxLQDxVhV+EXiqfLgMk
-nL0AtgsEc6oOXlAMsqII9SImqw2vqPbRKPQnIGqx3HQXfFU0qXt/+IuNzLVc8oL3
-3SbMrGFB9G4LR5gr7Evxc/UDN4enL9rSgjT5RfR/4MsyAyMmUJgNolEGb6fI3coA
-zDUEznC/uj6IVQRw0sMY
-=XwRd
+iQIcBAEBCAAGBQJUYXU1AAoJEMDTa8Ir7ZwVK0YP/iv82y1O4hGze4hwCO/zmpzH
+NyVUJDgZKQyZ2SM6xeEixNeHfAi6nlUSvbQGz5YowCkTVJ/HKjQnFDXTo4+4hNCY
+FBAbHT++2v9Qr0DSm8cmN9xpNnB1dZ/9iim3oEweYDn5Dw/nceM51QGjLD1VMX1Z
+Rku18zXE0LDy9RduhIWbS0jmget1NDtqV8YC+6alvJtdt93wpqvkyYuFf4IWE6MH
+PbjPZu4/zLu/Tc2kgSJj23AitC3BSdHXRjnNS9j2i5dLFzhIqUqR7gP+iQwURD8Q
+NifjtcjcqaFsGWADZMMdL9G8QC9zC417syWoYReRSukrRDKL2SDGX9tms/TNCVkt
+ycJBPsUDJXhiYUbz1+BRkEKRFPJxxaE9dBCkoyou/QuOw8jOtBy9opKvtdgVEv7A
+OgNOv+x/PrfbAdv2BWQZ3EBcsdEUKsEt6MTX7o3ijvqT2V4dcYyURO9n6Gr0wf8O
+vomrSm+t663O/2OXXLBMavp1eqyyOHNhp2Ak1yJwfNhlJg9AvRyyfX80vsp1vuzB
+hyrSUTsG58g15Bs715Wf0d/k5nX73VP+ARbkQl0rXkKV8UAxMt24zxJ9HUOhdaLZ
+NDX0Q4Tos1waJIfXo8+7JpuXbbxfuctsd5DWLWcLH5aiu3zmB9quHriZ/z4OI/Hj
+b/8q5uMMxaQaz6F+uftX
+=sset
 -----END PGP SIGNATURE-----
 
---Sig_/L.YyEyKKm3UkHSwFgiv2tvb--
+--Sig_/cPbEhK5Dc897LMP0HIPFVlH--
