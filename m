@@ -1,103 +1,55 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Tue, 11 Nov 2014 08:27:41 -0700
-Message-ID: <54622AED.9060205@kernel.dk>
-References: <20141111131216.3742d156@canb.auug.org.au> <318149421.176770.1415704819915.open-xchange@webmail.nmp.skynet.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <318149421.176770.1415704819915.open-xchange@webmail.nmp.skynet.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fabian Frederick <fabf@skynet.be>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: [PATCH -next] vt: Fix build breakage when !CONFIG_VT_CONSOLE
+Date: Tue, 11 Nov 2014 11:20:56 -0500
+Message-ID: <1415722856-5651-1-git-send-email-peter@hurleysoftware.com>
+References: <20141110180929.GA13084@kroah.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qg0-f41.google.com ([209.85.192.41]:49426 "EHLO
+	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751086AbaKKQVN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Nov 2014 11:21:13 -0500
+Received: by mail-qg0-f41.google.com with SMTP id q107so7482690qgd.0
+        for <linux-next@vger.kernel.org>; Tue, 11 Nov 2014 08:21:13 -0800 (PST)
+In-Reply-To: <20141110180929.GA13084@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jim Davis <jim.epost@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Hurley <peter@hurleysoftware.com>
 
-On 2014-11-11 04:20, Fabian Frederick wrote:
->
->
->> On 11 November 2014 at 03:12 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->>
->> Hi Jens,
->>
->> After merging the block tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/built-in.o: In function `cdrom_sysctl_handler':
->> cdrom_sysctl.c:(.text+0x156d92): undefined reference to `cdrom_mutex'
->> cdrom_sysctl.c:(.text+0x156da0): undefined reference to `cdrom_autoclose'
->> cdrom_sysctl.c:(.text+0x156dae): undefined reference to `cdrom_autoeject'
->> cdrom_sysctl.c:(.text+0x156dbc): undefined reference to `cdrom_debug'
->> cdrom_sysctl.c:(.text+0x156dca): undefined reference to `cdrom_lockdoor'
->> cdrom_sysctl.c:(.text+0x156dd8): undefined reference to
->> `cdrom_check_media_type'
->> cdrom_sysctl.c:(.text+0x156e0b): undefined reference to `cdrom_list'
->> cdrom_sysctl.c:(.text+0x156e37): undefined reference to `cdrom_autoclose'
->> cdrom_sysctl.c:(.text+0x156e57): undefined reference to `cdrom_autoeject'
->> cdrom_sysctl.c:(.text+0x156e77): undefined reference to
->> `cdrom_check_media_type'
->> cdrom_sysctl.c:(.text+0x156ea4): undefined reference to `cdrom_lockdoor'
->> cdrom_sysctl.c:(.text+0x156eb5): undefined reference to `cdrom_list'
->> cdrom_sysctl.c:(.text+0x15702e): undefined reference to `cdrom_mutex'
->> drivers/built-in.o: In function `cdrom_print_info.constprop.0':
->> cdrom_sysctl.c:(.text+0x1570f3): undefined reference to `cdrom_list'
->> cdrom_sysctl.c:(.text+0x157189): undefined reference to `cdrom_list'
->> drivers/built-in.o: In function `cdrom_sysctl_info':
->> cdrom_sysctl.c:(.text+0x1572c3): undefined reference to `cdrom_mutex'
->> cdrom_sysctl.c:(.text+0x1576dc): undefined reference to `cdrom_mutex'
->> drivers/built-in.o: In function `cdrom_sysctl_register':
->> (.text+0x157765): undefined reference to `cdrom_autoclose'
->> drivers/built-in.o: In function `cdrom_sysctl_register':
->> (.text+0x157781): undefined reference to `cdrom_autoeject'
->> drivers/built-in.o: In function `cdrom_sysctl_register':
->> (.text+0x15778e): undefined reference to `cdrom_debug'
->> drivers/built-in.o: In function `cdrom_sysctl_register':
->> (.text+0x15779b): undefined reference to `cdrom_lockdoor'
->> drivers/built-in.o: In function `cdrom_sysctl_register':
->> (.text+0x1577a8): undefined reference to `cdrom_check_media_type'
->>
->> Probably caused by commit d01681d1457c ("cdrom: export sysctl code").
->> This build has CONFIG_SYSCTL=y, CONFIG_BLK_DEV_IDECD=m,
->> CONFIG_BLK_DEV_SR=m, CONFIG_PARIDE_PCD=m, CONFIG_CDROM_PKTCDVD=m,
->> CONFIG_GDROM=n.
->>
->> I have used the block tree from next-20141110 for today.
->> --
->> Cheers,
->> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> Hi Stephen,
->
-> Problem is in Makefile:
->
-> obj-$(CONFIG_BLK_DEV_SR) += cdrom.o
-> obj-$(CONFIG_PARIDE_PCD) += cdrom.o
-> obj-$(CONFIG_CDROM_PKTCDVD) += cdrom.o
-> +obj-$(CONFIG_SYSCTL) += cdrom_sysctl.o
->
-> I tried cdrom-$(CONFIG_SYSCTL)  += cdrom_sysctl.o
-> to add sysctl only when cdrom.o is created
->
-> but now
->
-> drivers/scsi/sr_mod.ko
-> drivers/ide/ide-cd_mod.ko
-> drivers/ide/ide-cd_mod.ko
->
-> can't find cdrom.c functions ...
->
-> Is there another way to do it ?
+Commit 68952076e9226cc23ebce66d3fc2fdb8b6c04c30 ("vt: Remove
+vt_get_kmsg_redirect() from uapi header") fails to compile if
+!CONFIG_VT_CONSOLE.
 
-The problem is, now you can have cdrom/sr modular, but cdrom_sysctl.o is 
-linked in. That's just not going to work. Instead of jumping through 
-hoops to make this work, leave the section in cdrom.c and hid it behind a
+Move macro definition for vt_get_kmsg_redirect() up with file-scope
+function declarations.
 
-#if defined(CONFIG_SYSCTL)
-...
-#endif
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
+---
+ drivers/tty/vt/vt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-at the bottom or something.
-
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 3dc5d56..ad27ade 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -156,6 +156,8 @@ static void console_callback(struct work_struct *ignored);
+ static void blank_screen_t(unsigned long dummy);
+ static void set_palette(struct vc_data *vc);
+ 
++#define vt_get_kmsg_redirect() vt_kmsg_redirect(-1)
++
+ static int printable;		/* Is console ready for printing? */
+ int default_utf8 = true;
+ module_param(default_utf8, int, S_IRUGO | S_IWUSR);
+@@ -2509,8 +2511,6 @@ int vt_kmsg_redirect(int new)
+ 		return kmsg_con;
+ }
+ 
+-#define vt_get_kmsg_redirect() vt_kmsg_redirect(-1)
+-
+ /*
+  *	Console on virtual terminal
+  *
 -- 
-Jens Axboe
+2.1.3
