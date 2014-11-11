@@ -1,75 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the ext3
- tree
-Date: Tue, 11 Nov 2014 17:55:53 +1100
-Message-ID: <20141111175553.795e7828@canb.auug.org.au>
+Subject: linux-next: build warning in Linus' tree
+Date: Tue, 11 Nov 2014 18:11:49 +1100
+Message-ID: <20141111181149.6bfd76ba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.4j4j_eXFv83MlwQv=4mALd"; protocol="application/pgp-signature"
+ boundary="Sig_/.9afIdk5GQ6RSiOzmwAkfy9"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42072 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49731 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751334AbaKKG4B (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Nov 2014 01:56:01 -0500
+	id S1751448AbaKKHL4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Nov 2014 02:11:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joseph Qi <joseph.qi@huawei.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/.4j4j_eXFv83MlwQv=4mALd
+--Sig_/.9afIdk5GQ6RSiOzmwAkfy9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Al,
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-fs/ocfs2/inode.h between commit 1c92ec678f32 ("ocfs2: Convert to
-private i_dquot field") from the ext3 tree and commit eeb85794b87e
-("ocfs2: fix leftover orphan entry caused by append O_DIRECT write
-crash") from the akpm-current tree.
+With Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
+produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+fs/isofs/inode.c:177:1: warning: 'isofs_hash_common' defined but not used [=
+-Wunused-function]
+ isofs_hash_common(struct qstr *qstr, int ms)
+ ^
+
+Since commit b0afd8e5db7b ("isofs: don't bother with ->d_op for normal
+case") (which turned up in Linus' tree between v3.18-rc2 and -rc3,
+isofs_hash_common() is not used unless CONFIG_JOLIET is set.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/ocfs2/inode.h
-index ca3431ee7f24,1fdf4707e6d3..000000000000
---- a/fs/ocfs2/inode.h
-+++ b/fs/ocfs2/inode.h
-@@@ -81,7 -81,7 +81,9 @@@ struct ocfs2_inode_inf
-  	tid_t i_sync_tid;
-  	tid_t i_datasync_tid;
- =20
- +	struct dquot *i_dquot[MAXQUOTAS];
-++
-+ 	wait_queue_head_t append_dio_wq;
-  };
- =20
-  /*
-
---Sig_/.4j4j_eXFv83MlwQv=4mALd
+--Sig_/.9afIdk5GQ6RSiOzmwAkfy9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYbL/AAoJEMDTa8Ir7ZwVGyIP/ieyLJ45HXp4fe7He3/PtMR6
-N04GAsjvRMn9hl2LrArFcSps6ZG1THRegZ/MTmJvAUnzuZSNxOuojA2FCKqe+pGz
-LNcDiCYzVlapzIg0dSjTCQ7QeVLlPnz1mhY9Sba+JedFa7+gMDyv5bdnik8VmhUn
-LHDbd1EKRbOI9eWxy1+G2e3B1DbfP/WA6YxpaN52FOPe4A4K5j6jFLbLTSwwxVUW
-asstvFhsKxygbyWVIngVvXvEI+3PVfTrC5/8bDwTcmXD4Q0/6ujbupdkHf+mofaS
-XrHpsgBqWWKW6kwI5ENOMdtiGlyktBk+1X/oAIxGqgivEU4vxN5Duz7TzbnpE4Uk
-iLZ/nvDIssbIvxYvP+Ttf+rriZGPcgziYH/Uc1UAj2dkLcNQ0MY/qqYrh/K+YbMo
-ZWoNBQcLLL6b27aay+vAWiFI3FF21U/ndOgjvyVILWA22AysZ2fy8SvetnnPymoj
-FtQ228uHCX/8d/3fYzz/G4k34l5F50tCb7jSuNmSoU/fgdeuiuBI2q2t7zh2necr
-IvmXRK6BfxIT7yo3WHtdo+jFTJcrWtsCXELCj3jvgHOJQU+rXCmUUmN6JNbGgJTS
-Tg1KICBRnEIuL1x4pPpBfGo5rqtqB/1WjhvYh7YoUjqI3pfK4ICfrrPCMptEGZDB
-50ebQJaF+sNeEHFD+H4a
-=Mtcy
+iQIcBAEBCAAGBQJUYba5AAoJEMDTa8Ir7ZwVC/MP/2qsiEpghzM7DPwM2oIyWYYK
++56a2ZV9+jIT4WtDlZlNYvAz39qr0lyTQfGNuQwFYGc517eb+VN9uILSPPP3bQoh
+aX26rQufBiB8Q7k/xc6LfLEkn4TvunQ9d0C9QBhT6WJnT69/lUW3zAXYbBALWvGu
+mrZXyPQ6dM8M3X5mjjg7Zib0Lz+1HZ0XwKMJrv5N1BsZDz8K+QtnHXemzx2Kw/6F
+vwbA3G2bK86CFbA2jEPwC2B4RrTfNKYEqbhmmkkqrvYkNWmWIMERZztV8LcaheWe
+42o41YQJD7z/demfY9dbhPrc2E06JW2wCvTy+F96oT1pgRCzENx+pUG3K3GMgkZK
+rV6ZTOzHkQYK5HWNrnPCgswcGOGQmBVyw4zv/SEka6k4lDvg31Az9V+Sryu8sdTI
+P4J+whDeAmv2HsHacPRGuW5wyuVh1sv1Kf7n6F8GWrXtTLrdA5J9HBxbQ/G+5eAD
+IK0hOMik/JXf9xaE+ZQUyyUU+kd4RC44/fh7Bl4PdwaK11SMroGwoa+WArKZY9Fn
+hDDrwDXb4RJsE+T5vVWcUqvNn7C/0a91v2E1WDvbmeKZHJzFcWkEycXOX5SB+Hm1
+LrdlylU4jlEwUpc+JOOWfV+FRFAPIh5SfhhmPHwU4qJxHHVwXTF34JMJ3x/cj6H3
+rsWLc+sy5y0nbuq71DcY
+=WgHe
 -----END PGP SIGNATURE-----
 
---Sig_/.4j4j_eXFv83MlwQv=4mALd--
+--Sig_/.9afIdk5GQ6RSiOzmwAkfy9--
