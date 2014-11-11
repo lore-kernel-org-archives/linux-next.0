@@ -1,68 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the tiny tree
-Date: Tue, 11 Nov 2014 17:43:04 +1100
-Message-ID: <20141111174304.69b9ed45@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the ext3
+ tree
+Date: Tue, 11 Nov 2014 17:55:53 +1100
+Message-ID: <20141111175553.795e7828@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Em6oQDHW=RxLHcc2/ISiHsA"; protocol="application/pgp-signature"
+ boundary="Sig_/.4j4j_eXFv83MlwQv=4mALd"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39044 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42072 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751705AbaKKGnM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Nov 2014 01:43:12 -0500
+	id S1751334AbaKKG4B (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Nov 2014 01:56:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalina Mocanu <catalina.mocanu@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joseph Qi <joseph.qi@huawei.com>
 
---Sig_/Em6oQDHW=RxLHcc2/ISiHsA
+--Sig_/.4j4j_eXFv83MlwQv=4mALd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Josh,
+Hi Andrew,
 
-After merging the tiny tree, today's linux-next build (powerpc64
-allnoconfig) produced these warnings:
+Today's linux-next merge of the akpm-current tree got a conflict in
+fs/ocfs2/inode.h between commit 1c92ec678f32 ("ocfs2: Convert to
+private i_dquot field") from the ext3 tree and commit eeb85794b87e
+("ocfs2: fix leftover orphan entry caused by append O_DIRECT write
+crash") from the akpm-current tree.
 
-kernel/compat.c:33:12: warning: 'compat_get_timex' defined but not used [-W=
-unused-function]
- static int compat_get_timex(struct timex *txc, struct compat_timex __user =
-*utp)
-            ^
-kernel/compat.c:63:12: warning: 'compat_put_timex' defined but not used [-W=
-unused-function]
- static int compat_put_timex(struct compat_timex __user *utp, struct timex =
-*txc)
-            ^
-
-Introduced by commit 7beb114f18e0 ("kernel: time: Compile out NTP
-support").  Neither of these functions is needed if CONFIG_NTP is not
-set.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Em6oQDHW=RxLHcc2/ISiHsA
+diff --cc fs/ocfs2/inode.h
+index ca3431ee7f24,1fdf4707e6d3..000000000000
+--- a/fs/ocfs2/inode.h
++++ b/fs/ocfs2/inode.h
+@@@ -81,7 -81,7 +81,9 @@@ struct ocfs2_inode_inf
+  	tid_t i_sync_tid;
+  	tid_t i_datasync_tid;
+ =20
+ +	struct dquot *i_dquot[MAXQUOTAS];
+++
++ 	wait_queue_head_t append_dio_wq;
+  };
+ =20
+  /*
+
+--Sig_/.4j4j_eXFv83MlwQv=4mALd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYa/9AAoJEMDTa8Ir7ZwVMQ8P/2oAK7b/lUOuHXwH8wFY4Bi9
-WxTVsjf39FlGUJMuWc5Yp6PdyqRinzU2QbJ73Mz46LUAuIbgt5RaDbA3czOEOjl1
-iREV+4c6wDcEWkeLaxD/8RcnMyiW2PgJzyYCZjYCgKP4K+Ok3bSlci9On3OBba37
-SySkJ0mIDFBPbhdFtYan3jzcnecbhOo0dsO8Gt8TWDnG19OjHI3fU1q8/Q3imxeW
-Ghbj79x89Rzhah2E9jED8p5hH3YdwQF31VIzWXdpNwnM6PDUGTAHRmazM28eRmSh
-R3fI+aWc5ocl2iPHwIBJH/iKmndRXKSvPaSBMsM+zdt0jAfV2cdUNRTybRWnWBQu
-trtK1VyHxPy7AD9v4NIZlfD03lmWV+ffoIDx9oxK8M+pPA4wCnuaOha5W/ZeGYHH
-qNwM26eqK/n04zdyN6cD6+ELb2yg5hccyIrD6owXPR1VXwZnhQtt+sexVJ4nOq+r
-Ta07l/b2QwahQ62Sm6Urg9xwejT5VQ2UHFhULlKF6NzO7wGtPOPzA175FwkN8b4G
-6q88ikQNiSbCHqSzHjepIMa3+cAxjEPzUyS2DwAq/HQo29UqUtMnAEsP3hGEdhTZ
-WTQMw7IAxjXqDnEOGpFFOAdnOvTYTAH7+T8qXFkOLbtKTd5L0ZLkiplaicQCdwua
-3f/10TpSOPNecRHM+rkB
-=x5YZ
+iQIcBAEBCAAGBQJUYbL/AAoJEMDTa8Ir7ZwVGyIP/ieyLJ45HXp4fe7He3/PtMR6
+N04GAsjvRMn9hl2LrArFcSps6ZG1THRegZ/MTmJvAUnzuZSNxOuojA2FCKqe+pGz
+LNcDiCYzVlapzIg0dSjTCQ7QeVLlPnz1mhY9Sba+JedFa7+gMDyv5bdnik8VmhUn
+LHDbd1EKRbOI9eWxy1+G2e3B1DbfP/WA6YxpaN52FOPe4A4K5j6jFLbLTSwwxVUW
+asstvFhsKxygbyWVIngVvXvEI+3PVfTrC5/8bDwTcmXD4Q0/6ujbupdkHf+mofaS
+XrHpsgBqWWKW6kwI5ENOMdtiGlyktBk+1X/oAIxGqgivEU4vxN5Duz7TzbnpE4Uk
+iLZ/nvDIssbIvxYvP+Ttf+rriZGPcgziYH/Uc1UAj2dkLcNQ0MY/qqYrh/K+YbMo
+ZWoNBQcLLL6b27aay+vAWiFI3FF21U/ndOgjvyVILWA22AysZ2fy8SvetnnPymoj
+FtQ228uHCX/8d/3fYzz/G4k34l5F50tCb7jSuNmSoU/fgdeuiuBI2q2t7zh2necr
+IvmXRK6BfxIT7yo3WHtdo+jFTJcrWtsCXELCj3jvgHOJQU+rXCmUUmN6JNbGgJTS
+Tg1KICBRnEIuL1x4pPpBfGo5rqtqB/1WjhvYh7YoUjqI3pfK4ICfrrPCMptEGZDB
+50ebQJaF+sNeEHFD+H4a
+=Mtcy
 -----END PGP SIGNATURE-----
 
---Sig_/Em6oQDHW=RxLHcc2/ISiHsA--
+--Sig_/.4j4j_eXFv83MlwQv=4mALd--
