@@ -1,84 +1,112 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the
- hwmon-staging tree
-Date: Wed, 12 Nov 2014 15:05:19 +1100
-Message-ID: <20141112150519.06cb7c34@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the mips tree
+Date: Wed, 12 Nov 2014 17:26:33 +1100
+Message-ID: <20141112172633.2b0c9cae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8iK5DvFqw2LFKEvjuDVHFJp"; protocol="application/pgp-signature"
+ boundary="Sig_//1bjOwy8=0Xy7v/DVrvJZjT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Neelesh Gupta <neelegup@linux.vnet.ibm.com>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8iK5DvFqw2LFKEvjuDVHFJp
+--Sig_//1bjOwy8=0Xy7v/DVrvJZjT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Ralf,
 
-Today's linux-next merge of the driver-core tree got a conflict in
-drivers/hwmon/ibmpowernv.c between commit e349d9d5b3f9 ("hwmon:
-(ibmpowernv) Use platform 'id_table' to probe the device") from the
-hwmon-staging tree and commit 2a1ed077189a ("hwmon: drop owner
-assignment from platform_drivers") from the driver-core tree.
+After merging the mips tree, today's linux-next build (powerpc64
+allnoconfig) produced these warnings:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from fs/compat_binfmt_elf.c:145:0:
+fs/binfmt_elf.c: In function 'load_elf_binary':
+fs/binfmt_elf.c:718:13: warning: passing argument 1 of 'arch_elf_pt_proc' f=
+rom incompatible pointer type
+    retval =3D arch_elf_pt_proc(&loc->elf_ex, elf_ppnt,
+             ^
+In file included from include/linux/elfcore-compat.h:4:0,
+                 from fs/compat_binfmt_elf.c:20:
+include/linux/elf.h:81:19: note: expected 'struct elf64_hdr *' but argument=
+ is of type 'struct elf32_hdr *'
+ static inline int arch_elf_pt_proc(struct elfhdr *ehdr,
+                   ^
+In file included from fs/compat_binfmt_elf.c:145:0:
+fs/binfmt_elf.c:718:13: warning: passing argument 2 of 'arch_elf_pt_proc' f=
+rom incompatible pointer type
+    retval =3D arch_elf_pt_proc(&loc->elf_ex, elf_ppnt,
+             ^
+In file included from include/linux/elfcore-compat.h:4:0,
+                 from fs/compat_binfmt_elf.c:20:
+include/linux/elf.h:81:19: note: expected 'struct elf64_phdr *' but argumen=
+t is of type 'struct elf32_phdr *'
+ static inline int arch_elf_pt_proc(struct elfhdr *ehdr,
+                   ^
+In file included from fs/compat_binfmt_elf.c:145:0:
+fs/binfmt_elf.c:747:14: warning: passing argument 1 of 'arch_elf_pt_proc' f=
+rom incompatible pointer type
+     retval =3D arch_elf_pt_proc(&loc->interp_elf_ex,
+              ^
+In file included from include/linux/elfcore-compat.h:4:0,
+                 from fs/compat_binfmt_elf.c:20:
+include/linux/elf.h:81:19: note: expected 'struct elf64_hdr *' but argument=
+ is of type 'struct elf32_hdr *'
+ static inline int arch_elf_pt_proc(struct elfhdr *ehdr,
+                   ^
+In file included from fs/compat_binfmt_elf.c:145:0:
+fs/binfmt_elf.c:747:14: warning: passing argument 2 of 'arch_elf_pt_proc' f=
+rom incompatible pointer type
+     retval =3D arch_elf_pt_proc(&loc->interp_elf_ex,
+              ^
+In file included from include/linux/elfcore-compat.h:4:0,
+                 from fs/compat_binfmt_elf.c:20:
+include/linux/elf.h:81:19: note: expected 'struct elf64_phdr *' but argumen=
+t is of type 'struct elf32_phdr *'
+ static inline int arch_elf_pt_proc(struct elfhdr *ehdr,
+                   ^
+In file included from fs/compat_binfmt_elf.c:145:0:
+fs/binfmt_elf.c:761:11: warning: passing argument 1 of 'arch_check_elf' fro=
+m incompatible pointer type
+  retval =3D arch_check_elf(&loc->elf_ex, !!interpreter, &arch_state);
+           ^
+In file included from include/linux/elfcore-compat.h:4:0,
+                 from fs/compat_binfmt_elf.c:20:
+include/linux/elf.h:104:19: note: expected 'struct elf64_hdr *' but argumen=
+t is of type 'struct elf32_hdr *'
+ static inline int arch_check_elf(struct elfhdr *ehdr, bool has_interp,
+                   ^
 
+Probably introduced by commit 7b76fe94c0e4 ("binfmt_elf: allow arch
+code to examine PT_LOPROC ... PT_HIPROC headers") and maybe the
+preceeding commits as well.
+
+binfmt_elf.c is included by compat_binfmt_elf.c after defining some
+things to build the compat versions of things.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/hwmon/ibmpowernv.c
-index c7577b8f17a8,58ea44ec6c77..000000000000
---- a/drivers/hwmon/ibmpowernv.c
-+++ b/drivers/hwmon/ibmpowernv.c
-@@@ -301,20 -309,9 +301,19 @@@ static int ibmpowernv_probe(struct plat
-  	return PTR_ERR_OR_ZERO(hwmon_dev);
-  }
- =20
- +static const struct platform_device_id opal_sensor_driver_ids[] =3D {
- +	{
- +		.name =3D "opal-sensor",
- +	},
- +	{ }
- +};
- +MODULE_DEVICE_TABLE(platform, opal_sensor_driver_ids);
- +
-  static struct platform_driver ibmpowernv_driver =3D {
- -	.driver =3D {
- -		.name =3D DRVNAME,
- +	.probe		=3D ibmpowernv_probe,
- +	.id_table	=3D opal_sensor_driver_ids,
- +	.driver		=3D {
-- 		.owner	=3D THIS_MODULE,
- +		.name	=3D DRVNAME,
-  	},
-  };
- =20
-
---Sig_/8iK5DvFqw2LFKEvjuDVHFJp
+--Sig_//1bjOwy8=0Xy7v/DVrvJZjT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUYtyEAAoJEMDTa8Ir7ZwVFpsP/iWoJvj1XhcnjQYZmTopkbaE
-JUC9pWMXKS+c7vEmsSK8ttVx51nxH2vKiU62ygkNlGhhS7UlwJEkINI612cVyPRy
-NJiuzqHFWou8guSrEkMGoFRolZ2xEAvPkcGdW766Yx5X47TjfXD5XEZ0MKUGG6n+
-OyF35ON6iScP2ryT2lKnJ/+PdQNPGkmp3GdShkd/dB5KWXHAo3HiIlsO6wKVC315
-6iADsyHM80WXTq/EJqxMkaDOJrM8vEpEWzCGUY/BBT7uoXBUnmEE/CS4U7r439G3
-KSSsfMhk8rgevlafEaElDyC53tFaLiyG51K6u6T9PI7X/ZQKwznimgHmTzCj9stN
-Nrb/0mZ8Ec3hCy7TGeEft25DI0ct3mMk3uSihv0y5GKMKsP4ag+GHd6BCI4FWhyo
-BJnj9zekbFkEq3AIcxY/GoD1oxFcQzXLdL7EcsXMsLI9yu/Mj+NE/IR0gu4QmNxv
-V1hJorhpRbw5BKFruNKOf0+5eTgOodc5Y/FInUluWu0iYZ0q5kJSuxIVbAVXt9bt
-1C8NrgY0ATPT6mX6tmud/tx69S6zkrm7j42b+OV0YYCohYaeOmFZx7Kzn+X56nRb
-jPrgSg3uQ/ntYTxloCAgnr5pBEjELLzSFhQxPSKgFM9oEptyovxZHUzySOhq2Aih
-OzJJo3cuc23rUnZflXlV
-=Uzap
+iQIcBAEBCAAGBQJUYv2eAAoJEMDTa8Ir7ZwV5RUP+wVj0Ej1Q8MAQdDeRKwRdjK0
+uMnDfjfKp75IoB7KC/gcMlXqzbVlcR+hvsM2g8h2EmQr30ZqcDhmXZw92qOh8oQQ
+4SiYC4qwbGlBOV0xSHI2ZyvFvpfLkSzpiGJe9eTw1KniRfHd74OJFOMq6NfVT/2l
+wnZr3y21MWroK4gzkTmPTZ1MQ9OLIbQi7Y8nx1uluk6g4O0h/E2WrrTvNpyPOQeE
+xEEgZSlH7OMjOxSJNXq5YK/PxI61+Ijjqfkxds8NnxC1YfHNeg4Z0q/54StFOZ/A
+hjLwAjBc+Tr8jtcJ0AyXlUfzLhC1BqVoJdOR0BdAv7Rs9SncVaxoGsTq/az5Mmr+
+NlmyuzYW1w84/YSjiOEjhU4dsNB0NhEkkXSWlwwLPYhMP2c3tj41pwFX5duqfxnH
+vA8SujtP3iJPn0NMu+OTfuRyTQzj31lS4D2uDPQTDYtRU14jyN1I3a03dl6x1Ptq
+wlD4gfTcuhVDo7+KfLMq7dEW0B4xXPK5MgBx2S1ah9yqG0UBxcnsijJ6rAvUBhUp
+8pYMx8Y6imnAYPxOIEpeoSRo/fEzo5It+q0IigZGsFXTYQe4ZJHbAaxqo5yv+ftA
+eQcW2GMsp0wBHA+8uUCsmFuXsyEk/rw6YkFerrFHdJ1OGvj0J1oltvLE5bf1HiW3
+8aZx+Q/2cowegvkYiF8X
+=Gnih
 -----END PGP SIGNATURE-----
 
---Sig_/8iK5DvFqw2LFKEvjuDVHFJp--
+--Sig_//1bjOwy8=0Xy7v/DVrvJZjT--
