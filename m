@@ -1,32 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 13 Nov 2014 16:14:05 -0500 (EST)
-Message-ID: <20141113.161405.1383394554354192003.davem@davemloft.net>
-References: <20141113113555.15117365@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:59806 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934024AbaKMVOL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Nov 2014 16:14:11 -0500
-In-Reply-To: <20141113113555.15117365@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hariprasad@chelsio.com, alexander.h.duyck@redhat.com
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 13 Nov 2014 11:35:55 +1100
+Subject: linux-next: change of contact address for the tile tree?
+Date: Fri, 14 Nov 2014 10:04:26 +1100
+Message-ID: <20141114100426.6bfa92f8@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6s4i.ZWo9V6Rwr+3ackdP+X"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chris Metcalf <cmetcalf@tilera.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Metcalf <cmetcalf@ezchip.com>
+List-Id: linux-next.vger.kernel.org
 
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/ethernet/chelsio/cxgb4vf/sge.c between commit 65f6ecc93e7c
-> ("cxgb4vf: Move fl_starv_thres into adapter->sge data structure") from
-> the net tree and commit aa9cd31c3f3e ("cxgb4/cxgb4vf: Replace
-> __skb_alloc_page with __dev_alloc_page") from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Sig_/6s4i.ZWo9V6Rwr+3ackdP+X
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This merge resolution looks perfect.
+Hi Chris,
+
+I noticed commit c47b15c4928c ("arch/tile: update MAINTAINERS email to
+EZchip") in the tile tree today.  Should I update the contact address I
+have for you?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/6s4i.ZWo9V6Rwr+3ackdP+X
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUZTj/AAoJEMDTa8Ir7ZwVZsoP/3sCCYKYKU9C7kkKB68GdSb+
+FNmzDS6BvCtGtntFLvgppgDzlBewpvyggCCHz2amwkONL1Z1XEjmejpYWpq8B7L8
+OR6QaopfvmMFfwS1lRkBClHZDprB2qU1drFFSW3gOKV7QcrePazr13gOKNR/8ndM
+7eGum5zFjb7v7zgcdnrItKFv/G/6msinheaM8hu/aU0g5EwGVQDyip7UTm62iJ4l
+cLWqu0WxqzCJl5wu4JRiHeciYDmMtszxOHFn1GvHOQg6QhyJUPk3zcrZEawkmqUk
+DtQUnqc3v0X+xIIgb1JjwnGVlellmx9TFopTKYS6JE1vhmogSGfHbBRq/yuthCnT
+n3AjVfhhqcrW2HF3ka2zzK5rlXSNMJqg2H1Sim/FKIotqvOlmwNXYTYN+q6LkyGS
+ZEf2MKx+2YayqyTLmTIWD9bj7ZVB2FnA9TUUkrvK8g1d3P3KE22fDMBg9suX2EgN
+cdYz0qQ3o8YKNVM7HgbHaaG/TMABiwH80zmzFaOkhVaDahNWMEfm4ksOSVOSpVk1
+V+xIZz9SeUfoFGSytK5cKN18EnaxTpCXMAbozthXNZFB/s89RlgNwX4BY2M2fEwf
+he9vGEic7CHY/csSz/ONR/XdHnCRvAPXUO7Hrmva1LPtxANOBbKeLEbL+0Xv7XDj
+qWpn9p8gxGoin2ajw2OU
+=3E6N
+-----END PGP SIGNATURE-----
+
+--Sig_/6s4i.ZWo9V6Rwr+3ackdP+X--
