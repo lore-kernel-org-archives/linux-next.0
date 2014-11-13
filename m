@@ -1,32 +1,77 @@
-From: Hannes Frederic Sowa <hannes@redhat.com>
-Subject: Re: randconfig build error with next-20141112, in net/sched
-Date: Thu, 13 Nov 2014 11:22:30 +0100
-Message-ID: <1415874150.15503.5.camel@localhost>
-References: <CA+r1ZhjMGJVSdp71pQ5aHjAvDDxDYBsgzmwcnt5oNyZTmdZDiw@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Nov 13
+Date: Thu, 13 Nov 2014 06:11:16 -0800
+Message-ID: <20141113141116.GA15339@roeck-us.net>
+References: <20141113181002.6c583589@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+r1ZhjMGJVSdp71pQ5aHjAvDDxDYBsgzmwcnt5oNyZTmdZDiw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, jhs@mojatatu.com, "David S. Miller" <davem@davemloft.net>, netdev <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:35976 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933066AbaKMOLb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Nov 2014 09:11:31 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1Xov7R-003nDY-94
+	for linux-next@vger.kernel.org; Thu, 13 Nov 2014 14:11:29 +0000
+Content-Disposition: inline
+In-Reply-To: <20141113181002.6c583589@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mi, 2014-11-12 at 15:33 -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
+On Thu, Nov 13, 2014 at 06:10:02PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> ERROR: "reciprocal_value" [net/sched/sch_sfq.ko] undefined!
-> ERROR: "reciprocal_value" [net/sched/sch_netem.ko] undefined!
+> Changes since 20141112:
+> 
+> The net-next tree gained a conflict against the net tree.
+> 
+> The mfd tree gained a conflict against Linus' tree.
+> 
+> The akpm-current tree lost its build failures.
+> 
+> Non-merge commits (relative to Linus' tree): 6008
+>  6314 files changed, 193590 insertions(+), 163738 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" and checkout or reset to the new
+> master.
+> 
+> You can see which trees have been included by looking in the Next/Trees
+> file in the source.  There are also quilt-import.log and merge.log files
+> in the Next directory.  Between each merge, the tree was built with
+> a ppc64_defconfig for powerpc and an allmodconfig for x86_64 and a
+> multi_v7_defconfig for arm. After the final fixups (if any), it is also
+> built with powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig and
+> allyesconfig (this fails its final link) and i386, sparc, sparc64 and arm
+> defconfig.
+> 
+Build results:
+	total: 133 pass: 124 fail: 9
+Failed builds:
+	arm:davinci_all_defconfig
+	arm:axm55xx_defconfig
+	arm:orion5x_defconfig
+	arm:clps711x_defconfig
+	blackfin:defconfig
+	hexagon:defconfig
+	m68k:allmodconfig
+	powerpc:ppc6xx_defconfig (binutils 2.23)
+	powerpc:ppc6xx_defconfig (binutils 2.24)
 
-Thanks for the report. I think moving reciproval_div.o from lib-y to
-obj-y should resolve the problem. On it...
+Qemu tests:
+	total: 30 pass: 29 fail: 1
+Failed tests:
+	x86:x86_pc_nosmp_defconfig
 
-The problem with lib-y is, if vmlinux itself doesn't use the symbol,
-even if it is EXPORT_SYMBOLED, it won't be linked into the kernel. You
-seem to hit a configuration where reciproval_divide wasn't used in the
-kernel at all but only in modules, as such it got purged from vmlinux
-during linking.
+Details are available at http://server.roeck-us.net:8010/builders.
 
-Thanks,
-Hannes
+Guenter
