@@ -1,174 +1,68 @@
-From: Fabian Frederick <fabf@skynet.be>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Fri, 14 Nov 2014 17:19:55 +0100 (CET)
-Message-ID: <1420366039.63212.1415981995308.open-xchange@webmail.nmp.skynet.be>
-References: <20141111131216.3742d156@canb.auug.org.au> <318149421.176770.1415704819915.open-xchange@webmail.nmp.skynet.be> <54622AED.9060205@kernel.dk>
-Reply-To: Fabian Frederick <fabf@skynet.be>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] syslog: provide stub check_syslog_permissions
+Date: Fri, 14 Nov 2014 12:06:55 -0800
+Message-ID: <CAGXu5jLL_kzAaP2oF6rQ1n3kLV9DM-UzVtVf2gv+-ugJPED7NQ@mail.gmail.com>
+References: <CA+r1ZhjO=kxcyjRb3=d7ozZ_VT9a+iCUy27zPZ2WGVMMzP6OVA@mail.gmail.com>
+	<3908561D78D1C84285E8C5FCA982C28F3292CD43@ORSMSX114.amr.corp.intel.com>
+	<CAGXu5jLsd3G3+PCwFSUGDxxbfnJwx8G8X4chH0WK21-kv+_ecA@mail.gmail.com>
+	<20141114050934.GA7964@moniac.lan.yath.de>
+	<20141114052239.GB7964@moniac.lan.yath.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailsec101.isp.belgacom.be ([195.238.20.97]:1582 "EHLO
-	mailsec101.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S934046AbaKNQT5 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 Nov 2014 11:19:57 -0500
-In-Reply-To: <54622AED.9060205@kernel.dk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141114052239.GB7964@moniac.lan.yath.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Schmidt <yath@yath.de>
+Cc: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
+On Thu, Nov 13, 2014 at 9:22 PM, Sebastian Schmidt <yath@yath.de> wrote:
+> When building without CONFIG_PRINTK, we need to provide a stub
+> check_syslog_permissions. As there is no way to turn on the
+> dmesg_restrict sysctl without CONFIG_PRINTK, return success.
+>
+> Reported-by: Jim Davis <jim.epost@gmail.com>
+> Signed-off-by: Sebastian Schmidt <yath@yath.de>
 
+I think this is correct. Without CONFIG_PRINTK, dmesg_restrict doesn't
+exist. It's a bit mind-bending, but since all the logic for
+capabilities, etc, is also missing, I guess "allow" (return 0) is the
+right default without printk.
 
-> On 11 November 2014 at 16:27 Jens Axboe <axboe@kernel.dk> wrote:
+Thanks!
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  include/linux/syslog.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >
+> diff --git a/include/linux/syslog.h b/include/linux/syslog.h
+> index 9def529..13c05d1 100644
+> --- a/include/linux/syslog.h
+> +++ b/include/linux/syslog.h
+> @@ -48,6 +48,14 @@
+>  #define SYSLOG_FROM_PROC             1
 >
-> On 2014-11-11 04:20, Fabian Frederick wrote:
-> >
-> >
-> >> On 11 November 2014 at 03:12 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> >>
-> >>
-> >> Hi Jens,
-> >>
-> >> After merging the block tree, today's linux-next build (x86_64
-> >> allmodconfig) failed like this:
-> >>
-> >> drivers/built-in.o: In function `cdrom_sysctl_handler':
-> >> cdrom_sysctl.c:(.text+0x156d92): undefined reference to `cdrom_mut=
-ex'
-> >> cdrom_sysctl.c:(.text+0x156da0): undefined reference to `cdrom_aut=
-oclose'
-> >> cdrom_sysctl.c:(.text+0x156dae): undefined reference to `cdrom_aut=
-oeject'
-> >> cdrom_sysctl.c:(.text+0x156dbc): undefined reference to `cdrom_deb=
-ug'
-> >> cdrom_sysctl.c:(.text+0x156dca): undefined reference to `cdrom_loc=
-kdoor'
-> >> cdrom_sysctl.c:(.text+0x156dd8): undefined reference to
-> >> `cdrom_check_media_type'
-> >> cdrom_sysctl.c:(.text+0x156e0b): undefined reference to `cdrom_lis=
-t'
-> >> cdrom_sysctl.c:(.text+0x156e37): undefined reference to `cdrom_aut=
-oclose'
-> >> cdrom_sysctl.c:(.text+0x156e57): undefined reference to `cdrom_aut=
-oeject'
-> >> cdrom_sysctl.c:(.text+0x156e77): undefined reference to
-> >> `cdrom_check_media_type'
-> >> cdrom_sysctl.c:(.text+0x156ea4): undefined reference to `cdrom_loc=
-kdoor'
-> >> cdrom_sysctl.c:(.text+0x156eb5): undefined reference to `cdrom_lis=
-t'
-> >> cdrom_sysctl.c:(.text+0x15702e): undefined reference to `cdrom_mut=
-ex'
-> >> drivers/built-in.o: In function `cdrom_print_info.constprop.0':
-> >> cdrom_sysctl.c:(.text+0x1570f3): undefined reference to `cdrom_lis=
-t'
-> >> cdrom_sysctl.c:(.text+0x157189): undefined reference to `cdrom_lis=
-t'
-> >> drivers/built-in.o: In function `cdrom_sysctl_info':
-> >> cdrom_sysctl.c:(.text+0x1572c3): undefined reference to `cdrom_mut=
-ex'
-> >> cdrom_sysctl.c:(.text+0x1576dc): undefined reference to `cdrom_mut=
-ex'
-> >> drivers/built-in.o: In function `cdrom_sysctl_register':
-> >> (.text+0x157765): undefined reference to `cdrom_autoclose'
-> >> drivers/built-in.o: In function `cdrom_sysctl_register':
-> >> (.text+0x157781): undefined reference to `cdrom_autoeject'
-> >> drivers/built-in.o: In function `cdrom_sysctl_register':
-> >> (.text+0x15778e): undefined reference to `cdrom_debug'
-> >> drivers/built-in.o: In function `cdrom_sysctl_register':
-> >> (.text+0x15779b): undefined reference to `cdrom_lockdoor'
-> >> drivers/built-in.o: In function `cdrom_sysctl_register':
-> >> (.text+0x1577a8): undefined reference to `cdrom_check_media_type'
-> >>
-> >> Probably caused by commit d01681d1457c ("cdrom: export sysctl code=
-").
-> >> This build has CONFIG_SYSCTL=3Dy, CONFIG_BLK_DEV_IDECD=3Dm,
-> >> CONFIG_BLK_DEV_SR=3Dm, CONFIG_PARIDE_PCD=3Dm, CONFIG_CDROM_PKTCDVD=
-=3Dm,
-> >> CONFIG_GDROM=3Dn.
-> >>
-> >> I have used the block tree from next-20141110 for today.
-> >> --
-> >> Cheers,
-> >> Stephen Rothwell=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 sfr@canb.auug.org.au
-> >
-> > Hi Stephen,
-> >
-> > Problem is in Makefile:
-> >
-> > obj-$(CONFIG_BLK_DEV_SR) +=3D cdrom.o
-> > obj-$(CONFIG_PARIDE_PCD) +=3D cdrom.o
-> > obj-$(CONFIG_CDROM_PKTCDVD) +=3D cdrom.o
-> > +obj-$(CONFIG_SYSCTL) +=3D cdrom_sysctl.o
-> >
-> > I tried cdrom-$(CONFIG_SYSCTL)=C2=A0 +=3D cdrom_sysctl.o
-> > to add sysctl only when cdrom.o is created
-> >
-> > but now
-> >
-> > drivers/scsi/sr_mod.ko
-> > drivers/ide/ide-cd_mod.ko
-> > drivers/ide/ide-cd_mod.ko
-> >
-> > can't find cdrom.c functions ...
-> >
-> > Is there another way to do it ?
+>  int do_syslog(int type, char __user *buf, int count, bool from_file);
+> +
+> +#ifdef CONFIG_PRINTK
+>  int check_syslog_permissions(int type, bool from_file);
+> +#else
+> +static int check_syslog_permissions(int type, bool from_file)
+> +{
+> +       return 0;
+> +}
+> +#endif
 >
-> The problem is, now you can have cdrom/sr modular, but cdrom_sysctl.o=
- is
-> linked in. That's just not going to work. Instead of jumping through
-> hoops to make this work, leave the section in cdrom.c and hid it behi=
-nd a
->
-> #if defined(CONFIG_SYSCTL)
-> ...
-> #endif
->
-> at the bottom or something.
->
+>  #endif /* _LINUX_SYSLOG_H */
 > --
-> Jens Axboe
->
+> 2.1.1
 
-Hi Jens,
 
-=C2=A0 =C2=A0It's already the case in current code so I'll drop this pa=
-tch.
-I've got a small question about another one:
-(http://marc.info/?l=3Dlinux-kernel&m=3D141565102708591&w=3D2)
 
-I was looking if there was a reason for calling
-
-init_cdrom_command with 0 length in dvd_do_auth():
-
-=C2=A0 =C2=A0memset(buf, 0, sizeof(buf));
-=C2=A0 =C2=A0init_cdrom_command(&cgc, buf, 0, CGC_DATA_READ)
-=C2=A0 =C2=A0 =C2=A0 =C2=A0
-This doesn't impact setup_report_key/setup_send_key
-calls -as those functions initialize cgc buflen again
-depending on type argument- without DVD_INVALIDATE_AGID:
-we call setup_report_key(&cgc, ai->lsa.agid, 0x3f);
-where type is used for cmd[10]:
-
-=C2=A0 =C2=A0cgc->cmd[10] =3D type | (agid << 6);
-
-the switch(type) below doesn't have 0x3f case so we
-go directly to
-
-=C2=A0 =C2=A0cgc->cmd[9] =3D cgc->buflen;
-
-I replaced the 2 lines above with
-
-=C2=A0 =C2=A0init_cdrom_command(&cgc, buf, sizeof(buf), CGC_DATA_READ)
-
-(as memset is already done during init_cdrom_command) but that would
-change buflen in that case and subsequent cdo->generic_packet
-behaviour or am I missing something ?
-
-Regards,
-=46abian
+-- 
+Kees Cook
+Chrome OS Security
