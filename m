@@ -1,53 +1,81 @@
-From: Sebastian Schmidt <yath@yath.de>
-Subject: [PATCH] syslog: provide stub check_syslog_permissions
-Date: Thu, 13 Nov 2014 21:22:39 -0800
-Message-ID: <20141114052239.GB7964@moniac.lan.yath.de>
-References: <CA+r1ZhjO=kxcyjRb3=d7ozZ_VT9a+iCUy27zPZ2WGVMMzP6OVA@mail.gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F3292CD43@ORSMSX114.amr.corp.intel.com>
- <CAGXu5jLsd3G3+PCwFSUGDxxbfnJwx8G8X4chH0WK21-kv+_ecA@mail.gmail.com>
- <20141114050934.GA7964@moniac.lan.yath.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the usb tree
+Date: Fri, 14 Nov 2014 18:00:54 +1100
+Message-ID: <20141114180054.77fbbc7b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/RLU61p/c5uqQ3RrTNO04.PU"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from karr.yath.de ([144.76.4.50]:57436 "EHLO karr.yath.de"
+Received: from ozlabs.org ([103.22.144.67]:44892 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751064AbaKNFWq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 Nov 2014 00:22:46 -0500
-Content-Disposition: inline
-In-Reply-To: <20141114050934.GA7964@moniac.lan.yath.de>
+	id S1754392AbaKNHBD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Nov 2014 02:01:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Christoph Hellwig <hch@lst.de>
 
-When building without CONFIG_PRINTK, we need to provide a stub
-check_syslog_permissions. As there is no way to turn on the
-dmesg_restrict sysctl without CONFIG_PRINTK, return success.
+--Sig_/RLU61p/c5uqQ3RrTNO04.PU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Jim Davis <jim.epost@gmail.com>
-Signed-off-by: Sebastian Schmidt <yath@yath.de>
----
- include/linux/syslog.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi James,
 
-diff --git a/include/linux/syslog.h b/include/linux/syslog.h
-index 9def529..13c05d1 100644
---- a/include/linux/syslog.h
-+++ b/include/linux/syslog.h
-@@ -48,6 +48,14 @@
- #define SYSLOG_FROM_PROC             1
- 
- int do_syslog(int type, char __user *buf, int count, bool from_file);
-+
-+#ifdef CONFIG_PRINTK
- int check_syslog_permissions(int type, bool from_file);
-+#else
-+static int check_syslog_permissions(int type, bool from_file)
-+{
-+	return 0;
-+}
-+#endif
- 
- #endif /* _LINUX_SYSLOG_H */
--- 
-2.1.1
+Today's linux-next merge of the scsi tree got a conflict in
+drivers/usb/storage/uas.c between commit e28e2f2f7c42 ("uas: Make uas
+work with blk-mq") from the usb tree and commits 125c99bc8b6b ("scsi:
+add new scsi-command flag for tagged commands"), abd0c533e377
+("scsi: remove ordered_tag host template field") and 2ecb204d07ac
+("scsi: always assign block layer tags if enabled") from the scsi tree.
+
+I fixed it up (maybe, please check - see below) and can carry the fix
+as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/usb/storage/uas.c
+index 004ebc12bc21,33f211b56a42..000000000000
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@@ -806,7 -816,14 +805,7 @@@ static struct scsi_host_template uas_ho
+  	.sg_tablesize =3D SG_NONE,
+  	.cmd_per_lun =3D 1,	/* until we override it */
+  	.skip_settle_delay =3D 1,
+- 	.ordered_tag =3D 1,
+ -
+ -	/*
+ -	 * The uas drivers expects tags not to be bigger than the maximum
+ -	 * per-device queue depth, which is not true with the blk-mq tag
+ -	 * allocator.
+ -	 */
+ -	.disable_blk_mq =3D true,
++ 	.use_blk_tags =3D 1,
+  };
+ =20
+  #define UNUSUAL_DEV(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax, \
+
+--Sig_/RLU61p/c5uqQ3RrTNO04.PU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUZaitAAoJEMDTa8Ir7ZwVfhAQAIXnmGYFDuRRNsA1By3WaWpW
+coUAbNQd54Avb8EAh0IuPkVNeL1G+wVwZmBP03KWrV9onKvlYJ3UCWD+VFKEuwAX
+jJL4GC2nHKRebH4CRVYIa1BFjjJ3wYILVozqIrhmkZ9nwD0VHtx7T6gfOxbXuSvX
+DChYNYQ7Kvzh7X64nnAdcZr/zv+RCTeRVfbdHwwxrQ83fTORkLKC6aW1E5oym7gR
+dzEHU4yPTYiF3tnbRy8pDrgtnTcEaju7dcNdWYzoCaoJPfk6DhrgW2ez6Do33bju
+1Vnv9KkSyhi6/H0s/AD9C/kZOv1LB/yE4GPhfPHR6pnSgrlqKPfkiAQYTA5pfkL2
+snMphZtZYRfz6dGCHccTLaIN3N3O5Mnk6N0K7TfPsmvuNUAx060E+H1VPO0skc5s
+rX89UgPi1BSG7IJFCjjwVijdfdAKMe4AKUGU7XpM7fWUBI5epHjfyPgHPlZ4enMV
+zsZuC9ouudVzTTwYlPjxL4Q/eqbs5A5hpUDAB4dnw2181ledYC3zuT4JXAgJ2AMn
+j2N+0QfnUwcw1MVH1cm34VdZ8Ja9uaOTHacCkygi5q/iIQIx7ZwMSDv+L12vxMqb
+wlsC5a90tqpYsyn6p757FvICfb3ulg22HFLB1l8FlOCsDdV0GkMcIzFzU5H/+nqa
+bk9RYxKVXDid9Fxajx9x
+=49dI
+-----END PGP SIGNATURE-----
+
+--Sig_/RLU61p/c5uqQ3RrTNO04.PU--
