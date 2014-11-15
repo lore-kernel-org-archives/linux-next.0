@@ -1,39 +1,80 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build warnings after merge of the tiny tree
-Date: Fri, 14 Nov 2014 12:38:30 -0800
-Message-ID: <20141114203830.GA16553@jtriplet-mobl1>
-References: <20141111174304.69b9ed45@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Nov 14
+Date: Sat, 15 Nov 2014 13:19:22 -0800
+Message-ID: <20141115211922.GA2347@roeck-us.net>
+References: <20141114192738.08e744cc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35587 "EHLO
-	relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754377AbaKNUij (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Nov 2014 15:38:39 -0500
+Received: from bh-25.webhostbox.net ([208.91.199.152]:43157 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753503AbaKOVTb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Nov 2014 16:19:31 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1Xpkkk-003boo-Cm
+	for linux-next@vger.kernel.org; Sat, 15 Nov 2014 21:19:30 +0000
 Content-Disposition: inline
-In-Reply-To: <20141111174304.69b9ed45@canb.auug.org.au>
+In-Reply-To: <20141114192738.08e744cc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalina Mocanu <catalina.mocanu@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Nov 11, 2014 at 05:43:04PM +1100, Stephen Rothwell wrote:
-> Hi Josh,
+On Fri, Nov 14, 2014 at 07:27:38PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the tiny tree, today's linux-next build (powerpc64
-> allnoconfig) produced these warnings:
+> Changes since 20141113:
 > 
-> kernel/compat.c:33:12: warning: 'compat_get_timex' defined but not used [-Wunused-function]
->  static int compat_get_timex(struct timex *txc, struct compat_timex __user *utp)
->             ^
-> kernel/compat.c:63:12: warning: 'compat_put_timex' defined but not used [-Wunused-function]
->  static int compat_put_timex(struct compat_timex __user *utp, struct timex *txc)
->             ^
+> New tree: overlayfs
 > 
-> Introduced by commit 7beb114f18e0 ("kernel: time: Compile out NTP
-> support").  Neither of these functions is needed if CONFIG_NTP is not
-> set.
+> The idle tree gained a conflict against Linus' tree.
+> 
+> The scsi tree gained a conflict against the usb tree.
+> 
+> Non-merge commits (relative to Linus' tree): 6264
+>  6509 files changed, 209171 insertions(+), 167101 deletions(-)
+> 
 
-Fixed.
+I bisected the x86-nosmp qemu runtime failure I have seen for
+the last few days. Here is the result:
 
-- Josh Triplett
+bb46613f7099f70bc68c1c684cfa22d6863cd8eb is the first bad commit
+commit bb46613f7099f70bc68c1c684cfa22d6863cd8eb
+Author: Jiang Liu <jiang.liu@linux.intel.com>
+Date:   Mon Oct 27 16:12:06 2014 +0800
+
+    x86, irq: Make MSI and HT_IRQ indepenent of X86_IO_APIC
+
+Detailed log:
+
+git bisect start 'HEAD' 'v3.18-rc4'
+# good: [97bf3e2baed8f45432933bf15535061fb5acda44] Merge remote-tracking branch 'sound-asoc/for-next'
+git bisect good 97bf3e2baed8f45432933bf15535061fb5acda44
+# bad: [d23dcf93e7ad8004ef80726717f700316e53f44d] Merge remote-tracking branch 'usb-serial/usb-next'
+git bisect bad d23dcf93e7ad8004ef80726717f700316e53f44d
+# bad: [cff78d32f4c15b7b2cb173c8e6097c513f406da0] Merge remote-tracking branch 'kvm/linux-next'
+git bisect bad cff78d32f4c15b7b2cb173c8e6097c513f406da0
+# good: [09dc3f20206821e06b1b281b1ae4451777f707c4] Merge remote-tracking branch 'audit/next'
+git bisect good 09dc3f20206821e06b1b281b1ae4451777f707c4
+# bad: [caf0fea9e728916a92c508988fd2ae84a08c280b] Merge branch 'x86/vdso'
+git bisect bad caf0fea9e728916a92c508988fd2ae84a08c280b
+# good: [9aa5f98820067b00456c42347fc0ff48d2d2474f] Merge branch 'sched/urgent'
+git bisect good 9aa5f98820067b00456c42347fc0ff48d2d2474f
+# bad: [46fe562d914fde0a43ee339a0fcfd4af829cb8f7] Merge branch 'x86/boot'
+git bisect bad 46fe562d914fde0a43ee339a0fcfd4af829cb8f7
+# good: [b26ea43d0bb1539ce047206a57c7fd8d636e7f22] x86, irq: Protect __clear_irq_vector() with vector_lock
+git bisect good b26ea43d0bb1539ce047206a57c7fd8d636e7f22
+# bad: [e1d8f79a27a41493c8f1ad0bde440048e17f9494] iommu/amd: Use helpers to access irq_cfg data structure associated with IRQ
+git bisect bad e1d8f79a27a41493c8f1ad0bde440048e17f9494
+# good: [051825cab15c8180f2f0dbc3a9de5a3db7476065] x86, irq: Move HT IRQ related code from io_apic.c into htirq.c
+git bisect good 051825cab15c8180f2f0dbc3a9de5a3db7476065
+# bad: [bb46613f7099f70bc68c1c684cfa22d6863cd8eb] x86, irq: Make MSI and HT_IRQ indepenent of X86_IO_APIC
+git bisect bad bb46613f7099f70bc68c1c684cfa22d6863cd8eb
+# good: [b09198f7b59101e52bcf238ed3b7bfc64de055ef] x86, irq: Move IRQ initialization routines from io_apic.c into vector.c
+git bisect good b09198f7b59101e52bcf238ed3b7bfc64de055ef
+# first bad commit: [bb46613f7099f70bc68c1c684cfa22d6863cd8eb] x86, irq: Make MSI and HT_IRQ indepenent of X86_IO_APIC
+
+I'll be happy to provide the configuration if needed.
+
+Guenter
