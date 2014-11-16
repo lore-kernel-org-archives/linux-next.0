@@ -1,97 +1,64 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Nov 14
-Date: Sun, 16 Nov 2014 08:11:10 -0800
-Message-ID: <5468CC9E.7010300@roeck-us.net>
-References: <20141114192738.08e744cc@canb.auug.org.au> <20141115211922.GA2347@roeck-us.net> <54680D0A.7070900@linux.intel.com> <5468185D.5020400@roeck-us.net> <54682618.1070508@linux.intel.com> <54684A9E.90606@roeck-us.net> <54685F39.3060007@linux.intel.com> <5468CA48.3040504@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the pci-current tree
+Date: Mon, 17 Nov 2014 10:02:20 +1100
+Message-ID: <20141117100220.0e503957@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5468CA48.3040504@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kJ3L6kJGsdIxD4T=rAFwhiw"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39697 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751200AbaKPXCk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Nov 2014 18:02:40 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Aaron Ma <mapengyu@gmail.com>
 
-On 11/16/2014 08:01 AM, Guenter Roeck wrote:
-> On 11/16/2014 12:24 AM, Jiang Liu wrote:
->> On 2014/11/16 14:56, Guenter Roeck wrote:
->>> On 11/15/2014 08:20 PM, Jiang Liu wrote:
->>>>
->>>> On 2014/11/16 11:22, Guenter Roeck wrote:
->>>>> On 11/15/2014 06:33 PM, Jiang Liu wrote:
->>>>>> Hi Guenter,
->>>>>>       Could you please help to provide the config file and
->>>>>> error messages?
->>>>>
->>>>> Config file:
->>>>>
->>>>> https://github.com/groeck/linux-build-test/blob/master/rootfs/x86/qemu_x86_pc_nosmp_defconfig
->>>>>
->>>> Hi Guenter,
->>>>      Thanks for help. According to the above configuration file:
->>>> CONFIG_PCI_MSI is enabled, but CONFIG_X86_LOCAL_APIC and
->>>> CONFIG_X86_IO_APIC are both disabled. But the Kconfig for X86_LOCAL_APIC
->>>> is defined as:
->>>> config X86_LOCAL_APIC
->>>>           def_bool y
->>>>           depends on X86_64 || SMP || X86_32_NON_STANDARD || X86_UP_APIC
->>>> || PCI_MSI
->>>>           select GENERIC_IRQ_LEGACY_ALLOC_HWIRQ
->>>>
->>>> That means CONFIG_X86_LOCAL_APIC should be enabled if CONFIG_PCI_MSI is
->>>> enabled. So how did you generate the qemu_x86_pc_nosmp_defconfig? Are
->>>> you using an old configuration file?
->>>
->>> I took the configuration file I had for the SMP case (located in the same
->>> directory in the git repository), disabled SMP, and ran "make
->>> savedefconfig".
->>> "old" is relative in this context; I don't usually create new configuration
->>> files for each new kernel release, so, yes, you could say that the file
->>> I used is "old".
->>>
->>> CONFIG_X86_LOCAL_APIC is enabled. Keep in mind this is a configuration file
->>> created with "make savedefconfig", so default settings are not included.
->>> Correct, CONFIG_X86_IO_APIC is not enabled, but that is not really
->>> surprising
->>> since its dependencies are not met as far as I can see.
->>>
->>> Overall, I am not sure I understand what you are trying to say. X86_IO_APIC
->>> depends on X86_64 (not set) or SMP (not set) or X86_32_NON_STANDARD (not
->>> set)
->>> or X86_UP_IOAPIC (not set because it depends on X86_UP_APIC which
->>> depends on
->>> !PCI_MSI).
->>>
->>> Does that mean that I'll have to disable PCI_MSI to get x86 uniprocessor
->>> support to work after your patch ?
->> Hi Guenter,
->>     Previously, X86_IO_APIC will be enabled if PCI_MSI is enabled.
->> With my patch, x86_IO_APIC may be disabled even if PCI_MSI is enabled.
->> If X86_LOCAL_APIC/PCI_MSI are enabled and X86_IO_APIC is disabled, it
->> should work theoretically. I remember it works on my HP laptop.
->> Could you please help to check whether it solve the issue by manually
->> turning on X86_IO_APIC?
->
-> I can not turn on X86_IO_APIC manually. I have to enable one of the
-> following to do it.
->
->      def_bool X86_64 || SMP || X86_32_NON_STANDARD || X86_UP_IOAPIC
->
-> Since I want to build for 32 bit, I can not enable X86_64.
-> Since I want to build a uniprocessor image, I can not enable SMP.
-> X86_32_NON_STANDARD depends on SMP, so I can not enable it either.
-> X86_UP_IOAPIC depends on X86_UP_APIC which I can only enable by
-> disabling PCI_MSI.
->
-> So I disabled PCI_MSI and enabled X86_UP_IOAPIC as well as X86_IO_APIC.
-> The resulting image hangs completely with no console output whatsoever.
->
+--Sig_/kJ3L6kJGsdIxD4T=rAFwhiw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Additional data points: After reverting your patch on top of linux-next,
-everything works fine. The working configuration has CONFIG_IRQ_DOMAIN,
-CONFIG_X86_IO_APIC, CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS, and
-CONFIG_ACPI_HOTPLUG_IOAPIC enabled. The non-working configuration
-(with your patch applied) has all those disabled.
+Hi Bjorn,
 
-Guenter
+After merging the pci-current tree, today's linux-next build
+(arm_multi_v7_defconfig) produced this warning:
+
+drivers/pci/probe.c: In function 'pci_read_bridge_mmio_pref':
+drivers/pci/probe.c:438:5: warning: left shift count >=3D width of type
+     base |=3D ((dma_addr_t) mem_base_hi) << 32;
+     ^
+drivers/pci/probe.c:439:5: warning: left shift count >=3D width of type
+     limit |=3D ((dma_addr_t) mem_limit_hi) << 32;
+     ^
+
+Introduced by commit 3a02517d5e2a ("PCI: Support 64-bit bridge windows
+if we have 64-bit dma_addr_t").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/kJ3L6kJGsdIxD4T=rAFwhiw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUaS0NAAoJEMDTa8Ir7ZwVDQoP/0nl+uk9//h81t7qudmegjV+
+dqi8pNYmQXO5y6j+EyNs+paZK7vmmZWqeooOQ/Ll0VxvpFTh7vvrhJePOg5k3J1g
+hAtFoSdHqgDGMBkXYgdHKjb49K/fbcPtws+QDneokTzVyZeTI+F4d0kmVzYARf3b
+tXXhFzzdZzq29SVEmfbki3a/mu6cvQ1hdhG994sFnd3JgAzTfCVpuVi539fKGEwS
+6hZ5WQB5TYa6D1E/yerldKxlAAGQnMOQnNE6QkPlsmiuBISw1eNJjBXWZ9N0LKmC
+qGqs/Rda9FXM57SDpRGt1p2gfPsatM+mWqnRKZOCzFXo1U0dQ6hLl4S4CI3tGLRJ
+WliLj1yy1o3DRS1rAoWZZbCM8Z6BFDYsdD7FQFUnH7G4mMavlwAOfFZZ1Uc4gVDq
+gEceeZOwA4FV7102zOASY256ikXQ1bPiz6VIoP+ZPbpDw+cus04nZfd0zP9sS28A
+CyU3H8rvrdmtKtdBSEDKLoQcJ9TH5qmrYSxdtMhYWcFjQKREsLGNgRCQ0QrDfCyg
+9HQwv9Bq18VT8YWC130YFfMnt6zq3r4daHEo0YRGdTC9tg/uaCnzFdVuJFqX4wI6
+oAHZjsTHFYmwrlvvEDJ3FTfsswOrKl07ZQ4XWDW+4Vx/pHn4i04EYKvEjc2fuyWH
+avzAPxOF8AUt6MJ7UCu4
+=j5y9
+-----END PGP SIGNATURE-----
+
+--Sig_/kJ3L6kJGsdIxD4T=rAFwhiw--
