@@ -1,62 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the pm tree
-Date: Mon, 17 Nov 2014 13:44:14 +1100
-Message-ID: <20141117134414.7f4d8d21@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Date: Mon, 17 Nov 2014 14:04:54 +1100
+Message-ID: <20141117140454.497aeee8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xwzt9o0X2U1LUHI05AYpR0O"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39246 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752141AbaKQCoZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Nov 2014 21:44:25 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>
+ boundary="Sig_/mgd=kRmL2PUmbae+rvTxhQ+"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/xwzt9o0X2U1LUHI05AYpR0O
+--Sig_/mgd=kRmL2PUmbae+rvTxhQ+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Dave,
 
-After merging the pm tree, today's linux-next build (arm multi_v7_defconfig)
-produced this warning:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/intel_pm.c between commit 6bc55a67bd4b ("drm/i915:
+drop WaSetupGtModeTdRowDispatch:snb") from the drm-intel-fixes tree and
+commits (not sure which ones - the code seems to have been rearranged
+quite a bit) from the drm tree.
 
-kernel/power/Kconfig:132:error: recursive dependency detected!
-kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAI=
-NS
-kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM_RUNTI=
-ME
-
-Caused by commit 9cdd5fd742e6 ("PM / domains: Kconfig: always enable
-PM_RUNTIME when genpd enabled").
+I fixed it up (I applied the former patch by hand to the file from the
+drm tree) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/xwzt9o0X2U1LUHI05AYpR0O
+--Sig_/mgd=kRmL2PUmbae+rvTxhQ+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUaWEEAAoJEMDTa8Ir7ZwVYZEP/2zhAzwtPR0D6EI+Ro/j3xnS
-s9og01xxCsZ86HV1b6ganf79C0EkpVvdRmW1UemVJqmpw7RwP+4UapJzusRCl/zS
-l7tYehxuFGEXX29ANTUzhuMsKNJgiVUvIkyD97Q4xOjYZ10xdaVsc6DVFVym5gzO
-TSZzwCxckj8Shv+HeJhsSjGH+lfq/nZKr5O4lcdFvpUcNdCIg8UfWHjNITzbkZQR
-nZMY9z1dOEJJpKjoUYIg0lIghXNe8MBSsqjKOBMZzZsoLDZmBVlCQMsgbgdNNArm
-i7dZ38P9h/88Rj6RW4BGt2v9AMq9jGfIkf8Aqi2Nf5OpiSlsgpnwVI3DKEyG3R3v
-TnsS6kvO79oZtyMNHNFpHEd5BUh4sND2NanlsqzaqS/li+tJgJc1h4gH0Z7fK5TW
-fERdI6mRSQfvDhPhuYdIQhD3nUXwVji5c++FGCuvKERYBKjeD34+XdxBojO1+NWx
-QbD7eB1Y8KkG9dhNYf+pIim7ZnqpWweWsb+H2SEAs5SeOlxwd1ZxI8Wj4Qznw7cD
-CXcCqCfE0BmaCG1Aw+ldi7Box3mt63kGXdkRvNH4V+Ei4ghc+5JSf+lgciQ7QSRq
-JOySigUi5MbRrOC3Ur8KbsBLB/WjstVzgsG5rjtuK39VQKEc3w2rDvRFDHPb7G2a
-tHPDUWmD+EN7dr9xW8TJ
-=OYsg
+iQIcBAEBCAAGBQJUaWXbAAoJEMDTa8Ir7ZwVhRoP/3Mxsw5mdL4gEqqZ65e0pxM5
+YdS5174Jh/kdIDA46/ibYpuTIyM/uA2zxu64hWLxJVUI9CCLogR83m2mrufxDuRY
+14DkbaSY0sWFc1ZAOS2LVq3b5INWtLG1wVkHQckdyy0Af5rKpgA28/IOlTh4wdmv
+5QTBsPkAEifyXOFJcyUZiJdkxzwptMU4OJS3sFbA7czWs8k/9uZ/Q4ECytMZkrGd
+XW9HEPTkjMROu73oBYVqv2Mtfd6zDlVVCEFeRpIE/NWqAN1VHdfxpjTKstiAW0u/
+ptGHygM9cIoR3SBlqtIwOlBo5vP4jeyfCv+YzXcCgV5H14piKhDFSnOsC9NlxlZC
+5xEFYAdaWwLe7rJKzQBsD92oRw7Fn9f8RXIjxvaGlhXP7pNlFcYoA3SVWSz06c5t
+kkVtYep09/sIFzuB55Z7Xfs8P6SV2eTk6KzaxU8aGfPs6nz58NGhmqqdVKuSJclj
+zkYXE14MTj5R78zsxGSSAnwRbvm/FDfg4tJxS/ytuUG5RchdomtONfK8gw8wz1GA
+39uPnld8P2n22iC+urSbP0vZv/goolIh3nLukWbENWgpkvgP4+5VM0E9wD2U8CnJ
+EEfbyFDcYx56YyR65b9kcZd/sEMKDy0RrfpeV2tEI+Si6BZ2ZVynn/xhHOOxcc/L
+zBzbRQo7siJ6tWOh5+FA
+=aJur
 -----END PGP SIGNATURE-----
 
---Sig_/xwzt9o0X2U1LUHI05AYpR0O--
+--Sig_/mgd=kRmL2PUmbae+rvTxhQ+--
