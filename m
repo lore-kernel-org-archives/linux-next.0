@@ -1,35 +1,58 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Mon, 17 Nov 2014 12:51:09 -0700
-Message-ID: <546A51AD.50602@kernel.dk>
-References: <20141117144415.6af6c9d6@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build warning after merge of the pm tree
+Date: Tue, 18 Nov 2014 00:14:19 +0100
+Message-ID: <1721522.tICxlGjU6i@vostro.rjw.lan>
+References: <20141117134414.7f4d8d21@canb.auug.org.au> <1416223903.22252.11.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:41826 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297AbaKQTvO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Nov 2014 14:51:14 -0500
-Received: by mail-pd0-f174.google.com with SMTP id w10so2996354pde.19
-        for <linux-next@vger.kernel.org>; Mon, 17 Nov 2014 11:51:13 -0800 (PST)
-In-Reply-To: <20141117144415.6af6c9d6@canb.auug.org.au>
+Received: from v094114.home.net.pl ([79.96.170.134]:60301 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752657AbaKQWxS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Nov 2014 17:53:18 -0500
+In-Reply-To: <1416223903.22252.11.camel@x220>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>
 
-On 11/16/2014 08:44 PM, Stephen Rothwell wrote:
-> Hi Jens,
->
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ERROR: "blk_mq_free_request" [drivers/block/nvme.ko] undefined!
->
-> Caused by commit b94ebc3c7a0f ("NVMe: replace blk_put_request() with
-> blk_mq_free_request()").
->
-> I have used te block tree from next-20141114 for today.
+On Monday, November 17, 2014 12:31:43 PM Paul Bolle wrote:
+> On Mon, 2014-11-17 at 13:44 +1100, Stephen Rothwell wrote:
+> > Hi Rafael,
+> > 
+> > After merging the pm tree, today's linux-next build (arm multi_v7_defconfig)
+> > produced this warning:
+> > 
+> > kernel/power/Kconfig:132:error: recursive dependency detected!
+> > kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
+> > kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM_RUNTIME
+> > 
+> > Caused by commit 9cdd5fd742e6 ("PM / domains: Kconfig: always enable
+> > PM_RUNTIME when genpd enabled").
+> 
+> This error also popped up when I fiddled with omap2plus_defconfig on top
+> of next-20141117. Note that I ended up with a .config which has
+> CONFIG_ARCH_MULTI_V7 set. The error appears to be triggered by the
+> Kconfig entry for ARCH_EXYNOS (in arch/arm/mach-exynos/Kconfig). It
+> contains
+>         select PM_GENERIC_DOMAINS if PM_RUNTIME
+> 
+> (Perhaps the :272: line needs rephrasing in the error Stephen quoted. It
+> confused me quite a bit.)
+> 
+> Naively dropping that select statement from ARCH_EXYNOS triggered yet
+> another error:
+>     kernel/power/Kconfig:145:error: recursive dependency detected!
+>     kernel/power/Kconfig:145:	symbol PM depends on PM_RUNTIME
+>     kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
+>     kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM
+> 
+> After that I admitted defeat.
 
-Thanks Stephen, fixed.
+I'll drop the commit for now, but this looks strange.
+
+Had you cleaned up the kernel configuration after dropping the PM_RUNTIME select
+from ARCH_EXYNOS?
+
+Rafael
