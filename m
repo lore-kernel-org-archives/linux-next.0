@@ -1,104 +1,54 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 17 Nov 2014 10:47:15 +0100
-Message-ID: <20141117094714.GA20092@ulmo.nvidia.com>
-References: <20141117141158.438636fd@canb.auug.org.au>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: linux-next: build warning after merge of the pm tree
+Date: Mon, 17 Nov 2014 12:31:43 +0100
+Message-ID: <1416223903.22252.11.camel@x220>
+References: <20141117134414.7f4d8d21@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6395 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751755AbaKQJrd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Nov 2014 04:47:33 -0500
-In-Reply-To: <20141117141158.438636fd@canb.auug.org.au>
-Content-Disposition: inline
+Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:52653 "EHLO
+	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751513AbaKQLbq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2014 06:31:46 -0500
+In-Reply-To: <20141117134414.7f4d8d21@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>
 
---opJtzjQTFsWo+cga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2014-11-17 at 13:44 +1100, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> After merging the pm tree, today's linux-next build (arm multi_v7_defconfig)
+> produced this warning:
+> 
+> kernel/power/Kconfig:132:error: recursive dependency detected!
+> kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
+> kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM_RUNTIME
+> 
+> Caused by commit 9cdd5fd742e6 ("PM / domains: Kconfig: always enable
+> PM_RUNTIME when genpd enabled").
 
-On Mon, Nov 17, 2014 at 02:11:58PM +1100, Stephen Rothwell wrote:
-> * PGP Signed by an unknown key
->=20
-> Hi Dave,
->=20
-> Today's linux-next merge of the drm tree got a conflict in
-> drivers/gpu/drm/tegra/dc.c between commit 8ff64c17f3be ("drm/tegra: dc:
-> Add missing call to drm_vblank_on()") from Linus' tree and commits
-> 205d48edee84 ("drm/tegra: dc: Factor out DC, window and cursor commit")
-> and c7679306a923 ("drm/tegra: dc: Universal plane support") from the
-> drm tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc drivers/gpu/drm/tegra/dc.c
-> index 054a79f143ae,b957908aec73..000000000000
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@@ -751,7 -906,8 +906,8 @@@ static void tegra_crtc_disable(struct d
->   		}
->   	}
->  =20
->  -	drm_vblank_off(drm, dc->pipe);
->  +	drm_crtc_vblank_off(crtc);
-> + 	tegra_dc_commit(dc);
->   }
->  =20
->   static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
-> @@@ -934,15 -1090,9 +1090,9 @@@ static void tegra_crtc_prepare(struct d
->   static void tegra_crtc_commit(struct drm_crtc *crtc)
->   {
->   	struct tegra_dc *dc =3D to_tegra_dc(crtc);
-> - 	unsigned long value;
-> -=20
-> - 	value =3D GENERAL_UPDATE | WIN_A_UPDATE;
-> - 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-> -=20
-> - 	value =3D GENERAL_ACT_REQ | WIN_A_ACT_REQ;
-> - 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
->  =20
->  -	drm_vblank_post_modeset(crtc->dev, dc->pipe);
->  +	drm_crtc_vblank_on(crtc);
-> + 	tegra_dc_commit(dc);
->   }
->  =20
->   static void tegra_crtc_load_lut(struct drm_crtc *crtc)
+This error also popped up when I fiddled with omap2plus_defconfig on top
+of next-20141117. Note that I ended up with a .config which has
+CONFIG_ARCH_MULTI_V7 set. The error appears to be triggered by the
+Kconfig entry for ARCH_EXYNOS (in arch/arm/mach-exynos/Kconfig). It
+contains
+        select PM_GENERIC_DOMAINS if PM_RUNTIME
 
-Looks good.
+(Perhaps the :272: line needs rephrasing in the error Stephen quoted. It
+confused me quite a bit.)
 
-Thanks,
-Thierry
+Naively dropping that select statement from ARCH_EXYNOS triggered yet
+another error:
+    kernel/power/Kconfig:145:error: recursive dependency detected!
+    kernel/power/Kconfig:145:	symbol PM depends on PM_RUNTIME
+    kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
+    kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM
 
---opJtzjQTFsWo+cga
-Content-Type: application/pgp-signature
+After that I admitted defeat.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUacQiAAoJEN0jrNd/PrOhdiAQALvIBlSEZplno1wHEP3XFcb8
-6BuOJyHkpZ9QgBACZmCGi8IiY/GfT++akl3YPyURlRVEd5zGBjV4HQ0Sx0+SPkYE
-qnKKQzTXTcK7Z7j7O25yyxfp2S793GZZm137jh4BdJ1WdqaaoI2bgrYS9rEPndpJ
-gndY6n7KI3Ih2/a8rB6x4yiQuMV/yODEgbkXaiSMOUyM+jL6DsR4H/xQ+w9ZCqie
-UJLjXOIXv3Dn5BCtWlhQGy07VPYluz+YFc9caI73/uZbhIcR0XfPad9fJp25xmH3
-5ZeqZq5xfcdvmZlXQ4tA/NMH1gb75v6TDzVr7bN3xcFlbs4I+2MmqyDlZEgd6D30
-Gk1WEpeBpOjn6acOvZYbUDB0NZ2hhhft63sXN60fJ5QKr56gRt8RdhegSXgmTV2g
-CaNjPr6Q/2kdoj2yt/TKWpFU0U5eOfV3n/LEbtkKQz2c6mOa1q/2llkJIQdiZGt9
-BdJCkAb9OVtmspDrVVrWrDVHAz3OOMLZRoCLkZKaymi14U/B+yWBdEddabaBru0e
-TUwG+QMU83ZLBfppWx4MLkeXQaF4IoMxK9W4G+KhmFXy+6tosxofkdZVzNfWEDNN
-Ev4ukZI1qfrgGni87jD65/HY63YqbTeSGtygnlKCLFQ8SaySFPTiXnsmnzU+StB3
-29oNWROkONgeq5FSJc9p
-=9drM
------END PGP SIGNATURE-----
-
---opJtzjQTFsWo+cga--
+Paul Bolle
