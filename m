@@ -1,117 +1,120 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the idle tree with the pm tree
-Date: Mon, 17 Nov 2014 12:54:45 +1100
-Message-ID: <20141117125445.110f0321@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 17 Nov 2014 13:34:04 +1100
+Message-ID: <20141117133404.525229b4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NYqV+6DOkIGiGNDMxWMXGmI"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46934 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752018AbaKQByw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Nov 2014 20:54:52 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dirk Brandewie <dirk.j.brandewie@intel.com>
+ boundary="Sig_/Cv9hVhKNDupdKAOq1R5oc+R"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarno Rajahalme <jrajahalme@nicira.com>, Pravin B Shelar <pshelar@nicira.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/NYqV+6DOkIGiGNDMxWMXGmI
+--Sig_/Cv9hVhKNDupdKAOq1R5oc+R
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi all,
 
-Today's linux-next merge of the idle tree got a conflict in
-arch/x86/include/uapi/asm/msr-index.h between commit 2f86dc4cddcb
-("intel_pstate: Add support for HWP") from the pm tree and commit
-a8b65b07d753 ("tools/power turbostat: decode MSR_*_PERF_LIMIT_REASONS")
-from the idle tree.
+After merging the net-next tree, today's linux-next build (x86_64 allmodcon=
+fig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from include/linux/printk.h:6:0,
+                 from include/linux/kernel.h:13,
+                 from net/openvswitch/flow.h:23,
+                 from net/openvswitch/flow_netlink.c:21:
+net/openvswitch/flow_netlink.c: In function 'ovs_key_from_nlattrs':
+include/linux/kern_levels.h:4:18: error: called object is not a function or=
+ function pointer
+ #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                  ^
+include/linux/kern_levels.h:13:19: note: in expansion of macro 'KERN_SOH'
+ #define KERN_INFO KERN_SOH "6" /* informational */
+                   ^
+include/linux/printk.h:247:9: note: in expansion of macro 'KERN_INFO'
+  printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         ^
+net/openvswitch/datapath.h:205:3: note: in expansion of macro 'pr_info'
+   pr_info("netlink: " fmt "\n", ##__VA_ARGS__); \
+   ^
+net/openvswitch/flow_netlink.c:777:4: note: in expansion of macro 'OVS_NLER=
+R'
+    OVS_NLERR("IPv6 flow label %x is out of range (max=3D%x).\n",
+    ^
+net/openvswitch/datapath.h:205:27: error: expected ')' before string consta=
+nt
+   pr_info("netlink: " fmt "\n", ##__VA_ARGS__); \
+                           ^
+net/openvswitch/flow_netlink.c:19:41: note: in definition of macro 'pr_fmt'
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+                                         ^
+net/openvswitch/datapath.h:205:3: note: in expansion of macro 'pr_info'
+   pr_info("netlink: " fmt "\n", ##__VA_ARGS__); \
+   ^
+net/openvswitch/flow_netlink.c:777:4: note: in expansion of macro 'OVS_NLER=
+R'
+    OVS_NLERR("IPv6 flow label %x is out of range (max=3D%x).\n",
+    ^
+
+Caused by commit 05da5898a96c ("openvswitch: Add support for
+OVS_FLOW_ATTR_PROBE") interacting with commit fecaef85f718
+("openvswitch: Validate IPv6 flow key and mask values") from the net
+tree.
+
+I applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Nov 2014 13:31:33 +1100
+Subject: [PATCH] openvswitch: fix up for OVS_NLERR API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/openvswitch/flow_netlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
+index 259b2f1ebd0d..45bdcf596414 100644
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -774,7 +774,7 @@ static int ovs_key_from_nlattrs(struct sw_flow_match *m=
+atch, u64 attrs,
+ 		}
+=20
+ 		if (ipv6_key->ipv6_label & htonl(0xFFF00000)) {
+-			OVS_NLERR("IPv6 flow label %x is out of range (max=3D%x).\n",
++			OVS_NLERR(log, "IPv6 flow label %x is out of range (max=3D%x).\n",
+ 				  ntohl(ipv6_key->ipv6_label), (1 << 20) - 1);
+ 			return -EINVAL;
+ 		}
+--=20
+2.1.3
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/include/uapi/asm/msr-index.h
-index 62838e54947d,c1cb18be540e..000000000000
---- a/arch/x86/include/uapi/asm/msr-index.h
-+++ b/arch/x86/include/uapi/asm/msr-index.h
-@@@ -149,48 -149,10 +149,52 @@@
- =20
-  #define MSR_CORE_C1_RES			0x00000660
- =20
- +#define MSR_CC6_DEMOTION_POLICY_CONFIG	0x00000668
- +#define MSR_MC6_DEMOTION_POLICY_CONFIG	0x00000669
- +
- +/* Hardware P state interface */
- +#define MSR_PPERF			0x0000064e
- +#define MSR_PERF_LIMIT_REASONS		0x0000064f
- +#define MSR_PM_ENABLE			0x00000770
- +#define MSR_HWP_CAPABILITIES		0x00000771
- +#define MSR_HWP_REQUEST_PKG		0x00000772
- +#define MSR_HWP_INTERRUPT		0x00000773
- +#define MSR_HWP_REQUEST 		0x00000774
- +#define MSR_HWP_STATUS			0x00000777
- +
- +/* CPUID.6.EAX */
- +#define HWP_BASE_BIT			(1<<7)
- +#define HWP_NOTIFICATIONS_BIT		(1<<8)
- +#define HWP_ACTIVITY_WINDOW_BIT		(1<<9)
- +#define HWP_ENERGY_PERF_PREFERENCE_BIT	(1<<10)
- +#define HWP_PACKAGE_LEVEL_REQUEST_BIT	(1<<11)
- +
- +/* IA32_HWP_CAPABILITIES */
- +#define HWP_HIGHEST_PERF(x)		(x & 0xff)
- +#define HWP_GUARANTEED_PERF(x)		((x & (0xff << 8)) >>8)
- +#define HWP_MOSTEFFICIENT_PERF(x)	((x & (0xff << 16)) >>16)
- +#define HWP_LOWEST_PERF(x)		((x & (0xff << 24)) >>24)
- +
- +/* IA32_HWP_REQUEST */
- +#define HWP_MIN_PERF(x) 		(x & 0xff)
- +#define HWP_MAX_PERF(x) 		((x & 0xff) << 8)
- +#define HWP_DESIRED_PERF(x)		((x & 0xff) << 16)
- +#define HWP_ENERGY_PERF_PREFERENCE(x)	((x & 0xff) << 24)
- +#define HWP_ACTIVITY_WINDOW(x)		((x & 0xff3) << 32)
- +#define HWP_PACKAGE_CONTROL(x)		((x & 0x1) << 42)
- +
- +/* IA32_HWP_STATUS */
- +#define HWP_GUARANTEED_CHANGE(x)	(x & 0x1)
- +#define HWP_EXCURSION_TO_MINIMUM(x)	(x & 0x4)
- +
- +/* IA32_HWP_INTERRUPT */
- +#define HWP_CHANGE_TO_GUARANTEED_INT(x)	(x & 0x1)
- +#define HWP_EXCURSION_TO_MINIMUM_INT(x)	(x & 0x2)
- +
-+ #define MSR_CORE_PERF_LIMIT_REASONS	0x00000690
-+ #define MSR_GFX_PERF_LIMIT_REASONS	0x000006B0
-+ #define MSR_RING_PERF_LIMIT_REASONS	0x000006B1
-+=20
-  #define MSR_AMD64_MC0_MASK		0xc0010044
- =20
-  #define MSR_IA32_MCx_CTL(x)		(MSR_IA32_MC0_CTL + 4*(x))
-
---Sig_/NYqV+6DOkIGiGNDMxWMXGmI
+--Sig_/Cv9hVhKNDupdKAOq1R5oc+R
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUaVVpAAoJEMDTa8Ir7ZwVD0cQAIK7+yjhPNBZjiQ9bd9OCrN/
-qRlCSNEJNUhyoZb7WVfy+2yML/fVhJG2CFARZ1c8zNX+X0kLjf+XwQe8i7i9lTCC
-uJKhGa0MDw1vOJqdBM0eYu8b2k4WN53aivUFfs1cp8p7zFeC17wcew50vRe2f2Yr
-6bwvWNva2qJkImwk92AVcUIiUbdjUDDeXTUUP2m2WGJSiVZ8JZbdjQWex5V4p6LQ
-cjBc93Ypqt5BtVNjpQ02Cis2ujWjkmDc3aVUgAlazur5/gXSpzpUlmwTwWXV3Vvv
-PCY0qF91rExNUqjAus45IuLp9fQxmOMDePY89cwVQ6DoW7ITYeHBUv/IKycTqYcr
-xnkWT3NlZBiK/coFzQaqhwlF0uOe06WZ5uBX9qySknvcwVtoOuAOA/kitVT/Y3h2
-5yS0RTU0lPq0ZL5r/sf4lEePFE82wQHaPeRfOgYWWKf2hlshsbto8uUA+nkREE/M
-OEBwJ8Gohh1XHuQ0p6vJP1mYfi2Us5OkmAcIZzdsY1lGw+84oBvWXrL4e8L3UoD8
-2YITjOpxaT4i8l3BavV+EAeAvdByqtK+7Aq7zN4jei9xFLexQOLKgW4ESvMDPqI8
-xzSy5epap47ujVc5s8w1WezJdrz8YMsuDAMRDFdttZ3IMXKEp+JY0HdptMnmJyOQ
-b040PWH1VARDIFC+ZDpz
-=ICtC
+iQIcBAEBCAAGBQJUaV6hAAoJEMDTa8Ir7ZwVedYP/jqX0WKGoLujm6BbB07nV9+r
+fjiB29xTdPWdCNsFok2XAd6Iv/ut8mkhYZlk0NwXmRgyudZ8lxX2vi87unNB6PSE
+3NSi79kEQ5o/P67XB9zip7GYE4kEzIr044OdMdazUHe19A3KoH14keSG4l4tJoK3
+IpkUoT7F8OU6Dg7rOJIE9i6h4fs7nvMNBwa8Wd1WDLfccxQiYUJ82r+1RmdQKXGN
+banXQzKuCijfbFhH+4jDOW4PIdiVWPFB9+d9aHOEOBxVK85uu+wnV74RUfONFlhD
+chiFrxPSf9vsp12cRVKl8QnMifuiUt+biwLGHo4VaAHy1N7It8bofoAczd0x99cQ
+51dsaMzj5F+zIWqtnCY0wjPUGy0qYVmwKshs4+ny/pHw0Vrz40+MGsg11B81HdJy
+1MESNphzQZUENYPwZT6nIHj2/Yb1A4CsRtlMdXsfW8Fvpl7SM5qpVtpCUu3nAbvL
+hBl1y7mQo0TOguFI1sDV5uexHpOlA75pYUoi8ZaP/Wf9tbGKGyct1iTxh+JmLa/d
+M+SUYVsmRX5ckbg7VriakLAtss/ml59L/l56KV+nrr0I8scd3FivHCA3I17Iz26T
+Lnjcqjoooc6IHjySdxO3v1NUKDCrIzoePw9aunKIxi+j/S6sG6KLA1vdJtCWh1BO
+xk1sQtX0zIHvvBIADYb3
+=8pf0
 -----END PGP SIGNATURE-----
 
---Sig_/NYqV+6DOkIGiGNDMxWMXGmI--
+--Sig_/Cv9hVhKNDupdKAOq1R5oc+R--
