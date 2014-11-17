@@ -1,43 +1,60 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: manual merge of the tiny tree with the net-next tree
-Date: Mon, 17 Nov 2014 00:09:19 -0800
-Message-ID: <20141117080919.GD18179@thin>
-References: <20141117163503.6543cd21@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ipmi tree
+Date: Mon, 17 Nov 2014 19:14:40 +1100
+Message-ID: <20141117191440.621b3d3e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141117163503.6543cd21@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Iulia Manda <iulia.manda21@gmail.com>, Pravin B Shelar <pshelar@nicira.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/P/3LEmAa_dNub62_+vxWUvD"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43402 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750723AbaKQIOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2014 03:14:47 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Corey Minyard <cminyard@mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jk@ozlabs.org>
 
-On Mon, Nov 17, 2014 at 04:35:03PM +1100, Stephen Rothwell wrote:
-> Hi Josh,
-> 
-> Today's linux-next merge of the tiny tree got a conflict in
-> net/openvswitch/Kconfig between commit 8cd4313aa775 ("openvswitch: Fix
-> build failure") from the net-next tree and commit b043d487e255 ("lib:
-> Conditionally compile flex_array") from the tiny tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Sig_/P/3LEmAa_dNub62_+vxWUvD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me.
+Hi Corey,
 
-> diff --cc net/openvswitch/Kconfig
-> index b7d818c59423,1d979cecd66e..000000000000
-> --- a/net/openvswitch/Kconfig
-> +++ b/net/openvswitch/Kconfig
-> @@@ -4,9 -4,8 +4,10 @@@
->   
->   config OPENVSWITCH
->   	tristate "Open vSwitch"
->  +	depends on INET
->   	select LIBCRC32C
->  +	select NET_MPLS_GSO
-> + 	select FLEX_ARRAY
->   	---help---
->   	  Open vSwitch is a multilayer Ethernet switch targeted at virtualized
->   	  environments.  In addition to supporting a variety of features
+After merging the ipmi tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+make[3]: *** No rule to make target `drivers/char/ipmi/ipmi_powernv.o', nee=
+ded by `drivers/char/ipmi/built-in.o'.
+
+Caused by commit e6d873424d62 ("drivers/char/ipmi: Add powernv IPMI
+driver").  Presumable a forgotten "git add" for the new file ...
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/P/3LEmAa_dNub62_+vxWUvD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUaa50AAoJEMDTa8Ir7ZwVwgMP/RxY9wYnDtWsRJV7orBls/Yq
+hbJaamaE+bH2nN5ZD3xGC4DB0mO5KKMABI00N23xzjMpVYcw6r2PyltlVlLNBuAz
+NZuC5TdRaqIljoAf443/8hdyuntkoLtsfXHDNfYvYouAPX0v4PE3rRcCTBG+mJYp
+724fAZOpEUG2QEcJj1T6zJJK1hZ3zB4MSjDLtwyqpWr40M+S/UPSDKlBwJQcfvem
+RsU5/gG1JgwqBR50/2wyRQh9Hzdn/gmilpCcuiO0lL2MAhpYZY1ZkiuDjMmxkWAl
+jzx+Wqs8KZEkVJzI3YhbLfi8QeupsWQYxpNuOLujbtulY2VIi4HssYLIQK6RfS7g
+Sw7wgG/C+tIGNhcig8acfr0DM5fIPnahAifELI+T3bSVtf+s49aVPsx/u+zyDXn8
++fAzM7/tPAajzNj5R58zezqJimMJ/dLMpgEr43t8kEb1MTOJsp06MdThZUaKN5/H
+aUfZw5Ci8I2hcHQfk8H236FT10ebjdMzROoYVhAIBY+W4RQPbLonc7G2WYlw+qo9
+uTfW1tzVfApm4cOCGd2Z9qekn88EUppGQXQxIFHxoaul0bi6n9HqBQsA8Bt9UcHA
+x1C+f6OgKoKxkZrDOlfyWPXutcN0b0iIBAj8C6MP9hjYxghd1yfDHc1CxK8klcPb
+SclIDo0ZRY+hTDIcTn8t
+=Wc3n
+-----END PGP SIGNATURE-----
+
+--Sig_/P/3LEmAa_dNub62_+vxWUvD--
