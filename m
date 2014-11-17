@@ -1,82 +1,144 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the pm tree
-Date: Mon, 17 Nov 2014 15:16:30 +1100
-Message-ID: <20141117151630.35b22157@canb.auug.org.au>
+From: Jiang Liu <jiang.liu@linux.intel.com>
+Subject: Re: linux-next: Tree for Nov 14
+Date: Mon, 17 Nov 2014 13:12:17 +0800
+Message-ID: <546983B1.6060105@linux.intel.com>
+References: <20141114192738.08e744cc@canb.auug.org.au> <20141115211922.GA2347@roeck-us.net> <54680D0A.7070900@linux.intel.com> <5468185D.5020400@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F5x7GT6LQLAQDd2ze62HJDc"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51393 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751085AbaKQEQh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Nov 2014 23:16:37 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5468185D.5020400@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/F5x7GT6LQLAQDd2ze62HJDc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2014/11/16 11:22, Guenter Roeck wrote:
+> On 11/15/2014 06:33 PM, Jiang Liu wrote:
+>> Hi Guenter,
+>>     Could you please help to provide the config file and
+>> error messages?
+> 
+> Config file:
+>     https://github.com/groeck/linux-build-test/blob/master/rootfs/x86/qemu_x86_pc_nosmp_defconfig
+> 
+> 
+> Error log:
+>     http://server.roeck-us.net:8010/builders/qemu-x86-next/builds/44/steps/qemubuildcommand/logs/stdio
+> 
+> 
+> You can find the root file system used for the test as well as the test
+> script at
+>     https://github.com/groeck/linux-build-test/tree/master/rootfs/x86
+> 
+> There isn't really an error message, though - the boot stalls until the
+> controlling daemon
+> kills the qemu session.
+Hi Guenter,
+	With the test suite at
+https://github.com/groeck/linux-build-test/tree/master/rootfs/x86
+and configuration file qemu_x86_pc_nosmp_defconfig, I have
+following findings:
+1) disabling PCI_MSI, <OK>.
+2) manually turning on X86_IO_APIC, <OK>.
+3) with 3.16 kernel, disabling PCI_MSI, <OK>
+4) with 3.16 kernel, disabling PCI_MSI, enabling X86_UP_APIC, <fail>
 
-Hi Tomi,
+So the root cause is that KVM doesn't support the configuration with
+LOCAL_APIC enabled but IO_APIC disabled, though this configuration
+works with bare-metal machines.
+There are two possible solutions here:
+1) ALways enalbe IO_APIC if KVM is enabled.
+2) Enhance KVM to support LOCAL_APIC when IOAPIC is disabled.
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-include/linux/of.h between commit 8a0662d9ed29 ("Driver core: Unified
-interface for firmware node properties") from the pm tree and commit
-6d09dc6b74ca ("of.h: Keep extern declaration of of_* variables
-when !CONFIG_OF") from the omap_dss2 tree.
+But I'm not familiar with KVM and don't know how to achieve solution 2.
+Any suggestions?
+Regards!
+Gerry
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc include/linux/of.h
-index 189fc53bc7df,f83ca9dddcba..000000000000
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@@ -117,16 -112,7 +115,17 @@@ extern struct device_node *of_aliases
-  extern struct device_node *of_stdout;
-  extern raw_spinlock_t devtree_lock;
- =20
-+ #ifdef CONFIG_OF
- +static inline bool is_of_node(struct fwnode_handle *fwnode)
- +{
- +	return fwnode && fwnode->type =3D=3D FWNODE_OF;
- +}
- +
- +static inline struct device_node *of_node(struct fwnode_handle *fwnode)
- +{
- +	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
- +}
- +
-  static inline bool of_have_populated_dt(void)
-  {
-  	return of_allnodes !=3D NULL;
-
---Sig_/F5x7GT6LQLAQDd2ze62HJDc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUaXajAAoJEMDTa8Ir7ZwVHCMP+wZvqbs0lTnZx8QRcdHn4D34
-jhCq7UCmRq7kbeR55PhQHUgG7d+NoGYDPYTE7+XsGc7bPW2W/f9JB5QH1Oxj1dqk
-ag/ybYEhUm/PiUUjVCUj4zyMtLZWd8oBCLHMGIe4gtBQ8sxBjxtUxTnzlTpHn5Qz
-lkXTQIlwUOr8zhg99HJKB5A6YhgTPNgXBjkHGrr1vafa5mnuFE0wf11aq77y3AKV
-Pk6S4j6SaBloi+O4zw5O4KAylgq7I9wOzIFEHjbVYEv1xfi2Y46+ixPwPAyYOA6+
-XcqhMXt1LnFMDCNyCRyDbBstknLjN2DKtYxdkiFQoUy/UrJ5Vrv/GnCpQCkEiD+z
-C3DCdPgAbv57kSooptsiAXpvWS8y66/kP19q0tSbY6LKWyCDmsrwFYHxiZiJJnZy
-xvR5jeGV/RqPnzwuJS2jowqPA0W0Qs1e0YdMIEjsK0WpWUO/c1vkUIhtBBKywH5g
-l8/5PuWFyNSMqcdlnLP4Wnnz15ZXwg21coZN09ESn0cnHTmFhuriUQh1T/SLvjgw
-Ym5f2JzFujWGUK8gRdeQ3iv4RgKWjVBRjeNiFJn3mtQUmy6DexDSiuQFEEabzB88
-WK4f1GIQfVePHQRBK1qtI4+xUxJ+4oH6i/BoAshq7Ha6pUOG8FdUEl0GzvguBd7F
-8WrJbRV2EkQlFRfiKpzH
-=/YoK
------END PGP SIGNATURE-----
-
---Sig_/F5x7GT6LQLAQDd2ze62HJDc--
+> 
+> Guenter
+> 
+>> Thanks!
+>> Gerry
+>>
+>> On 2014/11/16 5:19, Guenter Roeck wrote:
+>>> On Fri, Nov 14, 2014 at 07:27:38PM +1100, Stephen Rothwell wrote:
+>>>> Hi all,
+>>>>
+>>>> Changes since 20141113:
+>>>>
+>>>> New tree: overlayfs
+>>>>
+>>>> The idle tree gained a conflict against Linus' tree.
+>>>>
+>>>> The scsi tree gained a conflict against the usb tree.
+>>>>
+>>>> Non-merge commits (relative to Linus' tree): 6264
+>>>>   6509 files changed, 209171 insertions(+), 167101 deletions(-)
+>>>>
+>>>
+>>> I bisected the x86-nosmp qemu runtime failure I have seen for
+>>> the last few days. Here is the result:
+>>>
+>>> bb46613f7099f70bc68c1c684cfa22d6863cd8eb is the first bad commit
+>>> commit bb46613f7099f70bc68c1c684cfa22d6863cd8eb
+>>> Author: Jiang Liu <jiang.liu@linux.intel.com>
+>>> Date:   Mon Oct 27 16:12:06 2014 +0800
+>>>
+>>>      x86, irq: Make MSI and HT_IRQ indepenent of X86_IO_APIC
+>>>
+>>> Detailed log:
+>>>
+>>> git bisect start 'HEAD' 'v3.18-rc4'
+>>> # good: [97bf3e2baed8f45432933bf15535061fb5acda44] Merge
+>>> remote-tracking branch 'sound-asoc/for-next'
+>>> git bisect good 97bf3e2baed8f45432933bf15535061fb5acda44
+>>> # bad: [d23dcf93e7ad8004ef80726717f700316e53f44d] Merge
+>>> remote-tracking branch 'usb-serial/usb-next'
+>>> git bisect bad d23dcf93e7ad8004ef80726717f700316e53f44d
+>>> # bad: [cff78d32f4c15b7b2cb173c8e6097c513f406da0] Merge
+>>> remote-tracking branch 'kvm/linux-next'
+>>> git bisect bad cff78d32f4c15b7b2cb173c8e6097c513f406da0
+>>> # good: [09dc3f20206821e06b1b281b1ae4451777f707c4] Merge
+>>> remote-tracking branch 'audit/next'
+>>> git bisect good 09dc3f20206821e06b1b281b1ae4451777f707c4
+>>> # bad: [caf0fea9e728916a92c508988fd2ae84a08c280b] Merge branch
+>>> 'x86/vdso'
+>>> git bisect bad caf0fea9e728916a92c508988fd2ae84a08c280b
+>>> # good: [9aa5f98820067b00456c42347fc0ff48d2d2474f] Merge branch
+>>> 'sched/urgent'
+>>> git bisect good 9aa5f98820067b00456c42347fc0ff48d2d2474f
+>>> # bad: [46fe562d914fde0a43ee339a0fcfd4af829cb8f7] Merge branch
+>>> 'x86/boot'
+>>> git bisect bad 46fe562d914fde0a43ee339a0fcfd4af829cb8f7
+>>> # good: [b26ea43d0bb1539ce047206a57c7fd8d636e7f22] x86, irq: Protect
+>>> __clear_irq_vector() with vector_lock
+>>> git bisect good b26ea43d0bb1539ce047206a57c7fd8d636e7f22
+>>> # bad: [e1d8f79a27a41493c8f1ad0bde440048e17f9494] iommu/amd: Use
+>>> helpers to access irq_cfg data structure associated with IRQ
+>>> git bisect bad e1d8f79a27a41493c8f1ad0bde440048e17f9494
+>>> # good: [051825cab15c8180f2f0dbc3a9de5a3db7476065] x86, irq: Move HT
+>>> IRQ related code from io_apic.c into htirq.c
+>>> git bisect good 051825cab15c8180f2f0dbc3a9de5a3db7476065
+>>> # bad: [bb46613f7099f70bc68c1c684cfa22d6863cd8eb] x86, irq: Make MSI
+>>> and HT_IRQ indepenent of X86_IO_APIC
+>>> git bisect bad bb46613f7099f70bc68c1c684cfa22d6863cd8eb
+>>> # good: [b09198f7b59101e52bcf238ed3b7bfc64de055ef] x86, irq: Move IRQ
+>>> initialization routines from io_apic.c into vector.c
+>>> git bisect good b09198f7b59101e52bcf238ed3b7bfc64de055ef
+>>> # first bad commit: [bb46613f7099f70bc68c1c684cfa22d6863cd8eb] x86,
+>>> irq: Make MSI and HT_IRQ indepenent of X86_IO_APIC
+>>>
+>>> I'll be happy to provide the configuration if needed.
+>>>
+>>> Guenter
+>>> -- 
+>>> To unsubscribe from this list: send the line "unsubscribe
+>>> linux-kernel" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>> Please read the FAQ at  http://www.tux.org/lkml/
+>>>
+>>
+> 
