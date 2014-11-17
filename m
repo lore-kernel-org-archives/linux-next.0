@@ -1,62 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the ia64 tree
-Date: Mon, 17 Nov 2014 18:49:59 +1100
-Message-ID: <20141117184959.15d4dbb8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the omap_dss2 tree
+Date: Mon, 17 Nov 2014 19:09:05 +1100
+Message-ID: <20141117190905.4e96294a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KTXkqVVl/Gy+T+ao4NBfh1f"; protocol="application/pgp-signature"
+ boundary="Sig_/epK8nW/5tACmWK7uTP44.BT"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52440 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36435 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750755AbaKQHuD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Nov 2014 02:50:03 -0500
+	id S1751318AbaKQIJT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2014 03:09:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Luck <tony.luck@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Schmidt <yath@yath.de>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luc Verhaegen <libv@skynet.be>, Hans de Goede <hdegoede@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, David Herrmann <dh.herrmann@gmail.com>, Grant Likely <grant.likely@linaro.org>
 
---Sig_/KTXkqVVl/Gy+T+ao4NBfh1f
+--Sig_/epK8nW/5tACmWK7uTP44.BT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Tomi,
 
-After merging the ia64 tree, today's linux-next build (powerpc64
-allnoconfig) produced this warning:
+After merging the omap_dss2 tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-In file included from kernel/printk/printk.c:41:0:
-include/linux/syslog.h:55:12: warning: 'check_syslog_permissions' defined b=
-ut not used [-Wunused-function]
- static int check_syslog_permissions(int type, bool from_file)
-            ^
+drivers/video/fbdev/simplefb.c: In function 'simplefb_clocks_init':
+drivers/video/fbdev/simplefb.c:207:2: error: implicit declaration of functi=
+on 'of_clk_get_parent_count' [-Werror=3Dimplicit-function-declaration]
+  par->clk_count =3D of_clk_get_parent_count(np);
+  ^
 
-Introduced by commit c36487706565 ("syslog: Provide stub
-check_syslog_permissions").
+Caused by commit fc219bfd5b2e ("simplefb: add clock handling code").
+This build does not have CONFIG_COMMON_CLK set.
+
+I have added the following fix for today (there is probably a better
+one):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Nov 2014 19:05:42 +1100
+Subject: [PATCH] simplefb: make it depend on CONFIG_COMMON_CLK
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/video/fbdev/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 025b439d4fe1..1f0298e166c3 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -2457,6 +2457,7 @@ config FB_HYPERV
+ config FB_SIMPLE
+ 	bool "Simple framebuffer support"
+ 	depends on (FB =3D y)
++	depends on COMMON_CLK
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
+--=20
+2.1.3
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/KTXkqVVl/Gy+T+ao4NBfh1f
+--Sig_/epK8nW/5tACmWK7uTP44.BT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUaainAAoJEMDTa8Ir7ZwVT68P/2JRk+7uz4y8uI2ERXYjELYH
-zqTM1bif4et+Iby5awtWksdBG/0AZZaCcdesdOYBmH4wbOjcza4Ux+eC1rsZWTvE
-EO/yvEtxaqQy8tr1k56+nC419AOocQJs9KgCBG8Ri663kpGYiyQfdMRHAWzO2Hrz
-rZ/n7eWBMLPcXSSq/4eFj46VHPwPhfxnX7fWJrwrz9ZxQ+q9XZnbpypDo/IfqkmY
-/zq0RJ1AKR3n8wcjmlZugDMcI3bxk/pn70VE6qI/BQRTol2jjuI4AgEoJCajITaF
-jxf9rvW3dI5J0syhHHnTm2Ue9yQ/Ld7e+rv29jVIfeyDv7CcHCBpj+hHX4nCyXLV
-CD0FzMmYvbv/LsVhB6eQKWCkpwKiZQplw929lOuButHtrNSg2gczGEfOONKgdwHW
-NwNXs2ZA2Y6axViua3/S/7vOggaW87fCwoJDrZxSR889W03Wz5AdK+71eU3BKSbR
-eiBE8SVlevfn3T8YU2PBbDhjBkPcE5ocj3VoOmBqOZapgfCEVcAzTpsdjTaGVnHx
-jZD/EGHKfyYeGR2br2SctDQboinjinjSnS5HI+VpBk+z3UCJtfjlsELVj/ds5caC
-UO3uKkiAFMhXmU5F/lowojD1/3uEj6jSJ90hyuIo2xVs5TkxtqbLVeGGzwIJZCs5
-X5XnLysVyFJSdOi+J14f
-=yZ+k
+iQIcBAEBCAAGBQJUaa0sAAoJEMDTa8Ir7ZwVWGAP/i6B1Z51iBNzwZ0xBeOjFUyX
+loo3Giak4yubaTGDnp+42Yby46BuKTw/TCygkmQNmUB62h+XutjxvWnqxCdZAi0I
+/+/dMD0ZGhdGGu3aobXfnS0HXQ3ewwLjhd9u7qbni1vnpxqYJ1DU4NQ5kbeMmFDR
+7xl/Yfo+wjTvPZBaPi5OrzqnI2c9j9TQWVjPbOnl+R6mKlTeKZm7bhzC2loXGNCk
+M9gPkFBMyknortmA7cS4MDtvApYAGjP8Fj/e3BrL1GccXhNxRZ0xVs45SbZeL0Bv
+N1OuXERoahAfBGStheF/Jt9qFxhkgk8SjeoY0H+nHdT7KPHFIvRylGq2Ip77yG/R
+devbbVcDzfaAKJZ9Qrj/R0RLib6DE1UjBTeI3HsKLO08mb1c/CTS6KLtvQLXhcVw
+7KERSGb7iB1x7sbIRNhcSdBni8Hn7MWze729sUxZsGcgBVNSxxH/Uc08v1MkUTGP
+t1mQV2iUUp+C/sjYKdBV042Xb+IygbqaTxGseYHLeF+8B2xjJ7JdaTvqeBrzyszz
+YVpNeg8G8I4rD9fB1qGUfg6HliRziYzDY8aRXPkvn6u8V2abuUesP1mr/Uwz42AK
+UL5xIgcZPy4DRiEfMG60x2F2e9cryofHch/8Jazm3j+VcHepZmCc2kbPJnVwynvR
+tQ3ziif4CgYXciQUpNRy
+=3pno
 -----END PGP SIGNATURE-----
 
---Sig_/KTXkqVVl/Gy+T+ao4NBfh1f--
+--Sig_/epK8nW/5tACmWK7uTP44.BT--
