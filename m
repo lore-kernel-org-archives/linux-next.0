@@ -1,56 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Mon, 17 Nov 2014 14:04:54 +1100
-Message-ID: <20141117140454.497aeee8@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 17 Nov 2014 14:11:58 +1100
+Message-ID: <20141117141158.438636fd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mgd=kRmL2PUmbae+rvTxhQ+"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/m2JCHI1uBioA0jVdI/OBfa7"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51821 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752463AbaKQDMG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Nov 2014 22:12:06 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 
---Sig_/mgd=kRmL2PUmbae+rvTxhQ+
+--Sig_/m2JCHI1uBioA0jVdI/OBfa7
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Dave,
 
 Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/intel_pm.c between commit 6bc55a67bd4b ("drm/i915:
-drop WaSetupGtModeTdRowDispatch:snb") from the drm-intel-fixes tree and
-commits (not sure which ones - the code seems to have been rearranged
-quite a bit) from the drm tree.
+drivers/gpu/drm/tegra/dc.c between commit 8ff64c17f3be ("drm/tegra: dc:
+Add missing call to drm_vblank_on()") from Linus' tree and commits
+205d48edee84 ("drm/tegra: dc: Factor out DC, window and cursor commit")
+and c7679306a923 ("drm/tegra: dc: Universal plane support") from the
+drm tree.
 
-I fixed it up (I applied the former patch by hand to the file from the
-drm tree) and can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/mgd=kRmL2PUmbae+rvTxhQ+
+diff --cc drivers/gpu/drm/tegra/dc.c
+index 054a79f143ae,b957908aec73..000000000000
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@@ -751,7 -906,8 +906,8 @@@ static void tegra_crtc_disable(struct d
+  		}
+  	}
+ =20
+ -	drm_vblank_off(drm, dc->pipe);
+ +	drm_crtc_vblank_off(crtc);
++ 	tegra_dc_commit(dc);
+  }
+ =20
+  static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
+@@@ -934,15 -1090,9 +1090,9 @@@ static void tegra_crtc_prepare(struct d
+  static void tegra_crtc_commit(struct drm_crtc *crtc)
+  {
+  	struct tegra_dc *dc =3D to_tegra_dc(crtc);
+- 	unsigned long value;
+-=20
+- 	value =3D GENERAL_UPDATE | WIN_A_UPDATE;
+- 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+-=20
+- 	value =3D GENERAL_ACT_REQ | WIN_A_ACT_REQ;
+- 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+ =20
+ -	drm_vblank_post_modeset(crtc->dev, dc->pipe);
+ +	drm_crtc_vblank_on(crtc);
++ 	tegra_dc_commit(dc);
+  }
+ =20
+  static void tegra_crtc_load_lut(struct drm_crtc *crtc)
+
+--Sig_/m2JCHI1uBioA0jVdI/OBfa7
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUaWXbAAoJEMDTa8Ir7ZwVhRoP/3Mxsw5mdL4gEqqZ65e0pxM5
-YdS5174Jh/kdIDA46/ibYpuTIyM/uA2zxu64hWLxJVUI9CCLogR83m2mrufxDuRY
-14DkbaSY0sWFc1ZAOS2LVq3b5INWtLG1wVkHQckdyy0Af5rKpgA28/IOlTh4wdmv
-5QTBsPkAEifyXOFJcyUZiJdkxzwptMU4OJS3sFbA7czWs8k/9uZ/Q4ECytMZkrGd
-XW9HEPTkjMROu73oBYVqv2Mtfd6zDlVVCEFeRpIE/NWqAN1VHdfxpjTKstiAW0u/
-ptGHygM9cIoR3SBlqtIwOlBo5vP4jeyfCv+YzXcCgV5H14piKhDFSnOsC9NlxlZC
-5xEFYAdaWwLe7rJKzQBsD92oRw7Fn9f8RXIjxvaGlhXP7pNlFcYoA3SVWSz06c5t
-kkVtYep09/sIFzuB55Z7Xfs8P6SV2eTk6KzaxU8aGfPs6nz58NGhmqqdVKuSJclj
-zkYXE14MTj5R78zsxGSSAnwRbvm/FDfg4tJxS/ytuUG5RchdomtONfK8gw8wz1GA
-39uPnld8P2n22iC+urSbP0vZv/goolIh3nLukWbENWgpkvgP4+5VM0E9wD2U8CnJ
-EEfbyFDcYx56YyR65b9kcZd/sEMKDy0RrfpeV2tEI+Si6BZ2ZVynn/xhHOOxcc/L
-zBzbRQo7siJ6tWOh5+FA
-=aJur
+iQIcBAEBCAAGBQJUaWeDAAoJEMDTa8Ir7ZwVtwIP/3K3H92RoGmz0QAQlkb2+mee
+OT99NUNYPdysrWnXhiEz7GaGYCx0MwnNMrEzbsPs/CSRWuBbg2cYRkvEW+c7GTAa
+fBkxBIE9GPXESvWk6HJZkfh9jWyFf1rC+aZ/lW/Ea0gd3tahvTMxnZZ0eVKCVQec
+Nhdr/JT36Jl8Sjlb1WYV/pKWwAgtlzPDQxfvF1MebXnbz7nIsev8CYPXwFQ8/Vma
+exnmdEBZykwLDNaueYVRh46Uj/umOFnzQWprONNSN/8O4wwpzuHI/XqQVL+X7Dvf
+47+VPZgmNVS7XzWP2WAV4ZlIjo6KgLwYAFC8PLSSIfRoKcz4gx3A/mcTjbPO5QiU
++O5S3lfGppTupIy5uX1FnfwuinvIcX5LHOp/gxjfipk8Cf2pdVU7dj+XHa2EbvMK
+IN368AhHvNcX4HRpSZbPfuh/xp/8hthCxO/5Cdte9KfABQjKdH41PGmxmI/mN9Bj
+dpEGEP9RgcwUeiwRNzakHecKaGSKY/OgJPrHgNBiU//m4hEGPHuRDQjVRiFbgogm
+IV9R1JdVgFkys1ebvQH33T3RI36xu6Tni7AE6CTJez88nD4LMQI6bjols8Bx/o3t
+ZQOWTbF0F6LbSAWhT+OskFQuZOgGEmqhpKCncdMa9I36FLtaILaTUVy+VGc4Xq6X
+JGNbU2L1gVtdMEms3Emq
+=4x9t
 -----END PGP SIGNATURE-----
 
---Sig_/mgd=kRmL2PUmbae+rvTxhQ+--
+--Sig_/m2JCHI1uBioA0jVdI/OBfa7--
