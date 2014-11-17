@@ -1,21 +1,21 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the ipmi tree
-Date: Mon, 17 Nov 2014 19:14:40 +1100
-Message-ID: <20141117191440.621b3d3e@canb.auug.org.au>
+Date: Mon, 17 Nov 2014 19:20:09 +1100
+Message-ID: <20141117192009.735e8b6b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/P/3LEmAa_dNub62_+vxWUvD"; protocol="application/pgp-signature"
+ boundary="Sig_/2Z9n+JDLqFo4BaivWt4h042"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43402 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35072 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750723AbaKQIOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Nov 2014 03:14:47 -0500
+	id S1751090AbaKQIUR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2014 03:20:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Corey Minyard <cminyard@mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jk@ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/P/3LEmAa_dNub62_+vxWUvD
+--Sig_/2Z9n+JDLqFo4BaivWt4h042
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -24,37 +24,41 @@ Hi Corey,
 After merging the ipmi tree, today's linux-next build (powerpc
 allyesconfig) failed like this:
 
-make[3]: *** No rule to make target `drivers/char/ipmi/ipmi_powernv.o', nee=
-ded by `drivers/char/ipmi/built-in.o'.
 
-Caused by commit e6d873424d62 ("drivers/char/ipmi: Add powernv IPMI
-driver").  Presumable a forgotten "git add" for the new file ...
+drivers/char/ipmi/ipmi_ssif.c: In function 'ssif_probe':
+drivers/char/ipmi/ipmi_ssif.c:1377:23: error: 'union ipmi_smi_info_union' h=
+as no member named 'acpi_info'
+   ssif_info->addr_info.acpi_info.acpi_handle =3D acpi_handle;
+                       ^
 
-I have reverted that commit for today.
+Caused by commit 66a4d9633da8 ("ipmi: Add SMBus interface driver (SSIF)").
+
+I have reverted that commit (and the following 1c99788eebd9 "ipmi:
+Handle I2C parms in the SSIF driver") for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/P/3LEmAa_dNub62_+vxWUvD
+--Sig_/2Z9n+JDLqFo4BaivWt4h042
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUaa50AAoJEMDTa8Ir7ZwVwgMP/RxY9wYnDtWsRJV7orBls/Yq
-hbJaamaE+bH2nN5ZD3xGC4DB0mO5KKMABI00N23xzjMpVYcw6r2PyltlVlLNBuAz
-NZuC5TdRaqIljoAf443/8hdyuntkoLtsfXHDNfYvYouAPX0v4PE3rRcCTBG+mJYp
-724fAZOpEUG2QEcJj1T6zJJK1hZ3zB4MSjDLtwyqpWr40M+S/UPSDKlBwJQcfvem
-RsU5/gG1JgwqBR50/2wyRQh9Hzdn/gmilpCcuiO0lL2MAhpYZY1ZkiuDjMmxkWAl
-jzx+Wqs8KZEkVJzI3YhbLfi8QeupsWQYxpNuOLujbtulY2VIi4HssYLIQK6RfS7g
-Sw7wgG/C+tIGNhcig8acfr0DM5fIPnahAifELI+T3bSVtf+s49aVPsx/u+zyDXn8
-+fAzM7/tPAajzNj5R58zezqJimMJ/dLMpgEr43t8kEb1MTOJsp06MdThZUaKN5/H
-aUfZw5Ci8I2hcHQfk8H236FT10ebjdMzROoYVhAIBY+W4RQPbLonc7G2WYlw+qo9
-uTfW1tzVfApm4cOCGd2Z9qekn88EUppGQXQxIFHxoaul0bi6n9HqBQsA8Bt9UcHA
-x1C+f6OgKoKxkZrDOlfyWPXutcN0b0iIBAj8C6MP9hjYxghd1yfDHc1CxK8klcPb
-SclIDo0ZRY+hTDIcTn8t
-=Wc3n
+iQIcBAEBCAAGBQJUaa+/AAoJEMDTa8Ir7ZwVzksP/3NQjLaQ00MjBhs6CvDhkc3q
+vCdsccsXNdscTC7benrj13gK7I6Hm6RGubchysZqIOKmwEO5fgcUQq8+mCWR/9XO
+G6GpwtMd1QEcrv5kuAA29TKoLSoU3IlodBA8HP84+n/MaU4sjdw6I3pP20EHxC1y
+ABFz2NjTF8QEsT+UxmEjmxpz69vPR0ZrmTAfinDVztSl+wD/VGhiATsjfOYSODVN
+/8MHPSPtEl+L//QaTWmBKximfu7IdmTecHC9S7ZGHawX/N1FhbYXt7z6PJVG+bij
+P9Aj6pgHTmMz+OjdT8+ZtR+IoQCi0yjjI5X9031aMmGS5jnUl+j9YPSlP1A8gmOe
+odR+3YRHcg4/EgbRUGYEezJlEhX3gU+nMX/L4K6dzbh3N67kl4+kxPDn3KQ2Qxpk
+G7YqBpqZR72BVtLOQs5NbbxhzF+x88qwpnupxdNd9+aqOM96BwTvdO2VJSyyJidR
+5yiOGRAAQsjlLVYe23A7PQ3gbKlsOhyXI95cBO1epYnPGefAyiwyztScThEux3N3
+gfB3C/0CCi2QWCCFz9aHgGqnJSkpw9HXA+su3kD3wgK3IFJDb2x4sBOjCzUTG942
+oyGM8nQHFrG4G658eWrzI19eRJPuGe3DgPuA5bZ96gCaoWTSRWqi11zoZ/5YJPaf
+b5Z7uKCPXCfLIAKNO7xB
+=C1KJ
 -----END PGP SIGNATURE-----
 
---Sig_/P/3LEmAa_dNub62_+vxWUvD--
+--Sig_/2Z9n+JDLqFo4BaivWt4h042--
