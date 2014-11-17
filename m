@@ -1,58 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+From: Paul Bolle <pebolle@tiscali.nl>
 Subject: Re: linux-next: build warning after merge of the pm tree
-Date: Tue, 18 Nov 2014 00:14:19 +0100
-Message-ID: <1721522.tICxlGjU6i@vostro.rjw.lan>
-References: <20141117134414.7f4d8d21@canb.auug.org.au> <1416223903.22252.11.camel@x220>
+Date: Tue, 18 Nov 2014 00:45:09 +0100
+Message-ID: <1416267909.7024.3.camel@x220>
+References: <20141117134414.7f4d8d21@canb.auug.org.au>
+	 <1416223903.22252.11.camel@x220> <1721522.tICxlGjU6i@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:60301 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752657AbaKQWxS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Nov 2014 17:53:18 -0500
-In-Reply-To: <1416223903.22252.11.camel@x220>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Bolle <pebolle@tiscali.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1721522.tICxlGjU6i@vostro.rjw.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On Monday, November 17, 2014 12:31:43 PM Paul Bolle wrote:
-> On Mon, 2014-11-17 at 13:44 +1100, Stephen Rothwell wrote:
-> > Hi Rafael,
-> > 
-> > After merging the pm tree, today's linux-next build (arm multi_v7_defconfig)
-> > produced this warning:
-> > 
-> > kernel/power/Kconfig:132:error: recursive dependency detected!
-> > kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
-> > kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM_RUNTIME
-> > 
-> > Caused by commit 9cdd5fd742e6 ("PM / domains: Kconfig: always enable
-> > PM_RUNTIME when genpd enabled").
+On Tue, 2014-11-18 at 00:14 +0100, Rafael J. Wysocki wrote:
+> I'll drop the commit for now, but this looks strange.
 > 
-> This error also popped up when I fiddled with omap2plus_defconfig on top
-> of next-20141117. Note that I ended up with a .config which has
-> CONFIG_ARCH_MULTI_V7 set. The error appears to be triggered by the
-> Kconfig entry for ARCH_EXYNOS (in arch/arm/mach-exynos/Kconfig). It
-> contains
->         select PM_GENERIC_DOMAINS if PM_RUNTIME
-> 
-> (Perhaps the :272: line needs rephrasing in the error Stephen quoted. It
-> confused me quite a bit.)
-> 
-> Naively dropping that select statement from ARCH_EXYNOS triggered yet
-> another error:
->     kernel/power/Kconfig:145:error: recursive dependency detected!
->     kernel/power/Kconfig:145:	symbol PM depends on PM_RUNTIME
->     kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
->     kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM
-> 
-> After that I admitted defeat.
+> Had you cleaned up the kernel configuration after dropping the PM_RUNTIME select
+> from ARCH_EXYNOS?
 
-I'll drop the commit for now, but this looks strange.
+I retested this again:
 
-Had you cleaned up the kernel configuration after dropping the PM_RUNTIME select
-from ARCH_EXYNOS?
+[linux * (next-20141117)]$ git status
+HEAD detached at next-20141117
+nothing to commit (use -u to show untracked files)
+[linux * (next-20141117)]$ make clean
+[linux * (next-20141117)]$ cp arch/arm/configs/omap2plus_defconfig .config
+[linux * (next-20141117)]$ vim arch/arm/mach-exynos/Kconfig:24:
+[linux * (next-20141117)]$ git diff
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index e4a00bafffc1..02ff8534238b 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -21,7 +21,6 @@ menuconfig ARCH_EXYNOS
+        select HAVE_S3C_RTC if RTC_CLASS
+        select PINCTRL
+        select PINCTRL_EXYNOS
+-       select PM_GENERIC_DOMAINS if PM_RUNTIME
+        select S5P_DEV_MFC
+        select SRAM
+        select MFD_SYSCON
+[linux * (next-20141117)]$ yes "" | make  ARCH=arm oldconfig >/dev/null
+kernel/power/Kconfig:145:error: recursive dependency detected!
+kernel/power/Kconfig:145:	symbol PM depends on PM_RUNTIME
+kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
+kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM
 
-Rafael
+Can you reproduce the above?
+
+
+Paul Bolle
