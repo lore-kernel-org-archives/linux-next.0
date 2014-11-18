@@ -1,49 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bad commit in the nfsd tree
-Date: Wed, 19 Nov 2014 08:04:11 +1100
-Message-ID: <20141119080411.09f6a811@canb.auug.org.au>
+Subject: Re: [PATCH] ARM: vfp: Silence mvfr0 unused variable warning
+Date: Wed, 19 Nov 2014 08:14:38 +1100
+Message-ID: <20141119081438.3df66238@canb.auug.org.au>
+References: <1416344191-20484-1-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lZahKQVJ53uKVryF_+L/dtP"; protocol="application/pgp-signature"
+ boundary="Sig_/+AhLzhf671Y_Q0gm7i1sQU1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1416344191-20484-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/lZahKQVJ53uKVryF_+L/dtP
+--Sig_/+AhLzhf671Y_Q0gm7i1sQU1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Stephen,
 
-I just noticed that the top commit of the nfsd tree (be603bbb7bc1
-"OOPS") has no Signed-off-by tags (or a real commit message at all) ...
+On Tue, 18 Nov 2014 12:56:31 -0800 Stephen Boyd <sboyd@codeaurora.org> wrot=
+e:
+>
+> Stephen Rothwell reports that commit 3f4c9f8f0a20 ("ARM: 8197/1:
+> vfp: Fix VFPv3 hwcap detection on CPUID based cpus") introduced an
+> unused variable warning.
+>=20
+> arch/arm/vfp/vfpmodule.c: In function 'vfp_init':
+> arch/arm/vfp/vfpmodule.c:725:6: warning: unused variable 'mvfr0'
+> [-Wunused-variable]
+>   u32 mvfr0;
+>=20
+> Silence this warning by using IS_ENABLED instead of ifdefs.
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Looks good (though I haven't tested it).  One small nit below:
+
+> +		if (IS_ENABLED(CONFIG_VFPv3)) {
+> +			mvfr0 =3D fmrx(MVFR0);
+
+Now that you have a block here, you could move the declaration of mvfr0
+into this block, right?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/lZahKQVJ53uKVryF_+L/dtP
+--Sig_/+AhLzhf671Y_Q0gm7i1sQU1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUa7RQAAoJEMDTa8Ir7ZwVBScP/RhYnFMd95kMlAKncL0sSYjZ
-RIkZ6SolmE8jfpq6k4+i4rWf8IzkUH+44y/DR2N3NFUvW61s2qEwIUNjiGMsRWLa
-NLi8GjwBHHkTf2slGA/hqxLM4NEqyr3Vgm1bgjkrog1w4JZi+C8j9cZq3ThmvMub
-uqMs+wFjuTFW9Q3oCNDYFfTuhXhkgvk069VJcDZkf5kvnS68Nhupa60qmXv0eCPi
-VQNM/XT663QA1ebblrMFsHUYoL7xfXM5iuiO0y/dFyfmiEH4x2sEFsf8vGOUFPiF
-m3oysgBu0YkbM7anMiqJT7KUECU9Scav9rZm/xCL1bisiF/tU14ZK6UpUgOshorG
-2qw+CjP1ACK1bVW4kGBr886wZS2NgGBxRa6n8Ywqyjz8p8QkSfLNEBaZpRHwjM1D
-oebRZZY5C0+zXgix8j19aZATpoB1DdJGAsB56iivUMdSjQE0FnYVlrOF7flwmPJN
-BQ/z+0nn2Yabf2i9bhuxzydkqyy4OD2xF0n8i/H/4n2+5O33smYJ5PQH57mwPtGg
-yYJlo8H92GwibEQ9j6Q4WPM+Wj5kHu3Bnjj87SVIMb2paape1ADU7hKErjY6BsBE
-VHFmgX1gNksuU2oAx4O5lfGAJ3o6WXfl9U+lEbofXRY3M01Z0eLiB2AnfzDr3yPX
-1n1b+HTb9uKtW722doFs
-=Ulze
+iQIcBAEBCAAGBQJUa7bWAAoJEMDTa8Ir7ZwVFQsP/3PxV7lH1y0JrgYbw+7ru7gN
+mgsa+TQp7pWfmY/kp3WQtv19RcW5Sxe7U44gKRCwUghGie6/xS1lb2VY/6GfkIKQ
+7M2E+26LQeWZc2z8LA7B/VZFgjhoF7vkxDdqS6tQEHGOjsyrfKrPppQirlq9Dt4M
+ympEW/a9lC4+72G7axOHtaZQQUus0L7wgovo2MibgnD3cRAZDdku52gryJP3x5In
+9g2110bdNTQShK4Dvvc0nVbGqwElZr8qX9K55F38gm3xGrQ6fVO3et81qAsb3Nso
+LOy1I2sQ2+7G1YfP8laczfwjuyL4rtO9aZ3HVHOMy9HvabRowp8p74qOX5iAEvYO
+4iR4A6R0WNjdtam3AjvzHNWFmn4U5RA3t6s+GK298/APCZHG/k6iN9KmWF/4cOWy
+bsmEPHTeBBdQ0taclu+jKCP9jaAgi+VtWPlHySsiFE9feyqV0LaBezTKxded52Og
+VPV2CZWhT81Kb/3IsOjj1hbiQJufqllidMeyN6hpRv6+3ds7uyZiPGCu5DlH+C9j
+jyaQMRchkbiqAwjYXEzWwuMnQnBZDGPjOdWU8CohumpeHZDPm+e3eroQAmF8P/W1
+RLlaFPawNZomwhTK5AFysNLpMItjXhuiDbE7+yXV5PFBDeDCzICF87uaiLFbq2Z+
+mtbLHTnwkqLIYapFLWPZ
+=WKiQ
 -----END PGP SIGNATURE-----
 
---Sig_/lZahKQVJ53uKVryF_+L/dtP--
+--Sig_/+AhLzhf671Y_Q0gm7i1sQU1--
