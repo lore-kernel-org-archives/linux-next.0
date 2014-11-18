@@ -1,96 +1,32 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: David Herrmann <dh.herrmann@gmail.com>
 Subject: Re: linux-next: build failure after merge of the omap_dss2 tree
-Date: Tue, 18 Nov 2014 16:53:14 +0200
-Message-ID: <546B5D5A.8020304@ti.com>
+Date: Tue, 18 Nov 2014 16:07:19 +0100
+Message-ID: <CANq1E4SMLHmezfXSENSQ8xUaXptwA8YKQ9Nne=sDCB0gPkPLmA@mail.gmail.com>
 References: <20141117190905.4e96294a@canb.auug.org.au>
+	<546B5D5A.8020304@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="OqvjuiOJgstrjmFCM7nIoLAhoTvasBlH3"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141117190905.4e96294a@canb.auug.org.au>
+In-Reply-To: <546B5D5A.8020304@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Hans de Goede <hdegoede@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luc Verhaegen <libv@skynet.be>, Geert Uytterhoeven <geert@linux-m68k.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, David Herrmann <dh.herrmann@gmail.com>, Grant Likely <grant.likely@linaro.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Hans de Goede <hdegoede@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Luc Verhaegen <libv@skynet.be>, Geert Uytterhoeven <geert@linux-m68k.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Grant Likely <grant.likely@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---OqvjuiOJgstrjmFCM7nIoLAhoTvasBlH3
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Hi
 
-Hi,
+On Tue, Nov 18, 2014 at 3:53 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+> Hi,
+>
+> Thanks Stephen!
+>
+> Hans, have you had a look at this? kbuild test bot also reported this.
 
-Thanks Stephen!
+The fix from Stephen should not go to main-line. It breaks simplefb on
+x86 without OF. Imo, linux/clk.h should provide a fallback if OF is
+not defined (like it already does for of_clk_get() and friends).
 
-Hans, have you had a look at this? kbuild test bot also reported this.
+Hans, any comments?
 
- Tomi
-
-On 17/11/14 10:09, Stephen Rothwell wrote:
-> Hi Tomi,
->=20
-> After merging the omap_dss2 tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> drivers/video/fbdev/simplefb.c: In function 'simplefb_clocks_init':
-> drivers/video/fbdev/simplefb.c:207:2: error: implicit declaration of fu=
-nction 'of_clk_get_parent_count' [-Werror=3Dimplicit-function-declaration=
-]
->   par->clk_count =3D of_clk_get_parent_count(np);
->   ^
->=20
-> Caused by commit fc219bfd5b2e ("simplefb: add clock handling code").
-> This build does not have CONFIG_COMMON_CLK set.
->=20
-> I have added the following fix for today (there is probably a better
-> one):
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 17 Nov 2014 19:05:42 +1100
-> Subject: [PATCH] simplefb: make it depend on CONFIG_COMMON_CLK
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/video/fbdev/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-> index 025b439d4fe1..1f0298e166c3 100644
-> --- a/drivers/video/fbdev/Kconfig
-> +++ b/drivers/video/fbdev/Kconfig
-> @@ -2457,6 +2457,7 @@ config FB_HYPERV
->  config FB_SIMPLE
->  	bool "Simple framebuffer support"
->  	depends on (FB =3D y)
-> +	depends on COMMON_CLK
->  	select FB_CFB_FILLRECT
->  	select FB_CFB_COPYAREA
->  	select FB_CFB_IMAGEBLIT
->=20
-
-
-
---OqvjuiOJgstrjmFCM7nIoLAhoTvasBlH3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUa11aAAoJEPo9qoy8lh71cpAP/RaKarGAGy0eJG47TOxOs+Gf
-99quEgYX4ygJpDTZ0ggUMS+98asJg6hXIuSen3GtSFg9ilBPX/wTN53zJH/F36Zx
-9CMF5L0dKffgxH4qWjkk5qA1gQEiM1K66aloIUUMK9b46AzP7CE0qVBkn+O7j8Zz
-uFDZuhU0RYaMJ4v7VCbyV95LXo7qQ8EVm2rl0Y10wfowHfXGgXSOBvIcVXbh5dFq
-UG2jgI5uAwvg0hS1xT+gMLaKmjUrbFOx7s3iFMcj4fGfGwwQfKT7Dd7CABJdIFGy
-sms+6b0ymGXrHXhLDOkfr076R+C+++YxKH4ZUzdk4XXbP2q/CY4ApmXJ/dWRCxMR
-/emJ8AZaEI99gWTiirMhQO9d1BCyl5A84bdR25Gnk8nGgdu1C0g9EVEUd3PKQCny
-y/PCGaV8eyTJ3kv2I0qFn0qzo9SnSwO0N+ewaZxTnfAy1Lrr3/jGp5noGmh40+F/
-ZZ8n8goL67EsWutTFv7DToAaehERORGqvzDkzdC5BQNaezwVwPJyD+Jl00Qw7Wtj
-k73wo6gA5cFCNMIb9+DSGCl5MZslk4ZnN0FE6WSGnEM/mSyOQOmYKdtqAFhSQXBt
-FwUcEuxGF3n6YiYd92YZD2ApGEIGWC3G9aXk5waBIDDUeqzwuIjqHkWDYJMEGFcK
-gkVe2YBQ1SKKuF7taGee
-=5dAf
------END PGP SIGNATURE-----
-
---OqvjuiOJgstrjmFCM7nIoLAhoTvasBlH3--
+Thanks
+David
