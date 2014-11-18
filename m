@@ -1,91 +1,49 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] ARM: vfp: Silence mvfr0 unused variable warning
-Date: Tue, 18 Nov 2014 12:56:31 -0800
-Message-ID: <1416344191-20484-1-git-send-email-sboyd@codeaurora.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commit in the nfsd tree
+Date: Wed, 19 Nov 2014 08:04:11 +1100
+Message-ID: <20141119080411.09f6a811@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lZahKQVJ53uKVryF_+L/dtP"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell reports that commit 3f4c9f8f0a20 ("ARM: 8197/1:
-vfp: Fix VFPv3 hwcap detection on CPUID based cpus") introduced an
-unused variable warning.
+--Sig_/lZahKQVJ53uKVryF_+L/dtP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-arch/arm/vfp/vfpmodule.c: In function 'vfp_init':
-arch/arm/vfp/vfpmodule.c:725:6: warning: unused variable 'mvfr0'
-[-Wunused-variable]
-  u32 mvfr0;
+Hi,
 
-Silence this warning by using IS_ENABLED instead of ifdefs.
+I just noticed that the top commit of the nfsd tree (be603bbb7bc1
+"OOPS") has no Signed-off-by tags (or a real commit message at all) ...
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-If you apply and use git show -b you can see that most of the diff
-is indentation.
+--Sig_/lZahKQVJ53uKVryF_+L/dtP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
- arch/arm/vfp/vfpmodule.c | 44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
-index 5002d002f6e3..216cd78f64aa 100644
---- a/arch/arm/vfp/vfpmodule.c
-+++ b/arch/arm/vfp/vfpmodule.c
-@@ -752,30 +752,30 @@ static int __init vfp_init(void)
- 		 * precision floating point operations. Only check
- 		 * for NEON if the hardware has the MVFR registers.
- 		 */
--#ifdef CONFIG_NEON
--		if ((fmrx(MVFR1) & 0x000fff00) == 0x00011100)
-+		if (IS_ENABLED(CONFIG_NEON) &&
-+		   (fmrx(MVFR1) & 0x000fff00) == 0x00011100)
- 			elf_hwcap |= HWCAP_NEON;
--#endif
--#ifdef CONFIG_VFPv3
--		mvfr0 = fmrx(MVFR0);
--		if (((mvfr0 & MVFR0_DP_MASK) >> MVFR0_DP_BIT) == 0x2 ||
--		    ((mvfr0 & MVFR0_SP_MASK) >> MVFR0_SP_BIT) == 0x2) {
--			elf_hwcap |= HWCAP_VFPv3;
--			/*
--			 * Check for VFPv3 D16 and VFPv4 D16.  CPUs in
--			 * this configuration only have 16 x 64bit
--			 * registers.
--			 */
--			if ((mvfr0 & MVFR0_A_SIMD_MASK) == 1)
--				/* also v4-D16 */
--				elf_hwcap |= HWCAP_VFPv3D16;
--			else
--				elf_hwcap |= HWCAP_VFPD32;
--		}
- 
--		if ((fmrx(MVFR1) & 0xf0000000) == 0x10000000)
--			elf_hwcap |= HWCAP_VFPv4;
--#endif
-+		if (IS_ENABLED(CONFIG_VFPv3)) {
-+			mvfr0 = fmrx(MVFR0);
-+			if (((mvfr0 & MVFR0_DP_MASK) >> MVFR0_DP_BIT) == 0x2 ||
-+			    ((mvfr0 & MVFR0_SP_MASK) >> MVFR0_SP_BIT) == 0x2) {
-+				elf_hwcap |= HWCAP_VFPv3;
-+				/*
-+				 * Check for VFPv3 D16 and VFPv4 D16.  CPUs in
-+				 * this configuration only have 16 x 64bit
-+				 * registers.
-+				 */
-+				if ((mvfr0 & MVFR0_A_SIMD_MASK) == 1)
-+					/* also v4-D16 */
-+					elf_hwcap |= HWCAP_VFPv3D16;
-+				else
-+					elf_hwcap |= HWCAP_VFPD32;
-+			}
-+
-+			if ((fmrx(MVFR1) & 0xf0000000) == 0x10000000)
-+				elf_hwcap |= HWCAP_VFPv4;
-+		}
- 	/* Extract the architecture version on pre-cpuid scheme */
- 	} else {
- 		if (vfpsid & FPSID_NODOUBLE) {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+iQIcBAEBCAAGBQJUa7RQAAoJEMDTa8Ir7ZwVBScP/RhYnFMd95kMlAKncL0sSYjZ
+RIkZ6SolmE8jfpq6k4+i4rWf8IzkUH+44y/DR2N3NFUvW61s2qEwIUNjiGMsRWLa
+NLi8GjwBHHkTf2slGA/hqxLM4NEqyr3Vgm1bgjkrog1w4JZi+C8j9cZq3ThmvMub
+uqMs+wFjuTFW9Q3oCNDYFfTuhXhkgvk069VJcDZkf5kvnS68Nhupa60qmXv0eCPi
+VQNM/XT663QA1ebblrMFsHUYoL7xfXM5iuiO0y/dFyfmiEH4x2sEFsf8vGOUFPiF
+m3oysgBu0YkbM7anMiqJT7KUECU9Scav9rZm/xCL1bisiF/tU14ZK6UpUgOshorG
+2qw+CjP1ACK1bVW4kGBr886wZS2NgGBxRa6n8Ywqyjz8p8QkSfLNEBaZpRHwjM1D
+oebRZZY5C0+zXgix8j19aZATpoB1DdJGAsB56iivUMdSjQE0FnYVlrOF7flwmPJN
+BQ/z+0nn2Yabf2i9bhuxzydkqyy4OD2xF0n8i/H/4n2+5O33smYJ5PQH57mwPtGg
+yYJlo8H92GwibEQ9j6Q4WPM+Wj5kHu3Bnjj87SVIMb2paape1ADU7hKErjY6BsBE
+VHFmgX1gNksuU2oAx4O5lfGAJ3o6WXfl9U+lEbofXRY3M01Z0eLiB2AnfzDr3yPX
+1n1b+HTb9uKtW722doFs
+=Ulze
+-----END PGP SIGNATURE-----
+
+--Sig_/lZahKQVJ53uKVryF_+L/dtP--
