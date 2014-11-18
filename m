@@ -1,60 +1,60 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build warning after merge of the pm tree
-Date: Tue, 18 Nov 2014 01:34:54 +0100
-Message-ID: <22131093.MONpcKKQM4@vostro.rjw.lan>
-References: <20141117134414.7f4d8d21@canb.auug.org.au> <1721522.tICxlGjU6i@vostro.rjw.lan> <1416267909.7024.3.camel@x220>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the
+ driver-core tree
+Date: Tue, 18 Nov 2014 18:12:22 +1100
+Message-ID: <20141118181222.451b84d1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fvqEJoylb+fRgxq1lRTEgdO"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:56466 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751907AbaKRANv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Nov 2014 19:13:51 -0500
-In-Reply-To: <1416267909.7024.3.camel@x220>
+Received: from ozlabs.org ([103.22.144.67]:51962 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750977AbaKRHM3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Nov 2014 02:12:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@linaro.org>
+To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Dinh Nguyen <dinguyen@opensource.altera.com>
 
-On Tuesday, November 18, 2014 12:45:09 AM Paul Bolle wrote:
-> On Tue, 2014-11-18 at 00:14 +0100, Rafael J. Wysocki wrote:
-> > I'll drop the commit for now, but this looks strange.
-> > 
-> > Had you cleaned up the kernel configuration after dropping the PM_RUNTIME select
-> > from ARCH_EXYNOS?
-> 
-> I retested this again:
-> 
-> [linux * (next-20141117)]$ git status
-> HEAD detached at next-20141117
-> nothing to commit (use -u to show untracked files)
-> [linux * (next-20141117)]$ make clean
-> [linux * (next-20141117)]$ cp arch/arm/configs/omap2plus_defconfig .config
-> [linux * (next-20141117)]$ vim arch/arm/mach-exynos/Kconfig:24:
-> [linux * (next-20141117)]$ git diff
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index e4a00bafffc1..02ff8534238b 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -21,7 +21,6 @@ menuconfig ARCH_EXYNOS
->         select HAVE_S3C_RTC if RTC_CLASS
->         select PINCTRL
->         select PINCTRL_EXYNOS
-> -       select PM_GENERIC_DOMAINS if PM_RUNTIME
->         select S5P_DEV_MFC
->         select SRAM
->         select MFD_SYSCON
-> [linux * (next-20141117)]$ yes "" | make  ARCH=arm oldconfig >/dev/null
-> kernel/power/Kconfig:145:error: recursive dependency detected!
-> kernel/power/Kconfig:145:	symbol PM depends on PM_RUNTIME
-> kernel/power/Kconfig:132:	symbol PM_RUNTIME is selected by PM_GENERIC_DOMAINS
-> kernel/power/Kconfig:272:	symbol PM_GENERIC_DOMAINS is selected by PM
-> 
-> Can you reproduce the above?
+--Sig_/fvqEJoylb+fRgxq1lRTEgdO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I can't personally.
+Hi Felipe,
 
-Anyway, I'm going to drop the commit as I said.
+Today's linux-next merge of the usb-gadget tree got a conflict in
+drivers/usb/dwc2/gadget.c between commit 7c3e90537b74 ("usb: dwc2: drop
+owner assignment from platform_drivers") from the driver-core tree and
+commit 117777b2c3bb ("usb: dwc2: Move gadget probe function into
+platform code") from the usb-gadget tree.
 
-Rafael
+I fixed it up (the latter removed the code changed by the former, so I
+did that) and can carry the fix as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/fvqEJoylb+fRgxq1lRTEgdO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUavFaAAoJEMDTa8Ir7ZwVB5oP/jbHkEHldbv+/xXndTPS7c7+
+zpfF0QJXqv8MMGQiKRquGcZTUuOdWMVNknkFqiR8ToIbbrySxc/+Hznj625iOB21
+vKoqRfo8sZJ08aMqE2M2dOFkW2II5deNMqyNSi+y7mmSPD8YVvUJIttjalI3/p4s
+/KnHqD8GhVBKkcP06Vzjky+bk+44pW2W+5wgFiDQfVF+sWw+6oi1E73g2j9CW4Jn
+1lLrCpyE0Av8ZtrPMoGkpOAPRUL+XuBj9YQhF5GqNgh19ETgW2C1H78S6vER4QNL
+A9+nxQnvSddZYnqXXA66E0c+vatWcUTd5RC2XCCRHXTYa1RLhhNAMyusa8VQ8yOG
+WZ4C8nQDoVNgA4w7LvkoIarSUWJ28lLPFNZWErIwlYHeGmGYSELbnPNtkvfOmJ8b
+0xKz/7jkI0dQH/YivDll8UeZZ3ANwZoeJpguCf3/UaAoni31e33RUFTGl6t2/cCK
+x+2Rgd6InHUb8lyWG32T1bGifi2KoG7JV/FjiUUo+iZQEAGlngH2gY4sOxu3OcVQ
++HhUM4cIltmmhuYpiQrVneJzuXmkWkYsD7VdlQRWxazO3/c1Az4uBF5IW0kSfpBG
+++w+asuM8MJ/SN33WNU9+KooqYrxBMiBGLgcrqPUNtMPW7EX+mkeblv6cXXzJgdK
+dJQIP51dHl1WvHYzDneo
+=uxCK
+-----END PGP SIGNATURE-----
+
+--Sig_/fvqEJoylb+fRgxq1lRTEgdO--
