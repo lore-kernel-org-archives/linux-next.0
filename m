@@ -1,66 +1,48 @@
-From: Felipe Balbi <balbi@ti.com>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: manual merge of the usb-gadget tree with the
  driver-core tree
-Date: Tue, 18 Nov 2014 09:25:31 -0600
-Message-ID: <20141118152531.GD8223@saruman>
+Date: Tue, 18 Nov 2014 08:24:36 -0800
+Message-ID: <20141118162436.GA1108@kroah.com>
 References: <20141118181222.451b84d1@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
+ <20141118152531.GD8223@saruman>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GpGaEY17fSl8rd50"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141118181222.451b84d1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Paul Zimmerman <paul.zimmerman@synopsys.com>
-List-Id: linux-next.vger.kernel.org
-
---GpGaEY17fSl8rd50
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:50040 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754899AbaKRQYi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Nov 2014 11:24:38 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+	by mailout.nyi.internal (Postfix) with ESMTP id F0057209DE
+	for <linux-next@vger.kernel.org>; Tue, 18 Nov 2014 11:24:37 -0500 (EST)
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20141118152531.GD8223@saruman>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Felipe Balbi <balbi@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Paul Zimmerman <paul.zimmerman@synopsys.com>
 
-Hi,
+On Tue, Nov 18, 2014 at 09:25:31AM -0600, Felipe Balbi wrote:
+> Hi,
+> 
+> On Tue, Nov 18, 2014 at 06:12:22PM +1100, Stephen Rothwell wrote:
+> > Hi Felipe,
+> > 
+> > Today's linux-next merge of the usb-gadget tree got a conflict in
+> > drivers/usb/dwc2/gadget.c between commit 7c3e90537b74 ("usb: dwc2: drop
+> > owner assignment from platform_drivers") from the driver-core tree and
+> 
+> why is that commit in the driver-core tree ? It wasn't even acked by
+> Paul Z. It wasn't sent to linux-usb either.
+> 
+> Sure, it's minimal, but I'd expect a little cordiality in Ccing driver
+> maintainers ;-)
 
-On Tue, Nov 18, 2014 at 06:12:22PM +1100, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> Today's linux-next merge of the usb-gadget tree got a conflict in
-> drivers/usb/dwc2/gadget.c between commit 7c3e90537b74 ("usb: dwc2: drop
-> owner assignment from platform_drivers") from the driver-core tree and
+We fixed up many hundreds of drivers all at once, it was easier to take
+that change through my driver-core tree than try to coordinate in
+everyone's different trees and end up missing some usages.
 
-why is that commit in the driver-core tree ? It wasn't even acked by
-Paul Z. It wasn't sent to linux-usb either.
+thanks,
 
-Sure, it's minimal, but I'd expect a little cordiality in Ccing driver
-maintainers ;-)
-
-Anyway, thanks for fixing it all up Stephen.
-
---=20
-balbi
-
---GpGaEY17fSl8rd50
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUa2TrAAoJEIaOsuA1yqRETGcP/1oEHBC2my4YUo4srN+0k+du
-A6TegqlON6AKZQyWkCh0RfwLbMR6A5dpBvgnE9h2uu7zfoGHJOI4qo2Lqs329Rad
-KR3xkxWCSda3KJiuq3/A9OkJAqB5coJs5fH4R2c/aThxjn/3I9KIGXMBovfMj3l0
-9qmbip8fWTse1w8QkFDYokmzIiNOqol6tjnoWInm6V4oPWIY1h3V2VQiWLJGaSaW
-OgF+rqqvMrJF9VDW0TdgpL4qcOMW1xkEQZejSUzKO0sN1tQB9CdHUjcWHDlY1r0I
-+hfjVSQ9mzagrRpPszJzQJDgVUgekm9PIkkpcP66KzZ4DMdHuz6zwtS+MlItjOR+
-bI6KfltKdBAtsG8sTwU8XFzqcriw2+cpHvDCJbgY4wxeITivoQDSXC6AVUg21Kuc
-YDFXvBKWIdZz0D0/gzbvLcUaDM1tErvt4TK+LN2pPPuVejIZb7SC04wZOkLiaoRH
-mSPQdWKVZdNU+ylk2VGp7XVLvIon1IaKnDfTLMRNZVlvy+2Qp2CGirnr2ziz+zuR
-e/ulZft9WkpHrrfmCWRDMiXlyClk8FHY2EdP2+3xDf9NvHEJ3YPP/RKg5c9IVGN1
-RujDV5SZH5dd9ta6lVuvWcWF2Iwx5MUVQhMh9LAhrK6DWEid5Sd3OgROyOpQBA5F
-iyrZ02zUkw9W4L5FHZ1b
-=9FlY
------END PGP SIGNATURE-----
-
---GpGaEY17fSl8rd50--
+greg k-h
