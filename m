@@ -1,30 +1,70 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: bad commit in the nfsd tree
-Date: Wed, 19 Nov 2014 15:50:56 -0500
-Message-ID: <20141119205056.GB14207@fieldses.org>
-References: <20141119080411.09f6a811@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Please update RPi repo location
+Date: Thu, 20 Nov 2014 07:52:41 +1100
+Message-ID: <20141120075241.64e07a90@canb.auug.org.au>
+References: <546CCEEF.7040604@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1/7B6QCiOnBXiDwI5JfOtgT"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:55585 "EHLO fieldses.org"
+Received: from ozlabs.org ([103.22.144.67]:59723 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753629AbaKSUu5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Nov 2014 15:50:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20141119080411.09f6a811@canb.auug.org.au>
+	id S1754001AbaKSUww (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Nov 2014 15:52:52 -0500
+In-Reply-To: <546CCEEF.7040604@wwwdotorg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Lee Jones <lee@kernel.org>
 
-On Wed, Nov 19, 2014 at 08:04:11AM +1100, Stephen Rothwell wrote:
-> Hi,
-> 
-> I just noticed that the top commit of the nfsd tree (be603bbb7bc1
-> "OOPS") has no Signed-off-by tags (or a real commit message at all) ...
+--Sig_/1/7B6QCiOnBXiDwI5JfOtgT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, sorry, I needed it as a temporary fix for a client-side bug (since
-gone upstream) for my testing, but didn't mean for it to leak out.
-Should be gone now.
+Hi Stephen,
 
---b.
+On Wed, 19 Nov 2014 10:10:07 -0700 Stephen Warren <swarren@wwwdotorg.org> w=
+rote:
+>
+> linux-rpi.git has moved from:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-rpi.git#for-n=
+ext
+>=20
+> to
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/rpi/linux-rpi.git#for-next
+>=20
+> The old location still works due to a symlink/... on kernel.org, but if=20
+> you could update linux-next to pull from the new canonical location,=20
+> that'd be great.
+
+Done.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/1/7B6QCiOnBXiDwI5JfOtgT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUbQMhAAoJEMDTa8Ir7ZwVz88QAIHegMCF2enl/q71B8vy9ynk
+9N64aCcBDsg0t/18wGxwj6ueD5gmzIuAF+lZ6IrX58QZjuwW/+cRxdT0tc4EAarh
+OMSwHEPoYYSCCfFJqF+2EfKrUORwWCCZqs9s9tfiZIEsXjuIVOAbHOYpS6Yn7JrT
+irPeGlqSu2HNzMQcDDJkynGSu+VJIIaznZmwbfJk03RvVjDPHxUJAeBrPWZKMPEx
+fv6H7B9JiEkqqv5EnalYiOTK1hsxKUBpoLwWtcHWxLhP3+tpqnYdmtBmrnr1Cm+U
+4StE829CvIAt28UszEpEePQU6/WWBbAJAVeFjvyG4b7CEmmhPG8eOnV+NRCxNqD2
+0s0wHJ+0IBndEcmDomIo/uPkMSJwHLEhHOWlHnN019IrxMDguuguB7qXYsPVVqUv
+nrRgXNkBgJ5b3KagnylW6j1DBLqDuoiuBYGM8xHGeQJ5/JToNBDwi8TwFiMT3IYr
+QU8UcRrQe6rwZq9Z6Xg2QG3W13hKEga344zGhdxQTLwBqBrP+zfGyVG2mgZ7o1W2
+ftiW4CV+MppXXGrtclFF/K+YNckHWL8kbEYYfQDdycSk4nbJnC+UmTTjGVcWrQQ5
+dEXQXRlP20grPWLutcmNaz/nQd4WAGR1G2Kb3I98bCmtzVtJoiCV4aaRg5IRaERP
+DO9Y3vVrV6TR1YS/Q1l1
+=EdGJ
+-----END PGP SIGNATURE-----
+
+--Sig_/1/7B6QCiOnBXiDwI5JfOtgT--
