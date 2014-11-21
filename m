@@ -1,39 +1,23 @@
-From: Jiri Kosina <jkosina@suse.cz>
+From: Steven Rostedt <rostedt@goodmis.org>
 Subject: Re: linux-next: build failure after merge of the ftrace tree
-Date: Fri, 21 Nov 2014 15:23:13 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1411211522020.23174@pobox.suse.cz>
-References: <20141121183215.01ba539c@canb.auug.org.au> <alpine.LNX.2.00.1411211149490.23174@pobox.suse.cz> <20141121092036.09edee57@gandalf.local.home>
+Date: Fri, 21 Nov 2014 09:27:46 -0500
+Message-ID: <20141121092746.7acc5d35@gandalf.local.home>
+References: <20141121183215.01ba539c@canb.auug.org.au>
+	<alpine.LNX.2.00.1411211149490.23174@pobox.suse.cz>
+	<20141121092036.09edee57@gandalf.local.home>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:54695 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758147AbaKUOXH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Nov 2014 09:23:07 -0500
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20141121092036.09edee57@gandalf.local.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.cz>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 21 Nov 2014, Steven Rostedt wrote:
-
-> > From: Jiri Kosina <jkosina@suse.cz>
-> > Subject: [PATCH] printk: make sure printk_func_t is known in percpu.h
-> > 
-> > Commit afdc34a3d3b8 ("printk: Add per_cpu printk func to allow printk to 
-> > be diverted") caused percpu variable printk_func to be declared in 
-> > percpu.h. Make sure that the corresponding type is known at the time of 
-> > declaration.
-> > 
-> > Fixes build failure on certain arch/config combinations.
-> > 
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-> > ---
-> >  include/linux/percpu.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
+On Fri, 21 Nov 2014 09:20:36 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+ 
 > > diff --git a/include/linux/percpu.h b/include/linux/percpu.h
 > > index a3aa63e..c94c766 100644
 > > --- a/include/linux/percpu.h
@@ -48,13 +32,53 @@ On Fri, 21 Nov 2014, Steven Rostedt wrote:
 > 
 > Unfortunately, this wasn't the fix. This was an allnoconfig, which
 > means printk wasn't defined.
+> 
 
-Ah, thanks, that indeed needs to be done as well.
+Just to be safe, I put the printk.h back in. Although it doesn't seem
+to be needed.
 
-I still think that the patch I sent should be applied, as there might be 
-configurations where printk.h doesn't implicitly transitively make it into 
-percpu.h.
+-- Steve
 
+>From da1e044a557571fd3718bd161b7ce7f36d3f999e Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
+Date: Fri, 21 Nov 2014 09:16:58 -0500
+Subject: [PATCH] printk/percpu: Do not define printk_func when printk is not
+ defined
+
+To avoid include hell, the per_cpu variable printk_func was declared
+in percpu.h. But it is only defined if printk is defined.
+
+Also add a printk.h include in percpu.h just to be safe.
+
+Link: http://lkml.kernel.org/r/20141121183215.01ba539c@canb.auug.org.au
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+---
+ include/linux/percpu.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+index ba2e85a0ff5b..87e9082a2bd4 100644
+--- a/include/linux/percpu.h
++++ b/include/linux/percpu.h
+@@ -5,6 +5,7 @@
+ #include <linux/preempt.h>
+ #include <linux/smp.h>
+ #include <linux/cpumask.h>
++#include <linux/printk.h>
+ #include <linux/pfn.h>
+ #include <linux/init.h>
+ 
+@@ -134,7 +135,9 @@ extern phys_addr_t per_cpu_ptr_to_phys(void *addr);
+ 	(typeof(type) __percpu *)__alloc_percpu(sizeof(type),		\
+ 						__alignof__(type))
+ 
++#ifdef CONFIG_PRINTK
+ /* To avoid include hell, as printk can not declare this, we declare it here */
+ DECLARE_PER_CPU(printk_func_t, printk_func);
++#endif
+ 
+ #endif /* __LINUX_PERCPU_H */
 -- 
-Jiri Kosina
-SUSE Labs
+1.8.1.4
