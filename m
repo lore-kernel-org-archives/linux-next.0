@@ -1,64 +1,419 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the arm-soc
- tree
-Date: Fri, 21 Nov 2014 15:14:12 -0800
-Message-ID: <20141121231411.GW7046@atomide.com>
-References: <20141121172412.4caf89cc@canb.auug.org.au>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 01/12] time: Rename udelay_test.c to test_udelay.c
+Date: Fri, 21 Nov 2014 15:30:51 -0800
+Message-ID: <CAGXu5jLKWOUcf+63HFdYLB6Ge31Xng+QqyKh3KNN7u15EfOVEA@mail.gmail.com>
+References: <1416599058-13836-1-git-send-email-john.stultz@linaro.org>
+	<1416599058-13836-2-git-send-email-john.stultz@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:15568 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751634AbaKUXOb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2014 18:14:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20141121172412.4caf89cc@canb.auug.org.au>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:42690 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751788AbaKUXaw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2014 18:30:52 -0500
+Received: by mail-ob0-f179.google.com with SMTP id va2so4795695obc.24
+        for <linux-next@vger.kernel.org>; Fri, 21 Nov 2014 15:30:51 -0800 (PST)
+In-Reply-To: <1416599058-13836-2-git-send-email-john.stultz@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+To: John Stultz <john.stultz@linaro.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Linux-Next <linux-next@vger.kernel.org>, David Riley <davidriley@chromium.org>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [141120 22:26]:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in
-> arch/arm/mach-omap2/Kconfig between commit 9e1e632c4846 ("ARM: OMAP2+:
-> Drop board file for ti8168evm") from the arm-soc tree and commit
-> 184901a06a36 ("ARM: removing support for etb/etm in
-> "arch/arm/kernel/"") from the char-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+On Fri, Nov 21, 2014 at 11:44 AM, John Stultz <john.stultz@linaro.org> wrote:
+> Kees requested that this test module be renamed for consistency sake,
+> so this patch renames the udelay_test.c file (recently added to
+> tip/timers/core for 3.17) to test_udelay.c
+>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Greg KH <greg@kroah.com>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@elte.hu>
+> Cc: Linux-Next <linux-next@vger.kernel.org>
+> Cc: David Riley <davidriley@chromium.org>
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
 
-Looks right to me thanks.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Tony 
- 
-> diff --cc arch/arm/mach-omap2/Kconfig
-> index 27ec8923ddf6,06020fe77e57..000000000000
-> --- a/arch/arm/mach-omap2/Kconfig
-> +++ b/arch/arm/mach-omap2/Kconfig
-> @@@ -276,14 -282,16 +276,6 @@@ config MACH_SBC353
->   	default y
->   	select OMAP_PACKAGE_CUS
->   
-> - config OMAP3_EMU
-> - 	bool "OMAP3 debugging peripherals"
-> - 	depends on ARCH_OMAP3
-> - 	select ARM_AMBA
-> - 	select OC_ETM
-> - 	help
-> - 	  Say Y here to enable debugging hardware of omap3
->  -config MACH_TI8168EVM
->  -	bool "TI8168 Evaluation Module"
->  -	depends on SOC_TI81XX
->  -	default y
->  -
->  -config MACH_TI8148EVM
->  -	bool "TI8148 Evaluation Module"
->  -	depends on SOC_TI81XX
->  -	default y
+Yes please! :)
+
+-Kees
+
+> ---
+>  kernel/time/Makefile      |   2 +-
+>  kernel/time/test_udelay.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++
+>  kernel/time/udelay_test.c | 168 ----------------------------------------------
+>  3 files changed, 169 insertions(+), 169 deletions(-)
+>  create mode 100644 kernel/time/test_udelay.c
+>  delete mode 100644 kernel/time/udelay_test.c
+>
+> diff --git a/kernel/time/Makefile b/kernel/time/Makefile
+> index 7347426..f622cf2 100644
+> --- a/kernel/time/Makefile
+> +++ b/kernel/time/Makefile
+> @@ -13,7 +13,7 @@ obj-$(CONFIG_TICK_ONESHOT)                    += tick-oneshot.o
+>  obj-$(CONFIG_TICK_ONESHOT)                     += tick-sched.o
+>  obj-$(CONFIG_TIMER_STATS)                      += timer_stats.o
+>  obj-$(CONFIG_DEBUG_FS)                         += timekeeping_debug.o
+> -obj-$(CONFIG_TEST_UDELAY)                      += udelay_test.o
+> +obj-$(CONFIG_TEST_UDELAY)                      += test_udelay.o
+>
+>  $(obj)/time.o: $(obj)/timeconst.h
+>
+> diff --git a/kernel/time/test_udelay.c b/kernel/time/test_udelay.c
+> new file mode 100644
+> index 0000000..e622ba3
+> --- /dev/null
+> +++ b/kernel/time/test_udelay.c
+> @@ -0,0 +1,168 @@
+> +/*
+> + * udelay() test kernel module
+> + *
+> + * Test is executed by writing and reading to /sys/kernel/debug/udelay_test
+> + * Tests are configured by writing: USECS ITERATIONS
+> + * Tests are executed by reading from the same file.
+> + * Specifying usecs of 0 or negative values will run multiples tests.
+> + *
+> + * Copyright (C) 2014 Google, Inc.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/debugfs.h>
+> +#include <linux/delay.h>
+> +#include <linux/ktime.h>
+> +#include <linux/module.h>
+> +#include <linux/uaccess.h>
+> +
+> +#define DEFAULT_ITERATIONS 100
+> +
+> +#define DEBUGFS_FILENAME "udelay_test"
+> +
+> +static DEFINE_MUTEX(udelay_test_lock);
+> +static struct dentry *udelay_test_debugfs_file;
+> +static int udelay_test_usecs;
+> +static int udelay_test_iterations = DEFAULT_ITERATIONS;
+> +
+> +static int udelay_test_single(struct seq_file *s, int usecs, uint32_t iters)
+> +{
+> +       int min = 0, max = 0, fail_count = 0;
+> +       uint64_t sum = 0;
+> +       uint64_t avg;
+> +       int i;
+> +       /* Allow udelay to be up to 0.5% fast */
+> +       int allowed_error_ns = usecs * 5;
+> +
+> +       for (i = 0; i < iters; ++i) {
+> +               struct timespec ts1, ts2;
+> +               int time_passed;
+> +
+> +               ktime_get_ts(&ts1);
+> +               udelay(usecs);
+> +               ktime_get_ts(&ts2);
+> +               time_passed = timespec_to_ns(&ts2) - timespec_to_ns(&ts1);
+> +
+> +               if (i == 0 || time_passed < min)
+> +                       min = time_passed;
+> +               if (i == 0 || time_passed > max)
+> +                       max = time_passed;
+> +               if ((time_passed + allowed_error_ns) / 1000 < usecs)
+> +                       ++fail_count;
+> +               WARN_ON(time_passed < 0);
+> +               sum += time_passed;
+> +       }
+> +
+> +       avg = sum;
+> +       do_div(avg, iters);
+> +       seq_printf(s, "%d usecs x %d: exp=%d allowed=%d min=%d avg=%lld max=%d",
+> +                       usecs, iters, usecs * 1000,
+> +                       (usecs * 1000) - allowed_error_ns, min, avg, max);
+> +       if (fail_count)
+> +               seq_printf(s, " FAIL=%d", fail_count);
+> +       seq_puts(s, "\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static int udelay_test_show(struct seq_file *s, void *v)
+> +{
+> +       int usecs;
+> +       int iters;
+> +       int ret = 0;
+> +
+> +       mutex_lock(&udelay_test_lock);
+> +       usecs = udelay_test_usecs;
+> +       iters = udelay_test_iterations;
+> +       mutex_unlock(&udelay_test_lock);
+> +
+> +       if (usecs > 0 && iters > 0) {
+> +               return udelay_test_single(s, usecs, iters);
+> +       } else if (usecs == 0) {
+> +               struct timespec ts;
+> +
+> +               ktime_get_ts(&ts);
+> +               seq_printf(s, "udelay() test (lpj=%ld kt=%ld.%09ld)\n",
+> +                               loops_per_jiffy, ts.tv_sec, ts.tv_nsec);
+> +               seq_puts(s, "usage:\n");
+> +               seq_puts(s, "echo USECS [ITERS] > " DEBUGFS_FILENAME "\n");
+> +               seq_puts(s, "cat " DEBUGFS_FILENAME "\n");
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int udelay_test_open(struct inode *inode, struct file *file)
+> +{
+> +       return single_open(file, udelay_test_show, inode->i_private);
+> +}
+> +
+> +static ssize_t udelay_test_write(struct file *file, const char __user *buf,
+> +               size_t count, loff_t *pos)
+> +{
+> +       char lbuf[32];
+> +       int ret;
+> +       int usecs;
+> +       int iters;
+> +
+> +       if (count >= sizeof(lbuf))
+> +               return -EINVAL;
+> +
+> +       if (copy_from_user(lbuf, buf, count))
+> +               return -EFAULT;
+> +       lbuf[count] = '\0';
+> +
+> +       ret = sscanf(lbuf, "%d %d", &usecs, &iters);
+> +       if (ret < 1)
+> +               return -EINVAL;
+> +       else if (ret < 2)
+> +               iters = DEFAULT_ITERATIONS;
+> +
+> +       mutex_lock(&udelay_test_lock);
+> +       udelay_test_usecs = usecs;
+> +       udelay_test_iterations = iters;
+> +       mutex_unlock(&udelay_test_lock);
+> +
+> +       return count;
+> +}
+> +
+> +static const struct file_operations udelay_test_debugfs_ops = {
+> +       .owner = THIS_MODULE,
+> +       .open = udelay_test_open,
+> +       .read = seq_read,
+> +       .write = udelay_test_write,
+> +       .llseek = seq_lseek,
+> +       .release = single_release,
+> +};
+> +
+> +static int __init udelay_test_init(void)
+> +{
+> +       mutex_lock(&udelay_test_lock);
+> +       udelay_test_debugfs_file = debugfs_create_file(DEBUGFS_FILENAME,
+> +                       S_IRUSR, NULL, NULL, &udelay_test_debugfs_ops);
+> +       mutex_unlock(&udelay_test_lock);
+> +
+> +       return 0;
+> +}
+> +
+> +module_init(udelay_test_init);
+> +
+> +static void __exit udelay_test_exit(void)
+> +{
+> +       mutex_lock(&udelay_test_lock);
+> +       debugfs_remove(udelay_test_debugfs_file);
+> +       mutex_unlock(&udelay_test_lock);
+> +}
+> +
+> +module_exit(udelay_test_exit);
+> +
+> +MODULE_AUTHOR("David Riley <davidriley@chromium.org>");
+> +MODULE_LICENSE("GPL");
+> diff --git a/kernel/time/udelay_test.c b/kernel/time/udelay_test.c
+> deleted file mode 100644
+> index e622ba3..0000000
+> --- a/kernel/time/udelay_test.c
+> +++ /dev/null
+> @@ -1,168 +0,0 @@
+> -/*
+> - * udelay() test kernel module
+> - *
+> - * Test is executed by writing and reading to /sys/kernel/debug/udelay_test
+> - * Tests are configured by writing: USECS ITERATIONS
+> - * Tests are executed by reading from the same file.
+> - * Specifying usecs of 0 or negative values will run multiples tests.
+> - *
+> - * Copyright (C) 2014 Google, Inc.
+> - *
+> - * This software is licensed under the terms of the GNU General Public
+> - * License version 2, as published by the Free Software Foundation, and
+> - * may be copied, distributed, and modified under those terms.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - */
+> -
+> -#include <linux/debugfs.h>
+> -#include <linux/delay.h>
+> -#include <linux/ktime.h>
+> -#include <linux/module.h>
+> -#include <linux/uaccess.h>
+> -
+> -#define DEFAULT_ITERATIONS 100
+> -
+> -#define DEBUGFS_FILENAME "udelay_test"
+> -
+> -static DEFINE_MUTEX(udelay_test_lock);
+> -static struct dentry *udelay_test_debugfs_file;
+> -static int udelay_test_usecs;
+> -static int udelay_test_iterations = DEFAULT_ITERATIONS;
+> -
+> -static int udelay_test_single(struct seq_file *s, int usecs, uint32_t iters)
+> -{
+> -       int min = 0, max = 0, fail_count = 0;
+> -       uint64_t sum = 0;
+> -       uint64_t avg;
+> -       int i;
+> -       /* Allow udelay to be up to 0.5% fast */
+> -       int allowed_error_ns = usecs * 5;
+> -
+> -       for (i = 0; i < iters; ++i) {
+> -               struct timespec ts1, ts2;
+> -               int time_passed;
+> -
+> -               ktime_get_ts(&ts1);
+> -               udelay(usecs);
+> -               ktime_get_ts(&ts2);
+> -               time_passed = timespec_to_ns(&ts2) - timespec_to_ns(&ts1);
+> -
+> -               if (i == 0 || time_passed < min)
+> -                       min = time_passed;
+> -               if (i == 0 || time_passed > max)
+> -                       max = time_passed;
+> -               if ((time_passed + allowed_error_ns) / 1000 < usecs)
+> -                       ++fail_count;
+> -               WARN_ON(time_passed < 0);
+> -               sum += time_passed;
+> -       }
+> -
+> -       avg = sum;
+> -       do_div(avg, iters);
+> -       seq_printf(s, "%d usecs x %d: exp=%d allowed=%d min=%d avg=%lld max=%d",
+> -                       usecs, iters, usecs * 1000,
+> -                       (usecs * 1000) - allowed_error_ns, min, avg, max);
+> -       if (fail_count)
+> -               seq_printf(s, " FAIL=%d", fail_count);
+> -       seq_puts(s, "\n");
+> -
+> -       return 0;
+> -}
+> -
+> -static int udelay_test_show(struct seq_file *s, void *v)
+> -{
+> -       int usecs;
+> -       int iters;
+> -       int ret = 0;
+> -
+> -       mutex_lock(&udelay_test_lock);
+> -       usecs = udelay_test_usecs;
+> -       iters = udelay_test_iterations;
+> -       mutex_unlock(&udelay_test_lock);
+> -
+> -       if (usecs > 0 && iters > 0) {
+> -               return udelay_test_single(s, usecs, iters);
+> -       } else if (usecs == 0) {
+> -               struct timespec ts;
+> -
+> -               ktime_get_ts(&ts);
+> -               seq_printf(s, "udelay() test (lpj=%ld kt=%ld.%09ld)\n",
+> -                               loops_per_jiffy, ts.tv_sec, ts.tv_nsec);
+> -               seq_puts(s, "usage:\n");
+> -               seq_puts(s, "echo USECS [ITERS] > " DEBUGFS_FILENAME "\n");
+> -               seq_puts(s, "cat " DEBUGFS_FILENAME "\n");
+> -       }
+> -
+> -       return ret;
+> -}
+> -
+> -static int udelay_test_open(struct inode *inode, struct file *file)
+> -{
+> -       return single_open(file, udelay_test_show, inode->i_private);
+> -}
+> -
+> -static ssize_t udelay_test_write(struct file *file, const char __user *buf,
+> -               size_t count, loff_t *pos)
+> -{
+> -       char lbuf[32];
+> -       int ret;
+> -       int usecs;
+> -       int iters;
+> -
+> -       if (count >= sizeof(lbuf))
+> -               return -EINVAL;
+> -
+> -       if (copy_from_user(lbuf, buf, count))
+> -               return -EFAULT;
+> -       lbuf[count] = '\0';
+> -
+> -       ret = sscanf(lbuf, "%d %d", &usecs, &iters);
+> -       if (ret < 1)
+> -               return -EINVAL;
+> -       else if (ret < 2)
+> -               iters = DEFAULT_ITERATIONS;
+> -
+> -       mutex_lock(&udelay_test_lock);
+> -       udelay_test_usecs = usecs;
+> -       udelay_test_iterations = iters;
+> -       mutex_unlock(&udelay_test_lock);
+> -
+> -       return count;
+> -}
+> -
+> -static const struct file_operations udelay_test_debugfs_ops = {
+> -       .owner = THIS_MODULE,
+> -       .open = udelay_test_open,
+> -       .read = seq_read,
+> -       .write = udelay_test_write,
+> -       .llseek = seq_lseek,
+> -       .release = single_release,
+> -};
+> -
+> -static int __init udelay_test_init(void)
+> -{
+> -       mutex_lock(&udelay_test_lock);
+> -       udelay_test_debugfs_file = debugfs_create_file(DEBUGFS_FILENAME,
+> -                       S_IRUSR, NULL, NULL, &udelay_test_debugfs_ops);
+> -       mutex_unlock(&udelay_test_lock);
+> -
+> -       return 0;
+> -}
+> -
+> -module_init(udelay_test_init);
+> -
+> -static void __exit udelay_test_exit(void)
+> -{
+> -       mutex_lock(&udelay_test_lock);
+> -       debugfs_remove(udelay_test_debugfs_file);
+> -       mutex_unlock(&udelay_test_lock);
+> -}
+> -
+> -module_exit(udelay_test_exit);
+> -
+> -MODULE_AUTHOR("David Riley <davidriley@chromium.org>");
+> -MODULE_LICENSE("GPL");
 > --
->   config OMAP3_SDRC_AC_TIMING
->   	bool "Enable SDRC AC timing register changes"
->   	depends on ARCH_OMAP3
+> 1.9.1
+>
+
+
+
+-- 
+Kees Cook
+Chrome OS Security
