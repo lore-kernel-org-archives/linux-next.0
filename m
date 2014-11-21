@@ -1,44 +1,64 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Subject: Re: [PATCH] amdkfd: explicitely include io.h in kfd_doorbell.c
-Date: Fri, 21 Nov 2014 15:54:34 -0500
-Message-ID: <CADnq5_OKSNfTH_kfwR4OgbTdp5twA5EVk6Ec+5SA2=2u=rNwgQ@mail.gmail.com>
-References: <1416600479-5767-1-git-send-email-oded.gabbay@amd.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the arm-soc
+ tree
+Date: Fri, 21 Nov 2014 15:14:12 -0800
+Message-ID: <20141121231411.GW7046@atomide.com>
+References: <20141121172412.4caf89cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1416600479-5767-1-git-send-email-oded.gabbay@amd.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Oded Gabbay <oded.gabbay@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, jim.epost@gmail.com, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:15568 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751634AbaKUXOb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2014 18:14:31 -0500
+Content-Disposition: inline
+In-Reply-To: <20141121172412.4caf89cc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
 
-T24gRnJpLCBOb3YgMjEsIDIwMTQgYXQgMzowNyBQTSwgT2RlZCBHYWJiYXkgPG9kZWQuZ2FiYmF5
-QGFtZC5jb20+IHdyb3RlOgo+IFRoaXMgcGF0Y2ggZml4ZXMgYSBjb21waWxhdGlvbiBlcnJvciB3
-aGVuIHVzaW5nIGNlcnRhaW4gY29uZmlndXJhdGlvbiBieQo+IGluY2x1ZGluZyB0aGUgZmlsZSBp
-by5oIGluIGtmZF9kb29yYmVsbC5jCj4KPiBTaWduZWQtb2ZmLWJ5OiBPZGVkIEdhYmJheSA8b2Rl
-ZC5nYWJiYXlAYW1kLmNvbT4KClJldmlld2VkLWJ5OiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5k
-ZXVjaGVyQGFtZC5jb20+Cgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGtmZC9rZmRf
-ZG9vcmJlbGwuYyB8IDEgKwo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPgo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGtmZC9rZmRfZG9vcmJlbGwuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9hbWQvYW1ka2ZkL2tmZF9kb29yYmVsbC5jCj4gaW5kZXggMGRjYjc4Ny4u
-YjU3OTFhNSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGtmZC9rZmRfZG9v
-cmJlbGwuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1ka2ZkL2tmZF9kb29yYmVsbC5j
-Cj4gQEAgLTIzLDYgKzIzLDcgQEAKPiAgI2luY2x1ZGUgPGxpbnV4L21tLmg+Cj4gICNpbmNsdWRl
-IDxsaW51eC9tbWFuLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+Cj4gKyNpbmNsdWRlIDxs
-aW51eC9pby5oPgo+Cj4gIC8qCj4gICAqIFRoaXMgZXh0ZW5zaW9uIHN1cHBvcnRzIGEga2VybmVs
-IGxldmVsIGRvb3JiZWxscyBtYW5hZ2VtZW50IGZvcgo+IC0tCj4gMi4xLjAKPgo+IF9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxp
-bmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+* Stephen Rothwell <sfr@canb.auug.org.au> [141120 22:26]:
+> Hi all,
+> 
+> Today's linux-next merge of the char-misc tree got a conflict in
+> arch/arm/mach-omap2/Kconfig between commit 9e1e632c4846 ("ARM: OMAP2+:
+> Drop board file for ti8168evm") from the arm-soc tree and commit
+> 184901a06a36 ("ARM: removing support for etb/etm in
+> "arch/arm/kernel/"") from the char-misc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+
+Looks right to me thanks.
+
+Tony 
+ 
+> diff --cc arch/arm/mach-omap2/Kconfig
+> index 27ec8923ddf6,06020fe77e57..000000000000
+> --- a/arch/arm/mach-omap2/Kconfig
+> +++ b/arch/arm/mach-omap2/Kconfig
+> @@@ -276,14 -282,16 +276,6 @@@ config MACH_SBC353
+>   	default y
+>   	select OMAP_PACKAGE_CUS
+>   
+> - config OMAP3_EMU
+> - 	bool "OMAP3 debugging peripherals"
+> - 	depends on ARCH_OMAP3
+> - 	select ARM_AMBA
+> - 	select OC_ETM
+> - 	help
+> - 	  Say Y here to enable debugging hardware of omap3
+>  -config MACH_TI8168EVM
+>  -	bool "TI8168 Evaluation Module"
+>  -	depends on SOC_TI81XX
+>  -	default y
+>  -
+>  -config MACH_TI8148EVM
+>  -	bool "TI8148 Evaluation Module"
+>  -	depends on SOC_TI81XX
+>  -	default y
+> --
+>   config OMAP3_SDRC_AC_TIMING
+>   	bool "Enable SDRC AC timing register changes"
+>   	depends on ARCH_OMAP3
