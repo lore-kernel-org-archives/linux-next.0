@@ -1,34 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Fri, 21 Nov 2014 22:30:22 -0500 (EST)
-Message-ID: <20141121.223022.399609321644415888.davem@davemloft.net>
-References: <20141117133404.525229b4@canb.auug.org.au>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 01/12] time: Rename udelay_test.c to test_udelay.c
+Date: Fri, 21 Nov 2014 19:45:41 -0800
+Message-ID: <20141122034541.GA17842@kroah.com>
+References: <1416599058-13836-1-git-send-email-john.stultz@linaro.org>
+ <1416599058-13836-2-git-send-email-john.stultz@linaro.org>
+ <CAGXu5jLKWOUcf+63HFdYLB6Ge31Xng+QqyKh3KNN7u15EfOVEA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:42375 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752979AbaKVDa1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2014 22:30:27 -0500
-In-Reply-To: <20141117133404.525229b4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jrajahalme@nicira.com, pshelar@nicira.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jLKWOUcf+63HFdYLB6Ge31Xng+QqyKh3KNN7u15EfOVEA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: John Stultz <john.stultz@linaro.org>, lkml <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Linux-Next <linux-next@vger.kernel.org>, David Riley <davidriley@chromium.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 17 Nov 2014 13:34:04 +1100
-
-> I applied the following merge fix patch:
+On Fri, Nov 21, 2014 at 03:30:51PM -0800, Kees Cook wrote:
+> On Fri, Nov 21, 2014 at 11:44 AM, John Stultz <john.stultz@linaro.org> wrote:
+> > Kees requested that this test module be renamed for consistency sake,
+> > so this patch renames the udelay_test.c file (recently added to
+> > tip/timers/core for 3.17) to test_udelay.c
+> >
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Greg KH <greg@kroah.com>
+> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@elte.hu>
+> > Cc: Linux-Next <linux-next@vger.kernel.org>
+> > Cc: David Riley <davidriley@chromium.org>
+> > Signed-off-by: John Stultz <john.stultz@linaro.org>
 > 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 17 Nov 2014 13:31:33 +1100
-> Subject: [PATCH] openvswitch: fix up for OVS_NLERR API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Thanks Stephen, I integrated this into the merge commit when
-I merge net into net-next just now.
 
-Thanks again.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
