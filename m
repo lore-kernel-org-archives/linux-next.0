@@ -1,55 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the kvm tree
-Date: Mon, 24 Nov 2014 17:19:08 +1100
-Message-ID: <20141124171908.034b2fa1@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the tegra
+ tree
+Date: Mon, 24 Nov 2014 18:25:38 +1100
+Message-ID: <20141124182538.5d3f7f29@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/p+yLM8q3xdlWZ19mojmqv4S"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/PEi4Z3qj0rRLUbcaFtqE4dR"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33299 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751919AbaKXHZw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2014 02:25:52 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 
---Sig_/p+yLM8q3xdlWZ19mojmqv4S
+--Sig_/PEi4Z3qj0rRLUbcaFtqE4dR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-After merging the kvm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the driver-core tree got a conflict in
+drivers/iommu/tegra-smmu.c between commit a2257374a4bd ("memory: Add
+NVIDIA Tegra memory controller support") from the tegra tree and commit
+98b773cf7b6b ("iommu: drop owner assignment from platform_drivers")
+from the driver-core tree.
 
-ERROR: "get_xsave_addr" [arch/x86/kvm/kvm.ko] undefined!
+I fixed it up (the former removed the code modified by the latter) and
+can carry the fix as necessary (no action is required).
 
-Caused by commit 1d7fe1d1fb18 ("KVM: x86: support XSAVES usage in the
-host").
-
-I have used the kvm tree from next-20141121 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/p+yLM8q3xdlWZ19mojmqv4S
+--Sig_/PEi4Z3qj0rRLUbcaFtqE4dR
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUcs3hAAoJEMDTa8Ir7ZwV8HMP/34Rbbe2XRrqWyF6q17BDWUy
-JUPsVAjfpl8mc6x8awehOD6sF4E9n9sw2r63kCF47C4c6zw+mdF7jePuXciUX5Qe
-IRGxK7xV7+ZJ9YsWwMNt7rzlrBQvoAiTJqjax2tpXeAGunEtZ4f6/NEP2TX72wcH
-ae12tovDZtAbLyXiMR4LNjgkIvCUZ0ZRH06aLlPlb2tTqxb7d0fpUv2xAYed+m5l
-TrPD9VtRv18o/nnnmYHjNVXUcTHrSETGTroVwReT04CysVf3IE9AXsuIyc/F3Utp
-JRgkkoKqsp4xcyVtAqZ4CfwF/p10+AjzWRCGpRfsu6iE5DeMBQrEEVBby5rxuoMO
-AlvMW9kfzXlLQCou5DBr+rTKhruhS+JHesibjvJjIusSAtJHzaYiE/ukfhSz+grj
-z4bHLm8j4b+MWhDz/urVglVhI8gxZjxZKO9IiLjJtpCvLh/UVPBAKYxTmKtR+tN6
-6A3COSB3EuKiI3eRMhHO6qYvWZcMGGcMjL1CEp714AJ1Osdiy34EpJa21xVP6w6p
-SNL9+yItjmeI9IRuph1M+wDatcfnCTQZMnprVpDoF7wZidYSdqOPTjhwEWXnlkfX
-tXdX2PUSXm16pcYqb4AfFAVjuLByNl0pt1G8BoRh2H/0PAOMx90zzAauis4O6OMr
-noFzdR3zpAIK8/u9bXpZ
-=jDIh
+iQIcBAEBCAAGBQJUct18AAoJEMDTa8Ir7ZwVNPwP+gOgEjgsZURI/9tzcLGo6xj/
+0bA0rNDeo+6op4Lw20LkKHvqtr8/Dykrp+7LHvRz+AA/Qy6qlfZ+reYthLmMXykj
+79FfJoiOo3czpJQfuDmRQnN2v9Z9ltZnSLItFg9Nz3c41axbXb40aZPgr7Yg6wqd
+nLIWLF05O/s0dhD4Pb8pNXn1cjgGnP9ZUfovtmQS7vP+qOCmjf86THEQw5sgZapA
+HS8aBJ8f/kqPnNN10RVJvZIPGDH5+FLpw50yMJ3f/6D1ZngA75IwRqNce5/pdrhB
+mByyNYdbzgU2G9xewXyKoWol9/AWODJgN7kaLqnapwoSM+PVS4Ja0XxvI2+HZZHR
+4eZNFj46AGggUT0ER8XVOE7tJO5OFAA/GVzlD+fQL+xR8AstXwgJJNA5WJOWgN+x
+cnDbMx827WX3fNLkSGzhbN0beo195c+cuZjK1cjpgwHfrZmgmsdarIonlSYUOQRL
+XlGxlzMdOF5sJVvC44Tpk5VNMIadFvouKfW96xWq7g8itVPi9OMKm/SOMTjk6lYv
+C/pg8xyTInzWuSq/9tqAEUZGmfhjXDoPy4abHpDzz85+CgPmcxYeHgwJTIekFfsN
+uJgJD+ZXNPjK3yTRgm40Gr3lCHikmQ+3/Ddi1zJzlwVMy493sePrNrAmrX56tFyx
+EKQN23eH4wNCqJjSblAL
+=K4aY
 -----END PGP SIGNATURE-----
 
---Sig_/p+yLM8q3xdlWZ19mojmqv4S--
+--Sig_/PEi4Z3qj0rRLUbcaFtqE4dR--
