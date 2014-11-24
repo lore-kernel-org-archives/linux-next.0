@@ -1,47 +1,128 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [-next] cpu cache info in drivers base?
-Date: Mon, 24 Nov 2014 16:00:48 +0100
-Message-ID: <20141124150048.GD3738@osiris>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] usb:phy: propagate __of_usb_find_phy()'s error on failure
+Date: Mon, 24 Nov 2014 16:16:46 +0100
+Message-ID: <20141124151644.GC4061@ulmo.nvidia.com>
+References: <1416498816-3292-1-git-send-email-arjun024@gmail.com>
+ <20141124131034.GB4061@ulmo.nvidia.com>
+ <20141124143646.GA20705@saruman>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0IvGJv3f9h+YhkrH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp13.uk.ibm.com ([195.75.94.109]:51191 "EHLO
-	e06smtp13.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751069AbaKXPBP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2014 10:01:15 -0500
-Received: from /spool/local
-	by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-	Mon, 24 Nov 2014 15:01:13 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-	by d06dlp01.portsmouth.uk.ibm.com (Postfix) with ESMTP id 49F4917D8045
-	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2014 15:01:25 +0000 (GMT)
-Received: from d06av03.portsmouth.uk.ibm.com (d06av03.portsmouth.uk.ibm.com [9.149.37.213])
-	by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id sAOF1Ab82490650
-	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2014 15:01:10 GMT
-Received: from d06av03.portsmouth.uk.ibm.com (localhost [127.0.0.1])
-	by d06av03.portsmouth.uk.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id sAOF11L4001920
-	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2014 08:01:08 -0700
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:65092 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750733AbaKXPQw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2014 10:16:52 -0500
 Content-Disposition: inline
+In-Reply-To: <20141124143646.GA20705@saruman>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sudeep Holla <sudeep.holla@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-next@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Arjun Sreedharan <arjun024@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
 
-Hi there,
 
-I'm just wondering what the point of the current cpu cache info
-within drivers/base is?
-If I startup linux-next (as of today) all I get is an error message
-"error detecting cacheinfo..cpu0".
-Which naturally comes from:
+--0IvGJv3f9h+YhkrH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-int __weak init_cache_level(unsigned int cpu)
-{
-	return -ENOENT;
-}
+On Mon, Nov 24, 2014 at 08:36:46AM -0600, Felipe Balbi wrote:
+> Hi,
+>=20
+> On Mon, Nov 24, 2014 at 02:10:41PM +0100, Thierry Reding wrote:
+> > On Thu, Nov 20, 2014 at 09:23:36PM +0530, Arjun Sreedharan wrote:
+> > > When __of_usb_find_phy() fails, it returns -ENODEV - its
+> > > error code has to be returned by devm_usb_get_phy_by_phandle().
+> > > Only when the former function succeeds and try_module_get()
+> > > fails should -EPROBE_DEFER be returned.
+> > >=20
+> > > Signed-off-by: Arjun Sreedharan <arjun024@gmail.com>
+> > > ---
+> > >  drivers/usb/phy/phy.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >=20
+> > This causes a boot regression on at least NVIDIA Dalmore (I boot over
+> > NFS using a USB network adapter).
+> >=20
+> > The commit message is somewhat insufficient because while it explains
+> > what the code does and asserts that it is the right thing to do, it
+> > fails to explain why.
+>=20
+> you also fail to explain it causes a regressions with Dalmore.
 
-Given that there is no implementation without __weak I'm wondering
-what the point is? Also it looks like no architecture has been
-converted to the new infrastructure, even though such patches have
-been posted in the past?
+I thought my explanation below was sufficient, but maybe I should say it
+in other words: __of_usb_find_phy() returns -ENODEV if no PHY was found
+to be registered for a given phandle. That causes the driver to abort
+probing with a -ENODEV error and does not trigger the probe deferral
+that'd be necessary to get the host controller to find the PHY the next
+time it was triggered.
+
+> This is really the correct patch, we shouldn't be overwritting the
+> error passed in by upper layers.
+
+No, it's very obviously not the correct patch if it causes a regression.
+
+> > > diff --git a/drivers/usb/phy/phy.c b/drivers/usb/phy/phy.c
+> > > index 045cd30..0310112 100644
+> > > --- a/drivers/usb/phy/phy.c
+> > > +++ b/drivers/usb/phy/phy.c
+> > > @@ -191,7 +191,9 @@ struct usb_phy *devm_usb_get_phy_by_phandle(struc=
+t device *dev,
+> > > =20
+> > >  	phy =3D __of_usb_find_phy(node);
+> > >  	if (IS_ERR(phy) || !try_module_get(phy->dev->driver->owner)) {
+> > > -		phy =3D ERR_PTR(-EPROBE_DEFER);
+> > > +		if (!IS_ERR(phy))
+> > > +			phy =3D ERR_PTR(-EPROBE_DEFER);
+> >=20
+> > If we look at this closer, __of_usb_find_phy() return a valid pointer if
+> > a PHY was found or ERR_PTR(-ENODEV) otherwise. But since the phandle has
+> > already been validated, the only reason why __of_usb_find_phy() fails is
+> > because the PHY that the phandle refers to hasn't been registered yet.
+> >=20
+> > Returning -EPROBE_DEFER is the correct thing to do in this situation
+> > because it gives the PHY driver an opportunity to register and the USB
+> > host controller to try probing again. I suppose one could argue that
+> > __of_usb_find_phy() should return ERR_PTR(-EPROBE_DEFER) on failure
+> > instead of ERR_PTR(-ENODEV), since evidently the device does exist, it
+> > just hasn't been registered yet. On the other hand it could happen that
+> > the phandle refers to a device tree node that's status =3D "disabled", =
+in
+> > which case ERR_PTR(-ENODEV) might be appropriate.
+> >=20
+> > Also, -EPROBE_DEFER isn't really the proper error for try_module_get()
+> > failure. Other functions (usb_get_phy() and usb_get_phy_dev()) return
+> > -ENODEV instead, so it'd be more consistent to stick with that. Hence I
+> > propose something like the below instead.
+>=20
+> I don't mind patch below, but I want to know why Dalmore regressed with
+> $subject.
+
+Note that this isn't only an issue specific to Dalmore. This affects
+every device that uses a USB PHY and where the PHY is registered after
+the first probe of the USB host controller.
+
+Thierry
+
+--0IvGJv3f9h+YhkrH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUc0vcAAoJEN0jrNd/PrOhyJcP/RG/Lv4CJrBL2o8fySKqoBbZ
+a6UYijwUmit0IvPQfjAVih5+UlMdzKB6siz0/n8cxcTsB8s/IAvHEAJ32Has+xzW
++R2Oa3AXtx3C1flWCA6hj0OggCRrAt384hEg3L4Q2LxPCQfZiABDIZ4EnMHq1Kkc
+Dol5ao/C0/S9pJHh+7lr7mTk3mTyUQB2S+uMhlDAITnTVPVeKZE0qaWmmNGXQ57F
+FOCy30OBTfB5fy3zWmGRyzJXUWGgSnLzw/m/MFsS+u1YdLHxHhXbEh99nPWthAhl
+9ff7BTey3gqI3sJa706FvXpfK4RkceXh1qjYDlB5TLnSh7RKprHyuji/0T9i/mty
+UlqgPvFO5Be0qyAG4JFHLYUI68hJKJj/27i0h19ERrEGAcfTQ1szdQ20uwegFxkS
+vvrBKvbqHzITQHae3H9KaqUOYL4Mh1b+zMkIzSA0w2F3SBiMOOgsEbmaCWt3+0D7
+t7XvJDh9ELew639NkJQYAxH1M9h3GKcAicUTxyZJmvfFo8otFQ6zGS1LynEt9dNu
+IR0r1ArTaM262ip5TlXMs3TuhoeqpJ8N38I4hdmGeRvZb4/oUNR52T8S2am2IlgL
+KpiPxqwHdk8xeg4h7k7UwBvSH7hpoqNMXgn7RHb2rgW5fO4BXwSnZijoXWDIzPJf
+bo9rhih9LubFNrI5Yzcu
+=rIdT
+-----END PGP SIGNATURE-----
+
+--0IvGJv3f9h+YhkrH--
