@@ -1,55 +1,35 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [-next] cpu cache info in drivers base?
-Date: Mon, 24 Nov 2014 16:06:19 +0000
-Message-ID: <5473577B.6010708@arm.com>
-References: <20141124150048.GD3738@osiris>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: linux-next: manual merge of the iommu tree with the tegra tree
+Date: Mon, 24 Nov 2014 17:16:48 +0100
+Message-ID: <20141124161648.GI3762@8bytes.org>
+References: <20141124153310.61fc2202@canb.auug.org.au>
+ <20141124093237.GC19045@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:57023 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753475AbaKXQFn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2014 11:05:43 -0500
-In-Reply-To: <20141124150048.GD3738@osiris>
+Received: from 8bytes.org ([81.169.241.247]:39723 "EHLO theia.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753943AbaKXQQv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2014 11:16:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20141124093237.GC19045@ulmo.nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>, Stephen Boyd <sboyd@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Thierry Reding <treding@nvidia.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olav Haugan <ohaugan@codeaurora.org>
 
-Hi Heiko,
+Hi Thierry,
 
-On 24/11/14 15:00, Heiko Carstens wrote:
-> Hi there,
->
-> I'm just wondering what the point of the current cpu cache info
-> within drivers/base is?
-> If I startup linux-next (as of today) all I get is an error message
-> "error detecting cacheinfo..cpu0".
+On Mon, Nov 24, 2014 at 10:32:38AM +0100, Thierry Reding wrote:
+> This conflict is uglier than I had anticipated. Perhaps it would make
+> sense to pull in a stable IOMMU branch into Tegra so that I can resolve
+> the conflict on top of that?
+> 
+> Joerg, do you have a stable branch containing the above commits that you
+> could provide for me to pull into the Tegra tree?
 
-That's correct, I did post a patch[1] to suppress that given not all
-architectures might add support.
+Yes, you can pull in the core branch from the iommu-tree. It should
+contain the conflicting patch.
 
-> Which naturally comes from:
->
-> int __weak init_cache_level(unsigned int cpu)
-> {
-> 	return -ENOENT;
-> }
->
-> Given that there is no implementation without __weak I'm wondering
-> what the point is? Also it looks like no architecture has been
-> converted to the new infrastructure, even though such patches have
-> been posted in the past?
 
-Yes, I asked Greg to hold off on the architecture patches for next
-versions as there may be conflicts(though we can have solve it using
-a common baseline, but I thought it was too late to try that). Also
-I have not got testing on few other architectures(ppc, ia64, amd). I
-will post those patches individually on respective arch lists and
-chase after the v3.19-rc1 release. Is that OK ?
-
-Regards,
-Sudeep
-
-[1] https://lkml.org/lkml/2014/11/12/351
+	Joerg
