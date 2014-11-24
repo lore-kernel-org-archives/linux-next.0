@@ -1,59 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Date: Mon, 24 Nov 2014 19:10:09 +1100
-Message-ID: <20141124191009.7f4fbf31@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the arm tree
+Date: Mon, 24 Nov 2014 19:17:20 +1100
+Message-ID: <20141124191720.574ca60a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/T59SINr8PJLDH0N0N98i1hs"; protocol="application/pgp-signature"
+ boundary="Sig_/wUfRnyJggakPeQwCq+yl9dQ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43125 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51979 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752751AbaKXIKL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2014 03:10:11 -0500
+	id S1752535AbaKXIR1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2014 03:17:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Aybuke Ozdemir <aybuke.147@gmail.com>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/T59SINr8PJLDH0N0N98i1hs
+--Sig_/wUfRnyJggakPeQwCq+yl9dQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/media/omap24xx/tcm825x.c between commit db85a0403be4
-("[media] omap24xx/tcm825x: remove deprecated omap2 camera drivers")
-from the v4l-dvb tree and commit 1002a240ed72 ("staging: media:
-omap24xx: Use min_t instead of min") from the staging tree.
+Today's linux-next merge of the char-misc tree got a conflict in
+arch/arm/kernel/etm.c between commit 4ed89f222806 ("ARM: convert
+printk(KERN_* to pr_*") from the arm tree and commit 184901a06a36
+("ARM: removing support for etb/etm in "arch/arm/kernel/"") from the
+char-misc tree.
 
-I fixed it up (the former removed the file, so I did that) and can
+I fixed it up (the latter removed the file, so I did that) and can
 carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/T59SINr8PJLDH0N0N98i1hs
+--Sig_/wUfRnyJggakPeQwCq+yl9dQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUcufhAAoJEMDTa8Ir7ZwV8fUP/2cYEtL96S4VJez+vxH7Obpt
-L1OQz+STG7awcX+LZksPZ/fLrzecRSrmPYusiL/OgeXJa2Y1rMSZE5VlbPmsU9nl
-oP1zabOWeOUU8hrsfJuNFecvdwQPzSWpIUoP/16iDsnM/HbwEKarS8dTKusGWt5n
-N/2+wV119d6RcOI9gJLYATfz1SEoV4owF9OagawM82X+1KXBuUS7ryKnLfQMfzoi
-v+R3UKULDnnEJ8Qjn1fVvTfr15s31SX8jFpzd+a3PuS36jvgXSQyglnhmpOPz63+
-Ku6zBc7N173CYekGo9Bw7F6pSIUCkKLqobckl9SjdFK9Sx1OCiasS+aJ/7gr70S+
-ZD7iJWjJJL9MSL4++baSfvc/0tMMvDOQpLsiqA4voGbiemd/UpVEe6GzCQa5pLDy
-vRKdsLUQ86fLRJ1LWTDHOMEBhOS3+sRAip8r2l0Q2ihhhlryZVKfx7N9wZU9ebD1
-RRGB8pRNKFn2rhOhqysTJHSz863JWjqZB3bsyX31Jf7ApzW+PFUIwc05b0iTcK+0
-o5I27in5vbEyvBG0AFvwh1XIp8gwIJdcW3hhpqPzH7YRGhilBssjvHtVkRNdX6D2
-yBR/l+4WhSh1P6kkiUrCBhWvppD/3jeqMN7KNvYIKOK7E6JbaGv5cbbOvx40ETME
-1fZdRYMs8KQy2Av5AQ5R
-=l1B2
+iQIcBAEBCAAGBQJUcumVAAoJEMDTa8Ir7ZwV8sYP/RJfRB5K7UOhnrY318VpMuym
+rZVAKYaR8f6+nEBXRCxOKv8eV1AqIRSjClraQnKhO1uYugVDJtUKSUBCzCTnzcTL
+E9eaWpuGcwJdLDYJ2LBhdRT++zw5EaRj09uJ9/eniXAvT0n0eLtVUmPMdHN7L8Eo
+WQTuSvdmbHaqZDaa7MGFDTEtmEakKmr/X5w0Lcx30PUloM9DbDp+RD/ocyZu73lA
+oxOp7FRS+BAlDkdmxr1m4QGiGRoBoEAIQHTqT3LmbjXe/tqtjkjf81lsUNjvhsC5
+qg2VnTRJzB1xXkuBosfIvIGU3Km6EC+vXYrEtb2hYxqVnKsNfneRm1+7LQ+EV1jI
+7mdZhH2eljzfyBgoOe5q6jCnsJVA9kCX4bDQpqmV0kuF3jtxocowBmIpHyA8OZTk
+yv7EXvV2jA0rnI3ekdDwR9llf6/bPIRgvg+ZjCgQjieAg7b0Kbz2Rk0u13zwyR/a
+mHwzxOjrReLvn1HyhZv4KoNWHxIy4WwaHqurAEszd8wmc46J7BXW5s817o3zmPeX
+/vwT8oaksqgGSN5t5iOymB80x8IIgGsfz0kj7fHE5oeP5NjY27Gp+iFNYuYn5xum
+0FRVAtFb4QGyL/yMtOkT9PikgbgF82q911opAZok+Kq69dQ30MH70u4KxPEcyNce
+SeFK/uO/d5feKfVBDWKb
+=7Ih7
 -----END PGP SIGNATURE-----
 
---Sig_/T59SINr8PJLDH0N0N98i1hs--
+--Sig_/wUfRnyJggakPeQwCq+yl9dQ--
