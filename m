@@ -1,81 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pci tree
-Date: Mon, 24 Nov 2014 16:18:42 +1100
-Message-ID: <20141124161842.02251126@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Mon, 24 Nov 2014 17:19:08 +1100
+Message-ID: <20141124171908.034b2fa1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IIB_jLdIHgJGPcHF.Qb9+1W"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43933 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750789AbaKXFSt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2014 00:18:49 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Yijing Wang <wangyijing@huawei.com>
+ boundary="Sig_/p+yLM8q3xdlWZ19mojmqv4S"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/IIB_jLdIHgJGPcHF.Qb9+1W
+--Sig_/p+yLM8q3xdlWZ19mojmqv4S
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/pci/host/pcie-rcar.c between commit 3c70637f7569 ("PCI: rcar:
-Make rcar_pci static") from the pci tree and commit 7c35c8cc32f3 ("PCI:
-rcar: Save MSI controller in pci_sys_data") from the tip tree.
+After merging the kvm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+ERROR: "get_xsave_addr" [arch/x86/kvm/kvm.ko] undefined!
 
+Caused by commit 1d7fe1d1fb18 ("KVM: x86: support XSAVES usage in the
+host").
+
+I have used the kvm tree from next-20141121 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pci/host/pcie-rcar.c
-index 0df9b2941221,c1177cd55ce3..000000000000
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@@ -380,16 -380,7 +380,7 @@@ static int rcar_pcie_setup(int nr, stru
-  	return 1;
-  }
- =20
-- static void rcar_pcie_add_bus(struct pci_bus *bus)
-- {
-- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-- 		struct rcar_pcie *pcie =3D sys_to_pcie(bus->sysdata);
--=20
-- 		bus->msi =3D &pcie->msi.chip;
-- 	}
-- }
--=20
- -struct hw_pci rcar_pci =3D {
- +static struct hw_pci rcar_pci =3D {
-  	.setup          =3D rcar_pcie_setup,
-  	.map_irq        =3D of_irq_parse_and_map_pci,
-  	.ops            =3D &rcar_pcie_ops,
-
---Sig_/IIB_jLdIHgJGPcHF.Qb9+1W
+--Sig_/p+yLM8q3xdlWZ19mojmqv4S
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUcr+2AAoJEMDTa8Ir7ZwVdqYQAIYmsRU2Lb130GZDr5PCYEQf
-DY7Wz0QS9bQ4LBmlTwaGc8jsdeh+1SnpnzSkCgzJnmZ1XeLSJW2y7bPFhrgYSsMB
-tbaZIZ4TgRDNatWYpgPwg25qPMeUP2zRjXN1kLu/VCWGSasslr0bblYJx+fYxPmk
-v+MhHsQug+q5PlkKwbYjVmnNxos4xAEJ3WtIVSQ/VwkI5p/h7cfM9gtN3VTIGtQC
-b74rtBeIGzCqLFZhZZh3dbf1DgLqlDGDUTJMT49rff4Q1QCpD32kNueZ7LpFu+4f
-ESRC0YeTTn835fAqq4xh4qwDWKV30uktgaZtfv0wfp7XrCLwTcJ9LiSN2xFQS2Cy
-IrGrFytuAGMLTM4BP6BBkjLou/RziKAD7DGKdHH8E7jl8jKrLAMIK5xM8Hd01s+U
-QGGl21KztrCZVvvw0ELwmsV/f9HRYcdIRRBc5tzTgiaEHAylOIfGQphcbOsNzAU0
-QmtNBE04bdn44chh/JJitGRDHhZfF/gYi7C6g86Ef71ehn5BPVvcwl8Pm4W3PFkT
-ZZtVGsrZlKTxdz6yWXJN/ersaYGudRcwFMi/IW2q2/9yTsAmEeC05wZVaKB06DYf
-pOiBiTROczA1USc+1pI2R5G08/gfZ0jir1aMx+OBzreFxrAh+ZyWcojCZ2LHbd3k
-da55Km7Eu5p2Rk1GMdsR
-=iQHh
+iQIcBAEBCAAGBQJUcs3hAAoJEMDTa8Ir7ZwV8HMP/34Rbbe2XRrqWyF6q17BDWUy
+JUPsVAjfpl8mc6x8awehOD6sF4E9n9sw2r63kCF47C4c6zw+mdF7jePuXciUX5Qe
+IRGxK7xV7+ZJ9YsWwMNt7rzlrBQvoAiTJqjax2tpXeAGunEtZ4f6/NEP2TX72wcH
+ae12tovDZtAbLyXiMR4LNjgkIvCUZ0ZRH06aLlPlb2tTqxb7d0fpUv2xAYed+m5l
+TrPD9VtRv18o/nnnmYHjNVXUcTHrSETGTroVwReT04CysVf3IE9AXsuIyc/F3Utp
+JRgkkoKqsp4xcyVtAqZ4CfwF/p10+AjzWRCGpRfsu6iE5DeMBQrEEVBby5rxuoMO
+AlvMW9kfzXlLQCou5DBr+rTKhruhS+JHesibjvJjIusSAtJHzaYiE/ukfhSz+grj
+z4bHLm8j4b+MWhDz/urVglVhI8gxZjxZKO9IiLjJtpCvLh/UVPBAKYxTmKtR+tN6
+6A3COSB3EuKiI3eRMhHO6qYvWZcMGGcMjL1CEp714AJ1Osdiy34EpJa21xVP6w6p
+SNL9+yItjmeI9IRuph1M+wDatcfnCTQZMnprVpDoF7wZidYSdqOPTjhwEWXnlkfX
+tXdX2PUSXm16pcYqb4AfFAVjuLByNl0pt1G8BoRh2H/0PAOMx90zzAauis4O6OMr
+noFzdR3zpAIK8/u9bXpZ
+=jDIh
 -----END PGP SIGNATURE-----
 
---Sig_/IIB_jLdIHgJGPcHF.Qb9+1W--
+--Sig_/p+yLM8q3xdlWZ19mojmqv4S--
