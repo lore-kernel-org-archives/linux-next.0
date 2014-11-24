@@ -1,56 +1,65 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: linux-next: build failure after merge of the i2c tree
-Date: Mon, 24 Nov 2014 10:24:42 +0100
-Message-ID: <20141124092442.GA3733@katana>
-References: <20141124201604.51aa3a82@canb.auug.org.au>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: linux-next: manual merge of the iommu tree with the tegra tree
+Date: Mon, 24 Nov 2014 10:32:38 +0100
+Message-ID: <20141124093237.GC19045@ulmo.nvidia.com>
+References: <20141124153310.61fc2202@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49767 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750901AbaKXJXQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2014 04:23:16 -0500
+	protocol="application/pgp-signature"; boundary="Fig2xvG2VGoz8o/s"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141124153310.61fc2202@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <20141124201604.51aa3a82@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Schwarz <max.schwarz@online.de>, Doug Anderson <dianders@chromium.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olav Haugan <ohaugan@codeaurora.org>
+List-Id: linux-next.vger.kernel.org
 
-
---ew6BAiZeqk4r7MaW
+--Fig2xvG2VGoz8o/s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Caused by commit 5a6f1566f6a0 ("i2c: rk3x: handle dynamic clock rate
-> changes correctly").
+On Mon, Nov 24, 2014 at 03:33:10PM +1100, Stephen Rothwell wrote:
+> * PGP Signed by an unknown key
+>=20
+> Hi Joerg,
+>=20
+> Today's linux-next merge of the iommu tree got a conflict in
+> drivers/iommu/tegra-smmu.c between commit a2257374a4bd ("memory: Add
+> NVIDIA Tegra memory controller support") from the tegra tree and commit
+> 315786ebbf4a ("iommu: Add iommu_map_sg() function") from the iommu tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Yes, missing Kconfig dependency on COMMON_CLK. I'll add and push the fix
-today. Thanks!
+This conflict is uglier than I had anticipated. Perhaps it would make
+sense to pull in a stable IOMMU branch into Tegra so that I can resolve
+the conflict on top of that?
 
+Joerg, do you have a stable branch containing the above commits that you
+could provide for me to pull into the Tegra tree?
 
+Thierry
 
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Fig2xvG2VGoz8o/s
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUcvlZAAoJEBQN5MwUoCm2DUMP/ie4jG8s5M6w35GP7O47I4i5
-Dcbxh5rQV51LLMYqm9T9+LEmDh98jVrnVeSUoS/86vP3lA3x/eKznWa+eX49vHBp
-/NbYyMa/adQx+jpvQOya/Ixu+eyZEhPgpl74MBIFvBR6uqcAifWfD0QGLgehKF7E
-Vr1zPv6wdTJ16PoIj3sTtbl33Z3HFA+809rrp7TTH7OKRZ1Zav+rewTlpOHRCOCn
-ibGrEqsuEXtolSdEAIWOvt8Xq0fFcqBrc4Rj9XL4bw6WkU8yBij8eQcrJ4LtvbyN
-szHBRPtaeJxMua8kg+VZto0oUmQyb7nC8w4eYWwiII/x9EWiPYNN9hW2ZWKRfoib
-y7eTa1ci/OpxwLMyW5y+hpWk05+63KHuSQLoKkokXNaAtl1P86cXUFZd1viYKz28
-qdgtaa2P1vjj4Vj4L3S7zKpv4261XsbBdacbI2/ASGQz+sCYVzfk7cRzy5fe/z+0
-M/qius3tRqy1wbAXm8CbDE/sVPYuy3OQCAD1tj9dEZWefQyDloST/iksQNyKHNi8
-cnmpBkcFPrrxafKWhhpb3vPcNeawetPyH2vWZ9gI+mHzehEx3m5PO+NlLizpUaSg
-dBORZoqFyjxw5ljLOmzsFTxtYdI0SzqrAGOMzZPGFKpjCIkxyXDX7IJfU1cndGOv
-ymmrsN8jmzWLAQRSX91Z
-=8FhH
+iQIcBAEBAgAGBQJUcvs1AAoJEN0jrNd/PrOhvwwQAJ8mFfBZtDxh55KIfE4c3dwX
+SsrsZ69BXDg97Q33bGbxM1ZajdSpjulQvKyC/Cfn7+bVEuhN136YV5w8yUCtW81v
+yKfzZVhk0mv6khf6whijTbfyTy5ei1uP8Vhq47tbsviZqvS+eo/k+U6egbS+7PCr
+bu1C5KXbdMc0nfw52IIhbz+YOXpFaGYmRNPw47xoFTMCvjQMvulemo2GsWlWzB7i
+QRduEgHk/W/peLoPaO+/2KJJc3HF3EE/a+7u7Zg4q2LHV1jKj0Hn9CX1JwxaAF68
+vrKxBTHC/SEGVlOuZwbt3loN2Upr4PIp6C8TQ9ERX666MOB4FdCV8ozKUPcE8Rsi
+AFT66YA9pP5P0vY6cgC8Pe21QxA/nKipxnPhRruXno+j1SSyFWRW9IJe8Jl5Wxdd
+UvcRXaoNaGbTU6DDWZ0FOSlNJlLuEB1wY0zKGQ2RqXk8RKlK3fjeFI5CQLKjTDAI
+V9kwo89wH1xcwnyz+V7M0yCrwko3uduZRKpoYHHNuNv56jdOZCYMh49Lx64bKyil
+kEMxX1Uz7djTtT7Ft4ImabC+i5Ar27LuEqtdyzQm8nNJgHEfN7f9LYnzbPgQWAY9
+seWYE4VSDhxWAeYbJKMIdW6i3eCUuvWj7xg2ugk63PhpPGERri6volX3DB7N2gfV
+10qOAo7pPjrXpPIT6qqm
+=0g0C
 -----END PGP SIGNATURE-----
 
---ew6BAiZeqk4r7MaW--
+--Fig2xvG2VGoz8o/s--
