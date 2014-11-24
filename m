@@ -1,122 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the i2c tree
-Date: Mon, 24 Nov 2014 20:16:04 +1100
-Message-ID: <20141124201604.51aa3a82@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the ftrace
+ tree
+Date: Mon, 24 Nov 2014 20:22:28 +1100
+Message-ID: <20141124202228.11999e2b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/th++vzCiZZ_OTMfNARewbS1"; protocol="application/pgp-signature"
+ boundary="Sig_/Uz5NaR/qSAhCS.+a7qIxDUe"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41387 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52194 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751978AbaKXJQN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2014 04:16:13 -0500
+	id S1753164AbaKXJWf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2014 04:22:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Schwarz <max.schwarz@online.de>, Doug Anderson <dianders@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
 
---Sig_/th++vzCiZZ_OTMfNARewbS1
+--Sig_/Uz5NaR/qSAhCS.+a7qIxDUe
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+Hi Andrew,
 
-After merging the i2c tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in
+kernel/printk/printk.c between commit afdc34a3d3b8 ("printk: Add
+per_cpu printk func to allow printk to be diverted") from the ftrace
+tree and commit b59ed413b21b ("printk: add and use LOGLEVEL_<level>
+defines for KERN_<LEVEL> equivalents") from the akpm-current tree.
 
-drivers/i2c/busses/i2c-rk3x.c: In function 'rk3x_i2c_clk_notifier_cb':
-drivers/i2c/busses/i2c-rk3x.c:634:7: error: 'PRE_RATE_CHANGE' undeclared (f=
-irst use in this function)
-  case PRE_RATE_CHANGE:
-       ^
-drivers/i2c/busses/i2c-rk3x.c:634:7: note: each undeclared identifier is re=
-ported only once for each function it appears in
-drivers/i2c/busses/i2c-rk3x.c:635:31: error: dereferencing pointer to incom=
-plete type
-   if (rk3x_i2c_calc_divs(ndata->new_rate, i2c->scl_frequency,
-                               ^
-drivers/i2c/busses/i2c-rk3x.c:641:12: error: dereferencing pointer to incom=
-plete type
-   if (ndata->new_rate > ndata->old_rate)
-            ^
-drivers/i2c/busses/i2c-rk3x.c:641:30: error: dereferencing pointer to incom=
-plete type
-   if (ndata->new_rate > ndata->old_rate)
-                              ^
-drivers/i2c/busses/i2c-rk3x.c:642:33: error: dereferencing pointer to incom=
-plete type
-    rk3x_i2c_adapt_div(i2c, ndata->new_rate);
-                                 ^
-drivers/i2c/busses/i2c-rk3x.c:645:7: error: 'POST_RATE_CHANGE' undeclared (=
-first use in this function)
-  case POST_RATE_CHANGE:
-       ^
-drivers/i2c/busses/i2c-rk3x.c:647:12: error: dereferencing pointer to incom=
-plete type
-   if (ndata->new_rate < ndata->old_rate)
-            ^
-drivers/i2c/busses/i2c-rk3x.c:647:30: error: dereferencing pointer to incom=
-plete type
-   if (ndata->new_rate < ndata->old_rate)
-                              ^
-drivers/i2c/busses/i2c-rk3x.c:648:33: error: dereferencing pointer to incom=
-plete type
-    rk3x_i2c_adapt_div(i2c, ndata->new_rate);
-                                 ^
-drivers/i2c/busses/i2c-rk3x.c:650:7: error: 'ABORT_RATE_CHANGE' undeclared =
-(first use in this function)
-  case ABORT_RATE_CHANGE:
-       ^
-drivers/i2c/busses/i2c-rk3x.c:652:12: error: dereferencing pointer to incom=
-plete type
-   if (ndata->new_rate > ndata->old_rate)
-            ^
-drivers/i2c/busses/i2c-rk3x.c:652:30: error: dereferencing pointer to incom=
-plete type
-   if (ndata->new_rate > ndata->old_rate)
-                              ^
-drivers/i2c/busses/i2c-rk3x.c:653:33: error: dereferencing pointer to incom=
-plete type
-    rk3x_i2c_adapt_div(i2c, ndata->old_rate);
-                                 ^
-drivers/i2c/busses/i2c-rk3x.c: In function 'rk3x_i2c_probe':
-drivers/i2c/busses/i2c-rk3x.c:941:2: error: implicit declaration of functio=
-n 'clk_notifier_register' [-Werror=3Dimplicit-function-declaration]
-  ret =3D clk_notifier_register(i2c->clk, &i2c->clk_rate_nb);
-  ^
-drivers/i2c/busses/i2c-rk3x.c:961:2: error: implicit declaration of functio=
-n 'clk_notifier_unregister' [-Werror=3Dimplicit-function-declaration]
-  clk_notifier_unregister(i2c->clk, &i2c->clk_rate_nb);
-  ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Caused by commit 5a6f1566f6a0 ("i2c: rk3x: handle dynamic clock rate
-changes correctly").
-
-I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/th++vzCiZZ_OTMfNARewbS1
+diff --cc kernel/printk/printk.c
+index 35c4b2232d6d,218ea26d75b8..000000000000
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@@ -1807,30 -1805,6 +1805,30 @@@ asmlinkage int printk_emit(int facility
+  }
+  EXPORT_SYMBOL(printk_emit);
+ =20
+ +int vprintk_default(const char *fmt, va_list args)
+ +{
+ +	int r;
+ +
+ +#ifdef CONFIG_KGDB_KDB
+ +	if (unlikely(kdb_trap_printk)) {
+ +		r =3D vkdb_printf(fmt, args);
+ +		return r;
+ +	}
+ +#endif
+- 	r =3D vprintk_emit(0, -1, NULL, 0, fmt, args);
+++	r =3D vprintk_emit(0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
+ +
+ +	return r;
+ +}
+ +EXPORT_SYMBOL_GPL(vprintk_default);
+ +
+ +/*
+ + * This allows printk to be diverted to another function per cpu.
+ + * This is useful for calling printk functions from within NMI
+ + * without worrying about race conditions that can lock up the
+ + * box.
+ + */
+ +DEFINE_PER_CPU(printk_func_t, printk_func) =3D vprintk_default;
+ +
+  /**
+   * printk - print a kernel message
+   * @fmt: format string
+
+--Sig_/Uz5NaR/qSAhCS.+a7qIxDUe
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUcvdaAAoJEMDTa8Ir7ZwVHEkP/3qrooqbHvfBvkSjFmE28tvW
-RFNnn73FGJamTdXV3G1MM36F3OE0RsWxxiIPQ+0xZk/hg8ySUJabzy+FoKAmqFR8
-8ZFBkUP22Hh3yOo4L7+E825ndlzvMa6SJYWkxrtP6tULDfK+rRv6Y2yCJ58vNAYT
-UciaskoZF7rw78y+vMUqAjhwSa9Mbe27LA2MCaHkULyscnar4k1vMnsNodzkCToy
-373IgHFqjPS+Ud/PwCereWcTU10rHgiucsvCZQLBIrdbgdDydzWIFcbzm/6sbphJ
-oT7D0riPsktCkF2m3WW+/ps/Ao1K01Wc+nX5AZJhohxr1V/DThx0b2zuntMXdMB+
-0rqN8C5Van+oOlLjZflux8LjwnJUd9kjB4U26Vtbwc8YVEyGY+HMioXfz5CXv4IE
-WVT7fomv2e38N/lWJsyNUTqGClz3u+5/jPCpd6VehF7mlZgd6MJrWGZhhls2ZTk6
-KdZr1L1/XrhjyZDumWneSv3br6ki8Ph7APzhx/a2THa0T4ibLCFd5qwHJEU8lvRN
-QFa+md7k25XhJtWnsAVoEJhR28m2YWdgdBEaPEtuUYdTJ3scwUk7k5RWk/+n32jk
-4VErvR2Rzf5YpI00tWfGPyA8wK1/yL3as9pgB1yNfAcHZiFfrhxvK1RN6lb1EM2N
-/WO4pXRfc6CBNGSysLqC
-=0Gqo
+iQIcBAEBCAAGBQJUcvjZAAoJEMDTa8Ir7ZwVDbYQAJEHeHWi1Jl49wG6HO66StBb
+LJ4tQnyVb53m0kIi5m9spfcwIPt/eE7rmq6vHosJhdnWBKbmvQ3dtpygdxyarJs/
+rcIf3IPGQN3aqSXMp0iLTb9ilSjbb3ypk6/4MFyT4qp+H2jz8RcfVi5Nvax4nKDN
+n6PevyaEAvN6JSLQ7iMD8DNGw+spPX9+tGoBCmC06Udsl1MCDqzplF7SkaNPdU1s
+iv3v6j1ETg9+K/B4EnPr+fyQgLIdvB1PzsgORa7Tga0qF0GFWxvmQJXhPwfgltuH
+0LvlH1mGtAavlqA/0vUj/j6MG4niQ0Uni7v+olDumBVDot/7bADnFKsg1lY9Dx8x
+LPpZDQXoX9RIlxS3b7Y5/ADNgJNIbmemXCM93OjY4Cqcpxv2zw0Uw3fVvKmXfknq
+v9NJHwoLh6gV5Cfg0DIIlNX5wllngmkNAViwL7+Z1aGRXAgQy9dlh0Sy4PIKw4tO
+L2taXCwxXwbdEvX+FucQm8oLwtDRyqGioqmz5OXpS6l3XD702wbm/KS9bACm1ve2
+EElFzY5zpXASFFyil+NqIDANa39S7EnVHdqYUCVATr3ZqELEBdhfQu8dnEJ7ZUrM
+osVO+ceQ/drLzEmRWAB0Y5xspg2roexuJHcynbIweKoyJPXvoMLX6DUdNLMdU1+u
+i74v2ibRTE0rO2yoWMww
+=jGfb
 -----END PGP SIGNATURE-----
 
---Sig_/th++vzCiZZ_OTMfNARewbS1--
+--Sig_/Uz5NaR/qSAhCS.+a7qIxDUe--
