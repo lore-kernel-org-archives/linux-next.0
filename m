@@ -1,104 +1,147 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with the arm-soc
- tree
-Date: Mon, 24 Nov 2014 07:28:37 -0800
-Message-ID: <20141124152836.GA2817@atomide.com>
-References: <20141124132214.2f756b6a@canb.auug.org.au>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH] usb:phy: propagate __of_usb_find_phy()'s error on failure
+Date: Mon, 24 Nov 2014 09:36:21 -0600
+Message-ID: <20141124153621.GF20705@saruman>
+References: <1416498816-3292-1-git-send-email-arjun024@gmail.com>
+ <20141124131034.GB4061@ulmo.nvidia.com>
+ <20141124143646.GA20705@saruman>
+ <20141124151644.GC4061@ulmo.nvidia.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="L1c6L/cjZjI9d0Eq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:50406 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751055AbaKXPbh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2014 10:31:37 -0500
+Received: from devils.ext.ti.com ([198.47.26.153]:39542 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752589AbaKXPgP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2014 10:36:15 -0500
 Content-Disposition: inline
-In-Reply-To: <20141124132214.2f756b6a@canb.auug.org.au>
+In-Reply-To: <20141124151644.GC4061@ulmo.nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Felipe Balbi <balbi@ti.com>, Arjun Sreedharan <arjun024@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [141123 18:24]:
-> Hi Mauro,
-> 
-> Today's linux-next merge of the v4l-dvb tree got a conflict in
-> arch/arm/mach-omap2/devices.c between commit e7e42b9d2a7f ("ARM:
-> OMAP4+: Remove unused omap_l3_noc platform init") from the arm-soc tree
-> and commit 1b65729a186b ("[media] mach-omap2: remove deprecated
-> VIDEO_OMAP2 support") from the v4l-dvb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--L1c6L/cjZjI9d0Eq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oops, that's a self-inflicted merge conflict, sorry. I should have
-waited a bit longer on the removal of the now unnecessary l3_init.
+Hi,
 
-Anyways, the resolution is correct thanks.
+On Mon, Nov 24, 2014 at 04:16:46PM +0100, Thierry Reding wrote:
+> On Mon, Nov 24, 2014 at 08:36:46AM -0600, Felipe Balbi wrote:
+> > Hi,
+> >=20
+> > On Mon, Nov 24, 2014 at 02:10:41PM +0100, Thierry Reding wrote:
+> > > On Thu, Nov 20, 2014 at 09:23:36PM +0530, Arjun Sreedharan wrote:
+> > > > When __of_usb_find_phy() fails, it returns -ENODEV - its
+> > > > error code has to be returned by devm_usb_get_phy_by_phandle().
+> > > > Only when the former function succeeds and try_module_get()
+> > > > fails should -EPROBE_DEFER be returned.
+> > > >=20
+> > > > Signed-off-by: Arjun Sreedharan <arjun024@gmail.com>
+> > > > ---
+> > > >  drivers/usb/phy/phy.c | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >=20
+> > > This causes a boot regression on at least NVIDIA Dalmore (I boot over
+> > > NFS using a USB network adapter).
+> > >=20
+> > > The commit message is somewhat insufficient because while it explains
+> > > what the code does and asserts that it is the right thing to do, it
+> > > fails to explain why.
+> >=20
+> > you also fail to explain it causes a regressions with Dalmore.
+>=20
+> I thought my explanation below was sufficient, but maybe I should say it
+> in other words: __of_usb_find_phy() returns -ENODEV if no PHY was found
+> to be registered for a given phandle. That causes the driver to abort
+> probing with a -ENODEV error and does not trigger the probe deferral
+> that'd be necessary to get the host controller to find the PHY the next
+> time it was triggered.
 
-Regards,
+right, and before $subject dev_usb_get_phy_by_phandle() was overwriting
+whatever error code passed by __of_usb_find_phy() to -EPROBE_DEFER.
 
-Tony
+> > This is really the correct patch, we shouldn't be overwritting the
+> > error passed in by upper layers.
+>=20
+> No, it's very obviously not the correct patch if it causes a regression.
 
-> diff --cc arch/arm/mach-omap2/devices.c
-> index 492ef1607115,1b623a06cdcd..000000000000
-> --- a/arch/arm/mach-omap2/devices.c
-> +++ b/arch/arm/mach-omap2/devices.c
-> @@@ -67,28 -67,40 +67,6 @@@ static int __init omap3_l3_init(void
->   }
->   omap_postcore_initcall(omap3_l3_init);
->   
-> - #if defined(CONFIG_VIDEO_OMAP2) || defined(CONFIG_VIDEO_OMAP2_MODULE)
->  -static int __init omap4_l3_init(void)
->  -{
->  -	int i;
->  -	struct omap_hwmod *oh[3];
->  -	struct platform_device *pdev;
->  -	char oh_name[L3_MODULES_MAX_LEN];
-> --
-> - static struct resource omap2cam_resources[] = {
-> - 	{
-> - 		.start		= OMAP24XX_CAMERA_BASE,
-> - 		.end		= OMAP24XX_CAMERA_BASE + 0xfff,
-> - 		.flags		= IORESOURCE_MEM,
-> - 	},
-> - 	{
-> - 		.start		= 24 + OMAP_INTC_START,
-> - 		.flags		= IORESOURCE_IRQ,
->  -	/* If dtb is there, the devices will be created dynamically */
->  -	if (of_have_populated_dt())
->  -		return -ENODEV;
->  -
->  -	/*
->  -	 * To avoid code running on other OMAPs in
->  -	 * multi-omap builds
->  -	 */
->  -	if (!cpu_is_omap44xx() && !soc_is_omap54xx())
->  -		return -ENODEV;
->  -
->  -	for (i = 0; i < L3_MODULES; i++) {
->  -		snprintf(oh_name, L3_MODULES_MAX_LEN, "l3_main_%d", i+1);
->  -
->  -		oh[i] = omap_hwmod_lookup(oh_name);
->  -		if (!(oh[i]))
->  -			pr_err("could not look up %s\n", oh_name);
-> --	}
-> - };
-> --
-> - static struct platform_device omap2cam_device = {
-> - 	.name		= "omap24xxcam",
-> - 	.id		= -1,
-> - 	.num_resources	= ARRAY_SIZE(omap2cam_resources),
-> - 	.resource	= omap2cam_resources,
-> - };
-> - #endif
->  -	pdev = omap_device_build_ss("omap_l3_noc", 0, oh, 3, NULL, 0);
->  -
->  -	WARN(IS_ERR(pdev), "could not build omap_device for %s\n", oh_name);
->  -
->  -	return PTR_RET(pdev);
->  -}
->  -omap_postcore_initcall(omap4_l3_init);
-> --
->   #if defined(CONFIG_IOMMU_API)
->   
->   #include <linux/platform_data/iommu-omap.h>
+or it exposes a bug elsewhere :-)
+
+> > > > diff --git a/drivers/usb/phy/phy.c b/drivers/usb/phy/phy.c
+> > > > index 045cd30..0310112 100644
+> > > > --- a/drivers/usb/phy/phy.c
+> > > > +++ b/drivers/usb/phy/phy.c
+> > > > @@ -191,7 +191,9 @@ struct usb_phy *devm_usb_get_phy_by_phandle(str=
+uct device *dev,
+> > > > =20
+> > > >  	phy =3D __of_usb_find_phy(node);
+> > > >  	if (IS_ERR(phy) || !try_module_get(phy->dev->driver->owner)) {
+> > > > -		phy =3D ERR_PTR(-EPROBE_DEFER);
+> > > > +		if (!IS_ERR(phy))
+> > > > +			phy =3D ERR_PTR(-EPROBE_DEFER);
+> > >=20
+> > > If we look at this closer, __of_usb_find_phy() return a valid pointer=
+ if
+> > > a PHY was found or ERR_PTR(-ENODEV) otherwise. But since the phandle =
+has
+> > > already been validated, the only reason why __of_usb_find_phy() fails=
+ is
+> > > because the PHY that the phandle refers to hasn't been registered yet.
+> > >=20
+> > > Returning -EPROBE_DEFER is the correct thing to do in this situation
+> > > because it gives the PHY driver an opportunity to register and the USB
+> > > host controller to try probing again. I suppose one could argue that
+> > > __of_usb_find_phy() should return ERR_PTR(-EPROBE_DEFER) on failure
+> > > instead of ERR_PTR(-ENODEV), since evidently the device does exist, it
+> > > just hasn't been registered yet. On the other hand it could happen th=
+at
+> > > the phandle refers to a device tree node that's status =3D "disabled"=
+, in
+> > > which case ERR_PTR(-ENODEV) might be appropriate.
+> > >=20
+> > > Also, -EPROBE_DEFER isn't really the proper error for try_module_get()
+> > > failure. Other functions (usb_get_phy() and usb_get_phy_dev()) return
+> > > -ENODEV instead, so it'd be more consistent to stick with that. Hence=
+ I
+> > > propose something like the below instead.
+> >=20
+> > I don't mind patch below, but I want to know why Dalmore regressed with
+> > $subject.
+>=20
+> Note that this isn't only an issue specific to Dalmore. This affects
+> every device that uses a USB PHY and where the PHY is registered after
+> the first probe of the USB host controller.
+
+although, I have been running this for the last few days with
+BeagleBoneBlack and AM437x SK and haven't noticed any issues.
+
+--=20
+balbi
+
+--L1c6L/cjZjI9d0Eq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIbBAEBAgAGBQJUc1B1AAoJEIaOsuA1yqREyGUP+Ks4brrW23+H1W6F9Pu/FOty
+nEai4XkSIbApqWp7G0Vi3TsOSm6+z1kBCQU5EHYX62r43lBRbXzNwfAdCm3IwzUQ
+AXn0y4chwNeVJG5hXvPU18Y+1rC060jU4E4M9gYZbLO9l1N11oxJzctevR7k+xkc
+TXdmfNh2lAuzp7V9Gpqa6Cgi/GjzU7/S3ez7hQEu9JUdA49O1WrC+yCfxHOIFf3Y
+6rZmb/zrYFXNKT3UipnfQERwA6rc/9YMdHqbcRAagaIfJid3wLNxAD25DA8t6kKm
+FL+jM6IaF5AfTBusHvWtNR0Arp/aTKn13OjjjdYNMcKPcvgE0JsLEZzCbD7qvpJ0
+3UrDQafX2y6GG0il5pnwfqYJ8k3KH3ZLrNcJX2mnjkAvd21p/qo/CpzAVY5K0QTT
+1I2ruKrTpIRaGyzrz0suv4p4lLk9VHP7V/nCluWr7mxAt53lb5gRy32jHYs9E+/G
+ZepEWWL0MyEV0jleBSAG1qudaZ/0k3juWZ11VB8HuPA5cs7cQUopIeNRJeI3PdyL
+9JuZIHXHkLQkWK3HljmUYBdAanv0tj8uvwF7yI5c/gVznpiGb4UrLEPGrcjSgWiq
+GmKb+1fnBInUSgUTcd3k5ccANj4GsjyN6W1uMVxp4Jcjo02hdwwpTenEzsclKQVS
+F4zRIflpervtXbfVLvw=
+=zVXg
+-----END PGP SIGNATURE-----
+
+--L1c6L/cjZjI9d0Eq--
