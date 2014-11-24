@@ -1,109 +1,47 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb:phy: propagate __of_usb_find_phy()'s error on failure
-Date: Mon, 24 Nov 2014 08:36:46 -0600
-Message-ID: <20141124143646.GA20705@saruman>
-References: <1416498816-3292-1-git-send-email-arjun024@gmail.com>
- <20141124131034.GB4061@ulmo.nvidia.com>
-Reply-To: <balbi@ti.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [-next] cpu cache info in drivers base?
+Date: Mon, 24 Nov 2014 16:00:48 +0100
+Message-ID: <20141124150048.GD3738@osiris>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141124131034.GB4061@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arjun Sreedharan <arjun024@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
-List-Id: linux-next.vger.kernel.org
-
---sm4nu43k4a2Rpi4c
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e06smtp13.uk.ibm.com ([195.75.94.109]:51191 "EHLO
+	e06smtp13.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751069AbaKXPBP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2014 10:01:15 -0500
+Received: from /spool/local
+	by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+	Mon, 24 Nov 2014 15:01:13 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+	by d06dlp01.portsmouth.uk.ibm.com (Postfix) with ESMTP id 49F4917D8045
+	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2014 15:01:25 +0000 (GMT)
+Received: from d06av03.portsmouth.uk.ibm.com (d06av03.portsmouth.uk.ibm.com [9.149.37.213])
+	by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id sAOF1Ab82490650
+	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2014 15:01:10 GMT
+Received: from d06av03.portsmouth.uk.ibm.com (localhost [127.0.0.1])
+	by d06av03.portsmouth.uk.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id sAOF11L4001920
+	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2014 08:01:08 -0700
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-next@vger.kernel.org
 
-Hi,
+Hi there,
 
-On Mon, Nov 24, 2014 at 02:10:41PM +0100, Thierry Reding wrote:
-> On Thu, Nov 20, 2014 at 09:23:36PM +0530, Arjun Sreedharan wrote:
-> > When __of_usb_find_phy() fails, it returns -ENODEV - its
-> > error code has to be returned by devm_usb_get_phy_by_phandle().
-> > Only when the former function succeeds and try_module_get()
-> > fails should -EPROBE_DEFER be returned.
-> >=20
-> > Signed-off-by: Arjun Sreedharan <arjun024@gmail.com>
-> > ---
-> >  drivers/usb/phy/phy.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> This causes a boot regression on at least NVIDIA Dalmore (I boot over
-> NFS using a USB network adapter).
->=20
-> The commit message is somewhat insufficient because while it explains
-> what the code does and asserts that it is the right thing to do, it
-> fails to explain why.
+I'm just wondering what the point of the current cpu cache info
+within drivers/base is?
+If I startup linux-next (as of today) all I get is an error message
+"error detecting cacheinfo..cpu0".
+Which naturally comes from:
 
-you also fail to explain it causes a regressions with Dalmore. This is
-really the correct patch, we shouldn't be overwritting the error passed
-in by upper layers.
+int __weak init_cache_level(unsigned int cpu)
+{
+	return -ENOENT;
+}
 
-> > diff --git a/drivers/usb/phy/phy.c b/drivers/usb/phy/phy.c
-> > index 045cd30..0310112 100644
-> > --- a/drivers/usb/phy/phy.c
-> > +++ b/drivers/usb/phy/phy.c
-> > @@ -191,7 +191,9 @@ struct usb_phy *devm_usb_get_phy_by_phandle(struct =
-device *dev,
-> > =20
-> >  	phy =3D __of_usb_find_phy(node);
-> >  	if (IS_ERR(phy) || !try_module_get(phy->dev->driver->owner)) {
-> > -		phy =3D ERR_PTR(-EPROBE_DEFER);
-> > +		if (!IS_ERR(phy))
-> > +			phy =3D ERR_PTR(-EPROBE_DEFER);
->=20
-> If we look at this closer, __of_usb_find_phy() return a valid pointer if
-> a PHY was found or ERR_PTR(-ENODEV) otherwise. But since the phandle has
-> already been validated, the only reason why __of_usb_find_phy() fails is
-> because the PHY that the phandle refers to hasn't been registered yet.
->=20
-> Returning -EPROBE_DEFER is the correct thing to do in this situation
-> because it gives the PHY driver an opportunity to register and the USB
-> host controller to try probing again. I suppose one could argue that
-> __of_usb_find_phy() should return ERR_PTR(-EPROBE_DEFER) on failure
-> instead of ERR_PTR(-ENODEV), since evidently the device does exist, it
-> just hasn't been registered yet. On the other hand it could happen that
-> the phandle refers to a device tree node that's status =3D "disabled", in
-> which case ERR_PTR(-ENODEV) might be appropriate.
->=20
-> Also, -EPROBE_DEFER isn't really the proper error for try_module_get()
-> failure. Other functions (usb_get_phy() and usb_get_phy_dev()) return
-> -ENODEV instead, so it'd be more consistent to stick with that. Hence I
-> propose something like the below instead.
-
-I don't mind patch below, but I want to know why Dalmore regressed with
-$subject.
-
---=20
-balbi
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUc0J+AAoJEIaOsuA1yqREyOEP/2ilkTZC9Jmtuw8CS+fRxqLB
-fforWtsEn/aooK8kARGh9s64I8UfPDTslUg4+Y8AW39Ltu2ZyILhHJ/GZNvTeGxz
-+0hlA3VHT9qMW8SI6vl4pS81SPDn91YoAGk9Kx+pzNvRyU/2JRglrO+I+0RCo+2+
-yosArAi5QLK61UVPXej1n8c2b1EHPYsT5HJWWfzVOTl1LOMrZAz0dxC0YXHpNxRz
-zn8L8zoB64+Be1onzyXbjQR4jsIskwYv/PDsx8ASJZBTcSPfwoJHd++4zR/PiaHc
-8+pnjzERJukBpX4YAhm7NLDuzXuUMBBrQs/S+e8Mbee93l+CNJt0YOxWtOBtPMH7
-wdl2pExoY2BWUE3pKJ+OjaUlwZeETYFcIW7ae+WTp9uvUrV1SCGtdjNnBzeP2ezH
-+3L0Ezz5IGfJd9+KxH5Mg7CievHqm8Muixq45aVGbtpRRoci+76ltKlSJ6rJo7FC
-xrnJGhj66klhlHojlVW/DCD5QBCQvU/Bl+3/cOD2kwgWz9m6coMkU4Q04TtjA5po
-nm7qlq6bUDGF6+UoWsq17deoGQp4uNONK4Hg8ej/kVkF02WzaVTsdWO/+9BNS4GX
-JVXCO/4Ff8i3XcTMVG3lLEuquygxQVHv9w0a6GRODRj1pzeTWpIpco41ZdHWqizO
-Y8LCk1G6W64XfywZpcjr
-=775j
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+Given that there is no implementation without __weak I'm wondering
+what the point is? Also it looks like no architecture has been
+converted to the new infrastructure, even though such patches have
+been posted in the past?
