@@ -1,60 +1,91 @@
 From: Josh Triplett <josh@joshtriplett.org>
 Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
-Date: Mon, 24 Nov 2014 22:48:49 -0800
-Message-ID: <20141125064849.GA1691@thin>
+Date: Mon, 24 Nov 2014 23:20:13 -0800
+Message-ID: <20141125072013.GB1691@thin>
 References: <20141125170315.13157c60@canb.auug.org.au>
  <20141125061645.GA15512@gmail.com>
+ <CALAqxLUKM7VyB6MW=-Mm+NA2pOEtD1CP3FxrmA_1gCucGon4hA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:36775 "EHLO
-	relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750852AbaKYGt2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2014 01:49:28 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20141125061645.GA15512@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Catalina Mocanu <catalina.mocanu@gmail.com>
+In-Reply-To: <CALAqxLUKM7VyB6MW=-Mm+NA2pOEtD1CP3FxrmA_1gCucGon4hA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: John Stultz <john.stultz@linaro.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Catalina Mocanu <catalina.mocanu@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Nov 25, 2014 at 07:16:45AM +0100, Ingo Molnar wrote:
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Josh,
-> > 
-> > Today's linux-next merge of the tiny tree got a conflict in
-> > kernel/time/Makefile between commit fd866e2b116b ("time: Rename
-> > udelay_test.c to test_udelay.c") from the tip tree and commit
-> > d1f6d68d03ea ("kernel: time: Compile out NTP support") from the tiny
-> > tree.
+On Mon, Nov 24, 2014 at 10:30:10PM -0800, John Stultz wrote:
+> On Mon, Nov 24, 2014 at 10:16 PM, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> >> Hi Josh,
+> >>
+> >> Today's linux-next merge of the tiny tree got a conflict in
+> >> kernel/time/Makefile between commit fd866e2b116b ("time: Rename
+> >> udelay_test.c to test_udelay.c") from the tip tree and commit
+> >> d1f6d68d03ea ("kernel: time: Compile out NTP support") from the tiny
+> >> tree.
+> >
+> > So I think a timer subsystem commit d1f6d68d03ea with this
+> > magnitude of linecount increase:
+> >
+> >  Signed-off-by: Catalina Mocanu <catalina.mocanu@gmail.com>
+> >  [josh: Handle CONFIG_COMPAT=y.]
+> >  Reviewed-by: Josh Triplett <josh@joshtriplett.org>
+> >  Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> >  ---
+> >   drivers/pps/Kconfig        |  2 +-
+> >   include/linux/timex.h      | 15 +++++++++++++--
+> >   init/Kconfig               | 10 ++++++++++
+> >   kernel/compat.c            |  8 ++++++--
+> >   kernel/sys_ni.c            |  4 ++++
+> >   kernel/time/Makefile       |  3 ++-
+> >   kernel/time/ntp_internal.h | 28 ++++++++++++++++++++++++++++
+> >   kernel/time/posix-timers.c |  2 ++
+> >   kernel/time/time.c         |  2 ++
+> >   kernel/time/timekeeping.c  |  2 ++
+> >   10 files changed, 70 insertions(+), 6 deletions(-)
+> >
+> > at minimum needs the ack of timer folks, before it can be
+> > committed to Git. Or is the tiny tree plan to submit all
+> > patches to the appropriate subsystem or gather acks, before
+> > sending it upstream?
 > 
-> So I think a timer subsystem commit d1f6d68d03ea with this 
-> magnitude of linecount increase:
+> Yea.  From first glance d1f6d68d03ea looks fairly broken.
 > 
->  Signed-off-by: Catalina Mocanu <catalina.mocanu@gmail.com>
->  [josh: Handle CONFIG_COMPAT=y.]
->  Reviewed-by: Josh Triplett <josh@joshtriplett.org>
->  Signed-off-by: Josh Triplett <josh@joshtriplett.org>
->  ---
->   drivers/pps/Kconfig        |  2 +-
->   include/linux/timex.h      | 15 +++++++++++++--
->   init/Kconfig               | 10 ++++++++++
->   kernel/compat.c            |  8 ++++++--
->   kernel/sys_ni.c            |  4 ++++
->   kernel/time/Makefile       |  3 ++-
->   kernel/time/ntp_internal.h | 28 ++++++++++++++++++++++++++++
->   kernel/time/posix-timers.c |  2 ++
->   kernel/time/time.c         |  2 ++
->   kernel/time/timekeeping.c  |  2 ++
->   10 files changed, 70 insertions(+), 6 deletions(-)
-> 
-> at minimum needs the ack of timer folks, before it can be 
-> committed to Git. Or is the tiny tree plan to submit all
-> patches to the appropriate subsystem or gather acks, before 
-> sending it upstream?
+> Returning 0 for ntp_tick_length() (which should be the current tick
+> length in NTP_SCALE_SHIFT shifted ns), seems like it would cause major
+> timekeeping problems.
 
-Yes, absolutely.  I planned to send out a tinification patch review
-series later this week with all 10 current patches (both those reviewed
-on LKML and those only reviewed elsewhere).
+Ouch, yeah; I'm impressed the kernel successfully booted that way (which
+I did test).
+
+Computing the tick_length to return seems to require a div_u64; is it
+safe to initialize a static const with the result of calling div_u64, or
+does the intializer need manual constant-folding to make the expression
+compile-time computable?
+
+Going by the logic in ntp_update_frequency, it looks like the stub
+ntp_tick_length needs to return:
+
+tick_length_base = 0;
+tick_usec = TICK_USEC;
+second_length = (u64)(tick_usec * NSEC_PER_USEC * USER_HZ) << NTP_SCALE_SHIFT;
+new_base = div_u64(second_length, NTP_INTERVAL_FREQ);
+tick_length += new_base - tick_length_base;
+
+(tick_length starts out 0, gets new_base - 0 added initially, and every
+subsequent time gets 0 added since tick_length_base won't change.)
+
+Substituting and simplifying:
+
+tick_length = new_base
+            = div_u64(second_length, NTP_INTERVAL_FREQ)
+            = div_u64((TICK_USEC * NSEC_PER_USEC * USER_HZ) << NTP_SCALE_SHIFT, NTP_INTERVAL_FREQ)
+
+The numerator there could potentially be simplified, but I don't see an
+obvious way around the division by NTP_INTERVAL_FREQ (defined as HZ).
 
 - Josh Triplett
