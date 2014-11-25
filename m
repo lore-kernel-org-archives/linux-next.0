@@ -1,85 +1,68 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
-Date: Tue, 25 Nov 2014 11:10:44 +0100
-Message-ID: <20141125101044.GA20465@gmail.com>
-References: <20141125170315.13157c60@canb.auug.org.au>
- <20141125061645.GA15512@gmail.com>
- <20141125064849.GA1691@thin>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: build failure after merge of the omap_dss2 tree
+Date: Tue, 25 Nov 2014 13:00:47 +0200
+Message-ID: <5474615F.20407@ti.com>
+References: <20141117190905.4e96294a@canb.auug.org.au>	<546B5D5A.8020304@ti.com> <CANq1E4SMLHmezfXSENSQ8xUaXptwA8YKQ9Nne=sDCB0gPkPLmA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:37132 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750760AbaKYKKt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2014 05:10:49 -0500
-Content-Disposition: inline
-In-Reply-To: <20141125064849.GA1691@thin>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Josh Triplett <josh@joshtriplett.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Catalina Mocanu <catalina.mocanu@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="7SbroNTaIbo90i1sg8Jm47TX9hLgKk5fH"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CANq1E4SMLHmezfXSENSQ8xUaXptwA8YKQ9Nne=sDCB0gPkPLmA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: David Herrmann <dh.herrmann@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Luc Verhaegen <libv@skynet.be>, Geert Uytterhoeven <geert@linux-m68k.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Grant Likely <grant.likely@linaro.org>
+List-Id: linux-next.vger.kernel.org
+
+--7SbroNTaIbo90i1sg8Jm47TX9hLgKk5fH
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 18/11/14 17:07, David Herrmann wrote:
+> Hi
+>=20
+> On Tue, Nov 18, 2014 at 3:53 PM, Tomi Valkeinen <tomi.valkeinen@ti.com>=
+ wrote:
+>> Hi,
+>>
+>> Thanks Stephen!
+>>
+>> Hans, have you had a look at this? kbuild test bot also reported this.=
+
+>=20
+> The fix from Stephen should not go to main-line. It breaks simplefb on
+> x86 without OF. Imo, linux/clk.h should provide a fallback if OF is
+> not defined (like it already does for of_clk_get() and friends).
+>=20
+> Hans, any comments?
+
+Hans, ping.
+
+ Tomi
 
 
-* Josh Triplett <josh@joshtriplett.org> wrote:
 
-> On Tue, Nov 25, 2014 at 07:16:45AM +0100, Ingo Molnar wrote:
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > Hi Josh,
-> > > 
-> > > Today's linux-next merge of the tiny tree got a conflict in
-> > > kernel/time/Makefile between commit fd866e2b116b ("time: Rename
-> > > udelay_test.c to test_udelay.c") from the tip tree and commit
-> > > d1f6d68d03ea ("kernel: time: Compile out NTP support") from the tiny
-> > > tree.
-> > 
-> > So I think a timer subsystem commit d1f6d68d03ea with this 
-> > magnitude of linecount increase:
-> > 
-> >  Signed-off-by: Catalina Mocanu <catalina.mocanu@gmail.com>
-> >  [josh: Handle CONFIG_COMPAT=y.]
-> >  Reviewed-by: Josh Triplett <josh@joshtriplett.org>
-> >  Signed-off-by: Josh Triplett <josh@joshtriplett.org>
-> >  ---
-> >   drivers/pps/Kconfig        |  2 +-
-> >   include/linux/timex.h      | 15 +++++++++++++--
-> >   init/Kconfig               | 10 ++++++++++
-> >   kernel/compat.c            |  8 ++++++--
-> >   kernel/sys_ni.c            |  4 ++++
-> >   kernel/time/Makefile       |  3 ++-
-> >   kernel/time/ntp_internal.h | 28 ++++++++++++++++++++++++++++
-> >   kernel/time/posix-timers.c |  2 ++
-> >   kernel/time/time.c         |  2 ++
-> >   kernel/time/timekeeping.c  |  2 ++
-> >   10 files changed, 70 insertions(+), 6 deletions(-)
-> > 
-> > at minimum needs the ack of timer folks, before it can be 
-> > committed to Git. Or is the tiny tree plan to submit all
-> > patches to the appropriate subsystem or gather acks, before 
-> > sending it upstream?
-> 
-> Yes, absolutely.  I planned to send out a tinification patch 
-> review series later this week with all 10 current patches (both 
-> those reviewed on LKML and those only reviewed elsewhere).
+--7SbroNTaIbo90i1sg8Jm47TX9hLgKk5fH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-But, but: _please_ don't push patches towards linux-next that 
-haven't been acked by maintainers.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-The point of linux-next is to expose subsystem trees that are 
-likely to go upstream in the next release - generally because the 
-maintainers themselves push it out, but sometimes also when 
-there's acked patches (or features) from maintainers that get 
-collected in other trees by developers (such as yours).
+iQIcBAEBAgAGBQJUdGFfAAoJEPo9qoy8lh711u0P/RGP5gYpV96vYKYsonQ3Ol1X
+Ggsnoad4qrWFIwlTJijwGfkSr4Sm8F0Z4YYvCApaMQ63r0fnCZmPbL8j/IGcbbRz
+2Q3UCEwLOriLaBnWPvviXa02q34pmDGdGc/Lhx/sUphNrzuGuI2toPR0SA9aVn2Y
+3Wvns4Y+Ke/EnR8QN/CQXICO1eUKAuRybhaxTzhHq/jjIP0gTrnUzn/OEtxvWFbA
+LiCMWdGOrdZI9DfkVLRgbQYZzYfzefIvHal0rr8NzHSFkMpYP6WUb3AybgHvNIin
+ZMGZXkGWQ2dXehXgVA4HRy7trnI55an286sxOvR2oRnvWRRjwsA6JZcZGiQ3rXAe
+t+nD14PPnhCn1L15HhzwHSeit9AGGSgj7XdnPsRNs75ZeRG9lAIsrEjlhJjNypbD
+dw7hDbmdjIBz4PzwqOm+kmZVqhsTAgkiP1LLsrrqTuNpfMr4tEa/tIPDlk6+bjW0
+vW5+FtBr7oX+Y8uEyeZOUcV3HROeRnbe4a7FsZuNGQtt7xwLqyNog4wqyoFqA/WT
+rBAa8QHsVhO6QKHpJHD0zF3ArUAcsVd54qh3J1btdaSk3LOwC9UyNcJESU4FSn1e
+0SGyqm4E2VhxIWrS/nAr010FNtODzxkvPoftmjy+H4B7byxE+7FQoFTduNtrHlDa
+5UMMdMuaBtxYq41wzq/2
+=LcHG
+-----END PGP SIGNATURE-----
 
-But unacked patches with clear problems, causing conflicts, is 
-outside that scope. If you want coverage testing you can push it 
-out to korg into your own tree, then Fengguang Wu's robot will 
-pick it up and report problems with it.
-
-In other words: pushing linux-tiny to linux-next is fine, but 
-only for patches that got acked by maintainers and is lined up 
-for the next release. For 'work in progress' patches, other 
-venues such as korg should be used.
-
-Thanks,
-
-	Ingo
+--7SbroNTaIbo90i1sg8Jm47TX9hLgKk5fH--
