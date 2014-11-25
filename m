@@ -1,31 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the vfs tree
-Date: Tue, 25 Nov 2014 13:42:46 +1100
-Message-ID: <20141125134246.2761ada5@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Date: Tue, 25 Nov 2014 14:36:46 +1100
+Message-ID: <20141125143646.4d945674@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ice+t87a0803zj7P9lvPyEQ"; protocol="application/pgp-signature"
+ boundary="Sig_/td_R+A_=UcaelopoFguwgDw"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52050 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57272 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750784AbaKYCmz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2014 21:42:55 -0500
+	id S1750770AbaKYDgy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2014 22:36:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>, Marcelo Leitner <mleitner@redhat.com>, Pablo Neira Ayuso <pablo@netfilter.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luciano Coelho <luciano.coelho@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Arik Nemtsov <arik@wizery.com>
 
---Sig_/ice+t87a0803zj7P9lvPyEQ
+--Sig_/td_R+A_=UcaelopoFguwgDw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/netfilter/nf_log.c between commit e71456ae9871 ("netfilter: Remove
-checks of seq_printf() return values") from the vfs tree and commit
-0c26ed1c07f1 ("netfilter: nf_log: Introduce nft_log_dereference()
-macro") from the net-next tree.
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-fw.h between commit 5ac6c72e5944
+("iwlwifi: mvm: check TLV flag before trying to use hotspot firmware
+commands") from the wireless tree and commit 77c5d7eff790 ("iwlwifi:
+mvm: add TDLS channel switch FW APIs") from the wireless-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,87 +35,52 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/netfilter/nf_log.c
-index 6e3b9117db1f,49a64174f3f1..000000000000
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@@ -294,39 -303,35 +303,37 @@@ static int seq_show(struct seq_file *s
-  {
-  	loff_t *pos =3D v;
-  	const struct nf_logger *logger;
- -	int i, ret;
- +	int i;
-  	struct net *net =3D seq_file_net(s);
+diff --cc drivers/net/wireless/iwlwifi/iwl-fw.h
+index 649fdae77383,a94d244459d7..000000000000
+--- a/drivers/net/wireless/iwlwifi/iwl-fw.h
++++ b/drivers/net/wireless/iwlwifi/iwl-fw.h
+@@@ -155,7 -157,7 +157,8 @@@ enum iwl_ucode_tlv_api=20
+   * @IWL_UCODE_TLV_CAPA_QUIET_PERIOD_SUPPORT: supports Quiet Period reques=
+ts
+   * @IWL_UCODE_TLV_CAPA_DQA_SUPPORT: supports dynamic queue allocation (DQ=
+A),
+   *	which also implies support for the scheduler configuration command
++  * @IWL_UCODE_TLV_CAPA_TDLS_CHANNEL_SWITCH: supports TDLS channel switchi=
+ng
+ + * @IWL_UCODE_TLV_CAPA_HOTSPOT_SUPPORT: supports Hot Spot Command
+   */
+  enum iwl_ucode_tlv_capa {
+  	IWL_UCODE_TLV_CAPA_D0I3_SUPPORT			=3D BIT(0),
+@@@ -164,7 -168,7 +169,8 @@@
+  	IWL_UCODE_TLV_CAPA_WFA_TPC_REP_IE_SUPPORT	=3D BIT(10),
+  	IWL_UCODE_TLV_CAPA_QUIET_PERIOD_SUPPORT		=3D BIT(11),
+  	IWL_UCODE_TLV_CAPA_DQA_SUPPORT			=3D BIT(12),
++ 	IWL_UCODE_TLV_CAPA_TDLS_CHANNEL_SWITCH		=3D BIT(13),
+ +	IWL_UCODE_TLV_CAPA_HOTSPOT_SUPPORT		=3D BIT(18),
+  };
  =20
-- 	logger =3D rcu_dereference_protected(net->nf.nf_loggers[*pos],
-- 					   lockdep_is_held(&nf_log_mutex));
-+ 	logger =3D nft_log_dereference(net->nf.nf_loggers[*pos]);
- =20
-  	if (!logger)
- -		ret =3D seq_printf(s, "%2lld NONE (", *pos);
- +		seq_printf(s, "%2lld NONE (", *pos);
-  	else
- -		ret =3D seq_printf(s, "%2lld %s (", *pos, logger->name);
- +		seq_printf(s, "%2lld %s (", *pos, logger->name);
- =20
- -	if (ret < 0)
- -		return ret;
- +	if (seq_has_overflowed(s))
- +		return -ENOSPC;
- =20
-  	for (i =3D 0; i < NF_LOG_TYPE_MAX; i++) {
-  		if (loggers[*pos][i] =3D=3D NULL)
-  			continue;
- =20
-- 		logger =3D rcu_dereference_protected(loggers[*pos][i],
-- 					   lockdep_is_held(&nf_log_mutex));
-+ 		logger =3D nft_log_dereference(loggers[*pos][i]);
- -		ret =3D seq_printf(s, "%s", logger->name);
- -		if (ret < 0)
- -			return ret;
- -		if (i =3D=3D 0 && loggers[*pos][i + 1] !=3D NULL) {
- -			ret =3D seq_printf(s, ",");
- -			if (ret < 0)
- -				return ret;
- -		}
- +		seq_printf(s, "%s", logger->name);
- +		if (i =3D=3D 0 && loggers[*pos][i + 1] !=3D NULL)
- +			seq_printf(s, ",");
- +
- +		if (seq_has_overflowed(s))
- +			return -ENOSPC;
-  	}
- =20
- -	return seq_printf(s, ")\n");
- +	seq_printf(s, ")\n");
- +
- +	if (seq_has_overflowed(s))
- +		return -ENOSPC;
- +	return 0;
-  }
- =20
-  static const struct seq_operations nflog_seq_ops =3D {
+  /* The default calibrate table size if not specified by firmware file */
 
---Sig_/ice+t87a0803zj7P9lvPyEQ
+--Sig_/td_R+A_=UcaelopoFguwgDw
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUc+ysAAoJEMDTa8Ir7ZwVxVoQAJMJK7tRoRBZ7wXRDQ10E8Xe
-Y5/EhDqoMCyg8dTGCp/GjDCJ88w/lvdXRVccUA8rfjIcAecnfFY/dS2cNWZXFFE3
-nsw7tgzn75TCp8psNthoqKQVncDfMjVEYsPxup8D0qx5C9AGNQVkAVwP4SRcz26f
-omMhtL8m2oa7jKXjkn2WMFOt3CdaCHDo/822ZJUoBYVX1O9EvpFuuu5n1ZC5cNA8
-K8P5unQ6yxV0D5Dfu1o/3S1iZpzZwqPHw3UbVnNOmh8mYFV0PaIdG9L/owRWvDf9
-qwOO+8ZHsy6NCFB+lScJcj8OCQew/nAnhewZOfCHQRqFXnFLoSEnk0uJ/rZXYi+F
-XzBh5SiBTJfPjugHf+sLdgVHZWQwQ2wfoHw2Ce232B6C0pLT7yGUvh+iuxclKVcr
-5ftKq4xQRuU8ADfUzQ9qlwCkPgmzINLO4BsHWPNwx8HFtiQJt6EbkhblEE7BNwgC
-fc5GUmbN3tcBfZT0auas5uMkwgDoQVThuasVnI5Eel80H2lwvc2ijZCfFJC4sOjC
-HSsreVWXWCc41WtnEJeQF3qdzbU9hSAWdBIHvId6CItyrmNk1QKu5XJ7x+UG3NSW
-S8/469FuAJsMlmPEwoLilNhh9dRjoPuoQJGEnHaqtG/HAW8r66PIrdNCv6p2S5o3
-qJ9RBdtpHg4niBXmbRee
-=maA7
+iQIcBAEBCAAGBQJUc/lTAAoJEMDTa8Ir7ZwVx1EP/2Ogx03Li1tXkIyiVWa41ygs
+qsHM86Vnz5uA68b3YshrlSCcRgx1Mu+TxFP2ip9Yt2GN2oLN0clA+avSMzmOk60f
+Usb82NrFm/+GUA+YQEHpiRyvflf6xZZH0q1/+J5cgvVJ/n+tnrnnil1gE4UofwK5
+O1bXjI4AvyeOd1gfkvzowxkOBlAx/Oh7p27SkSe/aslBcvlFnYdyT6T8SAUBFga+
+27W2CHFcKXmi/Y5A9i91STfOWqL2VGhuWRqEwQiaDU0ySBlkcD35q3imbuv4ZB4j
+nHymTcqDQh02f9hnfdOO0QUIaOEaJ1dGv0NwRnxUnFwHMmJ+QaV9fm5DfLeD2kGC
+v4Ea1TGANrhHf0G7uBWq1mL0BmHRxoiGtIYUQ/cGHIlYyYcOLS0OTVfIGD283FIN
+y2+LJxwzf2F761cXZFPvlj1db8fvIo9SnkJfRcRezCM7QxENfU7fwq2PLxgwkn66
+oClsaHxv/3C2JTNYix8PbFrPWjgvOn94onxs61MmnBy2htusP+vvxMihDMwmwQ2w
+ByY6hBB3+lZGl7MMGikdel9daTGYv7ArEWAuiHwSeC4j7BYOdQpq1LzQcyJOtja7
+5ceajZqch4YLvXeaWsjgww0m7qa+2fXLEn6SHnRyY6FbgWsErN1hGISwBTlOCTdB
+GR2HeDvARUlmECsEryYS
+=KtMB
 -----END PGP SIGNATURE-----
 
---Sig_/ice+t87a0803zj7P9lvPyEQ--
+--Sig_/td_R+A_=UcaelopoFguwgDw--
