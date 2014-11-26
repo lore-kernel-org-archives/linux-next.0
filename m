@@ -1,74 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the tty.current tree
-Date: Wed, 26 Nov 2014 18:12:26 +1100
-Message-ID: <20141126181226.55eb1afe@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: build failure after merge of the omap_dss2 tree
+Date: Wed, 26 Nov 2014 10:16:08 +0200
+Message-ID: <54758C48.6050106@ti.com>
+References: <20141117190905.4e96294a@canb.auug.org.au>	<546B5D5A.8020304@ti.com>	<CANq1E4SMLHmezfXSENSQ8xUaXptwA8YKQ9Nne=sDCB0gPkPLmA@mail.gmail.com>	<5474615F.20407@ti.com>	<5474660B.8070507@redhat.com>	<5474720F.5030106@ti.com> <20141126090737.2860d33c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/7LlzsWQ3/cddZm=WyIiaHgA"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="BQ7gv6XAjFv2fqLG94nKpO6AD25bNLtBv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37928 "EHLO ozlabs.org"
+Received: from bear.ext.ti.com ([192.94.94.41]:55186 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751764AbaKZHMe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2014 02:12:34 -0500
+	id S1751764AbaKZIQa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2014 03:16:30 -0500
+In-Reply-To: <20141126090737.2860d33c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingchang Lu <jingchang.lu@freescale.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Hans de Goede <hdegoede@redhat.com>, David Herrmann <dh.herrmann@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Luc Verhaegen <libv@skynet.be>, Geert Uytterhoeven <geert@linux-m68k.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Grant Likely <grant.likely@linaro.org>
 
---Sig_/7LlzsWQ3/cddZm=WyIiaHgA
-Content-Type: text/plain; charset=US-ASCII
+--BQ7gv6XAjFv2fqLG94nKpO6AD25bNLtBv
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On 26/11/14 00:07, Stephen Rothwell wrote:
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/of_serial.c between commit a5e9ab291c60 ("Revert
-"serial: of-serial: add PM suspend/resume support"") from the
-tty.current tree and commit 513e43858102 ("serial: of-serial: fix up PM
-ops on no_console_suspend and port type") from the tty tree.
+>>> So we need both CONFIG_OF and CONFIG_COMMON_CLK, the attached patch
+>>> should fix this.
+>>
+>> Thanks, applied.
+>=20
+> But not pushed out, yet?  Just checking that you haven't pushed on
+> purpose.
 
-I fixed it up (I assumed the tty tree version is correct and used that)
-and can carry the fix as necessary (no action is required).
+Not yet. I'll be pushing today.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+ Tomi
 
-diff --cc drivers/tty/serial/of_serial.c
-index f2fde9c21e9b,fd00e2521584..000000000000
---- a/drivers/tty/serial/of_serial.c
-+++ b/drivers/tty/serial/of_serial.c
-@@@ -269,7 -342,9 +342,8 @@@ static struct of_device_id of_platform_
-  static struct platform_driver of_platform_serial_driver =3D {
-  	.driver =3D {
-  		.name =3D "of_serial",
- -		.owner =3D THIS_MODULE,
-  		.of_match_table =3D of_platform_serial_table,
-+ 		.pm =3D &of_serial_pm_ops,
-  	},
-  	.probe =3D of_platform_serial_probe,
-  	.remove =3D of_platform_serial_remove,
 
---Sig_/7LlzsWQ3/cddZm=WyIiaHgA
-Content-Type: application/pgp-signature
+
+--BQ7gv6XAjFv2fqLG94nKpO6AD25bNLtBv
+Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAEBCAAGBQJUdX1fAAoJEMDTa8Ir7ZwVsSQP/i7FNcw6aoFFWvCLa2uD2Vyf
-+/8VqQ3pezZUK7tJswRjJ7JzomZUn79QEWSYFydlIxkEytZSQ7lgYLSUkCwc/WRg
-mwxek6D3+niw0qe4Ria+lO7F14YvvdFFKzSGSmszKPgk0zT2rx+UL/pdN5UF422W
-sZNGy13ouUdaFYPokK2CIrjpMHTSj+IpLCEXu/I1rORIg8vpVufmBXlBbkeysJZT
-cA9F0BjctzytUDfiyzGF6nTk8ZAlB1uOnnWzedwoXiz7VeeriF+IrEw9PiJr3AHg
-57Of3w3Tf9Ki4KXldGpqMeRt2JmqtPiPiqFCUV+mh/3lZUyIr3KDoc4AOxU5wu5P
-EJ65h4HyMj5+1TzEtb1SNvO6e6avAw3/PHdBecCMXNvmwyavodnI/+4NTvNlw6sK
-lbweDSThc1av53OS59YvjnmFrBgAImPRsHss1iVYyxXqyusPZCQraLEnmPngEwtI
-1SpiC85FscB5OWrOTeTmfaQ80P/5iWeGd0dX0Unltw5ALCbVhA9OaJhtHTdZdOLs
-jfLMqg8sTbH0ZOveOrlEDhqgsYZPgcJaE3iAnUVFsM7Tots6JcF3+qPX11zRyNUq
-EOx0aUREKyp14D9/m3EFpiFjeocoePx0T0T7FeM9mSj7dOSuQ8+KKdK+d0PsbhGW
-ch7zUeobeqFn4lu4qzdh
-=9UGd
+iQIcBAEBAgAGBQJUdYxIAAoJEPo9qoy8lh71FEUP/RexykoJPA9KpaVqhCgIdNRJ
+llpQqzdXbjKRE2nuq9Yv+X/JsRN4nIiK8NWggm6aduQkqGhRknDY8xVi6aFrnXze
+RkrLPAIEnhtroPjMWBhRSTQdtbdO79ipCj6pyuAI0G07I6vUGxPGNpn/nViEgehO
+g9LXUWblCtrO7xJfWWeNbSQdDRL78ejlnJidZ1ROaZWxKVtErbBXq/tJQSrNdoWV
+xrgfTLkkBpdoNjlfM4dLBRfgZuogDThsN4+t/iUdhCyYebUpgbV7LhIIEBRUaeqO
+yWcBW+19PVd9RGC+cl5sQFuZxA3hVrtQDz6pMpRoT6rgyxI1uVLXAJoXnzxd0cYU
+RcKXO7kP9lZlYPwh+Hen+H5dc2Ngj/2qGDn87/u6zJ0TY682m3UC/4gf86USSuJ9
+CxYstKDI06QCamF5TRJlPHTkGDrXlnRiIgjKsIcGW8EJb68HkDGUQ2ik7AqjJimT
+jOA8KsR+ETW/RyTO8yRLRe9yR1ynKZvlgUmrCQ6q9grb6D0qddUrIZTG7DFOATzW
+pOxlCxJ8pwSA4MzOxjQTe1GAAvrZ8h8mjcAPX2fHCU7s7pYCNeizYXaRqNydxtvs
+ZdKge4YWKuKaNVu57aCBzfE5yR4ivSLnbnCj2sOtdtbZY8HQiSgM2UmSHJIJlztD
+luiOJTTAZ42Ed7dCS6ir
+=EyIB
 -----END PGP SIGNATURE-----
 
---Sig_/7LlzsWQ3/cddZm=WyIiaHgA--
+--BQ7gv6XAjFv2fqLG94nKpO6AD25bNLtBv--
