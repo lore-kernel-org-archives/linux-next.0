@@ -1,72 +1,98 @@
-From: josh@joshtriplett.org
-Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
-Date: Tue, 25 Nov 2014 16:04:33 -0800
-Message-ID: <20141126000433.GA25720@cloud>
-References: <20141125101044.GA20465@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the ext4 tree
+Date: Wed, 26 Nov 2014 13:41:52 +1100
+Message-ID: <20141126134152.49cd4296@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/VteD/TK2atdBXWzc6ZQvB4x"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56151 "EHLO
-	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751045AbaKZAEk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2014 19:04:40 -0500
-Content-Disposition: inline
-In-Reply-To: <20141125101044.GA20465@gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:35458 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751930AbaKZCmM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2014 21:42:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Catalina Mocanu <catalina.mocanu@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>
 
-On Tue, Nov 25, 2014 at 11:10:44AM +0100, Ingo Molnar wrote:
-> * Josh Triplett <josh@joshtriplett.org> wrote:
-> > On Tue, Nov 25, 2014 at 07:16:45AM +0100, Ingo Molnar wrote:
-> > > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > Hi Josh,
-> > > > 
-> > > > Today's linux-next merge of the tiny tree got a conflict in
-> > > > kernel/time/Makefile between commit fd866e2b116b ("time: Rename
-> > > > udelay_test.c to test_udelay.c") from the tip tree and commit
-> > > > d1f6d68d03ea ("kernel: time: Compile out NTP support") from the tiny
-> > > > tree.
-> > > 
-> > > So I think a timer subsystem commit d1f6d68d03ea with this 
-> > > magnitude of linecount increase:
-> > > 
-> > >  Signed-off-by: Catalina Mocanu <catalina.mocanu@gmail.com>
-> > >  [josh: Handle CONFIG_COMPAT=y.]
-> > >  Reviewed-by: Josh Triplett <josh@joshtriplett.org>
-> > >  Signed-off-by: Josh Triplett <josh@joshtriplett.org>
-> > >  ---
-> > >   drivers/pps/Kconfig        |  2 +-
-> > >   include/linux/timex.h      | 15 +++++++++++++--
-> > >   init/Kconfig               | 10 ++++++++++
-> > >   kernel/compat.c            |  8 ++++++--
-> > >   kernel/sys_ni.c            |  4 ++++
-> > >   kernel/time/Makefile       |  3 ++-
-> > >   kernel/time/ntp_internal.h | 28 ++++++++++++++++++++++++++++
-> > >   kernel/time/posix-timers.c |  2 ++
-> > >   kernel/time/time.c         |  2 ++
-> > >   kernel/time/timekeeping.c  |  2 ++
-> > >   10 files changed, 70 insertions(+), 6 deletions(-)
-> > > 
-> > > at minimum needs the ack of timer folks, before it can be 
-> > > committed to Git. Or is the tiny tree plan to submit all
-> > > patches to the appropriate subsystem or gather acks, before 
-> > > sending it upstream?
-> > 
-> > Yes, absolutely.  I planned to send out a tinification patch 
-> > review series later this week with all 10 current patches (both 
-> > those reviewed on LKML and those only reviewed elsewhere).
-> 
-> But, but: _please_ don't push patches towards linux-next that 
-> haven't been acked by maintainers.
-[...snip clear explanation of linux-next...]
+--Sig_/VteD/TK2atdBXWzc6ZQvB4x
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the clarification, Ingo!  Mind if I use your explanation as
-the basis for additional documentation of linux-next?
+Hi Jens,
 
-I've moved the tiny/next branch of my tree to tiny/work, and I'll make
-sure that tiny/next only gets patches that have gotten all the necessary
-reviews.
+Today's linux-next merge of the block tree got a conflict in
+fs/fs-writeback.c between commit 74ba19abbeae ("vfs: add support for a
+lazytime mount option") from the ext4 tree and commit 9c6ac78eb352
+("writeback: fix a subtle race condition in I_DIRTY clearing") from the
+block tree.
 
-- Josh Triplett
+I fixed it up (maybe, please check - see below) and can carry the fix
+as necessary (no action is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/fs-writeback.c
+index cab2d6d74828,2d609a5fbfea..000000000000
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@@ -480,12 -479,28 +480,28 @@@ __writeback_single_inode(struct inode *
+  	 * write_inode()
+  	 */
+  	spin_lock(&inode->i_lock);
+- 	/* Clear I_DIRTY_PAGES if we've written out all dirty pages */
+- 	if (!mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+- 		inode->i_state &=3D ~I_DIRTY_PAGES;
++=20
+  	dirty =3D inode->i_state & I_DIRTY;
+- 	inode->i_state &=3D ~(I_DIRTY_SYNC | I_DIRTY_DATASYNC | I_DIRTY_TIME);
+ -	inode->i_state &=3D ~I_DIRTY;
+++	inode->i_state &=3D ~(I_DIRTY | I_DIRTY_TIME);
++=20
++ 	/*
++ 	 * Paired with smp_mb() in __mark_inode_dirty().  This allows
++ 	 * __mark_inode_dirty() to test i_state without grabbing i_lock -
++ 	 * either they see the I_DIRTY bits cleared or we see the dirtied
++ 	 * inode.
++ 	 *
++ 	 * I_DIRTY_PAGES is always cleared together above even if @mapping
++ 	 * still has dirty pages.  The flag is reinstated after smp_mb() if
++ 	 * necessary.  This guarantees that either __mark_inode_dirty()
++ 	 * sees clear I_DIRTY_PAGES or we see PAGECACHE_TAG_DIRTY.
++ 	 */
++ 	smp_mb();
++=20
++ 	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
++ 		inode->i_state |=3D I_DIRTY_PAGES;
++=20
+  	spin_unlock(&inode->i_lock);
++=20
+  	/* Don't write the inode if only I_DIRTY_PAGES was set */
+  	if (dirty & (I_DIRTY_SYNC | I_DIRTY_DATASYNC)) {
+  		int err =3D write_inode(inode, wbc);
+
+--Sig_/VteD/TK2atdBXWzc6ZQvB4x
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUdT4BAAoJEMDTa8Ir7ZwVWDsQAJVwTxFXnyS3m1F7jrDCWnDL
+HuZ6UUfvKIXOiRd2qULJkW9/novbaKaGs6TUQh8L3xWTW7Wi9qb/8zehi7cbVUgi
+I3zk3ugnbLSoWNMPhwUsSSh5ar17HJHNo7/qgf0B4cGYLbsZ8ALjGz4FmhbWgcly
+L49oUTSrCC1MpqIOZX/kPsf/8JuqsLs289YIqg/xdxy5e0fQSY+oWmO7cViR2sTQ
+FZRVlkwhBalaRIQqjrRrwvQT/AyWksT5wFpvd8IVnEruX6v09rK9610KlFwUpSyl
+ndN8PGgTKn2uoDBdRbeNWaVlJeT5JxkJjg8Kq8FukvTsSMx7ObUsjjer2nptz4Da
+LYc/l+eAGI1CP4eIvlTnzmPvMa7s4VS2u2UH0b/KONXphA4LrNguS3lzZFiBcDaK
+hHTCKJlsDeF4tcqX9Hs9RO33mkfOnRu8K2nfajLzMu0LasnMxkqqNF0g008JxOIv
+1Od5JQxcoD1PsUB7lHJJ8LFvCVS/0bo/4+UhLTOJiZemuEDSPRVoBAqm4F09vv3z
+/UnJMIfJU4F2AJPKQqfMgcq0UeoTIqmXDjiER6l7re65ssRl7lvihc9r0Gr4/wz9
+QiPf4Fdii0bGoB8bhIAJY/6Ha9fX0qLpNqPqjlQVH13YKjruB1BsP7JS3838/2iH
+xkGPYs8o8zCLeB0R2G6z
+=bI3d
+-----END PGP SIGNATURE-----
+
+--Sig_/VteD/TK2atdBXWzc6ZQvB4x--
