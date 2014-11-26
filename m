@@ -1,59 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the kvm tree
-Date: Wed, 26 Nov 2014 17:19:14 +1100
-Message-ID: <20141126171914.19ad9151@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the tty.current tree
+Date: Wed, 26 Nov 2014 18:12:26 +1100
+Message-ID: <20141126181226.55eb1afe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yZipVHhD6SLAjK3Y6qYdkAK"; protocol="application/pgp-signature"
+ boundary="Sig_/7LlzsWQ3/cddZm=WyIiaHgA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56992 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37928 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752108AbaKZGTX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2014 01:19:23 -0500
+	id S1751764AbaKZHMe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2014 02:12:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jingchang Lu <jingchang.lu@freescale.com>
 
---Sig_/yZipVHhD6SLAjK3Y6qYdkAK
+--Sig_/7LlzsWQ3/cddZm=WyIiaHgA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in
-arch/ia64/kvm/kvm-ia64.c between commit 003f7de62589 ("KVM: ia64:
-remove") from the kvm tree and commit bf4bea8e9a90 ("kvm: fix
-kvm_is_mmio_pfn() and rename to kvm_is_reserved_pfn()") from the
-kvm-arm tree.
+Today's linux-next merge of the tty tree got a conflict in
+drivers/tty/serial/of_serial.c between commit a5e9ab291c60 ("Revert
+"serial: of-serial: add PM suspend/resume support"") from the
+tty.current tree and commit 513e43858102 ("serial: of-serial: fix up PM
+ops on no_console_suspend and port type") from the tty tree.
 
-I fixed it up (the former removed the file, so I did that) and can
-carry the fix as necessary (no action is required).
+I fixed it up (I assumed the tty tree version is correct and used that)
+and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/yZipVHhD6SLAjK3Y6qYdkAK
+diff --cc drivers/tty/serial/of_serial.c
+index f2fde9c21e9b,fd00e2521584..000000000000
+--- a/drivers/tty/serial/of_serial.c
++++ b/drivers/tty/serial/of_serial.c
+@@@ -269,7 -342,9 +342,8 @@@ static struct of_device_id of_platform_
+  static struct platform_driver of_platform_serial_driver =3D {
+  	.driver =3D {
+  		.name =3D "of_serial",
+ -		.owner =3D THIS_MODULE,
+  		.of_match_table =3D of_platform_serial_table,
++ 		.pm =3D &of_serial_pm_ops,
+  	},
+  	.probe =3D of_platform_serial_probe,
+  	.remove =3D of_platform_serial_remove,
+
+--Sig_/7LlzsWQ3/cddZm=WyIiaHgA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUdXDnAAoJEMDTa8Ir7ZwV4mkP/3qHjvJfrAoFyXay+QYyiAi2
-h0A9t/BJeEsJZKs/BsmMybbXk/5AtgeFddjb04juMqYnptq73HSZvyg7M40gxct3
-kr/wpDCEryMsI9MHw8JUqo3uWX56958LO2fs5GVeK8Yb16DPzUU+ZbxTNU0idycc
-+LcvrkAAyGOUsRWkl7wtWkou/Ct8X6EMeR4t8cZ50Z7klxZBPHcXMoXImnNE11s9
-YIwQIYHVqgeJ9hxFZLDWNXclsN96EJq/0+NPJVrKF6qGzTHB24UlAjg7CyMSDVGG
-mnVYB4bwj3GUJfzs3NjQpyFK0S1ReM0XW3t0A7Z9jdIHLRMuvz/r9hdDoB6QLBcu
-tA46iZGCu/VX4joWjfmA9XOuExbbEthhlcOyHplD2+l1fmvAn03PACWv0BsYWy/Y
-eQHzjRz3L5UqES+1k0Pn3afNyzLLBQgM2YxHjsVVWSYSL3lOdyCKv1+ByyWtmASd
-B/dYIm6o3+NG0s/zfccj5LkY/F8Nhal2tM819Ql4AcleWpW/x232wkcx9es7EsBw
-q7IP04+OScQ4zvhWlq0VwkSbSBhEj8+chsf5u3adYfYTmBBkDXfjhIv1vZtGZ0zT
-OvPZHY5LaCRRNBdWvFu8NH9ISUwPxP1bOp6MdV6Ammw8LdVctFM/Yn6DMYHvkIeH
-/2GXhhU1pnBR/vtg+ODo
-=/c+B
+iQIcBAEBCAAGBQJUdX1fAAoJEMDTa8Ir7ZwVsSQP/i7FNcw6aoFFWvCLa2uD2Vyf
++/8VqQ3pezZUK7tJswRjJ7JzomZUn79QEWSYFydlIxkEytZSQ7lgYLSUkCwc/WRg
+mwxek6D3+niw0qe4Ria+lO7F14YvvdFFKzSGSmszKPgk0zT2rx+UL/pdN5UF422W
+sZNGy13ouUdaFYPokK2CIrjpMHTSj+IpLCEXu/I1rORIg8vpVufmBXlBbkeysJZT
+cA9F0BjctzytUDfiyzGF6nTk8ZAlB1uOnnWzedwoXiz7VeeriF+IrEw9PiJr3AHg
+57Of3w3Tf9Ki4KXldGpqMeRt2JmqtPiPiqFCUV+mh/3lZUyIr3KDoc4AOxU5wu5P
+EJ65h4HyMj5+1TzEtb1SNvO6e6avAw3/PHdBecCMXNvmwyavodnI/+4NTvNlw6sK
+lbweDSThc1av53OS59YvjnmFrBgAImPRsHss1iVYyxXqyusPZCQraLEnmPngEwtI
+1SpiC85FscB5OWrOTeTmfaQ80P/5iWeGd0dX0Unltw5ALCbVhA9OaJhtHTdZdOLs
+jfLMqg8sTbH0ZOveOrlEDhqgsYZPgcJaE3iAnUVFsM7Tots6JcF3+qPX11zRyNUq
+EOx0aUREKyp14D9/m3EFpiFjeocoePx0T0T7FeM9mSj7dOSuQ8+KKdK+d0PsbhGW
+ch7zUeobeqFn4lu4qzdh
+=9UGd
 -----END PGP SIGNATURE-----
 
---Sig_/yZipVHhD6SLAjK3Y6qYdkAK--
+--Sig_/7LlzsWQ3/cddZm=WyIiaHgA--
