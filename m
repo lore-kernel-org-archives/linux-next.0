@@ -1,98 +1,177 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the ext4 tree
-Date: Wed, 26 Nov 2014 13:41:52 +1100
-Message-ID: <20141126134152.49cd4296@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the i2c tree
+Date: Wed, 26 Nov 2014 15:33:53 +1100
+Message-ID: <20141126153353.5f4fedd5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VteD/TK2atdBXWzc6ZQvB4x"; protocol="application/pgp-signature"
+ boundary="Sig_/Cun9bu7X3YW1qBZbsBfI50="; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35458 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60690 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751930AbaKZCmM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2014 21:42:12 -0500
+	id S1751712AbaKZEeD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2014 23:34:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>
+To: Grant Likely <grant.likely@secretlab.ca>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---Sig_/VteD/TK2atdBXWzc6ZQvB4x
+--Sig_/Cun9bu7X3YW1qBZbsBfI50=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Grant,
 
-Today's linux-next merge of the block tree got a conflict in
-fs/fs-writeback.c between commit 74ba19abbeae ("vfs: add support for a
-lazytime mount option") from the ext4 tree and commit 9c6ac78eb352
-("writeback: fix a subtle race condition in I_DIRTY clearing") from the
-block tree.
+Today's linux-next merge of the devicetree tree got a conflict in
+drivers/i2c/i2c-core.c between commit 2fd36c552649 ("i2c: core: Map OF
+IRQ at probe time") from the  i2c tree and commit a430a3455f2c
+("i2c/of: Factor out Devicetree registration code") from the devicetree
+tree.
 
-I fixed it up (maybe, please check - see below) and can carry the fix
-as necessary (no action is required).
+I fixed it up (thanks for the heads up, but please see below) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/fs-writeback.c
-index cab2d6d74828,2d609a5fbfea..000000000000
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@@ -480,12 -479,28 +480,28 @@@ __writeback_single_inode(struct inode *
-  	 * write_inode()
-  	 */
-  	spin_lock(&inode->i_lock);
-- 	/* Clear I_DIRTY_PAGES if we've written out all dirty pages */
-- 	if (!mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
-- 		inode->i_state &=3D ~I_DIRTY_PAGES;
+diff --cc drivers/i2c/i2c-core.c
+index 19800033e75d,d8afd3f28ca4..000000000000
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@@ -1380,61 -1369,69 +1381,67 @@@ static void i2c_scan_static_board_info(
+  /* OF support code */
+ =20
+  #if IS_ENABLED(CONFIG_OF)
+- static void of_i2c_register_devices(struct i2c_adapter *adap)
++ static struct i2c_client *of_i2c_register_device(struct i2c_adapter *adap,
++ 						 struct device_node *node)
+  {
+- 	void *result;
+- 	struct device_node *node;
++ 	struct i2c_client *result;
++ 	struct i2c_board_info info =3D {};
++ 	struct dev_archdata dev_ad =3D {};
++ 	const __be32 *addr;
++ 	int len;
+ =20
+- 	/* Only register child devices if the adapter has a node pointer set */
+- 	if (!adap->dev.of_node)
+- 		return;
++ 	dev_dbg(&adap->dev, "of_i2c: register %s\n", node->full_name);
+ =20
+- 	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
++ 	if (of_modalias_node(node, info.type, sizeof(info.type)) < 0) {
++ 		dev_err(&adap->dev, "of_i2c: modalias failure on %s\n",
++ 			node->full_name);
++ 		return ERR_PTR(-EINVAL);
++ 	}
+ =20
+- 	for_each_available_child_of_node(adap->dev.of_node, node) {
+- 		struct i2c_board_info info =3D {};
+- 		struct dev_archdata dev_ad =3D {};
+- 		const __be32 *addr;
+- 		int len;
++ 	addr =3D of_get_property(node, "reg", &len);
++ 	if (!addr || (len < sizeof(int))) {
++ 		dev_err(&adap->dev, "of_i2c: invalid reg on %s\n",
++ 			node->full_name);
++ 		return ERR_PTR(-EINVAL);
++ 	}
+ =20
+- 		dev_dbg(&adap->dev, "of_i2c: register %s\n", node->full_name);
++ 	info.addr =3D be32_to_cpup(addr);
++ 	if (info.addr > (1 << 10) - 1) {
++ 		dev_err(&adap->dev, "of_i2c: invalid addr=3D%x on %s\n",
++ 			info.addr, node->full_name);
++ 		return ERR_PTR(-EINVAL);
++ 	}
+ =20
+- 		if (of_modalias_node(node, info.type, sizeof(info.type)) < 0) {
+- 			dev_err(&adap->dev, "of_i2c: modalias failure on %s\n",
+- 				node->full_name);
+- 			continue;
+- 		}
+ -	info.irq =3D irq_of_parse_and_map(node, 0);
++ 	info.of_node =3D of_node_get(node);
++ 	info.archdata =3D &dev_ad;
+ =20
+- 		addr =3D of_get_property(node, "reg", &len);
+- 		if (!addr || (len < sizeof(int))) {
+- 			dev_err(&adap->dev, "of_i2c: invalid reg on %s\n",
+- 				node->full_name);
+- 			continue;
+- 		}
++ 	if (of_get_property(node, "wakeup-source", NULL))
++ 		info.flags |=3D I2C_CLIENT_WAKE;
+ =20
+- 		info.addr =3D be32_to_cpup(addr);
+- 		if (info.addr > (1 << 10) - 1) {
+- 			dev_err(&adap->dev, "of_i2c: invalid addr=3D%x on %s\n",
+- 				info.addr, node->full_name);
+- 			continue;
+- 		}
++ 	request_module("%s%s", I2C_MODULE_PREFIX, info.type);
+ =20
+- 		info.of_node =3D of_node_get(node);
+- 		info.archdata =3D &dev_ad;
++ 	result =3D i2c_new_device(adap, &info);
++ 	if (result =3D=3D NULL) {
++ 		dev_err(&adap->dev, "of_i2c: Failure registering %s\n",
++ 			node->full_name);
++ 		of_node_put(node);
+ -		irq_dispose_mapping(info.irq);
++ 		return ERR_PTR(-EINVAL);
++ 	}
++ 	return result;
++ }
+ =20
+- 		if (of_get_property(node, "wakeup-source", NULL))
+- 			info.flags |=3D I2C_CLIENT_WAKE;
++ static void of_i2c_register_devices(struct i2c_adapter *adap)
++ {
++ 	struct device_node *node;
+ =20
+- 		request_module("%s%s", I2C_MODULE_PREFIX, info.type);
++ 	/* Only register child devices if the adapter has a node pointer set */
++ 	if (!adap->dev.of_node)
++ 		return;
+ =20
+- 		result =3D i2c_new_device(adap, &info);
+- 		if (result =3D=3D NULL) {
+- 			dev_err(&adap->dev, "of_i2c: Failure registering %s\n",
+- 				node->full_name);
+- 			of_node_put(node);
+- 			continue;
+- 		}
+- 	}
++ 	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
 +=20
-  	dirty =3D inode->i_state & I_DIRTY;
-- 	inode->i_state &=3D ~(I_DIRTY_SYNC | I_DIRTY_DATASYNC | I_DIRTY_TIME);
- -	inode->i_state &=3D ~I_DIRTY;
-++	inode->i_state &=3D ~(I_DIRTY | I_DIRTY_TIME);
-+=20
-+ 	/*
-+ 	 * Paired with smp_mb() in __mark_inode_dirty().  This allows
-+ 	 * __mark_inode_dirty() to test i_state without grabbing i_lock -
-+ 	 * either they see the I_DIRTY bits cleared or we see the dirtied
-+ 	 * inode.
-+ 	 *
-+ 	 * I_DIRTY_PAGES is always cleared together above even if @mapping
-+ 	 * still has dirty pages.  The flag is reinstated after smp_mb() if
-+ 	 * necessary.  This guarantees that either __mark_inode_dirty()
-+ 	 * sees clear I_DIRTY_PAGES or we see PAGECACHE_TAG_DIRTY.
-+ 	 */
-+ 	smp_mb();
-+=20
-+ 	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
-+ 		inode->i_state |=3D I_DIRTY_PAGES;
-+=20
-  	spin_unlock(&inode->i_lock);
-+=20
-  	/* Don't write the inode if only I_DIRTY_PAGES was set */
-  	if (dirty & (I_DIRTY_SYNC | I_DIRTY_DATASYNC)) {
-  		int err =3D write_inode(inode, wbc);
++ 	for_each_available_child_of_node(adap->dev.of_node, node)
++ 		of_i2c_register_device(adap, node);
+  }
+ =20
+  static int of_dev_node_match(struct device *dev, void *data)
 
---Sig_/VteD/TK2atdBXWzc6ZQvB4x
+--Sig_/Cun9bu7X3YW1qBZbsBfI50=
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUdT4BAAoJEMDTa8Ir7ZwVWDsQAJVwTxFXnyS3m1F7jrDCWnDL
-HuZ6UUfvKIXOiRd2qULJkW9/novbaKaGs6TUQh8L3xWTW7Wi9qb/8zehi7cbVUgi
-I3zk3ugnbLSoWNMPhwUsSSh5ar17HJHNo7/qgf0B4cGYLbsZ8ALjGz4FmhbWgcly
-L49oUTSrCC1MpqIOZX/kPsf/8JuqsLs289YIqg/xdxy5e0fQSY+oWmO7cViR2sTQ
-FZRVlkwhBalaRIQqjrRrwvQT/AyWksT5wFpvd8IVnEruX6v09rK9610KlFwUpSyl
-ndN8PGgTKn2uoDBdRbeNWaVlJeT5JxkJjg8Kq8FukvTsSMx7ObUsjjer2nptz4Da
-LYc/l+eAGI1CP4eIvlTnzmPvMa7s4VS2u2UH0b/KONXphA4LrNguS3lzZFiBcDaK
-hHTCKJlsDeF4tcqX9Hs9RO33mkfOnRu8K2nfajLzMu0LasnMxkqqNF0g008JxOIv
-1Od5JQxcoD1PsUB7lHJJ8LFvCVS/0bo/4+UhLTOJiZemuEDSPRVoBAqm4F09vv3z
-/UnJMIfJU4F2AJPKQqfMgcq0UeoTIqmXDjiER6l7re65ssRl7lvihc9r0Gr4/wz9
-QiPf4Fdii0bGoB8bhIAJY/6Ha9fX0qLpNqPqjlQVH13YKjruB1BsP7JS3838/2iH
-xkGPYs8o8zCLeB0R2G6z
-=bI3d
+iQIcBAEBCAAGBQJUdVg2AAoJEMDTa8Ir7ZwVetUP/jMa2Q8ToBqgw3FqUc3eVYXK
+kh63IQY8YtwRKcLLVNpI4judeMyL8w2QjAtAg3d+93EA2SEpZLRXK4kIkZzwpUY4
+Oiz6ppWQX37Dr3uQTU8lp49a3/CC+trTVSPX35rIWRWI8/MAK7ziHyU00IlJYiFF
+EkOio/igymAAdvpgtpNBbKkC6n/kAUCCQy4E9i0K86vy3odnTUqWSw2mDhdP/sps
+ZuB1ffrA1BYdsGoe/89OKlm42HBqOlj37jkWSInoVZpPgrhEs0U6qE64aypD/a3V
+2Thy6F6uo94iTmtFSpN4+F5JNumz/7uBPD/aJH8R9fQ/OsxaQ+bFjfDLAZ0AUfCj
+xBCYI7ea8TkgZgrFM1RDw0eoDmERrYKSN/DrL+b7LzHAukp36JlXbdg3dMyVb4bB
+zgGUQ9oitcdVziI9/AXGarQcxEmlfJhnJgdUXOMBI4G3rmxQda1C48TDYjUt9r57
+w6z00djSR9nh2f9/bm9ADc/NslXcRLKxkIJGizLvT6aIvnkGZGNCQNnNqY1GJtgM
+a6BWe4ACCkzewWVMWspdTS/Geyc0jv7fqdzMB+YoPIPu3ovVyZ+3WZof9l27c6TZ
+/1DEd49CvVeHfn5hU2zrjH1QMMfphYpVkWNY0+eEjbSYy5x36av/0/3wj672PwKw
+JVja7bnsQDuX6jC2pY3f
+=6OTU
 -----END PGP SIGNATURE-----
 
---Sig_/VteD/TK2atdBXWzc6ZQvB4x--
+--Sig_/Cun9bu7X3YW1qBZbsBfI50=--
