@@ -1,102 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the omap_dss2 tree
-Date: Wed, 26 Nov 2014 09:07:37 +1100
-Message-ID: <20141126090737.2860d33c@canb.auug.org.au>
-References: <20141117190905.4e96294a@canb.auug.org.au>
-	<546B5D5A.8020304@ti.com>
-	<CANq1E4SMLHmezfXSENSQ8xUaXptwA8YKQ9Nne=sDCB0gPkPLmA@mail.gmail.com>
-	<5474615F.20407@ti.com>
-	<5474660B.8070507@redhat.com>
-	<5474720F.5030106@ti.com>
+From: josh@joshtriplett.org
+Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
+Date: Tue, 25 Nov 2014 16:04:33 -0800
+Message-ID: <20141126000433.GA25720@cloud>
+References: <20141125101044.GA20465@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dO09hQl4gnYBg1=fYuZCnCa"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5474720F.5030106@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, David Herrmann <dh.herrmann@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Luc Verhaegen <libv@skynet.be>, Geert Uytterhoeven <geert@linux-m68k.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Grant Likely <grant.likely@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56151 "EHLO
+	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751045AbaKZAEk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2014 19:04:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20141125101044.GA20465@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Catalina Mocanu <catalina.mocanu@gmail.com>
 
---Sig_/dO09hQl4gnYBg1=fYuZCnCa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 25, 2014 at 11:10:44AM +0100, Ingo Molnar wrote:
+> * Josh Triplett <josh@joshtriplett.org> wrote:
+> > On Tue, Nov 25, 2014 at 07:16:45AM +0100, Ingo Molnar wrote:
+> > > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > > Hi Josh,
+> > > > 
+> > > > Today's linux-next merge of the tiny tree got a conflict in
+> > > > kernel/time/Makefile between commit fd866e2b116b ("time: Rename
+> > > > udelay_test.c to test_udelay.c") from the tip tree and commit
+> > > > d1f6d68d03ea ("kernel: time: Compile out NTP support") from the tiny
+> > > > tree.
+> > > 
+> > > So I think a timer subsystem commit d1f6d68d03ea with this 
+> > > magnitude of linecount increase:
+> > > 
+> > >  Signed-off-by: Catalina Mocanu <catalina.mocanu@gmail.com>
+> > >  [josh: Handle CONFIG_COMPAT=y.]
+> > >  Reviewed-by: Josh Triplett <josh@joshtriplett.org>
+> > >  Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> > >  ---
+> > >   drivers/pps/Kconfig        |  2 +-
+> > >   include/linux/timex.h      | 15 +++++++++++++--
+> > >   init/Kconfig               | 10 ++++++++++
+> > >   kernel/compat.c            |  8 ++++++--
+> > >   kernel/sys_ni.c            |  4 ++++
+> > >   kernel/time/Makefile       |  3 ++-
+> > >   kernel/time/ntp_internal.h | 28 ++++++++++++++++++++++++++++
+> > >   kernel/time/posix-timers.c |  2 ++
+> > >   kernel/time/time.c         |  2 ++
+> > >   kernel/time/timekeeping.c  |  2 ++
+> > >   10 files changed, 70 insertions(+), 6 deletions(-)
+> > > 
+> > > at minimum needs the ack of timer folks, before it can be 
+> > > committed to Git. Or is the tiny tree plan to submit all
+> > > patches to the appropriate subsystem or gather acks, before 
+> > > sending it upstream?
+> > 
+> > Yes, absolutely.  I planned to send out a tinification patch 
+> > review series later this week with all 10 current patches (both 
+> > those reviewed on LKML and those only reviewed elsewhere).
+> 
+> But, but: _please_ don't push patches towards linux-next that 
+> haven't been acked by maintainers.
+[...snip clear explanation of linux-next...]
 
-Hi Tomi,
+Thanks for the clarification, Ingo!  Mind if I use your explanation as
+the basis for additional documentation of linux-next?
 
-On Tue, 25 Nov 2014 14:11:59 +0200 Tomi Valkeinen <tomi.valkeinen@ti.com> w=
-rote:
->
-> On 25/11/14 13:20, Hans de Goede wrote:
-> >=20
-> > On 11/25/2014 12:00 PM, Tomi Valkeinen wrote:
-> >> On 18/11/14 17:07, David Herrmann wrote:
-> >>>
-> >>> On Tue, Nov 18, 2014 at 3:53 PM, Tomi Valkeinen
-> >>> <tomi.valkeinen@ti.com> wrote:
-> >>>>
-> >>>> Thanks Stephen!
-> >>>>
-> >>>> Hans, have you had a look at this? kbuild test bot also reported thi=
-s.
-> >>>
-> >>> The fix from Stephen should not go to main-line. It breaks simplefb on
-> >>> x86 without OF. Imo, linux/clk.h should provide a fallback if OF is
-> >>> not defined (like it already does for of_clk_get() and friends).
-> >>>
-> >>> Hans, any comments?
-> >>
-> >> Hans, ping.
-> >=20
-> > Sorry I somehow missed this thread so far, I did see the kbuild mail, b=
-ut
-> > it looked like a false positive to me, for the compile error case I
-> > already fixed
-> > in the last revision of the patch, adding #ifdef CONFIG_OF around the
-> > offending code.
-> >=20
-> > But on closer inspection I see that the entirety of linux/clk-provider.h
-> > is wrapped
-> > in one huge #ifdef CONFIG_COMMON_CLK and then later on also has:
-> >=20
-> > #ifdef CONFIG_OF
-> > ...
-> > int of_clk_get_parent_count(struct device_node *np);
-> > ...
-> > #endif
-> >=20
-> > So we need both CONFIG_OF and CONFIG_COMMON_CLK, the attached patch
-> > should fix this.
->=20
-> Thanks, applied.
+I've moved the tiny/next branch of my tree to tiny/work, and I'll make
+sure that tiny/next only gets patches that have gotten all the necessary
+reviews.
 
-But not pushed out, yet?  Just checking that you haven't pushed on
-purpose.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/dO09hQl4gnYBg1=fYuZCnCa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUdP2vAAoJEMDTa8Ir7ZwVANcP/jroBargaJVzQ5TronBT2vQ9
-unkJhSXtRTJQaQllboKNSTcs5UzmBh6pxGVVO0uTXVOUqjgdM57ZQ/QahPHnIaaj
-YCahpnd2yezGX6njuFkNroNlZJfvESNjnUpqrfQ1aJl7dYhb7f86V8iSiyJHAHIq
-aGrP5yspRkmrHAhO6yMPYR6brJ/9tn/utTZRibWcUINJNzUSg4bBNXktf9YP26lC
-EGgDi7nYwppoYY2DT/TnZQKwaSCh9Ddcn7C2aD36nnYIYUPa6tXyX0vt2qd9J2Wd
-2Aye72NbCrrCT+fTvIMQ7NEX2Fwhp7MgD79p7/76yHrVuUVyllxqODwqb4orPBn9
-dhAvfW2NMedqo6vH7AEVJaEPnYC8o04klbn4ySbVUY1tBuS1VGqfaRK77avwI4iD
-WYzYSXJjlnT7Iy81pfs9sC8+fQmtsgl4m+ftSQFruEHDegtR5kL8csbvBe4cpb+h
-BbHnfO5LoCQKieD2E6oQJ9LfOZcwueIMC+h/jfbSl7ik5aBAYi5/gQkMpyGI4x1G
-s82clU051HDFYvF8ya49dCp5evUL5XEjYkGVxmodx6GK2rov2Tempq4325QPqETr
-p7snYlZI74pz+4lG1frU/ey7zAnScR/qQ+lXcLvXEF7lWOe4ByKE9MsGC417X5Gn
-lZfJBxLl9ceiq5B5ivsE
-=XpL+
------END PGP SIGNATURE-----
-
---Sig_/dO09hQl4gnYBg1=fYuZCnCa--
+- Josh Triplett
