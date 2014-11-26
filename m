@@ -1,177 +1,154 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the i2c tree
-Date: Wed, 26 Nov 2014 15:33:53 +1100
-Message-ID: <20141126153353.5f4fedd5@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the pm, mfd
+ and regulator trees
+Date: Wed, 26 Nov 2014 15:44:06 +1100
+Message-ID: <20141126154406.434ab873@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Cun9bu7X3YW1qBZbsBfI50="; protocol="application/pgp-signature"
+ boundary="Sig_/5ddrhoO2Y3g=xvwA18WGNJj"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60690 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34640 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751712AbaKZEeD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2014 23:34:03 -0500
+	id S1751795AbaKZEoP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2014 23:44:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: Grant Likely <grant.likely@secretlab.ca>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Romain Perier <romain.perier@gmail.com>
 
---Sig_/Cun9bu7X3YW1qBZbsBfI50=
+--Sig_/5ddrhoO2Y3g=xvwA18WGNJj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Grant,
 
 Today's linux-next merge of the devicetree tree got a conflict in
-drivers/i2c/i2c-core.c between commit 2fd36c552649 ("i2c: core: Map OF
-IRQ at probe time") from the  i2c tree and commit a430a3455f2c
-("i2c/of: Factor out Devicetree registration code") from the devicetree
-tree.
+include/linux/of.h between commits b31384fa5de3 ("Driver core: Unified
+device properties interface for platform firmware") from the pm tree
+and a4b4e0461ec5 ("of: Add standard property for poweroff capability")
+from the mfd and regulator trees and commit 7518b5890d8a ("of/overlay:
+Introduce DT overlay support") from the devicetree tree.
 
-I fixed it up (thanks for the heads up, but please see below) and can
-carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/i2c/i2c-core.c
-index 19800033e75d,d8afd3f28ca4..000000000000
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@@ -1380,61 -1369,69 +1381,67 @@@ static void i2c_scan_static_board_info(
-  /* OF support code */
+diff --cc include/linux/of.h
+index facd94e45462,aa01cf5852f8..000000000000
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@@ -23,7 -23,7 +23,8 @@@
+  #include <linux/spinlock.h>
+  #include <linux/topology.h>
+  #include <linux/notifier.h>
+ +#include <linux/property.h>
++ #include <linux/list.h>
  =20
-  #if IS_ENABLED(CONFIG_OF)
-- static void of_i2c_register_devices(struct i2c_adapter *adap)
-+ static struct i2c_client *of_i2c_register_device(struct i2c_adapter *adap,
-+ 						 struct device_node *node)
+  #include <asm/byteorder.h>
+  #include <asm/errno.h>
+@@@ -108,27 -111,18 +114,27 @@@ static inline struct device_node *of_no
+  static inline void of_node_put(struct device_node *node) { }
+  #endif /* !CONFIG_OF_DYNAMIC */
+ =20
+ -#ifdef CONFIG_OF
+ -
+  /* Pointer for first entry in chain of all nodes. */
+- extern struct device_node *of_allnodes;
++ extern struct device_node *of_root;
+  extern struct device_node *of_chosen;
+  extern struct device_node *of_aliases;
+  extern struct device_node *of_stdout;
+  extern raw_spinlock_t devtree_lock;
+ =20
+ +#ifdef CONFIG_OF
+ +static inline bool is_of_node(struct fwnode_handle *fwnode)
+ +{
+ +	return fwnode && fwnode->type =3D=3D FWNODE_OF;
+ +}
+ +
+ +static inline struct device_node *of_node(struct fwnode_handle *fwnode)
+ +{
+ +	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
+ +}
+ +
+  static inline bool of_have_populated_dt(void)
   {
-- 	void *result;
-- 	struct device_node *node;
-+ 	struct i2c_client *result;
-+ 	struct i2c_board_info info =3D {};
-+ 	struct dev_archdata dev_ad =3D {};
-+ 	const __be32 *addr;
-+ 	int len;
- =20
-- 	/* Only register child devices if the adapter has a node pointer set */
-- 	if (!adap->dev.of_node)
-- 		return;
-+ 	dev_dbg(&adap->dev, "of_i2c: register %s\n", node->full_name);
- =20
-- 	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
-+ 	if (of_modalias_node(node, info.type, sizeof(info.type)) < 0) {
-+ 		dev_err(&adap->dev, "of_i2c: modalias failure on %s\n",
-+ 			node->full_name);
-+ 		return ERR_PTR(-EINVAL);
-+ 	}
- =20
-- 	for_each_available_child_of_node(adap->dev.of_node, node) {
-- 		struct i2c_board_info info =3D {};
-- 		struct dev_archdata dev_ad =3D {};
-- 		const __be32 *addr;
-- 		int len;
-+ 	addr =3D of_get_property(node, "reg", &len);
-+ 	if (!addr || (len < sizeof(int))) {
-+ 		dev_err(&adap->dev, "of_i2c: invalid reg on %s\n",
-+ 			node->full_name);
-+ 		return ERR_PTR(-EINVAL);
-+ 	}
- =20
-- 		dev_dbg(&adap->dev, "of_i2c: register %s\n", node->full_name);
-+ 	info.addr =3D be32_to_cpup(addr);
-+ 	if (info.addr > (1 << 10) - 1) {
-+ 		dev_err(&adap->dev, "of_i2c: invalid addr=3D%x on %s\n",
-+ 			info.addr, node->full_name);
-+ 		return ERR_PTR(-EINVAL);
-+ 	}
- =20
-- 		if (of_modalias_node(node, info.type, sizeof(info.type)) < 0) {
-- 			dev_err(&adap->dev, "of_i2c: modalias failure on %s\n",
-- 				node->full_name);
-- 			continue;
-- 		}
- -	info.irq =3D irq_of_parse_and_map(node, 0);
-+ 	info.of_node =3D of_node_get(node);
-+ 	info.archdata =3D &dev_ad;
- =20
-- 		addr =3D of_get_property(node, "reg", &len);
-- 		if (!addr || (len < sizeof(int))) {
-- 			dev_err(&adap->dev, "of_i2c: invalid reg on %s\n",
-- 				node->full_name);
-- 			continue;
-- 		}
-+ 	if (of_get_property(node, "wakeup-source", NULL))
-+ 		info.flags |=3D I2C_CLIENT_WAKE;
- =20
-- 		info.addr =3D be32_to_cpup(addr);
-- 		if (info.addr > (1 << 10) - 1) {
-- 			dev_err(&adap->dev, "of_i2c: invalid addr=3D%x on %s\n",
-- 				info.addr, node->full_name);
-- 			continue;
-- 		}
-+ 	request_module("%s%s", I2C_MODULE_PREFIX, info.type);
- =20
-- 		info.of_node =3D of_node_get(node);
-- 		info.archdata =3D &dev_ad;
-+ 	result =3D i2c_new_device(adap, &info);
-+ 	if (result =3D=3D NULL) {
-+ 		dev_err(&adap->dev, "of_i2c: Failure registering %s\n",
-+ 			node->full_name);
-+ 		of_node_put(node);
- -		irq_dispose_mapping(info.irq);
-+ 		return ERR_PTR(-EINVAL);
-+ 	}
-+ 	return result;
-+ }
- =20
-- 		if (of_get_property(node, "wakeup-source", NULL))
-- 			info.flags |=3D I2C_CLIENT_WAKE;
-+ static void of_i2c_register_devices(struct i2c_adapter *adap)
-+ {
-+ 	struct device_node *node;
- =20
-- 		request_module("%s%s", I2C_MODULE_PREFIX, info.type);
-+ 	/* Only register child devices if the adapter has a node pointer set */
-+ 	if (!adap->dev.of_node)
-+ 		return;
- =20
-- 		result =3D i2c_new_device(adap, &info);
-- 		if (result =3D=3D NULL) {
-- 			dev_err(&adap->dev, "of_i2c: Failure registering %s\n",
-- 				node->full_name);
-- 			of_node_put(node);
-- 			continue;
-- 		}
-- 	}
-+ 	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
-+=20
-+ 	for_each_available_child_of_node(adap->dev.of_node, node)
-+ 		of_i2c_register_device(adap, node);
+- 	return of_allnodes !=3D NULL;
++ 	return of_root !=3D NULL;
   }
  =20
-  static int of_dev_node_match(struct device *dev, void *data)
+  static inline bool of_node_is_root(const struct device_node *node)
+@@@ -956,14 -959,33 +992,44 @@@ static inline int of_reconfig_get_state
+  extern int of_resolve_phandles(struct device_node *tree);
+ =20
+  /**
+ + * of_system_has_poweroff_source - Tells if poweroff-source is found for =
+device_node
+ + * @np: Pointer to the given device_node
+ + *
+ + * return true if present false otherwise
+ + */
+ +static inline bool of_system_has_poweroff_source(const struct device_node=
+ *np)
+ +{
+ +	return of_property_read_bool(np, "poweroff-source");
+ +}
+ +
+++/**
++  * Overlay support
++  */
++=20
++ #ifdef CONFIG_OF_OVERLAY
++=20
++ /* ID based overlays; the API for external users */
++ int of_overlay_create(struct device_node *tree);
++ int of_overlay_destroy(int id);
++ int of_overlay_destroy_all(void);
++=20
++ #else
++=20
++ static inline int of_overlay_create(struct device_node *tree)
++ {
++ 	return -ENOTSUPP;
++ }
++=20
++ static inline int of_overlay_destroy(int id)
++ {
++ 	return -ENOTSUPP;
++ }
++=20
++ static inline int of_overlay_destroy_all(void)
++ {
++ 	return -ENOTSUPP;
++ }
++=20
++ #endif
++=20
+  #endif /* _LINUX_OF_H */
 
---Sig_/Cun9bu7X3YW1qBZbsBfI50=
+--Sig_/5ddrhoO2Y3g=xvwA18WGNJj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUdVg2AAoJEMDTa8Ir7ZwVetUP/jMa2Q8ToBqgw3FqUc3eVYXK
-kh63IQY8YtwRKcLLVNpI4judeMyL8w2QjAtAg3d+93EA2SEpZLRXK4kIkZzwpUY4
-Oiz6ppWQX37Dr3uQTU8lp49a3/CC+trTVSPX35rIWRWI8/MAK7ziHyU00IlJYiFF
-EkOio/igymAAdvpgtpNBbKkC6n/kAUCCQy4E9i0K86vy3odnTUqWSw2mDhdP/sps
-ZuB1ffrA1BYdsGoe/89OKlm42HBqOlj37jkWSInoVZpPgrhEs0U6qE64aypD/a3V
-2Thy6F6uo94iTmtFSpN4+F5JNumz/7uBPD/aJH8R9fQ/OsxaQ+bFjfDLAZ0AUfCj
-xBCYI7ea8TkgZgrFM1RDw0eoDmERrYKSN/DrL+b7LzHAukp36JlXbdg3dMyVb4bB
-zgGUQ9oitcdVziI9/AXGarQcxEmlfJhnJgdUXOMBI4G3rmxQda1C48TDYjUt9r57
-w6z00djSR9nh2f9/bm9ADc/NslXcRLKxkIJGizLvT6aIvnkGZGNCQNnNqY1GJtgM
-a6BWe4ACCkzewWVMWspdTS/Geyc0jv7fqdzMB+YoPIPu3ovVyZ+3WZof9l27c6TZ
-/1DEd49CvVeHfn5hU2zrjH1QMMfphYpVkWNY0+eEjbSYy5x36av/0/3wj672PwKw
-JVja7bnsQDuX6jC2pY3f
-=6OTU
+iQIcBAEBCAAGBQJUdVqbAAoJEMDTa8Ir7ZwV6KoP/0VLKOmqhHM1SR1QNYyk6R2i
+TdkHavhTvCxX/1lyRXd/smlqfj1k3BPFVTaw7Qi8L9UVAm9vvH3RzWaTPYWqCYYo
+UQAoWNejybtWIgp+RygqDDF7weaB2EsvYIwMMNluxCGmt2aC7BIcUJLgDAeUNo7Q
+0XDA5lCX/ifqpQD4982QkNtp8ihJNjUFa/TH7qfwmFTpyj1ftu3TWVr/n+sEi9j0
+l7MOw3cgul4BdI8xVWrw6LBO9pgXzZ8PJ44pUftUfbT1YVDKf4m5V6FBJAMICFh0
+Ua/speGDi6QGvXO2fBhrdb7mbps3eeeUDIdGU+4bm09vIL0316rUOOykugJ4Fg4C
+Riz4OKkX0ORa5pQDZsnsI6SgMzw3HgMVcG/TqJvCBLSWmwtwFgXZwTue36kV/cxY
+iXGLDoSrNpOxMNZIIXexq/Dj70KCVb3ly73K4yloKQfbk6nVaxIWB/XWXryXVIhR
+IySHJQZbxdoo56FbD1xvj1QyzlNNQoRULAVk+sADrkF/I0lsWeEOYMdyZYe0gQTm
+TUh/vzG8SqWfUj8uupgFycLxUw6olZenQ0g+LvcULX+d5YMFbRT8w2PLzAFsPYOh
+k3rD2jxOMs/iJyzLC5yzfrcwqb7le1tGAFcVVvcOHch1css/lXbpEzr0Pl4X4n7I
+6z9EfpV3OmDuExFg8zI7
+=52Jd
 -----END PGP SIGNATURE-----
 
---Sig_/Cun9bu7X3YW1qBZbsBfI50=--
+--Sig_/5ddrhoO2Y3g=xvwA18WGNJj--
