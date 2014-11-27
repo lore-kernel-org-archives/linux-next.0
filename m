@@ -1,84 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
-Date: Thu, 27 Nov 2014 08:20:56 -0800
-Message-ID: <20141127162056.GB30533@kroah.com>
-References: <20141127201156.62487051@canb.auug.org.au>
- <20141127203101.346ea550@canb.auug.org.au>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: linux-next: manual merge of the irqchip tree with the mips tree
+Date: Thu, 27 Nov 2014 13:11:43 -0500
+Message-ID: <20141127181143.GN22670@titan.lakedaemon.net>
+References: <20141127165719.2e5cb4e4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:47062 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751310AbaK0QWT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Nov 2014 11:22:19 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id D48E820B88
-	for <linux-next@vger.kernel.org>; Thu, 27 Nov 2014 11:22:18 -0500 (EST)
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:23831 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750861AbaK0SLy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2014 13:11:54 -0500
 Content-Disposition: inline
-In-Reply-To: <20141127203101.346ea550@canb.auug.org.au>
+In-Reply-To: <20141127165719.2e5cb4e4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>
 
-On Thu, Nov 27, 2014 at 08:31:01PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Thu, 27 Nov 2014 20:11:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > diff --cc drivers/staging/lustre/lustre/llite/llite_lib.c
-> > index 7b6b9e2e0102,3b0336029da3..000000000000
-> > --- a/drivers/staging/lustre/lustre/llite/llite_lib.c
-> > +++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
-> > @@@ -698,8 -690,10 +690,8 @@@ void lustre_dump_dentry(struct dentry *
-> >   	list_for_each(tmp, &dentry->d_subdirs)
-> >   		subdirs++;
-> >   
-> > - 	CERROR("dentry %p dump: name=%pd parent=%p, inode=%p, count=%u,"
-> > - 	       " flags=0x%x, fsdata=%p, %d subdirs\n", dentry, dentry,
-> >  -	CERROR("dentry %p dump: name=%.*s parent=%.*s (%p), inode=%p, count=%u, flags=0x%x, fsdata=%p, %d subdirs\n",
-> >  -	       dentry,
-> >  -	       dentry->d_name.len, dentry->d_name.name,
-> >  -	       dentry->d_parent->d_name.len, dentry->d_parent->d_name.name,
-> > ++	CERROR("dentry %p dump: name=%pd parent=%p, inode=%p, count=%u, flags=0x%x, fsdata=%p, %d subdirs\n",
-> > ++	       dentry, dentry,
-> >   	       dentry->d_parent, dentry->d_inode, d_count(dentry),
-> >   	       dentry->d_flags, dentry->d_fsdata, subdirs);
-> >   	if (dentry->d_inode != NULL)
-> 
-> The actual resolution for this file ended up being this:
-> 
-> diff --cc drivers/staging/lustre/lustre/llite/llite_lib.c
-> index 7b6b9e2e0102,3b0336029da3..52f0a7e40063
-> --- a/drivers/staging/lustre/lustre/llite/llite_lib.c
-> +++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
-> @@@ -698,8 -690,10 +690,8 @@@ void lustre_dump_dentry(struct dentry *
->   	list_for_each(tmp, &dentry->d_subdirs)
->   		subdirs++;
->   
-> - 	CERROR("dentry %p dump: name=%pd parent=%p, inode=%p, count=%u,"
-> - 	       " flags=0x%x, fsdata=%p, %d subdirs\n", dentry, dentry,
->  -	CERROR("dentry %p dump: name=%.*s parent=%.*s (%p), inode=%p, count=%u, flags=0x%x, fsdata=%p, %d subdirs\n",
->  -	       dentry,
->  -	       dentry->d_name.len, dentry->d_name.name,
->  -	       dentry->d_parent->d_name.len, dentry->d_parent->d_name.name,
-> ++	CERROR("dentry %p dump: name=%pd parent=%p, inode=%p, count=%u, flags=0x%x, fsdata=%p, %d subdirs\n",
-> ++	       dentry, dentry,
->   	       dentry->d_parent, dentry->d_inode, d_count(dentry),
->   	       dentry->d_flags, dentry->d_fsdata, subdirs);
->   	if (dentry->d_inode != NULL)
-> @@@ -709,7 -703,8 +701,8 @@@
->   		return;
->   
->   	list_for_each(tmp, &dentry->d_subdirs) {
->  -		struct dentry *d = list_entry(tmp, struct dentry, d_u.d_child);
->  +		struct dentry *d = list_entry(tmp, struct dentry, d_child);
-> + 
->   		lustre_dump_dentry(d, recur - 1);
->   	}
->   }
+Stephen,
 
-Looks good, thanks.
+On Thu, Nov 27, 2014 at 04:57:19PM +1100, Stephen Rothwell wrote:
+> Hi Jason,
+> 
+> Today's linux-next merge of the irqchip tree got a conflict in
+> drivers/irqchip/Makefile between commit 8a19b8f19429 ("MIPS: Move GIC
+> to drivers/irqchip/") from the mips tree and commit 5fe3bba3088c
+> ("irqchip: mtk-sysirq: Add sysirq interrupt polarity support") from the
+> irqchip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-greg k-h
+Looks good, thanks!
+
+thx,
+
+Jason.
