@@ -1,71 +1,38 @@
-From: Boaz Harrosh <boaz@plexistor.com>
-Subject: Re: linux-next: manual merge of the staging tree with the kbuild
- tree
-Date: Thu, 27 Nov 2014 10:24:37 +0200
-Message-ID: <5476DFC5.6020709@plexistor.com>
-References: <20141127190508.3305dfe8@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: manual merge of the devicetree tree with the pm, mfd
+ and regulator trees
+Date: Thu, 27 Nov 2014 08:49:02 +0000
+Message-ID: <20141127084902.GC4628@x1>
+References: <20141126154406.434ab873@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:64202 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750922AbaK0IYl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2014 03:24:41 -0500
-Received: by mail-wg0-f44.google.com with SMTP id b13so5788352wgh.3
-        for <linux-next@vger.kernel.org>; Thu, 27 Nov 2014 00:24:39 -0800 (PST)
-In-Reply-To: <20141127190508.3305dfe8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Romer <benjamin.romer@unisys.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20141126154406.434ab873@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Grant Likely <grant.likely@secretlab.ca>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Romain Perier <romain.perier@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict
-> in .gitignore between commit dfe0487249e5 (".gitignore: Add Kdevelop4
-> project files") from the kbuild tree and commit 75185f57f110 ("staging:
-> unisys: fix CamelCase macro names in controlframework.h") from the
-> staging tree.
-> 
+> Today's linux-next merge of the devicetree tree got a conflict in
+> include/linux/of.h between commits b31384fa5de3 ("Driver core: Unifie=
+d
+> device properties interface for platform firmware") from the pm tree
+> and a4b4e0461ec5 ("of: Add standard property for poweroff capability"=
+)
+> from the mfd and regulator trees and commit 7518b5890d8a ("of/overlay=
+:
+> Introduce DT overlay support") from the devicetree tree.
 
-Hi Greg Michal
+This patch actually originated from the Regulator tree.  I pulled it in
+to avoid conflicts between MFD and Regulator.  I guess OF needs to do
+the same to avoid a conflict when Linus pulls them in.
 
-I suggest to unify the two like:
+[...]
 
-+# IDE project files
-+*.kdev4
-+.project
-+.cproject
-
-And put the one patch from one tree. There is no need to
-comment about every IDE out there, just the one section for
-them all, I think
-
-Tell me if you guys need a patch and/or which tree should take
-it?
-
-Thanks
-Boaz
-
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc .gitignore
-> index ce57b79670a5,6bfac06d79ca..000000000000
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@@ -97,5 -97,6 +97,9 @@@ x509.genke
->   # Kconfig presets
->   all.config
->   
->  +# Kdevelop4
->  +*.kdev4
-> ++
-> + #eclipse files
-> + .project
-> + .cproject
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
