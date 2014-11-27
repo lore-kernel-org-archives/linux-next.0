@@ -1,38 +1,89 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: linux-next: manual merge of the irqchip tree with the mips tree
-Date: Thu, 27 Nov 2014 13:11:43 -0500
-Message-ID: <20141127181143.GN22670@titan.lakedaemon.net>
-References: <20141127165719.2e5cb4e4@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Nov 27
+Date: Thu, 27 Nov 2014 12:30:27 -0800
+Message-ID: <20141127203027.GA13159@roeck-us.net>
+References: <20141127230251.5273a72f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:23831 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750861AbaK0SLy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2014 13:11:54 -0500
+Received: from bh-25.webhostbox.net ([208.91.199.152]:53122 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750784AbaK0Uaf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2014 15:30:35 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1Xu5hy-002WkE-Mt
+	for linux-next@vger.kernel.org; Thu, 27 Nov 2014 20:30:34 +0000
 Content-Disposition: inline
-In-Reply-To: <20141127165719.2e5cb4e4@canb.auug.org.au>
+In-Reply-To: <20141127230251.5273a72f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen,
-
-On Thu, Nov 27, 2014 at 04:57:19PM +1100, Stephen Rothwell wrote:
-> Hi Jason,
+On Thu, Nov 27, 2014 at 11:02:51PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the irqchip tree got a conflict in
-> drivers/irqchip/Makefile between commit 8a19b8f19429 ("MIPS: Move GIC
-> to drivers/irqchip/") from the mips tree and commit 5fe3bba3088c
-> ("irqchip: mtk-sysirq: Add sysirq interrupt polarity support") from the
-> irqchip tree.
+> Changes since 20141126:
 > 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> The block tree gained a conflict against the ext4 tree.
+> 
+> The omap_dss2 tree lost its build failure.
+> 
+> The irqchip tree gained a conflict against the mips tree.
+> 
+> The staging tree gained conflicts against the kbuild and vfs trees.
+> 
+> The akpm tree lost a patch that turned up elsewhere.
+> 
+> Non-merge commits (relative to Linus' tree): 9044
+>  8635 files changed, 334054 insertions(+), 234320 deletions(-)
+> 
+> ----------------------------------------------------------------------------
 
-Looks good, thanks!
+Build results:
+	total: 133 pass: 111 fail: 22
+Failed builds:
+	alpha:defconfig
+	alpha:allmodconfig
+	hexagon:defconfig
+	mips:defconfig
+	mips:allmodconfig
+	mips:bcm47xx_defconfig
+	mips:bcm63xx_defconfig
+	mips:nlm_xlp_defconfig
+	mips:ath79_defconfig
+	mips:ar7_defconfig
+	mips:fuloong2e_defconfig
+	mips:e55_defconfig
+	mips:cavium_octeon_defconfig
+	mips:malta_defconfig
+	parisc:defconfig
+	parisc:generic-32bit_defconfig
+	parisc:a500_defconfig
+	parisc:generic-64bit_defconfig
+	sparc64:allmodconfig
+	x86_64:allyesconfig
+	xtensa:defconfig
+	xtensa:allmodconfig
 
-thx,
+Qemu test results:
+	total: 30 pass: 17 fail: 13
+Failed tests:
+	alpha:alpha_defconfig
+	arm:arm_versatile_defconfig
+	mips:mips_malta_defconfig
+	mips:mips_malta_smp_defconfig
+	mips:mipsel_malta_defconfig
+	mips:mipsel_malta_smp_defconfig
+	mips64:mips_malta64_defconfig
+	mips64:mips_malta64_smp_defconfig
+	powerpc:ppc_book3s_defconfig
+	powerpc:ppc_book3s_smp_defconfig
+	powerpc:ppc64_book3s_defconfig
+	powerpc:ppc64_book3s_smp_defconfig
+	xtensa:xtensa_defconfig
 
-Jason.
+Details are available at http://server.roeck-us.net:8010/builders.
+
+Guenter
