@@ -1,60 +1,111 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH] irqchip: gic: Remove warning by including linux/irqdomain.h
-Date: Thu, 27 Nov 2014 23:46:04 -0500
-Message-ID: <20141128044604.GO22670@titan.lakedaemon.net>
-References: <20141127172822.593adbd2@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the devicetree tree
+Date: Fri, 28 Nov 2014 17:17:04 +1100
+Message-ID: <20141128171704.1e0dbd96@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3aKPvnQ8rCAG_bb8nrEuFPR"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:25355 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750754AbaK1EqN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2014 23:46:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20141127172822.593adbd2@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:43005 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750832AbaK1GRL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Nov 2014 01:17:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Thomas Gleixner <tglx@linutronix.de>
+To: Greg KH <greg@kroah.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andrew Jackson <Andrew.Jackson@arm.com>
 
-Commit
+--Sig_/3aKPvnQ8rCAG_bb8nrEuFPR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  853a33ce6932 irqchip: gic-v2m: Add support for ARM GICv2m MSI(-X) doorbell
+Hi Greg,
 
-Introduced a series of warnings when building ARM multi_v7_defconfig:
+Today's linux-next merge of the tty tree got a conflict in
+Documentation/devicetree/bindings/serial/pl011.txt between commit
+a81a6c654bbe ("ARM: dt: fix up PL011 device tree bindings") from the
+devicetree tree and commit 98267d33e2da ("serial: pl011: Add device
+tree support for RX DMA polling") from the tty tree.
 
-  include/linux/irqchip/arm-gic.h:109:53: warning: its scope is only this definition or declaration, which is probably not what you want
-  In file included from arch/arm/mach-ux500/pm.c:13:0:
-  include/linux/irqchip/arm-gic.h:109:53: warning: 'struct irq_domain' declared inside parameter list
-   int gicv2m_of_init(struct device_node *node, struct irq_domain *parent);
-                                                       ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Fix this by adding the proper include.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Signed-off-by: Jason Cooper <jason@lakedaemon.net>
----
-I've added this to irqchip/irqdomain-arm locally and pushed it to next.  If
-there are no objections, I'll push it to irqchip/irqdomain-arm.
+diff --cc Documentation/devicetree/bindings/serial/pl011.txt
+index 52464918cfe2,0e05340055e1..000000000000
+--- a/Documentation/devicetree/bindings/serial/pl011.txt
++++ b/Documentation/devicetree/bindings/serial/pl011.txt
+@@@ -6,34 -6,17 +6,39 @@@ Required properties
+  - interrupts: exactly one interrupt specifier
+ =20
+  Optional properties:
+ -- pinctrl:		When present, must have one state named "sleep"
+ -			and one state named "default"
+ -- clocks:		When present, must refer to exactly one clock named
+ -			"apb_pclk"
+ -- dmas:			When present, may have one or two dma channels.
+ -			The first one must be named "rx", the second one
+ -			must be named "tx".
+ +- pinctrl: When present, must have one state named "default",
+ +	   and may contain a second name named "sleep". The former
+ +	   state sets up pins for ordinary operation whereas
+ +	   the latter state will put the associated pins to sleep
+ +	   when the UART is unused
+ +- clocks:  When present, the first clock listed must correspond to
+ +	   the clock named UARTCLK on the IP block, i.e. the clock
+ +	   to the external serial line, whereas the second clock
+ +	   must correspond to the PCLK clocking the internal logic
+ +	   of the block. Just listing one clock (the first one) is
+ +	   deprecated.
+ +- clocks-names: When present, the first clock listed must be named
+ +	   "uartclk" and the second clock listed must be named
+ +	   "apb_pclk"
+ +- dmas:	   When present, may have one or two dma channels.
+ +	   The first one must be named "rx", the second one
+ +	   must be named "tx".
++ - auto-poll:		Enables polling when using RX DMA.
++ - poll-rate-ms:		Rate at which poll occurs when auto-poll is set,
++ 			default 100ms.
++ - poll-timeout-ms:	Poll timeout when auto-poll is set, default
++ 			3000ms.
+ =20
+  See also bindings/arm/primecell.txt
+ +
+ +Example:
+ +
+ +uart@80120000 {
+ +	compatible =3D "arm,pl011", "arm,primecell";
+ +	reg =3D <0x80120000 0x1000>;
+ +	interrupts =3D <0 11 IRQ_TYPE_LEVEL_HIGH>;
+ +	dmas =3D <&dma 13 0 0x2>, <&dma 13 0 0x0>;
+ +	dma-names =3D "rx", "tx";
+ +	clocks =3D <&foo_clk>, <&bar_clk>;
+ +	clock-names =3D "uartclk", "apb_pclk";
+ +};
 
-thx,
+--Sig_/3aKPvnQ8rCAG_bb8nrEuFPR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Jason.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
- include/linux/irqchip/arm-gic.h | 2 ++
- 1 file changed, 2 insertions(+)
+iQIcBAEBCAAGBQJUeBNkAAoJEMDTa8Ir7ZwVMIwP/iHDxM5DZi1Lq7iuMBKTUpgD
+/QZyOnFp1yKEdl/bZh8UAGDiMrszTzpqkd1G9mluLASLmN+alFCrx+z4iKPjhWWF
+Ks8UUIHNZhzV74EJVTExsMOT5gh+6GuaqBP1r6y+ZzlYHbGNGehWpRiegcTCAcTe
+vpJtCxCIIVr4r36uoXGPj8cAV9KzOEG1C+BBdd8OZGNK3cPWjuKohAprbuCXNet8
+KOtSHRsNg4lrYhBChV1nRYtnyHuSHBatY4biblF3OYVSg4JtewPqoSXuVTuUUWQA
+NAPGY9hCNrcHgOCQJbUE7lftEXXjPXxxGWV7sWNp+Wf9WYoWhPTclOy+9XVRRYIx
+oC98qvvWSuwkJcMouyUwpPH7otoPMyJlIdXp9MvtpRsP0ijeNFkJoOhYywSW++qh
+HIWxAhx+20w698GX4jUROJB7fJvXoznOrH0o/OfTHTqps9NwpJf6Q+qoRK2GASQC
+P5QsqDPgj5wF3DubiRg1FmhaQ9HGCnLKu7oGOH5CkDN3iFHB10NPK4kU41wZuTJg
+XPXMYI+X5EQBHM9Y65qzkM9DJ9Azk/KvHdd0B12Mxeu3sXrVzn9bd4dhXweaLhQ6
+A1rtxugGrwlGxtI3V3FUO4jaBe5LiiBSB37vlLOz1viQECJIq7yaiCFJ0iwXQxCU
+vn116JAJZRiSg5WRR1QD
+=lSe7
+-----END PGP SIGNATURE-----
 
-diff --git a/include/linux/irqchip/arm-gic.h b/include/linux/irqchip/arm-gic.h
-index 60b09ed58cae..d1b2263a4db3 100644
---- a/include/linux/irqchip/arm-gic.h
-+++ b/include/linux/irqchip/arm-gic.h
-@@ -10,6 +10,8 @@
- #ifndef __LINUX_IRQCHIP_ARM_GIC_H
- #define __LINUX_IRQCHIP_ARM_GIC_H
- 
-+#include <linux/irqdomain.h>
-+
- #define GIC_CPU_CTRL			0x00
- #define GIC_CPU_PRIMASK			0x04
- #define GIC_CPU_BINPOINT		0x08
--- 
-2.1.3
+--Sig_/3aKPvnQ8rCAG_bb8nrEuFPR--
