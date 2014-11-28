@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the devicetree tree
-Date: Fri, 28 Nov 2014 17:17:04 +1100
-Message-ID: <20141128171704.1e0dbd96@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the driver-core tree
+Date: Fri, 28 Nov 2014 17:32:46 +1100
+Message-ID: <20141128173246.241262c4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3aKPvnQ8rCAG_bb8nrEuFPR"; protocol="application/pgp-signature"
+ boundary="Sig_/iJdwW6chG2znZh/To8wO5bW"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43005 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57229 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750832AbaK1GRL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 28 Nov 2014 01:17:11 -0500
+	id S1750902AbaK1GdK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Nov 2014 01:33:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andrew Jackson <Andrew.Jackson@arm.com>
+To: Greg KH <greg@kroah.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@freescale.com>
 
---Sig_/3aKPvnQ8rCAG_bb8nrEuFPR
+--Sig_/iJdwW6chG2znZh/To8wO5bW
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-Documentation/devicetree/bindings/serial/pl011.txt between commit
-a81a6c654bbe ("ARM: dt: fix up PL011 device tree bindings") from the
-devicetree tree and commit 98267d33e2da ("serial: pl011: Add device
-tree support for RX DMA polling") from the tty tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/chipidea/core.c between commit 5bc879a6a271 ("usb:
+chipidea: drop owner assignment from platform_drivers") from the
+driver-core tree and commit 8076932ff2fc ("usb: chipidea: add system
+power management support") from the usb tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,78 +34,40 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/serial/pl011.txt
-index 52464918cfe2,0e05340055e1..000000000000
---- a/Documentation/devicetree/bindings/serial/pl011.txt
-+++ b/Documentation/devicetree/bindings/serial/pl011.txt
-@@@ -6,34 -6,17 +6,39 @@@ Required properties
-  - interrupts: exactly one interrupt specifier
+diff --cc drivers/usb/chipidea/core.c
+index 947ed6e78be2,e14eafb2a05e..000000000000
+--- a/drivers/usb/chipidea/core.c
++++ b/drivers/usb/chipidea/core.c
+@@@ -751,6 -867,8 +867,7 @@@ static struct platform_driver ci_hdrc_d
+  	.remove	=3D ci_hdrc_remove,
+  	.driver	=3D {
+  		.name	=3D "ci_hdrc",
++ 		.pm	=3D &ci_pm_ops,
+ -		.owner	=3D THIS_MODULE,
+  	},
+  };
  =20
-  Optional properties:
- -- pinctrl:		When present, must have one state named "sleep"
- -			and one state named "default"
- -- clocks:		When present, must refer to exactly one clock named
- -			"apb_pclk"
- -- dmas:			When present, may have one or two dma channels.
- -			The first one must be named "rx", the second one
- -			must be named "tx".
- +- pinctrl: When present, must have one state named "default",
- +	   and may contain a second name named "sleep". The former
- +	   state sets up pins for ordinary operation whereas
- +	   the latter state will put the associated pins to sleep
- +	   when the UART is unused
- +- clocks:  When present, the first clock listed must correspond to
- +	   the clock named UARTCLK on the IP block, i.e. the clock
- +	   to the external serial line, whereas the second clock
- +	   must correspond to the PCLK clocking the internal logic
- +	   of the block. Just listing one clock (the first one) is
- +	   deprecated.
- +- clocks-names: When present, the first clock listed must be named
- +	   "uartclk" and the second clock listed must be named
- +	   "apb_pclk"
- +- dmas:	   When present, may have one or two dma channels.
- +	   The first one must be named "rx", the second one
- +	   must be named "tx".
-+ - auto-poll:		Enables polling when using RX DMA.
-+ - poll-rate-ms:		Rate at which poll occurs when auto-poll is set,
-+ 			default 100ms.
-+ - poll-timeout-ms:	Poll timeout when auto-poll is set, default
-+ 			3000ms.
- =20
-  See also bindings/arm/primecell.txt
- +
- +Example:
- +
- +uart@80120000 {
- +	compatible =3D "arm,pl011", "arm,primecell";
- +	reg =3D <0x80120000 0x1000>;
- +	interrupts =3D <0 11 IRQ_TYPE_LEVEL_HIGH>;
- +	dmas =3D <&dma 13 0 0x2>, <&dma 13 0 0x0>;
- +	dma-names =3D "rx", "tx";
- +	clocks =3D <&foo_clk>, <&bar_clk>;
- +	clock-names =3D "uartclk", "apb_pclk";
- +};
 
---Sig_/3aKPvnQ8rCAG_bb8nrEuFPR
+--Sig_/iJdwW6chG2znZh/To8wO5bW
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUeBNkAAoJEMDTa8Ir7ZwVMIwP/iHDxM5DZi1Lq7iuMBKTUpgD
-/QZyOnFp1yKEdl/bZh8UAGDiMrszTzpqkd1G9mluLASLmN+alFCrx+z4iKPjhWWF
-Ks8UUIHNZhzV74EJVTExsMOT5gh+6GuaqBP1r6y+ZzlYHbGNGehWpRiegcTCAcTe
-vpJtCxCIIVr4r36uoXGPj8cAV9KzOEG1C+BBdd8OZGNK3cPWjuKohAprbuCXNet8
-KOtSHRsNg4lrYhBChV1nRYtnyHuSHBatY4biblF3OYVSg4JtewPqoSXuVTuUUWQA
-NAPGY9hCNrcHgOCQJbUE7lftEXXjPXxxGWV7sWNp+Wf9WYoWhPTclOy+9XVRRYIx
-oC98qvvWSuwkJcMouyUwpPH7otoPMyJlIdXp9MvtpRsP0ijeNFkJoOhYywSW++qh
-HIWxAhx+20w698GX4jUROJB7fJvXoznOrH0o/OfTHTqps9NwpJf6Q+qoRK2GASQC
-P5QsqDPgj5wF3DubiRg1FmhaQ9HGCnLKu7oGOH5CkDN3iFHB10NPK4kU41wZuTJg
-XPXMYI+X5EQBHM9Y65qzkM9DJ9Azk/KvHdd0B12Mxeu3sXrVzn9bd4dhXweaLhQ6
-A1rtxugGrwlGxtI3V3FUO4jaBe5LiiBSB37vlLOz1viQECJIq7yaiCFJ0iwXQxCU
-vn116JAJZRiSg5WRR1QD
-=lSe7
+iQIcBAEBCAAGBQJUeBcfAAoJEMDTa8Ir7ZwV50wP/2/FlHkfBt0O5QBPDEOXfp8U
+YtTYIjTzXexats4FddJPKBhhvkHwrAfoaeYKzglGVXd9Htw8bTmXpixYaBQKnsVw
+uCIJ8QI7B5u8sIEVmWH3NANQwtxlSuOo8UNKgzX4ZYR9Od/+Ch47YpDUXw9TLOAu
+fG9wbBwq5iPCm61tzGTsdtuubBjfla3Uj0C3rqFTRbOuvITEEHM0eeyFzv81K8uu
+XscGErM5h62NyFwpzMIcbqsNy+S2yeHi6ibA5jkaJiXHoPuakjZ0kJa+7BOFKe7V
+yLkjo2GsXcHvjDtB1Ka3bkVJydr6nBeQOqlUQc5XdYmrXey5cZQvnL4TqC1/pUgP
+zBd5WYSrM0AXGUEbpq0bYcDhh9jfBJCoeJgpmE+5mLib8S5E2jvQT0Z0zARvuGpe
+dIQiBDNlKRwG/QrJHtcN+FiBEBncNFQY1cVZmVZ3kHeu4TwyVRdgu616/MGZ+xd1
+5eXIcuqlFciowC90M856wqDSVuZb2iUufbegGmgFa/qckIZ7A64gYd7LymhySdyB
+PGd2lUUGT2F4h7JddyaeIn4zkmR1+63PwlQhHrD0YiGmhDgl3M29gU2XRBxk0scv
+KOL6WstyYpu0SNt2iMMA/sOUkcT8Nbh6C286GruwxDW6g/inQb0YHOuYZ1KL0xr+
+Yg471YcpSTJuQQaBNTpH
+=lSJk
 -----END PGP SIGNATURE-----
 
---Sig_/3aKPvnQ8rCAG_bb8nrEuFPR--
+--Sig_/iJdwW6chG2znZh/To8wO5bW--
