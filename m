@@ -1,114 +1,112 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: linux-next: manual merge of the sunxi tree with the arm-soc tree
-Date: Fri, 28 Nov 2014 09:37:06 +0100
-Message-ID: <20141128083706.GT25249@lukather>
-References: <20141128103617.13a1821c@canb.auug.org.au>
+From: Sabrina Dubroca <sd@queasysnail.net>
+Subject: Re: linux-next: manual merge of the block tree with the ext4 tree
+Date: Sat, 29 Nov 2014 11:08:33 +0100
+Message-ID: <20141129100833.GA31892@kria>
+References: <20141127145347.0083c0bc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0WGqsT62A4RTsSXf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp2-g21.free.fr ([212.27.42.2]:28605 "EHLO smtp2-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751385AbaK2KIp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 29 Nov 2014 05:08:45 -0500
 Content-Disposition: inline
-In-Reply-To: <20141128103617.13a1821c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20141127145347.0083c0bc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Jeremiah Mahler <jmmahler@gmail.com>
 
+Hello,
 
---0WGqsT62A4RTsSXf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[adding Jeremiah Mahler to CC]
 
-Hi,
-
-On Fri, Nov 28, 2014 at 10:36:17AM +1100, Stephen Rothwell wrote:
-> Hi Maxime,
->=20
-> Today's linux-next merge of the sunxi tree got a conflict in
-> arch/arm/boot/dts/sun6i-a31.dtsi between commit 3fd0c05da46c ("Revert
-> "ARM: dts: sunxi: Use sun4i-a10-apb1-clk for sun6i/sun8i apb2
-> clocks."") from the arm-soc tree and commit 74c947ab33c9 ("ARM: dts:
-> sunxi: Use sun4i-a10-apb1-clk for sun6i/sun8i apb2 clocks") from the
-> sunxi tree.
->=20
-> I fixed it up (I just used the arm-soc version for now) and can carry
+2014-11-27, 14:53:47 +1100, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> Today's linux-next merge of the block tree got a conflict in
+> fs/fs-writeback.c between commit ef7fdf5e8c87 ("vfs: add support for a
+> lazytime mount option") from the ext4 tree and commit 9c6ac78eb352
+> ("writeback: fix a subtle race condition in I_DIRTY clearing") from the
+> block tree.
+> 
+> I fixed it up (I took a guess, plese check - see below) and can carry
 > the fix as necessary (no action is required).
->=20
-> --=20
+> 
+> -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc arch/arm/boot/dts/sun6i-a31.dtsi
-> index 529c73803976,f47156b6572b..000000000000
-> --- a/arch/arm/boot/dts/sun6i-a31.dtsi
-> +++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-> @@@ -217,19 -229,11 +229,19 @@@
->   					"apb1_daudio1";
->   		};
->  =20
->  -		apb2: clk@01c20058 {
->  +		apb2_mux: apb2_mux@01c20058 {
->  +			#clock-cells =3D <0>;
->  +			compatible =3D "allwinner,sun4i-a10-apb1-mux-clk";
->  +			reg =3D <0x01c20058 0x4>;
->  +			clocks =3D <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
->  +			clock-output-names =3D "apb2_mux";
->  +		};
->  +
->  +		apb2: apb2@01c20058 {
->   			#clock-cells =3D <0>;
-> - 			compatible =3D "allwinner,sun6i-a31-apb2-div-clk";
-> + 			compatible =3D "allwinner,sun4i-a10-apb1-clk";
->   			reg =3D <0x01c20058 0x4>;
-> - 			clocks =3D <&apb2_mux>;
-> + 			clocks =3D <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
->   			clock-output-names =3D "apb2";
->   		};
->  =20
+> 
+> diff --cc fs/fs-writeback.c
+> index 3d87174408ae,2d609a5fbfea..000000000000
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@@ -482,14 -479,30 +482,30 @@@ __writeback_single_inode(struct inode *
+>   	 * write_inode()
+>   	 */
+>   	spin_lock(&inode->i_lock);
+> - 	/* Clear I_DIRTY_PAGES if we've written out all dirty pages */
+> - 	if (!mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+> - 		inode->i_state &= ~I_DIRTY_PAGES;
+> + 
+>  -	dirty = inode->i_state & I_DIRTY;
+>  -	inode->i_state &= ~I_DIRTY;
+>  +	dirty = inode->i_state & I_DIRTY_INODE;
+>  +	inode->i_state &= ~I_DIRTY_INODE;
+> + 
+> + 	/*
+> + 	 * Paired with smp_mb() in __mark_inode_dirty().  This allows
+> + 	 * __mark_inode_dirty() to test i_state without grabbing i_lock -
+> + 	 * either they see the I_DIRTY bits cleared or we see the dirtied
+> + 	 * inode.
+> + 	 *
+> + 	 * I_DIRTY_PAGES is always cleared together above even if @mapping
+> + 	 * still has dirty pages.  The flag is reinstated after smp_mb() if
+> + 	 * necessary.  This guarantees that either __mark_inode_dirty()
+> + 	 * sees clear I_DIRTY_PAGES or we see PAGECACHE_TAG_DIRTY.
+> + 	 */
+> + 	smp_mb();
+> + 
+> + 	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+> + 		inode->i_state |= I_DIRTY_PAGES;
+> + 
+>   	spin_unlock(&inode->i_lock);
+> + 
+>   	/* Don't write the inode if only I_DIRTY_PAGES was set */
+>  -	if (dirty & (I_DIRTY_SYNC | I_DIRTY_DATASYNC)) {
+>  +	if (dirty) {
+>   		int err = write_inode(inode, wbc);
+>   		if (ret == 0)
+>   			ret = err;
 
-I'm not exactly sure why there is still conflicts between my branches
-and arm-soc, since the previous branch that generates these conflicts
-was supposed to be dropped, but the correct fix is:
 
-		apb2: clk@01c20058 {
-			#clock-cells =3D <0>;
-			compatible =3D "allwinner,sun4i-a10-apb1-clk";
-			reg =3D <0x01c20058 0x4>;
-			clocks =3D <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
-			clock-output-names =3D "apb2";
-		};
+I think there's a problem in your fix, Stephen.
 
-with the apb2_mux node dropped entirely.
+I'm getting hangs at boot (strangely -- in QEMU -- only when booting
+via grub, not when using -kernel) and during shutdown.  Jeremiah seems
+to have the same problem and his bisection led to the merge commit:
+https://lkml.org/lkml/2014/11/29/17
 
-Thanks!
-Maxime
+The following solves both issues for me.  I think it makes sense given
+the #defines from ef7fdf5e8c87, since Tejun intended to clear
+I_DIRTY_PAGES.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
 
---0WGqsT62A4RTsSXf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index b70e45f45afa..6b2510d97a0a 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -484,7 +484,7 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ 	spin_lock(&inode->i_lock);
+ 
+ 	dirty = inode->i_state & I_DIRTY_INODE;
+-	inode->i_state &= ~I_DIRTY_INODE;
++	inode->i_state &= ~I_DIRTY;
+ 
+ 	/*
+ 	 * Paired with smp_mb() in __mark_inode_dirty().  This allows
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iQIcBAEBAgAGBQJUeDQyAAoJEBx+YmzsjxAgA9EQAL3wd58qbe08NZaZT8xhq7lX
-gwDIDEM0n4buH/cVOAdsrWGmvn8ZdNDeSS7K+n0SMpghiV0DLfuEKhTkmt+tRUpZ
-tTIc+jF+c5onS23RpxCTF7YYfucXSUMzxZ1oRa8WlaRQR60TENiX6DI6z20LjgxK
-q3/apUscyyl72ncBPRfH89UYHv3d4+RCSLTLVYvbGXaeA+5cA6/RrFKzF0DIjyGd
-5Tdn5W/ZrbhKvNqMVzxP7MBPuxOAdqNFTUuy+lPIudobIR8Mi1BHhocA46LD+h3a
-hhCddDZl3glLWjSofeubnuTIroOZER8QOXrIiK5kcJDspUFaoX2+GyDYJwhlI4wl
-Bml23UVGaf5lWI7MRXlWhQiWkiY90FptlxGWn8Hm9+0SCLnh/C0eGM9CltSE+rvd
-5N8sxHnDFjZVpGFbjwQmXFBccXAj4Wp82+Z+2XiC3fkwgb1ptJYiNS+VBZpm6nEy
-AtI1de8e59rX85TLqLUr5I+ZgPHFraqL1RIkGv9rLyXaixjkaR8N4XkfZ8jOQV1R
-7FZOig4RuZvgGog8qh4ohLOFQcVxWUbBEKN7pPi4Ii+fxckb8XtodV0SJzaSTyQq
-7yETbfxLvo2VKNgIXCansc/8eDjk5tSbdgpu5baHHukDAw6xoxQF/3QigaImf9+W
-8P43wylwxFmMDRrCcH8N
-=xTCB
------END PGP SIGNATURE-----
-
---0WGqsT62A4RTsSXf--
+-- 
+Thanks,
+Sabrina
