@@ -1,119 +1,153 @@
-From: Jeremiah Mahler <jmmahler@gmail.com>
-Subject: Re: linux-next: manual merge of the block tree with the ext4 tree
-Date: Sat, 29 Nov 2014 14:08:43 -0800
-Message-ID: <20141129220843.GA1472@hudson.localdomain>
-References: <20141127145347.0083c0bc@canb.auug.org.au>
- <20141129100833.GA31892@kria>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH v4] Thermal: int3406_thermal: solve the dependency build
+ error
+Date: Sun, 30 Nov 2014 20:22:56 +0800
+Message-ID: <1417350176.27484.10.camel@rzhang1-toshiba>
+References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com>
+	 <543F88BE.4090307@intel.com> <20141017070620.GA1538@aaronlu.sh.intel.com>
+	 <20141017072236.GA12504@aaronlu.sh.intel.com> <544F33AF.1000704@intel.com>
+	 <20141107191127.GB27438@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141129100833.GA31892@kria>
+In-Reply-To: <20141107191127.GB27438@developer>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Aaron Lu <aaron.lu@intel.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+On Fri, 2014-11-07 at 15:11 -0400, Eduardo Valentin wrote:
+> Hi,
+> 
+> On Tue, Oct 28, 2014 at 02:11:59PM +0800, Aaron Lu wrote:
+> > Jim found that the current kernel may trigger a build error with some
+> > config: drivers/built-in.o: In function `int3406_thermal_probe':
+> > int3406_thermal.c:(.text+0x1d10b8): undefined reference to
+> > `acpi_video_get_levels'. The problem happens when CONFIG_THERMAL=y and
+> > CONFIG_ACPI_VIDEO=m. Solve the problem by separating a kernel config for
+> > int3406 thermal driver and add dependency on ACPI video for it.
+> > 
+> > Reported-by: Jim Davis <jim.epost@gmail.com>
+> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> 
+Aaron, this is an incremental patch on top of the INT3406 driver patch.
+As, both patches have not been shipped in Linus' tree, please merge
+these two patches altogether and resend.
 
-On Sat, Nov 29, 2014 at 11:08:33AM +0100, Sabrina Dubroca wrote:
-> Hello,
+thanks,
+rui
+> Rui,
 > 
-> [adding Jeremiah Mahler to CC]
+> Any further comments on this change?
 > 
-> 2014-11-27, 14:53:47 +1100, Stephen Rothwell wrote:
-> > Hi Jens,
+> BR,
+> 
+> Eduardo Valentin
+> 
+> > ---
+> > v4: rebased on v3.18-rc2.
 > > 
-> > Today's linux-next merge of the block tree got a conflict in
-> > fs/fs-writeback.c between commit ef7fdf5e8c87 ("vfs: add support for a
-> > lazytime mount option") from the ext4 tree and commit 9c6ac78eb352
-> > ("writeback: fix a subtle race condition in I_DIRTY clearing") from the
-> > block tree.
+> >  drivers/thermal/Kconfig                  | 26 +++-----------------
+> >  drivers/thermal/int340x_thermal/Kconfig  | 41 ++++++++++++++++++++++++++++++++
+> >  drivers/thermal/int340x_thermal/Makefile |  1 +
+> >  3 files changed, 45 insertions(+), 23 deletions(-)
+> >  create mode 100644 drivers/thermal/int340x_thermal/Kconfig
 > > 
-> > I fixed it up (I took a guess, plese check - see below) and can carry
-> > the fix as necessary (no action is required).
-> > 
+> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> > index f554d25b4399..ac391d8d76b4 100644
+> > --- a/drivers/thermal/Kconfig
+> > +++ b/drivers/thermal/Kconfig
+> > @@ -229,29 +229,9 @@ config INTEL_SOC_DTS_THERMAL
+> >  	  notification methods.The other trip is a critical trip point, which
+> >  	  was set by the driver based on the TJ MAX temperature.
+> >  
+> > -config INT340X_THERMAL
+> > -	tristate "ACPI INT340X thermal drivers"
+> > -	depends on X86 && ACPI
+> > -	select THERMAL_GOV_USER_SPACE
+> > -	select ACPI_THERMAL_REL
+> > -	select ACPI_FAN
+> > -	help
+> > -	  Newer laptops and tablets that use ACPI may have thermal sensors and
+> > -	  other devices with thermal control capabilities outside the core
+> > -	  CPU/SOC, for thermal safety reasons.
+> > -	  They are exposed for the OS to use via the INT3400 ACPI device object
+> > -	  as the master, and INT3401~INT340B ACPI device objects as the slaves.
+> > -	  Enable this to expose the temperature information and cooling ability
+> > -	  from these objects to userspace via the normal thermal framework.
+> > -	  This means that a wide range of applications and GUI widgets can show
+> > -	  the information to the user or use this information for making
+> > -	  decisions. For example, the Intel Thermal Daemon can use this
+> > -	  information to allow the user to select his laptop to run without
+> > -	  turning on the fans.
+> > -
+> > -config ACPI_THERMAL_REL
+> > -	tristate
+> > -	depends on ACPI
+> > +menu "ACPI INT340X thermal drivers"
+> > +source drivers/thermal/int340x_thermal/Kconfig
+> > +endmenu
+> >  
+> >  menu "Texas Instruments thermal drivers"
+> >  source "drivers/thermal/ti-soc-thermal/Kconfig"
+> > diff --git a/drivers/thermal/int340x_thermal/Kconfig b/drivers/thermal/int340x_thermal/Kconfig
+> > new file mode 100644
+> > index 000000000000..b92892a6afe0
+> > --- /dev/null
+> > +++ b/drivers/thermal/int340x_thermal/Kconfig
+> > @@ -0,0 +1,41 @@
+> > +#
+> > +# ACPI INT340x thermal drivers configuration
+> > +#
+> > +
+> > +config INT340X_THERMAL
+> > +	tristate "ACPI INT340X thermal drivers"
+> > +	depends on X86 && ACPI
+> > +	select THERMAL_GOV_USER_SPACE
+> > +	select ACPI_THERMAL_REL
+> > +	select ACPI_FAN
+> > +	help
+> > +	  Newer laptops and tablets that use ACPI may have thermal sensors and
+> > +	  other devices with thermal control capabilities outside the core
+> > +	  CPU/SOC, for thermal safety reasons.
+> > +	  They are exposed for the OS to use via the INT3400 ACPI device object
+> > +	  as the master, and INT3401~INT340B ACPI device objects as the slaves.
+> > +	  Enable this to expose the temperature information and cooling ability
+> > +	  from these objects to userspace via the normal thermal framework.
+> > +	  This means that a wide range of applications and GUI widgets can show
+> > +	  the information to the user or use this information for making
+> > +	  decisions. For example, the Intel Thermal Daemon can use this
+> > +	  information to allow the user to select his laptop to run without
+> > +	  turning on the fans.
+> > +
+> > +if INT340X_THERMAL
+> > +
+> > +config ACPI_THERMAL_REL
+> > +	tristate
+> > +	depends on ACPI
+> > +
+> > +config INT3406_THERMAL
+> > +	tristate "ACPI INT3406 display thermal driver"
+> > +	depends on ACPI_VIDEO
+> > +	help
+> > +	  The display thermal device represents the LED/LCD display panel
+> > +	  that may or may not include touch support. The main function of
+> > +	  the display thermal device is to allow control of the display
+> > +	  brightness in order to address a thermal condition or to reduce
+> > +	  power consumed by display device.
+> > +
+> > +endif
+> > diff --git a/drivers/thermal/int340x_thermal/Makefile b/drivers/thermal/int340x_thermal/Makefile
+> > index ffe40bffaf1a..a9d0429be412 100644
+> > --- a/drivers/thermal/int340x_thermal/Makefile
+> > +++ b/drivers/thermal/int340x_thermal/Makefile
+> > @@ -1,4 +1,5 @@
+> >  obj-$(CONFIG_INT340X_THERMAL)	+= int3400_thermal.o
+> >  obj-$(CONFIG_INT340X_THERMAL)	+= int3402_thermal.o
+> >  obj-$(CONFIG_INT340X_THERMAL)	+= int3403_thermal.o
+> > +obj-$(CONFIG_INT3406_THERMAL)	+= int3406_thermal.o
+> >  obj-$(CONFIG_ACPI_THERMAL_REL)	+= acpi_thermal_rel.o
 > > -- 
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
+> > 1.9.3
 > > 
-> > diff --cc fs/fs-writeback.c
-> > index 3d87174408ae,2d609a5fbfea..000000000000
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@@ -482,14 -479,30 +482,30 @@@ __writeback_single_inode(struct inode *
-> >   	 * write_inode()
-> >   	 */
-> >   	spin_lock(&inode->i_lock);
-> > - 	/* Clear I_DIRTY_PAGES if we've written out all dirty pages */
-> > - 	if (!mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
-> > - 		inode->i_state &= ~I_DIRTY_PAGES;
-> > + 
-> >  -	dirty = inode->i_state & I_DIRTY;
-> >  -	inode->i_state &= ~I_DIRTY;
-> >  +	dirty = inode->i_state & I_DIRTY_INODE;
-> >  +	inode->i_state &= ~I_DIRTY_INODE;
-> > + 
-> > + 	/*
-> > + 	 * Paired with smp_mb() in __mark_inode_dirty().  This allows
-> > + 	 * __mark_inode_dirty() to test i_state without grabbing i_lock -
-> > + 	 * either they see the I_DIRTY bits cleared or we see the dirtied
-> > + 	 * inode.
-> > + 	 *
-> > + 	 * I_DIRTY_PAGES is always cleared together above even if @mapping
-> > + 	 * still has dirty pages.  The flag is reinstated after smp_mb() if
-> > + 	 * necessary.  This guarantees that either __mark_inode_dirty()
-> > + 	 * sees clear I_DIRTY_PAGES or we see PAGECACHE_TAG_DIRTY.
-> > + 	 */
-> > + 	smp_mb();
-> > + 
-> > + 	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
-> > + 		inode->i_state |= I_DIRTY_PAGES;
-> > + 
-> >   	spin_unlock(&inode->i_lock);
-> > + 
-> >   	/* Don't write the inode if only I_DIRTY_PAGES was set */
-> >  -	if (dirty & (I_DIRTY_SYNC | I_DIRTY_DATASYNC)) {
-> >  +	if (dirty) {
-> >   		int err = write_inode(inode, wbc);
-> >   		if (ret == 0)
-> >   			ret = err;
-> 
-> 
-> I think there's a problem in your fix, Stephen.
-> 
-> I'm getting hangs at boot (strangely -- in QEMU -- only when booting
-> via grub, not when using -kernel) and during shutdown.  Jeremiah seems
-> to have the same problem and his bisection led to the merge commit:
-> https://lkml.org/lkml/2014/11/29/17
-> 
-> The following solves both issues for me.  I think it makes sense given
-> the #defines from ef7fdf5e8c87, since Tejun intended to clear
-> I_DIRTY_PAGES.
-> 
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index b70e45f45afa..6b2510d97a0a 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -484,7 +484,7 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
->  	spin_lock(&inode->i_lock);
->  
->  	dirty = inode->i_state & I_DIRTY_INODE;
-> -	inode->i_state &= ~I_DIRTY_INODE;
-> +	inode->i_state &= ~I_DIRTY;
->  
->  	/*
->  	 * Paired with smp_mb() in __mark_inode_dirty().  This allows
-> 
-> 
-> -- 
-> Thanks,
-> Sabrina
-
-That change fixes the problem.
-
-Thanks Sabrina and Stephen!
-
--- 
-- Jeremiah Mahler
