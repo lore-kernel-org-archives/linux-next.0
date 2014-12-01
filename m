@@ -1,153 +1,93 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH v4] Thermal: int3406_thermal: solve the dependency build
- error
-Date: Sun, 30 Nov 2014 20:22:56 +0800
-Message-ID: <1417350176.27484.10.camel@rzhang1-toshiba>
-References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com>
-	 <543F88BE.4090307@intel.com> <20141017070620.GA1538@aaronlu.sh.intel.com>
-	 <20141017072236.GA12504@aaronlu.sh.intel.com> <544F33AF.1000704@intel.com>
-	 <20141107191127.GB27438@developer>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the  tree
+Date: Mon, 1 Dec 2014 11:06:10 +1100
+Message-ID: <20141201110610.2126988c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141107191127.GB27438@developer>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Aaron Lu <aaron.lu@intel.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vcOAvF9O7BQS_2jmDbhHXQU"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60107 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751920AbaLAAGS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Nov 2014 19:06:18 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Alim Akhtar <alim.akhtar@samsung.com>, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On Fri, 2014-11-07 at 15:11 -0400, Eduardo Valentin wrote:
-> Hi,
-> 
-> On Tue, Oct 28, 2014 at 02:11:59PM +0800, Aaron Lu wrote:
-> > Jim found that the current kernel may trigger a build error with some
-> > config: drivers/built-in.o: In function `int3406_thermal_probe':
-> > int3406_thermal.c:(.text+0x1d10b8): undefined reference to
-> > `acpi_video_get_levels'. The problem happens when CONFIG_THERMAL=y and
-> > CONFIG_ACPI_VIDEO=m. Solve the problem by separating a kernel config for
-> > int3406 thermal driver and add dependency on ACPI video for it.
-> > 
-> > Reported-by: Jim Davis <jim.epost@gmail.com>
-> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> 
-Aaron, this is an incremental patch on top of the INT3406 driver patch.
-As, both patches have not been shipped in Linus' tree, please merge
-these two patches altogether and resend.
+--Sig_/vcOAvF9O7BQS_2jmDbhHXQU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
-rui
-> Rui,
-> 
-> Any further comments on this change?
-> 
-> BR,
-> 
-> Eduardo Valentin
-> 
-> > ---
-> > v4: rebased on v3.18-rc2.
-> > 
-> >  drivers/thermal/Kconfig                  | 26 +++-----------------
-> >  drivers/thermal/int340x_thermal/Kconfig  | 41 ++++++++++++++++++++++++++++++++
-> >  drivers/thermal/int340x_thermal/Makefile |  1 +
-> >  3 files changed, 45 insertions(+), 23 deletions(-)
-> >  create mode 100644 drivers/thermal/int340x_thermal/Kconfig
-> > 
-> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > index f554d25b4399..ac391d8d76b4 100644
-> > --- a/drivers/thermal/Kconfig
-> > +++ b/drivers/thermal/Kconfig
-> > @@ -229,29 +229,9 @@ config INTEL_SOC_DTS_THERMAL
-> >  	  notification methods.The other trip is a critical trip point, which
-> >  	  was set by the driver based on the TJ MAX temperature.
-> >  
-> > -config INT340X_THERMAL
-> > -	tristate "ACPI INT340X thermal drivers"
-> > -	depends on X86 && ACPI
-> > -	select THERMAL_GOV_USER_SPACE
-> > -	select ACPI_THERMAL_REL
-> > -	select ACPI_FAN
-> > -	help
-> > -	  Newer laptops and tablets that use ACPI may have thermal sensors and
-> > -	  other devices with thermal control capabilities outside the core
-> > -	  CPU/SOC, for thermal safety reasons.
-> > -	  They are exposed for the OS to use via the INT3400 ACPI device object
-> > -	  as the master, and INT3401~INT340B ACPI device objects as the slaves.
-> > -	  Enable this to expose the temperature information and cooling ability
-> > -	  from these objects to userspace via the normal thermal framework.
-> > -	  This means that a wide range of applications and GUI widgets can show
-> > -	  the information to the user or use this information for making
-> > -	  decisions. For example, the Intel Thermal Daemon can use this
-> > -	  information to allow the user to select his laptop to run without
-> > -	  turning on the fans.
-> > -
-> > -config ACPI_THERMAL_REL
-> > -	tristate
-> > -	depends on ACPI
-> > +menu "ACPI INT340X thermal drivers"
-> > +source drivers/thermal/int340x_thermal/Kconfig
-> > +endmenu
-> >  
-> >  menu "Texas Instruments thermal drivers"
-> >  source "drivers/thermal/ti-soc-thermal/Kconfig"
-> > diff --git a/drivers/thermal/int340x_thermal/Kconfig b/drivers/thermal/int340x_thermal/Kconfig
-> > new file mode 100644
-> > index 000000000000..b92892a6afe0
-> > --- /dev/null
-> > +++ b/drivers/thermal/int340x_thermal/Kconfig
-> > @@ -0,0 +1,41 @@
-> > +#
-> > +# ACPI INT340x thermal drivers configuration
-> > +#
-> > +
-> > +config INT340X_THERMAL
-> > +	tristate "ACPI INT340X thermal drivers"
-> > +	depends on X86 && ACPI
-> > +	select THERMAL_GOV_USER_SPACE
-> > +	select ACPI_THERMAL_REL
-> > +	select ACPI_FAN
-> > +	help
-> > +	  Newer laptops and tablets that use ACPI may have thermal sensors and
-> > +	  other devices with thermal control capabilities outside the core
-> > +	  CPU/SOC, for thermal safety reasons.
-> > +	  They are exposed for the OS to use via the INT3400 ACPI device object
-> > +	  as the master, and INT3401~INT340B ACPI device objects as the slaves.
-> > +	  Enable this to expose the temperature information and cooling ability
-> > +	  from these objects to userspace via the normal thermal framework.
-> > +	  This means that a wide range of applications and GUI widgets can show
-> > +	  the information to the user or use this information for making
-> > +	  decisions. For example, the Intel Thermal Daemon can use this
-> > +	  information to allow the user to select his laptop to run without
-> > +	  turning on the fans.
-> > +
-> > +if INT340X_THERMAL
-> > +
-> > +config ACPI_THERMAL_REL
-> > +	tristate
-> > +	depends on ACPI
-> > +
-> > +config INT3406_THERMAL
-> > +	tristate "ACPI INT3406 display thermal driver"
-> > +	depends on ACPI_VIDEO
-> > +	help
-> > +	  The display thermal device represents the LED/LCD display panel
-> > +	  that may or may not include touch support. The main function of
-> > +	  the display thermal device is to allow control of the display
-> > +	  brightness in order to address a thermal condition or to reduce
-> > +	  power consumed by display device.
-> > +
-> > +endif
-> > diff --git a/drivers/thermal/int340x_thermal/Makefile b/drivers/thermal/int340x_thermal/Makefile
-> > index ffe40bffaf1a..a9d0429be412 100644
-> > --- a/drivers/thermal/int340x_thermal/Makefile
-> > +++ b/drivers/thermal/int340x_thermal/Makefile
-> > @@ -1,4 +1,5 @@
-> >  obj-$(CONFIG_INT340X_THERMAL)	+= int3400_thermal.o
-> >  obj-$(CONFIG_INT340X_THERMAL)	+= int3402_thermal.o
-> >  obj-$(CONFIG_INT340X_THERMAL)	+= int3403_thermal.o
-> > +obj-$(CONFIG_INT3406_THERMAL)	+= int3406_thermal.o
-> >  obj-$(CONFIG_ACPI_THERMAL_REL)	+= acpi_thermal_rel.o
-> > -- 
-> > 1.9.3
-> > 
+Hi Kukjin,
+
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm64/Kconfig between commit 419043609689 ("arm64: amd-seattle:
+Adding device tree for AMD Seattle platform") from the arm-soc tree and
+commit ab93f6ca6394 ("arm64: Enable ARMv8 based exynos7 SoC support")
+from the samsung tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm64/Kconfig
+index 44cb996e3cd7,7351199f0a42..000000000000
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@@ -142,11 -142,23 +142,28 @@@ source "kernel/Kconfig.freezer
+ =20
+  menu "Platform selection"
+ =20
+ +config ARCH_SEATTLE
+ +	bool "AMD Seattle SoC Family"
+ +	help
+ +	  This enables support for AMD Seattle SOC Family
+ +
++ config ARCH_EXYNOS
++ 	bool
++ 	help
++ 	  This enables support for Samsung Exynos SoC family
++=20
++ config ARCH_EXYNOS7
++ 	bool "ARMv8 based Samsung Exynos7"
++ 	select ARCH_EXYNOS
++ 	select COMMON_CLK_SAMSUNG
++ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
++ 	select HAVE_S3C_RTC if RTC_CLASS
++ 	select PINCTRL
++ 	select PINCTRL_EXYNOS
++=20
++ 	help
++ 	  This enables support for Samsung Exynos7 SoC family
++=20
+  config ARCH_THUNDER
+  	bool "Cavium Inc. Thunder SoC Family"
+  	help
+
+--Sig_/vcOAvF9O7BQS_2jmDbhHXQU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUe7D4AAoJEMDTa8Ir7ZwV2MUP/1nAtjr7dLJxIELFEClRi5VS
+3Fdmbkydtzt2S0/CB18F6DpgULDBREiHqJivQZF2LiCuvUj/gwwK6hsOgWYIhR1q
+9Lu7mF/H8I7FDbTiFrNipNbQI03Eu2rX3cxarWZvtf8h7R2fPDzSY1YcyCDH/BRd
+QVEmL1YBwGITk3nsF+3VVNRDsCz3uIkX9gVwC5v33EYIgAPQ8je+T12DydK2J3yQ
+ZQpgYVq1rjAbHWe4P1VLbxIoLoTXlM/8BR+rzULsUibI4LO5RDpwRwd9omXAoA1h
+vhuvZFXkVfUHwL6SZxmkBThaxdd+ysEgkIqcJt36tLXHHzjlP7c7MYxbWnujWeWK
+EI5tWE57zqZ3aOYtCzNluJPWRUR7m8Q0OXFzvzAR2gGHK0k2wVuw0pkNuFd7/GuW
++hzTg2AFj5Obi69tLxTnqlwPptPk+WPNl4Xw0V5Bpt5iOSrRVbkgY3meHLLrcBSX
+MvajV9jVgfe6Qq4ZstGVw+CyJtUQm4/2F03GiCBMIxzlykxmtGNo7WfxTroyPd9V
+zM0E7pzX+QmeoguPE4v0Gd1G1bUv4grUYQVr6osKa9Y6lJeSEP0u+uVhviwR4k+4
+KH311u9ctMl8hKex3IYPNSk3ylBD395mK/lMygdR0mGQDZPF7ECOlmnt+PYWXiqE
+Hy0a/MZ7n3wXoRMbA5Z9
+=ZigC
+-----END PGP SIGNATURE-----
+
+--Sig_/vcOAvF9O7BQS_2jmDbhHXQU--
