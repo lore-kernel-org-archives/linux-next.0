@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with the arm-soc tree
-Date: Mon, 1 Dec 2014 13:52:41 +1100
-Message-ID: <20141201135241.435ecb37@canb.auug.org.au>
+Subject: linux-next: manual merge of the mmc-uh tree with the arm-soc tree
+Date: Mon, 1 Dec 2014 15:22:02 +1100
+Message-ID: <20141201152202.5a1b4978@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UU+c4Ww2.eAE=OEG+gqaQSV"; protocol="application/pgp-signature"
+ boundary="Sig_/deITdhwIVWWOIqUJ9tExxUD"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:32948 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59344 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752562AbaLACwt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Nov 2014 21:52:49 -0500
+	id S1752326AbaLAEWN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Nov 2014 23:22:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Andreas Fenkart <afenkart@gmail.com>
 
---Sig_/UU+c4Ww2.eAE=OEG+gqaQSV
+--Sig_/deITdhwIVWWOIqUJ9tExxUD
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Ulf,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-arch/arm/mach-omap2/board-rx51-peripherals.c between commit
-e639cd5bfc03 ("ARM: OMAP2+: Prepare to move GPMC to drivers by platform
-data header") from the arm-soc tree and commit 68a3c0433077 ("[media]
-ARM: OMAP2: RX-51: update si4713 platform data") from the v4l-dvb tree.
+Today's linux-next merge of the mmc-uh tree got a conflict in
+arch/arm/mach-omap2/board-n8x0.c between commit e639cd5bfc03 ("ARM:
+OMAP2+: Prepare to move GPMC to drivers by platform data header") from
+the arm-soc tree and commit 826c71a06588 ("ARM: OMAP2: MMC: include
+mmc-omap platform header directly") from the mmc-uh tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,40 +34,42 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/board-rx51-peripherals.c
-index e2ad48b5d9c0,ec2e4101988b..000000000000
---- a/arch/arm/mach-omap2/board-rx51-peripherals.c
-+++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
-@@@ -23,7 -23,7 +23,8 @@@
-  #include <linux/regulator/machine.h>
-  #include <linux/gpio.h>
-  #include <linux/gpio_keys.h>
-+ #include <linux/gpio/machine.h>
- +#include <linux/omap-gpmc.h>
-  #include <linux/mmc/host.h>
-  #include <linux/power/isp1704_charger.h>
+diff --cc arch/arm/mach-omap2/board-n8x0.c
+index 49c3c25808e7,e0ad64fde20e..000000000000
+--- a/arch/arm/mach-omap2/board-n8x0.c
++++ b/arch/arm/mach-omap2/board-n8x0.c
+@@@ -21,7 -21,10 +21,9 @@@
+  #include <linux/i2c.h>
+  #include <linux/spi/spi.h>
+  #include <linux/usb/musb.h>
++ #include <linux/mmc/host.h>
   #include <linux/platform_data/spi-omap2-mcspi.h>
+ -#include <linux/platform_data/mtd-onenand-omap2.h>
++ #include <linux/platform_data/mmc-omap.h>
+  #include <linux/mfd/menelaus.h>
+  #include <sound/tlv320aic3x.h>
+ =20
 
---Sig_/UU+c4Ww2.eAE=OEG+gqaQSV
+--Sig_/deITdhwIVWWOIqUJ9tExxUD
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUe9f+AAoJEMDTa8Ir7ZwV0TsP/RkjeAWxRk5NZYhAeikseo4l
-LtsYTU9HlBkJvfQ+dJZpwwnieXEu2VtWBL6BoG16eJnEyowCZQUh7xvk2wzjkhiH
-0Z/axKaKLcW5buTra6FYeOwrqHvd2BQHAak3T5CqUWPy8GLXt3BZ9XYmJY4WU4m/
-vQllAULjFbDvz+41NU+Ij7i6lz3BI9vLtxuJP+YbOaq8DC7Jbh+n0fENGqISQW1T
-QznI8nZfWFrd9y1ELWXzOMdlYEuzzzOx8ddVSPmLjP0R4qfwaYhL3X4NlSPs3+fA
-JsHUDA6QwqN3nJ+q80s1AABMVg4lAF5fd/WmMHfO/ct+9VJudoSB4yjd+KbdtsBQ
-kxHH3gwS4gHReVrtwCTTQ3Wii1UloOIjNeiCMly98im7f9izmp47AIp0EJcSSQXV
-5SMdQJOVraLmb7cgwY5dXHiZbjAy5T/j6ofXRcWJagTC72qnA93jez2J5qYeIYLp
-fju3k0hpkzY2kgG1rZSQf+0vv/ZA4zAcPaVAkNbNu1hCSaU41qrU2WXTL7SIs+2j
-o7APpur7v0xMPiWbqzeu59S6L4OfomHMGg3bFh6kKfaIq6Y3yNPaAGNxs+Zrupj2
-oN2vquOM2UfksgBhFCXushNLdzH+RD+0I/zWPBZ5RmGl9Hnnv6pr6y/GzzlwuxzJ
-e0KncSsXSRKoL+MuziW9
-=jb+I
+iQIcBAEBCAAGBQJUe+zvAAoJEMDTa8Ir7ZwV2bkQAINBPo8tCi0c27K0hkfwBJ/Q
+aAW7HHsswF2kf4pUkf940f23S3DGk8ep8zTIATM4iJBJuUG63uPF5T0xP+9LW301
+lTQnxnpBMfv7OE0dRnMb1G8fliy6iR+bjhVrcQ1I3DUGGFmz8Ivlqest04rBIZEB
+A7ou+WI4/EThKy4W27s2uKdHghYU9AkRFpsB+dQw6Q0SgKr8uMrSX0g4MjJfi2ck
+SdOc3zhQmwxMxq+Yliy/pbxfeTCcBsHuaHpnpNGL5dS6Do7/LOuqNrtkMQiUit/q
+DyHx88ALtC8Pgml+R0PAyC0elcfCAl9WzDNPngb1EPWFfY9DbpxtoAcl/gcQSRvD
+jQ6amG3ZXGp67C0RiZVSV3zH4/2QSkoqYqtqSZq4aa5QmvcbBLP//ydnsxcL1s8w
+8McsUJhaJ5URqWe5/LszZ1pwqfiv2sRyXtpV/9uhmV6fBN9oX63qDm34ulzsvOE6
+u94S5/nBtcpctyNUzSNsyH65a6XoP3WOridbIuRS1s50/Q+mcmeLbr3BPXdWfdmo
+VopTRXVv/GOFib4Eq2sVbgiJ0mXlNLz61WbpmUWbMa225+lDKPy87kKDYOVMYbeU
+qJDzOpeFF5qTcnC+NpeYIkuAqM8mjjWY751lusjzc+1GZvq9OObg1lq+Kdry8fjV
+dssBBmr6sNcTzdUuO/jl
+=NQ8F
 -----END PGP SIGNATURE-----
 
---Sig_/UU+c4Ww2.eAE=OEG+gqaQSV--
+--Sig_/deITdhwIVWWOIqUJ9tExxUD--
