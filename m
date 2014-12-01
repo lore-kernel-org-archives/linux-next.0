@@ -1,51 +1,66 @@
-From: Arend van Spriel <arend@broadcom.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the net-next
- tree
-Date: Mon, 1 Dec 2014 08:34:05 +0100
-Message-ID: <547C19ED.10201@broadcom.com>
-References: <20141201181933.6dfaad66@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the driver-core tree
+Date: Mon, 1 Dec 2014 18:42:05 +1100
+Message-ID: <20141201184205.08a8f7aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/mrVtLRuL2fZyAHZ_dVb0_MP"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:6966 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752483AbaLAHeK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2014 02:34:10 -0500
-In-Reply-To: <20141201181933.6dfaad66@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:58357 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752543AbaLAHmM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Dec 2014 02:42:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>, Ben Greear <greearb@candelatech.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arend van Spriel <arend@broadcom.com>
 
-On 01-12-14 08:19, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/net/wireless/ath/ath9k/debug.c between commits 70e535ed0029
-> ("ath9k: clean up debugfs print of reset causes"), 7b8aaead958e
-> ("ath9k: restart hardware after noise floor calibration failure") and
-> 325e18817668 ("ath9k: fix misc debugfs when not using chan context")
-> from the net-next tree and commit 631bee257bd5 ("ath: use seq_file api
-> for ath9k debugfs files") from the driver-core tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-> Greg, I am not sure why those 2 commits are even in your tree.  Do they
-> depend on something else in your tree?
+--Sig_/mrVtLRuL2fZyAHZ_dVb0_MP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-They do. The three commits below are related:
+Hi Greg,
 
-d32394f ath: ath9k: use debugfs_create_devm_seqfile() helper for
-seq_file entrie
-631bee2 ath: use seq_file api for ath9k debugfs files
-98210b7 debugfs: add helper function to create device related seq_file
+After merging the driver-core tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-The ath patches were made to provide example of using the new helper
-function and get some idea about code savings. Greg and John discussed
-who would take them. I noticed other ath changes in net-next so I kinda
-expected this email ;-)
+In file included from kernel/power/main.c:16:0:
+include/linux/debugfs.h:105:10: warning: 'struct device' declared inside pa=
+rameter list
+          void *data));
+          ^
 
-Regards,
-Arend
+And many more like this.
+
+Introduced by commit 98210b7f73f1 ("debugfs: add helper function to
+create device related seq_file").  See Rule 1 from
+Documentation/SubmitChecklist - though in this case a simple "struct
+device;" would probably do.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/mrVtLRuL2fZyAHZ_dVb0_MP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUfBvSAAoJEMDTa8Ir7ZwVh2wP/i+6xV6yZHYDpYYyAKcd1q8T
+2PvSJJTzD4y5TmtHUL0+C82cphSC8b94pFCIHuE0qIBSuL7dO/6/B4mesMN/4Koe
+FqK4aOYnXCv2S6RgF7ShGGgNz0eBclysp7xnUz/wLs9GfwKXBvBWPsra56zhpFdJ
+qMjSXXdh4m+NJvLbQb9pfTpYT2m7vcNdFoTetzOYEKPaI4H3MRJvvwZS6HlQSP1F
+U0DuBRg3Zht8jJ//pAj3CSgUbkdLyEILPXJpB6NAUuczSkIei/wr3D0bFTEz/7Ue
+sSkhEbmXLofAw32Sz3NE10gg7aO8k7HEqgwUO3yhtgi1jSajhZ3OMJusLvACwRUx
+s9W0N6B5SZGjZVxkhr/lsk3zY7nihoXb2Msvhdx5k9Pv3chJFRxlZkl4d3f13TBQ
+tc68Bksf3eO9weFIQYG84VFUsDH0lwCmITvemsvb/eW7Jw/FIoL4xPBggnsrGamr
+SEGP36yjKn+beuhUyzPxFWF0pkXCEG98AcTa8YaPEVg3fUty6UPMI+7ET8YlaiAH
+8D+8SphVkeG8ISA9imGYSbYEOfKWex3bXFbEtQOHxxvIWahuSqER8CJH7sccEMwf
+zaFq8p/wZDoaeAEn4XpGKbtbmzHTVXRNUZEPvrAUzDn7D2/eqoNFWHw8RHINOfpD
+XrNY7v4UbGpQC4kNPU+q
+=ygh5
+-----END PGP SIGNATURE-----
+
+--Sig_/mrVtLRuL2fZyAHZ_dVb0_MP--
