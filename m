@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the  tree
-Date: Mon, 1 Dec 2014 11:06:10 +1100
-Message-ID: <20141201110610.2126988c@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with the arm-soc tree
+Date: Mon, 1 Dec 2014 13:52:41 +1100
+Message-ID: <20141201135241.435ecb37@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vcOAvF9O7BQS_2jmDbhHXQU"; protocol="application/pgp-signature"
+ boundary="Sig_/UU+c4Ww2.eAE=OEG+gqaQSV"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60107 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:32948 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751920AbaLAAGS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Nov 2014 19:06:18 -0500
+	id S1752562AbaLACwt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Nov 2014 21:52:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Alim Akhtar <alim.akhtar@samsung.com>, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>
 
---Sig_/vcOAvF9O7BQS_2jmDbhHXQU
+--Sig_/UU+c4Ww2.eAE=OEG+gqaQSV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Mauro,
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm64/Kconfig between commit 419043609689 ("arm64: amd-seattle:
-Adding device tree for AMD Seattle platform") from the arm-soc tree and
-commit ab93f6ca6394 ("arm64: Enable ARMv8 based exynos7 SoC support")
-from the samsung tree.
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+arch/arm/mach-omap2/board-rx51-peripherals.c between commit
+e639cd5bfc03 ("ARM: OMAP2+: Prepare to move GPMC to drivers by platform
+data header") from the arm-soc tree and commit 68a3c0433077 ("[media]
+ARM: OMAP2: RX-51: update si4713 platform data") from the v4l-dvb tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,60 +34,40 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/Kconfig
-index 44cb996e3cd7,7351199f0a42..000000000000
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@@ -142,11 -142,23 +142,28 @@@ source "kernel/Kconfig.freezer
- =20
-  menu "Platform selection"
- =20
- +config ARCH_SEATTLE
- +	bool "AMD Seattle SoC Family"
- +	help
- +	  This enables support for AMD Seattle SOC Family
- +
-+ config ARCH_EXYNOS
-+ 	bool
-+ 	help
-+ 	  This enables support for Samsung Exynos SoC family
-+=20
-+ config ARCH_EXYNOS7
-+ 	bool "ARMv8 based Samsung Exynos7"
-+ 	select ARCH_EXYNOS
-+ 	select COMMON_CLK_SAMSUNG
-+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-+ 	select HAVE_S3C_RTC if RTC_CLASS
-+ 	select PINCTRL
-+ 	select PINCTRL_EXYNOS
-+=20
-+ 	help
-+ 	  This enables support for Samsung Exynos7 SoC family
-+=20
-  config ARCH_THUNDER
-  	bool "Cavium Inc. Thunder SoC Family"
-  	help
+diff --cc arch/arm/mach-omap2/board-rx51-peripherals.c
+index e2ad48b5d9c0,ec2e4101988b..000000000000
+--- a/arch/arm/mach-omap2/board-rx51-peripherals.c
++++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
+@@@ -23,7 -23,7 +23,8 @@@
+  #include <linux/regulator/machine.h>
+  #include <linux/gpio.h>
+  #include <linux/gpio_keys.h>
++ #include <linux/gpio/machine.h>
+ +#include <linux/omap-gpmc.h>
+  #include <linux/mmc/host.h>
+  #include <linux/power/isp1704_charger.h>
+  #include <linux/platform_data/spi-omap2-mcspi.h>
 
---Sig_/vcOAvF9O7BQS_2jmDbhHXQU
+--Sig_/UU+c4Ww2.eAE=OEG+gqaQSV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUe7D4AAoJEMDTa8Ir7ZwV2MUP/1nAtjr7dLJxIELFEClRi5VS
-3Fdmbkydtzt2S0/CB18F6DpgULDBREiHqJivQZF2LiCuvUj/gwwK6hsOgWYIhR1q
-9Lu7mF/H8I7FDbTiFrNipNbQI03Eu2rX3cxarWZvtf8h7R2fPDzSY1YcyCDH/BRd
-QVEmL1YBwGITk3nsF+3VVNRDsCz3uIkX9gVwC5v33EYIgAPQ8je+T12DydK2J3yQ
-ZQpgYVq1rjAbHWe4P1VLbxIoLoTXlM/8BR+rzULsUibI4LO5RDpwRwd9omXAoA1h
-vhuvZFXkVfUHwL6SZxmkBThaxdd+ysEgkIqcJt36tLXHHzjlP7c7MYxbWnujWeWK
-EI5tWE57zqZ3aOYtCzNluJPWRUR7m8Q0OXFzvzAR2gGHK0k2wVuw0pkNuFd7/GuW
-+hzTg2AFj5Obi69tLxTnqlwPptPk+WPNl4Xw0V5Bpt5iOSrRVbkgY3meHLLrcBSX
-MvajV9jVgfe6Qq4ZstGVw+CyJtUQm4/2F03GiCBMIxzlykxmtGNo7WfxTroyPd9V
-zM0E7pzX+QmeoguPE4v0Gd1G1bUv4grUYQVr6osKa9Y6lJeSEP0u+uVhviwR4k+4
-KH311u9ctMl8hKex3IYPNSk3ylBD395mK/lMygdR0mGQDZPF7ECOlmnt+PYWXiqE
-Hy0a/MZ7n3wXoRMbA5Z9
-=ZigC
+iQIcBAEBCAAGBQJUe9f+AAoJEMDTa8Ir7ZwV0TsP/RkjeAWxRk5NZYhAeikseo4l
+LtsYTU9HlBkJvfQ+dJZpwwnieXEu2VtWBL6BoG16eJnEyowCZQUh7xvk2wzjkhiH
+0Z/axKaKLcW5buTra6FYeOwrqHvd2BQHAak3T5CqUWPy8GLXt3BZ9XYmJY4WU4m/
+vQllAULjFbDvz+41NU+Ij7i6lz3BI9vLtxuJP+YbOaq8DC7Jbh+n0fENGqISQW1T
+QznI8nZfWFrd9y1ELWXzOMdlYEuzzzOx8ddVSPmLjP0R4qfwaYhL3X4NlSPs3+fA
+JsHUDA6QwqN3nJ+q80s1AABMVg4lAF5fd/WmMHfO/ct+9VJudoSB4yjd+KbdtsBQ
+kxHH3gwS4gHReVrtwCTTQ3Wii1UloOIjNeiCMly98im7f9izmp47AIp0EJcSSQXV
+5SMdQJOVraLmb7cgwY5dXHiZbjAy5T/j6ofXRcWJagTC72qnA93jez2J5qYeIYLp
+fju3k0hpkzY2kgG1rZSQf+0vv/ZA4zAcPaVAkNbNu1hCSaU41qrU2WXTL7SIs+2j
+o7APpur7v0xMPiWbqzeu59S6L4OfomHMGg3bFh6kKfaIq6Y3yNPaAGNxs+Zrupj2
+oN2vquOM2UfksgBhFCXushNLdzH+RD+0I/zWPBZ5RmGl9Hnnv6pr6y/GzzlwuxzJ
+e0KncSsXSRKoL+MuziW9
+=jb+I
 -----END PGP SIGNATURE-----
 
---Sig_/vcOAvF9O7BQS_2jmDbhHXQU--
+--Sig_/UU+c4Ww2.eAE=OEG+gqaQSV--
