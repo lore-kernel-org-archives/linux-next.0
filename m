@@ -1,45 +1,94 @@
-From: Arend van Spriel <arend@broadcom.com>
-Subject: Re: linux-next: build warnings after merge of the driver-core tree
-Date: Mon, 1 Dec 2014 08:45:13 +0100
-Message-ID: <547C1C89.1070604@broadcom.com>
-References: <20141201184205.08a8f7aa@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Mon, 1 Dec 2014 18:49:39 +1100
+Message-ID: <20141201184939.69c44428@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bSFSZ+AZryAMRNci/fHXRzU"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:50108 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752211AbaLAHpS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2014 02:45:18 -0500
-In-Reply-To: <20141201184205.08a8f7aa@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:54552 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752367AbaLAHtp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Dec 2014 02:49:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01-12-14 08:42, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the driver-core tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> In file included from kernel/power/main.c:16:0:
-> include/linux/debugfs.h:105:10: warning: 'struct device' declared inside parameter list
->           void *data));
->           ^
-> 
-> And many more like this.
-> 
-> Introduced by commit 98210b7f73f1 ("debugfs: add helper function to
-> create device related seq_file").  See Rule 1 from
-> Documentation/SubmitChecklist - though in this case a simple "struct
-> device;" would probably do.
-> 
+--Sig_/bSFSZ+AZryAMRNci/fHXRzU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I submitted a patch for that yesterday [1] and got (automated) email
-from Greg that it is going into his driver-core tree.
+Hi Greg,
 
-Regards,
-Arend
+After merging the driver-core tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-[1] http://mid.gmane.org/1417361481-1136-1-git-send-email-arend@broadcom.com
+fs/debugfs/file.c:797:16: error: conflicting types for 'debugfs_create_devm=
+_seqfile'
+ struct dentry *debugfs_create_devm_seqfile(struct device *dev, const char =
+*name,
+                ^
+In file included from fs/debugfs/file.c:21:0:
+include/linux/debugfs.h:102:16: note: previous declaration of 'debugfs_crea=
+te_devm_seqfile' was here
+ struct dentry *debugfs_create_devm_seqfile(struct device *dev, const char =
+*name,
+                ^
+
+Caused by commit 98210b7f73f1 ("debugfs: add helper function to create
+device related seq_file") but I am not sure how ... it seems to be
+related to the warning I reported earlier as the following patch fixes
+it (and the warnings).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 1 Dec 2014 18:42:52 +1100
+Subject: [PATCH] debugfs: predeclare struct device
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/debugfs.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
+index d145287c0e44..37b17d95d648 100644
+--- a/include/linux/debugfs.h
++++ b/include/linux/debugfs.h
+@@ -21,6 +21,7 @@
+ #include <linux/types.h>
+=20
+ struct file_operations;
++struct device;
+=20
+ struct debugfs_blob_wrapper {
+ 	void *data;
+--=20
+2.1.3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/bSFSZ+AZryAMRNci/fHXRzU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUfB2XAAoJEMDTa8Ir7ZwVHHEP/2P9+oTZnSDC9tuMqHbw+BN4
+NO4g1xSddDWKDLEDOM9Vut5n43UNX13bN6xQObPjl6oxPS9dIKKWduq16VZ9vnL4
+KoITY86chfIWuTCD7NPFPSTED0Zyv04goaEWSpaWEZipMYafeIdql82x36/1IEsV
+wq+DNc/B+8peVvmLiL+qbXbb6eO+v9rBOy4w6OcnU3tzchP1Sk3IHHEEJ4Sm5DOw
+J8COeJ6WqRkhIEpSio3KBh5cyMFZ2Y4D9/ZzoMQCTf5ddQekCZWfKwdWbwSH43Yb
+9NdHR89ztz0YhXKTR6xLtFUzw4f+SKzbvkslODVf0u0SlwjOwdv65wpyRhq9nxmV
+dlCMuXuBzxs3X1cvxq8gAuueiLhDZ2ErboDDmQfR1OMSRjxean3L7gG7KA0F6tBb
+bm8+F9NlPClvXMJGEbeZGasoFcgOyrNCpse0kF1yQFwDfpberTceQJwyGDCVrz/O
+sn6atHpyX8ktMV0ixR699UuaX/QjmhKLl779BefPuKZdzn1ZiUfuR9MLzlBFFOkj
+onQpCPA8VI4+7w3O4HA3jsfdAlB6bw1RhTqv8QB/opjfQVJBF1OrMIdkh5SS7qGl
+R9T6c5UW/UIQgWDn0HM2xNYclyZERlNQ/V+Gg6dcTrG5xqz3SgE13yafjwd6nYhA
+naPLE2m55r0B8E4V93by
+=yMV8
+-----END PGP SIGNATURE-----
+
+--Sig_/bSFSZ+AZryAMRNci/fHXRzU--
