@@ -1,55 +1,49 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warnings after merge of the driver-core tree
-Date: Tue, 2 Dec 2014 10:09:49 -0800
-Message-ID: <20141202180949.GA11700@kroah.com>
-References: <20141201184205.08a8f7aa@canb.auug.org.au>
- <547C1C89.1070604@broadcom.com>
+Subject: Re: linux-next: manual merge of the usb tree with the driver-core
+ tree
+Date: Tue, 2 Dec 2014 10:10:08 -0800
+Message-ID: <20141202181008.GB11700@kroah.com>
+References: <20141128173246.241262c4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:54009 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751916AbaLBSJv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Dec 2014 13:09:51 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-	by mailout.nyi.internal (Postfix) with ESMTP id CAA18239A3
-	for <linux-next@vger.kernel.org>; Tue,  2 Dec 2014 13:09:50 -0500 (EST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <547C1C89.1070604@broadcom.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20141128173246.241262c4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@freescale.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 01, 2014 at 08:45:13AM +0100, Arend van Spriel wrote:
-> On 01-12-14 08:42, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > After merging the driver-core tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced this warning:
-> > 
-> > In file included from kernel/power/main.c:16:0:
-> > include/linux/debugfs.h:105:10: warning: 'struct device' declared inside parameter list
-> >           void *data));
-> >           ^
-> > 
-> > And many more like this.
-> > 
-> > Introduced by commit 98210b7f73f1 ("debugfs: add helper function to
-> > create device related seq_file").  See Rule 1 from
-> > Documentation/SubmitChecklist - though in this case a simple "struct
-> > device;" would probably do.
-> > 
+On Fri, Nov 28, 2014 at 05:32:46PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> I submitted a patch for that yesterday [1] and got (automated) email
-> from Greg that it is going into his driver-core tree.
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/chipidea/core.c between commit 5bc879a6a271 ("usb:
+> chipidea: drop owner assignment from platform_drivers") from the
+> driver-core tree and commit 8076932ff2fc ("usb: chipidea: add system
+> power management support") from the usb tree.
 > 
-> Regards,
-> Arend
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 > 
-> [1] http://mid.gmane.org/1417361481-1136-1-git-send-email-arend@broadcom.com
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/usb/chipidea/core.c
+> index 947ed6e78be2,e14eafb2a05e..000000000000
+> --- a/drivers/usb/chipidea/core.c
+> +++ b/drivers/usb/chipidea/core.c
+> @@@ -751,6 -867,8 +867,7 @@@ static struct platform_driver ci_hdrc_d
+>   	.remove	= ci_hdrc_remove,
+>   	.driver	= {
+>   		.name	= "ci_hdrc",
+> + 		.pm	= &ci_pm_ops,
+>  -		.owner	= THIS_MODULE,
+>   	},
+>   };
+>   
 
-Sorry for the delay, is now in my driver-core-next branch, so this will
-be fixed in the next linux-next pull.
+Looks good, thanks.
 
 greg k-h
