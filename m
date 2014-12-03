@@ -1,63 +1,80 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: manual merge of the pm tree with the arm tree
-Date: Wed, 03 Dec 2014 02:45:35 +0100
-Message-ID: <2220221.lsImPz8V5G@vostro.rjw.lan>
-References: <20141203121235.3eabd77b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the
+ kselftest-fixes tree
+Date: Wed, 3 Dec 2014 12:52:38 +1100
+Message-ID: <20141203125238.48fa7380@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4808115.MsWV0D8ghN"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+PSmxa3y_RuCJsG7Uphl6rI"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:51140 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750884AbaLCBYV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Dec 2014 20:24:21 -0500
-In-Reply-To: <20141203121235.3eabd77b@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:55675 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751232AbaLCBwv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Dec 2014 20:52:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, stephen hemminger <stephen@networkplumber.org>
 
+--Sig_/+PSmxa3y_RuCJsG7Uphl6rI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---nextPart4808115.MsWV0D8ghN
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Hi all,
 
-On Wednesday, December 03, 2014 12:12:35 PM Stephen Rothwell wrote:
-> Hi Rafael,
+Today's linux-next merge of the net-next tree got a conflict in
+include/uapi/linux/Kbuild between commit 3f4994cfc15f ("kcmp: Move
+kcmp.h into uapi") from the kselftest-fixes tree and commit
+df32dd2054b6 ("uapi: resort Kbuild entries") from the net-next tree.
 
-Hi,
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-> Today's linux-next merge of the pm tree got a conflict in
-> include/linux/pm_runtime.h between commit 3fb1581ea1ab ("ARM: 8199/1:
-> PM / Runtime: Add getter for querying the IRQ safe option v12") from
-> the arm tree and commit 6d14dd40f550 ("PM: Drop CONFIG_PM_RUNTIME from
-> the driver core") from the pm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Looks OK to me, thanks!
+diff --cc include/uapi/linux/Kbuild
+index d78fecf216bf,a1e8175cc488..000000000000
+--- a/include/uapi/linux/Kbuild
++++ b/include/uapi/linux/Kbuild
+@@@ -211,12 -211,11 +211,12 @@@ header-y +=3D ivtv.
+  header-y +=3D ixjuser.h
+  header-y +=3D jffs2.h
+  header-y +=3D joystick.h
+ +header-y +=3D kcmp.h
+- header-y +=3D kd.h
+  header-y +=3D kdev_t.h
+- header-y +=3D kernel-page-flags.h
+- header-y +=3D kernel.h
++ header-y +=3D kd.h
+  header-y +=3D kernelcapi.h
++ header-y +=3D kernel.h
++ header-y +=3D kernel-page-flags.h
+  header-y +=3D kexec.h
+  header-y +=3D keyboard.h
+  header-y +=3D keyctl.h
 
---nextPart4808115.MsWV0D8ghN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+--Sig_/+PSmxa3y_RuCJsG7Uphl6rI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v2
 
-iQIcBAABCAAGBQJUfmtJAAoJEILEb/54YlRxr0sP/ipBaAFeOR9SmnFwTD0p2hgL
-ZKH/qy+MmisU9pFRjTQ24fznCJTfQuJi/lc6QczuKFDZhyTgKEngeD4Z5io3jfbD
-crTnlF/6Bx5NxDJtJfio2Gwzssj0tueaNPkUz9EQVg/bwCVykmx7UKLnP1D42h74
-dRioncG2fgiZ/0tkj8x9t2pD9WLlz/2lDYPQEcU4KTMNljT/t2+iFsjAj5uCoI2h
-fKr2NzGDU2srrFFRw/Ipe/Svmzm00SZAcrTDtqWhA0EnYgcxHWluprKUh/Wn02xd
-ng6hYkaW2X3RIvK34Avpz7/M3SGwcNIJV4CB7UXh7HdxHJZ3/H2Rb7rp2lu8OWSL
-8Q7/WpRzkh2wktPVD/cmTU7F5H09Px2DQTs58Q7rXMlMqSKpsH61jInoCwkUikT1
-WUlKzPNe02lNQu9TfgfjF/D0FgXIfcaf3inPhXrJMWcpGJ9mYzzmiArNMpYt3P5d
-s7Jt+E554gdYgaC/IQMaG/nF++BUtyroO+RHBwMV182JHWE3Ox1PkMwNBzZDcSBl
-eoirxygBHIAHd3RpXh7rkzkmJz5oXjA+jlN+ltnCEcFNGirCVUVnSkcbJnEJZRej
-joeF+02gsZhQpD4e/D/8QGPKcN9JydIO1MUy90StUlR2N04f68Nqyy7DP5aw8LOs
-oawwJE9sSQ/IBQ6tO3qM
-=Ew2c
+iQIcBAEBCAAGBQJUfmzwAAoJEMDTa8Ir7ZwVzdEP/R2dC4soe0tC9SXyYdOUzCZe
+/6Ajh6yFu21DHZM5mkaR6DhHSUYWjX1nnUt20VxhueFUhVIe9ImE37dgs7AkNRoU
+fWtBz2tfbklWnleIrbuoarAeVtWdn603O2IV/bari51pbHNGbcHv3FyckHUEEnEo
+8GHtHt7rEAqQ/LStF4tBXtbqoH+NKateRdRf9vV7rgVX+6gRrfIdBglvEGTcME83
+HxUCE8NJA3bkCdaal+PkPP7HDqrNFfnTkT2EsFKaRfFs4YSEy0/6Xx5PLzp6No7a
+FAjmWf8Wxxxn33eJCjUEI9YFpfWYKmITOugtlVMGx8UtfQ6qwVfq0gw6MxR5Ru4D
+vMPzmFs286rQpvyulO44Ns04EFTQYasFHrOj2RWbLhOfO38EqjUK2I1Zo4p6Li+E
+CGe2Njxy5gkiU6DBIMKnakFwBWXrIWnEB7HxvUvcWrcq8QIjqx39udc93nEKqQWz
+rwraArb3JEdCaa6mVchHPfuhsferLIN3xHPPuh30GIqO4k7sOabAi/WR7QiVRhoq
+1ZW6pwHQYtKU3i+7Ik8q70/gGDnK8sidtdBmqumfQvYzh7z+eL72tRtVNTzE6/fw
+QSDK0oPBlwWScyRwKRvsv9s1sFllYoA4F7kf8MXEJZweAtgrKpBAJVWGqb7C+KGU
+TlMKk1LlBj3RS1mab5uL
+=y44f
 -----END PGP SIGNATURE-----
 
---nextPart4808115.MsWV0D8ghN--
+--Sig_/+PSmxa3y_RuCJsG7Uphl6rI--
