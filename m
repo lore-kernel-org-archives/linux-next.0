@@ -1,39 +1,73 @@
-From: Jani Nikula <jani.nikula@intel.com>
-Subject: Re: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Wed, 03 Dec 2014 10:24:12 +0200
-Message-ID: <87d281nntf.fsf@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the drm tree with the
+ drm-intel-fixes tree
+Date: Wed, 3 Dec 2014 19:28:29 +1100
+Message-ID: <20141203192829.28bec60c@canb.auug.org.au>
 References: <20141203132708.7423b7f8@canb.auug.org.au>
+	<87d281nntf.fsf@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20141203132708.7423b7f8@canb.auug.org.au>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gmWRvhrWHhDYxacqQvFKbyZ"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60784 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751393AbaLCI2h (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Dec 2014 03:28:37 -0500
+In-Reply-To: <87d281nntf.fsf@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gV2VkLCAwMyBEZWMgMjAxNCwgU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcu
-YXU+IHdyb3RlOgo+IEhpIERhdmUsCj4KPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhl
-IGRybSB0cmVlIGdvdCBhIGNvbmZsaWN0IGluCj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-ZGlzcGxheS5jIGJldHdlZW4gY29tbWl0IGI2ODM2MjI3OGFmOQo+ICgiZHJtL2k5MTU6IE1vcmUg
-Y2F1dGlvdXMgd2l0aCBwY2ggZmlmbyB1bmRlcnJ1bnMiKSBmcm9tIHRoZQo+IGRybS1pbnRlbC1m
-aXhlcyB0cmVlIGFuZCBjb21taXQgYTcyZTRjOWY5YTExICgiZHJtL2k5MTU6IFVzZSBkZXZfcHJp
-dgo+IGluIHB1YmxpYyBpbnRlbF9maWZvX3VuZGVycnVuLmMgZnVuY3Rpb25zIikgZnJvbSB0aGUg
-ZHJtIHRyZWUuCj4KPiBJIGZpeGVkIGl0IHVwIChJIHVzZWQgdGhlIGRybSB0cmVlIHZlcnNpb24p
-IGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcwo+IG5lY2Vzc2FyeSAobm8gYWN0aW9uIGlzIHJlcXVp
-cmVkKS4KCmI2ODM2MjI3OGFmOSByZW1vdmVzIHR3byBsaW5lcyBvZiBjb2RlOyB0aGVzZSBzaG91
-bGQgYmUgcmVtb3ZlZCBpbiB0aGUKcmVzb2x2ZWQgdmVyc2lvbiB0b28uCgpCUiwKSmFuaS4KCgot
-LSAKSmFuaSBOaWt1bGEsIEludGVsIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+--Sig_/gmWRvhrWHhDYxacqQvFKbyZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jani,
+
+On Wed, 03 Dec 2014 10:24:12 +0200 Jani Nikula <jani.nikula@intel.com> wrot=
+e:
+>
+> On Wed, 03 Dec 2014, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the drm tree got a conflict in
+> > drivers/gpu/drm/i915/intel_display.c between commit b68362278af9
+> > ("drm/i915: More cautious with pch fifo underruns") from the
+> > drm-intel-fixes tree and commit a72e4c9f9a11 ("drm/i915: Use dev_priv
+> > in public intel_fifo_underrun.c functions") from the drm tree.
+> >
+> > I fixed it up (I used the drm tree version) and can carry the fix as
+> > necessary (no action is required).
+>=20
+> b68362278af9 removes two lines of code; these should be removed in the
+> resolved version too.
+
+Thanks for the correction.  I will do that tomorrow.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/gmWRvhrWHhDYxacqQvFKbyZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUfsmxAAoJEMDTa8Ir7ZwVOfAP/Rxe8mOdvyMO31kS/YRT3yBH
+VVDzYO9O4EyBIEEYe54wx8d6ouNoWGWwEbRLF/JUQnQzCbFi/EVwI9bbLsw27n5h
+bE93ceQPzHGIKDv485lzJwXvsSCA+DjjVy3v6mr99iDslFJgFR1OuVY7hJuOooZ/
+NH5zvGxIRf9WIiog2WR1U1mvcJhoEQGJhiCxo9/h56DkQhdrGopkXxAzjC7EhH7N
+sAayarg2ctorGaMQE6f/ZAUaILnDZK7+ud6zZx5U8SL/zUi5SL3V8S5uBM+tWRxz
+Vgqo9huYjyZ6yS0PSsbELOK75DhN96cRrjAadZNGbaeAXTWvziz7WUAXK8QpbDeK
+ZfAUk5GVosSEayv00Jl5GOoFQD0b/HLeFeugmY7wcvpJpc+8zLsIBzH5CCuNfRCX
+w5ZqSpfZMlvWelgq0dDlaVxvW0eSBH5lXywJpP1CG1Pk10t2Vq+I43uOPqioj8AY
+UC9WdO1cvm7KNSCIkdn3LPLolpDx7E35NBOgmXcvyomCOpsvFVAVm9c+oVy85NKo
+1ag0o+G6iJzYd8qcGbdSj8x60T3Je4UyYBQUzEgmxrVW0T7fTdHt++zMn4NBmjZm
+BeZkKSx9ci6ICcF0DQINktFSGFoSF1l81ghXie94T+2DWr6q31pqAsjV4g+JNLih
+JZTvNPr/jKLzjMZ4+NWA
+=70i7
+-----END PGP SIGNATURE-----
+
+--Sig_/gmWRvhrWHhDYxacqQvFKbyZ--
