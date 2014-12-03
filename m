@@ -1,90 +1,115 @@
-From: Jeremiah Mahler <jmmahler@gmail.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- net-next tree
-Date: Wed, 3 Dec 2014 00:36:55 -0800
-Message-ID: <20141203083655.GA5418@hudson.localdomain>
-References: <20141201181933.6dfaad66@canb.auug.org.au>
- <547C19ED.10201@broadcom.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kselftest tree with the
+ kselftest-fixes tree
+Date: Wed, 3 Dec 2014 20:32:10 +1100
+Message-ID: <20141203203210.2eef1e6c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:62042 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751371AbaLCIg7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Dec 2014 03:36:59 -0500
-Content-Disposition: inline
-In-Reply-To: <547C19ED.10201@broadcom.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>, Ben Greear <greearb@candelatech.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/VeMA0nfOXfMGEuCxeQyJA7F"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+List-Id: linux-next.vger.kernel.org
 
-all,
+--Sig_/VeMA0nfOXfMGEuCxeQyJA7F
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 01, 2014 at 08:34:05AM +0100, Arend van Spriel wrote:
-> On 01-12-14 08:19, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the driver-core tree got a conflict in
-> > drivers/net/wireless/ath/ath9k/debug.c between commits 70e535ed0029
-> > ("ath9k: clean up debugfs print of reset causes"), 7b8aaead958e
-> > ("ath9k: restart hardware after noise floor calibration failure") and
-> > 325e18817668 ("ath9k: fix misc debugfs when not using chan context")
-> > from the net-next tree and commit 631bee257bd5 ("ath: use seq_file api
-> > for ath9k debugfs files") from the driver-core tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary (no action
-> > is required).
-> > 
-> > Greg, I am not sure why those 2 commits are even in your tree.  Do they
-> > depend on something else in your tree?
-> 
-> They do. The three commits below are related:
-> 
-> d32394f ath: ath9k: use debugfs_create_devm_seqfile() helper for
-> seq_file entrie
-> 631bee2 ath: use seq_file api for ath9k debugfs files
-> 98210b7 debugfs: add helper function to create device related seq_file
-> 
-> The ath patches were made to provide example of using the new helper
-> function and get some idea about code savings. Greg and John discussed
-> who would take them. I noticed other ath changes in net-next so I kinda
-> expected this email ;-)
-> 
-> Regards,
-> Arend
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Hi Shuah,
 
-I just ran in to a problem with one of these commits.
+Today's linux-next merge of the kselftest tree got a cselftests/kcmp:
+Always try to build the testonflict in
+tools/testing/selftests/kcmp/Makefile between commit 4c12df63f7ff ("")
+from the kselftest-fixes tree and commit c0d8a9393efd
+("selftests/kcmp: add install target to enable installing test") from
+the kselftest tree.
 
-On an Acer C720 laptop if a suspend is performed the screen freezes,
-the machine locks up, and according to the indicator lights it does
-not enter suspend.  A hard reset is required to get it running again.
+I fixed it up (see below - probably some more could be done) and can
+carry the fix as necessary (no action is required).
 
-I have bisected the kernel and found that the following is the first bad
-commit.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-  commit d32394fae95741d733b174ec1446f27765f80233
-  Author: Arend van Spriel <arend@broadcom.com>
-  Date:   Sun Nov 9 11:32:00 2014 +0100
-  
-      ath: ath9k: use debugfs_create_devm_seqfile() helper for seq_file
-  entries
-      
-      Use the helper to get rid of the file operations per debugfs file.
-  The
-      struct ath9k_softc pointer is set as device driver data to be
-  obtained
-      in the seq_file read operation.
-      
-      Signed-off-by: Arend van Spriel <arend@broadcom.com>
-      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+diff --cc tools/testing/selftests/kcmp/Makefile
+index ff0eefdc6ceb,753890f8d3b7..000000000000
+--- a/tools/testing/selftests/kcmp/Makefile
++++ b/tools/testing/selftests/kcmp/Makefile
+@@@ -1,10 -1,48 +1,30 @@@
+ -uname_M :=3D $(shell uname -m 2>/dev/null || echo not)
+ -ARCH ?=3D $(shell echo $(uname_M) | sed -e s/i.86/i386/)
+ -ifeq ($(ARCH),i386)
+ -        ARCH :=3D x86
+ -	CFLAGS :=3D -DCONFIG_X86_32 -D__i386__
+ -endif
+ -ifeq ($(ARCH),x86_64)
+ -	ARCH :=3D x86
+ -	CFLAGS :=3D -DCONFIG_X86_64 -D__x86_64__
+ -endif
+ -
+ -CFLAGS +=3D -I../../../../arch/x86/include/generated/
+ -CFLAGS +=3D -I../../../../include/
+ +CC :=3D $(CROSS_COMPILE)$(CC)
+  CFLAGS +=3D -I../../../../usr/include/
+ -CFLAGS +=3D -I../../../../arch/x86/include/
+ =20
++ TEST_STR =3D ./kcmp_test || echo kcmp_test: [FAIL]
++=20
+ -all:
+ -ifeq ($(ARCH),x86)
+ -	gcc $(CFLAGS) kcmp_test.c -o kcmp_test
+ -else
+ -	echo "Not an x86 target, can't build kcmp selftest"
+ -endif
+ +all: kcmp_test
+ =20
++ install:
++ ifdef INSTALL_KSFT_PATH
++ ifeq ($(ARCH),x86)
++ 	install ./kcmp_test $(INSTALL_KSFT_PATH)
++ 	@echo echo Start kcmp test .... >> $(KSELFTEST)
++ 	@echo "$(TEST_STR)" >> $(KSELFTEST)
++ 	@echo rm -f kcmp-test-file >> $(KSELFTEST)
++ 	@echo echo End kcmp test .... >> $(KSELFTEST)
++ 	@echo echo =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D >> $(KSELFTEST)
++ else
++ 	@echo Not an x86 target, unable install kcmp selftests
++ endif
++ else
++ 	@echo Run make kselftest_install in top level source directory
++ endif
++=20
+  run_tests: all
+- 	@./kcmp_test || echo "kcmp_test: [FAIL]"
++ ifeq ($(ARCH),x86)
++ 	@$(TEST_STR)
++ endif
+ =20
+  clean:
+  	$(RM) kcmp_test kcmp-test-file
 
-Let me know if I can do anything else to help.
+--Sig_/VeMA0nfOXfMGEuCxeQyJA7F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-- Jeremiah Mahler
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUftifAAoJEMDTa8Ir7ZwVc0YQAJTRBwrSOjjAf/tE3rg3H2EU
+J5qssGE6o71+ztAK2x1E6vfFDsK6ezD7tKAPTgvisabXwckHX6+JBD3jCY4Hrq++
+eft2j7GHT7ZkNaJ1fEjg8eQ7542HepZ7ZrRsHtPG2Ay8L/ulEvhg/s3U6SIVOYtv
+nvLyYSPsXPm6l+4gX1PP68/R9sZkIZtR2UWP7WWXxyoK7dBXFKDHKBo+d8XB5xDr
+54zaB9dGJaHv+IFZX4RG2NUevLL7mICQ5CYbwJPcvIDrPc9PBpAegx3J8aMbsmEh
+W6I+yht9+U/A/jK0BUtqzNTaV3KNm1QbTaBHZcHVuo1VwxDz4gSx/mgB2CxAsDZx
+DMpuqBeGhOsHej0DmXWNjSagFv4z8xjo/RCypmCg+f7xkYhgdtSIICKUolI8smN1
+bTEGMjpo9AJ8+MbYZLFFVQr1P+ZvE1a+9Nk3opfII/0b29sX4z4VV6TZvYDSIbb3
+SxTa4YIwoJ15BqtPS9nZKsRQPkxyyFi/Eq15i/AuMQq3kjnlAo8LBPTgpXoO5oQ3
+MUxOBjSU6wMvSFXsvsuZA4XuxOmFj9GMu7IUe7PTvqNVBRTSBBu0jzlnZW9NHtUV
+VBEfuw5USrrusAyNGqCjKrSa72M5XKo2RqkgDQVEpNMgl/oxg42gl/ZKHDLkKnNq
+w92xQsJYiZ95q3iIMOE8
+=6LZg
+-----END PGP SIGNATURE-----
+
+--Sig_/VeMA0nfOXfMGEuCxeQyJA7F--
