@@ -1,66 +1,64 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: linux-next: manual merge of the kselftest tree with the kselftest-fixes
- tree
-Date: Wed, 03 Dec 2014 08:51:47 -0700
-Message-ID: <547F3193.3040003@osg.samsung.com>
-References: <20141203203210.2eef1e6c@canb.auug.org.au> <1417607797.23663.1.camel@concordia> <547F199A.3020600@osg.samsung.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: DT parsing : duplicate name error
+Date: Wed, 3 Dec 2014 14:04:16 -0200
+Message-ID: <CAOMZO5AmA5-Ji6SDUv6b3qrhSi-KvSNYDV=ZaL7HoOhh-6SnsA@mail.gmail.com>
+References: <CAL8zT=iXizKqJjWDcLT-chZ7=ioPYtQcB4GeqZpiL7kCpGOKZw@mail.gmail.com>
+	<CACxGe6sRULEmOvdxFvR=Mcbf4Cgd3YijrJg1q9Uz1vgYw5tG+w@mail.gmail.com>
+	<CAL8zT=geUOJnmUHvqyYk651U+HF3NSy3XU7hiWUn3gPX0sVjPg@mail.gmail.com>
+	<CACxGe6skTZDe40eJN06BDapfKuN-KzMqgbEWNyLiTeXTt5dw5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:39104 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751091AbaLCPvt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Dec 2014 10:51:49 -0500
-In-Reply-To: <547F199A.3020600@osg.samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACxGe6skTZDe40eJN06BDapfKuN-KzMqgbEWNyLiTeXTt5dw5g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>, rafael.j.wysocki@intel.com, mika.westerberg@linux.intel.com, Bryan Wu <cooloney@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On 12/03/2014 07:09 AM, Shuah Khan wrote:
-> On 12/03/2014 04:56 AM, Michael Ellerman wrote:
->> On Wed, 2014-12-03 at 20:32 +1100, Stephen Rothwell wrote:
->>> Hi Shuah,
->>>
->>> Today's linux-next merge of the kselftest tree got a cselftests/kcmp:
->>> Always try to build the testonflict in
->>> tools/testing/selftests/kcmp/Makefile between commit 4c12df63f7ff ("")
->>> from the kselftest-fixes tree and commit c0d8a9393efd
->>> ("selftests/kcmp: add install target to enable installing test") from
->>> the kselftest tree.
->>
->> That got a bit mixed up, I think it should be:
->>
->>   Today's linux-next merge of the kselftest tree got a conflict in
->>   tools/testing/selftests/kcmp/Makefile between commit 4c12df63f7ff
->>   ("selftests/kcmp: Always try to build the test") from the kselftest-fixes
->>   tree and commit c0d8a9393efd ("selftests/kcmp: add install target to enable
->>   installing test") from the kselftest tree.
->>
->>> I fixed it up (see below - probably some more could be done) and can
->>> carry the fix as necessary (no action is required).
->>
->> That resolution basically negates the effect of the first patch.
->>
->> Shuah, seeing these are both your trees are you happy to do the proper
->> resolution?
->>
-> 
-> Stephen and Michael,
-> 
-> I will sort this out. I have some patches in next that I should have
-> cleaned up yesterday when I applied commit 4c12df63f7ff.
-> 
-> Sorry for the mix-up
-> 
+On Wed, Dec 3, 2014 at 1:41 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
 
-Done. kselftes-next is clean now.
+> From a quick reading of the backlog, for some reason the new device is
+> getting assigned NULL as the device name in led_classdev_register().
+> Probably because led_cdev->name is set to NULL. The leds are getting
+> bound to the LED driver in gpio_led_probe() which is the non-DT path
+> for creating LED devices. That would mean there is pdata attached to
+> the LED device, but I haven't dug any farther than that. Really need
+> the bisect to narrow down what is going on.
 
--- Shuah
+Ok, so this issue happens when two or more gpio-leds do not contain
+the 'label' property.
 
--- 
-Shuah Khan
-Sr. Linux Kernel Developer
-Samsung Research America (Silicon Valley)
-shuahkh@osg.samsung.com | (970) 217-8978
+'label' is an optional property according to
+Documentation/devicetree/bindings/leds/common.txt:
+
+"Optional properties for child nodes:
+- label : The label for this LED.  If omitted, the label is
+  taken from the node name (excluding the unit address)."
+
+This works fine on 3.17.1 as we used to have this logic in leds-gpio:
+led.name = of_get_property(child, "label", NULL) ? : child->name;
+
+,but since commit a43f2cbbb009f96 ("leds: leds-gpio: Make use of
+device property API "), this is no longer true:
+
+ + fwnode_property_read_string(child, "label", &led.name);
+
+If 'label' is not present then both of the LEDs will have the same
+name and then the duplicate name error will happen.
+
+So we would need something like this:
+
+ if (fwnode_property_present(child, "label"))
+       fwnode_property_read_string(child, "label", &led.name);
+ else
+     get the name from the child ---> This is what I am not sure how
+to do after the conversion to use fwnode_handle.
+
+Any ideas?
+
+On linux-next I am only able to get two LEDs without 'label' property
+to work if I do the following:
+
+git checkout a43f2cbbb009f96
+git revert a43f2cbbb009f96
+git revert 5c51277a9ab
