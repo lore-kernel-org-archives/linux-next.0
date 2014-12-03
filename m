@@ -1,90 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the arm tree
-Date: Wed, 3 Dec 2014 12:12:35 +1100
-Message-ID: <20141203121235.3eabd77b@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: manual merge of the pm tree with the arm tree
+Date: Wed, 03 Dec 2014 02:45:35 +0100
+Message-ID: <2220221.lsImPz8V5G@vostro.rjw.lan>
+References: <20141203121235.3eabd77b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LonQYs_zs168hu1tVxmAx+d"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart4808115.MsWV0D8ghN"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38060 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750907AbaLCBMr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Dec 2014 20:12:47 -0500
+Received: from v094114.home.net.pl ([79.96.170.134]:51140 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750884AbaLCBYV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Dec 2014 20:24:21 -0500
+In-Reply-To: <20141203121235.3eabd77b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
---Sig_/LonQYs_zs168hu1tVxmAx+d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+--nextPart4808115.MsWV0D8ghN
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Today's linux-next merge of the pm tree got a conflict in
-include/linux/pm_runtime.h between commit 3fb1581ea1ab ("ARM: 8199/1:
-PM / Runtime: Add getter for querying the IRQ safe option v12") from
-the arm tree and commit 6d14dd40f550 ("PM: Drop CONFIG_PM_RUNTIME from
-the driver core") from the pm tree.
+On Wednesday, December 03, 2014 12:12:35 PM Stephen Rothwell wrote:
+> Hi Rafael,
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Hi,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Today's linux-next merge of the pm tree got a conflict in
+> include/linux/pm_runtime.h between commit 3fb1581ea1ab ("ARM: 8199/1:
+> PM / Runtime: Add getter for querying the IRQ safe option v12") from
+> the arm tree and commit 6d14dd40f550 ("PM: Drop CONFIG_PM_RUNTIME from
+> the driver core") from the pm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-diff --cc include/linux/pm_runtime.h
-index 44d74f0f182e,eda4feede048..000000000000
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@@ -128,12 -118,14 +118,19 @@@ static inline void pm_runtime_mark_last
-  	ACCESS_ONCE(dev->power.last_busy) =3D jiffies;
-  }
- =20
- +static inline bool pm_runtime_is_irq_safe(struct device *dev)
- +{
- +	return dev->power.irq_safe;
- +}
- +
-- #else /* !CONFIG_PM_RUNTIME */
-+ #else /* !CONFIG_PM */
-+=20
-+ static inline bool queue_pm_work(struct work_struct *work) { return false=
-; }
-+=20
-+ static inline int pm_generic_runtime_suspend(struct device *dev) { return=
- 0; }
-+ static inline int pm_generic_runtime_resume(struct device *dev) { return =
-0; }
-+ static inline int pm_runtime_force_suspend(struct device *dev) { return 0=
-; }
-+ static inline int pm_runtime_force_resume(struct device *dev) { return 0;=
- }
- =20
-  static inline int __pm_runtime_idle(struct device *dev, int rpmflags)
-  {
+Looks OK to me, thanks!
 
---Sig_/LonQYs_zs168hu1tVxmAx+d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--nextPart4808115.MsWV0D8ghN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBCAAGBQJUfmOKAAoJEMDTa8Ir7ZwV2FkP/jWWhNV/qM9TpsahBq4x+MZC
-ufFE8DVbgOJOFo0nAj5HBi8hyrWHwnm7kdGjQ0f79cz2Y2/KnMPvFW+UTa2fIYac
-Abd7j6QNLsilSvB/0Z2azf+wPwawRYH/FJvfYulR86dGFDkTGBtyD6QCq4MpSd82
-rRvFUo1kZOeeORI15wIhtV8qP2Y4oDf2sMnY/6SN8PO3rYw1LdHo+sNRK2krFMZb
-+ToirmTqRPQiMwecc7AezlTsrxRylAYa7/S8mTI0n6mKPQ7LWpy9DYd1oueIwX7L
-cJXidaMuHtuT9S7V/1O3zffwMsfUHes02FPplptNQkdJV3XAPSZNMsYRxgmcu318
-ZYPBC9oJjS4upi1bhpDNGRYq1ftraDu/m4OjUMnw3uv7C3evhapvGeVO3ElJHpHH
-IJCmtyZHCYt3ajT8eTM22T8qhJ5iwsWmloemikB9xbXUfu1c2QPD/6f82141XBUo
-JbJbqI9L1yPZY7QZDCIKeNrPcD5SsMt5S/MfHpieSGRRV+WPRju7opekqEwOwXp0
-cmzwuW3Eh6uvYcGLtoQL7SGkgaU1tRhcbQwEarfbkQwv43auDagY2hME89kOYSyx
-PqzJBrQvR8gHcykxJ83x9wIDw84oNWweCHoCzh5OeRsCni9sMmxPq6SdqWIW7cdd
-tql27gq4ElDDXn2VMlf3
-=jRj0
+iQIcBAABCAAGBQJUfmtJAAoJEILEb/54YlRxr0sP/ipBaAFeOR9SmnFwTD0p2hgL
+ZKH/qy+MmisU9pFRjTQ24fznCJTfQuJi/lc6QczuKFDZhyTgKEngeD4Z5io3jfbD
+crTnlF/6Bx5NxDJtJfio2Gwzssj0tueaNPkUz9EQVg/bwCVykmx7UKLnP1D42h74
+dRioncG2fgiZ/0tkj8x9t2pD9WLlz/2lDYPQEcU4KTMNljT/t2+iFsjAj5uCoI2h
+fKr2NzGDU2srrFFRw/Ipe/Svmzm00SZAcrTDtqWhA0EnYgcxHWluprKUh/Wn02xd
+ng6hYkaW2X3RIvK34Avpz7/M3SGwcNIJV4CB7UXh7HdxHJZ3/H2Rb7rp2lu8OWSL
+8Q7/WpRzkh2wktPVD/cmTU7F5H09Px2DQTs58Q7rXMlMqSKpsH61jInoCwkUikT1
+WUlKzPNe02lNQu9TfgfjF/D0FgXIfcaf3inPhXrJMWcpGJ9mYzzmiArNMpYt3P5d
+s7Jt+E554gdYgaC/IQMaG/nF++BUtyroO+RHBwMV182JHWE3Ox1PkMwNBzZDcSBl
+eoirxygBHIAHd3RpXh7rkzkmJz5oXjA+jlN+ltnCEcFNGirCVUVnSkcbJnEJZRej
+joeF+02gsZhQpD4e/D/8QGPKcN9JydIO1MUy90StUlR2N04f68Nqyy7DP5aw8LOs
+oawwJE9sSQ/IBQ6tO3qM
+=Ew2c
 -----END PGP SIGNATURE-----
 
---Sig_/LonQYs_zs168hu1tVxmAx+d--
+--nextPart4808115.MsWV0D8ghN--
