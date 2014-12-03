@@ -1,133 +1,39 @@
-From: Romain Perier <romain.perier@gmail.com>
-Subject: Re: linux-next: manual merge of the devicetree tree with the
- regulator tree
-Date: Wed, 3 Dec 2014 08:02:11 +0100
-Message-ID: <CABgxDoKJbhXCwvLbruKLSn5L-3vkma7Bct56nLtQR4_tu24QSQ@mail.gmail.com>
-References: <20141203152733.20ab945f@canb.auug.org.au>
+From: Jani Nikula <jani.nikula@intel.com>
+Subject: Re: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Date: Wed, 03 Dec 2014 10:24:12 +0200
+Message-ID: <87d281nntf.fsf@intel.com>
+References: <20141203132708.7423b7f8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f52.google.com ([209.85.216.52]:47455 "EHLO
-	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751609AbaLCHCM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Dec 2014 02:02:12 -0500
-In-Reply-To: <20141203152733.20ab945f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20141203132708.7423b7f8@canb.auug.org.au>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-My part looks good and unchanged (first commit), however I would
-prefer a confirmation from Grant about the full merge.
-
-Thanks,
-Romain
-
-2014-12-03 5:27 GMT+01:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Grant,
->
-> Today's linux-next merge of the devicetree tree got a conflict in
-> include/linux/of.h between commit 8f73110f6bac ("of: Rename
-> "poweroff-source" property to "system-power-controller"") from the pm
-> tree and commit 7518b5890d8a ("of/overlay: Introduce DT overlay
-> support") from the devicetree tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> diff --cc include/linux/of.h
-> index b47096730dc5,aa01cf5852f8..000000000000
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@@ -23,7 -23,7 +23,8 @@@
->   #include <linux/spinlock.h>
->   #include <linux/topology.h>
->   #include <linux/notifier.h>
->  +#include <linux/property.h>
-> + #include <linux/list.h>
->
->   #include <asm/byteorder.h>
->   #include <asm/errno.h>
-> @@@ -108,27 -111,18 +114,27 @@@ static inline struct device_node *of_no
->   static inline void of_node_put(struct device_node *node) { }
->   #endif /* !CONFIG_OF_DYNAMIC */
->
->  -#ifdef CONFIG_OF
->  -
->   /* Pointer for first entry in chain of all nodes. */
-> - extern struct device_node *of_allnodes;
-> + extern struct device_node *of_root;
->   extern struct device_node *of_chosen;
->   extern struct device_node *of_aliases;
->   extern struct device_node *of_stdout;
->   extern raw_spinlock_t devtree_lock;
->
->  +#ifdef CONFIG_OF
->  +static inline bool is_of_node(struct fwnode_handle *fwnode)
->  +{
->  +      return fwnode && fwnode->type == FWNODE_OF;
->  +}
->  +
->  +static inline struct device_node *of_node(struct fwnode_handle *fwnode)
->  +{
->  +      return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
->  +}
->  +
->   static inline bool of_have_populated_dt(void)
->   {
-> -       return of_allnodes != NULL;
-> +       return of_root != NULL;
->   }
->
->   static inline bool of_node_is_root(const struct device_node *node)
-> @@@ -956,14 -959,33 +992,44 @@@ static inline int of_reconfig_get_state
->   extern int of_resolve_phandles(struct device_node *tree);
->
->   /**
->  + * of_device_is_system_power_controller - Tells if system-power-controller is found for device_node
->  + * @np: Pointer to the given device_node
->  + *
->  + * return true if present false otherwise
->  + */
->  +static inline bool of_device_is_system_power_controller(const struct device_node *np)
->  +{
->  +      return of_property_read_bool(np, "system-power-controller");
->  +}
->  +
-> ++/**
-> +  * Overlay support
-> +  */
-> +
-> + #ifdef CONFIG_OF_OVERLAY
-> +
-> + /* ID based overlays; the API for external users */
-> + int of_overlay_create(struct device_node *tree);
-> + int of_overlay_destroy(int id);
-> + int of_overlay_destroy_all(void);
-> +
-> + #else
-> +
-> + static inline int of_overlay_create(struct device_node *tree)
-> + {
-> +       return -ENOTSUPP;
-> + }
-> +
-> + static inline int of_overlay_destroy(int id)
-> + {
-> +       return -ENOTSUPP;
-> + }
-> +
-> + static inline int of_overlay_destroy_all(void)
-> + {
-> +       return -ENOTSUPP;
-> + }
-> +
-> + #endif
-> +
->   #endif /* _LINUX_OF_H */
+T24gV2VkLCAwMyBEZWMgMjAxNCwgU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcu
+YXU+IHdyb3RlOgo+IEhpIERhdmUsCj4KPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhl
+IGRybSB0cmVlIGdvdCBhIGNvbmZsaWN0IGluCj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
+ZGlzcGxheS5jIGJldHdlZW4gY29tbWl0IGI2ODM2MjI3OGFmOQo+ICgiZHJtL2k5MTU6IE1vcmUg
+Y2F1dGlvdXMgd2l0aCBwY2ggZmlmbyB1bmRlcnJ1bnMiKSBmcm9tIHRoZQo+IGRybS1pbnRlbC1m
+aXhlcyB0cmVlIGFuZCBjb21taXQgYTcyZTRjOWY5YTExICgiZHJtL2k5MTU6IFVzZSBkZXZfcHJp
+dgo+IGluIHB1YmxpYyBpbnRlbF9maWZvX3VuZGVycnVuLmMgZnVuY3Rpb25zIikgZnJvbSB0aGUg
+ZHJtIHRyZWUuCj4KPiBJIGZpeGVkIGl0IHVwIChJIHVzZWQgdGhlIGRybSB0cmVlIHZlcnNpb24p
+IGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcwo+IG5lY2Vzc2FyeSAobm8gYWN0aW9uIGlzIHJlcXVp
+cmVkKS4KCmI2ODM2MjI3OGFmOSByZW1vdmVzIHR3byBsaW5lcyBvZiBjb2RlOyB0aGVzZSBzaG91
+bGQgYmUgcmVtb3ZlZCBpbiB0aGUKcmVzb2x2ZWQgdmVyc2lvbiB0b28uCgpCUiwKSmFuaS4KCgot
+LSAKSmFuaSBOaWt1bGEsIEludGVsIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
