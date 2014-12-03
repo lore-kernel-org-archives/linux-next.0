@@ -1,48 +1,61 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Wed, 3 Dec 2014 11:27:48 +0530
-Message-ID: <547EA65C.2010605@ti.com>
-References: <20141201191923.6366f9b5@canb.auug.org.au> <20141202181230.GD11700@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the omap_dss2
+ tree
+Date: Wed, 3 Dec 2014 18:01:27 +1100
+Message-ID: <20141203180127.2970ff3a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9good=_Lc0ia8j3enFmcxgD"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:52030 "EHLO bear.ext.ti.com"
+Received: from ozlabs.org ([103.22.144.67]:35942 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750860AbaLCF57 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Dec 2014 00:57:59 -0500
-In-Reply-To: <20141202181230.GD11700@kroah.com>
+	id S1750869AbaLCHBi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Dec 2014 02:01:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jyri Sarha <jsarha@ti.com>, Wolfram Sang <wsa@the-dreams.de>
 
-Greg,
+--Sig_/9good=_Lc0ia8j3enFmcxgD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 02 December 2014 11:42 PM, Greg KH wrote:
-> On Mon, Dec 01, 2014 at 07:19:23PM +1100, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> After merging the usb tree, today's linux-next build (arm
->> multi_v7_defconfig) failed like this:
->>
->> arch/arm/mach-omap2/twl-common.c:94:21: error: array type has incomplete element type
->>  struct phy_consumer consumers[] = {
->>                      ^
->>
->> Caused by commit dbc98635e0d4 ("phy: remove the old lookup method").
->>
->> I have used the usb tree from next-20141128 for today.
-> 
-> Ick, Heikki and Kishon, do you want me to just revert this patch?  How
-> did you test it?
+Hi Greg,
 
-I've resent the patch "arm: omap3: twl: remove usb phy init data" which is
-needed to get rid of this error.
+Today's linux-next merge of the driver-core tree got conflicts in
+sound/soc/omap/omap-hdmi-card.c and sound/soc/omap/omap-hdmi.c between
+commit ab387c1e51d7 ("ASoC: omap: Remove obsolete HDMI audio code and
+Kconfig options") from the omap_dss2 tree and commit d34135b4c0ef
+("ASoC: omap: drop owner assignment from platform_drivers") from the
+driver-core tree.
 
-This patch was part of the original series sent by Heikki but I couldn't merge
-it since I didn't get Ack from tony since it touched arch/arm/mach-omap2/ file.
-And I clearly missed the build failure report from fengguang. Sorry.
+I fixed it up (I removed the files) and can carry the fix as necessary
+(no action is required).
 
-Thanks
-Kishon
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/9good=_Lc0ia8j3enFmcxgD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUfrVMAAoJEMDTa8Ir7ZwVuNUQAI4Bibx+xUOZbv1l2mGBDTY2
+6lxkUf64x56l+NtwjWys5I8l4x45xQ4ZT/LwUOh3PaLpbBqZKi88zjd7lMSE4Bnd
+vIQPuAEB5SICTEUYU34iBFJKZks9e8IHuhtu50Fq0gaxvBcdFq9ROeF0f+wn5aTn
+REOuLUSXOvYxmbfHt+UFXbk+WXtcX6KF03/JA1AURIa+mlyIZazDdM7zI2MTX6Hp
+DmA6kqr0daQBTrG3l6K/hy2Ivw0O5rK+aEFFu4qLOqoY6MjZ6J+iW7njXUKXjffs
+zFX9HPobAVwV8PxBvw14RGL5DayF4dt3DIkibEtSEzFZKIjF7cNkDUyHuhWl3m9O
+uZecbKxJYnFyNW7FMFOykeFqry+y+XFeRqkxjFY7EA3ZWGuVY56HOgG06LS9T12B
+Wo5eZ9NP3CUDFeuwwm3zwPnyUAyABmIixK+U7ezvmcX7SpLXp7iucYHEegANoauN
+pwgPW/oj3327fuDYuD11WexoD7JcUL03eOnQXSPqpQR4W+InutgO0MjbECkbmKyK
+5oHCbIMGXf/d86kFDV3yb1jwVuei7q+PXlLLPQNESR6ihPuWK6bqmDNzmD703o+y
++D+KMc/lEj+3O2wlrCL4fMZmiZozDBUKcZCZySvOS8Io+Q+AG6XUq0eUDb1I+Boc
+Oj91/ROdRz1A5Y/XQQQx
+=z65z
+-----END PGP SIGNATURE-----
+
+--Sig_/9good=_Lc0ia8j3enFmcxgD--
