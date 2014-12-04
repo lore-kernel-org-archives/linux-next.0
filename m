@@ -1,90 +1,85 @@
-From: Jiri Pirko <jiri@resnulli.us>
-Subject: Re: [PATCH] net: ethernet: rocker: Add select to CONFIG_BRIDGE in
- Kconfig
-Date: Thu, 4 Dec 2014 19:15:48 +0100
-Message-ID: <20141204181548.GH1861@nanopsycho.orion>
-References: <CA+r1ZhhJQuwXbs+Et-ihsGP3QXDUWZ1nJ-5_hcjioFt5s8zMrA@mail.gmail.com>
- <54809BA5.7030901@rupran.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add
+ git://git.kernel.org/pub/scm/linux/kernel/git/borntraeger/linux.git
+ linux-next
+Date: Fri, 5 Dec 2014 10:29:03 +1100
+Message-ID: <20141205102903.156731eb@canb.auug.org.au>
+References: <54802B9F.1090303@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5GKvpvfkflk8siGS6BiyZpQ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:34637 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754276AbaLDSPu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Dec 2014 13:15:50 -0500
-Received: by mail-wg0-f46.google.com with SMTP id a1so15092996wgh.5
-        for <linux-next@vger.kernel.org>; Thu, 04 Dec 2014 10:15:49 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <54809BA5.7030901@rupran.de>
+Received: from ozlabs.org ([103.22.144.67]:58146 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753069AbaLDX3L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Dec 2014 18:29:11 -0500
+In-Reply-To: <54802B9F.1090303@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andreas Ruprecht <mail@rupran.de>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, sfeldma@gmail.com, netdev <netdev@vger.kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thu, Dec 04, 2014 at 06:36:37PM CET, mail@rupran.de wrote:
->On 04.12.2014 17:34, Jim Davis wrote:
->> Building with the attached random configuration file,
->> 
->> drivers/built-in.o: In function `rocker_port_fdb_learn_work':
->> /home/jim/linux/drivers/net/ethernet/rocker/rocker.c:3014: undefined
->> reference to `br_fdb_external_learn_del'
->> /home/jim/linux/drivers/net/ethernet/rocker/rocker.c:3016: undefined
->> reference to `br_fdb_external_learn_add'
->> 
->
->Hi,
->
->the problem here is that CONFIG_BRIDGE is set to 'm' (leading to
->inclusion of the two functions above in the kernel module) while
->CONFIG_ROCKER is set to 'y', requiring the functions at link time.
->
->Is the attached patch sufficient to fix this?
->
->Regards,
->
->Andreas
+--Sig_/5GKvpvfkflk8siGS6BiyZpQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
->From 0529c3cbe381338dc3337e07a71e15b3d22a3255 Mon Sep 17 00:00:00 2001
->From: Andreas Ruprecht <rupran@einserver.de>
->Date: Thu, 4 Dec 2014 18:28:09 +0100
->Subject: [PATCH] net: ethernet: rocker: Add select to CONFIG_BRIDGE in Kconfig
->
->In a configuration with CONFIG_BRIDGE set to 'm' and CONFIG_ROCKER
->set to 'y', undefined references occur at link time:
->
->> drivers/built-in.o: In function `rocker_port_fdb_learn_work':
->> /home/jim/linux/drivers/net/ethernet/rocker/rocker.c:3014: undefined
->> reference to `br_fdb_external_learn_del'
->> /home/jim/linux/drivers/net/ethernet/rocker/rocker.c:3016: undefined
->> reference to `br_fdb_external_learn_add'
->
->This patch fixes these by selecting CONFIG_BRIDGE from CONFIG_ROCKER.
->
->Reported-by: Jim Davis <jim.epost@gmail.com>
->Signed-off-by: Andreas Ruprecht <rupran@einserver.de>
-Acked-by: Jiri Pirko <jiri@resnulli.us>
+Hi Christian,
 
-this is ok for now. There is a plan to replace
-br_fdb_external_learn_add/del a by notifier which will fix this as well.
-
-Thanks.
-
->---
-> drivers/net/ethernet/rocker/Kconfig | 1 +
-> 1 file changed, 1 insertion(+)
+On Thu, 04 Dec 2014 10:38:39 +0100 Christian Borntraeger <borntraeger@de.ib=
+m.com> wrote:
 >
->diff --git a/drivers/net/ethernet/rocker/Kconfig b/drivers/net/ethernet/rocker/Kconfig
->index 11a850eab628..ade10ec4c78d 100644
->--- a/drivers/net/ethernet/rocker/Kconfig
->+++ b/drivers/net/ethernet/rocker/Kconfig
->@@ -18,6 +18,7 @@ if NET_VENDOR_ROCKER
-> config ROCKER
-> 	tristate "Rocker switch driver (EXPERIMENTAL)"
-> 	depends on PCI && NET_SWITCHDEV
->+	select BRIDGE
-> 	---help---
-> 	  This driver supports Rocker switch device.
-> 
->-- 
->1.9.1
->
+> can you add=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/borntraeger/linux.git linux=
+-next
+> to linux-next?
+> It contains changes to ACCESS_ONCE and it would be good to have this cros=
+s tested on several platforms.
+> Thanks
+
+Added from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/5GKvpvfkflk8siGS6BiyZpQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUgO5EAAoJEMDTa8Ir7ZwVrrAP/0hizD8x9mVN2X65/efKmat8
+rvlSH4OwC+lEZWXqwiALHMQTYAktweCoU1UxZSC8Mj4+0unkJXH5WybOKHTvoQiZ
+vwhJ8VO1CAPHVopG7eqC4aL8blhYCCDxvtbBuNjdh8nsxIgcti5T1PQA2OwIBg+B
+lSZhNGFWqpdY5cJyxB4LiRzaM2g3q80oMZaBUjy9SwaaxvaINh4eQS0tdnrQZ4on
+iu4Qj5tfaK+hBXgC9luNN9iNpcU4zEhabc5EobHHz5zMIH1Qo32WZKifQAFQwTbl
+fkiEXw0HvprnlI39iCkNG/CzXEBzaaPhpmBeJF10spRcwRKyIQR4MHafl/ylj8PH
+7ksDl92N/E/Hxy4W9zJ1UpOUSarDCN0xu/tIPedAP9Tuc/31Unv8MgLV2wFFf4z2
+Bir+wkNdYacKgxm6EWEya4NPXeOoV7yNc7hXgukh9fUFtJxKZJl/N9LmVNnx5oUP
+drtw4HSeLGkjVlrz9+kAJRf8UQLw/hXSbabRxZTPvvZRI49xzt5NPJM0fV4ML8Pp
+JwOEeBxrZv33gSYRBzhulWfjixuY/dsrah3+MbVhDQCKOtXc5EAfqPqzK8Glroml
+fcbM+AuUdRV1zCeN8tDxtlg1HIbtHcApUlrEzvq7KG2gUcjEqedVrtHd46v6WRS8
+TMil9x2MN1EX79/PVpby
+=lKaW
+-----END PGP SIGNATURE-----
+
+--Sig_/5GKvpvfkflk8siGS6BiyZpQ--
