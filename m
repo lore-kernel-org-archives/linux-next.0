@@ -1,110 +1,66 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the access_once tree
-Date: Sun, 07 Dec 2014 22:16:41 +0100
-Message-ID: <5484C3B9.2030909@de.ibm.com>
-References: <20141205213224.2dcc20e9@canb.auug.org.au> <5484BF4D.1020809@de.ibm.com>
+Date: Mon, 8 Dec 2014 10:55:17 +1100
+Message-ID: <20141208105517.0e9ac555@canb.auug.org.au>
+References: <20141205213224.2dcc20e9@canb.auug.org.au>
+	<5484BF4D.1020809@de.ibm.com>
+	<5484C3B9.2030909@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------010107050306070606060403"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/LZ8M9cZwkSpDtBqpS1ghESa"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp13.uk.ibm.com ([195.75.94.109]:39268 "EHLO
-	e06smtp13.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752671AbaLGVQq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Dec 2014 16:16:46 -0500
-Received: from /spool/local
-	by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
-	Sun, 7 Dec 2014 21:16:44 -0000
-In-Reply-To: <5484BF4D.1020809@de.ibm.com>
+Received: from ozlabs.org ([103.22.144.67]:40378 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752566AbaLGXz0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Dec 2014 18:55:26 -0500
+In-Reply-To: <5484C3B9.2030909@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------010107050306070606060403
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+--Sig_/LZ8M9cZwkSpDtBqpS1ghESa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Am 07.12.2014 um 21:57 schrieb Christian Borntraeger:
-> Am 05.12.2014 um 11:32 schrieb Stephen Rothwell:
->> Hi Christian,
->>
->> After merging the access_once tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> In file included from include/linux/compiler.h:189:0,
->>                  from include/uapi/linux/stddef.h:1,
->>                  from include/linux/stddef.h:4,
->>                  from include/uapi/linux/posix_types.h:4,
->>                  from include/linux/fdtable.h:8,
->>                  from security/apparmor/domain.c:16:
->> include/linux/types.h:14:9: error: unknown type name '__kernel_fd_set'
->>  typedef __kernel_fd_set  fd_set;
->>          ^
->>
->> And many more :-(
->>
->> Presumably caused by commit b06f66134856 ("kernel: Provide READ_ONCE
->> and ASSIGN_ONCE") which added types.h into compiler.h, but I am not
->> sure.  It could be an interaction with something else in linux-next, of
->> course.
->>
->> I have dropped the access_once tree for today, sorry.
->>
-> 
-> Interesting, I double checked with defconfig and cross compilation. But yes, using allmodconfig fails.
-> I have changed that to uapi/linux/types.h and __u<xx>. This seems to fix it as it only adds a small set of types.
-> 
-> Can you re-add?
-> 
-> Christian
-> 
+Hi Christian,
 
-I also did an additional check and merged this tree with linux-next/master. This introduced a new problem.
-The fix is simple, see patch. But I am not sure how to add that to next (via my tree), since this change is only in next.
+On Sun, 07 Dec 2014 22:16:41 +0100 Christian Borntraeger <borntraeger@de.ib=
+m.com> wrote:
+>
+> I also did an additional check and merged this tree with linux-next/maste=
+r. This introduced a new problem.
+> The fix is simple, see patch. But I am not sure how to add that to next (=
+via my tree), since this change is only in next.
 
-Christian
+OK, thanks for that.  I will apply that patch as a merge fix to my tree
+when I merge your tree.  You (or the owner of the conflicting tree)
+will need to let Linus know when the merge happens in his tree.
 
---------------010107050306070606060403
-Content-Type: text/x-patch;
- name="0001-x86-xen-p2m-Replace-ACCESS_ONCE-with-READ_ONCE.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-x86-xen-p2m-Replace-ACCESS_ONCE-with-READ_ONCE.patch"
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->From ef62db716c9edb1343c00eae45ad8f6c0c1c9255 Mon Sep 17 00:00:00 2001
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Sun, 7 Dec 2014 22:01:59 +0100
-Subject: [PATCH] x86/xen/p2m: Replace ACCESS_ONCE with READ_ONCE
+--Sig_/LZ8M9cZwkSpDtBqpS1ghESa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-ACCESS_ONCE does not work reliably on non-scalar types. For
-example gcc 4.6 and 4.7 might remove the volatile tag for such
-accesses during the SRA (scalar replacement of aggregates) step
-(https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Change the p2m code to replace ACCESS_ONCE with READ_ONCE.
+iQIcBAEBCAAGBQJUhOjtAAoJEMDTa8Ir7ZwVLT8P/iQs0qQkv+OBQ7f8vc3c8SM5
+5CNv/UmMG3oAulClhQ6svAJO0ljpdzmdePZd0tkbvQAfOjUvX9K+5aLgC6mpS5E3
+5byB4mm5DHkWX1kdX3yN5cWq9uydcnrVuQhD1ZiqwHL/cF6qbSQjviE8O0RRpPPy
+Djw1yip2C0djmNKhk8fhybsoo+LR6BMqt0ZwGdqQbcXjDMHaDLDoF+J+ENrh81OO
+GmUHrCdcglNNgpXo6hERArae9YbYGi/D2ypXvEWxvU0YH7WMStfJIvbBr0FHjQ0i
+HjXBV61qjTUFGlfjFrSKzR6GvEhcn7SM27/AH7NGa50IQ+FTBz5QfClpiMdi4iQf
+q8EicFXXUrakWp2BgbxpJ+l8PmAF+6IM4kgcrNGhuNEMqt9ibXBwtgEZsfO9IOET
+zdarxcIvECie0u3OSpk+A1NJVJoPOcPupq9A84DuVTw3j2trMjMgEAGC+ghrbdmS
+XCziFjjZVYmXJ1GUOSqFZXgluFx4hB0kzi+b9CLPsL1exo4L7FaxP2YLLHNo+ZUe
+rAYiRUOvqIVmoS0E1rgPvWIY6Stp7YIusdG8WneBAxSc8luMKrVAxi6u3/4GYuSb
+7dGi5sKVJu0Xe5R9JKPXs9tG/UQOt1DzM9o/teLgFAET1sPMxNZ1gHYEZU1+2mQr
+lsBTful+ESjVZlTechVg
+=L6ZR
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
----
- arch/x86/xen/p2m.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/xen/p2m.c b/arch/x86/xen/p2m.c
-index 8b5db51..08ddf91 100644
---- a/arch/x86/xen/p2m.c
-+++ b/arch/x86/xen/p2m.c
-@@ -554,7 +554,7 @@ static bool alloc_p2m(unsigned long pfn)
- 		mid_mfn = NULL;
- 	}
- 
--	p2m_pfn = pte_pfn(ACCESS_ONCE(*ptep));
-+	p2m_pfn = pte_pfn(READ_ONCE(*ptep));
- 	if (p2m_pfn == PFN_DOWN(__pa(p2m_identity)) ||
- 	    p2m_pfn == PFN_DOWN(__pa(p2m_missing))) {
- 		/* p2m leaf page is missing */
--- 
-1.8.5.5
-
-
---------------010107050306070606060403--
+--Sig_/LZ8M9cZwkSpDtBqpS1ghESa--
