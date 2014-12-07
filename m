@@ -1,50 +1,55 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Fri, 5 Dec 2014 16:23:13 +0000
-Message-ID: <20141205162312.GB11502@n2100.arm.linux.org.uk>
-References: <5481D913.9040109@ti.com>
- <5481D9BF.2090007@ti.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: linux-next: build failure after merge of the access_once tree
+Date: Sun, 07 Dec 2014 21:57:49 +0100
+Message-ID: <5484BF4D.1020809@de.ibm.com>
+References: <20141205213224.2dcc20e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5481D9BF.2090007@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e06smtp17.uk.ibm.com ([195.75.94.113]:51498 "EHLO
+	e06smtp17.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752700AbaLGU5x (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Dec 2014 15:57:53 -0500
+Received: from /spool/local
+	by e06smtp17.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
+	Sun, 7 Dec 2014 20:57:51 -0000
+In-Reply-To: <20141205213224.2dcc20e9@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Dec 05, 2014 at 10:13:51AM -0600, Nishanth Menon wrote:
-> On 12/05/2014 10:10 AM, Nishanth Menon wrote:
-> > Case #2: Reverting the following allows boot.
-> > 
-> > From next-20141204
-> > 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
-> > revert this  -> boot still fails
-> > 
-> > d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
-> > mach_desc only if not NULL
-> > revert this  -> boot still fails
-> > 
-> > 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
-> > revert this  -> boot still fails
-> > 
-> > c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
-> > revert this  -> boot passed (first bad commit).
-> > 
-> > 
+Am 05.12.2014 um 11:32 schrieb Stephen Rothwell:
+> Hi Christian,
 > 
-> + linux-samsung soc and updated Thomaz's mail ID (gmail now).
+> After merging the access_once tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from include/linux/compiler.h:189:0,
+>                  from include/uapi/linux/stddef.h:1,
+>                  from include/linux/stddef.h:4,
+>                  from include/uapi/linux/posix_types.h:4,
+>                  from include/linux/fdtable.h:8,
+>                  from security/apparmor/domain.c:16:
+> include/linux/types.h:14:9: error: unknown type name '__kernel_fd_set'
+>  typedef __kernel_fd_set  fd_set;
+>          ^
+> 
+> And many more :-(
+> 
+> Presumably caused by commit b06f66134856 ("kernel: Provide READ_ONCE
+> and ASSIGN_ONCE") which added types.h into compiler.h, but I am not
+> sure.  It could be an interaction with something else in linux-next, of
+> course.
+> 
+> I have dropped the access_once tree for today, sorry.
+> 
 
-Given where we are in the cycle (-final likely this weekend) the only
-thing we can do right now is to drop the patch set; exynos (and mvebu)
-will have to wait another cycle until this patch set (hopefully in a
-revised form) can be merged.
+Interesting, I double checked with defconfig and cross compilation. But yes, using allmodconfig fails.
+I have changed that to uapi/linux/types.h and __u<xx>. This seems to fix it as it only adds a small set of types.
 
-I think we need 8208/1 split up into smaller changes so that the cause
-of this regression can be found.
+Can you re-add?
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Christian
