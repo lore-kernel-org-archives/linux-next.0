@@ -1,59 +1,44 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc
- tree
-Date: Mon, 8 Dec 2014 13:00:09 +0000
-Message-ID: <20141208130009.GL3951@x1>
-References: <20141208120619.68287b54@canb.auug.org.au>
- <2406890.FlzRjyvuXd@wuerfel>
+From: Aaron Lu <aaron.lu@intel.com>
+Subject: Re: [PATCH] Thermal: introduce INT3406 thermal driver
+Date: Mon, 08 Dec 2014 21:22:44 +0800
+Message-ID: <5485A624.1060903@intel.com>
+References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com>	<543F88BE.4090307@intel.com>	<20141017070620.GA1538@aaronlu.sh.intel.com>	<20141017072236.GA12504@aaronlu.sh.intel.com>	<544F33AF.1000704@intel.com>	<20141107191127.GB27438@developer>	<1417350176.27484.10.camel@rzhang1-toshiba>	<547D59D2.8010906@intel.com>	<1418009702.19126.14.camel@rzhang1-toshiba>	<CAMuHMdWHn+BcpPjr7x+Y1aRwUgBP54mH=4XpjB1VOd7T76-kjw@mail.gmail.com> <CAMuHMdW8Yap=VrHaEs-oKbVtRSUSb87qf9JJph7aG-MPuv4f_w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qg0-f46.google.com ([209.85.192.46]:56131 "EHLO
-	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754051AbaLHNAP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 08:00:15 -0500
-Received: by mail-qg0-f46.google.com with SMTP id z107so3367023qgd.19
-        for <linux-next@vger.kernel.org>; Mon, 08 Dec 2014 05:00:14 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <2406890.FlzRjyvuXd@wuerfel>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Matthias Klein <matthias.klein@linux.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdW8Yap=VrHaEs-oKbVtRSUSb87qf9JJph7aG-MPuv4f_w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 08 Dec 2014, Arnd Bergmann wrote:
+On 12/08/2014 07:20 PM, Geert Uytterhoeven wrote:
+> On Mon, Dec 8, 2014 at 11:55 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> Unfortunately drivers/thermal/int340x_thermal/Kconfig was missing
+>> from the patch, hence "make oldconfig" now fails miserably with
+>>
+>> drivers/thermal/Kconfig:265: can't open file
+>> "drivers/thermal/int340x_thermal/Kconfig"
+> 
+> I've lifted the missing file from "[PATCH v3] Thermal: int3406_thermal:
+> solve the dependency build error" (https://lkml.org/lkml/2014/10/17/38).
 
-> On Monday 08 December 2014 12:06:19 Stephen Rothwell wrote:
-> > Hi Stephen,
-> >=20
-> > Today's linux-next merge of the bcm2835 tree got a conflict in
-> > arch/arm/boot/dts/Makefile between commit 302a5ef29d49 ("ARM: BCM53=
-01X:
-> > Add DT for Netgear R6300 V2") from the arm-soc tree and commit
-> > 6298ed17a404 ("ARM: bcm2835: Add device tree for Raspberry Pi model
-> > B+") from the bcm2835 tree.
-> >=20
-> > I fixed it up (the bcm2835 tree patch is also in the arm-soc tree a=
-s
-> > commit ba2a1d6959ac ("ARM: bcm2835: Add device tree for Raspberry P=
-i
-> > model B+"), so I just used the arm-soc version) and can carry the f=
-ix
-> > as necessary (no action is required).
->=20
-> Thanks a lot for the notification!
->=20
-> Lee, do you know what is going on? Did you accidentally rebase a comm=
-it
-> that you already sent for inclusion in arm-soc?
+My bad, and thanks a lot for your kind help!
 
-Nope.  The branch hasn't changed at all.
+Regards,
+Aaron
 
-OOI why would a re-base affect anything?  I sent you it in patch form.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
