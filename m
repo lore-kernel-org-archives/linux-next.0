@@ -1,79 +1,42 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc
- tree
-Date: Mon, 8 Dec 2014 13:49:03 +0000
-Message-ID: <20141208134903.GN3951@x1>
-References: <20141208120619.68287b54@canb.auug.org.au>
- <2406890.FlzRjyvuXd@wuerfel>
- <20141208130009.GL3951@x1>
- <3348703.0b5FTH9Sa3@wuerfel>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Mon, 8 Dec 2014 07:54:08 -0600
+Message-ID: <5485AD80.1050008@ti.com>
+References: <5481D913.9040109@ti.com> <5481D9BF.2090007@ti.com> <20141205162312.GB11502@n2100.arm.linux.org.uk> <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com> <20141208122235.GC11502@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:58134 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755231AbaLHNtI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 08:49:08 -0500
-Received: by mail-qc0-f170.google.com with SMTP id x3so3498468qcv.15
-        for <linux-next@vger.kernel.org>; Mon, 08 Dec 2014 05:49:08 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <3348703.0b5FTH9Sa3@wuerfel>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Matthias Klein <matthias.klein@linux.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20141208122235.GC11502@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 08 Dec 2014, Arnd Bergmann wrote:
+On 12/08/2014 06:22 AM, Russell King - ARM Linux wrote:
+> On Mon, Dec 08, 2014 at 08:54:18PM +0900, Tomasz Figa wrote:
+>> 2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+>>> Given where we are in the cycle (-final likely this weekend) the only
+>>> thing we can do right now is to drop the patch set; exynos (and mvebu)
+>>> will have to wait another cycle until this patch set (hopefully in a
+>>> revised form) can be merged.
+>>
+>> Or a fix could be queued on top of this. Since (I believe) this series
+>> has been queued for 3.19, we have 6 or 7 RC releases ahead, which
+>> could be used for the purpose of fixing things (as they are supposed
+>> to?).
+> 
+> They were merged on 27th November, so they would've been in linux-next
+> from about last Monday.  Nishanth reported a failure on Friday, the
 
-> On Monday 08 December 2014 13:00:09 Lee Jones wrote:
-> > On Mon, 08 Dec 2014, Arnd Bergmann wrote:
-> >=20
-> > > On Monday 08 December 2014 12:06:19 Stephen Rothwell wrote:
-> > > > Hi Stephen,
-> > > >=20
-> > > > Today's linux-next merge of the bcm2835 tree got a conflict in
-> > > > arch/arm/boot/dts/Makefile between commit 302a5ef29d49 ("ARM: B=
-CM5301X:
-> > > > Add DT for Netgear R6300 V2") from the arm-soc tree and commit
-> > > > 6298ed17a404 ("ARM: bcm2835: Add device tree for Raspberry Pi m=
-odel
-> > > > B+") from the bcm2835 tree.
-> > > >=20
-> > > > I fixed it up (the bcm2835 tree patch is also in the arm-soc tr=
-ee as
-> > > > commit ba2a1d6959ac ("ARM: bcm2835: Add device tree for Raspber=
-ry Pi
-> > > > model B+"), so I just used the arm-soc version) and can carry t=
-he fix
-> > > > as necessary (no action is required).
-> > >=20
-> > > Thanks a lot for the notification!
-> > >=20
-> > > Lee, do you know what is going on? Did you accidentally rebase a =
-commit
-> > > that you already sent for inclusion in arm-soc?
-> >=20
-> > Nope.  The branch hasn't changed at all.
-> >=20
-> > OOI why would a re-base affect anything?  I sent you it in patch fo=
-rm.
->=20
-> Ah, I looked at the wrong branch and didn't see that I applied a patc=
-h
-> instead of a pull request. It's all fine then, as long as you never
-> intend to send any pull requests based on top of your current branch.
->=20
-> You can possibly make Stephen's life a tiny bit simpler if you just
-> drop all patches from your for-next branch as soon as we've picked
-> them up into arm-soc.
+For what ever it is worth, the l2c changes actually appeared on
+Thursday CST (next-20141204). Found the regression against
+next-20141203 tag and it took me a day to track it down (after looking
+at a few other regressions as well)..
 
-That is something I thought about, but I believe we have users of that
-branch.  I guess we could always point them to ARM-SoC, or reset the
-branch to the aforementioned.
+Anyways...
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+-- 
+Regards,
+Nishanth Menon
