@@ -1,48 +1,35 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] Thermal: introduce INT3406 thermal driver
-Date: Mon, 8 Dec 2014 12:20:41 +0100
-Message-ID: <CAMuHMdW8Yap=VrHaEs-oKbVtRSUSb87qf9JJph7aG-MPuv4f_w@mail.gmail.com>
-References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com>
-	<543F88BE.4090307@intel.com>
-	<20141017070620.GA1538@aaronlu.sh.intel.com>
-	<20141017072236.GA12504@aaronlu.sh.intel.com>
-	<544F33AF.1000704@intel.com>
-	<20141107191127.GB27438@developer>
-	<1417350176.27484.10.camel@rzhang1-toshiba>
-	<547D59D2.8010906@intel.com>
-	<1418009702.19126.14.camel@rzhang1-toshiba>
-	<CAMuHMdWHn+BcpPjr7x+Y1aRwUgBP54mH=4XpjB1VOd7T76-kjw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc tree
+Date: Mon, 08 Dec 2014 12:25:01 +0100
+Message-ID: <2406890.FlzRjyvuXd@wuerfel>
+References: <20141208120619.68287b54@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:46143 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755143AbaLHLUp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 06:20:45 -0500
-In-Reply-To: <CAMuHMdWHn+BcpPjr7x+Y1aRwUgBP54mH=4XpjB1VOd7T76-kjw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Aaron Lu <aaron.lu@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141208120619.68287b54@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Matthias Klein <matthias.klein@linux.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 8, 2014 at 11:55 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Unfortunately drivers/thermal/int340x_thermal/Kconfig was missing
-> from the patch, hence "make oldconfig" now fails miserably with
->
-> drivers/thermal/Kconfig:265: can't open file
-> "drivers/thermal/int340x_thermal/Kconfig"
+On Monday 08 December 2014 12:06:19 Stephen Rothwell wrote:
+> Hi Stephen,
+> 
+> Today's linux-next merge of the bcm2835 tree got a conflict in
+> arch/arm/boot/dts/Makefile between commit 302a5ef29d49 ("ARM: BCM5301X:
+> Add DT for Netgear R6300 V2") from the arm-soc tree and commit
+> 6298ed17a404 ("ARM: bcm2835: Add device tree for Raspberry Pi model
+> B+") from the bcm2835 tree.
+> 
+> I fixed it up (the bcm2835 tree patch is also in the arm-soc tree as
+> commit ba2a1d6959ac ("ARM: bcm2835: Add device tree for Raspberry Pi
+> model B+"), so I just used the arm-soc version) and can carry the fix
+> as necessary (no action is required).
 
-I've lifted the missing file from "[PATCH v3] Thermal: int3406_thermal:
-solve the dependency build error" (https://lkml.org/lkml/2014/10/17/38).
+Thanks a lot for the notification!
 
-Gr{oetje,eeting}s,
+Lee, do you know what is going on? Did you accidentally rebase a commit
+that you already sent for inclusion in arm-soc?
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Arnd
