@@ -1,69 +1,80 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Mon, 8 Dec 2014 20:54:18 +0900
-Message-ID: <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com>
-References: <5481D913.9040109@ti.com>
-	<5481D9BF.2090007@ti.com>
-	<20141205162312.GB11502@n2100.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Mon, 8 Dec 2014 23:05:17 +1100
+Message-ID: <20141208230517.13ebfe4f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <20141205162312.GB11502@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EInRbud0xsbbLPnfI7kLexz"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53196 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753312AbaLHMF1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Dec 2014 07:05:27 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurentiu Palcu <laurentiu.palcu@intel.com>, Lee Jones <lee.jones@linaro.org>
 
-2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> On Fri, Dec 05, 2014 at 10:13:51AM -0600, Nishanth Menon wrote:
->> On 12/05/2014 10:10 AM, Nishanth Menon wrote:
->> > Case #2: Reverting the following allows boot.
->> >
->> > From next-20141204
->> > 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
->> > revert this  -> boot still fails
->> >
->> > d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
->> > mach_desc only if not NULL
->> > revert this  -> boot still fails
->> >
->> > 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
->> > revert this  -> boot still fails
->> >
->> > c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
->> > revert this  -> boot passed (first bad commit).
->> >
->> >
->>
->> + linux-samsung soc and updated Thomaz's mail ID (gmail now).
->
-> Given where we are in the cycle (-final likely this weekend) the only
-> thing we can do right now is to drop the patch set; exynos (and mvebu)
-> will have to wait another cycle until this patch set (hopefully in a
-> revised form) can be merged.
+--Sig_/EInRbud0xsbbLPnfI7kLexz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Or a fix could be queued on top of this. Since (I believe) this series
-has been queued for 3.19, we have 6 or 7 RC releases ahead, which
-could be used for the purpose of fixing things (as they are supposed
-to?).
+Hi Mark,
 
->
-> I think we need 8208/1 split up into smaller changes so that the cause
-> of this regression can be found.
+After merging the spi tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I'm afraid we need more than that.
+drivers/spi/spi-dln2.c: In function 'dln2_spi_copy_from_buf':
+drivers/spi/spi-dln2.c:415:4: error: implicit declaration of function 'get_=
+unaligned_le32' [-Werror=3Dimplicit-function-declaration]
+    *d++ =3D get_unaligned_le32(s++);
+    ^
 
-First of all, this series has been in the wild for more than 3 months
-already, without any serious changes. Need not to mention that mailing
-lists and maintainers of all potentially affected platforms had been
-added. It had been noted in cover letter that the only platform I (and
-Marek later) could test on was Exynos and that it would be good if
-somebody working with other platforms could test the patches.
+Caused by commit ffb9ad0a47b4 ("spi: add support for DLN-2 USB-SPI adapter"=
+).
 
-Looks like nobody cared back then, so why should we care that much
-now, especially that we have several RC releases ahead and we can
-still fix this?
+drivers/spi/spi-st-ssc4.c: In function 'spi_st_remove':
+drivers/spi/spi-st-ssc4.c:427:2: error: implicit declaration of function 'p=
+inctrl_pm_select_sleep_state' [-Werror=3Dimplicit-function-declaration]
+  pinctrl_pm_select_sleep_state(&pdev->dev);
+  ^
+drivers/spi/spi-st-ssc4.c: In function 'spi_st_runtime_resume':
+drivers/spi/spi-st-ssc4.c:453:2: error: implicit declaration of function 'p=
+inctrl_pm_select_default_state' [-Werror=3Dimplicit-function-declaration]
+  pinctrl_pm_select_default_state(dev);
+  ^
 
-Best regards,
-Tomasz
+Caused by commit cf9e9c98fa8c ("spi: Add new driver for
+STMicroelectronics' SPI Controller").
+
+To me COMPILE_TEST means "this builds everywhere, make sure it doesn't
+break" ... not "lets set this and see if Stephen finds anything" :-)
+
+I reverted both commits for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/EInRbud0xsbbLPnfI7kLexz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUhZQEAAoJEMDTa8Ir7ZwVQmkP/0hxKiWAhcIjKSNO0tfXYllB
+7/JIISA0r1jhsCW5Y2TyZWXmZ6t04wv0JwDJ+dqByb8HND3A39XnB2RHgXK/Si5N
+gZOORuzz9aKd2sBV8LM7trf+heex1kCsx5UbmuRUOcIZMikg5NzzVuOba0UTO753
+f1Mf3yY7u3eKKo9+NArfYCB29CjuwJcClV3X1pouLE0xbARyM7sC278kFcoquoQi
+kBzwoE40iLHJ5ujVpG4WzsUQZshd9C8E4kYd17SW3gi+cTp71Og5Ly8UqZ+gnn5o
+sndvrG3jlym4PKFh5KU4PLr0+shNmYBGCJ2eu7W0xLqxr1OM0JV0uoxbkbsj0ZBf
+ZCJ1pJj7pNKvndigTggayisKPMqC+4m34qvvV9k0ZGsqdlIB0bVkDdbT2RUDgT2z
+h6HpvA+9CiNyRF43PvAmFYpXu060A7tBrin+lb3of8KyhLMnVJq7EQREkqkIBfMT
+4yTkseepgmX0EusjI8TzU4A0G4pFtKxYs7Jz+8huIY4EWwo7RpEFqxZfjHBXxJgH
+BPLzfEe0ogdHUebc0CijJzYGe7Pe/cKG7jun1YtTKVBMeIs60MekGbqgtKlRIYfF
+HVeXYvAJGIAwe8p3b/YHSxGMWd5AGbLDiYX8Xmly4MBzGKSl7y/PsLu0++Dhh/+r
+TYfT8WyT4PD1LLkYDwxt
+=9uXs
+-----END PGP SIGNATURE-----
+
+--Sig_/EInRbud0xsbbLPnfI7kLexz--
