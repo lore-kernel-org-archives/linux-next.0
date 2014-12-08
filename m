@@ -1,81 +1,82 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] Thermal: introduce INT3406 thermal driver
-Date: Mon, 8 Dec 2014 11:55:49 +0100
-Message-ID: <CAMuHMdWHn+BcpPjr7x+Y1aRwUgBP54mH=4XpjB1VOd7T76-kjw@mail.gmail.com>
-References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com>
-	<543F88BE.4090307@intel.com>
-	<20141017070620.GA1538@aaronlu.sh.intel.com>
-	<20141017072236.GA12504@aaronlu.sh.intel.com>
-	<544F33AF.1000704@intel.com>
-	<20141107191127.GB27438@developer>
-	<1417350176.27484.10.camel@rzhang1-toshiba>
-	<547D59D2.8010906@intel.com>
-	<1418009702.19126.14.camel@rzhang1-toshiba>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the tiny tree with the tip tree
+Date: Mon, 8 Dec 2014 12:09:03 +0100
+Message-ID: <20141208110903.GA1246@gmail.com>
+References: <20141125101044.GA20465@gmail.com>
+ <20141126000433.GA25720@cloud>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:42511 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752144AbaLHKzw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 05:55:52 -0500
-In-Reply-To: <1418009702.19126.14.camel@rzhang1-toshiba>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:33107 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752144AbaLHLJI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 06:09:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20141126000433.GA25720@cloud>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Aaron Lu <aaron.lu@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+To: josh@joshtriplett.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Catalina Mocanu <catalina.mocanu@gmail.com>
 
-On Mon, Dec 8, 2014 at 4:35 AM, Zhang Rui <rui.zhang@intel.com> wrote:
-> On Tue, 2014-12-02 at 14:18 +0800, Aaron Lu wrote:
->> On 11/30/2014 08:22 PM, Zhang Rui wrote:
->> > On Fri, 2014-11-07 at 15:11 -0400, Eduardo Valentin wrote:
->> >> Hi,
->> >>
->> >> On Tue, Oct 28, 2014 at 02:11:59PM +0800, Aaron Lu wrote:
->> >>> Jim found that the current kernel may trigger a build error with some
->> >>> config: drivers/built-in.o: In function `int3406_thermal_probe':
->> >>> int3406_thermal.c:(.text+0x1d10b8): undefined reference to
->> >>> `acpi_video_get_levels'. The problem happens when CONFIG_THERMAL=y and
->> >>> CONFIG_ACPI_VIDEO=m. Solve the problem by separating a kernel config for
->> >>> int3406 thermal driver and add dependency on ACPI video for it.
->> >>>
->> >>> Reported-by: Jim Davis <jim.epost@gmail.com>
->> >>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
->> >>
->> > Aaron, this is an incremental patch on top of the INT3406 driver patch.
->> > As, both patches have not been shipped in Linus' tree, please merge
->> > these two patches altogether and resend.
->>
->> OK, here it is:
->>
->> From 02d7abdcfe138e6cdee7572b10addce4f56d89eb Mon Sep 17 00:00:00 2001
->> From: Aaron Lu <aaron.lu@intel.com>
->> Date: Wed, 3 Sep 2014 15:15:02 +0800
->> Subject: [PATCH] Thermal: introduce INT3406 thermal driver
->>
->> INT3406 ACPI device object resembles an ACPI video output device, but its
->> _BCM is said to be deprecated and should not be used. So we will make
->> use of the raw interface to do the actual cooling. Due to this, the
->> backlight core has some modifications. Also, to re-use some of the ACPI
->> video module's code, one function has been exported.
->>
->> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
->> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
->
-> applied.
 
-Unfortunately drivers/thermal/int340x_thermal/Kconfig was missing
-from the patch, hence "make oldconfig" now fails miserably with
+* josh@joshtriplett.org <josh@joshtriplett.org> wrote:
 
-drivers/thermal/Kconfig:265: can't open file
-"drivers/thermal/int340x_thermal/Kconfig"
+> On Tue, Nov 25, 2014 at 11:10:44AM +0100, Ingo Molnar wrote:
+> > * Josh Triplett <josh@joshtriplett.org> wrote:
+> > > On Tue, Nov 25, 2014 at 07:16:45AM +0100, Ingo Molnar wrote:
+> > > > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > > > Hi Josh,
+> > > > > 
+> > > > > Today's linux-next merge of the tiny tree got a conflict in
+> > > > > kernel/time/Makefile between commit fd866e2b116b ("time: Rename
+> > > > > udelay_test.c to test_udelay.c") from the tip tree and commit
+> > > > > d1f6d68d03ea ("kernel: time: Compile out NTP support") from the tiny
+> > > > > tree.
+> > > > 
+> > > > So I think a timer subsystem commit d1f6d68d03ea with this 
+> > > > magnitude of linecount increase:
+> > > > 
+> > > >  Signed-off-by: Catalina Mocanu <catalina.mocanu@gmail.com>
+> > > >  [josh: Handle CONFIG_COMPAT=y.]
+> > > >  Reviewed-by: Josh Triplett <josh@joshtriplett.org>
+> > > >  Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+> > > >  ---
+> > > >   drivers/pps/Kconfig        |  2 +-
+> > > >   include/linux/timex.h      | 15 +++++++++++++--
+> > > >   init/Kconfig               | 10 ++++++++++
+> > > >   kernel/compat.c            |  8 ++++++--
+> > > >   kernel/sys_ni.c            |  4 ++++
+> > > >   kernel/time/Makefile       |  3 ++-
+> > > >   kernel/time/ntp_internal.h | 28 ++++++++++++++++++++++++++++
+> > > >   kernel/time/posix-timers.c |  2 ++
+> > > >   kernel/time/time.c         |  2 ++
+> > > >   kernel/time/timekeeping.c  |  2 ++
+> > > >   10 files changed, 70 insertions(+), 6 deletions(-)
+> > > > 
+> > > > at minimum needs the ack of timer folks, before it can be 
+> > > > committed to Git. Or is the tiny tree plan to submit all
+> > > > patches to the appropriate subsystem or gather acks, before 
+> > > > sending it upstream?
+> > > 
+> > > Yes, absolutely.  I planned to send out a tinification patch 
+> > > review series later this week with all 10 current patches (both 
+> > > those reviewed on LKML and those only reviewed elsewhere).
+> > 
+> > But, but: _please_ don't push patches towards linux-next that 
+> > haven't been acked by maintainers.
+> [...snip clear explanation of linux-next...]
+> 
+> Thanks for the clarification, Ingo!  Mind if I use your explanation as
+> the basis for additional documentation of linux-next?
 
-Gr{oetje,eeting}s,
+Sure, feel free!
 
-                        Geert
+> I've moved the tiny/next branch of my tree to tiny/work, and 
+> I'll make sure that tiny/next only gets patches that have 
+> gotten all the necessary reviews.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+That looks perfect.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+
+	Ingo
