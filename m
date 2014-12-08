@@ -1,66 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the access_once tree
-Date: Mon, 8 Dec 2014 10:55:17 +1100
-Message-ID: <20141208105517.0e9ac555@canb.auug.org.au>
-References: <20141205213224.2dcc20e9@canb.auug.org.au>
-	<5484BF4D.1020809@de.ibm.com>
-	<5484C3B9.2030909@de.ibm.com>
+Subject: linux-next: manual merge of the bcm2835 tree with the arm-soc tree
+Date: Mon, 8 Dec 2014 12:06:19 +1100
+Message-ID: <20141208120619.68287b54@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LZ8M9cZwkSpDtBqpS1ghESa"; protocol="application/pgp-signature"
+ boundary="Sig_/6yZr7PafkkPqsojDZWQfZ59"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40378 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34302 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752566AbaLGXz0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 7 Dec 2014 18:55:26 -0500
-In-Reply-To: <5484C3B9.2030909@de.ibm.com>
+	id S1751224AbaLHBGZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Dec 2014 20:06:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Matthias Klein <matthias.klein@linux.com>, Lee Jones <lee.jones@linaro.org>
 
---Sig_/LZ8M9cZwkSpDtBqpS1ghESa
+--Sig_/6yZr7PafkkPqsojDZWQfZ59
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
+Hi Stephen,
 
-On Sun, 07 Dec 2014 22:16:41 +0100 Christian Borntraeger <borntraeger@de.ib=
-m.com> wrote:
->
-> I also did an additional check and merged this tree with linux-next/maste=
-r. This introduced a new problem.
-> The fix is simple, see patch. But I am not sure how to add that to next (=
-via my tree), since this change is only in next.
+Today's linux-next merge of the bcm2835 tree got a conflict in
+arch/arm/boot/dts/Makefile between commit 302a5ef29d49 ("ARM: BCM5301X:
+Add DT for Netgear R6300 V2") from the arm-soc tree and commit
+6298ed17a404 ("ARM: bcm2835: Add device tree for Raspberry Pi model
+B+") from the bcm2835 tree.
 
-OK, thanks for that.  I will apply that patch as a merge fix to my tree
-when I merge your tree.  You (or the owner of the conflicting tree)
-will need to let Linus know when the merge happens in his tree.
+I fixed it up (the bcm2835 tree patch is also in the arm-soc tree as
+commit ba2a1d6959ac ("ARM: bcm2835: Add device tree for Raspberry Pi
+model B+"), so I just used the arm-soc version) and can carry the fix
+as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/LZ8M9cZwkSpDtBqpS1ghESa
+--Sig_/6yZr7PafkkPqsojDZWQfZ59
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUhOjtAAoJEMDTa8Ir7ZwVLT8P/iQs0qQkv+OBQ7f8vc3c8SM5
-5CNv/UmMG3oAulClhQ6svAJO0ljpdzmdePZd0tkbvQAfOjUvX9K+5aLgC6mpS5E3
-5byB4mm5DHkWX1kdX3yN5cWq9uydcnrVuQhD1ZiqwHL/cF6qbSQjviE8O0RRpPPy
-Djw1yip2C0djmNKhk8fhybsoo+LR6BMqt0ZwGdqQbcXjDMHaDLDoF+J+ENrh81OO
-GmUHrCdcglNNgpXo6hERArae9YbYGi/D2ypXvEWxvU0YH7WMStfJIvbBr0FHjQ0i
-HjXBV61qjTUFGlfjFrSKzR6GvEhcn7SM27/AH7NGa50IQ+FTBz5QfClpiMdi4iQf
-q8EicFXXUrakWp2BgbxpJ+l8PmAF+6IM4kgcrNGhuNEMqt9ibXBwtgEZsfO9IOET
-zdarxcIvECie0u3OSpk+A1NJVJoPOcPupq9A84DuVTw3j2trMjMgEAGC+ghrbdmS
-XCziFjjZVYmXJ1GUOSqFZXgluFx4hB0kzi+b9CLPsL1exo4L7FaxP2YLLHNo+ZUe
-rAYiRUOvqIVmoS0E1rgPvWIY6Stp7YIusdG8WneBAxSc8luMKrVAxi6u3/4GYuSb
-7dGi5sKVJu0Xe5R9JKPXs9tG/UQOt1DzM9o/teLgFAET1sPMxNZ1gHYEZU1+2mQr
-lsBTful+ESjVZlTechVg
-=L6ZR
+iQIcBAEBCAAGBQJUhPmPAAoJEMDTa8Ir7ZwVHx0P/1ff9/dAZnFi/6f9CSPLdDg1
+jJOHrZn6YiZUdLD997cxmMe+MIngPffz8PCpYJ3dIAXOX9rGE9edrLulglS18k8j
+k8yo7gODN1ZyZkhXjyMrOyZlLI3WmftEGmVxTNeuPAoSQWhG6yF/QA+WB5g85JbF
+ku6GTB974IwrGEytorhSoooEK0Fe2tubSaj77d+9WcyMa8kqNtZPrBH1WEtiQvlC
+OkNx1HI/Euu87V8e7XLQqYvmHa4rZdCvoJ8hHEfBH0ZuHkBO1wGinJweRDa2Ldum
++NL1tqcM5zceDFz0rLZufw4IV6NqL/OsMip4f+uIqTiOpydns9cy04eocuLbII1H
+KZCdMY1tfKbnQyWsr82rNdI53RTwgvXU4QsptTg7zxUEhTCScpCiKdzTZd9eNqTM
+jGo2zPWfD5q7E6p6IKCTcFhanmhZTACmXhvdPkOgpgc24l6iFYWBXhpD4zwr01JJ
+2SJJ+qHhFa0wYR4h/o6+zl9NcpWAXM1W3GAEtlKxNSBYE81cDxKldnyDm9J/+GCh
+uG1PMZr9pUtwBPIhvsJT2zuMh4NrdQ2IXZyi2eUmGv9pYIOibobMOhhyBAx0KFuN
+8b13+Gx4oDRcekkv+ng5bzJs+oFJoxvjWccUrUoMhhoLZ9YlrZpHtALZK3KekY1V
+pk/kcaxETPgMmHxBXmg7
+=xf6Z
 -----END PGP SIGNATURE-----
 
---Sig_/LZ8M9cZwkSpDtBqpS1ghESa--
+--Sig_/6yZr7PafkkPqsojDZWQfZ59--
