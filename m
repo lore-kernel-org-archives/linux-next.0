@@ -1,57 +1,101 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: status of the lzo-update tree
-Date: Mon, 8 Dec 2014 21:31:20 +1100
-Message-ID: <20141208213120.214c8386@canb.auug.org.au>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the arm-soc
+ tree
+Date: Mon, 8 Dec 2014 10:33:29 +0000
+Message-ID: <20141208103328.GE27367@arm.com>
+References: <20141208184908.27bfd605@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Y1sEam=so/FcZ.pSpBYWFN."; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60467 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753575AbaLHKbc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2014 05:31:32 -0500
+Received: from foss-mx-na.foss.arm.com ([217.140.108.86]:45983 "EHLO
+	foss-mx-na.foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752077AbaLHKd2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 05:33:28 -0500
+Content-Disposition: inline
+In-Reply-To: <20141208184908.27bfd605@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Vrabel <david.vrabel@citrix.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Russell King <linux@arm.linux.org.uk>
 
---Sig_/Y1sEam=so/FcZ.pSpBYWFN.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 08, 2014 at 07:49:08AM +0000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the xen-tip tree got a conflict in
+> arch/arm/include/asm/dma-mapping.h between commits a3a60f81ee6f
+> ("dma-mapping: replace set_arch_dma_coherent_ops with
+> arch_setup_dma_ops") and 4bb25789ed28 ("arm: dma-mapping: plumb our
+> iommu mapping ops into arch_setup_dma_ops") from the arm-soc tree and
+> commit 3d5391ac6f5e ("arm: introduce is_device_dma_coherent") from the
+> xen-tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> I also neede this merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 8 Dec 2014 18:46:59 +1100
+> Subject: [PATCH] arm: introduce is_device_dma_coherent merge fix
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/arm/mm/dma-mapping.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 09645f00bd17..43064cbe58f9 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -2058,6 +2058,7 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  	else
+>  		dma_ops = arm_get_dma_map_ops(coherent);
+>  
+> +	dev->archdata.dma_coherent = coherent;
+>  	set_dma_ops(dev, dma_ops);
+>  }
 
-Hi Markus,
+Looks good to me.
 
-The only commit in the lzo-update tree
-(git://github.com/markus-oberhumer/linux.git#lzo-update) is:
-
-    lib/lzo: huge LZO decompression speedup on ARM by using unaligned access
-
-It is dated 4 Feb 2013 and committed on 4 Mar 2013.  Is this going
-anywhere?  Or should I just remove the whole tree?
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Y1sEam=so/FcZ.pSpBYWFN.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Will
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUhX4CAAoJEMDTa8Ir7ZwVh3AP/A4JyG3YGBo/sFstM8+LcX+A
-SQeeQO2Ky2NnHb6sWz3OQXRD1NNqJ4eqFGDFYV+1nPaRNJaCAwdWdEhxg7yXyl5N
-l98dxLGFvmbeLWOyjIaaQl7j5Ac8AcorjLAWBUlmF/qf37uWU90RecozjsWDp3dU
-gToQw8Mwh+kfcM1j4b6hTX+hIEIjy7yczYvnzguC0bdTfsmm4Is09UgCwiCKibbC
-gUrdU72qd7+T4gzS6w/mwI+goEbsee404vTvXqiBJMYl88hG4N6emScnBS7OlCi1
-nUqP+E63UkS4ovc0fiNp9j1Ion187iFn6kpr744TBo6kpS/r/jTR8baeO5/hiSAT
-auTOpZeeI8HyWm7boYaOQzIKKqq+z5VmLPpNoiGcHJhzY8TPBl6rD4TXa7g926RZ
-iqT7aBRrcG5EQQSsR09KTCYRd9KJphF4QDQbK2IZrDY28uvix+VX2j3u8/PThUG4
-p6eA2r1JAsZ/XvHx18eKyf0vi6DfsYw3+UaX7muIAUs/9B/ZtZlGyTRadv9gXX2y
-/tZMm555bCWbcPwmL9d2IPRmjbKBNQUgorX0DF5RACsPpNIuiGQ3GZugBHlouwZ+
-CC7+e7OcQWuqlzpAuQS+NMfLukWhdO993nzXvIt8WRDZgOmn3XjfckKtyUmkEXH/
-rkIUQlRhsKgmA2oJKO/h
-=bRxn
------END PGP SIGNATURE-----
-
---Sig_/Y1sEam=so/FcZ.pSpBYWFN.--
+> -- 
+> 2.1.3
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/include/asm/dma-mapping.h
+> index 9410b7e548fc,e6e3446abdf6..000000000000
+> --- a/arch/arm/include/asm/dma-mapping.h
+> +++ b/arch/arm/include/asm/dma-mapping.h
+> @@@ -121,13 -121,20 +121,19 @@@ static inline unsigned long dma_max_pfn
+>   }
+>   #define dma_max_pfn(dev) dma_max_pfn(dev)
+>   
+>  -static inline int set_arch_dma_coherent_ops(struct device *dev)
+>  -{
+>  -	dev->archdata.dma_coherent = true;
+>  -	set_dma_ops(dev, &arm_coherent_dma_ops);
+>  -	return 0;
+>  -}
+>  -#define set_arch_dma_coherent_ops(dev)	set_arch_dma_coherent_ops(dev)
+>  +#define arch_setup_dma_ops arch_setup_dma_ops
+>  +extern void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  +			       struct iommu_ops *iommu, bool coherent);
+>  +
+>  +#define arch_teardown_dma_ops arch_teardown_dma_ops
+>  +extern void arch_teardown_dma_ops(struct device *dev);
+>   
+> + /* do not use this function in a driver */
+> + static inline bool is_device_dma_coherent(struct device *dev)
+> + {
+> + 	return dev->archdata.dma_coherent;
+> + }
+> + 
+>   static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
+>   {
+>   	unsigned int offset = paddr & ~PAGE_MASK;
