@@ -1,54 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 8 Dec 2014 12:13:42 +0000
-Message-ID: <20141208121342.GW11764@sirena.org.uk>
-References: <20141208230517.13ebfe4f@canb.auug.org.au>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Mon, 8 Dec 2014 12:22:35 +0000
+Message-ID: <20141208122235.GC11502@n2100.arm.linux.org.uk>
+References: <5481D913.9040109@ti.com>
+ <5481D9BF.2090007@ti.com>
+ <20141205162312.GB11502@n2100.arm.linux.org.uk>
+ <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8R/sMIKPJVD0CT2D"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51994 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752151AbaLHMOJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 07:14:09 -0500
-Content-Disposition: inline
-In-Reply-To: <20141208230517.13ebfe4f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurentiu Palcu <laurentiu.palcu@intel.com>, Lee Jones <lee.jones@linaro.org>
-
-
---8R/sMIKPJVD0CT2D
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 08, 2014 at 11:05:17PM +1100, Stephen Rothwell wrote:
+On Mon, Dec 08, 2014 at 08:54:18PM +0900, Tomasz Figa wrote:
+> 2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> > Given where we are in the cycle (-final likely this weekend) the only
+> > thing we can do right now is to drop the patch set; exynos (and mvebu)
+> > will have to wait another cycle until this patch set (hopefully in a
+> > revised form) can be merged.
+> 
+> Or a fix could be queued on top of this. Since (I believe) this series
+> has been queued for 3.19, we have 6 or 7 RC releases ahead, which
+> could be used for the purpose of fixing things (as they are supposed
+> to?).
 
-> Caused by commit cf9e9c98fa8c ("spi: Add new driver for
-> STMicroelectronics' SPI Controller").
+They were merged on 27th November, so they would've been in linux-next
+from about last Monday.  Nishanth reported a failure on Friday, the
+last week day before the merge window opens.  There's no time to try
+and fix this before the merge window, which is why I decided to drop
+it.  They have already been dropped.  They were dropped immediately
+after my message on Friday was sent.  So they've not been in linux-next
+over this past weekend.
 
-> To me COMPILE_TEST means "this builds everywhere, make sure it doesn't
-> break" ... not "lets set this and see if Stephen finds anything" :-)
+We don't push known broken code in during the merge window.  The merge
+window is the exact time when subtle bugs are likely to be introduced,
+and is the exact time that you want bisect to work.  If we push known
+broken patches into the kernel during that period, we break the ability
+to use bisect to find problems, especially where it causes a platform
+to become unbootable.
 
-> I reverted both commits for today.
-
-I've dropped both from my tree too.
-
---8R/sMIKPJVD0CT2D
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUhZX1AAoJECTWi3JdVIfQkQEH/3+wucZbumeo+0/XaofRSaTP
-TH35VFxE5thQf77CnXJrib93MxZyBHYawnBSAiwDGGB8cF1sffwhaOmOvRjcYttR
-A7eORNk/L4eK9vUT2evbKsFZCCp67ZrVE6yB1E5qitjTlxJ2WI3jwPRKtOvDhmyY
-mr7tqbyhK7OLwZzb/gyzNThWy4xcQgpF7CFYK7kLQfia6Ga1QF+z2gkKQzfsUhh0
-ulRj0h3fzsruxXFgVtF1ODoguAlydc9loiLJezIPjLpboq3fRU41dA1OQ9uS8/so
-fhg2X/wN76fUvBGa0pZZWAUkRF8bcASpljRCJ+tPXp5wkLkucrOwwCXiE8yEk4M=
-=QBWY
------END PGP SIGNATURE-----
-
---8R/sMIKPJVD0CT2D--
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
