@@ -1,101 +1,81 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: linux-next: manual merge of the xen-tip tree with the arm-soc
- tree
-Date: Mon, 8 Dec 2014 10:33:29 +0000
-Message-ID: <20141208103328.GE27367@arm.com>
-References: <20141208184908.27bfd605@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] Thermal: introduce INT3406 thermal driver
+Date: Mon, 8 Dec 2014 11:55:49 +0100
+Message-ID: <CAMuHMdWHn+BcpPjr7x+Y1aRwUgBP54mH=4XpjB1VOd7T76-kjw@mail.gmail.com>
+References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com>
+	<543F88BE.4090307@intel.com>
+	<20141017070620.GA1538@aaronlu.sh.intel.com>
+	<20141017072236.GA12504@aaronlu.sh.intel.com>
+	<544F33AF.1000704@intel.com>
+	<20141107191127.GB27438@developer>
+	<1417350176.27484.10.camel@rzhang1-toshiba>
+	<547D59D2.8010906@intel.com>
+	<1418009702.19126.14.camel@rzhang1-toshiba>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss-mx-na.foss.arm.com ([217.140.108.86]:45983 "EHLO
-	foss-mx-na.foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752077AbaLHKd2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 05:33:28 -0500
-Content-Disposition: inline
-In-Reply-To: <20141208184908.27bfd605@canb.auug.org.au>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:42511 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752144AbaLHKzw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 05:55:52 -0500
+In-Reply-To: <1418009702.19126.14.camel@rzhang1-toshiba>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Vrabel <david.vrabel@citrix.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Russell King <linux@arm.linux.org.uk>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Aaron Lu <aaron.lu@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 
-On Mon, Dec 08, 2014 at 07:49:08AM +0000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the xen-tip tree got a conflict in
-> arch/arm/include/asm/dma-mapping.h between commits a3a60f81ee6f
-> ("dma-mapping: replace set_arch_dma_coherent_ops with
-> arch_setup_dma_ops") and 4bb25789ed28 ("arm: dma-mapping: plumb our
-> iommu mapping ops into arch_setup_dma_ops") from the arm-soc tree and
-> commit 3d5391ac6f5e ("arm: introduce is_device_dma_coherent") from the
-> xen-tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-> I also neede this merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 8 Dec 2014 18:46:59 +1100
-> Subject: [PATCH] arm: introduce is_device_dma_coherent merge fix
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/arm/mm/dma-mapping.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 09645f00bd17..43064cbe58f9 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -2058,6 +2058,7 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
->  	else
->  		dma_ops = arm_get_dma_map_ops(coherent);
->  
-> +	dev->archdata.dma_coherent = coherent;
->  	set_dma_ops(dev, dma_ops);
->  }
+On Mon, Dec 8, 2014 at 4:35 AM, Zhang Rui <rui.zhang@intel.com> wrote:
+> On Tue, 2014-12-02 at 14:18 +0800, Aaron Lu wrote:
+>> On 11/30/2014 08:22 PM, Zhang Rui wrote:
+>> > On Fri, 2014-11-07 at 15:11 -0400, Eduardo Valentin wrote:
+>> >> Hi,
+>> >>
+>> >> On Tue, Oct 28, 2014 at 02:11:59PM +0800, Aaron Lu wrote:
+>> >>> Jim found that the current kernel may trigger a build error with some
+>> >>> config: drivers/built-in.o: In function `int3406_thermal_probe':
+>> >>> int3406_thermal.c:(.text+0x1d10b8): undefined reference to
+>> >>> `acpi_video_get_levels'. The problem happens when CONFIG_THERMAL=y and
+>> >>> CONFIG_ACPI_VIDEO=m. Solve the problem by separating a kernel config for
+>> >>> int3406 thermal driver and add dependency on ACPI video for it.
+>> >>>
+>> >>> Reported-by: Jim Davis <jim.epost@gmail.com>
+>> >>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>> >>
+>> > Aaron, this is an incremental patch on top of the INT3406 driver patch.
+>> > As, both patches have not been shipped in Linus' tree, please merge
+>> > these two patches altogether and resend.
+>>
+>> OK, here it is:
+>>
+>> From 02d7abdcfe138e6cdee7572b10addce4f56d89eb Mon Sep 17 00:00:00 2001
+>> From: Aaron Lu <aaron.lu@intel.com>
+>> Date: Wed, 3 Sep 2014 15:15:02 +0800
+>> Subject: [PATCH] Thermal: introduce INT3406 thermal driver
+>>
+>> INT3406 ACPI device object resembles an ACPI video output device, but its
+>> _BCM is said to be deprecated and should not be used. So we will make
+>> use of the raw interface to do the actual cooling. Due to this, the
+>> backlight core has some modifications. Also, to re-use some of the ACPI
+>> video module's code, one function has been exported.
+>>
+>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+>
+> applied.
 
-Looks good to me.
+Unfortunately drivers/thermal/int340x_thermal/Kconfig was missing
+from the patch, hence "make oldconfig" now fails miserably with
 
-Cheers,
+drivers/thermal/Kconfig:265: can't open file
+"drivers/thermal/int340x_thermal/Kconfig"
 
-Will
+Gr{oetje,eeting}s,
 
-> -- 
-> 2.1.3
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/include/asm/dma-mapping.h
-> index 9410b7e548fc,e6e3446abdf6..000000000000
-> --- a/arch/arm/include/asm/dma-mapping.h
-> +++ b/arch/arm/include/asm/dma-mapping.h
-> @@@ -121,13 -121,20 +121,19 @@@ static inline unsigned long dma_max_pfn
->   }
->   #define dma_max_pfn(dev) dma_max_pfn(dev)
->   
->  -static inline int set_arch_dma_coherent_ops(struct device *dev)
->  -{
->  -	dev->archdata.dma_coherent = true;
->  -	set_dma_ops(dev, &arm_coherent_dma_ops);
->  -	return 0;
->  -}
->  -#define set_arch_dma_coherent_ops(dev)	set_arch_dma_coherent_ops(dev)
->  +#define arch_setup_dma_ops arch_setup_dma_ops
->  +extern void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
->  +			       struct iommu_ops *iommu, bool coherent);
->  +
->  +#define arch_teardown_dma_ops arch_teardown_dma_ops
->  +extern void arch_teardown_dma_ops(struct device *dev);
->   
-> + /* do not use this function in a driver */
-> + static inline bool is_device_dma_coherent(struct device *dev)
-> + {
-> + 	return dev->archdata.dma_coherent;
-> + }
-> + 
->   static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
->   {
->   	unsigned int offset = paddr & ~PAGE_MASK;
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
