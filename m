@@ -1,61 +1,72 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Mon, 8 Dec 2014 15:11:26 +0000
-Message-ID: <20141208151126.GD11502@n2100.arm.linux.org.uk>
-References: <5481D913.9040109@ti.com>
- <5481D9BF.2090007@ti.com>
- <20141205162312.GB11502@n2100.arm.linux.org.uk>
- <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com>
- <20141208122235.GC11502@n2100.arm.linux.org.uk>
- <5485AD80.1050008@ti.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc
+ tree
+Date: Mon, 08 Dec 2014 09:08:34 -0700
+Message-ID: <5485CD02.7010903@wwwdotorg.org>
+References: <20141208120619.68287b54@canb.auug.org.au> <2406890.FlzRjyvuXd@wuerfel> <20141208130009.GL3951@x1> <3348703.0b5FTH9Sa3@wuerfel> <20141208134903.GN3951@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5485AD80.1050008@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:58552 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752369AbaLHQIO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 11:08:14 -0500
+In-Reply-To: <20141208134903.GN3951@x1>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Matthias Klein <matthias.klein@linux.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Mon, Dec 08, 2014 at 07:54:08AM -0600, Nishanth Menon wrote:
-> On 12/08/2014 06:22 AM, Russell King - ARM Linux wrote:
-> > On Mon, Dec 08, 2014 at 08:54:18PM +0900, Tomasz Figa wrote:
-> >> 2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> >>> Given where we are in the cycle (-final likely this weekend) the only
-> >>> thing we can do right now is to drop the patch set; exynos (and mvebu)
-> >>> will have to wait another cycle until this patch set (hopefully in a
-> >>> revised form) can be merged.
-> >>
-> >> Or a fix could be queued on top of this. Since (I believe) this series
-> >> has been queued for 3.19, we have 6 or 7 RC releases ahead, which
-> >> could be used for the purpose of fixing things (as they are supposed
-> >> to?).
-> > 
-> > They were merged on 27th November, so they would've been in linux-next
-> > from about last Monday.  Nishanth reported a failure on Friday, the
-> 
-> For what ever it is worth, the l2c changes actually appeared on
-> Thursday CST (next-20141204). Found the regression against
-> next-20141203 tag and it took me a day to track it down (after looking
-> at a few other regressions as well)..
+On 12/08/2014 06:49 AM, Lee Jones wrote:
+> On Mon, 08 Dec 2014, Arnd Bergmann wrote:
+>
+>> On Monday 08 December 2014 13:00:09 Lee Jones wrote:
+>>> On Mon, 08 Dec 2014, Arnd Bergmann wrote:
+>>>
+>>>> On Monday 08 December 2014 12:06:19 Stephen Rothwell wrote:
+>>>>> Hi Stephen,
+>>>>>
+>>>>> Today's linux-next merge of the bcm2835 tree got a conflict in
+>>>>> arch/arm/boot/dts/Makefile between commit 302a5ef29d49 ("ARM: BCM5301X:
+>>>>> Add DT for Netgear R6300 V2") from the arm-soc tree and commit
+>>>>> 6298ed17a404 ("ARM: bcm2835: Add device tree for Raspberry Pi model
+>>>>> B+") from the bcm2835 tree.
+>>>>>
+>>>>> I fixed it up (the bcm2835 tree patch is also in the arm-soc tree as
+>>>>> commit ba2a1d6959ac ("ARM: bcm2835: Add device tree for Raspberry Pi
+>>>>> model B+"), so I just used the arm-soc version) and can carry the fix
+>>>>> as necessary (no action is required).
+>>>>
+>>>> Thanks a lot for the notification!
+>>>>
+>>>> Lee, do you know what is going on? Did you accidentally rebase a commit
+>>>> that you already sent for inclusion in arm-soc?
+>>>
+>>> Nope.  The branch hasn't changed at all.
+>>>
+>>> OOI why would a re-base affect anything?  I sent you it in patch form.
+>>
+>> Ah, I looked at the wrong branch and didn't see that I applied a patch
+>> instead of a pull request. It's all fine then, as long as you never
+>> intend to send any pull requests based on top of your current branch.
+>>
+>> You can possibly make Stephen's life a tiny bit simpler if you just
+>> drop all patches from your for-next branch as soon as we've picked
+>> them up into arm-soc.
+>
+> That is something I thought about, but I believe we have users of that
+> branch.  I guess we could always point them to ARM-SoC, or reset the
+> branch to the aforementioned.
 
-I wonder if that's because I didn't push my tree out until Tuesday-ish.
-It takes around 48 hours between when I push stuff out to it appearing
-in linux-next, which is not particularly desirable, but unavoidable due
-to timezone differences.
+The primary purpose of the kernel.org linux-rpi.git repo is for staging 
+patches into arm-soc/linux-next. As such, just like any other similar 
+repo, users should expect at least the for-xxx (e.g. for-next) branches 
+to get reset as kernel versions tick over, in order to contain the 
+content for the next kernel. Anyone using those branches for anything 
+else (e.g. local development) simply has to be prepared to do a rebase 
+themselves when that happens.
 
-I did decide that I wouldn't push it out the same day I merged it because
-I wanted it to run through my build/boot system, which it did successfully,
-but then my OMAP4 build doesn't have CPU idle enabled (and as you've
-identified, when CPU idle is disabled, it works.)
-
-The problem there is that if I decide not to push some merged changes out,
-it takes several days before I get around to touching the kernel tree
-again.  Hence why it took from Thursday until Tuesday for it to eventually
-get pushed out.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Equally, and patches that get sent to arm-soc should probably never be 
+applied to linux-rpi.git; anything that gets applied to linux-rpi.git 
+should get sent to arm-soc as a pull request. That avoids duplicate commits.
