@@ -1,80 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the spi tree
-Date: Mon, 8 Dec 2014 23:05:17 +1100
-Message-ID: <20141208230517.13ebfe4f@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the spi tree
+Date: Mon, 8 Dec 2014 12:13:42 +0000
+Message-ID: <20141208121342.GW11764@sirena.org.uk>
+References: <20141208230517.13ebfe4f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EInRbud0xsbbLPnfI7kLexz"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8R/sMIKPJVD0CT2D"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53196 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753312AbaLHMF1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2014 07:05:27 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51994 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752151AbaLHMOJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 07:14:09 -0500
+Content-Disposition: inline
+In-Reply-To: <20141208230517.13ebfe4f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurentiu Palcu <laurentiu.palcu@intel.com>, Lee Jones <lee.jones@linaro.org>
 
---Sig_/EInRbud0xsbbLPnfI7kLexz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+--8R/sMIKPJVD0CT2D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-After merging the spi tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+On Mon, Dec 08, 2014 at 11:05:17PM +1100, Stephen Rothwell wrote:
 
-drivers/spi/spi-dln2.c: In function 'dln2_spi_copy_from_buf':
-drivers/spi/spi-dln2.c:415:4: error: implicit declaration of function 'get_=
-unaligned_le32' [-Werror=3Dimplicit-function-declaration]
-    *d++ =3D get_unaligned_le32(s++);
-    ^
+> Caused by commit cf9e9c98fa8c ("spi: Add new driver for
+> STMicroelectronics' SPI Controller").
 
-Caused by commit ffb9ad0a47b4 ("spi: add support for DLN-2 USB-SPI adapter"=
-).
+> To me COMPILE_TEST means "this builds everywhere, make sure it doesn't
+> break" ... not "lets set this and see if Stephen finds anything" :-)
 
-drivers/spi/spi-st-ssc4.c: In function 'spi_st_remove':
-drivers/spi/spi-st-ssc4.c:427:2: error: implicit declaration of function 'p=
-inctrl_pm_select_sleep_state' [-Werror=3Dimplicit-function-declaration]
-  pinctrl_pm_select_sleep_state(&pdev->dev);
-  ^
-drivers/spi/spi-st-ssc4.c: In function 'spi_st_runtime_resume':
-drivers/spi/spi-st-ssc4.c:453:2: error: implicit declaration of function 'p=
-inctrl_pm_select_default_state' [-Werror=3Dimplicit-function-declaration]
-  pinctrl_pm_select_default_state(dev);
-  ^
+> I reverted both commits for today.
 
-Caused by commit cf9e9c98fa8c ("spi: Add new driver for
-STMicroelectronics' SPI Controller").
+I've dropped both from my tree too.
 
-To me COMPILE_TEST means "this builds everywhere, make sure it doesn't
-break" ... not "lets set this and see if Stephen finds anything" :-)
-
-I reverted both commits for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/EInRbud0xsbbLPnfI7kLexz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--8R/sMIKPJVD0CT2D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUhZQEAAoJEMDTa8Ir7ZwVQmkP/0hxKiWAhcIjKSNO0tfXYllB
-7/JIISA0r1jhsCW5Y2TyZWXmZ6t04wv0JwDJ+dqByb8HND3A39XnB2RHgXK/Si5N
-gZOORuzz9aKd2sBV8LM7trf+heex1kCsx5UbmuRUOcIZMikg5NzzVuOba0UTO753
-f1Mf3yY7u3eKKo9+NArfYCB29CjuwJcClV3X1pouLE0xbARyM7sC278kFcoquoQi
-kBzwoE40iLHJ5ujVpG4WzsUQZshd9C8E4kYd17SW3gi+cTp71Og5Ly8UqZ+gnn5o
-sndvrG3jlym4PKFh5KU4PLr0+shNmYBGCJ2eu7W0xLqxr1OM0JV0uoxbkbsj0ZBf
-ZCJ1pJj7pNKvndigTggayisKPMqC+4m34qvvV9k0ZGsqdlIB0bVkDdbT2RUDgT2z
-h6HpvA+9CiNyRF43PvAmFYpXu060A7tBrin+lb3of8KyhLMnVJq7EQREkqkIBfMT
-4yTkseepgmX0EusjI8TzU4A0G4pFtKxYs7Jz+8huIY4EWwo7RpEFqxZfjHBXxJgH
-BPLzfEe0ogdHUebc0CijJzYGe7Pe/cKG7jun1YtTKVBMeIs60MekGbqgtKlRIYfF
-HVeXYvAJGIAwe8p3b/YHSxGMWd5AGbLDiYX8Xmly4MBzGKSl7y/PsLu0++Dhh/+r
-TYfT8WyT4PD1LLkYDwxt
-=9uXs
+iQEcBAEBAgAGBQJUhZX1AAoJECTWi3JdVIfQkQEH/3+wucZbumeo+0/XaofRSaTP
+TH35VFxE5thQf77CnXJrib93MxZyBHYawnBSAiwDGGB8cF1sffwhaOmOvRjcYttR
+A7eORNk/L4eK9vUT2evbKsFZCCp67ZrVE6yB1E5qitjTlxJ2WI3jwPRKtOvDhmyY
+mr7tqbyhK7OLwZzb/gyzNThWy4xcQgpF7CFYK7kLQfia6Ga1QF+z2gkKQzfsUhh0
+ulRj0h3fzsruxXFgVtF1ODoguAlydc9loiLJezIPjLpboq3fRU41dA1OQ9uS8/so
+fhg2X/wN76fUvBGa0pZZWAUkRF8bcASpljRCJ+tPXp5wkLkucrOwwCXiE8yEk4M=
+=QBWY
 -----END PGP SIGNATURE-----
 
---Sig_/EInRbud0xsbbLPnfI7kLexz--
+--8R/sMIKPJVD0CT2D--
