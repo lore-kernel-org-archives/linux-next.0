@@ -1,66 +1,69 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: linux-next: build failure after merge of the access_once tree
-Date: Mon, 08 Dec 2014 12:35:35 +0100
-Message-ID: <54858D07.2030403@de.ibm.com>
-References: <20141208222641.40a64946@canb.auug.org.au>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Mon, 8 Dec 2014 20:54:18 +0900
+Message-ID: <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com>
+References: <5481D913.9040109@ti.com>
+	<5481D9BF.2090007@ti.com>
+	<20141205162312.GB11502@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp17.uk.ibm.com ([195.75.94.113]:53757 "EHLO
-	e06smtp17.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752419AbaLHLfm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 06:35:42 -0500
-Received: from /spool/local
-	by e06smtp17.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
-	Mon, 8 Dec 2014 11:35:40 -0000
-In-Reply-To: <20141208222641.40a64946@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20141205162312.GB11502@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Am 08.12.2014 um 12:26 schrieb Stephen Rothwell:
-> Hi Christian,
-> 
-> After merging the acess_once tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> arch/powerpc/mm/hugetlbpage.c: In function 'find_linux_pte_or_hugepte':
-> arch/powerpc/mm/hugetlbpage.c:981:3: error: invalid initializer
->    pud  = ACCESS_ONCE(*pudp);
->    ^
-> arch/powerpc/mm/hugetlbpage.c:993:4: error: invalid initializer
->     pmd  = ACCESS_ONCE(*pmdp);
->     ^
-> 
-> These are preexisting ...
-> 
-> mm/gup.c: In function 'gup_pmd_range':
-> mm/gup.c:929:3: error: invalid initializer
->    pmd_t pmd = ACCESS_ONCE(*pmdp);
->    ^
-> mm/gup.c:929:3: error: (near initialization for 'pmd')
-> 
-> This is from commit f30c59e921f1 ("mm: Update generic gup
-> implementation to handle hugepage directory") from the powerpc-mpe (and
-> powerpc) tree and so will require a merge fix patch (presumable
-> s/ACCESS_ONCE/READ_ONCE/).
-> 
-> I am not sure how many architectures you are trying to cover, but
-> powerpc is one I care about :-)
-> 
-> I have dropped the access_once tree again today, sorry (its too late at
-> night).
+2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> On Fri, Dec 05, 2014 at 10:13:51AM -0600, Nishanth Menon wrote:
+>> On 12/05/2014 10:10 AM, Nishanth Menon wrote:
+>> > Case #2: Reverting the following allows boot.
+>> >
+>> > From next-20141204
+>> > 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
+>> > revert this  -> boot still fails
+>> >
+>> > d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
+>> > mach_desc only if not NULL
+>> > revert this  -> boot still fails
+>> >
+>> > 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
+>> > revert this  -> boot still fails
+>> >
+>> > c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
+>> > revert this  -> boot passed (first bad commit).
+>> >
+>> >
+>>
+>> + linux-samsung soc and updated Thomaz's mail ID (gmail now).
+>
+> Given where we are in the cycle (-final likely this weekend) the only
+> thing we can do right now is to drop the patch set; exynos (and mvebu)
+> will have to wait another cycle until this patch set (hopefully in a
+> revised form) can be merged.
 
-Yes, we expect that tightening ACCESS_ONCE will trigger these bugs. I tried to cover everything in Linus master, but next is certainly a new game. It will be pretty hard for me to keep this running when hundreds of trees get merged during 3.19-rc. :-(
+Or a fix could be queued on top of this. Since (I believe) this series
+has been queued for 3.19, we have 6 or 7 RC releases ahead, which
+could be used for the purpose of fixing things (as they are supposed
+to?).
 
-Linus, I see two options:
+>
+> I think we need 8208/1 split up into smaller changes so that the cause
+> of this regression can be found.
 
-a: Either we go a full round in linux-next and expect all trees to follow the new rules, so we can merge this for 3.20
-b: Only apply READ/ASSIGN_ONCE and the first fixups for 3.19 and put the ACCESS_ONCE change in next after rc1 so it will go in for 3.20 (or later) so that people can adopt. 
+I'm afraid we need more than that.
 
-Any opinions?
+First of all, this series has been in the wild for more than 3 months
+already, without any serious changes. Need not to mention that mailing
+lists and maintainers of all potentially affected platforms had been
+added. It had been noted in cover letter that the only platform I (and
+Marek later) could test on was Exynos and that it would be good if
+somebody working with other platforms could test the patches.
 
-Christian
+Looks like nobody cared back then, so why should we care that much
+now, especially that we have several RC releases ahead and we can
+still fix this?
+
+Best regards,
+Tomasz
