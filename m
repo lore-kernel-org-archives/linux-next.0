@@ -1,44 +1,54 @@
-From: Aaron Lu <aaron.lu@intel.com>
-Subject: Re: [PATCH] Thermal: introduce INT3406 thermal driver
-Date: Mon, 08 Dec 2014 21:22:44 +0800
-Message-ID: <5485A624.1060903@intel.com>
-References: <CA+r1ZhhoskOXaRSmcrnbdgapi-FsaKf+dnPHTXGkDvkYbvwQ8Q@mail.gmail.com>	<543F88BE.4090307@intel.com>	<20141017070620.GA1538@aaronlu.sh.intel.com>	<20141017072236.GA12504@aaronlu.sh.intel.com>	<544F33AF.1000704@intel.com>	<20141107191127.GB27438@developer>	<1417350176.27484.10.camel@rzhang1-toshiba>	<547D59D2.8010906@intel.com>	<1418009702.19126.14.camel@rzhang1-toshiba>	<CAMuHMdWHn+BcpPjr7x+Y1aRwUgBP54mH=4XpjB1VOd7T76-kjw@mail.gmail.com> <CAMuHMdW8Yap=VrHaEs-oKbVtRSUSb87qf9JJph7aG-MPuv4f_w@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc tree
+Date: Mon, 08 Dec 2014 14:28:44 +0100
+Message-ID: <3348703.0b5FTH9Sa3@wuerfel>
+References: <20141208120619.68287b54@canb.auug.org.au> <2406890.FlzRjyvuXd@wuerfel> <20141208130009.GL3951@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdW8Yap=VrHaEs-oKbVtRSUSb87qf9JJph7aG-MPuv4f_w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.131]:51209 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753135AbaLHN25 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 08:28:57 -0500
+In-Reply-To: <20141208130009.GL3951@x1>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Matthias Klein <matthias.klein@linux.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On 12/08/2014 07:20 PM, Geert Uytterhoeven wrote:
-> On Mon, Dec 8, 2014 at 11:55 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> Unfortunately drivers/thermal/int340x_thermal/Kconfig was missing
->> from the patch, hence "make oldconfig" now fails miserably with
->>
->> drivers/thermal/Kconfig:265: can't open file
->> "drivers/thermal/int340x_thermal/Kconfig"
+On Monday 08 December 2014 13:00:09 Lee Jones wrote:
+> On Mon, 08 Dec 2014, Arnd Bergmann wrote:
 > 
-> I've lifted the missing file from "[PATCH v3] Thermal: int3406_thermal:
-> solve the dependency build error" (https://lkml.org/lkml/2014/10/17/38).
+> > On Monday 08 December 2014 12:06:19 Stephen Rothwell wrote:
+> > > Hi Stephen,
+> > > 
+> > > Today's linux-next merge of the bcm2835 tree got a conflict in
+> > > arch/arm/boot/dts/Makefile between commit 302a5ef29d49 ("ARM: BCM5301X:
+> > > Add DT for Netgear R6300 V2") from the arm-soc tree and commit
+> > > 6298ed17a404 ("ARM: bcm2835: Add device tree for Raspberry Pi model
+> > > B+") from the bcm2835 tree.
+> > > 
+> > > I fixed it up (the bcm2835 tree patch is also in the arm-soc tree as
+> > > commit ba2a1d6959ac ("ARM: bcm2835: Add device tree for Raspberry Pi
+> > > model B+"), so I just used the arm-soc version) and can carry the fix
+> > > as necessary (no action is required).
+> > 
+> > Thanks a lot for the notification!
+> > 
+> > Lee, do you know what is going on? Did you accidentally rebase a commit
+> > that you already sent for inclusion in arm-soc?
+> 
+> Nope.  The branch hasn't changed at all.
+> 
+> OOI why would a re-base affect anything?  I sent you it in patch form.
 
-My bad, and thanks a lot for your kind help!
+Ah, I looked at the wrong branch and didn't see that I applied a patch
+instead of a pull request. It's all fine then, as long as you never
+intend to send any pull requests based on top of your current branch.
 
-Regards,
-Aaron
+You can possibly make Stephen's life a tiny bit simpler if you just
+drop all patches from your for-next branch as soon as we've picked
+them up into arm-soc.
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
+	Arnd
