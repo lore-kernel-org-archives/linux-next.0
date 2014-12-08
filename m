@@ -1,49 +1,55 @@
-From: Lee Jones <lee.jones@linaro.org>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 8 Dec 2014 12:54:47 +0000
-Message-ID: <20141208125447.GJ3951@x1>
+Date: Mon, 8 Dec 2014 12:58:15 +0000
+Message-ID: <20141208125815.GX11764@sirena.org.uk>
 References: <20141208230517.13ebfe4f@canb.auug.org.au>
  <20141208121342.GW11764@sirena.org.uk>
+ <20141208125447.GJ3951@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XLTQE3HqOi3RIrZG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f43.google.com ([209.85.216.43]:40800 "EHLO
-	mail-qa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752514AbaLHMyw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 07:54:52 -0500
-Received: by mail-qa0-f43.google.com with SMTP id bm13so3242518qab.2
-        for <linux-next@vger.kernel.org>; Mon, 08 Dec 2014 04:54:51 -0800 (PST)
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52024 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752885AbaLHM6t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2014 07:58:49 -0500
 Content-Disposition: inline
-In-Reply-To: <20141208121342.GW11764@sirena.org.uk>
+In-Reply-To: <20141208125447.GJ3951@x1>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurentiu Palcu <laurentiu.palcu@intel.com>
 
-On Mon, 08 Dec 2014, Mark Brown wrote:
 
-> On Mon, Dec 08, 2014 at 11:05:17PM +1100, Stephen Rothwell wrote:
->=20
-> > Caused by commit cf9e9c98fa8c ("spi: Add new driver for
-> > STMicroelectronics' SPI Controller").
->=20
-> > To me COMPILE_TEST means "this builds everywhere, make sure it does=
-n't
-> > break" ... not "lets set this and see if Stephen finds anything" :-=
-)
->=20
-> > I reverted both commits for today.
->=20
-> I've dropped both from my tree too.
+--XLTQE3HqOi3RIrZG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patches re-sent without COMPILE_TEST support.
+On Mon, Dec 08, 2014 at 12:54:47PM +0000, Lee Jones wrote:
 
-I will re-enable COMPILE_TEST when Will Deacon's patch to fix this
-kind of nonsense lands.
+> Patches re-sent without COMPILE_TEST support.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+> I will re-enable COMPILE_TEST when Will Deacon's patch to fix this
+> kind of nonsense lands.
+
+It wasn't the _relaxed() stuff that was triggering, it was implicit
+inclusions of the pinctrl headers.  You need to directly include them
+rather than relying on some other header pulling them in.
+
+--XLTQE3HqOi3RIrZG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUhaBnAAoJECTWi3JdVIfQlvEH/2mD1Z8Q3CgPtqsluUesAdDA
+REteyJ5d/gATAnmpiqFh35USgzOxl/N28Y5yHnabk3TL01pY1J8AJtiny437Z0Lu
+H/7EKmizfCre9LH2r9sc3lz52NurcZ1Tif200EDuvGjK1VfNgdzJ10f71IRhRMk2
+aEyEnJEnktkgqa31kPzXT7nIN4JEi9OkIXlXKJyWcnIdRESC0QngWFIKQdSz2QUe
+8Pm4d1HLqeOcfK1UJKxFLpWgyJq+0XZKudOwkADwrh743vNi/TqG7k9sQsfobq0b
+eFgx0XoqJIyxm2OU+YgGgXBU/Pf4cV2JRAjGgqyBB75ErjZSFGHDF7YO4X8ij0w=
+=KwPc
+-----END PGP SIGNATURE-----
+
+--XLTQE3HqOi3RIrZG--
