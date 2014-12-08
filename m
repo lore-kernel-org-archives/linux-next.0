@@ -1,121 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with the arm-soc tree
-Date: Mon, 8 Dec 2014 18:49:08 +1100
-Message-ID: <20141208184908.27bfd605@canb.auug.org.au>
+Subject: linux-next: status of the lzo-update tree
+Date: Mon, 8 Dec 2014 21:31:20 +1100
+Message-ID: <20141208213120.214c8386@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/keqifRXUMrFmd1v=HZ4il08"; protocol="application/pgp-signature"
+ boundary="Sig_/Y1sEam=so/FcZ.pSpBYWFN."; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48905 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60467 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753901AbaLHHtS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2014 02:49:18 -0500
+	id S1753575AbaLHKbc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Dec 2014 05:31:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@arm.linux.org.uk>
+To: "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/keqifRXUMrFmd1v=HZ4il08
+--Sig_/Y1sEam=so/FcZ.pSpBYWFN.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Markus,
 
-Today's linux-next merge of the xen-tip tree got a conflict in
-arch/arm/include/asm/dma-mapping.h between commits a3a60f81ee6f
-("dma-mapping: replace set_arch_dma_coherent_ops with
-arch_setup_dma_ops") and 4bb25789ed28 ("arm: dma-mapping: plumb our
-iommu mapping ops into arch_setup_dma_ops") from the arm-soc tree and
-commit 3d5391ac6f5e ("arm: introduce is_device_dma_coherent") from the
-xen-tip tree.
+The only commit in the lzo-update tree
+(git://github.com/markus-oberhumer/linux.git#lzo-update) is:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+    lib/lzo: huge LZO decompression speedup on ARM by using unaligned access
 
-I also neede this merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 8 Dec 2014 18:46:59 +1100
-Subject: [PATCH] arm: introduce is_device_dma_coherent merge fix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/mm/dma-mapping.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 09645f00bd17..43064cbe58f9 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2058,6 +2058,7 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_b=
-ase, u64 size,
- 	else
- 		dma_ops =3D arm_get_dma_map_ops(coherent);
-=20
-+	dev->archdata.dma_coherent =3D coherent;
- 	set_dma_ops(dev, dma_ops);
- }
-=20
---=20
-2.1.3
-
+It is dated 4 Feb 2013 and committed on 4 Mar 2013.  Is this going
+anywhere?  Or should I just remove the whole tree?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/include/asm/dma-mapping.h
-index 9410b7e548fc,e6e3446abdf6..000000000000
---- a/arch/arm/include/asm/dma-mapping.h
-+++ b/arch/arm/include/asm/dma-mapping.h
-@@@ -121,13 -121,20 +121,19 @@@ static inline unsigned long dma_max_pfn
-  }
-  #define dma_max_pfn(dev) dma_max_pfn(dev)
- =20
- -static inline int set_arch_dma_coherent_ops(struct device *dev)
- -{
- -	dev->archdata.dma_coherent =3D true;
- -	set_dma_ops(dev, &arm_coherent_dma_ops);
- -	return 0;
- -}
- -#define set_arch_dma_coherent_ops(dev)	set_arch_dma_coherent_ops(dev)
- +#define arch_setup_dma_ops arch_setup_dma_ops
- +extern void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- +			       struct iommu_ops *iommu, bool coherent);
- +
- +#define arch_teardown_dma_ops arch_teardown_dma_ops
- +extern void arch_teardown_dma_ops(struct device *dev);
- =20
-+ /* do not use this function in a driver */
-+ static inline bool is_device_dma_coherent(struct device *dev)
-+ {
-+ 	return dev->archdata.dma_coherent;
-+ }
-+=20
-  static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t padd=
-r)
-  {
-  	unsigned int offset =3D paddr & ~PAGE_MASK;
-
---Sig_/keqifRXUMrFmd1v=HZ4il08
+--Sig_/Y1sEam=so/FcZ.pSpBYWFN.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUhVf8AAoJEMDTa8Ir7ZwVauYQAJaFQg2K5pLKsuzWje2mAv2r
-P2fggQQrBBFC7MO8aWRlJlaz2i9kzkOOIZoJC5sIgSiWIWYptw8K8FPwh78UDHKh
-YOXnlVSclL5KP35pok6sqIBNVpjug3DvNlP4ruIQu1BvSne7UZIhlLaLSDlCp7Lj
-qybnlefodPOoJOLVOYwI+R2Wa0rhhNbM62PwySPvsvE004VjmdKDQqZvuTrlcezD
-Tir3kGgnLkMp+pEVIPfdbkoWZqAjMpKHfRJ/cGM13As4A7BT9kbcI23Duh3Fhb5w
-0+qJQW5rOYx/eeJAjKuCCDorcoXaRGNOrd1zKAFbf53HAn4ex/CDd3+/jpsOa0jU
-JndBOIjjLcezwQyZZuU+T7Dxdtb/1dVxspLCiRsCkDv9dmljPaY6zDm7LYTIeAbV
-+tKTgiPjC79Z7F18H/p2+VSDG9Y9+1A5S/4V+mbTyZdiHnUfKSLsFX1TKmlzQi78
-8N99ki0aFKG1t9lHRZs1hfKhqWTLl/Z6I/XfL9i2mQ9talG0loFAzOorCHPy42X3
-mpJf4ufiCWnKMJrBmh2mrnRBOQKyjjm9paNQ/LM2ip/9pBdMyl8MEooYGlD68xmG
-HhJJeWQjXoU+Xxj8IxUWEG2LO1np55NuqJlzwJaiZ9rjl7zJ0pQAaCogjWdXicP6
-k46Vdrjllr2oHULIaBoW
-=AIpA
+iQIcBAEBCAAGBQJUhX4CAAoJEMDTa8Ir7ZwVh3AP/A4JyG3YGBo/sFstM8+LcX+A
+SQeeQO2Ky2NnHb6sWz3OQXRD1NNqJ4eqFGDFYV+1nPaRNJaCAwdWdEhxg7yXyl5N
+l98dxLGFvmbeLWOyjIaaQl7j5Ac8AcorjLAWBUlmF/qf37uWU90RecozjsWDp3dU
+gToQw8Mwh+kfcM1j4b6hTX+hIEIjy7yczYvnzguC0bdTfsmm4Is09UgCwiCKibbC
+gUrdU72qd7+T4gzS6w/mwI+goEbsee404vTvXqiBJMYl88hG4N6emScnBS7OlCi1
+nUqP+E63UkS4ovc0fiNp9j1Ion187iFn6kpr744TBo6kpS/r/jTR8baeO5/hiSAT
+auTOpZeeI8HyWm7boYaOQzIKKqq+z5VmLPpNoiGcHJhzY8TPBl6rD4TXa7g926RZ
+iqT7aBRrcG5EQQSsR09KTCYRd9KJphF4QDQbK2IZrDY28uvix+VX2j3u8/PThUG4
+p6eA2r1JAsZ/XvHx18eKyf0vi6DfsYw3+UaX7muIAUs/9B/ZtZlGyTRadv9gXX2y
+/tZMm555bCWbcPwmL9d2IPRmjbKBNQUgorX0DF5RACsPpNIuiGQ3GZugBHlouwZ+
+CC7+e7OcQWuqlzpAuQS+NMfLukWhdO993nzXvIt8WRDZgOmn3XjfckKtyUmkEXH/
+rkIUQlRhsKgmA2oJKO/h
+=bRxn
 -----END PGP SIGNATURE-----
 
---Sig_/keqifRXUMrFmd1v=HZ4il08--
+--Sig_/Y1sEam=so/FcZ.pSpBYWFN.--
