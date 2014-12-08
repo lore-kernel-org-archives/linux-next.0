@@ -1,62 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the bcm2835 tree with the arm-soc tree
-Date: Mon, 08 Dec 2014 16:08:14 +0100
-Message-ID: <27886656.dlK0fV8eSK@wuerfel>
-References: <20141208120619.68287b54@canb.auug.org.au> <3348703.0b5FTH9Sa3@wuerfel> <20141208134903.GN3951@x1>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Mon, 8 Dec 2014 15:11:26 +0000
+Message-ID: <20141208151126.GD11502@n2100.arm.linux.org.uk>
+References: <5481D913.9040109@ti.com>
+ <5481D9BF.2090007@ti.com>
+ <20141205162312.GB11502@n2100.arm.linux.org.uk>
+ <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com>
+ <20141208122235.GC11502@n2100.arm.linux.org.uk>
+ <5485AD80.1050008@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141208134903.GN3951@x1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Matthias Klein <matthias.klein@linux.com>, Stephen Warren <swarren@wwwdotorg.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5485AD80.1050008@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Monday 08 December 2014 13:49:03 Lee Jones wrote:
-> On Mon, 08 Dec 2014, Arnd Bergmann wrote:
-> 
-> > On Monday 08 December 2014 13:00:09 Lee Jones wrote:
-> > > On Mon, 08 Dec 2014, Arnd Bergmann wrote:
-> > > 
-> > > > On Monday 08 December 2014 12:06:19 Stephen Rothwell wrote:
-> > > > > Hi Stephen,
-> > > > > 
-> > > > > Today's linux-next merge of the bcm2835 tree got a conflict in
-> > > > > arch/arm/boot/dts/Makefile between commit 302a5ef29d49 ("ARM: BCM5301X:
-> > > > > Add DT for Netgear R6300 V2") from the arm-soc tree and commit
-> > > > > 6298ed17a404 ("ARM: bcm2835: Add device tree for Raspberry Pi model
-> > > > > B+") from the bcm2835 tree.
-> > > > > 
-> > > > > I fixed it up (the bcm2835 tree patch is also in the arm-soc tree as
-> > > > > commit ba2a1d6959ac ("ARM: bcm2835: Add device tree for Raspberry Pi
-> > > > > model B+"), so I just used the arm-soc version) and can carry the fix
-> > > > > as necessary (no action is required).
-> > > > 
-> > > > Thanks a lot for the notification!
-> > > > 
-> > > > Lee, do you know what is going on? Did you accidentally rebase a commit
-> > > > that you already sent for inclusion in arm-soc?
-> > > 
-> > > Nope.  The branch hasn't changed at all.
-> > > 
-> > > OOI why would a re-base affect anything?  I sent you it in patch form.
+On Mon, Dec 08, 2014 at 07:54:08AM -0600, Nishanth Menon wrote:
+> On 12/08/2014 06:22 AM, Russell King - ARM Linux wrote:
+> > On Mon, Dec 08, 2014 at 08:54:18PM +0900, Tomasz Figa wrote:
+> >> 2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> >>> Given where we are in the cycle (-final likely this weekend) the only
+> >>> thing we can do right now is to drop the patch set; exynos (and mvebu)
+> >>> will have to wait another cycle until this patch set (hopefully in a
+> >>> revised form) can be merged.
+> >>
+> >> Or a fix could be queued on top of this. Since (I believe) this series
+> >> has been queued for 3.19, we have 6 or 7 RC releases ahead, which
+> >> could be used for the purpose of fixing things (as they are supposed
+> >> to?).
 > > 
-> > Ah, I looked at the wrong branch and didn't see that I applied a patch
-> > instead of a pull request. It's all fine then, as long as you never
-> > intend to send any pull requests based on top of your current branch.
-> > 
-> > You can possibly make Stephen's life a tiny bit simpler if you just
-> > drop all patches from your for-next branch as soon as we've picked
-> > them up into arm-soc.
+> > They were merged on 27th November, so they would've been in linux-next
+> > from about last Monday.  Nishanth reported a failure on Friday, the
 > 
-> That is something I thought about, but I believe we have users of that
-> branch.  I guess we could always point them to ARM-SoC, or reset the
-> branch to the aforementioned.
+> For what ever it is worth, the l2c changes actually appeared on
+> Thursday CST (next-20141204). Found the regression against
+> next-20141203 tag and it took me a day to track it down (after looking
+> at a few other regressions as well)..
 
-How about adding another branch then, which contains everything you
-expect to get merged into the next kernel and that you can provide
-to your users but that is potentially separate from the one that Stephen
-pulls into linux-next?
+I wonder if that's because I didn't push my tree out until Tuesday-ish.
+It takes around 48 hours between when I push stuff out to it appearing
+in linux-next, which is not particularly desirable, but unavoidable due
+to timezone differences.
 
-	ARnd
+I did decide that I wouldn't push it out the same day I merged it because
+I wanted it to run through my build/boot system, which it did successfully,
+but then my OMAP4 build doesn't have CPU idle enabled (and as you've
+identified, when CPU idle is disabled, it works.)
+
+The problem there is that if I decide not to push some merged changes out,
+it takes several days before I get around to touching the kernel tree
+again.  Hence why it took from Thursday until Tuesday for it to eventually
+get pushed out.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
