@@ -1,140 +1,53 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Tue, 9 Dec 2014 10:57:46 -0600
-Message-ID: <20141209165746.GA29935@kahuna>
-References: <5481D913.9040109@ti.com>
- <5481D9BF.2090007@ti.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: linux-next: build failure after merge of the access_once tree
+Date: Tue, 09 Dec 2014 20:54:27 +0100
+Message-ID: <54875373.50305@de.ibm.com>
+References: <20141208222641.40a64946@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:59301 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753826AbaLIQ63 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2014 11:58:29 -0500
-Content-Disposition: inline
-In-Reply-To: <5481D9BF.2090007@ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141208222641.40a64946@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On 10:13-20141205, Nishanth Menon wrote:
-> On 12/05/2014 10:10 AM, Nishanth Menon wrote:
-> > next-20141204 fails to boot, but next-20141203 boots fine with
-> > omap2plus_defconfig.
-> > 
-> > Panda-ES(4460):
-> > https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-es.txt
-> > Panda(4430):
-> > https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-vanilla.txt
-> > 
-> > at the point of hang (JTAG):
-> >  pandaboard-es:
-> > 	cpu0: http://slexy.org/view/s2eIFqkRd5
-> > 	cpu1: http://slexy.org/view/s2Tysb6gpL
-> > 
-> > Case #1:
-> > Disabling CPUIDLE allows boot to proceed. there does not seem to have
-> > been any change in drivers/cpuidle and arch/arm/mach-omap2 w.r.t this.
-> > 
-> > Case #2: Reverting the following allows boot.
-> > 
-> > From next-20141204
-> > 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
-> > revert this  -> boot still fails
-> > 
-> > d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
-> > mach_desc only if not NULL
-> > revert this  -> boot still fails
-> > 
-> > 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
-> > revert this  -> boot still fails
-> > 
-> > c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
-> > revert this  -> boot passed (first bad commit).
-> > 
-> > 
+Am 08.12.2014 um 12:26 schrieb Stephen Rothwell:
+> Hi Christian,
 > 
-> + linux-samsung soc and updated Thomaz's mail ID (gmail now).
+> After merging the acess_once tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
+> 
+> arch/powerpc/mm/hugetlbpage.c: In function 'find_linux_pte_or_hugepte':
+> arch/powerpc/mm/hugetlbpage.c:981:3: error: invalid initializer
+>    pud  = ACCESS_ONCE(*pudp);
+>    ^
+> arch/powerpc/mm/hugetlbpage.c:993:4: error: invalid initializer
+>     pmd  = ACCESS_ONCE(*pmdp);
+>     ^
+> 
+> These are preexisting ...
+> 
+> mm/gup.c: In function 'gup_pmd_range':
+> mm/gup.c:929:3: error: invalid initializer
+>    pmd_t pmd = ACCESS_ONCE(*pmdp);
+>    ^
+> mm/gup.c:929:3: error: (near initialization for 'pmd')
+> 
+> This is from commit f30c59e921f1 ("mm: Update generic gup
+> implementation to handle hugepage directory") from the powerpc-mpe (and
+> powerpc) tree and so will require a merge fix patch (presumable
+> s/ACCESS_ONCE/READ_ONCE/).
+> 
+> I am not sure how many architectures you are trying to cover, but
+> powerpc is one I care about :-)
+> 
+> I have dropped the access_once tree again today, sorry (its too late at
+> night).
+> 
 
-Spend a few mins trying to track this down and it does look like commit
-c94e325 does a kmemdup for the data as part of l2x0_of_init->__l2c_init
+Next try. I removed the change of ACCESS_ONCE and just left the new interfaces and the simple reworks in the queue.
+I will tackle everything else after rc1 when next should be small again. Keeping fingers crossed....
 
-This fails since the invocation is in early_init. doing it a bit later
-as the following hack makes it work
-diff --git a/arch/arm/mach-omap2/board-generic.c b/arch/arm/mach-omap2/board-generic.c
-index 608079a..0bc6bd9 100644
---- a/arch/arm/mach-omap2/board-generic.c
-+++ b/arch/arm/mach-omap2/board-generic.c
-@@ -170,12 +170,19 @@ static const char *const omap4_boards_compat[] __initconst = {
- 	NULL,
- };
- 
-+
-+static void tmp_init_irq(void)
-+{
-+	omap_l2_cache_init();
-+	omap_gic_of_init();
-+}
-+
- DT_MACHINE_START(OMAP4_DT, "Generic OMAP4 (Flattened Device Tree)")
- 	.reserve	= omap_reserve,
- 	.smp		= smp_ops(omap4_smp_ops),
- 	.map_io		= omap4_map_io,
- 	.init_early	= omap4430_init_early,
--	.init_irq	= omap_gic_of_init,
-+	.init_irq	= tmp_init_irq,
- 	.init_machine	= omap_generic_init,
- 	.init_late	= omap4430_init_late,
- 	.init_time	= omap4_local_timer_init,
-diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
-index 03cbb16..f97847d 100644
---- a/arch/arm/mach-omap2/io.c
-+++ b/arch/arm/mach-omap2/io.c
-@@ -627,7 +627,6 @@ void __init omap4430_init_early(void)
- 	omap44xx_clockdomains_init();
- 	omap44xx_hwmod_init();
- 	omap_hwmod_init_postsetup();
--	omap_l2_cache_init();
- 	omap_clk_soc_init = omap4xxx_dt_clk_init;
- }
- 
-diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-index e5948c5..0ca90db 100644
---- a/arch/arm/mm/cache-l2x0.c
-+++ b/arch/arm/mm/cache-l2x0.c
-@@ -848,8 +848,11 @@ static int __init __l2c_init(const struct l2c_init_data *data,
- 	 * context from callers can access the structure.
- 	 */
- 	l2x0_data = kmemdup(data, sizeof(*data), GFP_KERNEL);
--	if (!l2x0_data)
-+	if (!l2x0_data) {
-+		pr_err("%s no mem %d\n", __func__, sizeof(*data));
-+		dump_stack();
- 		return -ENOMEM;
-+	}
- 
- 	/*
- 	 * Sanity check the aux values.  aux_mask is the bits we preserve
-@@ -1647,6 +1650,7 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
- 	struct device_node *np;
- 	struct resource res;
- 	u32 cache_id, old_aux;
-+	int r;
- 
- 	np = of_find_matching_node(NULL, l2x0_ids);
- 	if (!np)
-@@ -1693,6 +1697,8 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
- 	else
- 		cache_id = readl_relaxed(l2x0_base + L2X0_CACHE_ID);
- 
--	return __l2c_init(data, aux_val, aux_mask, cache_id);
-+	r = __l2c_init(data, aux_val, aux_mask, cache_id);
-+	pr_err("%s: %d\n", __func__, r);
-+	return r;
- }
-
--- 
-Regards,
-Nishanth Menon
+Christian
