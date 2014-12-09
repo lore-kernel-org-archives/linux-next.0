@@ -1,44 +1,60 @@
-From: "Mr. Stephen Odufore" <ovidiu.radu@ovidenia2005.ro>
-Subject: RE: TO WHOM IT MAY CONCERN!!!
-Date: Tue, 9 Dec 2014 00:35:36 -0800
-Message-ID: <ARS-HQ-DC01FSkWopdH002a4890@ARS-HQ-DC01.ars.local>
-Reply-To: <stephenodufore@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the thermal tree
+Date: Tue, 9 Dec 2014 13:17:44 +1100
+Message-ID: <20141209131744.084929df@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/J+Xtqe6RXr1IQMktB9wEdIv"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bn1hn0250.outbound.protection.outlook.com ([157.56.110.250]:48976
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755469AbaLIBkt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2014 20:40:49 -0500
+Received: from ozlabs.org ([103.22.144.67]:55158 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755745AbaLICRv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Dec 2014 21:17:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
 
-Hello
+--Sig_/J+Xtqe6RXr1IQMktB9wEdIv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-My Name is Mr. Stephen Odufore, A staff of Sunrise Bank Team, and an account officer to Engineer Shang Lee Sukchai(Late) It might interest you to know that engineer Shang Lee Sukchai is a Gold Merchant here in Ghana and he deposited a large sum of money with Sunrise Bank Team (Ghana).
+Hi Zhang,
 
+After merging the thermal tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-On one faithful Wednesday, 7 November 2012, We received a shocking news that Melcom building at Achimota-Accra COLLAPSED and that 78 persons were rescued from the rubble. Out of this figure ten persons are reported DEAD, 14 on admission at 37 Military Hospital as well as Achimota, and the Korle-Bu Teaching Hospitals. for more information visit the TWO links below:
+drivers/thermal/Kconfig:265: can't open file "drivers/thermal/int340x_therm=
+al/Kconfig"
 
+Caused by commit 4152c8bc018d ("Thermal: introduce INT3406 thermal
+driver").  Presumable a new file was missed.
 
-http://edition.myjoyonline.com/pages/news/201211/96847.php
+I have used teh thermal tree from next-20141208 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-http://edition.myjoyonline.com/pages/news/201211/96960.php
+--Sig_/J+Xtqe6RXr1IQMktB9wEdIv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Based on the information reaching us, Engineer Shang Lee Sukchai with his house hold (Wife, son and 2 daughters) died in the accident and left this large sum of money behind. Apparently, the management are seriously searching for any of his relative to claim this money so I want you to stand as a relative to the decease and once the funds are paid to you, I will visit you in your country so we can share the money. 
+iQIcBAEBCAAGBQJUhlvMAAoJEMDTa8Ir7ZwVUHoP/iSsEw8/KmV5MN8YNllJGten
+2eyxP+ShFUz3mF5P8Ho1OpOJt3zTZirw+UVRfOZmmCWnXUdYDnnEjymHF5aZEcWB
+UxvQoPn0dlfjwRXFy2Az4yvro8pyT00aWadf8X0NE6ZuBMm9maIPMxCkpi90Fl/k
+Xg3FIyhuAtSqfA5zwl8RDHryCDn9Ipj8AGLC8kA+5TP5GXEeqZ8X8c9UnaJC6mRE
+5QXJk0ttRszPVJ64XvDO7edjFynYSgAlS1kgg7fK5yOYn6flv1mNcRNyoQTvjseu
+0dt8HOhpUWHj2zt7F+wrcaJYFyg1M+9O3m7lve6+hmJZsyjrwTtvSoUBaArBcuUJ
+U+EIcWFHIvLX2AgrTDoThUR4iBHqQF+VqOCte3wLKEAMTBVAESTLpna7BaPqirlh
+48E4GsWj+qPyQP9BLKt5arJTr2oo36j49tNA4eCz/agK+J4GXgEC9Dua6bIa/3lT
+UamI9QneB2QZJkMbwIQtcHqGz1AEmT/4x+UpOJ2ChdjBcZWzNn1Yg8F+KMF6wQam
+JN8yDwqC3ewqXgeXGwUu9dy8uJ+b7M8IXXYRcVwTphSZoDheunl4NqtP9E/A/hPg
+loz682+r5UjhgBpQbg3zQE4iFVjxtfdDZ1KunjqTJItK3p/yxBBKkEgwu9GVvFkR
+nmH5pkD9J4PVGcXebgtm
+=IY/N
+-----END PGP SIGNATURE-----
 
-
-I can assure you that this deal is 100% risk-free, and if you follow my advice we will succeed within the shortest possible time. All I need is your assurance that you are solvent and capable of handling a transaction of this magnitude, and that our share of the money will be safe with you.
-
-
-The money is going to be shared among THREE parties and it's going to be in this way, 10% of the money will go to the orphanage in your country, another 10% to the widow and widowers association, 30% for your good work and cooperation whilst the remaining 50% goes to me and my colleague who is in support of this transaction.
-
-
-If you are interested in this business, then send your Full name, House address, direct contact number for easy communication. Remember, this transaction most be kept strictly Confidential hence my job will e astake
-
-
-Yours Faithfully
-Mr. Stephen Odufore
+--Sig_/J+Xtqe6RXr1IQMktB9wEdIv--
