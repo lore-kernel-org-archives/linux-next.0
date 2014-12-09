@@ -1,48 +1,72 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Tue, 9 Dec 2014 06:07:33 -0800
-Message-ID: <20141209140733.GA25340@linux.vnet.ibm.com>
-References: <20141209224230.57f0aa34@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the slave-dma tree with the arm
+ tree
+Date: Wed, 10 Dec 2014 01:08:37 +1100
+Message-ID: <20141210010837.2f83ed79@canb.auug.org.au>
+References: <20141209140901.685bb382@canb.auug.org.au>
+	<1418132328.19339.9.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3mM1+ilWb4ZXb=/F+q5hPnT"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e35.co.us.ibm.com ([32.97.110.153]:53662 "EHLO
-	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754022AbaLIOH6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2014 09:07:58 -0500
-Received: from /spool/local
-	by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Tue, 9 Dec 2014 07:07:57 -0700
-Content-Disposition: inline
-In-Reply-To: <20141209224230.57f0aa34@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:59150 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756906AbaLIOIp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Dec 2014 09:08:45 -0500
+In-Reply-To: <1418132328.19339.9.camel@AMDC1943>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Tue, Dec 09, 2014 at 10:42:30PM +1100, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the rcu tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> include/linux/notifier.h:51:4: warning: its scope is only this definition or declaration, which is probably not what you want
-> In file included from include/linux/memory_hotplug.h:6:0,
->                  from include/linux/mmzone.h:790,
->                  from include/linux/gfp.h:5,
->                  from arch/powerpc/mm/pgtable.c:25:
-> include/linux/notifier.h:51:4: error: 'struct notifier_block' declared inside parameter list [-Werror]
->     unsigned long action, void *data);
->     ^
-> 
-> And many more (most just warnings ...).
-> 
-> Presumably caused by commit 44dec3761b63 ("srcu: Isolate srcu sections
-> using CONFIG_SRCU") and reverting that commit makes the messages go
-> away, so I have done that for today.
+--Sig_/3mM1+ilWb4ZXb=/F+q5hPnT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Apologies, I forgot to push the fix to rcu/next, will do.
+Hi Krzysztof,
 
-							Thanx, Paul
+On Tue, 09 Dec 2014 14:38:48 +0100 Krzysztof Kozlowski <k.kozlowski@samsung=
+.com> wrote:
+>
+> Looks almost good:
+> ++      pm_runtime_mark_last_busy(pl330->ddma.dev);
+> ++      pm_runtime_put_autosuspend(pl330->ddma.dev);1
+>                                                     ^here
+
+Thanks for pointing that out, I have fixed it up for tomorrow.
+
+> However I am looking current next (fetched few minutes ago and the one
+> visible through gitweb) and I can see only mi changes (related to PM
+> runtime). It looks like slave-dma changes got lost on the way.
+
+Yeah, the slave-dma tree had another build problem so I used the
+version of it from the previous day and so this conflict did not
+actually occur today after all.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/3mM1+ilWb4ZXb=/F+q5hPnT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUhwJqAAoJEMDTa8Ir7ZwVbJMP/iRLO61zlAYpc+VgLnED0C9P
+vod6o7Tvplng8+9MKPh+0XygH4mByXqUVQRCvH/Nj4pwyp7bjME13wQP7DqZVCfQ
+2HMeCTW53mFfm7+w8f6Rd7I7xie8saz2/4r57lG64cC0Wyxmea4ZLR078CsRMdOQ
+XmqnkgfYV6u9alMEM1ie7HEx5iwuRSEPzN9j6ysSAu7xDiW5Su3MgCcWPCHfHQA5
+RSe2IqnoQ6/q5oBPIBR3wuH7ZqaiCRyYFxuYrhtXOGo0EOh7g93b/VtPVy629Azy
+6n7y2cj33s6SDoE3UNbCxAgzB29ail84ElZyFx22hQ2Ta0QMQQkXTYsKjk5Lur3Y
+4EV9H8ISJpLNuHLjCvxdMApaPEHwQBlSRyyxmYh81vbLyQmegp2KtIoDdTqrHer/
+gRQHpG+oyooP/bOws8tAkkCvsk2Pj2soFrUIzAI7IPTcR/J9StPG5cksLU4YyZIW
+9o++wXSKr5L2nUAWu5UWv4XkInvWHQXfy9J67tb1AOyYyZ46brdI8v8g/xYhDyXy
+T+SOZ9ia3t5ca+5TCfnaKMhMMsfZ5B4rDw0J+87pBE0FRxVp5Mpvle+npCl49Sro
+6mFSIiEvkvJd87ZOqQNlruzPytSaPpLzKXj5jxap4x8Ak/dc8QN4VqwiGuU4oBYV
+l2HtHWlWTH4ZfaOpFtPl
+=TVcV
+-----END PGP SIGNATURE-----
+
+--Sig_/3mM1+ilWb4ZXb=/F+q5hPnT--
