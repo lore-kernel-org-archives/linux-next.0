@@ -1,44 +1,48 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: linux-next: manual merge of the slave-dma tree with the arm tree
-Date: Tue, 09 Dec 2014 14:38:48 +0100
-Message-ID: <1418132328.19339.9.camel@AMDC1943>
-References: <20141209140901.685bb382@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Tue, 9 Dec 2014 06:07:33 -0800
+Message-ID: <20141209140733.GA25340@linux.vnet.ibm.com>
+References: <20141209224230.57f0aa34@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:15414 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756629AbaLINix (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2014 08:38:53 -0500
-In-reply-to: <20141209140901.685bb382@canb.auug.org.au>
+Received: from e35.co.us.ibm.com ([32.97.110.153]:53662 "EHLO
+	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754022AbaLIOH6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2014 09:07:58 -0500
+Received: from /spool/local
+	by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Tue, 9 Dec 2014 07:07:57 -0700
+Content-Disposition: inline
+In-Reply-To: <20141209224230.57f0aa34@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vinod Koul <vinod.koul@intel.com>, Russell King <linux@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>
 
-On wto, 2014-12-09 at 14:09 +1100, Stephen Rothwell wrote:
-> Hi Vinod,
+On Tue, Dec 09, 2014 at 10:42:30PM +1100, Stephen Rothwell wrote:
+> Hi Paul,
 > 
-> Today's linux-next merge of the slave-dma tree got a conflict in
-> drivers/dma/pl330.c between commits ae43b3289186 ("ARM: 8202/1:
-> dmaengine: pl330: Add runtime Power Management support v12") and
-> b816ccc5c01f ("ARM: 8206/1: dmaengine: pl330: Add PM sleep support")
-> from the arm tree and commits 86e15941d3f5 ("dmaengine: pl330: Split
-> device_control") and c9a09dacf851 ("dmaengine: pl330: Declare slave
-> capabilities for the generic code") from the slave-dma tree.
+> After merging the rcu tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
 > 
-> I fixed it up (hopefully - see below) and can carry the fix as
-> necessary (no action is required).
+> include/linux/notifier.h:51:4: warning: its scope is only this definition or declaration, which is probably not what you want
+> In file included from include/linux/memory_hotplug.h:6:0,
+>                  from include/linux/mmzone.h:790,
+>                  from include/linux/gfp.h:5,
+>                  from arch/powerpc/mm/pgtable.c:25:
+> include/linux/notifier.h:51:4: error: 'struct notifier_block' declared inside parameter list [-Werror]
+>     unsigned long action, void *data);
+>     ^
+> 
+> And many more (most just warnings ...).
+> 
+> Presumably caused by commit 44dec3761b63 ("srcu: Isolate srcu sections
+> using CONFIG_SRCU") and reverting that commit makes the messages go
+> away, so I have done that for today.
 
-Looks almost good:
-++      pm_runtime_mark_last_busy(pl330->ddma.dev);
-++      pm_runtime_put_autosuspend(pl330->ddma.dev);1
-                                                    ^here
+Apologies, I forgot to push the fix to rcu/next, will do.
 
-However I am looking current next (fetched few minutes ago and the one
-visible through gitweb) and I can see only mi changes (related to PM
-runtime). It looks like slave-dma changes got lost on the way.
-
-Best regards,
-Krzysztof
+							Thanx, Paul
