@@ -1,38 +1,52 @@
-From: Hariprasad S <hariprasad@chelsio.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 10 Dec 2014 15:44:01 +0530
-Message-ID: <20141210101359.GA3891@hariprasad-pc>
-References: <20141210195405.5af40846@canb.auug.org.au>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: linux-next: build failure after merge of the access_once tree
+Date: Wed, 10 Dec 2014 12:20:35 +0100
+Message-ID: <54882C83.5010803@de.ibm.com>
+References: <20141210192035.2e5d80ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from stargate.chelsio.com ([67.207.112.58]:9940 "EHLO
-	stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752128AbaLJKKV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 05:10:21 -0500
-Content-Disposition: inline
-In-Reply-To: <20141210195405.5af40846@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141210192035.2e5d80ff@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 10, 2014 at 19:54:05 +1100, Stephen Rothwell wrote:
-> Hi all,
+Am 10.12.2014 um 09:20 schrieb Stephen Rothwell:
+> Hi Christian,
 > 
-> After merging the net-next tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> After merging the access_once tree, today's linux-next build (powerpc
+> ppc44x_defconfig) failed like this:
 > 
-> drivers/net/ethernet/chelsio/cxgb4vf/built-in.o:(.opd+0x630): multiple definition of `t4_bar2_sge_qregs'
-> drivers/net/ethernet/chelsio/cxgb4/built-in.o:(.opd+0x14d0): first defined here
-> drivers/net/ethernet/chelsio/cxgb4vf/built-in.o: In function `.t4_bar2_sge_qregs':
-> (.text+0x9220): multiple definition of `.t4_bar2_sge_qregs'
-> drivers/net/ethernet/chelsio/cxgb4/built-in.o:(.text+0x24e24): first defined here
+> In file included from /scratch/sfr/next/include/uapi/linux/stddef.h:1:0,
+>                  from /scratch/sfr/next/include/linux/stddef.h:4,
+>                  from /scratch/sfr/next/include/uapi/linux/posix_types.h:4,
+>                  from /scratch/sfr/next/include/uapi/linux/types.h:13,
+>                  from /scratch/sfr/next/include/linux/types.h:5,
+>                  from /scratch/sfr/next/include/linux/smp.h:10,
+>                  from /scratch/sfr/next/include/linux/kernel_stat.h:4,
+>                  from /scratch/sfr/next/mm/memory.c:41:
+> In function '__read_once_size',
+>     inlined from 'handle_pte_fault' at /scratch/sfr/next/mm/memory.c:3192:10,
+>     inlined from '__handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3324:2,
+>     inlined from 'handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3353:6:
+> /scratch/sfr/next/include/linux/compiler.h:206:3: warning: call to 'data_access_exceeds_word_size' declared with attribute warning: data access exceeds word size and won't be atomic
+>    data_access_exceeds_word_size();
+>    ^
+> mm/built-in.o: In function `handle_mm_fault':
+> (.text+0x283a0): undefined reference to `data_access_exceeds_word_size'
 > 
-> Caused by commit e85c9a7abfa4 ("cxgb4/cxgb4vf: Add code to calculate T5
-> BAR2 Offsets for SGE Queue Registers") which added both versions.  :-(
-> 
-> I have applied this fir patch for today (including the subject
-> typo :-)):
-> 
-My bad. Thanks for the fix.
+> I hate dropped the access_once tree again today.
+
+hate dropped? typo or bad mood? ;-)
+
+I fixed this two-ways 
+1: a real bug: I did not provide data_access_exceeds_word_size
+2: a change in semantics: change the memory.c rework to a barrier as if should be enough
+
+Can you retry (I added ppc44x_defconfig to my cross compile test)?
+
+Christian
+
+Sorry for being such a pain, but the access_once rework will be prone to compile errors
