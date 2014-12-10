@@ -1,52 +1,47 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: linux-next: build failure after merge of the access_once tree
-Date: Wed, 10 Dec 2014 12:20:35 +0100
-Message-ID: <54882C83.5010803@de.ibm.com>
-References: <20141210192035.2e5d80ff@canb.auug.org.au>
+From: Jeremiah Mahler <jmmahler@gmail.com>
+Subject: Re: linux-next: Tree for Dec 10
+Date: Wed, 10 Dec 2014 03:30:14 -0800
+Message-ID: <20141210113014.GB10836@hudson.localdomain>
+References: <20141210204822.3359b7ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141210192035.2e5d80ff@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:35413 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751817AbaLJLaT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 06:30:19 -0500
+Content-Disposition: inline
+In-Reply-To: <20141210204822.3359b7ef@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-Am 10.12.2014 um 09:20 schrieb Stephen Rothwell:
-> Hi Christian,
+Stephen,
+
+On Wed, Dec 10, 2014 at 08:48:22PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the access_once tree, today's linux-next build (powerpc
-> ppc44x_defconfig) failed like this:
+> Please do not add stuff destined for v3.20 until after v3.19-rc1 is
+> released.
 > 
-> In file included from /scratch/sfr/next/include/uapi/linux/stddef.h:1:0,
->                  from /scratch/sfr/next/include/linux/stddef.h:4,
->                  from /scratch/sfr/next/include/uapi/linux/posix_types.h:4,
->                  from /scratch/sfr/next/include/uapi/linux/types.h:13,
->                  from /scratch/sfr/next/include/linux/types.h:5,
->                  from /scratch/sfr/next/include/linux/smp.h:10,
->                  from /scratch/sfr/next/include/linux/kernel_stat.h:4,
->                  from /scratch/sfr/next/mm/memory.c:41:
-> In function '__read_once_size',
->     inlined from 'handle_pte_fault' at /scratch/sfr/next/mm/memory.c:3192:10,
->     inlined from '__handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3324:2,
->     inlined from 'handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3353:6:
-> /scratch/sfr/next/include/linux/compiler.h:206:3: warning: call to 'data_access_exceeds_word_size' declared with attribute warning: data access exceeds word size and won't be atomic
->    data_access_exceeds_word_size();
->    ^
-> mm/built-in.o: In function `handle_mm_fault':
-> (.text+0x283a0): undefined reference to `data_access_exceeds_word_size'
+> Changes since 20141209:
 > 
-> I hate dropped the access_once tree again today.
+> Dropped tree: access_once
+> 
+> The thermal tree lost its build failure.
+> 
 
-hate dropped? typo or bad mood? ;-)
+Just a FYI.
 
-I fixed this two-ways 
-1: a real bug: I did not provide data_access_exceeds_word_size
-2: a change in semantics: change the memory.c rework to a barrier as if should be enough
+As of -next 20141210 commit d32394fae95741d733b174ec1446f27765f80233,
+which caused a suspend hang bug [1], is still in the tree.  Greg created
+a revert patch for it in driver-core [2] but I am not sure if this will
+make its way to -next.
 
-Can you retry (I added ppc44x_defconfig to my cross compile test)?
+  [1]: https://lkml.org/lkml/2014/12/3/215
 
-Christian
+  [2]: https://git.kernel.org/cgit/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-testing&id=f1c488a78d9f1a22cdb15648c15e70fd82ed229a
 
-Sorry for being such a pain, but the access_once rework will be prone to compile errors
+-- 
+- Jeremiah Mahler
