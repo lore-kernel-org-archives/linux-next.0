@@ -1,45 +1,54 @@
-From: Pranith Kumar <bobby.prani@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Wed, 10 Dec 2014 10:03:57 -0500
-Message-ID: <548860DD.7040003@gmail.com>
+Date: Wed, 10 Dec 2014 07:18:29 -0800
+Message-ID: <20141210151829.GQ25340@linux.vnet.ibm.com>
 References: <20141210190945.3af6868b@canb.auug.org.au>
+ <548860DD.7040003@gmail.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qg0-f43.google.com ([209.85.192.43]:53074 "EHLO
-	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757415AbaLJPDw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 10:03:52 -0500
-In-Reply-To: <20141210190945.3af6868b@canb.auug.org.au>
+Received: from e35.co.us.ibm.com ([32.97.110.153]:42526 "EHLO
+	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756341AbaLJPSo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 10:18:44 -0500
+Received: from /spool/local
+	by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Wed, 10 Dec 2014 08:18:43 -0700
+Content-Disposition: inline
+In-Reply-To: <548860DD.7040003@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pranith Kumar <bobby.prani@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12/10/2014 03:09 AM, Stephen Rothwell wrote:
-> Hi Paul,
+On Wed, Dec 10, 2014 at 10:03:57AM -0500, Pranith Kumar wrote:
+> On 12/10/2014 03:09 AM, Stephen Rothwell wrote:
+> > Hi Paul,
+> > 
+> > After merging the rcu tree, today's linux-next build (powerpc64
+> > allnoconfig) failed like this:
+> > 
+> > In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
+> >                  from arch/powerpc/kernel/setup_64.c:68:
+> > include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
+> >   struct srcu_struct srcu;
+> >                      ^
+> > include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
+> >   struct srcu_struct irq_srcu;
+> >                      ^
+> > 
+> > Presumably caused by commit 6e8ef258b669 ("srcu: Isolate srcu sections
+> > using CONFIG_SRCU").
+> > 
+> > I have reverted that commit again for today - more work required ...
+> > 
 > 
-> After merging the rcu tree, today's linux-next build (powerpc64
-> allnoconfig) failed like this:
+> Looks like there are other places which use KVM unconditionally. I will try to look and fix such uses. 
 > 
-> In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
->                  from arch/powerpc/kernel/setup_64.c:68:
-> include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
->   struct srcu_struct srcu;
->                      ^
-> include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
->   struct srcu_struct irq_srcu;
->                      ^
-> 
-> Presumably caused by commit 6e8ef258b669 ("srcu: Isolate srcu sections
-> using CONFIG_SRCU").
-> 
-> I have reverted that commit again for today - more work required ...
-> 
+> Paul, can you drop the patch until then? Thanks!
 
-Looks like there are other places which use KVM unconditionally. I will try to look and fix such uses. 
+Done!
 
-Paul, can you drop the patch until then? Thanks!
---
-Pranith
+							Thanx, Paul
