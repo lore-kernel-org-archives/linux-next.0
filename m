@@ -1,53 +1,72 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5] Thermal: introduce INT3406 thermal driver
-Date: Wed, 10 Dec 2014 11:53:25 -0800
-Message-ID: <CAOesGMirF-_H2ZzFR-VpwkEErZE2uQJSYx5EuePArQsEh=r_Kw@mail.gmail.com>
-References: <54868CF6.6020505@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Dec 10
+Date: Thu, 11 Dec 2014 07:51:42 +1100
+Message-ID: <20141211075142.5fe2993a@canb.auug.org.au>
+References: <20141210204822.3359b7ef@canb.auug.org.au>
+	<20141210113014.GB10836@hudson.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2njhpQ2CAs.yaQcDirTDEps"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f177.google.com ([209.85.220.177]:38367 "EHLO
-	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932906AbaLJTx0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 14:53:26 -0500
-Received: by mail-vc0-f177.google.com with SMTP id ij19so1720121vcb.22
-        for <linux-next@vger.kernel.org>; Wed, 10 Dec 2014 11:53:25 -0800 (PST)
-In-Reply-To: <54868CF6.6020505@intel.com>
+Received: from ozlabs.org ([103.22.144.67]:43096 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932116AbaLJUv4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2014 15:51:56 -0500
+In-Reply-To: <20141210113014.GB10836@hudson.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Aaron Lu <aaron.lu@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Zhang Rui <rui.zhang@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux-pm mailing list <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Jeremiah Mahler <jmmahler@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
-Hi,
+--Sig_/2njhpQ2CAs.yaQcDirTDEps
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[+daniel vetter]
+Hi Jeremiah,
 
-On Mon, Dec 8, 2014 at 9:47 PM, Aaron Lu <aaron.lu@intel.com> wrote:
-> INT3406 ACPI device object resembles an ACPI video output device, but its
-> _BCM is said to be deprecated and should not be used. So we will make
-> use of the raw interface to do the actual cooling. Due to this, the
-> backlight core has some modifications. Also, to re-use some of the ACPI
-> video module's code, one function has been exported.
+On Wed, 10 Dec 2014 03:30:14 -0800 Jeremiah Mahler <jmmahler@gmail.com> wro=
+te:
 >
-> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-> ---
-> v5:
-> Add the missing file drivers/thermal/int340x_thermal/Kconfig
-> Remove the assignment of .owner field from the device_driver structure
+> Just a FYI.
+>=20
+> As of -next 20141210 commit d32394fae95741d733b174ec1446f27765f80233,
+> which caused a suspend hang bug [1], is still in the tree.  Greg created
+> a revert patch for it in driver-core [2] but I am not sure if this will
+> make its way to -next.
+>=20
+>   [1]: https://lkml.org/lkml/2014/12/3/215
+>=20
+>   [2]: https://git.kernel.org/cgit/linux/kernel/git/gregkh/driver-core.gi=
+t/commit/?h=3Ddriver-core-testing&id=3Df1c488a78d9f1a22cdb15648c15e70fd82ed=
+229a
 
+Unfortunately, I can't control how often maintainers update the
+versions of their trees that are included in linux-next :-(
 
-Did this patch show up in -next for the first time last night, or did
-some other change break this?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-It causes a panic in i915 when booting Minnowboard Max for me.
+--Sig_/2njhpQ2CAs.yaQcDirTDEps
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Bootlog with panic is at:
+iQIcBAEBCAAGBQJUiLJqAAoJEMDTa8Ir7ZwVNtEP/3sFs2d6/uCJGLfGf+mcsv7q
+nkNZ7nEPgVxGYUn6HEgGf6ZGoFTw9xJ+965xnqBWNftGmEXOZKtM0vbg/oJsOdjs
+zz7x8ySwvXIGzY7TV2GzYYMnBexI7P7CkSNb2i0uyzUA/G5RqRh8/dlXyh8CRo8f
+3tUffmB8HFo3Dt0BIGAPXUT+op1MOm8QtfSiByNNm/IpYNLS9ncICsuQLle/QoY6
+hTJ1Au99R5Wn+u9YDTlRFM1aSiIr0K18xInmh0TP84ktVQ6WaW7ZBr+183caYjwO
+gWgF1mdkZITVWxTBdiGtEYK6XhUjyUvi0U25oHTPxN26XMCWndl8ODvb2qDcELkj
+JFcVc4pKcRnpG5vaiq3gCTgmQ1v8WaxtRfC64KfbPejpgywB16Izrv75J4oR+Ze+
+02sEaSoBXNawlvyfsyPVkPHCZ/92LdpYsPtHJlucG+NIcLH10KCQTuA+rabTaAz/
+0Lx/tFOEsEfs630cxW0ZFgoi2tEf4IHCWwJzVhMDP6YSZvacydxGq6051SW+cIcs
+azhpgnBM2x9pkZUvj1/nsSSriM3YJobESXXMcspPvk1qgJor3qeXJ35fXgX1oEvb
+rgvDesQh47v5WCKllEOwcst3Hf7tL3stRODYaU2026X6YBUpdMCUSy02BCljAMiF
+rxq96fYkBsiPns/Y4LW4
+=uf0Y
+-----END PGP SIGNATURE-----
 
-http://arm-soc.lixom.net/bootlogs/next/next-20141210/minnowmax-x86-minnowmax_defconfig.html
-
-I bisected and verified that reverting this patch makes the system boot again.
-
-
--Olof
+--Sig_/2njhpQ2CAs.yaQcDirTDEps--
