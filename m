@@ -1,76 +1,160 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the access_once tree
-Date: Wed, 10 Dec 2014 19:20:35 +1100
-Message-ID: <20141210192035.2e5d80ff@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Wed, 10 Dec 2014 19:54:05 +1100
+Message-ID: <20141210195405.5af40846@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UCMJBBO1Uh3vVdwQwEVLpla"; protocol="application/pgp-signature"
+ boundary="Sig_/=ckAssR/iWDt5AO31t3/Vem"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33049 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39991 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754357AbaLJIUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2014 03:20:42 -0500
+	id S1751554AbaLJIyN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2014 03:54:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hariprasad Shenai <hariprasad@chelsio.com>
 
---Sig_/UCMJBBO1Uh3vVdwQwEVLpla
+--Sig_/=ckAssR/iWDt5AO31t3/Vem
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
+Hi all,
 
-After merging the access_once tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+After merging the net-next tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-In file included from /scratch/sfr/next/include/uapi/linux/stddef.h:1:0,
-                 from /scratch/sfr/next/include/linux/stddef.h:4,
-                 from /scratch/sfr/next/include/uapi/linux/posix_types.h:4,
-                 from /scratch/sfr/next/include/uapi/linux/types.h:13,
-                 from /scratch/sfr/next/include/linux/types.h:5,
-                 from /scratch/sfr/next/include/linux/smp.h:10,
-                 from /scratch/sfr/next/include/linux/kernel_stat.h:4,
-                 from /scratch/sfr/next/mm/memory.c:41:
-In function '__read_once_size',
-    inlined from 'handle_pte_fault' at /scratch/sfr/next/mm/memory.c:3192:1=
-0,
-    inlined from '__handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3324:=
-2,
-    inlined from 'handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3353:6:
-/scratch/sfr/next/include/linux/compiler.h:206:3: warning: call to 'data_ac=
-cess_exceeds_word_size' declared with attribute warning: data access exceed=
-s word size and won't be atomic
-   data_access_exceeds_word_size();
-   ^
-mm/built-in.o: In function `handle_mm_fault':
-(.text+0x283a0): undefined reference to `data_access_exceeds_word_size'
+drivers/net/ethernet/chelsio/cxgb4vf/built-in.o:(.opd+0x630): multiple defi=
+nition of `t4_bar2_sge_qregs'
+drivers/net/ethernet/chelsio/cxgb4/built-in.o:(.opd+0x14d0): first defined =
+here
+drivers/net/ethernet/chelsio/cxgb4vf/built-in.o: In function `.t4_bar2_sge_=
+qregs':
+(.text+0x9220): multiple definition of `.t4_bar2_sge_qregs'
+drivers/net/ethernet/chelsio/cxgb4/built-in.o:(.text+0x24e24): first define=
+d here
 
-I hate dropped the access_once tree again today.
+Caused by commit e85c9a7abfa4 ("cxgb4/cxgb4vf: Add code to calculate T5
+BAR2 Offsets for SGE Queue Registers") which added both versions.  :-(
+
+I have applied this fir patch for today (including the subject
+typo :-)):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 10 Dec 2014 19:48:02 +1100
+Subject: [PATCH] cxgb4/cxgb4vf: global named must be unique
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h      | 2 +-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 4 ++--
+ drivers/net/ethernet/chelsio/cxgb4/sge.c        | 2 +-
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c      | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ether=
+net/chelsio/cxgb4/cxgb4.h
+index 2c37e1bf253a..a18d33fdb271 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+@@ -1007,7 +1007,7 @@ int t4_prep_fw(struct adapter *adap, struct fw_info *=
+fw_info,
+ int t4_prep_adapter(struct adapter *adapter);
+=20
+ enum t4_bar2_qtype { T4_BAR2_QTYPE_EGRESS, T4_BAR2_QTYPE_INGRESS };
+-int t4_bar2_sge_qregs(struct adapter *adapter,
++int cxgb4_t4_bar2_sge_qregs(struct adapter *adapter,
+ 		      unsigned int qid,
+ 		      enum t4_bar2_qtype qtype,
+ 		      u64 *pbar2_qoffset,
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/=
+ethernet/chelsio/cxgb4/cxgb4_main.c
+index c8c5b3d36d4e..1645f59648f0 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -3815,7 +3815,7 @@ int cxgb4_bar2_sge_qregs(struct net_device *dev,
+ 			 u64 *pbar2_qoffset,
+ 			 unsigned int *pbar2_qid)
+ {
+-	return t4_bar2_sge_qregs(netdev2adap(dev),
++	return cxgb4_t4_bar2_sge_qregs(netdev2adap(dev),
+ 				 qid,
+ 				 (qtype =3D=3D CXGB4_BAR2_QTYPE_EGRESS
+ 				  ? T4_BAR2_QTYPE_EGRESS
+@@ -4011,7 +4011,7 @@ static void process_db_drop(struct work_struct *work)
+ 		unsigned int bar2_qid;
+ 		int ret;
+=20
+-		ret =3D t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
++		ret =3D cxgb4_t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
+ 					&bar2_qoffset, &bar2_qid);
+ 		if (ret)
+ 			dev_err(adap->pdev_dev, "doorbell drop recovery: "
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/sge.c b/drivers/net/etherne=
+t/chelsio/cxgb4/sge.c
+index f12debd98dac..ebf935a1e352 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+@@ -2270,7 +2270,7 @@ static void __iomem *bar2_address(struct adapter *ada=
+pter,
+ 	u64 bar2_qoffset;
+ 	int ret;
+=20
+-	ret =3D t4_bar2_sge_qregs(adapter, qid, qtype,
++	ret =3D cxgb4_t4_bar2_sge_qregs(adapter, qid, qtype,
+ 				&bar2_qoffset, pbar2_qid);
+ 	if (ret)
+ 		return NULL;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ether=
+net/chelsio/cxgb4/t4_hw.c
+index 67345c73e570..28d04153f999 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+@@ -4031,7 +4031,7 @@ int t4_prep_adapter(struct adapter *adapter)
+ }
+=20
+ /**
+- *	t4_bar2_sge_qregs - return BAR2 SGE Queue register information
++ *	cxgb4_t4_bar2_sge_qregs - return BAR2 SGE Queue register information
+  *	@adapter: the adapter
+  *	@qid: the Queue ID
+  *	@qtype: the Ingress or Egress type for @qid
+@@ -4055,7 +4055,7 @@ int t4_prep_adapter(struct adapter *adapter)
+  *	Write Combining Doorbell Buffer. If the BAR2 Queue ID is not 0,
+  *	then these "Inferred Queue ID" register may not be used.
+  */
+-int t4_bar2_sge_qregs(struct adapter *adapter,
++int cxgb4_t4_bar2_sge_qregs(struct adapter *adapter,
+ 		      unsigned int qid,
+ 		      enum t4_bar2_qtype qtype,
+ 		      u64 *pbar2_qoffset,
+--=20
+2.1.3
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/UCMJBBO1Uh3vVdwQwEVLpla
+--Sig_/=ckAssR/iWDt5AO31t3/Vem
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUiAJYAAoJEMDTa8Ir7ZwVS5EP/2gwTPI0j4BnXbArBZD4B+OO
-mBqc/FGAed6UyhsGh4roS0CIPuxsAV+39tY3Ey6BRj7neM4a57IJaRXJ2koE8fK8
-0nmPFtvFfvC8/C4VhF3mQnHWMR05v227hmHA4iweDt6uhfgiK38cEh78XzrxQDsp
-BASeVsICdEjQwo63spoZ0nBSCSlTWCtOHO8a682ALsIqfKNt/Av/Elg33ANn1ppf
-fkgnr/VPtfaBg/lOsVRHE2nSN9EmjjAxTWlv39U6Uf0FTsKpYuGWshkuFXVJqfH0
-0PmoPPu7+NHbHCTnsk8JGBeXmoZQzysloEEjV4RdxYKHr/Gf1wX84K2K3UxLXq0R
-svYVuVZ6wIG6bizQ/x2A2drtTLJzJiqSfVTDQre+ReLs3sizcyiXxhuTDbGc2vBk
-Dn4MqW9gSMKbrwMGgYLdclf8TlR1hFDillDJlEEj6OUdUIebtqXLtIch2xNg6Aue
-Ln3vpWuW8PQSeCTlvjOi9a8u3ffE4D1qGtcZ6FWzm6j4HRVZtMdsgQm3mx4/ldAz
-lmft2EBNrYYH7hVxg8vwkedzL87pCOgar244TZ7RqTURpcuQOPp6NhkjU/C5Eo/9
-a4y1XXgAYkXW66KczynVtO/nGKtOSU2wBj91AcQVFQLrEMdMHI7sRXtv59on8CJl
-WI4x6d+wjOQDQ3VddhaU
-=wVoV
+iQIcBAEBCAAGBQJUiAoyAAoJEMDTa8Ir7ZwV8DoP/2o6KfcdbYMPfzJCKz7TWpkv
+1SIMakMwGnVGr5esy6DbVTDh35upKz/1VXzhIoepxpKd0cEFDA8yF4FCkEADUDJQ
+EAz7rPD4cKDdiaYgv6sj0fG6yWPP53cQC7aT6Fd4qA0hs2KGVSSUccxah4ZPPRMv
+FV+8c43w4LgWr4MqGA2sMOHIaBCliQ8CZn+p5wM+Kij39SeGffPyAkIBinD5Prm2
+o+7kLgfyA3ACKtJ8gOrLBBg9MqWgbAXepZVydC2JeD9j3Ax94lZwWfi0f8TIEvRt
+jDTTFcYGqYHv1tSQvQijjsN9YcundWLdZNzNT92L7geHJ9AY4jc2zw5WXAthWSmO
+8WSIZRDsTeR2giij6wuK8rGIQGvtyXUaLqt/iMne0Z/zg+tgEkXx/lC3yPvHclOr
+bBD/N1wnpaBAMBaZKZFoa1ip5s1l3b9wg6lZFefGfOdS+ZPB1Lmm3TaDq2o9WPWc
+8dJJXhoz/cEVH4oR8q96vtHg9FCIXiMaUccdlFWO2prIhzcESNLt8eOZ3EuLkhiU
+czySy4u39zglijKZfbjIZPuJexMl4fcMB+jXyj/7zFXl8jNudXDR2+WprJd89gNG
+EPIbHEoJhJqpfhEg2LRa8/+7xBCVoOn+sAFtEVW2NrMZFw2sJy2CZHKf585nQipc
+MyQs4OXVg2wW0i+zt9xk
+=t0Mr
 -----END PGP SIGNATURE-----
 
---Sig_/UCMJBBO1Uh3vVdwQwEVLpla--
+--Sig_/=ckAssR/iWDt5AO31t3/Vem--
