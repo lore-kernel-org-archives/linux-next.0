@@ -1,53 +1,97 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: linux-next: build failure after merge of the access_once tree
-Date: Tue, 09 Dec 2014 20:54:27 +0100
-Message-ID: <54875373.50305@de.ibm.com>
-References: <20141208222641.40a64946@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 10 Dec 2014 12:20:36 +1100
+Message-ID: <20141210122036.133457c9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141208222641.40a64946@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Lw_EIoOHkstf/6nkyWm99gc"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45099 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752812AbaLJBUo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Dec 2014 20:20:44 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am 08.12.2014 um 12:26 schrieb Stephen Rothwell:
-> Hi Christian,
-> 
-> After merging the acess_once tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> arch/powerpc/mm/hugetlbpage.c: In function 'find_linux_pte_or_hugepte':
-> arch/powerpc/mm/hugetlbpage.c:981:3: error: invalid initializer
->    pud  = ACCESS_ONCE(*pudp);
->    ^
-> arch/powerpc/mm/hugetlbpage.c:993:4: error: invalid initializer
->     pmd  = ACCESS_ONCE(*pmdp);
->     ^
-> 
-> These are preexisting ...
-> 
-> mm/gup.c: In function 'gup_pmd_range':
-> mm/gup.c:929:3: error: invalid initializer
->    pmd_t pmd = ACCESS_ONCE(*pmdp);
->    ^
-> mm/gup.c:929:3: error: (near initialization for 'pmd')
-> 
-> This is from commit f30c59e921f1 ("mm: Update generic gup
-> implementation to handle hugepage directory") from the powerpc-mpe (and
-> powerpc) tree and so will require a merge fix patch (presumable
-> s/ACCESS_ONCE/READ_ONCE/).
-> 
-> I am not sure how many architectures you are trying to cover, but
-> powerpc is one I care about :-)
-> 
-> I have dropped the access_once tree again today, sorry (its too late at
-> night).
-> 
+--Sig_/Lw_EIoOHkstf/6nkyWm99gc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Next try. I removed the change of ACCESS_ONCE and just left the new interfaces and the simple reworks in the queue.
-I will tackle everything else after rc1 when next should be small again. Keeping fingers crossed....
+Hi all,
 
-Christian
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/amd/xgbe/xgbe-desc.c between commit 03ccc4c0a9da
+("amd-xgbe: Do not clear interrupt indicator") from the net tree and
+commit c9f140ebb008 ("amd-xgbe: Separate Tx/Rx ring data fields into
+new structs") from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/ethernet/amd/xgbe/xgbe-desc.c
+index b15551bad7fa,51b68d1299fe..000000000000
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
+@@@ -354,8 -450,30 +450,29 @@@ static void xgbe_unmap_rdata(struct xgb
+  		rdata->skb =3D NULL;
+  	}
+ =20
+- 	rdata->tso_header =3D 0;
+- 	rdata->len =3D 0;
++ 	if (rdata->rx.hdr.pa.pages)
++ 		put_page(rdata->rx.hdr.pa.pages);
++=20
++ 	if (rdata->rx.hdr.pa_unmap.pages) {
++ 		dma_unmap_page(pdata->dev, rdata->rx.hdr.pa_unmap.pages_dma,
++ 			       rdata->rx.hdr.pa_unmap.pages_len,
++ 			       DMA_FROM_DEVICE);
++ 		put_page(rdata->rx.hdr.pa_unmap.pages);
++ 	}
++=20
++ 	if (rdata->rx.buf.pa.pages)
++ 		put_page(rdata->rx.buf.pa.pages);
++=20
++ 	if (rdata->rx.buf.pa_unmap.pages) {
++ 		dma_unmap_page(pdata->dev, rdata->rx.buf.pa_unmap.pages_dma,
++ 			       rdata->rx.buf.pa_unmap.pages_len,
++ 			       DMA_FROM_DEVICE);
++ 		put_page(rdata->rx.buf.pa_unmap.pages);
++ 	}
++=20
++ 	memset(&rdata->tx, 0, sizeof(rdata->tx));
++ 	memset(&rdata->rx, 0, sizeof(rdata->rx));
++=20
+ -	rdata->interrupt =3D 0;
+  	rdata->mapped_as_page =3D 0;
+ =20
+  	if (rdata->state_saved) {
+
+--Sig_/Lw_EIoOHkstf/6nkyWm99gc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUh5/pAAoJEMDTa8Ir7ZwV4QoQAIUWTzHnZ9wWIl/D0ByNjcFF
+8L74x9eEZFTyP0WnJgOAwrtSbx5P6nvMQaVEbaBJUl9fQLUIWndZkSVXp97hj39I
+48uglquyPOF2a1m6Z7obxqU3z/GGmcYNj0PJO9HPdpy1PE3VON8P2pBwy45Nk67b
+esQ8RXg1M9jFIF8ny8/SmhWU5KMZOne3UUaaPTTRFC/eZ7UsuZueUP0sQnAV91Dz
+o7xMPf5tI7N7vnsNEKQp8tBPRnEjqQq1EbxZK0Tt/rMKSukqlT5Ng8CDT+O0cWc0
+VWCRSJ5n6IIi5BUoWmgpPb1VWGN04+724gL7T+A9nvV9unjdNaCmGQF+qXZwBDYb
+vAlRV8Izm6mnuppT33rF5zWp2K9RyfXpRizw+njqumScWoxUG7M2n1TX3rhSKII8
+dXIzGrQrRA6AYIHaOpayoPzMFXza70NybPJ0vA8uxPaGIeXve2pjkVW7LjbzcbHN
+pQwvEifU+qU3mCmwzTAqlzzJme/GNATEq1Y+HJHZSCyc4Cu4MeCy+0ug88yuCR0B
+axIuO5v8oFEDuJ42C+PfaOkmgzEF/5SPQr3IDMEpfiQRT5knAJe/WxSvThmo9Jsh
+j4CtQP8BkO489Um0mE61NT3US9JTUDw6kmdhSrYszcw7n2m18eQgKJz0bl18QRlS
+WFc5uj9nPvA8ladXIYl+
+=S+Zi
+-----END PGP SIGNATURE-----
+
+--Sig_/Lw_EIoOHkstf/6nkyWm99gc--
