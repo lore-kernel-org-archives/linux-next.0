@@ -1,27 +1,25 @@
-From: Greg KH <greg@kroah.com>
+From: Jeremiah Mahler <jmmahler@gmail.com>
 Subject: Re: linux-next: Tree for Dec 10
-Date: Wed, 10 Dec 2014 17:27:36 -0500
-Message-ID: <20141210222736.GA19788@kroah.com>
+Date: Wed, 10 Dec 2014 14:34:54 -0800
+Message-ID: <20141210223454.GA4726@hudson.localdomain>
 References: <20141210204822.3359b7ef@canb.auug.org.au>
  <20141210113014.GB10836@hudson.localdomain>
  <20141211075142.5fe2993a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:33762 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758095AbaLJW1h (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2014 17:27:37 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.nyi.internal (Postfix) with ESMTP id BA501209D2
-	for <linux-next@vger.kernel.org>; Wed, 10 Dec 2014 17:27:36 -0500 (EST)
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:35141 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932724AbaLJWe6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 17:34:58 -0500
 Content-Disposition: inline
 In-Reply-To: <20141211075142.5fe2993a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeremiah Mahler <jmmahler@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
+
+Stephen,
 
 On Thu, Dec 11, 2014 at 07:51:42AM +1100, Stephen Rothwell wrote:
 > Hi Jeremiah,
@@ -41,8 +39,14 @@ On Thu, Dec 11, 2014 at 07:51:42AM +1100, Stephen Rothwell wrote:
 > 
 > Unfortunately, I can't control how often maintainers update the
 > versions of their trees that are included in linux-next :-(
+> 
 
-Oops, sorry about that, with travel this week, I forgot to push that one
-out to the git.kernel.org, my fault.  Now done.
+Ah, I see.
+Next time I will pester the maintainers :-)
 
-greg k-h
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+-- 
+- Jeremiah Mahler
