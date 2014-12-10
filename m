@@ -1,67 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rcu tree
-Date: Wed, 10 Dec 2014 19:09:45 +1100
-Message-ID: <20141210190945.3af6868b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the access_once tree
+Date: Wed, 10 Dec 2014 19:20:35 +1100
+Message-ID: <20141210192035.2e5d80ff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AS0MT6.JvxLt+U+D2jM7NrP"; protocol="application/pgp-signature"
+ boundary="Sig_/UCMJBBO1Uh3vVdwQwEVLpla"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53323 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33049 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751843AbaLJIJ6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2014 03:09:58 -0500
+	id S1754357AbaLJIUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2014 03:20:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/AS0MT6.JvxLt+U+D2jM7NrP
+--Sig_/UCMJBBO1Uh3vVdwQwEVLpla
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Christian,
 
-After merging the rcu tree, today's linux-next build (powerpc64
-allnoconfig) failed like this:
+After merging the access_once tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
-                 from arch/powerpc/kernel/setup_64.c:68:
-include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
-  struct srcu_struct srcu;
-                     ^
-include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
-  struct srcu_struct irq_srcu;
-                     ^
+In file included from /scratch/sfr/next/include/uapi/linux/stddef.h:1:0,
+                 from /scratch/sfr/next/include/linux/stddef.h:4,
+                 from /scratch/sfr/next/include/uapi/linux/posix_types.h:4,
+                 from /scratch/sfr/next/include/uapi/linux/types.h:13,
+                 from /scratch/sfr/next/include/linux/types.h:5,
+                 from /scratch/sfr/next/include/linux/smp.h:10,
+                 from /scratch/sfr/next/include/linux/kernel_stat.h:4,
+                 from /scratch/sfr/next/mm/memory.c:41:
+In function '__read_once_size',
+    inlined from 'handle_pte_fault' at /scratch/sfr/next/mm/memory.c:3192:1=
+0,
+    inlined from '__handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3324:=
+2,
+    inlined from 'handle_mm_fault' at /scratch/sfr/next/mm/memory.c:3353:6:
+/scratch/sfr/next/include/linux/compiler.h:206:3: warning: call to 'data_ac=
+cess_exceeds_word_size' declared with attribute warning: data access exceed=
+s word size and won't be atomic
+   data_access_exceeds_word_size();
+   ^
+mm/built-in.o: In function `handle_mm_fault':
+(.text+0x283a0): undefined reference to `data_access_exceeds_word_size'
 
-Presumably caused by commit 6e8ef258b669 ("srcu: Isolate srcu sections
-using CONFIG_SRCU").
-
-I have reverted that commit again for today - more work required ...
-
+I hate dropped the access_once tree again today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/AS0MT6.JvxLt+U+D2jM7NrP
+--Sig_/UCMJBBO1Uh3vVdwQwEVLpla
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUh//RAAoJEMDTa8Ir7ZwVixEP/3PHERwBSlA7u0eQSqRDgLwQ
-UYUKMRU877RPEp+QO9uXRgkdoaN34tPF6DocES2Mi2KZdPC52YoXuexEJcBeKE7l
-V7y9g720xV7mwNc+Lc5Ev3ZECiYi63ZUBFMgdfTRPPrHo8U8Z9FCTZAewEWn+/fu
-X99tS38jPQbbJ5RIoUHW86OO+gRMf0XDu2HWTbq7mCJmF+ZABJWhHBR+bPj0Oqhf
-ByVOjoKb5+QN6fLHVDqt9yMOrCyoVG79S76CPN38mgHDjhcYx9ERZU4tjFGC74dR
-AkfmZxSWGNzjQ1noowRN45uP58r3x1jq6hAJqcOhbhP1W8+7nfUcrviaFQXdkVQ8
-PgVfqpwAOEY8J82df9Zu06KgHWqifUmFCMTTqVczWR7DKLQvoP2FJ58Ylh9eKq7O
-aI1QSacRLFA8xlwetgdIUMMBo1QY2uqODpN6aMZalF76kdfWseuPBEfi136uFf+e
-vthBRrOeEWtV1G9oWSBDvLgyvWi3ZFBqtUp5tJ7+MHhYFkCqd2Ov37aByZpsGVwp
-dUbxBbJhfDDHw7I6ILQ8wIYefIn5ZPp0fxqu4mEFLcOdu4R0Wikcd/42XnIlGl5j
-j9SPCy3dGYBVIvqOyUJhRMePFTSXb/ZS4hrI14TXlpr5CAnzqYLwzUi5/SGY6SVP
-IJc3LUEAMnMFrM/VV6Cy
-=Iszr
+iQIcBAEBCAAGBQJUiAJYAAoJEMDTa8Ir7ZwVS5EP/2gwTPI0j4BnXbArBZD4B+OO
+mBqc/FGAed6UyhsGh4roS0CIPuxsAV+39tY3Ey6BRj7neM4a57IJaRXJ2koE8fK8
+0nmPFtvFfvC8/C4VhF3mQnHWMR05v227hmHA4iweDt6uhfgiK38cEh78XzrxQDsp
+BASeVsICdEjQwo63spoZ0nBSCSlTWCtOHO8a682ALsIqfKNt/Av/Elg33ANn1ppf
+fkgnr/VPtfaBg/lOsVRHE2nSN9EmjjAxTWlv39U6Uf0FTsKpYuGWshkuFXVJqfH0
+0PmoPPu7+NHbHCTnsk8JGBeXmoZQzysloEEjV4RdxYKHr/Gf1wX84K2K3UxLXq0R
+svYVuVZ6wIG6bizQ/x2A2drtTLJzJiqSfVTDQre+ReLs3sizcyiXxhuTDbGc2vBk
+Dn4MqW9gSMKbrwMGgYLdclf8TlR1hFDillDJlEEj6OUdUIebtqXLtIch2xNg6Aue
+Ln3vpWuW8PQSeCTlvjOi9a8u3ffE4D1qGtcZ6FWzm6j4HRVZtMdsgQm3mx4/ldAz
+lmft2EBNrYYH7hVxg8vwkedzL87pCOgar244TZ7RqTURpcuQOPp6NhkjU/C5Eo/9
+a4y1XXgAYkXW66KczynVtO/nGKtOSU2wBj91AcQVFQLrEMdMHI7sRXtv59on8CJl
+WI4x6d+wjOQDQ3VddhaU
+=wVoV
 -----END PGP SIGNATURE-----
 
---Sig_/AS0MT6.JvxLt+U+D2jM7NrP--
+--Sig_/UCMJBBO1Uh3vVdwQwEVLpla--
