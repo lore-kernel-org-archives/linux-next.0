@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the security tree with the vfs tree
-Date: Wed, 10 Dec 2014 13:47:37 +1100
-Message-ID: <20141210134737.1b51fe92@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with the vfs tree
+Date: Wed, 10 Dec 2014 17:21:43 +1100
+Message-ID: <20141210172143.2c218e27@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Wl0c_.uDJNJbF0=JSHBXnHf"; protocol="application/pgp-signature"
+ boundary="Sig_/8kweepAGKSKJpjzidmg2P6b"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48045 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57480 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751168AbaLJCrs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Dec 2014 21:47:48 -0500
+	id S1753000AbaLJGVx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2014 01:21:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Kasatkin <d.kasatkin@samsung.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/Wl0c_.uDJNJbF0=JSHBXnHf
+--Sig_/8kweepAGKSKJpjzidmg2P6b
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Eric,
 
-Today's linux-next merge of the security tree got a conflict in
-init/main.c between commit 87fb64a6c1f7 ("take the targets
-of /proc/*/ns/* symlinks to separate fs") from the vfs tree and commit
-c9cd2ce2bc63 ("integrity: provide a hook to load keys when rootfs is
-ready") from the security tree.
+Today's linux-next merge of the userns tree got conflicts in
+include/linux/user_namespace.h and kernel/user.c between commit
+435d5f4bb2cc ("common object embedded into various struct ....ns") from
+the vfs tree and commit 2b714ea67ed4 ("userns: Add a knob to disable
+setgroups on a per user namespace basis") from the userns tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,40 +34,58 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc init/main.c
-index 40240c8e31e8,9fc795fe4b3b..000000000000
---- a/init/main.c
-+++ b/init/main.c
-@@@ -78,7 -78,7 +78,8 @@@
-  #include <linux/context_tracking.h>
-  #include <linux/random.h>
-  #include <linux/list.h>
- +#include <linux/proc_ns.h>
-+ #include <linux/integrity.h>
+diff --cc include/linux/user_namespace.h
+index 4cf06c140e21,6451c401dcf6..000000000000
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@@ -27,7 -32,8 +33,8 @@@ struct user_namespace=20
+  	int			level;
+  	kuid_t			owner;
+  	kgid_t			group;
+ -	unsigned int		proc_inum;
+ +	struct ns_common	ns;
++ 	unsigned long		flags;
  =20
-  #include <asm/io.h>
-  #include <asm/bugs.h>
+  	/* Register of per-UID persistent keyrings for this namespace */
+  #ifdef CONFIG_PERSISTENT_KEYRINGS
+diff --cc kernel/user.c
+index 69b800aebf13,2d09940c9632..000000000000
+--- a/kernel/user.c
++++ b/kernel/user.c
+@@@ -50,10 -50,8 +50,11 @@@ struct user_namespace init_user_ns =3D=20
+  	.count =3D ATOMIC_INIT(3),
+  	.owner =3D GLOBAL_ROOT_UID,
+  	.group =3D GLOBAL_ROOT_GID,
+ -	.proc_inum =3D PROC_USER_INIT_INO,
+ +	.ns.inum =3D PROC_USER_INIT_INO,
+ +#ifdef CONFIG_USER_NS
+ +	.ns.ops =3D &userns_operations,
+ +#endif
++ 	.flags =3D USERNS_INIT_FLAGS,
+  #ifdef CONFIG_PERSISTENT_KEYRINGS
+  	.persistent_keyring_register_sem =3D
+  	__RWSEM_INITIALIZER(init_user_ns.persistent_keyring_register_sem),
 
---Sig_/Wl0c_.uDJNJbF0=JSHBXnHf
+--Sig_/8kweepAGKSKJpjzidmg2P6b
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIbBAEBCAAGBQJUh7RQAAoJEMDTa8Ir7ZwVTNsP+JhnE2pgSuyXZgo9277AJ1xR
-O6g0ftYh05lm/CEFXjFbXRGrxWGRemi46nzHRZMbDMnFBbpsGEaSpAiFC9Tf766S
-7Js7f2RcnQYQ4J4h/3tdlTzU8vcsvrG9cXNl1TcFKLH9iVhE3ybsbVJu+9RYb+2T
-Z0GARy0QJ6Vrwk5l+R1mrRGD7CJTAgE1UUNGs5RPPUgeFV9lcMVtDS0GO8E41ZHE
-v94/4k1vkSy+dmeJj9Ytzub0b2dTqmULsrG/84IiV6xrUuy/w5qEK1IzPRf6Eve5
-ivguiv2uO7lAqJVOVEsqkBCAYDn4w14WfPuH8NQ6xdFi2iy8IadM0GSYzhvIHBjv
-yXDJmMO5ZeoiH1hUf2avZy0eem/cP62UaeeMaxgw6tExFE7PEDYsOC+Guv1pMCn3
-b69E4qBe3z0MnSC/Aq8aai5/8F0JwZWH/zNcTYIcMoyZ7zK0MRzTeQ7FfYkXT0nj
-CbB7koDhDKGPvhaqYGCvWHa9MXS0GiJFowwosiNaGOMOUMk8zeZu/4Mkwb74Nn3W
-LFzJxKFnMVfEIyXZ2pFbAmkRhB66qhP9vUdYQPvPTAmlFrWhbRk0Ts338yDuLry3
-eIyyQsSW5dmOYi9iXs6zoV9ZLqcr3FXOo0bQ7BwuQq7K9TUrhqsCT1bkrQlJQ0ak
-WXZSeFW6cql4vmzSeAE=
-=Tajd
+iQIcBAEBCAAGBQJUh+Z8AAoJEMDTa8Ir7ZwViuoP/0UGNrM3MnRpZX7crRoRvdz3
+djihCukc9/Z3izwiJmZT8rtz3ISMbLDzTgMVUmW0fxRlJX+JJscWyRBzd1Xa8QWJ
+IY8Qzscw9/ZTQhJnXEgv8qdJDbaEdBzLvPO2PQSAqtglAscNCGonODcHIAElPZXe
+2CEluVirM055FgykkmuoB/wyw+A+vdStNh02apTnVRKd30sV+7TSW3d09uXPd9At
+Rn9uFl8kDW1ahmRjzq6V2DCsSWIUmMxoEO6x80HFx9STRfsBGQl/jJzh25p9EZvK
+SEvxgR0lXC2MO/76thI2ZJgGhOu+zY6lOzfuII+S2jZdvf9YjSNOYI0JDEcQD+2h
+7rDqpaRY2iI6s5lNh+7tOAxt/K9Qp5ZL0OnvznD0HSdlu1O4MTXHe4p6TzNIR5rO
+N2XPCClnv/5catug/4cZwQDXv8PO56u5jvdpmTQqAV7OAf76gIDqBoGvEgALtVqC
++WMtNXYV2gFRHiALISl1wfqe4kE/Hzp/TLYNuzsiBX5N2V21dLH6uT6idGFB6RT2
+Lb1+8zfsL15gWloSAeG8KBmV/1USrUZr9nNKA+bJSVA82hFGhhT+1X2fUOT4TWhx
+IheCuUNC2QPWmsyH9/TN7EOXYW6udEAFuqF4cbJu2RpSntS4RyffJxuZ2Eioi+CR
+EU+HGMwdGUvbKqxHRnI5
+=S20r
 -----END PGP SIGNATURE-----
 
---Sig_/Wl0c_.uDJNJbF0=JSHBXnHf--
+--Sig_/8kweepAGKSKJpjzidmg2P6b--
