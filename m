@@ -1,47 +1,45 @@
-From: Jeremiah Mahler <jmmahler@gmail.com>
-Subject: Re: linux-next: Tree for Dec 10
-Date: Wed, 10 Dec 2014 03:30:14 -0800
-Message-ID: <20141210113014.GB10836@hudson.localdomain>
-References: <20141210204822.3359b7ef@canb.auug.org.au>
+From: Pranith Kumar <bobby.prani@gmail.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Wed, 10 Dec 2014 10:03:57 -0500
+Message-ID: <548860DD.7040003@gmail.com>
+References: <20141210190945.3af6868b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:35413 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751817AbaLJLaT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 06:30:19 -0500
-Content-Disposition: inline
-In-Reply-To: <20141210204822.3359b7ef@canb.auug.org.au>
+Received: from mail-qg0-f43.google.com ([209.85.192.43]:53074 "EHLO
+	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757415AbaLJPDw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 10:03:52 -0500
+In-Reply-To: <20141210190945.3af6868b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen,
-
-On Wed, Dec 10, 2014 at 08:48:22PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On 12/10/2014 03:09 AM, Stephen Rothwell wrote:
+> Hi Paul,
 > 
-> Please do not add stuff destined for v3.20 until after v3.19-rc1 is
-> released.
+> After merging the rcu tree, today's linux-next build (powerpc64
+> allnoconfig) failed like this:
 > 
-> Changes since 20141209:
+> In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
+>                  from arch/powerpc/kernel/setup_64.c:68:
+> include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
+>   struct srcu_struct srcu;
+>                      ^
+> include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
+>   struct srcu_struct irq_srcu;
+>                      ^
 > 
-> Dropped tree: access_once
+> Presumably caused by commit 6e8ef258b669 ("srcu: Isolate srcu sections
+> using CONFIG_SRCU").
 > 
-> The thermal tree lost its build failure.
+> I have reverted that commit again for today - more work required ...
 > 
 
-Just a FYI.
+Looks like there are other places which use KVM unconditionally. I will try to look and fix such uses. 
 
-As of -next 20141210 commit d32394fae95741d733b174ec1446f27765f80233,
-which caused a suspend hang bug [1], is still in the tree.  Greg created
-a revert patch for it in driver-core [2] but I am not sure if this will
-make its way to -next.
-
-  [1]: https://lkml.org/lkml/2014/12/3/215
-
-  [2]: https://git.kernel.org/cgit/linux/kernel/git/gregkh/driver-core.git/commit/?h=driver-core-testing&id=f1c488a78d9f1a22cdb15648c15e70fd82ed229a
-
--- 
-- Jeremiah Mahler
+Paul, can you drop the patch until then? Thanks!
+--
+Pranith
