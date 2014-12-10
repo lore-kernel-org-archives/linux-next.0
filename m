@@ -1,160 +1,154 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Wed, 10 Dec 2014 19:54:05 +1100
-Message-ID: <20141210195405.5af40846@canb.auug.org.au>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Wed, 10 Dec 2014 10:42:33 +0100
+Message-ID: <54881589.20105@samsung.com>
+References: <5481D913.9040109@ti.com> <5481D9BF.2090007@ti.com>
+ <20141209165746.GA29935@kahuna>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=ckAssR/iWDt5AO31t3/Vem"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39991 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751554AbaLJIyN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2014 03:54:13 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hariprasad Shenai <hariprasad@chelsio.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-reply-to: <20141209165746.GA29935@kahuna>
+Sender: linux-omap-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/=ckAssR/iWDt5AO31t3/Vem
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+On 2014-12-09 17:57, Nishanth Menon wrote:
+> On 10:13-20141205, Nishanth Menon wrote:
+>> On 12/05/2014 10:10 AM, Nishanth Menon wrote:
+>>> next-20141204 fails to boot, but next-20141203 boots fine with
+>>> omap2plus_defconfig.
+>>>
+>>> Panda-ES(4460):
+>>> https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-es.txt
+>>> Panda(4430):
+>>> https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-vanilla.txt
+>>>
+>>> at the point of hang (JTAG):
+>>>   pandaboard-es:
+>>> 	cpu0: http://slexy.org/view/s2eIFqkRd5
+>>> 	cpu1: http://slexy.org/view/s2Tysb6gpL
+>>>
+>>> Case #1:
+>>> Disabling CPUIDLE allows boot to proceed. there does not seem to have
+>>> been any change in drivers/cpuidle and arch/arm/mach-omap2 w.r.t this.
+>>>
+>>> Case #2: Reverting the following allows boot.
+>>>
+>>>  From next-20141204
+>>> 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
+>>> revert this  -> boot still fails
+>>>
+>>> d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
+>>> mach_desc only if not NULL
+>>> revert this  -> boot still fails
+>>>
+>>> 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
+>>> revert this  -> boot still fails
+>>>
+>>> c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
+>>> revert this  -> boot passed (first bad commit).
+>>>
+>>>
+>> + linux-samsung soc and updated Thomaz's mail ID (gmail now).
+> Spend a few mins trying to track this down and it does look like commit
+> c94e325 does a kmemdup for the data as part of l2x0_of_init->__l2c_init
+>
+> This fails since the invocation is in early_init. doing it a bit later
+> as the following hack makes it work
+> diff --git a/arch/arm/mach-omap2/board-generic.c b/arch/arm/mach-omap2/board-generic.c
+> index 608079a..0bc6bd9 100644
+> --- a/arch/arm/mach-omap2/board-generic.c
+> +++ b/arch/arm/mach-omap2/board-generic.c
+> @@ -170,12 +170,19 @@ static const char *const omap4_boards_compat[] __initconst = {
+>   	NULL,
+>   };
+>   
+> +
+> +static void tmp_init_irq(void)
+> +{
+> +	omap_l2_cache_init();
+> +	omap_gic_of_init();
+> +}
+> +
+>   DT_MACHINE_START(OMAP4_DT, "Generic OMAP4 (Flattened Device Tree)")
+>   	.reserve	= omap_reserve,
+>   	.smp		= smp_ops(omap4_smp_ops),
+>   	.map_io		= omap4_map_io,
+>   	.init_early	= omap4430_init_early,
+> -	.init_irq	= omap_gic_of_init,
+> +	.init_irq	= tmp_init_irq,
+>   	.init_machine	= omap_generic_init,
+>   	.init_late	= omap4430_init_late,
+>   	.init_time	= omap4_local_timer_init,
+> diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
+> index 03cbb16..f97847d 100644
+> --- a/arch/arm/mach-omap2/io.c
+> +++ b/arch/arm/mach-omap2/io.c
+> @@ -627,7 +627,6 @@ void __init omap4430_init_early(void)
+>   	omap44xx_clockdomains_init();
+>   	omap44xx_hwmod_init();
+>   	omap_hwmod_init_postsetup();
+> -	omap_l2_cache_init();
+>   	omap_clk_soc_init = omap4xxx_dt_clk_init;
+>   }
+>   
 
-After merging the net-next tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Please note that am43xx_init_early() also calls omap_l2_cache_init(),
+so similar fix is needed for "Generic AM43 (Flattened Device Tree)"
+machines.
 
-drivers/net/ethernet/chelsio/cxgb4vf/built-in.o:(.opd+0x630): multiple defi=
-nition of `t4_bar2_sge_qregs'
-drivers/net/ethernet/chelsio/cxgb4/built-in.o:(.opd+0x14d0): first defined =
-here
-drivers/net/ethernet/chelsio/cxgb4vf/built-in.o: In function `.t4_bar2_sge_=
-qregs':
-(.text+0x9220): multiple definition of `.t4_bar2_sge_qregs'
-drivers/net/ethernet/chelsio/cxgb4/built-in.o:(.text+0x24e24): first define=
-d here
+I've briefly looked how the initialization is done on various omap
+platforms, but I don't see the good generic place for omap_l2_cache_init().
+IMHO the best solution will be to completely switch to generic/common l2c
+initialization and provide ".l2c_aux_val" and ".l2c_aux_mask" in machine
+descriptor. For the time being something like proposed above can be used.
 
-Caused by commit e85c9a7abfa4 ("cxgb4/cxgb4vf: Add code to calculate T5
-BAR2 Offsets for SGE Queue Registers") which added both versions.  :-(
+I assume that now it won't be possible to get l2c patches back to -next,
+so I will resend them (again...) with the omap related fix.
 
-I have applied this fir patch for today (including the subject
-typo :-)):
+> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+> index e5948c5..0ca90db 100644
+> --- a/arch/arm/mm/cache-l2x0.c
+> +++ b/arch/arm/mm/cache-l2x0.c
+> @@ -848,8 +848,11 @@ static int __init __l2c_init(const struct l2c_init_data *data,
+>   	 * context from callers can access the structure.
+>   	 */
+>   	l2x0_data = kmemdup(data, sizeof(*data), GFP_KERNEL);
+> -	if (!l2x0_data)
+> +	if (!l2x0_data) {
+> +		pr_err("%s no mem %d\n", __func__, sizeof(*data));
+> +		dump_stack();
+>   		return -ENOMEM;
+> +	}
+>   
+>   	/*
+>   	 * Sanity check the aux values.  aux_mask is the bits we preserve
+> @@ -1647,6 +1650,7 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+>   	struct device_node *np;
+>   	struct resource res;
+>   	u32 cache_id, old_aux;
+> +	int r;
+>   
+>   	np = of_find_matching_node(NULL, l2x0_ids);
+>   	if (!np)
+> @@ -1693,6 +1697,8 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+>   	else
+>   		cache_id = readl_relaxed(l2x0_base + L2X0_CACHE_ID);
+>   
+> -	return __l2c_init(data, aux_val, aux_mask, cache_id);
+> +	r = __l2c_init(data, aux_val, aux_mask, cache_id);
+> +	pr_err("%s: %d\n", __func__, r);
+> +	return r;
+>   }
+>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 10 Dec 2014 19:48:02 +1100
-Subject: [PATCH] cxgb4/cxgb4vf: global named must be unique
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h      | 2 +-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 4 ++--
- drivers/net/ethernet/chelsio/cxgb4/sge.c        | 2 +-
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c      | 4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ether=
-net/chelsio/cxgb4/cxgb4.h
-index 2c37e1bf253a..a18d33fdb271 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-@@ -1007,7 +1007,7 @@ int t4_prep_fw(struct adapter *adap, struct fw_info *=
-fw_info,
- int t4_prep_adapter(struct adapter *adapter);
-=20
- enum t4_bar2_qtype { T4_BAR2_QTYPE_EGRESS, T4_BAR2_QTYPE_INGRESS };
--int t4_bar2_sge_qregs(struct adapter *adapter,
-+int cxgb4_t4_bar2_sge_qregs(struct adapter *adapter,
- 		      unsigned int qid,
- 		      enum t4_bar2_qtype qtype,
- 		      u64 *pbar2_qoffset,
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/=
-ethernet/chelsio/cxgb4/cxgb4_main.c
-index c8c5b3d36d4e..1645f59648f0 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -3815,7 +3815,7 @@ int cxgb4_bar2_sge_qregs(struct net_device *dev,
- 			 u64 *pbar2_qoffset,
- 			 unsigned int *pbar2_qid)
- {
--	return t4_bar2_sge_qregs(netdev2adap(dev),
-+	return cxgb4_t4_bar2_sge_qregs(netdev2adap(dev),
- 				 qid,
- 				 (qtype =3D=3D CXGB4_BAR2_QTYPE_EGRESS
- 				  ? T4_BAR2_QTYPE_EGRESS
-@@ -4011,7 +4011,7 @@ static void process_db_drop(struct work_struct *work)
- 		unsigned int bar2_qid;
- 		int ret;
-=20
--		ret =3D t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
-+		ret =3D cxgb4_t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
- 					&bar2_qoffset, &bar2_qid);
- 		if (ret)
- 			dev_err(adap->pdev_dev, "doorbell drop recovery: "
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/sge.c b/drivers/net/etherne=
-t/chelsio/cxgb4/sge.c
-index f12debd98dac..ebf935a1e352 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
-@@ -2270,7 +2270,7 @@ static void __iomem *bar2_address(struct adapter *ada=
-pter,
- 	u64 bar2_qoffset;
- 	int ret;
-=20
--	ret =3D t4_bar2_sge_qregs(adapter, qid, qtype,
-+	ret =3D cxgb4_t4_bar2_sge_qregs(adapter, qid, qtype,
- 				&bar2_qoffset, pbar2_qid);
- 	if (ret)
- 		return NULL;
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c b/drivers/net/ether=
-net/chelsio/cxgb4/t4_hw.c
-index 67345c73e570..28d04153f999 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -4031,7 +4031,7 @@ int t4_prep_adapter(struct adapter *adapter)
- }
-=20
- /**
-- *	t4_bar2_sge_qregs - return BAR2 SGE Queue register information
-+ *	cxgb4_t4_bar2_sge_qregs - return BAR2 SGE Queue register information
-  *	@adapter: the adapter
-  *	@qid: the Queue ID
-  *	@qtype: the Ingress or Egress type for @qid
-@@ -4055,7 +4055,7 @@ int t4_prep_adapter(struct adapter *adapter)
-  *	Write Combining Doorbell Buffer. If the BAR2 Queue ID is not 0,
-  *	then these "Inferred Queue ID" register may not be used.
-  */
--int t4_bar2_sge_qregs(struct adapter *adapter,
-+int cxgb4_t4_bar2_sge_qregs(struct adapter *adapter,
- 		      unsigned int qid,
- 		      enum t4_bar2_qtype qtype,
- 		      u64 *pbar2_qoffset,
---=20
-2.1.3
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/=ckAssR/iWDt5AO31t3/Vem
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUiAoyAAoJEMDTa8Ir7ZwV8DoP/2o6KfcdbYMPfzJCKz7TWpkv
-1SIMakMwGnVGr5esy6DbVTDh35upKz/1VXzhIoepxpKd0cEFDA8yF4FCkEADUDJQ
-EAz7rPD4cKDdiaYgv6sj0fG6yWPP53cQC7aT6Fd4qA0hs2KGVSSUccxah4ZPPRMv
-FV+8c43w4LgWr4MqGA2sMOHIaBCliQ8CZn+p5wM+Kij39SeGffPyAkIBinD5Prm2
-o+7kLgfyA3ACKtJ8gOrLBBg9MqWgbAXepZVydC2JeD9j3Ax94lZwWfi0f8TIEvRt
-jDTTFcYGqYHv1tSQvQijjsN9YcundWLdZNzNT92L7geHJ9AY4jc2zw5WXAthWSmO
-8WSIZRDsTeR2giij6wuK8rGIQGvtyXUaLqt/iMne0Z/zg+tgEkXx/lC3yPvHclOr
-bBD/N1wnpaBAMBaZKZFoa1ip5s1l3b9wg6lZFefGfOdS+ZPB1Lmm3TaDq2o9WPWc
-8dJJXhoz/cEVH4oR8q96vtHg9FCIXiMaUccdlFWO2prIhzcESNLt8eOZ3EuLkhiU
-czySy4u39zglijKZfbjIZPuJexMl4fcMB+jXyj/7zFXl8jNudXDR2+WprJd89gNG
-EPIbHEoJhJqpfhEg2LRa8/+7xBCVoOn+sAFtEVW2NrMZFw2sJy2CZHKf585nQipc
-MyQs4OXVg2wW0i+zt9xk
-=t0Mr
------END PGP SIGNATURE-----
-
---Sig_/=ckAssR/iWDt5AO31t3/Vem--
