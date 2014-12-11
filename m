@@ -1,67 +1,74 @@
-From: Aaron Lu <aaron.lu@intel.com>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: [PATCH v5] Thermal: introduce INT3406 thermal driver
-Date: Thu, 11 Dec 2014 10:17:16 +0800
-Message-ID: <5488FEAC.2010005@intel.com>
-References: <54868CF6.6020505@intel.com>	<CAOesGMirF-_H2ZzFR-VpwkEErZE2uQJSYx5EuePArQsEh=r_Kw@mail.gmail.com>	<20141211010226.GA26253@aaronlu.sh.intel.com> <CAOesGMj_uObbxLdpobEhP=nRPsFUJNCtq01RH7ZSECd5=1Ti6Q@mail.gmail.com>
+Date: Wed, 10 Dec 2014 18:22:58 -0800
+Message-ID: <CAOesGMjgCbDys-RXQ2SWOcO6rNkgkQ3ZWuqsMUVMzuicES3CFA@mail.gmail.com>
+References: <54868CF6.6020505@intel.com>
+	<CAOesGMirF-_H2ZzFR-VpwkEErZE2uQJSYx5EuePArQsEh=r_Kw@mail.gmail.com>
+	<20141211010226.GA26253@aaronlu.sh.intel.com>
+	<CAOesGMj_uObbxLdpobEhP=nRPsFUJNCtq01RH7ZSECd5=1Ti6Q@mail.gmail.com>
+	<5488FEAC.2010005@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMj_uObbxLdpobEhP=nRPsFUJNCtq01RH7ZSECd5=1Ti6Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vc0-f175.google.com ([209.85.220.175]:59521 "EHLO
+	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932937AbaLKCW6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2014 21:22:58 -0500
+Received: by mail-vc0-f175.google.com with SMTP id hy10so2052666vcb.6
+        for <linux-next@vger.kernel.org>; Wed, 10 Dec 2014 18:22:58 -0800 (PST)
+In-Reply-To: <5488FEAC.2010005@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Aaron Lu <aaron.lu@intel.com>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Zhang Rui <rui.zhang@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux-pm mailing list <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-On 12/11/2014 10:15 AM, Olof Johansson wrote:
-> On Wed, Dec 10, 2014 at 5:02 PM, Aaron Lu <aaron.lu@intel.com> wrote:
->> On Wed, Dec 10, 2014 at 11:53:25AM -0800, Olof Johansson wrote:
->>> Hi,
->>>
->>> [+daniel vetter]
->>>
->>> On Mon, Dec 8, 2014 at 9:47 PM, Aaron Lu <aaron.lu@intel.com> wrote:
->>>> INT3406 ACPI device object resembles an ACPI video output device, but its
->>>> _BCM is said to be deprecated and should not be used. So we will make
->>>> use of the raw interface to do the actual cooling. Due to this, the
->>>> backlight core has some modifications. Also, to re-use some of the ACPI
->>>> video module's code, one function has been exported.
+On Wed, Dec 10, 2014 at 6:17 PM, Aaron Lu <aaron.lu@intel.com> wrote:
+> On 12/11/2014 10:15 AM, Olof Johansson wrote:
+>> On Wed, Dec 10, 2014 at 5:02 PM, Aaron Lu <aaron.lu@intel.com> wrote:
+>>> On Wed, Dec 10, 2014 at 11:53:25AM -0800, Olof Johansson wrote:
+>>>> Hi,
 >>>>
->>>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
->>>> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
->>>> ---
->>>> v5:
->>>> Add the missing file drivers/thermal/int340x_thermal/Kconfig
->>>> Remove the assignment of .owner field from the device_driver structure
+>>>> [+daniel vetter]
+>>>>
+>>>> On Mon, Dec 8, 2014 at 9:47 PM, Aaron Lu <aaron.lu@intel.com> wrote:
+>>>>> INT3406 ACPI device object resembles an ACPI video output device, but its
+>>>>> _BCM is said to be deprecated and should not be used. So we will make
+>>>>> use of the raw interface to do the actual cooling. Due to this, the
+>>>>> backlight core has some modifications. Also, to re-use some of the ACPI
+>>>>> video module's code, one function has been exported.
+>>>>>
+>>>>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>>>>> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+>>>>> ---
+>>>>> v5:
+>>>>> Add the missing file drivers/thermal/int340x_thermal/Kconfig
+>>>>> Remove the assignment of .owner field from the device_driver structure
+>>>>
+>>>>
+>>>> Did this patch show up in -next for the first time last night, or did
+>>>> some other change break this?
+>>>>
+>>>> It causes a panic in i915 when booting Minnowboard Max for me.
 >>>
->>>
->>> Did this patch show up in -next for the first time last night, or did
->>> some other change break this?
->>>
->>> It causes a panic in i915 when booting Minnowboard Max for me.
+>>> Sorry for the trouble, I'm looking at this now.
+>>> Is there anything special about the Minnowboard Max? I'll try to
+>>> reproduce the issue here locally with a typical Intel desktop.
 >>
->> Sorry for the trouble, I'm looking at this now.
->> Is there anything special about the Minnowboard Max? I'll try to
->> reproduce the issue here locally with a typical Intel desktop.
-> 
-> Another good question is why the code showed up in -next today. Code
-> going in for 3.19 is supposed to have been baking there already, and
-> it's too early to stage anything for 3.20.
-> 
-> Zhang?
-> 
->> Is it the next/master branch?
->> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> 
-> Yes. But I've confirmed that it happens with Zhang's next branch too
-> without the rest of linux-next.
+>> Another good question is why the code showed up in -next today. Code
+>> going in for 3.19 is supposed to have been baking there already, and
+>> it's too early to stage anything for 3.20.
+>>
+>> Zhang?
+>>
+>>> Is it the next/master branch?
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>>
+>> Yes. But I've confirmed that it happens with Zhang's next branch too
+>> without the rest of linux-next.
+>
+> Can you please give me your kernel config file too?
 
-Can you please give me your kernel config file too?
+http://arm-soc.lixom.net/minnowmax_defconfig
 
-Thanks,
-Aaron
 
-> 
-> 
-> -Olof
-> 
+-Olof
