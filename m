@@ -1,77 +1,53 @@
-From: Aaron Lu <aaron.lu@intel.com>
-Subject: Re: [PATCH v5] Thermal: introduce INT3406 thermal driver
-Date: Thu, 11 Dec 2014 14:10:38 +0800
-Message-ID: <5489355E.8080905@intel.com>
-References: <54868CF6.6020505@intel.com>	 <CAOesGMirF-_H2ZzFR-VpwkEErZE2uQJSYx5EuePArQsEh=r_Kw@mail.gmail.com>	 <20141211010226.GA26253@aaronlu.sh.intel.com>	 <CAOesGMj_uObbxLdpobEhP=nRPsFUJNCtq01RH7ZSECd5=1Ti6Q@mail.gmail.com> <1418265472.12435.68.camel@rzhang1-toshiba> <548934D0.8000502@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no linux-next today
+Date: Thu, 11 Dec 2014 18:55:48 +1100
+Message-ID: <20141211185548.77a6cf3b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/s/d6M1mUKJBb+atqb.2zREi"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:44236 "EHLO mga01.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:37848 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964797AbaLKGKk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Dec 2014 01:10:40 -0500
-In-Reply-To: <548934D0.8000502@intel.com>
+	id S1754188AbaLKHz6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Dec 2014 02:55:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>, Olof Johansson <olof@lixom.net>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux-pm mailing list <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On 12/11/2014 02:08 PM, Aaron Lu wrote:
-> On 12/11/2014 10:37 AM, Zhang Rui wrote:
->> On Wed, 2014-12-10 at 18:15 -0800, Olof Johansson wrote:
->>> On Wed, Dec 10, 2014 at 5:02 PM, Aaron Lu <aaron.lu@intel.com> wrote:
->>>> On Wed, Dec 10, 2014 at 11:53:25AM -0800, Olof Johansson wrote:
->>>>> Hi,
->>>>>
->>>>> [+daniel vetter]
->>>>>
->>>>> On Mon, Dec 8, 2014 at 9:47 PM, Aaron Lu <aaron.lu@intel.com> wrote:
->>>>>> INT3406 ACPI device object resembles an ACPI video output device, but its
->>>>>> _BCM is said to be deprecated and should not be used. So we will make
->>>>>> use of the raw interface to do the actual cooling. Due to this, the
->>>>>> backlight core has some modifications. Also, to re-use some of the ACPI
->>>>>> video module's code, one function has been exported.
->>>>>>
->>>>>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
->>>>>> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
->>>>>> ---
->>>>>> v5:
->>>>>> Add the missing file drivers/thermal/int340x_thermal/Kconfig
->>>>>> Remove the assignment of .owner field from the device_driver structure
->>>>>
->>>>>
->>>>> Did this patch show up in -next for the first time last night, or did
->>>>> some other change break this?
->>>>>
->>>>> It causes a panic in i915 when booting Minnowboard Max for me.
->>>>
->>>> Sorry for the trouble, I'm looking at this now.
->>>> Is there anything special about the Minnowboard Max? I'll try to
->>>> reproduce the issue here locally with a typical Intel desktop.
->>>
->>> Another good question is why the code showed up in -next today. Code
->>> going in for 3.19 is supposed to have been baking there already, and
->>> it's too early to stage anything for 3.20.
->>>
->>> Zhang?
->>
->> well, my Linux machine happened to be broken when I was in travel in Oct
->> and Nov, so that I got the 3.19 material prepared a little late.
->> Thus I just took some fixes and driver specific patches and plan to push
->> my pull request next week.
->> For this one, it had been pushed to linux-next for 3.18, but was dropped
->> because of some Kconfig problem. So I thought it was safe to include
->> this one for 3.19.
->> sorry for bring the trouble here.
-> 
-> It's my bad. In the meantime, I think I have found the problem:
-> If the system has a video output device that does not provide a correct
-> _BCL, the error path from the newly added code doesn't properly set the
-> error return value and that caused problem. The fix is simple:
+--Sig_/s/d6M1mUKJBb+atqb.2zREi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-BTW, this is verified with a laptop that would expose the same call
-trace as posted by Olof with the original commit.
+Hi all,
 
-Thanks,
-Aaron
+Unfortunately, I ran out of time before our machine room was shut down
+this evening.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/s/d6M1mUKJBb+atqb.2zREi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUiU4LAAoJEMDTa8Ir7ZwVWeEP/3tOde15/FWFR8IMYM5GLzJ/
+q9EkaEV+ubiikkaMEWH/jW1ZOCjxYuW5TIpxjWBWokbWr41W8EGbWME7ylIDMR5X
+/CW5bZrn2sbzORGsjUYiKTAF7vkBm2iNnKahLjwKCzedhF9an5s2JiGxS4Z8KNMh
+fcOob1UHDmdPCvNblg+aN9+W6dD7ZhUNh7ZO69z/px7jmHbQ3T6UdiSErR43Yrw0
+oih8tHZWttFhbbSVIWPjRI2NYI9aP4mULJYuPhIHxjstE2ncvEiZKtECAfLMGHbU
+ZtkxHS1Sl04GotbqdNq5+Fn91fkHmy0AcKgMahbpkv0tXSvtiEgwmsQdethGQTzW
+zJbDt/Nj6ZTmJyINRgzVbIxJ6XHEOh+HwnNr938CCbokto8CZJKmJ9eDyQ8z8/Wh
+kUabwiMUpSFtkWQVjS7G0H6PKQeOUF6iKIjLo5WLG2z78zETawDyrg6CYhRJjc59
+icaJhm/bxTmgRTeNIL1/0gHstEIvbOhB7EwY4AErrUI4BS2HSGutGzI831Bk1VNy
+y5SeNM1Jzv+B7tZqZSGkbCswhi9z8x0SN7575JAfxpVxga/kpjHT1lgJ2wogBbrI
+YDjNvPn+AObKFe6s5fH0l9NgCpR6dUH+cBdlQG9oOLftXlNuT9bk8tr2HPUtOVb6
+uiVd8TTDeJ0IItTXP6ZT
+=4Ot6
+-----END PGP SIGNATURE-----
+
+--Sig_/s/d6M1mUKJBb+atqb.2zREi--
