@@ -1,62 +1,55 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: linux-next: Tree for Dec 12
-Date: Fri, 12 Dec 2014 11:31:56 +0100
-Message-ID: <1418380316.5756.37.camel@x220>
-References: <20141212183518.06e3803d@canb.auug.org.au>
-	 <1418377757.5756.24.camel@x220> <20141212210449.7f460bb1@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: randconfig build error with next-20141210, in
+ drivers/net/ethernet/broadcom/genet
+Date: Fri, 12 Dec 2014 11:02:23 -0500 (EST)
+Message-ID: <20141212.110223.1096319955510441330.davem@davemloft.net>
+References: <CA+r1ZhjxtK8BtF16Mr9jXjqvFVV7KAAFjWqfVFUibNreZwZxTw@mail.gmail.com>
+	<20141211.142220.610076934853342634.davem@davemloft.net>
+	<548A786D.2060201@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:64302 "EHLO
-	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758149AbaLLKb7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Dec 2014 05:31:59 -0500
-In-Reply-To: <20141212210449.7f460bb1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Valentin Rothberg <valentinrothberg@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <548A786D.2060201@gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: f.fainelli@gmail.com
+Cc: jim.epost@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2014-12-12 at 21:04 +1100, Stephen Rothwell wrote:
-> That patch has been in linux-next since Dec 3 as commit 77a4494388ab in
-> Andrew's patch set (and maybe earlier).
+=46rom: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 11 Dec 2014 21:09:01 -0800
 
-Not earlier. Commit 77a4494388ab debuted in next-20141203:
-        $ git tag --contains 77a4494388ab
-        next-20141203
-        next-20141204
-        next-20141205
-        next-20141208
-        next-20141209
-        next-20141210
-        next-20141211
-        next-20141212
-        
-I missed that commit. But then again it never occurred to me that a
-Kconfig symbol would be added and removed in one series. And, obviously,
-grepping for INIT_FALLBACK didn't show anything in linux-next before
-today (the oldest tree I checked was next-20141201, after which I lost
-interest in going back any further). 
+> Le 11/12/2014 11:22, David Miller a =E9crit :
+>> From: Jim Davis <jim.epost@gmail.com> Date: Wed, 10 Dec 2014
+>> 09:10:45 -0700
+>>=20
+>>> Building with the attached random configuration file,
+>>>=20
+>>> ERROR: "fixed_phy_register"=20
+>>> [drivers/net/ethernet/broadcom/genet/genet.ko] undefined!
+>>=20
+>> Florian, I don't understand why FIXED_PHY is only selected in
+>> Kconfig if the driver is statically built into the kernel.
+>>=20
+>> That makes no sense at all, you should need that module regardless
+>> of how the driver itself is enabled.
+>=20
+> AFAIR this was introduced to silence a warning you reported:
+>=20
+> "I think you need to work on the Kconfig dependencies a little bit mo=
+re.
+> I have BCMGENET specified as modular, which absolutely should work.  =
+Yet
+> Kconfig complains.
+>=20
+> warning: (BCMGENET) selects FIXED_PHY which has unmet direct
+> dependencies (NETDEVICES && PHYLIB=3Dy)"
+>=20
+> but I agree, this makes no sense, we should select FIXED_PHY
+> unconditionnally, will send you patches tomorrow to fix that.
 
->   However, also in Adnrew's
-> patch set is another patch ("init: remove CONFIG_INIT_FALLBACK") that
-> then removes CONFIG_INIT_FALLBACK.  There is a conflict because the
-> first has gone into Linus' tree today (as commit 6ef4536e2f19), but the
-> second has not (I don't know why not).
-> 
-> Hmmm, I would have expected the Kconfig entry to be removed as well,
-> but either I missed that, or git is not as clever as I expect it to be.
-> 
-> > Anyhow, I'm sure this all will be sorted out in due time.
-> 
-> I hope so.
+What's really perplexing is that FIXED_PHY is only enable'able
+when PHYLIB=3Dy.  I think that's the core of the problems here.
 
-I won't be bothering (Andrew and) you again about this. Unless sorting
-this out takes rather long, that is.
-
-Thanks,
-
-
-Paul Bolle
+All of these drivers shouldn't lose fixed phy support simply
+because they, or PHYLIB itself, is built modular.
