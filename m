@@ -1,43 +1,48 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Fri, 12 Dec 2014 09:23:12 -0800
-Message-ID: <20141212172312.GT25340@linux.vnet.ibm.com>
-References: <20141212171215.6beff7b4@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v6] Thermal: introduce INT3406 thermal driver
+Date: Fri, 12 Dec 2014 10:18:55 -0800
+Message-ID: <CAOesGMjKdi6wPsy+U1makbFyJpsj8RZykOZ5BEYrFWj_VzUxqA@mail.gmail.com>
+References: <54868CF6.6020505@intel.com>
+	<CAOesGMirF-_H2ZzFR-VpwkEErZE2uQJSYx5EuePArQsEh=r_Kw@mail.gmail.com>
+	<20141211010226.GA26253@aaronlu.sh.intel.com>
+	<CAOesGMj_uObbxLdpobEhP=nRPsFUJNCtq01RH7ZSECd5=1Ti6Q@mail.gmail.com>
+	<1418265472.12435.68.camel@rzhang1-toshiba>
+	<548934D0.8000502@intel.com>
+	<1418286781.12435.73.camel@rzhang1-toshiba>
+	<54895821.3050902@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141212171215.6beff7b4@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:52193 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935127AbaLLSS4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Dec 2014 13:18:56 -0500
+Received: by mail-oi0-f48.google.com with SMTP id u20so5520789oif.35
+        for <linux-next@vger.kernel.org>; Fri, 12 Dec 2014 10:18:55 -0800 (PST)
+In-Reply-To: <54895821.3050902@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Aaron Lu <aaron.lu@intel.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux-pm mailing list <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 12, 2014 at 05:12:15PM +1100, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the rcu tree, today's linux-next build (powerpc64
-> allnoconfig) failed like this:
-> 
-> In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
->                  from arch/powerpc/kernel/setup_64.c:68:
-> include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
->   struct srcu_struct srcu;
->                      ^
-> include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
->   struct srcu_struct irq_srcu;
->                      ^
-> 
-> I am sure we have seen this before :-(
-> 
-> Caused by commit 31a78b1b598a ("srcu: Isolate srcu sections using
-> CONFIG_SRCU") as it was before (I do wonder why this came back).
-> 
-> I have reverted that commit for today.
+Hi,
 
-Gah...  I forgot to adjust rcu/next placement for the merge window!!!
-Please accept my apologies, I have set it up to include only the
-commits destined for 3.19.  :-/
 
-							Thanx, Paul
+
+On Thu, Dec 11, 2014 at 12:38 AM, Aaron Lu <aaron.lu@intel.com> wrote:
+> INT3406 ACPI device object resembles an ACPI video output device, but its
+> _BCM is said to be deprecated and should not be used. So we will make
+> use of the raw interface to do the actual cooling. Due to this, the
+> backlight core has some modifications. Also, to re-use some of the ACPI
+> video module's code, one function has been exported.
+>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> ---
+> v6: Fix an issue that wrongly set error path return value as reported
+> by Olof Johansson.
+
+Last night's -next was still broken. I take it this wasn't applied
+yet? Please at least revert the original patch.
+
+
+-Olof
