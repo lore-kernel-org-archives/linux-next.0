@@ -1,92 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Paul Bolle <pebolle@tiscali.nl>
 Subject: Re: linux-next: Tree for Dec 12
-Date: Fri, 12 Dec 2014 21:04:49 +1100
-Message-ID: <20141212210449.7f460bb1@canb.auug.org.au>
+Date: Fri, 12 Dec 2014 11:31:56 +0100
+Message-ID: <1418380316.5756.37.camel@x220>
 References: <20141212183518.06e3803d@canb.auug.org.au>
-	<1418377757.5756.24.camel@x220>
+	 <1418377757.5756.24.camel@x220> <20141212210449.7f460bb1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DpMCRYw8Qn2+7AYGZPCsv0M"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33553 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934608AbaLLKE6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Dec 2014 05:04:58 -0500
-In-Reply-To: <1418377757.5756.24.camel@x220>
+Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:64302 "EHLO
+	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758149AbaLLKb7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Dec 2014 05:31:59 -0500
+In-Reply-To: <20141212210449.7f460bb1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Bolle <pebolle@tiscali.nl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Valentin Rothberg <valentinrothberg@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
---Sig_/DpMCRYw8Qn2+7AYGZPCsv0M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2014-12-12 at 21:04 +1100, Stephen Rothwell wrote:
+> That patch has been in linux-next since Dec 3 as commit 77a4494388ab in
+> Andrew's patch set (and maybe earlier).
 
-Hi Paul,
+Not earlier. Commit 77a4494388ab debuted in next-20141203:
+        $ git tag --contains 77a4494388ab
+        next-20141203
+        next-20141204
+        next-20141205
+        next-20141208
+        next-20141209
+        next-20141210
+        next-20141211
+        next-20141212
+        
+I missed that commit. But then again it never occurred to me that a
+Kconfig symbol would be added and removed in one series. And, obviously,
+grepping for INIT_FALLBACK didn't show anything in linux-next before
+today (the oldest tree I checked was next-20141201, after which I lost
+interest in going back any further). 
 
-On Fri, 12 Dec 2014 10:49:17 +0100 Paul Bolle <pebolle@tiscali.nl> wrote:
->
-> > $ git checkout master
-> > $ git reset --hard stable
-> > [...]
-> > Merging akpm-current/current (35ac317b788c shmdt: use i_size_read() ins=
-tead of ->i_size)
-> > CONFLICT (content): Merge conflict in tools/testing/selftests/Makefile
-> > CONFLICT (content): Merge conflict in mm/page_alloc.c
-> > CONFLICT (content): Merge conflict in mm/memcontrol.c
-> > CONFLICT (content): Merge conflict in mm/hugetlb.c
-> > CONFLICT (content): Merge conflict in kernel/printk/printk.c
-> > CONFLICT (content): Merge conflict in kernel/exit.c
-> > CONFLICT (content): Merge conflict in init/main.c
->=20
-> I think the conflict resolution here can be found in your merge commit
-> bcab756e1d32 ("Merge branch 'akpm-current/current'").
->=20
-> For some reason it removes the only check for CONFIG_INIT_FALLBACK. I
-> only noticed because that makes the Kconfig entry INIT_FALLBACK a nop.
-> That check and Kconfig entry were added in commit 6ef4536e2f19 ("init:
-> allow CONFIG_INIT_FALLBACK=3Dn to disable defaults if init=3D fails"). Th=
-at
-> commit debuted in today's linux-next.
+>   However, also in Adnrew's
+> patch set is another patch ("init: remove CONFIG_INIT_FALLBACK") that
+> then removes CONFIG_INIT_FALLBACK.  There is a conflict because the
+> first has gone into Linus' tree today (as commit 6ef4536e2f19), but the
+> second has not (I don't know why not).
+> 
+> Hmmm, I would have expected the Kconfig entry to be removed as well,
+> but either I missed that, or git is not as clever as I expect it to be.
+> 
+> > Anyhow, I'm sure this all will be sorted out in due time.
+> 
+> I hope so.
 
-That patch has been in linux-next since Dec 3 as commit 77a4494388ab in
-Andrew's patch set (and maybe earlier).  However, also in Adnrew's
-patch set is another patch ("init: remove CONFIG_INIT_FALLBACK") that
-then removes CONFIG_INIT_FALLBACK.  There is a conflict because the
-first has gone into Linus' tree today (as commit 6ef4536e2f19), but the
-second has not (I don't know why not).
+I won't be bothering (Andrew and) you again about this. Unless sorting
+this out takes rather long, that is.
 
-Hmmm, I would have expected the Kconfig entry to be removed as well,
-but either I missed that, or git is not as clever as I expect it to be.
+Thanks,
 
-> Anyhow, I'm sure this all will be sorted out in due time.
 
-I hope so.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/DpMCRYw8Qn2+7AYGZPCsv0M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUir3HAAoJEMDTa8Ir7ZwV/BUP/2V1ldh942V9MWz8u4jeJpZ+
-4SMbxNFYqx8Cc7JUeJiIBKABmj2aiIhUPgrW2ig+MVmKQu97ByPSV6HN8zddacHE
-GKy/YbbPeyHCeHdzSpvigtBUwVP2UFnq5jwlKce2Fikyoo7LB9jKtY78h4zUgTb3
-DRkljIt6jHQfOwango3+XcQbmC+dfCTlasysD62eNdpjnlSfVwNsohZO2dj6+MBY
-ayvF8zKXJqMpEaZxrNnET5woksA8x4eI6bbkytHgzZPnJ02D84d2GKY5Ox56l9y+
-5RSiBWPYP4013l4FaUyUvYZ8uBkurnGwmyJVOKM6h0BnlHhdujl9RVspxNhN9kTp
-VpUzdp0jlndOWpScNkvNrXPc0Ylg56AvakisB74po0NadOT/dM61AMX68xjUZ3RA
-WbFtiqv9iCh3hmH/+ikhHWXdZFw+3xXUXFDpbj9gURKUPT+7Mjra0EbsaOmJdu1X
-YM7UFjxOvdmlBB4DU+kQwecAShS9xtN/Gi8xTEGR8oPsKbf54Q7xTAE/pADsuW73
-lOR2KpbS8IVGaERA3rKkp2MIzpB5iq8/LDtBhJOwieHetRWoNFyK8xBazsx4ABFl
-Bvk+uV1oL0fuMtMIzgWLid60ttaH7mIq6Fqf0EpS79UQI934uwzVHF2xvaEoRbzV
-Y2O0lLVUM/IcC2jgS6aQ
-=bdDE
------END PGP SIGNATURE-----
-
---Sig_/DpMCRYw8Qn2+7AYGZPCsv0M--
+Paul Bolle
