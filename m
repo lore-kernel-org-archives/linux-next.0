@@ -1,55 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: randconfig build error with next-20141210, in
- drivers/net/ethernet/broadcom/genet
-Date: Fri, 12 Dec 2014 11:02:23 -0500 (EST)
-Message-ID: <20141212.110223.1096319955510441330.davem@davemloft.net>
-References: <CA+r1ZhjxtK8BtF16Mr9jXjqvFVV7KAAFjWqfVFUibNreZwZxTw@mail.gmail.com>
-	<20141211.142220.610076934853342634.davem@davemloft.net>
-	<548A786D.2060201@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Fri, 12 Dec 2014 09:23:12 -0800
+Message-ID: <20141212172312.GT25340@linux.vnet.ibm.com>
+References: <20141212171215.6beff7b4@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <548A786D.2060201@gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: f.fainelli@gmail.com
-Cc: jim.epost@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20141212171215.6beff7b4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-=46rom: Florian Fainelli <f.fainelli@gmail.com>
-Date: Thu, 11 Dec 2014 21:09:01 -0800
+On Fri, Dec 12, 2014 at 05:12:15PM +1100, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> After merging the rcu tree, today's linux-next build (powerpc64
+> allnoconfig) failed like this:
+> 
+> In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
+>                  from arch/powerpc/kernel/setup_64.c:68:
+> include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
+>   struct srcu_struct srcu;
+>                      ^
+> include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
+>   struct srcu_struct irq_srcu;
+>                      ^
+> 
+> I am sure we have seen this before :-(
+> 
+> Caused by commit 31a78b1b598a ("srcu: Isolate srcu sections using
+> CONFIG_SRCU") as it was before (I do wonder why this came back).
+> 
+> I have reverted that commit for today.
 
-> Le 11/12/2014 11:22, David Miller a =E9crit :
->> From: Jim Davis <jim.epost@gmail.com> Date: Wed, 10 Dec 2014
->> 09:10:45 -0700
->>=20
->>> Building with the attached random configuration file,
->>>=20
->>> ERROR: "fixed_phy_register"=20
->>> [drivers/net/ethernet/broadcom/genet/genet.ko] undefined!
->>=20
->> Florian, I don't understand why FIXED_PHY is only selected in
->> Kconfig if the driver is statically built into the kernel.
->>=20
->> That makes no sense at all, you should need that module regardless
->> of how the driver itself is enabled.
->=20
-> AFAIR this was introduced to silence a warning you reported:
->=20
-> "I think you need to work on the Kconfig dependencies a little bit mo=
-re.
-> I have BCMGENET specified as modular, which absolutely should work.  =
-Yet
-> Kconfig complains.
->=20
-> warning: (BCMGENET) selects FIXED_PHY which has unmet direct
-> dependencies (NETDEVICES && PHYLIB=3Dy)"
->=20
-> but I agree, this makes no sense, we should select FIXED_PHY
-> unconditionnally, will send you patches tomorrow to fix that.
+Gah...  I forgot to adjust rcu/next placement for the merge window!!!
+Please accept my apologies, I have set it up to include only the
+commits destined for 3.19.  :-/
 
-What's really perplexing is that FIXED_PHY is only enable'able
-when PHYLIB=3Dy.  I think that's the core of the problems here.
-
-All of these drivers shouldn't lose fixed phy support simply
-because they, or PHYLIB itself, is built modular.
+							Thanx, Paul
