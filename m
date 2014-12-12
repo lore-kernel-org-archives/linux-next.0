@@ -1,62 +1,68 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: randconfig build error with next-20141210, in drivers/net/ethernet/broadcom/genet
-Date: Thu, 11 Dec 2014 21:09:01 -0800
-Message-ID: <548A786D.2060201@gmail.com>
-References: <CA+r1ZhjxtK8BtF16Mr9jXjqvFVV7KAAFjWqfVFUibNreZwZxTw@mail.gmail.com> <20141211.142220.610076934853342634.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Fri, 12 Dec 2014 17:12:15 +1100
+Message-ID: <20141212171215.6beff7b4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141211.142220.610076934853342634.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, jim.epost@gmail.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/p5gVPHcnmOPEjtcXlFwOON7"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52759 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752780AbaLLGM0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Dec 2014 01:12:26 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>
 
-Le 11/12/2014 11:22, David Miller a =E9crit :
-> From: Jim Davis <jim.epost@gmail.com> Date: Wed, 10 Dec 2014
-> 09:10:45 -0700
->=20
->> Building with the attached random configuration file,
->>=20
->> ERROR: "fixed_phy_register"=20
->> [drivers/net/ethernet/broadcom/genet/genet.ko] undefined!
->=20
-> Florian, I don't understand why FIXED_PHY is only selected in
-> Kconfig if the driver is statically built into the kernel.
->=20
-> That makes no sense at all, you should need that module regardless
-> of how the driver itself is enabled.
+--Sig_/p5gVPHcnmOPEjtcXlFwOON7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-AFAIR this was introduced to silence a warning you reported:
+Hi Paul,
 
-"I think you need to work on the Kconfig dependencies a little bit more=
-=2E
-I have BCMGENET specified as modular, which absolutely should work.  Ye=
-t
-Kconfig complains.
+After merging the rcu tree, today's linux-next build (powerpc64
+allnoconfig) failed like this:
 
-warning: (BCMGENET) selects FIXED_PHY which has unmet direct
-dependencies (NETDEVICES && PHYLIB=3Dy)"
+In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
+                 from arch/powerpc/kernel/setup_64.c:68:
+include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
+  struct srcu_struct srcu;
+                     ^
+include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
+  struct srcu_struct irq_srcu;
+                     ^
 
-but I agree, this makes no sense, we should select FIXED_PHY
-unconditionnally, will send you patches tomorrow to fix that.
+I am sure we have seen this before :-(
 
->=20
-> Can't we just remove the "XXX=3Dy" in all of those silly:
->=20
-> select FIXED_PHY if XXX=3Dy
->=20
-> expressions?
->=20
-> There are three such cases right now:
->=20
-> drivers/net/dsa/Kconfig:	select FIXED_PHY if NET_DSA_BCM_SF2=3Dy=20
-> drivers/net/ethernet/broadcom/Kconfig:	select FIXED_PHY if
-> BCMGENET=3Dy drivers/net/ethernet/broadcom/Kconfig:	select FIXED_PHY
-> if SYSTEMPORT=3Dy
->=20
+Caused by commit 31a78b1b598a ("srcu: Isolate srcu sections using
+CONFIG_SRCU") as it was before (I do wonder why this came back).
 
-
+I have reverted that commit for today.
 --=20
-=46lorian
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/p5gVPHcnmOPEjtcXlFwOON7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUiodFAAoJEMDTa8Ir7ZwVHD0P/26MlLHyqoQmN6+NJGYBmG3b
+/918gSa9raq1vvwWRT06YzVDOQNm0DahKhPmhgQZQbErwdS30GCt+Fz5kYo7Bffv
+UcV8NNzdmvXOOTkIS6hQGUgAP7gJezofkAxMJBx3BM18ceL9b59rHSr45BBzMHkO
+GZj+pWlXw/+/XNuqv/I6ypMPZcNI5T00URK1uJyF0KrS851AoYVU24CfmOiTp465
+Y38MMTbG2CnqdCwldhzIBicD0pJoK+msjkYGVWuTquVmeRE3EOi0NcFrO4atUrim
+tu9dLH/f1Yahf4DcjBvkeVXYqPodUPuu/y+RnyeRoIOZObcNBQdtPQea/JlqUqAD
+qNqU3a5ZaWodn8ptQ8/CMUnvCxwsicljU7TtV1CR4sDO4YZDk8SFVpHOVJsKqdbu
+NhYcNcBGlreEOsPOvNOWCM5493mrmPwm+CvJ2hH443N0M4/FvWTFtUnitq/hT/iJ
+A8lojhm96svHOayWpl3fYkFVh8V+BqWz+89dKTO2DvdFjHIWd3xKYHlvNS8YQ6SK
+0tB6XtGodllPuXPvvYVQtvg60Bj4hs9m+wr5CBl6CQGcF+ncoI+K7DuwWORipARs
++q7jzOUPM5ezH1DnWnYIoSoZNlEfQz+r3jWKWUByO0Ekh8UFf6g28aAHwmZEgpWy
+khD0jk63RB/V9CUi8Km1
+=De2g
+-----END PGP SIGNATURE-----
+
+--Sig_/p5gVPHcnmOPEjtcXlFwOON7--
