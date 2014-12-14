@@ -1,84 +1,54 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: question about the luto-misc tree
-Date: Sun, 14 Dec 2014 10:17:44 -0800
-Message-ID: <20141214181744.GF5310@linux.vnet.ibm.com>
-References: <20141214175747.2e6c506e@canb.auug.org.au>
- <CALCETrXu19aHhudTfPAr5PM05FR0xKBiSHgbubVhh6QUrHCADw@mail.gmail.com>
- <20141214120318.GA5310@linux.vnet.ibm.com>
- <CALCETrWsy5sxVTmjNu7t+o-QvEVY-csQHkP-PXT1aMFiXnzzhQ@mail.gmail.com>
- <20141214173715.GB5310@linux.vnet.ibm.com>
- <CALCETrWT7SLO3E+nV2g=QzJHAeWU4FBRENq=7OvoNDrHA7W0fg@mail.gmail.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: question about the commits in the vhost tree
+Date: Mon, 15 Dec 2014 09:29:55 +1100
+Message-ID: <20141215092955.024e334b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Ea2zNz.dvatB3O+dDoexb.x"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e35.co.us.ibm.com ([32.97.110.153]:47767 "EHLO
-	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750753AbaLNSRv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Dec 2014 13:17:51 -0500
-Received: from /spool/local
-	by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Sun, 14 Dec 2014 11:17:51 -0700
-Content-Disposition: inline
-In-Reply-To: <CALCETrWT7SLO3E+nV2g=QzJHAeWU4FBRENq=7OvoNDrHA7W0fg@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:34317 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751023AbaLNWaF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Dec 2014 17:30:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Dec 14, 2014 at 09:41:04AM -0800, Andy Lutomirski wrote:
-> On Sun, Dec 14, 2014 at 9:37 AM, Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> > On Sun, Dec 14, 2014 at 08:29:33AM -0800, Andy Lutomirski wrote:
-> >> On Sun, Dec 14, 2014 at 4:03 AM, Paul E. McKenney
-> >> <paulmck@linux.vnet.ibm.com> wrote:
-> >> > On Sat, Dec 13, 2014 at 11:26:36PM -0800, Andy Lutomirski wrote:
-> >> >> On Dec 13, 2014 10:58 PM, "Stephen Rothwell" <sfr@canb.auug.org.au> wrote:
-> >> >> >
-> >> >> > Hi Andy,
-> >> >> >
-> >> >> > The luto-misc tree seems to have a whole series of commits in it that
-> >> >> > have just bee removed from the rcu tree ...  You really have to be very
-> >> >> > careful if you base your work on a tree that is regularly rebased.
-> >> >>
-> >> >> Hmm.  They were there a couple days ago.  Paul, what should I do about
-> >> >> this?  I only need the one NMI nesting change for the stuff in
-> >> >> luto/next.
-> >> >>
-> >> >> > I also wonder if the other commits in that tree are destined for
-> >> >> > v3.19?  If they are for v3.20, then they should not be in linux-next
-> >> >> > until after v3.19-rc1 has been released.
-> >> >>
-> >> >> They're for 3.20.  I'll drop the whole series from the next branch for now.
-> >> >
-> >> > You mean the NMI nesting change below, correct?  One approach would be
-> >> > to include the branch rcu/dev from my -rcu tree.  Would that work for you?
-> >>
-> >> That would work.
-> >>
-> >> The problem is that, if you rebase again and I don't notice, then
-> >> it'll generate a pile of conflicts.  Is there someway that I can flag
-> >> my next tree as depending on a certain commi existing in another tree
-> >> so that the scripts that generate linux-next will ignore it if the
-> >> base commit goes away?
-> >
-> > The commits would still stick around because I keep date-encoded branches.
-> > But just to make things easier, I created a andy.2014.11.21a branch that
-> > points to the current commit and will stay there.  Please let me know how
-> > it goes.
-> 
-> That's the same commit that's in rcu/dev and was in luto/next, I
-> think.  Is the issue just that you pulled the whole thing from
-> whichever linux-rcu branch is in -next, but I still had it, so it
-> caused a problem?
+--Sig_/Ea2zNz.dvatB3O+dDoexb.x
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I still have the commit.  All I did was move the rcu/next branch that
-Stephen pulls from.
+Hi Michael,
 
-> In any case, I'll wait for 3.19-rc1 before re-adding any of this.
+Just wondering if all those commits added to the vhost
+(git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git#linux-next)
+tree today are really destined for v3.19.
 
-That does sound simpler, as I will make this commit available to -next
-at that point.  ;-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-							Thanx, Paul
+--Sig_/Ea2zNz.dvatB3O+dDoexb.x
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUjg9nAAoJEMDTa8Ir7ZwVgf4P/i84fSEdBuA3smG6Qt+3/bWx
+P1PUHM9XMIwRBOB+WF34B9zsF/1Yo1+RZsa0pGkBsCspB9oXvxC88Zb+noSCikX8
+8sRpgoQiG9xVxBAyLh39vmruKl9Mm3WZJY1W1YLyJOsyKMLMWBCUycxA2WBAppIT
+5Kv3JEQJTgwKCItafUxsXbHH5SnPglxZCUlqEXL21Gm6elSF1F3UIBp3FDKgM+IV
+/krUl4oAm67JCWftLeQlyzD27XF2o5zG9ZW1IJquWsCalwpSRU0638F5iUWci4ZY
+VozodCy3uz+ft6q8Jft/t2LpeX3r21YVoPGC+MYW0HEuEdIY8VAKIqvflteaIf3l
+6FMZM4ByOLdbO4WB4r5VoaPtI6Yr2Ktl45bMCc9BZTTJW0vAnRsOThsXaLJK55dL
+XI3Ez8zfn11kLdLLna4IYH0KePQTxDko7Te/VM5LTY640C34x0LfeP0M45g0FU+f
+XROstjwHyXacs+4SlVnMOwUA50hHS62+ysA2o5Mj8h7cmjRGSiyCczJZBTjwR4Ci
+7w++tDO+ioYKRCnzM0+icppEAqQtzBGfI78IgX2cFrRsO1c3v4m/pKUXwkKW+Ee9
+M3RBeVmF23+v1qyIYomwOluzyq1/XpwxehcEup0dbQsl1b441bwkHoUhpiSCD8Gq
+C2KE3TrsNTAJseTmO/rU
+=6beM
+-----END PGP SIGNATURE-----
+
+--Sig_/Ea2zNz.dvatB3O+dDoexb.x--
