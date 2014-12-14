@@ -1,73 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Dec 12
-Date: Sat, 13 Dec 2014 15:10:26 +1100
-Message-ID: <20141213151026.79a75a8f@canb.auug.org.au>
-References: <20141212183518.06e3803d@canb.auug.org.au>
-	<1418377757.5756.24.camel@x220>
-	<20141212210449.7f460bb1@canb.auug.org.au>
-	<1418380316.5756.37.camel@x220>
-	<20141212135719.4c79bac46d43bfd8d7c8e6a6@linux-foundation.org>
-	<1418423797.5756.54.camel@x220>
-	<20141212145623.dc2394c57c2254b2603456e4@linux-foundation.org>
+Subject: linux-next: question about the luto-misc tree
+Date: Sun, 14 Dec 2014 17:57:47 +1100
+Message-ID: <20141214175747.2e6c506e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5mds9I==dpRLAn3wVw4zIGd"; protocol="application/pgp-signature"
+ boundary="Sig_/w6AATFtADn6hH_l_/ISlrhw"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60640 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36878 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933210AbaLMEKe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Dec 2014 23:10:34 -0500
-In-Reply-To: <20141212145623.dc2394c57c2254b2603456e4@linux-foundation.org>
+	id S1750752AbaLNG5z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Dec 2014 01:57:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Paul Bolle <pebolle@tiscali.nl>, Valentin Rothberg <valentinrothberg@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>, Josh Triplett <josh@joshtriplett.org>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
---Sig_/5mds9I==dpRLAn3wVw4zIGd
+--Sig_/w6AATFtADn6hH_l_/ISlrhw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Andy,
 
-On Fri, 12 Dec 2014 14:56:23 -0800 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> How'd that happen?=20
-> http://ozlabs.org/~akpm/mmots/broken-out/init-remove-config_init_fallback=
-.patch
-> removes all mention of CONFIG_INIT_FALLBACK?
+The luto-misc tree seems to have a whole series of commits in it that
+have just bee removed from the rcu tree ...  You really have to be very
+careful if you base your work on a tree that is regularly rebased.
 
-Well, the patch now in Linus's tree adds the INIT_FALLBACK bit to the
-Kconfig file, but in your patchset, the bit is added and then removed.
-So when git comes to merge the two results, it looks like the
-apm-current branch in linux-next does not change that file at all, so
-git just uses the version from Linus' tree.  I missed it among all the
-other conflicts I had to fix up last evening.
-
+I also wonder if the other commits in that tree are destined for
+v3.19?  If they are for v3.20, then they should not be in linux-next
+until after v3.19-rc1 has been released.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/5mds9I==dpRLAn3wVw4zIGd
+--Sig_/w6AATFtADn6hH_l_/ISlrhw
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUi7w3AAoJEMDTa8Ir7ZwV7PoP/AvNK1smmvLRpLuFIoYBiSih
-zDE3o3FZNFZF46NA3fmFE5gHk5gL0Q6pvf9WLpIyG6mR/1BqmWPei2ZN0ws7sEAw
-IO438/MO6WZKC4RJAgMrlTjyUDlh1USYgid38kd5LszYHtMrVNqobFRneVa1u7SD
-80WSWqy20N6DRC/TzZfDJjZPWg9ySfYp6y6tvr9j87iiqZr5a2gZrJkTRiHjSm2u
-cerGMj+xUWBHqFgfJZx8XqXgy/+F/IgPnfiU+zBVsd1p4zooOWEyPgB2f6ZjhszD
-BXh86qPhmaOXMwxlfRlnnrKAu4RXjOFw8sjVLd0xVWqRD3VW8O8FJf0C4hVUIf/a
-bBSVorCXlXLnPY0YBa8MFBP8LUdFaGi7YGCwiGvobMY/Ewt9LZIkGZa4TnL2N59Q
-OwaL0sX/wPkPuc39GX4CwtKoMU8pm9pc1Hixejxo0e049UyEvjpGLAO6KWHbNCV6
-7QiEVfZNWt0tVKXRiRoQZobT/oa4KemMcTKFsxwjv1RRSYESG+Rve1zakDALZT0a
-ggJb55R+UnHcqUD1tfjws6Cp+cMhH8Ko03qQdtakH0lblpoVeEBGbM4AvjkcHUGR
-2CTr+dxz/oYJko/GUXgevbjZEoeY08gTRs7poYzVGZyBnVOyr1n66n0P18AlVobZ
-FDleKo0bIRNb1Anf8/Tm
-=sI3g
+iQIcBAEBCAAGBQJUjTTwAAoJEMDTa8Ir7ZwV2hgP/RDe30vZNeQxzUK34JgmUIg1
+STd0dIxwEcjBRmIp931W59wvreRk5Pn/1LdT1fXHq6M78SyUG7ozhE9k0PTFYqeX
+lT29/ZF0tmSdjIOJlHtaZ1OTib01oGURXnk8Wtlv52ocsLXp8rS2T5cfaF4ds0nN
+VQXSPfqPHNxripkBvRQMgtyO6D4JTqKbzPVFT6gWVPGfwS4MfKqFYs3RvaJBqRbm
+JzZCPd2XHRDzE+vUEqIWZQ6xvxuzlVu353HitO/9NZfABSD05tILcgG+peCXYugy
+sH4OrzVsu6Ng87XBASa6toyD8YI0bT0MKmTz5cGDqweFKvfm7pa6G/0OPfwjv13d
+86Pwtm9Ik4RbPkrrmFQv5RA8OZRV3OVV8dcvDLIMWq+gtv/8xgHeMNVbx59J+X35
+iRvrLtRcOmcZlUtDPn5qKXAPBthpbHOr8+SxsabuezMRg0jFnjvx+X97xECI79CH
+ZfKCOAPUcB+0r0svDniquDbVNTwg6M9a7Z4w0hzWHRaqQIdYbgpAB1kNE7hmdU/A
+LhhbqljEi40EkqbmrIpt8LVVHD3hJ8/B500XuW2nMlHm1ejdVlfTlwZBUIVHo+Jk
+EtYdXDhAl70LzidocTnIFgXQhseHFyP7Nxg6JePXvdwDIkArq+42DDGNJ7JZuFG2
+48lpHXZ9lGU+za8/YBzN
+=vpIo
 -----END PGP SIGNATURE-----
 
---Sig_/5mds9I==dpRLAn3wVw4zIGd--
+--Sig_/w6AATFtADn6hH_l_/ISlrhw--
