@@ -1,64 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- watchdog tree
-Date: Mon, 15 Dec 2014 16:09:09 +1100
-Message-ID: <20141215160909.24c2e73b@canb.auug.org.au>
-References: <20141215141114.575b8767@canb.auug.org.au>
-	<20141215043506.GB3949@kroah.com>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 15 Dec 2014 17:30:47 +1100
+Message-ID: <20141215173047.1b2fe0d1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zbOO6D84O3op/3wc/a/G68p"; protocol="application/pgp-signature"
+ boundary="Sig_/+qy1dGjZ5PESo=7KOq.9QNQ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33635 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33450 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750736AbaLOFJQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Dec 2014 00:09:16 -0500
-In-Reply-To: <20141215043506.GB3949@kroah.com>
+	id S1750756AbaLOGaz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Dec 2014 01:30:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>, Wolfram Sang <wsa@the-dreams.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Linus <torvalds@linux-foundation.org>
 
---Sig_/zbOO6D84O3op/3wc/a/G68p
+--Sig_/+qy1dGjZ5PESo=7KOq.9QNQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Andrew,
 
-On Sun, 14 Dec 2014 20:35:06 -0800 Greg KH <greg@kroah.com> wrote:
->
-> How is this happening, nothing has changed in my trees, did something
-> new get added to the watchdog tree?
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Yep.
+mm/oom_kill.c:257:20: error: redefinition of 'task_will_free_mem'
+ static inline bool task_will_free_mem(struct task_struct *task)
+                    ^
+In file included from /scratch/sfr/next/mm/oom_kill.c:20:0:
+include/linux/oom.h:90:20: note: previous definition of 'task_will_free_mem=
+' was here
+ static inline bool task_will_free_mem(struct task_struct *task)
+                    ^
 
-It would have been much easier on me (and maybe Linus) if those "drop
-owner assignment from platform_drivers" patches had gone via their
-respective maintainers ... just something to remember for next time.
+Caused by commit 4bf284e597a4 ("oom: don't assume that a coredumping
+thread will exit soon") from the akpm-current tree interacting with the
+version that finally went into Linus' tree (commit d003f371b270 ("oom:
+don't assume that a coredumping thread will exit soon")).
+
+I removed the definition of task_will_free_mem() from the akpm-current
+tree version.
+
+Andrew: this sort of thing could be avoided if the actual set of
+patches that you send to Linus were present in linux-next (even for a
+day). :-(
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/zbOO6D84O3op/3wc/a/G68p
+--Sig_/+qy1dGjZ5PESo=7KOq.9QNQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUjmz6AAoJEMDTa8Ir7ZwVC98P+gP25e/q3vgOMKrd0U4+ibEh
-Y4z8iEPiLdN043DGCTT9N/DYn1FNXzqgujenARur9IRyb6q5mBkf5lCXKfAYNHh7
-QCF5QcbZC3rGMHm+H4APmokoL/gsgvR7Oacn6ty0SDgdcitwHyTXQCwqTBqeosPU
-kElxu1ZaKp89WgtAmgv5kJFVhlvpID3sBhtptEOAfpcjp859F1JByJfyQTcFGadw
-SlRVF1YFVJgeFvTcFCiYZ3Zdvj/heUOys3DFLuqpKxbPbORNPdqjtDvDSaHybPc6
-VF5BLways+ycYYILTxJXtRchVtjOVGifG66nAY7h5OphnAl3r8W/2MCZqOgMI3lj
-K39xIJXlx+6KQtaNdSuDzfLbGnYvMpWyduK7nOyIqJpOOoKr7Hi4Hbtv+BbEWcuM
-QDiAWDk7KUASy6ySpmi8xHTPH5cui/g+iUTw6xS7QLSFZtutDgSOvClh3OXgW7sf
-GbB8M9I3Mu9YDt+ZoL3EDNb6HsBimiu6EEvoYdFddf1/HjE3hVsltONUj0PGx6ub
-XbaqSMZVsT+m2uOTtuTNPI+X3cwcJANPXeLQ/nPpCBMcww+j+63VkvMCbbiiMTQc
-mUxmRaAtbOzDUwGxBbs031BKVWdcmWtwYuEDRrQ38P069mB1lGPnSeD62l8HnG1R
-/jsmVLI0db9pBNHlmpvd
-=g+Jw
+iQIcBAEBCAAGBQJUjoAcAAoJEMDTa8Ir7ZwVm1AP/jnx9TaJ2r34O3AOxrdoBbJG
+2X52LwLytHJwuE5Qs4Wr/lA2SZooEvL/bmdqtUQ1p5bjA0UOxL6e7ZoApuujMbn3
+NqC+Q5srM1dp1qIXJk9W+CzC+Rur8JtaY4R3WhDLaUr8SH65IMe+X2PsWaZacC/I
+gk+ryn2rSsZsoYfTxXOT1xdKcPN2JqKVARzvzpsr7r1pPgOIB70qBVGq3ZG0SIeG
++oOh93bGzjbcjNbCHwrSUF07Rs+aC+uKtCXJDfgLU3HDKIJty3fX6XJsX0n83Ffk
+FBE12gQZmaVdLNTUxcnyeu3DuDTbVHd2dsz02ajN+bCCUXCD42X1JldnlkKyuuaC
+bE/07HGZUZdBNDO9tzJoCT5bZ1kbS4XHWjZ8xGdC7Rvr0/BzwAd7KprSe1e1DPrQ
++5p8rg2yqRdjnEWgtKyeBa2V15gipCcP644wANVbs1Ht6KXDWyENoLoA75h9/5bA
+dyxQUguXzipFCFnRCAE97MoVMhWLYwOElT+s3/vxKgM5n5/T6PY7Rkw5YvcdRqzN
+IVBhoH/87tn2nMN8Oay+TL5PjmOVU8Tav/Sr0Re/1hbmybxhabIxJ1/YuTzDAMEF
+obFP4W3B8eeaYgHDQguAebE+9wQ8W8K5PcZBkPrTWqPo0I5EKUT+eyzpbXHr2p1y
+rCF5bDMrULpRCCjYOo5j
+=Zn24
 -----END PGP SIGNATURE-----
 
---Sig_/zbOO6D84O3op/3wc/a/G68p--
+--Sig_/+qy1dGjZ5PESo=7KOq.9QNQ--
