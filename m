@@ -1,53 +1,43 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH] arm/rpc: avoid static keyword removal via define
-Date: Mon, 15 Dec 2014 09:48:07 +0100
-Message-ID: <1418633287-5019-2-git-send-email-borntraeger@de.ibm.com>
-References: <1418633287-5019-1-git-send-email-borntraeger@de.ibm.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ watchdog tree
+Date: Mon, 15 Dec 2014 09:02:27 -0800
+Message-ID: <20141215170227.GC2155@kroah.com>
+References: <20141215141114.575b8767@canb.auug.org.au>
+ <20141215043506.GB3949@kroah.com>
+ <20141215160909.24c2e73b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp12.uk.ibm.com ([195.75.94.108]:33579 "EHLO
-	e06smtp12.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750926AbaLOIsQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Dec 2014 03:48:16 -0500
-Received: from /spool/local
-	by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
-	Mon, 15 Dec 2014 08:48:14 -0000
-In-Reply-To: <1418633287-5019-1-git-send-email-borntraeger@de.ibm.com>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:43940 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750979AbaLORCb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Dec 2014 12:02:31 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id A121920ADE
+	for <linux-next@vger.kernel.org>; Mon, 15 Dec 2014 12:02:28 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20141215160909.24c2e73b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <linux@arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiubo Li <Li.Xiubo@freescale.com>, Wolfram Sang <wsa@the-dreams.de>
 
-commit 4486b86368d7 ("[ARM] riscpc: fix decompressor font file handling")
-introduced Makefile magic to avoid building a file two times. Using
--Dstatic= does break some assumptions on compiler.h that were introduced
-for READ_ONCE.
+On Mon, Dec 15, 2014 at 04:09:09PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Sun, 14 Dec 2014 20:35:06 -0800 Greg KH <greg@kroah.com> wrote:
+> >
+> > How is this happening, nothing has changed in my trees, did something
+> > new get added to the watchdog tree?
+> 
+> Yep.
+> 
+> It would have been much easier on me (and maybe Linus) if those "drop
+> owner assignment from platform_drivers" patches had gone via their
+> respective maintainers ... just something to remember for next time.
 
-Lets just use sed on the copy instead of using a define.
+Yeah, sorry, I'll do that next time, my fault.
 
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Russell King <linux@arm.linux.org.uk>
----
- arch/arm/boot/compressed/Makefile | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index 3ea230a..198f12a 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -196,10 +196,11 @@ $(obj)/piggy.$(suffix_y): $(obj)/../Image FORCE
- 
- $(obj)/piggy.$(suffix_y).o:  $(obj)/piggy.$(suffix_y) FORCE
- 
--CFLAGS_font.o := -Dstatic=
--
-+# use the font from lib/fonts/. We have to make the font global,
-+# for the decompressor so lets remove the static declaration
- $(obj)/font.c: $(FONTC)
- 	$(call cmd,shipped)
-+	sed -i s/static//g $@
- 
- $(obj)/hyp-stub.S: $(srctree)/arch/$(SRCARCH)/kernel/hyp-stub.S
- 	$(call cmd,shipped)
--- 
-1.8.5.5
+greg k-h
