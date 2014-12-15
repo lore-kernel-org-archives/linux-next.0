@@ -1,54 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: question about the commits in the vhost tree
-Date: Mon, 15 Dec 2014 09:29:55 +1100
-Message-ID: <20141215092955.024e334b@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Date: Mon, 15 Dec 2014 13:30:20 +1100
+Message-ID: <20141215133020.3de254a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ea2zNz.dvatB3O+dDoexb.x"; protocol="application/pgp-signature"
+ boundary="Sig_/+qAL1XUsYPYAiO0TSiwQzwk"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34317 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49041 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751023AbaLNWaF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Dec 2014 17:30:05 -0500
+	id S1750804AbaLOCam (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Dec 2014 21:30:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/Ea2zNz.dvatB3O+dDoexb.x
+--Sig_/+qAL1XUsYPYAiO0TSiwQzwk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi all,
 
-Just wondering if all those commits added to the vhost
-(git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git#linux-next)
-tree today are really destined for v3.19.
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/kernel/apic/io_apic.c between commit 16394fd03114 ("x86 / PM:
+Replace CONFIG_PM_RUNTIME in io_apic.c") from the pm tree and various
+commits from the tip tree.
+
+I fixed it up (the tip tree seems to have made extensive changes to
+this file and there are no longer any references to CONFIG_PM_RUNTIME,
+so I used the tip tree version) and can carry the fix as necessary (no
+action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Ea2zNz.dvatB3O+dDoexb.x
+--Sig_/+qAL1XUsYPYAiO0TSiwQzwk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUjg9nAAoJEMDTa8Ir7ZwVgf4P/i84fSEdBuA3smG6Qt+3/bWx
-P1PUHM9XMIwRBOB+WF34B9zsF/1Yo1+RZsa0pGkBsCspB9oXvxC88Zb+noSCikX8
-8sRpgoQiG9xVxBAyLh39vmruKl9Mm3WZJY1W1YLyJOsyKMLMWBCUycxA2WBAppIT
-5Kv3JEQJTgwKCItafUxsXbHH5SnPglxZCUlqEXL21Gm6elSF1F3UIBp3FDKgM+IV
-/krUl4oAm67JCWftLeQlyzD27XF2o5zG9ZW1IJquWsCalwpSRU0638F5iUWci4ZY
-VozodCy3uz+ft6q8Jft/t2LpeX3r21YVoPGC+MYW0HEuEdIY8VAKIqvflteaIf3l
-6FMZM4ByOLdbO4WB4r5VoaPtI6Yr2Ktl45bMCc9BZTTJW0vAnRsOThsXaLJK55dL
-XI3Ez8zfn11kLdLLna4IYH0KePQTxDko7Te/VM5LTY640C34x0LfeP0M45g0FU+f
-XROstjwHyXacs+4SlVnMOwUA50hHS62+ysA2o5Mj8h7cmjRGSiyCczJZBTjwR4Ci
-7w++tDO+ioYKRCnzM0+icppEAqQtzBGfI78IgX2cFrRsO1c3v4m/pKUXwkKW+Ee9
-M3RBeVmF23+v1qyIYomwOluzyq1/XpwxehcEup0dbQsl1b441bwkHoUhpiSCD8Gq
-C2KE3TrsNTAJseTmO/rU
-=6beM
+iQIcBAEBCAAGBQJUjkfDAAoJEMDTa8Ir7ZwV0aYQAI5NyQYBvdsfVOO7TnBQxWg3
+SonW6U8aHDvVq6oNRt0UQ5ewXaPxY2wht0qvkK/ZbDyqaxaRK1Gbyp0tLppjjNfj
+/EZVnr+nT0yuMbqYGfYapk3f4G2FxmMTKDA0N9JNZa/6tvyBwmWjCFwN0lS1iJzP
+w0zThL/Bahgimkwf3ghRiKuo7wdLtzL1/e5ZCG2/ovfx8QsUXrKmfiFcw8CLTY+Z
+E5CLzIhUBGygWPm/s3SjU/jAtDHfhHTVsgkAjuGDaM/OQjvWdRvZvXRv07nCYqhs
+MASxQP5uOFAtRRS+232hNsxOlF8CwhAlJCTdtX4OhiWKqw7ofeWbOLW+AuoW84oH
+TuakxDS/WGZVgSSgsbDxqUNkxUHp4+u6bx1PYZIUVhonRsMMfb9PKnh31gmnL5vX
+Y8tl81J+huK4D+DPmpGdOYfp9UKt6Jerw6vzk5SrzG42mom4uWnKDZq1UhVt7KuQ
+LEPe2igieRerffeosn+v+/tVqPFE7Xg7UI7dyaKDEFH+J2cdBNLeYtNiiSvGklAu
+1GbhPtHH6qJfM+xtuC1yCFtXG4UmmFAAlen354Qn+CB5CSIXAVKRKWbUdaNLhP2j
+Su6FiCXKtNCCyOZMjSuwr6XD9EcLuEVJF3JgbL5clhACUoEJ8xcSoXJN5ev8Li+S
+SQXxZY5sBZLdmcI1EkGT
+=n4b5
 -----END PGP SIGNATURE-----
 
---Sig_/Ea2zNz.dvatB3O+dDoexb.x--
+--Sig_/+qAL1XUsYPYAiO0TSiwQzwk--
