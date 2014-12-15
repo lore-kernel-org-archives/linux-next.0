@@ -1,73 +1,107 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 15 Dec 2014 17:30:47 +1100
-Message-ID: <20141215173047.1b2fe0d1@canb.auug.org.au>
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: linux-next: question about the commits in the vhost tree
+Date: Mon, 15 Dec 2014 08:47:15 +0200
+Message-ID: <20141215064715.GA24360@redhat.com>
+References: <20141215092955.024e334b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+qy1dGjZ5PESo=7KOq.9QNQ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33450 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:38972 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750756AbaLOGaz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Dec 2014 01:30:55 -0500
+	id S1750792AbaLOGrV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Dec 2014 01:47:21 -0500
+Content-Disposition: inline
+In-Reply-To: <20141215092955.024e334b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/+qy1dGjZ5PESo=7KOq.9QNQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 15, 2014 at 09:29:55AM +1100, Stephen Rothwell wrote:
+> Hi Michael,
+> 
+> Just wondering if all those commits added to the vhost
+> (git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git#linux-next)
+> tree today are really destined for v3.19.
 
-Hi Andrew,
+Most of them fix static analysis warnings, so I thought they they should
+go there.
+If there are issues I'd like to know early.
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+There is a new driver there that might not make it
+due to lack of testing:
 
-mm/oom_kill.c:257:20: error: redefinition of 'task_will_free_mem'
- static inline bool task_will_free_mem(struct task_struct *task)
-                    ^
-In file included from /scratch/sfr/next/mm/oom_kill.c:20:0:
-include/linux/oom.h:90:20: note: previous definition of 'task_will_free_mem=
-' was here
- static inline bool task_will_free_mem(struct task_struct *task)
-                    ^
+commit c9a04b96aa6af3a54b9b8d91782fb8f4415e2544
+Author: Michael S. Tsirkin <mst@redhat.com>
+Date:   Thu Dec 11 13:59:51 2014 +0200
 
-Caused by commit 4bf284e597a4 ("oom: don't assume that a coredumping
-thread will exit soon") from the akpm-current tree interacting with the
-version that finally went into Linus' tree (commit d003f371b270 ("oom:
-don't assume that a coredumping thread will exit soon")).
+    virtio_pci: modern driver
+    
+    It compiles! Must be perfect.
+    
+    One thing *not* implemented here is separate mappings
+    for descriptor/avail/used rings. That's nice to have,
+    will be done later after we have core support.
+    
+    Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-I removed the definition of task_will_free_mem() from the akpm-current
-tree version.
+and it's dependencies:
 
-Andrew: this sort of thing could be avoided if the actual set of
-patches that you send to Linus were present in linux-next (even for a
-day). :-(
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+commit fe13940bd8d00add4460c0a920d38d5f4385f0bb
+Author: Michael S. Tsirkin <mst@redhat.com>
+Date:   Sun Dec 14 15:15:55 2014 +0200
 
---Sig_/+qy1dGjZ5PESo=7KOq.9QNQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+    virtio_pci: macros for PCI layout offsets.
+    
+    QEMU wants it, so why not?  Trust, but verify.
+    
+    Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+commit 33028c00ddfb7bf433c9d020a7fd61f421daee76
+Author: Rusty Russell <rusty@rustcorp.com.au>
+Date:   Wed May 29 11:52:22 2013 +0930
 
-iQIcBAEBCAAGBQJUjoAcAAoJEMDTa8Ir7ZwVm1AP/jnx9TaJ2r34O3AOxrdoBbJG
-2X52LwLytHJwuE5Qs4Wr/lA2SZooEvL/bmdqtUQ1p5bjA0UOxL6e7ZoApuujMbn3
-NqC+Q5srM1dp1qIXJk9W+CzC+Rur8JtaY4R3WhDLaUr8SH65IMe+X2PsWaZacC/I
-gk+ryn2rSsZsoYfTxXOT1xdKcPN2JqKVARzvzpsr7r1pPgOIB70qBVGq3ZG0SIeG
-+oOh93bGzjbcjNbCHwrSUF07Rs+aC+uKtCXJDfgLU3HDKIJty3fX6XJsX0n83Ffk
-FBE12gQZmaVdLNTUxcnyeu3DuDTbVHd2dsz02ajN+bCCUXCD42X1JldnlkKyuuaC
-bE/07HGZUZdBNDO9tzJoCT5bZ1kbS4XHWjZ8xGdC7Rvr0/BzwAd7KprSe1e1DPrQ
-+5p8rg2yqRdjnEWgtKyeBa2V15gipCcP644wANVbs1Ht6KXDWyENoLoA75h9/5bA
-dyxQUguXzipFCFnRCAE97MoVMhWLYwOElT+s3/vxKgM5n5/T6PY7Rkw5YvcdRqzN
-IVBhoH/87tn2nMN8Oay+TL5PjmOVU8Tav/Sr0Re/1hbmybxhabIxJ1/YuTzDAMEF
-obFP4W3B8eeaYgHDQguAebE+9wQ8W8K5PcZBkPrTWqPo0I5EKUT+eyzpbXHr2p1y
-rCF5bDMrULpRCCjYOo5j
-=Zn24
------END PGP SIGNATURE-----
+    virtio-pci: define layout for virtio 1.0
+    
+    Based on patches by Michael S. Tsirkin <mst@redhat.com>, but I found it
+    hard to follow so changed to use structures which are more
+    self-documenting.
+    
+    Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+    Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
---Sig_/+qy1dGjZ5PESo=7KOq.9QNQ--
+
+
+commit 772b824772ad7f015534671136addcd00082d246
+Author: Michael S Tsirkin <mst@redhat.com>
+Date:   Wed May 29 11:52:21 2013 +0930
+
+    s390: add pci_iomap_range
+    
+    Virtio drivers should map the part of the range they need, not
+    necessarily all of it.
+    To this end, support mapping ranges within BAR on s390.
+    Since multiple ranges can now be mapped within a BAR, we keep track of
+    the number of mappings created, and only clear out the mapping for a BAR
+    when this number reaches 0.
+    
+    Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+commit 85f88e2d98c1bc6f34c3b625de2d9abfefdcde9d
+Author: Michael S Tsirkin <mst@redhat.com>
+Date:   Wed May 29 11:52:21 2013 +0930
+
+    pci: add pci_iomap_range
+    
+    Virtio drivers should map the part of the BAR they need, not necessarily
+    all of it.
+    
+    Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+    Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+
+but they are well contained so I was hoping putting them in linux-next
+will not harm anyone and help more people test it.
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
