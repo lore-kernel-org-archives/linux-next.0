@@ -1,162 +1,70 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2014-12-15-17-05 uploaded
-Date: Mon, 15 Dec 2014 17:06:52 -0800
-Message-ID: <548f85ac.CKlyI3on1DaQgGu+%akpm@linux-foundation.org>
-Reply-To: linux-kernel@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the infiniband tree with Linus' tree
+Date: Tue, 16 Dec 2014 12:41:23 +1100
+Message-ID: <20141216124123.14cdc5a4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <mm-commits-owner@vger.kernel.org>
-Sender: mm-commits-owner@vger.kernel.org
-To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4P.dAzbqnKVPzSSjZQ9onL/"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, "David S. Miller" <davem@davemloft.net>, Haggai Eran <haggaie@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2014-12-15-17-05 has been uploaded to
+--Sig_/4P.dAzbqnKVPzSSjZQ9onL/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Hi all,
 
-mmotm-readme.txt says
+Today's linux-next merge of the infiniband tree got a conflict in
+drivers/infiniband/hw/mlx5/mr.c between commit 479163f46082 ("mlx5:
+don't duplicate kvfree()") from Linus' tree and commit 89c925949c1f
+("IB/mlx5: Implement on demand paging by adding support for MMU
+notifiers") from the infiniband tree.
 
-README for mm-of-the-moment:
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-http://www.ozlabs.org/~akpm/mmotm/
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+diff --cc drivers/infiniband/hw/mlx5/mr.c
+index 5a80dd993761,a2dd7bfc129b..000000000000
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@@ -856,7 -1009,8 +1012,8 @@@ static struct mlx5_ib_mr *reg_create(st
+  		goto err_2;
+  	}
+  	mr->umem =3D umem;
++ 	mr->live =3D 1;
+ -	mlx5_vfree(in);
+ +	kvfree(in);
+ =20
+  	mlx5_ib_dbg(dev, "mkey =3D 0x%x\n", mr->mmr.key);
+ =20
 
-You will need quilt to apply these patches to the latest Linus release (3.x
-or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+--Sig_/4P.dAzbqnKVPzSSjZQ9onL/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+iQIcBAEBCAAGBQJUj43JAAoJEMDTa8Ir7ZwVTcYP/3YfhoJLHUXawJqE/GlF+Xjx
+6vntRmj3IV7EBmf2UM9vgJfTXCm87+N35m2ESr790GnYISq9ZGeqNd8xOL4W++V0
+HUloh0L7Tf2JOuzDIgS/7rwTJLwDb5QPu9ghJSejeOR17REg8wbXmKUyiwZgbn5W
+OGQEdGzJYu6ntZouUFHGESBFRubv65fE+F1fazmb3B6zJPgJ42nSMeU4amQ5D/ai
+CrS7VZEbMV0vS2aIVQ43rjg/sFgs0e9zj3saYomeMc8OjHe/VTRGpI6tvwIUprQz
+FGCKPlAboWY0iTo1CVIfMHDhvZ+GRehVqFijO8tOqpJBRM7yXkZCmLp5lkoySEWy
+H+K/0M4idzPp6FPYS7YBqj9EllipLCEj2RQ/WbUa1Xs9l7GX/Lul9M8TKDO06vAG
+bJGYUjLFf7TZhJ5CCDTnwe9ZjIdE4wAgR68PzET0hG0QAl48x5zXni1EnIMpOTld
+hFVJ07bvqjO6MhsbC4A6vVH8qt3F/qGSku7pR0RP/26ePRnGSk15PqVE4O+KkvkF
+1hy38QEJZv8og9Ujb26IpHaEuYtKVz/jQAJN2zlopFxaah9y7VccRf5rFZrP7jOR
+fgCo7wRZocv3eEINryY+FKzNOZNg2my9Jruw5+n6ScDTv4jRTlayiI0HU2Jl7r1p
+LbwzXqt9dKjk0DD22IcH
+=PPMp
+-----END PGP SIGNATURE-----
 
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/?p=linux-mmotm.git;a=summary
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/?p=linux-mmots.git;a=summary
-
-and use of this tree is similar to
-http://git.cmpxchg.org/?p=linux-mmotm.git, described above.
-
-
-This mmotm tree contains the following patches against 3.18:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-  arch-alpha-kernel-systblss-remove-debug-check.patch
-* remove-unnecessary-is_valid_nodemask.patch
-* hfsplus-fix-longname-handling.patch
-* mm-cma-split-cma-reserved-in-dmesg-log.patch
-* fs-proc-include-cma-info-in-proc-meminfo.patch
-* lib-show_mem-this-patch-adds-cma-reserved-infromation.patch
-* exit-fix-race-between-wait_consider_task-and-wait_task_zombie.patch
-* mm-page_allocc-__alloc_pages_nodemask-dont-alter-arg-gfp_mask.patch
-* mm-page_allocc-__alloc_pages_nodemask-dont-alter-arg-gfp_mask-fix.patch
-* input-route-kbd-leds-through-the-generic-leds-layer.patch
-* fs-ext4-fsyncc-generic_file_fsync-call-based-on-barrier-flag.patch
-* o2dlm-fix-null-pointer-dereference-in-o2dlm_blocking_ast_wrapper.patch
-* ocfs2-free-inode-when-i_count-becomes-zero.patch
-* ocfs2-call-ocfs2_journal_access_di-before-ocfs2_journal_dirty-in-ocfs2_write_end_nolock.patch
-* ocfs2-avoid-access-invalid-address-when-read-o2dlm-debug-messages.patch
-* ocfs2-dlm-fix-race-between-dispatched_work-and-dlm_lockres_grab_inflight_worker.patch
-* ocfs2-reflink-fix-slow-unlink-for-refcounted-file.patch
-* ocfs2-fix-journal-commit-deadlock.patch
-* ocfs2-eliminate-the-static-flag-of-some-functions.patch
-* ocfs2-add-functions-to-add-and-remove-inode-in-orphan-dir.patch
-* ocfs2-add-orphan-recovery-types-in-ocfs2_recover_orphans.patch
-* ocfs2-implement-ocfs2_direct_io_write.patch
-* ocfs2-allocate-blocks-in-ocfs2_direct_io_get_blocks.patch
-* ocfs2-do-not-fallback-to-buffer-i-o-write-if-appending.patch
-* ocfs2-do-not-fallback-to-buffer-i-o-write-if-fill-holes.patch
-* ocfs2-fix-leftover-orphan-entry-caused-by-append-o_direct-write-crash.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-  mm.patch
-* mm-replace-remap_file_pages-syscall-with-emulation.patch
-* mm-page_isolation-check-pfn-validity-before-access.patch
-* mm-page_alloc-embed-oom-killing-naturally-into-allocation-slowpath.patch
-* mm-fix-invalid-use-of-pfn_valid_within-in-test_pages_in_a_zone.patch
-* mm-introduce-do_shared_fault-and-drop-do_fault-fix-fix.patch
-* fs-mpagec-forgotten-write_sync-in-case-of-data-integrity-write.patch
-* mm-support-madvisemadv_free.patch
-* mm-support-madvisemadv_free-fix.patch
-* x86-add-pmd_-for-thp.patch
-* x86-add-pmd_-for-thp-fix.patch
-* sparc-add-pmd_-for-thp.patch
-* sparc-add-pmd_-for-thp-fix.patch
-* powerpc-add-pmd_-for-thp.patch
-* arm-add-pmd_mkclean-for-thp.patch
-* arm64-add-pmd_-for-thp.patch
-* mm-dont-split-thp-page-when-syscall-is-called.patch
-* mm-dont-split-thp-page-when-syscall-is-called-fix.patch
-* mm-dont-split-thp-page-when-syscall-is-called-fix-2.patch
-* do_shared_fault-check-that-mmap_sem-is-held.patch
-* all-arches-signal-move-restart_block-to-struct-task_struct.patch
-* drivers-misc-ti-st-st_corec-fix-null-dereference-on-protocol-type-check.patch
-* lib-vsprintf-add-%pt-format-specifier.patch
-* mm-utilc-add-kstrimdup.patch
-* lib-add-crc64-ecma-module.patch
-* init-remove-config_init_fallback.patch
-* rtc-rtc-isl12057-add-alarm-support-to-intersil-isl12057-rtc-driver.patch
-* fat-add-fat_fallocate-operation.patch
-* fat-skip-cluster-allocation-on-fallocated-region.patch
-* fat-permit-to-return-phy-block-number-by-fibmap-in-fallocated-region.patch
-* documentation-filesystems-vfattxt-update-the-limitation-for-fat-fallocate.patch
-* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-* drivers-gpio-gpio-zevioc-fix-build.patch
-* tools-testing-selftests-makefile-alphasort-the-targets-list.patch
-* w1-call-put_device-if-device_register-fails.patch
-* mm-add-strictlimit-knob-v2.patch
-  make-sure-nobodys-leaking-resources.patch
-  journal_add_journal_head-debug.patch
-  journal_add_journal_head-debug-fix.patch
-  releasing-resources-with-children.patch
-  make-frame_pointer-default=y.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  add-debugging-aid-for-memory-initialisation-problems.patch
-  workaround-for-a-pci-restoring-bug.patch
+--Sig_/4P.dAzbqnKVPzSSjZQ9onL/--
