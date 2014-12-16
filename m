@@ -1,42 +1,130 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] arm/rpc: avoid static keyword removal via define
-Date: Tue, 16 Dec 2014 11:40:56 +0000
-Message-ID: <20141216114056.GP11285@n2100.arm.linux.org.uk>
-References: <1418633287-5019-1-git-send-email-borntraeger@de.ibm.com>
- <1418633287-5019-2-git-send-email-borntraeger@de.ibm.com>
- <5490146A.3000408@de.ibm.com>
+From: Jeremiah Mahler <jmmahler@gmail.com>
+Subject: [BUG, linux-next] spawn PID 1 without CLONE_FS, wireless inop
+Date: Tue, 16 Dec 2014 03:55:37 -0800
+Message-ID: <20141216115537.GA1259@hudson.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:33601 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750996AbaLPLlC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Dec 2014 06:41:02 -0500
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5490146A.3000408@de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 16, 2014 at 12:15:54PM +0100, Christian Borntraeger wrote:
-> Am 15.12.2014 um 09:48 schrieb Christian Borntraeger:
-> > commit 4486b86368d7 ("[ARM] riscpc: fix decompressor font file handling")
-> > introduced Makefile magic to avoid building a file two times. Using
-> > -Dstatic= does break some assumptions on compiler.h that were introduced
-> > for READ_ONCE.
-> > 
-> > Lets just use sed on the copy instead of using a define.
-> > 
-> > Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > Cc: Russell King <linux@arm.linux.org.uk>
-> 
-> This fixed the linux-next build http://kisskb.ellerman.id.au/kisskb/target/1508/
-> Unless anybody complains, I will send the pull request for the access_once tree tomorrow and I have this patch applied on top.
+all,
 
-Please give me some time to look at this.
+The wireless network interface has become inoperative when running
+linux-next 20141216 on a Lenovo Carbon X1.  It is completely
+non-existent and `ip addr` doesn't show it.  A bisect has found that
+the bug was introduced by the following commit.
+
+  commit 9d328afb18f05c25686102ad890a67bb3ca38aab
+  Author: Al Viro <viro@zeniv.linux.org.uk>
+  Date:   Thu Dec 11 22:34:21 2014 -0500
+  
+      spawn PID 1 without CLONE_FS, give kernel threads zero umask
+      
+      Don't give PID 1 init_fs, give it a copy of its own when it's
+  spawned.
+      Then we can make init_fs.umode zero, and have both the PID 1 and
+      everything that gets spawned by call_usermodehelper() set
+  ->fs->umask
+      to old value (0022) early on.
+      
+      Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+Below is my network interface information.  And the iwlwifi modules are
+being used.
+
+  $ lspci
+  ...
+  03:00.0 Network controller: Intel Corporation Centrino Advanced-N 6205
+  [Taylor Peak] (rev 96)
+  ...
+
+And the patch which introduced this bug is included below.
+
+>From 9d328afb18f05c25686102ad890a67bb3ca38aab Mon Sep 17 00:00:00 2001
+From: Al Viro <viro@zeniv.linux.org.uk>
+Date: Thu, 11 Dec 2014 22:34:21 -0500
+Subject: [PATCH] spawn PID 1 without CLONE_FS, give kernel threads zero umask
+
+Don't give PID 1 init_fs, give it a copy of its own when it's spawned.
+Then we can make init_fs.umode zero, and have both the PID 1 and
+everything that gets spawned by call_usermodehelper() set ->fs->umask
+to old value (0022) early on.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/fs_struct.c | 2 +-
+ init/main.c    | 4 +++-
+ kernel/kmod.c  | 2 ++
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fs_struct.c b/fs/fs_struct.c
+index 7dca743..2242c40 100644
+--- a/fs/fs_struct.c
++++ b/fs/fs_struct.c
+@@ -162,5 +162,5 @@ struct fs_struct init_fs = {
+ 	.users		= 1,
+ 	.lock		= __SPIN_LOCK_UNLOCKED(init_fs.lock),
+ 	.seq		= SEQCNT_ZERO(init_fs.seq),
+-	.umask		= 0022,
++	.umask		= 0,
+ };
+diff --git a/init/main.c b/init/main.c
+index 40240c8..3a169a2 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -79,6 +79,7 @@
+ #include <linux/random.h>
+ #include <linux/list.h>
+ #include <linux/proc_ns.h>
++#include <linux/fs_struct.h>
+ 
+ #include <asm/io.h>
+ #include <asm/bugs.h>
+@@ -401,7 +402,7 @@ static noinline void __init_refok rest_init(void)
+ 	 * the init task will end up wanting to create kthreads, which, if
+ 	 * we schedule it before we create kthreadd, will OOPS.
+ 	 */
+-	kernel_thread(kernel_init, NULL, CLONE_FS);
++	kernel_thread(kernel_init, NULL, 0);
+ 	numa_default_policy();
+ 	pid = kernel_thread(kthreadd, NULL, CLONE_FS | CLONE_FILES);
+ 	rcu_read_lock();
+@@ -933,6 +934,7 @@ static int __ref kernel_init(void *unused)
+ {
+ 	int ret;
+ 
++	current->fs->umask = 0022;
+ 	kernel_init_freeable();
+ 	/* need to finish all async __init code before freeing the memory */
+ 	async_synchronize_full();
+diff --git a/kernel/kmod.c b/kernel/kmod.c
+index 80f7a6d..8879506 100644
+--- a/kernel/kmod.c
++++ b/kernel/kmod.c
+@@ -39,6 +39,7 @@
+ #include <linux/rwsem.h>
+ #include <linux/ptrace.h>
+ #include <linux/async.h>
++#include <linux/fs_struct.h>
+ #include <asm/uaccess.h>
+ 
+ #include <trace/events/module.h>
+@@ -227,6 +228,7 @@ static int ____call_usermodehelper(void *data)
+ 	struct cred *new;
+ 	int retval;
+ 
++	current->fs->umask = 0022;
+ 	spin_lock_irq(&current->sighand->siglock);
+ 	flush_signal_handlers(current, 1);
+ 	spin_unlock_irq(&current->sighand->siglock);
+-- 
+2.1.3
+
+Let me know if I can provided any further information that would be helpful.
 
 -- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+- Jeremiah Mahler
