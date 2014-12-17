@@ -1,73 +1,51 @@
-From: Jeremiah Mahler <jmmahler@gmail.com>
-Subject: Re: [BUG, linux-next] spawn PID 1 without CLONE_FS, wireless inop
-Date: Wed, 17 Dec 2014 06:54:46 -0800
-Message-ID: <20141217145446.GA3895@newt.localdomain>
-References: <20141216125615.GZ22149@ZenIV.linux.org.uk>
- <20141216132821.GA22149@ZenIV.linux.org.uk>
- <20141216140952.GA1224@hudson.localdomain>
- <20141216142542.GC22149@ZenIV.linux.org.uk>
- <20141216144610.GA1219@hudson.localdomain>
- <20141216150518.GD22149@ZenIV.linux.org.uk>
- <20141216152626.GA1228@hudson.localdomain>
- <20141216162716.GE22149@ZenIV.linux.org.uk>
- <20141216200351.GA1126@newt.localdomain>
- <s5h61dabeka.wl-tiwai@suse.de>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: [PATCH] arm/rpc: avoid static keyword removal via define
+Date: Wed, 17 Dec 2014 16:29:46 +0100
+Message-ID: <5491A16A.7050101@de.ibm.com>
+References: <1418633287-5019-1-git-send-email-borntraeger@de.ibm.com> <1418633287-5019-2-git-send-email-borntraeger@de.ibm.com> <5490146A.3000408@de.ibm.com> <20141216114056.GP11285@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:42338 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047AbaLQOyu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2014 09:54:50 -0500
-Content-Disposition: inline
-In-Reply-To: <s5h61dabeka.wl-tiwai@suse.de>
+Received: from e06smtp13.uk.ibm.com ([195.75.94.109]:42168 "EHLO
+	e06smtp13.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751066AbaLQQii (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2014 11:38:38 -0500
+Received: from /spool/local
+	by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
+	Wed, 17 Dec 2014 16:38:36 -0000
+In-Reply-To: <20141216114056.GP11285@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
-Takashi,
+Am 16.12.2014 um 12:40 schrieb Russell King - ARM Linux:
+> On Tue, Dec 16, 2014 at 12:15:54PM +0100, Christian Borntraeger wrote:
+>> Am 15.12.2014 um 09:48 schrieb Christian Borntraeger:
+>>> commit 4486b86368d7 ("[ARM] riscpc: fix decompressor font file handling")
+>>> introduced Makefile magic to avoid building a file two times. Using
+>>> -Dstatic= does break some assumptions on compiler.h that were introduced
+>>> for READ_ONCE.
+>>>
+>>> Lets just use sed on the copy instead of using a define.
+>>>
+>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>> Cc: Russell King <linux@arm.linux.org.uk>
+>>
+>> This fixed the linux-next build http://kisskb.ellerman.id.au/kisskb/target/1508/
+>> Unless anybody complains, I will send the pull request for the access_once tree tomorrow and I have this patch applied on top.
+> 
+> Please give me some time to look at this.
 
-On Wed, Dec 17, 2014 at 02:17:57PM +0100, Takashi Iwai wrote:
-> At Tue, 16 Dec 2014 12:03:51 -0800,
-> Jeremiah Mahler wrote:
-> > 
-> > Al Viro,
-[...]
-> > > 
-> > > OK, so the root is on sda6, it's been mounted before those attempts to
-> > > load firmware and init has been chrooted into it, while init_fs got left
-> > > behind.  And that "chrooted into" has happened without pivot_root(2) (or
-> > > it would've been caught by chroot_fs_refs() in sys_pivot_root()) and
-> > > not from the "no /init on initramfs" codepath (you do have it there).
-> > > 
-> > > OK, it's probably unsalvagable, then.  Pity, since it means that PID 1 and
-> > > kernel threads _must_ share ->fs, for the sake of usable ->fs->root, which
-> > > is asking for trouble.  And it means that we still need a sane solution for
-> > > nfsd folks...
-> > > 
-> > > Anyway, dropped that stuff from for-next (and for-linus, obviously), with
-> > > apologies all around.
-> > 
-> > On a totally different machine, an Acer C720, the sound quit working.
-> > I bisected that one and it pointed to this same commit.  However this
-> > one doesn't involve loading firmware or any of that stuff.  Attached
-> > are the good/bad dmesg logs.
-> 
-> Did you mean HD-audio stuff?  The bad case shows the error
-> 
-> [    2.122849] hda-i915: get_power symbol get fail
-> [    2.122856] snd_hda_intel 0000:00:03.0: Error request power-well from i915
-> 
-> This is the place calling request_symbol(), where i915 module should
-> have been loaded dynamically but it failed, likely because of the same
-> reason as the firmware loading failure.
-> 
+>From all builds, the only problematic case was the rpc_defconfig.
+So only CONFIG_ARCH_ACORN is affected.
 
-Ah, perhaps it does load firmware.  Then I am mistaken on that point.
+As I said, I want to send this series this merge window, so if you
+do not find the time to look into this before rc1, what about removing
+this patch from my queue and we solve this later? 
+Acorn Risc CPU is probably not the hottest platform right now, so if we 
+fix this in rc2 or rc3 this might be ok - I guess.
 
-> 
-> Takashi
-
--- 
-- Jeremiah Mahler
+Christian
