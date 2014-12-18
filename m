@@ -1,79 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: status of the logfs tree?
-Date: Thu, 18 Dec 2014 11:31:08 +1100
-Message-ID: <20141218113108.150d2edd@canb.auug.org.au>
-References: <20141009105418.32aad6ab@canb.auug.org.au>
-	<20141013113304.599de9d2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the modules tree
+Date: Thu, 18 Dec 2014 13:05:53 +1100
+Message-ID: <20141218130553.5c134d80@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ekCyowV_mpHT+pw./dvnl0V"; protocol="application/pgp-signature"
+ boundary="Sig_/6C+zPfjC/QOrZAqIAs28+ZZ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33823 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35052 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751682AbaLRAbU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Dec 2014 19:31:20 -0500
-In-Reply-To: <20141013113304.599de9d2@canb.auug.org.au>
+	id S1751252AbaLRCGB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Dec 2014 21:06:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
 
---Sig_/ekCyowV_mpHT+pw./dvnl0V
+--Sig_/6C+zPfjC/QOrZAqIAs28+ZZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Rusty,
 
-On Mon, 13 Oct 2014 11:33:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Thu, 9 Oct 2014 10:54:18 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > The top commit in the logfs tree was committed in November 2012.  Is
-> > there any intention to ask Linus to merge this tree?  Or should I just
-> > drop it completely?
-> >=20
-> > It is a pain because it takes considerable time for git to actually
-> > merge it.
-> >=20
-> > $ git log --oneline origin/master..logfs/master =20
-> > 339466142b3f Fix the call to BUG() caused by no free segment found
-> > ab2ec19f42dc logfs: fix possible memory leak in logfs_mtd_can_write_buf=
-()
-> > $ git diff --stat origin/master...logfs/master=20
-> >  fs/logfs/dev_mtd.c | 2 +-
-> >  fs/logfs/super.c   | 6 +++---
-> >  2 files changed, 4 insertions(+), 4 deletions(-)
->=20
-> Ping?
+After merging the modules tree, today's linux-next build (powerpc ppc64_def=
+config)
+failed like this:
 
-Ping?
+kernel/params.c: In function 'add_sysfs_param':
+kernel/params.c:649:9: error: 'struct module_kobject' has no member named '=
+kp'
+  if ((mk->kp->perm & (S_IWUSR | S_IWGRP | S_IWOTH)) !=3D 0)
+         ^
 
+Caused by commit 12491941a26c ("param: do not set store func without write =
+perm").
+
+I have used the modules tree from next-20141217 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/ekCyowV_mpHT+pw./dvnl0V
+--Sig_/6C+zPfjC/QOrZAqIAs28+ZZ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUkiBRAAoJEMDTa8Ir7ZwVNzEP/jOPH8rtpcKiZdOJKv7FuejJ
-2XgK39pYRNG5uh4bBR+QGipgCZM0x9bDv7TKs5gZ6nv2VwUBfllvwtuuE9/lV2Q4
-RJnFYxsKbSUtaORZ0uSMd6vQ3YehWzt/AUY91yCY6Q6/nwny3qVhQD+IYEkb/rY6
-YUHOB7vZRcM+LLR563PflEbsyf6kcHgPq4zyBarpfCrTAxRZzxQRAjmSWSXgEa++
-6qQUd4NPfKl8AVCUToIyAz8tV/L0JTk+CZypSVHhK1ZIvVsFUmFua4pzhl1C7boq
-OlvtdUPcgTzR53DLP18TukJp2jSYHtw47/pK7yR0NX3oSv6PmOWM5SUgji5IkG/S
-64chdnO9vZ4uSYTlAeJK/maVe5x+FRDCp29kUDSKpvumnxwtPTVzj3bhiIv/YX2+
-6jwl9WUw922/T8i5WWvFcOglBxIWiURXcao0bWgz9KEXeyaGYjrbfKa498OfCyZR
-odEuEiCs+ZaY6jEYQRK6jRc/hK7W/LtRogCDI3QW7fXTIThdQoQrw10d7c2E9BhS
-gVBJnBs+5+YeTFmdjnS5JviTYnv817m0ZpBT2Lm9YMdTQfskwqlYXxXqdY2caQLO
-62cbZZK0DJ5UlD1bfmh/gP28lty3r0Z5CCTmZZ/DDj1etp8l4P1ft6sC59d96KVK
-+aFkpDrxglc6LDih4xCW
-=Fr8D
+iQIcBAEBCAAGBQJUkjaGAAoJEMDTa8Ir7ZwVNCAQAIiTpkk0vVCV8FHqXSFQovO3
+Qd4eg/aOVrw3Fqf2+bhTF8WqHS198ITHUReLq2pu7PF4wH5/33ARrxWxxkI6oyRQ
+8U8EmB3KJ8DGFVZ8deA/hsYEfQo/Vd9O5ot4Of3zTg6PzrfUhSbc/XLZyM0uylK6
+Qjbryk8fpZhNRQStK387wuxdXqj+iWlqqfpOhITteGLndT3LiwplFLeqRTkdAr2Y
+iKN5lmEtQtkK6TpNhkgz4TzvsmIWLitAT7iYNowDFGJHcW9LpQxuhuNsMLFvFC7Z
+TIMy+4WyRHu1NfRjkzGrkZxt3U+2f1SZqRnFCaZQnw8s8ypUwSQL/RCV+go+Efkj
+t9dWPbj5C0aDaejxVP3CBMEndUR86tjVLC/BiO8MNe6bKj/IHxVTm2Jjpql70Q86
+zTefoNOgledUzdCZ4dGugMy7oNJW4gvWtHSnT4cl/yBDElftYmPQZw+M112mUq3A
+EnLMMgGwUskjne/VnmirX4f+Iv6okbwQycMp8n6yZpAkTAjdbRUtDIWdvAOUNxFV
+VsVa1c6yTxQf1RfDe8bkDx2A1AFvHemF4mvxBpmgK1h5dTxp1WJuJrc4EMYZHqKW
+AyIpfstcQg9W0AhMV0RrRn+muli3YDRN3ru38fZISCRhWmQ2Nh31nFeTV1RkXTrM
+yl5Q29l2OtTPTjRKPYeQ
+=aFN9
 -----END PGP SIGNATURE-----
 
---Sig_/ekCyowV_mpHT+pw./dvnl0V--
+--Sig_/6C+zPfjC/QOrZAqIAs28+ZZ--
