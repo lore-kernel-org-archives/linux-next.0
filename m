@@ -1,93 +1,72 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v6] Thermal: introduce INT3406 thermal driver
-Date: Mon, 22 Dec 2014 09:53:44 +0000
-Message-ID: <20141222095344.GE4525@x1>
-References: <54868CF6.6020505@intel.com>
- <CAOesGMirF-_H2ZzFR-VpwkEErZE2uQJSYx5EuePArQsEh=r_Kw@mail.gmail.com>
- <20141211010226.GA26253@aaronlu.sh.intel.com>
- <CAOesGMj_uObbxLdpobEhP=nRPsFUJNCtq01RH7ZSECd5=1Ti6Q@mail.gmail.com>
- <1418265472.12435.68.camel@rzhang1-toshiba>
- <548934D0.8000502@intel.com>
- <1418286781.12435.73.camel@rzhang1-toshiba>
- <54895821.3050902@intel.com>
- <1419217761.19619.2.camel@rzhang1-toshiba>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Mon, 22 Dec 2014 17:04:12 +0000
+Message-ID: <20141222170411.GL11502@n2100.arm.linux.org.uk>
+References: <5481D913.9040109@ti.com>
+ <5481D9BF.2090007@ti.com>
+ <20141209165746.GA29935@kahuna>
+ <54881589.20105@samsung.com>
+ <20141211092945.GE11502@n2100.arm.linux.org.uk>
+ <54897528.4030804@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:46202 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754400AbaLVRE2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2014 12:04:28 -0500
 Content-Disposition: inline
-In-Reply-To: <1419217761.19619.2.camel@rzhang1-toshiba>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Aaron Lu <aaron.lu@intel.com>, Olof Johansson <olof@lixom.net>, Daniel Vetter <daniel.vetter@ffwll.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux-pm mailing list <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, jg1.han@samsung.com
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <54897528.4030804@samsung.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Mon, 22 Dec 2014, Zhang Rui wrote:
+On Thu, Dec 11, 2014 at 11:42:48AM +0100, Marek Szyprowski wrote:
+> On 2014-12-11 10:29, Russell King - ARM Linux wrote:
+> >On Wed, Dec 10, 2014 at 10:42:33AM +0100, Marek Szyprowski wrote:
+> >>I assume that now it won't be possible to get l2c patches back to -next,
+> >>so I will resend them (again...) with the omap related fix.
+> >What, you mean you don't know the fundamental rules of kernel development?
+> >
+> >No one should ever dump any new code into linux-next during a merge
+> >window which is not a fix for a regression or a bug fix, period.
+> >
+> >Linus has in the past taken a snapshot of linux-next at the beginning
+> >of a merge window, and then threatened to refuse to merge anything that
+> >wasn't in his local snapshot, or which doesn't qualify as the above.
+> >
+> >So no, it won't be possible, because I play by the community rules when
+> >it comes to what gets merged and at what time in the cycle.
+> 
+> I know the rules. It was just my whining, that it is yet another release
+> cycle
+> that got missed. It is really disappointing, that those patches have been
+> floating for months and noone found issues related to different order of
+> initialization. It took way to long to get them scheduled for testing in
+> -next.
 
-> On Thu, 2014-12-11 at 16:38 +0800, Aaron Lu wrote:
-> > INT3406 ACPI device object resembles an ACPI video output device, b=
-ut its
-> > _BCM is said to be deprecated and should not be used. So we will ma=
-ke
-> > use of the raw interface to do the actual cooling. Due to this, the
-> > backlight core has some modifications. Also, to re-use some of the =
-ACPI
-> > video module's code, one function has been exported.
-> >=20
-> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
->=20
-> Jingoo and Lee,
->=20
-> are you okay with the changes in drivers/video/backlight/backlight.c =
-and
-> include/linux/backlight.h?
+Right, so - we're now at -rc1, and we should see about queuing this up
+sooner rather than later - in its fixed form.  From what I can see,
+there's been little progress on the OMAP problem.
 
-NB: Jingoo still needs to review the crux of the patch.
+Nishanth - can we push OMAP over to using the generic DT L2C
+initialisation (the one from init_IRQ in arch/arm/kernel/irq.c) and
+kill the SoC specific stuff in arch/arm/mach-omap2/omap4-common.c ?
 
-> > ---
-> > v6: Fix an issue that wrongly set error path return value as report=
-ed
-> > by Olof Johansson.
-> >=20
-> >  drivers/acpi/video.c                              |  77 ++++----
-> >  drivers/thermal/Kconfig                           |  26 +--
-> >  drivers/thermal/int340x_thermal/Kconfig           |  41 ++++
-> >  drivers/thermal/int340x_thermal/Makefile          |   1 +
-> >  drivers/thermal/int340x_thermal/int3406_thermal.c | 229 ++++++++++=
-++++++++++++
-> >  drivers/video/backlight/backlight.c               |  44 +++--
-> >  include/acpi/video.h                              |  20 ++
-> >  include/linux/backlight.h                         |   2 +
-> >  8 files changed, 366 insertions(+), 74 deletions(-)
-> >  create mode 100644 drivers/thermal/int340x_thermal/Kconfig
-> >  create mode 100644 drivers/thermal/int340x_thermal/int3406_thermal=
-=2Ec
+>From what I can see, in the DT case, the only thing which is used
+there is the ioremap() to provide omap4_get_l2cache_base() with
+something to return.  Everything else - the initialisation of the
+l2c_write_sec pointer, and the aux mask and values - can be specified
+via the machine_desc struct.
 
-I gather by the message at the top that you're looking for an Ack so
-this can be routed through another subsystem.  Not going to happen.
+That only leaves the non-DT stuff to worry about this, and from what I
+understand, that's going to be removed soon.  If we're going to keep
+the non-DT stuff, we should implement a new machine_desc hook for it
+instead of hijacking one of the existing callbacks.
 
-So you're on v6 already and a) no one has mentioned that introducing a
-new driver AND making core framework changes (in a different subsystem
-to boot) in one patch is bad and b) this is the first time you've
-Cc'ed the maintainers of the aforementioned subsystem?
-
-Moving forward you should split this patch into component parts and
-resend -- only this time ensure you Cc all maintainers in the first
-instance, rather than as as afterthought.
-
-> > -config INT340X_THERMAL
-> > -	tristate "ACPI INT340X thermal drivers"
-> > -	depends on X86 && ACPI
-> > -	select THERMAL_GOV_USER_SPACE
-> > -	select ACPI_THERMAL_REL
-> > -	select ACPI_FAN
-
-This patch also relies on backlight as well, no?
-
-[...]
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
