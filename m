@@ -1,38 +1,50 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: livepatching tree for linux-next
-Date: Tue, 23 Dec 2014 01:46:07 -0800
-Message-ID: <20141223094607.GA16445@infradead.org>
-References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Tue, 23 Dec 2014 12:00:00 +0100
+Message-ID: <54994B30.8040606@samsung.com>
+References: <5481D913.9040109@ti.com> <5481D9BF.2090007@ti.com>
+ <20141209165746.GA29935@kahuna> <54881589.20105@samsung.com>
+ <20141211092945.GE11502@n2100.arm.linux.org.uk> <54897528.4030804@samsung.com>
+ <20141222170411.GL11502@n2100.arm.linux.org.uk>
+ <CAGo_u6pKUj9x8sCFY0wJCVDkBjT77xetu+XZ+DqWTjEWnvZePA@mail.gmail.com>
+ <20141222172838.GM11502@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:60641 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751276AbaLWJqJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Dec 2014 04:46:09 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59951 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755341AbaLWLAE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Dec 2014 06:00:04 -0500
+In-reply-to: <20141222172838.GM11502@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Nishanth Menon <nm@ti.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "tony@atomide.com" <tony@atomide.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Dec 22, 2014 at 08:52:02PM +0100, Jiri Kosina wrote:
-> Hi Stephen,
-> 
-> a substantial amount of work has been invested into abstracing "Live 
-> Patching" core functionality out of the already existing implementations, 
-> so that further improvements can be built on top of it in incremental 
-> steps.
-> 
-> The core functionality (which is self-contained) now works and has been 
-> Reviewed/Acked by both interested parties (i.e. people working on kPatch 
-> and kGraft) and agreed to be a common ground on which further development 
-> will happen.
-> 
-> We plan to send a pull request for 3.20, therefore I'd like to ask you to 
-> include 'for-next' branch of
+Hello,
 
-This is still missing the actual patch generators, which should be
-merged together with the code, otherwise we'll get a mess with forever
-out of tree tools like systemtap again.
+On 2014-12-22 18:28, Russell King - ARM Linux wrote:
+> On Mon, Dec 22, 2014 at 11:12:42AM -0600, Nishanth Menon wrote:
+>> On Mon, Dec 22, 2014 at 11:04 AM, Russell King - ARM Linux
+>> <linux@arm.linux.org.uk> wrote:
+>>> That only leaves the non-DT stuff to worry about this, and from what I
+>>> understand, that's going to be removed soon.  If we're going to keep
+>>> the non-DT stuff, we should implement a new machine_desc hook for it
+>>> instead of hijacking one of the existing callbacks.
+>> none of the PL310 support requires non-DT. PL310 is needed for OMAP4
+>> and AM437x both of which are DT only.
+> Right, so the simple answer for the time being is to kill most of
+> omap_l2_cache_init(), leaving just the ioremap() behind.  Everything
+> else can go into the machine_desc structures, and OMAP4 and AM437x
+> can both benefit from initialising the L2 cache at exactly the same
+> point as most other platforms.
+
+I hope I did it right: https://lkml.org/lkml/2014/12/23/158
+Please test, because I have no access to Omap hardware.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
