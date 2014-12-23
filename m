@@ -1,77 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: missing merge fix patch for the merge of the
- xen-tip tree with the arm-soc tree
-Date: Tue, 23 Dec 2014 17:32:34 +1100
-Message-ID: <20141223173234.7c4c45f5@canb.auug.org.au>
-References: <20141208184908.27bfd605@canb.auug.org.au>
-	<20141208103328.GE27367@arm.com>
-	<20141223132605.02d81e01@canb.auug.org.au>
-	<CA+55aFwQKe0PvSuYqOeQMM8kouB3mkyQQ=gFMX=bkPx3GxanvA@mail.gmail.com>
+Subject: Re: linux-next: missing merge fix for the access_once tree
+Date: Tue, 23 Dec 2014 17:34:18 +1100
+Message-ID: <20141223173418.59e8556f@canb.auug.org.au>
+References: <20141223131749.78087632@canb.auug.org.au>
+	<CA+55aFxjeunxnfc8L1r=GWCBUf5uU=bcnDeu6VygMbsCxVgB0Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/74vVFQ3VyjweQBk_D1gmmF/"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56071 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751056AbaLWGcm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Dec 2014 01:32:42 -0500
-In-Reply-To: <CA+55aFwQKe0PvSuYqOeQMM8kouB3mkyQQ=gFMX=bkPx3GxanvA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Sig_/unRcsFdp62Je3/bBtCjcL9c"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+55aFxjeunxnfc8L1r=GWCBUf5uU=bcnDeu6VygMbsCxVgB0Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will.deacon@arm.com>, Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Vrabel <david.vrabel@citrix.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Russell King <linux@arm.linux.org.uk>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/74vVFQ3VyjweQBk_D1gmmF/
+--Sig_/unRcsFdp62Je3/bBtCjcL9c
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
-On Mon, 22 Dec 2014 20:09:50 -0800 Linus Torvalds <torvalds@linux-foundatio=
+On Mon, 22 Dec 2014 20:12:22 -0800 Linus Torvalds <torvalds@linux-foundatio=
 n.org> wrote:
 >
-> On Mon, Dec 22, 2014 at 6:26 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+> On Mon, Dec 22, 2014 at 6:17 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
-> > Hi Linus,
 > >
-> > I have been carrying this merge fix patch for some time that is now
-> > needed in your tree:
+> > I have been carrying this merge fix patch for some time.  It should
+> > have gone into the merge of the access_once tree.
 >=20
-> No, it's not. Look more closely.
+> No, you had a different tree that got merged into linux-next, that
+> made it an error to do ACCESS_ONCE() on a structure.
 >=20
-> My merge put the
+> The thing I merged didn't actually have that final commit, exactly so
+> that things wouldn't break from missing conversions.
 >=20
->         dev->archdata.dma_coherent =3D coherent;
->=20
-> line at the top of the function, like the way it was in the original comm=
-it.
+> So that patch isn't wrong, but it also isn't exactly a required fix
+> until the next merge window..
 
-Oops, sorry about that.
+True, so "should" was a bit strong.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/74vVFQ3VyjweQBk_D1gmmF/
+--Sig_/unRcsFdp62Je3/bBtCjcL9c
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUmQyHAAoJEMDTa8Ir7ZwVJK4QAI6Sto8zHENd4L6S86wn7F9B
-Jj3CSvO2A503KTA/Muneq4//PRplt0RZZUP/nDaPSc8ZKjCd+SNxp2vBPZRSUoWh
-OtevOroAGAlDvWz2AgF49TVw1ud73AiVgInFSFGmdhPzk47akTe+V4S8q2Yflo+I
-b1CC/PvVC1sW36dA3kKZ11EldNzF5AXAu7gHdFNSKB3FAIkar4jaq8tj9x6OBcDZ
-9Eo+fWduvEBI4QKBsb9dB1O5Wweon+/29rsEj3J989loYS4aD3Y5hpr+/EVtEPs7
-P6mvYmoI4KEhtHWzlFLF7t5/AeCzA/pKmTBiOrlAR5Mnru485jCJb1v+jN8LmwmK
-afwcBcEunVQihmETSMX5lBlq4IefrsYYVEoTO0wz04zP3Hd4kyGZVsoiGl48O6Rc
-Bnnw7Ke4xyy+4h6PYhTUS0EDloxBlVUfCvm5e87/yJ14sjLnt4CUUXm9gcpwFLp6
-o+nS/nfgScKiKXnVk5etNQ9z4Wd96XUJdlAvhX3FcV1/ZaAMzk1HiE0P9XUl76mo
-/eB01BmTjH+6hgl3ZnTOH33+s5cZVA0JixX3lvjyeaBvTNHjPhaUwMybkPFeWXzH
-HTWyO58H6RKTCVNFsD+vuDHOlgGgU3z28Nlxgmh7/wO15/tOX2f4HbPn6jX1dIN2
-7gm/dC6cGmJkf09fzWPo
-=phOW
+iQIcBAEBCAAGBQJUmQzxAAoJEMDTa8Ir7ZwVS8YP/if0ktfD6Jl89VYQTofkBaj4
+8z84+Jp6bKYhzaSmPfkpnlpSkh8wkt/1D/vdQgYYNj3moobeztpwiqP92fZmGaXQ
+CzJq5Iwp2tpXL5nGcQPxbJv9+hJ7tknCcFeaGlt6OCshYt1Nu4H/PIMf+9DhEOiS
+EPBfKJNkuNPwLlxA2icfNwmV7Ec4Ksi+aAxvpmoR++yogQs4R9WEGV0RxHI7UkpL
+++rLHiPe3cS0O/6BM844m43d/E+jBEIKTYDjZY1Fm5ZL5mqOjcfydJC7M3Xzng87
+g5WC+IEt2fzEHPkMqRYYgls29AJE2M1gXX+RUDlyVC9NomiDZdz1YXZLdT3EgJ2h
+MkWh/p/ShQkUP0IaK+xYhkvuk76zoQmhi6t8U9eTYfSyLpCeHT2GgpokmCF2Q4J8
+fQkoAhgYGCY9mNL40WHeNXWKReehmrgjEE8p/FPhL2VbrZYCK2bN7lm/nQ/y8twL
+1rEFkIH9e2C4tS3Mg+jo4lHv47KBJMZmfnv3SmfMWGgKW2AeaQghYAT2za8F663a
+AG6Eb6E+nUROA3jBuRa55Ypi5dVOJVR+uhS9i0E772QWcHdobaEyKIetRY4n1AFs
+MXOcBoi2z9d3nXH7DzUeU8gpdd9IKostQVp/GCbfBE9Tlcc8Gs8Da4PVD9mPQO9e
+619ZKTOw7gZIfocUaEwe
+=B4n4
 -----END PGP SIGNATURE-----
 
---Sig_/74vVFQ3VyjweQBk_D1gmmF/--
+--Sig_/unRcsFdp62Je3/bBtCjcL9c--
