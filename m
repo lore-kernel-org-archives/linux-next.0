@@ -1,63 +1,101 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Tue, 23 Dec 2014 10:05:24 -0600
-Message-ID: <549992C4.7000603@ti.com>
-References: <5481D913.9040109@ti.com> <5481D9BF.2090007@ti.com> <20141209165746.GA29935@kahuna> <54881589.20105@samsung.com> <20141211092945.GE11502@n2100.arm.linux.org.uk> <54897528.4030804@samsung.com> <20141222170411.GL11502@n2100.arm.linux.org.uk> <CAGo_u6pKUj9x8sCFY0wJCVDkBjT77xetu+XZ+DqWTjEWnvZePA@mail.gmail.com> <20141222172838.GM11502@n2100.arm.linux.org.uk> <54994B30.8040606@samsung.com> <20141223111045.GN11502@n2100.arm.linux.org.uk>
+From: Chen Gang <gang.chen.5i5j@gmail.com>
+Subject: [PATCH next] drivers/net/wireless/ath/wil6210/debugfs.c: Use 'uint64_t'
+ instead of 'cycles_t' to avoid warnings
+Date: Wed, 24 Dec 2014 22:40:39 +0800
+Message-ID: <549AD067.80608@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20141223111045.GN11502@n2100.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "tony@atomide.com" <tony@atomide.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: qca_vkondrat@qca.qualcomm.com, kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org, wil6210@qca.qualcomm.com, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 12/23/2014 05:10 AM, Russell King - ARM Linux wrote:
-> On Tue, Dec 23, 2014 at 12:00:00PM +0100, Marek Szyprowski wrote:
->> I hope I did it right: https://lkml.org/lkml/2014/12/23/158
->> Please test, because I have no access to Omap hardware.
-> 
-> Patch 1/8 looks like I'd expect it to.  Nishanth, please test with your
-> failing scenario, thanks.
-> 
-3.19-rc1
- 1:                      am437x-sk: BOOT: PASS:
-http://slexy.org/raw/s2ARFeCcDp
- 2:                    am43xx-epos: BOOT: PASS:
-http://slexy.org/raw/s2Kzli0GYS
- 3:                   am43xx-gpevm: BOOT: PASS:
-http://slexy.org/raw/s2DMkJGmdF
- 4:                  pandaboard-es: BOOT: PASS:
-http://slexy.org/raw/s204jfptrr
- 5:             pandaboard-vanilla: BOOT: PASS:
-http://slexy.org/raw/s2cbd82pMI
- 6:                        sdp4430: BOOT: PASS:
-http://slexy.org/raw/s21bzlzUNr
-TOTAL = 6 boards, Booted Boards = 6, No Boot boards = 0
+do_div() checks the type strictly. 'cycles_t' may be 32-bit under quite
+a few architectures (parisc, arm, avr32 ...). So use 'uint64_t' instead
+of, the related warning (with allmodconfig under parisc):
 
+    CC [M]  drivers/net/wireless/ath/wil6210/debugfs.o
+  In file included from arch/parisc/include/generated/asm/div64.h:1:0,
+                   from include/linux/kernel.h:124,
+                   from include/linux/list.h:8,
+                   from include/linux/module.h:9,
+                   from drivers/net/wireless/ath/wil6210/debugfs.c:17:
+  drivers/net/wireless/ath/wil6210/debugfs.c: In function
+=E2=80=98wil_vring_debugfs_show=E2=80=99:
+  include/asm-generic/div64.h:43:28: warning: comparison of distinct
+pointer types lacks a cast
+    (void)(((typeof((n)) *)0) =3D=3D ((uint64_t *)0)); \
+                              ^
+  drivers/net/wireless/ath/wil6210/debugfs.c:107:4: note: in expansion
+of macro =E2=80=98do_div=E2=80=99
+      do_div(idle, total);
+      ^
+  In file included from include/uapi/linux/stddef.h:1:0,
+                   from include/linux/stddef.h:4,
+                   from ./include/uapi/linux/posix_types.h:4,
+                   from include/uapi/linux/types.h:13,
+                   from include/linux/types.h:5,
+                   from include/linux/list.h:4,
+                   from include/linux/module.h:9,
+                   from drivers/net/wireless/ath/wil6210/debugfs.c:17:
+  include/asm-generic/div64.h:44:18: warning: right shift count >=3D wi=
+dth
+of type [-Wshift-count-overflow]
+    if (likely(((n) >> 32) =3D=3D 0)) {   \
+                    ^
+  include/linux/compiler.h:159:40: note: in definition of macro =E2=80=98=
+likely=E2=80=99
+   # define likely(x) __builtin_expect(!!(x), 1)
+                                          ^
+  drivers/net/wireless/ath/wil6210/debugfs.c:107:4: note: in expansion
+of macro =E2=80=98do_div=E2=80=99
+      do_div(idle, total);
+      ^
+  In file included from arch/parisc/include/generated/asm/div64.h:1:0,
+                   from include/linux/kernel.h:124,
+                   from include/linux/list.h:8,
+                   from include/linux/module.h:9,
+                   from drivers/net/wireless/ath/wil6210/debugfs.c:17:
+  include/asm-generic/div64.h:48:22: warning: passing argument 1 of
+=E2=80=98__div64_32=E2=80=99 from incompatible pointer type [-Wincompat=
+ible-pointer-types]
+     __rem =3D __div64_32(&(n), __base); \
+                        ^
+  drivers/net/wireless/ath/wil6210/debugfs.c:107:4: note: in expansion
+of macro =E2=80=98do_div=E2=80=99
+      do_div(idle, total);
+      ^
+  include/asm-generic/div64.h:35:17: note: expected =E2=80=98uint64_t *=
+ {aka
+long long unsigned int *}=E2=80=99 but argument is of type =E2=80=98cyc=
+les_t * {aka long
+unsigned int *}=E2=80=99
+   extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
+                   ^
 
-against the patch series: (all am437x platforms fail)
+Signed-off-by: Chen Gang <gang.chen.5i5j@gmail.com>
+---
+ drivers/net/wireless/ath/wil6210/debugfs.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-testing
- 1:                      am437x-sk: BOOT: FAIL:
-http://slexy.org/raw/s2yhDXyF7o
- 2:                    am43xx-epos: BOOT: FAIL:
-http://slexy.org/raw/s2m9cSdt55
- 3:                   am43xx-gpevm: BOOT: FAIL:
-http://slexy.org/raw/s2MqFFBuIl
- 4:                  pandaboard-es: BOOT: PASS:
-http://slexy.org/raw/s2XwggyB0a
- 5:             pandaboard-vanilla: BOOT: PASS:
-http://slexy.org/raw/s25WDvtbob
- 6:                        sdp4430: BOOT: PASS:
-http://slexy.org/raw/s2gjynR1Co
-TOTAL = 6 boards, Booted Boards = 3, No Boot boards = 3
+diff --git a/drivers/net/wireless/ath/wil6210/debugfs.c
+b/drivers/net/wireless/ath/wil6210/debugfs.c
+index 4e6e145..cd991fa 100644
+--- a/drivers/net/wireless/ath/wil6210/debugfs.c
++++ b/drivers/net/wireless/ath/wil6210/debugfs.c
+@@ -101,8 +101,8 @@ static int wil_vring_debugfs_show(struct seq_file
+*s, void *data)
+ 			char name[10];
+ 			/* performance monitoring */
+ 			cycles_t now =3D get_cycles();
+-			cycles_t idle =3D txdata->idle * 100;
+-			cycles_t total =3D now - txdata->begin;
++			uint64_t idle =3D txdata->idle * 100;
++			uint64_t total =3D now - txdata->begin;
 
-I am trying to understand what is different in AM437x except that it
-is a single A9 instead of OMAP4 style dual A9s.
-
--- 
-Regards,
-Nishanth Menon
+ 			do_div(idle, total);
+ 			txdata->begin =3D now;
+--=20
+1.7.9.5
