@@ -1,57 +1,120 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: error while fetching the watchdog tree
-Date: Fri, 26 Dec 2014 12:45:51 +1100
-Message-ID: <20141226124551.318187c0@canb.auug.org.au>
+Subject: Re: livepatching tree for linux-next
+Date: Fri, 26 Dec 2014 15:56:13 +1100
+Message-ID: <20141226155613.36dd95b9@canb.auug.org.au>
+References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz>
+	<20141223094607.GA16445@infradead.org>
+	<20141223151056.GA4789@treble.redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xoh+i+OCUMUSy+sbWOVK.Ip"; protocol="application/pgp-signature"
+ boundary="Sig_/sSi3tLVOg.pLycl_hainmFk"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50578 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39087 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750725AbaLZBp6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Dec 2014 20:45:58 -0500
+	id S1750920AbaLZE4V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Dec 2014 23:56:21 -0500
+In-Reply-To: <20141223151056.GA4789@treble.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
 
---Sig_/xoh+i+OCUMUSy+sbWOVK.Ip
+--Sig_/sSi3tLVOg.pLycl_hainmFk
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wim,
+Hi Jiri,
 
-Trying the fetch the watchdog tree
-(git://www.linux-watchdog.org/linux-watchdog-next.git#master) today
-produces this error:
+On Tue, 23 Dec 2014 09:10:56 -0600 Josh Poimboeuf <jpoimboe@redhat.com> wro=
+te:
+>
+> On Tue, Dec 23, 2014 at 01:46:07AM -0800, Christoph Hellwig wrote:
+> > On Mon, Dec 22, 2014 at 08:52:02PM +0100, Jiri Kosina wrote:
+> > >=20
+> > > a substantial amount of work has been invested into abstracing "Live=
+=20
+> > > Patching" core functionality out of the already existing implementati=
+ons,=20
+> > > so that further improvements can be built on top of it in incremental=
+=20
+> > > steps.
+> > >=20
+> > > The core functionality (which is self-contained) now works and has be=
+en=20
+> > > Reviewed/Acked by both interested parties (i.e. people working on kPa=
+tch=20
+> > > and kGraft) and agreed to be a common ground on which further develop=
+ment=20
+> > > will happen.
+> > >=20
+> > > We plan to send a pull request for 3.20, therefore I'd like to ask yo=
+u to=20
+> > > include 'for-next' branch of
+> >=20
+> > This is still missing the actual patch generators, which should be
+> > merged together with the code, otherwise we'll get a mess with forever
+> > out of tree tools like systemtap again.
+>=20
+> Well, a patch generator isn't required.  You can build a patch module
+> from source with kbuild, just like you would for any other kernel
+> module.  This is what kGraft already does today.  For example:
+>=20
+>    https://git.kernel.org/cgit/linux/kernel/git/jikos/livepatching.git/co=
+mmit/?h=3Dfor-next&id=3D13d1cf7e702596e0cd8ec62afa6bd49c431f2d0c
+>=20
+> We do want to add a generator, but there are two of them out there that
+> need to be converged.  It doesn't make sense to do that work until we
+> have first converged the rest of the stack (namely, consistency models).
+> That's our next step.
+>=20
+> The current code is by no means a final product, but it's still quite
+> useful already.
 
-fatal: unable to connect to www.linux-watchdog.org:
-www.linux-watchdog.org[0: 83.149.101.17]: errno=3DConnection refused
+OK, I have added this from today but if it becomes an issue, I will
+drop it again.  Lets see how it goes.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Sig_/xoh+i+OCUMUSy+sbWOVK.Ip
+--Sig_/sSi3tLVOg.pLycl_hainmFk
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUnL3UAAoJEMDTa8Ir7ZwVGu8P/RRqzbKd/abgGbtfWrprpgDY
-mwxVcV7qqPjbrhNzJfS5JY2wyvFrxauPn1ss2muI5nwfTGapIsWdoygAiOHRQTlC
-8M7rnCxY7ipms9H3TISV4ZspKmI6Ts/oiQcyHuTgst2VgQKOfoMXMACVgU7U5Y56
-rWidchnXN3ychaVcMyEqTWKtqjmMQ7YKbgMAsh1qftzi9l8bwkYQ4YbSM6IA9QHG
-4TvcI88nCmeUUhfE6WHfF/sprf+a1YFb1ZtDU4Lu1yrZsC7FzraDVxckth20xO1q
-U4ra2U0+NOXyuwbYGV8WNivF4jETLgu2GLGHjFslBa0KZnpuSHkhT6SnBG+gx+yu
-THxoFEHPQ1Inkhd0/6yiQQfRBZqn5RVHbUJlzptT0Bzw+3uxN8gpfcwAW7xkXQWV
-EAIsqbWIxMXBaCywTmfC8101wSGC0V3akqiXvnPSavcTaY9KvOtenQ8wZ9rM2N9w
-bOog7Lnk7S+nivAyG7vHkENW5q0o95tyCByTpvsZbSGhPGbeGhS9EEAYadtByn8R
-bqhNVMb+X0YFOINy9k1jRUEwkIoMi6khFTPzTgsDYXwVPb4VLuFNRfHvQyfxB06j
-pCRRYaDifvsm2j8wT4TVdhPsX+lD+SuQv5j5qaGi04sGkXlcjkLDfhwxbmOH6sls
-lOb1wNaiY7/fgEAHaIxe
-=Ik3i
+iQIcBAEBCAAGBQJUnOpyAAoJEMDTa8Ir7ZwVIhoP/ijzP8x+UQ3pmr6MANGMPZtk
+3ETTXmXuJzngDfA1+umlxiykOJbx7Sf8FGiJYCCiD+bZ+DB8aRmi9qsMECpOi1x8
+8RKe3UgXZ5ARk4bX5Sdb0dgljpbkXbSLUxYt6xWIx3EgHaTzZBnPv2xvx+0Jo7lr
+JoS1ATiyiv0Js25YN+H+qGCWPZzfwBfYL60qhtWC15lmAuAruy023BtMNmiszWHr
+0s6eytCsDfr1cHxcu/d1JmKHqYHv/dIf5ML177nr2E/YUfO8Z2j3xo2x47RO1hYE
+wgSy2aYIbgXxtDSBOqWzGTGTd7AMmBaamTQ2QtKlbu6FDS8jDIVJ24k4OBVZKKoa
+oWXhf0qyy+LGuwSbZWaLP3vlX3I73sl/uZL/ZLPkr7t9oGX4Hf+ROuZpIcpG5uGe
+UZ5OCgY1bygUIL3xQTPOkjL0lZ/xDNMA2uNmoDMbRZq2/Z0OLT+GxwrJlCGBSr2v
+3Yuy2cjoPUZorFxFY50TnbyH92wS/4WJdx2NHXaUPOLpLRHtOSXY82FfB45RzvJH
+N+/dFuUD5X3Wvi3HglMUQ1qTMztyqN0tFb0/Ly9E7f5tubaHfZHEH572ZDXvC1Ys
+vyXTIc1ldZ01y+4Os6vBaJ6whZbSpZ3V8voKwVudqsd6E5pP9gcWKDXy9eXU9vHr
+zAdDoAMUfCO2ymv7V7vq
+=LN77
 -----END PGP SIGNATURE-----
 
---Sig_/xoh+i+OCUMUSy+sbWOVK.Ip--
+--Sig_/sSi3tLVOg.pLycl_hainmFk--
