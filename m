@@ -1,120 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: livepatching tree for linux-next
-Date: Fri, 26 Dec 2014 15:56:13 +1100
-Message-ID: <20141226155613.36dd95b9@canb.auug.org.au>
-References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz>
-	<20141223094607.GA16445@infradead.org>
-	<20141223151056.GA4789@treble.redhat.com>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Fri, 26 Dec 2014 18:51:20 +1100
+Message-ID: <20141226185120.402d392f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sSi3tLVOg.pLycl_hainmFk"; protocol="application/pgp-signature"
+ boundary="Sig_/sUw8VThrEPS9m1il9ey3pIO"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39087 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59544 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750920AbaLZE4V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Dec 2014 23:56:21 -0500
-In-Reply-To: <20141223151056.GA4789@treble.redhat.com>
+	id S1751193AbaLZHva (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Dec 2014 02:51:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>
 
---Sig_/sSi3tLVOg.pLycl_hainmFk
+--Sig_/sUw8VThrEPS9m1il9ey3pIO
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Paul,
 
-On Tue, 23 Dec 2014 09:10:56 -0600 Josh Poimboeuf <jpoimboe@redhat.com> wro=
-te:
->
-> On Tue, Dec 23, 2014 at 01:46:07AM -0800, Christoph Hellwig wrote:
-> > On Mon, Dec 22, 2014 at 08:52:02PM +0100, Jiri Kosina wrote:
-> > >=20
-> > > a substantial amount of work has been invested into abstracing "Live=
-=20
-> > > Patching" core functionality out of the already existing implementati=
-ons,=20
-> > > so that further improvements can be built on top of it in incremental=
-=20
-> > > steps.
-> > >=20
-> > > The core functionality (which is self-contained) now works and has be=
-en=20
-> > > Reviewed/Acked by both interested parties (i.e. people working on kPa=
-tch=20
-> > > and kGraft) and agreed to be a common ground on which further develop=
-ment=20
-> > > will happen.
-> > >=20
-> > > We plan to send a pull request for 3.20, therefore I'd like to ask yo=
-u to=20
-> > > include 'for-next' branch of
-> >=20
-> > This is still missing the actual patch generators, which should be
-> > merged together with the code, otherwise we'll get a mess with forever
-> > out of tree tools like systemtap again.
->=20
-> Well, a patch generator isn't required.  You can build a patch module
-> from source with kbuild, just like you would for any other kernel
-> module.  This is what kGraft already does today.  For example:
->=20
->    https://git.kernel.org/cgit/linux/kernel/git/jikos/livepatching.git/co=
-mmit/?h=3Dfor-next&id=3D13d1cf7e702596e0cd8ec62afa6bd49c431f2d0c
->=20
-> We do want to add a generator, but there are two of them out there that
-> need to be converged.  It doesn't make sense to do that work until we
-> have first converged the rest of the stack (namely, consistency models).
-> That's our next step.
->=20
-> The current code is by no means a final product, but it's still quite
-> useful already.
+After merging the rcu tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-OK, I have added this from today but if it becomes an issue, I will
-drop it again.  Lets see how it goes.
+In file included from arch/powerpc/include/asm/kvm_ppc.h:30:0,
+                 from arch/powerpc/kernel/setup_64.c:68:
+include/linux/kvm_host.h:366:21: error: field 'srcu' has incomplete type
+  struct srcu_struct srcu;
+                     ^
+include/linux/kvm_host.h:367:21: error: field 'irq_srcu' has incomplete type
+  struct srcu_struct irq_srcu;
+                     ^
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+Caused by commit f01a973369dd ("srcu: Isolate srcu sections using
+CONFIG_SRCU").  Please stop readding that commit after until it is
+fixed :-(
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I have reverted that commit for today (again :-().
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/sSi3tLVOg.pLycl_hainmFk
+--Sig_/sUw8VThrEPS9m1il9ey3pIO
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUnOpyAAoJEMDTa8Ir7ZwVIhoP/ijzP8x+UQ3pmr6MANGMPZtk
-3ETTXmXuJzngDfA1+umlxiykOJbx7Sf8FGiJYCCiD+bZ+DB8aRmi9qsMECpOi1x8
-8RKe3UgXZ5ARk4bX5Sdb0dgljpbkXbSLUxYt6xWIx3EgHaTzZBnPv2xvx+0Jo7lr
-JoS1ATiyiv0Js25YN+H+qGCWPZzfwBfYL60qhtWC15lmAuAruy023BtMNmiszWHr
-0s6eytCsDfr1cHxcu/d1JmKHqYHv/dIf5ML177nr2E/YUfO8Z2j3xo2x47RO1hYE
-wgSy2aYIbgXxtDSBOqWzGTGTd7AMmBaamTQ2QtKlbu6FDS8jDIVJ24k4OBVZKKoa
-oWXhf0qyy+LGuwSbZWaLP3vlX3I73sl/uZL/ZLPkr7t9oGX4Hf+ROuZpIcpG5uGe
-UZ5OCgY1bygUIL3xQTPOkjL0lZ/xDNMA2uNmoDMbRZq2/Z0OLT+GxwrJlCGBSr2v
-3Yuy2cjoPUZorFxFY50TnbyH92wS/4WJdx2NHXaUPOLpLRHtOSXY82FfB45RzvJH
-N+/dFuUD5X3Wvi3HglMUQ1qTMztyqN0tFb0/Ly9E7f5tubaHfZHEH572ZDXvC1Ys
-vyXTIc1ldZ01y+4Os6vBaJ6whZbSpZ3V8voKwVudqsd6E5pP9gcWKDXy9eXU9vHr
-zAdDoAMUfCO2ymv7V7vq
-=LN77
+iQIcBAEBCAAGBQJUnRN+AAoJEMDTa8Ir7ZwVHGAP/12a/PwZLWwigF5QprQTtgtI
+g2IbtFxIfyJ+cdqIzvxQzisJIWACWhsAltWnUKdoqGb3rvsrSuNOCpgZOD3l4tcG
+55dkb5rnvcj3clKPFWGkY5s+sWmfzvG3LE3/9ZXzT9uSYYWt8YTmOAeqXW3LBD3q
+dD4beL4S6KhFPm3VhOQ52eiFq0ULTtG9NDsBj/3e86sqKnh6uaT7Is7zvJIq+NJU
+ch/BgIxR1DuC/lrSbf+wbF8rsyoh7RiUTZuE6ZFfwKhtSU6fYVJbai1/2A+Q/35d
+VOgRmmLrhKgBiZqKoFC2MmUDHtYukGdhBGtkoHpRGUzaOnSpWRxMqk1FiAHS+diT
+fb9V3BSxcGEDpvg2LAkq80cXcxE3efurMYjwSL6O2tLd7hPe0i2TT4PTY72IQScJ
+/Y6wNhLrtZPYvG27s3ryl0OBraZbo9hAjJj7Nin6jenG1C/C2Lt8lp3H1bZtRJOi
+4nStiEDu3gIWm84oWpKLRsY3H5sgQBx943c+rTqffqGCLb9JC7sbx5peDonYZ7F6
+uAcFRQtYLjysRSbyGHkS94QGyJmSLfdpzYDY2uDfeuptUAsnnim7rNUeG4eHMX0G
+TrxIpj/0Z/l0Gc6qKLqTdSDMgFdvELsqSYyznvb509VWfC/OTRYi7HyZyIvmrvT3
+pUp5Z87+r6dJ+Y2iUxJm
+=yP5x
 -----END PGP SIGNATURE-----
 
---Sig_/sSi3tLVOg.pLycl_hainmFk--
+--Sig_/sUw8VThrEPS9m1il9ey3pIO--
