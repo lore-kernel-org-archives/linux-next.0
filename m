@@ -1,28 +1,43 @@
 From: Pranith Kumar <bobby.prani@gmail.com>
 Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Sat, 27 Dec 2014 11:24:43 -0500
-Message-ID: <CAJhHMCCErUVzD_9mYZOVo=Z_FuBQVV53XWMX_SMEfVUZmBEcRQ@mail.gmail.com>
+Date: Sat, 27 Dec 2014 12:20:50 -0500
+Message-ID: <CAJhHMCBzF3ZgEP7SyLKzBTHxUmkn27fq7JyxyKe1nktiELXZPA@mail.gmail.com>
 References: <20141226185120.402d392f@canb.auug.org.au> <20141226165401.GH11609@linux.vnet.ibm.com>
+ <CAJhHMCCErUVzD_9mYZOVo=Z_FuBQVV53XWMX_SMEfVUZmBEcRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141226165401.GH11609@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vc0-f170.google.com ([209.85.220.170]:48992 "EHLO
+	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751072AbaL0RVV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Dec 2014 12:21:21 -0500
+In-Reply-To: <CAJhHMCCErUVzD_9mYZOVo=Z_FuBQVV53XWMX_SMEfVUZmBEcRQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Paul McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 26, 2014 at 11:54 AM, Paul E. McKenney wrote:
-> Pranith, if Stephen has CONFIG_KVM=n, it might be best to move the
-> "select SRCU" to "config PPC" in arch/powerpc/Kconfig.  Are you able
-> to cross-build powerpc?
+On Sat, Dec 27, 2014 at 11:24 AM, Pranith Kumar <bobby.prani@gmail.com> wrote:
+> On Fri, Dec 26, 2014 at 11:54 AM, Paul E. McKenney wrote:
+>> Pranith, if Stephen has CONFIG_KVM=n, it might be best to move the
+>> "select SRCU" to "config PPC" in arch/powerpc/Kconfig.  Are you able
+>> to cross-build powerpc?
+>>
+>
+> ppc 32 seems fine without selecting srcu unconditionally. So I added
+> this select to PPC 64 which should fix this build failure.
 >
 
-ppc 32 seems fine without selecting srcu unconditionally. So I added
-this select to PPC 64 which should fix this build failure.
+On looking at this further, I was able to figure out the parts on
+ppc64 utilizing KVM and enabled them dependent on CONFIG_KVM being
+enabled. I tested this with a ppc64 allnoconfig and it built
+succesfully (depending on a unrelated patch to enable printk for
+powernv).
 
-I will send the updated patch once I've done some basic tests. Sorry
-for the delay!
+I've sent the patch but it still seems that we will be playing
+whack-a-mole for now with code which uses KVM indepedent of
+CONFIG_KVM. May be fixing it incrementally is a better option than
+lumping all these together?
 
 -- 
 Pranith
