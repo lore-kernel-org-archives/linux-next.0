@@ -1,69 +1,52 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: Re: linux-next: question about the luto-misc tree
-Date: Sun, 28 Dec 2014 10:17:01 -0800
-Message-ID: <CALCETrXMDG81oFH0DujSCvxNaAE5YUMEPPGtYupaBck8GQk4Kw@mail.gmail.com>
-References: <20141214175747.2e6c506e@canb.auug.org.au> <CALCETrXu19aHhudTfPAr5PM05FR0xKBiSHgbubVhh6QUrHCADw@mail.gmail.com>
- <20141214120318.GA5310@linux.vnet.ibm.com> <CALCETrWsy5sxVTmjNu7t+o-QvEVY-csQHkP-PXT1aMFiXnzzhQ@mail.gmail.com>
- <20141214173715.GB5310@linux.vnet.ibm.com> <CALCETrWT7SLO3E+nV2g=QzJHAeWU4FBRENq=7OvoNDrHA7W0fg@mail.gmail.com>
- <20141214181744.GF5310@linux.vnet.ibm.com> <CALCETrXfc5SpjOUfRuj7d5Kzushjucw-njcGT+XW6L26c3BFyA@mail.gmail.com>
- <20141226123336.30fba599@canb.auug.org.au> <20141226170222.GI11609@linux.vnet.ibm.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: linux-next: Tree for Dec 26 (f2fs)
+Date: Mon, 29 Dec 2014 07:52:53 +0900
+Message-ID: <20141228225253.GG3335@lcm>
+References: <20141226193009.60d3f62e@canb.auug.org.au>
+ <549DB43B.7050902@infradead.org> <20141226205822.GA21870@jaegeuk-mac02>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:55075 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751752AbaL1SRX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Dec 2014 13:17:23 -0500
-Received: by mail-la0-f46.google.com with SMTP id q1so10652262lam.33
-        for <linux-next@vger.kernel.org>; Sun, 28 Dec 2014 10:17:22 -0800 (PST)
-In-Reply-To: <20141226170222.GI11609@linux.vnet.ibm.com>
+Received: from mailout4.samsung.com ([203.254.224.34]:31011 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751496AbaL1WyH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Dec 2014 17:54:07 -0500
+Content-disposition: inline
+In-reply-to: <20141226205822.GA21870@jaegeuk-mac02>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Dec 26, 2014 at 9:02 AM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Fri, Dec 26, 2014 at 12:33:36PM +1100, Stephen Rothwell wrote:
->> Hi Andy,
->>
->> On Mon, 22 Dec 2014 11:16:56 -0800 Andy Lutomirski <luto@amacapital.net> wrote:
->> >
->> > I'm re-adding the branch, since 3.19-rc1 is out, the change appears to
->> > still exist as-is in your tree, and it merges cleanly and builds in
->> > the latest -next for me.  Let me know if this will be problematic for
->> > any reason.
->>
->> So, now we have a problem because Paul has rebased a whole set of
->> commits that you have in your tree.  Commits c6dc129cf2d1 to
->> f58d100f65ae in your tree Paul has rebased on top of v3.19-rc1.  If you
->> are going to base your tree on (part of) Paul's tree, then Paul has to
->> agree to not rebase that part of his tree or you have to keep a watch
->> on his tree and rebase you tree on top of those rebased commits.
->> Really, the first should happen.
->
-> Apologies, Stephen -- I do seem to be your problem child at the moment!
->
-> The desried commit is "rcu: Make rcu_nmi_enter() handle nesting", correct?
-> Once confirmed or corrected, I will place this commit at the base of my
-> 3.20 tree, which will rebase it one last time, then avoid rebasing it
-> in the future, at least assuming no more bugs in that particular commit.
->
+On Fri, Dec 26, 2014 at 12:59:05PM -0800, Jaegeuk Kim wrote:
+> I fixed the merged patch directly.
+> 
+> Changman,
+> The patch was initially made by you, so let me know, if you have objection.
+> 
+> Thanks,
 
-Sorry for responding out of order and in HTML.  I just got back from a
-couple of days in the wilderness, and I'm catching up out of order.
+Sorry for my mistake.
+Thanks, Stephen and Jaegeuk.
 
-I've dropped this from my tree for now.  Paul, when you've done the
-final rebase, can you let me know?
-
-Thanks,
-Andy
-
->                                                         Thanx, Paul
->
-
-
-
--- 
-Andy Lutomirski
-AMA Capital Management, LLC
+> 
+> On Fri, Dec 26, 2014 at 11:17:15AM -0800, Randy Dunlap wrote:
+> > On 12/26/14 00:30, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > There will only be intermittent releases of linux-next between now and
+> > > Jan 5.
+> > > 
+> > > Changes since 20141221:
+> > > 
+> > 
+> > on x86_64:
+> > when CONFIG_F2FS_STAT_FS is not enabled:
+> > 
+> > ../fs/f2fs/segment.c: In function 'rewrite_data_page':
+> > ../fs/f2fs/segment.c:1233:2: error: implicit declaration of function 'stat_inc_inplace_blocks' [-Werror=implicit-function-declaration]
+> > 
+> > 
+> > 
+> > -- 
+> > ~Randy
