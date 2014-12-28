@@ -1,43 +1,49 @@
-From: Pranith Kumar <bobby.prani@gmail.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Sat, 27 Dec 2014 12:20:50 -0500
-Message-ID: <CAJhHMCBzF3ZgEP7SyLKzBTHxUmkn27fq7JyxyKe1nktiELXZPA@mail.gmail.com>
-References: <20141226185120.402d392f@canb.auug.org.au> <20141226165401.GH11609@linux.vnet.ibm.com>
- <CAJhHMCCErUVzD_9mYZOVo=Z_FuBQVV53XWMX_SMEfVUZmBEcRQ@mail.gmail.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: linux-next: missing merge fix for the access_once tree
+Date: Sun, 28 Dec 2014 09:38:55 +0100
+Message-ID: <549FC19F.4050504@de.ibm.com>
+References: <20141223131749.78087632@canb.auug.org.au> <CA+55aFxjeunxnfc8L1r=GWCBUf5uU=bcnDeu6VygMbsCxVgB0Q@mail.gmail.com> <20141223173418.59e8556f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:48992 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751072AbaL0RVV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Dec 2014 12:21:21 -0500
-In-Reply-To: <CAJhHMCCErUVzD_9mYZOVo=Z_FuBQVV53XWMX_SMEfVUZmBEcRQ@mail.gmail.com>
+Received: from e06smtp13.uk.ibm.com ([195.75.94.109]:44147 "EHLO
+	e06smtp13.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751439AbaL1IjC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Dec 2014 03:39:02 -0500
+Received: from /spool/local
+	by e06smtp13.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
+	Sun, 28 Dec 2014 08:39:01 -0000
+In-Reply-To: <20141223173418.59e8556f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, Dec 27, 2014 at 11:24 AM, Pranith Kumar <bobby.prani@gmail.com> wrote:
-> On Fri, Dec 26, 2014 at 11:54 AM, Paul E. McKenney wrote:
->> Pranith, if Stephen has CONFIG_KVM=n, it might be best to move the
->> "select SRCU" to "config PPC" in arch/powerpc/Kconfig.  Are you able
->> to cross-build powerpc?
+Am 23.12.2014 um 07:34 schrieb Stephen Rothwell:
+> Hi Linus,
+> 
+> On Mon, 22 Dec 2014 20:12:22 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
 >>
->
-> ppc 32 seems fine without selecting srcu unconditionally. So I added
-> this select to PPC 64 which should fix this build failure.
->
+>> On Mon, Dec 22, 2014 at 6:17 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>
+>>> I have been carrying this merge fix patch for some time.  It should
+>>> have gone into the merge of the access_once tree.
+>>
+>> No, you had a different tree that got merged into linux-next, that
+>> made it an error to do ACCESS_ONCE() on a structure.
+>>
+>> The thing I merged didn't actually have that final commit, exactly so
+>> that things wouldn't break from missing conversions.
+>>
+>> So that patch isn't wrong, but it also isn't exactly a required fix
+>> until the next merge window..
+> 
+> True, so "should" was a bit strong.
+> 
 
-On looking at this further, I was able to figure out the parts on
-ppc64 utilizing KVM and enabled them dependent on CONFIG_KVM being
-enabled. I tested this with a ppc64 allnoconfig and it built
-succesfully (depending on a unrelated patch to enable printk for
-powernv).
+I will re-add this up soon for my linux-next branch. 
+There are some additional places which need to be changed, so give me some more days during the holidays
 
-I've sent the patch but it still seems that we will be playing
-whack-a-mole for now with code which uses KVM indepedent of
-CONFIG_KVM. May be fixing it incrementally is a better option than
-lumping all these together?
-
--- 
-Pranith
+Christian
