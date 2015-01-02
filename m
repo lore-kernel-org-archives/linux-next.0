@@ -1,120 +1,93 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Sat, 3 Jan 2015 09:11:01 +1100
-Message-ID: <20150103091101.04b2c11e@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Fri, 2 Jan 2015 23:21:05 +0100
+Message-ID: <CA+icZUUmm5=YAZCXtk+iBaewFremZ17M2uShx+jBa4=JcTuaQA@mail.gmail.com>
+References: <20150103091101.04b2c11e@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qz0qniLi2g=L5vMKfISL0Wt"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46546 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752408AbbABWLJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2015 17:11:09 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150103091101.04b2c11e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Richard Cochran <richardcochran@gmail.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/qz0qniLi2g=L5vMKfISL0Wt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 2, 2015 at 11:11 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the net-next tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> drivers/net/ethernet/mellanox/mlx4/en_clock.c: In function 'mlx4_en_init_timestamp':
+> drivers/net/ethernet/mellanox/mlx4/en_clock.c:249:2: error: implicit declaration of function 'CLOCKSOURCE_MASK' [-Werror=implicit-function-declaration]
+>   mdev->cycles.mask = CLOCKSOURCE_MASK(48);
+>   ^
+> drivers/net/ethernet/mellanox/mlx4/en_clock.c:257:3: error: implicit declaration of function 'clocksource_khz2mult' [-Werror=implicit-function-declaration]
+>    clocksource_khz2mult(1000 * dev->caps.hca_core_clock, mdev->cycles.shift);
+>    ^
+> drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c: In function 'ixgbe_ptp_start_cyclecounter':
+> drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c:796:2: error: implicit declaration of function 'CLOCKSOURCE_MASK' [-Werror=implicit-function-declaration]
+>   adapter->cc.mask = CLOCKSOURCE_MASK(64);
+>   ^
+>
+> Presumably caused by commit 74d23cc704d1 ("time: move the
+> timecounter/cyclecounter code into its own file").
+>
 
-Hi all,
+Happy new 2015 Stephen...
 
-After merging the net-next tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+[ The last days I revived my linux-next build-script inspired by
+willing to test block-loop-mq v3 patchset against next-20141231 ]
 
-drivers/net/ethernet/mellanox/mlx4/en_clock.c: In function 'mlx4_en_init_ti=
-mestamp':
-drivers/net/ethernet/mellanox/mlx4/en_clock.c:249:2: error: implicit declar=
-ation of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-declarati=
-on]
-  mdev->cycles.mask =3D CLOCKSOURCE_MASK(48);
-  ^
-drivers/net/ethernet/mellanox/mlx4/en_clock.c:257:3: error: implicit declar=
-ation of function 'clocksource_khz2mult' [-Werror=3Dimplicit-function-decla=
-ration]
-   clocksource_khz2mult(1000 * dev->caps.hca_core_clock, mdev->cycles.shift=
-);
-   ^
-drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c: In function 'ixgbe_ptp_start_=
-cyclecounter':
-drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c:796:2: error: implicit declara=
-tion of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-declaratio=
-n]
-  adapter->cc.mask =3D CLOCKSOURCE_MASK(64);
-  ^
+Just FYI...
 
-Presumably caused by commit 74d23cc704d1 ("time: move the
-timecounter/cyclecounter code into its own file").
+Richard posted a new patch-series "[PATCH net-next 0/7] Fixing the
+"Time Counter fixes and improvements" on linux-nextdev fixing this.
 
-I added the following commit for today:
+- Sedat -
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sat, 3 Jan 2015 09:07:21 +1100
-Subject: [PATCH] ixgbe_ptp, mlx4: Include clocksource.h to get CLOCKSOURCE_=
-MASK
+[1] https://lkml.org/lkml/2015/1/1/27
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c  | 1 +
- drivers/net/ethernet/mellanox/mlx4/en_clock.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c b/drivers/net/eth=
-ernet/intel/ixgbe/ixgbe_ptp.c
-index 47c29eaaa140..73548280cbae 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
-@@ -25,6 +25,7 @@
-   Intel Corporation, 5200 N.E. Elam Young Parkway, Hillsboro, OR 97124-6497
-=20
- **************************************************************************=
-*****/
-+#include <linux/clocksource.h>
- #include "ixgbe.h"
- #include <linux/ptp_classify.h>
-=20
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_clock.c b/drivers/net/et=
-hernet/mellanox/mlx4/en_clock.c
-index e9cce4f72b24..7c6ef4b48f8e 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-@@ -31,6 +31,7 @@
-  *
-  */
-=20
-+#include <linux/clocksource.h>
- #include <linux/mlx4/device.h>
-=20
- #include "mlx4_en.h"
---=20
-2.1.4
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/qz0qniLi2g=L5vMKfISL0Wt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIbBAEBCAAGBQJUpxd6AAoJEMDTa8Ir7ZwV3egP+NAncIhaPXOGcN8aZD1DLKFD
-skjlYTsmrNO5wo3+qc8DaPsZgZItBQuE1zr5Dh/ozpk+b5NABVnZYX3BOSrbkzYx
-j+ZOK8B+zSPMxK0CgW0nzDPF06s4v41GpgnexMOo55g7/h3ieKmNCnJ4gKPSLSF3
-By4XmgnZHYGz+PHfZWAALnMYdJL89u/sy2FJQzEg7xMjHYUe6KauMMZnATlephhq
-DxoicL6wBT7goXHZm1R3gbOUe4PrcgvnnGHaulreC4bglL5mvV4WxCQL6Fx2fWf3
-C4IzFTde4wvFhgVSQ/p1yVuKQo2GG/hORZOS/iE9EiSoQChzbv0WbDGRkcvFs7p3
-Meux9rnEbw2z8lX1aNYfxxc6+yQY3bPLKVXzZIPdjsymKzokwqpFWaH12BGggA8v
-VMY5Ax5uN4G70OYKUU5RWpSPPDsonLZQwha/yMxOmXuxhneeHGaglbwGvfhSDnQp
-Rxw1+po+Rri1/mcDWxw3oruc7vGH0ByXMJlBM0KWWriu3lbiQp7Iv0SydYH5umoO
-tQZ04b+kCrtVdm5gxIurVP0gPy1PQuOv/Kyuete97TbiFabyqEzAkmGYoofOQQ4/
-tioW0+MmcNyMN4z5u/qh3ZDQjcL93VNbXREOxI0n5AvLQV/MLHw2XOtol1uAqmsr
-WQ2rtAy8Mm7atpIbXRA=
-=kxyP
------END PGP SIGNATURE-----
-
---Sig_/qz0qniLi2g=L5vMKfISL0Wt--
+> I added the following commit for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Sat, 3 Jan 2015 09:07:21 +1100
+> Subject: [PATCH] ixgbe_ptp, mlx4: Include clocksource.h to get CLOCKSOURCE_MASK
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c  | 1 +
+>  drivers/net/ethernet/mellanox/mlx4/en_clock.c | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+> index 47c29eaaa140..73548280cbae 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+> @@ -25,6 +25,7 @@
+>    Intel Corporation, 5200 N.E. Elam Young Parkway, Hillsboro, OR 97124-6497
+>
+>  *******************************************************************************/
+> +#include <linux/clocksource.h>
+>  #include "ixgbe.h"
+>  #include <linux/ptp_classify.h>
+>
+> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_clock.c b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
+> index e9cce4f72b24..7c6ef4b48f8e 100644
+> --- a/drivers/net/ethernet/mellanox/mlx4/en_clock.c
+> +++ b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
+> @@ -31,6 +31,7 @@
+>   *
+>   */
+>
+> +#include <linux/clocksource.h>
+>  #include <linux/mlx4/device.h>
+>
+>  #include "mlx4_en.h"
+> --
+> 2.1.4
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
