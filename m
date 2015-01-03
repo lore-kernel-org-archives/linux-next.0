@@ -1,95 +1,117 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Sat, 3 Jan 2015 10:32:02 +1100
-Message-ID: <20150103103202.7f31a7af@canb.auug.org.au>
+Date: Sat, 3 Jan 2015 14:01:45 +1100
+Message-ID: <20150103140145.3cd6b79c@canb.auug.org.au>
 References: <20150103091101.04b2c11e@canb.auug.org.au>
-	<CA+icZUUmm5=YAZCXtk+iBaewFremZ17M2uShx+jBa4=JcTuaQA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XuO_5dyW8GnvpiBGTW.M+9w"; protocol="application/pgp-signature"
+ boundary="Sig_/znWSccTcOy8hr3rl/cMSN4R"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36628 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44176 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752253AbbABXcK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2015 18:32:10 -0500
-In-Reply-To: <CA+icZUUmm5=YAZCXtk+iBaewFremZ17M2uShx+jBa4=JcTuaQA@mail.gmail.com>
+	id S1750801AbbACDBw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jan 2015 22:01:52 -0500
+In-Reply-To: <20150103091101.04b2c11e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Richard Cochran <richardcochran@gmail.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
---Sig_/XuO_5dyW8GnvpiBGTW.M+9w
+--Sig_/znWSccTcOy8hr3rl/cMSN4R
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sedat,
+Hi all,
 
-On Fri, 2 Jan 2015 23:21:05 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrote:
+On Sat, 3 Jan 2015 09:11:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> On Fri, Jan 2, 2015 at 11:11 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> >
-> > After merging the net-next tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >
-> > drivers/net/ethernet/mellanox/mlx4/en_clock.c: In function 'mlx4_en_ini=
-t_timestamp':
-> > drivers/net/ethernet/mellanox/mlx4/en_clock.c:249:2: error: implicit de=
-claration of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-decla=
-ration]
-> >   mdev->cycles.mask =3D CLOCKSOURCE_MASK(48);
-> >   ^
-> > drivers/net/ethernet/mellanox/mlx4/en_clock.c:257:3: error: implicit de=
-claration of function 'clocksource_khz2mult' [-Werror=3Dimplicit-function-d=
-eclaration]
-> >    clocksource_khz2mult(1000 * dev->caps.hca_core_clock, mdev->cycles.s=
-hift);
-> >    ^
-> > drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c: In function 'ixgbe_ptp_st=
-art_cyclecounter':
-> > drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c:796:2: error: implicit dec=
-laration of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-declar=
-ation]
-> >   adapter->cc.mask =3D CLOCKSOURCE_MASK(64);
-> >   ^
-> >
-> > Presumably caused by commit 74d23cc704d1 ("time: move the
-> > timecounter/cyclecounter code into its own file").
+> After merging the net-next tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 >=20
-> Just FYI...
+> drivers/net/ethernet/mellanox/mlx4/en_clock.c: In function 'mlx4_en_init_=
+timestamp':
+> drivers/net/ethernet/mellanox/mlx4/en_clock.c:249:2: error: implicit decl=
+aration of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-declara=
+tion]
+>   mdev->cycles.mask =3D CLOCKSOURCE_MASK(48);
+>   ^
+> drivers/net/ethernet/mellanox/mlx4/en_clock.c:257:3: error: implicit decl=
+aration of function 'clocksource_khz2mult' [-Werror=3Dimplicit-function-dec=
+laration]
+>    clocksource_khz2mult(1000 * dev->caps.hca_core_clock, mdev->cycles.shi=
+ft);
+>    ^
+> drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c: In function 'ixgbe_ptp_star=
+t_cyclecounter':
+> drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c:796:2: error: implicit decla=
+ration of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-declarat=
+ion]
+>   adapter->cc.mask =3D CLOCKSOURCE_MASK(64);
+>   ^
 >=20
-> Richard posted a new patch-series "[PATCH net-next 0/7] Fixing the
-> "Time Counter fixes and improvements" on linux-nextdev fixing this.
->=20
-> - Sedat -
->=20
-> [1] https://lkml.org/lkml/2015/1/1/27
 
-Thanks, so hopefully I won't need my patch for very long.
+My powerpc allyesconfig build also produced this:
+
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c: In function 'bnx2x_init_c=
+yclecounter':
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:14613:2: error: implicit d=
+eclaration of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-decl=
+aration]
+  bp->cyclecounter.mask =3D CLOCKSOURCE_MASK(64);
+  ^
+
+So I added this patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Sat, 3 Jan 2015 12:15:37 +1100
+Subject: [PATCH] bnx2x: Include clocksource.h to get CLOCKSOURCE_MASK
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net=
+/ethernet/broadcom/bnx2x/bnx2x_main.c
+index 2c951326a85d..119c190721da 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -57,6 +57,7 @@
+ #include <linux/semaphore.h>
+ #include <linux/stringify.h>
+ #include <linux/vmalloc.h>
++#include <linux/clocksource.h>
+=20
+ #include "bnx2x.h"
+ #include "bnx2x_init.h"
+--=20
+2.1.4
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/XuO_5dyW8GnvpiBGTW.M+9w
+--Sig_/znWSccTcOy8hr3rl/cMSN4R
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUpyp2AAoJEMDTa8Ir7ZwVW9QP/3XReF6R67XKfGnJDXlnctys
-XKUQvi25iGTolXWMoj1kfyFIrq5BRRaCbK7El3kjm8HU16YK3VtURyi7/m2RaPlq
-MFBLVyyEn7esNEXoWkDjcEMtbpatpqWPBWD9uOIoFsuBmi5SoIdo7ITPSWvRhwIw
-qTK6xCqFiDNlg9q/52w3hwI3uBXI76t5WyjuOGI0dRa1o2mCik8CkMeMu9dcXMJm
-eSDgnvlKaQbAkHZCB+045D6yS6PF/UOmvrIbjxn20kEjIsbh77itkTkdvDEoJ1a6
-RfJN/SOWHFhufok8hSDv7piU/ZFAuUqourRxfmnbhedyjNBKyGdYUcFKFxxswjTr
-+SrF98mIY4PNujNdJn8ij0YfsW74RkLsW9+Hv1YlY7KrMgPa5JevsTT32AUhMgO+
-ZjAX8GhcGTIP//f5oJ15KL0FiZzD7GXJ4CTv8xpSiRtvdMdR4QrnNqh140UAyllk
-jSDNisOAyngxfW0rUEyK+5WKs4EMwlh4c3k/N//EBLtaJloawCICV6olY25zUTki
-saqZ1fjsTpVy9OD2eiOK9aTmqDoYLY3SMgx+JtuVJKvkSsyUKkgapz+Hl/g7CCpP
-ahN5XUa6MPbAdLuIDzmJGqsyOWygT/lqTH0jWyt8fX9siHQ6OKKu2pscw5IJiyXt
-hc+GRl6nPt3KXaBkCs0G
-=S6dn
+iQIcBAEBCAAGBQJUp1udAAoJEMDTa8Ir7ZwVRMkP/iJ4ewJJT3FY4Jk/mGquAfsm
+LJwmkeC6WrR+sJHf3jtWM8M9uiZzGh9O4TcS9Otg9oc/Kw4SuKYxI50dGR/TQFQ/
+b+uH1g/rY38v2GThRWxHtmwcnwCS0RPElY9FJWjsgS7MewnNvpjAuIzlE+z6jTRF
+HtOcuqU0uP+d0nEJXDnym7Z3j6kO442Z72/Xk+86dOB7w36Hjp69uQ9zR+h+sMrG
+2GqG9wTCIRI0owsGLc/ICw5yUtoCeqIoE9qNR8Dgh4v+jp8jM+Xruh9+f9p5ALk0
+NS9Gwu5z+rYNC16i40P1N8ON4Rq+PjjA4anluc5Z9PBDODu4L77Uy9p4jWFJXLrj
+x44ISFlpoUvjxRnGbiuN+rYNJihQFaoKVKSsJjdZ2ek+es1aZJf1raEB0bDRg7Mk
+m8XrHl/mB3bDd3xkOlOT5zqJjehNbg0AeN0KlV4XDLRHhYOxIalIGKm8MMeCDwwo
+WjgGs0eEl5zqArlFO6INStcX0jDP2tyLEYpHtNYeaOi5H3EGF8VEY7dBuajfqY+J
+grSOoXUY0KWbLfVGv5pNYodwm521BBSDijgacFAP7burgI/WkXEdBAHMEXzWEKXR
++/jUBGKmI2S8k0Z275JRkMvS38/NPjRdGvdzQGsqYcT48UCx7dmCH4b8DpVZ4TjZ
+7eYXd92n5NaJ+o1422Dk
+=UE9R
 -----END PGP SIGNATURE-----
 
---Sig_/XuO_5dyW8GnvpiBGTW.M+9w--
+--Sig_/znWSccTcOy8hr3rl/cMSN4R--
