@@ -1,57 +1,64 @@
-From: Andy Lutomirski <luto@amacapital.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: bad commit in the luto-misc tree
-Date: Sun, 4 Jan 2015 15:42:31 -0800
-Message-ID: <CALCETrU47KbYVJ0XA4HnA+A4=Zck49ubuutT+SZNDUw+PBxQVw@mail.gmail.com>
+Date: Mon, 5 Jan 2015 10:48:57 +1100
+Message-ID: <20150105104857.1abcec86@canb.auug.org.au>
 References: <20150105103547.40ef87fd@canb.auug.org.au>
+	<CALCETrU47KbYVJ0XA4HnA+A4=Zck49ubuutT+SZNDUw+PBxQVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:33756 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752836AbbADXmx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Jan 2015 18:42:53 -0500
-Received: by mail-la0-f41.google.com with SMTP id hv19so17228326lab.14
-        for <linux-next@vger.kernel.org>; Sun, 04 Jan 2015 15:42:52 -0800 (PST)
-In-Reply-To: <20150105103547.40ef87fd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/x3C0i=.haa4S7_F2LndULqA"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CALCETrU47KbYVJ0XA4HnA+A4=Zck49ubuutT+SZNDUw+PBxQVw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Lutomirski <luto@amacapital.net>
 Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Jan 4, 2015 at 3:35 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andy,
+--Sig_/x3C0i=.haa4S7_F2LndULqA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andy,
+
+On Sun, 4 Jan 2015 15:42:31 -0800 Andy Lutomirski <luto@amacapital.net> wro=
+te:
 >
-> I noticed commit 7d032e5b1042 ("[TEST ONLY] Force RCU NMI nesting") has
-> no Signed-off-by ... I understand that this is for testing, but that
-> is *not* what linux-next is really for.  Especially given that that
-> commit is x86 only, it should be used for unit testing. not a wider
-> audience like this.
+> Sorry.  I totally failed here.  I swear I rebased onto the latest RCU
+> tree, double-checked it, and pushed that exact revision to luto/next.
+> Somehow I pushed a much older development commit.  I have no idea how
+> I did that.  I didn't even know I still had that commit around at all.
 
-Sorry.  I totally failed here.  I swear I rebased onto the latest RCU
-tree, double-checked it, and pushed that exact revision to luto/next.
-Somehow I pushed a much older development commit.  I have no idea how
-I did that.  I didn't even know I still had that commit around at all.
+OK, I have refetched your tree for today and it looks fine.
 
-Fixed now, I think.  Next time I will push to luto/next and
-double-check that I pushed the commit I thought I pushed.
+> Fixed now, I think.  Next time I will push to luto/next and
+> double-check that I pushed the commit I thought I pushed.
 
-Sorry for causing trouble.
+Thanks.
 
---Andy
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Sig_/x3C0i=.haa4S7_F2LndULqA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
->
-> I am also not sure about 9f29ed3365cd ("[DO NOT APPLY] rcu: Make
-> rcu_nmi_enter() handle nesting") ...  (it is, in particular, not
-> Signed-off-by the committer, you).
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+iQIcBAEBCAAGBQJUqdFuAAoJEMDTa8Ir7ZwVB5sP/R0oVrkvYictE+g3Tz8YB4MV
+yk2NyQlcT6aKefVB7PQhmEPfZkB77LOb4IKYDH1HFvoRu0+deeLFcyA9QKbT9evh
+lBqRQsb7J3K5l6nIofhvPicB3fB+bEvHaiLe3Zje2u1mRwedTABgH4+gLoolcr+k
+Mp1E6ceODbbPHC/x3jSVNbbDFobfA/y3wVrOiIdeKeygeVW8uNFVPaTtvgfKR4oL
+iync4s6EXmbUvTNePyM9Pc/m82wPLvvMWT4qlMVcXVhaBKCDnr4baK+JB+cYyTF2
+EZVziZf7mUVOcKAP5EO6QXdj75F6AJxA5jQHPqzAzNcp6ncd5fWsYDV44opNCBUL
+p1sSklNYRKOTSwh023dOLy444cVhkm7ZFVTBSXynUJaw9iyXwaXI1lPaWCMG+of0
+OuLGsqpp/5D0NJnO+AWUQu5PZu2vBt06J1o7wAgwLqxT43DMR9CkUfCLkyadCtn2
+x4uwkmO9dmLtsZ9CoCAn79GitmcWgnFxFUgnkftdVe1v78Vuxx80PyO7Cmr5EEna
+/+nOWZxQRYOL+UB8qz5RXPROm295RoBF1Nbgs+QcaKdy42MisOS55FkbVHhjpB2I
+fh4hfl0y1z1kLEmUhO7jhiI8M6N0qa13Ww2fhG+/eL8MibiVBOw6CjWJeCi7ZjIk
++REMFvETWWCS+vJbLmGc
+=NjDF
+-----END PGP SIGNATURE-----
 
-
-
--- 
-Andy Lutomirski
-AMA Capital Management, LLC
+--Sig_/x3C0i=.haa4S7_F2LndULqA--
