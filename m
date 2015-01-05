@@ -1,64 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bad commit in the luto-misc tree
-Date: Mon, 5 Jan 2015 10:48:57 +1100
-Message-ID: <20150105104857.1abcec86@canb.auug.org.au>
-References: <20150105103547.40ef87fd@canb.auug.org.au>
-	<CALCETrU47KbYVJ0XA4HnA+A4=Zck49ubuutT+SZNDUw+PBxQVw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Mon, 5 Jan 2015 14:36:15 +1100
+Message-ID: <20150105143615.4e75d3fe@canb.auug.org.au>
+References: <20150103091101.04b2c11e@canb.auug.org.au>
+	<20150103.144530.1032237292364564169.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/x3C0i=.haa4S7_F2LndULqA"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CALCETrU47KbYVJ0XA4HnA+A4=Zck49ubuutT+SZNDUw+PBxQVw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/ei2ObrYV7OQ9xa9e0d85lX_"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43815 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751773AbbAEDgX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 4 Jan 2015 22:36:23 -0500
+In-Reply-To: <20150103.144530.1032237292364564169.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, richardcochran@gmail.com, jeffrey.t.kirsher@intel.com
 
---Sig_/x3C0i=.haa4S7_F2LndULqA
+--Sig_/ei2ObrYV7OQ9xa9e0d85lX_
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Hi David,
 
-On Sun, 4 Jan 2015 15:42:31 -0800 Andy Lutomirski <luto@amacapital.net> wro=
-te:
+On Sat, 03 Jan 2015 14:45:30 -0500 (EST) David Miller <davem@davemloft.net>=
+ wrote:
 >
-> Sorry.  I totally failed here.  I swear I rebased onto the latest RCU
-> tree, double-checked it, and pushed that exact revision to luto/next.
-> Somehow I pushed a much older development commit.  I have no idea how
-> I did that.  I didn't even know I still had that commit around at all.
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Sat, 3 Jan 2015 09:11:01 +1100
+>=20
+> > After merging the net-next tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >=20
+> > drivers/net/ethernet/mellanox/mlx4/en_clock.c: In function 'mlx4_en_ini=
+t_timestamp':
+> > drivers/net/ethernet/mellanox/mlx4/en_clock.c:249:2: error: implicit de=
+claration of function 'CLOCKSOURCE_MASK' [-Werror=3Dimplicit-function-decla=
+ration]
+> >   mdev->cycles.mask =3D CLOCKSOURCE_MASK(48);
+>=20
+> Stephen please let me know if this failure is persisting.
 
-OK, I have refetched your tree for today and it looks fine.
-
-> Fixed now, I think.  Next time I will push to luto/next and
-> double-check that I pushed the commit I thought I pushed.
-
-Thanks.
+All the ones I reported are fixed, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/x3C0i=.haa4S7_F2LndULqA
+--Sig_/ei2ObrYV7OQ9xa9e0d85lX_
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUqdFuAAoJEMDTa8Ir7ZwVB5sP/R0oVrkvYictE+g3Tz8YB4MV
-yk2NyQlcT6aKefVB7PQhmEPfZkB77LOb4IKYDH1HFvoRu0+deeLFcyA9QKbT9evh
-lBqRQsb7J3K5l6nIofhvPicB3fB+bEvHaiLe3Zje2u1mRwedTABgH4+gLoolcr+k
-Mp1E6ceODbbPHC/x3jSVNbbDFobfA/y3wVrOiIdeKeygeVW8uNFVPaTtvgfKR4oL
-iync4s6EXmbUvTNePyM9Pc/m82wPLvvMWT4qlMVcXVhaBKCDnr4baK+JB+cYyTF2
-EZVziZf7mUVOcKAP5EO6QXdj75F6AJxA5jQHPqzAzNcp6ncd5fWsYDV44opNCBUL
-p1sSklNYRKOTSwh023dOLy444cVhkm7ZFVTBSXynUJaw9iyXwaXI1lPaWCMG+of0
-OuLGsqpp/5D0NJnO+AWUQu5PZu2vBt06J1o7wAgwLqxT43DMR9CkUfCLkyadCtn2
-x4uwkmO9dmLtsZ9CoCAn79GitmcWgnFxFUgnkftdVe1v78Vuxx80PyO7Cmr5EEna
-/+nOWZxQRYOL+UB8qz5RXPROm295RoBF1Nbgs+QcaKdy42MisOS55FkbVHhjpB2I
-fh4hfl0y1z1kLEmUhO7jhiI8M6N0qa13Ww2fhG+/eL8MibiVBOw6CjWJeCi7ZjIk
-+REMFvETWWCS+vJbLmGc
-=NjDF
+iQIcBAEBCAAGBQJUqgazAAoJEMDTa8Ir7ZwVbiIP/jryimpbFieQYrwzluJW9VRj
+A2zB2Lxe4zSPLwRtgx2TAuvPqoPma9SOR1e37SvE203jFy+Q9ZZkT/rq0nSO4y3s
+I+9xaQtYq/HSiecTgomHTt9UHMy1wpcyBghNCOD1AbViLPjyIVO0956VUvKuq5R4
+TpJI20GeXNcHilRryV0qTFu+lXMfjr79FCkrvgjPL6ykE2DPFhqEouEmwSZ6I8Ny
+6N4S9geY+9jD9HeUtzdf57nkxYOfqhAemPjam78aysER2JDS6e3GjbXthOSnU2QA
+KV+4Bovw/3x99mGqk2s2tC+iJ5LbgnfHtplK3X0S6hNPie+1Po0pKioCW8G58qhG
+TL+keiQa6rLRmtPVbinSzLWCLCH/sEjLNIinFVl8tMbn0k8S7w2BeHXMw5YrnNwh
+syxs8zaMAHyMCtDXkDRzwL5wYbUzWrtluoVEen2b8ZP1bF0AppL/2vSntPf43jP+
+TL/wE8wMG+TkO6AQD7md9mxXseJaznrhzAAEW7JoJdmRrUsIfZq3wdiRXeFgjvYR
+rbdCX37chpfOawTdDBODcZiwDdht83AhgwxOQz3oBD84j4H/TnBRQvsB+vNGKu+V
+vaHDNT2KgqOIvzZ+nQgsMFxuUCYSzLIs1LdmkNVM5EF1svvZVr8qF+Kg+69swR/+
+BFdIR2AOrMumL9lPtlP0
+=xtMt
 -----END PGP SIGNATURE-----
 
---Sig_/x3C0i=.haa4S7_F2LndULqA--
+--Sig_/ei2ObrYV7OQ9xa9e0d85lX_--
