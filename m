@@ -1,64 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Michal Simek <monstr@monstr.eu>
 Subject: Re: linux-next: error fetching the microblaze tree
-Date: Tue, 6 Jan 2015 22:11:56 +1100
-Message-ID: <20150106221156.060946b3@canb.auug.org.au>
-References: <20150106100346.6dbab82c@canb.auug.org.au>
-	<54AB8555.3090206@monstr.eu>
+Date: Tue, 06 Jan 2015 12:30:04 +0100
+Message-ID: <54ABC73C.9050802@monstr.eu>
+References: <20150106100346.6dbab82c@canb.auug.org.au>	<54AB8555.3090206@monstr.eu> <20150106221156.060946b3@canb.auug.org.au>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Sm_EJ8GfUlp0c7s7Un=vl1J"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="B2t6I7rS5JtctJ842R6SKSVLHP1xulxMi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41156 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754995AbbAFLMF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jan 2015 06:12:05 -0500
-In-Reply-To: <54AB8555.3090206@monstr.eu>
+Received: from mail-we0-f169.google.com ([74.125.82.169]:42862 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755149AbbAFLaK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jan 2015 06:30:10 -0500
+Received: by mail-we0-f169.google.com with SMTP id m14so9558818wev.0
+        for <linux-next@vger.kernel.org>; Tue, 06 Jan 2015 03:30:08 -0800 (PST)
+In-Reply-To: <20150106221156.060946b3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Simek <monstr@monstr.eu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/Sm_EJ8GfUlp0c7s7Un=vl1J
-Content-Type: text/plain; charset=US-ASCII
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--B2t6I7rS5JtctJ842R6SKSVLHP1xulxMi
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+On 01/06/2015 12:11 PM, Stephen Rothwell wrote:
+> Hi Michal,
+>=20
+> On Tue, 06 Jan 2015 07:48:53 +0100 Michal Simek <monstr@monstr.eu> wrot=
+e:
+>>
+>> sorry for trouble. Server has been moved to 92.62.235.6.
+>> I have changed DNS record but it takes some time to update
+>> it that's why you can't reach it. :-( It will be fixed soon
+>> I believe.
+>=20
+> No worries, I was just letting you know in case there was something you=
 
-On Tue, 06 Jan 2015 07:48:53 +0100 Michal Simek <monstr@monstr.eu> wrote:
->
-> sorry for trouble. Server has been moved to 92.62.235.6.
-> I have changed DNS record but it takes some time to update
-> it that's why you can't reach it. :-( It will be fixed soon
-> I believe.
+> were not aware of.  I have just done a fetch and it worked fine, so
+> things will be back to normal in tomorrows release.
 
-No worries, I was just letting you know in case there was something you
-were not aware of.  I have just done a fetch and it worked fine, so
-things will be back to normal in tomorrows release.
+Great.
+
+Thanks,
+Michal
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
+Maintainer of Linux kernel - Xilinx Zynq ARM architecture
+Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
 
---Sig_/Sm_EJ8GfUlp0c7s7Un=vl1J
-Content-Type: application/pgp-signature
+
+
+--B2t6I7rS5JtctJ842R6SKSVLHP1xulxMi
+Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQIcBAEBCAAGBQJUq8MDAAoJEMDTa8Ir7ZwVl6AP/2iAi+EjcuGfR9yhUxX6jsvH
-YQUTloQivNw/0KLX72g5KnrOr9+PHrdxx4jLoR+a+BO/76O1DnEqvJzCMA5tp+IZ
-g5nkbCgQSLe9wt5F6Uf2WF/OnuJgGt0Yn5FJxTsNNUcdlhQDxvDLcXXh/Uu7AsNM
-y/UgxlgnUjbd1mwN8Kk5ElKpDzt4D4TZiLD8OvjCDL7PlXA9FkeETkzceRo+Xsl0
-r5M7zHtidWXXa77C3Mh5cxNa9obDVqYLq6v4/d7vqj9qRjmwfMCbpyRX9/fGMQsC
-Zbg3W5+ADieAGVmdjBIXLsYpjJFja00OWfi2f+pj2dUwI45o6Lh6SlBfYXXP2wZV
-4jYFWoOivKPfWxktGT+wmEzFEyeWB9qtODT5kQzJeMqhwlr5pRvLVPsUofvQs76w
-EL1o9+/lnoaRXYacIOxOm358kJhhjYOBJwFOJEcbZKuz9Fud1FCH6ubGWq35HjPw
-p0phZB7C/ouTE17RqfiT+i7NcfkxPcUCjCagyM4L4bgl9Z0MnReNmRf5pfRYJpDN
-0UjplGDVMZh6pltU7oekInvAD4DGZfAg1hlRYbuDHhcz3zX1upPqlcfdZ7QF6WRj
-KcsY5eOlJlM8hXMMdY4AP6pzBJpyzootBFcs7eAKCuw/1XfOf/NLGyFDsiG2TZmi
-9K+hzTPOH0l6z44G0JUA
-=qNjP
+iEYEARECAAYFAlSrxzwACgkQykllyylKDCFVVwCeLxbIepaIYNWMh1FMZSdZQUIC
+YSAAoIPgVZ/msI1R5Aj1VoM79bxQzWOH
+=VLtd
 -----END PGP SIGNATURE-----
 
---Sig_/Sm_EJ8GfUlp0c7s7Un=vl1J--
+--B2t6I7rS5JtctJ842R6SKSVLHP1xulxMi--
