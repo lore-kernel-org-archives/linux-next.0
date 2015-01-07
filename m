@@ -1,92 +1,94 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Missing next-$date git-tag when pulled-in linux-next.git on top
- of linus.git
-Date: Thu, 8 Jan 2015 07:52:01 +1100
-Message-ID: <20150108075201.042f9126@canb.auug.org.au>
-References: <CA+icZUVVPe68VGwRcc5ztxGwHi83wHJVeiJMUuBynm2LypoaZA@mail.gmail.com>
-	<20150107212439.7254d389@canb.auug.org.au>
-	<CA+icZUVYu2uaAG-sSf5pf_rzGU+BSBAwu9mhBDrCXZ0a2nw1sA@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 7 (microblaze qemu problems)
+Date: Wed, 7 Jan 2015 13:45:30 -0800
+Message-ID: <20150107214530.GA27620@roeck-us.net>
+References: <20150107151618.7cb9d574@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVYu2uaAG-sSf5pf_rzGU+BSBAwu9mhBDrCXZ0a2nw1sA@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20150107151618.7cb9d574@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 07, 2015 at 03:16:18PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20150106:
+> 
+> *crickets*
+> 
+> Non-merge commits (relative to Linus' tree): 1350
+>  1543 files changed, 41856 insertions(+), 24250 deletions(-)
+> 
 
-Hi Sedat,
+With this kernel I get the following WARNINGs (lots of htem) when running
+microblaze images (both big and little endian) with qemu.
 
-On Wed, 7 Jan 2015 14:47:53 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrote:
->
-> On Wed, Jan 7, 2015 at 11:24 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > Hi Sedat,
-> >
-> > On Wed, 7 Jan 2015 09:24:57 +0100 Sedat Dilek <sedat.dilek@gmail.com> w=
-rote:
-> >>
-> >> My workflow looks like this
-> >>
-> >> # Get mainline Git tree
-> >> $ git clone $LINUS_GIT_URL
-> >>
-> >> # Checkout latest mainline (rc) tag (aka -next's "origin" commit-id)
-> >> $ git checkout -b Linux-v3.19-rc3 v3.19-rc3
-> >>
-> >> # Base to pull in current -next
-> >> $ git checkout -b Linux-next-20150107
-> >>
-> >> # Pull in stuff from next-20150107
-> >> $ git pull git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-ne=
-xt.git
-> >> tags/next-20150107
-> >
-> > Just do
-> >
-> > $ git pull git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-nex=
-t.git master
-> >
-> > That should also fetch the next- tag.
->=20
-> For current -next this is OK.
-> Sometimes I needed to test against a specific next-version.
-> Any idea?
+WARNING: CPU: 0 PID: 1 at arch/microblaze/kernel/cpu/cache.c:432
+__invalidate_dcache_range_msr_irq_wt+0xcc/0xd8()
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 3.19.0-rc3-next-20150107 #1
+...
+(sample) Call Trace:
+[<c0004080>] microblaze_unwind+0x5c/0x78
+[<c0003d64>] show_stack+0xe0/0x164
+[<c02e2224>] dump_stack+0x20/0x38
+[<c000adbc>] warn_slowpath_common+0x90/0xec
+[<c000aea0>] warn_slowpath_null+0xc/0x24
+[<c000493c>] __invalidate_dcache_range_msr_irq_wt+0xc0/0xd8
+[<c00c59c4>] simple_write_begin+0xf8/0x170
+[<c005d18c>] generic_perform_write+0xa8/0x2ac
+[<c005f1f8>] __generic_file_write_iter+0x1a8/0x478
+[<c005f504>] generic_file_write_iter+0x3c/0x128
+[<c009b0c4>] new_sync_write+0x84/0xcc
+[<c009ba88>] vfs_write+0xe8/0x224
+[<c009c314>] SyS_write+0x4c/0xf4
+[<c03d5200>] xwrite+0x48/0xb8
+[<c03d52a0>] do_copy+0x30/0x1ac
+[<c03d47b4>] write_buffer+0x34/0x60
+[<c03d4810>] flush_buffer+0x30/0xd0
+[<c03e4c70>] gunzip+0x2c0/0x3ac
+[<c03d4c20>] unpack_to_rootfs+0x1b8/0x368
+[<c03d56e8>] populate_rootfs+0x28/0x2d8
+[<c000044c>] do_one_initcall+0xa0/0x24c
+[<c03d2d9c>] kernel_init_freeable+0x150/0x238
+[<c02dedf0>] kernel_init+0x8/0x14c
+[<c0005d78>] ret_from_kernel_thread+0x8/0x20
 
-$ git clone <Linus' tree> next
-$ cd next
-$ git fetch <Next URL> next-xxxxxxxx
-$ git checkout -b Linux-next-xxxxxxxx next-xxxxxxxx
+Detailed logs are available at http://server.roeck-us.net:8010/builders.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+bisect results:
 
---Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+# bad: [7e3619a6de57f0257a2f6480182d2287ee05e314] Add linux-next specific files for 20150107
+# good: [b1940cd21c0f4abdce101253e860feff547291b0] Linux 3.19-rc3
+git bisect start 'HEAD' 'v3.19-rc3'
+# bad: [c48667c5659248ff2b2fbff5cd23c43b5768e81b] Merge remote-tracking branch 'net-next/master'
+git bisect bad c48667c5659248ff2b2fbff5cd23c43b5768e81b
+# bad: [5aa2843082a0ce9b710549bdc7ae8d54140edc70] Merge remote-tracking branch 'pci/next'
+git bisect bad 5aa2843082a0ce9b710549bdc7ae8d54140edc70
+# good: [11339e9e3d575c1486ff57dc49c83b6154918305] Merge remote-tracking branch 'samsung/for-next'
+git bisect good 11339e9e3d575c1486ff57dc49c83b6154918305
+# bad: [50d16e144b253542d89830c0ace8573a67ce4b16] Merge remote-tracking branch 'powerpc-mpe/next'
+git bisect bad 50d16e144b253542d89830c0ace8573a67ce4b16
+# good: [3fda5c0dda2eafe244898809a74831209cdb69b7] Merge remote-tracking branch 'cris/for-next'
+git bisect good 3fda5c0dda2eafe244898809a74831209cdb69b7
+# bad: [8b772494fda25dd998ade5621cc0684a5c897179] Merge remote-tracking branch 'microblaze/next'
+git bisect bad 8b772494fda25dd998ade5621cc0684a5c897179
+# bad: [cd2b00db005541d15ea9fbb474b5e5e98b993d8e] microblaze: Fix variable types to remove W=1 warning
+git bisect bad cd2b00db005541d15ea9fbb474b5e5e98b993d8e
+# good: [8543e6c96762fcc930af5725088c2b9e4865c3aa] microblaze: Use unsigned return type in do_syscall_trace_enter
+git bisect good 8543e6c96762fcc930af5725088c2b9e4865c3aa
+# good: [e76fdb324844cc0367f8c6ea5d13278a81568ccb] microblaze: Use unsigned type for "for" loop because of comparison-kgdb.c
+git bisect good e76fdb324844cc0367f8c6ea5d13278a81568ccb
+# bad: [b343c7d621bf801b502cba812c3dcb4320942b93] microblaze: Use unsigned type for limit comparison in cache.c
+git bisect bad b343c7d621bf801b502cba812c3dcb4320942b93
+# good: [bdb96e3cad21f5973c95f0e6687db4a57eff7c53] microblaze: Use unsigned type for proper comparison in cpuinfo*.c
+git bisect good bdb96e3cad21f5973c95f0e6687db4a57eff7c53
+# first bad commit: [b343c7d621bf801b502cba812c3dcb4320942b93] microblaze: Use unsigned type for limit comparison in cache.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Reverting the offending commit fixes the problem.
 
-iQIcBAEBCAAGBQJUrZx3AAoJEMDTa8Ir7ZwVeFsP/3zYLFnH+qQZWTR/xKhI8WIC
-vyhYJVdKBg1JxUv68+jUtgXgJTmpKs047m/36Yu/8apJLbcbUnv1+h++KnWmq5Sb
-sEwa5LCXtzYPABvGPraK+H8issl5XG8poqFgsSFvkGwHuGprK8leFud80nmSgzZh
-LNTCExF1fqU/miBQKFoh4OZz+RSmGhZ2Z8UJJvSTXOr/svYRzWEUTtY9wkBG8usf
-aHkwXoavaOPsuk3dDfzwFIvSbFJnIttmnQ1DCFfbw448lv5VwpGM+6ais/FEpr9t
-z1UZW5zWdOIEPmliEjnRx4pq+21oQRv7jJIxTP6UAvmTfEs0ba7KbNGbSZJG49zN
-ZCwUECYHPODUTmknymHt7fMakioMzrm84O9be3XuTYwdOQZkFjelp8UPDmzkpW/1
-YohzUfmtvcXSD5DaiRAf1ZOcs0KSdpSkgNwrePXXA5mh4EkMRcWvr0o24qTNIJLv
-jOZfcrS9+pGJF/uDHx0Vw3bSF5k69bs3hnhSXj0hK5yy3vC/21glJ9+74bSkrYaE
-7uT5Tk/U4Ve5Pwl+9yEX3b9OrV+NZhMYyipF767VrvkIWT4xrgWDbVicd9dM4UiN
-mSsvR3mm/lvLfiLUQsdwphM1fBUbPoe58AKqoO7MfX2s2T+DYGeErKN9uG2eZzFa
-qGSdJZ9KM1VVZIDsQsD6
-=xhEN
------END PGP SIGNATURE-----
-
---Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi--
+Guenter
