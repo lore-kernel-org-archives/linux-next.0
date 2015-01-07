@@ -1,102 +1,92 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 7
-Date: Wed, 7 Jan 2015 12:33:14 -0800
-Message-ID: <20150107203314.GA28171@roeck-us.net>
-References: <20150107151618.7cb9d574@canb.auug.org.au>
- <20150107142656.GA5666@roeck-us.net>
- <20150107163310.GZ5280@linux.vnet.ibm.com>
- <20150107173022.GA26631@roeck-us.net>
- <20150107180922.GC5280@linux.vnet.ibm.com>
- <20150107191813.GA28881@roeck-us.net>
- <54AD9062.8080204@de.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Missing next-$date git-tag when pulled-in linux-next.git on top
+ of linus.git
+Date: Thu, 8 Jan 2015 07:52:01 +1100
+Message-ID: <20150108075201.042f9126@canb.auug.org.au>
+References: <CA+icZUVVPe68VGwRcc5ztxGwHi83wHJVeiJMUuBynm2LypoaZA@mail.gmail.com>
+	<20150107212439.7254d389@canb.auug.org.au>
+	<CA+icZUVYu2uaAG-sSf5pf_rzGU+BSBAwu9mhBDrCXZ0a2nw1sA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54AD9062.8080204@de.ibm.com>
+In-Reply-To: <CA+icZUVYu2uaAG-sSf5pf_rzGU+BSBAwu9mhBDrCXZ0a2nw1sA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 07, 2015 at 09:00:34PM +0100, Christian Borntraeger wrote:
-> Am 07.01.2015 um 20:18 schrieb Guenter Roeck:
-> > On Wed, Jan 07, 2015 at 10:09:22AM -0800, Paul E. McKenney wrote:
-> >> On Wed, Jan 07, 2015 at 09:30:22AM -0800, Guenter Roeck wrote:
-> >>> On Wed, Jan 07, 2015 at 08:33:10AM -0800, Paul E. McKenney wrote:
-> >>>> On Wed, Jan 07, 2015 at 06:26:56AM -0800, Guenter Roeck wrote:
-> >>>>> On Wed, Jan 07, 2015 at 03:16:18PM +1100, Stephen Rothwell wrote:
-> >>>>>> Hi all,
-> >>>>>>
-> >>>>>> Changes since 20150106:
-> >>>>>>
-> >>>>>> *crickets*
-> >>>>>>
-> >>>>>> Non-merge commits (relative to Linus' tree): 1350
-> >>>>>>  1543 files changed, 41856 insertions(+), 24250 deletions(-)
-> >>>>>>
-> >>>>>> ----------------------------------------------------------------------------
-> >>>>>>
-> >>>>>
-> >>>>> New build failure for sh:dreamcast_defconfig:
-> >>>>>
-> >>>>> arch/sh/mm/gup.c: In function 'gup_get_pte':
-> >>>>> arch/sh/mm/gup.c:20:2: error: invalid initializer
-> >>>>> make[1]: *** [arch/sh/mm/gup.o] Error 1
-> >>>>>
-> >>>>> bisect log:
-> >>>>>
-> >>>>> # bad: [7e3619a6de57f0257a2f6480182d2287ee05e314] Add linux-next specific files for 20150107
-> >>>>> # good: [b1940cd21c0f4abdce101253e860feff547291b0] Linux 3.19-rc3
-> >>>>> git bisect start 'HEAD' 'v3.19-rc3'
-> >>>>> # good: [c48667c5659248ff2b2fbff5cd23c43b5768e81b] Merge remote-tracking branch 'net-next/master'
-> >>>>> git bisect good c48667c5659248ff2b2fbff5cd23c43b5768e81b
-> >>>>> # good: [b8cf629ce7d554711dd7ab256b00e6110355e1d7] Merge remote-tracking branch 'mmc-uh/next'
-> >>>>> git bisect good b8cf629ce7d554711dd7ab256b00e6110355e1d7
-> >>>>> # good: [cc52ff032bc2d91c78d7cf9aefcfa9e266ace816] Merge remote-tracking branch 'rcu/rcu/next'
-> >>>>> git bisect good cc52ff032bc2d91c78d7cf9aefcfa9e266ace816
-> >>>>> # bad: [9634277bcdab7b9d6a91409dc11d85502aa2e74b] Merge remote-tracking branch 'access_once/linux-next'
-> >>>>> git bisect bad 9634277bcdab7b9d6a91409dc11d85502aa2e74b
-> >>>>> # good: [261379560ee6aa65b4869c94eda0d3d60773aca3] Merge remote-tracking branch 'scsi/for-next'
-> >>>>> git bisect good 261379560ee6aa65b4869c94eda0d3d60773aca3
-> >>>>> # good: [38d45afa56bfca714780e45532760d64cd53b65b] Merge remote-tracking branch 'llvmlinux/for-next'
-> >>>>> git bisect good 38d45afa56bfca714780e45532760d64cd53b65b
-> >>>>> # good: [9afbe1ce2403c7d097bfaafcc5b27950040f7608] Merge remote-tracking branch 'y2038/y2038'
-> >>>>> git bisect good 9afbe1ce2403c7d097bfaafcc5b27950040f7608
-> >>>>> # bad: [a91ed664749cbec0325ef9da7d12619d9bb72e2d] kernel: tighten rules for ACCESS ONCE
-> >>>>> git bisect bad a91ed664749cbec0325ef9da7d12619d9bb72e2d
-> >>>>> # good: [e3865cc4a17e979e6b2f26af026686fae5567096] x86/xen/p2m: Replace ACCESS_ONCE with READ_ONCE
-> >>>>> git bisect good e3865cc4a17e979e6b2f26af026686fae5567096
-> >>>>> # good: [e2579c6f22ee0a43394d603cef6989dca98c5610] mm/gup: Replace ACCESS_ONCE with READ_ONCE
-> >>>>> git bisect good e2579c6f22ee0a43394d603cef6989dca98c5610
-> >>>>> # first bad commit: [a91ed664749cbec0325ef9da7d12619d9bb72e2d] kernel: tighten rules for ACCESS ONCE
-> >>>>>
-> >>>>> Maybe the ACCESS_ONCE in the affected file should be replaced with READ_ONCE ?
-> >>>>
-> >>>> That is my belief.  What happens when you try it?
-> >>>>
-> >>> Build passes, and my qemu tests pass as well. That doesn't mean
-> >>> that the change is correct, of course, since I don't know if the code
-> >>> in question is executed.
-> >>
-> >> Would it be possible to increment a counter at that location, then
-> >> print it out at some convenient point?
-> >>
-> > I made it simpler and just added a call to panic() ... which had no effect,
-> > so the function is not called in my qemu tests. Any idea what I would have
-> > to do to trigger a call ?
-> > 
-> >>> Should I send a patch with the change ?
-> >>
-> >> I believe such a patch is needed.  Testing would be good, but the patch
-> >> is what we were thinking of for this situation.
-> >>
-> > I'll probably send a patch marked "compile-tested only" if I can't find a way
-> > to test the change.
-> 
-> I was going to fix as well, but I can certainly take your patch. Can you send it with proper signed-off-by etc and I will add it to the access_once tree?
-> 
-Done.
+--Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Guenter
+Hi Sedat,
+
+On Wed, 7 Jan 2015 14:47:53 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> On Wed, Jan 7, 2015 at 11:24 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> > Hi Sedat,
+> >
+> > On Wed, 7 Jan 2015 09:24:57 +0100 Sedat Dilek <sedat.dilek@gmail.com> w=
+rote:
+> >>
+> >> My workflow looks like this
+> >>
+> >> # Get mainline Git tree
+> >> $ git clone $LINUS_GIT_URL
+> >>
+> >> # Checkout latest mainline (rc) tag (aka -next's "origin" commit-id)
+> >> $ git checkout -b Linux-v3.19-rc3 v3.19-rc3
+> >>
+> >> # Base to pull in current -next
+> >> $ git checkout -b Linux-next-20150107
+> >>
+> >> # Pull in stuff from next-20150107
+> >> $ git pull git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-ne=
+xt.git
+> >> tags/next-20150107
+> >
+> > Just do
+> >
+> > $ git pull git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-nex=
+t.git master
+> >
+> > That should also fetch the next- tag.
+>=20
+> For current -next this is OK.
+> Sometimes I needed to test against a specific next-version.
+> Any idea?
+
+$ git clone <Linus' tree> next
+$ cd next
+$ git fetch <Next URL> next-xxxxxxxx
+$ git checkout -b Linux-next-xxxxxxxx next-xxxxxxxx
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUrZx3AAoJEMDTa8Ir7ZwVeFsP/3zYLFnH+qQZWTR/xKhI8WIC
+vyhYJVdKBg1JxUv68+jUtgXgJTmpKs047m/36Yu/8apJLbcbUnv1+h++KnWmq5Sb
+sEwa5LCXtzYPABvGPraK+H8issl5XG8poqFgsSFvkGwHuGprK8leFud80nmSgzZh
+LNTCExF1fqU/miBQKFoh4OZz+RSmGhZ2Z8UJJvSTXOr/svYRzWEUTtY9wkBG8usf
+aHkwXoavaOPsuk3dDfzwFIvSbFJnIttmnQ1DCFfbw448lv5VwpGM+6ais/FEpr9t
+z1UZW5zWdOIEPmliEjnRx4pq+21oQRv7jJIxTP6UAvmTfEs0ba7KbNGbSZJG49zN
+ZCwUECYHPODUTmknymHt7fMakioMzrm84O9be3XuTYwdOQZkFjelp8UPDmzkpW/1
+YohzUfmtvcXSD5DaiRAf1ZOcs0KSdpSkgNwrePXXA5mh4EkMRcWvr0o24qTNIJLv
+jOZfcrS9+pGJF/uDHx0Vw3bSF5k69bs3hnhSXj0hK5yy3vC/21glJ9+74bSkrYaE
+7uT5Tk/U4Ve5Pwl+9yEX3b9OrV+NZhMYyipF767VrvkIWT4xrgWDbVicd9dM4UiN
+mSsvR3mm/lvLfiLUQsdwphM1fBUbPoe58AKqoO7MfX2s2T+DYGeErKN9uG2eZzFa
+qGSdJZ9KM1VVZIDsQsD6
+=xhEN
+-----END PGP SIGNATURE-----
+
+--Sig_/5vDmxIEJvhYz0a2s7ZYJ=Fi--
