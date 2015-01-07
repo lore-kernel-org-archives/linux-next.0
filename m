@@ -1,76 +1,95 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 7
-Date: Wed, 7 Jan 2015 09:30:22 -0800
-Message-ID: <20150107173022.GA26631@roeck-us.net>
-References: <20150107151618.7cb9d574@canb.auug.org.au>
- <20150107142656.GA5666@roeck-us.net>
- <20150107163310.GZ5280@linux.vnet.ibm.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: [PATCH next v2] drivers/net/wireless/ath/wil6210/debugfs.c: Use 'uint64_t' instead of 'cycles_t' to avoid warnings
+Date: Wed, 07 Jan 2015 19:51:45 +0200
+Message-ID: <87oaqaqy1a.fsf@kamboji.qca.qualcomm.com>
+References: <549AD6FC.8060706@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150107163310.GZ5280@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>, linux-sh@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <549AD6FC.8060706@gmail.com> (Chen Gang's message of "Wed, 24 Dec
+	2014 23:08:44 +0800")
+Sender: netdev-owner@vger.kernel.org
+To: Chen Gang <gang.chen.5i5j@gmail.com>
+Cc: qca_vkondrat@qca.qualcomm.com, linux-wireless@vger.kernel.org, wil6210@qca.qualcomm.com, netdev@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 07, 2015 at 08:33:10AM -0800, Paul E. McKenney wrote:
-> On Wed, Jan 07, 2015 at 06:26:56AM -0800, Guenter Roeck wrote:
-> > On Wed, Jan 07, 2015 at 03:16:18PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20150106:
-> > > 
-> > > *crickets*
-> > > 
-> > > Non-merge commits (relative to Linus' tree): 1350
-> > >  1543 files changed, 41856 insertions(+), 24250 deletions(-)
-> > > 
-> > > ----------------------------------------------------------------------------
-> > > 
-> > 
-> > New build failure for sh:dreamcast_defconfig:
-> > 
-> > arch/sh/mm/gup.c: In function 'gup_get_pte':
-> > arch/sh/mm/gup.c:20:2: error: invalid initializer
-> > make[1]: *** [arch/sh/mm/gup.o] Error 1
-> > 
-> > bisect log:
-> > 
-> > # bad: [7e3619a6de57f0257a2f6480182d2287ee05e314] Add linux-next specific files for 20150107
-> > # good: [b1940cd21c0f4abdce101253e860feff547291b0] Linux 3.19-rc3
-> > git bisect start 'HEAD' 'v3.19-rc3'
-> > # good: [c48667c5659248ff2b2fbff5cd23c43b5768e81b] Merge remote-tracking branch 'net-next/master'
-> > git bisect good c48667c5659248ff2b2fbff5cd23c43b5768e81b
-> > # good: [b8cf629ce7d554711dd7ab256b00e6110355e1d7] Merge remote-tracking branch 'mmc-uh/next'
-> > git bisect good b8cf629ce7d554711dd7ab256b00e6110355e1d7
-> > # good: [cc52ff032bc2d91c78d7cf9aefcfa9e266ace816] Merge remote-tracking branch 'rcu/rcu/next'
-> > git bisect good cc52ff032bc2d91c78d7cf9aefcfa9e266ace816
-> > # bad: [9634277bcdab7b9d6a91409dc11d85502aa2e74b] Merge remote-tracking branch 'access_once/linux-next'
-> > git bisect bad 9634277bcdab7b9d6a91409dc11d85502aa2e74b
-> > # good: [261379560ee6aa65b4869c94eda0d3d60773aca3] Merge remote-tracking branch 'scsi/for-next'
-> > git bisect good 261379560ee6aa65b4869c94eda0d3d60773aca3
-> > # good: [38d45afa56bfca714780e45532760d64cd53b65b] Merge remote-tracking branch 'llvmlinux/for-next'
-> > git bisect good 38d45afa56bfca714780e45532760d64cd53b65b
-> > # good: [9afbe1ce2403c7d097bfaafcc5b27950040f7608] Merge remote-tracking branch 'y2038/y2038'
-> > git bisect good 9afbe1ce2403c7d097bfaafcc5b27950040f7608
-> > # bad: [a91ed664749cbec0325ef9da7d12619d9bb72e2d] kernel: tighten rules for ACCESS ONCE
-> > git bisect bad a91ed664749cbec0325ef9da7d12619d9bb72e2d
-> > # good: [e3865cc4a17e979e6b2f26af026686fae5567096] x86/xen/p2m: Replace ACCESS_ONCE with READ_ONCE
-> > git bisect good e3865cc4a17e979e6b2f26af026686fae5567096
-> > # good: [e2579c6f22ee0a43394d603cef6989dca98c5610] mm/gup: Replace ACCESS_ONCE with READ_ONCE
-> > git bisect good e2579c6f22ee0a43394d603cef6989dca98c5610
-> > # first bad commit: [a91ed664749cbec0325ef9da7d12619d9bb72e2d] kernel: tighten rules for ACCESS ONCE
-> > 
-> > Maybe the ACCESS_ONCE in the affected file should be replaced with READ_ONCE ?
-> 
-> That is my belief.  What happens when you try it?
-> 
-Build passes, and my qemu tests pass as well. That doesn't mean
-that the change is correct, of course, since I don't know if the code
-in question is executed.
+Chen Gang <gang.chen.5i5j@gmail.com> writes:
 
-Should I send a patch with the change ?
+> do_div() checks the type strictly. 'cycles_t' may be 32-bit under qui=
+te
+> a few architectures (parisc, arm, avr32 ...). So use 'uint64_t' inste=
+ad
+> of, the related warning (with allmodconfig under parisc):
+>
+>     CC [M]  drivers/net/wireless/ath/wil6210/debugfs.o
+>   In file included from arch/parisc/include/generated/asm/div64.h:1:0=
+,
+>                    from include/linux/kernel.h:124,
+>                    from include/linux/list.h:8,
+>                    from include/linux/module.h:9,
+>                    from drivers/net/wireless/ath/wil6210/debugfs.c:17=
+:
+>   drivers/net/wireless/ath/wil6210/debugfs.c: In function =E2=80=98wi=
+l_vring_debugfs_show=E2=80=99:
+>   include/asm-generic/div64.h:43:28: warning: comparison of distinct =
+pointer types lacks a cast
+>     (void)(((typeof((n)) *)0) =3D=3D ((uint64_t *)0)); \
+>                               ^
+>   drivers/net/wireless/ath/wil6210/debugfs.c:107:4: note: in expansio=
+n of macro =E2=80=98do_div=E2=80=99
+>       do_div(idle, total);
+>       ^
+>   In file included from include/uapi/linux/stddef.h:1:0,
+>                    from include/linux/stddef.h:4,
+>                    from ./include/uapi/linux/posix_types.h:4,
+>                    from include/uapi/linux/types.h:13,
+>                    from include/linux/types.h:5,
+>                    from include/linux/list.h:4,
+>                    from include/linux/module.h:9,
+>                    from drivers/net/wireless/ath/wil6210/debugfs.c:17=
+:
+>   include/asm-generic/div64.h:44:18: warning: right shift count >=3D =
+width of type [-Wshift-count-overflow]
+>     if (likely(((n) >> 32) =3D=3D 0)) {   \
+>                     ^
+>   include/linux/compiler.h:159:40: note: in definition of macro =E2=80=
+=98likely=E2=80=99
+>    # define likely(x) __builtin_expect(!!(x), 1)
+>                                           ^
+>   drivers/net/wireless/ath/wil6210/debugfs.c:107:4: note: in expansio=
+n of macro =E2=80=98do_div=E2=80=99
+>       do_div(idle, total);
+>       ^
+>   In file included from arch/parisc/include/generated/asm/div64.h:1:0=
+,
+>                    from include/linux/kernel.h:124,
+>                    from include/linux/list.h:8,
+>                    from include/linux/module.h:9,
+>                    from drivers/net/wireless/ath/wil6210/debugfs.c:17=
+:
+>   include/asm-generic/div64.h:48:22: warning: passing argument 1 of =E2=
+=80=98__div64_32=E2=80=99 from incompatible pointer type [-Wincompatibl=
+e-pointer-types]
+>      __rem =3D __div64_32(&(n), __base); \
+>                         ^
+>   drivers/net/wireless/ath/wil6210/debugfs.c:107:4: note: in expansio=
+n of macro =E2=80=98do_div=E2=80=99
+>       do_div(idle, total);
+>       ^
+>   include/asm-generic/div64.h:35:17: note: expected =E2=80=98uint64_t=
+ * {aka long long unsigned int *}=E2=80=99 but argument is of type =E2=80=
+=98cycles_t * {aka long unsigned int *}=E2=80=99
+>    extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
+>                    ^
+>
+> Signed-off-by: Chen Gang <gang.chen.5i5j@gmail.com>
 
-Guenter
+Thanks, applied to wireless-drivers-next.git. But I simplified the
+title:
+
+c20e7789be9f wil6210: use 'uint64_t' instead of 'cycles_t' to avoid war=
+nings
+
+--=20
+Kalle Valo
