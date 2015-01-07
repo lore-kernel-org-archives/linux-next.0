@@ -1,55 +1,90 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Jiri Kosina <jkosina@suse.cz>
 Subject: Re: livepatching tree for linux-next
-Date: Wed, 7 Jan 2015 15:30:06 -0800
-Message-ID: <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org>
-References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz>
-	<20141223094607.GA16445@infradead.org>
-	<20141223151056.GA4789@treble.redhat.com>
-	<20141226155613.36dd95b9@canb.auug.org.au>
-	<20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
-	<alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz>
+Date: Thu, 8 Jan 2015 00:49:49 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz>
+References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz> <20141223094607.GA16445@infradead.org> <20141223151056.GA4789@treble.redhat.com> <20141226155613.36dd95b9@canb.auug.org.au> <20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
+ <alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz> <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz>
+In-Reply-To: <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 8 Jan 2015 00:01:02 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrote:
+On Wed, 7 Jan 2015, Andrew Morton wrote:
 
-> On Wed, 7 Jan 2015, Andrew Morton wrote:
-> 
-> > > OK, I have added this from today
-> > 
-> > My x86_64 allmodconfig broke.
-> > 
-> > In file included from include/linux/livepatch.h:29,
-> >                  from kernel/livepatch/core.c:30:
-> > ./arch/x86/include/asm/livepatch.h:29:2: error: #error Your compiler must support -mfentry for live patching to work
-> 
-> [ adding Steven and Masami to CC, as this in some sense is related in 
->   both to ftrace regs caller, and to IPMODIFY users in general ]
-> 
-> Well, if your gcc is too old (which is a fact detemined during build time, 
-> so there is no way to express this in Kconfig language in form of 
-> dependencies), we have to introduce build-time failure, as there is no way 
-> for this to work on compilers that don't support fentry on x86_64.
-> 
-> The only remaining option is to let the code build, pretend that 
-> everything is working, but do something like
-> 
-> #ifndef CC_USING_FENTRY
-> 	printk("The compiler you used to compile your kernel was ancient "
-> 		"there is no way for you to make use of this feature\n");
-> 	return -EINVAL;
-> #endif
-> 
-> or so ... which I personally detest even more.
+> Please find a way to fix it.  Copying CONFIG_CC_STACKPROTECTOR is one way.
 
-um, what's so special about this patchset that it gets to be the first
-code in the history of the kernel which breaks allmodconfig?
+Hmm ... is that actually really a good example? 
 
-Please find a way to fix it.  Copying CONFIG_CC_STACKPROTECTOR is one way.
+I think it will warn (explicitly from the top-level Makefile so that you 
+are aware why the things that will follow are happening), and then let gcc 
+fail the build due to unsupported option anyway ... because it will 
+(deliberately, so that the build fails) keep the 'stackp-flag' set even 
+for unsupported compiler options. No?
+
+If we really don't want to be causing this though, how about the below 
+instead?
+
+
+
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH] livepatching: handle ancient compilers with more grace
+
+We are aborting a build in case when gcc doesn't support fentry on x86_64 
+(regs->ip modification can't really reliably work with mcount).
+
+This however breaks allmodconfig for people with older gccs that don't 
+support -mfentry.
+
+Turn the build-time failure into runtime failure, resulting in the whole 
+infrastructure not being initialized if CC_USING_FENTRY is unset.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+---
+ arch/x86/include/asm/livepatch.h | 6 +++++-
+ kernel/livepatch/core.c          | 6 ++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/livepatch.h b/arch/x86/include/asm/livepatch.h
+index b5608d7..fa7f448 100644
+--- a/arch/x86/include/asm/livepatch.h
++++ b/arch/x86/include/asm/livepatch.h
+@@ -25,9 +25,13 @@
+ #include <linux/ftrace.h>
+ 
+ #ifdef CONFIG_LIVE_PATCHING
++static inline int klp_check_compiler_support(void)
++{
+ #ifndef CC_USING_FENTRY
+-#error Your compiler must support -mfentry for live patching to work
++	        return 1;
+ #endif
++	        return 0;
++}
+ extern int klp_write_module_reloc(struct module *mod, unsigned long type,
+ 				  unsigned long loc, unsigned long value);
+ 
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index 6f63879..ce42d3b 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -911,6 +911,12 @@ static int klp_init(void)
+ {
+ 	int ret;
+ 
++	ret = klp_check_compiler_support();
++	if (ret) {
++		pr_info("Your compiler is too old; turning off.\n");
++		return -EINVAL;
++	}
++
+ 	ret = register_module_notifier(&klp_module_nb);
+ 	if (ret)
+ 		return ret;
+
+-- 
+Jiri Kosina
+SUSE Labs
