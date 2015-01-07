@@ -1,53 +1,64 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: Missing next-$date git-tag when pulled-in linux-next.git on top
- of linus.git
-Date: Wed, 7 Jan 2015 14:47:53 +0100
-Message-ID: <CA+icZUVYu2uaAG-sSf5pf_rzGU+BSBAwu9mhBDrCXZ0a2nw1sA@mail.gmail.com>
-References: <CA+icZUVVPe68VGwRcc5ztxGwHi83wHJVeiJMUuBynm2LypoaZA@mail.gmail.com>
-	<20150107212439.7254d389@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 7
+Date: Wed, 7 Jan 2015 06:26:56 -0800
+Message-ID: <20150107142656.GA5666@roeck-us.net>
+References: <20150107151618.7cb9d574@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:63227 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753310AbbAGNr4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2015 08:47:56 -0500
-In-Reply-To: <20150107212439.7254d389@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150107151618.7cb9d574@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-sh@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 7, 2015 at 11:24 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Sedat,
->
-> On Wed, 7 Jan 2015 09:24:57 +0100 Sedat Dilek <sedat.dilek@gmail.com> wrote:
->>
->> My workflow looks like this
->>
->> # Get mainline Git tree
->> $ git clone $LINUS_GIT_URL
->>
->> # Checkout latest mainline (rc) tag (aka -next's "origin" commit-id)
->> $ git checkout -b Linux-v3.19-rc3 v3.19-rc3
->>
->> # Base to pull in current -next
->> $ git checkout -b Linux-next-20150107
->>
->> # Pull in stuff from next-20150107
->> $ git pull git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> tags/next-20150107
->
-> Just do
->
-> $ git pull git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
->
-> That should also fetch the next- tag.
->
+On Wed, Jan 07, 2015 at 03:16:18PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20150106:
+> 
+> *crickets*
+> 
+> Non-merge commits (relative to Linus' tree): 1350
+>  1543 files changed, 41856 insertions(+), 24250 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
 
-For current -next this is OK.
-Sometimes I needed to test against a specific next-version.
-Any idea?
+New build failure for sh:dreamcast_defconfig:
 
-- Sedat -
+arch/sh/mm/gup.c: In function 'gup_get_pte':
+arch/sh/mm/gup.c:20:2: error: invalid initializer
+make[1]: *** [arch/sh/mm/gup.o] Error 1
+
+bisect log:
+
+# bad: [7e3619a6de57f0257a2f6480182d2287ee05e314] Add linux-next specific files for 20150107
+# good: [b1940cd21c0f4abdce101253e860feff547291b0] Linux 3.19-rc3
+git bisect start 'HEAD' 'v3.19-rc3'
+# good: [c48667c5659248ff2b2fbff5cd23c43b5768e81b] Merge remote-tracking branch 'net-next/master'
+git bisect good c48667c5659248ff2b2fbff5cd23c43b5768e81b
+# good: [b8cf629ce7d554711dd7ab256b00e6110355e1d7] Merge remote-tracking branch 'mmc-uh/next'
+git bisect good b8cf629ce7d554711dd7ab256b00e6110355e1d7
+# good: [cc52ff032bc2d91c78d7cf9aefcfa9e266ace816] Merge remote-tracking branch 'rcu/rcu/next'
+git bisect good cc52ff032bc2d91c78d7cf9aefcfa9e266ace816
+# bad: [9634277bcdab7b9d6a91409dc11d85502aa2e74b] Merge remote-tracking branch 'access_once/linux-next'
+git bisect bad 9634277bcdab7b9d6a91409dc11d85502aa2e74b
+# good: [261379560ee6aa65b4869c94eda0d3d60773aca3] Merge remote-tracking branch 'scsi/for-next'
+git bisect good 261379560ee6aa65b4869c94eda0d3d60773aca3
+# good: [38d45afa56bfca714780e45532760d64cd53b65b] Merge remote-tracking branch 'llvmlinux/for-next'
+git bisect good 38d45afa56bfca714780e45532760d64cd53b65b
+# good: [9afbe1ce2403c7d097bfaafcc5b27950040f7608] Merge remote-tracking branch 'y2038/y2038'
+git bisect good 9afbe1ce2403c7d097bfaafcc5b27950040f7608
+# bad: [a91ed664749cbec0325ef9da7d12619d9bb72e2d] kernel: tighten rules for ACCESS ONCE
+git bisect bad a91ed664749cbec0325ef9da7d12619d9bb72e2d
+# good: [e3865cc4a17e979e6b2f26af026686fae5567096] x86/xen/p2m: Replace ACCESS_ONCE with READ_ONCE
+git bisect good e3865cc4a17e979e6b2f26af026686fae5567096
+# good: [e2579c6f22ee0a43394d603cef6989dca98c5610] mm/gup: Replace ACCESS_ONCE with READ_ONCE
+git bisect good e2579c6f22ee0a43394d603cef6989dca98c5610
+# first bad commit: [a91ed664749cbec0325ef9da7d12619d9bb72e2d] kernel: tighten rules for ACCESS ONCE
+
+Maybe the ACCESS_ONCE in the affected file should be replaced with READ_ONCE ?
+
+Guenter
