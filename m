@@ -1,62 +1,65 @@
-From: Jiri Kosina <jkosina@suse.cz>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: livepatching tree for linux-next
-Date: Thu, 8 Jan 2015 01:11:03 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz>
-References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz> <20141223094607.GA16445@infradead.org> <20141223151056.GA4789@treble.redhat.com> <20141226155613.36dd95b9@canb.auug.org.au> <20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
- <alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz> <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org> <alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz> <20150107155701.4839545f63701412003edd88@linux-foundation.org>
+Date: Wed, 7 Jan 2015 16:33:45 -0800
+Message-ID: <20150107163345.ae3ed8f2e4501e258ff01512@linux-foundation.org>
+References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz>
+	<20141223094607.GA16445@infradead.org>
+	<20141223151056.GA4789@treble.redhat.com>
+	<20141226155613.36dd95b9@canb.auug.org.au>
+	<20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
+	<alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz>
+	<20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org>
+	<alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz>
+	<20150107155701.4839545f63701412003edd88@linux-foundation.org>
+	<alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:57397 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751914AbbAHALG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Jan 2015 19:11:06 -0500
-In-Reply-To: <20150107155701.4839545f63701412003edd88@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 7 Jan 2015, Andrew Morton wrote:
+On Thu, 8 Jan 2015 01:11:03 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrote:
 
-> > --- a/kernel/livepatch/core.c
-> > +++ b/kernel/livepatch/core.c
-> > @@ -911,6 +911,12 @@ static int klp_init(void)
-> >  {
-> >  	int ret;
-> >  
-> > +	ret = klp_check_compiler_support();
-> > +	if (ret) {
-> > +		pr_info("Your compiler is too old; turning off.\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
+> On Wed, 7 Jan 2015, Andrew Morton wrote:
 > 
-> Looks reasonable.  
-
-Thanks. Can I treat this as your Reported-and-tested-by .. ?
-
-> It's a shame we've never figured out a way to do this at Kconfig-time.
-
-That's something that has been on my TODO list for very long time (this is 
-not the first time I've been biten by that), but unfortunately rather low. 
-I will talk to Michal Marek to see whether he doesn't have any idea how to 
-implement this in an elegant way ... but let's keep that separate from 
-this thread.
-
-In any case, Masami, I really think you would like to do something like 
-that for IPMODIFY as well ... or are you deliberately defering the 
-responsibility to handle the possible mcount fallout to the ftrace_ops 
-owner?
-
-> That second #error doing in livepatch.h is a bit odd.  It errors out if 
-> anyone includes livepatch.h when CONFIG_LIVE_PATCHING=n.  Methinks it 
-> would be saner to change it to
+> > > --- a/kernel/livepatch/core.c
+> > > +++ b/kernel/livepatch/core.c
+> > > @@ -911,6 +911,12 @@ static int klp_init(void)
+> > >  {
+> > >  	int ret;
+> > >  
+> > > +	ret = klp_check_compiler_support();
+> > > +	if (ret) {
+> > > +		pr_info("Your compiler is too old; turning off.\n");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > 
+> > Looks reasonable.  
 > 
-> #error include linux/livepatch.h, not asm/livepatch.h
+> Thanks. Can I treat this as your Reported-and-tested-by .. ?
 
-I guess that's a nice cleanup. Noted, thanks.
+I compile tested it.  Then I got bored trying to hunt down all the
+Kconfig things I needed to turn on to runtime test it ;)
 
--- 
-Jiri Kosina
-SUSE Labs
+btw, I suggest using HAVE_LIVE_PATCHING instead of
+ARCH_HAVE_LIVE_PATCHING.  because this:
+
+akpm3:/usr/src/25> grep " HAVE_" arch/x86/Kconfig | wc -l
+67
+akpm3:/usr/src/25> grep " ARCH_HAVE_" arch/x86/Kconfig | wc -l  
+3
+akpm3:/usr/src/25> grep " ARCH_HAS_" arch/x86/Kconfig | wc -l   
+7
+akpm3:/usr/src/25> grep " HAVE_ARCH" arch/x86/Kconfig | wc -l         
+8
+akpm3:/usr/src/25> grep " ARCH_USE" arch/x86/Kconfig | wc -l     
+4
+akpm3:/usr/src/25> grep " ARCH_WANT" arch/x86/Kconfig | wc -l   
+6
+
+makes me cry.
