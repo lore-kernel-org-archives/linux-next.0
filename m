@@ -1,79 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with the
- usb.current tree
-Date: Tue, 13 Jan 2015 15:06:21 +1100
-Message-ID: <20150113150621.67d395ce@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JuHi1Gn_ADuhPYK4l/pWOrN"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39067 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750957AbbAMEG2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jan 2015 23:06:28 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Dan Carpenter <dan.carpenter@oracle.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] next: drm/atomic: Use copy_from_user to copy 64 bit data from user space
+Date: Mon, 12 Jan 2015 21:12:17 -0800
+Message-ID: <1421125937-27394-1-git-send-email-linux@roeck-us.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Rob Clark <robdclark@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/JuHi1Gn_ADuhPYK4l/pWOrN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Copying 64 bit data from user space using get_user is not supported
+on all architectures, and may result in the following build error.
 
-Hi Felipe,
+ERROR: "__get_user_bad" [drivers/gpu/drm/drm.ko] undefined!
 
-Today's linux-next merge of the usb-gadget tree got a conflict in
-drivers/usb/gadget/udc/bdc/bdc_ep.c between commit f26d29e34e20 ("usb:
-gadget: udc: avoid dereference before NULL check in ep_queue") from the
-usb.current tree and commit d71b0d7764a7 ("usb: gadget: udc: remove
-bogus NULL check") from the usb-gadget tree.
+Avoid the problem by using copy_from_user.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Fixes: d34f20d6e2f2 ("drm: Atomic modeset ioctl")
+Cc: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+Compile tested only.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+ drivers/gpu/drm/drm_atomic.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --cc drivers/usb/gadget/udc/bdc/bdc_ep.c
-index d4fe8d769bd6,fdc0e9fc39d0..000000000000
---- a/drivers/usb/gadget/udc/bdc/bdc_ep.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_ep.c
-@@@ -718,11 -718,10 +718,11 @@@ static int ep_queue(struct bdc_ep *ep,=20
-  	struct bdc *bdc;
-  	int ret =3D 0;
- =20
-- 	if (!req || !ep || !ep->usb_ep.desc)
- -	bdc =3D ep->bdc;
-+ 	if (!req || !ep->usb_ep.desc)
-  		return -EINVAL;
- =20
- +	bdc =3D ep->bdc;
- +
-  	req->usb_req.actual =3D 0;
-  	req->usb_req.status =3D -EINPROGRESS;
-  	req->epnum =3D ep->ep_num;
-
---Sig_/JuHi1Gn_ADuhPYK4l/pWOrN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUtJnBAAoJEMDTa8Ir7ZwVNB0P/i/nYQEPR3Ap6aVCh0loaI3t
-HfuwOhNaQz07nBNcq29d95Tw+ydJ334apNQznLLCPomtG0p0gOQSRf/jdTGIvs3q
-cSCIRkneiYPYeBF+K25yj7ixMCM+g+Q7KfD3YDw0ZVGQc5vggzkK7qYVV5Zl3x1p
-ER9PKqSOdV/gauYCnrDZiz7H3Hyqg5Qn0ceoOfb/VXerYEYehEE3CVAo6tRhu02z
-MyUwYNxOG8eNtLVJB4oaVHtbZTxXFvd2oCloVB/wBnbnxE6WkgAHGzlGc6W/IqHX
-T5s+PZLelMSWMA0WZoRztCaCJx8DeA+AZy7bgaS/hC0geQSB8hc3+Gk9rv+HgC5w
-1vRmPrtPu3rVi6thEZTwhTnJu1IGg7n/SPEO3AyRfVqHFLga+TvqmlKJOWLOvGUM
-TtALD/0xlnZUsuHshpviTQYZXaiBoctbVGJ02IRiu9b8gOci1qieUwqLy06jqitj
-sgqwQpx+dwVCE+TDYIaH66p1zCXXeWmpptrj/G1/3JtWpSvzET8Z1hmyzfPttZdC
-IbLB949W1rbrilrLd9xOKsCN5/yXbYTPlmFNDVZuL6mDdonHPN/g1Nt/K1IG6INg
-0rUJEkpKu7vphzrK5aRHShWAeCYrZesTJsp0NtL+7hO1tynztai8V2P+/nkGn9x1
-ZjjhQvBZEhO2CKuYu4zL
-=jihR
------END PGP SIGNATURE-----
-
---Sig_/JuHi1Gn_ADuhPYK4l/pWOrN--
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 1e38dfc..af3f3df 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1259,7 +1259,9 @@ retry:
+ 				goto fail;
+ 			}
+ 
+-			if (get_user(prop_value, prop_values_ptr + copied_props)) {
++			if (copy_from_user(&prop_value,
++					   prop_values_ptr + copied_props,
++					   sizeof(prop_value))) {
+ 				ret = -EFAULT;
+ 				goto fail;
+ 			}
+-- 
+2.1.0
