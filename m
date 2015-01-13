@@ -1,57 +1,97 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: Tree for Jan 13 (arm build failure)
-Date: Tue, 13 Jan 2015 13:22:44 -0800
-Message-ID: <CAOesGMgak9F4YG49dvZMNUdSgcEKJ8ZmuWTYwGakqpW6_v36kA@mail.gmail.com>
-References: <20150113174128.7c108b18@canb.auug.org.au>
-	<20150113212100.GA26229@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150113212100.GA26229@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <linux@arm.linux.org.uk>, Peter Robinson <pbrobinson@gmail.com>
-List-Id: linux-next.vger.kernel.org
+From: Bilel DRIRA <bilel.dr@gmail.com>
+Subject: [PATCH v2 ] staging: ft1000: fix else style error
+Date: Tue, 13 Jan 2015 22:34:00 +0100
+Message-ID: <1421184840-24108-1-git-send-email-bilel.dr@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:57229 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751260AbbAMVhS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Jan 2015 16:37:18 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: marek.belisko@gmail.com, gregkh@linuxfoundation.org, joe@perches.com, tapaswenipathak@gmail.com, gdonald@gmail.com, aybuke.147@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Bilel DRIRA <bilel.dr@gmail.com>
 
-Hi,
+This patch fix the checkpatch.pl error:
 
-On Tue, Jan 13, 2015 at 1:21 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Tue, Jan 13, 2015 at 05:41:28PM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20150112:
->>
->> The imx-mxs tree gained a conflict against the arm-soc tree.
->>
->> The mvebu tree gained a conflict against the arm-soc tree.
->>
->> The net-next tree lost its build failure.
->>
->> The usb-gadget tree gained conflicts against the usb.current tree.
->>
->> The pinctrl tree lost its build failure.
->>
->> The akpm-current tree gained a conflict against the char-misc tree.
->>
->> Non-merge commits (relative to Linus' tree): 2710
->>  2658 files changed, 84945 insertions(+), 45898 deletions(-)
->>
->
-> New arm build failure.
->
-> Building arm:imx_v6_v7_defconfig ... failed
-> --------------
-> Error log:
-> make[1]: *** No rule to make target 'arch/arm/boot/dts/dtb-', needed by
-> '__build'.  Stop.
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [dtbs] Error 2
->
-> Bisect points to commit 6f1650f15bc ("ARM: dts: Only build dtb if associated
-> Arch and/or SoC is enabled").
+	ERROR: else should follow close brace '}'
 
-Yep, it was fixed in arm-soc shortly after sfr had fetched it, and
-should be fine in today's -next.
+Signed-off-by: Bilel DRIRA <bilel.dr@gmail.com>
+---
+v2: remove braces instead of just putting else after close brace. (suggested by Joe Perches).
 
+ drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c |   29 ++++++++--------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
 
--Olof
+diff --git a/drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c b/drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c
+index e9a37ee..4b830ac 100644
+--- a/drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c
++++ b/drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c
+@@ -570,12 +570,10 @@ static void ft1000_hbchk(u_long data)
+ 		pr_debug("hi_ho value = 0x%x\n", tempword);
+ 		/* Let's perform another check if ho is not detected */
+ 		if (tempword != ho) {
+-			if (info->AsicID == ELECTRABUZZ_ID) {
++			if (info->AsicID == ELECTRABUZZ_ID)
+ 				tempword = ft1000_read_dpram(dev, FT1000_HI_HO);
+-			}
+-			else {
++			else
+ 				tempword = ntohs(ft1000_read_dpram_mag_16(dev, FT1000_MAG_HI_HO, FT1000_MAG_HI_HO_INDX));
+-			}
+ 		}
+ 		if (tempword != ho) {
+ 			pr_info("heartbeat failed - no ho detected\n");
+@@ -686,20 +684,15 @@ static void ft1000_hbchk(u_long data)
+ 		}
+ 		/* Let's write hi again if fail */
+ 		if (tempword != hi) {
+-			if (info->AsicID == ELECTRABUZZ_ID) {
++			if (info->AsicID == ELECTRABUZZ_ID)
+ 				ft1000_write_dpram(dev, FT1000_HI_HO, hi);
+-			}
+-			else {
++			else
+ 				ft1000_write_dpram_mag_16(dev, FT1000_MAG_HI_HO, hi_mag, FT1000_MAG_HI_HO_INDX);
+-			}
+ 
+-			if (info->AsicID == ELECTRABUZZ_ID) {
++			if (info->AsicID == ELECTRABUZZ_ID)
+ 				tempword = ft1000_read_dpram(dev, FT1000_HI_HO);
+-			}
+-			else {
++			else
+ 				tempword = ntohs(ft1000_read_dpram_mag_16(dev, FT1000_MAG_HI_HO, FT1000_MAG_HI_HO_INDX));
+-			}
+-
+ 		}
+ 
+ 		if (tempword != hi) {
+@@ -957,12 +950,11 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
+ 		u16 wrd;
+ 	} convert;
+ 
+-	if (info->AsicID == ELECTRABUZZ_ID) {
++	if (info->AsicID == ELECTRABUZZ_ID)
+ 		tempword = FT1000_DPRAM_RX_BASE+2;
+-	}
+-	else {
++	else
+ 		tempword = FT1000_DPRAM_MAG_RX_BASE;
+-	}
++
+ 	if (ft1000_receive_cmd(dev, &cmdbuffer[0], MAX_CMD_SQSIZE, &tempword)) {
+ 
+ 		/* Get the message type which is total_len + PSEUDO header + msgtype + message body */
+@@ -1039,8 +1031,7 @@ static void ft1000_proc_drvmsg(struct net_device *dev)
+ 						info->ConTm = 0;
+ 					}
+ 				}
+-			}
+-			else {
++			} else {
+ 				pr_debug("Media is down\n");
+ 				if (info->mediastate == 1) {
+ 					info->mediastate = 0;
+-- 
+1.7.9.5
