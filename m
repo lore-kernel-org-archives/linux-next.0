@@ -1,77 +1,84 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 12 (build failures: m68k, ppc)
-Date: Mon, 12 Jan 2015 09:59:20 -0800
-Message-ID: <20150112175920.GC19868@roeck-us.net>
-References: <20150112180322.003b44f2@canb.auug.org.au>
- <20150112162438.GA18723@roeck-us.net>
- <CAMuHMdUYEe=L=H75AOYVjinRSW=okRJNrNJVy-bY1gshdVrO7Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
+Date: Tue, 13 Jan 2015 11:16:36 +1100
+Message-ID: <20150113111636.7bc5785c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JTIG4GBsZouOYHG=NB1Bity"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:60774 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbbALR7b (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jan 2015 12:59:31 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YAjH1-0000hM-On
-	for linux-next@vger.kernel.org; Mon, 12 Jan 2015 17:59:32 +0000
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUYEe=L=H75AOYVjinRSW=okRJNrNJVy-bY1gshdVrO7Q@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:34808 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751190AbbAMAQp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jan 2015 19:16:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>
+To: Shawn Guo <shawn.guo@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anson Huang <b20788@freescale.com>, Peter Robinson <pbrobinson@gmail.com>
 
-On Mon, Jan 12, 2015 at 05:27:08PM +0100, Geert Uytterhoeven wrote:
-> On Mon, Jan 12, 2015 at 5:24 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> > On Mon, Jan 12, 2015 at 06:03:22PM +1100, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> Changes since 20150109:
-> >>
-> >> The usb-gadget-fixes tree gained a conflict against the usb.current tree.
-> >>
-> >> The net-next tree gained a build failure for which I reverted a commit.
-> >>
-> >> The pinctrl tree gained a build failure so I used the version from
-> >> next-20150109.
-> >>
-> >> The akpm tree lost a few patches that turned up elsewhere.
-> >>
-> >> Non-merge commits (relative to Linus' tree): 2202
-> >>  2272 files changed, 69868 insertions(+), 38441 deletions(-)
-> >>
-> >
-> > Build failures, seen since next-20150109:
-> >         m68k:allmodconfig
-> >         powerpc:ppc6xx_defconfig
-> >
-> > Due to:
-> >         ERROR: "__get_user_bad" [drivers/gpu/drm/drm.ko] undefined!
-> >         make[1]: *** [__modpost] Error 1
-> >
-> > Caused by commit d34f20d6e2f (drm: Atomic modeset ioctl).
-> 
-> Yeah, it needs a get_user() that supports 64-bit data.
-> 
-Hi Geert,
+--Sig_/JTIG4GBsZouOYHG=NB1Bity
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I assume you mean m68k, where 64 bit support for get_user has been disabled.
+Hi Shawn,
 
-The problem on powerpc is different though: __get_user_nocheck()
-and __get_user_check() use
-	unsigned long __gu_val;
-followed by
-	__get_user_size(__gu_val, __gu_addr, (size), __gu_err);
+Today's linux-next merge of the imx-mxs tree got a conflict in
+arch/arm/boot/dts/Makefile between commit 6f1650f15bc4 ("ARM: dts: Only
+build dtb if associated Arch and/or SoC is enabled") from the arm-soc
+tree and commit 99fc5ba0bfb6 ("ARM: dts: imx6sx: add i.mx6sx sabreauto
+board support") from the imx-mxs tree.
 
-__get_user_size() fails in
-	if (size > sizeof(x))
-		 (x) = __get_user_bad();
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
-Presumably "unsigned long" is 32 bit on 32 bit powerpc, not 64 bit.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Overall, the explicit 64-bit use of get_user() seems to be quite unusual.
+diff --cc arch/arm/boot/dts/Makefile
+index 1c1cefc434a2,1236b8c0eb60..000000000000
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@@ -295,15 -265,12 +296,16 @@@ dtb-$(CONFIG_SOC_IMX6Q) +=3D=20
+  	imx6q-tx6q-1010-comtft.dtb \
+  	imx6q-tx6q-1020.dtb \
+  	imx6q-tx6q-1020-comtft.dtb \
+ -	imx6q-tx6q-1110.dtb \
+ -	imx6sl-evk.dtb \
+ +	imx6q-tx6q-1110.dtb
+ +dtb-$(CONFIG_SOC_IMX6SL) +=3D \
+ +	imx6sl-evk.dtb
+ +dtb-$(CONFIG_SOC_IMX6SX) +=3D \
++ 	imx6sx-sabreauto.dtb \
+  	imx6sx-sdb.dtb \
+ +dtb-$(CONFIG_SOC_LS1021A) +=3D \
+  	ls1021a-qds.dtb \
+ -	ls1021a-twr.dtb \
+ +	ls1021a-twr.dtb
+ +dtb-$(CONFIG_SOC_VF610) +=3D \
+  	vf500-colibri-eval-v3.dtb \
+  	vf610-colibri-eval-v3.dtb \
+  	vf610-cosmic.dtb \
 
-Thanks,
-Guenter
+--Sig_/JTIG4GBsZouOYHG=NB1Bity
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUtGPqAAoJEMDTa8Ir7ZwV92UQAIkZRnn9Zp1Cjv67UtbTVazN
+UpgCa5DZAJmhebzGPcbk9B5srEyvZyIWb0tWHrYluSyJ31BdJDP1amwXDKybcsB8
+SDj7klShw/Q5k+zQFsQ6sPvgdOtxwu3B+OvRULznXh9Fl8nmxZIIH3aRo33D1hz2
+05A4sQzTX+MXyGZmukbgkCdWTe++mYDjm7beH5lKe98F4vSpJxSSU3wIy1UR3LU9
+M1o9U71plJWuv/uS5BeKDvBSsrpnfROActb34oHG+ttiN75zzsW7eh3u0sb48fxN
+gfFhrZYbqoLcA25dEfjmAV19yOFDXdTAgMRHnYIXXByMx+vyDEtP0OpdwVrF2yd7
+dOhXKT6aPxHeCB3EUJv4dYn482m8BCNxE6lIoMKUI1Bo1mYRtP3/0zrPJ3Peq8g8
+qbdx1WK9Ry2DCVhTBw2YRkJBuJ+tPreB310J3Dnmjw3/jZycJ4c6D7EkZ8Dg4ZHb
+kpYYkWbmNPoOc67xZvVFjt7ApCdocr4l3vCRORjATVrIxnAmuRVL7Cgd4JGRHxdS
+SXF5BsbC4uIancmSB6sWvG53u1poAl2CdNJ1757yhZrwjYFUu320yppsSaKvBDnP
+4AxQ9QCF+2qzfNpiU9Be6tWHG/xVfW2QZElt+mZEmQwy/gJPHQpkWxT6oRRQMu/u
+vhh+9eu3dXsWe7dUny3+
+=ZtCk
+-----END PGP SIGNATURE-----
+
+--Sig_/JTIG4GBsZouOYHG=NB1Bity--
