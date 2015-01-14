@@ -1,67 +1,51 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 2/2] kprobes: compile out IPMODIFY support if ftrace doesn't
- support it
-Date: Wed, 14 Jan 2015 09:48:30 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1501140947540.4162@pobox.suse.cz>
-References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz> <20141223094607.GA16445@infradead.org> <20141223151056.GA4789@treble.redhat.com> <20141226155613.36dd95b9@canb.auug.org.au> <20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
- <alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz> <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org> <alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz> <20150107155701.4839545f63701412003edd88@linux-foundation.org>
- <alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz> <54B3C1DD.6090400@hitachi.com> <alpine.LNX.2.00.1501132345080.4162@pobox.suse.cz> <20150113211223.18908f21@grimm.local.home> <alpine.LNX.2.00.1501140945520.4162@pobox.suse.cz>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] next: drm/atomic: Use copy_from_user to copy 64 bit data
+ from user space
+Date: Wed, 14 Jan 2015 20:46:16 +0100
+Message-ID: <CAKMK7uFbky9q5os_k8xu8vJE7vC0XMWPt9Q5ZDaqzSgd6Rh62Q@mail.gmail.com>
+References: <1421125937-27394-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1501140945520.4162@pobox.suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1421125937-27394-1-git-send-email-linux@roeck-us.net>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-next.vger.kernel.org
 
-If ftrace doesn't claim to support IPMODIFY support, there is no need to 
-compile IPMODIFY support in kprobes either.
-
-Suggested-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
- kernel/kprobes.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 06f5830..49a69d7 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -912,7 +912,7 @@ static struct kprobe *alloc_aggr_kprobe(struct kprobe *p)
- }
- #endif /* CONFIG_OPTPROBES */
- 
--#ifdef CONFIG_KPROBES_ON_FTRACE
-+#if defined(CONFIG_KPROBES_ON_FTRACE) && (ftrace_ipmodify_supported == 1)
- static struct ftrace_ops kprobe_ftrace_ops __read_mostly = {
- 	.func = kprobe_ftrace_handler,
- 	.flags = FTRACE_OPS_FL_SAVE_REGS | FTRACE_OPS_FL_IPMODIFY,
-@@ -957,7 +957,7 @@ static void disarm_kprobe_ftrace(struct kprobe *p)
- 			   (unsigned long)p->addr, 1, 0);
- 	WARN(ret < 0, "Failed to disarm kprobe-ftrace at %p (%d)\n", p->addr, ret);
- }
--#else	/* !CONFIG_KPROBES_ON_FTRACE */
-+#else	/* !CONFIG_KPROBES_ON_FTRACE || ftrace_ipmodify_supported == 0 */
- #define prepare_kprobe(p)	arch_prepare_kprobe(p)
- #define arm_kprobe_ftrace(p)	do {} while (0)
- #define disarm_kprobe_ftrace(p)	do {} while (0)
-@@ -1416,12 +1416,12 @@ int __weak arch_check_ftrace_location(struct kprobe *p)
- 
- 	ftrace_addr = ftrace_location((unsigned long)p->addr);
- 	if (ftrace_addr) {
--#ifdef CONFIG_KPROBES_ON_FTRACE
-+#if defined(CONFIG_KPROBES_ON_FTRACE) && (ftrace_ipmodify_supported == 1)
- 		/* Given address is not on the instruction boundary */
- 		if ((unsigned long)p->addr != ftrace_addr)
- 			return -EILSEQ;
- 		p->flags |= KPROBE_FLAG_FTRACE;
--#else	/* !CONFIG_KPROBES_ON_FTRACE */
-+#else	/* !CONFIG_KPROBES_ON_FTRACE || ftrace_ipmodify_supported == 0 */
- 		return -EINVAL;
- #endif
- 	}
-
--- 
-Jiri Kosina
-SUSE Labs
+T24gTW9uLCBKYW4gMTIsIDIwMTUgYXQgMDk6MTI6MTdQTSAtMDgwMCwgR3VlbnRlciBSb2VjayB3
+cm90ZToKPiBDb3B5aW5nIDY0IGJpdCBkYXRhIGZyb20gdXNlciBzcGFjZSB1c2luZyBnZXRfdXNl
+ciBpcyBub3Qgc3VwcG9ydGVkCj4gb24gYWxsIGFyY2hpdGVjdHVyZXMsIGFuZCBtYXkgcmVzdWx0
+IGluIHRoZSBmb2xsb3dpbmcgYnVpbGQgZXJyb3IuCj4KPiBFUlJPUjogIl9fZ2V0X3VzZXJfYmFk
+IiBbZHJpdmVycy9ncHUvZHJtL2RybS5rb10gdW5kZWZpbmVkIQo+Cj4gQXZvaWQgdGhlIHByb2Js
+ZW0gYnkgdXNpbmcgY29weV9mcm9tX3VzZXIuCj4KPiBGaXhlczogZDM0ZjIwZDZlMmYyICgiZHJt
+OiBBdG9taWMgbW9kZXNldCBpb2N0bCIpCj4gQ2M6IFJvYiBDbGFyayA8cm9iZGNsYXJrQGdtYWls
+LmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBHdWVudGVyIFJvZWNrIDxsaW51eEByb2Vjay11cy5uZXQ+
+CgpNZXJnZWQgaW50byBteSBkcm0gbWlzYyBicmFuY2gsIHRoYW5rcy4KLURhbmllbAoKPiAtLS0K
+PiBDb21waWxlIHRlc3RlZCBvbmx5Lgo+Cj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljLmMg
+fCA0ICsrKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigt
+KQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljLmMgYi9kcml2ZXJz
+L2dwdS9kcm0vZHJtX2F0b21pYy5jCj4gaW5kZXggMWUzOGRmYy4uYWYzZjNkZiAxMDA2NDQKPiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2RybV9hdG9taWMuYwo+IEBAIC0xMjU5LDcgKzEyNTksOSBAQCByZXRyeToKPiAgIGdvdG8gZmFp
+bDsKPiAgIH0KPgo+IC0gaWYgKGdldF91c2VyKHByb3BfdmFsdWUsIHByb3BfdmFsdWVzX3B0ciAr
+IGNvcGllZF9wcm9wcykpIHsKPiArIGlmIChjb3B5X2Zyb21fdXNlcigmcHJvcF92YWx1ZSwKPiAr
+ICAgcHJvcF92YWx1ZXNfcHRyICsgY29waWVkX3Byb3BzLAo+ICsgICBzaXplb2YocHJvcF92YWx1
+ZSkpKSB7Cj4gICByZXQgPSAtRUZBVUxUOwo+ICAgZ290byBmYWlsOwo+ICAgfQo+IC0tCj4gMi4x
+LjAKPgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4g
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+PiBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+CgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24K
+KzQxICgwKSA3OSAzNjUgNTcgNDggLSBodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
