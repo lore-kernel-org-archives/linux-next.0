@@ -1,89 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 15 Jan 2015 13:47:35 +1100
-Message-ID: <20150115134735.1e4612c6@canb.auug.org.au>
+From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Subject: Re: [PATCH 2/2] kprobes: compile out IPMODIFY support if ftrace doesn't
+ support it
+Date: Thu, 15 Jan 2015 12:04:13 +0900
+Message-ID: <54B72E2D.5000507@hitachi.com>
+References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz> <20141223094607.GA16445@infradead.org> <20141223151056.GA4789@treble.redhat.com> <20141226155613.36dd95b9@canb.auug.org.au> <20150107144317.61ab2080877a4d8227990551@linux-foundation.org> <alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz> <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org> <alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz> <20150107155701.4839545f63701412003edd88@linux-foundation.org> <alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz> <54B3C1DD.6090400@hitachi.com> <alpine.LNX.2.00.1501132345080.4162@pobox.suse.cz> <20150113211223.18908f21@grimm.local.home> <alpine.LNX.2.00.1501140945520.4162@pobox.suse.cz> <alpine.LNX.2.00.1501140947540.4162@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oZs.80FKNEj1RzEYMAS6ixp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58912 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751205AbbAOCrp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Jan 2015 21:47:45 -0500
+Received: from mail9.hitachi.co.jp ([133.145.228.44]:49580 "EHLO
+	mail9.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750779AbbAODEV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Jan 2015 22:04:21 -0500
+In-Reply-To: <alpine.LNX.2.00.1501140947540.4162@pobox.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
 
---Sig_/oZs.80FKNEj1RzEYMAS6ixp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+(2015/01/14 17:48), Jiri Kosina wrote:
+> If ftrace doesn't claim to support IPMODIFY support, there is no need to 
+> compile IPMODIFY support in kprobes either.
+> 
 
-Hi all,
+This looks good to me :)
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/xen-netfront.c between commit 900e183301b5 ("xen-netfront:
-use different locks for Rx and Tx stats") from the net tree and commit
-a55e8bb8fb89 ("xen-netfront: refactor making Tx requests") from the
-net-next tree.
+Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thanks!
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> ---
+>  kernel/kprobes.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index 06f5830..49a69d7 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -912,7 +912,7 @@ static struct kprobe *alloc_aggr_kprobe(struct kprobe *p)
+>  }
+>  #endif /* CONFIG_OPTPROBES */
+>  
+> -#ifdef CONFIG_KPROBES_ON_FTRACE
+> +#if defined(CONFIG_KPROBES_ON_FTRACE) && (ftrace_ipmodify_supported == 1)
+>  static struct ftrace_ops kprobe_ftrace_ops __read_mostly = {
+>  	.func = kprobe_ftrace_handler,
+>  	.flags = FTRACE_OPS_FL_SAVE_REGS | FTRACE_OPS_FL_IPMODIFY,
+> @@ -957,7 +957,7 @@ static void disarm_kprobe_ftrace(struct kprobe *p)
+>  			   (unsigned long)p->addr, 1, 0);
+>  	WARN(ret < 0, "Failed to disarm kprobe-ftrace at %p (%d)\n", p->addr, ret);
+>  }
+> -#else	/* !CONFIG_KPROBES_ON_FTRACE */
+> +#else	/* !CONFIG_KPROBES_ON_FTRACE || ftrace_ipmodify_supported == 0 */
+>  #define prepare_kprobe(p)	arch_prepare_kprobe(p)
+>  #define arm_kprobe_ftrace(p)	do {} while (0)
+>  #define disarm_kprobe_ftrace(p)	do {} while (0)
+> @@ -1416,12 +1416,12 @@ int __weak arch_check_ftrace_location(struct kprobe *p)
+>  
+>  	ftrace_addr = ftrace_location((unsigned long)p->addr);
+>  	if (ftrace_addr) {
+> -#ifdef CONFIG_KPROBES_ON_FTRACE
+> +#if defined(CONFIG_KPROBES_ON_FTRACE) && (ftrace_ipmodify_supported == 1)
+>  		/* Given address is not on the instruction boundary */
+>  		if ((unsigned long)p->addr != ftrace_addr)
+>  			return -EILSEQ;
+>  		p->flags |= KPROBE_FLAG_FTRACE;
+> -#else	/* !CONFIG_KPROBES_ON_FTRACE */
+> +#else	/* !CONFIG_KPROBES_ON_FTRACE || ftrace_ipmodify_supported == 0 */
+>  		return -EINVAL;
+>  #endif
+>  	}
+> 
 
-diff --cc drivers/net/xen-netfront.c
-index d8c10764f130,01a4350eb313..000000000000
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@@ -562,18 -518,15 +517,15 @@@ static u16 xennet_select_queue(struct n
- =20
-  static int xennet_start_xmit(struct sk_buff *skb, struct net_device *dev)
-  {
-- 	unsigned short id;
-  	struct netfront_info *np =3D netdev_priv(dev);
- -	struct netfront_stats *stats =3D this_cpu_ptr(np->stats);
- +	struct netfront_stats *tx_stats =3D this_cpu_ptr(np->tx_stats);
-- 	struct xen_netif_tx_request *tx;
-- 	char *data =3D skb->data;
-- 	RING_IDX i;
-- 	grant_ref_t ref;
-- 	unsigned long mfn;
-+ 	struct xen_netif_tx_request *tx, *first_tx;
-+ 	unsigned int i;
-  	int notify;
-  	int slots;
-- 	unsigned int offset =3D offset_in_page(data);
-- 	unsigned int len =3D skb_headlen(skb);
-+ 	struct page *page;
-+ 	unsigned int offset;
-+ 	unsigned int len;
-  	unsigned long flags;
-  	struct netfront_queue *queue =3D NULL;
-  	unsigned int num_queues =3D dev->real_num_tx_queues;
 
---Sig_/oZs.80FKNEj1RzEYMAS6ixp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUtypPAAoJEMDTa8Ir7ZwVkcYP/1vLa6WhxEaf0bx1uORWbj+X
-Ge2oxR79aYJs7fiD5Ps6Pe/SUUhB6rukBk9OQbidsc3Fk1A+TdmNOm8wI+vnoNmQ
-G/DV3wB3nbGJoOVBZR27I4BlLGJKlqv+gw2gPiRYfFAQz1VSiuyjwrVJlkfxmIxC
-QfkLaxHGV2Ccv0hsMLKougFuck0EsiYIYPpE6YMpX4qJAoNml/hCBGYFiEJOe6/h
-pfoSg2zjyiR7PVSlGe4IJ4WpXLIRAWuPiXK+3mWpCqo/hpB4Ke2P2m5UZoFmvUsa
-Ja24UfXQ8BZuNUU3ewqLoMCRX5uOn2KcEDfQdKnx6rju/4vYk0Kuka1TYn2onQZS
-dIQl3q6YWpngpwc/qJlYwV8oFUk/23PxL/zjHfaJanGELM1sUInfPGao0K9vG786
-ksMtXkxuJ7X5awj35d3+vWb5z9h1o5gyAib69ILW++iJfl5LfJtm+VUyW7w9DLOM
-uhvesTkZaQSfnqs/BUClyencELim6b8seugXX0lx/ThMguG2zHCMC3DecmrzrBCn
-ZsHs8xVC8eKu9Dr96HhTnlM02ATsGN7LQnxTt8YwvfqnvN1gF0jnm7LwMcDKKs9+
-lX8XHzbZtgXrWGxPS6MPrQDRdwdksLTjvSCvjpf1wMfjMcnlbKDdBh8Je4W4KFw/
-T3cDqIbQJ/Lh7r6mx6L5
-=E0ux
------END PGP SIGNATURE-----
-
---Sig_/oZs.80FKNEj1RzEYMAS6ixp--
+-- 
+Masami HIRAMATSU
+Software Platform Research Dept. Linux Technology Research Center
+Hitachi, Ltd., Yokohama Research Laboratory
+E-mail: masami.hiramatsu.pt@hitachi.com
