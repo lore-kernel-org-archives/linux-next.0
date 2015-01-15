@@ -1,72 +1,65 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 2/2 v3] kprobes: compile out IPMODIFY support if ftrace
- doesn't support it
-Date: Thu, 15 Jan 2015 10:50:14 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1501151048250.4162@pobox.suse.cz>
-References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz> <20141223094607.GA16445@infradead.org> <20141223151056.GA4789@treble.redhat.com> <20141226155613.36dd95b9@canb.auug.org.au> <20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
- <alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz> <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org> <alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz> <20150107155701.4839545f63701412003edd88@linux-foundation.org>
- <alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz> <54B3C1DD.6090400@hitachi.com> <alpine.LNX.2.00.1501132345080.4162@pobox.suse.cz> <20150113211223.18908f21@grimm.local.home> <alpine.LNX.2.00.1501140945520.4162@pobox.suse.cz>
- <alpine.LNX.2.00.1501151045580.4162@pobox.suse.cz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Jan 12 (build failures: m68k, ppc)
+Date: Thu, 15 Jan 2015 11:12:13 +0100
+Message-ID: <CAMuHMdV1k4viMKmi_8vM52iz+ry50k=Ard1ADkEGzia+yJ5e3Q@mail.gmail.com>
+References: <20150112180322.003b44f2@canb.auug.org.au>
+	<20150112162438.GA18723@roeck-us.net>
+	<CAMuHMdUYEe=L=H75AOYVjinRSW=okRJNrNJVy-bY1gshdVrO7Q@mail.gmail.com>
+	<20150112175920.GC19868@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1501151045580.4162@pobox.suse.cz>
+In-Reply-To: <20150112175920.GC19868@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>
 List-Id: linux-next.vger.kernel.org
 
-If ftrace doesn't claim to support IPMODIFY support, there is no need to 
-compile IPMODIFY support in kprobes either.
+On Mon, Jan 12, 2015 at 6:59 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+>> > Build failures, seen since next-20150109:
+>> >         m68k:allmodconfig
+>> >         powerpc:ppc6xx_defconfig
 
-Suggested-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
+It looks like parisc is also suffering:
+http://kisskb.ellerman.id.au/kisskb/buildresult/12343847/
 
-v1 -> v2: nothing
-v2 -> v3: add Masami's ack and remove superfluous '== 1' comparsions
+>> > Due to:
+>> >         ERROR: "__get_user_bad" [drivers/gpu/drm/drm.ko] undefined!
+>> >         make[1]: *** [__modpost] Error 1
+>> >
+>> > Caused by commit d34f20d6e2f (drm: Atomic modeset ioctl).
+>>
+>> Yeah, it needs a get_user() that supports 64-bit data.
+>>
+> Hi Geert,
+>
+> I assume you mean m68k, where 64 bit support for get_user has been disabled.
+>
+> The problem on powerpc is different though: __get_user_nocheck()
+> and __get_user_check() use
+>         unsigned long __gu_val;
+> followed by
+>         __get_user_size(__gu_val, __gu_addr, (size), __gu_err);
+>
+> __get_user_size() fails in
+>         if (size > sizeof(x))
+>                  (x) = __get_user_bad();
+>
+> Presumably "unsigned long" is 32 bit on 32 bit powerpc, not 64 bit.
+>
+> Overall, the explicit 64-bit use of get_user() seems to be quite unusual.
 
- kernel/kprobes.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I noticed you've sent a fix for DRM.
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 06f5830..dfb296c 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -912,7 +912,7 @@ static struct kprobe *alloc_aggr_kprobe(struct kprobe *p)
- }
- #endif /* CONFIG_OPTPROBES */
- 
--#ifdef CONFIG_KPROBES_ON_FTRACE
-+#if defined(CONFIG_KPROBES_ON_FTRACE) && (ftrace_ipmodify_supported)
- static struct ftrace_ops kprobe_ftrace_ops __read_mostly = {
- 	.func = kprobe_ftrace_handler,
- 	.flags = FTRACE_OPS_FL_SAVE_REGS | FTRACE_OPS_FL_IPMODIFY,
-@@ -957,7 +957,7 @@ static void disarm_kprobe_ftrace(struct kprobe *p)
- 			   (unsigned long)p->addr, 1, 0);
- 	WARN(ret < 0, "Failed to disarm kprobe-ftrace at %p (%d)\n", p->addr, ret);
- }
--#else	/* !CONFIG_KPROBES_ON_FTRACE */
-+#else	/* !CONFIG_KPROBES_ON_FTRACE || !ftrace_ipmodify_supported */
- #define prepare_kprobe(p)	arch_prepare_kprobe(p)
- #define arm_kprobe_ftrace(p)	do {} while (0)
- #define disarm_kprobe_ftrace(p)	do {} while (0)
-@@ -1416,12 +1416,12 @@ int __weak arch_check_ftrace_location(struct kprobe *p)
- 
- 	ftrace_addr = ftrace_location((unsigned long)p->addr);
- 	if (ftrace_addr) {
--#ifdef CONFIG_KPROBES_ON_FTRACE
-+#if defined(CONFIG_KPROBES_ON_FTRACE) && (ftrace_ipmodify_supported)
- 		/* Given address is not on the instruction boundary */
- 		if ((unsigned long)p->addr != ftrace_addr)
- 			return -EILSEQ;
- 		p->flags |= KPROBE_FLAG_FTRACE;
--#else	/* !CONFIG_KPROBES_ON_FTRACE */
-+#else	/* !CONFIG_KPROBES_ON_FTRACE || !ftrace_ipmodify_supported */
- 		return -EINVAL;
- #endif
- 	}
--- 
-Jiri Kosina
-SUSE Labs
+Doh, and I was just fixing m68k...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
