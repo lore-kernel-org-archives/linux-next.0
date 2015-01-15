@@ -1,41 +1,38 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the renesas tree with the arm-soc tree
-Date: Thu, 15 Jan 2015 09:44:24 +0100
-Message-ID: <CAMuHMdVjtVfTQyqMZYeXiPCMoeyxxUv-ikxRvM3uw9FCGTQ+BA@mail.gmail.com>
-References: <20150115113840.71ab0a39@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH 1/2 v2] ftrace: don't allow IPMODIFY without proper
+ compiler support
+Date: Thu, 15 Jan 2015 10:34:48 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1501151032280.4162@pobox.suse.cz>
+References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz> <20141223094607.GA16445@infradead.org> <20141223151056.GA4789@treble.redhat.com> <20141226155613.36dd95b9@canb.auug.org.au> <20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
+ <alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz> <20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org> <alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz> <20150107155701.4839545f63701412003edd88@linux-foundation.org>
+ <alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz> <54B3C1DD.6090400@hitachi.com> <alpine.LNX.2.00.1501132345080.4162@pobox.suse.cz> <20150113211223.18908f21@grimm.local.home> <alpine.LNX.2.00.1501140945520.4162@pobox.suse.cz>
+ <54B73549.3090405@hitachi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:62813 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751437AbbAOIo0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Jan 2015 03:44:26 -0500
-In-Reply-To: <20150115113840.71ab0a39@canb.auug.org.au>
+Received: from cantor2.suse.de ([195.135.220.15]:46248 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752281AbbAOJew (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Jan 2015 04:34:52 -0500
+In-Reply-To: <54B73549.3090405@hitachi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Simon Horman <horms@verge.net.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Magnus Damm <damm+renesas@opensource.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Robinson <pbrobinson@gmail.com>
+To: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
 
-On Thu, Jan 15, 2015 at 1:38 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Today's linux-next merge of the renesas tree got a conflict in
-> arch/arm/boot/dts/Makefile between commit cb612390e546 ("ARM: dts: Only
-> build dtb if associated Arch and/or SoC is enabled") from the arm-soc
-> tree and commits 9ccba8abd0a7 ("ARM: shmobile: kzm9g: Build DTS for
-> Multiplatform") and 93c9f0228a3d ("ARM: shmobile: kzm9g-reference:
-> Remove board C code and DT file") from the renesas tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+On Thu, 15 Jan 2015, Masami Hiramatsu wrote:
 
-Your resolution is correct.
+> Hmm, if this binary doesn't support IPMODIFY, it should return -ENOTSUPP.
 
-Gr{oetje,eeting}s,
+Good poing, will send v3.
 
-                        Geert
+> And also, IMHO, we'd better reject registering ftrace_ops with IPMODIFY 
+> in this situation before updating hash table.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+That would happen automatically if we return -ENOTSUPP, right? Because the 
+check in ftrace_hash_move() would cause freeing of the new_hash and the 
+error value would get propagated out to ftrace_hash_move() callers.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Jiri Kosina
+SUSE Labs
