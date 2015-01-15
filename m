@@ -1,32 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the arm-soc tree
-Date: Thu, 15 Jan 2015 11:38:40 +1100
-Message-ID: <20150115113840.71ab0a39@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 15 Jan 2015 13:47:35 +1100
+Message-ID: <20150115134735.1e4612c6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ujG0E8d1HjHoQzVHeWDX=ej"; protocol="application/pgp-signature"
+ boundary="Sig_/oZs.80FKNEj1RzEYMAS6ixp"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46371 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:58912 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751886AbbAOAis (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Jan 2015 19:38:48 -0500
+	id S1751205AbbAOCrp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Jan 2015 21:47:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Robinson <pbrobinson@gmail.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>
 
---Sig_/ujG0E8d1HjHoQzVHeWDX=ej
+--Sig_/oZs.80FKNEj1RzEYMAS6ixp
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+Hi all,
 
-Today's linux-next merge of the renesas tree got a conflict in
-arch/arm/boot/dts/Makefile between commit cb612390e546 ("ARM: dts: Only
-build dtb if associated Arch and/or SoC is enabled") from the arm-soc
-tree and commits 9ccba8abd0a7 ("ARM: shmobile: kzm9g: Build DTS for
-Multiplatform") and 93c9f0228a3d ("ARM: shmobile: kzm9g-reference:
-Remove board C code and DT file") from the renesas tree.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/xen-netfront.c between commit 900e183301b5 ("xen-netfront:
+use different locks for Rx and Tx stats") from the net tree and commit
+a55e8bb8fb89 ("xen-netfront: refactor making Tx requests") from the
+net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,57 +34,56 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/Makefile
-index 95fed8145ac9,be6e2607da88..000000000000
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@@ -466,10 -411,8 +466,9 @@@ dtb-$(CONFIG_ARCH_SHMOBILE_LEGACY) +=3D=20
-  	r8a7778-bockw-reference.dtb \
-  	r8a7779-marzen.dtb \
-  	sh7372-mackerel.dtb \
-- 	sh73a0-kzm9g.dtb \
-- 	sh73a0-kzm9g-reference.dtb
-+ 	sh73a0-kzm9g.dtb
- -dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) +=3D emev2-kzm9d.dtb \
- +dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) +=3D \
- +	emev2-kzm9d.dtb \
-  	r7s72100-genmai.dtb \
-  	r8a73a4-ape6evm.dtb \
-  	r8a7740-armadillo800eva.dtb \
-@@@ -477,9 -420,9 +476,10 @@@
-  	r8a7790-lager.dtb \
-  	r8a7791-henninger.dtb \
-  	r8a7791-koelsch.dtb \
-- 	r8a7794-alt.dtb
-+ 	r8a7794-alt.dtb \
-+ 	sh73a0-kzm9g.dtb
- -dtb-$(CONFIG_ARCH_SOCFPGA) +=3D socfpga_arria5_socdk.dtb \
- +dtb-$(CONFIG_ARCH_SOCFPGA) +=3D \
- +	socfpga_arria5_socdk.dtb \
-  	socfpga_arria10_socdk.dtb \
-  	socfpga_cyclone5_socdk.dtb \
-  	socfpga_cyclone5_sockit.dtb \
+diff --cc drivers/net/xen-netfront.c
+index d8c10764f130,01a4350eb313..000000000000
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@@ -562,18 -518,15 +517,15 @@@ static u16 xennet_select_queue(struct n
+ =20
+  static int xennet_start_xmit(struct sk_buff *skb, struct net_device *dev)
+  {
+- 	unsigned short id;
+  	struct netfront_info *np =3D netdev_priv(dev);
+ -	struct netfront_stats *stats =3D this_cpu_ptr(np->stats);
+ +	struct netfront_stats *tx_stats =3D this_cpu_ptr(np->tx_stats);
+- 	struct xen_netif_tx_request *tx;
+- 	char *data =3D skb->data;
+- 	RING_IDX i;
+- 	grant_ref_t ref;
+- 	unsigned long mfn;
++ 	struct xen_netif_tx_request *tx, *first_tx;
++ 	unsigned int i;
+  	int notify;
+  	int slots;
+- 	unsigned int offset =3D offset_in_page(data);
+- 	unsigned int len =3D skb_headlen(skb);
++ 	struct page *page;
++ 	unsigned int offset;
++ 	unsigned int len;
+  	unsigned long flags;
+  	struct netfront_queue *queue =3D NULL;
+  	unsigned int num_queues =3D dev->real_num_tx_queues;
 
---Sig_/ujG0E8d1HjHoQzVHeWDX=ej
+--Sig_/oZs.80FKNEj1RzEYMAS6ixp
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUtwwUAAoJEMDTa8Ir7ZwVWe0P/jut2SVKHuPkakDyZSvnStxU
-JxbI2B2UKF71ogfeX7vU4xLWb6Oa1o2iX7Fi+AMxn0CChtc6Pl3Zv+xQc1SuyzeY
-TEKE6Q+gNGW54Lpk7jL/9xuNtRu1iRK63+LZzIm8SZUzPzzwT4tJpZR0Okk1DnOT
-K4m0qza8bKs5ys4PS3GG+ruIP0o0AMoSbWVRLHo85V3I6dWFWMHhfRKXPTTihwcU
-J0IN1yxowoqjAtAC8Xxk9mN/QpVuXEwIci6LKopf6Otrxs00AxXFl91lVmUEupwZ
-8BVe83ukndqn91o3o14BbjU/qdCcAO8okDut0E0lX2DnTn0Xb4DiGlIKoxjpwR1R
-uaUmLn+2UVRVp3Jl+cHLRnyWS9XTaHT5mvwsLDZMcZtBl+2ptCDKNBKFjkGD6GgM
-JApDuLFqnE9ZJ3uHxvglOtKGSgfctM/R0ourooLS4rJ7UN3B9s8LySw9hu2HAoPh
-kOihlpOGY9lMwFn0CrWckHi2mUUF6mdAahhuLDO9gmjntpOkZQ+00EdEyDW0hDem
-KCHarjDvIdrBIu075+2KzXM186Gn/2duk0UCTou+2IT8XRp7vkH0xYT+Xo6OIQUl
-r41Nulh3M03AQ/1H0p7k01NfnLLcmpykyQ5YKS0EknBd956BYaElXI9DAQ0zaYed
-gKHxNmezk3CAzAD/EkNw
-=x56b
+iQIcBAEBCAAGBQJUtypPAAoJEMDTa8Ir7ZwVkcYP/1vLa6WhxEaf0bx1uORWbj+X
+Ge2oxR79aYJs7fiD5Ps6Pe/SUUhB6rukBk9OQbidsc3Fk1A+TdmNOm8wI+vnoNmQ
+G/DV3wB3nbGJoOVBZR27I4BlLGJKlqv+gw2gPiRYfFAQz1VSiuyjwrVJlkfxmIxC
+QfkLaxHGV2Ccv0hsMLKougFuck0EsiYIYPpE6YMpX4qJAoNml/hCBGYFiEJOe6/h
+pfoSg2zjyiR7PVSlGe4IJ4WpXLIRAWuPiXK+3mWpCqo/hpB4Ke2P2m5UZoFmvUsa
+Ja24UfXQ8BZuNUU3ewqLoMCRX5uOn2KcEDfQdKnx6rju/4vYk0Kuka1TYn2onQZS
+dIQl3q6YWpngpwc/qJlYwV8oFUk/23PxL/zjHfaJanGELM1sUInfPGao0K9vG786
+ksMtXkxuJ7X5awj35d3+vWb5z9h1o5gyAib69ILW++iJfl5LfJtm+VUyW7w9DLOM
+uhvesTkZaQSfnqs/BUClyencELim6b8seugXX0lx/ThMguG2zHCMC3DecmrzrBCn
+ZsHs8xVC8eKu9Dr96HhTnlM02ATsGN7LQnxTt8YwvfqnvN1gF0jnm7LwMcDKKs9+
+lX8XHzbZtgXrWGxPS6MPrQDRdwdksLTjvSCvjpf1wMfjMcnlbKDdBh8Je4W4KFw/
+T3cDqIbQJ/Lh7r6mx6L5
+=E0ux
 -----END PGP SIGNATURE-----
 
---Sig_/ujG0E8d1HjHoQzVHeWDX=ej--
+--Sig_/oZs.80FKNEj1RzEYMAS6ixp--
