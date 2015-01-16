@@ -1,58 +1,68 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 12 (build failures: m68k, ppc)
-Date: Thu, 15 Jan 2015 06:09:25 -0800
-Message-ID: <54B7CA15.7000200@roeck-us.net>
-References: <20150112180322.003b44f2@canb.auug.org.au>	<20150112162438.GA18723@roeck-us.net>	<CAMuHMdUYEe=L=H75AOYVjinRSW=okRJNrNJVy-bY1gshdVrO7Q@mail.gmail.com>	<20150112175920.GC19868@roeck-us.net> <CAMuHMdV1k4viMKmi_8vM52iz+ry50k=Ard1ADkEGzia+yJ5e3Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the i2c tree
+Date: Fri, 16 Jan 2015 13:22:53 +1100
+Message-ID: <20150116132253.1c5f7a8d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdV1k4viMKmi_8vM52iz+ry50k=Ard1ADkEGzia+yJ5e3Q@mail.gmail.com>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jGvSC2bZ6OcEPUT28vnmVe3"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54299 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754919AbbAPCXA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Jan 2015 21:23:00 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 
-On 01/15/2015 02:12 AM, Geert Uytterhoeven wrote:
-> On Mon, Jan 12, 2015 at 6:59 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->>>> Build failures, seen since next-20150109:
->>>>          m68k:allmodconfig
->>>>          powerpc:ppc6xx_defconfig
->
-> It looks like parisc is also suffering:
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12343847/
->
->>>> Due to:
->>>>          ERROR: "__get_user_bad" [drivers/gpu/drm/drm.ko] undefined!
->>>>          make[1]: *** [__modpost] Error 1
->>>>
->>>> Caused by commit d34f20d6e2f (drm: Atomic modeset ioctl).
->>>
->>> Yeah, it needs a get_user() that supports 64-bit data.
->>>
->> Hi Geert,
->>
->> I assume you mean m68k, where 64 bit support for get_user has been disabled.
->>
->> The problem on powerpc is different though: __get_user_nocheck()
->> and __get_user_check() use
->>          unsigned long __gu_val;
->> followed by
->>          __get_user_size(__gu_val, __gu_addr, (size), __gu_err);
->>
->> __get_user_size() fails in
->>          if (size > sizeof(x))
->>                   (x) = __get_user_bad();
->>
->> Presumably "unsigned long" is 32 bit on 32 bit powerpc, not 64 bit.
->>
->> Overall, the explicit 64-bit use of get_user() seems to be quite unusual.
->
-> I noticed you've sent a fix for DRM.
->
-> Doh, and I was just fixing m68k...
->
+--Sig_/jGvSC2bZ6OcEPUT28vnmVe3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, should have Cc:'d you.
+Hi Wolfram,
 
-Guenter
+After merging the i2c tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/i2c/i2c-core.c: In function 'i2c_unregister_device':
+drivers/i2c/i2c-core.c:1016:3: error: implicit declaration of function 'of_=
+node_clear_flag' [-Werror=3Dimplicit-function-declaration]
+   of_node_clear_flag(client->dev.of_node, OF_POPULATED);
+   ^
+drivers/i2c/i2c-core.c:1016:43: error: 'OF_POPULATED' undeclared (first use=
+ in this function)
+   of_node_clear_flag(client->dev.of_node, OF_POPULATED);
+                                           ^
+
+Caused by commit d5285c36e6d2 ("i2c: Mark instantiated device nodes
+with OF_POPULATE").
+
+I have used the version of the i2c tree from next-20150115 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+--Sig_/jGvSC2bZ6OcEPUT28vnmVe3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUuHYCAAoJEMDTa8Ir7ZwVYEQP/3ZUsJJYPQxxZjGxaAWxjHSV
+SX8+gDIb66cr5C4lC9tKSMpgWmi6OCZJtuS3TmSeQQZS2WKsgklPvAfJhF71qJoH
+MtKwQBnPZgruDJZOK6b38tgwujf/XOfZW9Y7qFbAKYEq49A0FyzNRbaFZRvcCa+6
+KccEZ8ii/shexfvFUXyZKhVjVyIMQYjcnvJYyPJkH3ydCsZXhasOL+2iVAZPJAF/
+s47OJanquDPUJZlMQpJkGQhiQaXAXCdSdPQRYG4tlO07NpGbYDRauCfooyPXW/iK
+ay1kND4yseLya7/Ni0yMoif++L7T+L3u+wUSBwWONNVcsJaCrLmN3Kjj10QMbGh9
+LieDNwJVUvSzXdgmb8PfG11IBj3954hKvq838i4k4wIMooW+pV8mRnfrmQdiuhKY
+edugd1U8NWcQMfmaqstWKdDSdWEipiRAnMwfzh16wnS+XHZrnnJ3lOp4rKFab1rB
+ewbh94Ijd9R2jTic++sT+c5vFPWw746UR2QWTK511MwY2y9o/XJ4qEFkb3/5qvFI
+TcK0DV8yvdhGIAeElVv6isa3Zgpzhv043ripedrvbJVhpqv2dqGnZxMOzFUWqlJ0
+eUUTFt8YFqFS3lTchEqLPZX4g4eHLk2mYtrlOLrKzQ0ctcYNG2ctQPAsrOOB+5Vu
+INFFaKHsig7loez4aR+h
+=mPyV
+-----END PGP SIGNATURE-----
+
+--Sig_/jGvSC2bZ6OcEPUT28vnmVe3--
