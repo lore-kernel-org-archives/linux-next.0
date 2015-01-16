@@ -1,87 +1,91 @@
-From: "Kaukab, Yousaf" <yousaf.kaukab@intel.com>
-Subject: RE: linux-next: manual merge of the usb-gadget tree with the
- usb.current tree
-Date: Fri, 16 Jan 2015 09:56:42 +0000
-Message-ID: <B1AFEC30BE3ADF488E833B59904F5C3209836D93@IRSMSX107.ger.corp.intel.com>
-References: <20150116172346.4add4867@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 1/2 v3] ftrace: don't allow IPMODIFY without proper
+ compiler support
+Date: Fri, 16 Jan 2015 11:35:39 -0500
+Message-ID: <20150116113539.78c093ad@gandalf.local.home>
+References: <alpine.LNX.2.00.1412221412360.1680@pobox.suse.cz>
+	<20141223094607.GA16445@infradead.org>
+	<20141223151056.GA4789@treble.redhat.com>
+	<20141226155613.36dd95b9@canb.auug.org.au>
+	<20150107144317.61ab2080877a4d8227990551@linux-foundation.org>
+	<alpine.LNX.2.00.1501072346400.15299@pobox.suse.cz>
+	<20150107153006.60ed354e3458f402e6819b9e@linux-foundation.org>
+	<alpine.LNX.2.00.1501080037030.15299@pobox.suse.cz>
+	<20150107155701.4839545f63701412003edd88@linux-foundation.org>
+	<alpine.LNX.2.00.1501080104190.15299@pobox.suse.cz>
+	<54B3C1DD.6090400@hitachi.com>
+	<alpine.LNX.2.00.1501132345080.4162@pobox.suse.cz>
+	<20150113211223.18908f21@grimm.local.home>
+	<alpine.LNX.2.00.1501140945520.4162@pobox.suse.cz>
+	<alpine.LNX.2.00.1501151045580.4162@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:36480 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751314AbbAPJ4q convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Jan 2015 04:56:46 -0500
-In-Reply-To: <20150116172346.4add4867@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Robert Baldyga <r.baldyga@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LNX.2.00.1501151045580.4162@pobox.suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Friday, January 16, 2015 7:24 AM
-> To: Felipe Balbi; Greg KH
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Robert Baldyga;
-> Kaukab, Yousaf
-> Subject: linux-next: manual merge of the usb-gadget tree with the usb.current
-> tree
-> 
-> Hi Felipe,
-> 
-> Today's linux-next merge of the usb-gadget tree got a conflict in
-> drivers/usb/dwc2/gadget.c between commit 62f4f0651ce8 ("usb: dwc2:
-> gadget: kill requests with 'force' in s3c_hsotg_udc_stop()") from the usb.current
-> tree and commit c6f5c050e2a7 ("usb: dwc2: gadget: add bi-directional
-> endpoint support") and 1141ea01d5fa ("usb: dwc2: gadget:
-> kill requests after disabling ep") from the usb-gadget tree.
+On Thu, 15 Jan 2015 10:50:07 +0100 (CET)
+Jiri Kosina <jkosina@suse.cz> wrote:
 
-commit 62f4f0651ce8 ("usb: dwc2: gadget: kill requests with 'force' in s3c_hsotg_udc_stop()")
-should have been reverted by http://www.spinics.net/lists/linux-usb/msg119287.html.
-Somehow it didn't make it to linux-next.
+> Using IPMODIFY needs to be allowed only with compilers which are 
+> guaranteed to generate function prologues compatible with function 
+> redirection through changing instruction pointer in saved regs.
 
-6b448af46e2a ("drivers: usb: dwc2: remove 'force' parameter from kill_all_requests()"),
-which is added by this merge, is the replacement.
+That's actually not true.
+
+Sorry, I started thinking about this more, and I disagree with this
+change.
 
 > 
-> I fixed it up (I think - see below) and can carry the fix as necessary (no action is
-> required).
-> 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/usb/dwc2/gadget.c
-> index 79242008085b,882a1a8953f5..000000000000
-> --- a/drivers/usb/dwc2/gadget.c
-> +++ b/drivers/usb/dwc2/gadget.c
-> @@@ -2927,8 -2960,12 +2964,12 @@@ static int s3c_hsotg_udc_stop(struct
-> us
->   	mutex_lock(&hsotg->init_mutex);
-> 
->   	/* all endpoints should be shutdown */
-> - 	for (ep = 1; ep < hsotg->num_of_eps; ep++)
-> - 		s3c_hsotg_ep_disable_force(&hsotg->eps[ep].ep,
-> true);
-> + 	for (ep = 1; ep < hsotg->num_of_eps; ep++) {
-> + 		if (hsotg->eps_in[ep])
->  -			s3c_hsotg_ep_disable(&hsotg-
-> >eps_in[ep]->ep);
-> ++
-> 	s3c_hsotg_ep_disable_force(&hsotg->eps_in[ep]->ep, true);
-> + 		if (hsotg->eps_out[ep])
->  -			s3c_hsotg_ep_disable(&hsotg-
-> >eps_out[ep]->ep);
-> ++
-> 	s3c_hsotg_ep_disable_force(&hsotg->eps_out[ep]->ep, true);
-> + 	}
-> 
->   	spin_lock_irqsave(&hsotg->lock, flags);
-> 
+> For example changing regs->ip on x86_64 in cases when gcc is using mcount 
+> (and not fentry) is not allowed, because at the time mcount call is 
+> issued, the original function's prologue has already been executed, which 
+> leads to all kinds of inconsistent havoc.
 
-This can work. However, the force argument to s3c_hsotg_ep_disable_force is unused now. So might just leave s3c_hsotg_ep_disable as is, as done by c6f5c050e2a7.
+No, it only causes havoc if whoever modifies the ip doesn't know it's
+not at the start of the function.
 
-BR,
-Yousaf
+Hence, it's only the user of ftrace that wants to replace functions
+that needs to worry about this.
+
+In fact, there's nothing wrong if kprobes to use ftrace to change ip
+even if fentry isn't supported. That's because if fentry isn't
+supported, kprobes will notice that there's no ftrace call at the start
+of a function and will use a breakpoint instead. If a kprobe user still
+wants to change the ip after the stack frame was set up, they still can
+do that, they just need to find where the mcount call is. kprobe does
+its work based on the kernel address to probe, not where ftrace places
+its hooks.
+
+Now you could argue that there's no reason to change ip if ftrace isn't
+using fentry, but there's nothing to prevent a user from doing so.
+
+It also bothers me that you just prevented all users of kprobes from
+taking advantage of hooking to a ftrace caller if fentry isn't
+supported. All kprobes really needs is the REGS version supported. 99%
+of all kprobes do not modify ip.
+
+I have to say NAK on this change.
+
+Instead, make live kernel patching fail to load if fentry isn't
+supported. IOW, instead of ftrace_ipmodify_supported, have a
+live_kernel_patching_supported that could be based on fentry being used
+or not.
+
+-- Steve
+
+
+> 
+> There is currently no way to express dependency on gcc features in 
+> Kconfig, (CC_USING_FENTRY is defined only during build, so it's not 
+> possible for Kconfig symbol to depend on it) so this needs to be checked 
+> in runtime.
+> 
+> Mark x86_64 with fentry supported for now. Other archs can be added
+> gradually.
+> 
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
