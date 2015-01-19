@@ -1,88 +1,64 @@
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 19 Jan 2015 11:45:53 +0200
-Message-ID: <20150119094553.GA9332@node.dhcp.inet.fi>
-References: <20150119191718.365d4c98@canb.auug.org.au>
- <20150119083817.GA3203@moon>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: compaction tracepoint broken with CONFIG_COMPACTION enabled (was:
+ mmotm 2015-01-16-15-50 uploaded)
+Date: Mon, 19 Jan 2015 13:42:10 +0100
+Message-ID: <20150119124210.GC21052@dhcp22.suse.cz>
+References: <54b9a3ce.lQ94nh84G4XJawsQ%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:53706 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751090AbbASMmM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Jan 2015 07:42:12 -0500
 Content-Disposition: inline
-In-Reply-To: <20150119083817.GA3203@moon>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <54b9a3ce.lQ94nh84G4XJawsQ%akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: akpm@linux-foundation.org, Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
 
-On Mon, Jan 19, 2015 at 11:38:17AM +0300, Cyrill Gorcunov wrote:
-> On Mon, Jan 19, 2015 at 07:17:18PM +1100, Stephen Rothwell wrote:
-> > Hi Andrew,
-> > 
-> > After merging the akpm tree, today's linux-next build (sparc defconfig)
-> > failed like this:
-> > 
-> > In file included from arch/sparc/include/asm/bug.h:20:0,
-> >                  from include/linux/bug.h:4,
-> >                  from include/linux/thread_info.h:11,
-> >                  from include/asm-generic/preempt.h:4,
-> >                  from arch/sparc/include/generated/asm/preempt.h:1,
-> >                  from include/linux/preempt.h:18,
-> >                  from include/linux/spinlock.h:50,
-> >                  from include/linux/mmzone.h:7,
-> >                  from include/linux/gfp.h:5,
-> >                  from include/linux/slab.h:14,
-> >                  from mm/mmap.c:12:
-> > mm/mmap.c: In function 'exit_mmap':
-> > mm/mmap.c:2858:46: error: 'PUD_SHIFT' undeclared (first use in this function)
-> >     round_up(FIRST_USER_ADDRESS, PUD_SIZE) >> PUD_SHIFT);
-> >                                               ^
-> > include/asm-generic/bug.h:86:25: note: in definition of macro 'WARN_ON'
-> >   int __ret_warn_on = !!(condition);    \
-> >                          ^
-> > mm/mmap.c:2858:46: note: each undeclared identifier is reported only once for each function it appears in
-> >     round_up(FIRST_USER_ADDRESS, PUD_SIZE) >> PUD_SHIFT);
-> >                                               ^
-> > include/asm-generic/bug.h:86:25: note: in definition of macro 'WARN_ON'
-> >   int __ret_warn_on = !!(condition);    \
-> >                          ^
-> > 
-> > Caused by commit b316feb3c37f ("mm: account pmd page tables to the
-> > process").  32 bit sparc does not seem to define PUD_SHIFT ...
-> > 
-> > I am not sure what the correct fix is here, so I just did the following
-> > patch for today.
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 19 Jan 2015 19:10:53 +1100
-> > Subject: [PATCH] mm: account pmd page tables to the process fix
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  mm/mmap.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 6a7d36d133fb..25271805ab39 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -2854,8 +2854,10 @@ void exit_mmap(struct mm_struct *mm)
-> >  
-> >  	WARN_ON(atomic_long_read(&mm->nr_ptes) >
-> >  			round_up(FIRST_USER_ADDRESS, PMD_SIZE) >> PMD_SHIFT);
-> > +#ifdef PUD_SHIFT
-> >  	WARN_ON(mm_nr_pmds(mm) >
-> >  			round_up(FIRST_USER_ADDRESS, PUD_SIZE) >> PUD_SHIFT);
-> > +#endif
-> >  }
-> >  
-> >  /* Insert vm structure into process list sorted by address
-> 
-> Looks like it should be #ifdef CONFIG_MMU, Kirill?
+Hi,
+compaction trace points seem to be broken without CONFIG_COMPACTION
+enabled after
+mm-compaction-more-trace-to-understand-when-why-compaction-start-finish=
+=2Epatch.
 
-No. The problem is that <asm-generic/4level-fixup.h> doesn't define
-PUD_SHIFT. The fix is proposed:
+My config is
+# CONFIG_COMPACTION is not set
+CONFIG_CMA=3Dy
 
-http://www.spinics.net/lists/linux-mm/msg83249.html
+which might be a bit unusual but I am getting
+  CC      mm/compaction.o
+In file included from include/trace/define_trace.h:90:0,
+                 from include/trace/events/compaction.h:298,
+                 from mm/compaction.c:49:
+include/trace/events/compaction.h: In function =E2=80=98ftrace_raw_outp=
+ut_mm_compaction_end=E2=80=99:
+include/trace/events/compaction.h:164:3: error: =E2=80=98compaction_sta=
+tus_string=E2=80=99 undeclared (first use in this function)
+   compaction_status_string[__entry->status])
+   ^
+[...]
+include/trace/events/compaction.h: In function =E2=80=98ftrace_raw_outp=
+ut_mm_compaction_suitable_template=E2=80=99:
+include/trace/events/compaction.h:220:3: error: =E2=80=98compaction_sta=
+tus_string=E2=80=99 undeclared (first use in this function)
+   compaction_status_string[__entry->ret])
+[...]
+scripts/Makefile.build:257: recipe for target 'mm/compaction.o' failed
+make[1]: *** [mm/compaction.o] Error 1
+Makefile:1528: recipe for target 'mm/compaction.o' failed
+make: *** [mm/compaction.o] Error 2
 
--- 
- Kirill A. Shutemov
+Moving compaction_status_string outside of CONFIG_COMPACTION doesn't
+help much because of other failures:
+include/trace/events/compaction.h:261:30: error: =E2=80=98struct zone=E2=
+=80=99 has no member named =E2=80=98compact_defer_shift=E2=80=99
+   __entry->defer_shift =3D zone->compact_defer_shift;
+
+So I guess the tracepoint need a better fix.
+--=20
+Michal Hocko
+SUSE Labs
