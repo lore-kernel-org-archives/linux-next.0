@@ -1,40 +1,70 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 ] staging: ft1000: fix else style error
-Date: Sat, 17 Jan 2015 15:23:49 -0800
-Message-ID: <20150117232349.GA27066@kroah.com>
-References: <1421184840-24108-1-git-send-email-bilel.dr@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 19 Jan 2015 14:06:10 +1100
+Message-ID: <20150119140610.6b41b5ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <1421184840-24108-1-git-send-email-bilel.dr@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Bilel DRIRA <bilel.dr@gmail.com>
-Cc: devel@driverdev.osuosl.org, tapaswenipathak@gmail.com, linux-kernel@vger.kernel.org, gdonald@gmail.com, linux-next@vger.kernel.org, joe@perches.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/f+KABpqlzq61FD8th6Oe4hx"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34961 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750788AbbASDGS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 18 Jan 2015 22:06:18 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, Scott Feldman <sfeldma@gmail.com>, Gustavo Padovan <gustavo@padovan.org>
 
-On Tue, Jan 13, 2015 at 10:34:00PM +0100, Bilel DRIRA wrote:
-> This patch fix the checkpatch.pl error:
-> 
-> 	ERROR: else should follow close brace '}'
-> 
-> Signed-off-by: Bilel DRIRA <bilel.dr@gmail.com>
-> ---
-> v2: remove braces instead of just putting else after close brace. (suggested by Joe Perches).
-> 
->  drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c |   29 ++++++++--------------
->  1 file changed, 10 insertions(+), 19 deletions(-)
+--Sig_/f+KABpqlzq61FD8th6Oe4hx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Doesn't apply to my tree due to changes from other developers before you
-in this area, sorry.
+Hi all,
 
-greg k-h
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+In file included from net/bridge/br.c:22:0:
+include/net/switchdev.h:73:1: error: expected identifier or '(' before '{' =
+token
+ {
+ ^
+include/net/switchdev.h:71:19: warning: 'call_netdev_switch_notifiers' decl=
+ared 'static' but never defined [-Wunused-function]
+ static inline int call_netdev_switch_notifiers(unsigned long val, struct n=
+et_device *dev,
+                   ^
+
+Caused by commit 03bf0c281234 ("switchdev: introduce switchdev notifier").
+
+I have used the net-next tree from next-20150116 for today.  I also had
+to use the bluetooth tree from next-20150116 as it was fast forwarded
+to be the same as the net-next tree today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/f+KABpqlzq61FD8th6Oe4hx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUvHSnAAoJEMDTa8Ir7ZwVC9EP/16734XQidexho/rbTWlTbrB
+VrRJx9cNyGPCvVSi6Gev1jf3ctfis6vPskyOTnfy6F4cWDCsrbuBck1qxH7DhtHX
+Jvl4/Uko9R/A7XSCdGLw6Bv7pDUuvyG7Twz8seuoogLJON/K4k3Plpi79rgsIgNn
+o3Q5qwY/fZJwH3FJBElytoszKJK3/zdKrdGnlmotT5lNag0VMdb+hwiY57T245Pk
+ido3H+J1xyNM/YphrLCy+iqreDHbJOIxBROnvSBip1As93oZWHmJEayOy6OQLPUn
+jQRjBSSylgOuEAO/mv4w6kN9eEURR11nnWo5HGySyoV7vMiTZ7tPxPhoAWf4fpZP
+p3IPw0Rh2dTiRIzam+FKxatT1xNPsWtxbk8SefwTxOcwNtafaOeWwcVmFvhdkHM4
+wPGYeZsW0/F5yNX1jPMWseD3VuN2b/6yfWmLhEUgjv2ONyhAO+omBoK3HIyigkuv
+81C176fwVHIJg5qN/M1d18TwUCvQWIHFVeSyVaHsHveGVWxe2oSec4JMyHQjxWvG
+AanCSoSvyU1WYAMm8CebWKZUcrDkSg8rRzinSz+9oCjDg140qXKxevGh+/Mm9W7u
+qjH1x/dhhKmbcae18/KY+NXgZOSJJw4wafiMyMOrxkT4agNIYdubreUWo7+lbgeT
+bVM07I4CBfWStlitRrvX
+=jr+B
+-----END PGP SIGNATURE-----
+
+--Sig_/f+KABpqlzq61FD8th6Oe4hx--
