@@ -1,90 +1,62 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap tree with the arm-soc tree
-Date: Tue, 20 Jan 2015 09:10:49 -0800
-Message-ID: <20150120171048.GF7718@atomide.com>
-References: <20150120110947.1a92a416@canb.auug.org.au>
+From: Paul Moore <pmoore@redhat.com>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount root fs
+Date: Tue, 20 Jan 2015 12:39:08 -0500
+Message-ID: <4237741.ePaG0Gba6D@sifl>
+References: <20150120185308.53f4af4e@canb.auug.org.au> <20150120165655.GA10904@kria>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20150120110947.1a92a416@canb.auug.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Peter Robinson <pbrobinson@gmail.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150120165655.GA10904@kria>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, viro@zeniv.linux.org.uk, Richard Guy Briggs <rgb@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [150119 16:12]:
-> Hi Tony,
+On Tuesday, January 20, 2015 05:56:55 PM Sabrina Dubroca wrote:
+> Hello,
 > 
-> Today's linux-next merge of the omap tree got a conflict in
-> arch/arm/boot/dts/Makefile between commit cb612390e546 ("ARM: dts: Only
-> build dtb if associated Arch and/or SoC is enabled") from the arm-soc
-> tree and commit ac7452cee743 ("ARM: dts: Add minimal support for
-> dm8168-evm") from the omap tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> Today's linux-next doesn't boot on my qemu VM:
 
-Uhh why is cb612390e546 doing formatting changes all over the place?
-That's a sure way to produce merge conflicts..
-
-Anyways the conflict resolution looks good to me thanks.
-
-Regards,
-
-Tony
+...
  
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> I bisected it down to:
 > 
-> diff --cc arch/arm/boot/dts/Makefile
-> index a240d2d07b38,a6ace4d57ea5..000000000000
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@@ -392,8 -348,8 +392,9 @@@ dtb-$(CONFIG_ARCH_OMAP3) += 
->   	omap3-sbc-t3730.dtb \
->   	omap3-thunder.dtb \
->   	omap3-zoom3.dtb
-> + dtb-$(CONFIG_SOC_TI81XX) += dm8168-evm.dtb
->  -dtb-$(CONFIG_SOC_AM33XX) += am335x-base0033.dtb \
->  +dtb-$(CONFIG_SOC_AM33XX) += \
->  +	am335x-base0033.dtb \
->   	am335x-bone.dtb \
->   	am335x-boneblack.dtb \
->   	am335x-evm.dtb \
-> @@@ -410,20 -365,17 +411,21 @@@ dtb-$(CONFIG_ARCH_OMAP4) += 
->   	omap4-sdp-es23plus.dtb \
->   	omap4-var-dvk-om44.dtb \
->   	omap4-var-stk-om44.dtb
->  -dtb-$(CONFIG_SOC_AM43XX) += am43x-epos-evm.dtb \
->  +dtb-$(CONFIG_SOC_AM43XX) += \
->  +	am43x-epos-evm.dtb \
->   	am437x-sk-evm.dtb \
-> + 	am437x-idk-evm.dtb \
->   	am437x-gp-evm.dtb
->  -dtb-$(CONFIG_SOC_OMAP5) += omap5-cm-t54.dtb \
->  +dtb-$(CONFIG_SOC_OMAP5) += \
->  +	omap5-cm-t54.dtb \
->   	omap5-sbc-t54.dtb \
->   	omap5-uevm.dtb
->  -dtb-$(CONFIG_SOC_DRA7XX) += dra7-evm.dtb \
->  +dtb-$(CONFIG_SOC_DRA7XX) += \
->  +	dra7-evm.dtb \
->   	am57xx-beagle-x15.dtb \
->   	dra72-evm.dtb
->  -dtb-$(CONFIG_ARCH_ORION5X) += orion5x-lacie-d2-network.dtb \
->  +dtb-$(CONFIG_ARCH_ORION5X) += \
->  +	orion5x-lacie-d2-network.dtb \
->   	orion5x-lacie-ethernet-disk-mini-v2.dtb \
->   	orion5x-maxtor-shared-storage-2.dtb \
->   	orion5x-rd88f5182-nas.dtb
+> 5dc5218840e1  fs: create proper filename objects using getname_kernel()
+> 
+> I reverted then reapplied each part of that patch.  It works if I
+> leave out the hunk for do_path_lookup:
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index eeb3b83661f8..c3d21b79090e 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2001,9 +2001,15 @@ static int filename_lookup(int dfd, struct filename
+> *name, static int do_path_lookup(int dfd, const char *name,
+>  				unsigned int flags, struct nameidata *nd)
+>  {
+> -	struct filename filename = { .name = name };
+> +	int retval;
+> +	struct filename *filename;
+> 
+> -	return filename_lookup(dfd, &filename, flags, nd);
+> +	filename = getname_kernel(name);
+> +	if (unlikely(IS_ERR(filename)))
+> +		return PTR_ERR(filename);
+> +	retval = filename_lookup(dfd, filename, flags, nd);
+> +	putname(filename);
+> +	return retval;
+>  }
+> 
+> I don't know what other info you may need.
+> Full dmesg for the failed boot included below.
+
+Thanks for testing this and reporting the problem, especially such a small 
+bisection.  Unfortunately nothing is immediately obvious to me, would you mind 
+sharing your kernel config so I can try to reproduce and debug the problem?
+
+-Paul
+
+-- 
+paul moore
+security @ redhat
