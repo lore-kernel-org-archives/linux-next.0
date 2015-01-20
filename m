@@ -1,48 +1,81 @@
-From: Fabio Estevam <festevam@gmail.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
 Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
  root fs
-Date: Tue, 20 Jan 2015 17:43:01 -0200
-Message-ID: <CAOMZO5DsKT2rbSs8PuM6+KYcHZ6165-9eJPDXz=LJxiLW1tb-A@mail.gmail.com>
+Date: Tue, 20 Jan 2015 19:54:32 +0000
+Message-ID: <20150120195432.GH29656@ZenIV.linux.org.uk>
 References: <20150120185308.53f4af4e@canb.auug.org.au>
-	<1421780421.32504.2.camel@theros.lm.intel.com>
-	<CAOMZO5A0fjtzX+Gp8pWz=NawY1qEKK10BEgb7BMxTi_634qFYA@mail.gmail.com>
-	<129259164.tYuuyxyNUx@sifl>
+ <20150120165655.GA10904@kria>
+ <4237741.ePaG0Gba6D@sifl>
+ <20150120175135.GA25973@kria>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f50.google.com ([209.85.215.50]:57024 "EHLO
-	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751592AbbATTnD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 14:43:03 -0500
-In-Reply-To: <129259164.tYuuyxyNUx@sifl>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40263 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750764AbbATTym (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 14:54:42 -0500
+Content-Disposition: inline
+In-Reply-To: <20150120175135.GA25973@kria>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <pmoore@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, Boaz Harrosh <openosd@gmail.com>, Jens Axboe <axboe@kernel.dk>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, viro@zeniv.linux.org.uk, Richard Guy Briggs <rgb@redhat.com>
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Paul Moore <pmoore@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 
-On Tue, Jan 20, 2015 at 5:24 PM, Paul Moore <pmoore@redhat.com> wrote:
-> On Tuesday, January 20, 2015 05:16:45 PM Fabio Estevam wrote:
->> On Tue, Jan 20, 2015 at 5:00 PM, Ross Zwisler
->>
->> <ross.zwisler@linux.intel.com> wrote:
->> > These were just nuisance warnings, I believe, so my guess is that this
->> > isn't related to your kernel panic.   Reverting Boaz's patches to make
->> > these warnings go away would let you know for sure.
->>
->> You are right. Reverting 937af5ecd0591e makes such warnings disappear.
->
-> You guys are much quicker compiling kernels than I am :)
->
-> Fabio, are you still seeing the same panic, just without the warnings?  Or has
-> the panic resolved itself as well?
+On Tue, Jan 20, 2015 at 06:51:35PM +0100, Sabrina Dubroca wrote:
+> 2015-01-20, 12:39:08 -0500, Paul Moore wrote:
+> > On Tuesday, January 20, 2015 05:56:55 PM Sabrina Dubroca wrote:
+> > > Hello,
+> > > 
+> > > Today's linux-next doesn't boot on my qemu VM:
+> > 
+> > ...
+> >  
+> > > I bisected it down to:
+> > > 
+> > > 5dc5218840e1  fs: create proper filename objects using getname_kernel()
+> > > 
+> > > I reverted then reapplied each part of that patch.  It works if I
+> > > leave out the hunk for do_path_lookup:
+> > > 
+> > > diff --git a/fs/namei.c b/fs/namei.c
+> > > index eeb3b83661f8..c3d21b79090e 100644
+> > > --- a/fs/namei.c
+> > > +++ b/fs/namei.c
+> > > @@ -2001,9 +2001,15 @@ static int filename_lookup(int dfd, struct filename
+> > > *name, static int do_path_lookup(int dfd, const char *name,
+> > >  				unsigned int flags, struct nameidata *nd)
+> > >  {
+> > > -	struct filename filename = { .name = name };
+> > > +	int retval;
+> > > +	struct filename *filename;
+> > > 
+> > > -	return filename_lookup(dfd, &filename, flags, nd);
+> > > +	filename = getname_kernel(name);
+> > > +	if (unlikely(IS_ERR(filename)))
+> > > +		return PTR_ERR(filename);
+> > > +	retval = filename_lookup(dfd, filename, flags, nd);
+> > > +	putname(filename);
+> > > +	return retval;
+> > >  }
+> > > 
+> > > I don't know what other info you may need.
+> > > Full dmesg for the failed boot included below.
+> > 
+> > Thanks for testing this and reporting the problem, especially such a small 
+> > bisection.  Unfortunately nothing is immediately obvious to me, would you mind 
+> > sharing your kernel config so I can try to reproduce and debug the problem?
+> 
+> Sure.
+> 
+> I run qemu with:
+> 
+> qemu-system-x86_64 -enable-kvm -cpu host  -m 512 -kernel bzImage -append 'root=/dev/sda1' $IMG
+> 
+> and the image contains a single ext4 partition with a basic ArchLinux install.
 
-Just to clarify: I was not getting the same panic Sabrina originally reported.
-
-Reverting 937af5ecd0591e made the ram warnings go away.
-
-On my case I am running linux-next 20150120 plus this fix:
-http://www.spinics.net/lists/arm-kernel/msg393205.html
-
-and things seem to boot fine here on my ARM platform.
-
-Thanks
+Could you turn that return PTR_ERR(filename); into 
+{
+	printk(KERN_ERR "failed(%p -> %d)", name, PTR_ERR(filename));
+	return PTR_ERR(filename);
+}
+reproduce the panic and see what has it produced?
