@@ -1,107 +1,69 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [next-20150119]regression (mm)?
-Date: Tue, 20 Jan 2015 17:26:11 -0600
-Message-ID: <20150120232611.GA14142@kahuna>
-References: <54BD33DC.40200@ti.com>
- <20150119174317.GK20386@saruman>
- <20150120001643.7D15AA8@black.fi.intel.com>
- <20150120114555.GA11502@n2100.arm.linux.org.uk>
- <20150120140546.DDCB8D4@black.fi.intel.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Wed, 21 Jan 2015 00:27:26 +0100
+Message-ID: <20150120232726.GA16913@kria>
+References: <20150120165655.GA10904@kria>
+ <4237741.ePaG0Gba6D@sifl>
+ <20150120175135.GA25973@kria>
+ <20150120195432.GH29656@ZenIV.linux.org.uk>
+ <20150120204504.GA309@kria>
+ <20150120210202.GI29656@ZenIV.linux.org.uk>
+ <20150120220823.GB18129@kria>
+ <20150120221309.GA18589@roeck-us.net>
+ <20150120225041.GK29656@ZenIV.linux.org.uk>
+ <20150120231725.GL29656@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp4-g21.free.fr ([212.27.42.4]:12505 "EHLO smtp4-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751703AbbATX1d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jan 2015 18:27:33 -0500
 Content-Disposition: inline
-In-Reply-To: <20150120140546.DDCB8D4@black.fi.intel.com>
-Sender: owner-linux-mm@kvack.org
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Felipe Balbi <balbi@ti.com>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20150120231725.GL29656@ZenIV.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>, Paul Moore <pmoore@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 
-On 16:05-20150120, Kirill A. Shutemov wrote:
-> Russell King - ARM Linux wrote:
-> > On Tue, Jan 20, 2015 at 02:16:43AM +0200, Kirill A. Shutemov wrote:
-> > > Better option would be converting 2-lvl ARM configuration to
-> > > <asm-generic/pgtable-nopmd.h>, but I'm not sure if it's possible.
+2015-01-20, 23:17:25 +0000, Al Viro wrote:
+> On Tue, Jan 20, 2015 at 10:50:41PM +0000, Al Viro wrote:
+> > doesn't look at _anything_ other than name->name other than for audit_inode().
+> > And name->name is apparently the same.
 > > 
-> > Well, IMHO the folded approach in asm-generic was done the wrong way
-> > which barred ARM from ever using it.
+> > It looks like something ends up buggering name->name in process, but then
+> > the damn thing appears to be normal after return from filename_lookup()...
 > 
-> Okay, I see.
+> If my reconstruction of what's going on is correct, the call chain here
+> is do_path_lookup() <- kern_path() <- lookup_bdev() <- blkdev_get_by_path()
+> <- mount_bdev() <- some_type.mount() <- mount_fs()
+> <- vfs_kern_mount() <- do_new_mount() <- do_mount() <- sys_mount()
+> <- do_mount_root() <- mount_block_root() <- mount_root().  Which is
+> obscenely long, BTW, but that's a separate story...
 > 
-> Regarding the topic bug. Completely untested patch is below. Could anybody
-> check if it helps?
+> Could you slap
+> 	struct stat buf;
+> 	int n = sys_newstat(name, &buf);
+> 	printk(KERN_ERR "stat(\"%s\") -> %d\n", name, n);
+> 	n = sys_newstat("/dev", &buf);
+> 	printk(KERN_ERR "stat(\"dev\") -> %d\n", n);
 > 
-> From 34b9182d08ef2b541829e305fcc91ef1d26b27ea Mon Sep 17 00:00:00 2001
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Date: Tue, 20 Jan 2015 15:47:22 +0200
-> Subject: [PATCH] arm: define __PAGETABLE_PMD_FOLDED for !LPAE
-> 
-> ARM uses custom implementation of PMD folding in 2-level page table case.
-> Generic code expects to see __PAGETABLE_PMD_FOLDED to be defined if PMD is
-> folded, but ARM doesn't do this. Let's fix it.
-> 
-> Defining __PAGETABLE_PMD_FOLDED will drop out unused __pmd_alloc().
-> It also fixes problems with recently-introduced pmd accounting on ARM
-> without LPAE.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Nishanth Menon <nm@ti.com>
-> ---
->  arch/arm/include/asm/pgtable-2level.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
-> index bcc5e300413f..bfd662e49a25 100644
-> --- a/arch/arm/include/asm/pgtable-2level.h
-> +++ b/arch/arm/include/asm/pgtable-2level.h
-> @@ -10,6 +10,8 @@
->  #ifndef _ASM_PGTABLE_2LEVEL_H
->  #define _ASM_PGTABLE_2LEVEL_H
->  
-> +#define __PAGETABLE_PMD_FOLDED
-> +
->  /*
->   * Hardware-wise, we have a two level page table structure, where the first
->   * level has 4096 entries, and the second level has 256 entries.  Each entry
-> -- 
-> 2.1.4
+> in the beginning of mount_block_root() (init/do_mounts.c) and see what it
+> prints?
 
-Above helps the TI platforms
-1:                     am335x-evm: BOOT: PASS: am335x-evm.txt
-2:                      am335x-sk: BOOT: PASS: am335x-sk.txt
-3:                     am3517-evm: BOOT: PASS: am3517-evm.txt
-4:                      am37x-evm: BOOT: PASS: am37x-evm.txt
-5:                      am437x-sk: BOOT: PASS: am437x-sk.txt
-6:                    am43xx-epos: BOOT: PASS: am43xx-epos.txt
-7:                   am43xx-gpevm: BOOT: PASS: am43xx-gpevm.txt
-8:    BeagleBoard-X15(am57xx-evm): BOOT: PASS: am57xx-evm.txt
-9:                 BeagleBoard-XM: BOOT: PASS: beagleboard.txt
-10:            beagleboard-vanilla: BOOT: PASS: beagleboard-vanilla.txt
-11:               beaglebone-black: BOOT: PASS: beaglebone-black.txt
-12:                     beaglebone: BOOT: PASS: beaglebone.txt
-13:                     craneboard: BOOT: PASS: craneboard.txt
-14:                     dra72x-evm: BOOT: PASS: dra72x-evm.txt
-15:                     dra7xx-evm: BOOT: PASS: dra7xx-evm.txt
-16:         OMAP3430-Labrador(LDP): BOOT: PASS: ldp.txt
-17:                           n900: BOOT: FAIL: n900.txt (legacy issue
-with my farm)
-18:                      omap5-evm: BOOT: PASS: omap5-evm.txt
-19:                  pandaboard-es: BOOT: PASS: pandaboard-es.txt
-20:             pandaboard-vanilla: BOOT: PASS: pandaboard-vanilla.txt
-21:                        sdp2430: BOOT: PASS: sdp2430.txt
-22:                        sdp3430: BOOT: PASS: sdp3430.txt
-23:                        sdp4430: BOOT: PASS: sdp4430.txt
-TOTAL = 23 boards, Booted Boards = 22, No Boot boards = 1
+I get
 
-please feel free to add my
-Tested-by: Nishanth Menon <nm@ti.com>
+stat("/dev/root") -> -2
+stat("dev") -> -2
+with the patch applied (+panic)
+
+
+and:
+
+stat("/dev/root") -> 0
+stat("dev") -> 0
+with the old version of do_path_lookup.
 
 -- 
-Regards,
-Nishanth Menon
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Sabrina
