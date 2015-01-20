@@ -1,49 +1,43 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
- root fs
-Date: Tue, 20 Jan 2015 15:54:57 -0200
-Message-ID: <CAOMZO5ASd2Z20NOwZaQDneZ=35jyVUG-ggpaxo4v8VSds7yuoA@mail.gmail.com>
-References: <20150120185308.53f4af4e@canb.auug.org.au>
-	<20150120165655.GA10904@kria>
-	<4237741.ePaG0Gba6D@sifl>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the omap tree with the arm-soc tree
+Date: Tue, 20 Jan 2015 10:24:50 -0800
+Message-ID: <CAOesGMjc+q5ZEFU4GugJT2RCSmhv48DAA8JzuCxf63eEO6tWVQ@mail.gmail.com>
+References: <20150120110947.1a92a416@canb.auug.org.au>
+	<20150120171048.GF7718@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:32772 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754115AbbATRy7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 12:54:59 -0500
-In-Reply-To: <4237741.ePaG0Gba6D@sifl>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:52859 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751235AbbATSYv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 13:24:51 -0500
+Received: by mail-oi0-f46.google.com with SMTP id a141so7798723oig.5
+        for <linux-next@vger.kernel.org>; Tue, 20 Jan 2015 10:24:50 -0800 (PST)
+In-Reply-To: <20150120171048.GF7718@atomide.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <pmoore@redhat.com>
-Cc: Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, viro@zeniv.linux.org.uk, Richard Guy Briggs <rgb@redhat.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Robinson <pbrobinson@gmail.com>
 
-On Tue, Jan 20, 2015 at 3:39 PM, Paul Moore <pmoore@redhat.com> wrote:
+On Tue, Jan 20, 2015 at 9:10 AM, Tony Lindgren <tony@atomide.com> wrote:
+> * Stephen Rothwell <sfr@canb.auug.org.au> [150119 16:12]:
+>> Hi Tony,
+>>
+>> Today's linux-next merge of the omap tree got a conflict in
+>> arch/arm/boot/dts/Makefile between commit cb612390e546 ("ARM: dts: Only
+>> build dtb if associated Arch and/or SoC is enabled") from the arm-soc
+>> tree and commit ac7452cee743 ("ARM: dts: Add minimal support for
+>> dm8168-evm") from the omap tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary (no action
+>> is required).
+>
+> Uhh why is cb612390e546 doing formatting changes all over the place?
+> That's a sure way to produce merge conflicts..
 
-> Thanks for testing this and reporting the problem, especially such a small
-> bisection.  Unfortunately nothing is immediately obvious to me, would you mind
-> sharing your kernel config so I can try to reproduce and debug the problem?
+It's intentional but a but annoying, yes -- we're resolving them as we
+merge in new DT contents so it won't be exposed outside of our tree
+(and -next, unfortunately).
 
-In case it helps, I also get the similar errors on a mx6 which is
-built with arch/arm/configs/imx_v6_v7_defconfig:
 
-[    1.594196] imx-ipuv3 2800000.ipu: IPUv3H probed
-[    1.601836]  ram0: unknown partition table
-[    1.607247]  ram1: unknown partition table
-[    1.612617]  ram2: unknown partition table
-[    1.618010]  ram3: unknown partition table
-[    1.623359]  ram4: unknown partition table
-[    1.628761]  ram5: unknown partition table
-[    1.634065]  ram6: unknown partition table
-[    1.639436]  ram7: unknown partition table
-[    1.644749]  ram8: unknown partition table
-[    1.650132]  ram9: unknown partition table
-[    1.655447]  ram10: unknown partition table
-[    1.660911]  ram11: unknown partition table
-[    1.666268]  ram12: unknown partition table
-[    1.671778]  ram13: unknown partition table
-[    1.677154]  ram14: unknown partition table
-[    1.682593]  ram15: unknown partition table
-[    1.687165] brd: module loaded
-[    1.705148] loop: module loaded
+-Olof
