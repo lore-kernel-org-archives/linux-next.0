@@ -1,61 +1,77 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: Fwd: linux-next: manual merge of the luto-misc tree with the tip
- tree
-Date: Wed, 21 Jan 2015 07:16:42 +0100
-Message-ID: <20150121061642.GD15963@gmail.com>
-References: <20150119170839.2c6b4b78@canb.auug.org.au>
- <20150119093501.GA4644@pd.tnic>
- <CALCETrW05f9nty5Sk8XA2DTsocqqOxp62aT9QXwta74Km+ZOng@mail.gmail.com>
- <20150121053410.GA15291@gmail.com>
- <CALCETrXCenu4UexZfV6HTq898JbXmZGU5KaCWCXrz7oikrA34g@mail.gmail.com>
- <20150121055532.GA15518@gmail.com>
- <CALCETrVKEZz+NFiqxrgQhqhDZ6dPLSr32RiBoZZmFk5ZydEL1w@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the  tree
+Date: Wed, 21 Jan 2015 18:14:25 +1100
+Message-ID: <20150121181425.18399e35@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CALCETrVKEZz+NFiqxrgQhqhDZ6dPLSr32RiBoZZmFk5ZydEL1w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/DAAQF6MRW91gbeEGfRLQ4ci"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:46902 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750811AbbAUHOc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2015 02:14:32 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
+--Sig_/DAAQF6MRW91gbeEGfRLQ4ci
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-* Andy Lutomirski <luto@amacapital.net> wrote:
+Hi Andrew,
 
-> On Tue, Jan 20, 2015 at 9:55 PM, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > * Andy Lutomirski <luto@amacapital.net> wrote:
-> >
-> >> On Tue, Jan 20, 2015 at 9:34 PM, Ingo Molnar <mingo@kernel.org> wrote:
-> >> >
-> >> > * Andy Lutomirski <luto@amacapital.net> wrote:
-> >> >
-> >> >> Hi Ingo and Thomas-
-> >> >>
-> >> >> There's a trivial conflict in the pull request I sent last week.
-> >> >
-> >> > This is your x86 entry code rework pull request, right? The -tip
-> >> > tree now has the RCU commit it depends on, so could you please
-> >> > rebase it on top of tip:core/rcu so I can pull it? I'll resolve
-> >> > any remaining conflicts with the rest of -tip.
-> >> >
-> >>
-> >> Sure, I can do that in the morning.  The pull request merges cleanly
-> >> with tip:core/rcu, though, so is the rebase needed?
-> >
-> > Yes, because your changes rely on the RCU change (semantically),
-> > so if anyone bisects into your commits it might result in a
-> > subtly broken kernel, right?
-> 
-> Almost.  The parent of my original pull request is the RCU 
-> change that my entry changes semantically depend on, so 
-> bisection should be fine.
+Today's linux-next merge of the akpm-current tree got a conflict in
+mm/swap.c between commit 97b713ba3eba ("fs: kill BDI_CAP_SWAP_BACKED")
+from the block tree and commit f69ec11fad9f ("rmap: drop support of
+non-linear mappings") from the akpm-current tree.
 
-Okay, that's good - so now I can pull your bits, because the RCU 
-commit is final, no need to rebase. (Because you already based 
-your bits on the RCU change that later on ended up in -tip.)
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-	Ingo
+diff --cc mm/swap.c
+index 4e0109a2f37b,5b3087228b99..000000000000
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@@ -1138,10 -1138,10 +1138,8 @@@ void __init swap_setup(void
+  #ifdef CONFIG_SWAP
+  	int i;
+ =20
+- 	for (i =3D 0; i < MAX_SWAPFILES; i++) {
+ -	if (bdi_init(swapper_spaces[0].backing_dev_info))
+ -		panic("Failed to init swap bdi");
++ 	for (i =3D 0; i < MAX_SWAPFILES; i++)
+  		spin_lock_init(&swapper_spaces[i].tree_lock);
+- 		INIT_LIST_HEAD(&swapper_spaces[i].i_mmap_nonlinear);
+- 	}
+  #endif
+ =20
+  	/* Use a smaller cluster for small-memory machines */
+
+--Sig_/DAAQF6MRW91gbeEGfRLQ4ci
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUv1HWAAoJEMDTa8Ir7ZwVLaYP/0+LIFMnk0d7I272b8IC06I4
+mXHocyYOK1tl+29AfDPsnqMS7gD6nO6qEdjAYPcER+D0ovZyFFEJ0b5M8yJ2GsGh
+Ga4MRNNM9gFemw4s5xulNy+YE1eFJFbvWdJTIJ9VSFVwoQuHh7E+5f4F23x3Ohvk
+dZbgFLwAX/IuPeAwz6wkAAJEYm0Ok3jQEn+wZgiXguBdxUC0+lxcQfHF/r/2pUve
+Lv8Rsj5BZtY5TMqKgPqYeHkm/bmDBLYEv2++cbGj6GL0BPPsKIQgRWh483l2qzz5
+DhHjpctzl2UEyiSTlhVJkVoveKJSGLz914vG+w/iKjTfriRyAJxCTx2h5vjlFWVU
+ID1DUvmMIYFMzOBZ6ukK8nxKZ0vU0P3IFOU3Ll22woPpx4lnVIHGZKTkTKaKk/Ii
+/jqu2sMeKnTqIViz0VC8pmjdRi1+UkLaePJIxMhiZZJVrxNyDHjWUC4EoXxG7O98
+LvMGW0rGgNXW2wVDHvR3PJimZ1EvlWse37kf0mbWfLw+GuPaxNW21qPTIwhWV5KA
+aim89mWLGCEm97V7JIzqBvNDdRiDK3+T8CINs7vRt2YSAbg+RbJmxPhN4mWrV/+m
+dzMKnKg8Wk17W7im9ndZfRBr/HXjG/1gynoRIMyWEe7Tt98VA3HGqRVQhbCgEWed
+H9bXz6FajvLqIV9DMTmV
+=ijYO
+-----END PGP SIGNATURE-----
+
+--Sig_/DAAQF6MRW91gbeEGfRLQ4ci--
