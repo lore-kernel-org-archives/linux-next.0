@@ -1,30 +1,28 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Jan 21
-Date: Wed, 21 Jan 2015 13:05:49 +0100
-Message-ID: <CAMuHMdVxtuJZGE0dqQVxyojK2BcCN+6t8QkRmTg-MtK2YyCP2Q@mail.gmail.com>
-References: <20150121192608.61062b6a@canb.auug.org.au>
-	<CAMuHMdXuO+tYjSSnxg+B26MbiXiG-1mmFZ+=rx+OsxnnSPbcnA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the mmc-uh tree with the sunxi tree
+Date: Wed, 21 Jan 2015 13:07:48 +0100
+Message-ID: <CAMuHMdU_qf6wiN4PJkyED7Hf3N4GvJB7jf6seOTWRoRi4KNyPA@mail.gmail.com>
+References: <20150120141750.3dcade27@canb.auug.org.au>
+	<CAPDyKFq4TyiadznYCM-dGmeu799vWevBt1XVZ4DALhv-3bP=AA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:60497 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750754AbbAUMFv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 07:05:51 -0500
-In-Reply-To: <CAMuHMdXuO+tYjSSnxg+B26MbiXiG-1mmFZ+=rx+OsxnnSPbcnA@mail.gmail.com>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:35777 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751601AbbAUMHt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 07:07:49 -0500
+In-Reply-To: <CAPDyKFq4TyiadznYCM-dGmeu799vWevBt1XVZ4DALhv-3bP=AA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?David_Lanzend=C3=B6rfer?= <david.lanzendoerfer@o2s.ch>
 
-On Wed, Jan 21, 2015 at 12:08 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> n Wed, Jan 21, 2015 at 9:26 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Removed trees: (not updated for more that 1 year)
->
-> Have you informed the corresponding maintainers?
+On Wed, Jan 21, 2015 at 12:27 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> I can't find the sunxi tree, is it listed in MAINTAINERS?
 
-OK, I saw the other email. Sorry for the noise.
+git://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git#sunxi/for-next
+from
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees#n51
 
 Gr{oetje,eeting}s,
 
