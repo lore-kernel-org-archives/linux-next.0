@@ -1,93 +1,99 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 20
-Date: Tue, 20 Jan 2015 19:05:41 -0800
-Message-ID: <54BF1785.7040300@roeck-us.net>
-References: <20150120185308.53f4af4e@canb.auug.org.au> <20150120202642.GA6178@roeck-us.net> <20150120225443.GA19629@node.dhcp.inet.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the l2-mtd tree
+Date: Wed, 21 Jan 2015 14:18:36 +1100
+Message-ID: <20150121141836.50c26e27@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150120225443.GA19629@node.dhcp.inet.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>, Mel Gorman <mgorman@suse.de>, Joonsoo Kim <iamjoonsoo.kim@lge.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zO6cReBlcjg6gvTlXQeXoZV"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37183 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753161AbbAUDSn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jan 2015 22:18:43 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Brian Norris <computersforpeace@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-On 01/20/2015 02:54 PM, Kirill A. Shutemov wrote:
-> On Tue, Jan 20, 2015 at 12:26:42PM -0800, Guenter Roeck wrote:
->> ---
->> sparc:
->>
->> # bad: [5d0eebbbb6f76de160f7d7f9dc0b64a98ad9b8e9] Add linux-next specific files for 20150120
->> # good: [ec6f34e5b552fb0a52e6aae1a5afbbb1605cc6cc] Linux 3.19-rc5
->> git bisect start 'HEAD' 'v3.19-rc5'
->> # good: [f933e94e8f597c709068e58daa92570d5aa13b8c] Merge remote-tracking branch 'drm/drm-next'
->> git bisect good f933e94e8f597c709068e58daa92570d5aa13b8c
->> # good: [88cf70c4dd4a3851bf5531c0a51dec298d9690b5] Merge remote-tracking branch 'usb/usb-next'
->> git bisect good 88cf70c4dd4a3851bf5531c0a51dec298d9690b5
->> # good: [3ee33b3893f72e5a504ba873ee4a308896d97645] Merge remote-tracking branch 'cgroup/for-next'
->> git bisect good 3ee33b3893f72e5a504ba873ee4a308896d97645
->> # bad: [5925961a2889ec2b3734be9f3a6375822010f7a7] fs-befs-linuxvfsc-remove-unnecessary-casting-fix
->> git bisect bad 5925961a2889ec2b3734be9f3a6375822010f7a7
->> # bad: [fff9d1d082bb48a0d0e89aaaf746718fcef3a47f] mm: memcontrol: default hierarchy interface for memory fix
->> git bisect bad fff9d1d082bb48a0d0e89aaaf746718fcef3a47f
->> # good: [ab090dcbdd276e9ddcd0ecb666389aa85c30c76f] powerpc: drop _PAGE_FILE and pte_file()-related helpers
->> git bisect good ab090dcbdd276e9ddcd0ecb666389aa85c30c76f
->> # good: [91408e6db5842ed4bb66e2a3919b67a5f06ac34a] mm/hugetlb: fix suboptimal migration/hwpoisoned entry check
->> git bisect good 91408e6db5842ed4bb66e2a3919b67a5f06ac34a
->> # bad: [8e94896c7510e69bbd2acf418ad3a8afb9978c97] fs: consolidate {nr,free}_cached_objects args in shrink_control
->> git bisect bad 8e94896c7510e69bbd2acf418ad3a8afb9978c97
->> # bad: [5995b76d501a8f4d315f811698db98ac997d706f] x86: mm: restore original pte_special check
->> git bisect bad 5995b76d501a8f4d315f811698db98ac997d706f
->> # good: [b75c721aa3e2df5c52d4b6bce3dd687018c1f40c] mm: convert p[te|md]_numa users to p[te|md]_protnone_numa
->> git bisect good b75c721aa3e2df5c52d4b6bce3dd687018c1f40c
->> # good: [ce4188d335ac91a004087fb0ea86b85091ad570b] mm: convert p[te|md]_mknonnuma and remaining page table manipulations
->> git bisect good ce4188d335ac91a004087fb0ea86b85091ad570b
->> # bad: [625fa33ba695d73baa58afa44ab063f67e5f4b64] mm: numa: do not trap faults on the huge zero page
->> git bisect bad 625fa33ba695d73baa58afa44ab063f67e5f4b64
->> # good: [c2a7c97cc4bc3d46e98908d7dee07ab3e00a5257] mm: remove remaining references to NUMA hinting bits and helpers
->> git bisect good c2a7c97cc4bc3d46e98908d7dee07ab3e00a5257
->> # first bad commit: [625fa33ba695d73baa58afa44ab063f67e5f4b64] mm: numa: do not trap faults on the huge zero page
->
-> Could you provide more info about the fail in qemu?
->
+--Sig_/zO6cReBlcjg6gvTlXQeXoZV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Error message:
+Hi Jens,
 
-BUG: Bad page state in process init.sh  pfn:00000
-page:f05e7460 count:0 mapcount:-1 mapping:  (null) index:0x0
-flags: 0x400(reserved)
-page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-bad because of flags:
-flags: 0x400(reserved)
-CPU: 0 PID: 1 Comm: init.sh Not tainted 3.19.0-rc5-next-20150120 #1
-[f0076010 : bad_page+0xdc/0xfc ] [f00760c0 : free_pages_prepare+0x90/0x1f8 ] [f00775cc : free_hot_cold_page+0x20/0x160 ] [f00919e8 : do_wp_page+0x680/0x6ac ] [f00939f4 : handle_mm_fault+0xc94/0xd08 ] [f0015900 : do_sparc_fault+0xfc/0x3ec ] [f000af90 : srmmu_fault+0x58/0x68 ] [f00e74f4 : load_elf_binary+0x9a8/0xe94 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00e67d0 : load_script+0x214/0x224 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00b11a4 : do_execveat_common+0x434/0x584 ] [f00b1310 : do_execve+0x1c/0x2c ] [f02b50b0 : kernel_init+0x70/0xf0 ] [f000b200 : ret_from_kernel_thread+0xc/0x38 ] [00000000 :   (null) ]
-Disabling lock debugging due to kernel taint
-: applet not found
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100
+Today's linux-next merge of the block tree got a conflict in
+drivers/mtd/mtdcore.c between commit 3efe41be224c ("mtd: implement
+common reboot notifier boilerplate") from the  tree and commit
+b4caecd48005 ("fs: introduce f_op->mmap_capabilities for nommu mmap
+support") from the block tree.
 
-Complete console log:
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-http://server.roeck-us.net:8010/builders/qemu-sparc-next/builds/82/steps/qemubuildcommand/logs/stdio
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-defconfig:
+diff --cc drivers/mtd/mtdcore.c
+index cbc0fc46d2d6,ff38a1df22f7..000000000000
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@@ -366,17 -339,22 +340,33 @@@ static struct device_type mtd_devtype=20
+  	.release	=3D mtd_release,
+  };
+ =20
+ +static int mtd_reboot_notifier(struct notifier_block *n, unsigned long st=
+ate,
+ +			       void *cmd)
+ +{
+ +	struct mtd_info *mtd;
+ +
+ +	mtd =3D container_of(n, struct mtd_info, reboot_notifier);
+ +	mtd->_reboot(mtd);
+ +
+ +	return NOTIFY_DONE;
+ +}
+ +
++ #ifndef CONFIG_MMU
++ unsigned mtd_mmap_capabilities(struct mtd_info *mtd)
++ {
++ 	switch (mtd->type) {
++ 	case MTD_RAM:
++ 		return NOMMU_MAP_COPY | NOMMU_MAP_DIRECT | NOMMU_MAP_EXEC |
++ 			NOMMU_MAP_READ | NOMMU_MAP_WRITE;
++ 	case MTD_ROM:
++ 		return NOMMU_MAP_COPY | NOMMU_MAP_DIRECT | NOMMU_MAP_EXEC |
++ 			NOMMU_MAP_READ;
++ 	default:
++ 		return NOMMU_MAP_COPY;
++ 	}
++ }
++ #endif
++=20
+  /**
+   *	add_mtd_device - register an MTD device
+   *	@mtd: pointer to new MTD device info structure
 
-http://server.roeck-us.net/qemu/sparc32/qemu_sparc_defconfig
+--Sig_/zO6cReBlcjg6gvTlXQeXoZV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-qemu command line:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-/opt/buildbot/bin/qemu-system-sparc -cpu "Fujitsu MB86907" \
-	-kernel arch/sparc/boot/image -hda hda.sqf -no-reboot \
-	-append "root=/dev/sda rw init=/sbin/init.sh panic=1 console=ttyS0" \
-	-nographic
+iQIcBAEBCAAGBQJUvxqRAAoJEMDTa8Ir7ZwVYqwP/3TI1LdOdHBNbCTlZgmtGN2N
+n1zj7/DMNaIZvEYfnpY/R2pkgkj8mhcN1uJwV11SyxRK3e9LzftYVTl04ByFYqry
+Q1I4HiNnEvtpVke6rHp6QmWy+Y77fItb5wINdFbx1Lc0mMI/p8W5W1/FwY4nhe46
+LzPlSYdsf/pLlkXTvKwy/DKRoHfSsiCup87mA8rY3saCZnWthWaCA2w/CdR8IVhq
+6CK9tF86jdTP8BhurxPAa3pajb7qbv+xhZzZlEZA8QO/dNtkpGyU1YjHwZ3jFLcG
+jOUwAwUoO66UWt5ussUzw5fu20gG2rD2d+mTADh750oqlrGL7D9tKYussebiX1or
+e3hQbgPgdffCDn4dh8EqWel40PQwShNDpIteRqcUpvN3+N5DHyFc88AXHzxGQv0h
+AtXrLC+lP+R+fUSVjJwpIfTN+dmCBf2kuuD03HDEg9vA/3zpcyEoxx7GMg+usssY
+F5zjaZhzMGW/xnq7Uh4KG4pXfNlb3vLJEchFSAVdOVJi8jV+eLdqfZFXpR9HMEsU
+4cUUfrSK9nOaQPLLuHnxWPAFRJB9xrTYhQw8cMFf5Fp/e0i5qQocQ9w+lca114o/
+exeZZSx0a9RNsX1nLDTKOQqUsGl/PG2jHUHVvZ6q9fxrkjQR+rkTx7oStg5RqtkG
++Ir27pM13YBt5GWjMDWc
+=v+Mz
+-----END PGP SIGNATURE-----
 
-The root file system (hda.sqf) is at http://server.roeck-us.net/qemu/sparc32/hda.sqf.
-
-qemu version:
-
-/opt/buildbot/bin/qemu-system-sparc --version
-QEMU emulator version 2.1.2, Copyright (c) 2003-2008 Fabrice Bellard
-
-Hope this helps,
-
-Guenter
+--Sig_/zO6cReBlcjg6gvTlXQeXoZV--
