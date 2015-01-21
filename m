@@ -1,52 +1,124 @@
-From: Peter Huewe <peterhuewe@gmx.de>
-Subject: [PATCH] tpm/tpm_tis: Add missing ifdef CONFIG_ACPI for pnp_acpi_device
-Date: Wed, 21 Jan 2015 21:40:15 +0100
-Message-ID: <1421872815-16644-1-git-send-email-peterhuewe@gmx.de>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Wed, 21 Jan 2015 13:03:20 -0800
+Message-ID: <54C01418.5060204@roeck-us.net>
+References: <1528536.jyty2pu4Mz@sifl> <20150121004117.GM29656@ZenIV.linux.org.uk> <54BF1292.2080902@roeck-us.net> <20150121033600.GN29656@ZenIV.linux.org.uk> <54BF2496.4000807@roeck-us.net> <20150121043637.GO29656@ZenIV.linux.org.uk> <20150121110539.GA8924@kria> <54BFAA5D.4040108@roeck-us.net> <20150121182905.GQ29656@ZenIV.linux.org.uk> <54BFF8B3.6060802@roeck-us.net> <20150121200626.GR29656@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:56270 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751546AbbAUUi1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 15:38:27 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, tpmdd-devel@lists.sourceforge.net, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jim Davis <jim.epost@gmail.com>, Peter Huewe <peterhuewe@gmx.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20150121200626.GR29656@ZenIV.linux.org.uk>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Sabrina Dubroca <sd@queasysnail.net>, Paul Moore <pmoore@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-This fixes a build failure if CONFIG_PNP is set but CONFIG_ACPI is not:
-drivers/char/tpm/tpm_tis.c: In function =E2=80=98tpm_tis_pnp_init=E2=80=
-=99:
-drivers/char/tpm/tpm_tis.c:912:45: error: invalid type argument of
-=E2=80=98->=E2=80=99 (have =E2=80=98int=E2=80=99)
-   acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
+On 01/21/2015 12:06 PM, Al Viro wrote:
+> On Wed, Jan 21, 2015 at 11:06:27AM -0800, Guenter Roeck wrote:
+>> On 01/21/2015 10:29 AM, Al Viro wrote:
+>>> On Wed, Jan 21, 2015 at 05:32:13AM -0800, Guenter Roeck wrote:
+>>>> Another data point (though I have no idea if it is useful or what it means):
+>>>>
+>>>> In the working case, path_init sets nd->flags to 0x50 or 0x51.
+>>>> In the non-working case (ie for all files with a '/' in the name),
+>>>> it sets nd->flags to 0x10 or 0x11, even though it is always called
+>>>> with the LOOKUP_RCU bit set in flags.
+>>>
+>>> Umm...  Are those path_init() succeeding or failing?  Note that path_init()
+>>> includes "walk everything except for the last component", so your non-working
+>>> case is "have it walk anything at all".  What's failing there?  path_init()
+>>> or handling the remaining component?
+>>>
+>> path_init() returns -2. Guess that explains the unexpected flags ;-).
+>> The failuere is from
+>> 	link_path_walk()
+>> 		walk_component()
+>
+> Which is to say, lookup gave it a negative dentry.  OK, let's just make
+> vfs_mkdir() and walk_component() print what they are doing; on top of
+> linux-next
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 323957f..8a4e22f 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1586,8 +1586,11 @@ static inline int walk_component(struct nameidata *nd, struct path *path,
+>   		inode = path->dentry->d_inode;
+>   	}
+>   	err = -ENOENT;
+> -	if (!inode || d_is_negative(path->dentry))
+> +	if (!inode || d_is_negative(path->dentry)) {
+> +		printk(KERN_ERR "walk_component[%p,%pd4] -> negative\n",
+> +			path->dentry, path->dentry);
+>   		goto out_path_put;
+> +	}
+>
+>   	if (should_follow_link(path->dentry, follow)) {
+>   		if (nd->flags & LOOKUP_RCU) {
+> @@ -3521,6 +3524,7 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+>   	error = dir->i_op->mkdir(dir, dentry, mode);
+>   	if (!error)
+>   		fsnotify_mkdir(dir, dentry);
+> +	printk(KERN_ERR "mkdir[%p,%pd4] => %d\n", dentry, dentry, error);
+>   	return error;
+>   }
+>   EXPORT_SYMBOL(vfs_mkdir);
+>
 
-If CONFIG_PNPACPI is not set pnp_acpi_device is defined as 0 and thus
-accesing the handle is not possible.
+ok case (putname commented out):
 
-=46ixes: 0dc553652102 ("tpm: fix raciness of PPI interface lookup")
-Reported-by: Jim Davis <jim.epost@gmail.com>
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
- drivers/char/tpm/tpm_tis.c | 2 ++
- 1 file changed, 2 insertions(+)
+user_path_at_empty lookup usr flags 0x0
+path_lookupat: calling path_init 'usr' flags=40
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=40[50] returned 0
+walk_component: lookup_fast() returned 1
+walk_component: lookup_slow() returned 0
+walk_component: inode=  (null), negative=1
+do_path_lookup(usr, 0x10)
+path_lookupat: calling path_init 'usr' flags=50
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=50[50] returned 0
+mkdir[c74012a0,/usr] => 0
+user_path_at_empty lookup usr flags 0x1
+path_lookupat: calling path_init 'usr' flags=41
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=41[51] returned 0
+walk_component: inode=c74004a0, negative=0
+user_path_at_empty lookup usr flags 0x1
+path_lookupat: calling path_init 'usr' flags=41
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=41[51] returned 0
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index 20a61bc98db8..6725bef7cb96 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -908,8 +908,10 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_de=
-v,
- 	if (is_itpm(pnp_dev))
- 		itpm =3D true;
-=20
-+#ifdef CONFIG_ACPI
- 	if (pnp_acpi_device(pnp_dev))
- 		acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
-+#endif
-=20
- 	return tpm_tis_init(&pnp_dev->dev, acpi_dev_handle, start, len, irq);
- }
---=20
-2.0.5
+failing case:
+
+path_lookupat: calling path_init 'usr' flags=40
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=40[50] returned 0
+walk_component: lookup_fast() returned 1
+walk_component: lookup_slow() returned 0
+walk_component: inode=  (null), negative=1
+do_path_lookup(usr, 0x10)
+path_lookupat: calling path_init 'usr' flags=50
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=50[50] returned 0
+mkdir[c74012a0,/kkk] => 0						<==== SIC!
+user_path_at_empty lookup usr flags 0x1
+path_lookupat: calling path_init 'usr' flags=41
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=41[51] returned 0
+walk_component: lookup_fast() returned 1
+walk_component: lookup_slow() returned 0
+walk_component: inode=  (null), negative=1
+user_path_at_empty lookup usr flags 0x1
+path_lookupat: calling path_init 'usr' flags=41
+path_init: link_path_walk() returned 0
+path_lookupat: path_init 'usr' flags=41[51] returned 0
+walk_component: lookup_fast() returned 1
+walk_component: lookup_slow() returned 0
+walk_component: inode=  (null), negative=1
+
+Guenter
+
+
+
