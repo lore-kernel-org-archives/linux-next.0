@@ -1,71 +1,73 @@
-From: Konstantin Khlebnikov <koct9i@gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 21 Jan 2015 12:06:32 +0300
-Message-ID: <CALYGNiMY7qubx0oLyO37yG8-ci683hZyrN9ZPNcZy3Spo0z=Qg@mail.gmail.com>
-References: <20150121182908.4d8263e2@canb.auug.org.au>
-	<CALYGNiPBUFBpUXVjgBWYrOX=hi2hhY03owuZ5K27Ljt7BrDEBg@mail.gmail.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [next-20150119]regression (mm)?
+Date: Wed, 21 Jan 2015 11:23:19 +0200
+Message-ID: <54BF7007.7050800@ti.com>
+References: <54BD33DC.40200@ti.com> <20150119174317.GK20386@saruman> <20150120001643.7D15AA8@black.fi.intel.com> <20150120114555.GA11502@n2100.arm.linux.org.uk> <20150120140546.DDCB8D4@black.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CALYGNiPBUFBpUXVjgBWYrOX=hi2hhY03owuZ5K27Ljt7BrDEBg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Konstantin Khebnikov <khlebnikov@yandex-team.ru>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20150120140546.DDCB8D4@black.fi.intel.com>
+Sender: owner-linux-mm@kvack.org
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Felipe Balbi <balbi@ti.com>, Nishanth Menon <nm@ti.com>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 21, 2015 at 11:39 AM, Konstantin Khlebnikov
-<koct9i@gmail.com> wrote:
-> On Wed, Jan 21, 2015 at 10:29 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi Andrew,
+On 01/20/2015 04:05 PM, Kirill A. Shutemov wrote:
+> Russell King - ARM Linux wrote:
+>> On Tue, Jan 20, 2015 at 02:16:43AM +0200, Kirill A. Shutemov wrote:
+>>> Better option would be converting 2-lvl ARM configuration to
+>>> <asm-generic/pgtable-nopmd.h>, but I'm not sure if it's possible.
 >>
->> After merging the akpm-current tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->>
->> mm/page-writeback.c: In function 'account_page_cleared':
->> mm/page-writeback.c:2122:23: error: 'struct address_space' has no member named 'backing_dev_info'
->>    dec_bdi_stat(mapping->backing_dev_info,
->>                        ^
->>
->> Caused by commit d475bc581640 ("page_writeback: cleanup mess around
->> cancel_dirty_page()") (hmm, that commit has no Signed-off-by from
->> Andrew?) interacting with commit b83ae6d42143 ("fs: remove
->> mapping->backing_dev_info") from the block tree.
->
-> Andrew, please drop it. I'll rebase and send it again when the dust settles.
+>> Well, IMHO the folded approach in asm-generic was done the wrong way
+>> which barred ARM from ever using it.
+> 
+> Okay, I see.
+> 
+> Regarding the topic bug. Completely untested patch is below. Could anybody
+> check if it helps?
+> 
+> From 34b9182d08ef2b541829e305fcc91ef1d26b27ea Mon Sep 17 00:00:00 2001
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Date: Tue, 20 Jan 2015 15:47:22 +0200
+> Subject: [PATCH] arm: define __PAGETABLE_PMD_FOLDED for !LPAE
+> 
+> ARM uses custom implementation of PMD folding in 2-level page table case.
+> Generic code expects to see __PAGETABLE_PMD_FOLDED to be defined if PMD is
+> folded, but ARM doesn't do this. Let's fix it.
+> 
+> Defining __PAGETABLE_PMD_FOLDED will drop out unused __pmd_alloc().
+> It also fixes problems with recently-introduced pmd accounting on ARM
+> without LPAE.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: Nishanth Menon <nm@ti.com>
+> ---
+>  arch/arm/include/asm/pgtable-2level.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
+> index bcc5e300413f..bfd662e49a25 100644
+> --- a/arch/arm/include/asm/pgtable-2level.h
+> +++ b/arch/arm/include/asm/pgtable-2level.h
+> @@ -10,6 +10,8 @@
+>  #ifndef _ASM_PGTABLE_2LEVEL_H
+>  #define _ASM_PGTABLE_2LEVEL_H
+>  
+> +#define __PAGETABLE_PMD_FOLDED
+> +
+>  /*
+>   * Hardware-wise, we have a two level page table structure, where the first
+>   * level has 4096 entries, and the second level has 256 entries.  Each entry
+> 
 
-Also I've found potential race with mark_buffer_dirty() and I'm not sure if
-everything right in remove_from_page_cache phase. Probably it's better to
-make it bullet-proof and put the final account_page_cleaned under ->tree_lock.
+Among other boards I have my daVinci board (OMAP-L138-EVM) boots fine with
+this patch.
 
->
->>
->> I have applied the following fix patch:
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Wed, 21 Jan 2015 18:23:41 +1100
->> Subject: [PATCH] fs: remove mapping->backing_dev_info fix
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  mm/page-writeback.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
->> index a8397a6923be..ab922616e522 100644
->> --- a/mm/page-writeback.c
->> +++ b/mm/page-writeback.c
->> @@ -2119,7 +2119,7 @@ void account_page_cleared(struct page *page, struct address_space *mapping)
->>  {
->>         if (mapping_cap_account_dirty(mapping)) {
->>                 dec_zone_page_state(page, NR_FILE_DIRTY);
->> -               dec_bdi_stat(mapping->backing_dev_info,
->> +               dec_bdi_stat(inode_to_bdi(mapping->host),
->>                                 BDI_RECLAIMABLE);
->>                 task_io_account_cancelled_write(PAGE_CACHE_SIZE);
->>         }
->> --
->> 2.1.4
->>
->> --
->> Cheers,
->> Stephen Rothwell                    sfr@canb.auug.org.au
+Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
