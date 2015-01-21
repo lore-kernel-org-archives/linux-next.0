@@ -1,60 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the block
- tree
-Date: Wed, 21 Jan 2015 18:14:50 +1100
-Message-ID: <20150121181450.743c625b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 21 Jan 2015 18:29:08 +1100
+Message-ID: <20150121182908.4d8263e2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lomBaDQFP2YStwEchUnlYRk"; protocol="application/pgp-signature"
+ boundary="Sig_/58lniFmdwIYIGJECMN+_AmH"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49760 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56344 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750917AbbAUHOw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 02:14:52 -0500
+	id S1750736AbbAUH3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2015 02:29:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Konstantin Khebnikov <khlebnikov@yandex-team.ru>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khebnikov <khlebnikov@yandex-team.ru>, Christoph Hellwig <hch@lst.de>
 
---Sig_/lomBaDQFP2YStwEchUnlYRk
+--Sig_/58lniFmdwIYIGJECMN+_AmH
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got conflicts in
-mm/filemap.c and mm/truncate.c between commit de1414a654e6 ("fs: export
-inode_to_bdi and use it in favor of mapping->backing_dev_info") from
-the  tree and commit d475bc581640 ("page_writeback: cleanup mess around
-cancel_dirty_page()") from the akpm-current tree.
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (the latter removed the code modified by the former) and
-can carry the fix as necessary (no action is required).
+mm/page-writeback.c: In function 'account_page_cleared':
+mm/page-writeback.c:2122:23: error: 'struct address_space' has no member na=
+med 'backing_dev_info'
+   dec_bdi_stat(mapping->backing_dev_info,
+                       ^
+
+Caused by commit d475bc581640 ("page_writeback: cleanup mess around
+cancel_dirty_page()") (hmm, that commit has no Signed-off-by from
+Andrew?) interacting with commit b83ae6d42143 ("fs: remove
+mapping->backing_dev_info") from the block tree.
+
+I have applied the following fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 21 Jan 2015 18:23:41 +1100
+Subject: [PATCH] fs: remove mapping->backing_dev_info fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/page-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index a8397a6923be..ab922616e522 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2119,7 +2119,7 @@ void account_page_cleared(struct page *page, struct a=
+ddress_space *mapping)
+ {
+ 	if (mapping_cap_account_dirty(mapping)) {
+ 		dec_zone_page_state(page, NR_FILE_DIRTY);
+-		dec_bdi_stat(mapping->backing_dev_info,
++		dec_bdi_stat(inode_to_bdi(mapping->host),
+ 				BDI_RECLAIMABLE);
+ 		task_io_account_cancelled_write(PAGE_CACHE_SIZE);
+ 	}
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/lomBaDQFP2YStwEchUnlYRk
+--Sig_/58lniFmdwIYIGJECMN+_AmH
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUv1HqAAoJEMDTa8Ir7ZwVGgUP/RxXzfRqZ/ya0olDDGWo3IZC
-zuUdbxKh+Rb+8735RUh+Qdtjyh0SrVgVVKCloOvljPlEnQZ/ZAoDWuWciujjmRIW
-arXbGp7UBvVUNQDYLDBHOkyvEHvWWa6y70pfLSW27Qq2YCxHM2nma+D9j57qEGKG
-rBU9P2ePoq/ei/j1FeS7C/eIaPbB2hNNjKAwVZtB+NfZBmvF/m2Ra79zOcM3BN3R
-leD6q45hdHg6kOggpWkKx9ReCU8xbOBJM8r2NoDyyCgL3bYsp4p/RWNSRy5+q5je
-YPeR/I3PIF74OnCShdaBZYltGGUIYzZLQfZaREIMqKOzcjSaZmLSzvEtTL70YMPf
-7EG7gVOdky/F8jW1O8yfhFHclcC6tqAF68Ity0wS+0KO/uk0lpWbpaL4LDrCr5hr
-IvRRpvk0UFHrfDUzH2pVZeuDO44jN6jJYHtdCtbRjR/E6mRVYq+j70TWd+LhM+a4
-bfsr0de1HaXV8V0iuL5xFwDEqRWfyjilEMpeVX9fJ3Gc5GeIK2FffKSOhKp97tjQ
-xuxRQCX5nGY1CSzmTOIw1i/LoJCTlr6tqECtsvyczCgsOhE/HEiK0tif/NU/8jr8
-2cvze2ZNRYJqNySDUtXbC0/bwAQjRVDbiGmgMsIgLdyjZXdK2mLGimoWAl2d7zbt
-nUuF+cUX5QqMscgxO6e/
-=RRzh
+iQIcBAEBCAAGBQJUv1VLAAoJEMDTa8Ir7ZwVkGYP/2YUWZFVFR8p790qI5EgbeRO
+fiveUttEPUe1p428HBZdat4iXuz9/kV3HpDA9gSo0pM+KTj3ygA9fZLVq/NXPysw
+M+mRx220KqT7i5XvkF52IUfqhteXU3UdphpYxO702KVPix5VamCHcU0sN983nIqR
+c8aIutGnsWAblVTtzaGHw92fvxk1y4ylwsfC+M8OvXOuAa9b9CyXW/mHboFhdQgO
+Cvcn1hzAFiYa8ZYxeRo+Lk0ka/V9LkB5Mn3wbPPj1GQ2FQdDc3PbqFB8B5/4AT1p
+i0OmL9EQpwPw2eTaXQLEQ6bdahlUgig0adgpkrgc+THmityAUoR8kRhs5NGnFbjF
+glS8YWcZPjLcmPcT7eoOn+Q72bIZ3DkEF5YwfZevs3M8fW/pXcCGSlNRCuwl7U4z
+LMTGD9SKxOxvdr2XNpjeJJrc7g1ofd0evuzvXDQtYme/86slAw0830isaycDZZml
+H0KnKNvd5dQHKxOnr+9RhYAv+VAHK/W6hOj+HnaEJSA2SoW8O5+TiEXdcoW8DuXA
+V3YwPCL5lCvksB5lILYmoTbFczA/6t6bAaCzEGqfo65nG4YodGilliosuqpt5OpX
+GkFaDVBVbid+q9pWuqtL9IfPudCfos+Ds8mYOYFV9GbMeRgiXslCk6f0H6SJ10/D
+7B/Z0ddSfRLJLf+tHkSn
+=97J4
 -----END PGP SIGNATURE-----
 
---Sig_/lomBaDQFP2YStwEchUnlYRk--
+--Sig_/58lniFmdwIYIGJECMN+_AmH--
