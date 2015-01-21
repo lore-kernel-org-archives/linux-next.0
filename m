@@ -1,71 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] tpm/tpm_tis: Add missing ifdef CONFIG_ACPI for
- pnp_acpi_device
-Date: Thu, 22 Jan 2015 08:34:32 +1100
-Message-ID: <20150122083432.2adaaee2@canb.auug.org.au>
-References: <1421872815-16644-1-git-send-email-peterhuewe@gmx.de>
-	<20150122082350.121301eb@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Wed, 21 Jan 2015 13:38:59 -0800
+Message-ID: <20150121213859.GA22520@roeck-us.net>
+References: <20150121033600.GN29656@ZenIV.linux.org.uk>
+ <54BF2496.4000807@roeck-us.net>
+ <20150121043637.GO29656@ZenIV.linux.org.uk>
+ <20150121110539.GA8924@kria>
+ <54BFAA5D.4040108@roeck-us.net>
+ <20150121182905.GQ29656@ZenIV.linux.org.uk>
+ <54BFF8B3.6060802@roeck-us.net>
+ <20150121200626.GR29656@ZenIV.linux.org.uk>
+ <54C01418.5060204@roeck-us.net>
+ <20150121212833.GS29656@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XohsF7ClZivEVOvr5Vu72Yx"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55553 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752308AbbAUVek (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 16:34:40 -0500
-In-Reply-To: <20150122082350.121301eb@canb.auug.org.au>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:52215 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751751AbbAUVjl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 16:39:41 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YE301-000PFo-97
+	for linux-next@vger.kernel.org; Wed, 21 Jan 2015 21:39:41 +0000
+Content-Disposition: inline
+In-Reply-To: <20150121212833.GS29656@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: linux-next <linux-next@vger.kernel.org>, tpmdd-devel@lists.sourceforge.net, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jim Davis <jim.epost@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Sabrina Dubroca <sd@queasysnail.net>, Paul Moore <pmoore@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 
---Sig_/XohsF7ClZivEVOvr5Vu72Yx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 21, 2015 at 09:28:33PM +0000, Al Viro wrote:
+> On Wed, Jan 21, 2015 at 01:03:20PM -0800, Guenter Roeck wrote:
+> > 
+> > failing case:
+> > 
+> > path_lookupat: calling path_init 'usr' flags=40
+> > path_init: link_path_walk() returned 0
+> > path_lookupat: path_init 'usr' flags=40[50] returned 0
+> > walk_component: lookup_fast() returned 1
+> > walk_component: lookup_slow() returned 0
+> > walk_component: inode=  (null), negative=1
+> > do_path_lookup(usr, 0x10)
+> > path_lookupat: calling path_init 'usr' flags=50
+> > path_init: link_path_walk() returned 0
+> > path_lookupat: path_init 'usr' flags=50[50] returned 0
+> > mkdir[c74012a0,/kkk] => 0						<==== SIC!
+> 
+> Cute. 'k' being 0x6b, aka POISON_FREE...  OK, the next question is what's
+> been freed under us - I don't believe that it's dentry itself...
+> Oh, fuck.  OK, I see what happens.  Look at kern_path_create(); it does
+> LOOKUP_PARENT walk, leaving nd->last pointing to the last component of
+> the *COPY* of the name it's just created, walked and freed.
+> 
+Cool.
 
-Hi Peter,
+> OK...  Fortunately, struct nameidata is completely opaque outside of fs/namei.c,
+> so we only need to care about a couple of codepaths.
+> 
+> Folks, could you check if the following on top of linux-next fixes the problem?
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 323957f..cda89c3 100644
 
-On Thu, 22 Jan 2015 08:23:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> To save on the ifdef, why not
->=20
-> 	struct acpi_device *acpi;
->=20
-> 	.
-> 	.
->=20
-> 	acpi =3D pnp_acpi_device(dev);
-> 	if (acpi)
-> 		acpi_dev_handle =3D acpi->handle;
+Yes, this patch fixes the problem for me.
 
-I guess struct acpi_device may not be visible when CONFIG_ACPI is not
-set? That would be a pain :-(
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/XohsF7ClZivEVOvr5Vu72Yx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUwBtsAAoJEMDTa8Ir7ZwVp0YP/RrckqMcnqLHmLkQC3WzICLN
-NZINm5h63xaRPIZBTr6egliPgtBK2xTW+VABMMvk9XQ8eBw/i8drMlUGhdKft5C/
-2aSJuRU7cHPBBLjfWPrK7Ow+tPqDYp+ccfwmDzSpFK8tC6w/g+XDJCfgOl6HARCR
-ef6B8ULZWjJV/egEaFjap2oBP20MgES/RiPf0+a5gigq/7j0zO1+1PXk5+m87anQ
-qnCWTNZhQUX4dEwZLuKbJvXUT3pZXyChdlWsrop3c5TNRRYoXO7WjKlRagFGQlBi
-Yn5nISYYco9eV3YMcty7uga3ww7fm02SFTEInWPzPkqVEDX4Hji5ETpIg9aH4dzo
-eMz/SELyyShnwllrmD1THHOJbk1YO45C2nZ2hwZxd2Rh99Xhvwj1NY6GPYk6GJDj
-XWHNg0IVBe+r79I4j2+Kc6s/ubtVdqdH8qGeapY6rcff5a9Pkhp9BKNmLQ7dwCT6
-0kO/fzcDRm4SS6ULU7uSa1IR4iKMViILODTKgYNC/TrRDo7NxlPgjoD03pjnvelQ
-MuwCk/5OsnDMUd0rVWA0N7nZrXD4fJiLRDQEWlS0KyHMwg3Rscx9D0yBvTV4i5Ma
-1VqI1LX4CdXEMWNqoQFkCiSv6ZsSKf2BPghtnERbabcsbk4uenOgVFH21DjwMo7w
-bB26wJ91+RAFUewyF9UG
-=C8/0
------END PGP SIGNATURE-----
-
---Sig_/XohsF7ClZivEVOvr5Vu72Yx--
+Guenter
