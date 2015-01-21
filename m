@@ -1,88 +1,70 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 20
-Date: Wed, 21 Jan 2015 15:34:18 -0800
-Message-ID: <20150121233418.GA5081@roeck-us.net>
-References: <20150120185308.53f4af4e@canb.auug.org.au>
- <20150120202642.GA6178@roeck-us.net>
- <20150120225443.GA19629@node.dhcp.inet.fi>
- <54BF1785.7040300@roeck-us.net>
- <20150121104325.GA22449@node.dhcp.inet.fi>
+From: Peter Huewe <peterhuewe@gmx.de>
+Subject: [PATCH] tpm/tpm_tis: Add missing ifdef CONFIG_ACPI for pnp_acpi_device
+Date: Thu, 22 Jan 2015 00:42:50 +0100
+Message-ID: <1421883770-13720-1-git-send-email-peterhuewe@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:39593 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751924AbbAUXed (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 18:34:33 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YE4nB-001FQS-Ff
-	for linux-next@vger.kernel.org; Wed, 21 Jan 2015 23:34:33 +0000
-Content-Disposition: inline
-In-Reply-To: <20150121104325.GA22449@node.dhcp.inet.fi>
+Received: from mout.gmx.net ([212.227.15.18]:55100 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753277AbbAUXko (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2015 18:40:44 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Mel Gorman <mgorman@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, davem@davemloft.net
+To: jmorris@namei.org
+Cc: linux-security-module@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, tpmdd-devel@lists.sourceforge.net, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jim Davis <jim.epost@gmail.com>, Peter Huewe <peterhuewe@gmx.de>
 
-On Wed, Jan 21, 2015 at 12:43:25PM +0200, Kirill A. Shutemov wrote:
-> On Tue, Jan 20, 2015 at 07:05:41PM -0800, Guenter Roeck wrote:
-> > On 01/20/2015 02:54 PM, Kirill A. Shutemov wrote:
-> > >On Tue, Jan 20, 2015 at 12:26:42PM -0800, Guenter Roeck wrote:
-> > >>---
-> > >>sparc:
-> > >>
-> > >># bad: [5d0eebbbb6f76de160f7d7f9dc0b64a98ad9b8e9] Add linux-next specific files for 20150120
-> > >># good: [ec6f34e5b552fb0a52e6aae1a5afbbb1605cc6cc] Linux 3.19-rc5
-> > >>git bisect start 'HEAD' 'v3.19-rc5'
-> > >># good: [f933e94e8f597c709068e58daa92570d5aa13b8c] Merge remote-tracking branch 'drm/drm-next'
-> > >>git bisect good f933e94e8f597c709068e58daa92570d5aa13b8c
-> > >># good: [88cf70c4dd4a3851bf5531c0a51dec298d9690b5] Merge remote-tracking branch 'usb/usb-next'
-> > >>git bisect good 88cf70c4dd4a3851bf5531c0a51dec298d9690b5
-> > >># good: [3ee33b3893f72e5a504ba873ee4a308896d97645] Merge remote-tracking branch 'cgroup/for-next'
-> > >>git bisect good 3ee33b3893f72e5a504ba873ee4a308896d97645
-> > >># bad: [5925961a2889ec2b3734be9f3a6375822010f7a7] fs-befs-linuxvfsc-remove-unnecessary-casting-fix
-> > >>git bisect bad 5925961a2889ec2b3734be9f3a6375822010f7a7
-> > >># bad: [fff9d1d082bb48a0d0e89aaaf746718fcef3a47f] mm: memcontrol: default hierarchy interface for memory fix
-> > >>git bisect bad fff9d1d082bb48a0d0e89aaaf746718fcef3a47f
-> > >># good: [ab090dcbdd276e9ddcd0ecb666389aa85c30c76f] powerpc: drop _PAGE_FILE and pte_file()-related helpers
-> > >>git bisect good ab090dcbdd276e9ddcd0ecb666389aa85c30c76f
-> > >># good: [91408e6db5842ed4bb66e2a3919b67a5f06ac34a] mm/hugetlb: fix suboptimal migration/hwpoisoned entry check
-> > >>git bisect good 91408e6db5842ed4bb66e2a3919b67a5f06ac34a
-> > >># bad: [8e94896c7510e69bbd2acf418ad3a8afb9978c97] fs: consolidate {nr,free}_cached_objects args in shrink_control
-> > >>git bisect bad 8e94896c7510e69bbd2acf418ad3a8afb9978c97
-> > >># bad: [5995b76d501a8f4d315f811698db98ac997d706f] x86: mm: restore original pte_special check
-> > >>git bisect bad 5995b76d501a8f4d315f811698db98ac997d706f
-> > >># good: [b75c721aa3e2df5c52d4b6bce3dd687018c1f40c] mm: convert p[te|md]_numa users to p[te|md]_protnone_numa
-> > >>git bisect good b75c721aa3e2df5c52d4b6bce3dd687018c1f40c
-> > >># good: [ce4188d335ac91a004087fb0ea86b85091ad570b] mm: convert p[te|md]_mknonnuma and remaining page table manipulations
-> > >>git bisect good ce4188d335ac91a004087fb0ea86b85091ad570b
-> > >># bad: [625fa33ba695d73baa58afa44ab063f67e5f4b64] mm: numa: do not trap faults on the huge zero page
-> > >>git bisect bad 625fa33ba695d73baa58afa44ab063f67e5f4b64
-> > >># good: [c2a7c97cc4bc3d46e98908d7dee07ab3e00a5257] mm: remove remaining references to NUMA hinting bits and helpers
-> > >>git bisect good c2a7c97cc4bc3d46e98908d7dee07ab3e00a5257
-> > >># first bad commit: [625fa33ba695d73baa58afa44ab063f67e5f4b64] mm: numa: do not trap faults on the huge zero page
-> > >
-> > >Could you provide more info about the fail in qemu?
-> > >
-> > 
-> > Error message:
-> > 
-> > BUG: Bad page state in process init.sh  pfn:00000
-> > page:f05e7460 count:0 mapcount:-1 mapping:  (null) index:0x0
-> > flags: 0x400(reserved)
-> > page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-> > bad because of flags:
-> > flags: 0x400(reserved)
-> > CPU: 0 PID: 1 Comm: init.sh Not tainted 3.19.0-rc5-next-20150120 #1
-> > [f0076010 : bad_page+0xdc/0xfc ] [f00760c0 : free_pages_prepare+0x90/0x1f8 ] [f00775cc : free_hot_cold_page+0x20/0x160 ] [f00919e8 : do_wp_page+0x680/0x6ac ] [f00939f4 : handle_mm_fault+0xc94/0xd08 ] [f0015900 : do_sparc_fault+0xfc/0x3ec ] [f000af90 : srmmu_fault+0x58/0x68 ] [f00e74f4 : load_elf_binary+0x9a8/0xe94 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00e67d0 : load_script+0x214/0x224 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00b11a4 : do_execveat_common+0x434/0x584 ] [f00b1310 : do_execve+0x1c/0x2c ] [f02b50b0 : kernel_init+0x70/0xf0 ] [f000b200 : ret_from_kernel_thread+0xc/0x38 ] [00000000 :   (null) ]
-> > Disabling lock debugging due to kernel taint
-> > : applet not found
-> > Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100
-> 
-> It doesn't make much sense to me. It tries to free page with pfn==0 on
-> handling wp-fault. How it got mapped in the first place?
-> 
-Let me know if I can help with any debugging.
+This fixes a build failure if CONFIG_PNP is set but CONFIG_ACPI is not:
+drivers/char/tpm/tpm_tis.c: In function =E2=80=98tpm_tis_pnp_init=E2=80=
+=99:
+drivers/char/tpm/tpm_tis.c:912:45: error: invalid type argument of
+=E2=80=98->=E2=80=99 (have =E2=80=98int=E2=80=99)
+   acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
 
-Guenter
+If CONFIG_PNPACPI is not set pnp_acpi_device is defined as 0 and thus
+accesing the handle is not possible.
+
+=46ixes: 0dc553652102 ("tpm: fix raciness of PPI interface lookup")
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+Hi James unfortunately there was another build-error in -next. :(
+Can you apply this patch directly?
+otherwise you can also pull directly from my tree:
+The following changes since commit 743410a03bbf110da8942a715cf1358344ec=
+c281:
+  tpm: fix format string error in tpm-chip.c (2015-01-20 21:28:36 +0100=
+)
+are available in the git repository at:
+  https://github.com/PeterHuewe/linux-tpmdd
+for you to fetch changes up to d4989d9f693b9502f9288da5db279c2f8c2e50be=
+:
+tpm/tpm_tis: Add missing ifdef CONFIG_ACPI for pnp_acpi_device (2015-01=
+-21 21:35:26 +0100)
+
+Thanks,
+Peter
+
+
+ drivers/char/tpm/tpm_tis.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 20a61bc98db8..6725bef7cb96 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -908,8 +908,10 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_de=
+v,
+ 	if (is_itpm(pnp_dev))
+ 		itpm =3D true;
+=20
++#ifdef CONFIG_ACPI
+ 	if (pnp_acpi_device(pnp_dev))
+ 		acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
++#endif
+=20
+ 	return tpm_tis_init(&pnp_dev->dev, acpi_dev_handle, start, len, irq);
+ }
+--=20
+2.0.5
