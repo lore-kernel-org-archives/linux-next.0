@@ -1,67 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] staging/lustre/llite: get rid of backing_dev_info
-Date: Thu, 22 Jan 2015 07:24:48 +1100
-Message-ID: <20150122072448.1af839ea@canb.auug.org.au>
-References: <20150121144558.79cb2056@canb.auug.org.au>
-	<1421827847-8371-1-git-send-email-green@linuxhacker.ru>
-	<54BFE4AC.5010609@kernel.dk>
+From: Peter Huewe <peterhuewe@gmx.de>
+Subject: [PATCH] tpm/tpm_tis: Add missing ifdef CONFIG_ACPI for pnp_acpi_device
+Date: Wed, 21 Jan 2015 21:40:15 +0100
+Message-ID: <1421872815-16644-1-git-send-email-peterhuewe@gmx.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2sdZxFO2XtpBIPP=Ao4t_9H"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59286 "EHLO ozlabs.org"
+Received: from mout.gmx.net ([212.227.17.20]:56270 "EHLO mout.gmx.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753667AbbAUUY4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 15:24:56 -0500
-In-Reply-To: <54BFE4AC.5010609@kernel.dk>
+	id S1751546AbbAUUi1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2015 15:38:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: green@linuxhacker.ru, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, "<linux-kernel@vger.kernel.org> Mailing List" <linux-kernel@vger.kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Christoph Hellwig <hch@lst.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>, tpmdd-devel@lists.sourceforge.net, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jim Davis <jim.epost@gmail.com>, Peter Huewe <peterhuewe@gmx.de>
 
---Sig_/2sdZxFO2XtpBIPP=Ao4t_9H
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This fixes a build failure if CONFIG_PNP is set but CONFIG_ACPI is not:
+drivers/char/tpm/tpm_tis.c: In function =E2=80=98tpm_tis_pnp_init=E2=80=
+=99:
+drivers/char/tpm/tpm_tis.c:912:45: error: invalid type argument of
+=E2=80=98->=E2=80=99 (have =E2=80=98int=E2=80=99)
+   acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
 
-Hi Jens,
+If CONFIG_PNPACPI is not set pnp_acpi_device is defined as 0 and thus
+accesing the handle is not possible.
 
-On Wed, 21 Jan 2015 10:41:00 -0700 Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 01/21/2015 01:10 AM, green@linuxhacker.ru wrote:
-> > From: Oleg Drokin <green@linuxhacker.ru>
-> >
-> > With removal of backing_dev_info from struct address_space,
-> > we don't need to assign it in Lustre either.
->=20
-> Thanks Oleg, applied. Stephen, you should be able to drop the BROKEN=20
-> lustre patch again.
+=46ixes: 0dc553652102 ("tpm: fix raciness of PPI interface lookup")
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/char/tpm/tpm_tis.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Will do, thanks.
-
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 20a61bc98db8..6725bef7cb96 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -908,8 +908,10 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_de=
+v,
+ 	if (is_itpm(pnp_dev))
+ 		itpm =3D true;
+=20
++#ifdef CONFIG_ACPI
+ 	if (pnp_acpi_device(pnp_dev))
+ 		acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
++#endif
+=20
+ 	return tpm_tis_init(&pnp_dev->dev, acpi_dev_handle, start, len, irq);
+ }
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/2sdZxFO2XtpBIPP=Ao4t_9H
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUwAsVAAoJEMDTa8Ir7ZwVeBoP/2CIvhy5rpOy++x9BlRt2mtI
-3GVxJMN7/4Bd3B4LZnKXREArwM99WXFy3OLIt0QxtzN07tfuaEFaJtKckc50/Q1h
-JMPsNovBdoj5Gr1DoZc3U975CiBULqtYdDbT2Mp1cHK2Sn9owEDFRCH3D73mOCS/
-BCZEfRMOm3E75tRTUr6gyGGJLEdG2Dx8I7IbMxFyQgzh7wS0fFlrrGRFHclxpKf6
-1Ci91GcyCWdMACx+jMzz0TO+juEkIUTEifdD9xDizHnO7GWSdzw4t7jl+7Nh0rGs
-mRdOu3QsBjKyc+YX0aZswVQALnchIxuXR/5ecrtBntMSAZl6EkJWE6/VFidrtW9y
-B2nON1Jh9KiHA9CfZ32xmIIqCgXwkjGVwzrVXwksH722QqF9Qc9Zx0YDtVUBeVyT
-2UNuz/xMquhBUc1Tz/H9WyPBZYucGjdCWE+JzJkuMk/inEUqxhbq3FVFy+WSAdMf
-Nlhvl8zf5ook5/D+sW++lTBeQNLAUal4trBX3++nA3wWVjSUcdnQjgnNnito/lmh
-HTgjJcmRhO4zXk+60M6RaOTqJlRlQZSnDQphRr+49gUYQ6w+RPFmTeBV8KI3xTkV
-KZilb5RVPRefLFDTRCozu8GpNNIfT6lD4TCDR/f5wJG22AzcDJ6/tA33R4DQQnLh
-4MndE2yKVEYH4Q4Uur9+
-=X2tG
------END PGP SIGNATURE-----
-
---Sig_/2sdZxFO2XtpBIPP=Ao4t_9H--
+2.0.5
