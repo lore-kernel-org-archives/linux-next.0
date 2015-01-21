@@ -1,99 +1,154 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the l2-mtd tree
-Date: Wed, 21 Jan 2015 14:18:36 +1100
-Message-ID: <20150121141836.50c26e27@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Wed, 21 Jan 2015 03:36:00 +0000
+Message-ID: <20150121033600.GN29656@ZenIV.linux.org.uk>
+References: <20150120165655.GA10904@kria>
+ <20150120232726.GA16913@kria>
+ <1517211.UYLV49hvpg@sifl>
+ <1528536.jyty2pu4Mz@sifl>
+ <20150121004117.GM29656@ZenIV.linux.org.uk>
+ <54BF1292.2080902@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zO6cReBlcjg6gvTlXQeXoZV"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37183 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753161AbbAUDSn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Jan 2015 22:18:43 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41416 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751691AbbAUDgI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 22:36:08 -0500
+Content-Disposition: inline
+In-Reply-To: <54BF1292.2080902@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Brian Norris <computersforpeace@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Paul Moore <pmoore@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 
---Sig_/zO6cReBlcjg6gvTlXQeXoZV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 20, 2015 at 06:44:34PM -0800, Guenter Roeck wrote:
+> >The shit hits the fan earlier - when we end up missing /dev.  There are
+> >two places where it could've been created (depending on CONFIG_BLK_DEV_INITRD);
+> >	sys_mkdir(collected, mode);
+> >in init/initramfs.c (line 353 in linux-next) and
+> >         err = sys_mkdir((const char __user __force *) "/dev", 0755);
+> >in init/noinitramfs.c (line 32).  The latter would've screamed on failure;
+> >could you printk of collected (%s), mode (%o) and return value (%d) in the
+> >former and see what happens?
+> >
+> 
+> sys_mkdir .:40775 returned -17
+> sys_mkdir usr:40775 returned 0
+> sys_mkdir usr/lib:40775 returned -2
+> sys_mkdir usr/share:40755 returned -2
+> sys_mkdir usr/share/udhcpc:40755 returned -2
+> sys_mkdir usr/bin:40775 returned -2
+> sys_mkdir usr/sbin:40775 returned -2
+> sys_mkdir mnt:40775 returned 0
+> sys_mkdir proc:40775 returned 0
+> sys_mkdir root:40775 returned 0
+> sys_mkdir lib:40775 returned 0
+> sys_mkdir lib/modules:40775 returned -2
+> sys_mkdir lib/modules/3.9.2:40775 returned -2
+> sys_mkdir lib/modules/3.9.2/kernel:40775 returned -2
+> 
+> with
+> 	int err = sys_mkdir(collected, mode);
+> 	pr_info("sys_mkdir %s:%o returned %d\n", collected, mode, err);
+> added in init/initramfs.c.
 
-Hi Jens,
+Just what is lib/modules/3.9.2 doing there?  In any case, I think I have at
+least a plausible direction for digging.  Look:
 
-Today's linux-next merge of the block tree got a conflict in
-drivers/mtd/mtdcore.c between commit 3efe41be224c ("mtd: implement
-common reboot notifier boilerplate") from the  tree and commit
-b4caecd48005 ("fs: introduce f_op->mmap_capabilities for nommu mmap
-support") from the block tree.
+struct dentry *user_path_create(int dfd, const char __user *pathname,
+                                struct path *path, unsigned int lookup_flags)
+{
+        struct filename *tmp = getname(pathname);
+        struct dentry *res;
+        if (IS_ERR(tmp))
+                return ERR_CAST(tmp);
+        res = kern_path_create(dfd, tmp->name, path, lookup_flags);
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+struct dentry *kern_path_create(int dfd, const char *pathname,
+                                struct path *path, unsigned int lookup_flags)
+{
+        struct dentry *dentry = ERR_PTR(-EEXIST);
+        struct nameidata nd;
+        int err2;
+        int error;
+        bool is_dir = (lookup_flags & LOOKUP_DIRECTORY);
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+        /*
+         * Note that only LOOKUP_REVAL and LOOKUP_DIRECTORY matter here. Any
+         * other flags passed in are ignored!
+         */
+        lookup_flags &= LOOKUP_REVAL;
 
-diff --cc drivers/mtd/mtdcore.c
-index cbc0fc46d2d6,ff38a1df22f7..000000000000
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@@ -366,17 -339,22 +340,33 @@@ static struct device_type mtd_devtype=20
-  	.release	=3D mtd_release,
-  };
- =20
- +static int mtd_reboot_notifier(struct notifier_block *n, unsigned long st=
-ate,
- +			       void *cmd)
- +{
- +	struct mtd_info *mtd;
- +
- +	mtd =3D container_of(n, struct mtd_info, reboot_notifier);
- +	mtd->_reboot(mtd);
- +
- +	return NOTIFY_DONE;
- +}
- +
-+ #ifndef CONFIG_MMU
-+ unsigned mtd_mmap_capabilities(struct mtd_info *mtd)
-+ {
-+ 	switch (mtd->type) {
-+ 	case MTD_RAM:
-+ 		return NOMMU_MAP_COPY | NOMMU_MAP_DIRECT | NOMMU_MAP_EXEC |
-+ 			NOMMU_MAP_READ | NOMMU_MAP_WRITE;
-+ 	case MTD_ROM:
-+ 		return NOMMU_MAP_COPY | NOMMU_MAP_DIRECT | NOMMU_MAP_EXEC |
-+ 			NOMMU_MAP_READ;
-+ 	default:
-+ 		return NOMMU_MAP_COPY;
-+ 	}
-+ }
-+ #endif
-+=20
-  /**
-   *	add_mtd_device - register an MTD device
-   *	@mtd: pointer to new MTD device info structure
+        error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
 
---Sig_/zO6cReBlcjg6gvTlXQeXoZV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+static int do_path_lookup(int dfd, const char *name,
+                                unsigned int flags, struct nameidata *nd)
+{
+        int retval;
+        struct filename *filename;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+        filename = getname_kernel(name);
+        if (unlikely(IS_ERR(filename)))
+                return PTR_ERR(filename);
+        retval = filename_lookup(dfd, filename, flags, nd);
 
-iQIcBAEBCAAGBQJUvxqRAAoJEMDTa8Ir7ZwVYqwP/3TI1LdOdHBNbCTlZgmtGN2N
-n1zj7/DMNaIZvEYfnpY/R2pkgkj8mhcN1uJwV11SyxRK3e9LzftYVTl04ByFYqry
-Q1I4HiNnEvtpVke6rHp6QmWy+Y77fItb5wINdFbx1Lc0mMI/p8W5W1/FwY4nhe46
-LzPlSYdsf/pLlkXTvKwy/DKRoHfSsiCup87mA8rY3saCZnWthWaCA2w/CdR8IVhq
-6CK9tF86jdTP8BhurxPAa3pajb7qbv+xhZzZlEZA8QO/dNtkpGyU1YjHwZ3jFLcG
-jOUwAwUoO66UWt5ussUzw5fu20gG2rD2d+mTADh750oqlrGL7D9tKYussebiX1or
-e3hQbgPgdffCDn4dh8EqWel40PQwShNDpIteRqcUpvN3+N5DHyFc88AXHzxGQv0h
-AtXrLC+lP+R+fUSVjJwpIfTN+dmCBf2kuuD03HDEg9vA/3zpcyEoxx7GMg+usssY
-F5zjaZhzMGW/xnq7Uh4KG4pXfNlb3vLJEchFSAVdOVJi8jV+eLdqfZFXpR9HMEsU
-4cUUfrSK9nOaQPLLuHnxWPAFRJB9xrTYhQw8cMFf5Fp/e0i5qQocQ9w+lca114o/
-exeZZSx0a9RNsX1nLDTKOQqUsGl/PG2jHUHVvZ6q9fxrkjQR+rkTx7oStg5RqtkG
-+Ir27pM13YBt5GWjMDWc
-=v+Mz
------END PGP SIGNATURE-----
+and we have done getname_kernel() on the name->name of result of getname().
+At the very least, it's pointless - we already *have* struct filename for
+that sucker.  Now, it shouldn't have screwed the things up - it would better
+not, anyway, since we might legitimately have two identical pathname
+among the syscall arguments.  However, let's see if this (on top of
+linux-next, in addition to the same printks) changes behaviour:
 
---Sig_/zO6cReBlcjg6gvTlXQeXoZV--
+diff --git a/fs/namei.c b/fs/namei.c
+index 323957f..c7d107c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3314,7 +3314,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+ 	return file;
+ }
+ 
+-struct dentry *kern_path_create(int dfd, const char *pathname,
++static struct dentry *__kern_path_create(int dfd, struct filename *name,
+ 				struct path *path, unsigned int lookup_flags)
+ {
+ 	struct dentry *dentry = ERR_PTR(-EEXIST);
+@@ -3329,7 +3329,7 @@ struct dentry *kern_path_create(int dfd, const char *pathname,
+ 	 */
+ 	lookup_flags &= LOOKUP_REVAL;
+ 
+-	error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
++	error = filename_lookup(dfd, name, LOOKUP_PARENT|lookup_flags, &nd);
+ 	if (error)
+ 		return ERR_PTR(error);
+ 
+@@ -3383,6 +3383,19 @@ out:
+ 	path_put(&nd.path);
+ 	return dentry;
+ }
++
++struct dentry *kern_path_create(int dfd, const char *pathname,
++				struct path *path, unsigned int lookup_flags)
++{
++	struct filename *filename = getname_kernel(pathname);
++	struct dentry *res = ERR_CAST(filename);
++
++	if (!IS_ERR(filename)) {
++		res = __kern_path_create(dfd, filename, path, lookup_flags);
++		putname(filename);
++	}
++	return res;
++}
+ EXPORT_SYMBOL(kern_path_create);
+ 
+ void done_path_create(struct path *path, struct dentry *dentry)
+@@ -3401,7 +3414,7 @@ struct dentry *user_path_create(int dfd, const char __user *pathname,
+ 	struct dentry *res;
+ 	if (IS_ERR(tmp))
+ 		return ERR_CAST(tmp);
+-	res = kern_path_create(dfd, tmp->name, path, lookup_flags);
++	res = __kern_path_create(dfd, tmp, path, lookup_flags);
+ 	putname(tmp);
+ 	return res;
+ }
