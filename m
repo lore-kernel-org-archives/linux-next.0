@@ -1,86 +1,53 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: Fwd: linux-next: manual merge of the luto-misc tree with the tip tree
-Date: Tue, 20 Jan 2015 16:28:56 -0800
-Message-ID: <CALCETrW05f9nty5Sk8XA2DTsocqqOxp62aT9QXwta74Km+ZOng@mail.gmail.com>
-References: <20150119170839.2c6b4b78@canb.auug.org.au> <20150119093501.GA4644@pd.tnic>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Wed, 21 Jan 2015 00:41:17 +0000
+Message-ID: <20150121004117.GM29656@ZenIV.linux.org.uk>
+References: <20150120165655.GA10904@kria>
+ <20150120232726.GA16913@kria>
+ <1517211.UYLV49hvpg@sifl>
+ <1528536.jyty2pu4Mz@sifl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:36192 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751525AbbAUA3S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 19:29:18 -0500
-Received: by mail-la0-f53.google.com with SMTP id gq15so12993026lab.12
-        for <linux-next@vger.kernel.org>; Tue, 20 Jan 2015 16:29:17 -0800 (PST)
-In-Reply-To: <20150119093501.GA4644@pd.tnic>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41161 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751037AbbAUAl0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 19:41:26 -0500
+Content-Disposition: inline
+In-Reply-To: <1528536.jyty2pu4Mz@sifl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Paul Moore <pmoore@redhat.com>
+Cc: Sabrina Dubroca <sd@queasysnail.net>, Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 
-Hi Ingo and Thomas-
+On Tue, Jan 20, 2015 at 07:14:46PM -0500, Paul Moore wrote:
+> > > with the patch applied (+panic)
+> > > 
+> > > 
+> > > and:
+> > > 
+> > > stat("/dev/root") -> 0
+> > > stat("dev") -> 0
+> > > with the old version of do_path_lookup.
+> > 
+> > Wait a minute ... at this early stage of boot, I'm pretty sure we don't have
+> > a valid current->audit_context since we haven't fork'd anything.  If the
+> > audit context was non-NULL garbage that might explain the panic ...
 
-There's a trivial conflict in the pull request I sent last week.
+Not really - the panic is predicatable result of not finding /dev/root (hell,
+not even /dev there!) in mount_block_root().
+ 
+> Could you try initializing the init_task's audit_context to NULL in the 
+> INIT_TASK macro in include/linux/init_task.h?
 
---Andy
+Missing fields in struct initializer are treated as zeroes.
 
-
----------- Forwarded message ----------
-From: Borislav Petkov <bp@suse.de>
-Date: Mon, Jan 19, 2015 at 1:35 AM
-Subject: Re: linux-next: manual merge of the luto-misc tree with the tip tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andy Lutomirski <luto@amacapital.net>, "Luck, Tony"
-<tony.luck@intel.com>, linux-next@vger.kernel.org,
-linux-kernel@vger.kernel.org
-
-
-On Mon, Jan 19, 2015 at 05:08:39PM +1100, Stephen Rothwell wrote:
-> Hi Andy,
->
-> Today's linux-next merge of the luto-misc tree got a conflict in
-> arch/x86/kernel/cpu/mcheck/mce.c between commit 83737691e586 ("x86,
-> mce: Fix sparse errors") from the tip tree and commit d4812e169de4
-> ("x86, mce: Get rid of TIF_MCE_NOTIFY and associated mce tricks") from
-> the luto-misc tree.
->
-> I fixed it up (the latter removed some of the code changed by the
-> former) and can carry the fix as necessary (no action is required).
-
-That must be the piece of the hunk touching mce_info. Yes, the correct
-solution is to follow what d4812e169de4 does.
-
-Thanks Stephen :)
-
----
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 800d423f1e92..d23179900755 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1004,51 +1004,6 @@ static void mce_clear_state(unsigned long *toclear)
- }
-
- /*
-- * Need to save faulting physical address associated with a process
-- * in the machine check handler some place where we can grab it back
-- * later in mce_notify_process()
-- */
--#define        MCE_INFO_MAX    16
--
--struct mce_info {
--       atomic_t                inuse;
--       struct task_struct      *t;
--       __u64                   paddr;
--       int                     restartable;
--} mce_info[MCE_INFO_MAX];
-
---
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
-
-
--- 
-Andy Lutomirski
-AMA Capital Management, LLC
+The shit hits the fan earlier - when we end up missing /dev.  There are
+two places where it could've been created (depending on CONFIG_BLK_DEV_INITRD);
+	sys_mkdir(collected, mode);
+in init/initramfs.c (line 353 in linux-next) and
+        err = sys_mkdir((const char __user __force *) "/dev", 0755);
+in init/noinitramfs.c (line 32).  The latter would've screamed on failure;
+could you printk of collected (%s), mode (%o) and return value (%d) in the
+former and see what happens?
