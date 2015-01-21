@@ -1,102 +1,167 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] tpm/tpm_tis: Add missing ifdef CONFIG_ACPI for
- pnp_acpi_device
-Date: Thu, 22 Jan 2015 08:23:50 +1100
-Message-ID: <20150122082350.121301eb@canb.auug.org.au>
-References: <1421872815-16644-1-git-send-email-peterhuewe@gmx.de>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Wed, 21 Jan 2015 21:28:33 +0000
+Message-ID: <20150121212833.GS29656@ZenIV.linux.org.uk>
+References: <54BF1292.2080902@roeck-us.net>
+ <20150121033600.GN29656@ZenIV.linux.org.uk>
+ <54BF2496.4000807@roeck-us.net>
+ <20150121043637.GO29656@ZenIV.linux.org.uk>
+ <20150121110539.GA8924@kria>
+ <54BFAA5D.4040108@roeck-us.net>
+ <20150121182905.GQ29656@ZenIV.linux.org.uk>
+ <54BFF8B3.6060802@roeck-us.net>
+ <20150121200626.GR29656@ZenIV.linux.org.uk>
+ <54C01418.5060204@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wt.I7iFoOTCF6VH7FCukKIr"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43560 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751999AbbAUVX6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 16:23:58 -0500
-In-Reply-To: <1421872815-16644-1-git-send-email-peterhuewe@gmx.de>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:44822 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752389AbbAUV2n (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 16:28:43 -0500
+Content-Disposition: inline
+In-Reply-To: <54C01418.5060204@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: linux-next <linux-next@vger.kernel.org>, tpmdd-devel@lists.sourceforge.net, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jim Davis <jim.epost@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Sabrina Dubroca <sd@queasysnail.net>, Paul Moore <pmoore@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 
---Sig_/wt.I7iFoOTCF6VH7FCukKIr
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 21, 2015 at 01:03:20PM -0800, Guenter Roeck wrote:
+> ok case (putname commented out):
+> 
+> user_path_at_empty lookup usr flags 0x0
+> path_lookupat: calling path_init 'usr' flags=40
+> path_init: link_path_walk() returned 0
+> path_lookupat: path_init 'usr' flags=40[50] returned 0
+> walk_component: lookup_fast() returned 1
+> walk_component: lookup_slow() returned 0
+> walk_component: inode=  (null), negative=1
+> do_path_lookup(usr, 0x10)
+> path_lookupat: calling path_init 'usr' flags=50
+> path_init: link_path_walk() returned 0
+> path_lookupat: path_init 'usr' flags=50[50] returned 0
+> mkdir[c74012a0,/usr] => 0
+> user_path_at_empty lookup usr flags 0x1
+> path_lookupat: calling path_init 'usr' flags=41
+> path_init: link_path_walk() returned 0
+> path_lookupat: path_init 'usr' flags=41[51] returned 0
+> walk_component: inode=c74004a0, negative=0
+> user_path_at_empty lookup usr flags 0x1
+> path_lookupat: calling path_init 'usr' flags=41
+> path_init: link_path_walk() returned 0
+> path_lookupat: path_init 'usr' flags=41[51] returned 0
+> 
+> failing case:
+> 
+> path_lookupat: calling path_init 'usr' flags=40
+> path_init: link_path_walk() returned 0
+> path_lookupat: path_init 'usr' flags=40[50] returned 0
+> walk_component: lookup_fast() returned 1
+> walk_component: lookup_slow() returned 0
+> walk_component: inode=  (null), negative=1
+> do_path_lookup(usr, 0x10)
+> path_lookupat: calling path_init 'usr' flags=50
+> path_init: link_path_walk() returned 0
+> path_lookupat: path_init 'usr' flags=50[50] returned 0
+> mkdir[c74012a0,/kkk] => 0						<==== SIC!
 
-Hi Peter,
+Cute. 'k' being 0x6b, aka POISON_FREE...  OK, the next question is what's
+been freed under us - I don't believe that it's dentry itself...
+Oh, fuck.  OK, I see what happens.  Look at kern_path_create(); it does
+LOOKUP_PARENT walk, leaving nd->last pointing to the last component of
+the *COPY* of the name it's just created, walked and freed.
 
-On Wed, 21 Jan 2015 21:40:15 +0100 Peter Huewe <peterhuewe@gmx.de> wrote:
->
-> This fixes a build failure if CONFIG_PNP is set but CONFIG_ACPI is not:
-> drivers/char/tpm/tpm_tis.c: In function =E2=80=98tpm_tis_pnp_init=E2=80=
-=99:
-> drivers/char/tpm/tpm_tis.c:912:45: error: invalid type argument of
-> =E2=80=98->=E2=80=99 (have =E2=80=98int=E2=80=99)
->    acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
->=20
-> If CONFIG_PNPACPI is not set pnp_acpi_device is defined as 0 and thus
-> accesing the handle is not possible.
->=20
-> Fixes: 0dc553652102 ("tpm: fix raciness of PPI interface lookup")
-> Reported-by: Jim Davis <jim.epost@gmail.com>
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> ---
->  drivers/char/tpm/tpm_tis.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index 20a61bc98db8..6725bef7cb96 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -908,8 +908,10 @@ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
->  	if (is_itpm(pnp_dev))
->  		itpm =3D true;
-> =20
-> +#ifdef CONFIG_ACPI
->  	if (pnp_acpi_device(pnp_dev))
->  		acpi_dev_handle =3D pnp_acpi_device(pnp_dev)->handle;
-> +#endif
-> =20
->  	return tpm_tis_init(&pnp_dev->dev, acpi_dev_handle, start, len, irq);
->  }
+OK...  Fortunately, struct nameidata is completely opaque outside of fs/namei.c,
+so we only need to care about a couple of codepaths.
 
-To save on the ifdef, why not
+Folks, could you check if the following on top of linux-next fixes the problem?
 
-	struct acpi_device *acpi;
-
-	.
-	.
-
-	acpi =3D pnp_acpi_device(dev);
-	if (acpi)
-		acpi_dev_handle =3D acpi->handle;
-
-As an aside, the dummy pnp_acpi_device() should be returning NULL not
-0, and could be a static inline function (as could several other things
-in that header.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/wt.I7iFoOTCF6VH7FCukKIr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUwBjrAAoJEMDTa8Ir7ZwVBHwQAILFhOmUPxcVFahzFgZILGgR
-zZFcuLG731M9Fcma8cKFygNmHM0Kh5qZaC0GY8int9y2idgY3Ih1fs1QxoS6rIdu
-+eRJQ1YXrPMjIX80HT6Js1v6xRzodFsHYZ8IzA2Cfgv/gMsfWgxS3UyahkwN2h0Y
-SWUzSGRbXKXEMxBMGHNMjV5s/5DrRC9+nmZutLpRjxU6lUnsJShmPVRtJKI+/hmg
-CJHGac2dsy0pvgG/cwSbd0ld7eD+O7jdtW90KiGPNQRM9kLBieC6uIGLsqfzC6vI
-KdD50hqniFjvrHcokevUEffB1hn1ldJ27LR9gJeT4KEExaaiFH30+MqXcEjYIjAl
-iDynveWMySdW8sfl/ufcQzPUoL+TemrIqmp7xZ+75LBWol09eJeg339dvgQuxo8v
-hTnUrIErxFaiYMEM3y8N4ZFzRsc8R3X+6GkuBkg5AGP5qQsZ9U5JUy6lEiMUEHt4
-/zqFoiz20/AD6TC/Ac6uezCIByEpGv7tjgs/NXt1wH+Vld5vCTr2rtTnyuqb9WPj
-S2i+t2WPlgpeO+26X03Pi+MSWDlmmC26aiZaCri90YqXmgPXnXz0JRgLMPp1jyzz
-gE+YfEpL4t4nKmCiY36z5hfqHOnbEJttuFVX9hF5pD40nT4r4coyiI0BF4lnTG2R
-G0vv65HRRFHGdK3WhsJJ
-=6Ofj
------END PGP SIGNATURE-----
-
---Sig_/wt.I7iFoOTCF6VH7FCukKIr--
+diff --git a/fs/namei.c b/fs/namei.c
+index 323957f..cda89c3 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2056,13 +2056,22 @@ static int do_path_lookup(int dfd, const char *name,
+ /* does lookup, returns the object with parent locked */
+ struct dentry *kern_path_locked(const char *name, struct path *path)
+ {
++	struct filename *filename = getname_kernel(name);
+ 	struct nameidata nd;
+ 	struct dentry *d;
+-	int err = do_path_lookup(AT_FDCWD, name, LOOKUP_PARENT, &nd);
+-	if (err)
++	int err;
++
++	if (IS_ERR(filename))
++		return ERR_CAST(filename);
++
++	err = filename_lookup(AT_FDCWD, filename, LOOKUP_PARENT, &nd);
++	if (err) {
++		putname(filename);
+ 		return ERR_PTR(err);
++	}
+ 	if (nd.last_type != LAST_NORM) {
+ 		path_put(&nd.path);
++		putname(filename);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 	mutex_lock_nested(&nd.path.dentry->d_inode->i_mutex, I_MUTEX_PARENT);
+@@ -2070,9 +2079,11 @@ struct dentry *kern_path_locked(const char *name, struct path *path)
+ 	if (IS_ERR(d)) {
+ 		mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+ 		path_put(&nd.path);
++		putname(filename);
+ 		return d;
+ 	}
+ 	*path = nd.path;
++	putname(filename);
+ 	return d;
+ }
+ 
+@@ -3314,7 +3325,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+ 	return file;
+ }
+ 
+-struct dentry *kern_path_create(int dfd, const char *pathname,
++static struct dentry *filename_create(int dfd, struct filename *name,
+ 				struct path *path, unsigned int lookup_flags)
+ {
+ 	struct dentry *dentry = ERR_PTR(-EEXIST);
+@@ -3329,7 +3340,7 @@ struct dentry *kern_path_create(int dfd, const char *pathname,
+ 	 */
+ 	lookup_flags &= LOOKUP_REVAL;
+ 
+-	error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
++	error = filename_lookup(dfd, name, LOOKUP_PARENT|lookup_flags, &nd);
+ 	if (error)
+ 		return ERR_PTR(error);
+ 
+@@ -3383,6 +3394,19 @@ out:
+ 	path_put(&nd.path);
+ 	return dentry;
+ }
++
++struct dentry *kern_path_create(int dfd, const char *pathname,
++				struct path *path, unsigned int lookup_flags)
++{
++	struct filename *filename = getname_kernel(pathname);
++	struct dentry *res = ERR_CAST(filename);
++
++	if (!IS_ERR(filename)) {
++		res = filename_create(dfd, filename, path, lookup_flags);
++		putname(filename);
++	}
++	return res;
++}
+ EXPORT_SYMBOL(kern_path_create);
+ 
+ void done_path_create(struct path *path, struct dentry *dentry)
+@@ -3401,7 +3425,7 @@ struct dentry *user_path_create(int dfd, const char __user *pathname,
+ 	struct dentry *res;
+ 	if (IS_ERR(tmp))
+ 		return ERR_CAST(tmp);
+-	res = kern_path_create(dfd, tmp->name, path, lookup_flags);
++	res = filename_create(dfd, tmp, path, lookup_flags);
+ 	putname(tmp);
+ 	return res;
+ }
