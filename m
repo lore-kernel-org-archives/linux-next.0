@@ -1,95 +1,29 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: linux-next: manual merge of the mmc-uh tree with the sunxi tree
-Date: Wed, 21 Jan 2015 13:12:02 +0100
-Message-ID: <20150121121202.GF4367@lukather>
-References: <20150120141750.3dcade27@canb.auug.org.au>
- <CAPDyKFq4TyiadznYCM-dGmeu799vWevBt1XVZ4DALhv-3bP=AA@mail.gmail.com>
+From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: next-20150120 broken on Tegra by "ata: libahci: Allow using
+ multiple regulators"
+Date: Wed, 21 Jan 2015 07:31:34 -0500
+Message-ID: <20150121123134.GD8684@htj.dyndns.org>
+References: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
+ <20150121105001.GA9921@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Y18yPE/eBgOv3N1p"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:36194 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750889AbbAUMPF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 07:15:05 -0500
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFq4TyiadznYCM-dGmeu799vWevBt1XVZ4DALhv-3bP=AA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David =?iso-8859-1?Q?Lanzend=F6rfer?= <david.lanzendoerfer@o2s.ch>
-
-
---Y18yPE/eBgOv3N1p
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20150121105001.GA9921-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+On Wed, Jan 21, 2015 at 11:50:03AM +0100, Thierry Reding wrote:
+> Tejun, preferably the attached patch should be squashed into commit
+> c7d7ddee7e24 ("ata: libahci: Allow using multiple regulators") to avoid
+> breaking bisectability. If you don't want to rewrite history, let me
+> know and I can turn it into a proper patch.
 
-On Wed, Jan 21, 2015 at 12:27:09PM +0100, Ulf Hansson wrote:
-> On 20 January 2015 at 04:17, Stephen Rothwell <sfr@canb.auug.org.au> wrot=
-e:
-> > Hi Ulf,
-> >
-> > Today's linux-next merge of the mmc-uh tree got a conflict in
-> > drivers/mmc/host/sunxi-mmc.c between commit 6c09bb851e57 ("mmc: sunxi:
-> > Convert MMC driver to the standard clock phase API") from the sunxi
-> > tree and commit 776e24c502da ("mmc: sunxi: Removing unused code") from
-> > the mmc-uh tree.
-> >
-> > I fixed it up (the former includes the latter change) and can carry the
-> > fix as necessary (no action is required).
->=20
-> Maxime,
->=20
-> I can't find the sunxi tree, is it listed in MAINTAINERS?
+Yes, please make it a proper patch.
 
-No, it's not, I should probably add it :)
+Thanks a lot!
 
-It is here: https://git.kernel.org/cgit/linux/kernel/git/mripard/linux.git/
-
-> I know I have acked below patch, but that was quite a I while ago. Is
-> there any reason to why I can't take it through my mmc tree at this
-> point?
-> "mmc: sunxi: Convert MMC driver to the standard clock phase API".
-
-It still is needed to preserve bisectability, which is why you acked
-it in the first place. Otherwise, you would end up with a build
-breakage in the clock tree, because the mmc driver would still use the
-removed custom phase functions, and a failing MMC driver in your tree
-because the MMC clocks would not have the phase callbacks implemented.
-
-It's a pretty wide window of failure, and especially for the build
-breakage, I don't think it would be wise to split these patches.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---Y18yPE/eBgOv3N1p
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUv5eSAAoJEBx+YmzsjxAgEccQAIjze+3pVxO+fjTrLHi5QihR
-RV8KDOf0K9zSkOromZgy/C2c8CHP6ogdpim+ApHdvuJgCDbuwUj0wLfsXG6kCXpj
-oKbEr5Uh7096zmpNhSvSy6425DXxKUCsb10Hl5j7UH5LCOAEXyJMEiOwzb0vqDJK
-F8dS2x0U2zlQ1EZ9Cmrhj+enGApGEf1mSrnLfU906hnQ7tgfd2zIiELI6PSu4aEs
-lx48gPwvH80JGywx247ihgNajU9SOJ5E1zzPnvhSghuIyOsOXrqGQyHrDeaBO0m1
-ChT52ROvTedzDU479U1IWsjFxTX+zOxZf4WsCpl/wtBLHHgU8uONd5Xu7xeRiNDR
-lLtSsw5Co6Uacg33Q/x4chYrWxajcsFzrlm9qaFbsZoVbfpB3H9j5UFY78ZBEgX+
-7voj8VasrAWt+JaGU8bfSPIHagLxc+kcvz2cn+Ju8pR4C7/4fjY5zbdl3bxeORet
-kmYdONgNHOnNIOFgQX7JV/BnuBBnGXtpVeBUg4BDX0nf711OXvo00mAhiOkbOl7+
-NHnb0ZN3Cz6P1VFLO4tJrHK3LB/06qeWE6H5358qEvjknhvr1ypnhhPI9F9YbCC3
-h1xu3uCWZLk3Kip02Ie+zw+KmMMnq5ONvfzDaZ8nof/RZk8HsEqJv3Uzy23LvypE
-JAgXFKiJ5Cjm6ZPj8Vex
-=Uw3O
------END PGP SIGNATURE-----
-
---Y18yPE/eBgOv3N1p--
+-- 
+tejun
