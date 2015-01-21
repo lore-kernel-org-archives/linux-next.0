@@ -1,50 +1,60 @@
 From: Ingo Molnar <mingo@kernel.org>
 Subject: Re: Fwd: linux-next: manual merge of the luto-misc tree with the tip
  tree
-Date: Wed, 21 Jan 2015 06:55:32 +0100
-Message-ID: <20150121055532.GA15518@gmail.com>
+Date: Wed, 21 Jan 2015 07:16:42 +0100
+Message-ID: <20150121061642.GD15963@gmail.com>
 References: <20150119170839.2c6b4b78@canb.auug.org.au>
  <20150119093501.GA4644@pd.tnic>
  <CALCETrW05f9nty5Sk8XA2DTsocqqOxp62aT9QXwta74Km+ZOng@mail.gmail.com>
  <20150121053410.GA15291@gmail.com>
  <CALCETrXCenu4UexZfV6HTq898JbXmZGU5KaCWCXrz7oikrA34g@mail.gmail.com>
+ <20150121055532.GA15518@gmail.com>
+ <CALCETrVKEZz+NFiqxrgQhqhDZ6dPLSr32RiBoZZmFk5ZydEL1w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:60744 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750947AbbAUGCp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 01:02:45 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CALCETrXCenu4UexZfV6HTq898JbXmZGU5KaCWCXrz7oikrA34g@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <CALCETrVKEZz+NFiqxrgQhqhDZ6dPLSr32RiBoZZmFk5ZydEL1w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andy Lutomirski <luto@amacapital.net>
 Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
 
 * Andy Lutomirski <luto@amacapital.net> wrote:
 
-> On Tue, Jan 20, 2015 at 9:34 PM, Ingo Molnar <mingo@kernel.org> wrote:
+> On Tue, Jan 20, 2015 at 9:55 PM, Ingo Molnar <mingo@kernel.org> wrote:
 > >
 > > * Andy Lutomirski <luto@amacapital.net> wrote:
 > >
-> >> Hi Ingo and Thomas-
+> >> On Tue, Jan 20, 2015 at 9:34 PM, Ingo Molnar <mingo@kernel.org> wrote:
+> >> >
+> >> > * Andy Lutomirski <luto@amacapital.net> wrote:
+> >> >
+> >> >> Hi Ingo and Thomas-
+> >> >>
+> >> >> There's a trivial conflict in the pull request I sent last week.
+> >> >
+> >> > This is your x86 entry code rework pull request, right? The -tip
+> >> > tree now has the RCU commit it depends on, so could you please
+> >> > rebase it on top of tip:core/rcu so I can pull it? I'll resolve
+> >> > any remaining conflicts with the rest of -tip.
+> >> >
 > >>
-> >> There's a trivial conflict in the pull request I sent last week.
+> >> Sure, I can do that in the morning.  The pull request merges cleanly
+> >> with tip:core/rcu, though, so is the rebase needed?
 > >
-> > This is your x86 entry code rework pull request, right? The -tip
-> > tree now has the RCU commit it depends on, so could you please
-> > rebase it on top of tip:core/rcu so I can pull it? I'll resolve
-> > any remaining conflicts with the rest of -tip.
-> >
+> > Yes, because your changes rely on the RCU change (semantically),
+> > so if anyone bisects into your commits it might result in a
+> > subtly broken kernel, right?
 > 
-> Sure, I can do that in the morning.  The pull request merges cleanly
-> with tip:core/rcu, though, so is the rebase needed?
+> Almost.  The parent of my original pull request is the RCU 
+> change that my entry changes semantically depend on, so 
+> bisection should be fine.
 
-Yes, because your changes rely on the RCU change (semantically), 
-so if anyone bisects into your commits it might result in a 
-subtly broken kernel, right?
+Okay, that's good - so now I can pull your bits, because the RCU 
+commit is final, no need to rebase. (Because you already based 
+your bits on the RCU change that later on ended up in -tip.)
 
 Thanks,
 
