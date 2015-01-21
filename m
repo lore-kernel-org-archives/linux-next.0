@@ -1,48 +1,38 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: linux-next: manual merge of the mmc-uh tree with the sunxi tree
-Date: Wed, 21 Jan 2015 12:27:09 +0100
-Message-ID: <CAPDyKFq4TyiadznYCM-dGmeu799vWevBt1XVZ4DALhv-3bP=AA@mail.gmail.com>
-References: <20150120141750.3dcade27@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Jan 21
+Date: Wed, 21 Jan 2015 13:05:49 +0100
+Message-ID: <CAMuHMdVxtuJZGE0dqQVxyojK2BcCN+6t8QkRmTg-MtK2YyCP2Q@mail.gmail.com>
+References: <20150121192608.61062b6a@canb.auug.org.au>
+	<CAMuHMdXuO+tYjSSnxg+B26MbiXiG-1mmFZ+=rx+OsxnnSPbcnA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:61667 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871AbbAUL1K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 06:27:10 -0500
-Received: by mail-qa0-f46.google.com with SMTP id j7so32237084qaq.5
-        for <linux-next@vger.kernel.org>; Wed, 21 Jan 2015 03:27:09 -0800 (PST)
-In-Reply-To: <20150120141750.3dcade27@canb.auug.org.au>
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:60497 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754AbbAUMFv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 07:05:51 -0500
+In-Reply-To: <CAMuHMdXuO+tYjSSnxg+B26MbiXiG-1mmFZ+=rx+OsxnnSPbcnA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?David_Lanzend=C3=B6rfer?= <david.lanzendoerfer@o2s.ch>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 20 January 2015 at 04:17, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Ulf,
+On Wed, Jan 21, 2015 at 12:08 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> n Wed, Jan 21, 2015 at 9:26 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Removed trees: (not updated for more that 1 year)
 >
-> Today's linux-next merge of the mmc-uh tree got a conflict in
-> drivers/mmc/host/sunxi-mmc.c between commit 6c09bb851e57 ("mmc: sunxi:
-> Convert MMC driver to the standard clock phase API") from the sunxi
-> tree and commit 776e24c502da ("mmc: sunxi: Removing unused code") from
-> the mmc-uh tree.
->
-> I fixed it up (the former includes the latter change) and can carry the
-> fix as necessary (no action is required).
+> Have you informed the corresponding maintainers?
 
-Maxime,
+OK, I saw the other email. Sorry for the noise.
 
-I can't find the sunxi tree, is it listed in MAINTAINERS?
+Gr{oetje,eeting}s,
 
-I know I have acked below patch, but that was quite a I while ago. Is
-there any reason to why I can't take it through my mmc tree at this
-point?
-"mmc: sunxi: Convert MMC driver to the standard clock phase API".
+                        Geert
 
-Kind regards
-Uffe
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
