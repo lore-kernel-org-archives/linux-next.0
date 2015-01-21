@@ -1,154 +1,87 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
- root fs
-Date: Wed, 21 Jan 2015 03:36:00 +0000
-Message-ID: <20150121033600.GN29656@ZenIV.linux.org.uk>
-References: <20150120165655.GA10904@kria>
- <20150120232726.GA16913@kria>
- <1517211.UYLV49hvpg@sifl>
- <1528536.jyty2pu4Mz@sifl>
- <20150121004117.GM29656@ZenIV.linux.org.uk>
- <54BF1292.2080902@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Wed, 21 Jan 2015 14:45:58 +1100
+Message-ID: <20150121144558.79cb2056@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41416 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751691AbbAUDgI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 22:36:08 -0500
-Content-Disposition: inline
-In-Reply-To: <54BF1292.2080902@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Paul Moore <pmoore@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xTXcvTiRVXiAda2gd6Tm9Jj"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 20, 2015 at 06:44:34PM -0800, Guenter Roeck wrote:
-> >The shit hits the fan earlier - when we end up missing /dev.  There are
-> >two places where it could've been created (depending on CONFIG_BLK_DEV_INITRD);
-> >	sys_mkdir(collected, mode);
-> >in init/initramfs.c (line 353 in linux-next) and
-> >         err = sys_mkdir((const char __user __force *) "/dev", 0755);
-> >in init/noinitramfs.c (line 32).  The latter would've screamed on failure;
-> >could you printk of collected (%s), mode (%o) and return value (%d) in the
-> >former and see what happens?
-> >
-> 
-> sys_mkdir .:40775 returned -17
-> sys_mkdir usr:40775 returned 0
-> sys_mkdir usr/lib:40775 returned -2
-> sys_mkdir usr/share:40755 returned -2
-> sys_mkdir usr/share/udhcpc:40755 returned -2
-> sys_mkdir usr/bin:40775 returned -2
-> sys_mkdir usr/sbin:40775 returned -2
-> sys_mkdir mnt:40775 returned 0
-> sys_mkdir proc:40775 returned 0
-> sys_mkdir root:40775 returned 0
-> sys_mkdir lib:40775 returned 0
-> sys_mkdir lib/modules:40775 returned -2
-> sys_mkdir lib/modules/3.9.2:40775 returned -2
-> sys_mkdir lib/modules/3.9.2/kernel:40775 returned -2
-> 
-> with
-> 	int err = sys_mkdir(collected, mode);
-> 	pr_info("sys_mkdir %s:%o returned %d\n", collected, mode, err);
-> added in init/initramfs.c.
+--Sig_/xTXcvTiRVXiAda2gd6Tm9Jj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Just what is lib/modules/3.9.2 doing there?  In any case, I think I have at
-least a plausible direction for digging.  Look:
+Hi Jens,
 
-struct dentry *user_path_create(int dfd, const char __user *pathname,
-                                struct path *path, unsigned int lookup_flags)
-{
-        struct filename *tmp = getname(pathname);
-        struct dentry *res;
-        if (IS_ERR(tmp))
-                return ERR_CAST(tmp);
-        res = kern_path_create(dfd, tmp->name, path, lookup_flags);
+After merging the block tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-struct dentry *kern_path_create(int dfd, const char *pathname,
-                                struct path *path, unsigned int lookup_flags)
-{
-        struct dentry *dentry = ERR_PTR(-EEXIST);
-        struct nameidata nd;
-        int err2;
-        int error;
-        bool is_dir = (lookup_flags & LOOKUP_DIRECTORY);
+drivers/staging/lustre/lustre/llite/llite_lib.c: In function 'll_read_inode=
+2':
+drivers/staging/lustre/lustre/llite/llite_lib.c:1774:18: error: 'struct add=
+ress_space' has no member named 'backing_dev_info'
+  inode->i_mapping->backing_dev_info =3D &s2lsi(inode->i_sb)->lsi_bdi;
+                  ^
 
-        /*
-         * Note that only LOOKUP_REVAL and LOOKUP_DIRECTORY matter here. Any
-         * other flags passed in are ignored!
-         */
-        lookup_flags &= LOOKUP_REVAL;
+Caused by commit b83ae6d42143 ("fs: remove mapping->backing_dev_info")
+not updating the lustre code in the staging tree.
 
-        error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
+I have disabled the lustre code for today using the following.  Please
+let me know if you fix the lustre code so that I can reenable it.
 
-static int do_path_lookup(int dfd, const char *name,
-                                unsigned int flags, struct nameidata *nd)
-{
-        int retval;
-        struct filename *filename;
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 21 Jan 2015 14:36:21 +1100
+Subject: [PATCH] disable the lustre code for now
 
-        filename = getname_kernel(name);
-        if (unlikely(IS_ERR(filename)))
-                return PTR_ERR(filename);
-        retval = filename_lookup(dfd, filename, flags, nd);
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/lustre/lustre/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-and we have done getname_kernel() on the name->name of result of getname().
-At the very least, it's pointless - we already *have* struct filename for
-that sucker.  Now, it shouldn't have screwed the things up - it would better
-not, anyway, since we might legitimately have two identical pathname
-among the syscall arguments.  However, let's see if this (on top of
-linux-next, in addition to the same printks) changes behaviour:
+diff --git a/drivers/staging/lustre/lustre/Kconfig b/drivers/staging/lustre=
+/lustre/Kconfig
+index 6725467ef4d0..37dd33f6597e 100644
+--- a/drivers/staging/lustre/lustre/Kconfig
++++ b/drivers/staging/lustre/lustre/Kconfig
+@@ -1,6 +1,7 @@
+ config LUSTRE_FS
+ 	tristate "Lustre file system client support"
+ 	depends on INET && m && !MIPS && !XTENSA && !SUPERH
++	depends on BROKEN
+ 	select LNET
+ 	select CRYPTO
+ 	select CRYPTO_CRC32
+--=20
+2.1.4
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 323957f..c7d107c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3314,7 +3314,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
- 	return file;
- }
- 
--struct dentry *kern_path_create(int dfd, const char *pathname,
-+static struct dentry *__kern_path_create(int dfd, struct filename *name,
- 				struct path *path, unsigned int lookup_flags)
- {
- 	struct dentry *dentry = ERR_PTR(-EEXIST);
-@@ -3329,7 +3329,7 @@ struct dentry *kern_path_create(int dfd, const char *pathname,
- 	 */
- 	lookup_flags &= LOOKUP_REVAL;
- 
--	error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
-+	error = filename_lookup(dfd, name, LOOKUP_PARENT|lookup_flags, &nd);
- 	if (error)
- 		return ERR_PTR(error);
- 
-@@ -3383,6 +3383,19 @@ out:
- 	path_put(&nd.path);
- 	return dentry;
- }
-+
-+struct dentry *kern_path_create(int dfd, const char *pathname,
-+				struct path *path, unsigned int lookup_flags)
-+{
-+	struct filename *filename = getname_kernel(pathname);
-+	struct dentry *res = ERR_CAST(filename);
-+
-+	if (!IS_ERR(filename)) {
-+		res = __kern_path_create(dfd, filename, path, lookup_flags);
-+		putname(filename);
-+	}
-+	return res;
-+}
- EXPORT_SYMBOL(kern_path_create);
- 
- void done_path_create(struct path *path, struct dentry *dentry)
-@@ -3401,7 +3414,7 @@ struct dentry *user_path_create(int dfd, const char __user *pathname,
- 	struct dentry *res;
- 	if (IS_ERR(tmp))
- 		return ERR_CAST(tmp);
--	res = kern_path_create(dfd, tmp->name, path, lookup_flags);
-+	res = __kern_path_create(dfd, tmp, path, lookup_flags);
- 	putname(tmp);
- 	return res;
- }
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/xTXcvTiRVXiAda2gd6Tm9Jj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUvyD7AAoJEMDTa8Ir7ZwVMZ4P+QGvKVp/QpLbIJg52ORh7rQ6
+RJqX0T1aW3dQ41IpqBMBARjztctWxUinr93AwMVHSUPso1I1rA58c6R0r4ivpoAS
++an8UyMAJ67qG4r+ULnL9mnUjpRofPT/itKovR2OFJiLPKN7HAW5sVkFiG7KmogT
+Ws8PSQL8JJmL4GNKWYikmiIdsYr2nt55pzdpLVoa9fZcj0yKPiEl2RrHpW8uYQqd
+ACNhWHO842StArl8kE4vGtFMbUdtnf3jM2C7+pv+W41cppZMeLYBdlg9bZ5XEebj
+nEJMyfILjopBAa+2reKM08NJWLgQT+/Qbn++90YtSKvAT/V1sdCdO9Nap3PT6Ows
+2guEdmzM2HZOVuYKy9FOmOnzFIwUjye3rCQ+8lG4QPXNbAT56/Pn5bUKUbTTRQNr
+wyjM8BGTmXgMo9fawVBccu+F8jOC6lfWNpcZxuHjLJGXKgJgmnP7Ran6VW9Ir4aB
+gqbFOIgMdgMB8wNzGH7Ff3PfcagOR/glFqiR5E8bAT82akyyITiYYEC5Krc+QLfD
+BQBE2qE0FlXAa6Ni1eJQt1bHy7G6jlcmhaCVh4usF9T9D+L+8qiqjU9LXPgtRTQu
+u9Ljihyzv3DMy/l5tfLOdCGRhiGp0CbhJWLZux2jNA1u3zgwQxROUXeu2vyQaxTm
+wbGfxPCJhqiHSfyWcTR2
+=5urv
+-----END PGP SIGNATURE-----
+
+--Sig_/xTXcvTiRVXiAda2gd6Tm9Jj--
