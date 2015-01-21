@@ -1,58 +1,37 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
- root fs
-Date: Wed, 21 Jan 2015 04:36:38 +0000
-Message-ID: <20150121043637.GO29656@ZenIV.linux.org.uk>
-References: <20150120165655.GA10904@kria>
- <20150120232726.GA16913@kria>
- <1517211.UYLV49hvpg@sifl>
- <1528536.jyty2pu4Mz@sifl>
- <20150121004117.GM29656@ZenIV.linux.org.uk>
- <54BF1292.2080902@roeck-us.net>
- <20150121033600.GN29656@ZenIV.linux.org.uk>
- <54BF2496.4000807@roeck-us.net>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: Fwd: linux-next: manual merge of the luto-misc tree with the tip
+ tree
+Date: Wed, 21 Jan 2015 06:34:10 +0100
+Message-ID: <20150121053410.GA15291@gmail.com>
+References: <20150119170839.2c6b4b78@canb.auug.org.au>
+ <20150119093501.GA4644@pd.tnic>
+ <CALCETrW05f9nty5Sk8XA2DTsocqqOxp62aT9QXwta74Km+ZOng@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41489 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751981AbbAUEgo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2015 23:36:44 -0500
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:37533 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750735AbbAUFeP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 00:34:15 -0500
 Content-Disposition: inline
-In-Reply-To: <54BF2496.4000807@roeck-us.net>
+In-Reply-To: <CALCETrW05f9nty5Sk8XA2DTsocqqOxp62aT9QXwta74Km+ZOng@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Paul Moore <pmoore@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Tue, Jan 20, 2015 at 08:01:26PM -0800, Guenter Roeck wrote:
-> With this patch:
+
+* Andy Lutomirski <luto@amacapital.net> wrote:
+
+> Hi Ingo and Thomas-
 > 
-> sys_mkdir .:40775 returned -17
-> sys_mkdir usr:40775 returned 0
-> sys_mkdir usr/lib:40775 returned 0
-> sys_mkdir usr/share:40755 returned 0
-> sys_mkdir usr/share/udhcpc:40755 returned 0
-> sys_mkdir usr/bin:40775 returned 0
-> sys_mkdir usr/sbin:40775 returned 0
-> sys_mkdir mnt:40775 returned 0
-> sys_mkdir proc:40775 returned 0
-> sys_mkdir root:40775 returned 0
-> sys_mkdir lib:40775 returned 0
-> sys_mkdir lib/modules:40775 returned 0
-> ...
-> 
-> and the problem is fixed.
+> There's a trivial conflict in the pull request I sent last week.
 
-... except that it simply confirms that something's fishy with getname_kernel()
-of ->name of struct filename returned by getname().  IOW, I still do not
-understand the mechanism of breakage there.
+This is your x86 entry code rework pull request, right? The -tip 
+tree now has the RCU commit it depends on, so could you please 
+rebase it on top of tip:core/rcu so I can pull it? I'll resolve 
+any remaining conflicts with the rest of -tip.
 
-Another thing I really do not understand is
-+               if (inode->i_ino) {
-+                       /* valid inode number, use that for the comparison */
-+                       if (n->ino != inode->i_ino ||
-+                           n->dev != inode->i_sb->s_dev)
-+                               continue;
-in __audit_inode().  We don't *have* dentries with dentry->d_inode->i_ino == 0.
-Ever.  WTF is that about?  Paul?
+Thanks,
+
+	Ingo
