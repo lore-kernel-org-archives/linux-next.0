@@ -1,124 +1,146 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
- root fs
-Date: Wed, 21 Jan 2015 13:03:20 -0800
-Message-ID: <54C01418.5060204@roeck-us.net>
-References: <1528536.jyty2pu4Mz@sifl> <20150121004117.GM29656@ZenIV.linux.org.uk> <54BF1292.2080902@roeck-us.net> <20150121033600.GN29656@ZenIV.linux.org.uk> <54BF2496.4000807@roeck-us.net> <20150121043637.GO29656@ZenIV.linux.org.uk> <20150121110539.GA8924@kria> <54BFAA5D.4040108@roeck-us.net> <20150121182905.GQ29656@ZenIV.linux.org.uk> <54BFF8B3.6060802@roeck-us.net> <20150121200626.GR29656@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: tidy up of trees
+Date: Thu, 22 Jan 2015 08:09:27 +1100
+Message-ID: <20150122080927.0c32ecd7@canb.auug.org.au>
+References: <20150121151009.0cb88a21@canb.auug.org.au>
+	<20150121083739.1b29cfca@gandalf.local.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20150121200626.GR29656@ZenIV.linux.org.uk>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Sabrina Dubroca <sd@queasysnail.net>, Paul Moore <pmoore@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/RM5EXGs6qUnWXtHSHcwJvpX"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50671 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751975AbbAUVJg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2015 16:09:36 -0500
+In-Reply-To: <20150121083739.1b29cfca@gandalf.local.home>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 01/21/2015 12:06 PM, Al Viro wrote:
-> On Wed, Jan 21, 2015 at 11:06:27AM -0800, Guenter Roeck wrote:
->> On 01/21/2015 10:29 AM, Al Viro wrote:
->>> On Wed, Jan 21, 2015 at 05:32:13AM -0800, Guenter Roeck wrote:
->>>> Another data point (though I have no idea if it is useful or what it means):
->>>>
->>>> In the working case, path_init sets nd->flags to 0x50 or 0x51.
->>>> In the non-working case (ie for all files with a '/' in the name),
->>>> it sets nd->flags to 0x10 or 0x11, even though it is always called
->>>> with the LOOKUP_RCU bit set in flags.
->>>
->>> Umm...  Are those path_init() succeeding or failing?  Note that path_init()
->>> includes "walk everything except for the last component", so your non-working
->>> case is "have it walk anything at all".  What's failing there?  path_init()
->>> or handling the remaining component?
->>>
->> path_init() returns -2. Guess that explains the unexpected flags ;-).
->> The failuere is from
->> 	link_path_walk()
->> 		walk_component()
+--Sig_/RM5EXGs6qUnWXtHSHcwJvpX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Steven,
+
+On Wed, 21 Jan 2015 08:37:39 -0500 Steven Rostedt <rostedt@goodmis.org> wro=
+te:
 >
-> Which is to say, lookup gave it a negative dentry.  OK, let's just make
-> vfs_mkdir() and walk_component() print what they are doing; on top of
-> linux-next
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 323957f..8a4e22f 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1586,8 +1586,11 @@ static inline int walk_component(struct nameidata *nd, struct path *path,
->   		inode = path->dentry->d_inode;
->   	}
->   	err = -ENOENT;
-> -	if (!inode || d_is_negative(path->dentry))
-> +	if (!inode || d_is_negative(path->dentry)) {
-> +		printk(KERN_ERR "walk_component[%p,%pd4] -> negative\n",
-> +			path->dentry, path->dentry);
->   		goto out_path_put;
-> +	}
->
->   	if (should_follow_link(path->dentry, follow)) {
->   		if (nd->flags & LOOKUP_RCU) {
-> @@ -3521,6 +3524,7 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->   	error = dir->i_op->mkdir(dir, dentry, mode);
->   	if (!error)
->   		fsnotify_mkdir(dir, dentry);
-> +	printk(KERN_ERR "mkdir[%p,%pd4] => %d\n", dentry, dentry, error);
->   	return error;
->   }
->   EXPORT_SYMBOL(vfs_mkdir);
->
+> On Wed, 21 Jan 2015 15:10:09 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > Hi all,
+> >=20
+> > [affected tree contacts are bcc'd on this email]
+> >=20
+>=20
+> > kconfig
+> > Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-kc=
+onfig.git#for-next
+> >=20
+>=20
+> This is my localmodconfig repo. I only use it when someone points out
+> something broke or I find a better way of doing something.
+>=20
+> It doesn't get updated much because so far, I hear localmodconfig and
+> localyesconfig are doing everything that people like. It may not ever
+> get updated again if everyone (including myself) stays happy with it :-)
+>=20
+> But in case that changes, and I need to restructure it, this will be
+> needed again. Should I just let this go out of next, but I'll probably
+> forget that it does, and still think my for-next branch is active.
+>=20
+> If it is any extra burden on you to keep it, then I'm fine with it
+> falling off the radar. But if it's just "I have X repos in next, and
+> I'm trying to make it Y", I'd rather keep it in.
 
-ok case (putname commented out):
+No worries, I have put it back.
 
-user_path_at_empty lookup usr flags 0x0
-path_lookupat: calling path_init 'usr' flags=40
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=40[50] returned 0
-walk_component: lookup_fast() returned 1
-walk_component: lookup_slow() returned 0
-walk_component: inode=  (null), negative=1
-do_path_lookup(usr, 0x10)
-path_lookupat: calling path_init 'usr' flags=50
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=50[50] returned 0
-mkdir[c74012a0,/usr] => 0
-user_path_at_empty lookup usr flags 0x1
-path_lookupat: calling path_init 'usr' flags=41
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=41[51] returned 0
-walk_component: inode=c74004a0, negative=0
-user_path_at_empty lookup usr flags 0x1
-path_lookupat: calling path_init 'usr' flags=41
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=41[51] returned 0
+I guess what I am trying to do is get the attention of people who have
+trees that they are finished with, or have very stale commits in them.
+After a while it can take git a significant amount of work to merge a
+tree that is forked from a very old version of Linus' tree (I guess
+finding the merge base gets hard).
 
-failing case:
+So one thing that helps is that if even "empty" trees keep their head
+"near" the head of Linus' tree i.e. within a couple of releases (and a
+year is 4 releases).  That means that "git merge" is really fast (and
+does nothing) and I don't care.  If a merge takes 30 seconds (even to
+do nothing), and I have to do 230 merges a day, then it impacts on what
+I can get through.
 
-path_lookupat: calling path_init 'usr' flags=40
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=40[50] returned 0
-walk_component: lookup_fast() returned 1
-walk_component: lookup_slow() returned 0
-walk_component: inode=  (null), negative=1
-do_path_lookup(usr, 0x10)
-path_lookupat: calling path_init 'usr' flags=50
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=50[50] returned 0
-mkdir[c74012a0,/kkk] => 0						<==== SIC!
-user_path_at_empty lookup usr flags 0x1
-path_lookupat: calling path_init 'usr' flags=41
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=41[51] returned 0
-walk_component: lookup_fast() returned 1
-walk_component: lookup_slow() returned 0
-walk_component: inode=  (null), negative=1
-user_path_at_empty lookup usr flags 0x1
-path_lookupat: calling path_init 'usr' flags=41
-path_init: link_path_walk() returned 0
-path_lookupat: path_init 'usr' flags=41[51] returned 0
-walk_component: lookup_fast() returned 1
-walk_component: lookup_slow() returned 0
-walk_component: inode=  (null), negative=1
+And worse, what looks like abandoned work in some trees could impact on
+ongoing work in other trees.
 
-Guenter
+OK, I just did a test:
 
+$ git describe kconfig/for-next=20
+v3.13-rc4-1-g95edca5c523c
+$ time git merge kconfig/for-next=20
+Already up-to-date.
 
+real	0m1.443s
+user	0m1.408s
+sys	0m0.036s
 
+So, not a real problem.  But this:
+
+$ git describe logfs/master=20
+v3.6-rc4-55-g339466142b3f
+$ time git merge logfs/master=20
+Performing inexact rename detection:  32% (126388520/126388520), done.
+Auto-merging fs/logfs/super.c
+Merge made by the 'recursive' strategy.
+ fs/logfs/dev_mtd.c | 2 +-
+ fs/logfs/super.c   | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+real	1m12.023s
+user	1m7.920s
+sys	0m0.792s
+$ git reset --hard HEAD^
+HEAD is now at e1e12812e428 Add linux-next specific files for 20150121
+$ time git merge logfs/master=20
+Performing inexact rename detection:  32% (126388520/126388520), done.
+Auto-merging fs/logfs/super.c
+Merge made by the 'recursive' strategy.
+ fs/logfs/dev_mtd.c | 2 +-
+ fs/logfs/super.c   | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+real	1m7.794s
+user	1m7.216s
+sys	0m0.616s
+
+(I did it twice so that the second time it was all hot)  And then I
+have to do the build (which admittedly doesn't take too long in this
+case) but if a header file gets touched it is a real problem.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/RM5EXGs6qUnWXtHSHcwJvpX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUwBWMAAoJEMDTa8Ir7ZwVUuQP/RDlCY0G2tbRwCJV+SUWeKT+
+jGd7HtiEUF/OeI0iTwcyv0CHIwsI16VZ5Ogq7UWl0n5ZZo//e8kPuXNDTVTYE6j0
+fvfP0WxU79BgI7jPtV9cctcMsAbcGf8rZDLjdnTr8Nki+gTtryLuTRbI/8B4m+Zx
+sTjJy7Het676+p0nc2k94wQczvgbBaNjn+ASl20dAK6RQ3uKxaOriWrrqBWREXB0
+UFzmf1C5Hn9RTz//mCaitkRgkeDLU+X/jnx6FKVPne18fySMR251VckHHD5EPI1k
+dKwLcVNRyuZsujVglo/lZ3ETd4qG1jYGf0ryJ6+2d5pEubf3Pdp/X4c81mB3G0Bf
+wTYVfUZkPQjvQGE9mF4qPU310PjhzsY54DFDzCULP6XBueBg2t8cXIasLGP2VYmf
+rFUUzRT3t6ND1vH4vbZcOAZ/aHxVAvs+E8xrpLEVQlkPlUhAvSUSNS29Rjx4M/p4
+3vEZuT2y/n6MeABdxmHN4iSJbqH/gGxGMauaZetMMBloFFGHF5nWMSCElABZkDfg
+mMqig+V8wtW0ydwtRQOTxm+BIb77NphHrQS8maRl05YKoGO/xpN1mTkkzbumcuoe
+xzDMAEhD8i93l5ONin3G5auGrWQUsLGQYnCmmUNJkGTHyTrQdsmfC6FVc83Yj9LV
+SkfHAx9QjI6zbrzwgP22
+=kFOS
+-----END PGP SIGNATURE-----
+
+--Sig_/RM5EXGs6qUnWXtHSHcwJvpX--
