@@ -1,116 +1,359 @@
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: linux-next: Tree for Jan 20
-Date: Wed, 21 Jan 2015 12:43:25 +0200
-Message-ID: <20150121104325.GA22449@node.dhcp.inet.fi>
-References: <20150120185308.53f4af4e@canb.auug.org.au>
- <20150120202642.GA6178@roeck-us.net>
- <20150120225443.GA19629@node.dhcp.inet.fi>
- <54BF1785.7040300@roeck-us.net>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: next-20150120 broken on Tegra by "ata: libahci: Allow using
+ multiple regulators"
+Date: Wed, 21 Jan 2015 11:50:03 +0100
+Message-ID: <20150121105001.GA9921@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mta-out1.inet.fi ([62.71.2.195]:59889 "EHLO jenni2.inet.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750754AbbAUKn6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 05:43:58 -0500
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
 Content-Disposition: inline
-In-Reply-To: <54BF1785.7040300@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mel Gorman <mgorman@suse.de>, Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, davem@davemloft.net
+Sender: linux-ide-owner@vger.kernel.org
+To: Paul Walmsley <paul@pwsan.com>
+Cc: gregory.clement@free-electrons.com, hdegoede@redhat.com, tj@kernel.org, pwalmsley@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-ide@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 20, 2015 at 07:05:41PM -0800, Guenter Roeck wrote:
-> On 01/20/2015 02:54 PM, Kirill A. Shutemov wrote:
-> >On Tue, Jan 20, 2015 at 12:26:42PM -0800, Guenter Roeck wrote:
-> >>---
-> >>sparc:
-> >>
-> >># bad: [5d0eebbbb6f76de160f7d7f9dc0b64a98ad9b8e9] Add linux-next specific files for 20150120
-> >># good: [ec6f34e5b552fb0a52e6aae1a5afbbb1605cc6cc] Linux 3.19-rc5
-> >>git bisect start 'HEAD' 'v3.19-rc5'
-> >># good: [f933e94e8f597c709068e58daa92570d5aa13b8c] Merge remote-tracking branch 'drm/drm-next'
-> >>git bisect good f933e94e8f597c709068e58daa92570d5aa13b8c
-> >># good: [88cf70c4dd4a3851bf5531c0a51dec298d9690b5] Merge remote-tracking branch 'usb/usb-next'
-> >>git bisect good 88cf70c4dd4a3851bf5531c0a51dec298d9690b5
-> >># good: [3ee33b3893f72e5a504ba873ee4a308896d97645] Merge remote-tracking branch 'cgroup/for-next'
-> >>git bisect good 3ee33b3893f72e5a504ba873ee4a308896d97645
-> >># bad: [5925961a2889ec2b3734be9f3a6375822010f7a7] fs-befs-linuxvfsc-remove-unnecessary-casting-fix
-> >>git bisect bad 5925961a2889ec2b3734be9f3a6375822010f7a7
-> >># bad: [fff9d1d082bb48a0d0e89aaaf746718fcef3a47f] mm: memcontrol: default hierarchy interface for memory fix
-> >>git bisect bad fff9d1d082bb48a0d0e89aaaf746718fcef3a47f
-> >># good: [ab090dcbdd276e9ddcd0ecb666389aa85c30c76f] powerpc: drop _PAGE_FILE and pte_file()-related helpers
-> >>git bisect good ab090dcbdd276e9ddcd0ecb666389aa85c30c76f
-> >># good: [91408e6db5842ed4bb66e2a3919b67a5f06ac34a] mm/hugetlb: fix suboptimal migration/hwpoisoned entry check
-> >>git bisect good 91408e6db5842ed4bb66e2a3919b67a5f06ac34a
-> >># bad: [8e94896c7510e69bbd2acf418ad3a8afb9978c97] fs: consolidate {nr,free}_cached_objects args in shrink_control
-> >>git bisect bad 8e94896c7510e69bbd2acf418ad3a8afb9978c97
-> >># bad: [5995b76d501a8f4d315f811698db98ac997d706f] x86: mm: restore original pte_special check
-> >>git bisect bad 5995b76d501a8f4d315f811698db98ac997d706f
-> >># good: [b75c721aa3e2df5c52d4b6bce3dd687018c1f40c] mm: convert p[te|md]_numa users to p[te|md]_protnone_numa
-> >>git bisect good b75c721aa3e2df5c52d4b6bce3dd687018c1f40c
-> >># good: [ce4188d335ac91a004087fb0ea86b85091ad570b] mm: convert p[te|md]_mknonnuma and remaining page table manipulations
-> >>git bisect good ce4188d335ac91a004087fb0ea86b85091ad570b
-> >># bad: [625fa33ba695d73baa58afa44ab063f67e5f4b64] mm: numa: do not trap faults on the huge zero page
-> >>git bisect bad 625fa33ba695d73baa58afa44ab063f67e5f4b64
-> >># good: [c2a7c97cc4bc3d46e98908d7dee07ab3e00a5257] mm: remove remaining references to NUMA hinting bits and helpers
-> >>git bisect good c2a7c97cc4bc3d46e98908d7dee07ab3e00a5257
-> >># first bad commit: [625fa33ba695d73baa58afa44ab063f67e5f4b64] mm: numa: do not trap faults on the huge zero page
-> >
-> >Could you provide more info about the fail in qemu?
-> >
-> 
-> Error message:
-> 
-> BUG: Bad page state in process init.sh  pfn:00000
-> page:f05e7460 count:0 mapcount:-1 mapping:  (null) index:0x0
-> flags: 0x400(reserved)
-> page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-> bad because of flags:
-> flags: 0x400(reserved)
-> CPU: 0 PID: 1 Comm: init.sh Not tainted 3.19.0-rc5-next-20150120 #1
-> [f0076010 : bad_page+0xdc/0xfc ] [f00760c0 : free_pages_prepare+0x90/0x1f8 ] [f00775cc : free_hot_cold_page+0x20/0x160 ] [f00919e8 : do_wp_page+0x680/0x6ac ] [f00939f4 : handle_mm_fault+0xc94/0xd08 ] [f0015900 : do_sparc_fault+0xfc/0x3ec ] [f000af90 : srmmu_fault+0x58/0x68 ] [f00e74f4 : load_elf_binary+0x9a8/0xe94 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00e67d0 : load_script+0x214/0x224 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00b11a4 : do_execveat_common+0x434/0x584 ] [f00b1310 : do_execve+0x1c/0x2c ] [f02b50b0 : kernel_init+0x70/0xf0 ] [f000b200 : ret_from_kernel_thread+0xc/0x38 ] [00000000 :   (null) ]
-> Disabling lock debugging due to kernel taint
-> : applet not found
-> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100
+--7iMSBzlTiPOCCT2k
+Content-Type: multipart/mixed; boundary="FCuugMFkClbJLl1L"
+Content-Disposition: inline
 
-It doesn't make much sense to me. It tries to free page with pfn==0 on
-handling wp-fault. How it got mapped in the first place?
 
-Mel, any ideas?
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Complete console log:
-> 
-> http://server.roeck-us.net:8010/builders/qemu-sparc-next/builds/82/steps/qemubuildcommand/logs/stdio
-> 
-> defconfig:
-> 
-> http://server.roeck-us.net/qemu/sparc32/qemu_sparc_defconfig
-> 
-> qemu command line:
-> 
-> /opt/buildbot/bin/qemu-system-sparc -cpu "Fujitsu MB86907" \
-> 	-kernel arch/sparc/boot/image -hda hda.sqf -no-reboot \
-> 	-append "root=/dev/sda rw init=/sbin/init.sh panic=1 console=ttyS0" \
-> 	-nographic
-> 
-> The root file system (hda.sqf) is at http://server.roeck-us.net/qemu/sparc32/hda.sqf.
-> 
-> qemu version:
-> 
-> /opt/buildbot/bin/qemu-system-sparc --version
-> QEMU emulator version 2.1.2, Copyright (c) 2003-2008 Fabrice Bellard
-> 
-> Hope this helps,
-> 
-> Guenter
-> 
+On Wed, Jan 21, 2015 at 12:03:41AM +0000, Paul Walmsley wrote:
+> (linux-ide@ added)
+>=20
+> Commit c7d7ddee7e24eedde6149eefbcfbfbc7125b9ff0 ("ata: libahci: Allow
+> using multiple regulators") in Linux-next 20150120 causes a panic
+> during boot on multiple Tegra boards:
+>=20
+> http://nvt.pwsan.com/experimental/linux-next/testlogs/test_next-20150120/=
+20150120001539/boot/tegra30-beaver/tegra30-beaver/tegra_defconfig_log.txt
+> http://nvt.pwsan.com/experimental/linux-next/testlogs/test_next-20150120/=
+20150120001539/boot/tegra114-dalmore-a04/tegra114-dalmore/tegra_defconfig_l=
+og.txt
+> http://nvt.pwsan.com/experimental/linux-next/testlogs/test_next-20150120/=
+20150120001539/boot/tegra124-jetson-tk1/tegra124-jetson-tk1/tegra_defconfig=
+_log.txt
+>=20
+> Taking the latter boot log as an example, the 6b6b6b9f value that the=20
+> kernel is trying to dereference is being passed into _regulator_put() as =
+a=20
+> struct regulator *.
+>=20
+>=20
+> - Paul
+>=20
+
+Here's the devres log of what's happening:
+
+	[    4.949689] tegra-ahci 70027000.sata: DEVRES ADD ee1e2a00 devm_kzalloc_=
+release (16 bytes)
+	[    4.957886] tegra-ahci 70027000.sata: DEVRES ADD ee1e29c0 devm_pinctrl_=
+release (4 bytes)
+	[    4.965984] tegra-ahci 70027000.sata: DEVRES REM ee1e29c0 devm_pinctrl_=
+release (4 bytes)
+	[    4.974079] tegra-ahci 70027000.sata: DEVRES REM ee1e2a00 devm_kzalloc_=
+release (16 bytes)
+	[    4.982298] tegra-ahci 70027000.sata: DEVRES ADD ee1e29c0 grp< (0 bytes)
+	[    4.989006] tegra-ahci 70027000.sata: DEVRES ADD ee1dae00 ahci_platform=
+_put_resources (96 bytes)
+	[    4.997784] tegra-ahci 70027000.sata: DEVRES ADD ee1e2980 devm_region_r=
+elease (12 bytes)
+	[    5.005879] tegra-ahci 70027000.sata: DEVRES ADD ee1e2900 devm_ioremap_=
+release (4 bytes)
+	[    5.014005] tegra-ahci 70027000.sata: DEVRES ADD ee1e28c0 devm_kzalloc_=
+release (4 bytes)
+	[    5.022096] tegra-ahci 70027000.sata: DEVRES ADD ee1e2880 devm_kzalloc_=
+release (4 bytes)
+	[    5.030209] tegra-ahci 70027000.sata: DEVRES ADD ee1e2840 devm_phy_rele=
+ase (4 bytes)
+	[    5.037952] tegra-ahci 70027000.sata: DEVRES REM ee1e29c0 grp< (0 bytes)
+	[    5.044660] tegra-ahci 70027000.sata: DEVRES ADD ee1dad80 devm_kzalloc_=
+release (84 bytes)
+	[    5.052845] tegra-ahci 70027000.sata: DEVRES ADD ee1e29c0 devm_region_r=
+elease (12 bytes)
+	[    5.060938] tegra-ahci 70027000.sata: DEVRES ADD ee1e2f80 devm_ioremap_=
+release (4 bytes)
+	[    5.069039] tegra-ahci 70027000.sata: DEVRES ADD ee1e2f40 devm_reset_co=
+ntrol_release (4 bytes)
+	[    5.077647] tegra-ahci 70027000.sata: DEVRES ADD ee1e2ec0 devm_reset_co=
+ntrol_release (4 bytes)
+	[    5.086271] tegra-ahci 70027000.sata: DEVRES ADD ee1e2e40 devm_reset_co=
+ntrol_release (4 bytes)
+	[    5.094890] tegra-ahci 70027000.sata: DEVRES ADD ee1e2dc0 devm_clk_rele=
+ase (4 bytes)
+	[    5.102659] tegra-ahci 70027000.sata: Failed to get supply 'avdd': -517
+	[    5.109276] tegra-ahci 70027000.sata: Failed to get regulators
+	[    5.115103] tegra-ahci 70027000.sata: DEVRES REL ee1e2dc0 devm_clk_rele=
+ase (4 bytes)
+	[    5.122850] tegra-ahci 70027000.sata: DEVRES REL ee1e2e40 devm_reset_co=
+ntrol_release (4 bytes)
+	[    5.131462] tegra-ahci 70027000.sata: DEVRES REL ee1e2ec0 devm_reset_co=
+ntrol_release (4 bytes)
+	[    5.140073] tegra-ahci 70027000.sata: DEVRES REL ee1e2f40 devm_reset_co=
+ntrol_release (4 bytes)
+	[    5.148672] tegra-ahci 70027000.sata: DEVRES REL ee1e2f80 devm_ioremap_=
+release (4 bytes)
+	[    5.156764] tegra-ahci 70027000.sata: DEVRES REL ee1e29c0 devm_region_r=
+elease (12 bytes)
+	[    5.164856] tegra-ahci 70027000.sata: DEVRES REL ee1dad80 devm_kzalloc_=
+release (84 bytes)
+	[    5.173034] tegra-ahci 70027000.sata: DEVRES REL ee1e2840 devm_phy_rele=
+ase (4 bytes)
+	[    5.180778] tegra-ahci 70027000.sata: DEVRES REL ee1e2880 devm_kzalloc_=
+release (4 bytes)
+	[    5.188868] tegra-ahci 70027000.sata: DEVRES REL ee1e28c0 devm_kzalloc_=
+release (4 bytes)
+	[    5.196948] tegra-ahci 70027000.sata: DEVRES REL ee1e2900 devm_ioremap_=
+release (4 bytes)
+	[    5.205037] tegra-ahci 70027000.sata: DEVRES REL ee1e2980 devm_region_r=
+elease (12 bytes)
+	[    5.213129] tegra-ahci 70027000.sata: DEVRES REL ee1dae00 ahci_platform=
+_put_resources (96 bytes)
+
+What's happening here is that ahci_platform_put_resources() is added to
+the devres list before the devm_kzalloc() that allocates the target_pwrs
+array, which causes the target_pwrs array to be freed before devres gets
+to call ahci_platform_put_resources().
+
+Mixing managed and non-managed resources this way doesn't work, so I had
+to apply the attached patch to fix this.
+
+Tejun, preferably the attached patch should be squashed into commit
+c7d7ddee7e24 ("ata: libahci: Allow using multiple regulators") to avoid
+breaking bisectability. If you don't want to rewrite history, let me
+know and I can turn it into a proper patch.
+
+Thierry
+
+> [    1.353036] platform as3722-regulator: Driver as3722-regulator request=
+s probe deferral
+> [    1.362978] tegra-ahci 70027000.sata: Failed to get supply 'avdd': -517
+> [    1.369607] tegra-ahci 70027000.sata: Failed to get regulators
+> [    1.375479] Unable to handle kernel paging request at virtual address =
+6b6b6b9f
+> [    1.382689] pgd =3D c0004000
+> [    1.385517] [6b6b6b9f] *pgd=3D00000000
+> [    1.389101] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+> [    1.394403] Modules linked in:
+> [    1.397467] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.19.0-rc5-next-=
+20150120-72727-g5d0eebb #1
+> [    1.406237] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    1.412493] task: ee053840 ti: ee054000 task.ti: ee054000
+> [    1.417891] PC is at _regulator_put+0x14/0xa0
+> [    1.422241] LR is at regulator_put+0x1c/0x2c
+> [    1.426506] pc : [<c027764c>]    lr : [<c02776f4>]    psr: 00000113
+> [    1.426506] sp : ee055e40  ip : ee18aedc  fp : 00000000
+> [    1.437964] r10: c02f94b4  r9 : c02f94b0  r8 : ee055e70
+> [    1.443179] r7 : 0000000d  r6 : 00000005  r5 : 6b6b6b6b  r4 : 6b6b6b6b
+> [    1.449695] r3 : ee053840  r2 : ee055e48  r1 : 00000000  r0 : 6b6b6b6b
+> [    1.456213] Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segme=
+nt kernel
+> [    1.463509] Control: 10c5387d  Table: 8000406a  DAC: 00000015
+> [    1.469245] Process swapper/0 (pid: 1, stack limit =3D 0xee054210)
+> [    1.475242] Stack: (0xee055e40 to 0xee056000)
+> [    1.479596] 5e40: c08ff470 6b6b6b6b 00000005 c02776f4 6b6b6b6b 0000000=
+1 ee3d9990 c03481a4
+> [    1.487761] 5e60: ee3d9980 ee055e70 ee18ae10 c02f99f8 ee3d9980 ee3ed98=
+0 ee18ae10 c09804c0
+> [    1.495927] 5e80: fffffdfb c0910898 00000000 c08d31e4 00000000 c02f6ea=
+8 ee18ae10 c0910898
+> [    1.504093] 5ea0: ee18ae44 00000000 c08b996c c02f70f0 00000000 c091089=
+8 c02f7064 c02f577c
+> [    1.512258] 5ec0: ee036560 ee15f934 c0910898 ee3d9a00 c090dc08 c02f674=
+4 c07e6d00 c0910898
+> [    1.520423] 5ee0: c08ee018 c0910898 c08ee018 ee3ed700 c0939340 c02f771=
+4 00000000 c08ee018
+> [    1.528588] 5f00: c08ee018 c0008b04 c063dd14 00000014 00000000 0000000=
+0 00000000 c012d2dc
+> [    1.536752] 5f20: 00000000 c08f2684 60000113 00000001 ef7fcca0 c0659cb=
+c 000000d9 c003bdd4
+> [    1.544917] 5f40: c08626bc 00000006 ef7fcca8 00000006 c08f264c ef7fcc4=
+0 c08e3474 00000006
+> [    1.553082] 5f60: c08d31d8 c0939340 000000d9 c08d31e4 c089c598 c089cd8=
+0 00000006 00000006
+> [    1.561247] 5f80: c089c598 7fffffff 00000000 c062f028 00000000 0000000=
+0 00000000 00000000
+> [    1.569413] 5fa0: 00000000 c062f030 00000000 c000e9c0 00000000 0000000=
+0 00000000 00000000
+> [    1.577578] 5fc0: 00000000 00000000 00000000 00000000 00000000 0000000=
+0 00000000 00000000
+> [    1.585743] 5fe0: 00000000 00000000 00000000 00000000 00000013 0000000=
+0 ffffffff 7fffffff
+> [    1.593920] [<c027764c>] (_regulator_put) from [<c02776f4>] (regulator=
+_put+0x1c/0x2c)
+> [    1.601751] [<c02776f4>] (regulator_put) from [<c03481a4>] (ahci_platf=
+orm_put_resources+0x74/0xa0)
+> [    1.610704] [<c03481a4>] (ahci_platform_put_resources) from [<c02f99f8=
+>] (release_nodes+0x164/0x1d8)
+> [    1.619828] [<c02f99f8>] (release_nodes) from [<c02f6ea8>] (driver_pro=
+be_device+0x70/0x22c)
+> [    1.628170] [<c02f6ea8>] (driver_probe_device) from [<c02f70f0>] (__dr=
+iver_attach+0x8c/0x90)
+> [    1.636604] [<c02f70f0>] (__driver_attach) from [<c02f577c>] (bus_for_=
+each_dev+0x54/0x88)
+> [    1.644774] [<c02f577c>] (bus_for_each_dev) from [<c02f6744>] (bus_add=
+_driver+0xd4/0x1d0)
+> [    1.652940] [<c02f6744>] (bus_add_driver) from [<c02f7714>] (driver_re=
+gister+0x78/0xf4)
+> [    1.660936] [<c02f7714>] (driver_register) from [<c0008b04>] (do_one_i=
+nitcall+0x80/0x1d0)
+> [    1.669108] [<c0008b04>] (do_one_initcall) from [<c089cd80>] (kernel_i=
+nit_freeable+0x108/0x1d4)
+> [    1.677802] [<c089cd80>] (kernel_init_freeable) from [<c062f030>] (ker=
+nel_init+0x8/0xec)
+> [    1.685887] [<c062f030>] (kernel_init) from [<c000e9c0>] (ret_from_for=
+k+0x14/0x34)
+> [    1.693447] Code: e2504000 08bd8070 e3740a01 88bd8070 (e5940034)=20
+> [    1.699578] ---[ end trace 6cc7849b05d3269f ]---
+> [    1.704225] Kernel panic - not syncing: Attempted to kill init! exitco=
+de=3D0x0000000b
+> [    1.704225]=20
+> [    1.713348] CPU2: stopping
+> [    1.716059] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G      D         3.=
+19.0-rc5-next-20150120-72727-g5d0eebb #1
+> [    1.726041] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    1.732316] [<c0015a90>] (unwind_backtrace) from [<c00114a8>] (show_st=
+ack+0x10/0x14)
+> [    1.740057] [<c00114a8>] (show_stack) from [<c0632e9c>] (dump_stack+0x=
+84/0xd0)
+> [    1.747273] [<c0632e9c>] (dump_stack) from [<c001429c>] (handle_IPI+0x=
+134/0x160)
+> [    1.754660] [<c001429c>] (handle_IPI) from [<c00087d4>] (gic_handle_ir=
+q+0x54/0x5c)
+> [    1.762222] [<c00087d4>] (gic_handle_irq) from [<c0012000>] (__irq_svc=
++0x40/0x74)
+> [    1.769691] Exception stack(0xee079f98 to 0xee079fe0)
+> [    1.774734] 9f80:                                                     =
+  ffffffed 00000000
+> [    1.782900] 9fa0: ee079fe8 c001ee80 c08ea4f8 c08ea494 00000000 0000000=
+0 c08e6a00 c08e5d98
+> [    1.791064] 9fc0: ffffffed 00000000 00000000 ee079fe0 c000f48c c000f49=
+0 60000113 ffffffff
+> [    1.799236] [<c0012000>] (__irq_svc) from [<c000f490>] (arch_cpu_idle+=
+0x30/0x3c)
+> [    1.806626] [<c000f490>] (arch_cpu_idle) from [<c00554cc>] (cpu_startu=
+p_entry+0x1a4/0x278)
+> [    1.814881] [<c00554cc>] (cpu_startup_entry) from [<80008864>] (0x8000=
+8864)
+> [    1.821831] CPU3: stopping
+> [    1.824542] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G      D         3.=
+19.0-rc5-next-20150120-72727-g5d0eebb #1
+> [    1.834526] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    1.840797] [<c0015a90>] (unwind_backtrace) from [<c00114a8>] (show_st=
+ack+0x10/0x14)
+> [    1.848536] [<c00114a8>] (show_stack) from [<c0632e9c>] (dump_stack+0x=
+84/0xd0)
+> [    1.855751] [<c0632e9c>] (dump_stack) from [<c001429c>] (handle_IPI+0x=
+134/0x160)
+> [    1.863138] [<c001429c>] (handle_IPI) from [<c00087d4>] (gic_handle_ir=
+q+0x54/0x5c)
+> [    1.870701] [<c00087d4>] (gic_handle_irq) from [<c0012000>] (__irq_svc=
++0x40/0x74)
+> [    1.878170] Exception stack(0xee07bf98 to 0xee07bfe0)
+> [    1.883212] bf80:                                                     =
+  ffffffed 00000000
+> [    1.891377] bfa0: ee07bfe8 c001ee80 c08ea4f8 c08ea494 00000000 0000000=
+0 c08e6a00 c08e5d98
+> [    1.899543] bfc0: ffffffed 00000000 00000000 ee07bfe0 c000f48c c000f49=
+0 60000113 ffffffff
+> [    1.907715] [<c0012000>] (__irq_svc) from [<c000f490>] (arch_cpu_idle+=
+0x30/0x3c)
+> [    1.915105] [<c000f490>] (arch_cpu_idle) from [<c00554cc>] (cpu_startu=
+p_entry+0x1a4/0x278)
+> [    1.923358] [<c00554cc>] (cpu_startup_entry) from [<80008864>] (0x8000=
+8864)
+> [    1.930309] CPU1: stopping
+> [    1.933018] CPU: 1 PID: 0 Comm: swapper/1 Tainted: G      D         3.=
+19.0-rc5-next-20150120-72727-g5d0eebb #1
+> [    1.943002] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+> [    1.949273] [<c0015a90>] (unwind_backtrace) from [<c00114a8>] (show_st=
+ack+0x10/0x14)
+> [    1.957012] [<c00114a8>] (show_stack) from [<c0632e9c>] (dump_stack+0x=
+84/0xd0)
+> [    1.964227] [<c0632e9c>] (dump_stack) from [<c001429c>] (handle_IPI+0x=
+134/0x160)
+> [    1.971614] [<c001429c>] (handle_IPI) from [<c00087d4>] (gic_handle_ir=
+q+0x54/0x5c)
+> [    1.979177] [<c00087d4>] (gic_handle_irq) from [<c0012000>] (__irq_svc=
++0x40/0x74)
+> [    1.986646] Exception stack(0xee077f98 to 0xee077fe0)
+> [    1.991690] 7f80:                                                     =
+  ffffffed 00000000
+> [    1.999856] 7fa0: ee077fe8 c001ee80 c08ea4f8 c08ea494 00000000 0000000=
+0 c08e6a00 c08e5d98
+> [    2.008022] 7fc0: ffffffed 00000000 00000000 ee077fe0 c000f48c c000f49=
+0 60000113 ffffffff
+> [    2.016194] [<c0012000>] (__irq_svc) from [<c000f490>] (arch_cpu_idle+=
+0x30/0x3c)
+> [    2.023585] [<c000f490>] (arch_cpu_idle) from [<c00554cc>] (cpu_startu=
+p_entry+0x1a4/0x278)
+> [    2.031838] [<c00554cc>] (cpu_startup_entry) from [<80008864>] (0x8000=
+8864)
+> [    2.038794] ---[ end Kernel panic - not syncing: Attempted to kill ini=
+t! exitcode=3D0x0000000b
+> [    2.038794]=20
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
 
--- 
- Kirill A. Shutemov
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline; filename=patch
+Content-Transfer-Encoding: quoted-printable
+
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index 73a086664ee7..504d534ccbfe 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -276,6 +276,7 @@ static void ahci_platform_put_resources(struct device *=
+dev, void *res)
+ 		if (hpriv->target_pwrs && hpriv->target_pwrs[c])
+ 			regulator_put(hpriv->target_pwrs[c]);
+=20
++	kfree(hpriv->target_pwrs);
+ }
+=20
+ static int ahci_platform_get_phy(struct ahci_host_priv *hpriv, u32 port,
+@@ -412,7 +413,7 @@ struct ahci_host_priv *ahci_platform_get_resources(stru=
+ct platform_device *pdev)
+ 		goto err_out;
+ 	}
+ 	sz =3D hpriv->nports * sizeof(*hpriv->target_pwrs);
+-	hpriv->target_pwrs =3D devm_kzalloc(dev, sz, GFP_KERNEL);
++	hpriv->target_pwrs =3D kzalloc(sz, GFP_KERNEL);
+ 	if (!hpriv->target_pwrs) {
+ 		rc =3D -ENOMEM;
+ 		goto err_out;
+
+--FCuugMFkClbJLl1L--
+
+--7iMSBzlTiPOCCT2k
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUv4RZAAoJEN0jrNd/PrOhi4YP/iOa3CLsMM/yiMOKpoMrd+QY
+kCSbiKMGm+1/kKcOBsaZO0/SGUCn9e16oMW5cF+sZWtSk8EEB3zoqmVbzqFjTnBx
+w/qBbuEtuDe4Ff/nRN4EnlRGWq8nKWtHS7mge2oN1TTf8lQ7hcjBznP3FnLtVUAD
+obY8K6sj0itaO08ICZ9Pye4BjS31c5BR8Vkbut+Yl+UKDcQoQeeGCPi+q4brQ5uX
+3FIkp74nGJy5NIp3t0RRZ4fsiiVYc3luGVHX6YwAYdFHECq69ige38XFRdX6Pk72
+Cu7F+bauCX+451Bwrt70eKb3gXG9M9JpkK9KxK8lUabTzl5QDcQMOKSed8DPF2Oi
+hx7lEHCslK2hTNPYKLV3CnuOB8TBMuAe0Bc6RsIuQrvQox9OCLr+waxXtFxd/nrm
+F2MchlcRZjKlo/7BnChgrHy2osKQvJpQgDryKBJPseIQqqVwwi+99DDEjhLbNJ5P
+UN89Yg6+5FAHJlGfDJVXTfRg1htm6s18GxTV4+YyXFWowatuDUkZ9HLkKilNlU2C
+6Jhvklm55Ir/W4yIYHrf/Q41TygYDeU2/XFicKu0WCU7PTwEGA4TYeSHB8ASsbu+
+J/Z75+XLzhh+SUoMGFTJQMWeiriC8V3GxU4BbxUcanyibVLR5VuKuUDYtxrQibKn
+Q//S+W5rumkVAwTxGlz+
+=sOVm
+-----END PGP SIGNATURE-----
+
+--7iMSBzlTiPOCCT2k--
