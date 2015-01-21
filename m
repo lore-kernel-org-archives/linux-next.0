@@ -1,29 +1,69 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: next-20150120 broken on Tegra by "ata: libahci: Allow using
- multiple regulators"
-Date: Wed, 21 Jan 2015 07:31:34 -0500
-Message-ID: <20150121123134.GD8684@htj.dyndns.org>
-References: <alpine.DEB.2.02.1501210003010.5450@utopia.booyaka.com>
- <20150121105001.GA9921@ulmo.nvidia.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Wed, 21 Jan 2015 05:32:13 -0800
+Message-ID: <54BFAA5D.4040108@roeck-us.net>
+References: <20150120165655.GA10904@kria> <20150120232726.GA16913@kria> <1517211.UYLV49hvpg@sifl> <1528536.jyty2pu4Mz@sifl> <20150121004117.GM29656@ZenIV.linux.org.uk> <54BF1292.2080902@roeck-us.net> <20150121033600.GN29656@ZenIV.linux.org.uk> <54BF2496.4000807@roeck-us.net> <20150121043637.GO29656@ZenIV.linux.org.uk> <20150121110539.GA8924@kria>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150121105001.GA9921-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20150121110539.GA8924@kria>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Sabrina Dubroca <sd@queasysnail.net>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Paul Moore <pmoore@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 21, 2015 at 11:50:03AM +0100, Thierry Reding wrote:
-> Tejun, preferably the attached patch should be squashed into commit
-> c7d7ddee7e24 ("ata: libahci: Allow using multiple regulators") to avoid
-> breaking bisectability. If you don't want to rewrite history, let me
-> know and I can turn it into a proper patch.
+On 01/21/2015 03:05 AM, Sabrina Dubroca wrote:
+> 2015-01-21, 04:36:38 +0000, Al Viro wrote:
+>> On Tue, Jan 20, 2015 at 08:01:26PM -0800, Guenter Roeck wrote:
+>>> With this patch:
+>>>
+>>> sys_mkdir .:40775 returned -17
+>>> sys_mkdir usr:40775 returned 0
+>>> sys_mkdir usr/lib:40775 returned 0
+>>> sys_mkdir usr/share:40755 returned 0
+>>> sys_mkdir usr/share/udhcpc:40755 returned 0
+>>> sys_mkdir usr/bin:40775 returned 0
+>>> sys_mkdir usr/sbin:40775 returned 0
+>>> sys_mkdir mnt:40775 returned 0
+>>> sys_mkdir proc:40775 returned 0
+>>> sys_mkdir root:40775 returned 0
+>>> sys_mkdir lib:40775 returned 0
+>>> sys_mkdir lib/modules:40775 returned 0
+>>> ...
+>>>
+>>> and the problem is fixed.
+>
+> This patch also works for me.
+>
+>
+>> ... except that it simply confirms that something's fishy with getname_kernel()
+>> of ->name of struct filename returned by getname().  IOW, I still do not
+>> understand the mechanism of breakage there.
+>
+> I'm not so sure about that.  I tried to copy name to a new string in
+> do_path_lookup and that didn't help.
+>
+> Now, I've removed the
+>
+>          putname(filename);
+>
+> line from do_path_lookup and I don't get the panic.
+>
+>
+> And BTW, I added Guenter's debugging to init/initramfs.c and got:
+> sys_mkdir dev:40755 returned 0
+> sys_mkdir root:40700 returned 0
+>
+> even if it ends up panic'ing.
+>
+Another data point (though I have no idea if it is useful or what it means):
 
-Yes, please make it a proper patch.
+In the working case, path_init sets nd->flags to 0x50 or 0x51.
+In the non-working case (ie for all files with a '/' in the name),
+it sets nd->flags to 0x10 or 0x11, even though it is always called
+with the LOOKUP_RCU bit set in flags.
 
-Thanks a lot!
+Guenter
 
--- 
-tejun
