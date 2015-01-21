@@ -1,87 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Wed, 21 Jan 2015 14:45:58 +1100
-Message-ID: <20150121144558.79cb2056@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Tue, 20 Jan 2015 20:01:26 -0800
+Message-ID: <54BF2496.4000807@roeck-us.net>
+References: <20150120165655.GA10904@kria> <20150120232726.GA16913@kria> <1517211.UYLV49hvpg@sifl> <1528536.jyty2pu4Mz@sifl> <20150121004117.GM29656@ZenIV.linux.org.uk> <54BF1292.2080902@roeck-us.net> <20150121033600.GN29656@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xTXcvTiRVXiAda2gd6Tm9Jj"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150121033600.GN29656@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, Christoph Hellwig <hch@lst.de>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Paul Moore <pmoore@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xTXcvTiRVXiAda2gd6Tm9Jj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 01/20/2015 07:36 PM, Al Viro wrote:
+> On Tue, Jan 20, 2015 at 06:44:34PM -0800, Guenter Roeck wrote:
+>>> The shit hits the fan earlier - when we end up missing /dev.  There are
+>>> two places where it could've been created (depending on CONFIG_BLK_DEV_INITRD);
+>>> 	sys_mkdir(collected, mode);
+>>> in init/initramfs.c (line 353 in linux-next) and
+>>>          err = sys_mkdir((const char __user __force *) "/dev", 0755);
+>>> in init/noinitramfs.c (line 32).  The latter would've screamed on failure;
+>>> could you printk of collected (%s), mode (%o) and return value (%d) in the
+>>> former and see what happens?
+>>>
+>>
+>> sys_mkdir .:40775 returned -17
+>> sys_mkdir usr:40775 returned 0
+>> sys_mkdir usr/lib:40775 returned -2
+>> sys_mkdir usr/share:40755 returned -2
+>> sys_mkdir usr/share/udhcpc:40755 returned -2
+>> sys_mkdir usr/bin:40775 returned -2
+>> sys_mkdir usr/sbin:40775 returned -2
+>> sys_mkdir mnt:40775 returned 0
+>> sys_mkdir proc:40775 returned 0
+>> sys_mkdir root:40775 returned 0
+>> sys_mkdir lib:40775 returned 0
+>> sys_mkdir lib/modules:40775 returned -2
+>> sys_mkdir lib/modules/3.9.2:40775 returned -2
+>> sys_mkdir lib/modules/3.9.2/kernel:40775 returned -2
+>>
+>> with
+>> 	int err = sys_mkdir(collected, mode);
+>> 	pr_info("sys_mkdir %s:%o returned %d\n", collected, mode, err);
+>> added in init/initramfs.c.
+>
+> Just what is lib/modules/3.9.2 doing there?  In any case, I think I have at
 
-Hi Jens,
+Artifact from when I created the root file system (which apparently was with
+3.9.2). It is irrelevant for my testing, at least so far, so I never
+bothered fixing it.
 
-After merging the block tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+> least a plausible direction for digging.  Look:
+>
 
-drivers/staging/lustre/lustre/llite/llite_lib.c: In function 'll_read_inode=
-2':
-drivers/staging/lustre/lustre/llite/llite_lib.c:1774:18: error: 'struct add=
-ress_space' has no member named 'backing_dev_info'
-  inode->i_mapping->backing_dev_info =3D &s2lsi(inode->i_sb)->lsi_bdi;
-                  ^
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 323957f..c7d107c 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
 
-Caused by commit b83ae6d42143 ("fs: remove mapping->backing_dev_info")
-not updating the lustre code in the staging tree.
+With this patch:
 
-I have disabled the lustre code for today using the following.  Please
-let me know if you fix the lustre code so that I can reenable it.
+sys_mkdir .:40775 returned -17
+sys_mkdir usr:40775 returned 0
+sys_mkdir usr/lib:40775 returned 0
+sys_mkdir usr/share:40755 returned 0
+sys_mkdir usr/share/udhcpc:40755 returned 0
+sys_mkdir usr/bin:40775 returned 0
+sys_mkdir usr/sbin:40775 returned 0
+sys_mkdir mnt:40775 returned 0
+sys_mkdir proc:40775 returned 0
+sys_mkdir root:40775 returned 0
+sys_mkdir lib:40775 returned 0
+sys_mkdir lib/modules:40775 returned 0
+...
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 21 Jan 2015 14:36:21 +1100
-Subject: [PATCH] disable the lustre code for now
+and the problem is fixed.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/lustre/lustre/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/lustre/lustre/Kconfig b/drivers/staging/lustre=
-/lustre/Kconfig
-index 6725467ef4d0..37dd33f6597e 100644
---- a/drivers/staging/lustre/lustre/Kconfig
-+++ b/drivers/staging/lustre/lustre/Kconfig
-@@ -1,6 +1,7 @@
- config LUSTRE_FS
- 	tristate "Lustre file system client support"
- 	depends on INET && m && !MIPS && !XTENSA && !SUPERH
-+	depends on BROKEN
- 	select LNET
- 	select CRYPTO
- 	select CRYPTO_CRC32
---=20
-2.1.4
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/xTXcvTiRVXiAda2gd6Tm9Jj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUvyD7AAoJEMDTa8Ir7ZwVMZ4P+QGvKVp/QpLbIJg52ORh7rQ6
-RJqX0T1aW3dQ41IpqBMBARjztctWxUinr93AwMVHSUPso1I1rA58c6R0r4ivpoAS
-+an8UyMAJ67qG4r+ULnL9mnUjpRofPT/itKovR2OFJiLPKN7HAW5sVkFiG7KmogT
-Ws8PSQL8JJmL4GNKWYikmiIdsYr2nt55pzdpLVoa9fZcj0yKPiEl2RrHpW8uYQqd
-ACNhWHO842StArl8kE4vGtFMbUdtnf3jM2C7+pv+W41cppZMeLYBdlg9bZ5XEebj
-nEJMyfILjopBAa+2reKM08NJWLgQT+/Qbn++90YtSKvAT/V1sdCdO9Nap3PT6Ows
-2guEdmzM2HZOVuYKy9FOmOnzFIwUjye3rCQ+8lG4QPXNbAT56/Pn5bUKUbTTRQNr
-wyjM8BGTmXgMo9fawVBccu+F8jOC6lfWNpcZxuHjLJGXKgJgmnP7Ran6VW9Ir4aB
-gqbFOIgMdgMB8wNzGH7Ff3PfcagOR/glFqiR5E8bAT82akyyITiYYEC5Krc+QLfD
-BQBE2qE0FlXAa6Ni1eJQt1bHy7G6jlcmhaCVh4usF9T9D+L+8qiqjU9LXPgtRTQu
-u9Ljihyzv3DMy/l5tfLOdCGRhiGp0CbhJWLZux2jNA1u3zgwQxROUXeu2vyQaxTm
-wbGfxPCJhqiHSfyWcTR2
-=5urv
------END PGP SIGNATURE-----
-
---Sig_/xTXcvTiRVXiAda2gd6Tm9Jj--
+Guenter
