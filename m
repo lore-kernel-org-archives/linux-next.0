@@ -1,57 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: strange commit in the mfd tree
-Date: Thu, 22 Jan 2015 09:56:38 +1100
-Message-ID: <20150122095638.46a0b503@canb.auug.org.au>
+Subject: Re: [PATCH] tpm/tpm_tis: Add missing ifdef CONFIG_ACPI for
+ pnp_acpi_device
+Date: Thu, 22 Jan 2015 10:05:20 +1100
+Message-ID: <20150122100520.3e4ddfe7@canb.auug.org.au>
+References: <1421872815-16644-1-git-send-email-peterhuewe@gmx.de>
+	<20150122082350.121301eb@canb.auug.org.au>
+	<20150122083432.2adaaee2@canb.auug.org.au>
+	<201501212340.05536.PeterHuewe@gmx.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dk98fxO8OtbckH5zoCwzmEe"; protocol="application/pgp-signature"
+ boundary="Sig_/cKiVgk/NM7vtr/Flvq55h6g"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48172 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42600 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751546AbbAUW4o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 17:56:44 -0500
+	id S1752330AbbAUXF2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2015 18:05:28 -0500
+In-Reply-To: <201501212340.05536.PeterHuewe@gmx.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter =?UTF-8?B?SMO8d2U=?= <PeterHuewe@gmx.de>
+Cc: linux-next <linux-next@vger.kernel.org>, tpmdd-devel@lists.sourceforge.net, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Jim Davis <jim.epost@gmail.com>
 
---Sig_/dk98fxO8OtbckH5zoCwzmEe
-Content-Type: text/plain; charset=US-ASCII
+--Sig_/cKiVgk/NM7vtr/Flvq55h6g
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+Hi Peter,
 
-I noticed this commit in the mfd tree:
+On Wed, 21 Jan 2015 23:40:04 +0100 Peter H=C3=BCwe <PeterHuewe@gmx.de> wrot=
+e:
+>
+> Stephen, do you pull this patch in directly or shall it go via my tpmdd-t=
+ree -
+> > james -> -next ?
 
-f11b9265e6ca "[FIX/HACK] Disable DRM"
+Normally these go via the tree maintainer (unless they affect me
+directly - which this doesn't).
 
-Is that really appropriate here?  Especially given it has no explanation.
-
-I guess it will make my builds slightly faster :-)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/dk98fxO8OtbckH5zoCwzmEe
+--Sig_/cKiVgk/NM7vtr/Flvq55h6g
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUwC6rAAoJEMDTa8Ir7ZwVqLAP/1PTJXNnk2X7hKx2NCQzfwOC
-fjri4nutF8b/ym3vfYpanMW9Nb3iNCI2bCeropCTFwBRas4kcv46YSvTWZJLVmb+
-l+9AdPNQVLZ+HGvOe6qa8gK37YGD6MgblshFkeS1bsnZNrmXMRyyxy7pX3rgMY1a
-mJC9sR/kspirxMOQ/0XvVROhcB11OpBDTvXN1sf6F+G9lN+MPwhGc6gcvHK9HXyo
-mXHp5UOhr5uWVS1WkbgYX1PVXlaLg+qLjuGkdzHh4n/F/EzJboD3pqLOPV2ibCFa
-KZW9tBAt8SwzkH5rwq3Vz8fERJ+6Q5kElxy1ZR5Gk0v3FC5jaeekSVGoobf+3j8G
-Dlk1FHHnVOUnU0VJTE+ICgLRja22tLivCyn2UAiPYD6Jabolqg/Gpr9OvxrD7ZC9
-WWzHi1AXfMzdhRoaQSk0cRFBPu3B4/FOLXfFUV2pG6zX6H43R7O3X29EI59EmLwb
-OOACTEaP0wCUhizlQ/tMXvGlprHAtv4MeulGxPlcdqbwKD6kW2XKDr1LAYSz8XRU
-GZDmxQGQqS1v0MJrG3cJqUu92ve2zazurDbHQ3fXNkVlBDzdXY6+ok7K01+rYKKB
-3im7/TnRNJAiLjThpTwcrUvnsbUnZ/PMSoPkY2YmMbKzCGmODM6jUbCQBrG6Amhi
-AKzeYxmFdv13p/g+g4AO
-=cpQc
+iQIcBAEBCAAGBQJUwDC2AAoJEMDTa8Ir7ZwVCt8P/iW84JN6XFjcsdNB57JDXzSA
+7m5OEmzjG/xBhk4FEBi6hiicyMgCShv+JGcdizRtmTPhTpNbPmpnUjQy3r/IWRjZ
+8ImX9HYruFy5RFy3nXh9dfGyCLDSf4+40X+8lAJDuV4NvA/XV5lU/rfgk5hmnZmc
+Zr17CLvPXqXoxWIrHWh8EaNaZ+yyMJA3dLOnKxksoUfcXlEVsVQnO1eGVlHJe61a
+PT4k0F8C4k6+45gxx2pUH5gLhqcXk0GTXdg+ye8qdmHC8SDY7gbG6oGdnpF4W/Qw
+tojfr75f27eTUDd8y+PDrYkWtN4nlJHHDUKRksSbL394coY+f+oKhtHOo8GqT3he
+U3DIbywdgGcr8vNaRZYCZbNu3iuLRvmcd0nBY6XZRAHsN5CCgHLtUpQm23IDFssg
+R9LI9HrXRgzYpKHKtEcK4DMxboBeoZzBSHDEUH6qaX+I/Iqjij4MYLzTHhov25fi
+43JbsBFYTtyodoGyVOft+mk4mKRO9RMX++EPlp6yqg6H4UbEj+Z16nudOIM+hYFY
+W1KjqkCnDt3QwK/doMX9I7pUJEf9Aaa17Hfj259rwPpG1tw3uyLeUmxXcv1fkzfN
+0q3nrjjZyhk1VZKvridXQpV+50x/xdNNd49u+svL+p954++rNbeUpk0v4/td7hyp
+sLkfTrfELs1wmOsLWIqU
+=EZE2
 -----END PGP SIGNATURE-----
 
---Sig_/dk98fxO8OtbckH5zoCwzmEe--
+--Sig_/cKiVgk/NM7vtr/Flvq55h6g--
