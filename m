@@ -1,140 +1,141 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus'  tree
-Date: Thu, 22 Jan 2015 13:22:49 +1100
-Message-ID: <20150122132249.28ffba12@canb.auug.org.au>
+From: Paul Moore <pmoore@redhat.com>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount root fs
+Date: Wed, 21 Jan 2015 21:28:51 -0500
+Message-ID: <1829267.G68Yz0UZrY@sifl>
+References: <54BF1292.2080902@roeck-us.net> <54C01418.5060204@roeck-us.net> <20150121212833.GS29656@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/W.Y7KVCxNXnbYT5uAYTl0iv"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54474 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752249AbbAVCW4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 21:22:56 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Goz <ben.goz@amd.com>, Oded Gabbay <oded.gabbay@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20150121212833.GS29656@ZenIV.linux.org.uk>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/W.Y7KVCxNXnbYT5uAYTl0iv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wednesday, January 21, 2015 09:28:33 PM Al Viro wrote:
+> On Wed, Jan 21, 2015 at 01:03:20PM -0800, Guenter Roeck wrote:
+> > failing case:
+> > 
+> > path_lookupat: calling path_init 'usr' flags=40
+> > path_init: link_path_walk() returned 0
+> > path_lookupat: path_init 'usr' flags=40[50] returned 0
+> > walk_component: lookup_fast() returned 1
+> > walk_component: lookup_slow() returned 0
+> > walk_component: inode=  (null), negative=1
+> > do_path_lookup(usr, 0x10)
+> > path_lookupat: calling path_init 'usr' flags=50
+> > path_init: link_path_walk() returned 0
+> > path_lookupat: path_init 'usr' flags=50[50] returned 0
+> > mkdir[c74012a0,/kkk] => 0						<==== SIC!
+> 
+> Cute. 'k' being 0x6b, aka POISON_FREE...  OK, the next question is what's
+> been freed under us - I don't believe that it's dentry itself...
+> Oh, fuck.  OK, I see what happens.  Look at kern_path_create(); it does
+> LOOKUP_PARENT walk, leaving nd->last pointing to the last component of
+> the *COPY* of the name it's just created, walked and freed.
+> 
+> OK...  Fortunately, struct nameidata is completely opaque outside of
+> fs/namei.c, so we only need to care about a couple of codepaths.
+> 
+> Folks, could you check if the following on top of linux-next fixes the
+> problem?
 
-Hi Dave,
+Thanks Al, and Guenter, and Sabrina for helping resolve this; it surely would 
+have taken me much longer alone.
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/radeon/radeon_kfd.c between commit b64b8afcca9d
-("drm/amd: Fixing typos in kfd<->kgd interface") from Linus'  tree and
-commit a84a9903b588 ("drm/radeon: Implement SDMA interface functions")
-from the drm tree.
+Al, do you mind if I fold your patch below into the existing patches?
+ 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 323957f..cda89c3 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2056,13 +2056,22 @@ static int do_path_lookup(int dfd, const char *name,
+> /* does lookup, returns the object with parent locked */
+>  struct dentry *kern_path_locked(const char *name, struct path *path)
+>  {
+> +	struct filename *filename = getname_kernel(name);
+>  	struct nameidata nd;
+>  	struct dentry *d;
+> -	int err = do_path_lookup(AT_FDCWD, name, LOOKUP_PARENT, &nd);
+> -	if (err)
+> +	int err;
+> +
+> +	if (IS_ERR(filename))
+> +		return ERR_CAST(filename);
+> +
+> +	err = filename_lookup(AT_FDCWD, filename, LOOKUP_PARENT, &nd);
+> +	if (err) {
+> +		putname(filename);
+>  		return ERR_PTR(err);
+> +	}
+>  	if (nd.last_type != LAST_NORM) {
+>  		path_put(&nd.path);
+> +		putname(filename);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  	mutex_lock_nested(&nd.path.dentry->d_inode->i_mutex, I_MUTEX_PARENT);
+> @@ -2070,9 +2079,11 @@ struct dentry *kern_path_locked(const char *name,
+> struct path *path) if (IS_ERR(d)) {
+>  		mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+>  		path_put(&nd.path);
+> +		putname(filename);
+>  		return d;
+>  	}
+>  	*path = nd.path;
+> +	putname(filename);
+>  	return d;
+>  }
+> 
+> @@ -3314,7 +3325,7 @@ struct file *do_file_open_root(struct dentry *dentry,
+> struct vfsmount *mnt, return file;
+>  }
+> 
+> -struct dentry *kern_path_create(int dfd, const char *pathname,
+> +static struct dentry *filename_create(int dfd, struct filename *name,
+>  				struct path *path, unsigned int lookup_flags)
+>  {
+>  	struct dentry *dentry = ERR_PTR(-EEXIST);
+> @@ -3329,7 +3340,7 @@ struct dentry *kern_path_create(int dfd, const char
+> *pathname, */
+>  	lookup_flags &= LOOKUP_REVAL;
+> 
+> -	error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
+> +	error = filename_lookup(dfd, name, LOOKUP_PARENT|lookup_flags, &nd);
+>  	if (error)
+>  		return ERR_PTR(error);
+> 
+> @@ -3383,6 +3394,19 @@ out:
+>  	path_put(&nd.path);
+>  	return dentry;
+>  }
+> +
+> +struct dentry *kern_path_create(int dfd, const char *pathname,
+> +				struct path *path, unsigned int lookup_flags)
+> +{
+> +	struct filename *filename = getname_kernel(pathname);
+> +	struct dentry *res = ERR_CAST(filename);
+> +
+> +	if (!IS_ERR(filename)) {
+> +		res = filename_create(dfd, filename, path, lookup_flags);
+> +		putname(filename);
+> +	}
+> +	return res;
+> +}
+>  EXPORT_SYMBOL(kern_path_create);
+> 
+>  void done_path_create(struct path *path, struct dentry *dentry)
+> @@ -3401,7 +3425,7 @@ struct dentry *user_path_create(int dfd, const char
+> __user *pathname, struct dentry *res;
+>  	if (IS_ERR(tmp))
+>  		return ERR_CAST(tmp);
+> -	res = kern_path_create(dfd, tmp->name, path, lookup_flags);
+> +	res = filename_create(dfd, tmp, path, lookup_flags);
+>  	putname(tmp);
+>  	return res;
+>  }
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+-- 
+paul moore
+security @ redhat
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/radeon/radeon_kfd.c
-index 8bf87f1203cc,cae11eefecf0..000000000000
---- a/drivers/gpu/drm/radeon/radeon_kfd.c
-+++ b/drivers/gpu/drm/radeon/radeon_kfd.c
-@@@ -71,8 -70,8 +70,8 @@@ static int kgd_init_pipeline(struct kgd
- =20
-  static int kgd_hqd_load(struct kgd_dev *kgd, void *mqd, uint32_t pipe_id,
-  			uint32_t queue_id, uint32_t __user *wptr);
--=20
-+ static int kgd_hqd_sdma_load(struct kgd_dev *kgd, void *mqd);
- -static bool kgd_hqd_is_occupies(struct kgd_dev *kgd, uint64_t queue_addre=
-ss,
- +static bool kgd_hqd_is_occupied(struct kgd_dev *kgd, uint64_t queue_addre=
-ss,
-  				uint32_t pipe_id, uint32_t queue_id);
- =20
-  static int kgd_hqd_destroy(struct kgd_dev *kgd, uint32_t reset_type,
-@@@ -92,8 -92,11 +92,11 @@@ static const struct kfd2kgd_calls kfd2k
-  	.init_memory =3D kgd_init_memory,
-  	.init_pipeline =3D kgd_init_pipeline,
-  	.hqd_load =3D kgd_hqd_load,
-+ 	.hqd_sdma_load =3D kgd_hqd_sdma_load,
- -	.hqd_is_occupies =3D kgd_hqd_is_occupies,
- +	.hqd_is_occupied =3D kgd_hqd_is_occupied,
-+ 	.hqd_sdma_is_occupied =3D kgd_hqd_sdma_is_occupied,
-  	.hqd_destroy =3D kgd_hqd_destroy,
-+ 	.hqd_sdma_destroy =3D kgd_hqd_sdma_destroy,
-  	.get_fw_version =3D get_fw_version
-  };
- =20
-@@@ -533,7 -528,46 +544,46 @@@ static int kgd_hqd_load(struct kgd_dev=20
-  	return 0;
-  }
- =20
-+ static int kgd_hqd_sdma_load(struct kgd_dev *kgd, void *mqd)
-+ {
-+ 	struct cik_sdma_rlc_registers *m;
-+ 	uint32_t sdma_base_addr;
-+=20
-+ 	m =3D get_sdma_mqd(mqd);
-+ 	sdma_base_addr =3D get_sdma_base_addr(m);
-+=20
-+ 	write_register(kgd,
-+ 			sdma_base_addr + SDMA0_RLC0_VIRTUAL_ADDR,
-+ 			m->sdma_rlc_virtual_addr);
-+=20
-+ 	write_register(kgd,
-+ 			sdma_base_addr + SDMA0_RLC0_RB_BASE,
-+ 			m->sdma_rlc_rb_base);
-+=20
-+ 	write_register(kgd,
-+ 			sdma_base_addr + SDMA0_RLC0_RB_BASE_HI,
-+ 			m->sdma_rlc_rb_base_hi);
-+=20
-+ 	write_register(kgd,
-+ 			sdma_base_addr + SDMA0_RLC0_RB_RPTR_ADDR_LO,
-+ 			m->sdma_rlc_rb_rptr_addr_lo);
-+=20
-+ 	write_register(kgd,
-+ 			sdma_base_addr + SDMA0_RLC0_RB_RPTR_ADDR_HI,
-+ 			m->sdma_rlc_rb_rptr_addr_hi);
-+=20
-+ 	write_register(kgd,
-+ 			sdma_base_addr + SDMA0_RLC0_DOORBELL,
-+ 			m->sdma_rlc_doorbell);
-+=20
-+ 	write_register(kgd,
-+ 			sdma_base_addr + SDMA0_RLC0_RB_CNTL,
-+ 			m->sdma_rlc_rb_cntl);
-+=20
-+ 	return 0;
-+ }
-+=20
- -static bool kgd_hqd_is_occupies(struct kgd_dev *kgd, uint64_t queue_addre=
-ss,
- +static bool kgd_hqd_is_occupied(struct kgd_dev *kgd, uint64_t queue_addre=
-ss,
-  				uint32_t pipe_id, uint32_t queue_id)
-  {
-  	uint32_t act;
-
---Sig_/W.Y7KVCxNXnbYT5uAYTl0iv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUwF7+AAoJEMDTa8Ir7ZwVFRQQAIxdHRuq0dIQJs+wF58WiQJy
-luGf1AY7H2ER7GJLjByJ+VzF6hzr2pGd/1QEQW5dwJgogMLpTiNUcYukCfc+f7tT
-tDKt92SYGpfYPCzKM7f6v1jT3bMM6mfy36FxCHRQdJovMxWZRQv1QOodJJv81VRM
-BWvAEKhzeyX4UzZ9uIddER+UDQoSUjLcJkFz+F7H5TSPemnZJPEoDHZaTvrh+EJN
-CB6zu0YsJkqqzzWoitJLl+9+iewNe2DaVIgbWQAy/MtGuRXvRMSgaFng5F9jZbr8
-K1X/bnmEP90EPsleb+tFVDEaTAMc141ivUi3NSNM0H3Clf0vYqFj8Hz2DNtMT24+
-cPkOgqJhcTJ6F5XG4mXbMIsUZdayV4ACGAfW7h8X/+q+yN0zXVcepp+7ANj4Jvhx
-4H2Id3EH4/GIse1P2ndKJUKKFeW1XZPiGU61chxYdq0/6/6F/FviVoa0bsMnjg1i
-JoahH2GZbmXBLsyWQvr1uUgoXf1Jdj7bfJVuxksotNMaFCAM0JaFDLfYbxPkc9yB
-QiseQC0OjVR2wdqXPzQm/YuK+Hj3gj7DPI9pk+4yHFTLD/uC7A4sOin9NoMPRjol
-JYcAVu/Vc46532DGPJHW5+HNqoBvf6P15C+cNexTbglQuTI+YXwgRbiuDlLyeTf4
-Q3bMo5iyd389ekiOdEiF
-=qmvo
------END PGP SIGNATURE-----
-
---Sig_/W.Y7KVCxNXnbYT5uAYTl0iv--
