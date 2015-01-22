@@ -1,45 +1,62 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: kvms390 tree for Linux next
-Date: Thu, 22 Jan 2015 22:54:57 +0100
-Message-ID: <54C171B1.8030505@de.ibm.com>
-References: <54C0FCD0.7080108@de.ibm.com> <20150123083924.77942630@canb.auug.org.au>
+Date: Fri, 23 Jan 2015 09:59:02 +1100
+Message-ID: <20150123095902.2181ce5b@canb.auug.org.au>
+References: <54C0FCD0.7080108@de.ibm.com>
+	<20150123083924.77942630@canb.auug.org.au>
+	<54C171B1.8030505@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XlXfnT8=GICFsnHX.u/AMQH"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp17.uk.ibm.com ([195.75.94.113]:58686 "EHLO
-	e06smtp17.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753166AbbAVVzE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Jan 2015 16:55:04 -0500
-Received: from /spool/local
-	by e06smtp17.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
-	Thu, 22 Jan 2015 21:55:01 -0000
-In-Reply-To: <20150123083924.77942630@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:43524 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753761AbbAVW7N (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Jan 2015 17:59:13 -0500
+In-Reply-To: <54C171B1.8030505@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-next <linux-next@vger.kernel.org>, linux-s390 <linux-s390@vger.kernel.org>, Cornelia Huck <cornelia.huck@de.ibm.com>
 
-Am 22.01.2015 um 22:39 schrieb Stephen Rothwell:
-> Hi Christian,
-> 
-> On Thu, 22 Jan 2015 14:36:16 +0100 Christian Borntraeger <borntraeger@de.ibm.com> wrote:
->>
->> can you add the kvms390 tree at
->>
->> git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git next
->>
->> to linux-next?
->>
->> This tree will almost always be merged via the kvm tree, but it helps us
->> anyway detecting broken things before I ask Paolo to pull.
-> 
-> Added from today with just you as the contact (I can add more contacts
-> if that makes sense).
+--Sig_/XlXfnT8=GICFsnHX.u/AMQH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please also add 
-"Cornelia Huck <cornelia.huck@de.ibm.com>"
-thanks.
+Hi Christian,
 
-Christian
+On Thu, 22 Jan 2015 22:54:57 +0100 Christian Borntraeger <borntraeger@de.ib=
+m.com> wrote:
+>
+> Please also add=20
+> "Cornelia Huck <cornelia.huck@de.ibm.com>"
+
+Done.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/XlXfnT8=GICFsnHX.u/AMQH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUwYC/AAoJEMDTa8Ir7ZwVnWIP/jnvkiqfexd4KLwxae51HdQc
+BxwJ2q1O/UvmFicZB5vO3M02Rtf/eJ8CYRq/qnEiNt/Y3afWwiKmSuWCaExUX5h2
+tPqDQS9hUUpKcksI3XrDX17fvUb/VTTRekUIyXCijTSYXzBOIN2+EINuRTVVgp2t
+wcso3fUA+9nSvNkrbFqkboLGRoki1IRevuyud6zx1YnJK6+Z13pnxs3XeOoXn+f2
+ZNLsa+7vncvck6/fdoUM9rjjSts5fGtXBwyieFiwNQFayf4RDd4guYamBZEH/LB5
+qIel7se1Yy2ggiKIjwqLxGnFYZ5BhVb0rIhoqO2CGIQ/X7JOuoZx1OiadAuOu5oE
+OWGfLFCUz0QVwcaXaKwqTSx2N+hzEELyzxJn1r7SPyKioHlvf9EOmO46VofwEDPH
+pm6SjITwErhBJMYxe7gMCcD9XKlboKLHK/Q3j4YeIcPfU+rCxRdAPhH3Usk1ifP4
+I0p8VqtA7vnDQK6Msr3fzz0c7Bkmk5zeYWmurdDU9U58NWm0Wmvp0ebLLYme4H9u
+vXvYTdVJ8v0YzwF/LsL1S/wYMVWAk1YPRq1Nxo4P3UoT0vd19fR3rds3q9tFsxqq
+j1hIBcxYAfjQYtVSGrW7N+3r4R6+m6IB4r6JVcKjtQOIs2Zd1i3zZVK+87RH7/fm
+FMEpUl5rTHxOZnNaW20+
+=XxfG
+-----END PGP SIGNATURE-----
+
+--Sig_/XlXfnT8=GICFsnHX.u/AMQH--
