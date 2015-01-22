@@ -1,100 +1,76 @@
-From: Paul Moore <pmoore@redhat.com>
-Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount root fs
-Date: Wed, 21 Jan 2015 23:49:29 -0500
-Message-ID: <1657781.3bDdbpKPkz@sifl>
-References: <54BF1292.2080902@roeck-us.net> <1829267.G68Yz0UZrY@sifl> <20150122041241.GT29656@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with the rcu tree
+Date: Thu, 22 Jan 2015 15:57:38 +1100
+Message-ID: <20150122155738.3b0e5402@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150122041241.GT29656@ZenIV.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=QMFkAhsWWH5YHa5_qsHOOd"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39031 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750966AbbAVE5p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2015 23:57:45 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>, Mario Smarduch <m.smarduch@samsung.com>
 
-On Thursday, January 22, 2015 04:12:41 AM Al Viro wrote:
-> On Wed, Jan 21, 2015 at 09:28:51PM -0500, Paul Moore wrote:
-> > Al, do you mind if I fold your patch below into the existing patches?
-> 
-> No problem, but I'd probably prefer to put this series through vfs.git.
-> With the following as the first step:
+--Sig_/=QMFkAhsWWH5YHa5_qsHOOd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I just finished fixing up the patchset and giving it a quick sanity test on my 
-system, some additional testing is still needed to verify that all the audit 
-stuff is still okay (I did change the __audit_inode() as discussed and bumped 
-the refcount in __audit_reusename()) but I think as things stand the boot 
-panic problems should be resolved - thanks again for your help.
+Hi all,
 
-I'm going to (re)post what I've currently got for a patchset and call it a 
-day.  Tomorrow I'll add your below patch and finish up my testing, if all goes 
-well I'll repost the whole set.  If you would prefer it to go via the VFS 
-tree, that's fine with me, as long as it hits Linus' tree at some point I'm 
-happy.
+Today's linux-next merge of the kvm-arm tree got a conflict in
+arch/arm/kvm/Kconfig between commit 83fe27ea5311 ("rcu: Make SRCU
+optional by using CONFIG_SRCU") from the rcu tree and commit
+53c810c364d7 ("KVM: arm: dirty logging write protect support") from the
+kvm-arm tree.
 
-> Cut down on do_path_lookup() callers
-> 
-> Use filename_lookup() instead.  And don't bother with creating new
-> struct filename when caller already has one.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/fs/namei.c b/fs/namei.c
-> index bc35b02..73fcf42 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2046,7 +2046,8 @@ struct dentry *kern_path_locked(const char *name,
-> struct path *path) {
->  	struct nameidata nd;
->  	struct dentry *d;
-> -	int err = do_path_lookup(AT_FDCWD, name, LOOKUP_PARENT, &nd);
-> +	struct filename filename = {.name = name};
-> +	int err = filename_lookup(AT_FDCWD, &filename, LOOKUP_PARENT, &nd);
->  	if (err)
->  		return ERR_PTR(err);
->  	if (nd.last_type != LAST_NORM) {
-> @@ -3290,7 +3291,7 @@ struct file *do_file_open_root(struct dentry *dentry,
-> struct vfsmount *mnt, return file;
->  }
-> 
-> -struct dentry *kern_path_create(int dfd, const char *pathname,
-> +static struct dentry *filename_create(int dfd, struct filename *name,
->  				struct path *path, unsigned int lookup_flags)
->  {
->  	struct dentry *dentry = ERR_PTR(-EEXIST);
-> @@ -3305,7 +3306,7 @@ struct dentry *kern_path_create(int dfd, const char
-> *pathname, */
->  	lookup_flags &= LOOKUP_REVAL;
-> 
-> -	error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
-> +	error = filename_lookup(dfd, name, LOOKUP_PARENT|lookup_flags, &nd);
->  	if (error)
->  		return ERR_PTR(error);
-> 
-> @@ -3359,6 +3360,13 @@ out:
->  	path_put(&nd.path);
->  	return dentry;
->  }
-> +
-> +struct dentry *kern_path_create(int dfd, const char *pathname,
-> +				struct path *path, unsigned int lookup_flags)
-> +{
-> +	struct filename filename = {.name = pathname};
-> +	return filename_create(dfd, &filename, path, lookup_flags);
-> +}
->  EXPORT_SYMBOL(kern_path_create);
-> 
->  void done_path_create(struct path *path, struct dentry *dentry)
-> @@ -3377,7 +3385,7 @@ struct dentry *user_path_create(int dfd, const char
-> __user *pathname, struct dentry *res;
->  	if (IS_ERR(tmp))
->  		return ERR_CAST(tmp);
-> -	res = kern_path_create(dfd, tmp->name, path, lookup_flags);
-> +	res = filename_create(dfd, tmp, path, lookup_flags);
->  	putname(tmp);
->  	return res;
->  }
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
--- 
-paul moore
-security @ redhat
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/kvm/Kconfig
+index 3afee5f40f4f,a8d1ace3ea51..000000000000
+--- a/arch/arm/kvm/Kconfig
++++ b/arch/arm/kvm/Kconfig
+@@@ -21,9 -21,10 +21,11 @@@ config KV
+  	select PREEMPT_NOTIFIERS
+  	select ANON_INODES
+  	select HAVE_KVM_CPU_RELAX_INTERCEPT
++ 	select HAVE_KVM_ARCH_TLB_FLUSH_ALL
+  	select KVM_MMIO
+  	select KVM_ARM_HOST
++ 	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
+ +	select SRCU
+  	depends on ARM_VIRT_EXT && ARM_LPAE
+  	---help---
+  	  Support hosting virtualized guest machines. You will also
+
+--Sig_/=QMFkAhsWWH5YHa5_qsHOOd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUwINHAAoJEMDTa8Ir7ZwVXK4P/3OkhjVi7x3JbCKi0bGpkHPr
+T8l22wdp2MqUT9+J9CBq+8kTklj5UYSXsSZ9q/46x/Fouk+Jw8B/3hKGAvHy96cT
+t9/EgZpbMU0JQGhssjNrOSH0xket3BzjgDsdgQHKscGEXeD71nDJHtD86FZ2+u5i
+K2EGUkRcG14T7IonwueMCN778LchRsLLGAEAkBvvj4pDjG9RewdLTenRujTxBZUp
+oNwfll2GFiRb5eprtvkf1AoNWCCkCIwp5JgR323Z6VobcX1U6X7xnsLYkNhRAMeI
+TzoWTuWlBEDploNVbb1Gq5/e7+n3dQ9zCDqrDgDdV7+aUwnHmDuXDCZwc23PYUng
+ZXvmCp/2PKwp9cQafmauhQSb7qLwfgJCdcm0NJo4uV9ANzylk9jF7dv/XnWVGJdC
+UwDgFJLVezFeKT73oXeNytFwZbN+3H1cSvRo6vLPbUYSo3ZwlTPQZJksavEEEtoF
+GVVALuOZdQwQcPHJYjeYspoHXkc8QbYgpa6JuTTGu4eEUBAqcJExcsCSZfh1f7bo
+Uhy/J19xI9I11thp293YABd6oNrnDPSel3p0DqnKS5NyFs16DQnXe0ERHt9uyDsX
+mGpn4AFwGulo+4RoNkg2aGVbSDSWEpfVGcxTLCj4UQVDW9qzKfyrcHP4E/C8o3aw
+tyPGY1ClApuhvmvKAw4m
+=VRt/
+-----END PGP SIGNATURE-----
+
+--Sig_/=QMFkAhsWWH5YHa5_qsHOOd--
