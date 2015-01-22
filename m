@@ -1,63 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 22 Jan 2015 13:57:25 +1100
-Message-ID: <20150122135725.407801c8@canb.auug.org.au>
-References: <20150122132249.28ffba12@canb.auug.org.au>
-	<alpine.DEB.2.00.1501220230380.12580@skynet.skynet.ie>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 20
+Date: Wed, 21 Jan 2015 19:14:33 -0800
+Message-ID: <54C06B19.8060305@roeck-us.net>
+References: <20150120185308.53f4af4e@canb.auug.org.au> <20150120202642.GA6178@roeck-us.net> <20150120225443.GA19629@node.dhcp.inet.fi> <54BF1785.7040300@roeck-us.net> <20150121104325.GA22449@node.dhcp.inet.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lrCvyfv8kAFDrF3A38enIu0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34344 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753026AbbAVC5b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 21:57:31 -0500
-In-Reply-To: <alpine.DEB.2.00.1501220230380.12580@skynet.skynet.ie>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:40982 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754201AbbAVDOq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jan 2015 22:14:46 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YE8EG-003Fbx-Nf
+	for linux-next@vger.kernel.org; Thu, 22 Jan 2015 03:14:45 +0000
+In-Reply-To: <20150121104325.GA22449@node.dhcp.inet.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Goz <ben.goz@amd.com>, Oded Gabbay <oded.gabbay@amd.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>, Mel Gorman <mgorman@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, davem@davemloft.net
 
---Sig_/lrCvyfv8kAFDrF3A38enIu0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 01/21/2015 02:43 AM, Kirill A. Shutemov wrote:
 
-Hi Dave,
-
-On Thu, 22 Jan 2015 02:31:06 +0000 (GMT) Dave Airlie <airlied@linux.ie> wro=
-te:
+>> BUG: Bad page state in process init.sh  pfn:00000
+>> page:f05e7460 count:0 mapcount:-1 mapping:  (null) index:0x0
+>> flags: 0x400(reserved)
+>> page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+>> bad because of flags:
+>> flags: 0x400(reserved)
+>> CPU: 0 PID: 1 Comm: init.sh Not tainted 3.19.0-rc5-next-20150120 #1
+>> [f0076010 : bad_page+0xdc/0xfc ] [f00760c0 : free_pages_prepare+0x90/0x1f8 ] [f00775cc : free_hot_cold_page+0x20/0x160 ] [f00919e8 : do_wp_page+0x680/0x6ac ] [f00939f4 : handle_mm_fault+0xc94/0xd08 ] [f0015900 : do_sparc_fault+0xfc/0x3ec ] [f000af90 : srmmu_fault+0x58/0x68 ] [f00e74f4 : load_elf_binary+0x9a8/0xe94 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00e67d0 : load_script+0x214/0x224 ] [f00b0cac : search_binary_handler+0x68/0x12c ] [f00b11a4 : do_execveat_common+0x434/0x584 ] [f00b1310 : do_execve+0x1c/0x2c ] [f02b50b0 : kernel_init+0x70/0xf0 ] [f000b200 : ret_from_kernel_thread+0xc/0x38 ] [00000000 :   (null) ]
+>> Disabling lock debugging due to kernel taint
+>> : applet not found
+>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100
 >
-> btw I pushed a drm-next with all these fixed in it a little while ago
->=20
-> we must be racing!
+> It doesn't make much sense to me. It tries to free page with pfn==0 on
+> handling wp-fault. How it got mapped in the first place?
+>
+If I comment out the added call to vm_normal_page(), the code works fine.
+If the call to vm_local_page() is there but everything else from your patch
+is commented out, the crash occurs. Also, any log message added to the new
+code patch (inside the if statements) is not getting printed, meaning the
+new code (besides the call to vm_local_page) is not reached.
 
-Yeah, I tend to collect all the trees first thing in the morning
-(around 9 - 10 am my time) and then spend the day merging them.
+I guess that means that something in the call to vm_normal_page() appears
+to go wrong. No idea what that might be, though.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/lrCvyfv8kAFDrF3A38enIu0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUwGcZAAoJEMDTa8Ir7ZwV830P/ihT+xVgenBebhw7hhi8IRdN
-Qiyv+m+aVS2mJU7GJBfzqLtQuy5VMXRL7hsExjjVJELkUDPt4RMi64r6OnLluY+0
-zaoZ8gkD6Ons2T76/EIWCqNZSKtHdgzui8uBN8hixI73+llNZ4+qrorBeCjPrpx1
-TOp5kGOhAAaJ6BhHYK/oCeTnMjx5nMdloOAPQb7ACrGy9SD4fgCze7k952TbFQA7
-JUpz+RpQzrTU2OVLSOXN0GUjkMvn9SgyXUETGK2VHy54XT1Vv047Mny+NbMkKltg
-8nwGRWD+xFNct3Ex+Wm40lfsSidC9ycgPK6Mra5n8c6MfVYpjwChHXGgNMYSJW5g
-RTNzcLSCLRhuSetn5fBukM/eH1wKRMlniPES+h0g7ggmdA4KE2dCqWOcmogdZROO
-PIirk3sw7jJgG1VbscZbLPsX6O3gBB0qnRnCR9ZrydAV+yB7ZhebRSTNB7FRMBPm
-G+MZEVcCzMO1hm76lxo5tNrNoYafjFzZ4DcnJWSJeqBd0a5s5fRS8wv5YVkD/6rE
-kvZsAie2CdrvqzhaPIfzq081zFsEMbQGSdOzwpXvUOzA0seYwevbfX7XK/Ncd3k/
-7n+15EnTf75a4lLp2HpiJlwacdDkGILsd4ABw3SqBvreQitG0G5w7gADt1lg2Go1
-n6HQSvzGFP2HaTnPvOZP
-=DOyL
------END PGP SIGNATURE-----
-
---Sig_/lrCvyfv8kAFDrF3A38enIu0--
+Guenter
