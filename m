@@ -1,62 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: remove obsolete documentation tree
-Date: Fri, 23 Jan 2015 08:18:54 +1100
-Message-ID: <20150123081854.25e2ecef@canb.auug.org.au>
-References: <alpine.LNX.2.00.1501222153030.10817@pobox.suse.cz>
+Subject: Re: kvms390 tree for Linux next
+Date: Fri, 23 Jan 2015 08:39:24 +1100
+Message-ID: <20150123083924.77942630@canb.auug.org.au>
+References: <54C0FCD0.7080108@de.ibm.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XyUyy6bb8KmcKbuI2QuRFvh"; protocol="application/pgp-signature"
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1501222153030.10817@pobox.suse.cz>
-Sender: linux-doc-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/qfOyFbnBRYwWaofcEkbsFzj"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37362 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752225AbbAVVjd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Jan 2015 16:39:33 -0500
+In-Reply-To: <54C0FCD0.7080108@de.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-next <linux-next@vger.kernel.org>, linux-s390 <linux-s390@vger.kernel.org>, Cornelia Huck <cornelia.huck@de.ibm.com>
 
---Sig_/XyUyy6bb8KmcKbuI2QuRFvh
+--Sig_/qfOyFbnBRYwWaofcEkbsFzj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Christian,
 
-On Thu, 22 Jan 2015 21:56:44 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrot=
-e:
+On Thu, 22 Jan 2015 14:36:16 +0100 Christian Borntraeger <borntraeger@de.ib=
+m.com> wrote:
 >
-> please remove this tree:
+> can you add the kvms390 tree at
 >=20
-> documentation   git     git://git.kernel.org/pub/scm/linux/kernel/git/jik=
-os/doc.git#for-next
+> git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git next
 >=20
-> from the pile that is fetched into linux-next. It has been superseded wit=
-h=20
-> Jonathan's tree (which you are fetching under the name "jc_docs" already).
+> to linux-next?
+>=20
+> This tree will almost always be merged via the kvm tree, but it helps us
+> anyway detecting broken things before I ask Paolo to pull.
 
-Gone.  Thanks for letting me know.
+Added from today with just you as the contact (I can add more contacts
+if that makes sense).
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Sig_/XyUyy6bb8KmcKbuI2QuRFvh
+--Sig_/qfOyFbnBRYwWaofcEkbsFzj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUwWlKAAoJEMDTa8Ir7ZwVo4AP/18zDLAzXID8FFm9UO7SXhR3
-ScmcYs3kTG8qz4N8F8bXEjXpuNv7+fNqfsItiPEYNYIXIghr+p9UFYr++1enriTS
-T6JIpDxaLJpjCC1I2ExnfFMQMIAwcTp2d+B+ajWLA7VACDNU+K4+HJOi4BG0rawm
-WSgZDSyFRKERjG4Xi5QH+ReGhxeDOi3bUr1z05mNuJAI+1cKbb5jE4o6xacPVHfJ
-pvC11MsBnFWSOcwXcQPzsQBrNYsBrT7W1DgIlUTfjxcymFCrETRq/wESgOakPoJg
-Ozer3Y8nVw+HjICtqXhUrt1r6a4puggZK9Dxpzlj1cKmeOK3ZM8vdLBX6D/zUilG
-dSafy5b+CWQSOcN7P5y7mg8HXkqaTHBwiLn0t6NlSql5Od4baKo9lpIfqZO8e26k
-kXMvlGBjjXSbipzeowZfIK6usyBzfq+grWL6RBh3dVE8G1S6jn3J4zKdeIjkr2+f
-MCFP7BFiXjON0ecItGhwXiZ9XHNc6E14rsm0RLZgySAkFWKPYtrEelEZo69VzAKv
-5OjqirIk3VzgPdxVArdZdbMwV4dw2vNwuv6ReJHVjp9rtuAiLhcn6JE9omZeESDW
-kXQVMIKp+uLW72ciILMpughhBNZ46SHeueYPr6P/6GNIsPIbQTT7Tv0MmLziaZi7
-4j6Ah7pGcfoa4c/9T1Vi
-=t8wu
+iQIcBAEBCAAGBQJUwW4SAAoJEMDTa8Ir7ZwVGaIP/AtwNpb2ApfhkJDZjgmjYxi9
+iyX4T4R++rP+/JruvlAbTJGQrhoCm6a3Y9snd784Q5gguWJ6XF9JrVtDPCq6pd3G
+mKH2i3iCifoMyG2LC0sWw8qSff2bfxNWUWFREDNKiRnMW9+tj6ItM04sY8CayqAo
+GDZ0FtFiKx4HGnZV+UTuhVor1OBN1AgssQzyPfNHRK+LJN5mt6lCK06XZoK0u+cN
+76pzoNpnBvGOyMNhN3gDw4Z1hOp/DINCxdh8IlwzCFn0SHoax1PC9Ov4ZAt3Ccy3
+i/H89RZZMrROTHj3YqvsrhRG5iTSyJT1Zvbbr/xj6Mo1C7UMgcrsWUWHler7G2LZ
+7qi3ngX2VtYfC9/2X4PiMfdyzEDfEGlQBA9w6quDwFnejnri0FPOdRBdvgNMNOhb
+l9QzaQlp6MuITJTOgSsuoCLvgGHC2FK6PF4LC0K8wrKSoTxIGQP2+7zbkqQ3rETi
+eXRp1wfOXKJSdaHCUzrYwcaLiYpijUB45sit676TZMq42dsw9VIGHv5ZHsEwhd5i
+0st/Ya6ErZfOQZvFWSXr+/PDxpYzBUviUTIg5I1a00v4Zch6DcsWZQfNNfeIYkes
+qnman+4ae3Jqvah/5TEr9H2e4lKw64Gx00OsSmZRjFtwN6akXG0cwO/xwUSVbMxB
+bKaXPhF9a6H6PO03PCO/
+=zBYn
 -----END PGP SIGNATURE-----
 
---Sig_/XyUyy6bb8KmcKbuI2QuRFvh--
+--Sig_/qfOyFbnBRYwWaofcEkbsFzj--
