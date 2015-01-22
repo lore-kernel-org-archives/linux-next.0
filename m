@@ -1,30 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the rcu tree
-Date: Thu, 22 Jan 2015 15:57:38 +1100
-Message-ID: <20150122155738.3b0e5402@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Date: Thu, 22 Jan 2015 16:06:57 +1100
+Message-ID: <20150122160657.5a2eb77e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=QMFkAhsWWH5YHa5_qsHOOd"; protocol="application/pgp-signature"
+ boundary="Sig_/ONXl23aLkknIcZW=bQQiPWf"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39031 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59875 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750966AbbAVE5p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 23:57:45 -0500
+	id S1750796AbbAVFHD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Jan 2015 00:07:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pranith Kumar <bobby.prani@gmail.com>, Mario Smarduch <m.smarduch@samsung.com>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Huang <wei@redhat.com>, Mark Rutland <mark.rutland@arm.com>
 
---Sig_/=QMFkAhsWWH5YHa5_qsHOOd
+--Sig_/ONXl23aLkknIcZW=bQQiPWf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
 Today's linux-next merge of the kvm-arm tree got a conflict in
-arch/arm/kvm/Kconfig between commit 83fe27ea5311 ("rcu: Make SRCU
-optional by using CONFIG_SRCU") from the rcu tree and commit
-53c810c364d7 ("KVM: arm: dirty logging write protect support") from the
+arch/arm64/kvm/handle_exit.c between commit c6d01a947a51 ("arm64: kvm:
+move to ESR_ELx macros") from the arm64 tree and commit 0d97f8848104
+("arm/arm64: KVM: add tracing support for arm64 exit handler") from the
 kvm-arm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
@@ -34,43 +34,48 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/kvm/Kconfig
-index 3afee5f40f4f,a8d1ace3ea51..000000000000
---- a/arch/arm/kvm/Kconfig
-+++ b/arch/arm/kvm/Kconfig
-@@@ -21,9 -21,10 +21,11 @@@ config KV
-  	select PREEMPT_NOTIFIERS
-  	select ANON_INODES
-  	select HAVE_KVM_CPU_RELAX_INTERCEPT
-+ 	select HAVE_KVM_ARCH_TLB_FLUSH_ALL
-  	select KVM_MMIO
-  	select KVM_ARM_HOST
-+ 	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
- +	select SRCU
-  	depends on ARM_VIRT_EXT && ARM_LPAE
-  	---help---
-  	  Support hosting virtualized guest machines. You will also
+diff --cc arch/arm64/kvm/handle_exit.c
+index 29b184a8f3f8,6a7eb3ce7027..000000000000
+--- a/arch/arm64/kvm/handle_exit.c
++++ b/arch/arm64/kvm/handle_exit.c
+@@@ -63,10 -67,13 +69,13 @@@ static int handle_smc(struct kvm_vcpu *
+   */
+  static int kvm_handle_wfx(struct kvm_vcpu *vcpu, struct kvm_run *run)
+  {
+- 	if (kvm_vcpu_get_hsr(vcpu) & ESR_ELx_WFx_ISS_WFE)
+ -	if (kvm_vcpu_get_hsr(vcpu) & ESR_EL2_EC_WFI_ISS_WFE) {
+++	if (kvm_vcpu_get_hsr(vcpu) & ESR_ELx_WFx_ISS_WFE) {
++ 		trace_kvm_wfx_arm64(*vcpu_pc(vcpu), true);
+  		kvm_vcpu_on_spin(vcpu);
+- 	else
++ 	} else {
++ 		trace_kvm_wfx_arm64(*vcpu_pc(vcpu), false);
+  		kvm_vcpu_block(vcpu);
++ 	}
+ =20
+  	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ =20
 
---Sig_/=QMFkAhsWWH5YHa5_qsHOOd
+--Sig_/ONXl23aLkknIcZW=bQQiPWf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUwINHAAoJEMDTa8Ir7ZwVXK4P/3OkhjVi7x3JbCKi0bGpkHPr
-T8l22wdp2MqUT9+J9CBq+8kTklj5UYSXsSZ9q/46x/Fouk+Jw8B/3hKGAvHy96cT
-t9/EgZpbMU0JQGhssjNrOSH0xket3BzjgDsdgQHKscGEXeD71nDJHtD86FZ2+u5i
-K2EGUkRcG14T7IonwueMCN778LchRsLLGAEAkBvvj4pDjG9RewdLTenRujTxBZUp
-oNwfll2GFiRb5eprtvkf1AoNWCCkCIwp5JgR323Z6VobcX1U6X7xnsLYkNhRAMeI
-TzoWTuWlBEDploNVbb1Gq5/e7+n3dQ9zCDqrDgDdV7+aUwnHmDuXDCZwc23PYUng
-ZXvmCp/2PKwp9cQafmauhQSb7qLwfgJCdcm0NJo4uV9ANzylk9jF7dv/XnWVGJdC
-UwDgFJLVezFeKT73oXeNytFwZbN+3H1cSvRo6vLPbUYSo3ZwlTPQZJksavEEEtoF
-GVVALuOZdQwQcPHJYjeYspoHXkc8QbYgpa6JuTTGu4eEUBAqcJExcsCSZfh1f7bo
-Uhy/J19xI9I11thp293YABd6oNrnDPSel3p0DqnKS5NyFs16DQnXe0ERHt9uyDsX
-mGpn4AFwGulo+4RoNkg2aGVbSDSWEpfVGcxTLCj4UQVDW9qzKfyrcHP4E/C8o3aw
-tyPGY1ClApuhvmvKAw4m
-=VRt/
+iQIcBAEBCAAGBQJUwIV1AAoJEMDTa8Ir7ZwVjYEP/RaEwKmveZcTNwqpzq/xsWWI
+J6koMCCT1HCfDjME5kvZgwuev0QTyp/xP0XDpCnyizdpH4p2nlSnUrZJpUVqiakK
+zrqSyP1sQqbp+wHw5l/9tjRZEY0DZWa6RNjeHY8hh/+XEREk94ZewrH2xiIW5kkR
+Zp56g2R4GOcwfu2kI6vRXhKhvN8IsctFqrNmrBAzubt4afiKZfoKvVYhY4QY7D+y
+ehK46eCg6dkMWXQb0NQiEynVr9gHVCLHhpq+8DK6Lo1eafpbfFx1gWlNl1qa11Hz
+vJf46gO7T+iDQhnuM4YIyu0+Bpv/yfowPmV5C8XWxYZRqZLUcRY8uzCcInvhWI7o
+w4/EL2bUm4/fCWb+Pw89soKSjuny41aAFvKKpqewA0VKLbID4iIeHGoKFfBLAn13
+N+jiaKUhTCQb0p8VrSGcF4rdyUIJDlNvPkM3KjDUKN6xUMm8NuGaddD607G5HcMG
+vND15mAmEkAMGCI/b22Se3EPIs2eZzZFDOkdFDc6OmOEo23MAbaSBw4MzUJTVoT5
+U+IaNbly1d45Lz2yk/KVP1jkmQLOjvy1+QnPFR1WXcimDVaJRChO3rzlUQ+zClbl
+6vt7Jjdk/MODuXQpjk8ogfgWC4vAiupc4kgJyGCWBmqWYJLMXP+7UxLoZb0HispQ
+NeELxEj75XAV9FUeyDe1
+=ebAR
 -----END PGP SIGNATURE-----
 
---Sig_/=QMFkAhsWWH5YHa5_qsHOOd--
+--Sig_/ONXl23aLkknIcZW=bQQiPWf--
