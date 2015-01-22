@@ -1,19 +1,88 @@
-From: "Alexis Sulin" <jacdaw@comidales.com>
-Subject: and orname
-Date: Thu, 22 Jan 2015 11:25:57 +0800
-Message-ID: <00aat07x593xhk@m2gif.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for Jan 20 -- Kernel panic - Unable to mount
+ root fs
+Date: Thu, 22 Jan 2015 04:12:41 +0000
+Message-ID: <20150122041241.GT29656@ZenIV.linux.org.uk>
+References: <54BF1292.2080902@roeck-us.net>
+ <54C01418.5060204@roeck-us.net>
+ <20150121212833.GS29656@ZenIV.linux.org.uk>
+ <1829267.G68Yz0UZrY@sifl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [211.25.14.34] ([211.25.14.34]:50546 "HELO foreverinspired.com"
-	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-	id S1751768AbbAVDZx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2015 22:25:53 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trey Ammirato <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1829267.G68Yz0UZrY@sifl>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Paul Moore <pmoore@redhat.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Sabrina Dubroca <sd@queasysnail.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-LCB3ZSBoYWQgYmVlbiBwYXNzaW5nIHRoZSB1c3VhbCBxdWlldCBTdW5kYXkgaW4gVHViYWMs
-IHdoZW4gYSBNZXhpY2FuIHZhcXVlcm8gY2FtZSBnYWxsb3BpbmcgZnVyaW91c2x5IGludG8g
-dGhlIHBsYXphLCA=
+On Wed, Jan 21, 2015 at 09:28:51PM -0500, Paul Moore wrote:
+
+> Al, do you mind if I fold your patch below into the existing patches?
+
+No problem, but I'd probably prefer to put this series through vfs.git.
+With the following as the first step:
+
+Cut down on do_path_lookup() callers
+
+Use filename_lookup() instead.  And don't bother with creating new
+struct filename when caller already has one.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/namei.c b/fs/namei.c
+index bc35b02..73fcf42 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2046,7 +2046,8 @@ struct dentry *kern_path_locked(const char *name, struct path *path)
+ {
+ 	struct nameidata nd;
+ 	struct dentry *d;
+-	int err = do_path_lookup(AT_FDCWD, name, LOOKUP_PARENT, &nd);
++	struct filename filename = {.name = name};
++	int err = filename_lookup(AT_FDCWD, &filename, LOOKUP_PARENT, &nd);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 	if (nd.last_type != LAST_NORM) {
+@@ -3290,7 +3291,7 @@ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+ 	return file;
+ }
+ 
+-struct dentry *kern_path_create(int dfd, const char *pathname,
++static struct dentry *filename_create(int dfd, struct filename *name,
+ 				struct path *path, unsigned int lookup_flags)
+ {
+ 	struct dentry *dentry = ERR_PTR(-EEXIST);
+@@ -3305,7 +3306,7 @@ struct dentry *kern_path_create(int dfd, const char *pathname,
+ 	 */
+ 	lookup_flags &= LOOKUP_REVAL;
+ 
+-	error = do_path_lookup(dfd, pathname, LOOKUP_PARENT|lookup_flags, &nd);
++	error = filename_lookup(dfd, name, LOOKUP_PARENT|lookup_flags, &nd);
+ 	if (error)
+ 		return ERR_PTR(error);
+ 
+@@ -3359,6 +3360,13 @@ out:
+ 	path_put(&nd.path);
+ 	return dentry;
+ }
++
++struct dentry *kern_path_create(int dfd, const char *pathname,
++				struct path *path, unsigned int lookup_flags)
++{
++	struct filename filename = {.name = pathname};
++	return filename_create(dfd, &filename, path, lookup_flags);
++}
+ EXPORT_SYMBOL(kern_path_create);
+ 
+ void done_path_create(struct path *path, struct dentry *dentry)
+@@ -3377,7 +3385,7 @@ struct dentry *user_path_create(int dfd, const char __user *pathname,
+ 	struct dentry *res;
+ 	if (IS_ERR(tmp))
+ 		return ERR_CAST(tmp);
+-	res = kern_path_create(dfd, tmp->name, path, lookup_flags);
++	res = filename_create(dfd, tmp, path, lookup_flags);
+ 	putname(tmp);
+ 	return res;
+ }
