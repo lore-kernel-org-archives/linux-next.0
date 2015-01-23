@@ -1,84 +1,88 @@
-From: Wei Huang <wei@redhat.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Thu, 22 Jan 2015 19:36:22 -0600
-Message-ID: <54C1A596.2000600@redhat.com>
-References: <20150122160704.5ad5aeb9@canb.auug.org.au> <87r3unfb9x.fsf@approximate.cambridge.arm.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: mmotm 2015-01-22-15-04: qemu failures due to 'mm: account pmd page
+ tables to the process'
+Date: Thu, 22 Jan 2015 21:04:45 -0800
+Message-ID: <20150123050445.GA22751@roeck-us.net>
+References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:57233 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751235AbbAWBgk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Jan 2015 20:36:40 -0500
-In-Reply-To: <87r3unfb9x.fsf@approximate.cambridge.arm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Marc Zyngier <marc.zyngier@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoffer Dall <cdall@cs.columbia.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Mark Rutland <Mark.Rutland@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 01/22/2015 02:51 AM, Marc Zyngier wrote:
-> On Thu, Jan 22 2015 at  5:07:04 am GMT, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, Jan 22, 2015 at 03:05:17PM -0800, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2015-01-22-15-04 has been uploaded to
 > 
-> Hi Stephen,
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
->> Today's linux-next merge of the kvm-arm tree got a conflict in
->> arch/arm64/include/asm/kvm_arm.h between commit 6e53031ed840 ("arm64:
->> kvm: remove ESR_EL2_* macros") from the arm64 tree and commit
->> 0d97f8848104 ("arm/arm64: KVM: add tracing support for arm64 exit
->> handler") from the kvm-arm tree.
->>
->> I fixed it up (see below, but this probably requires more work) and can
->> carry the fix as necessary (no action is required).
-> 
-> Thanks for dealing with this. I think the following patch should be
-> applied on top of your resolution, making the new macro part of the
-> asm/esr.h file.
-> 
-> Mark, Wei: does it match your expectations?
-Looks good to me. Thanks for handling this issue.
+qemu:sh fails to shut down.
 
--Wei
+bisect log:
 
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-> index 6216709..92bbae3 100644
-> --- a/arch/arm64/include/asm/esr.h
-> +++ b/arch/arm64/include/asm/esr.h
-> @@ -96,6 +96,7 @@
->  #define ESR_ELx_COND_SHIFT	(20)
->  #define ESR_ELx_COND_MASK	(UL(0xF) << ESR_ELx_COND_SHIFT)
->  #define ESR_ELx_WFx_ISS_WFE	(UL(1) << 0)
-> +#define ESR_ELx_xVC_IMM_MASK	((1UL << 16) - 1)
->  
->  #ifndef __ASSEMBLY__
->  #include <asm/types.h>
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index 53fbc1e..94674eb 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -192,6 +192,4 @@
->  /* Hyp Prefetch Fault Address Register (HPFAR/HDFAR) */
->  #define HPFAR_MASK	(~UL(0xf))
->  
-> -#define ESR_EL2_HVC_IMM_MASK	((1UL << 16) - 1)
-> -
->  #endif /* __ARM64_KVM_ARM_H__ */
-> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> index b861ff6..bbc17cd 100644
-> --- a/arch/arm64/include/asm/kvm_emulate.h
-> +++ b/arch/arm64/include/asm/kvm_emulate.h
-> @@ -133,7 +133,7 @@ static inline phys_addr_t kvm_vcpu_get_fault_ipa(const struct kvm_vcpu *vcpu)
->  
->  static inline u32 kvm_vcpu_hvc_get_imm(const struct kvm_vcpu *vcpu)
->  {
-> -	return kvm_vcpu_get_hsr(vcpu) & ESR_EL2_HVC_IMM_MASK;
-> +	return kvm_vcpu_get_hsr(vcpu) & ESR_ELx_xVC_IMM_MASK;
->  }
->  
->  static inline bool kvm_vcpu_dabt_isvalid(const struct kvm_vcpu *vcpu)
-> 
+# bad: [03586ad04b2170ee816e6936981cc7cd2aeba129] pci: test for unexpectedly disabled bridges
+# good: [ec6f34e5b552fb0a52e6aae1a5afbbb1605cc6cc] Linux 3.19-rc5
+git bisect start 'HEAD' 'v3.19-rc5'
+# bad: [d113ba21d15c7d3615fd88490d1197615bb39fc0] mm: remove lock validation check for MADV_FREE
+git bisect bad d113ba21d15c7d3615fd88490d1197615bb39fc0
+# good: [17351d1625a5030fa16f1346b77064c03b51f107] mm:add KPF_ZERO_PAGE flag for /proc/kpageflags
+git bisect good 17351d1625a5030fa16f1346b77064c03b51f107
+# good: [ad18ad1fce6f241a9cbd4adfd6b16c9283181e39] memcg: add BUILD_BUG_ON() for string tables
+git bisect good ad18ad1fce6f241a9cbd4adfd6b16c9283181e39
+# bad: [aa7e7cbfa43b74f6faef04ff730b5098544a4f77] mm/compaction: enhance tracepoint output for compaction begin/end
+git bisect bad aa7e7cbfa43b74f6faef04ff730b5098544a4f77
+# good: [a40d0d2cf21e2714e9a6c842085148c938bf36ab] mm: memcontrol: remove unnecessary soft limit tree node test
+git bisect good a40d0d2cf21e2714e9a6c842085148c938bf36ab
+# good: [4ec4aa2e07c1d6eee61f6cace29401c6febcb6c5] mm: make FIRST_USER_ADDRESS unsigned long on all archs
+git bisect good 4ec4aa2e07c1d6eee61f6cace29401c6febcb6c5
+# bad: [22310c209483224a64436a6e815a86feda681659] mm: account pmd page tables to the process
+git bisect bad 22310c209483224a64436a6e815a86feda681659
+# good: [19a41261b1dcd8d12372d9c57c2035144608a599] arm: define __PAGETABLE_PMD_FOLDED for !LPAE
+git bisect good 19a41261b1dcd8d12372d9c57c2035144608a599
+# first bad commit: [22310c209483224a64436a6e815a86feda681659] mm: account pmd page tables to the process
+
+---
+
+qemu:microblaze generates warnings to the console.
+
+WARNING: CPU: 0 PID: 32 at mm/mmap.c:2858 exit_mmap+0x184/0x1a4()
+
+with various call stacks. See
+http://server.roeck-us.net:8010/builders/qemu-microblaze-mmotm/builds/15/steps/qemubuildcommand/logs/stdio
+for details.
+
+bisect log:
+
+# bad: [03586ad04b2170ee816e6936981cc7cd2aeba129] pci: test for unexpectedly disabled bridges
+# good: [ec6f34e5b552fb0a52e6aae1a5afbbb1605cc6cc] Linux 3.19-rc5
+git bisect start 'HEAD' 'v3.19-rc5'
+# bad: [d113ba21d15c7d3615fd88490d1197615bb39fc0] mm: remove lock validation check for MADV_FREE
+git bisect bad d113ba21d15c7d3615fd88490d1197615bb39fc0
+# good: [17351d1625a5030fa16f1346b77064c03b51f107] mm:add KPF_ZERO_PAGE flag for /proc/kpageflags
+git bisect good 17351d1625a5030fa16f1346b77064c03b51f107
+# good: [ad18ad1fce6f241a9cbd4adfd6b16c9283181e39] memcg: add BUILD_BUG_ON() for string tables
+git bisect good ad18ad1fce6f241a9cbd4adfd6b16c9283181e39
+# bad: [aa7e7cbfa43b74f6faef04ff730b5098544a4f77] mm/compaction: enhance tracepoint output for compaction begin/end
+git bisect bad aa7e7cbfa43b74f6faef04ff730b5098544a4f77
+# good: [a40d0d2cf21e2714e9a6c842085148c938bf36ab] mm: memcontrol: remove unnecessary soft limit tree node test
+git bisect good a40d0d2cf21e2714e9a6c842085148c938bf36ab
+# good: [4ec4aa2e07c1d6eee61f6cace29401c6febcb6c5] mm: make FIRST_USER_ADDRESS unsigned long on all archs
+git bisect good 4ec4aa2e07c1d6eee61f6cace29401c6febcb6c5
+# bad: [22310c209483224a64436a6e815a86feda681659] mm: account pmd page tables to the process
+git bisect bad 22310c209483224a64436a6e815a86feda681659
+# good: [19a41261b1dcd8d12372d9c57c2035144608a599] arm: define __PAGETABLE_PMD_FOLDED for !LPAE
+git bisect good 19a41261b1dcd8d12372d9c57c2035144608a599
+# first bad commit: [22310c209483224a64436a6e815a86feda681659] mm: account pmd page tables to the process
+
+If there is anything I can do to help debugging, please let me know.
+
+Guenter
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
