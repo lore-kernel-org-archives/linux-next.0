@@ -1,54 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Fri, 23 Jan 2015 12:10:09 +1100
-Message-ID: <20150123121009.2ed32a2b@canb.auug.org.au>
+From: Wei Huang <wei@redhat.com>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Date: Thu, 22 Jan 2015 19:36:22 -0600
+Message-ID: <54C1A596.2000600@redhat.com>
+References: <20150122160704.5ad5aeb9@canb.auug.org.au> <87r3unfb9x.fsf@approximate.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/V9dPqSKYD_MXF_wWwEtUxKB"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:57233 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751235AbbAWBgk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Jan 2015 20:36:40 -0500
+In-Reply-To: <87r3unfb9x.fsf@approximate.cambridge.arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marc Zyngier <marc.zyngier@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoffer Dall <cdall@cs.columbia.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Mark Rutland <Mark.Rutland@arm.com>
 
---Sig_/V9dPqSKYD_MXF_wWwEtUxKB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 01/22/2015 02:51 AM, Marc Zyngier wrote:
+> On Thu, Jan 22 2015 at  5:07:04 am GMT, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> Hi Stephen,
+> 
+>> Today's linux-next merge of the kvm-arm tree got a conflict in
+>> arch/arm64/include/asm/kvm_arm.h between commit 6e53031ed840 ("arm64:
+>> kvm: remove ESR_EL2_* macros") from the arm64 tree and commit
+>> 0d97f8848104 ("arm/arm64: KVM: add tracing support for arm64 exit
+>> handler") from the kvm-arm tree.
+>>
+>> I fixed it up (see below, but this probably requires more work) and can
+>> carry the fix as necessary (no action is required).
+> 
+> Thanks for dealing with this. I think the following patch should be
+> applied on top of your resolution, making the new macro part of the
+> asm/esr.h file.
+> 
+> Mark, Wei: does it match your expectations?
+Looks good to me. Thanks for handling this issue.
 
-Hi Al,
+-Wei
 
-Today's linux-next merge of the vfs tree got a conflict in
-kernel/auditsc.c between commit fcf22d8267ad ("audit: create private
-file name copies when auditing inodes") from Linus' tree and various
-commits from the vfs tree.
-
-I fixed it up (I used the vfs tree version as advised by Al) and can
-carry the fix as necessary (no action is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/V9dPqSKYD_MXF_wWwEtUxKB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUwZ94AAoJEMDTa8Ir7ZwVzgMP/jj6IwySbZZCiPotgrEcRRvh
-8LlimPOMH+S81lsoa9QmcIW52DOyIeQFKsyqNvpRSRc6pvrLqWq8I8iYECWw2mue
-D4EXLjZh4I83HaYVuNQtHu2eQkusBCd4q0VXM4Tv0Qc+DjT+BOkm4fC2SAYQ2o9N
-oPH6rXtQ9wTYdrJZoy4ovGAWNYS6Vajti47hVy1ECu+/VmN2vH39rbExo9oXYNCj
-6I+ifJgASDbX2xXsP8b7sgC58UA8XEGimHuFljI1rXFqd45EO89O9KPVfuImRPb/
-r7GoUNpdE+ko55wVpkYlJkp07k8IkMcPQXuA0hTnRFeCXvb1Zppsw2R0ZO+wCMKz
-nOV3ilv4Ihn9EUMx48A0J8J0P5/kFL9fylu5QL1U19ZAjK/WHZzpzLX0/i/zKQI0
-fTEmFJ+GSsUEJlxH5zXV3JzKJxghf/B77aS3kR7fuMYJC2jieqK+dwGMaRvAKCTe
-nV8mecFZhNMErhreYZhqXlm+vRmjF+Sur03qkiXJ1ArNUuDw3IlHSMzp8nMKxiNd
-lYU+FxMBGueNe5PkCTubdEkE+A0wzykzKs8WKai0Am2MDWnRB+xiyhp/qaxgCXHt
-P/bwUCqW/88+F4MXZJHyKtiUoMhf7OI7bXm7D6NiD+ob1q/A4v73qs1NNRXJvphv
-ZRLTDw94CLgEI+P1/CLG
-=8Zri
------END PGP SIGNATURE-----
-
---Sig_/V9dPqSKYD_MXF_wWwEtUxKB--
+> 
+> Thanks,
+> 
+> 	M.
+> 
+> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+> index 6216709..92bbae3 100644
+> --- a/arch/arm64/include/asm/esr.h
+> +++ b/arch/arm64/include/asm/esr.h
+> @@ -96,6 +96,7 @@
+>  #define ESR_ELx_COND_SHIFT	(20)
+>  #define ESR_ELx_COND_MASK	(UL(0xF) << ESR_ELx_COND_SHIFT)
+>  #define ESR_ELx_WFx_ISS_WFE	(UL(1) << 0)
+> +#define ESR_ELx_xVC_IMM_MASK	((1UL << 16) - 1)
+>  
+>  #ifndef __ASSEMBLY__
+>  #include <asm/types.h>
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index 53fbc1e..94674eb 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -192,6 +192,4 @@
+>  /* Hyp Prefetch Fault Address Register (HPFAR/HDFAR) */
+>  #define HPFAR_MASK	(~UL(0xf))
+>  
+> -#define ESR_EL2_HVC_IMM_MASK	((1UL << 16) - 1)
+> -
+>  #endif /* __ARM64_KVM_ARM_H__ */
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index b861ff6..bbc17cd 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -133,7 +133,7 @@ static inline phys_addr_t kvm_vcpu_get_fault_ipa(const struct kvm_vcpu *vcpu)
+>  
+>  static inline u32 kvm_vcpu_hvc_get_imm(const struct kvm_vcpu *vcpu)
+>  {
+> -	return kvm_vcpu_get_hsr(vcpu) & ESR_EL2_HVC_IMM_MASK;
+> +	return kvm_vcpu_get_hsr(vcpu) & ESR_ELx_xVC_IMM_MASK;
+>  }
+>  
+>  static inline bool kvm_vcpu_dabt_isvalid(const struct kvm_vcpu *vcpu)
+> 
