@@ -1,88 +1,89 @@
-From: Christoffer Dall <cdall@cs.columbia.edu>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Fri, 23 Jan 2015 12:53:19 +0100
-Message-ID: <20150123115319.GL15076@cbox>
-References: <20150122160704.5ad5aeb9@canb.auug.org.au>
- <87r3unfb9x.fsf@approximate.cambridge.arm.com>
+From: Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: mmotm 2015-01-22-15-04: qemu failure due to 'mm: memcontrol:
+ remove unnecessary soft limit tree node test'
+Date: Fri, 23 Jan 2015 09:18:17 -0500
+Message-ID: <20150123141817.GA22926@phnom.home.cmpxchg.org>
+References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>
+ <20150123050802.GB22751@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:43030 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753274AbbAWLxS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2015 06:53:18 -0500
-Received: by mail-lb0-f171.google.com with SMTP id u14so6601213lbd.2
-        for <linux-next@vger.kernel.org>; Fri, 23 Jan 2015 03:53:16 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <87r3unfb9x.fsf@approximate.cambridge.arm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Wei Huang <wei@redhat.com>
+In-Reply-To: <20150123050802.GB22751@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, cl@linux.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jan 22, 2015 at 08:51:54AM +0000, Marc Zyngier wrote:
-> On Thu, Jan 22 2015 at  5:07:04 am GMT, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> Hi Stephen,
-> 
-> > Today's linux-next merge of the kvm-arm tree got a conflict in
-> > arch/arm64/include/asm/kvm_arm.h between commit 6e53031ed840 ("arm64:
-> > kvm: remove ESR_EL2_* macros") from the arm64 tree and commit
-> > 0d97f8848104 ("arm/arm64: KVM: add tracing support for arm64 exit
-> > handler") from the kvm-arm tree.
-> >
-> > I fixed it up (see below, but this probably requires more work) and can
-> > carry the fix as necessary (no action is required).
-> 
-> Thanks for dealing with this. I think the following patch should be
-> applied on top of your resolution, making the new macro part of the
-> asm/esr.h file.
-> 
-> Mark, Wei: does it match your expectations?
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-> index 6216709..92bbae3 100644
-> --- a/arch/arm64/include/asm/esr.h
-> +++ b/arch/arm64/include/asm/esr.h
-> @@ -96,6 +96,7 @@
->  #define ESR_ELx_COND_SHIFT	(20)
->  #define ESR_ELx_COND_MASK	(UL(0xF) << ESR_ELx_COND_SHIFT)
->  #define ESR_ELx_WFx_ISS_WFE	(UL(1) << 0)
-> +#define ESR_ELx_xVC_IMM_MASK	((1UL << 16) - 1)
->  
->  #ifndef __ASSEMBLY__
->  #include <asm/types.h>
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index 53fbc1e..94674eb 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -192,6 +192,4 @@
->  /* Hyp Prefetch Fault Address Register (HPFAR/HDFAR) */
->  #define HPFAR_MASK	(~UL(0xf))
->  
-> -#define ESR_EL2_HVC_IMM_MASK	((1UL << 16) - 1)
-> -
->  #endif /* __ARM64_KVM_ARM_H__ */
-> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> index b861ff6..bbc17cd 100644
-> --- a/arch/arm64/include/asm/kvm_emulate.h
-> +++ b/arch/arm64/include/asm/kvm_emulate.h
-> @@ -133,7 +133,7 @@ static inline phys_addr_t kvm_vcpu_get_fault_ipa(const struct kvm_vcpu *vcpu)
->  
->  static inline u32 kvm_vcpu_hvc_get_imm(const struct kvm_vcpu *vcpu)
->  {
-> -	return kvm_vcpu_get_hsr(vcpu) & ESR_EL2_HVC_IMM_MASK;
-> +	return kvm_vcpu_get_hsr(vcpu) & ESR_ELx_xVC_IMM_MASK;
->  }
->  
->  static inline bool kvm_vcpu_dabt_isvalid(const struct kvm_vcpu *vcpu)
-> 
+Hi Guenter,
 
-This looks good to me too, I'll sync with Paolo on how to get this
-upstream.
+CC'ing Christoph for slub-stuff:
 
--Christoffer
+On Thu, Jan 22, 2015 at 09:08:02PM -0800, Guenter Roeck wrote:
+> On Thu, Jan 22, 2015 at 03:05:17PM -0800, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2015-01-22-15-04 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> qemu test for ppc64 fails with
+> 
+> Unable to handle kernel paging request for data at address 0x0000af50
+> Faulting instruction address: 0xc00000000089d5d4
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> 
+> with the following call stack:
+> 
+> Call Trace:
+> [c00000003d32f920] [c00000000089d588] .__slab_alloc.isra.44+0x7c/0x6f4
+> (unreliable)
+> [c00000003d32fa90] [c00000000020cf8c] .kmem_cache_alloc_node_trace+0x12c/0x3b0
+> [c00000003d32fb60] [c000000000bceeb4] .mem_cgroup_init+0x128/0x1b0
+> [c00000003d32fbf0] [c00000000000a2b4] .do_one_initcall+0xd4/0x260
+> [c00000003d32fce0] [c000000000ba26a8] .kernel_init_freeable+0x244/0x32c
+> [c00000003d32fdb0] [c00000000000ac24] .kernel_init+0x24/0x140
+> [c00000003d32fe30] [c000000000009564] .ret_from_kernel_thread+0x58/0x74
+> 
+> bisect log:
+
+[...]
+
+> # first bad commit: [a40d0d2cf21e2714e9a6c842085148c938bf36ab] mm: memcontrol: remove unnecessary soft limit tree node test
+
+The change in question is this:
+
+    mm: memcontrol: remove unnecessary soft limit tree node test
+    
+    kzalloc_node() automatically falls back to nodes with suitable memory.
+    
+    Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+    Acked-by: Michal Hocko <mhocko@suse.cz>
+    Reviewed-by: Vladimir Davydov <vdavydov@parallels.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index fb9788af4a3e..10db4a654d68 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4539,13 +4539,10 @@ static void __init mem_cgroup_soft_limit_tree_init(void)
+ {
+        struct mem_cgroup_tree_per_node *rtpn;
+        struct mem_cgroup_tree_per_zone *rtpz;
+-       int tmp, node, zone;
++       int node, zone;
+ 
+        for_each_node(node) {
+-               tmp = node;
+-               if (!node_state(node, N_NORMAL_MEMORY))
+-                       tmp = -1;
+-               rtpn = kzalloc_node(sizeof(*rtpn), GFP_KERNEL, tmp);
++               rtpn = kzalloc_node(sizeof(*rtpn), GFP_KERNEL, node);
+                BUG_ON(!rtpn);
+ 
+                soft_limit_tree.rb_tree_per_node[node] = rtpn;
+
+--
+
+Is the assumption of this patch wrong?  Does the specified node have
+to be online for the fallback to work?
+
+Thanks
