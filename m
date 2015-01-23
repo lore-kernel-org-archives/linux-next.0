@@ -1,89 +1,90 @@
-From: Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: mmotm 2015-01-22-15-04: qemu failure due to 'mm: memcontrol:
- remove unnecessary soft limit tree node test'
-Date: Fri, 23 Jan 2015 09:18:17 -0500
-Message-ID: <20150123141817.GA22926@phnom.home.cmpxchg.org>
-References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>
- <20150123050802.GB22751@roeck-us.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: mmotm 2015-01-22-15-04: qemu failures due to 'mm: account pmd
+ page tables to the process'
+Date: Fri, 23 Jan 2015 07:07:56 -0800
+Message-ID: <54C263CC.1060904@roeck-us.net>
+References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org> <20150123050445.GA22751@roeck-us.net> <20150123111304.GA5975@node.dhcp.inet.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150123050802.GB22751@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, cl@linux.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:51625 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464AbbAWPId (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2015 10:08:33 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YEfqa-004IPv-QT
+	for linux-next@vger.kernel.org; Fri, 23 Jan 2015 15:08:33 +0000
+In-Reply-To: <20150123111304.GA5975@node.dhcp.inet.fi>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-Hi Guenter,
+On 01/23/2015 03:13 AM, Kirill A. Shutemov wrote:
+> On Thu, Jan 22, 2015 at 09:04:45PM -0800, Guenter Roeck wrote:
+>> On Thu, Jan 22, 2015 at 03:05:17PM -0800, akpm@linux-foundation.org wrote:
+>>> The mm-of-the-moment snapshot 2015-01-22-15-04 has been uploaded to
+>>>
+>>>     http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>> qemu:sh fails to shut down.
+>>
+>> bisect log:
+>>
+>> # bad: [03586ad04b2170ee816e6936981cc7cd2aeba129] pci: test for unexpectedly disabled bridges
+>> # good: [ec6f34e5b552fb0a52e6aae1a5afbbb1605cc6cc] Linux 3.19-rc5
+>> git bisect start 'HEAD' 'v3.19-rc5'
+>> # bad: [d113ba21d15c7d3615fd88490d1197615bb39fc0] mm: remove lock validation check for MADV_FREE
+>> git bisect bad d113ba21d15c7d3615fd88490d1197615bb39fc0
+>> # good: [17351d1625a5030fa16f1346b77064c03b51f107] mm:add KPF_ZERO_PAGE flag for /proc/kpageflags
+>> git bisect good 17351d1625a5030fa16f1346b77064c03b51f107
+>> # good: [ad18ad1fce6f241a9cbd4adfd6b16c9283181e39] memcg: add BUILD_BUG_ON() for string tables
+>> git bisect good ad18ad1fce6f241a9cbd4adfd6b16c9283181e39
+>> # bad: [aa7e7cbfa43b74f6faef04ff730b5098544a4f77] mm/compaction: enhance tracepoint output for compaction begin/end
+>> git bisect bad aa7e7cbfa43b74f6faef04ff730b5098544a4f77
+>> # good: [a40d0d2cf21e2714e9a6c842085148c938bf36ab] mm: memcontrol: remove unnecessary soft limit tree node test
+>> git bisect good a40d0d2cf21e2714e9a6c842085148c938bf36ab
+>> # good: [4ec4aa2e07c1d6eee61f6cace29401c6febcb6c5] mm: make FIRST_USER_ADDRESS unsigned long on all archs
+>> git bisect good 4ec4aa2e07c1d6eee61f6cace29401c6febcb6c5
+>> # bad: [22310c209483224a64436a6e815a86feda681659] mm: account pmd page tables to the process
+>> git bisect bad 22310c209483224a64436a6e815a86feda681659
+>> # good: [19a41261b1dcd8d12372d9c57c2035144608a599] arm: define __PAGETABLE_PMD_FOLDED for !LPAE
+>> git bisect good 19a41261b1dcd8d12372d9c57c2035144608a599
+>> # first bad commit: [22310c209483224a64436a6e815a86feda681659] mm: account pmd page tables to the process
+>>
+>> ---
+>>
+>> qemu:microblaze generates warnings to the console.
+>>
+>> WARNING: CPU: 0 PID: 32 at mm/mmap.c:2858 exit_mmap+0x184/0x1a4()
+>>
+>> with various call stacks. See
+>> http://server.roeck-us.net:8010/builders/qemu-microblaze-mmotm/builds/15/steps/qemubuildcommand/logs/stdio
+>> for details.
+>
+> Could you try patch below? Completely untested.
+>
+>>From b584bb8d493794f67484c0b57c161d61c02599bc Mon Sep 17 00:00:00 2001
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Date: Fri, 23 Jan 2015 13:08:26 +0200
+> Subject: [PATCH] microblaze: define __PAGETABLE_PMD_FOLDED
+>
+> Microblaze uses custom implementation of PMD folding, but doesn't define
+> __PAGETABLE_PMD_FOLDED, which generic code expects to see. Let's fix it.
+>
+> Defining __PAGETABLE_PMD_FOLDED will drop out unused __pmd_alloc().
+> It also fixes problems with recently-introduced pmd accounting.
+>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
 
-CC'ing Christoph for slub-stuff:
+Tested working.
 
-On Thu, Jan 22, 2015 at 09:08:02PM -0800, Guenter Roeck wrote:
-> On Thu, Jan 22, 2015 at 03:05:17PM -0800, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2015-01-22-15-04 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> qemu test for ppc64 fails with
-> 
-> Unable to handle kernel paging request for data at address 0x0000af50
-> Faulting instruction address: 0xc00000000089d5d4
-> Oops: Kernel access of bad area, sig: 11 [#1]
-> 
-> with the following call stack:
-> 
-> Call Trace:
-> [c00000003d32f920] [c00000000089d588] .__slab_alloc.isra.44+0x7c/0x6f4
-> (unreliable)
-> [c00000003d32fa90] [c00000000020cf8c] .kmem_cache_alloc_node_trace+0x12c/0x3b0
-> [c00000003d32fb60] [c000000000bceeb4] .mem_cgroup_init+0x128/0x1b0
-> [c00000003d32fbf0] [c00000000000a2b4] .do_one_initcall+0xd4/0x260
-> [c00000003d32fce0] [c000000000ba26a8] .kernel_init_freeable+0x244/0x32c
-> [c00000003d32fdb0] [c00000000000ac24] .kernel_init+0x24/0x140
-> [c00000003d32fe30] [c000000000009564] .ret_from_kernel_thread+0x58/0x74
-> 
-> bisect log:
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-[...]
+Any idea how to fix the sh problem ?
 
-> # first bad commit: [a40d0d2cf21e2714e9a6c842085148c938bf36ab] mm: memcontrol: remove unnecessary soft limit tree node test
-
-The change in question is this:
-
-    mm: memcontrol: remove unnecessary soft limit tree node test
-    
-    kzalloc_node() automatically falls back to nodes with suitable memory.
-    
-    Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-    Acked-by: Michal Hocko <mhocko@suse.cz>
-    Reviewed-by: Vladimir Davydov <vdavydov@parallels.com>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index fb9788af4a3e..10db4a654d68 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4539,13 +4539,10 @@ static void __init mem_cgroup_soft_limit_tree_init(void)
- {
-        struct mem_cgroup_tree_per_node *rtpn;
-        struct mem_cgroup_tree_per_zone *rtpz;
--       int tmp, node, zone;
-+       int node, zone;
- 
-        for_each_node(node) {
--               tmp = node;
--               if (!node_state(node, N_NORMAL_MEMORY))
--                       tmp = -1;
--               rtpn = kzalloc_node(sizeof(*rtpn), GFP_KERNEL, tmp);
-+               rtpn = kzalloc_node(sizeof(*rtpn), GFP_KERNEL, node);
-                BUG_ON(!rtpn);
- 
-                soft_limit_tree.rb_tree_per_node[node] = rtpn;
-
---
-
-Is the assumption of this patch wrong?  Does the specified node have
-to be online for the fallback to work?
-
-Thanks
+Thanks,
+Guenter
