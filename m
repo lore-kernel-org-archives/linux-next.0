@@ -1,52 +1,35 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2015-01-22-15-04: qemu failure due to 'mm: memcontrol:
- remove unnecessary soft limit tree node test'
-Date: Fri, 23 Jan 2015 08:59:51 -0800
-Message-ID: <54C27E07.6000908@roeck-us.net>
-References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org> <20150123050802.GB22751@roeck-us.net> <20150123141817.GA22926@phnom.home.cmpxchg.org> <alpine.DEB.2.11.1501230908560.15325@gentwo.org> <20150123160204.GA32592@phnom.home.cmpxchg.org>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [next-20150119]regression (mm)?
+Date: Fri, 23 Jan 2015 11:27:36 -0600
+Message-ID: <20150123172736.GA15392@kahuna>
+References: <54BD33DC.40200@ti.com>
+ <20150119174317.GK20386@saruman>
+ <20150120001643.7D15AA8@black.fi.intel.com>
+ <20150120114555.GA11502@n2100.arm.linux.org.uk>
+ <20150120140546.DDCB8D4@black.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:40085 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752264AbbAWRAH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2015 12:00:07 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YEhaV-001hJ4-Fs
-	for linux-next@vger.kernel.org; Fri, 23 Jan 2015 17:00:04 +0000
-In-Reply-To: <20150123160204.GA32592@phnom.home.cmpxchg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Johannes Weiner <hannes@cmpxchg.org>, Christoph Lameter <cl@linux.com>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, mhocko@suse.cz
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20150120140546.DDCB8D4@black.fi.intel.com>
+Sender: owner-linux-mm@kvack.org
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Felipe Balbi <balbi@ti.com>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On 01/23/2015 08:02 AM, Johannes Weiner wrote:
-> On Fri, Jan 23, 2015 at 09:17:44AM -0600, Christoph Lameter wrote:
->> On Fri, 23 Jan 2015, Johannes Weiner wrote:
->>
->>> Is the assumption of this patch wrong?  Does the specified node have
->>> to be online for the fallback to work?
->>
->> Nodes that are offline have no control structures allocated and thus
->> allocations will likely segfault when the address of the controls
->> structure for the node is accessed.
->>
->> If we wanted to prevent that then every allocation would have to add a
->> check to see if the nodes are online which would impact performance.
->
-> Okay, that makes sense, thank you.
->
-> Andrew, can you please drop this patch?
->
-Problem is that there are three patches.
+On 16:05-20150120, Kirill A. Shutemov wrote:
+[..]
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: Nishanth Menon <nm@ti.com>
+Just to close on this thread:
+https://github.com/nmenon/kernel-test-logs/tree/next-20150123 looks good
+and back to old status. Thank you folks for all the help.
+-- 
+Regards,
+Nishanth Menon
 
-2537ffb mm: memcontrol: consolidate swap controller code
-2f9b346 mm: memcontrol: consolidate memory controller initialization
-a40d0d2 mm: memcontrol: remove unnecessary soft limit tree node test
-
-Reverting (or dropping) a40d0d2 alone is not possible since it modifies
-mem_cgroup_soft_limit_tree_init which is removed by 2f9b346.
-
-Guenter
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
