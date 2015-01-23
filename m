@@ -1,41 +1,51 @@
 From: Johannes Weiner <hannes@cmpxchg.org>
 Subject: Re: mmotm 2015-01-22-15-04: qemu failure due to 'mm: memcontrol:
  remove unnecessary soft limit tree node test'
-Date: Fri, 23 Jan 2015 11:02:04 -0500
-Message-ID: <20150123160204.GA32592@phnom.home.cmpxchg.org>
+Date: Fri, 23 Jan 2015 11:03:35 -0500
+Message-ID: <20150123160335.GB32592@phnom.home.cmpxchg.org>
 References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>
  <20150123050802.GB22751@roeck-us.net>
  <20150123141817.GA22926@phnom.home.cmpxchg.org>
- <alpine.DEB.2.11.1501230908560.15325@gentwo.org>
+ <54C26CE3.2060001@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gum.cmpxchg.org ([85.214.110.215]:48958 "EHLO gum.cmpxchg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751464AbbAWQDj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 Jan 2015 11:03:39 -0500
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.11.1501230908560.15325@gentwo.org>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Lameter <cl@linux.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, mhocko@suse.cz
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <54C26CE3.2060001@roeck-us.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, cl@linux.com
 
-On Fri, Jan 23, 2015 at 09:17:44AM -0600, Christoph Lameter wrote:
-> On Fri, 23 Jan 2015, Johannes Weiner wrote:
+On Fri, Jan 23, 2015 at 07:46:43AM -0800, Guenter Roeck wrote:
+> I added some debugging. First, the problem is only seen with SMP disabled.
+> Second, there is only one online node.
 > 
-> > Is the assumption of this patch wrong?  Does the specified node have
-> > to be online for the fallback to work?
+> Without your patch:
 > 
-> Nodes that are offline have no control structures allocated and thus
-> allocations will likely segfault when the address of the controls
-> structure for the node is accessed.
+> Node 0 online 1 high 1 memory 1 cpu 0 normal 1 tmp 0 rtpn c00000003d240600
+> Node 1 online 0 high 0 memory 0 cpu 0 normal 0 tmp -1 rtpn c00000003d240640
+> Node 2 online 0 high 0 memory 0 cpu 0 normal 0 tmp -1 rtpn c00000003d240680
 > 
-> If we wanted to prevent that then every allocation would have to add a
-> check to see if the nodes are online which would impact performance.
+> [ and so on up to node 255 ]
+> 
+> With your patch:
+> 
+> Node 0 online 1 high 1 memory 1 cpu 0 normal 1 rtpn c00000003d240600
+> Unable to handle kernel paging request for data at address 0x0000af50
+> Faulting instruction address: 0xc000000000895a3c
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> 
+> The log message is after the call to kzalloc_node.
+> 
+> So it doesn't look like the fallback is working, at least not with ppc64
+> in non-SMP mode.
 
-Okay, that makes sense, thank you.
+Yep, and Christoph confirmed that it's not meant to work like that.
+The patch is flawed.
 
-Andrew, can you please drop this patch?
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Thanks for testing and sorry for breaking your setup.
