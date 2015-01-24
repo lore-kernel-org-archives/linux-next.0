@@ -1,81 +1,101 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2015-01-22-15-04: qemu failure due to 'mm: memcontrol:
- remove unnecessary soft limit tree node test'
-Date: Fri, 23 Jan 2015 18:02:29 -0800
-Message-ID: <54C2FD35.9070803@roeck-us.net>
-References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org> <20150123050802.GB22751@roeck-us.net> <20150123141817.GA22926@phnom.home.cmpxchg.org> <alpine.DEB.2.11.1501230908560.15325@gentwo.org> <20150123160204.GA32592@phnom.home.cmpxchg.org> <54C27E07.6000908@roeck-us.net> <20150123173659.GB12036@phnom.home.cmpxchg.org>
+Subject: Re: mmotm 2015-01-22-15-04: qemu failures due to 'mm: account pmd
+ page tables to the process'
+Date: Fri, 23 Jan 2015 18:44:58 -0800
+Message-ID: <54C3072A.1030604@roeck-us.net>
+References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>	<20150123050445.GA22751@roeck-us.net>	<20150123111304.GA5975@node.dhcp.inet.fi>	<54C263CC.1060904@roeck-us.net> <20150123135519.9f1061caf875f41f89298d59@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:33864 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752472AbbAXCCm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2015 21:02:42 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YEq3e-001sbJ-9d
-	for linux-next@vger.kernel.org; Sat, 24 Jan 2015 02:02:42 +0000
-In-Reply-To: <20150123173659.GB12036@phnom.home.cmpxchg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Christoph Lameter <cl@linux.com>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, mhocko@suse.cz
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20150123135519.9f1061caf875f41f89298d59@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 01/23/2015 09:36 AM, Johannes Weiner wrote:
-> On Fri, Jan 23, 2015 at 08:59:51AM -0800, Guenter Roeck wrote:
->> On 01/23/2015 08:02 AM, Johannes Weiner wrote:
->>> On Fri, Jan 23, 2015 at 09:17:44AM -0600, Christoph Lameter wrote:
->>>> On Fri, 23 Jan 2015, Johannes Weiner wrote:
+On 01/23/2015 01:55 PM, Andrew Morton wrote:
+> On Fri, 23 Jan 2015 07:07:56 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
+>
 >>>>
->>>>> Is the assumption of this patch wrong?  Does the specified node have
->>>>> to be online for the fallback to work?
+>>>> qemu:microblaze generates warnings to the console.
 >>>>
->>>> Nodes that are offline have no control structures allocated and thus
->>>> allocations will likely segfault when the address of the controls
->>>> structure for the node is accessed.
+>>>> WARNING: CPU: 0 PID: 32 at mm/mmap.c:2858 exit_mmap+0x184/0x1a4()
 >>>>
->>>> If we wanted to prevent that then every allocation would have to add a
->>>> check to see if the nodes are online which would impact performance.
+>>>> with various call stacks. See
+>>>> http://server.roeck-us.net:8010/builders/qemu-microblaze-mmotm/builds/15/steps/qemubuildcommand/logs/stdio
+>>>> for details.
 >>>
->>> Okay, that makes sense, thank you.
+>>> Could you try patch below? Completely untested.
 >>>
->>> Andrew, can you please drop this patch?
+>>> >From b584bb8d493794f67484c0b57c161d61c02599bc Mon Sep 17 00:00:00 2001
+>>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>>> Date: Fri, 23 Jan 2015 13:08:26 +0200
+>>> Subject: [PATCH] microblaze: define __PAGETABLE_PMD_FOLDED
 >>>
->> Problem is that there are three patches.
+>>> Microblaze uses custom implementation of PMD folding, but doesn't define
+>>> __PAGETABLE_PMD_FOLDED, which generic code expects to see. Let's fix it.
+>>>
+>>> Defining __PAGETABLE_PMD_FOLDED will drop out unused __pmd_alloc().
+>>> It also fixes problems with recently-introduced pmd accounting.
+>>>
+>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>> Reported-by: Guenter Roeck <linux@roeck-us.net>
 >>
->> 2537ffb mm: memcontrol: consolidate swap controller code
->> 2f9b346 mm: memcontrol: consolidate memory controller initialization
->> a40d0d2 mm: memcontrol: remove unnecessary soft limit tree node test
+>> Tested working.
 >>
->> Reverting (or dropping) a40d0d2 alone is not possible since it modifies
->> mem_cgroup_soft_limit_tree_init which is removed by 2f9b346.
+>> Tested-by: Guenter Roeck <linux@roeck-us.net>
+>>
+>> Any idea how to fix the sh problem ?
 >
-> ("mm: memcontrol: consolidate swap controller code") gave me no issues
-> when rebasing, but ("mm: memcontrol: consolidate memory controller
-> initialization") needs updating.
+> Can you tell us more about it?  All I'm seeing is "qemu:sh fails to
+> shut down", which isn't very clear.
 >
-> So how about this one to replace ("mm: memcontrol: remove unnecessary
-> soft limit tree node test"):
->
-> ---
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> Subject: [patch] mm: memcontrol: simplify soft limit tree init code
->
-> - No need to test the node for N_MEMORY.  node_online() is enough for
->    node fallback to work in slab, use NUMA_NO_NODE for everything else.
->
-> - Remove the BUG_ON() for allocation failure.  A NULL pointer crash is
->    just as descriptive, and the absent return value check is obvious.
->
-> - Move local variables to the inner-most blocks.
->
-> - Point to the tree structure after its initialized, not before, it's
->    just more logical that way.
->
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 
-The latest version in mmotm passes my ppc64 qemu test, so it works
-at least in this context.
+qemu command line:
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+/opt/buildbot/bin/qemu-system-sh4 -M r2d -kernel ./arch/sh/boot/zImage \
+         -drive file=rootfs.ext2,if=ide \
+         -append "root=/dev/sda console=ttySC1,115200 noiotrap"
+         -serial null -serial stdio -net nic,model=rtl8139 -net user
+         -nographic -monitor null
+
+--
+Poweroff log in mainline (v3.19-rc5-119-gb942c65):
+
+/ # poweroff
+The system is going down NOW!
+Sent SIGTERM to all processes
+Sent SIGKILL to all processes
+Requesting system poweroff
+sd 0:0:0:0: [sda] Synchronizing SCSI cache
+sd 0:0:0:0: [sda] Stopping disk
+reboot: Power down
+
+--
+Poweroff log in mmotm (v3.19-rc5-417-gc64429b):
+
+/ # poweroff
+
+[ nothing else happens until I kill the qemu session ]
+
+The "halt" command does not work either.
+
+--
+The message "The system is going down NOW" is from the init process.
+If I use "kill -12 1" instead of "halt" or "poweroff", the system does
+shut down as expected. "poweroff -f" also works.
+
+Trying to debug this further, I noticed that the "ps" command hangs
+as well, so the problem is not limited to poweroff or halt.
+
+I'll be happy to debug this further, I just have no idea where to start.
+
+Thanks,
+Guenter
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
