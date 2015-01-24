@@ -1,106 +1,110 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2015-01-22-15-04: qemu failures due to 'mm: account pmd
- page tables to the process'
-Date: Fri, 23 Jan 2015 19:05:42 -0800
-Message-ID: <54C30C06.7010408@roeck-us.net>
-References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>	<20150123050445.GA22751@roeck-us.net>	<20150123111304.GA5975@node.dhcp.inet.fi>	<54C263CC.1060904@roeck-us.net> <20150123135519.9f1061caf875f41f89298d59@linux-foundation.org> <54C3072A.1030604@roeck-us.net>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [next-20150119]regression (mm)?
+Date: Fri, 23 Jan 2015 22:37:46 -0600
+Message-ID: <20150124043746.GA22262@kahuna>
+References: <20150119174317.GK20386@saruman>
+ <20150120001643.7D15AA8@black.fi.intel.com>
+ <20150120114555.GA11502@n2100.arm.linux.org.uk>
+ <20150120140546.DDCB8D4@black.fi.intel.com>
+ <20150123172736.GA15392@kahuna>
+ <CANMBJr7w2jZBwRDEsVNvL3XrDZ2ttwFz7qBf4zySAMMmcgAxiw@mail.gmail.com>
+ <20150123183706.GA15791@kahuna>
+ <20150123202229.GA9038@node.dhcp.inet.fi>
+ <CANMBJr4YOcHj2G7w-gwfoZjQQd=h0Mj59QNBo3ei_=ejYRcdnw@mail.gmail.com>
+ <20150124011311.GB9038@node.dhcp.inet.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:43294 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751517AbbAXDF4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2015 22:05:56 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YEr2p-002PfL-NU
-	for linux-next@vger.kernel.org; Sat, 24 Jan 2015 03:05:55 +0000
-In-Reply-To: <54C3072A.1030604@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20150124011311.GB9038@node.dhcp.inet.fi>
+Sender: owner-linux-mm@kvack.org
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Tyler Baker <tyler.baker@linaro.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Felipe Balbi <balbi@ti.com>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On 01/23/2015 06:44 PM, Guenter Roeck wrote:
-> On 01/23/2015 01:55 PM, Andrew Morton wrote:
->> On Fri, 23 Jan 2015 07:07:56 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
->>
->>>>>
->>>>> qemu:microblaze generates warnings to the console.
->>>>>
->>>>> WARNING: CPU: 0 PID: 32 at mm/mmap.c:2858 exit_mmap+0x184/0x1a4()
->>>>>
->>>>> with various call stacks. See
->>>>> http://server.roeck-us.net:8010/builders/qemu-microblaze-mmotm/builds/15/steps/qemubuildcommand/logs/stdio
->>>>> for details.
->>>>
->>>> Could you try patch below? Completely untested.
->>>>
->>>> >From b584bb8d493794f67484c0b57c161d61c02599bc Mon Sep 17 00:00:00 2001
->>>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->>>> Date: Fri, 23 Jan 2015 13:08:26 +0200
->>>> Subject: [PATCH] microblaze: define __PAGETABLE_PMD_FOLDED
->>>>
->>>> Microblaze uses custom implementation of PMD folding, but doesn't define
->>>> __PAGETABLE_PMD_FOLDED, which generic code expects to see. Let's fix it.
->>>>
->>>> Defining __PAGETABLE_PMD_FOLDED will drop out unused __pmd_alloc().
->>>> It also fixes problems with recently-introduced pmd accounting.
->>>>
->>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>> Reported-by: Guenter Roeck <linux@roeck-us.net>
->>>
->>> Tested working.
->>>
->>> Tested-by: Guenter Roeck <linux@roeck-us.net>
->>>
->>> Any idea how to fix the sh problem ?
->>
->> Can you tell us more about it?  All I'm seeing is "qemu:sh fails to
->> shut down", which isn't very clear.
->>
->
-> qemu command line:
->
-> /opt/buildbot/bin/qemu-system-sh4 -M r2d -kernel ./arch/sh/boot/zImage \
->          -drive file=rootfs.ext2,if=ide \
->          -append "root=/dev/sda console=ttySC1,115200 noiotrap"
->          -serial null -serial stdio -net nic,model=rtl8139 -net user
->          -nographic -monitor null
->
-> --
-> Poweroff log in mainline (v3.19-rc5-119-gb942c65):
->
-> / # poweroff
-> The system is going down NOW!
-> Sent SIGTERM to all processes
-> Sent SIGKILL to all processes
-> Requesting system poweroff
-> sd 0:0:0:0: [sda] Synchronizing SCSI cache
-> sd 0:0:0:0: [sda] Stopping disk
-> reboot: Power down
->
-> --
-> Poweroff log in mmotm (v3.19-rc5-417-gc64429b):
->
-> / # poweroff
->
-> [ nothing else happens until I kill the qemu session ]
->
-> The "halt" command does not work either.
->
-> --
-> The message "The system is going down NOW" is from the init process.
-> If I use "kill -12 1" instead of "halt" or "poweroff", the system does
-> shut down as expected. "poweroff -f" also works.
->
-> Trying to debug this further, I noticed that the "ps" command hangs
-> as well, so the problem is not limited to poweroff or halt.
->
-> I'll be happy to debug this further, I just have no idea where to start.
->
+On 03:13-20150124, Kirill A. Shutemov wrote:
+> > >> On 09:39-20150123, Tyler Baker wrote:
+[...]
+> > >> > I just reviewed the boot logs for next-20150123 and there still seems
+> > >> > to be a related issue. I've been boot testing
+> > >> > multi_v7_defconfig+CONFIG_ARM_LPAE=y kernel configurations which still
+> > >> > seem broken.
+[...]
+> Okay, proof of concept patch is below. It's going to break every other
+> architecture with FIRST_USER_ADDRESS != 0, but I think it's cleaner way to
+> go.
 
-Another data point: Reverting commit 22310c209483 does fix the problem.
+Testing on my end:
 
-Guenter
+just ran through this set (+ logs similar to Tyler's from my side):
+
+next-20150123 (multi_v7_defconfig == !LPAE)
+ 1:    BeagleBoard-X15(am57xx-evm): BOOT: PASS: http://paste.ubuntu.org.cn/2219449
+ 2:                     dra72x-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2219450
+ 3:                     dra7xx-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2219451
+ 4:                      omap5-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2219452
+TOTAL = 4 boards, Booted Boards = 4, No Boot boards = 0
+
+next-20150123-LPAE-Logging enabled[1] (multi_v7_defconfig +LPAE)
+ 1:    BeagleBoard-X15(am57xx-evm): BOOT: FAIL: http://paste.ubuntu.org.cn/2220938
+ 2:                     dra72x-evm: BOOT: FAIL: http://paste.ubuntu.org.cn/2220943
+ 3:                     dra7xx-evm: BOOT: FAIL: http://paste.ubuntu.org.cn/2220947
+ 4:                      omap5-evm: BOOT: FAIL: http://paste.ubuntu.org.cn/2220955
+TOTAL = 4 boards, Booted Boards = 0, No Boot boards = 4
+
+next-20150123-LPAE-new-patch [2] (multi_v7_defconfig + LPAE)
+ 1:    BeagleBoard-X15(am57xx-evm): BOOT: PASS: http://paste.ubuntu.org.cn/2221047
+ 2:                     dra72x-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221065
+ 3:                     dra7xx-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221069
+ 4:                      omap5-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221070
+TOTAL = 4 boards, Booted Boards = 4, No Boot boards = 0
+
+next-20150123-new-patch[2] (multi_v7_defconfig == !LPAE)
+ 1:                     am335x-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221277
+ 2:                      am335x-sk: BOOT: PASS: http://paste.ubuntu.org.cn/2221278
+ 3:                      am437x-sk: BOOT: FAIL: http://paste.ubuntu.org.cn/2221279 (unrelated)
+ 4:                    am43xx-epos: BOOT: PASS: http://paste.ubuntu.org.cn/2221280
+ 5:                   am43xx-gpevm: BOOT: PASS: http://paste.ubuntu.org.cn/2221281
+ 6:    BeagleBoard-X15(am57xx-evm): BOOT: PASS: http://paste.ubuntu.org.cn/2221282
+ 7:                 BeagleBoard-XM: BOOT: FAIL: http://paste.ubuntu.org.cn/2221283 (unrelated)
+ 8:            beagleboard-vanilla: BOOT: PASS: http://paste.ubuntu.org.cn/2221284
+ 9:               beaglebone-black: BOOT: PASS: http://paste.ubuntu.org.cn/2221285
+10:                     beaglebone: BOOT: FAIL: http://paste.ubuntu.org.cn/2221286 (unrelated)
+11:                     dra72x-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221287
+12:                     dra7xx-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221288
+13:                      omap5-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221289
+14:                  pandaboard-es: BOOT: PASS: http://paste.ubuntu.org.cn/2221290
+15:             pandaboard-vanilla: BOOT: PASS: http://paste.ubuntu.org.cn/2221291
+16:                        sdp4430: BOOT: PASS: http://paste.ubuntu.org.cn/2221292
+TOTAL = 16 boards, Booted Boards = 13, No Boot boards = 3
+
+next-20150123-new-patch[2] (omap2plus_defconfig)
+ 1:                     am335x-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221653
+ 2:                      am335x-sk: BOOT: PASS: http://paste.ubuntu.org.cn/2221654
+ 3:                      am437x-sk: BOOT: PASS: http://paste.ubuntu.org.cn/2221656
+ 4:                    am43xx-epos: BOOT: PASS: http://paste.ubuntu.org.cn/2221659
+ 5:                   am43xx-gpevm: BOOT: PASS: http://paste.ubuntu.org.cn/2221660
+ 6:    BeagleBoard-X15(am57xx-evm): BOOT: PASS: http://paste.ubuntu.org.cn/2221661
+ 7:                 BeagleBoard-XM: BOOT: PASS: http://paste.ubuntu.org.cn/2221670
+ 8:            beagleboard-vanilla: BOOT: PASS: http://paste.ubuntu.org.cn/2221676
+ 9:               beaglebone-black: BOOT: PASS: http://paste.ubuntu.org.cn/2221683
+10:                     beaglebone: BOOT: PASS: http://paste.ubuntu.org.cn/2221690
+11:                     dra72x-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221692
+12:                     dra7xx-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221695
+13:                      omap5-evm: BOOT: PASS: http://paste.ubuntu.org.cn/2221700
+14:                  pandaboard-es: BOOT: PASS: http://paste.ubuntu.org.cn/2221704
+15:             pandaboard-vanilla: BOOT: PASS: http://paste.ubuntu.org.cn/2221707
+16:                        sdp4430: BOOT: PASS: http://paste.ubuntu.org.cn/2221713
+TOTAL = 16 boards, Booted Boards = 16, No Boot boards = 0
+
+[1] http://paste.ubuntu.org.cn/2220994 (based on diff from Tyler B)
+[2] https://patchwork.kernel.org/patch/5698491/
+-- 
+Regards,
+Nishanth Menon
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
