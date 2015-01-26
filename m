@@ -1,54 +1,75 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: make allyesconfig i386 build failure with next-20150122 (caused
- by fb_agm1264k-fl driver)
-Date: Mon, 26 Jan 2015 14:46:54 -0800
-Message-ID: <20150126224654.GA17166@kroah.com>
-References: <CA+r1ZhhXF+hicy7JKo3jAbgSbO4KOLm6BwPosTKNb+E_Cb4yPQ@mail.gmail.com>
- <20150126215959.GA9853@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with Linus' tree
+Date: Tue, 27 Jan 2015 10:45:58 +1100
+Message-ID: <20150127104558.003abf61@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <20150126215959.GA9853@roeck-us.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: devel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, isdn@linux-pingi.de, netdev <netdev@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Jim Davis <jim.epost@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zacKz=pAtT62+HJVu9U8EM1"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:38715 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753431AbbAZXqF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jan 2015 18:46:05 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
 
-On Mon, Jan 26, 2015 at 01:59:59PM -0800, Guenter Roeck wrote:
-> On Thu, Jan 22, 2015 at 12:10:33PM -0700, Jim Davis wrote:
-> > make ARCH=i386 allyesconfig fails with
-> > 
-> > drivers/staging/built-in.o: In function `reset':
-> > (.text+0x2ae89d): multiple definition of `reset'
-> > drivers/isdn/built-in.o:(.text+0x185dc2): first defined here
-> > make[1]: *** [drivers/built-in.o] Error 1
-> 
-> Culprit:
-> 
-> commit b2ebd4be6fa1d2329b63531b044f9e25474981cb
-> Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Date:   Wed Dec 31 10:11:10 2014 +0100
-> 
->     staging: fbtft: add fb_agm1264k-fl driver
-> 
-> A global function named 'reset' isn't really a good idea.
-> 
-> Not that the global function with the same name in the isdn code
-> is better ;-).
+--Sig_/zacKz=pAtT62+HJVu9U8EM1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Agreed, the fbtft code is now fixed.  Patches to fix the isdn code would
-be gladly accepted as well :)
+Hi Catalin,
 
-thanks,
+Today's linux-next merge of the arm64 tree got a conflict in
+arch/arm64/mm/dump.c between commit 284be28565ef ("arm64: dump: Fix
+implicit inclusion of definition for PCI_IOBASE") from Linus' tree and
+commit 764011ca8247 ("arm64: mm: dump: add missing includes") from the
+arm64 tree.
 
-greg k-h
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm64/mm/dump.c
+index d54dc9ac4b70,bbc5a29ecaaf..000000000000
+--- a/arch/arm64/mm/dump.c
++++ b/arch/arm64/mm/dump.c
+@@@ -14,8 -14,9 +14,10 @@@
+   * of the License.
+   */
+  #include <linux/debugfs.h>
++ #include <linux/errno.h>
+  #include <linux/fs.h>
++ #include <linux/init.h>
+ +#include <linux/io.h>
+  #include <linux/mm.h>
+  #include <linux/sched.h>
+  #include <linux/seq_file.h>
+
+--Sig_/zacKz=pAtT62+HJVu9U8EM1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUxtG7AAoJEMDTa8Ir7ZwVclsP/RvJ24Jo0LcdQNz+rTk39srG
+xPf5iQ/yr9CzcHWm2l0/NU33HRLiN0re9Tqu0tNma7cfMcLvhcIcwzOzxTMFvRCW
+HWsVn7V2ZLQ6XRau8ysYr2NBKStBD7CDEKHPpoYERrjHttwQ+QU21TFalBXIc2bX
+XZHhSymPW+eaEeg4301A6+ZSOYdl5nltVlfl7EXr29tmAEhy5lHklrZFWmonj0uD
+45cULoSEZD1hskb6IrUgsEzsxL2y9ojkmfeZ/bBAcmqe+JI5ED7lMJc4kLI+I0Ub
+Z6kRUAhwTvUbUt8mRgMaVrq3fk4ViPK1S1vwZVc1b1SuzBUKGEMh3B3dynLXl8nq
+0ZAWFXi5P2J/9Q3Eoe2KBoxEWwUXPhKn6Jh01RYl3tmNma2EFK2eos7wxkkdFB/l
+4UYjfOtiYiEwrzliajkJ2hqUR3ZzBAITOsr/u5h4bCvGXZ3dAFA0AnXc2FvG6Pf2
+/dQ9dhzpzpIaWCEH/SB953Y8zHCSryv14UUiR/VknpqlVqXkEfIGloR5a1OGLGdA
+EyUfFNvVRHy6A11FVflXpTdLRPUlc97vLydMCPKxDkHRBFw2dtW3BhUqNtJDdeDP
+ThSz67biroPko3EZHGYv1Bb57vbVS6ZI+0kMPLI3COkJq3z0wkdJcmunXGdDBpqV
+QCvAmnRVuvMv2HGOpQyK
+=hW7z
+-----END PGP SIGNATURE-----
+
+--Sig_/zacKz=pAtT62+HJVu9U8EM1--
