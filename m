@@ -1,85 +1,54 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: mmotm 2015-01-22-15-04: qemu failures due to 'mm: account pmd
- page tables to the process'
-Date: Mon, 26 Jan 2015 06:17:55 -0800
-Message-ID: <54C64C93.6040504@roeck-us.net>
-References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org> <20150123050445.GA22751@roeck-us.net> <20150123111304.GA5975@node.dhcp.inet.fi> <54C263CC.1060904@roeck-us.net> <20150123135519.9f1061caf875f41f89298d59@linux-foundation.org> <20150124055207.GA8926@roeck-us.net> <20150126122944.GE25833@node.dhcp.inet.fi> <54C6494D.80802@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: contact change for the integrity tree
+Date: Tue, 27 Jan 2015 07:49:21 +1100
+Message-ID: <20150127074921.3a4ac6df@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kzoIXuD.h1xzzMAXw6tSSis"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:38874 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752867AbbAZOSS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jan 2015 09:18:18 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YFkUc-002GvO-ET
-	for linux-next@vger.kernel.org; Mon, 26 Jan 2015 14:18:18 +0000
-In-Reply-To: <54C6494D.80802@roeck-us.net>
+Received: from ozlabs.org ([103.22.144.67]:53056 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753477AbbAZUt3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jan 2015 15:49:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <d.kasatkin@samsung.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01/26/2015 06:03 AM, Guenter Roeck wrote:
-> On 01/26/2015 04:29 AM, Kirill A. Shutemov wrote:
->> On Fri, Jan 23, 2015 at 09:52:07PM -0800, Guenter Roeck wrote:
->>> On Fri, Jan 23, 2015 at 01:55:19PM -0800, Andrew Morton wrote:
->>>> On Fri, 23 Jan 2015 07:07:56 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
->>>>
->>>>>>>
->>>>>>> qemu:microblaze generates warnings to the console.
->>>>>>>
->>>>>>> WARNING: CPU: 0 PID: 32 at mm/mmap.c:2858 exit_mmap+0x184/0x1a4()
->>>>>>>
->>>>>>> with various call stacks. See
->>>>>>> http://server.roeck-us.net:8010/builders/qemu-microblaze-mmotm/builds/15/steps/qemubuildcommand/logs/stdio
->>>>>>> for details.
->>>>>>
->>>>>> Could you try patch below? Completely untested.
->>>>>>
->>>>>> >From b584bb8d493794f67484c0b57c161d61c02599bc Mon Sep 17 00:00:00 2001
->>>>>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->>>>>> Date: Fri, 23 Jan 2015 13:08:26 +0200
->>>>>> Subject: [PATCH] microblaze: define __PAGETABLE_PMD_FOLDED
->>>>>>
->>>>>> Microblaze uses custom implementation of PMD folding, but doesn't define
->>>>>> __PAGETABLE_PMD_FOLDED, which generic code expects to see. Let's fix it.
->>>>>>
->>>>>> Defining __PAGETABLE_PMD_FOLDED will drop out unused __pmd_alloc().
->>>>>> It also fixes problems with recently-introduced pmd accounting.
->>>>>>
->>>>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>>> Reported-by: Guenter Roeck <linux@roeck-us.net>
->>>>>
->>>>> Tested working.
->>>>>
->>>>> Tested-by: Guenter Roeck <linux@roeck-us.net>
->>>>>
->>>>> Any idea how to fix the sh problem ?
->>>>
->>>> Can you tell us more about it?  All I'm seeing is "qemu:sh fails to
->>>> shut down", which isn't very clear.
->>>
->>> Turns out that the include file defining __PAGETABLE_PMD_FOLDED
->>> was not always included where used, resulting in a messed up mm_struct.
->>
->> What means "messed up" here? It should only affect size of mm_struct.
->>
-> Plus the offset of all variables after the #ifndef.
->
->>> The patch below fixes the problem for the sh architecture.
->>> No idea if the patch is correct/acceptable for other architectures.
->>
->> That's pain. Some archs includes <linux/mm_types.h> from <asm/pgtable.h>.
->> I don't see obvious way to fix this. Urghh.
->>
-> Does it matter ? Circular includes are normally ok and happen all over the place.
+--Sig_/kzoIXuD.h1xzzMAXw6tSSis
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ah yes, it does, because mm_struct will not see the define in that case
-since it comes later. Hmm, that is really tricky. You could of course
-just drop the conditional from mm_struct. That would result in an unused
-variable for some architectures, but at least it would work.
+Hi all,
 
-Guenter
+I noticed commit bfd33c4b4b1a ("MAINTAINERS: email update") in the
+integrity tree today.  I assume that I should also update the email
+address in my contacts list?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/kzoIXuD.h1xzzMAXw6tSSis
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUxqhXAAoJEMDTa8Ir7ZwVXVEP/0fPmxW2K0uw2ploRjKGu4Up
+EJfDisOkzQF/QS5NMxJTQ5c7bstdK9duAsudf9A/JF4acvOSGo/Up4Io1kWViQPb
+cm0cTGFe1oCmtzxJpBJQoPO9GiDqZY1ECeqFYU/9rYJmoW6vzfGCw8bkiU2EaFgw
+w/afkVsqBA7bqqzIxy4fM/4jctFm23wu9LeEIv+HmS3eVLH5UR90CbknaAiF5xyQ
+O6Fbuvx8wGVWWE9o7aksEAC5x7mULys4qALeYCZc8P3vpJ5B7V8tw8Aq7C32VtEK
+KrdIJKe9kytwQLHT47OD9YrHOKSkp4o254DXJgwK5Ix8ywgCGE6rJ5l/1Mjvk5YU
+qB7vXhMk1al7+tAvQyieHEHfgIM+FRry7+GOn1wqjANS37RmzuXAffmGMiOd6EeF
+KGaUo5DY7PQR6NrsKKmLX+pGHDsW5mNYd59ZKAs/3Nt8fSIi7rwSPxuas+BFrSxz
+EKzDRiLmqR9BJ3cHTJZFYpJh0AC7F60uYdnJLtYUDf0n3ghD/0C/Js5MtPFl1m0g
+4GKLS63R+b5h3SvPtBPYH+V9lSwwEzsT/YQoYOeRlp9QwViId1HqEm36frnbKUQI
+0C5aRc7SQDQN4a7j9rj/zHjwXGLqY0sn2Vs+efiHbaVrI1I+Fz0kQcP/ny87JfuE
+jlHoCc3SQwN/5IPfQP1e
+=FVIO
+-----END PGP SIGNATURE-----
+
+--Sig_/kzoIXuD.h1xzzMAXw6tSSis--
