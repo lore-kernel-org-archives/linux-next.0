@@ -1,60 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: contact change for the integrity tree
-Date: Tue, 27 Jan 2015 08:02:58 +1100
-Message-ID: <20150127080258.534b0376@canb.auug.org.au>
-References: <20150127074921.3a4ac6df@canb.auug.org.au>
-	<CACE9dm92M1JO0OXW_4bWRBxOjo60ntYJ_Z+w1EJvPDTDM+yGyw@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: make allyesconfig i386 build failure with next-20150122 (caused
+ by fb_agm1264k-fl driver)
+Date: Mon, 26 Jan 2015 13:59:59 -0800
+Message-ID: <20150126215959.GA9853@roeck-us.net>
+References: <CA+r1ZhhXF+hicy7JKo3jAbgSbO4KOLm6BwPosTKNb+E_Cb4yPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VL2Ww/_4oLXlyDYhXBHSPE="; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56946 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755691AbbAZVDG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jan 2015 16:03:06 -0500
-In-Reply-To: <CACE9dm92M1JO0OXW_4bWRBxOjo60ntYJ_Z+w1EJvPDTDM+yGyw@mail.gmail.com>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:44903 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754230AbbAZWAK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jan 2015 17:00:10 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YFrhZ-003VN7-3N
+	for linux-next@vger.kernel.org; Mon, 26 Jan 2015 22:00:09 +0000
+Content-Disposition: inline
+In-Reply-To: <CA+r1ZhhXF+hicy7JKo3jAbgSbO4KOLm6BwPosTKNb+E_Cb4yPQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel <devel@driverdev.osuosl.org>, isdn@linux-pingi.de, netdev <netdev@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
---Sig_/VL2Ww/_4oLXlyDYhXBHSPE=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 22, 2015 at 12:10:33PM -0700, Jim Davis wrote:
+> make ARCH=i386 allyesconfig fails with
+> 
+> drivers/staging/built-in.o: In function `reset':
+> (.text+0x2ae89d): multiple definition of `reset'
+> drivers/isdn/built-in.o:(.text+0x185dc2): first defined here
+> make[1]: *** [drivers/built-in.o] Error 1
 
-Hi Dmitry,
+Culprit:
 
-On Mon, 26 Jan 2015 22:51:40 +0200 Dmitry Kasatkin <dmitry.kasatkin@gmail.c=
-om> wrote:
->
-> Yes, please.
+commit b2ebd4be6fa1d2329b63531b044f9e25474981cb
+Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date:   Wed Dec 31 10:11:10 2014 +0100
 
-Done.
+    staging: fbtft: add fb_agm1264k-fl driver
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+A global function named 'reset' isn't really a good idea.
 
---Sig_/VL2Ww/_4oLXlyDYhXBHSPE=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Not that the global function with the same name in the isdn code
+is better ;-).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUxquIAAoJEMDTa8Ir7ZwVnb8P/jwubfZWiKAPt8wlenvIfjoe
-CcMb+dXt3kCuCuJS+i6VHCq9u1OXax05MqHDvzojPqPuixgCMdC/FqmqZb0zdcJR
-cHLCUDm8WWf2YGfdo0Rdm/l6m0Zj3OWrgrx6nEqCL/TZXJBwuCe+pXKyHxpSqcqz
-UaIMctcZbMmDjIEJdvA3YBa2YxS8ErEt+aiWoSAjFW/8L6J8WfTbPPTME5F+NKkK
-0kJvmoktJJgoYHyE+nu5UdaMx09fgx0acrKGDWP85gzmwq0rMih8GJxsN+20mB/a
-y7TIOcaNRmh8DyxkntvoFakvPcv47JRrYL5IjPZSs99d9x78ybAMyNI/zsCB9l4C
-CxSBt/zDbup+GgJnFUo5gsIlyXu2F5chJcw5+eaiGsaoi4JLzMxrS0vh7Sz6aWWi
-tojcwby8ca503t7wqBMNIqABpTM2VXtsqKGkcgcdzhxsdZT9OnQDA1vPXNdWeUN4
-Jv7KL5BHz9PwttFDsIBYudWX+GB+prBwCihaNlM//aMrS+X60NSHgNgMWbYHfQQB
-n2tQHPBLnKG/pOAqXliRd5e3EiNVYu7Pi0E15ga7U5+h7Ugk0feS1DTlgBfMjZQk
-gNyZbeq1Iln7G9aVyDJIvpJsjeOXa3JVObo2MfyEXhEcjLg3Zh4ymcx9JM8qTVMP
-NO2qYP3NL7wAulRQPIsR
-=a502
------END PGP SIGNATURE-----
-
---Sig_/VL2Ww/_4oLXlyDYhXBHSPE=--
+Guenter
