@@ -1,75 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Tue, 27 Jan 2015 10:45:58 +1100
-Message-ID: <20150127104558.003abf61@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 27 Jan 2015 13:00:17 +1100
+Message-ID: <20150127130017.57c7cf12@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zacKz=pAtT62+HJVu9U8EM1"; protocol="application/pgp-signature"
+ boundary="Sig_/b6k_Xb_7rb63W3WQa7K0Apj"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38715 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39292 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753431AbbAZXqF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jan 2015 18:46:05 -0500
+	id S1753082AbbA0CAX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jan 2015 21:00:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nimrod Andy <B38611@freescale.com>
 
---Sig_/zacKz=pAtT62+HJVu9U8EM1
+--Sig_/b6k_Xb_7rb63W3WQa7K0Apj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+Hi all,
 
-Today's linux-next merge of the arm64 tree got a conflict in
-arch/arm64/mm/dump.c between commit 284be28565ef ("arm64: dump: Fix
-implicit inclusion of definition for PCI_IOBASE") from Linus' tree and
-commit 764011ca8247 ("arm64: mm: dump: add missing includes") from the
-arm64 tree.
+Today's linux-next merge of the net-next tree got a conflict in
+arch/arm/boot/dts/imx6sx-sdb.dts between commit 9143e398a443 ("ARM:
+dts: imx6sx: correct i.MX6sx sdb board enet phy address") from the net
+tree and commit fc8347778017 ("ARM: dts: imx6sx: correct i.MX6sx sdb
+board enet phy address") from the net-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (according to the commit comments, the version from the
+net tree is newer, so I used that) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm64/mm/dump.c
-index d54dc9ac4b70,bbc5a29ecaaf..000000000000
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@@ -14,8 -14,9 +14,10 @@@
-   * of the License.
-   */
-  #include <linux/debugfs.h>
-+ #include <linux/errno.h>
-  #include <linux/fs.h>
-+ #include <linux/init.h>
- +#include <linux/io.h>
-  #include <linux/mm.h>
-  #include <linux/sched.h>
-  #include <linux/seq_file.h>
-
---Sig_/zacKz=pAtT62+HJVu9U8EM1
+--Sig_/b6k_Xb_7rb63W3WQa7K0Apj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUxtG7AAoJEMDTa8Ir7ZwVclsP/RvJ24Jo0LcdQNz+rTk39srG
-xPf5iQ/yr9CzcHWm2l0/NU33HRLiN0re9Tqu0tNma7cfMcLvhcIcwzOzxTMFvRCW
-HWsVn7V2ZLQ6XRau8ysYr2NBKStBD7CDEKHPpoYERrjHttwQ+QU21TFalBXIc2bX
-XZHhSymPW+eaEeg4301A6+ZSOYdl5nltVlfl7EXr29tmAEhy5lHklrZFWmonj0uD
-45cULoSEZD1hskb6IrUgsEzsxL2y9ojkmfeZ/bBAcmqe+JI5ED7lMJc4kLI+I0Ub
-Z6kRUAhwTvUbUt8mRgMaVrq3fk4ViPK1S1vwZVc1b1SuzBUKGEMh3B3dynLXl8nq
-0ZAWFXi5P2J/9Q3Eoe2KBoxEWwUXPhKn6Jh01RYl3tmNma2EFK2eos7wxkkdFB/l
-4UYjfOtiYiEwrzliajkJ2hqUR3ZzBAITOsr/u5h4bCvGXZ3dAFA0AnXc2FvG6Pf2
-/dQ9dhzpzpIaWCEH/SB953Y8zHCSryv14UUiR/VknpqlVqXkEfIGloR5a1OGLGdA
-EyUfFNvVRHy6A11FVflXpTdLRPUlc97vLydMCPKxDkHRBFw2dtW3BhUqNtJDdeDP
-ThSz67biroPko3EZHGYv1Bb57vbVS6ZI+0kMPLI3COkJq3z0wkdJcmunXGdDBpqV
-QCvAmnRVuvMv2HGOpQyK
-=hW7z
+iQIcBAEBCAAGBQJUxvE1AAoJEMDTa8Ir7ZwVSCcP/iCkyXK0QN7h0Jih7SE6Xtax
+A+UPQeEVIZbsSAh/79UQJ0UttZh+1VXJ0qP6N7HU+WFtlajVEvm3yw298xzUvhON
+WDPNk4U7MjHlXjmkhtEyYdd2Q2eI5MxosCR8JA5fmLNybndvJqicXsdewWlJyIdM
+G+QOyKxtYRU7sxoxpoYeXyrcuEIwaatudwpbaivHh53/R9rZA+htmGXmVVGABekx
+g2rSdf7OyfNmKpXxKk5va/Cxmk+An6wZLbyjA51XK0AQ6n1VvqwYUMMR1TUct6Zw
+9FQumGm9ci/wj08P4PVU/rdpvwbNtaB0Es/3Q46yb45nbKtAaCEuwk3mUoKCsx80
+bireX8vuUmK2R5E+GSyQGzJ2/cKp+DW+Djk3m5Foq0OEwgtNK6/+HlT4u9ngF9nT
+6Dgn1IldlxYvmZd/5Fgyq+nla+aDIS6UlO0TUblD8350DGmkyz7gVfyr35uZHnGk
+B7bZ4YRYIOAI6wPeqrFCM9sPJGNrDVxdaoXMKdlk7A4Ijo2ez2PwxKfd3GkrPcu4
+w+5C/nWAiKaZmekL+lCDZGkOth+5ubMUy7Xhof3G1VupT7kYl3m/9waUfJVIMPQ3
+4tSz1gukt9stiuW108bMGFArFmE7sJa3m/ZBp7GQjO7wWAzePKx8LRUfHTi7KUz9
+ehX9Acw0JpPFEtiWyHIV
+=fwyF
 -----END PGP SIGNATURE-----
 
---Sig_/zacKz=pAtT62+HJVu9U8EM1--
+--Sig_/b6k_Xb_7rb63W3WQa7K0Apj--
