@@ -1,41 +1,85 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the block tree with the vfs tree
-Date: Tue, 27 Jan 2015 04:54:22 +0000
-Message-ID: <20150127045422.GY29656@ZenIV.linux.org.uk>
-References: <20150127145754.03e711a3@canb.auug.org.au>
- <54C70D52.6030208@kernel.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the clockevents tree with the arm tree
+Date: Tue, 27 Jan 2015 16:24:54 +1100
+Message-ID: <20150127162454.4138ecd8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qnI+bpDSe4yC=hkFhWdFYP3"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:42675 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751350AbbA0Ey1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jan 2015 23:54:27 -0500
-Content-Disposition: inline
-In-Reply-To: <54C70D52.6030208@kernel.dk>
+Received: from ozlabs.org ([103.22.144.67]:50396 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751024AbbA0FZD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Jan 2015 00:25:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@canonical.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Oleksij Rempel <linux@rempel-privat.de>
 
-On Mon, Jan 26, 2015 at 09:00:18PM -0700, Jens Axboe wrote:
-> On 01/26/2015 08:57 PM, Stephen Rothwell wrote:
-> >Hi Jens,
-> >
-> >Today's linux-next merge of the block tree got a conflict in
-> >drivers/block/loop.c between commit c2ca80413553 ("loop: convert to
-> >vfs_iter_read/write") from the vfs tree and commit b5dd2f6047ca
-> >("block: loop: improve performance via blk-mq") and several others from
-> >the block tree.
-> >
-> >I have no idea how fixed it up so I just used the version of the file
-> >from the block tree (its been there a while).  Please have a chat and
-> >figure out how to combine these two large changes.
-> 
-> Why isn't the loop patch in the block tree? That'd avoid such
-> incidents. We could add a dependency for the required VFS patch.
+--Sig_/qnI+bpDSe4yC=hkFhWdFYP3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't mind opening a never-rebased branch for generic iov_iter-related stuff;
-if you prefer to handle it that way - just tell.  The first two patches
-from that series would definitely go there; as for the rest... no preferences
-here.
+Hi Daniel,
+
+Today's linux-next merge of the clockevents tree got a conflict in
+drivers/clocksource/Kconfig between commit e074ff86e8b4 ("ARM: 8251/1:
+clocksource: enable pxa_timer for SA-1100 platform") from the arm tree
+and commit e4940cd76934 ("ARM: clocksource: add asm9260_timer driver")
+from the clockevents tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/clocksource/Kconfig
+index 6b6f1e4950df,4f2240c9c145..000000000000
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@@ -232,11 -236,13 +239,20 @@@ config CLKSRC_MIPS_GI
+  	depends on MIPS_GIC
+  	select CLKSRC_OF
+ =20
+ +config CLKSRC_PXA
+ +	def_bool y if ARCH_PXA || ARCH_SA1100
+ +	select CLKSRC_OF if USE_OF
+ +	help
+ +	  This enables OST0 support available on PXA and SA-11x0
+ +	  platforms.
+ +
++ config ASM9260_TIMER
++ 	bool "Alphascale ASM9260 timer driver"
++ 	select CLKSRC_MMIO
++ 	select CLKSRC_OF
++ 	default y if MACH_ASM9260
++ 	help
++ 	  This enables build of a clocksource and clockevent driver for
++ 	  the 32-bit System Timer hardware available on a Alphascale ASM9260.
++=20
+  endmenu
+
+--Sig_/qnI+bpDSe4yC=hkFhWdFYP3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUxyErAAoJEMDTa8Ir7ZwVKiwP/23qVpZJLYCDSkhtvh8KrJMY
+Gmmc6Nqq5GTejIf5co7iDWSlYsK6I15tSGWv8wAo3KBf664aGmYXZvXuliyj9Cae
+7PhhvNcBxONure0gh+a0HUyYC4pVw2prVezCJTmFUTTA+iXLUj5zF1J7pvjjSL4u
+8doj+B2edjytovsP0bCxmSAbhtWrSqLPi3mXKz+octJCkppcdrGP3bAhwBWbG1rw
+sIsoRXiY6IkfXTYYFG1dSdM1VY4IIXDNRPZisDRjAu/GhnnCAeiFn91oUxhtlilX
+fskkBhZYhdlRiXl9kDBv1o3nATVzLwskzxQLwB1gHBYDQi0+plnHiUC8z0G/SWGt
+ke0tpDQWwdVzvSrlPsAhPTSOHBUHNzptH1V3LdbAt1eCKBPj2nnfD4tdIlU3QXao
+rs5ywekvumnrPjR3yG3FFowTHIgOZ8tTa/vMYiMhWYu1sVn40yDhcTjDZnx6rB4j
+OFuzBqFay9U03MoFiJfRO4fbpZ/6638QFwQM/nkWFWxYyFo9y/iVxGEfviTAdrPn
+CfquRTIgCxdsHKWjSTD83WIvxH5C7pQFDYnVRnUNe6EvzIAR/aPSAzEmxFLss5PQ
+jX9ez0NEfyFWUuQxl+NZcgOMJF+MJuiPeWPCD9wps+iKJTsfyNOfuup5nwUSWigx
+e8mTqhzAycxuVPeF6Jd6
+=7jsQ
+-----END PGP SIGNATURE-----
+
+--Sig_/qnI+bpDSe4yC=hkFhWdFYP3--
