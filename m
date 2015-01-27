@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the arm-soc tree
-Date: Tue, 27 Jan 2015 13:04:37 +1100
-Message-ID: <20150127130437.3cd05af9@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-panel tree with the drm tree
+Date: Tue, 27 Jan 2015 13:39:05 +1100
+Message-ID: <20150127133905.6a2b75bc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cAKF/xMDWBelX7fDnaj._Mk"; protocol="application/pgp-signature"
+ boundary="Sig_/6bHmvUqOvqDMBD.YXljqwPy"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33990 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54318 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753256AbbA0CEo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jan 2015 21:04:44 -0500
+	id S1751116AbbA0CjM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jan 2015 21:39:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Chen <roger.chen@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>
+To: Thierry Reding <thierry.reding@gmail.com>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
---Sig_/cAKF/xMDWBelX7fDnaj._Mk
+--Sig_/6bHmvUqOvqDMBD.YXljqwPy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Thierry,
 
-Today's linux-next merge of the net-next tree got a conflict in
-arch/arm/boot/dts/rk3288.dtsi between commit eecfe981cecd ("ARM: dts:
-rockchip: add RK3288 suspend support") from the arm-soc tree and commit
-3d3fb74afc9b ("ARM: dts: rockchip: add gmac info for rk3288") from the
-net-next tree.
+Today's linux-next merge of the drm-panel tree got a conflict in
+drivers/gpu/drm/bridge/Kconfig between commit b21f4b658df8 ("drm: imx:
+imx-hdmi: move imx-hdmi to bridge/dw_hdmi") from the drm tree and
+commit c338dcdcc7b6 ("drm/bridge: ptn3460: Convert to I2C driver
+model") from the drm-panel tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,61 +34,45 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/boot/dts/rk3288.dtsi
-index 2a878a35facc,910dcad2088a..000000000000
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@@ -734,24 -741,11 +750,29 @@@
-  			bias-disable;
-  		};
- =20
-+ 		pcfg_pull_none_12ma: pcfg-pull-none-12ma {
-+ 			bias-disable;
-+ 			drive-strength =3D <12>;
-+ 		};
-+=20
- +		sleep {
- +			global_pwroff: global-pwroff {
- +				rockchip,pins =3D <0 0 RK_FUNC_1 &pcfg_pull_none>;
- +			};
+diff --cc drivers/gpu/drm/bridge/Kconfig
+index b70f3c8d4e8a,146e67bb037b..000000000000
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@@ -1,10 -1,8 +1,13 @@@
+  config DRM_PTN3460
+  	tristate "PTN3460 DP/LVDS bridge"
+  	depends on DRM
++ 	depends on OF
+  	select DRM_KMS_HELPER
++ 	select DRM_PANEL
+  	---help---
++ 	  ptn3460 eDP-LVDS bridge chip driver.
  +
- +			ddrio_pwroff: ddrio-pwroff {
- +				rockchip,pins =3D <0 1 RK_FUNC_1 &pcfg_pull_none>;
- +			};
- +
- +			ddr0_retention: ddr0-retention {
- +				rockchip,pins =3D <0 2 RK_FUNC_1 &pcfg_pull_up>;
- +			};
- +
- +			ddr1_retention: ddr1-retention {
- +				rockchip,pins =3D <0 3 RK_FUNC_1 &pcfg_pull_up>;
- +			};
- +		};
- +
-  		i2c0 {
-  			i2c0_xfer: i2c0-xfer {
-  				rockchip,pins =3D <0 15 RK_FUNC_1 &pcfg_pull_none>,
+ +config DRM_DW_HDMI
+ +	tristate
+ +	depends on DRM
+ +	select DRM_KMS_HELPER
 
---Sig_/cAKF/xMDWBelX7fDnaj._Mk
+--Sig_/6bHmvUqOvqDMBD.YXljqwPy
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUxvI6AAoJEMDTa8Ir7ZwVbSgP/idOy0pPtJCcga1mktJsnQiX
-64W4nSTB0aHLwVgCtoo1zSkbtyKYCSKv5ePObrdz9MIhYBK9gZLsKf2XpOLU2fCS
-Pheqwx8i4p8f6G3qr/Z+EM4kxHln4HDSIfWLZw26GzVx2OZXAHIhBr7v19/9Z3yj
-d10qhfwB9V3/GpRqmlKKyDPUCofF2vFtfW3jGYTIi+UsuR1D96LIL/x5Qh9Ii6QT
-bE5ZIG535YWCZB5Q46KuuU15G7tYBpxRlUT67LXTRLkctvfLr/EmyjoxHvSanNM2
-BpKAgZi2OWHPySKj862uDVsZFNG5wc1jnv9EWUddidDK2zE8LEsBPrly7lA3txnP
-3wb0yI9JmtjwrROp/vwOlHvSsUVxTY0NK4SEqB/02oJVtHGKpIFpTvx7V4/bJEW0
-rpOfHSibBPuvAlueXm58y5pVJmbRFHxTW/QvYf/wr57rftyVUf/kRnHuevqghabu
-Z+XuykDLKZgDDAN+O2G32pOnTFDx6BBg0krBHKC+KgHsFE4X71tCg2411/1hpWe4
-UJucsNUSTlSW+Rm+4iIJ2p1+Ta5awMJ1VGwBR3wLeiaTUSRmSmdPGzOp9lfebx2C
-pei6L+iT18rX+IleMmqeSK6MFw0ERT5Fg7RYY7mvgHq+pzfs3H7VtbuuGqiGi7Yb
-Pakx2ScBTDffpLmXMXk2
-=T0OE
+iQIcBAEBCAAGBQJUxvpNAAoJEMDTa8Ir7ZwVFWUP/R0YrnrZB6r742jrgjJrHjGI
+v1SlQS9SRQ0FKWLAW0WV9iasy6TYaoUC4PKkxaZ5KLeT2rUSIMW8B6KP4hUJP9Ix
+by2GQuB3yd7EF+ZZGy4uoSSfXM2EyqTQwmSadBKsOTC/aBuMDM/F+/FxyaiD7aks
+vFxYshbb582aq4g0IHRZqAhMWKzxDiUd1NLqA44DiJ99xcYQfHAiaMXGIttMV9zI
+OZxu7uRGLSk9NnZHsx7kVo3RpgF1/drWh8pQLdORS+JpWSOiI3kQOS/yN7A4QCiV
+SX2XhjBHvcdQigIG/JCVveiMVXJe5/emfyCXGObHdH652t6on85V5hBob0k7aT86
+FD4mTDmcNawmYIpU6kqKvU0077XB9VFWjInZ4bQhl7w29kOiJhhgYOWSI1yRefc5
+y3XYmBIcxQAcFdVUwG8Tq9s030UrcWAyFbqj8nJPpe+CpTP7IkWYcC2L5m+fCmHj
+m8QTPZZZ7V5u1xioVqHuZzAwiZuC2z9dIOMCgQ/a/c4aBeCcPA+JlX+mi4mkdjNB
+Ms0HcD02+0k490ZRVj/vZDpxy9QJc9piF3KP8dTYNa5zyjj72oHX18c2C7ih/3Wv
+OxlBuqqWGeNDk0en45TNeQQ+f3esbExL+P9wgMxkQIZNKVDkuqrgLwCBXy5D9vey
+QEzkutHH/rjs/PIjoXMl
+=N/hk
 -----END PGP SIGNATURE-----
 
---Sig_/cAKF/xMDWBelX7fDnaj._Mk--
+--Sig_/6bHmvUqOvqDMBD.YXljqwPy--
