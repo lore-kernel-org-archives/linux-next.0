@@ -1,56 +1,59 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 27 (build failures due to 'don't offset
- memmap for flatmem')
-Date: Tue, 27 Jan 2015 09:31:28 -0800
-Message-ID: <20150127173128.GA1555@roeck-us.net>
-References: <20150127195123.46885d96@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2015-01-22-15-04: qemu failures due to 'mm: account pmd
+ page tables to the process'
+Date: Tue, 27 Jan 2015 13:24:33 -0800
+Message-ID: <20150127132433.dbe4461d9caeecdb50f28b42@linux-foundation.org>
+References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org>
+	<20150123050445.GA22751@roeck-us.net>
+	<20150123111304.GA5975@node.dhcp.inet.fi>
+	<54C263CC.1060904@roeck-us.net>
+	<20150123135519.9f1061caf875f41f89298d59@linux-foundation.org>
+	<20150124055207.GA8926@roeck-us.net>
+	<20150126122944.GE25833@node.dhcp.inet.fi>
+	<54C6494D.80802@roeck-us.net>
+	<20150127161657.GA7155@node.dhcp.inet.fi>
+	<20150127162428.GA21638@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:37800 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753886AbbA0Rbf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Jan 2015 12:31:35 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YG9zD-0001NT-46
-	for linux-next@vger.kernel.org; Tue, 27 Jan 2015 17:31:35 +0000
-Content-Disposition: inline
-In-Reply-To: <20150127195123.46885d96@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laura Abbott <lauraa@codeaurora.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20150127162428.GA21638@roeck-us.net>
+Sender: owner-linux-mm@kvack.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 27, 2015 at 07:51:23PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20150123:
-> 
-> The arm64 tree gained a conflict against Linus' tree.
-> 
-> The net-next tree gained conflicts against the arm-soc and net trees.
-> 
-> The drm-panel tree gained a conflict against the drm tree.
-> 
-> The wireless-drivers-next tree gained a build failure for which I reverted
-> a commit.
-> 
-> The block tree gained conflicts against the vfs and Linus' trees.
-> 
-> The clockevents tree gained a conflict against the arm tree.
-> 
-> The akpm tree lost a patch that turned up elsewhere.
-> 
-> Non-merge commits (relative to Linus' tree): 5237
->  4877 files changed, 200964 insertions(+), 94565 deletions(-)
-> 
-There are various build failures due to commit
-	'mm/page_alloc.c: don't offset memmap for flatmem',
-which assumes that ARCH_PFN_OFFSET is defined for all architectures,
-but it isn't. This is also the first use of ARCH_PFN_OFFSET outside
-an architecture directory.
+On Tue, 27 Jan 2015 08:24:28 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
 
-Build fails for mn10300, m68k_nommu, and avr32.
+> > __PAGETABLE_PMD_FOLDED is defined during <asm/pgtable.h> which is not
+> > included into <linux/mm_types.h>. And we cannot include it here since
+> > many of <asm/pgtables> needs <linux/mm_types.h> to define struct page.
+> > 
+> > I failed to come up with better solution rather than put nr_pmds into
+> > mm_struct unconditionally.
+> > 
+> > One possible solution would be to expose number of page table levels
+> > architecture has via Kconfig, but that's ugly and requires changes to
+> > all architectures.
+> > 
+> FWIW, I tried a number of approaches. Ultimately I gave up and concluded
+> that it has to be either this patch or, as you say here, we would have
+> to add something like PAGETABLE_PMD_FOLDED as a Kconfig option.
 
-Guenter
+It's certainly a big mess.  Yes, I expect that moving
+__PAGETABLE_PMD_FOLDED and probably PAGETABLE_LEVELS into Kconfig logic
+would be a good fix.
+
+Adding 8 bytes to the mm_struct (sometimes) isn't a huge issue, but
+it does make the kernel just a little bit worse.
+
+Has anyone taken a look at what the Kconfig approach would look like?
+
+Possibly another fix for this would be to move mm_struct into its own
+header file, or something along those lines?
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
