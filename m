@@ -1,38 +1,34 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build failure after merge of the wireless-drivers-next tree
-Date: Tue, 27 Jan 2015 10:13:55 +0200
-Message-ID: <87y4ooej3w.fsf@kamboji.qca.qualcomm.com>
-References: <20150127190349.22ff92e8@canb.auug.org.au>
+From: Vladimir Davydov <vdavydov@parallels.com>
+Subject: Re: linux-next: build warnings after merge of the akpm-current tree
+Date: Tue, 27 Jan 2015 11:27:48 +0300
+Message-ID: <20150127082748.GE28978@esperanza>
+References: <20150127191243.6fbbf2f6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:39457 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753609AbbA0IOD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Jan 2015 03:14:03 -0500
-In-Reply-To: <20150127190349.22ff92e8@canb.auug.org.au> (Stephen Rothwell's
-	message of "Tue, 27 Jan 2015 19:03:49 +1100")
+Received: from mx2.parallels.com ([199.115.105.18]:41003 "EHLO
+	mx2.parallels.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754226AbbA0I1x (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Jan 2015 03:27:53 -0500
+Content-Disposition: inline
+In-Reply-To: <20150127191243.6fbbf2f6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hong Xu <hong@topbug.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi,
 
-> After merging the wireless-drivers-next tree, today's linux-next build
-> (powerpc allyesconfig) failed like this:
->
-> drivers/net/wireless/ath/ath9k/ath9k_htc.o:(.data+0x29d0): multiple definition of `led_blink'
-> drivers/net/wireless/ath/ath9k/ath9k.o:(.bss+0x1654): first defined here
->
-> Caused by commit 3a939a671225 ("ath9k_htc: Add a module parameter to
-> disable blink").
->
-> I have reverted that commit for today.
+On Tue, Jan 27, 2015 at 07:12:43PM +1100, Stephen Rothwell wrote:
+> In file included from mm/slab_common.c:26:0:
+> mm/slab_common.c: In function 'kmem_cache_destroy':
+> mm/slab.h:259:30: warning: right-hand operand of comma expression has no effect [-Wunused-value]
+>   for (iter = NULL, tmp = NULL, (root); 0; )
+>                               ^
 
-Sorry about that, we have a patch pending to fix it:
+It's already been fixed, please see
 
-https://patchwork.kernel.org/patch/5699001/
+https://lkml.org/lkml/2015/1/24/39
 
--- 
-Kalle Valo
+Thanks,
+Vladimir
