@@ -1,38 +1,56 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the block tree with the vfs tree
-Date: Thu, 29 Jan 2015 05:15:55 +0000
-Message-ID: <20150129051555.GC29656@ZenIV.linux.org.uk>
-References: <20150127145754.03e711a3@canb.auug.org.au>
- <54C70D52.6030208@kernel.dk>
- <20150127045422.GY29656@ZenIV.linux.org.uk>
- <20150128171102.GC17528@lst.de>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: randconfig build error with next-20150127, in
+ drivers/i2c/busses/i2c-designware-baytrail.c
+Date: Wed, 28 Jan 2015 07:59:29 +0100
+Message-ID: <20150128065929.GA1086@katana>
+References: <CA+r1ZhisCd7+LJ0gm-NLPJ+UE-FEuEWFQqDqcy7KPp2tD_bveA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49023 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755661AbbA2FP7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Jan 2015 00:15:59 -0500
+Received: from sauhun.de ([89.238.76.85]:37899 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752340AbbA2Gem (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Jan 2015 01:34:42 -0500
 Content-Disposition: inline
-In-Reply-To: <20150128171102.GC17528@lst.de>
+In-Reply-To: <CA+r1ZhisCd7+LJ0gm-NLPJ+UE-FEuEWFQqDqcy7KPp2tD_bveA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, david.e.box@linux.intel.com, linux-i2c@vger.kernel.org
 
-On Wed, Jan 28, 2015 at 06:11:02PM +0100, Christoph Hellwig wrote:
-> On Tue, Jan 27, 2015 at 04:54:22AM +0000, Al Viro wrote:
-> > I don't mind opening a never-rebased branch for generic iov_iter-related stuff;
-> > if you prefer to handle it that way - just tell.  The first two patches
-> > from that series would definitely go there; as for the rest... no preferences
-> > here.
-> 
-> It might make sense to just keep the VFS patches in your tree.
-> The target ones also are something I'd prefer if it goes through Nic
-> with additional review.  In addition they aren't really critical,
-> so if you merge the prep patches now we can feed the rest through
-> the proper trees in the .21 merge window.
 
-Done.  The first two are in #iov_iter now (merged into #for-next), the
-rest is dropped.  And #iov_iter is in never-rebased mode, so feel free
-to pull it wherever you need it.
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jan 27, 2015 at 04:41:44PM -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
+
+A proper Kconfig dependency fix has already been added and is in
+linux-next as of today.
+
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUyIjRAAoJEBQN5MwUoCm2QlYP/0zO854F6omGBspWgmMoMN4d
+6lZmyiBqOxwhLlSIrcDJqbWVvxVaGXcMhJL2OppeH0y7AZQrXHFtTWWLPqPDS4qG
+JdRHhQj7DaoA28rZ1/09TRcdK9UHGPJvA93Qy0gxOaAnpHRnaKR6HZXIRtvkY1PS
+0gDSixw1Ib5dwgtJFNzSRcc00RdmpuXefvtFTCJ/0ogvtovDXBSKQQ5jlEyq2GZj
+KQDXVmZiKvOseSKvPnNmjBmCGxaId1QchrAnpWTnUq3K/5mmBa+mF0gQLyFQBrKX
+64Y724mgW+4grWyzlbuM7y64ZWh8HOUQLeppcV6/x/ukqpscZcdFvI0CWhDhurA0
+D8SAjsMNCiBn4ui2Her72NsFg+Iwi10lVj+ceseXBZ5aBs9gZNuHG4jbaOdtU2WQ
+0OI7iV/+ikHy5cjiAb0yQKRrSfgfZCns9SOKwMHWDaFKzj+xBdNWUGZh+rvFt+Au
+ns2kvAgNZubbzxhpWW/AA7zAauCpjrvDgo/8K8Ext3N9/VG9Zaet/jpg9CNM7N82
+bvjqWlpV3BIe8dO9YB8pT4oYJxRYggxA7cyOas5/VmNwFmW3vI3L0au/oUAhXwQc
+s28cGzjPQ61hHPOBqYQ4ipz1afQ9SFhZiYJjxHvakiwEKTnBmbkPHnurdmumPSJT
+U94XVQ+DUoLiwvADP8WM
+=lF3S
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
