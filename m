@@ -1,42 +1,25 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 28 Jan 2015 09:09:35 +0000
-Message-ID: <20150128090935.GH14516@opensource.wolfsonmicro.com>
-References: <20150128130047.2311c637@canb.auug.org.au>
+From: Daniel Borkmann <dborkman@redhat.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 28 Jan 2015 09:39:12 +0100
+Message-ID: <54C8A030.1000906@redhat.com>
+References: <20150128120214.3307aed8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150128130047.2311c637@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:48746 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1761245AbbA1Uu2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Jan 2015 15:50:28 -0500
+In-Reply-To: <20150128120214.3307aed8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>
 
-On Wed, Jan 28, 2015 at 01:00:47PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the sound-asoc tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> sound/soc/codecs/arizona.c: In function 'arizona_out_ev':
-> sound/soc/codecs/arizona.c:738:57: error: 'struct snd_soc_dapm_widget' has no member named 'codec'
->   struct arizona_priv *priv = snd_soc_codec_get_drvdata(w->codec);
->                                                          ^
-> 
-> Caused by commit 054e1b489227 ("ASoC: arizona: Add delay for output
-> disable") interacting with commit 96da4e5b2e1d ("ASoC: Remove codec
-> field from snd_soc_dapm_widget").  It needed to be fixed up in merge
-> commit 7659e0ab1afa ("Merge remote-tracking branches
-> 'asoc/topic/ad193x', 'asoc/topic/alc5632', 'asoc/topic/arizona' and
-> 'asoc/topic/atmel' into asoc-next").
-> 
-> I have used the sound-asoc tree from next-20150127 for today.
-> -- 
+On 01/28/2015 02:02 AM, Stephen Rothwell wrote:
+...
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Very sorry guys my fault, not sure how that slipped through. Mark
-do you want an incremental fix or shall I respin the two patches
-in question?
-
-Thanks,
-Charles
+Looks good, thanks!
