@@ -1,56 +1,49 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: mmotm 2015-01-22-15-04: qemu failure due to 'mm: memcontrol:
- remove unnecessary soft limit tree node test'
-Date: Wed, 28 Jan 2015 09:03:06 -0600 (CST)
-Message-ID: <alpine.DEB.2.11.1501280900000.31753@gentwo.org>
-References: <54c1822d.RtdGfWPekQVAw8Ly%akpm@linux-foundation.org> <20150123050802.GB22751@roeck-us.net> <20150123141817.GA22926@phnom.home.cmpxchg.org> <alpine.DEB.2.11.1501230908560.15325@gentwo.org> <20150127172439.GA8623@dhcp22.suse.cz>
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20150127172439.GA8623@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Guenter Roeck <linux@roeck-us.net>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: make allyesconfig i386 build failure with next-20150122 (caused
+ by fb_agm1264k-fl driver)
+Date: Wed, 28 Jan 2015 09:36:55 -0800
+Message-ID: <20150128173655.GA7779@kroah.com>
+References: <CA+r1ZhhXF+hicy7JKo3jAbgSbO4KOLm6BwPosTKNb+E_Cb4yPQ@mail.gmail.com>
+ <20150126215959.GA9853@roeck-us.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <20150126215959.GA9853@roeck-us.net>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: devel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, isdn@linux-pingi.de, netdev <netdev@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Jim Davis <jim.epost@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 27 Jan 2015, Michal Hocko wrote:
+On Mon, Jan 26, 2015 at 01:59:59PM -0800, Guenter Roeck wrote:
+> On Thu, Jan 22, 2015 at 12:10:33PM -0700, Jim Davis wrote:
+> > make ARCH=i386 allyesconfig fails with
+> > 
+> > drivers/staging/built-in.o: In function `reset':
+> > (.text+0x2ae89d): multiple definition of `reset'
+> > drivers/isdn/built-in.o:(.text+0x185dc2): first defined here
+> > make[1]: *** [drivers/built-in.o] Error 1
+> 
+> Culprit:
+> 
+> commit b2ebd4be6fa1d2329b63531b044f9e25474981cb
+> Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Date:   Wed Dec 31 10:11:10 2014 +0100
+> 
+>     staging: fbtft: add fb_agm1264k-fl driver
+> 
+> A global function named 'reset' isn't really a good idea.
+> 
+> Not that the global function with the same name in the isdn code
+> is better ;-).
 
-> Admittedly, I was checking only SLAB allocator when reviewing and
-> assuming SLUB would behave in the same way :/
-> But maybe I have misinterpreted the slab code as well and
-> get_node(struct kmem_cache *, int node) returns non-NULL for !online
-> nodes.
-
-Oh. Just allocate from node 12345 in SLAB and you will also have a strange
-failure.
-
-> I have briefly checked the code and it seems that many users are aware
-> of this and use the same construct Johannes used in the end or they use
-> cpu_to_node. But then there are other users doing:
-> net/openvswitch/flow_table.c:
->         /* Initialize the default stat node. */
->         stats = kmem_cache_alloc_node(flow_stats_cache,
->                                       GFP_KERNEL | __GFP_ZERO, 0);
->
-> and this can blow up if Node0 is not online. I haven't checked other
-
-Node 0 is special in many architectures and is guaranteed to exist.
-PowerPC is a notable exception which causes frequent issues with NUMA
-changes.
-
-> That being said I have no problem with checking node_online in the memcg
-> code which was reported to blow up here. I am just thinking whether it
-> is safe to simply blow up like that.
-
-Node numbers must be legitimate in order to be used. Same thing with
-processor numbers. We cannot always check if they are online. The numbers
-in use must be sane. We have notifier subsystems that do callbacks to
-allow subsystems to add and remove new nodes and processors. Those should
-be used to ensure that only legitimate node and processor numbers are
-used.
-
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+It's been fixed in my tree for a while now :)
