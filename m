@@ -1,49 +1,46 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: make allyesconfig i386 build failure with next-20150122 (caused
- by fb_agm1264k-fl driver)
-Date: Wed, 28 Jan 2015 09:36:55 -0800
-Message-ID: <20150128173655.GA7779@kroah.com>
-References: <CA+r1ZhhXF+hicy7JKo3jAbgSbO4KOLm6BwPosTKNb+E_Cb4yPQ@mail.gmail.com>
- <20150126215959.GA9853@roeck-us.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2015-01-27-16-19 uploaded (smack)
+Date: Wed, 28 Jan 2015 10:07:53 -0800
+Message-ID: <54C92579.4090001@infradead.org>
+References: <54c82b3b.HD9c5l1koPm4DGUG%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <20150126215959.GA9853@roeck-us.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: devel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, isdn@linux-pingi.de, netdev <netdev@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Jim Davis <jim.epost@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54c82b3b.HD9c5l1koPm4DGUG%akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Casey Schaufler <casey@schaufler-ca.com>, linux-security-module <linux-security-module@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 26, 2015 at 01:59:59PM -0800, Guenter Roeck wrote:
-> On Thu, Jan 22, 2015 at 12:10:33PM -0700, Jim Davis wrote:
-> > make ARCH=i386 allyesconfig fails with
-> > 
-> > drivers/staging/built-in.o: In function `reset':
-> > (.text+0x2ae89d): multiple definition of `reset'
-> > drivers/isdn/built-in.o:(.text+0x185dc2): first defined here
-> > make[1]: *** [drivers/built-in.o] Error 1
+On 01/27/15 16:20, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2015-01-27-16-19 has been uploaded to
 > 
-> Culprit:
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
-> commit b2ebd4be6fa1d2329b63531b044f9e25474981cb
-> Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Date:   Wed Dec 31 10:11:10 2014 +0100
+> mmotm-readme.txt says
 > 
->     staging: fbtft: add fb_agm1264k-fl driver
+> README for mm-of-the-moment:
 > 
-> A global function named 'reset' isn't really a good idea.
+> http://www.ozlabs.org/~akpm/mmotm/
 > 
-> Not that the global function with the same name in the isdn code
-> is better ;-).
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 
-It's been fixed in my tree for a while now :)
+(from linux-next)
+
+on i386:
+CONFIG_NETWORK_SECMARK is not enabled.
+CONFIG_SECURITY_SMACK_NETFILTER is not enabled.
+
+../security/smack/smack_netfilter.c: In function 'smack_ipv4_output':
+../security/smack/smack_netfilter.c:55:6: error: 'struct sk_buff' has no member named 'secmark'
+   skb->secmark = skp->smk_secid;
+      ^
+
+Error in security/smack/Makefile:
+
+smack-$(CONFIG_NETFILTER) += smack_netfilter.o
+
+
+-- 
+~Randy
