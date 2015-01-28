@@ -1,46 +1,48 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2015-01-27-16-19 uploaded (smack)
-Date: Wed, 28 Jan 2015 10:07:53 -0800
-Message-ID: <54C92579.4090001@infradead.org>
-References: <54c82b3b.HD9c5l1koPm4DGUG%akpm@linux-foundation.org>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 28 Jan 2015 09:50:40 +0000
+Message-ID: <20150128095040.GI14516@opensource.wolfsonmicro.com>
+References: <20150128130047.2311c637@canb.auug.org.au> <20150128090935.GH14516@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54c82b3b.HD9c5l1koPm4DGUG%akpm@linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <20150128090935.GH14516@opensource.wolfsonmicro.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Casey Schaufler <casey@schaufler-ca.com>, linux-security-module <linux-security-module@vger.kernel.org>
+To: broonie@kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 List-Id: linux-next.vger.kernel.org
 
-On 01/27/15 16:20, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2015-01-27-16-19 has been uploaded to
+On Wed, Jan 28, 2015 at 09:09:35AM +0000, Charles Keepax wrote:
+> On Wed, Jan 28, 2015 at 01:00:47PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the sound-asoc tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> > 
+> > sound/soc/codecs/arizona.c: In function 'arizona_out_ev':
+> > sound/soc/codecs/arizona.c:738:57: error: 'struct snd_soc_dapm_widget' has no member named 'codec'
+> >   struct arizona_priv *priv = snd_soc_codec_get_drvdata(w->codec);
+> >                                                          ^
+> > 
+> > Caused by commit 054e1b489227 ("ASoC: arizona: Add delay for output
+> > disable") interacting with commit 96da4e5b2e1d ("ASoC: Remove codec
+> > field from snd_soc_dapm_widget").  It needed to be fixed up in merge
+> > commit 7659e0ab1afa ("Merge remote-tracking branches
+> > 'asoc/topic/ad193x', 'asoc/topic/alc5632', 'asoc/topic/arizona' and
+> > 'asoc/topic/atmel' into asoc-next").
+> > 
+> > I have used the sound-asoc tree from next-20150127 for today.
+> > -- 
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+> Very sorry guys my fault, not sure how that slipped through. Mark
+> do you want an incremental fix or shall I respin the two patches
+> in question?
 
-(from linux-next)
+Ah... ok I think I just timed my patch very badly in relation to
+Lar's changes and it was building here so I failed to notice the
+error. I see you have fixed it in the merge are you happy to go
+with that solution?
 
-on i386:
-CONFIG_NETWORK_SECMARK is not enabled.
-CONFIG_SECURITY_SMACK_NETFILTER is not enabled.
-
-../security/smack/smack_netfilter.c: In function 'smack_ipv4_output':
-../security/smack/smack_netfilter.c:55:6: error: 'struct sk_buff' has no member named 'secmark'
-   skb->secmark = skp->smk_secid;
-      ^
-
-Error in security/smack/Makefile:
-
-smack-$(CONFIG_NETFILTER) += smack_netfilter.o
-
-
--- 
-~Randy
+Thanks,
+Charles
