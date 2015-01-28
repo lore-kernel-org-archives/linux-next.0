@@ -1,78 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 28 Jan 2015 12:02:14 +1100
-Message-ID: <20150128120214.3307aed8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 28 Jan 2015 13:00:47 +1100
+Message-ID: <20150128130047.2311c637@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/v5QETUCmRZ_IMpURaH4AOKB"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41156 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932361AbbA1BCU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Jan 2015 20:02:20 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, Daniel Borkmann <dborkman@redhat.com>
+ boundary="Sig_/kx.AJGkjc9l5UT4eVH9FeYJ"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Lars-Peter Clausen <lars@metafoo.de>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/v5QETUCmRZ_IMpURaH4AOKB
+--Sig_/kx.AJGkjc9l5UT4eVH9FeYJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/sched/cls_bpf.c between commit 7913ecf69e24 ("net: cls_bpf: fix
-size mismatch on filter preparation") from the net tree and commit
-33e9fcc666e2 ("tc: cls_bpf: rename bpf_len to bpf_num_ops") from the
-net-next tree.
+After merging the sound-asoc tree, today's linux-next build (x86_64 allmodc=
+onfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+sound/soc/codecs/arizona.c: In function 'arizona_out_ev':
+sound/soc/codecs/arizona.c:738:57: error: 'struct snd_soc_dapm_widget' has =
+no member named 'codec'
+  struct arizona_priv *priv =3D snd_soc_codec_get_drvdata(w->codec);
+                                                         ^
 
+Caused by commit 054e1b489227 ("ASoC: arizona: Add delay for output
+disable") interacting with commit 96da4e5b2e1d ("ASoC: Remove codec
+field from snd_soc_dapm_widget").  It needed to be fixed up in merge
+commit 7659e0ab1afa ("Merge remote-tracking branches
+'asoc/topic/ad193x', 'asoc/topic/alc5632', 'asoc/topic/arizona' and
+'asoc/topic/atmel' into asoc-next").
+
+I have used the sound-asoc tree from next-20150127 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/sched/cls_bpf.c
-index f59adf8a4cd7,1029923f9e86..000000000000
---- a/net/sched/cls_bpf.c
-+++ b/net/sched/cls_bpf.c
-@@@ -179,12 -179,7 +179,12 @@@ static int cls_bpf_modify_existing(stru
-  		goto errout;
-  	}
- =20
-- 	bpf_size =3D bpf_len * sizeof(*bpf_ops);
-+ 	bpf_size =3D bpf_num_ops * sizeof(*bpf_ops);
- +	if (bpf_size !=3D nla_len(tb[TCA_BPF_OPS])) {
- +		ret =3D -EINVAL;
- +		goto errout;
- +	}
- +
-  	bpf_ops =3D kzalloc(bpf_size, GFP_KERNEL);
-  	if (bpf_ops =3D=3D NULL) {
-  		ret =3D -ENOMEM;
-
---Sig_/v5QETUCmRZ_IMpURaH4AOKB
+--Sig_/kx.AJGkjc9l5UT4eVH9FeYJ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUyDUbAAoJEMDTa8Ir7ZwVuRAP/ie41nenjL9DDo2tInUFgOUo
-JHndd8fflr3OD8YYxe/n6gmH3e2OvD6x+aSddf1eIinEOQBUxn6e6KgubJkACBol
-N1Ngqe/3UW0lg3I5RiXa8bW1JHgZ1P6kRcpzcZewQLKVRFlE61Xtu3ZvViRJfTGM
-q6EX3MiW8Ix8EeLQrguwT+ZzkzzD+h9Sh1UJ0COK89y77rYEa7/D3o7wehkn8ske
-10EaORLlQ5S9xsUyeUmZs4sB5IRokCYobsnXnOmBpyTLutwvAxIlO5jPDXk/LH+T
-az9/7cOGfrPvgRNNU5QF34IP2ra6iVroqAsi4xEDOxR+QqHpDU87NRSAoZfWZKIq
-338wyepUn7GDeB4VBjdOHpcBYvuKnFiO9+sggV+zQgFq6X+hmmROaqH6m4iMbhsw
-U2o+5BJOXuIxXzEmYmgD/CN+dnJBGbSvX8QgC1NA9hzs814d86MZstYyHoAkxKET
-PybimCeF11GkGvQtvcNEfgXZb8NiKMBgeHCJYNp/5ioBf59+yUGXvJ6ZdN3VzoLd
-oaj2Fkoyg1jj1XTK0v7QeUKDNItfhr61Z5XJWW/D1g9yvnJxFbqjc0M7VSMEEFkB
-eQirXrF5wE701c1LQFxBbJ1vK7BPaqy1arSvg16yM45yDOlI0DHyed3I+OoiHCF+
-WO2DkQXuuD/luwVmbhtX
-=6kyK
+iQIcBAEBCAAGBQJUyELUAAoJEMDTa8Ir7ZwVo0sP/3b/fQHKfHz96XtZ07/hS+Dg
+kK41FWo0oJeOb2vCH9A85aP7JmXVWtF/kx8W0w0JlsEs60jZB9QmqfVMXOL1FYOy
+IRrVRcKQnFdrV4soXFieD65sH56GhQuZFejQZp9E2ERPAy0dvr2tTimHVO8u9+XR
+MC5s5Gvs6KLOFBrd0AnVgbddQwGnknfqhFrWLZM506pn6s13MxJqaGdLpd5F7/Ao
+UaHh1DTwRGQY1i4f9GcEnnYLZZrkDubDx+7XV2bsfAi4O4TFF+JeEryaJBD5t58m
+kEHGrYxQMSoh1mBceGV1iyPg2I4prUNDO71pRkxqysoDcLmDYWE5lmyeex3S/9Bj
+uo22bBtrVBxj7OT40vY84kwot936ytLiguIllTDX546cWGPzG1uyQKWYXCsqiTwU
+DEqFqdHIoK13U1XmFc3tXLrwjd6ge29slSL0cPorY4ECO3eJMa2LFsDEDLGhTbSz
+wmXycTuS/gq+vzPxadX9b9BEQSdu8OmOtThglKqVDys3ewnM8xMKd0ZmlzmBRUh1
+E6jIUCAftI1z8gHb3VNZ7ynaVGi73VCJsglZMlLlyHXXjWwy8E9sW3mASq3PMLqf
+nCa6iQqk5+MrJbdJHgK+gfYaJcw5Ft6InZhG2zDQ/ZB+IkMweTIQgZQio9oTXAtC
+zR0lseYbeHAVEavbKVAo
+=usAh
 -----END PGP SIGNATURE-----
 
---Sig_/v5QETUCmRZ_IMpURaH4AOKB--
+--Sig_/kx.AJGkjc9l5UT4eVH9FeYJ--
