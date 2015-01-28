@@ -1,78 +1,61 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: Re: Fwd: linux-next: manual merge of the luto-misc tree with the tip tree
-Date: Tue, 27 Jan 2015 15:54:19 -0800
-Message-ID: <CALCETrWBELO_ou7PH0axx7c9qmrWoJRdZdzCRL0__6TBYaJbaQ@mail.gmail.com>
-References: <20150119170839.2c6b4b78@canb.auug.org.au> <20150119093501.GA4644@pd.tnic>
- <CALCETrW05f9nty5Sk8XA2DTsocqqOxp62aT9QXwta74Km+ZOng@mail.gmail.com>
- <20150121053410.GA15291@gmail.com> <CALCETrXCenu4UexZfV6HTq898JbXmZGU5KaCWCXrz7oikrA34g@mail.gmail.com>
- <20150121055532.GA15518@gmail.com> <CALCETrVKEZz+NFiqxrgQhqhDZ6dPLSr32RiBoZZmFk5ZydEL1w@mail.gmail.com>
- <20150121061642.GD15963@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with the mips tree
+Date: Wed, 28 Jan 2015 11:10:55 +1100
+Message-ID: <20150128111055.41091d7e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cWUmR9g2AYdMXeDOdb3TzP1"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:50199 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754108AbbA0Xyl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Jan 2015 18:54:41 -0500
-Received: by mail-la0-f43.google.com with SMTP id q1so16210195lam.2
-        for <linux-next@vger.kernel.org>; Tue, 27 Jan 2015 15:54:39 -0800 (PST)
-In-Reply-To: <20150121061642.GD15963@gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:47904 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758735AbbA1ALD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Jan 2015 19:11:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bjorn Helgaas <bhelgaas@google.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 
-On Tue, Jan 20, 2015 at 10:16 PM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Andy Lutomirski <luto@amacapital.net> wrote:
->
->> On Tue, Jan 20, 2015 at 9:55 PM, Ingo Molnar <mingo@kernel.org> wrote:
->> >
->> > * Andy Lutomirski <luto@amacapital.net> wrote:
->> >
->> >> On Tue, Jan 20, 2015 at 9:34 PM, Ingo Molnar <mingo@kernel.org> wrote:
->> >> >
->> >> > * Andy Lutomirski <luto@amacapital.net> wrote:
->> >> >
->> >> >> Hi Ingo and Thomas-
->> >> >>
->> >> >> There's a trivial conflict in the pull request I sent last week.
->> >> >
->> >> > This is your x86 entry code rework pull request, right? The -tip
->> >> > tree now has the RCU commit it depends on, so could you please
->> >> > rebase it on top of tip:core/rcu so I can pull it? I'll resolve
->> >> > any remaining conflicts with the rest of -tip.
->> >> >
->> >>
->> >> Sure, I can do that in the morning.  The pull request merges cleanly
->> >> with tip:core/rcu, though, so is the rebase needed?
->> >
->> > Yes, because your changes rely on the RCU change (semantically),
->> > so if anyone bisects into your commits it might result in a
->> > subtly broken kernel, right?
->>
->> Almost.  The parent of my original pull request is the RCU
->> change that my entry changes semantically depend on, so
->> bisection should be fine.
->
-> Okay, that's good - so now I can pull your bits, because the RCU
-> commit is final, no need to rebase. (Because you already based
-> your bits on the RCU change that later on ended up in -tip.)
->
+--Sig_/cWUmR9g2AYdMXeDOdb3TzP1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Are you planning on pulling that version?  In the mean time, I removed
-it from -next so that there won't be a pointless conflict depending on
-which version you pull.
+Hi Bjorn,
 
-Thanks,
-Andy
+Today's linux-next merge of the pci tree got conflicts in
+arch/mips/pci/pci-bcm1480.c, arch/mips/pci/pci-octeon.c and
+arch/mips/pci/pcie-octeon.c between commit 7b09777c187d ("MIPS: Add
+struct pci_ops member names to initialization") from the mips tree and
+commit ab1d7f9646fe ("MIPS: PCI: Add struct pci_ops member names to
+initialization") from the pci tree.
 
-> Thanks,
->
->         Ingo
+I fixed it up (same patch, different white space - I used the ones from
+the mips tree) and can carry the fix as necessary (no action is
+required).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Sig_/cWUmR9g2AYdMXeDOdb3TzP1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-Andy Lutomirski
-AMA Capital Management, LLC
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUyCkUAAoJEMDTa8Ir7ZwVGiQP/i97LjqxWnA46OWXyBKirc/v
+4vQUw3ms4jEMVkLpysxrtGOWSap5AB5HOAC6GCArY19BgjgAKy3fzRCn95I6n1Mw
+zebGz+JtAnF2kHx2dsugeHGxMVf6Hq5HTc1QZ+XlLAwqY1051DtIPTMOXMx0sPrl
+Jfz5Ko3GHHFDvjcPjelSOXLxW0OwKYLvpx417wO29r49FgopG+gzWkdCWvFKxf1n
+Jrwi1xac0FEQ2PeBQ13bXqzQJJMr5pgMAsrmX72jYajjZbHQuQpE7tHVhwBnJwiZ
+LoIMFjnnzzBK8DXG2gWuBezNRdSdT9XoQm8CH8SO3ugET/BKK4Dfk7b8yzTjeFbq
+djwPFG9H4z7qgp3E87W/a/yxlZva4w7j2se+M5tE+vHYVDcDF5mh71v33T6M0tbF
+YsbI9V44i0WklNLdDlSFoFNN6yQuHWys6xMK4WrdgKzfxII8j94xVsas2qg48fK/
+7qvls+dfkDok62lHM7STAyZj9CcWtqlObRSMWvIizJwdf/vCTnzBqpb+dMoW1vNf
+5Jpl8x2x7QEMM2lmGKleBHfRrZGQVizZir+2OImUkGQ3FpoYD9tfYn1ChQb6CQd2
+rU2WTJWUHzaBl+X1L6Ily+avCz88LHUpMboEUoXYfuEq+c/ooIW4SpBYVdjWkygV
+AQVwMZ7X0TeYG+qx8EBH
+=QTbX
+-----END PGP SIGNATURE-----
+
+--Sig_/cWUmR9g2AYdMXeDOdb3TzP1--
