@@ -1,56 +1,79 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: randconfig build error with next-20150127, in
- drivers/i2c/busses/i2c-designware-baytrail.c
-Date: Wed, 28 Jan 2015 07:59:29 +0100
-Message-ID: <20150128065929.GA1086@katana>
-References: <CA+r1ZhisCd7+LJ0gm-NLPJ+UE-FEuEWFQqDqcy7KPp2tD_bveA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the xen-tip
+ tree
+Date: Thu, 29 Jan 2015 18:28:55 +1100
+Message-ID: <20150129182855.58f0cf82@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:37899 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752340AbbA2Gem (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Jan 2015 01:34:42 -0500
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhisCd7+LJ0gm-NLPJ+UE-FEuEWFQqDqcy7KPp2tD_bveA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, david.e.box@linux.intel.com, linux-i2c@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Xp=KsYPkgH.R_e7otOCxb2E"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
+--Sig_/Xp=KsYPkgH.R_e7otOCxb2E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Andrew,
 
-On Tue, Jan 27, 2015 at 04:41:44PM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
+Today's linux-next merge of the akpm-current tree got a conflict in
+include/linux/mm.h between commit 667a0a06c99d ("mm: provide a
+find_special_page vma operation") from the xen-tip tree and commit
+cfd00f5aa195 ("mm: drop vm_ops->remap_pages and
+generic_file_remap_pages() stub") from the akpm-current tree.
 
-A proper Kconfig dependency fix has already been added and is in
-linux-next as of today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --cc include/linux/mm.h
+index 9269af7349fe,b5e28731a293..000000000000
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@@ -287,17 -284,6 +284,14 @@@ struct vm_operations_struct=20
+  	struct mempolicy *(*get_policy)(struct vm_area_struct *vma,
+  					unsigned long addr);
+  #endif
+- 	/* called by sys_remap_file_pages() to populate non-linear mapping */
+- 	int (*remap_pages)(struct vm_area_struct *vma, unsigned long addr,
+- 			   unsigned long size, pgoff_t pgoff);
+ +
+ +	/*
+ +	 * Called by vm_normal_page() for special PTEs to find the
+ +	 * page for @addr.  This is useful if the default behavior
+ +	 * (using pte_page()) would not find the correct page.
+ +	 */
+ +	struct page *(*find_special_page)(struct vm_area_struct *vma,
+ +					  unsigned long addr);
+  };
+ =20
+  struct mmu_gather;
+
+--Sig_/Xp=KsYPkgH.R_e7otOCxb2E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUyIjRAAoJEBQN5MwUoCm2QlYP/0zO854F6omGBspWgmMoMN4d
-6lZmyiBqOxwhLlSIrcDJqbWVvxVaGXcMhJL2OppeH0y7AZQrXHFtTWWLPqPDS4qG
-JdRHhQj7DaoA28rZ1/09TRcdK9UHGPJvA93Qy0gxOaAnpHRnaKR6HZXIRtvkY1PS
-0gDSixw1Ib5dwgtJFNzSRcc00RdmpuXefvtFTCJ/0ogvtovDXBSKQQ5jlEyq2GZj
-KQDXVmZiKvOseSKvPnNmjBmCGxaId1QchrAnpWTnUq3K/5mmBa+mF0gQLyFQBrKX
-64Y724mgW+4grWyzlbuM7y64ZWh8HOUQLeppcV6/x/ukqpscZcdFvI0CWhDhurA0
-D8SAjsMNCiBn4ui2Her72NsFg+Iwi10lVj+ceseXBZ5aBs9gZNuHG4jbaOdtU2WQ
-0OI7iV/+ikHy5cjiAb0yQKRrSfgfZCns9SOKwMHWDaFKzj+xBdNWUGZh+rvFt+Au
-ns2kvAgNZubbzxhpWW/AA7zAauCpjrvDgo/8K8Ext3N9/VG9Zaet/jpg9CNM7N82
-bvjqWlpV3BIe8dO9YB8pT4oYJxRYggxA7cyOas5/VmNwFmW3vI3L0au/oUAhXwQc
-s28cGzjPQ61hHPOBqYQ4ipz1afQ9SFhZiYJjxHvakiwEKTnBmbkPHnurdmumPSJT
-U94XVQ+DUoLiwvADP8WM
-=lF3S
+iQIcBAEBCAAGBQJUyeE8AAoJEMDTa8Ir7ZwVpjkQAIRMfYiVQQumAbbBBA5q6nJE
+BLMif5shURtsjLtt+JTn7rvLWEzCoTlLzKRocTG9h19oEj3IFrLD84tthB9LP1RQ
+H0IFLdFX5IZzCNU4nWiuhOPNv4zEGWkCnYJeY8MvCn7omEbJc6H+BnFfjr6ztnkJ
+IPPsL2YnU6HghUAfzxk20ZhqyVcny7lgPqgyzhGGh2wexsy8CjDbnAoYfYP7S7rq
+Dzj6aEJ+B+RNMqVz/JMgxgx7JbmykwBpM3MJ1+DOUsd1f7SwCbsWz7PsY8+ctpib
+xYlfE3WkVObwH6WOSOn5UV6+anwLDh/zuFwA2lZwP/2usexfBmwqsh8MqXFEKhTB
+LTYnRMezO60XhfYtpy7GtHMMKELVwLfBYL1LAPPySkdMkRSUDGjAk50w4opdtzUT
+3/opEFZ5uJFEdbnfmd6JogYj8/KwWgJNioaZZXisSGiemPRnzVzKQDkGImxx8dm9
+7eFdfnZ/OiD8FzZKzmjA1v5mMb3Y68vVEGq58zjvgx4pi2sOQY5+4fhCurQsCGwk
+L1uisHshbC2Nur81BRjmFyW+Fy88waGPf2ve8Udj/TXMo5O6uGqLEh+oUHrpYfkK
+zrJ5eA31tcLwTADh7lihrDKbzGSIGIZGxAAr0AZuwn6/6Jh4Etr9vSeggmtY2Rag
+xMac42c95udxVVKoRMlb
+=Qf9W
 -----END PGP SIGNATURE-----
 
---uAKRQypu60I7Lcqm--
+--Sig_/Xp=KsYPkgH.R_e7otOCxb2E--
