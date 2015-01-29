@@ -1,55 +1,152 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 28 Jan 2015 11:06:32 +0000
-Message-ID: <20150128110632.GR21293@sirena.org.uk>
-References: <20150128130047.2311c637@canb.auug.org.au>
- <20150128090935.GH14516@opensource.wolfsonmicro.com>
- <20150128095040.GI14516@opensource.wolfsonmicro.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Thu, 29 Jan 2015 13:17:18 +1100
+Message-ID: <20150129131718.645dbb99@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="79RLYUToM/4jl2vV"
+ boundary="Sig_/S9vo1trcbAYX6d7HJA79wce"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150128095040.GI14516@opensource.wolfsonmicro.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oded Gabbay <oded.gabbay@amd.com>, Ben Goz <ben.goz@amd.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/S9vo1trcbAYX6d7HJA79wce
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---79RLYUToM/4jl2vV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Dave,
 
-On Wed, Jan 28, 2015 at 09:50:40AM +0000, Charles Keepax wrote:
-> On Wed, Jan 28, 2015 at 09:09:35AM +0000, Charles Keepax wrote:
+Today's linux-next merge of the drm tree got conflicts in
+drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c and
+drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h between commits
+b8cbab042cd6 ("drm/amdkfd: Allow user to limit only queues per device")
+and 9fa843e76d90 ("drm/amdkfd: Fix bug in call to init_pipelines()")
+from Linus' tree and commits bcea30817574 ("drm/amdkfd: Add SDMA
+user-mode queues support to QCM") and fe502804205e ("drm/amdkfd: Remove
+call to deprecated init_memory interface") from the drm tree.
 
-> > Very sorry guys my fault, not sure how that slipped through. Mark
-> > do you want an incremental fix or shall I respin the two patches
-> > in question?
+I fixed it up (hopefully - see below) and can carry the fix as
+necessary (no action is required).
 
-> Ah... ok I think I just timed my patch very badly in relation to
-> Lar's changes and it was building here so I failed to notice the
-> error. I see you have fixed it in the merge are you happy to go
-> with that solution?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-It should be fixed for tomorrow I think - the zero day tester was quite
-slow for some reason.
+diff --cc drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+index 0d8694f015c1,b189f9791c90..000000000000
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+@@@ -213,15 -161,8 +168,18 @@@ static int create_queue_nocpsch(struct=20
+ =20
+  	list_add(&q->list, &qpd->queues_list);
+  	dqm->queue_count++;
+ +
+ +	/*
+ +	 * Unconditionally increment this counter, regardless of the queue's
+ +	 * type or whether the queue is active.
+ +	 */
+ +	dqm->total_queue_count++;
+ +	pr_debug("Total of %d queues are accountable so far\n",
+ +			dqm->total_queue_count);
+ +
+++
++ 	if (q->properties.type =3D=3D KFD_QUEUE_TYPE_SDMA)
++ 		dqm->sdma_queue_count++;
+  	mutex_unlock(&dqm->lock);
+  	return 0;
+  }
+@@@ -588,11 -488,7 +518,7 @@@ static int init_scheduler(struct device
+ =20
+  	pr_debug("kfd: In %s\n", __func__);
+ =20
+ -	retval =3D init_pipelines(dqm, get_pipes_num(dqm), KFD_DQM_FIRST_PIPE);
+ +	retval =3D init_pipelines(dqm, get_pipes_num(dqm), get_first_pipe(dqm));
+- 	if (retval !=3D 0)
+- 		return retval;
+-=20
+- 	retval =3D init_memory(dqm);
+ =20
+  	return retval;
+  }
+@@@ -843,14 -793,12 +845,19 @@@ static int create_queue_cpsch(struct de
+ =20
+  	mutex_lock(&dqm->lock);
+ =20
+ +	if (dqm->total_queue_count >=3D max_num_of_queues_per_device) {
+ +		pr_warn("amdkfd: Can't create new usermode queue because %d queues were=
+ already created\n",
+ +				dqm->total_queue_count);
+ +		retval =3D -EPERM;
+ +		goto out;
+ +	}
+ +
+- 	mqd =3D dqm->get_mqd_manager(dqm, KFD_MQD_TYPE_CIK_CP);
++ 	if (q->properties.type =3D=3D KFD_QUEUE_TYPE_SDMA)
++ 		select_sdma_engine_id(q);
++=20
++ 	mqd =3D dqm->ops.get_mqd_manager(dqm,
++ 			get_mqd_type_from_queue_type(q->properties.type));
++=20
+  	if (mqd =3D=3D NULL) {
+  		mutex_unlock(&dqm->lock);
+  		return -ENOMEM;
+@@@ -867,15 -815,9 +874,18 @@@
+  		retval =3D execute_queues_cpsch(dqm, false);
+  	}
+ =20
+ +	/*
+ +	 * Unconditionally increment this counter, regardless of the queue's
+ +	 * type or whether the queue is active.
+ +	 */
+ +	dqm->total_queue_count++;
+ +
+ +	pr_debug("Total of %d queues are accountable so far\n",
+ +			dqm->total_queue_count);
+ +
++ 	if (q->properties.type =3D=3D KFD_QUEUE_TYPE_SDMA)
++ 			dqm->sdma_queue_count++;
++=20
+  out:
+  	mutex_unlock(&dqm->lock);
+  	return retval;
+diff --cc drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
+index 52035bf0c1cb,e7b17b28330e..000000000000
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
+@@@ -130,9 -143,10 +143,11 @@@ struct device_queue_manager=20
+  	struct list_head	queues;
+  	unsigned int		processes_count;
+  	unsigned int		queue_count;
+ +	unsigned int		total_queue_count;
++ 	unsigned int		sdma_queue_count;
+  	unsigned int		next_pipe_to_allocate;
+  	unsigned int		*allocated_queues;
++ 	unsigned int		sdma_bitmap;
+  	unsigned int		vmid_bitmap;
+  	uint64_t		pipelines_addr;
+  	struct kfd_mem_obj	*pipeline_mem;
 
---79RLYUToM/4jl2vV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/S9vo1trcbAYX6d7HJA79wce
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJUyMK3AAoJECTWi3JdVIfQTtwH+wesOWVOVHHRceeFmLExpWv+
-5wGu9zwonNJ0CaTfWNSrs8MwV+7o4qa/sQWYThJuJAg4XS6VtvtMiVyuPsvymRRO
-fJGvJph49n63VNm0WKLHWNRwAThLZU9rQldGdQPWNqs/v2bCbaseqpa10AsNEiZN
-eX3N8cXH5uuWlvXGOVgmiKY7S+uahbjY0mXFYdytpAqtto+v2oMVHYk3w8rS1OhF
-EdUuzVhsWaUxVL2yDsKf1wwI8Fea5ilNYRYRyAjXtj/1IreMq/9P9mdgthDPHSrz
-jD7NkK/Kr2N4CMRSqLe6RZl0De52jofGf1NFALJlAZbPepbZvbQN0/27psfj/Hs=
-=ozMb
+iQIcBAEBCAAGBQJUyZgzAAoJEMDTa8Ir7ZwVhBYQAJdBgmBOL70vAc1YStor/Kfz
+hG/9aXR1jOnEi73yzVgBrOp685QY1dN7dQAkliRc64KCGLcE4NXXHqRzUsKgXEqz
+OYomOt1OILOw9c2PFchTVMZ6rJRDb29T4SSzzH2RWruX2+awYTF+IU2RfYNtoeV9
+vbXmDPuMxWITYQ+xuDfhnU/+bjYP0NBfW1EQ7tFUi/+0BLDx27yIXeEshgHL5q2l
+NTvQ0DYKoVKwtKsGInoRXYl34bGFvmAbEP9dLOIKZYsb7/UKO5+73WRsTKlIz2BP
+ZASUhH7hFtDw1XQegTTTl3Gm5I8fWAp9tmDsyb5g6fu3KPF5CE1KOKbiQNcUQO8N
+TcCVVRa5AwHmyrSjyFytw+g5fxka2X40EqTPG0lhhE6NY/gpVJUN9pS/P5N6YNPV
+H56yQQq+HUvpGTamnjNJSKiNUrsxyfhRa9b17i4s2II8nDVa9qCPmL2i5KrJqZWU
+i6veNEvao9N6qZSy9abz34IBaFUjw46J+k9H9mhkPVCcFZDhYkbRGWzUCCbXHji1
+gGbgSTsydkV3pUtJ3831Rboj0pU8UDN+mgL6KQX3J/K5nUlNg5leSVAhsZJmkIu+
+uFy2YCxHr3mTK41rOB/qsWDPi9UQJvg8kBF0MiICo/7wUktJ56qxpN7JIdT6EclM
+4+hX7LtNndB897bCTKKK
+=xNR8
 -----END PGP SIGNATURE-----
 
---79RLYUToM/4jl2vV--
+--Sig_/S9vo1trcbAYX6d7HJA79wce--
