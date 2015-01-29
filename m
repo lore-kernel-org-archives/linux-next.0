@@ -1,60 +1,83 @@
-From: Alban Browaeys <alban.browaeys@gmail.com>
-Subject: [PATCH] exynos/drm: fix no hdmi output
-Date: Thu, 29 Jan 2015 22:18:40 +0100
-Message-ID: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, Alban Browaeys <prahal@yahoo.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Fri, 30 Jan 2015 09:55:33 +1100
+Message-ID: <20150130095533.315d3831@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ivQ+xvIpLsd0XHnpznD9Omo"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>, Baruch Siach <baruch@tkos.co.il>
 List-Id: linux-next.vger.kernel.org
 
-The hdmi outputs black screen only even though under the hood Xorg and
-framebuffer console  are fine : devices found and initialized, but
-not a pixel out.
+--Sig_/ivQ+xvIpLsd0XHnpznD9Omo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Commit 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
-changed the call order of mixer_initialize with regards to
- exynos_drm_crtc_create.
+Hi all,
 
-This changes breaks hdmi out on Odroid U2 (linux-next with added
- Marek Szyprowski v4 hdmi patchset from linux-samsung-soc ML).
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/Kconfig.debug between commit 4d31e6641295 ("ARM: 8272/1: netx:
+Migrate DEBUG_LL macros to shared directory") from the  tree and
+commits 01ea63d99397 ("ARM: sirf: add two debug ports for CSRatlas7
+SoC") and e23814da8262 ("ARM: digicolor: add low level debug support")
+from the arm-soc tree.
 
-Restore the previous call ordering get hdmi to ouput proper pixels:
-ie call mixer_initialize first then exynos_drm_crtc_create.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Fixes: 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
-Signed-off-by: Alban Browaeys <prahal@yahoo.com>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index d8fd8e1..188f90f 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1258,18 +1258,19 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
- 	struct drm_device *drm_dev = data;
- 	int ret;
- 
-+	ret = mixer_initialize(ctx, drm_dev);
-+	if (ret)
-+		return ret;
-+
- 	ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
- 				     EXYNOS_DISPLAY_TYPE_HDMI,
- 				     &mixer_crtc_ops, ctx);
- 	if (IS_ERR(ctx->crtc)) {
-+		mixer_ctx_remove(ctx);
- 		ret = PTR_ERR(ctx->crtc);
- 		goto free_ctx;
- 	}
- 
--	ret = mixer_initialize(ctx, drm_dev);
--	if (ret)
--		goto free_ctx;
--
- 	return 0;
- 
- free_ctx:
--- 
-2.1.4
+diff --cc arch/arm/Kconfig.debug
+index a324ecdfeb21,b6a073de1559..000000000000
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@@ -1448,17 -1461,15 +1517,19 @@@ config DEBUG_UART_VIR
+  	default 0xfef00000 if ARCH_IXP4XX && !CPU_BIG_ENDIAN
+  	default 0xfef00003 if ARCH_IXP4XX && CPU_BIG_ENDIAN
+  	default 0xfef36000 if DEBUG_HIGHBANK_UART
+ +	default 0xfefb0000 if DEBUG_OMAP1UART1 || DEBUG_OMAP7XXUART1
+ +	default 0xfefb0800 if DEBUG_OMAP1UART2 || DEBUG_OMAP7XXUART2
+ +	default 0xfefb9800 if DEBUG_OMAP1UART3 || DEBUG_OMAP7XXUART3
+  	default 0xfefff700 if ARCH_IOP33X
+  	default 0xff003000 if DEBUG_U300_UART
++ 	default 0xffd01000 if DEBUG_HIP01_UART
+  	default DEBUG_UART_PHYS if !MMU
+  	depends on DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
+  		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_MESON_UARTAO || \
+ -		DEBUG_MSM_UART || DEBUG_QCOM_UARTDM || DEBUG_S3C24XX_UART || \
+ +		DEBUG_MSM_UART || DEBUG_NETX_UART || \
+ +		DEBUG_QCOM_UARTDM || DEBUG_S3C24XX_UART || \
+- 		DEBUG_UART_BCM63XX || DEBUG_ASM9260_UART
++ 		DEBUG_UART_BCM63XX || DEBUG_ASM9260_UART || \
++ 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0
+ =20
+  config DEBUG_UART_8250_SHIFT
+  	int "Register offset shift for the 8250 debug UART"
+
+--Sig_/ivQ+xvIpLsd0XHnpznD9Omo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUyrpqAAoJEMDTa8Ir7ZwVUT0P/382HvO7xIBJo5TjhVWeBjN8
+XyMy3K5AserhiwfRYADKKN8lDUTDv0ZgAln9Y9BqwGU5nS4mGFXTut+2iUksQuPs
+pwkDoE72/WM2u4PH7Gj2YhVIMbUrjHaWl6I5sDK67LrF7xI4j1t9znEaOyUSFSKC
+U1bAELG6aeOHdNflu/428FBgwpqicLF/oBkGqptIIFfC/I86KVIpZnrCh2OG0rt9
+E8Pac128JZTFY53AfRtGfiOfL6E7FJhHvdHQ6l0VBw4ZhAGSQMq/IrbyhEEwFgxm
+s1Bkef6DNv7KagRFwvaPBzhU1pqhSg7bYAaTLrMVecM1jRnAilhmjWx3eIGmjCxj
+G8EYV2UydGFa9hj5acVNUh3stSACNMcDT/qeCskcByHvniaqKJkwSFrumuVtb0Sy
+W+ANEtlzH5WwrhgzoDFNLXZ+pQVKQJUXR/u64vAnALV4o6i8HlFHdXcKczfoTGyV
+xWtexse3VuBWj/jfwk7lEbp3NAHoFISGG5FG1XBQpTMaG3g0yjoYwRNhnfWUwvW0
+FsvH1OnPU8beeOZKuTC5izCMozc1gwAH+Kos8gKFNvc7ZqJUGgNuOhnJIMZgt1A3
+cCV/xHEnCTMps+4X83XZBDocrP9qF7JvAvjmKs63MG0NvhIk0ZutLR6HAoegUSsC
++DMa2bKjkkw5aaXCzrtW
+=Y0dx
+-----END PGP SIGNATURE-----
+
+--Sig_/ivQ+xvIpLsd0XHnpznD9Omo--
