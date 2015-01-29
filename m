@@ -1,59 +1,130 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Thu, 29 Jan 2015 20:35:34 +1100
-Message-ID: <20150129203534.7fff65c3@canb.auug.org.au>
-References: <20150129133857.2bdbb86d@canb.auug.org.au>
-	<54C9ED70.1020803@amd.com>
+From: Steve Capper <steve.capper@linaro.org>
+Subject: Re: [PATCH v5 6/8] arm64/efi: move SetVirtualAddressMap() to UEFI stub
+Date: Thu, 29 Jan 2015 09:50:19 +0000
+Message-ID: <CAPvkgC0-e9DGH8zSZ+d6G5_mk49m1ToqBUJT3GnNAbuwdHh8QA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jtFap7wBvK1zauDMs4nAFOG"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54C9ED70.1020803@amd.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Oded Gabbay <oded.gabbay@amd.com>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Goz <ben.goz@amd.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Leif Lindholm <leif.lindholm@linaro.org>, Roy Franz <roy.franz@linaro.org>, Matt Fleming <matt.fleming@intel.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, bp@alien8.de, Mark Salter <msalter@redhat.com>, Geoff Levand <geoff.levand@linaro.org>, Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jtFap7wBvK1zauDMs4nAFOG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Oded,
-
-On Thu, 29 Jan 2015 10:21:04 +0200 Oded Gabbay <oded.gabbay@amd.com> wrote:
+On 8 January 2015 at 18:48, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> In order to support kexec, the kernel needs to be able to deal with the
+> state of the UEFI firmware after SetVirtualAddressMap() has been called.
+> To avoid having separate code paths for non-kexec and kexec, let's move
+> the call to SetVirtualAddressMap() to the stub: this will guarantee us
+> that it will only be called once (since the stub is not executed during
+> kexec), and ensures that the UEFI state is identical between kexec and
+> normal boot.
 >
-> So I think that Dave's drm-next now contains the correct code.
-> Will you merge it again, or do you do it daily anyway ? I fear I'm entire=
-ly=20
-> clear with the details of the linux-next process.
+> This implies that the layout of the virtual mapping needs to be created
+> by the stub as well. All regions are rounded up to a naturally aligned
+> multiple of 64 KB (for compatibility with 64k pages kernels) and recorded
+> in the UEFI memory map. The kernel proper reads those values and installs
+> the mappings in a dedicated set of page tables that are swapped in during
+> UEFI Runtime Services calls.
+>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-I fetch all the trees again each morning and then merge them, so
-tomorrow all will be well.
+Hi,
+I've been testing out linux-next next-20150128 and have run into an
+early bootup failure on Seattle.
+Having done a bisect, this patch comes up as the first "bad" patch:
+f3cdfd2 arm64/efi: move SetVirtualAddressMap() to UEFI stub
 
---=20
+I've tried the defconfig with 4-levels 4KB and 2-levels 64KB pages and
+the failure mode doesn't change.
+
+The point of failure for me is in setup_arch, just after call to
+local_async_enable.
+
+I'm not very knowledgeable of EFI, my guess is that a System Error
+occurs early (during the EFI stub activity?), then manifests once the
+asynchronous aborts are enabled?
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+--
+Steve
 
---Sig_/jtFap7wBvK1zauDMs4nAFOG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The full boot log:
+EFI stub: Booting Linux Kernel...
+EFI stub: Using DTB from configuration table
+EFI stub: Exiting boot services and installing virtual address map...
+Booting Linux on physical CPU 0x0
+Initializing cgroup subsys cpu
+Linux version 3.19.0-rc4+ (steven@capper-seattle) (gcc version 4.9.2
+20141101 (Red Hat 4.9.2-1) (GCC) ) #42 SMP Thu Jan 29 09:28:34 GMT
+2015
+CPU: AArch64 Processor [410fd070] revision 0
+Detected PIPT I-cache on CPU0
+alternatives: enabling workaround for ARM erratum 832075
+Early serial console at MMIO 0xe1010000 (options '')
+bootconsole [uart0] enabled
+Bad mode in Error handler detected, code 0xbf000000
+CPU: 0 PID: 0 Comm: swapper Not tainted 3.19.0-rc4+ #42
+Hardware name: amd,seattle (DT)
+task: fffffe0000aaddf0 ti: fffffe0000a70000 task.ti: fffffe0000a70000
+PC is at setup_arch+0x1f8/0x510
+LR is at setup_arch+0x1f4/0x510
+pc : [<fffffe00009b2818>] lr : [<fffffe00009b2814>] pstate: 000002c5
+sp : fffffe0000a73f10
+x29: fffffe0000a73f10 x28: 0000028001000000
+x27: fffffe0000081230 x26: 0000008001c00000
+x25: 0000008001be0000 x24: fffffe0000aa6000
+x23: 0000000000000000 x22: fffffe0000aa6000
+x21: fffffe0000a73fe8 x20: fffffe0000b60000
+x19: fffffe0000080000 x18: 0000000000000000
+x17: 0000000000000800 x16: 0000000000001000
+x15: 0000000000001c00 x14: 0ffffffffffffffe
+x13: 0000000000000001 x12: 0000000000000010
+x11: 0000000000000007 x10: 0101010101010101
+x9 : fffffffffffffffe x8 : 0000000000000008
+x7 : 0000000000000006 x6 : 0000800000000000
+x5 : 000000000000005f x4 : 0000000000000000
+x3 : 0000000000000063 x2 : 0000000000000065
+x1 : 0000000000000000 x0 : 0000000000000001
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Internal error: Oops - bad mode: 0 [#1] SMP
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 3.19.0-rc4+ #42
+Hardware name: amd,seattle (DT)
+task: fffffe0000aaddf0 ti: fffffe0000a70000 task.ti: fffffe0000a70000
+PC is at setup_arch+0x1f8/0x510
+LR is at setup_arch+0x1f4/0x510
+pc : [<fffffe00009b2818>] lr : [<fffffe00009b2814>] pstate: 000002c5
+sp : fffffe0000a73f10
+x29: fffffe0000a73f10 x28: 0000028001000000
+x27: fffffe0000081230 x26: 0000008001c00000
+x25: 0000008001be0000 x24: fffffe0000aa6000
+x23: 0000000000000000 x22: fffffe0000aa6000
+x21: fffffe0000a73fe8 x20: fffffe0000b60000
+x19: fffffe0000080000 x18: 0000000000000000
+x17: 0000000000000800 x16: 0000000000001000
+x15: 0000000000001c00 x14: 0ffffffffffffffe
+x13: 0000000000000001 x12: 0000000000000010
+x11: 0000000000000007 x10: 0101010101010101
+x9 : fffffffffffffffe x8 : 0000000000000008
+x7 : 0000000000000006 x6 : 0000800000000000
+x5 : 000000000000005f x4 : 0000000000000000
+x3 : 0000000000000063 x2 : 0000000000000065
+x1 : 0000000000000000 x0 : 0000000000000001
 
-iQIcBAEBCAAGBQJUyf7sAAoJEMDTa8Ir7ZwVDZEP/2ZpRBos6gz0acDbR7VvL197
-W71Uz9ZjQ6hWG7hqlvq178EikhFqOfuUFC92gOabfU89H+7/nMat5PrSIleZEq9a
-Q3adDj6oFYmI7AiSKz6qfjD8BOYPLIyIQZ9BBATSmQyg+sXFfECOe82ZJybhs3Dj
-swaJ9uo1AEA9MCvQnDE8WrlIvXD8x43tAiyM3Lf0f9ZZdwP2hcDtSCahGIwpYgBR
-I4IwUhuKjBRxIa54sHEHpreKB5K0Z6UqBGByWLOpoBC5JWWnLaJ5AbyuLfuOLVoB
-ezAQlLLfTMyJJWBXiIJQFKVeDjvmUdNGygy+uhpqZiDU59xj3af84hHGcrdEmv7U
-Qb2GhQD1bneytLr/gpS3kxub+SS3wBiZaIjfm6BZs/lX6I3ksL3a4gwGtc/8MT5x
-/5efLASi5jp9xuTBhFVJ5453585AhqyFsALqjNCWejKak7kFcuxmeSEYCctTq6hl
-BynOM0dIAji74ZrQFpMjX9NAKnudBn2CBfeQNUcbDwOaaHFLTunbwk0q1N+PPM7U
-VpxIuwEU8eco0GIOE7cx9lObj7ovamDPx/mx2JBI6VF6IjkkBjW6Ck/x1liJT2g7
-sH6Mch9Ss0rElfDPNv+g1dxJJPAEPuZ3iBwhqetYCoyb9+136iyXEpkrDLc/XEdE
-Ud85+cKYNgWGW/BUeSR0
-=kLJk
------END PGP SIGNATURE-----
-
---Sig_/jtFap7wBvK1zauDMs4nAFOG--
+Process swapper (pid: 0, stack limit = 0xfffffe0000a70058)
+Stack: (0xfffffe0000a73f10 to 0xfffffe0000a74000)
+3f00:                                     00a73fa0 fffffe00 009b0688 fffffe00
+3f20: 009ef3b8 fffffe00 00b60000 fffffe00 00b60000 fffffe00 00aa6000 fffffe00
+3f40: 00000000 00000000 01000000 00000080 01be0000 00000080 01c00000 00000080
+3f60: 00081230 fffffe00 00630088 fffffe00 00000001 00000000 1fe00000 00000080
+3f80: 00b63870 fffffe00 00000002 00000000 00b6451a fffffe00 00000000 00000000
+3fa0: 00000000 00000000 010906e0 00000080 f0f1e938 00000083 00000e12 00000000
+3fc0: 1fe00000 00000080 410fd070 00000000 01ab0000 00000080 01000000 00000080
+3fe0: 00000000 00000000 009ef3b8 fffffe00 00000000 00000000 00000000 00000000
+Call trace:
+[<fffffe00009b2818>] setup_arch+0x1f8/0x510
+[<fffffe00009b0684>] start_kernel+0xa4/0x3a8
+Code: 94000b2c 940009f7 97fff760 d50344ff (d00007f5)
+---[ end trace cb88537fdc8fa200 ]---
+Kernel panic - not syncing: Attempted to kill the idle task!
+---[ end Kernel panic - not syncing: Attempted to kill the idle task!
