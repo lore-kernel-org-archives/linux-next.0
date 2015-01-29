@@ -1,152 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 29 Jan 2015 13:17:18 +1100
-Message-ID: <20150129131718.645dbb99@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Thu, 29 Jan 2015 13:38:57 +1100
+Message-ID: <20150129133857.2bdbb86d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S9vo1trcbAYX6d7HJA79wce"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/fL0GHk8.12z8rVJko.HN3BN"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42268 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1762477AbbA2CjE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Jan 2015 21:39:04 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Dave Airlie <airlied@linux.ie>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oded Gabbay <oded.gabbay@amd.com>, Ben Goz <ben.goz@amd.com>
-List-Id: linux-next.vger.kernel.org
 
---Sig_/S9vo1trcbAYX6d7HJA79wce
+--Sig_/fL0GHk8.12z8rVJko.HN3BN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Dave,
 
-Today's linux-next merge of the drm tree got conflicts in
-drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c and
-drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h between commits
-b8cbab042cd6 ("drm/amdkfd: Allow user to limit only queues per device")
-and 9fa843e76d90 ("drm/amdkfd: Fix bug in call to init_pipelines()")
-from Linus' tree and commits bcea30817574 ("drm/amdkfd: Add SDMA
-user-mode queues support to QCM") and fe502804205e ("drm/amdkfd: Remove
-call to deprecated init_memory interface") from the drm tree.
+After merging the drm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (hopefully - see below) and can carry the fix as
-necessary (no action is required).
+drivers/gpu/drm/amd/amdkfd/kfd_device.c: In function 'kgd2kfd_device_init':
+drivers/gpu/drm/amd/amdkfd/kfd_device.c:193:11: error: 'max_num_of_processe=
+s' undeclared (first use in this function)
+  size +=3D (max_num_of_processes * sizeof(struct pm4_map_process) +
+           ^
+drivers/gpu/drm/amd/amdkfd/kfd_device.c:193:11: note: each undeclared ident=
+ifier is reported only once for each function it appears in
+drivers/gpu/drm/amd/amdkfd/kfd_device.c:194:26: error: 'max_num_of_queues_p=
+er_process' undeclared (first use in this function)
+   max_num_of_processes * max_num_of_queues_per_process *
+                          ^
+
+Caused by commit b8cbab042cd6 ("drm/amdkfd: Allow user to limit only
+queues per device") from Linus' tree interacting with commit
+e18e794e6ba0 ("drm/amdkfd: Fixed calculation of gart buffer size") from
+the drm tree.
+
+I couldn't easily figure out how to fix this, so I just disabled the
+driver using the patch below.  Please let me know when it is fixed, or
+provide me with a merge fix patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 29 Jan 2015 13:34:22 +1100
+Subject: [PATCH] drm/amdkfd: disable driver due to interaction with a bug f=
+ix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/amd/amdkfd/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/Kconfig b/drivers/gpu/drm/amd/amdkf=
+d/Kconfig
+index 8dfac37ff327..e96b4d6e3567 100644
+--- a/drivers/gpu/drm/amd/amdkfd/Kconfig
++++ b/drivers/gpu/drm/amd/amdkfd/Kconfig
+@@ -5,5 +5,6 @@
+ config HSA_AMD
+ 	tristate "HSA kernel driver for AMD GPU devices"
+ 	depends on DRM_RADEON && AMD_IOMMU_V2 && X86_64
++	depends on BROKEN
+ 	help
+ 	  Enable this if you want to use HSA features on AMD GPU devices.
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-index 0d8694f015c1,b189f9791c90..000000000000
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-@@@ -213,15 -161,8 +168,18 @@@ static int create_queue_nocpsch(struct=20
- =20
-  	list_add(&q->list, &qpd->queues_list);
-  	dqm->queue_count++;
- +
- +	/*
- +	 * Unconditionally increment this counter, regardless of the queue's
- +	 * type or whether the queue is active.
- +	 */
- +	dqm->total_queue_count++;
- +	pr_debug("Total of %d queues are accountable so far\n",
- +			dqm->total_queue_count);
- +
-++
-+ 	if (q->properties.type =3D=3D KFD_QUEUE_TYPE_SDMA)
-+ 		dqm->sdma_queue_count++;
-  	mutex_unlock(&dqm->lock);
-  	return 0;
-  }
-@@@ -588,11 -488,7 +518,7 @@@ static int init_scheduler(struct device
- =20
-  	pr_debug("kfd: In %s\n", __func__);
- =20
- -	retval =3D init_pipelines(dqm, get_pipes_num(dqm), KFD_DQM_FIRST_PIPE);
- +	retval =3D init_pipelines(dqm, get_pipes_num(dqm), get_first_pipe(dqm));
-- 	if (retval !=3D 0)
-- 		return retval;
--=20
-- 	retval =3D init_memory(dqm);
- =20
-  	return retval;
-  }
-@@@ -843,14 -793,12 +845,19 @@@ static int create_queue_cpsch(struct de
- =20
-  	mutex_lock(&dqm->lock);
- =20
- +	if (dqm->total_queue_count >=3D max_num_of_queues_per_device) {
- +		pr_warn("amdkfd: Can't create new usermode queue because %d queues were=
- already created\n",
- +				dqm->total_queue_count);
- +		retval =3D -EPERM;
- +		goto out;
- +	}
- +
-- 	mqd =3D dqm->get_mqd_manager(dqm, KFD_MQD_TYPE_CIK_CP);
-+ 	if (q->properties.type =3D=3D KFD_QUEUE_TYPE_SDMA)
-+ 		select_sdma_engine_id(q);
-+=20
-+ 	mqd =3D dqm->ops.get_mqd_manager(dqm,
-+ 			get_mqd_type_from_queue_type(q->properties.type));
-+=20
-  	if (mqd =3D=3D NULL) {
-  		mutex_unlock(&dqm->lock);
-  		return -ENOMEM;
-@@@ -867,15 -815,9 +874,18 @@@
-  		retval =3D execute_queues_cpsch(dqm, false);
-  	}
- =20
- +	/*
- +	 * Unconditionally increment this counter, regardless of the queue's
- +	 * type or whether the queue is active.
- +	 */
- +	dqm->total_queue_count++;
- +
- +	pr_debug("Total of %d queues are accountable so far\n",
- +			dqm->total_queue_count);
- +
-+ 	if (q->properties.type =3D=3D KFD_QUEUE_TYPE_SDMA)
-+ 			dqm->sdma_queue_count++;
-+=20
-  out:
-  	mutex_unlock(&dqm->lock);
-  	return retval;
-diff --cc drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
-index 52035bf0c1cb,e7b17b28330e..000000000000
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
-@@@ -130,9 -143,10 +143,11 @@@ struct device_queue_manager=20
-  	struct list_head	queues;
-  	unsigned int		processes_count;
-  	unsigned int		queue_count;
- +	unsigned int		total_queue_count;
-+ 	unsigned int		sdma_queue_count;
-  	unsigned int		next_pipe_to_allocate;
-  	unsigned int		*allocated_queues;
-+ 	unsigned int		sdma_bitmap;
-  	unsigned int		vmid_bitmap;
-  	uint64_t		pipelines_addr;
-  	struct kfd_mem_obj	*pipeline_mem;
-
---Sig_/S9vo1trcbAYX6d7HJA79wce
+--Sig_/fL0GHk8.12z8rVJko.HN3BN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUyZgzAAoJEMDTa8Ir7ZwVhBYQAJdBgmBOL70vAc1YStor/Kfz
-hG/9aXR1jOnEi73yzVgBrOp685QY1dN7dQAkliRc64KCGLcE4NXXHqRzUsKgXEqz
-OYomOt1OILOw9c2PFchTVMZ6rJRDb29T4SSzzH2RWruX2+awYTF+IU2RfYNtoeV9
-vbXmDPuMxWITYQ+xuDfhnU/+bjYP0NBfW1EQ7tFUi/+0BLDx27yIXeEshgHL5q2l
-NTvQ0DYKoVKwtKsGInoRXYl34bGFvmAbEP9dLOIKZYsb7/UKO5+73WRsTKlIz2BP
-ZASUhH7hFtDw1XQegTTTl3Gm5I8fWAp9tmDsyb5g6fu3KPF5CE1KOKbiQNcUQO8N
-TcCVVRa5AwHmyrSjyFytw+g5fxka2X40EqTPG0lhhE6NY/gpVJUN9pS/P5N6YNPV
-H56yQQq+HUvpGTamnjNJSKiNUrsxyfhRa9b17i4s2II8nDVa9qCPmL2i5KrJqZWU
-i6veNEvao9N6qZSy9abz34IBaFUjw46J+k9H9mhkPVCcFZDhYkbRGWzUCCbXHji1
-gGbgSTsydkV3pUtJ3831Rboj0pU8UDN+mgL6KQX3J/K5nUlNg5leSVAhsZJmkIu+
-uFy2YCxHr3mTK41rOB/qsWDPi9UQJvg8kBF0MiICo/7wUktJ56qxpN7JIdT6EclM
-4+hX7LtNndB897bCTKKK
-=xNR8
+iQIcBAEBCAAGBQJUyZ1GAAoJEMDTa8Ir7ZwVXg8QAIOzeGlgHHY38I6BqAdgjbNo
+Io6OJiRInFtaK2/Cz5L44BX/trkD4DCrltp3NbQx4+umBeZDhU9dd+kbOMTIHNMc
+pQ2S1TosoiieMkH4zdxWd86vdR5AxmDocakfgcQ3oF41oyGJnP9anM6kAvAlthE6
+OD09cXf+byMTrgeghnBK9W2sGAVfbwWHH6Gnnyy4zlwH8dDKfbrJE/62pzPTv4Dq
+1APXmJwWhHdDUaW3eBIu+YTXZj88OhgCSz1pTOUl/1QpA8Jq7QWvu5lqKgpHEI6u
+LvAZ7UjpViCILRaP4gAHPrO3Gk1C719LjhPDSOB576axWP8fr/dMyq0dg4YfH8aL
+z89SEJBSohaVaxZr0NhdmEeCCxfvCxEXAyGAUiPxLx9TX8Pp/LNeStHWrxIYpm3Z
+tx/BWpyj426fH9CcpyAmTW/TgLk7U1pbTJMETMmHDymtolwAkov7Ti2lTlPdZm9H
+gk2ptrUu9qFZYOiTXL0gkxo8s8xo4lEY0zV10ApSb6wCJ5OP3ZcHzItJJw1/myDp
+NmX7evrIe4dDk48w0LB0Q22QJz30AxhQjNdIh+otK0CxqZx3RxYNckbm94rqXKyY
+ci3VztxnOE8y5GqNXMeSn9afmputxpU/T8WvGS/tXdAd5f3kkDwQLBMu6hSUi6P9
++ocBQF6bsHUW1OLVyKYw
+=Ey+L
 -----END PGP SIGNATURE-----
 
---Sig_/S9vo1trcbAYX6d7HJA79wce--
+--Sig_/fL0GHk8.12z8rVJko.HN3BN--
