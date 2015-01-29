@@ -1,99 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Thu, 29 Jan 2015 13:38:57 +1100
-Message-ID: <20150129133857.2bdbb86d@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the l2-mtd tree
+Date: Thu, 29 Jan 2015 14:04:12 +1100
+Message-ID: <20150129140412.10a5e16a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fL0GHk8.12z8rVJko.HN3BN"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42268 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762477AbbA2CjE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Jan 2015 21:39:04 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oded Gabbay <oded.gabbay@amd.com>, Ben Goz <ben.goz@amd.com>
+ boundary="Sig_/ESq_PQdUKZ.lM2Ccis=Yu33"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Brian Norris <computersforpeace@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/fL0GHk8.12z8rVJko.HN3BN
+--Sig_/ESq_PQdUKZ.lM2Ccis=Yu33
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Jens,
 
-After merging the drm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the block tree got a conflict in
+drivers/mtd/mtdcore.c between commit 3efe41be224c ("mtd: implement
+common reboot notifier boilerplate") from the  tree and commit
+b4caecd48005 ("fs: introduce f_op->mmap_capabilities for nommu mmap
+support") from the block tree.
 
-drivers/gpu/drm/amd/amdkfd/kfd_device.c: In function 'kgd2kfd_device_init':
-drivers/gpu/drm/amd/amdkfd/kfd_device.c:193:11: error: 'max_num_of_processe=
-s' undeclared (first use in this function)
-  size +=3D (max_num_of_processes * sizeof(struct pm4_map_process) +
-           ^
-drivers/gpu/drm/amd/amdkfd/kfd_device.c:193:11: note: each undeclared ident=
-ifier is reported only once for each function it appears in
-drivers/gpu/drm/amd/amdkfd/kfd_device.c:194:26: error: 'max_num_of_queues_p=
-er_process' undeclared (first use in this function)
-   max_num_of_processes * max_num_of_queues_per_process *
-                          ^
-
-Caused by commit b8cbab042cd6 ("drm/amdkfd: Allow user to limit only
-queues per device") from Linus' tree interacting with commit
-e18e794e6ba0 ("drm/amdkfd: Fixed calculation of gart buffer size") from
-the drm tree.
-
-I couldn't easily figure out how to fix this, so I just disabled the
-driver using the patch below.  Please let me know when it is fixed, or
-provide me with a merge fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 29 Jan 2015 13:34:22 +1100
-Subject: [PATCH] drm/amdkfd: disable driver due to interaction with a bug f=
-ix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/amdkfd/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/amd/amdkfd/Kconfig b/drivers/gpu/drm/amd/amdkf=
-d/Kconfig
-index 8dfac37ff327..e96b4d6e3567 100644
---- a/drivers/gpu/drm/amd/amdkfd/Kconfig
-+++ b/drivers/gpu/drm/amd/amdkfd/Kconfig
-@@ -5,5 +5,6 @@
- config HSA_AMD
- 	tristate "HSA kernel driver for AMD GPU devices"
- 	depends on DRM_RADEON && AMD_IOMMU_V2 && X86_64
-+	depends on BROKEN
- 	help
- 	  Enable this if you want to use HSA features on AMD GPU devices.
---=20
-2.1.4
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/fL0GHk8.12z8rVJko.HN3BN
+diff --cc drivers/mtd/mtdcore.c
+index cbc0fc46d2d6,0ec4d6ea1e4b..000000000000
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@@ -366,17 -339,23 +340,34 @@@ static struct device_type mtd_devtype=20
+  	.release	=3D mtd_release,
+  };
+ =20
+ +static int mtd_reboot_notifier(struct notifier_block *n, unsigned long st=
+ate,
+ +			       void *cmd)
+ +{
+ +	struct mtd_info *mtd;
+ +
+ +	mtd =3D container_of(n, struct mtd_info, reboot_notifier);
+ +	mtd->_reboot(mtd);
+ +
+ +	return NOTIFY_DONE;
+ +}
+ +
++ #ifndef CONFIG_MMU
++ unsigned mtd_mmap_capabilities(struct mtd_info *mtd)
++ {
++ 	switch (mtd->type) {
++ 	case MTD_RAM:
++ 		return NOMMU_MAP_COPY | NOMMU_MAP_DIRECT | NOMMU_MAP_EXEC |
++ 			NOMMU_MAP_READ | NOMMU_MAP_WRITE;
++ 	case MTD_ROM:
++ 		return NOMMU_MAP_COPY | NOMMU_MAP_DIRECT | NOMMU_MAP_EXEC |
++ 			NOMMU_MAP_READ;
++ 	default:
++ 		return NOMMU_MAP_COPY;
++ 	}
++ }
++ EXPORT_SYMBOL_GPL(mtd_mmap_capabilities);
++ #endif
++=20
+  /**
+   *	add_mtd_device - register an MTD device
+   *	@mtd: pointer to new MTD device info structure
+
+--Sig_/ESq_PQdUKZ.lM2Ccis=Yu33
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJUyZ1GAAoJEMDTa8Ir7ZwVXg8QAIOzeGlgHHY38I6BqAdgjbNo
-Io6OJiRInFtaK2/Cz5L44BX/trkD4DCrltp3NbQx4+umBeZDhU9dd+kbOMTIHNMc
-pQ2S1TosoiieMkH4zdxWd86vdR5AxmDocakfgcQ3oF41oyGJnP9anM6kAvAlthE6
-OD09cXf+byMTrgeghnBK9W2sGAVfbwWHH6Gnnyy4zlwH8dDKfbrJE/62pzPTv4Dq
-1APXmJwWhHdDUaW3eBIu+YTXZj88OhgCSz1pTOUl/1QpA8Jq7QWvu5lqKgpHEI6u
-LvAZ7UjpViCILRaP4gAHPrO3Gk1C719LjhPDSOB576axWP8fr/dMyq0dg4YfH8aL
-z89SEJBSohaVaxZr0NhdmEeCCxfvCxEXAyGAUiPxLx9TX8Pp/LNeStHWrxIYpm3Z
-tx/BWpyj426fH9CcpyAmTW/TgLk7U1pbTJMETMmHDymtolwAkov7Ti2lTlPdZm9H
-gk2ptrUu9qFZYOiTXL0gkxo8s8xo4lEY0zV10ApSb6wCJ5OP3ZcHzItJJw1/myDp
-NmX7evrIe4dDk48w0LB0Q22QJz30AxhQjNdIh+otK0CxqZx3RxYNckbm94rqXKyY
-ci3VztxnOE8y5GqNXMeSn9afmputxpU/T8WvGS/tXdAd5f3kkDwQLBMu6hSUi6P9
-+ocBQF6bsHUW1OLVyKYw
-=Ey+L
+iQIcBAEBCAAGBQJUyaM1AAoJEMDTa8Ir7ZwVEkIP/jHHMrO/vJUTgffYYYhxVhlI
+amA2a2auSzpw8p0WYlLdBwGcdh2vL7VwLnUvQjMEJRXiqrdYUhIT7Fz00smgGWYi
+Q+Nqq35XseFxngNzWGcPszYYGLfKvdoIECDXJjyL39NX5ntUIyqF4kz6QXrl6mbR
+A6AHAO7is10fjqP0ncd0S3vn18FkfYKsvPZbGjKOdh4FnYedY8og4/wyjKTEBfCA
+jnL/VHfPFXkkGN3EhI412k5jjvFA8CZsAZB4/36Z5BIJ7+XiYKNM8vFDMNQwNQW8
+h5U5JLKB0ki0nD1JZkw2okQ1184QHWH7J7Q9vTR1nEqFmUmiI0OlK5cRpjFUCvqp
+geBZuE/kD++4XinpTbgG6Rb4mbo3k+cyv/2DryXrxsOavVA/Z80T0zwxKjUA8C+v
+RZ/6gtNragA/ibG+Ru6RR9rwIf2Gg4Hx6IDiPwHXpRPz6va4/e0j0jcyaIftlQw0
+MUB38EFktvvCIZz1n1drlJu6n4TodSfJLKnC7sBPBTMkpwX+z+IFXja11xXUiu9/
+PjIOiHecB8L2qoDGXobuM6vXptkCNzLq5DewNd9ZzhF1kyc3iA5c5gMmk6W/ObpK
+CWTW2v0yb3jQyUuEV0q0ErqQO5/DcZeSgZPMq6BKo+Q7WaE6iY1tBCtUPyO/rfUf
+BQlcYQKVoGwMjp8OkmPg
+=HR2k
 -----END PGP SIGNATURE-----
 
---Sig_/fL0GHk8.12z8rVJko.HN3BN--
+--Sig_/ESq_PQdUKZ.lM2Ccis=Yu33--
