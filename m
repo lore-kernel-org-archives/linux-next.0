@@ -1,60 +1,97 @@
-From: Mel Gorman <mgorman@suse.de>
-Subject: [PATCH] mm: remove remaining references to NUMA hinting bits and
- helpers -fix
-Date: Fri, 30 Jan 2015 10:04:06 +0000
-Message-ID: <20150130100406.GK2395@suse.de>
-References: <20150128152412.GX21293@sirena.org.uk>
- <CAPvkgC3OLdf7ZgDfAC5R4wgZDirAZAmY+ZsBLQedpjq+HJHACw@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 30 (build failures)
+Date: Fri, 30 Jan 2015 06:25:20 -0800
+Message-ID: <20150130142520.GA6872@roeck-us.net>
+References: <20150130180209.2bd86cc4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:49909 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753874AbbA3KEL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Jan 2015 05:04:11 -0500
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAPvkgC3OLdf7ZgDfAC5R4wgZDirAZAmY+ZsBLQedpjq+HJHACw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Steve Capper <steve.capper@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+In-Reply-To: <20150130180209.2bd86cc4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <matthew.r.wilcox@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Oleksij Rempel <linux@rempel-privat.de>, Boris Brezillon <boris.brezillon@free-electrons.com>
+List-Id: linux-next.vger.kernel.org
 
-The patch "mm: remove remaining references to NUMA hinting bits and helpers"
-was meant to remove NUMA hinting bits and helpers but broke is_swap_pte.
->From the original bug report
+On Fri, Jan 30, 2015 at 06:02:09PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Changes since 20150129:
+>=20
+> The arm-soc gained conflicts against the arm-current and arm trees.
+>=20
+> The spi tree gained a build failure for which I reverted a commit.
+>=20
+> Non-merge commits (relative to Linus' tree): 6300
+>  6348 files changed, 255117 insertions(+), 131620 deletions(-)
+>=20
+> ---------------------------------------------------------------------=
+-------
 
-	For at least the past couple of days tests of libhugetlbfs have
-	been hanging on mustang in the mlock test running ARMv8 defconfig
-	with both 32 bit and 64 bit userspace - after the mprotect test
-	(the one before it) we get no console output for several hours so
-	it appears that the test has deadlocked.  The tail of the log is:
+Build failures below. I copied the culprits (including Linus ;-).
 
-	| find_path (2M: 64):   PASS
-	| unlinked_fd (2M: 64): PASS
-	| readback (2M: 64):    PASS
-	| truncate (2M: 64):    PASS
-	| shared (2M: 64):      PASS
-	| mprotect (2M: 64):    PASS
+Guenter
 
-This patch should address the problem and is a fix to the mmotm patch
-mm-remove-remaining-references-to-numa-hinting-bits-and-helpers.patch
+=3D=3D=3D
+Building arc:defconfig ... failed
+Building arc:tb10x_defconfig ... failed
+--------------
+Error log:
+arch/arc/mm/fault.c: In function 'do_page_fault':
+arch/arc/mm/fault.c:164: error: 'VM_FAULT_SIGSEV' undeclared
 
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Mel Gorman <mgorman@suse.de>
----
- include/linux/swapops.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Typo. Caused by 33692f27597f ("vm: add VM_FAULT_SIGSEGV handling suppor=
+t"),
+from mainline. I submitted a patch.
 
-diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-index 73ca28070a92..cedf3d3c373f 100644
---- a/include/linux/swapops.h
-+++ b/include/linux/swapops.h
-@@ -54,7 +54,7 @@ static inline pgoff_t swp_offset(swp_entry_t entry)
- /* check whether a pte points to a swap entry */
- static inline int is_swap_pte(pte_t pte)
- {
--	return !pte_none(pte);
-+	return !pte_none(pte) && !pte_present(pte);
- }
- #endif
- 
+=3D=3D=3D
+Building mips:allmodconfig ... failed
+--------------
+Error log:
+
+fs/built-in.o: In function `dax_fault':
+(.text+0x5e284): undefined reference to `copy_user_page'
+
+Caused by 4927b7d77c001 ("dax,ext2: replace the XIP page fault handler =
+with the
+DAX page fault handler"). Looks like copy_user_page does not exist in m=
+ips.
+
+=3D=3D=3D
+Building sparc64:allmodconfig ... failed
+--------------
+Error log:
+drivers/built-in.o: In function `asm9260_timer_init':
+asm9260_timer.c:(.init.text+0x60d4): undefined reference to `of_io_requ=
+est_and_map'
+
+Caused by e4940cd76934 ("ARM: clocksource: add asm9260_timer driver").
+of_io_request_and_map does not exist for the sparc architecture.
+Maybe that driver should depend on ARM  or at least on !SPARC ?
+
+=3D=3D=3D
+Building xtensa:allmodconfig ... failed
+--------------
+Error log:
+drivers/gpu/drm/drm_gem_cma_helper.c: In function =E2=80=98drm_gem_cma_=
+create=E2=80=99:
+drivers/gpu/drm/drm_gem_cma_helper.c:110:2: error: implicit declaration=
+ of function =E2=80=98dma_alloc_writecombine=E2=80=99
+drivers/gpu/drm/drm_gem_cma_helper.c: In function =E2=80=98drm_gem_cma_=
+free_object=E2=80=99:
+drivers/gpu/drm/drm_gem_cma_helper.c:193:3: error: implicit declaration=
+ of function =E2=80=98dma_free_writecombine=E2=80=99
+drivers/gpu/drm/drm_gem_cma_helper.c: In function =E2=80=98drm_gem_cma_=
+mmap_obj=E2=80=99:
+drivers/gpu/drm/drm_gem_cma_helper.c:330:2: error: implicit declaration=
+ of function =E2=80=98dma_mmap_writecombine=E2=80=99
+
+Caused by 1a396789f65a2 ("drm: add Atmel HLCDC Display Controller suppo=
+rt").
+It selects DRM_KMS_CMA_HELPER which selects DRM_GEM_CMA_HELPER which ne=
+eds
+the missing dma functions. Those are not supported on xtensa (HAVE_DMA_=
+ATTRS
+is not set for xtensa). Maybe the controller should depend on HAVE_DMA_=
+ATTRS.
