@@ -1,102 +1,84 @@
-From: Oleksij Rempel <linux@rempel-privat.de>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 Subject: Re: linux-next: Tree for Jan 30 (build failures)
-Date: Fri, 30 Jan 2015 17:01:58 +0100
-Message-ID: <54CBAAF6.6030106@rempel-privat.de>
-References: <20150130180209.2bd86cc4@canb.auug.org.au> <20150130142520.GA6872@roeck-us.net>
+Date: Fri, 30 Jan 2015 17:15:38 +0100
+Message-ID: <20150130171538.0facb9b1@bbrezillon>
+References: <20150130180209.2bd86cc4@canb.auug.org.au>
+ <20150130142520.GA6872@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="pI9QfeliA5KBojLPVLdQUn7WmbcIkWHiB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <20150130142520.GA6872@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <matthew.r.wilcox@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Boris Brezillon <boris.brezillon@free-electrons.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Guenter Roeck <linux@roeck-us.net>, David Airlie <airlied@linux.ie>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Oleksij Rempel <linux@rempel-privat.de>, linux-next@vger.kernel.org, Matthew Wilcox <matthew.r.wilcox@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---pI9QfeliA5KBojLPVLdQUn7WmbcIkWHiB
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi Guenter,
-
-Am 30.01.2015 um 15:25 schrieb Guenter Roeck:
-> On Fri, Jan 30, 2015 at 06:02:09PM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20150129:
->>
->> The arm-soc gained conflicts against the arm-current and arm trees.
->>
->> The spi tree gained a build failure for which I reverted a commit.
->>
->> Non-merge commits (relative to Linus' tree): 6300
->>  6348 files changed, 255117 insertions(+), 131620 deletions(-)
->>
->> ----------------------------------------------------------------------=
-------
->=20
-> Build failures below. I copied the culprits (including Linus ;-).
->=20
-> Guenter
->=20
-> =3D=3D=3D
-> Building arc:defconfig ... failed
-> Building arc:tb10x_defconfig ... failed
-> --------------
-> Error log:
-> arch/arc/mm/fault.c: In function 'do_page_fault':
-> arch/arc/mm/fault.c:164: error: 'VM_FAULT_SIGSEV' undeclared
->=20
-> Typo. Caused by 33692f27597f ("vm: add VM_FAULT_SIGSEGV handling suppor=
-t"),
-> from mainline. I submitted a patch.
->=20
-> =3D=3D=3D
-> Building mips:allmodconfig ... failed
-> --------------
-> Error log:
->=20
-> fs/built-in.o: In function `dax_fault':
-> (.text+0x5e284): undefined reference to `copy_user_page'
->=20
-> Caused by 4927b7d77c001 ("dax,ext2: replace the XIP page fault handler =
-with the
-> DAX page fault handler"). Looks like copy_user_page does not exist in m=
-ips.
->=20
-> =3D=3D=3D
-> Building sparc64:allmodconfig ... failed
-> --------------
-> Error log:
-> drivers/built-in.o: In function `asm9260_timer_init':
-> asm9260_timer.c:(.init.text+0x60d4): undefined reference to `of_io_requ=
-est_and_map'
->=20
-> Caused by e4940cd76934 ("ARM: clocksource: add asm9260_timer driver").
-> of_io_request_and_map does not exist for the sparc architecture.
-> Maybe that driver should depend on ARM  or at least on !SPARC ?
-
-White listing will be easiest way. Should i send patch for it, or it is
-better to fixup existing patch?
-
---=20
-Regards,
-Oleksij
-
-
---pI9QfeliA5KBojLPVLdQUn7WmbcIkWHiB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iF4EAREIAAYFAlTLqv0ACgkQHwImuRkmbWloogD+JIkTCz85UXEjy7rPKY4ZnNbX
-EeJOCjOdHYwipFmD9VAA/iZs790Qd7iWdhAQrWCxLQHsPQ6cG3I3lY8q4mJaZa19
-=ZnG9
------END PGP SIGNATURE-----
-
---pI9QfeliA5KBojLPVLdQUn7WmbcIkWHiB--
+SGkgR3VlbnRlciwKCk9uIEZyaSwgMzAgSmFuIDIwMTUgMDY6MjU6MjAgLTA4MDAKR3VlbnRlciBS
+b2VjayA8bGludXhAcm9lY2stdXMubmV0PiB3cm90ZToKCj4gT24gRnJpLCBKYW4gMzAsIDIwMTUg
+YXQgMDY6MDI6MDlQTSArMTEwMCwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToKPiA+IEhpIGFsbCwK
+PiA+IAo+ID4gQ2hhbmdlcyBzaW5jZSAyMDE1MDEyOToKPiA+IAo+ID4gVGhlIGFybS1zb2MgZ2Fp
+bmVkIGNvbmZsaWN0cyBhZ2FpbnN0IHRoZSBhcm0tY3VycmVudCBhbmQgYXJtIHRyZWVzLgo+ID4g
+Cj4gPiBUaGUgc3BpIHRyZWUgZ2FpbmVkIGEgYnVpbGQgZmFpbHVyZSBmb3Igd2hpY2ggSSByZXZl
+cnRlZCBhIGNvbW1pdC4KPiA+IAo+ID4gTm9uLW1lcmdlIGNvbW1pdHMgKHJlbGF0aXZlIHRvIExp
+bnVzJyB0cmVlKTogNjMwMAo+ID4gIDYzNDggZmlsZXMgY2hhbmdlZCwgMjU1MTE3IGluc2VydGlv
+bnMoKyksIDEzMTYyMCBkZWxldGlvbnMoLSkKPiA+IAo+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
+IAo+IEJ1aWxkIGZhaWx1cmVzIGJlbG93LiBJIGNvcGllZCB0aGUgY3VscHJpdHMgKGluY2x1ZGlu
+ZyBMaW51cyA7LSkuCj4gCj4gR3VlbnRlcgo+IAo+ID09PQo+IEJ1aWxkaW5nIGFyYzpkZWZjb25m
+aWcgLi4uIGZhaWxlZAo+IEJ1aWxkaW5nIGFyYzp0YjEweF9kZWZjb25maWcgLi4uIGZhaWxlZAo+
+IC0tLS0tLS0tLS0tLS0tCj4gRXJyb3IgbG9nOgo+IGFyY2gvYXJjL21tL2ZhdWx0LmM6IEluIGZ1
+bmN0aW9uICdkb19wYWdlX2ZhdWx0JzoKPiBhcmNoL2FyYy9tbS9mYXVsdC5jOjE2NDogZXJyb3I6
+ICdWTV9GQVVMVF9TSUdTRVYnIHVuZGVjbGFyZWQKPiAKPiBUeXBvLiBDYXVzZWQgYnkgMzM2OTJm
+Mjc1OTdmICgidm06IGFkZCBWTV9GQVVMVF9TSUdTRUdWIGhhbmRsaW5nIHN1cHBvcnQiKSwKPiBm
+cm9tIG1haW5saW5lLiBJIHN1Ym1pdHRlZCBhIHBhdGNoLgo+IAo+ID09PQo+IEJ1aWxkaW5nIG1p
+cHM6YWxsbW9kY29uZmlnIC4uLiBmYWlsZWQKPiAtLS0tLS0tLS0tLS0tLQo+IEVycm9yIGxvZzoK
+PiAKPiBmcy9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBgZGF4X2ZhdWx0JzoKPiAoLnRleHQrMHg1
+ZTI4NCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYGNvcHlfdXNlcl9wYWdlJwo+IAo+IENhdXNl
+ZCBieSA0OTI3YjdkNzdjMDAxICgiZGF4LGV4dDI6IHJlcGxhY2UgdGhlIFhJUCBwYWdlIGZhdWx0
+IGhhbmRsZXIgd2l0aCB0aGUKPiBEQVggcGFnZSBmYXVsdCBoYW5kbGVyIikuIExvb2tzIGxpa2Ug
+Y29weV91c2VyX3BhZ2UgZG9lcyBub3QgZXhpc3QgaW4gbWlwcy4KPiAKPiA9PT0KPiBCdWlsZGlu
+ZyBzcGFyYzY0OmFsbG1vZGNvbmZpZyAuLi4gZmFpbGVkCj4gLS0tLS0tLS0tLS0tLS0KPiBFcnJv
+ciBsb2c6Cj4gZHJpdmVycy9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBgYXNtOTI2MF90aW1lcl9p
+bml0JzoKPiBhc205MjYwX3RpbWVyLmM6KC5pbml0LnRleHQrMHg2MGQ0KTogdW5kZWZpbmVkIHJl
+ZmVyZW5jZSB0byBgb2ZfaW9fcmVxdWVzdF9hbmRfbWFwJwo+IAo+IENhdXNlZCBieSBlNDk0MGNk
+NzY5MzQgKCJBUk06IGNsb2Nrc291cmNlOiBhZGQgYXNtOTI2MF90aW1lciBkcml2ZXIiKS4KPiBv
+Zl9pb19yZXF1ZXN0X2FuZF9tYXAgZG9lcyBub3QgZXhpc3QgZm9yIHRoZSBzcGFyYyBhcmNoaXRl
+Y3R1cmUuCj4gTWF5YmUgdGhhdCBkcml2ZXIgc2hvdWxkIGRlcGVuZCBvbiBBUk0gIG9yIGF0IGxl
+YXN0IG9uICFTUEFSQyA/Cj4gCj4gPT09Cj4gQnVpbGRpbmcgeHRlbnNhOmFsbG1vZGNvbmZpZyAu
+Li4gZmFpbGVkCj4gLS0tLS0tLS0tLS0tLS0KPiBFcnJvciBsb2c6Cj4gZHJpdmVycy9ncHUvZHJt
+L2RybV9nZW1fY21hX2hlbHBlci5jOiBJbiBmdW5jdGlvbiDigJhkcm1fZ2VtX2NtYV9jcmVhdGXi
+gJk6Cj4gZHJpdmVycy9ncHUvZHJtL2RybV9nZW1fY21hX2hlbHBlci5jOjExMDoyOiBlcnJvcjog
+aW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYZG1hX2FsbG9jX3dyaXRlY29tYmlu
+ZeKAmQo+IGRyaXZlcnMvZ3B1L2RybS9kcm1fZ2VtX2NtYV9oZWxwZXIuYzogSW4gZnVuY3Rpb24g
+4oCYZHJtX2dlbV9jbWFfZnJlZV9vYmplY3TigJk6Cj4gZHJpdmVycy9ncHUvZHJtL2RybV9nZW1f
+Y21hX2hlbHBlci5jOjE5MzozOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rp
+b24g4oCYZG1hX2ZyZWVfd3JpdGVjb21iaW5l4oCZCj4gZHJpdmVycy9ncHUvZHJtL2RybV9nZW1f
+Y21hX2hlbHBlci5jOiBJbiBmdW5jdGlvbiDigJhkcm1fZ2VtX2NtYV9tbWFwX29iauKAmToKPiBk
+cml2ZXJzL2dwdS9kcm0vZHJtX2dlbV9jbWFfaGVscGVyLmM6MzMwOjI6IGVycm9yOiBpbXBsaWNp
+dCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhkbWFfbW1hcF93cml0ZWNvbWJpbmXigJkKPiAK
+PiBDYXVzZWQgYnkgMWEzOTY3ODlmNjVhMiAoImRybTogYWRkIEF0bWVsIEhMQ0RDIERpc3BsYXkg
+Q29udHJvbGxlciBzdXBwb3J0IikuCj4gSXQgc2VsZWN0cyBEUk1fS01TX0NNQV9IRUxQRVIgd2hp
+Y2ggc2VsZWN0cyBEUk1fR0VNX0NNQV9IRUxQRVIgd2hpY2ggbmVlZHMKPiB0aGUgbWlzc2luZyBk
+bWEgZnVuY3Rpb25zLiBUaG9zZSBhcmUgbm90IHN1cHBvcnRlZCBvbiB4dGVuc2EgKEhBVkVfRE1B
+X0FUVFJTCj4gaXMgbm90IHNldCBmb3IgeHRlbnNhKS4gTWF5YmUgdGhlIGNvbnRyb2xsZXIgc2hv
+dWxkIGRlcGVuZCBvbiBIQVZFX0RNQV9BVFRSUy4KCkkgZml4ZWQgdGhhdCBvbmUgYSB3ZWVrIGFn
+bzogWzFdLgpJJ20gQWRkaW5nIERhdmUgYW5kIHRoZSBkcmktZGV2ZWwgTUwgaW4gQ2MsIGFwYXJ0
+IGZyb20gdGhhdCBJIGRvbid0IGtub3cKd2hhdCBJIGNhbi9zaG91bGQgZG8gdG8gbWFrZSBpdCBh
+cHBlYXIgaW4gbGludXgtbmV4dC4KCkRhdmUsIHVubGVzcyB5b3UgdGhpbmsgdGhlcmUgaXMgYSBy
+aXNrIGluIGFwcGx5aW5nIHRoaXMgcGF0Y2gsIGNvdWxkCnlvdSB0YWtlIGl0IGluIHlvdXIgZHJt
+LW5leHQgdHJlZSA/CgpCZXN0IFJlZ2FyZHMsCgpCb3JpcwoKWzFdaHR0cDovL3d3dy5zcGluaWNz
+Lm5ldC9saXN0cy9kcmktZGV2ZWwvbXNnNzU4NDguaHRtbAoKLS0gCkJvcmlzIEJyZXppbGxvbiwg
+RnJlZSBFbGVjdHJvbnMKRW1iZWRkZWQgTGludXggYW5kIEtlcm5lbCBlbmdpbmVlcmluZwpodHRw
+Oi8vZnJlZS1lbGVjdHJvbnMuY29tCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
