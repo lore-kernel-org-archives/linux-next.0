@@ -1,38 +1,60 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Thu, 29 Jan 2015 23:05:35 +0000
-Message-ID: <20150129230535.GG26493@n2100.arm.linux.org.uk>
-References: <20150130095533.315d3831@canb.auug.org.au>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] exynos/drm: fix no hdmi output
+Date: Fri, 30 Jan 2015 09:24:17 +0900
+Message-ID: <54CACF31.2040303@samsung.com>
+References: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:35269 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750767AbbA2XFw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Jan 2015 18:05:52 -0500
-Content-Disposition: inline
-In-Reply-To: <20150130095533.315d3831@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>, Baruch Siach <baruch@tkos.co.il>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alban Browaeys <alban.browaeys@gmail.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jan 30, 2015 at 09:55:33AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/Kconfig.debug between commit 4d31e6641295 ("ARM: 8272/1: netx:
-> Migrate DEBUG_LL macros to shared directory") from the  tree and
-> commits 01ea63d99397 ("ARM: sirf: add two debug ports for CSRatlas7
-> SoC") and e23814da8262 ("ARM: digicolor: add low level debug support")
-> from the arm-soc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-
-Both of these conflict resolutions (the other one you sent after this)
-look reasonable, thanks Stephen.
-
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+K0NjIGRyaS1kZXZlbCBNTC4KCkhpIEFsYmFuLAoKT24gMDEvMzAvMjAxNSAwNjoxOCBBTSwgQWxi
+YW4gQnJvd2FleXMgd3JvdGU6Cj4gVGhlIGhkbWkgb3V0cHV0cyBibGFjayBzY3JlZW4gb25seSBl
+dmVuIHRob3VnaCB1bmRlciB0aGUgaG9vZCBYb3JnIGFuZAo+IGZyYW1lYnVmZmVyIGNvbnNvbGUg
+IGFyZSBmaW5lIDogZGV2aWNlcyBmb3VuZCBhbmQgaW5pdGlhbGl6ZWQsIGJ1dAo+IG5vdCBhIHBp
+eGVsIG91dC4KPiAKPiBDb21taXQgOTNiY2EyNDNlYzk2ICgiZHJtL2V4eW5vczogcmVtb3ZlIHN0
+cnVjdCBleHlub3NfZHJtX21hbmFnZXIiKQo+IGNoYW5nZWQgdGhlIGNhbGwgb3JkZXIgb2YgbWl4
+ZXJfaW5pdGlhbGl6ZSB3aXRoIHJlZ2FyZHMgdG8KPiAgZXh5bm9zX2RybV9jcnRjX2NyZWF0ZS4K
+PiAKClJpZ2h0LCB0aGVyZSBpcyBubyBhbnkgcmVhc29uIHRvIGNoYW5nZSBvcmRlciBidXQgaSBk
+b24ndCB0aGluayBpdApjYXVzZXMgcHJvYmxlbSBiZWNhdXNlIHRoZXkgZG9uJ3QgYW55IGRlcGVu
+ZGVuY3kuCgo+IFRoaXMgY2hhbmdlcyBicmVha3MgaGRtaSBvdXQgb24gT2Ryb2lkIFUyIChsaW51
+eC1uZXh0IHdpdGggYWRkZWQKPiAgTWFyZWsgU3p5cHJvd3NraSB2NCBoZG1pIHBhdGNoc2V0IGZy
+b20gbGludXgtc2Ftc3VuZy1zb2MgTUwpLgo+IAoKSSB0ZXN0ZWQgT2Ryb2lkIFUzIGJ1dCBoZG1p
+IG91dCBpcyB3b3JraW5nIHdlbGwuCgpUaGFua3MuCgo+IFJlc3RvcmUgdGhlIHByZXZpb3VzIGNh
+bGwgb3JkZXJpbmcgZ2V0IGhkbWkgdG8gb3VwdXQgcHJvcGVyIHBpeGVsczoKPiBpZSBjYWxsIG1p
+eGVyX2luaXRpYWxpemUgZmlyc3QgdGhlbiBleHlub3NfZHJtX2NydGNfY3JlYXRlLgo+IAo+IEZp
+eGVzOiA5M2JjYTI0M2VjOTYgKCJkcm0vZXh5bm9zOiByZW1vdmUgc3RydWN0IGV4eW5vc19kcm1f
+bWFuYWdlciIpCj4gU2lnbmVkLW9mZi1ieTogQWxiYW4gQnJvd2FleXMgPHByYWhhbEB5YWhvby5j
+b20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCA5ICsr
+KysrLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
+KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IGQ4ZmQ4ZTEu
+LjE4OGY5MGYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
+ZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAt
+MTI1OCwxOCArMTI1OCwxOSBAQCBzdGF0aWMgaW50IG1peGVyX2JpbmQoc3RydWN0IGRldmljZSAq
+ZGV2LCBzdHJ1Y3QgZGV2aWNlICptYW5hZ2VyLCB2b2lkICpkYXRhKQo+ICAJc3RydWN0IGRybV9k
+ZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+ICAJaW50IHJldDsKPiAgCj4gKwlyZXQgPSBtaXhlcl9p
+bml0aWFsaXplKGN0eCwgZHJtX2Rldik7Cj4gKwlpZiAocmV0KQo+ICsJCXJldHVybiByZXQ7Cj4g
+Kwo+ICAJY3R4LT5jcnRjID0gZXh5bm9zX2RybV9jcnRjX2NyZWF0ZShkcm1fZGV2LCBjdHgtPnBp
+cGUsCj4gIAkJCQkgICAgIEVYWU5PU19ESVNQTEFZX1RZUEVfSERNSSwKPiAgCQkJCSAgICAgJm1p
+eGVyX2NydGNfb3BzLCBjdHgpOwo+ICAJaWYgKElTX0VSUihjdHgtPmNydGMpKSB7Cj4gKwkJbWl4
+ZXJfY3R4X3JlbW92ZShjdHgpOwo+ICAJCXJldCA9IFBUUl9FUlIoY3R4LT5jcnRjKTsKPiAgCQln
+b3RvIGZyZWVfY3R4Owo+ICAJfQo+ICAKPiAtCXJldCA9IG1peGVyX2luaXRpYWxpemUoY3R4LCBk
+cm1fZGV2KTsKPiAtCWlmIChyZXQpCj4gLQkJZ290byBmcmVlX2N0eDsKPiAtCj4gIAlyZXR1cm4g
+MDsKPiAgCj4gIGZyZWVfY3R4Ogo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
