@@ -1,100 +1,67 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 30 (clk related WARNING on arm)
-Date: Fri, 30 Jan 2015 11:07:09 -0800
-Message-ID: <20150130190709.GA13943@roeck-us.net>
-References: <20150130180209.2bd86cc4@canb.auug.org.au>
+From: Steve Capper <steve.capper@linaro.org>
+Subject: Re: [PATCH] mm: remove remaining references to NUMA hinting bits and
+ helpers -fix
+Date: Sat, 31 Jan 2015 09:11:53 +0000
+Message-ID: <20150131091153.GA31002@linaro.org>
+References: <20150128152412.GX21293@sirena.org.uk>
+ <CAPvkgC3OLdf7ZgDfAC5R4wgZDirAZAmY+ZsBLQedpjq+HJHACw@mail.gmail.com>
+ <20150130100406.GK2395@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:39621 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752561AbbA3THV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Jan 2015 14:07:21 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YHGuX-002inu-9R
-	for linux-next@vger.kernel.org; Fri, 30 Jan 2015 19:07:21 +0000
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:59004 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751783AbbAaJMD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 31 Jan 2015 04:12:03 -0500
+Received: by mail-wi0-f173.google.com with SMTP id r20so7580615wiv.0
+        for <linux-next@vger.kernel.org>; Sat, 31 Jan 2015 01:12:00 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20150130180209.2bd86cc4@canb.auug.org.au>
+In-Reply-To: <20150130100406.GK2395@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: Mel Gorman <mgorman@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Fri, Jan 30, 2015 at 06:02:09PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Jan 30, 2015 at 10:04:06AM +0000, Mel Gorman wrote:
+> The patch "mm: remove remaining references to NUMA hinting bits and helpers"
+> was meant to remove NUMA hinting bits and helpers but broke is_swap_pte.
+> From the original bug report
 > 
-> Changes since 20150129:
+> 	For at least the past couple of days tests of libhugetlbfs have
+> 	been hanging on mustang in the mlock test running ARMv8 defconfig
+> 	with both 32 bit and 64 bit userspace - after the mprotect test
+> 	(the one before it) we get no console output for several hours so
+> 	it appears that the test has deadlocked.  The tail of the log is:
 > 
-> The arm-soc gained conflicts against the arm-current and arm trees.
+> 	| find_path (2M: 64):   PASS
+> 	| unlinked_fd (2M: 64): PASS
+> 	| readback (2M: 64):    PASS
+> 	| truncate (2M: 64):    PASS
+> 	| shared (2M: 64):      PASS
+> 	| mprotect (2M: 64):    PASS
 > 
-> The spi tree gained a build failure for which I reverted a commit.
+> This patch should address the problem and is a fix to the mmotm patch
+> mm-remove-remaining-references-to-numa-hinting-bits-and-helpers.patch
 > 
-> Non-merge commits (relative to Linus' tree): 6300
->  6348 files changed, 255117 insertions(+), 131620 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-I see the following runtime warning repeatedly (with different call
-paths to vexpress_osc_round_rate) with my qemu vexpress test.
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Mel Gorman <mgorman@suse.de>
 
-Bisect points to commit cb75a8fcd14e71 ("clk: Add rate constraints to clocks").
+Acked-by: Steve Capper <steve.capper@linaro.org>
 
-Guenter
-
----
-WARNING: CPU: 0 PID: 1 at drivers/clk/versatile/clk-vexpress-osc.c:47
-vexpress_osc_round_rate+0x58/0x64()
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.19.0-rc6-next-20150130 #1
-Hardware name: ARM-Versatile Express
-[<80014360>] (unwind_backtrace) from [<80011170>] (show_stack+0x10/0x14)
-[<80011170>] (show_stack) from [<8047ae10>] (dump_stack+0x74/0x90)
-[<8047ae10>] (dump_stack) from [<80022230>] (warn_slowpath_common+0x74/0xb0)
-[<80022230>] (warn_slowpath_common) from [<80022288>] (warn_slowpath_null+0x1c/0x24)
-[<80022288>] (warn_slowpath_null) from [<8039033c>] (vexpress_osc_round_rate+0x58/0x64)
-[<8039033c>] (vexpress_osc_round_rate) from [<8038c7c8>] (clk_calc_new_rates+0x184/0x1f0)
-[<8038c7c8>] (clk_calc_new_rates) from [<8038cd28>] (clk_core_set_rate_nolock+0x48/0xb0)
-[<8038cd28>] (clk_core_set_rate_nolock) from [<8038dcc4>] (__clk_put+0x50/0xd8)
-[<8038dcc4>] (__clk_put) from [<8026e7a0>] (amba_device_add+0x114/0x1d4)
-[<8026e7a0>] (amba_device_add) from [<80387db0>] (of_platform_bus_create+0x220/0x2d4)
-[<80387db0>] (of_platform_bus_create) from [<80387ec0>] (of_platform_populate+0x5c/0xac)
-[<80387ec0>] (of_platform_populate) from [<805ff89c>] (customize_machine+0x30/0x40)
-[<805ff89c>] (customize_machine) from [<80008904>] (do_one_initcall+0x80/0x1d0)
-[<80008904>] (do_one_initcall) from [<805fde00>] (kernel_init_freeable+0x194/0x264)
-[<805fde00>] (kernel_init_freeable) from [<80475eb4>] (kernel_init+0x8/0xe4)
-[<80475eb4>] (kernel_init) from [<8000e680>] (ret_from_fork+0x14/0x34)
-
----
-bisect log:
-
-# bad: [827e3bdf1bb2401c1a1e5586eb3977d228d298b2] Add linux-next specific files for 20150130
-# good: [26bc420b59a38e4e6685a73345a0def461136dce] Linux 3.19-rc6
-git bisect start 'HEAD' 'v3.19-rc6'
-# good: [1a34190dd8293cb0f7bae0a3986eade642ea5aff] Merge remote-tracking branch 'drm/drm-next'
-git bisect good 1a34190dd8293cb0f7bae0a3986eade642ea5aff
-# good: [3a32e801433db8fab0d3ae2254ae62ca2f1c7328] Merge remote-tracking branch 'tty/tty-next'
-git bisect good 3a32e801433db8fab0d3ae2254ae62ca2f1c7328
-# good: [817dd6b22c9862d0e9620d7bfe092d82886dbde7] Merge remote-tracking branch 'staging/staging-next'
-git bisect good 817dd6b22c9862d0e9620d7bfe092d82886dbde7
-# good: [8a4d1d643337044052b3c9e8db824d7b07748c25] ipc,sem: use current->state helpers
-git bisect good 8a4d1d643337044052b3c9e8db824d7b07748c25
-# good: [aad220f241ded9a6ff5141606d76e195cbaa304b] Merge remote-tracking branch 'pinctrl/for-next'
-git bisect good aad220f241ded9a6ff5141606d76e195cbaa304b
-# bad: [7903f1485864e817dd882c04244ddce051d17d92] Merge remote-tracking branch 'clk/clk-next'
-git bisect bad 7903f1485864e817dd882c04244ddce051d17d92
-# good: [59cf3fcf9bafe8fdb6183f13dafb81fc8213a8f9] clk: Make clk API return per-user struct clk instances
-git bisect good 59cf3fcf9bafe8fdb6183f13dafb81fc8213a8f9
-# good: [a0b66e3f5a2522d1a5cf1127bc8cba0834b0fbf6] gpio: ge: fix compilation error
-git bisect good a0b66e3f5a2522d1a5cf1127bc8cba0834b0fbf6
-# good: [257e10752c13f2698d53e5df1744f4d7e41fdfa7] gpio: mpc8xxx: Use of_mm_gpiochip_remove
-git bisect good 257e10752c13f2698d53e5df1744f4d7e41fdfa7
-# good: [82807bf973d3e8825c35220266dd17d05d19cef8] Merge remote-tracking branch 'pwm/for-next'
-git bisect good 82807bf973d3e8825c35220266dd17d05d19cef8
-# good: [4eb2440ed60fb5793f7aa6da89b3d517cc59de43] reservation: Remove shadowing local variable 'ret'
-git bisect good 4eb2440ed60fb5793f7aa6da89b3d517cc59de43
-# bad: [daaed1492a40ea28c36ccfec5ad7060a1b24116e] clkdev: Export clk_register_clkdev
-git bisect bad daaed1492a40ea28c36ccfec5ad7060a1b24116e
-# bad: [cb75a8fcd14e71c115decc416dd8d223e7c8b2e0] clk: Add rate constraints to clocks
-git bisect bad cb75a8fcd14e71c115decc416dd8d223e7c8b2e0
-# first bad commit: [cb75a8fcd14e71c115decc416dd8d223e7c8b2e0] clk: Add rate constraints to clocks
+> ---
+>  include/linux/swapops.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> index 73ca28070a92..cedf3d3c373f 100644
+> --- a/include/linux/swapops.h
+> +++ b/include/linux/swapops.h
+> @@ -54,7 +54,7 @@ static inline pgoff_t swp_offset(swp_entry_t entry)
+>  /* check whether a pte points to a swap entry */
+>  static inline int is_swap_pte(pte_t pte)
+>  {
+> -	return !pte_none(pte);
+> +	return !pte_none(pte) && !pte_present(pte);
+>  }
+>  #endif
+>  
