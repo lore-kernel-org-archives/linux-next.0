@@ -1,79 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the fsl tree
-Date: Mon, 2 Feb 2015 19:02:09 +1100
-Message-ID: <20150202190209.122113bb@canb.auug.org.au>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: manual merge of the block tree with the vfs tree
+Date: Mon, 2 Feb 2015 09:06:08 +0100
+Message-ID: <20150202080608.GA9851@lst.de>
+References: <20150127145754.03e711a3@canb.auug.org.au> <54C70D52.6030208@kernel.dk> <20150127045422.GY29656@ZenIV.linux.org.uk> <20150128171102.GC17528@lst.de> <20150129051555.GC29656@ZenIV.linux.org.uk> <20150201055619.GA31780@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/s.WGTkJQphaxyKvwo7m4JWg"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48461 "EHLO ozlabs.org"
+Received: from verein.lst.de ([213.95.11.211]:43188 "EHLO newverein.lst.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932245AbbBBICQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Feb 2015 03:02:16 -0500
+	id S1752315AbbBBIGL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Feb 2015 03:06:11 -0500
+Content-Disposition: inline
+In-Reply-To: <20150201055619.GA31780@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Scott Wood <scottwood@freescale.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, LEROY Christophe <christophe.leroy@c-s.fr>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <ming.lei@canonical.com>
 
---Sig_/s.WGTkJQphaxyKvwo7m4JWg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Feb 01, 2015 at 05:56:19AM +0000, Al Viro wrote:
+> FWIW, there's an interesting question about the second commit in there -
+> what do we want vfs_iter_{read,write}() to do with *iter in case if it
+> has hit this:
+>         if (ret == -EIOCBQUEUED)
+>                 ret = wait_on_sync_kiocb(&kiocb);
+> 
+> Do we require ->read_iter() and ->write_iter() on sync kiocb to do all
+> advancing the iter before returning -EIOCBQUEUED?  What's more, do we
+> ever want to have it returned on sync kiocb?  IOW, is there any point
+> in having that wait in callers?
 
-Hi Andrew,
+See my "[RFC] split struct kiocb" series to sort out that mess.  For
+now none of the callers relies on the iov_iter being advances, so until
+then we can simply ignore that problem until then.
 
-Today's linux-next merge of the akpm-current tree got a conflict in
-arch/powerpc/include/asm/pgtable-ppc32.h between commit ce67f5d0a00c
-("powerpc32: Use kmem_cache memory for PGDIR") from the fsl tree and
-commit f8b48f1a9895 ("powerpc: drop _PAGE_FILE and pte_file()-related
-helpers") from the akpm-current tree.
+> I'm not sure if ep_io() and ep_aio_rwtail() + wait for completion are
+> eqiuvalent; ep_read/ep_write are very easy to turn into sync side of
+> ->read_iter/->write_iter and if that's equivalent to ep_aio_read/ep_aio_write
+> on sync kiocb + waiting for completion, we are fine.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/powerpc/include/asm/pgtable-ppc32.h
-index 26ce0ab0a9e4,cc3e621aa830..000000000000
---- a/arch/powerpc/include/asm/pgtable-ppc32.h
-+++ b/arch/powerpc/include/asm/pgtable-ppc32.h
-@@@ -342,14 -341,6 +342,9 @@@ static inline void __ptep_set_access_fl
-  #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val(pte) >> 3 })
-  #define __swp_entry_to_pte(x)		((pte_t) { (x).val << 3 })
- =20
-- /* Encode and decode a nonlinear file mapping entry */
-- #define PTE_FILE_MAX_BITS	29
-- #define pte_to_pgoff(pte)	(pte_val(pte) >> 3)
-- #define pgoff_to_pte(off)	((pte_t) { ((off) << 3) | _PAGE_FILE })
--=20
- +#ifndef CONFIG_PPC_4K_PAGES
- +void pgtable_cache_init(void);
- +#else
-  /*
-   * No page table caches to initialise
-   */
-
---Sig_/s.WGTkJQphaxyKvwo7m4JWg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJUzy8GAAoJEMDTa8Ir7ZwVkzkP/i/fc29twRYwYkCPqXRamHsD
-9uoOSqjsUYoYfLiLH5WSoBt0FJnnUF/Y6UpYf2E3cWMd/ch6WML/GJOCXGa6nkh5
-kZjeSIC7GGPD3BNS0Ch9pj31TXxRej7wagnrafnQbq7lncIi3mH6TOUM2pY2lfVu
-JAU8myTI3Unaz+5PYR/01CV55w4ZIQ/EGEzMJjbuoKuWhsbx8Tdv44XTuRMNvIUz
-5MVJ5f6cd2q+ncZOB9aOZSKeOv11Ogsb9bNxrEWDQwUkpt76+4rTjYVDN+egOqbT
-eZSndFzamqIiuWrgHvYTtmfCBjObSxziPmc2/IRlxZNAel2jzPnpLNUZPMDfeb3v
-gWrvzjxaC1CWHs+3fiuFZphc1A235tAAwMzPiL+FrovEuoT1U0ShTBAbSuDk5euM
-whV3cCCewEP2iamdaQ4BTalED9Zw5jtl5Tvlh/zoVFKKvo93UpcCOgo0gpN5OpVO
-BgoPISqCmgAvRlmNtbULi7CYIQ1SlRuEz03athImubTM4sNhEqh3gkhniCCZC43a
-cOrqWO+NtBL9ezgLKBSBA8AOqdrlXw4UBkBIZsHy+QEXeaxAX3c68VoXHXtkyEhZ
-dHkCsBKsuwQZKHlHuuMyA3D6+OUZnYZ4MDMllKwP4FiAn36YLBAXpUlFEox5FB9e
-RwOCsYkl1fdl5MrwdPOT
-=ajkV
------END PGP SIGNATURE-----
-
---Sig_/s.WGTkJQphaxyKvwo7m4JWg--
+They are very similar, and yes thet should be moved to iter version of
+the methods.  I actually started that but then ran into problems with
+the aio core that needed addressing first.
