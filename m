@@ -1,68 +1,86 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jan 30 (clk related WARNING on arm)
-Date: Sun, 01 Feb 2015 10:49:54 -0800
-Message-ID: <54CE7552.9070600@roeck-us.net>
-References: <20150130180209.2bd86cc4@canb.auug.org.au>	<20150130190709.GA13943@roeck-us.net> <CAMuHMdV64QF=WNxOgFn3mzpSCrA8amr6wrWQJFaZsUYozTVW=Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 2 Feb 2015 13:33:54 +1100
+Message-ID: <20150202133354.06329e97@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/QQRAE=g5SYDa_QeidqcBEsA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:53105 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753665AbbBASuG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Feb 2015 13:50:06 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YHzaw-002kg5-UG
-	for linux-next@vger.kernel.org; Sun, 01 Feb 2015 18:50:07 +0000
-In-Reply-To: <CAMuHMdV64QF=WNxOgFn3mzpSCrA8amr6wrWQJFaZsUYozTVW=Q@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:50849 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753662AbbBBCeC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Feb 2015 21:34:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Dichtel <nicolas.dichtel@6wind.com>, Thomas Graf <tgraf@suug.ch>
 
-On 02/01/2015 01:23 AM, Geert Uytterhoeven wrote:
-> On Fri, Jan 30, 2015 at 8:07 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->> On Fri, Jan 30, 2015 at 06:02:09PM +1100, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20150129:
->>>
->>> The arm-soc gained conflicts against the arm-current and arm trees.
->>>
->>> The spi tree gained a build failure for which I reverted a commit.
->>>
->>> Non-merge commits (relative to Linus' tree): 6300
->>>   6348 files changed, 255117 insertions(+), 131620 deletions(-)
->>>
->>> ----------------------------------------------------------------------------
->>>
->> I see the following runtime warning repeatedly (with different call
->> paths to vexpress_osc_round_rate) with my qemu vexpress test.
->>
->> Bisect points to commit cb75a8fcd14e71 ("clk: Add rate constraints to clocks").
->>
->> Guenter
->>
->> ---
->> WARNING: CPU: 0 PID: 1 at drivers/clk/versatile/clk-vexpress-osc.c:47
->> vexpress_osc_round_rate+0x58/0x64()
->
-> See also the thread started at
-> http://www.spinics.net/lists/linux-doc/msg28017.html
->
-> Will try the patch after FOSDEM.
->
-Hi Geert,
+--Sig_/QQRAE=g5SYDa_QeidqcBEsA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-thanks a lot for the pointer.
+Hi all,
 
-Stephen Boyd's patch ("clk: Assign a requested rate by default")
-fixes the problem seen in my test. Stephen, please feel free to add
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/vxlan.c between commit 33564bbb2cf1 ("vxlan: setup the
+right link netns in newlink hdlr") from the net tree and commit
+ac5132d1a03f ("vxlan: Only bind to sockets with compatible flags
+enabled") from the net-next tree.
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-to that patch.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
-Guenter
+diff --cc drivers/net/vxlan.c
+index a8c755dcab14,31bac2a21ce3..000000000000
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@@ -2557,8 -2761,19 +2761,19 @@@ static int vxlan_newlink(struct net *sr
+  	    nla_get_u8(data[IFLA_VXLAN_UDP_ZERO_CSUM6_RX]))
+  		vxlan->flags |=3D VXLAN_F_UDP_ZERO_CSUM6_RX;
+ =20
++ 	if (data[IFLA_VXLAN_REMCSUM_TX] &&
++ 	    nla_get_u8(data[IFLA_VXLAN_REMCSUM_TX]))
++ 		vxlan->flags |=3D VXLAN_F_REMCSUM_TX;
++=20
++ 	if (data[IFLA_VXLAN_REMCSUM_RX] &&
++ 	    nla_get_u8(data[IFLA_VXLAN_REMCSUM_RX]))
++ 		vxlan->flags |=3D VXLAN_F_REMCSUM_RX;
++=20
++ 	if (data[IFLA_VXLAN_GBP])
++ 		vxlan->flags |=3D VXLAN_F_GBP;
++=20
+ -	if (vxlan_find_vni(net, vni, use_ipv6 ? AF_INET6 : AF_INET,
+ +	if (vxlan_find_vni(src_net, vni, use_ipv6 ? AF_INET6 : AF_INET,
+- 			   vxlan->dst_port)) {
++ 			   vxlan->dst_port, vxlan->flags)) {
+  		pr_info("duplicate VNI %u\n", vni);
+  		return -EEXIST;
+  	}
+
+--Sig_/QQRAE=g5SYDa_QeidqcBEsA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJUzuIXAAoJEMDTa8Ir7ZwVLgsP/1DLNLhHJKwsBdmtuPjnE0m9
+qqAN5RLA2EMgY4NMbBl2x8IsRNlZtt2ZTvevTPT62LQpTmz9Ez1y6L9++Gs4HJBK
+WR0LsneMdv05WxJoEsKMiRftwQpV1dqslYaTKXrWWmnwxpxP0KA6u760Klh2xynX
+d8LzS8TYvdeqKWPj8WbjnyWj0k8z8Uu33oIuvTypUaCOp72am7LpjjlMxgNUcuGW
+IF6lRffW10cQB97GkDIpDE6wpRKu9sz51kZEdWdLwiBmE5BVk8EFNpBSdh7QuW9M
+wm3BIMfjnN4SgoEstNriwQq0LPY3v5WCWKpIgucDU1/wcKvFHUIsucTEaRzfEppW
+WGW1rnsKaLziDsYmXiihJWuyuTF11l2A8LoelGbwRwX1JmKGBz+we5uG/GQWynZ9
+cgg1polUHxpJos+/Ss+M5REQqnMeEf+kT4TTnWECjx03OPNTFxZ30DKrwX2K028w
+1UFtbpRiQLPNacE2Jg+Wq56f8Nhn3t23L0VqH4HEezCONqkwOYG5GIl7pFo8CLLR
+/DhESLzeOuo1uWYCKtiqTc7TFPcSB+H56mQKHN4u+vWo1xZR3+uRbKx+cCw9v/LH
+6qJ5We8UM6QOlvSHTWEbZO/IJExWAQTzPwDdNraZI0NWiKP2ueKyUS/oTBpY9yvv
++oHc1SfpwNV18An2tVT/
+=fBkM
+-----END PGP SIGNATURE-----
+
+--Sig_/QQRAE=g5SYDa_QeidqcBEsA--
