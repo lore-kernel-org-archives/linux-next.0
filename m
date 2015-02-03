@@ -1,66 +1,94 @@
-From: Laura Abbott <lauraa@codeaurora.org>
-Subject: Re: linux-next: Tree for Jan 27 (build failures due to 'don't offset
- memmap for flatmem')
-Date: Mon, 02 Feb 2015 10:31:09 -0800
-Message-ID: <54CFC26D.9020901@codeaurora.org>
-References: <20150127195123.46885d96@canb.auug.org.au> <20150127173128.GA1555@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the target-updates tree with Linus'
+ tree
+Date: Tue, 3 Feb 2015 15:59:44 +1100
+Message-ID: <20150203155944.21834ee3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:35400 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751663AbbBBSbL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Feb 2015 13:31:11 -0500
-In-Reply-To: <20150127173128.GA1555@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fUNU_cIkov.HSFGhCdrFGu8"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 1/27/2015 9:31 AM, Guenter Roeck wrote:
-> On Tue, Jan 27, 2015 at 07:51:23PM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20150123:
->>
->> The arm64 tree gained a conflict against Linus' tree.
->>
->> The net-next tree gained conflicts against the arm-soc and net trees.
->>
->> The drm-panel tree gained a conflict against the drm tree.
->>
->> The wireless-drivers-next tree gained a build failure for which I reverted
->> a commit.
->>
->> The block tree gained conflicts against the vfs and Linus' trees.
->>
->> The clockevents tree gained a conflict against the arm tree.
->>
->> The akpm tree lost a patch that turned up elsewhere.
->>
->> Non-merge commits (relative to Linus' tree): 5237
->>   4877 files changed, 200964 insertions(+), 94565 deletions(-)
->>
-> There are various build failures due to commit
-> 	'mm/page_alloc.c: don't offset memmap for flatmem',
-> which assumes that ARCH_PFN_OFFSET is defined for all architectures,
-> but it isn't. This is also the first use of ARCH_PFN_OFFSET outside
-> an architecture directory.
->
-> Build fails for mn10300, m68k_nommu, and avr32.
->
-> Guenter
->
+--Sig_/fUNU_cIkov.HSFGhCdrFGu8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Apologies for the late reply, I was on vacation last week. Yes,
-the patch is being re-worked. I asked Andrew to drop the patch
-from mmotm.
+Hi Nicholas,
 
-Thanks,
-Laura
+Today's linux-next merge of the target-updates tree got a conflict in
+drivers/vhost/scsi.c between commit 46243860806b ("vhost-scsi: Add
+missing virtio-scsi -> TCM attribute conversion") from Linus' tree and
+commit 2936f1d4f3e8 ("vhost/scsi: Global tcm_vhost -> vhost_scsi
+rename") from the target-updates tree.
 
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/vhost/scsi.c
+index d695b1673ae5,57a6f0ac4c55..000000000000
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@@ -911,28 -938,11 +938,28 @@@ vhost_scsi_mapal(struct vhost_scsi_cmd=20
+  	return 0;
+  }
+ =20
+ +static int vhost_scsi_to_tcm_attr(int attr)
+ +{
+ +	switch (attr) {
+ +	case VIRTIO_SCSI_S_SIMPLE:
+ +		return TCM_SIMPLE_TAG;
+ +	case VIRTIO_SCSI_S_ORDERED:
+ +		return TCM_ORDERED_TAG;
+ +	case VIRTIO_SCSI_S_HEAD:
+ +		return TCM_HEAD_TAG;
+ +	case VIRTIO_SCSI_S_ACA:
+ +		return TCM_ACA_TAG;
+ +	default:
+ +		break;
+ +	}
+ +	return TCM_SIMPLE_TAG;
+ +}
+ +
+- static void tcm_vhost_submission_work(struct work_struct *work)
++ static void vhost_scsi_submission_work(struct work_struct *work)
+  {
+- 	struct tcm_vhost_cmd *cmd =3D
+- 		container_of(work, struct tcm_vhost_cmd, work);
+- 	struct tcm_vhost_nexus *tv_nexus;
++ 	struct vhost_scsi_cmd *cmd =3D
++ 		container_of(work, struct vhost_scsi_cmd, work);
++ 	struct vhost_scsi_nexus *tv_nexus;
+  	struct se_cmd *se_cmd =3D &cmd->tvc_se_cmd;
+  	struct scatterlist *sg_ptr, *sg_prot_ptr =3D NULL;
+  	int rc;
+
+--Sig_/fUNU_cIkov.HSFGhCdrFGu8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU0FXFAAoJEMDTa8Ir7ZwVntQP/0PhDZHH6rSs+OC7oEQrrriY
+jg0kpHTs61V5Hs3pzseGKTrnWME8kQRrzL1jGgxih54AzF3kTQ5A3UrWi0NWGoxQ
+q8lxNs9I/gh5ltzTLhhyJKzGdhChR2JMpVWEiCrGTCIt8tjjwRT9sHneR1R5WHCz
+pjLKscDJFWVQQ+risXKOINdjvZ9gismPKiqGxTcWohr8VVhiExXtEnHHKygoBVJT
+dC6iH8uLhh/5vdGXjSffMLtJahlX5tdv8ED/DsWysN3QgiXaFQf/IKOX9UVgkR1I
+6b4b0sqJBowB/Gs27U5KnhpI4U/3xYxg06xnqx/+jOWhdiXiPIlJW+8CIHE9qbIS
+xD6pAFFXjatP6UIWPOMSLXQ+wp3zrXLZFQeuC5+w4sOdwH3nkcxC2GyrBrY2aFUV
+KT01MsZEHX2lt1W62O5JX0fX7oDSvxKMSAWgIdi0BpeE88EiXs4kd13jDeETzdim
+p5IEsPFxULuWx1n0B6k1cH4+MMOq2G04jug/xzVSzX2cm0x7wZS5ytUb0EMsIF3X
+erPMdskZMntqu8XFbSez1Gwm8ks3Ckt+QNdROI/66DCLIXzd8FcUXJOr3z2uUyhj
+d/wapdk6LohRWvQ0oydtYHtJGTgOH9UFQurA5CfA7JygvXgj0Rfe5wqqVaE14MPG
+s8A1D5QgQ+NkJJmOWZNe
+=BR6s
+-----END PGP SIGNATURE-----
+
+--Sig_/fUNU_cIkov.HSFGhCdrFGu8--
