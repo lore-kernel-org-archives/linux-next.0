@@ -1,36 +1,53 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Tue, 03 Feb 2015 10:25:05 -0800
-Message-ID: <20150203182505.421.11849@quantum>
-References: <20150203163140.3edfe607@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Feb 3 (arc:defconfig build failure)
+Date: Tue, 3 Feb 2015 10:42:18 -0800
+Message-ID: <20150203184218.GA20822@roeck-us.net>
+References: <20150203182010.73624992@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150203163140.3edfe607@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:35724 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965948AbbBCSmZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Feb 2015 13:42:25 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YIiQb-000NvJ-Kp
+	for linux-next@vger.kernel.org; Tue, 03 Feb 2015 18:42:25 +0000
+Content-Disposition: inline
+In-Reply-To: <20150203182010.73624992@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Peter Hurley <peter@hurleysoftware.com>
 
-Quoting Stephen Rothwell (2015-02-02 21:31:40)
-> Hi Mike,
+On Tue, Feb 03, 2015 at 06:20:10PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the clk tree got a conflict in
-> arch/arm/mach-omap2/cclock3xxx_data.c between commit ca662ee7b8a8
-> ("ARM: OMAP2+: Remove unused ti81xx platform init code") from the
-> arm-soc tree and commit d6540b193719 ("ARM: OMAP3: remove legacy clock
-> data") from the clk tree.
+> Changes since 20150202:
 > 
-> I fixed it up (the latter removed the file, so I did that) and can
-> carry the fix as necessary (no action is required).
-
-That is the correct fix.
-
-Thanks,
-Mike
-
+> The target-updates tree gained a conflict against Linus' tree.
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> The clk tree gained conflicts against the arm-soc tree.
+> 
+> Non-merge commits (relative to Linus' tree): 7173
+>  7143 files changed, 301126 insertions(+), 167764 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
+Building arc:defconfig ... failed
+--------------
+Error log:
+
+drivers/built-in.o: In function `of_setup_earlycon':
+(.init.text+0xb3e): undefined reference to `arc_early_base_baud'
+drivers/built-in.o: In function `setup_earlycon':
+(.init.text+0xcd0): undefined reference to `arc_early_base_baud'
+make: *** [vmlinux] Error 1
+
+This is due to "ARC: Dynamically determine BASE_BAUD from DeviceTree".
+arc:defconfig does not define CONFIG_SERIAL_8250 and thus also not
+CONFIG_SERIAL_8250_CONSOLE, but it looks like it is mandatory
+after this patch.
+
+Guenter
