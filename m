@@ -1,37 +1,36 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Update for drm-intel.git branches
-Date: Tue, 3 Feb 2015 10:28:16 +0100
-Message-ID: <CAKMK7uHhCVaODBoi_uSWt7eXe6P04YvwT9XboobaWUQ9VxPBVQ@mail.gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Tue, 03 Feb 2015 10:25:05 -0800
+Message-ID: <20150203182505.421.11849@quantum>
+References: <20150203163140.3edfe607@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:53619 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751202AbbBCJ2R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Feb 2015 04:28:17 -0500
-Received: by mail-ie0-f173.google.com with SMTP id tr6so23798874ieb.4
-        for <linux-next@vger.kernel.org>; Tue, 03 Feb 2015 01:28:16 -0800 (PST)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, "Nikula, Jani" <jani.nikula@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150203163140.3edfe607@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Quoting Stephen Rothwell (2015-02-02 21:31:40)
+> Hi Mike,
+> 
+> Today's linux-next merge of the clk tree got a conflict in
+> arch/arm/mach-omap2/cclock3xxx_data.c between commit ca662ee7b8a8
+> ("ARM: OMAP2+: Remove unused ti81xx platform init code") from the
+> arm-soc tree and commit d6540b193719 ("ARM: OMAP3: remove legacy clock
+> data") from the clk tree.
+> 
+> I fixed it up (the latter removed the file, so I did that) and can
+> carry the fix as necessary (no action is required).
 
-I've renamed the topic/core-stuff branch to topic/drm-misc in the
-drm-intel.git. I'll leave the old branch around until you've updated
-your scripts, please reply when you've done that.
+That is the correct fix.
 
-Another thing: Nowadays I have 2-3 special-purpose topic branches per
-kernel release, and at least with some of them I think it would be
-good to include them into linux-next. Would it be possible for your
-scripts to pick up the list of -next branches to pick up dynamically
-from some file? That would also simplify things with the
-for-linux-next branch, which is an alias to different branches
-depending upon where in the release cycle we are.
+Thanks,
+Mike
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
