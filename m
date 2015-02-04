@@ -1,114 +1,68 @@
-From: Andrey Ryabinin <a.ryabinin@samsung.com>
-Subject: Re: [PATCH] kasan: fix build warnings
-Date: Wed, 04 Feb 2015 15:05:28 +0300
-Message-ID: <54D20B08.7010508@samsung.com>
-References: <20150204185328.1ee3ce3c@canb.auug.org.au>
- <1423050231-1701-1-git-send-email-a.ryabinin@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Update for drm-intel.git branches
+Date: Wed, 4 Feb 2015 23:12:11 +1100
+Message-ID: <20150204231211.56a8d446@canb.auug.org.au>
+References: <CAKMK7uHhCVaODBoi_uSWt7eXe6P04YvwT9XboobaWUQ9VxPBVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1423050231-1701-1-git-send-email-a.ryabinin@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, Michal Marek <mmarek@suse.cz>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4=51TMnByFXzP51p05TXWY1"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52111 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753195AbbBDMMS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Feb 2015 07:12:18 -0500
+In-Reply-To: <CAKMK7uHhCVaODBoi_uSWt7eXe6P04YvwT9XboobaWUQ9VxPBVQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: linux-next <linux-next@vger.kernel.org>, "Nikula, Jani" <jani.nikula@linux.intel.com>
 
-On 02/04/2015 02:43 PM, Andrey Ryabinin wrote:
-> Some versions of gcc produce warning instead of error when
-> -fsanitize flag uses unsupported argument:
-> 	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61065
-> 
-> This breaks our detection of whether -fsanitize=kernel-address
-> is supported by compiler or not. Thus we have tons of build
-> warnings like this:
-> 	x86_64-linux-gcc: warning: unrecognized argument to -fsanitize= option: 'kernel-address'
-> 
-> Passing -Werror into $(call cc-option) will fix this problem
-> as gcc will error out now.
-> 
-> Signed-off-by: Andrey Ryabinin <a.ryabinin@samsung.com>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
-> 
-> Hi Andrew, this patch applies on top kasan patch set.
-> We can't just fix add-kernel-address-sanitizer-infrastructure.patch
-> as patch  kasan-enable-instrumentation-of-global-variables.patch
-> depends on it.
-> 
-> Let me know if your prefer to update all needed patches instead
-> of this fix.
-> 
->  scripts/Makefile.kasan | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-> index df302f8..72a40bb 100644
-> --- a/scripts/Makefile.kasan
-> +++ b/scripts/Makefile.kasan
-> @@ -5,15 +5,14 @@ else
->  	call_threshold := 0
->  endif
->  
-> -CFLAGS_KASAN_MINIMAL := $(call cc-option, -fsanitize=kernel-address \
-> -				--param asan-globals=1)
-> +CFLAGS_KASAN_MINIMAL := -fsanitize=kernel-address --param asan-globals=1
->  
->  CFLAGS_KASAN := $(call cc-option, -fsanitize=kernel-address \
->  		-fasan-shadow-offset=$(CONFIG_KASAN_SHADOW_OFFSET) \
->  		--param asan-stack=1 --param asan-globals=1 \
->  		--param asan-instrumentation-with-call-threshold=$(call_threshold))
->  
-> -ifeq ($(CFLAGS_KASAN_MINIMAL),)
-> +ifeq ($(call cc-option, $(CFLAGS_KASAN_MINIMAL) -Werror),)
->          $(warning Cannot use CONFIG_KASAN: \
->              -fsanitize=kernel-address is not supported by compiler)
->  else
-> 
+--Sig_/4=51TMnByFXzP51p05TXWY1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Daniel,
 
-Or maybe it would be be better always use -Werror in cc-option?
+On Tue, 3 Feb 2015 10:28:16 +0100 Daniel Vetter <daniel.vetter@ffwll.ch> wr=
+ote:
+>
+> I've renamed the topic/core-stuff branch to topic/drm-misc in the
+> drm-intel.git. I'll leave the old branch around until you've updated
+> your scripts, please reply when you've done that.
+>=20
+> Another thing: Nowadays I have 2-3 special-purpose topic branches per
+> kernel release, and at least with some of them I think it would be
+> good to include them into linux-next. Would it be possible for your
+> scripts to pick up the list of -next branches to pick up dynamically
+> from some file? That would also simplify things with the
+> for-linux-next branch, which is an alias to different branches
+> depending upon where in the release cycle we are.
 
----
-From: Andrey Ryabinin <a.ryabinin@samsung.com>
-Subject: [PATCH] kbuild: always use -Werror in 'call cc-option'
+I'll get back to you next week about this, OK?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Some versions of gcc produce warning instead of error when
--fsanitize flag uses unsupported argument:
-	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61065
+--Sig_/4=51TMnByFXzP51p05TXWY1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-This breaks our detection of whether -fsanitize=kernel-address
-is supported by compiler or not. Thus we have tons of build
-warnings like this:
-	x86_64-linux-gcc: warning: unrecognized argument to -fsanitize= option: 'kernel-address'
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-To workaround this compiler bug we could always use -Werror
-with 'call cc-option' forcing gcc to produce error instead of
-warnings.
+iQIcBAEBCAAGBQJU0gygAAoJEMDTa8Ir7ZwVk0QQAIj9gSUh4JvQI7SlfWFvycyi
+nUPYdSed5jH0TgImLG11G0OrbHDb+YOtPnTI8ea299YPKswEfbMku/FstAS6Dgv2
+bt7Z+hpcVsfuDSfLoaK2tdp61IwhXPrq9jYrtbQQzwS1qXErm9Gj/RXaTz29w406
+UJ+fNVRVpp1B7R5GJiXJXKmdFvDB/4VDhy7K3ywGt9X/rLXaQZne0xsCKF35ShBT
+uOLiQYGpnoTSI3AB7LP789aSoHG3gdKJQmJ3KIoq4+Sbf33S6NcDWtc3JiE2Xixx
+k+zBSecJXOWw3cURWxP3l7dCHjOSZSXWsg5M82cVj5gM8tYih6XgXeB7WdNalTL+
+nrZSFVI1xaUot+o/NXvXWTScBy+DNvDWjbPmHeTVlJg3GcCxdGUmgGEuwuDcj7ls
+qTiZMANeibGRbfcpCatjDUB5rWgS0H5j+xwIzJlJpzgBHmc4prx4wWYn0647e0dl
+hDx0beXmnM5kqAW3YF4A2VTn6Pb8r6678Odd7lXMJKhChibK6bYpUdtpga04HcFD
+BRi0wcUyqZ+fr89iz64ElYJzCoRC2chga2KQ7KuCm2Zkx0JKYNFnWbQc9FS86yPO
+huj/Vpt0CTzrhAJogN6ei73+tMGexDst7z7CmyX4uH3FfIXDN9YEes9KIUMtuG83
+j580umqQ2O37/tq1uq+P
+=7DTp
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Andrey Ryabinin <a.ryabinin@samsung.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michal Marek <mmarek@suse.cz>
----
- scripts/Kbuild.include | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index d3437b8..6bc4e3e 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -111,12 +111,12 @@ as-instr = $(call try-run,\
- # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
-
- cc-option = $(call try-run,\
--	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
-+	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -Werror -c -x c /dev/null -o "$$TMP",$(1),$(2))
-
- # cc-option-yn
- # Usage: flag := $(call cc-option-yn,-march=winchip-c6)
- cc-option-yn = $(call try-run,\
--	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",y,n)
-+	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -Werror -c -x c /dev/null -o "$$TMP",y,n)
-
- # cc-option-align
- # Prefix align with either -falign or -malign
+--Sig_/4=51TMnByFXzP51p05TXWY1--
