@@ -1,53 +1,74 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Wed, 04 Feb 2015 07:26:03 -0800
-Message-ID: <1423063563.2090.2.camel@HansenPartnership.com>
-References: <20150204172925.728016bf@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: Tree for Feb 4
+Date: Wed, 04 Feb 2015 08:31:36 -0700
+Message-ID: <54D23B58.9000703@kernel.dk>
+References: <20150204193535.58f132c5@canb.auug.org.au>	<CA+icZUXkMv+RYoHLN-BQSrYti8FUjqWih2XsARY4hDAP=2v1Yw@mail.gmail.com>	<54D237D9.4070209@kernel.dk> <CA+icZUXh3jdiF1SbJx4aRzYf2fjq_CErQ5drdQRK36ath0A-SA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150204172925.728016bf@canb.auug.org.au>
+In-Reply-To: <CA+icZUXh3jdiF1SbJx4aRzYf2fjq_CErQ5drdQRK36ath0A-SA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>, Joe Perches <joe@perches.com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2015-02-04 at 17:29 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/scsi/scsi_logging.c: In function 'sdev_prefix_printk':
-> drivers/scsi/scsi_logging.c:119:6: error: void value not ignored as it ought to be
->   ret = dev_printk(level, &sdev->sdev_gendev, "%s", logbuf);
->       ^
-> drivers/scsi/scsi_logging.c: In function 'scmd_printk':
-> drivers/scsi/scsi_logging.c:146:6: error: void value not ignored as it ought to be
->   ret = dev_printk(level, &scmd->device->sdev_gendev, "%s", logbuf);
->       ^
-> 
-> Caused by commit ded85c193a39 ("scsi: Implement per-cpu logging
-> buffer") interacting with commit d1f1052c5204 ("device: Change
-> dev_<level> logging functions to return void") from the driver-core
-> tree.
-> 
-> I added the following merge resolution patch.  Someone will have to
-> remember to tell Linus.  Also, the void return may be able to be
-> propagated further up the chain since these two new affected functions
-> now always return 0.
+On 02/04/2015 08:21 AM, Sedat Dilek wrote:
+> On Wed, Feb 4, 2015 at 4:16 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>> On 02/04/2015 05:26 AM, Sedat Dilek wrote:
+>>>
+>>> On Wed, Feb 4, 2015 at 9:35 AM, Stephen Rothwell <sfr@canb.auug.org.au>
+>>> wrote:
+>>>>
+>>>> Hi all,
+>>>>
+>>>> The next release I will be making will be next-20150209 - which will
+>>>> probably be after the v3.19 release.
+>>>>
+>>>> Changes since 20150203:
+>>>>
+>>>> The sound-asoc tree gained a conflict against the sound tree.
+>>>>
+>>>> The scsi tree gained a build failure caused by an interaction with the
+>>>> driver-core tree.  I applied a merge fix patch.
+>>>>
+>>>> The akpm-current tree gained a build failure for which I disabled
+>>>> CONFIG_KASAN.
+>>>>
+>>>> Non-merge commits (relative to Linus' tree): 7461
+>>>>    7314 files changed, 309736 insertions(+), 172363 deletions(-)
+>>>>
+>>>>
+>>>> ----------------------------------------------------------------------------
+>>>>
+>>>
+>>> [ CC Jens ]
+>>>
+>>> Hi,
+>>>
+>>> I am seeing the following in my logs several times...
+>>>
+>>> Feb  4 02:53:13 fambox kernel: [15507.397482] blk_update_request: I/O
+>>> error, dev loop0, sector 21261344
+>>> Feb  4 02:53:13 fambox kernel: [15507.397531] loop0: DISCARD failed.
+>>> Manually zeroing.
+>>
+>>
+>> This is from Martin's commit (CC'ed). Martin, there are various ways we can
+>> end up "failing" from blkdev_issue_discard(), I'm going to kill those debug
+>> warnings.
+>>
+>
+> [ Really CC Martin :-) ]
 
-Hannes posted a more correct fix for it today to the scsi list.
-However, sorting this out isn't just about the short term fix:  We can't
-afford the bisection failure of SCSI not building over a wide range of
-commits, so our tree will need to be pulled ahead of the driver-core
-tree.
+Ooops, thanks :-)
 
-I've got to say, while it's great that linux-next spotted this ahead of
-time (saves us all a massive beating from Linus, thanks Stephen) it's
-unfortunate to have this type of thing turn up on the edge of a merge
-window, especially caused by a trivial commit which perhaps shouldn't
-have gone in so late.
+> Caused by this one...?
+>
+> commit d93ba7a5a97c9f315bacdcdb8de4e5f368e7b396
+> "block: Add discard flag to blkdev_issue_zeroout() function"
 
-James
+That's the one.
+
+-- 
+Jens Axboe
