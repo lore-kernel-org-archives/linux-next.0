@@ -1,23 +1,23 @@
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Subject: Re: linux-next: Tree for Feb 4
-Date: Thu, 05 Feb 2015 00:25:13 +0100
-Message-ID: <2365805.7maNpNF1bG@vostro.rjw.lan>
-References: <20150204193535.58f132c5@canb.auug.org.au> <1511573.AlfExlvQsO@vostro.rjw.lan> <CA+icZUVVePNjW78-v3Z6_TXmVf26p2=uvLW2aCNkLq_0nqcjdQ@mail.gmail.com>
+Date: Thu, 05 Feb 2015 00:30:01 +0100
+Message-ID: <1777022.KaV9ILjeny@vostro.rjw.lan>
+References: <20150204193535.58f132c5@canb.auug.org.au> <1511573.AlfExlvQsO@vostro.rjw.lan> <CA+icZUXZz7jEN0EjHbM2vo+Vqg6iXnJrL625zuNhMNEk9FYPRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:59768 "HELO
+Received: from v094114.home.net.pl ([79.96.170.134]:53552 "HELO
 	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755565AbbBDXCS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Feb 2015 18:02:18 -0500
-In-Reply-To: <CA+icZUVVePNjW78-v3Z6_TXmVf26p2=uvLW2aCNkLq_0nqcjdQ@mail.gmail.com>
+	with SMTP id S1755909AbbBDXHG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Feb 2015 18:07:06 -0500
+In-Reply-To: <CA+icZUXZz7jEN0EjHbM2vo+Vqg6iXnJrL625zuNhMNEk9FYPRQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: sedat.dilek@gmail.com
 Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>
 
-On Wednesday, February 04, 2015 11:38:40 PM Sedat Dilek wrote:
+On Wednesday, February 04, 2015 11:46:32 PM Sedat Dilek wrote:
 > On Wed, Feb 4, 2015 at 10:54 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 > > On Wednesday, February 04, 2015 09:18:03 PM Sedat Dilek wrote:
 > >> On Wed, Feb 4, 2015 at 9:35 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
@@ -46,9 +46,6 @@ On Wednesday, February 04, 2015 11:38:40 PM Sedat Dilek wrote:
 > >
 > > Dirk is not the maintainer of intel_pstate any more, CC: Kristen.
 > >
-> 
-> Yupp, I forwarded my original posting before you answered me.
-> 
 > >> Hi,
 > >>
 > >> after suspend-and-resume I see the following call-trace:
@@ -56,77 +53,32 @@ On Wednesday, February 04, 2015 11:38:40 PM Sedat Dilek wrote:
 > > Do you see that after CPU1 offline too?
 > >
 > 
-> Did not check yet.
+> NO.
 > 
-> >> ...
-> >> [ 1144.482666] Disabling non-boot CPUs ...
-> >> [ 1144.483000] intel_pstate CPU 1 exiting
-> >> [ 1144.486064]
-> >> [ 1144.486065] ===============================
-> >> [ 1144.486067] smpboot: CPU 1 didn't die...
-> >> [ 1144.486067] [ INFO: suspicious RCU usage. ]
-> >> [ 1144.486069] 3.19.0-rc7-next-20150204.1-iniza-small #1 Not tainted
-> >> [ 1144.486070] -------------------------------
-> >> [ 1144.486072] include/trace/events/tlb.h:35 suspicious
-> >> rcu_dereference_check() usage!
-> >> [ 1144.486073]
-> >> [ 1144.486073] other info that might help us debug this:
-> >> [ 1144.486073]
-> >> [ 1144.486074]
-> >> [ 1144.486074] RCU used illegally from offline CPU!
-> >> [ 1144.486074] rcu_scheduler_active = 1, debug_locks = 0
-> >> [ 1144.486076] no locks held by swapper/1/0.
-> >> [ 1144.486076]
-> >> [ 1144.486076] stack backtrace:
-> >> [ 1144.486079] CPU: 1 PID: 0 Comm: swapper/1 Not tainted
-> >> 3.19.0-rc7-next-20150204.1-iniza-small #1
-> >> [ 1144.486080] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
-> >> 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
-> >> [ 1144.486085]  0000000000000001 ffff88011a44fe18 ffffffff817e370d
-> >> 0000000000000011
-> >> [ 1144.486088]  ffff88011a448290 ffff88011a44fe48 ffffffff810d6847
-> >> ffff8800c66b9600
-> >> [ 1144.486091]  0000000000000001 ffff88011a44c000 ffffffff81cb3900
-> >> ffff88011a44fe78
-> >> [ 1144.486092] Call Trace:
-> >> [ 1144.486099]  [<ffffffff817e370d>] dump_stack+0x4c/0x65
-> >> [ 1144.486104]  [<ffffffff810d6847>] lockdep_rcu_suspicious+0xe7/0x120
-> >> [ 1144.486109]  [<ffffffff810b71a5>] idle_task_exit+0x205/0x2c0
-> >> [ 1144.486113]  [<ffffffff81054c4e>] play_dead_common+0xe/0x50
-> >> [ 1144.486116]  [<ffffffff81054ca5>] native_play_dead+0x15/0x140
-> >> [ 1144.486121]  [<ffffffff8102963f>] arch_cpu_idle_dead+0xf/0x20
-> >> [ 1144.486123]  [<ffffffff810cd89e>] cpu_startup_entry+0x37e/0x580
-> >> [ 1144.486126]  [<ffffffff81053e20>] start_secondary+0x140/0x150
-> >> [ 1144.502920] intel_pstate CPU 2 exiting
-> >> ...
-> >>
-> >> Not sure if this comes from the rcu or pm/intel_pstate area.
-> >
-> > New intel_pstate commits in linux-next are between 7ab0256e57ae and
-> > a04759924e25 inclusive.  Please check that range first.
-> >
+> After...
 > 
-> Not sure if I am willing to test with reverted patches.
-> ( /me was updating Linux graphic driver stack today built with
-> upcomming llvm-toolchain v3.6.0. )
+> root# echo 0 > /sys/devices/system/cpu/cpu1/online
 > 
-> > If that doesn't point you to the offender, you can pull the linux-next
-> > branch of the linux-pm.git tree at:
-> >
-> > git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-> >
-> > and see if that alone triggers the issue for you.  If not, the offender is
-> > not there.  Otherwise, and if you use the ACPI cpuidle driver, you can
-> > check the acpi-processor merge point too.
-> >
+> ...I see this:
 > 
-> I pulled in pm-next-20150204 on top of next-20150204, but that did not help.
+> +[  707.936668] PM: Saving platform NVS memory
+> +[  707.936674] Disabling non-boot CPUs ...
+> +[  707.936712] intel_pstate CPU 2 exiting
+> +[  707.938024] smpboot: CPU 2 didn't die...
+> +[  707.949128] intel_pstate CPU 3 exiting
+> +[  707.950369] smpboot: CPU 3 didn't die...
+> +[  707.966248] ACPI: Low-level resume complete
+> +[  707.966302] PM: Restoring platform NVS memory
+> 
+> Full dmesg attached.
 
-What I was asking about was to test linux-pm.git/linux-next *instead* *of* full
-linux-next and not on top of it.  That would tell you whether or not the new trace
-was introduced by one of the PM commits or elsewhere.
+The dmesg doesn't match what you said above.
 
-But this most likely is what Paul said anyway.
+Anyway, that's not what I meant.  Does the CPU1 offlining alone:
+
+# echo 0 > /sys/devices/system/cpu/cpu1/online
+
+trigger the trace?  It should.
 
 
 -- 
