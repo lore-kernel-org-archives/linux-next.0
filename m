@@ -1,46 +1,78 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Date: Wed, 04 Feb 2015 08:53:21 +0100
-Message-ID: <54D1CFF1.60300@siemens.com>
-References: <20150204184818.0fe47255@canb.auug.org.au>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] exynos/drm: fix no hdmi output
+Date: Wed, 04 Feb 2015 17:35:34 +0900
+Message-ID: <54D1D9D6.1030801@samsung.com>
+References: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150204184818.0fe47255@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-reply-to: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Alban Browaeys <alban.browaeys@gmail.com>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, Alban Browaeys <prahal@yahoo.com>
 List-Id: linux-next.vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hi,
 
-On 2015-02-04 08:48, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> warning: (GDB_SCRIPTS) selects DEBUG_INFO which has unmet direct dependencies (DEBUG_KERNEL && !COMPILE_TEST)
-> warning: (GDB_SCRIPTS) selects DEBUG_INFO which has unmet direct dependencies (DEBUG_KERNEL && !COMPILE_TEST)
-> 
-> Introduced by commit 3cf8bb219e44 ("scripts/gdb: add infrastructure").
+On 2015=EB=85=84 01=EC=9B=94 30=EC=9D=BC 06:18, Alban Browaeys wrote:
+> The hdmi outputs black screen only even though under the hood Xorg an=
+d
+> framebuffer console  are fine : devices found and initialized, but
+> not a pixel out.
+>=20
+> Commit 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+> changed the call order of mixer_initialize with regards to
+>  exynos_drm_crtc_create.
+>=20
+> This changes breaks hdmi out on Odroid U2 (linux-next with added
+>  Marek Szyprowski v4 hdmi patchset from linux-samsung-soc ML).
+>=20
+> Restore the previous call ordering get hdmi to ouput proper pixels:
+> ie call mixer_initialize first then exynos_drm_crtc_create.
 
-I've posted a fix earlier today [1]. The Intel test robot informed me
-already.
+Applied. Please use prefix of subject correctly, drm/exynos because you=
+r
+patch is filtered in my mail box.
 
-Jan
+Thanks,
+Inki Dae
 
-[1] http://thread.gmane.org/gmane.linux.kernel/1881832
-
-- -- 
-Siemens AG, Corporate Technology, CT RTC ITP SES-DE
-Corporate Competence Center Embedded Linux
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEARECAAYFAlTRz/EACgkQitSsb3rl5xS3dQCg1ZPql+9XOcaC/hk7WSztRHDb
-6JkAn1XATlgzopMoj9KgpbMApDnkKQYc
-=Edbi
------END PGP SIGNATURE-----
+>=20
+> Fixes: 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+> Signed-off-by: Alban Browaeys <prahal@yahoo.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
+exynos/exynos_mixer.c
+> index d8fd8e1..188f90f 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1258,18 +1258,19 @@ static int mixer_bind(struct device *dev, str=
+uct device *manager, void *data)
+>  	struct drm_device *drm_dev =3D data;
+>  	int ret;
+> =20
+> +	ret =3D mixer_initialize(ctx, drm_dev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ctx->crtc =3D exynos_drm_crtc_create(drm_dev, ctx->pipe,
+>  				     EXYNOS_DISPLAY_TYPE_HDMI,
+>  				     &mixer_crtc_ops, ctx);
+>  	if (IS_ERR(ctx->crtc)) {
+> +		mixer_ctx_remove(ctx);
+>  		ret =3D PTR_ERR(ctx->crtc);
+>  		goto free_ctx;
+>  	}
+> =20
+> -	ret =3D mixer_initialize(ctx, drm_dev);
+> -	if (ret)
+> -		goto free_ctx;
+> -
+>  	return 0;
+> =20
+>  free_ctx:
+>=20
