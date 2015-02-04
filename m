@@ -1,115 +1,59 @@
-From: Hannes Reinecke <hare@suse.de>
-Subject: [PATCH] scsi_logging: return void for dev_printk() functions
-Date: Wed,  4 Feb 2015 08:11:34 +0100
-Message-ID: <1423033894-27646-1-git-send-email-hare@suse.de>
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Sender: linux-scsi-owner@vger.kernel.org
-To: James Bottomley <jbottomley@parallels.com>
-Cc: Christoph Hellwig <hch@lst.de>, linux-scsi@vger.kernel.org, Joe Perches <joe@perches.com>, linux-next@vger.kernel.org, Hannes Reinecke <hare@suse.de>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Date: Wed, 4 Feb 2015 18:48:18 +1100
+Message-ID: <20150204184818.0fe47255@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ldM0hhUT+GWxl9e_e/iQ3yt"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52780 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751716AbbBDHs3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Feb 2015 02:48:29 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>
 
-dev_printk() is now a void function, so the related functions
-scmd_printk() and sdev_prefix_printk() should be made void, too.
+--Sig_/ldM0hhUT+GWxl9e_e/iQ3yt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Hannes Reinecke <hare@suse.de>
----
- drivers/scsi/scsi_logging.c | 22 +++++++++-------------
- include/scsi/scsi_device.h  |  4 ++--
- 2 files changed, 11 insertions(+), 15 deletions(-)
+Hi Andrew,
 
-diff --git a/drivers/scsi/scsi_logging.c b/drivers/scsi/scsi_logging.c
-index ecc5918..bd70339 100644
---- a/drivers/scsi/scsi_logging.c
-+++ b/drivers/scsi/scsi_logging.c
-@@ -93,20 +93,19 @@ static size_t sdev_format_header(char *logbuf, size_t logbuf_len,
- 	return off;
- }
- 
--int sdev_prefix_printk(const char *level, const struct scsi_device *sdev,
--		       const char *name, const char *fmt, ...)
-+void sdev_prefix_printk(const char *level, const struct scsi_device *sdev,
-+			const char *name, const char *fmt, ...)
- {
- 	va_list args;
- 	char *logbuf;
- 	size_t off = 0, logbuf_len;
--	int ret;
- 
- 	if (!sdev)
--		return 0;
-+		return;
- 
- 	logbuf = scsi_log_reserve_buffer(&logbuf_len);
- 	if (!logbuf)
--		return 0;
-+		return;
- 
- 	if (name)
- 		off += scnprintf(logbuf + off, logbuf_len - off,
-@@ -116,26 +115,24 @@ int sdev_prefix_printk(const char *level, const struct scsi_device *sdev,
- 		off += vscnprintf(logbuf + off, logbuf_len - off, fmt, args);
- 		va_end(args);
- 	}
--	ret = dev_printk(level, &sdev->sdev_gendev, "%s", logbuf);
-+	dev_printk(level, &sdev->sdev_gendev, "%s", logbuf);
- 	scsi_log_release_buffer(logbuf);
--	return ret;
- }
- EXPORT_SYMBOL(sdev_prefix_printk);
- 
--int scmd_printk(const char *level, const struct scsi_cmnd *scmd,
-+void scmd_printk(const char *level, const struct scsi_cmnd *scmd,
- 		const char *fmt, ...)
- {
- 	va_list args;
- 	char *logbuf;
- 	size_t off = 0, logbuf_len;
--	int ret;
- 
- 	if (!scmd || !scmd->cmnd)
--		return 0;
-+		return;
- 
- 	logbuf = scsi_log_reserve_buffer(&logbuf_len);
- 	if (!logbuf)
--		return 0;
-+		return;
- 	off = sdev_format_header(logbuf, logbuf_len, scmd_name(scmd),
- 				 scmd->request->tag);
- 	if (off < logbuf_len) {
-@@ -143,9 +140,8 @@ int scmd_printk(const char *level, const struct scsi_cmnd *scmd,
- 		off += vscnprintf(logbuf + off, logbuf_len - off, fmt, args);
- 		va_end(args);
- 	}
--	ret = dev_printk(level, &scmd->device->sdev_gendev, "%s", logbuf);
-+	dev_printk(level, &scmd->device->sdev_gendev, "%s", logbuf);
- 	scsi_log_release_buffer(logbuf);
--	return ret;
- }
- EXPORT_SYMBOL(scmd_printk);
- 
-diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-index 2e0281e..a4c9336 100644
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@ -237,14 +237,14 @@ struct scsi_dh_data {
-  * like scmd_printk, but the device name is passed in
-  * as a string pointer
-  */
--__printf(4, 5) int
-+__printf(4, 5) void
- sdev_prefix_printk(const char *, const struct scsi_device *, const char *,
- 		const char *, ...);
- 
- #define sdev_printk(l, sdev, fmt, a...)				\
- 	sdev_prefix_printk(l, sdev, NULL, fmt, ##a)
- 
--__printf(3, 4) int
-+__printf(3, 4) void
- scmd_printk(const char *, const struct scsi_cmnd *, const char *, ...);
- 
- #define scmd_dbg(scmd, fmt, a...)					   \
--- 
-1.8.5.2
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
+warning: (GDB_SCRIPTS) selects DEBUG_INFO which has unmet direct dependenci=
+es (DEBUG_KERNEL && !COMPILE_TEST)
+warning: (GDB_SCRIPTS) selects DEBUG_INFO which has unmet direct dependenci=
+es (DEBUG_KERNEL && !COMPILE_TEST)
+
+Introduced by commit 3cf8bb219e44 ("scripts/gdb: add infrastructure").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/ldM0hhUT+GWxl9e_e/iQ3yt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU0c7LAAoJEMDTa8Ir7ZwVN0sP/2lZqwGHlV8Xf7wpbjW19Ltj
+fSdTJO0wej6cRon+dxQbHUd1NSj2rnAMdo4gCMOtzAKWhdhjixYnPtxtrpYSPWJO
+DgBBRcGj2Wn6WaxDcJEifG55WtReGmBoXxo1mrloVo3uLMOGLaWuT4XbgmOaR0be
+Fe0gRH0H8OAPFPbITjLE9Vf6UQL9NbZwhnMlP2dmk1jjJ1IcRi/Gs5F4V795NhvO
+JsSgnpFsVtNszYG8FPaXfOorexqFpP+X0DZzzqrLWxG2zNufqNmd1m46f70DFau+
+TWpfwrypX6XX9rYf+9lVYV0piFgbdYU/bUdA8bpQEQzwvmtjllrTnReMbhkL/Flt
+xqTgUlPMZKSuMQhSoLresebL+R4Iix2iu2aVMb9hlfYESOjrs3zULdW7XdDQ/1dX
+PwLZu292/4B35ZxExHiBvf8bGxB3QaSH7NiEamazSPbbMV/TR+75vBkpzViecGqm
+Z5YYCGL/mfoUTFKT71mbDnbB3WFLPTpxdLx+FU7H2ncCKW7xwZ5oWElmQ9g3wE0T
+bXNjGT/NYXFjv5NhUTDE+g1KE80GNspfjLLB0wLHIt22D7AffnuigIZ9WHZst41S
+VMrg5TN3kjwmQ+5Gsyfm3dZ+YOLwfcfq/wDEjuZ3wD1/aXpVTp4/ylC4F7RD+mTb
+OC+LzhYqq2+GRmIKhpIt
+=YAwY
+-----END PGP SIGNATURE-----
+
+--Sig_/ldM0hhUT+GWxl9e_e/iQ3yt--
