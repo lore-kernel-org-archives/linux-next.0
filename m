@@ -1,130 +1,129 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Subject: Re: linux-next: Tree for Feb 4
-Date: Thu, 5 Feb 2015 00:48:35 +0100
-Message-ID: <CA+icZUVFFMFFmx8tSTZ9YB=FbmjtD_ZfQa3JTOwb5K7eLW=k-w@mail.gmail.com>
+Date: Wed, 4 Feb 2015 15:51:15 -0800
+Message-ID: <20150204235115.GP5370@linux.vnet.ibm.com>
 References: <20150204193535.58f132c5@canb.auug.org.au>
-	<1511573.AlfExlvQsO@vostro.rjw.lan>
-	<CA+icZUXZz7jEN0EjHbM2vo+Vqg6iXnJrL625zuNhMNEk9FYPRQ@mail.gmail.com>
-	<1777022.KaV9ILjeny@vostro.rjw.lan>
-Reply-To: sedat.dilek@gmail.com
+ <1511573.AlfExlvQsO@vostro.rjw.lan>
+ <20150204215357.GL5370@linux.vnet.ibm.com>
+ <11131483.LrRNxJumiL@vostro.rjw.lan>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:46363 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966842AbbBDXsg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Feb 2015 18:48:36 -0500
-In-Reply-To: <1777022.KaV9ILjeny@vostro.rjw.lan>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <11131483.LrRNxJumiL@vostro.rjw.lan>
+Sender: linux-kernel-owner@vger.kernel.org
 To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>
+Cc: sedat.dilek@gmail.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 5, 2015 at 12:30 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Wednesday, February 04, 2015 11:46:32 PM Sedat Dilek wrote:
->> On Wed, Feb 4, 2015 at 10:54 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> > On Wednesday, February 04, 2015 09:18:03 PM Sedat Dilek wrote:
->> >> On Wed, Feb 4, 2015 at 9:35 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> >> > Hi all,
->> >> >
->> >> > The next release I will be making will be next-20150209 - which will
->> >> > probably be after the v3.19 release.
->> >> >
->> >> > Changes since 20150203:
->> >> >
->> >> > The sound-asoc tree gained a conflict against the sound tree.
->> >> >
->> >> > The scsi tree gained a build failure caused by an interaction with the
->> >> > driver-core tree.  I applied a merge fix patch.
->> >> >
->> >> > The akpm-current tree gained a build failure for which I disabled
->> >> > CONFIG_KASAN.
->> >> >
->> >> > Non-merge commits (relative to Linus' tree): 7461
->> >> >  7314 files changed, 309736 insertions(+), 172363 deletions(-)
->> >> >
->> >> > ----------------------------------------------------------------------------
->> >> >
->> >>
->> >> [ CC linux-rcu | linux-pm | intel_pstate maintainers ]
->> >
->> > Dirk is not the maintainer of intel_pstate any more, CC: Kristen.
->> >
->> >> Hi,
->> >>
->> >> after suspend-and-resume I see the following call-trace:
->> >
->> > Do you see that after CPU1 offline too?
->> >
->>
->> NO.
->>
->> After...
->>
->> root# echo 0 > /sys/devices/system/cpu/cpu1/online
->>
->> ...I see this:
->>
->> +[  707.936668] PM: Saving platform NVS memory
->> +[  707.936674] Disabling non-boot CPUs ...
->> +[  707.936712] intel_pstate CPU 2 exiting
->> +[  707.938024] smpboot: CPU 2 didn't die...
->> +[  707.949128] intel_pstate CPU 3 exiting
->> +[  707.950369] smpboot: CPU 3 didn't die...
->> +[  707.966248] ACPI: Low-level resume complete
->> +[  707.966302] PM: Restoring platform NVS memory
->>
->> Full dmesg attached.
->
-> The dmesg doesn't match what you said above.
->
-> Anyway, that's not what I meant.  Does the CPU1 offlining alone:
->
-> # echo 0 > /sys/devices/system/cpu/cpu1/online
->
-> trigger the trace?  It should.
->
+On Wed, Feb 04, 2015 at 11:59:31PM +0100, Rafael J. Wysocki wrote:
+> On Wednesday, February 04, 2015 01:53:58 PM Paul E. McKenney wrote:
+> > On Wed, Feb 04, 2015 at 10:54:07PM +0100, Rafael J. Wysocki wrote:
+> > > On Wednesday, February 04, 2015 09:18:03 PM Sedat Dilek wrote:
+> > > > On Wed, Feb 4, 2015 at 9:35 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > > > Hi all,
+> > > > >
+> > > > > The next release I will be making will be next-20150209 - which will
+> > > > > probably be after the v3.19 release.
+> > > > >
+> > > > > Changes since 20150203:
+> > > > >
+> > > > > The sound-asoc tree gained a conflict against the sound tree.
+> > > > >
+> > > > > The scsi tree gained a build failure caused by an interaction with the
+> > > > > driver-core tree.  I applied a merge fix patch.
+> > > > >
+> > > > > The akpm-current tree gained a build failure for which I disabled
+> > > > > CONFIG_KASAN.
+> > > > >
+> > > > > Non-merge commits (relative to Linus' tree): 7461
+> > > > >  7314 files changed, 309736 insertions(+), 172363 deletions(-)
+> > > > >
+> > > > > ----------------------------------------------------------------------------
+> > > > >
+> > > > 
+> > > > [ CC linux-rcu | linux-pm | intel_pstate maintainers ]
+> > > 
+> > > Dirk is not the maintainer of intel_pstate any more, CC: Kristen.
+> > > 
+> > > > Hi,
+> > > > 
+> > > > after suspend-and-resume I see the following call-trace:
+> > > 
+> > > Do you see that after CPU1 offline too? 
+> > > 
+> > > > ...
+> > > > [ 1144.482666] Disabling non-boot CPUs ...
+> > > > [ 1144.483000] intel_pstate CPU 1 exiting
+> > > > [ 1144.486064]
+> > > > [ 1144.486065] ===============================
+> > > > [ 1144.486067] smpboot: CPU 1 didn't die...
+> > > > [ 1144.486067] [ INFO: suspicious RCU usage. ]
+> > > > [ 1144.486069] 3.19.0-rc7-next-20150204.1-iniza-small #1 Not tainted
+> > > > [ 1144.486070] -------------------------------
+> > > > [ 1144.486072] include/trace/events/tlb.h:35 suspicious
+> > > > rcu_dereference_check() usage!
+> > > > [ 1144.486073]
+> > > > [ 1144.486073] other info that might help us debug this:
+> > > > [ 1144.486073]
+> > > > [ 1144.486074]
+> > > > [ 1144.486074] RCU used illegally from offline CPU!
+> > > > [ 1144.486074] rcu_scheduler_active = 1, debug_locks = 0
+> > > > [ 1144.486076] no locks held by swapper/1/0.
+> > > > [ 1144.486076]
+> > > > [ 1144.486076] stack backtrace:
+> > > > [ 1144.486079] CPU: 1 PID: 0 Comm: swapper/1 Not tainted
+> > > > 3.19.0-rc7-next-20150204.1-iniza-small #1
+> > > > [ 1144.486080] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
+> > > > 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
+> > > > [ 1144.486085]  0000000000000001 ffff88011a44fe18 ffffffff817e370d
+> > > > 0000000000000011
+> > > > [ 1144.486088]  ffff88011a448290 ffff88011a44fe48 ffffffff810d6847
+> > > > ffff8800c66b9600
+> > > > [ 1144.486091]  0000000000000001 ffff88011a44c000 ffffffff81cb3900
+> > > > ffff88011a44fe78
+> > > > [ 1144.486092] Call Trace:
+> > > > [ 1144.486099]  [<ffffffff817e370d>] dump_stack+0x4c/0x65
+> > > > [ 1144.486104]  [<ffffffff810d6847>] lockdep_rcu_suspicious+0xe7/0x120
+> > 
+> > As near as I can tell, idle_task_exit() is running on an offline CPU,
+> > then calling switch_mm() which contains trace_tlb_flush(), which uses RCU.
+> > And RCU is objecting to being used from a CPU that it is ignoring.
+> > 
+> > One approach would be to push RCU's idea of when the CPU goes offline
+> > down into arch code in this case, using some Kconfig symbol and
+> > the usual conditional compilation.  Another approach would be to
+> > invoke the trace calls under cpu_online(), for example, for the
+> > first such call in switch_mm():
+> > 
+> > 	if (cpu_online(smp_processor_id()))
+> > 		trace_tlb_flush(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
+> > 
+> > The compiler would discard this if tracing was disabled.
+> 
+> That looks like less intrusive to me.
 
-YES, I see this...
-...
-[   84.668616] PPP BSD Compression module registered
-[   84.678072] PPP Deflate Compression module registered
-[  101.143582] intel_pstate CPU 1 exiting
-[  101.157134]
-[  101.157135] ===============================
-[  101.157136] [ INFO: suspicious RCU usage. ]
-[  101.157139] 3.19.0-rc7-next-20150204.3-iniza-small #1 Not tainted
-[  101.157140] -------------------------------
-[  101.157142] include/trace/events/tlb.h:35 suspicious
-rcu_dereference_check() usage!
-[  101.157142]
-[  101.157142] other info that might help us debug this:
-[  101.157142]
-[  101.157143]
-[  101.157143] RCU used illegally from offline CPU!
-[  101.157143] rcu_scheduler_active = 1, debug_locks = 0
-[  101.157144] no locks held by swapper/1/0.
-[  101.157144]
-[  101.157144] stack backtrace:
-[  101.157146] CPU: 1 PID: 0 Comm: swapper/1 Not tainted
-3.19.0-rc7-next-20150204.3-iniza-small #1
-[  101.157147] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
-530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
-[  101.157151]  0000000000000001 ffff88011a44fe18 ffffffff817e35fd
-0000000000000011
-[  101.157153]  ffff88011a448290 ffff88011a44fe48 ffffffff810d6847
-ffff8800d3b96100
-[  101.157155]  0000000000000001 ffff88011a44c000 0000000000000005
-ffff88011a44fe78
-[  101.157156] Call Trace:
-[  101.157162]  [<ffffffff817e35fd>] dump_stack+0x4c/0x65
-[  101.157166]  [<ffffffff810d6847>] lockdep_rcu_suspicious+0xe7/0x120
-[  101.157170]  [<ffffffff810b71a5>] idle_task_exit+0x205/0x2c0
-[  101.157173]  [<ffffffff81054c4e>] play_dead_common+0xe/0x50
-[  101.157175]  [<ffffffff81054ca5>] native_play_dead+0x15/0x140
-[  101.157179]  [<ffffffff8102963f>] arch_cpu_idle_dead+0xf/0x20
-[  101.157181]  [<ffffffff810cd89e>] cpu_startup_entry+0x37e/0x580
-[  101.157183]  [<ffffffff81053e20>] start_secondary+0x140/0x150
-[  101.157228] smpboot: CPU 1 is now offline
+One possible concern is increased context-switch path length, but that
+would only be the case where tracing is enabled by default.
 
-- Sedat -
+> > Other thoughts?
+> 
+> Well, the whole issue here seems to be that common code using RCU is also
+> useful in places where RCU doesn't want to be used.  Arguably, we can deal
+> with all of those cases in a whack-a-mole manner, but that doesn't seem to
+> scale too well.
+
+Well, I did put a change into -next that makes these particular moles
+stick their heads up farther, so this is not a random event.  And in
+this particular case, we do have the option of extending RCU's reach to
+cover this operation, at the expense of a bit more intrusion by RCU into
+arch-specific code.  If tracing is enabled by default by major distros,
+that might be the right thing to do, unappealing though it might be.
+
+But yes, it would have been far better for RCU to have been picky to
+begin with, so that these issues could have been addressed as the were
+added to the kernel.  I guess one possible source of comfort is that once
+this is in place, future issues will make themselves immediately apparent.
+
+							Thanx, Paul
