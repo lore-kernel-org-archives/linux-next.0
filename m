@@ -1,112 +1,119 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 Subject: Re: linux-next: Tree for Feb 4
-Date: Thu, 5 Feb 2015 20:46:44 +0100
-Message-ID: <CA+icZUUXj2mLa4HT4nqusKOsxCE-hHPWoc7TcfsfCiWaBxXy9w@mail.gmail.com>
-References: <20150204193535.58f132c5@canb.auug.org.au>
-	<CA+icZUXkMv+RYoHLN-BQSrYti8FUjqWih2XsARY4hDAP=2v1Yw@mail.gmail.com>
-	<54D237D9.4070209@kernel.dk>
-	<CA+icZUXh3jdiF1SbJx4aRzYf2fjq_CErQ5drdQRK36ath0A-SA@mail.gmail.com>
-	<54D23B58.9000703@kernel.dk>
-	<CA+icZUWeO03=kYT1MZ3p8ZZaUTv-MxzSjL3gjuq1-q-Qm5WYpA@mail.gmail.com>
-	<yq1zj8tactc.fsf@sermon.lab.mkp.net>
-	<CA+icZUXrSSeFakX4w5nARo3eh35-p2JwKE5kw4KuuFQkv7dMOg@mail.gmail.com>
-	<yq17fvx9hct.fsf@sermon.lab.mkp.net>
-Reply-To: sedat.dilek@gmail.com
+Date: Thu, 5 Feb 2015 14:58:16 -0500
+Message-ID: <20150205145816.7c38a7df@gandalf.local.home>
+References: <20150205005716.GS5370@linux.vnet.ibm.com>
+	<CA+icZUWvBDC0FHX-OXLpjnSBbZceam_9KRBq4tcOM1jpJk0emQ@mail.gmail.com>
+	<20150205015144.GT5370@linux.vnet.ibm.com>
+	<CA+icZUUHBh-voBUfYEwajL7upnj3SJC47zJN-WnRW_7tnEnQsA@mail.gmail.com>
+	<54D3186F.7030500@sr71.net>
+	<20150205130343.6ac0eda9@gandalf.local.home>
+	<20150205130802.289a8be0@gandalf.local.home>
+	<54D3B253.3050000@sr71.net>
+	<20150205183412.GI5370@linux.vnet.ibm.com>
+	<54D3B7F5.9070209@sr71.net>
+	<20150205184537.GJ5370@linux.vnet.ibm.com>
+	<CA+icZUX_fi-O3kXymLCPfJ8Sx0yG=m5=pWzJDJpu-iHTyjM78Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <yq17fvx9hct.fsf@sermon.lab.mkp.net>
+In-Reply-To: <CA+icZUX_fi-O3kXymLCPfJ8Sx0yG=m5=pWzJDJpu-iHTyjM78Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 5, 2015 at 4:17 AM, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->>>>>> "Sedat" == Sedat Dilek <sedat.dilek@gmail.com> writes:
->
-> Sedat> No, but I am here on a so-called WUBI installation which
-> Sedat> triggered some bugs being an exotic installation.  My
-> Sedat> Ubuntu/precise is a 18GiB image laying on my Win7 partition
-> Sedat> (/dev/sda2).
->
-> I've been mulling over this for a while and can't come up with a good
-> approach. So let's just nuke these warnings.
->
-> --
-> Martin K. Petersen      Oracle Linux Engineering
->
->
-> block: Quiesce zeroout wrapper
->
-> blkdev_issue_zeroout() printed a warning if a device failed a discard or
-> write same request despite advertising support for these. That's fine
-> for SCSI since we'll disable these commands if we get an error back from
-> the disk saying that they are not supported. And consequently the
-> warning only gets printed once.
->
-> There are other types of block devices that support discard, however,
-> and these may return -EOPNOTSUPP for each command but leave discard
-> enabled in the queue limits. This will cause a warning message for every
-> blkdev_issue_zeroout() invocation.
->
-> Remove the offending warning messages.
->
-> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> ---
->  block/blk-lib.c |   26 +++++++-------------------
->  1 file changed, 7 insertions(+), 19 deletions(-)
->
-> diff --git a/block/blk-lib.c b/block/blk-lib.c
-> index 715e948f58a4..7688ee3f5d72 100644
-> --- a/block/blk-lib.c
-> +++ b/block/blk-lib.c
-> @@ -286,7 +286,6 @@ static int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
->   * @discard:   whether to discard the block range
->   *
->   * Description:
-> -
->   *  Zero-fill a block range.  If the discard flag is set and the block
->   *  device guarantees that subsequent READ operations to the block range
->   *  in question will return zeroes, the blocks will be discarded. Should
-> @@ -303,26 +302,15 @@ int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
->                          sector_t nr_sects, gfp_t gfp_mask, bool discard)
->  {
->         struct request_queue *q = bdev_get_queue(bdev);
-> -       unsigned char bdn[BDEVNAME_SIZE];
-> -
-> -       if (discard && blk_queue_discard(q) && q->limits.discard_zeroes_data) {
->
-> -               if (!blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, 0))
-> -                       return 0;
-> -
-> -               bdevname(bdev, bdn);
-> -               pr_warn("%s: DISCARD failed. Manually zeroing.\n", bdn);
-> -       }
-> +       if (discard && blk_queue_discard(q) && q->limits.discard_zeroes_data &&
-> +           blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, 0) == 0)
-> +               return 0;
->
-> -       if (bdev_write_same(bdev)) {
-> -
-> -               if (!blkdev_issue_write_same(bdev, sector, nr_sects, gfp_mask,
-> -                                            ZERO_PAGE(0)))
-> -                       return 0;
-> -
-> -               bdevname(bdev, bdn);
-> -               pr_warn("%s: WRITE SAME failed. Manually zeroing.\n", bdn);
-> -       }
-> +       if (bdev_write_same(bdev) &&
-> +           blkdev_issue_write_same(bdev, sector, nr_sects, gfp_mask,
-> +                                   ZERO_PAGE(0)) == 0)
-> +               return 0;
->
->         return __blkdev_issue_zeroout(bdev, sector, nr_sects, gfp_mask);
->  }
+On Thu, 5 Feb 2015 20:25:21 +0100
+Sedat Dilek <sedat.dilek@gmail.com> wrote:
 
-Martin, will you send a separate patch for that?
+> On Thu, Feb 5, 2015 at 7:45 PM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+> > On Thu, Feb 05, 2015 at 10:35:33AM -0800, Dave Hansen wrote:
+> >> On 02/05/2015 10:34 AM, Paul E. McKenney wrote:
+> >> >> >                               Did I actually need to be
+> >> >> > onlining/offlining CPUs to hit the splat that Sedat was reporting?
+> >> > Yep, you do need to offline at least one CPU to hit that splat.
+> >>
+> >> Heh, do we need a debugging mode that will randomly offline/online CPUs? :)
+> >
+> > For that, kernel/rcu/rcutorture.c and kernel/locking/locktorture.c
+> > are your friends.  ;-)
+> >
+> > The problem is that I only run RCU-relevant combinations of Kconfigs,
+> > which means that I missed the ones that Sedat used to find this problem.
+> > So I guess it is a good thing that others run -next testing.
+> >
+> 
+> [ Revived by a voltaren resinat pill... ]
+> 
+> I reverted "x86/mm: Omit switch_mm() tracing for offline CPUs"
+> ...and...
+> applied "tlb: Don't do trace_tlb_flush() on offline CPUs"
+> ...in my build-dir.
 
-Thanks.
+Is this Paul's version of the patch or mine? If it is just mine, do you
+know if Paul's version triggers this too?
 
-- Sedat -
+> ( I did not build from scratch but re-invoking make "updated" the
+> files touched by Steven's patch, see attached build-log. )
+> 
+> Unfortunately, the call-trace remains when doing an offlining of cpu1.
+> ( It's good to see it's reproducible. )
+
+Was the tracepoint enabled? Or was there some other rcu call that
+triggered this. Or would cpu_online(smp_processor_id()) return true at
+this point?
+
+-- Steve
+
+> 
+> root# echo 0 > /sys/devices/system/cpu/cpu1/online
+> 
+> [  121.652796] intel_pstate CPU 1 exiting
+> [  121.666272]
+> [  121.666274] ===============================
+> [  121.666274] [ INFO: suspicious RCU usage. ]
+> [  121.666277] 3.19.0-rc7-next-20150204.7-iniza-small #4 Not tainted
+> [  121.666278] -------------------------------
+> [  121.666280] include/trace/events/tlb.h:37 suspicious
+> rcu_dereference_check() usage!
+> [  121.666281]
+> [  121.666281] other info that might help us debug this:
+> [  121.666281]
+> [  121.666282]
+> [  121.666282] RCU used illegally from offline CPU!
+> [  121.666282] rcu_scheduler_active = 1, debug_locks = 0
+> [  121.666283] no locks held by swapper/1/0.
+> [  121.666284]
+> [  121.666284] stack backtrace:
+> [  121.666287] CPU: 1 PID: 0 Comm: swapper/1 Not tainted
+> 3.19.0-rc7-next-20150204.7-iniza-small #4
+> [  121.666288] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
+> 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
+> [  121.666293]  0000000000000001 ffff88011a44fe18 ffffffff817e39cd
+> 0000000000000011
+> [  121.666296]  ffff88011a448290 ffff88011a44fe48 ffffffff810d6af7
+> ffff8800d3dfaac0
+> [  121.666299]  0000000000000001 ffffffff81d32ce0 0000000000000005
+> ffff88011a44fe78
+> [  121.666300] Call Trace:
+> [  121.666308]  [<ffffffff817e39cd>] dump_stack+0x4c/0x65
+> [  121.666313]  [<ffffffff810d6af7>] lockdep_rcu_suspicious+0xe7/0x120
+> [  121.666318]  [<ffffffff810b73f9>] idle_task_exit+0x1c9/0x260
+> [  121.666322]  [<ffffffff81054c4e>] play_dead_common+0xe/0x50
+> [  121.666325]  [<ffffffff81054ca5>] native_play_dead+0x15/0x140
+> [  121.666330]  [<ffffffff8102963f>] arch_cpu_idle_dead+0xf/0x20
+> [  121.666333]  [<ffffffff810cdb4e>] cpu_startup_entry+0x37e/0x580
+> [  121.666336]  [<ffffffff81053e20>] start_secondary+0x140/0x150
+> [  121.666744] smpboot: CPU 1 is now offline
+> 
+> >From rcu point this is now safe?
+> But another area (linux-pm?) is still affected?
+> I will try to test "vanilla" pm-next if the problem exists with
+> intel_pstate as suggested by Rafael.
+> Hmmm, not sure how I can get the pm-next code which went into
+> next-20150204 as linux-pm.git#linux-next was feeded with new stuff.
+> 
+> 
+> - Sedat -
