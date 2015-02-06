@@ -1,51 +1,103 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 0/2] tracing/tlb/x85: Fix splat of calling RCU trace
- code on offline CPU
-Date: Fri, 6 Feb 2015 18:04:45 -0500
-Message-ID: <20150206180445.7e3aa6d1@gandalf.local.home>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH 2/2] x86/tbl/trace: Do not trace on CPU that is offline
+Date: Fri, 6 Feb 2015 15:27:54 -0800
+Message-ID: <20150206232754.GA17751@linux.vnet.ibm.com>
 References: <20150206200653.009919583@goodmis.org>
-	<CA+icZUVvnOA9O0GMDangTLATPOHU=Do5Kj-fo0bVu5Wfb0TT7Q@mail.gmail.com>
-	<20150206213856.GN5418@linux.vnet.ibm.com>
-	<CA+icZUWBJ5-0pyreVdTduaOPg8StccZhcu6=vdD_Zny8CCMZDw@mail.gmail.com>
-	<20150206173548.48f53ed7@gandalf.local.home>
-	<20150206224836.GU5418@linux.vnet.ibm.com>
+ <20150206200800.689573476@goodmis.org>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay0130.hostedemail.com ([216.40.44.130]:40565 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751776AbbBFXEs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2015 18:04:48 -0500
-In-Reply-To: <20150206224836.GU5418@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150206200800.689573476@goodmis.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Sedat Dilek <sedat.dilek@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 6 Feb 2015 14:48:36 -0800
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-
-> On Fri, Feb 06, 2015 at 05:35:48PM -0500, Steven Rostedt wrote:
-> > On Fri, 6 Feb 2015 23:13:02 +0100
-> > Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> > 
-> > 
-> > > OK, so both patches go through Steve's tree.
-> > 
-> > The second patch will require acks from those that maintain the files I
-> > touch.
+On Fri, Feb 06, 2015 at 03:06:55PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
 > 
-> Yep, that is required either way.  I will give it an Acked-by in the hope
-> that this helps.  You have another version on the way, or have I lost
-> count?  ;-)
+> When taking a CPU down for suspend and resume, a tracepoint may be called
+> when the CPU has been designated offline. As tracepoints require RCU for
+> protection, they must not be called if the current CPU is offline.
 > 
+> Unfortunately, trace_tlb_flush() is called in this scenario as was noted
+> by LOCKDEP:
+> 
+> ...
+> 
+>  Disabling non-boot CPUs ...
+>  intel_pstate CPU 1 exiting
+> 
+>  ===============================
+>  smpboot: CPU 1 didn't die...
+>  [ INFO: suspicious RCU usage. ]
+>  3.19.0-rc7-next-20150204.1-iniza-small #1 Not tainted
+>  -------------------------------
+>  include/trace/events/tlb.h:35 suspicious rcu_dereference_check() usage!
+> 
+>  other info that might help us debug this:
+> 
+>  RCU used illegally from offline CPU!
+>  rcu_scheduler_active = 1, debug_locks = 0
+>  no locks held by swapper/1/0.
+> 
+>  stack backtrace:
+>  CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.19.0-rc7-next-20150204.1-iniza-small #1
+>  Hardware name: SAMSUNG ELECTRONICS CO., LTD. 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
+>   0000000000000001 ffff88011a44fe18 ffffffff817e370d 0000000000000011
+>   ffff88011a448290 ffff88011a44fe48 ffffffff810d6847 ffff8800c66b9600
+>   0000000000000001 ffff88011a44c000 ffffffff81cb3900 ffff88011a44fe78
+>  Call Trace:
+>   [<ffffffff817e370d>] dump_stack+0x4c/0x65
+>   [<ffffffff810d6847>] lockdep_rcu_suspicious+0xe7/0x120
+>   [<ffffffff810b71a5>] idle_task_exit+0x205/0x2c0
+>   [<ffffffff81054c4e>] play_dead_common+0xe/0x50
+>   [<ffffffff81054ca5>] native_play_dead+0x15/0x140
+>   [<ffffffff8102963f>] arch_cpu_idle_dead+0xf/0x20
+>   [<ffffffff810cd89e>] cpu_startup_entry+0x37e/0x580
+>   [<ffffffff81053e20>] start_secondary+0x140/0x150
+>  intel_pstate CPU 2 exiting
+> 
+> ...
+> 
+> By converting the tlb_flush tracepoint to a TRACE_EVENT_CONDITION where the
+> condition is cpu_online(smp_processor_id()), we can avoid calling RCU protected
+> code when the CPU is offline.
+> 
+> Link: http://lkml.kernel.org/r/CA+icZUUGiGDoL5NU8RuxKzFjoLjEKRtUWx=JB8B9a0EQv-eGzQ@mail.gmail.com
+> 
+> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 
-It's this patch series that's my latest version. I just need the second
-patch acked. You could ack the first one as well if you want, but it's
-not that necessary.
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-I would really like an ack from Dave Hansen for the second patch, and
-perhaps hpa as well.
-
--- Steve
+> ---
+>  include/trace/events/tlb.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/trace/events/tlb.h b/include/trace/events/tlb.h
+> index 13391d288107..0e7635765153 100644
+> --- a/include/trace/events/tlb.h
+> +++ b/include/trace/events/tlb.h
+> @@ -13,11 +13,13 @@
+>  	{ TLB_LOCAL_SHOOTDOWN,		"local shootdown" },		\
+>  	{ TLB_LOCAL_MM_SHOOTDOWN,	"local mm shootdown" }
+> 
+> -TRACE_EVENT(tlb_flush,
+> +TRACE_EVENT_CONDITION(tlb_flush,
+> 
+>  	TP_PROTO(int reason, unsigned long pages),
+>  	TP_ARGS(reason, pages),
+> 
+> +	TP_CONDITION(cpu_online(smp_processor_id())),
+> +
+>  	TP_STRUCT__entry(
+>  		__field(	  int, reason)
+>  		__field(unsigned long,  pages)
+> -- 
+> 2.1.4
+> 
+> 
