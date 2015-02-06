@@ -1,126 +1,56 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Feb 4
-Date: Fri, 6 Feb 2015 16:24:13 +0100
-Message-ID: <CA+icZUXywtGD4u5bFqBa1L6gKuaEFffjad4d2u7K-kYun3Yh2g@mail.gmail.com>
-References: <20150204193535.58f132c5@canb.auug.org.au>
-	<CA+icZUXkMv+RYoHLN-BQSrYti8FUjqWih2XsARY4hDAP=2v1Yw@mail.gmail.com>
-	<54D237D9.4070209@kernel.dk>
-	<CA+icZUXh3jdiF1SbJx4aRzYf2fjq_CErQ5drdQRK36ath0A-SA@mail.gmail.com>
-	<54D23B58.9000703@kernel.dk>
-	<CA+icZUWeO03=kYT1MZ3p8ZZaUTv-MxzSjL3gjuq1-q-Qm5WYpA@mail.gmail.com>
-	<yq1zj8tactc.fsf@sermon.lab.mkp.net>
-	<CA+icZUXrSSeFakX4w5nARo3eh35-p2JwKE5kw4KuuFQkv7dMOg@mail.gmail.com>
-	<yq17fvx9hct.fsf@sermon.lab.mkp.net>
-	<CA+icZUUXj2mLa4HT4nqusKOsxCE-hHPWoc7TcfsfCiWaBxXy9w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 1/2] tracing: Add condition check to RCU lockdep checks
+Date: Fri, 06 Feb 2015 15:06:54 -0500
+Message-ID: <20150206200800.552335453@goodmis.org>
+References: <20150206200653.009919583@goodmis.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:61566 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754008AbbBFPYO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2015 10:24:14 -0500
-In-Reply-To: <CA+icZUUXj2mLa4HT4nqusKOsxCE-hHPWoc7TcfsfCiWaBxXy9w@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline; filename=0001-tracing-Add-condition-check-to-RCU-lockdep-checks.patch
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Sedat Dilek <sedat.dilek@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 5, 2015 at 8:46 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Thu, Feb 5, 2015 at 4:17 AM, Martin K. Petersen
-> <martin.petersen@oracle.com> wrote:
->>>>>>> "Sedat" == Sedat Dilek <sedat.dilek@gmail.com> writes:
->>
->> Sedat> No, but I am here on a so-called WUBI installation which
->> Sedat> triggered some bugs being an exotic installation.  My
->> Sedat> Ubuntu/precise is a 18GiB image laying on my Win7 partition
->> Sedat> (/dev/sda2).
->>
->> I've been mulling over this for a while and can't come up with a good
->> approach. So let's just nuke these warnings.
->>
->> --
->> Martin K. Petersen      Oracle Linux Engineering
->>
->>
->> block: Quiesce zeroout wrapper
->>
->> blkdev_issue_zeroout() printed a warning if a device failed a discard or
->> write same request despite advertising support for these. That's fine
->> for SCSI since we'll disable these commands if we get an error back from
->> the disk saying that they are not supported. And consequently the
->> warning only gets printed once.
->>
->> There are other types of block devices that support discard, however,
->> and these may return -EOPNOTSUPP for each command but leave discard
->> enabled in the queue limits. This will cause a warning message for every
->> blkdev_issue_zeroout() invocation.
->>
->> Remove the offending warning messages.
->>
->> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
->> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
->> ---
->>  block/blk-lib.c |   26 +++++++-------------------
->>  1 file changed, 7 insertions(+), 19 deletions(-)
->>
->> diff --git a/block/blk-lib.c b/block/blk-lib.c
->> index 715e948f58a4..7688ee3f5d72 100644
->> --- a/block/blk-lib.c
->> +++ b/block/blk-lib.c
->> @@ -286,7 +286,6 @@ static int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
->>   * @discard:   whether to discard the block range
->>   *
->>   * Description:
->> -
->>   *  Zero-fill a block range.  If the discard flag is set and the block
->>   *  device guarantees that subsequent READ operations to the block range
->>   *  in question will return zeroes, the blocks will be discarded. Should
->> @@ -303,26 +302,15 @@ int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
->>                          sector_t nr_sects, gfp_t gfp_mask, bool discard)
->>  {
->>         struct request_queue *q = bdev_get_queue(bdev);
->> -       unsigned char bdn[BDEVNAME_SIZE];
->> -
->> -       if (discard && blk_queue_discard(q) && q->limits.discard_zeroes_data) {
->>
->> -               if (!blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, 0))
->> -                       return 0;
->> -
->> -               bdevname(bdev, bdn);
->> -               pr_warn("%s: DISCARD failed. Manually zeroing.\n", bdn);
->> -       }
->> +       if (discard && blk_queue_discard(q) && q->limits.discard_zeroes_data &&
->> +           blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, 0) == 0)
->> +               return 0;
->>
->> -       if (bdev_write_same(bdev)) {
->> -
->> -               if (!blkdev_issue_write_same(bdev, sector, nr_sects, gfp_mask,
->> -                                            ZERO_PAGE(0)))
->> -                       return 0;
->> -
->> -               bdevname(bdev, bdn);
->> -               pr_warn("%s: WRITE SAME failed. Manually zeroing.\n", bdn);
->> -       }
->> +       if (bdev_write_same(bdev) &&
->> +           blkdev_issue_write_same(bdev, sector, nr_sects, gfp_mask,
->> +                                   ZERO_PAGE(0)) == 0)
->> +               return 0;
->>
->>         return __blkdev_issue_zeroout(bdev, sector, nr_sects, gfp_mask);
->>  }
->
-> Martin, will you send a separate patch for that?
->
-> Thanks.
->
+From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
 
-Just for the sake of completeness, the patch is now in block-next:
+The trace_tlb_flush() tracepoint can be called when a CPU is going offline.
+When a CPU is offline, RCU is no longer watching that CPU and since the
+tracepoint is protected by RCU, it must not be called. To prevent the
+tlb_flush tracepoint from being called when the CPU is offline, it was
+converted to a TRACE_EVENT_CONDITION where the condition checks if the
+CPU is online before calling the tracepoint.
 
-commit 9f9ee1f2b2f94f19437ae2def7c0d6636d7fe02e
-"block: Quiesce zeroout wrapper"
+Unfortunately, this was not enough to stop lockdep from complaining about
+it. Even though the RCU protected code of the tracepoint will never be
+called, the condition is hidden within the tracepoint, and even though the
+condition prevents RCU code from being called, the lockdep checks are
+outside the tracepoint (this is to test tracepoints even when they are not
+enabled).
 
-- Sedat -
+Even though tracepoints should be checked to be RCU safe when they are not
+enabled, the condition should still be considered when checking RCU.
 
-[1] http://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=9f9ee1f2b2f94f19437ae2def7c0d6636d7fe02e
+Link: http://lkml.kernel.org/r/CA+icZUUGiGDoL5NU8RuxKzFjoLjEKRtUWx=JB8B9a0EQv-eGzQ@mail.gmail.com
+
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+---
+ include/linux/tracepoint.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index e08e21e5f601..68a346b8328a 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -173,7 +173,7 @@ extern void syscall_unregfunc(void);
+ 				TP_PROTO(data_proto),			\
+ 				TP_ARGS(data_args),			\
+ 				TP_CONDITION(cond),,);			\
+-		if (IS_ENABLED(CONFIG_LOCKDEP)) {			\
++		if (IS_ENABLED(CONFIG_LOCKDEP) && cond) {			\
+ 			rcu_read_lock_sched_notrace();			\
+ 			rcu_dereference_sched(__tracepoint_##name.funcs);\
+ 			rcu_read_unlock_sched_notrace();		\
+-- 
+2.1.4
