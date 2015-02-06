@@ -1,63 +1,84 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: linux-next: Tree for Feb 4
-Date: Fri, 6 Feb 2015 01:14:55 +0100
-Message-ID: <CA+icZUV=umTsNRB7568SKdLQ35-=nH2544=XEE5xrfpn_pb_-A@mail.gmail.com>
-References: <20150205005716.GS5370@linux.vnet.ibm.com>
-	<54D3186F.7030500@sr71.net>
-	<20150205130343.6ac0eda9@gandalf.local.home>
-	<20150205130802.289a8be0@gandalf.local.home>
-	<54D3B253.3050000@sr71.net>
-	<20150205183412.GI5370@linux.vnet.ibm.com>
-	<54D3B7F5.9070209@sr71.net>
-	<20150205184537.GJ5370@linux.vnet.ibm.com>
-	<CA+icZUX_fi-O3kXymLCPfJ8Sx0yG=m5=pWzJDJpu-iHTyjM78Q@mail.gmail.com>
-	<20150205145816.7c38a7df@gandalf.local.home>
-	<CA+icZUUC7vD_FBUWV+WLBx2M-iXvR8E90zWGxmUWQcdmbHiH2A@mail.gmail.com>
-	<20150205152201.49d55905@gandalf.local.home>
-	<CA+icZUV9SeWKrWN6Q8-Us-VpOgaz2sXX-RT2he4rwJmOzGQjOw@mail.gmail.com>
-	<CA+icZUXkv2JV0kurGdvOPPavyrY2hb9rjTZ1yQn13gai=qobcw@mail.gmail.com>
-	<20150205170952.525bdee6@gandalf.local.home>
-	<CA+icZUX_f_M7EmV3OM_CeosjfqoMSkJrCgUBm0LKFFurFGRvGQ@mail.gmail.com>
-	<20150205181141.6f1d532a@gandalf.local.home>
-	<CA+icZUVTpQrVUkUBeAP+=tGaHE0GPBsPOOYeB+Rwke-7UkKRew@mail.gmail.com>
-	<20150205191226.47b146c5@gandalf.local.home>
-Reply-To: sedat.dilek@gmail.com
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH -next] drm/nouveau/clk: Use plain "/" for 32-bit division
+Date: Fri, 6 Feb 2015 15:50:17 +0900
+Message-ID: <54D46429.4020208@nvidia.com>
+References: <1423065755-19337-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f180.google.com ([74.125.82.180]:46512 "EHLO
-	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751521AbbBFAO5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Feb 2015 19:14:57 -0500
-In-Reply-To: <20150205191226.47b146c5@gandalf.local.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1423065755-19337-1-git-send-email-geert@linux-m68k.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, David Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 6, 2015 at 1:12 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Fri, 6 Feb 2015 00:53:41 +0100
-> Sedat Dilek <sedat.dilek@gmail.com> wrote:
->
->> > See that if (IS_ENABLED(CONFIG_LOCKDEP))?
->> >
->>
->> I have here...
->>
->> CONFIG_LOCKDEP=y
->
-> Yep, I knew that (you wouldn't get splats without it).
->
->
->> Which old patch?
->> "tlb: Don't do trace_tlb_flush() on offline CPUs" ?
->
-> Yeah, that one. In other words, just add this patch on the kernel you
-> just tested.
->
-> Thanks,
->
-
-Do you have a name with label for your patch?
-
-- Sedat -
+SGkgR2VlcnQsCgpPbiAwMi8wNS8yMDE1IDAxOjAyIEFNLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
+dGU6Cj4gT24gMzItYml0IHBsYXRmb3JtcyB1c2luZyBhc20tZ2VuZXJpYy9kaXY2NC5oOgo+Cj4g
+ZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2drMjBhLmM6IEluIGZ1bmN0
+aW9uICdnazIwYV9wbGxnX2NhbGNfcmF0ZSc6Cj4gZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZr
+bS9zdWJkZXYvY2xrL2drMjBhLmM6MTQ3Ojc5OiB3YXJuaW5nOiBjb21wYXJpc29uIG9mIGRpc3Rp
+bmN0IHBvaW50ZXIgdHlwZXMgbGFja3MgYSBjYXN0Cj4gICAgZG9fZGl2KHJhdGUsIGRpdmlkZXIp
+Owo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXgo+IGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252
+a20vc3ViZGV2L2Nsay9nazIwYS5jOjE0NzoyOiB3YXJuaW5nOiByaWdodCBzaGlmdCBjb3VudCA+
+PSB3aWR0aCBvZiB0eXBlCj4gICAgZG9fZGl2KHJhdGUsIGRpdmlkZXIpOwo+ICAgIF4KPiBkcml2
+ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9jbGsvZ2syMGEuYzoxNDc6MjM4OiB3YXJu
+aW5nOiBwYXNzaW5nIGFyZ3VtZW50IDEgb2YgJ19fZGl2NjRfMzInIGZyb20gaW5jb21wYXRpYmxl
+IHBvaW50ZXIgdHlwZQo+ICAgIGRvX2RpdihyYXRlLCBkaXZpZGVyKTsKPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4K
+PiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gYXJjaC9wYXJpc2MvaW5jbHVkZS9nZW5lcmF0ZWQvYXNt
+L2RpdjY0Lmg6MTowLAo+ICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9rZXJu
+ZWwuaDoxMjQsCj4gICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L2xpc3QuaDo4
+LAo+ICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9wcmVlbXB0Lmg6MTAsCj4g
+ICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrLmg6NTAsCj4gICAg
+ICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L21tem9uZS5oOjcsCj4gICAgICAgICAg
+ICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L2dmcC5oOjUsCj4gICAgICAgICAgICAgICAgICAg
+ZnJvbSBpbmNsdWRlL2xpbnV4L3NsYWIuaDoxNCwKPiAgICAgICAgICAgICAgICAgICBmcm9tIGRy
+aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZpZi9vcy5oOjUsCj4gICAgICAgICAgICAg
+ICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vY29yZS9vcy5o
+OjMsCj4gICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNs
+dWRlL252a20vY29yZS9vYmplY3QuaDozLAo+ICAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVy
+cy9ncHUvZHJtL25vdXZlYXUvaW5jbHVkZS9udmttL2NvcmUvc3ViZGV2Lmg6MywKPiAgICAgICAg
+ICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZrbS9zdWJk
+ZXYvY2xrLmg6MywKPiAgICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9ub3V2
+ZWF1L252a20vc3ViZGV2L2Nsay9nazIwYS5jOjI1Ogo+IGluY2x1ZGUvYXNtLWdlbmVyaWMvZGl2
+NjQuaDozNToxNzogbm90ZTogZXhwZWN0ZWQgJ3VpbnQ2NF90IConIGJ1dCBhcmd1bWVudCBpcyBv
+ZiB0eXBlICd1MzIgKicKPiAgIGV4dGVybiB1aW50MzJfdCBfX2RpdjY0XzMyKHVpbnQ2NF90ICpk
+aXZpZGVuZCwgdWludDMyX3QgZGl2aXNvcik7Cj4gICAgICAgICAgICAgICAgICAgXgo+Cj4gZG9f
+ZGl2KCkgaXMgbWVhbnQgZm9yIDY0LWJpdCBieSAzMi1iaXQgZGl2aXNpb24sIGJ1dCBib3RoIHRo
+ZSBkaXZpZGVuZAo+IGFuZCBkaXZpc29yIGFyZSAzMi1iaXQgaGVyZS4gSGVuY2UgdXNlIHBsYWlu
+ICIvIiBpbnN0ZWFkLgo+Cj4gU2lnbmVkLW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVy
+dEBsaW51eC1tNjhrLm9yZz4KPiAtLS0KPiBDb21waWxlLXRlc3RlZCBvbmx5Lgo+Cj4gcGFyaXNj
+L2FsbG1vZGNvbmZpZzoKPiBodHRwOi8va2lzc2tiLmVsbGVybWFuLmlkLmF1L2tpc3NrYi9idWls
+ZHJlc3VsdC8xMjM1ODM4Ni8KPiAtLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20v
+c3ViZGV2L2Nsay9nazIwYS5jIHwgMyArLS0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
+bigrKSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbm91
+dmVhdS9udmttL3N1YmRldi9jbGsvZ2syMGEuYyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252
+a20vc3ViZGV2L2Nsay9nazIwYS5jCj4gaW5kZXggNjVjNTMyNzQyYjA4ZDFjNi4uMDIyNTk1ODc2
+ZWE0ZGM4NSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRl
+di9jbGsvZ2syMGEuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2
+L2Nsay9nazIwYS5jCj4gQEAgLTE0NCw5ICsxNDQsOCBAQCBnazIwYV9wbGxnX2NhbGNfcmF0ZShz
+dHJ1Y3QgZ2syMGFfY2xrX3ByaXYgKnByaXYpCj4KPiAgIAlyYXRlID0gcHJpdi0+cGFyZW50X3Jh
+dGUgKiBwcml2LT5uOwo+ICAgCWRpdmlkZXIgPSBwcml2LT5tICogcGxfdG9fZGl2W3ByaXYtPnBs
+XTsKPiAtCWRvX2RpdihyYXRlLCBkaXZpZGVyKTsKPgo+IC0JcmV0dXJuIHJhdGUgLyAyOwo+ICsJ
+cmV0dXJuIHJhdGUgLyBkaXZpZGVyIC8gMjsKCkkgYWdyZWUgdGhlcmUgaXMgYSBwcm9ibGVtIGhl
+cmUsIGJ1dCBjb25zaWRlcmluZyB0aGUgdGhlb3JldGljYWwgdmFsdWVzIAp0aGF0IHJhdGUgY2Fu
+IHRha2UsIGNvdWxkIHdlIHJhdGhlciBmaXggdGhpcyBieSBtYWtpbmcgcmF0ZSBhIHU2ND8gV2l0
+aCAKdGhlIGN1cnJlbnQgbWF4aW11bSB2YWx1ZXMgb2YgcHJpdi0+cGFyZW50X3JhdGUgYW5kIHBy
+aXYtPm4sIHJhdGUgbWlnaHQgCmFwcHJvYWNoIGRhbmdlcm91c2x5IHRvIHRoZSB1MzIgbGltaXQg
+YW5kIEkgYmVsaWV2ZSBjYXN0aW5nIGl0IHRvIHU2NCAKd291bGQgYmUgc2FmZXIuCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
