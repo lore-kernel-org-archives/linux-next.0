@@ -1,90 +1,80 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH -next] drm/nouveau/clk: Use plain "/" for 32-bit division
-Date: Fri, 6 Feb 2015 08:53:04 +0100
-Message-ID: <CAMuHMdXbac9+oeVfqMpqGVfHaj9MbQ8=XeksKgnMiA8hPb=imw@mail.gmail.com>
-References: <1423065755-19337-1-git-send-email-geert@linux-m68k.org>
- <54D46429.4020208@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54D46429.4020208@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH v2] drm/nouveau/clk: Change rate from u32 to u64 in gk20a_pllg_calc_rate()
+Date: Fri,  6 Feb 2015 10:20:58 +0100
+Message-ID: <1423214458-23033-1-git-send-email-geert@linux-m68k.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51531 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754614AbbBFJVC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2015 04:21:02 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Airlie <airlied@linux.ie>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-SGkgQWxleGFuZHJlLAoKT24gRnJpLCBGZWIgNiwgMjAxNSBhdCA3OjUwIEFNLCBBbGV4YW5kcmUg
-Q291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4gd3JvdGU6Cj4gT24gMDIvMDUvMjAxNSAwMTow
-MiBBTSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOgo+PiBPbiAzMi1iaXQgcGxhdGZvcm1zIHVz
-aW5nIGFzbS1nZW5lcmljL2RpdjY0Lmg6Cj4+IGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20v
-c3ViZGV2L2Nsay9nazIwYS5jOiBJbiBmdW5jdGlvbgo+PiAnZ2syMGFfcGxsZ19jYWxjX3JhdGUn
-Ogo+PiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9jbGsvZ2syMGEuYzoxNDc6
-Nzk6IHdhcm5pbmc6Cj4+IGNvbXBhcmlzb24gb2YgZGlzdGluY3QgcG9pbnRlciB0eXBlcyBsYWNr
-cyBhIGNhc3QKPj4gICAgZG9fZGl2KHJhdGUsIGRpdmlkZXIpOwo+Pgo+PiBeCj4+IGRyaXZlcnMv
-Z3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2Nsay9nazIwYS5jOjE0NzoyOiB3YXJuaW5nOiBy
-aWdodAo+PiBzaGlmdCBjb3VudCA+PSB3aWR0aCBvZiB0eXBlCj4+ICAgIGRvX2RpdihyYXRlLCBk
-aXZpZGVyKTsKPj4gICAgXgo+PiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9j
-bGsvZ2syMGEuYzoxNDc6MjM4OiB3YXJuaW5nOiBwYXNzaW5nCj4+IGFyZ3VtZW50IDEgb2YgJ19f
-ZGl2NjRfMzInIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZQo+PiAgICBkb19kaXYocmF0
-ZSwgZGl2aWRlcik7Cj4+Cj4+IF4KPj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGFyY2gvcGFyaXNj
-L2luY2x1ZGUvZ2VuZXJhdGVkL2FzbS9kaXY2NC5oOjE6MCwKPj4gICAgICAgICAgICAgICAgICAg
-ZnJvbSBpbmNsdWRlL2xpbnV4L2tlcm5lbC5oOjEyNCwKPj4gICAgICAgICAgICAgICAgICAgZnJv
-bSBpbmNsdWRlL2xpbnV4L2xpc3QuaDo4LAo+PiAgICAgICAgICAgICAgICAgICBmcm9tIGluY2x1
-ZGUvbGludXgvcHJlZW1wdC5oOjEwLAo+PiAgICAgICAgICAgICAgICAgICBmcm9tIGluY2x1ZGUv
-bGludXgvc3BpbmxvY2suaDo1MCwKPj4gICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xp
-bnV4L21tem9uZS5oOjcsCj4+ICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9n
-ZnAuaDo1LAo+PiAgICAgICAgICAgICAgICAgICBmcm9tIGluY2x1ZGUvbGludXgvc2xhYi5oOjE0
-LAo+PiAgICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1
-ZGUvbnZpZi9vcy5oOjUsCj4+ICAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJt
-L25vdXZlYXUvaW5jbHVkZS9udmttL2NvcmUvb3MuaDozLAo+PiAgICAgICAgICAgICAgICAgICBm
-cm9tCj4+IGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZrbS9jb3JlL29iamVjdC5o
-OjMsCj4+ICAgICAgICAgICAgICAgICAgIGZyb20KPj4gZHJpdmVycy9ncHUvZHJtL25vdXZlYXUv
-aW5jbHVkZS9udmttL2NvcmUvc3ViZGV2Lmg6MywKPj4gICAgICAgICAgICAgICAgICAgZnJvbQo+
-PiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vc3ViZGV2L2Nsay5oOjMsCj4+
-ICAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJk
-ZXYvY2xrL2drMjBhLmM6MjU6Cj4+IGluY2x1ZGUvYXNtLWdlbmVyaWMvZGl2NjQuaDozNToxNzog
-bm90ZTogZXhwZWN0ZWQgJ3VpbnQ2NF90IConIGJ1dAo+PiBhcmd1bWVudCBpcyBvZiB0eXBlICd1
-MzIgKicKPj4gICBleHRlcm4gdWludDMyX3QgX19kaXY2NF8zMih1aW50NjRfdCAqZGl2aWRlbmQs
-IHVpbnQzMl90IGRpdmlzb3IpOwo+PiAgICAgICAgICAgICAgICAgICBeCj4+Cj4+IGRvX2Rpdigp
-IGlzIG1lYW50IGZvciA2NC1iaXQgYnkgMzItYml0IGRpdmlzaW9uLCBidXQgYm90aCB0aGUgZGl2
-aWRlbmQKPj4gYW5kIGRpdmlzb3IgYXJlIDMyLWJpdCBoZXJlLiBIZW5jZSB1c2UgcGxhaW4gIi8i
-IGluc3RlYWQuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRA
-bGludXgtbTY4ay5vcmc+Cj4+IC0tLQo+PiBDb21waWxlLXRlc3RlZCBvbmx5Lgo+Pgo+PiBwYXJp
-c2MvYWxsbW9kY29uZmlnOgo+PiBodHRwOi8va2lzc2tiLmVsbGVybWFuLmlkLmF1L2tpc3NrYi9i
-dWlsZHJlc3VsdC8xMjM1ODM4Ni8KPj4gLS0tCj4+ICAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUv
-bnZrbS9zdWJkZXYvY2xrL2drMjBhLmMgfCAzICstLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
-c2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS9ub3V2ZWF1L252a20vc3ViZGV2L2Nsay9nazIwYS5jCj4+IGIvZHJpdmVycy9ncHUvZHJt
-L25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2drMjBhLmMKPj4gaW5kZXggNjVjNTMyNzQyYjA4ZDFj
-Ni4uMDIyNTk1ODc2ZWE0ZGM4NSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL25vdXZl
-YXUvbnZrbS9zdWJkZXYvY2xrL2drMjBhLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL25vdXZl
-YXUvbnZrbS9zdWJkZXYvY2xrL2drMjBhLmMKPj4gQEAgLTE0NCw5ICsxNDQsOCBAQCBnazIwYV9w
-bGxnX2NhbGNfcmF0ZShzdHJ1Y3QgZ2syMGFfY2xrX3ByaXYgKnByaXYpCj4+Cj4+ICAgICAgICAg
-cmF0ZSA9IHByaXYtPnBhcmVudF9yYXRlICogcHJpdi0+bjsKPj4gICAgICAgICBkaXZpZGVyID0g
-cHJpdi0+bSAqIHBsX3RvX2Rpdltwcml2LT5wbF07Cj4+IC0gICAgICAgZG9fZGl2KHJhdGUsIGRp
-dmlkZXIpOwo+Pgo+PiAtICAgICAgIHJldHVybiByYXRlIC8gMjsKPj4gKyAgICAgICByZXR1cm4g
-cmF0ZSAvIGRpdmlkZXIgLyAyOwo+Cj4KPiBJIGFncmVlIHRoZXJlIGlzIGEgcHJvYmxlbSBoZXJl
-LCBidXQgY29uc2lkZXJpbmcgdGhlIHRoZW9yZXRpY2FsIHZhbHVlcyB0aGF0Cj4gcmF0ZSBjYW4g
-dGFrZSwgY291bGQgd2UgcmF0aGVyIGZpeCB0aGlzIGJ5IG1ha2luZyByYXRlIGEgdTY0PyBXaXRo
-IHRoZQo+IGN1cnJlbnQgbWF4aW11bSB2YWx1ZXMgb2YgcHJpdi0+cGFyZW50X3JhdGUgYW5kIHBy
-aXYtPm4sIHJhdGUgbWlnaHQgYXBwcm9hY2gKPiBkYW5nZXJvdXNseSB0byB0aGUgdTMyIGxpbWl0
-IGFuZCBJIGJlbGlldmUgY2FzdGluZyBpdCB0byB1NjQgd291bGQgYmUgc2FmZXIuCgpZZXMsIHRo
-YXQncyBiZXR0ZXIuCgpHcntvZXRqZSxlZXRpbmd9cywKCiAgICAgICAgICAgICAgICAgICAgICAg
-IEdlZXJ0CgotLQpHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJl
-eW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnCgpJbiBwZXJzb25hbCBjb252ZXJzYXRp
-b25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0Cndo
-ZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Ig
-c29tZXRoaW5nIGxpa2UgdGhhdC4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBM
-aW51cyBUb3J2YWxkcwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+On 32-bit platforms using asm-generic/div64.h:
+
+drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c: In function 'gk20a_pllg_calc_rate':
+drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:147:79: warning: comparison of distinct pointer types lacks a cast
+  do_div(rate, divider);
+                                                                               ^
+drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:147:2: warning: right shift count >= width of type
+  do_div(rate, divider);
+  ^
+drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:147:238: warning: passing argument 1 of '__div64_32' from incompatible pointer type
+  do_div(rate, divider);
+                                                                                                                                                                                                                                              ^
+In file included from arch/parisc/include/generated/asm/div64.h:1:0,
+                 from include/linux/kernel.h:124,
+                 from include/linux/list.h:8,
+                 from include/linux/preempt.h:10,
+                 from include/linux/spinlock.h:50,
+                 from include/linux/mmzone.h:7,
+                 from include/linux/gfp.h:5,
+                 from include/linux/slab.h:14,
+                 from drivers/gpu/drm/nouveau/include/nvif/os.h:5,
+                 from drivers/gpu/drm/nouveau/include/nvkm/core/os.h:3,
+                 from drivers/gpu/drm/nouveau/include/nvkm/core/object.h:3,
+                 from drivers/gpu/drm/nouveau/include/nvkm/core/subdev.h:3,
+                 from drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h:3,
+                 from drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:25:
+include/asm-generic/div64.h:35:17: note: expected 'uint64_t *' but argument is of type 'u32 *'
+ extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
+                 ^
+
+do_div() is meant for 64-bit by 32-bit division, but both the dividend
+and divisor are 32-bit here, causing the warning.
+
+As the product of priv->parent_rate and priv->n may no longer fit in u32
+soon, change rate from u32 to u64, which also fixes the warning.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+Compile-tested only.
+
+This is v2 of "drm/nouveau/clk: Use plain "/" for 32-bit division".
+
+v2:
+  - Change rate from u32 to u64 instead of changing the division.
+
+parisc/allmodconfig:
+http://kisskb.ellerman.id.au/kisskb/buildresult/12358386/
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
+index 65c532742b08d1c6..e87a964b8bea4d30 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
+@@ -139,7 +139,7 @@ gk20a_pllg_read_mnp(struct gk20a_clk_priv *priv)
+ static u32
+ gk20a_pllg_calc_rate(struct gk20a_clk_priv *priv)
+ {
+-	u32 rate;
++	u64 rate;
+ 	u32 divider;
+ 
+ 	rate = priv->parent_rate * priv->n;
+-- 
+1.9.1
