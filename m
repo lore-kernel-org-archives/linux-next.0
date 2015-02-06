@@ -1,89 +1,126 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v2] drm/nouveau/clk: Change rate from u32 to u64 in gk20a_pllg_calc_rate()
-Date: Fri, 6 Feb 2015 18:24:33 +0900
-Message-ID: <54D48851.9030207@nvidia.com>
-References: <1423214458-23033-1-git-send-email-geert@linux-m68k.org>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: Tree for Feb 4
+Date: Fri, 6 Feb 2015 16:24:13 +0100
+Message-ID: <CA+icZUXywtGD4u5bFqBa1L6gKuaEFffjad4d2u7K-kYun3Yh2g@mail.gmail.com>
+References: <20150204193535.58f132c5@canb.auug.org.au>
+	<CA+icZUXkMv+RYoHLN-BQSrYti8FUjqWih2XsARY4hDAP=2v1Yw@mail.gmail.com>
+	<54D237D9.4070209@kernel.dk>
+	<CA+icZUXh3jdiF1SbJx4aRzYf2fjq_CErQ5drdQRK36ath0A-SA@mail.gmail.com>
+	<54D23B58.9000703@kernel.dk>
+	<CA+icZUWeO03=kYT1MZ3p8ZZaUTv-MxzSjL3gjuq1-q-Qm5WYpA@mail.gmail.com>
+	<yq1zj8tactc.fsf@sermon.lab.mkp.net>
+	<CA+icZUXrSSeFakX4w5nARo3eh35-p2JwKE5kw4KuuFQkv7dMOg@mail.gmail.com>
+	<yq17fvx9hct.fsf@sermon.lab.mkp.net>
+	<CA+icZUUXj2mLa4HT4nqusKOsxCE-hHPWoc7TcfsfCiWaBxXy9w@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7442 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751925AbbBFJZF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2015 04:25:05 -0500
-In-Reply-To: <1423214458-23033-1-git-send-email-geert@linux-m68k.org>
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:61566 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754008AbbBFPYO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2015 10:24:14 -0500
+In-Reply-To: <CA+icZUUXj2mLa4HT4nqusKOsxCE-hHPWoc7TcfsfCiWaBxXy9w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On 02/06/2015 06:20 PM, Geert Uytterhoeven wrote:
-> On 32-bit platforms using asm-generic/div64.h:
+On Thu, Feb 5, 2015 at 8:46 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Thu, Feb 5, 2015 at 4:17 AM, Martin K. Petersen
+> <martin.petersen@oracle.com> wrote:
+>>>>>>> "Sedat" == Sedat Dilek <sedat.dilek@gmail.com> writes:
+>>
+>> Sedat> No, but I am here on a so-called WUBI installation which
+>> Sedat> triggered some bugs being an exotic installation.  My
+>> Sedat> Ubuntu/precise is a 18GiB image laying on my Win7 partition
+>> Sedat> (/dev/sda2).
+>>
+>> I've been mulling over this for a while and can't come up with a good
+>> approach. So let's just nuke these warnings.
+>>
+>> --
+>> Martin K. Petersen      Oracle Linux Engineering
+>>
+>>
+>> block: Quiesce zeroout wrapper
+>>
+>> blkdev_issue_zeroout() printed a warning if a device failed a discard or
+>> write same request despite advertising support for these. That's fine
+>> for SCSI since we'll disable these commands if we get an error back from
+>> the disk saying that they are not supported. And consequently the
+>> warning only gets printed once.
+>>
+>> There are other types of block devices that support discard, however,
+>> and these may return -EOPNOTSUPP for each command but leave discard
+>> enabled in the queue limits. This will cause a warning message for every
+>> blkdev_issue_zeroout() invocation.
+>>
+>> Remove the offending warning messages.
+>>
+>> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+>> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+>> ---
+>>  block/blk-lib.c |   26 +++++++-------------------
+>>  1 file changed, 7 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/block/blk-lib.c b/block/blk-lib.c
+>> index 715e948f58a4..7688ee3f5d72 100644
+>> --- a/block/blk-lib.c
+>> +++ b/block/blk-lib.c
+>> @@ -286,7 +286,6 @@ static int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>>   * @discard:   whether to discard the block range
+>>   *
+>>   * Description:
+>> -
+>>   *  Zero-fill a block range.  If the discard flag is set and the block
+>>   *  device guarantees that subsequent READ operations to the block range
+>>   *  in question will return zeroes, the blocks will be discarded. Should
+>> @@ -303,26 +302,15 @@ int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>>                          sector_t nr_sects, gfp_t gfp_mask, bool discard)
+>>  {
+>>         struct request_queue *q = bdev_get_queue(bdev);
+>> -       unsigned char bdn[BDEVNAME_SIZE];
+>> -
+>> -       if (discard && blk_queue_discard(q) && q->limits.discard_zeroes_data) {
+>>
+>> -               if (!blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, 0))
+>> -                       return 0;
+>> -
+>> -               bdevname(bdev, bdn);
+>> -               pr_warn("%s: DISCARD failed. Manually zeroing.\n", bdn);
+>> -       }
+>> +       if (discard && blk_queue_discard(q) && q->limits.discard_zeroes_data &&
+>> +           blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, 0) == 0)
+>> +               return 0;
+>>
+>> -       if (bdev_write_same(bdev)) {
+>> -
+>> -               if (!blkdev_issue_write_same(bdev, sector, nr_sects, gfp_mask,
+>> -                                            ZERO_PAGE(0)))
+>> -                       return 0;
+>> -
+>> -               bdevname(bdev, bdn);
+>> -               pr_warn("%s: WRITE SAME failed. Manually zeroing.\n", bdn);
+>> -       }
+>> +       if (bdev_write_same(bdev) &&
+>> +           blkdev_issue_write_same(bdev, sector, nr_sects, gfp_mask,
+>> +                                   ZERO_PAGE(0)) == 0)
+>> +               return 0;
+>>
+>>         return __blkdev_issue_zeroout(bdev, sector, nr_sects, gfp_mask);
+>>  }
 >
-> drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c: In function 'gk20a_pllg_calc_rate':
-> drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:147:79: warning: comparison of distinct pointer types lacks a cast
->    do_div(rate, divider);
->                                                                                 ^
-> drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:147:2: warning: right shift count >= width of type
->    do_div(rate, divider);
->    ^
-> drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:147:238: warning: passing argument 1 of '__div64_32' from incompatible pointer type
->    do_div(rate, divider);
->                                                                                                                                                                                                                                                ^
-> In file included from arch/parisc/include/generated/asm/div64.h:1:0,
->                   from include/linux/kernel.h:124,
->                   from include/linux/list.h:8,
->                   from include/linux/preempt.h:10,
->                   from include/linux/spinlock.h:50,
->                   from include/linux/mmzone.h:7,
->                   from include/linux/gfp.h:5,
->                   from include/linux/slab.h:14,
->                   from drivers/gpu/drm/nouveau/include/nvif/os.h:5,
->                   from drivers/gpu/drm/nouveau/include/nvkm/core/os.h:3,
->                   from drivers/gpu/drm/nouveau/include/nvkm/core/object.h:3,
->                   from drivers/gpu/drm/nouveau/include/nvkm/core/subdev.h:3,
->                   from drivers/gpu/drm/nouveau/include/nvkm/subdev/clk.h:3,
->                   from drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c:25:
-> include/asm-generic/div64.h:35:17: note: expected 'uint64_t *' but argument is of type 'u32 *'
->   extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
->                   ^
+> Martin, will you send a separate patch for that?
 >
-> do_div() is meant for 64-bit by 32-bit division, but both the dividend
-> and divisor are 32-bit here, causing the warning.
->
-> As the product of priv->parent_rate and priv->n may no longer fit in u32
-> soon, change rate from u32 to u64, which also fixes the warning.
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Compile-tested only.
->
-> This is v2 of "drm/nouveau/clk: Use plain "/" for 32-bit division".
->
-> v2:
->    - Change rate from u32 to u64 instead of changing the division.
->
-> parisc/allmodconfig:
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12358386/
-> ---
->   drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
-> index 65c532742b08d1c6..e87a964b8bea4d30 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
-> @@ -139,7 +139,7 @@ gk20a_pllg_read_mnp(struct gk20a_clk_priv *priv)
->   static u32
->   gk20a_pllg_calc_rate(struct gk20a_clk_priv *priv)
->   {
-> -	u32 rate;
-> +	u64 rate;
->   	u32 divider;
->
->   	rate = priv->parent_rate * priv->n;
+> Thanks.
 >
 
-Tested-by: Alexandre Courbot <acourbot@nvidia.com>
+Just for the sake of completeness, the patch is now in block-next:
 
-Adding Ben as he might want to take this in his tree?
+commit 9f9ee1f2b2f94f19437ae2def7c0d6636d7fe02e
+"block: Quiesce zeroout wrapper"
+
+- Sedat -
+
+[1] http://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=9f9ee1f2b2f94f19437ae2def7c0d6636d7fe02e
