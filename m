@@ -1,62 +1,28 @@
 From: Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH 1/2 v2] tracing: Add condition check to RCU lockdep checks
-Date: Fri, 6 Feb 2015 15:13:04 -0500
-Message-ID: <20150206151304.06b0fa59@gandalf.local.home>
-References: <20150206200653.009919583@goodmis.org>
-	<20150206200800.552335453@goodmis.org>
+Subject: Re: [PATCH 2/2] x86/tbl/trace: Do not trace on CPU that is offline
+Date: Fri, 6 Feb 2015 15:21:58 -0500
+Message-ID: <20150206152158.6ff17514@gandalf.local.home>
+References: <CA+icZUWB6XHvOxV-_b=m=c1-RvE3FVbeDeih__zZbZ23dVVJ6Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150206200800.552335453@goodmis.org>
+In-Reply-To: <CA+icZUWB6XHvOxV-_b=m=c1-RvE3FVbeDeih__zZbZ23dVVJ6Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Sedat Dilek <sedat.dilek@gmail.com>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
->From 2836d3eec0cbbb14ddb50e78506f9835bab59d5b Mon Sep 17 00:00:00 2001
-Date: Fri, 6 Feb 2015 14:30:50 -0500
-Subject: tracing: Add condition check to RCU lockdep checks
+On Fri, 6 Feb 2015 21:11:57 +0100
+Sedat Dilek <sedat.dilek@gmail.com> wrote:
 
-From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
+> On Fri, Feb 6, 2015 at 9:06 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
+> >
+> 
+> Subject: x86/tbl/trace: ---> .../tlb/...
+> 
 
-The trace_tlb_flush() tracepoint can be called when a CPU is going offline.
-When a CPU is offline, RCU is no longer watching that CPU and since the
-tracepoint is protected by RCU, it must not be called. To prevent the
-tlb_flush tracepoint from being called when the CPU is offline, it was
-converted to a TRACE_EVENT_CONDITION where the condition checks if the
-CPU is online before calling the tracepoint.
+But I wanted "To Be Loved".
 
-Unfortunately, this was not enough to stop lockdep from complaining about
-it. Even though the RCU protected code of the tracepoint will never be
-called, the condition is hidden within the tracepoint, and even though the
-condition prevents RCU code from being called, the lockdep checks are
-outside the tracepoint (this is to test tracepoints even when they are not
-enabled).
-
-Even though tracepoints should be checked to be RCU safe when they are not
-enabled, the condition should still be considered when checking RCU.
-
-Link: http://lkml.kernel.org/r/CA+icZUUGiGDoL5NU8RuxKzFjoLjEKRtUWx=JB8B9a0EQv-eGzQ@mail.gmail.com
-
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
----
- include/linux/tracepoint.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index e08e21e5f601..c72851328ca9 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -173,7 +173,7 @@ extern void syscall_unregfunc(void);
- 				TP_PROTO(data_proto),			\
- 				TP_ARGS(data_args),			\
- 				TP_CONDITION(cond),,);			\
--		if (IS_ENABLED(CONFIG_LOCKDEP)) {			\
-+		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
- 			rcu_read_lock_sched_notrace();			\
- 			rcu_dereference_sched(__tracepoint_##name.funcs);\
- 			rcu_read_unlock_sched_notrace();		\
--- 
-2.1.4
+-- Steve
