@@ -1,56 +1,40 @@
 From: Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH 1/2] tracing: Add condition check to RCU lockdep checks
-Date: Fri, 06 Feb 2015 15:06:54 -0500
-Message-ID: <20150206200800.552335453@goodmis.org>
-References: <20150206200653.009919583@goodmis.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Subject: [PATCH 0/2] tracing/tlb/x85: Fix splat of calling RCU trace code on offline CPU
+Date: Fri, 06 Feb 2015 15:06:53 -0500
+Message-ID: <20150206200653.009919583@goodmis.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=0001-tracing-Add-condition-check-to-RCU-lockdep-checks.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Sedat Dilek <sedat.dilek@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dave Hansen <dave@sr71.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kristen Carlson Accardi <kristen@linux.intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
+Paul,
 
-The trace_tlb_flush() tracepoint can be called when a CPU is going offline.
-When a CPU is offline, RCU is no longer watching that CPU and since the
-tracepoint is protected by RCU, it must not be called. To prevent the
-tlb_flush tracepoint from being called when the CPU is offline, it was
-converted to a TRACE_EVENT_CONDITION where the condition checks if the
-CPU is online before calling the tracepoint.
+I found a much better fix than adding the rcu_nocheck(). Simply have the
+rcu check inside the condition check as well. This way the rcu splat
+will only happen if the condition is set too. The condition doesn't need
+the tracepoint enabled.
 
-Unfortunately, this was not enough to stop lockdep from complaining about
-it. Even though the RCU protected code of the tracepoint will never be
-called, the condition is hidden within the tracepoint, and even though the
-condition prevents RCU code from being called, the lockdep checks are
-outside the tracepoint (this is to test tracepoints even when they are not
-enabled).
+Now I'm thinking that I should push the first patch through my tree as it
+only touches tracing. The second patch you can freely take.
 
-Even though tracepoints should be checked to be RCU safe when they are not
-enabled, the condition should still be considered when checking RCU.
+Neither patch really depends on the other, but both patches are required
+to make the splat go away. If Sedat could test these patches together,
+and give his tested-by tag, that would be great. I'll run my patch through
+my full series of tests and then push to linux next. You could take the second
+patch and push that through your tree (linux-next). When both arrive, the
+bug will be fixed. The two do not need to come in together.
 
-Link: http://lkml.kernel.org/r/CA+icZUUGiGDoL5NU8RuxKzFjoLjEKRtUWx=JB8B9a0EQv-eGzQ@mail.gmail.com
+Thoughts?
 
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
----
+-- Steve
+
+
+Steven Rostedt (Red Hat) (2):
+      tracing: Add condition check to RCU lockdep checks
+      x86/tbl/trace: Do not trace on CPU that is offline
+
+----
  include/linux/tracepoint.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index e08e21e5f601..68a346b8328a 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -173,7 +173,7 @@ extern void syscall_unregfunc(void);
- 				TP_PROTO(data_proto),			\
- 				TP_ARGS(data_args),			\
- 				TP_CONDITION(cond),,);			\
--		if (IS_ENABLED(CONFIG_LOCKDEP)) {			\
-+		if (IS_ENABLED(CONFIG_LOCKDEP) && cond) {			\
- 			rcu_read_lock_sched_notrace();			\
- 			rcu_dereference_sched(__tracepoint_##name.funcs);\
- 			rcu_read_unlock_sched_notrace();		\
--- 
-2.1.4
+ include/trace/events/tlb.h | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
