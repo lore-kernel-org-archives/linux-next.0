@@ -1,84 +1,44 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH -next] drm/nouveau/clk: Use plain "/" for 32-bit division
-Date: Fri, 6 Feb 2015 15:50:17 +0900
-Message-ID: <54D46429.4020208@nvidia.com>
-References: <1423065755-19337-1-git-send-email-geert@linux-m68k.org>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: Update for drm-intel.git branches
+Date: Fri, 6 Feb 2015 08:27:34 +0100
+Message-ID: <CAKMK7uGDzks5o7+2z4ZH=gs0CgfJ5uuQ=o6bzTvNciDOaRXoPw@mail.gmail.com>
+References: <CAKMK7uHhCVaODBoi_uSWt7eXe6P04YvwT9XboobaWUQ9VxPBVQ@mail.gmail.com>
+	<20150204231211.56a8d446@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1423065755-19337-1-git-send-email-geert@linux-m68k.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, David Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f173.google.com ([209.85.213.173]:65521 "EHLO
+	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751143AbbBFH1f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2015 02:27:35 -0500
+Received: by mail-ig0-f173.google.com with SMTP id a13so551133igq.0
+        for <linux-next@vger.kernel.org>; Thu, 05 Feb 2015 23:27:34 -0800 (PST)
+In-Reply-To: <20150204231211.56a8d446@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>, "Nikula, Jani" <jani.nikula@linux.intel.com>
 
-SGkgR2VlcnQsCgpPbiAwMi8wNS8yMDE1IDAxOjAyIEFNLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
-dGU6Cj4gT24gMzItYml0IHBsYXRmb3JtcyB1c2luZyBhc20tZ2VuZXJpYy9kaXY2NC5oOgo+Cj4g
-ZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZrbS9zdWJkZXYvY2xrL2drMjBhLmM6IEluIGZ1bmN0
-aW9uICdnazIwYV9wbGxnX2NhbGNfcmF0ZSc6Cj4gZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbnZr
-bS9zdWJkZXYvY2xrL2drMjBhLmM6MTQ3Ojc5OiB3YXJuaW5nOiBjb21wYXJpc29uIG9mIGRpc3Rp
-bmN0IHBvaW50ZXIgdHlwZXMgbGFja3MgYSBjYXN0Cj4gICAgZG9fZGl2KHJhdGUsIGRpdmlkZXIp
-Owo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgXgo+IGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252
-a20vc3ViZGV2L2Nsay9nazIwYS5jOjE0NzoyOiB3YXJuaW5nOiByaWdodCBzaGlmdCBjb3VudCA+
-PSB3aWR0aCBvZiB0eXBlCj4gICAgZG9fZGl2KHJhdGUsIGRpdmlkZXIpOwo+ICAgIF4KPiBkcml2
-ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRldi9jbGsvZ2syMGEuYzoxNDc6MjM4OiB3YXJu
-aW5nOiBwYXNzaW5nIGFyZ3VtZW50IDEgb2YgJ19fZGl2NjRfMzInIGZyb20gaW5jb21wYXRpYmxl
-IHBvaW50ZXIgdHlwZQo+ICAgIGRvX2RpdihyYXRlLCBkaXZpZGVyKTsKPiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4K
-PiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gYXJjaC9wYXJpc2MvaW5jbHVkZS9nZW5lcmF0ZWQvYXNt
-L2RpdjY0Lmg6MTowLAo+ICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9rZXJu
-ZWwuaDoxMjQsCj4gICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L2xpc3QuaDo4
-LAo+ICAgICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9wcmVlbXB0Lmg6MTAsCj4g
-ICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L3NwaW5sb2NrLmg6NTAsCj4gICAg
-ICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L21tem9uZS5oOjcsCj4gICAgICAgICAg
-ICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L2dmcC5oOjUsCj4gICAgICAgICAgICAgICAgICAg
-ZnJvbSBpbmNsdWRlL2xpbnV4L3NsYWIuaDoxNCwKPiAgICAgICAgICAgICAgICAgICBmcm9tIGRy
-aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZpZi9vcy5oOjUsCj4gICAgICAgICAgICAg
-ICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vY29yZS9vcy5o
-OjMsCj4gICAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNs
-dWRlL252a20vY29yZS9vYmplY3QuaDozLAo+ICAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVy
-cy9ncHUvZHJtL25vdXZlYXUvaW5jbHVkZS9udmttL2NvcmUvc3ViZGV2Lmg6MywKPiAgICAgICAg
-ICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZrbS9zdWJk
-ZXYvY2xrLmg6MywKPiAgICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9ub3V2
-ZWF1L252a20vc3ViZGV2L2Nsay9nazIwYS5jOjI1Ogo+IGluY2x1ZGUvYXNtLWdlbmVyaWMvZGl2
-NjQuaDozNToxNzogbm90ZTogZXhwZWN0ZWQgJ3VpbnQ2NF90IConIGJ1dCBhcmd1bWVudCBpcyBv
-ZiB0eXBlICd1MzIgKicKPiAgIGV4dGVybiB1aW50MzJfdCBfX2RpdjY0XzMyKHVpbnQ2NF90ICpk
-aXZpZGVuZCwgdWludDMyX3QgZGl2aXNvcik7Cj4gICAgICAgICAgICAgICAgICAgXgo+Cj4gZG9f
-ZGl2KCkgaXMgbWVhbnQgZm9yIDY0LWJpdCBieSAzMi1iaXQgZGl2aXNpb24sIGJ1dCBib3RoIHRo
-ZSBkaXZpZGVuZAo+IGFuZCBkaXZpc29yIGFyZSAzMi1iaXQgaGVyZS4gSGVuY2UgdXNlIHBsYWlu
-ICIvIiBpbnN0ZWFkLgo+Cj4gU2lnbmVkLW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVy
-dEBsaW51eC1tNjhrLm9yZz4KPiAtLS0KPiBDb21waWxlLXRlc3RlZCBvbmx5Lgo+Cj4gcGFyaXNj
-L2FsbG1vZGNvbmZpZzoKPiBodHRwOi8va2lzc2tiLmVsbGVybWFuLmlkLmF1L2tpc3NrYi9idWls
-ZHJlc3VsdC8xMjM1ODM4Ni8KPiAtLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20v
-c3ViZGV2L2Nsay9nazIwYS5jIHwgMyArLS0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
-bigrKSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbm91
-dmVhdS9udmttL3N1YmRldi9jbGsvZ2syMGEuYyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252
-a20vc3ViZGV2L2Nsay9nazIwYS5jCj4gaW5kZXggNjVjNTMyNzQyYjA4ZDFjNi4uMDIyNTk1ODc2
-ZWE0ZGM4NSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udmttL3N1YmRl
-di9jbGsvZ2syMGEuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vc3ViZGV2
-L2Nsay9nazIwYS5jCj4gQEAgLTE0NCw5ICsxNDQsOCBAQCBnazIwYV9wbGxnX2NhbGNfcmF0ZShz
-dHJ1Y3QgZ2syMGFfY2xrX3ByaXYgKnByaXYpCj4KPiAgIAlyYXRlID0gcHJpdi0+cGFyZW50X3Jh
-dGUgKiBwcml2LT5uOwo+ICAgCWRpdmlkZXIgPSBwcml2LT5tICogcGxfdG9fZGl2W3ByaXYtPnBs
-XTsKPiAtCWRvX2RpdihyYXRlLCBkaXZpZGVyKTsKPgo+IC0JcmV0dXJuIHJhdGUgLyAyOwo+ICsJ
-cmV0dXJuIHJhdGUgLyBkaXZpZGVyIC8gMjsKCkkgYWdyZWUgdGhlcmUgaXMgYSBwcm9ibGVtIGhl
-cmUsIGJ1dCBjb25zaWRlcmluZyB0aGUgdGhlb3JldGljYWwgdmFsdWVzIAp0aGF0IHJhdGUgY2Fu
-IHRha2UsIGNvdWxkIHdlIHJhdGhlciBmaXggdGhpcyBieSBtYWtpbmcgcmF0ZSBhIHU2ND8gV2l0
-aCAKdGhlIGN1cnJlbnQgbWF4aW11bSB2YWx1ZXMgb2YgcHJpdi0+cGFyZW50X3JhdGUgYW5kIHBy
-aXYtPm4sIHJhdGUgbWlnaHQgCmFwcHJvYWNoIGRhbmdlcm91c2x5IHRvIHRoZSB1MzIgbGltaXQg
-YW5kIEkgYmVsaWV2ZSBjYXN0aW5nIGl0IHRvIHU2NCAKd291bGQgYmUgc2FmZXIuCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Wed, Feb 4, 2015 at 1:12 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Tue, 3 Feb 2015 10:28:16 +0100 Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>>
+>> I've renamed the topic/core-stuff branch to topic/drm-misc in the
+>> drm-intel.git. I'll leave the old branch around until you've updated
+>> your scripts, please reply when you've done that.
+>>
+>> Another thing: Nowadays I have 2-3 special-purpose topic branches per
+>> kernel release, and at least with some of them I think it would be
+>> good to include them into linux-next. Would it be possible for your
+>> scripts to pick up the list of -next branches to pick up dynamically
+>> from some file? That would also simplify things with the
+>> for-linux-next branch, which is an alias to different branches
+>> depending upon where in the release cycle we are.
+>
+> I'll get back to you next week about this, OK?
+
+Yeah, no problem.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
