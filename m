@@ -1,307 +1,261 @@
-From: Pat Erley <pat-lkml@erley.org>
-Subject: Re: BUG: non-zero nr_pmds on freeing mm: 1
-Date: Sun, 08 Feb 2015 01:32:26 -0600
-Message-ID: <54D7110A.6050204@erley.org>
-References: <CA+icZUVTVdHc3QYD1LkWn=Xt-Zz6RcXPcjL6Xbpz0FZ6rdA5CQ@mail.gmail.com>	<CA+icZUVt_8wquKTq=A0tE7erL5iqQ7KsVDiJg_2CXd0Fu-VkcQ@mail.gmail.com>	<54D5D348.70408@erley.org>	<CA+icZUXPukpUw_xBsK9An+7KL_gyyyWSV7a_ip6uB8kJjTFoHg@mail.gmail.com>	<CA+icZUXJ=H+X2toQW4LksxaqBvyZyco=scT_OoV=bAG6ScuwMg@mail.gmail.com>	<54D69157.9040700@erley.org> <CA+icZUWB__V9L9nhRT7JSisVFooUT4EKGjKqobWHk4hkiJVwjQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Mon, 9 Feb 2015 13:26:42 +1100
+Message-ID: <20150209132642.0d61b6ed@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CA+icZUWB__V9L9nhRT7JSisVFooUT4EKGjKqobWHk4hkiJVwjQ@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: sedat.dilek@gmail.com
-Cc: Linux-Next <linux-next@vger.kernel.org>, kirill.shutemov@linux.intel.com, linux-mm <linux-mm@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.cz>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/z1g+Zviz9pkwepjS67Oah3d"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47331 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758814AbbBIC0x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Feb 2015 21:26:53 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>
 
-On 02/07/2015 04:33 PM, Sedat Dilek wrote:
-> On Sat, Feb 7, 2015 at 11:27 PM, Pat Erley <pat-lkml@erley.org> wrote:
->> On 02/07/2015 03:30 AM, Sedat Dilek wrote:
->>>
->>> On Sat, Feb 7, 2015 at 10:20 AM, Sedat Dilek <sedat.dilek@gmail.com>
->>> wrote:
->>>>
->>>> On Sat, Feb 7, 2015 at 9:56 AM, Pat Erley <pat-lkml@erley.org> wrote:
->>>>>
->>>>> On 02/07/2015 02:42 AM, Sedat Dilek wrote:
->>>>>>
->>>>>>
->>>>>> On Sat, Feb 7, 2015 at 8:33 AM, Sedat Dilek <sedat.dilek@gmail.com>
->>>>>> wrote:
->>>>>>>
->>>>>>>
->>>>>>> On Sat, Feb 7, 2015 at 6:12 AM, Pat Erley <pat-lkml@erley.org> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> I'm seeing the message in $subject on my Xen DOM0 on next-20150204 on
->>>>>>>> x86_64.  I haven't had time to bisect it, but have seen some
->>>>>>>> discussion
->>>>>>>> on
->>>>>>>> similar topics here recently.  I can trigger this pretty reliably by
->>>>>>>> watching Netflix.  At some point (minutes to hours) into it, the
->>>>>>>> netflix
->>>>>>>> video goes black (audio keeps going, so it still thinks it's working)
->>>>>>>> and
->>>>>>>> the error appears in dmesg.  Refreshing the page gets the video going
->>>>>>>> again,
->>>>>>>> and it will continue playing for some indeterminate amount of time.
->>>>>>>>
->>>>>>>> Kirill, I've CC'd you as looking in the logs, you've patched a false
->>>>>>>> positive trigger of this very recently(patch in kernel I'm running).
->>>>>>>> Am
->>>>>>>> I
->>>>>>>> actually hitting a problem, or is this another false positive case?
->>>>>>>> Any
->>>>>>>> additional details that might help?
->>>>>>>>
->>>>>>>> Dmesg from system attached.
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> [ CC some mm folks ]
->>>>>>>
->>>>>>> I have seen this, too.
->>>>>>>
->>>>>>> root# grep "BUG: non-zero nr_pmds on freeing mm:" /var/log/kern.log |
->>>>>>> wc
->>>>>>> -l
->>>>>>> 21
->>>>>>>
->>>>>>> Checking my logs: On next-20150203 and next-20150204.
->>>>>>>
->>>>>>> I am here not in a VM environment and cannot say what causes these
->>>>>>> messages.
->>>>>>>
->>>>>>
->>>>>> I checked a bit the logs and commits in mm.git and linux-next.git.
->>>>>>
->>>>>> [1] lists:
->>>>>>
->>>>>> Kirill A. Shutemov (1): mm: do not use mm->nr_pmds on !MMU
->>>>>> configurations
->>>>>>
->>>>>> NOTE: next-20150204 has this commit, but next-20150203 not (seen the
->>>>>> BUG: line in both releases).
->>>>>>
->>>>>> Looking at Kirill's commit...
->>>>>>
->>>>>> At my 1st quick look I thought Kirill mixed mm_nr_pmds_init() in the
->>>>>> case of defined(__PAGETABLE_PMD_FOLDED), but I was wrong.
->>>>>>
->>>>>> @@ -1440,13 +1440,15 @@ static inline int __pud_alloc(struct mm_struct
->>>>>> *mm, pgd_t *pgd,
->>>>>> ...
->>>>>> #if defined(__PAGETABLE_PMD_FOLDED) || !defined(CONFIG_MMU)
->>>>>> ...
->>>>>> static inline void mm_nr_pmds_init(struct mm_struct *mm)
->>>>>> {
->>>>>>      atomic_long_set(&mm->nr_pmds, 0);
->>>>>> }
->>>>>> ...
->>>>>> #else
->>>>>> ...
->>>>>> static inline void mm_nr_pmds_init(struct mm_struct *mm) {}
->>>>>> ...
->>>>>> #endif
->>>>>>
->>>>>> So, I drop my idea of reverting Kirill's commit.
->>>>>>
->>>>>> Pat, not sure how often you build linux-next.
->>>>>> When doing a daily linux-next testing... Before bisecting I normally
->>>>>> checked which version of linux-next was the last good and which one
->>>>>> was the first bad.
->>>>>> I cannot say which strategy is better.
->>>>>> But you seem to have a reliable test with watching Netflix.
->>>>>>
->>>>>> Regards,
->>>>>> - Sedat -
->>>>>>
->>>>>> [1]
->>>>>>
->>>>>> http://git.kernel.org/cgit/linux/kernel/git/mhocko/mm.git/tag/?id=mmotm-2015-02-03-16-38
->>>>>> [2]
->>>>>>
->>>>>> http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=e060ff1f1f00caab403bd208ffa78ed1b7ee0c4d
->>>>>
->>>>>
->>>>>
->>>>> Yeah, I only recently found a patch that lets me boot xen on a recent
->>>>> -next
->>>>> kernel:
->>>>>
->>>>> diff --git a/arch/x86/kernel/cpu/microcode/core.c
->>>>> b/arch/x86/kernel/cpu/microcode/core.c
->>>>> index 15c2909..36a8361 100644
->>>>> --- a/arch/x86/kernel/cpu/microcode/core.c
->>>>> +++ b/arch/x86/kernel/cpu/microcode/core.c
->>>>> @@ -552,7 +552,7 @@ static int __init microcode_init(void)
->>>>>           int error;
->>>>>
->>>>>           if (paravirt_enabled() || dis_ucode_ldr)
->>>>> -               return 0;
->>>>> +               return -EINVAL;
->>>>>
->>>>>           if (c->x86_vendor == X86_VENDOR_INTEL)
->>>>>                   microcode_ops = init_intel_microcode();
->>>>>
->>>>> that I found on it's way to upstream.  The last 'known good' Xen setup
->>>>> for
->>>>> me was a 3.18.0 rc6 kernel.  I only use Xen to experiment with, so I
->>>>> don't
->>>>> boot every kernel with Xen enabled, only when I'm working on learning
->>>>> it.
->>>>> So as far as a bisect window goes, that's a pretty large one.  I'll wait
->>>>> to
->>>>> see if anyone else chimes in before attempting the bisect(mostly because
->>>>> it's 3am here, and they'll all likely have a chance to see this chain of
->>>>> e-mails before I can get going on the bisect tomorrow).  I'll also check
->>>>> to
->>>>> see if I can trigger it on this kernel without booting in xen.
->>>>>
->>>>
->>>> I have run ltp (20150119) in special the mm testsuite.
->>>> It produces call-traces here when running OOM tests (oom03, oom04 and
->>>> oom05).
->>>>
->>>> # cd /opt/ltp
->>>>
->>>> # cat Version
->>>> 20150119
->>>>
->>>> root# LC_ALL=C ./runltp -f mm 2>&1 | tee
->>>> results-ltp_mm-testsuite_$(uname -r).txt
->>>>
->>>> 1st snippet in dmesg:
->>>> ...
->>>> [ 2808.331428] BUG: non-zero nr_pmds on freeing mm: 17
->>>> [ 3283.043499] oom03 invoked oom-killer: gfp_mask=0xd0, order=0,
->>>> oom_score_adj=0
->>>> [ 3283.043505] oom03 cpuset=/ mems_allowed=0
->>>> [ 3283.043551] CPU: 2 PID: 14892 Comm: oom03 Not tainted
->>>> 3.19.0-rc7-next-20150204.14-iniza-small #1
->>>> [ 3283.043553] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
->>>> 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
->>>> [ 3283.043555]  0000000000000000 ffff88005402fca8 ffffffff817e392d
->>>> 000000000000000a
->>>> [ 3283.043559]  ffff8800bcf04000 ffff88005402fd38 ffffffff817e1a16
->>>> ffff88005402fcd8
->>>> [ 3283.043562]  ffffffff810d827d 0000000000000206 ffffffff81c6e800
->>>> ffff88005402fce8
->>>> [ 3283.043565] Call Trace:
->>>> [ 3283.043571]  [<ffffffff817e392d>] dump_stack+0x4c/0x65
->>>> [ 3283.043576]  [<ffffffff817e1a16>] dump_header+0x9e/0x261
->>>> [ 3283.043580]  [<ffffffff810d827d>] ?
->>>> trace_hardirqs_on_caller+0x15d/0x200
->>>> [ 3283.043583]  [<ffffffff810d832d>] ? trace_hardirqs_on+0xd/0x10
->>>> [ 3283.043587]  [<ffffffff811a8abc>] oom_kill_process+0x1dc/0x3d0
->>>> [ 3283.043590]  [<ffffffff81217658>]
->>>> mem_cgroup_oom_synchronize+0x6b8/0x6f0
->>>> [ 3283.043594]  [<ffffffff81211a50>] ? mem_cgroup_reset+0xb0/0xb0
->>>> [ 3283.043597]  [<ffffffff811a95b4>] pagefault_out_of_memory+0x24/0xe0
->>>> [ 3283.043600]  [<ffffffff8106c4ad>] mm_fault_error+0x8d/0x190
->>>> [ 3283.043603]  [<ffffffff8106ca60>] __do_page_fault+0x4b0/0x4c0
->>>> [ 3283.043605]  [<ffffffff8106caa1>] do_page_fault+0x31/0x70
->>>> [ 3283.043609]  [<ffffffff817f0818>] page_fault+0x28/0x30
->>>> [ 3283.043657] Task in /1 killed as a result of limit of /1
->>>> [ 3283.043790] memory: usage 1048576kB, limit 1048576kB, failcnt 28578
->>>> [ 3283.043792] memory+swap: usage 0kB, limit 9007199254740988kB, failcnt
->>>> 0
->>>> [ 3283.043793] kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
->>>> [ 3283.043795] Memory cgroup stats for /1: cache:0KB rss:1048576KB
->>>> rss_huge:0KB mapped_file:0KB writeback:4316KB inactive_anon:524296KB
->>>> active_anon:524228KB inactive_file:0KB active_file:0KB unevictable:0KB
->>>> [ 3283.043867] [ pid ]   uid  tgid total_vm      rss nr_ptes nr_pmds
->>>> swapents oom_score_adj name
->>>> [ 3283.044061] [14891]     0 14891     1618      427       9       3
->>>>        0             0 oom03
->>>> [ 3283.044066] [14892]     0 14892   788050   252632     631       6
->>>>    65535             0 oom03
->>>> [ 3283.044069] Memory cgroup out of memory: Kill process 14892 (oom03)
->>>> score 943 or sacrifice child
->>>> [ 3283.044103] Killed process 14892 (oom03) total-vm:3152200kB,
->>>> anon-rss:1009556kB, file-rss:972kB
->>>> ...
->>>>
->>>> Hope this helps to get the beast.
->>>>
->>>
->>>   From results-ltp file...
->>>
->>> <<<test_start>>>
->>> tag=oom03 stime=1423299759
->>> cmdline="oom03"
->>> contacts=""
->>> analysis=exit
->>> <<<test_output>>>
->>> oom03       0  TINFO  :  set overcommit_memory to 1
->>> oom03       0  TINFO  :  start normal OOM testing.
->>> oom03       0  TINFO  :  expected victim is 14892.
->>> oom03       1  TPASS  :  victim signalled: (9) SIGKILL
->>> oom03       0  TINFO  :  start OOM testing for mlocked pages.
->>> oom03       0  TINFO  :  expected victim is 14893.
->>> oom03       2  TPASS  :  victim signalled: (9) SIGKILL
->>> oom03       0  TINFO  :  start OOM testing for KSM pages.
->>> oom03       0  TINFO  :  expected victim is 14894.
->>> oom03       3  TPASS  :  victim signalled: (9) SIGKILL
->>> oom03       4  TCONF  :  oom03.c:74: memcg swap accounting is disabled
->>> oom03       0  TINFO  :  set overcommit_memory to 0
->>> <<<execution_status>>>
->>> initiation_status="ok"
->>> duration=9 termination_type=exited termination_id=32 corefile=no
->>> cutime=80 cstime=564
->>> <<<test_end>>>
->>>
->>> Do you have "memcg swap accounting is disabled" (see above)?
->>> Can you try with CONFIG_MEMCG_SWAP_ENABLED=y to see if this has an effect?
->>>
->>> Here I have it disabled and the following memcg kernel-options set...
->>>
->>> $ grep -i memcg /boot/config-3.19.0-rc7-next-20150204.14-iniza-small
->>> CONFIG_MEMCG=y
->>> CONFIG_MEMCG_SWAP=y
->>> # CONFIG_MEMCG_SWAP_ENABLED is not set
->>> # CONFIG_MEMCG_KMEM is not set
->>>
->>> Hope the mm folk can explain if this option is relevant for the issue or
->>> not.
->>>
->>
->> linux-next $ grep -i memcg /boot/config-3.19.0-rc7
->> # CONFIG_MEMCG is not set
->>
->> I have MEMCG completely disabled, so it doesn't appear to be required for
->> this issue.  I'm slowly searching back for a 'good' build to start the
->> bisection.  Unfortunately, it can take a while to reproduce the issue, so
->> I'm only 2 tries into finding a recent good kernel.
->
-> Please, run LTP with mm testsuite, too.
->
->     root# LC_ALL=C ./runltp -f mm
->
-> It helped to trigger the bug here.
->
-> See build-instructions in [1].
->
-> Thanks.
->
-> - Sedat -
->
-> [1] https://github.com/linux-test-project/ltp/blob/master/doc/mini-howto-building-ltp-from-git.txt
+--Sig_/z1g+Zviz9pkwepjS67Oah3d
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-With a long day of compiling and rebooting behind me, all I was able to
-do was determine that my Netflix video issue is a separate issue from
-this error message.  I just reproduced the Video freeze in Xen on a
-kernel that I can't make show the error message.  The other possibility
-is that the change that's causing the message to appear is, in fact,
-reporting an issue that was uncaught by the error before.
+Hi Rafael,
 
-What is the error message meant to mean/represent?  I feel like it's
-missing some detail to make it useful(it may not be, I just know that,
-to me, seeing it as is doesn't tell me anything about how to figure out
-what's going on/going wrong).
+After merging the pm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+In file included from drivers/of/of_pci.c:1:0:
+drivers/of/of_pci.c: In function 'of_pci_get_host_bridge_resources':
+include/linux/list.h:447:43: error: dereferencing pointer to incomplete type
+  for (pos =3D list_first_entry(head, typeof(*pos), member); \
+                                           ^
+include/linux/kernel.h:799:18: note: in definition of macro 'container_of'
+  const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
+                  ^
+include/linux/list.h:363:2: note: in expansion of macro 'list_entry'
+  list_entry((ptr)->next, type, member)
+  ^
+include/linux/list.h:447:13: note: in expansion of macro 'list_first_entry'
+  for (pos =3D list_first_entry(head, typeof(*pos), member); \
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+include/linux/kernel.h:799:48: warning: initialization from incompatible po=
+inter type
+  const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
+                                                ^
+include/linux/list.h:352:2: note: in expansion of macro 'container_of'
+  container_of(ptr, type, member)
+  ^
+include/linux/list.h:363:2: note: in expansion of macro 'list_entry'
+  list_entry((ptr)->next, type, member)
+  ^
+include/linux/list.h:447:13: note: in expansion of macro 'list_first_entry'
+  for (pos =3D list_first_entry(head, typeof(*pos), member); \
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+include/linux/list.h:447:43: error: dereferencing pointer to incomplete type
+  for (pos =3D list_first_entry(head, typeof(*pos), member); \
+                                           ^
+include/linux/kernel.h:800:3: note: in definition of macro 'container_of'
+  (type *)( (char *)__mptr - offsetof(type,member) );})
+   ^
+include/linux/list.h:363:2: note: in expansion of macro 'list_entry'
+  list_entry((ptr)->next, type, member)
+  ^
+include/linux/list.h:447:13: note: in expansion of macro 'list_first_entry'
+  for (pos =3D list_first_entry(head, typeof(*pos), member); \
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+In file included from include/linux/compiler-gcc.h:106:0,
+                 from include/linux/compiler.h:54,
+                 from include/linux/linkage.h:4,
+                 from include/linux/kernel.h:6,
+                 from drivers/of/of_pci.c:1:
+include/linux/list.h:447:43: error: dereferencing pointer to incomplete type
+  for (pos =3D list_first_entry(head, typeof(*pos), member); \
+                                           ^
+include/linux/compiler-gcc4.h:14:53: note: in definition of macro '__compil=
+er_offsetof'
+ #define __compiler_offsetof(a,b) __builtin_offsetof(a,b)
+                                                     ^
+include/linux/kernel.h:800:29: note: in expansion of macro 'offsetof'
+  (type *)( (char *)__mptr - offsetof(type,member) );})
+                             ^
+include/linux/list.h:352:2: note: in expansion of macro 'container_of'
+  container_of(ptr, type, member)
+  ^
+include/linux/list.h:363:2: note: in expansion of macro 'list_entry'
+  list_entry((ptr)->next, type, member)
+  ^
+include/linux/list.h:447:13: note: in expansion of macro 'list_first_entry'
+  for (pos =3D list_first_entry(head, typeof(*pos), member); \
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+In file included from include/linux/kobject.h:20:0,
+                 from include/linux/of.h:21,
+                 from drivers/of/of_pci.c:3:
+include/linux/list.h:448:11: error: dereferencing pointer to incomplete type
+       &pos->member !=3D (head);     \
+           ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+In file included from drivers/of/of_pci.c:1:0:
+include/linux/list.h:393:40: error: dereferencing pointer to incomplete type
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+                                        ^
+include/linux/kernel.h:799:18: note: in definition of macro 'container_of'
+  const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
+                  ^
+include/linux/list.h:393:2: note: in expansion of macro 'list_entry'
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+  ^
+include/linux/list.h:449:13: note: in expansion of macro 'list_next_entry'
+       pos =3D list_next_entry(pos, member))
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+include/linux/list.h:393:18: error: dereferencing pointer to incomplete type
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+                  ^
+include/linux/kernel.h:799:49: note: in definition of macro 'container_of'
+  const typeof( ((type *)0)->member ) *__mptr =3D (ptr); \
+                                                 ^
+include/linux/list.h:393:2: note: in expansion of macro 'list_entry'
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+  ^
+include/linux/list.h:449:13: note: in expansion of macro 'list_next_entry'
+       pos =3D list_next_entry(pos, member))
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+include/linux/list.h:393:40: error: dereferencing pointer to incomplete type
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+                                        ^
+include/linux/kernel.h:800:3: note: in definition of macro 'container_of'
+  (type *)( (char *)__mptr - offsetof(type,member) );})
+   ^
+include/linux/list.h:393:2: note: in expansion of macro 'list_entry'
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+  ^
+include/linux/list.h:449:13: note: in expansion of macro 'list_next_entry'
+       pos =3D list_next_entry(pos, member))
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+In file included from include/linux/compiler-gcc.h:106:0,
+                 from include/linux/compiler.h:54,
+                 from include/linux/linkage.h:4,
+                 from include/linux/kernel.h:6,
+                 from drivers/of/of_pci.c:1:
+include/linux/list.h:393:40: error: dereferencing pointer to incomplete type
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+                                        ^
+include/linux/compiler-gcc4.h:14:53: note: in definition of macro '__compil=
+er_offsetof'
+ #define __compiler_offsetof(a,b) __builtin_offsetof(a,b)
+                                                     ^
+include/linux/kernel.h:800:29: note: in expansion of macro 'offsetof'
+  (type *)( (char *)__mptr - offsetof(type,member) );})
+                             ^
+include/linux/list.h:352:2: note: in expansion of macro 'container_of'
+  container_of(ptr, type, member)
+  ^
+include/linux/list.h:393:2: note: in expansion of macro 'list_entry'
+  list_entry((pos)->member.next, typeof(*(pos)), member)
+  ^
+include/linux/list.h:449:13: note: in expansion of macro 'list_next_entry'
+       pos =3D list_next_entry(pos, member))
+             ^
+drivers/of/of_pci.c:229:2: note: in expansion of macro 'list_for_each_entry'
+  list_for_each_entry(window, resources, list)
+  ^
+drivers/of/of_pci.c:230:15: error: dereferencing pointer to incomplete type
+   kfree(window->res);
+               ^
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Caused by commit 14d76b68f281 ("PCI: Use common resource list
+management code instead of private implementation") interacting with
+commit d2be00c0fb5a ("of/pci: Free resources on failure in
+of_pci_get_host_bridge_resources()") from the pci tree.
+
+I applied the following merge fix patch (which may need more work?).
+Someone needs to remember to tell Linus about this fix (or similar)
+when these trees get merged.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Feb 2015 13:08:24 +1100
+Subject: [PATCH] of/pci: fix up for "PCI: Use common resource list manageme=
+nt
+ code instead of private implementation"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/of/of_pci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
+index 60dc36c865b5..110fece2ff53 100644
+--- a/drivers/of/of_pci.c
++++ b/drivers/of/of_pci.c
+@@ -140,7 +140,7 @@ int of_pci_get_host_bridge_resources(struct device_node=
+ *dev,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
+-	struct pci_host_bridge_window *window;
++	struct resource_entry *window;
+ 	struct resource *res;
+ 	struct resource *bus_range;
+ 	struct of_pci_range range;
+@@ -226,7 +226,7 @@ int of_pci_get_host_bridge_resources(struct device_node=
+ *dev,
+ conversion_failed:
+ 	kfree(res);
+ parse_failed:
+-	list_for_each_entry(window, resources, list)
++	resource_list_for_each_entry(window, resources)
+ 		kfree(window->res);
+ 	pci_free_resource_list(resources);
+ 	kfree(bus_range);
+--=20
+2.1.4
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/z1g+Zviz9pkwepjS67Oah3d
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU2BrrAAoJEMDTa8Ir7ZwVfwcP/25N83zOCsxb3LPhOZlxrlFm
+HI+lChUqjYa4zmmrHpydBLAWpu9snMd3Zh8dQYJcudy+82Dng/+NUDuyfeOB5rgg
+l9zc+Crd2wueJC1zNoadjeqta9X6RE01/w3jq1cDC0vb+BqrV00GpyilH6Civz6Z
+b0gulgK4CLAyIWkg3KfrHAelgQaHH9638g+kXh9xk7K6rYFX3POHE26Kpu1EUzZ1
+xbeKPQ+Pk+8VrY/MFm6jgZl2GL5RePXNsDUGTBc20mC5C+6EhRT/VIig3IJbdTSC
+AaolaakhkQ88wtbpbnxbUOI+DLcnMK1DDP8LA7WmeIXdNcwyPAFjWt7y+R6eLkzL
+4KS0PqJkGiQeEsr/MVv9dz5hQvH4B3KbUizBN2rTgq4eilEYk5m0vkqroGl1k/Js
+rWJOpj0v3tuaNfBJPdYwOQdu3Av9m1Q5h5JWmH+dW7PvP6HIGvphI/pW95e9YiBm
+j1Tcbq46V5LYUgjzBWUuvx5WeO60cxI4yFtun1fdVAaa2JTYydhHqo8vAJhVzRjF
+ndd2vu15UFNAVHu14MMOxW6I9QHt0/OEnOtKnj1FH/89goXLf4WdMi18HxBdmDjd
+ktEE4XJGxCvzeKwo8/CR9G46W+bbFJ+aQ8N5aBbVFuRoz0Mw6P/R57pqjUHU4xn1
+8BW1iF8KfJJD+sfYrpvq
+=grQA
+-----END PGP SIGNATURE-----
+
+--Sig_/z1g+Zviz9pkwepjS67Oah3d--
