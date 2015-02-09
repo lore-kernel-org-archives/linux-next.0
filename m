@@ -1,88 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-drivers-next tree with
- Linus' tree
-Date: Mon, 9 Feb 2015 14:14:47 +1100
-Message-ID: <20150209141447.43697f4b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 9 Feb 2015 14:36:29 +1100
+Message-ID: <20150209143629.6fc92968@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/i.k7tCciQtQBOdR.NzIxZQH"; protocol="application/pgp-signature"
+ boundary="Sig_/VtgnQgRMfo_TMKrqkbBDwLb"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47159 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50238 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754208AbbBIDOy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 Feb 2015 22:14:54 -0500
+	id S1752975AbbBIDgg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Feb 2015 22:36:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>, Troy Tan <troy_tan@realsil.com.cn>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kenneth Westfield <kwestfie@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>
 
---Sig_/i.k7tCciQtQBOdR.NzIxZQH
+--Sig_/VtgnQgRMfo_TMKrqkbBDwLb
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kalle,
+Hi all,
 
-Today's linux-next merge of the wireless-drivers-next tree got a
-conflict in drivers/net/wireless/rtlwifi/pci.c between commit
-e9538cf4f907 ("rtlwifi: Fix error when accessing unmapped memory in
-skb") from Linus' tree and commit d0311314d002 ("rtlwifi: rtl8192ee:
-Fix handling of new style descriptors") from the wireless-drivers-next
-tree.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+In file included from sound/soc/codecs/max98357a.c:15:0:
+include/linux/module.h:138:40: error: '__mod_of__max98357a_device_id_device=
+_table' aliased to undefined symbol 'max98357a_device_id'
+   extern const struct type##_device_id __mod_##type##__##name##_device_tab=
+le \
+                                        ^
+sound/soc/codecs/max98357a.c:138:1: note: in expansion of macro 'MODULE_DEV=
+ICE_TABLE'
+ MODULE_DEVICE_TABLE(of, max98357a_device_id);
+ ^
+
+Caused by commit af5adf129369 ("ASoC: max98357a: Add MAX98357A codec driver=
+").
+
+I have added the following fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Feb 2015 14:34:40 +1100
+Subject: [PATCH] ASoC: max98357a: fix !CONFIG_OF build
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/soc/codecs/max98357a.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/codecs/max98357a.c b/sound/soc/codecs/max98357a.c
+index 98b915314d7a..ac169f9f4329 100644
+--- a/sound/soc/codecs/max98357a.c
++++ b/sound/soc/codecs/max98357a.c
+@@ -135,4 +135,6 @@ module_platform_driver(max98357a_platform_driver);
+ MODULE_DESCRIPTION("Maxim MAX98357A Codec Driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:" DRV_NAME);
++#ifdef CONFIG_OF
+ MODULE_DEVICE_TABLE(of, max98357a_device_id);
++#endif
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/rtlwifi/pci.c
-index c70efb9a6e78,88331d729b0e..000000000000
---- a/drivers/net/wireless/rtlwifi/pci.c
-+++ b/drivers/net/wireless/rtlwifi/pci.c
-@@@ -924,17 -917,14 +931,16 @@@ new_trx_end
-  			rtlpriv->enter_ps =3D false;
-  			schedule_work(&rtlpriv->works.lps_change_work);
-  		}
-- end:
- +		skb =3D new_skb;
- +no_new:
-  		if (rtlpriv->use_new_trx_flow) {
- -			_rtl_pci_init_one_rxdesc(hw, (u8 *)buffer_desc,
- +			_rtl_pci_init_one_rxdesc(hw, skb, (u8 *)buffer_desc,
-  						 rxring_idx,
- -					       rtlpci->rx_ring[rxring_idx].idx);
- +						 rtlpci->rx_ring[rxring_idx].idx);
-  		} else {
- -			_rtl_pci_init_one_rxdesc(hw, (u8 *)pdesc, rxring_idx,
- +			_rtl_pci_init_one_rxdesc(hw, skb, (u8 *)pdesc,
- +						 rxring_idx,
-  						 rtlpci->rx_ring[rxring_idx].idx);
- -
-  			if (rtlpci->rx_ring[rxring_idx].idx =3D=3D
-  			    rtlpci->rxringcount - 1)
-  				rtlpriv->cfg->ops->set_desc(hw, (u8 *)pdesc,
-
---Sig_/i.k7tCciQtQBOdR.NzIxZQH
+--Sig_/VtgnQgRMfo_TMKrqkbBDwLb
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU2CYsAAoJEMDTa8Ir7ZwVFHwP/RsqGOffmmSb6IMJEo863Dz5
-L0nQ/t0vn9LQNUruR9egznjsOuUG/GNFMRi4fVMxCOjed+oFatWJrbgmirmaE6rt
-CP0zKdUyjPBvFGIRB3xH7XijN9KWaxv8eMaN7bjBulHX4V41/XAK5W3BKDedHdK7
-SBsg0M+OkNgEYYgvqnWW2hTfhfpYPR2j8NmRVeluXMuT7gN8sg2ZUs26HfP6PI/M
-utOijb1C3xiw8L4IlCrvF1N5W1rJ4rJedA5aa/14QGq8rjgRJN4wVjQD8zB/Tj7d
-H8wVBzog8cjiKxU9EiaJTUGEWaESoISDEBToE+Bs6Dh4xNDGZbgEcDyTLckoGHae
-te1reu1C6fec3t0t3D1PpEdj3ln0tHpJV9bHgg4e2YMuvXQA/RiB+hrIFke/NCSU
-aPZk6TKcyLrN+kUC7N5Bm+YQETQpBAXD9f7uKydWfzWFS+mStj/SsMcE3a6wGU77
-ToqvmtTSMFVnbVyHF4RpcK+ti1xgpyX4QmuZH1W4FStokJVi36jOOpA/jkIvQOH/
-CBaxci10+0pNWO3U/FhRoTTcpi3xGlK3MpQ1NBjcXabb+Nv6VJJM9pkndfJ+pZJ/
-+NHtycuDTbHpnDTURnfS5kA79FySiCBoNbHA1jA3KtQhMDBleFRPaZKeZav17snX
-4w0XQnJkIQlszkSjdOtL
-=I9LO
+iQIcBAEBCAAGBQJU2CtBAAoJEMDTa8Ir7ZwVL3IP/2jJ+fxYF4e1IxqmxvmWgXqv
+p1yPTMixZoOhci3oeNGYdLTcGZilMFKz1lsrj4VL24je8el/p4CFy1SMzyR+UGeL
+lLphna+tPEiiDqFo9tWa+LbWNB3yyc7yah483BxppJQFPyhmVulB9Xjo/5xo/Put
+EjsaFxMBNsFdlAf44hzIp9ApC0EhhG8hisflEkuUqH4v5c9eHOzPKYXj0r8D3PvK
+JdMe3vpTxGijlo0jQbIR5nLEmEGbVoWuwrOCsGhN+WU8M3hCkJUtX5Jd4rhcZb1L
+4b1cqd3RjgHjbu+gQwy3auPkW3aXW8uzC34cawK/vEWni6MG8mqwB9k9wcCQnSCe
+2kj05wxHZgM321XYGtTunnGdYY3hITjFrrocPI/+gmbZLWa5Za/FiHxHKZmAjK6K
++gGNbWi2n9wjGWuIyP6jV+syrSuCaAN8qFxdobK1XM0u4Tj99dIsYp/WrSAQPsFn
+wLVdRV85JlLeE+p/aXA7l7Ewp4GCJfcf5mqp3vcv/w+A9wNQ2r0HJWJiB2ZOq/Qw
+nt/6VTOoGpr+ewiA6nP9rKfDi2LebyP6U+Cl7ZTw1Lbj5a4WCfup5sxhnOr2YfAP
+n5C7DjtAYJclFnEUZ2XvbO2Cv8CJwhwkwpmB/cuYyXdVsAdyy20i8ErIKJDR6pra
+x8C12rVSK4DohzeWOcqy
+=rHYS
 -----END PGP SIGNATURE-----
 
---Sig_/i.k7tCciQtQBOdR.NzIxZQH--
+--Sig_/VtgnQgRMfo_TMKrqkbBDwLb--
