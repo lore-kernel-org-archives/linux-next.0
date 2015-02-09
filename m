@@ -1,51 +1,36 @@
-From: Jiang Liu <jiang.liu@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Mon, 09 Feb 2015 13:36:07 +0800
-Message-ID: <54D84747.10501@linux.intel.com>
-References: <20150209132642.0d61b6ed@canb.auug.org.au> <54D82111.9090003@linux.intel.com> <2611810.oabrJWIJSx@vostro.rjw.lan>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Sun, 08 Feb 2015 21:52:46 -0800 (PST)
+Message-ID: <20150208.215246.2043422740922842311.davem@davemloft.net>
+References: <20150209140745.24859389@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:52855 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751101AbbBIFgM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Feb 2015 00:36:12 -0500
-In-Reply-To: <2611810.oabrJWIJSx@vostro.rjw.lan>
+Received: from shards.monkeyblade.net ([149.20.54.216]:37306 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752813AbbBIFwt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Feb 2015 00:52:49 -0500
+In-Reply-To: <20150209140745.24859389@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au
 
-Hi Rafael and Lorenzo,
-	With more closer review, I suspect statement "kfree(bus_range)"
-in commit d2be00c0fb5a ("of/pci: Free resources on failure in
-of_pci_get_host_bridge_resources()") may cause double free of bus_range
-because bus_range will also be freed by kfree(window->res);
-Regards!
-Gerry
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Feb 2015 14:07:45 +1100
 
-On 2015/2/9 11:22, Rafael J. Wysocki wrote:
-> On Monday, February 09, 2015 10:53:05 AM Jiang Liu wrote:
->>
->> On 2015/2/9 10:26, Stephen Rothwell wrote:
->>> Hi Rafael,
-> 
-> [cut]
-> 
->>>                ^
->>>
->>> Caused by commit 14d76b68f281 ("PCI: Use common resource list
->>> management code instead of private implementation") interacting with
->>> commit d2be00c0fb5a ("of/pci: Free resources on failure in
->>> of_pci_get_host_bridge_resources()") from the pci tree.
->>>
->>> I applied the following merge fix patch (which may need more work?).
->> Hi Stephen,
->> 	Thanks for fixing it and there should no more work needed.
-> 
-> Can you please have a look at my linux-next branch now and see if the code
-> is correct in there as well?
-> 
-> Rafael
-> 
+> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+> index e96fc00208bc..9cc4c4a90d00 100644
+> --- a/lib/rhashtable.c
+> +++ b/lib/rhashtable.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/jhash.h>
+>  #include <linux/random.h>
+>  #include <linux/rhashtable.h>
+> +#include <linux/err.h>
+>  
+>  #define HASH_DEFAULT_SIZE	64UL
+>  #define HASH_MIN_SIZE		4UL
+
+Applied, thanks Stephen.
