@@ -1,37 +1,90 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Mon, 09 Feb 2015 04:22:34 +0100
-Message-ID: <2611810.oabrJWIJSx@vostro.rjw.lan>
-References: <20150209132642.0d61b6ed@canb.auug.org.au> <54D82111.9090003@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 9 Feb 2015 14:07:45 +1100
+Message-ID: <20150209140745.24859389@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54D82111.9090003@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ADFK9_qy718Hu0MStAXZsTG"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41333 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759251AbbBIDHv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Feb 2015 22:07:51 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
 
-On Monday, February 09, 2015 10:53:05 AM Jiang Liu wrote:
-> 
-> On 2015/2/9 10:26, Stephen Rothwell wrote:
-> > Hi Rafael,
+--Sig_/ADFK9_qy718Hu0MStAXZsTG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[cut]
+Hi all,
 
-> >                ^
-> > 
-> > Caused by commit 14d76b68f281 ("PCI: Use common resource list
-> > management code instead of private implementation") interacting with
-> > commit d2be00c0fb5a ("of/pci: Free resources on failure in
-> > of_pci_get_host_bridge_resources()") from the pci tree.
-> > 
-> > I applied the following merge fix patch (which may need more work?).
-> Hi Stephen,
-> 	Thanks for fixing it and there should no more work needed.
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Can you please have a look at my linux-next branch now and see if the code
-is correct in there as well?
+lib/rhashtable.c: In function 'rhashtable_walk_next':
+lib/rhashtable.c:1002:3: error: implicit declaration of function 'ERR_PTR' =
+[-Werror=3Dimplicit-function-declaration]
+   return ERR_PTR(-EAGAIN);
+   ^
+lib/rhashtable.c:1002:3: warning: return makes pointer from integer without=
+ a cast
 
-Rafael
+Caused by commit f2dba9c6ff0d ("rhashtable: Introduce
+rhashtable_walk_*"). See Rule 1 in Documentation/SubmitChecklist.
+
+I have added the following fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Feb 2015 14:04:03 +1100
+Subject: [PATCH] rhashtable: using ERR_PTR requires linux/err.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ lib/rhashtable.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index e96fc00208bc..9cc4c4a90d00 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -23,6 +23,7 @@
+ #include <linux/jhash.h>
+ #include <linux/random.h>
+ #include <linux/rhashtable.h>
++#include <linux/err.h>
+=20
+ #define HASH_DEFAULT_SIZE	64UL
+ #define HASH_MIN_SIZE		4UL
+--=20
+2.1.4
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/ADFK9_qy718Hu0MStAXZsTG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU2CSFAAoJEMDTa8Ir7ZwVhVYP/ip0KrzOI2/6Av1S6GtKhTW4
+qaOTwtPuCWXOHQr3O1Cng3KZmPHytU+SHocllOBU58aaRsuUgIybJGhCSJcoOj4m
+M27cYNIQ8eKgmvckJ/k50dXlTz269vBeMvrwq5DXTeQc4SIelpTBAyMLvAfYuXPY
+BImVatrUAJ7FRYBM2LL8ezXX+g0/Y1whXKQIxDplldex1qVlh0DlBN8cvd8NCSwU
+Zlhv7nMj2Vma9h/IhwV3DDJ93yzTNQXebbpvU6CpnzZzdIIeJV6G1d95GcxaPQDh
+8hl/8cZas18eKa9DJ9gmCjYK7scVG7V1Z5CdZi3mzYdO3SbDpvNk+iM4sKlq1caw
+GLSzqnRJotQALh392i9c1sW/QUROAD+KIM2JDzMK5KThwM1ceJcMrNqPACCApvXJ
+wVYupp3XYBeIMsOUAMuNjoHnDUuDJPwQpXRX13vicDi4vPAbO0/df0D0L06mnHEN
+6JgTOXpeiqKXnD4obeVaHyI2UDPmCfCajcb+EXLuNgZVLFx/gaL8tmpuiZjueEEt
+OFP9aLEqQPIkduWdK3tOCw+achE6Z1G6qlWp5kqkeDpnzxkPGppL2vFR/Im0C5m5
+3ixLvw/rgaqzz3JHydikyVOEhQLTsmBrPVntCmbD1FajDe2WE+tp4k/gRTapv59X
+i/fwmGK7l3SXW1M+ANK5
+=/5bR
+-----END PGP SIGNATURE-----
+
+--Sig_/ADFK9_qy718Hu0MStAXZsTG--
