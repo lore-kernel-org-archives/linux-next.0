@@ -1,94 +1,106 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Mon, 9 Feb 2015 15:25:26 +1100
-Message-ID: <20150209152526.1f2b749e@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: [next-20141231] sched: WARNING: CPU: 1 PID: 2539 at
+ kernel/sched/core.c:7303 __might_sleep+0xbd/0xd0()
+Date: Mon, 9 Feb 2015 05:29:34 +0100
+Message-ID: <CA+icZUVPeTjHcq2TWNUbbWZMaFsZ3tNA6dAHd5TJEeJymVEjrw@mail.gmail.com>
+References: <CA+icZUWDMUBLq5=ydDtWnPadz0CBTQRHCeZnDVOvTjL4kYjfWA@mail.gmail.com>
+	<CA+icZUVMEqD9uDouL=FM8147NoWsgufkn2odTKEDgtiqcN3_3Q@mail.gmail.com>
+	<CACVXFVPvi1mjJKKX8UuFA02Ci376C-pMdyY9=1xWG9G10QdGfA@mail.gmail.com>
+	<CA+icZUWO=062JpKOKwwJR3LjKf9X-VjAkJL7nmqYy_iWo0X7qg@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lIBdJTDjWUmiS_SVG5o_Yc_"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58279 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753236AbbBIEZd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 Feb 2015 23:25:33 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Haynes <loghyr@primarydata.com>, Weston Andros Adamson <dros@primarydata.com>, Tao Peng <bergwolf@primarydata.com>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-aio@kvack.org>
+In-Reply-To: <CA+icZUWO=062JpKOKwwJR3LjKf9X-VjAkJL7nmqYy_iWo0X7qg@mail.gmail.com>
+Sender: owner-linux-aio@kvack.org
+To: Ming Lei <ming.lei@canonical.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Jens Axboe <axboe@fb.com>, "open list:AIO" <linux-aio@kvack.org>, Benjamin LaHaise <bcrl@kvack.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/lIBdJTDjWUmiS_SVG5o_Yc_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jan 4, 2015 at 8:53 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> On Sun, Jan 4, 2015 at 1:59 AM, Ming Lei <ming.lei@canonical.com> wrote:
+>> Hi Sedat,
+>>
+>> On Sun, Jan 4, 2015 at 7:42 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>> On Thu, Jan 1, 2015 at 11:28 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>>>> Hi,
+>>>>
+>>>> with next-20141231 I am seeing this call-trace:
+>>>>
+>>>> [   88.028632] ------------[ cut here ]------------
+>>>> [   88.028643] WARNING: CPU: 1 PID: 2539 at kernel/sched/core.c:7303
+>>>> __might_sleep+0xbd/0xd0()
+>>>> [   88.028646] do not call blocking ops when !TASK_RUNNING; state=1
+>>>> set at [<ffffffff810b82dd>] prepare_to_wait_event+0x5d/0x110
+>>>> [   88.028648] Modules linked in: ppp_deflate bsd_comp ppp_async
+>>>> crc_ccitt arc4 iwldvm uvcvideo mac80211 snd_hda_codec_hdmi
+>>>> snd_hda_codec_realtek parport_pc videobuf2_vmalloc
+>>>> snd_hda_codec_generic ppdev videobuf2_memops snd_hda_intel
+>>>> videobuf2_core rfcomm bnep snd_hda_controller option snd_hda_codec
+>>>> v4l2_common i915 joydev videodev usb_wwan snd_hwdep usbserial
+>>>> cdc_ether snd_pcm usbnet btusb snd_seq_midi snd_seq_midi_event
+>>>> bluetooth psmouse snd_rawmidi iwlwifi snd_seq i2c_algo_bit
+>>>> drm_kms_helper snd_timer serio_raw snd_seq_device samsung_laptop drm
+>>>> snd cfg80211 soundcore video lpc_ich intel_rst wmi mac_hid binfmt_misc
+>>>> lp parport hid_generic usbhid hid r8169 mii usb_storage
+>>>> [   88.028694] CPU: 1 PID: 2539 Comm: fio Not tainted
+>>>> 3.19.0-rc2-next20141231-1-iniza-small #1
+>>>> [   88.028695] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
+>>>> 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
+>>>> [   88.028697]  ffffffff81a66d5f ffff880070f43c38 ffffffff8175c50c
+>>>> 0000000000000000
+>>>> [   88.028700]  ffff880070f43c88 ffff880070f43c78 ffffffff810753ba
+>>>> ffff880070f43d28
+>>>> [   88.028703]  ffffffff81a67ef5 000000000000026d 0000000000000000
+>>>> 0000000000dce810
+>>>> [   88.028706] Call Trace:
+>>>> [   88.028712]  [<ffffffff8175c50c>] dump_stack+0x4c/0x65
+>>>> [   88.028716]  [<ffffffff810753ba>] warn_slowpath_common+0x8a/0xc0
+>>>> [   88.028719]  [<ffffffff81075436>] warn_slowpath_fmt+0x46/0x50
+>>>> [   88.028722]  [<ffffffff810c2c3d>] ? mark_held_locks+0x6d/0xa0
+>>>> [   88.028725]  [<ffffffff81761732>] ? mutex_lock_nested+0x2b2/0x4e0
+>>>> [   88.028727]  [<ffffffff810b82dd>] ? prepare_to_wait_event+0x5d/0x110
+>>>> [   88.028729]  [<ffffffff810b82dd>] ? prepare_to_wait_event+0x5d/0x110
+>>>> [   88.028731]  [<ffffffff8109c3ad>] __might_sleep+0xbd/0xd0
+>>>> [   88.028734]  [<ffffffff817614af>] mutex_lock_nested+0x2f/0x4e0
+>>>> [   88.028736]  [<ffffffff810b82d3>] ? prepare_to_wait_event+0x53/0x110
+>>>> [   88.028739]  [<ffffffff8124433f>] aio_read_events+0x4f/0x2d0
+>>>> [   88.028742]  [<ffffffff810c2e7d>] ? trace_hardirqs_on+0xd/0x10
+>>>> [   88.028745]  [<ffffffff812447c0>] read_events+0x200/0x320
+>>>> [   88.028747]  [<ffffffff810b81c0>] ? wait_woken+0xc0/0xc0
+>>>> [   88.028750]  [<ffffffff810e9690>] ? hrtimer_get_res+0x50/0x50
+>>>> [   88.028753]  [<ffffffff81244ca0>] ? lookup_ioctx+0xd0/0x140
+>>>> [   88.028755]  [<ffffffff812466b2>] SyS_io_getevents+0x62/0x100
+>>>> [   88.028759]  [<ffffffff813b59be>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+>>>> [   88.028762]  [<ffffffff817663ed>] system_call_fastpath+0x16/0x1b
+>>>> [   88.028764] ---[ end trace dba4f4a06fcdd178 ]---
+>>
+>> It is an known linux-aio issue, see the following link:
+>>
+>> http://marc.info/?t=141925049600004&r=1&w=2
+>>
+>
+> This discussion resulted in a RFC patch of Chris Mason which is still
+> discussed in [1].
+>
+> - Sedat -
+>
+> [1] http://marc.info/?t=141929396100001&r=1&w=2
 
-Hi Jens,
+The issue was fixed in Linux v3.19 (final) by...
 
-After merging the block tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+commit 9c9ce763b114e608b5cf3aa6cb69ad9f6e8b6adf
+"aio: annotate aio_read_event_ring for sleep patterns"
 
-fs/nfs/flexfilelayout/flexfilelayout.c: In function 'ff_layout_mark_request=
-_commit':
-fs/nfs/flexfilelayout/flexfilelayout.c:1369:47: error: 'struct address_spac=
-e' has no member named 'backing_dev_info'
-   inc_bdi_stat(page_file_mapping(req->wb_page)->backing_dev_info,
-                                               ^
+See also [2] for more details.
 
-Caused by commit b83ae6d42143 ("fs: remove mapping->backing_dev_info")
-interacting with commit d67ae825a59d ("pnfs/flexfiles: Add the FlexFile
-Layout Driver") from the nfs tree.
+- Sedat -
 
-I have added this merge fix patch (assuming it is correct, someone
-needs to tell Linus about this when the trees get merged):
+[1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=9c9ce763b114e608b5cf3aa6cb69ad9f6e8b6adf
+[2] http://marc.info/?l=linux-fsdevel&m=142345568702640&w=2
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 9 Feb 2015 15:20:12 +1100
-Subject: [PATCH] pnfs/flexfiles: fix FlexFile Layout Driver for removal
- mapping->backing_dev_info
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/nfs/flexfilelayout/flexfilelayout.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayout=
-/flexfilelayout.c
-index f29fb7d7e8f8..c22ecaa86c1c 100644
---- a/fs/nfs/flexfilelayout/flexfilelayout.c
-+++ b/fs/nfs/flexfilelayout/flexfilelayout.c
-@@ -1366,7 +1366,7 @@ ff_layout_mark_request_commit(struct nfs_page *req,
- 	spin_unlock(cinfo->lock);
- 	if (!cinfo->dreq) {
- 		inc_zone_page_state(req->wb_page, NR_UNSTABLE_NFS);
--		inc_bdi_stat(page_file_mapping(req->wb_page)->backing_dev_info,
-+		inc_bdi_stat(inode_to_bdi(page_file_mapping(req->wb_page)->host),
- 			     BDI_RECLAIMABLE);
- 		__mark_inode_dirty(req->wb_context->dentry->d_inode,
- 				   I_DIRTY_DATASYNC);
---=20
-2.1.4
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/lIBdJTDjWUmiS_SVG5o_Yc_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJU2Da7AAoJEMDTa8Ir7ZwVCOYP/2+vvkx3AQSxOvJKyaBxOn6L
-jEKSVhKRa0Xf7lj3E5k4RYicqaffkiGBnqfIblsqC2TCboMpKf+0shh02/CWFz76
-+7+wveZJ8DPn4hK5WhHTiJiV0FpYND/aANOE1Ho0WIFd5SAaINLqiHIt6AMeiv/Q
-gW3aNx9rdBve0Y01Xyt9OklxarG9rNU/yPoQiCI3r/5XNi63Xk3hXx5OAbJozlD2
-WD76hNpB6oU1YeBBTKzdroETNIsvgokCPiW9mN60qHUhDenXMhKo3VzFQVjCNZh0
-GSbQ0Q1yDsuPz2lKFFwANq55K5T5KY3Q1C2lIgnqm7XE2A5CxNxrLCy5iiDJ8GTM
-IXnRCRYbzMGngqSm3P86RZFYqzy96Q/V3xPnzO4vXDODBQqguuyU4ggqGMzf69dp
-xNBmqKYDREOz8fAGOEQi7dzOhaCKS7A7db1panv9B3Yzq5uV2QaJtJVMxu+uDRAL
-h/YUt4qu93UIGJLAE4MZbsn5/yUB1iWwU7Q2cPm34gWkZuJswxMu49+XFr4Qrvmj
-daOSx25PeQYu8TJ3rvE1a6j/s+zPHtJcxXr9FuPCeCmTptzMw31M2lLJ3bneVLnY
-JDUPr9JTPxnUO/WEBQOMvpUJBx3o7uBE6hTzD4wRgHllRKaNVxCiiPnonDZzqELQ
-8XbL5rWGq3q0sQFkZmBo
-=rU1b
------END PGP SIGNATURE-----
-
---Sig_/lIBdJTDjWUmiS_SVG5o_Yc_--
+--
+To unsubscribe, send a message with 'unsubscribe linux-aio' in
+the body to majordomo@kvack.org.  For more info on Linux AIO,
+see: http://www.kvack.org/aio/
+Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
