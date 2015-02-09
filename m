@@ -1,63 +1,91 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Feb 9 (build failures)
-Date: Mon, 9 Feb 2015 09:20:48 -0800
-Message-ID: <20150209172048.GA27107@roeck-us.net>
-References: <20150209211827.652dc2ce@canb.auug.org.au>
+From: Pat Erley <pat-lkml@erley.org>
+Subject: Re: BUG: non-zero nr_pmds on freeing mm: 1
+Date: Mon, 09 Feb 2015 11:45:25 -0600
+Message-ID: <54D8F235.7040105@erley.org>
+References: <CA+icZUVTVdHc3QYD1LkWn=Xt-Zz6RcXPcjL6Xbpz0FZ6rdA5CQ@mail.gmail.com> <20150209164248.GA29522@node.dhcp.inet.fi> <CA+icZUU_xYhg1kqbrb+y71EQQWNPk0vf9V2YS4dimXBA5jTYCg@mail.gmail.com> <20150209171320.GB29522@node.dhcp.inet.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:34343 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933558AbbBIRU5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Feb 2015 12:20:57 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YKs12-003oIf-AU
-	for linux-next@vger.kernel.org; Mon, 09 Feb 2015 17:20:56 +0000
-Content-Disposition: inline
-In-Reply-To: <20150209211827.652dc2ce@canb.auug.org.au>
+Received: from erley.org ([97.107.129.9]:47043 "EHLO remote.erley.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760942AbbBIRqH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Feb 2015 12:46:07 -0500
+In-Reply-To: <20150209171320.GB29522@node.dhcp.inet.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kenneth Westfield <kwestfie@codeaurora.org>, Mark Brown <broonie@kernel.org>, Oleksij Rempel <linux@rempel-privat.de>, Daniel Lezcano <daniel.lezcano@linaro.org>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>, Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Linux-Next <linux-next@vger.kernel.org>, kirill.shutemov@linux.intel.com, linux-mm <linux-mm@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.cz>, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, Feb 09, 2015 at 09:18:27PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Please oo not add any material destined for v3.21 to your linux-next
-> included trees until after v3.20-rc1 has been released.
-> 
+On 02/09/2015 11:13 AM, Kirill A. Shutemov wrote:
+> On Mon, Feb 09, 2015 at 06:06:11PM +0100, Sedat Dilek wrote:
+>> On Mon, Feb 9, 2015 at 5:42 PM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>>> On Sat, Feb 07, 2015 at 08:33:02AM +0100, Sedat Dilek wrote:
+>>>> On Sat, Feb 7, 2015 at 6:12 AM, Pat Erley <pat-lkml@erley.org> wrote:
+>>>>> I'm seeing the message in $subject on my Xen DOM0 on next-20150204 on
+>>>>> x86_64.  I haven't had time to bisect it, but have seen some discussion on
+>>>>> similar topics here recently.  I can trigger this pretty reliably by
+>>>>> watching Netflix.  At some point (minutes to hours) into it, the netflix
+>>>>> video goes black (audio keeps going, so it still thinks it's working) and
+>>>>> the error appears in dmesg.  Refreshing the page gets the video going again,
+>>>>> and it will continue playing for some indeterminate amount of time.
+>>>>>
+>>>>> Kirill, I've CC'd you as looking in the logs, you've patched a false
+>>>>> positive trigger of this very recently(patch in kernel I'm running).  Am I
+>>>>> actually hitting a problem, or is this another false positive case? Any
+>>>>> additional details that might help?
+>>>>>
+>>>>> Dmesg from system attached.
+>>>>
+>>>> [ CC some mm folks ]
+>>>>
+>>>> I have seen this, too.
+>>>>
+>>>> root# grep "BUG: non-zero nr_pmds on freeing mm:" /var/log/kern.log | wc -l
+>>>> 21
+>>>>
+>>>> Checking my logs: On next-20150203 and next-20150204.
+>>>>
+>>>> I am here not in a VM environment and cannot say what causes these messages.
+>>>
+>>> Sorry, my fault.
+>>>
+>>> The patch below should fix that.
+>>>
+>>>  From 11bce596e653302e41f819435912f01ca8cbc27e Mon Sep 17 00:00:00 2001
+>>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>>> Date: Mon, 9 Feb 2015 18:34:56 +0200
+>>> Subject: [PATCH] mm: fix race on pmd accounting
+>>>
+>>> Do not account the pmd table to the process if other thread allocated it
+>>> under us.
+>>>
+>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+>>
+>> Still building with the fix...
+>>
+>> Please feel free to add Pat as a reporter.
+>>
+>>       Reported-by: Pat Erley <pat-lkml@erley.org>
+>>
+>> Is that fixing...?
+>>
+>> commit daa1b0f29cdccae269123e7f8ae0348dbafdc3a7
+>> "mm: account pmd page tables to the process"
+>>
+>> If yes, please add a Fixes-tag [2]...
+>>
+>>       Fixes: daa1b0f29cdc ("mm: account pmd page tables to the process")
+>>
+>> I will re-test with LTP/mmap and report.
+>
+> The commit is not in Linus tree, so the sha1-id is goinging to change.
+>
 
-Build failures:
+I won't be able to test for at least 6 hours (more likely closer to 8 as 
+I have to get home, boot the machine, apply patch, compile, reboot, and 
+wait).  So not likely I'll be able to get a 'tested-by' on this one 
+without holding up the whole flow of the patch.
 
-Building arm:efm32_defconfig ... failed
---------------
-Error log:
-arm-poky-linux-gnueabi-ld: Text section oversize
-
-[ wonder if I need a new/different compiler ]
-
----
-
-Building mips:allmodconfig ... failed
---------------
-Error log:
-
-sound/soc/codecs/max98357a.c: In function 'max98357a_daiops_trigger':
-sound/soc/codecs/max98357a.c:30:3: error: implicit declaration of function 'gpiod_set_value'
-sound/soc/codecs/max98357a.c: In function 'max98357a_codec_probe':
-sound/soc/codecs/max98357a.c:55:2: error: implicit declaration of function 'devm_gpiod_get'
-sound/soc/codecs/max98357a.c:61:2: error: implicit declaration of function 'gpiod_direction_output'
-
-Looks like this driver depends on GPIOLIB but does not select it,
-and MIPS doesn't seem to support GPIOLIB. Missing dependencies ?
-
----
-
-Building sparc64:allmodconfig ... failed
---------------
-Error log:
-asm9260_timer.c:(.init.text+0x60d4): undefined reference to `of_io_request_and_map'
-
----
-Guenter
+Thanks for the prompt fix Kirill!
