@@ -1,72 +1,93 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nfsd tree with the nfs tree
-Date: Tue, 10 Feb 2015 11:55:49 +1100
-Message-ID: <20150210115549.6067ffc1@canb.auug.org.au>
+From: Oleksij Rempel <linux@rempel-privat.de>
+Subject: Re: linux-next: Tree for Feb 9 (build failures)
+Date: Tue, 10 Feb 2015 08:07:24 +0100
+Message-ID: <54D9AE2C.5080403@rempel-privat.de>
+References: <20150209211827.652dc2ce@canb.auug.org.au> <20150209172048.GA27107@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/exK0b7RW2F_NS.aRUhlhyCB"; protocol="application/pgp-signature"
+ protocol="application/pgp-signature";
+ boundary="40tN8bVBf4vxPPvoubldHROR7swL0D1N8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57020 "EHLO ozlabs.org"
+Received: from mout.gmx.net ([212.227.15.18]:51117 "EHLO mout.gmx.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932287AbbBJAz4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Feb 2015 19:55:56 -0500
+	id S1751261AbbBJHHm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Feb 2015 02:07:42 -0500
+In-Reply-To: <20150209172048.GA27107@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Haynes <loghyr@primarydata.com>, Christoph Hellwig <hch@lst.de>
+To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kenneth Westfield <kwestfie@codeaurora.org>, Mark Brown <broonie@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
---Sig_/exK0b7RW2F_NS.aRUhlhyCB
-Content-Type: text/plain; charset=US-ASCII
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--40tN8bVBf4vxPPvoubldHROR7swL0D1N8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Am 09.02.2015 um 18:20 schrieb Guenter Roeck:
+> On Mon, Feb 09, 2015 at 09:18:27PM +1100, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Please oo not add any material destined for v3.21 to your linux-next
+>> included trees until after v3.20-rc1 has been released.
+>>
+>=20
+> Build failures:
+>=20
+> Building arm:efm32_defconfig ... failed
+> --------------
+> Error log:
+> arm-poky-linux-gnueabi-ld: Text section oversize
+>=20
+> [ wonder if I need a new/different compiler ]
+>=20
+> ---
+>=20
+> Building mips:allmodconfig ... failed
+> --------------
+> Error log:
+>=20
+> sound/soc/codecs/max98357a.c: In function 'max98357a_daiops_trigger':
+> sound/soc/codecs/max98357a.c:30:3: error: implicit declaration of funct=
+ion 'gpiod_set_value'
+> sound/soc/codecs/max98357a.c: In function 'max98357a_codec_probe':
+> sound/soc/codecs/max98357a.c:55:2: error: implicit declaration of funct=
+ion 'devm_gpiod_get'
+> sound/soc/codecs/max98357a.c:61:2: error: implicit declaration of funct=
+ion 'gpiod_direction_output'
+>=20
+> Looks like this driver depends on GPIOLIB but does not select it,
+> and MIPS doesn't seem to support GPIOLIB. Missing dependencies ?
+>=20
+> ---
+>=20
+> Building sparc64:allmodconfig ... failed
+> --------------
+> Error log:
+> asm9260_timer.c:(.init.text+0x60d4): undefined reference to `of_io_requ=
+est_and_map'
 
-Today's linux-next merge of the nfsd tree got a conflict in
-include/linux/nfs4.h between commit d67ae825a59d ("pnfs/flexfiles: Add
-the FlexFile Layout Driver") from the nfs tree and commit 6cae0a4648c0
-("nfs: add LAYOUT_TYPE_MAX enum value") from the nfsd tree.
+The patch for this issue was send for two weeks:
+https://lkml.org/lkml/2015/1/31/21
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Should i resend it?
+
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Regards,
+Oleksij
 
-diff --cc include/linux/nfs4.h
-index de7c91ca427e,bc10d687f2ce..000000000000
---- a/include/linux/nfs4.h
-+++ b/include/linux/nfs4.h
-@@@ -516,7 -517,7 +517,8 @@@ enum pnfs_layouttype=20
-  	LAYOUT_NFSV4_1_FILES  =3D 1,
-  	LAYOUT_OSD2_OBJECTS =3D 2,
-  	LAYOUT_BLOCK_VOLUME =3D 3,
- +	LAYOUT_FLEX_FILES =3D 4,
-+ 	LAYOUT_TYPE_MAX
-  };
- =20
-  /* used for both layout return and recall */
 
---Sig_/exK0b7RW2F_NS.aRUhlhyCB
-Content-Type: application/pgp-signature
+--40tN8bVBf4vxPPvoubldHROR7swL0D1N8
+Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAEBCAAGBQJU2VcaAAoJEMDTa8Ir7ZwV6p0P/RL0D/IJymx426MjFAO/2F6z
-DthEfgQk1c+WJPm1+rpUI0K+UypBMt+c/zRY+vjL5PK+vNbIYb34BxaGQtqllJsS
-GAv5wPq6t8Q1VOvqBmYB0AdbZafgRfEKiZgFcbBAtq6f+CyeIwfKMnYiCKwK7o25
-iJsWNSOd58Xb98dT/zGuNKXXSRkVQTtedk0vW35z8uOOOUw25XhoAZr9gTRj1BQa
-7U5+6hYidqYpUc4fefd+zXh9oia8S18uFESafFhwv620/UczGKhtGYUOxP3GC6wl
-Rr66j7iVmJ5zbFxXhwHH8GMffhOvf7PzZIYr7JLSZ8bvVCvVYnSAVaI4C0eut5Ym
-LU5XPh7C8GmfTZgTW+n9VvCPr/Kd8Tg6waX2zKwz7NGNQjFegtYspQSRhA6KzPq0
-XOiVUkR0huZwGB6f1JA7PHo95vt57qrL+lsgaOB8CrDu2r6zVIcRwc3jRdiH43Hd
-E7JcvF1F3KEqzb7lVrLGHQtUIMa7+K+czt2xykv05trcdZOyzM7sYp/JP8lIvygx
-XxNJ8OFrXT6p4AHOpGrr3ipfiTFGWmsh4voSxJeM2oOL1qOo3nmw6feN8F77AUgc
-G31Arwi1M7kP1GIQOyWTHulzIMSkZRDIn2jAvuoXrHdXgza/YZ3TC2j8ITsX3pJf
-ofhC2sJyPuDEPnbKJEuZ
-=22bo
+iF4EAREIAAYFAlTZrjEACgkQHwImuRkmbWlocQD7BHHuV/cBA2woPXvy6mvSoMbo
+g2rEQmKKnpCxnIjc6n4A/2UAgUdTBh3FcJdfpEBR4Bphh25WWoUzRb+6aBZHKYnM
+=lZDW
 -----END PGP SIGNATURE-----
 
---Sig_/exK0b7RW2F_NS.aRUhlhyCB--
+--40tN8bVBf4vxPPvoubldHROR7swL0D1N8--
