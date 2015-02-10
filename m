@@ -1,51 +1,88 @@
-From: Andrey Ryabinin <a.ryabinin@samsung.com>
-Subject: [PATCH] x86_64-add-kasan-support-fix
-Date: Tue, 10 Feb 2015 13:34:53 +0300
-Message-ID: <1423564493-14372-1-git-send-email-a.ryabinin@samsung.com>
-References: <CA+r1Zhg+ktat+OrJoYeNAz=aV=H73fgni-jwU42EbB8WOKCq2w@mail.gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CA+r1Zhg+ktat+OrJoYeNAz=aV=H73fgni-jwU42EbB8WOKCq2w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrey Ryabinin <a.ryabinin@samsung.com>
-List-Id: linux-next.vger.kernel.org
+From: Balbir Singh <bsingharora@gmail.com>
+Subject: Re: [3.19-final|next-20150204] LTP OOM testsuite causes call-traces
+Date: Tue, 10 Feb 2015 16:15:28 +0530
+Message-ID: <CAKTCnz=ABrmbQrAEYJ=D0=s2+fRj9FH4D5oG6aWW-qVMoYLdEA@mail.gmail.com>
+References: <CA+icZUWLJvuZknXhamKJxyGb+OYdkeD5z0V_jn=BQVtq8F5XUQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yk0-f173.google.com ([209.85.160.173]:37269 "EHLO
+	mail-yk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752354AbbBJKp2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Feb 2015 05:45:28 -0500
+In-Reply-To: <CA+icZUWLJvuZknXhamKJxyGb+OYdkeD5z0V_jn=BQVtq8F5XUQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-Combination of CONFIG_SPARSEMEM_VMEMMAP=n, CONFIG_KASAN=y
-cause build error:
-	arch/x86/built-in.o: In function `populate_zero_shadow':
-	kasan_init_64.c:(.init.text+0xe2cc): undefined reference to
-	`vmemmap_alloc_block'
-	kasan_init_64.c:(.init.text+0xe3ab): undefined reference to
-	`vmemmap_alloc_block'
-	kasan_init_64.c:(.init.text+0xe483): undefined reference to
-	`vmemmap_alloc_block'
-	arch/x86/built-in.o: In function `kasan_init':
-	(.init.text+0xe65d): undefined reference to `vmemmap_populate'
-	arch/x86/built-in.o: In function `kasan_init':
-	(.init.text+0xe6ea): undefined reference to `vmemmap_populate'
-	make: *** [vmlinux] Error 1
+On Tue, Feb 10, 2015 at 3:12 PM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> Hi,
+>
+> I first noticed call-traces in next-20150204 and tested on v3.19-final
+> out of curiosity.
+>
+> So, oom3 | oom4 | oom5 from LTP tests produces call-traces in my logs
+> in both releases.
+> Yesterday, I sent a tarball to linux-mm/Shutemov which has material
+> for next-20150204.
+> The for-lkml tarball has stuff for v3.19-final.
+>
+> As an example (please see dmesg files in attached tarball(s)):
+> ...
+> +[  143.591734] oom03 invoked oom-killer: gfp_mask=0xd0, order=0,
+> oom_score_adj=0
+> +[  143.591789] oom03 cpuset=/ mems_allowed=0
+> +[  143.591828] CPU: 0 PID: 2904 Comm: oom03 Not tainted 3.19.0-1-iniza-small #1
+> +[  143.591830] Hardware name: SAMSUNG ELECTRONICS CO., LTD.
+> 530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
+> +[  143.591831]  ffff880034a64800 ffff880032c57bf8 ffffffff8175c66c
+> 0000000000000008
+> +[  143.591835]  ffff8800681a54d0 ffff880032c57c88 ffffffff8175ac3a
+> ffff880032c57c28
+> +[  143.591838]  ffffffff810c329d 0000000000000206 ffffffff81c74040
+> ffff880032c57c38
+> +[  143.591841] Call Trace:
+> +[  143.591848]  [<ffffffff8175c66c>] dump_stack+0x4c/0x65
+> +[  143.591852]  [<ffffffff8175ac3a>] dump_header+0x9e/0x259
+> +[  143.591857]  [<ffffffff810c329d>] ? trace_hardirqs_on_caller+0x15d/0x200
+> +[  143.591860]  [<ffffffff810c334d>] ? trace_hardirqs_on+0xd/0x10
+> +[  143.591863]  [<ffffffff81184cd2>] oom_kill_process+0x1d2/0x3c0
+> +[  143.591868]  [<ffffffff811ebf40>] mem_cgroup_oom_synchronize+0x630/0x670
+> +[  143.591871]  [<ffffffff811e6ac0>] ? mem_cgroup_reset+0xb0/0xb0
+> +[  143.591874]  [<ffffffff81185628>] pagefault_out_of_memory+0x18/0x90
+> +[  143.591877]  [<ffffffff8106317d>] mm_fault_error+0x8d/0x190
+> +[  143.591879]  [<ffffffff810637a8>] __do_page_fault+0x528/0x600
+> +[  143.591883]  [<ffffffff8113a847>] ? __acct_update_integrals+0xb7/0x120
+> +[  143.591886]  [<ffffffff81765a1b>] ? _raw_spin_unlock+0x2b/0x40
+> +[  143.591889]  [<ffffffff810a8ac1>] ? vtime_account_user+0x91/0xa0
+> +[  143.591892]  [<ffffffff8117ff83>] ? context_tracking_user_exit+0xb3/0x110
+> +[  143.591895]  [<ffffffff810638b1>] do_page_fault+0x31/0x70
+> +[  143.591898]  [<ffffffff817687b8>] page_fault+0x28/0x30
+> +[  143.591934] Task in /1 killed as a result of limit of /1
+> +[  143.591940] memory: usage 1048576kB, limit 1048576kB, failcnt 24350
+> +[  143.591942] memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+> +[  143.591943] kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
+> +[  143.591944] Memory cgroup stats for /1: cache:0KB rss:1048576KB
+> rss_huge:0KB mapped_file:0KB writeback:12060KB inactive_anon:524284KB
+> active_anon:524192KB inactive_file:0KB active_file:0KB unevictable:0KB
+> +[  143.592007] [ pid ]   uid  tgid total_vm      rss nr_ptes swapents
+> oom_score_adj name
+> +[  143.592155] [ 2903]     0  2903     1618      436       9        0
+>             0 oom03
+> +[  143.592159] [ 2904]     0  2904   788050   245188     616    65535
+>             0 oom03
+> +[  143.592162] Memory cgroup out of memory: Kill process 2904 (oom03)
+> score 921 or sacrifice child
+> +[  143.592167] Killed process 2904 (oom03) total-vm:3152200kB,
+> anon-rss:979724kB, file-rss:1028kB
+> +[  144.526653] oom03 invoked oom-killer: gfp_mask=0xd0, order=0,
+> oom_score_adj=0
 
-x86_64-specific part of KASAN depends on SPARSEMEM_VMEMMAP.
-Express this in Kconfig.
+Looks like we ran out of memory, the limit is 1024MB (1GiB) and we've
+hit it with a fail count of 24350. So basically /1 hit the limit and
+got OOM killed. Isn't that what you were testing for? How was the
+expected victim?
 
-Signed-off-by: Andrey Ryabinin <a.ryabinin@samsung.com>
-Reported-by: Jim Davis <jim.epost@gmail.com>
----
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1607c46..1e78e3c 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -85,7 +85,7 @@ config X86
- 	select HAVE_CMPXCHG_LOCAL
- 	select HAVE_CMPXCHG_DOUBLE
- 	select HAVE_ARCH_KMEMCHECK
--	select HAVE_ARCH_KASAN if X86_64
-+	select HAVE_ARCH_KASAN if X86_64 && SPARSEMEM_VMEMMAP
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select ARCH_BINFMT_ELF_RANDOMIZE_PIE
- 	select HAVE_ARCH_JUMP_LABEL
--- 
-2.3.0
+Thanks,
+Balbir Singh.
