@@ -1,54 +1,87 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: linux-next: manual merge of the pm tree with the pci tree
-Date: Wed, 11 Feb 2015 02:05:50 +0000
-Message-ID: <20150211020550.GA27432@e102568-lin.cambridge.arm.com>
-References: <20150211120755.50217078@canb.auug.org.au>
- <1544592.4ITKEDgnAg@vostro.rjw.lan>
- <4805506.yPQhhiqbXU@vostro.rjw.lan>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Tue, 10 Feb 2015 20:51:33 -0800
+Message-ID: <1423630293.27854.65.camel@jtkirshe-mobl>
+References: <20150210220215.5f87a13c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4805506.yPQhhiqbXU@vostro.rjw.lan>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-sGfNBIEU6RqhAvr6oSVp"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:25016 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754963AbbBKEvf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Feb 2015 23:51:35 -0500
+In-Reply-To: <20150210220215.5f87a13c@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Carolyn Wyborny <carolyn.wyborny@intel.com>
 
-Hi Rafael,
 
-On Wed, Feb 11, 2015 at 02:03:49AM +0000, Rafael J. Wysocki wrote:
-> On Wednesday, February 11, 2015 02:41:35 AM Rafael J. Wysocki wrote:
-> > On Wednesday, February 11, 2015 12:07:55 PM Stephen Rothwell wrote:
-> > > Hi Rafael,
-> > > 
-> > > Today's linux-next merge of the pm tree got a conflict in
-> > > drivers/of/of_pci.c between commit d2be00c0fb5a ("of/pci: Free
-> > > resources on failure in of_pci_get_host_bridge_resources()") from the
-> > > pci tree and commit 5c493df25a0d ("Merge branch 'pci/host-generic' of
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci into
-> > > acpi-resources") from the pm tree.
-> > > 
-> > > I fixed it up (I just use the latter version, please check when it
-> > > comes out) and can carry the fix as necessary (no action is required,
-> > > though someone might want to tell Linus how to resolve it - including
-> > > the removal of the "kfree(bus_range);").
-> > 
-> > Sorry, I messed this up.  The commit that supposed to be a merge ended
-> > up as a non-merge commit in my tree, just because I tried to modify
-> > the changelog of it without doing the merge again.
-> > 
-> > Then, I should have noticed that when I was putting together the pull request
-> > for Linus earlier today, but then I didn't.
-> 
-> Linus merged my tree and the PCI one already, but his conflict resolution
-> didn't remove the kfree(bus_range); line, so it looks like we'll need a
-> separate patch removing it.
-> 
-> Lorenzo, will you send it or should I prepare one?
+--=-sGfNBIEU6RqhAvr6oSVp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I will send the patch myself sorry for the churn.
+On Tue, 2015-02-10 at 22:02 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the net-next tree, today's linux-next build (i386
+> allmodconfig and a few others) failed like this:
+>=20
+> drivers/net/ethernet/intel/i40e/i40e_txrx.c: In function
+> 'i40e_setup_rx_descriptors':
+> drivers/net/ethernet/intel/i40e/i40e_txrx.c:1101:3: error:
+> incompatible type for argument 1 of '__seqcount_init'
+> include/linux/seqlock.h:53:20: note: expected 'struct seqcount_t *'
+> but argument is of type 'seqcount_t'
+>=20
+> Caused by commit 638702bd59a3 ("i40e/i40evf: Add call to
+> u64_stats_init
+> to init").
+>=20
+> Discovered after the release, so no fix done.
+>=20
+> The indentation of the lines added by that patch is also a bit
+> strange.
 
-Thank you,
-Lorenzo
+Yeah, this was fixed with the follow on patch:
+
+commit c07a213db1437a8fd40c328e6a2c426723caec65
+Author: Carolyn Wyborny <carolyn.wyborny@intel.com>
+Date:   Tue Feb 10 07:33:15 2015 +0000
+
+    i40e: Fix for stats init function call in Rx setup
+   =20
+    This patch fixes indentation issue and error found in argument
+    reported by static analysis.  Without this patch, sparse and other
+    static analysis errors will be found.
+   =20
+    Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+    Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+    Signed-off-by: Carolyn Wyborny <carolyn.wyborny@intel.com>
+    Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+
+--=-sGfNBIEU6RqhAvr6oSVp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCgAGBQJU2t/VAAoJEOVv75VaS+3OwpAP/AiL8DGfrGnO7y9rrlliDe12
+LYuS4Qrindu2IE8+jHvM8OJXDDqpaQd8VeaXUWM4DtTnLA55zQO/ZUtP98UgaZN0
+WFkZTwQJyk7qj/MWcQqGRYGsT62hmDW9+Lv6uq778qVPHjFEtdbynN6R5545IAKZ
+qoa/URk6kJkPT5M4FMPTa7gM2U/GXwDQWkd1zeXy5Fr/+L26wGjpBKz3H0nFIXFO
+rn+m54s1w0Y3AsziM6npcBOvDDUeBVT/lE9F3Oiy4QUah73P4vE6rX6wttOZz1/r
+Ish2aeABQV42/H3+RlYorMebP8NG2BDF9B8b12v/R4no65l+fIc4EcTDktvwaEoq
+BC+Y/UY2xF18w71XKREl8bRbWuauDLgRBAkNP8gKEcDmeMT1vIBc0EFUX64D62vI
+NaC0lrf4FRvf7vxcQphlJZeyZMvMLu22SQg+YFIWt9UrmrU9ooXbpYn72Vm6NQdq
+1x3oOusmbvN+nyawItrDe3H/s5k8VqmNgJ+ltfB11Nb/+DIQadIYUF1FxVkdHcMu
+KeTsnMoDX4H0UOYrt7lGbXLTLA/VUQopkDFEJlt9ou44kGqgWc/tkzxzbnbLaJKS
++dwTsM7nVQJ8QNlcNy+UtqqDUf2unlhQOd1derbrwusU/fJCqakkaDE+pveAMylg
+IwEKKb4BQlxJoNXGAnOM
+=G++5
+-----END PGP SIGNATURE-----
+
+--=-sGfNBIEU6RqhAvr6oSVp--
