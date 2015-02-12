@@ -1,44 +1,59 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: make mandocs build failure with next-20150210
-Date: Wed, 11 Feb 2015 23:48:44 +0800
-Message-ID: <20150211154844.GA18637@kroah.com>
-References: <CA+r1ZhhXpFWsBJohzyseUh1bVj51HcjzMPejY0wzmjgSvhaOHg@mail.gmail.com>
- <20150211072757.166344e7@canb.auug.org.au>
- <1423664340.10724.40.camel@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus'  tree
+Date: Thu, 12 Feb 2015 12:05:41 +1100
+Message-ID: <20150212120541.679651ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dhaht6_H=DqWYvBs.srb5/r"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36547 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752530AbbBKPs5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Feb 2015 10:48:57 -0500
-Content-Disposition: inline
-In-Reply-To: <1423664340.10724.40.camel@linux.intel.com>
+Received: from ozlabs.org ([103.22.144.67]:51474 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751781AbbBLBFt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Feb 2015 20:05:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc <linux-doc@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Wed, Feb 11, 2015 at 02:19:00PM +0000, Alan Cox wrote:
-> On Wed, 2015-02-11 at 07:27 +1100, Stephen Rothwell wrote:
-> > Hi Jim,
-> > 
-> > On Tue, 10 Feb 2015 11:40:23 -0700 Jim Davis <jim.epost@gmail.com> wrote:
-> > >
-> > >   DOCPROC Documentation/DocBook/device-drivers.xml
-> > > docproc: .//include/linux/i2o.h: No such file or directory
-> > > make[1]: *** [Documentation/DocBook/device-drivers.xml] Error 1
-> > 
-> > Presumably caused by commit 2cbf7fe2d5d3 ("i2o: move to staging") from
-> > the staging tree.
-> 
-> Yep - I sent GregKH a fix.
+--Sig_/dhaht6_H=DqWYvBs.srb5/r
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You did?  Did I apply it?  I don't see it in my to-apply queue
-anywhere...
+Hi all,
 
-Care to resend?
+Today's linux-next merge of the net-next tree got a conflict in
+crypto/af_alg.c between commit 9399f0c51489 ("crypto: fix
+af_alg_make_sg() conversion to iov_iter") from Linus' tree and commit
+750d8065d88b ("crypto: Fix regressions caused by iov_iter changes")
+from the net-next tree.
 
-thanks,
+I fixed it up (I used the net-next tree version (for no particular
+reason)) and can carry the fix as necessary (no action is required).
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/dhaht6_H=DqWYvBs.srb5/r
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU2/xqAAoJEMDTa8Ir7ZwVLpMQAJB5wt0CT8tyGi405w0i/UIY
++tzqaHqBJ6mU31dX4HHRyB8pxUaw2i3bW4bVn0FXRLAUcHreHuMSTdYU2gKF01Al
+UuyJL5K/j46B72+62d76mf1tKSF8Vy0F3Z0Y9kmRiPL2Q+KntsSjqxIs/+ecBG7s
+s+AI+UmW15mis0JNpCC/AXsqftbgQpzAcvQ9vIVYzxqmIz0ONvx4IHrNxpjvcmup
+dxKdpIRmdJnDTWqVpY07IlZRXVrCpz7yetgd9HlX1GFDrE+rgrh1zPSI76AbrgZl
+mYiw4Ns+BWX2GTxX9nAfFuReDqYfXwN5ZuvBfUI0R49VSARvw+GcUj0R2fEhIBcb
+Wn0FtMFsTsFmH/s7szt24wd8i/BRdd5W7sHyAtTnrU1usd8iGpDr2/+k83THiyyG
+g11UxOMOVvZNYVqIwDW3xVeFWoJkYwMGrBQdS+vjKMGtA5EJay73uYcg92pfvE0o
+vp+79G/MCxV/+y8LpFGc53nDIaG6wFza9tVpTpRsHYN2xDPKUKFCBJRRm+YcGTeW
++JonYCQWdBMo4+LRnVPinocI3Mp/sKyOsz7TiAnO9q6trSIFWHCyeuFzHX+Yc+FL
+KE9vnVUaO4sG7I9ti79WFQpJNpsPvU3QzkmAxWi5TF5xR0rjHBMlwyZpnxSHKgkt
+lw1NFtdKIJyATdwyNjO9
+=kqrv
+-----END PGP SIGNATURE-----
+
+--Sig_/dhaht6_H=DqWYvBs.srb5/r--
