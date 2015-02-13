@@ -1,75 +1,59 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH] fs: nfsd:xdr4.h: add missing conditional group
- CONFIG_NFSD_V3
-Date: Thu, 12 Feb 2015 15:02:01 -0800
-Message-ID: <20150212230201.GB17998@roeck-us.net>
-References: <1423778953-28307-1-git-send-email-baspeters93@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with Linus'  tree
+Date: Fri, 13 Feb 2015 11:11:50 +1100
+Message-ID: <20150213111150.528da7cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1423778953-28307-1-git-send-email-baspeters93-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bas Peters <baspeters93-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org, hch-jcswGhMUV9g@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/n8b.VdvB.CcO0_z3nNFB83J"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57699 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750992AbbBMAL5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Feb 2015 19:11:57 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Cowgill <James.Cowgill@imgtec.com>, Markos Chandras <markos.chandras@imgtec.com>
 
-On Thu, Feb 12, 2015 at 11:09:13PM +0100, Bas Peters wrote:
-> This patch adds a missing conditional group that has been causing build
-> breakages due to undefined struct members being referenced when
-> CONFIG_NFSD_v3 is not set.
-> 
-> This patch applies against linux-next.
-> 
-> Signed-off-by: Bas Peters <baspeters93-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  fs/nfsd/xdr4.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/nfsd/xdr4.h b/fs/nfsd/xdr4.h
-> index 0bda93e..5d1597f 100644
-> --- a/fs/nfsd/xdr4.h
-> +++ b/fs/nfsd/xdr4.h
-> @@ -630,9 +630,11 @@ void warn_on_nonidempotent_op(struct nfsd4_op *op);
->  static inline void
->  set_change_info(struct nfsd4_change_info *cinfo, struct svc_fh *fhp)
->  {
-> +	cinfo->change_supported = IS_I_VERSION(fhp->fh_dentry->d_inode);
-> +
-> +#ifdef CONFIG_NFSD_V3
->  	BUG_ON(!fhp->fh_pre_saved);
->  	cinfo->atomic = fhp->fh_post_saved;
-> -	cinfo->change_supported = IS_I_VERSION(fhp->fh_dentry->d_inode);
->  
->  	cinfo->before_change = fhp->fh_pre_change;
->  	cinfo->after_change = fhp->fh_post_change;
-> @@ -640,7 +642,7 @@ set_change_info(struct nfsd4_change_info *cinfo, struct svc_fh *fhp)
->  	cinfo->before_ctime_nsec = fhp->fh_pre_ctime.tv_nsec;
->  	cinfo->after_ctime_sec = fhp->fh_post_attr.ctime.tv_sec;
->  	cinfo->after_ctime_nsec = fhp->fh_post_attr.ctime.tv_nsec;
-> -
-> +#endif
->  }
+--Sig_/n8b.VdvB.CcO0_z3nNFB83J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You'll want to include and example of the build failure in the description,
-bisect results after the '---' line, and a Fixes: line pointing to the patch
-breaking the build.
+Hi Ralf,
 
-In this case, I am not sure if the above really fixes the problem,
-or if it just hides it behind an #ifdef. To determine that, it will
-probably be necessary to know which patch actually caused the problem.
-This even more true since the code in question was not changed since 
-around 2010, so making it conditional looks really suspicious.
+Today's linux-next merge of the mips tree got a conflict in
+arch/mips/kernel/elf.c between commit fd75a33e0002 ("MIPS: ELF: fix
+loading o32 binaries on 64-bit kernels") from Linus' tree and commit
+d8fb6537f1d4 ("MIPS: kernel: elf: Improve the overall ABI and FPU mode
+checks") from the mips tree.
 
-In the curent case, I suspect that the problem may have been introduced by
-commit 9cf514ccfac ("nfsd: implement pNFS operations"). That is just a guess,
-though; I didn't run bisect myself. The key really is to figure out why the
-code now fails to build, and not just to comment out the code that is causing
-the failure.
+I fixed it up (the latter seems to be a superset of the former) and can
+carry the fix as necessary (no action is required).
 
-Thanks,
-Guenter
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/n8b.VdvB.CcO0_z3nNFB83J
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU3UFLAAoJEMDTa8Ir7ZwVny8P/1/em+E1+xB2of3k9sR8c6Vd
+/hlIGVm/kY5LuXnOIKIs+IGppY+fESnH4em2+UL7XHI8MDg6mtS5Ug9NlOItFNJV
+K/82OMKazh4D+cbB6noGSIKrxE9yNDc/N8jlXC+ek/5RySlI1fieFejrNEf5Nbwm
+bN47lPOMqml6zqs6jZJtU6lqbJFLvJAho8Yrb/BQlsIb2KvEQocFrGRiPLVQd23m
+92uCF5ETtECUX9WI3rBON1rGGx7V8fjYpjPjZqkoNsr8OK0tdlFj1BmY8nQO2TSe
+WW0maiVgTeNI+mP95Uqg3yymLAQNtt6BlCDIcFHCSfwPzHOKsprJ5q+u4VSetgns
+itLd3wCXD+Sk6fyZo9XwCws9hZevtdTrsXV1LppcxgB2c4H3NHXhEnwlSTN7q12P
+RI4rtyneJp3pZ5qGMODJh1xjpr0VT98o2LSUzXXMvrcJ7kQaUvRk/5YYqoh5YWnI
++5jPMIClKKiulO5zQRWWAVDEW8a3pUp5unBjjw4FQTFJPy7nR3eWVGmplHAJNeP0
+TqPA9BALiROMpLPyNfa6R42J4tCEKVfxeHf9tTjFKvdyM/AINv3JgfAnUUoV90Mb
+n7Dpc5FFaxRil858X59O6t5x/+KXQ9ega2JB5VnTXGnGV9MaW1NZDAzYBtXE7kca
+de7945BdQEO2nDYzBKRT
+=P8rF
+-----END PGP SIGNATURE-----
+
+--Sig_/n8b.VdvB.CcO0_z3nNFB83J--
