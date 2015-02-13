@@ -1,65 +1,81 @@
-From: Sabrina Dubroca <sd@queasysnail.net>
-Subject: Re: linux-next: Tree for Feb 13
-Date: Fri, 13 Feb 2015 12:03:26 +0100
-Message-ID: <20150213110326.GA26177@kria>
-References: <20150213165615.1ad43047@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] fs: nfsd:xdr4.h: add missing conditional group
+ CONFIG_NFSD_V3
+Date: Fri, 13 Feb 2015 09:51:21 -0500
+Message-ID: <20150213145121.GC6808@fieldses.org>
+References: <1423778953-28307-1-git-send-email-baspeters93@gmail.com>
+ <20150212230201.GB17998@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp3-g21.free.fr ([212.27.42.3]:25952 "EHLO smtp3-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751465AbbBMLDd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Feb 2015 06:03:33 -0500
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20150213165615.1ad43047@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+In-Reply-To: <20150212230201.GB17998-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Bas Peters <baspeters93-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, hch-jcswGhMUV9g@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jim.epost-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-2015-02-13, 16:56:15 +1100, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Feb 12, 2015 at 03:02:01PM -0800, Guenter Roeck wrote:
+> On Thu, Feb 12, 2015 at 11:09:13PM +0100, Bas Peters wrote:
+> > This patch adds a missing conditional group that has been causing build
+> > breakages due to undefined struct members being referenced when
+> > CONFIG_NFSD_v3 is not set.
+> > 
+> > This patch applies against linux-next.
+> > 
+> > Signed-off-by: Bas Peters <baspeters93-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > ---
+> >  fs/nfsd/xdr4.h | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/nfsd/xdr4.h b/fs/nfsd/xdr4.h
+> > index 0bda93e..5d1597f 100644
+> > --- a/fs/nfsd/xdr4.h
+> > +++ b/fs/nfsd/xdr4.h
+> > @@ -630,9 +630,11 @@ void warn_on_nonidempotent_op(struct nfsd4_op *op);
+> >  static inline void
+> >  set_change_info(struct nfsd4_change_info *cinfo, struct svc_fh *fhp)
+> >  {
+> > +	cinfo->change_supported = IS_I_VERSION(fhp->fh_dentry->d_inode);
+> > +
+> > +#ifdef CONFIG_NFSD_V3
+> >  	BUG_ON(!fhp->fh_pre_saved);
+> >  	cinfo->atomic = fhp->fh_post_saved;
+> > -	cinfo->change_supported = IS_I_VERSION(fhp->fh_dentry->d_inode);
+> >  
+> >  	cinfo->before_change = fhp->fh_pre_change;
+> >  	cinfo->after_change = fhp->fh_post_change;
+> > @@ -640,7 +642,7 @@ set_change_info(struct nfsd4_change_info *cinfo, struct svc_fh *fhp)
+> >  	cinfo->before_ctime_nsec = fhp->fh_pre_ctime.tv_nsec;
+> >  	cinfo->after_ctime_sec = fhp->fh_post_attr.ctime.tv_sec;
+> >  	cinfo->after_ctime_nsec = fhp->fh_post_attr.ctime.tv_nsec;
+> > -
+> > +#endif
+> >  }
 > 
-> Please do not add any material destined for v3.21 to your linux-next
-> included trees until after v3.20-rc1 has been released.
+> You'll want to include and example of the build failure in the description,
+> bisect results after the '---' line, and a Fixes: line pointing to the patch
+> breaking the build.
 > 
-> Changes since 20150212:
+> In this case, I am not sure if the above really fixes the problem,
+> or if it just hides it behind an #ifdef. To determine that, it will
+> probably be necessary to know which patch actually caused the problem.
+> This even more true since the code in question was not changed since 
+> around 2010, so making it conditional looks really suspicious.
+> 
+> In the curent case, I suspect that the problem may have been introduced by
+> commit 9cf514ccfac ("nfsd: implement pNFS operations"). That is just a guess,
+> though; I didn't run bisect myself. The key really is to figure out why the
+> code now fails to build, and not just to comment out the code that is causing
+> the failure.
 
-Hi Stephen,
+Yeah, when Jim Davis reported this I took a quick look at the history,
+didn't see an obvious explanation, and figured well maybe this is just
+the first time anyone's hit that particular config in a while.  Sounds
+like this actually is a recent regression?
 
-Your conflict resolution in
-
-8fe7fba50596 "Merge branch 'akpm-current/current'"
-
-for mm/memory.c looks a bit off.  I get flooded with these messages:
-
-  BUG: non-zero nr_pmds on freeing mm: 4
-
-and fixed it with:
-
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 450e4952c5ef..802adda2b0b6 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3350,7 +3350,6 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
- 	smp_wmb(); /* See comment in __pte_alloc */
- 
- 	spin_lock(&mm->page_table_lock);
--	mm_inc_nr_pmds(mm);
- #ifndef __ARCH_HAS_4LEVEL_HACK
- 	if (!pud_present(*pud)) {
- 		mm_inc_nr_pmds(mm);
-
-
-references:
-http://www.spinics.net/lists/linux-mm/msg84294.html
-dc6c9a35b66b "mm: account pmd page tables to the process"
-
-[CC'ed Kirill A. Shutemov]
-
-
-Thanks
-
--- 
-Sabrina
+--b.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
