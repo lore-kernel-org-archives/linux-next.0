@@ -1,35 +1,45 @@
-From: Yibin Gong <yibin.gong@freescale.com>
-Subject: Re: linux-next: build failure after merge of the slave-dma tree
-Date: Mon, 16 Feb 2015 01:48:56 +0000
-Message-ID: <EB2E1ED4-00E1-4BDE-9B0D-8CB8912674B7@freescale.com>
-References: <20150216120934.3f4dc936@canb.auug.org.au>
+From: Masanari Iida <standby24x7@gmail.com>
+Subject: Re: make mandocs build failure with next-20150210
+Date: Mon, 16 Feb 2015 11:29:17 +0900
+Message-ID: <CALLJCT11o3CkhmsDF7nJxg-r0zoEaee4eScy9Xc5LVEg7Vg4Yg@mail.gmail.com>
+References: <CA+r1ZhhXpFWsBJohzyseUh1bVj51HcjzMPejY0wzmjgSvhaOHg@mail.gmail.com>
+	<20150211072757.166344e7@canb.auug.org.au>
+	<1423664340.10724.40.camel@linux.intel.com>
+	<20150211154844.GA18637@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150216120934.3f4dc936@canb.auug.org.au>
-Content-Language: zh-CN
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vinod Koul <vinod.koul@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20150211154844.GA18637@kroah.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Cox <alan@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc <linux-doc@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-SGkgU3RlcGhlbiwNCiAgICBUaGFua3MgZm9yIHlvdSByZXBvcnQuIEkgaGF2ZSBub3RpY2UgaXQg
-YW5kIHNlbnQgdGhlIHY0IHBhdGNoIHJldmlldyB5ZXN0ZXJkYXkuDQoNCrei19TO0rXEIGlQaG9u
-ZQ0KDQo+INTaIDIwMTXE6jLUwjE2yNWjrDA5OjA5o6xTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
-Yi5hdXVnLm9yZy5hdT4g0LS1wKO6DQo+IA0KPiBIaSBWaW5vZCwNCj4gDQo+IEFmdGVyIG1lcmdp
-bmcgdGhlIHNsYXZlLWRtYSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKGFybSBtdWx0
-aV92N19kZWZjb25maWcpDQo+IGZhaWxlZCBsaWtlIHRoaXM6DQo+IA0KPiBkcml2ZXJzL2RtYS9p
-bXgtc2RtYS5jOiBJbiBmdW5jdGlvbiAnc2RtYV9ydW5fY2hhbm5lbDAnOg0KPiBkcml2ZXJzL2Rt
-YS9pbXgtc2RtYS5jOjUzNTo1NzogZXJyb3I6IG1hY3JvICJyZWFkbCIgcGFzc2VkIDIgYXJndW1l
-bnRzLCBidXQgdGFrZXMganVzdCAxDQo+ICBpZiAocmVhZGwoU0RNQV9IX0NPTkZJR19DU00sIHNk
-bWEtPnJlZ3MgKyBTRE1BX0hfQ09ORklHKSA9PSAwKQ0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4NCj4gZHJpdmVycy9kbWEvaW14LXNk
-bWEuYzo1MzU6NjogZXJyb3I6ICdyZWFkbCcgdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMg
-ZnVuY3Rpb24pDQo+ICBpZiAocmVhZGwoU0RNQV9IX0NPTkZJR19DU00sIHNkbWEtPnJlZ3MgKyBT
-RE1BX0hfQ09ORklHKSA9PSAwKQ0KPiAgICAgIF4NCj4gDQo+IENhdXNlZCBieSBjb21taXQgNjZh
-MDczYjY0NzhkICgiZG1hZW5naW5lOiBpbXgtc2RtYTogc3dpdGNoIHRvIGR5bmFtaWMNCj4gY29u
-dGV4dCBtb2RlIGFmdGVyIHNjcmlwdCBsb2FkZWQiKS4NCj4gDQo+IEkgaGF2ZSB1c2VkIHRoZSBz
-bGF2ZS1kbWEgdHJlZSBmcm9tIG5leHQtMjAxNTAyMTMgZm9yIHRvZGF5Lg0KPiAtLSANCj4gQ2hl
-ZXJzLA0KPiBTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2FuYi5hdXVn
-Lm9yZy5hdQ0K
+On Thu, Feb 12, 2015 at 12:48 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Wed, Feb 11, 2015 at 02:19:00PM +0000, Alan Cox wrote:
+>> On Wed, 2015-02-11 at 07:27 +1100, Stephen Rothwell wrote:
+>> > Hi Jim,
+>> >
+>> > On Tue, 10 Feb 2015 11:40:23 -0700 Jim Davis <jim.epost@gmail.com> wrote:
+>> > >
+>> > >   DOCPROC Documentation/DocBook/device-drivers.xml
+>> > > docproc: .//include/linux/i2o.h: No such file or directory
+>> > > make[1]: *** [Documentation/DocBook/device-drivers.xml] Error 1
+>> >
+>> > Presumably caused by commit 2cbf7fe2d5d3 ("i2o: move to staging") from
+>> > the staging tree.
+>>
+>> Yep - I sent GregKH a fix.
+>
+> You did?  Did I apply it?  I don't see it in my to-apply queue
+> anywhere...
+>
+> Care to resend?
+>
+
+This warning started to appear on Linus's tree, after staging pull
+request was merged.
+
+Regards,
+Masanari Iida
