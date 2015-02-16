@@ -1,64 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the slave-dma tree
-Date: Mon, 16 Feb 2015 12:09:34 +1100
-Message-ID: <20150216120934.3f4dc936@canb.auug.org.au>
+From: Yibin Gong <yibin.gong@freescale.com>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Mon, 16 Feb 2015 01:48:56 +0000
+Message-ID: <EB2E1ED4-00E1-4BDE-9B0D-8CB8912674B7@freescale.com>
+References: <20150216120934.3f4dc936@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6Un7uNlmggZnjIMrY=D+6X4"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150216120934.3f4dc936@canb.auug.org.au>
+Content-Language: zh-CN
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Gong <b38343@freescale.com>, Sascha Hauer <s.hauer@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Vinod Koul <vinod.koul@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6Un7uNlmggZnjIMrY=D+6X4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Vinod,
-
-After merging the slave-dma tree, today's linux-next build (arm multi_v7_de=
-fconfig)
-failed like this:
-
-drivers/dma/imx-sdma.c: In function 'sdma_run_channel0':
-drivers/dma/imx-sdma.c:535:57: error: macro "readl" passed 2 arguments, but=
- takes just 1
-  if (readl(SDMA_H_CONFIG_CSM, sdma->regs + SDMA_H_CONFIG) =3D=3D 0)
-                                                         ^
-drivers/dma/imx-sdma.c:535:6: error: 'readl' undeclared (first use in this =
-function)
-  if (readl(SDMA_H_CONFIG_CSM, sdma->regs + SDMA_H_CONFIG) =3D=3D 0)
-      ^
-
-Caused by commit 66a073b6478d ("dmaengine: imx-sdma: switch to dynamic
-context mode after script loaded").
-
-I have used the slave-dma tree from next-20150213 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/6Un7uNlmggZnjIMrY=D+6X4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJU4UNSAAoJEMDTa8Ir7ZwVpswQAIqLCwoksO6qee2NNt689tyW
-idWoObMpn/YfifgQF3mk3cpLOkbcoWzcKQ1B1hELiEYtCS7IpGQ6cE1Qyg7WYACE
-dlLqLfGIemmYK5snjfYePB3+GKzXCxKuHehIyLNbmB52VKLDKFPQQizOQ35JyMGh
-GNFEwnrKABg7wKjMGNq/As3b6dPS/IqPFwVmPwn9d7C0eAqsVt4MJ01Fplcw/DXd
-ZetkKtddcmEtWtJC0MWDk7k//1wqpOgJ7hykav5egRIOrO4iFD/hOoJbHlz2CWVI
-iklrYDrOp/0kZdf7erHJs2jp32+dXzaPYQRebH6p0bXEe40hZCBNdi/4VW82OSvr
-NaMR/dXBtTJu7M9pFiKZlwEvMP10JHey4Ke3E8jCdvvf0DLJWPjzcTKncNMWFL6+
-IDErX+p+iIkdzuXILTFg3k6ix9Cl0kqIef0HkthTNnjjG6qmiMNfomQ08CMZ97O8
-ffZkzpzV2xfCD+7OZDtLCzq8m5QeuT8l7UnvQgmWl7Cb6ssnVQ6KrlLO2ZJi1WmF
-ma9k9N2qaNJI14/jAfIWBiX1CM97wKFegS3EZ+YDCP1rYPS/ab/fCL7Mq/J4uLoN
-oEO9n79FlnXGEyvH5iIKemVyVNW8/IgsGtoHmQUr9R1habKhuSKiDNxbHrE++hP0
-hOYE/qbnlUaqus+LauLC
-=1k2D
------END PGP SIGNATURE-----
-
---Sig_/6Un7uNlmggZnjIMrY=D+6X4--
+SGkgU3RlcGhlbiwNCiAgICBUaGFua3MgZm9yIHlvdSByZXBvcnQuIEkgaGF2ZSBub3RpY2UgaXQg
+YW5kIHNlbnQgdGhlIHY0IHBhdGNoIHJldmlldyB5ZXN0ZXJkYXkuDQoNCrei19TO0rXEIGlQaG9u
+ZQ0KDQo+INTaIDIwMTXE6jLUwjE2yNWjrDA5OjA5o6xTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
+Yi5hdXVnLm9yZy5hdT4g0LS1wKO6DQo+IA0KPiBIaSBWaW5vZCwNCj4gDQo+IEFmdGVyIG1lcmdp
+bmcgdGhlIHNsYXZlLWRtYSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKGFybSBtdWx0
+aV92N19kZWZjb25maWcpDQo+IGZhaWxlZCBsaWtlIHRoaXM6DQo+IA0KPiBkcml2ZXJzL2RtYS9p
+bXgtc2RtYS5jOiBJbiBmdW5jdGlvbiAnc2RtYV9ydW5fY2hhbm5lbDAnOg0KPiBkcml2ZXJzL2Rt
+YS9pbXgtc2RtYS5jOjUzNTo1NzogZXJyb3I6IG1hY3JvICJyZWFkbCIgcGFzc2VkIDIgYXJndW1l
+bnRzLCBidXQgdGFrZXMganVzdCAxDQo+ICBpZiAocmVhZGwoU0RNQV9IX0NPTkZJR19DU00sIHNk
+bWEtPnJlZ3MgKyBTRE1BX0hfQ09ORklHKSA9PSAwKQ0KPiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4NCj4gZHJpdmVycy9kbWEvaW14LXNk
+bWEuYzo1MzU6NjogZXJyb3I6ICdyZWFkbCcgdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMg
+ZnVuY3Rpb24pDQo+ICBpZiAocmVhZGwoU0RNQV9IX0NPTkZJR19DU00sIHNkbWEtPnJlZ3MgKyBT
+RE1BX0hfQ09ORklHKSA9PSAwKQ0KPiAgICAgIF4NCj4gDQo+IENhdXNlZCBieSBjb21taXQgNjZh
+MDczYjY0NzhkICgiZG1hZW5naW5lOiBpbXgtc2RtYTogc3dpdGNoIHRvIGR5bmFtaWMNCj4gY29u
+dGV4dCBtb2RlIGFmdGVyIHNjcmlwdCBsb2FkZWQiKS4NCj4gDQo+IEkgaGF2ZSB1c2VkIHRoZSBz
+bGF2ZS1kbWEgdHJlZSBmcm9tIG5leHQtMjAxNTAyMTMgZm9yIHRvZGF5Lg0KPiAtLSANCj4gQ2hl
+ZXJzLA0KPiBTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2FuYi5hdXVn
+Lm9yZy5hdQ0K
