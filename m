@@ -1,50 +1,64 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: make mandocs build failure with next-20150210
-Date: Mon, 16 Feb 2015 11:46:27 -0800
-Message-ID: <20150216194627.GB9933@kroah.com>
-References: <CA+r1ZhhXpFWsBJohzyseUh1bVj51HcjzMPejY0wzmjgSvhaOHg@mail.gmail.com>
- <20150211072757.166344e7@canb.auug.org.au>
- <1423664340.10724.40.camel@linux.intel.com>
- <20150211154844.GA18637@kroah.com>
- <CALLJCT11o3CkhmsDF7nJxg-r0zoEaee4eScy9Xc5LVEg7Vg4Yg@mail.gmail.com>
- <1424103690.10724.62.camel@linux.intel.com>
- <20150216122504.36620b6f@lwn.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Feb 16
+Date: Tue, 17 Feb 2015 07:36:19 +1100
+Message-ID: <20150217073619.4c972211@canb.auug.org.au>
+References: <20120216164144.35e98f5ee8f1b1f545406309@canb.auug.org.au>
+	<20150216171213.GA2804@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150216122504.36620b6f@lwn.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Alan Cox <alan@linux.intel.com>, Masanari Iida <standby24x7@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-doc <linux-doc@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PLPbFTJoHTp4_xiv+sW68Tw"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33476 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751021AbbBPUg3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Feb 2015 15:36:29 -0500
+In-Reply-To: <20150216171213.GA2804@roeck-us.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Markos Chandras <markos.chandras@imgtec.com>, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>, baspeters93@gmail.com
 
-On Mon, Feb 16, 2015 at 12:25:04PM -0700, Jonathan Corbet wrote:
-> On Mon, 16 Feb 2015 16:21:30 +0000
-> Alan Cox <alan@linux.intel.com> wrote:
-> 
-> > > This warning started to appear on Linus's tree, after staging pull
-> > > request was merged.  
-> > 
-> > I sent GregKH a fix for it a while ago
-> 
-> He seemed to indicate that he doesn't have it.  The following would seem
-> to fit the bill; unless somebody objects I'll send it upward so that docs
-> builds start working again.
-> 
-> Thanks,
-> 
-> jon
-> 
-> From a984e29fbe72371b203c43a33b66df44b4c8a948 Mon Sep 17 00:00:00 2001
-> From: Jonathan Corbet <corbet@lwn.net>
-> Date: Mon, 16 Feb 2015 12:21:42 -0700
-> Subject: [PATCH] Fix docs build failure caused by i2o removal
-> 
-> The movement of the I2O tree into staging broke the DocBook build.  Rather
-> than redirect the i2o references into staging, it seems better to just
-> remove them since this code is on its way out anyway.
-> 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+--Sig_/PLPbFTJoHTp4_xiv+sW68Tw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hi Guenter,
+
+On Mon, 16 Feb 2015 09:12:13 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Thu, Feb 16, 2012 at 04:41:44PM +1100, Stephen Rothwell wrote:
+> >=20
+> > Changes since 20120215:
+> ---
+> [ Trying again, this time hopefully replying to the correct e-mail.
+>   Sorry for the earlier noise. ]
+
+Did you really mean to reply to a release from 3 years ago?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/PLPbFTJoHTp4_xiv+sW68Tw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU4lTJAAoJEMDTa8Ir7ZwVU7gQAIAjZkTc+rccPsRx2Mi7ge9X
+ccc9htS1jpLk3ThcQP4ZIfa+aMGeR5PCYY/tH2PJjOudaHeTNehEg/q+y6i/7TOF
+EN2DzHja4q5jV4pYJac5xL12DVO9Fmi2biSXEMOhzlrvR9fbR7KuQITq3lrUMjk+
+97mYbwXR5pUEX66e4OIrIBZ0Ah6XTnCP/GaoH/t4BnSEqT1iRd7wxDDw+XAX6iK9
+unZrDf8mPQVIsDzsg7javjc7/1r2jyk1xcewRmcndxbw+Xt/8JRQnMI6W+pi7d//
+48hk6D3Gorq1QnwnLObjdP1qvqmWP8DzCnaUAXFrMOQ9X2Fs7JATLryhnF7uIGcR
+kca6ajNRsCdR6SBFOqUUlFxBQN2VDLWns6f8cN128ID4BGCb5bho1H1bFoygwML7
+P9ItL0F3q4PJ4HWlpWEVOre4bSc3MUjEkWnTDh3QDj0QJzlKmCV3FtA4D5SeJbmz
+z0ssQzBWKBMAJfJbUUY8C5HvHbozCxFMhssjka72DV1O9vYtadHuTP8hpBqfN2lH
+K7hwXcQRZz+FR+n6jCkiv/r4xl064yZWRbaB2xKySNatTFIy1K4M5ANWfCziebHO
+DuKgGsuA/zF2X4IBWTPkfQsrPF60+sJ0bMqjkwzqMh6CMKQ9ny8CjOlAk0CK1ZBr
+XLaHb2XZ8/3so4KG7xyv
+=TEQD
+-----END PGP SIGNATURE-----
+
+--Sig_/PLPbFTJoHTp4_xiv+sW68Tw--
