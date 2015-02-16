@@ -1,64 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: linux-next: Tree for Feb 16
-Date: Tue, 17 Feb 2015 07:36:19 +1100
-Message-ID: <20150217073619.4c972211@canb.auug.org.au>
-References: <20120216164144.35e98f5ee8f1b1f545406309@canb.auug.org.au>
-	<20150216171213.GA2804@roeck-us.net>
+Date: Mon, 16 Feb 2015 12:52:19 -0800
+Message-ID: <54E25883.3080704@roeck-us.net>
+References: <20120216164144.35e98f5ee8f1b1f545406309@canb.auug.org.au>	<20150216171213.GA2804@roeck-us.net> <20150217073619.4c972211@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PLPbFTJoHTp4_xiv+sW68Tw"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33476 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751021AbbBPUg3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Feb 2015 15:36:29 -0500
-In-Reply-To: <20150216171213.GA2804@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150217073619.4c972211@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Markos Chandras <markos.chandras@imgtec.com>, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>, baspeters93@gmail.com
+List-Id: linux-next.vger.kernel.org
 
---Sig_/PLPbFTJoHTp4_xiv+sW68Tw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Guenter,
-
-On Mon, 16 Feb 2015 09:12:13 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
+On 02/16/2015 12:36 PM, Stephen Rothwell wrote:
+> Hi Guenter,
 >
-> On Thu, Feb 16, 2012 at 04:41:44PM +1100, Stephen Rothwell wrote:
-> >=20
-> > Changes since 20120215:
-> ---
-> [ Trying again, this time hopefully replying to the correct e-mail.
->   Sorry for the earlier noise. ]
+> On Mon, 16 Feb 2015 09:12:13 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On Thu, Feb 16, 2012 at 04:41:44PM +1100, Stephen Rothwell wrote:
+>>>
+>>> Changes since 20120215:
+>> ---
+>> [ Trying again, this time hopefully replying to the correct e-mail.
+>>    Sorry for the earlier noise. ]
+>
+> Did you really mean to reply to a release from 3 years ago?
+>
 
-Did you really mean to reply to a release from 3 years ago?
+Sigh. No, of course not :-(. I think I am giving up for today.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/PLPbFTJoHTp4_xiv+sW68Tw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJU4lTJAAoJEMDTa8Ir7ZwVU7gQAIAjZkTc+rccPsRx2Mi7ge9X
-ccc9htS1jpLk3ThcQP4ZIfa+aMGeR5PCYY/tH2PJjOudaHeTNehEg/q+y6i/7TOF
-EN2DzHja4q5jV4pYJac5xL12DVO9Fmi2biSXEMOhzlrvR9fbR7KuQITq3lrUMjk+
-97mYbwXR5pUEX66e4OIrIBZ0Ah6XTnCP/GaoH/t4BnSEqT1iRd7wxDDw+XAX6iK9
-unZrDf8mPQVIsDzsg7javjc7/1r2jyk1xcewRmcndxbw+Xt/8JRQnMI6W+pi7d//
-48hk6D3Gorq1QnwnLObjdP1qvqmWP8DzCnaUAXFrMOQ9X2Fs7JATLryhnF7uIGcR
-kca6ajNRsCdR6SBFOqUUlFxBQN2VDLWns6f8cN128ID4BGCb5bho1H1bFoygwML7
-P9ItL0F3q4PJ4HWlpWEVOre4bSc3MUjEkWnTDh3QDj0QJzlKmCV3FtA4D5SeJbmz
-z0ssQzBWKBMAJfJbUUY8C5HvHbozCxFMhssjka72DV1O9vYtadHuTP8hpBqfN2lH
-K7hwXcQRZz+FR+n6jCkiv/r4xl064yZWRbaB2xKySNatTFIy1K4M5ANWfCziebHO
-DuKgGsuA/zF2X4IBWTPkfQsrPF60+sJ0bMqjkwzqMh6CMKQ9ny8CjOlAk0CK1ZBr
-XLaHb2XZ8/3so4KG7xyv
-=TEQD
------END PGP SIGNATURE-----
-
---Sig_/PLPbFTJoHTp4_xiv+sW68Tw--
+Guenter
