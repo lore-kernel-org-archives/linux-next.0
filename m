@@ -1,53 +1,64 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Feb 13 (runtime failures and 'non-zero nr_pmds'
- messages)
-Date: Fri, 13 Feb 2015 20:45:40 -0800
-Message-ID: <54DED2F4.50009@roeck-us.net>
-References: <20150213165615.1ad43047@canb.auug.org.au>	<20150213185428.GA31193@roeck-us.net> <20150214103734.3052cd2f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the slave-dma tree
+Date: Mon, 16 Feb 2015 12:09:34 +1100
+Message-ID: <20150216120934.3f4dc936@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6Un7uNlmggZnjIMrY=D+6X4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150214103734.3052cd2f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Sabrina Dubroca <sd@queasysnail.net>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Gong <b38343@freescale.com>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/6Un7uNlmggZnjIMrY=D+6X4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 02/13/2015 03:37 PM, Stephen Rothwell wrote:
-> Hi Guenter,
->
-> On Fri, 13 Feb 2015 10:54:28 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> I see a number of runtime failures with this version.
->> It affects alpha, mips64, ppc64, and x86_64.
->> Symptom is always the same. There are lots of
->>
->> BUG: non-zero nr_pmds on freeing mm: X (where X is 1..4)
->>
->> messages in the log, and the affected VMs don't reboot.
->>
->> I don't see the problem in curent mainline, nor in mmotm.
->> Bisect points to "Merge branch 'akpm-current/current'",
->> which isn't really helpful.
->>
->> Not sure if this is a bad merge resolution, so just take this
->> as a heads-up for now.
->
-> Yours is the second report overnight (see attached).  Almost certainly
-> a bad merge resolution on my part (its a bit hard when Andrew get part
-> of his patch set merged by Linus :-()
->
-And now Fengguang's tests caught it as well.
+Hi Vinod,
 
-> I will fix up the merge on Monday (unless Andrew gets more stuff merged
-> or updates mmotm for me).
->
-> Sorry about that.
->
+After merging the slave-dma tree, today's linux-next build (arm multi_v7_de=
+fconfig)
+failed like this:
 
-No worries. Good news is that test coverage is getting better.
+drivers/dma/imx-sdma.c: In function 'sdma_run_channel0':
+drivers/dma/imx-sdma.c:535:57: error: macro "readl" passed 2 arguments, but=
+ takes just 1
+  if (readl(SDMA_H_CONFIG_CSM, sdma->regs + SDMA_H_CONFIG) =3D=3D 0)
+                                                         ^
+drivers/dma/imx-sdma.c:535:6: error: 'readl' undeclared (first use in this =
+function)
+  if (readl(SDMA_H_CONFIG_CSM, sdma->regs + SDMA_H_CONFIG) =3D=3D 0)
+      ^
 
-Guenter
+Caused by commit 66a073b6478d ("dmaengine: imx-sdma: switch to dynamic
+context mode after script loaded").
+
+I have used the slave-dma tree from next-20150213 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/6Un7uNlmggZnjIMrY=D+6X4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU4UNSAAoJEMDTa8Ir7ZwVpswQAIqLCwoksO6qee2NNt689tyW
+idWoObMpn/YfifgQF3mk3cpLOkbcoWzcKQ1B1hELiEYtCS7IpGQ6cE1Qyg7WYACE
+dlLqLfGIemmYK5snjfYePB3+GKzXCxKuHehIyLNbmB52VKLDKFPQQizOQ35JyMGh
+GNFEwnrKABg7wKjMGNq/As3b6dPS/IqPFwVmPwn9d7C0eAqsVt4MJ01Fplcw/DXd
+ZetkKtddcmEtWtJC0MWDk7k//1wqpOgJ7hykav5egRIOrO4iFD/hOoJbHlz2CWVI
+iklrYDrOp/0kZdf7erHJs2jp32+dXzaPYQRebH6p0bXEe40hZCBNdi/4VW82OSvr
+NaMR/dXBtTJu7M9pFiKZlwEvMP10JHey4Ke3E8jCdvvf0DLJWPjzcTKncNMWFL6+
+IDErX+p+iIkdzuXILTFg3k6ix9Cl0kqIef0HkthTNnjjG6qmiMNfomQ08CMZ97O8
+ffZkzpzV2xfCD+7OZDtLCzq8m5QeuT8l7UnvQgmWl7Cb6ssnVQ6KrlLO2ZJi1WmF
+ma9k9N2qaNJI14/jAfIWBiX1CM97wKFegS3EZ+YDCP1rYPS/ab/fCL7Mq/J4uLoN
+oEO9n79FlnXGEyvH5iIKemVyVNW8/IgsGtoHmQUr9R1habKhuSKiDNxbHrE++hP0
+hOYE/qbnlUaqus+LauLC
+=1k2D
+-----END PGP SIGNATURE-----
+
+--Sig_/6Un7uNlmggZnjIMrY=D+6X4--
