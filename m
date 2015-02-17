@@ -1,67 +1,86 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: linux-next: Tree for Feb 17 (i2c-designware-baytrail.c)
-Date: Tue, 17 Feb 2015 20:11:58 +0100
-Message-ID: <20150217191153.GA1616@katana>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Feb 17 (mips build failures)
+Date: Wed, 18 Feb 2015 07:37:40 +1100
+Message-ID: <20150218073740.71da0354@canb.auug.org.au>
 References: <20150217160221.1a15340e@canb.auug.org.au>
- <54E38840.5060306@infradead.org>
+	<20150217172036.GA29820@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:56079 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751596AbbBQTM6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Feb 2015 14:12:58 -0500
-Content-Disposition: inline
-In-Reply-To: <54E38840.5060306@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, linux-i2c@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SNnpl9BavBq9e6=K1LZCM63"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150217172036.GA29820@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markos Chandras <markos.chandras@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>
+List-Id: linux-next.vger.kernel.org
 
-
---opJtzjQTFsWo+cga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/SNnpl9BavBq9e6=K1LZCM63
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Randy,
+Hi Guenter,
 
-thanks for the report!
+[Add Ralf to cc]
 
-> I suppose someone could make that:
+On Tue, 17 Feb 2015 09:20:36 -0800 Guenter Roeck <linux@roeck-us.net> wrote:
 >=20
-> 	depends on I2C_DESIGNWARE_PLATFORM && IOSF_MBI=3Dy && ACPI
+> Build results:
+> 	total: 121 pass: 109 fail: 12
+> Failed builds:
+> 	mips:defconfig
+> 	mips:allmodconfig
+> 	mips:bcm47xx_defconfig
+> 	mips:bcm63xx_defconfig
+> 	mips:nlm_xlp_defconfig
+> 	mips:ath79_defconfig
+> 	mips:ar7_defconfig
+> 	mips:fuloong2e_defconfig
+> 	mips:e55_defconfig
+> 	mips:cavium_octeon_defconfig
+> 	mips:malta_defconfig
+> 	sparc64:allmodconfig
 >=20
-> or even make I2C_DESIGNWARE_BAYTRAIL be a tristate symbol.
+> mips builds are all failing with
+>=20
+> Building mips:defconfig ... failed
+> --------------
+> Error log:
+> arch/mips/kernel/genex.S: Assembler messages:
+> arch/mips/kernel/genex.S:128: Error: Bad value (mips64r6) for internal use
+> arch/mips/kernel/genex.S:128: Error: unknown ISA level 64r6
+>=20
+> This was introduced by commit 0bf705e94771800 ("MIPS: kernel: genex: Set
+> correct ISA level") which apparently assumes that only mips64r6 is a valid
+> ISA level, though it is obviously not supported on older compilers. This
+> is on top of the other mips r6 related build errors seen yesterday.
+>=20
+> I really hope that this is not 3.20 material, given the lack of testing
+> with architectures other than mips r6 or with older compilers.
 
-I'll wait a day for input from David what he prefers, because I don't
-own/know this platform. If there is no response, I'll apply the first
-solution.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-   Wolfram
-
-
---opJtzjQTFsWo+cga
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/SNnpl9BavBq9e6=K1LZCM63
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJU45J5AAoJEBQN5MwUoCm2iSQP/R7dq5U+fxSg5wWD50KNMnTI
-3chwTowlQMIbYivbPoMLTbhTLhNGAZ1Qb9EDbytEmdUFhkVSdo2uYdm1FbQ8JDX6
-pU6P8pgG7GqqLadxOyHO0vl6jbxnR+j3ojYM0i/jBZKjFt1xN6QzUHGu5Px8Uls3
-wmyfHHQMQ0bP3cfWdvUERqy80ekytaxDWQEZiDLAIiHlXHvjhbGjQtSlzid1jYo7
-AXycstqSiU0uTksELt0JbkJg6iecZytqfvRVC6mlA9r7guZwAbF1eCYZNQogAz+d
-3YY0gcomm7eYN+uOTv9kmSrEBwc2vba5/13k4poXvxQ20MHmOHBua9ed1FTieILI
-/eLrhfRnFiYwCkkLcgJ/Nyd876P5shzSK2ttr5khgSuPCGXnZENZIajynpyTPrRs
-ggwsf3o77j5X1pAy9Y4ailbrmd1VGe05TUsBNLVC3286n4ESGYHSsZ8E95yj5XxW
-FCNlLxuR0S/2vef6hyLcAWb87lBdesGVSfZzdaW49TvNJeGbTQSeHZxVt7UmfzXS
-RMkGGKzZVuTJgGc6OlRN61VlYjRknVGXGi5we4ISIp/Uh3GyNrFvuxofEh32+r3N
-XK+/pXO+UHWGV4XK4FCbabgweXfrm5B+e4u2wKPKLudKPUMhsehtOVI+0j28+Z8h
-xV9HXkf0RNf5REATbdYO
-=KJWG
+iQIcBAEBCAAGBQJU46aZAAoJEMDTa8Ir7ZwVFSEP/jUaS2J4JZ6ONRQPnkUHr2Js
++om8iaonAd0NGrA8A3f1vNFTwEhqG+yD+6HU4qsK5mPO/y8Lv489vCI3OLN21sp9
+knQoozcuYd2bXAbfl9rJgeHXtkShqiDT/YlOZy3eokXQTT7gI3Jk7XiYUJJkeR4F
+tc9o6mfY3mI31hwWqr4I01dXoohz8+aKCQl0xrTzINPs25ER3xX8G01XbxL+/6bo
+XTFaEV2nXR3n+e4eY+RlkSYw5MWWRJvta7kS/G9gpCui3/qXzodqeBPczhnwGuTA
+YYYA/VHNVOAOoqJ/w6usLRCOVTSevI6PA6BZvN/m5HKoiACXSF55hqgE+NkXw0fK
+W9WeB4/jhKQwlBofGUy46r2LnjUUbd10SpOjt7sCCCVSiMiFhD2oQZZt1qQGWadZ
+OuUnt4vLmtaVAIYWMtATuMzWwslGkGu0S3tUZjz6ZxAnZKla1xsgHC6C4xYfSaOd
+Nos6K5+hmY3jwBVPxdZ8yEZ8/H7bd7AEM24GTLCvB1wGnEoZdHD8brd/nn6A3AxX
+aN91MNSzOqBvm3FWzpb09MgSdHc5Orn0o12Ppty2WgokAFsh4K0gPmLmPM2WfKSX
+xXGyiOkC+75R6dqyfvDpdsU+D7yNTmeaxFqSZLT0yM/RgE0pI6qBztYdQjNpbin8
+2rtU48gzJCnQS81klQRk
+=poWi
 -----END PGP SIGNATURE-----
 
---opJtzjQTFsWo+cga--
+--Sig_/SNnpl9BavBq9e6=K1LZCM63--
