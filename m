@@ -1,56 +1,67 @@
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Wolfram Sang <wsa@the-dreams.de>
 Subject: Re: linux-next: Tree for Feb 17 (i2c-designware-baytrail.c)
-Date: Tue, 17 Feb 2015 10:28:16 -0800
-Message-ID: <54E38840.5060306@infradead.org>
+Date: Tue, 17 Feb 2015 20:11:58 +0100
+Message-ID: <20150217191153.GA1616@katana>
 References: <20150217160221.1a15340e@canb.auug.org.au>
+ <54E38840.5060306@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150217160221.1a15340e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, linux-i2c@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
-On 02/16/15 21:02, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Please do not add any material destined for v3.21 to your linux-next
-> included trees until after v3.20-rc1 has been released.
-> 
-> Changes since 20150216:
-> 
-
-on i386, when CONFIG_IOSF_MBI=m and
-CONFIG_I2C_DESIGNWARE_BAYTRAIL=y:
-
-drivers/built-in.o: In function `i2c_dw_eval_lock_support':
-(.text+0x37dd74): undefined reference to `iosf_mbi_available'
-drivers/built-in.o: In function `reset_semaphore.isra.1':
-i2c-designware-baytrail.c:(.text+0x37ddd1): undefined reference to `iosf_mbi_read'
-i2c-designware-baytrail.c:(.text+0x37de13): undefined reference to `iosf_mbi_write'
-drivers/built-in.o: In function `baytrail_i2c_acquire':
-(.text+0x37df26): undefined reference to `iosf_mbi_write'
-drivers/built-in.o: In function `baytrail_i2c_acquire':
-(.text+0x37dfab): undefined reference to `iosf_mbi_read'
-drivers/built-in.o: In function `baytrail_i2c_acquire':
-(.text+0x37e080): undefined reference to `iosf_mbi_read'
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:56079 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751596AbbBQTM6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Feb 2015 14:12:58 -0500
+Content-Disposition: inline
+In-Reply-To: <54E38840.5060306@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, linux-i2c@vger.kernel.org
 
 
-because IOSF_MBI is tristate and I2C_DESIGNWARE_BAYTRAIL is bool:
+--opJtzjQTFsWo+cga
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-config I2C_DESIGNWARE_BAYTRAIL
-	bool "Intel Baytrail I2C semaphore support"
-	depends on I2C_DESIGNWARE_PLATFORM && IOSF_MBI && ACPI
+Randy,
+
+thanks for the report!
+
+> I suppose someone could make that:
+>=20
+> 	depends on I2C_DESIGNWARE_PLATFORM && IOSF_MBI=3Dy && ACPI
+>=20
+> or even make I2C_DESIGNWARE_BAYTRAIL be a tristate symbol.
+
+I'll wait a day for input from David what he prefers, because I don't
+own/know this platform. If there is no response, I'll apply the first
+solution.
+
+   Wolfram
 
 
-I suppose someone could make that:
+--opJtzjQTFsWo+cga
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-	depends on I2C_DESIGNWARE_PLATFORM && IOSF_MBI=y && ACPI
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-or even make I2C_DESIGNWARE_BAYTRAIL be a tristate symbol.
+iQIcBAEBAgAGBQJU45J5AAoJEBQN5MwUoCm2iSQP/R7dq5U+fxSg5wWD50KNMnTI
+3chwTowlQMIbYivbPoMLTbhTLhNGAZ1Qb9EDbytEmdUFhkVSdo2uYdm1FbQ8JDX6
+pU6P8pgG7GqqLadxOyHO0vl6jbxnR+j3ojYM0i/jBZKjFt1xN6QzUHGu5Px8Uls3
+wmyfHHQMQ0bP3cfWdvUERqy80ekytaxDWQEZiDLAIiHlXHvjhbGjQtSlzid1jYo7
+AXycstqSiU0uTksELt0JbkJg6iecZytqfvRVC6mlA9r7guZwAbF1eCYZNQogAz+d
+3YY0gcomm7eYN+uOTv9kmSrEBwc2vba5/13k4poXvxQ20MHmOHBua9ed1FTieILI
+/eLrhfRnFiYwCkkLcgJ/Nyd876P5shzSK2ttr5khgSuPCGXnZENZIajynpyTPrRs
+ggwsf3o77j5X1pAy9Y4ailbrmd1VGe05TUsBNLVC3286n4ESGYHSsZ8E95yj5XxW
+FCNlLxuR0S/2vef6hyLcAWb87lBdesGVSfZzdaW49TvNJeGbTQSeHZxVt7UmfzXS
+RMkGGKzZVuTJgGc6OlRN61VlYjRknVGXGi5we4ISIp/Uh3GyNrFvuxofEh32+r3N
+XK+/pXO+UHWGV4XK4FCbabgweXfrm5B+e4u2wKPKLudKPUMhsehtOVI+0j28+Z8h
+xV9HXkf0RNf5REATbdYO
+=KJWG
+-----END PGP SIGNATURE-----
 
-
--- 
-~Randy
+--opJtzjQTFsWo+cga--
