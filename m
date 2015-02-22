@@ -1,30 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s390 tree with Linus' tree
-Date: Sun, 22 Feb 2015 11:27:13 +1100
-Message-ID: <20150222112713.1fd0a359@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Sun, 22 Feb 2015 11:46:51 +1100
+Message-ID: <20150222114651.0578e72a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FURDHHbMZ9i91E3Aal2MxdF"; protocol="application/pgp-signature"
+ boundary="Sig_/ScE4louVk8yICCaETK6TxCb"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35429 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40905 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751745AbbBVA1V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 21 Feb 2015 19:27:21 -0500
+	id S1751730AbbBVAq6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 21 Feb 2015 19:46:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Marciniszyn <mike.marciniszyn@intel.com>, David Howells <dhowells@redhat.com>
 
---Sig_/FURDHHbMZ9i91E3Aal2MxdF
+--Sig_/ScE4louVk8yICCaETK6TxCb
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the s390 tree got a conflict in
-arch/s390/kernel/early.c between commit 61b0b01686d4 ("s390/spinlock:
-disabled compare-and-delay by default") from Linus' tree and commit
-c5f43f0a70fc ("s390: remove 31 bit support") from the s390 tree.
+Today's linux-next merge of the vfs tree got a conflict in
+drivers/infiniband/hw/qib/qib_fs.c between commit 041af0bb765a
+("IB/qib: Fix sizeof checkpatch warnings") from Linus' tree and commit
+271b063723fd ("VFS: (Scripted) Convert ->d_inode to fs_inode() in
+drivers/infiniband/hw/qib/qib_fs.c") from the vfs tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -33,56 +34,42 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/s390/kernel/early.c
-index 4427ab7ac23a,434b4d26a8db..000000000000
---- a/arch/s390/kernel/early.c
-+++ b/arch/s390/kernel/early.c
-@@@ -393,19 -328,16 +328,18 @@@ static __init void detect_machine_facil
-  		S390_lowcore.machine_flags |=3D MACHINE_FLAG_TLB_LC;
-  	if (test_facility(129))
-  		S390_lowcore.machine_flags |=3D MACHINE_FLAG_VX;
-- #endif
- -	if (test_facility(128))
- -		S390_lowcore.machine_flags |=3D MACHINE_FLAG_CAD;
-  }
+diff --cc drivers/infiniband/hw/qib/qib_fs.c
+index 55f240a363fe,88cc9a288ccd..000000000000
+--- a/drivers/infiniband/hw/qib/qib_fs.c
++++ b/drivers/infiniband/hw/qib/qib_fs.c
+@@@ -481,8 -481,8 +481,8 @@@ static int remove_device_files(struct s
+  	int ret, i;
  =20
- -static int __init nocad_setup(char *str)
- +static int __init cad_setup(char *str)
-  {
- -	S390_lowcore.machine_flags &=3D ~MACHINE_FLAG_CAD;
- +	int val;
- +
- +	get_option(&str, &val);
- +	if (val && test_facility(128))
- +		S390_lowcore.machine_flags |=3D MACHINE_FLAG_CAD;
-  	return 0;
-  }
- -early_param("nocad", nocad_setup);
- +early_param("cad", cad_setup);
+  	root =3D dget(sb->s_root);
+- 	mutex_lock(&root->d_inode->i_mutex);
++ 	mutex_lock(&fs_inode(root)->i_mutex);
+ -	snprintf(unit, sizeof unit, "%u", dd->unit);
+ +	snprintf(unit, sizeof(unit), "%u", dd->unit);
+  	dir =3D lookup_one_len(unit, root, strlen(unit));
  =20
-  static int __init cad_init(void)
-  {
+  	if (IS_ERR(dir)) {
 
---Sig_/FURDHHbMZ9i91E3Aal2MxdF
+--Sig_/ScE4louVk8yICCaETK6TxCb
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU6SJlAAoJEMDTa8Ir7ZwVc5sQAIfn7sXAZkj+NkbtNIFK0lXF
-wOHJw0t2LjT4VyZTLvtICYCLds1GlP7ekXuk8RyQNDiDtHzrozc7w0Tl/t2Q4zMF
-7APpTca/QAJDPXJcOiQRYLS912tOQBQr7ckvEfd1Iz2RbgIVG3r04cPazRfSbZSN
-SNZQGdTQmRvYWUsGC3MEQ2GtLe+5HWYc5pKKgOKhQKBX0w0LkIemCQaEtssLX7ac
-HSGSVCRkDsItTZKgG3cKwv64jLi7yGH1vt22R8K5kXvKInbuwythR6l+6WBSZ4OT
-c+sEUGoctJIwSNtD49awIlWhs9lYNXukWho6AiE8ue4FnHew+TchwPdIZ8ZZ6K5D
-Guw6Zn3fEdlJ/akPq1Wo5527BbJXP5GF3KdQvzMC4VIvbO42Me2b+6SB4dlDH9hW
-wluCJievhvEWfse1YyLRX1TlbWGKg9BoUZ18DQ1km+Wxa92a6JSep5wyJegHqxZc
-uzGk3lnq0f5RR1gXLOKlw8Ddzh3gI8/355ALW+YUGX1xJEhfMyggRbUV3g7d6LUZ
-X0Zlcnf+18l201Nyyu15Ec5Obg/kHYdSVnDvrk3RZISZOjoe+bIDCSX2aEm/t98H
-b3Jqb7rKn4dZ/DSF/SGJNU/B41gWS4s/VfWq74HVI9NljCSq4TSKEY/2wx2nnTpX
-wanbzth19YKFtPDXC/K2
-=BOqa
+iQIcBAEBCAAGBQJU6ScAAAoJEMDTa8Ir7ZwV4ZYP/2q/Pu7H/aU603DCNiSD7EyL
+P6ex31QwC55ymbLlIYSKAEAP05A41wvTMjnk/0oZVWGUMB2cjfMjhBfNCRifBKa7
+cU+M5f2tBzykFxw+i6qQsmaLwc5EydXvlE7fLKO10uua0w5eOE6i8pcG0Bugrfz0
+6N8XaFBE9aPN108Ekwv4JBJVdUXYjxiu1bQGfZ43MUfUrTirBqYbIHa1tFWR+3U8
+hCDuacNGQ08HhPct4smRtFf6zPxrjARYpFCLtKKLxCzsXcyMYHzgZLOtD6Q6/UHH
+mvmrlppp3ymGZ7NVN0oM/v49WZqaEcGFBFTGpMK/mquY4pcsFAE3U2EYZa+htiHW
+vJ6hHayDvK8DaQzonu1eLvwjVoMwwhvVkVGJyzcalMQvzInV5/GTjwimbfI4RijL
+nz3XLwvLww/BnC4ZQLG1F7unW4a/hUfc5Z2SPJXooNff3fp0mVO8ypRvCwrrOqnD
+xK62CZGbcFuw2ndvh/tXYr/uKZHpkTeW3diEVN6jGXBjpvFGxA1Eg745l0KJYpQJ
+sHWJirvVg7e+eadsUCUVDpjlNVEkM6hSzGLDrYN+PzK5bUOcGHf0nIF4bsSX9cVu
+xNfmQXkc+QiG2vIjKmr/x5FQpJg7U0YT+79FYl46uvJm5adsdvaHfNyKLARxbybn
+it7tldskJR36ri1k090q
+=iC9H
 -----END PGP SIGNATURE-----
 
---Sig_/FURDHHbMZ9i91E3Aal2MxdF--
+--Sig_/ScE4louVk8yICCaETK6TxCb--
