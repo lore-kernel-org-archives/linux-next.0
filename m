@@ -1,45 +1,52 @@
-From: =?windows-1252?Q?Vincent_Stehl=E9?= <vincent.stehle@laposte.net>
-Subject: Re: [PATCH linux-next] iommu: Enable LPAE pagetable on ARM only
-Date: Tue, 24 Feb 2015 00:36:10 +0100
-Message-ID: <54EBB96A.4050401@bergerie>
-References: <1424621346-7822-1-git-send-email-vincent.stehle@laposte.net> <2868840.GyWYJOzqWH@avalon>
+From: Joshua Kinard <kumba@gentoo.org>
+Subject: Re: linux-next: Tree for Feb 23 (rtc-ds1685)
+Date: Mon, 23 Feb 2015 18:50:21 -0500
+Message-ID: <54EBBCBD.8000800@gentoo.org>
+References: <20150223140944.6ed640cf@canb.auug.org.au> <54EB7328.5060704@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp3-g21.free.fr ([212.27.42.3]:34512 "EHLO smtp3-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751832AbbBWXgN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Feb 2015 18:36:13 -0500
-In-Reply-To: <2868840.GyWYJOzqWH@avalon>
+Received: from resqmta-po-06v.sys.comcast.net ([96.114.154.165]:33327 "EHLO
+	resqmta-po-06v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751848AbbBWXuc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Feb 2015 18:50:32 -0500
+In-Reply-To: <54EB7328.5060704@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: iommu@lists.linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Will Deacon <will.deacon@arm.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>
 
-On 02/23/2015 05:52 PM, Laurent Pinchart wrote:
-(runtime warning)
-> I suppose this is caused by the selftest code ?
+On 02/23/2015 13:36, Randy Dunlap wrote:
+> On 02/22/15 19:09, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Please do not add any material destined for v3.21 to your linux-next
+>> included trees until after v3.20-rc1 has been released.
+>>
+>> OK, so that was interesting :-)  v4.0-rc1 is out, so go crazy ...
+>>
+>> Changes since 20150222:
+>>
+>> *crickets*
+> 
+> 
+> for the last 4 days or so, I have been seeing this build error on
+> i386 and x86_64:
+> 
+> ../drivers/rtc/rtc-ds1685.c:919:22: error: 'ds1685_rtc_alarm_irq_enable' undeclared here (not in a function)
+>   .alarm_irq_enable = ds1685_rtc_alarm_irq_enable,
+> 
+> when CONFIG_RTC_INTF_DEV is not enabled.
 
-Hi Laurent,
+A patch was sent upstream already for this:
+http://ozlabs.org/~akpm/mmots/broken-out/rtc-ds1685-fix-ds1685_rtc_alarm_irq_enable-build-error.patch
 
-Thanks for your feedback. You are right, this is the selftest code. Here
-are the traces just before the first warnings:
+I'm not sure when it will appear in linux-next (still new to this process).
 
-  arm-lpae io-pgtable: selftest: pgsize_bitmap 0x40201000, IAS 32^M
-  arm-lpae io-pgtable: selftest: pgsize_bitmap 0x40201000, IAS 36^M
-  arm-lpae io-pgtable: selftest: pgsize_bitmap 0x40201000, IAS 40^M
-
-There are a number of failed selftests and warnings, and in the end the
-PA-RISC machine won't boot.
-
-..
-> How about ARM || COMPILE_TEST ? It can still be useful to compile the module 
-> on other architectures.
-
-I think you are right and this is how it should be; thank you for the
-tips, I did not know about COMPILE_TEST. I'll resend a patch v2 right away.
-
-Best regards,
-
-V.
+-- 
+Joshua Kinard
+Gentoo/MIPS
+kumba@gentoo.org
+4096R/D25D95E3 2011-03-28
