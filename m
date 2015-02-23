@@ -1,68 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Corey Minyard <minyard@acm.org>
 Subject: Re: linux-next: error fetching the ipmi tree
-Date: Tue, 24 Feb 2015 07:20:04 +1100
-Message-ID: <20150224072004.534ccb5a@canb.auug.org.au>
-References: <20150223102312.7029616b@canb.auug.org.au>
-	<54EA8C99.50000@acm.org>
+Date: Mon, 23 Feb 2015 15:44:19 -0600
+Message-ID: <54EB9F33.6030702@acm.org>
+References: <20150223102312.7029616b@canb.auug.org.au>	<54EA8C99.50000@acm.org> <20150224072004.534ccb5a@canb.auug.org.au>
+Reply-To: minyard@acm.org
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZPvoZVK.iGLOzX6Phk6n8vp"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54EA8C99.50000@acm.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Corey Minyard <minyard@acm.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:39617 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120AbbBWVoZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Feb 2015 16:44:25 -0500
+In-Reply-To: <20150224072004.534ccb5a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Corey Minyard <cminyard@mvista.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
---Sig_/ZPvoZVK.iGLOzX6Phk6n8vp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Sourcefoge is definitely having issues:
 
-Hi Corey,
+    [cminyard@t430 linux-ipmi]$ git push origin for-next
+    fatal: '/git/p/openipmi/linux-ipmi' does not appear to be a git
+    repository
+    fatal: Could not read from remote repository.
 
-On Sun, 22 Feb 2015 20:12:41 -0600 Corey Minyard <minyard@acm.org> wrote:
+    Please make sure you have the correct access rights
+    and the repository exists.
+
+After a while it started working, and the tag was there.  I've verified
+that everything is ok from a different machine.
+
+-corey
+
+On 02/23/2015 02:20 PM, Stephen Rothwell wrote:
+> Hi Corey,
 >
-> On 02/22/2015 05:23 PM, Stephen Rothwell wrote:
-> >
-> > While fetching the ipmi tree
-> > (git://git.code.sf.net/p/openipmi/linux-ipmi#for-next), I get this
-> > error:
-> >
-> > fatal: Couldn't find remote ref refs/heads/for-next
-> >
-> Hmm, I haven't touched that tag.  Sourceforge has been doing some
-> strange things lately, I'm wondering if I should switch to something
-> else.  I guess I could have accidentally deleted it, too.
->=20
-> Anyway, those changes are all in Linus' tree, so I just moved for-next
-> to master.
-
-Its gone again :-(
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/ZPvoZVK.iGLOzX6Phk6n8vp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJU64t6AAoJEMDTa8Ir7ZwVbBoP+gMniwMwHVwilvRoskPL4+iR
-6Cf7UdO3vEWhT79KKaJsDyiAac3Suu1iqlUUtAYytm3CRPvEBr2nInl4GYlB9oDi
-Klow52fmIWT5YNN+4g88TZ7nV5hHSAZi3uPs1d/n3FHdqkM1gOfw3mXvmdF90N2L
-ZGI1wV2ekYPzhW+xKq2+MQzxuSABsJaBwmMepRv0XkssVqmJ8HIoMpJeOI9vZFhr
-BqP7m4VVElRJfFLDOolvJj12em2FaEJX+7wTeaH+clT4y0Ld32MLVb3/B+kU9iJL
-b3qpfYaIjfeGvj4YHSWNy4b0ddx4lELkJHwSPV9ND1gwSENQXQgoeyemPtseAw0L
-mz+60IYXZfI8aZgyxMCDmHtXkR/WRr/Nz2/EALWqQ2CZrAz330+lABIneQRE5ZpU
-KPNjrocP7V+l6ICqip/Xpj/ebsXStI7lDp8xplTMErsagOOmyHCXRdL8vqz6kkuR
-o76lB5PIord+7m3OnqpNPJ5ILRVwfAr8mW0qIZs5n6bfa89sLuqSj714c1ynVUYw
-RtqRWd9X8hFJpn2MHAiH1JXuJCUMeR1U/9jttQMErQqnsmLVtjNgXXtfhwK2cXqM
-V7CHABzpUHELTfvDmdADzRb9UtnDi8U/9D2/cKwRk6YZZyopMJ9N9dUqsfW94oPC
-1x2yE5KhH4XEU7BiTQZX
-=SPTP
------END PGP SIGNATURE-----
-
---Sig_/ZPvoZVK.iGLOzX6Phk6n8vp--
+> On Sun, 22 Feb 2015 20:12:41 -0600 Corey Minyard <minyard@acm.org> wrote:
+>> On 02/22/2015 05:23 PM, Stephen Rothwell wrote:
+>>> While fetching the ipmi tree
+>>> (git://git.code.sf.net/p/openipmi/linux-ipmi#for-next), I get this
+>>> error:
+>>>
+>>> fatal: Couldn't find remote ref refs/heads/for-next
+>>>
+>> Hmm, I haven't touched that tag.  Sourceforge has been doing some
+>> strange things lately, I'm wondering if I should switch to something
+>> else.  I guess I could have accidentally deleted it, too.
+>>
+>> Anyway, those changes are all in Linus' tree, so I just moved for-next
+>> to master.
+> Its gone again :-(
+>
