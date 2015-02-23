@@ -1,47 +1,45 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: Linux 4.0-rc1 out..
-Date: Mon, 23 Feb 2015 15:14:30 -0800
-Message-ID: <CAOesGMhPfQco-4M71eTz49fmVOMMJLYaAX0rRHhD9L4bucDCdQ@mail.gmail.com>
-References: <CA+55aFzS==STcTbwabdvw=7_xX08kkUd=g2Q4XbWJzKbpjyN1A@mail.gmail.com>
-	<20150223161541.22df98cc@canb.auug.org.au>
+From: =?windows-1252?Q?Vincent_Stehl=E9?= <vincent.stehle@laposte.net>
+Subject: Re: [PATCH linux-next] iommu: Enable LPAE pagetable on ARM only
+Date: Tue, 24 Feb 2015 00:36:10 +0100
+Message-ID: <54EBB96A.4050401@bergerie>
+References: <1424621346-7822-1-git-send-email-vincent.stehle@laposte.net> <2868840.GyWYJOzqWH@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150223161541.22df98cc@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp3-g21.free.fr ([212.27.42.3]:34512 "EHLO smtp3-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751832AbbBWXgN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Feb 2015 18:36:13 -0500
+In-Reply-To: <2868840.GyWYJOzqWH@avalon>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: iommu@lists.linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Will Deacon <will.deacon@arm.com>
 
-Hi,
+On 02/23/2015 05:52 PM, Laurent Pinchart wrote:
+(runtime warning)
+> I suppose this is caused by the selftest code ?
 
-On Sun, Feb 22, 2015 at 9:15 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> There are also 265 commits in next-20150209 that didn't make it into
-> v4.0-rc1.
->
-> Top ten first word of commit summary:
->
->      25 rcu
->      24 arm
->      20 selftests
->      19 mm
->      11 arm-soc
->       6 documentation
->       5 tracing
->       5 staging
->       5 libceph
->       5 ceph
->
-> Top ten authors:
->
->      36 akpm@linux-foundation.org
->      34 paulmck@linux.vnet.ibm.com
->      20 shuahkh@osg.samsung.com
->      11 olof@lixom.net
+Hi Laurent,
 
-This is expected. We keep a next-only index file of what merges we've
-done in arch/arm/arm-soc-for-next-contents.txt which accounts for
-these commits.
+Thanks for your feedback. You are right, this is the selftest code. Here
+are the traces just before the first warnings:
 
+  arm-lpae io-pgtable: selftest: pgsize_bitmap 0x40201000, IAS 32^M
+  arm-lpae io-pgtable: selftest: pgsize_bitmap 0x40201000, IAS 36^M
+  arm-lpae io-pgtable: selftest: pgsize_bitmap 0x40201000, IAS 40^M
 
--Olof
+There are a number of failed selftests and warnings, and in the end the
+PA-RISC machine won't boot.
+
+..
+> How about ARM || COMPILE_TEST ? It can still be useful to compile the module 
+> on other architectures.
+
+I think you are right and this is how it should be; thank you for the
+tips, I did not know about COMPILE_TEST. I'll resend a patch v2 right away.
+
+Best regards,
+
+V.
