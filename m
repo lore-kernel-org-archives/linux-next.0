@@ -1,90 +1,54 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH linux-next] iommu: Enable LPAE pagetable on ARM only
-Date: Tue, 24 Feb 2015 11:33:02 +0100
-Message-ID: <CAMuHMdXpSbEdrQ=1-m_MBv6RUb92waZ0BjLr1p790R9+L3Z8ww@mail.gmail.com>
-References: <1424621346-7822-1-git-send-email-vincent.stehle@laposte.net>
-	<2868840.GyWYJOzqWH@avalon>
+From: Bob Peterson <rpeterso@redhat.com>
+Subject: Re: linux-next: Tree for Feb 24 (build failure due to 'GFS2:
+ Allocate reservation during splice_write')
+Date: Tue, 24 Feb 2015 11:56:31 -0500 (EST)
+Message-ID: <920599110.18428494.1424796991441.JavaMail.zimbra@redhat.com>
+References: <20150224140257.729c3958@canb.auug.org.au> <20150224051950.GA20733@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <2868840.GyWYJOzqWH@avalon>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?Q?Vincent_Stehl=C3=A9?= <vincent.stehle-QFKgK+z4sOrR7s880joybQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3-phx2.redhat.com ([209.132.183.24]:33652 "EHLO
+	mx3-phx2.redhat.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753126AbbBXQ4h (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Feb 2015 11:56:37 -0500
+In-Reply-To: <20150224051950.GA20733@roeck-us.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gTW9uLCBGZWIgMjMsIDIwMTUgYXQgNTo1MiBQTSwgTGF1cmVudCBQaW5jaGFydAo8bGF1cmVu
-dC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPiB3cm90ZToKPiBPbiBTdW5kYXkgMjIgRmVicnVh
-cnkgMjAxNSAxNzowOTowNiBWaW5jZW50IFN0ZWhsw6kgd3JvdGU6Cj4+IExQQUUgaW9tbXUgcGFn
-ZSB0YWJsZSBtYWtlcyBzZW5zZSBvbmx5IGZvciBBUk0gYXJjaGl0ZWN0dXJlLiBBZGQgdGhlCj4+
-IGNvcnJlc3BvbmRpbmcgZGVwZW5kZW5jeSBpbiBLY29uZmlnLgo+Pgo+PiBUaGlzIGZpeGVzIHRo
-ZSBmb2xsb3dpbmcgcnVudGltZSB3YXJuaW5ncyBvbiBQQS1SSVNDIGFyY2hpdGVjdHVyZToKPgo+
-IEkgc3VwcG9zZSB0aGlzIGlzIGNhdXNlZCBieSB0aGUgc2VsZnRlc3QgY29kZSA/Cj4KPj4gICBX
-QVJOSU5HOiBhdCBkcml2ZXJzL2lvbW11L2lvLXBndGFibGUtYXJtLmM6NDEzCj4+ICAgTW9kdWxl
-cyBsaW5rZWQgaW46Cj4+ICAgQ1BVOiAwIFBJRDogMSBDb21tOiBzd2FwcGVyLzAgTm90IHRhaW50
-ZWQKPj4gMy4xOS4wLW5leHQtMjAxNTAyMjItMDAwMDItZ2M0MjAyNTYgIzIgdGFzazogMTdjYTAw
-MDAgdGk6IDE3Y2E4MDAwIHRhc2sudGk6Cj4+IDE3Y2E4MDAwCj4+Cj4+ICAgICAgICBZWnJ2V0VT
-VEhMTlhCQ1ZNY2JjYmNiY2JPR0ZSUVBESQo+PiAgIFBTVzogMDAwMDAwMDAwMDAwMDEwMDExMTEx
-MTExMDAwMDExMTEgTm90IHRhaW50ZWQKPj4gICByMDAtMDMgIDAwMDRmZjBmIDAwMDAwMDFiIDEw
-NDg3MWIwIDE3Y2E4M2MwCj4+ICAgcjA0LTA3ICAwMDAwMTAwMCAwMDAwMDAwMCAwMDAwMDAwMCAw
-MDAwMDAwMAo+PiAgIHIwOC0xMSAgMDAwMDAwMDAgNDAwMDEwMDAgMTAxM2IzNmMgMTdjYTgyNDgK
-Pj4gICByMTItMTUgIDAwMDAwMDgwIDE3ZTcxMmMwIDAwMDAwMDAwIDE3YzVlMTAwCj4+ICAgcjE2
-LTE5ICAwMDAwMDAwYyAxMDVkOGViMCA0MDAwMTAwMCBmZmZmZmZmZgo+PiAgIHIyMC0yMyAgMDAw
-MDAwMDAgMDA4MDAwMjAgMTA0ODcxN2MgMDAwMDAwMDAKPj4gICByMjQtMjcgIDAwMDAxMDAwIDAw
-MDAwMDAwIDAwMDAwMDA5IDEwNzc0Y2UwCj4+ICAgcjI4LTMxICAwMDAwMDAwMCAwMDAwMDAyNyAx
-N2NhODQ4MCAxMDQ4NmQ0NAo+PiAgIHNyMDAtMDMgIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAw
-IDAwMDAwMDAwCj4+ICAgc3IwNC0wNyAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAw
-MDAKPj4KPj4gICBJQVNROiAwMDAwMDAwMCAwMDAwMDAwMCBJQU9ROiAxMDQ4NmRmNCAxMDQ4NmRm
-OAo+PiAgICBJSVI6IDAzZmZlMDFmICAgIElTUjogMDAwMDAwMDAgIElPUjogMTdjODZlNTQKPj4g
-ICAgQ1BVOiAgICAgICAgMCAgIENSMzA6IDE3Y2E4MDAwIENSMzE6IDAwMDAwMDAyCj4+ICAgIE9S
-SUdfUjI4OiAwMDAwMDAwMQo+PiAgICBJQU9RWzBdOiBfX2FybV9scGFlX3VubWFwKzB4MTQ0LzB4
-NGNjCj4+ICAgIElBT1FbMV06IF9fYXJtX2xwYWVfdW5tYXArMHgxNDgvMHg0Y2MKPj4gICAgUlAo
-cjIpOiBhcm1fbHBhZV91bm1hcCsweDM0LzB4NmMKPj4gICBCYWNrdHJhY2U6Cj4+ICAgIFs8MTA0
-ODcxYjA+XSBhcm1fbHBhZV91bm1hcCsweDM0LzB4NmMKPj4gICAgWzwxMDEyNzk0ND5dIDB4MTAx
-Mjc5NDQKPj4gICAgWzwxMDE2OGVlMD5dIGRvX29uZV9pbml0Y2FsbCsweDEyOC8weDFkYwo+PiAg
-ICBbPDEwMTAyOGZjPl0gMHgxMDEwMjhmYwo+PiAgICBbPDEwMTYxYjQ4Pl0ga2VybmVsX2luaXQr
-MHgxYy8weDExOAo+PiAgICBbPDEwMTVkMDFjPl0gZW5kX2ZhdWx0X3ZlY3RvcisweDFjLzB4MjQK
-Pj4gICAgWzwxMDE3NjJlYz5dIHNhdmVfc3RhY2tfdHJhY2UrMHgyOC8weDYwCj4+Cj4+IFNpZ25l
-ZC1vZmYtYnk6IFZpbmNlbnQgU3RlaGzDqSA8dmluY2VudC5zdGVobGVAbGFwb3N0ZS5uZXQ+Cj4+
-IENjOiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+
-Cj4+IENjOiBXaWxsIERlYWNvbiA8d2lsbC5kZWFjb25AYXJtLmNvbT4KPj4gLS0tCj4+Cj4+Cj4+
-IEhpLAo+Pgo+PiBUaGlzIGNhbiBiZSBzZWVuIHdpdGggZS5nLiBMaW51eCBuZXh0LTIwMTUwMjIy
-IG9uIHBhcmlzYyB3aXRoIGFsbG1vZGNvbmZpZy4KPj4KPj4gQmVzdCByZWdhcmRzLAo+Pgo+PiBW
-Lgo+Pgo+Pgo+PiAgZHJpdmVycy9pb21tdS9LY29uZmlnIHwgMSArCj4+ICAxIGZpbGUgY2hhbmdl
-ZCwgMSBpbnNlcnRpb24oKykKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW9tbXUvS2NvbmZp
-ZyBiL2RyaXZlcnMvaW9tbXUvS2NvbmZpZwo+PiBpbmRleCBiYWEwZDk3Li5jNzNmZDcyIDEwMDY0
-NAo+PiAtLS0gYS9kcml2ZXJzL2lvbW11L0tjb25maWcKPj4gKysrIGIvZHJpdmVycy9pb21tdS9L
-Y29uZmlnCj4+IEBAIC0yMiw2ICsyMiw3IEBAIGNvbmZpZyBJT01NVV9JT19QR1RBQkxFCj4+Cj4+
-ICBjb25maWcgSU9NTVVfSU9fUEdUQUJMRV9MUEFFCj4+ICAgICAgIGJvb2wgIkFSTXY3L3Y4IExv
-bmcgRGVzY3JpcHRvciBGb3JtYXQiCj4+ICsgICAgIGRlcGVuZHMgb24gQVJNCj4KPiBIb3cgYWJv
-dXQgQVJNIHx8IENPTVBJTEVfVEVTVCA/IEl0IGNhbiBzdGlsbCBiZSB1c2VmdWwgdG8gY29tcGls
-ZSB0aGUgbW9kdWxlCj4gb24gb3RoZXIgYXJjaGl0ZWN0dXJlcy4KCkNPTVBJTEVfVEVTVCBpcyBt
-ZWFudCBmb3IgdGVzdC1jb21waWxpbmcgZHJpdmVycyBvciBzdWJzeXN0ZW1zIHRoYXQgYXJlIG5v
-dAp1c2VmdWwgb24gYWxsIHBsYXRmb3Jtcy4gSU1ITyBDT01QSUxFX1RFU1Qga2VybmVscyBhcmUg
-c3RpbGwgc3VwcG9zZWQgdG8gYm9vdAp3aXRob3V0IGlsbCBlZmZlY3RzLgoKTm93LCBJIHVuZGVy
-c3RhbmQgdGhlIGlzc3VlIG9uIFBBLVJJU0MgaXMgd2l0aCB0aGUgc2VsZnRlc3QsIG5vdCB3aXRo
-IHRoZSBhY3R1YWwKSU9NTVVfSU9fUEdUQUJMRV9MUEFFIG1vZHVsZT8gVGhlbiBJT01NVV9JT19Q
-R1RBQkxFX0xQQUUKY2FuIGRlcGVuZCBvbiBBUk0gfHwgQ09NUElMRV9URVNUICh8fCBBUk02NCwg
-Y2ZyLiBMYXVyZW50J3MgbGF0ZXIgZW1haWwpLgoKQnV0IHRoZSBzZWxmdGVzdCBzaG91bGQgcHJv
-dGVjdCBpdHNlbGYgYWdhaW5zdCBydW5uaW5nIG9uIG5vbi1BUk0sIGVpdGhlcgpieSBtYWtpbmcg
-SU9NTVVfSU9fUEdUQUJMRV9MUEFFX1NFTEZURVNUIGRlcGVuZCBvbiBBUk0oNjQpCih3aXRob3V0
-ICJ8fCBDT01QSUxFX1RFU1QiKSwgb3IgYnkgYWRkaW5nIGEgY2hlY2sgdG8gYXJtX2xwYWVfZG9f
-c2VsZnRlc3RzKCksCnRvIHBsZWFzZSBhbGwgY29tcGlsZS10ZXN0ZXJzLgoKR3J7b2V0amUsZWV0
-aW5nfXMsCgogICAgICAgICAgICAgICAgICAgICAgICBHZWVydAoKLS0KR2VlcnQgVXl0dGVyaG9l
-dmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1t
-NjhrLm9yZwoKSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUs
-IEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dAp3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxp
-c3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuCiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KaW9tbXUgbWFpbGluZyBsaXN0Cmlv
-bW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8vbGlzdHMubGludXhmb3VuZGF0
-aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
+----- Original Message -----
+> On Tue, Feb 24, 2015 at 02:02:57PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20150223:
+> > 
+> > The hid tree gained a conflict against Linus' tree.
+> > 
+> > The drm-misc tree gained a build failure for which I applied a merge
+> > fix patch.
+> > 
+> > Non-merge commits (relative to Linus' tree): 1108
+> >  718 files changed, 18557 insertions(+), 17357 deletions(-)
+> > 
+> > ----------------------------------------------------------------------------
+> > 
+> 
+> Building powerpc:ppc6xx_defconfig ... failed
+> --------------
+> Error log:
+> fs/gfs2/file.c:1126:18: error: 'gfs2_file_splice_write' undeclared here (not
+> in a function)
+>   .splice_write = gfs2_file_splice_write,
+>                     ^
+> 		    make[2]: *** [fs/gfs2/file.o] Error 1
+
+Hi Guenter,
+
+Due to other errors, I rebased the linux-gfs2 tree and pushed a new patch to fix
+this problem. Sorry about that.
+
+Regards,
+
+Bob Peterson
