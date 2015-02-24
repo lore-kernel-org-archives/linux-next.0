@@ -1,54 +1,47 @@
-From: Bob Peterson <rpeterso@redhat.com>
-Subject: Re: linux-next: Tree for Feb 24 (build failure due to 'GFS2:
- Allocate reservation during splice_write')
-Date: Tue, 24 Feb 2015 11:56:31 -0500 (EST)
-Message-ID: <920599110.18428494.1424796991441.JavaMail.zimbra@redhat.com>
-References: <20150224140257.729c3958@canb.auug.org.au> <20150224051950.GA20733@roeck-us.net>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: Linux 4.0-rc1 out..
+Date: Tue, 24 Feb 2015 14:40:34 -0500
+Message-ID: <20150224194034.GA3042@home.goodmis.org>
+References: <CA+55aFzS==STcTbwabdvw=7_xX08kkUd=g2Q4XbWJzKbpjyN1A@mail.gmail.com>
+ <20150223161541.22df98cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3-phx2.redhat.com ([209.132.183.24]:33652 "EHLO
-	mx3-phx2.redhat.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753126AbbBXQ4h (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Feb 2015 11:56:37 -0500
-In-Reply-To: <20150224051950.GA20733@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150223161541.22df98cc@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
------ Original Message -----
-> On Tue, Feb 24, 2015 at 02:02:57PM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20150223:
-> > 
-> > The hid tree gained a conflict against Linus' tree.
-> > 
-> > The drm-misc tree gained a build failure for which I applied a merge
-> > fix patch.
-> > 
-> > Non-merge commits (relative to Linus' tree): 1108
-> >  718 files changed, 18557 insertions(+), 17357 deletions(-)
-> > 
-> > ----------------------------------------------------------------------------
-> > 
+On Mon, Feb 23, 2015 at 04:15:41PM +1100, Stephen Rothwell wrote:
 > 
-> Building powerpc:ppc6xx_defconfig ... failed
-> --------------
-> Error log:
-> fs/gfs2/file.c:1126:18: error: 'gfs2_file_splice_write' undeclared here (not
-> in a function)
->   .splice_write = gfs2_file_splice_write,
->                     ^
-> 		    make[2]: *** [fs/gfs2/file.o] Error 1
+> There are also 265 commits in next-20150209 that didn't make it into
+> v4.0-rc1.
+> 
+> Top ten first word of commit summary:
+> 
+>      25 rcu
+>      24 arm
+>      20 selftests
+>      19 mm
+>      11 arm-soc
+>       6 documentation
+>       5 tracing
 
-Hi Guenter,
+Yep, that was my tracefs code. It's all ready to go mainline, but then
+I did some stress testing on perf, and found that perf hard coded the
+mount id into itself, and ignored traceevents if they were not in the
+debugfs system (even if the path was the same!). I sent patches to fix
+this but because those patches didn't make it into the release, I decide
+to not push this knowing it will cause issues with perf.
 
-Due to other errors, I rebased the linux-gfs2 tree and pushed a new patch to fix
-this problem. Sorry about that.
+Thus, tracefs needs to wait till perf is updated before I push it out.
 
-Regards,
+-- Steve
 
-Bob Peterson
+
+>       5 staging
+>       5 libceph
+>       5 ceph
+> 
