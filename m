@@ -1,83 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error fetching the ipmi tree
-Date: Tue, 24 Feb 2015 11:27:01 +1100
-Message-ID: <20150224112701.6b35d6f0@canb.auug.org.au>
-References: <20150223102312.7029616b@canb.auug.org.au>
-	<54EA8C99.50000@acm.org>
-	<20150224072004.534ccb5a@canb.auug.org.au>
-	<54EB9F33.6030702@acm.org>
-	<20150224095449.243040b5@canb.auug.org.au>
-	<54EBC09E.1000204@acm.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Date: Tue, 24 Feb 2015 11:41:40 +1100
+Message-ID: <20150224114140.3d310574@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EHO1ryaC0LquRukNNuH9=L4"; protocol="application/pgp-signature"
+ boundary="Sig_/FCwSyTSeHiTLCCXOevkIImc"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37034 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38251 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752028AbbBXA1H (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Feb 2015 19:27:07 -0500
-In-Reply-To: <54EBC09E.1000204@acm.org>
+	id S1751812AbbBXAlq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Feb 2015 19:41:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Corey Minyard <minyard@acm.org>
-Cc: Corey Minyard <cminyard@mvista.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
---Sig_/EHO1ryaC0LquRukNNuH9=L4
+--Sig_/FCwSyTSeHiTLCCXOevkIImc
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Corey,
+Hi all,
 
-On Mon, 23 Feb 2015 18:06:54 -0600 Corey Minyard <minyard@acm.org> wrote:
->
-> On 02/23/2015 04:54 PM, Stephen Rothwell wrote:
-> > Hi Corey,
-> >
-> > On Mon, 23 Feb 2015 15:44:19 -0600 Corey Minyard <minyard@acm.org> wrot=
-e:
-> >> Sourcefoge is definitely having issues:
-> >>
-> >>     [cminyard@t430 linux-ipmi]$ git push origin for-next
-> >>     fatal: '/git/p/openipmi/linux-ipmi' does not appear to be a git
-> >>     repository
-> >>     fatal: Could not read from remote repository.
-> >>
-> >>     Please make sure you have the correct access rights
-> >>     and the repository exists.
-> >>
-> >> After a while it started working, and the tag was there.  I've verified
-> >> that everything is ok from a different machine.
-> > I see the problem.  I expect for-next to be a branch, but it is a tag.
-> > It is a real pain to pull a tag into a shared tree like mine (there
-> > could be a for-next tag in every tree I fetch from ...).
-> Oops, I messed that up, I mixing up procedures.  It's fixed.
+After merging the drm-misc tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Excellent, thanks.
+drivers/gpu/drm/tegra/drm.c: In function 'tegra_atomic_complete':
+drivers/gpu/drm/tegra/drm.c:58:2: error: implicit declaration of function '=
+drm_atomic_helper_commit_pre_planes' [-Werror=3Dimplicit-function-declarati=
+on]
+  drm_atomic_helper_commit_pre_planes(drm, state);
+  ^
+drivers/gpu/drm/tegra/drm.c:60:2: error: implicit declaration of function '=
+drm_atomic_helper_commit_post_planes' [-Werror=3Dimplicit-function-declarat=
+ion]
+  drm_atomic_helper_commit_post_planes(drm, state);
+  ^
+
+Caused by commit ad9e7c89a4e4 ("drm/atomic-helper: Rename
+commmit_post/pre_planes") interacting with commit 1503ca47d76e
+("drm/tegra: Atomic conversion, phase 3, step 3") from v4.0-rc1.
+
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 24 Feb 2015 11:37:11 +1100
+Subject: [PATCH] drm/atomic-helper: fix for Rename commmit_post/pre_planes
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/tegra/drm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 7dd328d77996..5f1880766110 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -55,9 +55,9 @@ static void tegra_atomic_complete(struct tegra_drm *tegra,
+ 	 * current layout.
+ 	 */
+=20
+-	drm_atomic_helper_commit_pre_planes(drm, state);
++	drm_atomic_helper_commit_modeset_disables(drm, state);
+ 	drm_atomic_helper_commit_planes(drm, state);
+-	drm_atomic_helper_commit_post_planes(drm, state);
++	drm_atomic_helper_commit_modeset_enables(drm, state);
+=20
+ 	drm_atomic_helper_wait_for_vblanks(drm, state);
+=20
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/EHO1ryaC0LquRukNNuH9=L4
+--Sig_/FCwSyTSeHiTLCCXOevkIImc
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU68VZAAoJEMDTa8Ir7ZwVNsEP/3Hg6YMc7p/AunjMWUnUkybZ
-sjlOxLEy033hfOhQk3gCckKqZe/nNKqlo6tTEU7c50orNVR6DW+3DLV1MI75rHVN
-MT0F77A7YtPSxN6sd7LOeq0lC7O3dD001DXU4fy0SQPk8Kmc/fRdksWI39c+B+J+
-J9+owyrtsfcIwYYXCwIDZjkyr5Ub8t9bkgprv/8K/KKAy5WQhlLXlmCVKQ+origC
-Df/NhLtwkkpQnJjnQagjpkPoWaJuCusrCiXCvFVE55+JyV+fFoPvhY8O4lcwOSrN
-d3vimToOAkzZi07gchwXJndKX11jlnRkjBWZFWYesYThnFiA59JTSAOZqfJUa2wF
-jYvY0KD2iPGkBGCk0JtTaQ0Sm9JOYwNBGZsQ8bzRJU9fVx16z8viEZEAX81vcX1n
-jwosgFNJcK4EIXZRqezitCw+nIedOf8TVozsRqiDvrUHQpmgCdKVhn91zz6exv/P
-brX6jYZpeiEpHarfrGCDkb+ktj8NaQv01jWOIW8zdipfSeNqFD9IJqftIHbi7q+Q
-r7Sa6U/oMDPhQyRANzbhmNKYEZcHf9YBywnXK8wAVj76C0x5wejHUWZjCzO/XKRA
-lAfAcxtXFxce9Rl+kXqZDmRzVc3Y/7jgMICabZLZJ6DNizhgKPWZK9pT99eh3ghK
-x3DXelcxelwD5K830iXV
-=ik19
+iQIcBAEBCAAGBQJU68jIAAoJEMDTa8Ir7ZwVHOYP/2C1G2aqVwktccAg2e7dUQSa
+BC4N/RRo0Q8NitzS3p36FBLOFHmpt5RaA9Y1GX7szcF32R+fhQUogyFsZ7iys5Rr
+B84W/IoVu2EYm319LHw+NwOY8f5z7yl9wQd5DMMEstAKLTHg4eGZQkXt/BDrndGL
+p8LmA3BQX5IXm6+RTAeZ4fhwva1uw1b1qwm9FCdkinCBeytEqQM0FikwFaoX5Rds
+i2c7mz1kr/jsoHWV7y4nsODjlXPyk54M9/pA4hzba4l/joYTeDq5po60NwSLC6kr
+OLVpGeJILPdP655K1pQ4LfU0SG9Nlmol7gbtdqrLiMtkeRrd5ONQkBjuk7yR+LTh
+FjMa4O/biM+JPfYd5OC7vx1TwU515x6MMsHLJXVATet4k1UEQb9ASvpGNvkdVZKP
+6S7WOSZNgBk8VU1C5A0NYe0uaXNs9JPTk6vUmIqQt9/FV/x1QDi6moMB/6qO/Por
+t3eSK6xx2zXXcpEKYxMzrqpRj7jeXR9l9GN/dpYgZHrdvRNaxVbz94j41/zt5hLV
+hwq3R2ela2ctIspcJpNc5ysMnX5dJyMjXIUzYj3dNmR8jKm590te6947q93pkNCe
+Ra7EY1EJHK+h7q5a/CQR7T+dgc6lmxhl55Hou0sgJu6jTzyOq5byswxTeKUoq/XP
+5WItS15ZiptqjZ35vsAJ
+=c5oO
 -----END PGP SIGNATURE-----
 
---Sig_/EHO1ryaC0LquRukNNuH9=L4--
+--Sig_/FCwSyTSeHiTLCCXOevkIImc--
