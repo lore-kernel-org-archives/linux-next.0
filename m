@@ -1,60 +1,78 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 linux-next] iommu: Enable LPAE pagetable on ARM only
-Date: Tue, 24 Feb 2015 01:58:17 +0200
-Message-ID: <4372575.Lr7FssDpKu@avalon>
-References: <2868840.GyWYJOzqWH@avalon> <1424735721-32313-1-git-send-email-vincent.stehle@laposte.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the hid tree with Linus' tree
+Date: Tue, 24 Feb 2015 11:00:48 +1100
+Message-ID: <20150224110048.209cacba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=LXglObxhfL4FaOid4bB/bY"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49729 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751845AbbBWX5R convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Feb 2015 18:57:17 -0500
-In-Reply-To: <1424735721-32313-1-git-send-email-vincent.stehle@laposte.net>
+Received: from ozlabs.org ([103.22.144.67]:50428 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751848AbbBXABB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Feb 2015 19:01:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vincent =?ISO-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>
-Cc: iommu@lists.linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Will Deacon <will.deacon@arm.com>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-Hi Vincent,
+--Sig_/=LXglObxhfL4FaOid4bB/bY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the patch.
+Hi Jiri,
 
-On Tuesday 24 February 2015 00:55:21 Vincent Stehl=E9 wrote:
-> LPAE iommu page table makes sense only for ARM architecture. Add the
-> corresponding dependency in Kconfig (and enable for COMPILE_TEST, too=
-, as
-> per Laurent's suggestion).
->=20
-> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@laposte.net>
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Will Deacon <will.deacon@arm.com>
+Today's linux-next merge of the hid tree got a conflict in
+drivers/iio/common/hid-sensors/hid-sensor-trigger.c between commit
+2b89635e9a9e ("iio: hid_sensor_hub: Common PM functions") from Linus'
+tree and commit 6adc83fca74a ("HID: hid-sensor-hub: Enhance get feature
+report API") from the hid tree.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->=20
-> Changes since v1:
-> - Add condition on COMPILE_TEST
->=20
->  drivers/iommu/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index baa0d97..27cd88d 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -22,6 +22,7 @@ config IOMMU_IO_PGTABLE
->=20
->  config IOMMU_IO_PGTABLE_LPAE
->  	bool "ARMv7/v8 Long Descriptor Format"
-> +	depends on ARM || COMPILE_TEST
->  	select IOMMU_IO_PGTABLE
->  	help
->  	  Enable support for the ARM long descriptor pagetable format.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
-Regards,
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Laurent Pinchart
+diff --cc drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+index 2f1d535b94c4,910e82a7d06e..000000000000
+--- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
++++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+@@@ -80,11 -77,8 +81,11 @@@ static int _hid_sensor_power_state(stru
+  	}
+ =20
+  	sensor_hub_get_feature(st->hsdev, st->power_state.report_id,
+- 					st->power_state.index,
+- 					&state_val);
++ 			       st->power_state.index,
++ 			       sizeof(state_val), &state_val);
+ +	if (state && poll_value)
+ +		msleep_interruptible(poll_value * 2);
+ +
+  	return 0;
+  }
+  EXPORT_SYMBOL(hid_sensor_power_state);
+
+--Sig_/=LXglObxhfL4FaOid4bB/bY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU6787AAoJEMDTa8Ir7ZwV5asP/iBWg/85iVvjApEnBpO5N50C
+dpyDL/JWDLLQWQwrnjqlFSOaHDz1WEtQcFL2A2+ZbKwM8719uVn1EtJIGllbCe4L
+KQ4f+bE8sDlEPxc1Y0TQZJt4Gpotn9lrRd9VWAnY0tPugfBg/rUFbs30bKUaW1YC
+CJbCHwqv/+9TRfuu9gAJqWHU7oW4hD4VgnnTTH9Z3IvLHXo9+UG9LjGBv/Mj+SLh
+iJFWdz6W9XuDXcv4X7uQqcy+HHeVPUWVFheJADU4+FRSp74TB1Ama364V75u0H8t
+Qe5QFkON23NvO+4hNSHthNe6IE2opHsGf329/No6lv9AavCq+WcgVJ3L+D8AuEjr
+FjKX+TiZrIMuDdcwPnQKxBlXlWyvbms8Ui90afZmKi8JGy/5hx4bsQs5rn8tAep8
+DWt6Gv1qJG/M4qAx+nvxFUKIZpwShs0GSAGct1ueMzzFukS/zzBoa0N8V4lafgz6
+sgdunMsJVuTLhhkvSEq6KHTh4lUs/HUmNdSLGeXo6FEO5o9nOt3EyfwYaJn0i+OG
+wy97WPqFAFMYgNA0aK+gJ48nPoD6Mxojrl84hhka1pz9aQCmUbO9jK6TiBpDzIP6
+6FzCnql5N2A4Nc9F+GhF9klZlUbRbzfwrkJzrTXZgRL7jddui7cP386QNwx+oDLB
+SEk/tb/P6Q4KboJkkylQ
+=gC/J
+-----END PGP SIGNATURE-----
+
+--Sig_/=LXglObxhfL4FaOid4bB/bY--
