@@ -1,77 +1,83 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v3 linux-next] iommu: Enable LPAE pagetable on ARM and ARM64 only
-Date: Tue, 24 Feb 2015 02:23:48 +0200
-Message-ID: <6851919.VIGEV8htgx@avalon>
-References: <3203874.zEMjzr0PS0@avalon> <1424737221-1193-1-git-send-email-vincent.stehle@laposte.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: error fetching the ipmi tree
+Date: Tue, 24 Feb 2015 11:27:01 +1100
+Message-ID: <20150224112701.6b35d6f0@canb.auug.org.au>
+References: <20150223102312.7029616b@canb.auug.org.au>
+	<54EA8C99.50000@acm.org>
+	<20150224072004.534ccb5a@canb.auug.org.au>
+	<54EB9F33.6030702@acm.org>
+	<20150224095449.243040b5@canb.auug.org.au>
+	<54EBC09E.1000204@acm.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EHO1ryaC0LquRukNNuH9=L4"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49752 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752314AbbBXAWq convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Feb 2015 19:22:46 -0500
-In-Reply-To: <1424737221-1193-1-git-send-email-vincent.stehle@laposte.net>
+Received: from ozlabs.org ([103.22.144.67]:37034 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752028AbbBXA1H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Feb 2015 19:27:07 -0500
+In-Reply-To: <54EBC09E.1000204@acm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vincent =?ISO-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>
-Cc: iommu@lists.linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Will Deacon <will.deacon@arm.com>
+To: Corey Minyard <minyard@acm.org>
+Cc: Corey Minyard <cminyard@mvista.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday 24 February 2015 01:20:21 Vincent Stehl=E9 wrote:
-> LPAE iommu page table makes sense only for ARM and ARM64 architecture=
-s. Add
-> the corresponding dependency in Kconfig (and enable for COMPILE_TEST,=
- too,
-> as per Laurent's suggestion).
->=20
-> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@laposte.net>
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Will Deacon <will.deacon@arm.com>
+--Sig_/EHO1ryaC0LquRukNNuH9=L4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Now,
+Hi Corey,
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Mon, 23 Feb 2015 18:06:54 -0600 Corey Minyard <minyard@acm.org> wrote:
+>
+> On 02/23/2015 04:54 PM, Stephen Rothwell wrote:
+> > Hi Corey,
+> >
+> > On Mon, 23 Feb 2015 15:44:19 -0600 Corey Minyard <minyard@acm.org> wrot=
+e:
+> >> Sourcefoge is definitely having issues:
+> >>
+> >>     [cminyard@t430 linux-ipmi]$ git push origin for-next
+> >>     fatal: '/git/p/openipmi/linux-ipmi' does not appear to be a git
+> >>     repository
+> >>     fatal: Could not read from remote repository.
+> >>
+> >>     Please make sure you have the correct access rights
+> >>     and the repository exists.
+> >>
+> >> After a while it started working, and the tag was there.  I've verified
+> >> that everything is ok from a different machine.
+> > I see the problem.  I expect for-next to be a branch, but it is a tag.
+> > It is a real pain to pull a tag into a shared tree like mine (there
+> > could be a for-next tag in every tree I fetch from ...).
+> Oops, I messed that up, I mixing up procedures.  It's fixed.
 
-> ---
->=20
-> On 02/24/2015 01:02 AM, Laurent Pinchart wrote:
-> > Shouldn't this be ARM || ARM64 || COMPILE_TEST ?
->=20
-> Hi Laurent,
->=20
-> It makes perfect sense; thanks. I completely forgot, as I have yet to=
- see
-> one of those. Here is v3 of the patch.
->=20
-> Best regards,
->=20
-> V.
->=20
->=20
-> Changes since v2:
-> - Add condition on ARM64
->=20
-> Changes since v1:
-> - Add condition on COMPILE_TEST
->=20
->=20
->  drivers/iommu/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index baa0d97..a440922 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -22,6 +22,7 @@ config IOMMU_IO_PGTABLE
->=20
->  config IOMMU_IO_PGTABLE_LPAE
->  	bool "ARMv7/v8 Long Descriptor Format"
-> +	depends on ARM || ARM64 || COMPILE_TEST
->  	select IOMMU_IO_PGTABLE
->  	help
->  	  Enable support for the ARM long descriptor pagetable format.
+Excellent, thanks.
 
 --=20
-Regards,
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Laurent Pinchart
+--Sig_/EHO1ryaC0LquRukNNuH9=L4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU68VZAAoJEMDTa8Ir7ZwVNsEP/3Hg6YMc7p/AunjMWUnUkybZ
+sjlOxLEy033hfOhQk3gCckKqZe/nNKqlo6tTEU7c50orNVR6DW+3DLV1MI75rHVN
+MT0F77A7YtPSxN6sd7LOeq0lC7O3dD001DXU4fy0SQPk8Kmc/fRdksWI39c+B+J+
+J9+owyrtsfcIwYYXCwIDZjkyr5Ub8t9bkgprv/8K/KKAy5WQhlLXlmCVKQ+origC
+Df/NhLtwkkpQnJjnQagjpkPoWaJuCusrCiXCvFVE55+JyV+fFoPvhY8O4lcwOSrN
+d3vimToOAkzZi07gchwXJndKX11jlnRkjBWZFWYesYThnFiA59JTSAOZqfJUa2wF
+jYvY0KD2iPGkBGCk0JtTaQ0Sm9JOYwNBGZsQ8bzRJU9fVx16z8viEZEAX81vcX1n
+jwosgFNJcK4EIXZRqezitCw+nIedOf8TVozsRqiDvrUHQpmgCdKVhn91zz6exv/P
+brX6jYZpeiEpHarfrGCDkb+ktj8NaQv01jWOIW8zdipfSeNqFD9IJqftIHbi7q+Q
+r7Sa6U/oMDPhQyRANzbhmNKYEZcHf9YBywnXK8wAVj76C0x5wejHUWZjCzO/XKRA
+lAfAcxtXFxce9Rl+kXqZDmRzVc3Y/7jgMICabZLZJ6DNizhgKPWZK9pT99eh3ghK
+x3DXelcxelwD5K830iXV
+=ik19
+-----END PGP SIGNATURE-----
+
+--Sig_/EHO1ryaC0LquRukNNuH9=L4--
