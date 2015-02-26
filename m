@@ -1,124 +1,135 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH linux-next] iommu: Enable LPAE pagetable on ARM only
-Date: Wed, 25 Feb 2015 10:00:45 +0000
-Message-ID: <20150225100044.GC20673@arm.com>
-References: <1424621346-7822-1-git-send-email-vincent.stehle@laposte.net>
- <2868840.GyWYJOzqWH@avalon>
- <CAMuHMdXpSbEdrQ=1-m_MBv6RUb92waZ0BjLr1p790R9+L3Z8ww@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Thu, 26 Feb 2015 11:15:36 +1100
+Message-ID: <20150226111536.42e221b8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXpSbEdrQ=1-m_MBv6RUb92waZ0BjLr1p790R9+L3Z8ww@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Vincent =?iso-8859-1?Q?Stehl=E9?= <vincent.stehle@laposte.net>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/BZmHcv/MbTU_y=k0diRyxl4"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40936 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752891AbbBZAPn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Feb 2015 19:15:43 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, Jani Nikula <jani.nikula@intel.com>
 
-On Tue, Feb 24, 2015 at 10:33:02AM +0000, Geert Uytterhoeven wrote:
-> On Mon, Feb 23, 2015 at 5:52 PM, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> > On Sunday 22 February 2015 17:09:06 Vincent Stehl=E9 wrote:
-> >> LPAE iommu page table makes sense only for ARM architecture. Add t=
-he
-> >> corresponding dependency in Kconfig.
-> >>
-> >> This fixes the following runtime warnings on PA-RISC architecture:
-> >
-> > I suppose this is caused by the selftest code ?
-> >
-> >>   WARNING: at drivers/iommu/io-pgtable-arm.c:413
-> >>   Modules linked in:
-> >>   CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-> >> 3.19.0-next-20150222-00002-gc420256 #2 task: 17ca0000 ti: 17ca8000=
- task.ti:
-> >> 17ca8000
-> >>
-> >>        YZrvWESTHLNXBCVMcbcbcbcbOGFRQPDI
-> >>   PSW: 00000000000001001111111100001111 Not tainted
-> >>   r00-03  0004ff0f 0000001b 104871b0 17ca83c0
-> >>   r04-07  00001000 00000000 00000000 00000000
-> >>   r08-11  00000000 40001000 1013b36c 17ca8248
-> >>   r12-15  00000080 17e712c0 00000000 17c5e100
-> >>   r16-19  0000000c 105d8eb0 40001000 ffffffff
-> >>   r20-23  00000000 00800020 1048717c 00000000
-> >>   r24-27  00001000 00000000 00000009 10774ce0
-> >>   r28-31  00000000 00000027 17ca8480 10486d44
-> >>   sr00-03  00000000 00000000 00000000 00000000
-> >>   sr04-07  00000000 00000000 00000000 00000000
-> >>
-> >>   IASQ: 00000000 00000000 IAOQ: 10486df4 10486df8
-> >>    IIR: 03ffe01f    ISR: 00000000  IOR: 17c86e54
-> >>    CPU:        0   CR30: 17ca8000 CR31: 00000002
-> >>    ORIG_R28: 00000001
-> >>    IAOQ[0]: __arm_lpae_unmap+0x144/0x4cc
-> >>    IAOQ[1]: __arm_lpae_unmap+0x148/0x4cc
-> >>    RP(r2): arm_lpae_unmap+0x34/0x6c
-> >>   Backtrace:
-> >>    [<104871b0>] arm_lpae_unmap+0x34/0x6c
-> >>    [<10127944>] 0x10127944
-> >>    [<10168ee0>] do_one_initcall+0x128/0x1dc
-> >>    [<101028fc>] 0x101028fc
-> >>    [<10161b48>] kernel_init+0x1c/0x118
-> >>    [<1015d01c>] end_fault_vector+0x1c/0x24
-> >>    [<101762ec>] save_stack_trace+0x28/0x60
-> >>
-> >> Signed-off-by: Vincent Stehl=E9 <vincent.stehle@laposte.net>
-> >> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >> Cc: Will Deacon <will.deacon@arm.com>
-> >> ---
-> >>
-> >>
-> >> Hi,
-> >>
-> >> This can be seen with e.g. Linux next-20150222 on parisc with allm=
-odconfig.
-> >>
-> >> Best regards,
-> >>
-> >> V.
-> >>
-> >>
-> >>  drivers/iommu/Kconfig | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> >> index baa0d97..c73fd72 100644
-> >> --- a/drivers/iommu/Kconfig
-> >> +++ b/drivers/iommu/Kconfig
-> >> @@ -22,6 +22,7 @@ config IOMMU_IO_PGTABLE
-> >>
-> >>  config IOMMU_IO_PGTABLE_LPAE
-> >>       bool "ARMv7/v8 Long Descriptor Format"
-> >> +     depends on ARM
-> >
-> > How about ARM || COMPILE_TEST ? It can still be useful to compile t=
-he module
-> > on other architectures.
->=20
-> COMPILE_TEST is meant for test-compiling drivers or subsystems that a=
-re not
-> useful on all platforms. IMHO COMPILE_TEST kernels are still supposed=
- to boot
-> without ill effects.
->=20
-> Now, I understand the issue on PA-RISC is with the selftest, not with=
- the actual
-> IOMMU_IO_PGTABLE_LPAE module? Then IOMMU_IO_PGTABLE_LPAE
-> can depend on ARM || COMPILE_TEST (|| ARM64, cfr. Laurent's later ema=
-il).
->=20
-> But the selftest should protect itself against running on non-ARM, ei=
-ther
-> by making IOMMU_IO_PGTABLE_LPAE_SELFTEST depend on ARM(64)
-> (without "|| COMPILE_TEST"), or by adding a check to arm_lpae_do_self=
-tests(),
-> to please all compile-testers.
+--Sig_/BZmHcv/MbTU_y=k0diRyxl4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Perhaps, but actually the issues reported by the self-test are *real* b=
-ugs
-that I've now got fixes for. They just don't show up on arm platforms
-because of different right shift behaviour.
+Hi all,
 
-Will
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/intel_display.c between commit 62e537f8d568
+("drm/i915: Fix frontbuffer false positve") from the drm-intel-fixes
+tree and commit 6a418fcd84d6 ("drm/i915: Use fb modifiers in
+intel_check_cursor_plane") from the drm-intel tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/i915/intel_display.c
+index 3117679299a6,2ac93909cfc5..000000000000
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@@ -2371,11 -2376,8 +2376,12 @@@ intel_alloc_plane_obj(struct intel_crt
+  	struct drm_device *dev =3D crtc->base.dev;
+  	struct drm_i915_gem_object *obj =3D NULL;
+  	struct drm_mode_fb_cmd2 mode_cmd =3D { 0 };
++ 	struct drm_framebuffer *fb =3D &plane_config->fb->base;
+ -	u32 base =3D plane_config->base;
+ +	u32 base_aligned =3D round_down(plane_config->base, PAGE_SIZE);
+ +	u32 size_aligned =3D round_up(plane_config->base + plane_config->size,
+ +				    PAGE_SIZE);
+ +
+ +	size_aligned -=3D base_aligned;
+ =20
+  	if (plane_config->size =3D=3D 0)
+  		return false;
+@@@ -6640,9 -6678,10 +6693,10 @@@ i9xx_get_initial_plane_config(struct in
+  	fb->pitches[0] =3D val & 0xffffffc0;
+ =20
+  	aligned_height =3D intel_fb_align_height(dev, fb->height,
+- 					       plane_config->tiling);
++ 					       fb->pixel_format,
++ 					       fb->modifier[0]);
+ =20
+ -	plane_config->size =3D PAGE_ALIGN(fb->pitches[0] * aligned_height);
+ +	plane_config->size =3D fb->pitches[0] * aligned_height;
+ =20
+  	DRM_DEBUG_KMS("pipe/plane %c/%d with fb: size=3D%dx%d@%d, offset=3D%x, p=
+itch %d, size 0x%x\n",
+  		      pipe_name(pipe), plane, fb->width, fb->height,
+@@@ -7677,9 -7721,10 +7736,10 @@@ skylake_get_initial_plane_config(struc
+  	fb->pitches[0] =3D (val & 0x3ff) * stride_mult;
+ =20
+  	aligned_height =3D intel_fb_align_height(dev, fb->height,
+- 					       plane_config->tiling);
++ 					       fb->pixel_format,
++ 					       fb->modifier[0]);
+ =20
+ -	plane_config->size =3D ALIGN(fb->pitches[0] * aligned_height, PAGE_SIZE);
+ +	plane_config->size =3D fb->pitches[0] * aligned_height;
+ =20
+  	DRM_DEBUG_KMS("pipe %c with fb: size=3D%dx%d@%d, offset=3D%x, pitch %d, =
+size 0x%x\n",
+  		      pipe_name(pipe), fb->width, fb->height,
+@@@ -7768,9 -7818,10 +7833,10 @@@ ironlake_get_initial_plane_config(struc
+  	fb->pitches[0] =3D val & 0xffffffc0;
+ =20
+  	aligned_height =3D intel_fb_align_height(dev, fb->height,
+- 					       plane_config->tiling);
++ 					       fb->pixel_format,
++ 					       fb->modifier[0]);
+ =20
+ -	plane_config->size =3D PAGE_ALIGN(fb->pitches[0] * aligned_height);
+ +	plane_config->size =3D fb->pitches[0] * aligned_height;
+ =20
+  	DRM_DEBUG_KMS("pipe %c with fb: size=3D%dx%d@%d, offset=3D%x, pitch %d, =
+size 0x%x\n",
+  		      pipe_name(pipe), fb->width, fb->height,
+@@@ -12197,9 -12188,10 +12203,7 @@@ intel_check_cursor_plane(struct drm_pla
+  		return -ENOMEM;
+  	}
+ =20
+- 	/* we only need to pin inside GTT if cursor is non-phy */
+- 	mutex_lock(&dev->struct_mutex);
+- 	if (!INTEL_INFO(dev)->cursor_needs_physical && obj->tiling_mode) {
+ -	if (fb =3D=3D crtc->cursor->fb)
+ -		return 0;
+ -
++ 	if (fb->modifier[0] !=3D DRM_FORMAT_MOD_NONE) {
+  		DRM_DEBUG_KMS("cursor cannot be tiled\n");
+  		ret =3D -EINVAL;
+  	}
+
+--Sig_/BZmHcv/MbTU_y=k0diRyxl4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU7mWtAAoJEMDTa8Ir7ZwVBt8QAINvgRi5NLHTxdAun8wBTYdC
+MusLbMAl0LyiKh0rFzYfr0QGaHb5LUf+tYeIszHrczHKn+ioOzzMTXoprHJ1+rZd
+cbXHy2js4um1SA/UtJCJskCsYb3uzPBe3nv12TTdULJO2y4MU0kXtxS/bhm6WQeA
+/3hBWNpR6B0pnBq1u+cg3nsNFs/ztUrXO7y6pV3TqJtJZsWmEV2tMJo6lIYm6y45
+1RNSqdXxjtac2f5dN/sELjjisxa1y30clPLezSfAEQfSXfTeIADtI4yJGVBboW8T
+IBfSsOmUJuDxViCqcOBN4yJF39NWW/3SRDPENUV8o3T01TLA0VHaQE5yqKK8iiTm
+t/u7xFpW8ow2Mr18KnFwUyPBlyegkOxlL70pLwsYxnUTfnTWUp3tvhILuuIUaHiF
+vdnFkfJ14vvwPLMFVC/5dmA+HcsCjNAKpoMWynqdyCbXvTWiOdKQkl2ztP5iuXRB
+jVpHOWaHKuLtkpSiS/9nrk5MEbBsdcJbi0wVX9F3Nye5pPf5EVaSHWbF9NvrBZeo
+scjIFSvEuF3ajT4mXNPp//HlzQciZv2PmN63D5lluZOKctn21ZpjxCqZm6/pgmQk
+28YgZ4g4GMn/QvWQ6MYp1mng0iJ1HvGqQONZCsLMY9m7MG0FLWqZ3rROrjoykxxq
+7+DTwKcXyMHo/XsfOUT/
+=Uj3N
+-----END PGP SIGNATURE-----
+
+--Sig_/BZmHcv/MbTU_y=k0diRyxl4--
