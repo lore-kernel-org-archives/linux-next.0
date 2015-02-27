@@ -1,63 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the clk tree
-Date: Fri, 27 Feb 2015 11:06:48 +1100
-Message-ID: <20150227110648.543f1e3e@canb.auug.org.au>
-References: <20150226131413.2aceaf7e@canb.auug.org.au>
-	<1424941761.27971.2.camel@AMDC1943>
-	<CAPtuhTgR-T-45QUuUfU_rCqR_yExbuQF-YQDCpVKeB4vyh9h7Q@mail.gmail.com>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Fri, 27 Feb 2015 11:36:45 +1100
+Message-ID: <20150227113645.4fe105c5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/L4EJkN/cfshnEa3/EMvF3+n"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59354 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752483AbbB0AG4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Feb 2015 19:06:56 -0500
-In-Reply-To: <CAPtuhTgR-T-45QUuUfU_rCqR_yExbuQF-YQDCpVKeB4vyh9h7Q@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/BiELhZ_gc8jbZ8hFOPDPq8H"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Hoath <nicholas.hoath@intel.com>, Jani Nikula <jani.nikula@intel.com>, John Harrison <John.C.Harrison@Intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/L4EJkN/cfshnEa3/EMvF3+n
+--Sig_/BiELhZ_gc8jbZ8hFOPDPq8H
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+Hi all,
 
-On Thu, 26 Feb 2015 16:01:24 -0800 Mike Turquette <mturquette@linaro.org> w=
-rote:
->
-> It's OK. I fixed it up locally the same day that I applied it but
-> didn't push the change out to my mirror in time to catch -next. It
-> will be fixed the next time Stephen pulls the clk tree.
+Today's linux-next merge of the drm-intel tree got a conflict in
+drivers/gpu/drm/i915/i915_drv.h between commit b3a38998f042 ("drm/i915:
+Fix a use after free, and unbalanced refcounting") from the
+drm-intel-fixes tree and commit 98e1bd4ae68e ("drm/i915: Cache ringbuf
+pointer in request structure") from the drm-intel tree.
 
-Which I have just done.  Thanks.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/L4EJkN/cfshnEa3/EMvF3+n
+diff --cc drivers/gpu/drm/i915/i915_drv.h
+index 8727086cf48c,239a382c8b55..000000000000
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@@ -2140,17 -2156,9 +2159,18 @@@ struct drm_i915_gem_request=20
+  	/** Position in the ringbuffer of the end of the whole request */
+  	u32 tail;
+ =20
+ -	/** Context and ring buffer related to this request */
+ +	/**
+- 	 * Context related to this request
+++	 * Context and ring buffer related to this request
+ +	 * Contexts are refcounted, so when this request is associated with a
+ +	 * context, we must increment the context's refcount, to guarantee that
+ +	 * it persists while any request is linked to it. Requests themselves
+ +	 * are also refcounted, so the request will only be freed when the last
+ +	 * reference to it is dismissed, and the code in
+ +	 * i915_gem_request_free() will then decrement the refcount on the
+ +	 * context.
+ +	 */
+  	struct intel_context *ctx;
++ 	struct intel_ringbuffer *ringbuf;
+ =20
+  	/** Batch buffer related to this request if any */
+  	struct drm_i915_gem_object *batch_obj;
+
+--Sig_/BiELhZ_gc8jbZ8hFOPDPq8H
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU77UdAAoJEMDTa8Ir7ZwVN+QP/34ovTPq8uYuRqzlFC9GnTqn
-E4MW7PYbCVIB+tRSTrlC1E40dyvY9osmqDGceRjNc0csZPlStUJcc80V4bZUtMTK
-0QEAsA0Mpyl/szwkXjV45O+qaOlVI7XNbW010pbORhWGgzklePYtZRlaUhsrNJzg
-AfjJS7WdnfjEfwxRWZZpywHhTSSdwyytn0ssB4UlbD3Xxy7FkJckG0i/Au3rNXKm
-mAZHZ/6V3IiEzBiM3GikAU6z/t1mHdk9weQwqmaNW3vuXEDRtiZpKSfSmoZF/Yw0
-pDD9Zqm2vgyduhbz2PAH04BRbILdiqckeKNTECH6Ltz30myAn5k3p/l2xAoBLrJm
-1yyQOP4tgd4vKOZSp/jHUqdEmbZXx5XDStshur0R3DW1Pc+9U9z7KmBc4Id7WFBy
-FtIc04XZ/s/vWOJ0r0zoETcR/JEjXynaBwCsZJsmwAN0lbVmR3LPPxwuVh0kJ5QG
-ilniErcYP6Fx/2xLwkoNvGc+Hn0WR33F5Z1fSE9u7Pmu+6KQXHMZxLVE5LbhtBQu
-KxMoHdno4rJbrkAmCuag5eQSfV85VYqi+y6dOGcF93y9wboEbpANv+oqFXB57dQd
-QG1qdwG/yTBjRe1+EUsA8+jl8JEO7MqXKvUW8RDBQ2qCVz8ySN0YgI9presvsDgG
-cFgtkI4XL1OpXXq5veAd
-=iDkX
+iQIcBAEBCAAGBQJU77wkAAoJEMDTa8Ir7ZwVZh8P/Ro4ZqWVyW8Ky3hHcDV320me
+4oSuCnH+13T6EimP0nA2+CXSBU/fs4UW0Z5LwA/Z6WIKAzhAS2Q/e/oHvb+6oqxZ
+6gVDAB2OJHrG6WyLHcj80N56UVdWRVpCPUrkB07b5v4DSm5qmoJiFI5TYQyvlzU2
+AN+AB4AYQgnr1Eyg5TyK59qWx7J0ORoPy/GoKxP9jCJSq0oFkzL73JtlVlPtiVft
+eGTegVMeSuZpI6kl5T/SjsV0nE329KgZE5uw8rzCkRxNQDi2yKogRKSjDlTZ7Cab
+vZS1XmZng1vxPuAEEqgihF02KcH6k9DFjSuKBZrK2SXCAwDpHsy+klirCiXDWQhW
+xRJv31XBnKIaR3Jt76JUfDaO3UWBsh7k1RACFKj5EiqtJUxgx7/W+70qE89VeoG+
+YSdYDbC+jlWPji1LFoFLJAYu79U7mdaopCEmQQ92h5B3lLMIJZWvPRKFuxWQqAkc
+bJoYkjkXfP4fW1I8kGw9WQuG2zv+zp3Fme/woypW/0kxyCyuw4jYry1ih/uRErcl
+F1ef/7G9K3qk6OxUOd6aPbmrcU6rUcKbD4W+uzGehpjOucXQ8SsvXWwSXiJRSF3r
+li8Epa9FsGItH5Rn2KkfzYdtCNSFJCGJq19iAMQkndoD8IMBYcCN3gE2S90g7AIp
+yHhDf5xSPwuifbFOJYni
+=ssWe
 -----END PGP SIGNATURE-----
 
---Sig_/L4EJkN/cfshnEa3/EMvF3+n--
+--Sig_/BiELhZ_gc8jbZ8hFOPDPq8H--
