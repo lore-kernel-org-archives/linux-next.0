@@ -1,81 +1,72 @@
-From: NeilBrown <neilb@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the md tree
-Date: Mon, 2 Mar 2015 17:03:45 +1100
-Message-ID: <20150302170345.742add96@notabene.brown>
+Date: Mon, 2 Mar 2015 17:11:49 +1100
+Message-ID: <20150302171149.0a62b072@canb.auug.org.au>
 References: <20150302165057.29087a08@canb.auug.org.au>
+	<20150302170345.742add96@notabene.brown>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/jh9vzJjS8IHcwq2I8WkVzh7"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:33733 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750870AbbCBGD5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Mar 2015 01:03:57 -0500
-In-Reply-To: <20150302165057.29087a08@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6T+r98i8NNEmj_tCkKr3B3n"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150302170345.742add96@notabene.brown>
+Sender: linux-kernel-owner@vger.kernel.org
+To: NeilBrown <neilb@suse.de>
 Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/jh9vzJjS8IHcwq2I8WkVzh7
+--Sig_/6T+r98i8NNEmj_tCkKr3B3n
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2 Mar 2015 16:50:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au>
-wrote:
+Hi Neil,
 
-> Hi Neil,
+On Mon, 2 Mar 2015 17:03:45 +1100 NeilBrown <neilb@suse.de> wrote:
+>
+> I think
+> +               bm_blocks =3D DIV_ROUND_UP(bm_blocks, 4096);
 >=20
-> After merging the md tree, today's linux-next build (i386 defconfig)
-> failed like this:
->=20
-> drivers/built-in.o: In function `bitmap_read_sb':
-> bitmap.c:(.text+0x29cd52): undefined reference to `__udivdi3'
->=20
-> Probably caused by commit b97e92574c0b ("Use separate bitmaps for each
-> nodes in the cluster") or commit f9209a323547 ("bitmap_create returns
-> bitmap pointer").
->=20
-> I reverted the md tree for today (because I am not sure how to fix
-> this and reverting less became messy).
->=20
+> needs DIV_ROUND_UP_SECTOR_T()
 
-Thanks.
-I think
-+               bm_blocks =3D DIV_ROUND_UP(bm_blocks, 4096);
+I tried that and it was not sufficient.
 
-needs DIV_ROUND_UP_SECTOR_T()
+> The first patch you identified adds that line.  The second relocates it.
 
+The second also changes this:
 
-The first patch you identified adds that line.  The second relocates it.
+bm_blocks =3D sector_div(bitmap->mddev->resync_max_sectors, (chunksize >> 9=
+));
 
-I've queued a fix-up for now, but I might get it merged back into the
-original...
+(added by the first) to this:
 
+bm_blocks =3D bitmap->mddev->resync_max_sectors / (bitmap->mddev->bitmap_in=
+fo.chunksize >> 9);
 
-Thanks,
-NeilBrown
+where bitmap->mddev->resync_max_sectors is a sector_t ...
 
---Sig_/jh9vzJjS8IHcwq2I8WkVzh7
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/6T+r98i8NNEmj_tCkKr3B3n
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIVAwUBVPP9QTnsnt1WYoG5AQLw3xAAm2Q3WUUEsLvFQ3q1AOCD3qMNiVD3Lojm
-Bd/8mOJdhbb9CyAcehicKNp9cqBUw1rt6GJYRuzu4WwEI/N+3WwSRvEvl9DwLl16
-oQjJCopF9WmSXPqdOANTQ0kLImg2udkfvrBcG6GLRr8LtFlBhocoi/pY+GXA2sVM
-lfLxPhRx9JZUZFsSrD/n5fLXLovez0cPvGGN/aGZ8a/9P+CK6gZzBV8f+oqzJYKb
-SKWAEI+A0itJ4uXvEh2PLfjxDxs/mKyZHtKS7rkAs6IIfD/2zNxbTpOU0vCo4ktO
-5/bKkOlnSAO7a4yAJv83lL1Y7duZCFpX8mVQhsFhwwdWiipHoNYNvjQVCdi+qoC9
-aZbCvpbsqSE3RnV30py6TtqGgms8WoEyhgCG24PD4EVsG25wWK8ajelUuZ6U3lOM
-yNs2v9TB2ti7+SBbBDLiy2q24KBmUxq7TT/VVbIXzHAqbJYm7uuG4pWGDN7ZhH56
-HWYRG8p4k6GwZb34i6QFaO2PJ9xj5BsHKlpl8oC+6CFGeN3xOW0QRTkU+Cpi+32t
-Clm72G6VNcXo6DuV5IhZgaKCmigsx5AqyH8ACXjGuJMpXSlHpXAtfSj+UCm4SUe3
-iMZZpoqLe2iLw2Bc31tvekrBidOnNjBOtxdsd0IoIMZB3jLrfm9+ARPX64BBDnZD
-dyjYF57wpUk=
-=wM7X
+iQIcBAEBCAAGBQJU8/8rAAoJEMDTa8Ir7ZwVtK8P/iFrG9XzxkMVELK3EdSRmtxX
+6l8ka+5EEN0hgQ41sN98k+97c5Mg5VPcX4b8pSyh9vvLrWt7ow1piXyLHiaPlIYW
+P8dN4f5HPco2FNQRlcOVp/jt5Cgns50ypNKUIKfcuR4l1mexnok92oU1DXhj5YE3
+KVNTDFk5MZUIglh6vbUqRqu3hqcJBHoyhtxHqwZktimftD0T+b1UxYyr4ASXML+n
+iiMmgZk9O4t0HaGPkotC/RMV6uLnMu30hgHIFoFHRpHrNEf4plQdFaaTddr41C27
+RmnScLs9no+zGdkNkNMTbE589wu7QJ0jHlKOa7U+U1MXeaKnjvOrD8XIaPmCeuL1
+V/ZF+5PWyaYuO9kx+7wFS6n5r8t2PvQBhVfV6LLx/kepyOXOabGGk9WQ3OxIMFjk
+LBSJNRtkfb4+3nUHk0IWMhg9kAqzPiW5Go2aLD1/R+rb4D9timc6e3A/mVw6jKrU
+jBORlI8CZn6/e8Xv5RYZiv1HmrDAxZ4UZtdALBPrpQLNlhhHSDM4Mtx/n/DRg35G
+mmgWrI1xwaodFiZ9P+u6CnxOn1tmIjtmh/Pd1b3nJdigPX/F6HLuV4p2VrZgjDNg
+r5Ka0ZsBfLKWKiO+kw8hfVfriZ0TsJkUl31VFclqFS2ukbusnjQ9WG7QQ+jEoiS8
+y3RXWEJIglQ15PayuvIC
+=fY+F
 -----END PGP SIGNATURE-----
 
---Sig_/jh9vzJjS8IHcwq2I8WkVzh7--
+--Sig_/6T+r98i8NNEmj_tCkKr3B3n--
