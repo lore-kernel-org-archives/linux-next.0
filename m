@@ -1,77 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 2 Mar 2015 11:31:40 +1100
-Message-ID: <20150302113140.084ba95a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the md tree
+Date: Mon, 2 Mar 2015 16:50:57 +1100
+Message-ID: <20150302165057.29087a08@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/luId0BZkcXy.hWZJELPAgJS"; protocol="application/pgp-signature"
+ boundary="Sig_/VDOqFPisTjKfBQY2dVM3=OD"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36128 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46872 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751486AbbCBAbt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Mar 2015 19:31:49 -0500
+	id S1750758AbbCBFvE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Mar 2015 00:51:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scott Feldman <sfeldma@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Neil Brown <neilb@suse.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/luId0BZkcXy.hWZJELPAgJS
+--Sig_/VDOqFPisTjKfBQY2dVM3=OD
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Neil,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/rocker/rocker.c between commit 5f2ebfbee688
-("rocker: silence shift wrapping warning") from the net tree and commit
-4a6bb6d35980 ("rocker: rename lport to pport") from the net-next tree.
+After merging the md tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/built-in.o: In function `bitmap_read_sb':
+bitmap.c:(.text+0x29cd52): undefined reference to `__udivdi3'
+
+Probably caused by commit b97e92574c0b ("Use separate bitmaps for each
+nodes in the cluster") or commit f9209a323547 ("bitmap_create returns
+bitmap pointer").
+
+I reverted the md tree for today (because I am not sure how to fix
+this and reverting less became messy).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/rocker/rocker.c
-index 9fb6948e14c6,e5a15a4c4e8f..000000000000
---- a/drivers/net/ethernet/rocker/rocker.c
-+++ b/drivers/net/ethernet/rocker/rocker.c
-@@@ -1257,9 -1280,9 +1280,9 @@@ static void rocker_port_set_enable(stru
-  	u64 val =3D rocker_read64(rocker_port->rocker, PORT_PHYS_ENABLE);
- =20
-  	if (enable)
-- 		val |=3D 1ULL << rocker_port->lport;
- -		val |=3D 1 << rocker_port->pport;
-++		val |=3D 1ULL << rocker_port->pport;
-  	else
-- 		val &=3D ~(1ULL << rocker_port->lport);
- -		val &=3D ~(1 << rocker_port->pport);
-++		val &=3D ~(1ULL << rocker_port->pport);
-  	rocker_write64(rocker_port->rocker, PORT_PHYS_ENABLE, val);
-  }
- =20
-
---Sig_/luId0BZkcXy.hWZJELPAgJS
+--Sig_/VDOqFPisTjKfBQY2dVM3=OD
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU869xAAoJEMDTa8Ir7ZwV1+EP/1swmNBJ7hytq2WvjHHYMUIC
-9aKA0nmDJKN/2JajYS5HEnzOcfWoeeIgPSTua9Pr+jt2uxhy85ZWH2g2n6UaZ/SB
-udgxt14rkINR/gGFIyZlk2fx4/Hem2ff+MTm5UMI9WU7mBD6kO/xK4ZQ95ilnVLN
-wTlNExWZb7rfoz0E7+Fd3Mr0wSO6Tg+ibcwgFretauFFOkzGqN5mjb52Qwz2Zdyn
-nwLwJf9jXvHBbprGEH+pbblapioTNZJ4xk/hGUvMK54zFvM0Ak2skrdTzycH0WoS
-PEq1i+PoWSnCGPMk0saZftcBGz6V3QnJZvNX+YTiRzc3+RaTJH0sHvLUY5rwdHSI
-Gc5iTkf1S9YNB3Ba/n3Advla/qanUst5dYbyeOy2wP0sGkWMvXcszytC3l1Yacqq
-/HGUrsAUhCkv5K5AGO5sVearIqXN2IsNw4svDmGR/sEVoXyYZba2Q9CfIPgDFR/6
-DHQKchc0bATiIFP6MA5ALTMeYrQpaRyus+PTCTrOiAO2OtwKzRcSf8zPa8LDXY1r
-ofq5iYFTdhS2XDPG0F+p8ZfeAMch3exHgxNpYUujn9WbGjaEcjZ+uwdaIvy9bphm
-Q+fSs0U63i4chivdBJ0D8RPe4tGhHnRIe3kc5BfGwQ2wBqYdMPB7BuUi0N7hVpbZ
-lZp0G3AmyJWu31IHiAbT
-=l8Ra
+iQIcBAEBCAAGBQJU8/pFAAoJEMDTa8Ir7ZwVngIP/Rdgm0bZPklkUX7RuGpjzhE0
+IHY85Ri4rTctJbNrB9fg1/oHfTWkTwIQ7U3FtiSLi9awDYWSY23up6vs5x87OOkO
+xxtVqDgivfy44EPlWIfdXFBtoT6zTRM/fILBZQ4raSePsuAYTthqTt/SS3fPCres
+oSilw1z6Ua4OeAKQommsFy109ZFwW6bdsGGg7m6rv/EHPg7Hq8L8zthOQ41OnhPS
+GG8LPx/67w/nctRdMcVY56exlVim7qwsqye3Epe3IyYn3C6uCJhhadBytDx32kFS
+x1SOkyX/XeIUJTNcdFYP+x64EQ2xOqPhtXYimJNLJKjQeLNBbHYdSKyGGeAzj1Jp
++Ffc+H3xuaelMoqLYGZ2ZkCNJMDiGDoU8FDSXj4hDq2uHJodze2SNxaKdLEVMbda
+tlGDsNM29tWf2L445kP1NGN3A+8goQwEnezDT6xTpjZAslz832qXlSW1BnDUGisv
+UstksM7ZaHiHR5xXe6dHCciSBHPXDj4dTkndhY31AMuUTA8drypFDZDkRDK6d5zk
+kfP5brPBggbDZxo/8iJp4PDDs5RQHa8pQ4t6d6/G7pz+xlyt60dxtdTtVbWtQCJF
+DvfpsW8mnKAzk79yftt8tCFEOlAP5h1Lox02y5ZSa4Wp2w/jlEVbDS+wtURRHFpn
+TYgKnUnt0BoTtCTTP7PJ
+=wEmQ
 -----END PGP SIGNATURE-----
 
---Sig_/luId0BZkcXy.hWZJELPAgJS--
+--Sig_/VDOqFPisTjKfBQY2dVM3=OD--
