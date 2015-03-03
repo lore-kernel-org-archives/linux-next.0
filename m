@@ -1,67 +1,106 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: randconfig build error with next-20150302, in
- drivers/net/ethernet/intel/i40e/i40e_configfs.c
-Date: Mon, 02 Mar 2015 15:03:54 -0800
-Message-ID: <1425337434.2409.11.camel@jtkirshe-mobl>
-References: <CA+r1ZhiO8i7b4XQatEX-9X12M9hYPo5F51wrOCYdA8JSMOHnpg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the md tree
+Date: Tue, 3 Mar 2015 13:35:31 +1100
+Message-ID: <20150303133531.72f10682@canb.auug.org.au>
+References: <20150302165057.29087a08@canb.auug.org.au>
+	<20150302170345.742add96@notabene.brown>
+	<20150302171149.0a62b072@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-zhAHmJaLjF1APSRyUtqs"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/F.YG7AZ3_uudzX48Zi+tX/E"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+r1ZhiO8i7b4XQatEX-9X12M9hYPo5F51wrOCYdA8JSMOHnpg@mail.gmail.com>
+In-Reply-To: <20150302171149.0a62b072@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, e1000-devel@lists.sourceforge.net, netdev <netdev@vger.kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-
---=-zhAHmJaLjF1APSRyUtqs
-Content-Type: text/plain; charset="UTF-8"
+--Sig_/F.YG7AZ3_uudzX48Zi+tX/E
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2015-03-02 at 09:29 -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
+Hi Neil,
+
+On Mon, 2 Mar 2015 17:11:49 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> On Mon, 2 Mar 2015 17:03:45 +1100 NeilBrown <neilb@suse.de> wrote:
+> >
+> > I think
+> > +               bm_blocks =3D DIV_ROUND_UP(bm_blocks, 4096);
+> >=20
+> > needs DIV_ROUND_UP_SECTOR_T()
 >=20
-> drivers/built-in.o: In function `i40e_cfgfs_group_make_item':
-> i40e_configfs.c:(.text+0x3df4ce): undefined reference to
-> `config_item_init_type_name'
-> drivers/built-in.o: In function `i40e_configfs_init':
-> (.text+0x3df4ee): undefined reference to `config_group_init'
-> drivers/built-in.o: In function `i40e_configfs_init':
-> (.text+0x3df50c): undefined reference to `configfs_register_subsystem'
-> drivers/built-in.o: In function `i40e_configfs_exit':
-> (.text+0x3df52e): undefined reference to `configfs_unregister_subsystem'
-> Makefile:939: recipe for target 'vmlinux' failed
+> I tried that and it was not sufficient.
+>=20
+> > The first patch you identified adds that line.  The second relocates it.
+>=20
+> The second also changes this:
+>=20
+> bm_blocks =3D sector_div(bitmap->mddev->resync_max_sectors, (chunksize >>=
+ 9));
+>=20
+> (added by the first) to this:
+>=20
+> bm_blocks =3D bitmap->mddev->resync_max_sectors / (bitmap->mddev->bitmap_=
+info.chunksize >> 9);
+>=20
+> where bitmap->mddev->resync_max_sectors is a sector_t ...
 
-We found this issue and already have a patch to resolve the problem.
-The issue is that we cannot have configfs as a module when our driver is
-compiled into the kernel.  The solution is to use the similar Kconfig
-logic we used for PTP (which had the same issue) for configfs.
+So I applied this patch for today:
 
-I should have the patch pushed upstream in the next batch of patches I
-push upstream.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 3 Mar 2015 13:30:26 +1100
+Subject: [PATCH] md/bitmap: use sector_div for sector_t divisions
 
---=-zhAHmJaLjF1APSRyUtqs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/md/bitmap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 23f575f0cd92..d40398404ab6 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -573,7 +573,8 @@ re_read:
+ 	if (bitmap->cluster_slot >=3D 0) {
+ 		long long bm_blocks;
+=20
+-		bm_blocks =3D bitmap->mddev->resync_max_sectors / (bitmap->mddev->bitmap=
+_info.chunksize >> 9);
++		bm_blocks =3D sector_div(bitmap->mddev->resync_max_sectors,
++				       bitmap->mddev->bitmap_info.chunksize >> 9);
+ 		bm_blocks =3D bm_blocks << 3;
+ 		bm_blocks =3D DIV_ROUND_UP_SECTOR_T(bm_blocks, 4096);
+ 		bitmap->mddev->bitmap_info.offset +=3D bitmap->cluster_slot * (bm_blocks=
+ << 3);
+--=20
+2.1.4
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/F.YG7AZ3_uudzX48Zi+tX/E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCgAGBQJU9OxaAAoJEOVv75VaS+3OgjAP/3c8QjYX3WbnzdJkzBGnofZf
-iLD+DTpvjKWwf4Kr16XL3MrOvQ96++0AGwQOdbPqaSpsowQL3Xrs9oFmu6kS2B0J
-Ff6+FoTSPXAIfG8Ye+qyYiIZYtDGU1KH43BjORSPL+fd1BHlYI6LZjJQtSuNbnaE
-/KXDwob4WAD+l6QA1U8hCl2p0eakjl75byYMjYWfQBo1/zNdu4mPeoEmnb60CqS8
-401r+oiRpIdQljdffxCzGJXf0IooN54jRDMfyFpiUSdS6FiTzTfTkKAMUaDtgBvZ
-8rwyJiMEw0khKZVWWdXrEucQiQcqzQNTo/z/lwkbduVTpna1lE0oq4qvtb3H1o2g
-MTghroh+0n6k8MPueSLb4hgJOl4EFqCoWKXt/jF/vfQfXeV/kHWcktbqx8z4T9Sg
-WwSsUjqunyw5ZeziVxDYWM9dEvYE1rFxjGeesKgP69Raiw9Kwdj70oOjA6wjLQug
-P9Tc9geqCCEzeefNbF0u98bN2QEMdAApWvyE5fvdbOSUWsw6U/x84eqgbeNw6vjG
-KXxxxqe5VIsmxw+lotJiLVNbAIS9TJzrVjNPg0bq6whvb0w7p/REOG8e89HXKUbJ
-H++hFXFnNAEalmfjlL/Drg7ed9mfyH/ov2iDgXIc6b4SCxlWwTqNbpmnhav2UHoL
-5jP3DkiF2qduvKuPslli
-=Hn+O
+iQIcBAEBCAAGBQJU9R33AAoJEMDTa8Ir7ZwVMGcP/0a7KOnjr9sWygWdDXuKXsc6
+cWTTIVJz99tikAnvqo9XDBs5WhGeP2LMmPER81SFidp+MmSIBmQ6M3NJmEaJyo9j
+qnAqZa7ouWwicTy+dRl+sj0YyL3JCtGG8so1QykTHDdsHbcMHDVFX5aQ96mg3DZp
+VAgaMt+kC7qpcCE4Oj/kEf9T0109j0EQQSm+NyIFRS2Xk9Baa3wI35uf3p6E6giR
+f1LSvm7WNLy503nFDPmRpXinDIAc0i6p8/Yfxma6RIRHWykzUYNIRa7f2sSqvyeI
+ShJKG/YzO8D+ReEYHww9cWMH+r16oqTOA/V4pWHxFLthxGsaazWcoVWGPSV4uYXm
+dSjSP0oJtlNbTZhnRbYaj6HZaOQb/6V79regcDiO1ry2CuPj/etm3y3W7DHUFI0e
+BEJWrnBLfL/V7yRIlv1hKMgcGNGd5w2XvfySb4FgztZ/uM75cz85rRqYagRr67Du
+v0lXurqfGHrjhBLtXB4arXrBm8hwgtUQuUAmZjMwVEGxSYpliHFjpDrSD3igyd8X
+/NpN4jUei2txIYpO3bCZU0GLQ44bDKxY5dEyF4uKwqYsVD2hV18JXspiQQyxcTIF
+ZYmpXgqCdWppJPhcPOEABryMKpS9Xc8y5mLK9cGc5ngi+N0Y0uas5CB/Cp98d6Qc
+SQUTD/+wEeaBxGiRlgcM
+=p2+i
 -----END PGP SIGNATURE-----
 
---=-zhAHmJaLjF1APSRyUtqs--
+--Sig_/F.YG7AZ3_uudzX48Zi+tX/E--
