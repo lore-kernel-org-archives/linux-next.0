@@ -1,50 +1,61 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Wed, 4 Mar 2015 08:26:09 +0100
-Message-ID: <20150304072609.GW11010@pengutronix.de>
-References: <20150304113429.15c54218@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build failure after merge of the clk tree
+Date: Wed, 4 Mar 2015 10:56:42 +0100
+Message-ID: <CAMuHMdWyWCa3bA4Z_4mnyqL-7kJ_de8UiRGiwR6U1-QDjwEcQQ@mail.gmail.com>
+References: <20150227140855.74020ea4@canb.auug.org.au>
+	<54F0AC6A.6070707@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:60503 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933456AbbCDH0P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Mar 2015 02:26:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20150304113429.15c54218@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Flora Fu <flora.fu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54F0AC6A.6070707@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Turquette <mturquette@linaro.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Fri, Feb 27, 2015 at 6:42 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> The problem is the patch was written before struct clk_core moved into
+> the clk.c file and then applied after it moved. So before the move the
+> order of includes would cause the struct definition to be before the
+> place where the tracepoint macros were expanded. The fix is to move the
+> tracepoint include after the struct clk_core definition:
+>
+> -----8<----
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 9aee501b8284..392477033990 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -22,9 +22,6 @@
+>  #include <linux/init.h>
+>  #include <linux/sched.h>
+>
+> -#define CREATE_TRACE_POINTS
+> -#include <trace/events/clk.h>
+> -
+>  #include "clk.h"
+>
+>  static DEFINE_SPINLOCK(enable_lock);
+> @@ -80,6 +77,9 @@ struct clk_core {
+>         struct kref             ref;
+>  };
+>
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/clk.h>
+> +
+>  struct clk {
+>         struct clk_core *core;
+>         const char *dev_id;
 
-On Wed, Mar 04, 2015 at 11:34:29AM +1100, Stephen Rothwell wrote:
-> Hi Lee,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/mfd/mt6397-core.c: In function 'mt6397_irq_domain_map':
-> drivers/mfd/mt6397-core.c:124:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
->   set_irq_flags(irq, IRQF_VALID);
->   ^
-> drivers/mfd/mt6397-core.c:124:21: error: 'IRQF_VALID' undeclared (first use in this function)
->   set_irq_flags(irq, IRQF_VALID);
->                      ^
-> drivers/mfd/mt6397-core.c:124:21: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> Caused by commit 06d1bcedc888 ("mfd: Add support for the MediaTek
-> MT6397 PMIC").
-> 
-> I have used the mfd tree from next-20150303 for today.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for noting. I have just sent a patch fixing this.
+Gr{oetje,eeting}s,
 
-Sascha
+                        Geert
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
