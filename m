@@ -1,92 +1,73 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Mar 4 (build failures)
-Date: Wed, 4 Mar 2015 08:42:30 -0800
-Message-ID: <20150304164230.GA22568@roeck-us.net>
-References: <20150304150341.2afe09fe@canb.auug.org.au>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: linux-next: build failure after merge of the thermal-soc tree
+Date: Wed, 4 Mar 2015 15:01:52 -0400
+Message-ID: <20150304190150.GA3427@developer.amazonguestwifi.org>
+References: <20150304180636.78c66f79@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:37143 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758277AbbCDTB5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Mar 2015 14:01:57 -0500
 Content-Disposition: inline
-In-Reply-To: <20150304150341.2afe09fe@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20150304180636.78c66f79@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javi Merino <javi.merino@arm.com>
 
-On Wed, Mar 04, 2015 at 03:03:41PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20150303:
-> 
-> The md tree still had its build failure so I applied a fix patch.
-> 
-> The mfd tree gained a build failure so I used the version from
-> next-20150303.
-> 
-> The clk tree still had its build failure so I again used the version
-> from next-20150225.
-> 
-> Non-merge commits (relative to Linus' tree): 2315
->  2429 files changed, 70869 insertions(+), 52760 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-Lots of build failures today.
 
-Build results:
-	total: 121 pass: 94 fail: 27
-Failed builds:
-	arc:defconfig
-	arc:tb10x_defconfig
-	arm:s3c2410_defconfig
-	arm:davinci_all_defconfig
-	arm:axm55xx_defconfig
-	arm:keystone_defconfig
-	arm:vexpress_defconfig
-	arm:at91_dt_defconfig
-	arm:sama5_defconfig
-	arm:orion5x_defconfig
-	arm:cm_x2xx_defconfig
-	arm:integrator_defconfig
-	arm64:defconfig
-	avr32:defconfig
-	avr32:merisc_defconfig
-	avr32:atngw100mkii_evklcd101_defconfig
-	m68k:allmodconfig
-	microblaze:mmu_defconfig
-	microblaze:nommu_defconfig
-	mips:allmodconfig
-	openrisc:defconfig
-	parisc:generic-32bit_defconfig
-	parisc:generic-64bit_defconfig
-	powerpc:allmodconfig
-	sparc64:allmodconfig
-	unicore32:defconfig
-	xtensa:allmodconfig
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Qemu tests:
-	total: 30 pass: 14 fail: 16
-Failed tests:
-	arm:arm_versatile_defconfig
-	arm:arm_vexpress_defconfig
-	arm64:arm64_smp_defconfig
-	arm64:arm64_nosmp_defconfig
-	microblaze:microblaze_defconfig
-	microblaze:microblazeel_defconfig
-	mips:mips_malta_defconfig
-	mips:mips_malta_smp_defconfig
-	mips:mipsel_malta_defconfig
-	mips:mipsel_malta_smp_defconfig
-	mips64:mips_malta64_defconfig
-	mips64:mips_malta64_smp_defconfig
-	powerpc:ppc_book3s_defconfig
-	powerpc:ppc_book3s_smp_defconfig
-	powerpc:ppc64_book3s_defconfig
-	powerpc:ppc64_book3s_smp_defconfig
+Hi Stephen,
 
-There are various errors, related to thermal, bpf, and others.
-I don't have time to bisect, unfortunately.
+On Wed, Mar 04, 2015 at 06:06:36PM +1100, Stephen Rothwell wrote:
+> Hi Eduardo,
+>=20
+> After merging the thermal-soc tree, today's linux-next build (arm
+> cm_x2xx_defconfig (at least)) failed like this:
+>=20
+> include/linux/thermal.h:408:38: error: parameter name omitted
+> include/linux/thermal.h:413:1: error: expected identifier or '(' before '=
+{' token
+>=20
+> Caused by commit ddd4dd8ddf78 ("thermal: extend the cooling device API
+> to include power information").
+>=20
 
-Details are available at http://server.roeck-us.net:8010/builders.
+Thanks for pointing it out. Javi has already provided a fix and I
+already added in my -linus branch. I will appear in your next linux-next
+build.
 
-Guenter
+BR,
+
+Eduardo Valentin
+
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJU91aVAAoJEMLUO4d9pOJWLAEH/04sACYJkZ9HM60TmEqQcXQ1
+M7JyZenA2WxV2z2tnZX3L3PhEv2YZSFqAcggsQNZBUIj5BsVHZzQmCwzMI7yudP+
+sWN8VbVwzr+e8ZKZRM5+3WCKNf5t+u5eIr6YH+9/FkIU1EByBP1gdoI9ELl979fK
+5YW+d/1c89ZR7clzGllRJ8B5DMSO/D7Gj8zXGghagIeAUDlu240n5deHPTASE/nx
+F+/VSnB9wryglgHdxnXv9TOfrYjobD6SFl323cDr6Wlxt3T99hyvMViVirmfSuq0
+njtoxfZpYy9ctfF/beNL7VS+fqpAG70/RNImrdkAgEezxcbNZt9iOjODyTiKMIw=
+=7fDc
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
