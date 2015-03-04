@@ -1,41 +1,73 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Mar 4 (platform/chrome)
-Date: Wed, 04 Mar 2015 11:06:12 -0800
-Message-ID: <54F757A4.4080700@infradead.org>
-References: <20150304150341.2afe09fe@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: randconfig build error with next-20150303, in
+ drivers/bcma/driver_pcie2.c
+Date: Thu, 5 Mar 2015 08:01:30 +1100
+Message-ID: <20150305080130.41b132ee@canb.auug.org.au>
+References: <CA+r1Zhio+Kp30y4DHS0SW20PjZrAY3PZLXjskykpa8CY0tcrMA@mail.gmail.com>
+	<87d24o7s2j.fsf@kamboji.qca.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:34513 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757967AbbCDTGR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Mar 2015 14:06:17 -0500
-In-Reply-To: <20150304150341.2afe09fe@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/tZzRD4dyQxyIGUsmw3FDJ2p"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <87d24o7s2j.fsf@kamboji.qca.qualcomm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, zajec5@gmail.com, linux-wireless <linux-wireless@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 03/03/15 20:03, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20150303:
-> 
+--Sig_/tZzRD4dyQxyIGUsmw3FDJ2p
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-on i386 or x86_64:
+Hi Kalle,
 
-  CC      drivers/platform/chrome/cros_ec_lpc.o
-../drivers/platform/chrome/cros_ec_lpc.c: In function 'ec_response_timed_out':
-../drivers/platform/chrome/cros_ec_lpc.c:40:3: error: implicit declaration of function 'inb' [-Werror=implicit-function-declaration]
-   if (!(inb(EC_LPC_ADDR_HOST_CMD) & EC_LPC_STATUS_BUSY_MASK))
-   ^
-../drivers/platform/chrome/cros_ec_lpc.c: In function 'cros_ec_cmd_xfer_lpc':
-../drivers/platform/chrome/cros_ec_lpc.c:75:3: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
-   outb(msg->outdata[i], EC_LPC_ADDR_HOST_PARAM + i);
-   ^
+On Wed, 04 Mar 2015 16:31:00 +0200 Kalle Valo <kvalo@codeaurora.org> wrote:
+>
+> Jim Davis <jim.epost@gmail.com> writes:
+>=20
+> > Building with the attached random configuration file,
+> >
+> > drivers/bcma/driver_pcie2.c: In function 'bcma_core_pcie2_up':
+> > drivers/bcma/driver_pcie2.c:196:2: error: implicit declaration of
+> > function 'pcie_set_readrq' [-Werror=3Dimplicit-function-declaration]
+> >   err =3D pcie_set_readrq(dev, pcie2->reqsize);
+> >   ^
+>=20
+> This should fix it:
+>=20
+> bcma: add missing includes
+>=20
+> https://git.kernel.org/cgit/linux/kernel/git/kvalo/wireless-drivers-next.=
+git/commit/?id=3D2264fc857decd45798368f46861d9aecac23546f
 
+However, that commit is in next-20150304 and we still get the error
+(see, for example,
+http://kisskb.ellerman.id.au/kisskb/buildresult/12376688/).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+--Sig_/tZzRD4dyQxyIGUsmw3FDJ2p
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU93KvAAoJEMDTa8Ir7ZwVzSgP/3EMAyofmCM9HmpsPrLbsXmx
+JTPvqnfNYuszMCh05oX3KD8r/tyqtrn3HyqZRYULm9mzJMlU2kz4FCucfufkjmQK
+TgPN9AROf8PpXtZwNSG2rKCkT7h/xju37GavfhOOdfEkZ5h+gEnvf8Yo4e+tOQkb
+m0oTI8TVO+aPkjls4A7z9iJXVbVRxKBZ5ye2ndBUHuBrHRwiZkaMLqPx8r4hwmhP
+APQYaX19F+LV6SaFiLhs2IYrOWIh4r0lPVKTxNNbpWBQEGzSdmoDhHuUk9Yt42k0
+OnfYomjsPJFt5P/6V2TitOPwmx9JA9y6pVi4wPF60PYs+5ZemKkEKfbQkqIFXik4
+FiocNj1QwicsnQgkJn27rGIGHog6oYGDn0+/WnpF2mfAJ4cOD1kjk/roUizsT2oq
+tCboAd1CT0MfGYrgb8llt+os2eXMVyMjEvW/IzIyVtYdWipvJKN8V8B6dvj6BHhA
+vswyfjkF4EenhA9WMr2o1IPyq9XGaM7frARq2G094HWzLaH1gxKPfw5k9RaMxOQk
+l9YVJzCwPb0BZ5xoDBL07G7wj0BVmbPMAQ8EG5cHvGmvr4Z21NKTqkw2m70vX0F/
+Qn50BTK376vIfwVd47wsglH6WHyBkXDfb6ApA/Jm181JBD+2Z/pF0gm5ZY51Os7d
+uJ8K9YhngmnkJ957DlET
+=zthJ
+-----END PGP SIGNATURE-----
+
+--Sig_/tZzRD4dyQxyIGUsmw3FDJ2p--
