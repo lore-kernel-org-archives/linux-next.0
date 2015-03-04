@@ -1,56 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the thermal-soc tree
-Date: Wed, 4 Mar 2015 18:06:36 +1100
-Message-ID: <20150304180636.78c66f79@canb.auug.org.au>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Wed, 4 Mar 2015 08:26:09 +0100
+Message-ID: <20150304072609.GW11010@pengutronix.de>
+References: <20150304113429.15c54218@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/y.SIc=IqMUYvTXglX3yRWis"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javi Merino <javi.merino@arm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:60503 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933456AbbCDH0P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Mar 2015 02:26:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20150304113429.15c54218@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Flora Fu <flora.fu@mediatek.com>
 
---Sig_/y.SIc=IqMUYvTXglX3yRWis
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Eduardo,
+On Wed, Mar 04, 2015 at 11:34:29AM +1100, Stephen Rothwell wrote:
+> Hi Lee,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/mfd/mt6397-core.c: In function 'mt6397_irq_domain_map':
+> drivers/mfd/mt6397-core.c:124:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
+>   set_irq_flags(irq, IRQF_VALID);
+>   ^
+> drivers/mfd/mt6397-core.c:124:21: error: 'IRQF_VALID' undeclared (first use in this function)
+>   set_irq_flags(irq, IRQF_VALID);
+>                      ^
+> drivers/mfd/mt6397-core.c:124:21: note: each undeclared identifier is reported only once for each function it appears in
+> 
+> Caused by commit 06d1bcedc888 ("mfd: Add support for the MediaTek
+> MT6397 PMIC").
+> 
+> I have used the mfd tree from next-20150303 for today.
 
-After merging the thermal-soc tree, today's linux-next build (arm
-cm_x2xx_defconfig (at least)) failed like this:
+Thanks for noting. I have just sent a patch fixing this.
 
-include/linux/thermal.h:408:38: error: parameter name omitted
-include/linux/thermal.h:413:1: error: expected identifier or '(' before '{'=
- token
+Sascha
 
-Caused by commit ddd4dd8ddf78 ("thermal: extend the cooling device API
-to include power information").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/y.SIc=IqMUYvTXglX3yRWis
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIbBAEBCAAGBQJU9q8BAAoJEMDTa8Ir7ZwVJdwP+NqhuRCiTvP5YDHD2N+/FEVr
-PYC73gHx4Lrw1Q4Kczq3Lu+SJSthG3fGZ4Ek2+GTvCU4ytFxhnWWondZYmGzHdTe
-no784rR++g4esuHezthAPYfGgGEwhObHpAOcxl2TUUSdOI2+iJJVYGZCrO+l2dZS
-Qro1ywNTV4M0Mkjh3KnQh1RR8GxsuItv4pQNFoNzbGnRtLrUxWwUT1f5FrPITpMH
-bgKa570qy+txD8A8dm0JEJkxxGv/2iFMqR49JPreS+FShS7LK4f45AHBugwBMAx3
-U4tpgmY210lL9yJV6S3e5+0O6NG30XyWOfIeFFR8esOiuNwaQDwZ9nB2auYtF8X7
-6sYhhzRmukyhxYmiyk/YUSZdS9GhSSw9eOeokF90L3GIFf9bJh/gt0bcmTDFW2++
-nB3tL1z4ahUKpcnROvjbo2ugBv0iQMzqH8K/ZbLL71G8rh8C74qJaIzmCRwDxjba
-tsFgCMHSBqFmFqPjwXLhMpDMJxoErn0KShux8rHA+SugnPBxHcqEtgEUdqLCAsYN
-hcHaXCuziBI6ixwml5GwbxDXmliycqBqay0q5qOCclMc53P8zjEwM2uFpSD6siwx
-Vr5PULm93v4MLv+K/d94L0XrxG7hFm1NsqqUgvxRNrg1jZmxuf1PE56lOTTPVS8W
-WlfIbMrRwjTHnPRiDaI=
-=tiHE
------END PGP SIGNATURE-----
-
---Sig_/y.SIc=IqMUYvTXglX3yRWis--
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
