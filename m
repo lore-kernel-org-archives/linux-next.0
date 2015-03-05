@@ -1,59 +1,31 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: randconfig build error with next-20150303, in drivers/bcma/driver_pcie2.c
-Date: Thu, 05 Mar 2015 15:44:56 +0200
-Message-ID: <87sidj4kyv.fsf@kamboji.qca.qualcomm.com>
-References: <CA+r1Zhio+Kp30y4DHS0SW20PjZrAY3PZLXjskykpa8CY0tcrMA@mail.gmail.com>
-	<87d24o7s2j.fsf@kamboji.qca.qualcomm.com>
-	<20150305080130.41b132ee@canb.auug.org.au>
+From: Toshi Kani <toshi.kani@hp.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 05 Mar 2015 08:22:00 -0700
+Message-ID: <1425568920.17007.273.camel@misato.fc.hp.com>
+References: <20150305154751.482ae42a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49764 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751360AbbCENpH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Mar 2015 08:45:07 -0500
-In-Reply-To: <20150305080130.41b132ee@canb.auug.org.au> (Stephen Rothwell's
-	message of "Thu, 5 Mar 2015 08:01:30 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150305154751.482ae42a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, zajec5@gmail.com, linux-wireless <linux-wireless@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Thu, 2015-03-05 at 15:47 +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (bfin
+> TCM-BF537_defconfig and many others) failed like this:
+> 
+> (.init.text+0x5f8): undefined reference to `ioremap_huge_init'
+> 
+> Caused by commit 45eaed3ec431 ("lib/ioremap.c: add huge I/O map
+> capability interfaces"). lib/ioremp.o is only built if CONFIG_MMU is
+> set ...
 
-> Hi Kalle,
->
-> On Wed, 04 Mar 2015 16:31:00 +0200 Kalle Valo <kvalo@codeaurora.org> wrote:
->>
->> Jim Davis <jim.epost@gmail.com> writes:
->> 
->> > Building with the attached random configuration file,
->> >
->> > drivers/bcma/driver_pcie2.c: In function 'bcma_core_pcie2_up':
->> > drivers/bcma/driver_pcie2.c:196:2: error: implicit declaration of
->> > function 'pcie_set_readrq' [-Werror=implicit-function-declaration]
->> >   err = pcie_set_readrq(dev, pcie2->reqsize);
->> >   ^
->> 
->> This should fix it:
->> 
->> bcma: add missing includes
->> 
->> https://git.kernel.org/cgit/linux/kernel/git/kvalo/wireless-drivers-next.git/commit/?id=2264fc857decd45798368f46861d9aecac23546f
->
-> However, that commit is in next-20150304 and we still get the error
-> (see, for example,
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12376688/).
+My apology.  I am sending the fix shortly.
 
-I applied few fixes from Rafal and Chen:
-
-1ca2760fb2c1 bcma: prepare Kconfig symbol for PCI driver
-0a4e699a41f7 bcma: move internal function declarations to private header
-c32ec2a11321 bcma: make bcma_host_pci_(up|down) calls safe for every config
-b09f5ec18b16 bcma: Kconfig: Let it depend on PCI
-
-It would be great if someone could report if the build errors are gone
-now.
-
--- 
-Kalle Valo
+Thanks,
+-Toshi
