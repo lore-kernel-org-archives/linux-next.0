@@ -1,33 +1,59 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Thu, 05 Mar 2015 00:01:58 -0500 (EST)
-Message-ID: <20150305.000158.1662853297584626367.davem@davemloft.net>
-References: <20150305134247.5a55e4db@canb.auug.org.au>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: randconfig build error with next-20150303, in drivers/bcma/driver_pcie2.c
+Date: Thu, 05 Mar 2015 15:44:56 +0200
+Message-ID: <87sidj4kyv.fsf@kamboji.qca.qualcomm.com>
+References: <CA+r1Zhio+Kp30y4DHS0SW20PjZrAY3PZLXjskykpa8CY0tcrMA@mail.gmail.com>
+	<87d24o7s2j.fsf@kamboji.qca.qualcomm.com>
+	<20150305080130.41b132ee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150305134247.5a55e4db@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ebiederm@xmission.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49764 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751360AbbCENpH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Mar 2015 08:45:07 -0500
+In-Reply-To: <20150305080130.41b132ee@canb.auug.org.au> (Stephen Rothwell's
+	message of "Thu, 5 Mar 2015 08:01:30 +1100")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, zajec5@gmail.com, linux-wireless <linux-wireless@vger.kernel.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 5 Mar 2015 13:42:47 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 5 Mar 2015 13:37:05 +1100
-> Subject: [PATCH] mpls: using vzalloc requires including vmalloc.h
-> 
-> Fixes this build error:
-> 
-> net/mpls/af_mpls.c: In function 'resize_platform_label_table':
-> net/mpls/af_mpls.c:767:4: error: implicit declaration of function 'vzalloc' [-Werror=implicit-function-declaration]
->     labels = vzalloc(size);
->     ^
-> 
-> Fixes: 7720c01f3f59 ("mpls: Add a sysctl to control the size of the mpls label table")
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Hi Kalle,
+>
+> On Wed, 04 Mar 2015 16:31:00 +0200 Kalle Valo <kvalo@codeaurora.org> wrote:
+>>
+>> Jim Davis <jim.epost@gmail.com> writes:
+>> 
+>> > Building with the attached random configuration file,
+>> >
+>> > drivers/bcma/driver_pcie2.c: In function 'bcma_core_pcie2_up':
+>> > drivers/bcma/driver_pcie2.c:196:2: error: implicit declaration of
+>> > function 'pcie_set_readrq' [-Werror=implicit-function-declaration]
+>> >   err = pcie_set_readrq(dev, pcie2->reqsize);
+>> >   ^
+>> 
+>> This should fix it:
+>> 
+>> bcma: add missing includes
+>> 
+>> https://git.kernel.org/cgit/linux/kernel/git/kvalo/wireless-drivers-next.git/commit/?id=2264fc857decd45798368f46861d9aecac23546f
+>
+> However, that commit is in next-20150304 and we still get the error
+> (see, for example,
+> http://kisskb.ellerman.id.au/kisskb/buildresult/12376688/).
 
-Applied, thanks Stephen.
+I applied few fixes from Rafal and Chen:
+
+1ca2760fb2c1 bcma: prepare Kconfig symbol for PCI driver
+0a4e699a41f7 bcma: move internal function declarations to private header
+c32ec2a11321 bcma: make bcma_host_pci_(up|down) calls safe for every config
+b09f5ec18b16 bcma: Kconfig: Let it depend on PCI
+
+It would be great if someone could report if the build errors are gone
+now.
+
+-- 
+Kalle Valo
