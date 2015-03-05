@@ -1,79 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Fri, 6 Mar 2015 10:26:14 +1100
-Message-ID: <20150306102614.206e5ec6@canb.auug.org.au>
-References: <20150305134247.5a55e4db@canb.auug.org.au>
-	<20150305.000158.1662853297584626367.davem@davemloft.net>
+Subject: Re: [PATCH] Fix undefined ioremap_huge_init when CONFIG_MMU is not
+ set
+Date: Fri, 6 Mar 2015 10:41:13 +1100
+Message-ID: <20150306104113.555c8888@canb.auug.org.au>
+References: <1425570246-812-1-git-send-email-toshi.kani@hp.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m_frNs=4qCu_Oun.GuKRmU."; protocol="application/pgp-signature"
+ boundary="Sig_/EIzWkTjUQe/.6RN7YfL/5SA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43237 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36908 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750914AbbCEX0W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Mar 2015 18:26:22 -0500
-In-Reply-To: <20150305.000158.1662853297584626367.davem@davemloft.net>
+	id S1751197AbbCEXlU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Mar 2015 18:41:20 -0500
+In-Reply-To: <1425570246-812-1-git-send-email-toshi.kani@hp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ebiederm@xmission.com
+To: Toshi Kani <toshi.kani@hp.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org, fengguang.wu@intel.com, hannes@cmpxchg.org
 
---Sig_/m_frNs=4qCu_Oun.GuKRmU.
+--Sig_/EIzWkTjUQe/.6RN7YfL/5SA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Toshi,
 
-On Thu, 05 Mar 2015 00:01:58 -0500 (EST) David Miller <davem@davemloft.net>=
- wrote:
+On Thu,  5 Mar 2015 08:44:06 -0700 Toshi Kani <toshi.kani@hp.com> wrote:
 >
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 5 Mar 2015 13:42:47 +1100
+> Fix a build error, undefined reference to ioremap_huge_init, when
+> CONFIG_MMU is not defined on linux-next and -mm tree.
 >=20
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Thu, 5 Mar 2015 13:37:05 +1100
-> > Subject: [PATCH] mpls: using vzalloc requires including vmalloc.h
-> >=20
-> > Fixes this build error:
-> >=20
-> > net/mpls/af_mpls.c: In function 'resize_platform_label_table':
-> > net/mpls/af_mpls.c:767:4: error: implicit declaration of function 'vzal=
-loc' [-Werror=3Dimplicit-function-declaration]
-> >     labels =3D vzalloc(size);
-> >     ^
-> >=20
-> > Fixes: 7720c01f3f59 ("mpls: Add a sysctl to control the size of the mpl=
-s label table")
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> lib/ioremap.o is not linked to the kernel when CONFIG_MMU is not
+> defined.
 >=20
-> Applied, thanks Stephen.
+> Signed-off-by: Toshi Kani <toshi.kani@hp.com>
+> ---
+>  include/linux/io.h |    5 +++--
+>  lib/ioremap.c      |    1 -
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-I don't see it in net-next?
-
+Added to my copy of the akpm-current tree today (and so into linux-next).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/m_frNs=4qCu_Oun.GuKRmU.
+--Sig_/EIzWkTjUQe/.6RN7YfL/5SA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU+OYbAAoJEMDTa8Ir7ZwVR2IQAITWu6ZSnTnJRAAxNtVYuiuk
-E4oDHDFUGnFo5vpj4V3y1959Dg53gVLRyGZjyyBsYD7B1TuHtf6z3tdb7/C5qaAQ
-6qQjAiWKdImY6eGl+OhWxC5BuN5kGTC7EZRsuNnOVycxosKyf5kp7kngT3WoUcNb
-gS3fE+GQSqJtHRy2WkPuw1cm47FGUSii/g0/FTn4+9eEvGy5Wl3mz/pSNbbf4aBS
-FhZY8RiaAO7k2zqe5qH6QUDHxNoFNILf4x6QIfnAWdOU65m2oBwIGCbpgz3f5mky
-FKEGEWZJ9V8laN9jS/HzbvOPNbB1YcIYhIX2ftmhTc6BsuPhWhPd99+7g36mZ3xd
-NNIDz02Cij9H6vj7PMfT1yIrVailqHb1IKg3U/l+yEpbleZZ3VcLx2SmKEmMy46a
-p7KRasch9rrgiXTubD1+hjB4lx5SnHU2rBDZoXP8wQ0fNPXgd+FidJgzYT1mHz07
-4IfUh6Embw1ucquEX0U5Gq1Bs+2dwA+QsEv9jqIe3b+buOO93gIpoC16u0BLsTNB
-9MQd06/IT/APqay10SagfrCgb0o2d+WsxPRGYrYZxwu8nxoiOaFCfalXKffhiEX8
-Qh8TczBlXcnzw3a82y9dv/uDpUiupQU/0jbYBEgYbu+Sbj+Apvy+hdRUWgve/zHe
-GuGXE7IWZ+oNECj26w8c
-=3Yf0
+iQIcBAEBCAAGBQJU+OmdAAoJEMDTa8Ir7ZwVW34P/1KSbNFXvcpU7ITotjEPswOQ
+KJQ2CWqMVlemNiC++UqiiyrRHHQdy5TmzqEpftTRw+kJXVuqyFdq9DFrCBIqLP3p
+bdcB2F6+D962fDI8UlZNOME8JYrsUNkTtdN5hQCoLk4D/YwDDJZqKjMv9qIt2r4h
+/92aBpXpMjRZYEX6wYQDE8pux2y5ckeFrGY0VvamDYCqvX8M9G2XlO5bOzl6NPFa
+Jzol5TxwTf52drNuxxTPmLS7GQB4gIlHtzy8CK4Pfuc8jxjaylWL7N8fOafb/Is3
+Rcktz4MmC2FkfkFgJ594a3gNoqXGTZn20Sb8t+6Z60sIh36TGJXwwAxvsZSzfYaF
+cuV2GqvMCD5SPbVmW0ORcxEzz71GVEcEVKNzsZHGcVC0SJ/07qfNt+xR6YyV01E0
+IExWTHi5dpEr2uPPxPlyXk3p7t/0Cn6heTG5w/QP+0GCYJwCVlQAsqxHanMypwJ3
+4oslW6xhwlau3w5p9KiESHVKRuoWJvdqfP0Uvcj55xOqr8tyhF+/4z1bXWR6xWat
+aR931R++pa1z8HvQf0sxSxapE2h7nvaPk7dPQBzK1XEyYkvaPfSHOq8xbeTswhjp
+p7VjJPOYPJuVDRwCEFJEIqbkONgWx2gAI10LU66yZSXLTeSd/AH+W5eVjhwnyPKU
+Wdum/qSryvPfH7fG8HbP
+=VFNl
 -----END PGP SIGNATURE-----
 
---Sig_/m_frNs=4qCu_Oun.GuKRmU.--
+--Sig_/EIzWkTjUQe/.6RN7YfL/5SA--
