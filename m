@@ -1,45 +1,50 @@
-From: Toshi Kani <toshi.kani@hp.com>
-Subject: Re: [PATCH] Fix undefined ioremap_huge_init when CONFIG_MMU is not
- set
-Date: Thu, 05 Mar 2015 16:43:43 -0700
-Message-ID: <1425599023.17007.293.camel@misato.fc.hp.com>
-References: <1425570246-812-1-git-send-email-toshi.kani@hp.com>
-	 <20150306104113.555c8888@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Thu, 05 Mar 2015 21:01:47 -0500 (EST)
+Message-ID: <20150305.210147.1680796621485642860.davem@davemloft.net>
+References: <20150305134247.5a55e4db@canb.auug.org.au>
+	<20150305.000158.1662853297584626367.davem@davemloft.net>
+	<20150306102614.206e5ec6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20150306104113.555c8888@canb.auug.org.au>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kbuild-all@01.org, fengguang.wu@intel.com, hannes@cmpxchg.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:37740 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754456AbbCFCBx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Mar 2015 21:01:53 -0500
+In-Reply-To: <20150306102614.206e5ec6@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ebiederm@xmission.com
 
-On Fri, 2015-03-06 at 10:41 +1100, Stephen Rothwell wrote:
-> Hi Toshi,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 6 Mar 2015 10:26:14 +1100
+
+> On Thu, 05 Mar 2015 00:01:58 -0500 (EST) David Miller <davem@davemloft.net> wrote:
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Thu, 5 Mar 2015 13:42:47 +1100
+>> 
+>> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> > Date: Thu, 5 Mar 2015 13:37:05 +1100
+>> > Subject: [PATCH] mpls: using vzalloc requires including vmalloc.h
+>> > 
+>> > Fixes this build error:
+>> > 
+>> > net/mpls/af_mpls.c: In function 'resize_platform_label_table':
+>> > net/mpls/af_mpls.c:767:4: error: implicit declaration of function 'vzalloc' [-Werror=implicit-function-declaration]
+>> >     labels = vzalloc(size);
+>> >     ^
+>> > 
+>> > Fixes: 7720c01f3f59 ("mpls: Add a sysctl to control the size of the mpls label table")
+>> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> 
+>> Applied, thanks Stephen.
 > 
-> On Thu,  5 Mar 2015 08:44:06 -0700 Toshi Kani <toshi.kani@hp.com> wrote:
-> >
-> > Fix a build error, undefined reference to ioremap_huge_init, when
-> > CONFIG_MMU is not defined on linux-next and -mm tree.
-> > 
-> > lib/ioremap.o is not linked to the kernel when CONFIG_MMU is not
-> > defined.
-> > 
-> > Signed-off-by: Toshi Kani <toshi.kani@hp.com>
-> > ---
-> >  include/linux/io.h |    5 +++--
-> >  lib/ioremap.c      |    1 -
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> Added to my copy of the akpm-current tree today (and so into linux-next).
+> I don't see it in net-next?
 
-Thanks Stephen!
--Toshi
+The perils of working on multiple workstations :-)
 
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Pushed out now, sorry about that.
