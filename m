@@ -1,61 +1,45 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: Re: linux-next: build warnings after merge of the crypto tree
-Date: Tue, 10 Mar 2015 08:02:35 +0100
-Message-ID: <1658340.bSp4ddJdxm@tauon>
-References: <20150310164417.540c18a4@canb.auug.org.au> <20150310060328.GA14997@gondor.apana.org.au> <20150310174454.7a92a3bd@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: build warning after merge of the tty tree
+Date: Tue, 10 Mar 2015 09:23:18 +0100
+Message-ID: <20150310082318.GH7525@pengutronix.de>
+References: <20150310162816.3301cff5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150310174454.7a92a3bd@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:33206 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751540AbbCJIXU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2015 04:23:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20150310162816.3301cff5@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg KH <greg@kroah.com>
 
-Am Dienstag, 10. M=E4rz 2015, 17:44:54 schrieb Stephen Rothwell:
+Hello Greg,
 
-Hi Stephen,
+On Tue, Mar 10, 2015 at 04:28:16PM +1100, Stephen Rothwell wrote:
+> After merging the tty tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> drivers/tty/serial/imx.c: In function 'imx_set_termios':
+> drivers/tty/serial/imx.c:1301:7: warning: suggest explicit braces to =
+avoid ambiguous 'else' [-Wparentheses]
+>     if (port->rs485.flags & SER_RS485_ENABLED)
+>        ^
+>=20
+> Introduced by commit 17b8f2a3fdca ("serial: imx: add support for half
+> duplex rs485").
+should I send a fixed commit or do you prefer an incremental change?
 
->Hi Herbert,
->
->On Tue, 10 Mar 2015 17:03:28 +1100 Herbert Xu=20
-<herbert@gondor.apana.org.au> wrote:
->> On Tue, Mar 10, 2015 at 04:44:17PM +1100, Stephen Rothwell wrote:
->> > After merging the crypto tree, today's (and the past few days)
->> > linux-next build (powerpc allyesconfig) produced these warnings:
->> >=20
->> > crypto/algif_aead.c:561:2: warning: initialization from
->> > incompatible pointer type> >=20
->> >   .sendmsg =3D aead_sendmsg,
->> >   ^
->> >=20
->> > crypto/algif_aead.c:561:2: warning: (near initialization for
->> > 'algif_aead_ops.sendmsg') crypto/algif_aead.c:563:2: warning:
->> > initialization from incompatible pointer type> >=20
->> >   .recvmsg =3D aead_recvmsg,
->> >   ^
->> >=20
->> > crypto/algif_aead.c:563:2: warning: (near initialization for
->> > 'algif_aead_ops.recvmsg')
->> >=20
->> > Introduced by commit 400c40cf78da ("crypto: algif - add AEAD
->> > support").>=20
->> This is a bit of a bummer.  What happened is that net-next has
->> killed the kiocb argument to sendmsg/recvmsg.  However, this
->> change is obviously not part of the crypto tree and algif_aead
->> only exists in the crypto tree.
->>=20
->> So Stephen could you fix this by hand until one of them is merged
->> upstream (just kill the first argument in aead_sendmsg/aead_recvmsg)=
-?
->
->No worries, I will put a merge fix patch in from tomorrow (and send yo=
-u
->a copy just in case).
+Best regards
+Uwe
 
-Thank you. Let me know if I should help.
-
-
-Ciao
-Stephan
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
