@@ -1,34 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 10 Mar 2015 18:34:32 -0400 (EDT)
-Message-ID: <20150310.183432.983434129392290441.davem@davemloft.net>
-References: <20150310120842.6dfa6c2b@canb.auug.org.au>
-	<20150309.234329.425011226766680524.davem@davemloft.net>
-	<20150311084830.0bc6dffd@canb.auug.org.au>
+From: Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH] zsmalloc: Add missing #include <linux/sched.h>
+Date: Wed, 11 Mar 2015 08:15:57 +0900
+Message-ID: <20150310231557.GA4794@blaptop>
+References: <1426023991-30407-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:33518 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751762AbbCJWeh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2015 18:34:37 -0400
-In-Reply-To: <20150311084830.0bc6dffd@canb.auug.org.au>
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:43588 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751096AbbCJXQG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2015 19:16:06 -0400
+Received: by pdjp10 with SMTP id p10so5935685pdj.10
+        for <linux-next@vger.kernel.org>; Tue, 10 Mar 2015 16:16:06 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1426023991-30407-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, joshc@ni.com, boris.brezillon@free-electrons.com, cyrille.pitchen@atmel.com
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nitin Gupta <ngupta@vflare.org>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-next@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 11 Mar 2015 08:48:30 +1100
+On Tue, Mar 10, 2015 at 10:46:31PM +0100, Geert Uytterhoeven wrote:
+> mips/allmodconfig:
+> 
+> mm/zsmalloc.c: In function '__zs_compact':
+> mm/zsmalloc.c:1747:2: error: implicit declaration of function
+> 'cond_resched' [-Werror=implicit-function-declaration]
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Minchan Kim <minchan@kernel.org>
 
-> Just wondering if you got that merge right?  Here is the diff from what
-> I did yesterday to what you have in net-next:
- ...
-> That section was removed by commit 421d9df0628b ("net/macb: merge
-> at91_ether driver into macb driver") and I presumed its effect was
-> moved into macb_probe().
+Thanks!
 
-Indeed, you're right, good catch.
-
-Fixed and pushed out to net-next, thanks!
+-- 
+Kind regards,
+Minchan Kim
