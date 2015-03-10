@@ -1,31 +1,39 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] fixup! serial: imx: add support for half duplex rs485
-Date: Tue, 10 Mar 2015 10:19:16 +0100
-Message-ID: <20150310091915.GC13728@kroah.com>
-References: <20150310162816.3301cff5@canb.auug.org.au>
- <1425976269-27169-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: build warning after merge of the trivial tree
+Date: Tue, 10 Mar 2015 10:47:54 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1503101047090.26925@pobox.suse.cz>
+References: <20150310163417.505f0da8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:48681 "EHLO
-	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751895AbbCJJTS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2015 05:19:18 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-	by mailout.nyi.internal (Postfix) with ESMTP id 3B6D3210AB
-	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2015 05:19:16 -0400 (EDT)
-Content-Disposition: inline
-In-Reply-To: <1425976269-27169-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from cantor2.suse.de ([195.135.220.15]:56458 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750892AbbCJJr4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2015 05:47:56 -0400
+In-Reply-To: <20150310163417.505f0da8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan <gnomes@lxorguk.ukuu.org.uk>, Alan Cox <alan@linux.intel.com>
 
-On Tue, Mar 10, 2015 at 09:31:09AM +0100, Uwe Kleine-K=F6nig wrote:
-> ---
->  drivers/tty/serial/imx.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+On Tue, 10 Mar 2015, Stephen Rothwell wrote:
 
-Same errors as your other patch :(
+> Hi Jiri,
+> 
+> After merging the trivial tree, today's linux-next build ()
+> produced this warning:
+> 
+> drivers/tty/goldfish.c: In function 'goldfish_tty_probe':
+> drivers/tty/goldfish.c:232:6: warning: unused variable 'i' [-Wunused-variable]
+>   int i;
+>       ^
+> 
+> Introduced by commit 2a2483685a9d ("goldfish: remove unreachable line
+> of code").
+
+Thanks for the report Stephen, now fixed via 0e4f93e501 in 
+trivial.git#for-next.
+
+-- 
+Jiri Kosina
+SUSE Labs
