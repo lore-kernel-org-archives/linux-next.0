@@ -1,43 +1,38 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] fixup! serial: imx: add support for half duplex rs485
-Date: Tue, 10 Mar 2015 09:31:09 +0100
-Message-ID: <1425976269-27169-1-git-send-email-u.kleine-koenig@pengutronix.de>
-References: <20150310162816.3301cff5@canb.auug.org.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150310162816.3301cff5@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] fixup! serial: mctrl-gpio: simplify init routine
+Date: Tue, 10 Mar 2015 10:18:45 +0100
+Message-ID: <20150310091845.GA13728@kroah.com>
+References: <20150310163740.0f3bc651@canb.auug.org.au>
+ <1425976191-20894-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:59827 "EHLO
+	out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751057AbbCJJSr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2015 05:18:47 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailout.nyi.internal (Postfix) with ESMTP id B6C9C210CC
+	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2015 05:18:45 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <1425976191-20894-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
----
- drivers/tty/serial/imx.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Tue, Mar 10, 2015 at 09:29:51AM +0100, Uwe Kleine-K=F6nig wrote:
+> ---
+>  drivers/tty/serial/serial_mctrl_gpio.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index ddfb672d0152..e9102eba49c4 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1298,7 +1298,7 @@ imx_set_termios(struct uart_port *port, struct ktermios *termios,
- 		if (sport->have_rtscts) {
- 			ucr2 &= ~UCR2_IRTS;
- 
--			if (port->rs485.flags & SER_RS485_ENABLED)
-+			if (port->rs485.flags & SER_RS485_ENABLED) {
- 				/*
- 				 * RTS is mandatory for rs485 operation, so keep
- 				 * it under manual control and keep transmitter
-@@ -1307,8 +1307,9 @@ imx_set_termios(struct uart_port *port, struct ktermios *termios,
- 				if (!(port->rs485.flags &
- 				      SER_RS485_RTS_AFTER_SEND))
- 					ucr2 |= UCR2_CTS;
--			else
-+			} else {
- 				ucr2 |= UCR2_CTSC;
-+			}
- 
- 		} else {
- 			termios->c_cflag &= ~CRTSCTS;
--- 
-2.1.4
+No changelog comment, no signed-off-by: and some odd "fixup!" in the
+subject line :(
+
+Please fix and resend so that I can actually apply the thing.
+
+thanks,
+
+greg k-h
