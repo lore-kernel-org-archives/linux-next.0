@@ -1,59 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the trivial tree
-Date: Tue, 10 Mar 2015 16:38:34 +1100
-Message-ID: <20150310163834.592b43d7@canb.auug.org.au>
-References: <20150310163417.505f0da8@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the crypto tree
+Date: Tue, 10 Mar 2015 16:44:17 +1100
+Message-ID: <20150310164417.540c18a4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.k19sUhGKQ9wekm5SC6hFQq"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53910 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751277AbbCJFig (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2015 01:38:36 -0400
-In-Reply-To: <20150310163417.505f0da8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan <gnomes@lxorguk.ukuu.org.uk>, Alan Cox <alan@linux.intel.com>
+ boundary="Sig_/0hR9sDVgE44LLFbt7bMTajr"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephan Mueller <smueller@chronox.de>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/.k19sUhGKQ9wekm5SC6hFQq
+--Sig_/0hR9sDVgE44LLFbt7bMTajr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Herbert,
 
-On Tue, 10 Mar 2015 16:34:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the trivial tree, today's linux-next build ()
+After merging the crypto tree, today's (and the past few days)
+linux-next build (powerpc allyesconfig) produced these warnings:
 
-This was an x86_64 allmodconfig build.
+crypto/algif_aead.c:561:2: warning: initialization from incompatible pointe=
+r type
+  .sendmsg =3D aead_sendmsg,
+  ^
+crypto/algif_aead.c:561:2: warning: (near initialization for 'algif_aead_op=
+s.sendmsg')
+crypto/algif_aead.c:563:2: warning: initialization from incompatible pointe=
+r type
+  .recvmsg =3D aead_recvmsg,
+  ^
+crypto/algif_aead.c:563:2: warning: (near initialization for 'algif_aead_op=
+s.recvmsg')
 
+Introduced by commit 400c40cf78da ("crypto: algif - add AEAD support").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/.k19sUhGKQ9wekm5SC6hFQq
+--Sig_/0hR9sDVgE44LLFbt7bMTajr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU/oNaAAoJEMDTa8Ir7ZwVE78P/2i3p+sCID3mLmIT0g7uwlIh
-JfAYDbGxd+5YtFFmAzx6v3ligScxu8xFt5B2UYQeZC/E8nOItcK/PPyBTgcDnTfG
-ekw2BAw/6ejOwyawG2rBpr0QBYFK0ZRLk7ywsOLADDcPqvga7y5Ha6aW5ssB2ryB
-HNyMCExTagJCUxqEgCZdo1UbQ5A1IIED++r10xWxp75GQWBTp4T2unp8ZMpcpmPA
-4LAPjNPT9r/Gv3oH5i0oKKZcB2PH6uQJ2lXR+aaHHIoMP9zRI5YYf8UQq/hjOqqh
-oKGWj9dS+VEbjOsgIlTjK852QkGjzfllipgVuEiHAmUeECHXpqSgj2SEdwoPWPK4
-H4EB1WVVTq1vU/2BzmTuZlPo0qtoLZxDPFGMPdf4Wq28uPzuuA5muUjFJ/DsR+PS
-PgGVA1WUJEoQ8dfUwTEQZm+D3lly2uacHiMpGziN10JNnfjsoSjGihbT4vEtG+pE
-d/Vssxh+sYw/xeRaeqmeq0/8YTJbstUcnKqdVai2AgwQOjulHY8rMhhFQu6gIvyI
-g8kzx6b6PWdsOV4beHPpFQLVAAboDrLeCcoCPRPdluynhSHd9wAPlzVa4UdXj3Gs
-Ndy27sxa8DAdtqwIRDpkSAYEwKOPmWNxJGc7oI014oA1yUgI8eOvEkYUJq0TQ1Sc
-0fv8SuWkSFFF2pOJnOGr
-=J3SI
+iQIcBAEBCAAGBQJU/oS2AAoJEMDTa8Ir7ZwVjrEP/124rMRknBbz/1If/hISsOvB
+vHxzEftujO+t1kYIOw/j7ou8EheaySu181PUulM1amV5hQwSJqRtgJJ7SdeBUu0p
+pOn8rSJbV869Ho4ijedHh8rV4M5vmZJryyTKAWNZC/cepaT58Z3dQQg3e9BHq7JA
+73xwH5O7qdxJYSpXy8dsiRJ65GIl3W1ZzjNFXv+xKpItb5GU0ZVRlwUPek3I5/BW
+rsMy3AiEa8M0cm3SVsQ1TeFBJtaPMpd3dnZgM/FBrMC4AjKPwytuVDdQbiCX4RHy
+lyqUsqckLas+vU6ZGH6m6HdKgYxRzc9NM0bv5RW+Z1Fa/I4cHSpfdV8cnu5JuNiP
+ciQcE/zEE8yKfXzLjbpFLYf5zQqrxI6Ch+1UEtUX/P3r/d756o3AuSRfWi/FcYuU
+16rWBRHRMfPZf89zTllTSOcwn6mpXe9RHn9iQRJaXr4XSE3SPNaIn+4xFQlPsdXk
+6F87S7sL2tBfI0z1BpWwG5h+NQqw/j6MPrJ/dzT805uylXZbw68CwSPGu2nY82gF
+5SGplfuD1fuTPCSbBC+wFxyKHkGqQB9HqiEv5f1HhivI6ekugZ319hRPZXFKYlvv
+aHfSWVtYXOAHUb9iSQR02MkCOtA2RRmuGqWN18NJDtuScJeJOHmiyRBXvcNdlKP7
+jo5dkjjPzws6NG/o599Z
+=hG/j
 -----END PGP SIGNATURE-----
 
---Sig_/.k19sUhGKQ9wekm5SC6hFQq--
+--Sig_/0hR9sDVgE44LLFbt7bMTajr--
