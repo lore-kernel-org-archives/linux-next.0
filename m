@@ -1,51 +1,44 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Tue, 10 Mar 2015 21:23:22 +0530
-Message-ID: <20150310155322.GA13969@sudip-PC>
-References: <20150310160728.7213b9fa@canb.auug.org.au>
- <20150310150815.GA28071@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] serial: mxs-auart: fix build failure due to broken goto statement
+Date: Tue, 10 Mar 2015 13:57:57 -0400
+Message-ID: <1426010277-5910-1-git-send-email-hofrat@osadl.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:41992 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752834AbbCJPxf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2015 11:53:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20150310150815.GA28071@kroah.com>
+Received: from www.osadl.org ([62.245.132.105]:49150 "EHLO www.osadl.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750976AbbCJSC3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2015 14:02:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>, Janusz Uzycki <j.uzycki@elproma.com.pl>, linux-serial@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
 
-On Tue, Mar 10, 2015 at 04:08:15PM +0100, Greg KH wrote:
-> On Tue, Mar 10, 2015 at 04:07:28PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > After merging the staging tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> > 
-> > In file included from include/linux/module.h:17:0,
-> >                  from drivers/staging/sm750fb/sm750.c:2:
-> > drivers/staging/sm750fb/sm750.c: In function '__check_g_option':
-> > drivers/staging/sm750fb/sm750.c:1436:14: error: 'g_option' undeclared (first use in this function)
-> >  module_param(g_option,charp,S_IRUGO);
-<snip>
-> > to enable it again.
-> 
-> Sorry about that.  Yes, I know it's a mess.  The build error on ppc
-> should now be fixed in my tree.  The build warnings are still there
-> (some are gone).  I should just go fix them up myself, and will do so
-> tonight if I don't get a patch from someone else that does so first...
-> 
-> So it should be safe to enable again.
-i am so sorry for the mess. I thought patchset to fix the build failures will buy me some time to fix the other warnings.
-I am sending another series to fix the remainig warnings.
+fix mxs-auart build failure. got -> goto and wrong jump target.
 
-reagrds
-sudip
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+---
 
-> 
-> thanks,
-> 
-> greg k-h
+Seems this was introduced in 343fda95481a ("serial: mxs-auart: properly handle 
+mctrl_gpio failing")
+
+This was only compile tested for mxs_defconfig
+
+Patch is against 4.0-rc3 (localversion-next is -next-20150310)
+
+ drivers/tty/serial/mxs-auart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
+index 9abdccf..a17abca 100644
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -1279,7 +1279,7 @@ static int mxs_auart_probe(struct platform_device *pdev)
+ 	ret = mxs_auart_init_gpios(s, &pdev->dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to initialize GPIOs.\n");
+-		got out_free_irq;
++		goto out_free_gpio_irq;
+ 	}
+ 
+ 	/*
+-- 
+1.7.10.4
