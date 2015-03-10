@@ -1,65 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the tty tree
-Date: Tue, 10 Mar 2015 16:37:40 +1100
-Message-ID: <20150310163740.0f3bc651@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the trivial tree
+Date: Tue, 10 Mar 2015 16:38:34 +1100
+Message-ID: <20150310163834.592b43d7@canb.auug.org.au>
+References: <20150310163417.505f0da8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UX=SWwhdYObsw7GcU82ofTX"; protocol="application/pgp-signature"
+ boundary="Sig_/.k19sUhGKQ9wekm5SC6hFQq"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50827 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53910 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751117AbbCJFhq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2015 01:37:46 -0400
+	id S1751277AbbCJFig (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2015 01:38:36 -0400
+In-Reply-To: <20150310163417.505f0da8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan <gnomes@lxorguk.ukuu.org.uk>, Alan Cox <alan@linux.intel.com>
 
---Sig_/UX=SWwhdYObsw7GcU82ofTX
+--Sig_/.k19sUhGKQ9wekm5SC6hFQq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-After merging the tty tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+On Tue, 10 Mar 2015 16:34:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the trivial tree, today's linux-next build ()
 
-drivers/tty/serial/serial_mctrl_gpio.c: In function 'mctrl_gpio_init':
-drivers/tty/serial/serial_mctrl_gpio.c:110:4: warning: return makes pointer=
- from integer without a cast
-    return PTR_ERR(gpios->gpio[i]);
-    ^
-drivers/tty/serial/serial_mctrl_gpio.c:90:6: warning: unused variable 'err'=
- [-Wunused-variable]
-  int err;
-      ^
+This was an x86_64 allmodconfig build.
 
-Introduced by commit 1d267ea6539f ("serial: mctrl-gpio: simplify init
-routine").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/UX=SWwhdYObsw7GcU82ofTX
+--Sig_/.k19sUhGKQ9wekm5SC6hFQq
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU/oMpAAoJEMDTa8Ir7ZwVkAMP/3gFOx0ttw3gWIztqWuy/sbL
-VE0lAfMkb6uJTrDFBkBTa+do0TTNGWWAAx08jZZoqbkVwNiBbJoBUZJOkZKWhbp9
-xJlUwXn+JGLgOJ4gT6n7VJs81mMrYrmq3suByzKIYrurBRiCMOeHLFotVr9ZY8LQ
-IcXibwgoesyKiB4Bv7E1icqLy1EGTvh7BycoMUBszYSbjzXsVLh71kgYz2QUrOxF
-HfPULfDw83Q2ZlUojDfhKKWlov0P31WVWPZCUtO9UBfLMqy6Hh9K0oGvFx229F64
-hWrjYgc+WVoWyB5JaYYHpAgD2lDCWBY4ZScg6OZA+4F0KHZ7/6oQrobyPoJfbFoG
-2uvhAaIwjyUzXIriRwqF8DiTILW4sBh12rfzSGeMixp48uu5GUqJj/UPdpKSyoHa
-PTGKFqwncvVPkBiEHmEmlZx7r7XTnVLzAklsZwwHy1aPEXHXVV1+3PIFATkHKbWa
-PtUSjdUl/Zns4yFnj0UG5zNfc5JkNWfuRiGEPdh5YxZXu14lyqpoiItlxNv40e5b
-3kUgIWhIxkYyLfwY17qU+zcumN3IBCGvroLI40imKnApXZRgomv+Rjc2Jw4r/2ge
-7cJrjvgkPkPoNAdAG8tT62M1/vI2n1JhCrMuMoa5fE7ErPkmNJPiv9dXbkRBvaSd
-QESB8nlWQ2/Qo8HsFPrR
-=QCkx
+iQIcBAEBCAAGBQJU/oNaAAoJEMDTa8Ir7ZwVE78P/2i3p+sCID3mLmIT0g7uwlIh
+JfAYDbGxd+5YtFFmAzx6v3ligScxu8xFt5B2UYQeZC/E8nOItcK/PPyBTgcDnTfG
+ekw2BAw/6ejOwyawG2rBpr0QBYFK0ZRLk7ywsOLADDcPqvga7y5Ha6aW5ssB2ryB
+HNyMCExTagJCUxqEgCZdo1UbQ5A1IIED++r10xWxp75GQWBTp4T2unp8ZMpcpmPA
+4LAPjNPT9r/Gv3oH5i0oKKZcB2PH6uQJ2lXR+aaHHIoMP9zRI5YYf8UQq/hjOqqh
+oKGWj9dS+VEbjOsgIlTjK852QkGjzfllipgVuEiHAmUeECHXpqSgj2SEdwoPWPK4
+H4EB1WVVTq1vU/2BzmTuZlPo0qtoLZxDPFGMPdf4Wq28uPzuuA5muUjFJ/DsR+PS
+PgGVA1WUJEoQ8dfUwTEQZm+D3lly2uacHiMpGziN10JNnfjsoSjGihbT4vEtG+pE
+d/Vssxh+sYw/xeRaeqmeq0/8YTJbstUcnKqdVai2AgwQOjulHY8rMhhFQu6gIvyI
+g8kzx6b6PWdsOV4beHPpFQLVAAboDrLeCcoCPRPdluynhSHd9wAPlzVa4UdXj3Gs
+Ndy27sxa8DAdtqwIRDpkSAYEwKOPmWNxJGc7oI014oA1yUgI8eOvEkYUJq0TQ1Sc
+0fv8SuWkSFFF2pOJnOGr
+=J3SI
 -----END PGP SIGNATURE-----
 
---Sig_/UX=SWwhdYObsw7GcU82ofTX--
+--Sig_/.k19sUhGKQ9wekm5SC6hFQq--
