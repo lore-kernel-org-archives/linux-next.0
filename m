@@ -1,43 +1,64 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] serial: mxs-auart: fix build failure due to broken goto
- statement
-Date: Tue, 10 Mar 2015 20:45:27 +0100
-Message-ID: <20150310194527.GF952@pengutronix.de>
-References: <1426010277-5910-1-git-send-email-hofrat@osadl.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Wed, 11 Mar 2015 07:57:04 +1100
+Message-ID: <20150311075704.7086515c@canb.auug.org.au>
+References: <20150310160728.7213b9fa@canb.auug.org.au>
+	<20150310150815.GA28071@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TJUxc1M3Vi05BpMd9iWH6UP"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:57998 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751024AbbCJTpe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2015 15:45:34 -0400
-Content-Disposition: inline
-In-Reply-To: <1426010277-5910-1-git-send-email-hofrat@osadl.org>
+Received: from ozlabs.org ([103.22.144.67]:54972 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753737AbbCJU5N (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2015 16:57:13 -0400
+In-Reply-To: <20150310150815.GA28071@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicholas Mc Guire <hofrat@osadl.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Janusz Uzycki <j.uzycki@elproma.com.pl>, linux-serial@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-Hello,
+--Sig_/TJUxc1M3Vi05BpMd9iWH6UP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 10, 2015 at 01:57:57PM -0400, Nicholas Mc Guire wrote:
-> fix mxs-auart build failure. got -> goto and wrong jump target.
+Hi Greg,
+
+On Tue, 10 Mar 2015 16:08:15 +0100 Greg KH <greg@kroah.com> wrote:
+>
+> Sorry about that.  Yes, I know it's a mess.  The build error on ppc
+> should now be fixed in my tree.  The build warnings are still there
+> (some are gone).  I should just go fix them up myself, and will do so
+> tonight if I don't get a patch from someone else that does so first...
 >=20
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-=46abio was bit quicker than you. He sent the same patch just before yo=
-u
-with Message-Id: 1425997464-3422-1-git-send-email-fabio.estevam@freesca=
-le.com.
+> So it should be safe to enable again.
 
-I failed to find a working archive though.
-
-Thanks anyhow,
-Uwe
+OK, will do.
 
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/TJUxc1M3Vi05BpMd9iWH6UP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU/1qmAAoJEMDTa8Ir7ZwVyoIQAIhqMMwztHCbLxJU+WWPXRok
+Q0yZpBi3KzbK21RjZt9KCAdSzoKZEB/I/IxqTqwP5hviJ3+6WJWOXwqAzmhY4SWq
+4JTfBeCNUZhfEcU/sNEulT6XeKK/517Ag0ZeKgQlo/FjvWARCzQrixIeFGItSI8K
+ixwp//ZXLd7K28ryxCysNwEFln3pPP/RKc0YslD/2EjDi9gpi1YgwjtMnOvuG8Nu
+LI28WX8OCkYnzypFAWoI0ebs4FUbgliPA59YKHyNwIQE4h6/4fUPLxhuCyq1MX5i
+CfnmbP/5+uqr4oS3flMzVHd4MUB+hcSuX5tJtkFmB6iS51fhWuAXmEo7YQigDJ4w
+bVspuLKsIWj0Fj1IanahXinPCLcW4QEV68iP2ybDdcHhIC7RfUIEspWvff8jFzbP
+KR5bIei+TsVEdS0HJ0AZOrcMA9Tv+kUXy2LwnfysDFM7/pssoNGvsKHVU2PAO7MG
+yOAMAsHAfgYhO07Qp2s3sXMXfSKVp+OQg32AyhbTBOJ7IST0bEaiNCmyC3qck9LF
+1peumRO+9OkzFh/cyCBCMKyNzolA5recG6NyVgC4ALpL0AdPWVN5HPKfHSp7QMTk
+gM5N7lKCTa7S695tMXxGMJtC92pIS0FICERKXvKQvzE7gxkDd3m+JBf+iBYX79JT
+JPdORIh59RGBmKTFe66a
+=yxgz
+-----END PGP SIGNATURE-----
+
+--Sig_/TJUxc1M3Vi05BpMd9iWH6UP--
