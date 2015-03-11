@@ -1,60 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the usb-gadget-fixes
- tree
-Date: Wed, 11 Mar 2015 13:41:50 +1100
-Message-ID: <20150311134150.2cd9464c@canb.auug.org.au>
+Subject: Re: [PATCH] zsmalloc: Add missing #include <linux/sched.h>
+Date: Wed, 11 Mar 2015 15:48:30 +1100
+Message-ID: <20150311154830.32d4981e@canb.auug.org.au>
+References: <1426023991-30407-1-git-send-email-geert@linux-m68k.org>
+	<20150310231557.GA4794@blaptop>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xsYE8YGVAag10wy+kJmZmlQ"; protocol="application/pgp-signature"
+ boundary="Sig_/GOvaB3NzmP25b+m0dX/ca.."; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49006 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50624 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750920AbbCKCl5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2015 22:41:57 -0400
+	id S1750769AbbCKEsg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Mar 2015 00:48:36 -0400
+In-Reply-To: <20150310231557.GA4794@blaptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Felipe Balbi <balbi@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Valentin Rothberg <Valentin.Rothberg@lip6.fr>, Valentin Rothberg <valentinrothberg@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-next@vger.kernel.org
 
---Sig_/xsYE8YGVAag10wy+kJmZmlQ
+--Sig_/GOvaB3NzmP25b+m0dX/ca..
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Geert,
 
-Today's linux-next merge of the tip tree got a conflict in
-drivers/usb/isp1760/isp1760-core.c between commit 80b4a0f8feeb ("usb:
-isp1760: set IRQ flags properly") from the usb-gadget-fixes tree and
-commit d8bf368d0631 ("genirq: Remove the deprecated 'IRQF_DISABLED'
-request_irq() flag entirely") from the tip tree.
+On Wed, 11 Mar 2015 08:15:57 +0900 Minchan Kim <minchan@kernel.org> wrote:
+>
+> On Tue, Mar 10, 2015 at 10:46:31PM +0100, Geert Uytterhoeven wrote:
+> > mips/allmodconfig:
+> >=20
+> > mm/zsmalloc.c: In function '__zs_compact':
+> > mm/zsmalloc.c:1747:2: error: implicit declaration of function
+> > 'cond_resched' [-Werror=3Dimplicit-function-declaration]
+> >=20
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Acked-by: Minchan Kim <minchan@kernel.org>
 
-I fixed it up (the latter is a subset of the former) and can carry the
-fix as necessary (no action is required).
-
+Added to my copy of Andrew's tree (and thus linux-next) today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/xsYE8YGVAag10wy+kJmZmlQ
+--Sig_/GOvaB3NzmP25b+m0dX/ca..
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJU/6tyAAoJEMDTa8Ir7ZwVeh0P/1mmCHMvEhWT0iKHKI/PquCi
-wNYVhGtphNdwgz37h4kMs/QmE2doBQw/OR0BaJdHkulxdfJuP1K3Y3fgBOYb2Jfi
-SyTP1imMmswH8gjdFRS+/L1wLarZs+lof622lRr++lsyTFr4ygehmD58vvgU9UCg
-vh4jjd1WNUJakWQ70VQYyEBELGBF7CUUT49OV9iQPi6FdUxtudqF36PMqSWgfkwU
-NeWohKI4z7kAi1sxZY/fUdtFruYsFVA/K+4CiZOwJ9NkmaG3LhWGuK8RGdDk6uIE
-7QsLQLBeSB1rnhsHHwQOPzyHIpp12/PUkfUBtIfXQN2QEULhpUlQ0oHg8b2YxXW4
-Nq7dZAjLPO9SWmonqH945rMMiRlJPy4aRXk7nvWUb1KYGpL6BUo6OfAdGMTC/EvZ
-srrzX3PzPeXxLdjzbLnX5luV4dLHoSjIvTs76o3FC2/5sUOBugHVV30OwofeNg18
-RxKev4VHg+l7QYLI6Y5CBdLK+fhlNgpOv1tPitQEEAYDLFs41/bP5pqAnsK3AYV8
-DOBVJcBD1IQzqGcPfp5o634mJa7J9TQ2MeLZebVqNMsTFBgCzGliqv3WcBRxJMph
-FwwA9Ofso7v+nPEKQNZ21w0M0TtLzUQI0XCjiGGrAlJ0K2WMkz7cR9xHlvomw0K1
-IJQoUjEr6DYHk+57SOS3
-=14oB
+iQIcBAEBCAAGBQJU/8kiAAoJEMDTa8Ir7ZwVB2kP/2OoDqaGbwmAjsr+nWQPWMrM
+1GnlHeocvwq1MQVtY3aqIUgPKPKr0CMAU4AbGO32eHoYRBTu1Gvxo/gxR2/pNN3o
+kwZx1yD/QQ2Rq2ikLKoseIbsTT6DDDhLOJUxPVfmsaVtlC9gdrms8um6rA44Y2aS
+0YGfd+KfecUOFIebYrQrkxzJw/HvVEqwts/pIQAwoPocqrvTVYwGl4nC8M31atgk
+PqLp7zk3PbnofNagD1a/3AqGQMyW0vLlnJBppisznyr8TJdpDlvzhTG8ZFprKqAY
+u/1IIIdT9uk5lH8/2PiEm4QKe1/AbnaLDpBV/WSbl13tMLStFKCnDC3Kiqz+WWsY
+mYiN9nLDagX+T9e7b/fFjcPkguDopl5vEcrq0OErG0FlLRhVNLSiCh54AtqbMF9f
+P0rqAouRIJDRv0kofD/KbC1bqYzTgFuVlZKvGdKxSbFgwfko77HO8P0cQAl8oM+n
+KnQnyEv0/XqUMLm2+yIhsovNXEsqJ5eXyxaHJsssY/mtHlQR4gD9hK/nOiD2F66h
+tLLN6BAqovJEtZ2CPeffnwgZP9IVNAERigLg1eNSpTxMkezCyRYK/UFCiNXs4DrT
+03W8xbXOBvr5eKeamim7ptQ9rgeKvGCwMPFLikLtLK4eRWH7n57Eqo09Z4Lw0o18
+KWw2MpmU+7p1YcO4WfMl
+=TNJX
 -----END PGP SIGNATURE-----
 
---Sig_/xsYE8YGVAag10wy+kJmZmlQ--
+--Sig_/GOvaB3NzmP25b+m0dX/ca..--
