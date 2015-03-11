@@ -1,25 +1,18 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Mar 11 (arm build failure, ASoC)
-Date: Wed, 11 Mar 2015 08:51:54 -0700
-Message-ID: <20150311155154.GA22446@roeck-us.net>
+Subject: Re: linux-next: Tree for Mar 11 (arm:multi_v5_defconfig build
+ failure)
+Date: Wed, 11 Mar 2015 08:55:48 -0700
+Message-ID: <20150311155548.GB22446@roeck-us.net>
 References: <20150311163558.6a09cfcc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:33967 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750779AbbCKPv7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2015 11:51:59 -0400
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YVivO-002Z6s-K0
-	for linux-next@vger.kernel.org; Wed, 11 Mar 2015 15:51:58 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20150311163558.6a09cfcc@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>, Andrew Lunn <andrew@lunn.ch>, Gregory CLEMENT <gregory.clement@free-electrons.com>
+List-Id: linux-next.vger.kernel.org
 
 On Wed, Mar 11, 2015 at 04:35:58PM +1100, Stephen Rothwell wrote:
 > Hi all,
@@ -42,13 +35,14 @@ On Wed, Mar 11, 2015 at 04:35:58PM +1100, Stephen Rothwell wrote:
 > 
 > ----------------------------------------------------------------------------
 > 
-Building arm:omap2plus_defconfig ... failed
+Building arm:multi_v5_defconfig ... failed
 --------------
 Error log:
-sound/soc/davinci/davinci-mcasp.c: In function 'davinci_mcasp_suspend':
-sound/soc/davinci/davinci-mcasp.c:1062:2: error: expected ';' before 'if'
+arch/arm/boot/dts/kirkwood-nas2big.dts:15:43: fatal error:
+	dt-bindings/leds/leds-netxbig.h: No such file or directory
+ #include <dt-bindings/leds/leds-netxbig.h>
 
-Caused by 6afda7f507 ("ASoC: davinci-mcasp: Allow complete shutdown of McASP
-when not in use"). Yes, there is a missing ';' in that code.
+Caused by commit a9e58557e99 ("ARM: Kirkwood: add DT description for nas2big").
+Yes, that file doesn't exist.
 
 Guenter
