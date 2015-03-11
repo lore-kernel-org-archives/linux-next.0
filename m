@@ -1,41 +1,60 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build warnings after merge of the crypto tree
-Date: Wed, 11 Mar 2015 13:05:56 +1100
-Message-ID: <20150311020556.GA1260@gondor.apana.org.au>
-References: <20150310164417.540c18a4@canb.auug.org.au>
- <20150310060328.GA14997@gondor.apana.org.au>
- <54FFA1BA.30009@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the usb-gadget-fixes
+ tree
+Date: Wed, 11 Mar 2015 13:41:50 +1100
+Message-ID: <20150311134150.2cd9464c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xsYE8YGVAag10wy+kJmZmlQ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ringil.hengli.com.au ([178.18.16.133]:40368 "EHLO
-	ringil.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751381AbbCKCGG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2015 22:06:06 -0400
-Content-Disposition: inline
-In-Reply-To: <54FFA1BA.30009@intel.com>
+Received: from ozlabs.org ([103.22.144.67]:49006 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750920AbbCKCl5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2015 22:41:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephan Mueller <smueller@chronox.de>, "David S. Miller" <davem@davemloft.net>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, netdev@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Valentin Rothberg <Valentin.Rothberg@lip6.fr>, Valentin Rothberg <valentinrothberg@gmail.com>
 
-On Tue, Mar 10, 2015 at 07:00:26PM -0700, Tadeusz Struk wrote:
-> On 03/09/2015 11:03 PM, Herbert Xu wrote:
-> > This is a bit of a bummer.  What happened is that net-next has
-> > killed the kiocb argument to sendmsg/recvmsg.  However, this
-> > change is obviously not part of the crypto tree and algif_aead
-> > only exists in the crypto tree.
-> > 
-> > So Stephen could you fix this by hand until one of them is merged
-> > upstream (just kill the first argument in aead_sendmsg/aead_recvmsg)?
-> 
-> So does it mean that aio operations will not be supported on sockets?
+--Sig_/xsYE8YGVAag10wy+kJmZmlQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Indeed.  If you want to have this ability you'll need to take
-the discussion over to netdev.
+Hi all,
 
+Today's linux-next merge of the tip tree got a conflict in
+drivers/usb/isp1760/isp1760-core.c between commit 80b4a0f8feeb ("usb:
+isp1760: set IRQ flags properly") from the usb-gadget-fixes tree and
+commit d8bf368d0631 ("genirq: Remove the deprecated 'IRQF_DISABLED'
+request_irq() flag entirely") from the tip tree.
+
+I fixed it up (the latter is a subset of the former) and can carry the
+fix as necessary (no action is required).
+
+--=20
 Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/xsYE8YGVAag10wy+kJmZmlQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJU/6tyAAoJEMDTa8Ir7ZwVeh0P/1mmCHMvEhWT0iKHKI/PquCi
+wNYVhGtphNdwgz37h4kMs/QmE2doBQw/OR0BaJdHkulxdfJuP1K3Y3fgBOYb2Jfi
+SyTP1imMmswH8gjdFRS+/L1wLarZs+lof622lRr++lsyTFr4ygehmD58vvgU9UCg
+vh4jjd1WNUJakWQ70VQYyEBELGBF7CUUT49OV9iQPi6FdUxtudqF36PMqSWgfkwU
+NeWohKI4z7kAi1sxZY/fUdtFruYsFVA/K+4CiZOwJ9NkmaG3LhWGuK8RGdDk6uIE
+7QsLQLBeSB1rnhsHHwQOPzyHIpp12/PUkfUBtIfXQN2QEULhpUlQ0oHg8b2YxXW4
+Nq7dZAjLPO9SWmonqH945rMMiRlJPy4aRXk7nvWUb1KYGpL6BUo6OfAdGMTC/EvZ
+srrzX3PzPeXxLdjzbLnX5luV4dLHoSjIvTs76o3FC2/5sUOBugHVV30OwofeNg18
+RxKev4VHg+l7QYLI6Y5CBdLK+fhlNgpOv1tPitQEEAYDLFs41/bP5pqAnsK3AYV8
+DOBVJcBD1IQzqGcPfp5o634mJa7J9TQ2MeLZebVqNMsTFBgCzGliqv3WcBRxJMph
+FwwA9Ofso7v+nPEKQNZ21w0M0TtLzUQI0XCjiGGrAlJ0K2WMkz7cR9xHlvomw0K1
+IJQoUjEr6DYHk+57SOS3
+=14oB
+-----END PGP SIGNATURE-----
+
+--Sig_/xsYE8YGVAag10wy+kJmZmlQ--
