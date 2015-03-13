@@ -1,121 +1,71 @@
-From: Guoqing Jiang <jgq516@gmail.com>
-Subject: Re: linux-next: build failure after merge of the md tree
-Date: Fri, 13 Mar 2015 16:55:50 +0800
-Message-ID: <5502A616.9050305@gmail.com>
-References: <20150302165057.29087a08@canb.auug.org.au>	<20150302170345.742add96@notabene.brown>	<20150302171149.0a62b072@canb.auug.org.au> <20150303133531.72f10682@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: arm64 crash in today's next due to 'blk-mq: fix use of incorrect
+ goto label in blk_mq_init_queue error path'
+Date: Fri, 13 Mar 2015 02:40:02 -0700
+Message-ID: <5502B072.4080108@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:32907 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751837AbbCMI4r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2015 04:56:47 -0400
-In-Reply-To: <20150303133531.72f10682@canb.auug.org.au>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:38236 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752768AbbCMJkP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2015 05:40:15 -0400
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YWM4j-003I3Z-M3
+	for linux-next@vger.kernel.org; Fri, 13 Mar 2015 09:40:13 +0000
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: NeilBrown <neilb@suse.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Mike Snitzer <snitzer@redhat.com>, Ming Lei <ming.lei@canonical.com>
 
-Stephen Rothwell wrote:
-> Hi Neil,
->
-> On Mon, 2 Mar 2015 17:11:49 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->   
->> On Mon, 2 Mar 2015 17:03:45 +1100 NeilBrown <neilb@suse.de> wrote:
->>     
->>> I think
->>> +               bm_blocks = DIV_ROUND_UP(bm_blocks, 4096);
->>>
->>> needs DIV_ROUND_UP_SECTOR_T()
->>>       
->> I tried that and it was not sufficient.
->>
->>     
->>> The first patch you identified adds that line.  The second relocates it.
->>>       
->> The second also changes this:
->>
->> bm_blocks = sector_div(bitmap->mddev->resync_max_sectors, (chunksize >> 9));
->>
->> (added by the first) to this:
->>
->> bm_blocks = bitmap->mddev->resync_max_sectors / (bitmap->mddev->bitmap_info.chunksize >> 9);
->>
->> where bitmap->mddev->resync_max_sectors is a sector_t ...
->>     
->
-> So I applied this patch for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 3 Mar 2015 13:30:26 +1100
-> Subject: [PATCH] md/bitmap: use sector_div for sector_t divisions
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/md/bitmap.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-> index 23f575f0cd92..d40398404ab6 100644
-> --- a/drivers/md/bitmap.c
-> +++ b/drivers/md/bitmap.c
-> @@ -573,7 +573,8 @@ re_read:
->  	if (bitmap->cluster_slot >= 0) {
->  		long long bm_blocks;
->  
-> -		bm_blocks = bitmap->mddev->resync_max_sectors / (bitmap->mddev->bitmap_info.chunksize >> 9);
-> +		bm_blocks = sector_div(bitmap->mddev->resync_max_sectors,
-> +				       bitmap->mddev->bitmap_info.chunksize >> 9);
->   
-One simple question, isn't the sector_div used for change '%' operator?
-but the modified line is:
+I see an arm64 crash in today's -next.
 
-bm_blocks = bitmap->mddev->resync_max_sectors */* (bitmap->mddev->bitmap_info.chunksize >> 9);
+[<ffffffc0002d3214>] blk_mq_freeze_queue_start+0x38/0x54
+[<ffffffc0002d3284>] blk_mq_update_tag_set_depth+0x2c/0xb8
+[<ffffffc0002d39f4>] blk_mq_init_allocated_queue+0x6e4/0x71c
+[<ffffffc0002d3a58>] blk_mq_init_queue+0x2c/0x6c
+[<ffffffc00036b9b8>] loop_add+0xc0/0x24c
+[<ffffffc0006b3af8>] loop_init+0x134/0x190
+[<ffffffc0000828b4>] do_one_initcall+0x88/0x1a8
+[<ffffffc000696ad4>] kernel_init_freeable+0x140/0x1e8
+[<ffffffc0004db960>] kernel_init+0xc/0xdc
 
-But, the modified is:
+See http://server.roeck-us.net:8010/builders/qemu-arm64-next/builds/132/steps/qemubuildcommand/logs/stdio
+for a complete log.
 
-bm_blocks = sector_div(bitmap->mddev->resync_max_sectors,
-		       bitmap->mddev->bitmap_info.chunksize >> 9);
+Bisect results:
 
-The sector_div returns:
+# bad: [4516740d361710d8a554749c63a75b410edd2fdc] fs: btrfs: Add missing include file
+# good: [9eccca0843205f87c00404b663188b88eb248051] Linux 4.0-rc3
+git bisect start 'HEAD' 'v4.0-rc3'
+# good: [07534ed768c6b5d4ffa048e643597e7d0690b572] Merge remote-tracking branch 'sound/for-next'
+git bisect good 07534ed768c6b5d4ffa048e643597e7d0690b572
+# bad: [b27544a5a14c901833f254f8bd17bdc132a7a765] Merge remote-tracking branch 'tty/tty-next'
+git bisect bad b27544a5a14c901833f254f8bd17bdc132a7a765
+# bad: [a16a3cc1cb1e956e294b5e36d1f9e082406676a5] Merge remote-tracking branch 'spi/for-next'
+git bisect bad a16a3cc1cb1e956e294b5e36d1f9e082406676a5
+# bad: [c4b2457b90df42abe46e463d5da149c9a4515262] Merge remote-tracking branch 'md/for-next'
+git bisect bad c4b2457b90df42abe46e463d5da149c9a4515262
+# good: [c96db850880a5f76d727725607ab82c4733d1c60] Merge remote-tracking branch 'input/next'
+git bisect good c96db850880a5f76d727725607ab82c4733d1c60
+# bad: [b083904c28374ec4d1f4bbeafb7faa68985e289f] Merge remote-tracking branch 'device-mapper/for-next'
+git bisect bad b083904c28374ec4d1f4bbeafb7faa68985e289f
+# good: [c7b1fb7cfa638bdcb9ff71a55ce0a9b8554bf927] Merge branch 'for-3.20/core' into for-next
+git bisect good c7b1fb7cfa638bdcb9ff71a55ce0a9b8554bf927
+# good: [40852b59c07610139755a707fde327c4b33b8b26] dm: remove request-based logic from make_request_fn wrapper
+git bisect good 40852b59c07610139755a707fde327c4b33b8b26
+# bad: [716452cd27b145d611e4399e7cc35df6c943686e] blk-mq: add blk_mq_init_allocated_queue and export blk_mq_register_disk
+git bisect bad 716452cd27b145d611e4399e7cc35df6c943686e
+# good: [8124ec8334d7ffa0ca496a52c7351b9ed610fa03] dm: don't start current request if it would've merged with the previous
+git bisect good 8124ec8334d7ffa0ca496a52c7351b9ed610fa03
+# good: [5013e29ef8a49fd276150f566880766938dc0e20] dm: impose configurable deadline for dm_request_fn's merge heuristic
+git bisect good 5013e29ef8a49fd276150f566880766938dc0e20
+# bad: [c9e8c91f8a279b87eb0d94b037504ea9fc1bef7c] blk-mq: fix use of incorrect goto label in blk_mq_init_queue error path
+git bisect bad c9e8c91f8a279b87eb0d94b037504ea9fc1bef7c
+# first bad commit: [c9e8c91f8a279b87eb0d94b037504ea9fc1bef7c] blk-mq: fix use of incorrect goto label in blk_mq_init_queue error path
 
-bitmap->mddev->resync_max_sectors % bitmap->mddev->bitmap_info.chunksize >> 9
+Looking into the patch, this is not surprising, since 'q' is now used before it is allocated.
 
-So it basically means :
-
-bm_blocks = bitmap->mddev->resync_max_sectors % bitmap->mddev->bitmap_info.chunksize >> 9
-
-
-And maybe the current next tree should add the following change to keep
-original semantic.
-
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index 501f83f..ea9c685 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -571,11 +571,10 @@ static int bitmap_read_sb(struct bitmap *bitmap)
- re_read:
-        /* If cluster_slot is set, the cluster is setup */
-        if (bitmap->cluster_slot >= 0) {
--               sector_t bm_blocks;
--               sector_t resync_sectors = bitmap->mddev->resync_max_sectors;
-+               sector_t bm_blocks = bitmap->mddev->resync_max_sectors;
- 
--               bm_blocks = sector_div(resync_sectors,
--                                     
-bitmap->mddev->bitmap_info.chunksize >> 9);
-+               sector_div(bm_blocks,
-+                               bitmap->mddev->bitmap_info.chunksize >> 9);
-                bm_blocks = bm_blocks << 3;
-                bm_blocks = DIV_ROUND_UP_SECTOR_T(bm_blocks, 4096);
-                bitmap->mddev->bitmap_info.offset +=
-bitmap->cluster_slot * (bm_blocks << 3);
-
-
-Thanks,
-Guoqing
->  		bm_blocks = bm_blocks << 3;
->  		bm_blocks = DIV_ROUND_UP_SECTOR_T(bm_blocks, 4096);
->  		bitmap->mddev->bitmap_info.offset += bitmap->cluster_slot * (bm_blocks << 3);
->   
+Guenter
