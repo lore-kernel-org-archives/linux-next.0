@@ -1,95 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Fri, 13 Mar 2015 12:02:50 +1100
-Message-ID: <20150313120250.5ce08f77@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the vfs tree
+Date: Fri, 13 Mar 2015 13:15:43 +1100
+Message-ID: <20150313131543.7c050492@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Kf6FmTbLMVK_qqsaDAutqjV"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49082 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752300AbbCMBC5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2015 21:02:57 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>
+ boundary="Sig_/gq5ucSd4VE9yMwX2d+==V2J"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Ying Xue <ying.xue@windriver.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/Kf6FmTbLMVK_qqsaDAutqjV
+--Sig_/gq5ucSd4VE9yMwX2d+==V2J
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-After merging the vfs tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in
+net/socket.c between commits 005139a14660 ("fs: remove ki_nbytes") and
+e9eab93cc2dc ("fs: don't allow to complete sync iocbs through
+aio_complete") from the vfs tree and commit 1b784140474e ("net: Remove
+iocb argument from sendmsg and recvmsg") from the net-next tree.
 
-fs/ext4/indirect.c: In function 'ext4_ind_direct_IO':
-fs/ext4/indirect.c:653:2: error: implicit declaration of function 'iov_iter=
-_count' [-Werror=3Dimplicit-function-declaration]
-  size_t count =3D iov_iter_count(iter);
-  ^
-
-Caused by commit 3737c63e1fb0 ("fs: move struct kiocb to fs.h").  aio.h
-used to include uio.h ...
-
-I wonder if there is more fallout from this include file diet.
-
-It would have been nice if the more general changes to aio.h were in a
-separate patch.
-
-I added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 13 Mar 2015 11:56:46 +1100
-Subject: [PATCH] ext4: iov_iter_count needs linux/uio.h
-
-Fixes: 3737c63e1fb0 ("fs: move struct kiocb to fs.h")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/ext4/indirect.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-index 33308738a06a..a9369e5d2cc1 100644
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -20,6 +20,8 @@
-  *	(sct@redhat.com), 1993, 1998
-  */
-=20
-+#include <linux/uio.h>
-+
- #include "ext4_jbd2.h"
- #include "truncate.h"
-=20
---=20
-2.1.4
+I fixed it up (mainly using the net-next version - see below) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Kf6FmTbLMVK_qqsaDAutqjV
+diff --cc net/socket.c
+index f6c519d7b3ba,95d3085cb477..000000000000
+--- a/net/socket.c
++++ b/net/socket.c
+@@@ -855,11 -807,10 +807,10 @@@ static ssize_t sock_read_iter(struct ki
+  	if (iocb->ki_pos !=3D 0)
+  		return -ESPIPE;
+ =20
+ -	if (iocb->ki_nbytes =3D=3D 0)	/* Match SYS5 behaviour */
+ +	if (!iov_iter_count(to))	/* Match SYS5 behaviour */
+  		return 0;
+ =20
+- 	res =3D __sock_recvmsg(iocb, sock, &msg,
+- 			     iov_iter_count(to), msg.msg_flags);
+ -	res =3D sock_recvmsg(sock, &msg, iocb->ki_nbytes, msg.msg_flags);
+++	res =3D sock_recvmsg(sock, &msg, iov_iter_count(to), msg.msg_flags);
+  	*to =3D msg.msg_iter;
+  	return res;
+  }
+@@@ -880,7 -831,7 +831,7 @@@ static ssize_t sock_write_iter(struct k
+  	if (sock->type =3D=3D SOCK_SEQPACKET)
+  		msg.msg_flags |=3D MSG_EOR;
+ =20
+- 	res =3D __sock_sendmsg(iocb, sock, &msg, iov_iter_count(from));
+ -	res =3D sock_sendmsg(sock, &msg, iocb->ki_nbytes);
+++	res =3D sock_sendmsg(sock, &msg, iov_iter_count(from));
+  	*from =3D msg.msg_iter;
+  	return res;
+  }
+
+--Sig_/gq5ucSd4VE9yMwX2d+==V2J
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVAjc+AAoJEMDTa8Ir7ZwV1w4P/ishiRWYRt8sMBHLJxHnonCv
-65Og4yN7Um9MLt2x1bgq9/AIjSrk0zmEJ/E8S2dHyJgTlQ4JvJgvry81ADhgMoA1
-Gap6yDM/qn/Y4+xiNFhe+yYoplL4meKiujtYmenwluyEytihnsaVFFB6PKL8H20G
-qwG876QusJXyaflp0a/BaOrRquMPadOx6hDh/zO79/R8yqezRRrukhtI18sMJ56E
-HpYcvtX8RwXZ4TlluKQDDayOiKwBmgdv+YslldineliHshCPNEIqimLRGk0yjeHF
-qtw9GV9aoZcDPrPm6i9s1vDQr5TqCzIy9s7PQVPop8yGT3G6NIxKZVGjmtI2kEa2
-l0QShP/BM4++3nyCXuWyMdFt0N+ublj5QDgREV9tHfVPRp+xBANpNCyEZz2XZvK1
-Kid8uSicmT2je2q+8akzjooSDu18Kq5YhGSgkRaWcq3D9PFaAmPuhQu4FQACdblk
-7byHiB3uKRLr0wR/HeR5/xVvSBBIvyAAlbuOSok6PGWshUjfZvo8raYhERs6hc/D
-y49PLA3XbQhJ5dV1XakdiHXxDuVqWmFCGiLLAs24TCeHNI56pDJmHEEKaLSKZyXF
-xngyZeE2pTh67qxksjZggA9+xwdEYwANqdeKRaR06BwUk4QCnaphUE3XrV0+BJdV
-JwTyx6W0+1jSfHuXjnA4
-=sSSN
+iQIcBAEBCAAGBQJVAkhUAAoJEMDTa8Ir7ZwVG5EP/1vqUfrhDlfVPB4neBvGHVrI
+ilRXWeza00D+cxKXrzIHgzlJWpnEHzMSM2kSlKTNbggZmWUdG4NPh8ie/aElkoN0
+gwmYkzrJKeePlNtZGwJUkdWqdXXw+HfB5PFIg2ew1Yjc7PbJ6CAu+4OdZz05aFHx
+gIddKx1FI1zlhITz7SGbbkuVPNNNJ1A2s5Rp+VEHJZROIYam3nCen51TgSUJZ+uV
+QiSzWHAgSgd1d/nHpI45dfsOUBAEIYkECWYp5Vs4vVmCcEfGDx7wHNX+2Biyt9gx
+Tfh17UfaJcmu1RFUQPK/zPREgokdmHEepOMrkTnYEIxbCjZn3a6TBP2to/KedOY0
+1GxlIMkFoPum6Bhgigh8puBK5lH/SgkYwy+2UR7YQNyuRobuv7/y0WLCDpYb5EfT
+OtfY2T64APbWFZ67vKrtbu2i+SxBuCjY/QbGiO8NqrOPktSoZIE58UR1B4L0Jsh4
+Ltl1eYeW6kBD5s+uDQgVf1d6b52R5AcyvU7fsQm3EeXAGhTfMVb36et67/r6fF8D
+hBorWrO2cZXBX42zKYyrlS4F5Vsg1aPoM1jQSBCqsQpeXkcL+CJMRkMG1N2Dq6eo
+rbBIdpxWImpPz/NgoNUgX98Q3OZIfB1e5H+yVGQikOauosyTxF2zitlkB2Wih4Jh
+YXYIstnK9pYKap7Fhf6v
+=zMg+
 -----END PGP SIGNATURE-----
 
---Sig_/Kf6FmTbLMVK_qqsaDAutqjV--
+--Sig_/gq5ucSd4VE9yMwX2d+==V2J--
