@@ -1,43 +1,46 @@
 From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: arm64 crash in today's next due to 'blk-mq: fix use of incorrect
- goto label in blk_mq_init_queue error path'
-Date: Fri, 13 Mar 2015 08:31:15 -0400
-Message-ID: <20150313123114.GC7312@redhat.com>
-References: <5502B072.4080108@roeck-us.net>
+Subject: next-20150313's block is broken, but fix available [was: Re: block:
+ fully initialize queue in blk_mq_init_allocated_queue]
+Date: Fri, 13 Mar 2015 10:17:22 -0400
+Message-ID: <20150313141722.GA13425@redhat.com>
+References: <1426239050-2528-1-git-send-email-sergey.senozhatsky@gmail.com>
+ <20150313122436.GB7312@redhat.com>
+ <20150313123709.GA430@swordfish>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5502B072.4080108@roeck-us.net>
+In-Reply-To: <20150313123709.GA430@swordfish>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@canonical.com>
+To: sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Cc: Ming Lei <ming.lei@canonical.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 13 2015 at  5:40am -0400,
-Guenter Roeck <linux@roeck-us.net> wrote:
+On Fri, Mar 13 2015 at  8:37am -0400,
+Sergey Senozhatsky <sergey.senozhatsky@gmail.com> wrote:
 
-> I see an arm64 crash in today's -next.
+> On (03/13/15 08:24), Mike Snitzer wrote:
+> > Thanks, but I already fixed these 2 patches and pushed them to
+> > linux-dm.git's for-next branch last night (I also posted v3 of the
+> > corresponding patches to LKML at that time).
 > 
-> [<ffffffc0002d3214>] blk_mq_freeze_queue_start+0x38/0x54
-> [<ffffffc0002d3284>] blk_mq_update_tag_set_depth+0x2c/0xb8
-> [<ffffffc0002d39f4>] blk_mq_init_allocated_queue+0x6e4/0x71c
-> [<ffffffc0002d3a58>] blk_mq_init_queue+0x2c/0x6c
-> [<ffffffc00036b9b8>] loop_add+0xc0/0x24c
-> [<ffffffc0006b3af8>] loop_init+0x134/0x190
-> [<ffffffc0000828b4>] do_one_initcall+0x88/0x1a8
-> [<ffffffc000696ad4>] kernel_init_freeable+0x140/0x1e8
-> [<ffffffc0004db960>] kernel_init+0xc/0xdc
+> oh, I see. didn't know that.
 > 
-> See http://server.roeck-us.net:8010/builders/qemu-arm64-next/builds/132/steps/qemubuildcommand/logs/stdio
-> for a complete log.
+> > Sorry to waste your time, I've learned my lesson:
+> > 
 > 
-> Bisect results:
+> no problem.
 > 
-...
-> # first bad commit: [c9e8c91f8a279b87eb0d94b037504ea9fc1bef7c] blk-mq: fix use of incorrect goto label in blk_mq_init_queue error path
+> > Hopefully linux-next was able to pick up my new 'for-next' and we don't
+> > have an entire weekend of linux-next crashes due to my idiocy.
 > 
-> Looking into the patch, this is not surprising, since 'q' is now used before it is allocated.
+> nope, this is how I spot it -- next-20150313 doesn't boot.
 
-Yes, sorry about this.  Certainly embarrassing, please see:
-https://lkml.org/lkml/2015/3/13/299
+Hi Stephen,
+
+Is there any opportunity to get the tree fixed by re-pulling
+linux-dm.git's 'for-next'?  I'd hate to kill linux-next productivity
+this weekend!  Sorry about this.
+
+Please advise, thanks.
+Mike
