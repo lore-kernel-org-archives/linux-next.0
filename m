@@ -1,48 +1,32 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2015-03-12-15-17 uploaded (rocker.c)
-Date: Fri, 13 Mar 2015 09:06:11 -0700
-Message-ID: <55030AF3.5070705@infradead.org>
-References: <550210ac.Pr9rP4DS86Wiia6Q%akpm@linux-foundation.org>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the net-next tree with the vfs tree
+Date: Fri, 13 Mar 2015 16:37:07 +0000
+Message-ID: <20150313163707.GP29656@ZenIV.linux.org.uk>
+References: <20150313131543.7c050492@canb.auug.org.au>
+ <20150312.232426.1464986797003264151.davem@davemloft.net>
+ <20150313035609.GO29656@ZenIV.linux.org.uk>
+ <20150313153817.34510752@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <550210ac.Pr9rP4DS86Wiia6Q%akpm@linux-foundation.org>
+Content-Disposition: inline
+In-Reply-To: <20150313153817.34510752@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, Jiri Pirko <jiri@resnulli.us>, sfeldma@gmail.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Linus Torvalds <torvalds@linux-foundation.org>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, ying.xue@windriver.com, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 03/12/15 15:18, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2015-03-12-15-17 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (3.x
-> or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
+On Fri, Mar 13, 2015 at 03:38:17PM +1100, Stephen Rothwell wrote:
 
-on i386:  found in mmotm but contained in linux-next:
+> There is also a conflict with e9eab93cc2dc ("fs: don't allow to
+> complete sync iocbs through aio_complete"), though it doesn't show up
+> in the resolution since I I just used the next-next tree bits.  So a
+> common branch containing that as well could be merged into both trees.
 
-when CONFIG_INET is not enabled:
-
-
-drivers/built-in.o: In function `rocker_port_fib_ipv4.isra.55':
-rocker.c:(.text+0x1ea5ae): undefined reference to `arp_tbl'
-rocker.c:(.text+0x1ea6b1): undefined reference to `arp_tbl'
-drivers/built-in.o: In function `rocker_netevent_event':
-rocker.c:(.text+0x1ea7b8): undefined reference to `arp_tbl'
-
-
-
--- 
-~Randy
+OK, for now I've done just that (vfs.git#iocb in never-rebase mode).
+I still think that vfs.git#gadget ought to go into mainline; arguments
+for the rest of #iocb are weaker and merging it into net-next would
+suffice; as the matter of fact, I have pending stuff for net-next touching
+the same area (further reduction of ->sendmsg()/->recvmsg() argument lists;
+total_len is redundant); might as well deal with that when feeding that
+to Dave...
