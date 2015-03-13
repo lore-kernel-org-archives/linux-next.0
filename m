@@ -1,62 +1,82 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the vfs tree
-Date: Fri, 13 Mar 2015 00:52:47 -0400 (EDT)
-Message-ID: <20150313.005247.525984466584401105.davem@davemloft.net>
-References: <20150313131543.7c050492@canb.auug.org.au>
-	<20150312.232426.1464986797003264151.davem@davemloft.net>
-	<20150313035609.GO29656@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
+Date: Fri, 13 Mar 2015 16:27:27 +1100
+Message-ID: <20150313162727.1d6b9c94@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:44472 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750740AbbCMEwv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2015 00:52:51 -0400
-In-Reply-To: <20150313035609.GO29656@ZenIV.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: viro@ZenIV.linux.org.uk
-Cc: torvalds@linux-foundation.org, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, ying.xue@windriver.com, balbi@ti.com, stern@rowland.harvard.edu, linux-usb@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/_s53OF=+pq1nOrr+WNXfD/8"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Alexander Kuleshov <kuleshovmail@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Fri, 13 Mar 2015 03:56:09 +0000
+--Sig_/_s53OF=+pq1nOrr+WNXfD/8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, Mar 12, 2015 at 11:24:26PM -0400, David Miller wrote:
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Fri, 13 Mar 2015 13:15:43 +1100
->> 
->> > Today's linux-next merge of the net-next tree got a conflict in
->> > net/socket.c between commits 005139a14660 ("fs: remove ki_nbytes") and
->> > e9eab93cc2dc ("fs: don't allow to complete sync iocbs through
->> > aio_complete") from the vfs tree and commit 1b784140474e ("net: Remove
->> > iocb argument from sendmsg and recvmsg") from the net-next tree.
->> > 
->> > I fixed it up (mainly using the net-next version - see below) and can
->> > carry the fix as necessary (no action is required).
->> 
->> Al, how do you want to resolve this?
-> 
-> Hmm...  I could backmerge 1b784140474e4fc94281a49e96c67d29df0efbde into
-> vfs.git#for-next, of course, but you've got quite a pile of stuff in front
-> of it...  FWIW, the conflict resolution proposed by Stephen is correct;
-> the question is what should go into which tree.
-> 
-> Actually, prereqs of the commit in question on vfs.git side are mostly
-> -stable fodder; all it really needs is vfs.git#gadget and I was planning
-> to send that to Linus - fixes for leaks and use-after-free in gadgetfs
-> that had been there since forever, plus fixes for regression since 3.18
-> (->f_op flipping that had always been fishy and outright broke when we
-> started to FMODE_CAN_READ/FMODE_CAN_WRITE).  USB folks seem to be OK
-> with it.  Christoph's patch isn't a regression fix, but seeing that it's
-> (a) trivial and (b) ends up causing merge headache...  Maybe it would
-> make sense to pull it into mainline and resolve the conflict on backmerge
-> from mainline to net-next.  Linus?  I've pushed that (gadget + ki_nbytes)
-> into vfs.git#for-linus-2; would you be OK with pulling that?
+Hi Andrew,
 
-Push your stuff to Linus, then I'll solve all of this by merging
-Linus --> net --> net-next at some point, ok?
+Today's linux-next merge of the akpm-current tree got a conflict in
+fs/fat/inode.c between commit 3737c63e1fb0 ("fs: move struct kiocb to
+fs.h") from the vfs tree and commit be33247df543 ("fs/fat: remove
+unnecessary includes") from the akpm-current tree.
 
-Meanwhile Stephen's fix will carry us over until then.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-THanks!
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/fat/inode.c
+index 8521207de229,8ea7fec6716d..000000000000
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@@ -11,20 -11,12 +11,11 @@@
+   */
+ =20
+  #include <linux/module.h>
+- #include <linux/init.h>
+- #include <linux/time.h>
+- #include <linux/slab.h>
+- #include <linux/seq_file.h>
+  #include <linux/pagemap.h>
+  #include <linux/mpage.h>
+- #include <linux/buffer_head.h>
+- #include <linux/mount.h>
+ -#include <linux/aio.h>
+  #include <linux/vfs.h>
++ #include <linux/seq_file.h>
+  #include <linux/parser.h>
+- #include <linux/uio.h>
+- #include <linux/writeback.h>
+- #include <linux/log2.h>
+- #include <linux/hash.h>
+  #include <linux/blkdev.h>
+  #include <asm/unaligned.h>
+  #include "fat.h"
+
+--Sig_/_s53OF=+pq1nOrr+WNXfD/8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVAnVDAAoJEMDTa8Ir7ZwV1gsP/0p7+SYdybamlbW3idvKWWFv
+k0EQrbTZctkjhzl6UHeBGDlIgDXMNklnaDpFXZdXktjdA9K+yNHEe9mq1UTkiC2Q
+lLQGMwboFZNQkHnzkTlRQY/zOTwUFEZBTnAKIg6MO8c41Q+fGgUPtG57SGCLv8DQ
+9X26VodUFbzczZOFEyvnvKguUo1OzjT8Bx/utdCi8i3pQ5dVmbnv8DY2Jsp0F6k6
+/4faQJ/3d62xTgS7Ji0tk9KMZuna0zN9UmMO7kdrob1m7Il4Ply/vcF6j3cPM76z
+w3auwOT314Lu8iZYyCL9wWgRpE9PYqlUWTWxiZ8LTjLUbfmD9bWz3htmoZP1X/lM
+WzoecN9qUVDA61ZntsrkPtFp5FlYuox6Ld6uT37gXd7CVeiWK8iuXGubfGvlsOJt
+ZGrmYfcKkEtIelFvmTCou7y01318ODOplN7iGYbwnDDd8nE8uDo4HsQgWziGRoMR
+fq8trolLIkoG4wYSsAXwUz1QDkR4PIZYPycmWHY2Uu3qM5o9HboPmwokvUsAHBdk
+Nwrxpv+ZFhDA6nyQxCUISCtqYFVlxBi3w8vGehLM9clzMThggzTL8m3pdTq4ufK9
+gJa2C9pFNVQ52J5weR6JuBt7n1gF3AnKl+XymYyA6BPvP6ACznKzHxbxy3mjaphV
+7ZF/Dssx2MezQ08aencb
+=1w/p
+-----END PGP SIGNATURE-----
+
+--Sig_/_s53OF=+pq1nOrr+WNXfD/8--
