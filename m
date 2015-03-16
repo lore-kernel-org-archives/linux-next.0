@@ -1,57 +1,56 @@
-From: Xi Ruoyao <xry111@outlook.com>
-Subject: Re: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Mon, 16 Mar 2015 21:43:31 +0800
-Message-ID: <BLU437-SMTP229FA75B0BDC81D45AB16A9E020@phx.gbl>
+From: Jani Nikula <jani.nikula@intel.com>
+Subject: Re: linux-next: manual merge of the drm tree with the
+	drm-intel-fixes tree
+Date: Mon, 16 Mar 2015 17:04:31 +0200
+Message-ID: <873855ouf4.fsf@intel.com>
 References: <20150316133049.39f516f2@canb.auug.org.au>
+ <BLU437-SMTP229FA75B0BDC81D45AB16A9E020@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from blu004-omc3s8.hotmail.com ([65.55.116.83]:64338 "EHLO
-	BLU004-OMC3S8.hotmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753874AbbCPNoR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2015 09:44:17 -0400
-In-Reply-To: <20150316133049.39f516f2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Matt Roper <matthew.d.roper@intel.com>, Damien Lespiau <damien.lespiau@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <BLU437-SMTP229FA75B0BDC81D45AB16A9E020@phx.gbl>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Xi Ruoyao <xry111@outlook.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-
-On 03/16/2015 at 10:30 AM, Stephen Rothwell wrote:
-> Hi Dave,
->
-> Today's linux-next merge of the drm tree got a conflict in
-> drivers/gpu/drm/i915/intel_display.c between commit 2dccc9898d45
-> ("drm/i915: Ensure plane->state->fb stays in sync with plane->fb") from
-> the drm-intel-fixes tree and commit afd65eb4cc05 ("drm/i915: Ensure
-> plane->state->fb stays in sync with plane->fb"), f55548b5af87
-> ("drm/i915: Don't try to reference the fb in
-> get_initial_plane_config()") and presumably others from the drm tree.
->
-> Same patch summary, different authors, committers and added function.
->
-> I fixed it up (I effectively used the drm tree version) and can carry
-> the fix as necessary (no action is required).
->
-My patch with commit 2dccc9898d45 is for Linux 4.0-rcN. It has no 
-relationship
-  with linux-next since Matt Roper's afd65eb4cc05 has solved this long 
-long ago.
-
-So, 2dccc9898d45 should not be tagged with for-linux-next-fixes (in 
-repository
-http://cgit.freedesktop.org/drm-intel/). I think it caused the mess of 
-version
-control.
-
-BTW, there is still one thing should be done in linux-next. We should 
-change
-Matt's update_state_fb to use drm_atomic_set_fb_for_plane since the logic of
-Matt's code is duplicated with drm_atomic_set_fb_for_plane.
-
--- 
-Xi Ruoyao
-School of Aerospace Science and Technology
-Xidian University, Xi'an, China
+T24gTW9uLCAxNiBNYXIgMjAxNSwgWGkgUnVveWFvIDx4cnkxMTFAb3V0bG9vay5jb20+IHdyb3Rl
+Ogo+IE9uIDAzLzE2LzIwMTUgYXQgMTA6MzAgQU0sIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4+
+IEhpIERhdmUsCj4+Cj4+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtIHRyZWUg
+Z290IGEgY29uZmxpY3QgaW4KPj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5j
+IGJldHdlZW4gY29tbWl0IDJkY2NjOTg5OGQ0NQo+PiAoImRybS9pOTE1OiBFbnN1cmUgcGxhbmUt
+PnN0YXRlLT5mYiBzdGF5cyBpbiBzeW5jIHdpdGggcGxhbmUtPmZiIikgZnJvbQo+PiB0aGUgZHJt
+LWludGVsLWZpeGVzIHRyZWUgYW5kIGNvbW1pdCBhZmQ2NWViNGNjMDUgKCJkcm0vaTkxNTogRW5z
+dXJlCj4+IHBsYW5lLT5zdGF0ZS0+ZmIgc3RheXMgaW4gc3luYyB3aXRoIHBsYW5lLT5mYiIpLCBm
+NTU1NDhiNWFmODcKPj4gKCJkcm0vaTkxNTogRG9uJ3QgdHJ5IHRvIHJlZmVyZW5jZSB0aGUgZmIg
+aW4KPj4gZ2V0X2luaXRpYWxfcGxhbmVfY29uZmlnKCkiKSBhbmQgcHJlc3VtYWJseSBvdGhlcnMg
+ZnJvbSB0aGUgZHJtIHRyZWUuCj4+Cj4+IFNhbWUgcGF0Y2ggc3VtbWFyeSwgZGlmZmVyZW50IGF1
+dGhvcnMsIGNvbW1pdHRlcnMgYW5kIGFkZGVkIGZ1bmN0aW9uLgo+Pgo+PiBJIGZpeGVkIGl0IHVw
+IChJIGVmZmVjdGl2ZWx5IHVzZWQgdGhlIGRybSB0cmVlIHZlcnNpb24pIGFuZCBjYW4gY2FycnkK
+Pj4gdGhlIGZpeCBhcyBuZWNlc3NhcnkgKG5vIGFjdGlvbiBpcyByZXF1aXJlZCkuCj4+Cj4gTXkg
+cGF0Y2ggd2l0aCBjb21taXQgMmRjY2M5ODk4ZDQ1IGlzIGZvciBMaW51eCA0LjAtcmNOLiBJdCBo
+YXMgbm8gCj4gcmVsYXRpb25zaGlwCj4gICB3aXRoIGxpbnV4LW5leHQgc2luY2UgTWF0dCBSb3Bl
+cidzIGFmZDY1ZWI0Y2MwNSBoYXMgc29sdmVkIHRoaXMgbG9uZyAKPiBsb25nIGFnby4KClRoZSBy
+ZWxhdGlvbnNoaXAgaXMgdGhhdCAtbmV4dCB3aWxsIGV2ZW50dWFsbHkgbWVyZ2UgdG8gTGludXMn
+IG1hc3RlciwKc28gTWF0dCdzIGNvbW1pdCB3aWxsIGNvbmZsaWN0IHdpdGggeW91cnMuIFlvdXIg
+Y29tbWl0IGlzIHRha2luZyB0aGUKZmFzdCBwYXRoIHRvIHRoZSBrZXJuZWwuIEJ1dCB5b3UgZG9u
+J3QgaGF2ZSB0byB3b3JyeSBhYm91dCBpdCwgaXQncyBhbGwKdGFrZW4gY2FyZSBvZi4gQW5kIHBl
+ciB3aGF0IFN0ZXBoZW4gc2F5cywgaGUgaGFzIGRvbmUgdGhlIHJpZ2h0IHRoaW5nLgoKPiBCVFcs
+IHRoZXJlIGlzIHN0aWxsIG9uZSB0aGluZyBzaG91bGQgYmUgZG9uZSBpbiBsaW51eC1uZXh0LiBX
+ZSBzaG91bGQgCj4gY2hhbmdlCj4gTWF0dCdzIHVwZGF0ZV9zdGF0ZV9mYiB0byB1c2UgZHJtX2F0
+b21pY19zZXRfZmJfZm9yX3BsYW5lIHNpbmNlIHRoZSBsb2dpYyBvZgo+IE1hdHQncyBjb2RlIGlz
+IGR1cGxpY2F0ZWQgd2l0aCBkcm1fYXRvbWljX3NldF9mYl9mb3JfcGxhbmUuCgpQYXRjaGVzIHdl
+bGNvbWUgaW4gaW50ZWwtZ2Z4IGxpc3Q7IHRoZSBhdWRpZW5jZSBoZXJlIGlzIHRvbyB3aWRlLiA7
+KQoKQlIsCkphbmkuCgoKLS0gCkphbmkgTmlrdWxhLCBJbnRlbCBPcGVuIFNvdXJjZSBUZWNobm9s
+b2d5IENlbnRlcgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
