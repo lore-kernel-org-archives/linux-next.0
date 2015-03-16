@@ -1,74 +1,69 @@
-From: David Herrmann <dh.herrmann@gmail.com>
-Subject: Re: randconfig build error with next-20150316, in samples/kdbus/kdbus-workers
-Date: Mon, 16 Mar 2015 23:27:54 +0100
-Message-ID: <CANq1E4S82hHRNgfnUCVYbzHku6X3kZchUNY4VRW0+YM9q_8Mbg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: randconfig build error with next-20150316, in
+ samples/kdbus/kdbus-workers
+Date: Tue, 17 Mar 2015 09:28:12 +1100
+Message-ID: <20150317092812.58da11cb@canb.auug.org.au>
 References: <CA+r1ZhgsXRTBzHicQ3H_DUGt7dioZa+GjpWepHvemGR=UzJymg@mail.gmail.com>
 	<CANq1E4Rc+Bp0mb=VxiV7Qgb1Wbz=TUExU4NwUcCsu9_DnC9pRw@mail.gmail.com>
 	<1426540369.20069.1.camel@ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/MxP3Gxo5OrrLz//V1fDVWbJ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:38069 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001AbbCPW1z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2015 18:27:55 -0400
+Received: from ozlabs.org ([103.22.144.67]:45118 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932185AbbCPW2T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2015 18:28:19 -0400
 In-Reply-To: <1426540369.20069.1.camel@ellerman.id.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, David Herrmann <dh.herrmann@googlemail.com>, Djalal Harouni <tixxdz@opendz.org>
+Cc: David Herrmann <dh.herrmann@gmail.com>, Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, David Herrmann <dh.herrmann@googlemail.com>, Djalal Harouni <tixxdz@opendz.org>
 
-Hi
+--Sig_/MxP3Gxo5OrrLz//V1fDVWbJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 16, 2015 at 10:12 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> On Mon, 2015-03-16 at 17:31 +0100, David Herrmann wrote:
->> Hi
->>
->> On Mon, Mar 16, 2015 at 5:22 PM, Jim Davis <jim.epost@gmail.com> wrote:
->> > Building with the attached random configuration file,
->> >
->> > In file included from ./include/uapi/linux/kdbus.h:12:0,
->> >                  from samples/kdbus/kdbus-api.h:5,
->> >                  from samples/kdbus/kdbus-workers.c:79:
->> > ./include/uapi/linux/types.h:9:2: warning: #warning "Attempt to use
->> > kernel headers from user space, see
->> > http://kernelnewbies.org/KernelHeaders" [-Wcpp]
->> >  #warning "Attempt to use kernel headers from user space, see
->> > http://kernelnewbies.org/KernelHeaders"
->> >   ^
->> > In file included from ./include/uapi/linux/posix_types.h:4:0,
->> >                  from ./include/uapi/linux/types.h:13,
->> >                  from ./include/uapi/linux/kdbus.h:12,
->> >                  from samples/kdbus/kdbus-api.h:5,
->> >                  from samples/kdbus/kdbus-workers.c:79:
->> > ./include/uapi/linux/stddef.h:1:28: fatal error: linux/compiler.h: No
->> > such file or directory
->> >  #include <linux/compiler.h>
->> >                             ^
->> > compilation terminated.
->> > scripts/Makefile.host:91: recipe for target 'samples/kdbus/kdbus-workers' failed
->> > make[2]: *** [samples/kdbus/kdbus-workers] Error 1
->>
->> If you build the samples in ./samples/, you need up-to-date kernel
->> headers. The kdbus samples rely on linux/kdbus.h to be available.
->>
->> A simple "make headers_install" will copy the headers to the local
->> directory ./usr/ in your kernel tree. This is the preferred location
->> over /usr/include by all tools in the kernel tree. That is, run "make
->> headers_install" once and your local tree will build fine. Once your
->> kernel-headers in /usr/include are up-to-date, it will work just
->> out-of-the-box again.
->>
->> In other words, if CONFIG_SAMPLES is enabled, you need the sanitized
->> kernel headers in your include path.
+Hi Michael,
+
+On Tue, 17 Mar 2015 08:12:49 +1100 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
 >
-> But the samples are also including the unsanitised headers, which I think is
+> But the samples are also including the unsanitised headers, which I think=
+ is
 > what's causing the problem here.
+>=20
+> HOSTCFLAGS_kdbus-workers.o +=3D           \
+>          -I$(objtree)/usr/include/       \
+>          -I$(objtree)/include/uapi/
 
-The uapi-include only causes the warning, not the build failure.
-There's already a fix for that queued:
+There is a new patch in the kdbus tree today that removes the uapi
+include.
 
-http://git.kernel.org/cgit/linux/kernel/git/gregkh/char-misc.git/commit/?h=kdbus&id=526edb23cd096375683455c73b56baba34ae3f06
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks
-David
+--Sig_/MxP3Gxo5OrrLz//V1fDVWbJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVB1kBAAoJEMDTa8Ir7ZwVY+QP/1GxpEwGxKfsahc4FMfshv5r
+G/aXxKtjtldIbDhLh2ZL78X7iI64jfsgldGxpH9q+bE/f4FFCf9TZpaoo2BelNd3
+1Fqdy4UFVAswaQrvm9shrJLLrUJkPd4grKvmrPI+Zo0lon06e/gJLfkMbixydsOq
+iG+R4A0PjfPLNwWVHVKlQle9j7ZWkpjZRHaww/785LqcBKd39eOfr5dKiozY+Wf+
+ivsNBNHKeTCu527S6TljvFdnPqpRMJE/WrHZt1ZMKKffByu6ajjER2rrQpiKXjQD
+xi297Eo7xvgUDJJpCL16Lj7Y0U3u/nvuXxacwSaTkd6j9aFny69wyF2zQSoq4lrG
+iB0u2lkgVVZlSQ1F4DDIo3EzgJDaWXt4zgaHrDUG5+7gC+he+h3ZYVOSl/kbFF3h
+anIhtRqmhl3lM3vcEfA7unfOtXqE7t0zhEB3FNWDL4prNCciQxkfLq+Ds05TCqhL
+9F2W8VT99fp97RsKHFyY7LY3R9vthW2LMjblyT2ycnBtlaOUZsz+yN76isu96ycT
+k4xyb49qEdUULX2ndWyxZ0yNfQNE4CVPIoclTTuq5+SJ4TH8cbSS32SJTl9WfdHt
+j69WasHV6h+GpQieie0gO/qC7+auz8roPbyGmioG1H0sAKJBrIb4F9I+yZpH0SL9
+ccA4KyDcAa3AJbp+NKS8
+=f9A+
+-----END PGP SIGNATURE-----
+
+--Sig_/MxP3Gxo5OrrLz//V1fDVWbJ--
