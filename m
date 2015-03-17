@@ -1,60 +1,44 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Tue, 17 Mar 2015 22:11:31 +1100
-Message-ID: <20150317111131.GA11471@gondor.apana.org.au>
-References: <20150317130104.548124c2@canb.auug.org.au>
+From: John Youn <John.Youn-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+Subject: Re: Build failure: -next 20150316
+Date: Tue, 17 Mar 2015 10:41:52 -0700
+Message-ID: <55086760.8060305@synopsys.com>
+References: <20150316195904.620c48f4@www.etchedpixels.co.uk> <20150317035226.GA29805@saruman.tx.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ringil.hengli.com.au ([178.18.16.133]:56500 "EHLO
-	ringil.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932516AbbCQLLu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Mar 2015 07:11:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20150317130104.548124c2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hartley <james.hartley@imgtec.com>, Andrew Bresticker <abrestic@chromium.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150317035226.GA29805-HgARHv6XitJaoMGHk7MhZQC/G2K4zDHf@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org, Alan Cox <alan-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
+Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 17, 2015 at 01:01:04PM +1100, Stephen Rothwell wrote:
+On 3/16/2015 8:53 PM, Felipe Balbi wrote:
+> Hi,
 > 
-> After merging the crypto tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> On Mon, Mar 16, 2015 at 07:59:04PM +0000, Alan Cox wrote:
+>> drivers/built-in.o: In function `dwc2_pci_remove':
+>> /rotating/Kernel/next/drivers/usb/dwc2/pci.c:70: undefined reference to
+>> `usb_phy_generic_unregister' drivers/built-in.o: In function
+>> `dwc2_pci_probe': /rotating/Kernel/next/drivers/usb/dwc2/pci.c:118:
+>> undefined reference to
+>> `usb_phy_generic_register' /rotating/Kernel/next/drivers/usb/dwc2/pci.c:141:
+>> undefined reference to `usb_phy_generic_unregister' Makefile:950: recipe
+>> for target 'vmlinux' failed make: *** [vmlinux] Error 1
 > 
-> drivers/crypto/img-hash.c: At top level:
-> drivers/crypto/img-hash.c:878:1: error: expected ',' or ';' before 'static'
->  static int img_hash_probe(struct platform_device *pdev)
->  ^
+> I think I already a fix for this in my testing/next, just need to mergew
+> it into next after testing.
 > 
-> Caused by commit d358f1abbf71 ("crypto: img-hash - Add Imagination
-> Technologies hw hash accelerator").
+> 
 
-Thanks for the report Stephen, I'll merge this patch to fix it.
+Hi Felipe,
 
----8<---
-imghash: Add missing semicolon to fix build error
-    
-There is a missing semicolon after MODULE_DEVICE_TABLE.
+I think it's different problem. I'll have a patch for you
+shortly.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+John
 
-diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
-index 0274172..fec61fc 100644
---- a/drivers/crypto/img-hash.c
-+++ b/drivers/crypto/img-hash.c
-@@ -873,7 +873,7 @@ static const struct of_device_id img_hash_match[] = {
- 	{ .compatible = "img,hash-accelerator" },
- 	{}
- };
--MODULE_DEVICE_TABLE(of, img_hash_match)
-+MODULE_DEVICE_TABLE(of, img_hash_match);
- 
- static int img_hash_probe(struct platform_device *pdev)
- {
-
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
