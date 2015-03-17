@@ -1,45 +1,59 @@
-From: David Herrmann <dh.herrmann@gmail.com>
-Subject: Re: randconfig build error with next-20150316, in samples/kdbus/kdbus-workers
-Date: Tue, 17 Mar 2015 00:00:48 +0100
-Message-ID: <CANq1E4RXYQJLcjf3pCu7zovw01uMnHTtMkiugjsJVQ8D=fLnVg@mail.gmail.com>
-References: <CA+r1ZhgsXRTBzHicQ3H_DUGt7dioZa+GjpWepHvemGR=UzJymg@mail.gmail.com>
-	<CANq1E4Rc+Bp0mb=VxiV7Qgb1Wbz=TUExU4NwUcCsu9_DnC9pRw@mail.gmail.com>
-	<1426540369.20069.1.camel@ellerman.id.au>
-	<CANq1E4S82hHRNgfnUCVYbzHku6X3kZchUNY4VRW0+YM9q_8Mbg@mail.gmail.com>
-	<1426546287.31646.1.camel@ellerman.id.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Tue, 17 Mar 2015 13:01:04 +1100
+Message-ID: <20150317130104.548124c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/13ggSojdA.s619m6+S6ug8F"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1426546287.31646.1.camel@ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, David Herrmann <dh.herrmann@googlemail.com>, Djalal Harouni <tixxdz@opendz.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hartley <james.hartley@imgtec.com>, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi
+--Sig_/13ggSojdA.s619m6+S6ug8F
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 16, 2015 at 11:51 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> On Mon, 2015-03-16 at 23:27 +0100, David Herrmann wrote:
->> The uapi-include only causes the warning, not the build failure.
->
-> I don't know how you came to that conclusion?
->
-> It fails looking for linux/compiler.h, which is only included from the kernel
-> headers, never from the exported headers.
+Hi Herbert,
 
-We only include linux/kdbus.h. On sanitized headers, this will include
-linux/types.h -> linux/posix_types.h -> linux/stddef.h.
-If you use the uapi headers, then stddef.h is not sanitized and will
-still include linux/compiler.h (which is removed on sanitized
-headers). Hence, this error only occurs if you include
-uapi/linux/kdbus.h. With sanitized headers in ./usr/, the compiler
-will prefer ./usr/linux/kdbus.h and ./usr/linux/stddef.h, thus never
-including any linux/compiler.h.
+After merging the crypto tree, today's linux-next build (x86_64 allmodconfi=
+g)
+failed like this:
 
-If you drop -I./include/uapi/, you will get "linux/kdbus.h not found".
-The error will be different, but it will not fix anything. However, if
-you run "make headers_install", everything will compile just fine even
-with -I./include/uapi/.
+drivers/crypto/img-hash.c: At top level:
+drivers/crypto/img-hash.c:878:1: error: expected ',' or ';' before 'static'
+ static int img_hash_probe(struct platform_device *pdev)
+ ^
 
-Thanks
-David
+Caused by commit d358f1abbf71 ("crypto: img-hash - Add Imagination
+Technologies hw hash accelerator").
+
+I have used the crypto tree from next-20150316 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/13ggSojdA.s619m6+S6ug8F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVB4rmAAoJEMDTa8Ir7ZwVFfEP/iT3444sKVINTIu+7M5KQumS
+BpSz95TCP984BLYdlNzi9o/d/RzaCbfW3Dz/hFDR1fmlotaTCqMbVwUN8Z69zR6b
+qyPrib3rybJ6iDvZRO0GX/MZUEa5s0rNMebijuEEOaav03Oit5vziFL5ByOGPris
+yTSze1tfDQEzILBhlyBivT53p+wJ+q/pH+zd5FrhXmjW8ugG1abB8CloHwZ8R4kO
+bXOWMPOHJTpUI2w+6iToO8aM5ekh957EvCgl/zCRi3uHIs/7tPNHNqR5bQIakvr7
+ICFncSVgW4bKX7feoIPA7HEjAzVf4RuGAGFrv3HE8/Iz4mYUUcT904IbA9EbI83+
++Y7advCsU2nBxKPul3HwqKTxrm/ilFvQt2hUdgMwTjqH5xNM5e9a78JLGGhNh62k
+rDvMxMD8ra7qskCIawc52gvrAhMfGQNw67jNCK5silMGcLat+pBv9dbY/DddsUCF
+IL8bfhdRmCVvqXfkkr4Q7EY3T6OXBDkRNKd/aZhh8o6uYSpRt7ZbhWk5RU+V7IE0
+OE4hEESbgwY1zRE9QUxtn/sXXBfT6jZXWlLY/RJzxGiKmoD3Uw06jHuRjuhQeh4R
+j2ed75HL5ilnerzOSRpOtdPIWDmlsKXmJCuVYl9YcWuN7kbeH62Ot6HckRQQnEC8
+BAz2hH+FKHWIuF0jbBpF
+=9bRz
+-----END PGP SIGNATURE-----
+
+--Sig_/13ggSojdA.s619m6+S6ug8F--
