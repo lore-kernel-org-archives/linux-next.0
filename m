@@ -1,69 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the virtio tree
-Date: Wed, 18 Mar 2015 12:47:34 +1100
-Message-ID: <20150318124734.629c0954@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with Linus' tree
+Date: Wed, 18 Mar 2015 14:41:11 +1100
+Message-ID: <20150318144111.1e56c6d9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/30TbwrL9JmdlnmWgxWax4UP"; protocol="application/pgp-signature"
+ boundary="Sig_/DXyNdRQ1ZrIO_vdG1iJo=/0"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49048 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53053 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753598AbbCRBrl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Mar 2015 21:47:41 -0400
+	id S1754686AbbCRDlS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Mar 2015 23:41:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex =?UTF-8?B?QmVubsOpZQ==?= <alex.bennee@linaro.org>
 
---Sig_/30TbwrL9JmdlnmWgxWax4UP
+--Sig_/DXyNdRQ1ZrIO_vdG1iJo=/0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi all,
 
-After merging the virtio tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the kvm-arm tree got a conflict in
+virt/kvm/arm/vgic.c between commit ae705930fca6 ("arm/arm64: KVM: Keep
+elrsr/aisr in sync with software model") from Linus' tree and commit
+71760950bf3d ("arm/arm64: KVM: add a common vgic_queue_irq_to_lr fn")
+from the kvm-arm tree.
 
-drivers/virtio/virtio_mmio.c:250:12: error: redefinition of 'vm_generation'
- static u32 vm_generation(struct virtio_device *vdev)
-            ^
-drivers/virtio/virtio_mmio.c:240:12: note: previous definition of 'vm_gener=
-ation' was here
- static u32 vm_generation(struct virtio_device *vdev)
-            ^
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
-Caused by the bad merge of commits 87e7bf1450c9 ("virtio_mmio:
-generation support") from Linus' tree and cf02b2c2d1a1 ("virtio_mmio:
-generation support") from the virtio tree.
-
-I fixed it up by removing the second version of that function.
-
-Could the virtio tree should be cleaned up to match what was sent to
-Linus, please?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/30TbwrL9JmdlnmWgxWax4UP
+diff --cc virt/kvm/arm/vgic.c
+index c9f60f524588,ffd937ca5141..000000000000
+--- a/virt/kvm/arm/vgic.c
++++ b/virt/kvm/arm/vgic.c
+@@@ -982,9 -1092,7 +1098,8 @@@ bool vgic_queue_irq(struct kvm_vcpu *vc
+  		if (vlr.source =3D=3D sgi_source_id) {
+  			kvm_debug("LR%d piggyback for IRQ%d\n", lr, vlr.irq);
+  			BUG_ON(!test_bit(lr, vgic_cpu->lr_used));
+- 			vlr.state |=3D LR_STATE_PENDING;
+- 			vgic_set_lr(vcpu, lr, vlr);
++ 			vgic_queue_irq_to_lr(vcpu, irq, lr, vlr);
+ +			vgic_sync_lr_elrsr(vcpu, lr, vlr);
+  			return true;
+  		}
+  	}
+@@@ -1001,12 -1109,8 +1116,9 @@@
+ =20
+  	vlr.irq =3D irq;
+  	vlr.source =3D sgi_source_id;
+- 	vlr.state =3D LR_STATE_PENDING;
+- 	if (!vgic_irq_is_edge(vcpu, irq))
+- 		vlr.state |=3D LR_EOI_INT;
+-=20
+- 	vgic_set_lr(vcpu, lr, vlr);
++ 	vlr.state =3D 0;
++ 	vgic_queue_irq_to_lr(vcpu, irq, lr, vlr);
+ +	vgic_sync_lr_elrsr(vcpu, lr, vlr);
+ =20
+  	return true;
+  }
+
+--Sig_/DXyNdRQ1ZrIO_vdG1iJo=/0
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVCNk8AAoJEMDTa8Ir7ZwVaLwP/2BGa83+n00AQASrKhTj1ccU
-MXjGacg0XEf7CpZ7Yk940W+xx23C8V6RG/dPuCvLj6PbJeZQTsB/piNwm+TS8Lkc
-EkvwoFBedZbdU3viD0XUc0f/5P1tIBTfO4Xvpx0JJPd0E77HlQAC1p4A+xj+fEAF
-FX8l9Kec08yYfUNTIqCVeQGG5t86P+fIy2BrYpUdNh+z7+SHK1fQBgEoTkq6JDjm
-+6mZqOWTIq15hMfuO9syPf/7qeGs7HrV4O2RMcYxkjNIUgt6ldwHTix2G04tNbWV
-KFIkeLJKd3Uu2hSlt1QP060ShXLwzJiHD3zBXpLcp6n57aZyo+u8l3XY5fKJa3ly
-NdemFNUM+/rX+NNtQN0NP8Tb2qXSQDnTOHcKkQDaREZ6Osea02kUyEZATeTrCFNX
-+4G5f2HndoY38ki1v60V9NUgDOgYvEgctJVLlWsPWaDHJsXB3qOTSOTNj5tNDiRR
-DFGfnS1/Se+voQ4P+ugczGN51b/8sZ9Yfwz2qdQ60W8NS76VTLuA3Npg9Cp/0Onw
-mobjMP2v+cOdsRnm5SCh2Qhj9YCyMwIHM+upHyw+LsL3pcvCXlklpF4Pisoeahtl
-CiFNuxDCcJpvDAd/HIsV3A7iWRNcD1jGJ2AbkQsVTn+t1Aen8duQuN0NoMHQjPMo
-SXmc/uqYFUviK863Wes8
-=otG/
+iQIcBAEBCAAGBQJVCPPbAAoJEMDTa8Ir7ZwVoJMQAIBvKPgYfcXu0Ovo16nP+UmW
+vx3sOv7An1fziwkVfJl95T74a0TWXyBiqHVSKSwHkg7b50+1alooU3cz2QYES4T3
+44L+iMr8MIrWNsVLZH0QBb1vRAme3hgN+IQJK9dmeSUK697wUA8X/s+BjUaF6CAH
+HIOahMS1+jZH+Ww3wzpDDMUo/+UIqmVTz8jDNXLAMx/MfB7w2D/X+hpETjLmPQv7
+t5qHWhtw6OgY1apgutTKXiEJCmTeUFv7QFmTlAikHft/3lJZxCu0Pm68gnZW0icp
+X38/+s8JW+OwncOnhZQF3AtBovCzPsnrMQROyprdnSDiyCF++K0DEXCuVcPfutRy
+b3hcI1zINp6lEKJDX0gIsVgm8PcLdbPLJijnLwQokDrFuRFrXl/+WnYH/am19QYz
+hG1ygu10a5RrtHOANkIWLPrS8YDUqQMJ3QQCJioo/XyyO9UPGCiMYcm3Eer1zZbt
+eEejf+VHQ5b6ZcSVb2uLbvYlJNwB+zaFxdPdlSJCE0rHpKQK2dOcGmNcDr7k/QT5
+VxD8glEJjJK2qPIKME3tNkkhI/ChvudX1KzyxGrXxjJ/5CExdrnh4h3WqwRpNpNt
+OeYwC1n5+EFglVGOYIJakcI6laTuBzYnTfl4G7rYYIP93xIvrYfhHKjfPgK0C13N
+VPldzgFMiDE1322bZWtM
+=7nn7
 -----END PGP SIGNATURE-----
 
---Sig_/30TbwrL9JmdlnmWgxWax4UP--
+--Sig_/DXyNdRQ1ZrIO_vdG1iJo=/0--
