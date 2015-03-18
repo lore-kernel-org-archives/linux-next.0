@@ -1,56 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slave-dma tree with the arm-soc
- tree
-Date: Wed, 18 Mar 2015 12:03:47 +1100
-Message-ID: <20150318120347.21288162@canb.auug.org.au>
+Subject: linux-next: manual merge of the virtio tree with Linus' tree
+Date: Wed, 18 Mar 2015 12:40:36 +1100
+Message-ID: <20150318124036.2a71a232@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2F0H_Dfwkn+dUH5l/aEkIDQ"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/XR_K6Myi.K5Wu5tKR2rFwRu"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43342 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753500AbbCRBkn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Mar 2015 21:40:43 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
 
---Sig_/2F0H_Dfwkn+dUH5l/aEkIDQ
+--Sig_/XR_K6Myi.K5Wu5tKR2rFwRu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi Rusty,
 
-Today's linux-next merge of the slave-dma tree got a conflict in
-arch/arm/mach-shmobile/board-mackerel.c between commit a521422ea4ae
-("ARM: shmobile: mackerel: Remove Legacy C board code") from the
-arm-soc tree and commit c078c62a7528 ("mmc: sh_mobile_sdhi: remove
-sh_mobile_sdhi_info v2") from the slave-dma tree.
+Today's linux-next merge of the virtio tree got a conflict in
+net/9p/trans_virtio.c between commit 8051a2a518fc ("9p/trans_virtio:
+fix hot-unplug") from Linus' tree and commit 1991755689ad
+("9p/trans_virtio: fix hot-unplug") from the virtio tree.
 
-I fixed it up (the former removed the file, so I did that) and can
-carry the fix as necessary (no action is required).
+I fixed it up (the latter is an older version the former, which is now
+in Linus' tree) and can carry the fix as necessary (no action is
+required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/2F0H_Dfwkn+dUH5l/aEkIDQ
+--Sig_/XR_K6Myi.K5Wu5tKR2rFwRu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVCM7zAAoJEMDTa8Ir7ZwVJ8kQAIyA6RWSfK5ooCKYQ4xKwqL1
-E9dhkcUIKIHKYN185XmVNrkyfCFmSWC6/hfWAO971zPPQ0p89WMLKKBSl/XnyVd7
-a5/U1v8c3g/KJy/218c+Regpitvl1bae1YEn1EF2K0k81Rf6IY4y+APhILmIrrEF
-/D+466izBKZCfa7DLnwTxIlgZRw3GDyXmRYwRdxpV/8/o5uQYdcE9AoKCNVGb8ml
-coe5zVgYr2lz80X9n609PGIro/sRwFdaXKd1wSUSegKGZ55gUz2wf+YiEvfw8SGq
-tiPci+XYcBcpfHSlfLduhCFm3dYsFx4e0+zaPl06lULcjiqXfT5/jGiwPiDbKtZh
-hFtWB3sn5Rwd83YoBhCZv5HuFEN6opBcpjj2Jj7hE0uGu0njPDpsVPJH+kvG1FSI
-/3q8O3l2V/M2g7a6iEZdDpcQ2CrWQS45Z7wcq4OZirgN1R2EjkHNUY8w7ZENw/Ii
-daThJjE8rJ7j7XivzZlg/rSKK7nybEIWGVmGMQiQ7HmQ5opioDFQHd4VHXk2HLff
-XylgSodFBL3eYirv4fCwChzXlN6kVabCkMvBaRHQCaEhyn84Wkl/HJDb7tR5SQGw
-0Dqs/Czi4kSKSVwwY0/wfl3gbDyBSJd9RXluhiciXHXDMdo0FfP47vso+inqCqhF
-0b9MqDuxv+tjtXntkc7S
-=dcdY
+iQIcBAEBCAAGBQJVCNeYAAoJEMDTa8Ir7ZwVjA0P+weXlERpLAyTyl/Ex6GlRSGJ
+8qnHgh1lIOtOlST8lUTXwn5f4tEdiEv/sYi04pbtkCpZvuk8YgUe+J9E4GinKQ4D
+StKAaZUfN9elrM26loU9x5rWtxu/D6Hj4i49R8SJ4D9+SebosOURhds0o65zkkCh
+OI7jl8EbU3fLfibH85jP+Sm+kOgTMMgM59C7Frtg0Utl0PqToY/3RtIFGjZluZ4S
+YDxaKS3lO9VIwNyS3I/2zkuHK1DPd8rvSnEFCYW+XqnBM1DlZpdVkEjRMupNHh0Q
+G+pPqqPq/SPv2znCrrrPiq2ex1KdZMaRSjVkYh6Bp3NjOAeRMnkpP9SlYREt48SB
+JzIi01lFPMmrim1bxaPNpchBVHpPfzm9aKl/M7n9uFpwLT97KyC6iaeS157N4Trz
+7wVNqat9XUv9ry9/5UYPc/JSj9EoQF8Pcop/dEnUxijJwU1vqAT5q+dyYR08xQBF
+Y0ms20L3gSj8ctMVN5eXwVd0uEVZT/CoPvReqrLynr6/B3D6vQXvqU5WP7hmpW1o
+ylcTiHbGKVeK85Hw4UqQBAqGVADsK3aFH+gyUcUHPsIfdGIQTY9MabMidOPk8p4G
+yB1WB+hfM0hROKqGn7nw27/Hb0yoGA/rLXXczoCtIxj4eqy9mdYg0UfLjy4nvszj
+Q4QJDNbxGCTESbNk2F3t
+=7LRl
 -----END PGP SIGNATURE-----
 
---Sig_/2F0H_Dfwkn+dUH5l/aEkIDQ--
+--Sig_/XR_K6Myi.K5Wu5tKR2rFwRu--
