@@ -1,69 +1,118 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: manual merge of the slave-dma tree with the renesas
- tree
-Date: Wed, 18 Mar 2015 16:46:50 +0530
-Message-ID: <20150318111650.GI32683@intel.com>
-References: <20150318120322.6a08816e@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+From: Roberto Medina <robertoxmed@gmail.com>
+Subject: [PATCH] staging: lustre: linux: linux-prim: fixed coding style warnings and errors
+Date: Wed, 18 Mar 2015 19:22:49 +0100
+Message-ID: <1426702969-3706-1-git-send-email-robertoxmed@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:3152 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755177AbbCRLUk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Mar 2015 07:20:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20150318120322.6a08816e@canb.auug.org.au>
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:37290 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752187AbbCRSWJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Mar 2015 14:22:09 -0400
+Received: by wixw10 with SMTP id w10so47426668wix.0
+        for <linux-next@vger.kernel.org>; Wed, 18 Mar 2015 11:22:08 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Simon Horman <horms@verge.net.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: oleg.drokin@intel.com
+Cc: gregkh@linuxfoundation.org, andreas.dilger@intel.com, bergwolf@gmail.com, john.hammond@intel.com, xuezhao.liu@emc.com, uja.ornl@gmail.com, asaf.vertz@tandemg.com, HPDD-discuss@lists.01.org, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, Roberto Medina <robertoxmed@gmail.com>
 
+From: Roberto Medina <robertoxmed@gmail.com>
 
---0eh6TmSyL6TZE2Uz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Coding style fixes due to exported symbols and comment style.
 
-On Wed, Mar 18, 2015 at 12:03:22PM +1100, Stephen Rothwell wrote:
-> Hi Vinod,
->=20
-> Today's linux-next merge of the slave-dma tree got a conflict in
-> arch/arm/mach-shmobile/board-ape6evm.c between commit 9d07d414d4c3
-> ("ARM: shmobile: r8a73a4: ape6evm: Remove legacy platform") from the
-> renesas tree and commit c078c62a7528 ("mmc: sh_mobile_sdhi: remove
-> sh_mobile_sdhi_info v2") from the slave-dma tree.
->=20
-> I fixed it up (the former removed the file, so I did that) and can
-> carry the fix as necessary (no action is required).
-Thanks for reporting,
+Signed-off-by: Roberto Medina <robertoxmed@gmail.com>
 
-Yes the fix is the right one.
+---
+ .../lustre/lustre/libcfs/linux/linux-prim.c        | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---=20
-~Vinod
-
-
---0eh6TmSyL6TZE2Uz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJVCV6iAAoJEHwUBw8lI4NHujIQALF9fGly2JCeO619n23WdabF
-8zCuoJMrtXiv3LXl52d52FvHmTOVDU3+/SLqmvJiZ2x7nh/Xn8JCgVYMoQojRJ/U
-hTcaDi2ZE4+0I/BmRROFgnf4E8lt/dG3MQOMaezxLAjqWbAwyzeLCUUg7XLPqbeU
-HVuaVcvlT2lfKfMnn1U5+KJGsH3Z1fHnWaKkJL+afe3iymHziAHGZt0vZsAn33qd
-b5F0pEeSQ1VrbtpFpJXlrOc62G+D06oXkFaPpJ/ClagIpGipLkLTQxOPoRmcr0nX
-KEs5zWhK5pKHPXJOEFSXwFr5kFzLVs+yoCSgg4MXViiuqAWYNfkP8S3KqtxAYMvX
-LQEQc7NFCxGV0GNDJfxRYqquiWtx0PzOqeHWnaTtsFvmnf/AopzG/To9heNzr51z
-lO/4t8D/+9mkSQgabbhEC+EnweFiBKYiAizmnTDbSA+4VLZNUaq2OkK+LkuXiXc2
-ftDK+NH5nPR1ZFHuwvcTvc9d5xOWEsBBsBLVHo4pMlnOcB+JhvNNETe1rc/wMmhR
-cfIgf9ru4KzD4HntKdgJmirNyRcr7bz1cXnq7qi/Dyyg43nUFf/bIlfbYoQpH8FE
-nio5ePSYmW7/1IE+Tm3PH9MgjoIQT/PdgVURQYRbjnF4BxEpnAOkFrL+egobFLUO
-vYQvIwX/TW0DHiLGvKJt
-=SdMw
------END PGP SIGNATURE-----
-
---0eh6TmSyL6TZE2Uz--
+diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-prim.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-prim.c
+index fde2819..838f5f3 100644
+--- a/drivers/staging/lustre/lustre/libcfs/linux/linux-prim.c
++++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-prim.c
+@@ -117,11 +117,12 @@ EXPORT_SYMBOL(cfs_timer_deadline);
+ void cfs_enter_debugger(void)
+ {
+ #if defined(CONFIG_KGDB)
+-//	BREAKPOINT();
++	/* BREAKPOINT(); */
+ #else
+ 	/* nothing */
+ #endif
+ }
++EXPORT_SYMBOL(cfs_enter_debugger);
+ 
+ 
+ sigset_t
+@@ -138,6 +139,7 @@ cfs_block_allsigs(void)
+ 
+ 	return old;
+ }
++EXPORT_SYMBOL(cfs_block_allsigs);
+ 
+ sigset_t cfs_block_sigs(unsigned long sigs)
+ {
+@@ -151,6 +153,7 @@ sigset_t cfs_block_sigs(unsigned long sigs)
+ 	spin_unlock_irqrestore(&current->sighand->siglock, flags);
+ 	return old;
+ }
++EXPORT_SYMBOL(cfs_block_sigs);
+ 
+ /* Block all signals except for the @sigs */
+ sigset_t cfs_block_sigsinv(unsigned long sigs)
+@@ -166,9 +169,10 @@ sigset_t cfs_block_sigsinv(unsigned long sigs)
+ 
+ 	return old;
+ }
++EXPORT_SYMBOL(cfs_block_sigsinv);
+ 
+ void
+-cfs_restore_sigs (sigset_t old)
++cfs_restore_sigs(sigset_t old)
+ {
+ 	unsigned long  flags;
+ 
+@@ -177,12 +181,14 @@ cfs_restore_sigs (sigset_t old)
+ 	recalc_sigpending();
+ 	spin_unlock_irqrestore(&current->sighand->siglock, flags);
+ }
++EXPORT_SYMBOL(cfs_restore_sigs);
+ 
+ int
+ cfs_signal_pending(void)
+ {
+ 	return signal_pending(current);
+ }
++EXPORT_SYMBOL(cfs_signal_pending);
+ 
+ void
+ cfs_clear_sigpending(void)
+@@ -193,25 +199,19 @@ cfs_clear_sigpending(void)
+ 	clear_tsk_thread_flag(current, TIF_SIGPENDING);
+ 	spin_unlock_irqrestore(&current->sighand->siglock, flags);
+ }
++EXPORT_SYMBOL(cfs_clear_sigpending);
+ 
+ int
+ libcfs_arch_init(void)
+ {
+ 	return 0;
+ }
++EXPORT_SYMBOL(libcfs_arch_init);
+ 
+ void
+ libcfs_arch_cleanup(void)
+ {
+ 	return;
+ }
+-
+-EXPORT_SYMBOL(libcfs_arch_init);
+ EXPORT_SYMBOL(libcfs_arch_cleanup);
+-EXPORT_SYMBOL(cfs_enter_debugger);
+-EXPORT_SYMBOL(cfs_block_allsigs);
+-EXPORT_SYMBOL(cfs_block_sigs);
+-EXPORT_SYMBOL(cfs_block_sigsinv);
+-EXPORT_SYMBOL(cfs_restore_sigs);
+-EXPORT_SYMBOL(cfs_signal_pending);
+-EXPORT_SYMBOL(cfs_clear_sigpending);
++
+-- 
+2.3.3
