@@ -1,58 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Date: Thu, 19 Mar 2015 14:45:25 +1100
-Message-ID: <20150319144525.0e78ab05@canb.auug.org.au>
+Subject: linux-next: manual merge of the spi tree with the slave-dma tree
+Date: Thu, 19 Mar 2015 14:48:34 +1100
+Message-ID: <20150319144834.56c676f6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WEvUMLAo9yafh5U2Da_oCsJ"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nikesh Oswal <nikesh@opensource.wolfsonmicro.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/Z1DpaZL+nYfPVsaVtN1JRyj"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52582 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751813AbbCSDsl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Mar 2015 23:48:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
---Sig_/WEvUMLAo9yafh5U2Da_oCsJ
+--Sig_/Z1DpaZL+nYfPVsaVtN1JRyj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mark,
 
-After merging the sound-asoc tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Today's linux-next merge of the spi tree got conflicts in
+drivers/dma/intel_mid_dma_regs.h and drivers/dma/intel_mid_dma.c
+between commit 3b62286d0ef7 ("dmaengine: Remove FSF mailing addresses")
+from the slave-dma tree and commit 36111da7838e ("dmaengine:
+intel-mid-dma: remove the driver") from the spi tree.
 
-sound/soc/soc-dapm.c: In function 'snd_soc_dapm_new_pcm':
-sound/soc/soc-dapm.c:3389:4: warning: passing argument 1 of 'snprintf' disc=
-ards 'const' qualifier from pointer target type
-    snprintf(w_param_text[count], len,
-    ^
-
-Introduced by commit c66150824b8a ("ASoC: dapm: add code to configure
-dai link parameters").
+I fixed it up (I just removed the files) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/WEvUMLAo9yafh5U2Da_oCsJ
+--Sig_/Z1DpaZL+nYfPVsaVtN1JRyj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVCkZaAAoJEMDTa8Ir7ZwVqagP/jMdSHIQMVaAtwcH8an+xTHm
-Ds5m5fuYHz/1EDfOvpzJ8j9F8Phd4bjfwtcPsQi14D6OmfWi4H7rb3Y10uhckjwG
-Rcy7JxfXITmrxGP7P3qP5SQYwI+6TBC1PGNr2aLy/SfFkeFyRxW4KwotvHeoOvY8
-ste64Rj008hGTI0Q0G7FL8T9FoAn4tPpBWSLfdNm3oFMvPi/hSrBDmv2vA+1ywF9
-JH3SJdD+Z+i1N0X1LykIWm57nRc5GsjCtU6rGNDgUdZh2n6g3mk3/a1POnqLvJ8m
-Pk+1c/TRTsJFIZ00Vxbh/oqxMgqmisvAjKXLamCznusSQFuOP/ab2aXdBtGRZDcn
-6eSIahEhhyailgmtfPCeCdJdRWiSOopGjLC/Erv2MTLdEhWKo8okki89ELpEVLSc
-EpO8K9nSkG/WmVwfdy0/BJJMH2DnS8VOALPr7YHtZPac/LxBkY5qbj9aqlkmFbHY
-ONMIVeFfXtB2gMlQdw+gSlygNWqkNk6jEQ2tACiY0npe5OVu1MvF0JM90QTxTfHI
-QhCfzI1OdVr/f9kCx6I12biT7vg01RPbgPOLMTN+cA88J4IL031+GoTuCT7hG0IP
-XphLY0LVv44mh4iPjxndv3jSkG3fRmWzQu5JzEdrsxw/zrQEiPyrwtxLvVvRGvoX
-Bn7FRxV6OKnpSHCURJ4r
-=zaIY
+iQIcBAEBCAAGBQJVCkcXAAoJEMDTa8Ir7ZwVepcP/jykFrfOia6zpRBkLbSlefsg
+XBxHWriJVxPXNpLn/D7tVhQKRFxAXp647LUjzi2uBjhvWVmniqRMZ0OH+zJg+56g
+Y9av8GsvfEumhnXjKd2+2V+0dOeDdBh7/wKSbfzZtGE1qkz8OAPUf9ryXPA0fIQE
+2tTKL71BYON2q/0drDVwMURZMo85wdwtjDIbrU+ljN/GBO3gmp7nF66n71PtGewR
+ZF72nt4CFpeRpIWmwEbnWi8NFED3+z8NO4uEO6pwkJkHQ9iL4Hb+LVahunCUt0Tt
+qtE63d6fNpo5hG1EMURT8Q50aO0e6NRWg4cb34sbftgjvp/5uhudOk9NUEIWhyRa
+3KjwEB71wJo/6HcYG8uVvR1xgg2Rd/MT9KjXWgeUoG2+yNqf1YQzIeL/cHBSYUwY
+K5PPOWNkXvZXrUJNoeWN7mU4N+tjOe3ED0VdGjuaSDyq5naGsYpwe5El2wW+h5Rj
+fAEktyyXkIK8i6erQUXtFOIdaaYkkfYQ82ZZP+3cUCrp5rl/X8hu/1G0UkluBJ/C
+uKhFAaMUoeFqJbUuuCwWm9x0hCe2l+kbOSmqHcqIGafjiI0DTnwbkLSKrtht4Tve
+KpqGXbQ+MQ+Yq4jnDauFEY3eRWK2cUoSkr5ORTGj/ndsM2+pOdcFYTTuIx/L9QrZ
+krL3Qu7tNdvCOZqyoeNz
+=bk6i
 -----END PGP SIGNATURE-----
 
---Sig_/WEvUMLAo9yafh5U2Da_oCsJ--
+--Sig_/Z1DpaZL+nYfPVsaVtN1JRyj--
