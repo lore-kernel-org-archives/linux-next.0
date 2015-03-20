@@ -1,66 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the spi tree with the jc_docs tree
-Date: Fri, 20 Mar 2015 16:30:46 +1100
-Message-ID: <20150320163046.01ef5023@canb.auug.org.au>
-References: <20150320162354.3ed4a511@canb.auug.org.au>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: linux-next: manual merge of the battery tree with the hid tree
+Date: Fri, 20 Mar 2015 08:58:38 +0100
+Message-ID: <CAJKOXPer=oM98UwobA9SmiE9cjk3BUqkJVzcHQLVTBdVzwYd7w@mail.gmail.com>
+References: <20150320151110.02e10b33@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lcmltSP9uUYjq8Jf80M0HeG"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39092 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750966AbbCTFaw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Mar 2015 01:30:52 -0400
-In-Reply-To: <20150320162354.3ed4a511@canb.auug.org.au>
+Received: from mail-yk0-f174.google.com ([209.85.160.174]:36597 "EHLO
+	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750969AbbCTH6j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Mar 2015 03:58:39 -0400
+In-Reply-To: <20150320151110.02e10b33@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Remonda <adrianremonda@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sebastian Reichel <sre@kernel.org>, Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jason Gerecke <killertofu@gmail.com>
 
---Sig_/lcmltSP9uUYjq8Jf80M0HeG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Fri, 20 Mar 2015 16:23:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+2015-03-20 5:11 GMT+01:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi Sebastian,
 >
-> Today's linux-next merge of the spi tree got a conflict in
-> Documentation/spi/spidev_test.c between commit 988b22c519c8 ("spi:
-> spidev_test: Added functionalities") from the jc_docs tree and commits
-> b78ce7ed5409 ("spi: spidev_test: Cleaned hexadecimal dump"),
-> 31a5c5a72b90 ("") and  ("") from the spi tree.
+> Today's linux-next merge of the battery tree got conflicts in
+> drivers/hid/wacom.h and drivers/hid/wacom_sys.c between commit
+> 953f2c5f7163 ("HID: wacom: Centralize updating of wacom_wac battery
+> status") and fce9957d8f61 ("HID: wacom: Allow dynamic battery
+> creation/destruction") from the hid tree and commit 297d716f6260
+> ("power_supply: Change ownership from driver to core") from the battery
+> tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).  I also applied the following merge fixup patch.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 20 Mar 2015 14:59:36 +1100
+> Subject: [PATCH] HID: wacom: merge fix for "Change ownership from driver to core"
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/hid/wacom_wac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/hid/wacom_wac.c b/drivers/hid/wacom_wac.c
+> index 5588ba80ede9..57ee0d807af1 100644
+> --- a/drivers/hid/wacom_wac.c
+> +++ b/drivers/hid/wacom_wac.c
+> @@ -62,7 +62,7 @@ static void wacom_notify_battery(struct wacom_wac *wacom_wac,
+>                 wacom_wac->ps_connected = ps_connected;
+>
+>                 if (wacom->battery.dev)
 
-I got distracted in the middle of writing the email :-)
+Should be:
+if (wacom->battery)
 
-31a5c5a72b90 ("spi: spidev_test: Added verbose output") and
-30061915be6e ("spi: spidev_test: Added input buffer from the terminal")
+Rest of patch looks fine but indeed some more changes are required.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+How about preparing an immutable branch from HID or battery tree so we
+could resolve these conflicts easily?
 
---Sig_/lcmltSP9uUYjq8Jf80M0HeG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVC7CKAAoJEMDTa8Ir7ZwVRCQP/A3/wJLkFsEJofx7MR2+LiYO
-5tf3TcPr2x+Xi1kNRldTOuBotXZVWhidW+IYOniuIYzXZihBb8gijj7IiGE9QF+3
-mSaKUnFyVnvetRBfnyMq3+R4D5nrooM3voQerPjmE64MyF+HZ5K6b5Ogqg+X+duP
-pNPs0SJehxQjBrOl97Ld2jQYIloMMJwSJAqJvrQ+ExwwyakXh5gvD7/cK7gJ78Ju
-CTQQytPv3SfQxhlnPJYdbPrp4NuSYpdinyW1XTU4/5epPo8c6FJtzW+B+8mx2sGO
-2qUyF8p8TnpdTyuQOa/A8zViT0Z40qmjLrlIqjFWi+EGyaaFn61tuQiQnE/FcdeN
-5GXHPnmTiwIYOigsnzONve1DDhQ0C87WItAZMt08TWBDWlVRr9Ka/QP0lvfuzkj6
-E5P8Uw3TQFvzSvQ2n9lH8IYwLQ/Mz0qN/vGB+FluE8s7BXzttFzHrbUmzvj6ok3r
-5ZB7WyZqMiZQFZV+nRON4thIV0POMBgGa2K5NjruKJ7Pp82ygMFyg+BvsAVMpB/l
-d1IQ8VD5RnWmBV+e70S882wgHHv4QXsR5tiYPsNWDwEU6e1yUAx5aOH2rboGyTlR
-1C9qqy/1n/TI775aOWaOvyNpNBzUrnk0e+yvdMjzI+hCGeMsBIOInPhwVPBebLdT
-PqAXyGsDbFa60c3PPADG
-=/mUp
------END PGP SIGNATURE-----
-
---Sig_/lcmltSP9uUYjq8Jf80M0HeG--
+Best regards,
+Krzysztof
