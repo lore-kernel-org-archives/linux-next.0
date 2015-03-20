@@ -1,62 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the spi tree with the jc_docs tree
-Date: Fri, 20 Mar 2015 16:23:54 +1100
-Message-ID: <20150320162354.3ed4a511@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the spi tree with the jc_docs tree
+Date: Fri, 20 Mar 2015 16:30:46 +1100
+Message-ID: <20150320163046.01ef5023@canb.auug.org.au>
+References: <20150320162354.3ed4a511@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dFsSnLao+fPU/H1bsjCpCtK"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/lcmltSP9uUYjq8Jf80M0HeG"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39092 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750966AbbCTFaw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Mar 2015 01:30:52 -0400
+In-Reply-To: <20150320162354.3ed4a511@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Remonda <adrianremonda@gmail.com>
-List-Id: linux-next.vger.kernel.org
 
---Sig_/dFsSnLao+fPU/H1bsjCpCtK
+--Sig_/lcmltSP9uUYjq8Jf80M0HeG
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi all,
 
-Today's linux-next merge of the spi tree got a conflict in
-Documentation/spi/spidev_test.c between commit 988b22c519c8 ("spi:
-spidev_test: Added functionalities") from the jc_docs tree and commits
-b78ce7ed5409 ("spi: spidev_test: Cleaned hexadecimal dump"),
-31a5c5a72b90 ("") and  ("") from the spi tree.
+On Fri, 20 Mar 2015 16:23:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the spi tree got a conflict in
+> Documentation/spi/spidev_test.c between commit 988b22c519c8 ("spi:
+> spidev_test: Added functionalities") from the jc_docs tree and commits
+> b78ce7ed5409 ("spi: spidev_test: Cleaned hexadecimal dump"),
+> 31a5c5a72b90 ("") and  ("") from the spi tree.
 
-Clearly the one commit in the jc_docs tree is supposed to do the same
-as three commits in the spi tree.  The jc_docs tree version has an
-older Author date, but a newer commit date ...
+I got distracted in the middle of writing the email :-)
 
-I fixed it up (by using the spi tree version of the file) and can carry
-the fix as necessary (no action is required).
-
-BTW, there is a function in there called "unespcape" whose comment
-calls it "Unescape" which would make more sense.
+31a5c5a72b90 ("spi: spidev_test: Added verbose output") and
+30061915be6e ("spi: spidev_test: Added input buffer from the terminal")
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/dFsSnLao+fPU/H1bsjCpCtK
+--Sig_/lcmltSP9uUYjq8Jf80M0HeG
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVC67vAAoJEMDTa8Ir7ZwVtBwQAJdjiPpj3YMndOnp/DgdB/ID
-ip1/umB+bAB3pJsqdp9kvrrcYB3l7cMzuA6EFl+9Uug1xBiuL8uWNulZWOoIKYEV
-1Hwwh7ZpF5SS51zotL1bXxELv976THp1wo8Wmg1Cp+ZmD5YVM8V9ZzMj0+w4EhpY
-kNYQqocD42+7eigen2Dco4K3x3x5BGdMrO8n5BeN9MtHy7nXuk7EtEtmag6+YN9i
-IJumToNFxF3kPIsZY+TkpSE0DB97HpJdeOjywKvjttPjgR60DmjC4duytjyyKEXr
-LEQMmlYd2oE9u72Vx6VqgUmwN+kgQDGBVKLlR80jVpqQSou41TlttdB39jfTbSOX
-mtB4kxulE6JkXHo50HfivpbAJxPnqC59azXC5r/8W+cRPq+6jRB26qwq/9brHELr
-PFzZljX4v87PCn7UEkFi6Fvt0+e6GnxNi9cldr0y8JpootmjMQqs7dMxO0JbrDhN
-UR+auP94jcOMARFk2pnlU/pYW+R882LL9bfWwfRMCKDRGcfkbNYVnZssFwAuUtez
-y9ix1lFz5I9xdMt4e50Sekj42u8iRoY5z2xhef1rEp+nKa0AqbE3ssae130dqMX4
-kVHQ8nFgR79eFhxKxiqPKSPdL8Yo/3HeZnW/NmVDrVh80eBVPee4vFMlfNEe6y8q
-1yoPtza8gPEXia1UUs+n
-=wU9N
+iQIcBAEBCAAGBQJVC7CKAAoJEMDTa8Ir7ZwVRCQP/A3/wJLkFsEJofx7MR2+LiYO
+5tf3TcPr2x+Xi1kNRldTOuBotXZVWhidW+IYOniuIYzXZihBb8gijj7IiGE9QF+3
+mSaKUnFyVnvetRBfnyMq3+R4D5nrooM3voQerPjmE64MyF+HZ5K6b5Ogqg+X+duP
+pNPs0SJehxQjBrOl97Ld2jQYIloMMJwSJAqJvrQ+ExwwyakXh5gvD7/cK7gJ78Ju
+CTQQytPv3SfQxhlnPJYdbPrp4NuSYpdinyW1XTU4/5epPo8c6FJtzW+B+8mx2sGO
+2qUyF8p8TnpdTyuQOa/A8zViT0Z40qmjLrlIqjFWi+EGyaaFn61tuQiQnE/FcdeN
+5GXHPnmTiwIYOigsnzONve1DDhQ0C87WItAZMt08TWBDWlVRr9Ka/QP0lvfuzkj6
+E5P8Uw3TQFvzSvQ2n9lH8IYwLQ/Mz0qN/vGB+FluE8s7BXzttFzHrbUmzvj6ok3r
+5ZB7WyZqMiZQFZV+nRON4thIV0POMBgGa2K5NjruKJ7Pp82ygMFyg+BvsAVMpB/l
+d1IQ8VD5RnWmBV+e70S882wgHHv4QXsR5tiYPsNWDwEU6e1yUAx5aOH2rboGyTlR
+1C9qqy/1n/TI775aOWaOvyNpNBzUrnk0e+yvdMjzI+hCGeMsBIOInPhwVPBebLdT
+PqAXyGsDbFa60c3PPADG
+=/mUp
 -----END PGP SIGNATURE-----
 
---Sig_/dFsSnLao+fPU/H1bsjCpCtK--
+--Sig_/lcmltSP9uUYjq8Jf80M0HeG--
