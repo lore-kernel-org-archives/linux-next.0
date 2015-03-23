@@ -1,52 +1,99 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: [PATCH -next] netfilter: Use LOGLEVEL_<FOO> defines
-Date: Mon, 23 Mar 2015 14:52:35 +0100
-Message-ID: <20150323135235.GA7595@salvia>
-References: <20150323140841.0b807b95@canb.auug.org.au>
- <20150323124723.GA6740@salvia>
- <1427115331.16851.11.camel@perches.com>
- <20150323130638.GA6857@salvia>
- <1427117031.16851.16.camel@perches.com>
- <20150324003828.0eac53d9@canb.auug.org.au>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm-perf tree
+Date: Mon, 23 Mar 2015 20:11:41 +0530
+Message-ID: <CAM4voanC-ur=A-UJ+Jw4qECUOnd-gZ2V87794tEVWJOqaqDT+g@mail.gmail.com>
+References: <20150323113318.0319c248@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.us.es ([193.147.175.20]:56970 "EHLO mail.us.es"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752173AbbCWNsj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Mar 2015 09:48:39 -0400
-Content-Disposition: inline
-In-Reply-To: <20150324003828.0eac53d9@canb.auug.org.au>
+Received: from mail-qg0-f41.google.com ([209.85.192.41]:33995 "EHLO
+	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752106AbbCWOlr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Mar 2015 10:41:47 -0400
+In-Reply-To: <20150323113318.0319c248@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick McHardy <kaber@trash.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Suzuki K. Poulose" <suzuki.poulose@arm.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Will Deacon <will.deacon@arm.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Mar 24, 2015 at 12:38:28AM +1100, Stephen Rothwell wrote:
-> Hi Joe,
-> 
-> On Mon, 23 Mar 2015 06:23:51 -0700 Joe Perches <joe@perches.com> wrote:
-> >
-> > Use the #defines where appropriate.
-> > 
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> > ---
-> > > > Perhaps all the .level = 4 uses should be LOGLEVEL_WARNING
-> > > > and .level = 5 should be LOGLEVEL_NOTICE
-> > > 
-> > > Yes, we can push a follow up patch to net-next changing all these
-> > > spots in the netfilter tree. Would you send a patch for this?
-> > 
-> > There are indirect includes of kern_levels.h but there are a
-> > lot of indirect includes of kernel.h in netfilter
-> 
-> I am not sure what you are getting at here.  kernel.h does not include
-> kern_levels.h (but printk.h does).  I, for one, am always happier when
-> necessary include files are explicitly included.
+Hi Stephen,
 
-I would also prefer if you include the explicit header files in that
-patch too. Could you send us a v2? Please, Cc:
-netfilter-devel@vger.kernel.org
+On Mon, Mar 23, 2015 at 6:03 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/bus/Kconfig between commit c9966c98697a ("arm-cci: Split the
+> code for PMU vs driver support") from the arm-perf tree and commit
+> 13fbf3c8d0f7 ("drivers: bus: Sort Kconfig entries alphabetically") from
+> the arm-soc tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Thanks.
+Not sure if this has been reported elsewhere, but I am seeing core
+boot-up failures on the exynos5420 with next-20150323 due to this.
+Your conflict fix is missing the ARM_CCI symbol because of which the
+CCI does not get enabled.
+
+Suzuki, can you confirm ?
+
+Regards,
+Abhilash
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --cc drivers/bus/Kconfig
+> index 79e297b1f221,7e9c2674af81..000000000000
+> --- a/drivers/bus/Kconfig
+> +++ b/drivers/bus/Kconfig
+> @@@ -4,6 -4,21 +4,38 @@@
+>
+>   menu "Bus devices"
+>
+>  -config ARM_CCI
+>  -      bool "ARM CCI driver support"
+> ++config ARM_CCI400_PORT_CTRL
+> ++      bool
+> +       depends on ARM && OF && CPU_V7
+> ++      select ARM_CCI400_COMMON
+> +       help
+>  -        Driver supporting the CCI cache coherent interconnect for ARM
+>  -        platforms.
+> ++        Low level power management driver for CCI400 cache coherent
+> ++        interconnect for ARM platforms.
+> ++
+> ++config ARM_CCI400_PMU
+> ++      bool "ARM CCI400 PMU support"
+> ++      default y
+> ++      depends on ARM || ARM64
+> ++      depends on HW_PERF_EVENTS
+> ++      select ARM_CCI400_COMMON
+> ++      help
+> ++        Support for PMU events monitoring on the ARM CCI cache coherent
+> ++        interconnect.
+> ++
+> ++        If unsure, say Y
+> ++
+> ++config ARM_CCI400_COMMON
+> ++      bool
+> ++      select ARM_CCI
+> +
+> + config ARM_CCN
+> +       bool "ARM CCN driver support"
+> +       depends on ARM || ARM64
+> +       depends on PERF_EVENTS
+> +       help
+> +         PMU (perf) driver supporting the ARM CCN (Cache Coherent Network)
+> +         interconnect.
+> +
+>   config BRCMSTB_GISB_ARB
+>         bool "Broadcom STB GISB bus arbiter"
+>         depends on ARM || MIPS
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
