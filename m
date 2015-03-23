@@ -1,26 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with the arm-soc tree
-Date: Mon, 23 Mar 2015 12:03:14 +1100
-Message-ID: <20150323120314.3631211a@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 23 Mar 2015 14:08:41 +1100
+Message-ID: <20150323140841.0b807b95@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/b.n2bcvvrnfWdxpKT5Li8.M"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_//aICTucY+xLsjne6JNWB4N1"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45746 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751935AbbCWDIt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Mar 2015 23:08:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>
 
---Sig_/b.n2bcvvrnfWdxpKT5Li8.M
+--Sig_//aICTucY+xLsjne6JNWB4N1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi all,
 
-Today's linux-next merge of the mips tree got a conflict in
-drivers/bus/Makefile between commit 6320c41198c7 ("drivers: bus: Sort
-Makefile entries alphabetically") from the arm-soc tree and commit
-cd46cf20d04a ("MIPS: Add CDMM bus support") from the mips tree.
+Today's linux-next merge of the net-next tree got a conflict in
+net/netfilter/nf_tables_core.c between commit 4017a7ee693d ("netfilter:
+restore rule tracing via nfnetlink_log") from the net tree and commit
+01ef16c2dd2e ("netfilter: nf_tables: minor tracing cleanups") from the
+net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -29,49 +34,84 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/bus/Makefile
-index e023a2bec664,807dd17ef2f8..000000000000
---- a/drivers/bus/Makefile
-+++ b/drivers/bus/Makefile
-@@@ -2,13 -2,11 +2,14 @@@
-  # Makefile for the bus drivers.
-  #
+diff --cc net/netfilter/nf_tables_core.c
+index 2d298dccb6dd,77165bf023f3..000000000000
+--- a/net/netfilter/nf_tables_core.c
++++ b/net/netfilter/nf_tables_core.c
+@@@ -21,6 -21,48 +21,48 @@@
+  #include <net/netfilter/nf_tables.h>
+  #include <net/netfilter/nf_log.h>
  =20
- +# Interconnect bus drivers for ARM platforms
- +obj-$(CONFIG_ARM_CCI)		+=3D arm-cci.o
- +obj-$(CONFIG_ARM_CCN)		+=3D arm-ccn.o
- +
-  obj-$(CONFIG_BRCMSTB_GISB_ARB)	+=3D brcmstb_gisb.o
- -obj-$(CONFIG_IMX_WEIM)	+=3D imx-weim.o
- +obj-$(CONFIG_IMX_WEIM)		+=3D imx-weim.o
-+ obj-$(CONFIG_MIPS_CDMM) +=3D mips_cdmm.o
- -obj-$(CONFIG_MVEBU_MBUS) +=3D mvebu-mbus.o
- -obj-$(CONFIG_OMAP_OCP2SCP)	+=3D omap-ocp2scp.o
- +obj-$(CONFIG_MVEBU_MBUS) 	+=3D mvebu-mbus.o
- =20
-  # Interconnect bus driver for OMAP SoCs.
-  obj-$(CONFIG_OMAP_INTERCONNECT)	+=3D omap_l3_smx.o omap_l3_noc.o
++ enum nft_trace {
++ 	NFT_TRACE_RULE,
++ 	NFT_TRACE_RETURN,
++ 	NFT_TRACE_POLICY,
++ };
++=20
++ static const char *const comments[] =3D {
++ 	[NFT_TRACE_RULE]	=3D "rule",
++ 	[NFT_TRACE_RETURN]	=3D "return",
++ 	[NFT_TRACE_POLICY]	=3D "policy",
++ };
++=20
++ static struct nf_loginfo trace_loginfo =3D {
++ 	.type =3D NF_LOG_TYPE_LOG,
++ 	.u =3D {
++ 		.log =3D {
++ 			.level =3D 4,
++ 			.logflags =3D NF_LOG_MASK,
++ 	        },
++ 	},
++ };
++=20
++ static void __nft_trace_packet(const struct nft_pktinfo *pkt,
++ 			       const struct nft_chain *chain,
++ 			       int rulenum, enum nft_trace type)
++ {
++ 	struct net *net =3D dev_net(pkt->in ? pkt->in : pkt->out);
++=20
+ -	nf_log_packet(net, pkt->xt.family, pkt->ops->hooknum, pkt->skb, pkt->in,
+ -		      pkt->out, &trace_loginfo, "TRACE: %s:%s:%s:%u ",
+ -		      chain->table->name, chain->name, comments[type],
+ -		      rulenum);
+++	nf_log_trace(net, pkt->xt.family, pkt->ops->hooknum, pkt->skb, pkt->in,
+++		     pkt->out, &trace_loginfo, "TRACE: %s:%s:%s:%u ",
+++		     chain->table->name, chain->name, comments[type],
+++		     rulenum);
++ }
++=20
++ static inline void nft_trace_packet(const struct nft_pktinfo *pkt,
++ 				    const struct nft_chain *chain,
++ 				    int rulenum, enum nft_trace type)
++ {
++ 	if (unlikely(pkt->skb->nf_trace))
++ 		__nft_trace_packet(pkt, chain, rulenum, type);
++ }
++=20
+  static void nft_cmp_fast_eval(const struct nft_expr *expr,
+  			      struct nft_data data[NFT_REG_MAX + 1])
+  {
 
---Sig_/b.n2bcvvrnfWdxpKT5Li8.M
+--Sig_//aICTucY+xLsjne6JNWB4N1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVD2ZXAAoJEMDTa8Ir7ZwVOboP/R0y5UdiIQG9lnRVMJXJxVsT
-EpvYfTJe9kx6Mm7q5ctHk45E7LNu2c+8keIbDxaMg3dez1Xkugf/N1Uq/YotlDaZ
-F3U8xbxGo+VU91E0mG8v/vMgaz6Ec2TrrxSB5p+r+K7ot2PW6VUPWuI0OCoS0nB5
-UNUS3Q1SxkzB5URfDG6WnkpFbGIZ5nQMPhVz6FDV4fJx4p7Ck0CapDlo82F8Zpm9
-NrKxyKo3eW4gEI+ObKcGstJsV+weRwR3wV+OwXazO9Ao9Nj+3PMnfukCKYWCq2TA
-SEELeXm21Kl5y39PM7BLxZc+eKmbOun3DcExEFmRxNQorEIhPCMflvqf4+n9h9tA
-EUlM1lcSWjfUVHAXWgPlNYouhjUR10IjjfPC4BLaKBz+daPuX5jPDkjwne+AUBYP
-9xBdoTnCe/xnFrotZloIlKgRd4U5xDg8djXOj5XLf8Oq6V9y5pCvALoBmohuYaji
-lwV7d0pgrifFVG5BGDY3lrwxx/Wuf70nS/1Pp4JARDAlqQKaUe471uJ7LWGzqvPt
-aH8DEoLcgSNZaWPE8Z+NdyvIjCcUmwoNqRzaYoH1KPy9BxcQtuNNDOYyn83OIzgg
-GWKbzczQpamI+OZmlmGS0YxdMh1X0iNN9bN2eVO9oDdYzAuOvyQGbPvDuwNxq2l4
-bI8XcCVLL9gVJGQCeGvo
-=LBaP
+iQIcBAEBCAAGBQJVD4O+AAoJEMDTa8Ir7ZwVI74P/1HJ4Lvx1MbMhq3LaaovIjVr
+XW+Np8Gb9cr10eYTmcXaThNQ18uYJmuUznSyUceqnFKSeqy+PNLqR7hlRlR0iiRA
+tZmIJx3XhzXH9QdxLsO2EJHjBgYJxmrpgnjA8cU7wwFXEl/e+EjPv3C7lpIMifgA
+rsRCFv1H0TuSgE1e/xzc7Pkn5qrzZBrHOEAQJyhoUeCAGL738g8bd2NXs7zv05Pb
+7a7mSPAzyNHQ13ZJuZ4MSqNWmVVx9kxzv+uVWz/k4Z/AP9BMjh2pieuYEtH9dDfg
+cmKgyGbl0oBbh3aLTbnubnIrs24Ywxn/0ojuv58QJq8ePZqExUy+hbUHG8nMBc0s
+TDPgn30YI4fNpq09oGyGPQ+q1cba3/jzgMNCjwuw0foLfhS6fn9vkJgrJYfEVUms
+9Bi05AixB9zufboXSHWpTRenh8A55Kno/BLLFAtDVqy40IAbcEfFiwlzxd5TrZgl
+91kxezMqqOGoLD5Q4ZrUU+Gf2itVzI1ZlzPEop8PMCNQFBLtB6fbWfB6yy9Ns7M1
+kFlhYIGzlql1oQu8A+ewA2eg7rR+got+PY7vo/eu4dfZJ6Xu9iYVDiBwK995XYry
+/BErib1qxkRcoy2HWvEeK5gT+c09aUGw8kNwQ7LoFPkLkDWB6QCnSz6p8fJ43uZB
+HY+qOq4y0cfvyKTG3CT3
+=G4Gf
 -----END PGP SIGNATURE-----
 
---Sig_/b.n2bcvvrnfWdxpKT5Li8.M--
+--Sig_//aICTucY+xLsjne6JNWB4N1--
