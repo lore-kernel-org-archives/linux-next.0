@@ -1,26 +1,19 @@
 From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Tue, 24 Mar 2015 11:43:46 +0100
-Message-ID: <20150324104346.GA7422@lst.de>
-References: <20150324134508.77b039a9@canb.auug.org.au> <20150323.230003.1242651745820752377.davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Tue, 24 Mar 2015 11:44:26 +0100
+Message-ID: <20150324104426.GB7422@lst.de>
+References: <20150313120250.5ce08f77@canb.auug.org.au> <20150324142422.4105cc15@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150323.230003.1242651745820752377.davem@davemloft.net>
+In-Reply-To: <20150324142422.4105cc15@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, viro@ZenIV.linux.org.uk, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, tadeusz.struk@intel.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 23, 2015 at 11:00:03PM -0400, David Miller wrote:
-> Ok, more conflicts wiht Al's vfs work.
-> 
-> This is starting to pile on, heavily...
+On Tue, Mar 24, 2015 at 02:24:22PM +1100, Stephen Rothwell wrote:
+> I am still applying the above patch every day ...
 
-These are my changes.  But I think it would be much better if any aio-related
-changes like this one we be one on top of my changes in Al's iocb branch,
-there have been various changes, and it would be better to review and
-commit the changes on top of it instead of carrying the changes as fixups.
-
-Nevermind the actual test coverage..
+Might be worth folding it.  Al, can you do that?
