@@ -1,122 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm-perf
+Subject: linux-next: manual merge of the thermal-soc tree with the thermal
  tree
-Date: Tue, 24 Mar 2015 08:16:10 +1100
-Message-ID: <20150324081610.52b1e92d@canb.auug.org.au>
-References: <20150323113318.0319c248@canb.auug.org.au>
-	<CAM4voanC-ur=A-UJ+Jw4qECUOnd-gZ2V87794tEVWJOqaqDT+g@mail.gmail.com>
-	<55102DAF.7050206@arm.com>
+Date: Tue, 24 Mar 2015 13:11:25 +1100
+Message-ID: <20150324131125.309811e1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=oY/.D4qjXwpC_bI+cneY7h"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55102DAF.7050206@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Will Deacon <Will.Deacon@arm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/vz+.pkkLNUc92FceL6.YRsy"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39922 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752395AbbCXCLc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Mar 2015 22:11:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kapileshwar Singh <kapileshwar.singh@arm.com>
 
---Sig_/=oY/.D4qjXwpC_bI+cneY7h
+--Sig_/vz+.pkkLNUc92FceL6.YRsy
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Eduardo,
 
-On Mon, 23 Mar 2015 15:13:51 +0000 "Suzuki K. Poulose" <Suzuki.Poulose@arm.=
-com> wrote:
->
-> On 23/03/15 14:41, Abhilash Kesavan wrote:
-> >
-> > On Mon, Mar 23, 2015 at 6:03 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >>
-> >> Today's linux-next merge of the arm-soc tree got a conflict in
-> >> drivers/bus/Kconfig between commit c9966c98697a ("arm-cci: Split the
-> >> code for PMU vs driver support") from the arm-perf tree and commit
-> >> 13fbf3c8d0f7 ("drivers: bus: Sort Kconfig entries alphabetically") from
-> >> the arm-soc tree.
-> >>
-> >> I fixed it up (see below) and can carry the fix as necessary (no action
-> >> is required).
-> >
-> > Not sure if this has been reported elsewhere, but I am seeing core
-> > boot-up failures on the exynos5420 with next-20150323 due to this.
-> > Your conflict fix is missing the ARM_CCI symbol because of which the
-> > CCI does not get enabled.
-> >
-> > Suzuki, can you confirm ?
->=20
-> Yes, you are right. We need the config ARM_CCI even now, which enables=20
-> the building of the arm-cci.c.
->=20
-> Stephen,
->=20
-> We need the following fix on the linux-next.
+Today's linux-next merge of the thermal-soc tree got a conflict in
+include/linux/thermal.h between commit 33f1e05e1536 ("Thermal:
+initialize thermal zone device correctly") from the thermal tree and
+commit f7e41876c4b2 ("thermal: of: fix cooling device weights in device
+tree") from the thermal-soc tree.
 
-Oops, sorry about that.  I have fixed up the merge resolution for today
-so that file starts like this:
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-#
-# Bus Devices
-#
-
-menu "Bus devices"
-
-config ARM_CCI
-	bool
-
-config ARM_CCI400_COMMON
-	bool
-	select ARM_CCI
-
-config ARM_CCI400_PMU
-	bool "ARM CCI400 PMU support"
-	default y
-	depends on ARM || ARM64
-	depends on HW_PERF_EVENTS
-	select ARM_CCI400_COMMON
-	help
-	  Support for PMU events monitoring on the ARM CCI cache coherent
-	  interconnect.
-
-	  If unsure, say Y
-
-config ARM_CCI400_PORT_CTRL
-	bool
-	depends on ARM && OF && CPU_V7
-	select ARM_CCI400_COMMON
-	help
-	  Low level power management driver for CCI400 cache coherent
-	  interconnect for ARM platforms.
-
-config ARM_CCN
-	.
-	.
-	.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/=oY/.D4qjXwpC_bI+cneY7h
+diff --cc include/linux/thermal.h
+index 8650b0b14da4,6bbe11c97cea..000000000000
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@@ -40,9 -40,9 +40,12 @@@
+  /* No upper/lower limit requirement */
+  #define THERMAL_NO_LIMIT	((u32)~0)
+ =20
+ +/* Invalid/uninitialized temperature */
+ +#define THERMAL_TEMP_INVALID	-27400
+ +
++ /* Default weight of a bound cooling device */
++ #define THERMAL_WEIGHT_DEFAULT 0
++=20
+  /* Unit conversion macros */
+  #define KELVIN_TO_CELSIUS(t)	(long)(((long)t-2732 >=3D 0) ?	\
+  				((long)t-2732+5)/10 : ((long)t-2732-5)/10)
+
+--Sig_/vz+.pkkLNUc92FceL6.YRsy
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVEIKfAAoJEMDTa8Ir7ZwVr8IP/19mePYh9XQgXFTcoskO/GvT
-LiMV8yv94BJ0HcbjuJ3u5h8B/Na0DQcrD/dAlaCgAj/wMsWHF8QqVTlvTJJatoxy
-AZpHiNIBrSMbB827/lLFZWcBiAgLFbasuTua0gI3BVwVNAtsVuAWIcsfoLW9AE3J
-g87hXYqwkD/pmYZiUonbxKo/RI8rWeyC4rwJvbNDuW91eLE1oLN6LUTIxjpbRpxm
-BzbAN/AJm03P6VbfHic3sBx772ux7UgzIfk5v8oWS/vguA6s9H6gFtSOiiww/1pH
-J+zNJue24GnfT+lIV1/0BKeFtQjn8r2Ki6DFRGmilCnGhsRpFkBz1xwIMUldwtOP
-WbvB+MLQVAIA1PEuK6lCVPK6j1bug+sN88TqexwbsjNyvFiZ4AWNXLNhdIrWfJ3A
-y30us4I9MnlivQZE+WDnD5OhIX0K+0KfYztEQQGIYjAPFGDn0oGw7NLVi1wnXwhG
-ROTNLMsPTet/5RTHRNq02ge95cDsUsYfuBs/43eUitqvfMVHp+nY48H71FUgyCqO
-RFOx9dzrzKUiVMoDIcP8NrmHZhmLTlQvMf0GriG9MCnWRbJNIvhq7VsWQV0xe/j9
-q1tk/wZWzCa0UU0vsJy7xpn5PweMoajD6npC6KlnDFnSV19cNFqYfJ9HQ4K1uLPu
-apSI4qw8QAIWQzET0hO0
-=MGCv
+iQIcBAEBCAAGBQJVEMfSAAoJEMDTa8Ir7ZwV0qIQAJGH7sRq4XnN18bhWDef/QgJ
+Q1IxItRpCIS6wS0joBVHaweIAA5h097qEdgUfj4Nt0SKnj3bn/rIFDQYII7sRJ9W
+ciFeRPwfmShRGdGE6dKVNplkn3NtXKxXaAhBkPfdH8g/BgKKFyj7YmxR3W+3kC2/
+fwTi6WgPQPAL2Ep4GgzvDGJkVFlMI6yHzULxt4q5nKjHIDdy7lkUfXL9+IC2vMuy
+Kh9aheZcmeBXxOpSLb7X7CcVA342lQ9ais08hbCL8z+Nb5PVDF7Mcfol0xfg3uCj
+hjohYQxvApIhwXSjRFmM6cazjCtMJNoEhQeQCf/9wj/46XC58TSRB0ze4QTOtJBY
+z6ylpgG2XjlY4lEUS6b48BqgYmGPWhtwxbDo9kvXpjAc1jmp108HcSAetVKfYXYm
+d7ZZa2oqG/LewaR6z3RaJbeIngDyuZ1q5MMHcQyCbO4g0bnQ780LcXLBp3B7QSsx
+uExDs6va2n+qxy6k3xXAKbQ4R/JaX6COHAvQ2kr1ns+j+NgFYTxlYEp3HQUidcWp
+Len2gY6j756cIZ7X2ztK7cSxbxj+i4N3+U3KBFU6wcMcPnUM/h2VuTM9YtNkATZK
+daTEBDzBxlYqvSBgTn5zuGu4nHpt4qp6MFZiSfkH7wFrJ060V16HzelXxdPtvDxi
+D8HF5RvIyJd5Id9wyDvM
+=x3BE
 -----END PGP SIGNATURE-----
 
---Sig_/=oY/.D4qjXwpC_bI+cneY7h--
+--Sig_/vz+.pkkLNUc92FceL6.YRsy--
