@@ -1,90 +1,120 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 25 Mar 2015 13:18:37 +1100
-Message-ID: <20150325131837.358e10a2@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: +
+ zsmalloc-do-not-remap-dst-page-while-prepare-next-src-page.patch added to
+ -mm tree
+Date: Wed, 25 Mar 2015 14:42:30 +0900
+Message-ID: <20150325054230.GB1675@swordfish>
+References: <5511d133.CLvN99GLSL/edQEW%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ocDZd=87+KOUS/VKVh3Fg9s"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58260 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751930AbbCYCSo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Mar 2015 22:18:44 -0400
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:35422 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752076AbbCYFmV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Mar 2015 01:42:21 -0400
+Content-Disposition: inline
+In-Reply-To: <5511d133.CLvN99GLSL/edQEW%akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal =?UTF-8?B?S3ViZcSNZWs=?= <mkubecek@suse.cz>, Eric Dumazet <edumazet@google.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: akpm@linux-foundation.org, sergey.senozhatsky@gmail.com, minchan@kernel.org, ngupta@vflare.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Heesub Shin <heesub.shin@samsung.com>
 
---Sig_/ocDZd=87+KOUS/VKVh3Fg9s
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On (03/24/15 14:03), akpm@linux-foundation.org wrote:
+> The patch titled
+>      Subject: zsmalloc: do not remap dst page while prepare next src page
+> has been added to the -mm tree.  Its filename is
+>      zsmalloc-do-not-remap-dst-page-while-prepare-next-src-page.patch
+> 
+> This patch should soon appear at
+>     http://ozlabs.org/~akpm/mmots/broken-out/zsmalloc-do-not-remap-dst-page-while-prepare-next-src-page.patch
+> and later at
+>     http://ozlabs.org/~akpm/mmotm/broken-out/zsmalloc-do-not-remap-dst-page-while-prepare-next-src-page.patch
+> 
 
-Hi all,
+Hello Stephen,
 
-Today's linux-next merge of the net-next tree got conflicts in
-net/ipv4/tcp_ipv4.c and net/ipv6/tcp_ipv6.c between commit d0c294c53a77
-("tcp: prevent fetching dst twice in early demux code") from the  tree
-and commit f7e4eb03f9d9 ("inet: ip early demux should avoid request
-sockets") from the net-next tree.
+Heesub Shin has reported that this patch causes BUG_ON on ARM
+(with CONFIG_DEBUG_HIGHMEM enabled). Could you please revert
+it in linux-next 20150325?
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+	-ss
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/ipv4/tcp_ipv4.c
-index f1756ee02207,4e90217003e8..000000000000
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@@ -1517,8 -1521,8 +1521,8 @@@ void tcp_v4_early_demux(struct sk_buff=20
-  	if (sk) {
-  		skb->sk =3D sk;
-  		skb->destructor =3D sock_edemux;
-- 		if (sk->sk_state !=3D TCP_TIME_WAIT) {
-+ 		if (sk_fullsock(sk)) {
- -			struct dst_entry *dst =3D sk->sk_rx_dst;
- +			struct dst_entry *dst =3D READ_ONCE(sk->sk_rx_dst);
- =20
-  			if (dst)
-  				dst =3D dst_check(dst, 0);
-diff --cc net/ipv6/tcp_ipv6.c
-index b283a498f7a4,4a4e6d30c448..000000000000
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@@ -1584,8 -1544,8 +1544,8 @@@ static void tcp_v6_early_demux(struct s
-  	if (sk) {
-  		skb->sk =3D sk;
-  		skb->destructor =3D sock_edemux;
-- 		if (sk->sk_state !=3D TCP_TIME_WAIT) {
-+ 		if (sk_fullsock(sk)) {
- -			struct dst_entry *dst =3D sk->sk_rx_dst;
- +			struct dst_entry *dst =3D READ_ONCE(sk->sk_rx_dst);
- =20
-  			if (dst)
-  				dst =3D dst_check(dst, inet6_sk(sk)->rx_dst_cookie);
-
---Sig_/ocDZd=87+KOUS/VKVh3Fg9s
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVEhsBAAoJEMDTa8Ir7ZwV5NgP/iSXrtfGmUs6wJSogkEQXQHe
-5dkPMWJYC0y69jEcWJde+WuHTiD8a0lovflPtj3m6B03AFsEPZR5why9nO2gezow
-2N2CqEGScywxaW/XCVUNjGRbINUlemhW3sPRI46u6+TYDWdvtRbiNAY98pmGyS3f
-Xzk3KqrkihNm2SDqYVAPtz7JQbNNLekwDesz8EarKRz+AvO87ebdQxzxUK1cXuKk
-Y+auqkXjdob9Jka/D7X+i04vFQxaY3pddxuunP+Ns+iw51vNM7/uf98QHtCS3dIV
-4GEKRAT9fHFKO6lo7ih7CY2GEwd/UoLpWFmmS07AovJzF7rfYZrBXjYOM8qJOkix
-MTsRjvxfq86p7IRYGcGJQsdqp6nRiJE7nD0tS6ND8fDSYp3pYAvupOkRs77TOnKw
-wrqHMuU8xK9W3TYFidhBkMyJpRpqr0b5/y4f6otqejpyYYG44nKCusVdiCQPcK8h
-3kt3R5pjMTPsGAIKLsKyHOtP2Ot4RBqy3KAzTc0LNvjc8iNh9Q7hSIQhDP/IhTfQ
-fiSaSgzzAKVEE2txj4uMKsf6W3e1R2O6+RCulBZqnGB5YQD95jj6y68QXVnogq/g
-lEEFhkgboCB55lLrV+NaVjnWL0oWZZl9l1CTEvC3CE1hwqqm9t1/PgAoyMuuX2Qe
-KdPTwglehCaGzUvLjuTM
-=rbGI
------END PGP SIGNATURE-----
-
---Sig_/ocDZd=87+KOUS/VKVh3Fg9s--
+> ------------------------------------------------------
+> From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Subject: zsmalloc: do not remap dst page while prepare next src page
+> 
+> The object may belong to different pages.  zs_object_copy() handles this
+> case and maps a new source page (get_next_page() and kmap_atomic()) when
+> object crosses boundaries of the current source page.  But it also
+> performs unnecessary kunmap/kmap_atomic of the destination page (it
+> remains unchanged), which can be avoided.
+> 
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Nitin Gupta <ngupta@vflare.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  mm/zsmalloc.c |    2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff -puN mm/zsmalloc.c~zsmalloc-do-not-remap-dst-page-while-prepare-next-src-page mm/zsmalloc.c
+> --- a/mm/zsmalloc.c~zsmalloc-do-not-remap-dst-page-while-prepare-next-src-page
+> +++ a/mm/zsmalloc.c
+> @@ -1538,12 +1538,10 @@ static void zs_object_copy(unsigned long
+>  			break;
+>  
+>  		if (s_off + size >= PAGE_SIZE) {
+> -			kunmap_atomic(d_addr);
+>  			kunmap_atomic(s_addr);
+>  			s_page = get_next_page(s_page);
+>  			BUG_ON(!s_page);
+>  			s_addr = kmap_atomic(s_page);
+> -			d_addr = kmap_atomic(d_page);
+>  			s_size = class->size - written;
+>  			s_off = 0;
+>  		} else {
+> _
+> 
+> Patches currently in -mm which might be from sergey.senozhatsky@gmail.com are
+> 
+> zram-cosmetic-zram_attr_ro-code-formatting-tweak.patch
+> zram-use-idr-instead-of-zram_devices-array.patch
+> zram-factor-out-device-reset-from-reset_store.patch
+> zram-reorganize-code-layout.patch
+> zram-add-dynamic-device-add-remove-functionality.patch
+> zram-add-dynamic-device-add-remove-functionality-fix.patch
+> zram-remove-max_num_devices-limitation.patch
+> zram-report-every-added-and-removed-device.patch
+> zram-trivial-correct-flag-operations-comment.patch
+> zram-return-zram-device_id-value-from-zram_add.patch
+> zram-introduce-automatic-device_id-generation.patch
+> zram-introduce-automatic-device_id-generation-fix.patch
+> zram-do-not-let-user-enforce-new-device-dev_id.patch
+> zsmalloc-decouple-handle-and-object.patch
+> zsmalloc-factor-out-obj_.patch
+> zsmalloc-support-compaction.patch
+> zsmalloc-adjust-zs_almost_full.patch
+> zram-support-compaction.patch
+> zsmalloc-record-handle-in-page-private-for-huge-object.patch
+> zsmalloc-add-fullness-into-stat.patch
+> zsmalloc-zsmalloc-documentation.patch
+> zram-remove-num_migrated-device-attr.patch
+> zram-move-compact_store-to-sysfs-functions-area.patch
+> zram-use-generic-start-end-io-accounting.patch
+> zram-describe-device-attrs-in-documentation.patch
+> zram-export-new-io_stat-sysfs-attrs.patch
+> zram-export-new-mm_stat-sysfs-attrs.patch
+> zram-deprecate-zram-attrs-sysfs-nodes.patch
+> zsmalloc-remove-synchronize_rcu-from-zs_compact.patch
+> zsmalloc-remove-extra-cond_resched-in-__zs_compact.patch
+> zsmalloc-do-not-remap-dst-page-while-prepare-next-src-page.patch
+> zsmalloc-micro-optimize-zs_object_copy.patch
+> cpumask-dont-perform-while-loop-in-cpumask_next_and.patch
+> lib-lz4-pull-out-constant-tables.patch
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe mm-commits" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
