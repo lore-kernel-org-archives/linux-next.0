@@ -1,65 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add UML to linux-next
-Date: Wed, 25 Mar 2015 17:07:24 +1100
-Message-ID: <20150325170724.33730ad5@canb.auug.org.au>
-References: <5511DE72.6040109@nod.at>
+Subject: linux-next: build warning after merge of the drm-panel tree
+Date: Wed, 25 Mar 2015 17:20:56 +1100
+Message-ID: <20150325172056.20be6ba2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O6u4Dubv0O5w.t4+6pVky9I"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53624 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752507AbbCYGHe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Mar 2015 02:07:34 -0400
-In-Reply-To: <5511DE72.6040109@nod.at>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-next@vger.kernel.org
+ boundary="Sig_/qyGeNCsad063Z/qGMgMGLic"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/O6u4Dubv0O5w.t4+6pVky9I
+--Sig_/qyGeNCsad063Z/qGMgMGLic
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Richard,
+Hi Thierry,
 
-On Tue, 24 Mar 2015 23:00:18 +0100 Richard Weinberger <richard@nod.at> wrot=
-e:
->
-> can you please add the following tree to linux-next?
-> git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git linux-next
+After merging the drm-panel tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-Unfortunately, that "linux-next" is a tag and I am not set up to fetch
-from tags easily, Could I trouble you to make that a branch instead,
-please?
+drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:34:	symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HEL=
+PER
+drivers/gpu/drm/Kconfig:28:	symbol DRM_KMS_HELPER is selected by DRM_PTN3460
+drivers/gpu/drm/bridge/Kconfig:6:	symbol DRM_PTN3460 depends on GPIOLIB
+drivers/gpio/Kconfig:34:	symbol GPIOLIB is selected by ARCH_REQUIRE_GPIOLIB
+drivers/gpio/Kconfig:23:	symbol ARCH_REQUIRE_GPIOLIB is selected by MCU_MPC=
+8349EMITX
+arch/powerpc/platforms/Kconfig:350:	symbol MCU_MPC8349EMITX depends on I2C
+drivers/i2c/Kconfig:7:	symbol I2C is selected by FB_DDC
+drivers/video/fbdev/Kconfig:59:	symbol FB_DDC is selected by FB_CYBER2000_D=
+DC
+drivers/video/fbdev/Kconfig:374:	symbol FB_CYBER2000_DDC depends on FB_CYBE=
+R2000
+drivers/video/fbdev/Kconfig:362:	symbol FB_CYBER2000 depends on FB
 
-(I notice that the tag is currently sitting on v4.0-rc5, so there is
-nothing in the uml tree yet.)
+Introduced by commit 6a43766f6ef3 ("drm/bridge: ps8622 and ptn3460
+depend on gpiolib").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/O6u4Dubv0O5w.t4+6pVky9I
+--Sig_/qyGeNCsad063Z/qGMgMGLic
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVElChAAoJEMDTa8Ir7ZwVd/oP/3CuWE5SmpoXAFsdCOjwu2Ql
-ifGGxOoNvppcVaHQB+nH6v1rJcWVuO/EYjIPPc5IgkDx3M4SVLVcAJH9s8x6v5GJ
-1P3YT7GC13VsraUoIDwNy1K1EQ0YSdQxMbkDXR+118nq6HK35GRiWZS3y8lD1dwI
-90js095Sl/E50n/BiG5mSGDrsI78NI7Hqa5Tr6YlGCrRy96vL5FkqgkHfbKSfBt+
-Wm4ywB2Tqms1aYGGEtngSUKI/hwjrUDvBlJBpagLCeDFRgoj8iNn4gysryyZHc7A
-lVa09moWtLr6oUjJ6I6SKjLRxg8oNQ7gmT8sUvGWoRGof5hnOEgUsGeihh91gCSG
-Rrk0R82QKrXci6pJ6h8ceB1NOQ4lZe4EErxn9cPtB6eEhk2maxAWBGG19LmbqTaI
-B89hxGLjLevsz6rwB1TwF4HKWx6eXng+7BifUBcjf6W3hih1zwQyddzlUtntrYLg
-zFaqLtBlmrwxVbKBECbcpgz3IW1vEX6nVQiF5542jt1spMJnXX0U9BqiVyv/7RQ/
-7/IXZeSBPVdmG/jIrENsVb9JJf0iVu089EIDDGbN+eKn7J8nmInBxJilMv21oQE2
-1EyrhqF8lF6cI3ME8jeKOhr9D6uOkkojw1UIpA5zdFDzzTlCOPSaa2nNxZSIRQP3
-b3ZSwqGZTHZrO53Pp9I9
-=byIr
+iQIcBAEBCAAGBQJVElPPAAoJEMDTa8Ir7ZwVPUUQAIHfJQy6tvMGDZ3R7iS2ER+G
+ON6vCA33JdcYnUKgnpTBoX30sw2gm6DNxXYvgwwdd5D9vc0cG5McuHEmmEsZ3ERl
+LdKWEq8tY7cDJQw/G1scY4jsZzkFgiqIJfIfnDfLEHTv/NJkfNvz0A5uymzTB6m6
+bAbPhtFtnFjb9xDSjuBf/6Pz8Y3I73H79qE8mfmdiaZTv41AgTcoKFKVYM8kmnXH
+7rfKdzu0JMSG/H0mhp7guQYtUN3mf3qCHmQa8ewtmfKL1ZWul3W97ur6i2wtST8f
+soKyrumK8dvW25GbH0ZNft/ZN0tkP3mE0EijX5Zt35h+ITAnWLQ40TZuM+zPsP/s
+yacnVksbf/5hPbTCU9Uz1WRepsbnhzVnmSU8Oq3EN+WVH6ewowokOEkZoTHwuKa8
+LbIb77wcIkwqqdvfii4ERPg46q/QKCLYICiMhMW3aTwI5fYLV750ovUs2PWhIKmx
+IO+fFivG12R6IJ6KVIBmEloQ1BEho6Q1OMHK91+GeJ2GAt7wiSjpe2V8zQdb3KL/
+UNQf31TyMp0ag/2Sz3knISTMcZhmWtkNogVsJrbkHyaNvbZT0HJq37dBbrQrg6+g
+FbmuHrQ/fB1Zb0zxF/vArbeOqVBQvPjuCKXddD0MtxUaS1rwDSf8gtWutEWAJxy4
+Zhi+dokdChikwJxH+XaN
+=82cQ
 -----END PGP SIGNATURE-----
 
---Sig_/O6u4Dubv0O5w.t4+6pVky9I--
+--Sig_/qyGeNCsad063Z/qGMgMGLic--
