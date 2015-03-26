@@ -1,33 +1,81 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: [PATCH V2 -next] netfilter: Use LOGLEVEL_<FOO> defines
-Date: Wed, 25 Mar 2015 12:19:32 +0100
-Message-ID: <20150325111932.GA6546@salvia>
-References: <20150323140841.0b807b95@canb.auug.org.au>
- <20150323124723.GA6740@salvia>
- <1427115331.16851.11.camel@perches.com>
- <20150323130638.GA6857@salvia>
- <1427117031.16851.16.camel@perches.com>
- <20150324003828.0eac53d9@canb.auug.org.au>
- <20150323135235.GA7595@salvia>
- <1427136610.16851.29.camel@perches.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add UML to linux-next
+Date: Thu, 26 Mar 2015 11:06:39 +1100
+Message-ID: <20150326110639.11f821a4@canb.auug.org.au>
+References: <5511DE72.6040109@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1427136610.16851.29.camel@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick McHardy <kaber@trash.net>, netfilter-devel <netfilter-devel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Zcm1yk4cH3ySYgwXSw03g3n"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54354 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751729AbbCZAGr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Mar 2015 20:06:47 -0400
+In-Reply-To: <5511DE72.6040109@nod.at>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Mar 23, 2015 at 11:50:10AM -0700, Joe Perches wrote:
-> Use the #defines where appropriate.
-> 
-> Miscellanea:
-> 
-> Add explicit #include <linux/kernel.h> where it was not
-> previously used so that these #defines are a bit more
-> explicitly defined instead of indirectly included via:
-> 	module.h->moduleparam.h->kernel.h
+--Sig_/Zcm1yk4cH3ySYgwXSw03g3n
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks.
+Hi Richard,
+
+On Tue, 24 Mar 2015 23:00:18 +0100 Richard Weinberger <richard@nod.at> wrot=
+e:
+>
+> can you please add the following tree to linux-next?
+> git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git linux-next
+>=20
+> It is a shame that this did not happen long before, but from now own UML =
+will use linux-next.
+
+Added form today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/Zcm1yk4cH3ySYgwXSw03g3n
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVE02UAAoJEMDTa8Ir7ZwVymIP/RkbySK7q+7vueHHrWpSCiVP
+eNInkX/fzkdlNnJ4g8O1MQof9biaJHg2mPM5lfbODBWvIRXc0AQ/KHMxU3oQdpVx
+shTQUjst7LwwLoiGc17XBiX1KQ2VK1ITQcEg9UVJnH2WGOfKbuHoM76KT1+JJPtv
+5E7jg+iBdYzagk+nU3WZao1qPMzlK/3YNA52Bpu5nSOgUtHVc8vGycA/2AW5napb
+zqwYlLa4LDE/BhodPq+D29XSwzeGHt58RzmptFtAbC3SpseQBJrVXwJaoa1zfdn9
+yluXqjqOk2HJkDcH7NUE8nfn9VBgKh8EGGdEJu13OM8U6yWvwITlFhlx6q4uQNCN
++X1EUj9t/OHxN+WCorbSXhMB+KRC04vEUykkkkXFEi/NajoFBXTIOz/N5Q/3UMvt
+Dhk//l9zJvTpiWGLYgJRqM7zaspr/nsSt6U7ZtBEG8nN854VBgDdPAg3TqvPuP5b
+iw4xA8jN6QqwOHo5qz78z6zJvnRpcMOURZu8Mulib+RrtEcJd/iX8D6VXW38w17l
+je2mXN1V1iDD8CnYVC5XqJw3qI0dhVeThyUbldKYQM2mUBZyww2YV1Yd2PpFFW6n
+MiFnlKS8WpFuzP2dnzU9xHoKNqw/idIoyLr6tbPcwn99eIpbkJWl/JjjdS2Aa/F5
+YzPCIXurYg6AV7OcHwdu
+=iPgQ
+-----END PGP SIGNATURE-----
+
+--Sig_/Zcm1yk4cH3ySYgwXSw03g3n--
