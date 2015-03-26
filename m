@@ -1,27 +1,23 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Peter Zijlstra <peterz@infradead.org>
 Subject: Re: linux-next: build warnings after merge of the access_once tree
-Date: Thu, 26 Mar 2015 11:11:55 +0100
-Message-ID: <5513DB6B.7050303@de.ibm.com>
+Date: Thu, 26 Mar 2015 11:34:42 +0100
+Message-ID: <20150326103442.GV21418@twins.programming.kicks-ass.net>
 References: <20150326193112.2c87eb39@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp17.uk.ibm.com ([195.75.94.113]:46787 "EHLO
-	e06smtp17.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752397AbbCZKMB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2015 06:12:01 -0400
-Received: from /spool/local
-	by e06smtp17.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
-	Thu, 26 Mar 2015 10:11:59 -0000
+Received: from bombadil.infradead.org ([198.137.202.9]:53444 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751581AbbCZKe7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2015 06:34:59 -0400
+Content-Disposition: inline
 In-Reply-To: <20150326193112.2c87eb39@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>, Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will.deacon@arm.com>
 
-Am 26.03.2015 um 09:31 schrieb Stephen Rothwell:
+On Thu, Mar 26, 2015 at 07:31:12PM +1100, Stephen Rothwell wrote:
 > Hi Christian,
 > 
 > After merging the access_once tree, today's linux-next build (arm
@@ -41,28 +37,11 @@ Am 26.03.2015 um 09:31 schrieb Stephen Rothwell:
 > Introduced by commit 6becd6bd5e89 ("compiler.h: Fix word size check for
 > READ/WRITE_ONCE") presumably interacting with commit 4d3199e4ca8e
 > ("locking: Remove ACCESS_ONCE() usage") from the tip tree.
-> 
 
-The point of my patch was to actually re-enable the formerly broken check.
-And indeed on arm 32 bit 
-we read a 64bit variable (lock_count). There is no possible way of doing that
-in an atomic fashion with READ_ONCE, so the warning is probably correct
+Hmm, valid warning though, ARM is a 32bit arch and therefore it will
+'have' to load a u64 in two goes, which violates the
+ACCESS_ONCE/READ_ONCE 'promise'.
 
-code in lib/lockref.c
-
-#define CMPXCHG_LOOP(CODE, SUCCESS) do {                                        \
-        struct lockref old;                                                     \
-        BUILD_BUG_ON(sizeof(old) != 8);                                         \
-        old.lock_count = READ_ONCE(lockref->lock_count);                        \
-        while (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {     \
-                struct lockref new = old, prev = old;                           \
-                CODE                                                            \
-                old.lock_count = cmpxchg64_relaxed(&lockref->lock_count,        \
-                                                   old.lock_count,              \
-                                                   new.lock_count);             \
-                if (likely(old.lock_count == prev.lock_count)) {                \
-                        SUCCESS;                                                \
-                }                                                               \
-                cpu_relax_lowlatency();                                         \
-        }                                                                       \
-} while (0)
+Now ARM can indeed to the cmpxchg64 thing, but I'm not sure what to do
+here, I suspect the code is fine, seeing how the cmpxchg64 will fail if
+the split loads got it wrong, but I've not overly thought about it.
