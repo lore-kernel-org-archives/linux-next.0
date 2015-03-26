@@ -1,69 +1,110 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with the imx-mxs tree
-Date: Thu, 26 Mar 2015 12:52:40 +1100
-Message-ID: <20150326125240.376bbc65@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the powerpc-mpe tree
+Date: Thu, 26 Mar 2015 13:29:48 +1100
+Message-ID: <20150326132948.3feecd0c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kzNgqu.02gqhSgJlTP7.tp2"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>, Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, Jason Cooper <jason@lakedaemon.net>, Kevin Cernekee <cernekee@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/DbJCKynVm6I/4kI1UEH+Ub2"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35226 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750819AbbCZC3y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Mar 2015 22:29:54 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neelesh Gupta <neelegup@linux.vnet.ibm.com>
 
---Sig_/kzNgqu.02gqhSgJlTP7.tp2
+--Sig_/DbJCKynVm6I/4kI1UEH+Ub2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi all,
 
-Today's linux-next merge of the mips tree got a conflict in
-drivers/irqchip/Makefile between commit 0494e11aafc7 ("irqchip:
-vf610-mscm-ir: Add support for Vybrid MSCM interrupt router") from the
-imx-mxs tree and commit 8a1a20290487 ("IRQCHIP: Add new driver for
-BCM7038-style level 1 interrupt controllers") from the mips tree.
+After merging the powerpc-mpe tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+
+In file included from arch/powerpc/platforms/powernv/setup.c:36:0:
+arch/powerpc/include/asm/opal.h:214:17: error: 'enum OpalMessageType' decla=
+red inside parameter list [-Werror]
+          struct notifier_block *nb);
+                 ^
+
+Caused by commit d7cf83fcaf1b ("powerpc/powernv: Move opal-api.h closer
+to the Skiboot version") interacting with commit b921e90260ce
+("powerpc/powernv: Add OPAL message notifier unregister function") from
+the powerpc tree.
+
+I have added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 26 Mar 2015 13:25:58 +1100
+Subject: [PATCH] powerpc/powernv: fix for OpalMessageType name change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/include/asm/opal.h       | 2 +-
+ arch/powerpc/platforms/powernv/opal.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opa=
+l.h
+index d430ec7e60c6..c08de77f398a 100644
+--- a/arch/powerpc/include/asm/opal.h
++++ b/arch/powerpc/include/asm/opal.h
+@@ -210,7 +210,7 @@ extern int opal_notifier_unregister(struct notifier_blo=
+ck *nb);
+=20
+ extern int opal_message_notifier_register(enum opal_msg_type msg_type,
+ 						struct notifier_block *nb);
+-extern int opal_message_notifier_unregister(enum OpalMessageType msg_type,
++extern int opal_message_notifier_unregister(enum opal_msg_type msg_type,
+ 					    struct notifier_block *nb);
+ extern void opal_notifier_enable(void);
+ extern void opal_notifier_disable(void);
+diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms=
+/powernv/opal.c
+index 2c590e69a928..d403b2b08626 100644
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -318,7 +318,7 @@ int opal_message_notifier_register(enum opal_msg_type m=
+sg_type,
+ 				&opal_msg_notifier_head[msg_type], nb);
+ }
+=20
+-int opal_message_notifier_unregister(enum OpalMessageType msg_type,
++int opal_message_notifier_unregister(enum opal_msg_type msg_type,
+ 				     struct notifier_block *nb)
+ {
+ 	return atomic_notifier_chain_unregister(
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/irqchip/Makefile
-index 9176c76eb164,89e45613de76..000000000000
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@@ -37,7 -37,7 +37,8 @@@ obj-$(CONFIG_TB10X_IRQC)		+=3D irq-tb10x.
-  obj-$(CONFIG_XTENSA)			+=3D irq-xtensa-pic.o
-  obj-$(CONFIG_XTENSA_MX)			+=3D irq-xtensa-mx.o
-  obj-$(CONFIG_IRQ_CROSSBAR)		+=3D irq-crossbar.o
- +obj-$(CONFIG_SOC_VF610)			+=3D irq-vf610-mscm-ir.o
-+ obj-$(CONFIG_BCM7038_L1_IRQ)		+=3D irq-bcm7038-l1.o
-  obj-$(CONFIG_BCM7120_L2_IRQ)		+=3D irq-bcm7120-l2.o
-  obj-$(CONFIG_BRCMSTB_L2_IRQ)		+=3D irq-brcmstb-l2.o
-  obj-$(CONFIG_KEYSTONE_IRQ)		+=3D irq-keystone.o
-
---Sig_/kzNgqu.02gqhSgJlTP7.tp2
+--Sig_/DbJCKynVm6I/4kI1UEH+Ub2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVE2ZtAAoJEMDTa8Ir7ZwVCOEQAINJbkRqPSnhYQ1S2+/A1V59
-CH+oPBdc/WylPt6Qcwdz2PRtliiSoKOOFUP6kdaXk/fMaafVCWZqQUaPrKyv27fh
-xASdUfnnKp5uwz/u/a9JBl1BPcM6N21qWNdcS4gmL564zri/jZD8YLQAPM0lZyaQ
-t/7UUQZB9cMK24IEymvf6KbNM41CBoZIBKh+0X6NVyUEFSzfoghw1y2KIRlVkt+d
-rmBXaczWGZaAUGI8CgejsnjgJ5gEa06HIdSScGKMgZFkHoO6SVwin+L6QhdMG4m1
-Ddxn6Mx1yBaCaOKeuANqJfrBTtaoFDfVa6RqdylqKSXRJqetO37UNHs5W6X6+3n7
-s98HKsloihWUca3BI+bwfDW9LbJDQdHlK5PUWXdg4Z7QXFdirqEOUn41ujsRd8bC
-uYyQ4KG0uZl0ggClrAXsbCJPgJevkMrqngFWWXOOjHNTWXzabG9kP+S/rLHVw9Cx
-UxkWabWZvgjO6V3UQjUrpa0GpGgHXeCyUvPuVMWMtlSYGPwNQT52a+BCf5yL0ovO
-3sjl+3TuS6CSvrJhUVn3Z8TS/PLFLuwoqF+/r05RKr10DvuHtP2eoUBimA0MkLtN
-1zHnr0ALkiwf+JV/N64uvI3Gfcrpd56y1OFOL+WoVeet4h/2432FcuiCyQ3Qj6t/
-SYB56iwsw4raMOqHq880
-=DSyo
+iQIcBAEBCAAGBQJVE28gAAoJEMDTa8Ir7ZwVZX8P/0RAwKl56rI8bQ5xZ1GwBIon
+9cTebSNCgLSpWNT1KUemArW53oHKpwHcda5vdy1zF4R44PBjOwF/P46jmM8DlvSH
+V9mE+uiGhipj3CXCWgNLNjJIbOcnhp3AlipMwTpc2xNNUQqWQ7EfdpLEDNtwDnC9
+JmhKATQGwtDbZY/lpt6tetYuuouVpYTo8kqJ9ye2ZizC3YKRJWxfZaz7tyjXmwqa
+Y2n9dRQzlgy+IjepvZanQBJjxNbYwiwHxtvn0hODk+c9BaLqOVTv5xTexNqcHugF
+w+185JGeD4Lf01MwJB6JZcBdyZN0hBawUbJJ6cOsjTn9cQY5G6Dm5HK1J/LPkxnc
+knAF3EWQf1K+durncJy4H7LZN92sH8X0knAGSZmDci3iwV3EPEozGUFPHKPf6tT9
+vTXRkfl4gt2ASAGPCiiTWHEBv9RROMiKhSj28KYEtL6tr8g7Ypip2WeRN6WAjmoV
+9+3WJEKDmCjNBSbLJhtxTZGT15aLRoFPOShmPey4Cyyxh2wMkvL7pYceVatiKq+C
+vbNg6UzQAbVWqmtkXY/Cyz3DC5i7VacoAxd0RSg3eNmPG0FTdibciGdoICr9iqd8
+tKlRuKWnO7SMi27PHUu0syaM+bVHpvbPWn7SKBZvr6QlJ2nyPDpUz7VHiqKSV0Ur
+l2G8/QofRweN1zZIUJAk
+=TEqV
 -----END PGP SIGNATURE-----
 
---Sig_/kzNgqu.02gqhSgJlTP7.tp2--
+--Sig_/DbJCKynVm6I/4kI1UEH+Ub2--
