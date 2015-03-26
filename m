@@ -1,58 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unnecessary merge in the ubifs tree
-Date: Thu, 26 Mar 2015 11:32:17 +1100
-Message-ID: <20150326113217.580fe7e8@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with the imx-mxs tree
+Date: Thu, 26 Mar 2015 12:52:40 +1100
+Message-ID: <20150326125240.376bbc65@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WcdNkhp7X=U+vU+UrKHXRXp"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52578 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751347AbbCZAcY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Mar 2015 20:32:24 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/kzNgqu.02gqhSgJlTP7.tp2"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, Jason Cooper <jason@lakedaemon.net>, Kevin Cernekee <cernekee@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/WcdNkhp7X=U+vU+UrKHXRXp
+--Sig_/kzNgqu.02gqhSgJlTP7.tp2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
+Hi Ralf,
 
-I noticed merge commit 3527a86b7ae1 ("Merge tag 'v4.0-rc5' into
-linux-next").  Just a note that if you had merged the commit that the
-tag points to, you would have just had a fast forward instead of a
-"real" merge.  Merging the tag forces the --no-ff flag on git merge
-(and adding --ff does not change that).  You could have merged
-"v4.0-rc5^0" (I think) or (apparently) pass --ff-only to get the fast
-forward.
+Today's linux-next merge of the mips tree got a conflict in
+drivers/irqchip/Makefile between commit 0494e11aafc7 ("irqchip:
+vf610-mscm-ir: Add support for Vybrid MSCM interrupt router") from the
+imx-mxs tree and commit 8a1a20290487 ("IRQCHIP: Add new driver for
+BCM7038-style level 1 interrupt controllers") from the mips tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/WcdNkhp7X=U+vU+UrKHXRXp
+diff --cc drivers/irqchip/Makefile
+index 9176c76eb164,89e45613de76..000000000000
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@@ -37,7 -37,7 +37,8 @@@ obj-$(CONFIG_TB10X_IRQC)		+=3D irq-tb10x.
+  obj-$(CONFIG_XTENSA)			+=3D irq-xtensa-pic.o
+  obj-$(CONFIG_XTENSA_MX)			+=3D irq-xtensa-mx.o
+  obj-$(CONFIG_IRQ_CROSSBAR)		+=3D irq-crossbar.o
+ +obj-$(CONFIG_SOC_VF610)			+=3D irq-vf610-mscm-ir.o
++ obj-$(CONFIG_BCM7038_L1_IRQ)		+=3D irq-bcm7038-l1.o
+  obj-$(CONFIG_BCM7120_L2_IRQ)		+=3D irq-bcm7120-l2.o
+  obj-$(CONFIG_BRCMSTB_L2_IRQ)		+=3D irq-brcmstb-l2.o
+  obj-$(CONFIG_KEYSTONE_IRQ)		+=3D irq-keystone.o
+
+--Sig_/kzNgqu.02gqhSgJlTP7.tp2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVE1OWAAoJEMDTa8Ir7ZwVy4kP/ippn0W0NFyJPOU9t01UP/bR
-dIK1LzCFKz1lD3NLeqsQe4XYGQLmUA7KGVo80NWkZMH+XOt7pCQ31DrwYY6Ft9LQ
-Mh3e5NgYCzqvdffk8v7cZj/hVpQhe49zfsCe5onMRgEudS/o62o3cfv2gto04JZm
-wIL+6J9TO/dk+RUKcEXCJZBijdQbBDNyy7+nBJmVm8QPEZfBIn8zEtkjFhj/JMB/
-VTGuBYKf7772zbU5gtgI7nZ8HbcsIHfVioZOugVEnSga3dVbRLZvCw3bgx2an9pz
-RUkPOsIYv+wyxKYv6f58LUsHPxuhxJdy3mZ9hMEzzIfkOxKtPNPvPfx8ZyD+gIrz
-eem8SWigr+/W+k55isnftki/q0cDL6huEkbhCXg2FBWb9n+tCGsZNp3QHPAWY1a3
-SduRTow9gMmMXv+dM3LRVZM/lY3NCBI7Uh5xRgwmd5XPHCRnBu/VPK8twxeW9426
-X+UDTy5J9UDnSSiYMAckBrNzoLFKzKnq32WLxKas9MdkTY96Q73Q80xgx/vHjDjz
-0k9bxqf49aqUDouhn35XKWExueKkoyczEtVb9AgFVD4t74qGQ6xNsNCXDq1+7IcO
-oJ1l2d7h8i6cpdayZeBeiac2lxj3oh8SBL/Da9AY0vUNRf4HqDgXPPq8qTjs1pd5
-oO3U8qYdiD6hLVwHWDyA
-=BKvh
+iQIcBAEBCAAGBQJVE2ZtAAoJEMDTa8Ir7ZwVCOEQAINJbkRqPSnhYQ1S2+/A1V59
+CH+oPBdc/WylPt6Qcwdz2PRtliiSoKOOFUP6kdaXk/fMaafVCWZqQUaPrKyv27fh
+xASdUfnnKp5uwz/u/a9JBl1BPcM6N21qWNdcS4gmL564zri/jZD8YLQAPM0lZyaQ
+t/7UUQZB9cMK24IEymvf6KbNM41CBoZIBKh+0X6NVyUEFSzfoghw1y2KIRlVkt+d
+rmBXaczWGZaAUGI8CgejsnjgJ5gEa06HIdSScGKMgZFkHoO6SVwin+L6QhdMG4m1
+Ddxn6Mx1yBaCaOKeuANqJfrBTtaoFDfVa6RqdylqKSXRJqetO37UNHs5W6X6+3n7
+s98HKsloihWUca3BI+bwfDW9LbJDQdHlK5PUWXdg4Z7QXFdirqEOUn41ujsRd8bC
+uYyQ4KG0uZl0ggClrAXsbCJPgJevkMrqngFWWXOOjHNTWXzabG9kP+S/rLHVw9Cx
+UxkWabWZvgjO6V3UQjUrpa0GpGgHXeCyUvPuVMWMtlSYGPwNQT52a+BCf5yL0ovO
+3sjl+3TuS6CSvrJhUVn3Z8TS/PLFLuwoqF+/r05RKr10DvuHtP2eoUBimA0MkLtN
+1zHnr0ALkiwf+JV/N64uvI3Gfcrpd56y1OFOL+WoVeet4h/2432FcuiCyQ3Qj6t/
+SYB56iwsw4raMOqHq880
+=DSyo
 -----END PGP SIGNATURE-----
 
---Sig_/WcdNkhp7X=U+vU+UrKHXRXp--
+--Sig_/kzNgqu.02gqhSgJlTP7.tp2--
