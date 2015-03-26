@@ -1,30 +1,30 @@
-From: Will Deacon <will.deacon@arm.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 Subject: Re: linux-next: build warnings after merge of the access_once tree
-Date: Thu, 26 Mar 2015 17:17:23 +0000
-Message-ID: <20150326171723.GA22620@arm.com>
-References: <20150326193112.2c87eb39@canb.auug.org.au>
- <20150326103442.GV21418@twins.programming.kicks-ass.net>
- <20150326132750.GA2805@arm.com>
- <20150326142220.GY21418@twins.programming.kicks-ass.net>
- <CA+55aFyLTc72-xTkjugVSMb3EQq=+__UcFe28agu086xf9d6ZA@mail.gmail.com>
- <CA+55aFyKR3uem_dgSin5wtYdKCBnyM5X9gbRUPfdF1ofeON_1g@mail.gmail.com>
- <20150326163647.GC21418@twins.programming.kicks-ass.net>
- <CA+55aFw1WHJqSj+z-mJGY-kxrg_OsGp9jK9VBi+wB4zPgCkv_w@mail.gmail.com>
- <20150326170748.GD21418@twins.programming.kicks-ass.net>
+Date: Thu, 26 Mar 2015 18:23:03 +0100
+Message-ID: <55144077.3010907@de.ibm.com>
+References: <20150326193112.2c87eb39@canb.auug.org.au> <20150326103442.GV21418@twins.programming.kicks-ass.net> <20150326132750.GA2805@arm.com> <20150326142220.GY21418@twins.programming.kicks-ass.net> <CA+55aFyLTc72-xTkjugVSMb3EQq=+__UcFe28agu086xf9d6ZA@mail.gmail.com> <CA+55aFyKR3uem_dgSin5wtYdKCBnyM5X9gbRUPfdF1ofeON_1g@mail.gmail.com> <20150326163647.GC21418@twins.programming.kicks-ass.net> <CA+55aFw1WHJqSj+z-mJGY-kxrg_OsGp9jK9VBi+wB4zPgCkv_w@mail.gmail.com> <20150326170748.GD21418@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e06smtp16.uk.ibm.com ([195.75.94.112]:48050 "EHLO
+	e06smtp16.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751900AbbCZRXI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2015 13:23:08 -0400
+Received: from /spool/local
+	by e06smtp16.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
+	Thu, 26 Mar 2015 17:23:07 -0000
 In-Reply-To: <20150326170748.GD21418@twins.programming.kicks-ass.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Borntraeger <borntraeger@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, Davidlohr Bueso <dave@stgolabs.net>, Paul McKenney <paulmck@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, Davidlohr Bueso <dave@stgolabs.net>, Paul McKenney <paulmck@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will.deacon@arm.com>
 
-On Thu, Mar 26, 2015 at 05:07:48PM +0000, Peter Zijlstra wrote:
+Am 26.03.2015 um 18:07 schrieb Peter Zijlstra:
 > On Thu, Mar 26, 2015 at 09:45:07AM -0700, Linus Torvalds wrote:
 > 
-> > Stop this idiocy.
+>> Stop this idiocy.
 > 
 > Yeah, clearly I can type faster than I can think straight :/
 > 
@@ -32,14 +32,12 @@ On Thu, Mar 26, 2015 at 05:07:48PM +0000, Peter Zijlstra wrote:
 > In any case, I've the below patch; do you want to take it now or do you
 > want me to route it through tip/locking/urgent or something like that?
 
-This patch also works fine for me. I managed to get the compiler to split a
-64-bit load into 2x32-bit loads using memcpy, so I do like keeping the
-8-byte case available for 32-bit architectures than can make use of it.
+Its not urgent. Current upstream has a broken check (gcc will not emit the
+warning if the function is static). I just fixed the check in my next tree
+but I can certainly drop that tree.
 
-	Acked-by: Will Deacon <will.deacon@arm.com>
-
-Will
-
+> 
+> ---
 > Subject: kernel: Remove atomicy checks from {READ,WRITE}_ONCE
 > From: Peter Zijlstra <peterz@infradead.org>
 > Date: Thu, 26 Mar 2015 17:45:37 +0100
@@ -62,6 +60,10 @@ Will
 > Cc: Will Deacon <will.deacon@arm.com>
 > Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
 > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+
+
 > ---
 >  include/linux/compiler.h | 16 ----------------
 >  1 file changed, 16 deletions(-)
@@ -71,9 +73,9 @@ Will
 > --- a/include/linux/compiler.h
 > +++ b/include/linux/compiler.h
 > @@ -192,29 +192,16 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
->  
+> 
 >  #include <uapi/linux/types.h>
->  
+> 
 > -static __always_inline void data_access_exceeds_word_size(void)
 > -#ifdef __compiletime_warning
 > -__compiletime_warning("data access exceeds word size and won't be atomic")
