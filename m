@@ -1,39 +1,54 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: build warnings after merge of the access_once tree
-Date: Thu, 26 Mar 2015 10:52:02 -0700
-Message-ID: <CA+55aFw6f4sLc4DMTmd2T9-r8NNQq8Zr4Wf1SvHSG=s1Vd-WuA@mail.gmail.com>
-References: <20150326193112.2c87eb39@canb.auug.org.au>
-	<20150326103442.GV21418@twins.programming.kicks-ass.net>
-	<20150326132750.GA2805@arm.com>
-	<20150326142220.GY21418@twins.programming.kicks-ass.net>
-	<CA+55aFyLTc72-xTkjugVSMb3EQq=+__UcFe28agu086xf9d6ZA@mail.gmail.com>
-	<551440C5.8040104@de.ibm.com>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the arm64-acpi
+ tree
+Date: Thu, 26 Mar 2015 18:35:13 +0000
+Message-ID: <alpine.DEB.2.02.1503261834490.7982@kaball.uk.xensource.com>
+References: <20150326173127.27fc5f42@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:38129 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752094AbbCZRwD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2015 13:52:03 -0400
-In-Reply-To: <551440C5.8040104@de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will.deacon@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Paul McKenney <paulmck@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="US-ASCII"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150326173127.27fc5f42@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Will Deacon <will.deacon@arm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hanjun Guo <hanjun.guo@linaro.org>, David Vrabel <david.vrabel@citrix.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 26, 2015 at 10:24 AM, Christian Borntraeger
-<borntraeger@de.ibm.com> wrote:
->
-> Oh I just added that check back then because some guy named
-> Linus suggested something like that ;-)
+On Thu, 26 Mar 2015, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the xen-tip tree got a conflict in
+> drivers/xen/Kconfig between commit 94ccae47e02d ("XEN / ACPI: Make XEN
+> ACPI depend on X86") from the arm64-acpi tree and commit 628c28eefd6f
+> ("xen: unify foreign GFN map/unmap for auto-xlated physmap guests")
+> from the xen-tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Yes, my bad.
+That's all right, thank you.
 
-In my defense, that was when we were talking about ACCESS_ONCE()
-causing bugs with gcc due to the blind use of "volatile" that it turns
-out gcc doesn't necessarily like.
 
-With the memcpy fallback (and the simpler "scalar pointer copy by
-hand"), I think READ_ONCE() (and WRITE_ONCE()) are safe.
-
-                      Linus
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/xen/Kconfig
+> index a31cd29b68a8,afc39ca5cc4f..000000000000
+> --- a/drivers/xen/Kconfig
+> +++ b/drivers/xen/Kconfig
+> @@@ -253,8 -253,10 +253,14 @@@ config XEN_EF
+>   	def_bool y
+>   	depends on X86_64 && EFI
+>   
+>  +config XEN_ACPI
+>  +	def_bool y
+>  +	depends on X86 && ACPI
+>  +
+> + config XEN_AUTO_XLATE
+> + 	def_bool y
+> + 	depends on ARM || ARM64 || XEN_PVHVM
+> + 	help
+> + 	  Support for auto-translated physmap guests.
+> + 
+>   endmenu
+> 
