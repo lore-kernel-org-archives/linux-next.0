@@ -1,54 +1,58 @@
-From: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
-Subject: Re: linux-next: build warning after merge of the slave-dma tree
-Date: Mon, 30 Mar 2015 11:56:08 +0530
-Message-ID: <0d71a355-1f27-4f9f-ad87-01a68aeaaca3@BL2FFO11OLC014.protection.gbl>
-References: <20150330172053.63896266@canb.auug.org.au>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Mon, 30 Mar 2015 08:15:37 +0100
+Message-ID: <20150330071536.GF24899@n2100.arm.linux.org.uk>
+References: <20150330171334.6f377ba7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150330172053.63896266@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20150330171334.6f377ba7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kedareswara rao Appana <appana.durga.rao@xilinx.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Lynch <nathan_lynch@mentor.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen Rothwell,
+On Mon, Mar 30, 2015 at 05:13:34PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> arch/arm/kernel/vdso.c: In function 'tk_is_cntvct':
+> arch/arm/kernel/vdso.c:273:15: error: 'const struct timekeeper' has no member named 'tkr'
+>   if (strcmp(tk->tkr.clock->name, "arch_sys_counter") != 0)
+>                ^
+> arch/arm/kernel/vdso.c: In function 'update_vsyscall':
+> arch/arm/kernel/vdso.c:319:32: error: 'struct timekeeper' has no member named 'tkr'
+>    vdso_data->cs_cycle_last = tk->tkr.cycle_last;
+>                                 ^
+> arch/arm/kernel/vdso.c:321:36: error: 'struct timekeeper' has no member named 'tkr'
+>    vdso_data->xtime_clock_snsec = tk->tkr.xtime_nsec;
+>                                     ^
+> arch/arm/kernel/vdso.c:322:27: error: 'struct timekeeper' has no member named 'tkr'
+>    vdso_data->cs_mult  = tk->tkr.mult;
+>                            ^
+> arch/arm/kernel/vdso.c:323:28: error: 'struct timekeeper' has no member named 'tkr'
+>    vdso_data->cs_shift  = tk->tkr.shift;
+>                             ^
+> arch/arm/kernel/vdso.c:324:27: error: 'struct timekeeper' has no member named 'tkr'
+>    vdso_data->cs_mask  = tk->tkr.mask;
+>                            ^
+> 
+> Caused by commit 876e78818def ("time: Rename timekeeper::tkr to
+> timekeeper::tkr_mono") from the tip tree interacting with commit
+> ecf99a439105 ("ARM: 8331/1: VDSO initialization, mapping, and
+> synchronization") from the arm tree.
+> 
+> I added this merge fix patch for today (is that all that is needed?):
 
-I will fix this and will send a patch.
+I'll drop the VDSO stuff from the ARM tree; I can't see a way to keep
+it in my tree and keep my tree buildable without dragging in the tip
+tree.
 
-Regards,
-Kedar.
+The ARM VDSO stuff will just have to wait for 4.2 instead.
 
-On 3/30/2015 11:50 AM, Stephen Rothwell wrote:
-> Hi Vinod,
->
-> After merging the slave-dma tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->
-> In file included from drivers/dma/xilinx/xilinx_vdma.c:26:0:
-> include/linux/dmapool.h:18:4: warning: 'struct device' declared inside parameter list
->      size_t size, size_t align, size_t allocation);
->      ^
-> include/linux/dmapool.h:18:4: warning: its scope is only this definition or declaration, which is probably not what you want
-> include/linux/dmapool.h:31:7: warning: 'struct device' declared inside parameter list
->         size_t size, size_t align, size_t allocation);
->         ^
-> drivers/dma/xilinx/xilinx_vdma.c: In function 'xilinx_vdma_alloc_chan_resources':
-> drivers/dma/xilinx/xilinx_vdma.c:501:20: warning: passing argument 2 of 'dma_pool_create' from incompatible pointer type
->    chan->desc_pool = dma_pool_create("xilinx_vdma_desc_pool",
->                      ^
-> In file included from drivers/dma/xilinx/xilinx_vdma.c:26:0:
-> include/linux/dmapool.h:17:18: note: expected 'struct device *' but argument is of type 'struct device *'
->   struct dma_pool *dma_pool_create(const char *name, struct device *dev,
->                    ^
->
-> Presumable caused by the include order change in commit 937abe88aea3
-> ("dmaengine: xilinx-dma: move header file to common location").
->
-> I guess that dmapool.h needs a "struct device;" line near the top.
->
-
-
-
-This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
