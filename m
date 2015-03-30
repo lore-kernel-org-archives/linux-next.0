@@ -1,68 +1,103 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Mon, 30 Mar 2015 15:05:34 +1100
-Message-ID: <20150330150534.52bf72dd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Mon, 30 Mar 2015 17:13:34 +1100
+Message-ID: <20150330171334.6f377ba7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Jr6nuAHfhaPgiSEoQpT2uPQ"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <ben.hutchings@codethink.co.uk>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/zhkqKsw_db745L06GAlqst."; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37086 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751370AbbC3GNm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Mar 2015 02:13:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Lynch <nathan_lynch@mentor.com>
 
---Sig_/Jr6nuAHfhaPgiSEoQpT2uPQ
+--Sig_/zhkqKsw_db745L06GAlqst.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-drivers/net/usb/cdc_ncm.c: In function 'cdc_ncm_fill_tx_frame':
-drivers/net/usb/cdc_ncm.c:1187:2: error: too few arguments to function 'usb=
-net_set_skb_tx_stats'
-  usbnet_set_skb_tx_stats(skb_out, n);
-  ^
-In file included from drivers/net/usb/cdc_ncm.c:51:0:
-include/linux/usb/usbnet.h:238:1: note: declared here
- usbnet_set_skb_tx_stats(struct sk_buff *skb,
- ^
+arch/arm/kernel/vdso.c: In function 'tk_is_cntvct':
+arch/arm/kernel/vdso.c:273:15: error: 'const struct timekeeper' has no memb=
+er named 'tkr'
+  if (strcmp(tk->tkr.clock->name, "arch_sys_counter") !=3D 0)
+               ^
+arch/arm/kernel/vdso.c: In function 'update_vsyscall':
+arch/arm/kernel/vdso.c:319:32: error: 'struct timekeeper' has no member nam=
+ed 'tkr'
+   vdso_data->cs_cycle_last =3D tk->tkr.cycle_last;
+                                ^
+arch/arm/kernel/vdso.c:321:36: error: 'struct timekeeper' has no member nam=
+ed 'tkr'
+   vdso_data->xtime_clock_snsec =3D tk->tkr.xtime_nsec;
+                                    ^
+arch/arm/kernel/vdso.c:322:27: error: 'struct timekeeper' has no member nam=
+ed 'tkr'
+   vdso_data->cs_mult  =3D tk->tkr.mult;
+                           ^
+arch/arm/kernel/vdso.c:323:28: error: 'struct timekeeper' has no member nam=
+ed 'tkr'
+   vdso_data->cs_shift  =3D tk->tkr.shift;
+                            ^
+arch/arm/kernel/vdso.c:324:27: error: 'struct timekeeper' has no member nam=
+ed 'tkr'
+   vdso_data->cs_mask  =3D tk->tkr.mask;
+                           ^
 
-Caused by a bad merge between commits 1e9e39f4a298 ("usbnet: Fix
-tx_packets stat for FLAG_MULTI_FRAME drivers") and 7a1e890e2168
-("usbnet: Fix tx_bytes statistic running backward in cdc_ncm") form the
-net tree and commit 6588af614e7b ("usbnet: Fix tx_packets stat for
-FLAG_MULTI_FRAME drivers") from the net-next tree.  (Presumably,
-6588af614e7b was cherry-picked as a bug fix.  So, Dave, something to
-watch for if you merge net into net-next.)
+Caused by commit 876e78818def ("time: Rename timekeeper::tkr to
+timekeeper::tkr_mono") from the tip tree interacting with commit
+ecf99a439105 ("ARM: 8331/1: VDSO initialization, mapping, and
+synchronization") from the arm tree.
 
-I applied the following merge fix patch:
+I added this merge fix patch for today (is that all that is needed?):
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 30 Mar 2015 14:59:49 +1100
-Subject: [PATCH] usbnet: fix bad merge in cdc_ncm.c
+Date: Mon, 30 Mar 2015 17:08:21 +1100
+Subject: [PATCH] ARM: VDSO: rename tkr to tkr_mono
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/net/usb/cdc_ncm.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/kernel/vdso.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/usb/cdc_ncm.c b/drivers/net/usb/cdc_ncm.c
-index ee6fed0af6f5..c3e4da9e79ca 100644
---- a/drivers/net/usb/cdc_ncm.c
-+++ b/drivers/net/usb/cdc_ncm.c
-@@ -1184,8 +1184,6 @@ cdc_ncm_fill_tx_frame(struct usbnet *dev, struct sk_b=
-uff *skb, __le32 sign)
- 	usbnet_set_skb_tx_stats(skb_out, n,
- 				ctx->tx_curr_frame_payload - skb_out->len);
+diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
+index 0d31d3ccab81..efe17dd9b921 100644
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -270,7 +270,7 @@ static bool tk_is_cntvct(const struct timekeeper *tk)
+ 	if (!IS_ENABLED(CONFIG_ARM_ARCH_TIMER))
+ 		return false;
 =20
--	usbnet_set_skb_tx_stats(skb_out, n);
--
- 	return skb_out;
+-	if (strcmp(tk->tkr.clock->name, "arch_sys_counter") !=3D 0)
++	if (strcmp(tk->tkr_mono.clock->name, "arch_sys_counter") !=3D 0)
+ 		return false;
 =20
- exit_no_skb:
+ 	return true;
+@@ -316,12 +316,12 @@ void update_vsyscall(struct timekeeper *tk)
+ 	vdso_data->wtm_clock_nsec		=3D wtm->tv_nsec;
+=20
+ 	if (vdso_data->tk_is_cntvct) {
+-		vdso_data->cs_cycle_last	=3D tk->tkr.cycle_last;
++		vdso_data->cs_cycle_last	=3D tk->tkr_mono.cycle_last;
+ 		vdso_data->xtime_clock_sec	=3D tk->xtime_sec;
+-		vdso_data->xtime_clock_snsec	=3D tk->tkr.xtime_nsec;
+-		vdso_data->cs_mult		=3D tk->tkr.mult;
+-		vdso_data->cs_shift		=3D tk->tkr.shift;
+-		vdso_data->cs_mask		=3D tk->tkr.mask;
++		vdso_data->xtime_clock_snsec	=3D tk->tkr_mono.xtime_nsec;
++		vdso_data->cs_mult		=3D tk->tkr_mono.mult;
++		vdso_data->cs_shift		=3D tk->tkr_mono.shift;
++		vdso_data->cs_mask		=3D tk->tkr_mono.mask;
+ 	}
+=20
+ 	vdso_write_end(vdso_data);
 --=20
 2.1.4
 
@@ -70,26 +105,26 @@ uff *skb, __le32 sign)
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Jr6nuAHfhaPgiSEoQpT2uPQ
+--Sig_/zhkqKsw_db745L06GAlqst.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVGMuTAAoJEMDTa8Ir7ZwVUPMQAJBNnUnRFpZNcRGq+AJwVlA3
-2HxqW7RXMTzRuYR7UoVmMoo+mcONdYH9fDYHi5yWVcp4JregwNQDA5axXbxEn2Md
-Y4vyRQKroTjluEN4hihgz4Cht+/13RfMyUC8qXUG1PLvQ+pY8dVQ7Fly6xgJGSoh
-5bw9ohKI4owTn/LDvFb2qQWXhwE9TT2iCe2kNVwXCXm8QOUxCBxgCwOhYdLz7zGL
-+rWTAOAw0oZhF+N2MpWNc7MZuRiZ/6OrgCFs1zaI0T8aB8Jpy+Pnue167i91/14o
-lgo7bT1AFxtaGpw1qQjG/k+HQ5IyNc1Q7fGHe6ogjne64V7OwAHZACTK29xqV6bL
-oHvbLisOx0hS02g0lMVz1hAy6i5Y+QvEqh9+2scvuQQR1jdUjCkSNFKL0pFsVm7O
-cPlxkURFFEmao1E3QnbUIa5ZBI9SLX4DVxETfnOb5tC5ukvhO1BuGdh4qaVAgUfj
-abZUFcJBM1pdilVGKyJASggJ+LI4vq8+ZwkVwX+jVwfpHgrqP5AQfgqjU4aZj7iF
-TA6/8AR1Ve3+YB6lKnKMrNTgR+6fwLAdcwE2B7q89BAJ+uh6gu16AQ30z5NagPJo
-GeBlPE7+5vrT/m/xbMBnIaGUJz32ttg1j5UDGAin+ebSTTFcscsYcALsgZq7qYl4
-BHGY3G2lgEsMIKmtQ1yV
-=/muZ
+iQIcBAEBCAAGBQJVGOmTAAoJEMDTa8Ir7ZwV4VYP/0FNY2QSIh+qFuhWHd2T5W6H
+MypfX9l04pBQzXDOLl0Spz1ei5CiALSNIhRv9w4MXwiaRWu1PWWBMZM4ZV6lqAIM
+Qz/W0KMiks0uEY8mH7w4glJ6fBLlJtmViSI5pvKvqY1m3vdKgEgW0zz9jZNvm1aD
+GWRA8/9GerXJZ8IuL4dBWX+BUevqtsaD0jbhjnHCQw//VyXKOBqfILPa0TQa60cO
+/Bfd4jowPlIEAAQuUe7BOfpL1ikWTWnZ2tf0iF26+d+kUXkfVzYg9AUOeZQqNv4m
+945wQ/VeLrbXMha17xSbRD0LyRbwZBG7t8Dfi+eUByobxK7zq/mbIl0wFxDbnsw5
+lQMSJIXRjtQKHQU7sGVryXuFluexA/NWIMxbYmNUJ52Gj+fVn11OT8Q2tdN2qmxM
+mr538DcOV2d47Q9WjZDzXVy11XTe7ekb7b/tXco7eHb630EP+vDQCe0F42/xzP1w
+4ZXnw+ha2u2aLMFOJV6XlXH/H7uAOHLHn8KAu9OFau1WJzQ5KPqQ4WbkjQbN+/Kf
+T+J7BLBkSp0qRHN/N4tDZgVJNE992crZhgoPBMvq43imSDsQy6YqXWUGh5q05rMy
+fY710H5z8rQXW5Yb34lQcZyUa1x0Ixzw4LyLOD9zgcm0Z+Ko0uqB6I6o3ETNu2ij
+wPXXwigbz/IV4JmzzfjE
+=FOv1
 -----END PGP SIGNATURE-----
 
---Sig_/Jr6nuAHfhaPgiSEoQpT2uPQ--
+--Sig_/zhkqKsw_db745L06GAlqst.--
