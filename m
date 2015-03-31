@@ -1,74 +1,132 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with the arm-soc tree
-Date: Tue, 31 Mar 2015 10:21:22 +1100
-Message-ID: <20150331102122.34db1c6e@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v2] dma: vdma: Fix compilation warnings
+Date: Tue, 31 Mar 2015 10:27:59 +0530
+Message-ID: <20150331045759.GP7192@intel.com>
+References: <32a1f768-901f-4728-b11e-6d5dc9a622ab@BN1BFFO11FD025.protection.gbl>
+ <20150330171846.GG7192@intel.com>
+ <20150331073543.0d885c65@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZGD2x1VzVAkV.aOkaLJmCaD"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Zhizhou Zhang <zhizhou.zhang@spreadtrum.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:33391 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750962AbbCaFCT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Mar 2015 01:02:19 -0400
+Content-Disposition: inline
+In-Reply-To: <20150331073543.0d885c65@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kedareswara rao Appana <appana.durga.rao@xilinx.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, anirudh@xilinx.com, Kedareswara rao Appana <appanad@xilinx.com>
 
---Sig_/ZGD2x1VzVAkV.aOkaLJmCaD
-Content-Type: text/plain; charset=US-ASCII
+
+--dDRMvlgZJXvWKvBx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+On Tue, Mar 31, 2015 at 07:35:43AM +1100, Stephen Rothwell wrote:
+Hi Stephen,
+>
+> On Mon, 30 Mar 2015 22:48:46 +0530 Vinod Koul <vinod.koul@intel.com> wrot=
+e:
+> >
+> > On Mon, Mar 30, 2015 at 06:48:29PM +0530, Kedareswara rao Appana wrote:
+> > > This patch fixes the following compilation warnings.
+> > > In file included from drivers/dma/xilinx/xilinx_vdma.c:26:0:
+> > > include/linux/dmapool.h:18:4: warning: 'struct device' declared insid=
+e parameter list
+> > >     size_t size, size_t align, size_t allocation);
+> > >     ^
+> > > include/linux/dmapool.h:18:4: warning: its scope is only this definit=
+ion or declaration, which is probably not what you want
+> > > include/linux/dmapool.h:31:7: warning: 'struct device' declared insid=
+e parameter list
+> > >        size_t size, size_t align, size_t allocation);
+> > >        ^
+> > > drivers/dma/xilinx/xilinx_vdma.c: In function 'xilinx_vdma_alloc_chan=
+_resources':
+> > > drivers/dma/xilinx/xilinx_vdma.c:501:20: warning: passing argument 2 =
+of 'dma_pool_create' from incompatible pointer type
+> > >   chan->desc_pool =3D dma_pool_create("xilinx_vdma_desc_pool",
+> > >                     ^
+> > > In file included from drivers/dma/xilinx/xilinx_vdma.c:26:0:
+> > > include/linux/dmapool.h:17:18: note: expected 'struct device *' but a=
+rgument is of type 'struct device *'
+> > >  struct dma_pool *dma_pool_create(const char *name, struct device *de=
+v, .
+> > >=20
+> > Well this does fix this error but this can also be fixed by rearranging=
+ the
+> > driver header files order.  Since I am not inclined to update a patch f=
+or
+> > dmapool.h I would go for rearranging drivers header
+> >=20
+> > --><8---------------><8--------------
+> >=20
+> > diff --git a/drivers/dma/xilinx/xilinx_vdma.c
+> > b/drivers/dma/xilinx/xilinx_vdma.c
+> > index d8434d465885..356ca4bc0ea5 100644
+> > --- a/drivers/dma/xilinx/xilinx_vdma.c
+> > +++ b/drivers/dma/xilinx/xilinx_vdma.c
+> > @@ -23,12 +23,12 @@
+> >   */
+> >=20
+> >  #include <linux/bitops.h>
+> > -#include <linux/dmapool.h>
+> >  #include <linux/dma/xilinx_dma.h>
+> >  #include <linux/init.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/io.h>
+> >  #include <linux/module.h>
+> > +#include <linux/dmapool.h>
+> >  #include <linux/of_address.h>
+> >  #include <linux/of_dma.h>
+> >  #include <linux/of_platform.h>
+> >=20
+> > Any objections?
+>=20
+> Yes.  The error is in dmapool.h so it should be fixed once and for
+> all.  The supplied patch is very unintrusive and means that the problem
+> won't reappear when someone does some rearrangement of includes in the
+> future.  The file in question really has no particular maintainer.
+> Even after your suggested patch, dmapool.h still depend on an implicit
+> include of device.h.
+I agree with your points, but isnt the order of headers also a thumb rule.
+Typicaly a driver file will include core includes followed by subsystem
+specfic includes.
 
-Today's linux-next merge of the arm64 tree got a conflict in
-arch/arm64/configs/defconfig between commit c4bb799588f6 ("arm64: Add
-support for Spreadtrum's Sharkl64 Platform in Kconfig and defconfig")
-from the arm-soc tree and commit 475bfd3d67fa ("arm64: defconfig:
-updates for 4.1") from the arm64 tree.
+Should a header have no dependency for its include ? I do come across
+multiple examples of this in kernel
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Yes fixing it in dmapool is also correct, so should we move to having
+headers agnostic to the order of inclusion eventually ?
 
+Thanks
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+~Vinod
 
-diff --cc arch/arm64/configs/defconfig
-index f3c8619f8fe1,e07896c819ef..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -31,9 -31,12 +31,13 @@@ CONFIG_MODULES=3D
-  CONFIG_MODULE_UNLOAD=3Dy
-  # CONFIG_BLK_DEV_BSG is not set
-  # CONFIG_IOSCHED_DEADLINE is not set
-+ CONFIG_ARCH_EXYNOS7=3Dy
-  CONFIG_ARCH_FSL_LS2085A=3Dy
-  CONFIG_ARCH_MEDIATEK=3Dy
- +CONFIG_ARCH_SPRD=3Dy
-+ CONFIG_ARCH_SEATTLE=3Dy
-+ CONFIG_ARCH_TEGRA=3Dy
-+ CONFIG_ARCH_TEGRA_132_SOC=3Dy
-  CONFIG_ARCH_THUNDER=3Dy
-  CONFIG_ARCH_VEXPRESS=3Dy
-  CONFIG_ARCH_XGENE=3Dy
-
---Sig_/ZGD2x1VzVAkV.aOkaLJmCaD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--dDRMvlgZJXvWKvBx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJVGdp4AAoJEMDTa8Ir7ZwVV9gP/1O6oZ7Hf8vLUl3qzeVR5fzW
-Q+LXPSxmv3tX/JG/4wpjZvkru/eUnRYu28FbN9ztIIjOoiPoAYFYhmkpKDfqntZI
-5B7olZmKtynq5xcy2Ns6tIpU3d1dSTiMrRwWc3qmsm6kBMRUNX71217HH3xKzT04
-ly2rrjveKT8W7f1TPKpudDTWoekY9XA9LEsKLNWstAgbycW6B4Vluj5AKxqosgx9
-Gt6W+ehAj0QswDNxftV4Ie+PWf+2IAuA6kg0LCUEvjNcoS7YGqoBfGXpyzf8FrS8
-qEtvXKOaXIW7jfThJaJu3GcMJXdBUWBt4SgXPJQvJkyb3SxFeozZJIlr02F78zOl
-ECI/jcaCw1az/GLx7AAyH1jxDqoWj3gDC6tswIBCHTdGBhdAz28xbteBAHqQRCm0
-71zM5+F1xhTheTmkSDFiaia4HjCGH08oUf74hKx2Y4SsiBH8Omp2BFEJx3OtExDD
-8nmT2YJZVzokG4ORRM4+pqiAsHG1OHgXgOetrfxhG/PFbQ0W5YJ+vF49jg6QdOMG
-mjb0KS3jTYJn7/hedfP/i5ISVivBRYupEOmSK3Eg1z1PH83OyJdIfQ5NZI20ruua
-fGr/a1RlObijdpZKblpuIkFImbGdKOycEdY3JViXTnfEPg5Rdp49gw/A9YSduZqQ
-LWDF4vgVhYSWdLtV0e/f
-=12OG
+iQIcBAEBAgAGBQJVGilXAAoJEHwUBw8lI4NHb6QP/3VEn0AorkmHnBOVooQrSGkN
+WjnuM4WFwHrHKSO4yYTmMpNPOSB4QoQlBLH+s8zXsEwk5sEW+/KQxpvDj6Yqv361
+mhYUDPu1GzURSb/j7G1U3jMWEWWetXAZI2a6TCvMDaIUacCsmAu/7/Z5Zh9XYtMK
+jxyPQk8pSevUNXeTHHUwzgueCnMdG4jQjgyv70mceQqq3fckb1udnBvpxqIauhAj
+qMmuvOySYqarwVUOub2HGs53zyIgC6icfy55AW7LzMnWPCiC6u/LU/p3E7Li0yAy
+HjJEm7Sx/TvD6QM+HaYTbiCJz/H3gitSYB6c9Z5z9tGwADWdXFcFOJBw5GZ0u5Wm
+2pgml+wQ9x4NEIWQzQeCF754KzZudpyrSNMhzQIdQwq6GYMb7fdmNHB6mREzurZX
+6zVfJpHESD5gVGR6ZSIBCJFtiSiiiozA00nQKvxW7CkRnL3tf+lI5gFQkr+eUj2S
+bW0m2oYcbcenhYgH/AxfnSwaTfQzFJt/vBrB5uGHVFNByZRgA+z+391qIEmXpXht
+zktIuIRDN+SS/SnnRKSWPaa2jlQkVwceTz/1507W/99BCYwmey5/vo1j9wGPbokr
+2kI9XzCuT3f48IBln9+KmZDSMxgLVN74Pixbbf80nKK/4EaDFwaipEcPt+3nuxCu
+Imho0OgZSk7cBFSq4Wbt
+=+kTb
 -----END PGP SIGNATURE-----
 
---Sig_/ZGD2x1VzVAkV.aOkaLJmCaD--
+--dDRMvlgZJXvWKvBx--
