@@ -1,31 +1,71 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Tue, 31 Mar 2015 14:13:15 -0400 (EDT)
-Message-ID: <20150331.141315.2296740365869114033.davem@davemloft.net>
-References: <20150330150534.52bf72dd@canb.auug.org.au>
+From: Fabian Frederick <fabf@skynet.be>
+Subject: Re: linux-next: build warning after merge of the char-misc tree
+Date: Tue, 31 Mar 2015 21:35:45 +0200 (CEST)
+Message-ID: <18153784.217855.1427830545058.open-xchange@webmail.nmp.proximus.be>
+References: <20150327184835.6b214809@canb.auug.org.au>
+Reply-To: Fabian Frederick <fabf@skynet.be>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:49225 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753653AbbCaSNR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Mar 2015 14:13:17 -0400
-In-Reply-To: <20150330150534.52bf72dd@canb.auug.org.au>
+Received: from mailsec110.isp.belgacom.be ([195.238.20.106]:55162 "EHLO
+	mailsec110.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751593AbbCaTfp convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Mar 2015 15:35:45 -0400
+In-Reply-To: <20150327184835.6b214809@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ben.hutchings@codethink.co.uk
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 30 Mar 2015 15:05:34 +1100
 
-> Caused by a bad merge between commits 1e9e39f4a298 ("usbnet: Fix
-> tx_packets stat for FLAG_MULTI_FRAME drivers") and 7a1e890e2168
-> ("usbnet: Fix tx_bytes statistic running backward in cdc_ncm") form the
-> net tree and commit 6588af614e7b ("usbnet: Fix tx_packets stat for
-> FLAG_MULTI_FRAME drivers") from the net-next tree.  (Presumably,
-> 6588af614e7b was cherry-picked as a bug fix.  So, Dave, something to
-> watch for if you merge net into net-next.)
 
-Thanks a lot for bringing this to my attention Stephen.
+> On 27 March 2015 at 08:48 Stephen Rothwell <sfr@canb.auug.org.au> wro=
+te:
+>
+>
+> Hi all,
+>
+> After merging the char-misc tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
+>
+> In file included from include/linux/module.h:17:0,
+>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 from dr=
+ivers/uio/uio_pdrv_genirq.c:21:
+> include/linux/moduleparam.h:326:22: warning: initialization discards =
+'const'
+> qualifier from pointer target type
+>=C2=A0 =C2=A0static const struct kparam_string __param_string_##name=C2=
+=A0 \
+>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0^
+> drivers/uio/uio_pdrv_genirq.c:260:1: note: in expansion of macro
+> 'module_param_string'
+>=C2=A0 module_param_string(of_id, uio_of_genirq_match[0].compatible, 1=
+28, 0);
+>=C2=A0 ^
+>
+> Introduced by commit 4d8beff2ae07 ("uio: constify of_device_id array"=
+).
+
+Hi Stephen,
+
+Absolutely, my patch is wrong ; comment below explains struct is filled
+afterwards.Sorry.
+Greg, should I send you a revert or maybe we could standardize that dri=
+ver ? (it
+seems it's the only one to work that way).
+
+static const struct of_device_id uio_of_genirq_match[] =3D {
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 { /* This is filled with module_parm */ },
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 { /* Sentinel */ },
+};
+
+Regards,
+=46abian
+
+> --
+> Cheers,
+> Stephen Rothwell=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 sfr@canb.auug.org.au
