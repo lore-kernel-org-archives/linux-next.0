@@ -1,86 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Mar 31 (build failures and culprits)
-Date: Wed, 1 Apr 2015 10:42:33 +1100
-Message-ID: <20150401104233.563d0022@canb.auug.org.au>
-References: <20150401000221.21961ecd@canb.auug.org.au>
-	<20150331161640.GA16540@roeck-us.net>
-	<20150331230749.GA6564@kroah.com>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: build failure after merge of the idle tree
+Date: Tue, 31 Mar 2015 22:05:40 -0400
+Message-ID: <CAJvTdKn4_7uQazbaOzB2kaOCy7YTPgPm9WUmirPZfNZZmgK53w@mail.gmail.com>
+References: <20150330124353.62c1329e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CLmRbAF7.6P.SC_Hk1ESAlX"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49040 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751541AbbCaXml (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Mar 2015 19:42:41 -0400
-In-Reply-To: <20150331230749.GA6564@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Felipe Balbi <balbi@ti.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Lad@roeck-us.net, Prabhakar <prabhakar.csengg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Mack <daniel@zonque.org>, Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <treding@nvidia.com>
-
---Sig_/CLmRbAF7.6P.SC_Hk1ESAlX
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150330124353.62c1329e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Thanks for catching this.
+Should be all set now.
 
-On Wed, 1 Apr 2015 01:07:49 +0200 Greg Kroah-Hartman <gregkh@linuxfoundatio=
-n.org> wrote:
+cheers,
+-Len
+
+
+On Sun, Mar 29, 2015 at 9:43 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Len,
 >
-> On Tue, Mar 31, 2015 at 09:16:40AM -0700, Guenter Roeck wrote:
-> >
-> > alpha:allmodconfig
-> > mips:allmodconfig
-> >=20
-> > samples/kdbus/kdbus-workers.c: In function =E2=80=98prime_new=E2=80=99:
-> > samples/kdbus/kdbus-workers.c:930:18: error: =E2=80=98__NR_memfd_create=
-=E2=80=99 undeclared
-> > (first use in this function)
-> >   p->fd =3D syscall(__NR_memfd_create, "prime-area", MFD_CLOEXEC);
-> >=20
-> > Looks like the kdbus example never worked for the affected architecture=
-s.
-> > I don't build allmodconfig for all architectures, so other architectures
-> > may be affected as well.
->=20
-> You need 3.17 kernel headers to have memfd_create, not much the kdbus
-> test code can do about that.  You might want to update the kernel
-> headers for these build boxes.
->=20
-> Or have we not hooked up memfd for alpha and mips?
+> After merging the idle tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> In file included from arch/x86/include/asm/msr.h:131:0,
+>                  from arch/x86/include/asm/processor.h:20,
+>                  from arch/x86/include/asm/thread_info.h:23,
+>                  from include/linux/thread_info.h:54,
+>                  from arch/x86/include/asm/preempt.h:6,
+>                  from include/linux/preempt.h:18,
+>                  from include/linux/smp.h:55,
+>                  from include/linux/kernel_stat.h:4,
+>                  from drivers/cpufreq/intel_pstate.c:14:
+> drivers/cpufreq/intel_pstate.c: In function 'core_get_turbo_pstate':
+> drivers/cpufreq/intel_pstate.c:593:9: error: 'MSR_NHM_TURBO_RATIO_LIMIT' undeclared (first use in this function)
+>   rdmsrl(MSR_NHM_TURBO_RATIO_LIMIT, value);
+>          ^
+> arch/x86/include/asm/paravirt.h:153:26: note: in definition of macro 'rdmsrl'
+>   val = paravirt_read_msr(msr, &_err); \
+>                           ^
+> drivers/cpufreq/intel_pstate.c:593:9: note: each undeclared identifier is reported only once for each function it appears in
+>   rdmsrl(MSR_NHM_TURBO_RATIO_LIMIT, value);
+>          ^
+> arch/x86/include/asm/paravirt.h:153:26: note: in definition of macro 'rdmsrl'
+>   val = paravirt_read_msr(msr, &_err); \
+>                           ^
+>
+> Caused by commit ce62fbaf893c ("tools/power turbostat: define and dump
+> MSR_TURBO_RATIO_LIMIT2").  Grep is your friend ...
+>
+> I have used the idle tree from next-20150327 for today.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-alpha has no definition for __NR_memfd_create and doesn't use
-asm-generic/unistd.h.
 
-mips has a definition for __NR_memfd_create if _MIPS_SIM =3D=3D
-_MIPS_SIM_ABI32, _MIPS_SIM_ABI64 or _MIPS_SIM_NABI32 (is there any
-other alternative?).
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/CLmRbAF7.6P.SC_Hk1ESAlX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVGzDuAAoJEMDTa8Ir7ZwVmrgP/1LNS0smYXefjPQxyW4ZNuNh
-tyZ6gqoCb2hfga980ZPnB0PBJ+izwJQmklAdBUABvU981VHaKPWY0e7UHOyc8vgf
-s4nun1jyh2astrMk9/qy6U2QvSuGTeWEFTiVJ8Ucu5NlMmh/SxUvE8xB2YKBaLRa
-xIHyoWsf3gOFdtIIlGMX/uZW/YYWzXC3uWyYnK7bc53zFOrP4yUdfD6KFtoShpXB
-eIZja8YRfq7RUE0LNo8ka2gyAt795OMj0XOcJD09w8BRKfhRH/+mC6+R8UqE5RR8
-XLTcx89IM9DmZkGvY5bB4gBDIEe0w+0er2HoWOSJudvnrm33QRW9ZMOVji8j29ag
-xhN+5iEqLJWY+mydGU1vKYRkwZ7nrkduvoGEtQroOmK9VLNcdqEo4shA80Ikt/Ih
-agC0kIuZZCj8+EOxeK7c1XvR5JLkkBhXsmYQcNFSOp6EfiVysAC6udHZpa0ekgJv
-ZyLl65T819jmFxNC/OFziCsQbSOsi/EjZoIx9cVPXepk+PSBjjkG6/rrH3MEhfP0
-QDha23sddgjEh/TYwd93j8YHv5CPTYRV56OFo7ZKOQOFXNHNRhmd/ddFFuqiI7VJ
-NtuBQYjHqaB+rrcetvEGuB9tHOmxIytuB2Vqv2ewPkqcbiJZdDS9tEYKwQbycmkN
-aQFQMeB9tkewL+QIGe1v
-=+oN9
------END PGP SIGNATURE-----
-
---Sig_/CLmRbAF7.6P.SC_Hk1ESAlX--
+-- 
+Len Brown, Intel Open Source Technology Center
