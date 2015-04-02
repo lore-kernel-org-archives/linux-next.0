@@ -1,53 +1,53 @@
-From: Vladimir Murzin <vladimir.murzin@arm.com>
-Subject: Re: mmotm 2015-04-01-14-54 uploaded
-Date: Thu, 02 Apr 2015 09:42:41 +0100
-Message-ID: <551D0101.6000301@arm.com>
-References: <551c6943.H+vcYDrtw2kStb+B%akpm@linux-foundation.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: ARM allmodconfig build failures in -next
+Date: Thu, 2 Apr 2015 11:48:21 +0100
+Message-ID: <20150402104821.GO6023@sirena.org.uk>
+References: <E1YdaYh-0000LL-D5@debutante>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aTCJOP0qgkSGqHWA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49580 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751210AbbDBKsp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2015 06:48:45 -0400
+Content-Disposition: inline
+In-Reply-To: <E1YdaYh-0000LL-D5@debutante>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tsahee Zidenberg <tsahee@annapurnalabs.com>, Barak Wasserstrom <barak@annapurnalabs.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+
+
+--aTCJOP0qgkSGqHWA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <551c6943.H+vcYDrtw2kStb+B%akpm@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "mhocko@suse.cz" <mhocko@suse.cz>
-List-Id: linux-next.vger.kernel.org
 
-On 01/04/15 22:55, akpm@linux-foundation.org wrote:
-> * mm-move-memtest-under-mm.patch
-> * mm-move-memtest-under-mm-fix.patch
+On Thu, Apr 02, 2015 at 09:33:03AM +0100, Build bot for Mark Brown wrote:
 
-It was noticed by Paul Bolle (and his clever bot) that patch above
-simply disables MEMTEST altogether [1]. Could you fold fix for that, please=
-?
+> Failed defconfigs:
+> 	arm-allmodconfig
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index ea369dd..cd6d74b 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1810,7 +1810,7 @@ config TEST_UDELAY
+For the past few days ARM allmodconfig has been failing to build in
+-next due to 841990b6b3e2cfc0b (ARM: dts: Alpine platform devicetree)
+=66rom the arm-soc tree.  This adds a Makefile fragment building
+alpine_db.dtb but adds the DTS file as alpine-db.dts instead.
 
- config MEMTEST
- =09bool "Memtest"
--=09depends on MEMBLOCK
-+=09depends on HAVE_MEMBLOCK
- =09---help---
- =09  This option adds a kernel parameter 'memtest', which allows memtest
- =09  to be set.
---
+--aTCJOP0qgkSGqHWA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-[1] https://lkml.org/lkml/2015/3/20/119
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Thanks
-Vladimir
+iQEcBAEBCAAGBQJVHR51AAoJECTWi3JdVIfQXn4H/0gaxi0vCPrATkB3WSY37Vi7
+ec1IgeYwRcYGz64me7QFDzIjfaxamttTZtBzAe2vIjRVmY7r+fxghbQ64igyqp/i
+LJ8CK1JyYOpqjTZHUhbZCBRmD6LT1OLe4/BWC8K3dx0z+s3ZJlSXGzsb9cpb746D
+ry2bm7JidPobYM6YnpxWuxg6FhUg6Pxv+WaTyuGqMG45tnfRCEVPrsEwVB+10kva
+/sbgeFFx2/ssRAjX4fk2JlDOKtPwQ2EIp+tqgYTRzJP5U+7RThAqyIrRVGoGCzhL
+VrRThT3vCiD1eaCOAY4rvkPGqm7KcRk60YWtfiJ8lVt0ouANUa6xHogKhlTR4L8=
+=35qr
+-----END PGP SIGNATURE-----
 
-> * memtest-use-phys_addr_t-for-physical-addresses.patch
-> * arm64-add-support-for-memtest.patch
-> * arm-add-support-for-memtest.patch
-> * kconfig-memtest-update-number-of-test-patterns-up-to-17.patch
-> * documentation-update-arch-list-in-the-memtest-entry.patch
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--aTCJOP0qgkSGqHWA--
