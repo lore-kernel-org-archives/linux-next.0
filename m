@@ -1,79 +1,56 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: next-20150402 build: 3 failures 18 warnings (next-20150402)
-Date: Fri, 3 Apr 2015 00:11:22 +0200
-Message-ID: <20150402221120.GA25267@ulmo.nvidia.com>
-References: <E1YdaYh-0000LL-D5@debutante>
- <20150402112231.GQ6023@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+From: Peter Hurley <peter@hurleysoftware.com>
+Subject: [PATCH] earlycon: Fix __earlycon_table stride
+Date: Fri,  3 Apr 2015 08:57:51 -0400
+Message-ID: <1428065871-17281-1-git-send-email-peter@hurleysoftware.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13377 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751666AbbDBWLo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2015 18:11:44 -0400
-In-Reply-To: <20150402112231.GQ6023@sirena.org.uk>
-Content-Disposition: inline
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:36833 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752590AbbDCM6N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Apr 2015 08:58:13 -0400
+Received: by qcgx3 with SMTP id x3so88640716qcg.3
+        for <linux-next@vger.kernel.org>; Fri, 03 Apr 2015 05:58:12 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Paul Walmsley <paul@pwsan.com>, Mike Turquette <mturquette@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Peter Hurley <peter@hurleysoftware.com>
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The compiler and the linker must agree on the alignment of
+struct earlycon_id; empirical testing and commit 07fca0e57fca92
+("tracing: Properly align linker defined symbols") suggests
+32-byte alignment is the LCD.
 
-On Thu, Apr 02, 2015 at 12:22:31PM +0100, Mark Brown wrote:
-> * PGP Signed by an unknown key
->=20
-> On Thu, Apr 02, 2015 at 09:33:03AM +0100, Build bot for Mark Brown wrote:
->=20
-> > Failed defconfigs:
-> > 	arm64-allmodconfig
->=20
-> For the past few days -next has been failing to build an arm64
-> allmodconfig due to:
->=20
-> | drivers/built-in.o: In function `tegra124_132_clock_init_post':
-> | :(.init.text+0x285d8): undefined reference to `tegra_emc_init'
->=20
-> This is triggered by d035fdfa27ac124bc8 (arm64: Add Tegra132 support)
-> which enables ARCH_TEGRA and ARCH_TEGRA_132_SOC for arm64 which in turn
-> causes clk-tegra124 to be built on arm64.  That driver relies on
-> TEGRA124_EMC but that depends on ARCH_TEGRA_124_SOC which is 32 bit
-> only.
->=20
-> We either need the EMC driver for Tegra132, a stub or some ifdefs.
->=20
-> It also looks like there's an issue if the memory controller driver is
-> not enabled (which looks to be something that can be controlled by the
-> user) but I've not checked properly.
+Reported-by: Yinghai Lu <yinghai@kernel.org>
+Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
+---
+ include/asm-generic/vmlinux.lds.h | 2 +-
+ include/linux/serial_core.h       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-The ARM64 allmodconfig finally finished building and I've pushed
-something that should hopefully fix things.
-
-Thierry
-
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVHb6FAAoJEN0jrNd/PrOhS8EQALDRQ6XnLmiARPOSch2BdUqm
-dRVNrYmbABPTYDGF8kCu3Mw9z8c7/kpn3N6eFSJu+Pjt1s/XZR9Sx6sV+jesKfES
-ofsouk8X6RMqLzfWXhV1HscVEqExIW7336l2KT2KhegW+8S/ylKE9BgVzL2eiGoh
-jkNGI5nCGf8gpRBoNiuE5/BDirLeGLEEx8M+sDPyTroPBslWA3l2w7Q5onNGJIws
-twfrpSzJZzhayiiRG63edgub9PwYxuZnWbsr/6TY07PQ6wLc+wCyvI6wfqnjwSd+
-KnUvCHx3BjJnZmd/eCAMWPxEsIIDlwgQOe5/Z8dRTTkMojpt5jRjXZ5FgKsMNskO
-S+ymCUv7Vo+fLOtKoM/Pxr+NjEP+ZSu6sBKPI2JbzU3d6eDha1fdRkbLkhyQffw7
-W2W8D32XiJEOdjYap+JLAw8o4nznLnmYZW3Dy0K86TzoRU0Wu7zsLilwMpcQ7BGi
-ux84QIv0JLQLPswcA2Lk+ACKQpBLObjnqdefF63e/fPmsnUklNMFVbJHCHrMAfF/
-DdPbzVHV1BQYcQjJiPkFuZDJisYfIlMn9bUvT7DrOcytGwcX8NQKDQwpwW3PLsNq
-RQdanZ866vcVv1yfPdIUVWfVZrRCNVgp0oFGE00E3uU+wL3gnckYgy+JfgcjwqAh
-NYljKrdGrxW4id3MbvX9
-=Mh0b
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 87e5b6f..561daf4 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -151,7 +151,7 @@
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_EARLYCON
+-#define EARLYCON_TABLE() . = ALIGN(8);				\
++#define EARLYCON_TABLE() STRUCT_ALIGN();			\
+ 			 VMLINUX_SYMBOL(__earlycon_table) = .;	\
+ 			 *(__earlycon_table)			\
+ 			 *(__earlycon_table_end)
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index 34de168..025dad9 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -342,7 +342,7 @@ struct earlycon_device {
+ struct earlycon_id {
+ 	char	name[16];
+ 	int	(*setup)(struct earlycon_device *, const char *options);
+-};
++} __aligned(32);
+ 
+ extern int setup_earlycon(char *buf);
+ extern int of_setup_earlycon(unsigned long addr,
+-- 
+2.3.5
