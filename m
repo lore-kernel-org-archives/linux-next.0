@@ -1,93 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the v9fs tree
-Date: Tue, 7 Apr 2015 14:05:06 +1000
-Message-ID: <20150407140506.387fedcb@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Tue, 7 Apr 2015 15:22:51 +1000
+Message-ID: <20150407152251.08d7929b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.G6fZPb4pFLeAkh/3kYCCvY"; protocol="application/pgp-signature"
+ boundary="Sig_/QjyERculE4tw_Xz299DV+Ry"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58241 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45971 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750950AbbDGEFN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Apr 2015 00:05:13 -0400
+	id S1750870AbbDGFW7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Apr 2015 01:22:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>, Eric Van Hensbergen <ericvh@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
---Sig_/.G6fZPb4pFLeAkh/3kYCCvY
+--Sig_/QjyERculE4tw_Xz299DV+Ry
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Dave,
 
-Today's linux-next merge of the vfs tree got a conflict in
-net/9p/protocol.c between commit 6250a8badb31 ("9p: use unsigned
-integers for nwqid/count") from the v9fs tree and commit 3f39ef33084b
-("net/9p: switch the guts of p9_client_{read,write}() to iov_iter")
-from the vfs tree.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/intel_sprite.c between commit 840a1cf0cd53
+("drm/i915: Reject the colorkey ioctls for primary and cursor planes")
+from Linus' tree and commit a8265c59e22a ("drm/i915: Rip out
+GET_SPRITE_COLORKEY ioctl") from the drm tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (The latter removed some of the code modified by the
+former) and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/9p/protocol.c
-index 305e4789f2cc,e9d0f0c1a048..000000000000
---- a/net/9p/protocol.c
-+++ b/net/9p/protocol.c
-@@@ -437,23 -439,13 +439,13 @@@ p9pdu_vwritef(struct p9_fcall *pdu, in
-  						 stbuf->extension, stbuf->n_uid,
-  						 stbuf->n_gid, stbuf->n_muid);
-  			} break;
-- 		case 'D':{
-- 				uint32_t count =3D va_arg(ap, uint32_t);
-- 				const void *data =3D va_arg(ap, const void *);
--=20
-- 				errcode =3D p9pdu_writef(pdu, proto_version, "d",
-- 									count);
-- 				if (!errcode && pdu_write(pdu, data, count))
-- 					errcode =3D -EFAULT;
-- 			}
-- 			break;
-- 		case 'U':{
-+ 		case 'V':{
- -				int32_t count =3D va_arg(ap, int32_t);
- +				uint32_t count =3D va_arg(ap, uint32_t);
-- 				const char __user *udata =3D
-- 						va_arg(ap, const void __user *);
-+ 				struct iov_iter *from =3D
-+ 						va_arg(ap, struct iov_iter *);
-  				errcode =3D p9pdu_writef(pdu, proto_version, "d",
-  									count);
-- 				if (!errcode && pdu_write_u(pdu, udata, count))
-+ 				if (!errcode && pdu_write_u(pdu, from, count))
-  					errcode =3D -EFAULT;
-  			}
-  			break;
-
---Sig_/.G6fZPb4pFLeAkh/3kYCCvY
+--Sig_/QjyERculE4tw_Xz299DV+Ry
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVI1d3AAoJEMDTa8Ir7ZwVLEUP/jGVNwbXQHKvLOiFIe3hMcVt
-2jVEAeIKsD+TYcK9TPZGzpT39ItUERrI5NOSsKUWB6YO/MXgNRHtR+TCApVv4T6S
-oseLKDm5Muq5PrwHCCeVkFMt41q2KMXJV28BeUO4iajI1BgF24VGGU1VDdyVnKFs
-dUQpP5L2sJTqjIsK0/43UXsGLHTDTgtpSOPcjbi5Lv8bOGtZHdXXUp8AqDtgnoNB
-7yLnmcPy+iBuEcRP11cRLYCYR67ThUg85kHIqVnKNrGAhscDB49dhRDU7LkCgzcO
-mwBLV2gRmjD7hEHCEAG7nPSzD9BUBuOq3U4crFzx6oCMNKYCu8zY9Vlg7pAvQ55k
-cPv8IWz9HsjEeXGxfeT31VRJaCpSeWRvUGbB2Wjwr+qhlyFv/FUaleR+K50vb9os
-pBrPzGLByJ76dokuWT6kjI3mHOG98g/L09ZolcMDPcxd8TYER8AFxB9Z3mu5zqbc
-1W/YUxX8Gfi03Xi24JBfK9+c1IQ9ZwhjRLniXY7TQFgKBQfJbBg+F2Ac+Lev4Duf
-+3uLtmHkRFhMkUe0H9WEDp+SzebenSKhuttjGxkkWTjrGD9pl8WARRAoX5rRLnvA
-cW7ucI09q2t8FNhDXYC+M6eOgvGHX3dvnuA26qrG5OTu40Ycnbu4fMgv5ewVyS/O
-qHYdaLsKPw/Ia/BOn1lE
-=XUxw
+iQIcBAEBCAAGBQJVI2mwAAoJEMDTa8Ir7ZwVc10QAJCenQFIFVWYxsQZ6S4uIYzQ
+ntv1bicPaLIUfkuLe6AWjxuJ4lRGZG5JL9fm8RIL1fP9aV2bawLF/qeFn1blymZW
+OkqixHXlc9p8cQu2cqBtTmIxUo//xuwS2C59Uic8Y7dQnWBVGIg4AcKbtCn4eQ44
+XOiek9dJ3Xc2nj5K67PmK41lZN2ofLbsv91eWXpy3qW7EAKhRyeduLgAuXJddxnV
+3M5VNJWSqeaejaL74eqit1dP5LbLg+n3ZjZUFNlKDJTs3Tkp7p6WsQtXOYWbv5fs
+iJWGZH/1hZ/q846G0TOaxO8/VlHqLmWdMTxcCKDB3Uf3igF6lwcgt5KCzuTc9V3X
+fs7U3cBh3mDSKxrKOgSTwpVgTCc9Y+W9E/m6WI/IKFZ5uckR3TvzjihKhV/4mGUW
+BzxPoyyB+2rG3fnThvczucjhxlCcoscARLTndZxTTGtPqevbF7THL1H1InEaIYeN
+X6wH3HJgI0dg3JqIS1CZD1YdOyR2FrXGylayLkzppC54BhoG0oH3QC1SwK6TND6j
+WkTRYOMD1wIK7p9y/7YF88BPlDp/hnlVwQDhy66oCHVX5Y6uJQWEVdPpKDCDeWnC
+UqfCaS9iUVSpK/avYSnt4ZyZraQWnZWUMYfsxv7Z5rraWLioZjWnc3jZH2I/zyVV
+L2c4eHwitMo9/z8PwqXF
+=MOP5
 -----END PGP SIGNATURE-----
 
---Sig_/.G6fZPb4pFLeAkh/3kYCCvY--
+--Sig_/QjyERculE4tw_Xz299DV+Ry--
