@@ -1,64 +1,154 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the arm-soc tree
-Date: Tue, 7 Apr 2015 11:12:17 +1000
-Message-ID: <20150407111217.2b2cf440@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the omap tree
+Date: Tue, 7 Apr 2015 11:36:18 +1000
+Message-ID: <20150407113618.7ddb495c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/PR5PRFiUUZKX2dV3._aGRnc"; protocol="application/pgp-signature"
+ boundary="Sig_/vmZb0jEfaGWvYmvxmicumGe"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33483 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59770 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752687AbbDGBM0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Apr 2015 21:12:26 -0400
+	id S1752687AbbDGBgY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Apr 2015 21:36:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
 
---Sig_/PR5PRFiUUZKX2dV3._aGRnc
+--Sig_/vmZb0jEfaGWvYmvxmicumGe
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Tony,
 
-After merging the arm-soc tree, today's linux-next build (arm
+After merging the omap tree, today's linux-next build (arm
 multi_v7_defconfig) failed like this:
 
-In file included from arch/arm/boot/dts/mt8135.dtsi:18:0,
-                 from arch/arm/boot/dts/mt8135-evbp1.dts:16:
-arch/arm/boot/dts/mt8135-pinfunc.h:18:40: fatal error: dt-bindings/pinctrl/=
-mt65xx.h: No such file or directory
- #include <dt-bindings/pinctrl/mt65xx.h>
-                                        ^
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
 
-Caused by commit e6f219b8ec5e ("ARM: dts: mt8135: Add pinctrl/GPIO/EINT
-node for mt8135").
+ERROR: Input tree has errors, aborting (use -f to force output)
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
 
-I have reverted that commit for today.
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/am3517_mt_ventoux.dtb] Error 2
+make[2]: *** [arch/arm/boot/dts/omap3430-sdp.dtb] Error 2
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/omap3-beagle-xm.dtb] Error 2
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/omap3-beagle-xm-ab.dtb] Error 2
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/omap3-beagle.dtb] Error 2
+make[2]: *** [arch/arm/boot/dts/omap3-devkit8000.dtb] Error 2
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/omap3-cm-t3530.dtb] Error 2
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/omap3-cm-t3730.dtb] Error 2
+make[2]: *** [arch/arm/boot/dts/omap3-evm-37xx.dtb] Error 2
+ERROR (phandle_references): Reference to non-existent node or label "omap3_=
+scm_general"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [arch/arm/boot/dts/omap3-evm.dtb] Error 2
+
+Presumably caused by commit b8845074cfbb ("ARM: dts: omap3: add minimal
+l4 bus layout with control module support") interacting with commit
+e52117638b79 ("ARM: dts: omap3: Add DT entries for OMAP 3 ISP") from
+the arm-soc tree.
+
+I applied the following merge fix patch for today (probably wrong, but
+hopefully builds):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 7 Apr 2015 11:30:14 +1000
+Subject: [PATCH] ARM: dts: omap3: fixup for merge conflict around
+ omap3_scm_general
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/boot/dts/omap34xx.dtsi | 2 +-
+ arch/arm/boot/dts/omap36xx.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx.d=
+tsi
+index 7bc8c0f72ddb..4f6b2d5b1902 100644
+--- a/arch/arm/boot/dts/omap34xx.dtsi
++++ b/arch/arm/boot/dts/omap34xx.dtsi
+@@ -46,7 +46,7 @@
+ 			       0x480bd800 0x017c>;
+ 			interrupts =3D <24>;
+ 			iommus =3D <&mmu_isp>;
+-			syscon =3D <&omap3_scm_general 0xdc>;
++			syscon =3D <&scm_conf 0xdc>;
+ 			ti,phy-type =3D <OMAP3ISP_PHY_TYPE_COMPLEX_IO>;
+ 			#clock-cells =3D <1>;
+ 			ports {
+diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.d=
+tsi
+index 3502fe00ec7d..86253de5a97a 100644
+--- a/arch/arm/boot/dts/omap36xx.dtsi
++++ b/arch/arm/boot/dts/omap36xx.dtsi
+@@ -78,7 +78,7 @@
+ 			       0x480bd800 0x0600>;
+ 			interrupts =3D <24>;
+ 			iommus =3D <&mmu_isp>;
+-			syscon =3D <&omap3_scm_general 0x2f0>;
++			syscon =3D <&scm_conf 0x2f0>;
+ 			ti,phy-type =3D <OMAP3ISP_PHY_TYPE_CSIPHY>;
+ 			#clock-cells =3D <1>;
+ 			ports {
+--=20
+2.1.4
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/PR5PRFiUUZKX2dV3._aGRnc
+--Sig_/vmZb0jEfaGWvYmvxmicumGe
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVIy72AAoJEMDTa8Ir7ZwVfNEP/2O5nvmPuvY2NZzXX7zQJBde
-ANbsCCTepunDhv+WXF034Wh4ceZuIaZ9tauLx5EFCMna/jAk03h9/rlq8AYxMVHV
-vC7ZWe7fzy6jjqzdhDwh27+IU+JaXY3nUR7xX16wLMes4bksCbFSya3GeM7v5mqz
-33DzDIH83u3tPqP/s4W64+GSA6ihuv3uLtMGKi8djs8FMBELvq816Cql6m4dOa/W
-9VGsM+YMzo3KoYOR2cdD5rOC7TYeWqCmWZ/PgicGbebJPw64gq+/2zXdoLl5QdQc
-LWX9Qtmt796mOjZaPWWlKNxebTv021edZolWPcf4Zz3Eo2g7Xj7byL8J7YMLKknq
-Ik/aIVVj5Y5H6VHCSjQTAaoHtS0YHT6GN47dJcGT/Z8f6rD0eKEruvhSPrZ8mpki
-uDhKXpEwN1jcLQXfkBaPJOdABKCPeMMwVfTKbSgRpyS5zP2bOfOXdNAwZnU+40zU
-pM59qtTui0d+go7wnmj0EHSaB3yG2IhitVP9dAY8k6dybFaf5IyLfaAzLVw8ur5P
-jD4u6kw3/bH0MAVfMvufLQBX44iTMGreItEInCfBqSSkehJSx852hMLOBjgX49L6
-+kucA2GpPkFe+Hi8aB1VYWvOm9hfiuzEXEkvSqR+WZKIBbotoKMxuQgOoY56BCli
-GFFuq7ohYEORs+/cfCJ3
-=7toV
+iQIcBAEBCAAGBQJVIzSWAAoJEMDTa8Ir7ZwVUIQQAIU4LF3Diqk4leo5D/QbeX91
+fkvm+mhKBnfEVpkJK+pY+5IYQWR3yklbxTeznANrWYpoYxASx8Jt4xxNAygfudtt
+B0l+Z/l5Njgn5TXgHD0g1o0qHfMAnIhZUqodkEbgiotmxDtsS+kxwSTuLqPA3ZhD
+8Be4VEV6WOx/lmvxVgVFA69hDAwq8HJNwJqqOTkG9l+/CyrmgXqdUg2MNhjLPs0v
+Rpgy1um++EilDxFfGqQqlWOTKsv5u7nN4rZQDnvcPe5PjlO5J6Oce8ODW0P6UX8E
+vypzIGEc+Rv2PFHbMR6/pbeJwmZZGRIzWLzj0kK9OE1XKZ9lzclC2Tek9PRMMXUL
+nW5xukwN5F/V05MHlip3RRt66l8Dj2M0zfdwbGlhQti3qNWspXFCLWLapkNAdNDF
+4rmsxMrXKBWR2O/13InNlGcw/JxRMp2iNGc4sDeoaHYNwCPGkRvnzqmmMYKYHXI8
+7Fb+8PUpY3HT5oY7WcEyd8B9MF70eeLX7g3lwzTDcvrjbENSOS0qBFrZna7LKKBT
+CD+p/Gapybfao8IFDT3lAjjVAT3o9oOb1gk4MStoi4vYDYljbMDDya6k2hKtUj+Z
+xyAktgT8YRov88fo/S3JBeBPVpJ+Zlvmg9gTr12/I2I82q2mmIgNZngTbl3gbWdb
+Vx44QW1bDyGpB2TRgN7m
+=ifH5
 -----END PGP SIGNATURE-----
 
---Sig_/PR5PRFiUUZKX2dV3._aGRnc--
+--Sig_/vmZb0jEfaGWvYmvxmicumGe--
