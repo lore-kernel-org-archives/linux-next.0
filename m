@@ -1,26 +1,72 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the vfs tree with the ext4 tree
-Date: Tue, 7 Apr 2015 09:02:14 +0200
-Message-ID: <20150407070214.GA7074@lst.de>
-References: <20150407140035.60d2053d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Tue, 7 Apr 2015 17:04:02 +1000
+Message-ID: <20150407170402.1aeae791@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:56873 "EHLO newverein.lst.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751028AbbDGHCQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Apr 2015 03:02:16 -0400
-Content-Disposition: inline
-In-Reply-To: <20150407140035.60d2053d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sheng Yong <shengyong1@huawei.com>, Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gwvMRf6+qwmveO=jyTZbiIO"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@plumgrid.com>Alexei Starovoitov <ast@plumgrid.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 07, 2015 at 02:00:35PM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Today's linux-next merge of the vfs tree got a conflict in fs/ext4/inode.c between commit 72b8e0f9fa8a ("ext4: remove unused header files") from the ext4 tree and commit e2e40f2c1ed4 ("fs: move struct kiocb to fs.h") from the vfs tree.
+--Sig_/gwvMRf6+qwmveO=jyTZbiIO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-FYI, the ext4 tree seems to have the crypto support, which I don't think is
-ready for 4.1 with all the implications of it..
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in
+samples/bpf/Makefile between commit 91bc4822c3d6 ("tc: bpf: add
+checksum helpers") from the net-next tree and commit b896c4f95ab4
+("samples/bpf: Add simple non-portable kprobe filter example") (and
+following) from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc samples/bpf/Makefile
+index d24f51bca465,fe98fb226e6e..000000000000
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@@ -17,7 -25,10 +25,11 @@@ tracex4-objs :=3D bpf_load.o libbpf.o tra
+  always :=3D $(hostprogs-y)
+  always +=3D sockex1_kern.o
+  always +=3D sockex2_kern.o
+ +always +=3D tcbpf1_kern.o
++ always +=3D tracex1_kern.o
++ always +=3D tracex2_kern.o
++ always +=3D tracex3_kern.o
++ always +=3D tracex4_kern.o
+ =20
+  HOSTCFLAGS +=3D -I$(objtree)/usr/include
+ =20
+
+--Sig_/gwvMRf6+qwmveO=jyTZbiIO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVI4FnAAoJEMDTa8Ir7ZwVTvEP/1JuJ3E28pqs1GSrw+FpgQPd
+DqxGx9K4Qov8kAze+jJeXa21K7IBNTqSvaA/lBqC0sVw8taSqShQydhBvvYuRb76
+Lzcq0Sl6rkCnQG7tC11Tw6jcC2SM0o2G87/oNQHDwzesTEosmcSSaOyejrXWwnIY
+fUpH9zWyVjh32n+EBhjG1h02Azn4w0FH/UBTo05lTDkJf0wqEHT7jqlyPYYBFeXV
+ofm6xXH9OC1wTLKjkkPOkoPORXpEsBqWaaL5uM+MHdKzVqedPa3fLv1nVWLzR8fG
+mvo6luAc7Spugtn0A2qstTqgrG4X8oQ1yq/huAAgKLQLxWrsDcc2EXNlSu9ZOkWJ
+YUhjRSUTZ00+3PZM8m7D7/gcEGfzTuH5hc1ca+4PrqITre6j6dMWaXyjKSA2HX9v
+rlivivkZbyaj8Ti7PKjwOO/UiCUWJrGjaJI9ZPGlMSUt7bKDMnwQuY4Jat89vT1D
+h3vcI0sWojdYvDHmfjLMkNVgSQdyaOaD4HymLS265ArXBp2ikj01SGnyMWmJA/Eq
+NZ3/M5dupPoJwgvYEgF/ak8HTOtz3dfvnx6hpMNKP4N0PwWa7T58wHyTku++vi9d
+T9yZHyOUogg6tibobfuCdz+lrjUHPhz1jGUC/8vWFdgg6EVpTg7Kb5FaKYsYnhwt
+kewehbcDbRcG4ILCs5nG
+=wx/v
+-----END PGP SIGNATURE-----
+
+--Sig_/gwvMRf6+qwmveO=jyTZbiIO--
