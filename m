@@ -1,66 +1,16 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 07 Apr 2015 21:54:05 +0200
-Message-ID: <552435DD.5040802@iogearbox.net>
-References: <20150407171858.2ad46594@canb.auug.org.au>	<20150407084829.GA9577@gmail.com>	<55239BAD.6040304@iogearbox.net> <20150407190527.1633a186@canb.auug.org.au> <5523BBE0.8030400@iogearbox.net> <55240342.9050900@plumgrid.com>
+From: Jim Davis <jim.epost@gmail.com>
+Subject: make mandocs build failure with next-20150407
+Date: Tue, 7 Apr 2015 15:41:23 -0700
+Message-ID: <CA+r1Zhh1iwe4go+hOUwzngTphyareAvbooyRARihJa8LwbqHKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www62.your-server.de ([213.133.104.62]:44441 "EHLO
-	www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753018AbbDGTyv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2015 15:54:51 -0400
-In-Reply-To: <55240342.9050900@plumgrid.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexei Starovoitov <ast@plumgrid.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, davem@davemloft.net
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc <linux-doc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 04/07/2015 06:18 PM, Alexei Starovoitov wrote:
-> On 4/7/15 4:13 AM, Daniel Borkmann wrote:
->> [ Cc'ing Dave, fyi ]
->>
->> On 04/07/2015 11:05 AM, Stephen Rothwell wrote:
->>> On Tue, 07 Apr 2015 10:56:13 +0200 Daniel Borkmann
->>> <daniel@iogearbox.net> wrote:
->>>> On 04/07/2015 10:48 AM, Ingo Molnar wrote:
->>>>> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>>
->>>>>> After merging the tip tree, today's linux-next build (powerpc
->>>>>> ppc64_defconfig) failed like this:
->>>>>>
->>>>>> kernel/events/core.c: In function 'perf_event_set_bpf_prog':
->>>>>> kernel/events/core.c:6732:15: error: 'struct bpf_prog_aux' has no
->>>>>> member named 'prog_type'
->>>>>>     if (prog->aux->prog_type != BPF_PROG_TYPE_KPROBE) {
->>>>>>                  ^
->>>>>>
->>>>>> Caused by commit 2541517c32be ("tracing, perf: Implement BPF programs
->>>>>> attached to kprobes").
->>>>>
->>>>> Note, this must be some (rarely triggered) aspect of the ppc64
->>>>> defconfig that neither x86 randconfigs nor most other arch defconfigs
->>>>> expose?
->>>>
->>>> Note, this is a merge conflict with the work that went via net-next
->>>> tree,
->>>> i.e. 24701ecea76b ("ebpf: move read-only fields to bpf_prog and shrink
->>>> bpf_prog_aux"). I believe that is why it didn't trigger on tip tree.
->>>>
->>>> You should be able to resolve it in linux-next by changing the test to:
->>>>
->>>>     if (prog->prog_type != BPF_PROG_TYPE_KPROBE) {
->>>
->>> Thanks Daniel, I will do that tomorrow.  Someone will have to remember
->>> to tell Linus.
->>
->> Yes, indeed, depending which tree is merged first.
->
-> Daniel analysis is correct, but the fix for kernel/events/core.c
-> should be:
-> - if (prog->aux->prog_type != BPF_PROG_TYPE_KPROBE) {
-> + if (prog->type != BPF_PROG_TYPE_KPROBE) {
-> instead of 'prog->prog_type'
-
-Yes, absolutely, thanks!
+  DOCPROC Documentation/DocBook/80211.xml
+Error(.//include/net/mac80211.h:329): Cannot parse enum!
+Error(.//include/net/mac80211.h:367): Cannot parse enum!
+Warning(.//include/net/mac80211.h:381): No description found for
+parameter 'type'
