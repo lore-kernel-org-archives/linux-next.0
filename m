@@ -1,84 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 7 Apr 2015 19:05:27 +1000
-Message-ID: <20150407190527.1633a186@canb.auug.org.au>
-References: <20150407171858.2ad46594@canb.auug.org.au>
-	<20150407084829.GA9577@gmail.com>
-	<55239BAD.6040304@iogearbox.net>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with the arm-soc tree
+Date: Tue, 7 Apr 2015 10:13:26 +0100
+Message-ID: <20150407091325.GA32558@localhost>
+References: <20150407114600.14a3ecc8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BTLmM9b5AmB6dPoDXhQ66vQ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55239BAD.6040304@iogearbox.net>
+Content-Disposition: inline
+In-Reply-To: <20150407114600.14a3ecc8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@plumgrid.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kumar Gala <galak@codeaurora.org>, linux-next@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Abhimanyu Kapur <abhimany@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/BTLmM9b5AmB6dPoDXhQ66vQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Daniel,
+On Tue, Apr 07, 2015 at 11:46:00AM +1000, Stephen Rothwell wrote:
+> diff --cc arch/arm64/configs/defconfig
+> index 96bba367f80c,e07896c819ef..000000000000
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@@ -31,10 -31,12 +31,14 @@@ CONFIG_MODULES=
+>   CONFIG_MODULE_UNLOAD=y
+>   # CONFIG_BLK_DEV_BSG is not set
+>   # CONFIG_IOSCHED_DEADLINE is not set
+> + CONFIG_ARCH_EXYNOS7=y
+>   CONFIG_ARCH_FSL_LS2085A=y
+>   CONFIG_ARCH_MEDIATEK=y
+>  +CONFIG_ARCH_QCOM=y
+>  +CONFIG_ARCH_SPRD=y
+> + CONFIG_ARCH_SEATTLE=y
+> + CONFIG_ARCH_TEGRA=y
+> + CONFIG_ARCH_TEGRA_132_SOC=y
+>   CONFIG_ARCH_THUNDER=y
+>   CONFIG_ARCH_VEXPRESS=y
+>   CONFIG_ARCH_XGENE=y
+> @@@ -105,9 -104,10 +111,11 @@@ CONFIG_VIRTIO_CONSOLE=
+>   # CONFIG_HW_RANDOM is not set
+>   CONFIG_SPI=y
+>   CONFIG_SPI_PL022=y
+>  +CONFIG_PINCTRL_MSM8916=y
+>   CONFIG_GPIO_PL061=y
+>   CONFIG_GPIO_XGENE=y
+> + CONFIG_POWER_RESET_XGENE=y
+> + CONFIG_POWER_RESET_SYSCON=y
+>   # CONFIG_HWMON is not set
+>   CONFIG_REGULATOR=y
+>   CONFIG_REGULATOR_FIXED_VOLTAGE=y
+> @@@ -133,10 -133,9 +141,11 @@@ CONFIG_MMC_SPI=
+>   CONFIG_RTC_CLASS=y
+>   CONFIG_RTC_DRV_EFI=y
+>   CONFIG_RTC_DRV_XGENE=y
+> + CONFIG_VIRTIO_PCI=y
+>   CONFIG_VIRTIO_BALLOON=y
+>   CONFIG_VIRTIO_MMIO=y
+>  +CONFIG_COMMON_CLK_QCOM=y
+>  +CONFIG_MSM_GCC_8916=y
+>   # CONFIG_IOMMU_SUPPORT is not set
+>   CONFIG_PHY_XGENE=y
+>   CONFIG_EXT2_FS=y
 
-On Tue, 07 Apr 2015 10:56:13 +0200 Daniel Borkmann <daniel@iogearbox.net> w=
-rote:
->
-> On 04/07/2015 10:48 AM, Ingo Molnar wrote:
-> >
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> >> After merging the tip tree, today's linux-next build (powerpc
-> >> ppc64_defconfig) failed like this:
-> >>
-> >> kernel/events/core.c: In function 'perf_event_set_bpf_prog':
-> >> kernel/events/core.c:6732:15: error: 'struct bpf_prog_aux' has no memb=
-er named 'prog_type'
-> >>    if (prog->aux->prog_type !=3D BPF_PROG_TYPE_KPROBE) {
-> >>                 ^
-> >>
-> >> Caused by commit 2541517c32be ("tracing, perf: Implement BPF programs
-> >> attached to kprobes").
-> >
-> > Note, this must be some (rarely triggered) aspect of the ppc64
-> > defconfig that neither x86 randconfigs nor most other arch defconfigs
-> > expose?
->=20
-> Note, this is a merge conflict with the work that went via net-next tree,
-> i.e. 24701ecea76b ("ebpf: move read-only fields to bpf_prog and shrink
-> bpf_prog_aux"). I believe that is why it didn't trigger on tip tree.
->=20
-> You should be able to resolve it in linux-next by changing the test to:
->=20
->    if (prog->prog_type !=3D BPF_PROG_TYPE_KPROBE) {
+It looks fine. Thanks.
 
-Thanks Daniel, I will do that tomorrow.  Someone will have to remember
-to tell Linus.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/BTLmM9b5AmB6dPoDXhQ66vQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVI53cAAoJEMDTa8Ir7ZwVzW8P/j8nv4tRB4TVxYUYaMaD8pnv
-VDNTPSqKYzGIiErLTW4No+jXAq/L7v7F4Va34XQnD8XzdjzG79jAtlJOocHwf7Id
-mzsNPmw7UsYXQMUU/fx9yXAgaWWm+9aQofiahvAG4hpz/VWdvvupu44D/libYh9v
-bIshGf8OwCgr7oeQHQ3zbJIUPjCMAK6rRQpWpo51vxJPGLqGVET60bUcQ6uS0AEI
-OjBUQ8CUBwft1Ycj4/h9SClfGOm2IqwRiEawOattcXkwSf5iooTaR9c6l/S1qyMN
-tHXeziSRNaKrOsVJGdms3Tw6ftYGJsV7HciNrWD9uoJyvnIyGZN642sE8lLocnXT
-Z6m7mnbaT1JNJZ29Gvby2Z2zdCz6Fy1koEnT2CWBc2HM6xaF1/YcTcA9zwksRcJb
-vi9KacAnlr0S+T615UHtl/BUvD571wjFcFO//AF/oxkGCpijPrCrLnSw4xAlSRFn
-u7fDjOU/UNMhmV3lQTzRU0jaDIGyaxFifLBbnWs10LVpAoMUH7B8EApQTF4hotp3
-YqAptFXp9OaksvxwLuPjw9ZP2aTpTbGMXjEVUSaYi/K8soj4Qm1cDo7DqY+BQLy9
-qXA/Z1yiVuYsoxKHjsWgt3x3HJLr2hAJuR458v8fm0st3SZ8/A/GXkoG0ZCbQ9M6
-s8/z4nAxamxv5BpjAjzf
-=J/Li
------END PGP SIGNATURE-----
-
---Sig_/BTLmM9b5AmB6dPoDXhQ66vQ--
+-- 
+Catalin
