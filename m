@@ -1,25 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm-current tree with the tile
  tree
-Date: Tue, 7 Apr 2015 21:05:41 +1000
-Message-ID: <20150407210541.04f42153@canb.auug.org.au>
+Date: Tue, 7 Apr 2015 21:09:29 +1000
+Message-ID: <20150407210929.471691b4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sF0juSoRlrIe+1b1r2BmAN8"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/_rH7RSjJB5hRM/1isZyhJcq"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35396 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751765AbbDGLJg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Apr 2015 07:09:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, Chris Metcalf <cmetcalf@ezchip.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulrich Obergfell <uobergfe@redhat.com>, Don Zickus <dzickus@redhat.com>
-List-Id: linux-next.vger.kernel.org
 
---Sig_/sF0juSoRlrIe+1b1r2BmAN8
+--Sig_/_rH7RSjJB5hRM/1isZyhJcq
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in
-include/linux/nmi.h between commit e164ade07b21 ("watchdog: add
+kernel/sysctl.c between commit e164ade07b21 ("watchdog: add
 watchdog_exclude sysctl to assist nohz") from the tile tree and commit
 866d62a433cc ("watchdog: enable the new user interface of the watchdog
 mechanism") from the akpm-current tree.
@@ -31,57 +35,68 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/nmi.h
-index 1703829c5812,3d46fb4708e0..000000000000
---- a/include/linux/nmi.h
-+++ b/include/linux/nmi.h
-@@@ -68,15 -63,20 +63,23 @@@ static inline bool trigger_allbutself_c
-  #ifdef CONFIG_LOCKUP_DETECTOR
-  int hw_nmi_is_cpu_stuck(struct pt_regs *);
-  u64 hw_nmi_get_sample_period(int watchdog_thresh);
-+ extern int nmi_watchdog_enabled;
-+ extern int soft_watchdog_enabled;
-  extern int watchdog_user_enabled;
-  extern int watchdog_thresh;
- +extern unsigned long *watchdog_exclude_mask_bits;
-  extern int sysctl_softlockup_all_cpu_backtrace;
-  struct ctl_table;
-- extern int proc_dowatchdog(struct ctl_table *, int ,
-- 			   void __user *, size_t *, loff_t *);
-+ extern int proc_watchdog(struct ctl_table *, int ,
-+ 			 void __user *, size_t *, loff_t *);
-+ extern int proc_nmi_watchdog(struct ctl_table *, int ,
-+ 			     void __user *, size_t *, loff_t *);
-+ extern int proc_soft_watchdog(struct ctl_table *, int ,
-+ 			      void __user *, size_t *, loff_t *);
-+ extern int proc_watchdog_thresh(struct ctl_table *, int ,
-+ 				void __user *, size_t *, loff_t *);
- +extern int proc_dowatchdog_exclude(struct ctl_table *, int,
- +				   void __user *, size_t *, loff_t *);
-  #endif
- =20
-  #ifdef CONFIG_HAVE_ACPI_APEI_NMI
+diff --cc kernel/sysctl.c
+index 431601ad393a,076473547fe5..000000000000
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@@ -861,13 -858,28 +859,35 @@@ static struct ctl_table kern_table[] =3D=20
+  		.extra2		=3D &sixty,
+  	},
+  	{
+ +		.procname	=3D "watchdog_exclude",
+ +		.data		=3D &watchdog_exclude_mask_bits,
+ +		.maxlen		=3D NR_CPUS,
+ +		.mode		=3D 0644,
+ +		.proc_handler	=3D proc_dowatchdog_exclude,
+ +	},
+ +	{
++ 		.procname       =3D "nmi_watchdog",
++ 		.data           =3D &nmi_watchdog_enabled,
++ 		.maxlen         =3D sizeof (int),
++ 		.mode           =3D 0644,
++ 		.proc_handler   =3D proc_nmi_watchdog,
++ 		.extra1		=3D &zero,
++ #if defined(CONFIG_HAVE_NMI_WATCHDOG) || defined(CONFIG_HARDLOCKUP_DETECT=
+OR)
++ 		.extra2		=3D &one,
++ #else
++ 		.extra2		=3D &zero,
++ #endif
++ 	},
++ 	{
++ 		.procname       =3D "soft_watchdog",
++ 		.data           =3D &soft_watchdog_enabled,
++ 		.maxlen         =3D sizeof (int),
++ 		.mode           =3D 0644,
++ 		.proc_handler   =3D proc_soft_watchdog,
++ 		.extra1		=3D &zero,
++ 		.extra2		=3D &one,
++ 	},
++ 	{
+  		.procname	=3D "softlockup_panic",
+  		.data		=3D &softlockup_panic,
+  		.maxlen		=3D sizeof(int),
 
---Sig_/sF0juSoRlrIe+1b1r2BmAN8
+--Sig_/_rH7RSjJB5hRM/1isZyhJcq
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVI7oLAAoJEMDTa8Ir7ZwV1pcP/2mj+K4qT8jjvbxb9RAKP9qv
-D0sOUHn6kcf98KmaBoAIKlATKmo6u3GOFl5IRopJ7/wlDwQ+6Qw6d/dbHIxLPOau
-2QaPW0HRICXeuMQhR4P5wkcUat1ZMFJccJUmjyDufUwc1UOovy5o8zmc0MezD7TM
-V1jyNYA0KTUen8Pt9FwxNtLyxW5iDI85LHrtGI7wvrzQho+Rbhh4iG6JK9hF0e2r
-r9ZhTYayf01TazschPZiuxWPVKELVezuhqq6l2LZKmkWtIm/uD/80tEwV1hAuS9/
-3eaIaKtS2+Cl++788AGUG2DcX1qRMZnI0efG2RWD3+BxF3Yp3hDeua1GV4ziqUVs
-c77B62Bktxz9TkgOXkIgXnF/kHR3U6J03GjPvu4pYHbbDIKzk2Yvpq7n61BjxERJ
-Ii4Hs5RSrr3zmljSAPbv5raVQ31A3eRet1BPp8/ycKcaClAzE/55w0Ds/O0rrtNM
-nR/SFMDXdD8FU0pKKD7RVf+T2KsidL/Dj/QA0/r7b8Z902xyqDOhIxr/Hgp5oYrC
-TJP9d7HjB3eCLQr1hXq1eZmOthJ1S2vPH7gEXTGZMjHkln/UqfHecqVCB3Dbc5lv
-oe9P0m5PjnuDLxsTxaTBVLoaE8wtOl4Qtu8ztewGEq/m4yMb62RsAFoQmttO61Vp
-c9DrmEY4AEwejixqsY0p
-=WJp3
+iQIcBAEBCAAGBQJVI7ruAAoJEMDTa8Ir7ZwVeBQP/Aww3mDHOiag3R8MeJ//ElCa
+etbnZk4G5B+ESyaYR29ZQZZqUD6mF5DdHEjot2luOsmIZiYsVu6hztYunWknKSSR
+cPB67jj1/EnBSATiBy5jD9LUv0meZPVPVzVBiAHWQozvw8zajzXAk5QAgCwunoYN
+PyWAZ03ootudEpTax1O6RgTACL+3mWz6Pgm7pll/aqWqnm3imVbeMQHI0cWwX+d7
+Try1SMV740j9wibucpaK8oQzWV8qHUeCtb7Ms3ZJJtSdiTAABL4QgCpMQqWIrV+j
+05XI+jMhGHYxNdnY2cfkH5dGyxo+EcypLpEAlWN0/ri0c/fVJyzJfourPfX6oWBm
+KVk1ms+DgTtpBEjRGRdlfjTqh68XMliWS88MIebhQ4Rx4DgECH/M7dyHSfBD6du6
+g6oDos6jVs5fsQVzx/Alj2b/3iBiZwglyGMtYiYE1YlbbiNk9dJy8/ScECJ5/YjH
+jYe1/Zd2savKU0vsK1W2feLaMWdRdin2rt+NXmsmBVYIh/MGU0qxm018kTQN28w+
+JEaLfK+SropSHNpez9+7rI0sN9D4oT1A/PKcB6HqCwBB0kFZQ1YfUce6KSEF3QME
+1fdOslSBdfRXELv3sRQhWB/KL5WZkti4+UEYcMhm5bj9fCOUJAFjnqHBIgqzXIJM
+ND/Tl7ESd0xwU6dWkg7I
+=hVdL
 -----END PGP SIGNATURE-----
 
---Sig_/sF0juSoRlrIe+1b1r2BmAN8--
+--Sig_/_rH7RSjJB5hRM/1isZyhJcq--
