@@ -1,46 +1,42 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Tue, 7 Apr 2015 10:43:19 +0200
-Message-ID: <CABuKBe+iBfmxHat3Ezinpd-85CA5m1f2gYydk=uW4SwABQ-0Wg@mail.gmail.com>
-References: <20150407111217.2b2cf440@canb.auug.org.au>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 7 Apr 2015 10:48:29 +0200
+Message-ID: <20150407084829.GA9577@gmail.com>
+References: <20150407171858.2ad46594@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150407111217.2b2cf440@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:35868 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751075AbbDGIse (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2015 04:48:34 -0400
+Content-Disposition: inline
+In-Reply-To: <20150407171858.2ad46594@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@plumgrid.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 
-2015-04-07 3:12 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
 > Hi all,
->
-> After merging the arm-soc tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> In file included from arch/arm/boot/dts/mt8135.dtsi:18:0,
->                  from arch/arm/boot/dts/mt8135-evbp1.dts:16:
-> arch/arm/boot/dts/mt8135-pinfunc.h:18:40: fatal error: dt-bindings/pinctrl/mt65xx.h: No such file or directory
->  #include <dt-bindings/pinctrl/mt65xx.h>
->                                         ^
->
-> Caused by commit e6f219b8ec5e ("ARM: dts: mt8135: Add pinctrl/GPIO/EINT
-> node for mt8135").
+> 
+> After merging the tip tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> kernel/events/core.c: In function 'perf_event_set_bpf_prog':
+> kernel/events/core.c:6732:15: error: 'struct bpf_prog_aux' has no member named 'prog_type'
+>   if (prog->aux->prog_type != BPF_PROG_TYPE_KPROBE) {
+>                ^
+> 
+> Caused by commit 2541517c32be ("tracing, perf: Implement BPF programs
+> attached to kprobes").
 
-This will be fixed as soon as Linus pinctrl for-next branch got merged [1].
+Note, this must be some (rarely triggered) aspect of the ppc64 
+defconfig that neither x86 randconfigs nor most other arch defconfigs 
+expose?
 
-Cheers,
-Matthias
+Thanks,
 
-[1] https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=for-next&id=a6df410d420aa4ff316797d352f69e7ebae5ff98
-
->
-> I have reverted that commit for today.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-
-
-
--- 
-motzblog.wordpress.com
+	Ingo
