@@ -1,154 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the omap tree
-Date: Tue, 7 Apr 2015 11:36:18 +1000
-Message-ID: <20150407113618.7ddb495c@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with the arm-soc tree
+Date: Tue, 7 Apr 2015 11:46:00 +1000
+Message-ID: <20150407114600.14a3ecc8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vmZb0jEfaGWvYmvxmicumGe"; protocol="application/pgp-signature"
+ boundary="Sig_//NmtmfFdJf4OlCu_NQSIbV+"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59770 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48263 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752687AbbDGBgY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Apr 2015 21:36:24 -0400
+	id S1752825AbbDGBqG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Apr 2015 21:46:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
+To: Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Abhimanyu Kapur <abhimany@codeaurora.org>, Kumar Gala <galak@codeaurora.org>
 
---Sig_/vmZb0jEfaGWvYmvxmicumGe
+--Sig_//NmtmfFdJf4OlCu_NQSIbV+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+Hi Catalin,
 
-After merging the omap tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the arm64 tree got a conflict in
+arch/arm64/configs/defconfig between commit d7f64a44356c ("arm64: qcom:
+Add support for Qualcomm MSM8916 SoC") from the arm-soc tree and commit
+475bfd3d67fa ("arm64: defconfig: updates for 4.1") from the arm64 tree.
 
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/am3517_mt_ventoux.dtb] Error 2
-make[2]: *** [arch/arm/boot/dts/omap3430-sdp.dtb] Error 2
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/omap3-beagle-xm.dtb] Error 2
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/omap3-beagle-xm-ab.dtb] Error 2
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/omap3-beagle.dtb] Error 2
-make[2]: *** [arch/arm/boot/dts/omap3-devkit8000.dtb] Error 2
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/omap3-cm-t3530.dtb] Error 2
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/omap3-cm-t3730.dtb] Error 2
-make[2]: *** [arch/arm/boot/dts/omap3-evm-37xx.dtb] Error 2
-ERROR (phandle_references): Reference to non-existent node or label "omap3_=
-scm_general"
-
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [arch/arm/boot/dts/omap3-evm.dtb] Error 2
-
-Presumably caused by commit b8845074cfbb ("ARM: dts: omap3: add minimal
-l4 bus layout with control module support") interacting with commit
-e52117638b79 ("ARM: dts: omap3: Add DT entries for OMAP 3 ISP") from
-the arm-soc tree.
-
-I applied the following merge fix patch for today (probably wrong, but
-hopefully builds):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 7 Apr 2015 11:30:14 +1000
-Subject: [PATCH] ARM: dts: omap3: fixup for merge conflict around
- omap3_scm_general
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/boot/dts/omap34xx.dtsi | 2 +-
- arch/arm/boot/dts/omap36xx.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx.d=
-tsi
-index 7bc8c0f72ddb..4f6b2d5b1902 100644
---- a/arch/arm/boot/dts/omap34xx.dtsi
-+++ b/arch/arm/boot/dts/omap34xx.dtsi
-@@ -46,7 +46,7 @@
- 			       0x480bd800 0x017c>;
- 			interrupts =3D <24>;
- 			iommus =3D <&mmu_isp>;
--			syscon =3D <&omap3_scm_general 0xdc>;
-+			syscon =3D <&scm_conf 0xdc>;
- 			ti,phy-type =3D <OMAP3ISP_PHY_TYPE_COMPLEX_IO>;
- 			#clock-cells =3D <1>;
- 			ports {
-diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.d=
-tsi
-index 3502fe00ec7d..86253de5a97a 100644
---- a/arch/arm/boot/dts/omap36xx.dtsi
-+++ b/arch/arm/boot/dts/omap36xx.dtsi
-@@ -78,7 +78,7 @@
- 			       0x480bd800 0x0600>;
- 			interrupts =3D <24>;
- 			iommus =3D <&mmu_isp>;
--			syscon =3D <&omap3_scm_general 0x2f0>;
-+			syscon =3D <&scm_conf 0x2f0>;
- 			ti,phy-type =3D <OMAP3ISP_PHY_TYPE_CSIPHY>;
- 			#clock-cells =3D <1>;
- 			ports {
---=20
-2.1.4
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/vmZb0jEfaGWvYmvxmicumGe
+diff --cc arch/arm64/configs/defconfig
+index 96bba367f80c,e07896c819ef..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -31,10 -31,12 +31,14 @@@ CONFIG_MODULES=3D
+  CONFIG_MODULE_UNLOAD=3Dy
+  # CONFIG_BLK_DEV_BSG is not set
+  # CONFIG_IOSCHED_DEADLINE is not set
++ CONFIG_ARCH_EXYNOS7=3Dy
+  CONFIG_ARCH_FSL_LS2085A=3Dy
+  CONFIG_ARCH_MEDIATEK=3Dy
+ +CONFIG_ARCH_QCOM=3Dy
+ +CONFIG_ARCH_SPRD=3Dy
++ CONFIG_ARCH_SEATTLE=3Dy
++ CONFIG_ARCH_TEGRA=3Dy
++ CONFIG_ARCH_TEGRA_132_SOC=3Dy
+  CONFIG_ARCH_THUNDER=3Dy
+  CONFIG_ARCH_VEXPRESS=3Dy
+  CONFIG_ARCH_XGENE=3Dy
+@@@ -105,9 -104,10 +111,11 @@@ CONFIG_VIRTIO_CONSOLE=3D
+  # CONFIG_HW_RANDOM is not set
+  CONFIG_SPI=3Dy
+  CONFIG_SPI_PL022=3Dy
+ +CONFIG_PINCTRL_MSM8916=3Dy
+  CONFIG_GPIO_PL061=3Dy
+  CONFIG_GPIO_XGENE=3Dy
++ CONFIG_POWER_RESET_XGENE=3Dy
++ CONFIG_POWER_RESET_SYSCON=3Dy
+  # CONFIG_HWMON is not set
+  CONFIG_REGULATOR=3Dy
+  CONFIG_REGULATOR_FIXED_VOLTAGE=3Dy
+@@@ -133,10 -133,9 +141,11 @@@ CONFIG_MMC_SPI=3D
+  CONFIG_RTC_CLASS=3Dy
+  CONFIG_RTC_DRV_EFI=3Dy
+  CONFIG_RTC_DRV_XGENE=3Dy
++ CONFIG_VIRTIO_PCI=3Dy
+  CONFIG_VIRTIO_BALLOON=3Dy
+  CONFIG_VIRTIO_MMIO=3Dy
+ +CONFIG_COMMON_CLK_QCOM=3Dy
+ +CONFIG_MSM_GCC_8916=3Dy
+  # CONFIG_IOMMU_SUPPORT is not set
+  CONFIG_PHY_XGENE=3Dy
+  CONFIG_EXT2_FS=3Dy
+
+--Sig_//NmtmfFdJf4OlCu_NQSIbV+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVIzSWAAoJEMDTa8Ir7ZwVUIQQAIU4LF3Diqk4leo5D/QbeX91
-fkvm+mhKBnfEVpkJK+pY+5IYQWR3yklbxTeznANrWYpoYxASx8Jt4xxNAygfudtt
-B0l+Z/l5Njgn5TXgHD0g1o0qHfMAnIhZUqodkEbgiotmxDtsS+kxwSTuLqPA3ZhD
-8Be4VEV6WOx/lmvxVgVFA69hDAwq8HJNwJqqOTkG9l+/CyrmgXqdUg2MNhjLPs0v
-Rpgy1um++EilDxFfGqQqlWOTKsv5u7nN4rZQDnvcPe5PjlO5J6Oce8ODW0P6UX8E
-vypzIGEc+Rv2PFHbMR6/pbeJwmZZGRIzWLzj0kK9OE1XKZ9lzclC2Tek9PRMMXUL
-nW5xukwN5F/V05MHlip3RRt66l8Dj2M0zfdwbGlhQti3qNWspXFCLWLapkNAdNDF
-4rmsxMrXKBWR2O/13InNlGcw/JxRMp2iNGc4sDeoaHYNwCPGkRvnzqmmMYKYHXI8
-7Fb+8PUpY3HT5oY7WcEyd8B9MF70eeLX7g3lwzTDcvrjbENSOS0qBFrZna7LKKBT
-CD+p/Gapybfao8IFDT3lAjjVAT3o9oOb1gk4MStoi4vYDYljbMDDya6k2hKtUj+Z
-xyAktgT8YRov88fo/S3JBeBPVpJ+Zlvmg9gTr12/I2I82q2mmIgNZngTbl3gbWdb
-Vx44QW1bDyGpB2TRgN7m
-=ifH5
+iQIcBAEBCAAGBQJVIzbcAAoJEMDTa8Ir7ZwVTU4P/3vYm3DeDSwishurUl85s3DK
+rxNZVvF55DuWKR9nRor/qGj/XwGajyS/GOEsHZukQJGvJlEqFdkcatvjfNBFZpN5
+bXFnAu0S1uJbIcQ8ZD0qaSeoRHb8I4qsQ6hiiHkvN3v31qk7neI1dlCyAobjyJI/
+W61TC+k13b2YmajOyVMxH2VQJcj3/nIBhOKcYSKMZzzDD/tzruwqxIkwBEa8OyiD
+6gX4lcdHPeTma2dlG2tguWPUGWbwSaU2YthI5brmbx1iafSW/FG07BB1DJhNkYy+
+WHIAmcJqShtaqggRHDFNvmRWby5Sv7Kiwn+AFuVihrYooLMoGKZgAOPA4unI/Spw
+f1J3wmlYUGtgQP17MOk0ye+PKKhfUbQOcmWI7CA7MciSAUtd3bUHM2U0ufFtZnGA
+KqFF9vz0KxlWIThuNnn7us9lF8I9rB2ilkiEUIKGNCuUTa46/VUvz+EKEjOObK8o
++JPlnwPP11yyU3OWsEhs+oh8ssTmdKdVl8wY79gGbDStEQVx8psf0koy5Q6a0OIM
+tiJKTf2bZFQQZMFoG4/XO/Y6YADD8EGqCPzaPNytY3wlHsIyVbaOHD+9AfvEN+MR
+m7vp0HvULAouCxmtIlTWCPqhbZKcBoQl2xoQQ0aRSgYB96RnWpF4s3+evaBAzFwT
+OUvBw70YkA/eLCazhN7f
+=TStE
 -----END PGP SIGNATURE-----
 
---Sig_/vmZb0jEfaGWvYmvxmicumGe--
+--Sig_//NmtmfFdJf4OlCu_NQSIbV+--
