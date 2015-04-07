@@ -1,56 +1,36 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Tue, 7 Apr 2015 11:46:10 +0200
-Message-ID: <CABuKBeLXgbty1wG=ZUNVfxmahD3zb+yMz2CtZ5kQtJeH1xVmRA@mail.gmail.com>
-References: <20150407111217.2b2cf440@canb.auug.org.au>
-	<CABuKBe+iBfmxHat3Ezinpd-85CA5m1f2gYydk=uW4SwABQ-0Wg@mail.gmail.com>
-	<CACRpkdZE0JB0xBENNPhi6g4Su5ZuZA0wf1mi8xzbLeKm3rOYjA@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the tty tree with the slave-dma tree
+Date: Tue, 7 Apr 2015 11:52:36 +0200
+Message-ID: <20150407095236.GA7071@kroah.com>
+References: <20150407192808.375a5d91@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:34874 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752620AbbDGJqM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2015 05:46:12 -0400
-In-Reply-To: <CACRpkdZE0JB0xBENNPhi6g4Su5ZuZA0wf1mi8xzbLeKm3rOYjA@mail.gmail.com>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:33602 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753805AbbDGJwj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2015 05:52:39 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailout.nyi.internal (Postfix) with ESMTP id 6115820B3F
+	for <linux-next@vger.kernel.org>; Tue,  7 Apr 2015 05:52:34 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20150407192808.375a5d91@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Vinod Koul <vinod.koul@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Xuelin Shi <xuelin.shi@freescale.com>
 
-2015-04-07 11:28 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 7, 2015 at 10:43 AM, Matthias Brugger
-> <matthias.bgg@gmail.com> wrote:
->> 2015-04-07 3:12 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
->>> Hi all,
->>>
->>> After merging the arm-soc tree, today's linux-next build (arm
->>> multi_v7_defconfig) failed like this:
->>>
->>> In file included from arch/arm/boot/dts/mt8135.dtsi:18:0,
->>>                  from arch/arm/boot/dts/mt8135-evbp1.dts:16:
->>> arch/arm/boot/dts/mt8135-pinfunc.h:18:40: fatal error: dt-bindings/pinctrl/mt65xx.h: No such file or directory
->>>  #include <dt-bindings/pinctrl/mt65xx.h>
->>>                                         ^
->>>
->>> Caused by commit e6f219b8ec5e ("ARM: dts: mt8135: Add pinctrl/GPIO/EINT
->>> node for mt8135").
->>
->> This will be fixed as soon as Linus pinctrl for-next branch got merged [1].
->
-> Hm that's unfortunate, we do not rely on merge orders.
->
-> Either the ARM SoC tree needs to pull in the pinctrl commit
-> or I need to carry this patch in the pinctrl tree.
->
-> Is this sufficiently stand-alone to be merged into my tree
-> or do you need to go by the former approach?
+On Tue, Apr 07, 2015 at 07:28:08PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in
+> drivers/dma/Kconfig between commit ad80da658bbc ("dmaengine: Driver
+> support for FSL RaidEngine device") from the slave-dma tree and commit
+> 2b49e0c56741 ("dmaengine: append hsu DMA driver") from the tty tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-It's a standalone patch, so for me it is fine if you merge the patch
-into your tree.
+Looks good to me, thanks.
 
-Thanks,
-Matthias
-
--- 
-motzblog.wordpress.com
+greg k-h
