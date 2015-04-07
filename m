@@ -1,29 +1,67 @@
 From: Alexei Starovoitov <ast@plumgrid.com>
-Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
-Date: Tue, 07 Apr 2015 09:11:33 -0700
-Message-ID: <552401B5.30303@plumgrid.com>
-References: <20150407170402.1aeae791@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 07 Apr 2015 09:18:10 -0700
+Message-ID: <55240342.9050900@plumgrid.com>
+References: <20150407171858.2ad46594@canb.auug.org.au>	<20150407084829.GA9577@gmail.com>	<55239BAD.6040304@iogearbox.net> <20150407190527.1633a186@canb.auug.org.au> <5523BBE0.8030400@iogearbox.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150407170402.1aeae791@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:36046 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753228AbbDGQSL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2015 12:18:11 -0400
+Received: by iebrs15 with SMTP id rs15so51383522ieb.3
+        for <linux-next@vger.kernel.org>; Tue, 07 Apr 2015 09:18:11 -0700 (PDT)
+In-Reply-To: <5523BBE0.8030400@iogearbox.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Borkmann <daniel@iogearbox.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, davem@davemloft.net
 
-On 4/7/15 12:04 AM, Stephen Rothwell wrote:
-> Hi all,
+On 4/7/15 4:13 AM, Daniel Borkmann wrote:
+> [ Cc'ing Dave, fyi ]
 >
-> Today's linux-next merge of the tip tree got a conflict in
-> samples/bpf/Makefile between commit 91bc4822c3d6 ("tc: bpf: add
-> checksum helpers") from the net-next tree and commit b896c4f95ab4
-> ("samples/bpf: Add simple non-portable kprobe filter example") (and
-> following) from the tip tree.
+> On 04/07/2015 11:05 AM, Stephen Rothwell wrote:
+>> On Tue, 07 Apr 2015 10:56:13 +0200 Daniel Borkmann
+>> <daniel@iogearbox.net> wrote:
+>>> On 04/07/2015 10:48 AM, Ingo Molnar wrote:
+>>>> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>>
+>>>>> After merging the tip tree, today's linux-next build (powerpc
+>>>>> ppc64_defconfig) failed like this:
+>>>>>
+>>>>> kernel/events/core.c: In function 'perf_event_set_bpf_prog':
+>>>>> kernel/events/core.c:6732:15: error: 'struct bpf_prog_aux' has no
+>>>>> member named 'prog_type'
+>>>>>     if (prog->aux->prog_type != BPF_PROG_TYPE_KPROBE) {
+>>>>>                  ^
+>>>>>
+>>>>> Caused by commit 2541517c32be ("tracing, perf: Implement BPF programs
+>>>>> attached to kprobes").
+>>>>
+>>>> Note, this must be some (rarely triggered) aspect of the ppc64
+>>>> defconfig that neither x86 randconfigs nor most other arch defconfigs
+>>>> expose?
+>>>
+>>> Note, this is a merge conflict with the work that went via net-next
+>>> tree,
+>>> i.e. 24701ecea76b ("ebpf: move read-only fields to bpf_prog and shrink
+>>> bpf_prog_aux"). I believe that is why it didn't trigger on tip tree.
+>>>
+>>> You should be able to resolve it in linux-next by changing the test to:
+>>>
+>>>     if (prog->prog_type != BPF_PROG_TYPE_KPROBE) {
+>>
+>> Thanks Daniel, I will do that tomorrow.  Someone will have to remember
+>> to tell Linus.
 >
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
->
+> Yes, indeed, depending which tree is merged first.
 
-Looks good. Thanks Stephen.
+Daniel analysis is correct, but the fix for kernel/events/core.c
+should be:
+- if (prog->aux->prog_type != BPF_PROG_TYPE_KPROBE) {
++ if (prog->type != BPF_PROG_TYPE_KPROBE) {
+instead of 'prog->prog_type'
+
+Thanks Stephen!
