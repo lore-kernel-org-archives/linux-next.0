@@ -1,79 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the slave-dma tree
-Date: Tue, 7 Apr 2015 19:28:08 +1000
-Message-ID: <20150407192808.375a5d91@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Tue, 7 Apr 2015 11:28:22 +0200
+Message-ID: <CACRpkdZE0JB0xBENNPhi6g4Su5ZuZA0wf1mi8xzbLeKm3rOYjA@mail.gmail.com>
+References: <20150407111217.2b2cf440@canb.auug.org.au>
+	<CABuKBe+iBfmxHat3Ezinpd-85CA5m1f2gYydk=uW4SwABQ-0Wg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RPqE8/yvPmRrt/J37AMKdy_"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Xuelin Shi <xuelin.shi@freescale.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:36636 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753307AbbDGJ2W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2015 05:28:22 -0400
+Received: by igblo3 with SMTP id lo3so6753358igb.1
+        for <linux-next@vger.kernel.org>; Tue, 07 Apr 2015 02:28:22 -0700 (PDT)
+In-Reply-To: <CABuKBe+iBfmxHat3Ezinpd-85CA5m1f2gYydk=uW4SwABQ-0Wg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>
 
---Sig_/RPqE8/yvPmRrt/J37AMKdy_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Apr 7, 2015 at 10:43 AM, Matthias Brugger
+<matthias.bgg@gmail.com> wrote:
+> 2015-04-07 3:12 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+>> Hi all,
+>>
+>> After merging the arm-soc tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>>
+>> In file included from arch/arm/boot/dts/mt8135.dtsi:18:0,
+>>                  from arch/arm/boot/dts/mt8135-evbp1.dts:16:
+>> arch/arm/boot/dts/mt8135-pinfunc.h:18:40: fatal error: dt-bindings/pinctrl/mt65xx.h: No such file or directory
+>>  #include <dt-bindings/pinctrl/mt65xx.h>
+>>                                         ^
+>>
+>> Caused by commit e6f219b8ec5e ("ARM: dts: mt8135: Add pinctrl/GPIO/EINT
+>> node for mt8135").
+>
+> This will be fixed as soon as Linus pinctrl for-next branch got merged [1].
 
-Hi Greg,
+Hm that's unfortunate, we do not rely on merge orders.
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/dma/Kconfig between commit ad80da658bbc ("dmaengine: Driver
-support for FSL RaidEngine device") from the slave-dma tree and commit
-2b49e0c56741 ("dmaengine: append hsu DMA driver") from the tty tree.
+Either the ARM SoC tree needs to pull in the pinctrl commit
+or I need to carry this patch in the pinctrl tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Is this sufficiently stand-alone to be merged into my tree
+or do you need to go by the former approach?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/dma/Kconfig
-index 38ece743f61d,074ffad334a7..000000000000
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@@ -112,17 -125,8 +112,19 @@@ config FSL_DM
-  	  EloPlus is on mpc85xx and mpc86xx and Pxxx parts, and the Elo3 is on
-  	  some Txxx and Bxxx parts.
- =20
- +config FSL_RAID
- +        tristate "Freescale RAID engine Support"
- +        depends on FSL_SOC && !ASYNC_TX_ENABLE_CHANNEL_SWITCH
- +        select DMA_ENGINE
- +        select DMA_ENGINE_RAID
- +        ---help---
- +          Enable support for Freescale RAID Engine. RAID Engine is
- +          available on some QorIQ SoCs (like P5020/P5040). It has
- +          the capability to offload memcpy, xor and pq computation
- +	  for raid5/6.
- +
-+ source "drivers/dma/hsu/Kconfig"
-+=20
-  config MPC512X_DMA
-  	tristate "Freescale MPC512x built-in DMA engine support"
-  	depends on PPC_MPC512x || PPC_MPC831x
-
---Sig_/RPqE8/yvPmRrt/J37AMKdy_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVI6MtAAoJEMDTa8Ir7ZwVUqMP/199UDTdsCXN7172n/+6rmOc
-oLKpI7bXZvkeayg7VAjdlOQ9RsVBHiCnIJ4ylj3i6MaY5vXKS+JSs+Lc1wQxf7fq
-8ARVA/eNVKN2WHBBh6LUr35jUO45gMHFMJJZTAHMtFUNT9r/oRbS9JW1PXrgb3uW
-ZPLujk3TnymmRYO3FdjoNCQgKEOcvHMG8Ix1CGNmiKUXkRv233SnL62zIuo56+S3
-EKWElU0mY9nkOgVKKSIlugBupSWCcBHS3uhg+sqAxsdD0SvSme9OpZDsJBtkCkkd
-IARWviq0OK8ErFDkJt0dKU+o9YaOtMib59WmRJSSH9QQQA9qJ6DcujiT+tm+jXpg
-rNb4R+WWjGtC3Wb0S2H4HYhDVdBV7WeIMFAP3qF7zpSbKdAfgm0WpOX194qsYpU7
-6IzoqDk9awHI1NVutcJziEOmBcjcHACqR9UPButB3K1hJJZPhBGCSxqTDlZFLQs4
-qbjXGq7NWSNpKxz4vt5ilmbdgU+n2PmqjcpVQIUHtvlB+bs+FrZq60AeY9uxgfA4
-fGWVaEukOhElmKnuZ9uKXuhWz3To9OQ6lEs+H+XI2IDDHJT4DRh6WvN6NNa0DYwx
-uOaHKbJauV86mvHpUm8oWE8hp5cVgpEdZwjWX2gP518ROm2vlLJwbaRCT6QtcT5a
-QWKtckONOITabZftrfVC
-=XeHc
------END PGP SIGNATURE-----
-
---Sig_/RPqE8/yvPmRrt/J37AMKdy_--
+Yours,
+Linus Walleij
