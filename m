@@ -1,105 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm-current tree with the tip tree
-Date: Wed, 8 Apr 2015 18:25:07 +1000
-Message-ID: <20150408182507.734b551a@canb.auug.org.au>
+Date: Wed, 8 Apr 2015 18:28:30 +1000
+Message-ID: <20150408182830.367f29a6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/VjihFZDA8FnbH=uqN._gdd1"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37357 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751132AbbDHIZO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Apr 2015 04:25:14 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Sig_/=OGDmHC8RAIFB7.JUN0bn7/"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <matthew.garrett@nebula.com>, Xunlei Pang <pang.xunlei@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Xunlei Pang <pang.xunlei@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/VjihFZDA8FnbH=uqN._gdd1
+--Sig_/=OGDmHC8RAIFB7.JUN0bn7/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in
-drivers/rtc/class.c between commit 0fa88cb4b82b ("time, drivers/rtc:
-Don't bother with rtc_resume() for the nonstop clocksource") from the
-tip tree and commit df9d6ec42558 ("rtc: restore alarm after resume")
-from the akpm-current tree.
+drivers/rtc/rtc-mc13xxx.c between commit 0307b0d77a08
+("drivers/rtc/mc13xxx: Update driver to address y2038/y2106 issues")
+from the tip tree and commit 219451fa4da4 ("drivers/rtc/rtc-mc13xxx.c:
+fix obfuscated and wrong format string") from the akpm-current tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/rtc/class.c
-index c29ba7e14304,d46549ce8fd9..000000000000
---- a/drivers/rtc/class.c
-+++ b/drivers/rtc/class.c
-@@@ -55,7 -55,9 +55,9 @@@ static int rtc_suspend(struct device *d
-  	struct timespec64	delta, delta_delta;
-  	int err;
+diff --cc drivers/rtc/rtc-mc13xxx.c
+index 32df1d812367,c8e78a560de7..000000000000
+--- a/drivers/rtc/rtc-mc13xxx.c
++++ b/drivers/rtc/rtc-mc13xxx.c
+@@@ -214,10 -215,12 +214,10 @@@ static int mc13xxx_rtc_set_alarm(struc
+  	if (unlikely(ret))
+  		goto out;
  =20
-+ 	rtc->valid_alarm =3D !rtc_read_alarm(rtc, &rtc->alarm);
-+=20
- -	if (has_persistent_clock())
- +	if (timekeeping_rtc_skipsuspend())
-  		return 0;
+ -	ret =3D rtc_tm_to_time(&alarm->time, &s1970);
+ -	if (unlikely(ret))
+ -		goto out;
+ +	s1970 =3D rtc_tm_to_time64(&alarm->time);
  =20
-  	if (strcmp(dev_name(&rtc->dev), CONFIG_RTC_HCTOSYS_DEVICE) !=3D 0)
-@@@ -102,7 -104,28 +104,28 @@@ static int rtc_resume(struct device *de
-  	struct timespec64	sleep_time;
-  	int err;
+- 	dev_dbg(dev, "%s: o%2.s %lld\n", __func__, alarm->enabled ? "n" : "ff",
+ -	dev_dbg(dev, "%s: %s %lu\n", __func__, alarm->enabled ? "on" : "off",
+ -			s1970);
+++	dev_dbg(dev, "%s: %s %lld\n", __func__, alarm->enabled ? "on" : "off",
+ +			(long long)s1970);
  =20
-+ 	/*
-+ 	 * Ensure that the platform hasn't overwritten a pending alarm while
-+ 	 * suspended
-+ 	 */
-+ 	if (rtc->valid_alarm) {
-+ 		long now, scheduled;
-+=20
-+ 		rtc_read_time(rtc, &tm);
-+ 		rtc_tm_to_time(&rtc->alarm.time, &scheduled);
-+ 		rtc_tm_to_time(&tm, &now);
-+=20
-+ 		/* Clear the alarm registers if it went off during suspend */
-+ 		if (scheduled <=3D now) {
-+ 			rtc_time_to_tm(0, &rtc->alarm.time);
-+ 			rtc->alarm.enabled =3D 0;
-+ 		}
-+=20
-+ 		if (rtc->ops && rtc->ops->set_alarm)
-+ 			rtc->ops->set_alarm(rtc->dev.parent, &rtc->alarm);
-+ 	}
-+=20
- -	if (has_persistent_clock())
- +	if (timekeeping_rtc_skipresume())
-  		return 0;
- =20
-  	rtc_hctosys_ret =3D -ENODEV;
+  	ret =3D mc13xxx_rtc_irq_enable_unlocked(dev, alarm->enabled,
+  			MC13XXX_IRQ_TODA);
 
---Sig_/VjihFZDA8FnbH=uqN._gdd1
+--Sig_/=OGDmHC8RAIFB7.JUN0bn7/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVJOXnAAoJEMDTa8Ir7ZwV5/kP/RPh5Z1EbxeeuaupMJrGmr0C
-ZtPBBqGbxLFyDbvCuryUh/V1b1b/jEaerkVOTDORGL3eAEWch5kD05VXsREPE7kM
-cqoK1N8st6GaprOPO2cP0AF/FKnmVX254abtTzLgnShN6knx+ldKhGwj0yF4cA9X
-7jwLvbHQKzQ+tJK7szZKvNGRIJcLNWyGVde19MX8xuHsG4jOK9MSrwjt06wufdeQ
-d74WM5ZIjJyqb/R9FUqkod5eQ/J3vsOjXiWhUdb+DS/OroRKKsMTUO0uIELO93WC
-X/NjQOC+hgo6+Rztxj5Fpo8F/GrQqFaDRTEfpPH3RT3/Ee1JhxTtohRfRmjTGnfL
-o5ktLVpzSJKoWyfyWrL6yw6ut9mMlnwOQnX+hYWQ3zuO+b+2DcQMbUMas0UrbY5p
-mPF0RQZJkXEecmZF/iyUnoAj5NIoj4B2Qz1POqKCgVO7wni8XzEP6WiByBJ7O04H
-hMb03JeLP6DGFex+yrjkvxm+Bbq5Sd2DeWlzecyVyrDQAl+0dip0PF6jzka73MtN
-Yo5BuPYxBf5Mug0K9ZlGt1G0/NKe+oG3nxylAa7f46PiKdynCw+XbeGwHvWYm3NS
-nYtBovcVgwNRhmOubhDhn9FKSEzNUTav1MeVxdVbizUdpOocgnpF2jDGXnnZIYRo
-Jev4CdqKMy9hMqLe6w0V
-=V+lX
+iQIcBAEBCAAGBQJVJOayAAoJEMDTa8Ir7ZwVD84QAIHlvoirKE9lGDDI78eMtbze
+wn1dLfuLr5nNPlrN6WWrCgGFT1+kQQbsf2MFL5MTyi1In+ZBMaIsyHrGGfYldn3y
+3iPrEHapHSOL30jFKYwqjiwWugHEFxtS+0ithfnjr/vxZclbTKp8j7CXlV30lNC3
+rctQlm7ILBLHeCQPnmyunuKVmnDpDXksNUlPdI4GXh8qaNbGJbkQYyIerCrIcBLg
+zjhxVo98B5d1rvYFYDXN7gTWP659E2B/2ilaAQfboT5iEUnmRvIgGQ0ew2QzaajD
+klUB5fUwv+GLee10M/Mer3dyciFY6l1/S1rSCyORqoyEq+TSMUelhLvTIqzlNmmO
+WkYvS+aVktAAsKC7cR2W5xk6GioJEIWCM0ZwPdIZWLwTVjyBM79frCE5xAG7yTfT
+x12qU7JPLV0snO+lauNIXOB9AbDdkqzllFsC30j8J59L9Fw7NMwzsA9gbibW5Q13
+yzT8SmKH5TRvf0q0w3nvu1zH0krs/GvFAzkKzV8BoczLChJUCoSdzxpTk9DkUHiQ
+NTBqY4+EL95RTsC6j0UuwK/iq9yxT8YZZRv4KQwLgsh7ZHcbtaUvNxO46L7s6fgP
+UYfnzjiDVLryI9HA3a0LQ3EXsfIajFw909x5ZhPXg0LmOoiPNzlU40SSEAq4GKqh
+p1wY9U6B3TRKEFavnZbQ
+=hez1
 -----END PGP SIGNATURE-----
 
---Sig_/VjihFZDA8FnbH=uqN._gdd1--
+--Sig_/=OGDmHC8RAIFB7.JUN0bn7/--
