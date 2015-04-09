@@ -1,118 +1,123 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Thu, 9 Apr 2015 07:57:11 +1000
-Message-ID: <20150409075711.615f0421@canb.auug.org.au>
-References: <20150408184954.1356280d@canb.auug.org.au>
-	<20150408151350.GA8490@gmail.com>
+Subject: linux-next: build failure after merge of the regulator tree
+Date: Thu, 9 Apr 2015 14:33:09 +1000
+Message-ID: <20150409143309.3a1fac67@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/39qm5IobiLgPVpxzqQKMjDn"; protocol="application/pgp-signature"
+ boundary="Sig_/mOUKQKAxIZg41dfCkIaSfjE"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57929 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46938 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753897AbbDHV5U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Apr 2015 17:57:20 -0400
-In-Reply-To: <20150408151350.GA8490@gmail.com>
+	id S1751070AbbDIEdR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Apr 2015 00:33:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hai Li <hali@codeaurora.org>, Rob Clark <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
---Sig_/39qm5IobiLgPVpxzqQKMjDn
+--Sig_/mOUKQKAxIZg41dfCkIaSfjE
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+Hi all,
 
-On Wed, 8 Apr 2015 17:13:51 +0200 Ingo Molnar <mingo@kernel.org> wrote:
->
->=20
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Today's linux-next merge of the akpm tree got a conflict in
-> > arch/x86/kernel/cpu/common.c between commit 6b51311c9765
-> > ("x86/asm/entry/64: Use a define for an invalid segment selector") from
-> > the tip tree and commit f28c11e4b695 ("arch/x86/kernel/cpu/common.c:
-> > fix warning") from the akpm tree.
->=20
-> So f28c11e4b695 doesn't appear to be in linux-next as fetched a minute=20
-> ago:
->=20
->  triton:~/linux.trees.git> git log f28c11e4b695 --
->  fatal: bad revision 'f28c11e4b695'
->  triton:~/linux.trees.git> git describe
->  next-20150408
->=20
-> How am I supposed to fetch and interpret such sha1's?
+After merging the regulator tree, today's linux-next build (arm multi_v7_de=
+fconfig)
+failed like this:
 
-Sorry, this was a special case.  This was a patch in the part of
-Andrew's series that gets rebased on top of the rest of linux-next each
-day (as that part has dependencies on other things in linux-next).  In
-this case, the resolution was to drop the patch entirely as it had
-become unnecessary.
+drivers/gpu/drm/msm/dsi/dsi_host.c: In function 'dsi_host_regulator_disable=
+':
+drivers/gpu/drm/msm/dsi/dsi_host.c:330:4: error: implicit declaration of fu=
+nction 'regulator_set_optimum_mode' [-Werror=3Dimplicit-function-declaratio=
+n]
+    regulator_set_optimum_mode(s[i].consumer,
+    ^
 
-This was it:
+Caused by commit a689554ba6ed ("drm/msm: Initial add DSI connector
+support") from the drm tree interacting with commit ae6e808f1574
+("regulator: Drop temporary regulator_set_optimum_mode wrapper") from
+the regulator tree.
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: arch/x86/kernel/cpu/common.c: fix warning
+This happens every time someone renames/changes an API :-(
 
-x86_64 allnoconfig:
+I have applied the following merge fix patch.  Someone needs to make
+sure Linus finds out when the latter of these two trees is merged into
+his.
 
-arch/x86/kernel/cpu/common.c: In function 'syscall_init':
-arch/x86/kernel/cpu/common.c:1225: warning: right shift count >=3D width of=
- type
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 9 Apr 2015 14:28:42 +1000
+Subject: [PATCH] drm/msm: fixes for regulator_set_optimum_mode name change
 
-Fixes: a76c7f4604937bc ("x86/asm/entry/64: Fold syscall32_cpu_init() into i=
-ts sole user")
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
+ drivers/gpu/drm/msm/dsi/dsi_host.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
- arch/x86/kernel/cpu/common.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -puN arch/x86/kernel/cpu/common.c~arch-x86-kernel-cpu-commonc-fix-warn=
-ing arch/x86/kernel/cpu/common.c
---- a/arch/x86/kernel/cpu/common.c~arch-x86-kernel-cpu-commonc-fix-warning
-+++ a/arch/x86/kernel/cpu/common.c
-@@ -1222,7 +1222,7 @@ void syscall_init(void)
- 	wrmsrl_safe(MSR_IA32_SYSENTER_EIP, (u64)ia32_sysenter_target);
- #else
- 	wrmsrl(MSR_CSTAR, ignore_sysret);
--	wrmsrl_safe(MSR_IA32_SYSENTER_CS, 0);
-+	wrmsrl_safe(MSR_IA32_SYSENTER_CS, 0ULL);
- 	wrmsrl_safe(MSR_IA32_SYSENTER_ESP, 0ULL);
- 	wrmsrl_safe(MSR_IA32_SYSENTER_EIP, 0ULL);
- #endif
-_
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/d=
+si_host.c
+index fdc54e3eff55..962cf545d24c 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -327,8 +327,7 @@ static void dsi_host_regulator_disable(struct msm_dsi_h=
+ost *msm_host)
+ 	DBG("");
+ 	for (i =3D num - 1; i >=3D 0; i--)
+ 		if (regs[i].disable_load >=3D 0)
+-			regulator_set_optimum_mode(s[i].consumer,
+-						regs[i].disable_load);
++			regulator_set_load(s[i].consumer, regs[i].disable_load);
+=20
+ 	regulator_bulk_disable(num, s);
+ }
+@@ -343,8 +342,8 @@ static int dsi_host_regulator_enable(struct msm_dsi_hos=
+t *msm_host)
+ 	DBG("");
+ 	for (i =3D 0; i < num; i++) {
+ 		if (regs[i].enable_load >=3D 0) {
+-			ret =3D regulator_set_optimum_mode(s[i].consumer,
+-							regs[i].enable_load);
++			ret =3D regulator_set_load(s[i].consumer,
++						regs[i].enable_load);
+ 			if (ret < 0) {
+ 				pr_err("regulator %d set op mode failed, %d\n",
+ 					i, ret);
+@@ -363,7 +362,7 @@ static int dsi_host_regulator_enable(struct msm_dsi_hos=
+t *msm_host)
+=20
+ fail:
+ 	for (i--; i >=3D 0; i--)
+-		regulator_set_optimum_mode(s[i].consumer, regs[i].disable_load);
++		regulator_set_load(s[i].consumer, regs[i].disable_load);
+ 	return ret;
+ }
+=20
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/39qm5IobiLgPVpxzqQKMjDn
+--Sig_/mOUKQKAxIZg41dfCkIaSfjE
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVJaQ+AAoJEMDTa8Ir7ZwVtrgP/j9i7lENErCEzNMFZ+mmVAGs
-MNZVRpXZ1Esu7+yS1LoHmxPrgzbPUi0d8ayX9NDFqzvn0RNM8XqrCEyliCxpZVXf
-2fZCEwOwSfXyXmKqU/sR0Lx1itxrjlUdTvEJtHN5WnDSX2JStG/3JPB9j+uS6QfK
-OHEtRFqcZRluADryodt9Z7MWYUAbp40n8B0Kx9AUwtVoEwwu5MOqtkk3RKb7yrxm
-HAfDLcHwcqbA+21Sqy5NLcO5KkTDnDtgXBlJEL9zEQARFoJnxbK1Krf1ikAPMNFL
-spauvjYosjm4ANJv7ccYJUuZDcKRBqNRl4nVwCRzhnoZQrzfZjUzwZMAF222HLnV
-xd/EmTn3QDLXhqnwr2okMDc6BfHD1fA+5pP/gH5HqEXwOUOlrWRVsSl4zk+HrD/p
-hM89m8ywh7sDyetCRSXwiUpgvhkrl4p6hi7SScSbjr95imJ8WxuKCtZxpQFVNvSj
-C48XwB7zsP4DTERl1D9h+2UPfj6/xAhI7ZOkPMW6aNG3MUVDsNw4cAYg/itBjw9W
-ASxj8Pp3EfeqrmVZHLuBhE5EVZXLv1tv6kvTtXEeBmQUxa0EPbe5mYRxSm8jDjLq
-o5dZstyWeYXQZ2q/FXejODizFLJvI8MNVQdoBQVDWPp3/x3ctsB23Djn+w8Xklpq
-EX3mmeW5uJUDeQxN/a6E
-=uaTB
+iQIcBAEBCAAGBQJVJgEKAAoJEMDTa8Ir7ZwVeowP/296AysB/s2j8xMc/JTlU7FV
+jZsszaNywSktAkuLrbGHF4wcSEST2nnmr+0UuEMWBvCDP/188hasH4916HrbO72d
+ZXdPtshu0h5ZOnQgKDlHhcm2mi3t66q4IjbAyuLZEc8cKcyovvQSE0DJVoykdOQ7
+EAGr2zZcvRNWoGwwpXfb2P8rW9GCiieL8ZEGbGH8jjj+wWi41pJTkCgTQpsH8skB
+jnGkhxx88mX/xX37OlqiXkFOW9txcmhroYfenxh9UyJ82nd08pWBOx7bkvn6QXJR
+N8oocsofn1ASJ/jINfNnHX6XShevWT98w7rJjeYxBujhSHkasxBug9iNUifwqYK9
+4m1E0Xqdkh6hxPkO0vv57RYXyTqdssjIcfi1gOEWS5zPphPwmAcRiaw/oH+s0jr8
+KMXdX4rNvkZ6qMu+hEacKqa/MnQiA27BeZYaF0I0T3Vyk633jvyJZJLniH64VOG3
+3meXi1yo8Joz4LYecQTKOb4e/58IS4Xw3tSJoCIk5W1RHKOEXxj/E8HmW5GF5dd5
+rH+eLZDgXjf6+NQk2IN4UjuVj6tF1pFYrWA172XcpMuAk27d9TsZ+OOGx/ZRiPTL
+vKFMlRQR9+DzHHxF0bc7/5TpWigUFd8/m5D99yG5IRqSDvUETkixk+J3GRtuxiCl
+DARv8lq5elMYfxn3Byeo
+=f0f1
 -----END PGP SIGNATURE-----
 
---Sig_/39qm5IobiLgPVpxzqQKMjDn--
+--Sig_/mOUKQKAxIZg41dfCkIaSfjE--
