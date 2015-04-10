@@ -1,55 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 10 Apr 2015 13:12:58 +1000
-Message-ID: <20150410131258.04416c49@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Fri, 10 Apr 2015 13:53:12 +1000
+Message-ID: <20150410135312.61626ea5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WFl1ec3WXBVP6_UB2LnHH8_"; protocol="application/pgp-signature"
+ boundary="Sig_/4BBBj2s9xcyQmprkNQ6t9RL"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Reid <preid@electromag.com.au>, Dinh Nguyen <dinguyen@opensource.altera.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WFl1ec3WXBVP6_UB2LnHH8_
+--Sig_/4BBBj2s9xcyQmprkNQ6t9RL
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mauro,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c between commit
-27015f8c1757 ("stmmac: devm_reset_control_get can return PROBE_DEFER")
-from the net tree and commit cbe21d92e4d5 ("net: stmmac: make reset
-control an optional requirement") from the net-next tree.
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+Documentation/devicetree/bindings/vendor-prefixes.txt between commit
+f71b10be4c8a ("of: Add vendor prefix for Arasan") from Linus' tree and
+commit 5888f9df0dcd ("[media] of: Add vendor prefix for Aptina
+Imaging") from the v4l-dvb tree.
 
-I fixed it up (I just used the net-next version) and can carry the fix
-as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/WFl1ec3WXBVP6_UB2LnHH8_
+diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
+index 3e8bd6d34c96,4326f52eba73..000000000000
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@@ -21,7 -20,7 +21,8 @@@ amlogic	Amlogic, Inc
+  ams	AMS AG
+  amstaos	AMS-Taos Inc.
+  apm	Applied Micro Circuits Corporation (APM)
++ aptina	Aptina Imaging
+ +arasan	Arasan Chip Systems
+  arm	ARM Ltd.
+  armadeus	ARMadeus Systems SARL
+  asahi-kasei	Asahi Kasei Corp.
+
+--Sig_/4BBBj2s9xcyQmprkNQ6t9RL
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVJz++AAoJEMDTa8Ir7ZwVQEkP/3gtKck9Onw8JfxoxOLre7kX
-EaF+BnrzpREMZjS/cF2qr7Ey/XDCco3XI+z8xLeeL/vh91GGDWpPa025oR4a+g/7
-wtkft8N2AieUjnjsP/VxiHRVatC8y7fbwFDpOp5mXHz1+xOis73YPCJoeAAzL4i/
-MAZ87yaCVp3kbDFzCIYC9eGmIR7esC7KgdPi+8BDmWAZCBhRf3CGSiyYqg+J4ux7
-k9AGIIwZjJYl1xb0vp7/Jv58+TUzNag4vh+OfCN3WmQttfyCPd2F9Dgr3dmAjLbS
-SBpUq2tt5phgnmDMnySX4GCjPLfP06YaJOLTz3ozolyxMcni11mB6rLYGf7kS8K1
-JfqjDAkHHTLDIcm2ZSb7w6BbQLsKJ1UN6Ii9M1LUsQ9hUaoqAYyF+El77YptZbwP
-y4kScEHFZ44a2TK1T7K+81yzHMTY66y2dvcFASwmFjmCW0WHYdvLGIulzdzQ4M0t
-Jb+FMrpPzj0U3gCcd2DefTjRv+4yQS8JlxV7FBWGE8RvpCmTAXu1cKTwhjaKdBsr
-pUHm1bpRYHxjRMqbMxDGZjfqL0Z2IN3ojO3BVSmoWjjxslGyxpKgEzlF/uTTHa1Y
-puZtKmKjr4pZJUMwAxRB3vr+ZiCNPkeb6JAarhh31PZKnbJf1fi/8j9XV9J+WZ5o
-ajv2gHayp86ojeZe/jJP
-=NH44
+iQIcBAEBCAAGBQJVJ0kzAAoJEMDTa8Ir7ZwVnAgP+gKbFXsE/RQyuL13uZ5O1r6J
+qSq5uv0uxpagwqTIWP8RxhX9crJKBO0n77JgRqrrjeyEeeETC5DM525ikqKZTi0R
+KPkBMVtp6Ni3Vfo/1x5AFABMzVzwn6AGc5h3ZyrqKr3lXZQKnLKdmkL5IqO6pr6g
+HwJqnPy0xzY3sPm/F8LmH6Ah8/Y4HF3g8ipPuSnZNdVHp/hoSOIOr32nEJ7FZTO9
+Qh6X8koeIPustheOI4c/rFrhqGWcYtH/TfDYsutmrI6VePG1sBq2nwmb1GuugbCs
+hzj2/zsnQilIQQcFEKZovl9CF119BJRJ+5+dtKpDZePcIBjV0h2M0mJ4JukWM+2i
++CRxlKWU3I5EWvFfdMVG8MyCDqV5u7YmZgwFYFaWlVXYzKe9Hm+fm7P7tSGB+6Hn
+OcVWZ80U7Lxg9OkXiJSIMgK8TuQJnKEGsMwYG36ljCejJTe2ao9yUNtMfVTDOtJ+
+ety6937W03u32f1UTKViNkKq5rtNS9DUn8dYefwGaqIhTisTDAnkBDlRDIGnT/Bq
+whb/x3uaocqbHeLnS4tfbSh7e+b2g3fZw2fInl/jckqiIqgJRPfFJbn4rCDajslu
+NLYFAQKYk9Vct4FT5Vu0Id+sV+kQS2rSDUY0bu384OmV2keC9EOJJatWUDj+pB3i
+nOWnpEClXnIuz7bdWbfw
+=ZwTr
 -----END PGP SIGNATURE-----
 
---Sig_/WFl1ec3WXBVP6_UB2LnHH8_--
+--Sig_/4BBBj2s9xcyQmprkNQ6t9RL--
