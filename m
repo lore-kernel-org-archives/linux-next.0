@@ -1,40 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Fri, 10 Apr 2015 11:35:04 +0200
-Message-ID: <CACRpkdax-5ZW+q+4kzsV1SN7K=24-WYt9N0kpHFmLPnV6tE7rw@mail.gmail.com>
-References: <20150410190829.75f92150@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the powerpc-mpe tree
+Date: Fri, 10 Apr 2015 20:02:40 +1000
+Message-ID: <20150410200240.13471ce4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=sTlS/Twty6TfvK4Cu2V34u"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:33334 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753963AbbDJJfH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Apr 2015 05:35:07 -0400
-Received: by layy10 with SMTP id y10so9150038lay.0
-        for <linux-next@vger.kernel.org>; Fri, 10 Apr 2015 02:35:05 -0700 (PDT)
-In-Reply-To: <20150410190829.75f92150@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:48883 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753963AbbDJKCr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 10 Apr 2015 06:02:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 10, 2015 at 11:08 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Linus,
->
-> After merging the gpio tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> drivers/gpio/gpio-sch.c:28:32: fatal error: uapi/linux/pci_ids.h: No such file or directory
->  #include <uapi/linux/pci_ids.h>
->                                 ^
->
-> Caused by commit d1e10dc8c104 ("gpio: sch: use uapi/linux/pci_ids.h
-> directly"). Clearly this depends on some other patch.
+--Sig_/=sTlS/Twty6TfvK4Cu2V34u
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Oh OK so much for not reading patch 0.
+Hi all,
 
-OK I'm taking it out of my tree,
-Michael, please use my ACK and handle this however you prefer.
+After merging the powerpc-mpe tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Yours,
-Linus Walleij
+mm/gup.c: In function 'gup_pte_range':
+mm/gup.c:904:3: error: conversion to non-scalar type requested
+   pte_t pte =3D ACCESS_ONCE(*ptep);
+   ^
+mm/gup.c: In function '__get_user_pages_fast':
+mm/gup.c:1194:3: error: conversion to non-scalar type requested
+   pgd_t pgd =3D ACCESS_ONCE(*pgdp);
+   ^
+
+Caused by commit 4bcad5b3b3ea ("powerpc: Make STRICT_MM_TYPECHECKS a
+config option").
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/=sTlS/Twty6TfvK4Cu2V34u
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVJ5/EAAoJEMDTa8Ir7ZwVOdcP+wZWXBwG9EuQrQza4qBLISqS
+8Zbe+TaEekn3eyK9cIwBp36HQ8iPTj1TbMHRl9ov7zAmaIeJf3MnGI1yWg7YCrzx
++kYB44+95xLj1fiyPO5jZ4fxIm+eUOlzkO9aCknvH2pApv4J8s//42FwtmxA6iNL
+xZtBpKHK5pTSLSdImQfCWXY5d7FurAHXvlv33ceNtgVCuuLBkNmhIB/5F5+zlIA/
+JcxEJBZ+gmUc+1ZOBX39o87YU3c6dvJnr9allER+z+rwKbo1F05xpDr+Dv2DZkwd
+1Ip0Swg4eekJjV7xRqNtnAErRdHGeWFMLlT4zkivczMYdE2xd1kz9L5ilqFfxLxM
+HEQxSlPmWr9ZcsrekTS+fDCQlbZpASLms/XJrQVYdqzpIEWpGMiLkrRq3X/1xO1O
+n/m8D6LSFT1u2tQc07VFOLVREqF6vZaoQL0T35xtKfmAiyTin3bRWgg/Q81euMz9
+w+WX1sByhk2fcgAvgeme0MtqE07wgTaVrNwfCAJhcD8BF3UoCQyNV3+ziy+TzZWW
+p0SI/tN4u2czSq6n4TDSNzzme30BejdZc4kWGMw0UY/MYrMphihpEyxAZ8XS9U5D
+UKNDqOZG08l5Q0OchLNyZ4ufA5vLy9HlHAUh3SfWg2xCcfmIUDALY+RkKg/YlKVy
+X+mLOD2Bzdz8G9F3HacN
+=VR61
+-----END PGP SIGNATURE-----
+
+--Sig_/=sTlS/Twty6TfvK4Cu2V34u--
