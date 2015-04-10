@@ -1,60 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-updates tree with the
- xen-tip tree
-Date: Fri, 10 Apr 2015 18:48:54 +1000
-Message-ID: <20150410184854.0b262379@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Fri, 10 Apr 2015 19:08:29 +1000
+Message-ID: <20150410190829.75f92150@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ELbUrqswHna0ofDImaK1fz5"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46896 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754304AbbDJItB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Apr 2015 04:49:01 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Tao Chen <boby.chen@huawei.com>, David Vrabel <david.vrabel@citrix.com>
+ boundary="Sig_/n00DLRP4=K50jolNG=eJd6I"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/ELbUrqswHna0ofDImaK1fz5
+--Sig_/n00DLRP4=K50jolNG=eJd6I
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicholas,
+Hi Linus,
 
-Today's linux-next merge of the target-updates tree got a conflict in
-drivers/xen/xen-scsiback.c between commit 785748788baf ("xen-scsiback:
-define a pr_fmt macro with xen-pvscsi") from the xen-tip tree and
-commit b4dd93cb4409 ("target: simplify the target template registration
-API") from the target-updates tree.
+After merging the gpio tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I fixed it up (the latter removed some of the code modified by the
-former) and can carry the fix as necessary (no action is required).
+drivers/gpio/gpio-sch.c:28:32: fatal error: uapi/linux/pci_ids.h: No such f=
+ile or directory
+ #include <uapi/linux/pci_ids.h>
+                                ^
 
+Caused by commit d1e10dc8c104 ("gpio: sch: use uapi/linux/pci_ids.h
+directly"). Clearly this depends on some other patch.
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/ELbUrqswHna0ofDImaK1fz5
+--Sig_/n00DLRP4=K50jolNG=eJd6I
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVJ457AAoJEMDTa8Ir7ZwVUT4P/2C0kFc8iYKgV3EIREIfvOeV
-hV3XtToX6xDDTBCIUdTOnvJ3kLluE5vERSEK99EJgKMbNr3/QFteIKsIeWXWRyLE
-0qz2jn6euMarY1MEOKZywk2EKecgv7Bc+Y0sPFyyhcjb1Ekzsd31GoREK0w0DZEz
-c7ihcnC7Fyff45XHRTL0J7HSSdCRC4HETRzl0O1U77Uv0HGExOdLNDqzs4W2E1Bd
-xOx0PtdsDerPYbDP4kFJKmX6boGOlJ27ZiATFaKNog0tG9+IGkkFDnVgYmcGQrmk
-bBpswB5909qOLT76xZrAm9ghGXwGheYAOMxrs4xSs4Zoju/XT+mfSRaLhwHoSFaU
-AQVlBzvti3r4A3IDznliuwKGDltn6c7aqci9ETi3tVrzE7BzhjWufxB0s0lu5/Uv
-mSIYdP917Q02zy5rt4fVYiYLA0GPfVqfQab01qBfcJeQ3n8bQ07/WQo0I5VrkCIq
-6ptB1d2Ob/ZC+HXdEDaWAN/MJmItlYr1RuxY+jLeYLKAYtmZIb3jWeez5XprkUal
-wCH/9fRsPr5RavqaUUOtxec1CbAvJermJSAg9aAbaGeIyGLeZBWOHgD/ZwFNCiHW
-fwyqC5SFfDCrS3Gk+VcxDFzPoR8qvjpxa/eZP+4OMJcsAA2+sEn9Oi0VJasBPMOO
-6wEBJghwb9jKFrpOrUJs
-=7hcv
+iQIcBAEBCAAGBQJVJ5MXAAoJEMDTa8Ir7ZwV0yMQAIjQwRdMkGn/W7Y9qcsvdITw
+omuQdfhkDAsCQ989KVPRoOlagmsCZCCECwo1KSgGJJVlB0k6nLXHcM4p/mdkRf+u
+QoxVvXiRUGlRL9IN9QQAbJDXogkkCAnOStU+YspKEZazi2B4DugHSHsIZN9mQtJs
+7jVs71inhzjaYAldkyNrR+Gog86CYmbcwWAPFOvcE1zoVoe/W9II6DNa47tPKK3i
+SpFrH53jrCrP9BJO7mwmWy4LK7BFz4CFlhYyvjrc5+eiSZ2HR+kivOGhNU0WJnrR
+5Dp/2TxpO35qng3L1xYwnfoKuWbHvjhEff2QcvgsAEyheazIJGQLUp67dyzYQ9qo
+ePY5PEWN89+x/hxroSs1JsOwarih+uvxKcaxqPYGzqzfDgBSHgcvbKytx4aqLTZy
+DucuLKCS62OcgOBrqQfNDlJoskFN8DKHI6slBZYXuO3QmN52x9qKIdC+ZRGM1t0Q
+2TEZL8B7DbsoPpHJnhIBZcXR0uyal50qVwECzsNykUCRkzQ0zLkU33OQzCzJ9bVv
+dzyHT4fFp8cbbwyoRpJoAWjlT/CHSFCIuzWFqvaslYitBcL+peGSmACqQVX+w1sM
+YQCn3VYP2v0CYdI5MXre4ItHvXTC3yBiZZpRQ7pFnof7FF3/nECZ7+yaQDX1wh8d
+3Sb1HfmAid5qhqU3MIpz
+=hvZh
 -----END PGP SIGNATURE-----
 
---Sig_/ELbUrqswHna0ofDImaK1fz5--
+--Sig_/n00DLRP4=K50jolNG=eJd6I--
