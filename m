@@ -1,17 +1,21 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 10 (media/i2c/ov2659)
-Date: Fri, 10 Apr 2015 10:06:35 -0700
-Message-ID: <5528031B.60408@infradead.org>
+Subject: Re: linux-next: Tree for Apr 10 (media/i2c/adp1653)
+Date: Fri, 10 Apr 2015 10:23:40 -0700
+Message-ID: <5528071C.2040102@infradead.org>
 References: <20150410211806.574ae8f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:45874 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751554AbbDJRXl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Apr 2015 13:23:41 -0400
 In-Reply-To: <20150410211806.574ae8f9@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Benoit Parrot <bparrot@ti.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, linux-media <linux-media@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Sakari Ailus <sakari.ailus@nokia.com>
 
 On 04/10/15 04:18, Stephen Rothwell wrote:
 > Hi all,
@@ -19,26 +23,26 @@ On 04/10/15 04:18, Stephen Rothwell wrote:
 > Changes since 20150409:
 > 
 
-on x86_64:
-when # CONFIG_VIDEO_V4L2_SUBDEV_API is not set:
+on i386:
 
-
-  CC [M]  drivers/media/i2c/ov2659.o
-../drivers/media/i2c/ov2659.c: In function 'ov2659_get_fmt':
-../drivers/media/i2c/ov2659.c:1054:3: error: implicit declaration of function 'v4l2_subdev_get_try_format' [-Werror=implicit-function-declaration]
-   mf = v4l2_subdev_get_try_format(sd, cfg, 0);
-   ^
-../drivers/media/i2c/ov2659.c:1054:6: warning: assignment makes pointer from integer without a cast [enabled by default]
-   mf = v4l2_subdev_get_try_format(sd, cfg, 0);
-      ^
-../drivers/media/i2c/ov2659.c: In function 'ov2659_set_fmt':
-../drivers/media/i2c/ov2659.c:1129:6: warning: assignment makes pointer from integer without a cast [enabled by default]
-   mf = v4l2_subdev_get_try_format(sd, cfg, fmt->pad);
-      ^
-../drivers/media/i2c/ov2659.c: In function 'ov2659_open':
-../drivers/media/i2c/ov2659.c:1264:38: error: 'struct v4l2_subdev_fh' has no member named 'pad'
-     v4l2_subdev_get_try_format(sd, fh->pad, 0);
+  CC [M]  drivers/media/i2c/adp1653.o
+../drivers/media/i2c/adp1653.c: In function '__adp1653_set_power':
+../drivers/media/i2c/adp1653.c:317:38: error: 'struct adp1653_platform_data' has no member named 'power_gpio'
+   gpio_set_value(flash->platform_data->power_gpio, on);
                                       ^
+../drivers/media/i2c/adp1653.c:336:38: error: 'struct adp1653_platform_data' has no member named 'power_gpio'
+   gpio_set_value(flash->platform_data->power_gpio, 0);
+                                      ^
+../drivers/media/i2c/adp1653.c: In function 'adp1653_of_init':
+../drivers/media/i2c/adp1653.c:471:4: error: 'struct adp1653_platform_data' has no member named 'power_gpio'
+  pd->power_gpio = of_get_gpio_flags(node, 0, &flags);
+    ^
+../drivers/media/i2c/adp1653.c:472:8: error: 'struct adp1653_platform_data' has no member named 'power_gpio'
+  if (pd->power_gpio < 0) {
+        ^
+../drivers/media/i2c/adp1653.c:433:6: warning: unused variable 'gpio' [-Wunused-variable]
+  int gpio;
+      ^
 
 
 
