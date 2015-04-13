@@ -1,111 +1,64 @@
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Subject: RE: linux-next: manual merge of the ftrace tree with the net-next
- tree
-Date: Mon, 13 Apr 2015 07:54:52 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB31B6CE461@hasmsx107.ger.corp.intel.com>
-References: <20150413175224.73a9baff@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the powerpc-mpe tree with the
+ powerpc tree
+Date: Mon, 13 Apr 2015 17:55:31 +1000
+Message-ID: <20150413175531.13d4ceb7@canb.auug.org.au>
+References: <20150413132715.2303253f@canb.auug.org.au>
+	<20150413060913.GA2365@richard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:16525 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752843AbbDMHy5 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Apr 2015 03:54:57 -0400
-In-Reply-To: <20150413175224.73a9baff@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Bpm20_GRTbH22/ObcniWoux"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150413060913.GA2365@richard>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Yang <weiyang@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Axtens <dja@axtens.net>
+List-Id: linux-next.vger.kernel.org
 
-> 
-> Hi Steven,
-> 
-> Today's linux-next merge of the ftrace tree got a conflict in
-> drivers/net/wireless/iwlwifi/iwl-devtrace.h between commit 7e1223b50089
-> ("iwlwifi: mvm: new Alive / error table API") from the net-next tree and
-> commit c5ef935d01a2 ("iwlwifi: Move each system tracepoints to their own
-> header") from the ftrace tree.
-> 
-> I fixed it up (see patch below, since this code was moved to a new file) and
-> can carry the fix as necessary (no action is required).
+--Sig_/Bpm20_GRTbH22/ObcniWoux
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes - So I was discussing that with Steven and you fixed it properly. Thank your for that.
+Hi,
 
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 13 Apr 2015 17:21:30 +1000
-> Subject: [PATCH] iwlwifi: mvm: fix up for tracing split
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/wireless/iwlwifi/iwl-devtrace-iwlwifi.h | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/iwlwifi/iwl-devtrace-iwlwifi.h
-> b/drivers/net/wireless/iwlwifi/iwl-devtrace-iwlwifi.h
-> index 6cb66a988271..223b8752f924 100644
-> --- a/drivers/net/wireless/iwlwifi/iwl-devtrace-iwlwifi.h
-> +++ b/drivers/net/wireless/iwlwifi/iwl-devtrace-iwlwifi.h
-> @@ -116,11 +116,11 @@ TRACE_EVENT(iwlwifi_dev_ucode_error,
->  	TP_PROTO(const struct device *dev, u32 desc, u32 tsf_low,
->  		 u32 data1, u32 data2, u32 line, u32 blink1,
->  		 u32 blink2, u32 ilink1, u32 ilink2, u32 bcon_time,
-> -		 u32 gp1, u32 gp2, u32 gp3, u32 ucode_ver, u32 hw_ver,
-> +		 u32 gp1, u32 gp2, u32 gp3, u32 major, u32 minor, u32
-> hw_ver,
->  		 u32 brd_ver),
->  	TP_ARGS(dev, desc, tsf_low, data1, data2, line,
->  		blink1, blink2, ilink1, ilink2, bcon_time, gp1, gp2,
-> -		gp3, ucode_ver, hw_ver, brd_ver),
-> +		gp3, major, minor, hw_ver, brd_ver),
->  	TP_STRUCT__entry(
->  		DEV_ENTRY
->  		__field(u32, desc)
-> @@ -136,7 +136,8 @@ TRACE_EVENT(iwlwifi_dev_ucode_error,
->  		__field(u32, gp1)
->  		__field(u32, gp2)
->  		__field(u32, gp3)
-> -		__field(u32, ucode_ver)
-> +		__field(u32, major)
-> +		__field(u32, minor)
->  		__field(u32, hw_ver)
->  		__field(u32, brd_ver)
->  	),
-> @@ -155,21 +156,22 @@ TRACE_EVENT(iwlwifi_dev_ucode_error,
->  		__entry->gp1 = gp1;
->  		__entry->gp2 = gp2;
->  		__entry->gp3 = gp3;
-> -		__entry->ucode_ver = ucode_ver;
-> +		__entry->major = major;
-> +		__entry->minor = minor;
->  		__entry->hw_ver = hw_ver;
->  		__entry->brd_ver = brd_ver;
->  	),
->  	TP_printk("[%s] #%02d %010u data 0x%08X 0x%08X line %u, "
->  		  "blink 0x%05X 0x%05X ilink 0x%05X 0x%05X "
-> -		  "bcon_tm %010u gp 0x%08X 0x%08X 0x%08X uCode 0x%08X
-> "
-> -		  "hw 0x%08X brd 0x%08X",
-> +		  "bcon_tm %010u gp 0x%08X 0x%08X 0x%08X major 0x%08X
-> "
-> +		  "minor 0x%08X hw 0x%08X brd 0x%08X",
->  		  __get_str(dev), __entry->desc, __entry->tsf_low,
->  		  __entry->data1,
->  		  __entry->data2, __entry->line, __entry->blink1,
->  		  __entry->blink2, __entry->ilink1, __entry->ilink2,
->  		  __entry->bcon_time, __entry->gp1, __entry->gp2,
-> -		  __entry->gp3, __entry->ucode_ver, __entry->hw_ver,
-> -		  __entry->brd_ver)
-> +		  __entry->gp3, __entry->major, __entry->minor,
-> +		  __entry->hw_ver, __entry->brd_ver)
->  );
-> 
->  TRACE_EVENT(iwlwifi_dev_ucode_event,
-> --
-> 2.1.4
-> 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+On Mon, 13 Apr 2015 14:09:13 +0800 Wei Yang <weiyang@linux.vnet.ibm.com> wr=
+ote:
+>
+> Hi, Stephen,
+>=20
+> Thanks for your finding :-) Your fix looks good to me.
+>=20
+> Michael & Ben,
+>=20
+> Do I need to rebase the patch or what should I do?
+
+You should have nothing to do, Michael has fixed it up when he merged
+Ben's tree into his.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/Bpm20_GRTbH22/ObcniWoux
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVK3Z4AAoJEMDTa8Ir7ZwVytAP/jclrvEp0a8+4y7X51ex0SmS
+yF1N5jDQQcLv5jEdeZOQZrsuzv6MPoTl9DlAFScb0Q0UZs4jn7CsIyqmjT64VvsD
+8Ahr1v7gXVFjNrYH53UQ0A+0RAybiDlh7I+NK1hnb03lnRtBq2KWzZR2h+//rjQy
+8mcZ875kH9YoEso5h8I2sgyIMHIYncn7jKEMG4syD4uLtV3xrNVy+Kl47vNmzqjT
+AiXWvPQrOo6kXjy8kP7fitzBDOY6NeDQlVb+fOZ8ktRTjPg66KEkjunrNmjuUYWW
+tj633BMdczlgVVLPP4o2SJL197WmCbPN7XTWqiuaoQjPhd0ddxnDzYTGbhsv/mVi
+HeshPp0+41KFCZqUPvpqdB6d60gcfpY9rbXb/x354O9/uoQ5W9maV2UJR03WaVeN
+p4xAIrXalzPTS/tDtvnLdwEA/LYenBQyJPoUCWKsY/zRvAud4pQ0/tYiffemovHU
+VAfwJZYwMDR88JRM4UFPbh1q0NX5S3iqYFCteC3ry5Cy1IJIznsmam/SHQMtaWJH
+fWu4n0sJdX06mVcPr0+ra+gotmaDwccoh0NMe+CrvPAEu0hmcr9DVFkJV1eBzzpW
+s6S08i7CGHTl+YnWu/kQIZjLn403GNSu4rZrG5GP+D3gYDPNOcLDoXSOhoDApY+u
+t9wowbztZMSPb8mO5wpC
+=pUej
+-----END PGP SIGNATURE-----
+
+--Sig_/Bpm20_GRTbH22/ObcniWoux--
