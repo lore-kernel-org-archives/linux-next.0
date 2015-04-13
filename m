@@ -1,85 +1,117 @@
-From: Borislav Petkov <bp@suse.de>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Mon, 13 Apr 2015 13:06:20 +0200
-Message-ID: <20150413110620.GD22325@pd.tnic>
-References: <20150413203917.1e7ea535@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
+Date: Mon, 13 Apr 2015 21:10:09 +1000
+Message-ID: <20150413211009.2fb2a23a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sRM+O1x/mBNRBtPQGQN3swU"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59991 "EHLO mx2.suse.de"
+Received: from ozlabs.org ([103.22.144.67]:50333 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751349AbbDMLIj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Apr 2015 07:08:39 -0400
-Content-Disposition: inline
-In-Reply-To: <20150413203917.1e7ea535@canb.auug.org.au>
+	id S1753357AbbDMLKP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Apr 2015 07:10:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@kernel.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Fabian Frederick <fabf@skynet.be>
 
-On Mon, Apr 13, 2015 at 08:39:17PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the rcu tree, today's linux-next build (powerpc allnoconfig)
-> failed like this:
-> 
-> init/main.c: In function 'rest_init':
-> init/main.c:387:2: error: implicit declaration of function 'smpboot_thread_init' [-Werror=implicit-function-declaration]
->   smpboot_thread_init();
->   ^
-> 
-> Caused by commit c55f6e1f6f69 ("cpu: Defer smpboot kthread unparking
-> until CPU known to scheduler").  The declaration in include/linux/cpu.h
-> is protected by CONFIG_SMP, its use is not.
-> 
-> I have reverted that commit for today.
+--Sig_/sRM+O1x/mBNRBtPQGQN3swU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the report Stephen, I know today is the day of b0rked
-linux-next builds :-(
+Hi Andrew,
 
-I think Ingo merged Paul's patch already so here's a fix ontop:
+Today's linux-next merge of the akpm-current tree got a conflict in
+fs/hfsplus/xattr.h between commit 5dd3dc06371a ("VFS: normal
+filesystems (and lustre): d_inode() annotations") from the vfs tree and
+commits 2c14e8b354bd ("fs/hfsplus: move xattr_name allocation in
+hfsplus_getxattr()") and a88c4defbd2e ("fs/hfsplus: move xattr_name
+allocation in hfsplus_setxattr()") from the akpm-current tree.
 
+I fixed it up (the code was moved by the latter, so I applied this
+merge fix patch) and can carry the fix as necessary (no action is
+required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 13 Apr 2015 21:07:48 +1000
+Subject: [PATCH] fs/hfsplus: merge fix for d_inode() annotation
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-From: Borislav Petkov <bp@suse.de>
-Date: Mon, 13 Apr 2015 13:01:32 +0200
-Subject: [PATCH] smpboot: Fix CONFIG_SMP=n build
+ fs/hfsplus/xattr.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Stephen Rothwell reported a CONFIG_SMP=n breakage with latest rcu/next.
-The timing of this is very unfortunate as we've been hunting this bug
-hastily over the weekend, just to be in time for the merge window.
-
-So here's a fix ontop.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20150413203917.1e7ea535@canb.auug.org.au
----
- include/linux/cpu.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 091badf0f6ba..bbdee1e6cf48 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -198,6 +198,10 @@ static inline void __unregister_cpu_notifier(struct notifier_block *nb)
- {
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 8c8f2cbe533a..416b1dbafe51 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -440,7 +440,7 @@ int hfsplus_setxattr(struct dentry *dentry, const char =
+*name,
+ 		return -ENOMEM;
+ 	strcpy(xattr_name, prefix);
+ 	strcpy(xattr_name + prefixlen, name);
+-	res =3D __hfsplus_setxattr(dentry->d_inode, xattr_name, value, size,
++	res =3D __hfsplus_setxattr(d_inode(dentry), xattr_name, value, size,
+ 				 flags);
+ 	kfree(xattr_name);
+ 	return res;
+@@ -600,7 +600,7 @@ ssize_t hfsplus_getxattr(struct dentry *dentry, const c=
+har *name,
+ 	strcpy(xattr_name, prefix);
+ 	strcpy(xattr_name + prefixlen, name);
+=20
+-	res =3D __hfsplus_getxattr(dentry->d_inode, xattr_name, value, size);
++	res =3D __hfsplus_getxattr(d_inode(dentry), xattr_name, value, size);
+ 	kfree(xattr_name);
+ 	return res;
+=20
+@@ -868,7 +868,7 @@ static int hfsplus_osx_getxattr(struct dentry *dentry, =
+const char *name,
+ 	 * creates), so we pass the name through unmodified (after
+ 	 * ensuring it doesn't conflict with another namespace).
+ 	 */
+-	return __hfsplus_getxattr(dentry->d_inode, name, buffer, size);
++	return __hfsplus_getxattr(d_inode(dentry), name, buffer, size);
  }
- 
-+static inline void smpboot_thread_init(void)
-+{
-+}
-+
- static inline void cpu_maps_update_begin(void)
- {
+=20
+ static int hfsplus_osx_setxattr(struct dentry *dentry, const char *name,
+@@ -890,7 +890,7 @@ static int hfsplus_osx_setxattr(struct dentry *dentry, =
+const char *name,
+ 	 * creates), so we pass the name through unmodified (after
+ 	 * ensuring it doesn't conflict with another namespace).
+ 	 */
+-	return __hfsplus_setxattr(dentry->d_inode, name, buffer, size, flags);
++	return __hfsplus_setxattr(d_inode(dentry), name, buffer, size, flags);
  }
--- 
-2.3.5
+=20
+ static size_t hfsplus_osx_listxattr(struct dentry *dentry, char *list,
+--=20
+2.1.4
 
--- 
-Regards/Gruss,
-    Boris.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-ECO tip #101: Trim your mails when you reply.
---
+--Sig_/sRM+O1x/mBNRBtPQGQN3swU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVK6QVAAoJEMDTa8Ir7ZwVdvUP/itwSYspmkr4ewenokZUQpD3
+zV/3zXWOqwezQGvkDknjS1GlhQlKyoH7KIJk4+cKTOFdq/nMQa2vMJ3hyo3XpdQz
+qGZaqZWiT9r3vcXN9M+Nj3Dw1S4IvAJrEE090sUGL3YCHtlnU3xqYpwPIrRmFoQG
+/A72jRIRfyqbV2B6iJ/bT+JJpKNKX4wCGQCfxQWmifJqWTxNm2yEpJ2KSjl/53ui
+fI3SNEZiIRiuaSzqL3IL3FurVEwf2XLqpY1i9RG36mQMkijq+bAakDKBdWYwcR5n
+TrDm7M6gjD1pwWdi8U5QsKzxONxpmcaUjsDf6rKeAkhgBL6MUab5vWBov1dLUrr8
+lU+cLLijy3ex1qbwJyY900ewMbVs/kkZ3ChoszwTPmRzHeXzkOQ5BPxCfnuJ733D
+CLdoPh6PeAmYzT6E83G1bO5lanUiyKpv99OkWHwQ6RUK2XVCHLMFJlA67Aq/zVuw
+jOnIsau+ScJoii93/mx6gdUGXcWSceC1u6L+dZ9/m93+SfWeCxfW51W+gm3B10rp
+nMDgqCDXI7x/sPmtmV2KnbxrA2KDBeMtpazFOB36iG6l3dbgyZic0AMsrHZpmxbM
+nZYMDGOR852uFsgAEgOde0VYlolZTz5d9tL7339snoSfIijifveDQxjTOAN4EfcW
+MXkJNnQ2u30K4tX7kbXV
+=RkPK
+-----END PGP SIGNATURE-----
+
+--Sig_/sRM+O1x/mBNRBtPQGQN3swU--
