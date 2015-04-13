@@ -1,71 +1,64 @@
-From: Wei Yang <weiyang@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the powerpc-mpe tree with the
- powerpc tree
-Date: Mon, 13 Apr 2015 14:09:13 +0800
-Message-ID: <20150413060913.GA2365@richard>
-References: <20150413132715.2303253f@canb.auug.org.au>
-Reply-To: Wei Yang <weiyang@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the irqchip tree
+Date: Mon, 13 Apr 2015 17:05:39 +1000
+Message-ID: <20150413170539.2f20e0a8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150413132715.2303253f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Axtens <dja@axtens.net>, Wei Yang <weiyang@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PCeNL9Hhfy31NYx6bJtU9JP"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47294 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753297AbbDMHFr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Apr 2015 03:05:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 
-On Mon, Apr 13, 2015 at 01:27:15PM +1000, Stephen Rothwell wrote:
->Hi all,
->
->Today's linux-next merge of the powerpc-mpe tree got a conflict in
->arch/powerpc/include/asm/machdep.h between commit 6e628c7d33d9
->("powerpc/powernv: Reserve additional space for IOV BAR according to
->the number of total_pe") from the  tree and commit 467efc2e4fdc
->("powerpc: Remove shims for pci_controller_ops operations") from the
->powerpc-mpe tree.
->
->I fixed it up (see below) and can carry the fix as necessary (no action
->is required).
+--Sig_/PCeNL9Hhfy31NYx6bJtU9JP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Stephen,
+Hi Jason,
 
-Thanks for your finding :-) Your fix looks good to me.
+After merging the irqchip tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Michael & Ben,
+kernel/irq/generic-chip.c: In function 'irq_map_generic_chip':
+kernel/irq/generic-chip.c:408:2: error: implicit declaration of function 'i=
+rq_domain_set_info' [-Werror=3Dimplicit-function-declaration]
+  irq_domain_set_info(d, virq, hw_irq, chip, gc, ct->handler, NULL, NULL);
+  ^
 
-Do I need to rebase the patch or what should I do?
+Caused by commit 3f6b2c298240 ("genirq: Generic chip: Support hierarchy
+domain").  The only declaration of irq_domain_set_info() depends on
+CONFIG_IRQ_DOMAIN_HIERARCHY.
 
->
->-- 
->Cheers,
->Stephen Rothwell                    sfr@canb.auug.org.au
->
->diff --cc arch/powerpc/include/asm/machdep.h
->index 1b268044f290,5c19ac527a8e..000000000000
->--- a/arch/powerpc/include/asm/machdep.h
->+++ b/arch/powerpc/include/asm/machdep.h
->@@@ -240,21 -236,6 +236,11 @@@ struct machdep_calls 
->  	/* Called after scan and before resource survey */
->  	void (*pcibios_fixup_phb)(struct pci_controller *hose);
->  
->- 	/* Called during PCI resource reassignment */
->- 	resource_size_t (*pcibios_window_alignment)(struct pci_bus *, unsigned long type);
->- 
->- 	/* Reset the secondary bus of bridge */
->- 	void  (*pcibios_reset_secondary_bus)(struct pci_dev *dev);
->- 
-> +#ifdef CONFIG_PCI_IOV
-> +	void (*pcibios_fixup_sriov)(struct pci_dev *pdev);
-> +	resource_size_t (*pcibios_iov_resource_alignment)(struct pci_dev *, int resno);
-> +#endif /* CONFIG_PCI_IOV */
-> +
->  	/* Called to shutdown machine specific hardware not already controlled
->  	 * by other drivers.
->  	 */
+I have used the irqchip tree from next-20150410 fot today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Sig_/PCeNL9Hhfy31NYx6bJtU9JP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
--- 
-Richard Yang
-Help you, Help me
+iQIcBAEBCAAGBQJVK2rHAAoJEMDTa8Ir7ZwVgKoP/A/GWRw6MsNOuZ4E1sgjBx6d
+fyFzIPGwZv+RkjZElxgoLhhbcIFiF5rzNoeIYMSut8jsdK6QwGBWOmTqh3G89VKa
+OU/mnT5PpbIEshtmOabvxvlOddaxzceu8Nm3UyvT9hATjNALdHKvxnnz/pX9VN72
+J1qTRNsAeziCiJA6Iwrhv+MKMVE3vGEL1ZsVR2f2IbcG7ZYNacwBvaTdb6rrqyVV
+SxVgqQGhGfXq0BbWQqJm6N7yUFCUrB/c5jfW7hriWTzekysvcxicE+xdXL+qNPRA
+oVK9CAbgO6d1MLYmVXz+hIVpoMe7c7WX2RteAoAjMoc5zRTYPjyWDk5LwyMpXUIP
+Bvp54CqfFWw3MQmehBEy20glS2GTCtslzpmRQp1qXb2dkFqxXNwJqWfwjJ/ZanaA
+GM/zJSJexxYuma/zEFC8ryCpTJyHMJrwLF3S3rmTbLmOdATRS/9KcXcKChhAhXS0
+EU8FMSuDH3eeTtrSiKhabglp3A+BL9emJ7FGSHhlnE7Kzw3HEEAss6dSCndxkH4y
+s4BeO/2/hx85KiV+GpnWS33aIONpAYu76At/doLt8O6LEIPknMOillMYOxvAKTVu
+Cf0Eph/yowQt5UwbZ1JTJzJIT4sXVz08zpCxEm2f8GY8v8ox7+HawIhiqlBv3qUN
+QQhDcTIGWydhwW4vbjJE
+=gKFq
+-----END PGP SIGNATURE-----
+
+--Sig_/PCeNL9Hhfy31NYx6bJtU9JP--
