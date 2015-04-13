@@ -1,123 +1,133 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: build failure after merge of the omap tree
-Date: Sun, 12 Apr 2015 16:18:35 -0700
-Message-ID: <20150412231834.GE5140@atomide.com>
-References: <20150407113618.7ddb495c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the btrfs tree
+Date: Mon, 13 Apr 2015 11:37:20 +1000
+Message-ID: <20150413113720.01ec6b1f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jTpSV3J.2eB=m3JjAQH2W_p"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:44075 "EHLO muru.com"
+Received: from ozlabs.org ([103.22.144.67]:46031 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752406AbbDLXWD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 12 Apr 2015 19:22:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20150407113618.7ddb495c@canb.auug.org.au>
+	id S1752143AbbDMBh2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Apr 2015 21:37:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Sterba <dsterba@suse.cz>, David Howells <dhowells@redhat.com>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [150406 18:37]:
-> Hi Tony,
-> 
-> After merging the omap tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/am3517_mt_ventoux.dtb] Error 2
-> make[2]: *** [arch/arm/boot/dts/omap3430-sdp.dtb] Error 2
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/omap3-beagle-xm.dtb] Error 2
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/omap3-beagle-xm-ab.dtb] Error 2
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/omap3-beagle.dtb] Error 2
-> make[2]: *** [arch/arm/boot/dts/omap3-devkit8000.dtb] Error 2
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/omap3-cm-t3530.dtb] Error 2
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/omap3-cm-t3730.dtb] Error 2
-> make[2]: *** [arch/arm/boot/dts/omap3-evm-37xx.dtb] Error 2
-> ERROR (phandle_references): Reference to non-existent node or label "omap3_scm_general"
-> 
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[2]: *** [arch/arm/boot/dts/omap3-evm.dtb] Error 2
-> 
-> Presumably caused by commit b8845074cfbb ("ARM: dts: omap3: add minimal
-> l4 bus layout with control module support") interacting with commit
-> e52117638b79 ("ARM: dts: omap3: Add DT entries for OMAP 3 ISP") from
-> the arm-soc tree.
-> 
-> I applied the following merge fix patch for today (probably wrong, but
-> hopefully builds):
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 7 Apr 2015 11:30:14 +1000
-> Subject: [PATCH] ARM: dts: omap3: fixup for merge conflict around
->  omap3_scm_general
+--Sig_/jTpSV3J.2eB=m3JjAQH2W_p
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry did not notice this until today, yes that's the correct fix thanks.
+Hi Al,
 
-Regards,
+Today's linux-next merge of the vfs tree got a conflict in
+fs/btrfs/xattr.c between commit 3c3b04d10ff1 ("btrfs: don't accept bare
+namespace as a valid xattr") from the btrfs tree and commit
+5dd3dc06371a ("VFS: normal filesystems (and lustre): d_inode()
+annotations") from the vfs tree.
 
-Tony
- 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/arm/boot/dts/omap34xx.dtsi | 2 +-
->  arch/arm/boot/dts/omap36xx.dtsi | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx.dtsi
-> index 7bc8c0f72ddb..4f6b2d5b1902 100644
-> --- a/arch/arm/boot/dts/omap34xx.dtsi
-> +++ b/arch/arm/boot/dts/omap34xx.dtsi
-> @@ -46,7 +46,7 @@
->  			       0x480bd800 0x017c>;
->  			interrupts = <24>;
->  			iommus = <&mmu_isp>;
-> -			syscon = <&omap3_scm_general 0xdc>;
-> +			syscon = <&scm_conf 0xdc>;
->  			ti,phy-type = <OMAP3ISP_PHY_TYPE_COMPLEX_IO>;
->  			#clock-cells = <1>;
->  			ports {
-> diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.dtsi
-> index 3502fe00ec7d..86253de5a97a 100644
-> --- a/arch/arm/boot/dts/omap36xx.dtsi
-> +++ b/arch/arm/boot/dts/omap36xx.dtsi
-> @@ -78,7 +78,7 @@
->  			       0x480bd800 0x0600>;
->  			interrupts = <24>;
->  			iommus = <&mmu_isp>;
-> -			syscon = <&omap3_scm_general 0x2f0>;
-> +			syscon = <&scm_conf 0x2f0>;
->  			ti,phy-type = <OMAP3ISP_PHY_TYPE_CSIPHY>;
->  			#clock-cells = <1>;
->  			ports {
-> -- 
-> 2.1.4
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/btrfs/xattr.c
+index 45ea704be030,4cca14ecb660..000000000000
+--- a/fs/btrfs/xattr.c
++++ b/fs/btrfs/xattr.c
+@@@ -408,17 -388,15 +408,17 @@@ ssize_t btrfs_getxattr(struct dentry *d
+  	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
+  		return generic_getxattr(dentry, name, buffer, size);
+ =20
+ -	if (!btrfs_is_valid_xattr(name))
+ -		return -EOPNOTSUPP;
+ +	ret =3D btrfs_is_valid_xattr(name);
+ +	if (ret)
+ +		return ret;
+- 	return __btrfs_getxattr(dentry->d_inode, name, buffer, size);
++ 	return __btrfs_getxattr(d_inode(dentry), name, buffer, size);
+  }
+ =20
+  int btrfs_setxattr(struct dentry *dentry, const char *name, const void *v=
+alue,
+  		   size_t size, int flags)
+  {
+- 	struct btrfs_root *root =3D BTRFS_I(dentry->d_inode)->root;
++ 	struct btrfs_root *root =3D BTRFS_I(d_inode(dentry))->root;
+ +	int ret;
+ =20
+  	/*
+  	 * The permission on security.* and system.* is not checked
+@@@ -435,12 -413,11 +435,12 @@@
+  	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
+  		return generic_setxattr(dentry, name, value, size, flags);
+ =20
+ -	if (!btrfs_is_valid_xattr(name))
+ -		return -EOPNOTSUPP;
+ +	ret =3D btrfs_is_valid_xattr(name);
+ +	if (ret)
+ +		return ret;
+ =20
+  	if (!strncmp(name, XATTR_BTRFS_PREFIX, XATTR_BTRFS_PREFIX_LEN))
+- 		return btrfs_set_prop(dentry->d_inode, name,
++ 		return btrfs_set_prop(d_inode(dentry), name,
+  				      value, size, flags);
+ =20
+  	if (size =3D=3D 0)
+@@@ -452,8 -429,7 +452,8 @@@
+ =20
+  int btrfs_removexattr(struct dentry *dentry, const char *name)
+  {
+- 	struct btrfs_root *root =3D BTRFS_I(dentry->d_inode)->root;
++ 	struct btrfs_root *root =3D BTRFS_I(d_inode(dentry))->root;
+ +	int ret;
+ =20
+  	/*
+  	 * The permission on security.* and system.* is not checked
+@@@ -470,15 -446,14 +470,15 @@@
+  	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
+  		return generic_removexattr(dentry, name);
+ =20
+ -	if (!btrfs_is_valid_xattr(name))
+ -		return -EOPNOTSUPP;
+ +	ret =3D btrfs_is_valid_xattr(name);
+ +	if (ret)
+ +		return ret;
+ =20
+  	if (!strncmp(name, XATTR_BTRFS_PREFIX, XATTR_BTRFS_PREFIX_LEN))
+- 		return btrfs_set_prop(dentry->d_inode, name,
++ 		return btrfs_set_prop(d_inode(dentry), name,
+  				      NULL, 0, XATTR_REPLACE);
+ =20
+- 	return __btrfs_setxattr(NULL, dentry->d_inode, name, NULL, 0,
++ 	return __btrfs_setxattr(NULL, d_inode(dentry), name, NULL, 0,
+  				XATTR_REPLACE);
+  }
+ =20
+
+--Sig_/jTpSV3J.2eB=m3JjAQH2W_p
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVKx3VAAoJEMDTa8Ir7ZwVCkEP+wUBAa3CxxCAujcVg/RprKzo
+z0pzRktbsOCZJypCc3qyPMR8I7agtY/ul9XW/P+J4ZklQrgSETIDnM15S94KwM00
+FoJFw1hLQ3oPyLmRBQXdNt3PdC3cuHv2jC5WhEP6ea4GWndRGEgsi1KOljXq6lVW
+LoE9FegY6jTVtFEiV+3DK9CkqpGdIFdc5mmG4f/Wta3EEicnsmuUGLpOT5fT9/Ba
+Mztro+JN5sRKYmANRKh5SqP7exVjNcm8x6+uVDWp9k+W/1UXkZTXGQTVpY3j71lH
+k3KVf+HPDZ5FgepZg0/OKffx9ZVWhNS1AvZMayV+hBmaWkKYjla6jcyHrhHsnuy8
+y4PHQDznxiKVxe3iM7dKj45W3sLwyAsXJog6fEdvjboV8JQjoayDPgKfjGwbfGbI
+GWzD6w8cGlL7Qq0jFMTRAjFNvm/aNI4uZtZyGwTD+UYv/Tn6dmvUhaKyO2H/r7Xw
+6LKIRH0CKxBnv2/82XKloIFcsWtcb6yksVTz9xkvI3hLQHmhyJArKZQrKlkguHqq
+B5hj1QYhWaiMlkpTVaUys8pRKDKRBMHZoCa+9DdfuaoSa6vjhfiE71417QHmdJD9
+8diq6g0Qewd7l6r/13ySPrwtnsgjeeRtGZxy64Izzhfp/9laDPqj6Ep8Lt3/MXdE
+aLvQJkPqdOh+tq3vwFyz
+=hJb6
+-----END PGP SIGNATURE-----
+
+--Sig_/jTpSV3J.2eB=m3JjAQH2W_p--
