@@ -1,64 +1,96 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rcu tree
-Date: Mon, 13 Apr 2015 20:39:17 +1000
-Message-ID: <20150413203917.1e7ea535@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warnings after merge of the char-misc tree
+Date: Mon, 13 Apr 2015 12:43:28 +0200
+Message-ID: <20150413104328.GB6390@kroah.com>
+References: <20150413193720.56083fbf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+Y4vA6w/BwMbmwmg_.s/Exl"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36844 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753961AbbDMKjY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Apr 2015 06:39:24 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:38860 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753769AbbDMKna (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Apr 2015 06:43:30 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailout.nyi.internal (Postfix) with ESMTP id B05A220C88
+	for <linux-next@vger.kernel.org>; Mon, 13 Apr 2015 06:43:29 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20150413193720.56083fbf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Steven Rostedt <rostedt@goodmis.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
 
---Sig_/+Y4vA6w/BwMbmwmg_.s/Exl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Apr 13, 2015 at 07:37:20PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the char-misc tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+> 
+> In file included from include/trace/define_trace.h:90:0,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined
+>  #define TRACE_SYSTEM_STRING __app(TRACE_SYSTEM_VAR,__trace_system_name)
+>  ^
+> In file included from include/trace/define_trace.h:83:0,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> drivers/misc/mei/./mei-trace.h:29:0: note: this is the location of the previous definition
+>  #define TRACE_SYSTEM_STRING __stringify(TRACE_SYSTEM)
+>  ^
+> In file included from include/trace/ftrace.h:134:0,
+>                  from include/trace/define_trace.h:90,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> drivers/misc/mei/./mei-trace.h:29:0: warning: "TRACE_SYSTEM_STRING" redefined
+>  #define TRACE_SYSTEM_STRING __stringify(TRACE_SYSTEM)
+>  ^
+> In file included from include/trace/define_trace.h:90:0,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> include/trace/ftrace.h:28:0: note: this is the location of the previous definition
+>  #define TRACE_SYSTEM_STRING __app(TRACE_SYSTEM_VAR,__trace_system_name)
+>  ^
+> In file included from include/trace/define_trace.h:90:0,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined
+>  #define TRACE_SYSTEM_STRING __app(TRACE_SYSTEM_VAR,__trace_system_name)
+>  ^
+> In file included from include/trace/define_trace.h:83:0,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> drivers/misc/mei/./mei-trace.h:29:0: note: this is the location of the previous definition
+>  #define TRACE_SYSTEM_STRING __stringify(TRACE_SYSTEM)
+>  ^
+> In file included from include/trace/ftrace.h:134:0,
+>                  from include/trace/define_trace.h:90,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> drivers/misc/mei/./mei-trace.h:29:0: warning: "TRACE_SYSTEM_STRING" redefined
+>  #define TRACE_SYSTEM_STRING __stringify(TRACE_SYSTEM)
+>  ^
+> In file included from include/trace/define_trace.h:90:0,
+>                  from drivers/misc/mei/mei-trace.h:76,
+>                  from drivers/misc/mei/mei-trace.c:21:
+> include/trace/ftrace.h:28:0: note: this is the location of the previous definition
+>  #define TRACE_SYSTEM_STRING __app(TRACE_SYSTEM_VAR,__trace_system_name)
+>  ^
+> 
+> Introduced by commit a0a927d06d79 ("mei: me: add io register tracing")
+> interacting with commit acd388fd3af3 ("tracing: Give system name a
+> pointer") from the ftrace tree.
+> 
+> TRACE_SYSTEM_STRING should be removed from drivers/misc/mei/mei-trace.h
+> as it is not being used anywhere in the mei-trace code.
 
-Hi Paul,
+That's nice for such system-wide changes to be done at the last possible
+minute in the development cycle :(
 
-After merging the rcu tree, today's linux-next build (powerpc allnoconfig)
-failed like this:
+Anyway, someone from the trace subsystem wish to send me a patch for
+this?
 
-init/main.c: In function 'rest_init':
-init/main.c:387:2: error: implicit declaration of function 'smpboot_thread_=
-init' [-Werror=3Dimplicit-function-declaration]
-  smpboot_thread_init();
-  ^
+thanks,
 
-Caused by commit c55f6e1f6f69 ("cpu: Defer smpboot kthread unparking
-until CPU known to scheduler").  The declaration in include/linux/cpu.h
-is protected by CONFIG_SMP, its use is not.
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/+Y4vA6w/BwMbmwmg_.s/Exl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVK5zZAAoJEMDTa8Ir7ZwVH2gQAICeQiX8ujlHigE+NRPpDkov
-1t/O1NEfF6vzWezDdKhZ9khaOT8mIHUOCwPrS1fZi1EU3sYdAIbVl5LwCYJhvVhX
-rYHVhouj8uQ5NcojBZhPN09GkzfxGHRY8DLXWPA9EOocjCIZTDerU7+Fp0nQbnYD
-f2QC078Zzn1/kX2JLmzMXUu+9suFIqF+A4hhOosXJIC207yRlKGwRPgi07/Ccghi
-QVVXVBmOdlw06J3/HYlzP+AMWHMnlTJ00VV+XUQQFE2IX1MsXT1LtQBfcZErJuBZ
-Zlp3yK7wuvTrDTSjXE+yxhL0FG0vpLwLmm4dVgpShlSOwE7s6xJgEte9S6qaQNqi
-XTGlHflrbuJ/1dzxweBJlqNLhg/7LM6IQoePRvzWbCL/j5tX49DFET22gJqiLx2g
-ZpeBxkchRZVsXOcsdjWZ6PKwhOr8HhMfSBmtgQTYTKJvC/4i/8xmZRzm59Pz6Z31
-xzbqDRe3qJAElg0n8+LMhFnG+lE55298/0zQv013SqiHMvaMdBHB6oNHMXbD8l8p
-/xMp4ACoUZ0ky7BtLAXT8GZfq5Cqq9sMuxK7LdVp5hctTVcV0KifJMnZVm14Pt5v
-9lfIcWwXburPkNU3FHXfdDU+xGhCaXcEgArhpHFV+NiQbOlS1NpIpd5SVybGSRMz
-lhThFPCI8ox7RfAx32BJ
-=l+Ya
------END PGP SIGNATURE-----
-
---Sig_/+Y4vA6w/BwMbmwmg_.s/Exl--
+greg k-h
