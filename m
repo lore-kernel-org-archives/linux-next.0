@@ -1,58 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vhost tree with the pci tree
-Date: Mon, 13 Apr 2015 19:48:51 +1000
-Message-ID: <20150413194851.47df3cb5@canb.auug.org.au>
+Subject: linux-next: manual merge of the kselftest tree with the powerpc-mpe
+ tree
+Date: Mon, 13 Apr 2015 20:16:55 +1000
+Message-ID: <20150413201655.2fa3af76@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hx2oVg1VX=Gy5cBaC+KJSep"; protocol="application/pgp-signature"
+ boundary="Sig_/43V.IWb/mpoZCotqby1IeDY"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:32886 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34080 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753385AbbDMJs4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Apr 2015 05:48:56 -0400
+	id S1753478AbbDMKRC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Apr 2015 06:17:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam bobroff <sam.bobroff@au1.ibm.com>
 
---Sig_/hx2oVg1VX=Gy5cBaC+KJSep
+--Sig_/43V.IWb/mpoZCotqby1IeDY
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi Shuah,
 
-Today's linux-next merge of the vhost tree got a conflict in
-Documentation/PCI/pci.txt between commit 37a9c502c0af ("PCI: Clarify
-policy for vendor IDs in pci.txt") from the pci tree and commit
-a708ec6790bb ("pci.txt: clarify vendor ID policy") from the vhost tree.
+Today's linux-next merge of the kselftest tree got a conflict in
+tools/testing/selftests/powerpc/tm/Makefile between commit 7fe924d9d71c
+("selftests/powerpc: Add transactional syscall test") from the
+powerpc-mpe tree and commit 6faeeea44b84 ("selftests: Add install
+support for the powerpc tests") from the kselftest tree.
 
-I fixed it up (I just used the pci tree version) and can carry the fix
-as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/hx2oVg1VX=Gy5cBaC+KJSep
+diff --cc tools/testing/selftests/powerpc/tm/Makefile
+index 122cf1830de8,34f2ec634b40..000000000000
+--- a/tools/testing/selftests/powerpc/tm/Makefile
++++ b/tools/testing/selftests/powerpc/tm/Makefile
+@@@ -1,18 -1,10 +1,13 @@@
+- PROGS :=3D tm-resched-dscr tm-syscall
+ -TEST_PROGS :=3D tm-resched-dscr
+++TEST_PROGS :=3D tm-resched-dscr tm-syscall
+ =20
+- all: $(PROGS)
++ all: $(TEST_PROGS)
+ =20
+- $(PROGS): ../harness.c
++ $(TEST_PROGS): ../harness.c
+ =20
+ +tm-syscall: tm-syscall-asm.S
+ +tm-syscall: CFLAGS +=3D -mhtm
+ +
+- run_tests: all
+- 	@-for PROG in $(PROGS); do \
+- 		./$$PROG; \
+- 	done;
++ include ../../lib.mk
+ =20
+  clean:
+- 	rm -f $(PROGS) *.o
+-=20
+- .PHONY: all run_tests clean
++ 	rm -f $(TEST_PROGS) *.o
+
+--Sig_/43V.IWb/mpoZCotqby1IeDY
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVK5EHAAoJEMDTa8Ir7ZwV6UQP/1QVynpSCwuy0DDeHN4H4ToR
-UnkoesbFLqC00kpUcW35YsN3eNGQXM/9meFOC1sSzqaxfE4jGb3+xG6os+09fZOT
-Hr/BihPjrbCLwuGeBitcyagAwAfatVZg5MeRQOIWK9sRb789WijpHe0+fzl1T6+/
-NUWNYX3r0/8X8u4x0Z6lanPFtV14vPA5WKXCSjC7Yv8nJGTNRwvulP28gmpw7FV2
-98Dr4XTiSmhljt8eA0xKVwSuVCeNykL8QAiv8/zIysM4P/Ews+/VOEY9rdajdXvV
-pLXuOPn/t+fAJIxPvJ7nuiUkw9MiLD7qBFqR+/3rIxY5VnhGJ4YaqNWzvrKfdzYK
-/0xPcWwMn+CGkWuHSuQu5H1kNWk7aCZNXSkDiCnU/aViilEWNkD22vCXZIwnSFpf
-plJSBVAdap+XYzwTb2OWTlmqxms5oJmvxXPZyIqg8msEks0z2ZNzNlaWKjwcREOd
-ayeNrY+5QoTWSqbacaYMeWyLVRwMT9wfnsYsG8o20DjZ4I4BEa/qyGIu+qMBvQtv
-n4IB8g4sWBm3CZqkHDFwt9+5Ol/1GZdx8iefwyZk7l3SWxHz7vcwiyQuSDgE7x/m
-coR17RUBKWla+oo2klO2OrWFYC5AkchdPsLGLrQyrtiKUzuGfuiAd9l/eBGC8atU
-+PgOKcnGTBwbVfdH0gRf
-=7NMz
+iQIbBAEBCAAGBQJVK5ebAAoJEMDTa8Ir7ZwVQscP902cv/11g+NqmBo/SXLoJLnM
+TYhLuP53z9vkjxkvmkouY86VMVE6ecERGfkUTba/utSe97MdOZL0yun8bM0Dcqld
+/b0figl8Ps8AleFGzXUurFrkONywsgdiN8Z8Atd449I9WyBMPsQ5iZE5dgp77YoA
+ZI7Il4oEitsggUrnKwQgIUC3oAkRBtNURdDWeN+U0j5IBz/KvnN4Z4odQRDmq4H/
+9Mat7penUDTSx9UzJJPe9uyTodwWHlT+jGGD9PM/CDgS/ZHY0PfGzCvuoteq2S5w
+6RHJoWVkZXuJlzQbqsDyd+Tcg+JZllt1+0DSOHbtvFAhr3zOfTARz3jzmYbExAaz
+yCLMj9HQLfyPb1jMLc3mFzGu+Q1DlDkf3+LX0tUiZjjrUUxDml0ZF1VxYKHKqPLa
+IOK5JMF46G3fpB/4o/zmCGajhJ5PNwHO/8SPRPfyDJ9CCJyoPaAHKOGEn/Id+86+
+rGc/NoXCoQdXK1uGUKK9hgEFnIpFnHBarjwDOQbLBx0bOMFXXrb5nhAQKiTfP00m
+dA/VgX24jnR66thXciGqj84XWmd7jRVzYxZVv6pwT46r1leTsvnSeBaHuTU/JiHD
+HVRvlSqZJZDroDtuMj12edCVUUwXKVqpd1c+NLdDTQwyLwsxbFysVOdU8+kK/f/X
+mObkjGjOto/VfGHnwuM=
+=qPaH
 -----END PGP SIGNATURE-----
 
---Sig_/hx2oVg1VX=Gy5cBaC+KJSep--
+--Sig_/43V.IWb/mpoZCotqby1IeDY--
