@@ -1,50 +1,71 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Mon, 13 Apr 2015 13:34:05 +0200
-Message-ID: <20150413113405.GA667@gmail.com>
-References: <20150413203917.1e7ea535@canb.auug.org.au>
- <20150413110620.GD22325@pd.tnic>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Mon, 13 Apr 2015 14:06:40 +0200
+Message-ID: <1444563.l1DQrQGkC9@vostro.rjw.lan>
+References: <20150413142442.2f7107e5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:33254 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754074AbbDMLeL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Apr 2015 07:34:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20150413110620.GD22325@pd.tnic>
+Received: from v094114.home.net.pl ([79.96.170.134]:62745 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750894AbbDMLmK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Apr 2015 07:42:10 -0400
+In-Reply-To: <20150413142442.2f7107e5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <bp@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>
 
-
-* Borislav Petkov <bp@suse.de> wrote:
-
-> On Mon, Apr 13, 2015 at 08:39:17PM +1000, Stephen Rothwell wrote:
-> > Hi Paul,
-> > 
-> > After merging the rcu tree, today's linux-next build (powerpc allnoconfig)
-> > failed like this:
-> > 
-> > init/main.c: In function 'rest_init':
-> > init/main.c:387:2: error: implicit declaration of function 'smpboot_thread_init' [-Werror=implicit-function-declaration]
-> >   smpboot_thread_init();
-> >   ^
-> > 
-> > Caused by commit c55f6e1f6f69 ("cpu: Defer smpboot kthread unparking
-> > until CPU known to scheduler").  The declaration in include/linux/cpu.h
-> > is protected by CONFIG_SMP, its use is not.
-> > 
-> > I have reverted that commit for today.
+On Monday, April 13, 2015 02:24:42 PM Stephen Rothwell wrote:
 > 
-> Thanks for the report Stephen, I know today is the day of b0rked
-> linux-next builds :-(
+> --Sig_/wQd_Ak5TvD_LSZFUNsW5WJr
+> Content-Type: text/plain; charset=US-ASCII
+> Content-Transfer-Encoding: quoted-printable
 > 
-> I think Ingo merged Paul's patch already so here's a fix ontop:
+> Hi Rafael,
+> 
+> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> In file included from arch/x86/include/asm/msr.h:131:0,
+>                  from arch/x86/include/asm/processor.h:20,
+>                  from arch/x86/include/asm/thread_info.h:23,
+>                  from include/linux/thread_info.h:54,
+>                  from arch/x86/include/asm/preempt.h:6,
+>                  from include/linux/preempt.h:18,
+>                  from include/linux/smp.h:55,
+>                  from include/linux/kernel_stat.h:4,
+>                  from drivers/cpufreq/intel_pstate.c:14:
+> drivers/cpufreq/intel_pstate.c: In function 'knl_get_turbo_pstate':
+> drivers/cpufreq/intel_pstate.c:622:9: error: 'MSR_NHM_TURBO_RATIO_LIMIT' un=
+> declared (first use in this function)
+>   rdmsrl(MSR_NHM_TURBO_RATIO_LIMIT, value);
+>          ^
+> arch/x86/include/asm/paravirt.h:153:26: note: in definition of macro 'rdmsr=
+> l'
+>   val =3D paravirt_read_msr(msr, &_err); \
+>                           ^
+> drivers/cpufreq/intel_pstate.c:622:9: note: each undeclared identifier is r=
+> eported only once for each function it appears in
+>   rdmsrl(MSR_NHM_TURBO_RATIO_LIMIT, value);
+>          ^
+> arch/x86/include/asm/paravirt.h:153:26: note: in definition of macro 'rdmsr=
+> l'
+>   val =3D paravirt_read_msr(msr, &_err); \
+>                           ^
+> 
+> Caused by commit 6acfd09a439a ("tools/power turbostat: define and dump
+> MSR_TURBO_RATIO_LIMIT2") interacting with commit b34ef932d79a
+> ("intel_pstate: Knights Landing support").  This should have been
+> resolved in commit 08fb40f3fbeb ("Merge branches 'powercap' and
+> 'pm-tools'").
 
-Yeah, I too triggered that build failure and fixed it locally.
+Right, will fix.
 
-Thanks,
+Thanks and sorry for the breakage.
 
-	Ingo
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
