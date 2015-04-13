@@ -1,76 +1,118 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: linux-next: manual merge of the vfs tree with the xfs tree
-Date: Mon, 13 Apr 2015 12:12:11 +1000
-Message-ID: <20150413021211.GP15810@dastard>
-References: <20150413115737.6ec67270@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 13 Apr 2015 13:05:57 +1000
+Message-ID: <20150413130557.75fc7f0f@canb.auug.org.au>
+References: <20150410201143.4adb51b0@canb.auug.org.au>
+	<2431868.FjHG917i2e@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-Content-Disposition: inline
-In-Reply-To: <20150413115737.6ec67270@canb.auug.org.au>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, xfs@oss.sgi.com, David Howells <dhowells@redhat.com>, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/j3okhGV2l4CU+mO.RpgH4_v"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47414 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752542AbbDMDGD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Apr 2015 23:06:03 -0400
+In-Reply-To: <2431868.FjHG917i2e@avalon>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hyun Kwon <hyun.kwon@xilinx.com>, Radhey Shyam Pandey <radheys@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-On Mon, Apr 13, 2015 at 11:57:37AM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Today's linux-next merge of the vfs tree got a conflict in
-> fs/xfs/xfs_iops.c between commit e8e9ad42c1f1 ("xfs: take i_mmap_lock
-> on extent manipulation operations") from the xfs tree and commit
-> 5dd3dc06371a ("VFS: normal filesystems (and lustre): d_inode()
-> annotations") from the vfs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc fs/xfs/xfs_iops.c
-> index 015d6a366b16,54b95232d946..000000000000
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@@ -953,13 -975,9 +953,13 @@@ xfs_vn_setattr
->   		uint		iolock = XFS_IOLOCK_EXCL;
->   
->   		xfs_ilock(ip, iolock);
-> - 		error = xfs_break_layouts(dentry->d_inode, &iolock);
-> + 		error = xfs_break_layouts(d_inode(dentry), &iolock);
->  -		if (!error)
->  +		if (!error) {
->  +			xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
->  +			iolock |= XFS_MMAPLOCK_EXCL;
->  +
->   			error = xfs_setattr_size(ip, iattr);
->  +		}
->   		xfs_iunlock(ip, iolock);
->   	} else {
->   		error = xfs_setattr_nonsize(ip, iattr, 0);
+--Sig_/j3okhGV2l4CU+mO.RpgH4_v
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fix looks good. FWIW, I'm just about to commit a locking fix
-which adds a parameter to xfs_break_layouts() so you might need to
-rework this again tomorrow...
+Hi Laurent,
 
+On Fri, 10 Apr 2015 15:45:11 +0300 Laurent Pinchart <laurent.pinchart@ideas=
+onboard.com> wrote:
+>
+> On Friday 10 April 2015 20:11:43 Stephen Rothwell wrote:
+> > Hi Mauro,
+> >=20
+> > After merging the v4l-dvb tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >=20
+> > drivers/media/platform/xilinx/xilinx-dma.c:15:35: fatal error:
+> > linux/amba/xilinx_dma.h: No such file or directory #include
+> > <linux/amba/xilinx_dma.h>
+> >                                    ^
+> >=20
+> > Caused by commit df3305156f98 ("[media] v4l: xilinx: Add Xilinx Video
+> > IP core").
+> >=20
+> > I have reverted that commit (and the 2 following it) for today.
+>=20
+> linux/amba/xilinx_dma.h has been moved to linux/dma/xilinx_dma.h by
+>=20
+> commit 937abe88aea3161cd3a563e577fc9cf4522c7aad
+> Author: Kedareswara rao Appana <appana.durga.rao@xilinx.com>
+> Date:   Mon Mar 2 23:24:24 2015 +0530
+>=20
+>     dmaengine: xilinx-dma: move header file to common location
+>    =20
+>     This patch moves the xilinx_dma.h header file
+>     to the include/linux/dma.
+>    =20
+>     Signed-off-by: Kedareswara rao Appana <appanad@xilinx.com>
+>     Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+>=20
+> Could you update the path instead of reverting the commits ?
+
+I applied this:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 13 Apr 2015 12:48:27 +1000
+Subject: [PATCH] v4l: xilinx: fix for include file movement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/media/platform/xilinx/xilinx-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/pla=
+tform/xilinx/xilinx-dma.c
+index 10209c294168..efde88adf624 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -12,7 +12,7 @@
+  * published by the Free Software Foundation.
+  */
+=20
+-#include <linux/amba/xilinx_dma.h>
++#include <linux/dma/xilinx_dma.h>
+ #include <linux/lcm.h>
+ #include <linux/list.h>
+ #include <linux/module.h>
+--=20
+2.1.4
+
+
+Someone needs to tell Linus when the merge happens.
+--=20
 Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--Sig_/j3okhGV2l4CU+mO.RpgH4_v
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVKzKZAAoJEMDTa8Ir7ZwV1zkP/1IppVMyoQR/FUBAz7L2cHwX
+/gDwOZvyE6Vz9jwwoZ/V4bTgIOKm3y9bpl8091WJdFQ+iSj7jliHm7aSKY7aEZsP
+JWgIVz///XjzwcLIUSqeQKfKo0zZvruOUVRpg7MP14/klRpfNCIUwtGgNUZkHpIH
+kLiMA+CcddwcIfAI4r1P16m4NfYb/GNPXzgDp0fmtzVy+5hKxDFvyIJ6cWm9a+yM
+RPqXTaFQNp/btyLgLEct7OEXy3/fosDa56HpXtBPP3l4rLzca2lHyTTsEKNqZ4lK
+Wmi+vmL2yeGIBDE3zL/5ukAYn7ie5KvgDvcoMKRtesbnkz9xMX6xCYkAlrG+F0en
+RDUHumUMdLc+3Q5fTFLW06Ul30UC+NrGntWrfBvMkpLF1rJvPXGkk6xAHbORYpCy
+xuP/DJqHCsl9Ye5R8KgsEnYh7Pt9d60G3fL0f+sfPAfhiIsKepD5BoEfab+LnRO/
+l6CjflQvmM9wW4bs8sfZfLLSxlJB99r2acEnzQlVgaeDIScQp74dlLUlg3zoihsg
+EyTFVhPE0fhfAtTK9mAImbXKO5DdSiRhfORR+VTsMJR+Vh5kiWU3Dd8CAxiSh/pa
+CSUWOCxFfD0GR/hqSPHXk5kO3egCuDHVqVF8+y5J2l9+3YkC77hd8uqdvD5ettQp
+WLXpJoBW3dAimi8fo99m
+=WcQJ
+-----END PGP SIGNATURE-----
+
+--Sig_/j3okhGV2l4CU+mO.RpgH4_v--
