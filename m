@@ -1,111 +1,55 @@
-From: Bob Liu <bob.liu@oracle.com>
-Subject: Re: linux-next: build failure after merge of the xen-tip tree
-Date: Mon, 13 Apr 2015 16:36:58 +0800
-Message-ID: <552B802A.3080709@oracle.com>
-References: <20150413180902.59d8e9bd@canb.auug.org.au>
+From: Wei Yang <weiyang@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the powerpc-mpe tree with the
+ powerpc tree
+Date: Mon, 13 Apr 2015 16:47:37 +0800
+Message-ID: <20150413084737.GA24116@richard>
+References: <20150413132715.2303253f@canb.auug.org.au>
+ <20150413060913.GA2365@richard>
+ <20150413175531.13d4ceb7@canb.auug.org.au>
+Reply-To: Wei Yang <weiyang@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030609070506060203060808"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150413180902.59d8e9bd@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:37546 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752707AbbDMIse (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Apr 2015 04:48:34 -0400
+Received: from /spool/local
+	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <weiyang@linux.vnet.ibm.com>;
+	Mon, 13 Apr 2015 18:48:32 +1000
+Content-Disposition: inline
+In-Reply-To: <20150413175531.13d4ceb7@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Liu <wei.liu2@citrix.com>, David Vrabel <david.vrabel@citrix.com>, Paul Durrant <paul.durrant@citrix.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Wei Yang <weiyang@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Axtens <dja@axtens.net>
 
-This is a multi-part message in MIME format.
---------------030609070506060203060808
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+On Mon, Apr 13, 2015 at 05:55:31PM +1000, Stephen Rothwell wrote:
+>Hi,
+>
+>On Mon, 13 Apr 2015 14:09:13 +0800 Wei Yang <weiyang@linux.vnet.ibm.com> wrote:
+>>
+>> Hi, Stephen,
+>> 
+>> Thanks for your finding :-) Your fix looks good to me.
+>> 
+>> Michael & Ben,
+>> 
+>> Do I need to rebase the patch or what should I do?
+>
+>You should have nothing to do, Michael has fixed it up when he merged
+>Ben's tree into his.
 
-Hi Stephen,
+OK, thanks :-)
 
-On 04/13/2015 04:09 PM, Stephen Rothwell wrote:
-> Hi all,
 >
-> After merging the xen-tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> drivers/char/tpm/xen-tpmfront.c: In function 'setup_ring':
-> drivers/char/tpm/xen-tpmfront.c:203:7: warning: passing argument 2 of 'xenbus_grant_ring' makes pointer from integer without a cast
->    rv = xenbus_grant_ring(dev, virt_to_mfn(priv->shr));
->         ^
-> In file included from drivers/char/tpm/xen-tpmfront.c:17:0:
-> include/xen/xenbus.h:206:5: note: expected 'void *' but argument is of type 'long unsigned int'
->   int xenbus_grant_ring(struct xenbus_device *dev, void *vaddr,
->       ^
-> drivers/char/tpm/xen-tpmfront.c:203:7: error: too few arguments to function 'xenbus_grant_ring'
->    rv = xenbus_grant_ring(dev, virt_to_mfn(priv->shr));
->         ^
-> In file included from drivers/char/tpm/xen-tpmfront.c:17:0:
-> include/xen/xenbus.h:206:5: note: declared here
->   int xenbus_grant_ring(struct xenbus_device *dev, void *vaddr,
->       ^
->
-> Caused by commit 1b1586eeeb8c ("xenbus_client: Extend interface to
-> support multi-page ring").
->
-> I have used the xen-tip tree from next-20150410 for today.
->
+>-- 
+>Cheers,
+>Stephen Rothwell                    sfr@canb.auug.org.au
 
-Sorry for this issue, I missed the xentpm-front.c file in that patch.
-(Original patch from Wei Liu already included the right modification 
-which didn't exist in Paul's.)
 
-Attached patch should fix this build failure.
 
 -- 
-Regards,
--Bob
-
---------------030609070506060203060808
-Content-Type: text/x-patch;
- name="0001-xen-tpmfront-fix-build-error.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="0001-xen-tpmfront-fix-build-error.patch"
-
->From 973eacee793595b9790957186ffd27f192f5dd4f Mon Sep 17 00:00:00 2001
-From: Bob Liu <bob.liu@oracle.com>
-Date: Mon, 13 Apr 2015 16:29:10 +0800
-Subject: [PATCH] xen-tpmfront: fix build failure
-
-Fix build failure caused by commit 1b1586eeeb8c ("xenbus_client: Extend
-interface to support multi-page ring"), xen-tpmfront was missed in that commit.
-
-Signed-off-by: Bob Liu <bob.liu@oracle.com>
----
- drivers/char/tpm/xen-tpmfront.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-index c3b4f5a..3111f27 100644
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -193,6 +193,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
- 	struct xenbus_transaction xbt;
- 	const char *message = NULL;
- 	int rv;
-+	grant_ref_t gref;
- 
- 	priv->shr = (void *)__get_free_page(GFP_KERNEL|__GFP_ZERO);
- 	if (!priv->shr) {
-@@ -200,11 +201,11 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
- 		return -ENOMEM;
- 	}
- 
--	rv = xenbus_grant_ring(dev, virt_to_mfn(priv->shr));
-+	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
- 	if (rv < 0)
- 		return rv;
- 
--	priv->ring_ref = rv;
-+	priv->ring_ref = gref;
- 
- 	rv = xenbus_alloc_evtchn(dev, &priv->evtchn);
- 	if (rv)
--- 
-1.7.10.4
-
-
---------------030609070506060203060808--
+Richard Yang
+Help you, Help me
