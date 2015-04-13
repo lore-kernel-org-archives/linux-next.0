@@ -1,92 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 14 Apr 2015 09:34:54 +1000
-Message-ID: <20150414093454.7a22ea9a@canb.auug.org.au>
-References: <20150330171334.6f377ba7@canb.auug.org.au>
-	<20150330071536.GF24899@n2100.arm.linux.org.uk>
-	<20150330190812.5512205f@canb.auug.org.au>
-	<5519646C.9010802@mentor.com>
-	<20150330150838.GL24899@n2100.arm.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the regulator tree
+Date: Tue, 14 Apr 2015 09:44:03 +1000
+Message-ID: <20150414094403.30126f2d@canb.auug.org.au>
+References: <20150409143309.3a1fac67@canb.auug.org.au>
+	<20150409093556.GP6023@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/U8sGDzLK+0dezvjSt4CFuUo"; protocol="application/pgp-signature"
+ boundary="Sig_/gskaob1+xf5twBEM2Ar2_Ob"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33783 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34687 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750935AbbDMXfM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Apr 2015 19:35:12 -0400
-In-Reply-To: <20150330150838.GL24899@n2100.arm.linux.org.uk>
+	id S1752052AbbDMXoK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Apr 2015 19:44:10 -0400
+In-Reply-To: <20150409093556.GP6023@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Nathan Lynch <Nathan_Lynch@mentor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hai Li <hali@codeaurora.org>, Rob Clark <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
---Sig_/U8sGDzLK+0dezvjSt4CFuUo
+--Sig_/gskaob1+xf5twBEM2Ar2_Ob
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi all,
 
-On Mon, 30 Mar 2015 16:08:38 +0100 Russell King - ARM Linux <linux@arm.linu=
-x.org.uk> wrote:
+On Thu, 9 Apr 2015 10:35:56 +0100 Mark Brown <broonie@kernel.org> wrote:
 >
-> On Mon, Mar 30, 2015 at 09:57:48AM -0500, Nathan Lynch wrote:
-> > On 03/30/2015 03:08 AM, Stephen Rothwell wrote:
-> > > Hi Russell,
-> > >=20
-> > > On Mon, 30 Mar 2015 08:15:37 +0100 Russell King - ARM Linux <linux@ar=
-m.linux.org.uk> wrote:
-> > >>
-> > >> I'll drop the VDSO stuff from the ARM tree; I can't see a way to keep
-> > >> it in my tree and keep my tree buildable without dragging in the tip
-> > >> tree.
-> > >=20
-> > > Does it affect your tree on its own?  If not, then it can be fixed wh=
-en
-> > > merged as I have done, or if you look at the tip tree, all you really
-> > > need to merge is tip timers/core branch (which I am sure the tip guys
-> > > can tell you if it is stable enough) which is about 28 commits ...
-> > >=20
-> > >> The ARM VDSO stuff will just have to wait for 4.2 instead.
-> > >=20
-> > > If that works for you.
-> >=20
-> > FWIW, Stephen's merge fix is correct and I have run my vdso tests
-> > without problems on OMAP5 with next-20150330.
+> On Thu, Apr 09, 2015 at 02:33:09PM +1000, Stephen Rothwell wrote:
 >=20
-> Hopefully, I can pull the tip stuff but if not, I'll try to remember
-> to include Stephen's patch with my pull request, but I can't make any
-> guarantees - Stephen's email will very quickly get buried in my mailbox,
-> and I'll most likely forget about it too... I'm notoriously bad with
-> email...
+> > After merging the regulator tree, today's linux-next build (arm multi_v=
+7_defconfig)
+> > failed like this:
+>=20
+> > drivers/gpu/drm/msm/dsi/dsi_host.c: In function 'dsi_host_regulator_dis=
+able':
+> > drivers/gpu/drm/msm/dsi/dsi_host.c:330:4: error: implicit declaration o=
+f function 'regulator_set_optimum_mode' [-Werror=3Dimplicit-function-declar=
+ation]
+> >     regulator_set_optimum_mode(s[i].consumer,
+> >     ^
+>=20
+> > Caused by commit a689554ba6ed ("drm/msm: Initial add DSI connector
+> > support") from the drm tree interacting with commit ae6e808f1574
+> > ("regulator: Drop temporary regulator_set_optimum_mode wrapper") from
+> > the regulator tree.
+>=20
+> > This happens every time someone renames/changes an API :-(
+>=20
+> It's *really* questionable if anyone should be using that API in the
+> first place, one of the reasons it's being removed is that it's really
+> unclear that anything would be able to successfully use it as-is.  The
+> easist thing might be to drop the new usage for the time being.
 
-This patch is now needed when the arm tree is merged with Linus' tree
-(the tip tree part has been merged).
+This fix up patch is now needed when the drm tree is merged with Linus'
+tree (the regulator part has been merged).
+
+Mark, what did you above response mean?  Should the drm tree be using
+something different?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/U8sGDzLK+0dezvjSt4CFuUo
+--Sig_/gskaob1+xf5twBEM2Ar2_Ob
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVLFKsAAoJEMDTa8Ir7ZwVwNMP/3Gy3+KZ6nfNmuLxmjB+Nk2p
-8q92q0WqE7XNB162OTypqP4DlcL1Bc5GV0iJAor4NttQJYqwsFQCbg7UjAPkAMma
-Dr9mRR/Ms1UQXdqzq2LLvnak5O9Dn0wwydvUL6ddgyNuAYLO1cxRriOE5pvlcozn
-ddKWjqMQR5CJXQgDaroaOvnysPfzIx1ZZo1A1+z24STB7lJJfnzBJ12BPStge9Qj
-X4bZ9BR3KVuCUoqEruW6opSa32vZma5b9HabK0myKS0dLdoDUWsICvlQwJGeiZQT
-DxDLH8tJ2StLaLgiusHBHvlOfwqB7Eu0YfbXwTnfy7K9XtcaZM72nRpXD84oQ9Km
-T4kQ01S6mhz1lVyE9PjwI4y6coT8k++c7yEO7bIbgBdOrgWFAKMyVGEScJAVLNfu
-osbq3zo91s7Zi80cgdAIjjsvSSHxUYUAdsfymgOo2fyP2IRsnqVfY5fe3yu2Kf1v
-JGlCVuQBwcFwJw2U7QlmS+4U0LspkVvU4SLNlcm+cSl/J2w58x2w/ncI6v2TnaZ9
-CpzEEjrq6bk6pIFaF/8TQpUqudea4Tk6G7ZsOX3DKJ9Da3wdx8mqHrLCxr/VIZSc
-7CF1thfs372goCBIrfoRK7jbTai7XDKbKhsx6bZyg1PodsYbmqRv8JFOnyB/Z8sU
-Jn2vlDtdmi6+fRtob9hY
-=b+YO
+iQIcBAEBCAAGBQJVLFTIAAoJEMDTa8Ir7ZwVz+kQAI/5vcsuWyE5qB+NAOZIyWya
+9A8bIYjdvRdCYanQ26b+22FK8lw4PN1OyWcVcFFXG47Tf6HjS5SwkMO0SAWGflfl
+l3m2mx93Dawfc2QJah8KyEpl1/FkID9+1mVtnjwn7pMay7/9yA3Z/sbtvGqXB8G6
+eeAvgrkUdzJpkbmulZNhaFEeQ6D+W/cHK8tV0bZQafY2PgEv+gM0Y5lHcILtzQGj
+SE34n1ISNF5hd2EcUlpBe/nnVll/jniU7TnSpM0sFeqMbUbJcH+o1PKYVrLTiTPW
+0VMG7lRmifs/zIHZjvSUXl1XUb3BAZ29Q0rV/XArBfx/K1BSwYRAyQ6iMSOqthH/
+q534z5Ir5TOxGKutozbEzNpBPK+cDlt9RLx7innmEGEaT+/fp4uMTTGoOkzUNp0Q
+H8if+9kjpO/PPiBihmPyrHkbnDwkKfbtACSkP3XdTcs9oCvSV4yev/tBee77lKPq
+1xFa6DFyFo+Rlyd1iwzoTqmeoWjYOOY5IEm69ibCcolyd889+XFspYoXlJl1KNBY
+rjI/GqnGmuQRu7ivTTPCbYJyx/MSCJxFFy7e0vKon7z6SVeos0D0xuDJV/HoW9hV
+gD1Llpc4sjr3IPJ5UIl4u3aMNFYtMNMfSBV0S4KItLWXnJ9irRom5fr5bDiBV/5J
+voO4HoMWUzOF3urLIl+g
+=PGPz
 -----END PGP SIGNATURE-----
 
---Sig_/U8sGDzLK+0dezvjSt4CFuUo--
+--Sig_/gskaob1+xf5twBEM2Ar2_Ob--
