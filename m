@@ -1,90 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kselftest tree with the powerpc-mpe
- tree
-Date: Mon, 13 Apr 2015 20:16:55 +1000
-Message-ID: <20150413201655.2fa3af76@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Mon, 13 Apr 2015 20:39:17 +1000
+Message-ID: <20150413203917.1e7ea535@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/43V.IWb/mpoZCotqby1IeDY"; protocol="application/pgp-signature"
+ boundary="Sig_/+Y4vA6w/BwMbmwmg_.s/Exl"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34080 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36844 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753478AbbDMKRC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Apr 2015 06:17:02 -0400
+	id S1753961AbbDMKjY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Apr 2015 06:39:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shuah Khan <shuahkh@osg.samsung.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam bobroff <sam.bobroff@au1.ibm.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>
 
---Sig_/43V.IWb/mpoZCotqby1IeDY
+--Sig_/+Y4vA6w/BwMbmwmg_.s/Exl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shuah,
+Hi Paul,
 
-Today's linux-next merge of the kselftest tree got a conflict in
-tools/testing/selftests/powerpc/tm/Makefile between commit 7fe924d9d71c
-("selftests/powerpc: Add transactional syscall test") from the
-powerpc-mpe tree and commit 6faeeea44b84 ("selftests: Add install
-support for the powerpc tests") from the kselftest tree.
+After merging the rcu tree, today's linux-next build (powerpc allnoconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+init/main.c: In function 'rest_init':
+init/main.c:387:2: error: implicit declaration of function 'smpboot_thread_=
+init' [-Werror=3Dimplicit-function-declaration]
+  smpboot_thread_init();
+  ^
 
+Caused by commit c55f6e1f6f69 ("cpu: Defer smpboot kthread unparking
+until CPU known to scheduler").  The declaration in include/linux/cpu.h
+is protected by CONFIG_SMP, its use is not.
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc tools/testing/selftests/powerpc/tm/Makefile
-index 122cf1830de8,34f2ec634b40..000000000000
---- a/tools/testing/selftests/powerpc/tm/Makefile
-+++ b/tools/testing/selftests/powerpc/tm/Makefile
-@@@ -1,18 -1,10 +1,13 @@@
-- PROGS :=3D tm-resched-dscr tm-syscall
- -TEST_PROGS :=3D tm-resched-dscr
-++TEST_PROGS :=3D tm-resched-dscr tm-syscall
- =20
-- all: $(PROGS)
-+ all: $(TEST_PROGS)
- =20
-- $(PROGS): ../harness.c
-+ $(TEST_PROGS): ../harness.c
- =20
- +tm-syscall: tm-syscall-asm.S
- +tm-syscall: CFLAGS +=3D -mhtm
- +
-- run_tests: all
-- 	@-for PROG in $(PROGS); do \
-- 		./$$PROG; \
-- 	done;
-+ include ../../lib.mk
- =20
-  clean:
-- 	rm -f $(PROGS) *.o
--=20
-- .PHONY: all run_tests clean
-+ 	rm -f $(TEST_PROGS) *.o
-
---Sig_/43V.IWb/mpoZCotqby1IeDY
+--Sig_/+Y4vA6w/BwMbmwmg_.s/Exl
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIbBAEBCAAGBQJVK5ebAAoJEMDTa8Ir7ZwVQscP902cv/11g+NqmBo/SXLoJLnM
-TYhLuP53z9vkjxkvmkouY86VMVE6ecERGfkUTba/utSe97MdOZL0yun8bM0Dcqld
-/b0figl8Ps8AleFGzXUurFrkONywsgdiN8Z8Atd449I9WyBMPsQ5iZE5dgp77YoA
-ZI7Il4oEitsggUrnKwQgIUC3oAkRBtNURdDWeN+U0j5IBz/KvnN4Z4odQRDmq4H/
-9Mat7penUDTSx9UzJJPe9uyTodwWHlT+jGGD9PM/CDgS/ZHY0PfGzCvuoteq2S5w
-6RHJoWVkZXuJlzQbqsDyd+Tcg+JZllt1+0DSOHbtvFAhr3zOfTARz3jzmYbExAaz
-yCLMj9HQLfyPb1jMLc3mFzGu+Q1DlDkf3+LX0tUiZjjrUUxDml0ZF1VxYKHKqPLa
-IOK5JMF46G3fpB/4o/zmCGajhJ5PNwHO/8SPRPfyDJ9CCJyoPaAHKOGEn/Id+86+
-rGc/NoXCoQdXK1uGUKK9hgEFnIpFnHBarjwDOQbLBx0bOMFXXrb5nhAQKiTfP00m
-dA/VgX24jnR66thXciGqj84XWmd7jRVzYxZVv6pwT46r1leTsvnSeBaHuTU/JiHD
-HVRvlSqZJZDroDtuMj12edCVUUwXKVqpd1c+NLdDTQwyLwsxbFysVOdU8+kK/f/X
-mObkjGjOto/VfGHnwuM=
-=qPaH
+iQIcBAEBCAAGBQJVK5zZAAoJEMDTa8Ir7ZwVH2gQAICeQiX8ujlHigE+NRPpDkov
+1t/O1NEfF6vzWezDdKhZ9khaOT8mIHUOCwPrS1fZi1EU3sYdAIbVl5LwCYJhvVhX
+rYHVhouj8uQ5NcojBZhPN09GkzfxGHRY8DLXWPA9EOocjCIZTDerU7+Fp0nQbnYD
+f2QC078Zzn1/kX2JLmzMXUu+9suFIqF+A4hhOosXJIC207yRlKGwRPgi07/Ccghi
+QVVXVBmOdlw06J3/HYlzP+AMWHMnlTJ00VV+XUQQFE2IX1MsXT1LtQBfcZErJuBZ
+Zlp3yK7wuvTrDTSjXE+yxhL0FG0vpLwLmm4dVgpShlSOwE7s6xJgEte9S6qaQNqi
+XTGlHflrbuJ/1dzxweBJlqNLhg/7LM6IQoePRvzWbCL/j5tX49DFET22gJqiLx2g
+ZpeBxkchRZVsXOcsdjWZ6PKwhOr8HhMfSBmtgQTYTKJvC/4i/8xmZRzm59Pz6Z31
+xzbqDRe3qJAElg0n8+LMhFnG+lE55298/0zQv013SqiHMvaMdBHB6oNHMXbD8l8p
+/xMp4ACoUZ0ky7BtLAXT8GZfq5Cqq9sMuxK7LdVp5hctTVcV0KifJMnZVm14Pt5v
+9lfIcWwXburPkNU3FHXfdDU+xGhCaXcEgArhpHFV+NiQbOlS1NpIpd5SVybGSRMz
+lhThFPCI8ox7RfAx32BJ
+=l+Ya
 -----END PGP SIGNATURE-----
 
---Sig_/43V.IWb/mpoZCotqby1IeDY--
+--Sig_/+Y4vA6w/BwMbmwmg_.s/Exl--
