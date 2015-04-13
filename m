@@ -1,46 +1,56 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: linux-next: build failure after merge of the irqchip tree
-Date: Mon, 13 Apr 2015 11:10:21 +0200
-Message-ID: <cc1a0f51a126557cd55f0f03d96bec25@agner.ch>
-References: <20150413170539.2f20e0a8@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: manual merge of the irqchip tree with Linus' tree
+Date: Mon, 13 Apr 2015 11:18:52 +0200
+Message-ID: <CAMuHMdVgN3f4kQYVcK7VAJ4DbH23vW_Pkc+DeKk5bejFET9UCA@mail.gmail.com>
+References: <20150316144727.488070cb@canb.auug.org.au>
+	<5506989D.9050703@arm.com>
+	<20150318175208.GC15137@io.lakedaemon.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:38683 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753429AbbDMJLT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Apr 2015 05:11:19 -0400
-In-Reply-To: <20150413170539.2f20e0a8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150318175208.GC15137@io.lakedaemon.net>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jason Cooper <jason@lakedaemon.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jason,
+On Wed, Mar 18, 2015 at 6:52 PM, Jason Cooper <jason@lakedaemon.net> wrote:
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -615,17 +724,19 @@ static struct syscore_ops exynos_pm_syscore_ops;
+>  void __init exynos_pm_init(void)
+>  {
+>         const struct of_device_id *match;
+> +       struct device_node *np;
+>         u32 tmp;
+>
+> -       of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
+> -       if (!match) {
+> +       np = of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
+> +       if (!np) {
+>                 pr_err("Failed to find PMU node\n");
+>                 return;
+>         }
+> -       pm_data = (struct exynos_pm_data *) match->data;
+>
+> -       /* Platform-specific GIC callback */
+> -       gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+> +       if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL)))
+> +               pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
+> +
+> +       pm_data = (struct exynos_pm_data *) match->data;
 
-On 2015-04-13 09:05, Stephen Rothwell wrote:
-> Hi Jason,
-> 
-> After merging the irqchip tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> kernel/irq/generic-chip.c: In function 'irq_map_generic_chip':
-> kernel/irq/generic-chip.c:408:2: error: implicit declaration of
-> function 'irq_domain_set_info' [-Werror=implicit-function-declaration]
->   irq_domain_set_info(d, virq, hw_irq, chip, gc, ct->handler, NULL, NULL);
->   ^
+Upon first look, the cast above should be "const".
+Upon second look, the cast is not needed at all (assigning "const void *"
+to "const struct exynos_pm_data *").
 
-Hm, sorry about that, I did not notice that this function is only
-available with domain hierarchy. I guess making domain hierarchy a
-dependency of genirq is a bit harsh...
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --
-Stefan
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> 
-> Caused by commit 3f6b2c298240 ("genirq: Generic chip: Support hierarchy
-> domain").  The only declaration of irq_domain_set_info() depends on
-> CONFIG_IRQ_DOMAIN_HIERARCHY.
-> 
-> I have used the irqchip tree from next-20150410 fot today.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
