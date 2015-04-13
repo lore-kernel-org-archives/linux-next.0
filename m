@@ -1,32 +1,27 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the vfs tree with the ext4 tree
-Date: Mon, 13 Apr 2015 11:43:55 +1000
-Message-ID: <20150413114355.72f80ab8@canb.auug.org.au>
+Date: Mon, 13 Apr 2015 11:48:14 +1000
+Message-ID: <20150413114814.3b74e8fb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/j3Eo2paDsELfOnBA1FGP3y5"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41390 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752688AbbDMBoC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 12 Apr 2015 21:44:02 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Michael Halcrow <mhalcrow@google.com>
+ boundary="Sig_/2DXa_EkSgLzEOMTCXxNLsN="; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/j3Eo2paDsELfOnBA1FGP3y5
+--Sig_/2DXa_EkSgLzEOMTCXxNLsN=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Al,
 
 Today's linux-next merge of the vfs tree got a conflict in
-fs/ext4/namei.c between commits e12fb97222fc ("ext4: make fsync to sync
-parent dir in no-journal for real this time") and 5c34f02d301e ("ext4
-crypto: partial update to namei.c for fname crypto") from the ext4 tree
-and commit 5dd3dc06371a ("VFS: normal filesystems (and lustre):
-d_inode() annotations") from the vfs tree.
+fs/ext4/symlink.c between commit 8ee224253787 ("ext4 crypto: Add
+symlink encryption") from the ext4 tree and commit 5dd3dc06371a ("VFS:
+normal filesystems (and lustre): d_inode() annotations") from the vfs
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,58 +30,142 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/ext4/namei.c
-index c5197176dba4,e086eebe335e..000000000000
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@@ -2058,14 -1732,9 +2058,14 @@@ static int add_dirent_to_buf(handle_t *
-  static int make_indexed_dir(handle_t *handle, struct dentry *dentry,
-  			    struct inode *inode, struct buffer_head *bh)
-  {
-- 	struct inode	*dir =3D dentry->d_parent->d_inode;
-+ 	struct inode	*dir =3D d_inode(dentry->d_parent);
+diff --cc fs/ext4/symlink.c
+index 839f71e941a9,57f50091b8d1..000000000000
+--- a/fs/ext4/symlink.c
++++ b/fs/ext4/symlink.c
+@@@ -21,107 -21,11 +21,107 @@@
+  #include <linux/namei.h>
+  #include "ext4.h"
+  #include "xattr.h"
+ +#include "ext4_crypto.h"
+ =20
  +#ifdef CONFIG_EXT4_FS_ENCRYPTION
- +	struct ext4_fname_crypto_ctx *ctx =3D NULL;
- +	int res;
- +#else
-  	const char	*name =3D dentry->d_name.name;
-  	int		namelen =3D dentry->d_name.len;
- +#endif
-  	struct buffer_head *bh2;
-  	struct dx_root	*root;
-  	struct dx_frame	frames[2], *frame;
-@@@ -2212,8 -1864,8 +2212,8 @@@ out_frames
-  static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
-  			  struct inode *inode)
+  static void *ext4_follow_link(struct dentry *dentry, struct nameidata *nd)
   {
-- 	struct inode *dir =3D dentry->d_parent->d_inode;
-+ 	struct inode *dir =3D d_inode(dentry->d_parent);
- -	struct buffer_head *bh;
- +	struct buffer_head *bh =3D NULL;
-  	struct ext4_dir_entry_2 *de;
-  	struct ext4_dir_entry_tail *t;
-  	struct super_block *sb;
+ +	struct page *cpage =3D NULL;
+ +	char *caddr, *paddr;
+ +	struct ext4_str cstr, pstr;
+- 	struct inode *inode =3D dentry->d_inode;
+++	struct inode *inode =3D d_inode(dentry);
+ +	struct ext4_fname_crypto_ctx *ctx =3D NULL;
+ +	struct ext4_encrypted_symlink_data *sd;
+ +	loff_t size =3D min(inode->i_size, (loff_t) PAGE_SIZE-1);
+ +	int res;
+ +	u32 plen, plen2;
+ +
+ +	ctx =3D ext4_get_fname_crypto_ctx(inode, inode->i_sb->s_blocksize);
+ +	if (IS_ERR(ctx))
+ +		return ctx;
+ +
+ +	cpage =3D read_mapping_page(inode->i_mapping, 0, NULL);
+ +	if (IS_ERR(cpage)) {
+ +		ext4_put_fname_crypto_ctx(&ctx);
+ +		return cpage;
+ +	}
+ +	caddr =3D kmap(cpage);
+ +	caddr[size] =3D 0;
+ +
+ +	if (!ctx) {
+ +		/* Symlink is unencrypted */
+ +		plen =3D strnlen((char *)caddr, inode->i_sb->s_blocksize);
+ +		plen2 =3D (plen < inode->i_sb->s_blocksize) ? plen + 1 : plen;
+ +		paddr =3D kmalloc(plen2, GFP_NOFS);
+ +		if (!paddr) {
+ +			ext4_put_fname_crypto_ctx(&ctx);
+ +			kunmap(cpage);
+ +			page_cache_release(cpage);
+ +			return ERR_PTR(-ENOMEM);
+ +		}
+ +		memcpy(paddr, caddr, plen);
+ +		if (plen < inode->i_sb->s_blocksize)
+ +			paddr[plen] =3D '\0';
+ +	} else {
+ +		/* Symlink is encrypted */
+ +		sd =3D (struct ext4_encrypted_symlink_data *)caddr;
+ +		cstr.name =3D sd->encrypted_path;
+ +		cstr.len  =3D le32_to_cpu(sd->len);
+ +		if ((cstr.len + sizeof(struct ext4_encrypted_symlink_data) - 1)
+ +			> inode->i_sb->s_blocksize) {
+ +			/* Symlink data on the disk is corrupted */
+ +			kunmap(cpage);
+ +			page_cache_release(cpage);
+ +			return ERR_PTR(-EIO);
+ +		}
+ +		plen =3D (cstr.len < EXT4_FNAME_CRYPTO_DIGEST_SIZE*2)
+ +			? EXT4_FNAME_CRYPTO_DIGEST_SIZE*2
+ +			: cstr.len;
+ +		paddr =3D kmalloc(plen + 1, GFP_NOFS);
+ +		if (!paddr) {
+ +			ext4_put_fname_crypto_ctx(&ctx);
+ +			kunmap(cpage);
+ +			page_cache_release(cpage);
+ +			return ERR_PTR(-ENOMEM);
+ +		}
+ +		pstr.name =3D paddr;
+ +		res =3D _ext4_fname_disk_to_usr(ctx, &cstr, &pstr);
+ +		if (res < 0) {
+ +			ext4_put_fname_crypto_ctx(&ctx);
+ +			kunmap(cpage);
+ +			page_cache_release(cpage);
+ +			kfree(paddr);
+ +			return ERR_PTR(res);
+ +		}
+ +		/* Null-terminate the name */
+ +		if (res <=3D plen)
+ +			paddr[res] =3D '\0';
+ +	}
+ +	nd_set_link(nd, paddr);
+ +	ext4_put_fname_crypto_ctx(&ctx);
+ +	return cpage;
+ +}
+ +
+ +static void ext4_put_link(struct dentry *dentry, struct nameidata *nd,
+ +			  void *cookie)
+ +{
+ +	struct page *page =3D cookie;
+ +	char *buf =3D nd_get_link(nd);
+ +
+ +	if (page) {
+ +		kunmap(page);
+ +		page_cache_release(page);
+ +	}
+ +	if (buf) {
+ +		nd_set_link(nd, NULL);
+ +		kfree(buf);
+ +	}
+ +}
+ +#endif
+ +
+ +static void *ext4_follow_fast_link(struct dentry *dentry, struct nameidat=
+a *nd)
+ +{
+- 	struct ext4_inode_info *ei =3D EXT4_I(dentry->d_inode);
++ 	struct ext4_inode_info *ei =3D EXT4_I(d_inode(dentry));
+  	nd_set_link(nd, (char *) ei->i_data);
+  	return NULL;
+  }
 
---Sig_/j3Eo2paDsELfOnBA1FGP3y5
+--Sig_/2DXa_EkSgLzEOMTCXxNLsN=
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVKx9gAAoJEMDTa8Ir7ZwV2fIQAJChIP0OvLnjKgzVQJallQJK
-2Fsof3KaZYRutIr82H0/eEPSIhUOny7diHcn/u7fJXN3D5ADwN3sQleLIbvsNGjH
-r+jCmt4PdQ7ylN1QdDqsdlvFpSYgW3m7Lac0N8b1WlqVI8KvsL4hZ3ikvPbc1OxK
-v3I54wuZIUwhKS1cKR/ERaifuGFCjtC/K3IS4lMEjmf+T2VUTHXFErP+kzlguXlA
-n18wAmJa7EtmYmAikPsguqIUVabQ/giKxU3/m4XJQnf0/ZFEFFqddlB5BxN66gC2
-1LFRAtv3WpTLy3q8oE84bP99qT5QCdMEBgPGElAHTt31FYe+Uki2QaoYbDa5dzzj
-ewtmWHuyjgWIlVLnhJ0BKYKyZYxOZyEzX2bvPIYY2hcogEpdCU7OjpLDECfa336Q
-xIrjMlTIehMVhd+z1rNeh+8caWJPXHFfcAPoTfHTYrdBetRkdpuhArUpinV4RPLT
-3xlV2LmcPb3YLnB+pxeaAFpg0Jh7lyzs0mHdmS5wIQSjDvacd0qcGPYGutdYWWGg
-c4HfvVle/msYYkEUHIWw/tfT1ct62Z+9fz06UT8Tz9keMjMelCogaxRk6bVin2cc
-S5R9odquGSGjQAy7vFAcptEOk5XGQA7DH89ITMCXhmN5B4KytQ3rF/ozAiSdoCbk
-5B+MgBTot9/mtbBxN//3
-=SGs2
+iQIcBAEBCAAGBQJVKyBiAAoJEMDTa8Ir7ZwVoxgP/A8V/FNGTu8DzkWnonkq3Zq+
+s+KFLYhUplJrwfotQ4C0cDgOfrs9ZfLW276VLFmwO0MkAx+mSYZmmdYjiAi78U4i
+SWuK6juDttn6f2cIvJ84J9ni/hFVRjmBSC7Jk6FmRMZ5t7YEjnh5PZfTzaZ1xRG4
+HqOs7li1TKv5NgCPfo+LhPmVwzsl7+WwEwfh0Gp2Dtju8cOEn+JFQ5qnkD6Dw3DN
+UItIDfLIPn6uAR7YppPkJ3+fVMzZTNzkpp1iwM81k3y0dkYnU65XWs7OVCFP17Cn
+XU7C15d8X6kBwP7CIuP24W8ucVKCKK0Hi2mKWxtAOn9Cby86mY24lK6RKVi/uu5Z
+eEDPK5n3TUtzsKdnY2Jjr3s4XSUuxf/vxDyORIk+H+vUChHnmAfSFsyvfkeRQ5J+
+YG6emqAQ6GiuY9+hbe90hIRRUk76u8/iLbCaNy6BnkL/DwfwCgbIwnrfYRzVF4gF
+xASHLzX3rtw94qVuAvCcuKHV5nSlphIXONLgqkkyjEKwtdk02E55hG4lLmfY2EUL
+CCa4Y81IhhV5O2UqRI1lOsyGxsRQrrZXFDF+EEsxn2Ch5837/Dnuiq/X2KbJAgjv
+lFhpOF0CBpn3FNeMcXQmyuis8pRAJFZLVqnJBHJqNucqFKy3uAO5GX0DVbmSgA/n
+alld1cneKEiKdSRdZlE/
+=W4V2
 -----END PGP SIGNATURE-----
 
---Sig_/j3Eo2paDsELfOnBA1FGP3y5--
+--Sig_/2DXa_EkSgLzEOMTCXxNLsN=--
