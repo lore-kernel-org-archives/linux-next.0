@@ -1,34 +1,49 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with the ext4 tree
-Date: Tue, 14 Apr 2015 22:14:56 +0100
-Message-ID: <20150414211456.GH889@ZenIV.linux.org.uk>
-References: <20150414113025.06905c2a@canb.auug.org.au>
- <20150414014855.GU889@ZenIV.linux.org.uk>
- <20150414170000.GB29810@thunk.org>
- <20150414171743.GC889@ZenIV.linux.org.uk>
- <20150414210215.GD29810@thunk.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no trees Thursday and Friday
+Date: Wed, 15 Apr 2015 09:41:37 +1000
+Message-ID: <20150415094137.4d773ed6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:60823 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754971AbbDNVPB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2015 17:15:01 -0400
-Content-Disposition: inline
-In-Reply-To: <20150414210215.GD29810@thunk.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4Ww=nvAtSGHiV/Oqn11judy"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 14, 2015 at 05:02:15PM -0400, Theodore Ts'o wrote:
-> On Tue, Apr 14, 2015 at 06:17:43PM +0100, Al Viro wrote:
-> > Except that you do not handle the slow unencrypted case - you end up with
-> > kfree() on the freshly kunmaped address.
-> 
-> Ah, right, we're actually kmalloc'ing the space that case as well ---
-> so hanging on the cpage is pointless; which was the point you were
-> making.   Sorry, I was being slow.
-> 
-> So what we have works, but it's not optimal.  Will fix.
+--Sig_/4Ww=nvAtSGHiV/Oqn11judy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-BTW, take a look at kfree_put_link(); no need to reinvent that wheel...
+Hi all,
+
+Just to let you all know that I will not be releasing linux-next trees
+on Thursday or Friday (nor probably over the weekend as usual).  Sorry
+about that.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/4Ww=nvAtSGHiV/Oqn11judy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVLaW1AAoJEMDTa8Ir7ZwV/8sP+wUHvLjDgzEp/u/1ABvAyKH/
+/RDNF05r7FPaL13wBSGJeHNn1jVoeIVodF8MkjglNApSMQEbFcOlNHIorSMsATW+
+VlyupaU+252FZPHw6USRBZ80yCEQ6L6+mXhVbt+TmfIdZmccSoQG8Xs5PTgIzSo6
+zJ8bgMOGH6iBOr7cJ6pWuoVbAjiGET1KejPs3q46yINkfsbFIOzja5mzCyn8Pb8x
+GFueHvkr5kWjhrr+twuMMwvDF+5wJEuXjTWGIF/C4fGBCjOGothybSZu6jlwR+bH
+GIXJd9aP2W1f/mvpBeJWZEx+YceBUtX4buxvc9AP3A86QCfEhlC2g8vScw4mtZIc
+wVqPTA0uPU9wI4nC2Z7mK5F9Qry0t9RfN/DDuMg0dsZnMXWjbfqweDuMwYMYjHrl
+aQAECgZ51U3iezxXnDRBrTkLwx0YF834I6V9QvqBJvP8o20W1944P+4APinVZ4LC
+31VuID+XR6RCGL0XA18RLOoRLEiPg4beTOGyuUhtt+2/qe3Yr6E3ZkbBeK6kGF6b
+6Q9J8YpGuzcXce/bOgnX7uBbEZl9owagEq7p/2uWekm9yt0abbyleCpS9MvUrgDu
+4/l//tZI6nDfUoRM3BN9GLZ9JC6/Ox6M0wqSfcN6LHWeynFyTfcPWuREu4IF0P59
+dGRp5HsOGlhcWTtoiLeG
+=KRxT
+-----END PGP SIGNATURE-----
+
+--Sig_/4Ww=nvAtSGHiV/Oqn11judy--
