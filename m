@@ -1,104 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the v4l-dvb tree
-Date: Wed, 15 Apr 2015 13:49:08 +1000
-Message-ID: <20150415134908.751fd80f@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the xen-tip tree
+Date: Wed, 15 Apr 2015 15:00:20 +1000
+Message-ID: <20150415150020.37c81478@canb.auug.org.au>
+References: <20150413180902.59d8e9bd@canb.auug.org.au>
+	<552B802A.3080709@oracle.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8_9NcHO/zM+b/ov5TOlmfqW"; protocol="application/pgp-signature"
+ boundary="Sig_/O_Zumdat8dQbE_Q/VdvFmZn"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37322 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48950 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932375AbbDODtQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2015 23:49:16 -0400
+	id S1751424AbbDOFAa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Apr 2015 01:00:30 -0400
+In-Reply-To: <552B802A.3080709@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillion <boris.brezillon@free-electrons.com>, Philipp Zabel <p.zabel@pengutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, Hyun Kwon <hyun.kwon@xilinx.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: Bob Liu <bob.liu@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Liu <wei.liu2@citrix.com>, David Vrabel <david.vrabel@citrix.com>, Paul Durrant <paul.durrant@citrix.com>
 
---Sig_/8_9NcHO/zM+b/ov5TOlmfqW
+--Sig_/O_Zumdat8dQbE_Q/VdvFmZn
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in
-include/uapi/linux/media-bus-format.h between commits 7b0fd4568bee
-("[media] v4l: Add RBG and RGB 8:8:8 media bus formats on 24 and 32 bit
-busses"), e8b2d7a565ae ("[media] v4l: Sort YUV formats of
-v4l2_mbus_pixelcode") and 2dca0551e4e2 ("[media] v4l: Add VUY8 24 bits
-bus format") from the v4l-dvb tree and commits 4b3a81a917a5 ("Add
-RGB444_1X12 and RGB565_1X16 media bus formats"), b295c22978b8 ("Add
-LVDS RGB media bus formats"), 08c38458be7e ("Add BGR888_1X24 and
-GBR888_1X24 media bus formats") and 203508ef52e3 ("Add
-RGB666_1X24_CPADHI media bus format") from the drm tree.
+On Mon, 13 Apr 2015 16:36:58 +0800 Bob Liu <bob.liu@oracle.com> wrote:
+>
+> On 04/13/2015 04:09 PM, Stephen Rothwell wrote:
+> >
+> > After merging the xen-tip tree, today's linux-next build (x86_64 allmod=
+config)
+> > failed like this:
+> >
+> > drivers/char/tpm/xen-tpmfront.c: In function 'setup_ring':
+> > drivers/char/tpm/xen-tpmfront.c:203:7: warning: passing argument 2 of '=
+xenbus_grant_ring' makes pointer from integer without a cast
+> >    rv =3D xenbus_grant_ring(dev, virt_to_mfn(priv->shr));
+> >         ^
+> > In file included from drivers/char/tpm/xen-tpmfront.c:17:0:
+> > include/xen/xenbus.h:206:5: note: expected 'void *' but argument is of =
+type 'long unsigned int'
+> >   int xenbus_grant_ring(struct xenbus_device *dev, void *vaddr,
+> >       ^
+> > drivers/char/tpm/xen-tpmfront.c:203:7: error: too few arguments to func=
+tion 'xenbus_grant_ring'
+> >    rv =3D xenbus_grant_ring(dev, virt_to_mfn(priv->shr));
+> >         ^
+> > In file included from drivers/char/tpm/xen-tpmfront.c:17:0:
+> > include/xen/xenbus.h:206:5: note: declared here
+> >   int xenbus_grant_ring(struct xenbus_device *dev, void *vaddr,
+> >       ^
+> >
+> > Caused by commit 1b1586eeeb8c ("xenbus_client: Extend interface to
+> > support multi-page ring").
+> >
+> > I have used the xen-tip tree from next-20150410 for today.
+> >
+>=20
+> Sorry for this issue, I missed the xentpm-front.c file in that patch.
+> (Original patch from Wei Liu already included the right modification=20
+> which didn't exist in Paul's.)
+>=20
+> Attached patch should fix this build failure.
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+I am still getting this failure :-(
 
-(what a mess :-()
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/uapi/linux/media-bus-format.h
-index d391893064a0,83ea46f4be51..000000000000
---- a/include/uapi/linux/media-bus-format.h
-+++ b/include/uapi/linux/media-bus-format.h
-@@@ -43,12 -45,16 +45,18 @@@
-  #define MEDIA_BUS_FMT_RGB565_2X8_BE		0x1007
-  #define MEDIA_BUS_FMT_RGB565_2X8_LE		0x1008
-  #define MEDIA_BUS_FMT_RGB666_1X18		0x1009
- +#define MEDIA_BUS_FMT_RBG888_1X24		0x100e
-+ #define MEDIA_BUS_FMT_RGB666_1X24_CPADHI	0x1015
-+ #define MEDIA_BUS_FMT_RGB666_1X7X3_SPWG		0x1010
-+ #define MEDIA_BUS_FMT_BGR888_1X24		0x1013
-+ #define MEDIA_BUS_FMT_GBR888_1X24		0x1014
-  #define MEDIA_BUS_FMT_RGB888_1X24		0x100a
-  #define MEDIA_BUS_FMT_RGB888_2X12_BE		0x100b
-  #define MEDIA_BUS_FMT_RGB888_2X12_LE		0x100c
-+ #define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG		0x1011
-+ #define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA	0x1012
-  #define MEDIA_BUS_FMT_ARGB8888_1X32		0x100d
- +#define MEDIA_BUS_FMT_RGB888_1X32_PADHI		0x100f
- =20
-  /* YUV (including grey) - next is	0x2025 */
-  #define MEDIA_BUS_FMT_Y8_1X8			0x2001
-@@@ -80,7 -82,13 +88,8 @@@
-  #define MEDIA_BUS_FMT_VYUY10_1X20		0x201b
-  #define MEDIA_BUS_FMT_YUYV10_1X20		0x200d
-  #define MEDIA_BUS_FMT_YVYU10_1X20		0x200e
-+ #define MEDIA_BUS_FMT_YUV8_1X24			0x2024
- -#define MEDIA_BUS_FMT_YUV10_1X30		0x2016
- -#define MEDIA_BUS_FMT_AYUV8_1X32		0x2017
- -#define MEDIA_BUS_FMT_UYVY12_2X12		0x201c
- -#define MEDIA_BUS_FMT_VYUY12_2X12		0x201d
- -#define MEDIA_BUS_FMT_YUYV12_2X12		0x201e
- -#define MEDIA_BUS_FMT_YVYU12_2X12		0x201f
- +#define MEDIA_BUS_FMT_VUY8_1X24			0x2024
-  #define MEDIA_BUS_FMT_UYVY12_1X24		0x2020
-  #define MEDIA_BUS_FMT_VYUY12_1X24		0x2021
-  #define MEDIA_BUS_FMT_YUYV12_1X24		0x2022
-
---Sig_/8_9NcHO/zM+b/ov5TOlmfqW
+--Sig_/O_Zumdat8dQbE_Q/VdvFmZn
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVLd+6AAoJEMDTa8Ir7ZwV1X8P/RUafeuX84WTufiJjG6EOV1g
-YJMEYbN6Yq+3lOduNt/5tWLJLBoxPVJvfIxByFywMPQTHxY5ivDTEYEZQ+W2SM9B
-8AQCoditE75EivCyU6sbi/wVEh1A3HvC2C+ki7ej1ZIR08J4+yq7BvHELmbeI9n8
-QXRhW3GrKpjl+KeyrUAOaI7pkPYv9eMqIwBy732TVtGwBjkVgX9looThG4Tl46KX
-R5Fqd7lxfj4u7Kdih1CqB+38dZ9ntIgKgxZgfbOlWLILJDtp53Av61aeST7dz68N
-G27f5lWF6FtukeRVGXTOq3XxFgjQ3ufICcJ1M8lq0soTxnRrPF9mIoOZjajTArcp
-aRJI6lF6HV/AJeOnc00yM67DV+a05LrGIexQm+uDTuVn+WffLRVKktEX70KLGtlv
-s4kVLQckQLxK8LTHH5NWtCTEUneHe9bem5qv4dehfKVcOmiH9Xd5b/dVu5jyNoLj
-z0VKTdJT/bGIt18R0tuI4XZLW10A9Rb/+Kc0fEkKv3+EXIVAYZIF9KtQKFhPxQ9a
-Pzmj6TWU+ApGMn/VtDgi5E13S02IAe1KXP3VTeuGQqo9xp0hjprF950bNKY6ZUh3
-FWpNeC+b3fS46TZi288rxMHYisqtLEDXQnf8lXuI9cpc7bLWyzC3jbqVNhL/0PmP
-r9KKmp1MuXm9ZGCCABbk
-=GY3H
+iQIcBAEBCAAGBQJVLfBpAAoJEMDTa8Ir7ZwVueQP/j3HS+Y5frvTr1JeYjppbKZE
+31bM8bNSsNDSPJ4JiC5Kr+ZCJwrzAt5PrO+2oRNskegp3qVCrtrt+cR0pt7R8wuQ
+KC3Bzu0ng4aPX160RzwXxFWzViEdSpv5GRgvmfBdYsf77VYvqVKHH2Qcd/iwlbSb
+dy9o3vpucPn4HBDr2wjslz+zEPIiZwlo7w6ajZ1GbokwRVCc16w0LxX2Ytr9Sb6f
+WmAswr6i5zahq6XA9xrh0XQKPsBc4oC1fYiGa7021jhQyOOiqWDMYTRPj/RYE297
+VYvcuQrvqlsfFdVUWN5eRxnXXf9EXRbSiR8a7/my/NYMh+OPyP+01bGS8heKPoNk
+ZFV+hIjbUcpoVShURrEkLuxehxw+iM6OZyhEXI0LLxbsVxjK7x7+mWVguMplvXN3
+GfnqTpRFl6rcekjFcJv8jV2XmBnX4w6oS3WTGUraqmfF+PclnvD/m/vOVnjK+M95
+HR7KQQzGd5Q8e5yTwIFz79UEBiRmlG345gKREQZaFAAMsfRUrJ4bV+Mz5ORAZXTt
+Td0DLh7T+fTuKO+4kGu4uR7ZXzbPj1j2ucLe3W4TBn3fP9Qi83mcFZ+80uKRiZW8
+MjtQnNvFucbtFY8Q/Mv2ZbVazuTnzjsjCCzFAopVIPvFaIg/sSx+gDHcU6yA/US8
+X+ASbUjemQF90VXxQkW2
+=e/Em
 -----END PGP SIGNATURE-----
 
---Sig_/8_9NcHO/zM+b/ov5TOlmfqW--
+--Sig_/O_Zumdat8dQbE_Q/VdvFmZn--
