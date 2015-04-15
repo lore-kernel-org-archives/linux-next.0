@@ -1,80 +1,130 @@
 From: Quentin Casasnovas <quentin.casasnovas@oracle.com>
 Subject: Re: [PATCH 0/2] Tentative fix for the divide-by-zero on
  score/paris/..
-Date: Wed, 15 Apr 2015 18:49:43 +0200
-Message-ID: <20150415164943.GF5947@chrystal.uk.oracle.com>
+Date: Wed, 15 Apr 2015 23:19:56 +0200
+Message-ID: <20150415211956.GA6703@chrystal.uk.oracle.com>
 References: <20150414165000.GA19434@roeck-us.net>
  <1429088078-23827-1-git-send-email-quentin.casasnovas@oracle.com>
  <552E6722.1080507@roeck-us.net>
- <20150415134637.GB5947@chrystal.uk.oracle.com>
- <20150415153150.GA1149@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="VS++wcV0S1rZb1Fb"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:51492 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751951AbbDOVRp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Apr 2015 17:17:45 -0400
 Content-Disposition: inline
-In-Reply-To: <20150415153150.GA1149@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <552E6722.1080507@roeck-us.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Guenter Roeck <linux@roeck-us.net>
 Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>, Rusty Russell <rusty@rustcorp.com.au>, lkml <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 15, 2015 at 08:31:50AM -0700, Guenter Roeck wrote:
-> On Wed, Apr 15, 2015 at 03:46:37PM +0200, Quentin Casasnovas wrote:
-> > > 
-> > > While I agree that those should get fixed (if they are real problems,
-> > > especially the ones for parisc and mn10300), I don't think it is
-> > > a good idea to fail the build because of it.
-> > 
-> > That's a tough one..  I think it's pretty bad in general to have some
-> > crufts in the ex_table referencing non-executable sections.  Note that it
-> > will not make the build fail if the relocation _seems_ legit (jump to an
-> > executable section even though it's not part of the white-list) but in
-> > those cases, something really does look wrong and could potentially have a
-> > security impact so I thought the build failure was a good thing to do.
-> > 
-> 
-> Guess we have a different philosophy; mine is "do no harm".
-> 
 
-Well I certainly did not intend to break any other architectures and do no
-harm.  Breaking the build early in case of security issue sounds like the
-opposite of doing harm to me :)  And it lead to you fixing a potential
-unprivileged denial-of-service IIUC your score patch.
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I am really sorry that it broke the build because of bugs in modpost
-though.
-
-> 
-> > Regarding the others, if you've compiled them with debug information, you
-> > should be able to do some addr2line magic incantation to find the offending
-> > code.  I've also added scripts/check_extable.sh which you might be able to
-> > use to get more details about the failures (or simply use the same logic in
-> > there to know where those maybe-wrong-relocations are coming from).
-> > 
-> > I'm surprised/concerned that some sections appear to have no name though
-> > (indicating yet another bug in my modpost changes?).. If you can share the
-> > object files then I can have a look (and possibly help with the addr2line
-> > incantation).
+On Wed, Apr 15, 2015 at 06:26:58AM -0700, Guenter Roeck wrote:
+> On 04/15/2015 01:54 AM, Quentin Casasnovas wrote:
+> > The following two patches might (hopefully) fix the build breakage on score
+> > and some other architectures.  I've checked the new __ex_table checker
+> > still works on x86-64 with them (it still detects an entry pointing to
+> > .altinstr_rplacement) and they should apply cleanly on top of Rusty's
+> > module-next branch.
+> >
+> > Thanks to Guenter for the bug analysis and sorry again for the breakage.
+> >
+> > Let me know if this makes things better..
 > >
 > 
-> I don't really have time to do that; please keep in mind that I am not getting
-> paid for this and do it in my free time. Both the parisc and mn10300 (am33)
-> tool chains are available from kernel.org; it should be straightforward to 
-> install them and see yourself what is going on. Unlike score I did not find
-> the problem in those architectures with code inspection.
+> the crash is fixed, but now I get
+> 
+> FATAL: The relocation at __ex_table+0x4 references
+> section "" which is not executable, IOW
+> the kernel will fault if it ever tries to
+> jump to it.  Something is seriously wrong
+> and should be fixed.
+> 
+> for parisc:defconfig,
+> 
+> FATAL: The relocation at __ex_table+0x634 references
+> section "__ex_table" which is not executable, IOW
+> the kernel will fault if it ever tries to
+> jump to it.  Something is seriously wrong
+> and should be fixed.
+> 
+> for score:allnoconfig, and
+> 
+> FATAL: The relocation at __ex_table+0x8 references
+> section "" which is not executable, IOW
+> it is not possible for the kernel to fault
+> at that address.  Something is seriously wrong
+> and should be fixed.
+> 
+> for mn10300:defconfig.
+> 
+> While I agree that those should get fixed (if they are real problems,
+> especially the ones for parisc and mn10300), I don't think it is
+> a good idea to fail the build because of it.
+> 
+> Note that I did find the problem in the score build; that was a real bug.
+> I don't know what may be wrong with the others.
 > 
 
-Sorry Guenter, it's just that you proposed your help earlier and as you had
-the environment already configured I completely abused you!  Thanks for the
-report and testing.
+The attached patch fixes the build failures on parisc and mn10300 on my
+defconfig build and should apply cleanly on top of the previous two.
 
-I've had a look at parisc and I think I understand what happens.  Unlike on
-x86_64 where all relocations in __ex_table are internal, parisc can have
-relocations in __ex_table to unresolved symbols, and the build system runs
-modpost on those temporary objects, which the code does not handle well
-since it was expecting a relocation to a section internal to the object.
-
-I have a fix ready but will do more testing on other architectures before
-sending it (I suspect it is the same issue).
+I'm not able to download the score cross toolchain for the moment but will
+do tomorrow. Guenter, may I ask if there were any other problems than the
+one you fixed in string.S there?
 
 Quentin
+
+--VS++wcV0S1rZb1Fb
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0001-modpost-do-not-try-to-match-the-SHT_NUL-section.patch"
+
+>From 2e9abac9cbde18af48951c54d52c9c515f9883a7 Mon Sep 17 00:00:00 2001
+From: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Date: Wed, 15 Apr 2015 22:39:50 +0200
+Subject: [PATCH] modpost: do not try to match the SHT_NUL section.
+
+Trying to match the SHT_NUL section isn't useful and causes build failures
+on parisc and mn10300 since the addition of section strict white-listing
+and __ex_table sanitizing.
+
+Signed-off-by: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+CC: Rusty Russell <rusty@rustcorp.com.au>
+Fixes: 050e57fd5936 ("modpost: add strict white-listing when referencing....")
+Fixes: 52dc0595d540 ("modpost: handle relocations mismatch in __ex_table.")
+---
+ scripts/mod/modpost.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index fd94977..45e4027 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1064,6 +1064,15 @@ static const struct sectioncheck *section_mismatch(
+ 	int elems = sizeof(sectioncheck) / sizeof(struct sectioncheck);
+ 	const struct sectioncheck *check = &sectioncheck[0];
+ 
++	/*
++	 * The target section could be the SHT_NUL section when we're
++	 * handling relocations to un-resolved symbols, trying to match it
++	 * doesn't make much sense and causes build failures on parisc and
++	 * mn10300 architectures.
++	 */
++	if (*tosec == '\0')
++		return NULL;
++
+ 	for (i = 0; i < elems; i++) {
+ 		if (match(fromsec, check->fromsec)) {
+ 			if (check->bad_tosec[0] && match(tosec, check->bad_tosec))
+-- 
+2.0.5
+
+
+--VS++wcV0S1rZb1Fb--
