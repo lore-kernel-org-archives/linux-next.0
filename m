@@ -1,172 +1,123 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the ext4 tree
-Date: Wed, 15 Apr 2015 11:35:43 +1000
-Message-ID: <20150415113543.3ecf376f@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Wed, 15 Apr 2015 12:30:19 +1000
+Message-ID: <20150415123019.069ab670@canb.auug.org.au>
+References: <20150413142442.2f7107e5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zwLYH4DUGISrurvnY/LezTZ"; protocol="application/pgp-signature"
+ boundary="Sig_/db4WJ3aftpH65LtF1rD9xi0"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43686 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57743 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751911AbbDOBfu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2015 21:35:50 -0400
+	id S1755574AbbDOCaZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2015 22:30:25 -0400
+In-Reply-To: <20150413142442.2f7107e5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Uday Savagaonkar <savagaon@google.com>
+To: Len Brown <len.brown@intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dasaratharaman Chandramouli <dasaratharaman.chandramouli@intel.com>
 
---Sig_/zwLYH4DUGISrurvnY/LezTZ
+--Sig_/db4WJ3aftpH65LtF1rD9xi0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Len,
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/ext4/symlink.c between commit 48e72c7a0127 ("ext4 crypto: Add
-symlink encryption") from the ext4 tree and commit 5dd3dc06371a ("VFS:
-normal filesystems (and lustre): d_inode() annotations") from the vfs
-tree.
+On Mon, 13 Apr 2015 14:24:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi Rafael,
+>=20
+> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+> In file included from arch/x86/include/asm/msr.h:131:0,
+>                  from arch/x86/include/asm/processor.h:20,
+>                  from arch/x86/include/asm/thread_info.h:23,
+>                  from include/linux/thread_info.h:54,
+>                  from arch/x86/include/asm/preempt.h:6,
+>                  from include/linux/preempt.h:18,
+>                  from include/linux/smp.h:55,
+>                  from include/linux/kernel_stat.h:4,
+>                  from drivers/cpufreq/intel_pstate.c:14:
+> drivers/cpufreq/intel_pstate.c: In function 'knl_get_turbo_pstate':
+> drivers/cpufreq/intel_pstate.c:622:9: error: 'MSR_NHM_TURBO_RATIO_LIMIT' =
+undeclared (first use in this function)
+>   rdmsrl(MSR_NHM_TURBO_RATIO_LIMIT, value);
+>          ^
+> arch/x86/include/asm/paravirt.h:153:26: note: in definition of macro 'rdm=
+srl'
+>   val =3D paravirt_read_msr(msr, &_err); \
+>                           ^
+> drivers/cpufreq/intel_pstate.c:622:9: note: each undeclared identifier is=
+ reported only once for each function it appears in
+>   rdmsrl(MSR_NHM_TURBO_RATIO_LIMIT, value);
+>          ^
+> arch/x86/include/asm/paravirt.h:153:26: note: in definition of macro 'rdm=
+srl'
+>   val =3D paravirt_read_msr(msr, &_err); \
+>                           ^
+>=20
+> Caused by commit 6acfd09a439a ("tools/power turbostat: define and dump
+> MSR_TURBO_RATIO_LIMIT2") interacting with commit b34ef932d79a
+> ("intel_pstate: Knights Landing support").  This should have been
+> resolved in commit 08fb40f3fbeb ("Merge branches 'powercap' and
+> 'pm-tools'").
+>=20
+> I have added the following patch for today:
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 13 Apr 2015 14:11:11 +1000
+> Subject: [PATCH] intel_pstate: fix bad merge (MSR_NHM_TURBO_RATIO_LIMIT r=
+ename)
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/cpufreq/intel_pstate.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index 875154d5f60b..5ecd2689a8fc 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -619,7 +619,7 @@ static int knl_get_turbo_pstate(void)
+>  	u64 value;
+>  	int nont, ret;
+> =20
+> -	rdmsrl(MSR_NHM_TURBO_RATIO_LIMIT, value);
+> +	rdmsrl(MSR_TURBO_RATIO_LIMIT, value);
+>  	nont =3D core_get_max_pstate();
+>  	ret =3D (((value) >> 8) & 0xFF);
+>  	if (ret <=3D nont)
 
-[The ext4 tree commit has been modified.]
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+This is now required after the merge of the idle tree (since the code
+was removed from the pm tree).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/ext4/symlink.c
-index a7b3a646dde0,57f50091b8d1..000000000000
---- a/fs/ext4/symlink.c
-+++ b/fs/ext4/symlink.c
-@@@ -21,100 -21,11 +21,100 @@@
-  #include <linux/namei.h>
-  #include "ext4.h"
-  #include "xattr.h"
- +#include "ext4_crypto.h"
- =20
- +#ifdef CONFIG_EXT4_FS_ENCRYPTION
-  static void *ext4_follow_link(struct dentry *dentry, struct nameidata *nd)
-  {
- +	struct page *cpage =3D NULL;
- +	char *caddr, *paddr =3D NULL;
- +	struct ext4_str cstr, pstr;
-- 	struct inode *inode =3D dentry->d_inode;
-++	struct inode *inode =3D d_inode(dentry);
- +	struct ext4_fname_crypto_ctx *ctx =3D NULL;
- +	struct ext4_encrypted_symlink_data *sd;
- +	loff_t size =3D min_t(loff_t, i_size_read(inode), PAGE_SIZE - 1);
- +	int res;
- +	u32 plen, max_size =3D inode->i_sb->s_blocksize;
- +
- +	if (!ext4_encrypted_inode(inode))
- +		return page_follow_link_light(dentry, nd);
- +
- +	ctx =3D ext4_get_fname_crypto_ctx(inode, inode->i_sb->s_blocksize);
- +	if (IS_ERR(ctx))
- +		return ctx;
- +
- +	if (ext4_inode_is_fast_symlink(inode)) {
-- 		caddr =3D (char *) EXT4_I(dentry->d_inode)->i_data;
-- 		max_size =3D sizeof(EXT4_I(dentry->d_inode)->i_data);
-++		caddr =3D (char *) EXT4_I(d_inode(dentry))->i_data;
-++		max_size =3D sizeof(EXT4_I(d_inode(dentry))->i_data);
- +	} else {
- +		cpage =3D read_mapping_page(inode->i_mapping, 0, NULL);
- +		if (IS_ERR(cpage)) {
- +			ext4_put_fname_crypto_ctx(&ctx);
- +			return cpage;
- +		}
- +		caddr =3D kmap(cpage);
- +		caddr[size] =3D 0;
- +	}
- +
- +	/* Symlink is encrypted */
- +	sd =3D (struct ext4_encrypted_symlink_data *)caddr;
- +	cstr.name =3D sd->encrypted_path;
- +	cstr.len  =3D le32_to_cpu(sd->len);
- +	if ((cstr.len +
- +	     sizeof(struct ext4_encrypted_symlink_data) - 1) >
- +	    max_size) {
- +		/* Symlink data on the disk is corrupted */
- +		res =3D -EIO;
- +		goto errout;
- +	}
- +	plen =3D (cstr.len < EXT4_FNAME_CRYPTO_DIGEST_SIZE*2) ?
- +		EXT4_FNAME_CRYPTO_DIGEST_SIZE*2 : cstr.len;
- +	paddr =3D kmalloc(plen + 1, GFP_NOFS);
- +	if (!paddr) {
- +		res =3D -ENOMEM;
- +		goto errout;
- +	}
- +	pstr.name =3D paddr;
- +	res =3D _ext4_fname_disk_to_usr(ctx, &cstr, &pstr);
- +	if (res < 0)
- +		goto errout;
- +	/* Null-terminate the name */
- +	if (res <=3D plen)
- +		paddr[res] =3D '\0';
- +	nd_set_link(nd, paddr);
- +	ext4_put_fname_crypto_ctx(&ctx);
- +	if (cpage) {
- +		kunmap(cpage);
- +		page_cache_release(cpage);
- +	}
- +	return NULL;
- +errout:
- +	ext4_put_fname_crypto_ctx(&ctx);
- +	if (cpage) {
- +		kunmap(cpage);
- +		page_cache_release(cpage);
- +	}
- +	kfree(paddr);
- +	return ERR_PTR(res);
- +}
- +
- +static void ext4_put_link(struct dentry *dentry, struct nameidata *nd,
- +			  void *cookie)
- +{
- +	struct page *page =3D cookie;
- +
- +	if (!page) {
- +		kfree(nd_get_link(nd));
- +	} else {
- +		kunmap(page);
- +		page_cache_release(page);
- +	}
- +}
- +#endif
- +
- +static void *ext4_follow_fast_link(struct dentry *dentry, struct nameidat=
-a *nd)
- +{
-- 	struct ext4_inode_info *ei =3D EXT4_I(dentry->d_inode);
-+ 	struct ext4_inode_info *ei =3D EXT4_I(d_inode(dentry));
-  	nd_set_link(nd, (char *) ei->i_data);
-  	return NULL;
-  }
-
---Sig_/zwLYH4DUGISrurvnY/LezTZ
+--Sig_/db4WJ3aftpH65LtF1rD9xi0
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVLcBzAAoJEMDTa8Ir7ZwVo9wP/33b/8rxJVeOQAJ8cBuEvNgp
-82LjiVaTBS6B3aFZw9RqC2N1R+eC32yA6MDJVhNLWq+PyqeE+38HTxkYYLS/aTpl
-Xfk10BpZ3NvUMDzmq2BDBnglF9t7diVzTsLS1WHFePbnd02iE69hBEdxHhdSYClx
-cvHwUiOl2UVo54Q3ffh5LA1oLVPIdDvpDurUaMXN9xm3rodkMYUtE564WWVJnGjj
-md0wRI0BbNj11/G7TiO543lOh9GLc5DHjt6LcqgDEg1DAh/hMWjQTL+6C6Y+FUtZ
-Ps+Y1JiUx4LGDhDQisp4spFur18JrKCfump8cVGU+TQ05GUsCDm6Zoe66JyRBGvW
-J05t4xAn8opKff+jC6gR3ibJehFrViouO6RRUPP+5mC3rfMsCRT7YOzfbXZH+oHc
-XcDdkPbpEsb3wrfUnV4JELlJuyUd9x/spv96OQXQaJk1K2Ob1cBAKHwiFyqXtPEY
-qG5YiKSwmHavUcUpFSVnseIacUbiKCgf2PhHMFOOTxPRJ/dgZQGwxunRAzx5w0ca
-4ZOQGo9tTrlf7zFJtL6Ymj1OITj7DaQfKaCRB/sUoO8Wi4WnLeBtSzewtiYUvMKQ
-YK5B0s+UlhgOJ6TM1rlb9niKYSpOBpr7w9NKQzmibmXGKiipd4ELO8DR5eUeEhkY
-Y2XSNf3RVOtIO4h2GpLM
-=vA5Z
+iQIcBAEBCAAGBQJVLc0/AAoJEMDTa8Ir7ZwVO6UP/0edJAmVY7xUQHJpuVfnVblI
+svxbnand+aEhvmekreFgiCv9GazzV24NgMfnprNcO91knCtdQB1djpwreAuDPY1W
+XdttBvgGoaX1yr6D3wsvJd/fAcl62jOsierVedSWZEixcDTiqGFGK9/Fw62fHZJA
+icmX09g3T+QUJYooPd610nV62k6xgH3Fc5FFpaUnOJH6cyNhxpMk/jZl+Ox4qMBY
+FCR+837YxPQyNCYAkLVEuYTjcSomw1OESyI4iEQAlVbCXr/dRs1a+Gdc6JQB3EmV
+w9CtGZFuKEn83RZBXGgHMCrSW7k8teNrCsuBSLp6244W7V4pt99ygxjGVs+cZhRN
+a4C/sR9SKzorqaz9MFvTVqSJ8iUxVmnIvrPoVdbwcAmxpDQ+AXHPa9Il+cmwiKTO
+3j+he+pDDPjIEi78qG/LU1tRFgM7PC84GB4GB/2xCMvVtXO9ugf9+ZI+8arBroTO
+YEJ+ZguThUVDIhJATJ+gu9+DBuqjxfLbOvrODUqLjiHkJ0szcVHZUJqGCuBmp+iH
+GohmJr5MssjjBV5H8wjwXs8WO0TCdRehVj94ByyI3eyP7t0KK+Ck6BfSO+FjxziI
+Zrzz4C1v4giI2vjeWT4I2MQzi3A3AsVvGbuFIhBak3Yw0lPF+AcoYsbGnT9eeoub
+wPycY3QQGmX/cv86+Hek
+=UqNS
 -----END PGP SIGNATURE-----
 
---Sig_/zwLYH4DUGISrurvnY/LezTZ--
+--Sig_/db4WJ3aftpH65LtF1rD9xi0--
