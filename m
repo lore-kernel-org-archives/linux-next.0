@@ -1,36 +1,65 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Subject: Re: linux-next: manual merge of the tip tree with the mips tree
-Date: Fri, 17 Apr 2015 17:33:43 +0200
-Message-ID: <20150417153343.GE17654@krava>
-References: <20150413155913.28eace15@canb.auug.org.au>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: linux-next: manual merge of the drm tree with the v4l-dvb tree
+Date: Fri, 17 Apr 2015 19:12:31 +0200
+Message-ID: <1429290751.3130.52.camel@pengutronix.de>
+References: <20150415133309.24f0a36a@canb.auug.org.au>
+	 <1429088942.3480.6.camel@pengutronix.de>
+	 <alpine.DEB.2.00.1504170405320.1232@skynet.skynet.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:46885 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933403AbbDQPdz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Apr 2015 11:33:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20150413155913.28eace15@canb.auug.org.au>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:43919 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932630AbbDQRMu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Apr 2015 13:12:50 -0400
+In-Reply-To: <alpine.DEB.2.00.1504170405320.1232@skynet.skynet.ie>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Jiri Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, Hyun Kwon <hyun.kwon@xilinx.com>
 
-On Mon, Apr 13, 2015 at 03:59:13PM +1000, Stephen Rothwell wrote:
-> Hi all,
+Am Freitag, den 17.04.2015, 04:07 +0100 schrieb Dave Airlie:
+> > Am Mittwoch, den 15.04.2015, 13:33 +1000 schrieb Stephen Rothwell:
+> > > Hi Dave,
+> > > 
+> > > Today's linux-next merge of the drm tree got a conflict in
+> > > Documentation/DocBook/media/v4l/subdev-formats.xml between commit
+> > > 7b0fd4568bee ("[media] v4l: Add RBG and RGB 8:8:8 media bus formats on
+> > > 24 and 32 bit busses") and e8b2d7a565ae ("[media] v4l: Sort YUV formats
+> > > of v4l2_mbus_pixelcode") from the v4l-dvb tree and commits 08c38458be7e
+> > > ("Add BGR888_1X24 and GBR888_1X24 media bus formats"), 0fc63eb104d7
+> > > ("Add YUV8_1X24 media bus format") and 203508ef52e3 ("Add
+> > > RGB666_1X24_CPADHI media bus format") from the drm tree.
+> > > 
+> > > I fixed it up (almost certainly incorrectly - see below) and can carry
+> > > the fix as necessary.  Please sort out who "owns" this file and try to
+> > > coordinate updates to it.
+> > 
+> > Together with the corresponding fixup for include/uapi/linux/media-bus-format.h,
+> > how about this:
 > 
-> Today's linux-next merge of the tip tree got a conflict in
-> tools/perf/config/Makefile between commit 4fd6ce055817 ("perf tools:
-> Hook up MIPS unwind and dwarf-regs in the Makefile") from the mips tree
+> This should never have gone into my tree if there wasn't someone in the 
+> v4l tree who knew it was coming,
+>
+> In future please merge the media-bus-formats through both tree, providing
+> a stable git tree to both maintainers to pull from, though this may not
+> avoid all bad cases, it hopefully will avoid this sort of mess.
 
-hi,
-I remember reviewing following patchset:
-  [PATCH 1/2] perf tools: Add support for MIPS userspace DWARF callchains.
-  [PATCH 2/2] perf tools: Hook up MIPS unwind and dwarf-regs in the Makefile
+I'll try this next time.
 
-but it did not fit on top of current tip, v2 was needed,
-which I haven't seen yet.. but I might have missed that,
-in which case sorry for the noise ;-)
+> I'm not really sure how best to clean this one up, I think I'd want
+> patches to my tree that just use the correect values, then it would just 
+> be a normal conflict on merging, instead of renumbering userspace visible
+> values,
 
-jirka
+So far the media tree has added formats 0x100e 0x100f and 0x2024, so I
+will send a patch for drm-next that moves these three out of the way,
+leaving them unused for the merge.
+The merge conflict resolution will still have to take care of the
+ordering in media-bus-format.h and the conflicts in subdev-formats.xml
+are still non-trivial, but at leasts the constant values won't move
+around anymore.
+
+regards
+Philipp
