@@ -1,41 +1,33 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v2] dma: vdma: Fix compilation warnings
-Date: Fri, 17 Apr 2015 23:19:34 +0530
-Message-ID: <20150417174934.GE30624@intel.com>
-References: <32a1f768-901f-4728-b11e-6d5dc9a622ab@BN1BFFO11FD025.protection.gbl>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 0/2] Tentative fix for the divide-by-zero on score/paris/..
+Date: Fri, 17 Apr 2015 22:52:43 -0700
+Message-ID: <5531F12B.7010401@roeck-us.net>
+References: <20150414165000.GA19434@roeck-us.net> <1429088078-23827-1-git-send-email-quentin.casasnovas@oracle.com> <552E6722.1080507@roeck-us.net> <20150415211956.GA6703@chrystal.uk.oracle.com> <552F13AF.5030606@roeck-us.net> <20150416082116.GB6703@chrystal.uk.oracle.com> <552FAF4C.2050202@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:46710 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754141AbbDQRyw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Apr 2015 13:54:52 -0400
-Content-Disposition: inline
-In-Reply-To: <32a1f768-901f-4728-b11e-6d5dc9a622ab@BN1BFFO11FD025.protection.gbl>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:35660 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750773AbbDRFwp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Apr 2015 01:52:45 -0400
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YjLgL-004MvY-5d
+	for linux-next@vger.kernel.org; Sat, 18 Apr 2015 05:52:45 +0000
+In-Reply-To: <552FAF4C.2050202@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kedareswara rao Appana <appana.durga.rao@xilinx.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, anirudh@xilinx.com, Kedareswara rao Appana <appanad@xilinx.com>
+To: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, lkml <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>
 
-On Mon, Mar 30, 2015 at 06:48:29PM +0530, Kedareswara rao Appana wrote:
-> This patch fixes the following compilation warnings.
-> In file included from drivers/dma/xilinx/xilinx_vdma.c:26:0:
-> include/linux/dmapool.h:18:4: warning: 'struct device' declared inside parameter list
->     size_t size, size_t align, size_t allocation);
->     ^
-> include/linux/dmapool.h:18:4: warning: its scope is only this definition or declaration, which is probably not what you want
-> include/linux/dmapool.h:31:7: warning: 'struct device' declared inside parameter list
->        size_t size, size_t align, size_t allocation);
->        ^
-> drivers/dma/xilinx/xilinx_vdma.c: In function 'xilinx_vdma_alloc_chan_resources':
-> drivers/dma/xilinx/xilinx_vdma.c:501:20: warning: passing argument 2 of 'dma_pool_create' from incompatible pointer type
->   chan->desc_pool = dma_pool_create("xilinx_vdma_desc_pool",
->                     ^
-> In file included from drivers/dma/xilinx/xilinx_vdma.c:26:0:
-> include/linux/dmapool.h:17:18: note: expected 'struct device *' but argument is of type 'struct device *'
->  struct dma_pool *dma_pool_create(const char *name, struct device *dev, .
-> 
-I have applied this now
+Hi Quentin,
 
--- 
-~Vinod
+it looks like there is another failure in linux-next, this time with sparc64:allmodconfig:
+
+WARNING: arch/sparc/kernel/built-in.o(__ex_table+0x3b4): Section mismatch in reference from the (unknown reference) (unknown) to the variable :__retl_efault
+/bin/sh: line 1: 22844 Floating point exception(core dumped) scripts/mod/modpost arch/sparc/kernel/built-in.o
+
+The problem was previously hidden by a different build failure.
+
+Guenter
