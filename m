@@ -1,89 +1,184 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Subject: Re: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Tue, 21 Apr 2015 06:56:40 -0300
-Message-ID: <20150421065640.02f14142@recife.lan>
-References: <20150421115409.73e6a066@canb.auug.org.au>
-	<5336539.Ny4ylH3Nve@avalon>
-	<20150421180243.15b11537@canb.auug.org.au>
+Date: Tue, 21 Apr 2015 15:38:02 +0300
+Message-ID: <1908360.Iueb02OAJf@avalon>
+References: <20150421115409.73e6a066@canb.auug.org.au> <20150421180243.15b11537@canb.auug.org.au> <20150421065640.02f14142@recife.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/oOcc+n0/q3Z26YDmqaXTkBF"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:40800 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754078AbbDUMWZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Apr 2015 08:22:25 -0400
-In-Reply-To: <20150421180243.15b11537@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Dave Airlie <airlied@redhat.com>, Boris Brezillion <boris.brezillon@free-electrons.com>, Hyun Kwon <hyun.kwon@xilinx.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150421065640.02f14142@recife.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Dave Airlie <airlied@redhat.com>, Boris Brezillion <boris.brezillon@free-electrons.com>, Hyun Kwon <hyun.kwon@xilinx.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/oOcc+n0/q3Z26YDmqaXTkBF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Mauro,
 
-Em Tue, 21 Apr 2015 18:02:43 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+On Tuesday 21 April 2015 06:56:40 Mauro Carvalho Chehab wrote:
+> Em Tue, 21 Apr 2015 18:02:43 +1000 Stephen Rothwell escreveu:
+> > On Tue, 21 Apr 2015 10:49:52 +0300 Laurent Pinchart wrote:
+> > > >  +#define MEDIA_BUS_FMT_YUV10_1X30              0x2016
+> > > >  +#define MEDIA_BUS_FMT_AYUV8_1X32              0x2017
+> > > >  +#define MEDIA_BUS_FMT_UYVY12_2X12             0x201c
+> > > >  +#define MEDIA_BUS_FMT_VYUY12_2X12             0x201d
+> > > >  +#define MEDIA_BUS_FMT_YUYV12_2X12             0x201e
+> > > >  +#define MEDIA_BUS_FMT_YVYU12_2X12             0x201f
+> > > 
+> > > The above 6 lines introduce duplicate defines, you can remove them.
+> > 
+> > OK, thanks, done for tomorrow.  Though hopefully all this will be
+> > resolved soon.
+> 
+> I think that the best is for me to merge from the DRM branch that Linus
+> picked, and solve the conflict there.
+> 
+> This way, it should be a way easier for Linus to pick it, and not
+> manually solve those conflicts with are not trivial.
+> 
+> Laurent/Philipp,
+> 
+> Please double-check if everything went fine on my conflict solving.
+> I'm pushing it at branch "fixes" at the media development tree:
+> 	git://linuxtv.org/media_tree.git fixes
+> 
+> In any case, I double-checked that it is compiling and it is producing the
+> media DocBook.
+> 
+> PS.: I intend to send this latter today for being merged upstream.
 
-> Hi Laurent,
->=20
-> On Tue, 21 Apr 2015 10:49:52 +0300 Laurent Pinchart <laurent.pinchart@ide=
-asonboard.com> wrote:
-> >=20
-> > >  +#define MEDIA_BUS_FMT_YUV10_1X30              0x2016
-> > >  +#define MEDIA_BUS_FMT_AYUV8_1X32              0x2017
-> > >  +#define MEDIA_BUS_FMT_UYVY12_2X12             0x201c
-> > >  +#define MEDIA_BUS_FMT_VYUY12_2X12             0x201d
-> > >  +#define MEDIA_BUS_FMT_YUYV12_2X12             0x201e
-> > >  +#define MEDIA_BUS_FMT_YVYU12_2X12             0x201f
-> >=20
-> > The above 6 lines introduce duplicate defines, you can remove them.
->=20
-> OK, thanks, done for tomorrow.  Though hopefully all this will be
-> resolved soon.
+The numerical values are correct, but the order of the YUV formats got messed
+up. Could you squash the following change into the merge ?
 
-I think that the best is for me to merge from the DRM branch that Linus
-picked, and solve the conflict there.
+diff --git a/Documentation/DocBook/media/v4l/subdev-formats.xml b/Documentation/DocBook/media/v4l/subdev-formats.xml
+index d66463b..2588ad7 100644
+--- a/Documentation/DocBook/media/v4l/subdev-formats.xml
++++ b/Documentation/DocBook/media/v4l/subdev-formats.xml
+@@ -3432,6 +3432,43 @@ see <xref linkend="colorspaces" />.</entry>
+ 	      <entry>y<subscript>1</subscript></entry>
+ 	      <entry>y<subscript>0</subscript></entry>
+ 	    </row>
++	    <row id="MEDIA-BUS-FMT-YUV8-1X24">
++	      <entry>MEDIA_BUS_FMT_YUV8_1X24</entry>
++	      <entry>0x2025</entry>
++	      <entry></entry>
++	      <entry>-</entry>
++	      <entry>-</entry>
++	      <entry>-</entry>
++	      <entry>-</entry>
++	      <entry>-</entry>
++	      <entry>-</entry>
++	      <entry>-</entry>
++	      <entry>-</entry>
++	      <entry>y<subscript>7</subscript></entry>
++	      <entry>y<subscript>6</subscript></entry>
++	      <entry>y<subscript>5</subscript></entry>
++	      <entry>y<subscript>4</subscript></entry>
++	      <entry>y<subscript>3</subscript></entry>
++	      <entry>y<subscript>2</subscript></entry>
++	      <entry>y<subscript>1</subscript></entry>
++	      <entry>y<subscript>0</subscript></entry>
++	      <entry>u<subscript>7</subscript></entry>
++	      <entry>u<subscript>6</subscript></entry>
++	      <entry>u<subscript>5</subscript></entry>
++	      <entry>u<subscript>4</subscript></entry>
++	      <entry>u<subscript>3</subscript></entry>
++	      <entry>u<subscript>2</subscript></entry>
++	      <entry>u<subscript>1</subscript></entry>
++	      <entry>u<subscript>0</subscript></entry>
++	      <entry>v<subscript>7</subscript></entry>
++	      <entry>v<subscript>6</subscript></entry>
++	      <entry>v<subscript>5</subscript></entry>
++	      <entry>v<subscript>4</subscript></entry>
++	      <entry>v<subscript>3</subscript></entry>
++	      <entry>v<subscript>2</subscript></entry>
++	      <entry>v<subscript>1</subscript></entry>
++	      <entry>v<subscript>0</subscript></entry>
++	    </row>
+ 	    <row id="MEDIA-BUS-FMT-UYVY12-1X24">
+ 	      <entry>MEDIA_BUS_FMT_UYVY12_1X24</entry>
+ 	      <entry>0x2020</entry>
+@@ -3672,43 +3709,6 @@ see <xref linkend="colorspaces" />.</entry>
+ 	      <entry>u<subscript>1</subscript></entry>
+ 	      <entry>u<subscript>0</subscript></entry>
+ 	    </row>
+-	    <row id="MEDIA-BUS-FMT-YUV8-1X24">
+-	      <entry>MEDIA_BUS_FMT_YUV8_1X24</entry>
+-	      <entry>0x2025</entry>
+-	      <entry></entry>
+-	      <entry>-</entry>
+-	      <entry>-</entry>
+-	      <entry>-</entry>
+-	      <entry>-</entry>
+-	      <entry>-</entry>
+-	      <entry>-</entry>
+-	      <entry>-</entry>
+-	      <entry>-</entry>
+-	      <entry>y<subscript>7</subscript></entry>
+-	      <entry>y<subscript>6</subscript></entry>
+-	      <entry>y<subscript>5</subscript></entry>
+-	      <entry>y<subscript>4</subscript></entry>
+-	      <entry>y<subscript>3</subscript></entry>
+-	      <entry>y<subscript>2</subscript></entry>
+-	      <entry>y<subscript>1</subscript></entry>
+-	      <entry>y<subscript>0</subscript></entry>
+-	      <entry>u<subscript>7</subscript></entry>
+-	      <entry>u<subscript>6</subscript></entry>
+-	      <entry>u<subscript>5</subscript></entry>
+-	      <entry>u<subscript>4</subscript></entry>
+-	      <entry>u<subscript>3</subscript></entry>
+-	      <entry>u<subscript>2</subscript></entry>
+-	      <entry>u<subscript>1</subscript></entry>
+-	      <entry>u<subscript>0</subscript></entry>
+-	      <entry>v<subscript>7</subscript></entry>
+-	      <entry>v<subscript>6</subscript></entry>
+-	      <entry>v<subscript>5</subscript></entry>
+-	      <entry>v<subscript>4</subscript></entry>
+-	      <entry>v<subscript>3</subscript></entry>
+-	      <entry>v<subscript>2</subscript></entry>
+-	      <entry>v<subscript>1</subscript></entry>
+-	      <entry>v<subscript>0</subscript></entry>
+-	    </row>
+ 	    <row id="MEDIA-BUS-FMT-YUV10-1X30">
+ 	      <entry>MEDIA_BUS_FMT_YUV10_1X30</entry>
+ 	      <entry>0x2016</entry>
+diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
+index 3eeb8cc..190d491 100644
+--- a/include/uapi/linux/media-bus-format.h
++++ b/include/uapi/linux/media-bus-format.h
+@@ -75,6 +75,10 @@
+ #define MEDIA_BUS_FMT_YUYV10_2X10		0x200b
+ #define MEDIA_BUS_FMT_YVYU10_2X10		0x200c
+ #define MEDIA_BUS_FMT_Y12_1X12			0x2013
++#define MEDIA_BUS_FMT_UYVY12_2X12		0x201c
++#define MEDIA_BUS_FMT_VYUY12_2X12		0x201d
++#define MEDIA_BUS_FMT_YUYV12_2X12		0x201e
++#define MEDIA_BUS_FMT_YVYU12_2X12		0x201f
+ #define MEDIA_BUS_FMT_UYVY8_1X16		0x200f
+ #define MEDIA_BUS_FMT_VYUY8_1X16		0x2010
+ #define MEDIA_BUS_FMT_YUYV8_1X16		0x2011
+@@ -86,16 +90,12 @@
+ #define MEDIA_BUS_FMT_YVYU10_1X20		0x200e
+ #define MEDIA_BUS_FMT_VUY8_1X24			0x2024
+ #define MEDIA_BUS_FMT_YUV8_1X24			0x2025
+-#define MEDIA_BUS_FMT_YUV10_1X30		0x2016
+-#define MEDIA_BUS_FMT_AYUV8_1X32		0x2017
+-#define MEDIA_BUS_FMT_UYVY12_2X12		0x201c
+-#define MEDIA_BUS_FMT_VYUY12_2X12		0x201d
+-#define MEDIA_BUS_FMT_YUYV12_2X12		0x201e
+-#define MEDIA_BUS_FMT_YVYU12_2X12		0x201f
+ #define MEDIA_BUS_FMT_UYVY12_1X24		0x2020
+ #define MEDIA_BUS_FMT_VYUY12_1X24		0x2021
+ #define MEDIA_BUS_FMT_YUYV12_1X24		0x2022
+ #define MEDIA_BUS_FMT_YVYU12_1X24		0x2023
++#define MEDIA_BUS_FMT_YUV10_1X30		0x2016
++#define MEDIA_BUS_FMT_AYUV8_1X32		0x2017
+ 
+ /* Bayer - next is	0x3019 */
+ #define MEDIA_BUS_FMT_SBGGR8_1X8		0x3001
 
-This way, it should be a way easier for Linus to pick it, and not
-manually solve those conflicts with are not trivial.
 
-Laurent/Philipp,
+-- 
+Regards,
 
-Please double-check if everything went fine on my conflict solving.
-I'm pushing it at branch "fixes" at the media development tree:
-	git://linuxtv.org/media_tree.git fixes
-=09
-In any case, I double-checked that it is compiling and it is producing the
-media DocBook.
-
-PS.: I intend to send this latter today for being merged upstream.
-
-=09
-Thanks,
-Mauro
-
---Sig_/oOcc+n0/q3Z26YDmqaXTkBF
-Content-Type: application/pgp-signature
-Content-Description: Assinatura digital OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJVNh7gAAoJEAhfPr2O5OEVPJwQAKKQQiK7f7pT+AbU/7KxqSPK
-DXQsx1uCsfupKS3KoN3tWHxZHGFdL38GrIQqvBMbBATcCli8PXkn3DFlMy15IltT
-4Ov30w0bKQrHtgqSBNMCXvkgbvM2GkO18BWjk0SqlLNxG43qYjis8DpvUieC3d8v
-p/wDMg3h2dedlKqvtoaatnNWsnD1Y0NnYlpD09LEp76johD0NgNKF5rpaNy4dBeT
-B3tTJygt4K8EQX7oju3qOBfeEVkZs32lqdAl82/bosAS8YBagC2cRRczgNUxxRL8
-pKA+XsVxHoMmuxThD0yy2j+ecIcchYBoB785EgrK1xBMlECzs2CuBE8uPVxAHlfn
-0gB7TZQOQfi8sL5AeK8sTMXW5Kw3c1rm/T/HoCm3ID5fPDAktqRjTrilegvbqAEU
-c+siOXDY60VamhvGrknjFlCVti12n2/wVskZKj3BmKhBhGv6owq+Yy2ZG0WrUYuj
-UNb9dkn9cCmPRISPSq74g172psFs1a4fsYAJCJIFjvWWB0Ikum2jNc7pSxprE5lt
-iETg8vaZH+MeI4vpLXatMioe7jlYP9cELy+CWYHvmr0JEGpgA/ias8d1Mcxy6iof
-o2s18zjCaHg12+8bjqbiep0H6lfVCqCScr9VkLW+SUANDyA2iTY52Z3zzUzsdMoA
-BpOsxR4GWEmi6dv8RiMR
-=kRmR
------END PGP SIGNATURE-----
-
---Sig_/oOcc+n0/q3Z26YDmqaXTkBF--
+Laurent Pinchart
