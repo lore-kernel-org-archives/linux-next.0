@@ -1,21 +1,21 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for Apr 22
-Date: Wed, 22 Apr 2015 14:29:18 +1000
-Message-ID: <20150422142918.05cb5d17@canb.auug.org.au>
+Subject: linux-next: Tree for Apr 23
+Date: Thu, 23 Apr 2015 14:54:40 +1000
+Message-ID: <20150423145440.5120dcc8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jTbzzu+VVuAdja1A_cct8mD"; protocol="application/pgp-signature"
+ boundary="Sig_/R=v7ywdmQGzGKJ1sAsJ5rHr"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37985 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47526 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751686AbbDVE3b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Apr 2015 00:29:31 -0400
+	id S1752249AbbDWEyt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Apr 2015 00:54:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 
---Sig_/jTbzzu+VVuAdja1A_cct8mD
+--Sig_/R=v7ywdmQGzGKJ1sAsJ5rHr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -24,12 +24,12 @@ Hi all,
 Please do not add any v4.2 material to your linux-next included trees
 until after v4.1-rc1 is released.
 
-Changes since 20150421:
+Changes since 20150422:
 
-*crickets*
+Removed tree: exec-domain (merged)
 
-Non-merge commits (relative to Linus' tree): 2194
- 2085 files changed, 109693 insertions(+), 55971 deletions(-)
+Non-merge commits (relative to Linus' tree): 1466
+ 1311 files changed, 78501 insertions(+), 20869 deletions(-)
 
 ----------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ defconfig.
 
 Below is a summary of the state of the merge.
 
-I am currently merging 215 trees (counting Linus' and 30 trees of patches
+I am currently merging 214 trees (counting Linus' and 30 trees of patches
 pending for Linus' tree).
 
 Stats about the size of the tree over time can be seen at
@@ -72,8 +72,8 @@ Stephen Rothwell                    sfr@canb.auug.org.au
 
 $ git checkout master
 $ git reset --hard stable
-Merging origin/master (b8ce8d7222b5 Merge branch 'for-linus' of git://git.k=
-ernel.org/pub/scm/linux/kernel/git/dtor/input)
+Merging origin/master (27cf3a16b253 Merge branch 'upstream' of git://git.in=
+fradead.org/users/pcmoore/audit)
 Merging fixes/master (b94d525e58dc Merge git://git.kernel.org/pub/scm/linux=
 /kernel/git/davem/net)
 Merging kbuild-current/rc-fixes (c517d838eb7d Linux 4.0-rc1)
@@ -88,10 +88,9 @@ Merging mips-fixes/mips-fixes (1795cd9b3a91 Linux 3.16-rc5)
 Merging powerpc-merge-mpe/fixes (a7e73e711e48 powerpc/kvm: Fix ppc64_defcon=
 fig + PPC_POWERNV=3Dn build error)
 Merging powerpc-merge/merge (c517d838eb7d Linux 4.0-rc1)
-Merging sparc/master (0edfad5959df sparc: Use GFP_ATOMIC in ldc_alloc_exp_d=
-ring() as it can be called in softirq context)
-Merging net/master (fab9adfb71fc net/mlx4_core: Fix reading HCA max message=
- size in mlx4_QUERY_DEV_CAP)
+Merging sparc/master (acc455cffa75 sparc64: Setup sysfs to mark LDOM socket=
+s, cores and threads correctly)
+Merging net/master (608404290e2d vxlan: remove the unnecessary codes)
 Merging ipsec/master (092a29a40bab vti6: fix uninit when using x-netns)
 Merging sound-current/for-linus (7d1b6e293274 ALSA: hda - fix "num_steps =
 =3D 0" error on ALC256)
@@ -125,10 +124,12 @@ Merging asm-generic/master (643165c8bbc8 Merge tag 'uaccess_for_upstream' o=
 f git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost into asm-generic)
 Merging arc/for-next (d8f6ad85cbb7 ARC: perf: don't add code for impossible=
  case)
-Merging arm/for-next (4b2f8838479e Merge branch 'devel-stable' into for-nex=
-t)
+Merging arm/for-next (ddb4404765c8 Merge branches 'misc' and 'vdso' into fo=
+r-next)
 Merging arm-perf/for-next/perf (39a8804455fb Linux 4.0)
 Merging arm-soc/for-next (0f0175702e2e arm-soc: document merges)
+CONFLICT (content): Merge conflict in drivers/bus/Makefile
+CONFLICT (content): Merge conflict in MAINTAINERS
 Merging at91/at91-next (d8a291a11778 Merge tag 'at91-dt2' into at91-next)
 Merging bcm2835/for-next (b2776bf7149b Linux 3.18)
 Merging rpi/for-rpi-next (9a5a3543e168 ARM: bcm2835: Fix i2c0 node name)
@@ -183,8 +184,8 @@ Merging mips/mips-for-linux-next (3e20a26b02bd Merge branch '4.0-fixes' int=
 o mips-for-linux-next)
 Merging nios2/nios2-next (4a89c3088ff6 nios2: fix cache coherency issue whe=
 n debug with gdb)
-Merging parisc-hd/for-next (c19edb6946d2 parisc: Replace PT_NLEVELS with CO=
-NFIG_PGTABLE_LEVELS)
+Merging parisc-hd/for-next (db4fd9c5d072 Merge git://git.kernel.org/pub/scm=
+/linux/kernel/git/davem/sparc)
 Merging powerpc-mpe/next (2fe0753d4940 powerpc/powermac: Fix build error se=
 en with powermac smp builds)
 Merging powerpc/next (65e7bb2a34fe Merge branch 'next-sriov' into next)
@@ -192,7 +193,8 @@ Merging fsl/next (d41444daba1f powerpc/corenet: enable CONFIG_I2C_MUX and C=
 ONFIG_I2C_MUX_PCA954x)
 Merging mpc5xxx/next (9e813308a5c1 powerpc/thp: Add tracepoints to track hu=
 gepage invalidate)
-Merging s390/features (80ed156a3d12 s390/pci: add locking for fmb access)
+Merging s390/features (db86b54acc93 s390/mm: change swap pte encoding and p=
+gtable cleanup)
 Merging sparc-next/master (9f935675d41a Merge branch 'for-linus' of git://g=
 it.kernel.org/pub/scm/linux/kernel/git/dtor/input)
 Merging tile/master (128f3cb9398b tile: nohz: warn if nohz_full uses hyperv=
@@ -267,8 +269,7 @@ d/for-next)
 Merging kconfig/for-next (bfa76d495765 Linux 3.19)
 Merging libata/for-next (e0e2674b9205 ata: ahci_st: fixup layering violatio=
 ns / drvdata errors)
-Merging pm/linux-next (ec8382996d13 Merge branches 'acpi-scan' and 'acpi-do=
-ck')
+Merging pm/linux-next (c72c2c92ac29 Merge branch 'acpi-ec')
 Merging idle/next (9d72137b1930 Merge branch 'cpu-online-next' into next)
 Merging apm/for-next (53675abbd1e5 x86, apm: Remove unused variable)
 Merging thermal/next (75229df63655 Merge branches 'thermal-fix', 'thermal-i=
@@ -280,7 +281,7 @@ model IDs)
 Merging dlm/next (2ab4bd8ea3a6 dlm: adopt orphan locks)
 Merging swiotlb/linux-next (8e0629c1d4ce swiotlb: don't assume PA 0 is inva=
 lid)
-Merging slave-dma/next (7ac544cc1c4f Merge branch 'for-linus' into next)
+Merging slave-dma/next (a49d0296b726 Merge branch 'for-linus' into next)
 CONFLICT (modify/delete): drivers/dma/intel_mid_dma_regs.h deleted in HEAD =
 and modified in slave-dma/next. Version slave-dma/next of drivers/dma/intel=
 _mid_dma_regs.h left in tree.
@@ -306,12 +307,11 @@ Merging bluetooth/master (35ef6e90d198 Bluetooth: btusb: off by one in rtl8=
 723b_parse_firmware())
 Merging infiniband/for-next (c1c2fef6cfb0 Merge branches 'cve-fixup', 'ipoi=
 b', 'iser', 'misc-4.1', 'or-mlx4' and 'srp' into for-4.1)
-Merging mtd/master (5e0899db69e2 mtd: nand: MTD_NAND_HISI504 should depend =
-on HAS_DMA)
+Merging mtd/master (3e550d2396d9 Merge MTD fixes from 4.0 into -next)
 Merging l2-mtd/master (81a1209c9091 mtd: spi-nor: Add support for Macronix =
 mx25u6435f serial flash)
-Merging crypto/master (ff030b099a21 crypto: rng - Introduce crypto_rng_gene=
-rate)
+Merging crypto/master (b617b702da4e crypto: rng - Zero seed in crypto_rng_r=
+eset)
 Merging drm/drm-next (cec32a470106 media-bus: Fixup RGB444_1X12, RGB565_1X1=
 6, and YUV8_1X24 media bus format)
 Merging drm-panel/drm/panel/for-next (1c550fa193d0 drm/panel: Add support f=
@@ -328,10 +328,9 @@ Merging drm-msm/msm-next (d5af49c92a8a drm/msm/mdp5: Enable DSI connector i=
 n msm drm driver)
 Merging sound/for-next (7d1b6e293274 ALSA: hda - fix "num_steps =3D 0" erro=
 r on ALC256)
-Merging sound-asoc/for-next (5d6cb688890a Merge remote-tracking branches 'a=
-soc/fix/fsl-ssi', 'asoc/fix/pm', 'asoc/fix/qcom', 'asoc/fix/rcar', 'asoc/fi=
-x/samsung' and 'asoc/fix/tfa9879' into asoc-linus)
-Merging modules/modules-next (55e1d5c7ad94 modpost: don't emit section mism=
+Merging sound-asoc/for-next (1702c59fa76a Merge remote-tracking branch 'aso=
+c/topic/sgtl5000' into asoc-next)
+Merging modules/modules-next (4a3893d069b7 modpost: don't emit section mism=
 atch warnings for compiler optimizations)
 Merging virtio/virtio-next (9abbfb486f5c virtio: drop virtio_device_is_lega=
 cy_only)
@@ -356,8 +355,8 @@ Merging battery/master (5939d9dfe440 power: twl4030_madc_battery: Add missi=
 ng MODULE_ALIAS)
 Merging omap_dss2/for-next (72fc8b7187cd Merge branches '4.1/fbdev' and '4.=
 1/omapdss' into for-next)
-Merging regulator/for-next (fc902dfc3e64 Merge remote-tracking branches 're=
-gulator/fix/doc' and 'regulator/fix/max77686' into regulator-linus)
+Merging regulator/for-next (3c24567c65bf Merge remote-tracking branches 're=
+gulator/topic/max14577' and 'regulator/topic/max77843' into regulator-next)
 Merging security/next (5deeb5cece3f lsm: copy comm before calling audit_log=
  to avoid race in string printing)
 Merging integrity/next (7bea7ff67e0c ima: /proc/keys is now mandatory)
@@ -404,7 +403,8 @@ Merging rcu/rcu/next (8d7dc9283f39 rcu: Control grace-period delays directl=
 y from value)
 Merging kvm/linux-next (b79013b2449c Merge tag 'staging-4.1-rc1' of git://g=
 it.kernel.org/pub/scm/linux/kernel/git/gregkh/staging)
-Merging kvm-arm/next (d44758c0dfc5 KVM: arm/arm64: enable KVM_CAP_IOEVENTFD)
+Merging kvm-arm/next (fd1d0ddf2ae9 KVM: arm/arm64: check IRQ number on user=
+land injection)
 Merging kvm-ppc/kvm-ppc-next (b79013b2449c Merge tag 'staging-4.1-rc1' of g=
 it://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging)
 Merging kvms390/next (816c7667ea97 KVM: s390: migrate vcpu interrupt state)
@@ -485,8 +485,6 @@ nfs.org/~bfields/linux)
 Merging access_once/linux-next (bc465aa9d045 Linux 4.0-rc5)
 Merging livepatching/for-next (075b759be1bb Merge branch 'for-4.1/core-s390=
 ' into for-next)
-Merging exec-domain/exec_domain_rip_v2 (97b2f0dc3314 arm64: Removed unused =
-variable)
 Merging akpm-current/current (5d77fd3b294b x86: switch to using asm-generic=
  for seccomp.h)
 CONFLICT (content): Merge conflict in mm/util.c
@@ -513,6 +511,7 @@ CONFLICT (content): Merge conflict in drivers/rtc/rtc-mc13xxx.c
 CONFLICT (content): Merge conflict in drivers/rtc/class.c
 CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_drv.h
 CONFLICT (content): Merge conflict in drivers/block/zram/zram_drv.c
+CONFLICT (content): Merge conflict in arch/sparc/kernel/mdesc.c
 CONFLICT (content): Merge conflict in arch/s390/pci/pci_debug.c
 CONFLICT (content): Merge conflict in arch/s390/mm/mmap.c
 CONFLICT (content): Merge conflict in arch/parisc/include/asm/Kbuild
@@ -530,28 +529,28 @@ Applying: mtrr, x86: clean up mtrr_type_lookup()
 Applying: mtrr, mm, x86: enhance MTRR checks for KVA huge page mapping
 Applying: drivers/w1/w1_int.c: call put_device if device_register fails
 Applying: mm: add strictlimit knob
-Merging akpm/master (cc08b3ae885b mm: add strictlimit knob)
+Merging akpm/master (405a4e9f7d26 mm: add strictlimit knob)
 
---Sig_/jTbzzu+VVuAdja1A_cct8mD
+--Sig_/R=v7ywdmQGzGKJ1sAsJ5rHr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVNyOnAAoJEMDTa8Ir7ZwVSPQP/2wvgT9v4m+1NAOt+e55ZBMw
-lT9jPv6M5H3r5TdAHKCBkMGBk4nj7JJU4nnm5W9aNWHwKZv1DRQj2+fHh1srA/zX
-HdJ/PW5YJZ14iZTJe9T+GZlPLDu/llulGpaBwwbslhvp4Q/fN0Ty1RhlWrtxNehm
-YK+LUonVB8zBwzbaSb7zLrvAORYGBKVEGYg1zWn9d96hyZttkHElce5L539E5hnV
-m+IlS2c2a+t6Ve7d4819eq5Mari+Vfip8V7k9jcQqaL/1Vs/zkSgQ34H0x7SkEFu
-0btPPayC6kSBDCbHwuBBit7LZ5V5bwh9UCS/KLuYdXJRtVuiP9IBw7oC0xJBVZrb
-44b4WPvay2VfD0CZID3jYXHpCb4IWr86616kX6dyTfPZDwSyWc/OJ/39uWwcTDA3
-5c6M6ctJkLsgk1vasvpNQHrjepxRTdkGR7H6BLzsjkVfVfOLzlZpqsJaT4YaRgtO
-+x2cUXe+76yj7ZV4Gjn1S9lz6BxAUehcyYmHhwbzGcVehwjUHs3s2fNHPTd8yNFI
-2Fmj2jN+uHuupJ1zDmthI+a/P8VJEVPzrOEQyYHps7OCSOssNFuKciaV/YqsnJ+J
-nDxh1bERzz04xMgdtHNEyee2pT1ICj4RwtPwAWuu6zDO9WcVf9yCyROR7FN5KSc/
-ZtcMB+azcl/dNBeKdhfW
-=pIbR
+iQIcBAEBCAAGBQJVOHsVAAoJEMDTa8Ir7ZwVxmIP+wcXClExHIqXxr3ACeyihy+Z
+MdcxDLABpcQTlN6wQZ5a6LyY6HKcBObd3PdX7ZAW1YAtIodtxFsiNJH7o2nKERGN
+o3e5FqZrwabOjzWd/4vbQ2CL9prxv9brgawtJ1eoklr3i5VSjxm9C+UgZ5GOgdQm
+IVTQixcdfyXvF7hXKWQbmG5wyzQSdef+178l7u/gpgydLvW7vmft6yp/bKoIr1vv
+fNRk40DOFSJrQR9hJvSm3HJxCvRUz6DDN3r4nKhC1+Tk5rwlDmTJLM6uxzmqtofn
+KGMO/9rP+hWymwschxtlwxOdK+ebI7ZfhglTvWjoWBXtchHG4r6El62iAyTD5DEi
+KXtUuNMjEZC0yVeWXVpFsiiCl22WwogeF16ltexeOXDe23uhmrVQjv28AHURRlAg
+YQKWy0tjQnJIHNRfAu/rhrrvBOZSuZlcnDqj+1zybufProvpWYJoUdwRHSMT+Ilb
+/P8BQLuLdbKvTujUO1KyOsyXlj3dX44/S3izokVfCqkBs8byNBoxREhdfE11FDno
+YUvIfpCCDSSChdJRmgMm+ubrKOxSds8tLaXp2tGAwElxFgF2Ih0GOzndjxTZVgTJ
+drlPjdpzinTxL84gE/u0d+d0/ncCWgcysiH7Mm//Egv6/TFy6IWzkbnUIlnt77EH
+W97x4GpbV7h8WlBecnTv
+=taRD
 -----END PGP SIGNATURE-----
 
---Sig_/jTbzzu+VVuAdja1A_cct8mD--
+--Sig_/R=v7ywdmQGzGKJ1sAsJ5rHr--
