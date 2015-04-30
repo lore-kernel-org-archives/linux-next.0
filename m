@@ -1,40 +1,75 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH 9/9] sysfs: disallow world-writable files.
-Date: Thu, 30 Apr 2015 11:32:05 +0930
-Message-ID: <874mnyxtk2.fsf@rustcorp.com.au>
-References: <CAB_aHcxDvUnqNaEJDhQ7e1Jd4U3-qvV1=99uyiBfD1384jku5g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ livepatching tree
+Date: Thu, 30 Apr 2015 14:07:33 +1000
+Message-ID: <20150430140733.7c9f79bd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAB_aHcxDvUnqNaEJDhQ7e1Jd4U3-qvV1=99uyiBfD1384jku5g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gobinda Maji <gobinda.cemk07@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/re0U+mMF+zNVFxVGJFO2LcA"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33521 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750802AbbD3EHk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Apr 2015 00:07:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, HATAYAMA Daisuke <d.hatayama@jp.fujitsu.com>
 
-Gobinda Maji <gobinda.cemk07@gmail.com> writes:
-> Hi Rusty,
+--Sig_/re0U+mMF+zNVFxVGJFO2LcA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Gobinda,
+Hi Andrew,
 
-> I have a small doubt about the permission restriction (User perms >=
-> group perms >= other perms) in VERIFY_OCTAL_PERMISSIONS(). Please Note
-> that permission field of User, Group or Other consists of three bits.
-> LSB is EXECUTE permission, MSB is READ permission and the middle bit
-> is WRITE permission. Say for example, permission value is "0431". Here
-> User has only READ permission whereas Group has both WRITE and EXECUTE
-> permission and Other has EXECUTE permission. I guess, it is not good
-> to give Group the WRITE permission whereas User itself has no WRITE
-> permission.
+Today's linux-next merge of the akpm-current tree got a conflict in
+arch/x86/kernel/machine_kexec_64.c between commit 4545c8988013 ("x86:
+introduce kaslr_offset()") from the livepatching tree and commit
+22543072a261 ("kdump, vmcoreinfo: report actual value of phys_base")
+from the akpm-current tree.
 
-You're absolutely right, well spotted!  The checks can be tightened.  We
-don't really care about execute, but logically write is "more
-privileged" than read.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Best to separate the tests; OTHER_WRITABLE <= GROUP_WRITABLE <= OWNER_WRITABLE
-and OTHER_READABLE <= GROUP_READABLE <= OWNER_READABLE.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-A patch would be welcome!
+diff --cc arch/x86/kernel/machine_kexec_64.c
+index e1029633f664,ab48c252e661..000000000000
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@@ -335,7 -334,8 +335,8 @@@ void arch_crash_save_vmcoreinfo(void
+  	VMCOREINFO_LENGTH(node_data, MAX_NUMNODES);
+  #endif
+  	vmcoreinfo_append_str("KERNELOFFSET=3D%lx\n",
+ -			      (unsigned long)&_text - __START_KERNEL);
+ +			      kaslr_offset());
++ 	VMCOREINFO_PHYS_BASE(phys_base);
+  }
+ =20
+  /* arch-dependent functionality related to kexec file-based syscall */
 
-Thanks,
-Rusty.
+--Sig_/re0U+mMF+zNVFxVGJFO2LcA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVQaqJAAoJEMDTa8Ir7ZwVhz8QAIOdCcdOslw/4XvwtV5FFxFv
+VpARCPdSLLzvwIn64twIREQYqMVXLfPtTIfAnkU8eIjcK3KkORzDSCECw8uUjkrM
+0/ZTHG6I0nDqsy+z1uegEtJoEysujMtBoyfzIxUw9w7rMtEAEQdvdfkL2vsPBp3e
+0oMuq6eXABekr2Zdk8hIBPv8ZLP/OOG8446RavT8X9C3QvM7WJOjkdrAExRxOoFt
+z9R5h9Lrwk6ygiIDMamZhJVCy0QZDeFrJLqIvM5rYELD63rAnjf9uGMvMzdiL7n6
+7slQaay5QcxoF38aa+bHOAkiudE6sX4gKYD/b7b+0ZWPNrFfHaALBXR4YSVON4oH
+awXZGZLhf4j1r+1PCmiKtIhj2NjACwYdW4sQYy3IPqgfEVoPONIbTHRSkcl7Y/Fw
+X4u7OupvDFViYk+iYousevddDBf/pBJX5KF88KatopyhoGoXn57Tzh5QqTwsJN31
++qeED0rNGwDLP7xJhQdApClgRrOEimIjRhldYOVoL6WKTxcxZtUbkRaYlOLcZExP
+t2cjokE88BJ9v5WzIzCyN6g4f5mhzl7vg6J16sF5sT5NWLUm+kz2y7L5BCZ4yCXy
+S+PgOrktjlJP7FsaEvNCqKDgqbEncGE2en48bArDKgThEk4zVaVTun/qB6Gd5xQz
+2B2gk7HcCiJ/b9kTix4W
+=+wC2
+-----END PGP SIGNATURE-----
+
+--Sig_/re0U+mMF+zNVFxVGJFO2LcA--
