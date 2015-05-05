@@ -1,82 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Coresight tree to -next please
-Date: Wed, 6 May 2015 00:27:03 +1000
-Message-ID: <20150506002703.3fa4618f@canb.auug.org.au>
-References: <CANLsYky=XeD6ednBkgv4Qe3=a7RUa6bW9-9X2DKKCmUXUwKsyA@mail.gmail.com>
-	<20150505104834.47f528ba@canb.auug.org.au>
-	<CANLsYkyjBEGJ=L52GWqUPeY5egsceK34phSdFcaoLUxZxxnXfA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SZ9oH4aSaGzSMe.qeckUGEp"; protocol="application/pgp-signature"
+From: john.hubbard@gmail.com
+Subject: [PATCH v2] watchdog: Fix a watchdog crash in some configurations
+Date: Tue,  5 May 2015 12:38:11 -0700
+Message-ID: <1430854691-9628-1-git-send-email-jhubbard@nvidia.com>
+References: <20150505140623.GL98296@redhat.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59781 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S2993177AbbEEO1N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 May 2015 10:27:13 -0400
-In-Reply-To: <CANLsYkyjBEGJ=L52GWqUPeY5egsceK34phSdFcaoLUxZxxnXfA@mail.gmail.com>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:36383 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752974AbbEETjW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 May 2015 15:39:22 -0400
+Received: by pabsx10 with SMTP id sx10so203625897pab.3
+        for <linux-next@vger.kernel.org>; Tue, 05 May 2015 12:39:21 -0700 (PDT)
+In-Reply-To: <20150505140623.GL98296@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-next@vger.kernel.org
+To: Don Zickus <dzickus@redhat.com>, Chris Metcalf <cmetcalf@ezchip.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Ulrich Obergfell <uobergfe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
 
---Sig_/SZ9oH4aSaGzSMe.qeckUGEp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: John Hubbard <jhubbard@nvidia.com>
 
-Hi Mathieu,
+Commit 8fcf2cc768acd845c1fed837bf9cfe2d7106336d in linux-next
+introduced a regression in some configurations. Specifically,
+with CONFIG_NO_HZ_FULL set, and CONFIG_NO_HZ_FULL_ALL *not* set,
+the kernel will crash in lockup_detector_init(), due to a
+NULL tick_nohz_full_mask pointer.
 
-On Tue, 5 May 2015 08:22:20 -0600 Mathieu Poirier <mathieu.poirier@linaro.o=
-rg> wrote:
->
-> On 4 May 2015 at 18:48, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > I used git://git.linaro.org/kernel/coresight.git, and added it from
-> > today.
->=20
-> Perfect - did you use the "next" branch?
+This is because the above commit uses tick_nohz_full_mask
+(in lockup_detector_init), if CONFIG_NO_HZ_FULL is set, but
+tick_nohz_full_mask only gets allocated if either:
 
-Yes.
+    a) CONFIG_NO_HZ_FULL_ALL is set, or
 
-> > Is this tree to be submitted directly to Linus, or via some
-> > other tree? (just gives me a clue as to where to positiion it in the
-> > merge list)
->=20
-> I take patches in my next tree and about twice per cycle will send a
-> tally to GKH for inclusion in his char-misc-next branch.  As such when
-> he takes my patches there should be some duplication between the
-> coresight next branch and his char-misc-next.  Do you see this as a
-> problem?
+    b) Someone passes in nohz_full=<any_value> on the boot
+      args line.
 
-It can cause conflicts if you send patches to Greg and keep them in
-your tree (if there are further changes to the same files in either
-tree).  Much better would be to ask him to pull your tree (or a subset)
-that way you have the same commits (as opposed to patches) in both
-trees.
+To correct this, change lockup_detector_init so that it does
+a runtime check instead of the ifdef check. This fix is
+simpler than my original proposed fix, thanks to Chris Metcalf
+for that.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ kernel/watchdog.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---Sig_/SZ9oH4aSaGzSMe.qeckUGEp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVSNM9AAoJEMDTa8Ir7ZwVSGkP/ipbITL3oFdRpKGUa9DOctmn
-hmYwyD567T1FkezdEWx0lWHO1/BAR+Nnf2S8b5X25t7oDcgGuaQlyBBBmDZ3kPwK
-/uo6T05S8XmzvPtpiqx3q1xAI30I4a4zVueFdQKt5fl0akn1sOjAJETZKWcHzpEy
-QWkauwoH2wwJC1f4hW0MGnfJl8fvUeEhVQKHrIpXkKF0aBf+vpoDH9t8nRAEEJqG
-47cuKhL1xTwM+YSBWRkwKJsw2RUgd/N8g5GGXYkUcCZdEtVNaa2/5aUjbflNR/y9
-RE5q8dWrMEVA2z1BVzBPVW2g9UcTtXQuEr76wUtz0ubLvLdFWxfXG6tncCGdY5PA
-qg474VtsQV+t0gGmOn61+Nd5JdTV2yiIEjwF7e3gRSP+jJk62B7fpV7/mwsfTOw0
-aTsD4ZNtJRz0wqG7JUiQbKgWfrSYSsns4JIndKqMjqz2g3lzr/O9R3yywZKxhsT4
-CHJVto6pIfrqeY28I1y3oe+m8nAh+ZgPtgNbzNfrzYrnWkBKcSvMg27k7fjmR2xQ
-+TaMReZGydT0VrgEI01BMCWuciOiL8arK4Z/OE4jQwJ5OoQdGZNxn0Iee5JF8FGP
-C/6S6U3fY2LIsx/D5Pra3LYl6SDkYeV9wCgl8PBRa3F2yt7VM1dXeHyPiI+A1D4a
-VsSkDIaytsC1IohbBfkv
-=z12h
------END PGP SIGNATURE-----
-
---Sig_/SZ9oH4aSaGzSMe.qeckUGEp--
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 40fda2f..c2eb97c 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -920,14 +920,14 @@ void __init lockup_detector_init(void)
+ {
+ 	set_sample_period();
+ 
+-#ifdef CONFIG_NO_HZ_FULL
+-	if (!cpumask_empty(tick_nohz_full_mask))
+-		pr_info("Disabling watchdog on nohz_full cores by default\n");
+-	cpumask_andnot(&watchdog_cpumask, cpu_possible_mask,
+-		       tick_nohz_full_mask);
+-#else
+-	cpumask_copy(&watchdog_cpumask, cpu_possible_mask);
+-#endif
++	if (tick_nohz_full_enabled()) {
++		if (!cpumask_empty(tick_nohz_full_mask))
++			pr_info("Disabling watchdog on nohz_full cores by default\n");
++		cpumask_andnot(&watchdog_cpumask, cpu_possible_mask,
++			       tick_nohz_full_mask);
++	}
++	else
++		cpumask_copy(&watchdog_cpumask, cpu_possible_mask);
+ 
+ 	if (watchdog_enabled)
+ 		watchdog_enable_all_cpus();
+-- 
+2.3.7
