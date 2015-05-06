@@ -1,41 +1,42 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: linux-next: build warning after merge of the clk tree
-Date: Tue, 5 May 2015 21:41:26 -0700
-Message-ID: <20150506044126.GA2817@codeaurora.org>
-References: <20150506140543.426ed29b@canb.auug.org.au>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: linux-next: build warnings after merge of the staging tree
+Date: Wed, 6 May 2015 08:56:19 +0200 (CEST)
+Message-ID: <alpine.DEB.2.10.1505060855420.2652@hadrien>
+References: <20150506141050.5689c298@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49057 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750779AbbEFEl2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2015 00:41:28 -0400
-Content-Disposition: inline
-In-Reply-To: <20150506140543.426ed29b@canb.auug.org.au>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:2938 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750730AbbEFG4f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2015 02:56:35 -0400
+In-Reply-To: <20150506141050.5689c298@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/06, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the clk tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/clk/clk.c:2231:13: warning: 'clk_is_orphan' defined but not used [-Wunused-function]
->  static bool clk_is_orphan(const struct clk *clk)
->              ^
-> 
-> Introduced by commit ece3ffbe1b7b ("clk: prevent orphan clocks from
-> being used").
-> 
-> CONFIG_OF is not set for this build ...
 
-Thanks for the report. kbuild robot also reported this problem
-the other day. We came up with a way to not have this function at
-all though so this problem should go away tomorrow.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Wed, 6 May 2015, Stephen Rothwell wrote:
+
+> Hi Greg,
+>
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+>
+> drivers/staging/lustre/lustre/llite/file.c: In function 'll_iocontrol_unregister':
+> drivers/staging/lustre/lustre/llite/file.c:3249:17: warning: unused variable 'size' [-Wunused-variable]
+>     unsigned int size = tmp->iocd_size;
+>                  ^
+> drivers/staging/lustre/lustre/llite/llite_lib.c: In function 'll_fill_super':
+> drivers/staging/lustre/lustre/llite/llite_lib.c:912:12: warning: unused variable 'instlen' [-Wunused-variable]
+>   const int instlen = sizeof(cfg->cfg_instance) * 2 + 2;
+>             ^
+>
+> Introduced by commit 97903a26fcfc ("staging: lustre: llite: drop uses
+> of OBD free functions").
+
+Sorry for not having noticed.  I will take care of it as soon as possible.
+
+julia
