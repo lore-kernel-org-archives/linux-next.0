@@ -1,43 +1,164 @@
-From: Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
-Subject: Re: linux-rdma repository url
-Date: Thu, 7 May 2015 13:22:09 +0530
-Message-ID: <CANjDDBiWfpv27cQ9Jpht+ZNJcQyQ=qnbLQa8B9eDjYgmkQOruQ@mail.gmail.com>
-References: <EE7902D3F51F404C82415C4803930ACD5DC493FD@CMEXMB1.ad.emulex.com>
-	<1430848060.2407.246.camel@redhat.com>
-	<1430941293.25060.8.camel@opteya.com>
-	<1430941701.2407.347.camel@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1430941701.2407.347.camel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Yann Droneaud <ydroneaud-RlY5vtjFyJ3QT0dZR+AlfA@public.gmane.org>, Devesh Sharma <Devesh.Sharma-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20150507 build: 0 failures 42 warnings (next-20150507)
+Date: Thu, 07 May 2015 13:59:01 +0100
+Message-ID: <E1YqLOG-00071b-Ko@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54677 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751167AbbEGM7L (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 May 2015 08:59:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Thanks Doug for the detailed info.
+Tree/Branch: next-20150507
+Git describe: next-20150507
+Commit: 55a92d585b Add linux-next specific files for 20150507
 
-On Thu, May 7, 2015 at 1:18 AM, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> wrote:
-> On Wed, 2015-05-06 at 21:41 +0200, Yann Droneaud wrote:
->> And what about linux-next: you should ask for your tree to be added to
->> the trees Stephen merge into linux-next so that yours get some
->> visibility to other maintainers and build bots.
->
-> I will.  The current tree is in 0day testing, I was going to add
-> linux-next, but was going to wait until I have a repo on k.o.
->
->
-> --
-> Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
->               GPG KeyID: 0E572FDD
->
+Build Time: 143 min 23 sec
+
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
+
+Errors: 0
+Warnings: 42
+Section Mismatches: 1
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     27 warnings    3 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+     16 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 42
+	  2 ../drivers/staging/lustre/lustre/llite/llite_lib.c:912:12: warning: unused variable 'instlen' [-Wunused-variable]
+	  2 ../drivers/staging/lustre/lustre/llite/file.c:3249:17: warning: unused variable 'size' [-Wunused-variable]
+	  2 ../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
+	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../sound/atmel/ac97c.c:919:29: warning: unused variable 'match' [-Wunused-variable]
+	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
+	  1 ../include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	  1 ../drivers/usb/renesas_usbhs/common.c:492:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type [enabled by default]
+	  1 ../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type
+	  1 ../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
+	  1 ../drivers/rtc/rtc-armada38x.c:67:34: warning: unused variable 'flags' [-Wunused-variable]
+	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/mmc/host/sh_mmcif.c:407:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/mmc/host/sh_mmcif.c:406:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/gpu/drm/msm/msm_iommu.c:63:3: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/msm/msm_iommu.c:102:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/msm/msm_gem.c:490:4: warning: format '%d' expects argument of type 'int', but argument 11 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/msm/msm_drv.c:97:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/gpu/drm/msm/msm_drv.c:219:3: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/msm/msm_drv.c:180:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/gpu/drm/msm/msm_drv.c:113:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/gpu/drm/msm/msm_drv.c:105:41: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/gpu/drm/msm/edp/edp_aux.c:158:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/msm/edp/edp_aux.c:135:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/msm/dsi/dsi_host.c:1043:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/msm/dsi/dsi_host.c:1026:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/block/nvme-core.c:1822:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/nvme-core.c:1794:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+Section Mismatch Summary: 1
+	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
 
 
 
--- 
--Regards
-Devesh
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 27 warnings, 3 section mismatches
+
+Warnings:
+	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/msm/edp/edp_aux.c:135:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
+	../drivers/gpu/drm/msm/edp/edp_aux.c:158:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
+	../drivers/gpu/drm/msm/msm_drv.c:97:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/msm/msm_drv.c:105:41: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/msm/msm_drv.c:113:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/msm/msm_drv.c:180:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/msm/msm_drv.c:219:3: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
+	../drivers/gpu/drm/msm/msm_gem.c:490:4: warning: format '%d' expects argument of type 'int', but argument 11 has type 'size_t' [-Wformat=]
+	../drivers/gpu/drm/msm/msm_iommu.c:63:3: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'size_t' [-Wformat=]
+	../drivers/gpu/drm/msm/msm_iommu.c:102:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat=]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:1026:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:1043:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
+	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/mmc/host/sh_mmcif.c:406:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/mmc/host/sh_mmcif.c:407:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	../drivers/staging/lustre/lustre/llite/file.c:3249:17: warning: unused variable 'size' [-Wunused-variable]
+	../drivers/staging/lustre/lustre/llite/llite_lib.c:912:12: warning: unused variable 'instlen' [-Wunused-variable]
+	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
+	../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type
+	../drivers/usb/renesas_usbhs/common.c:492:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+
+Section Mismatches:
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 16 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
+	../sound/atmel/ac97c.c:919:29: warning: unused variable 'match' [-Wunused-variable]
+	../drivers/block/nvme-core.c:1794:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/nvme-core.c:1822:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/rtc/rtc-armada38x.c:67:34: warning: unused variable 'flags' [-Wunused-variable]
+	../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
+	../include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
+	../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type [enabled by default]
+	../drivers/staging/lustre/lustre/llite/file.c:3249:17: warning: unused variable 'size' [-Wunused-variable]
+	../drivers/staging/lustre/lustre/llite/llite_lib.c:912:12: warning: unused variable 'instlen' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
