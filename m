@@ -1,64 +1,68 @@
-From: Doug Ledford <dledford@redhat.com>
-Subject: Re: linux-rdma repository url
-Date: Wed, 06 May 2015 15:48:21 -0400
-Message-ID: <1430941701.2407.347.camel@redhat.com>
-References: <EE7902D3F51F404C82415C4803930ACD5DC493FD@CMEXMB1.ad.emulex.com>
-	 <1430848060.2407.246.camel@redhat.com>
-	 <1430941293.25060.8.camel@opteya.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ext4 tree
+Date: Thu, 7 May 2015 11:14:32 +1000
+Message-ID: <20150507111432.272e30fe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-e0x7DaWNvMDssvbMT/4u"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TYgeKb/kH2vSpkMPVZ.NGRH"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:50797 "EHLO mx1.redhat.com"
+Received: from ozlabs.org ([103.22.144.67]:57228 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750943AbbEFTs1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 May 2015 15:48:27 -0400
-In-Reply-To: <1430941293.25060.8.camel@opteya.com>
+	id S1751565AbbEGBOl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 May 2015 21:14:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yann Droneaud <ydroneaud@opteya.com>
-Cc: Devesh Sharma <Devesh.Sharma@Emulex.Com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
---=-e0x7DaWNvMDssvbMT/4u
-Content-Type: text/plain; charset="UTF-8"
+--Sig_/TYgeKb/kH2vSpkMPVZ.NGRH
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2015-05-06 at 21:41 +0200, Yann Droneaud wrote:
-> And what about linux-next: you should ask for your tree to be added to
-> the trees Stephen merge into linux-next so that yours get some
-> visibility to other maintainers and build bots.
+Hi Ted,
 
-I will.  The current tree is in 0day testing, I was going to add
-linux-next, but was going to wait until I have a repo on k.o.
+After merging the ext4 tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+fs/ext4/file.c: In function 'ext4_file_mmap':
+fs/ext4/file.c:226:3: error: implicit declaration of function 'ext4_get_enc=
+ryption_info' [-Werror=3Dimplicit-function-declaration]
+   int err =3D ext4_get_encryption_info(inode);
+   ^
+fs/ext4/super.c: In function 'ext4_clear_inode':
+fs/ext4/super.c:958:19: error: 'struct ext4_inode_info' has no member named=
+ 'i_crypt_info'
+  if (EXT4_I(inode)->i_crypt_info)
+                   ^
 
+Caused by commit ef8a5d07c606 ("ext4 crypto: reorganize how we store
+keys in the inode").  This build has CONFIG_EXT4_FS_ENCRYPTION not set.
+
+I have used the ext4 tree from next-20150506 for today.
 --=20
-Doug Ledford <dledford@redhat.com>
-              GPG KeyID: 0E572FDD
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
---=-e0x7DaWNvMDssvbMT/4u
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+--Sig_/TYgeKb/kH2vSpkMPVZ.NGRH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVSnAFAAoJELgmozMOVy/daYkQAKkD4t0SCfBr8DPRkb8OJPzn
-k5HPBLbW2DoSWTXyQgcyi5iwQEB2Pt3R3/88CXci/reN+WFUoWVlL2K22+VnbL3b
-omtEjRwKp2LlQZuuTlOP5qAb6ocfxoHlmHGWDLXtLgV9rOyjVv+x6TEw77qHo9a9
-gc7l5TCbTah3FDm85FPTLcphH7+AdwCQ/XgOenaRHE89Zqb8jWm14OU6ApkTrcnH
-1OV6u3sHwfuy9tCy4mhbbxHxQA31ejOeGkxETjJcqYLFJ0kW2QDXA8V5lbpIdpDs
-9cZYtILyVrRfZrA1SXwPDV48L1ZAxVEeER4YvTPizBJYbP/Ik0z5RMet2fcgyoDO
-P5YeOfTmyW/dArzeKV/jxY/ulUbumVypm/0t9OtRSawBzZqhi48KAlSOyx8cqeYB
-7fb9NwkWI1C+eUVJ0qaPQGOejYrbSs0LyJwcofuMe7/jgdpmRjlYo8MshwZ9RSEz
-OFoALfiN/Uh/DZ5dafe4sBxh2qPRN1jbc7+wN7zKW8pnBp+8zf1BbD/jXi62zoIL
-AqmDXNRZZvDH+2+WfCbsyZUXKlK2+ncvcd0lsHttekCt30YfaU4kYYZ5yvNlycv4
-vEgm/qKtzubAqMG/Sb+9uuWPhTKr6Uu3s8b0zCiZU0EoMmM1kCuTdR1OhCNk0X8b
-5X3DZNYZ72ol2mW963kf
-=JoVO
+iQIcBAEBCAAGBQJVSrx8AAoJEMDTa8Ir7ZwV1+EP/iEH6LFitFKY+ZYO8iXJPao/
+m6U2L467zf/Rzw4OgmM2Bhk3x8HWrgSZDYFIclcVtCMYKrYKZRCGH5S4o7TTwT/l
+vME0Qoi5sJsn85NhKUbmFhQXQxC7CJ66Xp8DUUA2jS4MvYi0bDQ3ey12nASHstWP
+CZXkbCKEd+YMLy+6OZdGRPJG0+nja4pnnymSYQrF4XFo7H+E8qWKBbKP34YTqDsU
+SsSOLY33YBziIS+TYR9hp6y7FEnFhQcRcARHEFrbpi32bu/A25rjgRPOk5n1RIRv
+qLKDRkYmV7TXIP/Rn/IjrQdgdR3ZPBxw7y+YjypRybPyQj9A6SYVLIan7pvWqs/l
+/Rs1kzWzIhcnmm9esDsmQl7+FCy0JnfbkgR/plNMbF1q08+rtHj50NeLkMEFMUZY
+Hb4p/E4opx3KTw4xw19cQhATGl6VwjfuQFvvFTzxwlldhozOD44s1tDg5Td7AMhG
+yvefss9ATiqNTF+fasGzCwC6+9p31XTzUkjpCubKHo9WnuXsZ+h46ZuY0JZyYyof
+NBheu5nbN0XJgqD85dZj64vOGCaOERLvE2EsYge2V5G3evpJSAG7N1txqk6GC8Ne
+UTRWAAw96FztyxxBHvKHcwBroc8dkK+7Px5f9kh/0OMLXlFyvQi1vHAQHgfJ2eep
+yKjB1MhbcDSeYtROhEVn
+=SjGf
 -----END PGP SIGNATURE-----
 
---=-e0x7DaWNvMDssvbMT/4u--
+--Sig_/TYgeKb/kH2vSpkMPVZ.NGRH--
