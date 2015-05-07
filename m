@@ -1,61 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the tegra tree
-Date: Thu, 7 May 2015 14:06:17 +1000
-Message-ID: <20150507140617.708b9c15@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drm-intel tree
+Date: Thu, 7 May 2015 15:29:39 +1000
+Message-ID: <20150507152939.5e7b4333@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O2RKgCklSl4kbLPLUF4UY74"; protocol="application/pgp-signature"
+ boundary="Sig_/2K/Ip+c8QDkycWVnRsmAeDg"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33778 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44315 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750701AbbEGEGZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 May 2015 00:06:25 -0400
+	id S1751613AbbEGF3q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 May 2015 01:29:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/O2RKgCklSl4kbLPLUF4UY74
+--Sig_/2K/Ip+c8QDkycWVnRsmAeDg
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tegra tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+After merging the drm-intel tree, today's linux-next build (i386 defconfig)
+produced this warning:
 
-drivers/clk/tegra/clk-emc.c: In function 'tegra_clk_register_emc':
-drivers/clk/tegra/clk-emc.c:519:20: warning: assignment discards 'const' qu=
-alifier from pointer target type
-  init.parent_names =3D emc_parent_clk_names;
-                    ^
+drivers/gpu/drm/i915/i915_gem_gtt.c: In function 'gen8_ppgtt_init':
+drivers/gpu/drm/i915/i915_gem_gtt.c:954:22: warning: large integer implicit=
+ly truncated to unsigned type [-Woverflow]
+  ppgtt->base.total =3D 1ULL << 32;
+                      ^
 
-Introduced by commit dc9fdb640b9f ("clk: tegra: Add EMC clock driver").
+Introduced by commit 5c5f645773b6 ("drm/i915: Unify aliasing ppgtt
+handling").  "total" is a size_t, so unsigned 32 bit on i386.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/O2RKgCklSl4kbLPLUF4UY74
+--Sig_/2K/Ip+c8QDkycWVnRsmAeDg
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVSuS+AAoJEMDTa8Ir7ZwV+QQP/1v3S4aFedVbBlNl7rG3Ny/B
-0khX+tOarl0kH6JLPDQq2PreZYTOGqlOKcFYaC6ZukF9yncIzn0+xUxQ8WYo9yLd
-Hm3odmkjv9Eb7R0VCHpeQJ1a2INmCDBV2fovKFe7g9wTc88GtRcOBzlzkvt0g88v
-uLdXWgtPGsXk5q67zIufVAHKnG67poAOfGSiGyVdvmDmJWMup4uiFrS0TdcbHBfE
-fctT8dW1jDSTaAfTlhUweE8O2xEbvxGIkszAL4XZjz2TNE+rD1VbZ7e9zVFYj0jn
-+OeEHllMvknl/3qUfeyOYiqCLT9fIhOHLL7CDtgdENm7KBjlOvt5NTB7cqUH+ndS
-0wXHG32Ukqwv7oLNknXMC/+kZX/6d/lOk1tnkz4sbMG5n+EEA80mAk3nYhTQSqO0
-hb0GpJf3IJXg2d2dh2/eB+N6rwM1l4MhpAA68OkDjqRLfPcl5MSOh0fDm6J9Q+Sr
-ZkByVK1jdiOCe3b2VAuKSQWF/YFnrUTN5lO3gZ+sjdM0uHHG/BReJooXSHDO9tWV
-hd0YFYBvV6zarr+ou9zuiogZTrFicPtiVPQxAg2MYCKFe4yzV1Isgpm2kyITFdUS
-USofxAsijKFOXZQZw/HN4A2Le7AktFwNDIt9Ej95u5IVFMC8wUYZn7MwgGyQyJZr
-CZGdBYqgKsZ9isdFzRkg
-=N4Nl
+iQIcBAEBCAAGBQJVSvhHAAoJEMDTa8Ir7ZwV9ykP/2+9/hB3Gyun3Xn2HLpYY9Pj
+fvfRNf2ekx8QdIHQvV39iAoq+GOB762FmZelBvw3Q+qHOJj0YgkmeuryGxifC2qU
+ZLbHH4EhSarPlFWAF3ws4NmAQQY0II8erPcOHxpxIueYcYHJGE8X4rqtldG79Dj7
+CO09a0eR0tyoJZWxr2GCrvAKz4fQ8HfT/LrE5NDe235G67cZzAuZ0ap75i0XIrrd
+GDv6yfegcMrwTNCoqaP3+hlhvyFVPMygfZW9QcAz7zP5l9K7JPgGgJA6NvLm1loD
+5gfzXq408/GU2Duk8bcfJ5jLLHVBnH6Bn1c2yzh8ILSgIVfwzsqWRn4e2daejmd+
++jj5JeiRdy+FGWlQhO/XkTP/5GkO11/RqDdtQFzj0savgM6ax7p8XUV/dQygVOwJ
+LE0hn33ajLEKMfJQm7rZRX6frUIONW2lHasxomeGdYJrMoV7f5uzJmhtNt3ifKZB
+4mJZ9TVp/T6lNqfZH6bEIYaly4RVKS6HvhE0M0pA5uyE5Ec6PXoGVc0bJY/gGrAZ
+KkcPUZrOuzn/ORozBJcN5zGJhF6FtSmDyOFVSfvf6upsBDAJeeQyz4xI32qDaUyl
+yF0dEsW3XXcvZZafTr5nIk4Py+npsjlsO7hUn+uGtxK4LhpfeazgbZ8SYlenv+d3
+KqWK3J7Yn4bYtqgU72pg
+=3lpK
 -----END PGP SIGNATURE-----
 
---Sig_/O2RKgCklSl4kbLPLUF4UY74--
+--Sig_/2K/Ip+c8QDkycWVnRsmAeDg--
