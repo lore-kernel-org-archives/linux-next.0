@@ -1,37 +1,62 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: Tree for May 11 (build failures)
-Date: Mon, 11 May 2015 14:43:39 +0100
-Message-ID: <20150511134339.GE2067@n2100.arm.linux.org.uk>
-References: <20150511170946.6064c5e9@canb.auug.org.au>
- <20150511133108.GA29164@roeck-us.net>
+From: Nishanth Menon <nm@ti.com>
+Subject: next-20150511 / omap2-mcspi: regression for sdp4430 boot
+Date: Mon, 11 May 2015 11:50:19 -0500
+Message-ID: <5550DDCB.8010303@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:37053 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750962AbbEKNnv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 May 2015 09:43:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20150511133108.GA29164@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Tianping Fang <tianping.fang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Michael Welling <mwelling@ieee.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-spi@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, May 11, 2015 at 06:31:08AM -0700, Guenter Roeck wrote:
-> Building arm:keystone_defconfig ... failed
-> --------------
-> Error log:
-> arch/arm/mm/mmu.c: In function 'early_paging_init':
-> arch/arm/mm/mmu.c:1461:54: error: expected '(' before ')' token
->   asm volatile("mcr p15, 0, %0, c2, c0, 2" : : "ttbcr");
-> 
-> Introduced by 'ARM: re-implement physical address space switching'.
+Hi,
 
-For some reason, that passed with an older gcc, though it definitely is
-not correct.  A fix has already been merged and should be in the next
-next.
+SDP4430 uses a SPI based network chip ks8851.
+
+next-20150508:
+https://github.com/nmenon/kernel-test-logs/blob/next-20150508/omap2plus_defconfig/sdp4430.txt
+
+However, next-20150511:
+https://github.com/nmenon/kernel-test-logs/blob/next-20150511/omap2plus_defconfig/sdp4430.txt
+
+Generates infinite "ks8851 spi1.0: ks8851_irq: spi bus error" errors
+and hangs the platform.
+
+Bisected the issue down to the following two commits when reverted
+allows the board to function:
+
+
+commit b28cb9414db9f8e42ac18c9e360e4e99cda42489
+Author: Michael Welling <mwelling@ieee.org>
+Date:   Thu May 7 18:36:53 2015 -0500
+
+    spi: omap2-mcspi: Switch driver to use transfer_one
+
+    Switches from transfer_one_message to transfer_one to prepare
+driver for
+    use of GPIO chip selects.
+
+    Signed-off-by: Michael Welling <mwelling@ieee.org>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+Reverting this alone: http://paste.ubuntu.org.cn/2594735 (did not boot up)
+
+commit bc7f9bbc80bcc77745b3f54ec4e7103e3e142bb9
+Author: Michael Welling <mwelling@ieee.org>
+Date:   Fri May 8 13:31:01 2015 -0500
+
+    spi: omap2-mcspi: Add gpio_request and init CS
+
+    If GPIO chip select is specified, request the GPIO in the setup
+function
+    and release it in the cleanup function.
+
+    Signed-off-by: Michael Welling <mwelling@ieee.org>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+Reverting this as well allowed boot.
 
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+Regards,
+Nishanth Menon
