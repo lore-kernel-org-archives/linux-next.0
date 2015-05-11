@@ -1,182 +1,155 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Mon, 11 May 2015 11:26:12 +1000
-Message-ID: <20150511112612.04e26c8a@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-drivers-next tree with the
+ net-next tree
+Date: Mon, 11 May 2015 12:33:17 +1000
+Message-ID: <20150511123317.2fe9dd4c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vJjDl3uwjXAJts9FSHr695q"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uday Savagaonkar <savagaon@google.com>, Theodore Ts'o <tytso@mit.edu>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/YZk8JAF+gfb8BXW=uqHUGrP"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45943 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751644AbbEKCdX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 10 May 2015 22:33:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Michal Kazior <michal.kazior@tieto.com>, Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
 
---Sig_/vJjDl3uwjXAJts9FSHr695q
+--Sig_/YZk8JAF+gfb8BXW=uqHUGrP
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Kalle,
 
-After merging the vfs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the wireless-drivers-next tree got a
+conflict in drivers/net/wireless/ath/ath10k/mac.c between commits
+41fbf6e4f317 ("ath10k: enable IEEE80211_HW_SUPPORT_FAST_XMIT") and
+df1404650ccb ("mac80211: remove support for IFF_PROMISC") from the
+net-next tree and commits 548462133d98 ("ath10k: fix interrupt storm"),
+cc9904e694fa ("ath10k: add hw connection monitor support") and
+500ff9f9389d ("ath10k: implement chanctx API") (and a few others) from
+the wireless-drivers-next tree.
 
-fs/f2fs/namei.c: In function 'f2fs_encrypted_follow_link':
-fs/f2fs/namei.c:336:10: warning: passing argument 2 of 'f2fs_follow_link' f=
-rom incompatible pointer type
-   return f2fs_follow_link(dentry, nd);
-          ^
-fs/f2fs/namei.c:311:20: note: expected 'void **' but argument is of type 's=
-truct nameidata *'
- static const char *f2fs_follow_link(struct dentry *dentry, void **cookie)
-                    ^
-fs/f2fs/namei.c:336:3: warning: return discards 'const' qualifier from poin=
-ter target type
-   return f2fs_follow_link(dentry, nd);
-   ^
-fs/f2fs/namei.c:379:2: error: implicit declaration of function 'nd_set_link=
-' [-Werror=3Dimplicit-function-declaration]
-  nd_set_link(nd, paddr);
-  ^
-fs/f2fs/namei.c: In function 'f2fs_encrypted_put_link':
-fs/f2fs/namei.c:400:3: error: implicit declaration of function 'nd_get_link=
-' [-Werror=3Dimplicit-function-declaration]
-   kfree(nd_get_link(nd));
-   ^
-fs/f2fs/namei.c:400:3: warning: passing argument 1 of 'kfree' makes pointer=
- from integer without a cast
-In file included from fs/f2fs/f2fs.h:17:0,
-                 from fs/f2fs/namei.c:19:
-include/linux/slab.h:143:6: note: expected 'const void *' but argument is o=
-f type 'int'
- void kfree(const void *);
-      ^
-fs/f2fs/namei.c: At top level:
-fs/f2fs/namei.c:960:2: warning: initialization from incompatible pointer ty=
-pe
-  .follow_link    =3D f2fs_encrypted_follow_link,
-  ^
-fs/f2fs/namei.c:960:2: warning: (near initialization for 'f2fs_symlink_inod=
-e_operations.follow_link')
-fs/f2fs/namei.c:961:2: warning: initialization from incompatible pointer ty=
-pe
-  .put_link       =3D f2fs_encrypted_put_link,
-  ^
-fs/f2fs/namei.c:961:2: warning: (near initialization for 'f2fs_symlink_inod=
-e_operations.put_link')
-
-Caused by commits cf41cea5a829 ("new ->follow_link() and ->put_link()
-calling conventions") and 0ad7e33ea980 ("don't pass nameidata to
-->follow_link()") from teh vfs tree interacting with commit
-5270e98c341b ("f2fs crypto: add symlink encryption") from the f2fs tree.
-
-I applied the following merge fix patch (which I suspect is not
-completely correct - especially the f2fs_encrypted_put_link part):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 11 May 2015 11:22:19 +1000
-Subject: [PATCH] f2fs: merge fix for follow_link and put_link changes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/f2fs/namei.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index d7ed99ebe95b..42af89cdb9a4 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -320,8 +320,8 @@ static const char *f2fs_follow_link(struct dentry *dent=
-ry, void **cookie)
- }
-=20
- #ifdef CONFIG_F2FS_FS_ENCRYPTION
--static void *f2fs_encrypted_follow_link(struct dentry *dentry,
--						struct nameidata *nd)
-+static const char *f2fs_encrypted_follow_link(struct dentry *dentry,
-+					void **cookie)
- {
- 	struct page *cpage =3D NULL;
- 	char *caddr, *paddr =3D NULL;
-@@ -333,7 +333,7 @@ static void *f2fs_encrypted_follow_link(struct dentry *=
-dentry,
- 	u32 max_size =3D inode->i_sb->s_blocksize;
-=20
- 	if (!f2fs_encrypted_inode(inode))
--		return f2fs_follow_link(dentry, nd);
-+		return f2fs_follow_link(dentry, cookie);
-=20
- 	res =3D f2fs_setup_fname_crypto(inode);
- 	if (res)
-@@ -341,7 +341,7 @@ static void *f2fs_encrypted_follow_link(struct dentry *=
-dentry,
-=20
- 	cpage =3D read_mapping_page(inode->i_mapping, 0, NULL);
- 	if (IS_ERR(cpage))
--		return cpage;
-+		return ERR_CAST(cpage);
- 	caddr =3D kmap(cpage);
- 	caddr[size] =3D 0;
-=20
-@@ -376,12 +376,11 @@ static void *f2fs_encrypted_follow_link(struct dentry=
- *dentry,
- 	/* Null-terminate the name */
- 	if (res <=3D cstr.len)
- 		paddr[res] =3D '\0';
--	nd_set_link(nd, paddr);
- 	if (cpage) {
- 		kunmap(cpage);
- 		page_cache_release(cpage);
- 	}
--	return NULL;
-+	return *cookie =3D paddr;
- errout:
- 	if (cpage) {
- 		kunmap(cpage);
-@@ -391,14 +390,11 @@ errout:
- 	return ERR_PTR(res);
- }
-=20
--static void f2fs_encrypted_put_link(struct dentry *dentry, struct nameidat=
-a *nd,
--			  void *cookie)
-+static void f2fs_encrypted_put_link(struct dentry *dentry, void *cookie)
- {
- 	struct page *page =3D cookie;
-=20
--	if (!page) {
--		kfree(nd_get_link(nd));
--	} else {
-+	if (page) {
- 		kunmap(page);
- 		page_cache_release(page);
- 	}
---=20
-2.1.4
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/vJjDl3uwjXAJts9FSHr695q
+diff --cc drivers/net/wireless/ath/ath10k/mac.c
+index fcd08b2f8d26,eaa0182e001d..000000000000
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@@ -766,9 -1031,68 +1031,48 @@@ static int ath10k_monitor_stop(struct a
+  	return 0;
+  }
+ =20
+ -static bool ath10k_mac_should_disable_promisc(struct ath10k *ar)
+ -{
+ -	struct ath10k_vif *arvif;
+ -
+ -	if (!(ar->filter_flags & FIF_PROMISC_IN_BSS))
+ -		return true;
+ -
+ -	if (!ar->num_started_vdevs)
+ -		return false;
+ -
+ -	list_for_each_entry(arvif, &ar->arvifs, list)
+ -		if (arvif->vdev_type !=3D WMI_VDEV_TYPE_AP)
+ -			return false;
+ -
+ -	ath10k_dbg(ar, ATH10K_DBG_MAC,
+ -		   "mac disabling promiscuous mode because vdev is started\n");
+ -	return true;
+ -}
+ -
++ static bool ath10k_mac_monitor_vdev_is_needed(struct ath10k *ar)
++ {
++ 	int num_ctx;
++=20
++ 	/* At least one chanctx is required to derive a channel to start
++ 	 * monitor vdev on.
++ 	 */
++ 	num_ctx =3D ath10k_mac_num_chanctxs(ar);
++ 	if (num_ctx =3D=3D 0)
++ 		return false;
++=20
++ 	/* If there's already an existing special monitor interface then don't
++ 	 * bother creating another monitor vdev.
++ 	 */
++ 	if (ar->monitor_arvif)
++ 		return false;
++=20
++ 	return ar->monitor ||
+ -	       !ath10k_mac_should_disable_promisc(ar) ||
++ 	       test_bit(ATH10K_CAC_RUNNING, &ar->dev_flags);
++ }
++=20
++ static bool ath10k_mac_monitor_vdev_is_allowed(struct ath10k *ar)
++ {
++ 	int num_ctx;
++=20
++ 	num_ctx =3D ath10k_mac_num_chanctxs(ar);
++=20
++ 	/* FIXME: Current interface combinations and cfg80211/mac80211 code
++ 	 * shouldn't allow this but make sure to prevent handling the following
++ 	 * case anyway since multi-channel DFS hasn't been tested at all.
++ 	 */
++ 	if (test_bit(ATH10K_CAC_RUNNING, &ar->dev_flags) && num_ctx > 1)
++ 		return false;
++=20
++ 	return true;
++ }
++=20
+  static int ath10k_monitor_recalc(struct ath10k *ar)
+  {
+- 	bool should_start;
++ 	bool needed;
++ 	bool allowed;
++ 	int ret;
+ =20
+  	lockdep_assert_held(&ar->conf_mutex);
+ =20
+@@@ -5499,9 -6915,14 +6894,15 @@@ int ath10k_mac_register(struct ath10k *
+  			IEEE80211_HW_AP_LINK_PS |
+  			IEEE80211_HW_SPECTRUM_MGMT |
+  			IEEE80211_HW_SW_CRYPTO_CONTROL |
+- 			IEEE80211_HW_SUPPORT_FAST_XMIT;
+++			IEEE80211_HW_SUPPORT_FAST_XMIT |
++ 			IEEE80211_HW_CONNECTION_MONITOR |
++ 			IEEE80211_HW_SUPPORTS_PER_STA_GTK |
++ 			IEEE80211_HW_WANT_MONITOR_VIF |
++ 			IEEE80211_HW_CHANCTX_STA_CSA |
++ 			IEEE80211_HW_QUEUE_CONTROL;
+ =20
+  	ar->hw->wiphy->features |=3D NL80211_FEATURE_STATIC_SMPS;
++ 	ar->hw->wiphy->flags |=3D WIPHY_FLAG_IBSS_RSN;
+ =20
+  	if (ar->ht_cap_info & WMI_HT_CAP_DYNAMIC_SMPS)
+  		ar->hw->wiphy->features |=3D NL80211_FEATURE_DYNAMIC_SMPS;
+
+--Sig_/YZk8JAF+gfb8BXW=uqHUGrP
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVUAU5AAoJEMDTa8Ir7ZwVgjQP/1gTcUqq6rFUykba3vPrHEp9
-7JKjxCL0mC1hP8Zif3wx5tkjU7EXjc7l8ePM2cGrrMoNobFdsUENwG2dTkQaxCM7
-9A/MirANi3aOv2xJisduXyss8cueOpZ6v6t0AfJMiYBp9tARJ+jFXOdMIrz9Fed+
-fJupgSQ8eoPhDxP1Udn8Why/3HBAYcVW3bewyLMM3kKbvPzaI0lL833N2PVzaU0D
-2guCe3IGLy9dnekg21FTKbVgifBSHliu5Ot/8ojRR8cL+XD1WR7tqnDimZ87MnL2
-5oLFCmiOiEEC5EKsI1xL5z9d06epPwsEUjEcvvVgY7QbE+OlPlRFqzq7VWzoZdz1
-thqwsVEleEdEbrolS1WB6qxB3pgU19LB32Efj1JXnBLrwdsbUPexcx7K13W/1DJf
-h0U5LbUStHgUxdZJOyST/P1ijWu1qiIHEEdZ5x+cyxaFZ69SqlVWsQQRMptYi2bK
-GltgXqh7f2wXp47wt0orWJ/8fncJDACnBI9l6dI3SACeIHXdyVjgz6zNHhzHNZsl
-VWkMiKhyC0RIbPGRoxBZ+CXwBpfevdlrnCY9P89fkE4YWbyLLuqlLgVUxKIDRC42
-cweoADuWdbn3om7aTZ+updiaiIp1vUjuPAPT1BTeCR0yC97x8nmsFDBg9qVR+UBV
-Gd0fXLrMnT0TWC5tdLlL
-=FSai
+iQIcBAEBCAAGBQJVUBTxAAoJEMDTa8Ir7ZwVzNYP+gNqTuTXyFERCgF1O6IZjfhb
+aiBysQq5EdfsyVkODIIMW/MW/fac6x1wD9nmv4qQ3Q5XGEqIKZCdomIpRZDFkTU8
+dwlCXTWOAz+VGsEOENCr62hs4/ZjpXfndbTkvSShblYBi6olZ7o45lqzBP3AUpX3
+4Ry3CL+nvgQylmcIsOJ1aOLzWBIRiYaMgU7AOZxgpuMD6d06VFYFMF01R+/rNlO/
+HKFBRp9CVFUWW38DlgY5N192z/3vZjXNHh/ZSRVRuK8YANtHu/Q/46vR3IpX6M6a
+5wCqMmgnwJHzCtMU2qS9xxKLaD+rOwHvpUFM96dg/1aHprPE9A25zFr2DM7rGnQe
+7J+A8KyRr9ziJqq0cgtjAXzFACdEIsLMNjcpbMM62rAiClznJiY9h0f5L/OdnxTT
+G3qFtvz4m6Py2jhYaJu+hJJdx5eXFczjIedP4BfL5cogL32DwMe3gr1KmIGbB+z5
+VORo+of6MIUAEWMLKrosFcxnLN27g4O2MWbr9vlWs1ADAP7Ka8OrgeCafjxmiq7q
+p5IUAq3IAh15a9neTF2YUvQ5Fw9KaVh9YGT3k1t2+NSNy1aqDzctiNfCUJVtNMvL
+uzdqO3MT6wONN+JHg+zzsl8Va9zdCIWVcFfm5D8OjWGIyUKVEb27vFc7Z2YQ9O30
+idModk5QOIcs876oPbtS
+=LcIx
 -----END PGP SIGNATURE-----
 
---Sig_/vJjDl3uwjXAJts9FSHr695q--
+--Sig_/YZk8JAF+gfb8BXW=uqHUGrP--
