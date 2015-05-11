@@ -1,199 +1,68 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20150511 build: 1 failures 47 warnings (next-20150511)
-Date: Mon, 11 May 2015 11:45:00 +0100
-Message-ID: <E1YrlCm-0004gb-MG@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59855 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751538AbbEKKpH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 May 2015 06:45:07 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for May 11 (build failures)
+Date: Mon, 11 May 2015 06:31:08 -0700
+Message-ID: <20150511133108.GA29164@roeck-us.net>
+References: <20150511170946.6064c5e9@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150511170946.6064c5e9@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>, Tianping Fang <tianping.fang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20150511
-Git describe: next-20150511
-Commit: f17107cb88 Add linux-next specific files for 20150511
+On Mon, May 11, 2015 at 05:09:46PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20150508:
+> 
+> The ext4 tree lost its build failure.
+> 
+> The vfs tree gained conflicts against the ext4 and f2fs trees.
+> 
+> The wireless-drivers-next tree gained conflicts against the net-next tree.
+> 
+> The drm tree gained a conflict againste Linus' tree.
+> 
+> The tty tree gained a build failure for which I added a merge fix patch.
+> 
+> The staging tree gained a conflict against the v4l-dvb tree.
+> 
+> The akpm tree lost 3 patches that turned up elsewhere.
+> 
+> Non-merge commits (relative to Linus' tree): 3360
+>  3045 files changed, 142573 insertions(+), 64870 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
 
-Build Time: 74 min 3 sec
+Building arm:allmodconfig ... failed
+Building i386:allyesconfig ... failed
+Building i386:allmodconfig ... failed
+--------------
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
-
-Errors: 2
-Warnings: 47
-Section Mismatches: 1
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
 ERROR: "__aeabi_uldivmod" [fs/f2fs/f2fs.ko] undefined!
 ERROR: "__aeabi_ldivmod" [drivers/rtc/rtc-mt6397.ko] undefined!
+make[1]: *** [__modpost] Error 1
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     32 warnings    3 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v7_defconfig
-     20 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
+This is the error message seen when building arm:allmodconfig;
+i386 has the same problem but the message is a bit different.
 
--------------------------------------------------------------------------------
+Looks like there are some new 64-bit divide operations.
 
-Errors summary: 2
-	  1 ERROR: "__aeabi_uldivmod" [fs/f2fs/f2fs.ko] undefined!
-	  1 ERROR: "__aeabi_ldivmod" [drivers/rtc/rtc-mt6397.ko] undefined!
+---
 
-Warnings Summary: 47
-	  4 ../drivers/gpu/drm/drm_crtc.c:4325:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-	  2 ../drivers/staging/lustre/lustre/obdclass/cl_page.c:251:6: warning: unused variable 'pagesize' [-Wunused-variable]
-	  2 ../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
-	  2 ../drivers/staging/lustre/lustre/llite/llite_lib.c:908:12: warning: unused variable 'instlen' [-Wunused-variable]
-	  2 ../drivers/staging/lustre/lustre/llite/file.c:3242:17: warning: unused variable 'size' [-Wunused-variable]
-	  2 ../drivers/staging/comedi/drivers/ni_mio_common.c:2271:34: warning: right-hand operand of comma expression has no effect [-Wunused-value]
-	  2 ../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
-	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/atmel/ac97c.c:919:29: warning: unused variable 'match' [-Wunused-variable]
-	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
-	  1 ../include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	  1 ../drivers/usb/renesas_usbhs/common.c:492:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type [enabled by default]
-	  1 ../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type
-	  1 ../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
-	  1 ../drivers/rtc/rtc-armada38x.c:67:34: warning: unused variable 'flags' [-Wunused-variable]
-	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/mmc/host/sh_mmcif.c:407:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/mmc/host/sh_mmcif.c:406:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/msm/msm_iommu.c:63:3: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_iommu.c:102:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_gem.c:490:4: warning: format '%d' expects argument of type 'int', but argument 11 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:97:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:219:3: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:180:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:113:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:105:41: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/edp/edp_aux.c:158:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/edp/edp_aux.c:135:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/dsi/dsi_host.c:1043:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/dsi/dsi_host.c:1026:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/block/nvme-core.c:1822:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/nvme-core.c:1794:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+Building arm:keystone_defconfig ... failed
+--------------
+Error log:
+arch/arm/mm/mmu.c: In function 'early_paging_init':
+arch/arm/mm/mmu.c:1461:54: error: expected '(' before ')' token
+  asm volatile("mcr p15, 0, %0, c2, c0, 2" : : "ttbcr");
 
-Section Mismatch Summary: 1
-	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+Introduced by 'ARM: re-implement physical address space switching'.
 
+---
 
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 32 warnings, 3 section mismatches
-
-Warnings:
-	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/edp/edp_aux.c:135:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/edp/edp_aux.c:158:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_drv.c:97:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:105:41: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:113:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:180:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:219:3: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_gem.c:490:4: warning: format '%d' expects argument of type 'int', but argument 11 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_iommu.c:63:3: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_iommu.c:102:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat=]
-	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:1026:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:1043:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/drm_crtc.c:4325:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/mmc/host/sh_mmcif.c:406:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/mmc/host/sh_mmcif.c:407:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	../drivers/staging/comedi/drivers/ni_mio_common.c:2271:34: warning: right-hand operand of comma expression has no effect [-Wunused-value]
-	../drivers/staging/comedi/drivers/ni_mio_common.c:2271:34: warning: right-hand operand of comma expression has no effect [-Wunused-value]
-	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
-	../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type
-	../drivers/staging/lustre/lustre/llite/file.c:3242:17: warning: unused variable 'size' [-Wunused-variable]
-	../drivers/staging/lustre/lustre/llite/llite_lib.c:908:12: warning: unused variable 'instlen' [-Wunused-variable]
-	../drivers/staging/lustre/lustre/obdclass/cl_page.c:251:6: warning: unused variable 'pagesize' [-Wunused-variable]
-	../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
-	../drivers/usb/renesas_usbhs/common.c:492:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
-Section Mismatches:
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpu/drm/drm_crtc.c:4325:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 20 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [fs/f2fs/f2fs.ko] undefined!
-	ERROR: "__aeabi_ldivmod" [drivers/rtc/rtc-mt6397.ko] undefined!
-
-Warnings:
-	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../sound/atmel/ac97c.c:919:29: warning: unused variable 'match' [-Wunused-variable]
-	../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
-	../drivers/block/nvme-core.c:1794:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/block/nvme-core.c:1822:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/drm_crtc.c:4325:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-	../include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/rtc/rtc-armada38x.c:67:34: warning: unused variable 'flags' [-Wunused-variable]
-	../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
-	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
-	../drivers/staging/lustre/lustre/llite/file.c:3242:17: warning: unused variable 'size' [-Wunused-variable]
-	../drivers/staging/lustre/lustre/llite/llite_lib.c:908:12: warning: unused variable 'instlen' [-Wunused-variable]
-	../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type [enabled by default]
-	../drivers/staging/lustre/lustre/obdclass/cl_page.c:251:6: warning: unused variable 'pagesize' [-Wunused-variable]
-	../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/drm_crtc.c:4325:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-arm64-defconfig
+Guenter
