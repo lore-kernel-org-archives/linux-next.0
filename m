@@ -1,54 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: please clean up the clockevents tree
-Date: Wed, 13 May 2015 15:19:13 +1000
-Message-ID: <20150513151913.731a0d65@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Wed, 13 May 2015 16:55:16 +1000
+Message-ID: <20150513165516.66a0dbbb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rdBYRVCMmtbXE97k+/9PhR7"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39563 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936AbbEMFTU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 May 2015 01:19:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/Zw/Nq9y50//.K2+T0kkj.TX"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/rdBYRVCMmtbXE97k+/9PhR7
+--Sig_/Zw/Nq9y50//.K2+T0kkj.TX
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+Hi Linus,
 
-All the commits in the clockevents tree have appeared upstream (as
-different commits, unfortunately).  Please clean up your tree it is
-just causing unnecessary conflicts.
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/gpio/gpio-dln2.c: In function 'dln2_gpio_probe':
+drivers/gpio/gpio-dln2.c:469:12: error: 'struct gpio_chip' has no member na=
+med 'exported'
+  dln2->gpio.exported =3D true;
+            ^
+
+Caused by commit 6a4b6b0a3b55 ("gpio: sysfs: clean up chip class-device
+handling").
+
+I have used the gpio tree from next-20150512 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/rdBYRVCMmtbXE97k+/9PhR7
+--Sig_/Zw/Nq9y50//.K2+T0kkj.TX
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVUt7WAAoJEMDTa8Ir7ZwVgu8P/3SZyA2ikINsPaO2lBfOTpQT
-BKxsqoJOBBfjqXuEmmynzN5lb1LzcioDTbcEfcI7R1G9MOSRg5mbyoR59cncA3c6
-1bmn+eDjJYxucqtofpm8t11Zv1lBRSTiUwuv1YabVRC06OGyd+Li3IeThmKU0Zom
-yYvo1zIL3CFw1L0shno3KV4ubNcnsvaQEFljuJnfHZaEypxIIogXTrsTOowSqQEx
-TeDyc4yJfWLSPBekUxTiWDxGqzicneh05HQsehK9JawJBiZ03nGhe0oA912XcZR+
-NEYOwVUJ91BSjed/x3Oi/vhzDs0Rvi18C5WpT3xWhzyalw5Pt+3AWDUEUZh4IrrI
-Q3VeUBIA6AZZJEyI8ydOJ9BsEXipJKwsrAuGAs7a6felqtNolSjr8m/iG8jOKtN2
-/oX9eOPFL2nE1YIAAgNphUGYqhQgcHGSx+4V0M1ANMGzjw/MxUGSvKJuxYyqF0kZ
-usUkynrGKagrPpLFLXoTarM+QQX6zFjyMJiG8Hk4+uQSUkzhi9ryGFPKpIWJYgRY
-omTg6IJXrO6th+AeVCRIYGH1QGjmBa/IXfqgp4HoN95NBdvm4XZwK+M1ciX2d2i+
-EyJcayV4/nMAXNpXeTNE2VEYg8mF+G1839MbmepntGbPKoiu41GDxGKhJbrOxlQ+
-OgnZPUqnGa5aRmZTeC9E
-=XY+j
+iQIcBAEBCAAGBQJVUvVYAAoJEMDTa8Ir7ZwVyJsP/1b3HpRGoCa0b90vPJQOHe/N
+2dsslRYSkrr4hnTAne6JDJk1msAZlj+agWOlh79OjL9rdY1S3Y3XQrs/FBsIi0mG
+BwAodcDLI9axCGX/Kys7VFNxkWOhcgrtdM4LwMMX/qTC1QVJmECvQFLgLENaXz0e
+Fg3Acrf6AHCsJRsTnePZheCehdz/3d882UCvoWEh4b1NXmqZzY6JZELl8PA1sl3M
+SjDCTXEFAkwUWPiq9aCOYbq5UgZBdA0fNUGJDwJhhpdA/XFRUua/hZ1pB8TdM2PM
+nM9y2P6qj2c3Qltp1GXwh0D2GUguDYnrZdbOz/o2E3mT9FHV4zD2Co5SmesX5qOH
+LBkIR2+1JoFkJmeqVS3uPdGE7WpzznIrT7LN3bQLV5ZJMO+fZqosPE9P3FiTVI6z
+3vItQEDv/s+cMIGn/g1uySSxDKNQGUmKnO0zwDIxNqMRKXbH3b7qef3kvTlhwUib
+oCr+pKKouYXFDZ8qxtNV+jRrSyFY5PqngYve19vmWWogJxEpHZCGQdOQyhXP5msE
+/R4DF/6sS2NKPI2QNs2FbBTTLR/oeiRvDsXLtjZtVeXbFfIZ3VGQoTPV5Xb6O2DJ
+j8o1QKOdKskW7dtMAdNowuXLcHLRP+Y0BhA/H/NoMcUdcV3QeiyVNtWqD21F8XiV
+ETAjnmHPlxQaHl1b2igP
+=dClc
 -----END PGP SIGNATURE-----
 
---Sig_/rdBYRVCMmtbXE97k+/9PhR7--
+--Sig_/Zw/Nq9y50//.K2+T0kkj.TX--
