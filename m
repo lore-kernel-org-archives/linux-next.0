@@ -1,63 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Build failures in -next due to use of __hrtimer_start_range_ns
+From: Pawel Moll <pawel.moll@arm.com>
+Subject: Re: Build failures in -next due to use of __hrtimer_start_range_ns
  arm-ccn.c
-Date: Wed, 13 May 2015 15:51:01 +0100
-Message-ID: <20150513145101.GU2761@sirena.org.uk>
+Date: Wed, 13 May 2015 16:08:03 +0100
+Message-ID: <1431529683.3285.101.camel@arm.com>
 References: <E1YsUw4-0002i4-Do@optimist>
+	 <20150513145101.GU2761@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4fNq9Po2wJlmxAaR"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37656 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933090AbbEMOvQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 May 2015 10:51:16 -0400
-Content-Disposition: inline
-In-Reply-To: <E1YsUw4-0002i4-Do@optimist>
+Received: from foss.arm.com ([217.140.101.70]:36383 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934376AbbEMPIF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 May 2015 11:08:05 -0400
+In-Reply-To: <20150513145101.GU2761@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pawel Moll <pawel.moll@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "kernel-build-reports@lists.linaro.org" <kernel-build-reports@lists.linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+On Wed, 2015-05-13 at 15:51 +0100, Mark Brown wrote:
+> On Wed, May 13, 2015 at 12:34:48PM +0100, Build bot for Mark Brown wrote:
+> 
+> > 	arm64-allmodconfig
+> > ../drivers/bus/arm-ccn.c:924:3: error: implicit declaration of function '__hrtimer_start_range_ns' [-Werror=implicit-function-declaration]
+> > 
+> > 	arm-allmodconfig
+> > ../drivers/bus/arm-ccn.c:924:3: error: implicit declaration of function '__hrtimer_start_range_ns' [-Werror=implicit-function-declaration]
+> 
+> Today's -next fails to build both arm and arm64 allmodconfig due to the
+> above errors, introduced in commit ffa415245b8666c44d (bus: arm-ccn:
+> cpumask attribute).  Judging from the name of the symbol it appears that
+> the code is peering into hrtimer implementation details and indeed it
+> was removed in commit 58f1f803f1d6ef9 (hrtimer: Get rid of
+> __hrtimer_start_range_ns()) which has a commit message suggsting that
+> this has indeed been explicitly removed and no new references should be
+> added.
 
---4fNq9Po2wJlmxAaR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Right, the fix will be equivalent to
+576b0704c9def6d54b3ae9e13b0b7567c713f568 "x86: perf: uncore: Use
+hrtimer_start()"
 
-On Wed, May 13, 2015 at 12:34:48PM +0100, Build bot for Mark Brown wrote:
+http://marc.info/?l=linux-kernel&m=142904610220085
 
-> 	arm64-allmodconfig
-> ../drivers/bus/arm-ccn.c:924:3: error: implicit declaration of function '=
-__hrtimer_start_range_ns' [-Werror=3Dimplicit-function-declaration]
->=20
-> 	arm-allmodconfig
-> ../drivers/bus/arm-ccn.c:924:3: error: implicit declaration of function '=
-__hrtimer_start_range_ns' [-Werror=3Dimplicit-function-declaration]
+Will post it in a second, but not sure who should take it? The arm-soc
+guys, as an additional ccn patch, or Thomas as part of his series?
 
-Today's -next fails to build both arm and arm64 allmodconfig due to the
-above errors, introduced in commit ffa415245b8666c44d (bus: arm-ccn:
-cpumask attribute).  Judging from the name of the symbol it appears that
-the code is peering into hrtimer implementation details and indeed it
-was removed in commit 58f1f803f1d6ef9 (hrtimer: Get rid of
-__hrtimer_start_range_ns()) which has a commit message suggsting that
-this has indeed been explicitly removed and no new references should be
-added.
+Thanks for pointing this out!
 
---4fNq9Po2wJlmxAaR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVU2TUAAoJECTWi3JdVIfQQlMH/Ak9pqHUA0KT/icEmFdZwfwN
-rVj0oFZCuJyDBKT5R3erYZQwAPTo+9YfjrqXTRwjBcvCoKSYTi+iJ3cIl9IwAMFo
-Y1gPwOQhx/KbJLkKxAN117VD4ABPMTMXyOrGMSbG1sYj5H61wd22O6it3SMQdoJ3
-uwfJd5kwnyijQZhkBCRPCN+iE9sK9E5lEt/Ct5Qe6CFWuVJ4If7nxwrSsNet/AjY
-jMq25/TN2Qy3ED2m9ZyD5HaT8ouJCWt2NAAb1pxyQgSbQE7Ejwab81SvsP6xmH2u
-8rhWgB3YZIKXKmvkwbYA6Hqj5SXPPO9jmWrxQLx/SmQ/wQ4UiDtgri6/5b9hJ/c=
-=Z8Q5
------END PGP SIGNATURE-----
-
---4fNq9Po2wJlmxAaR--
+Pawel
