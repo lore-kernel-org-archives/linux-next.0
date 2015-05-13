@@ -1,76 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 13 May 2015 13:05:23 +1000
-Message-ID: <20150513130523.714f64a6@canb.auug.org.au>
+Subject: linux-next: manual merge of the security tree with the vfs tree
+Date: Wed, 13 May 2015 14:26:23 +1000
+Message-ID: <20150513142623.2b956887@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9GVYvmhXQXJ5d/UViK6uq7J"; protocol="application/pgp-signature"
+ boundary="Sig_/q+5AXnJI9y2PSXYxOK1LAsN"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54560 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53898 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934006AbbEMDFb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 May 2015 23:05:31 -0400
+	id S1750727AbbEME0a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 May 2015 00:26:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Dichtel <nicolas.dichtel@6wind.com>
+To: James Morris <jmorris@namei.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>, Casey Schaufler <casey@schaufler-ca.com>
 
---Sig_/9GVYvmhXQXJ5d/UViK6uq7J
+--Sig_/q+5AXnJI9y2PSXYxOK1LAsN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi James,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/core/net_namespace.c between commit e3d8ecb70e16 ("netns: return
-RTM_NEWNSID instead of RTM_GETNSID on a get") from the net tree and
-commit cab3c8ec8d57 ("netns: always provide the id to rtnl_net_fill()")
-from the net-next tree.
+Today's linux-next merge of the security tree got a conflict in
+security/capability.c between commits 37882db0546c ("SECURITY: remove
+nameidata arg from inode_follow_link") and bda0be7ad994 ("security:
+make inode_follow_link RCU-walk aware") from the vfs tree and commit
+1ddd3b4e07a4 ("LSM: Remove unused capability.c") from the security tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the latter removed the file, so I did that) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/core/net_namespace.c
-index 572af0011997,a665bf490c88..000000000000
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@@ -600,8 -639,9 +639,9 @@@ static int rtnl_net_getid(struct sk_buf
-  		goto out;
-  	}
- =20
-+ 	id =3D peernet2id(net, peer);
-  	err =3D rtnl_net_fill(msg, NETLINK_CB(skb).portid, nlh->nlmsg_seq, 0,
-- 			    RTM_NEWNSID, net, peer, -1);
- -			    RTM_GETNSID, net, id);
-++			    RTM_NEWNSID, net, id);
-  	if (err < 0)
-  		goto err_out;
- =20
-
---Sig_/9GVYvmhXQXJ5d/UViK6uq7J
+--Sig_/q+5AXnJI9y2PSXYxOK1LAsN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVUr94AAoJEMDTa8Ir7ZwVeLkP/0aOKs10PWv0SVofj54XK2jF
-uGwjDZ7IvXg8h7Y2pdXiMDLtzzzWV/907WbM3r+ei4gE5N3dIiV/RDmBRFts8lXC
-rD2GjeRV6zHSQeZZGX3Tz2MxnyP2kt02WfbSmkZ5bJ0jaFTfEdjt/OhGm7U+IRlQ
-r/jOy0Qb2+DTY5W5kbRkSRgysCKZCFRtZS/1a/erIuw2yyp2K0AJS+ir5Xa2aV0s
-t3EbGuXvBpc20U/SRGsJccVowsiV3tcsh0oUAXyRvwvsuGbDLiiL8HkI2RiZ8LC4
-JxsVEaXIl24TafJFd3WhV3uBqCuGgtSC2TQF9TW3p2Jw1pjntlQGuGa2E0YIaEo4
-vjCeiz5R9pM9dzWfV3iYpIgX4zxNgQhRXz61ZiV8hMNHb/4290vzSYs45VOdlUQZ
-txjqDpNxjg0E/Jn0LIenLDoRib297KVF0hbjlsLWizxkxNbYTSVIbtXmQOH//ace
-eUeRyR0srC5afT7L1126PjFfGKTSnO49XoBbgpIjUoD7aD5/1XyOP/M2ZALDKTvC
-mKXxAde31bdzJmysH0qqrGGa7V3L03H3drT2iwz5RhJHYjDEsvec+Dwf8AxA9ZG/
-thTqEQz5sR1r/cbs1gsK/iCiAiC/RBLFTjG9QChpLJdN8iUyoWykLfhkwRp0FH9l
-fouUetnODoEopRkSp06z
-=r3AZ
+iQIcBAEBCAAGBQJVUtJzAAoJEMDTa8Ir7ZwVt0cP/0XYFZFbfssnv47yAxfgOxxj
+sFkrIHl9b9WSPHZ6JTC3vl17c4upSzfFww/M5GEyut+Gfa1CtS6Qf8b2E6WEEtIf
+7LUKwSbF4/Bht1L6D1euW01tMUA7iJ9x+6e1u+94CVzT98OvPyOTttUP0nO49hM6
+GO0r9vrtj5VWZRsgfBxA+Usqz+Tq+tiiO7gCxPJtqTm0/9DWIovnf6A7pzOtSjst
+PpRsgeduBDC1ZE+rbLCrZANcThqqvvSVlaY6HsMIXj+djjr2u035uoVvl+uuGaRI
+6Nq5jfYQYl2gKMXPb+nNT2c4fLX01VvQsOGqXJR8ZbDfP3SSze/fPkkM4p1tHDB4
+8Rt5c5EZXuH/5ZqZlaEQNq6FwYpAvJWfpRCnmPSpXYuYhKxoKWdGijFF+r3yT5F3
+x7Y6rvriBQbgLHr3z5M+rGpUfFDMqOtToIFNAMOqFDpzkBwsEenwQniaCplMwnwK
+AUjPlMCoA2E2pXd/75WHQWObiO1RqXLsmG/RbtpVtE/p6hrNn3oW1M9S0Pvb5xwy
+Bpyx1RhHFk+dVsX6W3ejryyklrSuE8SeWruhCqJXnEZqM8p7/DsKdmOdQi0NAcpG
+wL1QS7pq4HyV6a5q9CXlscFjfk920k8rr6EXbQTZr2kKrxtXLmqsP8/WqYDcIAWu
+YGeKYSYSaMfTwX3/AXD0
+=d07q
 -----END PGP SIGNATURE-----
 
---Sig_/9GVYvmhXQXJ5d/UViK6uq7J--
+--Sig_/q+5AXnJI9y2PSXYxOK1LAsN--
