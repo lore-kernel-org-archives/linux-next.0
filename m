@@ -1,36 +1,85 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the
- kselftest-fixes tree
-Date: Thu, 14 May 2015 07:05:22 +0200
-Message-ID: <20150514050522.GA29268@gmail.com>
-References: <20150514143516.3dd92949@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the net-next tree
+Date: Thu, 14 May 2015 17:12:06 +1000
+Message-ID: <20150514171206.2fe660ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150514143516.3dd92949@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Shuah Khan <shuahkh@osg.samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NRSwGq3r=QpARwCuys5DYij"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:55125 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750713AbbENHMP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 May 2015 03:12:15 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>
 
+--Sig_/NRSwGq3r=QpARwCuys5DYij
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi all,
 
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in 
-> tools/testing/selftests/x86/run_x86_tests.sh between commit 
-> c1e6e5cb941b ("selftests, x86: Remove useless run_tests rule") from 
-> the kselftest-fixes tree and commit e22438f8e997 ("x86, selftests: 
-> Add a test for the "sysret_ss_attrs" bug") from the tip tree.
-> 
-> I fixed it up (I removed the file) and can carry the fix as 
-> necessary (no action is required).
+After merging the net-next tree, today's linux-next build (sparc64 defconfi=
+g)
+produced these warnings:
 
-Thanks Stephen - I've dropped this and the other conflicting commit 
-from -tip, so both conflicts should go away in tomorrow's integration.
+In file included from arch/sparc/include/asm/cmpxchg.h:4:0,
+                 from arch/sparc/include/asm/atomic_64.h:11,
+                 from arch/sparc/include/asm/atomic.h:4,
+                 from include/linux/atomic.h:4,
+                 from include/linux/spinlock.h:416,
+                 from include/linux/mmzone.h:7,
+                 from include/linux/gfp.h:5,
+                 from include/linux/mm.h:9,
+                 from net/packet/af_packet.c:56:
+net/packet/af_packet.c: In function 'packet_rcv_has_room':
+arch/sparc/include/asm/cmpxchg_64.h:43:22: warning: value computed is not u=
+sed [-Wunused-value]
+ #define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),s=
+izeof(*(ptr))))
+                      ^
+net/packet/af_packet.c:1314:3: note: in expansion of macro 'xchg'
+   xchg(&po->pressure, !has_room);
+   ^
+net/packet/af_packet.c: In function 'packet_poll':
+arch/sparc/include/asm/cmpxchg_64.h:43:22: warning: value computed is not u=
+sed [-Wunused-value]
+ #define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),s=
+izeof(*(ptr))))
+                      ^
+net/packet/af_packet.c:3817:3: note: in expansion of macro 'xchg'
+   xchg(&po->pressure, 0);
+   ^
 
-Thanks,
+Introduced by commit 2ccdbaa6d55b ("packet: rollover lock contention
+avoidance").
 
-	Ingo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/NRSwGq3r=QpARwCuys5DYij
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVVErMAAoJEMDTa8Ir7ZwVm1IP/jskvbLwZRYzlmBsHznhl2lS
+znmNmPOKI3JTcfj6a/wBUvK/yobCyh025wy7Y8OzNu+mf8y1/bz7yCJN013kmMe2
+ViZwr+/U4WqSgEEwoZrHl/ab/R9v8TfJA/6beTNVBJcu4fekRnYJJQk0ukwYASc6
+hhYfjmQozNiDgTw6bTnnJEv8Z9UhZQgNjwlXwvvN/jzHeqCnf9NYoPsoX70DTWsv
+LLURF6lrSL2NzKbPDuaOSVOHm7r7ib0e3t4G7RxifC400p5LIXxOmKrgFJCaJAnc
+Bt36eVLEWDYctBE31Tf/CtrUPEznh7uAb6D7e6Wd7+l8M9zO22Mc39ndfdz7wbn6
+RKrv9dnJGBiPer2Cxp6WBe88DCwDZweqvJPDV/41RKGp4E+3SfnKKmeFvwImN6re
+lrrA4rE0lOa9cwtNqXD1VAF7ma1D+gfl6bKed2PM8bKIoG6N2cBRDu/p4OE/FATU
+Ecxx7cvOwH5i+r5hqd07RdEzjhyswZwKqOsGzqlVYx+OJrxgnVk4NACurOIDcznl
+EcLOdNcGY2IXRYoLYwKxuXdeWOohg1vTNAOY+z0ibFbz2Um/DBT12L5jYaDKnbyx
+vct2rrIn2DVYH7LGNBov3LoeRj/2yXzuZLcl9HMYsEgLiisdilGDgS19vBEQizEF
+hJPXOeNI4VMggfFj/lvw
+=HjIS
+-----END PGP SIGNATURE-----
+
+--Sig_/NRSwGq3r=QpARwCuys5DYij--
