@@ -1,85 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the net-next tree
-Date: Thu, 14 May 2015 17:12:06 +1000
-Message-ID: <20150514171206.2fe660ec@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the net-next tree
+Date: Thu, 14 May 2015 17:38:44 +1000
+Message-ID: <20150514173844.68c13307@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NRSwGq3r=QpARwCuys5DYij"; protocol="application/pgp-signature"
+ boundary="Sig_/TucqpIsaz2=Udef2gVaSCkd"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55125 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37263 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750713AbbENHMP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 14 May 2015 03:12:15 -0400
+	id S1751494AbbENHjA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 May 2015 03:39:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scott Feldman <sfeldma@gmail.com>
 
---Sig_/NRSwGq3r=QpARwCuys5DYij
+--Sig_/TucqpIsaz2=Udef2gVaSCkd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-After merging the net-next tree, today's linux-next build (sparc64 defconfi=
-g)
-produced these warnings:
+Today's linux-next merge of the akpm tree got a conflict in
+net/switchdev/switchdev.c between commit 42275bd8fcb3 ("switchdev:
+don't use anonymous union on switchdev attr/obj structs") from the
+net-next tree and commit "net/switchdev/switchdev.c: work around
+gcc-4.4.4 initializer bug" from the akpm tree.
 
-In file included from arch/sparc/include/asm/cmpxchg.h:4:0,
-                 from arch/sparc/include/asm/atomic_64.h:11,
-                 from arch/sparc/include/asm/atomic.h:4,
-                 from include/linux/atomic.h:4,
-                 from include/linux/spinlock.h:416,
-                 from include/linux/mmzone.h:7,
-                 from include/linux/gfp.h:5,
-                 from include/linux/mm.h:9,
-                 from net/packet/af_packet.c:56:
-net/packet/af_packet.c: In function 'packet_rcv_has_room':
-arch/sparc/include/asm/cmpxchg_64.h:43:22: warning: value computed is not u=
-sed [-Wunused-value]
- #define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),s=
-izeof(*(ptr))))
-                      ^
-net/packet/af_packet.c:1314:3: note: in expansion of macro 'xchg'
-   xchg(&po->pressure, !has_room);
-   ^
-net/packet/af_packet.c: In function 'packet_poll':
-arch/sparc/include/asm/cmpxchg_64.h:43:22: warning: value computed is not u=
-sed [-Wunused-value]
- #define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),s=
-izeof(*(ptr))))
-                      ^
-net/packet/af_packet.c:3817:3: note: in expansion of macro 'xchg'
-   xchg(&po->pressure, 0);
-   ^
-
-Introduced by commit 2ccdbaa6d55b ("packet: rollover lock contention
-avoidance").
+I fixed it up (the former solves the same problem as the latter but in
+a different way, so I just dropped the latter) and can carry the fix as
+necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/NRSwGq3r=QpARwCuys5DYij
+--Sig_/TucqpIsaz2=Udef2gVaSCkd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVVErMAAoJEMDTa8Ir7ZwVm1IP/jskvbLwZRYzlmBsHznhl2lS
-znmNmPOKI3JTcfj6a/wBUvK/yobCyh025wy7Y8OzNu+mf8y1/bz7yCJN013kmMe2
-ViZwr+/U4WqSgEEwoZrHl/ab/R9v8TfJA/6beTNVBJcu4fekRnYJJQk0ukwYASc6
-hhYfjmQozNiDgTw6bTnnJEv8Z9UhZQgNjwlXwvvN/jzHeqCnf9NYoPsoX70DTWsv
-LLURF6lrSL2NzKbPDuaOSVOHm7r7ib0e3t4G7RxifC400p5LIXxOmKrgFJCaJAnc
-Bt36eVLEWDYctBE31Tf/CtrUPEznh7uAb6D7e6Wd7+l8M9zO22Mc39ndfdz7wbn6
-RKrv9dnJGBiPer2Cxp6WBe88DCwDZweqvJPDV/41RKGp4E+3SfnKKmeFvwImN6re
-lrrA4rE0lOa9cwtNqXD1VAF7ma1D+gfl6bKed2PM8bKIoG6N2cBRDu/p4OE/FATU
-Ecxx7cvOwH5i+r5hqd07RdEzjhyswZwKqOsGzqlVYx+OJrxgnVk4NACurOIDcznl
-EcLOdNcGY2IXRYoLYwKxuXdeWOohg1vTNAOY+z0ibFbz2Um/DBT12L5jYaDKnbyx
-vct2rrIn2DVYH7LGNBov3LoeRj/2yXzuZLcl9HMYsEgLiisdilGDgS19vBEQizEF
-hJPXOeNI4VMggfFj/lvw
-=HjIS
+iQIcBAEBCAAGBQJVVFESAAoJEMDTa8Ir7ZwVMWkP/jeyzqSovFX+iJzz62R8c9UY
+2ddHLqq0t7hS7xhy65+BUweOwLVqBXbnBoKld7RX3T16bYE7QXRkgC6u0EfpGJsz
+K5erD38wF8ps/ZaaexXJIDkwmLQGxF0ggemy93qYv+2CNnteX7/zSI5BvwQD0v1U
+mySjNmesP/DG98RcWOIuxa7S2x7GPVcHpT+tQyTATVFNXgBCkJpkzizXLPgu5B46
+qeBJ7tm9HiCOvKXoCED8eY+TYj4stFe7hkzsbI+8t+LDoDHhjQPwYhXXCU8zRDdB
+6yspjgv6Vi+iq7u5RmnsjA3tSBiDHmVoFIEfWUoUBpsQ/wWri9/o3IVjH1783UVg
+FIhsctvVYp8oqyi2+kxXozGZafKAAdlH+HdRckAljmcP9QTxL9v0N4XeNdPkhmdL
+PBJg3JayE/X+Lqd/eYe7jbAX8eK+gznCotTQ9guk0/42SmAyBaqSf3OTkNcR6OEQ
+9vta/178KG8UnEy2Eax+EaNu6aqmFrhTphQ3rp87TY/uOLDobzmloG+1oK+xFg0Y
+cw/3ay6EPLaMz63s5NjEzLhUAlSd+58+6JSggS8uueAH+64ro/5TjbB4mBvk2auX
+AZgmsHvWIymYhzP2FzBGzPIskUq3u/GN4TuKcxyM6ISqzmsW71+DREaTy48Jo/xW
+Mb6+fQqM2vgLkrCsBSGI
+=iO3q
 -----END PGP SIGNATURE-----
 
---Sig_/NRSwGq3r=QpARwCuys5DYij--
+--Sig_/TucqpIsaz2=Udef2gVaSCkd--
