@@ -1,211 +1,128 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20150519 build: 0 failures 59 warnings (next-20150519)
-Date: Tue, 19 May 2015 12:09:08 +0100
-Message-ID: <E1YufOV-0003qz-Uz@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47003 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753651AbbESLJR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2015 07:09:17 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for May 18 (mm/memory-failure.c)
+Date: Tue, 19 May 2015 09:46:36 -0400
+Message-ID: <20150519094636.67c9a4a3@gandalf.local.home>
+References: <20150518185226.23154d47@canb.auug.org.au>
+	<555A0327.9060709@infradead.org>
+	<20150519024933.GA1614@hori1.linux.bs1.fc.nec.co.jp>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20150519024933.GA1614@hori1.linux.bs1.fc.nec.co.jp>
+Sender: owner-linux-mm@kvack.org
+To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Jim Davis <jim.epost@gmail.com>, Chen Gong <gong.chen@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20150519
-Git describe: next-20150519
-Commit: 47cb9006f5 Add linux-next specific files for 20150519
+On Tue, 19 May 2015 02:49:34 +0000
+Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
 
-Build Time: 73 min 52 sec
+> On Mon, May 18, 2015 at 08:20:07AM -0700, Randy Dunlap wrote:
+> > On 05/18/15 01:52, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20150515:
+> > > 
+> > 
+> > on i386:
+> > 
+> > mm/built-in.o: In function `action_result':
+> > memory-failure.c:(.text+0x344a5): undefined reference to `__tracepoint_memory_failure_event'
+> > memory-failure.c:(.text+0x344d5): undefined reference to `__tracepoint_memory_failure_event'
+> > memory-failure.c:(.text+0x3450c): undefined reference to `__tracepoint_memory_failure_event'
+> 
+> Thanks for the reporting, Randy.
+> Here is a patch for this problem, could you try it?
+> 
+> Thanks,
+> Naoya
+> ---
+> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Subject: [PATCH] ras: hwpoison: fix build failure around
+>  trace_memory_failure_event
+> 
+> next-20150515 fails to build on i386 with the following error:
+> 
+>   mm/built-in.o: In function `action_result':
+>   memory-failure.c:(.text+0x344a5): undefined reference to `__tracepoint_memory_failure_event'
+>   memory-failure.c:(.text+0x344d5): undefined reference to `__tracepoint_memory_failure_event'
+>   memory-failure.c:(.text+0x3450c): undefined reference to `__tracepoint_memory_failure_event'
+> 
+> Defining CREATE_TRACE_POINTS and TRACE_INCLUDE_PATH fixes it.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: Jim Davis <jim.epost@gmail.com>
+> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> ---
+>  drivers/ras/ras.c       | 1 -
+>  include/ras/ras_event.h | 2 ++
+>  mm/memory-failure.c     | 1 +
+>  3 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
+> index b67dd362b7b6..3e2745d8e221 100644
+> --- a/drivers/ras/ras.c
+> +++ b/drivers/ras/ras.c
+> @@ -9,7 +9,6 @@
+>  #include <linux/ras.h>
+>  
+>  #define CREATE_TRACE_POINTS
+> -#define TRACE_INCLUDE_PATH ../../include/ras
+>  #include <ras/ras_event.h>
+>  
+>  static int __init ras_init(void)
+> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+> index 1443d79e4fe6..43054c0fcf65 100644
+> --- a/include/ras/ras_event.h
+> +++ b/include/ras/ras_event.h
+> @@ -1,6 +1,8 @@
+>  #undef TRACE_SYSTEM
+>  #define TRACE_SYSTEM ras
+>  #define TRACE_INCLUDE_FILE ras_event
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH ../../include/ras
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+Note, ideally, you want:
 
-Errors: 0
-Warnings: 59
-Section Mismatches: 2
+#define TRACE_INCLUDE_PATH .
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     34 warnings    5 mismatches  : arm64-allmodconfig
-     12 warnings    0 mismatches  : arm-multi_v7_defconfig
-     23 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
+and change the Makefile to have:
 
--------------------------------------------------------------------------------
+CFLAGS_ras.o := -I$(src)
 
-Warnings Summary: 59
-	  6 warning: (SCSI_UFS_QCOM) selects PHY_QCOM_UFS which has unmet direct dependencies (OF && ARCH_MSM)
-	  4 ../drivers/gpu/drm/drm_crtc.c:4324:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-	  2 ../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
-	  2 ../drivers/staging/lustre/lustre/lov/lov_request.c:78:7: warning: unused variable 'len' [-Wunused-variable]
-	  2 ../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
-	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/atmel/ac97c.c:919:29: warning: unused variable 'match' [-Wunused-variable]
-	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../kernel/cgroup.c:5297:2: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/cgroup.c:5251:2: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/cgroup.c:2805:2: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/cgroup.c:2717:3: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/cgroup.c:2561:2: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/cgroup.c:1283:2: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/cgroup.c:1243:2: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/cgroup.c:1104:3: warning: array subscript is below array bounds [-Warray-bounds]
-	  1 ../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
-	  1 ../include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	  1 ../drivers/usb/renesas_usbhs/mod.c:246:7: warning: 'intenb1' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/usb/renesas_usbhs/common.c:492:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/usb/gadget/function/rndis.c:940:10: warning: 'i' may be used uninitialized in this function [-Wuninitialized]
-	  1 ../drivers/usb/gadget/function/rndis.c:1151:4: warning: passing argument 1 of 'rndis_signal_disconnect' makes pointer from integer without a cast [enabled by default]
-	  1 ../drivers/usb/gadget/function/rndis.c:1151:28: warning: passing argument 1 of 'rndis_signal_disconnect' makes pointer from integer without a cast
-	  1 ../drivers/usb/gadget/function/rndis.c:1147:4: warning: passing argument 1 of 'rndis_signal_connect' makes pointer from integer without a cast [enabled by default]
-	  1 ../drivers/usb/gadget/function/rndis.c:1147:25: warning: passing argument 1 of 'rndis_signal_connect' makes pointer from integer without a cast
-	  1 ../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type [enabled by default]
-	  1 ../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type
-	  1 ../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
-	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/mmc/host/sh_mmcif.c:407:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/mmc/host/sh_mmcif.c:406:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/msm/msm_iommu.c:63:3: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_iommu.c:102:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_gem.c:490:4: warning: format '%d' expects argument of type 'int', but argument 11 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:97:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:219:3: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:180:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:113:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/msm_drv.c:105:41: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpu/drm/msm/edp/edp_aux.c:158:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/edp/edp_aux.c:135:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/dsi/dsi_host.c:1043:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/msm/dsi/dsi_host.c:1026:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/i2c/tda998x_drv.c:647:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
-	  1 ../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/block/nvme-core.c:1822:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/nvme-core.c:1794:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 2
-	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	  2 WARNING: drivers/i2c/busses/i2c-xgene-slimpro.o(.data+0x28): Section mismatch in reference from the variable xgene_slimpro_i2c_driver to the variable .init.text:$x
+...
 
 
+>  
+>  #if !defined(_TRACE_HW_EVENT_MC_H) || defined(TRACE_HEADER_MULTI_READ)
+>  #define _TRACE_HW_EVENT_MC_H
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 8cbe23ac1056..e88e14d87571 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -57,6 +57,7 @@
+>  #include <linux/mm_inline.h>
+>  #include <linux/kfifo.h>
+>  #include "internal.h"
+> +#define CREATE_TRACE_POINTS
+>  #include "ras/ras_event.h"
 
-===============================================================================
-Detailed per-defconfig build reports below:
+Um, you can only define CREATE_TRACE_POINTS for a single instance.
+Otherwise you will be making duplicate functions with the same name and
+same variables.
+
+That is, you must either pick CREATE_TRACE_POINTS for ras_event.h in
+mm/memory-failure.c or drivers/ras/ras.c. Not both.
+
+-- Steve
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 34 warnings, 5 section mismatches
+>  
+>  int sysctl_memory_failure_early_kill __read_mostly = 0;
 
-Warnings:
-	warning: (SCSI_UFS_QCOM) selects PHY_QCOM_UFS which has unmet direct dependencies (OF && ARCH_MSM)
-	warning: (SCSI_UFS_QCOM) selects PHY_QCOM_UFS which has unmet direct dependencies (OF && ARCH_MSM)
-	warning: (SCSI_UFS_QCOM) selects PHY_QCOM_UFS which has unmet direct dependencies (OF && ARCH_MSM)
-	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/i2c/tda998x_drv.c:647:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
-	../drivers/gpu/drm/msm/edp/edp_aux.c:135:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/edp/edp_aux.c:158:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_drv.c:97:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:105:41: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:113:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:180:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:219:3: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'resource_size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_gem.c:490:4: warning: format '%d' expects argument of type 'int', but argument 11 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_iommu.c:63:3: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/msm_iommu.c:102:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:1026:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:1043:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/gpu/drm/drm_crtc.c:4324:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-	../drivers/mmc/host/sh_mmcif.c:406:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/mmc/host/sh_mmcif.c:407:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
-	../drivers/usb/gadget/function/rndis.c:1147:25: warning: passing argument 1 of 'rndis_signal_connect' makes pointer from integer without a cast
-	../drivers/usb/gadget/function/rndis.c:1151:28: warning: passing argument 1 of 'rndis_signal_disconnect' makes pointer from integer without a cast
-	../drivers/staging/lustre/lustre/lov/lov_request.c:78:7: warning: unused variable 'len' [-Wunused-variable]
-	../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type
-	../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
-	../drivers/usb/renesas_usbhs/common.c:492:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
-Section Mismatches:
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	WARNING: drivers/i2c/busses/i2c-xgene-slimpro.o(.data+0x28): Section mismatch in reference from the variable xgene_slimpro_i2c_driver to the variable .init.text:$x
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	WARNING: drivers/i2c/busses/i2c-xgene-slimpro.o(.data+0x28): Section mismatch in reference from the variable xgene_slimpro_i2c_driver to the variable .init.text:$x
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
-
-Warnings:
-	../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../kernel/cgroup.c:1104:3: warning: array subscript is below array bounds [-Warray-bounds]
-	../kernel/cgroup.c:2561:2: warning: array subscript is below array bounds [-Warray-bounds]
-	../kernel/cgroup.c:1243:2: warning: array subscript is below array bounds [-Warray-bounds]
-	../kernel/cgroup.c:1283:2: warning: array subscript is below array bounds [-Warray-bounds]
-	../kernel/cgroup.c:2717:3: warning: array subscript is below array bounds [-Warray-bounds]
-	../kernel/cgroup.c:2805:2: warning: array subscript is below array bounds [-Warray-bounds]
-	../kernel/cgroup.c:5251:2: warning: array subscript is below array bounds [-Warray-bounds]
-	../kernel/cgroup.c:5297:2: warning: array subscript is below array bounds [-Warray-bounds]
-	../drivers/gpu/drm/drm_crtc.c:4324:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-	../drivers/usb/renesas_usbhs/mod.c:246:7: warning: 'intenb1' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 23 warnings, 0 section mismatches
-
-Warnings:
-	warning: (SCSI_UFS_QCOM) selects PHY_QCOM_UFS which has unmet direct dependencies (OF && ARCH_MSM)
-	warning: (SCSI_UFS_QCOM) selects PHY_QCOM_UFS which has unmet direct dependencies (OF && ARCH_MSM)
-	warning: (SCSI_UFS_QCOM) selects PHY_QCOM_UFS which has unmet direct dependencies (OF && ARCH_MSM)
-	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../sound/atmel/ac97c.c:919:29: warning: unused variable 'match' [-Wunused-variable]
-	../drivers/block/nvme-core.c:1794:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/block/nvme-core.c:1822:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
-	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/gpu/drm/drm_crtc.c:4324:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
-	../include/trace/ftrace.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
-	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
-	../drivers/scsi/scsi_debug.c:2376:8: warning: assignment from incompatible pointer type [enabled by default]
-	../drivers/staging/lustre/lustre/lov/lov_request.c:78:7: warning: unused variable 'len' [-Wunused-variable]
-	../drivers/usb/gadget/function/rndis.c:1147:4: warning: passing argument 1 of 'rndis_signal_connect' makes pointer from integer without a cast [enabled by default]
-	../drivers/usb/gadget/function/rndis.c:1151:4: warning: passing argument 1 of 'rndis_signal_disconnect' makes pointer from integer without a cast [enabled by default]
-	../drivers/usb/gadget/function/rndis.c:940:10: warning: 'i' may be used uninitialized in this function [-Wuninitialized]
-	../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/drm_crtc.c:4324:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-arm64-defconfig
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
