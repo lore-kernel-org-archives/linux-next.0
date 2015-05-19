@@ -1,70 +1,101 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 18 (mm/memory-failure.c)
-Date: Mon, 18 May 2015 21:40:27 -0700
-Message-ID: <555ABEBB.6060203@infradead.org>
-References: <20150518185226.23154d47@canb.auug.org.au> <555A0327.9060709@infradead.org> <20150519024933.GA1614@hori1.linux.bs1.fc.nec.co.jp>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with Linus' tree
+Date: Tue, 19 May 2015 16:40:40 +1000
+Message-ID: <20150519164040.72e640ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:50857 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750908AbbESEko (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2015 00:40:44 -0400
-In-Reply-To: <20150519024933.GA1614@hori1.linux.bs1.fc.nec.co.jp>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, Jim Davis <jim.epost@gmail.com>, Chen Gong <gong.chen@linux.intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jRMA4U1gWH.AZkyprUSISuc"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ulrich Obergfell <uobergfe@redhat.com>, Don Zickus <dzickus@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On 05/18/15 19:49, Naoya Horiguchi wrote:
-> On Mon, May 18, 2015 at 08:20:07AM -0700, Randy Dunlap wrote:
->> On 05/18/15 01:52, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20150515:
->>>
->>
->> on i386:
->>
->> mm/built-in.o: In function `action_result':
->> memory-failure.c:(.text+0x344a5): undefined reference to `__tracepoint_memory_failure_event'
->> memory-failure.c:(.text+0x344d5): undefined reference to `__tracepoint_memory_failure_event'
->> memory-failure.c:(.text+0x3450c): undefined reference to `__tracepoint_memory_failure_event'
-> 
-> Thanks for the reporting, Randy.
-> Here is a patch for this problem, could you try it?
-> 
-> Thanks,
-> Naoya
-> ---
-> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Subject: [PATCH] ras: hwpoison: fix build failure around
->  trace_memory_failure_event
-> 
-> next-20150515 fails to build on i386 with the following error:
-> 
->   mm/built-in.o: In function `action_result':
->   memory-failure.c:(.text+0x344a5): undefined reference to `__tracepoint_memory_failure_event'
->   memory-failure.c:(.text+0x344d5): undefined reference to `__tracepoint_memory_failure_event'
->   memory-failure.c:(.text+0x3450c): undefined reference to `__tracepoint_memory_failure_event'
-> 
-> Defining CREATE_TRACE_POINTS and TRACE_INCLUDE_PATH fixes it.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Reported-by: Jim Davis <jim.epost@gmail.com>
-> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+--Sig_/jRMA4U1gWH.AZkyprUSISuc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Hi Andrew,
 
-Thanks.
+Today's linux-next merge of the akpm-current tree got a conflict in
+kernel/watchdog.c between commit ab992dc38f9a ("watchdog: Fix merge
+'conflict'") from Linus' tree and commit fbfec4606e07
+("kernel/watchdog.c: fix watchdog_nmi_enable_all()") from the
+akpm-current tree.
 
-> ---
->  drivers/ras/ras.c       | 1 -
->  include/ras/ras_event.h | 2 ++
->  mm/memory-failure.c     | 1 +
->  3 files changed, 3 insertions(+), 1 deletion(-)
+I fixed it up (the latter is a subset of the former, so I used that -
+see below) and can carry the fix as necessary (no action is required).
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+diff --cc kernel/watchdog.c
+index 506edcc500c4,93ef2bad457c..000000000000
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@@ -610,36 -615,26 +617,36 @@@ void watchdog_nmi_enable_all(void
+  {
+  	int cpu;
+ =20
+ +	mutex_lock(&watchdog_proc_mutex);
+ +
+  	if (!(watchdog_enabled & NMI_WATCHDOG_ENABLED))
+ -		return;
+ +		goto unlock;
+ =20
+  	get_online_cpus();
+- 	for_each_online_cpu(cpu)
++ 	for_each_watchdog_cpu(cpu)
+  		watchdog_nmi_enable(cpu);
+  	put_online_cpus();
+ +
+ +unlock:
+ +	mutex_lock(&watchdog_proc_mutex);
+  }
+ =20
+  void watchdog_nmi_disable_all(void)
+  {
+  	int cpu;
+ =20
+ +	mutex_lock(&watchdog_proc_mutex);
+ +
+  	if (!watchdog_running)
+ -		return;
+ +		goto unlock;
+ =20
+  	get_online_cpus();
+- 	for_each_online_cpu(cpu)
++ 	for_each_watchdog_cpu(cpu)
+  		watchdog_nmi_disable(cpu);
+  	put_online_cpus();
+ +
+ +unlock:
+ +	mutex_unlock(&watchdog_proc_mutex);
+  }
+  #else
+  static int watchdog_nmi_enable(unsigned int cpu) { return 0; }
+
+--Sig_/jRMA4U1gWH.AZkyprUSISuc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVWtrtAAoJEMDTa8Ir7ZwV4YYP/0bz/yeOai5hj+K7kTNHD4ll
+cM7CAv/TBsHZ6k2eJeoJIHbT9Ed7WQzJBDQjz12smnsosT+NxyWDTneh49ZlPER8
+jK3ftkltBuck8w+UmqNoa/K3/2QpaGoe0AxMdET6ScatfGse3a9yWnWbjCrH0XNE
+ey/WO9u+y+S0URYPHRb+1zLT5D87iBA1PAEQ9S/x251p/k0iclxDS1S0CDuUFI5N
+R/SrIb8d+MNbPAT9u0qx0nNy0sBJm2jPmBwibCPdyuUacLnSP0+FGZw5i9s94ozD
+qOaIqfvivXhO2BpK1EZqCuLlR5cXcNEGcjRenjH81XJnObEkJV8MaqCKePm61g96
+9EC1XIGb4zMX+VGLN14Hn7CGUsow5alHeTuaxOAC5j0O9EF62ZogpXZQDq0PoX7R
+gp8kXJfbeT59deUm2+y94bIb+sD/N/9ulcL8+hjkNK9Mxqa6+OnnBFrc3agjr6Nj
+ejI/HZlHEGIPNcwQ31aGuxK1sHYisMcVklaP0njeeCnNm8be3vF3RSq07Kd6kl79
+UXy/jatUdKEoXjtSdoH9/U6eN+wHoGY3rvG+jJhZBg9ujXD8jcYmA2v+F4cQW1o8
+genQ9snE8PzkzYPKixjqgRn+M25eOQdoS16ERPfk1RYgOeNWC2pTVf2J7jNYjhUX
+99fabjzOJbmYtCT7GxG7
+=On7Y
+-----END PGP SIGNATURE-----
+
+--Sig_/jRMA4U1gWH.AZkyprUSISuc--
