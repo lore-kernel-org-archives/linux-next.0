@@ -1,60 +1,38 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the samsung tree with the arm-soc and
- at91 trees
-Date: Wed, 20 May 2015 11:47:45 +0200
-Message-ID: <CAMuHMdVoot1mBHUmGMuTzCkxzd7H5TJThrwmPvnedFAOAP49pw@mail.gmail.com>
-References: <20150520102743.3d336a73@canb.auug.org.au>
-	<CAJKOXPdsi-5kdQJtybeaMCy0DXuRTRGgBEOM=SH9BsjquEMjCQ@mail.gmail.com>
-	<20150520091646.GF3338@piout.net>
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: linux-next: build warning after merge of the drm tree
+Date: Wed, 20 May 2015 20:49:34 +0900
+Message-ID: <20150520114934.GA1346@swordfish>
+References: <20150520165408.79369e40@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150520091646.GF3338@piout.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Masahiro Yamada <yamada.masahiro@socionext.com>, Lee Jones <lee.jones@linaro.org>, Maxime Coquelin <maxime.coquelin@st.com>, Baruch Siach <baruch@tkos.co.il>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:35813 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752045AbbETLt7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2015 07:49:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20150520165408.79369e40@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
-On Wed, May 20, 2015 at 11:16 AM, Alexandre Belloni
-<alexandre.belloni@free-electrons.com> wrote:
-> On 20/05/2015 at 09:35:36 +0900, Krzysztof Kozlowski wrote :
->> 2015-05-20 9:27 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
->> > Today's linux-next merge of the samsung tree got a conflict in
->> > arch/arm/configs/multi_v7_defconfig between various commits from the
->> > arm-soc and at91 trees and various commits from the samsung tree.
->> >
->> > I fixed it up (see below) and can carry the fix as necessary (no action
->> > is required).
->>
->> Hi,
->>
->> Thanks for the merge.
->>
->> The parts coming from samsung-soc related to manually toggling stuff
->> (by me and Javier) look fine. The rest (coming from Kukjin's
->> savedefconfig) I don't know - too much of them.
->>
->
-> Hum, last time I asked, we were not supposed to do a savedefconfig on
-> multi_v7...
+On (05/20/15 16:54), Stephen Rothwell wrote:
+> After merging the drm tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/gpu/drm/drm_crtc.c:4324:13: warning: 'drm_property_unreference_blob_locked' defined but not used [-Wunused-function]
+>  static void drm_property_unreference_blob_locked(struct drm_property_blob *blob)
+>              ^
+> 
+> Introduced by commit 6bcacf51d050 ("drm: Add reference counting to blob
+> properties").
+> 
+> This has been happening for a while.  I assumed a user for this new API
+> would come along, but it hasn't ...
 
-Yeah, IMHO it's something the arm-soc maintainers should do only right
-after rc1.
+Hello Stephen,
 
-Doing it at any other point in time may remove options that have just been
-added to multi_v7_defconfig by an arm-soc submaintainer, and that depend on
-a Kconfig change queued in another maintainer's for-next branch.
+http://mid.gmane.org/CAPj87rMPtafeYNzgXoP+fx0dAqhwaD7kdnJgqb_vdbPtiOrXPg@mail.gmail.com
 
-Personally, I think no arm-soc submaintainer should touch multi_v7_defconfig,
-and all changes should be applied by the arm-soc maintainers.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	-ss
