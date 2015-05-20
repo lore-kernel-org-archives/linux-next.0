@@ -1,514 +1,792 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 20
-Date: Wed, 20 May 2015 18:14:15 +1000
-Message-ID: <20150520181415.1650d946@canb.auug.org.au>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Subject: [PATCH v2] trace, ras: move ras_event.h under include/trace/events
+Date: Wed, 20 May 2015 08:15:30 +0000
+Message-ID: <20150520081530.GA12646@hori1.linux.bs1.fc.nec.co.jp>
+References: <20150518185226.23154d47@canb.auug.org.au>
+ <555A0327.9060709@infradead.org>
+ <20150519024933.GA1614@hori1.linux.bs1.fc.nec.co.jp>
+ <20150519094636.67c9a4a3@gandalf.local.home>
+ <20150520053614.GA6236@hori1.linux.bs1.fc.nec.co.jp>
+ <20150520060119.GB27005@hori1.linux.bs1.fc.nec.co.jp>
+ <20150520060336.GC27005@hori1.linux.bs1.fc.nec.co.jp>
+ <20150520071625.GF27005@hori1.linux.bs1.fc.nec.co.jp>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vn9Irwth4jgC_KC9Z=7Kab_"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from TYO202.gate.nec.co.jp ([210.143.35.52]:62646 "EHLO
+	tyo202.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751155AbbETISQ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2015 04:18:16 -0400
+In-Reply-To: <20150520071625.GF27005@hori1.linux.bs1.fc.nec.co.jp>
+Content-Language: ja-JP
+Content-ID: <77EFBED4D106AF49A0B93242C194C877@gisp.nec.co.jp>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Jim Davis <jim.epost@gmail.com>, Chen Gong <gong.chen@linux.intel.com>
 
---Sig_/vn9Irwth4jgC_KC9Z=7Kab_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Here is the revised one.
+---
+Most of header files for tracepoints are located to include/trace/events or
+their relevant subdirectories under drivers/. One exception is
+include/ras/ras_events.h, which looks inconsistent. So let's move it to the
+default places for such headers.
 
-Hi all,
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+---
+ChangeLog v1->v2:
+- rename the header from ras_event.h to ras.h (then no need to define
+  TRACE_INCLUDE_FILE)
+- remove "#define TRACE_INCLUDE_PATH ../../include/ras" from a/drivers/ras/ras.c
+---
+ drivers/acpi/acpi_extlog.c             |   2 +-
+ drivers/edac/edac_mc.c                 |   2 +-
+ drivers/edac/ghes_edac.c               |   2 +-
+ drivers/pci/pcie/aer/aerdrv_errprint.c |   2 +-
+ drivers/ras/ras.c                      |   3 +-
+ include/ras/ras_event.h                | 323 ---------------------------------
+ include/trace/events/ras.h             | 322 ++++++++++++++++++++++++++++++++
+ mm/memory-failure.c                    |   2 +-
+ 8 files changed, 328 insertions(+), 330 deletions(-)
+ delete mode 100644 include/ras/ras_event.h
+ create mode 100644 include/trace/events/ras.h
 
-Changes since 20150519:
-
-The at91 tree gained a conflict against the arm-soc tree.
-
-The samsung tree gained conflicts against the arm-soc and at91 trees.
-
-The sunxi tree gained a conflict against the samsung tree.
-
-The drm tree gained a build failure, so I used the version from
-next-20150519.
-
-Non-merge commits (relative to Linus' tree): 4950
- 4429 files changed, 227552 insertions(+), 107140 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64 and a
-multi_v7_defconfig for arm. After the final fixups (if any), it is also
-built with powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig and
-allyesconfig (this fails its final link) and i386, sparc, sparc64 and arm
-defconfig.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 216 trees (counting Linus' and 30 trees of patches
-pending for Linus' tree).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master (1113cdfe7d2c Merge tag 'nfs-for-4.1-2' of git://git.=
-linux-nfs.org/projects/trondmy/linux-nfs)
-Merging fixes/master (b94d525e58dc Merge git://git.kernel.org/pub/scm/linux=
-/kernel/git/davem/net)
-Merging kbuild-current/rc-fixes (c517d838eb7d Linux 4.0-rc1)
-Merging arc-current/for-curr (e4140819dadc ARC: signal handling robustify)
-Merging arm-current/fixes (1b97937246d8 ARM: fix missing syscall trace exit)
-Merging m68k-current/for-linus (b24f670b7f5b m68k/mac: Fix out-of-bounds ar=
-ray index in OSS IRQ source initialization)
-Merging metag-fixes/fixes (0164a711c97b metag: Fix ioremap_wc/ioremap_cache=
-d build errors)
-Merging mips-fixes/mips-fixes (1795cd9b3a91 Linux 3.16-rc5)
-Merging powerpc-merge-mpe/fixes (5e95235ccd54 powerpc: Align TOC to 256 byt=
-es)
-Merging powerpc-merge/merge (c517d838eb7d Linux 4.0-rc1)
-Merging sparc/master (acc455cffa75 sparc64: Setup sysfs to mark LDOM socket=
-s, cores and threads correctly)
-Merging net/master (892bd6291ac1 Merge tag 'mac80211-for-davem-2015-05-19' =
-of git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211)
-Merging ipsec/master (6d7258ca9370 esp6: Use high-order sequence number bit=
-s for IV generation)
-Merging sound-current/for-linus (fa94b0d72511 ALSA: usb-audio: Add quirk fo=
-r MS LifeCam Studio)
-Merging pci-current/for-linus (5ebe6afaf005 Linux 4.1-rc2)
-Merging wireless-drivers/master (f67382186489 ath9k: fix per-packet tx powe=
-r configuration)
-Merging driver-core.current/driver-core-linus (e26081808eda Linux 4.1-rc4)
-Merging tty.current/tty-linus (e26081808eda Linux 4.1-rc4)
-Merging usb.current/usb-linus (e26081808eda Linux 4.1-rc4)
-Merging usb-gadget-fixes/fixes (c94e289f195e usb: gadget: remove incorrect =
-__init/__exit annotations)
-Merging usb-serial-fixes/usb-linus (e26081808eda Linux 4.1-rc4)
-Merging staging.current/staging-linus (e26081808eda Linux 4.1-rc4)
-Merging char-misc.current/char-misc-linus (e26081808eda Linux 4.1-rc4)
-Merging input-current/for-linus (3c0213d17a09 Input: elantech - fix semi-mt=
- protocol for v3 HW)
-Merging crypto-current/master (7b2a18e05feb crypto: algif_aead - fix invali=
-d sgl linking)
-Merging ide/master (d681f1166919 ide: remove deprecated use of pci api)
-Merging devicetree-current/devicetree/merge (41d9489319f2 drivers/of: Add e=
-mpty ranges quirk for PA-Semi)
-Merging rr-fixes/fixes (f47689345931 lguest: update help text.)
-Merging vfio-fixes/for-linus (db7d4d7f4021 vfio: Fix runaway interruptible =
-timeout)
-Merging kselftest-fixes/fixes (e9886ace222e selftests, x86: Rework x86 targ=
-et architecture detection)
-Merging drm-intel-fixes/for-linux-next-fixes (54da691deb12 drm/i915: fix sc=
-reen flickering)
-Merging asm-generic/master (643165c8bbc8 Merge tag 'uaccess_for_upstream' o=
-f git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost into asm-generic)
-Merging arc/for-next (4a8a224570ad ARC: inline cache flush toggle helpers)
-Merging arm/for-next (402d170ecb89 Merge branch 'devel-stable' into for-nex=
-t)
-Merging arm-perf/for-next/perf (b787f68c36d4 Linux 4.1-rc1)
-Merging arm-soc/for-next (c458f9171166 ARM: hisi: revert changes from hisi/=
-hip04-dt branch)
-Merging at91/at91-next (6d5c29b3994d Merge tag 'at91-dt2' into at91-next)
-CONFLICT (content): Merge conflict in arch/arm/configs/multi_v7_defconfig
-Merging bcm2835/for-next (b2776bf7149b Linux 3.18)
-Merging rpi/for-rpi-next (50b674b89355 Merge branches 'for-rpi-next-soc' an=
-d 'for-rpi-next-dt' into for-rpi-next)
-Merging berlin/berlin/for-next (7f8ad9c26be9 Merge branch 'berlin/simple-mf=
-d' into berlin/for-next)
-Merging cortex-m/for-next (e799b6f37e6c ARM: zImage: add support for ARMv7-=
-M)
-Merging imx-mxs/for-next (ccddd1f6adb1 Merge branch 'imx/defconfig' into fo=
-r-next)
-Merging keystone/next (a6ba4234e474 ARM: dts: k2l: fix the netcp range size)
-Merging mvebu/for-next (689bc92a6492 Merge branch 'mvebu/dt' into mvebu/for=
--next)
-Merging omap/for-next (8be7646999c7 Merge tag 'omap-for-v4.1/fixes-rc2' int=
-o for-next)
-Merging omap-pending/for-next (30aa18d3bea5 MAINTAINERS: add maintainer for=
- OMAP hwmod data)
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/omap_hwmod_43xx_d=
-ata.c
-Merging renesas/next (19ab3cd76fc9 Merge branch 'heads/dt-for-v4.2' into ne=
-xt)
-Merging samsung/for-next (f839a8773746 Merge branch 'samsung-defconfig' int=
-o for-next)
-CONFLICT (content): Merge conflict in arch/arm/configs/multi_v7_defconfig
-Merging sunxi/sunxi/for-next (a426b3379698 Merge branch 'sunxi/dt-for-4.2' =
-into sunxi/for-next)
-CONFLICT (content): Merge conflict in arch/arm/configs/multi_v7_defconfig
-Merging tegra/for-next (a4b484d8d187 Merge branch for-4.2/fuse into for-nex=
-t)
-Merging arm64/for-next/core (5b09a094f2fb arm64: perf: Fix callchain parse =
-error with kernel tracepoint events)
-Merging blackfin/for-linus (d91e14b3b9e1 eth: bf609 eth clock: add pclk clo=
-ck for stmmac driver probe)
-Merging c6x/for-linux-next (3083ca2376a7 c6x: platforms: cache: Export symb=
-ol L1P_cache_block_invalidate and L1D_cache_block_writeback)
-Merging cris/for-next (45f49276cd8a CRISv32: allow CONFIG_DEBUG_BUGVERBOSE)
-Merging h8300/h8300-next (7c2b998ca350 Merge branch 'master' into h8300-nex=
-t)
-Merging hexagon/linux-next (8914d7e85780 Hexagon: fix signal delivery for d=
-ebug traps)
-Merging ia64/next (62f269ef8191 pstore: Fix the ramoops module parameters u=
-pdate)
-Merging m68k/for-next (2b8520f1f256 m68k: Use for_each_sg())
-Merging m68knommu/for-next (e26081808eda Linux 4.1-rc4)
-Merging metag/for-next (40346a0327fe metag: copy_thread(): rename 'arg' arg=
-ument to 'kthread_arg')
-Merging microblaze/next (c2219eda5478 microblaze: Fix syscall error recover=
-y for invalid syscall IDs)
-Merging mips/mips-for-linux-next (4e01f664d8a6 MIPS: cpu: Convert MIPS_CPU_=
-* defs to (1ull << x))
-Merging nios2/nios2-next (1a70db49a735 nios2: rework cache)
-Merging parisc-hd/for-next (4b470f120817 Merge branch 'parisc-4.1-2' of git=
-://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux)
-Merging powerpc-mpe/next (38c048877098 powerpc/powernv: Silence SYSPARAM wa=
-rning on boot)
-Merging powerpc/next (65e7bb2a34fe Merge branch 'next-sriov' into next)
-Merging fsl/next (d41444daba1f powerpc/corenet: enable CONFIG_I2C_MUX and C=
-ONFIG_I2C_MUX_PCA954x)
-Merging mpc5xxx/next (9e813308a5c1 powerpc/thp: Add tracepoints to track hu=
-gepage invalidate)
-Merging s390/features (7c53fcb39fdd s390/dasd: Enable automatic loading of =
-dasd_diag_mod)
-Merging sparc-next/master (9f935675d41a Merge branch 'for-linus' of git://g=
-it.kernel.org/pub/scm/linux/kernel/git/dtor/input)
-Merging tile/master (47ad7b9bbeaa tile: improve stack backtrace)
-Merging uml/linux-next (fe205bdd1321 um: Print minimum physical memory requ=
-irement)
-Merging unicore32/unicore32 (d670878e2c9a unicore32: Remove ARCH_HAS_CPUFRE=
-Q config option)
-Merging xtensa/for_next (06a631433460 xtensa: Provide dummy dma_alloc_attrs=
-() and dma_free_attrs())
-Merging btrfs/next (e082f56313f3 btrfs: quota: Update quota tree after qgro=
-up relationship change.)
-Merging ceph/master (84b54fefaa05 libceph: announce support for straw2 buck=
-ets)
-Merging cifs/for-next (bc8ebdc4f54c Fix that several functions handle incor=
-rect value of mapchars)
-Merging ecryptfs/next (6d65261a09ad eCryptfs: don't pass fs-specific ioctl =
-commands through)
-Merging ext3/for_next (942d702e7196 udf: remove double err declaration in u=
-df_file_write_iter())
-Merging ext4/dev (bee5863ea1b4 ext4 crypto: require CONFIG_CRYPTO_CTR if ex=
-t4 encryption is enabled)
-Merging f2fs/dev (862d51324c8e f2fs crypto: add rwsem to avoid data races)
-Merging fscache/fscache (b00c2ae2ed3c FS-Cache: Don't override netfs's prim=
-ary_index if registering failed)
-Merging fuse/for-next (d2c0616b0572 fuse: separate pqueue for clones)
-Merging gfs2/for-next (a3e3213676d8 gfs2: fix shadow warning in gfs2_rbm_fi=
-nd())
-Merging jfs/jfs-next (7d2ac45611b0 jfs: %pf is only for function pointers)
-Merging nfs/linux-next (feaff8e5b2cf nfs: take extra reference to fl->fl_fi=
-le when running a setlk)
-Merging nfsd/nfsd-next (fcc47efd5695 nfsd: Remove dead declarations)
-Merging overlayfs/overlayfs-next (cc6f67bcafcb ovl: mount read-only if work=
-dir can't be created)
-Merging squashfs/master (62421645bb70 Squashfs: Add LZ4 compression configu=
-ration option)
-Merging v9fs/for-next (3d99e3fe13d4 Merge branch 'stable' of git://git.kern=
-el.org/pub/scm/linux/kernel/git/cmetcalf/linux-tile)
-Merging ubifs/linux-next (98fb1ffd8154 UBI: block: Add missing cache flushe=
-s)
-Merging xfs/for-next (5ebe6afaf005 Linux 4.1-rc2)
-Merging file-locks/linux-next (7505256626b0 Merge tag 'devicetree-for-linus=
-' of git://git.kernel.org/pub/scm/linux/kernel/git/glikely/linux)
-Merging vfs/for-next (b853a16176cf turn user_{path_at,path,lpath,path_dir}(=
-) into static inlines)
-CONFLICT (content): Merge conflict in fs/ext4/symlink.c
-Applying: f2fs: merge fix for follow_link changes
-Merging pci/next (9b08ae0dde00 Merge branch 'pci/msi' into next)
-Merging hid/for-next (4cdf21c9ad74 Merge branch 'for-4.2/upstream' into for=
--next)
-Merging i2c/i2c/for-next (f6505fbabc42 i2c: add SLIMpro I2C device driver o=
-n APM X-Gene platform)
-Merging jdelvare-hwmon/master (3cc49e580f0f hwmon: (w83792d) Additional PWM=
- outputs support)
-Merging dmi/master (9432bf142f77 firmware: dmi: List my quilt tree)
-CONFLICT (content): Merge conflict in drivers/firmware/dmi_scan.c
-Merging hwmon-staging/hwmon-next (ce489d01004e hwmon: Allow compile test of=
- GPIO consumers if !GPIOLIB)
-Merging v4l-dvb/master (e7f8fd8aa7f2 Merge branch 'patchwork' into to_next)
-Merging kbuild/for-next (d1809fd6c20c Merge branch 'kbuild/misc' into kbuil=
-d/for-next)
-Merging kconfig/for-next (bfa76d495765 Linux 3.19)
-Merging libata/for-next (8b66171ef957 Merge branch 'for-4.2' into for-next)
-Merging pm/linux-next (db2cb0798393 Merge branch 'pm-sleep' into linux-next)
-Merging idle/next (64887b6882de Merge branch 'for-linus-4.1' of git://git.k=
-ernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs)
-Merging apm/for-next (53675abbd1e5 x86, apm: Remove unused variable)
-Merging thermal/next (e27f74ae45b3 Merge branches 'for-rc' and 'release' of=
- .git into next)
-Merging thermal-soc/next (bcacb3e5fd10 Merge branch 'work-linus' into work-=
-next)
-Merging ieee1394/for-next (d71e6a11737f firewire: core: use correct vendor/=
-model IDs)
-Merging dlm/next (2ab4bd8ea3a6 dlm: adopt orphan locks)
-Merging swiotlb/linux-next (8e0629c1d4ce swiotlb: don't assume PA 0 is inva=
-lid)
-Merging slave-dma/next (4a5f3adeef59 Merge branch 'topic/omap' into next)
-Merging net-next/master (06b2c61c92a9 ip: remove unused function prototype)
-CONFLICT (content): Merge conflict in net/switchdev/switchdev.c
-Merging ipsec-next/master (8faf491e6420 xfrm: optimise to search the inexac=
-t policy list)
-Merging wireless-drivers-next/master (6e65104504fe brcmfmac: check result o=
-f USB firmware request)
-CONFLICT (content): Merge conflict in drivers/net/wireless/ath/ath10k/mac.c
-Merging bluetooth/master (011c391a090e Bluetooth: Add debug logs for legacy=
- SMP crypto functions)
-Merging infiniband/for-next (c1c2fef6cfb0 Merge branches 'cve-fixup', 'ipoi=
-b', 'iser', 'misc-4.1', 'or-mlx4' and 'srp' into for-4.1)
-Merging mtd/master (e26081808eda Linux 4.1-rc4)
-Merging l2-mtd/master (bcb83a19d3ac mtd: brcmnand: do not make local variab=
-le static)
-Merging crypto/master (eddca85b1a9a crypto: omap-sham - Add support for oma=
-p3 devices)
-Merging drm/drm-next (91d9f9856f91 Merge tag 'drm-amdkfd-next-2015-05-19' o=
-f git://people.freedesktop.org/~gabbayo/linux into drm-next)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_irq.c
-$ git reset --hard HEAD^
-Merging next-20150519 version of drm
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_irq.c
-[master 9d4119fc7111] next-20150519/drm
-Merging drm-panel/drm/panel/for-next (c06ea0ada75b drm/bridge: ptn3460: Pas=
-s flags to devm_gpiod_get())
-Merging drm-intel/for-linux-next (75a27165ed8c drm/i915: Tighten the exposu=
-re ARGB/ABGR 8888 formats)
-Merging drm-tegra/drm/tegra/for-next (535a65db484f drm/tegra: sor: Reset du=
-ring initialization)
-Merging drm-misc/topic/drm-misc (12008083be6d drm/atomic: add all affected =
-planes in drm_atomic_helper_check_modeset)
-Merging drm-exynos/exynos-drm/for-next (9aeb8acbf0a2 drm/exynos: dp: Lower =
-level of EDID read success message)
-Merging drm-msm/msm-next (d5af49c92a8a drm/msm/mdp5: Enable DSI connector i=
-n msm drm driver)
-Merging sound/for-next (4214c5349c20 ALSA: hda - Fix NULL dereference from =
-CA0132 DSP loader)
-Merging sound-asoc/for-next (dfb252abf339 Merge remote-tracking branches 'a=
-soc/topic/wm8994' and 'asoc/topic/wm8996' into asoc-next)
-Merging modules/modules-next (4a3893d069b7 modpost: don't emit section mism=
-atch warnings for compiler optimizations)
-Merging input/next (ca8ff6ac455d Input: wm831x-on - pass the IRQF_ONESHOT f=
-lag)
-Merging block/for-next (fad112603ac5 Merge branch 'for-4.2/core' into for-n=
-ext)
-Merging device-mapper/for-next (9a7eb85965cf dm stats: Use kvfree() in dm_k=
-vfree())
-CONFLICT (content): Merge conflict in include/linux/blk_types.h
-CONFLICT (content): Merge conflict in drivers/md/dm-thin.c
-CONFLICT (content): Merge conflict in drivers/md/dm-snap.c
-CONFLICT (content): Merge conflict in drivers/md/dm-raid1.c
-CONFLICT (content): Merge conflict in drivers/md/dm-cache-target.c
-CONFLICT (content): Merge conflict in block/bio.c
-Merging mmc/mmc-next (11bc9381b277 mmc: sdhci-s3c: use mmc_of_parse and rem=
-ove the card_tasklet)
-Merging mmc-uh/next (bd2ae7c415cf RFC: mmc: core: Increase delay for voltag=
-e to stabilize from 3.3V to 1.8V)
-Merging kgdb/kgdb-next (2d289f14f00a kdb: Fix handling of kallsyms_symbol_n=
-ext() return value)
-Merging md/for-next (bb27051f9fd7 md/raid5: fix handling of degraded stripe=
-s in batches.)
-Merging mfd/for-mfd-next (82f1e29aec9c Documentation: Add WM8998/WM1814 dev=
-ice tree bindings)
-Merging backlight/for-backlight-next (6d1238d838a1 backlight/lp855x: Don't =
-clear level on suspend/blank)
-Merging battery/master (8ebb7e9c1a50 power: bq27x00_battery: Add missing MO=
-DULE_ALIAS)
-Merging omap_dss2/for-next (72fc8b7187cd Merge branches '4.1/fbdev' and '4.=
-1/omapdss' into for-next)
-Merging regulator/for-next (acb466e8801a Merge remote-tracking branches 're=
-gulator/topic/max14577', 'regulator/topic/max77693', 'regulator/topic/max77=
-843', 'regulator/topic/max8973' and 'regulator/topic/of' into regulator-nex=
-t)
-Merging security/next (1ddd3b4e07a4 LSM: Remove unused capability.c)
-CONFLICT (content): Merge conflict in security/security.c
-CONFLICT (modify/delete): security/capability.c deleted in security/next an=
-d modified in HEAD. Version HEAD of security/capability.c left in tree.
-CONFLICT (content): Merge conflict in include/linux/security.h
-$ git rm -f security/capability.c
-Applying: LSM: merge fix for follow_link API changes
-Merging integrity/next (88096f774d71 ima: pass iint to ima_add_violation())
-Merging selinux/next (6a878464e21a signals: don't abuse __flush_signals() i=
-n selinux_bprm_committed_creds())
-Merging lblnet/next (b2776bf7149b Linux 3.18)
-Merging watchdog/master (fe92a2e35727 watchdog: octeon: use fixed length st=
-ring for register names)
-Merging iommu/next (60dcc6f0bcf4 Merge branches 'iommu/fixes', 'arm/rockchi=
-p', 'arm/exynos' and 'core' into next)
-Merging dwmw2-iommu/master (4ed6a540fab8 iommu/vt-d: Fix passthrough mode w=
-ith translation-disabled devices)
-Merging vfio/next (5a0ff17741c1 vfio-pci: Fix use after free)
-Merging osd/linux-next (1fa3a002b254 Boaz Harrosh - fix email in Documentat=
-ion)
-Merging jc_docs/docs-next (13696e0a735d Doc: Fix description of nomce in ke=
-rnel-parameters.txt)
-Merging trivial/for-next (0e4f93e5017d goldfish: goldfish_tty_probe() is no=
-t using 'i' any more)
-Merging audit/next (39a8804455fb Linux 4.0)
-Merging devicetree/devicetree/next (a2166ca5f320 Merge remote-tracking bran=
-ch 'robh/for-next' into devicetree/next)
-Merging dt-rh/for-next (4760597116e3 scripts/dtc: Update to upstream versio=
-n 9d3649bd3be245c9)
-Merging mailbox/mailbox-for-next (4c0f74bf82e8 mailbox: Enable BCM2835 mail=
-box support)
-Merging spi/for-next (17258abbb56b Merge remote-tracking branches 'spi/topi=
-c/sirf' and 'spi/topic/spidev' into spi-next)
-Merging tip/auto-latest (982578dabcf0 Merge branch 'timers/core')
-Merging clockevents/clockevents/next (d44c80d0cbb2 clocksource: exynos_mct:=
- Remove old platform mct_init())
-Merging edac/linux_next (fec53af531dd sb_edac: Fix typo computing number of=
- banks)
-Merging edac-amd/for-next (30c7469ba6f5 MAINTAINERS: Change Johannes Thumsh=
-irn's email address)
-Merging irqchip/irqchip/for-next (a8bcdc32fafb Merge branch 'irqchip/core' =
-into irqchip/for-next)
-Merging tiny/tiny/next (f114040e3ea6 Linux 3.18-rc1)
-Merging ftrace/for-next (f267caab4445 tracing: Remove unused prototype ftra=
-ce_event_define_field())
-Merging rcu/rcu/next (75eedc2ba60a documentation: Fix spelling of "operator=
-s")
-CONFLICT (content): Merge conflict in net/netfilter/core.c
-CONFLICT (content): Merge conflict in kernel/rcu/tree_plugin.h
-CONFLICT (content): Merge conflict in kernel/rcu/tree.c
-CONFLICT (content): Merge conflict in include/linux/rcutree.h
-CONFLICT (content): Merge conflict in include/linux/rcupdate.h
-Merging kvm/linux-next (3520469d65f2 KVM: export __gfn_to_pfn_memslot, drop=
- gfn_to_pfn_async)
-Merging kvm-arm/next (2fa462f82621 Merge tag 'kvm-arm-for-4.1-take2' of git=
-://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into kvm-master)
-Merging kvm-ppc/kvm-ppc-next (b79013b2449c Merge tag 'staging-4.1-rc1' of g=
-it://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging)
-Merging kvms390/next (06b36753a646 KVM: s390: drop handling of interception=
- code 12)
-Merging xen-tip/linux-next (ffb7dbed47da xen/arm: Define xen_arch_suspend())
-Merging percpu/for-next (4c907baf36d8 percpu_ref: implement percpu_ref_is_d=
-ying())
-Merging workqueues/for-next (d4d3e2579756 workqueue: ensure attrs changes a=
-re properly synchronized)
-Merging drivers-x86/for-next (61104aa44529 dell-laptop: Use dell-rbtn inste=
-ad i8042 filter when possible)
-Merging chrome-platform/for-next (96cba9b00e29 platform/chrome: chromeos_la=
-ptop - instantiate Atmel at primary address)
-Merging regmap/for-next (637733e01bd4 Merge remote-tracking branches 'regma=
-p/topic/defaults' and 'regmap/topic/irq' into regmap-next)
-Merging hsi/for-next (265ef3ee9575 HSI: cmt_speech: fix error return code)
-Merging leds/for-next (ebb66c25577a Documentation: leds-lp5523: describe ma=
-ster fader attributes)
-Merging ipmi/for-next (c32e9840e96a ipmi: Add a comment in how messages are=
- delivered from the lower layer)
-Merging driver-core/driver-core-next (e26081808eda Linux 4.1-rc4)
-Merging tty/tty-next (02730d3c053a Merge 4.1-rc4 into tty-next)
-Applying: serial/amba-pl011: fix mismerge
-Merging usb/usb-next (909eacd748b3 Merge 4.1-rc4 into usb-next)
-Merging usb-gadget/next (88a25e02f35e usb: renesas_usbhs: Add access contro=
-l for INTSTS1 and INTENB1 register)
-Merging usb-serial/usb-next (e26081808eda Linux 4.1-rc4)
-Merging staging/staging-next (936a0cd52aa5 Merge 4.1-rc4 into staging-next)
-CONFLICT (modify/delete): drivers/staging/media/dt3155v4l/dt3155v4l.c delet=
-ed in HEAD and modified in staging/staging-next. Version staging/staging-ne=
-xt of drivers/staging/media/dt3155v4l/dt3155v4l.c left in tree.
-$ git rm -f drivers/staging/media/dt3155v4l/dt3155v4l.c
-Merging char-misc/char-misc-next (f5da7cb24b78 coresight: etb10: Fix check =
-for bogus buffer depth)
-Merging extcon/extcon-next (d71aadda19f8 extcon: Remove the optional name o=
-f extcon device)
-Merging kdbus/kdbus (9fb9cd0f4434 kdbus: avoid the use of struct timespec)
-CONFLICT (content): Merge conflict in Documentation/Makefile
-Merging cgroup/for-next (8ab456ac3697 cgroup: switch to unsigned long for b=
-itmasks)
-Merging scsi/for-next (18308d4be6ae Merge branch 'misc' into for-next)
-Merging target-updates/for-next (3a6e7fffe130 target: Convert se_lun->lun_s=
-ep updater + readers to RCU)
-Merging target-merge/for-next-merge (b28a960c42fc Linux 3.14-rc2)
-Merging pinctrl/for-next (4fd30e726ed3 Merge branch 'devel' into for-next)
-Merging vhost/linux-next (f4aaa799cf9a tun, macvtap: higher order allocatio=
-ns for skbs)
-Merging remoteproc/for-next (172e6ab1caff remoteproc: fix various checkpatc=
-h warnings)
-Merging rpmsg/for-next (b1b9891441fa rpmsg: use less buffers when vrings ar=
-e small)
-Merging gpio/for-next (1ab4363bd9fb Merge branch 'devel' into for-next)
-Merging dma-mapping/dma-mapping-next (5ebe6afaf005 Linux 4.1-rc2)
-Merging pwm/for-next (efb0de55b6a2 pwm: Add support to remove registered co=
-nsumer lookup tables)
-Merging dma-buf/for-next (9abdffe286c1 dma-buf: add ref counting for module=
- as exporter)
-Merging userns/for-next (7e96c1b0e0f4 mnt: Fix fs_fully_visible to verify t=
-he root directory is visible)
-Merging ktest/for-next (7c2c49eceb79 ktest: Place quotes around item variab=
-le)
-Merging clk/clk-next (df5338d9fe5d clk: mmp: add PXA1928 clock support)
-Merging random/dev (7185ad2672a7 crypto: memzero_explicit - make sure to cl=
-ear out sensitive data)
-Merging aio/master (5f785de58873 aio: Skip timer for io_getevents if timeou=
-t=3D0)
-Merging llvmlinux/for-next (25d4aee23af2 arm: LLVMLinux: Use global stack r=
-egister variable for percpu)
-Merging kselftest/next (36a4d1a9445e tools selftests: Fix 'clean' target wi=
-th make 3.81)
-Merging y2038/y2038 (ed8c2241c1ae coredump: Use 64bit time for unix time of=
- coredump)
-CONFLICT (content): Merge conflict in drivers/staging/media/lirc/lirc_paral=
-lel.c
-Merging luto-misc/next (a6c5170d1ede Merge branch 'for-4.0' of git://linux-=
-nfs.org/~bfields/linux)
-Merging access_once/linux-next (bc465aa9d045 Linux 4.0-rc5)
-Merging livepatching/for-next (01ca6f0d384f Merge branch 'for-4.2/upstream'=
- into for-next)
-Merging coresight/next (086a4c07200f coresight: replicator: Add Qualcomm Co=
-reSight Replicator driver)
-Merging rtc/rtc-next (f1644dff27ab rtc: rtc-v3020: use gpio_request_array())
-Merging akpm-current/current (ecc81b6b2f2e mm-thp-split-out-pmd-collpase-fl=
-ush-into-a-separate-functions-fix-2)
-CONFLICT (content): Merge conflict in kernel/watchdog.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/machine_kexec_64.c
-$ git checkout -b akpm remotes/origin/akpm/master
-Applying: arch/unicore32/kernel/fpu-ucf64.c: remove unnecessary KERN_ERR
-Applying: printk: improve the description of /dev/kmsg line format
-Applying: drivers/w1/w1_int.c: call put_device if device_register fails
-Merging akpm/master (ff0a3cc77c28 drivers/w1/w1_int.c: call put_device if d=
-evice_register fails)
-
---Sig_/vn9Irwth4jgC_KC9Z=7Kab_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVXEJdAAoJEMDTa8Ir7ZwV7zwP/iXsUZoHOc956z4yW449fY3u
-wqhdOaq208QseTVBsLbUZMFwPKH1go3zEMMY6iCTjSGGmyTqpZzx4nM3+8ZIWObs
-sGjbnn2VH+D7CsP25TXlSM6V56OE/bYnxE1N+55agKyzO4hUyi67gnIE9ixCndkn
-WUDjDcgigarllTVXkrba6Kr1GXzn0brfEAt2y3n8T60w1VERrWjxFJbeN6buiU1O
-S2/57dRE26KIhB0ZTju08q4SKfw1XpYCKvRJEFqVhl1sHOHQLHrU32uAmgiAlr0/
-B1Jayv5uLlg4vI1P+q70eLxZndDu6FZz3hHHUqhZTyXXzLCbif1jeDvBok0neMwh
-0lnf6jQCc19bpzoz69rwrqTTjPQZJOk9rHb2rQxlm8EsbEw6UPBdEmo3IAfZBYk9
-8F99yX/vupUXTJCDuBqofeyl/0PHOrCHM7rds/zBs8E2xg8CEFfp93np9bqEe/gf
-/VwgJLIsfEDgnnp70mXBwiVFZPVjThD7C68I13J/Laup+BdRao3Z8Y1b5YwPvZW/
-xK6zA5opdaKNr91E03/goVBDx44nLXZs1pJPrLjta8fwbN55tB+BxjOT4Jn18TYZ
-fe3IIRp7NBd3gih35ZLhlk46KW6sigwEtz4o5WEYU9c73rG924D9oDo8n7FJDRIn
-6kuIdQfd4ErqT8fbStn1
-=Pmg6
------END PGP SIGNATURE-----
-
---Sig_/vn9Irwth4jgC_KC9Z=7Kab_--
+diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
+index b3842ffc19ba..b04bfd9f14e3 100644
+--- a/drivers/acpi/acpi_extlog.c
++++ b/drivers/acpi/acpi_extlog.c
+@@ -17,7 +17,7 @@
+ #include <asm/mce.h>
+ 
+ #include "apei/apei-internal.h"
+-#include <ras/ras_event.h>
++#include <trace/events/ras.h>
+ 
+ #define EXT_ELOG_ENTRY_MASK	GENMASK_ULL(51, 0) /* elog entry address mask */
+ 
+diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
+index af3be1914dbb..c95ecb74cdc4 100644
+--- a/drivers/edac/edac_mc.c
++++ b/drivers/edac/edac_mc.c
+@@ -33,7 +33,7 @@
+ #include <asm/edac.h>
+ #include "edac_core.h"
+ #include "edac_module.h"
+-#include <ras/ras_event.h>
++#include <trace/events/ras.h>
+ 
+ /* lock to memory controller's control array */
+ static DEFINE_MUTEX(mem_ctls_mutex);
+diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+index b24681998740..223005766527 100644
+--- a/drivers/edac/ghes_edac.c
++++ b/drivers/edac/ghes_edac.c
+@@ -15,7 +15,7 @@
+ #include <linux/edac.h>
+ #include <linux/dmi.h>
+ #include "edac_core.h"
+-#include <ras/ras_event.h>
++#include <trace/events/ras.h>
+ 
+ #define GHES_EDAC_REVISION " Ver: 1.0.0"
+ 
+diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+index 167fe411ce2e..b5d4c0d9778d 100644
+--- a/drivers/pci/pcie/aer/aerdrv_errprint.c
++++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+@@ -22,7 +22,7 @@
+ #include <linux/cper.h>
+ 
+ #include "aerdrv.h"
+-#include <ras/ras_event.h>
++#include <trace/events/ras.h>
+ 
+ #define AER_AGENT_RECEIVER		0
+ #define AER_AGENT_REQUESTER		1
+diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
+index b67dd362b7b6..d1557687ba18 100644
+--- a/drivers/ras/ras.c
++++ b/drivers/ras/ras.c
+@@ -9,8 +9,7 @@
+ #include <linux/ras.h>
+ 
+ #define CREATE_TRACE_POINTS
+-#define TRACE_INCLUDE_PATH ../../include/ras
+-#include <ras/ras_event.h>
++#include <trace/events/ras.h>
+ 
+ static int __init ras_init(void)
+ {
+diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+deleted file mode 100644
+index 1443d79e4fe6..000000000000
+--- a/include/ras/ras_event.h
++++ /dev/null
+@@ -1,323 +0,0 @@
+-#undef TRACE_SYSTEM
+-#define TRACE_SYSTEM ras
+-#define TRACE_INCLUDE_FILE ras_event
+-
+-#if !defined(_TRACE_HW_EVENT_MC_H) || defined(TRACE_HEADER_MULTI_READ)
+-#define _TRACE_HW_EVENT_MC_H
+-
+-#include <linux/tracepoint.h>
+-#include <linux/edac.h>
+-#include <linux/ktime.h>
+-#include <linux/pci.h>
+-#include <linux/aer.h>
+-#include <linux/cper.h>
+-#include <linux/mm.h>
+-
+-/*
+- * MCE Extended Error Log trace event
+- *
+- * These events are generated when hardware detects a corrected or
+- * uncorrected event.
+- */
+-
+-/* memory trace event */
+-
+-#if defined(CONFIG_ACPI_EXTLOG) || defined(CONFIG_ACPI_EXTLOG_MODULE)
+-TRACE_EVENT(extlog_mem_event,
+-	TP_PROTO(struct cper_sec_mem_err *mem,
+-		 u32 err_seq,
+-		 const uuid_le *fru_id,
+-		 const char *fru_text,
+-		 u8 sev),
+-
+-	TP_ARGS(mem, err_seq, fru_id, fru_text, sev),
+-
+-	TP_STRUCT__entry(
+-		__field(u32, err_seq)
+-		__field(u8, etype)
+-		__field(u8, sev)
+-		__field(u64, pa)
+-		__field(u8, pa_mask_lsb)
+-		__field_struct(uuid_le, fru_id)
+-		__string(fru_text, fru_text)
+-		__field_struct(struct cper_mem_err_compact, data)
+-	),
+-
+-	TP_fast_assign(
+-		__entry->err_seq = err_seq;
+-		if (mem->validation_bits & CPER_MEM_VALID_ERROR_TYPE)
+-			__entry->etype = mem->error_type;
+-		else
+-			__entry->etype = ~0;
+-		__entry->sev = sev;
+-		if (mem->validation_bits & CPER_MEM_VALID_PA)
+-			__entry->pa = mem->physical_addr;
+-		else
+-			__entry->pa = ~0ull;
+-
+-		if (mem->validation_bits & CPER_MEM_VALID_PA_MASK)
+-			__entry->pa_mask_lsb = (u8)__ffs64(mem->physical_addr_mask);
+-		else
+-			__entry->pa_mask_lsb = ~0;
+-		__entry->fru_id = *fru_id;
+-		__assign_str(fru_text, fru_text);
+-		cper_mem_err_pack(mem, &__entry->data);
+-	),
+-
+-	TP_printk("{%d} %s error: %s physical addr: %016llx (mask lsb: %x) %sFRU: %pUl %.20s",
+-		  __entry->err_seq,
+-		  cper_severity_str(__entry->sev),
+-		  cper_mem_err_type_str(__entry->etype),
+-		  __entry->pa,
+-		  __entry->pa_mask_lsb,
+-		  cper_mem_err_unpack(p, &__entry->data),
+-		  &__entry->fru_id,
+-		  __get_str(fru_text))
+-);
+-#endif
+-
+-/*
+- * Hardware Events Report
+- *
+- * Those events are generated when hardware detected a corrected or
+- * uncorrected event, and are meant to replace the current API to report
+- * errors defined on both EDAC and MCE subsystems.
+- *
+- * FIXME: Add events for handling memory errors originated from the
+- *        MCE subsystem.
+- */
+-
+-/*
+- * Hardware-independent Memory Controller specific events
+- */
+-
+-/*
+- * Default error mechanisms for Memory Controller errors (CE and UE)
+- */
+-TRACE_EVENT(mc_event,
+-
+-	TP_PROTO(const unsigned int err_type,
+-		 const char *error_msg,
+-		 const char *label,
+-		 const int error_count,
+-		 const u8 mc_index,
+-		 const s8 top_layer,
+-		 const s8 mid_layer,
+-		 const s8 low_layer,
+-		 unsigned long address,
+-		 const u8 grain_bits,
+-		 unsigned long syndrome,
+-		 const char *driver_detail),
+-
+-	TP_ARGS(err_type, error_msg, label, error_count, mc_index,
+-		top_layer, mid_layer, low_layer, address, grain_bits,
+-		syndrome, driver_detail),
+-
+-	TP_STRUCT__entry(
+-		__field(	unsigned int,	error_type		)
+-		__string(	msg,		error_msg		)
+-		__string(	label,		label			)
+-		__field(	u16,		error_count		)
+-		__field(	u8,		mc_index		)
+-		__field(	s8,		top_layer		)
+-		__field(	s8,		middle_layer		)
+-		__field(	s8,		lower_layer		)
+-		__field(	long,		address			)
+-		__field(	u8,		grain_bits		)
+-		__field(	long,		syndrome		)
+-		__string(	driver_detail,	driver_detail		)
+-	),
+-
+-	TP_fast_assign(
+-		__entry->error_type		= err_type;
+-		__assign_str(msg, error_msg);
+-		__assign_str(label, label);
+-		__entry->error_count		= error_count;
+-		__entry->mc_index		= mc_index;
+-		__entry->top_layer		= top_layer;
+-		__entry->middle_layer		= mid_layer;
+-		__entry->lower_layer		= low_layer;
+-		__entry->address		= address;
+-		__entry->grain_bits		= grain_bits;
+-		__entry->syndrome		= syndrome;
+-		__assign_str(driver_detail, driver_detail);
+-	),
+-
+-	TP_printk("%d %s error%s:%s%s on %s (mc:%d location:%d:%d:%d address:0x%08lx grain:%d syndrome:0x%08lx%s%s)",
+-		  __entry->error_count,
+-		  mc_event_error_type(__entry->error_type),
+-		  __entry->error_count > 1 ? "s" : "",
+-		  ((char *)__get_str(msg))[0] ? " " : "",
+-		  __get_str(msg),
+-		  __get_str(label),
+-		  __entry->mc_index,
+-		  __entry->top_layer,
+-		  __entry->middle_layer,
+-		  __entry->lower_layer,
+-		  __entry->address,
+-		  1 << __entry->grain_bits,
+-		  __entry->syndrome,
+-		  ((char *)__get_str(driver_detail))[0] ? " " : "",
+-		  __get_str(driver_detail))
+-);
+-
+-/*
+- * PCIe AER Trace event
+- *
+- * These events are generated when hardware detects a corrected or
+- * uncorrected event on a PCIe device. The event report has
+- * the following structure:
+- *
+- * char * dev_name -	The name of the slot where the device resides
+- *			([domain:]bus:device.function).
+- * u32 status -		Either the correctable or uncorrectable register
+- *			indicating what error or errors have been seen
+- * u8 severity -	error severity 0:NONFATAL 1:FATAL 2:CORRECTED
+- */
+-
+-#define aer_correctable_errors					\
+-	{PCI_ERR_COR_RCVR,	"Receiver Error"},		\
+-	{PCI_ERR_COR_BAD_TLP,	"Bad TLP"},			\
+-	{PCI_ERR_COR_BAD_DLLP,	"Bad DLLP"},			\
+-	{PCI_ERR_COR_REP_ROLL,	"RELAY_NUM Rollover"},		\
+-	{PCI_ERR_COR_REP_TIMER,	"Replay Timer Timeout"},	\
+-	{PCI_ERR_COR_ADV_NFAT,	"Advisory Non-Fatal Error"},	\
+-	{PCI_ERR_COR_INTERNAL,	"Corrected Internal Error"},	\
+-	{PCI_ERR_COR_LOG_OVER,	"Header Log Overflow"}
+-
+-#define aer_uncorrectable_errors				\
+-	{PCI_ERR_UNC_UND,	"Undefined"},			\
+-	{PCI_ERR_UNC_DLP,	"Data Link Protocol Error"},	\
+-	{PCI_ERR_UNC_SURPDN,	"Surprise Down Error"},		\
+-	{PCI_ERR_UNC_POISON_TLP,"Poisoned TLP"},		\
+-	{PCI_ERR_UNC_FCP,	"Flow Control Protocol Error"},	\
+-	{PCI_ERR_UNC_COMP_TIME,	"Completion Timeout"},		\
+-	{PCI_ERR_UNC_COMP_ABORT,"Completer Abort"},		\
+-	{PCI_ERR_UNC_UNX_COMP,	"Unexpected Completion"},	\
+-	{PCI_ERR_UNC_RX_OVER,	"Receiver Overflow"},		\
+-	{PCI_ERR_UNC_MALF_TLP,	"Malformed TLP"},		\
+-	{PCI_ERR_UNC_ECRC,	"ECRC Error"},			\
+-	{PCI_ERR_UNC_UNSUP,	"Unsupported Request Error"},	\
+-	{PCI_ERR_UNC_ACSV,	"ACS Violation"},		\
+-	{PCI_ERR_UNC_INTN,	"Uncorrectable Internal Error"},\
+-	{PCI_ERR_UNC_MCBTLP,	"MC Blocked TLP"},		\
+-	{PCI_ERR_UNC_ATOMEG,	"AtomicOp Egress Blocked"},	\
+-	{PCI_ERR_UNC_TLPPRE,	"TLP Prefix Blocked Error"}
+-
+-TRACE_EVENT(aer_event,
+-	TP_PROTO(const char *dev_name,
+-		 const u32 status,
+-		 const u8 severity),
+-
+-	TP_ARGS(dev_name, status, severity),
+-
+-	TP_STRUCT__entry(
+-		__string(	dev_name,	dev_name	)
+-		__field(	u32,		status		)
+-		__field(	u8,		severity	)
+-	),
+-
+-	TP_fast_assign(
+-		__assign_str(dev_name, dev_name);
+-		__entry->status		= status;
+-		__entry->severity	= severity;
+-	),
+-
+-	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
+-		__get_str(dev_name),
+-		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+-			__entry->severity == AER_FATAL ?
+-			"Fatal" : "Uncorrected, non-fatal",
+-		__entry->severity == AER_CORRECTABLE ?
+-		__print_flags(__entry->status, "|", aer_correctable_errors) :
+-		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
+-);
+-
+-/*
+- * memory-failure recovery action result event
+- *
+- * unsigned long pfn -	Page Frame Number of the corrupted page
+- * int type	-	Page types of the corrupted page
+- * int result	-	Result of recovery action
+- */
+-
+-#ifdef CONFIG_MEMORY_FAILURE
+-#define MF_ACTION_RESULT	\
+-	EM ( MF_IGNORED, "Ignored" )	\
+-	EM ( MF_FAILED,  "Failed" )	\
+-	EM ( MF_DELAYED, "Delayed" )	\
+-	EMe ( MF_RECOVERED, "Recovered" )
+-
+-#define MF_PAGE_TYPE		\
+-	EM ( MF_MSG_KERNEL, "reserved kernel page" )			\
+-	EM ( MF_MSG_KERNEL_HIGH_ORDER, "high-order kernel page" )	\
+-	EM ( MF_MSG_SLAB, "kernel slab page" )				\
+-	EM ( MF_MSG_DIFFERENT_COMPOUND, "different compound page after locking" ) \
+-	EM ( MF_MSG_POISONED_HUGE, "huge page already hardware poisoned" )	\
+-	EM ( MF_MSG_HUGE, "huge page" )					\
+-	EM ( MF_MSG_FREE_HUGE, "free huge page" )			\
+-	EM ( MF_MSG_UNMAP_FAILED, "unmapping failed page" )		\
+-	EM ( MF_MSG_DIRTY_SWAPCACHE, "dirty swapcache page" )		\
+-	EM ( MF_MSG_CLEAN_SWAPCACHE, "clean swapcache page" )		\
+-	EM ( MF_MSG_DIRTY_MLOCKED_LRU, "dirty mlocked LRU page" )	\
+-	EM ( MF_MSG_CLEAN_MLOCKED_LRU, "clean mlocked LRU page" )	\
+-	EM ( MF_MSG_DIRTY_UNEVICTABLE_LRU, "dirty unevictable LRU page" )	\
+-	EM ( MF_MSG_CLEAN_UNEVICTABLE_LRU, "clean unevictable LRU page" )	\
+-	EM ( MF_MSG_DIRTY_LRU, "dirty LRU page" )			\
+-	EM ( MF_MSG_CLEAN_LRU, "clean LRU page" )			\
+-	EM ( MF_MSG_TRUNCATED_LRU, "already truncated LRU page" )	\
+-	EM ( MF_MSG_BUDDY, "free buddy page" )				\
+-	EM ( MF_MSG_BUDDY_2ND, "free buddy page (2nd try)" )		\
+-	EMe ( MF_MSG_UNKNOWN, "unknown page" )
+-
+-/*
+- * First define the enums in MM_ACTION_RESULT to be exported to userspace
+- * via TRACE_DEFINE_ENUM().
+- */
+-#undef EM
+-#undef EMe
+-#define EM(a, b) TRACE_DEFINE_ENUM(a);
+-#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
+-
+-MF_ACTION_RESULT
+-MF_PAGE_TYPE
+-
+-/*
+- * Now redefine the EM() and EMe() macros to map the enums to the strings
+- * that will be printed in the output.
+- */
+-#undef EM
+-#undef EMe
+-#define EM(a, b)		{ a, b },
+-#define EMe(a, b)	{ a, b }
+-
+-TRACE_EVENT(memory_failure_event,
+-	TP_PROTO(unsigned long pfn,
+-		 int type,
+-		 int result),
+-
+-	TP_ARGS(pfn, type, result),
+-
+-	TP_STRUCT__entry(
+-		__field(unsigned long, pfn)
+-		__field(int, type)
+-		__field(int, result)
+-	),
+-
+-	TP_fast_assign(
+-		__entry->pfn	= pfn;
+-		__entry->type	= type;
+-		__entry->result	= result;
+-	),
+-
+-	TP_printk("pfn %#lx: recovery action for %s: %s",
+-		__entry->pfn,
+-		__print_symbolic(__entry->type, MF_PAGE_TYPE),
+-		__print_symbolic(__entry->result, MF_ACTION_RESULT)
+-	)
+-);
+-#endif /* CONFIG_MEMORY_FAILURE */
+-#endif /* _TRACE_HW_EVENT_MC_H */
+-
+-/* This part must be outside protection */
+-#include <trace/define_trace.h>
+diff --git a/include/trace/events/ras.h b/include/trace/events/ras.h
+new file mode 100644
+index 000000000000..e5cf7629b364
+--- /dev/null
++++ b/include/trace/events/ras.h
+@@ -0,0 +1,322 @@
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM ras
++
++#if !defined(_TRACE_HW_EVENT_MC_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_HW_EVENT_MC_H
++
++#include <linux/tracepoint.h>
++#include <linux/edac.h>
++#include <linux/ktime.h>
++#include <linux/pci.h>
++#include <linux/aer.h>
++#include <linux/cper.h>
++#include <linux/mm.h>
++
++/*
++ * MCE Extended Error Log trace event
++ *
++ * These events are generated when hardware detects a corrected or
++ * uncorrected event.
++ */
++
++/* memory trace event */
++
++#if defined(CONFIG_ACPI_EXTLOG) || defined(CONFIG_ACPI_EXTLOG_MODULE)
++TRACE_EVENT(extlog_mem_event,
++	TP_PROTO(struct cper_sec_mem_err *mem,
++		 u32 err_seq,
++		 const uuid_le *fru_id,
++		 const char *fru_text,
++		 u8 sev),
++
++	TP_ARGS(mem, err_seq, fru_id, fru_text, sev),
++
++	TP_STRUCT__entry(
++		__field(u32, err_seq)
++		__field(u8, etype)
++		__field(u8, sev)
++		__field(u64, pa)
++		__field(u8, pa_mask_lsb)
++		__field_struct(uuid_le, fru_id)
++		__string(fru_text, fru_text)
++		__field_struct(struct cper_mem_err_compact, data)
++	),
++
++	TP_fast_assign(
++		__entry->err_seq = err_seq;
++		if (mem->validation_bits & CPER_MEM_VALID_ERROR_TYPE)
++			__entry->etype = mem->error_type;
++		else
++			__entry->etype = ~0;
++		__entry->sev = sev;
++		if (mem->validation_bits & CPER_MEM_VALID_PA)
++			__entry->pa = mem->physical_addr;
++		else
++			__entry->pa = ~0ull;
++
++		if (mem->validation_bits & CPER_MEM_VALID_PA_MASK)
++			__entry->pa_mask_lsb = (u8)__ffs64(mem->physical_addr_mask);
++		else
++			__entry->pa_mask_lsb = ~0;
++		__entry->fru_id = *fru_id;
++		__assign_str(fru_text, fru_text);
++		cper_mem_err_pack(mem, &__entry->data);
++	),
++
++	TP_printk("{%d} %s error: %s physical addr: %016llx (mask lsb: %x) %sFRU: %pUl %.20s",
++		  __entry->err_seq,
++		  cper_severity_str(__entry->sev),
++		  cper_mem_err_type_str(__entry->etype),
++		  __entry->pa,
++		  __entry->pa_mask_lsb,
++		  cper_mem_err_unpack(p, &__entry->data),
++		  &__entry->fru_id,
++		  __get_str(fru_text))
++);
++#endif
++
++/*
++ * Hardware Events Report
++ *
++ * Those events are generated when hardware detected a corrected or
++ * uncorrected event, and are meant to replace the current API to report
++ * errors defined on both EDAC and MCE subsystems.
++ *
++ * FIXME: Add events for handling memory errors originated from the
++ *        MCE subsystem.
++ */
++
++/*
++ * Hardware-independent Memory Controller specific events
++ */
++
++/*
++ * Default error mechanisms for Memory Controller errors (CE and UE)
++ */
++TRACE_EVENT(mc_event,
++
++	TP_PROTO(const unsigned int err_type,
++		 const char *error_msg,
++		 const char *label,
++		 const int error_count,
++		 const u8 mc_index,
++		 const s8 top_layer,
++		 const s8 mid_layer,
++		 const s8 low_layer,
++		 unsigned long address,
++		 const u8 grain_bits,
++		 unsigned long syndrome,
++		 const char *driver_detail),
++
++	TP_ARGS(err_type, error_msg, label, error_count, mc_index,
++		top_layer, mid_layer, low_layer, address, grain_bits,
++		syndrome, driver_detail),
++
++	TP_STRUCT__entry(
++		__field(	unsigned int,	error_type		)
++		__string(	msg,		error_msg		)
++		__string(	label,		label			)
++		__field(	u16,		error_count		)
++		__field(	u8,		mc_index		)
++		__field(	s8,		top_layer		)
++		__field(	s8,		middle_layer		)
++		__field(	s8,		lower_layer		)
++		__field(	long,		address			)
++		__field(	u8,		grain_bits		)
++		__field(	long,		syndrome		)
++		__string(	driver_detail,	driver_detail		)
++	),
++
++	TP_fast_assign(
++		__entry->error_type		= err_type;
++		__assign_str(msg, error_msg);
++		__assign_str(label, label);
++		__entry->error_count		= error_count;
++		__entry->mc_index		= mc_index;
++		__entry->top_layer		= top_layer;
++		__entry->middle_layer		= mid_layer;
++		__entry->lower_layer		= low_layer;
++		__entry->address		= address;
++		__entry->grain_bits		= grain_bits;
++		__entry->syndrome		= syndrome;
++		__assign_str(driver_detail, driver_detail);
++	),
++
++	TP_printk("%d %s error%s:%s%s on %s (mc:%d location:%d:%d:%d address:0x%08lx grain:%d syndrome:0x%08lx%s%s)",
++		  __entry->error_count,
++		  mc_event_error_type(__entry->error_type),
++		  __entry->error_count > 1 ? "s" : "",
++		  ((char *)__get_str(msg))[0] ? " " : "",
++		  __get_str(msg),
++		  __get_str(label),
++		  __entry->mc_index,
++		  __entry->top_layer,
++		  __entry->middle_layer,
++		  __entry->lower_layer,
++		  __entry->address,
++		  1 << __entry->grain_bits,
++		  __entry->syndrome,
++		  ((char *)__get_str(driver_detail))[0] ? " " : "",
++		  __get_str(driver_detail))
++);
++
++/*
++ * PCIe AER Trace event
++ *
++ * These events are generated when hardware detects a corrected or
++ * uncorrected event on a PCIe device. The event report has
++ * the following structure:
++ *
++ * char * dev_name -	The name of the slot where the device resides
++ *			([domain:]bus:device.function).
++ * u32 status -		Either the correctable or uncorrectable register
++ *			indicating what error or errors have been seen
++ * u8 severity -	error severity 0:NONFATAL 1:FATAL 2:CORRECTED
++ */
++
++#define aer_correctable_errors					\
++	{PCI_ERR_COR_RCVR,	"Receiver Error"},		\
++	{PCI_ERR_COR_BAD_TLP,	"Bad TLP"},			\
++	{PCI_ERR_COR_BAD_DLLP,	"Bad DLLP"},			\
++	{PCI_ERR_COR_REP_ROLL,	"RELAY_NUM Rollover"},		\
++	{PCI_ERR_COR_REP_TIMER,	"Replay Timer Timeout"},	\
++	{PCI_ERR_COR_ADV_NFAT,	"Advisory Non-Fatal Error"},	\
++	{PCI_ERR_COR_INTERNAL,	"Corrected Internal Error"},	\
++	{PCI_ERR_COR_LOG_OVER,	"Header Log Overflow"}
++
++#define aer_uncorrectable_errors				\
++	{PCI_ERR_UNC_UND,	"Undefined"},			\
++	{PCI_ERR_UNC_DLP,	"Data Link Protocol Error"},	\
++	{PCI_ERR_UNC_SURPDN,	"Surprise Down Error"},		\
++	{PCI_ERR_UNC_POISON_TLP,"Poisoned TLP"},		\
++	{PCI_ERR_UNC_FCP,	"Flow Control Protocol Error"},	\
++	{PCI_ERR_UNC_COMP_TIME,	"Completion Timeout"},		\
++	{PCI_ERR_UNC_COMP_ABORT,"Completer Abort"},		\
++	{PCI_ERR_UNC_UNX_COMP,	"Unexpected Completion"},	\
++	{PCI_ERR_UNC_RX_OVER,	"Receiver Overflow"},		\
++	{PCI_ERR_UNC_MALF_TLP,	"Malformed TLP"},		\
++	{PCI_ERR_UNC_ECRC,	"ECRC Error"},			\
++	{PCI_ERR_UNC_UNSUP,	"Unsupported Request Error"},	\
++	{PCI_ERR_UNC_ACSV,	"ACS Violation"},		\
++	{PCI_ERR_UNC_INTN,	"Uncorrectable Internal Error"},\
++	{PCI_ERR_UNC_MCBTLP,	"MC Blocked TLP"},		\
++	{PCI_ERR_UNC_ATOMEG,	"AtomicOp Egress Blocked"},	\
++	{PCI_ERR_UNC_TLPPRE,	"TLP Prefix Blocked Error"}
++
++TRACE_EVENT(aer_event,
++	TP_PROTO(const char *dev_name,
++		 const u32 status,
++		 const u8 severity),
++
++	TP_ARGS(dev_name, status, severity),
++
++	TP_STRUCT__entry(
++		__string(	dev_name,	dev_name	)
++		__field(	u32,		status		)
++		__field(	u8,		severity	)
++	),
++
++	TP_fast_assign(
++		__assign_str(dev_name, dev_name);
++		__entry->status		= status;
++		__entry->severity	= severity;
++	),
++
++	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
++		__get_str(dev_name),
++		__entry->severity == AER_CORRECTABLE ? "Corrected" :
++			__entry->severity == AER_FATAL ?
++			"Fatal" : "Uncorrected, non-fatal",
++		__entry->severity == AER_CORRECTABLE ?
++		__print_flags(__entry->status, "|", aer_correctable_errors) :
++		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
++);
++
++/*
++ * memory-failure recovery action result event
++ *
++ * unsigned long pfn -	Page Frame Number of the corrupted page
++ * int type	-	Page types of the corrupted page
++ * int result	-	Result of recovery action
++ */
++
++#ifdef CONFIG_MEMORY_FAILURE
++#define MF_ACTION_RESULT	\
++	EM ( MF_IGNORED, "Ignored" )	\
++	EM ( MF_FAILED,  "Failed" )	\
++	EM ( MF_DELAYED, "Delayed" )	\
++	EMe ( MF_RECOVERED, "Recovered" )
++
++#define MF_PAGE_TYPE		\
++	EM ( MF_MSG_KERNEL, "reserved kernel page" )			\
++	EM ( MF_MSG_KERNEL_HIGH_ORDER, "high-order kernel page" )	\
++	EM ( MF_MSG_SLAB, "kernel slab page" )				\
++	EM ( MF_MSG_DIFFERENT_COMPOUND, "different compound page after locking" ) \
++	EM ( MF_MSG_POISONED_HUGE, "huge page already hardware poisoned" )	\
++	EM ( MF_MSG_HUGE, "huge page" )					\
++	EM ( MF_MSG_FREE_HUGE, "free huge page" )			\
++	EM ( MF_MSG_UNMAP_FAILED, "unmapping failed page" )		\
++	EM ( MF_MSG_DIRTY_SWAPCACHE, "dirty swapcache page" )		\
++	EM ( MF_MSG_CLEAN_SWAPCACHE, "clean swapcache page" )		\
++	EM ( MF_MSG_DIRTY_MLOCKED_LRU, "dirty mlocked LRU page" )	\
++	EM ( MF_MSG_CLEAN_MLOCKED_LRU, "clean mlocked LRU page" )	\
++	EM ( MF_MSG_DIRTY_UNEVICTABLE_LRU, "dirty unevictable LRU page" )	\
++	EM ( MF_MSG_CLEAN_UNEVICTABLE_LRU, "clean unevictable LRU page" )	\
++	EM ( MF_MSG_DIRTY_LRU, "dirty LRU page" )			\
++	EM ( MF_MSG_CLEAN_LRU, "clean LRU page" )			\
++	EM ( MF_MSG_TRUNCATED_LRU, "already truncated LRU page" )	\
++	EM ( MF_MSG_BUDDY, "free buddy page" )				\
++	EM ( MF_MSG_BUDDY_2ND, "free buddy page (2nd try)" )		\
++	EMe ( MF_MSG_UNKNOWN, "unknown page" )
++
++/*
++ * First define the enums in MM_ACTION_RESULT to be exported to userspace
++ * via TRACE_DEFINE_ENUM().
++ */
++#undef EM
++#undef EMe
++#define EM(a, b) TRACE_DEFINE_ENUM(a);
++#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
++
++MF_ACTION_RESULT
++MF_PAGE_TYPE
++
++/*
++ * Now redefine the EM() and EMe() macros to map the enums to the strings
++ * that will be printed in the output.
++ */
++#undef EM
++#undef EMe
++#define EM(a, b)		{ a, b },
++#define EMe(a, b)	{ a, b }
++
++TRACE_EVENT(memory_failure_event,
++	TP_PROTO(unsigned long pfn,
++		 int type,
++		 int result),
++
++	TP_ARGS(pfn, type, result),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, pfn)
++		__field(int, type)
++		__field(int, result)
++	),
++
++	TP_fast_assign(
++		__entry->pfn	= pfn;
++		__entry->type	= type;
++		__entry->result	= result;
++	),
++
++	TP_printk("pfn %#lx: recovery action for %s: %s",
++		__entry->pfn,
++		__print_symbolic(__entry->type, MF_PAGE_TYPE),
++		__print_symbolic(__entry->result, MF_ACTION_RESULT)
++	)
++);
++#endif /* CONFIG_MEMORY_FAILURE */
++#endif /* _TRACE_HW_EVENT_MC_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 8cbe23ac1056..55f07ccb9056 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -57,7 +57,7 @@
+ #include <linux/mm_inline.h>
+ #include <linux/kfifo.h>
+ #include "internal.h"
+-#include "ras/ras_event.h"
++#include <trace/events/ras.h>
+ 
+ int sysctl_memory_failure_early_kill __read_mostly = 0;
+ 
+-- 
+2.1.0
