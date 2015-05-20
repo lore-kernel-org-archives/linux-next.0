@@ -1,38 +1,47 @@
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Subject: Re: [PATCH 2/2] trace, ras: move ras_event.h under
- include/trace/events
-Date: Wed, 20 May 2015 07:16:25 +0000
-Message-ID: <20150520071625.GF27005@hori1.linux.bs1.fc.nec.co.jp>
-References: <20150518185226.23154d47@canb.auug.org.au>
- <555A0327.9060709@infradead.org>
- <20150519024933.GA1614@hori1.linux.bs1.fc.nec.co.jp>
- <20150519094636.67c9a4a3@gandalf.local.home>
- <20150520053614.GA6236@hori1.linux.bs1.fc.nec.co.jp>
- <20150520060119.GB27005@hori1.linux.bs1.fc.nec.co.jp>
- <20150520060336.GC27005@hori1.linux.bs1.fc.nec.co.jp>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: Re: linux-next: build warnings after merge of the usb-gadget tree
+Date: Wed, 20 May 2015 09:18:45 +0200
+Message-ID: <555C3555.5030400@samsung.com>
+References: <20150520162937.5cca5b00@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from TYO202.gate.nec.co.jp ([210.143.35.52]:46750 "EHLO
-	tyo202.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751609AbbETHSv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2015 03:18:51 -0400
-In-Reply-To: <20150520060336.GC27005@hori1.linux.bs1.fc.nec.co.jp>
-Content-Language: ja-JP
-Content-ID: <A39D0BAE64F1BF479625D9C33295B8B7@gisp.nec.co.jp>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:9342 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751341AbbETHSu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2015 03:18:50 -0400
+In-reply-to: <20150520162937.5cca5b00@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Jim Davis <jim.epost@gmail.com>, Chen Gong <gong.chen@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gV2VkLCBNYXkgMjAsIDIwMTUgYXQgMDY6MDM6MzdBTSArMDAwMCwgSG9yaWd1Y2hpIE5hb3lh
-KOWggOWPoyDnm7TkuZ8pIHdyb3RlOg0KPiBNb3N0IG9mIGhlYWRlciBmaWxlcyBmb3IgdHJhY2Vw
-b2ludHMgYXJlIGxvY2F0ZWQgdG8gaW5jbHVkZS90cmFjZS9ldmVudHMgb3INCj4gdGhlaXIgcmVs
-ZXZhbnQgc3ViZGlyZWN0b3JpZXMgdW5kZXIgZHJpdmVycy8uIE9uZSBleGNlcHRpb24gaXMNCj4g
-aW5jbHVkZS9yYXMvcmFzX2V2ZW50cy5oLCB3aGljaCBsb29rcyBpbmNvbnNpc3RlbnQuIFNvIGxl
-dCdzIG1vdmUgaXQgdG8gdGhlDQo+IGRlZmF1bHQgcGxhY2VzIGZvciBzdWNoIGhlYWRlcnMuDQo+
-IA0KPiBTaWduZWQtb2ZmLWJ5OiBOYW95YSBIb3JpZ3VjaGkgPG4taG9yaWd1Y2hpQGFoLmpwLm5l
-Yy5jb20+DQoNClNvcnJ5IHRoaXMgZG9lc24ndCBidWlsZCwgSSBzaG91bGQndmUgdGVzdGVkIGNh
-cmVmdWxseS4NCkknbGwgcG9zdCBhZ2FpbiBsYXRlciwgc28gcGxlYXNlIGlnbm9yZSB0aGlzLg0K
-DQpUaGFua3MsDQpOYW95YSBIb3JpZ3VjaGk=
+W dniu 20.05.2015 o 08:29, Stephen Rothwell pisze:
+> Hi Felipe,
+>
+> After merging the usb-gadget tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+>
+> drivers/usb/gadget/function/rndis.c: In function 'rndis_proc_write':
+> drivers/usb/gadget/function/rndis.c:1147:4: warning: passing argument 1 of 'rndis_signal_connect' makes pointer from integer without a cast
+>      rndis_signal_connect(p->confignr);
+>      ^
+> drivers/usb/gadget/function/rndis.c:748:5: note: expected 'struct rndis_params *' but argument is of type 'u8'
+>   int rndis_signal_connect(struct rndis_params *params)
+>       ^
+> drivers/usb/gadget/function/rndis.c:1151:4: warning: passing argument 1 of 'rndis_signal_disconnect' makes pointer from integer without a cast
+>      rndis_signal_disconnect(p->confignr);
+>      ^
+> drivers/usb/gadget/function/rndis.c:755:5: note: expected 'struct rndis_params *' but argument is of type 'u8'
+>   int rndis_signal_disconnect(struct rndis_params *params)
+>       ^
+>
+> Probably caused by commit 83210e59ee15 ("usb: gadget: rndis: use
+> rndis_params instead of configNr").
+>
+There is already a patch series for that:
+
+http://www.spinics.net/lists/linux-usb/msg125003.html
+
+AP
