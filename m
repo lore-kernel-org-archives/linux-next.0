@@ -1,74 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Wed, 20 May 2015 15:25:38 +1000
-Message-ID: <20150520152538.15e7a1cc@canb.auug.org.au>
+Date: Wed, 20 May 2015 15:31:02 +1000
+Message-ID: <20150520153102.3e70a45c@canb.auug.org.au>
 References: <20150520130828.4fdacf54@canb.auug.org.au>
 	<alpine.DEB.2.00.1505200541090.3204@skynet.skynet.ie>
+	<20150520152538.15e7a1cc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NbWYnLSv1vL8pR4ZnaYm8KP"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1505200541090.3204@skynet.skynet.ie>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Sig_/okGZxX/bi92BunsLHOsXHKv"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:44837 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750984AbbETFbJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 May 2015 01:31:09 -0400
+In-Reply-To: <20150520152538.15e7a1cc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Dave Airlie <airlied@linux.ie>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oded Gabbay <oded.gabbay@gmail.com>, Alex Deucher <alexander.deucher@amd.com>
-List-Id: linux-next.vger.kernel.org
 
---Sig_/NbWYnLSv1vL8pR4ZnaYm8KP
+--Sig_/okGZxX/bi92BunsLHOsXHKv
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Dave,
 
-On Wed, 20 May 2015 05:41:46 +0100 (IST) Dave Airlie <airlied@linux.ie> wro=
-te:
+On Wed, 20 May 2015 15:25:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> > After merging the drm tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
+> On Wed, 20 May 2015 05:41:46 +0100 (IST) Dave Airlie <airlied@linux.ie> w=
+rote:
+> >
+> > > After merging the drm tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) failed like this:
+> > >=20
+> > > drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c: In function 'c=
+reate_queue_cpsch':
+> > > drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c:888:2: error: i=
+mplicit declaration of function 'init_sdma_vm' [-Werror=3Dimplicit-function=
+-declaration]
+> > >   init_sdma_vm(dqm, q, qpd);
+> > >   ^
+> > >=20
+> > > Caused by commit 3e3f6e1a90a8 ("drm/amdkfd: make the sdma vm init to =
+be
+> > > asic specific").
+> > >=20
+> > > I have used the drm tree from next-20150519 for today.
 > >=20
-> > drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c: In function 'cre=
-ate_queue_cpsch':
-> > drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c:888:2: error: imp=
-licit declaration of function 'init_sdma_vm' [-Werror=3Dimplicit-function-d=
-eclaration]
-> >   init_sdma_vm(dqm, q, qpd);
-> >   ^
-> >=20
-> > Caused by commit 3e3f6e1a90a8 ("drm/amdkfd: make the sdma vm init to be
-> > asic specific").
-> >=20
-> > I have used the drm tree from next-20150519 for today.
+> > Okay this looks like a silent conflict, I'll have to pull Linus tree in=
+to
+> > drm-next and fix it up there.
 >=20
-> Okay this looks like a silent conflict, I'll have to pull Linus tree into
-> drm-next and fix it up there.
+> Yep, against commit 79b066bd76d5 ("drm/amdkfd: Initialize sdma vm when
+> creating sdma queue") which is in v4.1-rc3.
 
-Yep, against commit 79b066bd76d5 ("drm/amdkfd: Initialize sdma vm when
-creating sdma queue") which is in v4.1-rc3.
+So you could, of course, just merge that commit instead of Linus'
+tree ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/NbWYnLSv1vL8pR4ZnaYm8KP
+--Sig_/okGZxX/bi92BunsLHOsXHKv
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVXBrXAAoJEMDTa8Ir7ZwVfX8P/i1vyrIDgj3dJy0sjv+DMHgH
-DhF5MR7pPsQSWUlaQf8WSd3gHrpuqIU3q+O90Y+ZowKYKNn7/s/TPRut2H1nr6gT
-0ghKE0iS1OcBF4WfMrt+O4erYghGo5uxuAriNX/AXAGvgd4xN1uPS+OQYzORQMhm
-lxwUOeNBdLwJyBzcR3a5uS5zdYl/R1gyF5mw4aBlAH4oa8iDovENrG6s2Mj9ruOq
-MfaiiGfNAT5P0yZQpwz/nssFf/8SATKtfvwOCKnMUDrM9zNDMR46bTIkg1SBQVLT
-j+U9mL9wwdwUeyibx2sucbdDYx/oL8ISbmhw0FHNHxI3/92aSzH1/Y+K0wteqwor
-qFfNJQVTPMFp3FzLFh8A82I+UcIS7KvMtE9PlM6SCAZ5/I6uHBIpsNrlQlF7ERhn
-AOzATEGRQIvsC0HJEeVY/UmhNxVlNfjqX+mRIdFntpbUJxFvd7s/9UCI19DzBnrs
-2Gduq+joLMxM1ywek1hpVrb4rzGeLVdfBvq3Atj/aAvS1FPyPS+hPnAgX7HJdWxQ
-XwIJyG/Q3F3zYg3IA1Hz0lgwoXa+ad0+9spus9i/OTlU7dmAEuMNUv3tWrkkWmwf
-j145UmmQHhtCWRDUMxi1BBbMzAgiW+ESPRCYHYAW2zSYERXGsoQkJmO4wZ/sV7mU
-rNfND1ABFckxkQLn3ziI
-=vwOr
+iQIcBAEBCAAGBQJVXBwbAAoJEMDTa8Ir7ZwVsJMP/1B6+RKaZiG5FW5NIqCbloXR
+nqLCVqFdaEdibKE+yngjV/ECliO85rKidc4inzRkldVFzJao8gJQn6uRIXrV41XD
+DGWb6FflklawqS+i9/S5a9vPmzs8o+htHo8X+P5EMbon8jKa4RdSuNgwHr9EwWjC
+X7emOVD6JkT4uINa98nd42QWQR2zEVs7MLZUfNfTxfioqyeGxlZgPLuBkLbe0Svh
+Iyvpxj8sZz2h+LWyFRmAbeCUSqfwFlNazdrHNQPzE018X3x1uO3xlS8AzHfq4Lgk
+HKsE9XIT2HLfdi+Mbd0ke9Rg4PfxuXjf5fkXPcexEGefW+5jIK2QeBR4snOQ5m0I
+zR/XtOz+u8pvCFzbWtiP8qMJitK6Jknq7UJxF+vd/nSM7JvfpgaOy/6SDVnkYe/c
+u1TDKnPULAGzS+7D0lK8pshSDfTI2v0qHAap8sdhJKKpY1bmyUBDABNx8J50a4em
+X8578+kUWs1p6aixz4Y7cRLVwCh8GFOlnZvlNXdGOcQ7JaecDmJBbAWfe8afymkn
+GvBAOLKLD5OdW+tCgihAsgDY8Whn+PUJaUdZ8Sw0pTuMfWMGivP3dXt5o/Mpfdmx
+VIZbNHcqgqYzERr7qe2NRn0YB8chBICuUW/W7E04yUP3G7BIrvTm1S1eYb6+NIya
+a5DJ+OZw17YgQUCfTkqz
+=VA6k
 -----END PGP SIGNATURE-----
 
---Sig_/NbWYnLSv1vL8pR4ZnaYm8KP--
+--Sig_/okGZxX/bi92BunsLHOsXHKv--
