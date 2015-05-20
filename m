@@ -1,242 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with the arm-soc and
- at91 trees
-Date: Wed, 20 May 2015 10:27:43 +1000
-Message-ID: <20150520102743.3d336a73@canb.auug.org.au>
+Subject: linux-next: manual merge of the sunxi tree with the samsung tree
+Date: Wed, 20 May 2015 10:31:39 +1000
+Message-ID: <20150520103139.14600def@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//W9YA//y=6O3eCjwBsTRyFg"; protocol="application/pgp-signature"
+ boundary="Sig_/p9kqnKVQqHPmy82mOsqo4Wz"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38148 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48598 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751126AbbETA1t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2015 20:27:49 -0400
+	id S1751203AbbETAbq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 May 2015 20:31:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Masahiro Yamada <yamada.masahiro@socionext.com>, Lee Jones <lee.jones@linaro.org>, Maxime Coquelin <maxime.coquelin@st.com>, Baruch Siach <baruch@tkos.co.il>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Timo Sigurdsson <public_timo.s@silentcreek.de>
 
---Sig_//W9YA//y=6O3eCjwBsTRyFg
+--Sig_/p9kqnKVQqHPmy82mOsqo4Wz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Maxime,
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/configs/multi_v7_defconfig between various commits from the
-arm-soc and at91 trees and various commits from the samsung tree.
+Today's linux-next merge of the sunxi tree got a conflict in
+arch/arm/configs/multi_v7_defconfig between commit 6d718eeef2c9 ("ARM:
+multi_v7_defconfig: make savedefconfig for removing useless configs")
+from the samsung tree and commit 51d275281c06 ("ARM: Remove deprecated
+symbol from defconfig files") from the sunxi tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (they both removed CONFIG_POWER_RESET_SUN6I) and can
+carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/configs/multi_v7_defconfig
-index 84eb4eaea423,e88d6d6fdfd2..000000000000
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@@ -20,14 -19,12 +19,15 @@@ CONFIG_MACH_ARMADA_38X=3D
-  CONFIG_MACH_ARMADA_39X=3Dy
-  CONFIG_MACH_ARMADA_XP=3Dy
-  CONFIG_MACH_DOVE=3Dy
- +CONFIG_ARCH_AT91=3Dy
- +CONFIG_SOC_SAMA5D3=3Dy
- +CONFIG_SOC_SAMA5D4=3Dy
-+ CONFIG_ARCH_ALPINE=3Dy
-  CONFIG_ARCH_BCM=3Dy
-  CONFIG_ARCH_BCM_CYGNUS=3Dy
-- CONFIG_ARCH_BCM_21664=3Dy
-- CONFIG_ARCH_BCM_281XX=3Dy
-  CONFIG_ARCH_BCM_5301X=3Dy
-+ CONFIG_ARCH_BCM_281XX=3Dy
-+ CONFIG_ARCH_BCM_21664=3Dy
-  CONFIG_ARCH_BRCMSTB=3Dy
-  CONFIG_ARCH_BERLIN=3Dy
-  CONFIG_MACH_BERLIN_BG2=3Dy
-@@@ -89,8 -85,6 +89,7 @@@ CONFIG_ARCH_TEGRA_2x_SOC=3D
-  CONFIG_ARCH_TEGRA_3x_SOC=3Dy
-  CONFIG_ARCH_TEGRA_114_SOC=3Dy
-  CONFIG_ARCH_TEGRA_124_SOC=3Dy
-- CONFIG_TEGRA_EMC_SCALING_ENABLE=3Dy
- +CONFIG_ARCH_UNIPHIER=3Dy
-  CONFIG_ARCH_U8500=3Dy
-  CONFIG_MACH_HREFV60=3Dy
-  CONFIG_MACH_SNOWBALL=3Dy
-@@@ -119,10 -107,10 +112,11 @@@ CONFIG_KEXEC=3D
-  CONFIG_CPU_FREQ=3Dy
-  CONFIG_CPU_FREQ_STAT_DETAILS=3Dy
-  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=3Dy
-+ CONFIG_CPUFREQ_DT=3Dy
-  CONFIG_CPU_IDLE=3Dy
-- CONFIG_NEON=3Dy
- +CONFIG_KERNEL_MODE_NEON=3Dy
-  CONFIG_ARM_ZYNQ_CPUIDLE=3Dy
-+ CONFIG_ARM_EXYNOS_CPUIDLE=3Dy
-  CONFIG_NET=3Dy
-  CONFIG_PACKET=3Dy
-  CONFIG_UNIX=3Dy
-@@@ -140,10 -128,6 +134,7 @@@ CONFIG_IPV6_MIP6=3D
-  CONFIG_IPV6_TUNNEL=3Dm
-  CONFIG_IPV6_MULTIPLE_TABLES=3Dy
-  CONFIG_CAN=3Dy
-- CONFIG_CAN_RAW=3Dy
-- CONFIG_CAN_BCM=3Dy
-- CONFIG_CAN_DEV=3Dy
- +CONFIG_CAN_AT91=3Dm
-  CONFIG_CAN_XILINXCAN=3Dy
-  CONFIG_CAN_MCP251X=3Dy
-  CONFIG_BT=3Dm
-@@@ -223,13 -203,13 +213,14 @@@ CONFIG_MWIFIEX=3D
-  CONFIG_MWIFIEX_SDIO=3Dm
-  CONFIG_INPUT_JOYDEV=3Dy
-  CONFIG_INPUT_EVDEV=3Dy
- +CONFIG_KEYBOARD_QT1070=3Dm
-  CONFIG_KEYBOARD_GPIO=3Dy
-  CONFIG_KEYBOARD_TEGRA=3Dy
-- CONFIG_KEYBOARD_SPEAR=3Dy
-  CONFIG_KEYBOARD_ST_KEYSCAN=3Dy
-+ CONFIG_KEYBOARD_SPEAR=3Dy
-  CONFIG_KEYBOARD_CROS_EC=3Dy
-  CONFIG_MOUSE_PS2_ELANTECH=3Dy
-+ CONFIG_MOUSE_CYAPA=3Dm
-  CONFIG_MOUSE_ELAN_I2C=3Dy
-  CONFIG_INPUT_TOUCHSCREEN=3Dy
-  CONFIG_TOUCHSCREEN_ATMEL_MXT=3Dy
-@@@ -279,16 -254,14 +270,16 @@@ CONFIG_SERIAL_CONEXANT_DIGICOLOR_CONSOL
-  CONFIG_SERIAL_ST_ASC=3Dy
-  CONFIG_SERIAL_ST_ASC_CONSOLE=3Dy
-  CONFIG_I2C_CHARDEV=3Dy
-- CONFIG_I2C_DAVINCI=3Dy
-  CONFIG_I2C_MUX=3Dy
-+ CONFIG_I2C_ARB_GPIO_CHALLENGE=3Dm
-  CONFIG_I2C_MUX_PCA954x=3Dy
-  CONFIG_I2C_MUX_PINCTRL=3Dy
- +CONFIG_I2C_AT91=3Dm
-  CONFIG_I2C_CADENCE=3Dy
-+ CONFIG_I2C_DAVINCI=3Dy
-  CONFIG_I2C_DESIGNWARE_PLATFORM=3Dy
- +CONFIG_I2C_DIGICOLOR=3Dm
-  CONFIG_I2C_GPIO=3Dm
-- CONFIG_I2C_EXYNOS5=3Dy
-  CONFIG_I2C_MV64XXX=3Dy
-  CONFIG_I2C_RIIC=3Dy
-  CONFIG_I2C_S3C2410=3Dy
-@@@ -298,8 -271,8 +289,9 @@@ CONFIG_I2C_ST=3D
-  CONFIG_I2C_TEGRA=3Dy
-  CONFIG_I2C_XILINX=3Dy
-  CONFIG_I2C_RCAR=3Dy
-+ CONFIG_I2C_CROS_EC_TUNNEL=3Dm
-  CONFIG_SPI=3Dy
- +CONFIG_SPI_ATMEL=3Dm
-  CONFIG_SPI_CADENCE=3Dy
-  CONFIG_SPI_DAVINCI=3Dy
-  CONFIG_SPI_OMAP24XX=3Dy
-@@@ -522,18 -497,17 +519,21 @@@ CONFIG_RTC_DRV_AS3722=3D
-  CONFIG_RTC_DRV_DS1307=3Dy
-  CONFIG_RTC_DRV_MAX8907=3Dy
-  CONFIG_RTC_DRV_MAX77686=3Dy
-+ CONFIG_RTC_DRV_MAX77802=3Dm
-  CONFIG_RTC_DRV_RS5C372=3Dm
-  CONFIG_RTC_DRV_PALMAS=3Dy
- +CONFIG_RTC_DRV_ST_LPC=3Dy
-  CONFIG_RTC_DRV_TWL4030=3Dy
-  CONFIG_RTC_DRV_TPS6586X=3Dy
-  CONFIG_RTC_DRV_TPS65910=3Dy
-  CONFIG_RTC_DRV_S35390A=3Dm
-  CONFIG_RTC_DRV_EM3027=3Dy
- +CONFIG_RTC_DRV_DIGICOLOR=3Dm
-+ CONFIG_RTC_DRV_S5M=3Dm
-+ CONFIG_RTC_DRV_S3C=3Dm
-  CONFIG_RTC_DRV_PL031=3Dy
- +CONFIG_RTC_DRV_AT91RM9200=3Dm
- +CONFIG_RTC_DRV_AT91SAM9=3Dm
-  CONFIG_RTC_DRV_VT8500=3Dy
-  CONFIG_RTC_DRV_SUN6I=3Dy
-  CONFIG_RTC_DRV_SUNXI=3Dy
-@@@ -573,30 -548,29 +576,33 @@@ CONFIG_MSM_MMCC_8960=3D
-  CONFIG_MSM_MMCC_8974=3Dy
-  CONFIG_TEGRA_IOMMU_GART=3Dy
-  CONFIG_TEGRA_IOMMU_SMMU=3Dy
-+ CONFIG_QCOM_GSBI=3Dy
-  CONFIG_PM_DEVFREQ=3Dy
-  CONFIG_ARM_TEGRA_DEVFREQ=3Dm
-- CONFIG_MEMORY=3Dy
-  CONFIG_TI_AEMIF=3Dy
-  CONFIG_IIO=3Dy
- +CONFIG_AT91_ADC=3Dm
-  CONFIG_XILINX_XADC=3Dy
-  CONFIG_AK8975=3Dy
-  CONFIG_PWM=3Dy
- +CONFIG_PWM_ATMEL=3Dm
- +CONFIG_PWM_ATMEL_TCB=3Dm
-  CONFIG_PWM_RENESAS_TPU=3Dy
-+ CONFIG_PWM_SAMSUNG=3Dm
-  CONFIG_PWM_TEGRA=3Dy
-  CONFIG_PWM_VT8500=3Dy
-- CONFIG_PHY_HIX5HD2_SATA=3Dy
-- CONFIG_OMAP_USB2=3Dy
-- CONFIG_TI_PIPE3=3Dy
-+ CONFIG_KEYSTONE_IRQ=3Dy
-  CONFIG_PHY_MIPHY28LP=3Dy
-  CONFIG_PHY_MIPHY365X=3Dy
- +CONFIG_PHY_RCAR_GEN2=3Dm
-- CONFIG_PHY_STIH41X_USB=3Dy
-- CONFIG_PHY_STIH407_USB=3Dy
-+ CONFIG_OMAP_USB2=3Dy
-+ CONFIG_TI_PIPE3=3Dy
-+ CONFIG_PHY_HIX5HD2_SATA=3Dy
-  CONFIG_PHY_SUN4I_USB=3Dy
-  CONFIG_PHY_SUN9I_USB=3Dy
-+ CONFIG_PHY_SAMSUNG_USB2=3Dm
-+ CONFIG_PHY_STIH407_USB=3Dy
-+ CONFIG_PHY_STIH41X_USB=3Dy
-  CONFIG_EXT4_FS=3Dy
-  CONFIG_AUTOFS4_FS=3Dy
-  CONFIG_MSDOS_FS=3Dy
-@@@ -619,20 -592,3 +624,17 @@@ CONFIG_PRINTK_TIME=3D
-  CONFIG_DEBUG_FS=3Dy
-  CONFIG_MAGIC_SYSRQ=3Dy
-  CONFIG_LOCKUP_DETECTOR=3Dy
-- CONFIG_CRYPTO_DEV_TEGRA_AES=3Dy
-- CONFIG_CPUFREQ_DT=3Dy
-- CONFIG_KEYSTONE_IRQ=3Dy
- +CONFIG_ARM_CRYPTO=3Dy
- +CONFIG_CRYPTO_SHA1_ARM=3Dm
- +CONFIG_CRYPTO_SHA1_ARM_NEON=3Dm
- +CONFIG_CRYPTO_SHA1_ARM_CE=3Dm
- +CONFIG_CRYPTO_SHA2_ARM_CE=3Dm
- +CONFIG_CRYPTO_SHA256_ARM=3Dm
- +CONFIG_CRYPTO_SHA512_ARM=3Dm
- +CONFIG_CRYPTO_AES_ARM=3Dm
- +CONFIG_CRYPTO_AES_ARM_BS=3Dm
- +CONFIG_CRYPTO_AES_ARM_CE=3Dm
- +CONFIG_CRYPTO_GHASH_ARM_CE=3Dm
- +CONFIG_CRYPTO_DEV_ATMEL_AES=3Dm
- +CONFIG_CRYPTO_DEV_ATMEL_TDES=3Dm
- +CONFIG_CRYPTO_DEV_ATMEL_SHA=3Dm
-
---Sig_//W9YA//y=6O3eCjwBsTRyFg
+--Sig_/p9kqnKVQqHPmy82mOsqo4Wz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVW9UDAAoJEMDTa8Ir7ZwVookP/RGAGV/I4vFnt6RHN+V+Kx16
-1lUgtal/ifQQqGcnLvtFU3BeujO9Iyi7m43X3Dj4XYLQ5KPEM5MLkQy0x2GLi36K
-AehJ3s2UXJukBGYVrzFvqbgG3MtLp3ueiHD7XT9yWIE5gsocf2cFQDX9ztnkV7va
-AxwWSkUg4V6lRKHzrkTqJvTr2eYXB0+Jx6NEqV2MLQdjRc0/prrBvKt4orV1keH2
-M99wYbY23HOORVCPPqjnN75XLkfG13LHuL1CidlEyWDC+JEqEaDttBsbDa38eSpJ
-r//9Ct0WzXnmANZbz14nmsYQJLyBrjBLSrgeiYCZFwyYHYVuG7UMyK2oQRmCShoZ
-2h9sRT+ijuzAnclyER0p2ibsRiB7zP2N7BMDbeFqVRkcVuhKPYA2z6CYvrMQPX9p
-dcuoPbk6dklUsuD7tAe5dwD7t7lkNqFjG+aHT2axK/iFkw4LF/57hLfWhHvbS7bf
-PtV/DQ66hihXF2ntUcr61MkldaNnH8bngElfee6ZPmZKvsmieaRNaOQPjfAjCZML
-QZvizdN6dNxSfLt4iiMATgLtS0kF9eZDLrYPEzQ0DP8DMyMbEGSLVKRnmApiQaze
-KFnuDOnpInV2lFsdi190wJbrEEWzREBKu1zQKeR/Tl2yRvaF1KoYyCOyOyiLZLba
-RWmj4PWz6BZg03sWOi81
-=sI4B
+iQIcBAEBCAAGBQJVW9XvAAoJEMDTa8Ir7ZwVWsoP/0UBD2kl8pWnA5wZ+uCIvNUd
+LVglALpyvMLHSrm0qixZTFRP6zfPPVHxmqMnGb/b1owveL1XlNMipO4+X715EktE
+ulYmeLMxyBEAM6ei9kk1VjwVP9iFKhMNcOGVY273ikCw4j3pc+wr29QPHI6Gn+Y9
+8dB3JovFwk2QOfHjU1CQgHu1VsdFip62JQDp7E9/iymcoe5I84aW/Zbr+FCoS3XU
+sI77IoVqxHosYtCIV4loxbp94VMD9GZefQuN9sKcHOxiFJhyUimdeOWdzgfJmxJ2
+r34vU/53M5Wbml+tufoH2+DGFPsGJ2bIsP7wE//df1cycjAhyDm420a9d6+jSJMr
+/lBU8ozbxNHQCAppx05LXraRpm2T37XxgNPAWrJJo/m5E71w0g6lIyHUPj4Zwy+8
+9ydWTrZ+Y4t8TBgpGE+3XtcOR0xooipJ1F6jiYsewKqfyEb61tR2hklIzHJMvsZ4
+GrD5up+GDYtp/usW06ohzGz97QI/FDkLFZheemECSvudaJNO6pSHUchREEMGmaa9
+xctSlhD04xJxihIzjF1ckATdiFNMQXriZ06JT9ppcSMZm3zZ0AU0NgmE1CCAE8ri
+TCY7zwYrEPQuCRwpwf/1ZGwjntBG8a22afGkkpFooBDyaNi5BUJfOy7UhpKqP8La
+Vcmx4kKO6on07DYLZq/R
+=Ghho
 -----END PGP SIGNATURE-----
 
---Sig_//W9YA//y=6O3eCjwBsTRyFg--
+--Sig_/p9kqnKVQqHPmy82mOsqo4Wz--
