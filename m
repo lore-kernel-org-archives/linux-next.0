@@ -1,61 +1,113 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the drm tree
-Date: Wed, 20 May 2015 16:54:08 +1000
-Message-ID: <20150520165408.79369e40@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: linux-next: Tree for May 19 (arm:vexpress qemu failure due to FB
+ patch)
+Date: Wed, 20 May 2015 16:01:56 +0900
+Message-ID: <20150520070156.GA607@swordfish>
+References: <20150519173001.129513d7@canb.auug.org.au>
+ <20150520060236.GA28644@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/erj2uxdbV_57USI/u2XmGlT"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:35348 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751067AbbETHBe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2015 03:01:34 -0400
+Content-Disposition: inline
+In-Reply-To: <20150520060236.GA28644@roeck-us.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scot Doyle <lkml14@scotdoyle.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---Sig_/erj2uxdbV_57USI/u2XmGlT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On (05/19/15 23:02), Guenter Roeck wrote:
+> Date:	Tue, 19 May 2015 23:02:36 -0700
+> From: Guenter Roeck <linux@roeck-us.net>
+> To: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scot Doyle
+>  <lkml14@scotdoyle.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman
+>  <gregkh@linuxfoundation.org>
+> Subject: Re: linux-next: Tree for May 19 (arm:vexpress qemu failure due to
+>  FB patch)
+> User-Agent: Mutt/1.5.23 (2014-03-12)
+> 
+> On Tue, May 19, 2015 at 05:30:01PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20150518:
+> > 
+> > The akpm-current tree gained a conflict against Linus' tree.
+> > 
+> > Non-merge commits (relative to Linus' tree): 4713
+> >  4246 files changed, 207445 insertions(+), 103657 deletions(-)
+> > 
+> > ----------------------------------------------------------------------------
+> > 
+> I get an arm qemu runtime failure with this kernel when testing
+> a vexpress configuration. Kernel log output is
+> 
+> Freeing unused kernel memory: 264K (80618000 - 8065a000)
+> random: nonblocking pool is initialized
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 661 at kernel/time/timer.c:1098 del_timer_sync+0x4c/0x54()
+> ** 20 printk messages dropped ** [<80059184>] (handle_irq_event_percpu) from [<8005928c>] (handle_irq_event+0x44/0x64)
+> ** 127 printk messages dropped ** [<80059184>] (handle_irq_event_percpu) from [<8005928c>] (handle_irq_event+0x44/0x64)
+> ** 128 printk messages dropped ** [<8005928c>] (handle_irq_event) from [<8005becc>] (handle_fasteoi_irq+0xa8/0x180)
+> ** 127 printk messages dropped ** [<8005928c>] (handle_irq_event) from [<8005becc>] (handle_fasteoi_irq+0xa8/0x180)
+> ** 127 printk messages dropped ** [<8005928c>] (handle_irq_event) from [<8005becc>] (handle_fasteoi_irq+0xa8/0x180)
+> 
 
-Hi Dave,
+Should be fixed by  http://lkml.iu.edu/hypermail/linux/kernel/1505.2/02641.html
 
-After merging the drm tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+	-ss
 
-drivers/gpu/drm/drm_crtc.c:4324:13: warning: 'drm_property_unreference_blob=
-_locked' defined but not used [-Wunused-function]
- static void drm_property_unreference_blob_locked(struct drm_property_blob =
-*blob)
-             ^
-
-Introduced by commit 6bcacf51d050 ("drm: Add reference counting to blob
-properties").
-
-This has been happening for a while.  I assumed a user for this new API
-would come along, but it hasn't ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/erj2uxdbV_57USI/u2XmGlT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVXC+VAAoJEMDTa8Ir7ZwVNv0P/1M5KlopYtrSXnAB8Pg16fVq
-HiK43eFZsPgHLZmDPFP1HrBPvRAf8CWuPKgsZKlH5I+0bdWzYarLnI9ZA2rdB+gn
-d3W/elz+oy/U2eUqI4losTF5dNlNt3X63NkwUwzVXYlcId5KRERfg8VS/oLA8ujQ
-L5qBrH+rUfnbLpIBtgbFjZNdj9PKtnlwdQCablhO98Gi9ClouDWGY+AQYakC1TqR
-pyq0TU39ZDNzZiADXs4UYEGobZWM6rQSn+c4vsloGd10C1L1AtRhn4tRx6C+LcCE
-U8jQJXuVvlP5r69GoL8r13v+Co/KtnhudoDndZjrlyodL4Un8uOHXS60Cr2otLBA
-VZlrTKEZrpAbAwiTAIah59qMwA6OEVPwYECq0zxXSwcGLLHyh5CmHKl5RAOfJdsd
-z5p7/so28cRvgWtXpafv+SKt7goFAqtOtpkd8k/+G2spo/KKMuCHmtfgASXwo+1/
-cg7gl9YIdyC/YmiRgeHhv8B7Icwj6SLxojblAgJU57/1MUpAz40KlzVL83HICJ4Q
-XYgM3vAyApfIMdbBYf7GvbtZhqftqPef1n6G4jhD9E7S6L+FMWxLMlHqDAxVVaW5
-Xj0B8ysKLrphUjKt+gHox+4OywwdpEN+JL5HHk7afHBFatyt7vljKYxyfKiRfJUG
-LpBnnYNKNWVYB7SUTJN4
-=THoM
------END PGP SIGNATURE-----
-
---Sig_/erj2uxdbV_57USI/u2XmGlT--
+> and many more of those until the qemu session is aborted. The complete log
+> is at
+> http://server.roeck-us.net:8010/builders/qemu-arm-next/builds/165/steps/qemubuildcommand/logs/stdio
+> 
+> In some of the bisect builds I also noticed lots of
+> 
+> ** 167 printk messages dropped ** [<80055c00>] (call_console_drivers.constprop.25) from [<80057144>] (console_unlock+0x4c8/0x51c)
+> 
+> ---
+> Bisect log:
+> 
+> # bad: [47cb9006f5fc8568ff5f9359d8b05e8f5fc91f12] Add linux-next specific files for 20150519
+> # good: [e26081808edadfd257c6c9d81014e3b25e9a6118] Linux 4.1-rc4
+> git bisect start 'HEAD' 'v4.1-rc4'
+> # good: [6835509ff89e1da06d5c017c962aa00f06fd554a] Merge remote-tracking branch 'drm-panel/drm/panel/for-next'
+> git bisect good 6835509ff89e1da06d5c017c962aa00f06fd554a
+> # good: [689fbd5603000238443bf1d91277c36962374b27] Merge remote-tracking branch 'rcu/rcu/next'
+> git bisect good 689fbd5603000238443bf1d91277c36962374b27
+> # bad: [dc5f097e91455245a9ddbff7e9cbb475fd89745c] Merge remote-tracking branch 'staging/staging-next'
+> git bisect bad dc5f097e91455245a9ddbff7e9cbb475fd89745c
+> # good: [a4f18b1c40875d199a1f7a77f08642d38c4e6b21] staging: comedi: ni_stc.h: tidy up RTSI_Trig_Direction_Register and bits
+> git bisect good a4f18b1c40875d199a1f7a77f08642d38c4e6b21
+> # bad: [99bd60ce3d5dca9a87c615805947001b5b864102] Merge remote-tracking branch 'tty/tty-next'
+> git bisect bad 99bd60ce3d5dca9a87c615805947001b5b864102
+> # bad: [77232f791e0605521a978cbe7f79a93df24df374] vt: Don't check KD_GRAPHICS when binding/unbinding
+> git bisect bad 77232f791e0605521a978cbe7f79a93df24df374
+> # good: [b8dccc1b2e178c4d9702c30fadbadff0c093e3d7] tty: hvc_console.c: move assignment out of if () block
+> git bisect good b8dccc1b2e178c4d9702c30fadbadff0c093e3d7
+> # good: [31ada047681834d0d6f04adfb305ff26b52d2823] serial: imx: Constify platform_device_id
+> git bisect good 31ada047681834d0d6f04adfb305ff26b52d2823
+> # good: [853a699739fede12a5465be685f0f366276cb507] serial: tegra: handle race condition on uart rx side
+> git bisect good 853a699739fede12a5465be685f0f366276cb507
+> # good: [bd63364caa8df38bad2b25b11b2a1b849475cce5] vt: add cursor blink interval escape sequence
+> git bisect good bd63364caa8df38bad2b25b11b2a1b849475cce5
+> # bad: [03ac6b3499c8a0b1fbb5c33ad6234a9e860f2614] drivers/tty/nozomi.c: rename CONFIG_MAGIC
+> git bisect bad 03ac6b3499c8a0b1fbb5c33ad6234a9e860f2614
+> # bad: [360ee94b47a80b0e986c9e890f1862d29edf2c45] TTY: msm_smd_tty: Remove unused driver
+> git bisect bad 360ee94b47a80b0e986c9e890f1862d29edf2c45
+> # bad: [27a4c827c34ac4256a190cc9d24607f953c1c459] fbcon: use the cursor blink interval provided by vt
+> git bisect bad 27a4c827c34ac4256a190cc9d24607f953c1c459
+> # first bad commit: [27a4c827c34ac4256a190cc9d24607f953c1c459] fbcon: use the cursor blink interval provided by vt
+> 
+> This seems unlikely, and I don't immediately see what is wrong, but reverting
+> the bad commit fixes the problem.
+> 
+> Guenter
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
