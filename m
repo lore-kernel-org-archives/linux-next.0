@@ -1,35 +1,21 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: linux-next: Tree for May 19 (arm:vexpress qemu failure due to FB
  patch)
-Date: Wed, 20 May 2015 16:01:56 +0900
-Message-ID: <20150520070156.GA607@swordfish>
+Date: Wed, 20 May 2015 00:12:04 -0700
+Message-ID: <20150520071204.GB4026@kroah.com>
 References: <20150519173001.129513d7@canb.auug.org.au>
  <20150520060236.GA28644@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:35348 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751067AbbETHBe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2015 03:01:34 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20150520060236.GA28644@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scot Doyle <lkml14@scotdoyle.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scot Doyle <lkml14@scotdoyle.com>, Pavel Machek <pavel@ucw.cz>
+List-Id: linux-next.vger.kernel.org
 
-On (05/19/15 23:02), Guenter Roeck wrote:
-> Date:	Tue, 19 May 2015 23:02:36 -0700
-> From: Guenter Roeck <linux@roeck-us.net>
-> To: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scot Doyle
->  <lkml14@scotdoyle.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman
->  <gregkh@linuxfoundation.org>
-> Subject: Re: linux-next: Tree for May 19 (arm:vexpress qemu failure due to
->  FB patch)
-> User-Agent: Mutt/1.5.23 (2014-03-12)
-> 
+On Tue, May 19, 2015 at 11:02:36PM -0700, Guenter Roeck wrote:
 > On Tue, May 19, 2015 at 05:30:01PM +1000, Stephen Rothwell wrote:
 > > Hi all,
 > > 
@@ -55,11 +41,6 @@ On (05/19/15 23:02), Guenter Roeck wrote:
 > ** 127 printk messages dropped ** [<8005928c>] (handle_irq_event) from [<8005becc>] (handle_fasteoi_irq+0xa8/0x180)
 > ** 127 printk messages dropped ** [<8005928c>] (handle_irq_event) from [<8005becc>] (handle_fasteoi_irq+0xa8/0x180)
 > 
-
-Should be fixed by  http://lkml.iu.edu/hypermail/linux/kernel/1505.2/02641.html
-
-	-ss
-
 > and many more of those until the qemu session is aborted. The complete log
 > is at
 > http://server.roeck-us.net:8010/builders/qemu-arm-next/builds/165/steps/qemubuildcommand/logs/stdio
@@ -104,10 +85,9 @@ Should be fixed by  http://lkml.iu.edu/hypermail/linux/kernel/1505.2/02641.html
 > 
 > This seems unlikely, and I don't immediately see what is wrong, but reverting
 > the bad commit fixes the problem.
-> 
-> Guenter
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+No, that's correct, I have a fix coming soon to resolve this issue.
+
+thanks,
+
+greg k-h
