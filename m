@@ -1,98 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
-Date: Thu, 21 May 2015 10:58:56 +1000
-Message-ID: <20150521105856.1a076b4a@canb.auug.org.au>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: linux-next: manual merge of the samsung tree with the arm-soc and
+ at91 trees
+Date: Thu, 21 May 2015 10:20:43 +0900
+Message-ID: <CAJKOXPeQEvcUF1NcnSEAMGf5JE2ySftFtP9DHij6siDfzTjPtA@mail.gmail.com>
+References: <20150520102743.3d336a73@canb.auug.org.au>
+	<CAJKOXPdsi-5kdQJtybeaMCy0DXuRTRGgBEOM=SH9BsjquEMjCQ@mail.gmail.com>
+	<20150520091646.GF3338@piout.net>
+	<CAMuHMdVoot1mBHUmGMuTzCkxzd7H5TJThrwmPvnedFAOAP49pw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6hro4B1g.5BJzbTBm6b5zNc"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33693 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753060AbbEUA7E (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 May 2015 20:59:04 -0400
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:37125 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754712AbbEUBUo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2015 21:20:44 -0400
+In-Reply-To: <CAMuHMdVoot1mBHUmGMuTzCkxzd7H5TJThrwmPvnedFAOAP49pw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, Anson Huang <b20788@freescale.com>, Frank Li <Frank.Li@freescale.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Baruch Siach <baruch@tkos.co.il>, Linux-Next <linux-next@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Maxime Coquelin <maxime.coquelin@st.com>
 
---Sig_/6hro4B1g.5BJzbTBm6b5zNc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+2015-05-20 18:47 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> On Wed, May 20, 2015 at 11:16 AM, Alexandre Belloni
+> <alexandre.belloni@free-electrons.com> wrote:
+>> On 20/05/2015 at 09:35:36 +0900, Krzysztof Kozlowski wrote :
+>>> 2015-05-20 9:27 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+>>> > Today's linux-next merge of the samsung tree got a conflict in
+>>> > arch/arm/configs/multi_v7_defconfig between various commits from the
+>>> > arm-soc and at91 trees and various commits from the samsung tree.
+>>> >
+>>> > I fixed it up (see below) and can carry the fix as necessary (no action
+>>> > is required).
+>>>
+>>> Hi,
+>>>
+>>> Thanks for the merge.
+>>>
+>>> The parts coming from samsung-soc related to manually toggling stuff
+>>> (by me and Javier) look fine. The rest (coming from Kukjin's
+>>> savedefconfig) I don't know - too much of them.
+>>>
+>>
+>> Hum, last time I asked, we were not supposed to do a savedefconfig on
+>> multi_v7...
+>
+> Yeah, IMHO it's something the arm-soc maintainers should do only right
+> after rc1.
+>
+> Doing it at any other point in time may remove options that have just been
+> added to multi_v7_defconfig by an arm-soc submaintainer, and that depend on
+> a Kconfig change queued in another maintainer's for-next branch.
 
-Hi Shawn,
+It also depends on which tree and branch the savedefconfig was
+performed. If on Linus' master then probably it is not a good idea at
+any time.
 
-Today's linux-next merge of the imx-mxs tree got a conflict in
-arch/arm/mach-imx/Kconfig between commit 8064887e02fd ("ARM: vf610:
-enable Cortex-M4 configuration on Vybrid SoC") from the arm-soc tree
-and commit aff62955b27b ("ARM: imx: add msl support for imx7d") from
-the imx-mxs tree.
+> Personally, I think no arm-soc submaintainer should touch multi_v7_defconfig,
+> and all changes should be applied by the arm-soc maintainers.
 
-I fixed it up (hopefully - see below) and can carry the fix as
-necessary (no action is required).
+Actually Arnd suggested this:
+https://lkml.org/lkml/2015/5/15/303
+[PATCH 0/9] multi_v7_defconfig: Enable options for Exynos Chromebooks
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-imx/Kconfig
-index 2e3c45832674,b8e05379311e..000000000000
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@@ -582,24 -548,17 +548,31 @@@ config SOC_IMX6S
-  	help
-  	  This enables support for Freescale i.MX6 SoloX processor.
- =20
-+ config SOC_IMX7D
-+ 	bool "i.MX7 Dual support"
-+ 	select PINCTRL_IMX7D
-+ 	select ARM_GIC
-+ 	help
-+ 		This enables support for Freescale i.MX7 Dual processor.
-+=20
- +config SOC_LS1021A
- +	bool "Freescale LS1021A support"
- +	select ARM_GIC
- +	select HAVE_ARM_ARCH_TIMER
- +	select PCI_DOMAINS if PCI
- +	select ZONE_DMA if ARM_LPAE
- +	help
- +	  This enables support for Freescale LS1021A processor.
- +
- +endif
- +
- +comment "Cortex-A/Cortex-M asymmetric multiprocessing platforms"
- +
- +if ARCH_MULTI_V7 || ARM_SINGLE_ARMV7M
- +
-  config SOC_VF610
-  	bool "Vybrid Family VF610 support"
- -	select IRQ_DOMAIN_HIERARCHY
- -	select ARM_GIC
- +	select ARM_GIC if ARCH_MULTI_V7
-  	select PINCTRL_VF610
-  	select PL310_ERRATA_769419 if CACHE_L2X0
-  	select SMP_ON_UP if SMP
-
---Sig_/6hro4B1g.5BJzbTBm6b5zNc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVXS3VAAoJEMDTa8Ir7ZwVct4P/37R/iv3byc2xGYaxrXDhcft
-qGQyjqqIi+re6UwHg7SV+p5nZ1Zh7gwndGYjx84paFfye7pvnp3yFjv03DL0+nIB
-17zETycPT5oNnfwOBuI48wZzKxIaSsoo6iUE+dOU7CW26hTvDQP1U11W3KwtkLA0
-GiZ7k6F9lATQ5lAjnFR9Fv6raOIHBNs8TnXq/I7vldQ34V9MycwIBh2svi+dyyd5
-qEnX95HYrWazd1qwsiuh25tBA6SmwI7zwvWVk80DBee2sPVfazIIAbyeFHK5pyAv
-8/ZrMUUCpKtonsWjKJpZuuljZppiWPDrTPsQmwo49wtNejXRll2s/S36TO+7LUwv
-Z9cDuQFyXKEwSKOVUudAyg6hBSps36UI1xR+R33H3yUAl+cWTBDom6dC+cDKtoMi
-8ZdAowy67ywP88+xXLGwvhkuzkkxQUN2lR/yPPooGKjO67C0nq16vwG1Wfq/CKS8
-KcbrwRb4OEfeUe8ebF7Tjw7eZ3Z/r1VVviDdgCFxaNIer8+Y0wnCu3h1YrpBE6OG
-tzl5BAkswS6tD1RnLaE6fLcq4I2HOKzU95y7/dagS6wNkQOfZpHVm1oz3TpZRylp
-q17JWC+332zb+G3mbjkCjUzxBq08bDNByvR3NWUmqRFvuJLPUy3RcQPw+0+JQTC7
-dy1E3prJif+si5/T9xKj
-=ipyl
------END PGP SIGNATURE-----
-
---Sig_/6hro4B1g.5BJzbTBm6b5zNc--
+Best regards,
+Krzysztof
