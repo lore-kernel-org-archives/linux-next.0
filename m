@@ -1,63 +1,88 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH] spi: omap2-mcspi: Fix native cs with new set_cs
-Date: Thu, 21 May 2015 18:48:33 -0500
-Message-ID: <20150521234832.GA1827@deathray>
-References: <1431452337-19280-1-git-send-email-mwelling@ieee.org>
- <20150512191758.GX3066@sirena.org.uk>
- <20150521020709.GA14258@deathray>
- <20150521101857.GR21577@sirena.org.uk>
- <20150521210411.GA5406@deathray>
- <20150521211638.GN21577@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Date: Fri, 22 May 2015 13:27:21 +1000
+Message-ID: <20150522132721.43c296cb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150521211638.GN21577@sirena.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jCreaIEx2PQh2kVx+k/BC6o"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36973 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754067AbbEVD13 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 May 2015 23:27:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 21, 2015 at 10:16:38PM +0100, Mark Brown wrote:
-> On Thu, May 21, 2015 at 04:04:11PM -0500, Michael Welling wrote:
-> 
-> > Do you want to revert the patch and apply a new one or should I provide a
-> > patch that reverts the changes and fixes it all in one?
-> 
-> Can you please send me separate revert and re-add patches, that's
-> probably going to be easier to review.
+--Sig_/jCreaIEx2PQh2kVx+k/BC6o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-So after reverting this patch I found there is a issue in that it is difficult
-to determine when a transfer is complete to properly drive the chipselect from
-within the transfer_one function.
+Hi all,
 
-Then I figured that we could handle the case when GPIOs are being used with
-some conditional calls to omap2_mcspi_set_cs in the omap2_mcspi_work_one
-function.
+After merging the device-mapper tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Near the beginning of the function I added:
-	if (gpio_is_valid(spi->cs_gpio))
-		omap2_mcspi_set_cs(spi, 0);
+block/bio.c:310:20: error: redefinition of 'bio_inc_remaining'
+ static inline void bio_inc_remaining(struct bio *bio)
+                    ^
+In file included from block/bio.c:20:0:
+include/linux/bio.h:664:20: note: previous definition of 'bio_inc_remaining=
+' was here
+ static inline void bio_inc_remaining(struct bio *bio)
+                    ^
 
-Near the end of the function I added:
-	if (gpio_is_valid(spi->cs_gpio))
-		omap2_mcspi_set_cs(spi, 1);
+Caused by commit d61b82161c5a ("block: remove management of
+bi_remaining when restoring original bi_end_io").
 
-This makes GPIO chip select support work while leaving the native working
-as previous.
+OK, this is a bad automatic merge caused by the fact that the block
+tree and the device-mapper tree both contain the same set fo patches as
+different commits.
 
-Is this solution acceptible?
+Commit c4cf5261f8bf from the block tree is the same as commit
+8395711c4f90 from the device-mapper tree and both add
+bio_inc_remaining() to include/linux/bio.h.  The above commit in the
+device-mapper tree removes it from there, but the merge decided to keep
+it.
 
-In the process of reviewing the changes I found a few other things that
-should be changed as well.
+That shared patch above is part of a series of 14 patches that are
+identical patches but different commits and are causing quite a few
+conflicts.  It looks like those patches were rebased onto v4.10rc3 as
+the base for the device-mapper tree.  A better idea would have been to
+start with v4.1rc3 (if that is necessary) and merge commit 5b3f341f098d
+("blk-mq: make plug work for mutiple disks and queues") from the block
+tree - assuming that Jens will guarantee not to rebase that part of his
+tree.
 
-Here you will see a delay that is already handled by the core spi driver:
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drivers/spi/spi-omap2-mcspi.c#n1166
+Please clean this mess up.
 
-In the set_cs function the inversion of the enable that occurs in the
-core spi_set_cs function based on SPI_CS_HIGH needs to revert as the
-controller handles the inversion with OMAP2_MCSPI_CHCONF_EPOL bit in the
-CHCONF register.
+I have used the version of the device-mapper tree from next-20150521
+for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-If you approve of the fix for the GPIO support, I will provide a patch
-series with all of these above mentioned fixes.
+--Sig_/jCreaIEx2PQh2kVx+k/BC6o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVXqIeAAoJEMDTa8Ir7ZwV1oIP/AsJtzsG/Wz37m4qvDt9T+Ol
+KrTBLjABlSclEgCxOhFJiKxcDIZ/16fKc7f09hsNuQzSeh3L7HMurb/Oswv9BUX7
+lIBYJe4s1MtJVIYqMu22lPbLPnUBp8G5+tlaVvv5ovc6UGja5hDvAKjcnL/w5cAa
+JX9ljBquoBRjTER0sLg0U8ep9njixS+I0S7YNhMPLKDbjpA4JXRLQoUUoR3qUKYS
+l78CmS6M/ozbI6OFrsy0BJilgjuOqKOeUt9NZU7du8YfrpYiBe0P05BHCHmOoWyG
+o0LloNPh6VxYgRosbFSHoN6BZwuz9gobbVUulbRFc2eFNR785Ii414/Vm8ELKzYY
+vw0ihTIPDVD7OHxg2/9VQWc9zS75E5QQmjcYTJ91ovrkk0ELyruiWjx93/3IHd/M
+9ooYYXRFXvu5V9mmZQWXJEBG0DyYKWwVbO4f/P+nKTqJid4Q8X3MeG+h/2+delCQ
+Oc4nug37VI0wYbz5zP28wucivcuCQmQieQdHRdwUiaQuQX1h6OXcRgTycf3RefbI
+62k53q3dm/8a8IriIfiD+OP38TpBXvFNUzNCm9HXwSbF7watMcOSbD68rUhOhvUb
+OQw9DRtyDNBD2X+LefvwBZOkCND1SGRN+1YxyWNiIuDotFSSdlN3nLznUW9iQyl7
+YjhiNKkxDm5S54lM5YYM
+=MC7a
+-----END PGP SIGNATURE-----
+
+--Sig_/jCreaIEx2PQh2kVx+k/BC6o--
