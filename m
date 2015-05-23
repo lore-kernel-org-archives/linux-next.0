@@ -1,45 +1,30 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for May 22 (build failure in i915_gem_gtt.c)
-Date: Fri, 22 May 2015 21:36:41 -0700
-Message-ID: <20150523043641.GA10715@roeck-us.net>
-References: <20150522180940.1cbeec74@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: mmotm 2015-05-22-14-48 uploaded
+Date: Sat, 23 May 2015 12:54:30 +0200
+Message-ID: <CA+icZUXRs0ShGqn1232kdwvwpsX1UWzocKhshhV=AC1gPedu5Q@mail.gmail.com>
+References: <555fa43a.O+VvdA70yRRjg8LR%akpm@linux-foundation.org>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:51022 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757196AbbEWEgp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 23 May 2015 00:36:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20150522180940.1cbeec74@canb.auug.org.au>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:37787 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757429AbbEWKyc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 23 May 2015 06:54:32 -0400
+In-Reply-To: <555fa43a.O+VvdA70yRRjg8LR%akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Michal Hocko <mhocko@suse.cz>
 
-On Fri, May 22, 2015 at 06:09:40PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20150521:
-> 
-> The device-mapper tree gained a build failure so I used the version
-> from next-20150521.
-> 
-> The driver-core tree still had its build failure for which I applied a fix
-> patch.
-> 
-> Non-merge commits (relative to Linus' tree): 5332
->  4735 files changed, 245341 insertions(+), 114211 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-i386 builds:
+On Fri, May 22, 2015 at 11:48 PM,  <akpm@linux-foundation.org> wrote:
+[...]
+> You will need quilt to apply these patches to the latest Linus release (3.x
+> or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+>
+[...]
 
-drivers/gpu/drm/i915/i915_gem_gtt.c: In function 'gen8_ppgtt_init':
-drivers/gpu/drm/i915/i915_gem_gtt.c:954:2: error: large integer implicitly truncated to unsigned type [-Werror=overflow]
-cc1: all warnings being treated as errors
-make[4]: *** [drivers/gpu/drm/i915/i915_gem_gtt.o] Error 1
+Should be updated to "4.x" and "4.x-rcY".
 
-Caused by commit 5c5f645773b6d ("drm/i915: Unify aliasing ppgtt handling").
-
-Guenter
+- Sedat -
