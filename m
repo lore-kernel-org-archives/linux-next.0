@@ -1,30 +1,31 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: mmotm 2015-05-22-14-48 uploaded
-Date: Sat, 23 May 2015 12:54:30 +0200
-Message-ID: <CA+icZUXRs0ShGqn1232kdwvwpsX1UWzocKhshhV=AC1gPedu5Q@mail.gmail.com>
-References: <555fa43a.O+VvdA70yRRjg8LR%akpm@linux-foundation.org>
-Reply-To: sedat.dilek@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Michael Welling <mwelling@ieee.org>
+Subject: [PATCH 0/4] spi: omap2-mcspi: Fixes for recent updates
+Date: Sat, 23 May 2015 21:13:41 -0500
+Message-ID: <1432433625-23407-1-git-send-email-mwelling@ieee.org>
+References: <20150522122544.GL21391@sirena.org.uk>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:37787 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757429AbbEWKyc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 23 May 2015 06:54:32 -0400
-In-Reply-To: <555fa43a.O+VvdA70yRRjg8LR%akpm@linux-foundation.org>
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:36395 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751456AbbEXCOA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 23 May 2015 22:14:00 -0400
+In-Reply-To: <20150522122544.GL21391@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Michal Hocko <mhocko@suse.cz>
+To: broonie@kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Michael Welling <mwelling@ieee.org>
 
-On Fri, May 22, 2015 at 11:48 PM,  <akpm@linux-foundation.org> wrote:
-[...]
-> You will need quilt to apply these patches to the latest Linus release (3.x
-> or 3.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
->
-[...]
+The recent update of the OMAP2 McSPI driver left some unresolved issues.
+These patches should take care them and again allow for GPIO chip selects
+and native chip selects.
 
-Should be updated to "4.x" and "4.x-rcY".
+Michael Welling (4):
+  spi: omap2-mcspi: Remove unnecessary delay
+  spi: omap2-mcspi: Fix set_cs function for active high
+  spi: omap2-mcspi: Fix GPIO chip select support
+  spi: omap2-mcspi: Handle error on gpio_request
 
-- Sedat -
+ drivers/spi/spi-omap2-mcspi.c |   25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+-- 
+1.7.9.5
