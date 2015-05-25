@@ -1,87 +1,58 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: randconfig build error with next-20150521, in
- drivers/platform/x86/dell-rbtn.c
-Date: Sun, 24 May 2015 21:20:18 -0700
-Message-ID: <20150525042018.GA26644@fury.dvhart.com>
-References: <CA+r1Zhij2wUuLK6cdhr44NFW+okW4YuyFoo2_58mR6yncsXo3w@mail.gmail.com>
- <20150521195615.GF22037@vmdeb7>
- <201505212207.11872@pali>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Mon, 25 May 2015 17:25:07 +1000
+Message-ID: <20150525172507.20799066@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <201505212207.11872@pali>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zrKKqHYJOcLhS=22PM4ncwQ"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53343 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750793AbbEYHZO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 May 2015 03:25:14 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liang Li <liang.z.li@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, Yang Zhang <yang.z.zhang@intel.com>, Rik van Riel <riel@redhat.com>
 
-On Thu, May 21, 2015 at 10:07:11PM +0200, Pali Roh=E1r wrote:
-> On Thursday 21 May 2015 21:56:15 Darren Hart wrote:
-> > On Thu, May 21, 2015 at 10:36:15AM -0700, Jim Davis wrote:
-> > > Building with the attached random configuration file,
-> > >=20
-> > > drivers/built-in.o: In function `rbtn_remove':
-> > > dell-rbtn.c:(.text+0x31d7f4): undefined reference to
-> > > `input_unregister_device' drivers/built-in.o: In function
-> > > `rbtn_notify':
-> > > dell-rbtn.c:(.text+0x31d8e5): undefined reference to `input_event=
-'
-> > > dell-rbtn.c:(.text+0x31d8f8): undefined reference to `input_event=
-'
-> > > dell-rbtn.c:(.text+0x31d911): undefined reference to `input_event=
-'
-> > > dell-rbtn.c:(.text+0x31d924): undefined reference to `input_event=
-'
-> > > drivers/built-in.o: In function `rbtn_add':
-> > > dell-rbtn.c:(.text+0x31da11): undefined reference to
-> > > `input_allocate_device' dell-rbtn.c:(.text+0x31da4a): undefined
-> > > reference to `input_register_device' dell-rbtn.c:(.text+0x31da5e)=
-:
-> > > undefined reference to `input_free_device' Makefile:938: recipe
-> > > for target 'vmlinux' failed
-> >=20
-> > Thanks Jim,
-> >=20
-> > Pali, the DELL_RBTN needs to ensure if it it's built-in, that INPUT
-> > is too. ...
-> >=20
-> > > CONFIG_INPUT=3Dm
-> > > CONFIG_INPUT_FF_MEMLESS=3Dm
-> > > CONFIG_INPUT_POLLDEV=3Dm
-> > > CONFIG_INPUT_SPARSEKMAP=3Dm
-> > > CONFIG_INPUT_MATRIXKMAP=3Dm
-> >=20
-> > ...
-> >=20
-> > > CONFIG_DELL_RBTN=3Dy
-> >=20
-> > Please submit a fix as a new patch.
->=20
-> I believe that this patch is needed:
->=20
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kcon=
-fig
-> index 8c03223..d025fd8 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -141,6 +141,7 @@ config DELL_SMO8800
->  config DELL_RBTN
->  	tristate "Dell Airplane Mode Switch driver"
->  	depends on ACPI
-> +	depends on INPUT
->  	depends on RFKILL
->  	---help---
->  	  Say Y here if you want to support Dell Airplane Mode Switch ACPI
->=20
-> I did not tested it yet, but all other drivers depends on INPUT.
+--Sig_/zrKKqHYJOcLhS=22PM4ncwQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This looks reasonable to me. Please test it with the various configs an=
-d send
-the patch if it passes the tests.
+Hi all,
 
+Today's linux-next merge of the kvm tree got a conflict in
+arch/x86/kvm/x86.c between commit c447e76b4cab ("kvm/fpu: Enable eager
+restore kvm FPU for MPX") from the  tree and commit 653f52c316a4
+("kvm,x86: load guest FPU context more eagerly") from the kvm tree.
+
+I fixed it up (I used the version from the kvm tree) and can carry the
+fix as necessary (no action is required).
 
 --=20
-Darren Hart
-Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/zrKKqHYJOcLhS=22PM4ncwQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVYs5XAAoJEMDTa8Ir7ZwVjIoP/iZjdJ0mqVwhK/YYojoW6hqs
+oMgik+YkuWH0/klp8qu7tr13wrk51xTjcRfdNoBrLOhR77iRqxSHsQDxl7Oix0vL
+8oSa6npGmy6sND99xvZ6s/PGiMooVzTq6zpaIXj4oDJPTykiQYDqA0in01ddwvzF
+JePDGGJda/2dPPaFwXXyioz96Q3ygVS10m1KhsHAxAELWK5E28cmDG4MSIC7p1qR
+g+UmhdbP15ySkb0OFSZidOBCkE5Uudxf8cbH5fvCCaCmCbTHPwYxwk+aqRJ906Mw
+QVaTNfFl3mSy770FwgCOhHDEYBcpHYrfPcuO4HmBClvbQ1B8erTt0CD04WbJqPTf
+R7BD/2+CIJo54rkc/ewB9ZvK3RPqCSiGtNSJtfmvdRx3o0QRf12KMuEW3n0i9zi6
+1IduCJPOjHT8z8x54MHCRRR89WYDTpF20A0Lc/hJW2ZeEqi9gznV5o+QMEgdhTm4
+gPIqQY22OspBrN/PNpFSLEnVgnajFT+nhoz1fsbticyrOFtEr8tV2xhsoqPO9XTz
+flOW2s9UcR6NqQtBOjwf1YeGdoN4ZzAPUMn4+PoY4278WpYefFRHR+Q9elpGkuH5
+KfKbDotSI6sqFp2w/zRW1pceRWdiF4cJAQM/3/1yHUHorOt83L0/thLYHagoscQ7
+i0y7zHo5ZmCFeYc5robM
+=vGqn
+-----END PGP SIGNATURE-----
+
+--Sig_/zrKKqHYJOcLhS=22PM4ncwQ--
