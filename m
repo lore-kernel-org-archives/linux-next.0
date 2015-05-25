@@ -1,64 +1,75 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH 4/4] spi: omap2-mcspi: Handle error on gpio_request
-Date: Sun, 24 May 2015 11:52:31 -0500
-Message-ID: <20150524165231.GA3994@deathray>
-References: <20150522122544.GL21391@sirena.org.uk>
- <1432433625-23407-1-git-send-email-mwelling@ieee.org>
- <1432433625-23407-5-git-send-email-mwelling@ieee.org>
- <20150524081307.GC17508@opentech.at>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-drivers-next tree with the
+ wireless-drivers tree
+Date: Mon, 25 May 2015 13:07:47 +1000
+Message-ID: <20150525130747.12747385@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/V/t2O_YWQFqhhAW7l2rqTF0"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:33591 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751072AbbEXQwj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 24 May 2015 12:52:39 -0400
-Content-Disposition: inline
-In-Reply-To: <20150524081307.GC17508@opentech.at>
+Received: from ozlabs.org ([103.22.144.67]:51875 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750783AbbEYDHy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 May 2015 23:07:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicholas Mc Guire <der.herr@hofr.at>
-Cc: broonie@kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-On Sun, May 24, 2015 at 10:13:07AM +0200, Nicholas Mc Guire wrote:
-> On Sat, 23 May 2015, Michael Welling wrote:
-> 
-> > If a valid GPIO is specified but cannot be requested by the driver, print a
-> > message and error out of omap2_mcspi_setup.
-> > 
-> > Signed-off-by: Michael Welling <mwelling@ieee.org>
-> > ---
-> >  drivers/spi/spi-omap2-mcspi.c |    9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-> > index c4e21ad..5867384 100644
-> > --- a/drivers/spi/spi-omap2-mcspi.c
-> > +++ b/drivers/spi/spi-omap2-mcspi.c
-> > @@ -1023,9 +1023,12 @@ static int omap2_mcspi_setup(struct spi_device *spi)
-> >  	}
-> >  
-> >  	if (gpio_is_valid(spi->cs_gpio)) {
-> > -		if (gpio_request(spi->cs_gpio, dev_name(&spi->dev)) == 0)
-> > -			gpio_direction_output(spi->cs_gpio,
-> > -			!(spi->mode & SPI_CS_HIGH));
-> > +		ret = gpio_request(spi->cs_gpio, dev_name(&spi->dev));
-> > +		if (ret) {
-> > +			dev_err(&spi->dev, "failed to request gpio\n");
-> > +			return ret;
-> > +		}
-> > +		gpio_direction_output(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
-> >  	}
-> 
-> just wondering if the outer gpio_is_valid is actually needed as it seems
-> gpio_request() is actually calling gpio_is_valid() anyway and would return
-> non 0 if it were not,
+--Sig_/V/t2O_YWQFqhhAW7l2rqTF0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In this case we have to check first because if the GPIO is not registered the 
-native chip select is assumed. If the GPIO is registered, is valid and can be
-requested we use it as the chip select. If the GPIO is registered and valid but
-cannot be requested we return an error.
+Hi Kalle,
 
-> 
-> thx!
-> hofrat
+Today's linux-next merge of the wireless-drivers-next tree got a
+conflict in drivers/net/wireless/iwlwifi/Kconfig between commit
+ed65918735a5 ("iwlwifi: 7000: modify the firmware name for 3165") from
+the wireless-drivers tree and commit 87411456834a ("iwlwifi: clarify
+the device / firmware mapping in Kconfig") from the
+wireless-drivers-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/iwlwifi/Kconfig
+index f89f446e5c8a,99f9760fc11e..000000000000
+--- a/drivers/net/wireless/iwlwifi/Kconfig
++++ b/drivers/net/wireless/iwlwifi/Kconfig
+@@@ -21,7 -21,7 +21,8 @@@ config IWLWIF
+  		Intel 7260 Wi-Fi Adapter
+  		Intel 3160 Wi-Fi Adapter
+  		Intel 7265 Wi-Fi Adapter
+ +		Intel 3165 Wi-Fi Adapter
++ 		Intel 8260 Wi-Fi Adapter
+ =20
+ =20
+  	  This driver uses the kernel's mac80211 subsystem.
+
+--Sig_/V/t2O_YWQFqhhAW7l2rqTF0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVYpIIAAoJEMDTa8Ir7ZwVvWEP/iSD3hACndJNmCh0xg4duNjk
+R86vEuWJM0zxq+hmPEO9VI39+Za81axQ5YL/WY5p5g6lxjiZzh4opy5/UZ6Ms/Nj
+Oh3niljHx3OaUYlynsqxbNOvKddwUHL5u1GeCZFYehoyz+Vw/aO4lpBPQBrbCa9d
+wW+r44fg4OHBwzhyzNiUHGhl681H2VxjBBRXasNQaf9BHT8zU2kxN5RvQpb289SN
+rgHFA2cIC7mQz8aFqtEpQhRW09TbhP7NsJxqYsXTttonYsmG4G9j5+tEfYCrzw9t
+SOW+PXt6os99hwERLKcfK4+Bt4+XUC1UBoPiAxIv1NVNqBEZxEDrbxlIB232PUK/
+Gz4QQjDbjwOwX5nziU3/vZR6rC15ULyzEwA50XIUoiYxWElfwRS/aRloPJxAojo4
+9X2wCg4zyzAHCnUGu0LAWhDHYJFdlunM52Iq+0zOCBaUGv66ZKrolkcP+IYQw47W
+ZHuD1wjMpXt1xPrd0Y8GPDpetQUdxO2ZStx2qXzy48EWaTqLB0nAsS3j6LuSU8d/
+m3Y7RGBiHGxaGsgs0vHD4zQliY/o2ThL2rLYNG/NPHEQAVi0RJ6eikOMEVW3GKe7
+JoP/JJj0BPDyrxFaKUt5W2+NSoIuZUah4p1bEh7E/dqbLlM1IUnyZ8hut08qDffJ
+OpSkdCXZrSC/Sz9YZ0+5
+=517v
+-----END PGP SIGNATURE-----
+
+--Sig_/V/t2O_YWQFqhhAW7l2rqTF0--
