@@ -1,58 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Mon, 25 May 2015 17:25:07 +1000
-Message-ID: <20150525172507.20799066@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the tty.current tree
+Date: Mon, 25 May 2015 18:19:38 +1000
+Message-ID: <20150525181938.278a605c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zrKKqHYJOcLhS=22PM4ncwQ"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53343 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750793AbbEYHZO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 May 2015 03:25:14 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liang Li <liang.z.li@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, Yang Zhang <yang.z.zhang@intel.com>, Rik van Riel <riel@redhat.com>
+ boundary="Sig_/+hm6+oYnKi+C+ZdsjmhRyMN"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>, Jakub Kicinski <kubakici@wp.pl>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/zrKKqHYJOcLhS=22PM4ncwQ
+--Sig_/+hm6+oYnKi+C+ZdsjmhRyMN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/kvm/x86.c between commit c447e76b4cab ("kvm/fpu: Enable eager
-restore kvm FPU for MPX") from the  tree and commit 653f52c316a4
-("kvm,x86: load guest FPU context more eagerly") from the kvm tree.
+Today's linux-next merge of the tty tree got a conflict in
+drivers/tty/serial/amba-pl011.c between commit 43dd1f9a5b05
+("serial/amba-pl011: Unconditionally poll for FIFO space before each TX
+char") from the tty.current tree and commit 1e84d22322ce
+("serial/amba-pl011: Refactor and simplify TX FIFO handling") from the
+tty tree.
 
-I fixed it up (I used the version from the kvm tree) and can carry the
-fix as necessary (no action is required).
+I fixed it up (I just used the version from the tty tree) and can carry
+the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/zrKKqHYJOcLhS=22PM4ncwQ
+--Sig_/+hm6+oYnKi+C+ZdsjmhRyMN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVYs5XAAoJEMDTa8Ir7ZwVjIoP/iZjdJ0mqVwhK/YYojoW6hqs
-oMgik+YkuWH0/klp8qu7tr13wrk51xTjcRfdNoBrLOhR77iRqxSHsQDxl7Oix0vL
-8oSa6npGmy6sND99xvZ6s/PGiMooVzTq6zpaIXj4oDJPTykiQYDqA0in01ddwvzF
-JePDGGJda/2dPPaFwXXyioz96Q3ygVS10m1KhsHAxAELWK5E28cmDG4MSIC7p1qR
-g+UmhdbP15ySkb0OFSZidOBCkE5Uudxf8cbH5fvCCaCmCbTHPwYxwk+aqRJ906Mw
-QVaTNfFl3mSy770FwgCOhHDEYBcpHYrfPcuO4HmBClvbQ1B8erTt0CD04WbJqPTf
-R7BD/2+CIJo54rkc/ewB9ZvK3RPqCSiGtNSJtfmvdRx3o0QRf12KMuEW3n0i9zi6
-1IduCJPOjHT8z8x54MHCRRR89WYDTpF20A0Lc/hJW2ZeEqi9gznV5o+QMEgdhTm4
-gPIqQY22OspBrN/PNpFSLEnVgnajFT+nhoz1fsbticyrOFtEr8tV2xhsoqPO9XTz
-flOW2s9UcR6NqQtBOjwf1YeGdoN4ZzAPUMn4+PoY4278WpYefFRHR+Q9elpGkuH5
-KfKbDotSI6sqFp2w/zRW1pceRWdiF4cJAQM/3/1yHUHorOt83L0/thLYHagoscQ7
-i0y7zHo5ZmCFeYc5robM
-=vGqn
+iQIcBAEBCAAGBQJVYtseAAoJEMDTa8Ir7ZwVtLIP/2y5gbtqJ8WHUqjjLiQ7fCB8
+GhIEu/MqTD51GfDcE+BRbx0dxh5DqKbJl2oQUQ0IQktY8o6c6OKMQgQmxrfauWYx
+IAkH/58d6pTirrZ22vQnl1NLjHj4UnsbfyGQ5u6cvk5zdVLHCzPX4mX4wMZ4b1mR
+KoLs/kkF7BRVWWYoAdnnxkdGvqXo+K3QbKayzvcxPUvLLHpZw+knyT0ALDzExUtU
+pUwGh05oymHIHWT7OQ5e2kZakkDjBUEkpmdYrtKQwI6424rLAZ2FapBf9TC35myR
+TunslfvJXXpzhDikxF805Jj8u+P6qwlzgVEwdatbzXOJhOhvBhBN+r0s5/mrVvV/
+7r0s0cORofoDNtXUrj3W51kvUEikVegAPrfFK+q05SgdxumzRP9LfXsS8ttBxLqz
+mnh0cnxqHSF+51jBbNfd4U0a+bcCeN92i6aT9AynGCPXuRPE9cn/Mrcho2Pil9W3
+NRxSkQGpV3qm6bA1hp6pn/OAeC42IgHy4HR9E+J6Givzai91v6zhfrESbso+ZDxr
+MAAcEy/7mHe0ciqrZU99vRp4ukQEiuCOAVNwhLXA92grLEewfTnhQBkKVGGvwCf5
+w5n7+Iz43Ql8xuBkiRq0kw6i38KH5lJp6GTHKzSp4RMY995Ecdd8sc9nEC7coO3W
+u7FsozMmGPYS+lBRRnaj
+=GD6S
 -----END PGP SIGNATURE-----
 
---Sig_/zrKKqHYJOcLhS=22PM4ncwQ--
+--Sig_/+hm6+oYnKi+C+ZdsjmhRyMN--
