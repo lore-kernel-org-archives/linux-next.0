@@ -1,73 +1,51 @@
-From: Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 25 May 2015 16:03:15 +0200
-Message-ID: <20150525140315.GA26958@redhat.com>
-References: <20150525211801.679d9015@canb.auug.org.au>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Mon, 25 May 2015 16:11:49 +0200
+Message-ID: <55632DA5.4070106@redhat.com>
+References: <20150525172507.20799066@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:48399 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:49910 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750908AbbEYODW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 May 2015 10:03:22 -0400
-Content-Disposition: inline
-In-Reply-To: <20150525211801.679d9015@canb.auug.org.au>
+	id S1750908AbbEYOMB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 May 2015 10:12:01 -0400
+In-Reply-To: <20150525172507.20799066@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liang Li <liang.z.li@intel.com>, Yang Zhang <yang.z.zhang@intel.com>, Rik van Riel <riel@redhat.com>
 
-Hello,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-On Mon, May 25, 2015 at 09:18:01PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> __NR_syscalls (364) is not one more than the last syscall (364)
-> 
-> Caused by commit d7766613717b ("userfaultfd: activate syscall").  (BTW,
-> I notice that this patch was not cc'd to any ppc maintainers :-()
-> 
-> I have added this fix patch for today:
 
-So another option is to just drop the arch/powerpc part of the patch
-from -mm. It's up to you, there's no arch dependent code in the
-syscall though and the config option is not specific to x86 either. I
-enabled the syscall on powerpc in my tree to facilitate the testing so
-the patchset included that change to arch/powerpc, but it would be ok
-to enable the syscall only later upstream, after it has been tested.
 
-Thanks,
-Andrea
+On 25/05/2015 09:25, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kvm tree got a conflict in 
+> arch/x86/kvm/x86.c between commit c447e76b4cab ("kvm/fpu: Enable
+> eager restore kvm FPU for MPX") from the  tree and commit
+> 653f52c316a4 ("kvm,x86: load guest FPU context more eagerly") from
+> the kvm tree.
+> 
+> I fixed it up (I used the version from the kvm tree) and can carry
+> the fix as necessary (no action is required).
 
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 25 May 2015 21:13:40 +1000
-> Subject: [PATCH] userfaultfd: activate syscall fix
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/powerpc/include/asm/unistd.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
-> index f4f8b667d75b..4a055b6c2a64 100644
-> --- a/arch/powerpc/include/asm/unistd.h
-> +++ b/arch/powerpc/include/asm/unistd.h
-> @@ -12,7 +12,7 @@
->  #include <uapi/asm/unistd.h>
->  
->  
-> -#define __NR_syscalls		364
-> +#define __NR_syscalls		365
->  
->  #define __NR__exit __NR_exit
->  #define NR_syscalls	__NR_syscalls
-> -- 
-> 2.1.4
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+A true conflict resolution is needed, but I'll push it to the kvm tree
+in the next few days.
+
+Paolo
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVYy2iAAoJEL/70l94x66DibAH/04gli1LtFZbqOMHgxId+8qc
+HB1aqK/LBin4wdFmlBFUDT9AH1Q08SZ0sghmnOiQb17WZs9YRGBMKUJq+OPt/lky
+EgCSzv9iBAkuOLKC1tPmjDhKBok1SNWipqIUj1UtCKCtVBdWd7yG3C99KQQPT46V
+a66Jhk1KG7CryrqBfRpDnKSXbQTWiBFH4r6z2XAKboFiTMIp8EsWErMzHv7km5Zd
+Nw8Ia0AyAsVF4C85J00dQDeuQdwyfLyQEb+s7Zf5qFLIYO/Zd5HXezX8y8rDuSu9
+UIDtkKcebU1ddrXa/ocja3df52IMOsRLW1lg3shFO0MLWAqRtcx3WnqWC6J8Dx8=
+=AHYH
+-----END PGP SIGNATURE-----
