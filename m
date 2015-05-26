@@ -1,59 +1,129 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [NEXT REQUEST][PATCH] backlight: pwm: handle EPROBE_DEFER while
- requesting the PWM
-Date: Tue, 26 May 2015 08:36:48 +0100
-Message-ID: <20150526073648.GB11677@x1>
-References: <1424338214-24236-1-git-send-email-nicolas.ferre@atmel.com>
- <20150312090224.GC3314@x1>
- <20150525112718.5f7e2d7d@bbrezillon>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Date: Tue, 26 May 2015 14:45:27 +1000
+Message-ID: <20150526144527.07dfc438@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:35281 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751061AbbEZHhU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 May 2015 03:37:20 -0400
-Received: by wgme6 with SMTP id e6so20302429wgm.2
-        for <linux-next@vger.kernel.org>; Tue, 26 May 2015 00:36:52 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20150525112718.5f7e2d7d@bbrezillon>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, thierry.reding@gmail.com, jg1.han@samsung.com, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H9PgBp/+h/uvukjMdsqLZBQ"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Amit <namit@cs.technion.ac.il>
+List-Id: linux-next.vger.kernel.org
 
-Stephen, Boris,
+--Sig_/H9PgBp/+h/uvukjMdsqLZBQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > > When trying to request the PWM device with devm_pwm_get(), the EP=
-ROBE_DEFER
-> > > flag is not handled properly. It can lead to the PWM not being fo=
-und.
-> > >=20
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.co=
-m>
-> > > Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-> > > ---
-> > >  drivers/video/backlight/pwm_bl.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> >=20
-> > Applied, thanks.
->=20
-> I don't see this patch in Linus' tree (actually, it's not even in
-> linux-next).
-> I don't know where it's stuck, but could you make sure it reaches
-> mainline for 4.2 (or 4.1 if it's not to late) ?
+Hi all,
 
-Sorry for the confusion.
+Today's linux-next merge of the kvm tree got conflicts in
+arch/x86/include/asm/kvm_host.h and arch/x86/kvm/x86.c between commit
+0ee6a5172573 ("x86/fpu, kvm: Simplify fx_init()") (and a few others)
+from the tip tree and commit d28bc9dd25ce ("KVM: x86: INIT and reset
+sequences are different") from the kvm tree.
 
-It looks like my for-backlight-fixes branch isn't in -next.
-
-Stephen, could you rectify that please?
-
-M: git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git
+I fixed it up (since the former commit made fx_init() static, I just
+removed the declaration and see below) and can carry the fix as
+necessary (no action is required).
 
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/x86/kvm/x86.c
+index 989cfc01e2a5,457b908244f2..000000000000
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@@ -7002,11 -7088,19 +7089,13 @@@ int kvm_arch_vcpu_ioctl_set_fpu(struct=20
+  	return 0;
+  }
+ =20
+- static void fx_init(struct kvm_vcpu *vcpu)
+ -int fx_init(struct kvm_vcpu *vcpu, bool init_event)
+++static void fx_init(struct kvm_vcpu *vcpu, bool init_event)
+  {
+- 	fpstate_init(&vcpu->arch.guest_fpu.state);
+ -	int err;
+ -
+ -	err =3D fpu_alloc(&vcpu->arch.guest_fpu);
+ -	if (err)
+ -		return err;
+ -
++ 	if (!init_event)
+ -		fpu_finit(&vcpu->arch.guest_fpu);
+++		fpstate_init(&vcpu->arch.guest_fpu.state);
++=20
+  	if (cpu_has_xsaves)
+ -		vcpu->arch.guest_fpu.state->xsave.xsave_hdr.xcomp_bv =3D
+ +		vcpu->arch.guest_fpu.state.xsave.header.xcomp_bv =3D
+  			host_xcr0 | XSTATE_COMPACTION_ENABLED;
+ =20
+  	/*
+@@@ -7038,16 -7140,25 +7127,25 @@@ void kvm_put_guest_fpu(struct kvm_vcpu=20
+  {
+  	kvm_put_guest_xcr0(vcpu);
+ =20
+- 	if (!vcpu->guest_fpu_loaded)
++ 	if (!vcpu->guest_fpu_loaded) {
++ 		vcpu->fpu_counter =3D 0;
+  		return;
++ 	}
+ =20
+  	vcpu->guest_fpu_loaded =3D 0;
+ -	fpu_save_init(&vcpu->arch.guest_fpu);
+ +	copy_fpregs_to_fpstate(&vcpu->arch.guest_fpu);
+  	__kernel_fpu_end();
+  	++vcpu->stat.fpu_reload;
+- 	if (!vcpu->arch.eager_fpu)
+- 		kvm_make_request(KVM_REQ_DEACTIVATE_FPU, vcpu);
+-=20
++ 	/*
++ 	 * If using eager FPU mode, or if the guest is a frequent user
++ 	 * of the FPU, just leave the FPU active for next time.
++ 	 * Every 255 times fpu_counter rolls over to 0; a guest that uses
++ 	 * the FPU in bursts will revert to loading it on demand.
++ 	 */
++ 	if (!use_eager_fpu()) {
++ 		if (++vcpu->fpu_counter < 5)
++ 			kvm_make_request(KVM_REQ_DEACTIVATE_FPU, vcpu);
++ 	}
+  	trace_kvm_fpu(0);
+  }
+ =20
+@@@ -7346,7 -7450,9 +7445,7 @@@ int kvm_arch_vcpu_init(struct kvm_vcpu=20
+  		goto fail_free_mce_banks;
+  	}
+ =20
+- 	fx_init(vcpu);
+ -	r =3D fx_init(vcpu, false);
+ -	if (r)
+ -		goto fail_free_wbinvd_dirty_mask;
+++	fx_init(vcpu, false);
+ =20
+  	vcpu->arch.ia32_tsc_adjust_msr =3D 0x0;
+  	vcpu->arch.pv_time_enabled =3D false;
+
+--Sig_/H9PgBp/+h/uvukjMdsqLZBQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVY/psAAoJEMDTa8Ir7ZwV0yYP/1Wg1oNshHaEH1SDa+oD2K6l
+mgmHiHNltuDZbP2MNMTFzV8qhOGZimbAD99adjlmVHQ7GW+RVkoCoVrh/IJQLkqh
+Ru5djsBpXvgaOBInzbS4Gyg5dqTLynYX0OPUDTtBcDPBYf7yoqx+G1q76ZhYy2qo
+smUUGpLjgDOr7N5RVCIIAs1mF8WzKnpQrJnApkEPKC3ucW0o7IrxCLpso1w5dcK7
+Q0qMwpQQNCwKLn1ibwrMY4OwzMQIypxqjFnjCar/27wpN8mSyaVyLZxw3six+6+J
+RvdxBmXOtP10oTiEk47eNBsThzaZcxVdGb0wUf8jPH+ql3r2KaLpijTN5Om7jHZY
+eJxcSW8BOfsptdBb6ZZ8a3hxB2bt9DtMSOEvdw3hElrGz+7IgUJfd/3qk+pwHy5I
+PsDtc/I1gip0rjz90vj/3aolVLi7+f1vENGq1bCWu0U+sBx7B3RNdRyIo6EdFs6Q
+ReiXkiHAYWlfuHloP7sBGQyBEroY3DW9GrWGxTwVZWNKTqmeW6y7i7ArwxQsmqu0
+HWh+k/3L7L/UkdddxlYf22DWrgYbkRVnOFZVMG0dcMBoUVb1dso/6F2YK7oFWvjP
+NyRzOJX/0r4EUhMRttCNOdaZfxkLIxX/ALdysHDjo2Y27G76iJntzPuia4G8E6m4
+wvWOyXOgrc54zGsH6AGW
+=6r0M
+-----END PGP SIGNATURE-----
+
+--Sig_/H9PgBp/+h/uvukjMdsqLZBQ--
