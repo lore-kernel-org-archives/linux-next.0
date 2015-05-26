@@ -1,32 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the tty.current
- tree
-Date: Mon, 25 May 2015 09:28:21 -0700
-Message-ID: <20150525162821.GI9772@kroah.com>
-References: <20150525181938.278a605c@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [NEXT REQUEST][PATCH] backlight: pwm: handle EPROBE_DEFER while
+ requesting the PWM
+Date: Tue, 26 May 2015 08:36:48 +0100
+Message-ID: <20150526073648.GB11677@x1>
+References: <1424338214-24236-1-git-send-email-nicolas.ferre@atmel.com>
+ <20150312090224.GC3314@x1>
+ <20150525112718.5f7e2d7d@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:35281 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751061AbbEZHhU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 May 2015 03:37:20 -0400
+Received: by wgme6 with SMTP id e6so20302429wgm.2
+        for <linux-next@vger.kernel.org>; Tue, 26 May 2015 00:36:52 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20150525181938.278a605c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>, Jakub Kicinski <kubakici@wp.pl>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20150525112718.5f7e2d7d@bbrezillon>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, thierry.reding@gmail.com, jg1.han@samsung.com, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-On Mon, May 25, 2015 at 06:19:38PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in
-> drivers/tty/serial/amba-pl011.c between commit 43dd1f9a5b05
-> ("serial/amba-pl011: Unconditionally poll for FIFO space before each TX
-> char") from the tty.current tree and commit 1e84d22322ce
-> ("serial/amba-pl011: Refactor and simplify TX FIFO handling") from the
-> tty tree.
-> 
-> I fixed it up (I just used the version from the tty tree) and can carry
-> the fix as necessary (no action is required).
+Stephen, Boris,
 
-Thanks, that's the correct fix, Dave predicted this would happen :)
+> > > When trying to request the PWM device with devm_pwm_get(), the EP=
+ROBE_DEFER
+> > > flag is not handled properly. It can lead to the PWM not being fo=
+und.
+> > >=20
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.co=
+m>
+> > > Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> > > ---
+> > >  drivers/video/backlight/pwm_bl.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> >=20
+> > Applied, thanks.
+>=20
+> I don't see this patch in Linus' tree (actually, it's not even in
+> linux-next).
+> I don't know where it's stuck, but could you make sure it reaches
+> mainline for 4.2 (or 4.1 if it's not to late) ?
 
-greg k-h
+Sorry for the confusion.
+
+It looks like my for-backlight-fixes branch isn't in -next.
+
+Stephen, could you rectify that please?
+
+M: git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
