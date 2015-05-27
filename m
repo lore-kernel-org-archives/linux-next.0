@@ -1,65 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless-drivers-next
- tree
-Date: Wed, 27 May 2015 12:03:58 +1000
-Message-ID: <20150527120358.47b88a4b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the backlight tree
+Date: Wed, 27 May 2015 13:11:18 +1000
+Message-ID: <20150527131118.6e3ef667@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fnwYkBcjEgIr.hGKrSIT=DB"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37568 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751517AbbE0CER (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 May 2015 22:04:17 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Fu, Zhonghui" <zhonghui.fu@linux.intel.com>, Arend van Spriel <arend@broadcom.com>
+ boundary="Sig_/D2MbEb_pg.pRiOYpjurw1Tx"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/fnwYkBcjEgIr.hGKrSIT=DB
+--Sig_/D2MbEb_pg.pRiOYpjurw1Tx
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kalle,
+Hi Lee,
 
-After merging the wireless-drivers-next tree, today's linux-next build
-(arm multi_v7_defconfig) failed like this:
+After merging the backlight tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c: In function 'brcmf_ops_sd=
-io_probe':
-drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c:1139:7: error: dereferenci=
-ng pointer to incomplete type
-   adev->flags.power_manageable =3D 0;
-       ^
+drivers/video/backlight/backlight.c: In function 'of_find_backlight_by_node=
+':
+drivers/video/backlight/backlight.c:563:2: error: implicit declaration of f=
+unction 'of_platform_device_ensure' [-Werror=3Dimplicit-function-declaratio=
+n]
+  of_platform_device_ensure(node);
+  ^
 
-Caused by commit f0992ace680c ("brcmfmac: prohibit ACPI power
-management for brcmfmac driver").
+Caused by commit 67a6b10546ea ("backlight: Probe backlight devices on
+demand").
 
-I have used the wireless-drivers-next from next-20150526 for today.
+I have used the backlight tree from next-20150526 for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/fnwYkBcjEgIr.hGKrSIT=DB
+--Sig_/D2MbEb_pg.pRiOYpjurw1Tx
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVZSYeAAoJEMDTa8Ir7ZwVPBgP/RU+2xryej868CRIRsIUYon+
-qwjXsLKYJCPyPSYZ/JPx/phQfEWuRBR7FNuYqQypSmJonT6DeS9lxuBrap8mv2yF
-7VQzYKzZrQUuOVuY3Z80+Lo0rj4CeOcnabWVz4G18D0zQUiqa4woDjxAD+Ad6vv+
-xB5S0kBo5xHC0nP0X5ZEEDaHBhnLma6qCj9Fq71Nau/m4EUroRMz5SosgbjAQn6M
-s5Wl/tDF/Lm1GdYVR3X7GjFjMbzBPkObF6CnTOFRciailBIS00eAk2DL7CeH2BuD
-+ggGSyA9JuqcOSEvBNzWgyEpI9/9UU6pE6ksyG0S2EKdI1+32+hMWW36ZZGFO/TF
-7KznO/ElK+cN3/bqNF9NnswYfNn6nultXM6Ru6YL5v+z/FpY/VWUoYL9b4u6P7ky
-oHRWTkMKPjctIX6FSFGou6DP/GqV3fISQBBLc3rrbXKHJb6ApYVkzE0d8975WIIU
-pPWhbSNN9IRIgvae4nKpgEEze1TmZm2TSX31YIIy8f+Rqzrum29kB5WV1o4hK0Pg
-Cvddqs5vHdatLTTqnntO61wFp+TQjnN4X8T1KQUzZyncmCFYt5Lybqg44FK4I5pA
-euFgwI4Vgj2nGRnUxkW7YNvuSa0vw6dmi8ZjhCghd64jjd3UiZB/Wz7URwZt12l9
-3IXjVWtnuriNd61/mISb
-=XwXe
+iQIcBAEBCAAGBQJVZTXbAAoJEMDTa8Ir7ZwVwjcP/Rw6FdIIcHRToB+JliAG3qT2
+dr3yI9U8hRuuSPAeBmy/0uMncvvys0JxGhtGCgTU0lKJKkNJIPLHmAddW9m+zoU0
+QRlll4Smve2G4jz+hoIgM+gNuZGeMFZu+yYQMlj1zwCTfqpDfJPPZw/N9bcK8Frd
+sy+pI0Ne/EZzi3sfIY7VyL1JouHpcpf0VWB/m3QeIPh/79AVttFP+DnJRgh4wk35
+fDc/Cp9isLkp4rYkHB1bDgosi1Wll8QvS7hJfWi+xPQPJJO07sfPVqLeKo1hQ4c2
+VnL481X/6TSMGYeUMBBxqIh6WGXnpHdIQfgcgzq3fV48NkJFWe4jxRUCOrmRrvIR
+EYVA4kJ68WusuH5SIy/ip5UUctBiGP5gTgoBBNKmINU4WZ9PgBmQfSlFX4nTNAsf
+lVyIBLSivuW02Rgc0V2LcbDUutiOXdyLcAZC+TIRm0nMp0ImCZwbC0QkJIEGa640
+W8E3K4E7H+V7plnP7+uQEHrPmOu23523Dio2+nnJPLDluxWiBsw78DaICdFdUqdi
+6R3Xk5XAsJvrlDEYy1k8mpYDbW9upYnybd9HK46poOGoKe34QMl7nYr6fpeJi1Hz
+bl1cl1sJ5FD1LJrg3QcuoieNNyKSe0wa+ySyQKCEbiFskZDDzvs6caGxOZ1oJcWK
+OggkGSpCAhIjf20aIKnM
+=joL1
 -----END PGP SIGNATURE-----
 
---Sig_/fnwYkBcjEgIr.hGKrSIT=DB--
+--Sig_/D2MbEb_pg.pRiOYpjurw1Tx--
