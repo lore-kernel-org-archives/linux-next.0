@@ -1,32 +1,46 @@
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-Subject: RE: linux-next: build failure after merge of the char-misc tree
-Date: Wed, 27 May 2015 07:08:06 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B3C4A2662@hasmsx109.ger.corp.intel.com>
-References: <20150527155201.43e0bbb0@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: build failure after merge of the backlight tree
+Date: Wed, 27 May 2015 08:45:11 +0100
+Message-ID: <20150527074511.GR11677@x1>
+References: <20150527131118.6e3ef667@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:59375 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751558AbbE0HIK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 May 2015 03:08:10 -0400
-In-Reply-To: <20150527155201.43e0bbb0@canb.auug.org.au>
-Content-Language: en-US
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:34854 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751741AbbE0HpQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 May 2015 03:45:16 -0400
+Received: by wicmx19 with SMTP id mx19so101439017wic.0
+        for <linux-next@vger.kernel.org>; Wed, 27 May 2015 00:45:15 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20150527131118.6e3ef667@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
+On Wed, 27 May 2015, Stephen Rothwell wrote:
+> After merging the backlight tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> drivers/video/backlight/backlight.c: In function 'of_find_backlight_b=
+y_node':
+> drivers/video/backlight/backlight.c:563:2: error: implicit declaratio=
+n of function 'of_platform_device_ensure' [-Werror=3Dimplicit-function-=
+declaration]
+>   of_platform_device_ensure(node);
+>   ^
+>=20
+> Caused by commit 67a6b10546ea ("backlight: Probe backlight devices on
+> demand").
 
+Yes, I need to remove that commit.  Thanks for letting me know.
 
-> Hi all,
-> 
-> After merging the char-misc tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-Might be the case that this one was left out ?
-https://lkml.org/lkml/2015/5/7/522 
-uuid: extract macros for assigning raw arrays
+> I have used the backlight tree from next-20150526 for today.
 
-Tomas
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
