@@ -1,66 +1,60 @@
-From: Ramneek Mehresh <ramneek.mehresh@freescale.com>
-Subject: RE: Build errors in -next due to 'drivers:usb:fsl:Make fsl ehci drv
- an independent driver module'
-Date: Thu, 28 May 2015 04:02:54 +0000
-Message-ID: <SN1PR0301MB1583E3899BF6433E550098FBE0CA0@SN1PR0301MB1583.namprd03.prod.outlook.com>
-References: <20150527195903.GA5716@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Thu, 28 May 2015 14:17:16 +1000
+Message-ID: <20150528141716.562c15e1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+Remyv7KL42dMqfHdAXGuPF"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:32881 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750716AbbE1ERW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 May 2015 00:17:22 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Sig_/+Remyv7KL42dMqfHdAXGuPF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-> -----Original Message-----
-> From: Mehresh Ramneek-B31383
-> Sent: Thursday, May 28, 2015 9:25 AM
-> To: 'Guenter Roeck'
-> Cc: Alan Stern; Greg Kroah-Hartman; linux-kernel@vger.kernel.org; linux-
-> next@vger.kernel.org
-> Subject: RE: Build errors in -next due to 'drivers:usb:fsl:Make fsl ehci drv an
-> independent driver module'
-> 
-> 
-> 
-> > -----Original Message-----
-> > From: Guenter Roeck [mailto:linux@roeck-us.net]
-> > Sent: Thursday, May 28, 2015 1:29 AM
-> > To: Mehresh Ramneek-B31383
-> > Cc: Alan Stern; Greg Kroah-Hartman; linux-kernel@vger.kernel.org;
-> > linux- next@vger.kernel.org
-> > Subject: Build errors in -next due to 'drivers:usb:fsl:Make fsl ehci
-> > drv an independent driver module'
-> >
-> > Hi,
-> >
-> > your patch 'drivers:usb:fsl:Make fsl ehci drv an independent driver module'
-> > converts the driver into a separate module. Unfortunately, it uses
-> > non- exported functions from the ehci core code. This results in
-> > compile errors for several powerpc configurations.
-> >
-> > drivers/usb/host/ehci-fsl.c: In function 'ehci_fsl_drv_suspend':
-> > drivers/usb/host/ehci-fsl.c:531:2: error: implicit declaration of
-> > function 'ehci_adjust_port_wakeup_flags'
-> > drivers/usb/host/ehci-fsl.c: In function 'ehci_fsl_drv_resume':
-> > drivers/usb/host/ehci-fsl.c:561:2: error: implicit declaration of
-> > function 'ehci_reset'
-> >
-> Understood...apologies for the inconvenience caused. This problem comes
-> when both ehci_hcd and ehci_fsl are built as modules. Till now, only ehci-hcd
-> was build as module, and other drivers were built into it. I tested ehci_fsl as a
-> module with ehci_hcd as build-in.
-> 
-> Now, there are two solutions for this.
-> 1. export each function in ehci_hcd.c
-> 2. I make ehci-fsl.c as built-in
-> 
-> Please suggest.
-> 
-I just reproduced the issue...it comes when USB driver is compiled with PM enabled !!
-That's why we missed this this. I'll send the fix immediately.
-> > Guenter
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/phy/amd-xgbe-phy.c between commit 983942a5eaca
+("amd-xgbe-phy: Fix initial mode when autoneg is disabled") from Linus'
+tree and commit 7c12aa08779c ("amd-xgbe: Move the PHY support into
+amd-xgbe") from the net-next tree.
+
+I fixed it up (the latter removed the file, so I did that - there may
+be more needed) and can carry the fix as necessary (no action is
+required).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/+Remyv7KL42dMqfHdAXGuPF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVZpbQAAoJEMDTa8Ir7ZwVhQMQAJEVV+nVAR+n2+cEPrnDxN8K
+1J1datB6mVfjzprzhONCbkf7iMtebk7A02m9BzLjY8BOMygcrOI6aWlN1wp0SlG3
+SpIYtBzNGCZcQWEqHaF6sWaJrL9/mnZ4lvZ7k/nJykOJJWaNB7Z0aOXmNhwHCyUF
+99/BA8yTaPSj+gefVX1Uc7k9nzgx+jJfwBn8yK84rT+nEq+fqb3+UMLEI6LAl31V
+kcIDz7YrHPeO8LAsyf8RvT1waBk3XADN2NdLFrimtMAueVUVFdwDQdUJ7uRV8x+t
+oqWIEPQchq9oMim0rz8S4iB+xwdBYi/iliwv+tLnJT0Jv9/NVODEHE1/jDsoqsi5
+ftURttZ+7N6dkehi00ewaptb58nBf7ytBjv6kHso9Tg6f2cqHIjptoP010EL2Gzv
+MzNOOQC1cKXeLH6k1jSlDyxY/ZfJlRA/8cqmoRUIdF4k1qkFwQItAzNDZ0pfQ03x
++0KeCInzfZVBwHdIX2pgyZK4a0G8FQlp5ksNZuQXDCXrX/naEHUx5e+xk3aWs/66
+/tLVoYdd4GFPbByq/CJbju7YtqA3pXiF7fDl5vLUlb5IQZBmFj7rM5DyDrk5X/oB
+l39/XDQ1y+EfskCqvopS84uSuEMsRB8OM3hgg3gEaA4kWAHttbPxbSro9JjLlhJf
+1mBwU+x43qz+LtGSdr6H
+=dFlk
+-----END PGP SIGNATURE-----
+
+--Sig_/+Remyv7KL42dMqfHdAXGuPF--
