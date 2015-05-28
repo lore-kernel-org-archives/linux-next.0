@@ -1,44 +1,28 @@
-From: David Miller <davem@davemloft.net>
+From: Eric Dumazet <eric.dumazet@gmail.com>
 Subject: Re: linux-next: build failure after merge of most of the trees
-Date: Thu, 28 May 2015 14:35:45 -0700 (PDT)
-Message-ID: <20150528.143545.1946361377143498741.davem@davemloft.net>
+Date: Thu, 28 May 2015 15:13:24 -0700
+Message-ID: <1432851204.7456.46.camel@edumazet-glaptop2.roam.corp.google.com>
 References: <20150528220607.67a68696@canb.auug.org.au>
-	<20150528.114203.717794268051352731.davem@davemloft.net>
-	<1432839075.1556.4.camel@perches.com>
+	 <20150528.114203.717794268051352731.davem@davemloft.net>
+	 <1432839075.1556.4.camel@perches.com>
+	 <20150528.143545.1946361377143498741.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1432839075.1556.4.camel@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: joe@perches.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, edumazet@google.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:35738 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754006AbbE1WNZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 May 2015 18:13:25 -0400
+In-Reply-To: <20150528.143545.1946361377143498741.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: joe@perches.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, edumazet@google.com
 
-From: Joe Perches <joe@perches.com>
-Date: Thu, 28 May 2015 11:51:15 -0700
+On Thu, 2015-05-28 at 14:35 -0700, David Miller wrote:
 
-> On Thu, 2015-05-28 at 11:42 -0700, David Miller wrote:
->> I've applied the following to net-next, thanks for your report.
->> 
->> ====================
->> [PATCH] treewide: Add missing vmalloc.h inclusion.
->> 
->> All of these files were only building on non-x86 because of
->> the indirect of inclusion of vmalloc.h by, of all things,
->> "net/inet_hashtables.h"
-> []
->> diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-> []
->> @@ -444,6 +444,7 @@ static int skcipher_recvmsg(struct kiocb *unused, struct socket *sock,
->>  			err = skcipher_wait_for_data(sk, flags);
->>  			if (err)
->>  				goto unlock;
->> +			used = ctx->used;
-> 
-> huh?
+> Bogus chunk in my local tree, didn't make it into the final commit I
+> pushed out.
 
-Bogus chunk in my local tree, didn't make it into the final commit I
-pushed out.
-
-But thanks for noticing.
+Thanks for taking care of this before me !
