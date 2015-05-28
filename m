@@ -1,74 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci-current tree with Linus'  tree
-Date: Thu, 28 May 2015 11:36:26 +1000
-Message-ID: <20150528113626.58758931@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the
+ wireless-drivers-next tree
+Date: Thu, 28 May 2015 11:38:05 +1000
+Message-ID: <20150528113805.099cdc72@canb.auug.org.au>
+References: <20150527120358.47b88a4b@canb.auug.org.au>
+	<55658993.8060709@broadcom.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RldSXnKmsdCutiBqpEM0Zzo"; protocol="application/pgp-signature"
+ boundary="Sig_/hBYLMlIUlcxLQVZkCvbembT"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51476 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45297 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752473AbbE1Bgc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 May 2015 21:36:32 -0400
+	id S1751185AbbE1BiL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 May 2015 21:38:11 -0400
+In-Reply-To: <55658993.8060709@broadcom.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pratyush Anand <pratyush.anand@gmail.com>, Jingoo Han <jingoohan1@gmail.com>
+To: Arend van Spriel <arend@broadcom.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Fu, Zhonghui" <zhonghui.fu@linux.intel.com>
 
---Sig_/RldSXnKmsdCutiBqpEM0Zzo
+--Sig_/hBYLMlIUlcxLQVZkCvbembT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Hi Arend,
 
-Today's linux-next merge of the pci-current tree got a conflict in
-MAINTAINERS between commit b77017555ce5 ("MAINTAINERS: update Jingoo
-Han's email address") from Linus' tree and commit 110baab1d128
-("MAINTAINERS: Add Pratyush Anand as SPEAr13xx and DesignWare PCIe
-maintainer") from the pci-current tree.
+On Wed, 27 May 2015 11:08:35 +0200 Arend van Spriel <arend@broadcom.com> wr=
+ote:
+>
+> On 05/27/15 04:03, Stephen Rothwell wrote:
+> >
+> > After merging the wireless-drivers-next tree, today's linux-next build
+> > (arm multi_v7_defconfig) failed like this:
+> >
+> > drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c: In function 'brcmf_op=
+s_sdio_probe':
+> > drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c:1139:7: error: derefer=
+encing pointer to incomplete type
+> >     adev->flags.power_manageable =3D 0;
+> >         ^
+> >
+> > Caused by commit f0992ace680c ("brcmfmac: prohibit ACPI power
+> > management for brcmfmac driver").
+> >
+> > I have used the wireless-drivers-next from next-20150526 for today.
+>=20
+> Crap. struct acpi_device details are only known when CONFIG_ACPI is set.=
+=20
+> The attached patch should fix the issue.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I put that into linux-next today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc MAINTAINERS
-index 474bcb6c0bac,72674ba8cca5..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -7575,7 -7546,8 +7575,8 @@@ S:	Maintaine
-  F:	drivers/pci/host/pci-exynos.c
- =20
-  PCI DRIVER FOR SYNOPSIS DESIGNWARE
- -M:	Jingoo Han <jg1.han@samsung.com>
- +M:	Jingoo Han <jingoohan1@gmail.com>
-+ M:	Pratyush Anand <pratyush.anand@gmail.com>
-  L:	linux-pci@vger.kernel.org
-  S:	Maintained
-  F:	drivers/pci/host/*designware*
-
---Sig_/RldSXnKmsdCutiBqpEM0Zzo
+--Sig_/hBYLMlIUlcxLQVZkCvbembT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVZnEeAAoJEMDTa8Ir7ZwVt10P+gIwg9IJhGm4GpT4L4UlbYYH
-tuKceNAhLSaumP1L6Old0TyTUDrl+OpmRrXDUIMhtXRg4bvdQtO9hs0h+qY92x75
-Yjt2wlsbyOt5Yi9bZM2aeJ5Jti1gKijqRxn2WzmSzIs4mD6o08hvVfogMODvZePh
-qCeZwn/R6XV9xJfM0jl+3foVW1VLB86rCQoocOGZkKkWh6aGL7ipymDIjyHrFKaF
-9xacgREsLdaG71IPLX65/En4f5xd8wjD2apqXWxC1d6jVsYYgLIasymwAnBBtkLH
-64ZM1+lGwL7Tcu6yNtM2eZNwfscFh61J3afTjQtrKdzogZx6WVKL+5aiHUI11o77
-Tt9JzN9cqXJAdAtI/RlNY+KY8Z4WtOI9bQZQNS2S8IgQhVr64PrClPWfV1pK+wc1
-EeaG90QFOlFFC32jybXys4z6IbnaSMR/mxvaIp59A/1qYyZNAscmcmB2oJkwJAYO
-7x8ZKNHTV1NuEUWWAm30vOguY5Pehsv204mWN4n5ciQmGgi6xYnj5m9Bv4I79AgT
-mk0OfMDJElZI8YiOWtVqvW8PwK1BftJ0nXJaZ7wIcjg37jyL+1z2OU3JcB5Ib9rn
-vcVO+V+15A+F0qZ58YSipuGZJqDOFSCt0t2227DHm6KijD3hfZqr96FevVI8auQP
-Zuytm1+bVNtwAnIP9wNt
-=qx7K
+iQIcBAEBCAAGBQJVZnGBAAoJEMDTa8Ir7ZwVyoEQAJJSWmVBhixHh2ypeyApa7CD
+QIa6AYKqxbloFDttq1QssO78SdHoN8CKtY+zeGKPb6kTG077BLa3NhngBegP0r3a
+WRMJadkeLG61ApuO7y4ry0/wV11XVVA3vC5Twyf1mJho/ZHjxfl7XCXmTGXTwaZ4
+A/rfcoUxDZswljny2XZIOXTTK+L7xC42hkC+UjiCgI7jb6jj+aNskapU+g5ixmLf
+kI1gyW/SxbLaYV70+l3dproNInHM5WL2ddQLq7LpndzuYnaX/CZzz0gmuB9c/8Ib
+lspAuKSXiauNLW0ZszhE0sTHRhgLf5JU8/PLVHmFoNiZetKX+UPXep5R1jKknXiB
+2UPWOodNxtqcoZjnPUG9LvHAi1fKh3YddUbpLpG0ZnplapB6oCWku/0VIcxbTEQF
+rdeA3zRYEYA0yy6ytcNLik1vbvbdcAwK5z/mWfkGtK9a1+0iOrO/CS0BwFbvrR3K
+qiUGjbq8R++rqpZIF59Uqq17qw+TCBfSWqFZU5CUv3gceMexsz6270QyPSkbUwIn
+YSUS4ReKZVVEwI0g1sPP4NtubaHfvAuWH64P2fCV4SCBBMq2i4tGKqQPN8oBIAmT
+B/eZP59eYP/ZHp38MlT2hL4rkUlezzQrWokpNTF1HGCykW6dBhml7TiIdIv+pMYW
+uKPvycVXLIxE9/z6Cbk1
+=6NgJ
 -----END PGP SIGNATURE-----
 
---Sig_/RldSXnKmsdCutiBqpEM0Zzo--
+--Sig_/hBYLMlIUlcxLQVZkCvbembT--
