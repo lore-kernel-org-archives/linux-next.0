@@ -1,60 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Thu, 28 May 2015 14:17:16 +1000
-Message-ID: <20150528141716.562c15e1@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the sparc tree
+Date: Thu, 28 May 2015 16:38:46 +1000
+Message-ID: <20150528163846.05f47bd6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+Remyv7KL42dMqfHdAXGuPF"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:32881 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750716AbbE1ERW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 May 2015 00:17:22 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/8UbiCNBoq+7obPbjxZs63p2"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, chris hyser <chris.hyser@oracle.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/+Remyv7KL42dMqfHdAXGuPF
+--Sig_/8UbiCNBoq+7obPbjxZs63p2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/phy/amd-xgbe-phy.c between commit 983942a5eaca
-("amd-xgbe-phy: Fix initial mode when autoneg is disabled") from Linus'
-tree and commit 7c12aa08779c ("amd-xgbe: Move the PHY support into
-amd-xgbe") from the net-next tree.
+Today's linux-next merge of the tip tree got a conflict in
+arch/sparc/include/asm/topology_64.h between commit acc455cffa75
+("sparc64: Setup sysfs to mark LDOM sockets, cores and threads
+correctly") from the sparc tree and commit 06931e622468
+("sched/topology: Rename topology_thread_cpumask() to
+topology_sibling_cpumask()") from the tip tree.
 
-I fixed it up (the latter removed the file, so I did that - there may
-be more needed) and can carry the fix as necessary (no action is
-required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/+Remyv7KL42dMqfHdAXGuPF
+diff --cc arch/sparc/include/asm/topology_64.h
+index d1761df5cca6,9a928fcb7a9b..000000000000
+--- a/arch/sparc/include/asm/topology_64.h
++++ b/arch/sparc/include/asm/topology_64.h
+@@@ -40,8 -40,8 +40,8 @@@ static inline int pcibus_to_node(struc
+  #ifdef CONFIG_SMP
+  #define topology_physical_package_id(cpu)	(cpu_data(cpu).proc_id)
+  #define topology_core_id(cpu)			(cpu_data(cpu).core_id)
+ -#define topology_core_cpumask(cpu)		(&cpu_core_map[cpu])
+ +#define topology_core_cpumask(cpu)		(&cpu_core_sib_map[cpu])
+- #define topology_thread_cpumask(cpu)		(&per_cpu(cpu_sibling_map, cpu))
++ #define topology_sibling_cpumask(cpu)		(&per_cpu(cpu_sibling_map, cpu))
+  #endif /* CONFIG_SMP */
+ =20
+  extern cpumask_t cpu_core_map[NR_CPUS];
+
+--Sig_/8UbiCNBoq+7obPbjxZs63p2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVZpbQAAoJEMDTa8Ir7ZwVhQMQAJEVV+nVAR+n2+cEPrnDxN8K
-1J1datB6mVfjzprzhONCbkf7iMtebk7A02m9BzLjY8BOMygcrOI6aWlN1wp0SlG3
-SpIYtBzNGCZcQWEqHaF6sWaJrL9/mnZ4lvZ7k/nJykOJJWaNB7Z0aOXmNhwHCyUF
-99/BA8yTaPSj+gefVX1Uc7k9nzgx+jJfwBn8yK84rT+nEq+fqb3+UMLEI6LAl31V
-kcIDz7YrHPeO8LAsyf8RvT1waBk3XADN2NdLFrimtMAueVUVFdwDQdUJ7uRV8x+t
-oqWIEPQchq9oMim0rz8S4iB+xwdBYi/iliwv+tLnJT0Jv9/NVODEHE1/jDsoqsi5
-ftURttZ+7N6dkehi00ewaptb58nBf7ytBjv6kHso9Tg6f2cqHIjptoP010EL2Gzv
-MzNOOQC1cKXeLH6k1jSlDyxY/ZfJlRA/8cqmoRUIdF4k1qkFwQItAzNDZ0pfQ03x
-+0KeCInzfZVBwHdIX2pgyZK4a0G8FQlp5ksNZuQXDCXrX/naEHUx5e+xk3aWs/66
-/tLVoYdd4GFPbByq/CJbju7YtqA3pXiF7fDl5vLUlb5IQZBmFj7rM5DyDrk5X/oB
-l39/XDQ1y+EfskCqvopS84uSuEMsRB8OM3hgg3gEaA4kWAHttbPxbSro9JjLlhJf
-1mBwU+x43qz+LtGSdr6H
-=dFlk
+iQIcBAEBCAAGBQJVZrf7AAoJEMDTa8Ir7ZwVOvcQAI5yoe9KTkfdoYKABVdNwgnO
+VxGGC0rfObpML/d0PHqdMoz5K5+3UcWT94v0rrdXEfBzHMkPOSTC1c7LmlP9yPrd
+ecOuVZSwkCfX/tCiDLXdqaBOxUYJPS0MO24K862tDQRJEs/ZY2VH+91nDFzCYVsG
+e4zubOAvhHVblUwEOJVU9aHiGFNZ8RuOMjarsOgSDLIbDNuxCChiWxXdybXoQaiq
+X8Hq1CvOMDXIoJpTOAn07CjaX0Hg2vsu/8hPTwgg9c6YS9Ge/+PVUM0VMc0pNu4C
+h7gWvD+L4zrY7RoNZEun4WROBcyMPKwVqm5o47L0qx48VUIH/kB/PXlX5HyiDUQp
+Yi5vji8enmx2K7jTP9oaThREzFk/lZxt7XFQROXyIVWPoOLy3hq9PsJU6jiroKhm
+vlVxBsC0wyXDLRbH+9ZmL47xfT140yKuWc3NBW9HLn0Zz9GCLb0dQlAfZIrK5F/S
+WsDgXw+ovd7q7KBRCzxUFGRp4wDomIzriACd3lEbmhnsLN/g0w6AtaDzgfGnuyLo
+C2jMtVnr8fJ5fdlDRkCqdJXuntdCodYF/u9PpNmwtXiiZSHMMYN7mSzXcVXOQNaO
+u/PDHec8b67Bq2DuDftpjb8v11tCGLK3F8/dR8fPnU/39cZxxpvCK9JHa6mbvyy6
+fl0pfAFEBjovQx6FbWfm
+=XqL5
 -----END PGP SIGNATURE-----
 
---Sig_/+Remyv7KL42dMqfHdAXGuPF--
+--Sig_/8UbiCNBoq+7obPbjxZs63p2--
