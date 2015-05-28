@@ -1,72 +1,153 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: randconfig build error with next-20150528, in
- drivers/power/twl4030_charger.c
-Date: Thu, 28 May 2015 19:57:00 +0200
-Message-ID: <20150528175700.GB31619@earth>
-References: <CA+r1ZhjGZqh0ZOdkne3Pf1Ht2Vyf3+HzFPzrqVPDMRfiT6prxA@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of most of the trees
+Date: Thu, 28 May 2015 11:42:03 -0700 (PDT)
+Message-ID: <20150528.114203.717794268051352731.davem@davemloft.net>
+References: <20150528220607.67a68696@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Y7xTucakfITjPcLV"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhjGZqh0ZOdkne3Pf1Ht2Vyf3+HzFPzrqVPDMRfiT6prxA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>, NeilBrown <neilb@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, Felipe Balbi <balbi@ti.com>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20150528220607.67a68696@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, edumazet@google.com
 List-Id: linux-next.vger.kernel.org
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 28 May 2015 22:06:07 +1000
 
---Y7xTucakfITjPcLV
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Ouch :-(
 
-Hi,
+The only thing I will say on this matter is that the _only_ way this
+problem will go away is if someone does the work necessary to get rid
+of that implicit vmalloc.h include that happens on all x86 platform
+builds.
 
-[+CC NeilBrown]
-[+CC Felipe Balbi]
+So if you want this to stop happening, work on that.
 
-On Thu, May 28, 2015 at 10:05:55AM -0700, Jim Davis wrote:
-> drivers/power/twl4030_charger.c: In function =E2=80=98twl4030_bci_probe=
-=E2=80=99:
-> drivers/power/twl4030_charger.c:648:23: error: implicit declaration of fu=
-nction
-> =E2=80=98devm_usb_get_phy_by_node=E2=80=99 [-Werror=3Dimplicit-function-d=
-eclaration]
->     bci->transceiver =3D devm_usb_get_phy_by_node(
->                        ^
-> drivers/power/twl4030_charger.c:648:21: warning: assignment makes pointer=
- from i
-> nteger without a cast [-Wint-conversion]
->     bci->transceiver =3D devm_usb_get_phy_by_node(
->                      ^
+I've applied the following to net-next, thanks for your report.
 
-This has been introduced by the following commit from Neil Brown:
+====================
+[PATCH] treewide: Add missing vmalloc.h inclusion.
 
-power: twl4030_charger: find associated phy by more reliable means.
+All of these files were only building on non-x86 because of
+the indirect of inclusion of vmalloc.h by, of all things,
+"net/inet_hashtables.h"
 
--- Sebastian
+None of this got caught during build testing, because on x86
+there is an implicit vmalloc.h include via on of the arch asm/
+headers.
 
---Y7xTucakfITjPcLV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+This fixes all of these
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ crypto/algif_skcipher.c                | 1 +
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c     | 1 +
+ drivers/target/iscsi/iscsi_target.c    | 1 +
+ drivers/target/target_core_file.c      | 1 +
+ drivers/target/target_core_pr.c        | 1 +
+ drivers/target/target_core_transport.c | 1 +
+ drivers/target/target_core_user.c      | 1 +
+ drivers/vhost/scsi.c                   | 1 +
+ 8 files changed, 8 insertions(+)
 
-iQIcBAEBCgAGBQJVZ1bpAAoJENju1/PIO/qa3wcQAIRY6DOfWTSIWlHTmvsTo8mF
-pE4iKR+eoCDvhgex8O1hMn/Sm9mBjo0SDYg4AI0wIqGWuVNCVksMhptTxLD4Kwym
-J2cm0cs/p+UstN8NWUK18PE1QgsgFiWbOpoHUvQSD8l8gbXh9K8/wT1ogytF5/Id
-bk8lEv4LANKX8+IMwqmQC0QICgDaf2VbKkuEMkDQrU2JRrwycQGXnkSA0dIqEHAX
-G90SA1SHydjBu9Kghh/K5/r7hitD9mh47VTHHtJv/JZHjwchRktpOeEpU+ENlfBM
-V05R5K76o5o1b5G0QPeRWKyX+bK6oMurchThs3brFvg1vrsGCRsh5zCWcVezjbzN
-trVoSJ1GG7pVStIbXbZXq8LA1faG0/f4iWosbM4Z1rG5SLrlc7QUCIrv9VYyci5w
-Hpi8R3KvQGxAM6OX5tBSrpow/GyLeabcy/a3fDPLMIZQGu1DK6J3vwSk0DcuLZ6m
-MYElNmoYfR6QXheaV+1US+FuzNv9x0mwbhHep+FNwn4Tkb30/MjcdBHXYNjqwD3o
-3lEicLaW0ckHDYlXDudytWKnqfmV6guA9C8mmPsJPBSNg3F+AbtLW3e/04/4DOaV
-jrZGd/ieac2LTY7BbCfqo+BBZ17Ca89qVLsUsBMh8B1lGFJEpF3qi0M3tdBNFGl0
-p7fkCCfepbIfMMIalikD
-=jE9L
------END PGP SIGNATURE-----
-
---Y7xTucakfITjPcLV--
+diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
+index 37110fd..4d1c315 100644
+--- a/crypto/algif_skcipher.c
++++ b/crypto/algif_skcipher.c
+@@ -444,6 +444,7 @@ static int skcipher_recvmsg(struct kiocb *unused, struct socket *sock,
+ 			err = skcipher_wait_for_data(sk, flags);
+ 			if (err)
+ 				goto unlock;
++			used = ctx->used;
+ 		}
+ 
+ 		used = min_t(unsigned long, used, iov_iter_count(&msg->msg_iter));
+diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+index 73f9fee..54c986a 100644
+--- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
++++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+@@ -27,6 +27,7 @@
+ #include <linux/moduleparam.h>
+ #include <generated/utsrelease.h>
+ #include <linux/utsname.h>
++#include <linux/vmalloc.h>
+ #include <linux/init.h>
+ #include <linux/list.h>
+ #include <linux/slab.h>
+diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
+index aebde32..f2ce95c 100644
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -21,6 +21,7 @@
+ #include <linux/crypto.h>
+ #include <linux/completion.h>
+ #include <linux/module.h>
++#include <linux/vmalloc.h>
+ #include <linux/idr.h>
+ #include <asm/unaligned.h>
+ #include <scsi/scsi_device.h>
+diff --git a/drivers/target/target_core_file.c b/drivers/target/target_core_file.c
+index d836de2..5f8b119 100644
+--- a/drivers/target/target_core_file.c
++++ b/drivers/target/target_core_file.c
+@@ -30,6 +30,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/module.h>
++#include <linux/vmalloc.h>
+ #include <linux/falloc.h>
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_host.h>
+diff --git a/drivers/target/target_core_pr.c b/drivers/target/target_core_pr.c
+index 283cf78..06cd53e 100644
+--- a/drivers/target/target_core_pr.c
++++ b/drivers/target/target_core_pr.c
+@@ -27,6 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/list.h>
++#include <linux/vmalloc.h>
+ #include <linux/file.h>
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_cmnd.h>
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index 0adc0f6..c99d2ea 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -34,6 +34,7 @@
+ #include <linux/cdrom.h>
+ #include <linux/module.h>
+ #include <linux/ratelimit.h>
++#include <linux/vmalloc.h>
+ #include <asm/unaligned.h>
+ #include <net/sock.h>
+ #include <net/tcp.h>
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 1a1bcf7..ca43a10 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -21,6 +21,7 @@
+ #include <linux/idr.h>
+ #include <linux/timer.h>
+ #include <linux/parser.h>
++#include <linux/vmalloc.h>
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_host.h>
+ #include <linux/uio_driver.h>
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index dc78d87..16b45ca 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -35,6 +35,7 @@
+ #include <linux/compat.h>
+ #include <linux/eventfd.h>
+ #include <linux/fs.h>
++#include <linux/vmalloc.h>
+ #include <linux/miscdevice.h>
+ #include <asm/unaligned.h>
+ #include <scsi/scsi.h>
+-- 
+2.1.0
