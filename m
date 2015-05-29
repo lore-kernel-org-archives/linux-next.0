@@ -1,130 +1,507 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: build failure after merge of the usb-gadget tree
-Date: Fri, 29 May 2015 10:19:21 -0500
-Message-ID: <20150529151921.GD2026@saruman.tx.rr.com>
-References: <20150529183213.7db39b9b@canb.auug.org.au>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8nsIa27JVQLqB7/C"
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20150529 build: 0 failures 187 warnings (next-20150529)
+Date: Fri, 29 May 2015 16:55:57 +0100
+Message-ID: <E1YyMdZ-0002tK-Fl@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:47631 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161065AbbE2PVc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 May 2015 11:21:32 -0400
-Content-Disposition: inline
-In-Reply-To: <20150529183213.7db39b9b@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33923 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756191AbbE2P4Q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 May 2015 11:56:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@ti.com>, Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
---8nsIa27JVQLqB7/C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tree/Branch: next-20150529
+Git describe: next-20150529
+Commit: 7732a9817f Add linux-next specific files for 20150529
 
-On Fri, May 29, 2015 at 06:32:13PM +1000, Stephen Rothwell wrote:
-> Hi Felipe,
->=20
-> After merging the usb-gadget tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> In file included from include/linux/module.h:17:0,
->                  from drivers/usb/gadget/legacy/nokia.c:19:
-> drivers/usb/gadget/legacy/nokia.c: In function '__check_num_buffers':
-> drivers/usb/gadget/function/f_mass_storage.h:51:34: error: 'fsg_num_buffe=
-rs' undeclared (first use in this function)
->   module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
->                                   ^
-> include/linux/moduleparam.h:387:68: note: in definition of macro '__param=
-_check'
->   static inline type __always_unused *__check_##name(void) { return(p); }
->                                                                     ^
-> include/linux/moduleparam.h:145:2: note: in expansion of macro 'param_che=
-ck_uint'
->   param_check_##type(name, &(value));       \
->   ^
-> drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of =
-macro 'module_param_named'
->   module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
->   ^
-> drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_=
-MODULE_PARAMETERS'
->  FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
->  ^
-> drivers/usb/gadget/function/f_mass_storage.h:51:34: note: each undeclared=
- identifier is reported only once for each function it appears in
->   module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
->                                   ^
-> include/linux/moduleparam.h:387:68: note: in definition of macro '__param=
-_check'
->   static inline type __always_unused *__check_##name(void) { return(p); }
->                                                                     ^
-> include/linux/moduleparam.h:145:2: note: in expansion of macro 'param_che=
-ck_uint'
->   param_check_##type(name, &(value));       \
->   ^
-> drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of =
-macro 'module_param_named'
->   module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
->   ^
-> drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_=
-MODULE_PARAMETERS'
->  FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
->  ^
-> drivers/usb/gadget/legacy/nokia.c: At top level:
-> drivers/usb/gadget/function/f_mass_storage.h:51:34: error: 'fsg_num_buffe=
-rs' undeclared here (not in a function)
->   module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
->                                   ^
-> include/linux/moduleparam.h:224:22: note: in definition of macro '__modul=
-e_param_call'
->       level, flags, { arg } }
->                       ^
-> include/linux/moduleparam.h:146:2: note: in expansion of macro 'module_pa=
-ram_cb'
->   module_param_cb(name, &param_ops_##type, &value, perm);     \
->   ^
-> drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of =
-macro 'module_param_named'
->   module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
->   ^
-> drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_=
-MODULE_PARAMETERS'
->  FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
->  ^
->=20
-> Caused by commit e4f8ef7b0770 ("usb: gadget: nokia: Add mass storage
-> driver to g_nokia").
->=20
-> I have used the usb-gadget tree from next-20150528 for today.
+Build Time: 74 min 31 sec
 
-I'll drop that patch, thanks
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
---=20
-balbi
+Errors: 0
+Warnings: 187
+Section Mismatches: 2
 
---8nsIa27JVQLqB7/C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+    142 warnings    5 mismatches  : arm64-allmodconfig
+      7 warnings    0 mismatches  : arm-multi_v5_defconfig
+      9 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+     54 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      2 warnings    0 mismatches  : arm64-defconfig
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+-------------------------------------------------------------------------------
 
-iQIcBAEBAgAGBQJVaIN5AAoJEIaOsuA1yqREYZgP/RHlZVJwo/jYrP6gLZ1i5+NB
-iRDCJqpmaHXBkPzQUt2/wleh04xVX4qvfQWNl5pO6y5H4j+2gCCuIavI3lEVzetS
-0MWtqi+1Ny6SEsCWW2cx5Qd/clnAYXRogPeheoVceGWeP1yijC7xolG5Ohv8jCht
-GUQzb4BrwpqJCvV0yuSjRoKOWLNQiz9MyDLo/Q1ml1rV3Fjo019i4JwDI+0LPz4d
-dl+Yui7MIkGS6Fcn2Rh3X0+Wfh6OzZS8FDaBk692W5tx/ShbEA2DP4TKkOmt0uXh
-lOKla2DFdDJY2R0bQiNaF3HnZgFrxX1zpQdq5abOafHHjEcOEJRgOanWImV4S00X
-DlN7U7kFbJbDZw8qs/Je/YrLzB1Rm3CdGEcxlBhXikTirKc/S59oZJC1WdQHGrtt
-c1i0qz31RL9EHb7skgNImW1bxBWeX1IjDpJnX1pO4CUcUM5U5P+Fin1JFSHXz1uq
-zTODkGsI53k3djWLswle3c23wxtuYRZPN4ay7OCUF+b3JHzBIiFg2m7WUWMvTfrn
-laa/mPfEYWsup3Llzht/sKVdOIVoQCnU/1dwmnq/eeY15ACoT0iPZ5WGx37Hcm/p
-PesTSdtZrroJXisv18CVIkeJ3FVi45hs/p8weEPow8uREzYQYUOwqLixSgtMZw7a
-TfTELL7wwHTdp3A3uYFb
-=1eWM
------END PGP SIGNATURE-----
+Warnings Summary: 187
+	 12 <stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	 11 warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	  2 ../drivers/staging/wilc1000/wilc_wlan.c:897:11: warning: unused variable 'val32' [-Wunused-variable]
+	  2 ../drivers/staging/wilc1000/wilc_spi.c:1200:4: warning: too many arguments for format [-Wformat-extra-args]
+	  2 ../drivers/staging/wilc1000/wilc_spi.c:1197:3: warning: too many arguments for format [-Wformat-extra-args]
+	  2 ../drivers/staging/wilc1000/linux_wlan.c:2612:16: warning: unused variable 'ih' [-Wunused-variable]
+	  2 ../drivers/staging/wilc1000/linux_wlan.c:2611:8: warning: unused variable 'pu8UdpBuffer' [-Wunused-variable]
+	  2 ../drivers/staging/wilc1000/linux_wlan.c:2039:1: warning: label '_fail_irq_init_' defined but not used [-Wunused-label]
+	  2 ../drivers/staging/wilc1000/linux_wlan.c:1714:1: warning: label '_fail_1' defined but not used [-Wunused-label]
+	  2 ../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
+	  2 ../drivers/staging/lustre/lustre/lov/lov_request.c:78:7: warning: unused variable 'len' [-Wunused-variable]
+	  2 ../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
+	  1 arch/arm/configs/multi_v7_defconfig:601:warning: override: reassigning to symbol COMMON_CLK_QCOM
+	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../net/ipv4/inet_hashtables.c:631:13: warning: division by zero [-Wdiv-by-zero]
+	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
+	  1 ../include/trace/trace_events.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	  1 ../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wlan.c:2322:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat]
+	  1 ../drivers/staging/wilc1000/wilc_wlan.c:2322:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat=]
+	  1 ../drivers/staging/wilc1000/wilc_wlan.c:2305:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat]
+	  1 ../drivers/staging/wilc1000/wilc_wlan.c:2305:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat=]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:938:97: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:935:31: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:853:3: warning: format '%d' expects argument of type 'int', but argument 2 has type 'size_t' [-Wformat=]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:839:31: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:672:3: warning: format '%d' expects argument of type 'int', but argument 2 has type 'size_t' [-Wformat=]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:2: warning: initialization from incompatible pointer type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:2: warning: (near initialization for 'WILC_WFI_cfg80211_ops.get_station') [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:17: warning: initialization from incompatible pointer type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:17: warning: (near initialization for 'WILC_WFI_cfg80211_ops.get_station')
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:2: warning: initialization from incompatible pointer type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:2: warning: (near initialization for 'WILC_WFI_cfg80211_ops.change_station') [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:20: warning: initialization from incompatible pointer type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:20: warning: (near initialization for 'WILC_WFI_cfg80211_ops.change_station')
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:2: warning: initialization from incompatible pointer type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:2: warning: (near initialization for 'WILC_WFI_cfg80211_ops.add_station') [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:17: warning: initialization from incompatible pointer type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:17: warning: (near initialization for 'WILC_WFI_cfg80211_ops.add_station')
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4100:41: warning: passing argument 1 of 'WILC_WFI_init_mon_interface' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4100:3: warning: passing argument 1 of 'WILC_WFI_init_mon_interface' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4001:25: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4001:25: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3933:12: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3933:12: warning: initialization discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3861:25: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3861:25: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3614:2: warning: format '%d' expects argument of type 'int', but argument 5 has type 'size_t' [-Wformat=]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3614:2: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3510:33: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3508:33: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3502:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3475:67: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3421:67: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3354:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3352:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3346:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3261:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3259:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3253:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1505:8: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1504:41: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1471:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1471:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1470:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1470:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1465:39: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1465:11: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1465:11: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1464:44: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1431:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1431:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1430:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1430:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1414:8: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1413:41: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1381:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1381:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1380:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1380:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1367:39: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1367:11: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1367:11: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1366:44: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1335:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1335:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1334:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1334:15: warning: assignment discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1250:58: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1250:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1156:7: warning: passing argument 3 of 'host_int_set_join_req' discards 'const' qualifier from pointer target type [enabled by default]
+	  1 ../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1152:81: warning: passing argument 3 of 'host_int_set_join_req' discards 'const' qualifier from pointer target type
+	  1 ../drivers/staging/wilc1000/wilc_spi.c:407:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'long unsigned int' [-Wformat=]
+	  1 ../drivers/staging/wilc1000/linux_wlan.c:2636:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/linux_wlan.c:2140:51: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/linux_wlan.c:1405:84: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/linux_wlan.c:1165:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/linux_wlan.c:1154:35: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:900:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:862:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:802:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:758:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:711:47: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:708:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:7073:58: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:7070:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:706:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:7011:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:6964:62: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:6958:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:6859:31: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:665:47: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:6643:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:662:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:651:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:625:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:6160:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:6068:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:5817:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4349:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4298:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4280:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4230:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4206:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4138:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4086:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:4000:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3948:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3890:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3813:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3769:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3721:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3665:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3568:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3523:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3442:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3428:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3380:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3330:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3299:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3255:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3211:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3166:72: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3162:67: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3098:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3049:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:3010:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2969:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2912:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2865:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2819:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2810:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2798:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2770:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2664:73: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2660:68: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2239:71: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2235:66: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:2209:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:1993:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:1981:33: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:1453:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:1375:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/wilc1000/host_interface.c:1208:70: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
+	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	  1 ../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/gpu/drm/i915/intel_display.c:11866:6: warning: 'crtc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/gpu/drm/i915/intel_display.c:11842:14: warning: 'crtc_state' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/block/nvme-core.c:1834:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/nvme-core.c:1795:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/nvme-core.c:1791:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/nvme-core.c:1769:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
---8nsIa27JVQLqB7/C--
+Section Mismatch Summary: 2
+	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	  2 WARNING: drivers/i2c/busses/i2c-xgene-slimpro.o(.data+0x28): Section mismatch in reference from the variable xgene_slimpro_i2c_driver to the variable .init.text:$x
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 142 warnings, 5 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	../drivers/gpio/gpio-74xx-mmio.c:132:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
+	../drivers/staging/lustre/lustre/lov/lov_request.c:78:7: warning: unused variable 'len' [-Wunused-variable]
+	../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
+	../drivers/staging/wilc1000/wilc_wlan.c:897:11: warning: unused variable 'val32' [-Wunused-variable]
+	../drivers/staging/wilc1000/wilc_wlan.c:2305:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat=]
+	../drivers/staging/wilc1000/wilc_wlan.c:2322:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat=]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:672:3: warning: format '%d' expects argument of type 'int', but argument 2 has type 'size_t' [-Wformat=]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:839:31: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:853:3: warning: format '%d' expects argument of type 'int', but argument 2 has type 'size_t' [-Wformat=]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:935:31: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:938:97: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1152:81: warning: passing argument 3 of 'host_int_set_join_req' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1250:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1250:58: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1334:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1335:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1366:44: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1367:39: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1380:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1381:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1413:41: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1430:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1431:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1464:44: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1465:39: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1470:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1471:15: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1504:41: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3253:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3259:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3261:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3346:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3352:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3354:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3421:67: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3475:67: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3502:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3508:33: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3510:33: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3614:2: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3614:2: warning: format '%d' expects argument of type 'int', but argument 5 has type 'size_t' [-Wformat=]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3861:25: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3933:12: warning: initialization discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4001:25: warning: assignment discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4100:41: warning: passing argument 1 of 'WILC_WFI_init_mon_interface' discards 'const' qualifier from pointer target type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:17: warning: initialization from incompatible pointer type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:17: warning: (near initialization for 'WILC_WFI_cfg80211_ops.add_station')
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:20: warning: initialization from incompatible pointer type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:20: warning: (near initialization for 'WILC_WFI_cfg80211_ops.change_station')
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:17: warning: initialization from incompatible pointer type
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:17: warning: (near initialization for 'WILC_WFI_cfg80211_ops.get_station')
+	../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/linux_wlan.c:1154:35: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/linux_wlan.c:1165:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/linux_wlan.c:1405:84: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/linux_wlan.c:1714:1: warning: label '_fail_1' defined but not used [-Wunused-label]
+	../drivers/staging/wilc1000/linux_wlan.c:2039:1: warning: label '_fail_irq_init_' defined but not used [-Wunused-label]
+	../drivers/staging/wilc1000/linux_wlan.c:2140:51: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/linux_wlan.c:2636:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/linux_wlan.c:2612:16: warning: unused variable 'ih' [-Wunused-variable]
+	../drivers/staging/wilc1000/linux_wlan.c:2611:8: warning: unused variable 'pu8UdpBuffer' [-Wunused-variable]
+	../drivers/staging/wilc1000/host_interface.c:625:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:651:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/host_interface.c:662:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:665:47: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:706:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:708:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:711:47: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:758:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:802:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:862:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:900:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:1208:70: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:1375:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:1453:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:1981:33: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:1993:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2209:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2235:66: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2239:71: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2660:68: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2664:73: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2770:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2798:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2810:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2819:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2865:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2912:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:2969:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3010:61: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3049:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3098:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3162:67: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3166:72: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3211:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3255:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3299:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3330:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3380:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3428:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3442:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3523:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3568:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3665:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3721:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3769:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3813:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3890:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:3948:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4000:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4086:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4138:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4206:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4230:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4280:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4298:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:4349:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:5817:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:6068:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:6160:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:6643:59: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:6859:31: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:6958:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/host_interface.c:6964:62: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/host_interface.c:7011:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/host_interface.c:7070:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/staging/wilc1000/host_interface.c:7073:58: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/wilc1000/wilc_spi.c:407:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'long unsigned int' [-Wformat=]
+	../drivers/staging/wilc1000/wilc_spi.c:1197:3: warning: too many arguments for format [-Wformat-extra-args]
+	../drivers/staging/wilc1000/wilc_spi.c:1200:4: warning: too many arguments for format [-Wformat-extra-args]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+Section Mismatches:
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/i2c/busses/i2c-xgene-slimpro.o(.data+0x28): Section mismatch in reference from the variable xgene_slimpro_i2c_driver to the variable .init.text:$x
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/i2c/busses/i2c-xgene-slimpro.o(.data+0x28): Section mismatch in reference from the variable xgene_slimpro_i2c_driver to the variable .init.text:$x
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../net/ipv4/inet_hashtables.c:631:13: warning: division by zero [-Wdiv-by-zero]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:601:warning: override: reassigning to symbol COMMON_CLK_QCOM
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../net/bluetooth/mgmt.c:6463:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:6463:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/i915/intel_display.c:11842:14: warning: 'crtc_state' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/i915/intel_display.c:11866:6: warning: 'crtc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 54 warnings, 0 section mismatches
+
+Warnings:
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	warning: (ARCH_MXC) selects CLKSRC_IMX_GPT which has unmet direct dependencies (OF && BROKEN)
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../kernel/acct.c:174:2: warning: value computed is not used [-Wunused-value]
+	../drivers/block/nvme-core.c:1769:29: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/nvme-core.c:1791:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/nvme-core.c:1795:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/nvme-core.c:1834:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/trace/trace_events.h:28:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	../drivers/media/platform/coda/./trace.h:12:0: warning: "TRACE_SYSTEM_STRING" redefined [enabled by default]
+	../drivers/rtc/rtc-armada38x.c:91:22: warning: unused variable 'flags' [-Wunused-variable]
+	../drivers/staging/lustre/lustre/lov/lov_request.c:78:7: warning: unused variable 'len' [-Wunused-variable]
+	../drivers/scsi/ips.c:210:2: warning: #warning "This driver has only been tested on the x86/ia64/x86_64 platforms" [-Wcpp]
+	../drivers/staging/lustre/lustre/obdclass/acl.c:123:6: warning: unused variable 'old_size' [-Wunused-variable]
+	../drivers/staging/wilc1000/wilc_wlan.c:897:11: warning: unused variable 'val32' [-Wunused-variable]
+	../drivers/staging/wilc1000/wilc_wlan.c:2305:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat]
+	../drivers/staging/wilc1000/wilc_wlan.c:2322:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'uint8_t *' [-Wformat]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1156:7: warning: passing argument 3 of 'host_int_set_join_req' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1334:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1335:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1367:11: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1367:11: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1380:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1381:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1414:8: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1430:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1431:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1465:11: warning: passing argument 2 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1465:11: warning: passing argument 6 of 'host_int_add_rx_gtk' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1470:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1471:15: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:1505:8: warning: passing argument 2 of 'host_int_add_ptk' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3861:25: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:3933:12: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4001:25: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4100:3: warning: passing argument 1 of 'WILC_WFI_init_mon_interface' discards 'const' qualifier from pointer target type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:2: warning: initialization from incompatible pointer type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4184:2: warning: (near initialization for 'WILC_WFI_cfg80211_ops.add_station') [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:2: warning: initialization from incompatible pointer type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4186:2: warning: (near initialization for 'WILC_WFI_cfg80211_ops.change_station') [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:2: warning: initialization from incompatible pointer type [enabled by default]
+	../drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:4189:2: warning: (near initialization for 'WILC_WFI_cfg80211_ops.get_station') [enabled by default]
+	../drivers/staging/wilc1000/linux_wlan.c:1714:1: warning: label '_fail_1' defined but not used [-Wunused-label]
+	../drivers/staging/wilc1000/linux_wlan.c:2039:1: warning: label '_fail_irq_init_' defined but not used [-Wunused-label]
+	../drivers/staging/wilc1000/linux_wlan.c:2612:16: warning: unused variable 'ih' [-Wunused-variable]
+	../drivers/staging/wilc1000/linux_wlan.c:2611:8: warning: unused variable 'pu8UdpBuffer' [-Wunused-variable]
+	../drivers/staging/wilc1000/wilc_spi.c:1197:3: warning: too many arguments for format [-Wformat-extra-args]
+	../drivers/staging/wilc1000/wilc_spi.c:1200:4: warning: too many arguments for format [-Wformat-extra-args]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
