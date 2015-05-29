@@ -1,59 +1,118 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH] clocksource: make ARM_TIMER_SP804 depend on GENERIC_SCHED_CLOCK
-Date: Fri, 29 May 2015 09:17:56 +0100
-Message-ID: <1432887476-19301-1-git-send-email-sudeep.holla@arm.com>
-References: <20150529110919.2276365a@canb.auug.org.au>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:56677 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753184AbbE2ISI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 May 2015 04:18:08 -0400
-In-Reply-To: <20150529110919.2276365a@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the usb-gadget tree
+Date: Fri, 29 May 2015 18:32:13 +1000
+Message-ID: <20150529183213.7db39b9b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lpu.2AQp7UA2UkuPSazPfeI"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>, Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Commit 5261ef2ea836 ("ARM: 8366/1: move Dual-Timer SP804 driver to
-drivers/clocksource") moved SP804 to drivers/clocksource resulting in
-it being selectable on platforms/architectures without the config
-GENERIC_SCHED_CLOCK enabled. Due to that, it results in the following
-build failure(e.g. x86_64 allmodconfig)
+--Sig_/lpu.2AQp7UA2UkuPSazPfeI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/built-in.o: In function `__sp804_clocksource_and_sched_clock_init':
-(.init.text+0x1a0e7): undefined reference to `sched_clock_register'
+Hi Felipe,
 
-This patch fixes the build by making ARM_TIMER_SP804 depend on
-GENERIC_SCHED_CLOCK
+After merging the usb-gadget tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/clocksource/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+In file included from include/linux/module.h:17:0,
+                 from drivers/usb/gadget/legacy/nokia.c:19:
+drivers/usb/gadget/legacy/nokia.c: In function '__check_num_buffers':
+drivers/usb/gadget/function/f_mass_storage.h:51:34: error: 'fsg_num_buffers=
+' undeclared (first use in this function)
+  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
+                                  ^
+include/linux/moduleparam.h:387:68: note: in definition of macro '__param_c=
+heck'
+  static inline type __always_unused *__check_##name(void) { return(p); }
+                                                                    ^
+include/linux/moduleparam.h:145:2: note: in expansion of macro 'param_check=
+_uint'
+  param_check_##type(name, &(value));       \
+  ^
+drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of ma=
+cro 'module_param_named'
+  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
+  ^
+drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_MO=
+DULE_PARAMETERS'
+ FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
+ ^
+drivers/usb/gadget/function/f_mass_storage.h:51:34: note: each undeclared i=
+dentifier is reported only once for each function it appears in
+  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
+                                  ^
+include/linux/moduleparam.h:387:68: note: in definition of macro '__param_c=
+heck'
+  static inline type __always_unused *__check_##name(void) { return(p); }
+                                                                    ^
+include/linux/moduleparam.h:145:2: note: in expansion of macro 'param_check=
+_uint'
+  param_check_##type(name, &(value));       \
+  ^
+drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of ma=
+cro 'module_param_named'
+  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
+  ^
+drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_MO=
+DULE_PARAMETERS'
+ FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
+ ^
+drivers/usb/gadget/legacy/nokia.c: At top level:
+drivers/usb/gadget/function/f_mass_storage.h:51:34: error: 'fsg_num_buffers=
+' undeclared here (not in a function)
+  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
+                                  ^
+include/linux/moduleparam.h:224:22: note: in definition of macro '__module_=
+param_call'
+      level, flags, { arg } }
+                      ^
+include/linux/moduleparam.h:146:2: note: in expansion of macro 'module_para=
+m_cb'
+  module_param_cb(name, &param_ops_##type, &value, perm);     \
+  ^
+drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of ma=
+cro 'module_param_named'
+  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
+  ^
+drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_MO=
+DULE_PARAMETERS'
+ FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
+ ^
 
-Hi Russell,
+Caused by commit e4f8ef7b0770 ("usb: gadget: nokia: Add mass storage
+driver to g_nokia").
 
-If you are fine with this fix, I will put this into the patch tracker.
+I have used the usb-gadget tree from next-20150528 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Regards,
-Sudeep
+--Sig_/lpu.2AQp7UA2UkuPSazPfeI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 0f1c0e7f86da..50534704486a 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -134,6 +134,7 @@ config ARM_GLOBAL_TIMER
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
- config ARM_TIMER_SP804
- 	bool "Support for Dual Timer SP804 module"
-+	depends on GENERIC_SCHED_CLOCK
- 	select CLKSRC_MMIO
- 	select CLKSRC_OF if OF
+iQIcBAEBCAAGBQJVaCQSAAoJEMDTa8Ir7ZwVX2MP/1zB36EGVbLTnOpoQYIg+G3D
+MhhDQ+3iFCB908KrnLBogOoYsSwkMVTFUDc59dnd/gg9Tv/Xu7Ws8JGnoW9jFkC8
+LtSpkP5mmpPLphKdszUwkSyerzMR/figwRW1Yg8qL6Z76jihjULI1f6T4PTE3yyh
+i8uaUcEycYTkjdusAsGHrKsTfk5v/VKsXkm13tBMp6MGg6HdaDfJzIEH4dkErwkV
+CpMITsVN0HO7/Q3Zf5GNfR1P0Zan5DTEUNob/f++tqE6pgWAMgL+4Jn3jopG+QaF
+XuaEwIbPL0nlvK4+vFR9DVw4zisgDQ4aBv6uBOtoYRpJnrOqFNY8Bf7w4+l4y0Yk
+1maeKgYGLvdYL8fCa7Sov5kxTGEIm6b88Z0QY+IbX0Xy5WB9DKthYJuJXz3JOmJF
+2b1PQJX8vZmYYhXWzFB+Z4+RrakuATnaUT8fRgCGvoSHrTW7FHottkY0J0twDMOM
+T0N5H/OA/OB+J6wGwSzDl1ZC9sSgogN78GK7TGcLVB7VdLxjke81CavVNS2YKGRb
+bKwdbXsPwtB+UQGSML7sRP7phznPlEpSa+Cz2+stIYovOoam5svQCzLQBR0RMyOk
+V+dlLZTBrrVNHPJrpA0P7qn7L0I6wbVyoS8/Y07YXYJAVFIDg20QmVluMqBos7mX
+5YVC580dficMZLMcwOaa
+=8i7N
+-----END PGP SIGNATURE-----
 
---
-1.9.1
+--Sig_/lpu.2AQp7UA2UkuPSazPfeI--
