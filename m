@@ -1,69 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of most of the trees
-Date: Fri, 29 May 2015 10:34:59 +1000
-Message-ID: <20150529103459.4e90212d@canb.auug.org.au>
+Date: Fri, 29 May 2015 10:36:45 +1000
+Message-ID: <20150529103645.57579e82@canb.auug.org.au>
 References: <20150528220607.67a68696@canb.auug.org.au>
-	<1432826811.7456.10.camel@edumazet-glaptop2.roam.corp.google.com>
+	<20150528.114203.717794268051352731.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wPctUqjvJCDZIEGQrzDe7ND"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1432826811.7456.10.camel@edumazet-glaptop2.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/OtEd_yb1YUMU9CnYj.2pHXu"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50684 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754794AbbE2Agz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 May 2015 20:36:55 -0400
+In-Reply-To: <20150528.114203.717794268051352731.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, edumazet@google.com
 
---Sig_/wPctUqjvJCDZIEGQrzDe7ND
+--Sig_/OtEd_yb1YUMU9CnYj.2pHXu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Dave,
 
-On Thu, 28 May 2015 08:26:51 -0700 Eric Dumazet <eric.dumazet@gmail.com> wr=
-ote:
+On Thu, 28 May 2015 11:42:03 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
 >
-> We were alerted of this problem thanks to kbuild test robot.
+> The only thing I will say on this matter is that the _only_ way this
+> problem will go away is if someone does the work necessary to get rid
+> of that implicit vmalloc.h include that happens on all x86 platform
+> builds.
 >=20
-> This fix is not a definitive one I hope.
+> So if you want this to stop happening, work on that.
 
-No, just something to allow me to get my tree to build so I could go to
-bed :-)
+I may have a look in my (copious) free time :-)
 
-> Golden rule is that vmalloc() users must include vmalloc.h themselves,
-> not by an indirect include.
+> I've applied the following to net-next, thanks for your report.
 
-Yep, that is a special case of Rule 1.
-
-> I sent one fix, and prepared others, but I prefer that each offender is
-> fixed.
-
-Yeah, thanks to Dave for that.
+Thanks for that.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/wPctUqjvJCDZIEGQrzDe7ND
+--Sig_/OtEd_yb1YUMU9CnYj.2pHXu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVZ7Q4AAoJEMDTa8Ir7ZwVhosP+wc60HYnJ06VQli0LyUrxZxA
-CZZPUZcJin2Vztl+HY1HlSJzBbAO6G44xB2z9CwANWK8uIh3+Wcr6+BIwTksI0sE
-OlIFCz3MeQrQfGbty7J/dIBiuH2MStt7IwElWxOB/xqn9Hl8dOduULLzgiGOU2Gm
-yA6zmzqvkVouRmb1lV0sB0ub1FpUZfLYFb4LJYeUz1GEv5Q8BLy8MSzda+QEPg2s
-ScMEY+IvufKlCw4IBzU9k1sdQIc1IHQK7nLznRRzn/UKa5ym+vuHWUnL4MPspVVK
-w44SX/xx20evlfpSM7XSknO7mFD8qIhLhh3SglUji8oYzOkrYFY3Id0nJ7Td+wJS
-M60FgM+EYrD8xPA7zyxmmwsWIZgYUSWkJSLOEZHPRsxxkeIgQaLTlny6PlF+bMg2
-oFSPJAiFz6IHyoWerbi22OMksgWObmBkMrK8I88k2nOC4l8b2kLpSjvgoBbJ1hD1
-9godo6bSogG2M6IIb1ivQP3p/8SCN9oaco+eeILCBNBvyviGGxRkJW0DGh3tEbvS
-74r0zlqiIM852YJmDxvjL3VsvC9rR7DhT3N2rM2sVMKtc+eREhaddHhyWrO461Ns
-Ed0Fzt1UKFHU3C6qaLgLU0vw5+JboXsyU0L3d1CW4o9tea/t0HaNvehbd2qx0Urg
-dzNmvke18Y1Dc+nAwreR
-=IAab
+iQIcBAEBCAAGBQJVZ7SlAAoJEMDTa8Ir7ZwVBQ0P/2zfkVn6Ixnho1Wq2oDArBn8
+EaYRVgjJ+wg040oR82u6Ew650HXHk2NgBFflRjN0kBY9b5piwbJcs5Doq4WhlfIG
++cscXjc1fZjBZmYNMUU75CYX288tWFvuX0VkwCdJNnQZ+a4wM3A/SJRXT/NYrNNr
+e6u6ndyNNrh+lMMQUQtOQy7H6itsOln5jZLD1DAB+iiXbs7bjrE44wIfsnI8GLi5
+CZTCeR7wZeCqPX93Iofy1b/k2psjRdhoaPPBq1rDySNbjpWbglfPMb5Mco4toNNF
+1kICSbfSA3oLuCQlA6UEWgwV/4NdoHYtlyj357bf/HXLzhvLJQAI75ttdp6B7Ami
+7RCxnV24h5lzPrINa0Sx8Oufa8ehz4v+SrRIFi4OuMVic9nbO+six/OH9ZHRWrnn
+9j0o/yrCX4ahvIW7Dxas63HjfuOcBiKMP688s1NPK5enSJ0M2HNsAaeDnobPxTOX
+2xLT1E5E4UACXfr33Q6E/szqmMT/tvNlISU7EBhwCrzy8anVzZXGu925Ggd0hcnz
+xPtffa0r4eVomcq1SGbzpUxdlSUxyrQ8eOf7tlcRKq0JPncwTWI8/0ff3AwwzQ/Q
+HM4WMbN8rm6qGZzjUdPLm773qhKTIpBgbUtWqGCJKfjrrKoxUWA/ibXKq28qXG0u
+dKVGdouZqE6A3n4WRs5G
+=Y3Hu
 -----END PGP SIGNATURE-----
 
---Sig_/wPctUqjvJCDZIEGQrzDe7ND--
+--Sig_/OtEd_yb1YUMU9CnYj.2pHXu--
