@@ -1,78 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clk tree with the imx-mxs tree
-Date: Fri, 29 May 2015 20:45:53 +1000
-Message-ID: <20150529204553.3198ba2c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the imx-mxs tree
+Date: Fri, 29 May 2015 21:28:59 +1000
+Message-ID: <20150529212859.0acb08e2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/10XH093XHZnTmgvwZYSH/_T"; protocol="application/pgp-signature"
+ boundary="Sig_/.FBWVoRDs3GNdNeV.yrryB3"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45412 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40544 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754472AbbE2KqA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 May 2015 06:46:00 -0400
+	id S1755887AbbE2L3I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 May 2015 07:29:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bintian Wang <bintian.wang@huawei.com>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/10XH093XHZnTmgvwZYSH/_T
+--Sig_/.FBWVoRDs3GNdNeV.yrryB3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Shawn,
 
-Today's linux-next merge of the clk tree got a conflict in
-drivers/clk/Makefile between commit 33156149fc4a ("ARM: imx: move clock
-drivers into drivers/clk") from the imx-mxs tree and commit
-b1691707eccd ("clk: hi6220: Clock driver support for Hisilicon hi6220
-SoC") from the clk tree.
+After merging the imx-mxs tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+
+drivers/clocksource/timer-imx-gpt.c:37:27: fatal error: asm/mach/time.h: No=
+ such file or directory
+ #include <asm/mach/time.h>
+                           ^
+
+Caused by commit 77b0235b6b5c ("ARM: imx: move timer driver into
+drivers/clocksource").
+
+I have marked it as BROKEN for now:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 29 May 2015 21:24:03 +1000
+Subject: [PATCH] ARM: imx: mark CLKSRC_IMX_GPT as BROKEN for now
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/clocksource/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 3c15a49fdac9..d8fedc925864 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -279,6 +279,7 @@ config CLKSRC_PXA
+ config CLKSRC_IMX_GPT
+ 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
+ 	depends on OF
++	depends on BROKEN
+ 	select CLKSRC_MMIO
+=20
+ config H8300_TMR16
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/clk/Makefile
-index 96e9778ac9bd,772909d1a612..000000000000
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@@ -47,11 -47,9 +47,10 @@@ obj-$(CONFIG_COMMON_CLK_PWM)		+=3D clk-pw
-  obj-$(CONFIG_COMMON_CLK_AT91)		+=3D at91/
-  obj-$(CONFIG_ARCH_BCM_MOBILE)		+=3D bcm/
-  obj-$(CONFIG_ARCH_BERLIN)		+=3D berlin/
-- obj-$(CONFIG_ARCH_HI3xxx)		+=3D hisilicon/
-- obj-$(CONFIG_ARCH_HIP04)		+=3D hisilicon/
-- obj-$(CONFIG_ARCH_HIX5HD2)		+=3D hisilicon/
-+ obj-$(CONFIG_ARCH_HISI)			+=3D hisilicon/
- +obj-$(CONFIG_ARCH_MXC)			+=3D imx/
-  obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+=3D keystone/
-+ obj-$(CONFIG_ARCH_MEDIATEK)		+=3D mediatek/
-  ifeq ($(CONFIG_COMMON_CLK), y)
-  obj-$(CONFIG_ARCH_MMP)			+=3D mmp/
-  endif
-
---Sig_/10XH093XHZnTmgvwZYSH/_T
+--Sig_/.FBWVoRDs3GNdNeV.yrryB3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVaENmAAoJEMDTa8Ir7ZwVwZwP+wbxuNIRiSYMgYcC/5wF6dNw
-UHgDTryGAZ7oAf1e3bQXtEDOscGesnZChR0xcS3m03TYXYV6iBWyvM2sYK0GEuxx
-H2tC5Poft5xAJmxigpa9OTPd7zXvzNFSvQn9YGsAZaSSPajAZvvyE6RIW8ryY42o
-8LRpRA1HYyx03mIJq1WKBkBe3FyyrDGaSOBzVRtaZU3OZKah88by2pYJYP6M3wMg
-HrlG/BqgXwwL9oQR9H6oOrSOhpXAfsqKiSpYS94fYVaP7YwNMnPNgAbi5bZDJuxj
-Na6SbZ4KERoMGtRZXZbaFYULNYB7JMXF/8hfqhvGV9NneCF0D9c8wcPqo4nimQ2M
-J3b/wGx+zUwZ9Vl/Nm5ZucJ3ZyKqDxtXokXh4LU6GpO6OjqXrnBTpdMwOU/heWC/
-vQdKSbrtsAM7UXBYtbgEwcMBOzPPXm+71S9bClx9bwl7xyqdbL7sTVf96q1PnM7o
-8kuS5XHbkice//urLt6Ngr3RO++DSAbnq2wxGOLaMchkHLw+sxM4qSja8HSz7t4+
-DPoINDw4adMdjalmas315Ht7LtgeIQoH6zA4B3TxD+MG0vlzZQI4n3+x+4SxL5mX
-2LvhsJo9IPaKdmYpaduhhPaxGtNrLf7UiTerzNZuwrCenttfUDk5bJijYCxBnwtB
-C2mDFYEkB4JI2PGuaMn5
-=w7YZ
+iQIcBAEBCAAGBQJVaE2CAAoJEMDTa8Ir7ZwVTyQQAIUt3i9Z81IbH7NmJ2P7raxW
+kdbEXAUjkROls/abWXEUFWsMqBZMsozAjp79+8KeRrKcovA1HeKc35VGtxR+V/v8
+F8LrP5lgTKmeDZzmn7FBg5o6KOZ4v+7SqSi/20vBfUMaEVAj9r/IPUkx4RMgeIng
+Ytozj4xo5yU/CZF1ByX89/vbxPKNW9bdxIFXjq1Y0ySDKVAjFh23d3hVXKRs/2l0
+xBWMyC/pyz4BZVBRWVPAEy6fB64iWcj7A3xQ0pZ9V8ECJ1PsD+/XYfICNzg25Rs4
+VA1kUv+68LN9m+2u0nk7cLZdrXImnremp2TZUVwkf4ZBqBJdRkT+4JIOWO+x1Jvs
+7SnLf8lMoc9kFYwqKTlCLhFS+MRYi6O/EPpkEPaCvou13kfzjps02GErFzpfn0SN
+oKBjmvWIMvyBg0Ce8cwpOLRs5RtGLc7udG8rB3igsr/LM1Ux20st+46XsHzzbAJB
+MsmuPLFjo+fHIbcz83pFAz3hZAXURuH61iy8bUQW+v7bwDV6gzA28rv50jaGzD/A
+Mu75VtpISX2iO9Iexd/s0KvH1DfspjatNWdnkZbBv060niQSp/KD1MuG8J/Ubd3v
+zh6mSXvj2ejyVEUs2DnpLoXHtfgUG2tlRFPkelxXQr3K0QBW2qhTF03aovhbamzw
+Gwaurd/0lQ/zdrR88bfF
+=8Nyy
 -----END PGP SIGNATURE-----
 
---Sig_/10XH093XHZnTmgvwZYSH/_T--
+--Sig_/.FBWVoRDs3GNdNeV.yrryB3--
