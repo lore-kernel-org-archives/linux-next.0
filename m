@@ -1,118 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the usb-gadget tree
-Date: Fri, 29 May 2015 18:32:13 +1000
-Message-ID: <20150529183213.7db39b9b@canb.auug.org.au>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: linux-next: manual merge of the arm-perf tree with Linus' and
+ teh arm-current trees
+Date: Fri, 29 May 2015 11:21:54 +0100
+Message-ID: <20150529102154.GC6528@arm.com>
+References: <20150529111432.397105d2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lpu.2AQp7UA2UkuPSazPfeI"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>, Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:57250 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755547AbbE2KV5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 May 2015 06:21:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20150529111432.397105d2@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <Mark.Rutland@arm.com>
 
---Sig_/lpu.2AQp7UA2UkuPSazPfeI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 29, 2015 at 02:14:32AM +0100, Stephen Rothwell wrote:
+> Today's linux-next merge of the arm-perf tree got a conflict in
+> arch/arm/kernel/perf_event_cpu.c between commit 338d9dd3e2ae ("ARM:
+> 8351/1: perf: don't warn about missing interrupt-affinity property for
+> PPIs") from Linus' tree and 8d2812849acb ("ARM: 8357/1: perf: fix
+> memory leak when probing PMU PPIs") from the arm-current tree and
+> commit 64d0d3943e14 ("arm: perf: make of_pmu_irq_cfg take arm_pmu")
+> from the arm-perf tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi Felipe,
+Thanks Stephen, looks good to me. I've got some more patches queued which
+will actually mean we just remove this file altogether, but this is fine
+for now.
 
-After merging the usb-gadget tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Will
 
-In file included from include/linux/module.h:17:0,
-                 from drivers/usb/gadget/legacy/nokia.c:19:
-drivers/usb/gadget/legacy/nokia.c: In function '__check_num_buffers':
-drivers/usb/gadget/function/f_mass_storage.h:51:34: error: 'fsg_num_buffers=
-' undeclared (first use in this function)
-  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
-                                  ^
-include/linux/moduleparam.h:387:68: note: in definition of macro '__param_c=
-heck'
-  static inline type __always_unused *__check_##name(void) { return(p); }
-                                                                    ^
-include/linux/moduleparam.h:145:2: note: in expansion of macro 'param_check=
-_uint'
-  param_check_##type(name, &(value));       \
-  ^
-drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of ma=
-cro 'module_param_named'
-  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
-  ^
-drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_MO=
-DULE_PARAMETERS'
- FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
- ^
-drivers/usb/gadget/function/f_mass_storage.h:51:34: note: each undeclared i=
-dentifier is reported only once for each function it appears in
-  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
-                                  ^
-include/linux/moduleparam.h:387:68: note: in definition of macro '__param_c=
-heck'
-  static inline type __always_unused *__check_##name(void) { return(p); }
-                                                                    ^
-include/linux/moduleparam.h:145:2: note: in expansion of macro 'param_check=
-_uint'
-  param_check_##type(name, &(value));       \
-  ^
-drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of ma=
-cro 'module_param_named'
-  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
-  ^
-drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_MO=
-DULE_PARAMETERS'
- FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
- ^
-drivers/usb/gadget/legacy/nokia.c: At top level:
-drivers/usb/gadget/function/f_mass_storage.h:51:34: error: 'fsg_num_buffers=
-' undeclared here (not in a function)
-  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
-                                  ^
-include/linux/moduleparam.h:224:22: note: in definition of macro '__module_=
-param_call'
-      level, flags, { arg } }
-                      ^
-include/linux/moduleparam.h:146:2: note: in expansion of macro 'module_para=
-m_cb'
-  module_param_cb(name, &param_ops_##type, &value, perm);     \
-  ^
-drivers/usb/gadget/function/f_mass_storage.h:51:2: note: in expansion of ma=
-cro 'module_param_named'
-  module_param_named(num_buffers, fsg_num_buffers, uint, S_IRUGO);\
-  ^
-drivers/usb/gadget/legacy/nokia.c:45:1: note: in expansion of macro 'FSG_MO=
-DULE_PARAMETERS'
- FSG_MODULE_PARAMETERS(/* no prefix */, fsg_mod_data);
- ^
-
-Caused by commit e4f8ef7b0770 ("usb: gadget: nokia: Add mass storage
-driver to g_nokia").
-
-I have used the usb-gadget tree from next-20150528 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/lpu.2AQp7UA2UkuPSazPfeI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVaCQSAAoJEMDTa8Ir7ZwVX2MP/1zB36EGVbLTnOpoQYIg+G3D
-MhhDQ+3iFCB908KrnLBogOoYsSwkMVTFUDc59dnd/gg9Tv/Xu7Ws8JGnoW9jFkC8
-LtSpkP5mmpPLphKdszUwkSyerzMR/figwRW1Yg8qL6Z76jihjULI1f6T4PTE3yyh
-i8uaUcEycYTkjdusAsGHrKsTfk5v/VKsXkm13tBMp6MGg6HdaDfJzIEH4dkErwkV
-CpMITsVN0HO7/Q3Zf5GNfR1P0Zan5DTEUNob/f++tqE6pgWAMgL+4Jn3jopG+QaF
-XuaEwIbPL0nlvK4+vFR9DVw4zisgDQ4aBv6uBOtoYRpJnrOqFNY8Bf7w4+l4y0Yk
-1maeKgYGLvdYL8fCa7Sov5kxTGEIm6b88Z0QY+IbX0Xy5WB9DKthYJuJXz3JOmJF
-2b1PQJX8vZmYYhXWzFB+Z4+RrakuATnaUT8fRgCGvoSHrTW7FHottkY0J0twDMOM
-T0N5H/OA/OB+J6wGwSzDl1ZC9sSgogN78GK7TGcLVB7VdLxjke81CavVNS2YKGRb
-bKwdbXsPwtB+UQGSML7sRP7phznPlEpSa+Cz2+stIYovOoam5svQCzLQBR0RMyOk
-V+dlLZTBrrVNHPJrpA0P7qn7L0I6wbVyoS8/Y07YXYJAVFIDg20QmVluMqBos7mX
-5YVC580dficMZLMcwOaa
-=8i7N
------END PGP SIGNATURE-----
-
---Sig_/lpu.2AQp7UA2UkuPSazPfeI--
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/kernel/perf_event_cpu.c
+> index 3b8c2833c537,50f245bf4e05..000000000000
+> --- a/arch/arm/kernel/perf_event_cpu.c
+> +++ b/arch/arm/kernel/perf_event_cpu.c
+> @@@ -301,17 -306,12 +306,18 @@@ static int probe_current_pmu(struct arm
+>   	return ret;
+>   }
+>   
+> - static int of_pmu_irq_cfg(struct platform_device *pdev)
+> + static int of_pmu_irq_cfg(struct arm_pmu *pmu)
+>   {
+>  -	int i;
+>  +	int i, irq;
+> + 	struct platform_device *pdev = pmu->plat_device;
+>  -	int *irqs = kcalloc(pdev->num_resources, sizeof(*irqs), GFP_KERNEL);
+>  +	int *irqs;
+>   
+>  +	/* Don't bother with PPIs; they're already affine */
+>  +	irq = platform_get_irq(pdev, 0);
+>  +	if (irq >= 0 && irq_is_percpu(irq))
+>  +		return 0;
+>  +
+>  +	irqs = kcalloc(pdev->num_resources, sizeof(*irqs), GFP_KERNEL);
+>   	if (!irqs)
+>   		return -ENOMEM;
+>   
