@@ -1,88 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the imx-mxs tree
-Date: Fri, 29 May 2015 21:28:59 +1000
-Message-ID: <20150529212859.0acb08e2@canb.auug.org.au>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] clocksource: make ARM_TIMER_SP804 depend on GENERIC_SCHED_CLOCK
+Date: Fri, 29 May 2015 12:33:31 +0100
+Message-ID: <55684E8B.1080404@arm.com>
+References: <20150529110919.2276365a@canb.auug.org.au> <1432887476-19301-1-git-send-email-sudeep.holla@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.FBWVoRDs3GNdNeV.yrryB3"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40544 "EHLO ozlabs.org"
+Received: from foss.arm.com ([217.140.101.70]:57358 "EHLO foss.arm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755887AbbE2L3I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 May 2015 07:29:08 -0400
+	id S1751995AbbE2Ldf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 May 2015 07:33:35 -0400
+In-Reply-To: <1432887476-19301-1-git-send-email-sudeep.holla@arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Sig_/.FBWVoRDs3GNdNeV.yrryB3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Shawn,
-
-After merging the imx-mxs tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Sudeep Holla <Sudeep.Holla@arm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
 
-drivers/clocksource/timer-imx-gpt.c:37:27: fatal error: asm/mach/time.h: No=
- such file or directory
- #include <asm/mach/time.h>
-                           ^
 
-Caused by commit 77b0235b6b5c ("ARM: imx: move timer driver into
-drivers/clocksource").
+On 29/05/15 09:17, Sudeep Holla wrote:
+> Commit 5261ef2ea836 ("ARM: 8366/1: move Dual-Timer SP804 driver to
+> drivers/clocksource") moved SP804 to drivers/clocksource resulting in
+> it being selectable on platforms/architectures without the config
+> GENERIC_SCHED_CLOCK enabled. Due to that, it results in the following
+> build failure(e.g. x86_64 allmodconfig)
+>
+> drivers/built-in.o: In function `__sp804_clocksource_and_sched_clock_init':
+> (.init.text+0x1a0e7): undefined reference to `sched_clock_register'
+>
+> This patch fixes the build by making ARM_TIMER_SP804 depend on
+> GENERIC_SCHED_CLOCK
+>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>   drivers/clocksource/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> Hi Russell,
+>
+> If you are fine with this fix, I will put this into the patch tracker.
+>
 
-I have marked it as BROKEN for now:
+I have put this in patch tracker (8382/1)[1]
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 29 May 2015 21:24:03 +1000
-Subject: [PATCH] ARM: imx: mark CLKSRC_IMX_GPT as BROKEN for now
+Regards,
+Sudeep
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/clocksource/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 3c15a49fdac9..d8fedc925864 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -279,6 +279,7 @@ config CLKSRC_PXA
- config CLKSRC_IMX_GPT
- 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
- 	depends on OF
-+	depends on BROKEN
- 	select CLKSRC_MMIO
-=20
- config H8300_TMR16
---=20
-2.1.4
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/.FBWVoRDs3GNdNeV.yrryB3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVaE2CAAoJEMDTa8Ir7ZwVTyQQAIUt3i9Z81IbH7NmJ2P7raxW
-kdbEXAUjkROls/abWXEUFWsMqBZMsozAjp79+8KeRrKcovA1HeKc35VGtxR+V/v8
-F8LrP5lgTKmeDZzmn7FBg5o6KOZ4v+7SqSi/20vBfUMaEVAj9r/IPUkx4RMgeIng
-Ytozj4xo5yU/CZF1ByX89/vbxPKNW9bdxIFXjq1Y0ySDKVAjFh23d3hVXKRs/2l0
-xBWMyC/pyz4BZVBRWVPAEy6fB64iWcj7A3xQ0pZ9V8ECJ1PsD+/XYfICNzg25Rs4
-VA1kUv+68LN9m+2u0nk7cLZdrXImnremp2TZUVwkf4ZBqBJdRkT+4JIOWO+x1Jvs
-7SnLf8lMoc9kFYwqKTlCLhFS+MRYi6O/EPpkEPaCvou13kfzjps02GErFzpfn0SN
-oKBjmvWIMvyBg0Ce8cwpOLRs5RtGLc7udG8rB3igsr/LM1Ux20st+46XsHzzbAJB
-MsmuPLFjo+fHIbcz83pFAz3hZAXURuH61iy8bUQW+v7bwDV6gzA28rv50jaGzD/A
-Mu75VtpISX2iO9Iexd/s0KvH1DfspjatNWdnkZbBv060niQSp/KD1MuG8J/Ubd3v
-zh6mSXvj2ejyVEUs2DnpLoXHtfgUG2tlRFPkelxXQr3K0QBW2qhTF03aovhbamzw
-Gwaurd/0lQ/zdrR88bfF
-=8Nyy
------END PGP SIGNATURE-----
-
---Sig_/.FBWVoRDs3GNdNeV.yrryB3--
+[1] http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8382/1
