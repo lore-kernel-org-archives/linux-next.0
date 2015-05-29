@@ -1,37 +1,37 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: randconfig build error with next-20150529, in
- drivers/mmc/host/omap_hsmmc.c
-Date: Fri, 29 May 2015 09:44:35 -0700
-Message-ID: <20150529164434.GQ30984@atomide.com>
-References: <CA+r1Zhj3epGqV_Po0X-Q2hROKpG=a8L2R=D+5qdZTAptWtP3HQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 29 (drivers/power/twl4030_charger)
+Date: Fri, 29 May 2015 09:55:27 -0700
+Message-ID: <556899FF.1040705@infradead.org>
+References: <20150529221804.2b8940f3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1Zhj3epGqV_Po0X-Q2hROKpG=a8L2R=D+5qdZTAptWtP3HQ@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150529221804.2b8940f3@canb.auug.org.au>
+Sender: linux-pm-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ignotas <notasas@gmail.com>, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-* Jim Davis <jim.epost@gmail.com> [150529 09:27]:
-> Building with the attached random configuration file,
->=20
-> warning: (USB_OTG_FSM && FSL_USB2_OTG && USB_MV_OTG) selects USB_OTG
-> which has unmet direct dependencies (USB_SUPPORT && USB && PM)
->=20
-> drivers/mmc/host/omap_hsmmc.c: In function =E2=80=98omap_hsmmc_config=
-ure_wake_irq=E2=80=99:
-> drivers/mmc/host/omap_hsmmc.c:1663:8: error: implicit declaration of
-> function =E2=80=98dev_pm_set_dedicated_wake_irq=E2=80=99
-> [-Werror=3Dimplicit-function-declaration]
->   ret =3D dev_pm_set_dedicated_wake_irq(host->dev, host->wake_irq);
+On 05/29/15 05:18, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20150528:
+> 
 
-Oops, there's a typo in the prototype. I must have only tested
-dev_pm_set_wake_irq case and not the dev_pm_set_dedicated_wake_irq
-on x86. Patch coming shortly.
+on i386:
+when CONFIG_USB_SUPPORT is not enabled:
 
-Regards,
+../drivers/power/twl4030_charger.c: In function 'twl4030_bci_probe':
+../drivers/power/twl4030_charger.c:648:4: error: implicit declaration of function 'devm_usb_get_phy_by_node' [-Werror=implicit-function-declaration]
+    bci->transceiver = devm_usb_get_phy_by_node(
+    ^
+../drivers/power/twl4030_charger.c:648:21: warning: assignment makes pointer from integer without a cast [enabled by default]
+    bci->transceiver = devm_usb_get_phy_by_node(
+                     ^
 
-Tony
+Should this driver depend on USB_SUPPORT?
+
+
+-- 
+~Randy
