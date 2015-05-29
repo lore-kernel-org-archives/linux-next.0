@@ -1,62 +1,59 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the kvm tree
-Date: Fri, 29 May 2015 09:54:08 +0200
-Message-ID: <20150529075408.GA26168@gmail.com>
-References: <20150529173648.61bf6592@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH] clocksource: make ARM_TIMER_SP804 depend on GENERIC_SCHED_CLOCK
+Date: Fri, 29 May 2015 09:17:56 +0100
+Message-ID: <1432887476-19301-1-git-send-email-sudeep.holla@arm.com>
+References: <20150529110919.2276365a@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:37678 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751933AbbE2HyQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 May 2015 03:54:16 -0400
-Content-Disposition: inline
-In-Reply-To: <20150529173648.61bf6592@canb.auug.org.au>
+Received: from foss.arm.com ([217.140.101.70]:56677 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753184AbbE2ISI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 May 2015 04:18:08 -0400
+In-Reply-To: <20150529110919.2276365a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
+Commit 5261ef2ea836 ("ARM: 8366/1: move Dual-Timer SP804 driver to
+drivers/clocksource") moved SP804 to drivers/clocksource resulting in
+it being selectable on platforms/architectures without the config
+GENERIC_SCHED_CLOCK enabled. Due to that, it results in the following
+build failure(e.g. x86_64 allmodconfig)
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+drivers/built-in.o: In function `__sp804_clocksource_and_sched_clock_init':
+(.init.text+0x1a0e7): undefined reference to `sched_clock_register'
 
-> Hi all,
-> 
-> After merging the kvm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> arch/x86/kvm/cpuid.c: In function 'kvm_update_cpuid':
-> arch/x86/kvm/cpuid.c:98:2: error: implicit declaration of function 'use_eager_fpu' [-Werror=implicit-function-declaration]
->   vcpu->arch.eager_fpu = use_eager_fpu() || guest_cpuid_has_mpx(vcpu);
->   ^
-> 
-> Caused by a bad automatic merge resolution which didn't add the
-> includes of one of its parents.
-> 
-> I added the following merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 29 May 2015 17:24:42 +1000
-> Subject: [PATCH] kvm: bad merge fix patch for arch/x86/kvm/cpuid.c
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/x86/kvm/cpuid.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index e243f2ed54c0..8285bc73a5a2 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -16,6 +16,8 @@
->  #include <linux/module.h>
->  #include <linux/vmalloc.h>
->  #include <linux/uaccess.h>
-> +#include <asm/fpu/api.h> /* For use_eager_fpu.  Ugh! */
-> +#include <asm/fpu/internal.h> /* For use_eager_fpu.  Ugh! */
+This patch fixes the build by making ARM_TIMER_SP804 depend on
+GENERIC_SCHED_CLOCK
 
-The comments are incorrect, otherwise the resolution is OK.
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/clocksource/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
+Hi Russell,
 
-	Ingo
+If you are fine with this fix, I will put this into the patch tracker.
+
+Regards,
+Sudeep
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 0f1c0e7f86da..50534704486a 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -134,6 +134,7 @@ config ARM_GLOBAL_TIMER
+
+ config ARM_TIMER_SP804
+ 	bool "Support for Dual Timer SP804 module"
++	depends on GENERIC_SCHED_CLOCK
+ 	select CLKSRC_MMIO
+ 	select CLKSRC_OF if OF
+
+--
+1.9.1
