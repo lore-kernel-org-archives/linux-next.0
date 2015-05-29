@@ -1,69 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of most of the trees
-Date: Fri, 29 May 2015 10:36:45 +1000
-Message-ID: <20150529103645.57579e82@canb.auug.org.au>
-References: <20150528220607.67a68696@canb.auug.org.au>
-	<20150528.114203.717794268051352731.davem@davemloft.net>
+Subject: linux-next: build failure after merge of the arm tree
+Date: Fri, 29 May 2015 11:09:19 +1000
+Message-ID: <20150529110919.2276365a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OtEd_yb1YUMU9CnYj.2pHXu"; protocol="application/pgp-signature"
+ boundary="Sig_/kWYYfYTiv/=zDiKceYQpp_O"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50684 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38491 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754794AbbE2Agz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 May 2015 20:36:55 -0400
-In-Reply-To: <20150528.114203.717794268051352731.davem@davemloft.net>
+	id S1755025AbbE2BJZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 May 2015 21:09:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, edumazet@google.com
+To: Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
 
---Sig_/OtEd_yb1YUMU9CnYj.2pHXu
+--Sig_/kWYYfYTiv/=zDiKceYQpp_O
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Russell,
 
-On Thu, 28 May 2015 11:42:03 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> The only thing I will say on this matter is that the _only_ way this
-> problem will go away is if someone does the work necessary to get rid
-> of that implicit vmalloc.h include that happens on all x86 platform
-> builds.
->=20
-> So if you want this to stop happening, work on that.
+After merging the arm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I may have a look in my (copious) free time :-)
+drivers/built-in.o: In function `__sp804_clocksource_and_sched_clock_init':
+(.init.text+0x1a0e7): undefined reference to `sched_clock_register'
 
-> I've applied the following to net-next, thanks for your report.
+Presumably caused by commit 5261ef2ea836 ("ARM: 8366/1: move Dual-Timer
+SP804 driver to drivers/clocksource").
 
-Thanks for that.
-
+I have used the arm tree from next-20150528 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/OtEd_yb1YUMU9CnYj.2pHXu
+--Sig_/kWYYfYTiv/=zDiKceYQpp_O
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVZ7SlAAoJEMDTa8Ir7ZwVBQ0P/2zfkVn6Ixnho1Wq2oDArBn8
-EaYRVgjJ+wg040oR82u6Ew650HXHk2NgBFflRjN0kBY9b5piwbJcs5Doq4WhlfIG
-+cscXjc1fZjBZmYNMUU75CYX288tWFvuX0VkwCdJNnQZ+a4wM3A/SJRXT/NYrNNr
-e6u6ndyNNrh+lMMQUQtOQy7H6itsOln5jZLD1DAB+iiXbs7bjrE44wIfsnI8GLi5
-CZTCeR7wZeCqPX93Iofy1b/k2psjRdhoaPPBq1rDySNbjpWbglfPMb5Mco4toNNF
-1kICSbfSA3oLuCQlA6UEWgwV/4NdoHYtlyj357bf/HXLzhvLJQAI75ttdp6B7Ami
-7RCxnV24h5lzPrINa0Sx8Oufa8ehz4v+SrRIFi4OuMVic9nbO+six/OH9ZHRWrnn
-9j0o/yrCX4ahvIW7Dxas63HjfuOcBiKMP688s1NPK5enSJ0M2HNsAaeDnobPxTOX
-2xLT1E5E4UACXfr33Q6E/szqmMT/tvNlISU7EBhwCrzy8anVzZXGu925Ggd0hcnz
-xPtffa0r4eVomcq1SGbzpUxdlSUxyrQ8eOf7tlcRKq0JPncwTWI8/0ff3AwwzQ/Q
-HM4WMbN8rm6qGZzjUdPLm773qhKTIpBgbUtWqGCJKfjrrKoxUWA/ibXKq28qXG0u
-dKVGdouZqE6A3n4WRs5G
-=Y3Hu
+iQIcBAEBCAAGBQJVZ7xDAAoJEMDTa8Ir7ZwVyokP/A+ffdwftbOCaA8eiYZehEPc
+qm2+CMpZihzpPrxEavUIzv47uU5Q0FlLoEtTAzaGGsn1oOxhQIbxIx1eoaMaYwEv
+kSpyNIxBkfgHc/QTxtoUHbg0dH85EsxXqpOL9KplKpb0/XjUMA0oAibnvhYAQG4d
+TL+vo5e6LMVZtKpBdK4wZqKU2PpquVNPr1L01VRXouUfhr67p0LI2G4vsppbCTq7
+AGMfTWr5pQqTNzkeJiE0vn6Inh45jLXxoYtwPdpLdx+PYOLz3fS+u9zThpZclJME
+fCMY7wPAy5Z9NeioZazARAolcYMRIhm1NqdtxfjuRSQWXc01WiQiA4K1gvmaSykU
+/+EOu+myBB2JuEAaZkozI0IF+1aJNRbpprT9X10AklSE3wZUPuj8THEE8qPNjX7o
+n8wyDSfMeXvMK9L3EcOKQGKtBZ1i6xugJTga61POq22fw247cdsFwk6X2L4ZD1DP
+fLWze5KoDK9nOPHaIU/W5ubZZDYngbZ1kOcn0E2PMz/l52HUMRSqb5WodzKfU+7+
+BfK+Dm/SK37jkPEXozWzlYC8XH1Gft1U6pxvndk6vIYlkTSRRHg2gEOUzq3nSUIe
+BEIy7demok52UMx35EiOMmCPmJPgqbVv+k+WT+pPFVJz6dvWrrB/VFEeO9VHD9xO
+QxAkqQ/kr86slQcD7/4W
+=GKAZ
 -----END PGP SIGNATURE-----
 
---Sig_/OtEd_yb1YUMU9CnYj.2pHXu--
+--Sig_/kWYYfYTiv/=zDiKceYQpp_O--
