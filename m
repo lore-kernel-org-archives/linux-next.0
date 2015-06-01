@@ -1,60 +1,103 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the uml tree
-Date: Mon, 1 Jun 2015 12:05:39 +1000
-Message-ID: <20150601120539.1f9a84a8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 1 Jun 2015 13:44:13 +1000
+Message-ID: <20150601134413.34ccfce3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1zfXeSaB/C+xLuYGAaZoLRD"; protocol="application/pgp-signature"
+ boundary="Sig_/xYE8XkCjyfsr8HpZGhrSmiI"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50044 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59597 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752078AbbFACFs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 31 May 2015 22:05:48 -0400
+	id S1752078AbbFADoW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 31 May 2015 23:44:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>, Richard Weinberger <richard@nod.at>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>, Rana Shahout <ranas@mellanox.com>, Achiad Shochat <achiad@mellanox.com>, Amir Vadai <amirv@mellanox.com>
 
---Sig_/1zfXeSaB/C+xLuYGAaZoLRD
+--Sig_/xYE8XkCjyfsr8HpZGhrSmiI
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/hppfs/hppfs.c between commit f74a14e870c8 ("um: Remove hppfs") from
-the uml tree and commits 680baacbca69 ("new ->follow_link() and
-->put_link() calling conventions"), 6e77137b363b ("don't pass nameidata
-to ->follow_link()") and 5f2c4179e129 ("switch ->put_link() from dentry
-to inode") from the vfs tree.
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary (no action is required).
+drivers/net/ethernet/mellanox/mlx5/core/main.c: In function 'mlx5_irq_set_a=
+ffinity_hint':
+drivers/net/ethernet/mellanox/mlx5/core/main.c:474:2: error: implicit decla=
+ration of function 'cpumask_set_cpu_local_first' [-Werror=3Dimplicit-functi=
+on-declaration]
+  err =3D cpumask_set_cpu_local_first(i, numa_node, priv->irq_info[i].mask);
+  ^
+
+Caused by commit db058a186f98 ("net/mlx5_core: Set irq affinity hints")
+interacting with commit f36963c9d3f6 ("cpumask_set_cpu_local_first =3D>
+cpumask_local_spread, lament") from Linus' tree.
+
+I have applied the following merge fix patch (Dave, you could do this
+by back merging commit f36963c9d3f6 from Linus' tree - which is based
+on v4.1-rc2 if that worries you).  Please yell if this is not correct
+(it does build).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 1 Jun 2015 13:36:49 +1000
+Subject: [PATCH] net/mlx5_core: merge fix for cpumask_set_cpu_local_first A=
+PI change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/e=
+thernet/mellanox/mlx5/core/main.c
+index 1c37f587426d..2510fed3494d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -471,11 +471,8 @@ static int mlx5_irq_set_affinity_hint(struct mlx5_core=
+_dev *mdev, int i)
+ 		return -ENOMEM;
+ 	}
+=20
+-	err =3D cpumask_set_cpu_local_first(i, numa_node, priv->irq_info[i].mask);
+-	if (err) {
+-		mlx5_core_warn(mdev, "cpumask_set_cpu_local_first failed");
+-		goto err_clear_mask;
+-	}
++	cpumask_set_cpu(cpumask_local_spread(i, numa_node),
++			priv->irq_info[i].mask);
+=20
+ 	err =3D irq_set_affinity_hint(irq, priv->irq_info[i].mask);
+ 	if (err) {
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/1zfXeSaB/C+xLuYGAaZoLRD
+--Sig_/xYE8XkCjyfsr8HpZGhrSmiI
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVa734AAoJEMDTa8Ir7ZwVlbgP/RtQs5HMNtT8oyIR/Bsx2bUo
-RwEndlIdlGtiXAAM4S9IRgZBmfoiF6PfKpfDEWk95FPQxWYui9dAujIHIoaBZ+mv
-oKSM30DI9s1MiNrrR6IQLbuc1i02fvdrzvH6erFGK8E5aNcJP6M0Tpu5PWBA/XaA
-REDcqWSj32ObRtkRuxUZcyX5dVSKku8pf4a6qOuLxw8rI8eB3gqazOVunScb/Irw
-TC92SqaIi0EL692gnyxWhB3Ww+l0EGwj+JsoOUy43N+CiLewqERYqJwFf+2az0wc
-Q/7ttP33vOksQmQkCjRgySayLJidGZcHsKL/y54k5C92PXmZEaVs9PAao1F/JBTI
-rY+zsQDBjj8dIfe1byrotFSN7f8TPQG6jWdRTXwf+jRm1ilBEPmVq9G7DGhEV5av
-Chs/6PW2DMIGXCYOzGcSqob5ok164TqII2Cxju0Su/RcQvQ2fZWpyuQeMwt40Plp
-tio2xKJX6X2+QCdXcs3oLpwUMNSAL43XmGb/vEAEnbFBvIiUHlIYIgWmRvungYaZ
-4wam0bntfWAV/muzc3wfhkZx3rfS348PuRexo84b8nBHAP3QsKudfaQh/XMwqsfI
-oY141AT/Z/PCSUvVDTr2oY5HEoYHbUwCedgswp7JlutAm5VGC5AWns4+51W0OGv6
-E9cWN54lmXMMLN6Fel1Y
-=78MD
+iQIcBAEBCAAGBQJVa9USAAoJEMDTa8Ir7ZwVH08P/0W1hJ+xAn5Hre5R0r1Lyi+2
+JbRQFZnXZRncTIrsbg20onKfOu/IGSYzrIx4DBwq+kbCgkx9ttffcL9xsVpqZkde
+91B3+EZhMA4fGvXDaorXHMFpa2fl4DhYRF2bVjrcoz2UZWEo38A/MrTo/YgpUoRj
+ivc/Bem/G4jF10y/IAtgKwtOfCcY7wd2vIjIGMqLISdVOJCjF6n5HtW+wZunfKzb
+6nGUAwEyt3h0U1NOegfHYJAODNDwn/adVCW+E8xW63e82owCMGban0f+usJ2fhKw
+2AMuwO75fATnFpNCMPmhLM4ZuNeuvb+lGSPE7GlDjh0/DIo3FEqTdk60H+E3f4F1
+Zn7nmi6Se31W5PGwa8cuTSy95T7xpWMH11hxq42hyoZ9Za1pwu1/D8GI+vPc/EYf
+Ah4dPM9KZCORDkoEFLBTJTyVYwAIPnah+ILJ8nC1yPHRelOsBuFx5c+uag8dPJ28
+IBjsq1VxodTBjbh6ZYDlo+24mB3rwdjRrhGNaLUmIqgUdZYl2LLB3N0Tdz5AaMPK
+VWVmYK0G9qYbB011CVae3hNc22oIO43x0uFbk2he7w5r0aZfHwRi8IPgagP01+s/
+jItDae5TvcTkT/dChy0q5iew5GxAvb0NlEeFUSJPwREx+kbeSVYGbcUbEwdaUFMk
+x+SqlZ871gl0A103or1m
+=ZvZL
 -----END PGP SIGNATURE-----
 
---Sig_/1zfXeSaB/C+xLuYGAaZoLRD--
+--Sig_/xYE8XkCjyfsr8HpZGhrSmiI--
