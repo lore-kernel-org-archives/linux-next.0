@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with the h8300 tree
-Date: Mon, 1 Jun 2015 11:41:28 +1000
-Message-ID: <20150601114128.6e91b2ca@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with the imx-mxs tree
+Date: Mon, 1 Jun 2015 11:41:34 +1000
+Message-ID: <20150601114134.34e60286@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WL+K26sfBae5ubkdTl6tYJW"; protocol="application/pgp-signature"
+ boundary="Sig_/jpZZ3.NJMXdsKK25DcG+uho"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47054 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37526 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750704AbbFABle (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 31 May 2015 21:41:34 -0400
+	id S1758221AbbFABlg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 31 May 2015 21:41:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+To: Ralf Baechle <ralf@linux-mips.org>, Shawn Guo <shawn.guo@linaro.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>
 
---Sig_/WL+K26sfBae5ubkdTl6tYJW
+--Sig_/jpZZ3.NJMXdsKK25DcG+uho
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Ralf,
 
-Today's linux-next merge of the mips tree got conflicts in
-drivers/irqchip/Kconfig and drivers/irqchip/Makefile between commit
-19efb55b79f3 ("h8300: IRQ chip driver") from the h8300 tree and commit
-a7c64f0e29a6 ("MIPS/IRQCHIP: Move Ingenic SoC intc driver to
-drivers/irqchip") from the mips tree.
+Today's linux-next merge of the mips tree got a conflict in
+drivers/clk/Makefile between commit 33156149fc4a ("ARM: imx: move clock
+drivers into drivers/clk") from the imx-mxs tree and commit
+66ab9263a018 ("clk: ingenic: add driver for Ingenic SoC CGU clocks")
+from the mips tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,59 +34,40 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/irqchip/Kconfig
-index 8a7d7807b596,746daf37454c..000000000000
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@@ -160,10 -164,7 +165,15 @@@ config MIPS_GI
-  	bool
-  	select MIPS_CM
- =20
-+ config INGENIC_IRQ
-+ 	bool
-+ 	depends on MACH_INGENIC
-+ 	default y
-++
- +config RENESAS_H8300H_INTC
- +        bool
- +	select IRQ_DOMAIN
- +
- +config RENESAS_H8S_INTC
- +        bool
-- 	select IRQ_DOMAIN
-++	select IRQ_DOMAIN
-diff --cc drivers/irqchip/Makefile
-index f8efb7087760,db014e8e12c9..000000000000
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@@ -47,5 -48,4 +48,6 @@@ obj-$(CONFIG_KEYSTONE_IRQ)		+=3D irq-keys
-  obj-$(CONFIG_MIPS_GIC)			+=3D irq-mips-gic.o
-  obj-$(CONFIG_ARCH_MEDIATEK)		+=3D irq-mtk-sysirq.o
-  obj-$(CONFIG_ARCH_DIGICOLOR)		+=3D irq-digicolor.o
-+ obj-$(CONFIG_INGENIC_IRQ)		+=3D irq-ingenic.o
- +obj-$(CONFIG_RENESAS_H8300H_INTC)	+=3D irq-renesas-h8300h.o
- +obj-$(CONFIG_RENESAS_H8S_INTC)		+=3D irq-renesas-h8s.o
+diff --cc drivers/clk/Makefile
+index 96e9778ac9bd,cc773271b919..000000000000
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@@ -50,7 -50,7 +50,8 @@@ obj-$(CONFIG_ARCH_BERLIN)		+=3D berlin
+  obj-$(CONFIG_ARCH_HI3xxx)		+=3D hisilicon/
+  obj-$(CONFIG_ARCH_HIP04)		+=3D hisilicon/
+  obj-$(CONFIG_ARCH_HIX5HD2)		+=3D hisilicon/
+ +obj-$(CONFIG_ARCH_MXC)			+=3D imx/
++ obj-$(CONFIG_MACH_INGENIC)		+=3D ingenic/
+  obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+=3D keystone/
+  ifeq ($(CONFIG_COMMON_CLK), y)
+  obj-$(CONFIG_ARCH_MMP)			+=3D mmp/
 
---Sig_/WL+K26sfBae5ubkdTl6tYJW
+--Sig_/jpZZ3.NJMXdsKK25DcG+uho
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVa7hMAAoJEMDTa8Ir7ZwVB7kP/iHX4Y7bpg1RVllqKyGMloLY
-2DhbEPQKm6G7L3I2ZGPjFbt0R7KVYFJWKEwdOFaZmRLpuRsE73bCfAnG3/oBHhcT
-0I1jjbaUiPma+JfuaG0MGgZu6dcvjGkin6QPPyGKO0k4Gd/hLyEJDu//1KlNfdO9
-8cglLwVxLiy5mCzatP1gXzlyYSbCUaGfn8bI3jOYd9g942F09pEfPyVgMKhqfFY3
-yzB4XrkqI5jbm44E04Xaw67epKYQRdi/hu4WQrRjQ985cko9Yub40Q/77w3snue7
-F8XE/lpw+Z1PoOMTu4tnd0LpDpNhzvV5Iid4IkzqF0pAawIOLvk5znA5slVr9//l
-cbqQaaBw5/YIc+12sv4V94KFeM5iRvaneT9OanfL2T/YITRkLKt3uPfVrgSaw0V2
-B5YKn0I4ETr0Jwf+appMAnaFo/2QrL2BEgFNah5vLBTKVsq7K00h632iYHbSrAew
-VsZSPnbOjiJayURD2VLimsw2jdJ8cR+sgOIJ9uvPfnJjsI+TkKpNQtnDY0NX6yds
-62w4XxD624HsIe6PXpggpTfLdczS2hUaSIeZ9uMvQVCXIU/Cd0tgUFMhPE2CeUY1
-ZXnKnjAyz8qdmcJZexpNFU2WPgFYVXw71NWSx4zT6vLhUF1jT5yzyV0geJF0ZDmP
-l8KaerLKFVRUUwlpW3zh
-=Y7BF
+iQIcBAEBCAAGBQJVa7hOAAoJEMDTa8Ir7ZwVOVkP/07O9n3GfY3THY5kUKDGCeQr
+v1n8Hd0OM5+1T9ltKOnGTwrBtTMObsqXgvNgr4Nfqv8BEYW+rVEEq6FDXHKRyt+6
+gigKzBbFJQqJPd6qE9OKE1KLHhYCj1MUnIpsZ7yMHr8imgLnphL8DuhRAT+PrCPE
+xCbCkto7bI/X98oEBgGbcsH/8LslD9WhW50O0Q1hejXDU8XyBBgk6tggvTnoCary
+PB182OtJgP4ztZrYziCd/SS0Yj+N/Nolc7hnM280u/fmFwHPQFZBNv9hmA8CEoo7
+OaLaxdI5HWyLf6yRcKcOnIAe9vFEUSQ9zpLmRyk/gmlYG+7vtj+XjzdCp4aJI4i+
+TweNr+lB2UFubbWXPOZcjiKTvXCk0wwjcVEBm+EFLoFc5RW93+UbE8toCZRCqhf/
+zwP9Xrh8SGGlW1TJquLLiwkAaJtgLUGg81JCOZby4TNEK777mw5zI5/6NpRPFlQ9
+YTPid+exbnDMbKXKg1DQN7UwSOR8CEVyldaXxfwChYY0+/2D5vEu9AHeE0DrKgQ5
+0KMYSbpboA7fZDAfIl9xAdJ30qNOZYoOCNeyn8m6Uzv57ErNMJenor3fJNc4bqPA
+13myzPpWVu4UwVyVCI2oeqezzJ1tKGeVMaEGMU6y7bMYNx5xJxONpXEVTJ8G39h6
+JQKjRlV626A7mC57V/EE
+=Kagp
 -----END PGP SIGNATURE-----
 
---Sig_/WL+K26sfBae5ubkdTl6tYJW--
+--Sig_/jpZZ3.NJMXdsKK25DcG+uho--
