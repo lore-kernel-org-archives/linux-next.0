@@ -1,89 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the edac-amd tree
-Date: Mon, 1 Jun 2015 17:07:42 +1000
-Message-ID: <20150601170742.626210ef@canb.auug.org.au>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Mon, 01 Jun 2015 09:12:55 +0200
+Message-ID: <556C05F7.70302@monstr.eu>
+References: <20150601102511.316f0262@canb.auug.org.au>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NjauolGQXl5LnmYPL8i4q=X"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="qUEaGRiCH0wfbQFExFNDhQtKVKR9g1rdd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58480 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751140AbbFAHHt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Jun 2015 03:07:49 -0400
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:36432 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750868AbbFAHM7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jun 2015 03:12:59 -0400
+Received: by wgbgq6 with SMTP id gq6so106090317wgb.3
+        for <linux-next@vger.kernel.org>; Mon, 01 Jun 2015 00:12:58 -0700 (PDT)
+In-Reply-To: <20150601102511.316f0262@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <borislav.petkov@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Loc Ho <lho@apm.com>, Arnd Bergmann <arnd@arndb.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Sullivan <nathan.sullivan@ni.com>, Michal Simek <michal.simek@xilinx.com>, David Miller <davem@davemloft.net>
 
---Sig_/NjauolGQXl5LnmYPL8i4q=X
-Content-Type: text/plain; charset=US-ASCII
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--qUEaGRiCH0wfbQFExFNDhQtKVKR9g1rdd
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Borislav,
+Hi,
 
-After merging the edac-amd tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On 06/01/2015 02:25 AM, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/boot/dts/zynq-7000.dtsi between commit 9eeb5161397a ("ARM:
+> zynq: DT: Use the zynq binding with macb") from Linus' tree and commit
+> 4481b18b7cf0 ("ARM: zynq: DT: Use the zynq binding with macb") from the=
 
-drivers/edac/xgene_edac.c: In function 'xgene_edac_pmd_l2c_version1':
-drivers/edac/xgene_edac.c:792:2: error: implicit declaration of function 'M=
-IDR_VARIANT' [-Werror=3Dimplicit-function-declaration]
-  switch (MIDR_VARIANT(read_cpuid_id())) {
-  ^
-drivers/edac/xgene_edac.c:792:2: error: implicit declaration of function 'r=
-ead_cpuid_id' [-Werror=3Dimplicit-function-declaration]
-drivers/edac/xgene_edac.c:794:3: error: implicit declaration of function 'M=
-IDR_REVISION' [-Werror=3Dimplicit-function-declaration]
-   switch (MIDR_REVISION(read_cpuid_id())) {
-   ^
-drivers/edac/xgene_edac.c:797:4: error: implicit declaration of function 'r=
-ead_cpuid' [-Werror=3Dimplicit-function-declaration]
-    switch (REVIDR_MINOR_REV(read_cpuid(REVIDR_EL1))) {
-    ^
-drivers/edac/xgene_edac.c:797:40: error: 'REVIDR_EL1' undeclared (first use=
- in this function)
-    switch (REVIDR_MINOR_REV(read_cpuid(REVIDR_EL1))) {
-                                        ^
-drivers/edac/xgene_edac.c:790:37: note: in definition of macro 'REVIDR_MINO=
-R_REV'
-  #define REVIDR_MINOR_REV(revidr) ((revidr) & 0x00000007)
-                                     ^
-drivers/edac/xgene_edac.c:797:40: note: each undeclared identifier is repor=
-ted only once for each function it appears in
-    switch (REVIDR_MINOR_REV(read_cpuid(REVIDR_EL1))) {
-                                        ^
-drivers/edac/xgene_edac.c:790:37: note: in definition of macro 'REVIDR_MINO=
-R_REV'
-  #define REVIDR_MINOR_REV(revidr) ((revidr) & 0x00000007)
-                                     ^
+> arm-soc tree.
+>=20
+> I fixed it up (it looks like that latter is a newer version of the
+> former, so I used it) and can carry the fix as necessary (no action
+> is required).
+>=20
 
-Caused by commit  ("EDAC: Add APM X-Gene SoC EDAC driver").  You can't
-use COMPIlE_TEST for drivers that use arch specific APIs ...
+David applied v1 of the patch. I have applied v2 (pulled via arm-soc)
+which also keep backward compatible string. There should be two
+compatible strings.
 
-I have used the edac-amd tree from next-20150529 for today.
+Thanks,
+Michal
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
+Maintainer of Linux kernel - Xilinx Zynq ARM architecture
+Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
 
---Sig_/NjauolGQXl5LnmYPL8i4q=X
-Content-Type: application/pgp-signature
+
+
+--qUEaGRiCH0wfbQFExFNDhQtKVKR9g1rdd
+Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v2.0.14 (GNU/Linux)
 
-iQIcBAEBCAAGBQJVbATDAAoJEMDTa8Ir7ZwVZ3cP/0C20JIeaN5eGSj9xD3ObYZ4
-KBCuCPjqMWrjgqOijeVOzT+0CrM7T52DIDGBUaVrdJiXW05FNLQTeznARMny/a0j
-kfUxDQRJwcl6JxUbGuV5BiQYR73PyM/u9iEzviE9KDsBjsvIJPHYpl30LxkseDnx
-jzlCdqkMbIjpH3qKc+evUXbZsolDkYlLVzlv03tUO3k3MGioXpIgjhHw47pmVp2B
-OdmxL/YqCojL9xF6q7wwdCJBfvHsZe5Vmo1SeQ9D7kvdLW4Ff2AoQ/c1VLGbZ0nb
-C7YgLyu3PLB+Our8a5BYNzWZprbzNwt1E49M0thWlaV61EcIdWb4w+Ga7ZZ0TOnn
-l9lOCRXR8QkNPKa8tVyrvKPJogrUKkiflgH/eycfvywaziR7BOGkNb97WDtho43m
-fhTLTvcBtUXgOR2j3mDfIa3c6BDBUoGkU4D1lkZdhsLuh8jAwpM9FMEQm9qdDlRW
-7mcZXMP7aeFcOEo8/ZkFa+GReWEirz32N5i8SPxTSuBKVcVgj5bmKXDFFCT3+S81
-KOPHc+a4Jt04ZWbudOISsFVY9BvTZ/dUqPTa5pMJIpGUcqR9Cz0fHZIPbkRY8Kgt
-oesvHjk0L45YEehnhw26KRlC04V4sI58uyThcFjqf+Qd9QgQIdZXXMCCOFdMyKR4
-klrsluaMnPuzjF07SufS
-=kHMk
+iEYEARECAAYFAlVsBfgACgkQykllyylKDCGvTgCffQNV7XHFiC7J6x/xN/YolFx8
+ugMAniyvJ+190/CmLuuP267u9lRaOu4v
+=h7Rg
 -----END PGP SIGNATURE-----
 
---Sig_/NjauolGQXl5LnmYPL8i4q=X--
+--qUEaGRiCH0wfbQFExFNDhQtKVKR9g1rdd--
