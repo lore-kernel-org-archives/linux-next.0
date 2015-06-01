@@ -1,82 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the target-updates tree with Linus'
  tree
-Date: Mon, 1 Jun 2015 20:48:09 +1000
-Message-ID: <20150601204809.5cf1ac2b@canb.auug.org.au>
+Date: Mon, 1 Jun 2015 20:58:03 +1000
+Message-ID: <20150601205803.0e77fecf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gMeO4ltR6TJ3dKRGU41MXI3"; protocol="application/pgp-signature"
+ boundary="Sig_/hscHD7V7dvRn_G+ASAWbolQ"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34632 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47774 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751003AbbFAKsR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Jun 2015 06:48:17 -0400
+	id S1751332AbbFAK6S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Jun 2015 06:58:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Grover <agrover@redhat.com>, Christoph Hellwig <hch@lst.de>
 
---Sig_/gMeO4ltR6TJ3dKRGU41MXI3
+--Sig_/hscHD7V7dvRn_G+ASAWbolQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Nicholas,
 
 Today's linux-next merge of the target-updates tree got a conflict in
-drivers/target/target_core_configfs.c between commit d588cf8f618d
-("target: Fix se_tpg_tfo->tf_subsys regression + remove tf_subsystem")
-from Linus' tree and commits c6eec4d58f5d ("target: remove tf_subsystem
-pointers") and 93af633991fd ("target: don't copy fabric ops") and
-f0eb815f8a53 ("target: put struct target_fabric_configfs on a diet")
-from the target-updates tree.
+drivers/target/target_core_device.c between commit a3541703ebbf
+("target: Use a PASSTHROUGH flag instead of transport_types") from
+Linus' tree and commit 1362adc724c4 ("target: Subsume se_port +
+t10_alua_tg_pt_gp_member into se_lun") from the target-updates tree.
 
-I fixed it up (the first of the target-updates tree patches is a subset
-of the patch in Linus' tree - see the result below) and can carry the
-fix as necessary (no action is required).
+I fixed it up (the latter removed the code updated by the former) and
+can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/target/target_core_configfs.c
-index e7b0430a0575,4ada522d7bc3..000000000000
---- a/drivers/target/target_core_configfs.c
-+++ b/drivers/target/target_core_configfs.c
-@@@ -1034,10 -1587,10 +1587,10 @@@ static ssize_t target_core_dev_pr_store
-  	u64 sa_res_key =3D 0;
-  	u32 mapped_lun =3D 0, target_lun =3D 0;
-  	int ret =3D -1, res_holder =3D 0, all_tg_pt =3D 0, arg, token;
-- 	u16 port_rpti =3D 0, tpgt =3D 0;
-- 	u8 type =3D 0, scope;
-+ 	u16 tpgt =3D 0;
-+ 	u8 type =3D 0;
- =20
- -	if (dev->transport->transport_type =3D=3D TRANSPORT_PLUGIN_PHBA_PDEV)
- +	if (dev->transport->transport_flags & TRANSPORT_FLAG_PASSTHROUGH)
-  		return 0;
-  	if (dev->dev_reservation_flags & DRF_SPC2_RESERVATIONS)
-  		return 0;
-
---Sig_/gMeO4ltR6TJ3dKRGU41MXI3
+--Sig_/hscHD7V7dvRn_G+ASAWbolQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbDhvAAoJEMDTa8Ir7ZwVNwIP/3dFyA6EpM8W9kAlmP+qa/Up
-hXIznN6eDQStCkCLmqInxfpev2RrEZoAJ18D0BaJezyBbChBnWXLzcHqZZFDrDZs
-YPxHpMe2BQMsTih9I1y/Xerr2rPorT75IEsQ2RpFIT09c/Hlz1F/6Tjk9oGiUW9B
-lIs1+PE8h5fCVGGUK51lxj7cXI628c/qNjkQZT6x2rXzENrzd7BKcflK2dnCfVQy
-DA5FE5LvdHUHmE3xn//bfJJNxIXkSv05EeZ63F92bBqq0VRssLjpV8i3P7XLv8Fl
-P8QMxhn/27IGGExTE7is0HfT6/1AUy5s++NHlYBBnRXJofHmzhMAaEdRsdxjCgI5
-ZqOlycV+RHUPLsXQ90lnpRfK7fs8BwCtCM2/NpVYYxnOJALIycOtMLG8DAguRvRM
-D+fIVUq/MUmPQ+hhdu7xpMyXCC47ATUagYIl3RgYUA8ezkQ06GWPEL3Tti8qKrUR
-PokG+VE0PkvTw74SpAZCUNApihRQYRnuZn09cO3jJI1tOa43Re0oHWZ5N0cFZt/e
-onP32dB450tOd/XDkRfrvODkFYpaYVeJNrENQqs+97HJrnJT2b5CHE5IDxTwHPFP
-jwVJOUqCV6vvvnwe7m0rbl9z0kzhQrdMU6EizEFGwY42XTU18bCrxB3pUkSGRRaf
-u3BO9TFcZGd1/PflGJKc
-=AwhZ
+iQIcBAEBCAAGBQJVbDrIAAoJEMDTa8Ir7ZwV/cEP/iRW8fndcyqkbsPHRBHwmiKo
+lbqNAvIDaoMinGRM+ZecrCYhLGync9omYN7huECRyUgKLHEL4WzAcTBiaqMyagcj
+QHE4uipk4+I6b6D4ocD41O8Ke6qMvJmUr18DUj9jb6PSlarwsEzcG0I/yrCOBLiJ
+YZg4qMrQ0Cj09OhttsQdxPEoKHV6fTzxF7tPJwBxJOnV0a/DH0ZS8sfS1KnBUQkA
+w0DQ0vBtACKG3KZgcbv4hK7t6K4eptsep989Z61F46gU0tyWiUsW/1dLD28E/KQU
+0wpevF9jnG/McZsrNIszCYsoleLSuPADcWRxe6W/eI3q8L7RqOywqyjp6X0gexvw
+gINPa1YRFihRdO7T6R8VWJpzQTBtCr3uVVFGxQ4ahBR7LkzxWzB3HNpx5CTLOysM
+4kxR9Oe3I1FQ08P4w8dwTYaA/jYOWcToU6NP0GR/ky72F7W1xgJ/EoSK5dX5N8Vg
+Hn9dGQmVDmhTLKGmffgNRHJDhLCc2PxlfhSUcCUq+b4znSDsIIfaFTZimE+sY8FW
+VStI4vtIAEsiHLDAgDgeUVfcvgyD/zFU4WvQgYr2SpKe+CidDPgNARZT+Kt6R9TM
+R7YuHND+TW/lNG8FP/AAO3ZUpiYVBAhw3B4CSiP0iFD/v+oeHq3btCEFvCx84POo
+juFsTeBvd81A/HvZ44iA
+=/sTk
 -----END PGP SIGNATURE-----
 
---Sig_/gMeO4ltR6TJ3dKRGU41MXI3--
+--Sig_/hscHD7V7dvRn_G+ASAWbolQ--
