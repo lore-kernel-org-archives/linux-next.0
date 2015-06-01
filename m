@@ -1,101 +1,74 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: randconfig build error with next-20150521, in
- drivers/platform/x86/dell-rbtn.c
-Date: Mon, 1 Jun 2015 19:26:50 +0200
-Message-ID: <20150601172650.GA80980@vmdeb7>
-References: <CA+r1Zhij2wUuLK6cdhr44NFW+okW4YuyFoo2_58mR6yncsXo3w@mail.gmail.com>
- <20150521195615.GF22037@vmdeb7>
- <201505212207.11872@pali>
- <556C8B10.8040000@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 2 Jun 2015 08:47:46 +1000
+Message-ID: <20150602084746.3a931067@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jqbgQBcJAqTvwylYMQJHk3E"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:33278 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752051AbbFAR0h (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Jun 2015 13:26:37 -0400
-Content-Disposition: inline
-In-Reply-To: <556C8B10.8040000@infradead.org>
+Received: from ozlabs.org ([103.22.144.67]:54662 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752852AbbFAWrx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Jun 2015 18:47:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@opensource.altera.com>
 
-On Mon, Jun 01, 2015 at 09:40:48AM -0700, Randy Dunlap wrote:
-> On 05/21/15 13:07, Pali Roh=E1r wrote:
-> > On Thursday 21 May 2015 21:56:15 Darren Hart wrote:
-> >> On Thu, May 21, 2015 at 10:36:15AM -0700, Jim Davis wrote:
-> >>> Building with the attached random configuration file,
-> >>>
-> >>> drivers/built-in.o: In function `rbtn_remove':
-> >>> dell-rbtn.c:(.text+0x31d7f4): undefined reference to
-> >>> `input_unregister_device' drivers/built-in.o: In function
-> >>> `rbtn_notify':
-> >>> dell-rbtn.c:(.text+0x31d8e5): undefined reference to `input_event=
-'
-> >>> dell-rbtn.c:(.text+0x31d8f8): undefined reference to `input_event=
-'
-> >>> dell-rbtn.c:(.text+0x31d911): undefined reference to `input_event=
-'
-> >>> dell-rbtn.c:(.text+0x31d924): undefined reference to `input_event=
-'
-> >>> drivers/built-in.o: In function `rbtn_add':
-> >>> dell-rbtn.c:(.text+0x31da11): undefined reference to
-> >>> `input_allocate_device' dell-rbtn.c:(.text+0x31da4a): undefined
-> >>> reference to `input_register_device' dell-rbtn.c:(.text+0x31da5e)=
-:
-> >>> undefined reference to `input_free_device' Makefile:938: recipe
-> >>> for target 'vmlinux' failed
-> >>
-> >> Thanks Jim,
-> >>
-> >> Pali, the DELL_RBTN needs to ensure if it it's built-in, that INPU=
-T
-> >> is too. ...
-> >>
-> >>> CONFIG_INPUT=3Dm
-> >>> CONFIG_INPUT_FF_MEMLESS=3Dm
-> >>> CONFIG_INPUT_POLLDEV=3Dm
-> >>> CONFIG_INPUT_SPARSEKMAP=3Dm
-> >>> CONFIG_INPUT_MATRIXKMAP=3Dm
-> >>
-> >> ...
-> >>
-> >>> CONFIG_DELL_RBTN=3Dy
-> >>
-> >> Please submit a fix as a new patch.
-> >=20
-> > I believe that this patch is needed:
-> >=20
-> > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kc=
-onfig
-> > index 8c03223..d025fd8 100644
-> > --- a/drivers/platform/x86/Kconfig
-> > +++ b/drivers/platform/x86/Kconfig
-> > @@ -141,6 +141,7 @@ config DELL_SMO8800
-> >  config DELL_RBTN
-> >  	tristate "Dell Airplane Mode Switch driver"
-> >  	depends on ACPI
-> > +	depends on INPUT
-> >  	depends on RFKILL
-> >  	---help---
-> >  	  Say Y here if you want to support Dell Airplane Mode Switch ACP=
-I
-> >=20
-> > I did not tested it yet, but all other drivers depends on INPUT.
-> >=20
->=20
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
->=20
-> Please get the patch merged.
+--Sig_/jqbgQBcJAqTvwylYMQJHk3E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I was waiting on a new version from Pali, but it hasn't appeared quite =
-yet. I've
-dropped the dell-rbtn and associated dell-laptop changes from my next b=
-ranch for
-now to avoid the breakage.
+Hi all,
+
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-socfpga/core.h between commit 02b4e2756e01 ("ARM: v7
+setup function should invalidate L1 cache") from the arm tree and
+commit 122694a0c712 ("ARM: socfpga: use of_iomap to map the SCU") from
+the arm-soc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
-Darren Hart
-Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-socfpga/core.h
+index 767c09e954a0,5913bbb50036..000000000000
+--- a/arch/arm/mach-socfpga/core.h
++++ b/arch/arm/mach-socfpga/core.h
+@@@ -31,8 -31,8 +31,6 @@@
+ =20
+  #define RSTMGR_MPUMODRST_CPU1		0x2     /* CPU1 Reset */
+ =20
+- extern void __iomem *socfpga_scu_base_addr;
+ -extern void socfpga_secondary_startup(void);
+--
+  extern void socfpga_init_clocks(void);
+  extern void socfpga_sysmgr_init(void);
+ =20
+
+--Sig_/jqbgQBcJAqTvwylYMQJHk3E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVbOEXAAoJEMDTa8Ir7ZwVxhIQAIYri3miMYvCRelGYAIlw++a
+KKC/gWyDfUrEGGBVulOyXq4AHf/512cbubsSKzmSBr82dW5TUz2yS4elxXB97cou
+mSnRkb5FPnbUmh+9VPFNuQnVXrq4T7XbkQPizp5nFFx4hKveFuFRHbL+cNTbbbJ0
+R8r4tm/pH3FIAtm10uEvvSbl0VVK6UpSEuEH+oyN9qORKEEV+sv9iVXtuoj8VWDb
+1xe7KbQDTy9l0Bky33NpSQlqnuwdj0wuouexowyXplq3Iyb/quluao5AhTf0i/ve
+nXLzHTDReCGu2ryII+gHmPoBzUXWiXaQpHj9X8riwm6/trg5/xgrr5c0MSpRdeA2
+Z3PF7A1yOgmXM5vggw12yXCby6WMBemH0ItSMONuBg/l69A7DFJNnlMzWMv1hp/x
+yelYEKiJfYJLCT7o31xA52oQxW3BPQ+V5TlhWpQ603+59vXSjE01+ZU33505G+1R
+Rrq0md/RPRNkVL02nC+nnOpakPkIAGU4/yJuvXq7MySRtPx4B/g1aeXoGRsVgNVV
+P452S+KGYwIIQbyYtvVU6jNy/t7L2NoP81qDxDHlTLnLdG2H2GjzZDuqsDW/c8O+
+aEz0yS2sEZkfhw2jnutKSRKZY5D9uL3WMWTahScQRWi8WNOofXmUh437sXx3BA8E
+FgSlmtvdvugfvXuM6IsX
+=RIRH
+-----END PGP SIGNATURE-----
+
+--Sig_/jqbgQBcJAqTvwylYMQJHk3E--
