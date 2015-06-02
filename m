@@ -1,31 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 2 Jun 2015 08:47:46 +1000
-Message-ID: <20150602084746.3a931067@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with the arm and h8300
+ trees
+Date: Tue, 2 Jun 2015 10:41:55 +1000
+Message-ID: <20150602104155.4dd7c872@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jqbgQBcJAqTvwylYMQJHk3E"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54662 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752852AbbFAWrx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Jun 2015 18:47:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dinh Nguyen <dinguyen@opensource.altera.com>
+ boundary="Sig_/0kDuAOT/cGW9cg/7jZwwsvH"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, Russell King <linux@arm.linux.org.uk>, Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/jqbgQBcJAqTvwylYMQJHk3E
+--Sig_/0kDuAOT/cGW9cg/7jZwwsvH
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Ralf,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-socfpga/core.h between commit 02b4e2756e01 ("ARM: v7
-setup function should invalidate L1 cache") from the arm tree and
-commit 122694a0c712 ("ARM: socfpga: use of_iomap to map the SCU") from
-the arm-soc tree.
+Today's linux-next merge of the mips tree got a conflict in
+drivers/irqchip/Makefile between commits 22b67acd99c0 ("ARM: 8368/1:
+sa1100: move irq driver to drivers/irqchip/") from the arm tree and
+eba5540f0103 ("h8300: IRQ chip driver") from the h8300 tree and commit
+a7c64f0e29a6 ("MIPS/IRQCHIP: Move Ingenic SoC intc driver to
+drivers/irqchip") from the mips tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,41 +32,39 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-socfpga/core.h
-index 767c09e954a0,5913bbb50036..000000000000
---- a/arch/arm/mach-socfpga/core.h
-+++ b/arch/arm/mach-socfpga/core.h
-@@@ -31,8 -31,8 +31,6 @@@
- =20
-  #define RSTMGR_MPUMODRST_CPU1		0x2     /* CPU1 Reset */
- =20
-- extern void __iomem *socfpga_scu_base_addr;
- -extern void socfpga_secondary_startup(void);
---
-  extern void socfpga_init_clocks(void);
-  extern void socfpga_sysmgr_init(void);
- =20
+diff --cc drivers/irqchip/Makefile
+index ed9553322638,db014e8e12c9..000000000000
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@@ -47,6 -48,4 +48,7 @@@ obj-$(CONFIG_KEYSTONE_IRQ)		+=3D irq-keys
+  obj-$(CONFIG_MIPS_GIC)			+=3D irq-mips-gic.o
+  obj-$(CONFIG_ARCH_MEDIATEK)		+=3D irq-mtk-sysirq.o
+  obj-$(CONFIG_ARCH_DIGICOLOR)		+=3D irq-digicolor.o
+ +obj-$(CONFIG_ARCH_SA1100)		+=3D irq-sa11x0.o
+ +obj-$(CONFIG_RENESAS_H8300H_INTC)	+=3D irq-renesas-h8300h.o
+ +obj-$(CONFIG_RENESAS_H8S_INTC)		+=3D irq-renesas-h8s.o
++ obj-$(CONFIG_INGENIC_IRQ)		+=3D irq-ingenic.o
 
---Sig_/jqbgQBcJAqTvwylYMQJHk3E
+--Sig_/0kDuAOT/cGW9cg/7jZwwsvH
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbOEXAAoJEMDTa8Ir7ZwVxhIQAIYri3miMYvCRelGYAIlw++a
-KKC/gWyDfUrEGGBVulOyXq4AHf/512cbubsSKzmSBr82dW5TUz2yS4elxXB97cou
-mSnRkb5FPnbUmh+9VPFNuQnVXrq4T7XbkQPizp5nFFx4hKveFuFRHbL+cNTbbbJ0
-R8r4tm/pH3FIAtm10uEvvSbl0VVK6UpSEuEH+oyN9qORKEEV+sv9iVXtuoj8VWDb
-1xe7KbQDTy9l0Bky33NpSQlqnuwdj0wuouexowyXplq3Iyb/quluao5AhTf0i/ve
-nXLzHTDReCGu2ryII+gHmPoBzUXWiXaQpHj9X8riwm6/trg5/xgrr5c0MSpRdeA2
-Z3PF7A1yOgmXM5vggw12yXCby6WMBemH0ItSMONuBg/l69A7DFJNnlMzWMv1hp/x
-yelYEKiJfYJLCT7o31xA52oQxW3BPQ+V5TlhWpQ603+59vXSjE01+ZU33505G+1R
-Rrq0md/RPRNkVL02nC+nnOpakPkIAGU4/yJuvXq7MySRtPx4B/g1aeXoGRsVgNVV
-P452S+KGYwIIQbyYtvVU6jNy/t7L2NoP81qDxDHlTLnLdG2H2GjzZDuqsDW/c8O+
-aEz0yS2sEZkfhw2jnutKSRKZY5D9uL3WMWTahScQRWi8WNOofXmUh437sXx3BA8E
-FgSlmtvdvugfvXuM6IsX
-=RIRH
+iQIcBAEBCAAGBQJVbPvYAAoJEMDTa8Ir7ZwV7vYP/A463YZVthq39mkRJF8fuvYw
+/xRNZrieWJQYptY4fQTbJKSuZi5kPB4taz/pVYpaFGvAYqrkkLXHuVVvwWXB3EvW
+451aWDYvvD9S975/3Pqm5jnbCm+5X4j5729IQSzYA+6AhPhIrvZ4MFQ0BBTspJ4N
+soIrfYTIcVO+UOgNcJSRqO2ER/PcF8roavti/C6TWuOCJbOpSKieoFFhTXoT/YGb
+CJbkPn9cRVN7DgrPoEgxKwSnT1jmJOtodYJSPzaG5kN5KmUT6MifsRduVrRCMge3
+onuuUTN0tgq3A9gw0nTwtoYiCfeVGOHp0a91yK5iZ1kmPwt6HimeK6c6cN0dNGyQ
+haUefUZ+uaRGpGM2n9nj7sm66dOGBrI/XgzLw6lm1BBcTb2gS0PCB7jYaBWa9C7w
+6NUcAOb007bK4V+vHhBo0tGMrrsi4B+8lesp0Yqth4Q7dVkrM8Qg+m4zyQ+Jk3sQ
+uB4vXtEWZdqNKG55q3kqXtGDC+OQzO2Poye1PQmnMTtZG3XmRo2/8+2kQW9xsblo
+odUnR1kzH7bIDI9rf4PtsyyOtmdlh27R7I46h3NrpXHnWdWAiZSD5VccIeX5rbaN
+Oukg71hPhNMMPKXx7RXSnHbEj5fPf6lw6gsZSif0fwcrNQoh3Ph93vobVi99VWAN
+FtYDaDs/DPjHcvXA2ppr
+=wZV2
 -----END PGP SIGNATURE-----
 
---Sig_/jqbgQBcJAqTvwylYMQJHk3E--
+--Sig_/0kDuAOT/cGW9cg/7jZwwsvH--
