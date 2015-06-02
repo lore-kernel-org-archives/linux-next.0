@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drivers-x86 tree with Linus' tree
-Date: Tue, 2 Jun 2015 16:07:23 +1000
-Message-ID: <20150602160723.3b519d63@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the net-next tree
+Date: Tue, 2 Jun 2015 17:31:27 +1000
+Message-ID: <20150602173127.3b65697f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/A3n_=nlQH.OejTcp73.LXZQ"; protocol="application/pgp-signature"
+ boundary="Sig_/YnLY2x=ILBBl22xtrP5jo.H"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56937 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48326 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751171AbbFBGHe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Jun 2015 02:07:34 -0400
+	id S1753893AbbFBHbd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Jun 2015 03:31:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Darren Hart <dvhart@infradead.org>, Philippe Coval <philippe.coval@open.eurogiciel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Tunin <hanipouspilot@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>
 
---Sig_/A3n_=nlQH.OejTcp73.LXZQ
+--Sig_/YnLY2x=ILBBl22xtrP5jo.H
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Darren,
+Hi James,
 
-Today's linux-next merge of the drivers-x86 tree got a conflict in
-drivers/platform/x86/ideapad-laptop.c between commit 9b071a43553d
-("ideapad_laptop: Add Lenovo G40-30 to devices without radio switch")
-from Linus' tree and commit 4fa9dabcffc8 ("ideapad_laptop: Lenovo
-G50-30 fix rfkill reports wireless blocked") from the drivers-x86 tree.
+Today's linux-next merge of the scsi tree got a conflict in
+drivers/target/target_core_user.c between commit 5538d294dd66
+("treewide: Add missing vmalloc.h inclusion") from the net-next tree
+and commit 7ad09a15e76b ("target: Minimize SCSI header #include
+directives") from the scsi tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,52 +34,48 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/platform/x86/ideapad-laptop.c
-index b496db87bc05,1db3d2176d56..000000000000
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@@ -830,13 -830,13 +830,20 @@@ static void ideapad_acpi_notify(acpi_ha
-   */
-  static const struct dmi_system_id no_hw_rfkill_list[] =3D {
-  	{
- +		.ident =3D "Lenovo G40-30",
- +		.matches =3D {
- +			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
- +			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo G40-30"),
- +		},
- +	},
- +	{
-+ 		.ident =3D "Lenovo G50-30",
-+ 		.matches =3D {
-+ 			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+ 			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo G50-30"),
-+ 		},
-+ 	},
-+ 	{
-  		.ident =3D "Lenovo Yoga 2 11 / 13 / Pro",
-  		.matches =3D {
-  			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+diff --cc drivers/target/target_core_user.c
+index edc955558250,21b438ec4700..000000000000
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@@ -19,13 -19,13 +19,14 @@@
+  #include <linux/spinlock.h>
+  #include <linux/module.h>
+  #include <linux/idr.h>
++ #include <linux/kernel.h>
+  #include <linux/timer.h>
+  #include <linux/parser.h>
+ +#include <linux/vmalloc.h>
+- #include <scsi/scsi.h>
+- #include <scsi/scsi_host.h>
+  #include <linux/uio_driver.h>
+  #include <net/genetlink.h>
++ #include <scsi/scsi_common.h>
++ #include <scsi/scsi_proto.h>
+  #include <target/target_core_base.h>
+  #include <target/target_core_fabric.h>
+  #include <target/target_core_backend.h>
 
---Sig_/A3n_=nlQH.OejTcp73.LXZQ
+--Sig_/YnLY2x=ILBBl22xtrP5jo.H
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbUgjAAoJEMDTa8Ir7ZwVU7AQAJaLCRPINb06ZzF0jLgSUIZB
-R+gYNedEv9x6wFWkZzUk1SOOR8GsIZVqOO1Lc5MpBSNbpIZyjFHL4o0M7YS/pkBU
-/+4DhmOPHF/cT9ZMzGeu7fhdWzIoCiUyYwbT38mb/1Osmi4apo21RebUHwzn2nLB
-G8pKBPQz7adGehIbEPBU4T1v8/pZ5hTayLKXBCuICDzlujm7tZ7On7k7jKTDip1y
-R+8K5Ia8nBtOTFhx5N3vRYsvLhjxMolYgvSVlE1+zzN3U08q+O/weKK6/A9CWVoN
-o3VgVZT4bQfq4JoI5IJSMfI1RUqqomO4ZzxBycvB1SsWgUn1ymVhwuymw9Nd7W78
-99TA+WHPIb8SaEGkSsOFVaPEz8otLrOlfJws/STTasukb1AoCU0W9B7CBUXD7+AN
-HuHPIHsp6FgLLBKxE/cRL1MAkH5adBQ10vvevHUzhK298YspEZwm5AJj7RyDFg+c
-OtwjZxTepWU3iysZjOdGfR6PX4MuGEVMh7++CsW3RvzIJQ5VaDkiLsEPBOVefK3I
-ody+C1tTQKInkNKfCC1FzJ1fdIswW9cAkoqX1jyE048+PFCfi8o6VjihHeNMcE19
-+lqIqwaFrF++kxkjnaNNiMcBePjuKtDr7fQykd4HORNwPFzatztimPa3fuWoehts
-t/yclnzwQDJugMPASHGW
-=WOJ+
+iQIcBAEBCAAGBQJVbVvTAAoJEMDTa8Ir7ZwVX68QAJP7k2cDFXi6hziDPsPe0j1B
+eexNEJxvWr9X5eEtiLHjNHKnP3T5oZwSBImqgKxRusQXgXzbGVOkY6zbOo5ewug8
+Tl7zdjpcO5J9ONfuIJv7svJwhDQerbhSKIN3w2XsPuUTxbXhUzckC6gEOfKX01VC
+A+ZJHPMkzF9Fk+fMPuJQcyBQXxx6s7B3DTwTceVI7GAtaBYHywBnF355zi8l9j0a
+19LVG7h7erJhkX/15Y0s0oxqONQewowrtIjkX4M0PsBTqo1lBsgnitptqS6YGcAC
+OQ0U85/b+H7GmvstyIemyeLSpJhNZD1Dkq56nl7jtYYamLmrdoptmsseH2eP1aD3
+KcWuuUiBtGfmFAhRcJIHZmv6VGVEOIOx7hFsOxcCSnxPHCzkfoIOJjjqu/UMVRKK
+uvaYoa6xbSnWq+RjhdxJ+0ejSckpm/8RG04XQJ9hy/z7VAzAiua3a5eL/Yn14xHU
+3C9IOFcxGJ3mc9MI45h174UmIWctodoJg0N3vz88P/tJ644ItePD4FwG1FJjxfT7
+2R0xHytx16djquCIqgLWyYVW2N9H7UeSdc9/W5p5l5Wi5IS6OFtHllEyY5GCV4z9
+hP9vxNwWP9Ne5FgiRKef+bU94UDqzdmX8OwQeuBwwL3Rg0F2bU6vDucmdl/KBk4p
+7riZhaDN+IT2cZk2VObz
+=OQsP
 -----END PGP SIGNATURE-----
 
---Sig_/A3n_=nlQH.OejTcp73.LXZQ--
+--Sig_/YnLY2x=ILBBl22xtrP5jo.H--
