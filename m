@@ -1,81 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with the net-next tree
-Date: Tue, 2 Jun 2015 17:31:27 +1000
-Message-ID: <20150602173127.3b65697f@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi tree
+Date: Tue, 2 Jun 2015 18:06:36 +1000
+Message-ID: <20150602180636.0f89c971@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YnLY2x=ILBBl22xtrP5jo.H"; protocol="application/pgp-signature"
+ boundary="Sig_/8.H7bi07=9pzbzic6bB7hM5"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48326 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44068 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753893AbbFBHbd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Jun 2015 03:31:33 -0400
+	id S1754248AbbFBIGn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Jun 2015 04:06:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bart Van Assche <bart.vanassche@sandisk.com>, Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>
 
---Sig_/YnLY2x=ILBBl22xtrP5jo.H
+--Sig_/8.H7bi07=9pzbzic6bB7hM5
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi James,
 
-Today's linux-next merge of the scsi tree got a conflict in
-drivers/target/target_core_user.c between commit 5538d294dd66
-("treewide: Add missing vmalloc.h inclusion") from the net-next tree
-and commit 7ad09a15e76b ("target: Minimize SCSI header #include
-directives") from the scsi tree.
+After merging the scsi tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/usb/gadget/function/f_mass_storage.c:280:12: error: 'MAX_COMMAND_SI=
+ZE' undeclared here (not in a function)
+  u8   cmnd[MAX_COMMAND_SIZE];
+            ^
 
+Caused by commit 0e640c799103 ("Replace MAX_COMMAND_SIZE with BLK_MAX_CDB").
+
+I have used the scsi tree from next-20150601 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/target/target_core_user.c
-index edc955558250,21b438ec4700..000000000000
---- a/drivers/target/target_core_user.c
-+++ b/drivers/target/target_core_user.c
-@@@ -19,13 -19,13 +19,14 @@@
-  #include <linux/spinlock.h>
-  #include <linux/module.h>
-  #include <linux/idr.h>
-+ #include <linux/kernel.h>
-  #include <linux/timer.h>
-  #include <linux/parser.h>
- +#include <linux/vmalloc.h>
-- #include <scsi/scsi.h>
-- #include <scsi/scsi_host.h>
-  #include <linux/uio_driver.h>
-  #include <net/genetlink.h>
-+ #include <scsi/scsi_common.h>
-+ #include <scsi/scsi_proto.h>
-  #include <target/target_core_base.h>
-  #include <target/target_core_fabric.h>
-  #include <target/target_core_backend.h>
-
---Sig_/YnLY2x=ILBBl22xtrP5jo.H
+--Sig_/8.H7bi07=9pzbzic6bB7hM5
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbVvTAAoJEMDTa8Ir7ZwVX68QAJP7k2cDFXi6hziDPsPe0j1B
-eexNEJxvWr9X5eEtiLHjNHKnP3T5oZwSBImqgKxRusQXgXzbGVOkY6zbOo5ewug8
-Tl7zdjpcO5J9ONfuIJv7svJwhDQerbhSKIN3w2XsPuUTxbXhUzckC6gEOfKX01VC
-A+ZJHPMkzF9Fk+fMPuJQcyBQXxx6s7B3DTwTceVI7GAtaBYHywBnF355zi8l9j0a
-19LVG7h7erJhkX/15Y0s0oxqONQewowrtIjkX4M0PsBTqo1lBsgnitptqS6YGcAC
-OQ0U85/b+H7GmvstyIemyeLSpJhNZD1Dkq56nl7jtYYamLmrdoptmsseH2eP1aD3
-KcWuuUiBtGfmFAhRcJIHZmv6VGVEOIOx7hFsOxcCSnxPHCzkfoIOJjjqu/UMVRKK
-uvaYoa6xbSnWq+RjhdxJ+0ejSckpm/8RG04XQJ9hy/z7VAzAiua3a5eL/Yn14xHU
-3C9IOFcxGJ3mc9MI45h174UmIWctodoJg0N3vz88P/tJ644ItePD4FwG1FJjxfT7
-2R0xHytx16djquCIqgLWyYVW2N9H7UeSdc9/W5p5l5Wi5IS6OFtHllEyY5GCV4z9
-hP9vxNwWP9Ne5FgiRKef+bU94UDqzdmX8OwQeuBwwL3Rg0F2bU6vDucmdl/KBk4p
-7riZhaDN+IT2cZk2VObz
-=OQsP
+iQIcBAEBCAAGBQJVbWQRAAoJEMDTa8Ir7ZwV8KcP/1yFc2Fp71O/88eEkLa+JsE8
+daHXpAPxJtLSiehcmOxECvVVFI2raEQiA4sxF+EeCjn/f3+KsXLNqwSMirhsk4bM
+3iZlO0csSuVhcTFeLMJIZSNuPZs1Pmib3F89VDr/Yc7df5Xp1sYU9LYDLzV8sJPp
+nFyDDAaExywQQRHvmXypSM0NvtH9MvL5V8xPrkTIEQ2u+XUsOf0GGq3hTkB3rx2N
+iQjMnWJtDQX0JnO1nvnk8WWSZZBKQaM0YFGXO3FfTKfFz01t7d5Bwd034YO9dSHb
+1lZ3LFZms4M4aSystlclaxczVZ3XszgOMIVbQiGY6TYpRZxziMyFT4t8ezvH3VEY
+x98tft2CE00VQTFUksHmUapHCUcLlfvWDYkc6YErEajd/e3V8Fne89lF2kIuj8mM
+iS8TU3AIeX7ARadxB9Kw9BZW81Xez3nUBxXNKXda/NTAdby7XqiwWciODt2itjQC
+HhsQkVKk021uOwvlEHGcklPYknfvKTvV6AY00B+QIdoqki0R+U8iwtk+x6s4G8R0
+OCwQznPRhmK6RXvHU0dz9ULnS4ZCkWs+jI536vMWSI6REfAkpQntT6qocHuotRIV
+sFnSejs7jKTIEO8/CCfNRej2QV1f7WKbGRSUi1tE8RjBF/h4gjEyOevoxvRkCZaZ
+uBgS5LOqhymLmMj0KvhO
+=Ltl2
 -----END PGP SIGNATURE-----
 
---Sig_/YnLY2x=ILBBl22xtrP5jo.H--
+--Sig_/8.H7bi07=9pzbzic6bB7hM5--
