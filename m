@@ -1,33 +1,65 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Wed, 03 Jun 2015 09:23:13 +0200
-Message-ID: <1433316193.2274.5.camel@sipsolutions.net>
-References: <20150603171634.2da4f45d@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20150603171634.2da4f45d@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Johnny Kim <johnny.kim@atmel.com>
-List-Id: linux-next.vger.kernel.org
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH] advansys: fix compilation errors and warnings when CONFIG_PCI is not set
+Date: Wed,  3 Jun 2015 09:56:42 +0200
+Message-ID: <1433318202-1455-1-git-send-email-jthumshirn@suse.de>
+References: <CA+r1ZhgMztLi-9E6cV=W1xJkMYG_rTtaJFj4Bv0TFPHmjSU+oQ@mail.gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:52245 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753056AbbFCH44 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2015 03:56:56 -0400
+In-Reply-To: <CA+r1ZhgMztLi-9E6cV=W1xJkMYG_rTtaJFj4Bv0TFPHmjSU+oQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Hannes Reinecke <hare@suse.de>, JBottomley@odin.com
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Johannes Thumshirn <jthumshirn@suse.de>
 
-Hi Stephen, all,
+Fix compilation errors on forgotten #include <linux/dmapool.h> and warnings when
+CONFIG_PCI is not set.
 
-> Caused by commit c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11
-> driver") from the staging tree interacting with commit 80279fb7ba5b
-> ("cfg80211: properly send NL80211_ATTR_DISCONNECTED_BY_AP in
-> disconnect") from the net-next tree.
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ drivers/scsi/advansys.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-I thought I fixed it all, but it looks like this is a new driver.
-
-> I applied the below merge fix patch (I didn't know if it should be
-> "true" or "false" - advise would be nice).
-
-As far as I can tell from looking at a few lines of context it's
-handling a disconnect event from the firmware, which presumably sends
-the event upon deauth from the AP; thus it should be 'true' instead,
-since the argument says "from_ap".
-
-johannes
+diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+index 14d3aa5..4305178 100644
+--- a/drivers/scsi/advansys.c
++++ b/drivers/scsi/advansys.c
+@@ -37,6 +37,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/firmware.h>
++#include <linux/dmapool.h>
+ 
+ #include <asm/io.h>
+ #include <asm/dma.h>
+@@ -9435,6 +9436,7 @@ static int AscInitSetConfig(struct pci_dev *pdev, struct Scsi_Host *shost)
+  * on big-endian platforms so char fields read as words are actually being
+  * unswapped on big-endian platforms.
+  */
++#ifdef CONFIG_PCI
+ static ADVEEP_3550_CONFIG Default_3550_EEPROM_Config = {
+ 	ADV_EEPROM_BIOS_ENABLE,	/* cfg_lsw */
+ 	0x0000,			/* cfg_msw */
+@@ -9771,7 +9773,6 @@ static ADVEEP_38C1600_CONFIG ADVEEP_38C1600_Config_Field_IsChar = {
+ 	0			/* 63 reserved */
+ };
+ 
+-#ifdef CONFIG_PCI
+ /*
+  * Wait for EEPROM command to complete
+  */
+@@ -11385,7 +11386,9 @@ static int advansys_board_found(struct Scsi_Host *shost, unsigned int iop,
+  err_unmap:
+ 	if (boardp->ioremap_addr)
+ 		iounmap(boardp->ioremap_addr);
++#ifdef CONFIG_PCI
+  err_shost:
++#endif
+ 	return ret;
+ }
+ 
+-- 
+1.8.5.2
