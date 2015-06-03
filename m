@@ -1,59 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the init tree with the arm tree
-Date: Wed, 3 Jun 2015 19:21:06 +1000
-Message-ID: <20150603192106.1d30ff5a@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the mips
+ tree
+Date: Wed, 3 Jun 2015 19:33:46 +1000
+Message-ID: <20150603193346.01a9989d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EDgh6wZgONk3=14BklXf5F."; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55154 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752774AbbFCJVI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2015 05:21:08 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/yd6VimrzzdsxOhyTbIuDyAn"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/EDgh6wZgONk3=14BklXf5F.
-Content-Type: text/plain; charset=US-ASCII
+--Sig_/yd6VimrzzdsxOhyTbIuDyAn
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Andrew,
 
-Today's linux-next merge of the init tree got a conflict in
-arch/arm/mach-keystone/platsmp.c between commit 7517021b8a32 ("ARM:
-redo TTBR setup code for LPAE") from the arm tree and commit
-5639d871ecb2 ("arm/mach-keystone: remove legacy __cpuinit sections that
-crept in") from the init tree.
+Today's linux-next merge of the akpm-current tree got a conflict in
+MAINTAINERS between commit d4b6c2755ce1 ("MAINTAINERS: Add Broadcom
+BCM47xx entry") from the  tree and commit b93598277db2 ("MAINTAINERS:
+remove section BROADCOM BCM33XX MIPS ARCHITECTURE") from the
+akpm-current tree.
 
-I fixed it up (the former removed the code modified by the latter) and
-can carry the fix as necessary (no action is required).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/EDgh6wZgONk3=14BklXf5F.
+diff --cc MAINTAINERS
+index 5f620640c34d,6de7364e67a4..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -2211,22 -2153,6 +2211,14 @@@ T:	git git://git.kernel.org/pub/scm/lin
+  S:	Maintained
+  N:	bcm2835
+ =20
+- BROADCOM BCM33XX MIPS ARCHITECTURE
+- M:	Kevin Cernekee <cernekee@gmail.com>
+- L:	linux-mips@linux-mips.org
+- S:	Maintained
+- F:	arch/mips/bcm3384/*
+- F:	arch/mips/include/asm/mach-bcm3384/*
+- F:	arch/mips/kernel/*bmips*
+-=20
+ +BROADCOM BCM47XX MIPS ARCHITECTURE
+ +M:	Hauke Mehrtens <hauke@hauke-m.de>
+ +M:	Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+ +L:	linux-mips@linux-mips.org
+ +S:	Maintained
+ +F:	arch/mips/bcm47xx/*
+ +F:	arch/mips/include/asm/mach-bcm47xx/*
+ +
+  BROADCOM BCM5301X ARM ARCHITECTURE
+  M:	Hauke Mehrtens <hauke@hauke-m.de>
+  L:	linux-arm-kernel@lists.infradead.org
+@@@ -2322,14 -2247,8 +2314,14 @@@ M:	Ray Jui <rjui@broadcom.com
+  L:	bcm-kernel-feedback-list@broadcom.com
+  S:	Supported
+  F:	drivers/gpio/gpio-bcm-kona.c
+- F:	Documentation/devicetree/bindings/gpio/gpio-bcm-kona.txt
++ F:	Documentation/devicetree/bindings/gpio/brcm,kona-gpio.txt
+ =20
+ +BROADCOM STB NAND FLASH DRIVER
+ +M:	Brian Norris <computersforpeace@gmail.com>
+ +L:	linux-mtd@lists.infradead.org
+ +S:	Maintained
+ +F:	drivers/mtd/nand/brcmnand/
+ +
+  BROADCOM SPECIFIC AMBA DRIVER (BCMA)
+  M:	Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+  L:	linux-wireless@vger.kernel.org
+
+--Sig_/yd6VimrzzdsxOhyTbIuDyAn
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbscCAAoJEMDTa8Ir7ZwVQrsP/0wF1trGMqsFOlnbwbt6uO6u
-iogt++BrGwjnGp6DEjtMwNWFYnunRuQiHV5HoCRURS45+AFwnGZZXj45+F6iixi2
-Lu3tOQSa1NATnjQOYNSpbP1BtobvTSqJ/7OST52wmQDUpyrTN4GbqMe9JEi6Itss
-6qUyFLz5eEbJXxXj6KuPo42YhF5enBIuyQ4qJYJNL8pCfwB1EUMJOW2kyq8SN0YX
-2d/r/NAQE34wgqEFjgl5bhWRPzNGnaj8lZ/ZJg2iIjrwYje96XXRJhdKuO7dXtXf
-98J+XYOHCTOmHgExrrprKGtudqNgxpiXNKL4tMMCfEJUvCuNzle6oHHPpNO1mWkw
-ygN8C2VuUvs/xNQuMv7GQ8bel2cvuK98MPkmvs+UWkh5QWAk9lvBT8bbz4h7DjlN
-yezUR0sFvMcVRmatJjNW11ZigoC81+R7tA0qq5PfK5rRl5G4//qRFH8H7DaksqMy
-cbvsh7rootiJQK/Tk4LDnGfRJkcRldTJ0LVZDJRSs9rW4Seqyh+Nclglts1vCBQl
-7u5pAkKuXsMY4xNvJOqe3rjh+X9XM/uSqKKfq+1HZJcxtmCz91k2Phtp6T2j3VgS
-62ks/hGPUlCPJlbSi/ybb1sT+B1W/hrn6Lo3XePEMJLQhUaj7+wJT+tQEhUIjsGJ
-c7SdvFE2TV4xUcSveIZl
-=fWGf
+iQIcBAEBCAAGBQJVbsoCAAoJEMDTa8Ir7ZwVpCAQAIiIpZyXdMCZLGRq3twgBrwR
+61HIrZchGrlozS1qHX7DeaNz4DfLsffW5agWM64Qpg6WFggVl65eNTaIqVyOI9+5
+fSl/r3lc4oelkx8CPsFJ7147oOBGWzJSRGPj5fwo+Vq/OdgYyusEhvB8rlswB7Am
+C07P20XtGi1Bsd+lzHzco16evBAtbv70QPE8O3d7aFBc1MsWvXa6IVCUYRSHgHF7
+2999uCP+ycUKDbdLxpWAgOfEi5y7biL7H4YZRg2u6qzb8JhgB59Fpr49r8dO7nIP
+LRciZ9qeKuRdBsFFParLkzpORTWAhSkpsOY1tKAVFYyQHEvFqSAkd9DH3xYGvfux
+JH3yLgopRY1i9PmcFGcec12E+lIFkiYLQkCefkL7UFgkOBuLewOGSWYeU6TBD4PO
+nHhtHpRM5O9+zDs1do1RrOQy5kgKbuXqRdSIR3MX2KRAe8cO39JtJUcCsMdM6pIZ
+0rz2f+3iPVDZqGIiUa/rZY3bhUwOYWXux7zs+sL/vFPN5Gw6v54Z2ku29MZdCLey
+CwA/sSZMcMBi1Eq/YnvA8cnhhwrHNNNsaI+aldAfFpAM8IOdUEb18pRu16ejpwoj
+Fd/f8lY8V9AO2io9/dQFBkrJCJBgfs8OjcaP4GmmSRCLAMjO80Kd7X06yeMBUi2/
+ADf6nf3qzn+NpaC8bwvS
+=QXqf
 -----END PGP SIGNATURE-----
 
---Sig_/EDgh6wZgONk3=14BklXf5F.--
+--Sig_/yd6VimrzzdsxOhyTbIuDyAn--
