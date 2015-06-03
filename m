@@ -1,69 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the mips tree
-Date: Wed, 3 Jun 2015 16:48:42 +1000
-Message-ID: <20150603164842.1615c414@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Wed, 3 Jun 2015 17:16:34 +1000
+Message-ID: <20150603171634.2da4f45d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oOsKleqY22rQxi+V/Q/R/ij"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42230 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752361AbbFCGsu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2015 02:48:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Felipe Balbi <balbi@ti.com>
+ boundary="Sig_/Q685ra.J_l.eM0uRwWv2ELw"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Arnd Bergmann <arnd@arndb.de>, Johnny Kim <johnny.kim@atmel.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/oOsKleqY22rQxi+V/Q/R/ij
+--Sig_/Q685ra.J_l.eM0uRwWv2ELw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/phy/Makefile between commit d38dee131827 ("PHY: Add driver for
-Pistachio USB2.0 PHY") from the mips tree and commit 1c14905ef951
-("phy: add driver for TI TUSB1210 ULPI PHY") from the usb tree.
+After merging the staging tree, today's linux-next build (x86_64 allmodconf=
+ig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:681:3: error: too few arg=
+uments to function 'cfg80211_disconnected'
+   cfg80211_disconnected(dev, pstrDisconnectNotifInfo->u16reason, pstrDisco=
+nnectNotifInfo->ie,
+   ^
+In file included from drivers/staging/wilc1000/wilc_wfi_netdevice.h:40:0,
+                 from drivers/staging/wilc1000/wilc_wfi_cfgoperations.h:11,
+                 from drivers/staging/wilc1000/wilc_wfi_cfgoperations.c:13:
+include/net/cfg80211.h:4584:6: note: declared here
+ void cfg80211_disconnected(struct net_device *dev, u16 reason,
+      ^
+
+Caused by commit c5c77ba18ea6 ("staging: wilc1000: Add SDIO/SPI 802.11
+driver") from the staging tree interacting with commit 80279fb7ba5b
+("cfg80211: properly send NL80211_ATTR_DISCONNECTED_BY_AP in
+disconnect") from the net-next tree.
+
+I applied the below merge fix patch (I didn't know if it should be
+"true" or "false" - advise would be nice).  However, there are still
+way to many warnings from this driver, so I have disabled it again.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 3 Jun 2015 17:09:03 +1000
+Subject: [PATCH] staging: wilc1000: fix call to cfg80211_disconnecteddue to=
+ API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/wilc1000/wilc_wfi_cfgoperations.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/st=
+aging/wilc1000/wilc_wfi_cfgoperations.c
+index f5eff0933e7d..1685669762e8 100644
+--- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
++++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+@@ -679,7 +679,7 @@ static void CfgConnectResult(tenuConnDisconnEvent enuCo=
+nnDisconnEvent,
+ 			pstrDisconnectNotifInfo->u16reason =3D 1;
+ 		}
+ 		cfg80211_disconnected(dev, pstrDisconnectNotifInfo->u16reason, pstrDisco=
+nnectNotifInfo->ie,
+-				      pstrDisconnectNotifInfo->ie_len, GFP_KERNEL);
++				      pstrDisconnectNotifInfo->ie_len, false, GFP_KERNEL);
+=20
+ 	}
+=20
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/phy/Makefile
-index 75a37dc952f5,0a2041803135..000000000000
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@@ -40,4 -40,4 +40,5 @@@ obj-$(CONFIG_PHY_STIH41X_USB)		+=3D phy-s
-  obj-$(CONFIG_PHY_QCOM_UFS) 	+=3D phy-qcom-ufs.o
-  obj-$(CONFIG_PHY_QCOM_UFS) 	+=3D phy-qcom-ufs-qmp-20nm.o
-  obj-$(CONFIG_PHY_QCOM_UFS) 	+=3D phy-qcom-ufs-qmp-14nm.o
- +obj-$(CONFIG_PHY_PISTACHIO_USB)		+=3D phy-pistachio-usb.o
-+ obj-$(CONFIG_PHY_TUSB1210)		+=3D phy-tusb1210.o
-
---Sig_/oOsKleqY22rQxi+V/Q/R/ij
+--Sig_/Q685ra.J_l.eM0uRwWv2ELw
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbqNQAAoJEMDTa8Ir7ZwVSIoQAI8eYy5HQ80JQtTd74Ss2gV8
-Tt5X3wK7vYqpgAqQcVPjN1qunT2KxpZjP6vuxKgz7lSJlzWLz37e0+TS7mCD0usj
-qP8JagFBzZlg2I8YbCYs8bj8IGX+1OKuFO7gWFhtYntkahwzZnj+Pg/WgVWl94xf
-F8+tSR1NBkO5zwKqBul1rMnh/I7a8IAJDOirYNkdiHbmA75bWTKqlUIvWBBu/fHe
-tT4koavHY17SfokFSs8CDkGf/cXOx6/zuGozMFkPu55EirSr00d0lxG/cVVFfa6P
-4VOYcNeOAPooWGXQmPhL2X8sW3c5SwB8NETmozGI2iBaNe1rWuw+BzyLHPgbg0Bg
-5LyiOL+uoQaDlV+hotEV4vLNMDwavO1PGjCUSqDsyijr3M477HS8HUYuPOtIMcLr
-+lgcvN20cpUKefKtWIo/VZAGrMomKAFAiX/qedPHebjhwMmQlAVne3e0ybWWzeNk
-fVR0gNMxSbwlIyyZCOD587OwwKBN4MLsH27VwNu7cj2lppghhQ351BKFgm4Vl4Uv
-lo11GpQd8Db1IZfsDMTWQjUpdr1HkfwizPCPFwHoBgp/YR6zqE/eE2UYrowYa8nU
-QgX6X5IWSPWmM/tLmcN0Xi+WToMSCy0wl5c7RTC1HbGf/GRc/lktVKcykVUI4wFP
-3zqBkUiqSlO+WKZtX/BF
-=XZyS
+iQIcBAEBCAAGBQJVbqnfAAoJEMDTa8Ir7ZwVQZMP/38mOdnObrfdaRP+ikGif2ou
+rv8hy/q4KFaRhvVH0dSJQiQrW/9sZ77r0H4gDQcqHwOkdo2wtBxWW+TCXezbAX3f
+ULIwviOh0oPuVisW3BkCyF4S5GekKPpr4cj6HUwjDKAnZZLGGblXg++Wte8qofB/
+x56RGVs7eLxLMUtGJkBf5IUaNUcv9CtlzytFY/1xPFyWV55hDmXdrppNBTXQO1UF
+lXvBPXbQKqHRzVTaTYEuoMzfHngCRJFp9WbpfMQ0gGkCR6hL1VVK/j3UeQ9EYaAe
+gB9Lg1uQTPZo4QI/R5tWXqCtrMNo2ZDe92fNezHpT0czjTF4fZ70hLqOkBilLRza
+iQFcAWk2a19YfARKYfAEhw8Ufy+VvHPwgQP0zFABXwwsw+KpQIENfuU0o5ZNMm7u
+EagAnV9LBMdd/DQj3+B8ggmhaD+YxC6atYR3BbnuO9fjs9KZNxeA7xuv5/jaANdU
+Sh86FdcQOoHlggtW+aWWB4BQ7vF+SMiD8JnXtGnnFl1Px6qpy4sats1CBnHax0G2
+t0gn3l/qCpGFPu5ccgUMGAlS6aikHC2Vr1uY4EkJu8n3qBQsnJL4xm5D06gq+x5v
+mU0l/n93nocbM8bpa+FCso3ZZFeZvHQpHKuGzthpdKQWdljh8cwhTegj03bQ5rxn
+D6fklxTfJ/XeuMdJedyH
+=/wua
 -----END PGP SIGNATURE-----
 
---Sig_/oOsKleqY22rQxi+V/Q/R/ij--
+--Sig_/Q685ra.J_l.eM0uRwWv2ELw--
