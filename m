@@ -1,155 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the target-updates tree
-Date: Wed, 3 Jun 2015 18:16:07 +1000
-Message-ID: <20150603181607.70cef830@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with the block tree
+Date: Wed, 3 Jun 2015 18:46:48 +1000
+Message-ID: <20150603184648.6d2481e1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KOxL4lYJwVYx7UjPtVhNu9I"; protocol="application/pgp-signature"
+ boundary="Sig_/rGi7Iy.x+xJZgRIX+NgPsXE"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48259 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33895 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753429AbbFCIQO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2015 04:16:14 -0400
+	id S1753094AbbFCIq5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2015 04:46:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Bart Van Assche <bart.vanassche@sandisk.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
---Sig_/KOxL4lYJwVYx7UjPtVhNu9I
+--Sig_/rGi7Iy.x+xJZgRIX+NgPsXE
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicholas,
+Hi Eric,
 
-After merging the target-updates tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the userns tree got a conflict in
+include/linux/fs.h between commit 89e9b9e07a39 ("writeback: add
+{CONFIG|BDI_CAP|FS}_CGROUP_WRITEBACK") from the block tree and commit
+1b852bceb0d1 ("mnt: Refactor the logic for mounting sysfs and proc in a
+user namespace") from the userns tree.
 
-drivers/target/target_core_fabric_lib.c: In function 'target_get_pr_transpo=
-rt_id_len':
-drivers/target/target_core_fabric_lib.c:364:7: error: 'SCSI_PROTOCOL_FCP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_FCP:
-       ^
-drivers/target/target_core_fabric_lib.c:364:7: note: each undeclared identi=
-fier is reported only once for each function it appears in
-drivers/target/target_core_fabric_lib.c:365:7: error: 'SCSI_PROTOCOL_SBP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SBP:
-       ^
-drivers/target/target_core_fabric_lib.c:366:7: error: 'SCSI_PROTOCOL_SRP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SRP:
-       ^
-drivers/target/target_core_fabric_lib.c:367:7: error: 'SCSI_PROTOCOL_SAS' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SAS:
-       ^
-drivers/target/target_core_fabric_lib.c:369:7: error: 'SCSI_PROTOCOL_ISCSI'=
- undeclared (first use in this function)
-  case SCSI_PROTOCOL_ISCSI:
-       ^
-drivers/target/target_core_fabric_lib.c: In function 'target_get_pr_transpo=
-rt_id':
-drivers/target/target_core_fabric_lib.c:388:7: error: 'SCSI_PROTOCOL_SAS' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SAS:
-       ^
-drivers/target/target_core_fabric_lib.c:390:7: error: 'SCSI_PROTOCOL_SBP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SBP:
-       ^
-drivers/target/target_core_fabric_lib.c:392:7: error: 'SCSI_PROTOCOL_SRP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SRP:
-       ^
-drivers/target/target_core_fabric_lib.c:394:7: error: 'SCSI_PROTOCOL_FCP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_FCP:
-       ^
-drivers/target/target_core_fabric_lib.c:396:7: error: 'SCSI_PROTOCOL_ISCSI'=
- undeclared (first use in this function)
-  case SCSI_PROTOCOL_ISCSI:
-       ^
-drivers/target/target_core_fabric_lib.c: In function 'target_parse_pr_out_t=
-ransport_id':
-drivers/target/target_core_fabric_lib.c:411:7: error: 'SCSI_PROTOCOL_SAS' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SAS:
-       ^
-drivers/target/target_core_fabric_lib.c:418:7: error: 'SCSI_PROTOCOL_SBP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SBP:
-       ^
-drivers/target/target_core_fabric_lib.c:419:7: error: 'SCSI_PROTOCOL_SRP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_SRP:
-       ^
-drivers/target/target_core_fabric_lib.c:420:7: error: 'SCSI_PROTOCOL_FCP' u=
-ndeclared (first use in this function)
-  case SCSI_PROTOCOL_FCP:
-       ^
-drivers/target/target_core_fabric_lib.c:423:7: error: 'SCSI_PROTOCOL_ISCSI'=
- undeclared (first use in this function)
-  case SCSI_PROTOCOL_ISCSI:
-       ^
-
-Caused by commit 2650d71e244f ("target: move transport ID handling to
-the core") interacting with commit ba929992522b ("target: Minimize SCSI
-header #include directives") from the scsi tree.
-
-I have added this merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 3 Jun 2015 18:10:46 +1000
-Subject: [PATCH] target: explicitly include scsi_proto.h in target_core_fab=
-ric_lib.c
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/target/target_core_fabric_lib.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/target/target_core_fabric_lib.c b/drivers/target/targe=
-t_core_fabric_lib.c
-index b05578b5b4a0..cb6497ce4b61 100644
---- a/drivers/target/target_core_fabric_lib.c
-+++ b/drivers/target/target_core_fabric_lib.c
-@@ -35,6 +35,8 @@
- #include <linux/spinlock.h>
- #include <linux/export.h>
-=20
-+#include <scsi/scsi_proto.h>
-+
- #include <target/target_core_base.h>
- #include <target/target_core_fabric.h>
-=20
---=20
-2.1.4
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/KOxL4lYJwVYx7UjPtVhNu9I
+diff --cc include/linux/fs.h
+index fe0dcaa3a789,571aab91bfc0..000000000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -1913,7 -1897,7 +1913,8 @@@ struct file_system_type=20
+  #define FS_HAS_SUBTYPE		4
+  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+  #define FS_USERNS_DEV_MOUNT	16 /* A userns mount does not imply MNT_NODEV=
+ */
+- #define FS_CGROUP_WRITEBACK	32	/* Supports cgroup-aware writeback */
++ #define FS_USERNS_VISIBLE	32	/* FS must already be visible */
+++#define FS_CGROUP_WRITEBACK	64	/* Supports cgroup-aware writeback */
+  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during ren=
+ame() internally. */
+  	struct dentry *(*mount) (struct file_system_type *, int,
+  		       const char *, void *);
+
+--Sig_/rGi7Iy.x+xJZgRIX+NgPsXE
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbrfMAAoJEMDTa8Ir7ZwVCFoP/3C5XUluPRiLsz0WOeNKjC63
-0Xnjd+Ia5W5im3HXdJaazmiNHNICDBIAW+Z1m+98yPwIAvP393tPo1gji8EpbpQ4
-JZkAvdeWN4awNQJqTeHrHiTIl3fXiF2voTOm3w/0+XwZOBEi3NaZ34hLOFsHY7Cj
-PIIclgjsU0gxg8cRcUKWzLr3oFLS8plv0NBzxEP+/sK/UuSu0ZF1aoKEKQNYn5ra
-HBxO4r8rdDxWc449lyNoRP6NCJt6DmbH2cLul4YsjkF4TK9ovFgYKSmWwG47KKy7
-K3ENXJbLSqzO02OQ67LVV7bM6s3z73P95TAT4kgot4Ac5p7y/cWF399sELkSFQm5
-GdFnyiSfhM9cgklosftjffc8Siu1+lyTdSZmkqEUBZxzeMn5DRGGdbUlR5p1At44
-IjOcIifyQem0BUIN1G2TK8gnw17+Cqd7wKCGOo4Z19kV+pgL4cDVaMlPMWzGT4WP
-v9S1+uJ9yizJwIn/FHh0OBLy1WzVygaLRHPpEg13wjNsmoagG7Z+7xtcPKJCqePI
-IFkoWZ3iZTJFzbKB5ZJuT+XF6fIXC9ieecbr/diqaIHTOqOzYFPYRVb+LF8St3zY
-w/1BrQy6gm751caqJxnkEuCtpVVrcHWVKlniMbeCpn1hXTEJtKbptumTm+Bs55mt
-uyROtaMNm/RTUiAH5cxF
-=1uST
+iQIcBAEBCAAGBQJVbr79AAoJEMDTa8Ir7ZwVqacP/3Bgr8QbbLJhhnzvEovfOhl5
+1Zp398+WkBA3+M0WSTM3kXtLR6dcASiidsxD35IEsZVSWtdCZAaWYxogIUY40evj
+HAeZ89URaWLvaQd/g1CD2aOsYp24SXOd/eus0gYt/lJypJfkaDXRqOQ0ckh8Ca1B
+GYzW/Rm1X3pEOJyjG7BzosBczMq6XRhm4PmTEc5DI0+pSz0s8PoUwy0QM8q9kWs1
+SMjYZ/S1zPJdQOzIPMg3ycyWJoEV78k55mCPHdbeQDzCffm9LfKN6zNO6UDZqHY8
+D/mrhAvw51ljImVz0TXs8urB1iNpuGityZvJLq71GT5jy9ENPGy8SR/moSqju/Qz
+ev2TaGHuz7PNLVlIiWqejY1lsKWoN/OlmE2aFrIUNrlzOB/C10iGm5+QfwL2j0EQ
+K/GpR/CXWJuPFJ64PILieN9B4VLohqHIz/a05hLWFTIuFQ/tOtsPKL3Q6i1OrlFP
+W2esvN0sn5a/drJUAQcMxUikwud1b41miOirsICBhRzSR9wJ6MGLvBkafPXFZnWk
++E/5RmlNwmJmvTGp01SGFNht1czc+5TfwTzP46BO0z1HJBiBz+XKWkjDa/sZDjlb
+WG0WJcE+mt05r2Yqa2pg9ilUGCSC2ULxfoJImES//6GRoo1uPzpSbkBuRNbz7djR
+7UqVctScjEGIChMXC3AY
+=DO3u
 -----END PGP SIGNATURE-----
 
---Sig_/KOxL4lYJwVYx7UjPtVhNu9I--
+--Sig_/rGi7Iy.x+xJZgRIX+NgPsXE--
