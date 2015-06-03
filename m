@@ -1,47 +1,48 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: bisect of ARM - implicit declaration of function
- 'arch_irqs_disabled'
-Date: Tue, 2 Jun 2015 21:51:26 -0400
-Message-ID: <20150603015125.GJ29898@windriver.com>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: manual merge of the drivers-x86 tree with Linus' tree
+Date: Tue, 2 Jun 2015 20:27:50 -0700
+Message-ID: <20150603032750.GA49670@vmdeb7>
+References: <20150602160723.3b519d63@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:48457 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751919AbbFCBvc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Jun 2015 21:51:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.9]:43826 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481AbbFCD2B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Jun 2015 23:28:01 -0400
 Content-Disposition: inline
+In-Reply-To: <20150602160723.3b519d63@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Philippe Coval <philippe.coval@open.eurogiciel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Tunin <hanipouspilot@gmail.com>
 
-Hi Arnd,
+On Tue, Jun 02, 2015 at 04:07:23PM +1000, Stephen Rothwell wrote:
+> Hi Darren,
+> 
+> Today's linux-next merge of the drivers-x86 tree got a conflict in
+> drivers/platform/x86/ideapad-laptop.c between commit 9b071a43553d
+> ("ideapad_laptop: Add Lenovo G40-30 to devices without radio switch")
+> from Linus' tree and commit 4fa9dabcffc8 ("ideapad_laptop: Lenovo
+> G50-30 fix rfkill reports wireless blocked") from the drivers-x86 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-While testing linux-next and some stuff I have pending, I came across a
-build fail that I then found was also in Jun2 linux-next:
+Thanks for the heads' up. This happens because my -next branch is based on *-rc1
+as I think was recommended at the last kernel summit. Since rc1 I sent Linus the
+G50-30, but by rc6 I didn't feel good about sending the similar G50-30 fix, so
+that is in my rc1 branch.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/12435853/
+I am happy to rebase my -next on rc6 to avoid the conflict, but I believe the
+rebase is considered poor practice.
 
-A quick bisect leads to:
+You said no action required, but if there is something I can do to avoid this
+kind of manual effort on your part (and a manual merge by Linus in the upcoming
+merge window), I'm happy to update my process to accommodate.
 
-make[1]: Leaving directory '/home/paul/builds/arm-efm32_defconfig'
-cb1293e2f594558ccc3995acf9c9d7400b3add36 is the first bad commit
-commit cb1293e2f594558ccc3995acf9c9d7400b3add36
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Tue May 26 15:40:44 2015 +0100
+Thanks,
 
-    ARM: 8375/1: disable some options on ARMv7-M
-
-
-A google search led me to this:
-
-  http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/320678.html
-
-...but I did not see that in linux-next.
-
-Anyway just a heads up on what I found.  I have not investigated
-further than that.
-
-Paul.
---
+-- 
+Darren Hart
+Intel Open Source Technology Center
