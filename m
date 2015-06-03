@@ -1,53 +1,121 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unsigned patch on the top of the nfsd tree
-Date: Thu, 4 Jun 2015 07:58:36 +1000
-Message-ID: <20150604075836.3bb3b4a3@canb.auug.org.au>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: build failure after merge of the target-updates tree
+Date: Wed, 03 Jun 2015 15:12:56 -0700
+Message-ID: <1433369576.18125.7.camel@haakon3.risingtidesystems.com>
+References: <20150603181607.70cef830@canb.auug.org.au>
+	 <1433361639.2251.111.camel@HansenPartnership.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/igM9/NImd+6DO32oAGPFf_2"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43066 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752111AbbFCV6n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2015 17:58:43 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <1433361639.2251.111.camel@HansenPartnership.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Bart Van Assche <bart.vanassche@sandisk.com>, linux-scsi <linux-scsi@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/igM9/NImd+6DO32oAGPFf_2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2015-06-03 at 13:00 -0700, James Bottomley wrote:
+> On Wed, 2015-06-03 at 18:16 +1000, Stephen Rothwell wrote:
+> > Hi Nicholas,
+> > 
+> > After merging the target-updates tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/target/target_core_fabric_lib.c: In function 'target_get_pr_transport_id_len':
+> > drivers/target/target_core_fabric_lib.c:364:7: error: 'SCSI_PROTOCOL_FCP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_FCP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:364:7: note: each undeclared identifier is reported only once for each function it appears in
+> > drivers/target/target_core_fabric_lib.c:365:7: error: 'SCSI_PROTOCOL_SBP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SBP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:366:7: error: 'SCSI_PROTOCOL_SRP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SRP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:367:7: error: 'SCSI_PROTOCOL_SAS' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SAS:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:369:7: error: 'SCSI_PROTOCOL_ISCSI' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_ISCSI:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c: In function 'target_get_pr_transport_id':
+> > drivers/target/target_core_fabric_lib.c:388:7: error: 'SCSI_PROTOCOL_SAS' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SAS:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:390:7: error: 'SCSI_PROTOCOL_SBP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SBP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:392:7: error: 'SCSI_PROTOCOL_SRP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SRP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:394:7: error: 'SCSI_PROTOCOL_FCP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_FCP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:396:7: error: 'SCSI_PROTOCOL_ISCSI' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_ISCSI:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c: In function 'target_parse_pr_out_transport_id':
+> > drivers/target/target_core_fabric_lib.c:411:7: error: 'SCSI_PROTOCOL_SAS' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SAS:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:418:7: error: 'SCSI_PROTOCOL_SBP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SBP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:419:7: error: 'SCSI_PROTOCOL_SRP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_SRP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:420:7: error: 'SCSI_PROTOCOL_FCP' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_FCP:
+> >        ^
+> > drivers/target/target_core_fabric_lib.c:423:7: error: 'SCSI_PROTOCOL_ISCSI' undeclared (first use in this function)
+> >   case SCSI_PROTOCOL_ISCSI:
+> >        ^
+> > 
+> > Caused by commit 2650d71e244f ("target: move transport ID handling to
+> > the core") interacting with commit ba929992522b ("target: Minimize SCSI
+> > header #include directives") from the scsi tree.
+> > 
+> > I have added this merge fix patch for today:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Wed, 3 Jun 2015 18:10:46 +1000
+> > Subject: [PATCH] target: explicitly include scsi_proto.h in target_core_fabric_lib.c
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/target/target_core_fabric_lib.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/target/target_core_fabric_lib.c b/drivers/target/target_core_fabric_lib.c
+> > index b05578b5b4a0..cb6497ce4b61 100644
+> > --- a/drivers/target/target_core_fabric_lib.c
+> > +++ b/drivers/target/target_core_fabric_lib.c
+> > @@ -35,6 +35,8 @@
+> >  #include <linux/spinlock.h>
+> >  #include <linux/export.h>
+> >  
+> > +#include <scsi/scsi_proto.h>
+> > +
+> >  #include <target/target_core_base.h>
+> >  #include <target/target_core_fabric.h>
+> 
+> OK, this gives us a cross tree dependency on the SCSI header split
+> patches.  Nic, if you base your tree off this commit in mine, I'll make
+> sure to push early in the merge window.
+> 
+> commit ba929992522b6d1f866b7021bc50da66f8fdd743
+> Author: Bart Van Assche <bart.vanassche@sandisk.com>
+> Date:   Fri May 8 10:11:12 2015 +0200
+> 
+>     target: Minimize SCSI header #include directives
+> 
 
-Hi,
+Rebasing one subsystem's for-next atop another subsystem's for-next is a
+sure fire way to cause Linus to become irate.
 
-I noticed that it appears that you have leaked an unsigned debugging
-patch at the top of the nsfd tree today ...
+But it's not even necessary here anyways, just fold Stephen's patch to
+add scsi_proto.h to target_core_fabric_configfs.c into the original
+change, and be done with it.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+--nab
 
---Sig_/igM9/NImd+6DO32oAGPFf_2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVb3iRAAoJEMDTa8Ir7ZwVNFoP/ivCg3ctfIY9oLMQ0HxQIUkm
-k75s9My1ehfz7nEz1JiN7jbueBjV76FQAOsehBFEuIWy07mndWfwQBpMUkKV8sYC
-OwAxYnpgasfDPQy4CDaiuyb4h4s91C9ciW/y7eWGdywb2Am+ZglYYtsoTQmc/f+d
-GH0q02z1iBstPTil65IzXsvktlIv6P4ZOI5HAN/2yqvm+GpvAuqS2/Jfi7X7rfR8
-EEIjt3cmuwPTIVI9m8ZgkDRAPYHciFia3HCfRwfaXgutiCqBXfuVevkQ+61iOAUf
-RR5luv/ZapAUoPOjpveW9Jq3Y/hcCd2Gprq1+xrrbDNW6OldDmuqjq4Z8IZstPAr
-hSksLV0Ri7RtwalQUiK7F0LN95ZpFb3FUpc1+OIMeGl/4G2mOC4bbvpb/aeGgKTB
-Wo3b+/8MrFgy0NLIy1tS7MTWHrrsnSeZ07IgXlrqGvj5qA6cxqFWXNoyRtmEHwHc
-pJyvswg6CTYTmOVJIfjPGy7Gbf23tDoTCRbLAUXZsfjVmjYecczXyazaQAFy9YGC
-Xhx47GHqJbZA7TuPM0FyCojlCo9Pb0JI7lj61xTIlq3tmslejPeH9lfim1qiGvhu
-p7i6EbPFeKDNnvzGu648/bxnW9DNYnGo6Tbx70aNBvJJilVobMuVuy4wtlfHVsXi
-Z+6ySMfJGmo0qngr4Zsl
-=xm7K
------END PGP SIGNATURE-----
-
---Sig_/igM9/NImd+6DO32oAGPFf_2--
