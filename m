@@ -1,110 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Wed, 3 Jun 2015 13:33:22 +1000
-Message-ID: <20150603133322.78302d08@canb.auug.org.au>
+Subject: Re: please include init-v4.1-rc6 branch for v4.2
+Date: Wed, 3 Jun 2015 13:39:04 +1000
+Message-ID: <20150603133904.5d8b0bfb@canb.auug.org.au>
+References: <20150602232318.GI29898@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.0RccQCoThOoRYZi07w25YF"; protocol="application/pgp-signature"
+ boundary="Sig_/F4+.KU_oxudJXmg/Z/h6ShK"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37898 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35371 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751393AbbFCDd3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Jun 2015 23:33:29 -0400
+	id S1751673AbbFCDjL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Jun 2015 23:39:11 -0400
+In-Reply-To: <20150602232318.GI29898@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/.0RccQCoThOoRYZi07w25YF
+--Sig_/F4+.KU_oxudJXmg/Z/h6ShK
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Paul,
 
-Today's linux-next merge of the block tree got a conflict in
-mm/page-writeback.c between commit 464d1387acb9 ("writeback: use |1
-instead of +1 to protect against div by zero") from Linus' tree and
-commit de1fff37b278 ("writeback: s/bdi/wb/ in mm/page-writeback.c")
-from the block tree.
+On Tue, 2 Jun 2015 19:23:18 -0400 Paul Gortmaker <paul.gortmaker@windriver.=
+com> wrote:
+>
+> Please include init-v4.1-rc6 branch of:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux.git
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+OK, I will add it in just before I merge Andrew's tree and see how it
+goes.
+
+> I've been cross building it and test merging it with next on and off for
+> several weeks now, so it should be trouble free (hopefully).  There will
+> be two relatively trivial conflicts upon merging to next:
+>=20
+> 1) A removal of a __cpuinit from this tree will conflict with a removal
+>    of the whole code block contaning the original __cpuinit in the file
+>    arch/arm/mach-keystone/platsmp.c
+>=20
+> 2) A removal of a __CPUINIT from this tree will conflict with a complete
+>    file removal (removed, not renamed) of arch/arm/mach-hisi/headsmp.S
+
+Thanks for the heads up on these.
+
+> Assuming I can get Linus to pull the chunks this time, it should be a
+> one shot (one version) tree from a linux-next point of view.
+
+If he takes it, please remind me to remove the tree.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-diff --cc mm/page-writeback.c
-index eb59f7eea508,e1514d5b4e9b..000000000000
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@@ -802,27 -990,27 +990,27 @@@ static void wb_position_ratio(struct di
-  	 * threshold, so that the occasional writes won't be blocked and active
-  	 * writes can rampup the threshold quickly.
-  	 */
-- 	bdi_thresh =3D max(bdi_thresh, (limit - dirty) / 8);
-+ 	wb_thresh =3D max(wb_thresh, (limit - dtc->dirty) / 8);
-  	/*
-- 	 * scale global setpoint to bdi's:
-- 	 *	bdi_setpoint =3D setpoint * bdi_thresh / thresh
-+ 	 * scale global setpoint to wb's:
-+ 	 *	wb_setpoint =3D setpoint * wb_thresh / thresh
-  	 */
-- 	x =3D div_u64((u64)bdi_thresh << 16, thresh | 1);
-- 	bdi_setpoint =3D setpoint * (u64)x >> 16;
- -	x =3D div_u64((u64)wb_thresh << 16, dtc->thresh + 1);
-++	x =3D div_u64((u64)wb_thresh << 16, dtc->thresh | 1);
-+ 	wb_setpoint =3D setpoint * (u64)x >> 16;
-  	/*
-- 	 * Use span=3D(8*write_bw) in single bdi case as indicated by
-- 	 * (thresh - bdi_thresh ~=3D 0) and transit to bdi_thresh in JBOD case.
-+ 	 * Use span=3D(8*write_bw) in single wb case as indicated by
-+ 	 * (thresh - wb_thresh ~=3D 0) and transit to wb_thresh in JBOD case.
-  	 *
-- 	 *        bdi_thresh                    thresh - bdi_thresh
-- 	 * span =3D ---------- * (8 * write_bw) + ------------------- * bdi_thre=
-sh
-- 	 *          thresh                            thresh
-+ 	 *        wb_thresh                    thresh - wb_thresh
-+ 	 * span =3D --------- * (8 * write_bw) + ------------------ * wb_thresh
-+ 	 *         thresh                           thresh
-  	 */
-- 	span =3D (thresh - bdi_thresh + 8 * write_bw) * (u64)x >> 16;
-- 	x_intercept =3D bdi_setpoint + span;
-+ 	span =3D (dtc->thresh - wb_thresh + 8 * write_bw) * (u64)x >> 16;
-+ 	x_intercept =3D wb_setpoint + span;
- =20
-- 	if (bdi_dirty < x_intercept - span / 4) {
-- 		pos_ratio =3D div64_u64(pos_ratio * (x_intercept - bdi_dirty),
-- 				      (x_intercept - bdi_setpoint) | 1);
-+ 	if (dtc->wb_dirty < x_intercept - span / 4) {
-+ 		pos_ratio =3D div64_u64(pos_ratio * (x_intercept - dtc->wb_dirty),
- -				      x_intercept - wb_setpoint + 1);
-++				      (x_intercept - wb_setpoint) | 1);
-  	} else
-  		pos_ratio /=3D 4;
- =20
-
---Sig_/.0RccQCoThOoRYZi07w25YF
+--Sig_/F4+.KU_oxudJXmg/Z/h6ShK
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVbnWHAAoJEMDTa8Ir7ZwVR1sP/2iHcRLNgJmjh+2jsB9aJz3Q
-fTe1QfvDafQzlJJZ01kPXTGWP2F1QT/QgGmcWc2aKumM6mBiYdtKIhkgRfRC8FVn
-hOWrmJip9XfuP3e1lI9e3k7fhSflJmV/pnYepa5XzWVDLAhJ6pt09HJnPNqTvwH3
-dLyN4VTl7LJikDeSFC3Mi43WZqUwJEqKaihn6FqZEwxvbl6X5meys9XKEXtB2eZp
-i7RBYHQP+PCZfz0DjHu3s1NHnbD6ciZba7xhpWWI+n6vWEc2LgHjgZUV8Y8lph+Q
-cIae+BQjAjcomhw0Csgs4STko8r5gErazzBJu0IaKYUDH0CBTRfGZctucyzPSTul
-kyGXtJDHFoQ1x5xCXwlnemjyhPxRSNfAUNxc3hH5Q7nJhFY2vuj6M+TKBBy/YnsX
-Ux6k3p9bABXD8QRbRqbOpAhtCYjrpHwxUL0q0/m6DKsZPSI/8ifIHrDniI7j/7Sw
-ShmdFGmNCR+sgvucxRIJaMZxNn9m1rzQ2lnfFEZ1Lm2B14pNB+bg7fFIv5ctSoB4
-XY0XIYhDAnWNlsfPKcJonmuNJPuxpBSQnjP26+RaSWu5me7R4WhiDY+MXppmQ1dd
-MQY0FXbtYlZgkmRIXo/mH/ADIFHY+5o6PsEP7hiC8cmW7JrivMVEx0qq5n97Yn8t
-erj+ZbrE15ods4k0e4eZ
-=ifz8
+iQIcBAEBCAAGBQJVbnbdAAoJEMDTa8Ir7ZwVzXoP/3aVYL5UQbf1JJyldEa3Yv2m
+7SB5uzJehnjaPIChTKuviB8m4HusfLnyyv52pDjLU/faTfQWrMixoTe6Rkhpggva
+fP+v74DdG8LF1Qi0pXU03Unt9cOl1pazIw3aOHAU25aaAYfJBJLOhRUiHNzpMIv/
+odvBMh2PTU9H63spJlV5fYEyIzkB45MHhpMV151WiWU8MU7yZ3jDC8xSbG2tWCwM
+adYuRroFmSigUSN7iwkBiYd4HVv7AT6YdraxJKbLz/6TzsgtZW4ktXLji1ZcVqx4
+ZaPYk1qGL6m410ZdEJ5n3hz/CBuJW1nnzcT2rLXcBNwMwfLjLlnUGrSS+HXvBKK7
+i/rWqrqYqBJjSQAZSa8N10YvbaS702NeLi0Lezgf3HhdobgrvJYuzNuwFhXGx3d4
+QJmvzDqUnYYhJCqzq6Z+5ajWT9m6kEyL2g3JjJN5kF+8TiBPO2gXzY2CcDCQcVgO
+Q9gacbIxjfXKnHxnTZQ/LTH3Tt3xqBBkKqM/PB3cejwvcyg266jrGwMSY6vNM3ca
+BGRs2ZWa7PTFV1NQZTVP5ORIzybc5uDxNgElGUsJmbX7s83WG0iH10aFPXB2/lII
+TVLZ26AePJDLbJxkq75B0M9PJiiEbam+lnScr0OE66w29x9EY2FQXZVYsanYAp6T
+ijJVroMKoLQx/Q0SQMl/
+=bJE0
 -----END PGP SIGNATURE-----
 
---Sig_/.0RccQCoThOoRYZi07w25YF--
+--Sig_/F4+.KU_oxudJXmg/Z/h6ShK--
