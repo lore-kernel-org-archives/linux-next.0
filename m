@@ -1,133 +1,120 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: build failure after merge of the target-updates tree
-Date: Wed, 03 Jun 2015 15:33:32 -0700
-Message-ID: <1433370812.2251.140.camel@HansenPartnership.com>
-References: <20150603181607.70cef830@canb.auug.org.au>
-	 <1433361639.2251.111.camel@HansenPartnership.com>
-	 <1433369576.18125.7.camel@haakon3.risingtidesystems.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: next-20150603 build: 5 failures 55 warnings (next-20150603)
+Date: Wed, 3 Jun 2015 18:38:45 -0400
+Message-ID: <CAP=VYLojVYPwC7N5ePFQ08aTd0a3G5SEirME8bfDuSASyM4jpw@mail.gmail.com>
+References: <E1Z08Mt-0006dU-4j@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57376 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752773AbbFCWde (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2015 18:33:34 -0400
-In-Reply-To: <1433369576.18125.7.camel@haakon3.risingtidesystems.com>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:36221 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753340AbbFCWjR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2015 18:39:17 -0400
+Received: by wibdq8 with SMTP id dq8so106721702wib.1
+        for <linux-next@vger.kernel.org>; Wed, 03 Jun 2015 15:39:15 -0700 (PDT)
+In-Reply-To: <E1Z08Mt-0006dU-4j@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Bart Van Assche <bart.vanassche@sandisk.com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Build bot for Mark Brown <broonie@kernel.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Wed, 2015-06-03 at 15:12 -0700, Nicholas A. Bellinger wrote:
-> On Wed, 2015-06-03 at 13:00 -0700, James Bottomley wrote:
-> > On Wed, 2015-06-03 at 18:16 +1000, Stephen Rothwell wrote:
-> > > Hi Nicholas,
-> > > 
-> > > After merging the target-updates tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > > 
-> > > drivers/target/target_core_fabric_lib.c: In function 'target_get_pr_transport_id_len':
-> > > drivers/target/target_core_fabric_lib.c:364:7: error: 'SCSI_PROTOCOL_FCP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_FCP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:364:7: note: each undeclared identifier is reported only once for each function it appears in
-> > > drivers/target/target_core_fabric_lib.c:365:7: error: 'SCSI_PROTOCOL_SBP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SBP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:366:7: error: 'SCSI_PROTOCOL_SRP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SRP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:367:7: error: 'SCSI_PROTOCOL_SAS' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SAS:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:369:7: error: 'SCSI_PROTOCOL_ISCSI' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_ISCSI:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c: In function 'target_get_pr_transport_id':
-> > > drivers/target/target_core_fabric_lib.c:388:7: error: 'SCSI_PROTOCOL_SAS' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SAS:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:390:7: error: 'SCSI_PROTOCOL_SBP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SBP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:392:7: error: 'SCSI_PROTOCOL_SRP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SRP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:394:7: error: 'SCSI_PROTOCOL_FCP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_FCP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:396:7: error: 'SCSI_PROTOCOL_ISCSI' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_ISCSI:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c: In function 'target_parse_pr_out_transport_id':
-> > > drivers/target/target_core_fabric_lib.c:411:7: error: 'SCSI_PROTOCOL_SAS' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SAS:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:418:7: error: 'SCSI_PROTOCOL_SBP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SBP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:419:7: error: 'SCSI_PROTOCOL_SRP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_SRP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:420:7: error: 'SCSI_PROTOCOL_FCP' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_FCP:
-> > >        ^
-> > > drivers/target/target_core_fabric_lib.c:423:7: error: 'SCSI_PROTOCOL_ISCSI' undeclared (first use in this function)
-> > >   case SCSI_PROTOCOL_ISCSI:
-> > >        ^
-> > > 
-> > > Caused by commit 2650d71e244f ("target: move transport ID handling to
-> > > the core") interacting with commit ba929992522b ("target: Minimize SCSI
-> > > header #include directives") from the scsi tree.
-> > > 
-> > > I have added this merge fix patch for today:
-> > > 
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Wed, 3 Jun 2015 18:10:46 +1000
-> > > Subject: [PATCH] target: explicitly include scsi_proto.h in target_core_fabric_lib.c
-> > > 
-> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > ---
-> > >  drivers/target/target_core_fabric_lib.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/target/target_core_fabric_lib.c b/drivers/target/target_core_fabric_lib.c
-> > > index b05578b5b4a0..cb6497ce4b61 100644
-> > > --- a/drivers/target/target_core_fabric_lib.c
-> > > +++ b/drivers/target/target_core_fabric_lib.c
-> > > @@ -35,6 +35,8 @@
-> > >  #include <linux/spinlock.h>
-> > >  #include <linux/export.h>
-> > >  
-> > > +#include <scsi/scsi_proto.h>
-> > > +
-> > >  #include <target/target_core_base.h>
-> > >  #include <target/target_core_fabric.h>
-> > 
-> > OK, this gives us a cross tree dependency on the SCSI header split
-> > patches.  Nic, if you base your tree off this commit in mine, I'll make
-> > sure to push early in the merge window.
-> > 
-> > commit ba929992522b6d1f866b7021bc50da66f8fdd743
-> > Author: Bart Van Assche <bart.vanassche@sandisk.com>
-> > Date:   Fri May 8 10:11:12 2015 +0200
-> > 
-> >     target: Minimize SCSI header #include directives
-> > 
-> 
-> Rebasing one subsystem's for-next atop another subsystem's for-next is a
-> sure fire way to cause Linus to become irate.
+On Wed, Jun 3, 2015 at 9:06 AM, Build bot for Mark Brown
+<broonie@kernel.org> wrote:
+> Tree/Branch: next-20150603
+> Git describe: next-20150603
+> Commit: 273de33838 Add linux-next specific files for 20150603
+>
+> Build Time: 64 min 44 sec
+>
+> Passed:    4 / 9   ( 44.44 %)
+> Failed:    5 / 9   ( 55.56 %)
+>
+> Errors: 10
+> Warnings: 55
+> Section Mismatches: 1
+>
+> Failed defconfigs:
+>         arm64-allmodconfig
+>         arm-multi_v7_defconfig
+>         arm-allmodconfig
+>         arm-allnoconfig
+>         arm64-defconfig
+>
+> Errors:
+>
+>         arm64-allmodconfig
+> ../include/linux/device.h:1296:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../include/linux/device.h:1301:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
+> ../include/linux/device.h:1296:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../include/linux/device.h:1301:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
+> ../include/linux/device.h:1296:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../include/linux/device.h:1301:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
 
-No, he's fine with it (as long as the trees aren't entangled when
-submitted). We used to do it all the time with the block and SCSI trees;
-it's why the scsi postmerge tree existed.
+I'm pretty sure that the above are just duplicates from the
+tegra/fuse/fuse-tegra error below.
 
-> But it's not even necessary here anyways, just fold Stephen's patch to
-> add scsi_proto.h to target_core_fabric_configfs.c into the original
-> change, and be done with it.
+>
+>         arm-multi_v7_defconfig
+> ../drivers/clk/sunxi/clk-mod0.c:131:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../drivers/clk/sunxi/clk-mod0.c:131:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
 
-I can certainly do that, but other updates to the target tree could
-cause this problem to reoccur in different files.
+The sunxi should be fixed with this now added:
 
-James
+https://lkml.kernel.org/r/1433358578-9579-1-git-send-email-paul.gortmaker@windriver.com
+
+> ../drivers/soc/tegra/fuse/fuse-tegra.c:171:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../drivers/soc/tegra/fuse/fuse-tegra.c:171:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
+
+The tegra fix should ideally be in the tegra tree, as per here:
+
+https://lkml.kernel.org/r/20150603160808.GM29898@windriver.com
+
+...but since I didn't hear from Thierry yet, I put in this preemptive fix,
+since we get those ugly looking device.h errors above from this.
+
+https://git.kernel.org/cgit/linux/kernel/git/paulg/linux.git/commit/?h=init-v4.1-rc6&id=53806e8b585f2eaf1cda5fbef89cd8e4b5f3d336
+
+>
+>         arm-allmodconfig
+> ../drivers/cpufreq/exynos-cpufreq.c:239:1: error: type defaults to 'int' in declaration of 'device_initcall' [-Werror=implicit-int]
+
+The exynos should be fixed now as well, with this:
+
+https://lkml.kernel.org/r/1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com
+
+> ../drivers/clk/sunxi/clk-mod0.c:131:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../drivers/clk/sunxi/clk-mod0.c:131:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
+
+The  sunxi was covered above.
+
+> ../drivers/hwtracing/coresight/coresight-replicator-qcom.c:214:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../drivers/hwtracing/coresight/coresight-replicator-qcom.c:214:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
+
+I can't fix this one from my tree since the code only exists in next.
+But I've passed the fix onto Greg since it comes via his staging tree:
+
+https://lkml.kernel.org/r/1433364777-29651-1-git-send-email-paul.gortmaker@windriver.com
+
+> ../drivers/soc/tegra/fuse/fuse-tegra.c:171:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../drivers/soc/tegra/fuse/fuse-tegra.c:171:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
+
+Same tegra thing mentioned above.
+
+> ../drivers/tty/serial/8250/8250_omap.c:586:20: error: redefinition of 'omap8250_irq'
+
+I don't think that one was caused by me..
+
+>
+>         arm64-defconfig
+> ../include/linux/device.h:1296:1: error: type defaults to 'int' in declaration of 'module_init' [-Werror=implicit-int]
+> ../include/linux/device.h:1301:1: error: type defaults to 'int' in declaration of 'module_exit' [-Werror=implicit-int]
+
+Tegra one again, unfortunately.
+
+Thanks again for the extra build coverage; I should have given a heads-up
+earlier that I was proactively sorting this out once I saw the results.
+
+I'd run all the ARM defconfigs recently, but forgot to go back and redo
+the allmodconfigs after test-merging with the latest linux-next.  :-/
+
+Paul.
