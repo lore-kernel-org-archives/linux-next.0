@@ -1,61 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 4 Jun 2015 14:02:40 +1000
-Message-ID: <20150604140240.0717637a@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the cris tree
+Date: Thu, 4 Jun 2015 14:26:22 +1000
+Message-ID: <20150604142622.3b36321f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/pNevEAHsnmV4UjE4m26j5EN"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/D6=NiEYaFSr5kiA_LQ_Gssi"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37276 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753197AbbFDE0b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Jun 2015 00:26:31 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Rabin Vincent <rabin@rab.in>
 
---Sig_/pNevEAHsnmV4UjE4m26j5EN
+--Sig_/D6=NiEYaFSr5kiA_LQ_Gssi
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jens,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the block tree got a conflict in
+arch/cris/include/asm/Kbuild between commit 5527b7d955ac ("CRIS: UAPI:
+use generic headers via Kbuild") from the cris tree and commit
+c546d5db75b4 ("remove scatterlist.h generation from arch Kbuild files")
+from the block tree.
 
-In file included from sound/soc/soc-dapm.c:43:0:
-include/sound/soc.h:30:32: fatal error: sound/soc-topology.h: No such file =
-or directory
- #include <sound/soc-topology.h>
-                                ^
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Several more of these ...
-
-Caused by commit b2eef86fedbf ("ASoC: topology: Add topology core").
-Looks like a file was missed.
-
-I have used the sound-asoc tree from next-20150603 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/pNevEAHsnmV4UjE4m26j5EN
+diff --cc arch/cris/include/asm/Kbuild
+index 2fc4331a69ca,d294f6aaff1d..000000000000
+--- a/arch/cris/include/asm/Kbuild
++++ b/arch/cris/include/asm/Kbuild
+@@@ -24,23 -18,11 +24,22 @@@ generic-y +=3D linkage.
+  generic-y +=3D local.h
+  generic-y +=3D local64.h
+  generic-y +=3D mcs_spinlock.h
+ +generic-y +=3D mman.h
+  generic-y +=3D module.h
+ +generic-y +=3D msgbuf.h
+  generic-y +=3D percpu.h
+ +generic-y +=3D poll.h
+  generic-y +=3D preempt.h
+ +generic-y +=3D resource.h
+- generic-y +=3D scatterlist.h
+  generic-y +=3D sections.h
+ +generic-y +=3D sembuf.h
+ +generic-y +=3D shmbuf.h
+ +generic-y +=3D siginfo.h
+ +generic-y +=3D socket.h
+ +generic-y +=3D sockios.h
+ +generic-y +=3D statfs.h
+  generic-y +=3D topology.h
+  generic-y +=3D trace_clock.h
+ +generic-y +=3D types.h
+  generic-y +=3D vga.h
+  generic-y +=3D xor.h
+
+--Sig_/D6=NiEYaFSr5kiA_LQ_Gssi
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVb83mAAoJEMDTa8Ir7ZwVgdAP/0QarszxpU3TfjruICAkYmmU
-+gDjqNb0Gz6XZ+dSWbC4/hp7f8C1XbvDOP484iesFpY/ER3mF6mPhYsIl2L5fqrf
-2Nz17niPYMmyDq5Lqu+N5NAT4WqTRacUvqv9Sf+RPVM1ktzMaFx30LEeK6nbwFwo
-sV5XZfHZHVydiL4iyWpVpw0z6054XJQwpihJF9aWKYgX0B2sVVtCOXOL4gZq3Q+t
-A/P9QRACQPN5xXmMYhz0rZqRc3EwSPAKqsUAKG82Mzu4K1SMdmgjkG9pXqflvzWV
-SEkAHUEupSzgbOa07Z2f8/n5PiXZ4yVipXuk0lFnsPU25rjWed/TSsaMXWZQBs/d
-L8HuXFv9ZfkfvW5UV6elparNxdptyGm2tW2FfcSw4Rut1LKZsGLRceDxKDRbYGFF
-0m23PYCoVJlVD7eL2mkaEyxdL60+c0WsnzRY7tuJCAjCfqUZ8IWsmCfWVGsQmJI5
-Z0NGFLH+CXbrg9Np3cdwyXJhVIg3Sqw7TyII/IHejthFMrooAg9qHwSx59JUVAbh
-vKAGkJuqpTiuWtZMkVbLTB0FFAJLAwQV2j3xlATUBSN/P7QN0j0/Bw95yMEVelBC
-jquNXufFma3QA/Nu9OBIqolgNkZrrTpLnnKlCWXeiDylo8epTP/14ocvmDGdUtMG
-z9bB4+/88R7VRH5gDze4
-=Mtq2
+iQIcBAEBCAAGBQJVb9NzAAoJEMDTa8Ir7ZwVwyQP/1qMsE+I1ZpBfOrsWf4yzPUK
+Zfy2tWFwfJfBHu92nDWwvuW1FdSBxL+RhWMeeezhrESTX7wcAlI9FlmEjEnIawj3
+eEDq/ycBF8yXrSA+PRNuwA+lniKc1TxV4WVxJmmRrS8WMHXbrBSDs0Yfrv2rRK6t
+YOqCJ5qRHbxASkHsiMxRGdQO+lsNv1YbYrE+R4DVU5lTg46XuGbg1erWhMnafyzo
+sTsYtjRwBHgqSfE4cW5GR03Pt8uCTJjZdiwJDCbJALyWmnJjx2B3BEbA6KHWBiLJ
+eRJZcPZfb/GtLmOn90mMNvkxEg3k+IwWBZnYQs2N/OwcshtOOC56iNI39GUwDvtZ
+e2/W9X9PfDf2NtsQ8yKf0T706R5PPiG2d8iXTEoKq15w/byGTlnNMiFOSFeDISDK
+wAHnn34bWSJG8Duaqe+IrDZLsw0wr7Chwdfn8afo/Vi7Srcn2dVal1t+qei52KHP
+4Ik6m5Mz4Jds1VmWUMMfQ0+Zdh1crIsvHkjZ3tGlmJZHbINKwib9PkL8tgunK1Yh
+nZ8x8OiOnk4o4ZI2aUfB8ewlbFJFIQ0wo+jAbs7iFBOZuIL9TsTFXiSUx2iLynXF
+kULdI6kl6XQFHCRGVLJb65CBrF85CyXdlRNhfDnnAIhphO1TvMsYbXtjIwVD75+d
+9Meo2QrdjKd5oo3zjTpB
+=NaNr
 -----END PGP SIGNATURE-----
 
---Sig_/pNevEAHsnmV4UjE4m26j5EN--
+--Sig_/D6=NiEYaFSr5kiA_LQ_Gssi--
