@@ -1,54 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Date: Thu, 4 Jun 2015 22:29:28 +1000
-Message-ID: <20150604222928.0d64b6b2@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drm tree
+Date: Thu, 4 Jun 2015 22:31:19 +1000
+Message-ID: <20150604223119.1cf74d29@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0zh6An6=lPcaVOOHs.CMhi1"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/AVk9i2NRW/iLMh=./jrnx7z"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48251 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753591AbbFDMb1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Jun 2015 08:31:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/0zh6An6=lPcaVOOHs.CMhi1
+--Sig_/AVk9i2NRW/iLMh=./jrnx7z
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Dave,
 
-After merging the akpm-current tree, today's linux-next build (x86_64
+After merging the drm tree, today's linux-next build (x86_64
 allmodconfig) produced this warning:
 
-./usr/include/linux/userfaultfd.h:14: found __[us]{8,16,32,64} type without=
+./usr/include/linux/virtio_gpu.h:184: found __[us]{8,16,32,64} type without=
  #include <linux/types.h>
-
-Introduced by commit 2873f48b446c ("userfaultfd: uAPI").
-
+Add virtio gpu driver
+Introduced by commit dc5698e80cf7 ("Add virtio gpu driver").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/0zh6An6=lPcaVOOHs.CMhi1
+--Sig_/AVk9i2NRW/iLMh=./jrnx7z
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVcEStAAoJEMDTa8Ir7ZwV5TIP/jtP+iTLkauFtLp8LdZk32n7
-s/3pAnJI6AuiN99G7oBG27gx4F32wPgftcXzJInCyinEAM7TcLejAPHDTx3LdifU
-KEn3TeyLt90nef/9oY7uOJ49ZnEBYzcFs5DLwjYWsjS7B1vi89va1TbjcR9wk0zb
-0+7SeA15EmH+wMifWsNWlQWwgIaFL+OYN8sAwVr5Ze38hEC+vzQ42a3iyEP74o9G
-Mhtpb5Uc2GEOiUN5GLsjb3AkavgaVEKgVmUXe4NPi2v5qZb829fRFDcjW5Kv0GkQ
-vGGie0uR8E0lOR2n9ab2CfI/rhgI/kYk2k1NAOhk0oLQgDP6pGGSwyNABQn7sgpd
-EvloMmEi+gh4ys/2gC2mgQxYUf8Iy671JCll9Deh94jX4RutSNdfE97fqT9ouH0E
-BBBOEDO6EtHyD6o88ta4qxdr/PDOlo4C4GNTFQz/7b/AETWduLYF35JemwmDmyck
-wVvGlN6fBSQ0Av+deOxQ9BC72JDBrmN19QzC0ijOSIJL2A95wvur0scKX4TdShOF
-/vGztUuoCwSBf6UaqPHa3TJFdJL8gp8WDiiYBjIpqplzVKNOVXEDdbRClF6j/WDE
-5o2zspbzcX5nI0gaHN6vmPJ8rth6IXFU8G0IdVCk7sgZljaGtHo8HqS8Wk/h53tz
-sPHSmFt7Wh868JdXMl5L
-=hVJE
+iQIcBAEBCAAGBQJVcEUcAAoJEMDTa8Ir7ZwVGtoQAIzrB7th0LJ/GYy1BW3+xCq5
+zCWRAk5XDc+7nsnD8g5I7jhHCuJz1ew3LZ3Ha/PmcQ8HUr72yvHnBGYk5VL47Wwr
+1Mm6r8REvjZczaZYCbuXcgnU7r1SONW3Wc0hqZq9VxB2pOlgjYpi2L18N8ay5uP5
+Hyt2HbHg1qQmgfuz9x6tddM3gLqcxm6r5C30RTBlmbQbfWoftlA1BXhfxxUpGGSt
+EjgGrr9us0oouaMYmev1f4heca1DkHS773HUjiTzsxpikQWoTITE0NP6dFMUWXHI
+CVcY8nrk8BP16muJNscElXHhaE3vrNot00aa5+W+nBGCg0YPBdCOU4tGPT6hdTwO
+P0g7rzUssjyzY4pXWedSP1mUueiiOIT4wNFPvKG5POfA6Hb87bajjRd9m5ltr9yC
+WFzF7WK4WvbGHGpYVCvFF6gVid9Y7Vkddtr0dmfG6j7maiOchIY5W2wKFelbPILA
+dkrSSZB4E36wwQ6RiKBuB16lyMQCncT2MxYnsSoRUrccdKRhxPehNczmisAeLadL
+6M1CqPPFWWyS8cYKGsPCl5d5k5o0VCoLRqE5KdKXEGd4J/cO3BdCl3seSwaLhzC1
+IrawmpQpF1qTZZsjLi2D+PSrJUX7lWz1NK7wekRzofOpz6qMx13VMP6YzaiMovcX
+I919IE+4zJJCRWc3OVTW
+=1M+a
 -----END PGP SIGNATURE-----
 
---Sig_/0zh6An6=lPcaVOOHs.CMhi1--
+--Sig_/AVk9i2NRW/iLMh=./jrnx7z--
