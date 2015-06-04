@@ -1,66 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the mips tree
-Date: Thu, 4 Jun 2015 18:39:33 +1000
-Message-ID: <20150604183933.5f403cfd@canb.auug.org.au>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: compile fail with "soc/tegra: fuse: Unify Tegra20
+ and Tegra30 drivers"
+Date: Thu, 4 Jun 2015 10:49:03 +0200
+Message-ID: <20150604084902.GL29060@ulmo.nvidia.com>
+References: <20150603160808.GM29898@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5O5IkVmGEA+M=CR9=Mdg=zE"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Brian Norris <computersforpeace@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
-List-Id: linux-next.vger.kernel.org
+	protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1514 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750992AbbFDIt2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jun 2015 04:49:28 -0400
+In-Reply-To: <20150603160808.GM29898@windriver.com>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
---Sig_/5O5IkVmGEA+M=CR9=Mdg=zE
-Content-Type: text/plain; charset=US-ASCII
+--mxv5cy4qt+RJ9ypb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On Wed, Jun 03, 2015 at 12:08:08PM -0400, Paul Gortmaker wrote:
+> Hi Thierry,
+>=20
+> This commit:
+>=20
+>   commit 436b6428b9cc97f61721f335eb9d8010751a337e
+>   Author: Thierry Reding <treding@nvidia.com>
+>   Date:   Wed Apr 29 16:54:04 2015 +0200
+>=20
+>     soc/tegra: fuse: Unify Tegra20 and Tegra30 drivers
+>=20
+> in linux-next, in combination with my pending init cleanup
+>=20
+> http://marc.info/?l=3Dlinux-kernel&m=3D143327626201054&w=3D2
+>=20
+> will cause a compile fail because 43b642 is relying on an
+> implicit include of <linux/module.h> to provide the fcn for:
+>=20
+>    +module_platform_driver(tegra_fuse_driver);
+>=20
+> which in turn causes:
+>=20
+> drivers/soc/tegra/fuse/fuse-tegra.c:171:1: error: type defaults to 'int' =
+in declaration of 'module_init' [-Werror=3Dimplicit-int]
+> drivers/soc/tegra/fuse/fuse-tegra.c:171:1: error: type defaults to 'int' =
+in declaration of 'module_exit' [-Werror=3Dimplicit-int]
+>=20
+> Can you add the include to your tree please?  I think it makes
+> more sense to be there vs. me preemptively adding it to mine.
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/phy/Makefile between commit d38dee131827 ("PHY: Add driver for
-Pistachio USB2.0 PHY") from the mips tree and commit 0d486806ffd0 ("phy:
-add Broadcom SATA3 PHY driver for Broadcom STB SoCs") from the usb tree.
+I've squashed a patch from Paul Walmsley into the offending commit and
+pushed a new for-next branch of the Tegra tree, so this should be fixed
+in the next iteration.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thierry
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/phy/Makefile
-index 75a37dc952f5,bc92b427e5ca..000000000000
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@@ -40,4 -40,5 +40,6 @@@ obj-$(CONFIG_PHY_STIH41X_USB)		+=3D phy-s
-  obj-$(CONFIG_PHY_QCOM_UFS) 	+=3D phy-qcom-ufs.o
-  obj-$(CONFIG_PHY_QCOM_UFS) 	+=3D phy-qcom-ufs-qmp-20nm.o
-  obj-$(CONFIG_PHY_QCOM_UFS) 	+=3D phy-qcom-ufs-qmp-14nm.o
- +obj-$(CONFIG_PHY_PISTACHIO_USB)		+=3D phy-pistachio-usb.o
-+ obj-$(CONFIG_PHY_TUSB1210)		+=3D phy-tusb1210.o
-+ obj-$(CONFIG_PHY_BRCMSTB_SATA)		+=3D phy-brcmstb-sata.o
-
---Sig_/5O5IkVmGEA+M=CR9=Mdg=zE
+--mxv5cy4qt+RJ9ypb
 Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVcA7LAAoJEMDTa8Ir7ZwV8NUP/jhxw+Vg3rjI6T19NaOIMDt2
-rE97xXYolgZ1QpdqSX+H/QHL65fvZ7RQ84UJNcanasmXMeHibucRnRsSrCV4blDu
-amV8WsVLK3bLM9KlmmqXIVxB3811yjwyoxSALYUE9f8bSRUwHour5T7d/RTKeXr+
-nxPjlemsHdKFtUmumvAO1Rpa2dVpvXDgmUdwa6Rspn2U2UtItb4G83I1ldb9GVol
-bON2xpZG/lifbrFHK4m9GcoXp2YtJlYoGu+Oze7am/KMeo+CSK1PLsklj/rYQpjp
-pp68h9qA/RjUEMZ0NMCa9qkDmtAymtcUap7xKSg8e2s7ilEevw5ahatr3b5W33SD
-PPRw8F1xtMANzlwatCeoIQCvFYLNIu8fvKK8zkrmquHxJoduB8okcPtm+ZEyz4VH
-8VfTun+RKOn94bkf2rB6y+2uCuBvX+LnkfGID84e4HkAUhrciOd3rjZm90nWfDEy
-KgvsWPhVfzF5M/8dyOLhUUPbhMYApS9xCceV3xrat+0KB4FAguUCb0td+d5iHUxh
-eWn5DfJkGP31YaRjjirXvKYj3P1tYDqQe7muVT15+rk6K87YXMsrzV9N1jWbkoV8
-lXkNmlT1P8+yfHJsfQFJhTGwODANsafxxDJAZU+hJ3Zw1h3ohrD5zEGDqn6zLOUH
-IrlxZbYmNtu8hh0q7Nvl
-=8CPV
+iQIcBAABCAAGBQJVcBD3AAoJEN0jrNd/PrOhvyIP/jEH7ukj1X23K67UIhQEHfpe
+GSf1AN8UnuKv3UEd1478gS/JEa64sMjPoteec7/JA1/3QR0Ki3XaqtlIzB2VvD0i
+XMPrx0WVdbRic3VHQsM9q2OGQmnO4cwZA1UPdoqzQV8pCZj1zDbXMyvFxpcvabs1
+wEaeqmXN2C3pjTKX/YDvK4xEquFWB+raZ74xYdOOoExckBb2j+c7MKDBOXUx0lbW
+QRCnlv5fZaiRLSnIJ/KfIgxOc3SxNnD5zlcpXXj5y7fQ+Bi//iYGFWXaXpRHm+kX
+VZrk1/6bfS/yp0Vxe78nSPz8TId+4oFJL8h6jht1eaS3Xdl6rJWuK+6nKM4bDxUB
+ViR/HS8m0FKKkV9ElZRMsV1YCCeQWpvpw6pFwdAMEIs6MG683rDtccEcS/FwwMax
+dwehnFtqjFyY3HQVotJ+dhIlvLB+/kcwwJ4/JEKZSE+KwRf8Po4pS9inBppb917i
+ytY56g1ChwrE3edykbNDvnD6QeHx80KfFsFgab3mzWUCMo1Zj3EkYDtJDKAcJo0/
+M1f3oPhW9MUAOwe0tcoR8ZQoVK9OXleIjbhrQK+wuRrda0PTeflHsWF9iMi7O0en
+55U8HsU0HMgocNjwBzJQ1HWb0lbWSmhIe6+ErNLUNl6NoCpF2/vqnlMkv2f9T368
+JncxjPUD15V85mkdaWAm
+=v1Nw
 -----END PGP SIGNATURE-----
 
---Sig_/5O5IkVmGEA+M=CR9=Mdg=zE--
+--mxv5cy4qt+RJ9ypb--
