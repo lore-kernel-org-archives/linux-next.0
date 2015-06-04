@@ -1,82 +1,56 @@
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: linux-next: build failure after merge of the drivers-x86 tree
-Date: Thu, 4 Jun 2015 19:51:36 +0200
-Message-ID: <20150604175135.GA10262@potion.brq.redhat.com>
-References: <20150604181308.16fbe6cf@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20150604 build: 2 failures 37 warnings (next-20150604)
+Date: Thu, 4 Jun 2015 18:57:40 +0100
+Message-ID: <20150604175740.GQ14071@sirena.org.uk>
+References: <E1Z0YIL-0008Ma-5O@optimist>
+ <20150604170112.GM14071@sirena.org.uk>
+ <20150604171004.GZ30984@atomide.com>
+ <20150604172026.GA30984@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="awGZH0NYyyipry6r"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42637 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753698AbbFDR5v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jun 2015 13:57:51 -0400
 Content-Disposition: inline
-In-Reply-To: <20150604181308.16fbe6cf@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Darren Hart <dvhart@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20150604172026.GA30984@atomide.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-2015-06-04 18:13+1000, Stephen Rothwell:
-> After merging the drivers-x86 tree, today's linux-next build (x86_64 =
-allmodconfig)
-> failed like this:
->=20
-> ERROR: "acpi_bus_get_status_handle" [drivers/platform/x86/pvpanic.ko]=
- undefined!
->=20
-> Caused by commit b8f8cf6b02b6 ("pvpanic: handle missing _STA correctl=
-y").
 
-Classic, I only built with Y, sorry.
+--awGZH0NYyyipry6r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-acpi_bus_get_status_handle is not exported, so a simple solution would
-be to make it so.  Or it's possible to rewrite the patch in a way that
-uses current infrastructure.
+On Thu, Jun 04, 2015 at 10:20:26AM -0700, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [150604 10:11]:
 
-Would you prefer a patch to export it, a build fix on top of
-b8f8cf6b02b6 or a replacement patch?
+> > Sounds like I'm using an old commit in one of my pending branches,
+> > will check immediately.
 
-Thanks.
+> Greg, there's now commit 9809889c708e in tty-linus and commit
+> 9e91597f2423 in tty-next.
 
-A fix on top of b8f8cf6b02b6:
----8<---
-pvpanic: use acpi_bus_get_status to fix build
+Thanks for investigating!
 
-The previous version used acpi_bus_get_status_handle, which was not
-being exported, so module build blew up;  switch to acpi_bus_get_status
-and use the status it populates.
+--awGZH0NYyyipry6r
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Populated status is a bitfield so we can make the code self-documenting=
-=2E
-We do not check 'present' because 'enabled' has to be false in that cas=
-e
-by specification.  Older QEMUs set 0xff to status and newer ones do 0xb=
-=2E
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
----
- drivers/platform/x86/pvpanic.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+iQEcBAEBCAAGBQJVcJGTAAoJECTWi3JdVIfQe7oH/1TuVtBfCvg/7w5qEgH+8PEx
+zrkzSIbMDS3GRXv2mKMwkKFsPZiP1xlBW6YF/qbOfu5nKZkTF97XTqQ+HaH6RYe7
+aFybpfSAtJRW3ppEKsIoGLazX7dF6i96OaqHsz4DAkZfzpbf5qNU/GggtqTrPiWL
+vmbWBC3vcbKdizadqffSOZT1Xh4cg7rGAMvJVzyVcucGCnUVwo0RY5B8UxXaT5Cj
+cSXrPWeDq8VOMcPj+dLI7cjEpyq5Op5OgtrxWySRVp3W0MHSMi6Pofp20lTJYHmn
+ZsRtNt9nHLXNmYMUWOc2V5jgmEa2f4a/SMBa4RJCmiXOZSJE5ynWe5JoW33hclA=
+=CveP
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/platform/x86/pvpanic.c b/drivers/platform/x86/pvpa=
-nic.c
-index 7b6860333267..fd86daba7ffd 100644
---- a/drivers/platform/x86/pvpanic.c
-+++ b/drivers/platform/x86/pvpanic.c
-@@ -92,12 +92,13 @@ pvpanic_walk_resources(struct acpi_resource *res, v=
-oid *context)
-=20
- static int pvpanic_add(struct acpi_device *device)
- {
--	acpi_status status;
--	u64 ret;
-+	int ret;
-=20
--	status =3D acpi_bus_get_status_handle(device->handle, &ret);
-+	ret =3D acpi_bus_get_status(device);
-+	if (ret < 0)
-+		return ret;
-=20
--	if (ACPI_FAILURE(status) || (ret & 0x0B) !=3D 0x0B)
-+	if (!device->status.enabled || !device->status.functional)
- 		return -ENODEV;
-=20
- 	acpi_walk_resources(device->handle, METHOD_NAME__CRS,
+--awGZH0NYyyipry6r--
