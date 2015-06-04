@@ -1,56 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20150604 build: 2 failures 37 warnings (next-20150604)
-Date: Thu, 4 Jun 2015 18:57:40 +0100
-Message-ID: <20150604175740.GQ14071@sirena.org.uk>
-References: <E1Z0YIL-0008Ma-5O@optimist>
- <20150604170112.GM14071@sirena.org.uk>
- <20150604171004.GZ30984@atomide.com>
- <20150604172026.GA30984@atomide.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jun 4 (radeonfb && xfs)
+Date: Thu, 04 Jun 2015 12:15:18 -0700
+Message-ID: <5570A3C6.6050509@infradead.org>
+References: <20150604231545.506332b5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="awGZH0NYyyipry6r"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42637 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753698AbbFDR5v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jun 2015 13:57:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20150604172026.GA30984@atomide.com>
+Received: from casper.infradead.org ([85.118.1.10]:47313 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751874AbbFDTP1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jun 2015 15:15:27 -0400
+In-Reply-To: <20150604231545.506332b5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, xfs@oss.sgi.com
+
+On 06/04/15 06:15, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20150603:
+> 
 
 
---awGZH0NYyyipry6r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+on i386:
 
-On Thu, Jun 04, 2015 at 10:20:26AM -0700, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [150604 10:11]:
+fs/built-in.o: In function `xfs_ifree_cluster':
+xfs_inode.c:(.text+0x1c491a): undefined reference to `__umoddi3'
 
-> > Sounds like I'm using an old commit in one of my pending branches,
-> > will check immediately.
+drivers/built-in.o: In function `radeonfb_pci_register':
+radeon_base.c:(.text+0x72fe0): undefined reference to `__divdi3'
 
-> Greg, there's now commit 9809889c708e in tty-linus and commit
-> 9e91597f2423 in tty-next.
 
-Thanks for investigating!
 
---awGZH0NYyyipry6r
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVcJGTAAoJECTWi3JdVIfQe7oH/1TuVtBfCvg/7w5qEgH+8PEx
-zrkzSIbMDS3GRXv2mKMwkKFsPZiP1xlBW6YF/qbOfu5nKZkTF97XTqQ+HaH6RYe7
-aFybpfSAtJRW3ppEKsIoGLazX7dF6i96OaqHsz4DAkZfzpbf5qNU/GggtqTrPiWL
-vmbWBC3vcbKdizadqffSOZT1Xh4cg7rGAMvJVzyVcucGCnUVwo0RY5B8UxXaT5Cj
-cSXrPWeDq8VOMcPj+dLI7cjEpyq5Op5OgtrxWySRVp3W0MHSMi6Pofp20lTJYHmn
-ZsRtNt9nHLXNmYMUWOc2V5jgmEa2f4a/SMBa4RJCmiXOZSJE5ynWe5JoW33hclA=
-=CveP
------END PGP SIGNATURE-----
-
---awGZH0NYyyipry6r--
+-- 
+~Randy
