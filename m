@@ -1,69 +1,61 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: randconfig build error with next-20150603, in fs/xfs/xfs_inode.c
-Date: Wed, 3 Jun 2015 23:15:58 -0400
-Message-ID: <20150604031557.GS29898@windriver.com>
-References: <CA+r1Zhh5oW+z_DwszUehhF+ke41soBzHPcC7QCYH9yV+0A=upA@mail.gmail.com>
- <CAP=VYLppm7teN4LMpOAgXFunmDjnYLFV_mdbZTPaPWMqTwQPtg@mail.gmail.com>
- <20150604030103.GJ9143@dastard>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 4 Jun 2015 14:02:40 +1000
+Message-ID: <20150604140240.0717637a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:43786 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751735AbbFDDQH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2015 23:16:07 -0400
-Content-Disposition: inline
-In-Reply-To: <20150604030103.GJ9143@dastard>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, xfs@oss.sgi.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pNevEAHsnmV4UjE4m26j5EN"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-[Re: randconfig build error with next-20150603, in fs/xfs/xfs_inode.c] On 04/06/2015 (Thu 13:01) Dave Chinner wrote:
+--Sig_/pNevEAHsnmV4UjE4m26j5EN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Jun 03, 2015 at 10:36:54PM -0400, Paul Gortmaker wrote:
-> > On Wed, Jun 3, 2015 at 12:31 PM, Jim Davis <jim.epost@gmail.com> wrote:
-> > > Building with the attached random configuration file,
-> > >
-> > > fs/built-in.o: In function `xfs_ifree_cluster':
-> > > /home/jim/linux/fs/xfs/xfs_inode.c:2268: undefined reference to `__umoddi3'
-> > 
-> > I don't think this is specific to a particular randconfig.
-> > 
-> > On ARM allmodconfig, I saw:
-> > 
-> > ERROR: "__aeabi_uldivmod" [fs/xfs/xfs.ko] undefined!
-> > 
-> > On powerpc with an older gcc-4.5 toolchain, I saw:
-> > 
-> > /bin/sh: line 1: 23453 Segmentation fault      powerpc-linux-ld -EB -m
-> > elf64ppc -r -T /home/paul/git/linux-head/scripts/module-common.lds
-> > arch/powerpc/lib/crtsavres.o --build-id -o fs/xfs/xfs.ko fs/xfs/xfs.o
-> > fs/xfs/xfs.mod.o
-> > make[2]: *** [fs/xfs/xfs.ko] Error 139
-> > 
-> > I have not investigated further than that.
-> 
-> A fix is already pending. Probably be in tomorrow's linux-next
-> build.
+Hi all,
 
-Thanks Dave -- sounds good.  After all, the whole point of linux-next is
-to spot these and vet out arch/merge issues before they get merged.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-No matter what level of arch and config coverage I try to do, it seems
-linux-next still finds a corner case that I somehow missed.
+In file included from sound/soc/soc-dapm.c:43:0:
+include/sound/soc.h:30:32: fatal error: sound/soc-topology.h: No such file =
+or directory
+ #include <sound/soc-topology.h>
+                                ^
 
-Hopefully we don't lose sight of that underlying goal and we don't
-inadvertently intimidate folks from requesting their changes to be added
-to linux-next.
+Several more of these ...
 
-Paul.
---
+Caused by commit b2eef86fedbf ("ASoC: topology: Add topology core").
+Looks like a file was missed.
 
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+I have used the sound-asoc tree from next-20150603 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/pNevEAHsnmV4UjE4m26j5EN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVb83mAAoJEMDTa8Ir7ZwVgdAP/0QarszxpU3TfjruICAkYmmU
++gDjqNb0Gz6XZ+dSWbC4/hp7f8C1XbvDOP484iesFpY/ER3mF6mPhYsIl2L5fqrf
+2Nz17niPYMmyDq5Lqu+N5NAT4WqTRacUvqv9Sf+RPVM1ktzMaFx30LEeK6nbwFwo
+sV5XZfHZHVydiL4iyWpVpw0z6054XJQwpihJF9aWKYgX0B2sVVtCOXOL4gZq3Q+t
+A/P9QRACQPN5xXmMYhz0rZqRc3EwSPAKqsUAKG82Mzu4K1SMdmgjkG9pXqflvzWV
+SEkAHUEupSzgbOa07Z2f8/n5PiXZ4yVipXuk0lFnsPU25rjWed/TSsaMXWZQBs/d
+L8HuXFv9ZfkfvW5UV6elparNxdptyGm2tW2FfcSw4Rut1LKZsGLRceDxKDRbYGFF
+0m23PYCoVJlVD7eL2mkaEyxdL60+c0WsnzRY7tuJCAjCfqUZ8IWsmCfWVGsQmJI5
+Z0NGFLH+CXbrg9Np3cdwyXJhVIg3Sqw7TyII/IHejthFMrooAg9qHwSx59JUVAbh
+vKAGkJuqpTiuWtZMkVbLTB0FFAJLAwQV2j3xlATUBSN/P7QN0j0/Bw95yMEVelBC
+jquNXufFma3QA/Nu9OBIqolgNkZrrTpLnnKlCWXeiDylo8epTP/14ocvmDGdUtMG
+z9bB4+/88R7VRH5gDze4
+=Mtq2
+-----END PGP SIGNATURE-----
+
+--Sig_/pNevEAHsnmV4UjE4m26j5EN--
