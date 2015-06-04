@@ -1,34 +1,82 @@
-From: Laura Abbott <labbott@redhat.com>
-Subject: Re: ARM allnoconfig and arm_lowmem_init
-Date: Thu, 04 Jun 2015 10:35:54 -0700
-Message-ID: <55708C7A.2040700@redhat.com>
-References: <55705677.6060808@windriver.com> <20150604141557.GL7557@n2100.arm.linux.org.uk>
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Date: Thu, 4 Jun 2015 19:51:36 +0200
+Message-ID: <20150604175135.GA10262@potion.brq.redhat.com>
+References: <20150604181308.16fbe6cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47218 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753706AbbFDRf4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Jun 2015 13:35:56 -0400
-In-Reply-To: <20150604141557.GL7557@n2100.arm.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150604181308.16fbe6cf@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Darren Hart <dvhart@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 06/04/2015 07:15 AM, Russell King - ARM Linux wrote:
-> On Thu, Jun 04, 2015 at 09:45:27AM -0400, Paul Gortmaker wrote:
->> Hi Laura,
->>
->> The following linux-next build fails:
->
-> You're not the first to report this.  Laura's been rather quiet on
-> this subject, if I don't see a response soon, I'll be dropping this
-> patch.
->
+2015-06-04 18:13+1000, Stephen Rothwell:
+> After merging the drivers-x86 tree, today's linux-next build (x86_64 =
+allmodconfig)
+> failed like this:
+>=20
+> ERROR: "acpi_bus_get_status_handle" [drivers/platform/x86/pvpanic.ko]=
+ undefined!
+>=20
+> Caused by commit b8f8cf6b02b6 ("pvpanic: handle missing _STA correctl=
+y").
 
-I saw the other response but got bogged down with other things. I'll
-work through this today and if I can't something, drop the patch.
+Classic, I only built with Y, sorry.
 
-Laura
+acpi_bus_get_status_handle is not exported, so a simple solution would
+be to make it so.  Or it's possible to rewrite the patch in a way that
+uses current infrastructure.
+
+Would you prefer a patch to export it, a build fix on top of
+b8f8cf6b02b6 or a replacement patch?
+
+Thanks.
+
+A fix on top of b8f8cf6b02b6:
+---8<---
+pvpanic: use acpi_bus_get_status to fix build
+
+The previous version used acpi_bus_get_status_handle, which was not
+being exported, so module build blew up;  switch to acpi_bus_get_status
+and use the status it populates.
+
+Populated status is a bitfield so we can make the code self-documenting=
+=2E
+We do not check 'present' because 'enabled' has to be false in that cas=
+e
+by specification.  Older QEMUs set 0xff to status and newer ones do 0xb=
+=2E
+
+Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+---
+ drivers/platform/x86/pvpanic.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/platform/x86/pvpanic.c b/drivers/platform/x86/pvpa=
+nic.c
+index 7b6860333267..fd86daba7ffd 100644
+--- a/drivers/platform/x86/pvpanic.c
++++ b/drivers/platform/x86/pvpanic.c
+@@ -92,12 +92,13 @@ pvpanic_walk_resources(struct acpi_resource *res, v=
+oid *context)
+=20
+ static int pvpanic_add(struct acpi_device *device)
+ {
+-	acpi_status status;
+-	u64 ret;
++	int ret;
+=20
+-	status =3D acpi_bus_get_status_handle(device->handle, &ret);
++	ret =3D acpi_bus_get_status(device);
++	if (ret < 0)
++		return ret;
+=20
+-	if (ACPI_FAILURE(status) || (ret & 0x0B) !=3D 0x0B)
++	if (!device->status.enabled || !device->status.functional)
+ 		return -ENODEV;
+=20
+ 	acpi_walk_resources(device->handle, METHOD_NAME__CRS,
