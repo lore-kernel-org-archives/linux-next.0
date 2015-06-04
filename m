@@ -1,41 +1,62 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Dave Chinner <david@fromorbit.com>
 Subject: Re: randconfig build error with next-20150603, in fs/xfs/xfs_inode.c
-Date: Wed, 3 Jun 2015 22:36:54 -0400
-Message-ID: <CAP=VYLppm7teN4LMpOAgXFunmDjnYLFV_mdbZTPaPWMqTwQPtg@mail.gmail.com>
+Date: Thu, 4 Jun 2015 13:01:03 +1000
+Message-ID: <20150604030103.GJ9143@dastard>
 References: <CA+r1Zhh5oW+z_DwszUehhF+ke41soBzHPcC7QCYH9yV+0A=upA@mail.gmail.com>
+	<CAP=VYLppm7teN4LMpOAgXFunmDjnYLFV_mdbZTPaPWMqTwQPtg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:32896 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751196AbbFDCh0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2015 22:37:26 -0400
-In-Reply-To: <CA+r1Zhh5oW+z_DwszUehhF+ke41soBzHPcC7QCYH9yV+0A=upA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, david@fromorbit.com, xfs@oss.sgi.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <xfs-bounces@oss.sgi.com>
+Content-Disposition: inline
+In-Reply-To: <CAP=VYLppm7teN4LMpOAgXFunmDjnYLFV_mdbZTPaPWMqTwQPtg@mail.gmail.com>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, xfs@oss.sgi.com, linux-next <linux-next@vger.kernel.org>, Jim Davis <jim.epost@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 3, 2015 at 12:31 PM, Jim Davis <jim.epost@gmail.com> wrote:
-> Building with the attached random configuration file,
->
-> fs/built-in.o: In function `xfs_ifree_cluster':
-> /home/jim/linux/fs/xfs/xfs_inode.c:2268: undefined reference to `__umoddi3'
+On Wed, Jun 03, 2015 at 10:36:54PM -0400, Paul Gortmaker wrote:
+> On Wed, Jun 3, 2015 at 12:31 PM, Jim Davis <jim.epost@gmail.com> wrote:
+> > Building with the attached random configuration file,
+> >
+> > fs/built-in.o: In function `xfs_ifree_cluster':
+> > /home/jim/linux/fs/xfs/xfs_inode.c:2268: undefined reference to `__umoddi3'
+> 
+> I don't think this is specific to a particular randconfig.
+> 
+> On ARM allmodconfig, I saw:
+> 
+> ERROR: "__aeabi_uldivmod" [fs/xfs/xfs.ko] undefined!
+> 
+> On powerpc with an older gcc-4.5 toolchain, I saw:
+> 
+> /bin/sh: line 1: 23453 Segmentation fault      powerpc-linux-ld -EB -m
+> elf64ppc -r -T /home/paul/git/linux-head/scripts/module-common.lds
+> arch/powerpc/lib/crtsavres.o --build-id -o fs/xfs/xfs.ko fs/xfs/xfs.o
+> fs/xfs/xfs.mod.o
+> make[2]: *** [fs/xfs/xfs.ko] Error 139
+> 
+> I have not investigated further than that.
 
-I don't think this is specific to a particular randconfig.
+A fix is already pending. Probably be in tomorrow's linux-next
+build.
 
-On ARM allmodconfig, I saw:
+Cheers,
 
-ERROR: "__aeabi_uldivmod" [fs/xfs/xfs.ko] undefined!
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
-On powerpc with an older gcc-4.5 toolchain, I saw:
-
-/bin/sh: line 1: 23453 Segmentation fault      powerpc-linux-ld -EB -m
-elf64ppc -r -T /home/paul/git/linux-head/scripts/module-common.lds
-arch/powerpc/lib/crtsavres.o --build-id -o fs/xfs/xfs.ko fs/xfs/xfs.o
-fs/xfs/xfs.mod.o
-make[2]: *** [fs/xfs/xfs.ko] Error 139
-
-I have not investigated further than that.
-
-Paul.
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
