@@ -1,50 +1,85 @@
-From: michael@ozlabs.org (mpe@ellerman.id.au)
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes tree
-Date: Fri,  5 Jun 2015 15:46:34 +1000 (AEST)
-Message-ID: <20150605054634.E4FA3140218@ozlabs.org>
+From: Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH] advansys: fix compilation errors and warnings when CONFIG_PCI
+ is not set
+Date: Fri, 05 Jun 2015 15:09:20 +0200
+Message-ID: <55719F80.8010702@suse.de>
+References: <CA+r1ZhgMztLi-9E6cV=W1xJkMYG_rTtaJFj4Bv0TFPHmjSU+oQ@mail.gmail.com> <1433318202-1455-1-git-send-email-jthumshirn@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:50898 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932182AbbFENJX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Jun 2015 09:09:23 -0400
+In-Reply-To: <1433318202-1455-1-git-send-email-jthumshirn@suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Johannes Thumshirn <jthumshirn@suse.de>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, JBottomley@odin.com
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-SGkgRGF2ZSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtIHRyZWUgZ290IGEg
-Y29uZmxpY3QgaW4KZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfcmluZ2J1ZmZlci5jIGJldHdl
-ZW4gY29tbWl0IDRmNDdjOTlhOWJlNyAoImRybS9pOTE1OgpNb3ZlIFdhQmFycmllclBlcmZvcm1h
-bmNlRml4RGlzYWJsZTpza2wgdG8gc2tsIGNvZGUgZnJvbSBjaHYgY29kZSIpIGZyb20gdGhlCmRy
-bS1pbnRlbC1maXhlcyB0cmVlIGFuZCBjb21taXQgYjYyYWRiZDFlYTFmICgiZHJtL2k5MTUvYnh0
-OiBNb3ZlCldhRm9yY2VFbmFibGVOb25Db2hlcmVudCB0byBTa3lsYWtlIG9ubHkiKSBmcm9tIHRo
-ZSBkcm0gdHJlZS4KCkkgZml4ZWQgaXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUg
-Zml4IGFzIG5lY2Vzc2FyeSAobm8gYWN0aW9uCmlzIHJlcXVpcmVkKS4KCmNoZWVycwoKZGlmZiAt
-LWNjIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3JpbmdidWZmZXIuYwppbmRleCAwMDViNWUw
-NGRlNGQsZDkzNGY4NTczOTRkLi4wMDAwMDAwMDAwMDAKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5
-MTUvaW50ZWxfcmluZ2J1ZmZlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3Jp
-bmdidWZmZXIuYwpAQEAgLTEwMTcsMTMgLTEwMzAsMTcgKzEwMjMsMjQgQEBAIHN0YXRpYyBpbnQg
-c2tsX2luaXRfd29ya2Fyb3VuZHMoc3RydWN0IAogIAkJV0FfU0VUX0JJVF9NQVNLRUQoSElaX0NI
-SUNLRU4sCiAgCQkJCSAgQkRXX0hJWl9QT1dFUl9DT01QSUxFUl9DTE9DS19HQVRJTkdfRElTQUJM
-RSk7CiAgCiArCWlmIChJTlRFTF9SRVZJRChkZXYpID09IFNLTF9SRVZJRF9DMCB8fAogKwkgICAg
-SU5URUxfUkVWSUQoZGV2KSA9PSBTS0xfUkVWSURfRDApCiArCQkvKiBXYUJhcnJpZXJQZXJmb3Jt
-YW5jZUZpeERpc2FibGU6c2tsICovCiArCQlXQV9TRVRfQklUX01BU0tFRChIRENfQ0hJQ0tFTjAs
-CiArCQkJCSAgSERDX0ZFTkNFX0RFU1RfU0xNX0RJU0FCTEUgfAogKwkJCQkgIEhEQ19CQVJSSUVS
-X1BFUkZPUk1BTkNFX0RJU0FCTEUpOwogKworIAlpZiAoSU5URUxfUkVWSUQoZGV2KSA8PSBTS0xf
-UkVWSURfRDApIHsKKyAJCS8qCisgCQkgKlVzZSBGb3JjZSBOb24tQ29oZXJlbnQgd2hlbmV2ZXIg
-ZXhlY3V0aW5nIGEgM0QgY29udGV4dC4gVGhpcworIAkJICogaXMgYSB3b3JrYXJvdW5kIGZvciBh
-IHBvc3NpYmxlIGhhbmcgaW4gdGhlIHVubGlrZWx5IGV2ZW50CisgCQkgKiBhIFRMQiBpbnZhbGlk
-YXRpb24gb2NjdXJzIGR1cmluZyBhIFBTRCBmbHVzaC4KKyAJCSAqLworIAkJLyogV2FGb3JjZUVu
-YWJsZU5vbkNvaGVyZW50OnNrbCAqLworIAkJV0FfU0VUX0JJVF9NQVNLRUQoSERDX0NISUNLRU4w
-LAorIAkJCQkgIEhEQ19GT1JDRV9OT05fQ09IRVJFTlQpOworIAl9CisgCiAgCXJldHVybiBza2xf
-dHVuZV9pel9oYXNoaW5nKHJpbmcpOwogIH0KICAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+On 06/03/2015 09:56 AM, Johannes Thumshirn wrote:
+> Fix compilation errors on forgotten #include <linux/dmapool.h> and wa=
+rnings when
+> CONFIG_PCI is not set.
+>=20
+> Reported-by: Jim Davis <jim.epost@gmail.com>
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> ---
+>  drivers/scsi/advansys.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+> index 14d3aa5..4305178 100644
+> --- a/drivers/scsi/advansys.c
+> +++ b/drivers/scsi/advansys.c
+> @@ -37,6 +37,7 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/firmware.h>
+> +#include <linux/dmapool.h>
+> =20
+>  #include <asm/io.h>
+>  #include <asm/dma.h>
+> @@ -9435,6 +9436,7 @@ static int AscInitSetConfig(struct pci_dev *pde=
+v, struct Scsi_Host *shost)
+>   * on big-endian platforms so char fields read as words are actually=
+ being
+>   * unswapped on big-endian platforms.
+>   */
+> +#ifdef CONFIG_PCI
+>  static ADVEEP_3550_CONFIG Default_3550_EEPROM_Config =3D {
+>  	ADV_EEPROM_BIOS_ENABLE,	/* cfg_lsw */
+>  	0x0000,			/* cfg_msw */
+> @@ -9771,7 +9773,6 @@ static ADVEEP_38C1600_CONFIG ADVEEP_38C1600_Con=
+fig_Field_IsChar =3D {
+>  	0			/* 63 reserved */
+>  };
+> =20
+> -#ifdef CONFIG_PCI
+>  /*
+>   * Wait for EEPROM command to complete
+>   */
+> @@ -11385,7 +11386,9 @@ static int advansys_board_found(struct Scsi_H=
+ost *shost, unsigned int iop,
+>   err_unmap:
+>  	if (boardp->ioremap_addr)
+>  		iounmap(boardp->ioremap_addr);
+> +#ifdef CONFIG_PCI
+>   err_shost:
+> +#endif
+>  	return ret;
+>  }
+> =20
+>=20
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+
+Cheers,
+
+Hannes
+--=20
+Dr. Hannes Reinecke		               zSeries & Storage
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
+GF: F. Imend=F6rffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG N=FCrnberg)
