@@ -1,64 +1,71 @@
-From: michael@ozlabs.org (mpe@ellerman.id.au)
-Subject: linux-next: manual merge of the vfs tree with the  tree
-Date: Fri,  5 Jun 2015 15:46:07 +1000 (AEST)
-Message-ID: <20150605054607.C628E1401DE@ozlabs.org>
+From: Jani Nikula <jani.nikula@intel.com>
+Subject: Re: linux-next: manual merge of the drm tree with the drm-intel-fixes tree
+Date: Fri, 05 Jun 2015 11:03:20 +0300
+Message-ID: <87sia6a8fr.fsf@intel.com>
+References: <20150605054634.E4FA3140218@ozlabs.org>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33147 "EHLO ozlabs.org"
+Received: from mga02.intel.com ([134.134.136.20]:37282 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751463AbbFEFqJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Jun 2015 01:46:09 -0400
+	id S1753333AbbFEIBF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Jun 2015 04:01:05 -0400
+In-Reply-To: <20150605054634.E4FA3140218@ozlabs.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kinglong Mee <kinglongmee@gmail.com>
+To: "mpe@ellerman.id.au" <michael@ozlabs.org>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Hoath <nicholas.hoath@intel.com>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Damien Lespiau <damien.lespiau@intel.com>
 
-Hi Al,
+On Fri, 05 Jun 2015, "mpe@ellerman.id.au" <michael@ozlabs.org> wrote:
+> Hi Dave,
+>
+> Today's linux-next merge of the drm tree got a conflict in
+> drivers/gpu/drm/i915/intel_ringbuffer.c between commit 4f47c99a9be7 ("drm/i915:
+> Move WaBarrierPerformanceFixDisable:skl to skl code from chv code") from the
+> drm-intel-fixes tree and commit b62adbd1ea1f ("drm/i915/bxt: Move
+> WaForceEnableNonCoherent to Skylake only") from the drm tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Today's linux-next merge of the vfs tree got a conflict in fs/namei.c between
-commit 890458a43dbd ("path: New helpers path_get_pin/path_put_unpin for path
-pin") from the nfsd tree and commit 894bc8c4662b ("namei: remove restrictions
-on nesting depth") from the vfs tree.
+Our tree seems to have the if blocks the other way round. I don't think
+it matters, but Ville, Damien, chime in if you think it does.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+BR
+Jani.
 
-cheers
+>
+> cheers
+>
+> diff --cc drivers/gpu/drm/i915/intel_ringbuffer.c
+> index 005b5e04de4d,d934f857394d..000000000000
+> --- a/drivers/gpu/drm/i915/intel_ringbuffer.c
+> +++ b/drivers/gpu/drm/i915/intel_ringbuffer.c
+> @@@ -1017,13 -1030,17 +1023,24 @@@ static int skl_init_workarounds(struct 
+>   		WA_SET_BIT_MASKED(HIZ_CHICKEN,
+>   				  BDW_HIZ_POWER_COMPILER_CLOCK_GATING_DISABLE);
+>   
+>  +	if (INTEL_REVID(dev) == SKL_REVID_C0 ||
+>  +	    INTEL_REVID(dev) == SKL_REVID_D0)
+>  +		/* WaBarrierPerformanceFixDisable:skl */
+>  +		WA_SET_BIT_MASKED(HDC_CHICKEN0,
+>  +				  HDC_FENCE_DEST_SLM_DISABLE |
+>  +				  HDC_BARRIER_PERFORMANCE_DISABLE);
+>  +
+> + 	if (INTEL_REVID(dev) <= SKL_REVID_D0) {
+> + 		/*
+> + 		 *Use Force Non-Coherent whenever executing a 3D context. This
+> + 		 * is a workaround for a possible hang in the unlikely event
+> + 		 * a TLB invalidation occurs during a PSD flush.
+> + 		 */
+> + 		/* WaForceEnableNonCoherent:skl */
+> + 		WA_SET_BIT_MASKED(HDC_CHICKEN0,
+> + 				  HDC_FORCE_NON_COHERENT);
+> + 	}
+> + 
+>   	return skl_tune_iz_hashing(ring);
+>   }
+>   
 
-diff --cc fs/namei.c
-index d41a29efca67,2dad0eaf91d3..000000000000
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@@ -492,32 -492,7 +492,33 @@@ void path_put(const struct path *path
-  }
-  EXPORT_SYMBOL(path_put);
-  
- +/**
- + * path_get_pin - get a reference to a path's dentry
- + *                and pin to path's vfsmnt
- + * @path: path to get the reference to
- + * @p: the fs_pin pin to vfsmnt
- + */
- +void path_get_pin(struct path *path, struct fs_pin *p)
- +{
- +	dget(path->dentry);
- +	pin_insert_group(p, path->mnt, NULL);
- +}
- +EXPORT_SYMBOL(path_get_pin);
- +
- +/**
- + * path_put_unpin - put a reference to a path's dentry
- + *                  and remove pin to path's vfsmnt
- + * @path: path to put the reference to
- + * @p: the fs_pin removed from vfsmnt
- + */
- +void path_put_unpin(struct path *path, struct fs_pin *p)
- +{
- +	dput(path->dentry);
- +	pin_remove(p);
- +}
- +EXPORT_SYMBOL(path_put_unpin);
- +
-+ #define EMBEDDED_LEVELS 2
-  struct nameidata {
-  	struct path	path;
-  	struct qstr	last;
+-- 
+Jani Nikula, Intel Open Source Technology Center
