@@ -1,49 +1,46 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: next-20150604 build: 2 failures 37 warnings (next-20150604)
-Date: Fri, 5 Jun 2015 19:49:00 +0900
-Message-ID: <20150605104900.GA5346@kroah.com>
-References: <E1Z0YIL-0008Ma-5O@optimist>
- <20150604170112.GM14071@sirena.org.uk>
- <20150604171004.GZ30984@atomide.com>
- <20150604172026.GA30984@atomide.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the mips tree
+Date: Fri, 5 Jun 2015 19:53:14 +0900
+Message-ID: <20150605105314.GC5346@kroah.com>
+References: <20150604183933.5f403cfd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40882 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932375AbbFEKtC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Jun 2015 06:49:02 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150604172026.GA30984@atomide.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Mark Brown <broonie@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20150604183933.5f403cfd@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Brian Norris <computersforpeace@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 04, 2015 at 10:20:26AM -0700, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [150604 10:11]:
-> > * Mark Brown <broonie@kernel.org> [150604 10:03]:
-> > > On Thu, Jun 04, 2015 at 05:47:05PM +0100, Build bot for Mark Brown wrote:
-> > > 
-> > > > 	arm-allmodconfig
-> > > > ../drivers/tty/serial/8250/8250_omap.c:586:20: error: redefinition of 'omap8250_irq'
-> > > 
-> > > Current -next fails to build an ARM allmodconfig (and possibly other
-> > > things) due to 9e91597f24234 and 9809889c708eb (serial: 8250_omap:
-> > > provide complete custom startup & shutdown callbacks) which appear to be
-> > > the same commit that's been applied twice somehow.  Not sure what's
-> > > going on there...
-> > 
-> > Sounds like I'm using an old commit in one of my pending branches,
-> > will check immediately.
+On Thu, Jun 04, 2015 at 06:39:33PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Greg, there's now commit 9809889c708e in tty-linus and commit
-> 9e91597f2423 in tty-next.
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/phy/Makefile between commit d38dee131827 ("PHY: Add driver for
+> Pistachio USB2.0 PHY") from the mips tree and commit 0d486806ffd0 ("phy:
+> add Broadcom SATA3 PHY driver for Broadcom STB SoCs") from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/phy/Makefile
+> index 75a37dc952f5,bc92b427e5ca..000000000000
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@@ -40,4 -40,5 +40,6 @@@ obj-$(CONFIG_PHY_STIH41X_USB)		+= phy-s
+>   obj-$(CONFIG_PHY_QCOM_UFS) 	+= phy-qcom-ufs.o
+>   obj-$(CONFIG_PHY_QCOM_UFS) 	+= phy-qcom-ufs-qmp-20nm.o
+>   obj-$(CONFIG_PHY_QCOM_UFS) 	+= phy-qcom-ufs-qmp-14nm.o
+>  +obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
+> + obj-$(CONFIG_PHY_TUSB1210)		+= phy-tusb1210.o
+> + obj-$(CONFIG_PHY_BRCMSTB_SATA)		+= phy-brcmstb-sata.o
 
-Yes, I can't go back and remove the one in tty-next, I'm guessing when
-they are merged there is an issue.  I'll look into that after Linus
-pulls in my tty-linus tree.
 
-thanks,
+Thanks, that looks correct to me.
 
 greg k-h
