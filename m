@@ -1,56 +1,80 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20150604 build: 2 failures 37 warnings (next-20150604)
-Date: Fri, 5 Jun 2015 18:16:52 +0100
-Message-ID: <20150605171652.GB14071@sirena.org.uk>
-References: <E1Z0YIL-0008Ma-5O@optimist>
- <20150604170112.GM14071@sirena.org.uk>
- <20150604171004.GZ30984@atomide.com>
- <20150604172026.GA30984@atomide.com>
- <20150605104900.GA5346@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jun 5
+Date: Mon, 8 Jun 2015 01:26:09 +1000
+Message-ID: <20150608012609.68ee8d35@canb.auug.org.au>
+References: <1433513253.8590.5.camel@ellerman.id.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="F2YjuSVvMy0XUwbk"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150605104900.GA5346@kroah.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tony Lindgren <tony@atomide.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/s4vXOv=Zvn/Qu5ZQpr1GRg6"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:44721 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750734AbbFGP0R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Jun 2015 11:26:17 -0400
+In-Reply-To: <1433513253.8590.5.camel@ellerman.id.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 
+--Sig_/s4vXOv=Zvn/Qu5ZQpr1GRg6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---F2YjuSVvMy0XUwbk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Michael,
 
-On Fri, Jun 05, 2015 at 07:49:00PM +0900, Greg Kroah-Hartman wrote:
-> On Thu, Jun 04, 2015 at 10:20:26AM -0700, Tony Lindgren wrote:
+On Sat, 06 Jun 2015 00:07:33 +1000 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
+>
+> So as Stephen said in his earlier email I did the linux-next merge today =
+as a
+> test run for when he's on vacation.
 
-> > Greg, there's now commit 9809889c708e in tty-linus and commit
-> > 9e91597f2423 in tty-next.
+Thanks for that - you persisted longer that I would have :-)
 
-> Yes, I can't go back and remove the one in tty-next, I'm guessing when
-> they are merged there is an issue.  I'll look into that after Linus
-> pulls in my tty-linus tree.
+> Also note the tree has moved, until I get permission on the official linu=
+x-next
+> repo, for today it's at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mpe/linux-next.git
 
-Yeah, git isn't always spectacularly good at resolving add/add if
-there's context changes between two things in a merge - it sometimes
-ends up double adding things.
+I have pushed your updates into the official tree, now.
 
---F2YjuSVvMy0XUwbk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> I also don't have permission to upload the patch, so there is no patch to=
+day.
+
+I also have not uploaded the patch (as I do not have the patch that you
+created. It is not really an issue, but we can push that up later.
+
+> Stats about the size of the tree over time can be seen at
+> http://neuling.org/linux-next-size.html .
+
+These should be up to date shortly.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/s4vXOv=Zvn/Qu5ZQpr1GRg6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJVcdmDAAoJECTWi3JdVIfQrGUH/0DZ+yHuI491OC5C8E2h9YvC
-2CiteLgjAibMN5WNBRByyUdlcqNmL80YNkKhnaj+O7Q7yjKrmXGmwv1VfzxKMMZD
-nqPRU2pU9jiKczozAwlT/ru3yMgCKvzXSXwfJ+OgxP4OjtuoiOnntZ7Lat/WT2L3
-KtXQBrhdo24WMhzAX8T7xJLDjTTHQIkW0ffM6yyZ8BvPgTZW/bXpRGX6rn83Vtgd
-uAQha+HtamqUsBhzD1wbuLdyX3LF4nMKfF6N3eLxCsyHze4ISeMb2us69nqcEij3
-ZnGqWPvp9b/EjBjdGR7K3tyW3ComxF9O672OnsCuGaiABz3VNXIfzkG0r6FvH00=
-=oPzJ
+iQIcBAEBCAAGBQJVdGKWAAoJEMDTa8Ir7ZwV7osP/2gNjQk5X9RHtBg39H+C3VPq
+Zb7h9MBfTa4J7F7l1Hgv5Asl3YeuuXkNW5Ug5MF2j0CY+/zzDRysC6+OOY3Vr0Lh
+ezoFWzD72IU+kiUUrrRIveUpRxhuhfNrOgIBm5KduTlbqoNw2gcMwh+ylbd1lKL9
+hq4GSDDcF0QgF9t+W8okYIZ9OTXrFx0xcDSAJevFi1iyXvArXBVWu5A78uP4nXiQ
+qWcw/zbLlr0+CWyX4MKcw0i7S0wVDqSy8zyvJZCKPj18fVNskFO0HhOtdwoVOSmf
+rSpRO3JgtSPf+t/9ImPvsG4gEZjSR/NcHu94DmzCHSgFHmZYgesNoLz9Pn1f+7K8
+YOyRFUW+2GlecvvcxK83frADBQ8xaY7TmpqQL2bA4ILIILV9vzgZ+/UU9BeX2dFP
+VqkvaXSCJ5h6J3OC7nnXVn5QhzNBfBVjjc3r4yg4Nu7LJUGbi1XOrlLwA9V5y4JR
+2zjLccTIRSv5nANvFWWakumamZu1KH6oBKtQ0tDmZ3/Dil+YfwxPlUSxUm9eSZiO
+kR4mnAQEHWRPV86nCY/J2CRaQgOdorLgDITXNTRziCyGtCjOqLKXenCjwu7qhaDj
+KcvWx8W3oDuF1B2MSx3VfgmGUBh6TtpfaymnQlZ/Mz0CF/M2fC7yGLOOrkNAnZLF
+sPj5fr0x3jlX48Ow293Z
+=ENUq
 -----END PGP SIGNATURE-----
 
---F2YjuSVvMy0XUwbk--
+--Sig_/s4vXOv=Zvn/Qu5ZQpr1GRg6--
