@@ -1,41 +1,57 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: next-20150604 build: 2 failures 37 warnings (next-20150604)
-Date: Mon, 8 Jun 2015 13:56:32 -0700
-Message-ID: <20150608205632.GB11211@kroah.com>
-References: <E1Z0YIL-0008Ma-5O@optimist>
- <20150604170112.GM14071@sirena.org.uk>
- <20150604171004.GZ30984@atomide.com>
- <20150604172026.GA30984@atomide.com>
- <20150605104900.GA5346@kroah.com>
- <20150605171652.GB14071@sirena.org.uk>
+From: Stephan Mueller <smueller@chronox.de>
+Subject: Re: randconfig build error with next-20150529, in crypto/jitterentropy.c
+Date: Tue, 09 Jun 2015 00:36:07 +0200
+Message-ID: <2802354.BKbRJQHDPP@tauon.atsec.com>
+References: <CA+r1ZhhfcfZ5RvAtFEnR0y3Y79dz2Em7JsuqF_XRPBRhL5pROQ@mail.gmail.com> <CAHp75VeoCQSUCeswTCzUyKbV_e4RTt5t0yjEJLSzAvtX8jFvNw@mail.gmail.com> <20150608195412.GA2792@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150605171652.GB14071@sirena.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20150608195412.GA2792@roeck-us.net>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto <linux-crypto@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 05, 2015 at 06:16:52PM +0100, Mark Brown wrote:
-> On Fri, Jun 05, 2015 at 07:49:00PM +0900, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 04, 2015 at 10:20:26AM -0700, Tony Lindgren wrote:
-> 
-> > > Greg, there's now commit 9809889c708e in tty-linus and commit
-> > > 9e91597f2423 in tty-next.
-> 
-> > Yes, I can't go back and remove the one in tty-next, I'm guessing when
-> > they are merged there is an issue.  I'll look into that after Linus
-> > pulls in my tty-linus tree.
-> 
-> Yeah, git isn't always spectacularly good at resolving add/add if
-> there's context changes between two things in a merge - it sometimes
-> ends up double adding things.
+Am Monday 08 June 2015, 12:54:12 schrieb Guenter Roeck:
 
-Ok, I've now merged these branches together, if someone can verify that
-my tty-next branch is correct, that would be great.
+Hi Guenter,
 
-thanks,
+Thanks for the note.
 
-greg k-h
+...
+>
+>---
+>
+>openrisc:defconfig:
+>
+>In file included from ./arch/openrisc/include/asm/timex.h:23:0,
+>	...
+>	from crypto/jitterentropy.c:52:
+>./arch/openrisc/include/asm/spr.h: In function 'jent_loop_shuffle':
+>./arch/openrisc/include/asm/spr.h:30:2: warning: asm operand 1 probably
+>doesn't match constraints
+>./arch/openrisc/include/asm/spr.h:30:2: error: impossible constraint in 'asm'
+
+I received this one also before. But that seems to be an error on the OpenRISC 
+platform as the random_get_entropy() function or the get_cycles function is 
+not implemented as defined.
+
+The crypto code uses the following which triggers the issue:
+
+        __u64 tmp = 0;
+
+        tmp = random_get_entropy();
+
+That one seems to be an appropriate use of random_get_entropy() which on 
+almost all arches is an alias for get_cycles().
+>
+>---
+>
+>nios2:3c120_defconfig:
+>
+>ERROR: "get_cycles" [crypto/jitterentropy.ko] undefined!
+
+
+Ciao
+Stephan
