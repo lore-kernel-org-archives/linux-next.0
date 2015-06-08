@@ -1,62 +1,61 @@
-From: Peter Zijlstra <peterz@infradead.org>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: randconfig build error with next-20150529, in
  crypto/jitterentropy.c
-Date: Mon, 08 Jun 2015 17:59:45 +0200
-Message-ID: <1433779185.1495.46.camel@twins>
+Date: Mon, 8 Jun 2015 12:54:12 -0700
+Message-ID: <20150608195412.GA2792@roeck-us.net>
 References: <CA+r1ZhhfcfZ5RvAtFEnR0y3Y79dz2Em7JsuqF_XRPBRhL5pROQ@mail.gmail.com>
-	 <20150608122502.GA29454@gondor.apana.org.au>
-	 <1433766990.1495.39.camel@twins> <2190933.vdB90a64Et@tauon.atsec.com>
+ <CAHp75VeoCQSUCeswTCzUyKbV_e4RTt5t0yjEJLSzAvtX8jFvNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:43931 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752178AbbFHP7x convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Jun 2015 11:59:53 -0400
-In-Reply-To: <2190933.vdB90a64Et@tauon.atsec.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephan Mueller <smueller@chronox.de>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, linux-crypto <linux-crypto@vger.kernel.org>, Waiman Long <Waiman.Long@hp.com>, Ingo Molnar <mingo@kernel.org>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75VeoCQSUCeswTCzUyKbV_e4RTt5t0yjEJLSzAvtX8jFvNw@mail.gmail.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto <linux-crypto@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2015-06-08 at 17:52 +0200, Stephan Mueller wrote:
-> Am Monday 08 June 2015, 14:36:30 schrieb Peter Zijlstra:
+On Mon, Jun 08, 2015 at 03:21:09PM +0300, Andy Shevchenko wrote:
+> On Fri, May 29, 2015 at 10:14 PM, Jim Davis <jim.epost@gmail.com> wrote:
+> > Building with the attached random configuration file,
 > 
-> Hi Peter,
-> >
-> >Would something like
-> >
-> >#pragma GCC push_options
-> >#pragma GCC optimize ("-O0")
-> >static __u64 jent_fold_time(struct rand_data *ec, __u64 time,
-> >			    __u64 *folded, __u64 loop_cnt)
-> >{
-> >	...
-> >}
-> >#pragma GCC pop_options
-> >
-> >Be an option to allow the file to be compiled with regular optimizations
-> >enabled?
+> Hit the very same error against next-20150605.
 > 
-> After doing some tests, I see that neither the min entropy nor the Shannon 
-> Entropy of the raw noise is affected by using the mentioned pragmas at the 
-> right locations.
-> 
-> So I will prepare a patch tonight.
-> 
-> Just for my edification: why does an -O0 on a self contained file break the 
-> compile run?
 
-We rely on -finline-functions, which is disabled with -O0.
+There are also several failing default configurations.
 
-By inlining some things, the compiler can do constant value propagation
-etc. and compile time evaluate things.
+Guenter
 
-We often (as is the case here) use this to generate compiler warns
-without generating actual code.
+---
 
->  Any why do the pragmas work?
+um:defconfig:
 
-They are placed such that the code affected by the above creativity is
-outside of the forced -O0 compile and life is good again.
+include/asm-generic/fixmap.h: In function 'fix_to_virt':
+include/asm-generic/fixmap.h:31:2: error: size of unnamed array is negative
+---
+
+x86_64:defconfig:
+i386:defconfig:
+
+./arch/x86/include/asm/qspinlock.h: In function 'native_queued_spin_unlock':
+./arch/x86/include/asm/qspinlock.h:17:2: error:
+	call to '__compiletime_assert_17' declared with attribute error:
+		Need native word sized stores/loads for atomicity.
+
+---
+
+openrisc:defconfig:
+
+In file included from ./arch/openrisc/include/asm/timex.h:23:0,
+	...
+	from crypto/jitterentropy.c:52:
+./arch/openrisc/include/asm/spr.h: In function 'jent_loop_shuffle':
+./arch/openrisc/include/asm/spr.h:30:2: warning: asm operand 1 probably doesn't
+match constraints
+./arch/openrisc/include/asm/spr.h:30:2: error: impossible constraint in 'asm'
+
+---
+
+nios2:3c120_defconfig:
+
+ERROR: "get_cycles" [crypto/jitterentropy.ko] undefined!
