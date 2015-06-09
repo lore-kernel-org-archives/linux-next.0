@@ -1,31 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the mips tree
-Date: Tue, 9 Jun 2015 20:59:53 +1000
-Message-ID: <20150609205953.4ecde1ce@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the jc_docs tree
+Date: Tue, 9 Jun 2015 21:26:49 +1000
+Message-ID: <20150609212649.7517567c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2=EO8FWJ+Qxa_eyhciGOKN7"; protocol="application/pgp-signature"
+ boundary="Sig_/tbBHZWvOOyPjURCGLUHk9hr"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56180 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49621 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751228AbbFILAI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2015 07:00:08 -0400
+	id S932181AbbFIL1B (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2015 07:27:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Greg KH <greg@kroah.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roberta Dobrescu <roberta.dobrescu@gmail.com>, Jonathan Cameron <jic23@kernel.org>, Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
 
---Sig_/2=EO8FWJ+Qxa_eyhciGOKN7
+--Sig_/tbBHZWvOOyPjURCGLUHk9hr
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got conflicts in
-drivers/tty/serial/8250/Kconfig and drivers/tty/serial/8250/Makefile
-between commit d4a7bd1c0e5e ("serial: 8250_ingenic: support for Ingenic
-SoC UARTs") from the mips tree and commit 1a8d2903cb6a ("serial:
-8250_uniphier: add UniPhier serial driver") from the tty tree.
+Today's linux-next merge of the staging tree got a conflict in
+tools/Makefile between commit b3fd7368f8f6 ("Move freefall program from
+Documentation/ to tools/") from the jc_docs tree and commit
+53375103eae8 ("tools: iio: Add iio targets in tools Makefile") from the
+staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -34,64 +34,48 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/tty/serial/8250/Kconfig
-index 43330ea95cfd,a74a8e4717d4..000000000000
---- a/drivers/tty/serial/8250/Kconfig
-+++ b/drivers/tty/serial/8250/Kconfig
-@@@ -343,11 -351,9 +351,18 @@@ config SERIAL_8250_MT657
-  	  If you have a Mediatek based board and want to use the
-  	  serial port, say Y to this option. If unsure, say N.
+diff --cc tools/Makefile
+index b113078fb7ad,79463b00b81e..000000000000
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@@ -129,11 -113,8 +130,12 @@@ turbostat_clean x86_energy_perf_policy_
+  tmon_clean:
+  	$(call descend,thermal/tmon,clean)
  =20
- +config SERIAL_8250_INGENIC
- +	bool "Support for Ingenic SoC serial ports"
- +	depends on SERIAL_8250_CONSOLE && OF_FLATTREE
- +	select LIBFDT
- +	select SERIAL_EARLYCON
- +	help
- +	  If you have a system using an Ingenic SoC and wish to make use of
- +	  its UARTs, say Y to this option. If unsure, say N.
-++
-+ config SERIAL_8250_UNIPHIER
-+ 	tristate "Support for UniPhier on-chip UART"
-+ 	depends on SERIAL_8250 && ARCH_UNIPHIER
-+ 	help
-+ 	  If you have a UniPhier based board and want to use the on-chip
-+ 	  serial ports, say Y to this option. If unsure, say N.
-diff --cc drivers/tty/serial/8250/Makefile
-index 98fba26e194a,6fa22ffad63d..000000000000
---- a/drivers/tty/serial/8250/Makefile
-+++ b/drivers/tty/serial/8250/Makefile
-@@@ -22,7 -22,6 +22,9 @@@ obj-$(CONFIG_SERIAL_8250_DW)		+=3D 8250_d
-  obj-$(CONFIG_SERIAL_8250_EM)		+=3D 8250_em.o
-  obj-$(CONFIG_SERIAL_8250_OMAP)		+=3D 8250_omap.o
-  obj-$(CONFIG_SERIAL_8250_FINTEK)	+=3D 8250_fintek.o
-+ obj-$(CONFIG_SERIAL_8250_LPC18XX)	+=3D 8250_lpc18xx.o
-  obj-$(CONFIG_SERIAL_8250_MT6577)	+=3D 8250_mtk.o
- +obj-$(CONFIG_SERIAL_8250_INGENIC)	+=3D 8250_ingenic.o
+ +freefall_clean:
+ +	$(call descend,laptop/freefall,clean)
  +
- +CFLAGS_8250_ingenic.o +=3D -I$(srctree)/scripts/dtc/libfdt
-+ obj-$(CONFIG_SERIAL_8250_UNIPHIER)	+=3D 8250_uniphier.o
+  clean: acpi_clean cgroup_clean cpupower_clean hv_clean firewire_clean lgu=
+est_clean \
+  		perf_clean selftests_clean turbostat_clean usb_clean virtio_clean \
+- 		vm_clean net_clean x86_energy_perf_policy_clean tmon_clean freefall_cle=
+an
+ -		vm_clean net_clean iio_clean x86_energy_perf_policy_clean tmon_clean
+++		vm_clean net_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+++		freefall_clean
+ =20
+  .PHONY: FORCE
 
---Sig_/2=EO8FWJ+Qxa_eyhciGOKN7
+--Sig_/tbBHZWvOOyPjURCGLUHk9hr
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVdsc2AAoJEMDTa8Ir7ZwVIc8P/jd1F7xW80gUX4I8nVKisagN
-wJF/BH3KQ3yXFPiEwLoPo0oApwFfBxq4SzjOi8d6Xy8FeuVVJHJZtOSzmrUR+R2Y
-zhiSOCY4DpANl7kcEd7clM96MzuZ0cCZW4hSzQ1/+lXFqWLsaygXbINLt+WEzLda
-vVNuCT8qhKqEjHKriCW1CqgEP9rI/iciyMPz6+/WEZv1AW8MjdMCXYanDiLDQi6i
-29XIqxVdT3rHZy/OBoRIit67dEe3T0nZvKPhG5kCCtk3H/9/nwka5d9Q1w/cpVV0
-PhMzZq8ce1czHhb3OM+VVVuPh9MXJ9L0VE7nXmmDGWuOg5U58p7k+zmcd/xi/Iqd
-gTuoE8LU+v4wxzTY3DS+AmPDoYpgOfP0rVlat6+gBh5MyevJIzEXjVsOS0hCk8HF
-uf565+f7dFVb1WSKGXG7/C7KSikaaDVbj0i+Lxnnalu2hIabLhiFWCBZrVQHDmNL
-y1YMD2GMqcHpbSxIrWkn6K4rBVyhQQnZvj2lzdwooxAYNJsJwLDZzsVW/6krliNP
-3+yejkH8zLGnIzpOvuVcHDkkvBp+M2NpA4a1iYRmcv59BuCe12usyeZwsabUNPx5
-zTOThWtc5JrtxE0sbcgZ0pDsM1T8uuEOco98PneES2Ct/73MpBBHY9PcafYbgnk2
-qpQTIRwF6ZJgNCuxCkne
-=cO+0
+iQIcBAEBCAAGBQJVds2CAAoJEMDTa8Ir7ZwVoZwP/3RZ0RmPaz0BnWJbmf8cuFHG
+feYO4T7yUKA2jtLFIVSnoTXfotfXq/PWJN5tdbosso1wDgLCL6yXTnXMg5ZrYCtV
+n6F37VL2yavxWJuJ5j1JMWRlrFFr2MGatMIO0f0MCQt0bgievcWxgqfIc2KXsNeN
+s2nMqEzPDPjcbM4+1n+Es2WM+HxuAJ96KuYkIy7s2oTSH8Y4+298pt/Q+1QSLwse
+k14iJxbxPS/e6vxGv+q8vIyd+wvMvpO1GQwrp9HTOdYKUJDZtEx0TBgiZvbqPP7J
+ZyL9OKW/AAjFQ3f2zO1r6R2FTb4AJfkGwTGNAaIpSND1hs7RNk00t5jHIlzvQF+4
+n76owWJDs4GBJgdH2ExtT9cHwnfpjOA0mOqOUr+cgVvBDUZ9AnT/rvejn/wo88a5
+94f0p88UuTqQzm3dbCF905QadO+HCWtqe1YqbquWTZxHmooSYV2y6C0oJcQyhYi3
+qBg3wsRlsK+azrVLskI34UP8eeErdiQisZQ2H5Ehno/KLhHLwBId+QRFxRTkCRSG
+DT8ZKolNM+iG2Yqe7Z8TggKecb8sdjx7Xgq4qqJzFt5kvGrDStMIrT3dz8ErcUAf
+WSkpZPKHCIcjxreVfeQetIY2Ki7bQJzHP5gRoOQcI8Hj8p8pUhtHOLlGieTzsUOI
+DVfcAyJ1v2GcRmLDBV60
+=m8Dh
 -----END PGP SIGNATURE-----
 
---Sig_/2=EO8FWJ+Qxa_eyhciGOKN7--
+--Sig_/tbBHZWvOOyPjURCGLUHk9hr--
