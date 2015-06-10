@@ -1,47 +1,82 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: next-20150604 build: 2 failures 37 warnings (next-20150604)
-Date: Wed, 10 Jun 2015 00:04:02 -0700
-Message-ID: <20150610070402.GB2740@atomide.com>
-References: <E1Z0YIL-0008Ma-5O@optimist>
- <20150604170112.GM14071@sirena.org.uk>
- <20150604171004.GZ30984@atomide.com>
- <20150604172026.GA30984@atomide.com>
- <20150605104900.GA5346@kroah.com>
- <20150605171652.GB14071@sirena.org.uk>
- <20150608205632.GB11211@kroah.com>
+From: Hanjun Guo <hanjun.guo@linaro.org>
+Subject: Re: [Linaro-acpi] next-20150609 build: 2 failures 40 warnings (next-20150609)
+Date: Wed, 10 Jun 2015 15:33:52 +0800
+Message-ID: <5577E860.1040605@linaro.org>
+References: <E1Z2Ny7-00019f-Dj@optimist> <20150609182305.GW14071@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:56958 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752109AbbFJHEG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2015 03:04:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20150608205632.GB11211@kroah.com>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:36588 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751748AbbFJHeD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jun 2015 03:34:03 -0400
+Received: by pdjm12 with SMTP id m12so31920997pdj.3
+        for <linux-next@vger.kernel.org>; Wed, 10 Jun 2015 00:34:02 -0700 (PDT)
+In-Reply-To: <20150609182305.GW14071@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>, Y Vo <yvo@apm.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linaro-acpi@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> [150608 13:58]:
-> On Fri, Jun 05, 2015 at 06:16:52PM +0100, Mark Brown wrote:
-> > On Fri, Jun 05, 2015 at 07:49:00PM +0900, Greg Kroah-Hartman wrote:
-> > > On Thu, Jun 04, 2015 at 10:20:26AM -0700, Tony Lindgren wrote:
-> > 
-> > > > Greg, there's now commit 9809889c708e in tty-linus and commit
-> > > > 9e91597f2423 in tty-next.
-> > 
-> > > Yes, I can't go back and remove the one in tty-next, I'm guessing when
-> > > they are merged there is an issue.  I'll look into that after Linus
-> > > pulls in my tty-linus tree.
-> > 
-> > Yeah, git isn't always spectacularly good at resolving add/add if
-> > there's context changes between two things in a merge - it sometimes
-> > ends up double adding things.
-> 
-> Ok, I've now merged these branches together, if someone can verify that
-> my tty-next branch is correct, that would be great.
+On 06/10/2015 02:23 AM, Mark Brown wrote:
+> On Tue, Jun 09, 2015 at 07:09:47PM +0100, Build bot for Mark Brown wrote:
+>
+>> 	arm64-allmodconfig
+>> ERROR: "acpi_gpiochip_request_interrupts" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "acpi_gpiochip_free_interrupts" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>
+> Today's -next fails to build an arm64 allmodconfig due to commit
+> 733cf014f02040b3ad (gpio: xgene: add ACPI support for APM X-Gene GPIO
+> standby driver) which adds ACPI support to the X-Gene standby driver
+> without either adding a dependency on ACPI or there being stubs in the
+> ACPI headers for the above functions in !ACPI configurations.  My
+> instinct is that the stubs are going to be nicer since it'll save on
+> ifdefs in drivers which seems nicer.
 
-I've verified that things are working for 8250_omap thanks.
+It seems that acpi_gpiochip_request_interrupts didn't export
+so there will be a compile error when xgene-sb compiled as
+a ko, I prepared a patch below:
 
-Tony
+
+ From d47771429144d80a2c38b79f06577dd237e349d1 Mon Sep 17 00:00:00 2001
+From: Hanjun Guo <hanjun.guo@linaro.org>
+Date: Wed, 10 Jun 2015 15:24:30 +0800
+Subject: [PATCH] GPIO / ACPI: export acpi_gpiochip_request(free)_interrupts
+  for module use
+
+acpi_gpiochip_request(free)_interrupts can be used for modules,
+so export them. This also fixs a compile error when xgene-sb
+configured as kernel module.
+
+Fixes: 733cf014f020 "gpio: xgene: add ACPI support for APM X-Gene GPIO 
+standby driver"
+Signed-off-by: Hanjun Guo <hanjun.guo@linaro.org>
+---
+  drivers/gpio/gpiolib-acpi.c | 2 ++
+  1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 19b99d0..980a996 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -307,6 +307,7 @@ void acpi_gpiochip_request_interrupts(struct 
+gpio_chip *chip)
+         acpi_walk_resources(handle, "_AEI",
+                             acpi_gpiochip_request_interrupt, acpi_gpio);
+  }
++EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
+
+  /**
+   * acpi_gpiochip_free_interrupts() - Free GPIO ACPI event interrupts.
+@@ -346,6 +347,7 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip 
+*chip)
+                 kfree(event);
+         }
+  }
++EXPORT_SYMBOL_GPL(acpi_gpiochip_free_interrupts);
+
+  int acpi_dev_add_driver_gpios(struct acpi_device *adev,
+                               const struct acpi_gpio_mapping *gpios)
+-- 
+1.9.1
