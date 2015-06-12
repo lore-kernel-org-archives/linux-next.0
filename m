@@ -1,47 +1,57 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-Date: Fri, 12 Jun 2015 11:19:59 -0700
-Message-ID: <7hlhfobxgw.fsf@deeprootsystems.com>
-References: <1434069014.28544.1.camel@ellerman.id.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Fri, 12 Jun 2015 14:22:49 -0700 (PDT)
+Message-ID: <20150612.142249.755232253520109286.davem@davemloft.net>
+References: <1434106289.20648.2.camel@ellerman.id.au>
+	<BY1PR0701MB17063C25D627AF725A9E0D46FEBB0@BY1PR0701MB1706.namprd07.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:33045 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751854AbbFLSUE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2015 14:20:04 -0400
-Received: by igbpi8 with SMTP id pi8so17628396igb.0
-        for <linux-next@vger.kernel.org>; Fri, 12 Jun 2015 11:20:03 -0700 (PDT)
-In-Reply-To: <1434069014.28544.1.camel@ellerman.id.au> (Michael Ellerman's
-	message of "Fri, 12 Jun 2015 10:30:14 +1000")
+Received: from shards.monkeyblade.net ([149.20.54.216]:47469 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840AbbFLVWu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2015 17:22:50 -0400
+In-Reply-To: <BY1PR0701MB17063C25D627AF725A9E0D46FEBB0@BY1PR0701MB1706.namprd07.prod.outlook.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dinguyen@opensource.altera.com, rmk+kernel@arm.linux.org.uk
+To: Derek.Chickles@caviumnetworks.com
+Cc: mpe@ellerman.id.au, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, Satananda.Burla@caviumnetworks.com, Felix.Manlunas@caviumnetworks.com, Robert.Richter@caviumnetworks.com, Aleksey.Makarov@caviumnetworks.com, Raghu.Vatsavayi@caviumnetworks.com
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
+From: "Chickles, Derek" <Derek.Chickles@caviumnetworks.com>
+Date: Fri, 12 Jun 2015 15:59:54 +0000
 
-> Hi all,
->
-> After merging the arm-soc tree, today's linux-next build (arm_multi_v7_defconfig)
-> failed like this:
->
->   scripts/Makefile.build:258: recipe for target 'arch/arm/mach-socfpga/platsmp.o' failed
->   arch/arm/mach-socfpga/platsmp.c:66:23: error: 'socfpga_secondary_startup' undeclared (first use in this function)
->      writel(virt_to_phys(socfpga_secondary_startup),
->                        ^
->
-> Caused by the interaction of commits 45be0cdb5323 "ARM: socfpga: add
-> CPU_METHOD_OF_DECLARE for Arria 10" and 02b4e2756e01 "ARM: v7 setup function
-> should invalidate L1 cache".
+>> -----Original Message-----
+>> From: Michael Ellerman [mailto:mpe@ellerman.id.au]
+>> Sent: Friday, June 12, 2015 3:51 AM
+>> To: Thomas Gleixner; Ingo Molnar; H. Peter Anvin; Peter Zijlstra; David
+>> S.Miller
+>> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> sfr@canb.auug.org.au; Chickles, Derek; Burla, Satananda; Manlunas, Felix;
+>> Richter, Robert; Makarov, Aleksey; Vatsavayi, Raghu
+>> Subject: linux-next: build failure after merge of the tip tree
+>> 
+>> Hi all,
+>> 
+>> After merging the tip tree, today's linux-next build (x86_allmodconfig)
+>> failed like this:
+ ...
+>> And so on.
+>> 
+>> Caused by the interaction of commit d6472302f242 "x86/mm: Decouple
+>> <linux/vmalloc.h> from <asm/io.h>" from the tip tree with commit
+>> f21fb3ed364b
+>> "Add support of Cavium Liquidio ethernet adapters" from the net-next tree.
+>> 
+>> I applied the following fix for today:
+ ...
+> Thanks. Much appreciated.
 
-I found this as well, unfortunately after it was already pulled for -next.
+This doesn't work, neither of these emails are a formal proper submission
+of a fix for this build failure.
 
-> I applied the following fix for today.
+One of you has to do the work to formally submit the patch to netdev
+with a full signoff and commit log message so that it gets fixed in my
+tree.
 
-Yes, that's the right fix, and arm-soc now has the equivalent fix as
-well.
-
-Thanks,
-
-Kevin
+Thanks.
