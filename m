@@ -1,15 +1,15 @@
 From: Michael Ellerman <mpe@ellerman.id.au>
 Subject: linux-next: manual merge of the l2-mtd tree with the mips tree
-Date: Fri, 12 Jun 2015 13:27:06 +1000
-Message-ID: <1434079626.1545.1.camel@ellerman.id.au>
+Date: Fri, 12 Jun 2015 20:50:20 +1000
+Message-ID: <1434106220.20648.1.camel@ellerman.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55265 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52950 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750915AbbFLD1O (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Jun 2015 23:27:14 -0400
+	id S1750893AbbFLKu2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2015 06:50:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Brian Norris <computersforpeace@gmail.com>, Ralf Baechle <ralf@linux-mips.org>
