@@ -1,40 +1,60 @@
-From: "Chickles, Derek" <Derek.Chickles@caviumnetworks.com>
-Subject: RE: linux-next: build failure after merge of the tip tree
-Date: Fri, 12 Jun 2015 21:25:04 +0000
-Message-ID: <BY1PR0701MB17065A6D911514088AAD877CFEBB0@BY1PR0701MB1706.namprd07.prod.outlook.com>
-References: <1434106289.20648.2.camel@ellerman.id.au>
-	<BY1PR0701MB17063C25D627AF725A9E0D46FEBB0@BY1PR0701MB1706.namprd07.prod.outlook.com>
- <20150612.142249.755232253520109286.davem@davemloft.net>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: linux-next: manual merge of the rdma tree with the net-next tree
+Date: Mon, 15 Jun 2015 18:11:12 +1000
+Message-ID: <1434355872.19706.4.camel@ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bn1on0092.outbound.protection.outlook.com ([157.56.110.92]:15136
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752751AbbFLVZI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2015 17:25:08 -0400
-In-Reply-To: <20150612.142249.755232253520109286.davem@davemloft.net>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: "mpe@ellerman.id.au" <mpe@ellerman.id.au>, "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@elte.hu" <mingo@elte.hu>, "hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org" <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "Burla, Satananda" <Satananda.Burla@caviumnetworks.com>, "Manlunas, Felix" <Felix.Manlunas@caviumnetworks.com>, "Richter, Robert" <Robert.Richter@caviumnetworks.com>, "Makarov, Aleksey" <Aleksey.Makarov@caviumnetworks.com>, "Vatsavayi, Raghu" <Raghu.Vatsavayi@caviumnetworks.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, Hariprasad Shenai <hariprasad@chelsio.com>Hariprasad Shenai <hariprasad@chelsio.com>
+List-Id: linux-next.vger.kernel.org
+
+Hi Doug,
+
+Today's linux-next merge of the rdma tree got a conflict in
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c and
+drivers/net/ethernet/chelsio/cxgb4/sge.c between commit b26127227677
+"cxgb4/cxgb4vf: function and argument name cleanup" from the net-next tree and
+commit 66cf188eba52 "cxgb4: Support for user mode bar2 mappings with T4" from
+the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+cheers
 
 
-
-> -----Original Message-----
-> From: David Miller [mailto:davem@davemloft.net]
->  ...
-> > Thanks. Much appreciated.
-> 
-> This doesn't work, neither of these emails are a formal proper submission
-> of a fix for this build failure.
-> 
-> One of you has to do the work to formally submit the patch to netdev
-> with a full signoff and commit log message so that it gets fixed in my
-> tree.
-> 
-> Thanks.
-
-Yes, we're working on this. Hopefully, we'll have this submitted later today, with the build fix and sparse warning fixes.
+diff --cc drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index 0e27f2266e6b,a9355593e65e..000000000000
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@@ -2356,8 -2352,8 +2358,8 @@@ static void process_db_drop(struct work
+  		unsigned int bar2_qid;
+  		int ret;
+  
+ -		ret = cxgb4_t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
+ -					      0, &bar2_qoffset, &bar2_qid);
+ +		ret = t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
+- 					&bar2_qoffset, &bar2_qid);
+++					0, &bar2_qoffset, &bar2_qid);
+  		if (ret)
+  			dev_err(adap->pdev_dev, "doorbell drop recovery: "
+  				"qid=%d, pidx_inc=%d\n", qid, pidx_inc);
+diff --cc drivers/net/ethernet/chelsio/cxgb4/sge.c
+index 6b7c37fd0252,1b99aecde736..000000000000
+--- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+@@@ -2401,8 -2429,8 +2401,8 @@@ static void __iomem *bar2_address(struc
+  	u64 bar2_qoffset;
+  	int ret;
+  
+- 	ret = t4_bar2_sge_qregs(adapter, qid, qtype,
+ -	ret = cxgb4_t4_bar2_sge_qregs(adapter, qid, qtype, 0,
+ -				      &bar2_qoffset, pbar2_qid);
+++	ret = t4_bar2_sge_qregs(adapter, qid, qtype, 0,
+ +				&bar2_qoffset, pbar2_qid);
+  	if (ret)
+  		return NULL;
+  
