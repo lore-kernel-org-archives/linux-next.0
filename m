@@ -1,24 +1,23 @@
 From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: linux-next: manual merge of the rdma tree with the net-next tree
-Date: Mon, 15 Jun 2015 18:11:12 +1000
-Message-ID: <1434355872.19706.4.camel@ellerman.id.au>
+Subject: linux-next: manual merge of the staging tree with the rdma tree
+Date: Mon, 15 Jun 2015 18:12:11 +1000
+Message-ID: <1434355931.19706.5.camel@ellerman.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, Hariprasad Shenai <hariprasad@chelsio.com>Hariprasad Shenai <hariprasad@chelsio.com>
+To: Greg KH <greg@kroah.com>, Doug Ledford <dledford@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matan Barak <matanb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Mike Shuey <shuey@purdue.edu>
 List-Id: linux-next.vger.kernel.org
 
-Hi Doug,
+Hi Greg,
 
-Today's linux-next merge of the rdma tree got a conflict in
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c and
-drivers/net/ethernet/chelsio/cxgb4/sge.c between commit b26127227677
-"cxgb4/cxgb4vf: function and argument name cleanup" from the net-next tree and
-commit 66cf188eba52 "cxgb4: Support for user mode bar2 mappings with T4" from
-the rdma tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c between commit 8e37210b38fb
+"IB/core: Change ib_create_cq to use struct ib_cq_init_attr" from the rdma tree
+and commit ec3d17c0ed2e "staging: lustre: lnet: o2iblnd: code cleanup - align
+whitespace" from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -26,35 +25,37 @@ is required).
 cheers
 
 
-diff --cc drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-index 0e27f2266e6b,a9355593e65e..000000000000
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@@ -2356,8 -2352,8 +2358,8 @@@ static void process_db_drop(struct work
-  		unsigned int bar2_qid;
-  		int ret;
+diff --cc drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
+index c41b5575df05,48454a576b7a..000000000000
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
+@@@ -642,18 -643,17 +643,18 @@@ kib_conn_t *kiblnd_create_conn(kib_peer
+  	 * she must dispose of 'cmid'.  (Actually I'd block forever if I tried
+  	 * to destroy 'cmid' here since I'm called from the CM which still has
+  	 * its ref on 'cmid'). */
+- 	rwlock_t		*glock = &kiblnd_data.kib_global_lock;
+- 	kib_net_t	      *net = peer->ibp_ni->ni_data;
+- 	kib_dev_t	      *dev;
++ 	rwlock_t *glock = &kiblnd_data.kib_global_lock;
++ 	kib_net_t *net = peer->ibp_ni->ni_data;
++ 	kib_dev_t *dev;
+  	struct ib_qp_init_attr *init_qp_attr;
+- 	struct kib_sched_info	*sched;
+- 	struct ib_cq_init_attr  cq_attr = {};
+- 	kib_conn_t		*conn;
+- 	struct ib_cq		*cq;
+- 	unsigned long		flags;
+- 	int			cpt;
+- 	int			rc;
+- 	int			i;
++ 	struct kib_sched_info *sched;
+++	struct ib_cq_init_attr cq_attr = {};
++ 	kib_conn_t *conn;
++ 	struct ib_cq *cq;
++ 	unsigned long flags;
++ 	int cpt;
++ 	int rc;
++ 	int i;
   
- -		ret = cxgb4_t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
- -					      0, &bar2_qoffset, &bar2_qid);
- +		ret = t4_bar2_sge_qregs(adap, qid, T4_BAR2_QTYPE_EGRESS,
-- 					&bar2_qoffset, &bar2_qid);
-++					0, &bar2_qoffset, &bar2_qid);
-  		if (ret)
-  			dev_err(adap->pdev_dev, "doorbell drop recovery: "
-  				"qid=%d, pidx_inc=%d\n", qid, pidx_inc);
-diff --cc drivers/net/ethernet/chelsio/cxgb4/sge.c
-index 6b7c37fd0252,1b99aecde736..000000000000
---- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
-@@@ -2401,8 -2429,8 +2401,8 @@@ static void __iomem *bar2_address(struc
-  	u64 bar2_qoffset;
-  	int ret;
-  
-- 	ret = t4_bar2_sge_qregs(adapter, qid, qtype,
- -	ret = cxgb4_t4_bar2_sge_qregs(adapter, qid, qtype, 0,
- -				      &bar2_qoffset, pbar2_qid);
-++	ret = t4_bar2_sge_qregs(adapter, qid, qtype, 0,
- +				&bar2_qoffset, pbar2_qid);
-  	if (ret)
-  		return NULL;
-  
+  	LASSERT(net != NULL);
+  	LASSERT(!in_interrupt());
