@@ -1,35 +1,37 @@
 From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: linux-next: manual merge of the rdma tree with the net-next tree
-Date: Wed, 17 Jun 2015 13:20:43 +1000
-Message-ID: <1434511243.24642.5.camel@ellerman.id.au>
+Subject: linux-next: manual merge of the tip tree with the crypto tree
+Date: Wed, 17 Jun 2015 13:21:45 +1000
+Message-ID: <1434511305.24642.6.camel@ellerman.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33615 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46811 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752453AbbFQDUo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Jun 2015 23:20:44 -0400
+	id S1752723AbbFQDVq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2015 23:21:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Doug Ledford <dledford@redhat.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>, Eran Ben Elisha <eranbe@mellanox.com>, Hadar Hen Zion <hadarh@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-Hi Doug,
+Hi all,
 
-Today's linux-next merge of the rdma tree got a conflict in:
+Today's linux-next merge of the tip tree got conflicts in:
 
-  drivers/infiniband/hw/mlx4/mad.c
+  drivers/crypto/vmx/aes.c
+  drivers/crypto/vmx/aes_cbc.c
+  drivers/crypto/vmx/ghash.c
 
 between commit:
 
-  7193a141eb74 "IB/mlx4: Set VF to read from QP counters"
+  4beb10604597 "crypto: vmx - Reindent to kernel style"
 
-from the net-next tree and commit:
+from the crypto tree and commit:
 
-  4cd7c9479aff "IB/mad: Add support for additional MAD info to/from drivers"
+  5f76eea88dcb "sched/preempt, powerpc: Disable preemption in enable_kernel_altivec() explicitly"
 
-from the rdma tree.
+from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -37,53 +39,464 @@ is required).
 cheers
 
 
-diff --cc drivers/infiniband/hw/mlx4/mad.c
-index bc09b4e1f57c,3e2dee46caa2..000000000000
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@@ -817,12 -827,14 +819,12 @@@ static void edit_counter(struct mlx4_co
+diff --cc drivers/crypto/vmx/aes.c
+index 023e5f014783,a9064e36e7b5..000000000000
+--- a/drivers/crypto/vmx/aes.c
++++ b/drivers/crypto/vmx/aes.c
+@@@ -76,47 -73,53 +76,53 @@@ static void p8_aes_exit(struct crypto_t
   }
   
-  static int iboe_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
-- 			struct ib_wc *in_wc, struct ib_grh *in_grh,
-- 			struct ib_mad *in_mad, struct ib_mad *out_mad)
-+ 			const struct ib_wc *in_wc, const struct ib_grh *in_grh,
-+ 			const struct ib_mad *in_mad, struct ib_mad *out_mad)
+  static int p8_aes_setkey(struct crypto_tfm *tfm, const u8 *key,
+ -    unsigned int keylen)
+ +			 unsigned int keylen)
   {
- -	struct mlx4_cmd_mailbox *mailbox;
- +	struct mlx4_counter counter_stats;
-  	struct mlx4_ib_dev *dev = to_mdev(ibdev);
-  	int err;
- -	u32 inmod = dev->counters[port_num - 1] & 0xffff;
- -	u8 mode;
-  
-  	if (in_mad->mad_hdr.mgmt_class != IB_MGMT_CLASS_PERF_MGMT)
-  		return -EINVAL;
-@@@ -850,15 -868,21 +852,23 @@@
+ -    int ret;
+ -    struct p8_aes_ctx *ctx = crypto_tfm_ctx(tfm);
+ -
+ -    preempt_disable();
+ -    pagefault_disable();
+ -    enable_kernel_altivec();
+ -    ret = aes_p8_set_encrypt_key(key, keylen * 8, &ctx->enc_key);
+ -    ret += aes_p8_set_decrypt_key(key, keylen * 8, &ctx->dec_key);
+ -    pagefault_enable();
+ -    preempt_enable();
+ -
+ -    ret += crypto_cipher_setkey(ctx->fallback, key, keylen);
+ -    return ret;
+ +	int ret;
+ +	struct p8_aes_ctx *ctx = crypto_tfm_ctx(tfm);
+ +
+++	preempt_disable();
+ +	pagefault_disable();
+ +	enable_kernel_altivec();
+ +	ret = aes_p8_set_encrypt_key(key, keylen * 8, &ctx->enc_key);
+ +	ret += aes_p8_set_decrypt_key(key, keylen * 8, &ctx->dec_key);
+ +	pagefault_enable();
+++	preempt_enable();
+ +
+ +	ret += crypto_cipher_setkey(ctx->fallback, key, keylen);
+ +	return ret;
   }
   
-  int mlx4_ib_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
-- 			struct ib_wc *in_wc, struct ib_grh *in_grh,
-- 			struct ib_mad *in_mad, struct ib_mad *out_mad)
-+ 			const struct ib_wc *in_wc, const struct ib_grh *in_grh,
-+ 			const struct ib_mad_hdr *in, size_t in_mad_size,
-+ 			struct ib_mad_hdr *out, size_t *out_mad_size,
-+ 			u16 *out_mad_pkey_index)
+  static void p8_aes_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
   {
- +	struct mlx4_ib_dev *dev = to_mdev(ibdev);
-+ 	const struct ib_mad *in_mad = (const struct ib_mad *)in;
-+ 	struct ib_mad *out_mad = (struct ib_mad *)out;
-+ 
-+ 	BUG_ON(in_mad_size != sizeof(*in_mad) ||
-+ 	       *out_mad_size != sizeof(*out_mad));
-+ 
-  	switch (rdma_port_get_link_layer(ibdev, port_num)) {
-  	case IB_LINK_LAYER_INFINIBAND:
- -		return ib_process_mad(ibdev, mad_flags, port_num, in_wc,
- -				      in_grh, in_mad, out_mad);
- +		if (!mlx4_is_slave(dev->dev))
- +			return ib_process_mad(ibdev, mad_flags, port_num, in_wc,
- +					      in_grh, in_mad, out_mad);
-  	case IB_LINK_LAYER_ETHERNET:
-  		return iboe_process_mad(ibdev, mad_flags, port_num, in_wc,
-  					  in_grh, in_mad, out_mad);
+ -    struct p8_aes_ctx *ctx = crypto_tfm_ctx(tfm);
+ -
+ -    if (in_interrupt()) {
+ -        crypto_cipher_encrypt_one(ctx->fallback, dst, src);
+ -    } else {
+ -	preempt_disable();
+ -        pagefault_disable();
+ -        enable_kernel_altivec();
+ -        aes_p8_encrypt(src, dst, &ctx->enc_key);
+ -        pagefault_enable();
+ -	preempt_enable();
+ -    }
+ +	struct p8_aes_ctx *ctx = crypto_tfm_ctx(tfm);
+ +
+ +	if (in_interrupt()) {
+ +		crypto_cipher_encrypt_one(ctx->fallback, dst, src);
+ +	} else {
+++		preempt_disable();
+ +		pagefault_disable();
+ +		enable_kernel_altivec();
+ +		aes_p8_encrypt(src, dst, &ctx->enc_key);
+ +		pagefault_enable();
+++		preempt_enable();
+ +	}
+  }
+  
+  static void p8_aes_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+  {
+ -    struct p8_aes_ctx *ctx = crypto_tfm_ctx(tfm);
+ -
+ -    if (in_interrupt()) {
+ -        crypto_cipher_decrypt_one(ctx->fallback, dst, src);
+ -    } else {
+ -	preempt_disable();
+ -        pagefault_disable();
+ -        enable_kernel_altivec();
+ -        aes_p8_decrypt(src, dst, &ctx->dec_key);
+ -        pagefault_enable();
+ -	preempt_enable();
+ -    }
+ +	struct p8_aes_ctx *ctx = crypto_tfm_ctx(tfm);
+ +
+ +	if (in_interrupt()) {
+ +		crypto_cipher_decrypt_one(ctx->fallback, dst, src);
+ +	} else {
+++		preempt_disable();
+ +		pagefault_disable();
+ +		enable_kernel_altivec();
+ +		aes_p8_decrypt(src, dst, &ctx->dec_key);
+ +		pagefault_enable();
+++		preempt_enable();
+ +	}
+  }
+  
+  struct crypto_alg p8_aes_alg = {
+diff --cc drivers/crypto/vmx/aes_cbc.c
+index 7120ab24d8c6,477284abdd11..000000000000
+--- a/drivers/crypto/vmx/aes_cbc.c
++++ b/drivers/crypto/vmx/aes_cbc.c
+@@@ -77,95 -74,95 +77,101 @@@ static void p8_aes_cbc_exit(struct cryp
+  }
+  
+  static int p8_aes_cbc_setkey(struct crypto_tfm *tfm, const u8 *key,
+ -    unsigned int keylen)
+ +			     unsigned int keylen)
+  {
+ -    int ret;
+ -    struct p8_aes_cbc_ctx *ctx = crypto_tfm_ctx(tfm);
+ -
+ -    preempt_disable();
+ -    pagefault_disable();
+ -    enable_kernel_altivec();
+ -    ret = aes_p8_set_encrypt_key(key, keylen * 8, &ctx->enc_key);
+ -    ret += aes_p8_set_decrypt_key(key, keylen * 8, &ctx->dec_key);
+ -    pagefault_enable();
+ -    preempt_enable();
+ -
+ -    ret += crypto_blkcipher_setkey(ctx->fallback, key, keylen);
+ -    return ret;
+ +	int ret;
+ +	struct p8_aes_cbc_ctx *ctx = crypto_tfm_ctx(tfm);
+ +
+++	preempt_disable();
+ +	pagefault_disable();
+ +	enable_kernel_altivec();
+ +	ret = aes_p8_set_encrypt_key(key, keylen * 8, &ctx->enc_key);
+ +	ret += aes_p8_set_decrypt_key(key, keylen * 8, &ctx->dec_key);
+ +	pagefault_enable();
+++	preempt_enable();
+ +
+ +	ret += crypto_blkcipher_setkey(ctx->fallback, key, keylen);
+ +	return ret;
+  }
+  
+  static int p8_aes_cbc_encrypt(struct blkcipher_desc *desc,
+ -    struct scatterlist *dst, struct scatterlist *src,
+ -    unsigned int nbytes)
+ +			      struct scatterlist *dst,
+ +			      struct scatterlist *src, unsigned int nbytes)
+  {
+ -    int ret;
+ -    struct blkcipher_walk walk;
+ -    struct p8_aes_cbc_ctx *ctx = crypto_tfm_ctx(
+ -            crypto_blkcipher_tfm(desc->tfm));
+ -    struct blkcipher_desc fallback_desc = {
+ -        .tfm = ctx->fallback,
+ -        .info = desc->info,
+ -        .flags = desc->flags
+ -    };
+ -
+ -    if (in_interrupt()) {
+ -        ret = crypto_blkcipher_encrypt(&fallback_desc, dst, src, nbytes);
+ -    } else {
+ -	preempt_disable();
+ -        pagefault_disable();
+ -        enable_kernel_altivec();
+ -
+ -	blkcipher_walk_init(&walk, dst, src, nbytes);
+ -        ret = blkcipher_walk_virt(desc, &walk);
+ -        while ((nbytes = walk.nbytes)) {
+ -			aes_p8_cbc_encrypt(walk.src.virt.addr, walk.dst.virt.addr,
+ -				nbytes & AES_BLOCK_MASK, &ctx->enc_key, walk.iv, 1);
+ +	int ret;
+ +	struct blkcipher_walk walk;
+ +	struct p8_aes_cbc_ctx *ctx =
+ +		crypto_tfm_ctx(crypto_blkcipher_tfm(desc->tfm));
+ +	struct blkcipher_desc fallback_desc = {
+ +		.tfm = ctx->fallback,
+ +		.info = desc->info,
+ +		.flags = desc->flags
+ +	};
+ +
+ +	if (in_interrupt()) {
+ +		ret = crypto_blkcipher_encrypt(&fallback_desc, dst, src,
+ +					       nbytes);
+ +	} else {
+++		preempt_disable();
+ +		pagefault_disable();
+ +		enable_kernel_altivec();
+ +
+ +		blkcipher_walk_init(&walk, dst, src, nbytes);
+ +		ret = blkcipher_walk_virt(desc, &walk);
+ +		while ((nbytes = walk.nbytes)) {
+ +			aes_p8_cbc_encrypt(walk.src.virt.addr,
+ +					   walk.dst.virt.addr,
+ +					   nbytes & AES_BLOCK_MASK,
+ +					   &ctx->enc_key, walk.iv, 1);
+  			nbytes &= AES_BLOCK_SIZE - 1;
+  			ret = blkcipher_walk_done(desc, &walk, nbytes);
+ -	}
+ +		}
+  
+ -        pagefault_enable();
+ -	preempt_enable();
+ -    }
+ +		pagefault_enable();
+++		preempt_enable();
+ +	}
+  
+ -    return ret;
+ +	return ret;
+  }
+  
+  static int p8_aes_cbc_decrypt(struct blkcipher_desc *desc,
+ -    struct scatterlist *dst, struct scatterlist *src,
+ -    unsigned int nbytes)
+ +			      struct scatterlist *dst,
+ +			      struct scatterlist *src, unsigned int nbytes)
+  {
+ -    int ret;
+ -    struct blkcipher_walk walk;
+ -    struct p8_aes_cbc_ctx *ctx = crypto_tfm_ctx(
+ -            crypto_blkcipher_tfm(desc->tfm));
+ -    struct blkcipher_desc fallback_desc = {
+ -        .tfm = ctx->fallback,
+ -        .info = desc->info,
+ -        .flags = desc->flags
+ -    };
+ -
+ -    if (in_interrupt()) {
+ -        ret = crypto_blkcipher_decrypt(&fallback_desc, dst, src, nbytes);
+ -    } else {
+ -	preempt_disable();
+ -        pagefault_disable();
+ -        enable_kernel_altivec();
+ -
+ -	blkcipher_walk_init(&walk, dst, src, nbytes);
+ -        ret = blkcipher_walk_virt(desc, &walk);
+ -        while ((nbytes = walk.nbytes)) {
+ -			aes_p8_cbc_encrypt(walk.src.virt.addr, walk.dst.virt.addr,
+ -				nbytes & AES_BLOCK_MASK, &ctx->dec_key, walk.iv, 0);
+ +	int ret;
+ +	struct blkcipher_walk walk;
+ +	struct p8_aes_cbc_ctx *ctx =
+ +		crypto_tfm_ctx(crypto_blkcipher_tfm(desc->tfm));
+ +	struct blkcipher_desc fallback_desc = {
+ +		.tfm = ctx->fallback,
+ +		.info = desc->info,
+ +		.flags = desc->flags
+ +	};
+ +
+ +	if (in_interrupt()) {
+ +		ret = crypto_blkcipher_decrypt(&fallback_desc, dst, src,
+ +					       nbytes);
+ +	} else {
+++		preempt_disable();
+ +		pagefault_disable();
+ +		enable_kernel_altivec();
+ +
+ +		blkcipher_walk_init(&walk, dst, src, nbytes);
+ +		ret = blkcipher_walk_virt(desc, &walk);
+ +		while ((nbytes = walk.nbytes)) {
+ +			aes_p8_cbc_encrypt(walk.src.virt.addr,
+ +					   walk.dst.virt.addr,
+ +					   nbytes & AES_BLOCK_MASK,
+ +					   &ctx->dec_key, walk.iv, 0);
+  			nbytes &= AES_BLOCK_SIZE - 1;
+  			ret = blkcipher_walk_done(desc, &walk, nbytes);
+  		}
+  
+ -        pagefault_enable();
+ -	preempt_enable();
+ -    }
+ +		pagefault_enable();
+++		preempt_enable();
+ +	}
+  
+ -    return ret;
+ +	return ret;
+  }
+  
+  
+diff --cc drivers/crypto/vmx/ghash.c
+index 4c3a8f7e5059,f255ec4a04d4..000000000000
+--- a/drivers/crypto/vmx/ghash.c
++++ b/drivers/crypto/vmx/ghash.c
+@@@ -109,92 -107,98 +109,100 @@@ static int p8_ghash_init(struct shash_d
+  }
+  
+  static int p8_ghash_setkey(struct crypto_shash *tfm, const u8 *key,
+ -    unsigned int keylen)
+ +			   unsigned int keylen)
+  {
+ -    struct p8_ghash_ctx *ctx = crypto_tfm_ctx(crypto_shash_tfm(tfm));
+ -
+ -    if (keylen != GHASH_KEY_LEN)
+ -        return -EINVAL;
+ -
+ -    preempt_disable();
+ -    pagefault_disable();
+ -    enable_kernel_altivec();
+ -    enable_kernel_fp();
+ -    gcm_init_p8(ctx->htable, (const u64 *) key);
+ -    pagefault_enable();
+ -    preempt_enable();
+ -    return crypto_shash_setkey(ctx->fallback, key, keylen);
+ +	struct p8_ghash_ctx *ctx = crypto_tfm_ctx(crypto_shash_tfm(tfm));
+ +
+ +	if (keylen != GHASH_KEY_LEN)
+ +		return -EINVAL;
+ +
+++	preempt_disable();
+ +	pagefault_disable();
+ +	enable_kernel_altivec();
+ +	enable_kernel_fp();
+ +	gcm_init_p8(ctx->htable, (const u64 *) key);
+ +	pagefault_enable();
+++	preempt_enable();
+ +	return crypto_shash_setkey(ctx->fallback, key, keylen);
+  }
+  
+  static int p8_ghash_update(struct shash_desc *desc,
+ -        const u8 *src, unsigned int srclen)
+ +			   const u8 *src, unsigned int srclen)
+  {
+ -    unsigned int len;
+ -    struct p8_ghash_ctx *ctx = crypto_tfm_ctx(crypto_shash_tfm(desc->tfm));
+ -    struct p8_ghash_desc_ctx *dctx = shash_desc_ctx(desc);
+ -
+ -    if (IN_INTERRUPT) {
+ -        return crypto_shash_update(&dctx->fallback_desc, src, srclen);
+ -    } else {
+ -        if (dctx->bytes) {
+ -            if (dctx->bytes + srclen < GHASH_DIGEST_SIZE) {
+ -                memcpy(dctx->buffer + dctx->bytes, src, srclen);
+ -                dctx->bytes += srclen;
+ -                return 0;
+ -            }
+ -            memcpy(dctx->buffer + dctx->bytes, src,
+ -                    GHASH_DIGEST_SIZE - dctx->bytes);
+ -	    preempt_disable();
+ -            pagefault_disable();
+ -            enable_kernel_altivec();
+ -            enable_kernel_fp();
+ -            gcm_ghash_p8(dctx->shash, ctx->htable, dctx->buffer,
+ -                    GHASH_DIGEST_SIZE);
+ -            pagefault_enable();
+ -	    preempt_enable();
+ -            src += GHASH_DIGEST_SIZE - dctx->bytes;
+ -            srclen -= GHASH_DIGEST_SIZE - dctx->bytes;
+ -            dctx->bytes = 0;
+ -        }
+ -        len = srclen & ~(GHASH_DIGEST_SIZE - 1);
+ -        if (len) {
+ -	    preempt_disable();
+ -            pagefault_disable();
+ -            enable_kernel_altivec();
+ -            enable_kernel_fp();
+ -            gcm_ghash_p8(dctx->shash, ctx->htable, src, len);
+ -            pagefault_enable();
+ -	    preempt_enable();
+ -            src += len;
+ -            srclen -= len;
+ -        }
+ -        if (srclen) {
+ -            memcpy(dctx->buffer, src, srclen);
+ -            dctx->bytes = srclen;
+ -        }
+ -        return 0;
+ -    }
+ +	unsigned int len;
+ +	struct p8_ghash_ctx *ctx = crypto_tfm_ctx(crypto_shash_tfm(desc->tfm));
+ +	struct p8_ghash_desc_ctx *dctx = shash_desc_ctx(desc);
+ +
+ +	if (IN_INTERRUPT) {
+ +		return crypto_shash_update(&dctx->fallback_desc, src,
+ +					   srclen);
+ +	} else {
+ +		if (dctx->bytes) {
+ +			if (dctx->bytes + srclen < GHASH_DIGEST_SIZE) {
+ +				memcpy(dctx->buffer + dctx->bytes, src,
+ +				       srclen);
+ +				dctx->bytes += srclen;
+ +				return 0;
+ +			}
+ +			memcpy(dctx->buffer + dctx->bytes, src,
+ +			       GHASH_DIGEST_SIZE - dctx->bytes);
+++			preempt_disable();
+ +			pagefault_disable();
+ +			enable_kernel_altivec();
+ +			enable_kernel_fp();
+ +			gcm_ghash_p8(dctx->shash, ctx->htable,
+ +				     dctx->buffer, GHASH_DIGEST_SIZE);
+ +			pagefault_enable();
+++			preempt_enable();
+ +			src += GHASH_DIGEST_SIZE - dctx->bytes;
+ +			srclen -= GHASH_DIGEST_SIZE - dctx->bytes;
+ +			dctx->bytes = 0;
+ +		}
+ +		len = srclen & ~(GHASH_DIGEST_SIZE - 1);
+ +		if (len) {
+++			preempt_disable();
+ +			pagefault_disable();
+ +			enable_kernel_altivec();
+ +			enable_kernel_fp();
+ +			gcm_ghash_p8(dctx->shash, ctx->htable, src, len);
+ +			pagefault_enable();
+++			preempt_enable();
+ +			src += len;
+ +			srclen -= len;
+ +		}
+ +		if (srclen) {
+ +			memcpy(dctx->buffer, src, srclen);
+ +			dctx->bytes = srclen;
+ +		}
+ +		return 0;
+ +	}
+  }
+  
+  static int p8_ghash_final(struct shash_desc *desc, u8 *out)
+  {
+ -    int i;
+ -    struct p8_ghash_ctx *ctx = crypto_tfm_ctx(crypto_shash_tfm(desc->tfm));
+ -    struct p8_ghash_desc_ctx *dctx = shash_desc_ctx(desc);
+ -
+ -    if (IN_INTERRUPT) {
+ -        return crypto_shash_final(&dctx->fallback_desc, out);
+ -    } else {
+ -        if (dctx->bytes) {
+ -            for (i = dctx->bytes; i < GHASH_DIGEST_SIZE; i++)
+ -                dctx->buffer[i] = 0;
+ -	    preempt_disable();
+ -            pagefault_disable();
+ -            enable_kernel_altivec();
+ -            enable_kernel_fp();
+ -            gcm_ghash_p8(dctx->shash, ctx->htable, dctx->buffer,
+ -                    GHASH_DIGEST_SIZE);
+ -            pagefault_enable();
+ -	    preempt_enable();
+ -            dctx->bytes = 0;
+ -        }
+ -        memcpy(out, dctx->shash, GHASH_DIGEST_SIZE);
+ -        return 0;
+ -    }
+ +	int i;
+ +	struct p8_ghash_ctx *ctx = crypto_tfm_ctx(crypto_shash_tfm(desc->tfm));
+ +	struct p8_ghash_desc_ctx *dctx = shash_desc_ctx(desc);
+ +
+ +	if (IN_INTERRUPT) {
+ +		return crypto_shash_final(&dctx->fallback_desc, out);
+ +	} else {
+ +		if (dctx->bytes) {
+ +			for (i = dctx->bytes; i < GHASH_DIGEST_SIZE; i++)
+ +				dctx->buffer[i] = 0;
+++			preempt_disable();
+ +			pagefault_disable();
+ +			enable_kernel_altivec();
+ +			enable_kernel_fp();
+ +			gcm_ghash_p8(dctx->shash, ctx->htable,
+ +				     dctx->buffer, GHASH_DIGEST_SIZE);
+ +			pagefault_enable();
+++			preempt_enable();
+ +			dctx->bytes = 0;
+ +		}
+ +		memcpy(out, dctx->shash, GHASH_DIGEST_SIZE);
+ +		return 0;
+ +	}
+  }
+  
+  struct shash_alg p8_ghash_alg = {
