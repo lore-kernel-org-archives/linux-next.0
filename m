@@ -1,73 +1,54 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the rdma tree
-Date: Mon, 15 Jun 2015 21:48:51 -0700
-Message-ID: <20150616044851.GA24536@kroah.com>
-References: <1434355931.19706.5.camel@ellerman.id.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: linux-next: manual merge of the rdma tree with the nfs tree
+Date: Wed, 17 Jun 2015 13:17:18 +1000
+Message-ID: <1434511038.24642.2.camel@ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:44056 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750873AbbFPEsx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Jun 2015 00:48:53 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.nyi.internal (Postfix) with ESMTP id 02CC320878
-	for <linux-next@vger.kernel.org>; Tue, 16 Jun 2015 00:48:52 -0400 (EDT)
-Content-Disposition: inline
-In-Reply-To: <1434355931.19706.5.camel@ellerman.id.au>
+Received: from ozlabs.org ([103.22.144.67]:54730 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752823AbbFQDRU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2015 23:17:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Doug Ledford <dledford@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matan Barak <matanb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Mike Shuey <shuey@purdue.edu>
+To: Doug Ledford <dledford@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sagi Grimberg <sagig@mellanox.com>, Anna Schumaker <anna.schumaker@netapp.com>, Chuck Lever <chuck.lever@oracle.com>, Devesh Sharma <devesh.sharma@avagotech.com>Devesh Sharma <devesh.sharma@avagotech.com>
 
-On Mon, Jun 15, 2015 at 06:12:11PM +1000, Michael Ellerman wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c between commit 8e37210b38fb
-> "IB/core: Change ib_create_cq to use struct ib_cq_init_attr" from the rdma tree
-> and commit ec3d17c0ed2e "staging: lustre: lnet: o2iblnd: code cleanup - align
-> whitespace" from the staging tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
-> cheers
-> 
-> 
-> diff --cc drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-> index c41b5575df05,48454a576b7a..000000000000
-> --- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-> +++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-> @@@ -642,18 -643,17 +643,18 @@@ kib_conn_t *kiblnd_create_conn(kib_peer
->   	 * she must dispose of 'cmid'.  (Actually I'd block forever if I tried
->   	 * to destroy 'cmid' here since I'm called from the CM which still has
->   	 * its ref on 'cmid'). */
-> - 	rwlock_t		*glock = &kiblnd_data.kib_global_lock;
-> - 	kib_net_t	      *net = peer->ibp_ni->ni_data;
-> - 	kib_dev_t	      *dev;
-> + 	rwlock_t *glock = &kiblnd_data.kib_global_lock;
-> + 	kib_net_t *net = peer->ibp_ni->ni_data;
-> + 	kib_dev_t *dev;
->   	struct ib_qp_init_attr *init_qp_attr;
-> - 	struct kib_sched_info	*sched;
-> - 	struct ib_cq_init_attr  cq_attr = {};
-> - 	kib_conn_t		*conn;
-> - 	struct ib_cq		*cq;
-> - 	unsigned long		flags;
-> - 	int			cpt;
-> - 	int			rc;
-> - 	int			i;
-> + 	struct kib_sched_info *sched;
-> ++	struct ib_cq_init_attr cq_attr = {};
-> + 	kib_conn_t *conn;
-> + 	struct ib_cq *cq;
-> + 	unsigned long flags;
-> + 	int cpt;
-> + 	int rc;
-> + 	int i;
+Hi Doug,
 
-Looks good to me, thanks.
+Today's linux-next merge of the rdma tree got a conflict in:
 
-greg k-h
+  net/sunrpc/xprtrdma/frwr_ops.c
+
+between commit:
+
+  951e721ca0d6 "xprtrdma: Introduce an FRMR recovery workqueue"
+
+from the nfs tree and commit:
+
+  76357c715f32 "xprtrdma, svcrdma: Switch to generic logging helpers"
+
+from the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+cheers
+
+diff --cc net/sunrpc/xprtrdma/frwr_ops.c
+index 661fbc1784ab,d234521320a4..000000000000
+--- a/net/sunrpc/xprtrdma/frwr_ops.c
++++ b/net/sunrpc/xprtrdma/frwr_ops.c
+@@@ -252,8 -128,8 +252,8 @@@ frwr_sendcompletion(struct ib_wc *wc
+  
+  	/* WARNING: Only wr_id and status are reliable at this point */
+  	r = (struct rpcrdma_mw *)(unsigned long)wc->wr_id;
+- 	pr_warn("RPC:       %s: frmr %p flushed, status %d\n",
+- 		__func__, r, wc->status);
+ -	dprintk("RPC:       %s: frmr %p (stale), status %s (%d)\n",
+++	pr_warn("RPC:       %s: frmr %p flushed, status %s (%d)\n",
++ 		__func__, r, ib_wc_status_msg(wc->status), wc->status);
+  	r->r.frmr.fr_state = FRMR_IS_STALE;
+  }
+  
