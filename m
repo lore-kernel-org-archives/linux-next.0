@@ -1,54 +1,50 @@
 From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Date: Fri, 19 Jun 2015 14:59:57 +1000
-Message-ID: <1434689997.23771.9.camel@ellerman.id.au>
+Subject: linux-next: manual merge of the drivers-x86 tree with the pm tree
+Date: Fri, 19 Jun 2015 15:04:39 +1000
+Message-ID: <1434690279.23771.10.camel@ellerman.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Amit <namit@cs.technion.ac.il>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33577 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751347AbbFSFEk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 19 Jun 2015 01:04:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Darren Hart <dvhart@infradead.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Corentin Chary <corentin.chary@gmail.com>
 
-Hi all,
+Hi Darren,
 
-Today's linux-next merge of the kvm tree got a conflict in:
+Today's linux-next merge of the drivers-x86 tree got conflicts in:
 
-  arch/x86/kvm/lapic.c
+  drivers/platform/x86/apple-gmux.c
+  drivers/platform/x86/asus-wmi.c
+  drivers/platform/x86/samsung-laptop.c
 
-between commit:
+between commits:
 
-  b6ac06953221 "KVM: x86: fix lapic.timer_mode on restore"
+  143958e12fc1 "apple-gmux: Port to new backlight interface selection API"
+  1ff99803702b "asus-wmi: Port to new backlight interface selection API"
+  705669ed8d41 "samsung-laptop: Port to new backlight interface selection API"
 
-from the tip tree and commit:
+from the pm tree and commits:
 
-  90de4a187518 "KVM: x86: Support for disabling quirks"
+  85eaa5fb829a "apple_gmux: Use acpi_video_unregister_backlight instead of acpi_video_unregister"
+  5f770658747e "asus-wmi: Use acpi_video_unregister_backlight instead of acpi_video_unregister"
+  9330dcdd918a "samsung-laptop: Use acpi_video_unregister_backlight instead of acpi_video_unregister"
 
-from the kvm tree.
+from the drivers-x86 tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+This was caused by the patches:
+
+  "apple_gmux: Use acpi_video_unregister_backlight instead of acpi_video_unregister"
+  "asus-wmi: Use acpi_video_unregister_backlight instead of acpi_video_unregister"
+  "samsung-laptop: Use acpi_video_unregister_backlight instead of acpi_video_unregister"
+
+appearing in both trees as different commits.
+
+I fixed it up and can carry the fix as necessary (no action is required).
 
 cheers
-
-
-diff --cc arch/x86/kvm/lapic.c
-index 4c7deb4f78a1,beeef05bb4d9..000000000000
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@@ -1581,9 -1588,10 +1593,11 @@@ void kvm_lapic_reset(struct kvm_vcpu *v
-  
-  	for (i = 0; i < APIC_LVT_NUM; i++)
-  		apic_set_reg(apic, APIC_LVTT + 0x10 * i, APIC_LVT_MASKED);
- -	apic->lapic_timer.timer_mode = 0;
-++
- +	apic_update_lvtt(apic);
-- 	apic_set_reg(apic, APIC_LVT0,
-- 		     SET_APIC_DELIVERY_MODE(0, APIC_MODE_EXTINT));
-+ 	if (!(vcpu->kvm->arch.disabled_quirks & KVM_QUIRK_LINT0_REENABLED))
-+ 		apic_set_reg(apic, APIC_LVT0,
-+ 			     SET_APIC_DELIVERY_MODE(0, APIC_MODE_EXTINT));
-  
-  	apic_set_reg(apic, APIC_DFR, 0xffffffffU);
-  	apic_set_spiv(apic, 0xff);
