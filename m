@@ -1,61 +1,54 @@
 From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Fri, 19 Jun 2015 14:47:26 +1000
-Message-ID: <1434689246.23771.6.camel@ellerman.id.au>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Date: Fri, 19 Jun 2015 14:59:57 +1000
+Message-ID: <1434689997.23771.9.camel@ellerman.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47839 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750890AbbFSEr3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Jun 2015 00:47:29 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Amit <namit@cs.technion.ac.il>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-After merging the v4l-dvb tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the kvm tree got a conflict in:
 
-  drivers/media/platform/sti/bdisp/bdisp-debug.c: In function 'bdisp_dbg_perf':
-  drivers/media/platform/sti/bdisp/bdisp-debug.c:600:50: error: expected ';' before ')' token
-     min_fps = SECOND / (s32)bdisp->dbg.min_duration);
-                                                    ^
-  drivers/media/platform/sti/bdisp/bdisp-debug.c:600:50: error: expected statement before ')' token
+  arch/x86/kvm/lapic.c
 
+between commit:
 
-Caused by commit fdf11845cbc1 "bdisp-debug: don't try to divide by s64":
+  b6ac06953221 "KVM: x86: fix lapic.timer_mode on restore"
 
-  @@ -585,16 +587,27 @@ static int bdisp_dbg_perf(struct seq_file *s, void *data)
-          }
+from the tip tree and commit:
 
-          avg_time_us = bdisp->dbg.tot_duration;
-  -       do_div(avg_time_us, request->nb_req);
-  -
-  -       avg_fps = 1000000;
-  -       min_fps = 1000000;
-  -       max_fps = 1000000;
-  -       last_fps = 1000000;
-  -       do_div(avg_fps, avg_time_us);
-  -       do_div(min_fps, bdisp->dbg.min_duration);
-  -       do_div(max_fps, bdisp->dbg.max_duration);
-  -       do_div(last_fps, bdisp->dbg.last_duration);
-  +       div64_s64(avg_time_us, request->nb_req);
-  +
-  +       if (avg_time_us > SECOND)
-  +               avg_fps = 0;
-  +       else
-  +               avg_fps = SECOND / (s32)avg_time_us;
-  +
-  +       if (bdisp->dbg.min_duration > SECOND)
-  +               min_fps = 0;
-  +       else
-  +               min_fps = SECOND / (s32)bdisp->dbg.min_duration);
-                                                                 ^
+  90de4a187518 "KVM: x86: Support for disabling quirks"
 
-I fixed it up for today.
+from the kvm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 cheers
+
+
+diff --cc arch/x86/kvm/lapic.c
+index 4c7deb4f78a1,beeef05bb4d9..000000000000
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@@ -1581,9 -1588,10 +1593,11 @@@ void kvm_lapic_reset(struct kvm_vcpu *v
+  
+  	for (i = 0; i < APIC_LVT_NUM; i++)
+  		apic_set_reg(apic, APIC_LVTT + 0x10 * i, APIC_LVT_MASKED);
+ -	apic->lapic_timer.timer_mode = 0;
+++
+ +	apic_update_lvtt(apic);
+- 	apic_set_reg(apic, APIC_LVT0,
+- 		     SET_APIC_DELIVERY_MODE(0, APIC_MODE_EXTINT));
++ 	if (!(vcpu->kvm->arch.disabled_quirks & KVM_QUIRK_LINT0_REENABLED))
++ 		apic_set_reg(apic, APIC_LVT0,
++ 			     SET_APIC_DELIVERY_MODE(0, APIC_MODE_EXTINT));
+  
+  	apic_set_reg(apic, APIC_DFR, 0xffffffffU);
+  	apic_set_spiv(apic, 0xff);
