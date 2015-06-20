@@ -1,80 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rtc tree with the mfd tree
-Date: Sat, 20 Jun 2015 22:16:17 +1000
-Message-ID: <20150620221617.375623f2@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with Linus' tree
+Date: Sat, 20 Jun 2015 22:38:55 +1000
+Message-ID: <20150620223855.6b83124c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+sEsHmxwgI8TuB/BXs4Rgc6"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59009 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753558AbbFTMQ0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 20 Jun 2015 08:16:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Sig_/B7xkGfrBwWJ2JVQmhNsBMG2"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, Jens Axboe <axboe@fb.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/+sEsHmxwgI8TuB/BXs4Rgc6
+--Sig_/B7xkGfrBwWJ2JVQmhNsBMG2
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alexandre,
+Hi Dan,
 
-Today's linux-next merge of the rtc tree got a conflict in:
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-  drivers/rtc/Makefile
+  drivers/block/Kconfig
 
 between commit:
 
-  b5b2bdfc2893 ("rtc: st: Add new driver for ST's LPC RTC")
+  b6f2098fb708 ("block: pmem: Add dependency on HAS_IOMEM")
 
-from the mfd tree and commit:
+from Linus' tree and commit:
 
-  766218609678 ("rtc: Properly sort Makefile")
+  1ffe3c5dc311 ("libnvdimm, pmem: move pmem to drivers/nvdimm/")
 
-from the rtc tree.
+from the nvdimm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the latter incorporated the change from the former)
+and can carry the fix as necessary (no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/rtc/Makefile
-index ebe2c085d01c,5ea5370f56f2..000000000000
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@@ -135,6 -139,6 +139,7 @@@ obj-$(CONFIG_RTC_DRV_SPEAR)	+=3D rtc-spea
-  obj-$(CONFIG_RTC_DRV_STARFIRE)	+=3D rtc-starfire.o
-  obj-$(CONFIG_RTC_DRV_STK17TA8)	+=3D rtc-stk17ta8.o
-  obj-$(CONFIG_RTC_DRV_STMP)	+=3D rtc-stmp3xxx.o
-++obj-$(CONFIG_RTC_DRV_ST_LPC)	+=3D rtc-st-lpc.o
-  obj-$(CONFIG_RTC_DRV_SUN4V)	+=3D rtc-sun4v.o
-  obj-$(CONFIG_RTC_DRV_SUN6I)	+=3D rtc-sun6i.o
-  obj-$(CONFIG_RTC_DRV_SUNXI)	+=3D rtc-sunxi.o
-
---Sig_/+sEsHmxwgI8TuB/BXs4Rgc6
+--Sig_/B7xkGfrBwWJ2JVQmhNsBMG2
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVhVmYAAoJEMDTa8Ir7ZwVrAAQAImiWltbRvoMmGp92Nzf5qwn
-CwyLqgwKlmMMlsE5h1K0rRHLgxjiKlWoZzeFovNj8E5v0BMcAKkBxq9e/i57wFeQ
-MCrQWNfZAIwNdXph4sAyE5qfm+8khsjviiF+oBXm/VpsNPgPD1bv9clWz2jv9eQF
-TLJqANvEyBYUINJxJaBEqfKHrAhpUWHChpzsvny8xP7rIPzSBMPAG0fgsd9rZ0LB
-/WrDJ6Tm2V6ql0hkDVuWpDI5i40IcZuzqM8drRhtCq47VOyXKLZ1k6X+1SC7BjJp
-oisLe80ker7iXi1AbvL93y5b2g/sJcrUMmg4MvqT3/ZOnLxSaYOY0oR706EAJrRk
-HKgYS4435ZA53tnVG4+iNUjdzZVj5eIP8is4k+2SEwdB9Cmn9tKGPZXS2VGagCB4
-9Ih0znCa+ShxqW2Hjv4EF0srDbTBoh2XoZYfvgGu5JRgmTvKHNhs91hqhBiAmro+
-98G3Il61/DC2IN6P2LFuqsd2l8u9pjZewhPBAorHEbCFz3YyAZy36ktdnADnCDzQ
-ui+bXqyJHS3a4fkBRg5ZBWY9iV6xhG9C7s5K/AuY0DYyruoyp5ptTJbq4WgRwu2G
-gLamT3gm8YbTqdRGLdztHUrdG7+8QtrXs7DUu03sRn+81k5A8sotU/VlvOI2H463
-ZKfwiPdN6RK9mmwX7eSq
-=2GDU
+iQIcBAEBCAAGBQJVhV7lAAoJEMDTa8Ir7ZwVnBUP/RngiFL7uq78+0XvLpubOAvt
+XPnQ9euHqZdAmPquoL4LtlPvGTBzOHIDKrpG1+H8MAx4x5Qg1gSWN4DBSPASJabh
+mlfGg208aBjGde/axV4UUUZNbRE0Gr1TnwDZbLp518wAxftMDhiinmwNonMG+aLv
+y2pHxpGgkU2OYvVlfL38UngXKhxicN9WWYVMnUgO09nYkLakheFHwww9lA5mn2y0
+O8+cqK3/wubtXeXLP+FT/BJ7JQkLsNDz5AID+zU5YItjEcDtUfVMLUwV24jeqNK+
+IgRg4/rdpV/K1PiXqKWgdNS6jdaBhEgdBWhGbiYWfDvfr7Svo6IHTHEQV9OKLfkJ
+7szYDYV4khGOoNpwN2kyY4keWPfTNVVZe5ai3xrGFAVbmv0mHxymDfr0yKUfnj3u
+45HVoUyom09QUMKun3F+LweHbx8MfFl4zIVS1YYLcO0tvaByURcPs2EOXUa/aY/2
+3cgKhUbOyrkZItSnNbjb8iZbs2+EG6sfTNTOl3adkd0y4cqaKBacx750xF6EM4Yh
+IP2BL6ppHR8yYPaYqcCBgsHL0b5xbRTxEhzPOaVEEfIVaya9NCS9BmoAP728WseD
+7wYyRROVDMbiD02JdAXG4EtXnOCsqu8FanLUy4yFqdEzpxgyrcPCYbHP7iZFlhfy
+EmBOzJ0xonoXMDFqypcM
+=IndM
 -----END PGP SIGNATURE-----
 
---Sig_/+sEsHmxwgI8TuB/BXs4Rgc6--
+--Sig_/B7xkGfrBwWJ2JVQmhNsBMG2--
