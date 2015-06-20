@@ -1,70 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the staging tree
-Date: Sat, 20 Jun 2015 20:48:26 +1000
-Message-ID: <20150620204826.010cd35a@canb.auug.org.au>
-References: <20150529204002.1cd0cc0a@canb.auug.org.au>
-	<20150601185012.093db327@canb.auug.org.au>
+Subject: linux-next: manual merge of the rtc tree with the mfd tree
+Date: Sat, 20 Jun 2015 22:16:17 +1000
+Message-ID: <20150620221617.375623f2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.j4hmId+zN=Nw94jPVGH9AE"; protocol="application/pgp-signature"
+ boundary="Sig_/+sEsHmxwgI8TuB/BXs4Rgc6"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59853 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59009 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751891AbbFTKsd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 20 Jun 2015 06:48:33 -0400
-In-Reply-To: <20150601185012.093db327@canb.auug.org.au>
+	id S1753558AbbFTMQ0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 20 Jun 2015 08:16:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johnny Kim <johnny.kim@atmel.com>, Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/.j4hmId+zN=Nw94jPVGH9AE
+--Sig_/+sEsHmxwgI8TuB/BXs4Rgc6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Alexandre,
 
-On Mon, 1 Jun 2015 18:50:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Fri, 29 May 2015 20:40:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the staging tree, today's linux-next build (x86_64
-> > allmodconfig) produced a large number of warnings in
-> > drivers/staging/wilc1000.
->=20
-> Since there are so many warnings, I have disabled the driver for now.
+Today's linux-next merge of the rtc tree got a conflict in:
 
-I tried building this with the driver enabled but it still produces and
-inordinate number of warnings, so I have disabled it again.  Please
-either get them sorted out or disable this driver before asking Linus
-to merge it.
+  drivers/rtc/Makefile
+
+between commit:
+
+  b5b2bdfc2893 ("rtc: st: Add new driver for ST's LPC RTC")
+
+from the mfd tree and commit:
+
+  766218609678 ("rtc: Properly sort Makefile")
+
+from the rtc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/.j4hmId+zN=Nw94jPVGH9AE
+diff --cc drivers/rtc/Makefile
+index ebe2c085d01c,5ea5370f56f2..000000000000
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@@ -135,6 -139,6 +139,7 @@@ obj-$(CONFIG_RTC_DRV_SPEAR)	+=3D rtc-spea
+  obj-$(CONFIG_RTC_DRV_STARFIRE)	+=3D rtc-starfire.o
+  obj-$(CONFIG_RTC_DRV_STK17TA8)	+=3D rtc-stk17ta8.o
+  obj-$(CONFIG_RTC_DRV_STMP)	+=3D rtc-stmp3xxx.o
+++obj-$(CONFIG_RTC_DRV_ST_LPC)	+=3D rtc-st-lpc.o
+  obj-$(CONFIG_RTC_DRV_SUN4V)	+=3D rtc-sun4v.o
+  obj-$(CONFIG_RTC_DRV_SUN6I)	+=3D rtc-sun6i.o
+  obj-$(CONFIG_RTC_DRV_SUNXI)	+=3D rtc-sunxi.o
+
+--Sig_/+sEsHmxwgI8TuB/BXs4Rgc6
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVhUT/AAoJEMDTa8Ir7ZwVALAP/1dpvu5ARGvHObjVSuoyADvD
-izJBzi0MYQ20Rkv6V4okQP8Q8h8ysPxC/LnqJObU4bWE9REzKeUSgICtKurXyG5g
-xZI+AOm0tXLvo9ltPEPs3oHED6XESdvq+a97dymzFiHJHBieAo90jTtJkJVCGj4R
-HiNwPRGRaG8P/+YTZddGZ9/GyUPYCoqy5CZT3rwjcOw/hU9hL0QhZdTSIMrhpIOu
-tC2667+wMVOqKUMrX972LJUb/11neumGjYjb8MTL6AXy8BCRCCG8T9gm+74X5qEP
-f0a58uhlILtFU5aBUauCO7GLlun7VctJTHW+dvzQLRFPlmBOH+pHYSj8w2fTU2Zd
-omgRyIIQwSBeNMQ5cjRw3+SoMm/6epBcj+5gawsvLrCSyHs4bbxjUQ+DmuW1TXbM
-UvVQr22J9ndG+UCSLplgVmigs9kDYEhaz/IxWjx/E0mPGonua38LvHyLlK5l/Lw/
-4YcsojGl21Zuv1QFfsr8rePScrJkmiWC7VwBpA+g3unXpd7nVFLaIdYcVzYX6Bd7
-R3I6qGkP3ekHzyhwrezGkmyp9jBz7EVwwnsF8SxJF8ZfHf+jeRD5PFOA06kdO5RM
-E0eLv68+76A4pZ4b+DBjBQ/2mT3d7ZrAqL7hH1iKKwUfy5D7lABuW81I0MzUntyi
-teaUYinjxvYI0Ym33fG+
-=pYN3
+iQIcBAEBCAAGBQJVhVmYAAoJEMDTa8Ir7ZwVrAAQAImiWltbRvoMmGp92Nzf5qwn
+CwyLqgwKlmMMlsE5h1K0rRHLgxjiKlWoZzeFovNj8E5v0BMcAKkBxq9e/i57wFeQ
+MCrQWNfZAIwNdXph4sAyE5qfm+8khsjviiF+oBXm/VpsNPgPD1bv9clWz2jv9eQF
+TLJqANvEyBYUINJxJaBEqfKHrAhpUWHChpzsvny8xP7rIPzSBMPAG0fgsd9rZ0LB
+/WrDJ6Tm2V6ql0hkDVuWpDI5i40IcZuzqM8drRhtCq47VOyXKLZ1k6X+1SC7BjJp
+oisLe80ker7iXi1AbvL93y5b2g/sJcrUMmg4MvqT3/ZOnLxSaYOY0oR706EAJrRk
+HKgYS4435ZA53tnVG4+iNUjdzZVj5eIP8is4k+2SEwdB9Cmn9tKGPZXS2VGagCB4
+9Ih0znCa+ShxqW2Hjv4EF0srDbTBoh2XoZYfvgGu5JRgmTvKHNhs91hqhBiAmro+
+98G3Il61/DC2IN6P2LFuqsd2l8u9pjZewhPBAorHEbCFz3YyAZy36ktdnADnCDzQ
+ui+bXqyJHS3a4fkBRg5ZBWY9iV6xhG9C7s5K/AuY0DYyruoyp5ptTJbq4WgRwu2G
+gLamT3gm8YbTqdRGLdztHUrdG7+8QtrXs7DUu03sRn+81k5A8sotU/VlvOI2H463
+ZKfwiPdN6RK9mmwX7eSq
+=2GDU
 -----END PGP SIGNATURE-----
 
---Sig_/.j4hmId+zN=Nw94jPVGH9AE--
+--Sig_/+sEsHmxwgI8TuB/BXs4Rgc6--
