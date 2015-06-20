@@ -1,104 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Sun, 21 Jun 2015 00:31:39 +1000
-Message-ID: <20150621003139.5cfdfcd6@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warnings after merge of the staging tree
+Date: Sat, 20 Jun 2015 07:50:34 -0700
+Message-ID: <20150620145034.GA28249@kroah.com>
+References: <20150529204002.1cd0cc0a@canb.auug.org.au>
+ <20150601185012.093db327@canb.auug.org.au>
+ <20150620204826.010cd35a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CJdMeQg6PxuV8fYsTxouB4z"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60411 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754462AbbFTObu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 20 Jun 2015 10:31:50 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:41928 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754382AbbFTOui (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 20 Jun 2015 10:50:38 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailout.nyi.internal (Postfix) with ESMTP id E594B20302
+	for <linux-next@vger.kernel.org>; Sat, 20 Jun 2015 10:50:35 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20150620204826.010cd35a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Boris BREZILLON <boris.brezillon@free-electrons.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johnny Kim <johnny.kim@atmel.com>, Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>
 
---Sig_/CJdMeQg6PxuV8fYsTxouB4z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Jun 20, 2015 at 08:48:26PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Mon, 1 Jun 2015 18:50:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Fri, 29 May 2015 20:40:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the staging tree, today's linux-next build (x86_64
+> > > allmodconfig) produced a large number of warnings in
+> > > drivers/staging/wilc1000.
+> > 
+> > Since there are so many warnings, I have disabled the driver for now.
+> 
+> I tried building this with the driver enabled but it still produces and
+> inordinate number of warnings, so I have disabled it again.  Please
+> either get them sorted out or disable this driver before asking Linus
+> to merge it.
 
-Hi Andrew,
+Yeah, I know, I keep asking the driver authors for fixes, but nothing
+has shown up yet except cosmetic changes.  I'm going to disable it as no
+one seems willing to do the work, which is sad.
 
-After merging the akpm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/crypto/marvell/cesa.c: In function 'mv_cesa_get_sram':
-drivers/crypto/marvell/cesa.c:324:2: error: implicit declaration of functio=
-n 'of_get_named_gen_pool' [-Werror=3Dimplicit-function-declaration]
-  engine->pool =3D of_get_named_gen_pool(cesa->dev->of_node,
-  ^
-drivers/crypto/marvell/cesa.c:324:15: warning: assignment makes pointer fro=
-m integer without a cast
-  engine->pool =3D of_get_named_gen_pool(cesa->dev->of_node,
-               ^
-
-Caused by commit:
-
-  f63601fd616a ("crypto: marvell/cesa - add a new driver for Marvell's CESA=
-")
-
-from the crypto tree interacting with patch:
-
-  "genalloc: rename of_get_named_gen_pool() to of_gen_pool_get()"
-
-from the akpm tree.
-
-I added this merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sun, 21 Jun 2015 00:23:08 +1000
-Subject: [PATCH] crypto: marvell/cesa - fix up for of_get_named_gen_pool()
- rename
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/crypto/marvell/cesa.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/crypto/marvell/cesa.c b/drivers/crypto/marvell/cesa.c
-index a432633bced4..1c6f98dd88f4 100644
---- a/drivers/crypto/marvell/cesa.c
-+++ b/drivers/crypto/marvell/cesa.c
-@@ -321,9 +321,8 @@ static int mv_cesa_get_sram(struct platform_device *pde=
-v, int idx)
- 	const char *res_name =3D "sram";
- 	struct resource *res;
-=20
--	engine->pool =3D of_get_named_gen_pool(cesa->dev->of_node,
--					     "marvell,crypto-srams",
--					     idx);
-+	engine->pool =3D of_gen_pool_get(cesa->dev->of_node,
-+				       "marvell,crypto-srams", idx);
- 	if (engine->pool) {
- 		engine->sram =3D gen_pool_dma_alloc(engine->pool,
- 						  cesa->sram_size,
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/CJdMeQg6PxuV8fYsTxouB4z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVhXlUAAoJEMDTa8Ir7ZwVHV4P/3yJ4HqGZU/xB3qtexU6G1nP
-ww1gQkJ5gN5+dDyJZFOS4w4pZnIvBzcC17881wjLjH0BXX22xWPY/VsKMUUqIz8L
-9/wf9TjBfQpNzgxy8ldH/plcluaJyKQMg1xw+8YGE/3nbZ7vT1f2yuPb3dG/y6bL
-15uQlDQwTAF+ytCq5hSaYsXINxk6LRuBkwO9FQaXAG1XdmEgHN73OZ8DnGfHO8bm
-uG+aE832mq0XONjFE4t7e8FGGxvIKXSv4blx4kA0Z+XXfQmz2Qi7R3NX80x/dNGk
-NWdma+pFw6eMR6sGqPcDVFgmNAAQKFZHy9vzRrjnJRg1zhJ878YLHejE+Fp1a3Aj
-VK0pYxgqpXM5CM2cb6+TvhhjKYfOhP5Y8AvRmiaDJn68bZE6t8B20DAIj6xLW5Nr
-/ifdh3G1ZCROJ4X4ykfXExh/4b13CMQEyjybmUJN3kUVdQrgAjC+ocSwjz3Hv8a3
-qxNu26+ONKK1COHcQsgA2mLfedwZRMop/icCB2IR/DNok7ZXalKOShfhUA26tsU2
-SQmfUpStUvBZ52FLJaB3p/TSpqWT+g3oe660KtWRMFhca0UxtfmLbpS7IA6aajYq
-jpnussChuasIjv5+SrqqDLsjYDo6ZTbAXZbhOmBgryOqOR/DYh+N4omufmJzPoZn
-E7DP27B7s8iMZq6DoVSs
-=KdHu
------END PGP SIGNATURE-----
-
---Sig_/CJdMeQg6PxuV8fYsTxouB4z--
+greg k-h
