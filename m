@@ -1,97 +1,103 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH/RFC] cris: add placeholder DMA functions for build coverage
-Date: Sun, 21 Jun 2015 01:55:52 -0400
-Message-ID: <CAP=VYLr5cz3H0OEyyOs=JQ5kW1DY4awMGOjCLKzpnF4fYkXypQ@mail.gmail.com>
-References: <1434829970-28568-1-git-send-email-paul.gortmaker@windriver.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v7 00/14] crypto: add a new driver for Marvell's CESA
+Date: Sun, 21 Jun 2015 10:24:18 +0200
+Message-ID: <20150621102418.2ea74910@bbrezillon>
+References: <1434635190-27733-1-git-send-email-boris.brezillon@free-electrons.com>
+	<20150619142444.GA15234@gondor.apana.org.au>
+	<CAP=VYLqQynCNRTpm4JnOxeO6DH_739fO2QNcDMxaXqCKCHiTtQ@mail.gmail.com>
+	<CAP=VYLpSrTvXRovWo4G7AXWv1OKFQRpQR255hS5z+=h4+XOLhg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:35022 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751403AbbFUF4X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Jun 2015 01:56:23 -0400
-In-Reply-To: <1434829970-28568-1-git-send-email-paul.gortmaker@windriver.com>
+Received: from down.free-electrons.com ([37.187.137.238]:47737 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751854AbbFUIY1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Jun 2015 04:24:27 -0400
+In-Reply-To: <CAP=VYLpSrTvXRovWo4G7AXWv1OKFQRpQR255hS5z+=h4+XOLhg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>, linux-cris-kernel@axis.com
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, Arnaud Ebalard <arno@natisbad.org>, Tawfik Bayouk <tawfik@marvell.com>, Lior Amsalem <alior@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jguntho>
 
-On Sat, Jun 20, 2015 at 3:52 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> Currently arch/cris fails the allmodconfig/allyesconfig build
-> coverage in linux-next with things like:
->
-> drivers/media/platform/sti/bdisp/bdisp-hw.c:132:3: error: implicit
->  declaration of function 'dma_free_attrs'
-> drivers/media/platform/sti/bdisp/bdisp-hw.c:157:2: error: implicit
->  declaration of function 'dma_alloc_attrs'
->
-> drivers/crypto/marvell/cesa.c: In function 'mv_cesa_get_sram':
+Hi Paul,
+
+On Sat, 20 Jun 2015 20:14:08 -0400
+Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+
+> On Sat, Jun 20, 2015 at 4:32 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> > On Fri, Jun 19, 2015 at 10:24 AM, Herbert Xu
+> > <herbert@gondor.apana.org.au> wrote:
+> >> On Thu, Jun 18, 2015 at 03:46:16PM +0200, Boris Brezillon wrote:
+> >>> Hello,
+> >>>
+> >>> This patch series adds a new driver supporting Marvell's CESA IP.
+> >>> This driver addresses some limitations of the existing one.
+> >>> >From a performance and CPU load point of view the most important
+> >>> limitation in the existing driver is the lack of DMA support, thus
+> >>> preventing us from chaining crypto operations.
+> >>
+> >> All applied to cryptodev.  Thanks a lot!
+> >
+> > It seems this breaks linux-next allmodconfig on i386:
+> 
+> Similar breakage for s390 and sparc it seems:
+> 
 > drivers/crypto/marvell/cesa.c:353:2: error: implicit declaration of
->  function 'phys_to_dma'
+> function 'phys_to_dma' [-Werror=implicit-function-declaration]
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/12445415/
+> http://kisskb.ellerman.id.au/kisskb/buildresult/12445345/
+> 
+> If the CESA IP is only available on a single arch then
+> adding an arch dependency might be the easiest fix,
+> since phys_to_dma seems sparsely implemented.
 
-It looks like the one directly above might need a patch to limit
-cesa.c from building across all arch, since phys_to_dma is
-missing from sparc, s390, and even i386 with some configs.
+Indeed. Here is a patch fixing that.
 
-So the phys_to_dma (and reverse) implementations may not
-be strictly needed for cris just yet, if the above happens.
+Thanks,
 
-Paul.
---
+Boris
 
->
-> We steal the 1st 2 from commit e74993aef4411995960052506a000f94411a7103
-> ("xtensa: Provide dummy dma_alloc_attrs() and dma_free_attrs()") and
-> the remaining two from commit 8d4f5339d1ee4027c07e6b2a1cfa9dc41b0d383b
-> ("x86, IA64, powerpc: add phys_to_dma() and dma_to_phys()")
->
-> Cc: Mikael Starvik <starvik@axis.com>
-> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-> Cc: linux-cris-kernel@axis.com
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->
-> [I don't know anything about cris or what DMA rules it operates under,
->  hence RFC and "placeholder" status....]
->
->  arch/cris/include/asm/dma-mapping.h | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/arch/cris/include/asm/dma-mapping.h b/arch/cris/include/asm/dma-mapping.h
-> index 57f794ee6039..224e5e85b0d2 100644
-> --- a/arch/cris/include/asm/dma-mapping.h
-> +++ b/arch/cris/include/asm/dma-mapping.h
-> @@ -168,5 +168,27 @@ extern int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
->  #define dma_mmap_coherent(d, v, c, h, s) dma_common_mmap(d, v, c, h, s)
->  #define dma_get_sgtable(d, t, v, h, s) dma_common_get_sgtable(d, t, v, h, s)
->
-> +static inline void *dma_alloc_attrs(struct device *dev, size_t size,
-> +                                   dma_addr_t *dma_handle, gfp_t flag,
-> +                                   struct dma_attrs *attrs)
-> +{
-> +       return NULL;
-> +}
-> +
-> +static inline void dma_free_attrs(struct device *dev, size_t size,
-> +                                 void *vaddr, dma_addr_t dma_handle,
-> +                                 struct dma_attrs *attrs)
-> +{
-> +}
-> +
-> +static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
-> +{
-> +       return paddr;
-> +}
-> +
-> +static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t daddr)
-> +{
-> +       return daddr;
-> +}
->
->  #endif
-> --
-> 2.2.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+--- >8 ---
+
+>From 891d4e5f185c39cd34b5859a1a63850ef997514d Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Date: Sun, 21 Jun 2015 10:17:54 +0200
+Subject: [PATCH] crypto: marvell/CESA: enforce dependency on ARM
+
+The CESA driver calls phys_to_virt() which is not available on all
+architectures.
+Enforce the dependency on ARM so that other architectures won't compile
+the driver even if COMPILE_TEST is set.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Suggested-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/crypto/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index cdca762..b374d5d 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -176,7 +176,7 @@ config CRYPTO_DEV_MV_CESA
+ 
+ config CRYPTO_DEV_MARVELL_CESA
+ 	tristate "New Marvell's Cryptographic Engine driver"
+-	depends on (PLAT_ORION || ARCH_MVEBU || COMPILE_TEST) && HAS_DMA && HAS_IOMEM
++	depends on (PLAT_ORION || ARCH_MVEBU || COMPILE_TEST) && HAS_DMA && HAS_IOMEM && ARM
+ 	select CRYPTO_AES
+ 	select CRYPTO_DES
+ 	select CRYPTO_BLKCIPHER
+-- 
+1.9.1
+
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
