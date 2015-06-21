@@ -1,62 +1,59 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] clocksource: increase dependencies of timer-stm32 to limit build wreckage
-Date: Sat, 20 Jun 2015 19:02:32 -0400
-Message-ID: <1434841352-24300-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v7 00/14] crypto: add a new driver for Marvell's CESA
+Date: Sat, 20 Jun 2015 20:14:08 -0400
+Message-ID: <CAP=VYLpSrTvXRovWo4G7AXWv1OKFQRpQR255hS5z+=h4+XOLhg@mail.gmail.com>
+References: <1434635190-27733-1-git-send-email-boris.brezillon@free-electrons.com>
+ <20150619142444.GA15234@gondor.apana.org.au> <CAP=VYLqQynCNRTpm4JnOxeO6DH_739fO2QNcDMxaXqCKCHiTtQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:37640 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754763AbbFUAOj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Jun 2015 20:14:39 -0400
+In-Reply-To: <CAP=VYLqQynCNRTpm4JnOxeO6DH_739fO2QNcDMxaXqCKCHiTtQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, Arnaud Ebalard <arno@natisbad.org>, Tawfik Bayouk <tawfik@marvell.com>, Lior Amsalem <alior@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>Jason
 
-This driver leaks out into arch/parisc builds that don't have
-CONFIG_GENERIC_CLOCKEVENTS, leading to the following (truncated)
-wreckage:
+On Sat, Jun 20, 2015 at 4:32 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> On Fri, Jun 19, 2015 at 10:24 AM, Herbert Xu
+> <herbert@gondor.apana.org.au> wrote:
+>> On Thu, Jun 18, 2015 at 03:46:16PM +0200, Boris Brezillon wrote:
+>>> Hello,
+>>>
+>>> This patch series adds a new driver supporting Marvell's CESA IP.
+>>> This driver addresses some limitations of the existing one.
+>>> >From a performance and CPU load point of view the most important
+>>> limitation in the existing driver is the lack of DMA support, thus
+>>> preventing us from chaining crypto operations.
+>>
+>> All applied to cryptodev.  Thanks a lot!
+>
+> It seems this breaks linux-next allmodconfig on i386:
 
-  CC      drivers/clocksource/timer-stm32.o
-drivers/clocksource/timer-stm32.c:38:28: error: field 'evtdev' has incomplete type
-drivers/clocksource/timer-stm32.c:44:19: warning: 'enum clock_event_mode' declared inside parameter list
-drivers/clocksource/timer-stm32.c:44:19: warning: its scope is only this definition or declaration, which is probably not what you want
-drivers/clocksource/timer-stm32.c:43:62: error: parameter 1 ('mode') has incomplete type
-drivers/clocksource/timer-stm32.c:43:13: error: function declaration isn't a prototype
-drivers/clocksource/timer-stm32.c: In function 'stm32_clock_event_set_mode':
-drivers/clocksource/timer-stm32.c:47:3: error: type defaults to 'int' in declaration of '__mptr'
-drivers/clocksource/timer-stm32.c:47:3: warning: initialization from incompatible pointer type
-drivers/clocksource/timer-stm32.c:51:7: error: 'CLOCK_EVT_MODE_PERIODIC' undeclared (first use in this function)
-drivers/clocksource/timer-stm32.c:51:7: note: each undeclared identifier is reported only once for each function it appears in
-drivers/clocksource/timer-stm32.c:56:7: error: 'CLOCK_EVT_MODE_ONESHOT' undeclared (first use in this function)
+Similar breakage for s390 and sparc it seems:
 
-Tighten up the dependencies to limit where it gets built by copying
-the style of the Kconfig line for CLKSRC_EFM32 a few lines above.
+drivers/crypto/marvell/cesa.c:353:2: error: implicit declaration of
+function 'phys_to_dma' [-Werror=implicit-function-declaration]
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
+http://kisskb.ellerman.id.au/kisskb/buildresult/12445415/
+http://kisskb.ellerman.id.au/kisskb/buildresult/12445345/
 
-[linux-next fail: http://kisskb.ellerman.id.au/kisskb/buildresult/12444884/ ]
+If the CESA IP is only available on a single arch then
+adding an arch dependency might be the easiest fix,
+since phys_to_dma seems sparsely implemented.
 
- drivers/clocksource/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Paul.
+--
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 60d7d3d204d3..0f1c77e491f8 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -112,8 +112,8 @@ config CLKSRC_LPC32XX
- 	select CLKSRC_OF
- 
- config CLKSRC_STM32
--	bool "Clocksource for STM32 SoCs" if COMPILE_TEST
--	depends on OF
-+	bool "Clocksource for STM32 SoCs" if !ARCH_STM32
-+	depends on OF && ARM && (ARCH_STM32 || COMPILE_TEST)
- 	select CLKSRC_MMIO
- 
- config ARM_ARCH_TIMER
--- 
-2.2.1
+>
+> http://kisskb.ellerman.id.au/kisskb/buildresult/12445342/
+>
+> ERROR: "phys_to_dma" [drivers/crypto/marvell/marvell-cesa.ko] undefined!
+> make[2]: *** [__modpost] Error 1
+>
+> Paul.
+> --
