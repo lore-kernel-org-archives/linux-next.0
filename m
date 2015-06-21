@@ -1,59 +1,51 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH v7 00/14] crypto: add a new driver for Marvell's CESA
-Date: Sat, 20 Jun 2015 20:14:08 -0400
-Message-ID: <CAP=VYLpSrTvXRovWo4G7AXWv1OKFQRpQR255hS5z+=h4+XOLhg@mail.gmail.com>
-References: <1434635190-27733-1-git-send-email-boris.brezillon@free-electrons.com>
- <20150619142444.GA15234@gondor.apana.org.au> <CAP=VYLqQynCNRTpm4JnOxeO6DH_739fO2QNcDMxaXqCKCHiTtQ@mail.gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with the bluetooth
+ tree
+Date: Sun, 21 Jun 2015 08:33:32 +0800
+Message-ID: <20150621003331.GA26768@gondor.apana.org.au>
+References: <20150620162224.24da2d9f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:37640 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754763AbbFUAOj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Jun 2015 20:14:39 -0400
-In-Reply-To: <CAP=VYLqQynCNRTpm4JnOxeO6DH_739fO2QNcDMxaXqCKCHiTtQ@mail.gmail.com>
+Received: from helcar.hengli.com.au ([209.40.204.226]:59340 "EHLO
+	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752256AbbFUAdr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Jun 2015 20:33:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20150620162224.24da2d9f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, Arnaud Ebalard <arno@natisbad.org>, Tawfik Bayouk <tawfik@marvell.com>, Lior Amsalem <alior@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>Jason
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Vincent <simon.vincent@xsilon.com>, Marcel Holtmann <marcel@holtmann.org>
 
-On Sat, Jun 20, 2015 at 4:32 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On Fri, Jun 19, 2015 at 10:24 AM, Herbert Xu
-> <herbert@gondor.apana.org.au> wrote:
->> On Thu, Jun 18, 2015 at 03:46:16PM +0200, Boris Brezillon wrote:
->>> Hello,
->>>
->>> This patch series adds a new driver supporting Marvell's CESA IP.
->>> This driver addresses some limitations of the existing one.
->>> >From a performance and CPU load point of view the most important
->>> limitation in the existing driver is the lack of DMA support, thus
->>> preventing us from chaining crypto operations.
->>
->> All applied to cryptodev.  Thanks a lot!
->
-> It seems this breaks linux-next allmodconfig on i386:
+Hi Stephen:
 
-Similar breakage for s390 and sparc it seems:
+On Sat, Jun 20, 2015 at 04:22:24PM +1000, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> Today's linux-next merge of the crypto tree got a conflict in:
+> 
+>   net/mac802154/llsec.c
+> 
+> between commit:
+> 
+>   5b0579850017 ("mac802154: fix llsec authentication without encryption BUG")
+> 
+> from the bluetooth tree and commit:
+> 
+>   25528fdae4ab ("mac802154: Switch to new AEAD interface")
+> 
+> from the crypto tree.
+> 
+> I just used the crypto tree version (effectively dropping the former
+> commit) since it is more extensive and so a better conflict resolution
+> is needed.
 
-drivers/crypto/marvell/cesa.c:353:2: error: implicit declaration of
-function 'phys_to_dma' [-Werror=implicit-function-declaration]
+Actually I think that's all you need to do since the crypto tree
+version no longer has the bug in question.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/12445415/
-http://kisskb.ellerman.id.au/kisskb/buildresult/12445345/
-
-If the CESA IP is only available on a single arch then
-adding an arch dependency might be the easiest fix,
-since phys_to_dma seems sparsely implemented.
-
-Paul.
---
-
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12445342/
->
-> ERROR: "phys_to_dma" [drivers/crypto/marvell/marvell-cesa.ko] undefined!
-> make[2]: *** [__modpost] Error 1
->
-> Paul.
-> --
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
