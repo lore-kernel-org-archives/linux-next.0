@@ -1,104 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 22 Jun 2015 12:58:33 +1000
-Message-ID: <20150622125833.451c4440@canb.auug.org.au>
+From: =?windows-1252?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 22 Jun 2015 09:20:57 +0200
+Message-ID: <5587B759.3090504@amd.com>
+References: <20150621135051.27364542@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/pRgzmiSgBDipHIcHo3udMUq"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50237 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751689AbbFVC6k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Jun 2015 22:58:40 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150621135051.27364542@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?windows-1252?Q?Marek_Ol=9A=E1k?= <marek.olsak@amd.com>, =?windows-1252?Q?Michel_D=E4nzer?= <michel.daenzer@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/pRgzmiSgBDipHIcHo3udMUq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen & Dave,
 
-Hi all,
+indeed RADEON_INFO_VA_UNMAP_WORKING was added to 4.1 to indicate that a 
+certain kernel bug is fixed now and we can remove the user space workaround.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+And RADEON_INFO_GPU_RESET_COUNTER was stashed to be merged in 4.2 as new 
+feature.
 
-  net/packet/af_packet.c
+Annoying but harmless and Stephen's resolve of the conflict looks valid 
+to me.
 
-between commit:
+Regards,
+Christian.
 
-  468479e6043c ("packet: avoid out of bounds read in round robin fanout")
-
-from the net tree and commit:
-
-  3b3a5b0aab5b ("packet: rollover huge flows before small flows")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/packet/af_packet.c
-index fe1610ddeacf,20e8c40da90d..000000000000
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@@ -1272,6 -1326,30 +1326,20 @@@ static void packet_sock_destruct(struc
-  	sk_refcnt_debug_dec(sk);
-  }
- =20
- -static int fanout_rr_next(struct packet_fanout *f, unsigned int num)
- -{
- -	int x =3D atomic_read(&f->rr_cur) + 1;
- -
- -	if (x >=3D num)
- -		x =3D 0;
- -
- -	return x;
- -}
- -
-+ static bool fanout_flow_is_huge(struct packet_sock *po, struct sk_buff *s=
-kb)
-+ {
-+ 	u32 rxhash;
-+ 	int i, count =3D 0;
-+=20
-+ 	rxhash =3D skb_get_hash(skb);
-+ 	for (i =3D 0; i < ROLLOVER_HLEN; i++)
-+ 		if (po->rollover->history[i] =3D=3D rxhash)
-+ 			count++;
-+=20
-+ 	po->rollover->history[prandom_u32() % ROLLOVER_HLEN] =3D rxhash;
-+ 	return count > (ROLLOVER_HLEN >> 1);
-+ }
-+=20
-  static unsigned int fanout_demux_hash(struct packet_fanout *f,
-  				      struct sk_buff *skb,
-  				      unsigned int num)
-
---Sig_/pRgzmiSgBDipHIcHo3udMUq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVh3ndAAoJEMDTa8Ir7ZwVuhkP/RnaaYphj2IxKJDsLXwK1Y3S
-CklCKWMam1jWe/LiKORgv5qxLon0ki5Cdcb067jNbOtw2LxcBjmLbVD3m8CpgIB4
-+LkX05pvVnZCxiPpPRPMogXG6EyiplBOHKtfQc/iiZvhQ0KVJUVMl/tboGCqPAhk
-Vi1FWqLaO5p0MBYIklGrpoC8+diLqRxD1znv2UyZ6QU+SRvS1nZbp0qmXby3Uroe
-5cBzXWKAi9VgszKJjihgAeKE68lzepEXwMADr9QVGPRxt3gAoWwGIBeYQFlxIyW7
-CyYVe8WE41o/2Tcdte0bb+r6/csOllRCX65M25uMd5AxW+l9zGGl7y80UUKPxSod
-7YPqUbRhxbU9BWl3cKupUZJhuSiHZk9aD9PcDjFdk5R3kkD27LxwOmkQov2X7lJ4
-ux/bkb0D4zyPasmXU/aR9b2EotngRUk89zcKY2hG2sfru1uHIg4iMU0CCRQURkeK
-GQTD0V12ikibivrLRjsNssP6s8aGH2FGr34bUZy4aBUvS1eJ6ekxMp/agoLHqtTZ
-fL8ELsJkd7WJku2kJx4qoRt7q3MPAScUbth4vY9knMueTn05Cf40SZcZZz3ycKK+
-+3ljnIdRVWh9zTggDzpaofve/Sz+oOlg+PLnCXUV/hyVua8FyMODqzoHIppwY5JP
-Hi+ZfvnRJXCBRIJodnZn
-=9Ud1
------END PGP SIGNATURE-----
-
---Sig_/pRgzmiSgBDipHIcHo3udMUq--
+On 21.06.2015 05:50, Stephen Rothwell wrote:
+> Hi Dave,
+>
+> Today's linux-next merge of the drm tree got conflicts in:
+>
+>    drivers/gpu/drm/radeon/radeon_kms.c
+>    include/uapi/drm/radeon_drm.h
+>
+> between commit:
+>
+>    3bc980bf19bb ("drm/radeon: Add RADEON_INFO_VA_UNMAP_WORKING query")
+>
+> from Linus' tree and commit:
+>
+>    72b9076b2887 ("drm/radeon: add a GPU reset counter queryable by userspace")
+>
+> from the drm tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>
