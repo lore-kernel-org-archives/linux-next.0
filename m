@@ -1,99 +1,86 @@
 From: Dan Streetman <ddstreet@ieee.org>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Wed, 24 Jun 2015 14:18:44 -0400
-Message-ID: <CALZtONAqdXeV0=Enjsw6YzuWFC-4ZqpeWfwxcEgBa+1CasqbGA@mail.gmail.com>
-References: <20150624113727.4f61ba18@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] modules: only use mod->param_lock if CONFIG_MODULES
+Date: Wed, 24 Jun 2015 14:31:17 -0400
+Message-ID: <1435170677-16492-1-git-send-email-ddstreet@ieee.org>
+References: <CALZtONAqdXeV0=Enjsw6YzuWFC-4ZqpeWfwxcEgBa+1CasqbGA@mail.gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:34595 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752620AbbFXSTE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Jun 2015 14:19:04 -0400
-In-Reply-To: <20150624113727.4f61ba18@canb.auug.org.au>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:36587 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752536AbbFXSbe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Jun 2015 14:31:34 -0400
+In-Reply-To: <CALZtONAqdXeV0=Enjsw6YzuWFC-4ZqpeWfwxcEgBa+1CasqbGA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Dan Streetman <ddstreet@ieee.org>
 
-On Tue, Jun 23, 2015 at 9:37 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Rusty,
->
-> After merging the modules tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+Simplify params.c by replacing KPARAM_MUTEX() with an inline function
+__param_lock(), and replacing KPARAM_IS_LOCKED() with direct calls to
+mutex_is_locked().  Inside __param_lock(), only (conditionally) return
+mod->param_lock #ifdef CONFIG_MODULES; if there are no modules just
+return the built-in param_lock.
 
-that's weird.  Are you sure it failed during allmodconfig?  I can see
-why it would fail like that if CONFIG_MODULES ins't defined, which
-I'll send a patch for...
+Since "struct module" isn't defined if !CONFIG_MODULES, we must leave
+out the code that returns mod->param_lock if there are no modules.
 
->
-> In file included from include/linux/linkage.h:4:0,
->                  from include/linux/kernel.h:6,
->                  from kernel/params.c:18:
-> kernel/params.c: In function 'param_array':
-> kernel/params.c:32:42: error: dereferencing pointer to incomplete type
->  #define KPARAM_MUTEX(mod) ((mod) ? &(mod)->param_lock : &param_lock)
->                                           ^
-> include/linux/compiler.h:164:42: note: in definition of macro 'unlikely'
->  # define unlikely(x) __builtin_expect(!!(x), 0)
->                                           ^
-> kernel/params.c:462:3: note: in expansion of macro 'BUG_ON'
->    BUG_ON(!KPARAM_IS_LOCKED(mod));
->    ^
-> kernel/params.c:33:47: note: in expansion of macro 'KPARAM_MUTEX'
->  #define KPARAM_IS_LOCKED(mod) mutex_is_locked(KPARAM_MUTEX(mod))
->                                                ^
-> kernel/params.c:462:11: note: in expansion of macro 'KPARAM_IS_LOCKED'
->    BUG_ON(!KPARAM_IS_LOCKED(mod));
->            ^
-> kernel/params.c: In function 'param_array_get':
-> kernel/params.c:32:42: error: dereferencing pointer to incomplete type
->  #define KPARAM_MUTEX(mod) ((mod) ? &(mod)->param_lock : &param_lock)
->                                           ^
-> include/linux/compiler.h:164:42: note: in definition of macro 'unlikely'
->  # define unlikely(x) __builtin_expect(!!(x), 0)
->                                           ^
-> kernel/params.c:499:3: note: in expansion of macro 'BUG_ON'
->    BUG_ON(!KPARAM_IS_LOCKED(p.mod));
->    ^
-> kernel/params.c:33:47: note: in expansion of macro 'KPARAM_MUTEX'
->  #define KPARAM_IS_LOCKED(mod) mutex_is_locked(KPARAM_MUTEX(mod))
->                                                ^
-> kernel/params.c:499:11: note: in expansion of macro 'KPARAM_IS_LOCKED'
->    BUG_ON(!KPARAM_IS_LOCKED(p.mod));
->            ^
-> In file included from include/linux/notifier.h:13:0,
->                  from include/linux/memory_hotplug.h:6,
->                  from include/linux/mmzone.h:789,
->                  from include/linux/gfp.h:5,
->                  from include/linux/kmod.h:22,
->                  from include/linux/module.h:13,
->                  from kernel/params.c:21:
-> kernel/params.c: In function 'kernel_param_lock':
-> kernel/params.c:32:42: error: dereferencing pointer to incomplete type
->  #define KPARAM_MUTEX(mod) ((mod) ? &(mod)->param_lock : &param_lock)
->                                           ^
-> include/linux/mutex.h:146:44: note: in definition of macro 'mutex_lock'
->  #define mutex_lock(lock) mutex_lock_nested(lock, 0)
->                                             ^
-> kernel/params.c:621:13: note: in expansion of macro 'KPARAM_MUTEX'
->   mutex_lock(KPARAM_MUTEX(mod));
->              ^
-> kernel/params.c: In function 'kernel_param_unlock':
-> kernel/params.c:32:42: error: dereferencing pointer to incomplete type
->  #define KPARAM_MUTEX(mod) ((mod) ? &(mod)->param_lock : &param_lock)
->                                           ^
-> kernel/params.c:626:15: note: in expansion of macro 'KPARAM_MUTEX'
->   mutex_unlock(KPARAM_MUTEX(mod));
->                ^
->
-> Caused by commit b51d23e4e9fe ("module: add per-module param_lock").
->
-> I am not exactly sure why this fails to build.  It may be an
-> interaction with some other change.
->
-> I have used the modules tree from next-20150623 for today.
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Signed-off-by: Dan Streetman <ddstreet@ieee.org>
+---
+ kernel/params.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/params.c b/kernel/params.c
+index 8890d0b..9c955cd 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -29,8 +29,14 @@
+ static DEFINE_MUTEX(param_lock);
+ 
+ /* Use the module's mutex, or if built-in use the built-in mutex */
+-#define KPARAM_MUTEX(mod)	((mod) ? &(mod)->param_lock : &param_lock)
+-#define KPARAM_IS_LOCKED(mod)	mutex_is_locked(KPARAM_MUTEX(mod))
++static inline struct mutex *__param_lock(struct module *mod)
++{
++#ifdef CONFIG_MODULES
++	return mod ? &mod->param_lock : &param_lock;
++#else
++	return &param_lock;
++#endif
++}
+ 
+ /* This just allows us to keep track of which parameters are kmalloced. */
+ struct kmalloced_param {
+@@ -459,7 +465,7 @@ static int param_array(struct module *mod,
+ 		/* nul-terminate and parse */
+ 		save = val[len];
+ 		((char *)val)[len] = '\0';
+-		BUG_ON(!KPARAM_IS_LOCKED(mod));
++		BUG_ON(!mutex_is_locked(__param_lock(mod)));
+ 		ret = set(val, &kp);
+ 
+ 		if (ret != 0)
+@@ -496,7 +502,7 @@ static int param_array_get(char *buffer, const struct kernel_param *kp)
+ 		if (i)
+ 			buffer[off++] = ',';
+ 		p.arg = arr->elem + arr->elemsize * i;
+-		BUG_ON(!KPARAM_IS_LOCKED(p.mod));
++		BUG_ON(!mutex_is_locked(__param_lock(p.mod)));
+ 		ret = arr->ops->get(buffer + off, &p);
+ 		if (ret < 0)
+ 			return ret;
+@@ -618,12 +624,12 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 
+ void kernel_param_lock(struct module *mod)
+ {
+-	mutex_lock(KPARAM_MUTEX(mod));
++	mutex_lock(__param_lock(mod));
+ }
+ 
+ void kernel_param_unlock(struct module *mod)
+ {
+-	mutex_unlock(KPARAM_MUTEX(mod));
++	mutex_unlock(__param_lock(mod));
+ }
+ 
+ #ifdef CONFIG_SYSFS
+-- 
+2.1.0
