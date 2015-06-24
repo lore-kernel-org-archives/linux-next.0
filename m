@@ -1,78 +1,101 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dt-rh tree with the arm-soc tree
-Date: Wed, 24 Jun 2015 13:31:33 +1000
-Message-ID: <20150624133133.435a979d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Wed, 24 Jun 2015 17:37:10 +1000
+Message-ID: <20150624173710.3248ece8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LZuNRPQ5fRjoS5OvSmZRMdO"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47480 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752099AbbFXDbj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Jun 2015 23:31:39 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Jun Nie <jun.nie@linaro.org>, Kevin Hilman <khilman@linaro.org>
+ boundary="Sig_/LN_j3f2ia2e8m0Vs_L.61N/"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Tripathi <stripathi@apm.com>, Iyappan Subramanian <isubramanian@apm.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/LZuNRPQ5fRjoS5OvSmZRMdO
+--Sig_/LN_j3f2ia2e8m0Vs_L.61N/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi all,
 
-Today's linux-next merge of the dt-rh tree got a conflict in:
+After merging the net-next tree, today's linux-next build (KCONFIG_NAME)
+failed like this:
 
-  Documentation/devicetree/bindings/vendor-prefixes.txt
+drivers/net/ethernet/apm/xgene/xgene_enet_main.c: In function 'xgene_get_po=
+rt_id_acpi':
+drivers/net/ethernet/apm/xgene/xgene_enet_main.c:880:2: error: implicit dec=
+laration of function 'acpi_evaluate_integer' [-Werror=3Dimplicit-function-d=
+eclaration]
+  status =3D acpi_evaluate_integer(ACPI_HANDLE(dev), "_SUN", NULL, &temp);
+  ^
+drivers/net/ethernet/apm/xgene/xgene_enet_main.c: At top level:
+drivers/net/ethernet/apm/xgene/xgene_enet_main.c:874:12: warning: 'xgene_ge=
+t_port_id_acpi' defined but not used [-Wunused-function]
+ static int xgene_get_port_id_acpi(struct device *dev,
+            ^
 
-between commit:
+Caused by commit 0738c54d6324 ("drivers: net: xgene: Fix the ACPI support
+for RGMII/SGMII0/XFI interface of APM X-Gene SoC ethernet controller").
 
-  d5553cb05a04 ("ARM: dts: zx: add an initial zx296702 dts and doc")
+I have applied this patch for today:
 
-from the arm-soc tree and commit:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 24 Jun 2015 17:29:51 +1000
+Subject: [PATCH] drivers: net: xgene: fix for ACPI support without ACPI
 
-  72d942e23cda ("of: Add vendor prefix for Zodiac Inflight Innovations")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/apm/xgene/xgene_enet_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-from the dt-rh tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net=
+/ethernet/apm/xgene/xgene_enet_main.c
+index b334f279ce8d..95153b234c71 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+@@ -871,6 +871,7 @@ static const struct net_device_ops xgene_ndev_ops =3D {
+ 	.ndo_set_mac_address =3D xgene_enet_set_mac_address,
+ };
+=20
++#ifdef CONFIG_ACPI
+ static int xgene_get_port_id_acpi(struct device *dev,
+ 				  struct xgene_enet_pdata *pdata)
+ {
+@@ -886,6 +887,7 @@ static int xgene_get_port_id_acpi(struct device *dev,
+=20
+ 	return 0;
+ }
++#endif
+=20
+ static int xgene_get_port_id_dt(struct device *dev, struct xgene_enet_pdat=
+a *pdata)
+ {
+--=20
+2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
-index a0aa80bb3480,c400c95abc67..000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@@ -225,4 -211,4 +225,5 @@@ xillybus	Xillybus Ltd
-  xlnx	Xilinx
-  zyxel	ZyXEL Communications Corp.
-  zarlink	Zarlink Semiconductor
-+ zii	Zodiac Inflight Innovations
- +zte	ZTE Corp.
-
---Sig_/LZuNRPQ5fRjoS5OvSmZRMdO
+--Sig_/LN_j3f2ia2e8m0Vs_L.61N/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJViiSZAAoJEMDTa8Ir7ZwV80gP/3IZaIsLujgJHeTsSOAs6aX1
-jisUfZQ/ORb6hv66wqSO6lsbbxSIpD2IKp8P1VT3lM6r203TTak+WmD8Kin/+8s9
-iYZo716us07qmCPDI85v90fO1cala+bLqxX5w/8QqHTyX/bi8kUXdg0VCpBqBa2c
-x/Gaqh3idx+0IKeU9mX2PfXFDx6vqpetd1BFvMN+C+HgM4BmJnGFp9IotkM5i0mb
-eCThququDbN2y7Uw4Z982/2v7DTrhuKljtHfxMH8GHL5BzSk7ueseiqa8z9sNnq8
-Dp0aIDUaaiBOvn7ELstjA9GtIiTdlWtCvxhg3npHWlwp9F8zdYecoxQAqihbByt1
-rBgV8UlDnV78q0mj63z9pK7XYP+NorfkWtdlkNyiDHeGBeejGPVoIlRm7JxSmE8K
-NxqMfj3gzTuGorE8xjIygDo00SoBpr/XqdnwoW08ymDET6uOzWr+6Fem8EjsaJd5
-AEmGZta6mji1zbxoGN8mnP7mTJrF50ACbdImN7FLgCXfR3AkY+udBs3KqBUn44BN
-bkw2wBSLFI2L2S58XWIJPg2VXuLj/wzhs8I9TvwYW2Oc2mGx+eFA6ZVjKeg/hP6Q
-h1lwZR9vM75EhmWKRJKn3XwMDlu2Z3iVQUC9g+UDPpfUIwvo+r0vWBo/w837anxq
-1DHXzRVrPmKvfVElnmrA
-=Bpol
+iQIcBAEBCAAGBQJVil4qAAoJEMDTa8Ir7ZwV1IwP/A0OVYyBJc9zcK74M6N/rPQU
+FNPJOClJI0RxzdHOkfkaC0jaQu8RMuKVDliV4L9i43HoCEJONL+FLXi8nB+XCRBk
+c5cPiac0Ck8t0VkexHNtMqD/UKaKwM4SWMzFnbQOHR8/ROjiWKMUJxE+mg13SAQD
+XUfWe40c9RaFgBA5yaw4Ot+bWYpXwEguWb5yEPCBLKpjH+fRPq7WBOSjfEKlP7NM
+EvPoeeqsArRVLxKQKJbNnmU+VbvoQlavB6VtGRoNeXz3v1RDAMc3soBQ0zilFFIY
+E3Av2akheyURjSIE5RtNKvKwVYMA6vxFhhj/RIPB2QHEooybfa+VfZ2hN3F74gPx
+JhOiJ/LYVHj6yAwfqrDjmvtYr+cFE2ScSggS6cpIobhxAuZES5BADmWsZOSnDEjC
+4KnjSfBZ5xuthDRaiaqrjDc953Nv2NzOhhlbQjXvw6/6WSaJYZDR399B7nWDRkbP
+DexoO5PPMQ5vQPcAHonhp5SFz8mR6kBg6tEfGM1T5D2lmKV509oqivZZheDHCMUm
+jK5OOZr8hSPD07cpf1LdGSflLW0d/f6+XN2VoxPJApXacyQl/NCYQqqw7MqUqUsO
+femoQ1RNDVHU/jgZpd7DSmjc0Is+Ski553+uxSpqhtjwnM2IDhJU0CP38nEPnvC7
+bMKoBeNWhh+EKpD7vxMP
+=iHI/
 -----END PGP SIGNATURE-----
 
---Sig_/LZuNRPQ5fRjoS5OvSmZRMdO--
+--Sig_/LN_j3f2ia2e8m0Vs_L.61N/--
