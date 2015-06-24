@@ -1,65 +1,83 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the rcu tree with the modules and tip trees
-Date: Wed, 24 Jun 2015 09:39:02 +0930
-Message-ID: <87a8vqrmqp.fsf@rustcorp.com.au>
-References: <20150528172507.31f6fc8c@canb.auug.org.au> <20150624092344.1814c761@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm-exynos tree
+Date: Wed, 24 Jun 2015 11:01:22 +1000
+Message-ID: <20150624110122.2dcbc338@canb.auug.org.au>
+References: <20150623115245.2142288e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CBS+7JbL.ZR.2CrqeWfq9dl"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41168 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44338 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755009AbbFXAZa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Jun 2015 20:25:30 -0400
-In-Reply-To: <20150624092344.1814c761@canb.auug.org.au>
+	id S932228AbbFXBBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Jun 2015 21:01:30 -0400
+In-Reply-To: <20150623115245.2142288e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hyungwon Hwang <human.hwang@samsung.com>, Rob Herring <robh+dt@kernel.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> Hi Rusty,
+--Sig_/CBS+7JbL.ZR.2CrqeWfq9dl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dave,
+
+On Tue, 23 Jun 2015 11:52:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> On Thu, 28 May 2015 17:25:07 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the rcu tree got a conflict in
->> include/linux/rcupdate.h between commits 0a04b0166929 ("rcu: Move
->> lockless_dereference() out of rcupdate.h") from the modules tree and
->> c1ad348b452a ("tick: Nohz: Rework next timer evaluation") from the tip
->> tree and commits 7d0ae8086b82 ("rcu: Convert ACCESS_ONCE() to
->> READ_ONCE() and WRITE_ONCE()") and 3382adbc1bb8 ("rcu: Eliminate a few
->> CONFIG_RCU_NOCB_CPU_ALL #ifdefs") from the rcu tree.
->> 
->> I fixed it up (see below) and can carry the fix as necessary (no action
->> is required).
->> 
->> I also had to add this merge fix patch:
->> 
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Thu, 28 May 2015 17:20:58 +1000
->> Subject: [PATCH] rcu: merge fix for Convert ACCESS_ONCE() to READ_ONCE() and
->>  WRITE_ONCE()
->> 
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  include/linux/compiler.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
->> index ba91e5c88a32..f7e7235f3a91 100644
->> --- a/include/linux/compiler.h
->> +++ b/include/linux/compiler.h
->> @@ -483,7 +483,7 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
->>   */
->>  #define lockless_dereference(p) \
->>  ({ \
->> -	typeof(p) _________p1 = ACCESS_ONCE(p); \
->> +	typeof(p) _________p1 = READ_ONCE(p); \
->>  	smp_read_barrier_depends(); /* Dependency order vs. p above. */ \
->>  	(_________p1); \
->>  })
+> After merging the drm-exynos tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/media/i2c/adv7604.o: In function `of_graph_get_endpoint_by_regs':
+> adv7604.c:(.text+0x586c): multiple definition of `of_graph_get_endpoint_b=
+y_regs'
+> drivers/media/i2c/adv7343.o:adv7343.c:(.text+0xa13): first defined here
+> drivers/media/platform/soc_camera/atmel-isi.o: In function `of_graph_get_=
+endpoint_by_regs':
+> atmel-isi.c:(.text+0x1ec9): multiple definition of `of_graph_get_endpoint=
+_by_regs'
+> drivers/media/platform/soc_camera/soc_camera.o:soc_camera.c:(.text+0x2ce3=
+): first defined here
+> drivers/media/platform/soc_camera/rcar_vin.o: In function `of_graph_get_e=
+ndpoint_by_regs':
+> rcar_vin.c:(.text+0x307c): multiple definition of `of_graph_get_endpoint_=
+by_regs'
+> drivers/media/platform/soc_camera/soc_camera.o:soc_camera.c:(.text+0x2ce3=
+): first defined here
+>=20
+> Caused by commit:
+>=20
+>   a0f7001c18ca ("of: add helper for getting endpoint node of specific ide=
+ntifiers")
 
-Good catch.  I've apply this to my modules-next tree now, as it will
-work fine pre-merge.
+This failure is now in the drm tree (where above patch is commit
+8ccd0d0ca041).  I have used the patch from Inki for today.
 
-Thanks,
-Rusty.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/CBS+7JbL.ZR.2CrqeWfq9dl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVigFoAAoJEMDTa8Ir7ZwVn+UP/RkyXQk4I2WlFteH3w93H04f
+xVRweWoWld2TMVjucjjs1owsrSAjLX60tJ0OA4bXg23pGrq8bcaEW15ePidppqYz
+2iJcRmtw9s8yaBOKkQE77wMx/W0sKuUiy+ofXC5qWNNw3p+wC4TpT/n4Jr6oZRhE
+wecQHVl2Lp+BVypq4CR3WKGkPG1hGkYCVnoPmtEd675gDdU+kAZX5mFopLNDUh/u
+2mOCMVn3k0Zp+pglvxFYPL018TQJ0XvStPYfNry9zDOXMn07z6Qva/Xt8cmfN3f8
+fdYflgBbS/8wM4pch9EzADYVqrykYhUD7fIj8w173qXmb9oPOo+s260ZvrRRy8LG
+sOJg8XZuPgoJoJFUvSZtV/NF8wMg/K+4uf9qrBEmHZyAtn9oYO8uA79fROraSNeJ
+X2ubiVxnLyd+9ymVipv95e/nMkBUjABLKNeakWVeYVoZ2OBvHjusNeoJO1VlXTrm
+jlVBoywBz5fLa6vAO2KY0RntVqHv/OSGAnG3cZLiWusYeExtehN2OM5TdAS4pH4q
+/9fQj32+Z7X10+ITF9IY/qaJB1DN03oOpOZ2lCWV8xKk7Um1c+1IGZhVNIqQiRgC
+sCc8zoNG6WEy61l48ZwidYfLzmHWsx1Dt5abs7PVq2QRFywgNpKZh41oqj9cBVim
+sEXRVabpQZ/6X/zrI7Pu
+=nPMi
+-----END PGP SIGNATURE-----
+
+--Sig_/CBS+7JbL.ZR.2CrqeWfq9dl--
