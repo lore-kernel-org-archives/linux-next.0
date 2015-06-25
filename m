@@ -1,16 +1,23 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 Subject: Re: [next] nfs update breaks build on sparc
-Date: Thu, 25 Jun 2015 18:40:45 -0400
-Message-ID: <CAP=VYLoZQrknQS5v5QEYJPqx6=g+aHAt2jJeimO8Z+UvFHKpEg@mail.gmail.com>
-References: <20150625145528.GA3069@windriver.com> <20150625152424.GC3069@windriver.com>
+Date: Thu, 25 Jun 2015 19:13:45 -0400
+Message-ID: <CAHQdGtRrb+BPL9Ui9F8YzkrM6g=Xzj696Y6Mgw_5-uxLjZN0oA@mail.gmail.com>
+References: <20150625145528.GA3069@windriver.com>
+	<20150625152424.GC3069@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <sparclinux-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vn0-f50.google.com ([209.85.216.50]:38918 "EHLO
+	mail-vn0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751507AbbFYXNq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jun 2015 19:13:46 -0400
+Received: by vnav203 with SMTP id v203so13272383vna.6
+        for <linux-next@vger.kernel.org>; Thu, 25 Jun 2015 16:13:45 -0700 (PDT)
 In-Reply-To: <20150625152424.GC3069@windriver.com>
-Sender: sparclinux-owner@vger.kernel.org
-To: Trond Myklebust <trond.myklebust@primarydata.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, sparclinux@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Tao Peng <tao.peng@primarydata.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, sparclinux@vger.kernel.org
 
 On Thu, Jun 25, 2015 at 11:24 AM, Paul Gortmaker
 <paul.gortmaker@windriver.com> wrote:
@@ -24,26 +31,11 @@ On Thu, Jun 25, 2015 at 11:24 AM, Paul Gortmaker
 >
 > I tried to reproduce it locally so I could run a bisect,
 > but it must be toolchain specific because I don't see it.
+>
 
-Presumably this is the same thing; showing up in i386 and elsewhere:
+Sigh. It looks as if xchg() and cmpxchg() are not available for 64-bit
+integers on sparc32.
+Tao, can we rely on mirror->lock to provide atomicity here instead?
 
-fs/nfs/flexfilelayout/flexfilelayout.c:444:15: error: call to
-'__xchg_wrong_size' declared with attribute error: Bad argument size
-for xchg
-fs/nfs/flexfilelayout/flexfilelayout.c:433:3: error: call to
-'__cmpxchg_wrong_size' declared with attribute error: Bad argument
-size for cmpxchg
-fs/nfs/flexfilelayout/flexfilelayout.c:463:2: error: call to
-'__cmpxchg_wrong_size' declared with attribute error: Bad argument
-size for cmpxchg
-fs/nfs/flexfilelayout/flexfilelayout.c:464:2: error: call to
-'__cmpxchg_wrong_size' declared with attribute error: Bad argument
-size for cmpxchg
-make[4]: *** [fs/nfs/flexfilelayout/flexfilelayout.o] Error 1
-make[3]: *** [fs/nfs/flexfilelayout] Error 2
-make[2]: *** [fs/nfs] Error 2
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/12449737/
-
-Paul.
----
+Cheers
+  Trond
