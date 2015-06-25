@@ -1,47 +1,69 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] crypto: mv_cesa - fix up for of_get_named_gen_pool() rename
-Date: Thu, 25 Jun 2015 11:41:26 -0400
-Message-ID: <CAP=VYLrgVjuymafdBZXAzPmBFEdGn71cfJA29n6=nd2ie0mPyw@mail.gmail.com>
-References: <CABxcv=m4juAMHaMYSB+8O8cEX+YZCJ0cArS2wN-YGpTBgWe-CA@mail.gmail.com>
- <1435221470-5382-1-git-send-email-simon.guinot@sequanux.org> <20150625153006.GA11513@gondor.apana.org.au>
+From: Peng Tao <tao.peng@primarydata.com>
+Subject: Re: nfs commit breaks build for nfs4.1=y nfs4.2=n
+Date: Thu, 25 Jun 2015 23:42:43 +0800
+Message-ID: <CAKVebiWL0WwPZtVjNsWJtkO-_Dh86S+_j83tzM_1iDnPpbJHLw@mail.gmail.com>
+References: <20150625145528.GA3069@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20150625153006.GA11513@gondor.apana.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Simon Guinot <simon.guinot@sequanux.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Nadav Haklai <nadavh@marvell.com>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tawfik Bayouk <tawfik@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Arnaud Ebalard <arno@natisbad.org>, Rob Herring <robh+dt@kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:33628 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751963AbbFYPnD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jun 2015 11:43:03 -0400
+Received: by igbqq3 with SMTP id qq3so17676175igb.0
+        for <linux-next@vger.kernel.org>; Thu, 25 Jun 2015 08:43:03 -0700 (PDT)
+In-Reply-To: <20150625145528.GA3069@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Jeff Layton <jeff.layton@primarydata.com>, Trond Myklebust <trond.myklebust@primarydata.com>, linux-next@vger.kernel.org
 
-On Thu, Jun 25, 2015 at 11:30 AM, Herbert Xu
-<herbert@gondor.apana.org.au> wrote:
-> On Thu, Jun 25, 2015 at 10:37:50AM +0200, Simon Guinot wrote:
->> This patch fixes the following build error:
->>
->> drivers/crypto/mv_cesa.c: In function 'mv_cesa_get_sram':
->> drivers/crypto/mv_cesa.c:1037: error: implicit declaration of function 'of_get_named_gen_pool'
->> drivers/crypto/mv_cesa.c:1038: warning: assignment makes pointer from integer without a cast
->> scripts/Makefile.build:258: recipe for target 'drivers/crypto/mv_cesa.o' failed
->>
->> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+Thanks Paul! It was reported by kbuild test robot and a fix has been
+sent to linux-nfs list.
+
+Cheers,
+Tao
+
+On Thu, Jun 25, 2015 at 10:55 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 >
-> This patch doesn't compile.
-
-As sfr pointed out, this is an interaction with a rename patch in
-the akpm tree; sfr added a fixup patch here last night:
-
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?h=akpm
-
-"crypto: marvell/cesa - another fix up for of_get_named_gen_pool() rename"
-
-Paul.
---
-
-> --
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> New breakage seen in linux-next:
+>
+> fs/nfs/pnfs.c:2293: undefined reference to
+> `nfs42_proc_layoutstats_generic'
+>
+> ...bisected to:
+>
+> commit 8733408d6ed713d080c325262d7b51a780136d41
+> Author: Peng Tao <tao.peng@primarydata.com>
+> Date:   Tue Jun 23 19:51:57 2015 +0800
+>
+>     pnfs: add pnfs_report_layoutstat helper function
+>
+> Probably caused by the unusual defconfig having:
+>
+>
+> $ grep NFS .config
+> CONFIG_KERNFS=y
+> CONFIG_NFS_FS=y
+> CONFIG_NFS_V2=y
+> CONFIG_NFS_V3=y
+> # CONFIG_NFS_V3_ACL is not set
+> CONFIG_NFS_V4=y
+> # CONFIG_NFS_SWAP is not set
+> CONFIG_NFS_V4_1=y                       <------------
+> # CONFIG_NFS_V4_2 is not set            <------------
+> CONFIG_PNFS_FILE_LAYOUT=y
+> CONFIG_PNFS_FLEXFILE_LAYOUT=m
+> CONFIG_NFS_V4_1_IMPLEMENTATION_ID_DOMAIN="kernel.org"
+> # CONFIG_NFS_V4_1_MIGRATION is not set
+> CONFIG_ROOT_NFS=y
+> # CONFIG_NFS_USE_LEGACY_DNS is not set
+> CONFIG_NFS_USE_KERNEL_DNS=y
+> # CONFIG_NFSD is not set
+> CONFIG_NFS_COMMON=y
+>
+> http://kisskb.ellerman.id.au/kisskb/buildresult/12449989/
+>
+>
+>
