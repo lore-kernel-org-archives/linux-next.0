@@ -1,31 +1,32 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [next] nfs update breaks build on sparc
-Date: Thu, 25 Jun 2015 11:24:24 -0400
-Message-ID: <20150625152424.GC3069@windriver.com>
-References: <20150625145528.GA3069@windriver.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: mv_cesa - fix up for of_get_named_gen_pool()
+ rename
+Date: Thu, 25 Jun 2015 23:30:06 +0800
+Message-ID: <20150625153006.GA11513@gondor.apana.org.au>
+References: <CABxcv=m4juAMHaMYSB+8O8cEX+YZCJ0cArS2wN-YGpTBgWe-CA@mail.gmail.com>
+ <1435221470-5382-1-git-send-email-simon.guinot@sequanux.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:47579 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750786AbbFYPY0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jun 2015 11:24:26 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150625145528.GA3069@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@primarydata.com>
-Cc: linux-next@vger.kernel.org, sparclinux@vger.kernel.org
+In-Reply-To: <1435221470-5382-1-git-send-email-simon.guinot@sequanux.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Nadav Haklai <nadavh@marvell.com>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tawfik Bayouk <tawfik@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, linux-next@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Arnaud Ebalard <arno@natisbad.org>, Rob Herring <robh+dt@kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+On Thu, Jun 25, 2015 at 10:37:50AM +0200, Simon Guinot wrote:
+> This patch fixes the following build error:
+> 
+> drivers/crypto/mv_cesa.c: In function 'mv_cesa_get_sram':
+> drivers/crypto/mv_cesa.c:1037: error: implicit declaration of function 'of_get_named_gen_pool'
+> drivers/crypto/mv_cesa.c:1038: warning: assignment makes pointer from integer without a cast
+> scripts/Makefile.build:258: recipe for target 'drivers/crypto/mv_cesa.o' failed
+> 
+> Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
 
-New breakage seen in linux-next today:
-
-ERROR: "__xchg_called_with_bad_pointer" [fs/nfs/flexfilelayout/nfs_layout_flexfiles.ko] undefined!
-ERROR: "__cmpxchg_called_with_bad_pointer" [fs/nfs/flexfilelayout/nfs_layout_flexfiles.ko] undefined!
-make[2]: *** [__modpost] Error 1
-make[1]: *** [modules] Error 2
-
-I tried to reproduce it locally so I could run a bisect,
-but it must be toolchain specific because I don't see it.
-
-Paul.
+This patch doesn't compile.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
