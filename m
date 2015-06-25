@@ -1,79 +1,84 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v7 00/14] crypto: add a new driver for Marvell's CESA
-Date: Thu, 25 Jun 2015 02:33:43 +0200
-Message-ID: <CABxcv=m4juAMHaMYSB+8O8cEX+YZCJ0cArS2wN-YGpTBgWe-CA@mail.gmail.com>
-References: <1434635190-27733-1-git-send-email-boris.brezillon@free-electrons.com>
- <20150619142444.GA15234@gondor.apana.org.au>
- <CAP=VYLqQynCNRTpm4JnOxeO6DH_739fO2QNcDMxaXqCKCHiTtQ@mail.gmail.com>
- <CAP=VYLpSrTvXRovWo4G7AXWv1OKFQRpQR255hS5z+=h4+XOLhg@mail.gmail.com>
- <20150621102418.2ea74910@bbrezillon>
- <20150621082717.GA29128@gondor.apana.org.au>
- <20150622092336.5949e258@bbrezillon>
- <20150622075910.GA7659@gondor.apana.org.au>
- <20150625000037.GK31584@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the modules tree
+Date: Thu, 25 Jun 2015 11:50:17 +1000
+Message-ID: <20150625115017.4ac34bb8@canb.auug.org.au>
+References: <20150624113727.4f61ba18@canb.auug.org.au>
+	<CALZtONAqdXeV0=Enjsw6YzuWFC-4ZqpeWfwxcEgBa+1CasqbGA@mail.gmail.com>
+	<20150625085706.787b7100@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20150625000037.GK31584@windriver.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Nadav Haklai <nadavh@marvell.com>, Mark Rutland <mark.rutland@arm.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Tawfik Bayouk <tawfik@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Arnaud Ebalard <arno@natisbad.org>, Rob Herring <robh+dt@kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gFEH1zi.0tJXoo7L8koX/0="; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59985 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751014AbbFYBuZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Jun 2015 21:50:25 -0400
+In-Reply-To: <20150625085706.787b7100@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dan Streetman <ddstreet@ieee.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello Paul,
+--Sig_/gFEH1zi.0tJXoo7L8koX/0=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 25, 2015 at 2:00 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> [Re: [PATCH v7 00/14] crypto: add a new driver for Marvell's CESA] On 22/06/2015 (Mon 15:59) Herbert Xu wrote:
->
->> On Mon, Jun 22, 2015 at 09:23:36AM +0200, Boris Brezillon wrote:
->> > Hi Herbert,
->> >
->> > On Sun, 21 Jun 2015 16:27:17 +0800
->> > Herbert Xu <herbert@gondor.apana.org.au> wrote:
->> >
->> > > On Sun, Jun 21, 2015 at 10:24:18AM +0200, Boris Brezillon wrote:
->> > > >
->> > > > Indeed. Here is a patch fixing that.
->> > >
->> > > I think you should just kill COMPILE_TEST instead of adding ARM.
->> >
->> > The following patch is killing the COMPILE_TEST dependency.
->>
->> Patch applied.
->
-> Just a heads up, this driver is still killing a couple of linux-next
-> builds today and for the past few days.
->
-> drivers/crypto/mv_cesa.c:1037:2: error: implicit declaration of function
-> 'of_get_named_gen_pool' [-Werror=implicit-function-declaration]
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12448851/
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12448776/
->
-> Missing dependency on CONFIG_OF_<blah> presumably.
->
+Hi Dan,
 
-I haven't looked at the series but <linux/genalloc.h> has a stub
-of_get_named_gen_pool() function if CONFIG_OF is not enabled [0].
-
-So it seems that the problem is rather that the header is not being
-included in some file.
-
-> Paul.
-> --
+On Thu, 25 Jun 2015 08:57:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
+> On Wed, 24 Jun 2015 14:18:44 -0400 Dan Streetman <ddstreet@ieee.org> wrot=
+e:
+> >
+> > On Tue, Jun 23, 2015 at 9:37 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> > >
+> > > After merging the modules tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> >=20
+> > that's weird.  Are you sure it failed during allmodconfig?  I can see
+> > why it would fail like that if CONFIG_MODULES ins't defined, which
+> > I'll send a patch for...
+>=20
+> Pretty sure - and, in any case, I don't do any CONFIG_MODULES=3Dn builds
+> between tree merges (only later in the day).  That is why I couldn't
+> figure out what went wrong.
+>=20
+> I will apply your patch today and see if that helps.
 
-Best regards,
-Javier
+I built without your patch and it failed again, but applying your patch fix=
+es it.
 
-[0]: http://lxr.free-electrons.com/source/include/linux/genalloc.h#L131
+Rusty, you can consider this
+
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+for "[PATCH] modules: only use mod->param_lock if CONFIG_MODULES"
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/gFEH1zi.0tJXoo7L8koX/0=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVi15dAAoJEMDTa8Ir7ZwVpk0P/1ek4Z4EhGz1gMJIqwe2e6HI
+HuIIo7MGBZuQcN9f+kft4kY7XgTVH6YfMRwW2GlPLBu5W0kC2Bd3i3JkE65oPUdp
+lE/i7+hGUrWo5sVTKPIKGKsM//QK4zSxWmaOxzP/6SL64AitAn6W/sjpEN4aePvj
+idYvO2peBrnPqrjUl79zxbbtl9yIagwY+cjZPFFHEbTIPMQFiomPjK4WOrUUcvHJ
+9xOUzylhf54XjiUsbDSUx5y6EPURk3ZRyo/SzAFucGOQoVyvMMrQPhM2elnppWap
+M+/miuKhyATdYk1C1zDmLhFDLibNAifsqekmfWZz7idpzgMl9q6tG1/4hQMl4vqc
+u+CD6Z8UCjM1ONntfgfyR6hn6MuL4yoDNsT00BOtgY6DB213yhDO5pG8DrXVOJ2V
+SNEHJ2EF78rEAXM0s69RFlS92UCZ5uNYFbdieSbGr9EHvoq0vI9IrE7jtJJPleds
+HCoPbKF0IT8Oxvuz9ey4nCPiVOn50stp7BLZJJn6Z4+Rxq62f7PklnEtMYsFC7o4
+Xhv/2oit8U+M1AHxEKXuA9ZT1TTHfTLHu6U0kL2eUkX8utpytDsh4L0ty0jr6g7u
+Vm6JoerCm729lIMri1djJhi5jpcOLo1oHDaB03WMOH0mhR47JrowbwZGo0YKxLHw
+1z5GZOqaISJKcKZZpryK
+=DKdw
+-----END PGP SIGNATURE-----
+
+--Sig_/gFEH1zi.0tJXoo7L8koX/0=--
