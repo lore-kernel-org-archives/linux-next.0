@@ -1,71 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Thu, 25 Jun 2015 08:57:06 +1000
-Message-ID: <20150625085706.787b7100@canb.auug.org.au>
-References: <20150624113727.4f61ba18@canb.auug.org.au>
-	<CALZtONAqdXeV0=Enjsw6YzuWFC-4ZqpeWfwxcEgBa+1CasqbGA@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v7 00/14] crypto: add a new driver for Marvell's CESA
+Date: Wed, 24 Jun 2015 20:00:38 -0400
+Message-ID: <20150625000037.GK31584@windriver.com>
+References: <1434635190-27733-1-git-send-email-boris.brezillon@free-electrons.com>
+ <20150619142444.GA15234@gondor.apana.org.au>
+ <CAP=VYLqQynCNRTpm4JnOxeO6DH_739fO2QNcDMxaXqCKCHiTtQ@mail.gmail.com>
+ <CAP=VYLpSrTvXRovWo4G7AXWv1OKFQRpQR255hS5z+=h4+XOLhg@mail.gmail.com>
+ <20150621102418.2ea74910@bbrezillon>
+ <20150621082717.GA29128@gondor.apana.org.au>
+ <20150622092336.5949e258@bbrezillon>
+ <20150622075910.GA7659@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n/FoYtiw_LzS9D26wdw74nZ"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:32977 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751239AbbFXW5P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Jun 2015 18:57:15 -0400
-In-Reply-To: <CALZtONAqdXeV0=Enjsw6YzuWFC-4ZqpeWfwxcEgBa+1CasqbGA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dan Streetman <ddstreet@ieee.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20150622075910.GA7659@gondor.apana.org.au>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Nadav Haklai <nadavh@marvell.com>, Mark Rutland <mark.rutland@arm.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tawfik Bayouk <tawfik@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Arnaud Ebalard <arno@natisbad.org>, Rob Herring <robh+dt@kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/n/FoYtiw_LzS9D26wdw74nZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+[Re: [PATCH v7 00/14] crypto: add a new driver for Marvell's CESA] On 22/06/2015 (Mon 15:59) Herbert Xu wrote:
 
-Hi Dan,
+> On Mon, Jun 22, 2015 at 09:23:36AM +0200, Boris Brezillon wrote:
+> > Hi Herbert,
+> > 
+> > On Sun, 21 Jun 2015 16:27:17 +0800
+> > Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> > 
+> > > On Sun, Jun 21, 2015 at 10:24:18AM +0200, Boris Brezillon wrote:
+> > > > 
+> > > > Indeed. Here is a patch fixing that.
+> > > 
+> > > I think you should just kill COMPILE_TEST instead of adding ARM.
+> > 
+> > The following patch is killing the COMPILE_TEST dependency.
+> 
+> Patch applied.
 
-On Wed, 24 Jun 2015 14:18:44 -0400 Dan Streetman <ddstreet@ieee.org> wrote:
->
-> On Tue, Jun 23, 2015 at 9:37 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> >
-> > After merging the modules tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
->=20
-> that's weird.  Are you sure it failed during allmodconfig?  I can see
-> why it would fail like that if CONFIG_MODULES ins't defined, which
-> I'll send a patch for...
+Just a heads up, this driver is still killing a couple of linux-next
+builds today and for the past few days.
 
-Pretty sure - and, in any case, I don't do any CONFIG_MODULES=3Dn builds
-between tree merges (only later in the day).  That is why I couldn't
-figure out what went wrong.
+drivers/crypto/mv_cesa.c:1037:2: error: implicit declaration of function
+'of_get_named_gen_pool' [-Werror=implicit-function-declaration]
 
-I will apply your patch today and see if that helps.
+http://kisskb.ellerman.id.au/kisskb/buildresult/12448851/
+http://kisskb.ellerman.id.au/kisskb/buildresult/12448776/
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Missing dependency on CONFIG_OF_<blah> presumably.
 
---Sig_/n/FoYtiw_LzS9D26wdw74nZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Paul.
+--
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVizXJAAoJEMDTa8Ir7ZwVYQoQAJR1uRqUfEZSZDGjERHnpWCg
-3AaBAqVmwRCL4PnF+UPULP16QM9+GIPaRRJk0VXltBPIBddHB71lAXDCaJwE4pBJ
-JF3wqsN8Rx9jmVzj5pc2o9tcX7VJsJ4il7tqwZutb/+EpcBxf82rJOkGWp0qEAY1
-ZhOfa9fIbW+///3JkVUmXt4NmzXC87g/s30iAKO49YkiwhFsG5gdild/1Fr/Sof+
-zUB2obdx0uwNiKxp83ojORxm/yr/HnAKuPmmqvohZU/w16Awob8Fyp+iBCFmhmiq
-K+zQa9Hilqws29QColXVx7BIm3kabSv5Ahr1SYgonmWQmsK3zNUoevCAGHHdRhzs
-PBJ9EYxwLiwJaqCsoOZ7VetvMdnwbpsodFpt1fhxGq+ilqrYBLUWSyW4+HA5gOse
-RYdNvLsNHsLsXSTQhyL/bUulJgispdoEtOXETzvJVrg/4Y7h0RLZ0e97gzHVj/Uo
-oo44t/eMO9IJhJcwRdH/5Vqz6nc8iJztvp2wIrWjrc8UPVCGO/jjDme8dBVmBIkB
-vNl35JtyU9Q9KbCh7hnqvdiqGzgYgEoMNmf05mWPnmv854WU9BZMAVB0tG85Htpp
-hIuX9saWNk5yHVCLj93f+83isgNTI9TDKIub75sxNyMcETrUO1yeN+0KqPKPWvuM
-r0J5n1e53qTUGizDgM+x
-=plcq
------END PGP SIGNATURE-----
-
---Sig_/n/FoYtiw_LzS9D26wdw74nZ--
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
