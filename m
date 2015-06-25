@@ -1,113 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the modules tree
-Date: Thu, 25 Jun 2015 16:54:47 +1000
-Message-ID: <20150625165447.140502c9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Thu, 25 Jun 2015 18:00:03 +1000
+Message-ID: <20150625180003.0ce72be8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/llNir3=kE6sLvlqkKapg/X0"; protocol="application/pgp-signature"
+ boundary="Sig_/GfdEYCAbo0tS0d5ldMcWzrP"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47722 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57623 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750777AbbFYGy4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Jun 2015 02:54:56 -0400
+	id S1751652AbbFYIAL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Jun 2015 04:00:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Streetman <ddstreet@ieee.org>
+To: Andrew Morton <akpm@linux-foundation.org>, "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
 
---Sig_/llNir3=kE6sLvlqkKapg/X0
+--Sig_/GfdEYCAbo0tS0d5ldMcWzrP
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Andrew,
 
-After merging the modules tree, today's linux-next build (powerpc
-allnoconfig) failed like this:
+After merging the akpm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-kernel/params.c:628:6: error: redefinition of 'kernel_param_lock'
- void kernel_param_lock(struct module *mod)
-      ^
-In file included from include/linux/module.h:18:0,
-                 from kernel/params.c:21:
-include/linux/moduleparam.h:246:20: note: previous definition of 'kernel_pa=
-ram_lock' was here
- static inline void kernel_param_lock(struct module *mod)
-                    ^
-kernel/params.c:633:6: error: redefinition of 'kernel_param_unlock'
- void kernel_param_unlock(struct module *mod)
-      ^
-In file included from include/linux/module.h:18:0,
-                 from kernel/params.c:21:
-include/linux/moduleparam.h:249:20: note: previous definition of 'kernel_pa=
-ram_unlock' was here
- static inline void kernel_param_unlock(struct module *mod)
-                    ^
+fs/nsfs.c: In function 'nsfs_show_path':
+fs/nsfs.c:145:2: error: void value not ignored as it ought to be
+  return seq_printf(seq, "%s:[%lu]", ns_ops->name, inode->i_ino);
+  ^
+fs/nsfs.c:146:1: warning: control reaches end of non-void function [-Wretur=
+n-type]
+ }
+ ^
 
-Caused by commit b51d23e4e9fe ("module: add per-module param_lock").
-This had not been tested with CONFIG_SYSFS not set.
+Caused by patch
 
-I have added the following patch for today (which may not be complete,
-but builds).
+  "fs/seq_file: convert int seq_vprint/seq_printf/etc... returns to void"
+
+interacting with commit
+
+  ed2ffc74eee8 ("nsfs: Add a show_path method to fix mountinfo")
+
+from the userns tree.
+
+I added this patch:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 25 Jun 2015 16:38:51 +1000
-Subject: [PATCH] modules: clean up add per-module param_lock
+Date: Thu, 25 Jun 2015 17:41:14 +1000
+Subject: [PATCH] nsfs: fix for seq_printf() API change
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- include/linux/moduleparam.h | 9 ---------
- 1 file changed, 9 deletions(-)
+ fs/nsfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-index c12f2147c350..428d7c25c383 100644
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -239,17 +239,8 @@ __check_old_set_param(int (*oldset)(const char *, stru=
-ct kernel_param *))
- 	return 0;
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index e4905fbf3396..8f20d6016e20 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -142,7 +142,8 @@ static int nsfs_show_path(struct seq_file *seq, struct =
+dentry *dentry)
+ 	struct inode *inode =3D d_inode(dentry);
+ 	const struct proc_ns_operations *ns_ops =3D dentry->d_fsdata;
+=20
+-	return seq_printf(seq, "%s:[%lu]", ns_ops->name, inode->i_ino);
++	seq_printf(seq, "%s:[%lu]", ns_ops->name, inode->i_ino);
++	return 0;
  }
 =20
--#ifdef CONFIG_SYSFS
- extern void kernel_param_lock(struct module *mod);
- extern void kernel_param_unlock(struct module *mod);
--#else
--static inline void kernel_param_lock(struct module *mod)
--{
--}
--static inline void kernel_param_unlock(struct module *mod)
--{
--}
--#endif
-=20
- #ifndef MODULE
- /**
+ static const struct super_operations nsfs_ops =3D {
 --=20
 2.1.4
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Sig_/llNir3=kE6sLvlqkKapg/X0
+--Sig_/GfdEYCAbo0tS0d5ldMcWzrP
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVi6W9AAoJEMDTa8Ir7ZwVWnIP/RqBjozqrX3IBqyltoGvapU9
-BV6SdT99ELa+9t2R4PRORX1aI8vkg7s9NiVLexvNFzLpI5y/wVHXwnDb19BP24Ac
-yG2TQKid9CHNMDGVb7bqYZR8xhb6Rg+iTalhf/FiEU8fywbn+Cq5YZ5LouMMtm8+
-ZXkEnA/ztHE0p0yD3Q3c/8ieP4pnleTZW+/tr/KqEUQYe22GO/+X6Md8MMKGJaSK
-Oh57op0ItC5zAXKGu5e2Jbz9ytLMeRKZqYY0/kuhYYhwzICpTQxzVn1XYXPWjsa/
-79LYh5bVgevJAm4jSCijAO0mlbQb9EipvY53tHbwUyOGsWrvm68GcBVKXmqpJYSE
-+M2uDa2J1FdcRILFGv8zAzDdBAav0UEMWbc1WYCE0TxjJ5QSda6oR1QszU98Fapy
-fB8D2prLoYJgVPvN78J3wpIUKynv8V//gOhxyzIKP8i1w13vlix0Og7zdSV/7iXY
-PLYwlNJKTsd7sClms37dR5Ot8gtb/ln/KpFJJ107tt0I6ndxRxnkAv0l+it/1vhq
-1uvejToSrSvL1wWJGUSi4TF2HBSU/xrCt7fuZjha5jjvkpVdoA0kCe0q3I15dtZL
-oZlYJOKyPIIHa7OehcJcawKGpPgCECvYusLWoQqrd+NETu/l/n43F6CuZdZCkoYq
-0TQ2dIuNQ16OqzGZUxdc
-=nvJ1
+iQIcBAEBCAAGBQJVi7UJAAoJEMDTa8Ir7ZwVOBcP/3mIg5371n/s3NjoVjLZXOi+
+sy0170W6fpCs0FLy0cCyEJ4GDSUYuMC2Uyyvx4mEmv9lzJll74wFCtjmAzUJiwrG
+sT5pdu6bq7PjBmRpfxtA1DbXlfqAhVqp51Lehl8UiN3DLgGfwjpxA8h2a8Cnj95x
+YKzwL7fzFByZkZPrT/0i9snHjScG12lbweSn5wTjh8xgQHPVXFmiSXQOvsIWUDBu
+gIkWhSFLla7diGlM7Ep+z5qr5zZqPWPPFpykGCPDpGYvbjdQagk4abFXS+ej6lqa
+yJ1G5iBRjYWFMgli5mh3XVkr2ZJFSBoIM6Bmp5vAww/szFZVm34pJCMo3Gn/2eJj
+qOY/qYQsvtSOq7njl8PN7txH+ZE0nGUmkosi59UVXODzWp6AjFeWvGf9RIYatjXN
+6Hp/W6ElnZjA52h2eG6p1nEhu+QucHYBYSmAr29ZgUmGkEb4Vzz8tvioPL6OWDd7
+RlXTtPIioJMAKvMX0ZJv0iGfR9rb+qHIU9MnCPQHjAIbBdVMfevEWM/2kK5WfDa6
+WP+L7tI5DRFr5R6xJgT/Raa7fuGn2ZYzl/DSeXffulQIa7DhCpMuadCaXXGlgblR
+utOi/HgoqJLNo92DKsDJdnWnag1+3ZpBA1gCk0ybWQhPQFW6yoaAJQItrtpbhPsX
+vZWepPnhomFiKUlayl/1
+=iinG
 -----END PGP SIGNATURE-----
 
---Sig_/llNir3=kE6sLvlqkKapg/X0--
+--Sig_/GfdEYCAbo0tS0d5ldMcWzrP--
