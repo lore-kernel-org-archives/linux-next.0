@@ -1,115 +1,77 @@
-From: Dan Streetman <ddstreet@ieee.org>
-Subject: [PATCH] modules: elide param_lock if !CONFIG_SYSFS
-Date: Thu, 25 Jun 2015 09:04:08 -0400
-Message-ID: <1435237448-13684-1-git-send-email-ddstreet@ieee.org>
-References: <CALZtONA4kOn2yciNYA2C9QdXuovdjFXBca4EU4CDs6XDiQtxJQ@mail.gmail.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:35673 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750968AbbFYNEd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jun 2015 09:04:33 -0400
-In-Reply-To: <CALZtONA4kOn2yciNYA2C9QdXuovdjFXBca4EU4CDs6XDiQtxJQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Streetman <ddstreet@ieee.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v2] staging: make board support depend on OF_IRQ and CLKDEV_LOOKUP
+Date: Thu, 25 Jun 2015 10:13:22 -0400
+Message-ID: <558C0C82.3080709@windriver.com>
+References: <CAMuHMdWS_-=yn8n2_UruwDjK3tnWg6GWkn3PEe4DBNMAEOZOVA@mail.gmail.com> <1434842903-24708-1-git-send-email-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1434842903-24708-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Only include the built-in and per-module param_lock, and corresponding
-lock/unlock functions, if sysfs is enabled.  If there is no sysfs there
-is no need for locking kernel params.
+On 15-06-20 07:28 PM, Paul Gortmaker wrote:
+> Building allmodconfig for arch/cris currently fails with:
+> 
+> drivers/built-in.o: In function `board_staging_register_clock':
+> drivers/staging/board/board.c:131: undefined reference to `clk_add_alias'
+> make: *** [vmlinux] Error 1
 
-This fixes a build break when CONFIG_SYSFS is not enabled, introduced
-by commit b51d23e.
+Just checking this didn't fall through the cracks, as its absence
+causes several arch breakage on linux-next for several days now:
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Dan Streetman <ddstreet@ieee.org>
----
- include/linux/module.h |  2 ++
- kernel/params.c        | 21 ++++++++++++++++-----
- 2 files changed, 18 insertions(+), 5 deletions(-)
+(.init.text+0xf968): undefined reference to `clk_add_alias'
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 6ba0e87..46efa1c 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -240,7 +240,9 @@ struct module {
- 	unsigned int num_syms;
  
- 	/* Kernel parameters. */
-+#ifdef CONFIG_SYSFS
- 	struct mutex param_lock;
-+#endif
- 	struct kernel_param *kp;
- 	unsigned int num_kp;
- 
-diff --git a/kernel/params.c b/kernel/params.c
-index 9c955cd..d2c6a2a 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -25,6 +25,7 @@
- #include <linux/slab.h>
- #include <linux/ctype.h>
- 
-+#ifdef CONFIG_SYSFS
- /* Protects all built-in parameters, modules use their own param_lock */
- static DEFINE_MUTEX(param_lock);
- 
-@@ -38,6 +39,17 @@ static inline struct mutex *__param_lock(struct module *mod)
- #endif
- }
- 
-+static inline void __check_param_lock(struct module *mod)
-+{
-+	BUG_ON(!mutex_is_locked(__param_lock(mod)));
-+}
-+#else /* !CONFIG_SYSFS */
-+/* we don't need any param lock if there's no sysfs */
-+static inline void __check_param_lock(struct module *mod)
-+{
-+}
-+#endif
-+
- /* This just allows us to keep track of which parameters are kmalloced. */
- struct kmalloced_param {
- 	struct list_head list;
-@@ -465,7 +477,7 @@ static int param_array(struct module *mod,
- 		/* nul-terminate and parse */
- 		save = val[len];
- 		((char *)val)[len] = '\0';
--		BUG_ON(!mutex_is_locked(__param_lock(mod)));
-+		__check_param_lock(mod);
- 		ret = set(val, &kp);
- 
- 		if (ret != 0)
-@@ -502,7 +514,7 @@ static int param_array_get(char *buffer, const struct kernel_param *kp)
- 		if (i)
- 			buffer[off++] = ',';
- 		p.arg = arr->elem + arr->elemsize * i;
--		BUG_ON(!mutex_is_locked(__param_lock(p.mod)));
-+		__check_param_lock(p.mod);
- 		ret = arr->ops->get(buffer + off, &p);
- 		if (ret < 0)
- 			return ret;
-@@ -622,18 +634,17 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
- #define __modinit __init
- #endif
- 
-+#ifdef CONFIG_SYSFS
- void kernel_param_lock(struct module *mod)
- {
- 	mutex_lock(__param_lock(mod));
- }
-+EXPORT_SYMBOL(kernel_param_lock);
- 
- void kernel_param_unlock(struct module *mod)
- {
- 	mutex_unlock(__param_lock(mod));
- }
--
--#ifdef CONFIG_SYSFS
--EXPORT_SYMBOL(kernel_param_lock);
- EXPORT_SYMBOL(kernel_param_unlock);
- 
- /*
--- 
-2.1.0
+x86:     http://kisskb.ellerman.id.au/kisskb/buildresult/12448913/
+powerpc: http://kisskb.ellerman.id.au/kisskb/buildresult/12449785/
+parisc:  http://kisskb.ellerman.id.au/kisskb/buildresult/12449940/
+
+and possibly others I've missed.
+
+Paul.
+--
+
+> 
+> The clk_add_alias lives in drivers/clk/clkdev.c and that file
+> is only compiled for CONFIG_CLKDEV_LOOKUP, so it would seem
+> we need to add a dependency on that.
+> 
+> Geert also reported seeing this in his build coverage:
+> 
+>   There seems to be another missing dependency on OF_IRQ:
+> 
+>   drivers/built-in.o: In function `board_staging_gic_fixup_resources':
+>   (.init.text+0x21c2): undefined reference to `irq_create_of_mapping'
+> 
+> so we might as well fix that at the same time since it is
+> on the same line.
+> 
+> Cc: Magnus Damm <damm+renesas@opensource.se>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+> [v2: fold in Geert's OF_IRQ addition suggestion.]
+> 
+>  drivers/staging/board/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/board/Kconfig b/drivers/staging/board/Kconfig
+> index b8ee81840666..3f287c48e082 100644
+> --- a/drivers/staging/board/Kconfig
+> +++ b/drivers/staging/board/Kconfig
+> @@ -1,6 +1,6 @@
+>  config STAGING_BOARD
+>  	bool "Staging Board Support"
+> -	depends on OF_ADDRESS
+> +	depends on OF_ADDRESS && OF_IRQ && CLKDEV_LOOKUP
+>  	help
+>  	  Select to enable per-board staging support code.
+>  
+> 
