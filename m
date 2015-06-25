@@ -1,77 +1,56 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH v2] staging: make board support depend on OF_IRQ and CLKDEV_LOOKUP
-Date: Thu, 25 Jun 2015 10:13:22 -0400
-Message-ID: <558C0C82.3080709@windriver.com>
-References: <CAMuHMdWS_-=yn8n2_UruwDjK3tnWg6GWkn3PEe4DBNMAEOZOVA@mail.gmail.com> <1434842903-24708-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: nfs commit breaks build for nfs4.1=y nfs4.2=n
+Date: Thu, 25 Jun 2015 10:55:28 -0400
+Message-ID: <20150625145528.GA3069@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434842903-24708-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:35992 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751509AbbFYO5a (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Jun 2015 10:57:30 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Peng Tao <tao.peng@primarydata.com>
+Cc: Jeff Layton <jeff.layton@primarydata.com>, Trond Myklebust <trond.myklebust@primarydata.com>, linux-next@vger.kernel.org
 
-On 15-06-20 07:28 PM, Paul Gortmaker wrote:
-> Building allmodconfig for arch/cris currently fails with:
-> 
-> drivers/built-in.o: In function `board_staging_register_clock':
-> drivers/staging/board/board.c:131: undefined reference to `clk_add_alias'
-> make: *** [vmlinux] Error 1
 
-Just checking this didn't fall through the cracks, as its absence
-causes several arch breakage on linux-next for several days now:
+New breakage seen in linux-next:
 
-(.init.text+0xf968): undefined reference to `clk_add_alias'
+fs/nfs/pnfs.c:2293: undefined reference to
+`nfs42_proc_layoutstats_generic'
 
- 
-x86:     http://kisskb.ellerman.id.au/kisskb/buildresult/12448913/
-powerpc: http://kisskb.ellerman.id.au/kisskb/buildresult/12449785/
-parisc:  http://kisskb.ellerman.id.au/kisskb/buildresult/12449940/
+...bisected to:
 
-and possibly others I've missed.
+commit 8733408d6ed713d080c325262d7b51a780136d41
+Author: Peng Tao <tao.peng@primarydata.com>
+Date:   Tue Jun 23 19:51:57 2015 +0800
 
-Paul.
---
+    pnfs: add pnfs_report_layoutstat helper function
 
-> 
-> The clk_add_alias lives in drivers/clk/clkdev.c and that file
-> is only compiled for CONFIG_CLKDEV_LOOKUP, so it would seem
-> we need to add a dependency on that.
-> 
-> Geert also reported seeing this in his build coverage:
-> 
->   There seems to be another missing dependency on OF_IRQ:
-> 
->   drivers/built-in.o: In function `board_staging_gic_fixup_resources':
->   (.init.text+0x21c2): undefined reference to `irq_create_of_mapping'
-> 
-> so we might as well fix that at the same time since it is
-> on the same line.
-> 
-> Cc: Magnus Damm <damm+renesas@opensource.se>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
-> [v2: fold in Geert's OF_IRQ addition suggestion.]
-> 
->  drivers/staging/board/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/board/Kconfig b/drivers/staging/board/Kconfig
-> index b8ee81840666..3f287c48e082 100644
-> --- a/drivers/staging/board/Kconfig
-> +++ b/drivers/staging/board/Kconfig
-> @@ -1,6 +1,6 @@
->  config STAGING_BOARD
->  	bool "Staging Board Support"
-> -	depends on OF_ADDRESS
-> +	depends on OF_ADDRESS && OF_IRQ && CLKDEV_LOOKUP
->  	help
->  	  Select to enable per-board staging support code.
->  
-> 
+Probably caused by the unusual defconfig having:
+
+
+$ grep NFS .config
+CONFIG_KERNFS=y
+CONFIG_NFS_FS=y
+CONFIG_NFS_V2=y
+CONFIG_NFS_V3=y
+# CONFIG_NFS_V3_ACL is not set
+CONFIG_NFS_V4=y
+# CONFIG_NFS_SWAP is not set
+CONFIG_NFS_V4_1=y			<------------
+# CONFIG_NFS_V4_2 is not set		<------------
+CONFIG_PNFS_FILE_LAYOUT=y
+CONFIG_PNFS_FLEXFILE_LAYOUT=m
+CONFIG_NFS_V4_1_IMPLEMENTATION_ID_DOMAIN="kernel.org"
+# CONFIG_NFS_V4_1_MIGRATION is not set
+CONFIG_ROOT_NFS=y
+# CONFIG_NFS_USE_LEGACY_DNS is not set
+CONFIG_NFS_USE_KERNEL_DNS=y
+# CONFIG_NFSD is not set
+CONFIG_NFS_COMMON=y
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12449989/
+    
