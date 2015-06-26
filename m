@@ -1,46 +1,34 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] crypto: mv_cesa - fix up for of_get_named_gen_pool()
- rename
-Date: Fri, 26 Jun 2015 17:32:54 +0900
-Message-ID: <20150626083254.GA18367@gondor.apana.org.au>
-References: <CABxcv=m4juAMHaMYSB+8O8cEX+YZCJ0cArS2wN-YGpTBgWe-CA@mail.gmail.com>
- <1435221470-5382-1-git-send-email-simon.guinot@sequanux.org>
- <20150625153006.GA11513@gondor.apana.org.au>
- <20150625155605.GI4853@kw.sim.vm.gnt>
+From: Borislav Petkov <bp@alien8.de>
+Subject: Re: linux-next: manual merge of the edac-amd tree with Linus' tree
+Date: Fri, 26 Jun 2015 10:34:50 +0200
+Message-ID: <20150626083450.GC14572@pd.tnic>
+References: <20150626170839.7a0945c5@canb.auug.org.au>
+ <20150626072723.GB14572@pd.tnic>
+ <20150626182256.03241d32@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.skyhub.de ([78.46.96.112]:32933 "EHLO mail.skyhub.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751317AbbFZIfG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Jun 2015 04:35:06 -0400
 Content-Disposition: inline
-In-Reply-To: <20150625155605.GI4853@kw.sim.vm.gnt>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Nadav Haklai <nadavh@marvell.com>, Mark Rutland <mark.rutland@arm.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tawfik Bayouk <tawfik@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, linux-next@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Arnaud Ebalard <arno@natisbad.org>, Rob Herring <robh+dt@kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20150626182256.03241d32@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 25, 2015 at 05:56:05PM +0200, Simon Guinot wrote:
-> On Thu, Jun 25, 2015 at 11:30:06PM +0800, Herbert Xu wrote:
-> > On Thu, Jun 25, 2015 at 10:37:50AM +0200, Simon Guinot wrote:
-> > > This patch fixes the following build error:
-> > > 
-> > > drivers/crypto/mv_cesa.c: In function 'mv_cesa_get_sram':
-> > > drivers/crypto/mv_cesa.c:1037: error: implicit declaration of function 'of_get_named_gen_pool'
-> > > drivers/crypto/mv_cesa.c:1038: warning: assignment makes pointer from integer without a cast
-> > > scripts/Makefile.build:258: recipe for target 'drivers/crypto/mv_cesa.o' failed
-> > > 
-> > > Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-> > 
-> > This patch doesn't compile.
-> 
-> It does compile. How it could not ?
-> But since the issue has already been fixed, it doesn't really matter.
+On Fri, Jun 26, 2015 at 06:22:56PM +1000, Stephen Rothwell wrote:
+> I just fetch it every morning, so if you just want to set your for-next
+> branch to somewhere in Linus' tree (so it is effectively empty), then
+> that would be easiest for me.
 
-It breaks the build of mv_cesa in the crypto tree as well as the
-cryptodev tree while without your patch the mv_cesa builds just
-fine.  If your patch isn't meant for these trees then you should
-clearly say so.
+Done :-)
 
-Thanks,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
