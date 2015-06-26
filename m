@@ -1,83 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the ceph tree
-Date: Fri, 26 Jun 2015 18:33:26 +1000
-Message-ID: <20150626183326.7287706a@canb.auug.org.au>
-References: <20150626111755.5f0635bd@canb.auug.org.au>
-	<CAOi1vP8-Fz2FABJZdt6_aZq_TNGFBhGuanV-n9kBvdFmyRMsyw@mail.gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: mv_cesa - fix up for of_get_named_gen_pool()
+ rename
+Date: Fri, 26 Jun 2015 17:32:54 +0900
+Message-ID: <20150626083254.GA18367@gondor.apana.org.au>
+References: <CABxcv=m4juAMHaMYSB+8O8cEX+YZCJ0cArS2wN-YGpTBgWe-CA@mail.gmail.com>
+ <1435221470-5382-1-git-send-email-simon.guinot@sequanux.org>
+ <20150625153006.GA11513@gondor.apana.org.au>
+ <20150625155605.GI4853@kw.sim.vm.gnt>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jC7ZUGI_7G/TPBggUUzGeCi"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40408 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752222AbbFZIde (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Jun 2015 04:33:34 -0400
-In-Reply-To: <CAOi1vP8-Fz2FABJZdt6_aZq_TNGFBhGuanV-n9kBvdFmyRMsyw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Sage Weil <sage@newdream.net>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yan, Zheng" <zyan@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150625155605.GI4853@kw.sim.vm.gnt>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Lior Amsalem <alior@marvell.com>, Andrew Lunn <andrew@lunn.ch>, Nadav Haklai <nadavh@marvell.com>, Mark Rutland <mark.rutland@arm.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tawfik Bayouk <tawfik@marvell.com>, Eran Ben-Avi <benavi@marvell.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, linux-next@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Arnaud Ebalard <arno@natisbad.org>, Rob Herring <robh+dt@kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/jC7ZUGI_7G/TPBggUUzGeCi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 25, 2015 at 05:56:05PM +0200, Simon Guinot wrote:
+> On Thu, Jun 25, 2015 at 11:30:06PM +0800, Herbert Xu wrote:
+> > On Thu, Jun 25, 2015 at 10:37:50AM +0200, Simon Guinot wrote:
+> > > This patch fixes the following build error:
+> > > 
+> > > drivers/crypto/mv_cesa.c: In function 'mv_cesa_get_sram':
+> > > drivers/crypto/mv_cesa.c:1037: error: implicit declaration of function 'of_get_named_gen_pool'
+> > > drivers/crypto/mv_cesa.c:1038: warning: assignment makes pointer from integer without a cast
+> > > scripts/Makefile.build:258: recipe for target 'drivers/crypto/mv_cesa.o' failed
+> > > 
+> > > Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
+> > 
+> > This patch doesn't compile.
+> 
+> It does compile. How it could not ?
+> But since the issue has already been fixed, it doesn't really matter.
 
-Hi Ilya,
+It breaks the build of mv_cesa in the crypto tree as well as the
+cryptodev tree while without your patch the mv_cesa builds just
+fine.  If your patch isn't meant for these trees then you should
+clearly say so.
 
-On Fri, 26 Jun 2015 11:21:52 +0300 Ilya Dryomov <idryomov@gmail.com> wrote:
->
-> > Sage: that ceph tree commit has no Signed-off-by from its
-> > committer :-(  The same is true for almost all the commits in the ceph
-> > tree ... and the committer (Ilya) is not listed as a maintainer of that
-> > tree ... and its on github :-(
->=20
-> Well, it has Signed-off-by from a person who is listed as a maintainer
-> of fs/ceph (Zheng).  We share the same tree for three components: rbd
-> (drivers/block/rbd.c), cephfs (fs/ceph) and libceph (net/ceph) which is
-> used by both rbd and cephfs (we should probably split libceph into its
-> own MAINTAINERS entry).  The volume of commits is not that high and
-> we prefer to not clutter our 30-40 commits per cycle with a bunch of
-> merges, so when one of us rebases the committer stamp gets wiped.
-
-Then the person who rebases it must add a Signed-off-by line since they
-are then on the handling path from the author to Linus.
-
-> As for github, is that a bad thing?  ceph-client.git is certainly not
-> the only github tree in linux-next.
-
-Yeah, it just means that I am a bit more suspicious of things there.
-You are *not* listed in my contacts for the ceph tree not are you
-listed in the MAINTAINERS file for that tree.
-
-Also the tree listed in MAINTAINERS is:
-
-T:      git git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.=
-git
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Sig_/jC7ZUGI_7G/TPBggUUzGeCi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVjQ5cAAoJEMDTa8Ir7ZwVhisP/j5sXZPkas8kVHO014h9AAt3
-zpKFwaFALcxcJa1LVHTOIP+OoFcNpA4c41gPxtTyFrUry0BQWer7aHvBsvklJO/i
-qFSWKCezk/RqzxN7ETbI46L4mdUCNy39JBpYPkJcRozrSc42w7GsLY8J77ENdFSo
-mpa3EjVkLU+KDHd5o6pk1RCutUNhn0m3DP3V/hbAXVXt8W3ZKWg4HstZXrfB/hNt
-80MkEzBMtUJbPNZiqB6OyOklrF65fT12ne6iFbGTAw6kH7jh/2V15zyY7kmweXvi
-z/ePcNgqUJ0Ezxk70riUzwWZe+4RYoI7uJVcilZ3ZUrV+oN9Sn1MA8Nf6EEZKnsp
-uOkFgAmGC0oeSe6dY6yhbZlkc0SFo73qOQI5AfRblUuT78zzq+RBnjukRG/e5VWm
-XCCmRkb53E+dtnc7UzsrWvdhEoPTpYQQTCG47DEZCLLFtlfjU6PTWZJ0kcGoivVZ
-CMBOaqSdFvFMizXonn/iW5D3SMbEuXX6n3sQ0Q1xcBFdPO7C8XDZPaX92nuTzQts
-i2X/oHbfOcIkLk8kBpu00NM8ppDO7buJxFvRaHLZ2w8idEZ/BjyrFQWHqS1ErWNn
-vAkqmaD0CZdXZLDE3HfKpDcdTBSR01YFcSaHhdP+Bp/IkeRR5OiuB0H/M4POHwhZ
-fP/4KCeZKLv5lUPsDvy8
-=g3EJ
------END PGP SIGNATURE-----
-
---Sig_/jC7ZUGI_7G/TPBggUUzGeCi--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
