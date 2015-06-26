@@ -1,48 +1,60 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: linux-next: manual merge of the arc tree with Linus' tree
-Date: Fri, 26 Jun 2015 11:21:42 +0530
-Message-ID: <558CE86E.8040006@synopsys.com>
-References: <20150626094751.3c5a6490@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the edac-amd tree with Linus' tree
+Date: Fri, 26 Jun 2015 17:08:39 +1000
+Message-ID: <20150626170839.7a0945c5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2dfwg/695TcHzbhTkBp//HR"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay.synopsys.com ([198.182.60.111]:49714 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751277AbbFZFwS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Jun 2015 01:52:18 -0400
-In-Reply-To: <20150626094751.3c5a6490@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:56474 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751579AbbFZHIw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Jun 2015 03:08:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday 26 June 2015 05:17 AM, Stephen Rothwell wrote:
-> Hi Vineet,
-> 
-> Today's linux-next merge of the arc tree got a conflict in:
-> 
->   include/asm-generic/barrier.h
-> 
-> between commits:
-> 
->   ab3f02fc2372 ("locking/arch: Add WRITE_ONCE() to set_mb()")
->   b92b8b35a2e3 ("locking/arch: Rename set_mb() to smp_store_mb()")
-> 
-> from Linus' tree and commit:
-> 
->   470c27e4695a ("arch: conditionally define smp_{mb,rmb,wmb}")
-> 
-> from the arc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
+--Sig_/2dfwg/695TcHzbhTkBp//HR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Borislav,
 
-LGTM.
+Today's linux-next merge of the edac-amd tree got a conflict in:
 
-Thx Stephan.
+  drivers/edac/mce_amd_inj.c
 
--Vineet
+between commits from Linus' tree and the same commits plus more from
+the edac-amd tree.
+
+I just dropped the edac-amd tree for today as it seems that it was just
+rebased and a few commits dropped before Linus was asked to merge it.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/2dfwg/695TcHzbhTkBp//HR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVjPqCAAoJEMDTa8Ir7ZwVEHQP/2OhaL+qrPgi6npnCzbzsEW9
+necl6BssTIguJAW2++Jiw47jIKyJmHtDNnQLfVUGGMLRPDPQy8ROKwhJbHaEcUqZ
+i9LfcsUqnN4nBGBt1O+y+KBl7099b3kwl7WKPBMvq8AekM1xhz2yIeMYnOqp7Bc/
+X3F+a3qdZnL+NpqrYRrgbAi8IdC7BLN99GaxQvmTK6djaD0iQ+aQ9wn72oOla2V4
+y09mLF8TqpSFAm6Nj3dYivjFsXrDHqwa45aViNLFh9TgdzeJMtcGc6IzvJ+wFdkd
+HZtsFS0Smq1eJj79KJyRlOOV/sqFGXpyGH9LQSVD2NlnnAnlgTeGCnLoznawCkYM
+fqUAp9jlP4NEOHSXxJiHbVRgWCZ6bI5nyuEgerMf/fkKJ7R+PaK9swOhwvYGxgr0
+Ls8djT/DKrGcEbYzIArSVw4atY7TMgcGpJznoTpI8HXvp5Zk/3waFMfdpe9c57dv
+uG478lLovKzNmjxcqcjndKJRV6A5w+RqT+oP4ewmxio7p83UlmZgEYLj3loe8JkN
+kkFxpmgLZHS0WUG4QxOF9yar8Bm4COVV3axv+W6JPbFv5/7aZUDJbWmHaPu7C6hE
+LySHnAY42yxAe0prOxVi6IMSVFJApBZDndJ3iIEu06LcstAwY/YPN7JSFwUl1Ude
+h6TxxEgxZjZ8cV7W6peU
+=FLLQ
+-----END PGP SIGNATURE-----
+
+--Sig_/2dfwg/695TcHzbhTkBp//HR--
