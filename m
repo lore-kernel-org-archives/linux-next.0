@@ -1,102 +1,49 @@
-From: Guenter Roeck <private@roeck-us.net>
-Subject: Re: arc build failures in -next due to ARCv2 patch
-Date: Sat, 27 Jun 2015 07:16:23 -0700
-Message-ID: <558EB037.1030308@roeck-us.net>
-References: <558DE739.4020804@roeck-us.net> <C2D7FE5348E1B147BCA15975FBA23075665A8A84@IN01WEMBXB.internal.synopsys.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH] modules: elide param_lock if !CONFIG_SYSFS
+Date: Sun, 28 Jun 2015 14:51:14 +0930
+Message-ID: <87vbe8s911.fsf@rustcorp.com.au>
+References: <CALZtONA4kOn2yciNYA2C9QdXuovdjFXBca4EU4CDs6XDiQtxJQ@mail.gmail.com> <1435237448-13684-1-git-send-email-ddstreet@ieee.org> <87616bsd02.fsf@rustcorp.com.au> <CALZtOND_-LahkJE5pD6eQOusT42M4-9ECKZ1cD+F_dPK4CVX8A@mail.gmail.com> <20150627102134.00e58047@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:50822 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752544AbbF0OQc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Jun 2015 10:16:32 -0400
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075665A8A84@IN01WEMBXB.internal.synopsys.com>
+Received: from ozlabs.org ([103.22.144.67]:33259 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751000AbbF1FY0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Jun 2015 01:24:26 -0400
+In-Reply-To: <20150627102134.00e58047@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: "arc-linux-dev@synopsys.com" <arc-linux-dev@synopsys.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dan Streetman <ddstreet@ieee.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hi Vineet,
-
-On 06/27/2015 04:42 AM, Vineet Gupta wrote:
-> hi,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> Hi Rusty,
 >
-> Sorry for top posting / html - web client access from home.
-Another Microsoft victim ? That is why I dislike sending e-mail
-from my company account.
-
-> Thx for reporting the issue - I have pushed a fix (also attached) whi=
-ch shd cure it (don't have exactly similar oldish gcc at hand).
-
-Not that old, really, it just isn't configured for ARCv2. Question is i=
-f I need two
-separate compilers or if I can configure it to support both v1 and v2.
-
-> This slipped thru the cracks as newer gcc for legacy ARCompact can st=
-ill tolerate the new toggles.
-
-Something like the following would avoid the ifdef in the Makefile and =
-also check if the option
-is supported by the compiler.
-
-config ARC_NO_LL64
-     default y
-     depends on !ARC_HAS_LL64 && ISA_ARCV2
-
-=2E..
-
-cflags-$(CONFIG_ARC_NO_LL64) +=3D $(call cc-option, -mno-ll64)
-
-
-Your patch uses ${} instead of $() - does the make command accept/under=
-stand that ?
-
-> I will get back to you on Monday about how to go about including supp=
-ort for a newer gcc for ARCv2 build test as well.
-Looking forward to it, though I hope I can just built a toolchain for H=
-S38.
-
-After applying your patch, I get
-
-arch/arc/kernel/process.c: In function =91arch_cpu_idle=92:
-arch/arc/kernel/process.c:51:26: error: =91ARCV2_IRQ_DEF_PRIO=92 undecl=
-ared (first use in this function)
-    const int arg =3D 0x10 | ARCV2_IRQ_DEF_PRIO;
-                                       ^
-
-Thanks,
-Guenter
-
-> Thx,
-> -Vineet
-> ________________________________________
-> From: Guenter Roeck [private@roeck-us.net]
-> Sent: Saturday, June 27, 2015 5:28 AM
-> To: linux-next@vger.kernel.org
-> Cc: Vineet Gupta
-> Subject: arc build failures in -next due to ARCv2 patch
+> On Thu, 25 Jun 2015 17:34:31 -0400 Dan Streetman <ddstreet@ieee.org> wrote:
+>>
+>> On Thu, Jun 25, 2015 at 5:18 PM, Rusty Russell <rusty@rustcorp.com.au> wrote:
+>> > Dan Streetman <ddstreet@ieee.org> writes:
+>> >> Only include the built-in and per-module param_lock, and corresponding
+>> >> lock/unlock functions, if sysfs is enabled.  If there is no sysfs there
+>> >> is no need for locking kernel params.
+>> >>
+>> >> This fixes a build break when CONFIG_SYSFS is not enabled, introduced
+>> >> by commit b51d23e.
+>> >
+>> > This doesn't even come close to applying to my tree?
+>> 
+>> sorry, I had the !CONFIG_MODULES patch in my tree also, so this was on
+>> top of that one:
+>> https://lkml.org/lkml/2015/6/24/550
+>> 
+>> I can resend that one, on top of this one, or you can fix it up.
+>> 
+>> Sorry for not getting it right the first time ;-)
 >
-> Hi,
->
-> my arc test builds in -next now fail with
->
-> cc1: error: unrecognized command line option "-mno-ll64"
-> make[2]: *** [scripts/mod/empty.o] Error 1
-> make[1]: *** [scripts/mod] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> cc1: error: unrecognized command line option "-mno-ll64"
-> make[1]: *** [kernel/bounds.s] Error 1
->
-> due to commit 'ARCv2: Support for ARCv2 ISA and HS38x cores'.
->
-> This is with gcc 4.8.3 built from buildroot.
->
-> Do I now need a new compiler / toolchain to build the kernel ?
-> Any chance to make this change compatible to work with older
-> compilers ?
->
-> Thanks,
-> Guenter
->
+> This is what I ended up applying to yesterday's linux-next:
+
+Thanks, added correct description to previous patch and applied this
+on top.
+
+Sorry for the hassle,
+Rusty.
