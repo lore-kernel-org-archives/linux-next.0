@@ -1,54 +1,25 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20150629 build: 1 failures 74 warnings (next-20150629)
-Date: Mon, 29 Jun 2015 18:15:41 +0100
-Message-ID: <20150629171541.GK11162@sirena.org.uk>
-References: <E1Z9WQC-000356-Bd@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: reminder
+Date: Tue, 30 Jun 2015 07:59:14 +1000
+Message-ID: <20150630075914.2951f14f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="T4Djgzn3z2HSNnx0"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60839 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752442AbbF2RP4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jun 2015 13:15:56 -0400
-Content-Disposition: inline
-In-Reply-To: <E1Z9WQC-000356-Bd@optimist>
+Received: from ozlabs.org ([103.22.144.67]:58633 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753500AbbF2V7Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Jun 2015 17:59:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lars Poeschel <poeschel@lemonage.de>, Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+Hi all,
 
---T4Djgzn3z2HSNnx0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Just a reminder to *not* add any v4.3 related material to your
+linux-next included branches until *after* v4.2-rc1 is released.
 
-On Mon, Jun 29, 2015 at 11:36:17AM +0100, Build bot for Mark Brown wrote:
-
-Today's -next fails to build an ARM allmodconfig due to:
-
-> ../drivers/watchdog/omap_wdt.c:288:18: error: 'omap_wdt' undeclared (first use in this function)
-
-which is introduced by "watchdog: omap_wdt: early_enable module
-parameter" which adds the above reference to a nonexistant variable.
-Presumably the patch was generated against something sufficiently old to
-lack "watchdog: omap: put struct watchdog_device into driver data" which
-appears to be where it was removed.
-
---T4Djgzn3z2HSNnx0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVkX09AAoJECTWi3JdVIfQTmgH/16VaJpAUhRs+5RF4w9pN3Ai
-Vy8bSmP/wsXoefiqZtqUJGV+pkY8a87xzpR77vvL6bYrWhVqs/qbVw5hSt77kBmp
-04+fDRlsrC9PjEbbNy4D70KCLjMUu0eKHAXMFyY+sBRBiYKLEQ5pM01Ju2ypppeH
-oakxYNY+cMQIGBUMqjAjiS5kvpzwPK4yT3KwEu2aBxmSE5oan5kQbUiSOcuKfZi5
-sv96VN2o3jt0Vtg/S1+YGZya/o64mPP7bzYo9ezF16e9DauoqGTEm/bncrBhcsFE
-nRXzbdyKY2ygKa9w8Utmm8Q/Qolbk7Gkyp3p73e5Wd1ypJiLz4NxQofR5/j5MBM=
-=FXwm
------END PGP SIGNATURE-----
-
---T4Djgzn3z2HSNnx0--
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
