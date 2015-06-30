@@ -1,341 +1,55 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: next-20150629 build: 1 failures 74 warnings (next-20150629)
-Date: Tue, 30 Jun 2015 08:11:33 +0200
-Message-ID: <20150630061133.GA7252@quack.suse.cz>
-References: <E1Z9WQC-000356-Bd@optimist>
- <20150629170622.GJ11162@sirena.org.uk>
+From: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v2] watchdog: omap_wdt: early_enable module parameter
+Date: Tue, 30 Jun 2015 08:58:07 +0200
+Message-ID: <20150630065807.GA5645@spo001.leaseweb.nl>
+References: <1435227711-29875-1-git-send-email-poeschel@lemonage.de> <558C0634.9050802@roeck-us.net> <CAP=VYLr5wVMBdA76U0HKP2GTN07qiCkCTtBmFG5Z_bWE0QvT9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="2oS5YaxWCcQjTEyO"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:47865 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750785AbbF3GLm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Jun 2015 02:11:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20150629170622.GJ11162@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-
-
---2oS5YaxWCcQjTEyO
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <CAP=VYLr5wVMBdA76U0HKP2GTN07qiCkCTtBmFG5Z_bWE0QvT9g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, LKML doc <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon 29-06-15 18:06:22, Mark Brown wrote:
-> On Mon, Jun 29, 2015 at 11:36:17AM +0100, Build bot for Mark Brown wrote:
+Hi Paul,
+
+> On Thu, Jun 25, 2015 at 9:46 AM, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org> wrote:
+> > On 06/25/2015 03:21 AM, poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org wrote:
+> >>
+> >> From: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>
+> >>
+> >> Add a early_enable module parameter to the omap_wdt that starts the
+> >> watchdog on module insertion. The default value is 0 which does not
+> >> start the watchdog - which also does not change the behavior if the
+> >> parameter is not given.
+> >>
+> >> Signed-off-by: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>
+> >
+> >
+> > Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 > 
-> Today's -next fails to build an ARM allmodconfig due to:
+> In case the info hasn't looped back around yet, this breaks the
+> omap builds in linux-next:
 > 
-> > ../drivers/gpu/drm/exynos/exynos_drm_g2d.c:465:7: error: 'vec' undeclared (first use in this function)
+> drivers/watchdog/omap_wdt.c:288:18: error: 'omap_wdt' undeclared
+> (first use in this function)
 > 
-> caused by "drm/exynos: convert g2d_userptr_get_dma_addr() to use
-> get_vaddr_frames()" which has an obvious bug testing the return value of
-> frame_vector_create() by trying to look at vec rather than g2d_userptr->vec.
+> (Not sure how this could have ever worked as-is.)
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/12452335/
+> 
+> I see a patch has already been posted to arm-kernel but not
+> Cc'd to all originally involved so figured I'd mention it.
 
-Thanks for notice. Attached is a fixed version of the patch.
+It's fixed. The reason why we din't catch it was because of interference
+with 'watchdog: omap: put struct watchdog_device into driver data'.
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Kind regards,
+Wim.
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-drm-exynos-Convert-g2d_userptr_get_dma_addr-to-use-g.patch"
-
->From 994fa5c0a9d6cd21b837242cbc67becae09257be Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 4 Dec 2013 14:41:22 +0100
-Subject: [PATCH] drm/exynos: Convert g2d_userptr_get_dma_addr() to use
- get_vaddr_frames()
-
-Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_frames().
-This removes the knowledge about vmas and mmap_sem locking from exynos
-driver. Also it fixes a problem that the function has been mapping user
-provided address without holding mmap_sem.
-
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 91 ++++++++++---------------------
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 97 ---------------------------------
- 2 files changed, 29 insertions(+), 159 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 81a250830808..1d8d9a508373 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -190,10 +190,8 @@ struct g2d_cmdlist_userptr {
- 	dma_addr_t		dma_addr;
- 	unsigned long		userptr;
- 	unsigned long		size;
--	struct page		**pages;
--	unsigned int		npages;
-+	struct frame_vector	*vec;
- 	struct sg_table		*sgt;
--	struct vm_area_struct	*vma;
- 	atomic_t		refcount;
- 	bool			in_pool;
- 	bool			out_of_list;
-@@ -363,6 +361,7 @@ static void g2d_userptr_put_dma_addr(struct drm_device *drm_dev,
- {
- 	struct g2d_cmdlist_userptr *g2d_userptr =
- 					(struct g2d_cmdlist_userptr *)obj;
-+	struct page **pages;
- 
- 	if (!obj)
- 		return;
-@@ -382,19 +381,21 @@ out:
- 	exynos_gem_unmap_sgt_from_dma(drm_dev, g2d_userptr->sgt,
- 					DMA_BIDIRECTIONAL);
- 
--	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
--					g2d_userptr->npages,
--					g2d_userptr->vma);
-+	pages = frame_vector_pages(g2d_userptr->vec);
-+	if (!IS_ERR(pages)) {
-+		int i;
- 
--	exynos_gem_put_vma(g2d_userptr->vma);
-+		for (i = 0; i < frame_vector_count(g2d_userptr->vec); i++)
-+			set_page_dirty_lock(pages[i]);
-+	}
-+	put_vaddr_frames(g2d_userptr->vec);
-+	frame_vector_destroy(g2d_userptr->vec);
- 
- 	if (!g2d_userptr->out_of_list)
- 		list_del_init(&g2d_userptr->list);
- 
- 	sg_free_table(g2d_userptr->sgt);
- 	kfree(g2d_userptr->sgt);
--
--	drm_free_large(g2d_userptr->pages);
- 	kfree(g2d_userptr);
- }
- 
-@@ -408,9 +409,7 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
- 	struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
- 	struct g2d_cmdlist_userptr *g2d_userptr;
- 	struct g2d_data *g2d;
--	struct page **pages;
- 	struct sg_table	*sgt;
--	struct vm_area_struct *vma;
- 	unsigned long start, end;
- 	unsigned int npages, offset;
- 	int ret;
-@@ -456,65 +455,38 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	atomic_set(&g2d_userptr->refcount, 1);
-+	g2d_userptr->size = size;
- 
- 	start = userptr & PAGE_MASK;
- 	offset = userptr & ~PAGE_MASK;
- 	end = PAGE_ALIGN(userptr + size);
- 	npages = (end - start) >> PAGE_SHIFT;
--	g2d_userptr->npages = npages;
--
--	pages = drm_calloc_large(npages, sizeof(struct page *));
--	if (!pages) {
--		DRM_ERROR("failed to allocate pages.\n");
--		ret = -ENOMEM;
-+	g2d_userptr->vec = frame_vector_create(npages);
-+	if (!g2d_userptr->vec)
- 		goto err_free;
--	}
- 
--	down_read(&current->mm->mmap_sem);
--	vma = find_vma(current->mm, userptr);
--	if (!vma) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("failed to get vm region.\n");
-+	ret = get_vaddr_frames(start, npages, true, true, g2d_userptr->vec);
-+	if (ret != npages) {
-+		DRM_ERROR("failed to get user pages from userptr.\n");
-+		if (ret < 0)
-+			goto err_destroy_framevec;
- 		ret = -EFAULT;
--		goto err_free_pages;
-+		goto err_put_framevec;
- 	}
--
--	if (vma->vm_end < userptr + size) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("vma is too small.\n");
-+	if (frame_vector_to_pages(g2d_userptr->vec) < 0) {
- 		ret = -EFAULT;
--		goto err_free_pages;
-+		goto err_put_framevec;
- 	}
- 
--	g2d_userptr->vma = exynos_gem_get_vma(vma);
--	if (!g2d_userptr->vma) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("failed to copy vma.\n");
--		ret = -ENOMEM;
--		goto err_free_pages;
--	}
--
--	g2d_userptr->size = size;
--
--	ret = exynos_gem_get_pages_from_userptr(start & PAGE_MASK,
--						npages, pages, vma);
--	if (ret < 0) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("failed to get user pages from userptr.\n");
--		goto err_put_vma;
--	}
--
--	up_read(&current->mm->mmap_sem);
--	g2d_userptr->pages = pages;
--
- 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
- 	if (!sgt) {
- 		ret = -ENOMEM;
--		goto err_free_userptr;
-+		goto err_put_framevec;
- 	}
- 
--	ret = sg_alloc_table_from_pages(sgt, pages, npages, offset,
--					size, GFP_KERNEL);
-+	ret = sg_alloc_table_from_pages(sgt,
-+					frame_vector_pages(g2d_userptr->vec),
-+					npages, offset, size, GFP_KERNEL);
- 	if (ret < 0) {
- 		DRM_ERROR("failed to get sgt from pages.\n");
- 		goto err_free_sgt;
-@@ -549,16 +521,11 @@ err_sg_free_table:
- err_free_sgt:
- 	kfree(sgt);
- 
--err_free_userptr:
--	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
--					g2d_userptr->npages,
--					g2d_userptr->vma);
--
--err_put_vma:
--	exynos_gem_put_vma(g2d_userptr->vma);
-+err_put_framevec:
-+	put_vaddr_frames(g2d_userptr->vec);
- 
--err_free_pages:
--	drm_free_large(pages);
-+err_destroy_framevec:
-+	frame_vector_destroy(g2d_userptr->vec);
- 
- err_free:
- 	kfree(g2d_userptr);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 0d5b9698d384..47068ae44ced 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -378,103 +378,6 @@ int exynos_drm_gem_get_ioctl(struct drm_device *dev, void *data,
- 	return 0;
- }
- 
--struct vm_area_struct *exynos_gem_get_vma(struct vm_area_struct *vma)
--{
--	struct vm_area_struct *vma_copy;
--
--	vma_copy = kmalloc(sizeof(*vma_copy), GFP_KERNEL);
--	if (!vma_copy)
--		return NULL;
--
--	if (vma->vm_ops && vma->vm_ops->open)
--		vma->vm_ops->open(vma);
--
--	if (vma->vm_file)
--		get_file(vma->vm_file);
--
--	memcpy(vma_copy, vma, sizeof(*vma));
--
--	vma_copy->vm_mm = NULL;
--	vma_copy->vm_next = NULL;
--	vma_copy->vm_prev = NULL;
--
--	return vma_copy;
--}
--
--void exynos_gem_put_vma(struct vm_area_struct *vma)
--{
--	if (!vma)
--		return;
--
--	if (vma->vm_ops && vma->vm_ops->close)
--		vma->vm_ops->close(vma);
--
--	if (vma->vm_file)
--		fput(vma->vm_file);
--
--	kfree(vma);
--}
--
--int exynos_gem_get_pages_from_userptr(unsigned long start,
--						unsigned int npages,
--						struct page **pages,
--						struct vm_area_struct *vma)
--{
--	int get_npages;
--
--	/* the memory region mmaped with VM_PFNMAP. */
--	if (vma_is_io(vma)) {
--		unsigned int i;
--
--		for (i = 0; i < npages; ++i, start += PAGE_SIZE) {
--			unsigned long pfn;
--			int ret = follow_pfn(vma, start, &pfn);
--			if (ret)
--				return ret;
--
--			pages[i] = pfn_to_page(pfn);
--		}
--
--		if (i != npages) {
--			DRM_ERROR("failed to get user_pages.\n");
--			return -EINVAL;
--		}
--
--		return 0;
--	}
--
--	get_npages = get_user_pages(current, current->mm, start,
--					npages, 1, 1, pages, NULL);
--	get_npages = max(get_npages, 0);
--	if (get_npages != npages) {
--		DRM_ERROR("failed to get user_pages.\n");
--		while (get_npages)
--			put_page(pages[--get_npages]);
--		return -EFAULT;
--	}
--
--	return 0;
--}
--
--void exynos_gem_put_pages_to_userptr(struct page **pages,
--					unsigned int npages,
--					struct vm_area_struct *vma)
--{
--	if (!vma_is_io(vma)) {
--		unsigned int i;
--
--		for (i = 0; i < npages; i++) {
--			set_page_dirty_lock(pages[i]);
--
--			/*
--			 * undo the reference we took when populating
--			 * the table.
--			 */
--			put_page(pages[i]);
--		}
--	}
--}
--
- int exynos_gem_map_sgt_with_dma(struct drm_device *drm_dev,
- 				struct sg_table *sgt,
- 				enum dma_data_direction dir)
--- 
-2.1.4
-
-
---2oS5YaxWCcQjTEyO--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
