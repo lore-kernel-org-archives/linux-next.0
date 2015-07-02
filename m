@@ -1,50 +1,51 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] staging: make board support depend on OF_IRQ and
- CLKDEV_LOOKUP
-Date: Thu, 2 Jul 2015 06:54:18 -0700
-Message-ID: <20150702135418.GA4979@roeck-us.net>
-References: <CAMuHMdWS_-=yn8n2_UruwDjK3tnWg6GWkn3PEe4DBNMAEOZOVA@mail.gmail.com>
- <1434842903-24708-1-git-send-email-paul.gortmaker@windriver.com>
- <558C0C82.3080709@windriver.com>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: manual merge of the kbuild tree with Linus' tree
+Date: Thu, 02 Jul 2015 21:53:49 +0200
+Message-ID: <559596CD.6000403@suse.cz>
+References: <20150702103025.634ca1e5@canb.auug.org.au>	<CAMuHMdUCu7MWiUGW+TmVN8=T8SvPHgUoupSdf9XMn0e1mKQm3Q@mail.gmail.com>	<5594E56E.7080605@suse.cz> <CAMuHMdW7bn+jCRaL0xWG7WrVLmOsdmRgYj5F4r73vi2q3pL-Cg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:43566 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753549AbbGBNyW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Jul 2015 09:54:22 -0400
-Content-Disposition: inline
-In-Reply-To: <558C0C82.3080709@windriver.com>
+Received: from cantor2.suse.de ([195.135.220.15]:36007 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754093AbbGBTxw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Jul 2015 15:53:52 -0400
+In-Reply-To: <CAMuHMdW7bn+jCRaL0xWG7WrVLmOsdmRgYj5F4r73vi2q3pL-Cg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@suse.com>, David Vrabel <david.vrabel@citrix.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Jun 25, 2015 at 10:13:22AM -0400, Paul Gortmaker wrote:
-> On 15-06-20 07:28 PM, Paul Gortmaker wrote:
-> > Building allmodconfig for arch/cris currently fails with:
-> > 
-> > drivers/built-in.o: In function `board_staging_register_clock':
-> > drivers/staging/board/board.c:131: undefined reference to `clk_add_alias'
-> > make: *** [vmlinux] Error 1
+Dne 2.7.2015 v 11:18 Geert Uytterhoeven napsal(a):
+> On Thu, Jul 2, 2015 at 9:17 AM, Michal Marek <mmarek@suse.cz> wrote:
+>> Dne 2.7.2015 v 08:47 Geert Uytterhoeven napsal(a):
+>>> On Thu, Jul 2, 2015 at 2:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> diff --cc scripts/kconfig/Makefile
+>>>> index f52abae0ec5f,930de225d52e..000000000000
+>>>> --- a/scripts/kconfig/Makefile
+>>>> +++ b/scripts/kconfig/Makefile
+>>>> @@@ -142,9 -139,9 +143,10 @@@ help
+>>>>         @echo  '  alldefconfig    - New config with all symbols set to default'
+>>>>         @echo  '  randconfig      - New config with random answer to all options'
+>>>>         @echo  '  listnewconfig   - List new options'
+>>>> -       @echo  '  olddefconfig    - Same as silentoldconfig but sets new symbols to their default value'
+>>>> +       @echo  '  olddefconfig    - Same as silentoldconfig but sets new symbols to their'
+>>>> +       @echo  '                    default value'
+>>>>  -      @echo  '  kvmconfig       - Enable additional options for guest kernel support'
+>>>>  +      @echo  '  kvmconfig       - Enable additional options for kvm guest kernel support'
+>>>>  +      @echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
+>>>
+>>> Doh, a new long line to be wrapped.
+>>>
+>>> Michal: Shall I send a fix-up patch, or a new one against Linus' tree?
+>>
+>> Please send one against Linus' tree, because I do not have the xenconfig
+>> patch in the kbuild tree.
 > 
-> Just checking this didn't fall through the cracks, as its absence
-> causes several arch breakage on linux-next for several days now:
-> 
-> (.init.text+0xf968): undefined reference to `clk_add_alias'
-> 
->  
-> x86:     http://kisskb.ellerman.id.au/kisskb/buildresult/12448913/
-> powerpc: http://kisskb.ellerman.id.au/kisskb/buildresult/12449785/
-> parisc:  http://kisskb.ellerman.id.au/kisskb/buildresult/12449940/
-> 
-This problem is now seen in mainline.
+> Done.
 
-Also affected: alpha:allmodconfig, mips:allmodconfig, s390:allmodconfig.
+Sorry, I misunderstood you. Please send a fix-up (i.e. just fixing the
+new long line) patch based on Linus's tree.
 
-and applying the patch fixes the problem.
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
-Guenter
+Michal
