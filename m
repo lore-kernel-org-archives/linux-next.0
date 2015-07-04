@@ -1,63 +1,69 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] crypto: marvell/cesa - another fix up for
- of_get_named_gen_pool() rename
-Date: Fri, 3 Jul 2015 10:59:07 -0700
-Message-ID: <20150703175907.GA27122@roeck-us.net>
-References: <20150703134937.36a048b0@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: next-20150703 build: 1 failures 73 warnings (next-20150703)
+Date: Sat, 4 Jul 2015 00:01:33 -0400
+Message-ID: <CAP=VYLqpwQ4OqYMBW4m9oo2ZjiZEda7vn1zSXxLEYtH7ucbOqQ@mail.gmail.com>
+References: <E1ZB04o-0001MQ-6U@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:58127 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755251AbbGCR7Q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jul 2015 13:59:16 -0400
-Content-Disposition: inline
-In-Reply-To: <20150703134937.36a048b0@canb.auug.org.au>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:33490 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751910AbbGDECE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 4 Jul 2015 00:02:04 -0400
+Received: by wiwl6 with SMTP id l6so241059352wiw.0
+        for <linux-next@vger.kernel.org>; Fri, 03 Jul 2015 21:02:03 -0700 (PDT)
+In-Reply-To: <E1ZB04o-0001MQ-6U@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Build bot for Mark Brown <broonie@kernel.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, jack@suse.cz, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Jul 03, 2015 at 01:49:37PM +1000, Stephen Rothwell wrote:
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/crypto/mv_cesa.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> Andrew, you seem to have forgotten this one (or maybe it was not needed
-> in Linus' tree when you sent that last patch bomb).  Anyway, this is
-> now needed in Linus' tree.
-> 
-See also https://lkml.org/lkml/2015/6/25/122.
+On Fri, Jul 3, 2015 at 8:28 AM, Build bot for Mark Brown
+<broonie@kernel.org> wrote:
+> Tree/Branch: next-20150703
+> Git describe: next-20150703
+> Commit: e58c24353a Add linux-next specific files for 20150703
+>
+> Build Time: 152 min 12 sec
+>
+> Passed:    8 / 9   ( 88.89 %)
+> Failed:    1 / 9   ( 11.11 %)
+>
+> Errors: 1
+> Warnings: 73
+> Section Mismatches: 1
+>
+> Failed defconfigs:
+>         arm-allmodconfig
+>
+> Errors:
+>
+>         arm-allmodconfig
+> ../drivers/gpu/drm/exynos/exynos_drm_g2d.c:465:7: error: 'vec' undeclared (first use in this function)
+>
 
-Guenter
+Bisect:
 
-> diff --git a/drivers/crypto/mv_cesa.c b/drivers/crypto/mv_cesa.c
-> index 5bcd575fa96f..e6b658faef63 100644
-> --- a/drivers/crypto/mv_cesa.c
-> +++ b/drivers/crypto/mv_cesa.c
-> @@ -1034,8 +1034,8 @@ static int mv_cesa_get_sram(struct platform_device *pdev,
->  			     &sram_size);
->  
->  	cp->sram_size = sram_size;
-> -	cp->sram_pool = of_get_named_gen_pool(pdev->dev.of_node,
-> -					      "marvell,crypto-srams", 0);
-> +	cp->sram_pool = of_gen_pool_get(pdev->dev.of_node,
-> +					"marvell,crypto-srams", 0);
->  	if (cp->sram_pool) {
->  		cp->sram = gen_pool_dma_alloc(cp->sram_pool, sram_size,
->  					      &cp->sram_dma);
-> -- 
-> 2.1.4
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
-> 
+6e9d331aec60a3dd1bbc035fbdd84a90364b8565 is the first bad commit
+commit 6e9d331aec60a3dd1bbc035fbdd84a90364b8565
+Author: Jan Kara <jack@suse.cz>
+Date:   Fri Jun 19 09:05:45 2015 +1000
+
+    drm/exynos: convert g2d_userptr_get_dma_addr() to use get_vaddr_frames()
+
+Fix seems posted here...
+
+http://permalink.gmane.org/gmane.comp.video.dri.devel/131898
+
+Original problematic commit comes in via the akpm tree....
+paul@yow:~/git/linux-head$ git describe --contains 6e9d331aec60a3dd
+next-20150703~1^2~4
+
+paul@yow:~/git/linux-head$ git rev-parse next-20150703~1
+43fd9052f8cba2ae8e11c0a763ef5a5c512d187d
+
+...which is:
+
+43fd9052f8cb Merge branch 'akpm/master'
+
+Paul.
