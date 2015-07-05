@@ -1,67 +1,74 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20150703 build: 1 failures 73 warnings (next-20150703)
-Date: Sun, 5 Jul 2015 10:36:54 +0100
-Message-ID: <20150705093654.GB11162@sirena.org.uk>
-References: <E1ZB04o-0001MQ-6U@optimist>
- <CAP=VYLqpwQ4OqYMBW4m9oo2ZjiZEda7vn1zSXxLEYtH7ucbOqQ@mail.gmail.com>
- <20150704165249.231cdacd@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Date: Mon, 6 Jul 2015 09:27:31 +1000
+Message-ID: <20150706092731.4a871578@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cDyoBSpeMmeqjtIY"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40182 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755808AbbGEM1y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Jul 2015 08:27:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20150704165249.231cdacd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, jack@suse.cz, Andrew Morton <akpm@linux-foundation.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+ boundary="Sig_/N1mVZxyvYT7_PoXiWObhOfi"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-
---cDyoBSpeMmeqjtIY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/N1mVZxyvYT7_PoXiWObhOfi
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 04, 2015 at 04:52:49PM +1000, Stephen Rothwell wrote:
-> On Sat, 4 Jul 2015 00:01:33 -0400 Paul Gortmaker <paul.gortmaker@windrive=
-r.com> wrote:
+Hi all,
 
-> > 6e9d331aec60a3dd1bbc035fbdd84a90364b8565 is the first bad commit
-> > commit 6e9d331aec60a3dd1bbc035fbdd84a90364b8565
-> > Author: Jan Kara <jack@suse.cz>
-> > Date:   Fri Jun 19 09:05:45 2015 +1000
+After merging the device-mapper tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> >     drm/exynos: convert g2d_userptr_get_dma_addr() to use get_vaddr_fra=
-mes()
+drivers/md/dm-thin.c: In function '__pool_destroy':
+drivers/md/dm-thin.c:2780:2: error: implicit declaration of function 'vfree=
+' [-Werror=3Dimplicit-function-declaration]
+  vfree(pool->cell_sort_array);
+  ^
+drivers/md/dm-thin.c: In function 'pool_create':
+drivers/md/dm-thin.c:2893:2: error: implicit declaration of function 'vmall=
+oc' [-Werror=3Dimplicit-function-declaration]
+  pool->cell_sort_array =3D vmalloc(sizeof(*pool->cell_sort_array) * CELL_S=
+ORT_ARRAY_SIZE);
+  ^
+drivers/md/dm-thin.c:2893:24: warning: assignment makes pointer from intege=
+r without a cast
+  pool->cell_sort_array =3D vmalloc(sizeof(*pool->cell_sort_array) * CELL_S=
+ORT_ARRAY_SIZE);
+                        ^
 
-> Amazing!  Four SOB lines and lots of CCs and noone bothered to build test=
- it :-(
+Caused by commit
 
-> > Fix seems posted here...
-> >=20
-> > http://permalink.gmane.org/gmane.comp.video.dri.devel/131898
+  94212d3b6054 ("dm thin: allocate the cell_sort_array dynamically")
 
-And there was another, similar fix sent as a result of me reporting the
-same issue earlier last week too with no response :(
+Forgot to include vmalloc.h
 
---cDyoBSpeMmeqjtIY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I have used the device-mapper from next-20150703 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Sig_/N1mVZxyvYT7_PoXiWObhOfi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJVmPq1AAoJECTWi3JdVIfQKAsIAIL2SZ6aFLz4JnTXh4TVlNUO
-/RgOfzEKQq37Hjw8I1lfr8rIjjpdx7LuBASb/7GrsdaVxIUzLZDjALI00pC8Qg0X
-QUYnkkNwXlmEUc1sttB6OIatqmRtP4sK7DM3tuZrf85iBy15x68MeGk9usNEjPVe
-lOyBY7eV6foOfAC4p12LIdMf4B82lYrHF9UlVIXfZzWaOicaNJQq85Kdivqz9bhO
-jVB9LDz0H4hbpLWCCg2XhF1sjTUJi2RrSRlCjClBWhm2lO3eY11ojcRCN8x2bfyo
-sBvfFjvW2NwrYrmr6lSq44a4/zBB9LO3iJhkDPuhBv9DoTb0kYTJtgsNhyi6Eig=
-=RXXn
+iQIcBAEBCAAGBQJVmb1tAAoJEMDTa8Ir7ZwVT8wP/i0CiyXTRPvJ2zsTCAxzQy0B
+3KxzcqDcok7278LSTZaTd7f1p983m0G4SgyKxQ4KP1hDJoAfmQ1LBvCGEAaStfai
+LcdgTb+jD3HQx0ClswwsiWDuyoxLdfms53NvcyviTZ1+aj8LyxUObGgsPhauQhP4
++yTWnbL8ub7o1T25KDQeRa4Vc3UY3WyRafvarb7wYHvo7hlakkabPiLDv9htwdvy
+lP3juYlan+aEpDV/n6/2jP4Uth17odjCiqBKXsNKY8VS5CWWlcYO0tKOmViqyldK
+wFJ7nEEr8Wf0qMpmNhUbYXwcfoSHy2vGQxtPZpBletpyt3xVuXluUr7oO/gj9IJz
+1i1NCMKpkfeuAn+sB1kScJT6dukXVP3gHo8q+W4LESFDCfzGai9IHu0VG+4UWUuH
+/YM8OclfiuMbKSVzLN1rOvivd4MODQDrI2MqXA5Kk6XiqU7s5A7QjQDMVE8RubRd
+psmY1AUYv0Qo4/m+e1tv6qwITlSBiaIQrNOBe6VEceko3LzurFBwtrX3BEN2oFg+
+pvBwwpiN6KKkt9AC3CKcGzRZHxRyw4O/LqLxdqJ19/l08ymDGfD2P0Ztn4AmrfO4
+YzWW3nsxudS4a6rz87sqpjOhSCbAEsqI+HPzrbNevLYGjd41XThzDOVl5oxX2SQ/
+9Efme6voKwo2VVd/stsg
+=oxYR
 -----END PGP SIGNATURE-----
 
---cDyoBSpeMmeqjtIY--
+--Sig_/N1mVZxyvYT7_PoXiWObhOfi--
