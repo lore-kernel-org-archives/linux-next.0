@@ -1,74 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the device-mapper tree
-Date: Mon, 6 Jul 2015 09:27:31 +1000
-Message-ID: <20150706092731.4a871578@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Mon, 6 Jul 2015 10:08:58 +1000
+Message-ID: <20150706100858.649532b5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/N1mVZxyvYT7_PoXiWObhOfi"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/+2AWsTet09zD=_blgrPym6X"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:55376 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751159AbbGFAJF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Jul 2015 20:09:05 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
 
---Sig_/N1mVZxyvYT7_PoXiWObhOfi
+--Sig_/+2AWsTet09zD=_blgrPym6X
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the device-mapper tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the tip tree got a conflict in:
 
-drivers/md/dm-thin.c: In function '__pool_destroy':
-drivers/md/dm-thin.c:2780:2: error: implicit declaration of function 'vfree=
-' [-Werror=3Dimplicit-function-declaration]
-  vfree(pool->cell_sort_array);
-  ^
-drivers/md/dm-thin.c: In function 'pool_create':
-drivers/md/dm-thin.c:2893:2: error: implicit declaration of function 'vmall=
-oc' [-Werror=3Dimplicit-function-declaration]
-  pool->cell_sort_array =3D vmalloc(sizeof(*pool->cell_sort_array) * CELL_S=
-ORT_ARRAY_SIZE);
-  ^
-drivers/md/dm-thin.c:2893:24: warning: assignment makes pointer from intege=
-r without a cast
-  pool->cell_sort_array =3D vmalloc(sizeof(*pool->cell_sort_array) * CELL_S=
-ORT_ARRAY_SIZE);
-                        ^
+  kernel/sched/core.c
 
-Caused by commit
+between commit:
 
-  94212d3b6054 ("dm thin: allocate the cell_sort_array dynamically")
+  2ecd9d29abb1 ("sched, preempt_notifier: separate notifier registration fr=
+om static_key inc/dec")
 
-Forgot to include vmalloc.h
+from Linus' tree and commit:
 
-I have used the device-mapper from next-20150703 for today.
+  6efde1d3716b ("sched/preempt, kvm: Fix KVM preempt_notifier usage")
+
+from the tip tree.
+
+I fixed it up (maybe - see below) and can carry the fix as necessary
+(no action is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/N1mVZxyvYT7_PoXiWObhOfi
+diff --cc kernel/sched/core.c
+index 78b4bad10081,850e54b89a11..000000000000
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@@ -2338,10 -2326,13 +2338,15 @@@ EXPORT_SYMBOL_GPL(preempt_notifier_dec)
+   */
+  void preempt_notifier_register(struct preempt_notifier *notifier)
+  {
+ -	static_key_slow_inc(&preempt_notifier_key);
+ +	if (!static_key_false(&preempt_notifier_key))
+ +		WARN(1, "registering preempt_notifier while notifiers disabled\n");
+ +
++ 	/*
++ 	 * Avoid preemption while changing the preempt notifier list.
++ 	 */
++ 	preempt_disable();
+  	hlist_add_head(&notifier->link, &current->preempt_notifiers);
++ 	preempt_enable();
+  }
+  EXPORT_SYMBOL_GPL(preempt_notifier_register);
+ =20
+@@@ -2353,7 -2344,14 +2358,12 @@@
+   */
+  void preempt_notifier_unregister(struct preempt_notifier *notifier)
+  {
++ 	/*
++ 	 * Avoid preemption while changing the preempt notifier list.
++ 	 */
++ 	preempt_disable();
+  	hlist_del(&notifier->link);
++ 	preempt_enable();
+ -
+ -	static_key_slow_dec(&preempt_notifier_key);
+  }
+  EXPORT_SYMBOL_GPL(preempt_notifier_unregister);
+ =20
+
+--Sig_/+2AWsTet09zD=_blgrPym6X
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVmb1tAAoJEMDTa8Ir7ZwVT8wP/i0CiyXTRPvJ2zsTCAxzQy0B
-3KxzcqDcok7278LSTZaTd7f1p983m0G4SgyKxQ4KP1hDJoAfmQ1LBvCGEAaStfai
-LcdgTb+jD3HQx0ClswwsiWDuyoxLdfms53NvcyviTZ1+aj8LyxUObGgsPhauQhP4
-+yTWnbL8ub7o1T25KDQeRa4Vc3UY3WyRafvarb7wYHvo7hlakkabPiLDv9htwdvy
-lP3juYlan+aEpDV/n6/2jP4Uth17odjCiqBKXsNKY8VS5CWWlcYO0tKOmViqyldK
-wFJ7nEEr8Wf0qMpmNhUbYXwcfoSHy2vGQxtPZpBletpyt3xVuXluUr7oO/gj9IJz
-1i1NCMKpkfeuAn+sB1kScJT6dukXVP3gHo8q+W4LESFDCfzGai9IHu0VG+4UWUuH
-/YM8OclfiuMbKSVzLN1rOvivd4MODQDrI2MqXA5Kk6XiqU7s5A7QjQDMVE8RubRd
-psmY1AUYv0Qo4/m+e1tv6qwITlSBiaIQrNOBe6VEceko3LzurFBwtrX3BEN2oFg+
-pvBwwpiN6KKkt9AC3CKcGzRZHxRyw4O/LqLxdqJ19/l08ymDGfD2P0Ztn4AmrfO4
-YzWW3nsxudS4a6rz87sqpjOhSCbAEsqI+HPzrbNevLYGjd41XThzDOVl5oxX2SQ/
-9Efme6voKwo2VVd/stsg
-=oxYR
+iQIcBAEBCAAGBQJVmccfAAoJEMDTa8Ir7ZwVJ88P/jyZ+LSsu94hgZYaDuZurAzc
+QmA3rEeRX0ECoHTummOkoEafKN7/nRg7wcmrAt4fVeXB2DQgU/7gFicohcDJLR/J
+SkCWD/0pin6MsYRNOxu70HY731eLdge1uHcmCQnDF1yMJLN9EeiCTTSBYL0nnEBY
+OykqoEmm8op16qnX7Hd1PaIFunPkXILv+2RKmkkvDXdJ0wtZXQpXT6jFyVclK/wu
+q+oGsS1ZBiQhiyRnySTcEkUkftzGjC7sde6/6r+LjX8Nuxre9R/OGNXYi0l492JL
+hRWHSZRLJ0vymHrfRhP4j7S0DvRCUsnRsl/DJrIIRpT58P52iaxej60BBwJcPQYi
+jRLCT6YWKmqIr8yTKxYs5FuULmFmzJZfixwOtelEDwjeLovmFi67HGFXPdUAuiSo
+5FEkNuoJBUKEbf3cIsWktvD53Izr60MEeKochGFGk5zlFNcm2JosfwR10DltIxTs
+QIIk0q13lx9gUh097ELgAi21GF5BdUTxc2cDzW92VGJWnPlDTQK2JPWrU4ACFLga
+U32QkfrQ/npWLSE5EDn4MQtVf1G4PaKv3Auf6pgostEJCaE8WOuHrOrL12Lyf74e
+irDD2mzZhwu0rl/LQli7Y9Tu+lo50dQ+JzA1MuBDY4JIBnS5dokghqYCuvtSFazg
+6ZSBD9BS8bXmO7g/LfCs
+=uY/Y
 -----END PGP SIGNATURE-----
 
---Sig_/N1mVZxyvYT7_PoXiWObhOfi--
+--Sig_/+2AWsTet09zD=_blgrPym6X--
