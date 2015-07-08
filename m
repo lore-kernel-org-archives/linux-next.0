@@ -1,72 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Wed, 8 Jul 2015 10:56:06 +1000
-Message-ID: <20150708105606.301171bb@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with Linus' tree
+Date: Wed, 8 Jul 2015 11:43:07 +1000
+Message-ID: <20150708114307.3da73865@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ldYSNj1VI8_exUpV++ElCR0"; protocol="application/pgp-signature"
+ boundary="Sig_/S_jg4HMWNZxhOWmCrSEMall"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59433 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59065 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753671AbbGHA4P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Jul 2015 20:56:15 -0400
+	id S1752195AbbGHBnR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Jul 2015 21:43:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>
 
---Sig_/ldYSNj1VI8_exUpV++ElCR0
+--Sig_/S_jg4HMWNZxhOWmCrSEMall
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Michael,
 
-After merging the tip tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the vhost tree got a conflict in:
 
-kernel/cpu.c: In function '_cpu_down':
-kernel/cpu.c:398:2: error: implicit declaration of function 'irq_lock_spars=
-e' [-Werror=3Dimplicit-function-declaration]
-  irq_lock_sparse();
-  ^
-kernel/cpu.c:407:3: error: implicit declaration of function 'irq_unlock_spa=
-rse' [-Werror=3Dimplicit-function-declaration]
-   irq_unlock_sparse();
-   ^
+  MAINTAINERS
 
-Caused by commit
+between commit:
 
-  fc862aa8288b ("hotplug: Prevent alloc/free of irq descriptors during cpu =
-up/down")
+  4ad6ee91aa9f ("Add MAINTAINERS entry for virtio-gpu")
 
-Forgot to include linux/irqdesc.h.
+from Linus' tree and commit:
 
-I have used the tip tree from next-20150707 for today.
+  f2dbda3b4fc2 ("MAINTAINERS: separate section for s390 virtio drivers")
+
+from the vhost tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/ldYSNj1VI8_exUpV++ElCR0
+diff --cc MAINTAINERS
+index d558d280fdc1,fbef7d0a4dd5..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -10895,15 -10570,15 +10894,24 @@@ F:	drivers/block/virtio_blk.
+  F:	include/linux/virtio_*.h
+  F:	include/uapi/linux/virtio_*.h
+ =20
++ VIRTIO DRIVERS FOR S390
++ M:	Christian Borntraeger <borntraeger@de.ibm.com>
++ M:	Cornelia Huck <cornelia.huck@de.ibm.com>
++ L:	linux-s390@vger.kernel.org
++ L:	virtualization@lists.linux-foundation.org
++ L:	kvm@vger.kernel.org
++ S:	Supported
++ F:	drivers/s390/virtio/
++=20
+ +VIRTIO GPU DRIVER
+ +M:	David Airlie <airlied@linux.ie>
+ +M:	Gerd Hoffmann <kraxel@redhat.com>
+ +L:	dri-devel@lists.freedesktop.org
+ +L:	virtualization@lists.linux-foundation.org
+ +S:	Maintained
+ +F:	drivers/gpu/drm/virtio/
+ +F:	include/uapi/linux/virtio_gpu.h
+ +
+  VIRTIO HOST (VHOST)
+  M:	"Michael S. Tsirkin" <mst@redhat.com>
+  L:	kvm@vger.kernel.org
+
+--Sig_/S_jg4HMWNZxhOWmCrSEMall
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBCAAGBQJVnHUrAAoJEMDTa8Ir7ZwVrcEP/RG43gfhmSzptyk+sI0eZ5GD
-jDd0GWaXbKPi62goSyPO0q3SIGQhqrJ+kQxFfmo6N7JkcB05xA8LPBij3ku5/Pse
-MLkQcrR37bOmyf1ixxd00UzByEj6GGjEYZmOp3Ggj8OuYwaZrihoMuyfcTX5aR6e
-JO6CL+WcI//BEMjvNmvOjTzLQqLj18LwSquPpP+43hIEv44JrH22p0s33zYnAo7q
-EaAJGQNFESR7QysYDMUrGyNITj3310W0UOo4u4N0GVcq+57QgcokeCMKL1xMr61O
-m6djdynsTrB1Frf4azoK9ELoEbxhf08sdYXaKrpFMaa3DLJZ3azsP34tp3rmquPi
-scyXnjhqpueXdfn/CaSnHbq/CDiv8SGNzEO5DCAMW+YS2pFOAxNfrIykc3098NP6
-PWoC5PszwbCVr1SUnGak5ZjPREBsgePzGUySYLjwAm7gtgeY39I/fgqUZHikPiYn
-qPebgXd+R2yBXOZoL4EhBcRLwWoDO696q/2FcRPY2t+yow3NJdNxQSHJ7LtVwWey
-cWGzqI0LvPfjb8Jup+p9GKEKMQeJuiGiN2Ipw+BTOgX3dHcwHI6bEiP3Rv+iDSHO
-biYqa4fYJgfha3z2viFMVIuXNjynCjfrLhTJtB11XsYLaHoCQqZSBCKcO+/tJsGR
-VaI9RgZOTgbRglg89SFe
-=1YSE
+iQIcBAEBCAAGBQJVnIAyAAoJEMDTa8Ir7ZwV18MP/2CF+yD0FVBqFz/pIgRO7/H9
+ayzrhfoKtJR90Wep2zx1NCFHnsEKFYXAsNy4SEVh7hxgB8Y6tAZgbK7zETltYx3m
+yv7Ut7qRWAqeFuJ1lZJshMZgM+v/NJeEDKPaXdzylUDD8q33KGfW40nDW3i1Wkh1
+pDzBgxKNudPLCoQHmVlZ3qn4oZDfSRjIAO1cK/2wSH/PCHPppNS2g1bb+Oasktd+
+emlEKvy5A9ximptpIx0uXyYTOJWFzJ8+ITnyes5xPSTJRreNO6UrQXvN8ItwJFCy
+koMPKBxhgUd2K8r7OIs5NOdK5LbyMWsPkj8f9FlspedtWmmbtCT/jgCCWDReokrD
+kcvUsp718VWDrf9qeryO4ScxSVDPkhGM0/Buv+6rSkrl48OaqBy9yxxIrhr/PANj
+oZAhPu7+jzsPnIt7/bcHXJ4SF0YBhJH0WdMiOJmWja1w8ApfxV6cR9jA77jtv081
+NcUMwff1dIeQgDcJAuv4K7xvdTLVTGv8oJC6/mkOKnLZ9OTqCW1MPaVpIINcaemW
+Xjh33+SU77ycMkNj7Jmb6pMbgUG9+sPqs2Nv+t4IDemh0xOPDbQQETPdWKzEFtNO
+kzzvVWK5PjNdISMDyIKxOwppkJrM/6BX9uyB5hf9YR1ab2+gsQ7xL7fOdWREh5VC
+mMEfIUa2lzQqegrnWedk
+=ulnD
 -----END PGP SIGNATURE-----
 
---Sig_/ldYSNj1VI8_exUpV++ElCR0--
+--Sig_/S_jg4HMWNZxhOWmCrSEMall--
