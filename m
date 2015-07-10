@@ -1,38 +1,76 @@
-From: "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
-Subject: Re: [PATCH] regulators: Add missing dummy definition for regulator_list_voltage
-Date: Fri, 10 Jul 2015 16:14:25 +0100
-Message-ID: <559FE151.2030305@arm.com>
-References: <558D2FB3.1060209@arm.com> <1435316810-8634-1-git-send-email-suzuki.poulose@arm.com> <20150707123838.GF2887@sirena.org.uk>
+From: "Suzuki K. Poulose" <suzuki.poulose@arm.com>
+Subject: [PATCHv2] regulators: Add missing dummy definition for regulator_list_voltage
+Date: Fri, 10 Jul 2015 16:26:38 +0100
+Message-ID: <1436541998-19930-1-git-send-email-suzuki.poulose@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu-smtp-delivery-143.mimecast.com ([146.101.78.143]:27249 "EHLO
+Received: from eu-smtp-delivery-143.mimecast.com ([146.101.78.143]:56329 "EHLO
 	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932716AbbGJPO2 convert rfc822-to-8bit
+	by vger.kernel.org with ESMTP id S1751374AbbGJP0m convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Jul 2015 11:14:28 -0400
-In-Reply-To: <20150707123838.GF2887@sirena.org.uk>
+	Fri, 10 Jul 2015 11:26:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "paul@pwsan.com" <paul@pwsan.com>, "treding@nvidia.com" <treding@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: broonie@kernel.org
+Cc: linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, "Suzuki K. Poulose" <suzuki.poulose@arm.com>, treding@nvidia.com, paul@pwsan.com
 
-On 07/07/15 13:38, Mark Brown wrote:
-> On Fri, Jun 26, 2015 at 12:06:50PM +0100, Suzuki K. Poulose wrote:
->
->> +static inline int regulator_list_voltage(struct regulator *regulator, unsigned selector)
->> +{
->> +	return 0;
->> +}
->
-> I'd expect this stub to return -EINVAL since the voltage count should be
-> zero for !REGULATOR (since we obviously can't count the number of
-> voltages).
->
-You are right, -EINVAL suites better. There are some users of the
-API who consider 0 as invalid, but -EINVAL sounds better and covers
-all the existing uses. Will resend the patch.
+=46rom: "Suzuki K. Poulose" <suzuki.poulose@arm.com>
 
-Thanks
-Suzuki
+=46ixes a build break when CONFIG_REGULATOR is not selected.
+
+e.g, on linux-next - 07102015:
+
+drivers/clk/tegra/clk-dfll.c: In function =E2=80=98find_lut_index_for_r=
+ate=E2=80=99:
+drivers/clk/tegra/clk-dfll.c:691:3: error: implicit declaration of func=
+tion =E2=80=98regulator_list_voltage=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+    if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) =3D=3D uv)
+    ^
+   CC      drivers/clocksource/mmio.o
+   CC      fs/proc/softirqs.o
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/clk/tegra/clk-dfll.o] Error 1
+make[2]: *** [drivers/clk/tegra] Error 2
+make[1]: *** [drivers/clk] Error 2
+make[1]: *** Waiting for unfinished jobs....
+
+This should be pushed to 4.2 as we have the issue in 4.2-rc1, just that
+nobody uses it without the REGULATOR(yet).
+
+Cc: Mark Brown <broonie@kernel.org>
+Cc: treding@nvidia.com
+Cc: paul@pwsan.com
+Signed-off-by: Suzuki K. Poulose <suzuki.poulose@arm.com>
+---
+Changes since V1:
+ - Return -EINVAL instead of 0
+---
+ include/linux/regulator/consumer.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulat=
+or/consumer.h
+index f8a689e..2ba4a40 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -550,6 +550,12 @@ static inline int regulator_count_voltages(struct =
+regulator *regulator)
+ {
+ 	return 0;
+ }
++
++static inline int regulator_list_voltage(struct regulator *regulator, =
+unsigned selector)
++{
++	return -EINVAL;
++}
++
+ #endif
+=20
+ static inline int regulator_set_voltage_tol(struct regulator *regulato=
+r,
+--=20
+1.7.9.5
