@@ -1,67 +1,71 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Crash in -next due to 'MIPS: Move FP usage checks into
- protected_{save, restore}_fp_context'
-Date: Wed, 15 Jul 2015 09:09:18 -0700
-Message-ID: <20150715160918.GA27653@roeck-us.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: please include init-v4.1-rc6 branch for v4.2
+Date: Wed, 15 Jul 2015 16:59:03 -0400
+Message-ID: <20150715205903.GB26147@windriver.com>
+References: <20150602232318.GI29898@windriver.com>
+ <20150603133904.5d8b0bfb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:48637 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751877AbbGOQJd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jul 2015 12:09:33 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:65363 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753439AbbGOU7J convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jul 2015 16:59:09 -0400
 Content-Disposition: inline
+In-Reply-To: <20150603133904.5d8b0bfb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-next@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+[Re: [linux-next] please include init-v4.1-rc6 branch for v4.2] On 03/06/2015 (Wed 13:39) Stephen Rothwell wrote:
 
-my qemu test for mipsel crashes with next-20150715 as follows.
+> Hi Paul,
+> 
+> On Tue, 2 Jun 2015 19:23:18 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> >
+> > Please include init-v4.1-rc6 branch of:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux.git
+> 
+> OK, I will add it in just before I merge Andrew's tree and see how it
+> goes.
+> 
 
-...
-Btrfs loaded
-console [netcon0] enabled
-netconsole: network logging started
-Freeing unused kernel memory: 284K (808f9000 - 80940000)
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000008
+[...]
 
-Bisect points to commit 'MIPS: Move FP usage checks into protected_{save,
-restore}_fp_context'. Bisect log is as follows.
+> 
+> > Assuming I can get Linus to pull the chunks this time, it should be a
+> > one shot (one version) tree from a linux-next point of view.
+> 
+> If he takes it, please remind me to remove the tree.
 
-The problem is not seen with bit endian qemu test.
+As of today, the final commit from this tree is merged, so it can be removed.
 
-Please let me know if there is anything I can do to help debugging
-this problem.
+Thanks again for access to the increased test coverage on all of this.
 
-Thanks,
-Guenter
----
+Paul.
+--
 
-# bad: [f4d61b2d73c1e4964ad68df238af5005485469af] Add linux-next specific files for 20150715
-# good: [bc0195aad0daa2ad5b0d76cce22b167bc3435590] Linux 4.2-rc2
-git bisect start 'HEAD' 'v4.2-rc2'
-# bad: [897f492ee766d354b949f3838cbfda8978cfd3cd] Merge remote-tracking branch 'crypto/master'
-git bisect bad 897f492ee766d354b949f3838cbfda8978cfd3cd
-# bad: [687fe9993e4fbe728113086eb9525360465694e6] Merge remote-tracking branch 'mips/mips-for-linux-next'
-git bisect bad 687fe9993e4fbe728113086eb9525360465694e6
-# good: [a06e5ae4e8d6d5846809e94d0d45afcc5a9eaf35] Merge remote-tracking branch 'omap/for-next'
-git bisect good a06e5ae4e8d6d5846809e94d0d45afcc5a9eaf35
-# good: [badbfaedef0876d3cffb3264512aaec8cc162c61] Merge remote-tracking branch 'tegra/for-next'
-git bisect good badbfaedef0876d3cffb3264512aaec8cc162c61
-# bad: [88841d986cebe1207a47cd7422f5069b2616b194] MIPS: Advertise MSA support via HWCAP when present
-git bisect bad 88841d986cebe1207a47cd7422f5069b2616b194
-# good: [7c1f7b83170bc14a3e461a9b5595fcecf857da70] MIPS: octeon: Replace the homebrewn flow handler
-git bisect good 7c1f7b83170bc14a3e461a9b5595fcecf857da70
-# good: [186a699fdf6f0866ca980bcf5e79f54922fe52c2] MIPS: Introduce accessors for MSA vector registers
-git bisect good 186a699fdf6f0866ca980bcf5e79f54922fe52c2
-# bad: [1793cdaa84ed5c4025a36793f350b07b49555b57] MIPS: Skip odd double FP registers when copying FP32 sigcontext
-git bisect bad 1793cdaa84ed5c4025a36793f350b07b49555b57
-# good: [8a6bb0ab74eaca5f2a4e60f94df2ea5b08cdfd63] MIPS: Simplify EVA FP context handling code
-git bisect good 8a6bb0ab74eaca5f2a4e60f94df2ea5b08cdfd63
-# good: [6f47ebd751531249fe0e2b4d3afdfcbf9f66dbd8] MIPS: Use struct mips_abi offsets to save FP context
-git bisect good 6f47ebd751531249fe0e2b4d3afdfcbf9f66dbd8
-# bad: [fa3156ca734cb65f23df0f844433e75ea1da37f3] MIPS: Move FP usage checks into protected_{save, restore}_fp_context
-git bisect bad fa3156ca734cb65f23df0f844433e75ea1da37f3
-# first bad commit: [fa3156ca734cb65f23df0f844433e75ea1da37f3] MIPS: Move FP usage checks into protected_{save, restore}_fp_context
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+>         Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell 
+> sfr@canb.auug.org.au
