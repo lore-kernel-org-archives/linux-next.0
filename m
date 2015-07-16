@@ -1,56 +1,92 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20150716 build: 4 failures 88 warnings (next-20150716)
-Date: Thu, 16 Jul 2015 15:01:46 +0100
-Message-ID: <20150716140146.GL4039@sirena.org.uk>
-References: <E1ZFg2R-0001bO-R5@optimist>
- <20150716134152.GJ4039@sirena.org.uk>
- <20150716134836.GB26865@e104818-lin.cambridge.arm.com>
+From: Eric B Munson <emunson@akamai.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 16 Jul 2015 10:36:59 -0400
+Message-ID: <55A7C18B.7030104@akamai.com>
+References: <20150716152036.3551cef7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cy9Nn4fUvYST66Pl"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54011 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754463AbbGPOCH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jul 2015 10:02:07 -0400
-Content-Disposition: inline
-In-Reply-To: <20150716134836.GB26865@e104818-lin.cambridge.arm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Toshi Kani <toshi.kani@hp.com>, Matthew Wilcox <willy@linux.intel.com>, Will Deacon <Will.Deacon@arm.com>, "kernel-build-reports@lists.linaro.org" <kernel-build-reports@lists.linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150716152036.3551cef7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
---cy9Nn4fUvYST66Pl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 07/16/2015 01:20 AM, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (arm 
+> multi_v7_defconfig) failed like this:
+> 
+> arch/arm/kernel/entry-common.S: Assembler messages: 
+> arch/arm/kernel/entry-common.S:108: Error: __NR_syscalls is not
+> equal to the size of the syscall table
+> 
+> Caused by commit
+> 
+> d221fc1f0f25 ("mm: mlock: add new mlock, munlock, and munlockall
+> system calls")
+> 
+> I have added the following fix patch for today:
 
-On Thu, Jul 16, 2015 at 02:48:36PM +0100, Catalin Marinas wrote:
-> On Thu, Jul 16, 2015 at 02:41:52PM +0100, Mark Brown wrote:
+Andrew,
 
-> > The update_mmu_cache() function is defined unconditionally in
-> > asm/tlbflush.h so there is presumably some path of conditional
-> > inclusions which causes it not to get declared in an allnoconfig - I
-> > didn't chase that down yet.
+I have an updated set that addresses the build failures by completing
+the system call additions.  It does not yet address Jon's concern
+about applying MLOCK_ONFAULT to a region with pages that are already
+present (this is in progress).
 
-> Maybe we should move it to asm/pgtable.h like many other architectures.
+Do you want the updated syscalls now or wait until the whole thing is
+ready?
 
-Seems likely to be more robust in future if we're consistent...
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au> Date: Thu, 16 Jul
+> 2015 14:58:53 +1000 Subject: [PATCH] mm: mlock: fix for add new
+> mlock, munlock, and munlockall system calls
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au> --- 
+> arch/arm/include/asm/unistd.h | 2 +- arch/arm/kernel/calls.S
+> | 2 +- 2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/unistd.h
+> b/arch/arm/include/asm/unistd.h index 32640c431a08..2516c09d65d7
+> 100644 --- a/arch/arm/include/asm/unistd.h +++
+> b/arch/arm/include/asm/unistd.h @@ -19,7 +19,7 @@ * This may need
+> to be greater than __NR_last_syscall+1 in order to * account for
+> the padding in the syscall table */ -#define __NR_syscalls  (388) 
+> +#define __NR_syscalls  (392)
 
---cy9Nn4fUvYST66Pl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+IIUC, this should be 391.
+
+> 
+> /* * *NOTE*: This is a ghost syscall private to the kernel.  Only
+> the diff --git a/arch/arm/kernel/calls.S b/arch/arm/kernel/calls.S 
+> index 514e77b26414..88808221383b 100644 ---
+> a/arch/arm/kernel/calls.S +++ b/arch/arm/kernel/calls.S @@ -399,7
+> +399,7 @@ CALL(sys_execveat) CALL(sys_mlock2) CALL(sys_munlock2) 
+> -/* 400 */	CALL(sys_munlockall2) +/* 390 */	CALL(sys_munlockall2) 
+> #ifndef syscalls_counted .equ syscalls_padding, ((NR_syscalls + 3)
+> & ~3) - NR_syscalls #define syscalls_counted
+> 
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQEcBAEBCAAGBQJVp7lJAAoJECTWi3JdVIfQ+vwH/ixITd14sSOoBl+3/BTnHEK7
-8YzsfDDsqp11N5dsqbU2+7kjdruNVhR2xwNTXnT1lDe7VWoxEaww1CxbTGUJwXRG
-+pYdMEGTAUWbeU8/BW2z5IJMGmrpolOrIC+98IJDEjMU5wjVcuc8Bm4Z795xdpSI
-vPhaUYodalsIMjSFZJu/03arTkPxGFnkPRs6pm/F+k8/D+TZevmP9NpxxtjXXd2a
-ZW3gSFFyGoiSAGjZ6YeiEK7KSRr3sxiwc7pJcZMlALHgpJYdolyEzUXm9PGPK8Wh
-wCDKZEjEdBTO4LiC7AeCjjgsa1O5VZZKzHnaQ2O6dDUD2alULzDsQPh2Qd0HErE=
-=7AMf
+iQIcBAEBAgAGBQJVp8GLAAoJELbVsDOpoOa9D7AQAIzPHDWeQwR5wDBBo1OyrY8N
+vczsi8h9P4HlTfXH3jv6TYkcTdRRgLJN5ExIcFXUj3dRC+foYjLg+WvSszpJBuBT
+ACc8jjuR+TdcDBSPrQ52QJiGwjKmQZ061HtWyCglveHl6fcAdgVq0/VLjjuEKGGj
+uOFUNNjzWxCkGViOUzTdAsUsY/G6MlDMDERHUsdKkQYF4lofcaQB31L3EvcNBFHU
+r9XIgzyiLDgJ22BgNs0tHBrv3JuQgrf3cEYIhYfwXj8JyrrCHo3IvcfkafGYCrIT
+cTTPpnfTjPKWD2P14R4OAuLViB3GLGeKc//aSS3UZh3y0m1Bzw157BXGCQawqrUu
+xRH+Ft0+gwcmI6Ez/trqu25NTq1KnOsot9XZFK2l3R0CYfYMwNOOUiNRk2+3PElk
+gLu8nhGCF+f4OE7S5zQjcnnZ9rCAEprg/9ewMdRQXlT4719msDuQdzgequrzl55+
+bQJQCPGIvyZhiP+Eh3LgvhJky/XY2xacs5FaHOgTYIeuHd794VQhncEbrbthMS3S
+t94JjTAWssi7nHvau0ASZ3iR5R7iw0WJrvAARUiqkoZxMXQiOW5Tb3KQ+C9gp4KZ
+l6w23L7MhdAMGrY5yLX1o+itet6o3nUksi4DK3qFNcr1gKVYwkXsEIkk6Bv3lRyx
+rAFP155JAY6t3kyTso+I
+=276b
 -----END PGP SIGNATURE-----
-
---cy9Nn4fUvYST66Pl--
