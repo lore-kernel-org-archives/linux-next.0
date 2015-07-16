@@ -1,57 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 16 Jul 2015 15:32:40 +1000
-Message-ID: <20150716153240.4faff811@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Thu, 16 Jul 2015 15:50:20 +1000
+Message-ID: <20150716155020.307cf111@canb.auug.org.au>
+References: <20150716131423.4c849184@canb.auug.org.au>
+	<20150716035138.GQ3717@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33633 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60980 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752068AbbGPFcm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jul 2015 01:32:42 -0400
+	id S1752156AbbGPFuZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jul 2015 01:50:25 -0400
+In-Reply-To: <20150716035138.GQ3717@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Chris Metcalf <cmetcalf@ezchip.com>, Thomas Gleixner <tglx@linutronix.de>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
 
-Hi Andrew,
+Hi Paul,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On Wed, 15 Jul 2015 20:51:38 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+>
+> Thank you in both cases!  I suspect that more will follow, so is there
+> something I can do to make this easier?  (Hard for me to patch stuff
+> that is not yet in the tree...)
 
-ERROR: ".smpboot_register_percpu_thread_cpumask" [drivers/infiniband/hw/ehca/ib_ehca.ko] undefined!
-
-Caused by commit
-
-  2b07b4da35a9 ("smpboot: allow passing the cpumask on per-cpu thread registration")
-
-I have added the following build faix for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 16 Jul 2015 15:30:05 +1000
-Subject: [PATCH] smpboot: fix for allow passing the cpumask on per-cpu thread registration
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/smpboot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/smpboot.c b/kernel/smpboot.c
-index d99a41d25b0c..a818cbc73e14 100644
---- a/kernel/smpboot.c
-+++ b/kernel/smpboot.c
-@@ -308,7 +308,7 @@ out:
- 	put_online_cpus();
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(smpboot_register_percpu_thread);
-+EXPORT_SYMBOL_GPL(smpboot_register_percpu_thread_cpumask);
- 
- /**
-  * smpboot_unregister_percpu_thread - Unregister a per_cpu thread related to hotplug
--- 
-2.1.4
+No, that is what I am here for.  But it would be good if you remember
+this when it comes time for your tree to be merged into tip ...
 
 -- 
 Cheers,
