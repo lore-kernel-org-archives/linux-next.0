@@ -1,53 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the arm tree
-Date: Thu, 16 Jul 2015 14:50:19 +1000
-Message-ID: <20150716145019.03c07a2e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 16 Jul 2015 15:20:36 +1000
+Message-ID: <20150716152036.3551cef7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37488 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45967 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751537AbbGPEuV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jul 2015 00:50:21 -0400
+	id S1751389AbbGPFUi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jul 2015 01:20:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Laurent Dufour <ldufour@linux.vnet.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric B Munson <emunson@akamai.com>
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  arch/arm/include/asm/Kbuild
+arch/arm/kernel/entry-common.S: Assembler messages:
+arch/arm/kernel/entry-common.S:108: Error: __NR_syscalls is not equal to the size of the syscall table
 
-between commit:
+Caused by commit
 
-  57853e8906a0 ("ARM: 8403/1: kbuild: don't use generic mcs_spinlock.h header")
+  d221fc1f0f25 ("mm: mlock: add new mlock, munlock, and munlockall system calls")
 
-from the arm tree and commit:
+I have added the following fix patch for today:
 
-  74cf1a5a0c64 ("mm: clean up per architecture MM hook header files")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 16 Jul 2015 14:58:53 +1000
+Subject: [PATCH] mm: mlock: fix for add new mlock, munlock, and munlockall system calls
 
-from the akpm-current tree.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/include/asm/unistd.h | 2 +-
+ arch/arm/kernel/calls.S       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+diff --git a/arch/arm/include/asm/unistd.h b/arch/arm/include/asm/unistd.h
+index 32640c431a08..2516c09d65d7 100644
+--- a/arch/arm/include/asm/unistd.h
++++ b/arch/arm/include/asm/unistd.h
+@@ -19,7 +19,7 @@
+  * This may need to be greater than __NR_last_syscall+1 in order to
+  * account for the padding in the syscall table
+  */
+-#define __NR_syscalls  (388)
++#define __NR_syscalls  (392)
+ 
+ /*
+  * *NOTE*: This is a ghost syscall private to the kernel.  Only the
+diff --git a/arch/arm/kernel/calls.S b/arch/arm/kernel/calls.S
+index 514e77b26414..88808221383b 100644
+--- a/arch/arm/kernel/calls.S
++++ b/arch/arm/kernel/calls.S
+@@ -399,7 +399,7 @@
+ 		CALL(sys_execveat)
+ 		CALL(sys_mlock2)
+ 		CALL(sys_munlock2)
+-/* 400 */	CALL(sys_munlockall2)
++/* 390 */	CALL(sys_munlockall2)
+ #ifndef syscalls_counted
+ .equ syscalls_padding, ((NR_syscalls + 3) & ~3) - NR_syscalls
+ #define syscalls_counted
+-- 
+2.1.4
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/include/asm/Kbuild
-index 517ef6dd22b9,30b3bc1666d2..000000000000
---- a/arch/arm/include/asm/Kbuild
-+++ b/arch/arm/include/asm/Kbuild
-@@@ -12,6 -12,8 +12,7 @@@ generic-y += irq_regs.
-  generic-y += kdebug.h
-  generic-y += local.h
-  generic-y += local64.h
- -generic-y += mcs_spinlock.h
-+ generic-y += mm-arch-hooks.h
-  generic-y += msgbuf.h
-  generic-y += param.h
-  generic-y += parport.h
