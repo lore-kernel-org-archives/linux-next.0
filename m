@@ -1,40 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Date: Thu, 16 Jul 2015 15:26:00 +1000
-Message-ID: <20150716152600.0ec446c2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 16 Jul 2015 15:32:40 +1000
+Message-ID: <20150716153240.4faff811@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33159 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33633 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751335AbbGPF0B (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jul 2015 01:26:01 -0400
+	id S1752068AbbGPFcm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jul 2015 01:32:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Chris Metcalf <cmetcalf@ezchip.com>, Thomas Gleixner <tglx@linutronix.de>
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+After merging the akpm-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-lib/genalloc.c: In function 'gen_pool_get':
-/scratch/sfr/next/lib/genalloc.c:599:6: warning: passing argument 4 of 'devres_find' discards 'const' qualifier from pointer target type
-  p = devres_find(dev, devm_gen_pool_release, devm_gen_pool_match, name);
-      ^
-In file included from /scratch/sfr/next/include/linux/node.h:17:0,
-                 from /scratch/sfr/next/include/linux/cpu.h:16,
-                 from /scratch/sfr/next/include/linux/of_device.h:4,
-                 from /scratch/sfr/next/lib/genalloc.c:37:
-/scratch/sfr/next/include/linux/device.h:620:14: note: expected 'void *' but argument is of type 'const char *'
- extern void *devres_find(struct device *dev, dr_release_t release,
-              ^
+ERROR: ".smpboot_register_percpu_thread_cpumask" [drivers/infiniband/hw/ehca/ib_ehca.ko] undefined!
 
 Caused by commit
 
-  e89a70fd54f2 ("genalloc: add support of multiple gen_pools per device")
+  2b07b4da35a9 ("smpboot: allow passing the cpumask on per-cpu thread registration")
+
+I have added the following build faix for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 16 Jul 2015 15:30:05 +1000
+Subject: [PATCH] smpboot: fix for allow passing the cpumask on per-cpu thread registration
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/smpboot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/smpboot.c b/kernel/smpboot.c
+index d99a41d25b0c..a818cbc73e14 100644
+--- a/kernel/smpboot.c
++++ b/kernel/smpboot.c
+@@ -308,7 +308,7 @@ out:
+ 	put_online_cpus();
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(smpboot_register_percpu_thread);
++EXPORT_SYMBOL_GPL(smpboot_register_percpu_thread_cpumask);
+ 
+ /**
+  * smpboot_unregister_percpu_thread - Unregister a per_cpu thread related to hotplug
+-- 
+2.1.4
 
 -- 
 Cheers,
