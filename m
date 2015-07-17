@@ -1,86 +1,106 @@
-From: Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: [PATCH] mm-move-mremap-from-file_operations-to-vm_operations_struct-fix
-Date: Fri, 17 Jul 2015 13:37:57 -0400
-Message-ID: <20150717173757.GD2779@kvack.org>
-References: <20150716231405.GA25147@redhat.com> <20150716162444.26425f5e227387f1166a6d16@linux-foundation.org> <20150716235227.GA26551@redhat.com> <20150717140615.GA2779@kvack.org> <20150717172726.GA30443@redhat.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2] mfd: Fixup clients of multi_reg_write/register_patch
+Date: Fri, 17 Jul 2015 18:57:04 +0100
+Message-ID: <20150717175704.GR11162@sirena.org.uk>
+References: <20150717143934.4f0ce5d7@canb.auug.org.au>
+ <20150717094436.GC21939@opensource.wolfsonmicro.com>
+ <20150717103450.GJ11162@sirena.org.uk>
+ <20150717140926.GG21939@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6mqFCp4yUXYxk5sJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kanga.kvack.org ([205.233.56.17]:43055 "EHLO kanga.kvack.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752719AbbGQRh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Jul 2015 13:37:58 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55915 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752438AbbGQR5P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jul 2015 13:57:15 -0400
 Content-Disposition: inline
-In-Reply-To: <20150717172726.GA30443@redhat.com>
+In-Reply-To: <20150717140926.GG21939@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Joonsoo Kim <js1304@gmail.com>, Fengguang Wu <fengguang.wu@intel.com>, Jeff Moyer <jmoyer@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-On Fri, Jul 17, 2015 at 07:27:26PM +0200, Oleg Nesterov wrote:
-> Benjamin,
-> 
-> it seems that we do not understand each other,
-...
-> >
-> > Either try to fix it correctly,
-> 
-> And I think this fix is correct. In a sense that we only add
-> filemap_page_mkwrite() to make the linker happy, it can never be called
-> and thus we can never hit this BUG().
-> 
-> Please look at filemap_fault() in nommu.c,
-> 
-> 	int filemap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
-> 	{
-> 		BUG();
-> 		return 0;
-> 	}
-> 
-> this is the same thing. If nothing else, mm/memory.c is not even compiled
-> if NOMMU.
 
-Using BUG() is the wrong approach.  If the code is not needed in NOMMU, then 
-#ifdef it out.  Think about it: NOMMU systems are very low memory systems 
-and they should not have dead code compiled in if it is not needed.
+--6mqFCp4yUXYxk5sJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > or disable the config.
-> 
-> Yes, I think this makes more sense. but see below...
-> 
-> > Making it just
-> > compile but be knowingly broken is worse than either of those 2 options.
-> 
-> Why? See above. I think this change makes no difference except it fixes
-> the build.
-> 
-> Again, of course I could miss something. Could you explain your point?
+On Fri, Jul 17, 2015 at 03:09:26PM +0100, Nariman Poushin wrote:
+> Introduced by:
+> commit 8019ff6cfc04
+> ("regmap: Use reg_sequence for multi_reg_write / register_patch")
 
-Don't add BUG().  It's the equivalent approach of saying "I think this code 
-isn't needed, but I'm lazy and not going to remove it properly."
+Lee, feel free to pull the request below in to get the API update or let
+me know if you want me to merge some MFD changes instead:
 
-> > My point was that it is valid for someone to want to use the functionality
-> > on a nommu system, and given that it should have worked before the page
-> > migration code was added, It Would Be Nice(tm) to return it to that state.
-> 
-> Perhaps it worked on NOMMU before, I have no idea. But currently, afaics,
-> it can not. Even sys_io_setup() can't suceed. So I do not understand why
-> do we allow NOMMU && CONFIG_AIO.
-> 
-> But this is another issue. Of course I won't insist, please forget.
+The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 
-As I said in my earlier email: aio on NOMMU was broken by the page migration 
-code that was added in mid 3.1x.  Fixing it should not be that hard.
-> 
-> > Adding a BUG() like that to the code is just plain broken.
-> 
-> Why? Could you explain what I have missed?
+  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
 
-It's doing half the job.  Either the code should be #if'd out or not.
+are available in the git repository at:
 
-		-ben
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-seq-delay-api
 
-> Oleg.
+for you to fetch changes up to 8019ff6cfc0440415fcfb6352c58c3951e6ab053:
 
--- 
-"Thought is the essence of where you are now."
+  regmap: Use reg_sequence for multi_reg_write / register_patch (2015-07-16 22:02:55 +0100)
+
+----------------------------------------------------------------
+regmap: Create a new struct reg_sequence for register sequences
+
+In order to allow us to start adding extra annotations for sequences
+without bloating register default tables duplicate the structure under
+the new name reg_sequence and update the APIs to use that instead of
+reg_default.
+
+----------------------------------------------------------------
+Nariman Poushin (1):
+      regmap: Use reg_sequence for multi_reg_write / register_patch
+
+ drivers/base/regmap/internal.h |  2 +-
+ drivers/base/regmap/regmap.c   | 22 +++++++++++-----------
+ drivers/gpu/drm/i2c/adv7511.c  |  2 +-
+ drivers/input/misc/drv260x.c   |  6 +++---
+ drivers/input/misc/drv2665.c   |  2 +-
+ drivers/input/misc/drv2667.c   |  4 ++--
+ drivers/mfd/arizona-core.c     |  2 +-
+ drivers/mfd/twl6040.c          |  2 +-
+ drivers/mfd/wm5102-tables.c    |  6 +++---
+ drivers/mfd/wm5110-tables.c    |  6 +++---
+ drivers/mfd/wm8994-core.c      |  8 ++++----
+ drivers/mfd/wm8997-tables.c    |  2 +-
+ include/linux/regmap.h         | 17 ++++++++++++++---
+ sound/soc/codecs/arizona.c     |  2 +-
+ sound/soc/codecs/cs35l32.c     |  2 +-
+ sound/soc/codecs/cs42l52.c     |  2 +-
+ sound/soc/codecs/da7210.c      |  4 ++--
+ sound/soc/codecs/rt5640.c      |  2 +-
+ sound/soc/codecs/rt5645.c      |  4 ++--
+ sound/soc/codecs/rt5651.c      |  2 +-
+ sound/soc/codecs/rt5670.c      |  2 +-
+ sound/soc/codecs/rt5677.c      |  2 +-
+ sound/soc/codecs/tlv320aic3x.c |  2 +-
+ sound/soc/codecs/wm2200.c      |  2 +-
+ sound/soc/codecs/wm5100.c      |  2 +-
+ sound/soc/codecs/wm8962.c      |  2 +-
+ sound/soc/codecs/wm8993.c      |  2 +-
+ 27 files changed, 62 insertions(+), 51 deletions(-)
+
+--6mqFCp4yUXYxk5sJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVqUHvAAoJECTWi3JdVIfQm6YH/0TEouGaHqGshfGU2b6ru5sV
+Q1hQ0ssSEFYBFtyv6QIvQXPXaEIid+aSqH/S8dWnSDIeJJ8LJl5qiRfg3YtWOt+h
+Ot33FjnvfMVuwc/jDZaibswqoUJba4jO4K/64ZzS+CpKDOL286XwgSrZFtNC+r71
+8YnCns75ULP3W/iLXHgG81lNsJ4wYwncIXcbx1gLCDPQlNr5AyGiOD4fxJoCUjZh
+9o2BydgkrRHQswdqsGkJD5bzhrkqm3TGTt9aa8cSBbgO5EciTvWKlAC+KDAsYCRr
+ss2r+68BNr/sysa0PtG7+P3SUivxMbnCd8fMoJx57cHz47KYK2MJgdxAR/ZhRGI=
+=mjy1
+-----END PGP SIGNATURE-----
+
+--6mqFCp4yUXYxk5sJ--
