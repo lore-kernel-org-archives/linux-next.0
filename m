@@ -1,64 +1,110 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH]
-	mm-move-mremap-from-file_operations-to-vm_operations_struct-fix
-Date: Fri, 17 Jul 2015 20:54:34 +0200
-Message-ID: <20150717185434.GA2290@redhat.com>
-References: <20150716231405.GA25147@redhat.com> <20150716162444.26425f5e227387f1166a6d16@linux-foundation.org> <20150716235227.GA26551@redhat.com> <20150717140615.GA2779@kvack.org> <20150717172726.GA30443@redhat.com> <20150717173757.GD2779@kvack.org> <20150717175542.GA31888@redhat.com> <55A94578.5050306@gmail.com> <20150717181940.GA946@redhat.com> <55A94BD2.5040603@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Fri, 17 Jul 2015 11:53:21 -0700
+Message-ID: <20150717185321.GA10554@linux.vnet.ibm.com>
+References: <20150716131423.4c849184@canb.auug.org.au>
+ <20150716035138.GQ3717@linux.vnet.ibm.com>
+ <20150717114046.GB5396@gmail.com>
+ <20150717173528.GH3717@linux.vnet.ibm.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <55A94BD2.5040603@gmail.com>
+In-Reply-To: <20150717173528.GH3717@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Austin S Hemmelgarn <ahferroin7@gmail.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Joonsoo Kim <js1304@gmail.com>, Fengguang Wu <fengguang.wu@intel.com>, Jeff Moyer <jmoyer@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 07/17, Austin S Hemmelgarn wrote:
->
-> On 2015-07-17 14:19, Oleg Nesterov wrote:
->> On 07/17, Austin S Hemmelgarn wrote:
->>>
->>> On 2015-07-17 13:55, Oleg Nesterov wrote:
->>>> On 07/17, Benjamin LaHaise wrote:
->>>>>
->>>>> Don't add BUG().  It's the equivalent approach of saying "I think this code
->>>>> isn't needed, but I'm lazy and not going to remove it properly."
->>>>
->>>> There is another interpretation: I think this code must be never called,
->>>> if it is actually called we have a serious problem which should be loudly
->>>> reported.
->>>>
->>> And not compiling it at all _will_ loudly report it, it'll just report
->>> it during linking instead of at run-time, which is a much better time to
->>> shout about it.
->>
->> And how can we do this?
->>
-> If a function that isn't defined (for example, you use a #if block to
-> comment it out under certain circumstances), then the link will fail
-> rather noisily something references it.
+On Fri, Jul 17, 2015 at 10:35:28AM -0700, Paul E. McKenney wrote:
+> On Fri, Jul 17, 2015 at 01:40:46PM +0200, Ingo Molnar wrote:
+> > 
+> > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+> > 
+> > > On Thu, Jul 16, 2015 at 01:14:23PM +1000, Stephen Rothwell wrote:
+> > > > Hi Paul,
+> > > > 
+> > > > After merging the rcu tree, today's linux-next build (arm
+> > > > multi_v7_defconfig) failed like this:
+> > > > 
+> > > > kernel/notifier.c: In function 'notify_die':
+> > > > kernel/notifier.c:547:2: error: implicit declaration of function 'rcu_lockdep_assert' [-Werror=implicit-function-declaration]
+> > > >   rcu_lockdep_assert(rcu_is_watching(),
+> > > >   ^
+> > > > 
+> > > > Caused by commit
+> > > > 
+> > > >   02300fdb3e5f ("rcu: Rename rcu_lockdep_assert() to RCU_LOCKDEP_WARN()")
+> > > > 
+> > > > interacting with commit
+> > > > 
+> > > >   e727c7d7a11e ("notifiers, RCU: Assert that RCU is watching in notify_die()")
+> > > > 
+> > > > [ and I also noted
+> > > >   0333a209cbf6 ("x86/irq, context_tracking: Document how IRQ context tracking works and add an RCU assertion")
+> > > > ]
+> > > > 
+> > > > from the tip tree.
+> > > 
+> > > Thank you in both cases!  I suspect that more will follow, so is there
+> > > something I can do to make this easier?  (Hard for me to patch stuff
+> > > that is not yet in the tree...)
+> > 
+> > So we could keep the old macro around as well for such cases, and then remove it 
+> > in v4.4 or so?
+> 
+> Works for me!  Will do.
 
-This is what we are trying to fix.
+And here is a prototype patch, which I intend to merge with the existing
+patch that renames rcu_lockdep_assert() to RCU_LOCKDEP_WARN().  I will
+also queue a revert of the patch below for 4.4.
 
-> We already know during the
-> compile that it's a NOMMU kernel, so anything that calls it on a MMU
-> enabled kernel can have a compile time check added
+Thoughts?
 
-It already has. memory.c is not compiled if NOMMU.
+							Thanx, Paul
 
-The problem is aio_ring_vm_ops which references this function. And btw
-filemap_fault() too.
+------------------------------------------------------------------------
 
-And just in case, I won't mind to add ifdef(CONFIG_MMU) there, I am
-waiting for reply from Benjamin.
-
-> instead of doing the
-> check at runtime (or even just calling it without checking), thus even
-> further reducing code size.
-
-So what exactly do you suggest to fix the problem?
-
-I agree with any solution which satisfies the maintainers.
-
-Oleg.
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 41c49b12fe6d..663d6e028c3d 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -536,9 +536,29 @@ static inline int rcu_read_lock_sched_held(void)
+ 
+ #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+ 
++/* Deprecate the rcu_lockdep_assert() macro. */
++static inline void __attribute((deprecated)) deprecate_rcu_lockdep_assert(void)
++{
++}
++
+ #ifdef CONFIG_PROVE_RCU
+ 
+ /**
++ * rcu_lockdep_assert - emit lockdep splat if specified condition not met
++ * @c: condition to check
++ * @s: informative message
++ */
++#define rcu_lockdep_assert(c, s)					\
++	do {								\
++		static bool __section(.data.unlikely) __warned;		\
++		deprecate_rcu_lockdep_assert();				\
++		if (debug_lockdep_rcu_enabled() && !__warned && !(c)) {	\
++			__warned = true;				\
++			lockdep_rcu_suspicious(__FILE__, __LINE__, s);	\
++		}							\
++	} while (0)
++
++/**
+  * RCU_LOCKDEP_WARN - emit lockdep splat if specified condition is met
+  * @c: condition to check
+  * @s: informative message
+@@ -575,6 +595,7 @@ static inline void rcu_preempt_sleep_check(void)
+ 
+ #else /* #ifdef CONFIG_PROVE_RCU */
+ 
++#define rcu_lockdep_assert(c, s) deprecate_rcu_lockdep_assert()
+ #define RCU_LOCKDEP_WARN(c, s) do { } while (0)
+ #define rcu_sleep_check() do { } while (0)
+ 
