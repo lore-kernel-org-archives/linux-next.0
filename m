@@ -1,58 +1,643 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Fri, 17 Jul 2015 13:40:46 +0200
-Message-ID: <20150717114046.GB5396@gmail.com>
-References: <20150716131423.4c849184@canb.auug.org.au>
- <20150716035138.GQ3717@linux.vnet.ibm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20150717 build: 1 failures 87 warnings (next-20150717)
+Date: Fri, 17 Jul 2015 12:48:38 +0100
+Message-ID: <E1ZG486-0004Uo-GZ@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:33443 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752104AbbGQLkw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jul 2015 07:40:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20150716035138.GQ3717@linux.vnet.ibm.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55526 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756559AbbGQLsr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jul 2015 07:48:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20150717
+Git describe: next-20150717
+Commit: ee9a5e3e8e Add linux-next specific files for 20150717
+
+Build Time: 90 min 42 sec
+
+Passed:    8 / 9   ( 88.89 %)
+Failed:    1 / 9   ( 11.11 %)
+
+Errors: 0
+Warnings: 87
+Section Mismatches: 1
+
+Failed defconfigs:
+	arm-allnoconfig
+
+Errors:
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+    404 warnings    3 mismatches  : arm64-allmodconfig
+      9 warnings    0 mismatches  : arm-multi_v5_defconfig
+     10 warnings    0 mismatches  : arm-multi_v7_defconfig
+     26 warnings    0 mismatches  : arm-allmodconfig
+      4 warnings    0 mismatches  : arm-allnoconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 87
+	 30 ../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 26 ../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 24 ../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 23 ../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 22 ../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 19 ../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 17 ../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 17 ../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	 17 ../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	 14 ../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	 14 ../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	 14 ../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 12 <stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	 12 ../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 10 ../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 10 ../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	  9 ../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  9 ../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  7 <stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+	  7 <stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	  7 <stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	  6 ../drivers/staging/lustre/lustre/osc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  6 ../drivers/staging/lustre/lustre/obdclass/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  5 ../drivers/staging/lustre/lustre/fid/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  5 ../drivers/staging/lustre/lnet/klnds/socklnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  4 ../drivers/staging/lustre/lustre/obdclass/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  4 ../drivers/staging/lustre/lustre/mdc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  4 ../drivers/staging/lustre/lustre/fld/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	  3 warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+	  3 ../drivers/staging/lustre/lustre/osc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  3 ../drivers/staging/lustre/lustre/obdclass/linux/../../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  3 ../drivers/staging/lustre/lustre/mgc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  3 ../drivers/staging/lustre/lustre/lov/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  3 ../drivers/staging/lustre/lnet/lnet/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  3 ../drivers/staging/lustre/lnet/klnds/o2iblnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  2 ../sound/soc/codecs/rt5645.c:2766:22: warning: unused variable 'rt5645' [-Wunused-variable]
+	  2 ../drivers/staging/lustre/lustre/obdclass/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  2 ../drivers/staging/lustre/lustre/mdc/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  2 ../drivers/staging/lustre/lustre/lmv/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  2 ../drivers/staging/lustre/lustre/lmv/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  2 ../drivers/staging/lustre/lustre/llite/../lclient/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../sound/soc/codecs/wm5110.c:362:57: warning: passing argument 2 of 'regmap_multi_reg_write_bypassed' from incompatible pointer type
+	  1 ../sound/soc/codecs/wm5110.c:362:2: warning: passing argument 2 of 'regmap_multi_reg_write_bypassed' from incompatible pointer type [enabled by default]
+	  1 ../sound/soc/codecs/wm5110.c:294:49: warning: passing argument 2 of 'regmap_multi_reg_write' from incompatible pointer type
+	  1 ../sound/soc/codecs/wm5110.c:294:2: warning: passing argument 2 of 'regmap_multi_reg_write' from incompatible pointer type [enabled by default]
+	  1 ../net/ipv4/inet_hashtables.c:617:13: warning: division by zero [-Wdiv-by-zero]
+	  1 ../net/bluetooth/mgmt.c:6613:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:6613:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../ipc/kdbus/connection.c:2049:1: warning: the frame size of 1280 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../include/linux/file.h:55:9: warning: 'cfd' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/file.h:55:16: warning: 'cfd' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/lustre/lustre/obdecho/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  1 ../drivers/staging/lustre/lustre/lov/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  1 ../drivers/staging/lustre/lustre/llite/../lclient/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  1 ../drivers/staging/lustre/lustre/llite/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	  1 ../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/ntb/ntb_transport.c:778:3: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	  1 ../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/mfd/wm8998-tables.c:50:10: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type [enabled by default]
+	  1 ../drivers/mfd/wm8998-tables.c:49:10: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type
+	  1 ../drivers/mfd/wm5110-tables.c:281:11: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type [enabled by default]
+	  1 ../drivers/mfd/wm5110-tables.c:280:11: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type
+	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
+	  1 ../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
+	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/block/nvme-core.c:1849:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/nvme-core.c:1807:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+Section Mismatch Summary: 1
+	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
 
 
-* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
 
-> On Thu, Jul 16, 2015 at 01:14:23PM +1000, Stephen Rothwell wrote:
-> > Hi Paul,
-> > 
-> > After merging the rcu tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> > 
-> > kernel/notifier.c: In function 'notify_die':
-> > kernel/notifier.c:547:2: error: implicit declaration of function 'rcu_lockdep_assert' [-Werror=implicit-function-declaration]
-> >   rcu_lockdep_assert(rcu_is_watching(),
-> >   ^
-> > 
-> > Caused by commit
-> > 
-> >   02300fdb3e5f ("rcu: Rename rcu_lockdep_assert() to RCU_LOCKDEP_WARN()")
-> > 
-> > interacting with commit
-> > 
-> >   e727c7d7a11e ("notifiers, RCU: Assert that RCU is watching in notify_die()")
-> > 
-> > [ and I also noted
-> >   0333a209cbf6 ("x86/irq, context_tracking: Document how IRQ context tracking works and add an RCU assertion")
-> > ]
-> > 
-> > from the tip tree.
-> 
-> Thank you in both cases!  I suspect that more will follow, so is there
-> something I can do to make this easier?  (Hard for me to patch stuff
-> that is not yet in the tree...)
+===============================================================================
+Detailed per-defconfig build reports below:
 
-So we could keep the old macro around as well for such cases, and then remove it 
-in v4.4 or so?
 
-Thanks,
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
-	Ingo
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 404 warnings, 3 section mismatches
+
+Warnings:
+	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
+	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
+	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	../sound/soc/codecs/rt5645.c:2766:22: warning: unused variable 'rt5645' [-Wunused-variable]
+	../sound/soc/codecs/wm5110.c:294:49: warning: passing argument 2 of 'regmap_multi_reg_write' from incompatible pointer type
+	../sound/soc/codecs/wm5110.c:362:57: warning: passing argument 2 of 'regmap_multi_reg_write_bypassed' from incompatible pointer type
+	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/mfd/wm5110-tables.c:280:11: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type
+	../drivers/mfd/wm8998-tables.c:49:10: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/klnds/socklnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/klnds/socklnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/klnds/socklnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/klnds/socklnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/klnds/socklnd/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/lnet/../../include/linux/lnet/../libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lnet/selftest/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fid/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fid/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fid/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fid/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fid/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fld/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fld/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fld/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/fld/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/libcfs/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lmv/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lmv/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lmv/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lmv/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../lclient/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../lclient/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../lclient/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/lov/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mdc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/llite/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mgc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mdc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mdc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/linux/../../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mgc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/linux/../../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mdc/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mgc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/linux/../../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mdc/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/mdc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdecho/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/osc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/linux/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/obdclass/../include/lustre/../../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../include/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/staging/lustre/lustre/ptlrpc/../../include/linux/libcfs/libcfs_string.h:105:0: warning: "strtoul" redefined
+	../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+Section Mismatches:
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	<stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+	../net/ipv4/inet_hashtables.c:617:13: warning: division by zero [-Wdiv-by-zero]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	<stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 10 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	<stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+	../net/bluetooth/mgmt.c:6613:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:6613:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	<stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 26 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	<stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../ipc/kdbus/connection.c:2049:1: warning: the frame size of 1280 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/linux/file.h:55:16: warning: 'cfd' may be used uninitialized in this function [-Wuninitialized]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/block/nvme-core.c:1807:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/nvme-core.c:1849:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../sound/soc/codecs/rt5645.c:2766:22: warning: unused variable 'rt5645' [-Wunused-variable]
+	../sound/soc/codecs/wm5110.c:294:2: warning: passing argument 2 of 'regmap_multi_reg_write' from incompatible pointer type [enabled by default]
+	../sound/soc/codecs/wm5110.c:362:2: warning: passing argument 2 of 'regmap_multi_reg_write_bypassed' from incompatible pointer type [enabled by default]
+	../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
+	../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
+	../drivers/mfd/wm5110-tables.c:281:11: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type [enabled by default]
+	../drivers/mfd/wm8998-tables.c:50:10: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type [enabled by default]
+	../drivers/ntb/ntb_transport.c:778:3: warning: right shift count >= width of type [enabled by default]
+	../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	<stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : FAIL, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1256:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1259:2: warning: #warning syscall munlock2 not implemented [-Wcpp]
+	<stdin>:1262:2: warning: #warning syscall munlockall2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../include/linux/file.h:55:9: warning: 'cfd' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1253:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+x86_64-defconfig
