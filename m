@@ -1,79 +1,57 @@
-From: Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: [PATCH] mm-move-mremap-from-file_operations-to-vm_operations_struct-fix
-Date: Fri, 17 Jul 2015 10:06:15 -0400
-Message-ID: <20150717140615.GA2779@kvack.org>
-References: <20150716231405.GA25147@redhat.com> <20150716162444.26425f5e227387f1166a6d16@linux-foundation.org> <20150716235227.GA26551@redhat.com>
+From: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/2] mfd: Fixup clients of multi_reg_write/register_patch
+Date: Fri, 17 Jul 2015 15:09:26 +0100
+Message-ID: <20150717140926.GG21939@opensource.wolfsonmicro.com>
+References: <20150717143934.4f0ce5d7@canb.auug.org.au> <20150717094436.GC21939@opensource.wolfsonmicro.com> <20150717103450.GJ11162@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150716235227.GA26551@redhat.com>
+In-Reply-To: <20150717103450.GJ11162@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Joonsoo Kim <js1304@gmail.com>, Fengguang Wu <fengguang.wu@intel.com>, Jeff Moyer <jmoyer@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 17, 2015 at 01:52:28AM +0200, Oleg Nesterov wrote:
-> On 07/16, Andrew Morton wrote:
-> >
-> > On Fri, 17 Jul 2015 01:14:05 +0200 Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > > fs/aio.c can't be compiled if CONFIG_MMU=n, filemap_page_mkwrite()
-> > > is not defined in this case. Add yet another "must not be called"
-> > > helper into nommu.c to make the linker happy.
-> > >
-> > > I still think this is pointless, afaics sys_io_setup() simply can't
-> > > succeed if CONFIG_MMU=n. Instead we should make CONFIG_AIO depend
-> > > on CONFIG_MMU.
-> > >
-> > > ..
-> > >
-> > > --- a/mm/nommu.c
-> > > +++ b/mm/nommu.c
-> > > @@ -2008,6 +2008,12 @@ void filemap_map_pages(struct vm_area_struct *vma, struct vm_fault *vmf)
-> > >  }
-> > >  EXPORT_SYMBOL(filemap_map_pages);
-> > >
-> > > +int filemap_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
-> > > +{
-> > > +	BUG();
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
-> > >  		unsigned long addr, void *buf, int len, int write)
-> > >  {
-> >
-> > So if anyone starts testing aio on NOMMU, this patch will make the
-> > whole thing immediately go BUG.  This isn't helpful :(
-> 
-> Well, I'm afraid I could miss something, but _afaics_ this can not
-> happen. filemap_page_mkwrite() can't be called if NOMMU.
-> 
-> In particular, simply because sys_io_setup() is the only user (if
-> NOMMU) and it can't succeed. But even if I missed something and it
-> can succeed, ->page_mkwrite() must not be called anyway. But this,
-> again, unless I missed something ;)
-> 
-> > Yes, making AIO depend on MMU sounds better.
-> 
-> Perhaps Benjamin can change his mind or correct me.
+Introduced by:
+commit 8019ff6cfc04
+("regmap: Use reg_sequence for multi_reg_write / register_patch")
 
-Either try to fix it correctly, or disable the config.  Making it just 
-compile but be knowingly broken is worse than either of those 2 options.  
-My point was that it is valid for someone to want to use the functionality 
-on a nommu system, and given that it should have worked before the page 
-migration code was added, It Would Be Nice(tm) to return it to that state.  
-Adding a BUG() like that to the code is just plain broken.
+Interacting with:
+commit 561629755a21 ("mfd: arizona: Add support for WM8998 and WM1814")
+commit 81207880cef2 ("mfd: wm5110: Add register patch for rev E and above")
 
-		-ben
+Signed-off-by: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
+---
+ drivers/mfd/wm5110-tables.c | 2 +-
+ drivers/mfd/wm8998-tables.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> > Because if it wasn't
-> > busted before, it sure is now!
-> 
-> I hope this change can't make any difference.
-> 
-> Oleg.
-
+diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
+index 90b84c1..31a132a 100644
+--- a/drivers/mfd/wm5110-tables.c
++++ b/drivers/mfd/wm5110-tables.c
+@@ -250,7 +250,7 @@ static const struct reg_sequence wm5110_revd_patch[] = {
+ };
+ 
+ /* Add extra headphone write sequence locations */
+-static const struct reg_default wm5110_reve_patch[] = {
++static const struct reg_sequence wm5110_reve_patch[] = {
+ 	{ 0x80, 0x3 },
+ 	{ 0x80, 0x3 },
+ 	{ 0x4b, 0x138 },
+diff --git a/drivers/mfd/wm8998-tables.c b/drivers/mfd/wm8998-tables.c
+index 60e8622..73d6842 100644
+--- a/drivers/mfd/wm8998-tables.c
++++ b/drivers/mfd/wm8998-tables.c
+@@ -21,7 +21,7 @@
+ #define WM8998_NUM_AOD_ISR 2
+ #define WM8998_NUM_ISR 5
+ 
+-static const struct reg_default wm8998_rev_a_patch[] = {
++static const struct reg_sequence wm8998_rev_a_patch[] = {
+ 	{ 0x0212, 0x0000 },
+ 	{ 0x0211, 0x0014 },
+ 	{ 0x04E4, 0x0E0D },
 -- 
-"Thought is the essence of where you are now."
+2.1.4
