@@ -1,91 +1,66 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Fri, 17 Jul 2015 14:33:36 -0700
-Message-ID: <20150717213336.GL3717@linux.vnet.ibm.com>
-References: <20150716131423.4c849184@canb.auug.org.au>
- <20150716035138.GQ3717@linux.vnet.ibm.com>
- <20150717114046.GB5396@gmail.com>
- <20150717173528.GH3717@linux.vnet.ibm.com>
- <20150717185321.GA10554@linux.vnet.ibm.com>
- <20150717195131.GA27792@gmail.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH]
+	mm-move-mremap-from-file_operations-to-vm_operations_struct-fix
+Date: Sat, 18 Jul 2015 00:31:47 +0200
+Message-ID: <20150717223147.GA13259@redhat.com>
+References: <20150716231405.GA25147@redhat.com> <20150716162444.26425f5e227387f1166a6d16@linux-foundation.org> <20150716235227.GA26551@redhat.com> <20150717140615.GA2779@kvack.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e34.co.us.ibm.com ([32.97.110.152]:35173 "EHLO
-	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753112AbbGQVdm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jul 2015 17:33:42 -0400
-Received: from /spool/local
-	by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Fri, 17 Jul 2015 15:33:41 -0600
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150717195131.GA27792@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+In-Reply-To: <20150717140615.GA2779@kvack.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Benjamin LaHaise <bcrl@kvack.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Joonsoo Kim <js1304@gmail.com>, Fengguang Wu <fengguang.wu@intel.com>, Jeff Moyer <jmoyer@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 17, 2015 at 09:51:31PM +0200, Ingo Molnar wrote:
-> 
-> * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > And here is a prototype patch, which I intend to merge with the existing patch 
-> > that renames rcu_lockdep_assert() to RCU_LOCKDEP_WARN().  I will also queue a 
-> > revert of the patch below for 4.4.
-> > 
-> > Thoughts?
-> > 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> > index 41c49b12fe6d..663d6e028c3d 100644
-> > --- a/include/linux/rcupdate.h
-> > +++ b/include/linux/rcupdate.h
-> > @@ -536,9 +536,29 @@ static inline int rcu_read_lock_sched_held(void)
-> >  
-> >  #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> >  
-> > +/* Deprecate the rcu_lockdep_assert() macro. */
-> > +static inline void __attribute((deprecated)) deprecate_rcu_lockdep_assert(void)
-> > +{
-> > +}
-> > +
-> >  #ifdef CONFIG_PROVE_RCU
-> >  
-> >  /**
-> > + * rcu_lockdep_assert - emit lockdep splat if specified condition not met
-> > + * @c: condition to check
-> > + * @s: informative message
-> > + */
-> > +#define rcu_lockdep_assert(c, s)					\
-> > +	do {								\
-> > +		static bool __section(.data.unlikely) __warned;		\
-> > +		deprecate_rcu_lockdep_assert();				\
-> > +		if (debug_lockdep_rcu_enabled() && !__warned && !(c)) {	\
-> > +			__warned = true;				\
-> > +			lockdep_rcu_suspicious(__FILE__, __LINE__, s);	\
-> > +		}							\
-> 
-> Btw., out of general macro paranoia I'd write such constructs as something like:
-> 
-> 		if (!(c) && debug_lockdep_rcu_enabled() && !__warned) {	\
-> 
-> I.e. always evaluate 'c' even if debugging is off. This way if the construct is 
-> fed an expression with a side effect (bad idea!) then it still works regardless of 
-> whether the warning triggered already or not.
+On 07/17, Benjamin LaHaise wrote:
+>
+> it should have worked before the page
+> migration code was added,
 
-If you feel strongly about this, I will need to make lockdep_is_held()
-be defined when lockdep is disabled.  Easy enough to do, just thought
-I should double-check.
+This is off-topic, but the whole "vm" logic in aio_setup_ring()
+looks sub-optimal. I do not mean the code, just it seems to me it
+is pointless to pollute the page cache, and expose the pages we
+can not swap/free to lru. Afaics we _only_ need this for migration.
 
-> But this construct is OK too to me, so feel free to add my:
-> 
->   Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Perhaps I missed something, doesn't matter. But this means that
+this memory is not accounted, so if I increase aio-max-nr then
+this test-case
 
-Thank you!
+	#define __NR_io_setup	206
 
-							Thanx, Paul
+	int main(void)
+	{
+		int nr;
+
+		for (nr = 0; ;++nr) {
+			void *ctx = NULL;
+			int ret = syscall(__NR_io_setup, 1, &ctx);
+			if (ret) {
+				printf("failed %d %m: ", nr);
+				getchar();
+			}
+		}
+
+		return 0;
+	}
+
+triggers OOM-killer which kills sshd and other daemons on my machine.
+These pages were not even faulted in (or the shrinker can unmap them),
+the kernel can not know who should be blamed.
+
+Shouldn't we account aio events/pages somehow, say per-user, or in
+mm->pinned_vm ?
+
+I do not think this is unkown, and probably this all is fine. IOW,
+this is just a question, not a bug-report or something like this.
+
+And of course, this is not exploitable because aio-max-nr limits
+the number of pages you can steal.
+
+But otoh, aio_max_nr is system-wide, so the unpriviliged user can
+ddos (say) mysqld. And this leads to the same question: shouldn't
+we account nr_events at least?
+
+Oleg.
