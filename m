@@ -1,87 +1,70 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 45/45] clk: Remove clk.h from clk-provider.h
-Date: Sat, 18 Jul 2015 14:17:35 -0400
-Message-ID: <CAP=VYLrPp1rCncnGkB9CX6+7Fecjwgc0Z2mBSh1FNV65GsUGXg@mail.gmail.com>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org> <1436571223-10959-46-git-send-email-sboyd@codeaurora.org>
+Subject: Re: [PATCH] mm: Fix up new locking syscalls
+Date: Sat, 18 Jul 2015 14:54:07 -0400
+Message-ID: <CAP=VYLoN3fLJS5cPFJytdhMjqD21jado+unf0eZD6SYXM5rpyA@mail.gmail.com>
+References: <1437055226-18351-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:33058 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752603AbbGRSSH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jul 2015 14:18:07 -0400
-In-Reply-To: <1436571223-10959-46-git-send-email-sboyd@codeaurora.org>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:36429 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751591AbbGRSyi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jul 2015 14:54:38 -0400
+Received: by wgbcc4 with SMTP id cc4so10390512wgb.3
+        for <linux-next@vger.kernel.org>; Sat, 18 Jul 2015 11:54:36 -0700 (PDT)
+In-Reply-To: <1437055226-18351-1-git-send-email-broonie@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Eric B Munson <emunson@akamai.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "Luck, Tony" <tony.luck@intel.com>
 
-On Fri, Jul 10, 2015 at 7:33 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Remove clk.h from clk-provider.h so that we can clearly split clk
-> providers from clk consumers. This will allow us to quickly
-> detect when clock providers are using the consumer APIs by
-> looking at the includes.
+On Thu, Jul 16, 2015 at 10:00 AM, Mark Brown <broonie@kernel.org> wrote:
+> Extend the arm64 compat syscall table for the new syscalls to fix build
+> errors introduced by "mm: mlock: add new mlock, munlock, and munlockall
+> system calls":
 
-At least one build does not like this change:
+The ia64 builds also are failing with:
 
- running ./x
-#
-# configuration written to .config
-#
-drivers/clk/spear/spear3xx_clock.c: In function 'spear320_clk_init':
-drivers/clk/spear/spear3xx_clock.c:346:2: error: implicit declaration
-of function 'clk_set_parent' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/clk/spear/spear3xx_clock.o] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [drivers/clk/spear] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [drivers/clk/] Error 2
-3a2c322b68f8137be2f1f5788b13bfb9e0b937c3 is the first bad commit
-commit 3a2c322b68f8137be2f1f5788b13bfb9e0b937c3
-Author: Stephen Boyd <sboyd@codeaurora.org>
-Date:   Mon Jun 22 17:13:49 2015 -0700
+arch/ia64/kernel/entry.S:1775: Error: attempt to move .org backwards
 
-    clk: Remove clk.h from clk-provider.h
+and a mindless bisect leads to the same commit listed above, presumably
+for the same NR_syscall issue Mark fixes here.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/12465390/
+http://kisskb.ellerman.id.au/kisskb/buildresult/12465244/
 
 Paul.
 --
 
-
 >
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>  ../arch/arm64/include/asm/unistd32.h:801:1: error: array index in initializer exceeds array bounds
+>  ../arch/arm64/include/asm/unistd32.h:801:1: error: (near initialization for 'compat_sys_call_table')
+>  ../arch/arm64/include/asm/unistd32.h:803:1: error: array index in initializer exceeds array bounds
+>  ../arch/arm64/include/asm/unistd32.h:803:1: error: (near initialization for 'compat_sys_call_table')
+>  ../arch/arm64/include/asm/unistd32.h:805:1: error: array index in initializer exceeds array bounds
+>  ../arch/arm64/include/asm/unistd32.h:805:1: error: (near initialization for 'compat_sys_call_table')
+>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  include/linux/clk-provider.h | 2 +-
+>  arch/arm64/include/asm/unistd.h | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 78842f46f152..36fa555ff431 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -11,7 +11,6 @@
->  #ifndef __LINUX_CLK_PROVIDER_H
->  #define __LINUX_CLK_PROVIDER_H
+> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+> index 3bc498c..aa537a4 100644
+> --- a/arch/arm64/include/asm/unistd.h
+> +++ b/arch/arm64/include/asm/unistd.h
+> @@ -44,7 +44,7 @@
+>  #define __ARM_NR_compat_cacheflush     (__ARM_NR_COMPAT_BASE+2)
+>  #define __ARM_NR_compat_set_tls                (__ARM_NR_COMPAT_BASE+5)
 >
-> -#include <linux/clk.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
+> -#define __NR_compat_syscalls           388
+> +#define __NR_compat_syscalls           391
+>  #endif
 >
-> @@ -33,6 +32,7 @@
->  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
->  #define CLK_RECALC_NEW_RATES   BIT(9) /* recalc rates after notifications */
->
-> +struct clk;
->  struct clk_hw;
->  struct clk_core;
->  struct dentry;
+>  #define __ARCH_WANT_SYS_CLONE
 > --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> 2.1.4
 >
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
