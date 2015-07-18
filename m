@@ -1,68 +1,83 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 22/45] clk: samsung: Properly include clk.h and clkdev.h
-Date: Sat, 18 Jul 2015 14:06:39 -0400
-Message-ID: <CAP=VYLoaHmFLj32uKq3FZSwwnsP7=W-zip4yLwuvqmvVa3P3ew@mail.gmail.com>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
- <1436571223-10959-23-git-send-email-sboyd@codeaurora.org> <55A0C0A6.8060600@samsung.com>
- <55A42299.3040809@codeaurora.org>
+Subject: Re: [PATCH 45/45] clk: Remove clk.h from clk-provider.h
+Date: Sat, 18 Jul 2015 14:17:35 -0400
+Message-ID: <CAP=VYLrPp1rCncnGkB9CX6+7Fecjwgc0Z2mBSh1FNV65GsUGXg@mail.gmail.com>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org> <1436571223-10959-46-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55A42299.3040809@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:33058 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752603AbbGRSSH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jul 2015 14:18:07 -0400
+In-Reply-To: <1436571223-10959-46-git-send-email-sboyd@codeaurora.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Mon, Jul 13, 2015 at 4:42 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->
+On Fri, Jul 10, 2015 at 7:33 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> Remove clk.h from clk-provider.h so that we can clearly split clk
+> providers from clk consumers. This will allow us to quickly
+> detect when clock providers are using the consumer APIs by
+> looking at the includes.
 
-[...]
+At least one build does not like this change:
 
-> I hope to eventually remove the forward declaration of struct clk in
-> clk-provider.h too. That will take some more time though. I can leave this
-> part out of the patch if you like and add it back when that work is done, it
-> doesn't matter to me.
-
-The current version of this patch seems to break at least one of the
-linux-next builds:
-
-Bisecting: 0 revisions left to test after this (roughly 0 steps)
-[41608067f4b3912d03eeb2ad4f9db8cbe4d969ca] clk: samsung: Properly
-include clk.h and clkdev.h
-running ./x
+ running ./x
 #
 # configuration written to .config
 #
-drivers/clk/samsung/clk-s3c2410-dclk.c: In function 's3c24xx_register_clkout':
-drivers/clk/samsung/clk-s3c2410-dclk.c:99:2: error: implicit
-declaration of function 'kzalloc'
-[-Werror=implicit-function-declaration]
-drivers/clk/samsung/clk-s3c2410-dclk.c:99:9: warning: assignment makes
-pointer from integer without a cast [enabled by default]
-drivers/clk/samsung/clk-s3c2410-dclk.c: In function 's3c24xx_dclk_probe':
-drivers/clk/samsung/clk-s3c2410-dclk.c:312:2: error: implicit
-declaration of function 'clk_register_clkdev'
-[-Werror=implicit-function-declaration]
+drivers/clk/spear/spear3xx_clock.c: In function 'spear320_clk_init':
+drivers/clk/spear/spear3xx_clock.c:346:2: error: implicit declaration
+of function 'clk_set_parent' [-Werror=implicit-function-declaration]
 cc1: some warnings being treated as errors
-make[2]: *** [drivers/clk/samsung/clk-s3c2410-dclk.o] Error 1
-make[1]: *** [drivers/clk/samsung] Error 2
+make[2]: *** [drivers/clk/spear/spear3xx_clock.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [drivers/clk/spear] Error 2
+make[1]: *** Waiting for unfinished jobs....
 make: *** [drivers/clk/] Error 2
-41608067f4b3912d03eeb2ad4f9db8cbe4d969ca is the first bad commit
-commit 41608067f4b3912d03eeb2ad4f9db8cbe4d969ca
+3a2c322b68f8137be2f1f5788b13bfb9e0b937c3 is the first bad commit
+commit 3a2c322b68f8137be2f1f5788b13bfb9e0b937c3
 Author: Stephen Boyd <sboyd@codeaurora.org>
-Date:   Fri Jun 19 15:00:46 2015 -0700
+Date:   Mon Jun 22 17:13:49 2015 -0700
 
-    clk: samsung: Properly include clk.h and clkdev.h
+    clk: Remove clk.h from clk-provider.h
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/12465308/
+http://kisskb.ellerman.id.au/kisskb/buildresult/12465390/
 
 Paul.
 --
 
+
 >
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  include/linux/clk-provider.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 78842f46f152..36fa555ff431 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -11,7 +11,6 @@
+>  #ifndef __LINUX_CLK_PROVIDER_H
+>  #define __LINUX_CLK_PROVIDER_H
+>
+> -#include <linux/clk.h>
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+>
+> @@ -33,6 +32,7 @@
+>  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+>  #define CLK_RECALC_NEW_RATES   BIT(9) /* recalc rates after notifications */
+>
+> +struct clk;
+>  struct clk_hw;
+>  struct clk_core;
+>  struct dentry;
 > --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 > a Linux Foundation Collaborative Project
 >
 > --
