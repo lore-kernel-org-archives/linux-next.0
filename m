@@ -1,83 +1,72 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Sat, 18 Jul 2015 04:40:02 +0200
-Message-ID: <20150718024002.GA13059@gmail.com>
-References: <20150716131423.4c849184@canb.auug.org.au>
- <20150716035138.GQ3717@linux.vnet.ibm.com>
- <20150717114046.GB5396@gmail.com>
- <20150717173528.GH3717@linux.vnet.ibm.com>
- <20150717185321.GA10554@linux.vnet.ibm.com>
- <20150717195131.GA27792@gmail.com>
- <20150717213336.GL3717@linux.vnet.ibm.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 22/45] clk: samsung: Properly include clk.h and clkdev.h
+Date: Sat, 18 Jul 2015 14:06:39 -0400
+Message-ID: <CAP=VYLoaHmFLj32uKq3FZSwwnsP7=W-zip4yLwuvqmvVa3P3ew@mail.gmail.com>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+ <1436571223-10959-23-git-send-email-sboyd@codeaurora.org> <55A0C0A6.8060600@samsung.com>
+ <55A42299.3040809@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150717213336.GL3717@linux.vnet.ibm.com>
+In-Reply-To: <55A42299.3040809@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@baylibre.com>, LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Mon, Jul 13, 2015 at 4:42 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>
 
-* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+[...]
 
-> On Fri, Jul 17, 2015 at 09:51:31PM +0200, Ingo Molnar wrote:
-> > 
-> > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
-> > 
-> > > And here is a prototype patch, which I intend to merge with the existing patch 
-> > > that renames rcu_lockdep_assert() to RCU_LOCKDEP_WARN().  I will also queue a 
-> > > revert of the patch below for 4.4.
-> > > 
-> > > Thoughts?
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> > > index 41c49b12fe6d..663d6e028c3d 100644
-> > > --- a/include/linux/rcupdate.h
-> > > +++ b/include/linux/rcupdate.h
-> > > @@ -536,9 +536,29 @@ static inline int rcu_read_lock_sched_held(void)
-> > >  
-> > >  #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> > >  
-> > > +/* Deprecate the rcu_lockdep_assert() macro. */
-> > > +static inline void __attribute((deprecated)) deprecate_rcu_lockdep_assert(void)
-> > > +{
-> > > +}
-> > > +
-> > >  #ifdef CONFIG_PROVE_RCU
-> > >  
-> > >  /**
-> > > + * rcu_lockdep_assert - emit lockdep splat if specified condition not met
-> > > + * @c: condition to check
-> > > + * @s: informative message
-> > > + */
-> > > +#define rcu_lockdep_assert(c, s)					\
-> > > +	do {								\
-> > > +		static bool __section(.data.unlikely) __warned;		\
-> > > +		deprecate_rcu_lockdep_assert();				\
-> > > +		if (debug_lockdep_rcu_enabled() && !__warned && !(c)) {	\
-> > > +			__warned = true;				\
-> > > +			lockdep_rcu_suspicious(__FILE__, __LINE__, s);	\
-> > > +		}							\
-> > 
-> > Btw., out of general macro paranoia I'd write such constructs as something like:
-> > 
-> > 		if (!(c) && debug_lockdep_rcu_enabled() && !__warned) {	\
-> > 
-> > I.e. always evaluate 'c' even if debugging is off. This way if the construct is 
-> > fed an expression with a side effect (bad idea!) then it still works regardless of 
-> > whether the warning triggered already or not.
-> 
-> If you feel strongly about this, I will need to make lockdep_is_held()
-> be defined when lockdep is disabled. [...]
+> I hope to eventually remove the forward declaration of struct clk in
+> clk-provider.h too. That will take some more time though. I can leave this
+> part out of the patch if you like and add it back when that work is done, it
+> doesn't matter to me.
 
-No need - if it goes deeper then I wouldn't worry.
+The current version of this patch seems to break at least one of the
+linux-next builds:
 
-Thanks,
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[41608067f4b3912d03eeb2ad4f9db8cbe4d969ca] clk: samsung: Properly
+include clk.h and clkdev.h
+running ./x
+#
+# configuration written to .config
+#
+drivers/clk/samsung/clk-s3c2410-dclk.c: In function 's3c24xx_register_clkout':
+drivers/clk/samsung/clk-s3c2410-dclk.c:99:2: error: implicit
+declaration of function 'kzalloc'
+[-Werror=implicit-function-declaration]
+drivers/clk/samsung/clk-s3c2410-dclk.c:99:9: warning: assignment makes
+pointer from integer without a cast [enabled by default]
+drivers/clk/samsung/clk-s3c2410-dclk.c: In function 's3c24xx_dclk_probe':
+drivers/clk/samsung/clk-s3c2410-dclk.c:312:2: error: implicit
+declaration of function 'clk_register_clkdev'
+[-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[2]: *** [drivers/clk/samsung/clk-s3c2410-dclk.o] Error 1
+make[1]: *** [drivers/clk/samsung] Error 2
+make: *** [drivers/clk/] Error 2
+41608067f4b3912d03eeb2ad4f9db8cbe4d969ca is the first bad commit
+commit 41608067f4b3912d03eeb2ad4f9db8cbe4d969ca
+Author: Stephen Boyd <sboyd@codeaurora.org>
+Date:   Fri Jun 19 15:00:46 2015 -0700
 
-	Ingo
+    clk: samsung: Properly include clk.h and clkdev.h
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12465308/
+
+Paul.
+--
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
