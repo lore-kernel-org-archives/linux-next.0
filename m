@@ -1,78 +1,51 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH V3 4/5] mm: mmap: Add mmap flag to request VM_LOCKONFAULT
-Date: Sat, 18 Jul 2015 15:11:23 -0400
-Message-ID: <CAP=VYLq5=9DCfncJpQizcSbQt1O7VL2yEdzZNOFK+M3pqLpb3Q@mail.gmail.com>
-References: <1436288623-13007-1-git-send-email-emunson@akamai.com> <1436288623-13007-5-git-send-email-emunson@akamai.com>
+Subject: ASoC: cs4349: Add support for Cirrus Logic CS4349 breaks on multiple
+ arch
+Date: Sat, 18 Jul 2015 15:28:22 -0400
+Message-ID: <20150718192822.GB4477@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:37884 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752159AbbGRTLy convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jul 2015 15:11:54 -0400
-In-Reply-To: <1436288623-13007-5-git-send-email-emunson@akamai.com>
+Received: from mail.windriver.com ([147.11.1.11]:48220 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752090AbbGRT22 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jul 2015 15:28:28 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric B Munson <emunson@akamai.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.cz>, Vlastimil Babka <vbabka@suse.cz>, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-arch <linux-arch@vger.kernel.org>, linux-api@vger.kernel.org, cmetcalf@ezchip.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: tim.howe@cirrus.com
+Cc: broonie@kernel.org, linux-next@vger.kernel.org
 
-On Tue, Jul 7, 2015 at 1:03 PM, Eric B Munson <emunson@akamai.com> wrot=
-e:
-> The cost of faulting in all memory to be locked can be very high when
-> working with large mappings.  If only portions of the mapping will be
-> used this can incur a high penalty for locking.
->
-> Now that we have the new VMA flag for the locked but not present stat=
-e,
-> expose it  as an mmap option like MAP_LOCKED -> VM_LOCKED.
+Hi Tim,
 
-An automatic bisection on arch/tile leads to this commit:
+This commit:
 
-5a5656f2c9b61c74c15f9ef3fa2e6513b6c237bb is the first bad commit
-commit 5a5656f2c9b61c74c15f9ef3fa2e6513b6c237bb
-Author: Eric B Munson <emunson@akamai.com>
-Date:   Thu Jul 16 10:09:22 2015 +1000
+e40da86a37f64c73b810bc7a63d77c44dc61accb is the first bad commit
+commit e40da86a37f64c73b810bc7a63d77c44dc61accb
+Author: Tim Howe <tim.howe@cirrus.com>
+Date:   Thu Jul 16 14:51:40 2015 -0500
 
-    mm: mmap: add mmap flag to request VM_LOCKONFAULT
+    ASoC: cs4349: Add support for Cirrus Logic CS4349
 
-=46ails with:
+    Signed-off-by: Tim Howe <tim.howe@cirrus.com>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
 
-In file included from arch/tile/mm/init.c:24:
-include/linux/mman.h: In function =E2=80=98calc_vm_flag_bits=E2=80=99:
-include/linux/mman.h:90: error: =E2=80=98MAP_LOCKONFAULT=E2=80=99 undec=
-lared (first
-use in this function)
-include/linux/mman.h:90: error: (Each undeclared identifier is
-reported only once
-include/linux/mman.h:90: error: for each function it appears in.)
-In file included from arch/tile/mm/mmap.c:21:
-include/linux/mman.h: In function =E2=80=98calc_vm_flag_bits=E2=80=99:
-include/linux/mman.h:90: error: =E2=80=98MAP_LOCKONFAULT=E2=80=99 undec=
-lared (first
-use in this function)
-include/linux/mman.h:90: error: (Each undeclared identifier is
-reported only once
-include/linux/mman.h:90: error: for each function it appears in.)
-In file included from arch/tile/mm/fault.c:24:
-include/linux/mman.h: In function =E2=80=98calc_vm_flag_bits=E2=80=99:
-include/linux/mman.h:90: error: =E2=80=98MAP_LOCKONFAULT=E2=80=99 undec=
-lared (first
-use in this function)
-include/linux/mman.h:90: error: (Each undeclared identifier is
-reported only once
-include/linux/mman.h:90: error: for each function it appears in.)
-In file included from arch/tile/mm/hugetlbpage.c:27:
-include/linux/mman.h: In function =E2=80=98calc_vm_flag_bits=E2=80=99:
-include/linux/mman.h:90: error: =E2=80=98MAP_LOCKONFAULT=E2=80=99 undec=
-lared (first
-use in this function)
-include/linux/mman.h:90: error: (Each undeclared identifier is
-reported only once
-include/linux/mman.h:90: error: for each function it appears in.)
-make[1]: *** [arch/tile/mm/hugetlbpage.o] Error 1
+is showing up in linux-next build failures for mips, parisc and s390.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/12465365/
+sound/soc/codecs/cs4349.c:300:2: error: implicit declaration of function
+'devm_gpiod_get_optional' [-Werror=implicit-function-declaration]
+sound/soc/codecs/cs4349.c:301:12: error: 'GPIOD_OUT_LOW' undeclared
+(first use in this function)
+sound/soc/codecs/cs4349.c:306:3: error: implicit declaration of function
+'gpiod_set_value_cansleep' [-Werror=implicit-function-declaration]
+
+Here are a few examples:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12465322/
+http://kisskb.ellerman.id.au/kisskb/buildresult/12465445/
+http://kisskb.ellerman.id.au/kisskb/buildresult/12465246/
+
+I'm guessing it needs some tighter Kconfig dependencies to block it
+from being selected on arch that don't have/enable gpio stuff.
 
 Paul.
---
