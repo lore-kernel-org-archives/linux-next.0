@@ -1,58 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: ASoC: cs4349: Add support for Cirrus Logic CS4349 breaks on
- multiple arch
-Date: Sat, 18 Jul 2015 22:16:14 +0100
-Message-ID: <20150718211614.GZ11162@sirena.org.uk>
-References: <20150718192822.GB4477@windriver.com>
- <CAOMZO5AX_Aj3DR4fp9Cv+dySD41_91vZN6bnSNWy_aDzszGfhg@mail.gmail.com>
- <CAOMZO5B98KvAwJppqzi0RcCf-harrO9FXJrfRybwVZYH1r5vJw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 04/16] MIPS: use struct mips_abi offsets to save FP context
+Date: Sat, 18 Jul 2015 20:21:53 -0400
+Message-ID: <CAP=VYLr-DAi0TGuDiSZSeceKQ=Bb6Z9UXNZ=eBKVeP0g1SpOhg@mail.gmail.com>
+References: <1436540426-10021-1-git-send-email-paul.burton@imgtec.com> <1436540426-10021-5-git-send-email-paul.burton@imgtec.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QkVZ4Vgb6v/48gn5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57617 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750853AbbGRVQY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jul 2015 17:16:24 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5B98KvAwJppqzi0RcCf-harrO9FXJrfRybwVZYH1r5vJw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, tim.howe@cirrus.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, akpm@linux-foundation.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1436540426-10021-5-git-send-email-paul.burton@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Matthew Fortune <matthew.fortune@imgtec.com>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Michael Ellerman <mpe@ellerman.id.au>, LKML <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>, James Hogan <james.hogan@imgtec.com>, Andy Lutomirski <luto@amacapital.net>, Markos Chandras <markos.chandras@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Manuel Lauss <manuel.lauss@gmail.com>, "Maciej W. Rozycki" <macro@codesourcery.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
+On Fri, Jul 10, 2015 at 11:00 AM, Paul Burton <paul.burton@imgtec.com> wrote:
+> When saving FP state to struct sigcontext, make use of the offsets
+> provided by struct mips_abi to obtain appropriate addresses for the
+> sc_fpregs & sc_fpc_csr fields of the sigcontext. This is done only for
+> the native struct sigcontext in this patch (ie. for O32 in CONFIG_32BIT
+> kernels or for N64 in CONFIG_64BIT kernels) but is done in preparation
+> for sharing this code with compat ABIs in further patches.
+>
+> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+> ---
+>
+>  arch/mips/kernel/r4k_fpu.S       | 151 +++++++++++++++++++++------------------
+>  arch/mips/kernel/signal-common.h |   6 ++
+>  arch/mips/kernel/signal.c        |  85 +++++++++++++++-------
+>  3 files changed, 145 insertions(+), 97 deletions(-)
+>
 
---QkVZ4Vgb6v/48gn5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ The current version of this in linux-next picked up a booger in transit.
 
-On Sat, Jul 18, 2015 at 06:04:48PM -0300, Fabio Estevam wrote:
+$ git show 6775b4ea74d5922e5310b7b7a902a8fbe61a0c9d|diffstat
+ arch/mips/kernel/r4k_fpu.S       |  151 ++++++++++++++++++++-------------------
+ arch/mips/kernel/signal-common.h |    6 +
+ arch/mips/kernel/signal.c        |   85 ++++++++++++++-------
+ index.html                       |   16 ++++
+ 4 files changed, 161 insertions(+), 97 deletions(-)
 
-> -       select SND_SOC_CS4349 if I2C
-> +       select SND_SOC_CS4349 if I2C && GPIOLIB
+Guessing it happened at Ralf's end.
 
-We don't need Kconfig, we need to include the relevant header for the
-stubs - gpiolib is like regulator and should stub itself out.  akpm has
-a fix in his tree but he hasn't sent it as a patch so I need to go fish
-it out of the notification e-mail which will probably happen on Monday
-or something.
-
-Though quite why an arch would have I2C and not GPIOs...
-
---QkVZ4Vgb6v/48gn5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVqsIdAAoJECTWi3JdVIfQkKkIAIb+BADDVnbIqFCbQ9JOB/KZ
-DnReUt6IeV1XMayGVNJXpevuWbjDX1wDOoi/XFkEd+8hmiu6xsD8chOASmZYsfcz
-HXlw0bWM9UbJFlHBUDHHHerTMoIFp8Fhf59l8NptsHTk2DA3QMjmAjuH5p3nvf0x
-DSJBOwbNC3xkSZT1v6+cPpSdb6hx7GB4v7C/UNGXtWwz7tjUqt3lxdds5tYKeRWS
-WdC8LciPaBZkDdB+FAj83f4/lRp0P3aeaOZOzOO18cvaM0NSbUEJUDrE8+vbyeuR
-9ILLukOgITpL8UpW4WdfMJoIlB9DD83EQK01bmF7N0PmA9pVK1os6p+UELafX9Y=
-=uAXR
------END PGP SIGNATURE-----
-
---QkVZ4Vgb6v/48gn5--
+Paul.
+--
