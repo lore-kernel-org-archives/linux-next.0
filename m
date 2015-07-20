@@ -1,70 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cris tree with Linus' tree
-Date: Mon, 20 Jul 2015 10:01:44 +1000
-Message-ID: <20150720100144.7c6d40fa@canb.auug.org.au>
+Subject: Re: [PATCH 1/2] mfd: Fixup clients of
+ multi_reg_write/register_patch
+Date: Mon, 20 Jul 2015 11:59:35 +1000
+Message-ID: <20150720115935.686b556e@canb.auug.org.au>
+References: <20150717143934.4f0ce5d7@canb.auug.org.au>
+	<20150717094436.GC21939@opensource.wolfsonmicro.com>
+	<20150717103450.GJ11162@sirena.org.uk>
+	<20150717140926.GG21939@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38867 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48184 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754068AbbGTABu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 19 Jul 2015 20:01:50 -0400
+	id S1753947AbbGTB7h (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Jul 2015 21:59:37 -0400
+In-Reply-To: <20150717140926.GG21939@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>, Rabin Vincent <rabin@rab.in>, Laurent Dufour <ldufour@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Hi Jesper,
+Hi Nariman,
 
-Today's linux-next merge of the cris tree got a conflict in:
+On Fri, 17 Jul 2015 15:09:26 +0100 Nariman Poushin <nariman@opensource.wolfsonmicro.com> wrote:
+>
+> Introduced by:
+> commit 8019ff6cfc04
+> ("regmap: Use reg_sequence for multi_reg_write / register_patch")
+> 
+> Interacting with:
+> commit 561629755a21 ("mfd: arizona: Add support for WM8998 and WM1814")
+> commit 81207880cef2 ("mfd: wm5110: Add register patch for rev E and above")
+> 
+> Signed-off-by: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
+> ---
+>  drivers/mfd/wm5110-tables.c | 2 +-
+>  drivers/mfd/wm8998-tables.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-  arch/cris/include/asm/Kbuild
-
-between commits:
-
-  c546d5db75b4 ("remove scatterlist.h generation from arch Kbuild files")
-  f2abeef9fd6f ("mm: clean up per architecture MM hook header files")
-
-from Linus' tree and commit:
-
-  d0529229a92c ("CRIS: UAPI: use generic headers via Kbuild")
-
-from the cris tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I will apply both these patches as merge fix patches in linux-next
+today.  Thanks.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/cris/include/asm/Kbuild
-index ad2244f35bca,2fc4331a69ca..000000000000
---- a/arch/cris/include/asm/Kbuild
-+++ b/arch/cris/include/asm/Kbuild
-@@@ -18,12 -24,23 +24,23 @@@ generic-y += linkage.
-  generic-y += local.h
-  generic-y += local64.h
-  generic-y += mcs_spinlock.h
-+ generic-y += mman.h
- +generic-y += mm-arch-hooks.h
-  generic-y += module.h
-+ generic-y += msgbuf.h
-  generic-y += percpu.h
-+ generic-y += poll.h
-  generic-y += preempt.h
-+ generic-y += resource.h
- -generic-y += scatterlist.h
-  generic-y += sections.h
-+ generic-y += sembuf.h
-+ generic-y += shmbuf.h
-+ generic-y += siginfo.h
-+ generic-y += socket.h
-+ generic-y += sockios.h
-+ generic-y += statfs.h
-  generic-y += topology.h
-  generic-y += trace_clock.h
-+ generic-y += types.h
-  generic-y += vga.h
-  generic-y += xor.h
