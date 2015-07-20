@@ -1,52 +1,39 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH]
-	mm-move-mremap-from-file_operations-to-vm_operations_struct-fix
-Date: Mon, 20 Jul 2015 22:03:58 +0200
-Message-ID: <20150720200358.GA22507@redhat.com>
-References: <20150716162444.26425f5e227387f1166a6d16@linux-foundation.org> <20150716235227.GA26551@redhat.com> <20150717140615.GA2779@kvack.org> <20150717223147.GA13259@redhat.com> <x49h9oysyct.fsf@segfault.boston.devel.redhat.com> <20150720173311.GA4379@redhat.com> <20150720175145.GH21558@kvack.org> <20150720183150.GA6868@redhat.com> <20150720192440.GA20573@redhat.com> <20150720193912.GJ21558@kvack.org>
+From: Chris Metcalf <cmetcalf@ezchip.com>
+Subject: Re: [PATCH V3 4/5] mm: mmap: Add mmap flag to request VM_LOCKONFAULT
+Date: Mon, 20 Jul 2015 16:40:25 -0400
+Message-ID: <55AD5CB9.4090400@ezchip.com>
+References: <1436288623-13007-1-git-send-email-emunson@akamai.com>
+ <1436288623-13007-5-git-send-email-emunson@akamai.com>
+ <CAP=VYLq5=9DCfncJpQizcSbQt1O7VL2yEdzZNOFK+M3pqLpb3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:59835 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752000AbbGTUFt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Jul 2015 16:05:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20150720193912.GJ21558@kvack.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Jeff Moyer <jmoyer@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Joonsoo Kim <js1304@gmail.com>, Fengguang Wu <fengguang.wu@intel.com>, Johannes Weiner <hannes@cmpxchg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CAP=VYLq5=9DCfncJpQizcSbQt1O7VL2yEdzZNOFK+M3pqLpb3Q@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Eric B Munson <emunson@akamai.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.cz>, Vlastimil Babka <vbabka@suse.cz>, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-arch <linux-arch@vger.kernel.org>, linux-api@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 07/20, Benjamin LaHaise wrote:
+On 07/18/2015 03:11 PM, Paul Gortmaker wrote:
+> On Tue, Jul 7, 2015 at 1:03 PM, Eric B Munson<emunson@akamai.com>  wrote:
+>> >The cost of faulting in all memory to be locked can be very high when
+>> >working with large mappings.  If only portions of the mapping will be
+>> >used this can incur a high penalty for locking.
+>> >
+>> >Now that we have the new VMA flag for the locked but not present state,
+>> >expose it  as an mmap option like MAP_LOCKED -> VM_LOCKED.
+> An automatic bisection on arch/tile leads to this commit:
 >
-> On Mon, Jul 20, 2015 at 09:24:40PM +0200, Oleg Nesterov wrote:
-> > On 07/20, Oleg Nesterov wrote:
-> > >
-> > > But again, again, please ignore. This all is off-topic and my understanding
-> > > is very limited.
-> >
-> > Yes, yes, but sorry for noise and let me repeat...
-> >
-> > This memory lives in page-cache/lru, it is visible for shrinker which
-> > will unmap these pages for no reason on memory shortage. IOW, aio fools
-> > the kernel, this memory looks reclaimable but it is not. And we only do
-> > this for migration.
+> 5a5656f2c9b61c74c15f9ef3fa2e6513b6c237bb is the first bad commit
+> commit 5a5656f2c9b61c74c15f9ef3fa2e6513b6c237bb
+> Author: Eric B Munson<emunson@akamai.com>
+> Date:   Thu Jul 16 10:09:22 2015 +1000
 >
-> And we have the same problem with O_DIRECT.
+>      mm: mmap: add mmap flag to request VM_LOCKONFAULT
 
-I don't this so, or I misunderstood. Sure, dio_get_page() will pin the page.
-But not forever and this is unavoidable. This is not the same. OK, nevermind,
-lets forget this.
+Eric, I'm happy to help with figuring out the tile issues.
 
-> > And I should have changes the subject a long ago... So what do you think
-> > we should do with the build failure?
->
-> I honestly don't care what of the options you do -- please just don't go
-> about adding BUG()s.
-
-OK, thanks.
-
-Then I'll send v2 which adds ifdef(MMU) into aio_ring_vm_ops tomorrow.
-
-Oleg.
+-- 
+Chris Metcalf, EZChip Semiconductor
+http://www.ezchip.com
