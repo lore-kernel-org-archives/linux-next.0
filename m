@@ -1,39 +1,41 @@
-From: Chris Metcalf <cmetcalf@ezchip.com>
-Subject: Re: [PATCH V3 4/5] mm: mmap: Add mmap flag to request VM_LOCKONFAULT
-Date: Mon, 20 Jul 2015 16:40:25 -0400
-Message-ID: <55AD5CB9.4090400@ezchip.com>
-References: <1436288623-13007-1-git-send-email-emunson@akamai.com>
- <1436288623-13007-5-git-send-email-emunson@akamai.com>
- <CAP=VYLq5=9DCfncJpQizcSbQt1O7VL2yEdzZNOFK+M3pqLpb3Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfsd tree
+Date: Tue, 21 Jul 2015 09:57:37 +1000
+Message-ID: <20150721095737.7411eb05@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <CAP=VYLq5=9DCfncJpQizcSbQt1O7VL2yEdzZNOFK+M3pqLpb3Q@mail.gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, Eric B Munson <emunson@akamai.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.cz>, Vlastimil Babka <vbabka@suse.cz>, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-arch <linux-arch@vger.kernel.org>, linux-api@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:46584 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752142AbbGTX5l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Jul 2015 19:57:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kinglong Mee <kinglongmee@gmail.com>
 
-On 07/18/2015 03:11 PM, Paul Gortmaker wrote:
-> On Tue, Jul 7, 2015 at 1:03 PM, Eric B Munson<emunson@akamai.com>  wrote:
->> >The cost of faulting in all memory to be locked can be very high when
->> >working with large mappings.  If only portions of the mapping will be
->> >used this can incur a high penalty for locking.
->> >
->> >Now that we have the new VMA flag for the locked but not present state,
->> >expose it  as an mmap option like MAP_LOCKED -> VM_LOCKED.
-> An automatic bisection on arch/tile leads to this commit:
->
-> 5a5656f2c9b61c74c15f9ef3fa2e6513b6c237bb is the first bad commit
-> commit 5a5656f2c9b61c74c15f9ef3fa2e6513b6c237bb
-> Author: Eric B Munson<emunson@akamai.com>
-> Date:   Thu Jul 16 10:09:22 2015 +1000
->
->      mm: mmap: add mmap flag to request VM_LOCKONFAULT
+Hi,
 
-Eric, I'm happy to help with figuring out the tile issues.
+After merging the nfsd tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+fs/nfsd/nfs4state.c: In function 'client_has_state':
+fs/nfsd/nfs4state.c:2249:22: error: 'struct nfs4_client' has no member named 'cl_lo_states'
+   || !list_empty(&clp->cl_lo_states)
+                      ^
+fs/nfsd/nfs4state.c:2252:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+
+Caused by commit
+
+  395b297af7bf ("nfsd: Add layouts checking in client_has_state()")
+
+cl_lo_states is only defined when CONFIG_NFSD_PNFS is set.
+
+I have used the nsfd tree from next-20150720 for today.
 
 -- 
-Chris Metcalf, EZChip Semiconductor
-http://www.ezchip.com
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
