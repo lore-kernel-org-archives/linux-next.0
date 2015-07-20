@@ -1,28 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jul 17
-Date: Mon, 20 Jul 2015 13:00:15 +1000
-Message-ID: <20150720130015.451bd7e3@canb.auug.org.au>
-References: <20150717152606.08ba1c82@canb.auug.org.au>
-	<20150718194148.GA5888@windriver.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 20 Jul 2015 13:44:58 +1000
+Message-ID: <20150720134458.3c77e507@canb.auug.org.au>
+References: <20150717142501.0239bd93@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150718194148.GA5888@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:55413 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932074AbbGTDpA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Jul 2015 23:45:00 -0400
+In-Reply-To: <20150717142501.0239bd93@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 
-Hi Paul,
+Hi all,
 
-On Sat, 18 Jul 2015 15:41:51 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+On Fri, 17 Jul 2015 14:25:01 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> I noticed there are a bunch of new (appeared in the last day or two)
-> fails spread around, so I did a triage/bisect of them so we have a
-> better idea of what is going on as we start the week.
+> After merging the sound-asoc tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> sound/soc/sti/sti_uniperif.c: In function 'sti_uniperiph_dai_suspend':
+> sound/soc/sti/sti_uniperif.c:81:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
+>   ret = pinctrl_pm_select_sleep_state(uni->dev);
+>   ^
+> sound/soc/sti/sti_uniperif.c: In function 'sti_uniperiph_dai_resume':
+> sound/soc/sti/sti_uniperif.c:102:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
+>   ret = pinctrl_pm_select_default_state(uni->dev);
+>   ^
+> 
+> Caused by commit
+> 
+>   f3bd847eb0a7 ("ASoC: sti: Add uniperipheral dai driver")
 
-Thanks for this.  Lets hope some things get fixed ...
+ping!  I still needed this today.
+
+> 
+> I have added this fix patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 17 Jul 2015 14:21:37 +1000
+> Subject: [PATCH] ASoC: sti: included needed header file
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  sound/soc/sti/sti_uniperif.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/sound/soc/sti/sti_uniperif.c b/sound/soc/sti/sti_uniperif.c
+> index 749e6b294184..ab8d36af6dcb 100644
+> --- a/sound/soc/sti/sti_uniperif.c
+> +++ b/sound/soc/sti/sti_uniperif.c
+> @@ -6,6 +6,7 @@
+>   */
+>  
+>  #include <linux/module.h>
+> +#include <linux/pinctrl/consumer.h>
+>  
+>  #include "uniperif.h"
+>  
+> -- 
+> 2.1.4
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
