@@ -1,40 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build failure after merge of the wireless-drivers-next tree
-Date: Wed, 22 Jul 2015 09:07:05 +0300
-Message-ID: <871tg0n2t2.fsf@kamboji.qca.qualcomm.com>
-References: <20150722103239.04995fda@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] regulator: rk808: make better use of the gpiod API
+Date: Wed, 22 Jul 2015 09:13:29 +0200
+Message-ID: <20150722071329.GM9981@pengutronix.de>
+References: <20150721132945.7ffc443b@canb.auug.org.au>
+ <1437461993-14860-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CAJKOXPfY4zYtWKa6U4mzBjtS87HZepOV_hHodU2QJaJrLcr9qQ@mail.gmail.com>
+ <20150721143524.GD9981@pengutronix.de>
+ <20150721144100.GU11162@sirena.org.uk>
+ <55AEE03F.8060100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57682 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754968AbbGVGHM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 02:07:12 -0400
-In-Reply-To: <20150722103239.04995fda@canb.auug.org.au> (Stephen Rothwell's
-	message of "Wed, 22 Jul 2015 10:32:39 +1000")
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:58785 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932090AbbGVHNm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 03:13:42 -0400
+Content-Disposition: inline
+In-Reply-To: <55AEE03F.8060100@samsung.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>, kernel@pengutronix.de, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>
 
-Hi Stephen,
+Hello,
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Wed, Jul 22, 2015 at 09:13:51AM +0900, Krzysztof Kozlowski wrote:
+> On 21.07.2015 23:41, Mark Brown wrote:
+> > That looks like a bug, yes.
+>=20
+> Cc: linux-pm, Kevin, Rafael, Ulf
+Good idea. Note I already sent a patch to Greg that you might want to
+look at, too:
+	http://article.gmane.org/gmane.linux.kernel/2001345
 
-> After merging the wireless-drivers-next tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
->
-> ERROR: "of_default_bus_match_table" [drivers/bcma/bcma.ko] undefined!
->
-> Caused by commit
->
->   cae761b5a6bd ("bcma: populate bus DT subnodes as platform_device-s")
->
-> I have used the wireless-drivers-next tree from next-20150721 for today.
+Best regards
+Uwe
 
-Sorry about that.
-
-Rafal, can you please send a patch to fix this? I'll apply it ASAP.
-
--- 
-Kalle Valo
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
