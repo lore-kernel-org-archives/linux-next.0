@@ -1,39 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] net: via/Kconfig: GENERIC_PCI_IOMAP required if PCI
- not selected
-Date: Wed, 22 Jul 2015 11:08:36 -0700 (PDT)
-Message-ID: <20150722.110836.422018977846427052.davem@davemloft.net>
-References: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20150722 build: 2 failures 75 warnings (next-20150722)
+Date: Wed, 22 Jul 2015 19:40:15 +0100
+Message-ID: <20150722184015.GA11162@sirena.org.uk>
+References: <E1ZHv2t-0004JI-0H@optimist>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Iu0Tl93s8YP0EGMr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:43623 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751820AbbGVSIh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 14:08:37 -0400
-In-Reply-To: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35083 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751154AbbGVSkX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 14:40:23 -0400
+Content-Disposition: inline
+In-Reply-To: <E1ZHv2t-0004JI-0H@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: borneo.antonio@gmail.com
-Cc: paul.gortmaker@windriver.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, alchark@gmail.com
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-From: Antonio Borneo <borneo.antonio@gmail.com>
-Date: Thu, 23 Jul 2015 00:34:14 +0800
 
-> -	depends on (PCI || OF_IRQ)
-> +	depends on (PCI || (OF_IRQ && GENERIC_PCI_IOMAP))
+--Iu0Tl93s8YP0EGMr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Having GENERIC_PCI_IOMAP withut PCI makes absolutely no sense to me.
+On Wed, Jul 22, 2015 at 03:30:56PM +0100, Build bot for Mark Brown wrote:
 
-I can't see why a platform would provide GENERIC_PCI_IOMAP when it
-does not have PCI enabled.
+For the past couple of days linux-next has failed to build an ARM
+allmodconfig due to:
 
-You need to explain this.
+> ERROR: "irq_get_irqchip_state" [drivers/pinctrl/qcom/pinctrl-ssbi-mpp.ko] undefined!
+> ERROR: "irq_get_irqchip_state" [drivers/pinctrl/qcom/pinctrl-ssbi-gpio.ko] undefined!
 
-When PCI is not enabled, you should not be using any interface
-pci_*() whatsoever.  Especially such a core interface as pci_iomap().
+This is due to b4c45fe974bc5f (pinctrl: qcom: ssbi: Family A gpio & mpp
+drivers) and b4c45fe974bc (pinctrl: qcom: ssbi: Family A gpio & mpp
+drivers).  That function isn't exported so can't be used from modules, I
+expect the fix is to add the apprpriate exports.
 
-ALTERNATIVELY, NOP versions of pci_iomap() and friends should be
-provided when PCI is disabled, which just return errors and
-non-success statuses.
+--Iu0Tl93s8YP0EGMr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVr+OOAAoJECTWi3JdVIfQgRsH/ArlS6NCArc/+2BzJcNrtIP1
+8lmJwHrw3sBz2IMJOFLATec95e9ZrCsgdJvstSBfaaAXc32VK4nOEWzBwxLpJhrl
+m2FR/VeVD9euihNBo8GjBnG1mhSPfRDIZWbSttIUn6mOsmzF2JotcsMy+wg1zPFy
+jdC0dcN/3DR9Pffsvzvsg9JDsRFUNf2teIyiXwQOXnqSDW8MKLqBghI/Nmzh9+hC
+fkAqoteL4n9Ey3L23fxH+I6TJAnB9cNTaEyhvpWPHjioYkYTaiFqlmSMC0jz+ocD
+3FqlL7zmQcLOMssUlpYxbm2Aw5wJBNedzdxI49WdPwtp7t5zXo7TnHryqKzCVu0=
+=Zq1j
+-----END PGP SIGNATURE-----
+
+--Iu0Tl93s8YP0EGMr--
