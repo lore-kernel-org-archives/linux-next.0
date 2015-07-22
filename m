@@ -1,69 +1,66 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/3] mfd: Remove MFD_CROS_EC depends on X86 || ARM
-Date: Tue, 21 Jul 2015 18:31:52 -0700
-Message-ID: <CAOesGMgbLLvYxETQp5jN+XO22f2m-ejVri1e9dY+=wML8Rjy-w@mail.gmail.com>
-References: <1435191645-6022-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1435191645-6022-3-git-send-email-javier.martinez@collabora.co.uk>
-	<20150625083854.GV15013@x1>
-	<558BBF6C.7000906@collabora.co.uk>
-	<20150722011300.GF4477@windriver.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 2/2] regulator: rk808: make better use of the gpiod API
+Date: Wed, 22 Jul 2015 11:21:39 +0900
+Message-ID: <CAJKOXPeREmAhrdxJAR4_Pn6ZzYEk8uR_dMCvxLXbBn+bfVQVPQ@mail.gmail.com>
+References: <20150721142149.GC9981@pengutronix.de>
+	<1437489985-1362-1-git-send-email-uwe@kleine-koenig.org>
+	<1437489985-1362-2-git-send-email-uwe@kleine-koenig.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <20150722011300.GF4477@windriver.com>
-Sender: sparclinux-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>, Gwendal Grignou <gwendal@google.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, sparclinux@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:34766 "EHLO
+	mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754965AbbGVCVj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Jul 2015 22:21:39 -0400
+In-Reply-To: <1437489985-1362-2-git-send-email-uwe@kleine-koenig.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Chris Zhong <zyw@rock-chips.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pengutronix.de
 
-On Tue, Jul 21, 2015 at 6:13 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> [Re: [PATCH 2/3] mfd: Remove MFD_CROS_EC depends on X86 || ARM] On 25/06/2015 (Thu 10:44) Javier Martinez Canillas wrote:
+2015-07-21 23:46 GMT+09:00 Uwe Kleine-K=C3=B6nig <uwe@kleine-koenig.org=
+>:
+> From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 >
->> Hello Lee,
->>
->> On 06/25/2015 10:38 AM, Lee Jones wrote:
->> > On Thu, 25 Jun 2015, Javier Martinez Canillas wrote:
->> >
->> >> A dependency on X86 || ARM for MFD_CROS_EC was added to fix the warning:
->> >>
->> >> (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
->> >>
->> >> This happened because CHROME_PLATFORMS had a dependency on X86 || ARM but
->> >> that dependency was removed since there isn't a reason why the option can
->> >> not be selected on other architectures. So now the above warning will not
->> >> happen and the MFD_CROS_EC dependency can be removed since is not needed.
->> >>
->> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> >> ---
->> >>
->> >>  drivers/mfd/Kconfig | 1 -
->> >>  1 file changed, 1 deletion(-)
->> >
->> > Applied for v4.3, thanks.
->> >
->>
->> Thanks a lot.
->>
->> Olof,
->>
->> Could you please ack patch 1/3 so Lee can pick it through the mfd tree?
->> Since both patches 1/3 and 2/3 are needed to fix the build warning for
->> !X86 and !ARM architectures.
+> The gpiod functions include variants for managed gpiod resources. Use=
+ it
+> to simplify the remove function.
 >
-> Hi all,
+> As the driver handles a device node without a specification of dvs gp=
+ios
+> just fine, additionally use the variant of gpiod_get exactly for this
+> use case. This makes error checking more strict.
 >
-> Wondering if this fell through the cracks.  It used to be just a
-> linux-next issue, but now it is a mainline issue.  This _really_ should
-> be fixed and fed to Linus ASAP.  Ideally it should have been fixed before
-> going to mainline as it was reported in plenty of time ; that is the
-> whole point of linux-next.... to fix unanticipated fallout and revise.
+> As a third benefit this patch makes the driver use the flags paramete=
+r
+> of gpiod_get* which will not be optional any more after 4.2 and so
+> prevents a build failure when the respective gpiod commit is merged.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
+> note the above mentioned gpiod change is already in next, so the driv=
+er
+> fails to build there.
+>
+> Changes since (implicit) v1, sent with
+> Message-Id: 1437461993-14860-1-git-send-email-u.kleine-koenig@pengutr=
+onix.de:
+>
+>  - Assert that of_node_put is called in error path to not leak a refe=
+rence
+>    and drop now empty remove callback.
+>    Thanks to Krzysztof Kozlowski for catching.
+>
+>
+> Best regards
+> Uwe
+>  drivers/regulator/rk808-regulator.c | 32 ++++++++++++---------------=
+-----
+>  1 file changed, 12 insertions(+), 20 deletions(-)
 
-Yep, agreed. I've been a bit removed from upstream work for the last
-couple of months (getting back to it now), so I've been bad at
-following up on this.
+Looks good now:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Acks sent now, Lee, please pick up for 4.2 if you don't mind.
-
-
--Olof
+Best regards,
+Krzysztof
