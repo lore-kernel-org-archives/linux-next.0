@@ -1,56 +1,39 @@
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net: via/Kconfig: GENERIC_PCI_IOMAP required if PCI
+ not selected
+Date: Wed, 22 Jul 2015 11:08:36 -0700 (PDT)
+Message-ID: <20150722.110836.422018977846427052.davem@davemloft.net>
+References: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:43623 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751820AbbGVSIh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 14:08:37 -0400
+In-Reply-To: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: borneo.antonio@gmail.com
+Cc: paul.gortmaker@windriver.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, alchark@gmail.com
+
 From: Antonio Borneo <borneo.antonio@gmail.com>
-Subject: [PATCH] net: via/Kconfig: GENERIC_PCI_IOMAP required if PCI not selected
 Date: Thu, 23 Jul 2015 00:34:14 +0800
-Message-ID: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, netdev@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Alexey Charkov <alchark@gmail.com>, Antonio Borneo <borneo.antonio@gmail.com>
-List-Id: linux-next.vger.kernel.org
 
-The builds of arch/sh are failing in linux-next with:
+> -	depends on (PCI || OF_IRQ)
+> +	depends on (PCI || (OF_IRQ && GENERIC_PCI_IOMAP))
 
-drivers/net/ethernet/via/via-rhine.c:1098:2: error: implicit declaration
-of function 'pci_iomap' [-Werror=implicit-function-declaration]
-drivers/net/ethernet/via/via-rhine.c:1119:2: error: implicit declaration
-of function 'pci_iounmap' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-make[5]: *** [drivers/net/ethernet/via/via-rhine.o] Error 1
+Having GENERIC_PCI_IOMAP withut PCI makes absolutely no sense to me.
 
-The logic in include/asm-generic/{io,iomap,pci_iomap}.h
-requires GENERIC_PCI_IOMAP to inline empty pci_iomap/pci_iounmap
-when PCI is not selected.
+I can't see why a platform would provide GENERIC_PCI_IOMAP when it
+does not have PCI enabled.
 
-Add GENERIC_PCI_IOMAP in the dependency list for VIA_RHINE and
-VIA_VELOCITY.
+You need to explain this.
 
-Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
----
- drivers/net/ethernet/via/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+When PCI is not enabled, you should not be using any interface
+pci_*() whatsoever.  Especially such a core interface as pci_iomap().
 
-diff --git a/drivers/net/ethernet/via/Kconfig b/drivers/net/ethernet/via/Kconfig
-index 9bf3ff1..96c527c 100644
---- a/drivers/net/ethernet/via/Kconfig
-+++ b/drivers/net/ethernet/via/Kconfig
-@@ -19,7 +19,7 @@ if NET_VENDOR_VIA
- 
- config VIA_RHINE
- 	tristate "VIA Rhine support"
--	depends on (PCI || OF_IRQ)
-+	depends on (PCI || (OF_IRQ && GENERIC_PCI_IOMAP))
- 	depends on HAS_DMA
- 	select CRC32
- 	select MII
-@@ -44,7 +44,7 @@ config VIA_RHINE_MMIO
- 
- config VIA_VELOCITY
- 	tristate "VIA Velocity support"
--	depends on (PCI || (OF_ADDRESS && OF_IRQ))
-+	depends on (PCI || (OF_ADDRESS && OF_IRQ && GENERIC_PCI_IOMAP))
- 	depends on HAS_DMA
- 	select CRC32
- 	select CRC_CCITT
--- 
-2.4.6
+ALTERNATIVELY, NOP versions of pci_iomap() and friends should be
+provided when PCI is disabled, which just return errors and
+non-success statuses.
