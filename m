@@ -1,54 +1,55 @@
 From: Joachim Eastwood <manabian@gmail.com>
-Subject: Re: next-20150722 build: 2 failures 75 warnings (next-20150722)
-Date: Wed, 22 Jul 2015 23:26:34 +0200
-Message-ID: <CAGhQ9VxXdFOCZhEi07X_k-+zV9NpYG+Brnt_fjPT=3mdyeSrgg@mail.gmail.com>
-References: <E1ZHv2t-0004JI-0H@optimist>
-	<20150722184345.GB11162@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] memory: pl172: fix modular build
+Date: Thu, 23 Jul 2015 00:10:37 +0200
+Message-ID: <1437603037-18395-1-git-send-email-manabian@gmail.com>
+References: <20150722184345.GB11162@sirena.org.uk>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:36001 "EHLO
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:35159 "EHLO
 	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752041AbbGVV0g (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 17:26:36 -0400
-Received: by lbbqi7 with SMTP id qi7so64708120lbb.3
-        for <linux-next@vger.kernel.org>; Wed, 22 Jul 2015 14:26:35 -0700 (PDT)
+	with ESMTP id S1752016AbbGVWKp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 18:10:45 -0400
+Received: by lblf12 with SMTP id f12so145560579lbl.2
+        for <linux-next@vger.kernel.org>; Wed, 22 Jul 2015 15:10:44 -0700 (PDT)
 In-Reply-To: <20150722184345.GB11162@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: olof@lixom.net, arm@kernel.org
+Cc: broonie@kernel.org, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joachim Eastwood <manabian@gmail.com>
 
-On 22 July 2015 at 20:43, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Jul 22, 2015 at 03:30:56PM +0100, Build bot for Mark Brown wrote:
->
-> Today's linux-next fails to build an ARM allmodconfig due to:
->
->> ERROR: "of_default_bus_match_table" [drivers/memory/pl172.ko] undefined!
->
-> 17c50b700c3b4 (memory: add ARM PL172 MultiPort Memory Controller
-> driver).  The symbol of_default_bus_match_table isn't exported by the OF
-> core code so can't be referenced from modules.
+Building pl172 as a module fails with:
+> ERROR: "of_default_bus_match_table" [drivers/memory/pl172.ko] undefined!
 
-Sorry about that. Seems like I didn't do a modular build after I
-started to use "of_default_bus_match_table".
-A quick fix would be to just replace "of_default_bus_match_table" with
-NULL, but that means that child nodes that use "simple-bus" wouldn't
-work. Since I don't have any nodes with "simple-bus" I'll send this
-fix ASAP to Olof.
+Because the symbol of_default_bus_match_table isn't exported by the OF
+core code so can't be referenced from modules. Fix this by removing
+the usage of of_default_bus_match_table for now. The side effect of
+this is that child nodes can't use "simple-bus" or "simple-mfd".
 
-Grant/Rob: Would you be okay with a patch that exports
-"of_default_bus_match_table"?
-I think it would be useful for memory controllers to allow child nodes
-that use "simple-bus" and "simple-mfd".
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
 
-Note that "of_default_bus_match_table" is also used by
-memory/omap-gpmc.c, but this drivers can only be built-in so it
-doesn't face this problem.
-memory/ti-aemif.c and memory/mvebu-devbus.c doesn't use
-"of_default_bus_match_table", but again that means they can't have
-child nodes with "simple-bus".
+This should fix the allmod build failure introduces by the
+pl172 driver that Mark encountered. After this fix the driver
+should builds just fine as a module and there is no behavior
+change when boot my devkit either since none of children under
+pl172 uses "simple-bus/mfd" right now.
 
+ drivers/memory/pl172.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-regards,
-Joachim Eastwood
+diff --git a/drivers/memory/pl172.c b/drivers/memory/pl172.c
+index 3a8e57ee96f0..b2ef6072fbf4 100644
+--- a/drivers/memory/pl172.c
++++ b/drivers/memory/pl172.c
+@@ -255,8 +255,7 @@ static int pl172_probe(struct amba_device *adev, const struct amba_id *id)
+ 		if (ret)
+ 			continue;
+ 
+-		of_platform_populate(child_np, of_default_bus_match_table,
+-				     NULL, dev);
++		of_platform_populate(child_np, NULL, NULL, dev);
+ 	}
+ 
+ 	return 0;
+-- 
+1.8.0
