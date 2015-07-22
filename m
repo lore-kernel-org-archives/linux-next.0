@@ -1,46 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error fetching the ipmi tree
-Date: Wed, 22 Jul 2015 11:03:31 +1000
-Message-ID: <20150722110331.2ed76955@canb.auug.org.au>
-References: <20150722082946.39366276@canb.auug.org.au>
-	<55AED99D.1060405@mvista.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 2/3] mfd: Remove MFD_CROS_EC depends on X86 || ARM
+Date: Tue, 21 Jul 2015 21:13:00 -0400
+Message-ID: <20150722011300.GF4477@windriver.com>
+References: <1435191645-6022-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1435191645-6022-3-git-send-email-javier.martinez@collabora.co.uk>
+ <20150625083854.GV15013@x1>
+ <558BBF6C.7000906@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40176 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964893AbbGVBDg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jul 2015 21:03:36 -0400
-In-Reply-To: <55AED99D.1060405@mvista.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Corey Minyard <cminyard@mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <558BBF6C.7000906@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Gwendal Grignou <gwendal@google.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, Olof Johansson <olof@lixom.net>
+List-Id: linux-next.vger.kernel.org
 
-Hi Corey,
+[Re: [PATCH 2/3] mfd: Remove MFD_CROS_EC depends on X86 || ARM] On 25/06/2015 (Thu 10:44) Javier Martinez Canillas wrote:
 
-On Tue, 21 Jul 2015 18:45:33 -0500 Corey Minyard <cminyard@mvista.com> wrote:
->
-> On 07/21/2015 05:29 PM, Stephen Rothwell wrote:
-> >
-> > While fetching the ipmi tree
-> > (git://git.code.sf.net/p/openipmi/linux-ipmi#for-next), I get this
-> > error:
-> >
-> > fatal: unable to connect to git.code.sf.net:
-> > git.code.sf.net[0: 216.34.181.155]: errno=Connection refused
-> >
-> > I have been getting this for a few days now.  The http and https URLs
-> > don't work either (for me in Firefox).
+> Hello Lee,
 > 
-> Looks like sourceforge had a serious outage on the 18th and are still
-> working on restoring it. http://sourceforge.net/blog/category/sitestatus/
+> On 06/25/2015 10:38 AM, Lee Jones wrote:
+> > On Thu, 25 Jun 2015, Javier Martinez Canillas wrote:
+> > 
+> >> A dependency on X86 || ARM for MFD_CROS_EC was added to fix the warning:
+> >> 
+> >> (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+> >> 
+> >> This happened because CHROME_PLATFORMS had a dependency on X86 || ARM but
+> >> that dependency was removed since there isn't a reason why the option can
+> >> not be selected on other architectures. So now the above warning will not
+> >> happen and the MFD_CROS_EC dependency can be removed since is not needed.
+> >> 
+> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >> ---
+> >> 
+> >>  drivers/mfd/Kconfig | 1 -
+> >>  1 file changed, 1 deletion(-)
+> > 
+> > Applied for v4.3, thanks.
+> > 
 > 
-> Would you like me to move this someplace else?
+> Thanks a lot.
+> 
+> Olof,
+> 
+> Could you please ack patch 1/3 so Lee can pick it through the mfd tree?
+> Since both patches 1/3 and 2/3 are needed to fix the build warning for
+> !X86 and !ARM architectures.
 
-Its not a real problem as long as you don't have any updates for the
-tree before SF restore things.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Hi all,
+
+Wondering if this fell through the cracks.  It used to be just a
+linux-next issue, but now it is a mainline issue.  This _really_ should
+be fixed and fed to Linus ASAP.  Ideally it should have been fixed before 
+going to mainline as it was reported in plenty of time ; that is the
+whole point of linux-next.... to fix unanticipated fallout and revise.
+
+------------------
+paul@builder:~/git/linux-head$ git describe 
+v4.2-rc3
+paul@builder:~/git/linux-head$ echo $ARCH
+sparc64
+paul@builder:~/git/linux-head$ make allyesconfig
+scripts/kconfig/conf  --allyesconfig Kconfig
+warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+#
+# configuration written to .config
+#
+paul@builder:~/git/linux-head$ 
+------------------
+
+Thanks,
+Paul.
+--
+
+> 
+> Best regards,
+> Javier
