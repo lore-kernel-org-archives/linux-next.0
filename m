@@ -1,45 +1,50 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] regulator: rk808: make better use of the gpiod API
-Date: Wed, 22 Jul 2015 09:13:29 +0200
-Message-ID: <20150722071329.GM9981@pengutronix.de>
-References: <20150721132945.7ffc443b@canb.auug.org.au>
- <1437461993-14860-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CAJKOXPfY4zYtWKa6U4mzBjtS87HZepOV_hHodU2QJaJrLcr9qQ@mail.gmail.com>
- <20150721143524.GD9981@pengutronix.de>
- <20150721144100.GU11162@sirena.org.uk>
- <55AEE03F.8060100@samsung.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: via rhine build regression for arch/sh
+Date: Wed, 22 Jul 2015 09:54:25 -0400
+Message-ID: <20150722135424.GG4477@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:58785 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932090AbbGVHNm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 03:13:42 -0400
+Received: from mail.windriver.com ([147.11.1.11]:42694 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934255AbbGVNy2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jul 2015 09:54:28 -0400
 Content-Disposition: inline
-In-Reply-To: <55AEE03F.8060100@samsung.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>, kernel@pengutronix.de, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>
+To: Alexey Charkov <alchark@gmail.com>, Antonio Borneo <borneo.antonio@gmail.com>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org
 
-Hello,
+The builds of arch/sh are failing in linux-next with:
 
-On Wed, Jul 22, 2015 at 09:13:51AM +0900, Krzysztof Kozlowski wrote:
-> On 21.07.2015 23:41, Mark Brown wrote:
-> > That looks like a bug, yes.
->=20
-> Cc: linux-pm, Kevin, Rafael, Ulf
-Good idea. Note I already sent a patch to Greg that you might want to
-look at, too:
-	http://article.gmane.org/gmane.linux.kernel/2001345
+drivers/net/ethernet/via/via-rhine.c:1098:2: error: implicit declaration
+of function 'pci_iomap' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/via/via-rhine.c:1119:2: error: implicit declaration
+of function 'pci_iounmap' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[5]: *** [drivers/net/ethernet/via/via-rhine.o] Error 1
 
-Best regards
-Uwe
+http://kisskb.ellerman.id.au/kisskb/buildresult/12468878/
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+It either is the one line change in:
+
+commit b7d3282a245f44286b88e436b1d08c518cdf4569
+Author: Antonio Borneo <borneo.antonio@gmail.com>
+Date:   Wed Jun 17 19:42:31 2015 +0800
+
+    net: via/Kconfig: replace USE_OF with OF_???
+    
+
+..or maybe it goes back to the original OF support patch:
+
+commit 2d283862dc62daead9db0dc89cd0d0351e91f765
+Author: Alexey Charkov <alchark@gmail.com>
+Date:   Tue Apr 22 19:28:09 2014 +0400
+
+    net: via-rhine: add OF bus binding
+
+
+I have not bisected to check which, but it seems likely that
+it is one of the above.
+
+Paul.
