@@ -1,34 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext4 tree
-Date: Thu, 23 Jul 2015 10:56:23 +1000
-Message-ID: <20150723105623.2f8c9548@canb.auug.org.au>
+From: Antonio Borneo <borneo.antonio@gmail.com>
+Subject: Re: [PATCH] net: via/Kconfig: GENERIC_PCI_IOMAP required if PCI not selected
+Date: Thu, 23 Jul 2015 09:35:51 +0800
+Message-ID: <CAAj6DX3WpzogwYFa4EQ-b1o+n-4kE0iXOokYQA5NpV=3YBmM_A@mail.gmail.com>
+References: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
+	<20150722.110836.422018977846427052.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55337 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752585AbbGWA4Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Jul 2015 20:56:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20150722.110836.422018977846427052.davem@davemloft.net>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, netdev@vger.kernel.org, linux-next@vger.kernel.org, Alexey Charkov <alchark@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Theodore,
+On Thu, Jul 23, 2015 at 2:08 AM, David Miller <davem@davemloft.net> wrote:
+> From: Antonio Borneo <borneo.antonio@gmail.com>
+> Date: Thu, 23 Jul 2015 00:34:14 +0800
+>
+>> -     depends on (PCI || OF_IRQ)
+>> +     depends on (PCI || (OF_IRQ && GENERIC_PCI_IOMAP))
+>
+> Having GENERIC_PCI_IOMAP withut PCI makes absolutely no sense to me.
+>
+> I can't see why a platform would provide GENERIC_PCI_IOMAP when it
+> does not have PCI enabled.
 
-After merging the ext4 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+My understanding for GENERIC_PCI_IOMAP is to enable providing empty
+pci_iomap/pci_iounmap.
+Digging in git log, arch that used to provide such empty instances
+moved to a centralized implementation by using GENERIC_PCI_IOMAP.
+For me such empty functions should be available by default when PCI is
+not set, but this is not the case today.
 
-ERROR: "wbc_account_io" [fs/ext4/ext4.ko] undefined!
-ERROR: "bio_associate_blkcg" [fs/ext4/ext4.ko] undefined!
+So there are cases that set GENERIC_PCI_IOMAP without setting PCI. E.g.
+make ARCH=mips workpad_defconfig
+make ARCH=microblaze allnoconfig
 
-Caused by commit
+Moreover, in lib/Kconfig GENERIC_PCI_IOMAP is selected when
+GENERIC_IOMAP is set, without dependencies from PCI.
 
-  001e4a8775f6 ("ext4: implement cgroup writeback support")
+You can also check
+https://lkml.org/lkml/2013/9/11/76
+already upstream in commit
+78857614104a26cdada4c53eea104752042bf5a1
 
-I have used the ext4 tree from next-20150722 for today.
+Anyway, no other Kconfig uses GENERIC_PCI_IOMAP within conditionals,
+which makes this patch quite unusual.
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+If you think this is not the way to go, we can consider to revert both
+0f8b6cea1f3271ccc37dd2847b39e235461e0ced
+b7d3282a245f44286b88e436b1d08c518cdf4569
+and take some more time for a different solution.
+
+Regards,
+Antonio
+
+> You need to explain this.
+>
+> When PCI is not enabled, you should not be using any interface
+> pci_*() whatsoever.  Especially such a core interface as pci_iomap().
+>
+> ALTERNATIVELY, NOP versions of pci_iomap() and friends should be
+> provided when PCI is disabled, which just return errors and
+> non-success statuses.
