@@ -1,37 +1,50 @@
-From: Thomas Graf <tgraf@suug.ch>
-Subject: Re: [PATCH net-next] ip_tunnel: Call ip_tunnel_core_init() from
- inet_init()
-Date: Thu, 23 Jul 2015 10:17:19 +0200
-Message-ID: <20150723081719.GC22790@pox.localdomain>
-References: <20150723115824.071b84ff@canb.auug.org.au>
- <20150723080844.GB22790@pox.localdomain>
- <20150723.012849.1964809126719828221.davem@davemloft.net>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the FIXME
+ tree
+Date: Thu, 23 Jul 2015 11:39:27 +0200
+Message-ID: <20150723093927.GA8686@quack.suse.cz>
+References: <20150723160048.01a283c5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:35988 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752384AbbGWIRW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jul 2015 04:17:22 -0400
-Received: by wicgb10 with SMTP id gb10so131515324wic.1
-        for <linux-next@vger.kernel.org>; Thu, 23 Jul 2015 01:17:21 -0700 (PDT)
+Received: from cantor2.suse.de ([195.135.220.15]:55663 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752903AbbGWJjf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Jul 2015 05:39:35 -0400
 Content-Disposition: inline
-In-Reply-To: <20150723.012849.1964809126719828221.davem@davemloft.net>
+In-Reply-To: <20150723160048.01a283c5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
 
-On 07/23/15 at 01:28am, David Miller wrote:
-> From: Thomas Graf <tgraf@suug.ch>
-> Date: Thu, 23 Jul 2015 10:08:44 +0200
+On Thu 23-07-15 16:00:48, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> > Convert the module_init() to a invocation from inet_init() since
-> > ip_tunnel_core is part of the INET built-in.
-> > 
-> > Fixes: 3093fbe7ff4 ("route: Per route IP tunnel metadata via lightweight tunnel")
-> > Signed-off-by: Thomas Graf <tgraf@suug.ch>
+> Today's linux-next merge of the akpm-current tree got conflicts in:
 > 
-> I applied this instead of my module.h include fix, thanks Thomas.
+>   fs/ext3/super.c
+> 
+> between commit:
+> 
+>   106542e7987c ("fs: Remove ext3 filesystem driver")
+> 
+> from the FIXME tree and commit:
+> 
+>   d2c05ecd59bc ("parse_integer: convert ext2, ext3, ext4")
+> 
+> from the akpm-current tree.
+> 
+> I fixed it up (I just removed the file) and can carry the fix as necessary
+> (no action is required).
+> 
+> Jan, I also removed the JBD section from the MAINTAINERS file ... your
+> version has conflict markers left around it ...
 
-Thanks, sorry for the extra trouble you had to go through.
+Thanks Stephen. I have fixed up MAINTAINERS file in my tree (amended the
+original commit).
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
