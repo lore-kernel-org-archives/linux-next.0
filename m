@@ -1,66 +1,64 @@
-From: Alexey Charkov <alchark@gmail.com>
-Subject: Re: [PATCH] net: via/Kconfig: GENERIC_PCI_IOMAP required if PCI not selected
-Date: Thu, 23 Jul 2015 18:33:36 +0300
-Message-ID: <CABjd4Yx5YTEqUVGF+OqddB-q6u4u7boQK1ndcCKteQCa1LxubA@mail.gmail.com>
-References: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
-	<20150722.110836.422018977846427052.davem@davemloft.net>
-	<CAAj6DX3WpzogwYFa4EQ-b1o+n-4kE0iXOokYQA5NpV=3YBmM_A@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: next-20150722 build: 2 failures 75 warnings (next-20150722)
+Date: Thu, 23 Jul 2015 10:54:41 -0500
+Message-ID: <CAL_Jsq+Kw-PFQVm2bAy-CnF=UMqrRvjde+TSu2mn+DpPFK0=LA@mail.gmail.com>
+References: <E1ZHv2t-0004JI-0H@optimist> <20150722184345.GB11162@sirena.org.uk>
+ <CAGhQ9VxXdFOCZhEi07X_k-+zV9NpYG+Brnt_fjPT=3mdyeSrgg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:32890 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752797AbbGWPdi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jul 2015 11:33:38 -0400
-In-Reply-To: <CAAj6DX3WpzogwYFa4EQ-b1o+n-4kE0iXOokYQA5NpV=3YBmM_A@mail.gmail.com>
+Received: from mail-yk0-f181.google.com ([209.85.160.181]:33936 "EHLO
+	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752897AbbGWPzC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jul 2015 11:55:02 -0400
+Received: by ykax123 with SMTP id x123so223845920yka.1
+        for <linux-next@vger.kernel.org>; Thu, 23 Jul 2015 08:55:01 -0700 (PDT)
+In-Reply-To: <CAGhQ9VxXdFOCZhEi07X_k-+zV9NpYG+Brnt_fjPT=3mdyeSrgg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Antonio Borneo <borneo.antonio@gmail.com>
-Cc: David Miller <davem@davemloft.net>, Paul Gortmaker <paul.gortmaker@windriver.com>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Olof Johansson <olof@lixom.net>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, linux-next <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-2015-07-23 4:35 GMT+03:00 Antonio Borneo <borneo.antonio@gmail.com>:
-> On Thu, Jul 23, 2015 at 2:08 AM, David Miller <davem@davemloft.net> wrote:
->> From: Antonio Borneo <borneo.antonio@gmail.com>
->> Date: Thu, 23 Jul 2015 00:34:14 +0800
+On Wed, Jul 22, 2015 at 4:26 PM, Joachim  Eastwood <manabian@gmail.com> wrote:
+> On 22 July 2015 at 20:43, Mark Brown <broonie@kernel.org> wrote:
+>> On Wed, Jul 22, 2015 at 03:30:56PM +0100, Build bot for Mark Brown wrote:
 >>
->>> -     depends on (PCI || OF_IRQ)
->>> +     depends on (PCI || (OF_IRQ && GENERIC_PCI_IOMAP))
+>> Today's linux-next fails to build an ARM allmodconfig due to:
 >>
->> Having GENERIC_PCI_IOMAP withut PCI makes absolutely no sense to me.
+>>> ERROR: "of_default_bus_match_table" [drivers/memory/pl172.ko] undefined!
 >>
->> I can't see why a platform would provide GENERIC_PCI_IOMAP when it
->> does not have PCI enabled.
+>> 17c50b700c3b4 (memory: add ARM PL172 MultiPort Memory Controller
+>> driver).  The symbol of_default_bus_match_table isn't exported by the OF
+>> core code so can't be referenced from modules.
 >
-> My understanding for GENERIC_PCI_IOMAP is to enable providing empty
-> pci_iomap/pci_iounmap.
+> Sorry about that. Seems like I didn't do a modular build after I
+> started to use "of_default_bus_match_table".
+> A quick fix would be to just replace "of_default_bus_match_table" with
+> NULL, but that means that child nodes that use "simple-bus" wouldn't
+> work. Since I don't have any nodes with "simple-bus" I'll send this
+> fix ASAP to Olof.
 
-There is also a non-empty implementation that calls to ioremap/iounmap
-(compiled in when PCI=y). So it's rather an option that every
-architecture should use if they don't have any special requirements
-(which seems to be true about SH, too). Maybe a name like
-"MY_ARCH_DOESNT_NEED_ANYTHING_SPECIAL_FROM_PCI_IOMAP" instead of
-GENERIC_PCI_IOMAP would be more reflective of its current semantics,
-but it doesn't look very pretty anyway :)
+I think generally there is no reason to use NULL and most users can
+safely pass of_default_bus_match_table. It would only matter if you
+had children matching simple-*, but that should not be the case
+typically.
 
-> Digging in git log, arch that used to provide such empty instances
-> moved to a centralized implementation by using GENERIC_PCI_IOMAP.
-> For me such empty functions should be available by default when PCI is
-> not set, but this is not the case today.
+> Grant/Rob: Would you be okay with a patch that exports
+> "of_default_bus_match_table"?
+> I think it would be useful for memory controllers to allow child nodes
+> that use "simple-bus" and "simple-mfd".
+>
+> Note that "of_default_bus_match_table" is also used by
+> memory/omap-gpmc.c, but this drivers can only be built-in so it
+> doesn't face this problem.
+> memory/ti-aemif.c and memory/mvebu-devbus.c doesn't use
+> "of_default_bus_match_table", but again that means they can't have
+> child nodes with "simple-bus".
 
-If we trust the commit message in
-97a29d59fc222b36bac3ee3a8ae994f65bf7ffdf
-it looks like architectures that use their own PCI mapping functions
-would provide them unconditionally, so we shouldn't unconditionally
-include stubs in the generic header to avoid double definition.
+I would prefer to see a wrapper function exported that internally
+passes of_default_bus_match_table rather than exporting it. And then
+clean-up all the callers including the ones passing NULL. Or if we
+need to keep the NULL variant, perhaps 2 variants clearly named for
+what they do: of_populate_children and of_populate_buses.
 
-I think the way to fix this most consistently with what other arches
-do would be to move "select GENERIC_PCI_IOMAP" from arch/sh/Kconfig
-outside of "config PCI" (towards line 40 or so in the same file). This
-will ensure that all NOP stubs are applied correctly to avoid such
-compile-time errors.
-
-Happy to provide a 2-line patch to do the above, but I don't have any
-SH hardware to test.
-
-Best,
-Alexey
+Rob
