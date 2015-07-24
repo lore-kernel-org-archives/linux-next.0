@@ -1,208 +1,223 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH -next v2] mm: srcu-ify shrinkers
-Date: Fri, 24 Jul 2015 10:25:33 -0400
-Message-ID: <CAP=VYLr0rPWi1aeuk4w1On9CYRNmnEWwJgGtaX=wEvGaBURtrg@mail.gmail.com>
-References: <1434398602.1903.15.camel@stgolabs.net> <1437080113.3596.2.camel@stgolabs.net>
- <20150721121932.GJ11967@dhcp22.suse.cz>
+Subject: Re: [PATCH 1/1] mm, mpx: add "vm_flags_t vm_flags" arg to do_mmap_pgoff()
+Date: Fri, 24 Jul 2015 10:39:13 -0400
+Message-ID: <CAP=VYLp+5Co5PyHcbfkdkNUmyy259DuG4ov=+da+UeRAGFUe1Q@mail.gmail.com>
+References: <1436784852-144369-1-git-send-email-kirill.shutemov@linux.intel.com>
+ <1436784852-144369-3-git-send-email-kirill.shutemov@linux.intel.com>
+ <20150713165323.GA7906@redhat.com> <55A3EFE9.7080101@linux.intel.com>
+ <20150716110503.9A4F5196@black.fi.intel.com> <55A7D38C.7070907@linux.intel.com>
+ <20150716160927.GA27037@node.dhcp.inet.fi> <20150716222603.GA21791@redhat.com>
+ <20150716222621.GB21791@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20150721121932.GJ11967@dhcp22.suse.cz>
+In-Reply-To: <20150716222621.GB21791@redhat.com>
 Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>, Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, Dave Hansen <dave.hansen@linux.intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, Andy Lutomirski <luto@amacapital.net>, Thomas Gleixner <tglx@linutronix.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 21, 2015 at 8:19 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Thu 16-07-15 13:55:13, Davidlohr Bueso wrote:
->> The shrinker_rwsem is a global lock that protects the shrinker_list,
->> serializing a shrinking call with register/unregistering the shrinker
->> itself. As such, this lock is taken mostly for reading. In the unlikely
->> case that the the list is being modified, we simply return indicating
->> we want to iterate again. However, the only caller of shrink_slab()
->> that acknowledges this return is drop_slab_node(), so in practice, the
->> rest of the callers never try again.
->>
->> This patch proposes replacing the rwsem with an srcu aware list of
->> shrinkers, where (un)registering tasks use a spinlock. Upon shrinker
->> calls, the srcu read lock will guarantee the existence of the structure,
->> thus safely optimizing the common (read locked) case. These guarantees
->> also allow us to cleanup and simplify the code, getting rid of the
->> ugly trylock mechanism to retry the shrinker operation when the list
->> is concurrently being modified. As Michal pointed this is only worth
->> mentioning for unregister purposes.
->>
->> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
->
-> Looks reasonable to me. I am pretty sure that any performance
-> improvements are close to 0 but the code looks better to me.
->
-> Acked-by: Michal Hocko <mhocko@suse.com>
+On Thu, Jul 16, 2015 at 6:26 PM, Oleg Nesterov <oleg@redhat.com> wrote:
+> Add the additional "vm_flags_t vm_flags" argument to do_mmap_pgoff(),
+> rename it to do_mmap(), and re-introduce do_mmap_pgoff() as a simple
+> wrapper on top of do_mmap(). Perhaps we should update the callers of
+> do_mmap_pgoff() and kill it later.
 
-The version of this commit in linux-next currently fails on arm allnoconfig:
+It seems that the version of this patch in linux-next breaks all nommu
+builds (m86k, some arm, etc).
 
-mm/built-in.o: In function `shrink_slab.part.66.constprop.73':
-slub.c:(.text+0xce10): undefined reference to `__srcu_read_lock'
-slub.c:(.text+0xd00c): undefined reference to `__srcu_read_unlock'
-mm/built-in.o: In function `unregister_shrinker':
-slub.c:(.text+0xd0f4): undefined reference to `synchronize_srcu'
-mm/built-in.o:(.data+0x1c8): undefined reference to `process_srcu'
-make: *** [vmlinux] Error 1
+mm/nommu.c: In function 'do_mmap':
+mm/nommu.c:1248:30: error: 'vm_flags' redeclared as different kind of symbol
+mm/nommu.c:1241:15: note: previous definition of 'vm_flags' was here
+scripts/Makefile.build:258: recipe for target 'mm/nommu.o' failed
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12470285/
 
 Bisect says:
 
-dab937da82f9504fbac75592a1825614318d73e7 is the first bad commit
-commit dab937da82f9504fbac75592a1825614318d73e7
-Author: Davidlohr Bueso <dave@stgolabs.net>
-Date:   Fri Jul 24 09:11:26 2015 +1000
+31705a3a633bb63683918f055fe6032939672b61 is the first bad commit
+commit 31705a3a633bb63683918f055fe6032939672b61
+Author: Oleg Nesterov <oleg@redhat.com>
+Date:   Fri Jul 24 09:20:30 2015 +1000
 
-    mm: srcu-ify shrinkers
+    mm, mpx: add "vm_flags_t vm_flags" arg to do_mmap_pgoff()
 
 Paul.
 --
 
->> ---
->> Changes from v1:
->>  - Got rid of the trylock, per mhocko.
->>
->>  fs/super.c  |  8 ++++----
->>  mm/vmscan.c | 39 ++++++++++++++++++---------------------
->>  2 files changed, 22 insertions(+), 25 deletions(-)
->>
->> diff --git a/fs/super.c b/fs/super.c
->> index b613723..c917817 100644
->> --- a/fs/super.c
->> +++ b/fs/super.c
->> @@ -49,8 +49,8 @@ static char *sb_writers_name[SB_FREEZE_LEVELS] = {
->>   * One thing we have to be careful of with a per-sb shrinker is that we don't
->>   * drop the last active reference to the superblock from within the shrinker.
->>   * If that happens we could trigger unregistering the shrinker from within the
->> - * shrinker path and that leads to deadlock on the shrinker_rwsem. Hence we
->> - * take a passive reference to the superblock to avoid this from occurring.
->> + * shrinker path. Hence we take a passive reference to the superblock to avoid
->> + * this from occurring.
->>   */
->>  static unsigned long super_cache_scan(struct shrinker *shrink,
->>                                     struct shrink_control *sc)
->> @@ -121,8 +121,8 @@ static unsigned long super_cache_count(struct shrinker *shrink,
->>        * Don't call trylock_super as it is a potential
->>        * scalability bottleneck. The counts could get updated
->>        * between super_cache_count and super_cache_scan anyway.
->> -      * Call to super_cache_count with shrinker_rwsem held
->> -      * ensures the safety of call to list_lru_shrink_count() and
->> +      * SRCU guarantees object validity across this call -- thus
->> +      * it is safe to call list_lru_shrink_count() and
->>        * s_op->nr_cached_objects().
->>        */
->>       if (sb->s_op && sb->s_op->nr_cached_objects)
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index c8d8282..fc820cf 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -36,7 +36,7 @@
->>  #include <linux/cpuset.h>
->>  #include <linux/compaction.h>
->>  #include <linux/notifier.h>
->> -#include <linux/rwsem.h>
->> +#include <linux/srcu.h>
->>  #include <linux/delay.h>
->>  #include <linux/kthread.h>
->>  #include <linux/freezer.h>
->> @@ -146,8 +146,9 @@ int vm_swappiness = 60;
->>   */
->>  unsigned long vm_total_pages;
->>
->> +DEFINE_STATIC_SRCU(shrinker_srcu);
->>  static LIST_HEAD(shrinker_list);
->> -static DECLARE_RWSEM(shrinker_rwsem);
->> +static DEFINE_SPINLOCK(shrinker_list_lock);
->>
->>  #ifdef CONFIG_MEMCG
->>  static bool global_reclaim(struct scan_control *sc)
->> @@ -242,9 +243,9 @@ int register_shrinker(struct shrinker *shrinker)
->>       if (!shrinker->nr_deferred)
->>               return -ENOMEM;
->>
->> -     down_write(&shrinker_rwsem);
->> -     list_add_tail(&shrinker->list, &shrinker_list);
->> -     up_write(&shrinker_rwsem);
->> +     spin_lock(&shrinker_list_lock);
->> +     list_add_tail_rcu(&shrinker->list, &shrinker_list);
->> +     spin_unlock(&shrinker_list_lock);
->>       return 0;
->>  }
->>  EXPORT_SYMBOL(register_shrinker);
->> @@ -254,9 +255,14 @@ EXPORT_SYMBOL(register_shrinker);
->>   */
->>  void unregister_shrinker(struct shrinker *shrinker)
->>  {
->> -     down_write(&shrinker_rwsem);
->> -     list_del(&shrinker->list);
->> -     up_write(&shrinker_rwsem);
->> +     spin_lock(&shrinker_list_lock);
->> +     list_del_rcu(&shrinker->list);
->> +     spin_unlock(&shrinker_list_lock);
->> +     /*
->> +      * Before freeing nr_deferred, ensure all srcu
->> +      * readers are done with their critical region.
->> +      */
->> +     synchronize_srcu(&shrinker_srcu);
->>       kfree(shrinker->nr_deferred);
->>  }
->>  EXPORT_SYMBOL(unregister_shrinker);
->> @@ -408,6 +414,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
->>                                unsigned long nr_scanned,
->>                                unsigned long nr_eligible)
->>  {
->> +     int idx;
->>       struct shrinker *shrinker;
->>       unsigned long freed = 0;
->>
->> @@ -417,18 +424,9 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
->>       if (nr_scanned == 0)
->>               nr_scanned = SWAP_CLUSTER_MAX;
->>
->> -     if (!down_read_trylock(&shrinker_rwsem)) {
->> -             /*
->> -              * If we would return 0, our callers would understand that we
->> -              * have nothing else to shrink and give up trying. By returning
->> -              * 1 we keep it going and assume we'll be able to shrink next
->> -              * time.
->> -              */
->> -             freed = 1;
->> -             goto out;
->> -     }
->> +     idx = srcu_read_lock(&shrinker_srcu);
->>
->> -     list_for_each_entry(shrinker, &shrinker_list, list) {
->> +     list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
->>               struct shrink_control sc = {
->>                       .gfp_mask = gfp_mask,
->>                       .nid = nid,
->> @@ -444,8 +442,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
->>               freed += do_shrink_slab(&sc, shrinker, nr_scanned, nr_eligible);
->>       }
->>
->> -     up_read(&shrinker_rwsem);
->> -out:
->> +     srcu_read_unlock(&shrinker_srcu, idx);
->>       cond_resched();
->>       return freed;
->>  }
->> --
->> 2.1.4
->>
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
 >
+> This way mpx_mmap() can simply call do_mmap(vm_flags => VM_MPX) and
+> do not play with vm internals.
+>
+> After this change mmap_region() has a single user outside of mmap.c,
+> arch/tile/mm/elf.c:arch_setup_additional_pages(). It would be nice
+> to change arch/tile/ and unexport mmap_region().
+>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  arch/x86/mm/mpx.c  |   51 +++++++--------------------------------------------
+>  include/linux/mm.h |   12 ++++++++++--
+>  mm/mmap.c          |   10 ++++------
+>  mm/nommu.c         |   15 ++++++++-------
+>  4 files changed, 29 insertions(+), 59 deletions(-)
+>
+> diff --git a/arch/x86/mm/mpx.c b/arch/x86/mm/mpx.c
+> index 4d1c11c..fdbd3e0 100644
+> --- a/arch/x86/mm/mpx.c
+> +++ b/arch/x86/mm/mpx.c
+> @@ -24,58 +24,21 @@
+>   */
+>  static unsigned long mpx_mmap(unsigned long len)
+>  {
+> -       unsigned long ret;
+> -       unsigned long addr, pgoff;
+>         struct mm_struct *mm = current->mm;
+> -       vm_flags_t vm_flags;
+> -       struct vm_area_struct *vma;
+> +       unsigned long addr, populate;
+>
+>         /* Only bounds table and bounds directory can be allocated here */
+>         if (len != MPX_BD_SIZE_BYTES && len != MPX_BT_SIZE_BYTES)
+>                 return -EINVAL;
+>
+>         down_write(&mm->mmap_sem);
+> -
+> -       /* Too many mappings? */
+> -       if (mm->map_count > sysctl_max_map_count) {
+> -               ret = -ENOMEM;
+> -               goto out;
+> -       }
+> -
+> -       /* Obtain the address to map to. we verify (or select) it and ensure
+> -        * that it represents a valid section of the address space.
+> -        */
+> -       addr = get_unmapped_area(NULL, 0, len, 0, MAP_ANONYMOUS | MAP_PRIVATE);
+> -       if (addr & ~PAGE_MASK) {
+> -               ret = addr;
+> -               goto out;
+> -       }
+> -
+> -       vm_flags = VM_READ | VM_WRITE | VM_MPX |
+> -                       mm->def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
+> -
+> -       /* Set pgoff according to addr for anon_vma */
+> -       pgoff = addr >> PAGE_SHIFT;
+> -
+> -       ret = mmap_region(NULL, addr, len, vm_flags, pgoff);
+> -       if (IS_ERR_VALUE(ret))
+> -               goto out;
+> -
+> -       vma = find_vma(mm, ret);
+> -       if (!vma) {
+> -               ret = -ENOMEM;
+> -               goto out;
+> -       }
+> -
+> -       if (vm_flags & VM_LOCKED) {
+> -               up_write(&mm->mmap_sem);
+> -               mm_populate(ret, len);
+> -               return ret;
+> -       }
+> -
+> -out:
+> +       addr = do_mmap(NULL, 0, len, PROT_READ | PROT_WRITE,
+> +                       MAP_ANONYMOUS | MAP_PRIVATE, VM_MPX, 0, &populate);
+>         up_write(&mm->mmap_sem);
+> -       return ret;
+> +       if (populate)
+> +               mm_populate(addr, populate);
+> +
+> +       return addr;
+>  }
+>
+>  enum reg_type {
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 0207ffa..1f0a56e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1849,11 +1849,19 @@ extern unsigned long get_unmapped_area(struct file *, unsigned long, unsigned lo
+>
+>  extern unsigned long mmap_region(struct file *file, unsigned long addr,
+>         unsigned long len, vm_flags_t vm_flags, unsigned long pgoff);
+> -extern unsigned long do_mmap_pgoff(struct file *file, unsigned long addr,
+> +extern unsigned long do_mmap(struct file *file, unsigned long addr,
+>         unsigned long len, unsigned long prot, unsigned long flags,
+> -       unsigned long pgoff, unsigned long *populate);
+> +       vm_flags_t vm_flags, unsigned long pgoff, unsigned long *populate);
+>  extern int do_munmap(struct mm_struct *, unsigned long, size_t);
+>
+> +static inline unsigned long
+> +do_mmap_pgoff(struct file *file, unsigned long addr,
+> +       unsigned long len, unsigned long prot, unsigned long flags,
+> +       unsigned long pgoff, unsigned long *populate)
+> +{
+> +       return do_mmap(file, addr, len, prot, flags, 0, pgoff, populate);
+> +}
+> +
+>  #ifdef CONFIG_MMU
+>  extern int __mm_populate(unsigned long addr, unsigned long len,
+>                          int ignore_errors);
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 2185cd9..2f36ebc 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1247,14 +1247,12 @@ static inline int mlock_future_check(struct mm_struct *mm,
+>  /*
+>   * The caller must hold down_write(&current->mm->mmap_sem).
+>   */
+> -
+> -unsigned long do_mmap_pgoff(struct file *file, unsigned long addr,
+> +unsigned long do_mmap(struct file *file, unsigned long addr,
+>                         unsigned long len, unsigned long prot,
+> -                       unsigned long flags, unsigned long pgoff,
+> -                       unsigned long *populate)
+> +                       unsigned long flags, vm_flags_t vm_flags,
+> +                       unsigned long pgoff, unsigned long *populate)
+>  {
+>         struct mm_struct *mm = current->mm;
+> -       vm_flags_t vm_flags;
+>
+>         *populate = 0;
+>
+> @@ -1298,7 +1296,7 @@ unsigned long do_mmap_pgoff(struct file *file, unsigned long addr,
+>          * to. we assume access permissions have been handled by the open
+>          * of the memory object, so we don't do any here.
+>          */
+> -       vm_flags = calc_vm_prot_bits(prot) | calc_vm_flag_bits(flags) |
+> +       vm_flags |= calc_vm_prot_bits(prot) | calc_vm_flag_bits(flags) |
+>                         mm->def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
+>
+>         if (flags & MAP_LOCKED)
+> diff --git a/mm/nommu.c b/mm/nommu.c
+> index e544508..e3026fd 100644
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -1271,13 +1271,14 @@ enomem:
+>  /*
+>   * handle mapping creation for uClinux
+>   */
+> -unsigned long do_mmap_pgoff(struct file *file,
+> -                           unsigned long addr,
+> -                           unsigned long len,
+> -                           unsigned long prot,
+> -                           unsigned long flags,
+> -                           unsigned long pgoff,
+> -                           unsigned long *populate)
+> +unsigned long do_mmap(struct file *file,
+> +                       unsigned long addr,
+> +                       unsigned long len,
+> +                       unsigned long prot,
+> +                       unsigned long flags,
+> +                       vm_flags_t vm_flags,
+> +                       unsigned long pgoff,
+> +                       unsigned long *populate)
+>  {
+>         struct vm_area_struct *vma;
+>         struct vm_region *region;
 > --
-> Michal Hocko
-> SUSE Labs
+> 1.5.5.1
+>
+>
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
 > the body of a message to majordomo@vger.kernel.org
