@@ -1,54 +1,65 @@
-From: Vladimir Davydov <vdavydov@parallels.com>
-Subject: Re: randconfig build error with next-20150724, in mm/page_ext.c
-Date: Fri, 24 Jul 2015 19:36:12 +0300
-Message-ID: <20150724163612.GK8100@esperanza>
-References: <CA+r1ZhhXUi3huTQ8GJmX5EeqWV58Fsni9eKjA-wd2irckJUagA@mail.gmail.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 24 Jul 2015 13:16:05 -0700
+Message-ID: <1437768965.3298.52.camel@stgolabs.net>
+References: <20150724153334.543cfc7b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay.parallels.com ([195.214.232.42]:42655 "EHLO
-	relay.parallels.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752214AbbGXQg3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jul 2015 12:36:29 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhhXUi3huTQ8GJmX5EeqWV58Fsni9eKjA-wd2irckJUagA@mail.gmail.com>
+Received: from mx2.suse.de ([195.135.220.15]:42579 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753030AbbGXUQS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Jul 2015 16:16:18 -0400
+In-Reply-To: <20150724153334.543cfc7b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 24, 2015 at 09:27:53AM -0700, Jim Davis wrote:
-
-> warning: (HWPOISON_INJECT && MEM_SOFT_DIRTY && IDLE_PAGE_TRACKING)
-> selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS
-> && MMU)
+On Fri, 2015-07-24 at 15:33 +1000, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> mm/built-in.o: In function `page_ext_init_flatmem':
-> (.init.text+0x30ef): undefined reference to `page_idle_ops'
-> mm/built-in.o: In function `page_ext_init_flatmem':
-> (.init.text+0x3172): undefined reference to `page_idle_ops'
+> After merging the akpm-current tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
+> 
+> mm/built-in.o: In function `shrink_slab.part.73.constprop.83':
+> vmscan.c:(.text+0xf760): undefined reference to `__srcu_read_lock'
+> vmscan.c:(.text+0xf924): undefined reference to `__srcu_read_unlock'
+> mm/built-in.o: In function `unregister_shrinker':
+> (.text+0xfa60): undefined reference to `synchronize_srcu'
+> mm/built-in.o:(.data+0x1e8): undefined reference to `process_srcu'
+> 
+> Caused by commit
+> 
+>   dab937da82f9 ("mm: srcu-ify shrinkers")
+> 
+> I have reverted that commit for today.
 
-This has already been reported by the kbuild test robot, see:
+Adding paulmck.
 
-  [mmotm:master 260/385] warning: (HWPOISON_INJECT && ..) selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS && ..)
+I'm not entirely sure what is the fix here. Paul G also reported it
+failing for arm. I was able to reproduce with powerpc, and the following
+fixes the issue, but I doubt it is the correct way to address this. The
+idea was based on how we do it for x86.
 
-It should be fixed by:
+Also, having SRCU in mm is, lets say, more than convenient, beyond
+MMU_NOTIFIERS which explicitly selects SRCU.
 
-From: Vladimir Davydov <vdavydov@parallels.com>
-Subject: [PATCH] mm/Kconfig: fix IDLE_PAGE_TRACKING dependencies
+Paul?
 
-Fixes: proc-add-kpageidle-file
-Signed-off-by: Vladimir Davydov <vdavydov@parallels.com>
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 5ef2711..774207e 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -124,6 +124,7 @@ config PPC
+        select GENERIC_IRQ_SHOW
+        select GENERIC_IRQ_SHOW_LEVEL
+        select IRQ_FORCED_THREADING
++       select SRCU
+        select HAVE_RCU_TABLE_FREE if SMP
+        select HAVE_SYSCALL_TRACEPOINTS
+        select HAVE_BPF_JIT
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index db817e2c2ec8..a1de09926171 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -657,6 +657,7 @@ config DEFERRED_STRUCT_PAGE_INIT
- 
- config IDLE_PAGE_TRACKING
- 	bool "Enable idle page tracking"
-+	depends on PROC_FS && MMU
- 	select PROC_PAGE_MONITOR
- 	select PAGE_EXTENSION if !64BIT
- 	help
+Thanks,
+Davidlohr
