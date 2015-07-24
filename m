@@ -1,56 +1,216 @@
-From: Vladimir Davydov <vdavydov-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>
-Subject: Re: [PATCH -mm v9 6/8] proc: add kpageidle file
-Date: Fri, 24 Jul 2015 17:17:26 +0300
-Message-ID: <20150724141726.GE8100@esperanza>
-References: <cover.1437303956.git.vdavydov@parallels.com>
- <d7a78b72053cf529c0c9ff6cbc02ffbb3d58fe35.1437303956.git.vdavydov@parallels.com>
- <CAP=VYLqiNfQJ6oyQg2GszeHwdOmeY_uD3XPvw=++weJOKdx4_g@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH -next v2] mm: srcu-ify shrinkers
+Date: Fri, 24 Jul 2015 10:25:33 -0400
+Message-ID: <CAP=VYLr0rPWi1aeuk4w1On9CYRNmnEWwJgGtaX=wEvGaBURtrg@mail.gmail.com>
+References: <1434398602.1903.15.camel@stgolabs.net> <1437080113.3596.2.camel@stgolabs.net>
+ <20150721121932.GJ11967@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAP=VYLqiNfQJ6oyQg2GszeHwdOmeY_uD3XPvw=++weJOKdx4_g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Cc: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Andres Lagar-Cavilla <andreslc-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Minchan Kim <minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Raghavendra K T <raghavendra.kt-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Johannes Weiner <hannes-druUgvl0LCNAfugRpC6u6w@public.gmane.org>, Michal Hocko <mhocko-AlSwsSmVLrQ@public.gmane.org>, Greg Thelen <gthelen-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Michel Lespinasse <walken-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, David Rientjes <rientjes-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Pavel Emelyanov <xemul-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>, Cyrill Gorcunov <gorcunov-GEFAQzZX7r8dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML doc <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, cgroups-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20150721121932.GJ11967@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 24, 2015 at 10:08:25AM -0400, Paul Gortmaker wrote:
+On Tue, Jul 21, 2015 at 8:19 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Thu 16-07-15 13:55:13, Davidlohr Bueso wrote:
+>> The shrinker_rwsem is a global lock that protects the shrinker_list,
+>> serializing a shrinking call with register/unregistering the shrinker
+>> itself. As such, this lock is taken mostly for reading. In the unlikely
+>> case that the the list is being modified, we simply return indicating
+>> we want to iterate again. However, the only caller of shrink_slab()
+>> that acknowledges this return is drop_slab_node(), so in practice, the
+>> rest of the callers never try again.
+>>
+>> This patch proposes replacing the rwsem with an srcu aware list of
+>> shrinkers, where (un)registering tasks use a spinlock. Upon shrinker
+>> calls, the srcu read lock will guarantee the existence of the structure,
+>> thus safely optimizing the common (read locked) case. These guarantees
+>> also allow us to cleanup and simplify the code, getting rid of the
+>> ugly trylock mechanism to retry the shrinker operation when the list
+>> is concurrently being modified. As Michal pointed this is only worth
+>> mentioning for unregister purposes.
+>>
+>> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+>
+> Looks reasonable to me. I am pretty sure that any performance
+> improvements are close to 0 but the code looks better to me.
+>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-> fs/proc/page.c:341:4: error: implicit declaration of function
-> 'pmdp_clear_young_notify' [-Werror=implicit-function-declaration]
-> fs/proc/page.c:347:4: error: implicit declaration of function
-> 'ptep_clear_young_notify' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[3]: *** [fs/proc/page.o] Error 1
-> make[2]: *** [fs/proc] Error 2
+The version of this commit in linux-next currently fails on arm allnoconfig:
 
-My bad, sorry.
+mm/built-in.o: In function `shrink_slab.part.66.constprop.73':
+slub.c:(.text+0xce10): undefined reference to `__srcu_read_lock'
+slub.c:(.text+0xd00c): undefined reference to `__srcu_read_unlock'
+mm/built-in.o: In function `unregister_shrinker':
+slub.c:(.text+0xd0f4): undefined reference to `synchronize_srcu'
+mm/built-in.o:(.data+0x1c8): undefined reference to `process_srcu'
+make: *** [vmlinux] Error 1
 
-It's already been reported by the kbuild-test-robot, see
+Bisect says:
 
-  [linux-next:master 3983/4215] fs/proc/page.c:332:4: error: implicit declaration of function 'pmdp_clear_young_notify'
+dab937da82f9504fbac75592a1825614318d73e7 is the first bad commit
+commit dab937da82f9504fbac75592a1825614318d73e7
+Author: Davidlohr Bueso <dave@stgolabs.net>
+Date:   Fri Jul 24 09:11:26 2015 +1000
 
-The fix is:
+    mm: srcu-ify shrinkers
 
-From: Vladimir Davydov <vdavydov-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>
-Subject: [PATCH] mmu_notifier: add missing stubs for clear_young
+Paul.
+--
 
-This is a compilation fix for !CONFIG_MMU_NOTIFIER.
+>> ---
+>> Changes from v1:
+>>  - Got rid of the trylock, per mhocko.
+>>
+>>  fs/super.c  |  8 ++++----
+>>  mm/vmscan.c | 39 ++++++++++++++++++---------------------
+>>  2 files changed, 22 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/fs/super.c b/fs/super.c
+>> index b613723..c917817 100644
+>> --- a/fs/super.c
+>> +++ b/fs/super.c
+>> @@ -49,8 +49,8 @@ static char *sb_writers_name[SB_FREEZE_LEVELS] = {
+>>   * One thing we have to be careful of with a per-sb shrinker is that we don't
+>>   * drop the last active reference to the superblock from within the shrinker.
+>>   * If that happens we could trigger unregistering the shrinker from within the
+>> - * shrinker path and that leads to deadlock on the shrinker_rwsem. Hence we
+>> - * take a passive reference to the superblock to avoid this from occurring.
+>> + * shrinker path. Hence we take a passive reference to the superblock to avoid
+>> + * this from occurring.
+>>   */
+>>  static unsigned long super_cache_scan(struct shrinker *shrink,
+>>                                     struct shrink_control *sc)
+>> @@ -121,8 +121,8 @@ static unsigned long super_cache_count(struct shrinker *shrink,
+>>        * Don't call trylock_super as it is a potential
+>>        * scalability bottleneck. The counts could get updated
+>>        * between super_cache_count and super_cache_scan anyway.
+>> -      * Call to super_cache_count with shrinker_rwsem held
+>> -      * ensures the safety of call to list_lru_shrink_count() and
+>> +      * SRCU guarantees object validity across this call -- thus
+>> +      * it is safe to call list_lru_shrink_count() and
+>>        * s_op->nr_cached_objects().
+>>        */
+>>       if (sb->s_op && sb->s_op->nr_cached_objects)
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index c8d8282..fc820cf 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -36,7 +36,7 @@
+>>  #include <linux/cpuset.h>
+>>  #include <linux/compaction.h>
+>>  #include <linux/notifier.h>
+>> -#include <linux/rwsem.h>
+>> +#include <linux/srcu.h>
+>>  #include <linux/delay.h>
+>>  #include <linux/kthread.h>
+>>  #include <linux/freezer.h>
+>> @@ -146,8 +146,9 @@ int vm_swappiness = 60;
+>>   */
+>>  unsigned long vm_total_pages;
+>>
+>> +DEFINE_STATIC_SRCU(shrinker_srcu);
+>>  static LIST_HEAD(shrinker_list);
+>> -static DECLARE_RWSEM(shrinker_rwsem);
+>> +static DEFINE_SPINLOCK(shrinker_list_lock);
+>>
+>>  #ifdef CONFIG_MEMCG
+>>  static bool global_reclaim(struct scan_control *sc)
+>> @@ -242,9 +243,9 @@ int register_shrinker(struct shrinker *shrinker)
+>>       if (!shrinker->nr_deferred)
+>>               return -ENOMEM;
+>>
+>> -     down_write(&shrinker_rwsem);
+>> -     list_add_tail(&shrinker->list, &shrinker_list);
+>> -     up_write(&shrinker_rwsem);
+>> +     spin_lock(&shrinker_list_lock);
+>> +     list_add_tail_rcu(&shrinker->list, &shrinker_list);
+>> +     spin_unlock(&shrinker_list_lock);
+>>       return 0;
+>>  }
+>>  EXPORT_SYMBOL(register_shrinker);
+>> @@ -254,9 +255,14 @@ EXPORT_SYMBOL(register_shrinker);
+>>   */
+>>  void unregister_shrinker(struct shrinker *shrinker)
+>>  {
+>> -     down_write(&shrinker_rwsem);
+>> -     list_del(&shrinker->list);
+>> -     up_write(&shrinker_rwsem);
+>> +     spin_lock(&shrinker_list_lock);
+>> +     list_del_rcu(&shrinker->list);
+>> +     spin_unlock(&shrinker_list_lock);
+>> +     /*
+>> +      * Before freeing nr_deferred, ensure all srcu
+>> +      * readers are done with their critical region.
+>> +      */
+>> +     synchronize_srcu(&shrinker_srcu);
+>>       kfree(shrinker->nr_deferred);
+>>  }
+>>  EXPORT_SYMBOL(unregister_shrinker);
+>> @@ -408,6 +414,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+>>                                unsigned long nr_scanned,
+>>                                unsigned long nr_eligible)
+>>  {
+>> +     int idx;
+>>       struct shrinker *shrinker;
+>>       unsigned long freed = 0;
+>>
+>> @@ -417,18 +424,9 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+>>       if (nr_scanned == 0)
+>>               nr_scanned = SWAP_CLUSTER_MAX;
+>>
+>> -     if (!down_read_trylock(&shrinker_rwsem)) {
+>> -             /*
+>> -              * If we would return 0, our callers would understand that we
+>> -              * have nothing else to shrink and give up trying. By returning
+>> -              * 1 we keep it going and assume we'll be able to shrink next
+>> -              * time.
+>> -              */
+>> -             freed = 1;
+>> -             goto out;
+>> -     }
+>> +     idx = srcu_read_lock(&shrinker_srcu);
+>>
+>> -     list_for_each_entry(shrinker, &shrinker_list, list) {
+>> +     list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
+>>               struct shrink_control sc = {
+>>                       .gfp_mask = gfp_mask,
+>>                       .nid = nid,
+>> @@ -444,8 +442,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+>>               freed += do_shrink_slab(&sc, shrinker, nr_scanned, nr_eligible);
+>>       }
+>>
+>> -     up_read(&shrinker_rwsem);
+>> -out:
+>> +     srcu_read_unlock(&shrinker_srcu, idx);
+>>       cond_resched();
+>>       return freed;
+>>  }
+>> --
+>> 2.1.4
+>>
+>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
+>
+> --
+> Michal Hocko
+> SUSE Labs
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-Fixes: mmu-notifier-add-clear_young-callback
-Signed-off-by: Vladimir Davydov <vdavydov-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>
-
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index a5b17137c683..a1a210d59961 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -471,6 +471,8 @@ static inline void mmu_notifier_mm_destroy(struct mm_struct *mm)
- 
- #define ptep_clear_flush_young_notify ptep_clear_flush_young
- #define pmdp_clear_flush_young_notify pmdp_clear_flush_young
-+#define ptep_clear_young_notify ptep_test_and_clear_young
-+#define pmdp_clear_young_notify pmdp_test_and_clear_young
- #define	ptep_clear_flush_notify ptep_clear_flush
- #define pmdp_huge_clear_flush_notify pmdp_huge_clear_flush
- #define pmdp_huge_get_and_clear_notify pmdp_huge_get_and_clear
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
