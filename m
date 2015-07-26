@@ -1,63 +1,59 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Sat, 25 Jul 2015 15:35:24 -0700
-Message-ID: <20150725223524.GA14593@x>
-References: <20150724153334.543cfc7b@canb.auug.org.au>
- <1437768965.3298.52.camel@stgolabs.net>
- <20150724230902.GQ3717@linux.vnet.ibm.com>
- <20150725194739.GA9753@x>
- <1437859442.3298.68.camel@stgolabs.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the renesas tree with the arm-soc tree
+Date: Mon, 27 Jul 2015 09:27:19 +1000
+Message-ID: <20150727092719.22e43573@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:38574 "EHLO
-	relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754997AbbGYWfc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 25 Jul 2015 18:35:32 -0400
-Content-Disposition: inline
-In-Reply-To: <1437859442.3298.68.camel@stgolabs.net>
+Received: from ozlabs.org ([103.22.144.67]:59209 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755033AbbGZX1V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Jul 2015 19:27:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Magnus Damm <damm+renesas@opensource.se>
 
-On Sat, Jul 25, 2015 at 02:24:02PM -0700, Davidlohr Bueso wrote:
-> On Sat, 2015-07-25 at 12:47 -0700, Josh Triplett wrote:
-> > I certainly agree that it doesn't make sense to make all architectures
-> > select SRCU, if an unremovable core kernel feature uses SRCU.  If
-> > possible, I'd really like to avoid seeing SRCU become mandatory again,
-> > though.
-> 
-> I find it very strange that srcu is not taken for granted like rcu is,
-> or even regular locking primitives. How much overhead does srcu add?
+Hi Simon,
 
-About 2k.  (For scale, note that a tinyconfig kernel is currently on the
-order of 700-800k, so that's an appreciable fraction of the kernel.)
+Today's linux-next merge of the renesas tree got a conflict in:
 
-> > Is there any chance at all of the shrinker mechanism becoming optional?
-> > At first glance, it seems reasonably separate from the rest of mm, in
-> > that if it didn't exist and shrinking didn't happen, the rest of mm
-> > still works.  If that happened, MM_SHRINKER could select SRCU.
-> 
-> Some mm functionality might very possibly rely on srcu in the future if
-> we expect any chances of scaling, ie: faults. So I'd rather not take a
-> short term solution here, as we'll probably be discussing this again
-> otherwise.
+  arch/arm/mach-shmobile/setup-r8a7779.c
 
-What other mm functionality plans to use SRCU?
+between commit:
 
-Among other things, no-mmu builds might still be able to omit it.
+  3017a8804ada ("ARM: appropriate __init annotation for const data")
 
-> > If that's not possible, then for the moment, I'd suggest making a hidden
-> > symbol MM_SHRINKER that's always y and does "select SRCU", to preserve
-> > SRCU's modularity for the moment while not forcing every architecture to
-> > select it.
-> 
-> This is _very_ hacking. While tinyfication has its uses and
-> applications, I'd rather not have it in the way of normal kernels.
+from the arm-soc tree and commit:
 
-Thinking about it further, the better alternative if SRCU can't be kept
-optional CONFIG_SRCU "default y" and hidden, so that it doesn't get
-disabled by tinyconfig.
+  131c2e0480b0 ("ARM: shmobile: r8a7779: Generic CCF and timer suppor")
 
-- Josh Triplett
+from the renesas tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-shmobile/setup-r8a7779.c
+index 2321c9de2274,c18d85a96c67..000000000000
+--- a/arch/arm/mach-shmobile/setup-r8a7779.c
++++ b/arch/arm/mach-shmobile/setup-r8a7779.c
+@@@ -756,7 -96,13 +96,13 @@@ static u32 __init r8a7779_read_mode_pin
+  	return mode;
+  }
+  
++ static void __init r8a7779_init_time(void)
++ {
++ 	r8a7779_clocks_init(r8a7779_read_mode_pins());
++ 	clocksource_of_init();
++ }
++ 
+ -static const char *r8a7779_compat_dt[] __initdata = {
+ +static const char *r8a7779_compat_dt[] __initconst = {
+  	"renesas,r8a7779",
+  	NULL,
+  };
