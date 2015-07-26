@@ -1,37 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the arm-soc tree
-Date: Mon, 27 Jul 2015 09:32:12 +1000
-Message-ID: <20150727093212.6556dbcb@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net: via/Kconfig: GENERIC_PCI_IOMAP required if PCI
+ not selected
+Date: Sun, 26 Jul 2015 16:36:58 -0700 (PDT)
+Message-ID: <20150726.163658.1558548081941865290.davem@davemloft.net>
+References: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
+	<20150722.110836.422018977846427052.davem@davemloft.net>
+	<CAAj6DX3WpzogwYFa4EQ-b1o+n-4kE0iXOokYQA5NpV=3YBmM_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>, Nicolas Pitre <nicolas.pitre@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:36771 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755333AbbGZXg7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Jul 2015 19:36:59 -0400
+In-Reply-To: <CAAj6DX3WpzogwYFa4EQ-b1o+n-4kE0iXOokYQA5NpV=3YBmM_A@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: borneo.antonio@gmail.com
+Cc: paul.gortmaker@windriver.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, alchark@gmail.com
 
-Hi Simon,
+From: Antonio Borneo <borneo.antonio@gmail.com>
+Date: Thu, 23 Jul 2015 09:35:51 +0800
 
-Today's linux-next merge of the renesas tree got conflicts in:
+> Digging in git log, arch that used to provide such empty instances
+> moved to a centralized implementation by using GENERIC_PCI_IOMAP.
+> For me such empty functions should be available by default when PCI is
+> not set, but this is not the case today.
 
-  arch/arm/mach-shmobile/board-marzen-reference.c and
-  arch/arm/mach-shmobile/board-marzen.c
+Then that is what we should fix instead of these hackish per-driver
+patches.
 
-between commit:
-
-  3017a8804ada ("ARM: appropriate __init annotation for const data")
-
-from the arm-soc tree and commits:
-
-  d2fb6bdaffc7 ("ARM: shmobile: marzen-reference: Remove C board code")
-  9d35777f2b96 ("ARM: shmobile: marzen: Remove legacy board code")
-
-from the renesas tree.
-
-I fixed it up (I just removed the 2 files) and can carry the fix as
-necessary (no action is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Make it so that these fallback implementations always are present
+when PCI is not set.
