@@ -1,67 +1,80 @@
-From: Guenter Roeck <linux@roeck-us.net>
+From: Paul Burton <paul.burton@imgtec.com>
 Subject: Re: Crash in -next due to 'MIPS: Move FP usage checks into
  protected_{save, restore}_fp_context'
-Date: Mon, 27 Jul 2015 12:44:01 -0700
-Message-ID: <20150727194401.GC14674@roeck-us.net>
+Date: Mon, 27 Jul 2015 13:02:14 -0700
+Message-ID: <20150727200214.GH7289@NP-P-BURTON>
 References: <20150715160918.GA27653@roeck-us.net>
  <20150727150652.GA1756@roeck-us.net>
  <20150727172142.GE7289@NP-P-BURTON>
  <20150727174622.GA10708@roeck-us.net>
  <20150727180442.GG7289@NP-P-BURTON>
+ <20150727194401.GC14674@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:54566 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750917AbbG0ToF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 15:44:05 -0400
+Content-Type: text/plain; charset="utf-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150727180442.GG7289@NP-P-BURTON>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-next@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+In-Reply-To: <20150727194401.GC14674@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 27, 2015 at 11:04:42AM -0700, Paul Burton wrote:
-> On Mon, Jul 27, 2015 at 10:46:22AM -0700, Guenter Roeck wrote:
-> > On Mon, Jul 27, 2015 at 10:21:42AM -0700, Paul Burton wrote:
-> > > On Mon, Jul 27, 2015 at 08:06:52AM -0700, Guenter Roeck wrote:
-> > > > On Wed, Jul 15, 2015 at 09:09:18AM -0700, Guenter Roeck wrote:
-> > > > > Hi,
-> > > > 
-> > > > > my qemu test for mipsel crashes with next-20150715 as follows.
+On Mon, Jul 27, 2015 at 12:44:01PM -0700, Guenter Roeck wrote:
+> On Mon, Jul 27, 2015 at 11:04:42AM -0700, Paul Burton wrote:
+> > On Mon, Jul 27, 2015 at 10:46:22AM -0700, Guenter Roeck wrote:
+> > > On Mon, Jul 27, 2015 at 10:21:42AM -0700, Paul Burton wrote:
+> > > > On Mon, Jul 27, 2015 at 08:06:52AM -0700, Guenter Roeck wrote:
+> > > > > On Wed, Jul 15, 2015 at 09:09:18AM -0700, Guenter Roeck wrote:
+> > > > > > Hi,
 > > > > > 
-> > > > ping ... problem is still seen as of next-20150727.
-> > > 
-> > > Hi Guenter,
-> > > 
-> > > Apologies for the delay. Could you share your affected kernel
-> > > configuration & which userland you're running?
-> > > 
-> > > I've just tested with a malta_defconfig kernel & a buildroot based
-> > > initramfs without problems, and things are also fine on my physical
-> > > MIPSr6 setups. If you have any directions with which I can reproduce
-> > > this problem that would be great.
-> > > 
-> > This is with qemu in little endian mode. Big endian works fine.
+> > > > > > my qemu test for mipsel crashes with next-20150715 as follows.
+> > > > > > 
+> > > > > ping ... problem is still seen as of next-20150727.
+> > > > 
+> > > > Hi Guenter,
+> > > > 
+> > > > Apologies for the delay. Could you share your affected kernel
+> > > > configuration & which userland you're running?
+> > > > 
+> > > > I've just tested with a malta_defconfig kernel & a buildroot based
+> > > > initramfs without problems, and things are also fine on my physical
+> > > > MIPSr6 setups. If you have any directions with which I can reproduce
+> > > > this problem that would be great.
+> > > > 
+> > > This is with qemu in little endian mode. Big endian works fine.
+> > 
+> > Yup, I was using little endian in both cases. malta_defconfig is little
+> > endian - sadly use of the el suffix is pretty inconsistent...
+> > 
 > 
-> Yup, I was using little endian in both cases. malta_defconfig is little
-> endian - sadly use of the el suffix is pretty inconsistent...
+> Hi Paul,
 > 
+> some more data:
+> 
+> I tried with mipsel64, using malta_defconfig from 4.2-rc4 as starting point.
+> Same failure. All releases from 3.2 up to 4.2-rc4 pass the test, linux-next
+> as of today fails.
+> 
+> Here is the log:
+> 
+> http://server.roeck-us.net:8010/builders/qemu-mipsel64-next/builds/0/steps/qemubuildcommand/logs/stdio
+> 
+> I pushed the initramfs, configuration, and test script into rootfs/mipsel64
+> of https://github.com/groeck/linux-build-test.
 
-Hi Paul,
+Hi Guenter,
 
-some more data:
+I'm currently mailing out v2 of the series which should fix your
+problem. It was an issue where the kernel would check the FP context for
+whether a SIGFPE should be generated even in cases where FP had not been
+used by userland, and thus had not been initialised. My userland is
+hard float & thus makes use of the FPU early whilst I believe yours is
+soft float, which explains the difference in behaviour.
 
-I tried with mipsel64, using malta_defconfig from 4.2-rc4 as starting point.
-Same failure. All releases from 3.2 up to 4.2-rc4 pass the test, linux-next
-as of today fails.
+I think the endian difference probably boils down to what garbage the
+initial FP context contained.
 
-Here is the log:
+Ralf: can you update the patches in -next please?
 
-http://server.roeck-us.net:8010/builders/qemu-mipsel64-next/builds/0/steps/qemubuildcommand/logs/stdio
-
-I pushed the initramfs, configuration, and test script into rootfs/mipsel64
-of https://github.com/groeck/linux-build-test.
-
-Guenter
+Thanks,
+    Paul
