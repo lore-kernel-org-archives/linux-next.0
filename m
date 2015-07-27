@@ -1,101 +1,58 @@
-From: Guenter Roeck <linux@roeck-us.net>
+From: Paul Burton <paul.burton@imgtec.com>
 Subject: Re: Crash in -next due to 'MIPS: Move FP usage checks into
  protected_{save, restore}_fp_context'
-Date: Mon, 27 Jul 2015 10:46:22 -0700
-Message-ID: <20150727174622.GA10708@roeck-us.net>
+Date: Mon, 27 Jul 2015 11:04:42 -0700
+Message-ID: <20150727180442.GG7289@NP-P-BURTON>
 References: <20150715160918.GA27653@roeck-us.net>
  <20150727150652.GA1756@roeck-us.net>
  <20150727172142.GE7289@NP-P-BURTON>
+ <20150727174622.GA10708@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:33498 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752574AbbG0Rq0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 13:46:26 -0400
+Received: from mailapp01.imgtec.com ([195.59.15.196]:4002 "EHLO
+	mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752294AbbG0SEr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 14:04:47 -0400
 Content-Disposition: inline
-In-Reply-To: <20150727172142.GE7289@NP-P-BURTON>
+In-Reply-To: <20150727174622.GA10708@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Burton <paul.burton@imgtec.com>
+To: Guenter Roeck <linux@roeck-us.net>
 Cc: linux-next@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
 
-On Mon, Jul 27, 2015 at 10:21:42AM -0700, Paul Burton wrote:
-> On Mon, Jul 27, 2015 at 08:06:52AM -0700, Guenter Roeck wrote:
-> > On Wed, Jul 15, 2015 at 09:09:18AM -0700, Guenter Roeck wrote:
-> > > Hi,
-> > > 
-> > > my qemu test for mipsel crashes with next-20150715 as follows.
-> > > 
-> > ping ... problem is still seen as of next-20150727.
-> 
-> Hi Guenter,
-> 
-> Apologies for the delay. Could you share your affected kernel
-> configuration & which userland you're running?
-> 
-> I've just tested with a malta_defconfig kernel & a buildroot based
-> initramfs without problems, and things are also fine on my physical
-> MIPSr6 setups. If you have any directions with which I can reproduce
-> this problem that would be great.
-> 
-This is with qemu in little endian mode. Big endian works fine.
-The configuration, the script to build and run the kernel, 
-and the root file system used are are available at
-https://github.com/groeck/linux-build-test, in directory
-rootfs/mipsel/. The log for the latest build failure is in
-http://server.roeck-us.net:8010/builders/qemu-mipsel-next/builds/194/steps/qemubuildcommand/logs/stdio.
-
-Hope this helps,
-Guenter
-
-
-> Thanks,
->     Paul
-> 
+On Mon, Jul 27, 2015 at 10:46:22AM -0700, Guenter Roeck wrote:
+> On Mon, Jul 27, 2015 at 10:21:42AM -0700, Paul Burton wrote:
+> > On Mon, Jul 27, 2015 at 08:06:52AM -0700, Guenter Roeck wrote:
+> > > On Wed, Jul 15, 2015 at 09:09:18AM -0700, Guenter Roeck wrote:
+> > > > Hi,
+> > > > 
+> > > > my qemu test for mipsel crashes with next-20150715 as follows.
+> > > > 
+> > > ping ... problem is still seen as of next-20150727.
 > > 
-> > > ...
-> > > Btrfs loaded
-> > > console [netcon0] enabled
-> > > netconsole: network logging started
-> > > Freeing unused kernel memory: 284K (808f9000 - 80940000)
-> > > Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000008
-> > > 
-> > > Bisect points to commit 'MIPS: Move FP usage checks into protected_{save,
-> > > restore}_fp_context'. Bisect log is as follows.
-> > > 
-> > > The problem is not seen with bit endian qemu test.
-> > > 
-> > > Please let me know if there is anything I can do to help debugging
-> > > this problem.
-> > > 
-> > > Thanks,
-> > > Guenter
-> > > ---
-> > > 
-> > > # bad: [f4d61b2d73c1e4964ad68df238af5005485469af] Add linux-next specific files for 20150715
-> > > # good: [bc0195aad0daa2ad5b0d76cce22b167bc3435590] Linux 4.2-rc2
-> > > git bisect start 'HEAD' 'v4.2-rc2'
-> > > # bad: [897f492ee766d354b949f3838cbfda8978cfd3cd] Merge remote-tracking branch 'crypto/master'
-> > > git bisect bad 897f492ee766d354b949f3838cbfda8978cfd3cd
-> > > # bad: [687fe9993e4fbe728113086eb9525360465694e6] Merge remote-tracking branch 'mips/mips-for-linux-next'
-> > > git bisect bad 687fe9993e4fbe728113086eb9525360465694e6
-> > > # good: [a06e5ae4e8d6d5846809e94d0d45afcc5a9eaf35] Merge remote-tracking branch 'omap/for-next'
-> > > git bisect good a06e5ae4e8d6d5846809e94d0d45afcc5a9eaf35
-> > > # good: [badbfaedef0876d3cffb3264512aaec8cc162c61] Merge remote-tracking branch 'tegra/for-next'
-> > > git bisect good badbfaedef0876d3cffb3264512aaec8cc162c61
-> > > # bad: [88841d986cebe1207a47cd7422f5069b2616b194] MIPS: Advertise MSA support via HWCAP when present
-> > > git bisect bad 88841d986cebe1207a47cd7422f5069b2616b194
-> > > # good: [7c1f7b83170bc14a3e461a9b5595fcecf857da70] MIPS: octeon: Replace the homebrewn flow handler
-> > > git bisect good 7c1f7b83170bc14a3e461a9b5595fcecf857da70
-> > > # good: [186a699fdf6f0866ca980bcf5e79f54922fe52c2] MIPS: Introduce accessors for MSA vector registers
-> > > git bisect good 186a699fdf6f0866ca980bcf5e79f54922fe52c2
-> > > # bad: [1793cdaa84ed5c4025a36793f350b07b49555b57] MIPS: Skip odd double FP registers when copying FP32 sigcontext
-> > > git bisect bad 1793cdaa84ed5c4025a36793f350b07b49555b57
-> > > # good: [8a6bb0ab74eaca5f2a4e60f94df2ea5b08cdfd63] MIPS: Simplify EVA FP context handling code
-> > > git bisect good 8a6bb0ab74eaca5f2a4e60f94df2ea5b08cdfd63
-> > > # good: [6f47ebd751531249fe0e2b4d3afdfcbf9f66dbd8] MIPS: Use struct mips_abi offsets to save FP context
-> > > git bisect good 6f47ebd751531249fe0e2b4d3afdfcbf9f66dbd8
-> > > # bad: [fa3156ca734cb65f23df0f844433e75ea1da37f3] MIPS: Move FP usage checks into protected_{save, restore}_fp_context
-> > > git bisect bad fa3156ca734cb65f23df0f844433e75ea1da37f3
-> > > # first bad commit: [fa3156ca734cb65f23df0f844433e75ea1da37f3] MIPS: Move FP usage checks into protected_{save, restore}_fp_context
+> > Hi Guenter,
+> > 
+> > Apologies for the delay. Could you share your affected kernel
+> > configuration & which userland you're running?
+> > 
+> > I've just tested with a malta_defconfig kernel & a buildroot based
+> > initramfs without problems, and things are also fine on my physical
+> > MIPSr6 setups. If you have any directions with which I can reproduce
+> > this problem that would be great.
+> > 
+> This is with qemu in little endian mode. Big endian works fine.
+
+Yup, I was using little endian in both cases. malta_defconfig is little
+endian - sadly use of the el suffix is pretty inconsistent...
+
+> The configuration, the script to build and run the kernel, 
+> and the root file system used are are available at
+> https://github.com/groeck/linux-build-test, in directory
+> rootfs/mipsel/. The log for the latest build failure is in
+> http://server.roeck-us.net:8010/builders/qemu-mipsel-next/builds/194/steps/qemubuildcommand/logs/stdio.
+
+Thanks for the pointers, I'm able to reproduce it using your config and
+initramfs, and I'll dig into what's going on here.
+
+Paul
