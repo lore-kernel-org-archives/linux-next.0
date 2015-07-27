@@ -1,36 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] genirq: Export irq_{get,set}_irqchip_state()
-Date: Mon, 27 Jul 2015 15:23:07 +0200
-Message-ID: <CACRpkdYEFK9gJETzw+ygQVZU0Y6BQwgw-LNqd3sjuOcvAJrr9g@mail.gmail.com>
-References: <20150722184015.GA11162@sirena.org.uk>
-	<1437594184-22966-1-git-send-email-bjorn.andersson@sonymobile.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: Crash in -next due to 'MIPS: Move FP usage checks into
+ protected_{save, restore}_fp_context'
+Date: Mon, 27 Jul 2015 08:06:52 -0700
+Message-ID: <20150727150652.GA1756@roeck-us.net>
+References: <20150715160918.GA27653@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:32976 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308AbbG0NXI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 09:23:08 -0400
-Received: by oige126 with SMTP id e126so51213256oig.0
-        for <linux-next@vger.kernel.org>; Mon, 27 Jul 2015 06:23:07 -0700 (PDT)
-In-Reply-To: <1437594184-22966-1-git-send-email-bjorn.andersson@sonymobile.com>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:33465 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753881AbbG0PG4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 11:06:56 -0400
+Content-Disposition: inline
+In-Reply-To: <20150715160918.GA27653@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: linux-next@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
 
-On Wed, Jul 22, 2015 at 9:43 PM, Bjorn Andersson
-<bjorn.andersson@sonymobile.com> wrote:
+On Wed, Jul 15, 2015 at 09:09:18AM -0700, Guenter Roeck wrote:
+> Hi,
+> 
+> my qemu test for mipsel crashes with next-20150715 as follows.
+> 
+ping ... problem is still seen as of next-20150727.
 
-> Export these functions to be able to build the Qualcomm family A PMIC
-> gpio and mpp drivers as modules.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-TGLX: please take this one, alternatively I can carry it with
-your ACK.
-
-Yours,
-Linus Walleij
+> ...
+> Btrfs loaded
+> console [netcon0] enabled
+> netconsole: network logging started
+> Freeing unused kernel memory: 284K (808f9000 - 80940000)
+> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000008
+> 
+> Bisect points to commit 'MIPS: Move FP usage checks into protected_{save,
+> restore}_fp_context'. Bisect log is as follows.
+> 
+> The problem is not seen with bit endian qemu test.
+> 
+> Please let me know if there is anything I can do to help debugging
+> this problem.
+> 
+> Thanks,
+> Guenter
+> ---
+> 
+> # bad: [f4d61b2d73c1e4964ad68df238af5005485469af] Add linux-next specific files for 20150715
+> # good: [bc0195aad0daa2ad5b0d76cce22b167bc3435590] Linux 4.2-rc2
+> git bisect start 'HEAD' 'v4.2-rc2'
+> # bad: [897f492ee766d354b949f3838cbfda8978cfd3cd] Merge remote-tracking branch 'crypto/master'
+> git bisect bad 897f492ee766d354b949f3838cbfda8978cfd3cd
+> # bad: [687fe9993e4fbe728113086eb9525360465694e6] Merge remote-tracking branch 'mips/mips-for-linux-next'
+> git bisect bad 687fe9993e4fbe728113086eb9525360465694e6
+> # good: [a06e5ae4e8d6d5846809e94d0d45afcc5a9eaf35] Merge remote-tracking branch 'omap/for-next'
+> git bisect good a06e5ae4e8d6d5846809e94d0d45afcc5a9eaf35
+> # good: [badbfaedef0876d3cffb3264512aaec8cc162c61] Merge remote-tracking branch 'tegra/for-next'
+> git bisect good badbfaedef0876d3cffb3264512aaec8cc162c61
+> # bad: [88841d986cebe1207a47cd7422f5069b2616b194] MIPS: Advertise MSA support via HWCAP when present
+> git bisect bad 88841d986cebe1207a47cd7422f5069b2616b194
+> # good: [7c1f7b83170bc14a3e461a9b5595fcecf857da70] MIPS: octeon: Replace the homebrewn flow handler
+> git bisect good 7c1f7b83170bc14a3e461a9b5595fcecf857da70
+> # good: [186a699fdf6f0866ca980bcf5e79f54922fe52c2] MIPS: Introduce accessors for MSA vector registers
+> git bisect good 186a699fdf6f0866ca980bcf5e79f54922fe52c2
+> # bad: [1793cdaa84ed5c4025a36793f350b07b49555b57] MIPS: Skip odd double FP registers when copying FP32 sigcontext
+> git bisect bad 1793cdaa84ed5c4025a36793f350b07b49555b57
+> # good: [8a6bb0ab74eaca5f2a4e60f94df2ea5b08cdfd63] MIPS: Simplify EVA FP context handling code
+> git bisect good 8a6bb0ab74eaca5f2a4e60f94df2ea5b08cdfd63
+> # good: [6f47ebd751531249fe0e2b4d3afdfcbf9f66dbd8] MIPS: Use struct mips_abi offsets to save FP context
+> git bisect good 6f47ebd751531249fe0e2b4d3afdfcbf9f66dbd8
+> # bad: [fa3156ca734cb65f23df0f844433e75ea1da37f3] MIPS: Move FP usage checks into protected_{save, restore}_fp_context
+> git bisect bad fa3156ca734cb65f23df0f844433e75ea1da37f3
+> # first bad commit: [fa3156ca734cb65f23df0f844433e75ea1da37f3] MIPS: Move FP usage checks into protected_{save, restore}_fp_context
