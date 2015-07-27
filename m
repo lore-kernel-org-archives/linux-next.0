@@ -1,35 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] net: via/Kconfig: GENERIC_PCI_IOMAP required if PCI
- not selected
-Date: Sun, 26 Jul 2015 16:36:58 -0700 (PDT)
-Message-ID: <20150726.163658.1558548081941865290.davem@davemloft.net>
-References: <1437582854-3320-1-git-send-email-borneo.antonio@gmail.com>
-	<20150722.110836.422018977846427052.davem@davemloft.net>
-	<CAAj6DX3WpzogwYFa4EQ-b1o+n-4kE0iXOokYQA5NpV=3YBmM_A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 27 Jul 2015 11:14:47 +1000
+Message-ID: <20150727111447.72daeeb3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:36771 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755333AbbGZXg7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Jul 2015 19:36:59 -0400
-In-Reply-To: <CAAj6DX3WpzogwYFa4EQ-b1o+n-4kE0iXOokYQA5NpV=3YBmM_A@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: borneo.antonio@gmail.com
-Cc: paul.gortmaker@windriver.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, alchark@gmail.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+List-Id: linux-next.vger.kernel.org
 
-From: Antonio Borneo <borneo.antonio@gmail.com>
-Date: Thu, 23 Jul 2015 09:35:51 +0800
+Hi Dave,
 
-> Digging in git log, arch that used to provide such empty instances
-> moved to a centralized implementation by using GENERIC_PCI_IOMAP.
-> For me such empty functions should be available by default when PCI is
-> not set, but this is not the case today.
+Today's linux-next merge of the drm tree got a conflict in:
 
-Then that is what we should fix instead of these hackish per-driver
-patches.
+  drivers/gpu/drm/drm_crtc.c
 
-Make it so that these fallback implementations always are present
-when PCI is not set.
+between commit:
+
+  5677d67ae394 ("drm: Stop resetting connector state to unknown")
+
+from Linus' tree and commit:
+
+  6295d607ad34 ("drm: Add modeset object iterators")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/drm_crtc.c
+index fed748311b92,1f0da41ae2a1..000000000000
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@@ -5398,9 -5273,12 +5273,9 @@@ void drm_mode_config_reset(struct drm_d
+  		if (encoder->funcs->reset)
+  			encoder->funcs->reset(encoder);
+  
+- 	list_for_each_entry(connector, &dev->mode_config.connector_list, head)
+ -	drm_for_each_connector(connector, dev) {
+ -		connector->status = connector_status_unknown;
+ -
+++	drm_for_each_connector(connector, dev)
+  		if (connector->funcs->reset)
+  			connector->funcs->reset(connector);
+ -	}
+  }
+  EXPORT_SYMBOL(drm_mode_config_reset);
+  
