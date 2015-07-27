@@ -1,51 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the
- wireless-drivers-next tree
-Date: Mon, 27 Jul 2015 16:04:24 +1000
-Message-ID: <20150727160424.6af47528@canb.auug.org.au>
-References: <20150722103239.04995fda@canb.auug.org.au>
-	<876156b1ia.fsf@kamboji.qca.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] genirq: Export irq_{get,set}_irqchip_state()
+Date: Mon, 27 Jul 2015 15:23:07 +0200
+Message-ID: <CACRpkdYEFK9gJETzw+ygQVZU0Y6BQwgw-LNqd3sjuOcvAJrr9g@mail.gmail.com>
+References: <20150722184015.GA11162@sirena.org.uk>
+	<1437594184-22966-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45449 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750779AbbG0GE1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jul 2015 02:04:27 -0400
-In-Reply-To: <876156b1ia.fsf@kamboji.qca.qualcomm.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:32976 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751308AbbG0NXI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 09:23:08 -0400
+Received: by oige126 with SMTP id e126so51213256oig.0
+        for <linux-next@vger.kernel.org>; Mon, 27 Jul 2015 06:23:07 -0700 (PDT)
+In-Reply-To: <1437594184-22966-1-git-send-email-bjorn.andersson@sonymobile.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Hi Kalle,
+On Wed, Jul 22, 2015 at 9:43 PM, Bjorn Andersson
+<bjorn.andersson@sonymobile.com> wrote:
 
-On Mon, 27 Jul 2015 08:41:49 +0300 Kalle Valo <kvalo@codeaurora.org> wrote:
+> Export these functions to be able to build the Qualcomm family A PMIC
+> gpio and mpp drivers as modules.
 >
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> 
-> > After merging the wireless-drivers-next tree, today's linux-next build
-> > (x86_64 allmodconfig) failed like this:
-> >
-> > ERROR: "of_default_bus_match_table" [drivers/bcma/bcma.ko] undefined!
-> >
-> > Caused by commit
-> >
-> >   cae761b5a6bd ("bcma: populate bus DT subnodes as platform_device-s")
-> >
-> > I have used the wireless-drivers-next tree from next-20150721 for today.
-> 
-> Yesterday I pushed the commit below which should fix this issue. Please
-> let me know if you still have any problems.
-> 
-> commit 92ff7a698badec3938edd3ba6b3e3ae035555365
-> Author: Hauke Mehrtens <hauke@hauke-m.de>
-> Date:   Sat Jul 25 21:10:27 2015 +0200
-> 
->     bcma: fix build error when build as module
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-It is fixed today, thanks.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+TGLX: please take this one, alternatively I can carry it with
+your ACK.
+
+Yours,
+Linus Walleij
