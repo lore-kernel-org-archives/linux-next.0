@@ -1,47 +1,54 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 27 Jul 2015 15:10:40 -0700
-Message-ID: <20150727221040.GA4038@jtriplet-mobl1>
-References: <20150724153334.543cfc7b@canb.auug.org.au>
- <1437768965.3298.52.camel@stgolabs.net>
- <20150724230902.GQ3717@linux.vnet.ibm.com>
- <20150725194739.GA9753@x>
- <1437859442.3298.68.camel@stgolabs.net>
- <20150725223524.GA14593@x>
- <20150727130312.d87e352473dfd8b431c8c07b@linux-foundation.org>
- <20150727202758.GA28119@cloud>
- <20150727133133.a2c22062fba70b971f449d0a@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add QCOM to linux-next
+Date: Tue, 28 Jul 2015 08:52:42 +1000
+Message-ID: <20150728085242.7e0e9e95@canb.auug.org.au>
+References: <20150727214230.GH12739@qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40763 "EHLO
-	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752739AbbG0WKr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 18:10:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20150727133133.a2c22062fba70b971f449d0a@linux-foundation.org>
+Received: from ozlabs.org ([103.22.144.67]:34236 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754401AbbG0Wwo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jul 2015 18:52:44 -0400
+In-Reply-To: <20150727214230.GH12739@qualcomm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Gross <agross@codeaurora.org>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Jul 27, 2015 at 01:31:33PM -0700, Andrew Morton wrote:
-> On Mon, 27 Jul 2015 13:27:58 -0700 josh@joshtriplett.org wrote:
+Hi Andy,
+
+On Mon, 27 Jul 2015 16:42:30 -0500 Andy Gross <agross@codeaurora.org> wrote:
+>
+> Can you please add the following tree to linux-next:
 > 
-> > I agree with that.  I'm wondering if, rather than making the
-> > SRCU-ification optional, shrinkers themselves could just be optional.
-> > Unless I'm badly misunderstanding what shrinkers do, they seem like a
-> > perfect example of something that could be omitted with little to no
-> > impact.  (Stub them out, make them never called, and if you run out of
-> > memory just be unhappy.  Ditto for the oom-killer, which really ought to
-> > be optional.)
+> git://codeaurora.org/quic/kernel/agross-msm.git qcom/for-next
 > 
-> The shrinkers do important stuff ;) "find /" will consume large amounts
-> of memory for inode and dentry caches.  The shrinkers are how we free
-> that up again.
+> We'll be using this for our QCOM SOC repo integration work.
 
-*Ah*, I see.  I misunderstood their purpose, and I didn't realize that
-was one of the cases they covered.  While that might be possible to
-reduce, it doesn't sound like it can go away entirely. :)
+I assume that this will be merged via the arm-soc tree?
 
-- Josh Triplett
+Added from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
