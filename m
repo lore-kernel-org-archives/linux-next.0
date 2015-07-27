@@ -1,80 +1,42 @@
-From: Paul Burton <paul.burton@imgtec.com>
-Subject: Re: Crash in -next due to 'MIPS: Move FP usage checks into
- protected_{save, restore}_fp_context'
-Date: Mon, 27 Jul 2015 13:02:14 -0700
-Message-ID: <20150727200214.GH7289@NP-P-BURTON>
-References: <20150715160918.GA27653@roeck-us.net>
- <20150727150652.GA1756@roeck-us.net>
- <20150727172142.GE7289@NP-P-BURTON>
- <20150727174622.GA10708@roeck-us.net>
- <20150727180442.GG7289@NP-P-BURTON>
- <20150727194401.GC14674@roeck-us.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 27 Jul 2015 13:03:12 -0700
+Message-ID: <20150727130312.d87e352473dfd8b431c8c07b@linux-foundation.org>
+References: <20150724153334.543cfc7b@canb.auug.org.au>
+	<1437768965.3298.52.camel@stgolabs.net>
+	<20150724230902.GQ3717@linux.vnet.ibm.com>
+	<20150725194739.GA9753@x>
+	<1437859442.3298.68.camel@stgolabs.net>
+	<20150725223524.GA14593@x>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150727194401.GC14674@roeck-us.net>
+In-Reply-To: <20150725223524.GA14593@x>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 27, 2015 at 12:44:01PM -0700, Guenter Roeck wrote:
-> On Mon, Jul 27, 2015 at 11:04:42AM -0700, Paul Burton wrote:
-> > On Mon, Jul 27, 2015 at 10:46:22AM -0700, Guenter Roeck wrote:
-> > > On Mon, Jul 27, 2015 at 10:21:42AM -0700, Paul Burton wrote:
-> > > > On Mon, Jul 27, 2015 at 08:06:52AM -0700, Guenter Roeck wrote:
-> > > > > On Wed, Jul 15, 2015 at 09:09:18AM -0700, Guenter Roeck wrote:
-> > > > > > Hi,
-> > > > > 
-> > > > > > my qemu test for mipsel crashes with next-20150715 as follows.
-> > > > > > 
-> > > > > ping ... problem is still seen as of next-20150727.
-> > > > 
-> > > > Hi Guenter,
-> > > > 
-> > > > Apologies for the delay. Could you share your affected kernel
-> > > > configuration & which userland you're running?
-> > > > 
-> > > > I've just tested with a malta_defconfig kernel & a buildroot based
-> > > > initramfs without problems, and things are also fine on my physical
-> > > > MIPSr6 setups. If you have any directions with which I can reproduce
-> > > > this problem that would be great.
-> > > > 
-> > > This is with qemu in little endian mode. Big endian works fine.
-> > 
-> > Yup, I was using little endian in both cases. malta_defconfig is little
-> > endian - sadly use of the el suffix is pretty inconsistent...
-> > 
-> 
-> Hi Paul,
-> 
-> some more data:
-> 
-> I tried with mipsel64, using malta_defconfig from 4.2-rc4 as starting point.
-> Same failure. All releases from 3.2 up to 4.2-rc4 pass the test, linux-next
-> as of today fails.
-> 
-> Here is the log:
-> 
-> http://server.roeck-us.net:8010/builders/qemu-mipsel64-next/builds/0/steps/qemubuildcommand/logs/stdio
-> 
-> I pushed the initramfs, configuration, and test script into rootfs/mipsel64
-> of https://github.com/groeck/linux-build-test.
+On Sat, 25 Jul 2015 15:35:24 -0700 Josh Triplett <josh@joshtriplett.org> wrote:
 
-Hi Guenter,
+> > Some mm functionality might very possibly rely on srcu in the future if
+> > we expect any chances of scaling, ie: faults. So I'd rather not take a
+> > short term solution here, as we'll probably be discussing this again
+> > otherwise.
+> 
+> What other mm functionality plans to use SRCU?
+> 
+> Among other things, no-mmu builds might still be able to omit it.
 
-I'm currently mailing out v2 of the series which should fix your
-problem. It was an issue where the kernel would check the FP context for
-whether a SIGFPE should be generated even in cases where FP had not been
-used by userland, and thus had not been initialised. My userland is
-hard float & thus makes use of the FPU early whilst I believe yours is
-soft float, which explains the difference in behaviour.
+Yup.
 
-I think the endian difference probably boils down to what garbage the
-initial FP context contained.
+It's pretty trivial to make the shrinker srcuification be a
+Kconfigurable thing.  A few little helper functions and we're done. 
+That way, non-SMP kernels can use the plain old rwsem if so desired.
 
-Ralf: can you update the patches in -next please?
+otoh it's better to use the same mechanism on all kernels for reasons
+of testing coverage, maintenance cost, etc.
 
-Thanks,
-    Paul
+The mm-srcu-ify-shrinkers.patch changelog is suspiciously lacking in
+evidence-of-benefit.  We could just drop it?
