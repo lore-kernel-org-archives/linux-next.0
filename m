@@ -1,55 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 27 Jul 2015 11:14:47 +1000
-Message-ID: <20150727111447.72daeeb3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the battery tree
+Date: Mon, 27 Jul 2015 11:40:03 +1000
+Message-ID: <20150727114003.093f0c4d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48284 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755249AbbG0BkF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Jul 2015 21:40:05 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jun Nie <jun.nie@linaro.org>
 
-Hi Dave,
+Hi Sebastian,
 
-Today's linux-next merge of the drm tree got a conflict in:
+After merging the battery tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/gpu/drm/drm_crtc.c
+drivers/power/reset/zx-reboot.c:21:26: fatal error: asm/proc-fns.h: No such file or directory
+ #include <asm/proc-fns.h>
+                          ^
 
-between commit:
+Caused by commit
 
-  5677d67ae394 ("drm: Stop resetting connector state to unknown")
+  dd9f1486ae20 ("power/reset: zx: Register restart handler")
 
-from Linus' tree and commit:
-
-  6295d607ad34 ("drm: Add modeset object iterators")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I have used the battery tree from next-20150724 for today.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/drm_crtc.c
-index fed748311b92,1f0da41ae2a1..000000000000
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@@ -5398,9 -5273,12 +5273,9 @@@ void drm_mode_config_reset(struct drm_d
-  		if (encoder->funcs->reset)
-  			encoder->funcs->reset(encoder);
-  
-- 	list_for_each_entry(connector, &dev->mode_config.connector_list, head)
- -	drm_for_each_connector(connector, dev) {
- -		connector->status = connector_status_unknown;
- -
-++	drm_for_each_connector(connector, dev)
-  		if (connector->funcs->reset)
-  			connector->funcs->reset(connector);
- -	}
-  }
-  EXPORT_SYMBOL(drm_mode_config_reset);
-  
