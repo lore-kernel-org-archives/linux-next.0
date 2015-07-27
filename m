@@ -1,35 +1,45 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 27 Jul 2015 13:31:33 -0700
-Message-ID: <20150727133133.a2c22062fba70b971f449d0a@linux-foundation.org>
-References: <20150724153334.543cfc7b@canb.auug.org.au>
-	<1437768965.3298.52.camel@stgolabs.net>
-	<20150724230902.GQ3717@linux.vnet.ibm.com>
-	<20150725194739.GA9753@x>
-	<1437859442.3298.68.camel@stgolabs.net>
-	<20150725223524.GA14593@x>
-	<20150727130312.d87e352473dfd8b431c8c07b@linux-foundation.org>
-	<20150727202758.GA28119@cloud>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: Crash in -next due to 'MIPS: Move FP usage checks into
+ protected_{save, restore}_fp_context'
+Date: Mon, 27 Jul 2015 13:41:04 -0700
+Message-ID: <20150727204104.GA1198@roeck-us.net>
+References: <20150715160918.GA27653@roeck-us.net>
+ <20150727150652.GA1756@roeck-us.net>
+ <20150727172142.GE7289@NP-P-BURTON>
+ <20150727174622.GA10708@roeck-us.net>
+ <20150727180442.GG7289@NP-P-BURTON>
+ <20150727194401.GC14674@roeck-us.net>
+ <20150727200214.GH7289@NP-P-BURTON>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150727202758.GA28119@cloud>
-Sender: linux-kernel-owner@vger.kernel.org
-To: josh@joshtriplett.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:37327 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752718AbbG0UlH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2015 16:41:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20150727200214.GH7289@NP-P-BURTON>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
 
-On Mon, 27 Jul 2015 13:27:58 -0700 josh@joshtriplett.org wrote:
+Hi Paul,
 
-> I agree with that.  I'm wondering if, rather than making the
-> SRCU-ification optional, shrinkers themselves could just be optional.
-> Unless I'm badly misunderstanding what shrinkers do, they seem like a
-> perfect example of something that could be omitted with little to no
-> impact.  (Stub them out, make them never called, and if you run out of
-> memory just be unhappy.  Ditto for the oom-killer, which really ought to
-> be optional.)
+On Mon, Jul 27, 2015 at 01:02:14PM -0700, Paul Burton wrote:
+> 
+> Hi Guenter,
+> 
+> I'm currently mailing out v2 of the series which should fix your
+> problem. It was an issue where the kernel would check the FP context for
+> whether a SIGFPE should be generated even in cases where FP had not been
+> used by userland, and thus had not been initialised. My userland is
+> hard float & thus makes use of the FPU early whilst I believe yours is
+> soft float, which explains the difference in behaviour.
+> 
+> I think the endian difference probably boils down to what garbage the
+> initial FP context contained.
+> 
+Thanks a lot for the fix!
 
-The shrinkers do important stuff ;) "find /" will consume large amounts
-of memory for inode and dentry caches.  The shrinkers are how we free
-that up again.
+Guenter
