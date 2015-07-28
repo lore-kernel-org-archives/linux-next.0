@@ -1,45 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Tue, 28 Jul 2015 15:33:03 +1000
-Message-ID: <20150728153303.2ba27786@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Tue, 28 Jul 2015 16:00:15 +1000
+Message-ID: <20150728160015.142f588f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56650 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932074AbbG1FdG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jul 2015 01:33:06 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Eric B Munson <emunson@akamai.com>, Andrea Arcangeli <aarcange@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Andrew,
 
-After merging the tip tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/video/fbdev/aty/atyfb_base.c: In function 'atyfb_setup_generic':
-drivers/video/fbdev/aty/atyfb_base.c:3447:2: error: implicit declaration of function 'ioremap_uc' [-Werror=implicit-function-declaration]
-  par->ati_regbase = ioremap_uc(info->fix.mmio_start, 0x1000);
-  ^
-drivers/video/fbdev/aty/atyfb_base.c:3447:19: warning: assignment makes pointer from integer without a cast
-  par->ati_regbase = ioremap_uc(info->fix.mmio_start, 0x1000);
-                   ^
+  arch/x86/entry/syscalls/syscall_32.tbl
 
-Caused by commits
+between commit:
 
-  3cc2dac5be3f ("drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC")
-  8c7ea50c010b ("x86/mm, asm-generic: Add IOMMU ioremap_uc() variant default")
+  9dea5dc921b5 ("x86/entry/syscalls: Wire up 32-bit direct socket calls")
 
-The latter defines ioremap_uc() for x86 and those architectures that
-use asm-generic/io.h - which is not all of them :-( .  The former commit
-then uses ioremap_uc().
+from the tip tree and commit:
 
-I have reverted commit 3cc2dac5be3f (and 7d89a3cb159a that follows it)
-for today.
+  0a36ab281187 ("userfaultfd: activate syscall")
+  f721d9f04de4 ("mm: mlock: add new mlock, munlock, and munlockall system calls")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/x86/entry/syscalls/syscall_32.tbl
+index 25e3cf1cd8fd,d68b13925aa4..000000000000
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@@ -365,18 -365,7 +365,22 @@@
+  356	i386	memfd_create		sys_memfd_create
+  357	i386	bpf			sys_bpf
+  358	i386	execveat		sys_execveat			stub32_execveat
+ -359	i386	userfaultfd		sys_userfaultfd
+ -360	i386	mlock2			sys_mlock2
+ -361	i386	munlock2		sys_munlock2
+ -362	i386	munlockall2		sys_munlockall2
+ +359	i386	socket			sys_socket
+ +360	i386	socketpair		sys_socketpair
+ +361	i386	bind			sys_bind
+ +362	i386	connect			sys_connect
+ +363	i386	listen			sys_listen
+ +364	i386	accept4			sys_accept4
+ +365	i386	getsockopt		sys_getsockopt			compat_sys_getsockopt
+ +366	i386	setsockopt		sys_setsockopt			compat_sys_setsockopt
+ +367	i386	getsockname		sys_getsockname
+ +368	i386	getpeername		sys_getpeername
+ +369	i386	sendto			sys_sendto
+ +370	i386	sendmsg			sys_sendmsg			compat_sys_sendmsg
+ +371	i386	recvfrom		sys_recvfrom			compat_sys_recvfrom
+ +372	i386	recvmsg			sys_recvmsg			compat_sys_recvmsg
+ +373	i386	shutdown		sys_shutdown
+++374	i386	userfaultfd		sys_userfaultfd
+++375	i386	mlock2			sys_mlock2
+++376	i386	munlock2		sys_munlock2
+++377	i386	munlockall2		sys_munlockall2
