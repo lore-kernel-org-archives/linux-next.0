@@ -1,54 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add QCOM to linux-next
-Date: Tue, 28 Jul 2015 08:52:42 +1000
-Message-ID: <20150728085242.7e0e9e95@canb.auug.org.au>
-References: <20150727214230.GH12739@qualcomm.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 28 Jul 2015 11:26:23 +1000
+Message-ID: <20150728112623.3ec0b2b5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34236 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36334 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754401AbbG0Wwo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jul 2015 18:52:44 -0400
-In-Reply-To: <20150727214230.GH12739@qualcomm.com>
+	id S1754828AbbG1B0Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jul 2015 21:26:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andy Gross <agross@codeaurora.org>
-Cc: linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Westphal <fw@strlen.de>
 
-Hi Andy,
+Hi all,
 
-On Mon, 27 Jul 2015 16:42:30 -0500 Andy Gross <agross@codeaurora.org> wrote:
->
-> Can you please add the following tree to linux-next:
-> 
-> git://codeaurora.org/quic/kernel/agross-msm.git qcom/for-next
-> 
-> We'll be using this for our QCOM SOC repo integration work.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-I assume that this will be merged via the arm-soc tree?
+  net/ipv4/ip_fragment.c
 
-Added from today.
+between commit:
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+  0e60d245a0be ("inet: frag: change *_frag_mem_limit functions to take netns_frags as argument")
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
+from the net tree and commit:
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+  14fe22e33462 ("Revert "ipv4: use skb coalescing in defragmentation"")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/ipv4/ip_fragment.c
+index 921138f6c97c,f44bccc42494..000000000000
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@@ -587,35 -586,22 +586,22 @@@ static int ip_frag_reasm(struct ipq *qp
+  		head->len -= clone->len;
+  		clone->csum = 0;
+  		clone->ip_summed = head->ip_summed;
+ -		add_frag_mem_limit(&qp->q, clone->truesize);
+ +		add_frag_mem_limit(qp->q.net, clone->truesize);
+  	}
+  
++ 	skb_shinfo(head)->frag_list = head->next;
+  	skb_push(head, head->data - skb_network_header(head));
+  
+- 	sum_truesize = head->truesize;
+- 	for (fp = head->next; fp;) {
+- 		bool headstolen;
+- 		int delta;
+- 		struct sk_buff *next = fp->next;
+- 
+- 		sum_truesize += fp->truesize;
++ 	for (fp=head->next; fp; fp = fp->next) {
++ 		head->data_len += fp->len;
++ 		head->len += fp->len;
+  		if (head->ip_summed != fp->ip_summed)
+  			head->ip_summed = CHECKSUM_NONE;
+  		else if (head->ip_summed == CHECKSUM_COMPLETE)
+  			head->csum = csum_add(head->csum, fp->csum);
+- 
+- 		if (skb_try_coalesce(head, fp, &headstolen, &delta)) {
+- 			kfree_skb_partial(fp, headstolen);
+- 		} else {
+- 			if (!skb_shinfo(head)->frag_list)
+- 				skb_shinfo(head)->frag_list = fp;
+- 			head->data_len += fp->len;
+- 			head->len += fp->len;
+- 			head->truesize += fp->truesize;
+- 		}
+- 		fp = next;
++ 		head->truesize += fp->truesize;
+  	}
+- 	sub_frag_mem_limit(qp->q.net, sum_truesize);
+ -	sub_frag_mem_limit(&qp->q, head->truesize);
+++	sub_frag_mem_limit(qp->q.net, head->truesize);
+  
+  	head->next = NULL;
+  	head->dev = dev;
