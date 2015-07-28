@@ -1,420 +1,71 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20150728 build: 1 failures 41 warnings (next-20150728)
-Date: Tue, 28 Jul 2015 11:24:40 +0100
-Message-ID: <E1ZK23s-0008Dr-Qa@optimist>
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 28 Jul 2015 18:34:19 +0200
+Message-ID: <20150728163419.GZ30479@wotan.suse.de>
+References: <20150728153303.2ba27786@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43496 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755340AbbG1KYs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2015 06:24:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36480 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751124AbbG1Qeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jul 2015 12:34:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20150728153303.2ba27786@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm@linux-foundation.org, benh@kernel.crashing.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tree/Branch: next-20150728
-Git describe: next-20150728
-Commit: 5aa6180315 Add linux-next specific files for 20150728
+On Tue, Jul 28, 2015 at 03:33:03PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/video/fbdev/aty/atyfb_base.c: In function 'atyfb_setup_generic':
+> drivers/video/fbdev/aty/atyfb_base.c:3447:2: error: implicit declaration of function 'ioremap_uc' [-Werror=implicit-function-declaration]
+>   par->ati_regbase = ioremap_uc(info->fix.mmio_start, 0x1000);
+>   ^
+> drivers/video/fbdev/aty/atyfb_base.c:3447:19: warning: assignment makes pointer from integer without a cast
+>   par->ati_regbase = ioremap_uc(info->fix.mmio_start, 0x1000);
+>                    ^
+> 
+> Caused by commits
+> 
+>   3cc2dac5be3f ("drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC")
+>   8c7ea50c010b ("x86/mm, asm-generic: Add IOMMU ioremap_uc() variant default")
+> 
+> The latter defines ioremap_uc() for x86 and those architectures that
+> use asm-generic/io.h - which is not all of them :-( .  The former commit
+> then uses ioremap_uc().
+> 
+> I have reverted commit 3cc2dac5be3f (and 7d89a3cb159a that follows it)
+> for today.
 
-Build Time: 80 min 9 sec
+This should be fixed by:
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+http://git.kernel.org/tip/8c7ea50c010b2f1e006ad37c43f98202a31de2cb
 
-Errors: 9
-Warnings: 41
-Section Mismatches: 1
+The way it was defined was to return NULL if an arch does not have it,
+*but* if the asm-generic io.h header is not included on some archs it will still
+fail, which leaves us no option but to then poke and define its implementaiton
+for archs which opt-out of asm-generic io.h
 
-Failed defconfigs:
-	arm-allmodconfig
+Benh, in this case I believe its OK to to just map it to ioremap(), let me know
+what you think.
 
-Errors:
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index a8d2ef30d473..91db9153cd44 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -721,6 +721,7 @@ extern void __iomem *ioremap_prot(phys_addr_t address, unsigned long size,
+ 				  unsigned long flags);
+ extern void __iomem *ioremap_wc(phys_addr_t address, unsigned long size);
+ #define ioremap_nocache(addr, size)	ioremap((addr), (size))
++#define ioremap_uc(addr, size)	ioremap((addr), (size))
+ 
+ extern void iounmap(volatile void __iomem *addr);
+ 
 
-	arm-allmodconfig
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-../drivers/gpu/drm/omapdrm/omap_crtc.c:470:2: error: initialization from incompatible pointer type [-Werror]
-../drivers/gpu/drm/omapdrm/omap_crtc.c:470:2: error: (near initialization for 'omap_crtc_helper_funcs.atomic_begin') [-Werror]
-../drivers/gpu/drm/omapdrm/omap_crtc.c:471:2: error: initialization from incompatible pointer type [-Werror]
-../drivers/gpu/drm/omapdrm/omap_crtc.c:471:2: error: (near initialization for 'omap_crtc_helper_funcs.atomic_flush') [-Werror]
-../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-    110 warnings    3 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      4 warnings    0 mismatches  : arm-multi_v7_defconfig
-     14 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 9
-	 15 ../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	 15 ../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	 15 ../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	 15 ../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	  1 ../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
-	  1 ../drivers/gpu/drm/omapdrm/omap_crtc.c:471:2: error: initialization from incompatible pointer type [-Werror]
-	  1 ../drivers/gpu/drm/omapdrm/omap_crtc.c:471:2: error: (near initialization for 'omap_crtc_helper_funcs.atomic_flush') [-Werror]
-	  1 ../drivers/gpu/drm/omapdrm/omap_crtc.c:470:2: error: initialization from incompatible pointer type [-Werror]
-	  1 ../drivers/gpu/drm/omapdrm/omap_crtc.c:470:2: error: (near initialization for 'omap_crtc_helper_funcs.atomic_begin') [-Werror]
-
-Warnings Summary: 41
-	 17 ../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	 17 ../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	 14 ../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	 14 ../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	 11 <stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	  3 warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../net/bluetooth/mgmt.c:6636:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:6636:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
-	  1 ../ipc/kdbus/connection.c:2049:1: warning: the frame size of 1280 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/pci/host/pcie-xilinx.c:235:3: warning: passing argument 1 of 'sys_to_pcie' makes pointer from integer without a cast [enabled by default]
-	  1 ../drivers/ntb/ntb_transport.c:778:3: warning: right shift count >= width of type [enabled by default]
-	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	  1 ../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
-	  1 ../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
-	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/block/nvme-core.c:1888:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/nvme-core.c:1846:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 1
-	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 110 warnings, 3 section mismatches
-
-Warnings:
-	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-
-Section Mismatches:
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	../net/bluetooth/mgmt.c:6636:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:6636:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 65 errors, 14 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:12:3: error: unknown type name 'u32'
-	../arch/arm/include/asm/spinlock_types.h:15:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:16:4: error: unknown type name 'u16'
-	../arch/arm/include/asm/spinlock_types.h:28:2: error: unknown type name 'u32'
-	../drivers/gpu/drm/omapdrm/omap_crtc.c:470:2: error: initialization from incompatible pointer type [-Werror]
-	../drivers/gpu/drm/omapdrm/omap_crtc.c:470:2: error: (near initialization for 'omap_crtc_helper_funcs.atomic_begin') [-Werror]
-	../drivers/gpu/drm/omapdrm/omap_crtc.c:471:2: error: initialization from incompatible pointer type [-Werror]
-	../drivers/gpu/drm/omapdrm/omap_crtc.c:471:2: error: (near initialization for 'omap_crtc_helper_funcs.atomic_flush') [-Werror]
-	../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../ipc/kdbus/connection.c:2049:1: warning: the frame size of 1280 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/block/nvme-core.c:1846:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/block/nvme-core.c:1888:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
-	../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
-	../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/ntb_transport.c:778:3: warning: right shift count >= width of type [enabled by default]
-	../drivers/pci/host/pcie-xilinx.c:235:3: warning: passing argument 1 of 'sys_to_pcie' makes pointer from integer without a cast [enabled by default]
-	../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+  Luis
