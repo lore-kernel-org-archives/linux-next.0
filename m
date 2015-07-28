@@ -1,71 +1,50 @@
-From: "Luis R. Rodriguez" <mcgrof@suse.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 28 Jul 2015 18:34:19 +0200
-Message-ID: <20150728163419.GZ30479@wotan.suse.de>
-References: <20150728153303.2ba27786@canb.auug.org.au>
+From: Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Tue, 28 Jul 2015 11:14:40 -0700
+Message-ID: <1438107280.2249.81.camel@stgolabs.net>
+References: <20150724153334.543cfc7b@canb.auug.org.au>
+	 <1437768965.3298.52.camel@stgolabs.net>
+	 <20150724230902.GQ3717@linux.vnet.ibm.com> <20150725194739.GA9753@x>
+	 <1437859442.3298.68.camel@stgolabs.net> <20150725223524.GA14593@x>
+	 <20150727130312.d87e352473dfd8b431c8c07b@linux-foundation.org>
+	 <1438028402.25997.58.camel@stgolabs.net> <20150727203110.GB28119@cloud>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:36480 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:42647 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751124AbbG1Qeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jul 2015 12:34:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20150728153303.2ba27786@canb.auug.org.au>
+	id S1752465AbbG1SOt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jul 2015 14:14:49 -0400
+In-Reply-To: <20150727203110.GB28119@cloud>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm@linux-foundation.org, benh@kernel.crashing.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: josh@joshtriplett.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 28, 2015 at 03:33:03PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Mon, 2015-07-27 at 13:31 -0700, josh@joshtriplett.org wrote:
+> That sounds interesting!  mmap_sem is definitely a performance
+> bottleneck.  How do you handle writes versus reads?
+
+The idea is to make vmas srcu aware, such that their lookups in the
+vmacache are lockless and can survive the entire fault path, among
+others we have ->vm_file. We simply handle cases when the
+vma/page-tables have changed between when the lookup was done and when
+we grab the pte lock with mmap_sem. These invalidations are a pain,
+albeit non fatal in some cases.
+
 > 
-> After merging the tip tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> > Yes, you can argue that they're not published all you want,
+> > but I'm talking beyond my specific use case. Linux VM is known to scale,
+> > why should we hide a core scalability tool from it?
 > 
-> drivers/video/fbdev/aty/atyfb_base.c: In function 'atyfb_setup_generic':
-> drivers/video/fbdev/aty/atyfb_base.c:3447:2: error: implicit declaration of function 'ioremap_uc' [-Werror=implicit-function-declaration]
->   par->ati_regbase = ioremap_uc(info->fix.mmio_start, 0x1000);
->   ^
-> drivers/video/fbdev/aty/atyfb_base.c:3447:19: warning: assignment makes pointer from integer without a cast
->   par->ati_regbase = ioremap_uc(info->fix.mmio_start, 0x1000);
->                    ^
-> 
-> Caused by commits
-> 
->   3cc2dac5be3f ("drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC")
->   8c7ea50c010b ("x86/mm, asm-generic: Add IOMMU ioremap_uc() variant default")
-> 
-> The latter defines ioremap_uc() for x86 and those architectures that
-> use asm-generic/io.h - which is not all of them :-( .  The former commit
-> then uses ioremap_uc().
-> 
-> I have reverted commit 3cc2dac5be3f (and 7d89a3cb159a that follows it)
-> for today.
+> In the case of mmap_sem, does it help at all if tiny kernels were 1)
+> non-preemptible and 2) non-SMP?  Tiny kernels don't necessarily care
+> about scaling.
 
-This should be fixed by:
+Yes, I believe it would! I actually assumed tiny kernels were already
+UP. I don't think it makes much sense to have it at that level. Same
+with preemption.
 
-http://git.kernel.org/tip/8c7ea50c010b2f1e006ad37c43f98202a31de2cb
-
-The way it was defined was to return NULL if an arch does not have it,
-*but* if the asm-generic io.h header is not included on some archs it will still
-fail, which leaves us no option but to then poke and define its implementaiton
-for archs which opt-out of asm-generic io.h
-
-Benh, in this case I believe its OK to to just map it to ioremap(), let me know
-what you think.
-
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index a8d2ef30d473..91db9153cd44 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -721,6 +721,7 @@ extern void __iomem *ioremap_prot(phys_addr_t address, unsigned long size,
- 				  unsigned long flags);
- extern void __iomem *ioremap_wc(phys_addr_t address, unsigned long size);
- #define ioremap_nocache(addr, size)	ioremap((addr), (size))
-+#define ioremap_uc(addr, size)	ioremap((addr), (size))
- 
- extern void iounmap(volatile void __iomem *addr);
- 
-
-  Luis
+Thanks,
+Davidlohr
