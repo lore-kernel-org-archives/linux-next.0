@@ -1,54 +1,43 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 29 Jul 2015 00:08:27 -0700
-Message-ID: <55B87BEB.1080608@roeck-us.net>
-References: <20150729170359.1a8e05cf@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: manual merge of the mfd tree with the pm tree
+Date: Wed, 29 Jul 2015 08:44:19 +0100
+Message-ID: <20150729074419.GG2284@x1>
+References: <20150729122730.1fc9b6a6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:42407 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752012AbbG2HIa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Jul 2015 03:08:30 -0400
-In-Reply-To: <20150729170359.1a8e05cf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150729122730.1fc9b6a6@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 07/29/2015 12:03 AM, Stephen Rothwell wrote:
-> Hi Andrew,
->
-> After merging the akpm-current tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> kernel/watchdog.c:654:6: error: redefinition of 'watchdog_nmi_enable_all'
->   void watchdog_nmi_enable_all(void) {}
->        ^
-> In file included from kernel/watchdog.c:16:0:
-> include/linux/nmi.h:34:20: note: previous definition of 'watchdog_nmi_enable_all' was here
->   static inline void watchdog_nmi_enable_all(void) {}
->                      ^
-> kernel/watchdog.c:655:6: error: redefinition of 'watchdog_nmi_disable_all'
->   void watchdog_nmi_disable_all(void) {}
->        ^
-> In file included from kernel/watchdog.c:16:0:
-> include/linux/nmi.h:33:20: note: previous definition of 'watchdog_nmi_disable_all' was here
->   static inline void watchdog_nmi_disable_all(void) {}
->                      ^
->
-> Caused by commit
->
->    7e6e3bfa2820 ("kernel/watchdog: move NMI function header declarations from watchdog.h to nmi.h")
->
-> I have reverted that commit for today.
->
+> Hi Lee,
 
+Morning Stephen.
 
-v2 with a fix submitted already, after the zero day build bots alerted me.
+> Today's linux-next merge of the mfd tree got a conflict in:
+>=20
+>   drivers/acpi/scan.c
+>=20
+> between commit:
+>=20
+>   68c6b148daa6 ("ACPI / scan: Move device matching code to bus.c")
+>=20
+> from the pm tree and commit:
+>=20
+>   712e960f0ee9 ("ACPI / PM: Attach ACPI power domain only once")
+>=20
+> from the mfd tree.
 
-Sorry for the trouble; I didn't expect that there would be two sets of dummy functions.
-No excuse, of course :-(.
+I believe this will go away when Rafael pulls [0]
 
-Guenter
+[0] http://www.kernelhub.org/?msg=3D803290&p=3D2
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
