@@ -1,58 +1,122 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Subject: Re: patch reverts on linux-next - ioremap_uc() for atyfb
-Date: Wed, 29 Jul 2015 08:59:18 +0800
-Message-ID: <20150729005918.GB23184@wfg-t540p.sh.intel.com>
-References: <20150728200549.GG30479@wotan.suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with the pm tree
+Date: Wed, 29 Jul 2015 12:27:30 +1000
+Message-ID: <20150729122730.1fc9b6a6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:22683 "EHLO mga02.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:55896 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751817AbbG2BAH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jul 2015 21:00:07 -0400
-Content-Disposition: inline
-In-Reply-To: <20150728200549.GG30479@wotan.suse.de>
+	id S1751369AbbG2C1d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jul 2015 22:27:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>
-Cc: akpm@linux-foundation.org, Borislav Petkov <bp@suse.de>, mingo@kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-HI Luis,
+Hi Lee,
 
-On Tue, Jul 28, 2015 at 10:05:49PM +0200, Luis R. Rodriguez wrote:
-> Andrew,
-> 
-> I got a notice from Ingo on July 21 that one of my patches, "x86/mm,
-> asm-generic: Add IOMMU ioremap_uc() variant default" was merged into tip. It
-> was merged a long with other patches, for example:
-> 
-> http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/drivers/video/fbdev/aty/atyfb_base.c?id=3cc2dac5be3f23414a4efdee0b26d79bed297cac
-> 
-> I wrote this patch after Boris had my atyfb series bake on his tree
-> as his tree receives 0-day tests. Then this patch for example makes use of
-> ioremap_uc():
-> 
-> "drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC"
-> 
-> I noticed though that on top there's a revert of that same patch:
-> 
-> http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/drivers/video/fbdev/aty/atyfb_base.c?id=4c090fb7209d523ef4cedb354192a190edd0d166
-> 
-> Revert "drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC" akpm-base
-> This reverts commit 3cc2dac5be3f23414a4efdee0b26d79bed297cac.
-> 
-> It doesn't explain why this was reverted though. Is it OK for things be
-> reverted like this ? Is it understood by others ? It was a bit of a surprise to
-> me though as I was not able to verify things were going through to linux-next.
-> Since Boris was also on vacation and since my trees do not get 0-day-tests
-> it also meant I realied on the chain for issues to be found. I'll fix the
-> fact that my trees do not get 0-day tests but it seems we should probably
-> only put so many dev trees on 0-day test, I'll check with Fengguang Wu if
-> he has bandwidth to put some of my trees.
+Today's linux-next merge of the mfd tree got a conflict in:
 
-Would you tell me your git URL? I'm always seeking to add more dev
-trees to the 0-day test pool. Bandwidth is not a problem you need to
-worry.
+  drivers/acpi/scan.c
 
-Thanks,
-Fengguang
+between commit:
+
+  68c6b148daa6 ("ACPI / scan: Move device matching code to bus.c")
+
+from the pm tree and commit:
+
+  712e960f0ee9 ("ACPI / PM: Attach ACPI power domain only once")
+
+from the mfd tree.
+
+I fixed it up by adding the following merge fix patch and can carry the
+fix as necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 29 Jul 2015 12:07:20 +1000
+Subject: [PATCH] ACPI / PM: merge fix for code movement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/acpi/bus.c | 46 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index 54a2e66ce236..afc15bf929d8 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -482,6 +482,35 @@ static void acpi_device_remove_notify_handler(struct acpi_device *device)
+                              Device Matching
+    -------------------------------------------------------------------------- */
+ 
++/**
++ * acpi_device_is_first_physical_node - Is given dev first physical node
++ * @adev: ACPI companion device
++ * @dev: Physical device to check
++ *
++ * Function checks if given @dev is the first physical devices attached to
++ * the ACPI companion device. This distinction is needed in some cases
++ * where the same companion device is shared between many physical devices.
++ *
++ * Note that the caller have to provide valid @adev pointer.
++ */
++bool acpi_device_is_first_physical_node(struct acpi_device *adev,
++					const struct device *dev)
++{
++	bool ret = false;
++
++	mutex_lock(&adev->physical_node_lock);
++	if (!list_empty(&adev->physical_node_list)) {
++		const struct acpi_device_physical_node *node;
++
++		node = list_first_entry(&adev->physical_node_list,
++					struct acpi_device_physical_node, node);
++		ret = node->dev == dev;
++	}
++	mutex_unlock(&adev->physical_node_lock);
++
++	return ret;
++}
++
+ /*
+  * acpi_companion_match() - Can we match via ACPI companion device
+  * @dev: Device in question
+@@ -506,7 +535,6 @@ static void acpi_device_remove_notify_handler(struct acpi_device *device)
+ struct acpi_device *acpi_companion_match(const struct device *dev)
+ {
+ 	struct acpi_device *adev;
+-	struct mutex *physical_node_lock;
+ 
+ 	adev = ACPI_COMPANION(dev);
+ 	if (!adev)
+@@ -515,21 +543,7 @@ struct acpi_device *acpi_companion_match(const struct device *dev)
+ 	if (list_empty(&adev->pnp.ids))
+ 		return NULL;
+ 
+-	physical_node_lock = &adev->physical_node_lock;
+-	mutex_lock(physical_node_lock);
+-	if (list_empty(&adev->physical_node_list)) {
+-		adev = NULL;
+-	} else {
+-		const struct acpi_device_physical_node *node;
+-
+-		node = list_first_entry(&adev->physical_node_list,
+-					struct acpi_device_physical_node, node);
+-		if (node->dev != dev)
+-			adev = NULL;
+-	}
+-	mutex_unlock(physical_node_lock);
+-
+-	return adev;
++	return acpi_device_is_first_physical_node(adev, dev) ? adev : NULL;
+ }
+ 
+ /**
+-- 
+2.4.6
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
