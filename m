@@ -1,60 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
-Date: Thu, 30 Jul 2015 13:04:44 +1000
-Message-ID: <20150730130444.2ac0706c@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the ext3 tree
+Date: Thu, 30 Jul 2015 13:15:32 +1000
+Message-ID: <20150730131532.3cbd6995@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43620 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750734AbbG3DEq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jul 2015 23:04:46 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Jens,
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+Today's linux-next merge of the block tree got a conflict in:
 
-  drivers/gpu/drm/drm_crtc.c
+  block/bounce.c
 
 between commit:
 
-  5677d67ae394 ("drm: Stop resetting connector state to unknown")
+  a3ad0a9da863 ("block: Remove forced page bouncing under IO")
 
-from Linus' tree and commit:
+from the ext3 tree and commit:
 
-  1c473be11958 ("drm: Fixup locking WARNINGs in drm_mode_config_reset")
+  b7c44ed9d2fc ("block: manipulate bio->bi_flags through helpers")
 
-from the drm-misc tree.
+from the block tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the former removed some of the code updated by the latter)
+and can carry the fix as necessary (no action is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/drm_crtc.c
-index c91c18b2b1d4,7d02e32b4e94..000000000000
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@@ -5273,9 -5273,14 +5273,11 @@@ void drm_mode_config_reset(struct drm_d
-  		if (encoder->funcs->reset)
-  			encoder->funcs->reset(encoder);
+diff --cc block/bounce.c
+index 31cad13a0c9d,2c310ea007ee..000000000000
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@@ -160,24 -161,42 +161,24 @@@ static void __bounce_end_io_read(struc
+  {
+  	struct bio *bio_orig = bio->bi_private;
   
-+ 	mutex_lock(&dev->mode_config.mutex);
- -	drm_for_each_connector(connector, dev) {
- -		connector->status = connector_status_unknown;
- -
- +	drm_for_each_connector(connector, dev)
-  		if (connector->funcs->reset)
-  			connector->funcs->reset(connector);
- -	}
-+ 	mutex_unlock(&dev->mode_config.mutex);
+- 	if (test_bit(BIO_UPTODATE, &bio->bi_flags))
++ 	if (!bio->bi_error)
+  		copy_to_high_bio_irq(bio_orig, bio);
+  
+- 	bounce_end_io(bio, pool, err);
++ 	bounce_end_io(bio, pool);
   }
-  EXPORT_SYMBOL(drm_mode_config_reset);
   
+- static void bounce_end_io_read(struct bio *bio, int err)
++ static void bounce_end_io_read(struct bio *bio)
+  {
+- 	__bounce_end_io_read(bio, page_pool, err);
++ 	__bounce_end_io_read(bio, page_pool);
+  }
+  
+- static void bounce_end_io_read_isa(struct bio *bio, int err)
++ static void bounce_end_io_read_isa(struct bio *bio)
+  {
+- 	__bounce_end_io_read(bio, isa_page_pool, err);
++ 	__bounce_end_io_read(bio, isa_page_pool);
+  }
+  
+ -#ifdef CONFIG_NEED_BOUNCE_POOL
+ -static int must_snapshot_stable_pages(struct request_queue *q, struct bio *bio)
+ -{
+ -	if (bio_data_dir(bio) != WRITE)
+ -		return 0;
+ -
+ -	if (!bdi_cap_stable_pages_required(&q->backing_dev_info))
+ -		return 0;
+ -
+ -	return bio_flagged(bio, BIO_SNAP_STABLE);
+ -}
+ -#else
+ -static int must_snapshot_stable_pages(struct request_queue *q, struct bio *bio)
+ -{
+ -	return 0;
+ -}
+ -#endif /* CONFIG_NEED_BOUNCE_POOL */
+ -
+  static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
+ -			       mempool_t *pool, int force)
+ +			       mempool_t *pool)
+  {
+  	struct bio *bio;
+  	int rw = bio_data_dir(*bio_orig);
