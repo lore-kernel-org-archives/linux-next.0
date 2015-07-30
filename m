@@ -1,154 +1,69 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: samples/kdbus/kdbus-workers.c and cross compiling MIPS
-Date: Thu, 30 Jul 2015 11:32:05 -0400
-Message-ID: <55BA4375.7010400@windriver.com>
-References: <20150729161912.GF18685@windriver.com>	<CANq1E4TgWK-8JkUtOYfTOL9Dx=jWeVpA-h881TXSA3BNjp+MPw@mail.gmail.com>	<55BA2B91.5070107@windriver.com> <CANq1E4S7awCfPaNduoG8ENHmnGhR7-VT-9LvGwREZs-h8zNmzQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:60526 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751289AbbG3Pca (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jul 2015 11:32:30 -0400
-In-Reply-To: <CANq1E4S7awCfPaNduoG8ENHmnGhR7-VT-9LvGwREZs-h8zNmzQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: David Herrmann <dh.herrmann@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, Djalal Harouni <tixxdz@opendz.org>, linux-mips@linux-mips.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+From: Andrea Arcangeli <aarcange@redhat.com>
+Subject: [PATCH] userfaultfd: register syscall numbers for x86 32bit and x86-64 64bit
+Date: Thu, 30 Jul 2015 17:34:27 +0200
+Message-ID: <1438270467-13324-1-git-send-email-aarcange@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, "\\\"H. Peter Anvin\\\"" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Eric B Munson <emunson@akamai.com>, Pavel Emelyanov <xemul@parallels.com>, "\\\"Dr. David Alan Gilbert\\\"" <dgilbert@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On 2015-07-30 10:23 AM, David Herrmann wrote:
-> Hi
->=20
-> On Thu, Jul 30, 2015 at 3:50 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
->> On 2015-07-29 12:31 PM, David Herrmann wrote:
->>> Hi
->>>
->>> On Wed, Jul 29, 2015 at 6:19 PM, Paul Gortmaker
->>> <paul.gortmaker@windriver.com> wrote:
->>>> Hi David,
->>>>
->>>> Does it make sense to build this sample when cross compiling?
->>>>
->>>> The reason I ask is that it has been breaking the linux-next build=
- of
->>>> allmodconfig for a while now, with:
->>>>
->>>>   HOSTCC  samples/kdbus/kdbus-workers
->>>> samples/kdbus/kdbus-workers.c: In function =E2=80=98prime_new=E2=80=
-=99:
->>>> samples/kdbus/kdbus-workers.c:934:18: error: =E2=80=98__NR_memfd_c=
-reate=E2=80=99 undeclared (first use in this function)
->>>>   p->fd =3D syscall(__NR_memfd_create, "prime-area", MFD_CLOEXEC);
->>>>                   ^
->>>> samples/kdbus/kdbus-workers.c:934:18: note: each undeclared identi=
-fier is reported only once for each function it appears in
->>>> scripts/Makefile.host:91: recipe for target 'samples/kdbus/kdbus-w=
-orkers' failed
->>>> make[2]: *** [samples/kdbus/kdbus-workers] Error 1
->>>
->>> mips does have this syscall, so I assume the problem is out-of-date
->>> kernel headers. You can fix this by running:
->>>
->>>     $ make headers_install
->>
->> No, let me try and clarify. Please note the emphasis on cross compil=
-ing
->> and automated build coverage, i.e. there is no place for manual step=
-s.
->=20
-> User-space samples in ./samples/ are compiled with HOSTCC, which is
-> the compiler for the _local_ machine. Regardless of cross-compiling
-> the same local compiler is used. So I cannot understand why this is
-> even remotely related to cross compiling. Please elaborate.
+This registers the official numbers of the userfaultfd syscall for x86
+32bit and x86-64 64bit. This registration allows to ship kernels in
+production using these two syscall numbers for userfaultfd.
 
-Well, it only shows up when we cross compile for mips.  It does not
-seem to be showing up for any other arch (and we cover ~10 of them).
-Nor does it show up for x86 builds.  Also note that the main linux-next
-build machine is actually a PowerPC host.
+Acked-by: Pavel Emelyanov <xemul@parallels.com>
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+ include/linux/syscalls.h               | 1 +
+ kernel/sys_ni.c                        | 1 +
+ 4 files changed, 4 insertions(+)
 
-> Please note that this is HOSTCC running, so it does *NOT* require the
-> toolchain for your cross-compiled architecture.
->=20
-> Also, please tell me why your system has "linux/memfd.h" available,
-> but __NR_memfd_create is undefined?
-
-My local system is a bog standard ubuntu 14.10 and it sees it.  I dont
-know what distro the linux-next IBM powerpc builder is based on but it
-also sees it....
-
-Here is what V=3D1 output looks like:
-
-(cat /dev/null; ) > samples/kdbus/modules.order
-  gcc -Wp,-MD,samples/kdbus/.kdbus-workers.d -Wall -Wmissing-prototypes=
- -Wstrict-prototypes -O2 -fomit-frame-pointer -std=3Dgnu89    -I./usr/i=
-nclude -o samples/kdbus/kdbus-workers samples/kdbus/kdbus-workers.c  -l=
-rt
-samples/kdbus/kdbus-workers.c: In function =E2=80=98prime_new=E2=80=99:
-samples/kdbus/kdbus-workers.c:934:18: error: =E2=80=98__NR_memfd_create=
-=E2=80=99 undeclared (first use in this function)
-  p->fd =3D syscall(__NR_memfd_create, "prime-area", MFD_CLOEXEC);
-                  ^
-samples/kdbus/kdbus-workers.c:934:18: note: each undeclared identifier =
-is reported only once for each function it appears in
-scripts/Makefile.host:91: recipe for target 'samples/kdbus/kdbus-worker=
-s' failed
-make[2]: *** [samples/kdbus/kdbus-workers] Error 1
-scripts/Makefile.build:403: recipe for target 'samples/kdbus' failed
-make[1]: *** [samples/kdbus] Error 2
-Makefile:1569: recipe for target 'samples/' failed
-make: *** [samples/] Error 2
-
-and here is what is in ./usr/include:
-
-paul@yow-lpgnfs-02:~/git/linux-head$ grep -R __NR_memfd_create ./usr/in=
-clude/
-=2E/usr/include/asm-generic/unistd.h:#define __NR_memfd_create 279
-=2E/usr/include/asm-generic/unistd.h:__SYSCALL(__NR_memfd_create, sys_m=
-emfd_create)
-=2E/usr/include/asm/unistd.h:#define __NR_memfd_create            (__NR=
-_Linux + 354)
-=2E/usr/include/asm/unistd.h:#define __NR_memfd_create            (__NR=
-_Linux + 314)
-=2E/usr/include/asm/unistd.h:#define __NR_memfd_create            (__NR=
-_Linux + 318)
-paul@yow-lpgnfs-02:~/git/linux-head$=20
-
-=2E.so it is in there, but presumably something wrt mips ifdeffery
-means it is thrown out by cpp.
-
->=20
-> Anyway, patch is attached. Can you verify it works?
-
-Yes, after I fixed up the mangling from it being sent as
-quoted-printable, it fixes the issue; or at least avoids it.
-
-Tested-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-Thanks,
-Paul.
---
-
-> David
->=20
-> diff --git a/samples/kdbus/Makefile b/samples/kdbus/Makefile
-> index 137f842..dbd9de8 100644
-> --- a/samples/kdbus/Makefile
-> +++ b/samples/kdbus/Makefile
-> @@ -1,9 +1,13 @@
->  # kbuild trick to avoid linker error. Can be omitted if a module is =
-built.
->  obj- :=3D dummy.o
->=20
-> +ifndef CROSS_COMPILE
-> +
->  hostprogs-$(CONFIG_SAMPLE_KDBUS) +=3D kdbus-workers
->=20
->  always :=3D $(hostprogs-y)
->=20
->  HOSTCFLAGS_kdbus-workers.o +=3D -I$(objtree)/usr/include
->  HOSTLOADLIBES_kdbus-workers :=3D -lrt
-> +
-> +endif
->=20
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 25e3cf1..178c5c2 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -380,3 +380,4 @@
+ 371	i386	recvfrom		sys_recvfrom			compat_sys_recvfrom
+ 372	i386	recvmsg			sys_recvmsg			compat_sys_recvmsg
+ 373	i386	shutdown		sys_shutdown
++374	i386	userfaultfd		sys_userfaultfd
+\ No newline at end of file
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 9ef32d5..81c4906 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -329,6 +329,7 @@
+ 320	common	kexec_file_load		sys_kexec_file_load
+ 321	common	bpf			sys_bpf
+ 322	64	execveat		stub_execveat
++323	common	userfaultfd		sys_userfaultfd
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index b45c45b..0800131 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -810,6 +810,7 @@ asmlinkage long sys_timerfd_gettime(int ufd, struct itimerspec __user *otmr);
+ asmlinkage long sys_eventfd(unsigned int count);
+ asmlinkage long sys_eventfd2(unsigned int count, int flags);
+ asmlinkage long sys_memfd_create(const char __user *uname_ptr, unsigned int flags);
++asmlinkage long sys_userfaultfd(int flags);
+ asmlinkage long sys_fallocate(int fd, int mode, loff_t offset, loff_t len);
+ asmlinkage long sys_old_readdir(unsigned int, struct old_linux_dirent __user *, unsigned int);
+ asmlinkage long sys_pselect6(int, fd_set __user *, fd_set __user *,
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 7995ef5..8b3e10ea 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -218,6 +218,7 @@ cond_syscall(compat_sys_timerfd_gettime);
+ cond_syscall(sys_eventfd);
+ cond_syscall(sys_eventfd2);
+ cond_syscall(sys_memfd_create);
++cond_syscall(sys_userfaultfd);
+ 
+ /* performance counters: */
+ cond_syscall(sys_perf_event_open);
