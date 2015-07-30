@@ -1,89 +1,89 @@
-From: David Herrmann <dh.herrmann@gmail.com>
-Subject: Re: samples/kdbus/kdbus-workers.c and cross compiling MIPS
-Date: Thu, 30 Jul 2015 16:23:52 +0200
-Message-ID: <CANq1E4S7awCfPaNduoG8ENHmnGhR7-VT-9LvGwREZs-h8zNmzQ@mail.gmail.com>
-References: <20150729161912.GF18685@windriver.com>
-	<CANq1E4TgWK-8JkUtOYfTOL9Dx=jWeVpA-h881TXSA3BNjp+MPw@mail.gmail.com>
-	<55BA2B91.5070107@windriver.com>
+From: "Drokin, Oleg" <oleg.drokin@intel.com>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Thu, 30 Jul 2015 14:38:24 +0000
+Message-ID: <2253D7EC-7419-44B3-9C6F-B39552AC7DDA@intel.com>
+References: <20150730141713.001bf7d6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55BA2B91.5070107@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: David Herrmann <dh.herrmann@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, Djalal Harouni <tixxdz@opendz.org>, linux-mips@linux-mips.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:35845 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752644AbbG3Oi1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jul 2015 10:38:27 -0400
+In-Reply-To: <20150730141713.001bf7d6@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <2AD5E4CA4C8F4A488B5DB6CCD9F687C8@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, "<linux-next@vger.kernel.org>" <linux-next@vger.kernel.org>, "<linux-kernel@vger.kernel.org>" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Greg KH <greg@kroah.com>, "Dilger, Andreas" <andreas.dilger@intel.com>
 
-Hi
 
-On Thu, Jul 30, 2015 at 3:50 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On 2015-07-29 12:31 PM, David Herrmann wrote:
->> Hi
->>
->> On Wed, Jul 29, 2015 at 6:19 PM, Paul Gortmaker
->> <paul.gortmaker@windriver.com> wrote:
->>> Hi David,
->>>
->>> Does it make sense to build this sample when cross compiling?
->>>
->>> The reason I ask is that it has been breaking the linux-next build =
-of
->>> allmodconfig for a while now, with:
->>>
->>>   HOSTCC  samples/kdbus/kdbus-workers
->>> samples/kdbus/kdbus-workers.c: In function =E2=80=98prime_new=E2=80=
-=99:
->>> samples/kdbus/kdbus-workers.c:934:18: error: =E2=80=98__NR_memfd_cr=
-eate=E2=80=99 undeclared (first use in this function)
->>>   p->fd =3D syscall(__NR_memfd_create, "prime-area", MFD_CLOEXEC);
->>>                   ^
->>> samples/kdbus/kdbus-workers.c:934:18: note: each undeclared identif=
-ier is reported only once for each function it appears in
->>> scripts/Makefile.host:91: recipe for target 'samples/kdbus/kdbus-wo=
-rkers' failed
->>> make[2]: *** [samples/kdbus/kdbus-workers] Error 1
->>
->> mips does have this syscall, so I assume the problem is out-of-date
->> kernel headers. You can fix this by running:
->>
->>     $ make headers_install
->
-> No, let me try and clarify. Please note the emphasis on cross compili=
-ng
-> and automated build coverage, i.e. there is no place for manual steps=
-=2E
+On Jul 30, 2015, at 12:17 AM, Stephen Rothwell wrote:
 
-User-space samples in ./samples/ are compiled with HOSTCC, which is
-the compiler for the _local_ machine. Regardless of cross-compiling
-the same local compiler is used. So I cannot understand why this is
-even remotely related to cross compiling. Please elaborate.
-Please note that this is HOSTCC running, so it does *NOT* require the
-toolchain for your cross-compiled architecture.
+> Hi Jens,
+> 
+> After merging the block tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/staging/lustre/lustre/llite/../include/obd_support.h:42:0,
+>                 from drivers/staging/lustre/lustre/llite/../include/lustre_cfg.h:225,
+>                 from drivers/staging/lustre/lustre/llite/../include/lustre_lib.h:55,
+>                 from drivers/staging/lustre/lustre/llite/lloop.c:105:
+> drivers/staging/lustre/lustre/llite/lloop.c: In function 'loop_handle_bio':
+> drivers/staging/lustre/lustre/llite/../include/linux/lustre_compat25.h:89:35: error: too many arguments to function 'bio_endio'
+> #define cfs_bio_endio(a, b, c)    bio_endio((a), (c))
+>                                   ^
+> drivers/staging/lustre/lustre/llite/lloop.c:379:3: note: in expansion of macro 'cfs_bio_endio'
+>   cfs_bio_endio(bio, bio->bi_iter.bi_size, ret);
+>   ^
+> In file included from include/linux/blkdev.h:18:0,
+>                 from drivers/staging/lustre/lustre/llite/lloop.c:91:
+> include/linux/bio.h:442:13: note: declared here
+> extern void bio_endio(struct bio *);
+>             ^
+> 
+> Caused by commit
+> 
+>  4246a0b63bd8 ("block: add a bi_error field to struct bio")
+> 
+> I added the following fix patch, but more is probably required:
 
-Also, please tell me why your system has "linux/memfd.h" available,
-but __NR_memfd_create is undefined?
+It looks like this in itself is enough, but we probably should be good to
+kill those cfs_bio_* compat macros while we are at it.
+I'll submit a patch, but not sure where to base it on.
+If basing on current block tree's linux-next, then I get a bunch of errors about how
+kstrto* are undefined, so I cannot really test this yet.
 
-Anyway, patch is attached. Can you verify it works?
-David
+Thanks.
 
-diff --git a/samples/kdbus/Makefile b/samples/kdbus/Makefile
-index 137f842..dbd9de8 100644
---- a/samples/kdbus/Makefile
-+++ b/samples/kdbus/Makefile
-@@ -1,9 +1,13 @@
- # kbuild trick to avoid linker error. Can be omitted if a module is bu=
-ilt.
- obj- :=3D dummy.o
-
-+ifndef CROSS_COMPILE
-+
- hostprogs-$(CONFIG_SAMPLE_KDBUS) +=3D kdbus-workers
-
- always :=3D $(hostprogs-y)
-
- HOSTCFLAGS_kdbus-workers.o +=3D -I$(objtree)/usr/include
- HOSTLOADLIBES_kdbus-workers :=3D -lrt
-+
-+endif
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 30 Jul 2015 14:10:57 +1000
+> Subject: [PATCH] block: lustre: temporary fix for bio_endio API change
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> drivers/staging/lustre/lustre/include/linux/lustre_compat25.h | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/lustre/lustre/include/linux/lustre_compat25.h b/drivers/staging/lustre/lustre/include/linux/lustre_compat25.h
+> index 513c81f43d6e..1aac5a77c500 100644
+> --- a/drivers/staging/lustre/lustre/include/linux/lustre_compat25.h
+> +++ b/drivers/staging/lustre/lustre/include/linux/lustre_compat25.h
+> @@ -86,7 +86,7 @@
+> 		vfs_rename(old, old_dir, new, new_dir, NULL, 0)
+> 
+> #define cfs_bio_io_error(a, b)   bio_io_error((a))
+> -#define cfs_bio_endio(a, b, c)    bio_endio((a), (c))
+> +#define cfs_bio_endio(a, b, c)    bio_endio((a))
+> 
+> #define cfs_path_put(nd)     path_put(&(nd)->path)
+> 
+> -- 
+> 2.4.6
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
