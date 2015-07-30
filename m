@@ -1,74 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 30 Jul 2015 12:10:25 +1000
-Message-ID: <20150730121025.3703e788@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: manual merge of the nfsd tree with Linus' tree
+Date: Wed, 29 Jul 2015 22:12:12 -0400
+Message-ID: <20150730021212.GB25234@fieldses.org>
+References: <20150730112325.72240f81@canb.auug.org.au>
+ <CAHQdGtSeaDoFp2mztbAdk4jTX55ox9Qb+YGV3wKhOF1teZCPXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHQdGtSeaDoFp2mztbAdk4jTX55ox9Qb+YGV3wKhOF1teZCPXg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Satish Ashok <sashok@cumulusnetworks.com>, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+To: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Wed, Jul 29, 2015 at 09:35:11PM -0400, Trond Myklebust wrote:
+> Hi Stephen,
+> 
+> On Wed, Jul 29, 2015 at 9:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the nfsd tree got a conflict in:
+> >
+> >   fs/nfs/nfs42proc.c
+> >
+> > between commit:
+> >
+> >   bdcc2cd14e4e ("NFSv4.2: handle NFS-specific llseek errors")
+> >
+> > from Linus' tree and commit:
+> >
+> >   0183ae17c741 ("NFSv4.2: handle NFS-specific llseek errors")
+> >
+> > from the nfsd tree.
+> >
+> > The only difference here is that _nfs42_proc_llseek is static in the
+> > former, so I used that.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Whoops, thanks, I shouldn't have even had that one in my tree....
 
-  net/bridge/br_multicast.c
+> Yes, I snuck that declaration into the patch since it was obvious that
+> we would never want to export _nfs42_proc_llseek(), and because
+> "sparse" complained. Apologies if that caused a conflict...
 
-between commit:
+I actually noticed that, then noticed a bunch of other stuff there had
+the same problem, then started to make a patch to fix all those in one
+fell swoop, then decided I was being annoying and dropped it.
 
-  544586f742b4 ("bridge: mcast: give fast leave precedence over multicast router and querier")
+Um.
 
-from the net tree and commit:
-
-  09cf0211f970 ("bridge: mdb: fill state in br_mdb_notify")
-
-from the net-next tree.
-
-I fixed it up (hopefully - see below) and can carry the fix as necessary
-(no action is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/bridge/br_multicast.c
-index 0b39dcc65b94,fd238587e032..000000000000
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@@ -1424,31 -1441,6 +1440,32 @@@ br_multicast_leave_group(struct net_bri
-  	if (!mp)
-  		goto out;
-  
- +	if (port && (port->flags & BR_MULTICAST_FAST_LEAVE)) {
- +		struct net_bridge_port_group __rcu **pp;
- +
- +		for (pp = &mp->ports;
- +		     (p = mlock_dereference(*pp, br)) != NULL;
- +		     pp = &p->next) {
- +			if (p->port != port)
- +				continue;
- +
- +			rcu_assign_pointer(*pp, p->next);
- +			hlist_del_init(&p->mglist);
- +			del_timer(&p->timer);
-++			br_mdb_notify(br->dev, port, group, RTM_DELMDB,
-++				      p->state);
- +			call_rcu_bh(&p->rcu, br_multicast_free_pg);
-- 			br_mdb_notify(br->dev, port, group, RTM_DELMDB);
- +
- +			if (!mp->ports && !mp->mglist &&
- +			    netif_running(br->dev))
- +				mod_timer(&mp->timer, jiffies);
- +		}
- +		goto out;
- +	}
- +
- +	if (timer_pending(&other_query->timer))
- +		goto out;
- +
-  	if (br->multicast_querier) {
-  		__br_multicast_send_query(br, port, &mp->addr);
-  
+--b.
