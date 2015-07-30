@@ -1,39 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nfsd tree with Linus' tree
-Date: Thu, 30 Jul 2015 11:23:25 +1000
-Message-ID: <20150730112325.72240f81@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: samples/kdbus/kdbus-workers.c and cross compiling MIPS
+Date: Thu, 30 Jul 2015 11:28:07 +1000
+Message-ID: <1438219687.2374.1.camel@ellerman.id.au>
+References: <20150729161912.GF18685@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33062 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754278AbbG3BX1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jul 2015 21:23:27 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@primarydata.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150729161912.GF18685@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: dh.herrmann@googlemail.com, gregkh@linuxfoundation.org, daniel@zonque.org, tixxdz@opendz.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Wed, 2015-07-29 at 12:19 -0400, Paul Gortmaker wrote:
+> Hi David,
+>=20
+> Does it make sense to build this sample when cross compiling?
+>=20
+> The reason I ask is that it has been breaking the linux-next build of
+> allmodconfig for a while now, with:
+>=20
+>   HOSTCC  samples/kdbus/kdbus-workers
+> samples/kdbus/kdbus-workers.c: In function =E2=80=98prime_new=E2=80=99=
+:
+> samples/kdbus/kdbus-workers.c:934:18: error: =E2=80=98__NR_memfd_crea=
+te=E2=80=99 undeclared (first use in this function)
+>   p->fd =3D syscall(__NR_memfd_create, "prime-area", MFD_CLOEXEC);
+>                   ^
+> samples/kdbus/kdbus-workers.c:934:18: note: each undeclared identifie=
+r is reported only once for each function it appears in
+> scripts/Makefile.host:91: recipe for target 'samples/kdbus/kdbus-work=
+ers' failed
+> make[2]: *** [samples/kdbus/kdbus-workers] Error 1
+>=20
+> http://kisskb.ellerman.id.au/kisskb/buildresult/12473453/
+>=20
+> We recently made some changes to skip other sample/test programs when
+> cross compiling in mainline 65f6f092a6987 and f59514b6a8c5ca6dd and
+> 6a407a81a9abcf.  Maybe it makes sense to do the same here?
 
-Today's linux-next merge of the nfsd tree got a conflict in:
+Hi Paul,
 
-  fs/nfs/nfs42proc.c
+We also can configure kisskb to not build samples for all_modconfig, wh=
+ich
+avoids these sort of issues with a slight decrease in code coverage. We=
+ already
+disable samples for several other arch all_modconfigs.
 
-between commit:
-
-  bdcc2cd14e4e ("NFSv4.2: handle NFS-specific llseek errors")
-
-from Linus' tree and commit:
-
-  0183ae17c741 ("NFSv4.2: handle NFS-specific llseek errors")
-
-from the nfsd tree.
-
-The only difference here is that _nfs42_proc_llseek is static in the
-former, so I used that.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+cheers
