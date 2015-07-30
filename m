@@ -1,22 +1,31 @@
 From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: randconfig build error with next-20150729, in
  drivers/mfd/intel-lpss-acpi.c
-Date: Thu, 30 Jul 2015 09:55:25 +0100
-Message-ID: <20150730085525.GG9319@x1>
+Date: Thu, 30 Jul 2015 09:59:03 +0100
+Message-ID: <20150730085903.GH9319@x1>
 References: <CA+r1ZhjAMvJOL0cGXjmyUm=P3B5vCHqQWbT7KKxObhDNYrrAsQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:35180 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753934AbbG3I7J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jul 2015 04:59:09 -0400
+Received: by wibxm9 with SMTP id xm9so234851797wib.0
+        for <linux-next@vger.kernel.org>; Thu, 30 Jul 2015 01:59:07 -0700 (PDT)
 Content-Disposition: inline
 In-Reply-To: <CA+r1ZhjAMvJOL0cGXjmyUm=P3B5vCHqQWbT7KKxObhDNYrrAsQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jim Davis <jim.epost@gmail.com>, andriy.shevchenko@linux.intel.com
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, sameo@linux.intel.com
-List-Id: linux-next.vger.kernel.org
+
+Andy,
+
+Can you look into this please?
 
 On Wed, 29 Jul 2015, Jim Davis wrote:
-
 > Building with the attached random configuration file,
 >=20
 > In file included from drivers/mfd/intel-lpss-acpi.c:22:0:
@@ -29,8 +38,8 @@ S=E2=80=99 undeclared here
 =98INTEL_LPSS_PM_O
 > PS=E2=80=99
 >  static INTEL_LPSS_PM_OPS(intel_lpss_acpi_pm_ops);
-
-Is it a script which reports this?
+>         ^
+>=20
 
 > #
 > # Automatically generated file; DO NOT EDIT.
