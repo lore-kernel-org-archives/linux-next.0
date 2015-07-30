@@ -1,54 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the at91 tree with the arm-soc tree
-Date: Fri, 31 Jul 2015 08:38:03 +1000
-Message-ID: <20150731083803.71c9d466@canb.auug.org.au>
+Subject: Re: samples/kdbus/kdbus-workers.c and cross compiling MIPS
+Date: Fri, 31 Jul 2015 09:55:11 +1000
+Message-ID: <20150731095511.1a6f1257@canb.auug.org.au>
+References: <20150729161912.GF18685@windriver.com>
+	<CANq1E4TgWK-8JkUtOYfTOL9Dx=jWeVpA-h881TXSA3BNjp+MPw@mail.gmail.com>
+	<55BA2B91.5070107@windriver.com>
+	<CANq1E4S7awCfPaNduoG8ENHmnGhR7-VT-9LvGwREZs-h8zNmzQ@mail.gmail.com>
+	<55BA4375.7010400@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34251 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36801 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750822AbbG3WiG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jul 2015 18:38:06 -0400
+	id S1750936AbbG3XzN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Jul 2015 19:55:13 -0400
+In-Reply-To: <55BA4375.7010400@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: David Herrmann <dh.herrmann@gmail.com>, David Herrmann <dh.herrmann@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, Djalal Harouni <tixxdz@opendz.org>, linux-mips@linux-mips.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
 
-Hi Nicolas,
+Hi Paul,
 
-Today's linux-next merge of the at91 tree got a conflict in:
+On Thu, 30 Jul 2015 11:32:05 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+>
+> Well, it only shows up when we cross compile for mips.  It does not
+> seem to be showing up for any other arch (and we cover ~10 of them).
+> Nor does it show up for x86 builds.  Also note that the main linux-next
+> build machine is actually a PowerPC host.
 
-  arch/arm/mach-at91/sama5.c
+Actually I do my linux-next builds on an x86_64 host, and the overnight
+builds are spread between that and a PowerPC host.
 
-between commit:
+> > Please note that this is HOSTCC running, so it does *NOT* require the
+> > toolchain for your cross-compiled architecture.
+> > 
+> > Also, please tell me why your system has "linux/memfd.h" available,
+> > but __NR_memfd_create is undefined?
+> 
+> My local system is a bog standard ubuntu 14.10 and it sees it.  I dont
+> know what distro the linux-next IBM powerpc builder is based on but it
+> also sees it....
 
-  19c233b79d1a ("ARM: appropriate __init annotation for const data")
-
-from the arm-soc tree and commit:
-
-  a6e41317b9b8 ("ARM: at91/soc: add basic support for new sama5d2 SoC")
-
-from the at91 tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Our build hosts are running Debian stable and Ubuntu <mumble> (I think -
+I will check on this latter).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-at91/sama5.c
-index 8fc47630bbc8,90c3c3051ae7..000000000000
---- a/arch/arm/mach-at91/sama5.c
-+++ b/arch/arm/mach-at91/sama5.c
-@@@ -63,7 -65,8 +65,8 @@@ DT_MACHINE_START(sama5_dt, "Atmel SAMA5
-  	.dt_compat	= sama5_dt_board_compat,
-  MACHINE_END
-  
- -static const char *sama5_alt_dt_board_compat[] __initconst = {
- +static const char *const sama5_alt_dt_board_compat[] __initconst = {
-+ 	"atmel,sama5d2",
-  	"atmel,sama5d4",
-  	NULL
-  };
