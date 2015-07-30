@@ -1,52 +1,60 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: manual merge of the nfsd tree with Linus' tree
-Date: Wed, 29 Jul 2015 22:12:12 -0400
-Message-ID: <20150730021212.GB25234@fieldses.org>
-References: <20150730112325.72240f81@canb.auug.org.au>
- <CAHQdGtSeaDoFp2mztbAdk4jTX55ox9Qb+YGV3wKhOF1teZCPXg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
+Date: Thu, 30 Jul 2015 13:04:44 +1000
+Message-ID: <20150730130444.2ac0706c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHQdGtSeaDoFp2mztbAdk4jTX55ox9Qb+YGV3wKhOF1teZCPXg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trond.myklebust@primarydata.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43620 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750734AbbG3DEq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jul 2015 23:04:46 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 29, 2015 at 09:35:11PM -0400, Trond Myklebust wrote:
-> Hi Stephen,
-> 
-> On Wed, Jul 29, 2015 at 9:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the nfsd tree got a conflict in:
-> >
-> >   fs/nfs/nfs42proc.c
-> >
-> > between commit:
-> >
-> >   bdcc2cd14e4e ("NFSv4.2: handle NFS-specific llseek errors")
-> >
-> > from Linus' tree and commit:
-> >
-> >   0183ae17c741 ("NFSv4.2: handle NFS-specific llseek errors")
-> >
-> > from the nfsd tree.
-> >
-> > The only difference here is that _nfs42_proc_llseek is static in the
-> > former, so I used that.
+Hi all,
 
-Whoops, thanks, I shouldn't have even had that one in my tree....
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
-> Yes, I snuck that declaration into the patch since it was obvious that
-> we would never want to export _nfs42_proc_llseek(), and because
-> "sparse" complained. Apologies if that caused a conflict...
+  drivers/gpu/drm/drm_crtc.c
 
-I actually noticed that, then noticed a bunch of other stuff there had
-the same problem, then started to make a patch to fix all those in one
-fell swoop, then decided I was being annoying and dropped it.
+between commit:
 
-Um.
+  5677d67ae394 ("drm: Stop resetting connector state to unknown")
 
---b.
+from Linus' tree and commit:
+
+  1c473be11958 ("drm: Fixup locking WARNINGs in drm_mode_config_reset")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/drm_crtc.c
+index c91c18b2b1d4,7d02e32b4e94..000000000000
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@@ -5273,9 -5273,14 +5273,11 @@@ void drm_mode_config_reset(struct drm_d
+  		if (encoder->funcs->reset)
+  			encoder->funcs->reset(encoder);
+  
++ 	mutex_lock(&dev->mode_config.mutex);
+ -	drm_for_each_connector(connector, dev) {
+ -		connector->status = connector_status_unknown;
+ -
+ +	drm_for_each_connector(connector, dev)
+  		if (connector->funcs->reset)
+  			connector->funcs->reset(connector);
+ -	}
++ 	mutex_unlock(&dev->mode_config.mutex);
+  }
+  EXPORT_SYMBOL(drm_mode_config_reset);
+  
