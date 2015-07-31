@@ -1,45 +1,36 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 31 (usb/phy/phy-qcom-8x16-usb.c)
-Date: Fri, 31 Jul 2015 08:59:30 -0700
-Message-ID: <55BB9B62.7080301@infradead.org>
-References: <20150731154700.381f57a4@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: samples/kdbus/kdbus-workers.c and cross compiling MIPS
+Date: Fri, 31 Jul 2015 09:29:21 -0700
+Message-ID: <20150731162921.GA6335@kroah.com>
+References: <20150729161912.GF18685@windriver.com>
+ <CANq1E4TgWK-8JkUtOYfTOL9Dx=jWeVpA-h881TXSA3BNjp+MPw@mail.gmail.com>
+ <55BA2B91.5070107@windriver.com>
+ <CANq1E4S7awCfPaNduoG8ENHmnGhR7-VT-9LvGwREZs-h8zNmzQ@mail.gmail.com>
+ <1438326061.29353.9.camel@ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:33580 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752869AbbGaP7f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2015 11:59:35 -0400
-In-Reply-To: <20150731154700.381f57a4@canb.auug.org.au>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33728 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750780AbbGaQ3W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2015 12:29:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1438326061.29353.9.camel@ellerman.id.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: David Herrmann <dh.herrmann@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, David Herrmann <dh.herrmann@googlemail.com>, Daniel Mack <daniel@zonque.org>, Djalal Harouni <tixxdz@opendz.org>, linux-mips@linux-mips.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 07/30/15 22:47, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Jul 31, 2015 at 05:01:01PM +1000, Michael Ellerman wrote:
+> It's obviously possible that some samples build with that configuration, but
+> building against another arch'es kernel headers just seems like it's asking for
+> trouble. Even if we can build the samples, they will never run correctly.
 > 
-> Changes since 20150730:
-> 
+> So I suggest we should just disable SAMPLES if we're cross compiling, full stop.
 
-on i386:
+Yes, that seems like a much better solution overall.  Can you send a
+patch for this?
 
-when CONFIG_EXTCON=m:
+thanks,
 
-
-drivers/built-in.o: In function `phy_8x16_remove':
-phy-qcom-8x16-usb.c:(.text+0x24170a): undefined reference to `extcon_unregister_interest'
-drivers/built-in.o: In function `phy_8x16_init':
-phy-qcom-8x16-usb.c:(.text+0x241d32): undefined reference to `extcon_get_cable_state'
-drivers/built-in.o: In function `phy_8x16_probe':
-phy-qcom-8x16-usb.c:(.text+0x24223c): undefined reference to `extcon_get_edev_by_phandle'
-phy-qcom-8x16-usb.c:(.text+0x2424bd): undefined reference to `extcon_register_interest'
-phy-qcom-8x16-usb.c:(.text+0x242582): undefined reference to `extcon_unregister_interest'
-
-
-
-so config USB_QCOM_8X16_PHY needs to depend on EXTCON.
-
--- 
-~Randy
+greg k-h
