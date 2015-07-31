@@ -1,36 +1,34 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: samples/kdbus/kdbus-workers.c and cross compiling MIPS
-Date: Fri, 31 Jul 2015 09:29:21 -0700
-Message-ID: <20150731162921.GA6335@kroah.com>
-References: <20150729161912.GF18685@windriver.com>
- <CANq1E4TgWK-8JkUtOYfTOL9Dx=jWeVpA-h881TXSA3BNjp+MPw@mail.gmail.com>
- <55BA2B91.5070107@windriver.com>
- <CANq1E4S7awCfPaNduoG8ENHmnGhR7-VT-9LvGwREZs-h8zNmzQ@mail.gmail.com>
- <1438326061.29353.9.camel@ellerman.id.au>
-Mime-Version: 1.0
+From: Oleg Drokin <green@linuxhacker.ru>
+Subject: Re: [PATCH] staging/lustre/lloop: Update call to bio_endio() to match new prototype
+Date: Fri, 31 Jul 2015 12:51:45 -0400
+Message-ID: <0CCD5889-DAA6-4A16-B832-FB1307A868B6@linuxhacker.ru>
+References: <20150730141713.001bf7d6@canb.auug.org.au> <1438268615-1685381-1-git-send-email-green@linuxhacker.ru> <20150731112709.GA8541@sudip-pc>
+Mime-Version: 1.0 (Apple Message framework v1283)
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33728 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750780AbbGaQ3W (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2015 12:29:22 -0400
-Content-Disposition: inline
-In-Reply-To: <1438326061.29353.9.camel@ellerman.id.au>
+Received: from linuxhacker.ru ([217.76.32.60]:41215 "EHLO fiona.linuxhacker.ru"
+	rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1751791AbbGaQwI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 31 Jul 2015 12:52:08 -0400
+In-Reply-To: <20150731112709.GA8541@sudip-pc>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: David Herrmann <dh.herrmann@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, David Herrmann <dh.herrmann@googlemail.com>, Daniel Mack <daniel@zonque.org>, Djalal Harouni <tixxdz@opendz.org>, linux-mips@linux-mips.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Greg KH <greg@kroah.com>, Andreas Dilger <andreas.dilger@intel.com>
 
-On Fri, Jul 31, 2015 at 05:01:01PM +1000, Michael Ellerman wrote:
-> It's obviously possible that some samples build with that configuration, but
-> building against another arch'es kernel headers just seems like it's asking for
-> trouble. Even if we can build the samples, they will never run correctly.
-> 
-> So I suggest we should just disable SAMPLES if we're cross compiling, full stop.
+On Jul 31, 2015, at 7:27 AM, Sudip Mukherjee wrote:
 
-Yes, that seems like a much better solution overall.  Can you send a
-patch for this?
+> On Thu, Jul 30, 2015 at 11:03:35AM -0400, green@linuxhacker.ru wrote:
+>> From: Oleg Drokin <green@linuxhacker.ru>
+>> 
+>> Also while we are at it, drop all cfs_bio_* wrappers.
+>> 
+>> Signed-off-by: Oleg Drokin <oleg.drokin@intel.com>
+>> ---
+> Is it dependent on some other patch? This applies cleanly but is
+> breaking the build. "error: too few arguments to function bio_endio"
 
-thanks,
-
-greg k-h
+Yes, this is for block/linux-next specifically.
+For current staging tree a corresponding one is 
+http://www.gossamer-threads.com/lists/linux/kernel/2227687
