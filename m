@@ -1,50 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: samples/kdbus/kdbus-workers.c and cross compiling MIPS
-Date: Fri, 31 Jul 2015 09:55:11 +1000
-Message-ID: <20150731095511.1a6f1257@canb.auug.org.au>
-References: <20150729161912.GF18685@windriver.com>
-	<CANq1E4TgWK-8JkUtOYfTOL9Dx=jWeVpA-h881TXSA3BNjp+MPw@mail.gmail.com>
-	<55BA2B91.5070107@windriver.com>
-	<CANq1E4S7awCfPaNduoG8ENHmnGhR7-VT-9LvGwREZs-h8zNmzQ@mail.gmail.com>
-	<55BA4375.7010400@windriver.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 31 Jul 2015 10:35:53 +1000
+Message-ID: <20150731103553.5311283a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36801 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750936AbbG3XzN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jul 2015 19:55:13 -0400
-In-Reply-To: <55BA4375.7010400@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: David Herrmann <dh.herrmann@gmail.com>, David Herrmann <dh.herrmann@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, Djalal Harouni <tixxdz@opendz.org>, linux-mips@linux-mips.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Karicheri, Muralidharan" <m-karicheri2@ti.com>, WingMan Kwok <w-kwok2@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+Hi all,
 
-On Thu, 30 Jul 2015 11:32:05 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
->
-> Well, it only shows up when we cross compile for mips.  It does not
-> seem to be showing up for any other arch (and we cover ~10 of them).
-> Nor does it show up for x86 builds.  Also note that the main linux-next
-> build machine is actually a PowerPC host.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Actually I do my linux-next builds on an x86_64 host, and the overnight
-builds are spread between that and a PowerPC host.
+  drivers/net/ethernet/ti/netcp_ethss.c
 
-> > Please note that this is HOSTCC running, so it does *NOT* require the
-> > toolchain for your cross-compiled architecture.
-> > 
-> > Also, please tell me why your system has "linux/memfd.h" available,
-> > but __NR_memfd_create is undefined?
-> 
-> My local system is a bog standard ubuntu 14.10 and it sees it.  I dont
-> know what distro the linux-next IBM powerpc builder is based on but it
-> also sees it....
+between commit:
 
-Our build hosts are running Debian stable and Ubuntu <mumble> (I think -
-I will check on this latter).
+  31a184b7acbc ("net: netcp: ethss: cleanup gbe_probe() and gbe_remove() functions")
+
+from the net tree and commit:
+
+  489e8a2f09d7 ("net: netcp: Fixes to CPSW statistics collection")
+
+from the net-next tree.
+
+I fixed it up (using the error path from the former) and can carry the
+fix as necessary (no action is required).
 
 -- 
 Cheers,
