@@ -1,35 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 31 Jul 2015 10:35:53 +1000
-Message-ID: <20150731103553.5311283a@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Build error in -next due to 'drivers/video/fbdev/atyfb: Replace MTRR
+ UC hole with strong UC'
+Date: Thu, 30 Jul 2015 19:26:00 -0700
+Message-ID: <55BADCB8.3030503@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Karicheri, Muralidharan" <m-karicheri2@ti.com>, WingMan Kwok <w-kwok2@ti.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:35848 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750991AbbGaC0D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jul 2015 22:26:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@suse.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
 
-Hi all,
+Hi Luis,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+probably the zero-day build already told you, but just in case:
 
-  drivers/net/ethernet/ti/netcp_ethss.c
+Your commit 'drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC'
+causes build errors for architectures which don't support ioremap_uc.
+This affects at least the alpha architecture, though there may be others.
 
-between commit:
+Here is the build error:
 
-  31a184b7acbc ("net: netcp: ethss: cleanup gbe_probe() and gbe_remove() functions")
+drivers/video/fbdev/aty/atyfb_base.c: In function 'atyfb_setup_generic':
+drivers/video/fbdev/aty/atyfb_base.c:3447:2: error: implicit declaration of function 'ioremap_uc'
 
-from the net tree and commit:
-
-  489e8a2f09d7 ("net: netcp: Fixes to CPSW statistics collection")
-
-from the net-next tree.
-
-I fixed it up (using the error path from the former) and can carry the
-fix as necessary (no action is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks,
+Guenter
