@@ -1,51 +1,58 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Build error in -next due to 'drivers/video/fbdev/atyfb: Replace
- MTRR UC hole with strong UC'
-Date: Fri, 31 Jul 2015 17:09:52 -0700
-Message-ID: <55BC0E50.9060606@roeck-us.net>
-References: <55BADCB8.3030503@roeck-us.net> <CAP=VYLoUTKemCoqw8t6mC4Gz+-HrhUzMY7DvTL-yE0Cx6gpJQw@mail.gmail.com> <20150801000233.GS30479@wotan.suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Subject: [RFC] alpha: use asm-generic/io.h
+Date: Fri, 31 Jul 2015 17:38:29 -0700
+Message-ID: <1438389509-16908-1-git-send-email-mcgrof@do-not-panic.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:59430 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932156AbbHAAJ5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2015 20:09:57 -0400
-In-Reply-To: <20150801000233.GS30479@wotan.suse.de>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:35794 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751891AbbHAAih (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2015 20:38:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luis R. Rodriguez" <mcgrof@suse.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+To: rth@twiddle.net
+Cc: ink@jurassic.park.msu.ru, mattst88@gmail.com, will.deacon@arm.com, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux@roeck-us.net, paul.gortmaker@windriver.com, mingo@kernel.org, linux-next@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
 
-On 07/31/2015 05:02 PM, Luis R. Rodriguez wrote:
-> On Fri, Jul 31, 2015 at 01:52:24PM -0400, Paul Gortmaker wrote:
->> On Thu, Jul 30, 2015 at 10:26 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->>> Hi Luis,
->>>
->>> probably the zero-day build already told you, but just in case:
->>>
->>> Your commit 'drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC'
->>> causes build errors for architectures which don't support ioremap_uc.
->>> This affects at least the alpha architecture, though there may be others.
->>
->> Yep, parisc allmodconfig now sees it as well.  Bisected before seeing
->> this message.
->>
->> 3cc2dac5be3f23414a4efdee0b26d79bed297cac is the first bad commit
->> commit 3cc2dac5be3f23414a4efdee0b26d79bed297cac
->> Author: Luis R. Rodriguez <mcgrof@suse.com>
->> Date:   Thu Jul 9 18:24:58 2015 -0700
->>
->>      drivers/video/fbdev/atyfb: Replace MTRR UC hole with strong UC
->>
->> http://kisskb.ellerman.id.au/kisskb/buildresult/12475234/
->
-> I submitted a fix for it, can you tell me your linux-next tree?
->
+From: "Luis R. Rodriguez" <mcgrof@suse.com>
 
-http://server.roeck-us.net:8010/builders/next-alpha-next
+Since alpha does not include asm-generic/io.h it would mean
+alpha folks have to always carefully monitor asm-generic patches
+and before they get merged make sure their own arch implementation
+solution gets added. By using asm-generic/io.h alpha gets sensible
+defaults, in this case ioremap_uc() would be one example, where
+by default it would return NULL, so not implemented. When alpha
+folks get a chance then they can add the appropriate
+implementation.
 
-next-20150729 to next-20150731.
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@suse.com>
+---
 
-Guenter
+The easy solution *for now* is to just do:
+
+#define ioremap_uc ioremap_nocache
+
+*But* that would have to be done for any other asm-generic/io.h collateral
+evolution, this on the other hand, would get it right for alpha from the
+get-go -- so I ask -- can this please be tested and if it is OK then consider
+it be merged?
+
+If we can't add asm-generic/io.h then the above define replacement would
+be the way to go.
+
+ arch/alpha/include/asm/io.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
+index f05bdb4b1cb9..16a5bda42750 100644
+--- a/arch/alpha/include/asm/io.h
++++ b/arch/alpha/include/asm/io.h
+@@ -581,4 +581,6 @@ extern void outsl (unsigned long port, const void *src, unsigned long count);
+ 
+ #endif /* __KERNEL__ */
+ 
++#include <asm-generic/io.h>
++
+ #endif /* __ALPHA_IO_H */
+-- 
+2.3.2.209.gd67f9d5.dirty
