@@ -1,35 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the access_once tree with the arm64
- tree
-Date: Wed, 5 Aug 2015 14:41:39 +1000
-Message-ID: <20150805144139.575dbda7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Wed, 5 Aug 2015 16:49:31 +1000
+Message-ID: <20150805164931.516fb8ee@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>, Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Will Deacon <will.deacon@arm.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Christian,
+Hi Herbert,
 
-Today's linux-next merge of the access_once tree got a conflict in:
+After merging the crypto tree, today's linux-next build (sparc64
+defconfig) failed like this:
 
-  arch/arm64/include/asm/barrier.h
+crypto/built-in.o: In function `crypto_authenc_exit_tfm':
+authenc.c:(.text+0x11d1c): undefined reference to `crypto_put_default_null_skcipher'
+crypto/built-in.o: In function `crypto_authenc_init_tfm':
+authenc.c:(.text+0x11d7c): undefined reference to `crypto_get_default_null_skcipher'
 
-between commit:
+Caused by commit
 
-  4b3dc9679cf7 ("arm64: force CONFIG_SMP=y and remove redundant #ifdefs")
+  92d95ba91772 ("crypto: authenc - Convert to new AEAD interface")
 
-from the arm64 tree and commit:
+Those symbols depend on CONFIG_CRYPTO_NULL which is set to 'm' for
+this build.
 
-  76695af20c01 ("locking, arch: use WRITE_ONCE()/READ_ONCE() in smp_store_release()/smp_load_acquire()")
+I have added this fix patch for today:
 
-from the access_once tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 5 Aug 2015 16:41:48 +1000
+Subject: [PATCH] crypto: authenc - select CRYPTO_NULL
 
-I fixed it up (the former removed the code modified by the latter, so I
-just did that) and can carry the fix as necessary (no action is required).
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ crypto/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 354bb692c964..ac7cc6226e61 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -200,6 +200,7 @@ config CRYPTO_AUTHENC
+ 	select CRYPTO_BLKCIPHER
+ 	select CRYPTO_MANAGER
+ 	select CRYPTO_HASH
++	select CRYPTO_NULL
+ 	help
+ 	  Authenc: Combined mode wrapper for IPsec.
+ 	  This is required for IPSec.
+-- 
+2.5.0
 
 -- 
 Cheers,
