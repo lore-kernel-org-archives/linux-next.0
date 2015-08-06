@@ -1,56 +1,49 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: next-20150806 build: 2 failures 52 warnings (next-20150806)
-Date: Thu, 6 Aug 2015 18:27:52 +0100
-Message-ID: <20150806172752.GA20873@sirena.org.uk>
+Date: Thu, 6 Aug 2015 18:53:22 +0100
+Message-ID: <20150806175322.GB20873@sirena.org.uk>
 References: <E1ZNIul-0007IF-Ev@optimist>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="28KEV0d44fEAywNn"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59631 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754254AbbHFR2F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Aug 2015 13:28:05 -0400
+	protocol="application/pgp-signature"; boundary="A/AdVN8FDkvpDdxN"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <E1ZNIul-0007IF-Ev@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Hogan <james.hogan@imgtec.com>, Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-pci-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>, Yijing Wang <wangyijing@huawei.com>, Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Michal Simek <michal.simek@xilinx.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-pci@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
 
---28KEV0d44fEAywNn
+--A/AdVN8FDkvpDdxN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Thu, Aug 06, 2015 at 12:00:47PM +0100, Build bot for Mark Brown wrote:
 
-Today's linux-next fails to build an ARM allmodconfig with:
+Today's linux-next fails to build an ARM allmodconfig due to:
 
-> 	arm-allmodconfig
-> ../lib/test_user_copy.c:67:2: error: implicit declaration of function 'copy_in_user' [-Werror=implicit-function-declaration]
-> ../lib/test_user_copy.c:94:2: error: implicit declaration of function '__copy_in_user' [-Werror=implicit-function-declaration]
+> ../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
 
-due to 3a646f02c7 (lib/test_user_copy.c: check
-__copy_in_user()/copy_in_user()) which attempts to test copy_in_user()
-which doesn't appear to be defined, at least with the set of include
-files and/or config options you get with an allmodconfig and not at all
-as far as I can tell.
+msi_desc_to_pci_sys_data doesn't appear to exist anywhere else in
+current -next, the usage was introduced by e39758e0ea769e632e (PCI: Use
+helper functions to access fields in struct msi_desc) at which time it
+looks like it did exist but I can't immediately see where it was removed.
 
---28KEV0d44fEAywNn
+--A/AdVN8FDkvpDdxN
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJVw5kXAAoJECTWi3JdVIfQru0IAIK6hWS7u5ZfuWDxdiK0RigQ
-dpDAQKwRK8ijCFl4pemMy2+A2UY/YOwjh/zeutA5uHUyp1RgqnUQDFqxcvPGppDg
-eGtZDLRz0vNP476qWTsMAUVoqJqBMsZOlSn6nh2aonZ4Zyjav3XOTDCbmUsud3SW
-LK5IfFupqmbxY8Fz/siuex5/hv7rYpbFjLVLK4cM+TCAWHY+lybKE7G7oq6S4uSC
-wibtgp+1DlO9y9eiy5axofD0FSD64e2atbatOGzJMXkN3UrOpRVuAo6vHLsbOZvg
-x8P5wsJURA9tky5b68wFBJrrkxqVTGZ8smg0v3tZkdxccS1jpPVpYq7UUqAAsBI=
-=CxdB
+iQEcBAEBCAAGBQJVw58RAAoJECTWi3JdVIfQSNAH/2++6pgRoyaBNUvxPLZeFza+
+UeW4WWSRIPsW6Bmrh3Y5weeN5npLKO2ZwiUdAfsDPsDvOlbGWWDdIvVibF5xpf8V
+lHc0ihPgPMuzJTNHjzETwXV+4mUDdkUv0FsWxgwzhv0bhe9w9z8uznEY5XiIxs5A
+Ptuvo8cvqRNwHIUoln64SWd3zMOSois/EXqX/+UcmUjKMMzQ4csk6BOjQZgPneGt
+ZnMPQgp8O8e2lSPDIne+O2+3c2U9j34FRsi6/SQAExG4z91Ti2JaVoZzx4kVh0H2
+krcql/myy6/k783zuOTkvqEdG5cdGb7j2KrNoumfQtve9jbMns604ExWagIEcls=
+=n1TH
 -----END PGP SIGNATURE-----
 
---28KEV0d44fEAywNn--
+--A/AdVN8FDkvpDdxN--
