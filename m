@@ -1,40 +1,42 @@
-From: Andy Gross <agross@codeaurora.org>
-Subject: Re: next-20150806 build: 2 failures 52 warnings (next-20150806)
-Date: Thu, 6 Aug 2015 13:50:05 -0500
-Message-ID: <20150806185005.GA31045@qualcomm.com>
-References: <E1ZNIul-0007IF-Ev@optimist>
- <20150806171958.GZ20873@sirena.org.uk>
+From: KY Srinivasan <kys@microsoft.com>
+Subject: RE: randconfig build error with next-20150806, in
+ arch/x86/kernel/cpu/mshyperv.c
+Date: Thu, 6 Aug 2015 20:09:57 +0000
+Message-ID: <SN1PR0301MB1662921A3C948311C5E0CBE5A0740@SN1PR0301MB1662.namprd03.prod.outlook.com>
+References: <CA+r1ZhjAk_ca2DQ4mOb6SWeJLHbVt=qZWFrMPvGuhb+yu=Vnnw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49740 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754014AbbHFSuH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Aug 2015 14:50:07 -0400
-Content-Disposition: inline
-In-Reply-To: <20150806171958.GZ20873@sirena.org.uk>
+Received: from mail-bn1on0146.outbound.protection.outlook.com ([157.56.110.146]:34129
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752300AbbHFUKA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Aug 2015 16:10:00 -0400
+In-Reply-To: <CA+r1ZhjAk_ca2DQ4mOb6SWeJLHbVt=qZWFrMPvGuhb+yu=Vnnw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Kumar Gala <galak@codeaurora.org>, David Brown <davidb@codeaurora.org>, David Airlie <airlied@linux.ie>, Rob Clark <robdclark@gmail.com>, jilai wang <jilaiw@codeaurora.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, tglx <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, hpa <hpa@zytor.com>, x86 <x86@kernel.org>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
 
-On Thu, Aug 06, 2015 at 06:19:58PM +0100, Mark Brown wrote:
-> On Thu, Aug 06, 2015 at 12:00:47PM +0100, Build bot for Mark Brown wrote:
-> 
-> Today's linux-next fails to build an arm64 allmodconfig due to:
-> 
-> > 	arm64-allmodconfig
-> > ERROR: "qcom_scm_hdcp_req" [drivers/gpu/drm/msm/msm.ko] undefined!
-> > ERROR: "qcom_scm_hdcp_available" [drivers/gpu/drm/msm/msm.ko] undefined!
-> 
-> I'm not sure exactly where it crept in (I suspect it's an architecture
-> change) but I do note that there's no select for QCOM_SCM but it has no
-> config text.  The arch/arm code does select that symbol but only in SMP
-> cases.
-
-I'll look into this.  Thanks for the report.
-
--- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmltIERhdmlzIFttYWls
+dG86amltLmVwb3N0QGdtYWlsLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIEF1Z3VzdCA2LCAyMDE1
+IDc6NTUgQU0NCj4gVG86IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pjsg
+bGludXgtbmV4dCA8bGludXgtDQo+IG5leHRAdmdlci5rZXJuZWwub3JnPjsgbGludXgta2VybmVs
+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgS1kNCj4gU3Jpbml2YXNhbiA8a3lzQG1p
+Y3Jvc29mdC5jb20+OyBIYWl5YW5nIFpoYW5nDQo+IDxoYWl5YW5nekBtaWNyb3NvZnQuY29tPjsg
+dGdseCA8dGdseEBsaW51dHJvbml4LmRlPjsgSW5nbyBNb2xuYXINCj4gPG1pbmdvQHJlZGhhdC5j
+b20+OyBocGEgPGhwYUB6eXRvci5jb20+OyB4ODYgPHg4NkBrZXJuZWwub3JnPjsNCj4gZGV2ZWxA
+bGludXhkcml2ZXJwcm9qZWN0Lm9yZw0KPiBTdWJqZWN0OiByYW5kY29uZmlnIGJ1aWxkIGVycm9y
+IHdpdGggbmV4dC0yMDE1MDgwNiwgaW4NCj4gYXJjaC94ODYva2VybmVsL2NwdS9tc2h5cGVydi5j
+DQo+IA0KPiBCdWlsZGluZyB3aXRoIHRoZSBhdHRhY2hlZCByYW5kb20gY29uZmlndXJhdGlvbiBm
+aWxlLA0KPiANCj4gd2FybmluZzogKElOVEVMX01JQ19IT1NUICYmIENBSUZfVklSVElPICYmIFZI
+T1NUX05FVCAmJg0KPiBWSE9TVF9TQ1NJICYmDQo+IFZIT1NUX05FVCAmJiBWSE9TVF9TQ1NJKSBz
+ZWxlY3RzIFZIT1NUX1JJTkcgd2hpY2ggaGFzIHVubWV0IGRpcmVjdA0KPiBkZXBlbmRlbmNpZXMg
+KE5FVERFVklDRVMgJiYgQ0FJRl9WSVJUSU8gfHwgVklSVFVBTElaQVRJT04pDQo+IA0KPiBhcmNo
+L3g4Ni9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBgaHZfbWFjaGluZV9jcmFzaF9zaHV0ZG93bic6
+DQo+IC9ob21lL2ppbS9saW51eC1uZXh0L2FyY2gveDg2L2tlcm5lbC9jcHUvbXNoeXBlcnYuYzox
+MTI6IHVuZGVmaW5lZA0KPiByZWZlcmVuY2UgdG8gYG5hdGl2ZV9tYWNoaW5lX2NyYXNoX3NodXRk
+b3duJw0KDQpUaGFua3MgSmltOyBJIGFtIHNlbmRpbmcgb3V0IGEgcGF0Y2ggdG8gYWRkcmVzcyB0
+aGUgaXNzdWUgaW4gbXNoeXBlcnYuYy4NCg0KUmVnYXJkcywNCg0KDQpLLiBZDQoNCg0KPiANCj4g
+LS0NCj4gSmltDQo=
