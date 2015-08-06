@@ -1,55 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the
- char-misc tree
-Date: Thu, 6 Aug 2015 16:35:52 +1000
-Message-ID: <20150806163552.5eabeba3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 6 Aug 2015 17:24:03 +1000
+Message-ID: <20150806172403.6eac2407@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49924 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36391 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751072AbbHFGfy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Aug 2015 02:35:54 -0400
+	id S1753794AbbHFHYG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Aug 2015 03:24:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>, "dyoung@redhat.com" <dyoung@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Kees Cook <keescook@chromium.org>
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+After merging the akpm-current tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-  include/linux/kexec.h
+lib/test_user_copy.c: In function 'test_user_copy_init':
+lib/test_user_copy.c:111:2: error: implicit declaration of function 'csum_partial_copy_from_user' [-Werror=implicit-function-declaration]
+  csum_partial_copy_from_user(usermem, kmem, PAGE_SIZE, 0, &err);
+  ^
 
-between commit:
+Caused by commit
 
-  2b94ed245861 ("kexec: define kexec_in_progress in !CONFIG_KEXEC case")
+  0b6e2917b6fc ("lib/test_user_copy.c: check user checksum functions")
 
-from the char-misc tree and commit:
+It looks like PowerPC 64 bit has an implementation of
+csum_and_copy_from_user() that does not use csum_partial_copy_from_user()
+and so this latter does not exist.  You need to check for
+_HAVE_ARCH_COPY_AND_CSUM_FROM_USER.
 
-  3d86985f695b ("kexec: split kexec_load syscall from kexec core code")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I have reverted that commit for today.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc include/linux/kexec.h
-index b63218f68c4b,5f193d80a6fb..000000000000
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@@ -323,8 -325,7 +325,8 @@@ struct pt_regs
-  struct task_struct;
-  static inline void crash_kexec(struct pt_regs *regs) { }
-  static inline int kexec_should_crash(struct task_struct *p) { return 0; }
- +#define kexec_in_progress false
-- #endif /* CONFIG_KEXEC */
-+ #endif /* CONFIG_KEXEC_CORE */
-  
-  #endif /* !defined(__ASSEBMLY__) */
-  
