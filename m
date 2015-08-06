@@ -1,42 +1,36 @@
-From: KY Srinivasan <kys@microsoft.com>
-Subject: RE: randconfig build error with next-20150806, in
- arch/x86/kernel/cpu/mshyperv.c
-Date: Thu, 6 Aug 2015 20:09:57 +0000
-Message-ID: <SN1PR0301MB1662921A3C948311C5E0CBE5A0740@SN1PR0301MB1662.namprd03.prod.outlook.com>
-References: <CA+r1ZhjAk_ca2DQ4mOb6SWeJLHbVt=qZWFrMPvGuhb+yu=Vnnw@mail.gmail.com>
+From: Joerg Roedel <jroedel@suse.de>
+Subject: Re: next-20150806 build: 2 failures 52 warnings (next-20150806)
+Date: Thu, 6 Aug 2015 22:17:24 +0200
+Message-ID: <20150806201724.GC10112@suse.de>
+References: <E1ZNIul-0007IF-Ev@optimist>
+ <20150806180156.GC20873@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bn1on0146.outbound.protection.outlook.com ([157.56.110.146]:34129
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752300AbbHFUKA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Aug 2015 16:10:00 -0400
-In-Reply-To: <CA+r1ZhjAk_ca2DQ4mOb6SWeJLHbVt=qZWFrMPvGuhb+yu=Vnnw@mail.gmail.com>
-Content-Language: en-US
+Received: from mx2.suse.de ([195.135.220.15]:39734 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751956AbbHFURa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Aug 2015 16:17:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20150806180156.GC20873@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, tglx <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, hpa <hpa@zytor.com>, x86 <x86@kernel.org>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Salva =?iso-8859-1?Q?Peir=F3?= <speirofr@gmail.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmltIERhdmlzIFttYWls
-dG86amltLmVwb3N0QGdtYWlsLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIEF1Z3VzdCA2LCAyMDE1
-IDc6NTUgQU0NCj4gVG86IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pjsg
-bGludXgtbmV4dCA8bGludXgtDQo+IG5leHRAdmdlci5rZXJuZWwub3JnPjsgbGludXgta2VybmVs
-IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgS1kNCj4gU3Jpbml2YXNhbiA8a3lzQG1p
-Y3Jvc29mdC5jb20+OyBIYWl5YW5nIFpoYW5nDQo+IDxoYWl5YW5nekBtaWNyb3NvZnQuY29tPjsg
-dGdseCA8dGdseEBsaW51dHJvbml4LmRlPjsgSW5nbyBNb2xuYXINCj4gPG1pbmdvQHJlZGhhdC5j
-b20+OyBocGEgPGhwYUB6eXRvci5jb20+OyB4ODYgPHg4NkBrZXJuZWwub3JnPjsNCj4gZGV2ZWxA
-bGludXhkcml2ZXJwcm9qZWN0Lm9yZw0KPiBTdWJqZWN0OiByYW5kY29uZmlnIGJ1aWxkIGVycm9y
-IHdpdGggbmV4dC0yMDE1MDgwNiwgaW4NCj4gYXJjaC94ODYva2VybmVsL2NwdS9tc2h5cGVydi5j
-DQo+IA0KPiBCdWlsZGluZyB3aXRoIHRoZSBhdHRhY2hlZCByYW5kb20gY29uZmlndXJhdGlvbiBm
-aWxlLA0KPiANCj4gd2FybmluZzogKElOVEVMX01JQ19IT1NUICYmIENBSUZfVklSVElPICYmIFZI
-T1NUX05FVCAmJg0KPiBWSE9TVF9TQ1NJICYmDQo+IFZIT1NUX05FVCAmJiBWSE9TVF9TQ1NJKSBz
-ZWxlY3RzIFZIT1NUX1JJTkcgd2hpY2ggaGFzIHVubWV0IGRpcmVjdA0KPiBkZXBlbmRlbmNpZXMg
-KE5FVERFVklDRVMgJiYgQ0FJRl9WSVJUSU8gfHwgVklSVFVBTElaQVRJT04pDQo+IA0KPiBhcmNo
-L3g4Ni9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBgaHZfbWFjaGluZV9jcmFzaF9zaHV0ZG93bic6
-DQo+IC9ob21lL2ppbS9saW51eC1uZXh0L2FyY2gveDg2L2tlcm5lbC9jcHUvbXNoeXBlcnYuYzox
-MTI6IHVuZGVmaW5lZA0KPiByZWZlcmVuY2UgdG8gYG5hdGl2ZV9tYWNoaW5lX2NyYXNoX3NodXRk
-b3duJw0KDQpUaGFua3MgSmltOyBJIGFtIHNlbmRpbmcgb3V0IGEgcGF0Y2ggdG8gYWRkcmVzcyB0
-aGUgaXNzdWUgaW4gbXNoeXBlcnYuYy4NCg0KUmVnYXJkcywNCg0KDQpLLiBZDQoNCg0KPiANCj4g
-LS0NCj4gSmltDQo=
+On Thu, Aug 06, 2015 at 07:01:56PM +0100, Mark Brown wrote:
+> On Thu, Aug 06, 2015 at 12:00:47PM +0100, Build bot for Mark Brown wrote:
+> 
+> Today's linux-next fails to build an ARM allmodconfig with:
+> 
+> > ../drivers/iommu/omap-iommu-debug.c:138:2: error: void value not ignored as it ought to be
+> 
+> caused by a combination of 1ba2f20ac (fs/seq_file: convert int
+> seq_vprint/seq_printf/etc... returns to void) which made seq_printf()
+> return void and e203db293863fa15 (iommu/omap: Fix debug_read_tlb() to
+> use seq_printf()) which has been in -next for a little while now.
+
+Whoops. Thanks for the report, I'll fix it tomorrow.
+
+
+	Joerg
