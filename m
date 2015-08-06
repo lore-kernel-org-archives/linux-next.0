@@ -1,350 +1,737 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20150806 build: 2 failures 52 warnings (next-20150806)
-Date: Thu, 06 Aug 2015 12:00:47 +0100
-Message-ID: <E1ZNIul-0007IF-Ev@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58562 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755398AbbHFLAx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Aug 2015 07:00:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: mmotm 2015-08-05-17-06 uploaded
+Date: Thu, 6 Aug 2015 14:53:15 +0200
+Message-ID: <20150806125315.GG19825@dhcp22.suse.cz>
+References: <55c2a523.5JaGZbDMxr+dV/A0%akpm@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <55c2a523.5JaGZbDMxr+dV/A0%akpm@linux-foundation.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20150806
-Git describe: next-20150806
-Commit: c6b169e6ff Add linux-next specific files for 20150806
+Andrew, it seems that proc-add-kpageidle-file-fix-6.patch
+(pasted below) is incomplete. Unlike the original patch
+(http://marc.info/?l=linux-mm&m=143826131310409&w=2) it is missing hunks
+which are removing struct page_ext_operations page_idle_ops = {} and
+others from
+fs/proc/page.c and that leads to
+fs/built-in.o:(.data+0xa4dc): multiple definition of `page_idle_ops'
+mm/built-in.o:(.data+0x979c): first defined here
+make: *** [vmlinux] Error 1
 
-Build Time: 70 min 42 sec
+I have applied the original patch for my git tree. 
+---
+From: Vladimir Davydov <vdavydov@parallels.com>
+Subject: Move /proc/kpageidle to /sys/kernel/mm/page_idle/bitmap
 
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
+Since IDLE_PAGE_TRACKING does not need to depend on PROC_FS anymore,
+this patch also moves the code from fs/proc/page.c to mm/page_idle.c and
+introduces a dedicated header file include/linux/page_idle.h.
 
-Errors: 6
-Warnings: 52
-Section Mismatches: 1
+Signed-off-by: Vladimir Davydov <vdavydov@parallels.com>
+Cc: Andres Lagar-Cavilla <andreslc@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+ Documentation/vm/idle_page_tracking.txt |   38 +--
+ Documentation/vm/pagemap.txt            |    5 
+ fs/proc/page.c                          |    8 
+ fs/proc/task_mmu.c                      |    1 
+ include/linux/mm.h                      |   98 ---------
+ include/linux/page_idle.h               |  110 ++++++++++
+ mm/Kconfig                              |    3 
+ mm/Makefile                             |    1 
+ mm/huge_memory.c                        |    1 
+ mm/migrate.c                            |    1 
+ mm/page_ext.c                           |    1 
+ mm/page_idle.c                          |  232 ++++++++++++++++++++++
+ mm/rmap.c                               |    1 
+ mm/swap.c                               |    1 
+ 14 files changed, 373 insertions(+), 128 deletions(-)
 
-Errors:
-
-	arm64-allmodconfig
-ERROR: "qcom_scm_hdcp_req" [drivers/gpu/drm/msm/msm.ko] undefined!
-ERROR: "qcom_scm_hdcp_available" [drivers/gpu/drm/msm/msm.ko] undefined!
-
-	arm-allmodconfig
-../lib/test_user_copy.c:67:2: error: implicit declaration of function 'copy_in_user' [-Werror=implicit-function-declaration]
-../lib/test_user_copy.c:94:2: error: implicit declaration of function '__copy_in_user' [-Werror=implicit-function-declaration]
-../drivers/iommu/omap-iommu-debug.c:138:2: error: void value not ignored as it ought to be
-../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allnoconfig
-    111 warnings    2 mismatches  : arm64-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v5_defconfig
-      8 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : x86_64-defconfig
-     24 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : arm-allnoconfig
-      2 warnings    0 mismatches  : x86_64-allnoconfig
-      3 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 6
-	  1 ERROR: "qcom_scm_hdcp_req" [drivers/gpu/drm/msm/msm.ko] undefined!
-	  1 ERROR: "qcom_scm_hdcp_available" [drivers/gpu/drm/msm/msm.ko] undefined!
-	  1 ../lib/test_user_copy.c:94:2: error: implicit declaration of function '__copy_in_user' [-Werror=implicit-function-declaration]
-	  1 ../lib/test_user_copy.c:67:2: error: implicit declaration of function 'copy_in_user' [-Werror=implicit-function-declaration]
-	  1 ../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
-	  1 ../drivers/iommu/omap-iommu-debug.c:138:2: error: void value not ignored as it ought to be
-
-Warnings Summary: 52
-	 17 ../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	 17 ../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	 14 ../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	 14 ../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	 10 <stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	  9 ../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	  6 <stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
-	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	  3 warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	  3 ../drivers/net/ethernet/mellanox/mlxsw/item.h:65:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 6 has type 'size_t' [-Wformat]
-	  2 ../drivers/gpio/gpio-omap.c:504:3: warning: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [enabled by default]
-	  2 ../arch/x86/kernel/irq.c:237:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../net/bluetooth/mgmt.c:6636:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:6636:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
-	  1 ../ipc/kdbus/connection.c:2049:1: warning: the frame size of 1280 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/tty/serial/amba-pl011.c:329:13: warning: 'pl011_writeb' defined but not used [-Wunused-function]
-	  1 ../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/pci/host/pcie-xilinx.c:235:3: warning: passing argument 1 of 'sys_to_pcie' makes pointer from integer without a cast [enabled by default]
-	  1 ../drivers/ntb/ntb_transport.c:778:3: warning: right shift count >= width of type [enabled by default]
-	  1 ../drivers/net/ethernet/mellanox/mlxsw/pci.c:1548:2: warning: right shift count >= width of type [enabled by default]
-	  1 ../drivers/net/ethernet/mellanox/mlxsw/pci.c:1536:2: warning: right shift count >= width of type [enabled by default]
-	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	  1 ../drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4564:8: warning: 'chip' may be used uninitialized in this function [-Wuninitialized]
-	  1 ../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/iommu/omap-iommu-debug.c:140:1: warning: control reaches end of non-void function [-Wreturn-type]
-	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
-	  1 ../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
-	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/i915/intel_bios.c:1034:3: warning: format '%u' expects a matching 'unsigned int' argument [-Wformat=]
-	  1 ../drivers/block/nvme-core.c:1888:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/nvme-core.c:1846:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	  1 ../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 1
-	  2 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 2 errors, 111 warnings, 2 section mismatches
-
-Errors:
-	ERROR: "qcom_scm_hdcp_req" [drivers/gpu/drm/msm/msm.ko] undefined!
-	ERROR: "qcom_scm_hdcp_available" [drivers/gpu/drm/msm/msm.ko] undefined!
-
-Warnings:
-	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../sound/pci/echoaudio/echoaudio.h:156:0: warning: "TRUE" redefined
-	../sound/pci/echoaudio/echoaudio.h:157:0: warning: "FALSE" redefined
-	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
-	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
-	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
-	../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
-	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
-	../drivers/tty/serial/amba-pl011.c:329:13: warning: 'pl011_writeb' defined but not used [-Wunused-function]
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
-	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
-	../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
-Section Mismatches:
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	../net/bluetooth/mgmt.c:6636:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:6636:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpio/gpio-omap.c:504:3: warning: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [enabled by default]
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../arch/x86/kernel/irq.c:237:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	../drivers/gpu/drm/i915/intel_bios.c:1034:3: warning: format '%u' expects a matching 'unsigned int' argument [-Wformat=]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 4 errors, 24 warnings, 0 section mismatches
-
-Errors:
-	../lib/test_user_copy.c:67:2: error: implicit declaration of function 'copy_in_user' [-Werror=implicit-function-declaration]
-	../lib/test_user_copy.c:94:2: error: implicit declaration of function '__copy_in_user' [-Werror=implicit-function-declaration]
-	../drivers/iommu/omap-iommu-debug.c:138:2: error: void value not ignored as it ought to be
-	../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
-	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../ipc/kdbus/connection.c:2049:1: warning: the frame size of 1280 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/block/nvme-core.c:1846:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/block/nvme-core.c:1888:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/gpio/gpio-omap.c:504:3: warning: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [enabled by default]
-	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/iommu/omap-iommu-debug.c:140:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
-	../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
-	../drivers/ntb/ntb_transport.c:778:3: warning: right shift count >= width of type [enabled by default]
-	../drivers/pci/host/pcie-xilinx.c:235:3: warning: passing argument 1 of 'sys_to_pcie' makes pointer from integer without a cast [enabled by default]
-	../drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4564:8: warning: 'chip' may be used uninitialized in this function [-Wuninitialized]
-	../drivers/net/ethernet/mellanox/mlxsw/item.h:65:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 6 has type 'size_t' [-Wformat]
-	../drivers/net/ethernet/mellanox/mlxsw/item.h:65:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 6 has type 'size_t' [-Wformat]
-	../drivers/net/ethernet/mellanox/mlxsw/pci.c:1536:2: warning: right shift count >= width of type [enabled by default]
-	../drivers/net/ethernet/mellanox/mlxsw/pci.c:1548:2: warning: right shift count >= width of type [enabled by default]
-	../drivers/net/ethernet/mellanox/mlxsw/item.h:65:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 6 has type 'size_t' [-Wformat]
-	../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../arch/x86/kernel/irq.c:237:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
-	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
-	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
+diff -puN Documentation/vm/idle_page_tracking.txt~proc-add-kpageidle-file-fix-6 Documentation/vm/idle_page_tracking.txt
+--- a/Documentation/vm/idle_page_tracking.txt~proc-add-kpageidle-file-fix-6
++++ a/Documentation/vm/idle_page_tracking.txt
+@@ -6,10 +6,12 @@ estimating the workload's working set si
+ account when configuring the workload parameters, setting memory cgroup limits,
+ or deciding where to place the workload within a compute cluster.
+ 
++It is enabled by CONFIG_IDLE_PAGE_TRACKING=y.
++
+ USER API
+ 
+-If CONFIG_IDLE_PAGE_TRACKING was enabled on compile time, a new read-write file
+-is present on the proc filesystem, /proc/kpageidle.
++The idle page tracking API is located at /sys/kernel/mm/page_idle. Currently,
++it consists of the only read-write file, /sys/kernel/mm/page_idle/bitmap.
+ 
+ The file implements a bitmap where each bit corresponds to a memory page. The
+ bitmap is represented by an array of 8-byte integers, and the page at PFN #i is
+@@ -30,24 +32,25 @@ and hence such pages are never reported
+ For huge pages the idle flag is set only on the head page, so one has to read
+ /proc/kpageflags in order to correctly count idle huge pages.
+ 
+-Reading from or writing to /proc/kpageidle will return -EINVAL if you are not
+-starting the read/write on an 8-byte boundary, or if the size of the read/write
+-is not a multiple of 8 bytes. Writing to this file beyond max PFN will return
+--ENXIO.
++Reading from or writing to /sys/kernel/mm/page_idle/bitmap will return
++-EINVAL if you are not starting the read/write on an 8-byte boundary, or
++if the size of the read/write is not a multiple of 8 bytes. Writing to
++this file beyond max PFN will return -ENXIO.
+ 
+ That said, in order to estimate the amount of pages that are not used by a
+ workload one should:
+ 
+- 1. Mark all the workload's pages as idle by setting corresponding bits in the
+-    /proc/kpageidle bitmap. The pages can be found by reading /proc/pid/pagemap
+-    if the workload is represented by a process, or by filtering out alien pages
+-    using /proc/kpagecgroup in case the workload is placed in a memory cgroup.
++ 1. Mark all the workload's pages as idle by setting corresponding bits in
++    /sys/kernel/mm/page_idle/bitmap. The pages can be found by reading
++    /proc/pid/pagemap if the workload is represented by a process, or by
++    filtering out alien pages using /proc/kpagecgroup in case the workload is
++    placed in a memory cgroup.
+ 
+  2. Wait until the workload accesses its working set.
+ 
+- 3. Read /proc/kpageidle and count the number of bits set. If one wants to
+-    ignore certain types of pages, e.g. mlocked pages since they are not
+-    reclaimable, he or she can filter them out using /proc/kpageflags.
++ 3. Read /sys/kernel/mm/page_idle/bitmap and count the number of bits set. If
++    one wants to ignore certain types of pages, e.g. mlocked pages since they
++    are not reclaimable, he or she can filter them out using /proc/kpageflags.
+ 
+ See Documentation/vm/pagemap.txt for more information about /proc/pid/pagemap,
+ /proc/kpageflags, and /proc/kpagecgroup.
+@@ -74,8 +77,9 @@ When a dirty page is written to swap or
+ exceeding the dirty memory limit, it is not marked referenced.
+ 
+ The idle memory tracking feature adds a new page flag, the Idle flag. This flag
+-is set manually, by writing to /proc/kpageidle (see the USER API section), and
+-cleared automatically whenever a page is referenced as defined above.
++is set manually, by writing to /sys/kernel/mm/page_idle/bitmap (see the USER API
++section), and cleared automatically whenever a page is referenced as defined
++above.
+ 
+ When a page is marked idle, the Accessed bit must be cleared in all PTEs it is
+ mapped to, otherwise we will not be able to detect accesses to the page coming
+@@ -90,5 +94,5 @@ Since the idle memory tracking feature i
+ it only works with pages that are on an LRU list, other pages are silently
+ ignored. That means it will ignore a user memory page if it is isolated, but
+ since there are usually not many of them, it should not affect the overall
+-result noticeably. In order not to stall scanning of /proc/kpageidle, locked
+-pages may be skipped too.
++result noticeably. In order not to stall scanning of the idle page bitmap,
++locked pages may be skipped too.
+diff -puN Documentation/vm/pagemap.txt~proc-add-kpageidle-file-fix-6 Documentation/vm/pagemap.txt
+--- a/Documentation/vm/pagemap.txt~proc-add-kpageidle-file-fix-6
++++ a/Documentation/vm/pagemap.txt
+@@ -5,7 +5,7 @@ pagemap is a new (as of 2.6.25) set of i
+ userspace programs to examine the page tables and related information by
+ reading files in /proc.
+ 
+-There are five components to pagemap:
++There are four components to pagemap:
+ 
+  * /proc/pid/pagemap.  This file lets a userspace process find out which
+    physical frame each virtual page is mapped to.  It contains one 64-bit
+@@ -75,9 +75,6 @@ There are five components to pagemap:
+    memory cgroup each page is charged to, indexed by PFN. Only available when
+    CONFIG_MEMCG is set.
+ 
+- * /proc/kpageidle.  This file comprises API of the idle page tracking feature.
+-   See Documentation/vm/idle_page_tracking.txt for more details.
+-
+ Short descriptions to the page flags:
+ 
+  0. LOCKED
+diff -puN fs/proc/page.c~proc-add-kpageidle-file-fix-6 fs/proc/page.c
+--- a/fs/proc/page.c~proc-add-kpageidle-file-fix-6
++++ a/fs/proc/page.c
+@@ -5,20 +5,18 @@
+ #include <linux/ksm.h>
+ #include <linux/mm.h>
+ #include <linux/mmzone.h>
+-#include <linux/rmap.h>
+-#include <linux/mmu_notifier.h>
+ #include <linux/huge_mm.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+ #include <linux/hugetlb.h>
+ #include <linux/memcontrol.h>
++#include <linux/page_idle.h>
+ #include <linux/kernel-page-flags.h>
+ #include <asm/uaccess.h>
+ #include "internal.h"
+ 
+ #define KPMSIZE sizeof(u64)
+ #define KPMMASK (KPMSIZE - 1)
+-#define KPMBITS (KPMSIZE * BITS_PER_BYTE)
+ 
+ /* /proc/kpagecount - an array exposing page counts
+  *
+@@ -500,10 +498,6 @@ static int __init proc_page_init(void)
+ #ifdef CONFIG_MEMCG
+ 	proc_create("kpagecgroup", S_IRUSR, NULL, &proc_kpagecgroup_operations);
+ #endif
+-#ifdef CONFIG_IDLE_PAGE_TRACKING
+-	proc_create("kpageidle", S_IRUSR | S_IWUSR, NULL,
+-		    &proc_kpageidle_operations);
+-#endif
+ 	return 0;
+ }
+ fs_initcall(proc_page_init);
+diff -puN fs/proc/task_mmu.c~proc-add-kpageidle-file-fix-6 fs/proc/task_mmu.c
+--- a/fs/proc/task_mmu.c~proc-add-kpageidle-file-fix-6
++++ a/fs/proc/task_mmu.c
+@@ -13,6 +13,7 @@
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/page_idle.h>
+ 
+ #include <asm/elf.h>
+ #include <asm/uaccess.h>
+diff -puN include/linux/mm.h~proc-add-kpageidle-file-fix-6 include/linux/mm.h
+--- a/include/linux/mm.h~proc-add-kpageidle-file-fix-6
++++ a/include/linux/mm.h
+@@ -2191,103 +2191,5 @@ void __init setup_nr_node_ids(void);
+ static inline void setup_nr_node_ids(void) {}
+ #endif
+ 
+-#ifdef CONFIG_IDLE_PAGE_TRACKING
+-#ifdef CONFIG_64BIT
+-static inline bool page_is_young(struct page *page)
+-{
+-	return PageYoung(page);
+-}
+-
+-static inline void set_page_young(struct page *page)
+-{
+-	SetPageYoung(page);
+-}
+-
+-static inline bool test_and_clear_page_young(struct page *page)
+-{
+-	return TestClearPageYoung(page);
+-}
+-
+-static inline bool page_is_idle(struct page *page)
+-{
+-	return PageIdle(page);
+-}
+-
+-static inline void set_page_idle(struct page *page)
+-{
+-	SetPageIdle(page);
+-}
+-
+-static inline void clear_page_idle(struct page *page)
+-{
+-	ClearPageIdle(page);
+-}
+-#else /* !CONFIG_64BIT */
+-/*
+- * If there is not enough space to store Idle and Young bits in page flags, use
+- * page ext flags instead.
+- */
+-extern struct page_ext_operations page_idle_ops;
+-
+-static inline bool page_is_young(struct page *page)
+-{
+-	return test_bit(PAGE_EXT_YOUNG, &lookup_page_ext(page)->flags);
+-}
+-
+-static inline void set_page_young(struct page *page)
+-{
+-	set_bit(PAGE_EXT_YOUNG, &lookup_page_ext(page)->flags);
+-}
+-
+-static inline bool test_and_clear_page_young(struct page *page)
+-{
+-	return test_and_clear_bit(PAGE_EXT_YOUNG,
+-				  &lookup_page_ext(page)->flags);
+-}
+-
+-static inline bool page_is_idle(struct page *page)
+-{
+-	return test_bit(PAGE_EXT_IDLE, &lookup_page_ext(page)->flags);
+-}
+-
+-static inline void set_page_idle(struct page *page)
+-{
+-	set_bit(PAGE_EXT_IDLE, &lookup_page_ext(page)->flags);
+-}
+-
+-static inline void clear_page_idle(struct page *page)
+-{
+-	clear_bit(PAGE_EXT_IDLE, &lookup_page_ext(page)->flags);
+-}
+-#endif /* CONFIG_64BIT */
+-#else /* !CONFIG_IDLE_PAGE_TRACKING */
+-static inline bool page_is_young(struct page *page)
+-{
+-	return false;
+-}
+-
+-static inline void set_page_young(struct page *page)
+-{
+-}
+-
+-static inline bool test_and_clear_page_young(struct page *page)
+-{
+-	return false;
+-}
+-
+-static inline bool page_is_idle(struct page *page)
+-{
+-	return false;
+-}
+-
+-static inline void set_page_idle(struct page *page)
+-{
+-}
+-
+-static inline void clear_page_idle(struct page *page)
+-{
+-}
+-#endif /* CONFIG_IDLE_PAGE_TRACKING */
+-
+ #endif /* __KERNEL__ */
+ #endif /* _LINUX_MM_H */
+diff -puN /dev/null include/linux/page_idle.h
+--- /dev/null
++++ a/include/linux/page_idle.h
+@@ -0,0 +1,110 @@
++#ifndef _LINUX_MM_PAGE_IDLE_H
++#define _LINUX_MM_PAGE_IDLE_H
++
++#include <linux/bitops.h>
++#include <linux/page-flags.h>
++#include <linux/page_ext.h>
++
++#ifdef CONFIG_IDLE_PAGE_TRACKING
++
++#ifdef CONFIG_64BIT
++static inline bool page_is_young(struct page *page)
++{
++	return PageYoung(page);
++}
++
++static inline void set_page_young(struct page *page)
++{
++	SetPageYoung(page);
++}
++
++static inline bool test_and_clear_page_young(struct page *page)
++{
++	return TestClearPageYoung(page);
++}
++
++static inline bool page_is_idle(struct page *page)
++{
++	return PageIdle(page);
++}
++
++static inline void set_page_idle(struct page *page)
++{
++	SetPageIdle(page);
++}
++
++static inline void clear_page_idle(struct page *page)
++{
++	ClearPageIdle(page);
++}
++#else /* !CONFIG_64BIT */
++/*
++ * If there is not enough space to store Idle and Young bits in page flags, use
++ * page ext flags instead.
++ */
++extern struct page_ext_operations page_idle_ops;
++
++static inline bool page_is_young(struct page *page)
++{
++	return test_bit(PAGE_EXT_YOUNG, &lookup_page_ext(page)->flags);
++}
++
++static inline void set_page_young(struct page *page)
++{
++	set_bit(PAGE_EXT_YOUNG, &lookup_page_ext(page)->flags);
++}
++
++static inline bool test_and_clear_page_young(struct page *page)
++{
++	return test_and_clear_bit(PAGE_EXT_YOUNG,
++				  &lookup_page_ext(page)->flags);
++}
++
++static inline bool page_is_idle(struct page *page)
++{
++	return test_bit(PAGE_EXT_IDLE, &lookup_page_ext(page)->flags);
++}
++
++static inline void set_page_idle(struct page *page)
++{
++	set_bit(PAGE_EXT_IDLE, &lookup_page_ext(page)->flags);
++}
++
++static inline void clear_page_idle(struct page *page)
++{
++	clear_bit(PAGE_EXT_IDLE, &lookup_page_ext(page)->flags);
++}
++#endif /* CONFIG_64BIT */
++
++#else /* !CONFIG_IDLE_PAGE_TRACKING */
++
++static inline bool page_is_young(struct page *page)
++{
++	return false;
++}
++
++static inline void set_page_young(struct page *page)
++{
++}
++
++static inline bool test_and_clear_page_young(struct page *page)
++{
++	return false;
++}
++
++static inline bool page_is_idle(struct page *page)
++{
++	return false;
++}
++
++static inline void set_page_idle(struct page *page)
++{
++}
++
++static inline void clear_page_idle(struct page *page)
++{
++}
++
++#endif /* CONFIG_IDLE_PAGE_TRACKING */
++
++#endif /* _LINUX_MM_PAGE_IDLE_H */
+diff -puN mm/Kconfig~proc-add-kpageidle-file-fix-6 mm/Kconfig
+--- a/mm/Kconfig~proc-add-kpageidle-file-fix-6
++++ a/mm/Kconfig
+@@ -657,8 +657,7 @@ config DEFERRED_STRUCT_PAGE_INIT
+ 
+ config IDLE_PAGE_TRACKING
+ 	bool "Enable idle page tracking"
+-	depends on PROC_FS && MMU
+-	select PROC_PAGE_MONITOR
++	depends on SYSFS
+ 	select PAGE_EXTENSION if !64BIT
+ 	help
+ 	  This feature allows to estimate the amount of user pages that have
+diff -puN mm/Makefile~proc-add-kpageidle-file-fix-6 mm/Makefile
+--- a/mm/Makefile~proc-add-kpageidle-file-fix-6
++++ a/mm/Makefile
+@@ -79,3 +79,4 @@ obj-$(CONFIG_MEMORY_BALLOON) += balloon_
+ obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
+ obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
+ obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
++obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
+diff -puN mm/huge_memory.c~proc-add-kpageidle-file-fix-6 mm/huge_memory.c
+--- a/mm/huge_memory.c~proc-add-kpageidle-file-fix-6
++++ a/mm/huge_memory.c
+@@ -25,6 +25,7 @@
+ #include <linux/migrate.h>
+ #include <linux/hashtable.h>
+ #include <linux/userfaultfd_k.h>
++#include <linux/page_idle.h>
+ 
+ #include <asm/tlb.h>
+ #include <asm/pgalloc.h>
+diff -puN mm/migrate.c~proc-add-kpageidle-file-fix-6 mm/migrate.c
+--- a/mm/migrate.c~proc-add-kpageidle-file-fix-6
++++ a/mm/migrate.c
+@@ -37,6 +37,7 @@
+ #include <linux/gfp.h>
+ #include <linux/balloon_compaction.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/page_idle.h>
+ 
+ #include <asm/tlbflush.h>
+ 
+diff -puN mm/page_ext.c~proc-add-kpageidle-file-fix-6 mm/page_ext.c
+--- a/mm/page_ext.c~proc-add-kpageidle-file-fix-6
++++ a/mm/page_ext.c
+@@ -6,6 +6,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/kmemleak.h>
+ #include <linux/page_owner.h>
++#include <linux/page_idle.h>
+ 
+ /*
+  * struct page extension
+diff -puN /dev/null mm/page_idle.c
+--- /dev/null
++++ a/mm/page_idle.c
+@@ -0,0 +1,232 @@
++#include <linux/init.h>
++#include <linux/bootmem.h>
++#include <linux/fs.h>
++#include <linux/sysfs.h>
++#include <linux/kobject.h>
++#include <linux/mm.h>
++#include <linux/mmzone.h>
++#include <linux/pagemap.h>
++#include <linux/rmap.h>
++#include <linux/mmu_notifier.h>
++#include <linux/page_ext.h>
++#include <linux/page_idle.h>
++
++#define BITMAP_CHUNK_SIZE	sizeof(u64)
++#define BITMAP_CHUNK_BITS	(BITMAP_CHUNK_SIZE * BITS_PER_BYTE)
++
++/*
++ * Idle page tracking only considers user memory pages, for other types of
++ * pages the idle flag is always unset and an attempt to set it is silently
++ * ignored.
++ *
++ * We treat a page as a user memory page if it is on an LRU list, because it is
++ * always safe to pass such a page to rmap_walk(), which is essential for idle
++ * page tracking. With such an indicator of user pages we can skip isolated
++ * pages, but since there are not usually many of them, it will hardly affect
++ * the overall result.
++ *
++ * This function tries to get a user memory page by pfn as described above.
++ */
++static struct page *page_idle_get_page(unsigned long pfn)
++{
++	struct page *page;
++	struct zone *zone;
++
++	if (!pfn_valid(pfn))
++		return NULL;
++
++	page = pfn_to_page(pfn);
++	if (!page || !PageLRU(page) ||
++	    !get_page_unless_zero(page))
++		return NULL;
++
++	zone = page_zone(page);
++	spin_lock_irq(&zone->lru_lock);
++	if (unlikely(!PageLRU(page))) {
++		put_page(page);
++		page = NULL;
++	}
++	spin_unlock_irq(&zone->lru_lock);
++	return page;
++}
++
++static int page_idle_clear_pte_refs_one(struct page *page,
++					struct vm_area_struct *vma,
++					unsigned long addr, void *arg)
++{
++	struct mm_struct *mm = vma->vm_mm;
++	spinlock_t *ptl;
++	pmd_t *pmd;
++	pte_t *pte;
++	bool referenced = false;
++
++	if (unlikely(PageTransHuge(page))) {
++		pmd = page_check_address_pmd(page, mm, addr,
++					     PAGE_CHECK_ADDRESS_PMD_FLAG, &ptl);
++		if (pmd) {
++			referenced = pmdp_clear_young_notify(vma, addr, pmd);
++			spin_unlock(ptl);
++		}
++	} else {
++		pte = page_check_address(page, mm, addr, &ptl, 0);
++		if (pte) {
++			referenced = ptep_clear_young_notify(vma, addr, pte);
++			pte_unmap_unlock(pte, ptl);
++		}
++	}
++	if (referenced) {
++		clear_page_idle(page);
++		/*
++		 * We cleared the referenced bit in a mapping to this page. To
++		 * avoid interference with page reclaim, mark it young so that
++		 * page_referenced() will return > 0.
++		 */
++		set_page_young(page);
++	}
++	return SWAP_AGAIN;
++}
++
++static void page_idle_clear_pte_refs(struct page *page)
++{
++	/*
++	 * Since rwc.arg is unused, rwc is effectively immutable, so we
++	 * can make it static const to save some cycles and stack.
++	 */
++	static const struct rmap_walk_control rwc = {
++		.rmap_one = page_idle_clear_pte_refs_one,
++		.anon_lock = page_lock_anon_vma_read,
++	};
++	bool need_lock;
++
++	if (!page_mapped(page) ||
++	    !page_rmapping(page))
++		return;
++
++	need_lock = !PageAnon(page) || PageKsm(page);
++	if (need_lock && !trylock_page(page))
++		return;
++
++	rmap_walk(page, (struct rmap_walk_control *)&rwc);
++
++	if (need_lock)
++		unlock_page(page);
++}
++
++static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
++				     struct bin_attribute *attr, char *buf,
++				     loff_t pos, size_t count)
++{
++	u64 *out = (u64 *)buf;
++	struct page *page;
++	unsigned long pfn, end_pfn;
++	int bit;
++
++	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
++		return -EINVAL;
++
++	pfn = pos * BITS_PER_BYTE;
++	if (pfn >= max_pfn)
++		return 0;
++
++	end_pfn = pfn + count * BITS_PER_BYTE;
++	if (end_pfn > max_pfn)
++		end_pfn = ALIGN(max_pfn, BITMAP_CHUNK_BITS);
++
++	for (; pfn < end_pfn; pfn++) {
++		bit = pfn % BITMAP_CHUNK_BITS;
++		if (!bit)
++			*out = 0ULL;
++		page = page_idle_get_page(pfn);
++		if (page) {
++			if (page_is_idle(page)) {
++				/*
++				 * The page might have been referenced via a
++				 * pte, in which case it is not idle. Clear
++				 * refs and recheck.
++				 */
++				page_idle_clear_pte_refs(page);
++				if (page_is_idle(page))
++					*out |= 1ULL << bit;
++			}
++			put_page(page);
++		}
++		if (bit == BITMAP_CHUNK_BITS - 1)
++			out++;
++		cond_resched();
++	}
++	return (char *)out - buf;
++}
++
++static ssize_t page_idle_bitmap_write(struct file *file, struct kobject *kobj,
++				      struct bin_attribute *attr, char *buf,
++				      loff_t pos, size_t count)
++{
++	const u64 *in = (u64 *)buf;
++	struct page *page;
++	unsigned long pfn, end_pfn;
++	int bit;
++
++	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
++		return -EINVAL;
++
++	pfn = pos * BITS_PER_BYTE;
++	if (pfn >= max_pfn)
++		return -ENXIO;
++
++	end_pfn = pfn + count * BITS_PER_BYTE;
++	if (end_pfn > max_pfn)
++		end_pfn = ALIGN(max_pfn, BITMAP_CHUNK_BITS);
++
++	for (; pfn < end_pfn; pfn++) {
++		bit = pfn % BITMAP_CHUNK_BITS;
++		if ((*in >> bit) & 1) {
++			page = page_idle_get_page(pfn);
++			if (page) {
++				page_idle_clear_pte_refs(page);
++				set_page_idle(page);
++				put_page(page);
++			}
++		}
++		if (bit == BITMAP_CHUNK_BITS - 1)
++			in++;
++		cond_resched();
++	}
++	return (char *)in - buf;
++}
++
++static struct bin_attribute page_idle_bitmap_attr =
++		__BIN_ATTR(bitmap, S_IRUSR | S_IWUSR,
++			   page_idle_bitmap_read, page_idle_bitmap_write, 0);
++
++static struct bin_attribute *page_idle_bin_attrs[] = {
++	&page_idle_bitmap_attr,
++	NULL,
++};
++
++static struct attribute_group page_idle_attr_group = {
++	.bin_attrs = page_idle_bin_attrs,
++	.name = "page_idle",
++};
++
++#ifndef CONFIG_64BIT
++static bool need_page_idle(void)
++{
++	return true;
++}
++struct page_ext_operations page_idle_ops = {
++	.need = need_page_idle,
++};
++#endif
++
++static int __init page_idle_init(void)
++{
++	int err;
++
++	err = sysfs_create_group(mm_kobj, &page_idle_attr_group);
++	if (err) {
++		pr_err("page_idle: register sysfs failed\n");
++		return err;
++	}
++	return 0;
++}
++subsys_initcall(page_idle_init);
+diff -puN mm/rmap.c~proc-add-kpageidle-file-fix-6 mm/rmap.c
+--- a/mm/rmap.c~proc-add-kpageidle-file-fix-6
++++ a/mm/rmap.c
+@@ -59,6 +59,7 @@
+ #include <linux/migrate.h>
+ #include <linux/hugetlb.h>
+ #include <linux/backing-dev.h>
++#include <linux/page_idle.h>
+ 
+ #include <asm/tlbflush.h>
+ 
+diff -puN mm/swap.c~proc-add-kpageidle-file-fix-6 mm/swap.c
+--- a/mm/swap.c~proc-add-kpageidle-file-fix-6
++++ a/mm/swap.c
+@@ -32,6 +32,7 @@
+ #include <linux/gfp.h>
+ #include <linux/uio.h>
+ #include <linux/hugetlb.h>
++#include <linux/page_idle.h>
+ 
+ #include "internal.h"
+ 
+_
+-- 
+Michal Hocko
+SUSE Labs
