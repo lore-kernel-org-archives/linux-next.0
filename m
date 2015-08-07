@@ -1,56 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the  wireless-drivers-next
- tree
-Date: Fri, 7 Aug 2015 13:16:15 +1000
-Message-ID: <20150807131615.535d4c04@canb.auug.org.au>
+Subject: linux-next: manual merge of the audit tree with Linus' tree
+Date: Fri, 7 Aug 2015 14:15:41 +1000
+Message-ID: <20150807141541.772edd2f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47934 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34197 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752098AbbHGDQR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Aug 2015 23:16:17 -0400
+	id S1751304AbbHGEPn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Aug 2015 00:15:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>, Ameen Ali <ameenali023@gmail.com>
 
-Hi Kalle,
+Hi Paul,
 
-After merging the wireless-drivers-next tree, today's linux-next build
-(x86_64 allmodconfig) failed like this:
+Today's linux-next merge of the audit tree got a conflict in:
 
-drivers/net/wireless/ath/ath9k/debug_sta.c: In function 'read_file_node_aggr':
-drivers/net/wireless/ath/ath9k/debug_sta.c:54:25: error: 'struct ath_node' has no member named 'ac'
-  for (acno = 0, ac = &an->ac[acno];
-                         ^
-drivers/net/wireless/ath/ath9k/debug_sta.c:55:43: error: increment of pointer to unknown structure
-       acno < IEEE80211_NUM_ACS; acno++, ac++) {
-                                           ^
-drivers/net/wireless/ath/ath9k/debug_sta.c:55:7: error: arithmetic on pointer to an incomplete type
-       acno < IEEE80211_NUM_ACS; acno++, ac++) {
-       ^
-drivers/net/wireless/ath/ath9k/debug_sta.c:56:11: error: dereferencing pointer to incomplete type
-   txq = ac->txq;
-           ^
-drivers/net/wireless/ath/ath9k/debug_sta.c:60:14: error: dereferencing pointer to incomplete type
-      acno, ac->sched);
-              ^
-drivers/net/wireless/ath/ath9k/debug_sta.c:71:12: error: 'struct ath_atx_tid' has no member named 'ac'
-   txq = tid->ac->txq;
-            ^
-drivers/net/wireless/ath/ath9k/debug_sta.c:83:10: error: 'struct ath_atx_tid' has no member named 'sched'
-       tid->sched);
-          ^
+  kernel/audit.c
 
-Caused by commits
+between commit:
 
-  592fa228f213 ("ath9k: remove struct ath_atx_ac")
-  d70d848a75fd ("ath9k: remove the sched field in struct ath_atx_tid")
+  5985de6754a6 ("audit: code clean up")
 
-I have used the wireless-drivers-next tree from next-20150806 for today.
+from Linus' tree and commit:
+
+  84cb777e6781 ("audit: use macros for unset inode and device values")
+
+from the audit tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/audit.c
+index f9e6065346db,060153dc47d4..000000000000
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@@ -1761,7 -1759,7 +1761,7 @@@ void audit_log_name(struct audit_contex
+  	} else
+  		audit_log_format(ab, " name=(null)");
+  
+- 	if (n->ino != (unsigned long)-1)
+ -	if (n->ino != AUDIT_INO_UNSET) {
+++	if (n->ino != AUDIT_INO_UNSET)
+  		audit_log_format(ab, " inode=%lu"
+  				 " dev=%02x:%02x mode=%#ho"
+  				 " ouid=%u ogid=%u rdev=%02x:%02x",
