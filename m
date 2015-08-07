@@ -1,70 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the char-misc tree
-Date: Fri, 7 Aug 2015 16:32:14 +1000
-Message-ID: <20150807163214.25c10a5f@canb.auug.org.au>
+From: Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: linux-next: manual merge of the audit tree with Linus' tree
+Date: Fri, 7 Aug 2015 02:33:02 -0400
+Message-ID: <20150807063302.GA23800@madcap2.tricolour.ca>
+References: <20150807141541.772edd2f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56171 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:40665 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752142AbbHGGcQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 7 Aug 2015 02:32:16 -0400
+	id S1753215AbbHGGdG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Aug 2015 02:33:06 -0400
+Content-Disposition: inline
+In-Reply-To: <20150807141541.772edd2f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>, Andy Lutomirski <luto@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Moore <paul@paul-moore.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ameen Ali <ameenali023@gmail.com>
 
-Hi all,
+On 15/08/07, Stephen Rothwell wrote:
+> Hi Paul,
 
-After merging the char-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Hi Stephen,
 
-drivers/hv/hv.c: In function 'read_hv_clock_tsc':
-drivers/hv/hv.c:154:4: error: implicit declaration of function 'rdtscll' [-Werror=implicit-function-declaration]
-    rdtscll(cur_tsc);
-    ^
+> Today's linux-next merge of the audit tree got a conflict in:
+> 
+>   kernel/audit.c
+> 
+> between commit:
+> 
+>   5985de6754a6 ("audit: code clean up")
+> 
+> from Linus' tree and commit:
+> 
+>   84cb777e6781 ("audit: use macros for unset inode and device values")
+> 
+> from the audit tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Caused by commit
+Yup, looks good, thanks!  :)
 
-  ca9357bd26c2 ("Drivers: hv: vmbus: Implement a clocksource based on the TSC page")
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc kernel/audit.c
+> index f9e6065346db,060153dc47d4..000000000000
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@@ -1761,7 -1759,7 +1761,7 @@@ void audit_log_name(struct audit_contex
+>   	} else
+>   		audit_log_format(ab, " name=(null)");
+>   
+> - 	if (n->ino != (unsigned long)-1)
+>  -	if (n->ino != AUDIT_INO_UNSET) {
+> ++	if (n->ino != AUDIT_INO_UNSET)
+>   		audit_log_format(ab, " inode=%lu"
+>   				 " dev=%02x:%02x mode=%#ho"
+>   				 " ouid=%u ogid=%u rdev=%02x:%02x",
 
-interacting with commits
+- RGB
 
-  87be28aaf145 ("x86/asm/tsc: Replace rdtscll() with native_read_tsc()")
-  4ea1636b04db ("x86/asm/tsc: Rename native_read_tsc() to rdtsc()")
-
-from the tip tree.
-
-Please consider maintaining API's for a release cycle when changing them.
-
-I have applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 7 Aug 2015 16:21:32 +1000
-Subject: [PATCH] Drivers: hv: vmbus: fix for the removal of rdtscll()
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/hv/hv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-index 6341be8739ae..335064f01c37 100644
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -151,7 +151,7 @@ static cycle_t read_hv_clock_tsc(struct clocksource *arg)
- 			u64 scale = tsc_pg->tsc_scale;
- 			s64 offset = tsc_pg->tsc_offset;
- 
--			rdtscll(cur_tsc);
-+			cur_tsc = rdtsc();
- 			/* current_tick = ((cur_tsc *scale) >> 64) + offset */
- 			asm("mulq %3"
- 				: "=d" (current_tick), "=a" (tmp)
--- 
-2.5.0
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+--
+Richard Guy Briggs <rbriggs@redhat.com>
+Senior Software Engineer, Kernel Security, AMER ENG Base Operating Systems, Red Hat
+Remote, Ottawa, Canada
+Voice: +1.647.777.2635, Internal: (81) 32635, Alt: +1.613.693.0684x3545
