@@ -1,57 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build failure after merge of the  wireless-drivers-next tree
-Date: Sun, 09 Aug 2015 11:41:45 +0300
-Message-ID: <8737zszwdy.fsf@kamboji.qca.qualcomm.com>
-References: <20150807131615.535d4c04@canb.auug.org.au>
+From: Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>
+Subject: unmet direct dependencies in -next
+Date: Sun, 9 Aug 2015 11:40:05 +0200
+Message-ID: <55C71FF5.1020902@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150807131615.535d4c04@canb.auug.org.au> (Stephen Rothwell's
-	message of "Fri, 7 Aug 2015 13:16:15 +1000")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, yann.morin.1998-GANU6spQydw@public.gmane.org, linux-kbuild <linux-kbuild-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "open list:I2C SUBSYSTEM" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, user-mode-linux-devel <user-mode-linux-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi!
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+-next faces some build issues on UML because of unmet direct dependencies.
+Mostly due to HAS_IOMEM and I2C.
 
-> After merging the wireless-drivers-next tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
->
-> drivers/net/wireless/ath/ath9k/debug_sta.c: In function 'read_file_node_aggr':
-> drivers/net/wireless/ath/ath9k/debug_sta.c:54:25: error: 'struct ath_node' has no member named 'ac'
->   for (acno = 0, ac = &an->ac[acno];
->                          ^
+warning: (MEDIA_SUBDRV_AUTOSELECT && VIDEO_CX231XX && INV_MPU6050_IIO) selects I2C_MUX which has unmet direct dependencies (I2C && HAS_IOMEM)
+warning: (ST_IRQCHIP && HIP04_ETH && STMMAC_PLATFORM && DWMAC_IPQ806X && DWMAC_LPC18XX && DWMAC_ROCKCHIP && DWMAC_SOCFPGA && DWMAC_STI && TI_CPSW && PINCTRL_ROCKCHIP &&
+PINCTRL_DOVE && POWER_RESET_KEYSTONE && POWER_RESET_SYSCON && POWER_RESET_SYSCON_POWEROFF && S3C2410_WATCHDOG && VIDEO_OMAP3 && VIDEO_S5P_FIMC && RTC_DRV_AT91SAM9 && VIDEO_OMAP4 &&
+HWSPINLOCK_QCOM && ATMEL_ST && QCOM_GSBI) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
+warning: (MEDIA_SUBDRV_AUTOSELECT && VIDEO_CX231XX && INV_MPU6050_IIO) selects I2C_MUX which has unmet direct dependencies (I2C && HAS_IOMEM)
+warning: (ST_IRQCHIP && HIP04_ETH && STMMAC_PLATFORM && DWMAC_IPQ806X && DWMAC_LPC18XX && DWMAC_ROCKCHIP && DWMAC_SOCFPGA && DWMAC_STI && TI_CPSW && PINCTRL_ROCKCHIP &&
+PINCTRL_DOVE && POWER_RESET_KEYSTONE && POWER_RESET_SYSCON && POWER_RESET_SYSCON_POWEROFF && S3C2410_WATCHDOG && VIDEO_OMAP3 && VIDEO_S5P_FIMC && RTC_DRV_AT91SAM9 && VIDEO_OMAP4 &&
+HWSPINLOCK_QCOM && ATMEL_ST && QCOM_GSBI) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
 
-[...]
+For example MFD_SYSCON cannot build on UML as it depends on HAS_IOMEM.
+While the symbol MFD_SYSCON has correct dependencies some users of MFD_SYSCON
+just issue a "select MFD_SYSCON" and bypass the HAS_IOMEM dependency and causing the build to fail.
 
-> Caused by commits
->
->   592fa228f213 ("ath9k: remove struct ath_atx_ac")
->   d70d848a75fd ("ath9k: remove the sched field in struct ath_atx_tid")
->
-> I have used the wireless-drivers-next tree from next-20150806 for today.
+This brings me to a question on kconfig itself, wouldn't it be better to just disable a symbol if it has
+unmet direct dependencies?
 
-Sorry about that, the commit below should fix the issue. This seems to
-be a frequent problem, I think I need to start running more extensive
-build tests before applying wireless-drivers patches.
-
-commit 12e035968191c05a574c9c20367cb3090bc7d99d
-Author: Felix Fietkau <nbd@openwrt.org>
-Date:   Thu Aug 6 12:44:30 2015 +0200
-
-    ath9k: fix build with CONFIG_ATH9K_STATION_STATISTICS=y
-    
-    kbuild bot reported that commit 592fa228f213 ("ath9k: remove struct
-    ath_atx_ac") broke the build when CONFIG_ATH9K_STATION_STATISTICS is y.
-    
-    Reported-by: kbuild test robot <fengguang.wu@intel.com>
-    Fixes: 592fa228f213 ("ath9k: remove struct ath_atx_ac")
-    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-    Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-
-
--- 
-Kalle Valo
+Thanks,
+//richard
