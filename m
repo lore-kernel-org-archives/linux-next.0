@@ -1,30 +1,43 @@
-From: Michal Marek <mmarek-AlSwsSmVLrQ@public.gmane.org>
-Subject: Re: unmet direct dependencies in -next
-Date: Mon, 10 Aug 2015 13:57:29 +0200
-Message-ID: <55C891A9.2080607@suse.cz>
-References: <55C71FF5.1020902@nod.at> <20150810091004.GC3249@x1>
- <55C86B66.3020601@nod.at> <55C88738.80400@suse.cz>
- <20150810115541.GA6479@katana>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: next-20150806 build: 2 failures 52 warnings (next-20150806)
+Date: Mon, 10 Aug 2015 13:31:10 -0500
+Message-ID: <CAErSpo6aryRYOJpfXfY6SuJoVe72MYd8RKgPhiDZ9pt5+zmXBQ@mail.gmail.com>
+References: <E1ZNIul-0007IF-Ev@optimist> <20150806175322.GB20873@sirena.org.uk>
+ <20150807073954.3d19fc69@canb.auug.org.au> <20150807094957.GK20873@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150810115541.GA6479@katana>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, yann.morin.1998-GANU6spQydw@public.gmane.org, linux-kbuild <linux-kbuild-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:I2C SUBSYSTEM" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, user-mode-linux-devel <user-mode-linux-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:35766 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932520AbbHJSbc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Aug 2015 14:31:32 -0400
+Received: by wicne3 with SMTP id ne3so32702610wic.0
+        for <linux-next@vger.kernel.org>; Mon, 10 Aug 2015 11:31:30 -0700 (PDT)
+In-Reply-To: <20150807094957.GK20873@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jiang Liu <jiang.liu@linux.intel.com>, Yijing Wang <wangyijing@huawei.com>, Thomas Gleixner <tglx@linutronix.de>, Michal Simek <michal.simek@xilinx.com>, kernel-build-reports@lists.linaro.org, linaro-kernel <linaro-kernel@lists.linaro.org>, linux-next list <linux-next@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 
-On 2015-08-10 13:55, Wolfram Sang wrote:
-> 
->> The result of the given .config does not matter as much. The point of
->> the warnings is that there are missing select statements in the Kconfig
->> files.
-> 
-> For the I2C part, I think they should rather depend on I2C_MUX.
-> Selecting I2C should be rare, like when you really need that PMIC to
-> boot.
+On Fri, Aug 7, 2015 at 4:49 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Aug 07, 2015 at 07:39:54AM +1000, Stephen Rothwell wrote:
+>> On Thu, 6 Aug 2015 18:53:22 +0100 Mark Brown <broonie@kernel.org> wrote:
+>
+>> > msi_desc_to_pci_sys_data doesn't appear to exist anywhere else in
+>> > current -next, the usage was introduced by e39758e0ea769e632e (PCI: Use
+>> > helper functions to access fields in struct msi_desc) at which time it
+>> > looks like it did exist but I can't immediately see where it was removed.
+>
+>> Actually, it is a typo ... all other uses are spelt msi_desc_to_pci_sysdata.
 
-Right, that's another way to fix it.
+c179c9b978b9 ("PCI: Add helper function msi_desc_to_pci_sysdata()")
+added msi_desc_to_pci_sysdata().
 
-Michal
+e39758e0ea76 ("PCI: Use helper functions to access fields in struct
+msi_desc") added calls to msi_desc_to_pci_sysdata() in
+pci-keystone-dw.c and pcie-designware.c, but to
+msi_desc_to_pci_sys_data() (note extra "_") in pcie-xilinx.c.
+
+These were both merged by Thomas, so I assume he and Jiang will sort this out.
+
+Bjorn
