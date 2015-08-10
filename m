@@ -1,43 +1,32 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: next-20150806 build: 2 failures 52 warnings (next-20150806)
-Date: Mon, 10 Aug 2015 13:31:10 -0500
-Message-ID: <CAErSpo6aryRYOJpfXfY6SuJoVe72MYd8RKgPhiDZ9pt5+zmXBQ@mail.gmail.com>
-References: <E1ZNIul-0007IF-Ev@optimist> <20150806175322.GB20873@sirena.org.uk>
- <20150807073954.3d19fc69@canb.auug.org.au> <20150807094957.GK20873@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Tue, 11 Aug 2015 08:51:08 +1000
+Message-ID: <20150811085108.43baa983@canb.auug.org.au>
+References: <20150810150741.5969efdb@canb.auug.org.au>
+	<20150810054652.GA26735@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:35766 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932520AbbHJSbc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Aug 2015 14:31:32 -0400
-Received: by wicne3 with SMTP id ne3so32702610wic.0
-        for <linux-next@vger.kernel.org>; Mon, 10 Aug 2015 11:31:30 -0700 (PDT)
-In-Reply-To: <20150807094957.GK20873@sirena.org.uk>
+Received: from ozlabs.org ([103.22.144.67]:46770 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754832AbbHJWvM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Aug 2015 18:51:12 -0400
+In-Reply-To: <20150810054652.GA26735@dtor-ws>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jiang Liu <jiang.liu@linux.intel.com>, Yijing Wang <wangyijing@huawei.com>, Thomas Gleixner <tglx@linutronix.de>, Michal Simek <michal.simek@xilinx.com>, kernel-build-reports@lists.linaro.org, linaro-kernel <linaro-kernel@lists.linaro.org>, linux-next list <linux-next@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
 
-On Fri, Aug 7, 2015 at 4:49 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Aug 07, 2015 at 07:39:54AM +1000, Stephen Rothwell wrote:
->> On Thu, 6 Aug 2015 18:53:22 +0100 Mark Brown <broonie@kernel.org> wrote:
+Hi Dmitry,
+
+On Sun, 9 Aug 2015 22:46:52 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 >
->> > msi_desc_to_pci_sys_data doesn't appear to exist anywhere else in
->> > current -next, the usage was introduced by e39758e0ea769e632e (PCI: Use
->> > helper functions to access fields in struct msi_desc) at which time it
->> > looks like it did exist but I can't immediately see where it was removed.
->
->> Actually, it is a typo ... all other uses are spelt msi_desc_to_pci_sysdata.
+> Thank you for the patch. I think we actually want GPIOD_OUT_LOW and kill
+> the "else" branch altogether, like below.
 
-c179c9b978b9 ("PCI: Add helper function msi_desc_to_pci_sysdata()")
-added msi_desc_to_pci_sysdata().
+I will use your patch from today.  Thanks.
 
-e39758e0ea76 ("PCI: Use helper functions to access fields in struct
-msi_desc") added calls to msi_desc_to_pci_sysdata() in
-pci-keystone-dw.c and pcie-designware.c, but to
-msi_desc_to_pci_sys_data() (note extra "_") in pcie-xilinx.c.
-
-These were both merged by Thomas, so I assume he and Jiang will sort this out.
-
-Bjorn
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
