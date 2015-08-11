@@ -1,24 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Linux-next: no tree today
-Date: Tue, 11 Aug 2015 20:59:47 +1000
-Message-ID: <969771D8-3ABC-4D3E-B1EB-EEBE4C9554E2@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37425 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932862AbbHKK7p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Aug 2015 06:59:45 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernal@vger.kernel.org
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH] x86: fix build in !CONFIG_KEXEC_CORE case
+Date: Tue, 11 Aug 2015 15:35:35 +0200
+Message-ID: <1439300135-10698-1-git-send-email-vkuznets@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: x86@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, "K. Y. Srinivasan" <kys@microsoft.com>, Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Sorry about that, but I made a bit of a mess when cross grading my laptop.
+Recent changes in Hyper-V driver ("Drivers: hv: vmbus: add special crash
+handler") broke the build when CONFIG_KEXEC_CORE is not set. These
+changes, however, only reveal the previously existent issue: when
+CONFIG_KEXEC_CORE is not defined kernel/kexec.c is not being included in
+the build and native_machine_crash_shutdown() defined in asm/reboot.h has
+no implementation.
 
-Hopefully things will be better tomorrow.
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/include/asm/reboot.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/reboot.h b/arch/x86/include/asm/reboot.h
+index a82c4f1..a6c1124 100644
+--- a/arch/x86/include/asm/reboot.h
++++ b/arch/x86/include/asm/reboot.h
+@@ -16,8 +16,15 @@ struct machine_ops {
+ 
+ extern struct machine_ops machine_ops;
+ 
+-void native_machine_crash_shutdown(struct pt_regs *regs);
+ void native_machine_shutdown(void);
++#ifdef CONFIG_KEXEC_CORE
++void native_machine_crash_shutdown(struct pt_regs *regs);
++#else
++static inline void native_machine_crash_shutdown(struct pt_regs *regs)
++{
++	native_machine_shutdown();
++}
++#endif
+ void __noreturn machine_real_restart(unsigned int type);
+ /* These must match dispatch in arch/x86/realmore/rm/reboot.S */
+ #define MRR_BIOS	0
 -- 
-Stephen Rothwell
-sfr@canb.auug.org.au
+2.4.3
