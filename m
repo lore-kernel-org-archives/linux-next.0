@@ -1,68 +1,373 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Wed, 12 Aug 2015 19:21:05 +0200
-Message-ID: <20150812172105.GW16853@twins.programming.kicks-ass.net>
-References: <20150812150954.36bc605c@canb.auug.org.au>
- <55CB49CA.8050305@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20150812 build: 1 failures 60 warnings (next-20150812)
+Date: Wed, 12 Aug 2015 18:25:53 +0100
+Message-ID: <E1ZPZmj-0000Tc-Rg@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:52042 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932380AbbHLRVO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 13:21:14 -0400
-Content-Disposition: inline
-In-Reply-To: <55CB49CA.8050305@oracle.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40703 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932195AbbHLR0B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 13:26:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, David Vrabel <david.vrabel@citrix.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Wed, Aug 12, 2015 at 09:27:38AM -0400, Boris Ostrovsky wrote:
+Tree/Branch: next-20150812
+Git describe: next-20150812
+Commit: c1a0c66f23 Add linux-next specific files for 20150812
 
-> Incidentally, 11276d53 ("locking/static_keys: Add a new static_key
-> interface") breaks old-ish compilers (gcc version 4.4.4 20100503 (Red=
- Hat
-> 4.4.4-2) (GCC)):
->=20
->=20
->=20
->   CC      arch/x86/kernel/nmi.o
-> In file included from
-> /home/build/linux-boris/include/linux/jump_label.h:109,
->                  from
-> /home/build/linux-boris/arch/x86/include/asm/spinlock.h:5,
->                  from /home/build/linux-boris/include/linux/spinlock.=
-h:88,
->                  from /home/build/linux-boris/arch/x86/kernel/nmi.c:1=
-4:
-> /home/build/linux-boris/arch/x86/include/asm/jump_label.h: In functio=
-n
-> =E2=80=98nmi_handle=E2=80=99:
-> /home/build/linux-boris/arch/x86/include/asm/jump_label.h:21: warning=
-: asm
-> operand 0 probably doesn=E2=80=99t match constraints
-> /home/build/linux-boris/arch/x86/include/asm/jump_label.h:21: error:
-> impossible constraint in =E2=80=98asm=E2=80=99
-> make[3]: *** [arch/x86/kernel/nmi.o] Error 1
-> make[2]: *** [arch/x86/kernel] Error 2
-> make[1]: *** [arch/x86] Error 2
+Build Time: 80 min 38 sec
 
-Ugh bugger.
+Passed:    8 / 9   ( 88.89 %)
+Failed:    1 / 9   ( 11.11 %)
 
-I bet its that: &((char *)key)[branch] business, an earlier variant
-thereof tripped up more recent GCCs too.
+Errors: 1
+Warnings: 60
+Section Mismatches: 1
 
-So its an __always_inline function, and both argument are always compil=
-e
-time constants, @key is the address of an object in static storage (a
-global) and @branch is a simple 0/1 at the call site.
+Failed defconfigs:
+	arm-allmodconfig
 
-Now we wish to compute (unsigned long)key + branch at compile/link time
-to feed to the assembler as an immediate, which should be possible,
-given its all 'constants'.
+Errors:
 
-It just appears GCC is having a hard time with this.
+	arm-allmodconfig
+../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
 
-Let me see if I have a sufficiently old GCC around to play with.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allnoconfig
+     83 warnings    3 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      9 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+     85 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
+      2 warnings    0 mismatches  : x86_64-allnoconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 60
+	 17 ../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	 17 ../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	 11 <stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	 11 ../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	  9 ../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	  6 <stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	  4 ../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	  2 ../drivers/rtc/rtc-ds1374.c:667:6: warning: unused variable 'res' [-Wunused-variable]
+	  2 ../drivers/gpio/gpio-omap.c:504:3: warning: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [enabled by default]
+	  2 ../drivers/dma/ipu/ipu_irq.c:305:22: warning: 'irq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../arch/x86/kernel/irq.c:237:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../net/bluetooth/mgmt.c:6643:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:6643:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/tty/serial/amba-pl011.c:329:13: warning: 'pl011_writeb' defined but not used [-Wunused-function]
+	  1 ../drivers/scsi/bnx2fc/bnx2fc_fcoe.c:2134:1: warning: the frame size of 1256 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/pci/host/pcie-xilinx.c:235:3: warning: passing argument 1 of 'sys_to_pcie' makes pointer from integer without a cast [enabled by default]
+	  1 ../drivers/ntb/ntb_transport.c:809:3: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/net/ethernet/mellanox/mlxsw/pci.c:1561:2: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/net/ethernet/mellanox/mlxsw/pci.c:1549:2: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	  1 ../drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4564:8: warning: 'chip' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
+	  1 ../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
+	  1 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type [enabled by default]
+	  1 ../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type
+	  1 ../drivers/block/nvme-core.c:1888:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/nvme-core.c:1846:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+Section Mismatch Summary: 1
+	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 83 warnings, 3 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
+	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type
+	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/rtc/rtc-ds1374.c:667:6: warning: unused variable 'res' [-Wunused-variable]
+	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/tty/serial/amba-pl011.c:329:13: warning: 'pl011_writeb' defined but not used [-Wunused-function]
+	../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+
+Section Mismatches:
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	../drivers/dma/ipu/ipu_irq.c:305:22: warning: 'irq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	../net/bluetooth/mgmt.c:6643:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:6643:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/dma/ipu/ipu_irq.c:305:22: warning: 'irq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpio/gpio-omap.c:504:3: warning: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [enabled by default]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	../arch/x86/kernel/irq.c:237:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 85 warnings, 0 section mismatches
+
+Errors:
+	../drivers/pci/host/pcie-xilinx.c:235:3: error: implicit declaration of function 'msi_desc_to_pci_sys_data' [-Werror=implicit-function-declaration]
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/block/nvme-core.c:1846:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/nvme-core.c:1888:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type [enabled by default]
+	../drivers/gpio/gpio-omap.c:504:3: warning: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [enabled by default]
+	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
+	../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
+	../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/ntb/ntb_transport.c:809:3: warning: right shift count >= width of type [enabled by default]
+	../drivers/pci/host/pcie-xilinx.c:235:3: warning: passing argument 1 of 'sys_to_pcie' makes pointer from integer without a cast [enabled by default]
+	../drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4564:8: warning: 'chip' may be used uninitialized in this function [-Wuninitialized]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/mellanox/mlxsw/pci.c:1549:2: warning: right shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/mellanox/mlxsw/pci.c:1561:2: warning: right shift count >= width of type [enabled by default]
+	../drivers/rtc/rtc-ds1374.c:667:6: warning: unused variable 'res' [-Wunused-variable]
+	../drivers/scsi/bnx2fc/bnx2fc_fcoe.c:2134:1: warning: the frame size of 1256 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../arch/x86/kernel/irq.c:237:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../kernel/notifier.c:547:2: warning: 'deprecate_rcu_lockdep_assert' is deprecated (declared at ../include/linux/rcupdate.h:540) [-Wdeprecated-declarations]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
