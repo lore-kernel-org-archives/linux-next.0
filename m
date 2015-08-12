@@ -1,52 +1,50 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: linux-next: build failure after merge of the clk tree
-Date: Wed, 12 Aug 2015 01:23:13 -0700
-Message-ID: <20150812082313.GM26614@codeaurora.org>
-References: <20150812171912.03110efc@canb.auug.org.au>
- <CAMuHMdUQEVbyhnOBBgjKqBoFNc9FSCU68uoLg0XNWMFFxWAOdQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Frederic Danis <frederic.danis@linux.intel.com>
+Subject: [PATCH] Bluetooth: hci_bcm: Fix "implicit declaration"
+Date: Wed, 12 Aug 2015 12:46:01 +0200
+Message-ID: <1439376361-16647-1-git-send-email-frederic.danis@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUQEVbyhnOBBgjKqBoFNc9FSCU68uoLg0XNWMFFxWAOdQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Turquette <mturquette@baylibre.com>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Rajendra Nayak <rnayak@codeaurora.org>
+To: linux-bluetooth@vger.kernel.org, sfr@canb.auug.org.au, gustavo@padovan.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, marcel@holtmann.org
 List-Id: linux-next.vger.kernel.org
 
-On 08/12, Geert Uytterhoeven wrote:
-> On Wed, Aug 12, 2015 at 9:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
-> > failed like this:
-> >
-> > ERROR: "pm_genpd_init" [drivers/clk/qcom/clk-qcom.ko] undefined!
-> >
-> > Caused by commit
-> >
-> >   0c4172846b0b ("clk: qcom: Add support for GDSCs")
-> >
-> > I have used the clk tree from next-20150810 for today.
-> 
-> Missing EXPORT_SYMBOL_GPL(pm_genpd_init)?
-> 
-> However, having modular PM Domain drivers may cause unpleasant surprises...
-> 
+The kbuild test robot reported implicit declaration of function
+'acpi_dev_get_resources'.
 
-Curious what sort of surprises those would be? I suppose
-something like power domains being removed from the system would
-need some more work to start failing the suspend/resume of
-devices in the power domains or possibly unbind the drivers that
-are using the power domains provided. And we probably need to
-sprinkle some try_module_get()/module_put() too so that the
-module isn't easily removed if it's in use by some other drivers.
+Surround ACPI function by CONFIG_ACPI test.
 
-I hope it's not something that we think is impossible to do
-though because we've been able to support the clk driver as
-entirely modular on qcom platforms and I'd like to keep it that
-way. BTW, it seems that we export __of_genpd_add_provider() so
-there's at least some precedence for modular genpd code, albeit a
-small one.
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Frederic Danis <frederic.danis@linux.intel.com>
+---
+ drivers/bluetooth/hci_bcm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index cb7fe83..2bb0940 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -388,6 +388,7 @@ static const struct acpi_gpio_mapping acpi_bcm_default_gpios[] = {
+ 	{ },
+ };
+ 
++#ifdef CONFIG_ACPI
+ static int bcm_resource(struct acpi_resource *ares, void *data)
+ {
+ 	struct bcm_device *dev = data;
+@@ -459,6 +460,12 @@ static int bcm_acpi_probe(struct bcm_device *dev)
+ 
+ 	return 0;
+ }
++#else
++static int bcm_acpi_probe(struct bcm_device *dev)
++{
++	return -EINVAL;
++}
++#endif /* CONFIG_ACPI */
+ 
+ static int bcm_probe(struct platform_device *pdev)
+ {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
