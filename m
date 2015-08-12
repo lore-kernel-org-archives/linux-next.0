@@ -1,74 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Wed, 12 Aug 2015 22:27:58 +1000
-Message-ID: <20150812222758.7d4e62f2@canb.auug.org.au>
-References: <20150812181045.0d290caa@canb.auug.org.au>
-	<20150812082107.GT9999@pengutronix.de>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
+Date: Wed, 12 Aug 2015 09:27:38 -0400
+Message-ID: <55CB49CA.8050305@oracle.com>
+References: <20150812150954.36bc605c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150812082107.GT9999@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:37652 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751967AbbHLN3Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 09:29:24 -0400
+In-Reply-To: <20150812150954.36bc605c@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, David Vrabel <david.vrabel@citrix.com>
 
-Hi Uwe,
-
-On Wed, 12 Aug 2015 10:21:07 +0200 Uwe Kleine-K=C3=B6nig <u.kleine-koen=
-ig@pengutronix.de> wrote:
+On 08/12/2015 01:09 AM, Stephen Rothwell wrote:
+> Hi all,
 >
-> On Wed, Aug 12, 2015 at 06:10:45PM +1000, Stephen Rothwell wrote:
-> > After merging the gpio tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >=20
-> > drivers/extcon/extcon-palmas.c:211:25: error: too few arguments to =
-function 'devm_gpiod_get_optional'
-> >   palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, "id"=
-);
-> >                          ^
-> > In file included from /home/sfr/next/next/include/asm-generic/gpio.=
-h:13:0,
-> >                  from /home/sfr/next/next/include/linux/gpio.h:51,
-> >                  from /home/sfr/next/next/include/linux/of_gpio.h:2=
-0,
-> >                  from /home/sfr/next/next/include/linux/mfd/palmas.=
-h:24,
-> >                  from /home/sfr/next/next/drivers/extcon/extcon-pal=
-mas.c:28:
-> > /home/sfr/next/next/include/linux/gpio/consumer.h:80:32: note: decl=
-ared here
-> >  struct gpio_desc *__must_check devm_gpiod_get_optional(struct devi=
-ce *dev,
-> >                                 ^
-> >=20
-> > Caused by commit
-> >=20
-> >   b17d1bf16cc7 ("gpio: make flags mandatory for gpiod_get functions=
-")
-> >=20
-> > interacting with commit
-> >=20
-> >   92b7cb5dc885 ("extcon: palmas: Support GPIO based USB ID detectio=
-n")
+> Today's linux-next merge of the xen-tip tree got a conflict in:
 >
-> I don't find this commit, can you tell me though which tree this come=
-s
-> into next?
+>    arch/x86/xen/enlighten.c
+>
+> between commit:
+>
+>    9261e050b686 ("x86/asm/tsc, x86/paravirt: Remove read_tsc() and re=
+ad_tscp() paravirt hooks")
+>
+> from the tip tree and commit:
+>
+>    cd6f350a5460 ("xen/PMU: Initialization code for Xen PMU")
+>
+> from the xen-tip tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no acti=
+on
+> is required).
 
-Umm, the next line of that email said:
+Thanks, this looks good.
 
-"from the extcon tree."
+Incidentally, 11276d53 ("locking/static_keys: Add a new static_key=20
+interface") breaks old-ish compilers (gcc version 4.4.4 20100503 (Red=20
+Hat 4.4.4-2) (GCC)):
 
-:-)
 
-That would be
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git#extc=
-on-next
+   CC      arch/x86/kernel/nmi.o
+In file included from=20
+/home/build/linux-boris/include/linux/jump_label.h:109,
+                  from=20
+/home/build/linux-boris/arch/x86/include/asm/spinlock.h:5,
+                  from /home/build/linux-boris/include/linux/spinlock.h=
+:88,
+                  from /home/build/linux-boris/arch/x86/kernel/nmi.c:14=
+:
+/home/build/linux-boris/arch/x86/include/asm/jump_label.h: In function=20
+=91nmi_handle=92:
+/home/build/linux-boris/arch/x86/include/asm/jump_label.h:21: warning:=20
+asm operand 0 probably doesn=92t match constraints
+/home/build/linux-boris/arch/x86/include/asm/jump_label.h:21: error:=20
+impossible constraint in =91asm=92
+make[3]: *** [arch/x86/kernel/nmi.o] Error 1
+make[2]: *** [arch/x86/kernel] Error 2
+make[1]: *** [arch/x86] Error 2
 
-run by Chanwoo Choi.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+
+-boris
+
+>
+> -- Cheers, Stephen Rothwell sfr@canb.auug.org.au diff --cc=20
+> arch/x86/xen/enlighten.c index d9cfa452da9d,a1c2e46206a9..00000000000=
+0=20
+> --- a/arch/x86/xen/enlighten.c +++ b/arch/x86/xen/enlighten.c @@@=20
+> -1215,8 -1179,11 +1219,8 @@@ static const struct pv_cpu_ops xen_cpu_=20
+> .read_msr =3D xen_read_msr_safe, .write_msr =3D xen_write_msr_safe, -=
+=20
+> .read_pmc =3D native_read_pmc, - .read_tsc =3D native_read_tsc, +=20
+> .read_pmc =3D xen_read_pmc, - .read_tscp =3D native_read_tscp, - .ire=
+t =3D=20
+> xen_iret, #ifdef CONFIG_X86_64 .usergs_sysret32 =3D xen_sysret32,
