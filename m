@@ -1,44 +1,62 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build failure after merge of the clk tree
-Date: Wed, 12 Aug 2015 09:45:25 +0200
-Message-ID: <CAMuHMdUQEVbyhnOBBgjKqBoFNc9FSCU68uoLg0XNWMFFxWAOdQ@mail.gmail.com>
-References: <20150812171912.03110efc@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the bluetooth tree
+Date: Wed, 12 Aug 2015 18:01:07 +1000
+Message-ID: <20150812180107.312be11d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:34461 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933386AbbHLHp0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 03:45:26 -0400
-In-Reply-To: <20150812171912.03110efc@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:40224 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933457AbbHLIBJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Aug 2015 04:01:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Danis <frederic.danis@linux.intel.com>, Marcel Holtmann <marcel@holtmann.org>
 
-On Wed, Aug 12, 2015 at 9:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> ERROR: "pm_genpd_init" [drivers/clk/qcom/clk-qcom.ko] undefined!
->
-> Caused by commit
->
->   0c4172846b0b ("clk: qcom: Add support for GDSCs")
->
-> I have used the clk tree from next-20150810 for today.
+Hi Gustavo,
 
-Missing EXPORT_SYMBOL_GPL(pm_genpd_init)?
+After merging the bluetooth tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-However, having modular PM Domain drivers may cause unpleasant surprises...
+drivers/bluetooth/hci_bcm.c: In function 'bcm_acpi_probe':
+drivers/bluetooth/hci_bcm.c:458:2: error: implicit declaration of function 'acpi_dev_get_resources' [-Werror=implicit-function-declaration]
+  acpi_dev_get_resources(adev, &resources, bcm_resource, dev);
+  ^
 
-Gr{oetje,eeting}s,
+Caused by commit
 
-                        Geert
+  ae056908862b ("Bluetooth: hci_bcm: Retrieve UART speed from ACPI")
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+This build does not have ACPI enabled.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 12 Aug 2015 17:58:00 +1000
+Subject: [PATCH] Bluetooth: hci_bcm: need to depend on CONFIG_ACPI
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/bluetooth/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+index 0bd88c942a52..affaecab4fa6 100644
+--- a/drivers/bluetooth/Kconfig
++++ b/drivers/bluetooth/Kconfig
+@@ -147,6 +147,7 @@ config BT_HCIUART_INTEL
+ config BT_HCIUART_BCM
+ 	bool "Broadcom protocol support"
+ 	depends on BT_HCIUART
++	depends on ACPI
+ 	select BT_HCIUART_H4
+ 	select BT_BCM
+ 	help
+-- 
+2.5.0
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
