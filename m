@@ -1,68 +1,49 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Wed, 12 Aug 2015 22:16:42 +0200
-Message-ID: <20150812201642.GW9999@pengutronix.de>
-References: <20150812181045.0d290caa@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Aug 12 (include/linux/pci.h)
+Date: Thu, 13 Aug 2015 07:53:22 +1000
+Message-ID: <20150813075322.064035f8@canb.auug.org.au>
+References: <20150812233914.451d1fcf@canb.auug.org.au>
+	<55CB8AF0.4060905@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150812181045.0d290caa@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <55CB8AF0.4060905@infradead.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci <linux-pci@vger.kernel.org>, Tadeusz Struk <tadeusz.struk@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, Michal Marek <mmarek@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+Hi Randy,
 
-On Wed, Aug 12, 2015 at 06:10:45PM +1000, Stephen Rothwell wrote:
-> After merging the gpio tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+On Wed, 12 Aug 2015 11:05:36 -0700 Randy Dunlap <rdunlap@infradead.org>=
+ wrote:
+>
+> on i386 or x86_64:
 >=20
-> drivers/extcon/extcon-palmas.c:211:25: error: too few arguments to fu=
-nction 'devm_gpiod_get_optional'
->   palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, "id");
->                          ^
-> In file included from /home/sfr/next/next/include/asm-generic/gpio.h:=
-13:0,
->                  from /home/sfr/next/next/include/linux/gpio.h:51,
->                  from /home/sfr/next/next/include/linux/of_gpio.h:20,
->                  from /home/sfr/next/next/include/linux/mfd/palmas.h:=
-24,
->                  from /home/sfr/next/next/drivers/extcon/extcon-palma=
-s.c:28:
-> /home/sfr/next/next/include/linux/gpio/consumer.h:80:32: note: declar=
-ed here
->  struct gpio_desc *__must_check devm_gpiod_get_optional(struct device=
- *dev,
->                                 ^
+> Many (repeated) errors like this one:
 >=20
-> Caused by commit
+> ../include/linux/pci.h:390:12: error: =C3=A2=C2=80=C2=98struct pci_de=
+v=C3=A2=C2=80=C2=99 has no member named =C3=A2=C2=80=C2=98physfn=C3=A2=C2=
+=80=C2=99
 >=20
->   b17d1bf16cc7 ("gpio: make flags mandatory for gpiod_get functions")
->=20
-> interacting with commit
->=20
->   92b7cb5dc885 ("extcon: palmas: Support GPIO based USB ID detection"=
-)
-that commit is not correct. After
+> when CONFIG_PCI_ATS is not enabled.
 
-	palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, "id");
+Maybe caused by commit
 
-it does
+  dd0f368398ea ("crypto: qat - Add qat dh895xcc VF driver")
 
-	palmas_usb->gpio_id_irq =3D gpiod_to_irq(palmas_usb->id_gpiod);
+from the crypto tree Which adds a
 
-without setting the gpio to input. So the right fix is not to add
-GPIOD_ASIS but GPIOD_IN.
+  select PCI_IOV
 
-Best regards
-Uwe
+to drivers/crypto/qat/Kconfig without the necessary
+
+  select PCI
+
+but PCI_IOV selects PCI_ATS, so I am not sure what happened here.  I am
+assuming that your config has PCI_IOV enabled?  What about PCI?
 
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
