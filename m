@@ -1,62 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the bluetooth tree
-Date: Wed, 12 Aug 2015 18:01:07 +1000
-Message-ID: <20150812180107.312be11d@canb.auug.org.au>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: linux-next: build failure after merge of the clk tree
+Date: Wed, 12 Aug 2015 01:03:18 -0700
+Message-ID: <20150812080318.GL26614@codeaurora.org>
+References: <20150812171912.03110efc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40224 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933457AbbHLIBJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Aug 2015 04:01:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38761 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933731AbbHLIDV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 04:03:21 -0400
+Content-Disposition: inline
+In-Reply-To: <20150812171912.03110efc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Danis <frederic.danis@linux.intel.com>, Marcel Holtmann <marcel@holtmann.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>
 
-Hi Gustavo,
+On 08/12, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> ERROR: "pm_genpd_init" [drivers/clk/qcom/clk-qcom.ko] undefined!
+> 
+> Caused by commit
+> 
+>   0c4172846b0b ("clk: qcom: Add support for GDSCs")
+> 
+> I have used the clk tree from next-20150810 for today.
 
-After merging the bluetooth tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
-
-drivers/bluetooth/hci_bcm.c: In function 'bcm_acpi_probe':
-drivers/bluetooth/hci_bcm.c:458:2: error: implicit declaration of function 'acpi_dev_get_resources' [-Werror=implicit-function-declaration]
-  acpi_dev_get_resources(adev, &resources, bcm_resource, dev);
-  ^
-
-Caused by commit
-
-  ae056908862b ("Bluetooth: hci_bcm: Retrieve UART speed from ACPI")
-
-This build does not have ACPI enabled.
-
-I have added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 12 Aug 2015 17:58:00 +1000
-Subject: [PATCH] Bluetooth: hci_bcm: need to depend on CONFIG_ACPI
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/bluetooth/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-index 0bd88c942a52..affaecab4fa6 100644
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -147,6 +147,7 @@ config BT_HCIUART_INTEL
- config BT_HCIUART_BCM
- 	bool "Broadcom protocol support"
- 	depends on BT_HCIUART
-+	depends on ACPI
- 	select BT_HCIUART_H4
- 	select BT_BCM
- 	help
--- 
-2.5.0
+Thanks. I've removed these patches from the clk tree until this
+is resolved.
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
