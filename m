@@ -1,64 +1,45 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Wed, 12 Aug 2015 10:21:07 +0200
-Message-ID: <20150812082107.GT9999@pengutronix.de>
-References: <20150812181045.0d290caa@canb.auug.org.au>
+From: Jiang Liu <jiang.liu@linux.intel.com>
+Subject: Re: next-20150806 build: 2 failures 52 warnings (next-20150806)
+Date: Wed, 12 Aug 2015 16:21:25 +0800
+Message-ID: <55CB0205.2020408@linux.intel.com>
+References: <E1ZNIul-0007IF-Ev@optimist>
+ <20150806175322.GB20873@sirena.org.uk>
+ <20150807073954.3d19fc69@canb.auug.org.au>
+ <20150807094957.GK20873@sirena.org.uk>
+ <CAErSpo6aryRYOJpfXfY6SuJoVe72MYd8RKgPhiDZ9pt5+zmXBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:56356 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933726AbbHLIVP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 04:21:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20150812181045.0d290caa@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <CAErSpo6aryRYOJpfXfY6SuJoVe72MYd8RKgPhiDZ9pt5+zmXBQ@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Yijing Wang <wangyijing@huawei.com>, Thomas Gleixner <tglx@linutronix.de>, Michal Simek <michal.simek@xilinx.com>, kernel-build-reports@lists.linaro.org, linaro-kernel <linaro-kernel@lists.linaro.org>, linux-next list <linux-next@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hello Stephen,
-
-On Wed, Aug 12, 2015 at 06:10:45PM +1000, Stephen Rothwell wrote:
-> After merging the gpio tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> drivers/extcon/extcon-palmas.c:211:25: error: too few arguments to fu=
-nction 'devm_gpiod_get_optional'
->   palmas_usb->id_gpiod =3D devm_gpiod_get_optional(&pdev->dev, "id");
->                          ^
-> In file included from /home/sfr/next/next/include/asm-generic/gpio.h:=
-13:0,
->                  from /home/sfr/next/next/include/linux/gpio.h:51,
->                  from /home/sfr/next/next/include/linux/of_gpio.h:20,
->                  from /home/sfr/next/next/include/linux/mfd/palmas.h:=
-24,
->                  from /home/sfr/next/next/drivers/extcon/extcon-palma=
-s.c:28:
-> /home/sfr/next/next/include/linux/gpio/consumer.h:80:32: note: declar=
-ed here
->  struct gpio_desc *__must_check devm_gpiod_get_optional(struct device=
- *dev,
->                                 ^
->=20
-> Caused by commit
->=20
->   b17d1bf16cc7 ("gpio: make flags mandatory for gpiod_get functions")
->=20
-> interacting with commit
->=20
->   92b7cb5dc885 ("extcon: palmas: Support GPIO based USB ID detection"=
-)
-I don't find this commit, can you tell me though which tree this comes
-into next?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+On 2015/8/11 2:31, Bjorn Helgaas wrote:
+> On Fri, Aug 7, 2015 at 4:49 AM, Mark Brown <broonie@kernel.org> wrote:
+>> On Fri, Aug 07, 2015 at 07:39:54AM +1000, Stephen Rothwell wrote:
+>>> On Thu, 6 Aug 2015 18:53:22 +0100 Mark Brown <broonie@kernel.org> wrote:
+>>
+>>>> msi_desc_to_pci_sys_data doesn't appear to exist anywhere else in
+>>>> current -next, the usage was introduced by e39758e0ea769e632e (PCI: Use
+>>>> helper functions to access fields in struct msi_desc) at which time it
+>>>> looks like it did exist but I can't immediately see where it was removed.
+>>
+>>> Actually, it is a typo ... all other uses are spelt msi_desc_to_pci_sysdata.
+> 
+> c179c9b978b9 ("PCI: Add helper function msi_desc_to_pci_sysdata()")
+> added msi_desc_to_pci_sysdata().
+> 
+> e39758e0ea76 ("PCI: Use helper functions to access fields in struct
+> msi_desc") added calls to msi_desc_to_pci_sysdata() in
+> pci-keystone-dw.c and pcie-designware.c, but to
+> msi_desc_to_pci_sys_data() (note extra "_") in pcie-xilinx.c.
+> 
+> These were both merged by Thomas, so I assume he and Jiang will sort this out.
+Hi Bjorn and Mark,
+	Thomas is on vocation this two weeks, so I will send him a
+patch to fix this issue once Thomas is back.
+Thanks!
+Gerry
