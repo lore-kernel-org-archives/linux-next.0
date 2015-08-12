@@ -1,7 +1,7 @@
 From: Peter Zijlstra <peterz@infradead.org>
 Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Wed, 12 Aug 2015 19:38:23 +0200
-Message-ID: <20150812173823.GG18673@twins.programming.kicks-ass.net>
+Date: Wed, 12 Aug 2015 19:46:25 +0200
+Message-ID: <20150812174625.GH18673@twins.programming.kicks-ass.net>
 References: <20150812150954.36bc605c@canb.auug.org.au>
  <55CB49CA.8050305@oracle.com>
  <20150812172105.GW16853@twins.programming.kicks-ass.net>
@@ -9,10 +9,10 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:50815 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.9]:52971 "EHLO
 	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751025AbbHLRij (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 13:38:39 -0400
+	with ESMTP id S1751226AbbHLRqj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 13:46:39 -0400
 Content-Disposition: inline
 In-Reply-To: <20150812172105.GW16853@twins.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
@@ -71,10 +71,91 @@ me
 >=20
 > Let me see if I have a sufficiently old GCC around to play with.
 
-So both my 4.4 compilers:
+Could you feed the below to your compiler? Its a bit cumbersome, but
+its the next best I could come up with...
 
-gcc-4.4 (Ubuntu/Linaro 4.4.7-8ubuntu1) 4.4.7
-gcc-4.4 (Debian 4.4.7-2) 4.4.7
+---
+ arch/x86/include/asm/jump_label.h | 56 ++++++++++++++++++++++++++++---=
+--------
+ 1 file changed, 41 insertions(+), 15 deletions(-)
 
-Do not have CC_HAVE_ASM_GOTO at all, and my gcc-4.6 (my next oldest
-compiler) doesn't have trouble building this.
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/j=
+ump_label.h
+index 28d7a857f9d1..76c769ae4200 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -16,15 +16,30 @@
+ # define STATIC_KEY_INIT_NOP GENERIC_NOP5_ATOMIC
+ #endif
+=20
++struct foo {
++	u8 zero;
++	u8 one;
++};
++
+ static __always_inline bool arch_static_branch(struct static_key *key,=
+ bool branch)
+ {
+-	asm_volatile_goto("1:"
+-		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
+-		".pushsection __jump_table,  \"aw\" \n\t"
+-		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
+-		".popsection \n\t"
+-		: :  "i" (&((char *)key)[branch]) : : l_yes);
++	if (!branch) {
++		asm_volatile_goto("1:"
++				".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
++				".pushsection __jump_table,  \"aw\" \n\t"
++				_ASM_ALIGN "\n\t"
++				_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
++				".popsection \n\t"
++				: :  "i" (&((struct foo *)key)->zero) : : l_yes);
++	} else {
++		asm_volatile_goto("1:"
++				".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
++				".pushsection __jump_table,  \"aw\" \n\t"
++				_ASM_ALIGN "\n\t"
++				_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
++				".popsection \n\t"
++				: :  "i" (&((struct foo *)key)->one) : : l_yes);
++	}
+=20
+ 	return false;
+ l_yes:
+@@ -33,14 +48,25 @@ static __always_inline bool arch_static_branch(stru=
+ct static_key *key, bool bran
+=20
+ static __always_inline bool arch_static_branch_jump(struct static_key =
+*key, bool branch)
+ {
+-	asm_volatile_goto("1:"
+-		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
+-		"2:\n\t"
+-		".pushsection __jump_table,  \"aw\" \n\t"
+-		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
+-		".popsection \n\t"
+-		: :  "i" (&((char *)key)[branch]) : : l_yes);
++	if (!branch) {
++		asm_volatile_goto("1:"
++				".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
++				"2:\n\t"
++				".pushsection __jump_table,  \"aw\" \n\t"
++				_ASM_ALIGN "\n\t"
++				_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
++				".popsection \n\t"
++				: :  "i" (&((struct foo *)key)->zero) : : l_yes);
++	} else {
++		asm_volatile_goto("1:"
++				".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
++				"2:\n\t"
++				".pushsection __jump_table,  \"aw\" \n\t"
++				_ASM_ALIGN "\n\t"
++				_ASM_PTR "1b, %l[l_yes], %c0 \n\t"
++				".popsection \n\t"
++				: :  "i" (&((struct foo *)key)->one) : : l_yes);
++	}
+=20
+ 	return false;
+ l_yes:
