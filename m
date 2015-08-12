@@ -1,70 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the gpio tree
-Date: Wed, 12 Aug 2015 18:10:45 +1000
-Message-ID: <20150812181045.0d290caa@canb.auug.org.au>
+Subject: Re: [PATCH] Bluetooth: hci_bcm: improve use of gpios API
+Date: Wed, 12 Aug 2015 18:19:05 +1000
+Message-ID: <20150812181905.78ade990@canb.auug.org.au>
+References: <20150812165949.0d66f2be@canb.auug.org.au>
+	<1439364056-8564-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41985 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753878AbbHLITI convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Aug 2015 04:19:08 -0400
+In-Reply-To: <1439364056-8564-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Gustavo Padovan <gustavo@padovan.org>, Frederic Danis <frederic.danis@linux.intel.com>, Marcel Holtmann <marcel@holtmann.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, kernel@pengutronix.de
 
-Hi Linus,
+Hi Uwe,
 
-After merging the gpio tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+On Wed, 12 Aug 2015 09:20:56 +0200 Uwe Kleine-K=C3=B6nig <u.kleine-koen=
+ig@pengutronix.de> wrote:
+>
+> devm_gpiod_get currently has an optional parameter to set initial
+> direction and value for the requested gpio. Make use of this to simpl=
+ify
+> the driver and make it not fail to build when this parameter is made
+> mandatory (which is scheduled for 4.3-rc1).
+>=20
+> Moreover use the _optional variant of devm_gpiod_get to simplify erro=
+r
+> handling (which also gets more strict for free).
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
+> Hello,
+>=20
+> this is needed on top of commit 0395ffc1ee05 ("Bluetooth: hci_bcm: Ad=
+d
+> PM for BCM devices") incombination with b17d1bf16cc7 ("gpio: make fla=
+gs
+> mandatory for gpiod_get functions") which is currently sitting in nex=
+t.
+>=20
+> Stephen fixed it up with a simpler patch, which works fine, but doesn=
+'t
+> benefit from the nice things devm_gpiod_get et al offer.
+>=20
+> Best regards
+> Uwe
+>=20
+>  drivers/bluetooth/hci_bcm.c | 24 +++++++++---------------
+>  1 file changed, 9 insertions(+), 15 deletions(-)
 
-drivers/extcon/extcon-palmas.c:211:25: error: too few arguments to function 'devm_gpiod_get_optional'
-  palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id");
-                         ^
-In file included from /home/sfr/next/next/include/asm-generic/gpio.h:13:0,
-                 from /home/sfr/next/next/include/linux/gpio.h:51,
-                 from /home/sfr/next/next/include/linux/of_gpio.h:20,
-                 from /home/sfr/next/next/include/linux/mfd/palmas.h:24,
-                 from /home/sfr/next/next/drivers/extcon/extcon-palmas.c:28:
-/home/sfr/next/next/include/linux/gpio/consumer.h:80:32: note: declared here
- struct gpio_desc *__must_check devm_gpiod_get_optional(struct device *dev,
-                                ^
+I will use this instead of my simple patch tomorrow if the bluetooth
+maintainer has not applied it.
 
-Caused by commit
-
-  b17d1bf16cc7 ("gpio: make flags mandatory for gpiod_get functions")
-
-interacting with commit
-
-  92b7cb5dc885 ("extcon: palmas: Support GPIO based USB ID detection")
-
-from the extcon tree.
-
-I have applied this merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 12 Aug 2015 18:05:55 +1000
-Subject: [PATCH] extcon: palmas: fix for devm_gpiod_get_optional API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/extcon/extcon-palmas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/extcon/extcon-palmas.c b/drivers/extcon/extcon-palmas.c
-index 662e91778cb0..4ce4106b8f4f 100644
---- a/drivers/extcon/extcon-palmas.c
-+++ b/drivers/extcon/extcon-palmas.c
-@@ -208,7 +208,7 @@ static int palmas_usb_probe(struct platform_device *pdev)
- 			palmas_usb->wakeup = pdata->wakeup;
- 	}
- 
--	palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id");
-+	palmas_usb->id_gpiod = devm_gpiod_get_optional(&pdev->dev, "id", GPIOD_ASIS);
- 	if (IS_ERR(palmas_usb->id_gpiod)) {
- 		dev_err(&pdev->dev, "failed to get id gpio\n");
- 		return PTR_ERR(palmas_usb->id_gpiod);
--- 
-2.5.0
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
