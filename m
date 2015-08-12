@@ -1,38 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the imx-mxs tree
-Date: Wed, 12 Aug 2015 13:22:39 +1000
-Message-ID: <20150812132239.0ce1fe80@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Wed, 12 Aug 2015 13:24:27 +1000
+Message-ID: <20150812132427.300e4bca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59848 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60594 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932684AbbHLDWn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Aug 2015 23:22:43 -0400
+	id S932684AbbHLDY3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Aug 2015 23:24:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Victoria Milhoan <vicki.milhoan@freescale.com>, Shengjiu Wang <shengjiu.wang@freescale.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>
 
-Hi Herbert,
+Hi Mauro,
 
-Today's linux-next merge of the crypto tree got a conflict in:
+After merging the v4l-dvb tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  arch/arm/configs/imx_v6_v7_defconfig
+ERROR (phandle_references): Reference to non-existent node or label "ssc2"
 
-between commit:
+ERROR: Input tree has errors, aborting (use -f to force output)
+scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/stih410-b2120.dtb' failed
+ERROR (phandle_references): Reference to non-existent node or label "ssc2"
 
-  351265f46291 ("ARM: imx_v6_v7_defconfig: build in audio driver")
+ERROR: Input tree has errors, aborting (use -f to force output)
+scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/stih407-b2120.dtb' failed
 
-from the imx-mxs tree and commit:
+Caused by commit
 
-  ab86ca0755ec ("ARM: imx_v6_v7_defconfig: Select CAAM")
+  5d8877b6ae0d ("[media] ARM: DT: STi: STiH407: Add c8sectpfe LinuxDVB DT node")
 
-from the crypto tree.
-
-I fixed it up (they both removed the same line) and can carry the fix
-as necessary (no action is required).
+I have used the v4l-dvb tree from next-20150810 for today.
 
 -- 
 Cheers,
