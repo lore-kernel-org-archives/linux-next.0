@@ -1,39 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the tip tree
-Date: Thu, 13 Aug 2015 14:55:35 +1000
-Message-ID: <20150813145535.6db96f9f@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the drm-msm tree
+Date: Thu, 13 Aug 2015 16:00:43 +1000
+Message-ID: <20150813160043.651ffef6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37092 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60574 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751460AbbHMEzg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Aug 2015 00:55:36 -0400
+	id S1751378AbbHMGAp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Aug 2015 02:00:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Clark <robdclark@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hai Li <hali@codeaurora.org>
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in:
+Today's linux-next merge of the clk tree got a conflict in:
 
-  drivers/staging/ozwpan/ozproto.c
+  drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
 
 between commit:
 
-  5a447f09a8df ("staging: ozwpan: Fix hrtimer wreckage")
+  bdbc06e2309b ("drm/msm/dsi: Save/Restore PLL status across PHY reset")
 
-from the tip tree and commit:
+from the drm-msm tree and commit:
 
-  a73e99cb67e7 ("staging: ozwpan: Remove from tree")
+  3dde2c2b968a ("drm/msm/dsi: Convert to clk_hw based provider APIs")
 
-from the staging tree.
+from the clk tree.
 
-I fixed it up (I just removed the file) and can carry the fix as necessary
-(no action is required).
+I fixed it up (the former removed some of the code updated by the latter)
+and can carry the fix as necessary (no action is required).
+
+
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
