@@ -1,47 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with
-	Linus' tree
-Date: Fri, 14 Aug 2015 12:06:15 +1000
-Message-ID: <20150814120615.2c73b7e4@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-tip tree with Linus' tree
+Date: Fri, 14 Aug 2015 13:56:53 +1000
+Message-ID: <20150814135653.4a897b2d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Thierry Reding <treding@nvidia.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47303 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753347AbbHND44 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Aug 2015 23:56:56 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, David Vrabel <david.vrabel@citrix.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vZHJtX2lycS5jCgpiZXR3ZWVuIGNv
-bW1pdDoKCiAgMjA5ZTRkYmM4ZGNkICgiZHJtL3ZibGFuazogVXNlIHUzMiBjb25zaXN0ZW50bHkg
-Zm9yIHZibGFuayBjb3VudGVycyIpCgpmcm9tIExpbnVzJyB0cmVlIGFuZCBjb21taXQ6CgogIGI5
-MDE4MGIwNTdmNyAoImRybS9pcnE6IE1vcmUgcGlwZS9jcnRjIGNvbnNpc3RlbmN5IGNsZWFudXBz
-IikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVwIChzZWUgYmVsb3cpIGFu
-ZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkgKG5vIGFjdGlvbgppcyByZXF1aXJlZCku
-CgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2Fu
-Yi5hdXVnLm9yZy5hdQoKZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS9kcm1faXJxLmMKaW5kZXgg
-ZWUxNDMyNDUyMmNlLDcwOTE5ZDQ4ZjAxNS4uMDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9kcm1faXJxLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9pcnEuYwpAQEAgLTc0LDEx
-IC03NCwxMSArNzQsMTEgQEBAIG1vZHVsZV9wYXJhbV9uYW1lZCh2YmxhbmtvZmZkZWxheSwgZHJt
-XwogIG1vZHVsZV9wYXJhbV9uYW1lZCh0aW1lc3RhbXBfcHJlY2lzaW9uX3VzZWMsIGRybV90aW1l
-c3RhbXBfcHJlY2lzaW9uLCBpbnQsIDA2MDApOwogIG1vZHVsZV9wYXJhbV9uYW1lZCh0aW1lc3Rh
-bXBfbW9ub3RvbmljLCBkcm1fdGltZXN0YW1wX21vbm90b25pYywgaW50LCAwNjAwKTsKICAKLSBz
-dGF0aWMgdm9pZCBzdG9yZV92Ymxhbmsoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IGNydGMs
-Cisgc3RhdGljIHZvaWQgc3RvcmVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHVuc2ln
-bmVkIGludCBwaXBlLAogLQkJCSB1bnNpZ25lZCB2YmxhbmtfY291bnRfaW5jLAogKwkJCSB1MzIg
-dmJsYW5rX2NvdW50X2luYywKICAJCQkgc3RydWN0IHRpbWV2YWwgKnRfdmJsYW5rKQogIHsKLSAJ
-c3RydWN0IGRybV92YmxhbmtfY3J0YyAqdmJsYW5rID0gJmRldi0+dmJsYW5rW2NydGNdOworIAlz
-dHJ1Y3QgZHJtX3ZibGFua19jcnRjICp2YmxhbmsgPSAmZGV2LT52YmxhbmtbcGlwZV07CiAgCXUz
-MiB0c2xvdDsKICAKICAJYXNzZXJ0X3NwaW5fbG9ja2VkKCZkZXYtPnZibGFua190aW1lX2xvY2sp
-OwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1n
-ZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+Hi all,
+
+Today's linux-next merge of the xen-tip tree got a conflict in:
+
+  arch/x86/xen/Makefile
+
+between commit:
+
+  fc5fee86bdd3 ("x86/xen: build "Xen PV" APIC driver for domU as well")
+
+from Linus' tree and commit:
+
+  6e3012fba294 ("xen/PMU: Initialization code for Xen PMU")
+
+from the xen-tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/x86/xen/Makefile
+index 4b6e29ac0968,071fab5c720e..000000000000
+--- a/arch/x86/xen/Makefile
++++ b/arch/x86/xen/Makefile
+@@@ -13,7 -13,7 +13,7 @@@ CFLAGS_mmu.o			:= $(nostackp
+  obj-y		:= enlighten.o setup.o multicalls.o mmu.o irq.o \
+  			time.o xen-asm.o xen-asm_$(BITS).o \
+  			grant-table.o suspend.o platform-pci-unplug.o \
+- 			p2m.o apic.o
+ -			p2m.o pmu.o
+++			p2m.o apic.o pmu.o
+  
+  obj-$(CONFIG_EVENT_TRACING) += trace.o
+  
