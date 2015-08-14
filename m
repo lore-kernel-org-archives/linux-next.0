@@ -1,62 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next-20150813 build error arch/x86/include/asm/jump_label.h:21:
- error: impossible constraint in =?UTF-8?B?4oCYYXNt4oCZ?=
-Date: Fri, 14 Aug 2015 08:34:22 +1000
-Message-ID: <20150814083422.6fe2884e@canb.auug.org.au>
-References: <CAHTgTXWtwSRuC8ERo4i_XHWUSD0-400oArZQBdcFJCjg6_Q6Lg@mail.gmail.com>
+Subject: linux-next: manual merge of the drm-tegra tree with the drm-misc tree
+Date: Fri, 14 Aug 2015 12:00:29 +1000
+Message-ID: <20150814120029.101f6df6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34963 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752682AbbHMWeX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Aug 2015 18:34:23 -0400
-In-Reply-To: <CAHTgTXWtwSRuC8ERo4i_XHWUSD0-400oArZQBdcFJCjg6_Q6Lg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vinson Lee <vlee@twopensource.com>
-Cc: linux-next@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Vinson,
-
-On Thu, 13 Aug 2015 13:49:56 -0700 Vinson Lee <vlee@twopensource.com> w=
-rote:
->
-> I get this build error with next-20150813 compiling with GCC 4.4.7.
->=20
->   CC      arch/x86/kvm/irq_comm.o
-> In file included from include/linux/jump_label.h:108,
->                  from ./arch/x86/include/asm/spinlock.h:4,
->                  from include/linux/spinlock.h:87,
->                  from include/linux/seqlock.h:35,
->                  from include/linux/time.h:5,
->                  from include/linux/ktime.h:24,
->                  from include/linux/timer.h:5,
->                  from include/linux/workqueue.h:8,
->                  from include/linux/pm.h:25,
->                  from ./arch/x86/include/asm/apic.h:5,
->                  from ./arch/x86/include/asm/smp.h:12,
->                  from include/linux/smp.h:59,
->                  from include/linux/percpu.h:6,
->                  from include/linux/context_tracking_state.h:4,
->                  from include/linux/vtime.h:4,
->                  from include/linux/hardirq.h:7,
->                  from include/linux/kvm_host.h:10,
->                  from arch/x86/kvm/irq_comm.c:23:
-> ./arch/x86/include/asm/jump_label.h: In function =E2=80=98kvm_irq_del=
-ivery_to_apic=E2=80=99:
-> ./arch/x86/include/asm/jump_label.h:21: warning: asm operand 0
-> probably doesn=E2=80=99t match constraints
-> ./arch/x86/include/asm/jump_label.h:21: warning: asm operand 0
-> probably doesn=E2=80=99t match constraints
-> ./arch/x86/include/asm/jump_label.h:21: error: impossible constraint =
-in =E2=80=98asm=E2=80=99
-> ./arch/x86/include/asm/jump_label.h:21: error: impossible constraint =
-in =E2=80=98asm=E2=80=99
-
-This was known about and should be fixed in the tip tree today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+SGkgVGhpZXJyeSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtLXRlZ3JhIHRy
+ZWUgZ290IGNvbmZsaWN0cyBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RzaS5jCiAgZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwogIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9yZ2IuYwog
+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYwoKYmV0d2VlbiBjb21taXQ6CgogIDlhNjlhOWFj
+MjBmNyAoImRybTogTWFrZSB0aGUgY29ubmVjdG9yIGRwbXMgY2FsbGJhY2sgcmV0dXJuIGEgdmFs
+dWUsIHYyIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUgYW5kIGNvbW1pdHM6CgogIDE3MWUyZTZk
+ZDkxMiAoImRybS90ZWdyYTogZHNpOiBSZXN0b3JlIERQTVMiKQogIDI5ODcxYjIxYzQ4YyAoImRy
+bS90ZWdyYTogaGRtaTogUmVzdG9yZSBEUE1TIikKICAzMmMzZGVlMTFlOGUgKCJkcm0vdGVncmE6
+IHJnYjogUmVzdG9yZSBEUE1TIikKICA4NTBiYWI0NDgwMzQgKCJkcm0vdGVncmE6IHNvcjogUmVz
+dG9yZSBEUE1TIikKCmZyb20gdGhlIGRybS10ZWdyYSB0cmVlLgoKSSBmaXhlZCBpdCB1cCAodGhl
+IGxhdHRlciBjb21taXRzIHJlbW92ZWQgdGhlIGNvZGUgdXBkYXRlZCBieSB0aGUgZm9ybWVyKQph
+bmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5IChubyBhY3Rpb24gaXMgcmVxdWlyZWQp
+LgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbCAgICAgICAgICAgICAgICAgICAgc2ZyQGNh
+bmIuYXV1Zy5vcmcuYXUKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
