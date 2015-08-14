@@ -1,38 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-tegra tree with the drm-misc tree
-Date: Fri, 14 Aug 2015 12:00:29 +1000
-Message-ID: <20150814120029.101f6df6@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with
+	Linus' tree
+Date: Fri, 14 Aug 2015 12:06:15 +1000
+Message-ID: <20150814120615.2c73b7e4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Thierry Reding <treding@nvidia.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-SGkgVGhpZXJyeSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtLXRlZ3JhIHRy
-ZWUgZ290IGNvbmZsaWN0cyBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RzaS5jCiAgZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2hkbWkuYwogIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9yZ2IuYwog
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYwoKYmV0d2VlbiBjb21taXQ6CgogIDlhNjlhOWFj
-MjBmNyAoImRybTogTWFrZSB0aGUgY29ubmVjdG9yIGRwbXMgY2FsbGJhY2sgcmV0dXJuIGEgdmFs
-dWUsIHYyIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUgYW5kIGNvbW1pdHM6CgogIDE3MWUyZTZk
-ZDkxMiAoImRybS90ZWdyYTogZHNpOiBSZXN0b3JlIERQTVMiKQogIDI5ODcxYjIxYzQ4YyAoImRy
-bS90ZWdyYTogaGRtaTogUmVzdG9yZSBEUE1TIikKICAzMmMzZGVlMTFlOGUgKCJkcm0vdGVncmE6
-IHJnYjogUmVzdG9yZSBEUE1TIikKICA4NTBiYWI0NDgwMzQgKCJkcm0vdGVncmE6IHNvcjogUmVz
-dG9yZSBEUE1TIikKCmZyb20gdGhlIGRybS10ZWdyYSB0cmVlLgoKSSBmaXhlZCBpdCB1cCAodGhl
-IGxhdHRlciBjb21taXRzIHJlbW92ZWQgdGhlIGNvZGUgdXBkYXRlZCBieSB0aGUgZm9ybWVyKQph
-bmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5IChubyBhY3Rpb24gaXMgcmVxdWlyZWQp
-LgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbCAgICAgICAgICAgICAgICAgICAgc2ZyQGNh
-bmIuYXV1Zy5vcmcuYXUKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
+dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vZHJtX2lycS5jCgpiZXR3ZWVuIGNv
+bW1pdDoKCiAgMjA5ZTRkYmM4ZGNkICgiZHJtL3ZibGFuazogVXNlIHUzMiBjb25zaXN0ZW50bHkg
+Zm9yIHZibGFuayBjb3VudGVycyIpCgpmcm9tIExpbnVzJyB0cmVlIGFuZCBjb21taXQ6CgogIGI5
+MDE4MGIwNTdmNyAoImRybS9pcnE6IE1vcmUgcGlwZS9jcnRjIGNvbnNpc3RlbmN5IGNsZWFudXBz
+IikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVwIChzZWUgYmVsb3cpIGFu
+ZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkgKG5vIGFjdGlvbgppcyByZXF1aXJlZCku
+CgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2Fu
+Yi5hdXVnLm9yZy5hdQoKZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS9kcm1faXJxLmMKaW5kZXgg
+ZWUxNDMyNDUyMmNlLDcwOTE5ZDQ4ZjAxNS4uMDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9kcm1faXJxLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9pcnEuYwpAQEAgLTc0LDEx
+IC03NCwxMSArNzQsMTEgQEBAIG1vZHVsZV9wYXJhbV9uYW1lZCh2YmxhbmtvZmZkZWxheSwgZHJt
+XwogIG1vZHVsZV9wYXJhbV9uYW1lZCh0aW1lc3RhbXBfcHJlY2lzaW9uX3VzZWMsIGRybV90aW1l
+c3RhbXBfcHJlY2lzaW9uLCBpbnQsIDA2MDApOwogIG1vZHVsZV9wYXJhbV9uYW1lZCh0aW1lc3Rh
+bXBfbW9ub3RvbmljLCBkcm1fdGltZXN0YW1wX21vbm90b25pYywgaW50LCAwNjAwKTsKICAKLSBz
+dGF0aWMgdm9pZCBzdG9yZV92Ymxhbmsoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IGNydGMs
+Cisgc3RhdGljIHZvaWQgc3RvcmVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHVuc2ln
+bmVkIGludCBwaXBlLAogLQkJCSB1bnNpZ25lZCB2YmxhbmtfY291bnRfaW5jLAogKwkJCSB1MzIg
+dmJsYW5rX2NvdW50X2luYywKICAJCQkgc3RydWN0IHRpbWV2YWwgKnRfdmJsYW5rKQogIHsKLSAJ
+c3RydWN0IGRybV92YmxhbmtfY3J0YyAqdmJsYW5rID0gJmRldi0+dmJsYW5rW2NydGNdOworIAlz
+dHJ1Y3QgZHJtX3ZibGFua19jcnRjICp2YmxhbmsgPSAmZGV2LT52YmxhbmtbcGlwZV07CiAgCXUz
+MiB0c2xvdDsKICAKICAJYXNzZXJ0X3NwaW5fbG9ja2VkKCZkZXYtPnZibGFua190aW1lX2xvY2sp
+OwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1n
+ZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
