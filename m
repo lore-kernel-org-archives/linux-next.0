@@ -1,54 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with Linus' tree
-Date: Fri, 14 Aug 2015 13:56:53 +1000
-Message-ID: <20150814135653.4a897b2d@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the drm-misc tree
+Date: Fri, 14 Aug 2015 15:35:32 +1000
+Message-ID: <20150814153532.78cd6e88@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47303 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50596 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753347AbbHND44 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Aug 2015 23:56:56 -0400
+	id S1750728AbbHNFfe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Aug 2015 01:35:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, David Vrabel <david.vrabel@citrix.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 
 Hi all,
 
-Today's linux-next merge of the xen-tip tree got a conflict in:
+After merging the drm-misc tree, today's linux-next build (arm
+multi_v7_defconfig) produced these warnings:
 
-  arch/x86/xen/Makefile
+drivers/gpu/drm/exynos/exynos_drm_drv.c:290:2: warning: initialization from incompatible pointer type
+  .get_vblank_counter = drm_vblank_count,
+  ^
+drivers/gpu/drm/exynos/exynos_drm_drv.c:290:2: warning: (near initialization for 'exynos_drm_driver.get_vblank_counter')
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:262:2: warning: initialization from incompatible pointer type
+  .get_vblank_counter = drm_vblank_count,
+  ^
+drivers/gpu/drm/rcar-du/rcar_du_drv.c:262:2: warning: (near initialization for 'rcar_du_driver.get_vblank_counter')
+drivers/gpu/drm/msm/msm_drv.c:981:2: warning: initialization from incompatible pointer type
+  .get_vblank_counter = drm_vblank_count,
+  ^
+drivers/gpu/drm/msm/msm_drv.c:981:2: warning: (near initialization for 'msm_driver.get_vblank_counter')
 
-between commit:
+Introduced by commit
 
-  fc5fee86bdd3 ("x86/xen: build "Xen PV" APIC driver for domU as well")
-
-from Linus' tree and commit:
-
-  6e3012fba294 ("xen/PMU: Initialization code for Xen PMU")
-
-from the xen-tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+  b90180b057f7 ("drm/irq: More pipe/crtc consistency cleanups")
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/x86/xen/Makefile
-index 4b6e29ac0968,071fab5c720e..000000000000
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@@ -13,7 -13,7 +13,7 @@@ CFLAGS_mmu.o			:= $(nostackp
-  obj-y		:= enlighten.o setup.o multicalls.o mmu.o irq.o \
-  			time.o xen-asm.o xen-asm_$(BITS).o \
-  			grant-table.o suspend.o platform-pci-unplug.o \
-- 			p2m.o apic.o
- -			p2m.o pmu.o
-++			p2m.o apic.o pmu.o
-  
-  obj-$(CONFIG_EVENT_TRACING) += trace.o
-  
