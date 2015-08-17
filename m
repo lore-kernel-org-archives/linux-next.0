@@ -1,72 +1,96 @@
-From: KY Srinivasan <kys@microsoft.com>
-Subject: RE: [PATCH] x86: fix build in !CONFIG_KEXEC_CORE case
-Date: Mon, 17 Aug 2015 17:58:48 +0000
-Message-ID: <BY2PR0301MB165420BD30B27E9915796BCBA0790@BY2PR0301MB1654.namprd03.prod.outlook.com>
-References: <1439300135-10698-1-git-send-email-vkuznets@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Aug 17 (staging/hfi1)
+Date: Mon, 17 Aug 2015 15:35:54 -0700
+Message-ID: <55D261CA.2070802@infradead.org>
+References: <20150817205533.72ebb3fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1439300135-10698-1-git-send-email-vkuznets@redhat.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, "x86@kernel.org" <x86@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Jim Davis <jim.epost@gmail.com>, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:40531 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750921AbbHQWgD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2015 18:36:03 -0400
+In-Reply-To: <20150817205533.72ebb3fb@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Mike Marciniszyn <mike.marciniszyn@intel.com>
+
+On 08/17/15 03:55, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Changes since 20150813:
+>=20
 
 
+Several items:
 
-> -----Original Message-----
-> From: Vitaly Kuznetsov [mailto:vkuznets@redhat.com]
-> Sent: Tuesday, August 11, 2015 6:36 AM
-> To: x86@kernel.org
-> Cc: Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar
-> <mingo@redhat.com>; H. Peter Anvin <hpa@zytor.com>; linux-
-> kernel@vger.kernel.org; Greg KH <gregkh@linuxfoundation.org>; KY
-> Srinivasan <kys@microsoft.com>; Jim Davis <jim.epost@gmail.com>; linux-
-> next <linux-next@vger.kernel.org>
-> Subject: [PATCH] x86: fix build in !CONFIG_KEXEC_CORE case
-> 
-> Recent changes in Hyper-V driver ("Drivers: hv: vmbus: add special crash
-> handler") broke the build when CONFIG_KEXEC_CORE is not set. These
-> changes, however, only reveal the previously existent issue: when
-> CONFIG_KEXEC_CORE is not defined kernel/kexec.c is not being included in
-> the build and native_machine_crash_shutdown() defined in asm/reboot.h
-> has
-> no implementation.
-> 
-> Reported-by: Jim Davis <jim.epost@gmail.com>
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
->  arch/x86/include/asm/reboot.h | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/reboot.h b/arch/x86/include/asm/reboot.h
-> index a82c4f1..a6c1124 100644
-> --- a/arch/x86/include/asm/reboot.h
-> +++ b/arch/x86/include/asm/reboot.h
-> @@ -16,8 +16,15 @@ struct machine_ops {
-> 
->  extern struct machine_ops machine_ops;
-> 
-> -void native_machine_crash_shutdown(struct pt_regs *regs);
->  void native_machine_shutdown(void);
-> +#ifdef CONFIG_KEXEC_CORE
-> +void native_machine_crash_shutdown(struct pt_regs *regs);
-> +#else
-> +static inline void native_machine_crash_shutdown(struct pt_regs *regs)
-> +{
-> +	native_machine_shutdown();
-> +}
-> +#endif
->  void __noreturn machine_real_restart(unsigned int type);
->  /* These must match dispatch in arch/x86/realmore/rm/reboot.S */
->  #define MRR_BIOS	0
-> --
-> 2.4.3
+A:  these and other similar errors:
 
-This patch fixes a build issue; please apply.
+In file included from ../drivers/staging/hfi1/chip.c:61:0:
+=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
+trace_LINKVERB=C3=A2=C2=80=C2=99:
+=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
+=C2=98__hfi1_trace_LINKVERB=C3=A2=C2=80=C2=99 can never be inlined beca=
+use it uses variable argument lists
+ static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
+ \
+                    ^
+=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
+trace_CNTR=C3=A2=C2=80=C2=99:
+=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
+=C2=98__hfi1_trace_CNTR=C3=A2=C2=80=C2=99 can never be inlined because =
+it uses variable argument lists
+ static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
+ \
+                    ^
+=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
+trace_DC8051=C3=A2=C2=80=C2=99:
+=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
+=C2=98__hfi1_trace_DC8051=C3=A2=C2=80=C2=99 can never be inlined becaus=
+e it uses variable argument lists
+ static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
+ \
+                    ^
+=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
+trace_RCVCTRL=C3=A2=C2=80=C2=99:
+=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
+=C2=98__hfi1_trace_RCVCTRL=C3=A2=C2=80=C2=99 can never be inlined becau=
+se it uses variable argument lists
+ static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
+ \
+                    ^
+=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
+trace_TID=C3=A2=C2=80=C2=99:
+=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
+=C2=98__hfi1_trace_TID=C3=A2=C2=80=C2=99 can never be inlined because i=
+t uses variable argument lists
+ static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
+ \
+                    ^
 
-Regards,
+B:  When CONFIG_PCI is not enabled, lots of these errors:
 
-K. Y
+In file included from ../drivers/staging/hfi1/chip.c:60:0:
+=2E./drivers/staging/hfi1/hfi.h:508:20: error: field =C3=A2=C2=80=C2=98=
+msix=C3=A2=C2=80=C2=99 has incomplete type
+  struct msix_entry msix;
+                   ^
+
+=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98disable=
+_intx=C3=A2=C2=80=C2=99:
+=2E./drivers/staging/hfi1/chip.c:8667:2: error: implicit declaration of=
+ function =C3=A2=C2=80=C2=98pci_intx=C3=A2=C2=80=C2=99 [-Werror=3Dimpli=
+cit-function-declaration]
+  pci_intx(pdev, 0);
+  ^
+
+so the driver should depend on PCI or maybe even PCI_MSI.
+
+C.  Please provide some contact info, e.g. in a TODO file or the MAINTA=
+INERS file.
+
+
+--=20
+~Randy
