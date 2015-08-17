@@ -1,38 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next-20150817 build: 2 failures 16 warnings (next-20150817)
-Date: Tue, 18 Aug 2015 00:01:25 +1000
-Message-ID: <20150818000125.2225c713@canb.auug.org.au>
-References: <E1ZRJRP-0003Sa-92@optimist>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the rdma tree
+Date: Mon, 17 Aug 2015 09:03:02 -0700
+Message-ID: <20150817160302.GA6311@kroah.com>
+References: <20150817181312.4be1a554@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39903 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750759AbbHQOB0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Aug 2015 10:01:26 -0400
-In-Reply-To: <E1ZRJRP-0003Sa-92@optimist>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60057 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750799AbbHQQDH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Aug 2015 12:03:07 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailout.nyi.internal (Postfix) with ESMTP id A9FB920ED1
+	for <linux-next@vger.kernel.org>; Mon, 17 Aug 2015 12:03:06 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20150817181312.4be1a554@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Build bot for Mark Brown <broonie@kernel.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Gromm <christian.gromm@microchip.com>, Steve Wise <swise@opengridcomputing.com>, Dennis Dalessandro <dennis.dalessandro@intel.com>
 
-Hi Mark,
-
-On Mon, 17 Aug 2015 13:23:04 +0100 Build bot for Mark Brown <broonie@kernel.org> wrote:
->
-> 	arm64-allmodconfig
-> ../scripts/sign-file.c:20:25: fatal error: openssl/bio.h: No such file or directory
-> ../scripts/extract-cert.c:23:25: fatal error: openssl/bio.h: No such file or directory
+On Mon, Aug 17, 2015 at 06:13:12PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> 	arm-allmodconfig
-> ../scripts/sign-file.c:20:25: fatal error: openssl/bio.h: No such file or directory
-> ../scripts/extract-cert.c:23:25: fatal error: openssl/bio.h: No such file or directory
+> Today's linux-next merge of the staging tree got conflicts in:
+> 
+>   drivers/staging/Kconfig
+>   drivers/staging/Makefile
+> 
+> between commit:
+> 
+>   c2347d1b409d ("RDMA/amso1100: deprecate the amso1100 provider")
+>   17465e48756f ("IB/ipath: Move ipath driver to staging.")
+>   97748be1d6d0 ("Move hfi1 to staging")
+> 
+> from the rdma tree and commit:
+> 
+>   57562a72414c ("Staging: most: add MOST driver's core module")
+> 
+> from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-allmodconfig builds will now need libssl-dev or the equivalent installed
-to build the host programs for the new signing code that came in the
-security tree today.
+Looks good, thanks.
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+greg k-h
