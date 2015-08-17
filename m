@@ -1,96 +1,27 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 17 (staging/hfi1)
-Date: Mon, 17 Aug 2015 15:35:54 -0700
-Message-ID: <55D261CA.2070802@infradead.org>
-References: <20150817205533.72ebb3fb@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rebase of the drm-exynos tree
+Date: Tue, 18 Aug 2015 08:50:50 +1000
+Message-ID: <20150818085050.7a38f4ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:40531 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750921AbbHQWgD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2015 18:36:03 -0400
-In-Reply-To: <20150817205533.72ebb3fb@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Mike Marciniszyn <mike.marciniszyn@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@linux.ie>
+List-Id: linux-next.vger.kernel.org
 
-On 08/17/15 03:55, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Changes since 20150813:
->=20
+Hi Inki,
 
+I noticed today that your tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git#exynos-drm/for-next)
+has been merged by Dave into his drm tree.  Unfortunately, your tree
+has also been rebased onto Linus's v4.2-rc7.  So now the commits
+0cb600d9be30-f8f66412fa6c in your tree are duplicated of commits
+d36b3004ca2c-2a8cb4894540 in Dave's.  Please tidy this up (i.e. your
+exynos-drm/for-next branch should be commit 2a8cb4894540 or something
+later in Dave's tree) and you should continue your work from there.
 
-Several items:
-
-A:  these and other similar errors:
-
-In file included from ../drivers/staging/hfi1/chip.c:61:0:
-=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
-trace_LINKVERB=C3=A2=C2=80=C2=99:
-=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
-=C2=98__hfi1_trace_LINKVERB=C3=A2=C2=80=C2=99 can never be inlined beca=
-use it uses variable argument lists
- static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
- \
-                    ^
-=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
-trace_CNTR=C3=A2=C2=80=C2=99:
-=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
-=C2=98__hfi1_trace_CNTR=C3=A2=C2=80=C2=99 can never be inlined because =
-it uses variable argument lists
- static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
- \
-                    ^
-=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
-trace_DC8051=C3=A2=C2=80=C2=99:
-=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
-=C2=98__hfi1_trace_DC8051=C3=A2=C2=80=C2=99 can never be inlined becaus=
-e it uses variable argument lists
- static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
- \
-                    ^
-=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
-trace_RCVCTRL=C3=A2=C2=80=C2=99:
-=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
-=C2=98__hfi1_trace_RCVCTRL=C3=A2=C2=80=C2=99 can never be inlined becau=
-se it uses variable argument lists
- static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
- \
-                    ^
-=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi1_=
-trace_TID=C3=A2=C2=80=C2=99:
-=2E./drivers/staging/hfi1/trace.h:1357:20: error: function =C3=A2=C2=80=
-=C2=98__hfi1_trace_TID=C3=A2=C2=80=C2=99 can never be inlined because i=
-t uses variable argument lists
- static inline void __hfi1_trace_##fn(const char *func, char *fmt, ...)=
- \
-                    ^
-
-B:  When CONFIG_PCI is not enabled, lots of these errors:
-
-In file included from ../drivers/staging/hfi1/chip.c:60:0:
-=2E./drivers/staging/hfi1/hfi.h:508:20: error: field =C3=A2=C2=80=C2=98=
-msix=C3=A2=C2=80=C2=99 has incomplete type
-  struct msix_entry msix;
-                   ^
-
-=2E./drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98disable=
-_intx=C3=A2=C2=80=C2=99:
-=2E./drivers/staging/hfi1/chip.c:8667:2: error: implicit declaration of=
- function =C3=A2=C2=80=C2=98pci_intx=C3=A2=C2=80=C2=99 [-Werror=3Dimpli=
-cit-function-declaration]
-  pci_intx(pdev, 0);
-  ^
-
-so the driver should depend on PCI or maybe even PCI_MSI.
-
-C.  Please provide some contact info, e.g. in a TODO file or the MAINTA=
-INERS file.
-
-
---=20
-~Randy
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
