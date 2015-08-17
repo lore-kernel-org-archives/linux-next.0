@@ -1,34 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the samsung tree
-Date: Mon, 17 Aug 2015 11:36:17 +1000
-Message-ID: <20150817113617.56d901e5@canb.auug.org.au>
+Subject: linux-next: manual merge of the thermal-soc tree with the arm tree
+Date: Mon, 17 Aug 2015 12:17:54 +1000
+Message-ID: <20150817121754.04736e67@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shailendra Verma <shailendra.capricorn@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57017 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751440AbbHQCRz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Aug 2015 22:17:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
 
-Hi Rafael,
+Hi Eduardo,
 
-Today's linux-next merge of the pm tree got a conflict in:
+Today's linux-next merge of the thermal-soc tree got a conflict in:
 
-  drivers/cpufreq/exynos-cpufreq.c
+  drivers/thermal/cpu_cooling.c
 
 between commit:
 
-  966f2a71a92d ("cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support")
+  df6f527755a5 ("thermal: cpu_cooling: fix lockdep problems in cpu_cooling")
 
-from the samsung tree and commit:
+from the arm tree and commits:
 
-  62c3f2fddd43 ("cpufreq: exynos: Fix for memory leak in case SoC name does not match")
+  02373d7c69b4 ("thermal: cpu_cooling: fix lockdep problems in cpu_cooling")
+  a24af233a1fd ("thermal/cpu_cooling: convert 'switch' block to 'if' block in notifier")
 
-from the pm tree.
+from the thermal-soc tree.
 
-I fixed it up (I just removed the file) and can carry the fix as necessary
-(no action is required).
+I fixed it up (the first two look like two versions of the same patch,
+so I used the version from the thermal-soc tree) and can carry the fix
+as necessary (no action is required).
+
+Russell: that commit in your tree has no Signed-off-by :-(
 
 -- 
 Cheers,
