@@ -1,37 +1,127 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the security tree
-Date: Mon, 17 Aug 2015 15:29:53 +1000
-Message-ID: <20150817152953.355a9d4f@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm-exynos tree
+Date: Mon, 17 Aug 2015 15:53:28 +1000
+Message-ID: <20150817155328.1b690385@canb.auug.org.au>
+References: <20150817135130.162b3a40@canb.auug.org.au>
+	<20150817135342.2c6d3586@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, David Woodhouse <David.Woodhouse@intel.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:46751 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750803AbbHQFxa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Aug 2015 01:53:30 -0400
+In-Reply-To: <20150817135342.2c6d3586@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi James,
+Hi Inki,
 
-After merging the security tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Mon, 17 Aug 2015 13:53:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Mon, 17 Aug 2015 13:51:30 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the drm-exynos tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > drivers/gpu/drm/exynos/exynos_mixer.c: In function 'vp_video_buffer':
+> > drivers/gpu/drm/exynos/exynos_mixer.c:395:15: error: 'struct exynos_drm_plane' has no member named 'pixel_format'
+> >   switch (plane->pixel_format) {
+> >                ^
+> > In file included from drivers/gpu/drm/exynos/exynos_mixer.c:17:0:
+> > drivers/gpu/drm/exynos/exynos_mixer.c:404:10: error: 'struct exynos_drm_plane' has no member named 'pixel_format'
+> >      plane->pixel_format);
+> >           ^
+> > include/drm/drmP.h:164:17: note: in definition of macro 'DRM_ERROR'
+> >   drm_err(fmt, ##__VA_ARGS__)
+> >                  ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:411:11: error: 'struct exynos_drm_plane' has no member named 'scan_flag'
+> >   if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE) {
+> >            ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:417:39: error: 'struct exynos_drm_plane' has no member named 'pitch'
+> >     luma_addr[1] = luma_addr[0] + plane->pitch;
+> >                                        ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:418:43: error: 'struct exynos_drm_plane' has no member named 'pitch'
+> >     chroma_addr[1] = chroma_addr[0] + plane->pitch;
+> >                                            ^
+> > In file included from drivers/gpu/drm/exynos/exynos_mixer.c:20:0:
+> > drivers/gpu/drm/exynos/exynos_mixer.c:439:53: error: 'struct exynos_drm_plane' has no member named 'pitch'
+> >   vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(plane->pitch) |
+> >                                                      ^
+> > drivers/gpu/drm/exynos/regs-vp.h:59:5: note: in definition of macro 'VP_MASK_VAL'
+> >   (((val) << (low_bit)) & VP_MASK(high_bit, low_bit))
+> >      ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:439:35: note: in expansion of macro 'VP_IMG_HSIZE'
+> >   vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(plane->pitch) |
+> >                                    ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:440:21: error: 'struct exynos_drm_plane' has no member named 'fb_height'
+> >    VP_IMG_VSIZE(plane->fb_height));
+> >                      ^
+> > drivers/gpu/drm/exynos/regs-vp.h:59:5: note: in definition of macro 'VP_MASK_VAL'
+> >   (((val) << (low_bit)) & VP_MASK(high_bit, low_bit))
+> >      ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:440:3: note: in expansion of macro 'VP_IMG_VSIZE'
+> >    VP_IMG_VSIZE(plane->fb_height));
+> >    ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:442:53: error: 'struct exynos_drm_plane' has no member named 'pitch'
+> >   vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(plane->pitch) |
+> >                                                      ^
+> > drivers/gpu/drm/exynos/regs-vp.h:59:5: note: in definition of macro 'VP_MASK_VAL'
+> >   (((val) << (low_bit)) & VP_MASK(high_bit, low_bit))
+> >      ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:442:35: note: in expansion of macro 'VP_IMG_HSIZE'
+> >   vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(plane->pitch) |
+> >                                    ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:443:21: error: 'struct exynos_drm_plane' has no member named 'fb_height'
+> >    VP_IMG_VSIZE(plane->fb_height / 2));
+> >                      ^
+> > drivers/gpu/drm/exynos/regs-vp.h:59:5: note: in definition of macro 'VP_MASK_VAL'
+> >   (((val) << (low_bit)) & VP_MASK(high_bit, low_bit))
+> >      ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:443:3: note: in expansion of macro 'VP_IMG_VSIZE'
+> >    VP_IMG_VSIZE(plane->fb_height / 2));
+> >    ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:445:39: error: 'struct exynos_drm_plane' has no member named 'src_width'
+> >   vp_reg_write(res, VP_SRC_WIDTH, plane->src_width);
+> >                                        ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:446:40: error: 'struct exynos_drm_plane' has no member named 'src_height'
+> >   vp_reg_write(res, VP_SRC_HEIGHT, plane->src_height);
+> >                                         ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:451:39: error: 'struct exynos_drm_plane' has no member named 'crtc_width'
+> >   vp_reg_write(res, VP_DST_WIDTH, plane->crtc_width);
+> >                                        ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:454:41: error: 'struct exynos_drm_plane' has no member named 'crtc_height'
+> >    vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_height / 2);
+> >                                          ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:457:41: error: 'struct exynos_drm_plane' has no member named 'crtc_height'
+> >    vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_height);
+> >                                          ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:472:27: error: 'struct exynos_drm_plane' has no member named 'mode_height'
+> >   mixer_cfg_scan(ctx, plane->mode_height);
+> >                            ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c:473:30: error: 'struct exynos_drm_plane' has no member named 'mode_height'
+> >   mixer_cfg_rgb_fmt(ctx, plane->mode_height);
+> >                               ^
+> > drivers/gpu/drm/exynos/exynos_mixer.c: In function 'mixer_setup_scale':
+> > drivers/gpu/drm/exynos/exynos_mixer.c:494:11: error: 'const struct exynos_drm_plane' has no member named 'crtc_width
+> 
+> Hmm, my message was truncated ...
+> 
+> I assume that there was a conflicting change in some other tree, and so
+> have dropped this tree for today (hopefully it will be fixed up soon or
+> you can tell me how to fix this).
 
-scripts/extract-cert.c:23:25: fatal error: openssl/bio.h: No such file or directory
- #include <openssl/bio.h>
-                         ^
-compilation terminated.
-scripts/sign-file.c:20:25: fatal error: openssl/bio.h: No such file or directory
- #include <openssl/bio.h>
-                         ^
+Actually it looks like this was caused by commit
 
-Caused by commits:
+  a97f353797b4 ("drm/exynos: remove unused fields from struct exynos_drm_plane")
 
-  1329e8cc69b9 ("modsign: Extract signing cert from CONFIG_MODULE_SIG_KEY if needed")
-  bc1c373dd2a5 ("MODSIGN: Provide a utility to append a PKCS#7 signature to a module")
-
-After a bit of digging, I installed libssl-dev on my Debian build
-machines.
+but only exposed today (maybe by some Kconfig dependency changing so
+that drivers/gpu/drm/exynos/exynos_mixer.c is now built).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
