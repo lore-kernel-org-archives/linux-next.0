@@ -1,37 +1,42 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Tue, 18 Aug 2015 14:23:26 +0200
-Message-ID: <20150818122326.GR9999@pengutronix.de>
-References: <20150818165719.5ac6f687@canb.auug.org.au>
- <CACRpkda=qtTr+YFWhcGd=3fnP_1pzpNKTbbehP6FdUahoQgBtw@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: next-20150806 build: 2 failures 52 warnings (next-20150806)
+Date: Tue, 18 Aug 2015 14:47:59 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1508181447480.3873@nanos>
+References: <E1ZNIul-0007IF-Ev@optimist> <20150806175322.GB20873@sirena.org.uk> <20150807073954.3d19fc69@canb.auug.org.au> <20150807094957.GK20873@sirena.org.uk> <CAErSpo6aryRYOJpfXfY6SuJoVe72MYd8RKgPhiDZ9pt5+zmXBQ@mail.gmail.com>
+ <55CB0205.2020408@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:42430 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751612AbbHRMXg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Aug 2015 08:23:36 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkda=qtTr+YFWhcGd=3fnP_1pzpNKTbbehP6FdUahoQgBtw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <55CB0205.2020408@linux.intel.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Yijing Wang <wangyijing@huawei.com>, Michal Simek <michal.simek@xilinx.com>, kernel-build-reports@lists.linaro.org, linaro-kernel <linaro-kernel@lists.linaro.org>, linux-next list <linux-next@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hello Linus,
+On Wed, 12 Aug 2015, Jiang Liu wrote:
+> On 2015/8/11 2:31, Bjorn Helgaas wrote:
+> > On Fri, Aug 7, 2015 at 4:49 AM, Mark Brown <broonie@kernel.org> wrote:
+> >> On Fri, Aug 07, 2015 at 07:39:54AM +1000, Stephen Rothwell wrote:
+> >>> On Thu, 6 Aug 2015 18:53:22 +0100 Mark Brown <broonie@kernel.org> wrote:
+> >>
+> >>>> msi_desc_to_pci_sys_data doesn't appear to exist anywhere else in
+> >>>> current -next, the usage was introduced by e39758e0ea769e632e (PCI: Use
+> >>>> helper functions to access fields in struct msi_desc) at which time it
+> >>>> looks like it did exist but I can't immediately see where it was removed.
+> >>
+> >>> Actually, it is a typo ... all other uses are spelt msi_desc_to_pci_sysdata.
+> > 
+> > c179c9b978b9 ("PCI: Add helper function msi_desc_to_pci_sysdata()")
+> > added msi_desc_to_pci_sysdata().
+> > 
+> > e39758e0ea76 ("PCI: Use helper functions to access fields in struct
+> > msi_desc") added calls to msi_desc_to_pci_sysdata() in
+> > pci-keystone-dw.c and pcie-designware.c, but to
+> > msi_desc_to_pci_sys_data() (note extra "_") in pcie-xilinx.c.
+> > 
+> > These were both merged by Thomas, so I assume he and Jiang will sort this out.
+> Hi Bjorn and Mark,
+> 	Thomas is on vocation this two weeks, so I will send him a
+> patch to fix this issue once Thomas is back.
 
-I forgot to add you (and also Stephen) to Cc for my slightly different
-patch. You can find it at https://patchwork.linuxtv.org/patch/30908/.
-
-I just sent you and Stephen a bounce if you want to comment.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+I'm back :)
