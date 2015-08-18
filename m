@@ -1,49 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 18 Aug 2015 12:35:16 +1000
-Message-ID: <20150818123516.23d5120f@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm-exynos tree
+Date: Tue, 18 Aug 2015 13:02:43 +1000
+Message-ID: <20150818130243.24c783da@canb.auug.org.au>
+References: <20150817135130.162b3a40@canb.auug.org.au>
+	<20150817135342.2c6d3586@canb.auug.org.au>
+	<20150817155328.1b690385@canb.auug.org.au>
+	<55D18874.6010609@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Ward <david.ward@ll.mit.edu>, Pieter Hollants <pieter@hollants.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37849 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750890AbbHRDCp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Aug 2015 23:02:45 -0400
+In-Reply-To: <55D18874.6010609@samsung.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi all,
+Hi Inki,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+On Mon, 17 Aug 2015 16:08:36 +0900 Inki Dae <inki.dae@samsung.com> wrote:
+>
+> And today, I re-based exynos-drm/for-next on top of mainline. Could you
+> update and try to build it again?
 
-  drivers/net/usb/qmi_wwan.c
-
-between commit:
-
-  a8079092c1bb ("net: qmi_wwan: add HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module")
-
-from the net tree and commit:
-
-  2070c48cf2b7 ("qmi_wwan: Add support for Dell Wireless 5809e 4G Modem")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+It is OK in today's linux-next.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/usb/qmi_wwan.c
-index 64a60afbe50c,1f7a7cd97e50..000000000000
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@@ -785,7 -785,7 +785,8 @@@ static const struct usb_device_id produ
-  	{QMI_FIXED_INTF(0x413c, 0x81a4, 8)},	/* Dell Wireless 5570e HSPA+ (42Mbps) Mobile Broadband Card */
-  	{QMI_FIXED_INTF(0x413c, 0x81a8, 8)},	/* Dell Wireless 5808 Gobi(TM) 4G LTE Mobile Broadband Card */
-  	{QMI_FIXED_INTF(0x413c, 0x81a9, 8)},	/* Dell Wireless 5808e Gobi(TM) 4G LTE Mobile Broadband Card */
-+ 	{QMI_FIXED_INTF(0x413c, 0x81b1, 8)},	/* Dell Wireless 5809e Gobi(TM) 4G LTE Mobile Broadband Card */
- +	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
-  	{QMI_FIXED_INTF(0x03f0, 0x581d, 4)},	/* HP lt4112 LTE/HSPA+ Gobi 4G Module (Huawei me906e) */
-  
-  	/* 4. Gobi 1000 devices */
