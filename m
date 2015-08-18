@@ -1,46 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfs tree
-Date: Tue, 18 Aug 2015 10:56:34 +1000
-Message-ID: <20150818105634.5be18a1c@canb.auug.org.au>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: linux-next: rebase of the drm-exynos tree
+Date: Tue, 18 Aug 2015 10:21:32 +0900
+Message-ID: <55D2889C.20404@samsung.com>
+References: <20150818085050.7a38f4ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51505 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751959AbbHRA4i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Aug 2015 20:56:38 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:33302 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750985AbbHRBVe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2015 21:21:34 -0400
+In-reply-to: <20150818085050.7a38f4ef@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@linux.ie>
 
-Hi Trond,
+Hi Stephen,
 
-After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On 2015=EB=85=84 08=EC=9B=94 18=EC=9D=BC 07:50, Stephen Rothwell wrote:
+> Hi Inki,
+>=20
+> I noticed today that your tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git=
+#exynos-drm/for-next)
+> has been merged by Dave into his drm tree.  Unfortunately, your tree
+> has also been rebased onto Linus's v4.2-rc7.  So now the commits
+> 0cb600d9be30-f8f66412fa6c in your tree are duplicated of commits
+> d36b3004ca2c-2a8cb4894540 in Dave's.  Please tidy this up (i.e. your
+> exynos-drm/for-next branch should be commit 2a8cb4894540 or something
+> later in Dave's tree) and you should continue your work from there.
 
-drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_pmr_pool_map':
-drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:1828:2: error: implicit declaration of function 'ib_reg_phys_mr' [-Werror=implicit-function-declaration]
-  pmr->pmr_mr = ib_reg_phys_mr(hdev->ibh_pd,
-  ^
-drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:1828:14: warning: assignment makes pointer from integer without a cast
-  pmr->pmr_mr = ib_reg_phys_mr(hdev->ibh_pd,
-              ^
-drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_hdev_setup_mrs':
-drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2380:6: warning: assignment makes pointer from integer without a cast
-   mr = ib_reg_phys_mr(hdev->ibh_pd, &ipb, 1, acflags, &iova);
-      ^
+Right, I had requested git-pull. Will do re-base on top of Dave's tree.
 
-Caused by commit
+Thanks,
+Inki Dae
 
-  1241d7bf2ac8 ("core: Remove the ib_reg_phys_mr() and ib_rereg_phys_mr() verbs")
-
-which noted this build failure would occur :-(
-
-Since this commit is self comtained, I have reverted it until someone
-provides a fix for the lustre code.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+>=20
