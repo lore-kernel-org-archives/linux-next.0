@@ -1,38 +1,57 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Tue, 18 Aug 2015 10:35:27 -0300
-Message-ID: <20150818103527.17ca5e56@recife.lan>
-References: <20150818165719.5ac6f687@canb.auug.org.au>
-	<CACRpkda=qtTr+YFWhcGd=3fnP_1pzpNKTbbehP6FdUahoQgBtw@mail.gmail.com>
-	<20150818122326.GR9999@pengutronix.de>
+From: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
+Subject: RE: linux-next: Tree for Aug 17 (staging/hfi1)
+Date: Tue, 18 Aug 2015 14:24:32 +0000
+Message-ID: <32E1700B9017364D9B60AED9960492BC257995D2@fmsmsx120.amr.corp.intel.com>
+References: <20150817205533.72ebb3fb@canb.auug.org.au>
+ <55D261CA.2070802@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:58302 "EHLO lists.s-osg.org"
+Received: from mga01.intel.com ([192.55.52.88]:64160 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751826AbbHRNfe convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Aug 2015 09:35:34 -0400
-In-Reply-To: <20150818122326.GR9999@pengutronix.de>
+	id S1750770AbbHROYk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Aug 2015 10:24:40 -0400
+In-Reply-To: <55D261CA.2070802@infradead.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil <hans.verkuil@cisco.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Doug Ledford <dledford@redhat.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
 
-Em Tue, 18 Aug 2015 14:23:26 +0200
-Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> escreveu:
-
-> Hello Linus,
->=20
-> I forgot to add you (and also Stephen) to Cc for my slightly differen=
-t
-> patch. You can find it at https://patchwork.linuxtv.org/patch/30908/.
->=20
-> I just sent you and Stephen a bounce if you want to comment.
-
-My plan is to either apply Stephen or Uwe version at media latter this =
-week,
-after giving some time for people to review it.
-
-Regards,
-Mauro
+PiBBOiAgdGhlc2UgYW5kIG90aGVyIHNpbWlsYXIgZXJyb3JzOg0KPiANCj4gSW4gZmlsZSBpbmNs
+dWRlZCBmcm9tIC4uL2RyaXZlcnMvc3RhZ2luZy9oZmkxL2NoaXAuYzo2MTowOg0KPiAuLi9kcml2
+ZXJzL3N0YWdpbmcvaGZpMS9jaGlwLmM6IEluIGZ1bmN0aW9uIMOiwoDCmF9faGZpMV90cmFjZV9M
+SU5LVkVSQsOiwoDCmToNCj4gLi4vZHJpdmVycy9zdGFnaW5nL2hmaTEvdHJhY2UuaDoxMzU3OjIw
+OiBlcnJvcjogZnVuY3Rpb24NCj4gw6LCgMKYX19oZmkxX3RyYWNlX0xJTktWRVJCw6LCgMKZIGNh
+biBuZXZlciBiZSBpbmxpbmVkIGJlY2F1c2UgaXQgdXNlcyB2YXJpYWJsZQ0KPiBhcmd1bWVudCBs
+aXN0cyAgc3RhdGljIGlubGluZSB2b2lkIF9faGZpMV90cmFjZV8jI2ZuKGNvbnN0IGNoYXIgKmZ1
+bmMsIGNoYXINCj4gKmZtdCwgLi4uKSBcDQo+DQoNClRoaXMgd2FzIGNvcnJlY3RlZCB3aXRoDQpo
+dHRwczovL3d3dy5tYWlsLWFyY2hpdmUuY29tL2xpbnV4LXJkbWFAdmdlci5rZXJuZWwub3JnL21z
+ZzI3MjIxLmh0bWwsIHdoaWNoIEkgdGhpbmsgRG91ZyBoYXMgcGlja2VkIHVwLg0KDQpEb3VnLCBS
+YW5keSwgU3RlcGhlbiBob3cgZG8gd2Ugd2FudCB0byBoYW5kbGUgZml4aW5nIGRyaXZlcnMvc3Rh
+Z2luZy9oZmkxIHZpYSB0aGUgc3RhZ2luZyBsaXN0IHZzLiB0aGUgbGludXgtcmRtYSBsaXN0Pw0K
+DQo+IEI6ICBXaGVuIENPTkZJR19QQ0kgaXMgbm90IGVuYWJsZWQsIGxvdHMgb2YgdGhlc2UgZXJy
+b3JzOg0KPiANCg0KVGhlIGRyaXZlciB1c2VkIHRvIGdldCBhIGdpZnQgZnJvbSB0aGUgZHJpdmVy
+cy9pbmZpbmliYW5kL2h3L0tjb25maWcsIHdoaWNoIGhhcyB0aGUgcmVxdWlyZWQgUENJIGRlcGVu
+ZGVuY3kuDQoNClRoZSBpbmZpbmliYW5kIGRlcGVuZGVuY3kgaXMgYWxzbyBzaW1pbGFybHkgbWlz
+c2luZyBhbmQgd2FzIHJlc29sdmVkIHZpYSB0aGUgZm9sbG93aW5nIHRlbXBvcmFyeSBwYXRjaDoN
+Cg0KaHR0cHM6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9saW51eC1yZG1hQHZnZXIua2VybmVsLm9y
+Zy9tc2cyNjk4OS5odG1sDQoNClRoaXMgb25lIGFsc28gbmVlZHMgdG8gYmUgc2ltaWxhcmx5IGFk
+ZGVkIGZvciB0aGF0IDAtZGF5IGJ1aWxkIGlzc3VlLg0KDQpJIGhhdmUgc3VibWl0dGVkIHRvIGJv
+dGggbGlzdHMgaHR0cHM6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9saW51eC1yZG1hQHZnZXIua2Vy
+bmVsLm9yZy9tc2cyNzI5OS5odG1sIGFzc3VtaW5nIHRoZSBhYm92ZSBvbmUgYXMgYSBkZXBlbmRl
+bmN5Lg0KDQo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSAuLi9kcml2ZXJzL3N0YWdpbmcvaGZpMS9j
+aGlwLmM6NjA6MDoNCj4gLi4vZHJpdmVycy9zdGFnaW5nL2hmaTEvaGZpLmg6NTA4OjIwOiBlcnJv
+cjogZmllbGQgw6LCgMKYbXNpeMOiwoDCmSBoYXMgaW5jb21wbGV0ZQ0KPiB0eXBlDQo+ICAgc3Ry
+dWN0IG1zaXhfZW50cnkgbXNpeDsNCj4gICAgICAgICAgICAgICAgICAgIF4NCj4gDQo+IC4uL2Ry
+aXZlcnMvc3RhZ2luZy9oZmkxL2NoaXAuYzogSW4gZnVuY3Rpb24gw6LCgMKYZGlzYWJsZV9pbnR4
+w6LCgMKZOg0KPiAuLi9kcml2ZXJzL3N0YWdpbmcvaGZpMS9jaGlwLmM6ODY2NzoyOiBlcnJvcjog
+aW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24NCj4gw6LCgMKYcGNpX2ludHjDosKAwpkg
+Wy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dDQo+ICAgcGNpX2ludHgocGRl
+diwgMCk7DQo+ICAgXg0KPiANCj4gc28gdGhlIGRyaXZlciBzaG91bGQgZGVwZW5kIG9uIFBDSSBv
+ciBtYXliZSBldmVuIFBDSV9NU0kuDQo+IA0KPiBDLiAgUGxlYXNlIHByb3ZpZGUgc29tZSBjb250
+YWN0IGluZm8sIGUuZy4gaW4gYSBUT0RPIGZpbGUgb3IgdGhlIE1BSU5UQUlORVJTDQo+IGZpbGUu
+DQo+IA0KDQpJIGhhdmUgc3VibWl0dGVkIGh0dHBzOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGlu
+dXgtcmRtYUB2Z2VyLmtlcm5lbC5vcmcvbXNnMjcyOTguaHRtbCB0byBib3RoIGxpc3RzIHRvIGFk
+ZCBhIG1haW50YWluZXIuDQoNCk1pa2UNCg==
