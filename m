@@ -1,72 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Tue, 18 Aug 2015 09:12:57 -0700
-Message-ID: <20150818161257.GB4040@kroah.com>
-References: <20150818160116.1c77685d@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Aug 18 (xen/apic)
+Date: Tue, 18 Aug 2015 09:55:56 -0700
+Message-ID: <55D3639C.401@infradead.org>
+References: <20150818214003.73bd846a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:49256 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751177AbbHRQNB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Aug 2015 12:13:01 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.nyi.internal (Postfix) with ESMTP id A6D90202D2
-	for <linux-next@vger.kernel.org>; Tue, 18 Aug 2015 12:13:00 -0400 (EDT)
-Content-Disposition: inline
-In-Reply-To: <20150818160116.1c77685d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150818214003.73bd846a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 18, 2015 at 04:01:16PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On 08/18/15 04:40, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the tty tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+> Changes since 20150817:
 > 
-> make[2]: *** No rule to make target 'arch/arm/boot/dts/imx6sl-fox-p1.dtb', needed by '__build'.  Stop.
-> 
-> Caused by commit
-> 
->   189550b8644e ("serial: imx: introduce serial_imx_enable_wakeup()")
-> 
-> I guess a file was missed.
-> 
-> I partially reverted that commit:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 18 Aug 2015 15:56:40 +1000
-> Subject: [PATCH] serial: imx: partial revert of "introduce
->  serial_imx_enable_wakeup()"
-> 
-> This reverts the part of commit 189550b8644e that affects
-> arch/arm/boot/dts/Makefile
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/arm/boot/dts/Makefile | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index d3ee1f01ffc7..233159d2eaab 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -330,7 +330,6 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
->  	imx6q-wandboard-revb1.dtb
->  dtb-$(CONFIG_SOC_IMX6SL) += \
->  	imx6sl-evk.dtb \
-> -	imx6sl-fox-p1.dtb \
->  	imx6sl-warp.dtb
->  dtb-$(CONFIG_SOC_IMX6SX) += \
->  	imx6sx-sabreauto.dtb \
+
+on i386:
+
+CONFIG_SMP is not enabled.
+# CONFIG_X86_UP_APIC is not set
 
 
-Ugh, this sucks, Eduardo, what went wrong here?  I think I have to
-revert the original commit now :(
+../arch/x86/xen/apic.c: In function 'xen_io_apic_read':
+../arch/x86/xen/apic.c:18:2: error: implicit declaration of function 'mpc_ioapic_addr' [-Werror=implicit-function-declaration]
+  apic_op.apic_physbase = mpc_ioapic_addr(apic);
+  ^
+../arch/x86/xen/apic.c: At top level:
+../arch/x86/xen/apic.c:155:19: error: 'default_target_cpus' undeclared here (not in a function)
+  .target_cpus   = default_target_cpus,
+                   ^
+../arch/x86/xen/apic.c:158:24: error: 'default_check_apicid_used' undeclared here (not in a function)
+  .check_apicid_used  = default_check_apicid_used, /* Used on 32-bit */
+                        ^
+../arch/x86/xen/apic.c:160:30: error: 'flat_vector_allocation_domain' undeclared here (not in a function)
+  .vector_allocation_domain = flat_vector_allocation_domain,
+                              ^
+../arch/x86/xen/apic.c:163:25: error: 'default_ioapic_phys_id_map' undeclared here (not in a function)
+  .ioapic_phys_id_map  = default_ioapic_phys_id_map, /* Used on 32-bit */
+                         ^
+../arch/x86/xen/apic.c:165:28: error: 'default_cpu_present_to_apicid' undeclared here (not in a function)
+  .cpu_present_to_apicid  = default_cpu_present_to_apicid,
+                            ^
+../arch/x86/xen/apic.c:167:31: error: 'default_check_phys_apicid_present' undeclared here (not in a function)
+  .check_phys_apicid_present = default_check_phys_apicid_present, /* smp_sanity_check needs it */
+                               ^
+../arch/x86/xen/apic.c:174:29: error: 'flat_cpu_mask_to_apicid_and' undeclared here (not in a function)
+  .cpu_mask_to_apicid_and  = flat_cpu_mask_to_apicid_and,
+                             ^
 
-thanks,
 
-greg k-h
+
+-- 
+~Randy
