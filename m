@@ -1,38 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the v4l-dvb tree
-Date: Tue, 18 Aug 2015 13:58:10 +1000
-Message-ID: <20150818135810.2eb2dba5@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Tue, 18 Aug 2015 16:01:16 +1000
+Message-ID: <20150818160116.1c77685d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54793 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751271AbbHRD6M (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Aug 2015 23:58:12 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Jan Kara <jack@suse.cz>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jiri,
+Hi Greg,
 
-Today's linux-next merge of the trivial tree got a conflict in:
+After merging the tty tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  drivers/media/v4l2-core/videobuf2-memops.c
+make[2]: *** No rule to make target 'arch/arm/boot/dts/imx6sl-fox-p1.dtb', needed by '__build'.  Stop.
 
-between commit:
+Caused by commit
 
-  6690c8c78c74 ("[media] media: vb2: Remove unused functions")
+  189550b8644e ("serial: imx: introduce serial_imx_enable_wakeup()")
 
-from the v4l-dvb tree and commit:
+I guess a file was missed.
 
-  e1c05067c323 ("treewide: fix typos in comment blocks")
+I partially reverted that commit:
 
-from the trivial tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 18 Aug 2015 15:56:40 +1000
+Subject: [PATCH] serial: imx: partial revert of "introduce
+ serial_imx_enable_wakeup()"
 
-I fixed it up (the former removed the code modified by the latter)
-and can carry the fix as necessary (no action is required).
+This reverts the part of commit 189550b8644e that affects
+arch/arm/boot/dts/Makefile
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/boot/dts/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index d3ee1f01ffc7..233159d2eaab 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -330,7 +330,6 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6q-wandboard-revb1.dtb
+ dtb-$(CONFIG_SOC_IMX6SL) += \
+ 	imx6sl-evk.dtb \
+-	imx6sl-fox-p1.dtb \
+ 	imx6sl-warp.dtb
+ dtb-$(CONFIG_SOC_IMX6SX) += \
+ 	imx6sx-sabreauto.dtb \
+-- 
+2.5.0
 
 -- 
 Cheers,
