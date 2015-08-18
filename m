@@ -1,64 +1,49 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: linux-next: manual merge of the thermal-soc tree with the arm
- tree
-Date: Tue, 18 Aug 2015 02:33:48 -0700
-Message-ID: <20150818093348.GB26346@localhost.localdomain>
-References: <20150817121754.04736e67@canb.auug.org.au>
- <20150817075549.GG7557@n2100.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 18 Aug 2015 12:35:16 +1000
+Message-ID: <20150818123516.23d5120f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:33792 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751475AbbHRCdx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2015 22:33:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20150817075549.GG7557@n2100.arm.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Ward <david.ward@ll.mit.edu>, Pieter Hollants <pieter@hollants.com>
+List-Id: linux-next.vger.kernel.org
 
-Russell,
+Hi all,
 
-On Mon, Aug 17, 2015 at 12:55 AM, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> On Mon, Aug 17, 2015 at 12:17:54PM +1000, Stephen Rothwell wrote:
->> Hi Eduardo,
->>
->> Today's linux-next merge of the thermal-soc tree got a conflict in:
->>
->>   drivers/thermal/cpu_cooling.c
->>
->> between commit:
->>
->>   df6f527755a5 ("thermal: cpu_cooling: fix lockdep problems in cpu_cooling")
->>
->> from the arm tree and commits:
->>
->>   02373d7c69b4 ("thermal: cpu_cooling: fix lockdep problems in cpu_cooling")
->>   a24af233a1fd ("thermal/cpu_cooling: convert 'switch' block to 'if' block in notifier")
->>
->> from the thermal-soc tree.
->>
->> I fixed it up (the first two look like two versions of the same patch,
->> so I used the version from the thermal-soc tree) and can carry the fix
->> as necessary (no action is required).
->>
->> Russell: that commit in your tree has no Signed-off-by :-(
->
-> Yes it does.  It's above the explanation of why it's there.  However,
-> now that Eduardo has taken patches to fix the long standing bug, I can
-> drop this commit.
->
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Thanks once again for the effort to push the fix. Once again, sorry for the inconvenience.
+  drivers/net/usb/qmi_wwan.c
 
+between commit:
 
-> --
-> FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-> according to speedtest.net.
+  a8079092c1bb ("net: qmi_wwan: add HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module")
 
+from the net tree and commit:
 
+  2070c48cf2b7 ("qmi_wwan: Add support for Dell Wireless 5809e 4G Modem")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
-Eduardo Bezerra Valentin
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/usb/qmi_wwan.c
+index 64a60afbe50c,1f7a7cd97e50..000000000000
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@@ -785,7 -785,7 +785,8 @@@ static const struct usb_device_id produ
+  	{QMI_FIXED_INTF(0x413c, 0x81a4, 8)},	/* Dell Wireless 5570e HSPA+ (42Mbps) Mobile Broadband Card */
+  	{QMI_FIXED_INTF(0x413c, 0x81a8, 8)},	/* Dell Wireless 5808 Gobi(TM) 4G LTE Mobile Broadband Card */
+  	{QMI_FIXED_INTF(0x413c, 0x81a9, 8)},	/* Dell Wireless 5808e Gobi(TM) 4G LTE Mobile Broadband Card */
++ 	{QMI_FIXED_INTF(0x413c, 0x81b1, 8)},	/* Dell Wireless 5809e Gobi(TM) 4G LTE Mobile Broadband Card */
+ +	{QMI_FIXED_INTF(0x03f0, 0x4e1d, 8)},	/* HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module */
+  	{QMI_FIXED_INTF(0x03f0, 0x581d, 4)},	/* HP lt4112 LTE/HSPA+ Gobi 4G Module (Huawei me906e) */
+  
+  	/* 4. Gobi 1000 devices */
