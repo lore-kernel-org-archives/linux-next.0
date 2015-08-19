@@ -1,67 +1,61 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: linux-next: Tree for Aug 18 (drivers/media/i2c/tc358743.c)
-Date: Wed, 19 Aug 2015 08:27:27 +0200
-Message-ID: <55D421CF.9090109@xs4all.nl>
-References: <20150818214003.73bd846a@canb.auug.org.au> <55D34EA5.1010705@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the cgroup
+ tree
+Date: Wed, 19 Aug 2015 18:43:55 +1000
+Message-ID: <20150819184355.0cb8cbce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:56530 "EHLO
-	lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751524AbbHSG2L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Aug 2015 02:28:11 -0400
-In-Reply-To: <55D34EA5.1010705@infradead.org>
+Received: from ozlabs.org ([103.22.144.67]:56692 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752144AbbHSIn5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Aug 2015 04:43:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Ramakrishnan Muthukrishnan <ram@rkrishnan.org>, Mikhail Khelik <mkhelik@cisco.com>, Mats Randgaard <matrandg@cisco.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
 
-On 08/18/2015 05:26 PM, Randy Dunlap wrote:
-> On 08/18/15 04:40, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20150817:
->>
-> 
-> on i386:
-> 
-> when CONFIG_MEDIA_CONTROLLER is not enabled:
-> 
-> ../drivers/media/i2c/tc358743.c: In function 'tc358743_probe':
-> ../drivers/media/i2c/tc358743.c:1890:29: error: 'struct v4l2_subdev' has no member named 'entity'
->   err = media_entity_init(&sd->entity, 1, &state->pad, 0);
->                              ^
-> ../drivers/media/i2c/tc358743.c:1940:26: error: 'struct v4l2_subdev' has no member named 'entity'
->   media_entity_cleanup(&sd->entity);
->                           ^
-> ../drivers/media/i2c/tc358743.c: In function 'tc358743_remove':
-> ../drivers/media/i2c/tc358743.c:1955:26: error: 'struct v4l2_subdev' has no member named 'entity'
->   media_entity_cleanup(&sd->entity);
->                           ^
-> 
-> 
-> 
+Hi Andrew,
 
-tc358743: add missing Kconfig dependency/select
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-This driver depends on VIDEO_V4L2_SUBDEV_API and needs to select HDMI.
+  kernel/cgroup.c
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+between commit:
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index d669547..521bbf1 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -289,7 +289,8 @@ config VIDEO_SAA711X
- 
- config VIDEO_TC358743
- 	tristate "Toshiba TC358743 decoder"
--	depends on VIDEO_V4L2 && I2C
-+	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
-+	select HDMI
- 	---help---
- 	  Support for the Toshiba TC358743 HDMI to MIPI CSI-2 bridge.
- 
+  d98817d4961b ("cgroup: don't print subsystems for the default hierarchy")
+  3e1d2eed39d8 ("cgroup: introduce cgroup_subsys->legacy_name")
+
+from the cgroup tree and commit:
+
+  04b6d1bfdd24 ("fs: create and use seq_show_option for escaping")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/cgroup.c
+index f3f5cd5e2c0d,c6c4240e7d28..000000000000
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@@ -1339,10 -1332,9 +1339,10 @@@ static int cgroup_show_options(struct s
+  	struct cgroup_subsys *ss;
+  	int ssid;
+  
+ -	for_each_subsys(ss, ssid)
+ -		if (root->subsys_mask & (1 << ssid))
+ -			seq_show_option(seq, ss->name, NULL);
+ +	if (root != &cgrp_dfl_root)
+ +		for_each_subsys(ss, ssid)
+ +			if (root->subsys_mask & (1 << ssid))
+- 				seq_printf(seq, ",%s", ss->legacy_name);
+++				seq_show_option(seq, ss->legacy_name, NULL);
+  	if (root->flags & CGRP_ROOT_NOPREFIX)
+  		seq_puts(seq, ",noprefix");
+  	if (root->flags & CGRP_ROOT_XATTR)
