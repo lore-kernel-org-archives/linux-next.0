@@ -1,52 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 17 (staging/hfi1)
-Date: Wed, 19 Aug 2015 09:23:00 +1000
-Message-ID: <20150819092300.3e97d1ec@canb.auug.org.au>
-References: <20150817205533.72ebb3fb@canb.auug.org.au>
-	<55D261CA.2070802@infradead.org>
-	<32E1700B9017364D9B60AED9960492BC257995D2@fmsmsx120.amr.corp.intel.com>
+Subject: Re: linux-next: build failure after merge of the nfs tree
+Date: Wed, 19 Aug 2015 10:05:36 +1000
+Message-ID: <20150819100536.5b4d1ae6@canb.auug.org.au>
+References: <20150818105634.5be18a1c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60793 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39892 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750923AbbHRXXB convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Aug 2015 19:23:01 -0400
-In-Reply-To: <32E1700B9017364D9B60AED9960492BC257995D2@fmsmsx120.amr.corp.intel.com>
+	id S1750777AbbHSAFj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Aug 2015 20:05:39 -0400
+In-Reply-To: <20150818105634.5be18a1c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Christoph Hellwig <hch@infradead.org>, Greg KH <greg@kroah.com>, Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, HPDD-discuss@lists.01.org
 
-Hi Mike,
+Hi Trond,
 
-On Tue, 18 Aug 2015 14:24:32 +0000 "Marciniszyn, Mike" <mike.marciniszy=
-n@intel.com> wrote:
+On Tue, 18 Aug 2015 10:56:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> > A:  these and other similar errors:
-> >=20
-> > In file included from ../drivers/staging/hfi1/chip.c:61:0:
-> > ../drivers/staging/hfi1/chip.c: In function =C3=A2=C2=80=C2=98__hfi=
-1_trace_LINKVERB=C3=A2=C2=80=C2=99:
-> > ../drivers/staging/hfi1/trace.h:1357:20: error: function
-> > =C3=A2=C2=80=C2=98__hfi1_trace_LINKVERB=C3=A2=C2=80=C2=99 can never=
- be inlined because it uses variable
-> > argument lists  static inline void __hfi1_trace_##fn(const char *fu=
-nc, char
-> > *fmt, ...) \
-> >
->=20
-> This was corrected with
-> https://www.mail-archive.com/linux-rdma@vger.kernel.org/msg27221.html=
-, which I think Doug has picked up.
->=20
-> Doug, Randy, Stephen how do we want to handle fixing drivers/staging/=
-hfi1 via the staging list vs. the linux-rdma list?
+> After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_pmr_pool_map':
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:1828:2: error: implicit declaration of function 'ib_reg_phys_mr' [-Werror=implicit-function-declaration]
+>   pmr->pmr_mr = ib_reg_phys_mr(hdev->ibh_pd,
+>   ^
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:1828:14: warning: assignment makes pointer from integer without a cast
+>   pmr->pmr_mr = ib_reg_phys_mr(hdev->ibh_pd,
+>               ^
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_hdev_setup_mrs':
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2380:6: warning: assignment makes pointer from integer without a cast
+>    mr = ib_reg_phys_mr(hdev->ibh_pd, &ipb, 1, acflags, &iova);
+>       ^
+> 
+> Caused by commit
+> 
+>   1241d7bf2ac8 ("core: Remove the ib_reg_phys_mr() and ib_rereg_phys_mr() verbs")
+> 
+> which noted this build failure would occur :-(
+> 
+> Since this commit is self comtained, I have reverted it until someone
+> provides a fix for the lustre code.
 
-Since the problem was only introduced in the rdma tree (and the trace.h
-file only exists there), it needs to be fixed there.
+Today, I will disable lustre (from staging) instead (thanks to
+Christoph for reminding me of this policy).
 
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
