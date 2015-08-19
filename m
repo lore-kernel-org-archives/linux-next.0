@@ -1,40 +1,67 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] staging/lustre/o2iblnd: remove references to
- ib_reg_phsy_mr()
-Date: Tue, 18 Aug 2015 19:53:11 -0700
-Message-ID: <20150819025311.GB4588@kroah.com>
-References: <20150819100536.5b4d1ae6@canb.auug.org.au>
- <1439946275-1595274-1-git-send-email-green@linuxhacker.ru>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: linux-next: Tree for Aug 18 (drivers/media/i2c/tc358743.c)
+Date: Wed, 19 Aug 2015 08:27:27 +0200
+Message-ID: <55D421CF.9090109@xs4all.nl>
+References: <20150818214003.73bd846a@canb.auug.org.au> <55D34EA5.1010705@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:56817 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751717AbbHSCxO (ORCPT
+Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:56530 "EHLO
+	lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751524AbbHSG2L (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Aug 2015 22:53:14 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id 23367204A8
-	for <linux-next@vger.kernel.org>; Tue, 18 Aug 2015 22:53:14 -0400 (EDT)
-Content-Disposition: inline
-In-Reply-To: <1439946275-1595274-1-git-send-email-green@linuxhacker.ru>
+	Wed, 19 Aug 2015 02:28:11 -0400
+In-Reply-To: <55D34EA5.1010705@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: green@linuxhacker.ru
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Trond Myklebust <trond.myklebust@fys.uio.no>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>, Andreas Dilger <andreas.dilger@intel.com>, HPDD-discuss@ml01.01.org, Amir Shehata <amir.shehata@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-media <linux-media@vger.kernel.org>, Ramakrishnan Muthukrishnan <ram@rkrishnan.org>, Mikhail Khelik <mkhelik@cisco.com>, Mats Randgaard <matrandg@cisco.com>
 
-On Tue, Aug 18, 2015 at 09:04:35PM -0400, green@linuxhacker.ru wrote:
-> From: Oleg Drokin <green@linuxhacker.ru>
+On 08/18/2015 05:26 PM, Randy Dunlap wrote:
+> On 08/18/15 04:40, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20150817:
+>>
 > 
-> Removed references to ib_reg_phsy_mr() and PMR which was added
-> to deal with some Chelsio specific scenario, but no longer needed
-> now.
+> on i386:
 > 
-> Signed-off-by: Amir Shehata <amir.shehata@intel.com>
-> Signed-off-by: Oleg Drokin <oleg.drokin@intel.com>
-> ---
-> This fixes a build failure in Lustre due to ib_reg_phys_mr being removed.
+> when CONFIG_MEDIA_CONTROLLER is not enabled:
+> 
+> ../drivers/media/i2c/tc358743.c: In function 'tc358743_probe':
+> ../drivers/media/i2c/tc358743.c:1890:29: error: 'struct v4l2_subdev' has no member named 'entity'
+>   err = media_entity_init(&sd->entity, 1, &state->pad, 0);
+>                              ^
+> ../drivers/media/i2c/tc358743.c:1940:26: error: 'struct v4l2_subdev' has no member named 'entity'
+>   media_entity_cleanup(&sd->entity);
+>                           ^
+> ../drivers/media/i2c/tc358743.c: In function 'tc358743_remove':
+> ../drivers/media/i2c/tc358743.c:1955:26: error: 'struct v4l2_subdev' has no member named 'entity'
+>   media_entity_cleanup(&sd->entity);
+>                           ^
+> 
+> 
+> 
 
-You forgot a reported-by line :(
+tc358743: add missing Kconfig dependency/select
 
-I'll go add it...
+This driver depends on VIDEO_V4L2_SUBDEV_API and needs to select HDMI.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index d669547..521bbf1 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -289,7 +289,8 @@ config VIDEO_SAA711X
+ 
+ config VIDEO_TC358743
+ 	tristate "Toshiba TC358743 decoder"
+-	depends on VIDEO_V4L2 && I2C
++	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
++	select HDMI
+ 	---help---
+ 	  Support for the Toshiba TC358743 HDMI to MIPI CSI-2 bridge.
+ 
