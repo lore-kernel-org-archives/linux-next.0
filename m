@@ -1,70 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the s390 tree
-Date: Thu, 20 Aug 2015 15:32:38 +1000
-Message-ID: <20150820153238.673130bb@canb.auug.org.au>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: Tree for Aug 12 (include/linux/pci.h)
+Date: Wed, 19 Aug 2015 23:16:06 -0700
+Message-ID: <CAErSpo4+H6AJs9shVGN8fm9=GwPL9EzNcyMNt5FW81JGEA1sDA@mail.gmail.com>
+References: <20150812233914.451d1fcf@canb.auug.org.au> <55CB8AF0.4060905@infradead.org>
+ <20150813075322.064035f8@canb.auug.org.au> <55CBCF96.7060102@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59117 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750880AbbHTFck (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Aug 2015 01:32:40 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55CBCF96.7060102@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-next list <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Michal Marek <mmarek@suse.cz>, "Yann E. MORIN" <yann.morin.1998@free.fr>, linux-kbuild <linux-kbuild@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+[+cc Yann, linux-kbuild]
 
-Today's linux-next merge of the tip tree got a conflict in:
+On Wed, Aug 12, 2015 at 3:58 PM, Tadeusz Struk <tadeusz.struk@intel.com=
+> wrote:
+> On 08/12/2015 02:53 PM, Stephen Rothwell wrote:
+>> On Wed, 12 Aug 2015 11:05:36 -0700 Randy Dunlap <rdunlap@infradead.o=
+rg> wrote:
+>>> >
+>>> > on i386 or x86_64:
+>>> >
+>>> > Many (repeated) errors like this one:
+>>> >
+>>> > ../include/linux/pci.h:390:12: error: =C3=A2=E2=82=AC=CB=9Cstruct=
+ pci_dev=C3=A2=E2=82=AC=E2=84=A2 has no member named =C3=A2=E2=82=AC=CB=
+=9Cphysfn=C3=A2=E2=82=AC=E2=84=A2
+>>> >
+>>> > when CONFIG_PCI_ATS is not enabled.
+>> Maybe caused by commit
+>>
+>>   dd0f368398ea ("crypto: qat - Add qat dh895xcc VF driver")
+>>
+>> from the crypto tree Which adds a
+>>
+>>   select PCI_IOV
+>>
+>> to drivers/crypto/qat/Kconfig without the necessary
+>>
+>>   select PCI
+>>
+>> but PCI_IOV selects PCI_ATS, so I am not sure what happened here.  I=
+ am
+>> assuming that your config has PCI_IOV enabled?  What about PCI?
+>
+> There is a patch submitted, but not yet applied
+> https://patchwork.kernel.org/patch/6994171/
+> maybe it will help?
 
-  arch/s390/lib/uaccess.c
+I don't understand this.  In drivers/pci/Kconfig, we have:
 
-between commit:
+  config PCI_IOV
+    depends on PCI
 
-  cabc4abe8e36 ("s390/uaccess: remove uaccess_primary kernel parameter")
+and in drivers/crypto/qat/Kconfig, dd0f368398ea adds:
 
-from the s390 tree and commit:
+  config CRYPTO_DEV_QAT_DH895xCCVF
+    select PCI_IOV
 
-  ed79e946732e ("s390/uaccess, locking/static_keys: employ static_branch_likely()")
+And apparently it's possible to end up with a .config with
+CONFIG_PCI_IOV=3Dy but CONFIG_PCI is not set?  That seems wrong, since
+we declared that PCI_IOV depends on PCI.  Does select ignore that
+dependency somehow?
 
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/s390/lib/uaccess.c
-index 0d002a746bec,93cb1d09493d..000000000000
---- a/arch/s390/lib/uaccess.c
-+++ b/arch/s390/lib/uaccess.c
-@@@ -370,10 -370,23 +370,10 @@@ long __strncpy_from_user(char *dst, con
-  }
-  EXPORT_SYMBOL(__strncpy_from_user);
-  
- -/*
- - * The "old" uaccess variant without mvcos can be enforced with the
- - * uaccess_primary kernel parameter. This is mainly for debugging purposes.
- - */
- -static int uaccess_primary __initdata;
- -
- -static int __init parse_uaccess_pt(char *__unused)
- -{
- -	uaccess_primary = 1;
- -	return 0;
- -}
- -early_param("uaccess_primary", parse_uaccess_pt);
- -
-  static int __init uaccess_init(void)
-  {
- -	if (!uaccess_primary && test_facility(27))
- +	if (test_facility(27))
-- 		static_key_slow_inc(&have_mvcos);
-+ 		static_branch_enable(&have_mvcos);
-  	return 0;
-  }
-  early_initcall(uaccess_init);
+Bjorn
