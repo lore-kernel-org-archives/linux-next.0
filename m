@@ -1,64 +1,70 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 19 Aug 2015 22:16:40 -0700 (PDT)
-Message-ID: <20150819.221640.338059561382705752.davem@davemloft.net>
-References: <20150820125734.51414bd0@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the s390 tree
+Date: Thu, 20 Aug 2015 15:32:38 +1000
+Message-ID: <20150820153238.673130bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:52111 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750978AbbHTFQl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Aug 2015 01:16:41 -0400
-In-Reply-To: <20150820125734.51414bd0@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:59117 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750880AbbHTFck (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Aug 2015 01:32:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jbenc@redhat.com
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQpEYXRlOiBUaHUs
-IDIwIEF1ZyAyMDE1IDEyOjU3OjM0ICsxMDAwDQoNCj4gQWZ0ZXIgbWVyZ2luZyB0aGUgbmV0LW5l
-eHQgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkIChhcm0NCj4gbXVsdGlfdjdfZGVmY29u
-ZmlnKSBmYWlsZWQgbGlrZSB0aGlzOg0KPiANCj4gbmV0L2lwdjQvZmliX3NlbWFudGljcy5jOiBJ
-biBmdW5jdGlvbiAnZmliX2VuY2FwX21hdGNoJzoNCj4gbmV0L2lwdjQvZmliX3NlbWFudGljcy5j
-OjU1MzozOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2x3dHN0YXRl
-X2ZyZWUnIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQ0KPiAgICBsd3Rz
-dGF0ZV9mcmVlKGx3dHN0YXRlKTsNCj4gICAgXg0KPiANCj4gQ2F1c2VkIGJ5IGNvbW1pdA0KPiAN
-Cj4gICBkZjM4M2U2MjQwZWYgKCJsd3R1bm5lbDogZml4IG1lbW9yeSBsZWFrIikNCj4gDQo+IENP
-TkZJR19MV1RVTk5FTCBpcyBub3Qgc2V0IGZvciB0aGlzIGJ1aWxkLg0KPiANCj4gSSByZXZlcnRl
-ZCB0aGF0IGNvbW1pdCBmb3IgdG9kYXkuDQoNCk91Z2h0IHRvIGFscmVhZHkgYmUgZml4ZWQgYnk6
-DQoNCj09PT09PT09PT09PT09PT09PT09DQpGcm9tIDgyNGU3MzgzZTkyODE1Y2I1OTE3OTNjNzRj
-YzgzNmFhNTE2NWY3ZjggTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxDQpGcm9tOiBZaW5nIFh1ZSA8
-eWluZy54dWVAd2luZHJpdmVyLmNvbT4NCkRhdGU6IFdlZCwgMTkgQXVnIDIwMTUgMTU6NDY6MTcg
-KzA4MDANClN1YmplY3Q6IFtQQVRDSCAxLzJdIGx3dHVubmVsOiBGaXggdGhlIHNwYXJzZSB3YXJu
-aW5ncyBpbiBmaWJfZW5jYXBfbWF0Y2gNCk1JTUUtVmVyc2lvbjogMS4wDQpDb250ZW50LVR5cGU6
-IHRleHQvcGxhaW47IGNoYXJzZXQ9VVRGLTgNCkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IDhi
-aXQNCg0KV2hlbiBDT05GSUdfTFdUVU5ORUwgY29uZmlnIGlzIG5vdCBlbmFibGVkLCB0aGUgbHd0
-c3RhdGVfZnJlZSgpIGlzIG5vdA0KZGVjbGFyZWQgaW4gbHd0dW5uZWwuaCBhdCBhbGwuIEhvd2V2
-ZXIsIGV2ZW4gaW4gdGhpcyBjYXNlLCB0aGUgZnVuY3Rpb24NCmlzIHN0aWxsIHJlZmVyZW5jZWQg
-aW4gZmliX3NlbWFudGljcy5jIHNvIHRoYXQgdGhlcmUgYXBwZWFycyB0aGUNCmZvbGxvd2luZyBz
-cGFyc2Ugd2FybmluZ3M6DQoNCm5ldC9pcHY0L2ZpYl9zZW1hbnRpY3MuYzo1NTM6MTc6IGVycm9y
-OiB1bmRlZmluZWQgaWRlbnRpZmllciAnbHd0c3RhdGVfZnJlZScNCiAgQ0MgICAgICBuZXQvaXB2
-NC9maWJfc2VtYW50aWNzLm8NCiAgbmV0L2lwdjQvZmliX3NlbWFudGljcy5jOiBJbiBmdW5jdGlv
-biChZmliX2VuY2FwX21hdGNoojoNCiAgbmV0L2lwdjQvZmliX3NlbWFudGljcy5jOjU1MzozOiBl
-cnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24goWx3dHN0YXRlX2ZyZWWiIFst
-V2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQ0KICBjYzE6IHNvbWUgd2Fybmlu
-Z3MgYmVpbmcgdHJlYXRlZCBhcyBlcnJvcnMNCiAgbWFrZVsxXTogKioqIFtuZXQvaXB2NC9maWJf
-c2VtYW50aWNzLm9dIEVycm9yIDENCiAgbWFrZTogKioqIFtuZXQvaXB2NC9maWJfc2VtYW50aWNz
-Lm9dIEVycm9yIDINCg0KVG8gZWxpbWluYXRlIHRoZSBlcnJvciwgd2UgZGVmaW5lIGFuIGVtcHR5
-IGZ1bmN0aW9uIGZvciBsd3RzdGF0ZV9mcmVlKCkNCmluIGx3dHVubmVsLmggd2hlbiBDT05GSUdf
-TFdUVU5ORUwgaXMgZGlzYWJsZWQuDQoNCkZpeGVzOiBkZjM4M2U2MjQwZWYgKCJsd3R1bm5lbDog
-Zml4IG1lbW9yeSBsZWFrIikNCkNjOiBKaXJpIEJlbmMgPGpiZW5jQHJlZGhhdC5jb20+DQpSZXBv
-cnRlZC1ieToga2J1aWxkIHRlc3Qgcm9ib3QgPGZlbmdndWFuZy53dUBpbnRlbC5jb20+DQpTaWdu
-ZWQtb2ZmLWJ5OiBZaW5nIFh1ZSA8eWluZy54dWVAd2luZHJpdmVyLmNvbT4NCkFja2VkLWJ5OiBK
-aXJpIEJlbmMgPGpiZW5jQHJlZGhhdC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBEYXZpZCBTLiBNaWxs
-ZXIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+DQotLS0NCiBpbmNsdWRlL25ldC9sd3R1bm5lbC5oIHwg
-NCArKysrDQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEv
-aW5jbHVkZS9uZXQvbHd0dW5uZWwuaCBiL2luY2x1ZGUvbmV0L2x3dHVubmVsLmgNCmluZGV4IDM0
-ZmQ4ZjcuLmNmZWU1MzkgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL25ldC9sd3R1bm5lbC5oDQorKysg
-Yi9pbmNsdWRlL25ldC9sd3R1bm5lbC5oDQpAQCAtOTMsNiArOTMsMTAgQEAgaW50IGx3dHVubmVs
-X2lucHV0NihzdHJ1Y3Qgc2tfYnVmZiAqc2tiKTsNCiANCiAjZWxzZQ0KIA0KK3N0YXRpYyBpbmxp
-bmUgdm9pZCBsd3RzdGF0ZV9mcmVlKHN0cnVjdCBsd3R1bm5lbF9zdGF0ZSAqbHdzKQ0KK3sNCit9
-DQorDQogc3RhdGljIGlubGluZSBzdHJ1Y3QgbHd0dW5uZWxfc3RhdGUgKg0KIGx3dHN0YXRlX2dl
-dChzdHJ1Y3QgbHd0dW5uZWxfc3RhdGUgKmx3cykNCiB7DQotLSANCjIuMS4wDQoNCg==
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in:
+
+  arch/s390/lib/uaccess.c
+
+between commit:
+
+  cabc4abe8e36 ("s390/uaccess: remove uaccess_primary kernel parameter")
+
+from the s390 tree and commit:
+
+  ed79e946732e ("s390/uaccess, locking/static_keys: employ static_branch_likely()")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/s390/lib/uaccess.c
+index 0d002a746bec,93cb1d09493d..000000000000
+--- a/arch/s390/lib/uaccess.c
++++ b/arch/s390/lib/uaccess.c
+@@@ -370,10 -370,23 +370,10 @@@ long __strncpy_from_user(char *dst, con
+  }
+  EXPORT_SYMBOL(__strncpy_from_user);
+  
+ -/*
+ - * The "old" uaccess variant without mvcos can be enforced with the
+ - * uaccess_primary kernel parameter. This is mainly for debugging purposes.
+ - */
+ -static int uaccess_primary __initdata;
+ -
+ -static int __init parse_uaccess_pt(char *__unused)
+ -{
+ -	uaccess_primary = 1;
+ -	return 0;
+ -}
+ -early_param("uaccess_primary", parse_uaccess_pt);
+ -
+  static int __init uaccess_init(void)
+  {
+ -	if (!uaccess_primary && test_facility(27))
+ +	if (test_facility(27))
+- 		static_key_slow_inc(&have_mvcos);
++ 		static_branch_enable(&have_mvcos);
+  	return 0;
+  }
+  early_initcall(uaccess_init);
