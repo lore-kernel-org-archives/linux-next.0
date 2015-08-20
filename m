@@ -1,77 +1,54 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [Xen-devel] linux-next: Tree for Aug 18 (xen/apic)
-Date: Wed, 19 Aug 2015 12:12:06 -0400
-Message-ID: <20150819161206.GA14136@l.oracle.com>
-References: <20150818214003.73bd846a@canb.auug.org.au>
- <55D3639C.401@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tile tree with the microblaze tree
+Date: Thu, 20 Aug 2015 10:56:23 +1000
+Message-ID: <20150820105623.56c68fc9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:44452 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751161AbbHSQMp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Aug 2015 12:12:45 -0400
-Content-Disposition: inline
-In-Reply-To: <55D3639C.401@infradead.org>
+Received: from ozlabs.org ([103.22.144.67]:44847 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751566AbbHTA4Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Aug 2015 20:56:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Jason@zx2c4.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+To: Chris Metcalf <cmetcalf@ezchip.com>, Michal Simek <monstr@monstr.eu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>
 
-On Tue, Aug 18, 2015 at 09:55:56AM -0700, Randy Dunlap wrote:
-> On 08/18/15 04:40, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20150817:
-> > 
-> 
-> on i386:
-> 
-> CONFIG_SMP is not enabled.
-> # CONFIG_X86_UP_APIC is not set
+Hi Chris,
 
-I think this is related to fc5fee86bdd3d720e2d1d324e4fae0c35845fa63
-Author: Jason A. Donenfeld <Jason@zx2c4.com>
-Date:   Mon Aug 10 15:40:27 2015 +0200
+Today's linux-next merge of the tile tree got a conflict in:
 
-    x86/xen: build "Xen PV" APIC driver for domU as well
+  include/uapi/linux/elf-em.h
 
-CCing Jason
-> 
-> 
-> ../arch/x86/xen/apic.c: In function 'xen_io_apic_read':
-> ../arch/x86/xen/apic.c:18:2: error: implicit declaration of function 'mpc_ioapic_addr' [-Werror=implicit-function-declaration]
->   apic_op.apic_physbase = mpc_ioapic_addr(apic);
->   ^
-> ../arch/x86/xen/apic.c: At top level:
-> ../arch/x86/xen/apic.c:155:19: error: 'default_target_cpus' undeclared here (not in a function)
->   .target_cpus   = default_target_cpus,
->                    ^
-> ../arch/x86/xen/apic.c:158:24: error: 'default_check_apicid_used' undeclared here (not in a function)
->   .check_apicid_used  = default_check_apicid_used, /* Used on 32-bit */
->                         ^
-> ../arch/x86/xen/apic.c:160:30: error: 'flat_vector_allocation_domain' undeclared here (not in a function)
->   .vector_allocation_domain = flat_vector_allocation_domain,
->                               ^
-> ../arch/x86/xen/apic.c:163:25: error: 'default_ioapic_phys_id_map' undeclared here (not in a function)
->   .ioapic_phys_id_map  = default_ioapic_phys_id_map, /* Used on 32-bit */
->                          ^
-> ../arch/x86/xen/apic.c:165:28: error: 'default_cpu_present_to_apicid' undeclared here (not in a function)
->   .cpu_present_to_apicid  = default_cpu_present_to_apicid,
->                             ^
-> ../arch/x86/xen/apic.c:167:31: error: 'default_check_phys_apicid_present' undeclared here (not in a function)
->   .check_phys_apicid_present = default_check_phys_apicid_present, /* smp_sanity_check needs it */
->                                ^
-> ../arch/x86/xen/apic.c:174:29: error: 'flat_cpu_mask_to_apicid_and' undeclared here (not in a function)
->   .cpu_mask_to_apicid_and  = flat_cpu_mask_to_apicid_and,
->                              ^
-> 
-> 
-> 
-> -- 
-> ~Randy
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xen.org
-> http://lists.xen.org/xen-devel
+between commit:
+
+  bb88ba0946dd ("elf-em.h: move EM_MICROBLAZE to the common header")
+
+from the microblaze tree and commit:
+
+  a0ddef81f4ae ("tile: enable full SECCOMP support")
+
+from the tile tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/uapi/linux/elf-em.h
+index 8c90a7972a2f,3429a3ba382b..000000000000
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@@ -38,7 -38,8 +38,9 @@@
+  #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+  #define EM_TI_C6000	140	/* TI C6X DSPs */
+  #define EM_AARCH64	183	/* ARM 64 bit */
++ #define EM_TILEPRO	188	/* Tilera TILEPro */
+ +#define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
++ #define EM_TILEGX	191	/* Tilera TILE-Gx */
+  #define EM_FRV		0x5441	/* Fujitsu FR-V */
+  #define EM_AVR32	0x18ad	/* Atmel AVR32 */
+  
