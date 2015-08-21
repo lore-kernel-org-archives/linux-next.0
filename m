@@ -1,65 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the btrfs tree
-Date: Fri, 21 Aug 2015 10:42:10 +1000
-Message-ID: <20150821104210.19795868@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Fri, 21 Aug 2015 14:10:04 +1000
+Message-ID: <20150821141004.6298e3bd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36882 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60870 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751942AbbHUAmO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Aug 2015 20:42:14 -0400
+	id S1750801AbbHUEKH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Aug 2015 00:10:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Suchanek <hramrach@gmail.com>
 
-Hi all,
+Hi Mark,
 
-After merging the btrfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the spi tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-fs/btrfs/extent_io.c: In function 'btrfs_bio_clone':
-fs/btrfs/extent_io.c:2734:10: error: 'struct bio' has no member named 'bi_css'
-   if (bio->bi_css)
-          ^
-fs/btrfs/extent_io.c:2735:32: error: 'struct bio' has no member named 'bi_css'
-    bio_associate_blkcg(new, bio->bi_css);
-                                ^
-fs/btrfs/volumes.c: In function 'breakup_stripe_bio':
-fs/btrfs/volumes.c:5958:15: error: 'struct bio' has no member named 'bi_ioc'
-  if (first_bio->bi_ioc) {
-               ^
-fs/btrfs/volumes.c:5959:34: error: 'struct bio' has no member named 'bi_ioc'
-   get_io_context_active(first_bio->bi_ioc);
-                                  ^
-fs/btrfs/volumes.c:5960:6: error: 'struct bio' has no member named 'bi_ioc'
-   bio->bi_ioc = first_bio->bi_ioc;
-      ^
-fs/btrfs/volumes.c:5960:26: error: 'struct bio' has no member named 'bi_ioc'
-   bio->bi_ioc = first_bio->bi_ioc;
-                          ^
-fs/btrfs/volumes.c:5962:15: error: 'struct bio' has no member named 'bi_css'
-  if (first_bio->bi_css) {
-               ^
-fs/btrfs/volumes.c:5963:20: error: 'struct bio' has no member named 'bi_css'
-   css_get(first_bio->bi_css);
-                    ^
-fs/btrfs/volumes.c:5964:6: error: 'struct bio' has no member named 'bi_css'
-   bio->bi_css = first_bio->bi_css;
-      ^
-fs/btrfs/volumes.c:5964:26: error: 'struct bio' has no member named 'bi_css'
-   bio->bi_css = first_bio->bi_css;
-                          ^
+In file included from include/linux/clk.h:16:0,
+                 from drivers/spi/spi-sun4i.c:14:
+drivers/spi/spi-sun4i.c: In function 'sun4i_spi_transfer_one':
+drivers/spi/spi-sun4i.c:283:43: error: 'speed' undeclared (first use in this function)
+  tx_time = max_t(int, tfr->len * 8 * 2 / (speed / 1000), 100);
+                                           ^
+include/linux/kernel.h:767:17: note: in definition of macro 'max_t'
+  type __max1 = (x);   \
+                 ^
+drivers/spi/spi-sun4i.c:283:43: note: each undeclared identifier is reported only once for each function it appears in
+  tx_time = max_t(int, tfr->len * 8 * 2 / (speed / 1000), 100);
+                                           ^
+include/linux/kernel.h:767:17: note: in definition of macro 'max_t'
+  type __max1 = (x);   \
+                 ^
+In file included from include/linux/clk.h:16:0,
+                 from drivers/spi/spi-sun6i.c:14:
+drivers/spi/spi-sun6i.c: In function 'sun6i_spi_transfer_one':
+drivers/spi/spi-sun6i.c:273:43: error: 'speed' undeclared (first use in this function)
+  tx_time = max_t(int, tfr->len * 8 * 2 / (speed / 1000), 100);
+                                           ^
+include/linux/kernel.h:767:17: note: in definition of macro 'max_t'
+  type __max1 = (x);   \
+                 ^
+drivers/spi/spi-sun6i.c:273:43: note: each undeclared identifier is reported only once for each function it appears in
+  tx_time = max_t(int, tfr->len * 8 * 2 / (speed / 1000), 100);
+                                           ^
+include/linux/kernel.h:767:17: note: in definition of macro 'max_t'
+  type __max1 = (x);   \
+                 ^
 
 Caused by commit
 
-  da2f0f74cf7d ("Btrfs: add support for blkio controllers")
+  63d53d153b62 ("spi: sunxi: fix transfer timeout")
 
-This build does ont have CONFIG_BLK_CGROUP set.
-
-I have used the btrfs tree from next-20150820 for today.
+I have used the spi tree from next-20150820 for today.
 
 -- 
 Cheers,
