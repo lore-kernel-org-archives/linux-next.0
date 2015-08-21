@@ -1,76 +1,66 @@
-From: David Vrabel <david.vrabel@citrix.com>
-Subject: Re: [Xen-devel] linux-next: Tree for Aug 18 (xen/apic)
-Date: Thu, 20 Aug 2015 11:42:59 +0100
-Message-ID: <55D5AF33.7000606@citrix.com>
-References: <20150818214003.73bd846a@canb.auug.org.au>
- <55D3639C.401@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the btrfs tree
+Date: Fri, 21 Aug 2015 10:42:10 +1000
+Message-ID: <20150821104210.19795868@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp02.citrix.com ([66.165.176.63]:27672 "EHLO
-	SMTP02.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750986AbbHTKnC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Aug 2015 06:43:02 -0400
-In-Reply-To: <55D3639C.401@infradead.org>
+Received: from ozlabs.org ([103.22.144.67]:36882 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751942AbbHUAmO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Aug 2015 20:42:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 18/08/15 17:55, Randy Dunlap wrote:
-> On 08/18/15 04:40, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20150817:
->>
-> 
-> on i386:
-> 
-> CONFIG_SMP is not enabled.
-> # CONFIG_X86_UP_APIC is not set
+Hi all,
 
-Thanks for the report.  The below patch fixes this.
+After merging the btrfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-8<----------------------
-x86/xen: make CONFIG_XEN depend on CONFIG_X86_LOCAL_APIC
+fs/btrfs/extent_io.c: In function 'btrfs_bio_clone':
+fs/btrfs/extent_io.c:2734:10: error: 'struct bio' has no member named 'bi_css'
+   if (bio->bi_css)
+          ^
+fs/btrfs/extent_io.c:2735:32: error: 'struct bio' has no member named 'bi_css'
+    bio_associate_blkcg(new, bio->bi_css);
+                                ^
+fs/btrfs/volumes.c: In function 'breakup_stripe_bio':
+fs/btrfs/volumes.c:5958:15: error: 'struct bio' has no member named 'bi_ioc'
+  if (first_bio->bi_ioc) {
+               ^
+fs/btrfs/volumes.c:5959:34: error: 'struct bio' has no member named 'bi_ioc'
+   get_io_context_active(first_bio->bi_ioc);
+                                  ^
+fs/btrfs/volumes.c:5960:6: error: 'struct bio' has no member named 'bi_ioc'
+   bio->bi_ioc = first_bio->bi_ioc;
+      ^
+fs/btrfs/volumes.c:5960:26: error: 'struct bio' has no member named 'bi_ioc'
+   bio->bi_ioc = first_bio->bi_ioc;
+                          ^
+fs/btrfs/volumes.c:5962:15: error: 'struct bio' has no member named 'bi_css'
+  if (first_bio->bi_css) {
+               ^
+fs/btrfs/volumes.c:5963:20: error: 'struct bio' has no member named 'bi_css'
+   css_get(first_bio->bi_css);
+                    ^
+fs/btrfs/volumes.c:5964:6: error: 'struct bio' has no member named 'bi_css'
+   bio->bi_css = first_bio->bi_css;
+      ^
+fs/btrfs/volumes.c:5964:26: error: 'struct bio' has no member named 'bi_css'
+   bio->bi_css = first_bio->bi_css;
+                          ^
 
-Since commit feb44f1f7a4ac299d1ab1c3606860e70b9b89d69 (x86/xen:
-Provide a "Xen PV" APIC driver to support >255 VCPUs) Xen guests need
-a full APIC driver and thus should depend on X86_LOCAL_APIC.
+Caused by commit
 
-This fixes an i386 build failure with !SMP && !CONFIG_X86_UP_APIC by
-disabling Xen support in this configuration.
+  da2f0f74cf7d ("Btrfs: add support for blkio controllers")
 
-Users needing Xen support in a non-SMP i386 kernel will need to enable
-CONFIG_X86_UP_APIC.
+This build does ont have CONFIG_BLK_CGROUP set.
 
-Signed-off-by: David Vrabel <david.vrabel@citrix.com>
----
- arch/x86/xen/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I have used the btrfs tree from next-20150820 for today.
 
-diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-index e88fda8..4841453 100644
---- a/arch/x86/xen/Kconfig
-+++ b/arch/x86/xen/Kconfig
-@@ -8,7 +8,7 @@ config XEN
- 	select PARAVIRT_CLOCK
- 	select XEN_HAVE_PVMMU
- 	depends on X86_64 || (X86_32 && X86_PAE)
--	depends on X86_TSC
-+	depends on X86_LOCAL_APIC && X86_TSC
- 	help
- 	  This is the Linux Xen port.  Enabling this will allow the
- 	  kernel to boot in a paravirtualized environment under the
-@@ -17,7 +17,7 @@ config XEN
- config XEN_DOM0
- 	def_bool y
- 	depends on XEN && PCI_XEN && SWIOTLB_XEN
--	depends on X86_LOCAL_APIC && X86_IO_APIC && ACPI && PCI
-+	depends on X86_IO_APIC && ACPI && PCI
-
- config XEN_PVHVM
- 	def_bool y
 -- 
-2.1.4
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
