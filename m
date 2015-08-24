@@ -1,73 +1,57 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: linux-next: build failure after merge of the slave-dma tree
-Date: Mon, 24 Aug 2015 11:21:48 +0200
-Message-ID: <20150824092148.GI2413@lukather>
-References: <20150806122203.64e25587@canb.auug.org.au>
- <20150806030027.GS11789@localhost>
- <20150824065358.GC2413@lukather>
- <20150824081143.GG13546@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ omap_dss2 tree
+Date: Mon, 24 Aug 2015 20:53:32 +1000
+Message-ID: <20150824205332.3ecb165a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fKov5AqTsvseSZ0Z"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150824081143.GG13546@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@atmel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53467 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932242AbbHXKxe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Aug 2015 06:53:34 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolai Stange <nicstange@gmail.com>, Yuriy Kolerov <yuriy.kolerov@synopsys.com>
 
+Hi Andrew,
 
---fKov5AqTsvseSZ0Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-On Mon, Aug 24, 2015 at 01:41:43PM +0530, Vinod Koul wrote:
-> On Mon, Aug 24, 2015 at 08:53:59AM +0200, Maxime Ripard wrote:
-> > > I am dropping this commit now, it need to be fixed to take into accou=
-nt
-> > > Cyrille work on remove tx_width and this patch should be updated to r=
-eflect
-> > > that
-> >=20
-> > I'll send an updated version today, is there some time left for this
-> > to be part of 4.3?
->=20
-> Fortunately for you, Linus released rc8, so yes if you are quick we can s=
-till
-> merge this
+  drivers/video/console/Kconfig
 
-I just fixed the issue, tested it, and sent a new version.
+between commit:
 
-Thanks!
-Maxime
+  48fd8ecf29e3 ("framebuffer: disable vgacon on microblaze arch")
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+from the omap_dss2 tree and commit:
 
---fKov5AqTsvseSZ0Z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  4b9939fb41ee ("drivers/video/concole: add negative dependency for VGA_CONSOLE on ARC")
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+from the akpm-current tree.
 
-iQIcBAEBAgAGBQJV2uIsAAoJEBx+YmzsjxAgzLEQAInsWm0z6ROjRi9YfBGiw3RJ
-U6nHWP7A8CoQ7R7l06o+SpPMWsgkyqA5iFARDgxaeqEyXxgF2hHSYn59F/6rWOab
-aYYkEEBQJz8YfX39bkkoXWxKXOuon25ApWjXWJKjXnx1mZAcqEqLbw7jcvelYoqS
-JBDa9O42UmENKvF5FObIg0QuvA4z9c+sPlFEAz8+3CbkLlK5kuf2e7T0pryZONXR
-4GNEii0GnK4RKgP4ZEwIh2ycYsljXRIi1aYmsQY1HRQmBpKqzbZX38tPM6Dj34SR
-cOLBZXBQZHdqFCd/BK5V9tg+vsY15+FziFoq2adbfdlt22OPMIvFDhyYRXfNmUEW
-DztztjFZs6lfma67nWPfK3fL1QvNg4ZtV4tqD+lqiJm6hHjc+sYNxiZSfPKPXPCr
-Mon/ulSO3Y/e/uSaa9ujiG65mHOzJH9bZzCb3+4C+WGDu7CbJYojkxEFSN3IwMiw
-ISHzW8Q6EM13Te4z/MMM/FIeYuTRX/twm9hPxH35bKiYR7BRAXyV/P9AxksA/95k
-B2kIg9Ib0ApMVkmr6zn9zKvp8z6zrDTZpB2oOZKXrPvIhVXtdvn/w0wrLCToMk6G
-zRkg4rASwk/j/q91rOT9w1SHRv0bbYaSiiv4yQu/Ol9JFLwCJs76CSB/89VJh6y0
-oOPWysMQF4wXV3MTuYhE
-=F8om
------END PGP SIGNATURE-----
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
---fKov5AqTsvseSZ0Z--
+Another place begging for a controlling CONFIG_ symbol that other
+places can select (or a negative symbol).
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/video/console/Kconfig
+index e0dc0fee4ea6,071280643db7..000000000000
+--- a/drivers/video/console/Kconfig
++++ b/drivers/video/console/Kconfig
+@@@ -9,7 -9,7 +9,7 @@@ config VGA_CONSOL
+  	depends on !4xx && !8xx && !SPARC && !M68K && !PARISC && !FRV && \
+  		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
+  		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
+- 		!ARM64 && !MICROBLAZE
+ -		!ARM64 && !ARC
+++		!ARM64 && !MICROBLAZE && !ARC
+  	default y
+  	help
+  	  Saying Y here will allow you to use Linux in text mode through a
