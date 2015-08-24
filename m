@@ -1,55 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the btrfs tree
-Date: Mon, 24 Aug 2015 14:16:07 +1000
-Message-ID: <20150824141607.5644d08c@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Mon, 24 Aug 2015 14:20:23 +1000
+Message-ID: <20150824142023.11355647@canb.auug.org.au>
+References: <20150824132111.534ddea7@canb.auug.org.au>
+	<20150823.203325.2208394271706147325.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150823.203325.2208394271706147325.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@fb.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kent.overstreet@gmail.com>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jbenc@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-Hi Jens,
+Hi Dave,
 
-Today's linux-next merge of the block tree got a conflict in:
+On Sun, 23 Aug 2015 20:33:25 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 24 Aug 2015 13:21:11 +1000
+> 
+> > After merging the net-next tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> 
+> Fixed by:
+> 
+> ====================
+> [PATCH] route: fix breakage after moving lwtunnel state
 
-  fs/btrfs/inode.c
-
-between commit:
-
-  da2f0f74cf7d ("Btrfs: add support for blkio controllers")
-
-from the btrfs tree and commit:
-
-  b54ffb73cadc ("block: remove bio_get_nr_vecs()")
-
-from the block tree.
-
-I fixed it up (following Chris's example merge - see below) and can
-carry the fix as necessary (no action is required).
+Thanks, I will get that tomorrow.  I must try to remember to check to
+see if you have added fixes to your tree when I get these errors (not
+that it happens all that often).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/btrfs/inode.c
-index bda3c41dc9d5,f924d9a62700..000000000000
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@@ -7986,12 -7958,7 +7987,11 @@@ out
-  static struct bio *btrfs_dio_bio_alloc(struct block_device *bdev,
-  				       u64 first_sector, gfp_t gfp_flags)
-  {
-- 	int nr_vecs = bio_get_nr_vecs(bdev);
- -	return btrfs_bio_alloc(bdev, first_sector, BIO_MAX_PAGES, gfp_flags);
- +	struct bio *bio;
-- 	bio = btrfs_bio_alloc(bdev, first_sector, nr_vecs, gfp_flags);
-++	bio = btrfs_bio_alloc(bdev, first_sector, BIO_MAX_PAGES, gfp_flags);
- +	if (bio)
- +		bio_associate_current(bio);
- +	return bio;
-  }
-  
-  static inline int btrfs_lookup_and_bind_dio_csum(struct btrfs_root *root,
