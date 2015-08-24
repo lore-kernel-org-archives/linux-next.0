@@ -1,40 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xtensa tree with the arm64 and tip
- trees
-Date: Mon, 24 Aug 2015 11:10:54 +1000
-Message-ID: <20150824111054.4bad5fba@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 24 Aug 2015 13:21:11 +1000
+Message-ID: <20150824132111.534ddea7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60023 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48024 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753614AbbHXBK5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 23 Aug 2015 21:10:57 -0400
+	id S1751036AbbHXDVO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 23 Aug 2015 23:21:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Zankel <chris@zankel.net>, Catalin Marinas <catalin.marinas@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Benc <jbenc@redhat.com>
 
-Hi Chris,
+Hi all,
 
-Today's linux-next merge of the xtensa tree got a conflict in:
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  arch/xtensa/include/asm/atomic.h
+In function 'dst_hold',
+    inlined from '__ipv6_dev_ac_dec' at /home/sfr/next/next/net/ipv6/anycast.c:328:2:
+/home/sfr/next/next/include/linux/compiler.h:447:38: error: call to '__compiletime_assert_243' declared with attribute error: BUILD_BUG_ON failed: offsetof(struct dst_entry, __refcnt) & 63
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+                                      ^
+/home/sfr/next/next/include/linux/compiler.h:430:4: note: in definition of macro '__compiletime_assert'
+    prefix ## suffix();    \
+    ^
+/home/sfr/next/next/include/linux/compiler.h:447:2: note: in expansion of macro '_compiletime_assert'
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^
+/home/sfr/next/next/include/linux/bug.h:50:37: note: in expansion of macro 'compiletime_assert'
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^
+/home/sfr/next/next/include/linux/bug.h:74:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+  ^
+/home/sfr/next/next/include/net/dst.h:243:2: note: in expansion of macro 'BUILD_BUG_ON'
+  BUILD_BUG_ON(offsetof(struct dst_entry, __refcnt) & 63);
+  ^
 
-between commit:
+And many more :-(
 
-  2a3ed90f428c ("xtensa: Provide atomic_{or,xor,and}")
+Caused by commit
 
-from the arm64 and tip trees and commit:
+  61adedf3e3f1 ("route: move lwtunnel state to dst_entry")
 
-  38fef73c21d1 ("xtensa: implement fake NMI")
-
-from the xtensa tree.
-
-I fixed it up (I dropped the latter's definitions of
-atomic_{set,clear}_mask) and can carry the fix as necessary (no action
-is required).
+I have used the net-next tree from next-20150821 for today.
 
 -- 
 Cheers,
