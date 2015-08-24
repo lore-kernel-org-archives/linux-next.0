@@ -1,85 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Sun, 23 Aug 2015 20:33:25 -0700 (PDT)
-Message-ID: <20150823.203325.2208394271706147325.davem@davemloft.net>
-References: <20150824132111.534ddea7@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:47988 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753872AbbHXDd3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 23 Aug 2015 23:33:29 -0400
-In-Reply-To: <20150824132111.534ddea7@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jbenc@redhat.com
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 24 Aug 2015 13:21:11 +1000
+Subject: linux-next: manual merge of the block tree with the btrfs tree
+Date: Mon, 24 Aug 2015 14:15:35 +1000
+Message-ID: <20150824141535.42e0c4e1@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kent Overstreet <kent.overstreet@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-> After merging the net-next tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+Hi Jens,
 
-Fixed by:
+Today's linux-next merge of the block tree got a conflict in:
 
-====================
-[PATCH] route: fix breakage after moving lwtunnel state
+  fs/btrfs/volumes.c
 
-__recnt and related fields need to be in its own cacheline for performance
-reasons. Commit 61adedf3e3f1 ("route: move lwtunnel state to dst_entry")
-broke that on 32bit archs, causing BUILD_BUG_ON in dst_hold to be triggered.
+between commits:
 
-This patch fixes the breakage by moving the lwtunnel state to the end of
-dst_entry on 32bit archs. Unfortunately, this makes it share the cacheline
-with __refcnt and may affect performance, thus further patches may be
-needed.
+  da2f0f74cf7d ("Btrfs: add support for blkio controllers")
+  3a9508b0221d ("btrfs: fix compile when block cgroups are not enabled")
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Fixes: 61adedf3e3f1 ("route: move lwtunnel state to dst_entry")
-Signed-off-by: Jiri Benc <jbenc@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- include/net/dst.h | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+from the btrfs tree and commit:
 
-diff --git a/include/net/dst.h b/include/net/dst.h
-index 0a9a723..ef8f1d4 100644
---- a/include/net/dst.h
-+++ b/include/net/dst.h
-@@ -44,7 +44,6 @@ struct dst_entry {
- #else
- 	void			*__pad1;
- #endif
--	struct lwtunnel_state   *lwtstate;
- 	int			(*input)(struct sk_buff *);
- 	int			(*output)(struct sock *sk, struct sk_buff *skb);
- 
-@@ -85,11 +84,12 @@ struct dst_entry {
- 	__u32			__pad2;
- #endif
- 
-+#ifdef CONFIG_64BIT
-+	struct lwtunnel_state   *lwtstate;
- 	/*
- 	 * Align __refcnt to a 64 bytes alignment
- 	 * (L1_CACHE_SIZE would be too much)
- 	 */
--#ifdef CONFIG_64BIT
- 	long			__pad_to_align_refcnt[1];
- #endif
- 	/*
-@@ -99,6 +99,9 @@ struct dst_entry {
- 	atomic_t		__refcnt;	/* client references	*/
- 	int			__use;
- 	unsigned long		lastuse;
-+#ifndef CONFIG_64BIT
-+	struct lwtunnel_state   *lwtstate;
-+#endif
- 	union {
- 		struct dst_entry	*next;
- 		struct rtable __rcu	*rt_next;
+  0e28997ec476 ("btrfs: remove bio splitting and merge_bvec_fn() calls")
+
+from the block tree.
+
+I fixed it up (I removed breakup_stripe_bio) and can carry the fix as
+necessary (no action is required).
+
 -- 
-2.1.0
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
