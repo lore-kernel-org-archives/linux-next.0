@@ -1,72 +1,39 @@
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the kvm-ppc tree with the tip tree
-Date: Wed, 26 Aug 2015 11:21:00 -0700
-Message-ID: <20150826182100.GA2662@fergus.ozlabs.ibm.com>
+Date: Thu, 27 Aug 2015 07:30:38 +1000
+Message-ID: <20150827073038.06f66e4b@canb.auug.org.au>
 References: <20150824155954.0cb8a6a8@canb.auug.org.au>
+	<20150826182100.GA2662@fergus.ozlabs.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150824155954.0cb8a6a8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:38189 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752224AbbHZVak (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Aug 2015 17:30:40 -0400
+In-Reply-To: <20150826182100.GA2662@fergus.ozlabs.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Mackerras <paulus@ozlabs.org>
 Cc: Alexander Graf <agraf@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi Paul,
 
-On Mon, Aug 24, 2015 at 03:59:54PM +1000, Stephen Rothwell wrote:
-> Hi Alexander,
+On Wed, 26 Aug 2015 11:21:00 -0700 Paul Mackerras <paulus@ozlabs.org> wrote:
+>
+> On Mon, Aug 24, 2015 at 03:59:54PM +1000, Stephen Rothwell wrote:
+> >  -		} else if (should_resched()) {
+> >  +		} else if (need_resched()) {
+> >  +			vc->vcore_state = VCORE_PREEMPT;
 > 
-> Today's linux-next merge of the kvm-ppc tree got a conflict in:
-> 
->   arch/powerpc/kvm/book3s_hv.c
-> 
-> between commit:
-> 
->   c56dadf39761 ("sched/preempt, powerpc, kvm: Use need_resched() instead of should_resched()")
-> 
-> from the tip tree and commit:
-> 
->   ec2571650826 ("KVM: PPC: Book3S HV: Make use of unused threads when running guests")
-> 
-> from the kvm-ppc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> This line is removed in the kvm-ppc tree because it is now in the new
+> kvmppc_vcore_preempt() function.  Thus we don't need this line in the
+> merge result.  However, having it here just means that we set
+> vc->vcore_state to VCORE_PREEMPT twice.
 
-The fix isn't quite correct (see below), but the error is benign.
+Thanks for the report.  I have fixed up my reolution.
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/powerpc/kvm/book3s_hv.c
-> index a9f753fb73a8,fad52f226c12..000000000000
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@@ -2178,11 -2670,12 +2670,13 @@@ static int kvmppc_run_vcpu(struct kvm_r
->   		vc->runner = vcpu;
->   		if (n_ceded == vc->n_runnable) {
->   			kvmppc_vcore_blocked(vc);
->  -		} else if (should_resched()) {
->  +		} else if (need_resched()) {
->  +			vc->vcore_state = VCORE_PREEMPT;
-
-This line is removed in the kvm-ppc tree because it is now in the new
-kvmppc_vcore_preempt() function.  Thus we don't need this line in the
-merge result.  However, having it here just means that we set
-vc->vcore_state to VCORE_PREEMPT twice.
-
-> + 			kvmppc_vcore_preempt(vc);
->   			/* Let something else run */
->   			cond_resched_lock(&vc->lock);
-> - 			vc->vcore_state = VCORE_INACTIVE;
-> + 			if (vc->vcore_state == VCORE_PREEMPT)
-> + 				kvmppc_vcore_end_preempt(vc);
->   		} else {
->   			kvmppc_run_core(vc);
->   		}
-
-Regards,
-Paul.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
