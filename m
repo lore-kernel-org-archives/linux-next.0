@@ -1,27 +1,72 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: build failure after merge of the security tree
-Date: Wed, 26 Aug 2015 15:45:05 +0100
-Message-ID: <15177.1440600305@warthog.procyon.org.uk>
-References: <20150817160458.0c2bb25a@canb.auug.org.au> <20150817152953.355a9d4f@canb.auug.org.au>
+From: Paul Mackerras <paulus@ozlabs.org>
+Subject: Re: linux-next: manual merge of the kvm-ppc tree with the tip tree
+Date: Wed, 26 Aug 2015 11:21:00 -0700
+Message-ID: <20150826182100.GA2662@fergus.ozlabs.ibm.com>
+References: <20150824155954.0cb8a6a8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150817160458.0c2bb25a@canb.auug.org.au>
-Content-ID: <15176.1440600305.1@warthog.procyon.org.uk>
+Content-Disposition: inline
+In-Reply-To: <20150824155954.0cb8a6a8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <David.Woodhouse@intel.com>
+Cc: Alexander Graf <agraf@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Stephen,
 
-> > After a bit of digging, I installed libssl-dev on my Debian build
-> > machines.
+On Mon, Aug 24, 2015 at 03:59:54PM +1000, Stephen Rothwell wrote:
+> Hi Alexander,
 > 
-> Is this worth a mention in Documentation/Changes along with all the
-> other prerequisites?
+> Today's linux-next merge of the kvm-ppc tree got a conflict in:
+> 
+>   arch/powerpc/kvm/book3s_hv.c
+> 
+> between commit:
+> 
+>   c56dadf39761 ("sched/preempt, powerpc, kvm: Use need_resched() instead of should_resched()")
+> 
+> from the tip tree and commit:
+> 
+>   ec2571650826 ("KVM: PPC: Book3S HV: Make use of unused threads when running guests")
+> 
+> from the kvm-ppc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Could be.  It's mentioned in the Kconfig and Documentation/module-signing.txt
-already, but this looks like a good place.
+The fix isn't quite correct (see below), but the error is benign.
 
-David
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/powerpc/kvm/book3s_hv.c
+> index a9f753fb73a8,fad52f226c12..000000000000
+> --- a/arch/powerpc/kvm/book3s_hv.c
+> +++ b/arch/powerpc/kvm/book3s_hv.c
+> @@@ -2178,11 -2670,12 +2670,13 @@@ static int kvmppc_run_vcpu(struct kvm_r
+>   		vc->runner = vcpu;
+>   		if (n_ceded == vc->n_runnable) {
+>   			kvmppc_vcore_blocked(vc);
+>  -		} else if (should_resched()) {
+>  +		} else if (need_resched()) {
+>  +			vc->vcore_state = VCORE_PREEMPT;
+
+This line is removed in the kvm-ppc tree because it is now in the new
+kvmppc_vcore_preempt() function.  Thus we don't need this line in the
+merge result.  However, having it here just means that we set
+vc->vcore_state to VCORE_PREEMPT twice.
+
+> + 			kvmppc_vcore_preempt(vc);
+>   			/* Let something else run */
+>   			cond_resched_lock(&vc->lock);
+> - 			vc->vcore_state = VCORE_INACTIVE;
+> + 			if (vc->vcore_state == VCORE_PREEMPT)
+> + 				kvmppc_vcore_end_preempt(vc);
+>   		} else {
+>   			kvmppc_run_core(vc);
+>   		}
+
+Regards,
+Paul.
