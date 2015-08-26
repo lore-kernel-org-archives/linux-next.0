@@ -1,38 +1,33 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the i2c tree
-Date: Tue, 25 Aug 2015 17:01:39 -0700
-Message-ID: <CAKdAkRQqYXoTkkf=qh9KRJvJx5GhE=mui8ijq6r5GU1n-qWdnw@mail.gmail.com>
-References: <20150825105102.742ff687@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc-uh tree
+Date: Wed, 26 Aug 2015 12:04:35 +1000
+Message-ID: <20150826120435.27ed1e89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:33477 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755977AbbHZABk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Aug 2015 20:01:40 -0400
-In-Reply-To: <20150825105102.742ff687@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:46096 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752553AbbHZCEh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Aug 2015 22:04:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-next <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-On Mon, Aug 24, 2015 at 5:51 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Wolfram,
->
-> After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> ERROR: "of_irq_get_byname" [drivers/i2c/i2c-core.ko] undefined!
->
-> Caused by commit
->
->   efb6a10b761e ("i2c: allow specifying separate wakeup interrupt in device tree")
->
-> I have used the i2c tree from next-20150824 for today.
+Hi Ulf,
 
-Ugh, of_get_irq_byname is not exported; I'll send a patch.
+After merging the mmc-uh tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Thanks.
+ERROR: "pinctrl_bind_pins" [drivers/mmc/core/mmc_core.ko] undefined!
+
+Caused by commit
+
+  175172f6367f ("mmc: pwrseq: bind pinctrl pins before using the gpios")
+
+I have used te mmc-uh tree from next-20150825 for today.
 
 -- 
-Dmitry
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
