@@ -1,406 +1,388 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for Aug 27
-Date: Thu, 27 Aug 2015 18:22:35 +1000
-Message-ID: <20150827182235.479609c9@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20150827 build: 0 failures 74 warnings (next-20150827)
+Date: Thu, 27 Aug 2015 13:26:54 +0100
+Message-ID: <E1ZUwGc-0001Js-3P@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51128 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750802AbbH0IWh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Aug 2015 04:22:37 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37793 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752033AbbH0M1B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Aug 2015 08:27:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi all,
+Tree/Branch: next-20150827
+Git describe: next-20150827
+Commit: 2b186e5821 Add linux-next specific files for 20150827
 
-Changes since 20150826:
+Build Time: 81 min 28 sec
 
-The i2c tree lost its build failure.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-The slave-dma tree gained conflicts against the pm, mfd and rtc trees.
+Errors: 0
+Warnings: 74
+Section Mismatches: 1
 
-The block tree gained a conflict against Linus' tree.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allnoconfig
+     88 warnings    3 mismatches  : arm64-allmodconfig
+     10 warnings    0 mismatches  : arm-multi_v5_defconfig
+     13 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : x86_64-defconfig
+     94 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
+      2 warnings    0 mismatches  : arm64-defconfig
 
-The mmc-uh tree still had its build failure so I used the version from
-next-20150825.
+-------------------------------------------------------------------------------
 
-The tty tree still had its build failure for which I reverted part of
-a commit.
+Warnings Summary: 74
+	 17 ../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	 17 ../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	 12 <stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	 11 ../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	 10 ../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	  7 <stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+	  7 <stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  6 ../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	  4 ../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	  4 ../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	  3 ../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  3 ../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../include/linux/kernel.h:601:17: warning: comparison of distinct pointer types lacks a cast
+	  2 ../drivers/rtc/rtc-ds1374.c:667:6: warning: unused variable 'res' [-Wunused-variable]
+	  2 ../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  2 ../drivers/dma/ipu/ipu_irq.c:305:22: warning: 'irq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../block/blk-merge.c:91:9: warning: 'bvprv.bv_page' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../net/bluetooth/mgmt.c:6643:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:6643:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../include/linux/bitops.h:58:34: warning: passing argument 1 of 'find_next_zero_bit' from incompatible pointer type
+	  1 ../include/linux/bitops.h:56:34: warning: passing argument 1 of 'find_next_zero_bit' from incompatible pointer type
+	  1 ../include/asm-generic/memory_model.h:52:52: warning: 'bvprv.bv_page' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/nfsd/nfs4state.c:6081:53: warning: passing argument 4 of 'nfsd_foreach_client_lock' from incompatible pointer type
+	  1 ../fs/nfsd/nfs4state.c:6081:2: warning: passing argument 4 of 'nfsd_foreach_client_lock' from incompatible pointer type [enabled by default]
+	  1 ../fs/logfs/dev_bdev.c:84:14: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	  1 ../fs/logfs/dev_bdev.c:174:14: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	  1 ../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/tty/serial/amba-pl011.c:329:13: warning: 'pl011_writeb' defined but not used [-Wunused-function]
+	  1 ../drivers/scsi/bnx2fc/bnx2fc_fcoe.c:2134:1: warning: the frame size of 1256 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/ntb/ntb_transport.c:809:3: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/net/ethernet/mellanox/mlxsw/pci.c:1561:2: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/net/ethernet/mellanox/mlxsw/pci.c:1549:2: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	  1 ../drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4575:8: warning: 'chip' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c:588:2: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'dma_addr_t' [-Wformat=]
+	  1 ../drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c:1109:32: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c:297:3: warning: right shift count >= width of type [enabled by default]
+	  1 ../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
+	  1 ../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
+	  1 ../drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:241:11: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:231:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:211:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type [enabled by default]
+	  1 ../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type
+	  1 ../drivers/block/nvme-core.c:1891:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/nvme-core.c:1849:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	  1 ../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	  1 ../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
-The rtc tree gained a conflict against the arm-soc tree.
+Section Mismatch Summary: 1
+	  3 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
 
-Non-merge commits (relative to Linus' tree): 9929
- 8596 files changed, 524281 insertions(+), 204650 deletions(-)
 
-----------------------------------------------------------------------------
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+===============================================================================
+Detailed per-defconfig build reports below:
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log
-files in the Next directory.  Between each merge, the tree was built
-with a ppc64_defconfig for powerpc and an allmodconfig for x86_64,
-a multi_v7_defconfig for arm and a native build of tools/perf. After
-the final fixups (if any), it is also built with powerpc allnoconfig
-(32 and 64 bit), ppc44x_defconfig and allyesconfig (this fails its final
-link) and i386, sparc, sparc64 and arm defconfig.
 
-Below is a summary of the state of the merge.
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
 
-I am currently merging 225 trees (counting Linus' and 33 trees of patches
-pending for Linus' tree).
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 88 warnings, 3 section mismatches
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/atm/iphase.h:127:0: warning: "isprint" redefined
+	../drivers/block/drbd/drbd_bitmap.c:482:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/block/drbd/drbd_bitmap.c:483:0: warning: "BITS_PER_PAGE_MASK" redefined
+	../include/linux/kernel.h:601:17: warning: comparison of distinct pointer types lacks a cast
+	../include/linux/kernel.h:601:17: warning: comparison of distinct pointer types lacks a cast
+	../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type
+	../include/linux/bitops.h:56:34: warning: passing argument 1 of 'find_next_zero_bit' from incompatible pointer type
+	../include/linux/bitops.h:58:34: warning: passing argument 1 of 'find_next_zero_bit' from incompatible pointer type
+	../fs/nfsd/nfs4state.c:6081:53: warning: passing argument 4 of 'nfsd_foreach_client_lock' from incompatible pointer type
+	../drivers/infiniband/hw/qib/qib_qp.c:44:0: warning: "BITS_PER_PAGE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:43:0: warning: "FALSE" redefined
+	../drivers/isdn/mISDN/dsp_ecdis.h:44:0: warning: "TRUE" redefined
+	../drivers/mmc/host/sh_mmcif.c:417:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/mmc/host/sh_mmcif.c:418:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:62:0: warning: "TRUE" redefined
+	../drivers/net/fddi/skfp/h/targetos.h:63:0: warning: "FALSE" redefined
+	../drivers/rtc/rtc-ds1374.c:667:6: warning: unused variable 'res' [-Wunused-variable]
+	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
+	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
+	../drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c:588:2: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'dma_addr_t' [-Wformat=]
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../include/linux/bitops.h:6:19: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/tty/serial/amba-pl011.c:329:13: warning: 'pl011_writeb' defined but not used [-Wunused-function]
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:31:0: warning: "FALSE" redefined
+	../drivers/staging/ft1000/ft1000-usb/ft1000_usb.h:32:0: warning: "TRUE" redefined
+	../drivers/usb/renesas_usbhs/common.c:496:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
 
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
+Section Mismatches:
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x18c): Section mismatch in reference from the function init_module() to the function .exit.text:dprc_driver_exit()
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 10 warnings, 0 section mismatches
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master (f9ed72dde34e Merge branch 'for-linus' of git://git.kernel.dk/linux-block)
-Merging fixes/master (c7e9ad7da219 Merge branch 'perf-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip)
-Merging kbuild-current/rc-fixes (3d1450d54a4f Makefile: Force gzip and xz on module install)
-Merging arc-current/for-curr (e4140819dadc ARC: signal handling robustify)
-Merging arm-current/fixes (3939f3345050 ARM: 8418/1: add boot image dependencies to not generate invalid images)
-Merging m68k-current/for-linus (1214c525484c m68k: Use for_each_sg())
-Merging metag-fixes/fixes (0164a711c97b metag: Fix ioremap_wc/ioremap_cached build errors)
-Merging mips-fixes/mips-fixes (1795cd9b3a91 Linux 3.16-rc5)
-Merging powerpc-fixes/fixes (4d9aac397a5d powerpc/PCI: Disable MSI/MSI-X interrupts at PCI probe time in OF case)
-Merging powerpc-merge-mpe/fixes (bc0195aad0da Linux 4.2-rc2)
-Merging sparc/master (73958c651fbf sparc64: use ENTRY/ENDPROC in VISsave)
-Merging net/master (f50791ac1aca usbnet: Get EVENT_NO_RUNTIME_PM bit before it is cleared)
-Merging ipsec/master (158cd4af8ded packet: missing dev_put() in packet_do_bind())
-Merging sound-current/for-linus (c7cd0ef66aad ALSA: hda - Fix path power activation)
-Merging pci-current/for-linus (45ea2a5fed6d PCI: Don't use 64-bit bus addresses on PA-RISC)
-Merging wireless-drivers/master (741e3b9902d1 rtlwifi: rtl8723be: Add module parameter for MSI interrupts)
-Merging driver-core.current/driver-core-linus (cbfe8fa6cd67 Linux 4.2-rc4)
-Merging tty.current/tty-linus (cbfe8fa6cd67 Linux 4.2-rc4)
-Merging usb.current/usb-linus (f7644cbfcdf0 Linux 4.2-rc6)
-Merging usb-gadget-fixes/fixes (c93e64e91248 usb: udc: core: add device_del() call to error pathway)
-Merging usb-serial-fixes/usb-linus (d071a3cdd2e1 USB: qcserial: add HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module)
-Merging staging.current/staging-linus (f7644cbfcdf0 Linux 4.2-rc6)
-Merging char-misc.current/char-misc-linus (f7644cbfcdf0 Linux 4.2-rc6)
-Merging input-current/for-linus (e51e38494a8e Input: synaptics - fix handling of disabling gesture mode)
-Merging crypto-current/master (b310c178e6d8 crypto: caam - fix memory corruption in ahash_final_ctx)
-Merging ide/master (d681f1166919 ide: remove deprecated use of pci api)
-Merging devicetree-current/devicetree/merge (f76502aa9140 of/dynamic: Fix test for PPC_PSERIES)
-Merging rr-fixes/fixes (275d7d44d802 module: Fix locking in symbol_put_addr())
-Merging vfio-fixes/for-linus (4bc94d5dc95d vfio: Fix lockdep issue)
-Merging kselftest-fixes/fixes (fee50f3c8427 selftests/futex: Fix futex_cmp_requeue_pi() error handling)
-Merging backlight-fixes/for-backlight-fixes (68feaca0b13e backlight: pwm: Handle EPROBE_DEFER while requesting the PWM)
-Merging ftrace-fixes/for-next-urgent (6224beb12e19 tracing: Have branch tracer use recursive field of task struct)
-Merging mfd-fixes/for-mfd-fixes (fb9caeedafe6 mfd: Remove MFD_CROS_EC_SPI depends on OF)
-Merging drm-intel-fixes/for-linux-next-fixes (c13dcf9f2d6f Linux 4.2-rc8)
-Merging asm-generic/master (643165c8bbc8 Merge tag 'uaccess_for_upstream' of git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost into asm-generic)
-Merging arc/for-next (5a005d77a906 ARC: perf: cap the number of counters to hardware max of 32)
-Merging arm/for-next (0986c811d54f Merge branch 'drm-dwhdmi-devel' into for-next)
-CONFLICT (content): Merge conflict in arch/arm/include/asm/Kbuild
-Merging arm-perf/for-next/perf (fa8ad7889d83 arm: perf: factor arm_pmu core out to drivers)
-Merging arm-soc/for-next (38af586237cf arm-soc: document merges)
-CONFLICT (modify/delete): drivers/cpufreq/exynos-cpufreq.c deleted in arm-soc/for-next and modified in HEAD. Version HEAD of drivers/cpufreq/exynos-cpufreq.c left in tree.
-CONFLICT (modify/delete): arch/arm/kernel/psci.c deleted in HEAD and modified in arm-soc/for-next. Version arm-soc/for-next of arch/arm/kernel/psci.c left in tree.
-$ git rm -f arch/arm/kernel/psci.c drivers/cpufreq/exynos-cpufreq.c
-Applying: ARM: fix for PSCI code movement
-Merging at91/at91-next (253ebd4 Merge branch 'at91-4.3-defconfig' into at91-next)
-CONFLICT (content): Merge conflict in arch/arm/mach-at91/sama5.c
-CONFLICT (content): Merge conflict in arch/arm/configs/at91_dt_defconfig
-Merging bcm2835/for-next (b2776bf Linux 3.18)
-Merging berlin/berlin/for-next (d770e55 Linux 4.2-rc1)
-Merging cortex-m/for-next (e799b6f ARM: zImage: add support for ARMv7-M)
-Merging imx-mxs/for-next (c746ef1 Merge branch 'imx/defconfig' into for-next)
-Merging keystone/next (a6ba423 ARM: dts: k2l: fix the netcp range size)
-CONFLICT (content): Merge conflict in arch/arm/boot/dts/k2l.dtsi
-CONFLICT (content): Merge conflict in arch/arm/boot/dts/k2hk.dtsi
-CONFLICT (content): Merge conflict in arch/arm/boot/dts/k2e.dtsi
-Merging mvebu/for-next (adfc8c7 Merge branch 'mvebu/config' into mvebu/for-next)
-Merging omap/for-next (b2a882022a1e Merge branch 'omap-for-v4.3/dt-v2' into for-next)
-Merging omap-pending/for-next (30aa18d3bea5 MAINTAINERS: add maintainer for OMAP hwmod data)
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-Merging qcom/qcom/for-next (4ae93a64be4f soc: qcom: smem: Fix errant private access)
-Merging renesas/next (078e7cdb7497 Merge branch 'heads/fixes-for-v4.3' into next)
-Merging rockchip/for-next (ed0450118b2f Merge branch 'v4.3-armsoc/soc' into for-next)
-Merging rpi/for-rpi-next (bc0195aad0da Linux 4.2-rc2)
-Merging samsung/for-next (112129267f1a Merge branch 'v4.3-next/dt64-samsung' into for-next)
-Merging samsung-krzk/for-next (002528669469 Merge branch 'defconfig-for-next' into for-next)
-Merging sunxi/sunxi/for-next (9d73c13a139c Merge branches 'sunxi/dt-for-4.3' and 'sunxi/defconfig-for-4.3' into sunxi/for-next)
-Merging tegra/for-next (bea5a17a8beb Merge branch for-4.3/defconfig into for-next)
-Merging arm64/for-next/core (5166c20ef95b arm64: makefile: fix perf_callchain.o kconfig dependency)
-Merging blackfin/for-linus (d91e14b3b9e1 eth: bf609 eth clock: add pclk clock for stmmac driver probe)
-Merging c6x/for-linux-next (960a2741d5fd c67: irq: Use __handle_domain_irq())
-Merging cris/for-next (1e4d6e13d050 cris: don't use module_init for non-modular core eeprom.c code)
-CONFLICT (content): Merge conflict in arch/cris/include/asm/Kbuild
-Merging h8300/h8300-next (99bcfda85f66 Revert "asm-generic: {get,put}_user ptr argument evaluate only 1 time")
-Merging hexagon/linux-next (15978bfde3bb hexagon/time: Migrate to new 'set-state' interface)
-Merging ia64/next (ae40b7e28752 Merge branch 'misc-4.2' into next)
-Merging m68k/for-next (1ecb40643a9a m68k/bootinfo: Use kmemdup rather than duplicating its implementation)
-Merging m68knommu/for-next (50e48bd06731 m68k/coldfire: use PFN_DOWN macro)
-Merging metag/for-next (3fe6942f0486 Documentation/features/vm: Meta2 is capable of THP)
-Merging microblaze/next (bb88ba0946dd elf-em.h: move EM_MICROBLAZE to the common header)
-Merging mips/mips-for-linux-next (8e5f2cf82761 MIPS: math-emu: Remove unused handle_dsemul function declaration)
-Merging nios2/for-next (81c9517e7ab4 nios2/time: Migrate to new 'set-state' interface)
-Merging parisc-hd/for-next (0c0f80b3f908 parisc: Define ioremap_uc and ioremap_wc)
-Merging powerpc/next (5d53be7d8c7c powerpc/powernv: Fix mis-merge of OPAL support for LEDS driver)
-Merging powerpc-mpe/next (bc0195aad0da Linux 4.2-rc2)
-Merging fsl/next (4524cd093fa8 powerpc/t1023rdb/dts: set ifc nand chip select from 2 to 1)
-Merging mpc5xxx/next (9e813308a5c1 powerpc/thp: Add tracepoints to track hugepage invalidate)
-Merging s390/features (1d3f9094c6fd s390/sclp_vt220: support magic sysrequests)
-Merging sparc-next/master (9f935675d41a Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input)
-Merging tile/master (ff3e9a7307db tile/vdso: emit a GNU hash as well)
-CONFLICT (content): Merge conflict in include/uapi/linux/elf-em.h
-Merging uml/linux-next (bdbac7d0e2b3 um: Fix kernel mode fault condition)
-Merging unicore32/unicore32 (d670878e2c9a unicore32: Remove ARCH_HAS_CPUFREQ config option)
-Merging xtensa/for_next (895fb3159280 xtensa: improve vmlinux.lds.S sed post-processing)
-CONFLICT (content): Merge conflict in arch/xtensa/include/asm/atomic.h
-Merging btrfs/next (3a9508b0221d btrfs: fix compile when block cgroups are not enabled)
-Merging ceph/master (64c1797a9371 libceph: Remove spurious kunmap() of the zero page)
-Merging cifs/for-next (5fb4e288a025 cifs: Fix use-after-free on mid_q_entry)
-Merging ecryptfs/next (0dad87fcb732 eCryptfs: Delete a check before the function call "key_put")
-Merging ext3/for_next (9181f8bf5abf udf: Don't modify filesystem for read-only mounts)
-Merging ext4/dev (bdfe0cbd746a Revert "ext4: remove block_device_ejected")
-Merging f2fs/dev (b01548919c33 f2fs: handle f2fs_truncate error correctly)
-Merging fscache/fscache (b00c2ae2ed3c FS-Cache: Don't override netfs's primary_index if registering failed)
-Merging fuse/for-next (0a30f612d6cf fuse: update MAINTAINERS entry)
-Merging gfs2/for-next (ea79f0ec7a38 GFS2: Make ht_parms static)
-Merging jfs/jfs-next (26456955719b jfs: clean up jfs_rename and fix out of order unlock)
-Merging nfs/linux-next (1090c3bf81ef nfs42: remove unused declaration)
-Merging nfsd/nfsd-next (a8bd5e23a345 nfsd: Add Jeff Layton as co-maintainer)
-Merging orangefs/for-next (600896a3b8b0 Orangefs: Swap order of include files)
-Merging overlayfs/overlayfs-next (cdb672795876 ovl: lookup whiteouts outside iterate_dir())
-Merging squashfs/master (62421645bb70 Squashfs: Add LZ4 compression configuration option)
-Merging v9fs/for-next (b5ac1fb2717e 9p: fix return code of read() when count is 0)
-Merging ubifs/linux-next (071a1f837f72 UGIFS: fix a typo in comment of ubifs_budget_req)
-Merging xfs/for-next (70b33a7466ba Merge branch 'xfs-misc-fixes-for-4.3-3' into for-next)
-Merging file-locks/linux-next (ee296d7c5709 locks: inline posix_lock_file_wait and flock_lock_file_wait)
-Merging vfs/for-next (397d425dc26d vfs: Test for and handle paths that are unreachable from their mnt_root)
-Merging pci/next (1845f79c5eb6 Merge branch 'pci/enumeration' into next)
-CONFLICT (content): Merge conflict in drivers/pci/host/pcie-iproc.c
-CONFLICT (content): Merge conflict in drivers/pci/host/Kconfig
-Merging hid/for-next (8e433b666751 Merge branch 'for-4.3/upstream' into for-next)
-Merging i2c/i2c/for-next (31bb26d67b48 Merge branch 'i2c/for-4.3' into i2c/for-next)
-Merging jdelvare-hwmon/master (902fd32b7711 hwmon: (k10temp) Remove duplicate pci-id define)
-Merging dmi/master (1dc51b828800 Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
-Merging hwmon-staging/hwmon-next (ccf2dc51bc4a hwmon: (ltc2978) Add support for LTM4675)
-Merging v4l-dvb/master (5d26c12b70e9 Merge branch 'v4l_for_linus' into to_next)
-Merging kbuild/for-next (afa50c336d92 Merge branch 'kbuild/kbuild' into kbuild/for-next)
-Merging kconfig/for-next (c0ddc8c745b7 localmodconfig: Use Kbuild files too)
-Merging libata/for-next (82908d67958c Merge branch 'for-4.2-fixes' into for-next)
-Merging pm/linux-next (5b1e6ec93c6b Merge branches 'acpi-ec', 'acpi-osl' and 'acpi-processor' into linux-next)
-Merging idle/next (aba5686671dc Merge branch 'cpuidle' into release)
-Merging apm/for-next (53675abbd1e5 x86, apm: Remove unused variable)
-Merging thermal/next (6ce87b2a60f1 Merge branches 'for-rc' and 'release' of .git into next)
-Merging thermal-soc/next (1afb9c539dae thermal/cpu_cooling: update policy limits if clipped_freq < policy->max)
-Merging ieee1394/for-next (d71e6a11737f firewire: core: use correct vendor/model IDs)
-Merging dlm/next (b96f465035f9 dlm: fix lvb copy for user locks)
-Merging swiotlb/linux-next (023600f192be swiotlb: do not export map_single function)
-Merging slave-dma/next (9dd4efc41d09 Merge branch 'for-linus' into next)
-CONFLICT (content): Merge conflict in drivers/dma/Makefile
-CONFLICT (content): Merge conflict in drivers/dma/Kconfig
-Merging net-next/master (8c5bbe77d4cd Merge branch 'act_bpf_lockless')
-Merging ipsec-next/master (e69948a0a530 net: Document xfrm4_gc_thresh and xfrm6_gc_thresh)
-Merging wireless-drivers-next/master (0ba3ac03c1f3 Merge ath-next from ath.git)
-Merging bluetooth/master (c0c700240d9a Bluetooth: hci_intel: Add Intel baudrate configuration support)
-Merging rdma/for-next (153b7306b7c6 Merge branch 'hfi1-v4' into to-be-rebased/for-4.3)
-Merging mtd/master (5f867db63473 mtd: nand: Fix NAND_USE_BOUNCE_BUFFER flag conflict)
-Merging l2-mtd/master (cc7fce802290 mtd: blkdevs: fix switch-bool compilation warning)
-Merging crypto/master (bf433416e675 crypto: algif_aead - fix for multiple operations on AF_ALG sockets)
-CONFLICT (content): Merge conflict in arch/arm/configs/imx_v6_v7_defconfig
-Merging drm/drm-next (db56176025ce Revert "drm/atomic: Call ww_acquire_done after check phase is complete")
-CONFLICT (content): Merge conflict in arch/arm/configs/multi_v7_defconfig
-Merging drm-panel/drm/panel/for-next (a33ee95f8f45 drm/bridge: Put Kconfig entries in a separate menu)
-Merging drm-intel/for-linux-next (26951caf55d7 drm/i915/skl: enable DDI-E hotplug)
-Merging drm-tegra/drm/tegra/for-next (459cc2c6800b drm/tegra: sor: Add HDMI support)
-Merging drm-misc/topic/drm-misc (f4b199715e68 drm/fb-helper: Add module option to disable fbdev emulation)
-Merging drm-exynos/exynos-drm/for-next (1b647a166f07 Merge tag 'dmaengine-fix-4.2-rc8' of git://git.infradead.org/users/vkoul/slave-dma)
-Merging drm-msm/msm-next (d248b61f6114 drm/msm/dsi: Introduce DSI configuration module)
-Merging sound/for-next (0662292aec05 ALSA: usb-audio: Handle normal and auto-suspend equally)
-Merging sound-asoc/for-next (9bf087aa8609 Merge remote-tracking branches 'asoc/topic/wm8960', 'asoc/topic/wm8983', 'asoc/topic/wm8996' and 'asoc/topic/xtensa' into asoc-next)
-Merging modules/modules-next (5cfb203a304d modpost: abort if a module symbol is too long)
-Merging input/next (66bc2f51ef7d Input: psmouse - add small delay for IBM trackpoint pass-through mode)
-Merging block/for-next (721cb0165e64 Merge branch 'for-4.3/drivers' into for-next)
-CONFLICT (content): Merge conflict in fs/fs-writeback.c
-CONFLICT (content): Merge conflict in fs/f2fs/data.c
-CONFLICT (content): Merge conflict in fs/btrfs/volumes.c
-CONFLICT (content): Merge conflict in fs/btrfs/scrub.c
-CONFLICT (content): Merge conflict in fs/btrfs/raid56.c
-CONFLICT (content): Merge conflict in fs/btrfs/inode.c
-CONFLICT (content): Merge conflict in drivers/md/dm.c
-CONFLICT (content): Merge conflict in crypto/ccm.c
-CONFLICT (content): Merge conflict in block/bounce.c
-Applying: block: lustre: temporary fix for bio_endio API change
-Merging device-mapper/for-next (bd49784fd1e8 dm stats: report precise_timestamps and histogram in @stats_list output)
-Merging pcmcia/master (e8e68fd86d22 pcmcia: do not break rsrc_nonstatic when handling anonymous cards)
-Merging mmc/mmc-next (11bc9381b277 mmc: sdhci-s3c: use mmc_of_parse and remove the card_tasklet)
-Merging mmc-uh/next (cf7565369868 mmc: sdhci-of-at91: fix platform_no_drv_owner.cocci warnings)
-$ git reset --hard HEAD^
-Merging next-20150825 version of mmc-uh
-Merging kgdb/kgdb-next (2d289f14f00a kdb: Fix handling of kallsyms_symbol_next() return value)
-Merging md/for-next (8f4a806e5c12 md-cluster: remove inappropriate try_module_get from join())
-CONFLICT (content): Merge conflict in drivers/md/raid5.c
-CONFLICT (content): Merge conflict in drivers/md/raid0.c
-Merging mfd/for-mfd-next (5a688c455066 mfd: jz4740-adc: Init mask cache in generic IRQ chip)
-CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
-Merging backlight/for-backlight-next (13d20b3b618a backlight: tosa: Export I2C module alias information)
-Merging battery/master (b68c3161430a bq2415x_charger: Allow to load and use driver even if notify device is not registered yet)
-Merging omap_dss2/for-next (b06ece93cf96 video: fbdev: s3c-fb: Constify platform_device_id)
-Merging regulator/for-next (2795987874ec Merge remote-tracking branches 'regulator/topic/stub', 'regulator/topic/tol' and 'regulator/topic/tps6586x' into regulator-next)
-Merging security/next (30b139dfe0bf scripts: add extract-cert and sign-file to .gitignore)
-CONFLICT (content): Merge conflict in security/yama/yama_lsm.c
-Merging integrity/next (24fd03c87695 ima: update builtin policies)
-Merging selinux/next (fda4d578ed0a selinux: explicitly declare the role "base_r")
-Merging lblnet/next (b2776bf7149b Linux 3.18)
-Merging watchdog/master (c13dcf9f2d6f Linux 4.2-rc8)
-Merging iommu/next (4d400e71a1ee Merge branches 'arm/omap', 'arm/msm', 'arm/smmu', 'arm/tegra', 'x86/vt-d', 'x86/amd', 'ppc/pamu' and 'core' into next)
-Merging dwmw2-iommu/master (5dbaf90a6780 iommu/vt-d: Add initial shell of SVM support)
-Merging vfio/next (a714ea5fa416 MAINTAINERS: Add vfio-platform sub-maintainer)
-Merging jc_docs/docs-next (0fe0965e63c8 Documentation/x86: Rename IRQSTACKSIZE to IRQ_STACK_SIZE)
-Merging trivial/for-next (e5f6450c3f40 MAINTAINERS: update my e-mail address)
-CONFLICT (modify/delete): drivers/regulator/max77843.c deleted in HEAD and modified in trivial/for-next. Version trivial/for-next of drivers/regulator/max77843.c left in tree.
-CONFLICT (content): Merge conflict in drivers/media/v4l2-core/videobuf2-memops.c
-$ git rm -f drivers/regulator/max77843.c
-Merging audit/next (15ce414b82b0 fixup: audit: implement audit by executable)
-CONFLICT (content): Merge conflict in kernel/audit.c
-Merging devicetree/devicetree/next (48a9b733e644 of/irq: Rename "intc_desc" to "of_intc_desc" to fix OF on sh)
-Merging dt-rh/for-next (126b16e2ad98 Docs: dt: add generic MSI bindings)
-Merging mailbox/mailbox-for-next (86e488adaab7 mailbox: arm_mhu: reduce txpoll_period from 10ms to 1 ms)
-Merging spi/for-next (7d617336cb5d Merge remote-tracking branch 'spi/topic/xcomm' into spi-next)
-Merging tip/auto-latest (9cc8370f6130 Merge branch 'x86/platform')
-CONFLICT (content): Merge conflict in arch/s390/lib/uaccess.c
-CONFLICT (content): Merge conflict in arch/mips/include/asm/switch_to.h
-CONFLICT (content): Merge conflict in arch/arm64/include/asm/barrier.h
-CONFLICT (content): Merge conflict in arch/arm/mach-shmobile/setup-r8a7779.c
-CONFLICT (modify/delete): arch/arm/mach-shmobile/intc-sh73a0.c deleted in HEAD and modified in tip/auto-latest. Version tip/auto-latest of arch/arm/mach-shmobile/intc-sh73a0.c left in tree.
-$ git rm -f arch/arm/mach-shmobile/intc-sh73a0.c
-Merging clockevents/clockevents/next (2b5cf544934f cris/time: Migrate to new 'set-state' interface)
-Merging edac/linux_next (fa2ce64f85be sb_edac: support for Broadwell -EP and -EX)
-Merging edac-amd/for-next (99e1dfb7d209 EDAC, mce_amd: Don't emit 'CE' for Deferred error)
-Merging irqchip/irqchip/for-next (a8bcdc32fafb Merge branch 'irqchip/core' into irqchip/for-next)
-Merging tiny/tiny/next (f114040e3ea6 Linux 3.18-rc1)
-Merging ftrace/for-next (b44754d8262d ring_buffer: Allow to exit the ring buffer benchmark immediately)
-Merging rcu/rcu/next (95f2435b1f83 rcu: Change _wait_rcu_gp() to work around gcc 67055 bug)
-Merging kvm/linux-next (4d283ec908e6 x86/kvm: Rename VMX's segment access rights defines)
-Merging kvm-arm/next (054167b3d551 arm: KVM: keep arm vfp/simd exit handling consistent with arm64)
-Merging kvm-ppc/kvm-ppc-next (c63517c2e381 KVM: PPC: Book3S: correct width in XER handling)
-CONFLICT (content): Merge conflict in arch/powerpc/kvm/book3s_hv.c
-Merging kvms390/next (152b28392a8d KVM: s390: Fix assumption that kvm_set_irq_routing is always run successfully)
-Merging xen-tip/linux-next (0ac7a1841284 xen/xenbus: Rename the variable xen_store_mfn to xen_store_gfn)
-CONFLICT (content): Merge conflict in arch/x86/xen/enlighten.c
-Merging percpu/for-next (292c24a073ee percpu: clean up of schunk->map[] assignment in pcpu_setup_first_chunk)
-Merging workqueues/for-next (355c06633e23 workqueue: fix some docbook warnings)
-Merging drivers-x86/for-next (fc0bfacd045a hp-wireless: remove unneeded goto/label in hpwl_init)
-Merging chrome-platform/for-next (1d95e6f10fd8 platform/chrome: cros_ec: Fix possible leak in led_rgb_store())
-Merging regmap/for-next (579657f2e1ed Merge remote-tracking branches 'regmap/topic/lockdep', 'regmap/topic/raw' and 'regmap/topic/seq-delay' into regmap-next)
-Applying: mfd: Fixup clients of multi_reg_write/register_patch
-Merging hsi/for-next (d770e558e219 Linux 4.2-rc1)
-Merging leds/for-next (5f414dd632fd leds: Export OF module alias information in missing drivers)
-Merging ipmi/for-next (437e1ebfeddd ipmi: add of_device_id in MODULE_DEVICE_TABLE)
-Merging driver-core/driver-core-next (71db87ba5700 bus: subsys: update return type of ->remove_dev() to void)
-CONFLICT (content): Merge conflict in drivers/cpufreq/cpufreq.c
-Merging tty/tty-next (c868cbb7e5c6 serial: imx: save and restore context in the suspend path)
-Applying: serial: imx: partial revert of "introduce serial_imx_enable_wakeup()"
-Merging usb/usb-next (44840dec6127 USB: qcserial: add HP lt4111 LTE/EV-DO/HSPA+ Gobi 4G Module)
-Merging usb-gadget/next (2f3cc24f07b8 usb: musb: gadget: fix build break by adding missing 'break')
-Merging usb-serial/usb-next (26c78daade0f USB: io_ti: Add heartbeat to keep idle EP/416 ports from disconnecting)
-Merging staging/staging-next (415bcb5c6eff staging/lustre/o2iblnd: remove references to ib_reg_phsy_mr())
-CONFLICT (modify/delete): drivers/staging/ozwpan/ozproto.c deleted in staging/staging-next and modified in HEAD. Version HEAD of drivers/staging/ozwpan/ozproto.c left in tree.
-CONFLICT (content): Merge conflict in drivers/staging/lustre/lustre/include/linux/lustre_compat25.h
-CONFLICT (content): Merge conflict in drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-$ git rm -f drivers/staging/ozwpan/ozproto.c
-Applying: staging/lustre: fix for bio_endio() API change
-Merging char-misc/char-misc-next (672cfeeb93e5 Merge tag 'extcon-next-for-4.3' of git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon into char-misc-testing)
-CONFLICT (content): Merge conflict in drivers/misc/ti-st/st_kim.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/mshyperv.c
-Applying: Drivers: hv: vmbus: fix for the removal of rdtscll()
-Merging extcon/extcon-next (ac22a1d3386e extcon: palmas: Fix build break due to devm_gpiod_get_optional API change)
-Merging kdbus/kdbus (a36324913ff2 kdbus: selftests: add more name registry tests)
-Merging cgroup/for-next (eacb1e7d4bfa Merge branch 'for-4.3' into for-next)
-Merging scsi/for-next (bd2f88337545 Merge branch 'misc' into for-next)
-Merging target-updates/for-next (109e2381749c target: Drop iSCSI use of mutex around max_cmd_sn increment)
-CONFLICT (content): Merge conflict in include/scsi/scsi_eh.h
-CONFLICT (content): Merge conflict in drivers/scsi/scsi_error.c
-CONFLICT (content): Merge conflict in drivers/ata/libata-scsi.c
-Merging target-merge/for-next-merge (ebc9e94db174 cxlflash: Virtual LUN support)
-CONFLICT (content): Merge conflict in drivers/scsi/cxlflash/main.c
-Merging pinctrl/for-next (3ab897d2113c Merge branch 'devel' into for-next)
-Merging vhost/linux-next (0c63b715912b PCI/MSI: Make pci_msi_shutdown(), pci_msix_shutdown() static)
-Merging remoteproc/for-next (8de3dbd0895b remoteproc: fix !CONFIG_OF build breakage)
-Merging rpmsg/for-next (b1b9891441fa rpmsg: use less buffers when vrings are small)
-Merging gpio/for-next (929550b9f9f8 gpio: mxc: fix section mismatch warning)
-Applying: tc358743: fix for devm_gpiod_get API change
-Merging dma-mapping/dma-mapping-next (d770e558e219 Linux 4.2-rc1)
-Merging pwm/for-next (01ec8472009c pwm-pca9685: Support changing the output frequency)
-Merging dma-buf/for-next (86ea07ca846a Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux)
-Merging userns/for-next (4b75de861505 fs: Set the size of empty dirs to 0.)
-Merging ktest/for-next (b953c0d234bc Linux 4.1)
-Merging clk/clk-next (d31ff5f7f3b1 clk: pistachio: correct critical clock list)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
-CONFLICT (content): Merge conflict in drivers/clk/ti/Makefile
-Merging random/dev (7185ad2672a7 crypto: memzero_explicit - make sure to clear out sensitive data)
-Merging aio/master (5f785de58873 aio: Skip timer for io_getevents if timeout=0)
-Merging llvmlinux/for-next (25d4aee23af2 arm: LLVMLinux: Use global stack register variable for percpu)
-Merging kselftest/next (d770e558e219 Linux 4.2-rc1)
-Merging y2038/y2038 (ed8c2241c1ae coredump: Use 64bit time for unix time of coredump)
-CONFLICT (content): Merge conflict in drivers/staging/media/lirc/lirc_parallel.c
-Merging luto-misc/next (a6c5170d1ede Merge branch 'for-4.0' of git://linux-nfs.org/~bfields/linux)
-Merging access_once/linux-next (c231afa3ccf1 compiler.h: cast away attributes in WRITE_ONCE magic)
-Merging livepatching/for-next (07d42d41dfc4 Merge branch 'for-4.3/upstream' into for-next)
-Merging coresight/next (395855d956ed coresight: Fix implicit inclusion of linux/sched.h)
-Merging rtc/rtc-next (c53d791e8e50 rtc: omap: Add external clock enabling support)
-CONFLICT (content): Merge conflict in arch/arm/boot/dts/am437x-gp-evm.dts
-Merging hwspinlock/for-next (bd5717a4632c hwspinlock: qcom: Correct msb in regmap_field)
-Merging nvdimm/libnvdimm-for-next (6f3d528ae9cf Merge branch 'pmem-api' into libnvdimm-for-next)
-Merging akpm-current/current (0931fbddc5f2 lib: scatterlist: add sg splitting function)
-CONFLICT (content): Merge conflict in mm/early_ioremap.c
-CONFLICT (content): Merge conflict in mm/Makefile
-CONFLICT (content): Merge conflict in mm/Kconfig
-CONFLICT (content): Merge conflict in kernel/cgroup.c
-CONFLICT (content): Merge conflict in include/linux/kexec.h
-CONFLICT (modify/delete): fs/ext3/super.c deleted in HEAD and modified in akpm-current/current. Version akpm-current/current of fs/ext3/super.c left in tree.
-CONFLICT (content): Merge conflict in drivers/video/console/Kconfig
-CONFLICT (content): Merge conflict in arch/x86/entry/syscalls/syscall_32.tbl
-$ git rm -f fs/ext3/super.c
-Applying: userfaultfd: selftest: update userfaultfd x86 32bit syscall number
-$ git checkout -b akpm remotes/origin/akpm/master
-Applying: namei: fix warning while make xmldocs caused by namei.c
-Applying: fs/seq_file: convert int seq_vprint/seq_printf/etc... returns to void
-Applying: fs-seq_file-convert-int-seq_vprint-seq_printf-etc-returns-to-void-fix
-Applying: fs-seq_file-convert-int-seq_vprint-seq_printf-etc-returns-to-void-fix-fix
-Applying: mm: mark most vm_operations_struct const
-Applying: mm, mpx: add "vm_flags_t vm_flags" arg to do_mmap_pgoff()
-Applying: mm-mpx-add-vm_flags_t-vm_flags-arg-to-do_mmap_pgoff-fix
-Applying: mm-mpx-add-vm_flags_t-vm_flags-arg-to-do_mmap_pgoff-fix-checkpatch-fixes
-Applying: mm: make sure all file VMAs have ->vm_ops set
-Applying: mm: use vma_is_anonymous() in create_huge_pmd() and wp_huge_pmd()
-Applying: mm, madvise: use vma_is_anonymous() to check for anon VMA
-Applying: sys_membarrier(): system-wide memory barrier (generic, x86)
-Applying: selftests: add membarrier syscall test
-Applying: selftests: enhance membarrier syscall test
-Applying: dma-mapping: consolidate dma_{alloc,free}_{attrs,coherent}
-Applying: dma-mapping: consolidate dma_{alloc,free}_noncoherent
-Applying: dma-mapping: cosolidate dma_mapping_error
-Applying: dma-mapping: consolidate dma_supported
-Applying: dma-mapping: consolidate dma_set_mask
-Applying: drivers/w1/w1_int.c: call put_device if device_register fails
-Merging akpm/master (b3e117e68c85 drivers/w1/w1_int.c: call put_device if device_register fails)
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+	../block/blk-merge.c:91:9: warning: 'bvprv.bv_page' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/dma/ipu/ipu_irq.c:305:22: warning: 'irq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 13 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+	../block/blk-merge.c:91:9: warning: 'bvprv.bv_page' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:6643:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:6643:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/dma/ipu/ipu_irq.c:305:22: warning: 'irq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/blkdev.h:1368:21: warning: 'bvprv.bv_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/asm-generic/memory_model.h:52:52: warning: 'bvprv.bv_page' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 94 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+	../arch/arm/mach-cns3xxx/pcie.c:266:1: warning: the frame size of 1088 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/block/nvme-core.c:1849:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/block/nvme-core.c:1891:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../fs/logfs/dev_bdev.c:84:14: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	../fs/logfs/dev_bdev.c:174:14: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	../drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/crypto/caam/desc.h:1495:0: warning: "JUMP_TYPE_MASK" redefined [enabled by default]
+	../drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:211:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:231:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:241:11: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../fs/nfsd/nfs4state.c:6081:2: warning: passing argument 4 of 'nfsd_foreach_client_lock' from incompatible pointer type [enabled by default]
+	../drivers/infiniband/core/uverbs_cmd.c:1466:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgm204.c:975:1: warning: the frame size of 1208 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/infiniband/hw/cxgb4/mem.c:147:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/gpu/drm/virtio/virtgpu_fence.c:64:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
+	../drivers/gpu/drm/virtio/virtgpu_debugfs.c:39:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'long long int' [-Wformat]
+	../drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c:297:3: warning: right shift count >= width of type [enabled by default]
+	../drivers/ntb/ntb_transport.c:809:3: warning: right shift count >= width of type [enabled by default]
+	../drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c:1109:32: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
+	../drivers/rtc/rtc-ds1374.c:667:6: warning: unused variable 'res' [-Wunused-variable]
+	../drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4575:8: warning: 'chip' may be used uninitialized in this function [-Wuninitialized]
+	../drivers/scsi/bnx2fc/bnx2fc_fcoe.c:2134:1: warning: the frame size of 1256 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_main.c:7601:2: warning: left shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40e/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:444:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:445:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:521:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/intel/i40evf/i40e_common.c:522:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/mellanox/mlxsw/pci.c:1549:2: warning: right shift count >= width of type [enabled by default]
+	../drivers/net/ethernet/mellanox/mlxsw/pci.c:1561:2: warning: right shift count >= width of type [enabled by default]
+	../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1301:2: warning: #warning syscall mlock2 not implemented [-Wcpp]
+	<stdin>:1304:2: warning: #warning syscall membarrier not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+	<stdin>:1298:2: warning: #warning syscall userfaultfd not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
