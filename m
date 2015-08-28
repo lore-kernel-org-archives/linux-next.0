@@ -1,47 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Fri, 28 Aug 2015 11:50:41 +1000
-Message-ID: <20150828115041.037554b4@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with Linus' tree
+Date: Fri, 28 Aug 2015 16:15:58 +1000
+Message-ID: <20150828161558.29184e3f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40314 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51626 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751030AbbH1Bun (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Aug 2015 21:50:43 -0400
+	id S1751005AbbH1GP7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Aug 2015 02:15:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ricard Wanderlof <ricard.wanderlof@axis.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ross Zwisler <ross.zwisler@linux.intel.com>
 
-Hi all,
+Hi Dan,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-In file included from sound/soc/codecs/ics43432.c:12:0:
-sound/soc/codecs/ics43432.c:60:25: error: 'ics43432_dt_ids' undeclared here (not in a function)
- MODULE_DEVICE_TABLE(of, ics43432_dt_ids);
-                         ^
-include/linux/module.h:223:21: note: in definition of macro 'MODULE_DEVICE_TABLE'
- extern const typeof(name) __mod_##type##__##name##_device_table  \
-                     ^
-include/linux/module.h:223:27: error: '__mod_of__ics43432_dt_ids_device_table' aliased to undefined symbol 'ics43432_dt_ids'
- extern const typeof(name) __mod_##type##__##name##_device_table  \
-                           ^ 
-sound/soc/codecs/ics43432.c:60:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
- MODULE_DEVICE_TABLE(of, ics43432_dt_ids);
- ^
+  drivers/acpi/nfit.c
 
-Caused by commit
+between commit:
 
-  3b7ce99748f0 ("ASoC: ics43432: Add codec driver for InvenSense ICS-43432")
+  de4a196c02a2 ("nfit, nd_blk: BLK status register is only 32 bits")
 
-Not really build tested with CONFIG_OF set, right? :-(
+from Linus' tree and commit:
 
-I have reverted that commit for today.
+  67a3e8fe9015 ("nd_blk: change aperture mapping from WC to WB")
+
+from the nvdimm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/acpi/nfit.c
+index bb29e56276bd,82d07e8fda00..000000000000
+--- a/drivers/acpi/nfit.c
++++ b/drivers/acpi/nfit.c
+@@@ -1032,7 -1017,7 +1017,7 @@@ static u32 read_blk_stat(struct nfit_bl
+  	if (mmio->num_lines)
+  		offset = to_interleave_offset(offset, mmio);
+  
+- 	return readl(mmio->base + offset);
+ -	return readq(mmio->addr.base + offset);
+++	return readl(mmio->addr.base + offset);
+  }
+  
+  static void write_blk_ctl(struct nfit_blk *nfit_blk, unsigned int bw,
