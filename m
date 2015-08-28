@@ -1,85 +1,67 @@
-From: Jiri Pirko <jiri@resnulli.us>
-Subject: Re: linux-next: manual merge of the rdma tree with the net-next tree
-Date: Fri, 28 Aug 2015 08:35:15 +0200
-Message-ID: <20150828063515.GA2156@nanopsycho.orion>
-References: <20150828112650.50b2ae58@canb.auug.org.au>
+From: Ricard Wanderlof <ricard.wanderlof@axis.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 28 Aug 2015 09:40:41 +0200
+Message-ID: <alpine.DEB.2.02.1508280936240.16666@lnxricardw1.se.axis.com>
+References: <20150828115041.037554b4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:36431 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751810AbbH1GfS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Aug 2015 02:35:18 -0400
-Received: by wicgk12 with SMTP id gk12so11113786wic.1
-        for <linux-next@vger.kernel.org>; Thu, 27 Aug 2015 23:35:17 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20150828112650.50b2ae58@canb.auug.org.au>
+Received: from bastet.se.axis.com ([195.60.68.11]:45225 "EHLO
+	bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751681AbbH1Hkp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Aug 2015 03:40:45 -0400
+In-Reply-To: <20150828115041.037554b4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matan Barak <matanb@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
-
-Fri, Aug 28, 2015 at 03:26:50AM CEST, sfr@canb.auug.org.au wrote:
->Hi Doug,
->
->Today's linux-next merge of the rdma tree got a conflict in:
->
->  net/core/dev.c
->
->between commit:
->
->  0e4ead9d7b36 ("net: introduce change upper device notifier change info")
->
->from the net-next tree and commit:
->
->  133b5b93c734 ("net: Add info for NETDEV_CHANGEUPPER event")
->
->from the rdma tree.
->
->They are doing very similar things, but not identical.
->
->I fixed it up (see bottom of email and the below extra patch) and can
->carry the fix as necessary (no action is required unless something more
->correct is supplied, of course).
->
->From: Stephen Rothwell <sfr@canb.auug.org.au>
->Date: Fri, 28 Aug 2015 11:14:38 +1000
->Subject: [PATCH] net: merge change upper notifier changes
->
->Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->---
-
-<snip>
-
->diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
->index 0aa7d19ac85e..4ce420487d07 100644
->--- a/include/linux/netdevice.h
->+++ b/include/linux/netdevice.h
->@@ -2115,13 +2115,22 @@ struct netdev_notifier_change_info {
-> 	unsigned int flags_changed;
-> };
-> 
->+enum netdev_changeupper_event {
->+	NETDEV_CHANGEUPPER_LINK,
->+	NETDEV_CHANGEUPPER_UNLINK,
->+};
->+
-
-I have this handled by "bool linking". So this is not needed.
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
 
-> struct netdev_notifier_changeupper_info {
-> 	struct netdev_notifier_info info; /* must be first */
->+	enum netdev_changeupper_event event;
+On Fri, 28 Aug 2015, Stephen Rothwell wrote:
 
-	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> In file included from sound/soc/codecs/ics43432.c:12:0:
+> sound/soc/codecs/ics43432.c:60:25: error: 'ics43432_dt_ids' undeclare=
+d here (not in a function)
+>  MODULE_DEVICE_TABLE(of, ics43432_dt_ids);
+>                          ^
+> include/linux/module.h:223:21: note: in definition of macro 'MODULE_D=
+EVICE_TABLE'
+>  extern const typeof(name) __mod_##type##__##name##_device_table  \
+>                      ^
+> include/linux/module.h:223:27: error: '__mod_of__ics43432_dt_ids_devi=
+ce_table' aliased to undefined symbol 'ics43432_dt_ids'
+>  extern const typeof(name) __mod_##type##__##name##_device_table  \
+>                            ^=20
+> sound/soc/codecs/ics43432.c:60:1: note: in expansion of macro 'MODULE=
+_DEVICE_TABLE'
+>  MODULE_DEVICE_TABLE(of, ics43432_dt_ids);
+>  ^
+>=20
+> Caused by commit
+>=20
+>   3b7ce99748f0 ("ASoC: ics43432: Add codec driver for InvenSense ICS-=
+43432")
+>=20
+> Not really build tested with CONFIG_OF set, right? :-(
 
+Well, actually, yes.
 
+In fact the exact same construct is used by a handful of other codec=20
+drivers which apparently don't fail.
 
-Other than this, looks good. Thanks
+I'm suspecting something slightly more convoluted like a missing #inclu=
+de .
 
-> 	struct net_device *upper_dev; /* new upper dev */
-> 	bool master; /* is upper dev master */
-> 	bool linking; /* is the nofication for link or unlink */
-> };
-> 
+> I have reverted that commit for today.
+
+Ok. I'll get to work on this ASAP.
+
+/Ricard
+--=20
+Ricard Wolf Wanderl=F6f                           ricardw(at)axis.com
+Axis Communications AB, Lund, Sweden            www.axis.com
+Phone +46 46 272 2016                           Fax +46 46 13 61 30
