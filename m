@@ -1,48 +1,22 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: linux-next: Tree for Aug 28
-Date: Fri, 28 Aug 2015 12:06:46 -0700
-Message-ID: <CAPcyv4iWFGKOLd0KJQRBR9_bG1czoiA_edpoeS5WXtWf_SD9XA@mail.gmail.com>
-References: <20150828182712.3d45a033@canb.auug.org.au>
-	<20150828152441.GA8179@roeck-us.net>
+From: Tan Wong <srinu.meesala@iiserpune.ac.in>
+Subject: Re
+Date: Sat, 29 Aug 2015 02:05:22 +0530 (IST)
+Message-ID: <73923671.1905339.1440794122679.JavaMail.root__2226.10384594208$1440795068$gmane$org@iiserpune.ac.in>
+Reply-To: Tan Wong <tanwong726@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150828152441.GA8179@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from webmail.iiserpune.ac.in ([210.212.192.141]:44071 "EHLO
+	zimbra.iiserpune.ac.in" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752481AbbH1Uuw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Aug 2015 16:50:52 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 
-On Fri, Aug 28, 2015 at 8:24 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Fri, Aug 28, 2015 at 06:27:12PM +1000, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20150827:
->>
->> The rdma tree gained a conflict aaginst the net-next tree.
->>
->> The sound-asoc tree gained a build failure for which I reverted a commit.
->>
->> The mmc-uh tree lost its build failure.
->>
->> The tty tree still had its build failure for which I reverted part of
->> a commit.
->>
->> The nvdimm tree gained conflicts against Linus' and the v4l-dvb trees.
->>
->> Non-merge commits (relative to Linus' tree): 10211
->>  8743 files changed, 533186 insertions(+), 210999 deletions(-)
->>
->> ----------------------------------------------------------------------------
->>
->
-> Time for a status report. We might see at least some of the following
-> failures in mainline after the commit window closes.
->
-> Build results:
->         total: 145 pass: 138 fail: 7
-> Failed builds:
->         alpha:allmodconfig [1], [2]
 
-Thanks for the report!  Fixed and pushed back out to the
-libnvdimm-for-next branch of nvdimm.git
+
+I am Mr.Tan Wong director of operations, HangSeng Bank,Hong Kong.I have urgent and confidential business proposition involving transfer of $24,500,000.00 that will be of great benefit for both of us. I will give you more details as regards this transaction as soon as you notify me of your interest. Awaiting your urgent reply 
+
+Kind Regards
+Tan Wong
