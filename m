@@ -1,67 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nvdimm tree with the v4l-dvb tree
-Date: Fri, 28 Aug 2015 16:19:18 +1000
-Message-ID: <20150828161918.43e93192@canb.auug.org.au>
+From: Jiri Pirko <jiri@resnulli.us>
+Subject: Re: linux-next: manual merge of the rdma tree with the net-next tree
+Date: Fri, 28 Aug 2015 08:35:15 +0200
+Message-ID: <20150828063515.GA2156@nanopsycho.orion>
+References: <20150828112650.50b2ae58@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38919 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750750AbbH1GTT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 28 Aug 2015 02:19:19 -0400
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:36431 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751810AbbH1GfS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Aug 2015 02:35:18 -0400
+Received: by wicgk12 with SMTP id gk12so11113786wic.1
+        for <linux-next@vger.kernel.org>; Thu, 27 Aug 2015 23:35:17 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20150828112650.50b2ae58@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matan Barak <matanb@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
 
-Hi Dan,
+Fri, Aug 28, 2015 at 03:26:50AM CEST, sfr@canb.auug.org.au wrote:
+>Hi Doug,
+>
+>Today's linux-next merge of the rdma tree got a conflict in:
+>
+>  net/core/dev.c
+>
+>between commit:
+>
+>  0e4ead9d7b36 ("net: introduce change upper device notifier change info")
+>
+>from the net-next tree and commit:
+>
+>  133b5b93c734 ("net: Add info for NETDEV_CHANGEUPPER event")
+>
+>from the rdma tree.
+>
+>They are doing very similar things, but not identical.
+>
+>I fixed it up (see bottom of email and the below extra patch) and can
+>carry the fix as necessary (no action is required unless something more
+>correct is supplied, of course).
+>
+>From: Stephen Rothwell <sfr@canb.auug.org.au>
+>Date: Fri, 28 Aug 2015 11:14:38 +1000
+>Subject: [PATCH] net: merge change upper notifier changes
+>
+>Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>---
 
-Today's linux-next merge of the nvdimm tree got a conflict in:
+<snip>
 
-  mm/Kconfig
+>diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+>index 0aa7d19ac85e..4ce420487d07 100644
+>--- a/include/linux/netdevice.h
+>+++ b/include/linux/netdevice.h
+>@@ -2115,13 +2115,22 @@ struct netdev_notifier_change_info {
+> 	unsigned int flags_changed;
+> };
+> 
+>+enum netdev_changeupper_event {
+>+	NETDEV_CHANGEUPPER_LINK,
+>+	NETDEV_CHANGEUPPER_UNLINK,
+>+};
+>+
 
-between commit:
+I have this handled by "bool linking". So this is not needed.
 
-  8025e5ddf9c1 ("[media] mm: Provide new get_vaddr_frames() helper")
 
-from the v4l-dvb tree and commit:
+> struct netdev_notifier_changeupper_info {
+> 	struct netdev_notifier_info info; /* must be first */
+>+	enum netdev_changeupper_event event;
 
-  033fbae988fc ("mm: ZONE_DEVICE for "device memory"")
+	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-from the nvdimm tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Other than this, looks good. Thanks
 
-diff --cc mm/Kconfig
-index 0fb2e96653fe,a0cd086df16b..000000000000
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@@ -649,5 -655,19 +649,22 @@@ config DEFERRED_STRUCT_PAGE_INI
-  	  processes running early in the lifetime of the systemm until kswapd
-  	  finishes the initialisation.
-  
- +config FRAME_VECTOR
- +	bool
-++
-+ config ZONE_DEVICE
-+ 	bool "Device memory (pmem, etc...) hotplug support" if EXPERT
-+ 	default !ZONE_DMA
-+ 	depends on !ZONE_DMA
-+ 	depends on MEMORY_HOTPLUG
-+ 	depends on MEMORY_HOTREMOVE
-+ 	depends on X86_64 #arch_add_memory() comprehends device memory
-+ 
-+ 	help
-+ 	  Device memory hotplug support allows for establishing pmem,
-+ 	  or other device driver discovered memory regions, in the
-+ 	  memmap. This allows pfn_to_page() lookups of otherwise
-+ 	  "device-physical" addresses which is needed for using a DAX
-+ 	  mapping in an O_DIRECT operation, among other things.
-+ 
-+ 	  If FS_DAX is enabled, then say Y.
+> 	struct net_device *upper_dev; /* new upper dev */
+> 	bool master; /* is upper dev master */
+> 	bool linking; /* is the nofication for link or unlink */
+> };
+> 
