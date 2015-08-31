@@ -1,33 +1,58 @@
-From: Alexei Starovoitov <ast@plumgrid.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 Subject: Re: linux-next: Tree for Aug 31 (new arm, arm64, s390 failures)
-Date: Mon, 31 Aug 2015 08:09:02 -0700
-Message-ID: <55E46E0E.1040007@plumgrid.com>
+Date: Mon, 31 Aug 2015 16:31:03 +0100
+Message-ID: <20150831163103.2e13b301@arm.com>
 References: <20150831195420.371e8849@canb.auug.org.au>
- <20150831141736.GA19616@roeck-us.net>
+	<20150831141736.GA19616@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:32920 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753124AbbHaPJE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Aug 2015 11:09:04 -0400
-Received: by padhy3 with SMTP id hy3so37564963pad.0
-        for <linux-next@vger.kernel.org>; Mon, 31 Aug 2015 08:09:04 -0700 (PDT)
+Received: from foss.arm.com ([217.140.101.70]:57637 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753275AbbHaPbM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 31 Aug 2015 11:31:12 -0400
 In-Reply-To: <20150831141736.GA19616@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, "pi-cheng.chen" <pi-cheng.chen@linaro.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "pi-cheng.chen" <pi-cheng.chen@linaro.org>, Alexei Starovoitov <ast@plumgrid.com>
 
-On 8/31/15 7:17 AM, Guenter Roeck wrote:
-> s390:
->
-> kernel/built-in.o: In function `bpf_trace_printk':
-> bpf_trace.c:(.text+0x116a5c): undefined reference to `strncpy_from_unsafe'
-> kernel/built-in.o: In function `fetch_memory_string':
-> trace_kprobe.c:(.text+0x118ee0): undefined reference to `strncpy_from_unsafe'
->
-> Appears to be due to 'bpf: add support for %s specifier to bpf_trace_printk()'.
+On Mon, 31 Aug 2015 07:17:36 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-working on a fix...
+Hi Guenter,
+
+> Qemu test results:
+> 	total: 85 pass: 74 fail: 11
+> Failed tests:
+> 	arm:vexpress-a9:arm_vexpress_defconfig:vexpress-v2p-ca9
+> 	arm:vexpress-a15:arm_vexpress_defconfig:vexpress-v2p-ca15-tc1
+> 	arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+> 	arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+> 	arm:realview-pb-a8:arm_realview_pb_defconfig
+> 	arm:realview-eb:arm_realview_eb_defconfig
+> 	mips:fuloong2e_defconfig
+> 	xtensa:dc232b:lx60:xtensa_defconfig
+> 	xtensa:dc232b:kc705:xtensa_defconfig
+> 	xtensa:dc233c:ml605:generic_kc705_defconfig
+> 	xtensa:dc233c:kc705:generic_kc705_defconfi
+> 
+> Notable new failures (since next-20150828) are the s390 build failures,
+> the arm64 build failure, and the arm qemu test failures.
+> 
+
+[...]
+
+> The qemu arm tests all fail silently, meaning there is no console
+> output. Bisect points to 'irqchip/GIC: Convert to EOImode == 1'.
+> Bisect log attached.
+
+Could you give me a qemu command-line I can use to track this down?
+Real HW seems happy enough, from what I can see...
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny.
