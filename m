@@ -1,41 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Mon, 31 Aug 2015 08:49:20 +0200
-Message-ID: <CACRpkdacdnkwiz5g8PMOWL5i1-dsrg2-a1teon_nQGOPbF=RZg@mail.gmail.com>
-References: <20150831164046.0ffd7c55@canb.auug.org.au>
+From: Ricard Wanderlof <ricard.wanderlof@axis.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 31 Aug 2015 09:04:22 +0200
+Message-ID: <alpine.DEB.2.02.1508310850530.16666@lnxricardw1.se.axis.com>
+References: <20150828115041.037554b4@canb.auug.org.au> <alpine.DEB.2.02.1508280936240.16666@lnxricardw1.se.axis.com> <20150828154556.GO12027@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:34437 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752390AbbHaGtV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Aug 2015 02:49:21 -0400
-Received: by obbfr1 with SMTP id fr1so86227256obb.1
-        for <linux-next@vger.kernel.org>; Sun, 30 Aug 2015 23:49:20 -0700 (PDT)
-In-Reply-To: <20150831164046.0ffd7c55@canb.auug.org.au>
+Received: from bastet.se.axis.com ([195.60.68.11]:48176 "EHLO
+	bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922AbbHaHEZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Aug 2015 03:04:25 -0400
+In-Reply-To: <20150828154556.GO12027@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Fengguang Wu <fengguang.wu@intel.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Aug 31, 2015 at 8:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> After merging the gpio tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/gpio/gpio-etraxfs.c: In function 'etraxfs_gpio_irq_request_resources':
-> drivers/gpio/gpio-etraxfs.c:300:2: error: 'ret' undeclared (first use in this function)
->   ret = gpiochip_lock_as_irq(&chip->bgc.gc, d->hwirq);
->   ^
->
-> Caused by commit
->
->   5e22ec019823 ("gpio: extraxfs: fix returnvar.cocci warnings")
+On Fri, 28 Aug 2015, Mark Brown wrote:
 
-Seems like the coccinelle patch was made against an earlier version
-of the tree before some other patches went in.
+> On Fri, Aug 28, 2015 at 09:40:41AM +0200, Ricard Wanderlof wrote:
+> > On Fri, 28 Aug 2015, Stephen Rothwell wrote:
+>=20
+> > In fact the exact same construct is used by a handful of other code=
+c=20
+> > drivers which apparently don't fail.
+>=20
+> > I'm suspecting something slightly more convoluted like a missing=20
+> #include .
+>=20
+> No, the issue is that you have used a different variable name when=20
+> declaring the IDs and when referencing them in the module device tabl=
+e.
 
-Pulling this one out...
+Yeah, I realized that upon closer inspection.=20
 
-Thanks,
-Linus Walleij
+What bugs me is that my ARM gcc didn't seem to flag this, whereas the=20
+x86 gcc did upon subsequent testing. And yes, CONFIG_OF is set during m=
+y=20
+build.
+
+/Ricard
+--=20
+Ricard Wolf Wanderl=F6f                           ricardw(at)axis.com
+Axis Communications AB, Lund, Sweden            www.axis.com
+Phone +46 46 272 2016                           Fax +46 46 13 61 30
