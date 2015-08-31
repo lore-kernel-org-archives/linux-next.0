@@ -1,28 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bad base of the h8300 tree
-Date: Mon, 31 Aug 2015 07:43:04 +1000
-Message-ID: <20150831074304.0ce16f9f@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the drm tree
+Date: Mon, 31 Aug 2015 13:24:05 +1000
+Message-ID: <20150831132405.4dec315e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40655 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751704AbbH3VnI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Aug 2015 17:43:08 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Ben Skeggs <bskeggs@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Yoshinori,
+Hi Jiri,
 
-The h8300 tree today has been based on linux-next.  This cannto work.
-Please rebase this onto Linus' tree (or some other stable base).
+Today's linux-next merge of the trivial tree got a conflict in:
 
-I cannot use your tree in this state, so it will be dropped from
-linux-next until it is fixed.  Also, Linus cannot pull it in this state.
+  drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
+
+between commit:
+
+  109c2f2f1c42 ("drm/nouveau/gr: switch to subdev printk macros")
+
+from the drm tree and commit:
+
+  4bb138a47b7f ("drm/nouveau/gr: Fix typo in nv10.c")
+
+from the trivial tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
+index 9436ada62cba,d6ace41830e9..000000000000
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
+@@@ -791,7 -845,7 +791,7 @@@ nv10_gr_ctx_regs_find_offset(struct nv1
+  		if (nv10_gr_ctx_regs[i] == reg)
+  			return i;
+  	}
+- 	nvkm_error(subdev, "unknow offset nv10_ctx_regs %d\n", reg);
+ -	nv_error(priv, "unknown offset nv10_ctx_regs %d\n", reg);
+++	nvkm_error(subdev, "unknown offset nv10_ctx_regs %d\n", reg);
+  	return -1;
+  }
+  
+@@@ -804,7 -857,7 +804,7 @@@ nv17_gr_ctx_regs_find_offset(struct nv1
+  		if (nv17_gr_ctx_regs[i] == reg)
+  			return i;
+  	}
+- 	nvkm_error(subdev, "unknow offset nv17_ctx_regs %d\n", reg);
+ -	nv_error(priv, "unknown offset nv17_ctx_regs %d\n", reg);
+++	nvkm_error(subdev, "unknown offset nv17_ctx_regs %d\n", reg);
+  	return -1;
+  }
+  
