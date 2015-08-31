@@ -1,60 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the drm tree
-Date: Mon, 31 Aug 2015 13:24:05 +1000
-Message-ID: <20150831132405.4dec315e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Mon, 31 Aug 2015 16:40:46 +1000
+Message-ID: <20150831164046.0ffd7c55@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jikos@kernel.org>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Ben Skeggs <bskeggs@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59541 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751862AbbHaGku (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 31 Aug 2015 02:40:50 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Fengguang Wu <fengguang.wu@intel.com>
 
-Hi Jiri,
+Hi Linus,
 
-Today's linux-next merge of the trivial tree got a conflict in:
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
+drivers/gpio/gpio-etraxfs.c: In function 'etraxfs_gpio_irq_request_resources':
+drivers/gpio/gpio-etraxfs.c:300:2: error: 'ret' undeclared (first use in this function)
+  ret = gpiochip_lock_as_irq(&chip->bgc.gc, d->hwirq);
+  ^
 
-between commit:
+Caused by commit
 
-  109c2f2f1c42 ("drm/nouveau/gr: switch to subdev printk macros")
+  5e22ec019823 ("gpio: extraxfs: fix returnvar.cocci warnings")
 
-from the drm tree and commit:
-
-  4bb138a47b7f ("drm/nouveau/gr: Fix typo in nv10.c")
-
-from the trivial tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I have used the gpio tree from next-20150828 for today.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
-index 9436ada62cba,d6ace41830e9..000000000000
---- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/nv10.c
-@@@ -791,7 -845,7 +791,7 @@@ nv10_gr_ctx_regs_find_offset(struct nv1
-  		if (nv10_gr_ctx_regs[i] == reg)
-  			return i;
-  	}
-- 	nvkm_error(subdev, "unknow offset nv10_ctx_regs %d\n", reg);
- -	nv_error(priv, "unknown offset nv10_ctx_regs %d\n", reg);
-++	nvkm_error(subdev, "unknown offset nv10_ctx_regs %d\n", reg);
-  	return -1;
-  }
-  
-@@@ -804,7 -857,7 +804,7 @@@ nv17_gr_ctx_regs_find_offset(struct nv1
-  		if (nv17_gr_ctx_regs[i] == reg)
-  			return i;
-  	}
-- 	nvkm_error(subdev, "unknow offset nv17_ctx_regs %d\n", reg);
- -	nv_error(priv, "unknown offset nv17_ctx_regs %d\n", reg);
-++	nvkm_error(subdev, "unknown offset nv17_ctx_regs %d\n", reg);
-  	return -1;
-  }
-  
