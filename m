@@ -1,64 +1,50 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the slave-dma tree with the pm, mfd
- and rtc trees
-Date: Tue, 1 Sep 2015 09:17:25 +0200
-Message-ID: <CAMuHMdWoJFrG+bKJrY+Hm5+5fS9aiRiAdEegoT0wYvk2m4fjHg@mail.gmail.com>
-References: <20150827112645.6c30e106@canb.auug.org.au>
-	<20150827032405.GS13546@localhost>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Tue, 1 Sep 2015 00:49:46 -0700
+Message-ID: <20150901074946.GF4029@linux.vnet.ibm.com>
+References: <20150901135006.78be270e@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:35388 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752866AbbIAHR0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Sep 2015 03:17:26 -0400
-In-Reply-To: <20150827032405.GS13546@localhost>
+Received: from e38.co.us.ibm.com ([32.97.110.159]:52942 "EHLO
+	e38.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754332AbbIAHtv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Sep 2015 03:49:51 -0400
+Received: from /spool/local
+	by e38.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Tue, 1 Sep 2015 01:49:50 -0600
+Content-Disposition: inline
+In-Reply-To: <20150901135006.78be270e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lee Jones <lee.jones@linaro.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>
 
-On Thu, Aug 27, 2015 at 5:24 AM, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Thu, Aug 27, 2015 at 11:26:45AM +1000, Stephen Rothwell wrote:
->> Hi Vinod,
->>
->> Today's linux-next merge of the slave-dma tree got conflicts in:
->>
->>   drivers/dma/Kconfig
->>   drivers/dma/Makefile
->>
->> between commit:
->>
->>   667dfed98615 ("dmaengine: add a driver for Intel integrated DMA 64-bit")
->>
->> from the pm, mfd and rtc trees and commits:
->>
->>   3c21619077be ("dmaengine: sort the Kconfig")
->>   7e97229b3920 ("dmaengine: sort the makefile")
->>
->> from the slave-dma tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary (no action
->> is required).
->
-> Thanks Stephen,
->
-> I looked at this and merge is sorted, so looks good to me
+On Tue, Sep 01, 2015 at 01:50:06PM +1000, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> ERROR: "sched_setscheduler_nocheck" [kernel/locking/locktorture.ko] undefined!
+> ERROR: "percpu_down_write" [kernel/locking/locktorture.ko] undefined!
+> ERROR: "percpu_up_write" [kernel/locking/locktorture.ko] undefined!
+> ERROR: "percpu_down_read" [kernel/locking/locktorture.ko] undefined!
+> ERROR: "percpu_up_read" [kernel/locking/locktorture.ko] undefined!
+> ERROR: "__percpu_init_rwsem" [kernel/locking/locktorture.ko] undefined!
+> 
+> Caused by commits
+> 
+>   04be76a9b067 ("locktorture: Support rtmutex torturing")
+>   40b2996f9b32 ("locktorture: Add torture tests for percpu_rwsem")
+> 
+> and maybe more.
+> 
+> I have used the rcu tree from next-20150831 for today.
 
-Sorted by Kconfig symbol or by name?
+It is looking like I will be deferring these to v4.4, apologies for
+the hassle!
 
-IDMA64 sorts before IMG_MDC_DMA,
-but "Intel integrated DMA 64-bit support" doesn't.
-
-Most other Intel DMA drivers have an INTEL_ prefix.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							Thanx, Paul
