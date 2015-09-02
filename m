@@ -1,56 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the xfs tree
-Date: Wed, 2 Sep 2015 12:16:49 +1000
-Message-ID: <20150902121649.7a686b6c@canb.auug.org.au>
+Subject: linux-next: manual merge of the device-mapper tree with the block
+ tree
+Date: Wed, 2 Sep 2015 12:39:29 +1000
+Message-ID: <20150902123929.1b216311@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48643 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40477 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751169AbbIBCQv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Sep 2015 22:16:51 -0400
+	id S1750717AbbIBCjb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Sep 2015 22:39:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, David Jeffery <djeffery@redhat.com>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>, Christoph Hellwig <hch@lst.de>
 
-Hi Jens,
+Hi all,
 
-Today's linux-next merge of the block tree got a conflict in:
+Today's linux-next merge of the device-mapper tree got a conflict in:
 
-  fs/xfs/xfs_aops.c
+  drivers/md/dm-cache-target.c
 
 between commit:
 
-  c9eb256eda44 ("xfs: return errors from partial I/O failures to files")
-
-from the xfs tree and commit:
-
   4246a0b63bd8 ("block: add a bi_error field to struct bio")
 
-from the block tree.
+from the block tree and commit:
 
-I fixed it up (I think - see below) and can carry the fix as necessary
-(no action is required).
+  cc7da0ba9c96 ("dm cache: fix use after freeing migrations")
+
+from the device-mapper tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/xfs/xfs_aops.c
-index c8637073ef25,c77499bcbd7a..000000000000
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@@ -354,8 -355,7 +353,8 @@@ xfs_end_bio
-  {
-  	xfs_ioend_t		*ioend = bio->bi_private;
+diff --cc drivers/md/dm-cache-target.c
+index 7245071778db,f9d9cc6a094b..000000000000
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@@ -1358,9 -1352,10 +1352,10 @@@ static void issue_discard(struct dm_cac
+  		b = to_dblock(from_dblock(b) + 1);
+  	}
   
-- 	if (!ioend->io_error && !test_bit(BIO_UPTODATE, &bio->bi_flags))
-- 		ioend->io_error = error;
- -	ioend->io_error = bio->bi_error;
-++	if (!ioend->io_error)
-++		ioend->io_error = bio->bi_error;
+ -	bio_endio(bio, 0);
+ +	bio_endio(bio);
+- 	cell_defer(mg->cache, mg->new_ocell, false);
++ 	cell_defer(cache, mg->new_ocell, false);
+  	free_migration(mg);
++ 	wake_worker(cache);
+  }
   
-  	/* Toss bio and pass work off to an xfsdatad thread */
-  	bio->bi_private = NULL;
+  static void issue_copy_or_discard(struct dm_cache_migration *mg)
