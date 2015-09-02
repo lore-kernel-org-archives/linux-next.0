@@ -1,48 +1,32 @@
-From: Roger Willcocks <roger@filmlight.ltd.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the block tree with the xfs tree
-Date: Wed, 02 Sep 2015 14:34:51 +0100
-Message-ID: <1441200891.17400.1277.camel@localhost.localdomain>
+Date: Wed, 2 Sep 2015 23:37:29 +1000
+Message-ID: <20150902233729.4e824342@canb.auug.org.au>
 References: <20150902121649.7a686b6c@canb.auug.org.au>
-	 <C57DF728-E46C-433C-AA9D-209557D795E2@filmlight.ltd.uk>
-	 <20150902230342.125e23ce@canb.auug.org.au>
+	<C57DF728-E46C-433C-AA9D-209557D795E2@filmlight.ltd.uk>
+	<20150902230342.125e23ce@canb.auug.org.au>
+	<1441200891.17400.1277.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from c.mx.filmlight.ltd.uk ([54.76.112.217]:60166 "EHLO
-	c.mx.filmlight.ltd.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750856AbbIBNex (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Sep 2015 09:34:53 -0400
-In-Reply-To: <20150902230342.125e23ce@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1441200891.17400.1277.camel@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roger Willcocks <roger@filmlight.ltd.uk>
 Cc: Jens Axboe <axboe@kernel.dk>, David Jeffery <djeffery@redhat.com>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, Ben Myers <bpm@sgi.com>, linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
+Hi Roger,
 
-On Wed, 2015-09-02 at 23:03 +1000, Stephen Rothwell wrote:
-> Hi Roger,
-> 
-> On Wed, 2 Sep 2015 10:45:29 +0100 Roger Willcocks <roger@filmlight.ltd.uk> wrote:
-> >
-> > On 2 Sep 2015, at 03:16, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
+On Wed, 02 Sep 2015 14:34:51 +0100 Roger Willcocks <roger@filmlight.ltd.uk> wrote:
+>
+> Huh, now I've had my coffee, that extra check doesn't add anything.
+> (There's no harm done in assigning zero to io_error if it's already
+> zero.) Apologies for the noise.
 
-> > > ++	if (!ioend->io_error)
-> > > ++		ioend->io_error = bio->bi_error;
+That's OK, my excuse is being to far at the other end of the day ...
 
-> > 
-> > This is incorrect; it can clear an earlier error status. It should probably read:
-> > 
-> >  	if (!ioend->io_error && bio->bi_error)
-> >  		ioend->io_error = bio->bi_error;
-> 
-> Thanks, I will use that from tomorrow.
-> 
-
-Huh, now I've had my coffee, that extra check doesn't add anything.
-(There's no harm done in assigning zero to io_error if it's already
-zero.) Apologies for the noise.
-
+I actually now remember thinking the same thing at the time I did it :-)
 -- 
-Roger Willcocks <roger@filmlight.ltd.uk>
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
