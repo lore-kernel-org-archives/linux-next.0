@@ -1,66 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Tue, 8 Sep 2015 09:35:24 +1000
-Message-ID: <20150908093524.507a19d8@canb.auug.org.au>
-References: <20150728160015.142f588f@canb.auug.org.au>
-	<20150729171256.GA10863@redhat.com>
+Subject: Re: linux-next: build failure after merge of the
+	drm-misc tree
+Date: Tue, 8 Sep 2015 09:42:49 +1000
+Message-ID: <20150908094249.5cb1267e@canb.auug.org.au>
+References: <20150903104919.6419ad18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60296 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751135AbbIGXfZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Sep 2015 19:35:25 -0400
-In-Reply-To: <20150729171256.GA10863@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
-Cc: Andrea Arcangeli <aarcange@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Eric B Munson <emunson@akamai.com>, "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20150903104919.6419ad18@canb.auug.org.au>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Linus,
-
-On Wed, 29 Jul 2015 19:12:56 +0200 Andrea Arcangeli <aarcange@redhat.com> wrote:
->
-> On Tue, Jul 28, 2015 at 04:00:15PM +1000, Stephen Rothwell wrote:
-> >  -359	i386	userfaultfd		sys_userfaultfd
-> > ++374	i386	userfaultfd		sys_userfaultfd
-> 
-> Do I understand correctly the syscall number of userfaultfd for x86
-> 32bit has just changed from 359 to 374? Appreciated that you CCed me
-> on such a relevant change to be sure I didn't miss it.
-> 
-> Then the below is needed as well.
-
-The below patch was missed when the userfaultfd stuff and the x86 changes
-were merged.  I have repeated the patch in the clear below.
-
-From: Andrea Arcangeli <aarcange@redhat.com>
-Date: Wed, 29 Jul 2015 18:53:17 +0200
-Subject: [PATCH] userfaultfd: selftest: update userfaultfd x86 32bit syscall number
-
-It changed as result of linux-next merge of other syscalls.
-
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
----
- tools/testing/selftests/vm/userfaultfd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 0c0b839..76071b1 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -69,7 +69,7 @@
- #ifdef __x86_64__
- #define __NR_userfaultfd 323
- #elif defined(__i386__)
--#define __NR_userfaultfd 359
-+#define __NR_userfaultfd 374
- #elif defined(__powewrpc__)
- #define __NR_userfaultfd 364
- #else
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+SGkgYWxsLAoKT24gVGh1LCAzIFNlcCAyMDE1IDEwOjQ5OjE5ICsxMDAwIFN0ZXBoZW4gUm90aHdl
+bGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPgo+IEFmdGVyIG1lcmdpbmcgdGhlIGRy
+bS1taXNjIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoYXJtCj4gbXVsdGlfdjdfZGVm
+Y29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+IAo+IGRyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21k
+cDUvbWRwNV9wbGFuZS5jOiBJbiBmdW5jdGlvbiAnbWRwNV9wbGFuZV9jbGVhbnVwX2ZiJzoKPiBk
+cml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzoyNzI6MjY6IGVycm9yOiAn
+ZmInIHJlZGVjbGFyZWQgYXMgZGlmZmVyZW50IGtpbmQgb2Ygc3ltYm9sCj4gICBzdHJ1Y3QgZHJt
+X2ZyYW1lYnVmZmVyICpmYiA9IG9sZF9zdGF0ZS0+ZmI7Cj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgICBeCj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6MjY3OjI3
+OiBub3RlOiBwcmV2aW91cyBkZWZpbml0aW9uIG9mICdmYicgd2FzIGhlcmUKPiAgICBzdHJ1Y3Qg
+ZHJtX2ZyYW1lYnVmZmVyICpmYiwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICBeCj4gZHJp
+dmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6IEF0IHRvcCBsZXZlbDoKPiBk
+cml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzozODM6Mzogd2FybmluZzog
+aW5pdGlhbGl6YXRpb24gZnJvbSBpbmNvbXBhdGlibGUgcG9pbnRlciB0eXBlCj4gICAgLmNsZWFu
+dXBfZmIgPSBtZHA1X3BsYW5lX2NsZWFudXBfZmIsCj4gICAgXgo+IGRyaXZlcnMvZ3B1L2RybS9t
+c20vbWRwL21kcDUvbWRwNV9wbGFuZS5jOjM4MzozOiB3YXJuaW5nOiAobmVhciBpbml0aWFsaXph
+dGlvbiBmb3IgJ21kcDVfcGxhbmVfaGVscGVyX2Z1bmNzLmNsZWFudXBfZmInKQo+IAo+IENhdXNl
+ZCBieSBjb21taXQKPiAKPiAgIGEzMTcyOTBhZjBkYiAoImRybS9hdG9taWM6IE1ha2UgcHJlcGFy
+ZV9mYi9jbGVhbnVwX2ZiIG9ubHkgdGFrZSBzdGF0ZSwgdjMiKQo+IAo+IFdlbGwsIHRoYXQgd2Fz
+IGNsZWFybHkgbmV2ZXIgYnVpbGQgdGVzdGVkIDotKAo+IAo+IEkgaGF2ZSB1c2VkIHRoZSBkcm0t
+bWlzYyB0cmVlIGZyb20gbmV4dC0yMDE1MDkwMiBmb3IgdG9kYXkuCgpUaGlzIGlzIHN0aWxsIGlu
+IHRvZGF5J3MgbGludXgtbmV4dCA6LSgKCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwgICAg
+ICAgICAgICAgICAgICAgIHNmckBjYW5iLmF1dWcub3JnLmF1Cl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwt
+Z2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
