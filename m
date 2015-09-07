@@ -1,50 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Tue, 8 Sep 2015 09:20:35 +1000
-Message-ID: <20150908092035.64a6b455@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+ tree
+Date: Tue, 8 Sep 2015 09:35:24 +1000
+Message-ID: <20150908093524.507a19d8@canb.auug.org.au>
+References: <20150728160015.142f588f@canb.auug.org.au>
+	<20150729171256.GA10863@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56197 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60296 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751268AbbIGXUh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Sep 2015 19:20:37 -0400
+	id S1751135AbbIGXfZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Sep 2015 19:35:25 -0400
+In-Reply-To: <20150729171256.GA10863@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Andrea Arcangeli <aarcange@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Linus <torvalds@linux-foundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Eric B Munson <emunson@akamai.com>, "Dr. David Alan Gilbert" <dgilbert@redhat.com>
 
-Hi Mauro,
+Hi Linus,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in:
+On Wed, 29 Jul 2015 19:12:56 +0200 Andrea Arcangeli <aarcange@redhat.com> wrote:
+>
+> On Tue, Jul 28, 2015 at 04:00:15PM +1000, Stephen Rothwell wrote:
+> >  -359	i386	userfaultfd		sys_userfaultfd
+> > ++374	i386	userfaultfd		sys_userfaultfd
+> 
+> Do I understand correctly the syscall number of userfaultfd for x86
+> 32bit has just changed from 359 to 374? Appreciated that you CCed me
+> on such a relevant change to be sure I didn't miss it.
+> 
+> Then the below is needed as well.
 
-  mm/Makefile
+The below patch was missed when the userfaultfd stuff and the x86 changes
+were merged.  I have repeated the patch in the clear below.
 
-between commit:
+From: Andrea Arcangeli <aarcange@redhat.com>
+Date: Wed, 29 Jul 2015 18:53:17 +0200
+Subject: [PATCH] userfaultfd: selftest: update userfaultfd x86 32bit syscall number
 
-  c1a4de99fada ("userfaultfd: mcopy_atomic|mfill_zeropage: UFFDIO_COPY|UFFDIO_ZEROPAGE preparation")
+It changed as result of linux-next merge of other syscalls.
 
-from Linus' tree and commit:
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+---
+ tools/testing/selftests/vm/userfaultfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  8025e5ddf9c1 ("[media] mm: Provide new get_vaddr_frames() helper")
-
-from the v4l-dvb tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+index 0c0b839..76071b1 100644
+--- a/tools/testing/selftests/vm/userfaultfd.c
++++ b/tools/testing/selftests/vm/userfaultfd.c
+@@ -69,7 +69,7 @@
+ #ifdef __x86_64__
+ #define __NR_userfaultfd 323
+ #elif defined(__i386__)
+-#define __NR_userfaultfd 359
++#define __NR_userfaultfd 374
+ #elif defined(__powewrpc__)
+ #define __NR_userfaultfd 364
+ #else
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc mm/Makefile
-index b424d5e5b6ff,be5d5c866305..000000000000
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@@ -78,4 -78,4 +78,5 @@@ obj-$(CONFIG_CMA)	+= cma.
-  obj-$(CONFIG_MEMORY_BALLOON) += balloon_compaction.o
-  obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
-  obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
- +obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
-+ obj-$(CONFIG_FRAME_VECTOR) += frame_vector.o
