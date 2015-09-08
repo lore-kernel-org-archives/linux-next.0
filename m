@@ -1,50 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the
-	drm-misc tree
-Date: Tue, 8 Sep 2015 09:42:49 +1000
-Message-ID: <20150908094249.5cb1267e@canb.auug.org.au>
-References: <20150903104919.6419ad18@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Tue, 8 Sep 2015 11:35:44 +1000
+Message-ID: <20150908113544.41d5a451@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20150903104919.6419ad18@canb.auug.org.au>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52390 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751942AbbIHBfr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Sep 2015 21:35:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wanpeng Li <wanpeng.li@hotmail.com>, Paolo Bonzini <pbonzini@redhat.com>
 
-SGkgYWxsLAoKT24gVGh1LCAzIFNlcCAyMDE1IDEwOjQ5OjE5ICsxMDAwIFN0ZXBoZW4gUm90aHdl
-bGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPgo+IEFmdGVyIG1lcmdpbmcgdGhlIGRy
-bS1taXNjIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoYXJtCj4gbXVsdGlfdjdfZGVm
-Y29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+IAo+IGRyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21k
-cDUvbWRwNV9wbGFuZS5jOiBJbiBmdW5jdGlvbiAnbWRwNV9wbGFuZV9jbGVhbnVwX2ZiJzoKPiBk
-cml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzoyNzI6MjY6IGVycm9yOiAn
-ZmInIHJlZGVjbGFyZWQgYXMgZGlmZmVyZW50IGtpbmQgb2Ygc3ltYm9sCj4gICBzdHJ1Y3QgZHJt
-X2ZyYW1lYnVmZmVyICpmYiA9IG9sZF9zdGF0ZS0+ZmI7Cj4gICAgICAgICAgICAgICAgICAgICAg
-ICAgICBeCj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6MjY3OjI3
-OiBub3RlOiBwcmV2aW91cyBkZWZpbml0aW9uIG9mICdmYicgd2FzIGhlcmUKPiAgICBzdHJ1Y3Qg
-ZHJtX2ZyYW1lYnVmZmVyICpmYiwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICBeCj4gZHJp
-dmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6IEF0IHRvcCBsZXZlbDoKPiBk
-cml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzozODM6Mzogd2FybmluZzog
-aW5pdGlhbGl6YXRpb24gZnJvbSBpbmNvbXBhdGlibGUgcG9pbnRlciB0eXBlCj4gICAgLmNsZWFu
-dXBfZmIgPSBtZHA1X3BsYW5lX2NsZWFudXBfZmIsCj4gICAgXgo+IGRyaXZlcnMvZ3B1L2RybS9t
-c20vbWRwL21kcDUvbWRwNV9wbGFuZS5jOjM4MzozOiB3YXJuaW5nOiAobmVhciBpbml0aWFsaXph
-dGlvbiBmb3IgJ21kcDVfcGxhbmVfaGVscGVyX2Z1bmNzLmNsZWFudXBfZmInKQo+IAo+IENhdXNl
-ZCBieSBjb21taXQKPiAKPiAgIGEzMTcyOTBhZjBkYiAoImRybS9hdG9taWM6IE1ha2UgcHJlcGFy
-ZV9mYi9jbGVhbnVwX2ZiIG9ubHkgdGFrZSBzdGF0ZSwgdjMiKQo+IAo+IFdlbGwsIHRoYXQgd2Fz
-IGNsZWFybHkgbmV2ZXIgYnVpbGQgdGVzdGVkIDotKAo+IAo+IEkgaGF2ZSB1c2VkIHRoZSBkcm0t
-bWlzYyB0cmVlIGZyb20gbmV4dC0yMDE1MDkwMiBmb3IgdG9kYXkuCgpUaGlzIGlzIHN0aWxsIGlu
-IHRvZGF5J3MgbGludXgtbmV4dCA6LSgKCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwgICAg
-ICAgICAgICAgICAgICAgIHNmckBjYW5iLmF1dWcub3JnLmF1Cl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwt
-Z2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+Hi all,
+
+After merging the kvm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 'grow_halt_poll_ns':
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1931:2: error: implicit declaration of function 'trace_kvm_halt_poll_ns_grow' [-Werror=implicit-function-declaration]
+  trace_kvm_halt_poll_ns_grow(vcpu->vcpu_id, val, old);
+  ^
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 'shrink_halt_poll_ns':
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1945:2: error: implicit declaration of function 'trace_kvm_halt_poll_ns_shrink' [-Werror=implicit-function-declaration]
+  trace_kvm_halt_poll_ns_shrink(vcpu->vcpu_id, val, old);
+  ^
+
+Caused by commit
+
+  2cbd78244fb2 ("KVM: trace kvm_halt_poll_ns grow/shrink")
+
+I have reverted that commit for today.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
