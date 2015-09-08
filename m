@@ -1,39 +1,63 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip tree
-Date: Tue, 8 Sep 2015 11:11:25 -0700
-Message-ID: <CA+55aFw=mTzTg8BS1Oo27qoybYYzweRvDNv-3U2V4gOpJ6FqrA@mail.gmail.com>
-References: <20150728160015.142f588f@canb.auug.org.au>
-	<20150729171256.GA10863@redhat.com>
-	<20150908093524.507a19d8@canb.auug.org.au>
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: Re: randconfig build error with next-20150908, in
+ drivers/md/dm-mpath.c
+Date: Tue, 8 Sep 2015 14:30:22 -0400
+Message-ID: <20150908183021.GA3019@redhat.com>
+References: <CA+r1ZhgR=dO0ezk0Nm0JuAb1D0AU7K2Am=Pyy9aPqCMsLW9Y0w@mail.gmail.com>
+ <20150908172356.GA1584@redhat.com>
+ <1441733672.5932.1.camel@Odin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:33602 "EHLO
-	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751864AbbIHSL0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Sep 2015 14:11:26 -0400
-In-Reply-To: <20150908093524.507a19d8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrea Arcangeli <aarcange@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>, Eric B Munson <emunson@akamai.com>, "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-scsi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1441733672.5932.1.camel@Odin.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: James Bottomley <jbottomley@odin.com>, hare@suse.de
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "agk@redhat.com" <agk@redhat.com>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "jim.epost@gmail.com" <jim.epost@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "dm-devel@redhat.com" <dm-devel@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Sep 7, 2015 at 4:35 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> The below patch was missed when the userfaultfd stuff and the x86 changes
-> were merged.  I have repeated the patch in the clear below.
+On Tue, Sep 08 2015 at  1:34pm -0400,
+James Bottomley <jbottomley@odin.com> wrote:
 
-When forwarding patches, please add your sign-off. I can see (and
-apply) the original in this thread, so I guess it doesn't matter in
-this particular case, but in general that's what you should be doing
-so that I don't then have to find the other email just to apply the
-patch from the original author.
+> On Tue, 2015-09-08 at 13:23 -0400, Mike Snitzer wrote:
+> > On Tue, Sep 08 2015 at  1:10pm -0400,
+> > Jim Davis <jim.epost@gmail.com> wrote:
+> > 
+> > > Building with the attached random configuration file,
+> > > 
+> > > drivers/built-in.o: In function `activate_path':
+> > > /home/jim/linux-next/drivers/md/dm-mpath.c:1225: undefined reference
+> > > to `scsi_dh_activate'
+> > > drivers/built-in.o: In function `parse_path':
+> > > /home/jim/linux-next/drivers/md/dm-mpath.c:581: undefined reference to
+> > > `scsi_dh_attached_handler_name'
+> > > /home/jim/linux-next/drivers/md/dm-mpath.c:600: undefined reference to
+> > > `scsi_dh_attach'
+> > > /home/jim/linux-next/drivers/md/dm-mpath.c:615: undefined reference to
+> > > `scsi_dh_set_params'
+> > 
+> > These DM-mpath changes were staged via linux-scsi.  Cc'ing James and Christoph.
+> 
+> [adding linux-scsi]
+> 
+> It must be Hannes' dm changes ... you acked them.  I take it the problem
+> is now dm-mpath won't build without CONFIG_SCSI?  How do you want it
+> fixed?  We can either add a Kconfig dependency or try to disentangle
+> them again.
 
-Also, this wasn't actually a real merge error. This was just a bug in
-the whole process. Andrew's patches sent to me had been updated with
-the right number for all the other cases, why hadn't this been folded
-into the series too? Apparently Andrew's series has simply been buggy
-for the last month or more, and that was true even before it was sent
-to me and while it was cooking in -next.. Tssk.
+OK (Hannes' changes).  I'm fine with seeing DM_MULTIPATH depend on
+CONFIG_SCSI.
 
-            Linus
+The Kconfig for DM_MULTIPATH is clearly stale:
+
+        # nasty syntax but means make DM_MULTIPATH independent
+        # of SCSI_DH if the latter isn't defined but if
+        # it is, DM_MULTIPATH must depend on it.  We get a build
+        # error if SCSI_DH=m and DM_MULTIPATH=y
+        depends on SCSI_DH || !SCSI_DH
+
+James, if you have a vision for how to fix this please feel free.
+Otherwise, Hannes, care to send a patch to fix this?
+
+Thanks,
+Mike
