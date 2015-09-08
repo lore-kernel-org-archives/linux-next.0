@@ -1,68 +1,53 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the
-	drm-misc tree
-Date: Tue, 8 Sep 2015 10:16:17 +0200
-Message-ID: <20150908081617.GH32505@phenom.ffwll.local>
-References: <20150903104919.6419ad18@canb.auug.org.au>
- <20150908094249.5cb1267e@canb.auug.org.au>
- <55EE68A2.3020509@linux.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: linux-next: build failure after merge of the kvm tree
+Date: Tue, 8 Sep 2015 11:24:33 +0200
+Message-ID: <55EEA951.6020604@redhat.com>
+References: <20150908113544.41d5a451@canb.auug.org.au>
+ <BLU436-SMTP381CF188008388F4CA601D80530@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <55EE68A2.3020509@linux.intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Stone <daniels@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:60058 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752020AbbIHJYh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Sep 2015 05:24:37 -0400
+In-Reply-To: <BLU436-SMTP381CF188008388F4CA601D80530@phx.gbl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Wanpeng Li <wanpeng.li@hotmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVHVlLCBTZXAgMDgsIDIwMTUgYXQgMDY6NDg6MzRBTSArMDIwMCwgTWFhcnRlbiBMYW5raG9y
-c3Qgd3JvdGU6Cj4gT3AgMDgtMDktMTUgb20gMDE6NDIgc2NocmVlZiBTdGVwaGVuIFJvdGh3ZWxs
-Ogo+ID4gSGkgYWxsLAo+ID4KPiA+IE9uIFRodSwgMyBTZXAgMjAxNSAxMDo0OToxOSArMTAwMCBT
-dGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4gPj4gQWZ0ZXIg
-bWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkIChhcm0K
-PiA+PiBtdWx0aV92N19kZWZjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cj4gPj4KPiA+PiBkcml2
-ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzogSW4gZnVuY3Rpb24gJ21kcDVf
-cGxhbmVfY2xlYW51cF9mYic6Cj4gPj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1
-X3BsYW5lLmM6MjcyOjI2OiBlcnJvcjogJ2ZiJyByZWRlY2xhcmVkIGFzIGRpZmZlcmVudCBraW5k
-IG9mIHN5bWJvbAo+ID4+ICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBvbGRfc3RhdGUt
-PmZiOwo+ID4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXgo+ID4+IGRyaXZlcnMvZ3B1L2Ry
-bS9tc20vbWRwL21kcDUvbWRwNV9wbGFuZS5jOjI2NzoyNzogbm90ZTogcHJldmlvdXMgZGVmaW5p
-dGlvbiBvZiAnZmInIHdhcyBoZXJlCj4gPj4gICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIs
-Cj4gPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgXgo+ID4+IGRyaXZlcnMvZ3B1L2RybS9t
-c20vbWRwL21kcDUvbWRwNV9wbGFuZS5jOiBBdCB0b3AgbGV2ZWw6Cj4gPj4gZHJpdmVycy9ncHUv
-ZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6MzgzOjM6IHdhcm5pbmc6IGluaXRpYWxpemF0
-aW9uIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZQo+ID4+ICAgIC5jbGVhbnVwX2ZiID0g
-bWRwNV9wbGFuZV9jbGVhbnVwX2ZiLAo+ID4+ICAgIF4KPiA+PiBkcml2ZXJzL2dwdS9kcm0vbXNt
-L21kcC9tZHA1L21kcDVfcGxhbmUuYzozODM6Mzogd2FybmluZzogKG5lYXIgaW5pdGlhbGl6YXRp
-b24gZm9yICdtZHA1X3BsYW5lX2hlbHBlcl9mdW5jcy5jbGVhbnVwX2ZiJykKPiA+Pgo+ID4+IENh
-dXNlZCBieSBjb21taXQKPiA+Pgo+ID4+ICAgYTMxNzI5MGFmMGRiICgiZHJtL2F0b21pYzogTWFr
-ZSBwcmVwYXJlX2ZiL2NsZWFudXBfZmIgb25seSB0YWtlIHN0YXRlLCB2MyIpCj4gPj4KPiA+PiBX
-ZWxsLCB0aGF0IHdhcyBjbGVhcmx5IG5ldmVyIGJ1aWxkIHRlc3RlZCA6LSgKPiA+Pgo+ID4+IEkg
-aGF2ZSB1c2VkIHRoZSBkcm0tbWlzYyB0cmVlIGZyb20gbmV4dC0yMDE1MDkwMiBmb3IgdG9kYXku
-Cj4gPiBUaGlzIGlzIHN0aWxsIGluIHRvZGF5J3MgbGludXgtbmV4dCA6LSgKPiA+Cj4gSSBqdXN0
-IGdvdCBhcm91bmQgdG8gbWFraW5nIGFuIGFtZW5kIGZpeCBwYXRjaCBmb3IgaXQgeWVzdGVyZGF5
-LiBDYW4geW91IGZvbGQgaXQgaW50byB2MyBkYW5pZWw/CgpTcXVhc2hlZCBpbiwgdGhhbmtzLgot
-RGFuaWVsCgo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21k
-cDVfcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDUvbWRwNV9wbGFuZS5jCj4g
-aW5kZXggNGQzOTBiNjk5ZTlhLi5hMGY1ZmYwY2U4ZGMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
-bXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYwo+IEBAIC0yNjQsNyArMjY0LDYgQEAgc3RhdGljIGlu
-dCBtZHA1X3BsYW5lX3ByZXBhcmVfZmIoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIH0KPiAg
-Cj4gIHN0YXRpYyB2b2lkIG1kcDVfcGxhbmVfY2xlYW51cF9mYihzdHJ1Y3QgZHJtX3BsYW5lICpw
-bGFuZSwKPiAtCQlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiwKPiAgCQljb25zdCBzdHJ1Y3Qg
-ZHJtX3BsYW5lX3N0YXRlICpvbGRfc3RhdGUpCj4gIHsKPiAgCXN0cnVjdCBtZHA1X3BsYW5lICpt
-ZHA1X3BsYW5lID0gdG9fbWRwNV9wbGFuZShwbGFuZSk7Cj4gCgotLSAKRGFuaWVsIFZldHRlcgpT
-b2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+
+
+On 08/09/2015 04:10, Wanpeng Li wrote:
+> 
+> I miss place the trace codes under CONFIG_KVM_ASYNC_PF, the patch in the
+> attachment rewrite the commit and fix it. Sorry for that.
+
+Thanks.  I cannot rewind kvm/next, so I committed just the incremental change:
+
+diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
+index 0d1bc478833b..d6f83222a6a1 100644
+--- a/include/trace/events/kvm.h
++++ b/include/trace/events/kvm.h
+@@ -356,6 +356,8 @@ TRACE_EVENT(
+ 		  __entry->address)
+ );
+ 
++#endif
++
+ TRACE_EVENT(kvm_halt_poll_ns,
+ 	TP_PROTO(bool grow, unsigned int vcpu_id, int new, int old),
+ 	TP_ARGS(grow, vcpu_id, new, old),
+@@ -386,8 +388,6 @@ TRACE_EVENT(kvm_halt_poll_ns,
+ #define trace_kvm_halt_poll_ns_shrink(vcpu_id, new, old) \
+ 	trace_kvm_halt_poll_ns(false, vcpu_id, new, old)
+ 
+-#endif
+-
+ #endif /* _TRACE_KVM_MAIN_H */
+ 
+ /* This part must be outside protection */
+
+Paolo
