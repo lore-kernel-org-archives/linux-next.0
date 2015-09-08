@@ -1,61 +1,110 @@
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Tue, 8 Sep 2015 06:48:34 +0200
-Message-ID: <55EE68A2.3020509@linux.intel.com>
-References: <20150903104919.6419ad18@canb.auug.org.au>
- <20150908094249.5cb1267e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Tue, 8 Sep 2015 14:53:12 +1000
+Message-ID: <20150908145312.202c9786@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150908094249.5cb1267e@canb.auug.org.au>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, Joe Perches <joe@perches.com>
 List-Id: linux-next.vger.kernel.org
 
-T3AgMDgtMDktMTUgb20gMDE6NDIgc2NocmVlZiBTdGVwaGVuIFJvdGh3ZWxsOgo+IEhpIGFsbCwK
-Pgo+IE9uIFRodSwgMyBTZXAgMjAxNSAxMDo0OToxOSArMTAwMCBTdGVwaGVuIFJvdGh3ZWxsIDxz
-ZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS1taXNj
-IHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoYXJtCj4+IG11bHRpX3Y3X2RlZmNvbmZp
-ZykgZmFpbGVkIGxpa2UgdGhpczoKPj4KPj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9t
-ZHA1X3BsYW5lLmM6IEluIGZ1bmN0aW9uICdtZHA1X3BsYW5lX2NsZWFudXBfZmInOgo+PiBkcml2
-ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzoyNzI6MjY6IGVycm9yOiAnZmIn
-IHJlZGVjbGFyZWQgYXMgZGlmZmVyZW50IGtpbmQgb2Ygc3ltYm9sCj4+ICAgc3RydWN0IGRybV9m
-cmFtZWJ1ZmZlciAqZmIgPSBvbGRfc3RhdGUtPmZiOwo+PiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIF4KPj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6MjY3OjI3
-OiBub3RlOiBwcmV2aW91cyBkZWZpbml0aW9uIG9mICdmYicgd2FzIGhlcmUKPj4gICAgc3RydWN0
-IGRybV9mcmFtZWJ1ZmZlciAqZmIsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4KPj4g
-ZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6IEF0IHRvcCBsZXZlbDoK
-Pj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6MzgzOjM6IHdhcm5p
-bmc6IGluaXRpYWxpemF0aW9uIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZQo+PiAgICAu
-Y2xlYW51cF9mYiA9IG1kcDVfcGxhbmVfY2xlYW51cF9mYiwKPj4gICAgXgo+PiBkcml2ZXJzL2dw
-dS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzozODM6Mzogd2FybmluZzogKG5lYXIgaW5p
-dGlhbGl6YXRpb24gZm9yICdtZHA1X3BsYW5lX2hlbHBlcl9mdW5jcy5jbGVhbnVwX2ZiJykKPj4K
-Pj4gQ2F1c2VkIGJ5IGNvbW1pdAo+Pgo+PiAgIGEzMTcyOTBhZjBkYiAoImRybS9hdG9taWM6IE1h
-a2UgcHJlcGFyZV9mYi9jbGVhbnVwX2ZiIG9ubHkgdGFrZSBzdGF0ZSwgdjMiKQo+Pgo+PiBXZWxs
-LCB0aGF0IHdhcyBjbGVhcmx5IG5ldmVyIGJ1aWxkIHRlc3RlZCA6LSgKPj4KPj4gSSBoYXZlIHVz
-ZWQgdGhlIGRybS1taXNjIHRyZWUgZnJvbSBuZXh0LTIwMTUwOTAyIGZvciB0b2RheS4KPiBUaGlz
-IGlzIHN0aWxsIGluIHRvZGF5J3MgbGludXgtbmV4dCA6LSgKPgpJIGp1c3QgZ290IGFyb3VuZCB0
-byBtYWtpbmcgYW4gYW1lbmQgZml4IHBhdGNoIGZvciBpdCB5ZXN0ZXJkYXkuIENhbiB5b3UgZm9s
-ZCBpdCBpbnRvIHYzIGRhbmllbD8KCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbXNtL21k
-cC9tZHA1L21kcDVfcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDUvbWRwNV9w
-bGFuZS5jCmluZGV4IDRkMzkwYjY5OWU5YS4uYTBmNWZmMGNlOGRjIDEwMDY0NAotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9k
-cm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYwpAQCAtMjY0LDcgKzI2NCw2IEBAIHN0YXRpYyBp
-bnQgbWRwNV9wbGFuZV9wcmVwYXJlX2ZiKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogfQogCiBz
-dGF0aWMgdm9pZCBtZHA1X3BsYW5lX2NsZWFudXBfZmIoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUs
-Ci0JCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLAogCQljb25zdCBzdHJ1Y3QgZHJtX3BsYW5l
-X3N0YXRlICpvbGRfc3RhdGUpCiB7CiAJc3RydWN0IG1kcDVfcGxhbmUgKm1kcDVfcGxhbmUgPSB0
-b19tZHA1X3BsYW5lKHBsYW5lKTsKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+Hi Andrew,
+
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/net/ieee802154/at86rf230.c: In function 'at86rf230_stats_show':
+drivers/net/ieee802154/at86rf230.c:1650:6: error: void value not ignored as it ought to be
+  ret = seq_printf(file, "SUCCESS:\t\t%8llu\n", lp->trac.success);
+      ^
+drivers/net/ieee802154/at86rf230.c:1654:6: error: void value not ignored as it ought to be
+  ret = seq_printf(file, "SUCCESS_DATA_PENDING:\t%8llu\n",
+      ^
+drivers/net/ieee802154/at86rf230.c:1659:6: error: void value not ignored as it ought to be
+  ret = seq_printf(file, "SUCCESS_WAIT_FOR_ACK:\t%8llu\n",
+      ^
+drivers/net/ieee802154/at86rf230.c:1664:6: error: void value not ignored as it ought to be
+  ret = seq_printf(file, "CHANNEL_ACCESS_FAILURE:\t%8llu\n",
+      ^
+drivers/net/ieee802154/at86rf230.c:1669:6: error: void value not ignored as it ought to be
+  ret = seq_printf(file, "NO_ACK:\t\t\t%8llu\n", lp->trac.no_ack);
+      ^
+drivers/net/ieee802154/at86rf230.c:1673:2: error: void value not ignored as it ought to be
+  return seq_printf(file, "INVALID:\t\t%8llu\n", lp->trac.invalid);
+  ^
+drivers/net/ieee802154/at86rf230.c:1674:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+
+Caused by commit
+
+  890acf8330ca ("at86rf230: add debugfs support")
+
+from the bluetooth tree interacting with commit
+
+  0287f0d7576f ("fs/seq_file: convert int seq_vprint/seq_printf/etc... returns to void")
+
+from the akpm tree.
+
+I have added the following fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 8 Sep 2015 14:48:11 +1000
+Subject: [PATCH] fs-seq_file-convert-int-seq_vprint-seq_printf-etc-returns-to-void-fix-fix-fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ieee802154/at86rf230.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/net/ieee802154/at86rf230.c b/drivers/net/ieee802154/at86rf230.c
+index b8b0628dc2f3..a9f3af63e590 100644
+--- a/drivers/net/ieee802154/at86rf230.c
++++ b/drivers/net/ieee802154/at86rf230.c
+@@ -1647,30 +1647,16 @@ static int at86rf230_stats_show(struct seq_file *file, void *offset)
+ 	struct at86rf230_local *lp = file->private;
+ 	int ret;
+ 
+-	ret = seq_printf(file, "SUCCESS:\t\t%8llu\n", lp->trac.success);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = seq_printf(file, "SUCCESS_DATA_PENDING:\t%8llu\n",
++	seq_printf(file, "SUCCESS:\t\t%8llu\n", lp->trac.success);
++	seq_printf(file, "SUCCESS_DATA_PENDING:\t%8llu\n",
+ 			 lp->trac.success_data_pending);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = seq_printf(file, "SUCCESS_WAIT_FOR_ACK:\t%8llu\n",
++	seq_printf(file, "SUCCESS_WAIT_FOR_ACK:\t%8llu\n",
+ 			 lp->trac.success_wait_for_ack);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = seq_printf(file, "CHANNEL_ACCESS_FAILURE:\t%8llu\n",
++	seq_printf(file, "CHANNEL_ACCESS_FAILURE:\t%8llu\n",
+ 			 lp->trac.channel_access_failure);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = seq_printf(file, "NO_ACK:\t\t\t%8llu\n", lp->trac.no_ack);
+-	if (ret < 0)
+-		return ret;
+-
+-	return seq_printf(file, "INVALID:\t\t%8llu\n", lp->trac.invalid);
++	seq_printf(file, "NO_ACK:\t\t\t%8llu\n", lp->trac.no_ack);
++	seq_printf(file, "INVALID:\t\t%8llu\n", lp->trac.invalid);
++	return 0;
+ }
+ 
+ static int at86rf230_stats_open(struct inode *inode, struct file *file)
+-- 
+2.5.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
