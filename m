@@ -1,151 +1,61 @@
-From: Wanpeng Li <wanpeng.li@hotmail.com>
-Subject: Re: linux-next: build failure after merge of the kvm tree
-Date: Tue, 8 Sep 2015 10:10:13 +0800
-Message-ID: <BLU436-SMTP381CF188008388F4CA601D80530@phx.gbl>
-References: <20150908113544.41d5a451@canb.auug.org.au>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+Date: Tue, 8 Sep 2015 06:48:34 +0200
+Message-ID: <55EE68A2.3020509@linux.intel.com>
+References: <20150903104919.6419ad18@canb.auug.org.au>
+ <20150908094249.5cb1267e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="------------040705000300050407070708"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150908113544.41d5a451@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150908094249.5cb1267e@canb.auug.org.au>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stone <daniels@collabora.com>
 List-Id: linux-next.vger.kernel.org
 
---------------040705000300050407070708
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi Paolo, Stephen,
-On 9/8/15 9:35 AM, Stephen Rothwell wrote:
-> Hi all,
->
-> After merging the kvm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 'grow_halt_poll_ns':
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1931:2: error: implicit declaration of function 'trace_kvm_halt_poll_ns_grow' [-Werror=implicit-function-declaration]
->    trace_kvm_halt_poll_ns_grow(vcpu->vcpu_id, val, old);
->    ^
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function 'shrink_halt_poll_ns':
-> arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1945:2: error: implicit declaration of function 'trace_kvm_halt_poll_ns_shrink' [-Werror=implicit-function-declaration]
->    trace_kvm_halt_poll_ns_shrink(vcpu->vcpu_id, val, old);
->    ^
->
-> Caused by commit
->
->    2cbd78244fb2 ("KVM: trace kvm_halt_poll_ns grow/shrink")
->
-> I have reverted that commit for today.
-
-I miss place the trace codes under CONFIG_KVM_ASYNC_PF, the patch in the 
-attachment rewrite the commit and fix it. Sorry for that.
-
-Regards,
-Wanpeng Li
-
---------------040705000300050407070708
-Content-Type: text/plain; charset="UTF-8"; x-mac-type=0; x-mac-creator=0;
-	name="0001-KVM-trace-kvm_halt_poll_ns-grow-shrink.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="0001-KVM-trace-kvm_halt_poll_ns-grow-shrink.patch"
-
->From c06ca8fec43a7ccc1fe265afe8b2fd3b84085368 Mon Sep 17 00:00:00 2001
-From: Wanpeng Li <wanpeng.li@hotmail.com>
-Date: Tue, 8 Sep 2015 10:03:38 +0800
-Subject: [PATCH] KVM: trace kvm_halt_poll_ns grow/shrink
-
-Tracepoint for dynamic halt_pool_ns, fired on every potential change.
-
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
----
- include/trace/events/kvm.h | 30 ++++++++++++++++++++++++++++++
- virt/kvm/kvm_main.c        |  8 ++++++--
- 2 files changed, 36 insertions(+), 2 deletions(-)
-
-diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
-index a44062d..d6f8322 100644
---- a/include/trace/events/kvm.h
-+++ b/include/trace/events/kvm.h
-@@ -358,6 +358,36 @@ TRACE_EVENT(
- 
- #endif
- 
-+TRACE_EVENT(kvm_halt_poll_ns,
-+	TP_PROTO(bool grow, unsigned int vcpu_id, int new, int old),
-+	TP_ARGS(grow, vcpu_id, new, old),
-+
-+	TP_STRUCT__entry(
-+		__field(bool, grow)
-+		__field(unsigned int, vcpu_id)
-+		__field(int, new)
-+		__field(int, old)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->grow           = grow;
-+		__entry->vcpu_id        = vcpu_id;
-+		__entry->new            = new;
-+		__entry->old            = old;
-+	),
-+
-+	TP_printk("vcpu %u: halt_poll_ns %d (%s %d)",
-+			__entry->vcpu_id,
-+			__entry->new,
-+			__entry->grow ? "grow" : "shrink",
-+			__entry->old)
-+);
-+
-+#define trace_kvm_halt_poll_ns_grow(vcpu_id, new, old) \
-+	trace_kvm_halt_poll_ns(true, vcpu_id, new, old)
-+#define trace_kvm_halt_poll_ns_shrink(vcpu_id, new, old) \
-+	trace_kvm_halt_poll_ns(false, vcpu_id, new, old)
-+
- #endif /* _TRACE_KVM_MAIN_H */
- 
- /* This part must be outside protection */
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 8ab49cf..4662a88 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1918,8 +1918,9 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_mark_page_dirty);
- 
- static void grow_halt_poll_ns(struct kvm_vcpu *vcpu)
- {
--	int val = vcpu->halt_poll_ns;
-+	int old, val;
- 
-+	old = val = vcpu->halt_poll_ns;
- 	/* 10us base */
- 	if (val == 0 && halt_poll_ns_grow)
- 		val = 10000;
-@@ -1927,18 +1928,21 @@ static void grow_halt_poll_ns(struct kvm_vcpu *vcpu)
- 		val *= halt_poll_ns_grow;
- 
- 	vcpu->halt_poll_ns = val;
-+	trace_kvm_halt_poll_ns_grow(vcpu->vcpu_id, val, old);
- }
- 
- static void shrink_halt_poll_ns(struct kvm_vcpu *vcpu)
- {
--	int val = vcpu->halt_poll_ns;
-+	int old, val;
- 
-+	old = val = vcpu->halt_poll_ns;
- 	if (halt_poll_ns_shrink == 0)
- 		val = 0;
- 	else
- 		val /= halt_poll_ns_shrink;
- 
- 	vcpu->halt_poll_ns = val;
-+	trace_kvm_halt_poll_ns_shrink(vcpu->vcpu_id, val, old);
- }
- 
- static int kvm_vcpu_check_block(struct kvm_vcpu *vcpu)
--- 
-1.9.1
-
-
---------------040705000300050407070708--
+T3AgMDgtMDktMTUgb20gMDE6NDIgc2NocmVlZiBTdGVwaGVuIFJvdGh3ZWxsOgo+IEhpIGFsbCwK
+Pgo+IE9uIFRodSwgMyBTZXAgMjAxNSAxMDo0OToxOSArMTAwMCBTdGVwaGVuIFJvdGh3ZWxsIDxz
+ZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS1taXNj
+IHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoYXJtCj4+IG11bHRpX3Y3X2RlZmNvbmZp
+ZykgZmFpbGVkIGxpa2UgdGhpczoKPj4KPj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9t
+ZHA1X3BsYW5lLmM6IEluIGZ1bmN0aW9uICdtZHA1X3BsYW5lX2NsZWFudXBfZmInOgo+PiBkcml2
+ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzoyNzI6MjY6IGVycm9yOiAnZmIn
+IHJlZGVjbGFyZWQgYXMgZGlmZmVyZW50IGtpbmQgb2Ygc3ltYm9sCj4+ICAgc3RydWN0IGRybV9m
+cmFtZWJ1ZmZlciAqZmIgPSBvbGRfc3RhdGUtPmZiOwo+PiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIF4KPj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6MjY3OjI3
+OiBub3RlOiBwcmV2aW91cyBkZWZpbml0aW9uIG9mICdmYicgd2FzIGhlcmUKPj4gICAgc3RydWN0
+IGRybV9mcmFtZWJ1ZmZlciAqZmIsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4KPj4g
+ZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6IEF0IHRvcCBsZXZlbDoK
+Pj4gZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNS9tZHA1X3BsYW5lLmM6MzgzOjM6IHdhcm5p
+bmc6IGluaXRpYWxpemF0aW9uIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZQo+PiAgICAu
+Y2xlYW51cF9mYiA9IG1kcDVfcGxhbmVfY2xlYW51cF9mYiwKPj4gICAgXgo+PiBkcml2ZXJzL2dw
+dS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYzozODM6Mzogd2FybmluZzogKG5lYXIgaW5p
+dGlhbGl6YXRpb24gZm9yICdtZHA1X3BsYW5lX2hlbHBlcl9mdW5jcy5jbGVhbnVwX2ZiJykKPj4K
+Pj4gQ2F1c2VkIGJ5IGNvbW1pdAo+Pgo+PiAgIGEzMTcyOTBhZjBkYiAoImRybS9hdG9taWM6IE1h
+a2UgcHJlcGFyZV9mYi9jbGVhbnVwX2ZiIG9ubHkgdGFrZSBzdGF0ZSwgdjMiKQo+Pgo+PiBXZWxs
+LCB0aGF0IHdhcyBjbGVhcmx5IG5ldmVyIGJ1aWxkIHRlc3RlZCA6LSgKPj4KPj4gSSBoYXZlIHVz
+ZWQgdGhlIGRybS1taXNjIHRyZWUgZnJvbSBuZXh0LTIwMTUwOTAyIGZvciB0b2RheS4KPiBUaGlz
+IGlzIHN0aWxsIGluIHRvZGF5J3MgbGludXgtbmV4dCA6LSgKPgpJIGp1c3QgZ290IGFyb3VuZCB0
+byBtYWtpbmcgYW4gYW1lbmQgZml4IHBhdGNoIGZvciBpdCB5ZXN0ZXJkYXkuIENhbiB5b3UgZm9s
+ZCBpdCBpbnRvIHYzIGRhbmllbD8KCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbXNtL21k
+cC9tZHA1L21kcDVfcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDUvbWRwNV9w
+bGFuZS5jCmluZGV4IDRkMzkwYjY5OWU5YS4uYTBmNWZmMGNlOGRjIDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9k
+cm0vbXNtL21kcC9tZHA1L21kcDVfcGxhbmUuYwpAQCAtMjY0LDcgKzI2NCw2IEBAIHN0YXRpYyBp
+bnQgbWRwNV9wbGFuZV9wcmVwYXJlX2ZiKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogfQogCiBz
+dGF0aWMgdm9pZCBtZHA1X3BsYW5lX2NsZWFudXBfZmIoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUs
+Ci0JCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLAogCQljb25zdCBzdHJ1Y3QgZHJtX3BsYW5l
+X3N0YXRlICpvbGRfc3RhdGUpCiB7CiAJc3RydWN0IG1kcDVfcGxhbmUgKm1kcDVfcGxhbmUgPSB0
+b19tZHA1X3BsYW5lKHBsYW5lKTsKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
