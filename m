@@ -1,40 +1,28 @@
-From: James Bottomley <jbottomley@odin.com>
-Subject: Re: randconfig build error with next-20150908, in
- drivers/md/dm-mpath.c
-Date: Fri, 11 Sep 2015 18:54:01 +0000
-Message-ID: <1441997640.7836.1.camel@Odin.com>
-References: <CA+r1ZhgR=dO0ezk0Nm0JuAb1D0AU7K2Am=Pyy9aPqCMsLW9Y0w@mail.gmail.com>
-	 <20150908172356.GA1584@redhat.com> <20150909160418.GB28608@lst.de>
+From: Joe Stringer <joestringer@nicira.com>
+Subject: Re: randconfig build error with next-20150911, in net/openvswitch
+Date: Fri, 11 Sep 2015 15:05:09 -0700
+Message-ID: <CANr6G5zD=Pkt=ZvFW8i8AXX_0KnwxZviOCuFVR8Z90Zzf9SY6A@mail.gmail.com>
+References: <CA+r1Zhiv+XTVX2a-E-57dDkxqvNNVMf7NpoBVuabXBZsPXT_4g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.parallels.com ([199.115.105.18]:39352 "EHLO
-	mx2.parallels.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751351AbbIKSyO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Sep 2015 14:54:14 -0400
-In-Reply-To: <20150909160418.GB28608@lst.de>
-Content-Language: en-US
-Content-ID: <4A0CFA1049FE10469B9DFB86E33EE6DF@sw.swsoft.com>
+Received: from mail-yk0-f174.google.com ([209.85.160.174]:33774 "EHLO
+	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752934AbbIKWF3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Sep 2015 18:05:29 -0400
+Received: by ykei199 with SMTP id i199so105227052yke.0
+        for <linux-next@vger.kernel.org>; Fri, 11 Sep 2015 15:05:28 -0700 (PDT)
+In-Reply-To: <CA+r1Zhiv+XTVX2a-E-57dDkxqvNNVMf7NpoBVuabXBZsPXT_4g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "hch@lst.de" <hch@lst.de>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "jim.epost@gmail.com" <jim.epost@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "agk@redhat.com" <agk@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "snitzer@redhat.com" <snitzer@redhat.com>, "dm-devel@redhat.com" <dm-devel@redhat.com>
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pravin Shelar <pshelar@nicira.com>, netdev <netdev@vger.kernel.org>, "dev@openvswitch.org" <dev@openvswitch.org>, "David S. Miller" <davem@davemloft.net>
 
-T24gV2VkLCAyMDE1LTA5LTA5IGF0IDE4OjA0ICswMjAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
-ZToNCj4gRG9lcyB0aGlzIGZpeCB0aGUgaXNzdWUgZm9yIHlvdT8gIE15IEtjb25maWctZnUgaXNu
-J3QgdGhlIGJlc3QsDQo+IGJ1dCB0aGUgaWRlYSBiZWhpbmQgdGhpcyBpcyB0aGF0IGRtLW1wYXRo
-IHdpbGwgZGVwZW5kIG9uIFNDU0kNCj4gaWYgU0NTSV9ESCBpcyBzZXQuICBJZiBTQ1NJX0RIIGlz
-IG5vdCBzZXQgaXQgd2lsbCB1c2UgdGhlIHN0dWJzDQo+IGFuZCBub3QgY2FyZSBhYm91dCBTQ1NJ
-Lg0KDQpJIGFzc3VtZSBJJ20gT0sgdG8gYWRkDQoNClNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBI
-ZWxsd2lnIDxoY2hAbHN0LmRlPg0KDQooSSdsbCBhc3N1bWUgc28gaWYgeW91IGRvbid0IHJlcGx5
-KQ0KDQpKYW1lcw0KDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21kL0tjb25maWcgYi9kcml2ZXJz
-L21kL0tjb25maWcNCj4gaW5kZXggYjU5NzI3My4uZTllYTY4MSAxMDA2NDQNCj4gLS0tIGEvZHJp
-dmVycy9tZC9LY29uZmlnDQo+ICsrKyBiL2RyaXZlcnMvbWQvS2NvbmZpZw0KPiBAQCAtMzkzLDcg
-KzM5Myw3IEBAIGNvbmZpZyBETV9NVUxUSVBBVEgNCj4gIAkjIG9mIFNDU0lfREggaWYgdGhlIGxh
-dHRlciBpc24ndCBkZWZpbmVkIGJ1dCBpZg0KPiAgCSMgaXQgaXMsIERNX01VTFRJUEFUSCBtdXN0
-IGRlcGVuZCBvbiBpdC4gIFdlIGdldCBhIGJ1aWxkDQo+ICAJIyBlcnJvciBpZiBTQ1NJX0RIPW0g
-YW5kIERNX01VTFRJUEFUSD15DQo+IC0JZGVwZW5kcyBvbiBTQ1NJX0RIIHx8ICFTQ1NJX0RIDQo+
-ICsJZGVwZW5kcyBvbiAhU0NTSV9ESCB8fCBTQ1NJDQo+ICAJLS0taGVscC0tLQ0KPiAgCSAgQWxs
-b3cgdm9sdW1lIG1hbmFnZXJzIHRvIHN1cHBvcnQgbXVsdGlwYXRoIGhhcmR3YXJlLg0KPiAgDQoN
-Cg0KDQo=
+On 11 September 2015 at 09:53, Jim Davis <jim.epost@gmail.com> wrote:
+> Building with the attached random configuration file,
+>
+> net/built-in.o: In function `ovs_ct_execute':
+> (.text+0x10f587): undefined reference to `nf_ct_frag6_gather'
+
+Thanks for the report, I sent a patch:
+https://patchwork.ozlabs.org/patch/517033/
