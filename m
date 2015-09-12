@@ -1,108 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with
-	Linus' tree
-Date: Sat, 12 Sep 2015 13:15:29 +1000
-Message-ID: <20150912131529.5e0f0980@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Sat, 12 Sep 2015 14:34:28 +1000
+Message-ID: <20150912143428.14e01ffa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56047 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751281AbbILEec (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 12 Sep 2015 00:34:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Davydov <vdavydov@parallels.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vZHJtX2RwX2hlbHBlci5jCgpiZXR3
-ZWVuIGNvbW1pdHM6CgogIDc5YTJiMTYxYzEyYSAoImRybS9kcDogRGVmaW5lIEFVWF9SRVRSWV9J
-TlRFUlZBTCBhcyA1MDAgdXMiKQogIDRlZmE4M2M4Yzc4NiAoImRybS9kcDogQWRqdXN0IGkyYy1v
-dmVyLWF1eCByZXRyeSBjb3VudCBiYXNlZCBvbiBtZXNzYWdlIHNpemUgYW5kIGkyYyBidXMgc3Bl
-ZWQiKQogIGYzNjIwM2JlNjA4YSAoImRybS9kcDogQWRkIGRwX2F1eF9pMmNfc3BlZWRfa2h6IG1v
-ZHVsZSBwYXJhbSB0byBzZXQgdGhlIGFzc3VtZSBpMmMgYnVzIHNwZWVkIikKCmZyb20gTGludXMn
-IHRyZWUgYW5kIGNvbW1pdDoKCiAgNjhlYzJhMmEyNDgxICgiZHJtL2RwOiBVc2UgSTJDX1dSSVRF
-X1NUQVRVU19VUERBVEUgdG8gZHJhaW4gcGFydGlhbCBJMkNfV1JJVEUgcmVxdWVzdHMiKQoKZnJv
-bSB0aGUgZHJtLW1pc2MgdHJlZS4KCkkgZml4ZWQgaXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBj
-YXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeSAobm8gYWN0aW9uCmlzIHJlcXVpcmVkKS4KCi0tIApD
-aGVlcnMsClN0ZXBoZW4gUm90aHdlbGwgICAgICAgICAgICAgICAgICAgIHNmckBjYW5iLmF1dWcu
-b3JnLmF1CgpkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJtL2RybV9kcF9oZWxwZXIuYwppbmRleCAy
-OTE3MzRlODdmY2EsNWE1NWQ5MDViOGVlLi4wMDAwMDAwMDAwMDAKLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2RybV9kcF9oZWxwZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2RwX2hlbHBlci5j
-CkBAQCAtNDI0LDkwIC00MjIsMTkgKzQyNCwxMDMgQEBAIHN0YXRpYyB1MzIgZHJtX2RwX2kyY19m
-dW5jdGlvbmFsaXR5KHN0cgogIAkgICAgICAgSTJDX0ZVTkNfMTBCSVRfQUREUjsKICB9CiAgCiAr
-I2RlZmluZSBBVVhfUFJFQ0hBUkdFX0xFTiAxMCAvKiAxMCB0byAxNiAqLwogKyNkZWZpbmUgQVVY
-X1NZTkNfTEVOICgxNiArIDQpIC8qIHByZWFtYmxlICsgQVVYX1NZTkNfRU5EICovCiArI2RlZmlu
-ZSBBVVhfU1RPUF9MRU4gNAogKyNkZWZpbmUgQVVYX0NNRF9MRU4gNAogKyNkZWZpbmUgQVVYX0FE
-RFJFU1NfTEVOIDIwCiArI2RlZmluZSBBVVhfUkVQTFlfUEFEX0xFTiA0CiArI2RlZmluZSBBVVhf
-TEVOR1RIX0xFTiA4CiArCiArLyoKICsgKiBDYWxjdWxhdGUgdGhlIGR1cmF0aW9uIG9mIHRoZSBB
-VVggcmVxdWVzdC9yZXBseSBpbiB1c2VjLiBHaXZlcyB0aGUKICsgKiAiYmVzdCIgY2FzZSBlc3Rp
-bWF0ZSwgaWUuIHN1Y2Nlc3NmdWwgd2hpbGUgYXMgc2hvcnQgYXMgcG9zc2libGUuCiArICovCiAr
-c3RhdGljIGludCBkcm1fZHBfYXV4X3JlcV9kdXJhdGlvbihjb25zdCBzdHJ1Y3QgZHJtX2RwX2F1
-eF9tc2cgKm1zZykKICt7CiArCWludCBsZW4gPSBBVVhfUFJFQ0hBUkdFX0xFTiArIEFVWF9TWU5D
-X0xFTiArIEFVWF9TVE9QX0xFTiArCiArCQlBVVhfQ01EX0xFTiArIEFVWF9BRERSRVNTX0xFTiAr
-IEFVWF9MRU5HVEhfTEVOOwogKwogKwlpZiAoKG1zZy0+cmVxdWVzdCAmIERQX0FVWF9JMkNfUkVB
-RCkgPT0gMCkKICsJCWxlbiArPSBtc2ctPnNpemUgKiA4OwogKwogKwlyZXR1cm4gbGVuOwogK30K
-ICsKICtzdGF0aWMgaW50IGRybV9kcF9hdXhfcmVwbHlfZHVyYXRpb24oY29uc3Qgc3RydWN0IGRy
-bV9kcF9hdXhfbXNnICptc2cpCiArewogKwlpbnQgbGVuID0gQVVYX1BSRUNIQVJHRV9MRU4gKyBB
-VVhfU1lOQ19MRU4gKyBBVVhfU1RPUF9MRU4gKwogKwkJQVVYX0NNRF9MRU4gKyBBVVhfUkVQTFlf
-UEFEX0xFTjsKICsKICsJLyoKICsJICogRm9yIHJlYWQgd2UgZXhwZWN0IHdoYXQgd2FzIGFza2Vk
-LiBGb3Igd3JpdGVzIHRoZXJlIHdpbGwKICsJICogYmUgMCBvciAxIGRhdGEgYnl0ZXMuIEFzc3Vt
-ZSAwIGZvciB0aGUgImJlc3QiIGNhc2UuCiArCSAqLwogKwlpZiAobXNnLT5yZXF1ZXN0ICYgRFBf
-QVVYX0kyQ19SRUFEKQogKwkJbGVuICs9IG1zZy0+c2l6ZSAqIDg7CiArCiArCXJldHVybiBsZW47
-CiArfQogKwogKyNkZWZpbmUgSTJDX1NUQVJUX0xFTiAxCiArI2RlZmluZSBJMkNfU1RPUF9MRU4g
-MQogKyNkZWZpbmUgSTJDX0FERFJfTEVOIDkgLyogQUREUkVTUyArIFIvVyArIEFDSy9OQUNLICov
-CiArI2RlZmluZSBJMkNfREFUQV9MRU4gOSAvKiBEQVRBICsgQUNLL05BQ0sgKi8KICsKICsvKgog
-KyAqIENhbGN1bGF0ZSB0aGUgbGVuZ3RoIG9mIHRoZSBpMmMgdHJhbnNmZXIgaW4gdXNlYywgYXNz
-dW1pbmcKICsgKiB0aGUgaTJjIGJ1cyBzcGVlZCBpcyBhcyBzcGVjaWZpZWQuIEdpdmVzIHRoZSB0
-aGUgIndvcnN0IgogKyAqIGNhc2UgZXN0aW1hdGUsIGllLiBzdWNjZXNzZnVsIHdoaWxlIGFzIGxv
-bmcgYXMgcG9zc2libGUuCiArICogRG9lc24ndCBhY2NvdW50IHRoZSB0aGUgIk1PVCIgYml0LCBh
-bmQgaW5zdGVhZCBhc3N1bWVzIGVhY2gKICsgKiBtZXNzYWdlIGluY2x1ZGVzIGEgU1RBUlQsIEFE
-RFJFU1MgYW5kIFNUT1AuIE5laXRoZXIgZG9lcyBpdAogKyAqIGFjY291bnQgZm9yIGFkZGl0aW9u
-YWwgcmFuZG9tIHZhcmlhYmxlcyBzdWNoIGFzIGNsb2NrIHN0cmV0Y2hpbmcuCiArICovCiArc3Rh
-dGljIGludCBkcm1fZHBfaTJjX21zZ19kdXJhdGlvbihjb25zdCBzdHJ1Y3QgZHJtX2RwX2F1eF9t
-c2cgKm1zZywKICsJCQkJICAgaW50IGkyY19zcGVlZF9raHopCiArewogKwkvKiBBVVggYml0cmF0
-ZSBpcyAxTUh6LCBpMmMgYml0cmF0ZSBhcyBzcGVjaWZpZWQgKi8KICsJcmV0dXJuIERJVl9ST1VO
-RF9VUCgoSTJDX1NUQVJUX0xFTiArIEkyQ19BRERSX0xFTiArCiArCQkJICAgICBtc2ctPnNpemUg
-KiBJMkNfREFUQV9MRU4gKwogKwkJCSAgICAgSTJDX1NUT1BfTEVOKSAqIDEwMDAsIGkyY19zcGVl
-ZF9raHopOwogK30KICsKICsvKgogKyAqIERldGVyaW5lIGhvdyBtYW55IHJldHJpZXMgc2hvdWxk
-IGJlIGF0dGVtcHRlZCB0byBzdWNjZXNzZnVsbHkgdHJhbnNmZXIKICsgKiB0aGUgc3BlY2lmaWVk
-IG1lc3NhZ2UsIGJhc2VkIG9uIHRoZSBlc3RpbWF0ZWQgZHVyYXRpb25zIG9mIHRoZQogKyAqIGky
-YyBhbmQgQVVYIHRyYW5zZmVycy4KICsgKi8KICtzdGF0aWMgaW50IGRybV9kcF9pMmNfcmV0cnlf
-Y291bnQoY29uc3Qgc3RydWN0IGRybV9kcF9hdXhfbXNnICptc2csCiArCQkJICAgICAgaW50IGky
-Y19zcGVlZF9raHopCiArewogKwlpbnQgYXV4X3RpbWVfdXMgPSBkcm1fZHBfYXV4X3JlcV9kdXJh
-dGlvbihtc2cpICsKICsJCWRybV9kcF9hdXhfcmVwbHlfZHVyYXRpb24obXNnKTsKICsJaW50IGky
-Y190aW1lX3VzID0gZHJtX2RwX2kyY19tc2dfZHVyYXRpb24obXNnLCBpMmNfc3BlZWRfa2h6KTsK
-ICsKICsJcmV0dXJuIERJVl9ST1VORF9VUChpMmNfdGltZV91cywgYXV4X3RpbWVfdXMgKyBBVVhf
-UkVUUllfSU5URVJWQUwpOwogK30KICsKICsvKgogKyAqIEZJWE1FIGN1cnJlbnRseSBhc3N1bWVz
-IDEwIGtIeiBhcyBzb21lIHJlYWwgd29ybGQgZGV2aWNlcyBzZWVtCiArICogdG8gcmVxdWlyZSBp
-dC4gV2Ugc2hvdWxkIHF1ZXJ5L3NldCB0aGUgc3BlZWQgdmlhIERQQ0QgaWYgc3VwcG9ydGVkLgog
-KyAqLwogK3N0YXRpYyBpbnQgZHBfYXV4X2kyY19zcGVlZF9raHogX19yZWFkX21vc3RseSA9IDEw
-OwogK21vZHVsZV9wYXJhbV91bnNhZmUoZHBfYXV4X2kyY19zcGVlZF9raHosIGludCwgMDY0NCk7
-CiArTU9EVUxFX1BBUk1fREVTQyhkcF9hdXhfaTJjX3NwZWVkX2toeiwKICsJCSAiQXNzdW1lZCBz
-cGVlZCBvZiB0aGUgaTJjIGJ1cyBpbiBrSHosICgxLTQwMCwgZGVmYXVsdCAxMCkiKTsKICsKKyBz
-dGF0aWMgdm9pZCBkcm1fZHBfaTJjX21zZ193cml0ZV9zdGF0dXNfdXBkYXRlKHN0cnVjdCBkcm1f
-ZHBfYXV4X21zZyAqbXNnKQorIHsKKyAJLyoKKyAJICogSW4gY2FzZSBvZiBpMmMgZGVmZXIgb3Ig
-c2hvcnQgaTJjIGFjayByZXBseSB0byBhIHdyaXRlLAorIAkgKiB3ZSBuZWVkIHRvIHN3aXRjaCB0
-byBXUklURV9TVEFUVVNfVVBEQVRFIHRvIGRyYWluIHRoZQorIAkgKiByZXN0IG9mIHRoZSBtZXNz
-YWdlCisgCSAqLworIAlpZiAoKG1zZy0+cmVxdWVzdCAmIH5EUF9BVVhfSTJDX01PVCkgPT0gRFBf
-QVVYX0kyQ19XUklURSkgeworIAkJbXNnLT5yZXF1ZXN0ICY9IERQX0FVWF9JMkNfTU9UOworIAkJ
-bXNnLT5yZXF1ZXN0IHw9IERQX0FVWF9JMkNfV1JJVEVfU1RBVFVTX1VQREFURTsKKyAJfQorIH0K
-KyAKICAvKgogICAqIFRyYW5zZmVyIGEgc2luZ2xlIEkyQy1vdmVyLUFVWCBtZXNzYWdlIGFuZCBo
-YW5kbGUgdmFyaW91cyBlcnJvciBjb25kaXRpb25zLAogICAqIHJldHJ5aW5nIHRoZSB0cmFuc2Fj
-dGlvbiBhcyBhcHByb3ByaWF0ZS4gIEl0IGlzIGFzc3VtZWQgdGhhdCB0aGUKQEBAIC01OTUsNyAt
-NTIxLDggKzYxMCw4IEBAQCBzdGF0aWMgaW50IGRybV9kcF9pMmNfZG9fbXNnKHN0cnVjdCBkcm0K
-ICAJCQlhdXgtPmkyY19kZWZlcl9jb3VudCsrOwogIAkJCWlmIChkZWZlcl9pMmMgPCA3KQogIAkJ
-CQlkZWZlcl9pMmMrKzsKIC0JCQl1c2xlZXBfcmFuZ2UoNDAwLCA1MDApOwogKwkJCXVzbGVlcF9y
-YW5nZShBVVhfUkVUUllfSU5URVJWQUwsIEFVWF9SRVRSWV9JTlRFUlZBTCArIDEwMCk7CisgCQkJ
-ZHJtX2RwX2kyY19tc2dfd3JpdGVfc3RhdHVzX3VwZGF0ZShtc2cpOwogIAkJCWNvbnRpbnVlOwog
-IAogIAkJZGVmYXVsdDoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1n
-ZngK
+Hi Andrew,
+
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+In file included from include/linux/mm.h:318:0,
+                 from include/linux/highmem.h:7,
+                 from include/linux/bio.h:23,
+                 from include/linux/writeback.h:192,
+                 from include/linux/memcontrol.h:30,
+                 from include/linux/swap.h:8,
+                 from include/linux/suspend.h:4,
+                 from arch/x86/kernel/asm-offsets.c:12:
+include/linux/page-flags.h:371:26: error: macro "TESTPAGEFLAG" requires 3 arguments, but only 2 given
+ TESTPAGEFLAG(Young, young)
+                          ^  
+include/linux/page-flags.h:372:25: error: macro "SETPAGEFLAG" requires 3 arguments, but only 2 given
+ SETPAGEFLAG(Young, young)   
+                         ^   
+include/linux/page-flags.h:371:1: error: unknown type name 'TESTPAGEFLAG'
+ TESTPAGEFLAG(Young, young)  
+ ^
+include/linux/page-flags.h:373:27: error: macro "TESTCLEARFLAG" requires 3 arguments, but only 2 given
+ TESTCLEARFLAG(Young, young) 
+                           ^ 
+include/linux/page-flags.h:373:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'TESTCLEARFLAG'
+ TESTCLEARFLAG(Young, young) 
+ ^
+include/linux/page-flags.h:374:20: error: macro "PAGEFLAG" requires 3 arguments, but only 2 given
+ PAGEFLAG(Idle, idle)
+                    ^
+include/linux/page-flags.h:373:1: error: unknown type name 'TESTCLEARFLAG'
+ TESTCLEARFLAG(Young, young) 
+ ^
+In file included from include/linux/highmem.h:7:0,
+                 from include/linux/bio.h:23,
+                 from include/linux/writeback.h:192,
+                 from include/linux/memcontrol.h:30,
+                 from include/linux/swap.h:8,
+                 from include/linux/suspend.h:4,
+                 from arch/x86/kernel/asm-offsets.c:12:
+include/linux/mm.h: In function '__compound_tail_refcounted':
+include/linux/mm.h:453:2: error: implicit declaration of function 'PageAnon' [-Werror=implicit-function-declaration]
+  return PageAnon(page) && !PageSlab(page) && !PageHeadHuge(page);
+  ^
+
+Caused by commit
+
+  33c3fc71c8cf ("mm: introduce idle page tracking")
+
+from Linus' tree interacting with commit
+
+  3b1670dad702 ("page-flags: introduce page flags policies wrt compound pages")
+
+from the akpm-current tree (and presumably others).
+
+I have just dropped the akpm-current tree for today.  I am sorry I
+rushed you to put out a cleaned up mmotm yesterday :-(
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
