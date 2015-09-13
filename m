@@ -1,86 +1,47 @@
-From: Hannes Reinecke <hare@suse.de>
-Subject: Re: randconfig build error with next-20150908, in
- drivers/md/dm-mpath.c
-Date: Sun, 13 Sep 2015 16:29:38 +0200
-Message-ID: <55F58852.7070108@suse.de>
-References: <CA+r1ZhgR=dO0ezk0Nm0JuAb1D0AU7K2Am=Pyy9aPqCMsLW9Y0w@mail.gmail.com>
- <20150908172356.GA1584@redhat.com> <1441733672.5932.1.camel@Odin.com>
- <20150908183021.GA3019@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: bad base of the h8300 tree
+Date: Mon, 14 Sep 2015 09:54:25 +1000
+Message-ID: <20150914095425.1c6c3470@canb.auug.org.au>
+References: <20150831074304.0ce16f9f@canb.auug.org.au>
+	<20150901074033.4282c9c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20150908183021.GA3019@redhat.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Mike Snitzer <snitzer@redhat.com>, James Bottomley <jbottomley@odin.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "agk@redhat.com" <agk@redhat.com>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "jim.epost@gmail.com" <jim.epost@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "dm-devel@redhat.com" <dm-devel@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39659 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752163AbbIMXy1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 13 Sep 2015 19:54:27 -0400
+In-Reply-To: <20150901074033.4282c9c4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/08/2015 08:30 PM, Mike Snitzer wrote:
-> On Tue, Sep 08 2015 at  1:34pm -0400,
-> James Bottomley <jbottomley@odin.com> wrote:
->=20
->> On Tue, 2015-09-08 at 13:23 -0400, Mike Snitzer wrote:
->>> On Tue, Sep 08 2015 at  1:10pm -0400,
->>> Jim Davis <jim.epost@gmail.com> wrote:
->>>
->>>> Building with the attached random configuration file,
->>>>
->>>> drivers/built-in.o: In function `activate_path':
->>>> /home/jim/linux-next/drivers/md/dm-mpath.c:1225: undefined referen=
-ce
->>>> to `scsi_dh_activate'
->>>> drivers/built-in.o: In function `parse_path':
->>>> /home/jim/linux-next/drivers/md/dm-mpath.c:581: undefined referenc=
-e to
->>>> `scsi_dh_attached_handler_name'
->>>> /home/jim/linux-next/drivers/md/dm-mpath.c:600: undefined referenc=
-e to
->>>> `scsi_dh_attach'
->>>> /home/jim/linux-next/drivers/md/dm-mpath.c:615: undefined referenc=
-e to
->>>> `scsi_dh_set_params'
->>>
->>> These DM-mpath changes were staged via linux-scsi.  Cc'ing James an=
-d Christoph.
->>
->> [adding linux-scsi]
->>
->> It must be Hannes' dm changes ... you acked them.  I take it the pro=
-blem
->> is now dm-mpath won't build without CONFIG_SCSI?  How do you want it
->> fixed?  We can either add a Kconfig dependency or try to disentangle
->> them again.
->=20
-> OK (Hannes' changes).  I'm fine with seeing DM_MULTIPATH depend on
-> CONFIG_SCSI.
->=20
-Indeed, with the switch for having scsi_dh being moved into struct
-scsi_device DM_MULTIPATH will now depend on SCSI.
+Hi Yoshinori,
 
-> The Kconfig for DM_MULTIPATH is clearly stale:
->=20
->         # nasty syntax but means make DM_MULTIPATH independent
->         # of SCSI_DH if the latter isn't defined but if
->         # it is, DM_MULTIPATH must depend on it.  We get a build
->         # error if SCSI_DH=3Dm and DM_MULTIPATH=3Dy
->         depends on SCSI_DH || !SCSI_DH
->=20
-> James, if you have a vision for how to fix this please feel free.
-> Otherwise, Hannes, care to send a patch to fix this?
->=20
-Yep, once I'm back in the office on Monday.
+On Tue, 1 Sep 2015 07:40:33 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Mon, 31 Aug 2015 07:43:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > The h8300 tree today has been based on linux-next.  This cannto work.
+> > Please rebase this onto Linus' tree (or some other stable base).
+> > 
+> > I cannot use your tree in this state, so it will be dropped from
+> > linux-next until it is fixed.  Also, Linus cannot pull it in this state.
+> 
+> And now your tree conatins lots and lots of very old commits that do
+> not even have Signed-off-by tags :-(.  The version I have been using
+> has a HEAD of commit:
+> 
+> 99bcfda85f66 "Revert "asm-generic: {get,put}_user ptr argument evaluate only 1 time""
+> 
+> (which, it turns out" also has no Signed-off-by :-()
+> 
+> Maybe you should reset your tree to that and try to move on from there.
 
+Can you please clean this up ...
+
+-- 
 Cheers,
-
-Hannes
---=20
-Dr. Hannes Reinecke		      zSeries & Storage
-hare@suse.de			      +49 911 74053 688
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: J. Hawn, J. Guild, F. Imend=F6rffer, HRB 16746 (AG N=FCrnberg)
---
-To unsubscribe from this list: send the line "unsubscribe linux-scsi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Stephen Rothwell                    sfr@canb.auug.org.au
