@@ -1,72 +1,48 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 16 Sep 2015 08:38:17 +0200
-Message-ID: <20150916063817.GC22064@krava.redhat.com>
-References: <20150916101245.60235b54@canb.auug.org.au>
- <20150916061652.GB22064@krava.redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Wed, 16 Sep 2015 08:58:32 +0200
+Message-ID: <CAMuHMdUFnQBYr8tt7GsZw+6s_raFct+vDoRf6F=QnEC6ehqmPw@mail.gmail.com>
+References: <20150728160015.142f588f@canb.auug.org.au>
+	<20150729171256.GA10863@redhat.com>
+	<20150908093524.507a19d8@canb.auug.org.au>
+	<CA+55aFw=mTzTg8BS1Oo27qoybYYzweRvDNv-3U2V4gOpJ6FqrA@mail.gmail.com>
+	<20150909085603.0173ac4e@canb.auug.org.au>
+	<CA+55aFzNTO-VRD25QyopovfbVN3m3XMogruRE0L7G51AKOAb2g@mail.gmail.com>
+	<20150908162115.fc494463.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44804 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751904AbbIPGiX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Sep 2015 02:38:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20150916061652.GB22064@krava.redhat.com>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:34019 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751822AbbIPG6d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Sep 2015 02:58:33 -0400
+In-Reply-To: <20150908162115.fc494463.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrea Arcangeli <aarcange@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>, Eric B Munson <emunson@akamai.com>, "Dr. David Alan Gilbert" <dgilbert@redhat.com>
 
-On Wed, Sep 16, 2015 at 08:16:52AM +0200, Jiri Olsa wrote:
-> On Wed, Sep 16, 2015 at 10:12:45AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the tip tree, today's linux-next build (perf) failed
-> > like this:
-> > 
-> > make[3]: *** No rule to make target 'tools/lib/api/fs/debugfs.h', needed by 'tools/perf/arch/common.o'.  Stop.
-> > tools/build/Makefile.build:109: recipe for target 'arch' failed
-> > make[4]: *** No rule to make target 'fs/debugfs.h', needed by 'tools/perf/fs/fs.o'.  Stop.
-> > tools/build/Makefile.build:109: recipe for target 'fs' failed
-> > make[3]: *** No rule to make target 'tools/lib/api/fs/debugfs.h', needed by 'tools/perf/util/abspath.o'.  Stop.
-> > tools/build/Makefile.build:109: recipe for target 'util' failed
-> > Makefile:32: recipe for target 'tools/perf/libapi-in.o' failed
-> > Makefile.perf:417: recipe for target 'tools/perf/libapi.a' failed
-> > Makefile.perf:393: recipe for target 'tools/perf/libperf-in.o' failed
-> > Makefile:68: recipe for target 'all' failed
-> > 
-> > Maybe caused by commit
-> > 
-> >   60a1133a5b39 ("tools lib api fs: Remove debugfs, tracefs and findfs objects")
-> > 
-> > This is an incremental build i.e. I do not do a "make clean" after doing
-> > the build for each tree merge (in case that matters).
-> 
-> it does in this case, removed header files stay in
-> cmd build dependency file (like in .abspath.o.cmd above)
-> and cause build error
-> 
-> build system is not smart enough yet to find out,
-> I was postponning fixing this for some time now,
-> I'll try to get this resolved asap
-> 
-> > 
-> > I have used the tip tree from next-20150915 for today.
-> > 
-> > Also, building perf seems to ignore O=<dir> on the make invocation.
-> > Is that expected?
-> 
-> hum, not sure about this one.. I'm not using it, but we have
-> tests for this and I thought we're ok.. I'll check
+Hi Andrew,
 
-seems to work on latest Arnaldo's perf/core,
-what command line failed for you?
+On Wed, Sep 9, 2015 at 1:21 AM, Andrew Morton <akpm@linux-foundation.org> wrote:
+> New syscalls are rather a pain, both from the patch-monkeying POV and
+> also because nobody knows what the syscall numbers will be until
+> everything lands in mainline.  Oh well, it doesn't happen often and
+> it's easy stuff.
 
-[jolsa@krava perf]$ make O=/tmp/krava/
-...
-[jolsa@krava perf]$ ll /tmp/krava/perf
--rwxrwxr-x. 1 jolsa jolsa 12669704 Sep 16 08:36 /tmp/krava/perf
+One more reason to let the assignment of syscall numbers be handled
+(1) by the architecture maintainer, (2) after -rc1, even for x86.
 
+If x86 is no more the canonical source, scripts/checksyscalls.sh needs an
+update, though.
 
-jirka
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
