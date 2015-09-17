@@ -1,63 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Thu, 17 Sep 2015 10:13:48 +1000
-Message-ID: <20150917101348.7f9d2665@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 17 Sep 2015 10:34:23 +1000
+Message-ID: <20150917103423.1663c15e@canb.auug.org.au>
+References: <20150916101245.60235b54@canb.auug.org.au>
+	<20150916061652.GB22064@krava.redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58471 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55155 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752811AbbIQANv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Sep 2015 20:13:51 -0400
+	id S1752750AbbIQAe0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Sep 2015 20:34:26 -0400
+In-Reply-To: <20150916061652.GB22064@krava.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Hi all,
+Hi Jiri,
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+On Wed, 16 Sep 2015 08:16:52 +0200 Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Wed, Sep 16, 2015 at 10:12:45AM +1000, Stephen Rothwell wrote:
+> > 
+> > After merging the tip tree, today's linux-next build (perf) failed
+> > like this:
+> > 
+> > make[3]: *** No rule to make target 'tools/lib/api/fs/debugfs.h', needed by 'tools/perf/arch/common.o'.  Stop.
+> > tools/build/Makefile.build:109: recipe for target 'arch' failed
+> > make[4]: *** No rule to make target 'fs/debugfs.h', needed by 'tools/perf/fs/fs.o'.  Stop.
+> > tools/build/Makefile.build:109: recipe for target 'fs' failed
+> > make[3]: *** No rule to make target 'tools/lib/api/fs/debugfs.h', needed by 'tools/perf/util/abspath.o'.  Stop.
+> > tools/build/Makefile.build:109: recipe for target 'util' failed
+> > Makefile:32: recipe for target 'tools/perf/libapi-in.o' failed
+> > Makefile.perf:417: recipe for target 'tools/perf/libapi.a' failed
+> > Makefile.perf:393: recipe for target 'tools/perf/libperf-in.o' failed
+> > Makefile:68: recipe for target 'all' failed
+> > 
+> > Maybe caused by commit
+> > 
+> >   60a1133a5b39 ("tools lib api fs: Remove debugfs, tracefs and findfs objects")
+> > 
+> > This is an incremental build i.e. I do not do a "make clean" after doing
+> > the build for each tree merge (in case that matters).
+> 
+> it does in this case, removed header files stay in
+> cmd build dependency file (like in .abspath.o.cmd above)
+> and cause build error
+> 
+> build system is not smart enough yet to find out,
+> I was postponning fixing this for some time now,
+> I'll try to get this resolved asap
 
-  drivers/gpu/drm/i915/i915_irq.c
-
-between commit:
-
-  4e3d1e26c2b2 ("drm/i915: Pass hpd_status_i915[] to intel_get_hpd_pins() in pre-g4x")
-
-from Linus' tree and commit:
-
-  58f2cf241fb9 ("drm/i915: Don't call intel_get_hpd_pins() when there's no hotplug interrupt")
-
-from the drm-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+OK, for now I will clean out my objdir before doing the perf build
+after the tip tree merge.  It would be nice to have this fixed, though,
+if possible.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/i915/i915_irq.c
-index 5a244ab9395b,ca6d806a195a..000000000000
---- a/drivers/gpu/drm/i915/i915_irq.c
-+++ b/drivers/gpu/drm/i915/i915_irq.c
-@@@ -1557,10 -1652,13 +1652,13 @@@ static void i9xx_hpd_irq_handler(struc
-  	} else {
-  		u32 hotplug_trigger = hotplug_status & HOTPLUG_INT_STATUS_I915;
-  
-- 		intel_get_hpd_pins(&pin_mask, &long_mask, hotplug_trigger,
-- 				   hotplug_trigger, hpd_status_i915,
-- 				   i9xx_port_hotplug_long_detect);
-- 		intel_hpd_irq_handler(dev, pin_mask, long_mask);
-+ 		if (hotplug_trigger) {
-+ 			intel_get_hpd_pins(&pin_mask, &long_mask, hotplug_trigger,
- -					   hotplug_trigger, hpd_status_g4x,
-++					   hotplug_trigger, hpd_status_i915,
-+ 					   i9xx_port_hotplug_long_detect);
-+ 
-+ 			intel_hpd_irq_handler(dev, pin_mask, long_mask);
-+ 		}
-  	}
-  }
-  
