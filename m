@@ -1,163 +1,305 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: crisv32 runtime failure in -next due to 'page-flags: define
- behavior SL*B-related flags on compound pages'
-Date: Fri, 18 Sep 2015 08:13:35 -0700
-Message-ID: <55FC2A1F.8050207@roeck-us.net>
-References: <55FAEA67.9000102@roeck-us.net>
- <20150918142507.GA30125@node.dhcp.inet.fi> <20150918145309.GG32685@axis.com>
+From: akpm@linux-foundation.org
+Subject: mmotm 2015-09-18-16-08 uploaded
+Date: Fri, 18 Sep 2015 16:09:22 -0700
+Message-ID: <55fc99a2.C+uainn0OBbdNkC2%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:51054 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754684AbbIRPNj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Sep 2015 11:13:39 -0400
-In-Reply-To: <20150918145309.GG32685@axis.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52693 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752196AbbIRXJX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Sep 2015 19:09:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesper Nilsson <jesper.nilsson@axis.com>, "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jespern@axis.com>, Minchan Kim <minchan@kernel.org>, linux-cris-kernel@axis.com
+To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
 
-On 09/18/2015 07:53 AM, Jesper Nilsson wrote:
-> On Fri, Sep 18, 2015 at 05:25:07PM +0300, Kirill A. Shutemov wrote:
->> On Thu, Sep 17, 2015 at 09:29:27AM -0700, Guenter Roeck wrote:
->>> Hi,
->>>
->>> my crisv32 qemu test fails with next-20150917 as follows.
->>>
->>> NET: Registered protocol family 16
->>> kernel BUG at mm/slab.c:1648!
->>> Linux 4.3.0-rc1-next-20150917 #1 Wed Sep 16 23:56:59 PDT 2015
->>> Oops: 0000
->>>
->>> [ register dump follows ]
->>>
->>> See http://server.roeck-us.net:8010/builders/qemu-crisv32-next/builds/83/steps/qemubuildcommand/logs/stdio
->>> for a complete log.
->>
->> Is there a chance to get proper backtrace?
->
-> Yes, it should be possible with CONFIG_KALLSYMS=y in the kconfig.
->
+The mm-of-the-moment snapshot 2015-09-18-16-08 has been uploaded to
 
-Good to know. I added it to my configuration.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Here it is:
+mmotm-readme.txt says
 
-kernel BUG at mm/slab.c:1648!
-Linux 4.3.0-rc1-next-20150918 #1 Fri Sep 18 08:07:55 PDT 2015
-Oops: 0000
-CPU: 0
-ERP: c0074c00 SRP: c0074c1e  CCS: 00009408 USP: 00000000 MOF: 00000000
-  r0: 0000002a  r1: ffffe000   r2: c000f2ca  r3: c0074e40
-  r4: c0033d00  r5: 0000000a   r6: 00000009  r7: 00000100
-  r8: 0000000a  r9: c04a3254  r10: c1e97765 r11: c1fc1282
-r12: c04a3240 r13: 00000000 oR10: c1e97765 acr: 00000001
-  sp: c046458c
-        Data MMU Cause: 00000000
-Instruction MMU Cause: 00000000
-Process ksoftirqd/0 (pid: 3, stackpage=c1feb3a0)
+README for mm-of-the-moment:
 
-Stack from c1ff3e80:
+http://www.ozlabs.org/~akpm/mmotm/
 
-c0004a0e c004ba7c
-c04645e0 00000000
-c04645d8 0000000a
-c00059e8 00000001
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-        00000000
-c046458c 00000000
-c0341cfc c004ba7c
-c0033d00 c0004b52
-0000002a
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-ffffe000 c000f2ca
-c0074e40 c0005898
-c0074c1e c1e97765
-c0074c1e c0033bd2
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-Call Trace: [<c0004a0e>] show_stack+0x0/0x9e
-[<c004ba7c>] printk+0x0/0x2c
-[<c00059e8>] show_registers+0x14a/0x1c2
-[<c004ba7c>] printk+0x0/0x2c
-[<c0033d00>] rcu_bh_qs+0x0/0x30
-[<c0004b52>] die_if_kernel+0x7c/0x9e
-[<c000f2ca>] __local_bh_enable_ip+0x0/0xb0
-[<c0074e40>] kfree+0x0/0x82
-[<c0005898>] do_BUG+0x2a/0x30
-[<c0074c1e>] kmem_rcu_free+0x18/0x1e
-[<c0074c1e>] kmem_rcu_free+0x18/0x1e
-[<c0033bd2>] __rcu_process_callbacks+0x80/0xaa
-[<c0033b52>] __rcu_process_callbacks+0x0/0xaa
-[<c0033c14>] rcu_process_callbacks+0x18/0x2a
-[<c000f15e>] __do_softirq+0xbc/0x1c2
-[<c002008c>] kthread_should_stop+0x0/0x18
-[<c00200a4>] kthread_should_park+0x0/0x18
-[<c02d5f5e>] schedule+0x0/0x7c
-[<c000f286>] run_ksoftirqd+0x22/0x32
-[<c00228e8>] smpboot_thread_fn+0xe4/0x12c
-[<c0022804>] smpboot_thread_fn+0x0/0x12c
-[<c0028e88>] __init_waitqueue_head+0x0/0x8
-[<c002048e>] kthread+0xb6/0xce
-[<c00203d8>] kthread+0x0/0xce
-[<c00055fa>] ret_from_kernel_thread+0xe/0x14
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
-Code: 2a d6 6d da 87 d3 65 70 b0 05 3e e9 (7f) d2 65 e0 29 d6 84 e2 7e ba 6a c6
----[ end trace cc289b1d61e6a9a8 ]---
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
-Kernel panic - not syncing: Aiee, killing interrupt handler!
-CPU: 0 PID: 3 Comm: ksoftirqd/0 Not tainted 4.3.0-rc1-next-20150918 #1
 
-Stack from c1ff3e28:
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-c1feb3a0 0000000b
-c0341cfc c004ba7c
-c0033d00 0000000a
-c0177e2c c004b8fa
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
-        c1feb3a0
-0000000b c0341cfc
-c004ba7c c0033d00
-0000000a 00000009
-c000dd54
+To develop on top of mmotm git:
 
-c0342a14 00000000
-00000061 00000000
-c046458c 00000000
-c0341cfc c004ba7c
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
 
-Call Trace: [<c004ba7c>] printk+0x0/0x2c
-[<c0033d00>] rcu_bh_qs+0x0/0x30
-[<c0177e2c>] dump_stack+0x1c/0x22
-[<c004b8fa>] panic+0x82/0x19c
-[<c004ba7c>] printk+0x0/0x2c
-[<c0033d00>] rcu_bh_qs+0x0/0x30
-[<c000dd54>] do_exit+0x5e0/0x7da
-[<c004ba7c>] printk+0x0/0x2c
-[<c0033d00>] rcu_bh_qs+0x0/0x30
-[<c004baa2>] printk+0x26/0x2c
-[<c0004b6a>] die_if_kernel+0x94/0x9e
-[<c0004b72>] die_if_kernel+0x9c/0x9e
-[<c000f2ca>] __local_bh_enable_ip+0x0/0xb0
-[<c0074e40>] kfree+0x0/0x82
-[<c0005898>] do_BUG+0x2a/0x30
-[<c0074c1e>] kmem_rcu_free+0x18/0x1e
-[<c0074c1e>] kmem_rcu_free+0x18/0x1e
-[<c0033bd2>] __rcu_process_callbacks+0x80/0xaa
-[<c0033b52>] __rcu_process_callbacks+0x0/0xaa
-[<c0033c14>] rcu_process_callbacks+0x18/0x2a
-[<c000f15e>] __do_softirq+0xbc/0x1c2
-[<c002008c>] kthread_should_stop+0x0/0x18
-[<c00200a4>] kthread_should_park+0x0/0x18
-[<c02d5f5e>] schedule+0x0/0x7c
-[<c000f286>] run_ksoftirqd+0x22/0x32
-[<c00228e8>] smpboot_thread_fn+0xe4/0x12c
-[<c0022804>] smpboot_thread_fn+0x0/0x12c
-[<c0028e88>] __init_waitqueue_head+0x0/0x8
-[<c002048e>] kthread+0xb6/0xce
-[<c00203d8>] kthread+0x0/0xce
-[<c00055fa>] ret_from_kernel_thread+0xe/0x14
----[ end Kernel panic - not syncing: Aiee, killing interrupt handler!
+To rebase a branch with older patches to a new mmotm release:
 
-Guenter
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.3-rc1:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  arch-alpha-kernel-systblss-remove-debug-check.patch
+  drivers-gpu-drm-i915-intel_spritec-fix-build.patch
+  drivers-gpu-drm-i915-intel_tvc-fix-build.patch
+  arm-mm-do-not-use-virt_to_idmap-for-nommu-systems.patch
+* userfaultfd-revert-userfaultfd-waitqueue-add-nr-wake-parameter-to-__wake_up_locked_key.patch
+* userfaultfd-selftests-vm-pick-up-sanitized-kernel-headers.patch
+* userfaultfd-selftest-headers-fixup.patch
+* userfaultfd-selftest-only-warn-if-__nr_userfaultfd-is-undefined.patch
+* userfaultfd-selftest-avoid-my_bcmp-false-positives-with-powerpc.patch
+* userfaultfd-selftest-return-an-error-if-bounce_verify-fails.patch
+* userfaultfd-selftest-dont-error-out-if-pthread_mutex_t-isnt-identical.patch
+* userfaultfd-register-uapi-generic-syscall-aarch64.patch
+* mm-dax-vma-with-vm_ops-pfn_mkwrite-wants-to-be-write-notified.patch
+* mm-dax-vma-with-vm_ops-pfn_mkwrite-wants-to-be-write-notified-fix.patch
+* mm-migrate-hugetlb-putback-destination-hugepage-to-active-list.patch
+* x86-efi-kasan-undef-memset-memcpy-memmove-per-arch.patch
+* x86-efi-kasan-undef-memset-memcpy-memmove-per-arch-fix.patch
+* ocfs2-dlm-fix-race-between-convert-and-recovery.patch
+* ocfs2-dlm-fix-race-between-convert-and-recovery-v2.patch
+* iommu-common-do-not-try-to-deref-a-null-iommu-lazy_flush-pointer-when-n-pool-hint.patch
+* vmscan-fix-sane_reclaim-helper-for-legacy-memcg.patch
+* cleanup-membarrier-selftest.patch
+* ocfs2-dlm-fix-deadlock-when-dispatch-assert-master.patch
+* mm-slab-fix-unexpected-index-mapping-result-of-kmalloc_sizeindex_node1.patch
+* inotify-actually-check-for-invalid-bits-in-sys_inotify_add_watch.patch
+* inotify-actually-check-for-invalid-bits-in-sys_inotify_add_watch-v2.patch
+* fs-ext4-fsyncc-generic_file_fsync-call-based-on-barrier-flag.patch
+* ocfs2_direct_io_write-misses-ocfs2_is_overwrite-error-code.patch
+* ocfs2-fill-in-the-unused-portion-of-the-block-with-zeros-by-dio_zero_block.patch
+* ocfs2-add-ocfs2_write_type_t-type-to-identify-the-caller-of-write.patch
+* ocfs2-use-c_new-to-indicate-newly-allocated-extents.patch
+* ocfs2-test-target-page-before-change-it.patch
+* ocfs2-do-not-change-i_size-in-write_end-for-direct-io.patch
+* ocfs2-return-the-physical-address-in-ocfs2_write_cluster.patch
+* ocfs2-record-unwritten-extents-when-populate-write-desc.patch
+* ocfs2-fix-sparse-file-data-ordering-issue-in-direct-io.patch
+* ocfs2-code-clean-up-for-direct-io.patch
+* ocfs2-extend-transaction-for-ocfs2_remove_rightmost_path-and-ocfs2_update_edge_lengths-before-to-avoid-inconsistency-between-inode-and-et.patch
+* extend-enough-credits-for-freeing-one-truncate-record-while-replaying-truncate-records.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* 9p-do-not-overwrite-return-code-when-locking-fails.patch
+  mm.patch
+* mm-slab-convert-slab_is_available-to-boolean.patch
+* slub-create-new-___slab_alloc-function-that-can-be-called-with-irqs-disabled.patch
+* slub-avoid-irqoff-on-in-bulk-allocation.patch
+* mm-kmemleak-remove-unneeded-initialization-of-object-to-null.patch
+* syscall-mlockall-reorganize-return-values-and-remove-goto-out-label.patch
+* x86-numa-acpi-online-node-earlier-when-doing-cpu-hot-addition.patch
+* kernel-profilec-replace-cpu_to_mem-with-cpu_to_node.patch
+* sgi-xp-replace-cpu_to_node-with-cpu_to_mem-to-support-memoryless-node.patch
+* openvswitch-replace-cpu_to_node-with-cpu_to_mem-to-support-memoryless-node.patch
+* i40e-use-numa_mem_id-to-better-support-memoryless-node.patch
+* i40evf-use-numa_mem_id-to-better-support-memoryless-node.patch
+* x86-numa-kill-useless-code-to-improve-code-readability.patch
+* mm-update-_mem_id_-for-every-possible-cpu-when-memory-configuration-changes.patch
+* mm-x86-enable-memoryless-node-support-to-better-support-cpu-memory-hotplug.patch
+* uaccess-reimplement-probe_kernel_address-using-probe_kernel_read.patch
+* uaccess-reimplement-probe_kernel_address-using-probe_kernel_read-fix.patch
+* uaccess-reimplement-probe_kernel_address-using-probe_kernel_read-fix-fix.patch
+* mm-mmapc-remove-useless-statement-vma-=-null-in-find_vma.patch
+* memcg-flatten-task_struct-memcg_oom.patch
+* memcg-punt-high-overage-reclaim-to-return-to-userland-path.patch
+* memcg-collect-kmem-bypass-conditions-into-__memcg_kmem_bypass.patch
+* memcg-ratify-and-consolidate-over-charge-handling.patch
+* memcg-drop-unnecessary-cold-path-tests-from-__memcg_kmem_bypass.patch
+* mm-fix-docbook-comment-for-get_vaddr_frames.patch
+* mm-add-tracepoint-for-scanning-pages.patch
+* mm-make-optimistic-check-for-swapin-readahead.patch
+* mm-make-optimistic-check-for-swapin-readahead-fix.patch
+* mm-make-optimistic-check-for-swapin-readahead-fix-2.patch
+* mm-make-swapin-readahead-to-improve-thp-collapse-rate.patch
+* mm-make-swapin-readahead-to-improve-thp-collapse-rate-fix.patch
+* mm-make-swapin-readahead-to-improve-thp-collapse-rate-fix-2.patch
+* mm-replace-nr_node_ids-for-loop-with-for_each_node-in-list-lru.patch
+* powerpc-numa-do-not-allocate-bootmem-memory-for-non-existing-nodes.patch
+* mm-msync-use-offset_in_page-macro.patch
+* mm-nommu-use-offset_in_page-macro.patch
+* mm-mincore-use-offset_in_page-macro.patch
+* mm-early_ioremap-use-offset_in_page-macro.patch
+* mm-percpu-use-offset_in_page-macro.patch
+* mm-util-use-offset_in_page-macro.patch
+* mm-mlock-use-offset_in_page-macro.patch
+* mm-vmalloc-use-offset_in_page-macro.patch
+* mm-mmap-use-offset_in_page-macro.patch
+* mm-mremap-use-offset_in_page-macro.patch
+* mm-memblock-make-memblock_remove_range-static.patch
+* mm-migrate-count-pages-failing-all-retries-in-vmstat-and-tracepoint.patch
+* mm-page_alloc-remove-unused-parameter-in-init_currently_empty_zone.patch
+* mm-use-only-per-device-readahead-limit.patch
+* mm-hugetlb-proc-add-hugetlb-related-fields-to-proc-pid-smaps.patch
+* mm-hugetlb-proc-add-hugetlbpages-field-to-proc-pid-status.patch
+* mm-vmscan-make-inactive_anon_is_low_global-return-directly.patch
+* mm-oom_kill-introduce-is_sysrq_oom-helper.patch
+* mm-compaction-add-an-is_via_compact_memory-helper-function.patch
+* fs-global-sync-to-not-clear-error-status-of-individual-inodes.patch
+* mm-hwpoison-ratelimit-messages-from-unpoison_memory.patch
+* mm-memcontrol-fix-order-calculation-in-try_charge.patch
+* doc-add-information-about-max_ptes_swap.patch
+* mm-kasan-rename-kasan_enabled-to-kasan_report_enabled.patch
+* mm-kasan-module_vaddr-is-not-available-on-all-archs.patch
+* mm-kasan-dont-use-kasan-shadow-pointer-in-generic-functions.patch
+* mm-kasan-prevent-deadlock-in-kasan-reporting.patch
+* kasan-update-reported-bug-types-for-not-user-nor-kernel-memory-accesses.patch
+* kasan-update-reported-bug-types-for-kernel-memory-accesses.patch
+* kasan-accurately-determine-the-type-of-the-bad-access.patch
+* kasan-update-log-messages.patch
+* kasan-various-fixes-in-documentation.patch
+* kasan-various-fixes-in-documentation-checkpatch-fixes.patch
+* kasan-move-kasan_sanitize-in-arch-x86-boot-makefile.patch
+* kasan-update-reference-to-kasan-prototype-repo.patch
+* lib-test_kasan-add-some-testcases.patch
+* kasan-fix-a-type-conversion-error.patch
+* kasan-use-is_aligned-in-memory_is_poisoned_8.patch
+* mm-mlock-refactor-mlock-munlock-and-munlockall-code.patch
+* mm-mlock-add-new-mlock-system-call.patch
+* mm-introduce-vm_lockonfault.patch
+* mm-introduce-vm_lockonfault-v9.patch
+* mm-mlock-add-mlock-flags-to-enable-vm_lockonfault-usage.patch
+* mm-mlock-add-mlock-flags-to-enable-vm_lockonfault-usage-v9.patch
+* selftests-vm-add-tests-for-lock-on-fault.patch
+* selftests-vm-add-tests-for-lock-on-fault-v9.patch
+* mips-add-entry-for-new-mlock2-syscall.patch
+* zram-introduce-comp-algorithm-fallback-functionality.patch
+* mm-zswap-remove-unneeded-initialization-to-null-in-zswap_entry_find_get.patch
+* module-export-param_free_charp.patch
+* zswap-use-charp-for-zswap-param-strings.patch
+* zpool-remove-redundant-zpool-type-string-const-ify-zpool_get_type.patch
+* mm-zsmalloc-constify-struct-zs_pool-name.patch
+* mm-drop-page-slab_page.patch
+* slab-slub-use-page-rcu_head-instead-of-page-lru-plus-cast.patch
+* zsmalloc-use-page-private-instead-of-page-first_page.patch
+* mm-pack-compound_dtor-and-compound_order-into-one-word-in-struct-page.patch
+* mm-make-compound_head-robust.patch
+* mm-use-unsigned-int-for-page-order.patch
+* mm-use-unsigned-int-for-page-order-fix.patch
+* mm-use-unsigned-int-for-compound_dtor-compound_order-on-64bit.patch
+* page-flags-trivial-cleanup-for-pagetrans-helpers.patch
+* page-flags-introduce-page-flags-policies-wrt-compound-pages.patch
+* page-flags-introduce-page-flags-policies-wrt-compound-pages-fix.patch
+* page-flags-define-pg_locked-behavior-on-compound-pages.patch
+* page-flags-define-behavior-of-fs-io-related-flags-on-compound-pages.patch
+* page-flags-define-behavior-of-lru-related-flags-on-compound-pages.patch
+* page-flags-define-behavior-slb-related-flags-on-compound-pages.patch
+* page-flags-define-behavior-of-xen-related-flags-on-compound-pages.patch
+* page-flags-define-pg_reserved-behavior-on-compound-pages.patch
+* page-flags-define-pg_swapbacked-behavior-on-compound-pages.patch
+* page-flags-define-pg_swapcache-behavior-on-compound-pages.patch
+* page-flags-define-pg_mlocked-behavior-on-compound-pages.patch
+* page-flags-define-pg_uncached-behavior-on-compound-pages.patch
+* page-flags-define-pg_uptodate-behavior-on-compound-pages.patch
+* page-flags-look-on-head-page-if-the-flag-is-encoded-in-page-mapping.patch
+* mm-sanitize-page-mapping-for-tail-pages.patch
+* include-linux-page-flagsh-rename-macros-to-avoid-collisions.patch
+* mm-increase-swap_cluster_max-to-batch-tlb-flushes.patch
+* mm-vmscan-fix-the-page-state-calculation-in-too_many_isolated.patch
+* fs-mpagec-forgotten-write_sync-in-case-of-data-integrity-write.patch
+* x86-add-pmd_-for-thp.patch
+* x86-add-pmd_-for-thp-fix.patch
+* sparc-add-pmd_-for-thp.patch
+* sparc-add-pmd_-for-thp-fix.patch
+* powerpc-add-pmd_-for-thp.patch
+* arm-add-pmd_mkclean-for-thp.patch
+* arm64-add-pmd_-for-thp.patch
+* mm-support-madvisemadv_free.patch
+* mm-support-madvisemadv_free-fix.patch
+* mm-support-madvisemadv_free-fix-2.patch
+* mm-support-madvisemadv_free-fix-3.patch
+* mm-dont-split-thp-page-when-syscall-is-called.patch
+* mm-dont-split-thp-page-when-syscall-is-called-fix.patch
+* mm-dont-split-thp-page-when-syscall-is-called-fix-2.patch
+* mm-dont-split-thp-page-when-syscall-is-called-fix-3.patch
+* mm-free-swp_entry-in-madvise_free.patch
+* mm-move-lazy-free-pages-to-inactive-list.patch
+* mm-move-lazy-free-pages-to-inactive-list-fix.patch
+* mm-move-lazy-free-pages-to-inactive-list-fix-fix.patch
+* mm-move-lazy-free-pages-to-inactive-list-fix-fix-fix.patch
+* fs-proc-arrayc-set-overflow-flag-in-case-of-error.patch
+* use-poison_pointer_delta-for-poison-pointers.patch
+* kernelh-make-abs-work-with-64-bit-types.patch
+* remove-abs64.patch
+* include-linux-compiler-gcch-improve-__visible-documentation.patch
+* lib-dynamic_debugc-use-kstrdup_const.patch
+* lib-vsprintf-add-%pt-format-specifier.patch
+* lib-halfmd4-use-rol32-inline-function-in-the-round-macro.patch
+* lib-test-string_helpersc-add-string_get_size-tests.patch
+* lib-test-string_helpersc-add-string_get_size-tests-v5.patch
+* lib-fix-data-race-in-llist_del_first.patch
+* lib-introduce-kvasprintf_const.patch
+* kobject-use-kvasprintf_const-for-formatting-name.patch
+* mm-utilc-add-kstrimdup.patch
+* lib-add-crc64-ecma-module.patch
+* fat-add-fat_fallocate-operation.patch
+* fat-skip-cluster-allocation-on-fallocated-region.patch
+* fat-permit-to-return-phy-block-number-by-fibmap-in-fallocated-region.patch
+* documentation-filesystems-vfattxt-update-the-limitation-for-fat-fallocate.patch
+* signals-kill-block_all_signals-and-unblock_all_signals.patch
+* seq_file-re-use-string_escape_str.patch
+* fs-seq_file-use-seq_-helpers-in-seq_hex_dump.patch
+* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
+* w1-masters-omap_hdq-add-support-for-1-wire-mode.patch
+* zlib-fix-usage-example-of-zlib_adler32.patch
+* ipc-msgc-msgsnd-use-freezable-blocking-call.patch
+* msgrcv-use-freezable-blocking-call.patch
+  linux-next.patch
+* net-ipv4-routec-prevent-oops.patch
+* w1-call-put_device-if-device_register-fails.patch
+  mm-add-strictlimit-knob-v2.patch
+  do_shared_fault-check-that-mmap_sem-is-held.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  make-frame_pointer-default=y.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  mutex-subsystem-synchro-test-module.patch
+  slab-leaks3-default-y.patch
+  add-debugging-aid-for-memory-initialisation-problems.patch
+  workaround-for-a-pci-restoring-bug.patch
