@@ -1,59 +1,35 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Sep 18 (build failures)
-Date: Fri, 18 Sep 2015 07:22:04 -0700
-Message-ID: <20150918142204.GA17018@roeck-us.net>
-References: <20150918140810.6345bce9@canb.auug.org.au>
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: crisv32 runtime failure in -next due to 'page-flags: define
+ behavior SL*B-related flags on compound pages'
+Date: Fri, 18 Sep 2015 17:25:07 +0300
+Message-ID: <20150918142507.GA30125@node.dhcp.inet.fi>
+References: <55FAEA67.9000102@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150918140810.6345bce9@canb.auug.org.au>
+In-Reply-To: <55FAEA67.9000102@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Zhang <zjzhang@codeaurora.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Minchan Kim <minchan@kernel.org>, linux-cris-kernel@axis.com
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Sep 18, 2015 at 02:08:10PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Sep 17, 2015 at 09:29:27AM -0700, Guenter Roeck wrote:
+> Hi,
 > 
-> Changes since 20150917:
+> my crisv32 qemu test fails with next-20150917 as follows.
 > 
-> I used the h8300 tree from next-20150828 since the current tree has been
-> rebased onto something very old :-(
+> NET: Registered protocol family 16
+> kernel BUG at mm/slab.c:1648!
+> Linux 4.3.0-rc1-next-20150917 #1 Wed Sep 16 23:56:59 PDT 2015
+> Oops: 0000
 > 
-> The bluetooth tree still had its build failure.
+> [ register dump follows ]
 > 
-> The tip tree gained a conflict against Linus' tree.
-> 
-> The akpm-current tree lost its build failure.
-> 
-> Non-merge commits (relative to Linus' tree): 1938
->  1581 files changed, 83940 insertions(+), 23948 deletions(-)
-> 
+> See http://server.roeck-us.net:8010/builders/qemu-crisv32-next/builds/83/steps/qemubuildcommand/logs/stdio
+> for a complete log.
 
-Build failures:
+Is there a chance to get proper backtrace?
 
-ia64:defconfig
-ia64:allnoconfig
-
-drivers/built-in.o: In function `efi_mem_attributes':
-(.text+0xde962): undefined reference to `memmap'
-drivers/built-in.o: In function `efi_mem_attributes':
-(.text+0xde971): undefined reference to `memmap'
-
-Bisect points to 'efi, x86: Rearrange efi_mem_attributes()'.
-On a side note, 'memmap' is really a bad name for a global variable,
-As the patch desciption suggests, the variable does not exist for ia64,
-so the build failure is not entirely unexpected.
-
-----
-powerpc:ppc64e_defconfig
-powerpc:85xx/sbc8548_defconfig
-
-arch/powerpc/sysdev/fsl_pci.c: In function 'fsl_pci_mcheck_exception':
-arch/powerpc/sysdev/fsl_pci.c:1002:4: error: passing argument 2 of 'probe_kernel_read' makes pointer from integer without a cast
-
-Bisect points to 'uaccess: reimplement probe_kernel_address() using
-probe_kernel_read()'.
-
-Guenter
+-- 
+ Kirill A. Shutemov
