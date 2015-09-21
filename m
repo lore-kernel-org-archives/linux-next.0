@@ -1,25 +1,19 @@
-From: Michal Hocko <mhocko@kernel.org>
+From: Vladimir Davydov <vdavydov@parallels.com>
 Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 21 Sep 2015 09:58:53 +0200
-Message-ID: <20150921075853.GA19811@dhcp22.suse.cz>
+Date: Mon, 21 Sep 2015 10:58:59 +0300
+Message-ID: <20150921075859.GB4995@esperanza>
 References: <20150921141039.5bfbb9ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:36595 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755990AbbIUH65 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Sep 2015 03:58:57 -0400
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20150921141039.5bfbb9ca@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Davydov <vdavydov@parallels.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon 21-09-15 14:10:39, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
+On Mon, Sep 21, 2015 at 02:10:39PM +1000, Stephen Rothwell wrote:
 > After merging the akpm-current tree, today's linux-next build (x86_64
 > allmodconfig) failed like this:
 > 
@@ -41,22 +35,12 @@ On Mon 21-09-15 14:10:39, Stephen Rothwell wrote:
 > I don't know what the correct firx is here (help, please) so I have just
 > open coded the cgroup_on_dfl() call for now:
 
-AFAIU your fix is correct but using
-cgroup_subsys_on_dfl(memory_cgrp_subsys) is more appropriate:
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index d62924ee8022..c3df03add73e 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -176,7 +176,7 @@ static bool sane_reclaim(struct scan_control *sc)
- 	if (!memcg)
- 		return true;
- #ifdef CONFIG_CGROUP_WRITEBACK
--	if (cgroup_on_dfl(memcg->css.cgroup))
-+	if (cgroup_subsys_on_dfl(memory_cgrp_subsys))
- 		return true;
- #endif
- 	return false;
+Quoting Tejun (http://www.spinics.net/lists/linux-mm/msg94556.html):
 
--- 
-Michal Hocko
-SUSE Labs
+: Just a heads-up.  I'm applying a patch which replaces cgroup_on_dfl()
+: with cgroup_subsys_on_dfl() to cgroup/for-4.4, so this patch would
+: need to be adjusted to do cgroup_subsys_on_dfl(memory_cgrp_subsys)
+: instead.
+
+Thanks,
+Vladimir
