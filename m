@@ -1,70 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 21 Sep 2015 11:23:54 +1000
-Message-ID: <20150921112354.36dd39e8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 21 Sep 2015 14:10:39 +1000
+Message-ID: <20150921141039.5bfbb9ca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bard Liao <bardliao@realtek.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35915 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750701AbbIUEKm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Sep 2015 00:10:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Davydov <vdavydov@parallels.com>
 
-Hi all,
+Hi Andrew,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
+After merging the akpm-current tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-sound/soc/codecs/rt5645.c: In function 'rt5645_i2c_probe':
-sound/soc/codecs/rt5645.c:3277:21: error: 'dmi_platform_intel_broadwel' undeclared (first use in this function)
-    dmi_check_system(dmi_platform_intel_broadwel)
-                     ^
-sound/soc/codecs/rt5645.c:3277:21: note: each undeclared identifier is reported only once for each function it appears in
-sound/soc/codecs/rt5645.c:3278:3: error: expected ')' before 'rt5645'
-   rt5645->pdata = *rt5645_pdata;
-   ^
-sound/soc/codecs/rt5645.c:3478:1: error: expected expression before '}' token
- }
- ^
-sound/soc/codecs/rt5645.c:3264:15: warning: unused variable 'val' [-Wunused-variable]
-  unsigned int val;
-               ^
-sound/soc/codecs/rt5645.c:3263:11: warning: unused variable 'i' [-Wunused-variable]
-  int ret, i;
-           ^
-sound/soc/codecs/rt5645.c:3263:6: warning: unused variable 'ret' [-Wunused-variable]
-  int ret, i;
-      ^
-sound/soc/codecs/rt5645.c: At top level:
-sound/soc/codecs/rt5645.c:2894:13: warning: 'rt5645_jack_detect_work' defined but not used [-Wunused-function]
- static void rt5645_jack_detect_work(struct work_struct *work)
-             ^
-sound/soc/codecs/rt5645.c:3090:34: warning: 'rt5645_dai' defined but not used [-Wunused-variable]
- static struct snd_soc_dai_driver rt5645_dai[] = {
-                                  ^
-sound/soc/codecs/rt5645.c:3131:36: warning: 'soc_codec_dev_rt5645' defined but not used [-Wunused-variable]
- static struct snd_soc_codec_driver soc_codec_dev_rt5645 = {
-                                    ^
-sound/soc/codecs/rt5645.c:3232:29: warning: 'dmi_platform_intel_broadwell' defined but not used [-Wunused-variable]
- static struct snd_soc_codec_driver soc_codec_dev_rt5645 = {
-                                    ^
-sound/soc/codecs/rt5645.c:3232:29: warning: 'dmi_platform_intel_broadwell' defined but not used [-Wunused-variable]
- static struct dmi_system_id dmi_platform_intel_broadwell[] __initdata = {
-                             ^
-sound/soc/codecs/rt5645.c:3244:12: warning: 'rt5645_parse_dt' defined but not used [-Wunused-function]
- static int rt5645_parse_dt(struct rt5645_priv *rt5645, struct device *dev)
-            ^
-sound/soc/codecs/rt5645.c: In function 'rt5645_i2c_probe':
-sound/soc/codecs/rt5645.c:3478:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
+mm/vmscan.c: In function 'sane_reclaim':
+mm/vmscan.c:178:2: error: implicit declaration of function 'cgroup_on_dfl' [-Werror=implicit-function-declaration]
+  if (cgroup_on_dfl(memcg->css.cgroup))
+  ^
 
 Caused by commit
 
-  3dbabe60c832 ("ASoC: rt5645: Add dmi for Broadwell")
+  d08255ab4d66 ("vmscan: fix sane_reclaim helper for legacy memcg")
 
-I have used the sound-asoc tree from next-20150918 for today.
+interacting with commit
+
+  9e10a130d9b6 ("cgroup: replace cgroup_on_dfl() tests in controllers with cgroup_subsys_on_dfl()")
+
+from the cgroup tree.
+
+I don't know what the correct firx is here (help, please) so I have just
+open coded the cgroup_on_dfl() call for now:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 21 Sep 2015 14:06:17 +1000
+Subject: [PATCH] vmscan-fix-sane_reclaim-helper-for-legacy-memcg-fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 6ad68edbd260..8c7b1f5c6a6d 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -175,7 +175,7 @@ static bool sane_reclaim(struct scan_control *sc)
+ 	if (!memcg)
+ 		return true;
+ #ifdef CONFIG_CGROUP_WRITEBACK
+-	if (cgroup_on_dfl(memcg->css.cgroup))
++	if (memcg->css.cgroup->root == &cgrp_dfl_root)
+ 		return true;
+ #endif
+ 	return false;
+-- 
+2.5.1
 
 -- 
 Cheers,
