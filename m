@@ -1,37 +1,52 @@
-From: Hans-Peter Nilsson <hans-peter.nilsson@axis.com>
-Subject: Re: crisv32 runtime failure in -next due to 'page-flags: define
- behavior SL*B-related flags on compound pages'
-Date: Tue, 22 Sep 2015 18:16:18 +0200
-Message-ID: <201509221616.t8MGGIrW017239@ignucius.se.axis.com>
-References: <20150922153104.GA19024@node.dhcp.inet.fi>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20150922 build: 1 failures 346 warnings (next-20150922)
+Date: Tue, 22 Sep 2015 09:24:17 -0700
+Message-ID: <20150922162417.GI30445@sirena.org.uk>
+References: <E1ZeORj-0001FG-G8@optimist>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BkEY3RoTgCMsaH6y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bastet.se.axis.com ([195.60.68.11]:36300 "EHLO
-	bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933247AbbIVQQY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Sep 2015 12:16:24 -0400
-In-reply-to: <20150922153104.GA19024@node.dhcp.inet.fi> (kirill@shutemov.name)
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46203 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933180AbbIVQ03 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Sep 2015 12:26:29 -0400
+Content-Disposition: inline
+In-Reply-To: <E1ZeORj-0001FG-G8@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kirill@shutemov.name
-Cc: paulmck@linux.vnet.ibm.com, starvik@axis.com, linux@roeck-us.net, jespern@axis.com, hughd@google.com, kirill.shutemov@linux.intel.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, minchan@kernel.org, linux-cris-kernel@axis.com
+To: huangdaode <huangdaode@hisilicon.com>, Yisen Zhuang <Yisen.Zhuang@huawei.com>, Kenneth Lee <liguozhu@huawei.com>, "David S. Miller" <davem@davemloft.net>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-> From: "Kirill A. Shutemov" <kirill@shutemov.name>
-> Date: Tue, 22 Sep 2015 17:31:04 +0200
 
-> On Tue, Sep 22, 2015 at 08:18:35AM -0700, Paul E. McKenney wrote:
-> > On Tue, Sep 22, 2015 at 03:57:06PM +0200, Hans-Peter Nilsson wrote:
-> > > I guess you hit the right spot, but I'd think people would be
-> > > more comfortable with aligning to sizeof (void *).
-> > 
-> > I would indeed prefer sizeof(void *).
-> 
-> Do you prefer to have the attribute set for whole structure or for ->next?
-> I think attribute on ->next is more appropriate from documentation POV.
+--BkEY3RoTgCMsaH6y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Speaking of the documentation POV, I'd recommend adding an
-explanatory comment.  Here's hoping this was obvious! ;)
+On Tue, Sep 22, 2015 at 03:21:29PM +0100, Build bot for Mark Brown wrote:
 
-brgds, H-P
+Today's -next fails to build an arm allmodconfig due to:
+
+> 	arm-allmodconfig
+> ../drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c:315:3: error: implicit declaration of function 'readq' [-Werror=implicit-function-declaration]
+
+due to 511e6bc071db148 (net: add Hisilicon Network Subsystem DSAF
+support) in the networking tree.
+
+--BkEY3RoTgCMsaH6y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWAYCwAAoJECTWi3JdVIfQOZMH/1kb2f76rAv4env2D0vrzUHk
+/odh2dJpPUBZyG0sLm+xfyt1AEEDMeAkRGE4Kuab4QkdgvhfTX41QU0tfPxM3SDB
+VfCO7h/SCLWjHRchH+avP+gI2SK8mjpedYGVTJ5p6CQDI2/PmEy+7shyNAS6kqWB
+o5gsAv9mo/Y80kkKYRP2NyY9tdtIada8YtkZziHjCw3RrtHtdOhDQ0Kl7/ToLnwL
+VrPuufxnnrrmWZPhUXfZsGBcqRAs0bjuCncjJNRA+wFpHzq8yVYYchhrZrIW+uG/
+3NuSLTN+QO0lLZeir2u8fnkZGB5dRzZZE6PVoY6ZtlrjRpItWgzgq/eRzZTZtOU=
+=DuRs
+-----END PGP SIGNATURE-----
+
+--BkEY3RoTgCMsaH6y--
