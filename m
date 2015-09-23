@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the berlin tree
-Date: Wed, 23 Sep 2015 09:51:18 +1000
-Message-ID: <20150923095118.0b8cb7bf@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drm-misc tree
+Date: Wed, 23 Sep 2015 13:20:41 +1000
+Message-ID: <20150923132041.60714a8d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antoine Tenart <antoine.tenart@free-electrons.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:55532 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760017AbbIWDUo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Sep 2015 23:20:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, David Herrmann <dh.herrmann@gmail.com>
 
-Hi Sebastian,
+Hi all,
 
-After merging the berlin tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+After merging the drm-misc tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-arch/arm/boot/dts/berlin2q.dtsi:62.24-25 syntax error
-FATAL ERROR: Unable to parse input tree
-drivers/clk/berlin/bg2q.c: In function 'berlin2q_clock_setup':
-/home/sfr/next/next/drivers/clk/berlin/bg2q.c:359:7: error: 'CLKID_CPU' undeclared (first use in this function)
-  clks[CLKID_CPU] =
-       ^
+drivers/gpu/drm/drm_crtc.c: In function 'drm_fb_release':
+drivers/gpu/drm/drm_crtc.c:3494:21: warning: unused variable 'dev' [-Wunused-variable]
+  struct drm_device *dev = priv->minor->dev;
+                     ^
 
-Caused by commits
+Introduced by commit
 
-  23998645f6e7 ("ARM: berlin: dts: add the cpufreq-dt bindings on the BG2Q")
-  ea6beeb6b2af ("clk: berlin: add cpuclk")
-
-I have used the berlin tree from next-20150922 for today.
+  3d2e74c94432 ("drm/core: Preserve the fb id on close.")
 
 -- 
 Cheers,
