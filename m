@@ -1,52 +1,36 @@
-From: Jakub Sitnicki <jsitnicki@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: Fix build error when CFG80211 is not
- selected
-Date: Wed, 23 Sep 2015 23:42:26 +0200
-Message-ID: <1443044546-8994-1-git-send-email-jsitnicki@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Thu, 24 Sep 2015 11:25:16 +1000
+Message-ID: <20150924112516.1dc9d5d3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Jim Davis <jim.epost@gmail.com>, kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-The kbuild test robot reports the following build error for
-i386-randconfig-c0-09230740:
-
->> ERROR: "ieee80211_hdrlen" [drivers/staging/rtl8188eu/r8188eu.ko] undefined!
-
-Add a dependency on CFG80211 to fix it.
-
-Signed-off-by: Jakub Sitnicki <jsitnicki@gmail.com>
----
-
-Same issue has also been reported by Jim Davis for
-randconfig-1442987837.txt.
-
- drivers/staging/rtl8188eu/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8188eu/Kconfig b/drivers/staging/rtl8188eu/Kconfig
-index 5a38b41..94f3879 100644
---- a/drivers/staging/rtl8188eu/Kconfig
-+++ b/drivers/staging/rtl8188eu/Kconfig
-@@ -1,6 +1,6 @@
- config R8188EU
- 	tristate "Realtek RTL8188EU Wireless LAN NIC driver"
--	depends on WLAN && USB
-+	depends on WLAN && USB && CFG80211
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
- 	---help---
--- 
-2.1.0
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0taW50ZWwgdHJlZSBn
+b3QgYSBjb25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5j
+CgpiZXR3ZWVuIGNvbW1pdDoKCiAgNzIxYTA5ZjczOTNkICgiZHJtL2k5MTU6IEFkZCBwcmltYXJ5
+IHBsYW5lIHRvIG1hc2sgaWYgaXQncyB2aXNpYmxlIikKCmZyb20gdGhlIGRybS1pbnRlbC1maXhl
+cyB0cmVlIGFuZCBjb21taXQ6CgogIGY5Y2Q3Yjg4MWEwNCAoImRybS9pOTE1OiBNb3ZlIHNwcml0
+ZS9jdXJzb3IgcGxhbmUgZGlzYWJsZSB0byBpbnRlbF9zYW5pdGl6ZV9jcnRjKCkiKQoKZnJvbSB0
+aGUgZHJtLWludGVsIHRyZWUuCgpJIGZpeGVkIGl0IHVwIChJIGhhdmUgbm8gaWRlYSB3aGF0IGRv
+IHRvIGhlcmUsIHNvIEkganVzdCB1c2VkIHRoZSB2ZXJzaW9uCmZyb20gdGhlIGRybS1pbnRlbCB0
+cmVlKSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5IChubyBhY3Rpb24KaXMgcmVx
+dWlyZWQgLSB1bmxlc3MgdGhlcmUgaXMgYSBiZXR0ZXIgZml4KS4KCi0tIApDaGVlcnMsClN0ZXBo
+ZW4gUm90aHdlbGwgICAgICAgICAgICAgICAgICAgIHNmckBjYW5iLmF1dWcub3JnLmF1Cl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWls
+aW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
