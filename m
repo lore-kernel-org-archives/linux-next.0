@@ -1,53 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 25 Sep 2015 10:50:34 +1000
-Message-ID: <20150925105034.473739fd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the cgroup tree
+Date: Fri, 25 Sep 2015 13:26:00 +1000
+Message-ID: <20150925132600.4b344b30@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42770 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752569AbbIYAug (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Sep 2015 20:50:36 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Benc <jbenc@redhat.com>, "Eric W. Biederman" <ebiederm@xmission.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Davydov <vdavydov@parallels.com>, Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Tejun,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the cgroup tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  net/ipv4/arp.c
+mm/vmscan.c: In function 'sane_reclaim':
+mm/vmscan.c:178:2: error: implicit declaration of function 'cgroup_on_dfl' [-Werror=implicit-function-declaration]
+  if (cgroup_on_dfl(memcg->css.cgroup))
+  ^
 
-between commit:
+Caused by commit
 
-  63d008a4e9ee ("ipv4: send arp replies to the correct tunnel")
+  d5028f9f7d8d ("vmscan: fix sane_reclaim helper for legacy memcg")
 
-from the net tree and commit:
+from Linus' tree interacting with commit
 
-  0c4b51f0054c ("netfilter: Pass net into okfn")
+  9e10a130d9b6 ("cgroup: replace cgroup_on_dfl() tests in controllers with cgroup_subsys_on_dfl()")
 
-from the net-next tree.
+from the cgroup tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+We new this was coming, so I have applied the following merge fix patch from Andrew's tree and can carry it as necessary:
+
+From: Michal Hocko <mhocko@kernel.org>
+Subject: vmscan build fix
+
+
+
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/vmscan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -puN mm/vmscan.c~vmscan-build-fix mm/vmscan.c
+--- a/mm/vmscan.c~vmscan-build-fix
++++ a/mm/vmscan.c
+@@ -175,7 +175,7 @@ static bool sane_reclaim(struct scan_con
+ 	if (!memcg)
+ 		return true;
+ #ifdef CONFIG_CGROUP_WRITEBACK
+-	if (cgroup_on_dfl(memcg->css.cgroup))
++	if (cgroup_subsys_on_dfl(memory_cgrp_subsys))
+ 		return true;
+ #endif
+ 	return false;
+_
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/ipv4/arp.c
-index f03db8b7abee,61ff5ea31283..000000000000
---- a/net/ipv4/arp.c
-+++ b/net/ipv4/arp.c
-@@@ -651,8 -654,6 +657,7 @@@ static int arp_process(struct net *net
-  	u16 dev_type = dev->type;
-  	int addr_type;
-  	struct neighbour *n;
-- 	struct net *net = dev_net(dev);
- +	struct dst_entry *reply_dst = NULL;
-  	bool is_garp = false;
-  
-  	/* arp_rcv below verifies the ARP header and verifies the device
