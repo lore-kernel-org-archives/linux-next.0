@@ -1,63 +1,46 @@
-From: Abylay Ospan <aospan@netup.ru>
-Subject: Re: linux-next: Tree for Sep 24 (netup_unidvb & if)
-Date: Fri, 25 Sep 2015 09:54:58 +0300
-Message-ID: <CAK3bHNVFjBJhXM4VsKg74CfXbxYpigSDFjp5KC030oD+3txHKg@mail.gmail.com>
-References: <20150924145335.2674d15d@canb.auug.org.au> <5604388C.2040604@infradead.org>
- <20150924170555.621c83ea@gandalf.local.home> <56047AD2.90504@infradead.org>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: randconfig build error with next-20150812, in
+ drivers/i2c/busses/i2c-i801.c
+Date: Fri, 25 Sep 2015 09:36:10 +0200
+Message-ID: <20150925093610.64ed7f59@endymion.delvare>
+References: <CA+r1ZhjyBKcWbNB3hkPxoEKatojYk9=VPqSurZHPk9nfNp_gSQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56047AD2.90504@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey Kozlov <serjk@netup.ru>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:39873 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751106AbbIYHgQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Sep 2015 03:36:16 -0400
+In-Reply-To: <CA+r1ZhjyBKcWbNB3hkPxoEKatojYk9=VPqSurZHPk9nfNp_gSQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, jdelvare@suse.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>
 
-Hi Randy,
+On Wed, 12 Aug 2015 08:42:18 -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
+> 
+> drivers/built-in.o: In function `dmi_check_onboard_devices':
+> i2c-i801.c:(.text+0x126b36): undefined reference to `i2c_new_device'
+> drivers/built-in.o: In function `i801_remove':
+> i2c-i801.c:(.text+0x126b86): undefined reference to `i2c_del_adapter'
+> drivers/built-in.o: In function `i801_probe':
+> i2c-i801.c:(.text+0x127d08): undefined reference to `i2c_add_adapter'
+> i2c-i801.c:(.text+0x127d6e): undefined reference to `i2c_new_device'
 
-I have checked your config. There is:
-# CONFIG_DVB_HORUS3A is not set
+Sorry for the late reply. The error is caused by the following
+combination of options:
 
-in this case in drivers/media/dvb-frontends/horus3a.h incorrect
-statement used. I will send patch to fix this problem bit later.
+CONFIG_I2C=m
+CONFIG_I2C_I801=y
 
-thanks for report !
+I can reproduce it even with mainline now. This is caused by
+CONFIG_ITCO_WDT=y, which selects CONFIG_I2C_I801=y without selecting
+its dependencies (CONFIG_I2C.)
 
-
-2015-09-25 1:36 GMT+03:00 Randy Dunlap <rdunlap@infradead.org>:
-> On 09/24/15 14:05, Steven Rostedt wrote:
->> On Thu, 24 Sep 2015 10:53:16 -0700
->> Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->>> On 09/23/15 21:53, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20150923:
->>>>
->>>
->>> on x86_64:
->>>
->>>
->>
->> Compiles fine for me, and I enabled:
->>
->>  CONFIG_PROFILE_ALL_BRANCHES=y
->>  CONFIG_MEDIA_SUPPORT=y
->>  CONFIG_MEDIA_ANALOG_TV_SUPPORT=y
->>
->> which looks like it should give the problem you have.
->>
->> What config did you use, and maybe it's a gcc version problem?
->
-> Sorry, I should have included the randconfig file.  Here it is (attached).
->
->
-> --
-> ~Randy
-
-
+Thanks for reporting, I'll post a fix shortly.
 
 -- 
-Abylay Ospan,
-NetUP Inc.
-http://www.netup.tv
+Jean Delvare
+SUSE L3 Support
