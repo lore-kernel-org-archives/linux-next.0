@@ -1,41 +1,41 @@
 From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: [PATCH 2/2] pinctrl: at91-pio4: irq argument as been removed from irq flow handlers
-Date: Mon, 28 Sep 2015 11:41:13 +0200
-Message-ID: <1443433273-17417-3-git-send-email-ludovic.desroches@atmel.com>
+Subject: Re: [PATCH 0/2] Fixes for next
+Date: Mon, 28 Sep 2015 11:43:21 +0200
+Message-ID: <20150928094321.GB20481@odux.rfo.atmel.com>
 References: <1443433273-17417-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:24398 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757055AbbI1Jo1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Sep 2015 05:44:27 -0400
+Content-Disposition: inline
 In-Reply-To: <1443433273-17417-1-git-send-email-ludovic.desroches@atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: linus.walleij@linaro.org, sfr@canb.auug.org.au
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.ferre@atmel.com, Ludovic Desroches <ludovic.desroches@atmel.com>
-List-Id: linux-next.vger.kernel.org
 
-Irq argument as been removed from irq flow handlers so use the irq
-descriptor to retrieve data we need.
+Sorry I have forgotten:
+--in-reply-to=20150925133410.3c9e2b03@canb.auug.org.au
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+(linux-next: build failure after merge of the pinctrl tree)
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 041df59..4aa6be0 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -222,9 +222,10 @@ static struct irq_chip atmel_gpio_irq_chip = {
- 	.irq_set_type	= atmel_gpio_irq_set_type,
- };
- 
--static void atmel_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
-+static void atmel_gpio_irq_handler(struct irq_desc *desc)
- {
--	struct atmel_pioctrl *atmel_pioctrl = irq_get_handler_data(irq);
-+	unsigned int irq = irq_desc_get_irq(desc);
-+	struct atmel_pioctrl *atmel_pioctrl = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	unsigned long isr;
- 	int n, bank = -1;
--- 
-2.5.0
+On Mon, Sep 28, 2015 at 11:41:11AM +0200, Ludovic Desroches wrote:
+> Hi Stephen, Linus,
+> 
+> Here are fixes for next. I did the at91-pio4 patches on top of next-20150916
+> which doesn't contain some tglx's updates about irqs.
+> 
+> Ludovic Desroches (2):
+>   pinctrl: at91-pio4: use irq_set_handler_locked
+>   pinctrl: at91-pio4: irq argument as been removed from irq flow
+>     handlers
+> 
+>  drivers/pinctrl/pinctrl-at91-pio4.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> -- 
+> 2.5.0
+> 
