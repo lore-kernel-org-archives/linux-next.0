@@ -1,69 +1,25 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: randconfig build error with next-20150812, in
- drivers/i2c/busses/i2c-i801.c
-Date: Fri, 25 Sep 2015 16:06:04 +0200
-Message-ID: <1443189964.4919.5.camel@chaos.site>
-References: <CA+r1ZhjyBKcWbNB3hkPxoEKatojYk9=VPqSurZHPk9nfNp_gSQ@mail.gmail.com>
-	 <20150925093610.64ed7f59@endymion.delvare>
-	 <20150925133757.GA2857@codeblueprint.co.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no release today
+Date: Mon, 28 Sep 2015 12:38:44 +1000
+Message-ID: <20150928123844.096bacc4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20150925133757.GA2857@codeblueprint.co.uk>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, wsa@the-dreams.de, linux-i2c@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, Guenter Roeck <linux@roeck-us.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58362 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753602AbbI1Cir (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Sep 2015 22:38:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Le Friday 25 September 2015 =C3=A0 14:37 +0100, Matt Fleming a =C3=A9cr=
-it :
-> On Fri, 25 Sep, at 09:36:10AM, Jean Delvare wrote:
-> > On Wed, 12 Aug 2015 08:42:18 -0700, Jim Davis wrote:
-> > > Building with the attached random configuration file,
-> > >=20
-> > > drivers/built-in.o: In function `dmi_check_onboard_devices':
-> > > i2c-i801.c:(.text+0x126b36): undefined reference to `i2c_new_devi=
-ce'
-> > > drivers/built-in.o: In function `i801_remove':
-> > > i2c-i801.c:(.text+0x126b86): undefined reference to `i2c_del_adap=
-ter'
-> > > drivers/built-in.o: In function `i801_probe':
-> > > i2c-i801.c:(.text+0x127d08): undefined reference to `i2c_add_adap=
-ter'
-> > > i2c-i801.c:(.text+0x127d6e): undefined reference to `i2c_new_devi=
-ce'
-> >=20
-> > Sorry for the late reply. The error is caused by the following
-> > combination of options:
-> >=20
-> > CONFIG_I2C=3Dm
-> > CONFIG_I2C_I801=3Dy
-> >=20
-> > I can reproduce it even with mainline now. This is caused by
-> > CONFIG_ITCO_WDT=3Dy, which selects CONFIG_I2C_I801=3Dy without sele=
-cting
-> > its dependencies (CONFIG_I2C.)
-> >=20
-> > Thanks for reporting, I'll post a fix shortly.
->=20
-> Sorry that you got caught up in this build error Jean.
+Hi all,
 
-No big deal :)
+There will be no linux-next release today.  Normal service should
+resume tomorrow.
 
-> Guenter (Cc'd) posted a fix here,
->=20
->   https://lkml.kernel.org/r/1441978088-27288-1-git-send-email-linux@r=
-oeck-us.net
-
-Actually I prefer Guenter's approach. I am never comfortable with
-drivers selecting subsystems. So you can add:
-
-Acked-by: Jean Delvare <jdelvare@suse.de>
-
-to Guenter's patch and drop mine.
-
-Thanks,
---=20
-Jean Delvare
-SUSE L3 Support
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
