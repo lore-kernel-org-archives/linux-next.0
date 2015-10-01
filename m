@@ -1,54 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Date: Thu, 1 Oct 2015 12:47:17 +1000
-Message-ID: <20151001124717.3e695a86@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+Date: Thu, 1 Oct 2015 08:41:38 +0200
+Message-ID: <20151001064138.GO3383@phenom.ffwll.local>
+References: <20151001124717.3e695a86@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:35074 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750990AbbJAGio (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Oct 2015 02:38:44 -0400
+Received: by wicge5 with SMTP id ge5so14036812wic.0
+        for <linux-next@vger.kernel.org>; Wed, 30 Sep 2015 23:38:43 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20151001124717.3e695a86@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
-ZXh0IGJ1aWxkICh4ODZfNjQKYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKRVJST1I6
-ICJkcm1fYWdwX3JlbGVhc2UiIFtkcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbi5rb10gdW5k
-ZWZpbmVkIQpFUlJPUjogImRybV9hZ3BfYWNxdWlyZSIgW2RyaXZlcnMvZ3B1L2RybS9yYWRlb24v
-cmFkZW9uLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAiZHJtX2FncF9lbmFibGUiIFtkcml2ZXJzL2dw
-dS9kcm0vcmFkZW9uL3JhZGVvbi5rb10gdW5kZWZpbmVkIQpFUlJPUjogImRybV9hZ3BfaW5mbyIg
-W2RyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAiZHJt
-X2FncF9yZWxlYXNlIiBbZHJpdmVycy9ncHUvZHJtL21nYS9tZ2Eua29dIHVuZGVmaW5lZCEKRVJS
-T1I6ICJkcm1fYWdwX2FjcXVpcmUiIFtkcml2ZXJzL2dwdS9kcm0vbWdhL21nYS5rb10gdW5kZWZp
-bmVkIQpFUlJPUjogImRybV9hZ3BfZnJlZSIgW2RyaXZlcnMvZ3B1L2RybS9tZ2EvbWdhLmtvXSB1
-bmRlZmluZWQhCkVSUk9SOiAiZHJtX2FncF9iaW5kIiBbZHJpdmVycy9ncHUvZHJtL21nYS9tZ2Eu
-a29dIHVuZGVmaW5lZCEKRVJST1I6ICJkcm1fYWdwX3VuYmluZCIgW2RyaXZlcnMvZ3B1L2RybS9t
-Z2EvbWdhLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAiZHJtX2FncF9hbGxvYyIgW2RyaXZlcnMvZ3B1
-L2RybS9tZ2EvbWdhLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAiZHJtX2FncF9lbmFibGUiIFtkcml2
-ZXJzL2dwdS9kcm0vbWdhL21nYS5rb10gdW5kZWZpbmVkIQpFUlJPUjogImRybV9hZ3BfaW5mbyIg
-W2RyaXZlcnMvZ3B1L2RybS9tZ2EvbWdhLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAiZHJtX2FncF91
-bmJpbmRfaW9jdGwiIFtkcml2ZXJzL2dwdS9kcm0vZHJtLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAi
-ZHJtX2FncF9pbml0IiBbZHJpdmVycy9ncHUvZHJtL2RybS5rb10gdW5kZWZpbmVkIQpFUlJPUjog
-ImRybV9hZ3BfYWxsb2NfaW9jdGwiIFtkcml2ZXJzL2dwdS9kcm0vZHJtLmtvXSB1bmRlZmluZWQh
-CkVSUk9SOiAiZHJtX2FncF9jbGVhciIgW2RyaXZlcnMvZ3B1L2RybS9kcm0ua29dIHVuZGVmaW5l
-ZCEKRVJST1I6ICJkcm1fYWdwX2luZm9faW9jdGwiIFtkcml2ZXJzL2dwdS9kcm0vZHJtLmtvXSB1
-bmRlZmluZWQhCkVSUk9SOiAiZHJtX2FncF9lbmFibGVfaW9jdGwiIFtkcml2ZXJzL2dwdS9kcm0v
-ZHJtLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAiZHJtX2FncF9yZWxlYXNlX2lvY3RsIiBbZHJpdmVy
-cy9ncHUvZHJtL2RybS5rb10gdW5kZWZpbmVkIQpFUlJPUjogImRybV9hZ3BfYmluZF9pb2N0bCIg
-W2RyaXZlcnMvZ3B1L2RybS9kcm0ua29dIHVuZGVmaW5lZCEKRVJST1I6ICJkcm1fYWdwX2FjcXVp
-cmVfaW9jdGwiIFtkcml2ZXJzL2dwdS9kcm0vZHJtLmtvXSB1bmRlZmluZWQhCkVSUk9SOiAiZHJt
-X2FncF9mcmVlX2lvY3RsIiBbZHJpdmVycy9ncHUvZHJtL2RybS5rb10gdW5kZWZpbmVkIQoKTm90
-IHF1aXRlIHN1cmUgd2hpY2ggY29tbWl0IGNhdXNlZCB0aGlzLCBidXQgSSBoYXZlIHVzZWQgdGhl
-IGRybS1taXNjCnRyZWUgZnJvbSBuZXh0LTIwMTUwOTMwIGZvciB0b2RheS4KCi0tIApDaGVlcnMs
-ClN0ZXBoZW4gUm90aHdlbGwgICAgICAgICAgICAgICAgICAgIHNmckBjYW5iLmF1dWcub3JnLmF1
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thu, Oct 01, 2015 at 12:47:17PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the drm-misc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: "drm_agp_release" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "drm_agp_acquire" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "drm_agp_enable" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "drm_agp_info" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "drm_agp_release" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_acquire" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_free" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_bind" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_unbind" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_alloc" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_enable" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_info" [drivers/gpu/drm/mga/mga.ko] undefined!
+> ERROR: "drm_agp_unbind_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_init" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_alloc_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_clear" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_info_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_enable_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_release_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_bind_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_acquire_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "drm_agp_free_ioctl" [drivers/gpu/drm/drm.ko] undefined!
+> 
+> Not quite sure which commit caused this, but I have used the drm-misc
+> tree from next-20150930 for today.
+
+Build fail for CONFIG_AGP=m (bot not y or n). I'm wrestling kbuild atm.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
