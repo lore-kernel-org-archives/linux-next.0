@@ -1,65 +1,91 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Oct 1 (arch/x86/ras/mce_amd_inj.c)
-Date: Thu, 1 Oct 2015 11:12:12 -0700
-Message-ID: <560D777C.6050009@infradead.org>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: linux-next: Tree for Oct 1 (ipvs)
+Date: Fri, 2 Oct 2015 09:45:49 +0900
+Message-ID: <20151002004549.GA22640@verge.net.au>
 References: <20151001165001.02d3ada5@canb.auug.org.au>
- <560D6FD4.20203@infradead.org> <20151001174958.GC3544@pd.tnic>
+ <560D6CB6.5070904@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:51248 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753015AbbJASMY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Oct 2015 14:12:24 -0400
-In-Reply-To: <20151001174958.GC3544@pd.tnic>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46186 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750963AbbJBAps (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Oct 2015 20:45:48 -0400
+Content-Disposition: inline
+In-Reply-To: <560D6CB6.5070904@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aravind Gopalakrishnan <aravind.gopalakrishnan@amd.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, lvs-devel@vger.kernel.org
 
-On 10/01/15 10:49, Borislav Petkov wrote:
-> On Thu, Oct 01, 2015 at 10:39:32AM -0700, Randy Dunlap wrote:
->> On 09/30/15 23:50, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20150930:
->>>
->>
->>
->> on x86_64:
->>
->> ../arch/x86/ras/mce_amd_inj.c: In function 'toggle_nb_mca_mst_cpu':
->> ../arch/x86/ras/mce_amd_inj.c:214:42: warning: dereferencing 'void *' pointer [enabled by default]
->>   struct pci_dev *F3 = node_to_amd_nb(nid)->misc;
->>                                           ^
->> ../arch/x86/ras/mce_amd_inj.c:214:42: error: request for member 'misc' in something not a structure or union
+Hi Randy,
+
+On Thu, Oct 01, 2015 at 10:26:14AM -0700, Randy Dunlap wrote:
+> On 09/30/15 23:50, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20150930:
+> > 
 > 
-> Thanks Randy,
+> on x86_64:
 > 
-> this is most likely due to us using node_to_amd_nb() - an AMD_NB
-> facility - but we're not depending on it. Does that help?
+> ../net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_leave':
+> ../net/netfilter/ipvs/ip_vs_core.c:584:6: error: implicit declaration of function 'ip_vs_addr_is_unicast' [-Werror=implicit-function-declaration]
+>       ip_vs_addr_is_unicast(net, svc->af, &iph->daddr)) {
+>       ^
+> ../net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_out':
+> ../net/netfilter/ipvs/ip_vs_core.c:1177:14: warning: unused variable 'net' [-Wunused-variable]
+>   struct net *net = ipvs->net;
 
-Yes, thanks.
+Thanks for reporting this problem.
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+I have the following patch queued up in the ipvs-next tree
+and plan to send a pull request for it later today.
 
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH] ipvs: Don't protect ip_vs_addr_is_unicast with CONFIG_SYSCTL
 
-> ---
-> diff --git a/arch/x86/ras/Kconfig b/arch/x86/ras/Kconfig
-> index 10fea5fc821e..98b3ef750984 100644
-> --- a/arch/x86/ras/Kconfig
-> +++ b/arch/x86/ras/Kconfig
-> @@ -1,6 +1,6 @@
->  config AMD_MCE_INJ
->  	tristate "Simple MCE injection interface for AMD processors"
-> -	depends on RAS && EDAC_DECODE_MCE && DEBUG_FS
-> +	depends on RAS && EDAC_DECODE_MCE && DEBUG_FS && AMD_NB
->  	default n
->  	help
->  	  This is a simple debugfs interface to inject MCEs and test different
-> 
+I arranged the code so that the compiler can remove the unecessary bits
+in ip_vs_leave when CONFIG_SYSCTL is unset, and removed an explicit
+CONFIG_SYSCTL.
 
+Unfortunately when rebasing my work on top of that of Alex Gartrell I
+missed the fact that the newly added function ip_vs_addr_is_unicast was
+surrounded by CONFIG_SYSCTL.
 
+So remove the now unnecessary CONFIG_SYSCTL guards around
+ip_vs_addr_is_unicast.  It is causing build failures today when
+CONFIG_SYSCTL is not selected and any self respecting compiler will
+notice that sysctl_cache_bypass is always false without CONFIG_SYSCTL
+and not include the logic from the function ip_vs_addr_is_unicast in
+the compiled code.
+
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: Simon Horman <horms@verge.net.au>
+---
+ net/netfilter/ipvs/ip_vs_core.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+index 37dd77a3d0fb..d08df435c2aa 100644
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -547,7 +547,6 @@ ip_vs_schedule(struct ip_vs_service *svc, struct sk_buff *skb,
+ 	return cp;
+ }
+ 
+-#ifdef CONFIG_SYSCTL
+ static inline int ip_vs_addr_is_unicast(struct net *net, int af,
+ 					union nf_inet_addr *addr)
+ {
+@@ -557,7 +556,6 @@ static inline int ip_vs_addr_is_unicast(struct net *net, int af,
+ #endif
+ 	return (inet_addr_type(net, addr->ip) == RTN_UNICAST);
+ }
+-#endif
+ 
+ /*
+  *  Pass or drop the packet.
 -- 
-~Randy
+2.1.4
