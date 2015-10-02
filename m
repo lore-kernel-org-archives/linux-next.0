@@ -1,91 +1,60 @@
 From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: Tree for Oct 1 (ipvs)
-Date: Fri, 2 Oct 2015 09:45:49 +0900
-Message-ID: <20151002004549.GA22640@verge.net.au>
-References: <20151001165001.02d3ada5@canb.auug.org.au>
- <560D6CB6.5070904@infradead.org>
+Subject: Request for inclusion of ipvs and ipvs-next trees in next
+Date: Fri, 2 Oct 2015 09:56:26 +0900
+Message-ID: <20151002005626.GA4802@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46186 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46322 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750963AbbJBAps (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Oct 2015 20:45:48 -0400
+	with ESMTP id S1750767AbbJBA4Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Oct 2015 20:56:25 -0400
 Content-Disposition: inline
-In-Reply-To: <560D6CB6.5070904@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, lvs-devel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, David Miller <davem@davemloft.net>
 
-Hi Randy,
 
-On Thu, Oct 01, 2015 at 10:26:14AM -0700, Randy Dunlap wrote:
-> On 09/30/15 23:50, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20150930:
-> > 
-> 
-> on x86_64:
-> 
-> ../net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_leave':
-> ../net/netfilter/ipvs/ip_vs_core.c:584:6: error: implicit declaration of function 'ip_vs_addr_is_unicast' [-Werror=implicit-function-declaration]
->       ip_vs_addr_is_unicast(net, svc->af, &iph->daddr)) {
->       ^
-> ../net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_out':
-> ../net/netfilter/ipvs/ip_vs_core.c:1177:14: warning: unused variable 'net' [-Wunused-variable]
->   struct net *net = ipvs->net;
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for reporting this problem.
+Hi,
 
-I have the following patch queued up in the ipvs-next tree
-and plan to send a pull request for it later today.
+I would like to request the inclusion of 'ipvs.git' and 'ipvs-next.git' in
+linux-next.
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH] ipvs: Don't protect ip_vs_addr_is_unicast with CONFIG_SYSCTL
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs-next.git
 
-I arranged the code so that the compiler can remove the unecessary bits
-in ip_vs_leave when CONFIG_SYSCTL is unset, and removed an explicit
-CONFIG_SYSCTL.
+I have been maintaining IPVS using those trees for a number of years and
+maintaining IPVS without those trees for a number of years before that.
 
-Unfortunately when rebasing my work on top of that of Alex Gartrell I
-missed the fact that the newly added function ip_vs_addr_is_unicast was
-surrounded by CONFIG_SYSCTL.
+Usually 'ipvs-next.git' feeds into Pablo's 'nf-next.git' which
+in turn feeds into Dave's 'net-next.git'. Likewise for s/-next//.
 
-So remove the now unnecessary CONFIG_SYSCTL guards around
-ip_vs_addr_is_unicast.  It is causing build failures today when
-CONFIG_SYSCTL is not selected and any self respecting compiler will
-notice that sysctl_cache_bypass is always false without CONFIG_SYSCTL
-and not include the logic from the function ip_vs_addr_is_unicast in
-the compiled code.
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Acked-by: Julian Anastasov <ja@ssi.bg>
-Signed-off-by: Simon Horman <horms@verge.net.au>
----
- net/netfilter/ipvs/ip_vs_core.c | 2 --
- 1 file changed, 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-index 37dd77a3d0fb..d08df435c2aa 100644
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -547,7 +547,6 @@ ip_vs_schedule(struct ip_vs_service *svc, struct sk_buff *skb,
- 	return cp;
- }
- 
--#ifdef CONFIG_SYSCTL
- static inline int ip_vs_addr_is_unicast(struct net *net, int af,
- 					union nf_inet_addr *addr)
- {
-@@ -557,7 +556,6 @@ static inline int ip_vs_addr_is_unicast(struct net *net, int af,
- #endif
- 	return (inet_addr_type(net, addr->ip) == RTN_UNICAST);
- }
--#endif
- 
- /*
-  *  Pass or drop the packet.
--- 
-2.1.4
+iQIcBAEBAgAGBQJWDdY6AAoJENfPZGlqN0++K58P/jneqAURGzUN+gFRQ3R9PW2R
+0vJ7gJx4rH7ya2DBgHxOZzQhrFwcLQtJ2I0S1H8q8pNnIEvMOxe9M1NOSZWSb1Ci
+Gl/C+N4xoPxV7eqUrxjnm8DANhjQQPg2BU3RbHmSg6uURHIckA3IYJSDdDnPsl3l
+atCAk8y3aXs/pZVBV2Xmq+67XVbiXoEnzBWN1KeyI0YmJRYGlNE+KY9D06vK0OiH
+a/6+S6UE9QS7TUyPFvyY+ZxPDWRygO4KB452AQeYI880mtuFdvlKxJmr6l51S0U0
+DEQxO+BU3hirV28ujF3zcndMzDfurr/NXDnOc8qCyMyz+mYur9lRfD/1SARVZePp
+iuRSe69C9X8jfeo4JvxjF5arfPjXxToEh7GhqTZ8kHc+LjrtfTqALfkGi4WCIF0O
+OS8Z70YG4fumIl2Si+6CSg1kp+wYSBANQqwu9mFnP+8aGUUijeHO5bVc+KaTE8jZ
+1WqdtyeTj+DODPgHZimZUs2RSIgEqmLeHVqr/z0NbNsRZxTraVPFNGBLivT6Mn0w
+XEo+E63MB1GUuHX23FwZJM+yRKTE/C8OtlkgYtpX9xsx4GPisI1ncMza0y5wi/bU
+D5uK8HUMJv6WBrWSNrKyXcd1C6lxchF788eXDVtz2QING3E7NKeiSfEREzlBCow2
+dKBdldI8ubAS29TUUKnb
+=dots
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
