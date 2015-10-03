@@ -1,53 +1,89 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bad base of the h8300 tree
-Date: Sat, 3 Oct 2015 14:28:38 +1000
-Message-ID: <20151003142838.4bcd9570@canb.auug.org.au>
-References: <20150831074304.0ce16f9f@canb.auug.org.au>
-	<20150901074033.4282c9c4@canb.auug.org.au>
-	<20150914095425.1c6c3470@canb.auug.org.au>
-	<20150915091030.13b2a149@canb.auug.org.au>
-	<20150915091201.6d1f620b@canb.auug.org.au>
-	<87vbappzob.wl-ysato@users.sourceforge.jp>
+From: "FedEx 2Day A.M." <wayne.west@desertgal.com>
+Subject: We could not deliver your parcel, #0000690129
+Date: Fri, 2 Oct 2015 22:20:20 -0700
+Message-ID: <d45417b85f4c9f3a0051d2dd1ab9410a@desertgal.com>
+Reply-To: "FedEx 2Day A.M." <wayne.west@desertgal.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+	boundary="b1_4b0f5ee4477f30d8eefeab5e3d4fa15b"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45201 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750698AbbJCE2k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 3 Oct 2015 00:28:40 -0400
-In-Reply-To: <87vbappzob.wl-ysato@users.sourceforge.jp>
+Received: from p3nlsmtp12.shr.prod.phx3.secureserver.net ([72.167.234.237]:50693
+	"EHLO p3nlsmtp12.shr.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751292AbbJCFUV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 3 Oct 2015 01:20:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
 
-Hi Yoshinori,
+--b1_4b0f5ee4477f30d8eefeab5e3d4fa15b
+Content-Type: text/plain; charset=us-ascii
 
-On Fri, 02 Oct 2015 15:11:48 +0900 Yoshinori Sato <ysato@users.sourceforge.jp> wrote:
->
-> On Tue, 15 Sep 2015 08:12:01 +0900,
-> Stephen Rothwell wrote:
-> > 
-> > On Tue, 15 Sep 2015 09:10:30 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Please do "gitk 9751a9e449da..h8300-next" in your tree and look at
-> > > it (9751a9e449da is in Linus' tree).  As I suggested above, maybe you
-> > > should go back to commit 99bcfda85f66 and work forward from there
-> > > (after amending it have a SOB).  Or just start all over with v4.3 ...
-> > 
-> > I meant v4.3-rc1, of course.
-> 
-> OK.
-> fixed it.
+Dear Customer,
 
-Well, not really :-(
+Courier was unable to deliver the parcel to you.
+You can review complete details of your order in the find attached.
 
-It is now based on next-20150925.  As I have said before, you cannot
-base your linux-next included branch on a linux-next release.  You
-should either base it on Linus' tree, or one of the other linux-next
-included branches (as long as that other branch is never rebased).
+Kind regards,
+Wayne West,
+Station Manager.
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+
+--b1_4b0f5ee4477f30d8eefeab5e3d4fa15b
+Content-Type: application/zip; name="Label_0000690129.zip"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=Label_0000690129.zip
+
+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
+AAAAAA==
+
+
+--b1_4b0f5ee4477f30d8eefeab5e3d4fa15b--
