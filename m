@@ -1,46 +1,53 @@
-From: Vinson Lee <vlee@twopensource.com>
-Subject: =?UTF-8?B?bmV4dC0yMDE1MTAwMiBidWlsZCBlcnJvciAic2FtcGxlcy9rZGJ1cy9rZGJ1cy13b3JrZQ==?=
-	=?UTF-8?B?cnMuYzo3Nzg6IGVycm9yOiDigJhDTE9DS19NT05PVE9OSUNfQ09BUlNF4oCZIg==?=
-Date: Fri, 2 Oct 2015 19:10:38 -0700
-Message-ID: <CAHTgTXXam2MA440R4hf+jZVaUYqtWERogPHHcosRv+kC2MUTEQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: bad base of the h8300 tree
+Date: Sat, 3 Oct 2015 14:28:38 +1000
+Message-ID: <20151003142838.4bcd9570@canb.auug.org.au>
+References: <20150831074304.0ce16f9f@canb.auug.org.au>
+	<20150901074033.4282c9c4@canb.auug.org.au>
+	<20150914095425.1c6c3470@canb.auug.org.au>
+	<20150915091030.13b2a149@canb.auug.org.au>
+	<20150915091201.6d1f620b@canb.auug.org.au>
+	<87vbappzob.wl-ysato@users.sourceforge.jp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:33545 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbbJCCKk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Oct 2015 22:10:40 -0400
-Received: by lafb9 with SMTP id b9so13062703laf.0
-        for <linux-next@vger.kernel.org>; Fri, 02 Oct 2015 19:10:38 -0700 (PDT)
+Received: from ozlabs.org ([103.22.144.67]:45201 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750698AbbJCE2k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 3 Oct 2015 00:28:40 -0400
+In-Reply-To: <87vbappzob.wl-ysato@users.sourceforge.jp>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Mack <daniel@zonque.org>, David Herrmann <dh.herrmann@googlemail.com>, Djalal Harouni <tixxdz@opendz.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi.
+Hi Yoshinori,
 
-I am hitting this build error in kdbus-workers.c with Ubuntu 10.04.4.
-Ubuntu 10.04.4 has glibc 2.11.
+On Fri, 02 Oct 2015 15:11:48 +0900 Yoshinori Sato <ysato@users.sourceforge.jp> wrote:
+>
+> On Tue, 15 Sep 2015 08:12:01 +0900,
+> Stephen Rothwell wrote:
+> > 
+> > On Tue, 15 Sep 2015 09:10:30 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > Please do "gitk 9751a9e449da..h8300-next" in your tree and look at
+> > > it (9751a9e449da is in Linus' tree).  As I suggested above, maybe you
+> > > should go back to commit 99bcfda85f66 and work forward from there
+> > > (after amending it have a SOB).  Or just start all over with v4.3 ...
+> > 
+> > I meant v4.3-rc1, of course.
+> 
+> OK.
+> fixed it.
 
-  HOSTCC  samples/kdbus/kdbus-workers
-samples/kdbus/kdbus-workers.c: In function =E2=80=98child_run=E2=80=99:
-samples/kdbus/kdbus-workers.c:778: error: =E2=80=98CLOCK_MONOTONIC_COAR=
-SE=E2=80=99
-undeclared (first use in this function)
-samples/kdbus/kdbus-workers.c:778: error: (Each undeclared identifier
-is reported only once
-samples/kdbus/kdbus-workers.c:778: error: for each function it appears =
-in.)
-samples/kdbus/kdbus-workers.c: In function =E2=80=98bus_open_connection=
-=E2=80=99:
-samples/kdbus/kdbus-workers.c:1043: error: =E2=80=98O_CLOEXEC=E2=80=99 =
-undeclared
-(first use in this function)
-samples/kdbus/kdbus-workers.c: In function =E2=80=98bus_make=E2=80=99:
-samples/kdbus/kdbus-workers.c:1280: error: =E2=80=98O_CLOEXEC=E2=80=99 =
-undeclared
-(first use in this function)
-make[2]: *** [samples/kdbus/kdbus-workers] Error 1
+Well, not really :-(
 
+It is now based on next-20150925.  As I have said before, you cannot
+base your linux-next included branch on a linux-next release.  You
+should either base it on Linus' tree, or one of the other linux-next
+included branches (as long as that other branch is never rebased).
+
+-- 
 Cheers,
-Vinson
+Stephen Rothwell                    sfr@canb.auug.org.au
