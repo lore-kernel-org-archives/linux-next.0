@@ -1,64 +1,67 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: Request for inclusion of ipvs and ipvs-next trees in next
-Date: Tue, 6 Oct 2015 09:25:21 +0900
-Message-ID: <20151006002521.GA12506@verge.net.au>
-References: <20151002005626.GA4802@verge.net.au>
- <20151005234054.1bfade21@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Tue, 6 Oct 2015 12:09:34 +1100
+Message-ID: <20151006120934.29093843@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38537 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751870AbbJFAZT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Oct 2015 20:25:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20151005234054.1bfade21@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:52567 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751166AbbJFBJg convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Oct 2015 21:09:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, David Miller <davem@davemloft.net>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexdeucher@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
-On Mon, Oct 05, 2015 at 11:40:54PM +1100, Stephen Rothwell wrote:
-> Hi Simon,
-> 
-> On Fri, 2 Oct 2015 09:56:26 +0900 Simon Horman <horms@verge.net.au> wrote:
-> >
-> > I would like to request the inclusion of 'ipvs.git' and 'ipvs-next.git' in
-> > linux-next.
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git
-> > https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs-next.git
-> > 
-> > I have been maintaining IPVS using those trees for a number of years and
-> > maintaining IPVS without those trees for a number of years before that.
-> > 
-> > Usually 'ipvs-next.git' feeds into Pablo's 'nf-next.git' which
-> > in turn feeds into Dave's 'net-next.git'. Likewise for s/-next//.
-> 
-> Added from tomorrow.  (just noting that I don't fetch the nf{,-next}
-> trees ...)
+Hi Dave,
 
-Thanks, noted.
+After merging the drm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-> I am using the git:... version of the URLs and assume that you mean for me
-> to fetch the master branch of each of those trees.
+drivers/gpu/drm/drm_fb_helper.c: In function 'restore_fbdev_mode':
+drivers/gpu/drm/drm_fb_helper.c:448:5: error: 'error' undeclared (first use in this function)
+     error = true;
+     ^
 
-Sorry for not being clearer about the branch; yes, the master branch is
-the one to fetch.
+Caused by commit
 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgment of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window. 
-> 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
->         Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and 
->      * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
+  03f9abb28c3e ("drm: handle cursor_set2 in restore_fbdev_mode")
+
+>From Linus' tree interacting with commit
+
+  b7bdf0a87add ("drm/fb-helper: Use -errno return in restore_mode_unlocked")
+
+from the drm tree.
+
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 6 Oct 2015 12:04:49 +1100
+Subject: [PATCH] drm/fb-helper: merge fix for "Use -errno return in restore_mode_unlocked"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/drm_fb_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 97d1a4633c5c..bd6d4ab27512 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -445,7 +445,7 @@ static int restore_fbdev_mode(struct drm_fb_helper *fb_helper)
+ 		if (crtc->funcs->cursor_set2) {
+ 			ret = crtc->funcs->cursor_set2(crtc, NULL, 0, 0, 0, 0, 0);
+ 			if (ret)
+-				error = true;
++				return ret;
+ 		} else if (crtc->funcs->cursor_set) {
+ 			ret = crtc->funcs->cursor_set(crtc, NULL, 0, 0, 0);
+ 			if (ret)
+-- 
+2.5.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
