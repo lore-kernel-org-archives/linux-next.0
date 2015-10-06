@@ -1,62 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the ipsec tree
-Date: Tue, 6 Oct 2015 11:24:55 +1100
-Message-ID: <20151006112455.584daaf0@canb.auug.org.au>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: Request for inclusion of ipvs and ipvs-next trees in next
+Date: Tue, 6 Oct 2015 09:25:21 +0900
+Message-ID: <20151006002521.GA12506@verge.net.au>
+References: <20151002005626.GA4802@verge.net.au>
+ <20151005234054.1bfade21@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53629 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750866AbbJFAY5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Oct 2015 20:24:57 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:38537 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751870AbbJFAZT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Oct 2015 20:25:19 -0400
+Content-Disposition: inline
+In-Reply-To: <20151005234054.1bfade21@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Steffen Klassert <steffen.klassert@secunet.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "Eric W. Biederman" <ebiederm@xmission.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, David Miller <davem@davemloft.net>
 
-Hi all,
+On Mon, Oct 05, 2015 at 11:40:54PM +1100, Stephen Rothwell wrote:
+> Hi Simon,
+> 
+> On Fri, 2 Oct 2015 09:56:26 +0900 Simon Horman <horms@verge.net.au> wrote:
+> >
+> > I would like to request the inclusion of 'ipvs.git' and 'ipvs-next.git' in
+> > linux-next.
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git
+> > https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs-next.git
+> > 
+> > I have been maintaining IPVS using those trees for a number of years and
+> > maintaining IPVS without those trees for a number of years before that.
+> > 
+> > Usually 'ipvs-next.git' feeds into Pablo's 'nf-next.git' which
+> > in turn feeds into Dave's 'net-next.git'. Likewise for s/-next//.
+> 
+> Added from tomorrow.  (just noting that I don't fetch the nf{,-next}
+> trees ...)
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Thanks, noted.
 
-  net/ipv6/xfrm6_output.c
+> I am using the git:... version of the URLs and assume that you mean for me
+> to fetch the master branch of each of those trees.
 
-between commit:
+Sorry for not being clearer about the branch; yes, the master branch is
+the one to fetch.
 
-  93efac3f2e03 ("ipv6: Fix IPsec pre-encap fragmentation check")
-
-from the ipsec tree and commit:
-
-  7d8c6e391575 ("ipv6: Pass struct net through ip6_fragment")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/ipv6/xfrm6_output.c
-index be033f22a3f3,4cefda009f53..000000000000
---- a/net/ipv6/xfrm6_output.c
-+++ b/net/ipv6/xfrm6_output.c
-@@@ -163,11 -164,12 +170,11 @@@ static int __xfrm6_output(struct net *n
-  		return -EMSGSIZE;
-  	}
-  
- -	if (x->props.mode == XFRM_MODE_TUNNEL &&
- -	    ((skb->len > mtu && !skb_is_gso(skb)) ||
- -		dst_allfrag(skb_dst(skb)))) {
- +	if (toobig || dst_allfrag(skb_dst(skb)))
-- 		return ip6_fragment(sk, skb,
-- 				    x->outer_mode->afinfo->output_finish);
-+ 		return ip6_fragment(net, sk, skb,
-+ 				    __xfrm6_output_finish);
- -	}
- +
- +skip_frag:
-  	return x->outer_mode->afinfo->output_finish(sk, skb);
-  }
-  
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+>         Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
