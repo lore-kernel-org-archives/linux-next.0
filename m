@@ -1,37 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the audit tree
-Date: Tue, 6 Oct 2015 16:46:46 +1100
-Message-ID: <20151006164646.5ad86a14@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Tue, 6 Oct 2015 18:03:25 +1100
+Message-ID: <20151006180325.42fc9b17@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34387 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751009AbbJFFqs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Oct 2015 01:46:48 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+Hi Andrew,
 
-After merging the audit tree, today's linux-next build (i386 defconfig
-and others) produced this warning:
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-security/lsm_audit.c: In function 'dump_common_audit_data':
-security/lsm_audit.c:340:9: warning: passing argument 1 of 'unix_sk' discards 'const' qualifier from pointer target type
-     u = unix_sk(sk);
-         ^
-In file included from security/lsm_audit.c:22:0:
-include/net/af_unix.h:67:33: note: expected 'struct sock *' but argument is of type 'const struct sock *'
- static inline struct unix_sock *unix_sk(struct sock *sk)
-                                 ^
+kernel/time/clocksource.c: In function 'clocksource_watchdog':
+kernel/time/clocksource.c:220:3: error: implicit declaration of function 'abs64' [-Werror=implicit-function-declaration]
+   if (abs64(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
+   ^
 
-Introduced by commit
+Caused by commit
 
-  43cfd5e38587 ("audit: constify parts of common_audit_data and lsm_network_audit")
+  67dfae0cd72f ("clocksource: Fix abs() usage w/ 64bit values")
+
+>From Linus' tree interacting with commit
+
+  e75a4c084376 ("Remove abs64()")
+
+from the akpm tree.
+
+I have applied the following fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 6 Oct 2015 17:59:03 +1100
+Subject: [PATCH] clocksource: Fix for "Remove abs64()"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/time/clocksource.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index f2c9b06c8ab7..6b473e4b2dad 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -217,7 +217,7 @@ static void clocksource_watchdog(unsigned long data)
+ 			continue;
+ 
+ 		/* Check the deviation from the watchdog clocksource. */
+-		if (abs64(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
++		if (abs(cs_nsec - wd_nsec) > WATCHDOG_THRESHOLD) {
+ 			pr_warn("timekeeping watchdog: Marking clocksource '%s' as unstable because the skew is too large:\n",
+ 				cs->name);
+ 			pr_warn("                      '%s' wd_now: %llx wd_last: %llx mask: %llx\n",
+-- 
+2.5.1
 
 -- 
 Cheers,
