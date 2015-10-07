@@ -1,52 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the target-updates tree
-Date: Wed, 7 Oct 2015 14:49:32 +1100
-Message-ID: <20151007144932.3e68e0f7@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the usb tree
+Date: Wed, 7 Oct 2015 15:26:08 +1100
+Message-ID: <20151007152608.2ba8f7a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41493 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57151 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752928AbbJGDte (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Oct 2015 23:49:34 -0400
+	id S1750725AbbJGE0K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Oct 2015 00:26:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Christoph Hellwig <hch@lst.de>
+To: Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Mel Gorman <mgorman@techsingularity.net>
 
-Hi Nicholas,
+Hi Andrew,
 
-After merging the target-updates tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/hwtracing/stm/policy.c:212:2: error: unknown field 'show_attribute' specified in initializer
-  .show_attribute  = stp_policy_node_attr_show,
-  ^
-drivers/hwtracing/stm/policy.c:212:2: warning: initialization from incompatible pointer type
-drivers/hwtracing/stm/policy.c:212:2: warning: (near initialization for 'stp_policy_node_item_ops.allow_link')
-drivers/hwtracing/stm/policy.c:213:2: error: unknown field 'store_attribute' specified in initializer
-  .store_attribute = stp_policy_node_attr_store,
-  ^
-drivers/hwtracing/stm/policy.c:213:2: warning: initialization from incompatible pointer type
-drivers/hwtracing/stm/policy.c:213:2: warning: (near initialization for 'stp_policy_node_item_ops.drop_link')
-drivers/hwtracing/stm/policy.c:353:2: error: unknown field 'show_attribute' specified in initializer
-  .show_attribute  = stp_policy_attr_show,
-  ^
-drivers/hwtracing/stm/policy.c:353:2: warning: initialization from incompatible pointer type
-drivers/hwtracing/stm/policy.c:353:2: warning: (near initialization for 'stp_policy_item_ops.allow_link')
+  drivers/usb/host/u132-hcd.c
 
-Caused by commit
+between commit:
 
-  7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
+  d5f9e73309b7 ("USB: u132-hcd: Fix seperate word in printk message")
 
-from the char-misc tree interacting with commit
+from the usb tree and commit:
 
-  f71933438300 ("configfs: remove old API")
+  ac4f832eb227 ("mm, page_alloc: distinguish between being unable to sleep, unwilling to sleep and avoiding waking kswapd")
 
-I have reverted the target-updated commit for today.  If there is a
-better resolution (and I assume that there is), please let me know.
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/usb/host/u132-hcd.c
+index 0a94895a358d,67b3b9d9dfd1..000000000000
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@@ -2244,8 -2244,9 +2244,8 @@@ static int u132_urb_enqueue(struct usb_
+  {
+  	struct u132 *u132 = hcd_to_u132(hcd);
+  	if (irqs_disabled()) {
+- 		if (__GFP_WAIT & mem_flags) {
++ 		if (gfpflags_allow_blocking(mem_flags)) {
+ -			printk(KERN_ERR "invalid context for function that migh"
+ -				"t sleep\n");
+ +			printk(KERN_ERR "invalid context for function that might sleep\n");
+  			return -EINVAL;
+  		}
+  	}
