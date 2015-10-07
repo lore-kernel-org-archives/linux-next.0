@@ -1,45 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the target-updates
- tree
-Date: Thu, 8 Oct 2015 07:22:46 +1100
-Message-ID: <20151008072246.00d423ea@canb.auug.org.au>
-References: <20151007144932.3e68e0f7@canb.auug.org.au>
-	<87bncaj23e.fsf@ashishki-desk.ger.corp.intel.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Date: Wed, 07 Oct 2015 23:48:11 +0200
+Message-ID: <8672077.UYXmy4VzzX@vostro.rjw.lan>
+References: <20151007155146.41c4528f@canb.auug.org.au> <CAKohponuRX-XbGHk=T_B1+MXb8TeUwZOYc8NMLrNvZP_U_GSew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87bncaj23e.fsf@ashishki-desk.ger.corp.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:63032 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752402AbbJGVTl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2015 17:19:41 -0400
+In-Reply-To: <CAKohponuRX-XbGHk=T_B1+MXb8TeUwZOYc8NMLrNvZP_U_GSew@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next list <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Alexander,
-
-On Wed, 07 Oct 2015 15:27:17 +0300 Alexander Shishkin <alexander.shishkin@linux.intel.com> wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Wednesday, October 07, 2015 08:40:59 AM Viresh Kumar wrote:
+> Hi Stephen,
 > 
-> > Caused by commit
+> On 7 October 2015 at 06:51, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Greg,
 > >
-> >   7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
+> > After merging the driver-core tree, today's linux-next build (arm
+> > multi_v7_defconfig) produced this warning:
 > >
-> > from the char-misc tree interacting with commit
+> > drivers/base/power/opp/debugfs.c: In function 'opp_debug_create_one':
+> > drivers/base/power/opp/debugfs.c:48:7: warning: passing argument 4 of 'debugfs_create_bool' from incompatible pointer type
+> >   if (!debugfs_create_bool("available", S_IRUGO, d,
+> >        ^
+> > In file included from drivers/base/power/opp/debugfs.c:13:0:
+> > include/linux/debugfs.h:94:16: note: expected 'bool *' but argument is of type 'u32 *'
+> >  struct dentry *debugfs_create_bool(const char *name, umode_t mode,
+> >                 ^
+> > drivers/base/power/opp/debugfs.c:52:7: warning: passing argument 4 of 'debugfs_create_bool' from incompatible pointer type
+> >   if (!debugfs_create_bool("dynamic", S_IRUGO, d, (u32 *)&opp->dynamic))
+> >        ^
+> > In file included from drivers/base/power/opp/debugfs.c:13:0:
+> > include/linux/debugfs.h:94:16: note: expected 'bool *' but argument is of type 'u32 *'
+> >  struct dentry *debugfs_create_bool(const char *name, umode_t mode,
+> >                 ^
+> > drivers/base/power/opp/debugfs.c:55:7: warning: passing argument 4 of 'debugfs_create_bool' from incompatible pointer type
+> >   if (!debugfs_create_bool("turbo", S_IRUGO, d, (u32 *)&opp->turbo))
+> >        ^
+> > In file included from drivers/base/power/opp/debugfs.c:13:0:
+> > include/linux/debugfs.h:94:16: note: expected 'bool *' but argument is of type 'u32 *'
+> >  struct dentry *debugfs_create_bool(const char *name, umode_t mode,
+> >                 ^
 > >
-> >   f71933438300 ("configfs: remove old API")
+> > Introduced by commit
 > >
-> > I have reverted the target-updated commit for today.  If there is a
-> > better resolution (and I assume that there is), please let me know.
+> >   621a5f7ad9cd ("debugfs: Pass bool pointer to debugfs_create_bool()")
+> >
+> > interacting with commit
+> >
+> >   5cb5fdbf3877 ("PM / OPP: Add debugfs support")
+> >
+> > from the pm tree.
 > 
-> I'm going to follow up to this email with a fix that updates stm class
-> code to the new api, I'm not sure whos branch it should go to, because
-> it only works with Christoph's configfs patches in the -next.
+> That was expected and the PM tree needs to get updated to get it fixed.
+> And I will be doing that soon.
 
-Well, I will add it as a merge resolution patch in linux-next (instead
-of the current revert) but someone will have to remember to send it to
-Linus when the latter of these two trees is merged by him.  Unless one
-of these trees can merge the other (or a non rebasing subset) ...
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+For the record, I'm tired of your breaking things on a regular basis like this.
+
+I'm dropping 5cb5fdbf3877 from the PM tree.
+
+Thanks,
+Rafael
