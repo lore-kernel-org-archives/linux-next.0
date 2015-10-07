@@ -1,57 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with Linus' tree
-Date: Wed, 7 Oct 2015 13:12:34 +1100
-Message-ID: <20151007131234.3bc851eb@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the regulator tree
+Date: Wed, 7 Oct 2015 13:45:03 +1100
+Message-ID: <20151007134503.48dd5084@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50658 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752667AbbJGCpH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Oct 2015 22:45:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
 Hi all,
 
-Today's linux-next merge of the xen-tip tree got a conflict in:
+After merging the regulator tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  arch/x86/xen/p2m.c
+drivers/regulator/core.c: At top level:
+drivers/regulator/core.c:139:13: warning: 'regulator_lock_supply' defined but not used [-Wunused-function]
+ static void regulator_lock_supply(struct regulator_dev *rdev)
+             ^
+drivers/regulator/core.c:159:13: warning: 'regulator_unlock_supply' defined but not used [-Wunused-function]
+ static void regulator_unlock_supply(struct regulator_dev *rdev)
+             ^
 
-between commit:
+Introduced by commit
 
-  98dd166ea3a3 ("x86/xen/p2m: hint at the last populated P2M entry")
-
-from Linus' tree and commit:
-
-  c5fdd42b47ab ("x86/xen: export xen_alloc_p2m_entry()")
-
-from the xen-tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+  9f01cd4a915e ("regulator: core: introduce function to lock regulators and its supplies")
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/x86/xen/p2m.c
-index 660b3cfef234,4ea676a49b6b..000000000000
---- a/arch/x86/xen/p2m.c
-+++ b/arch/x86/xen/p2m.c
-@@@ -619,14 -611,9 +622,15 @@@ int xen_alloc_p2m_entry(unsigned long p
-  			free_p2m_page(p2m);
-  	}
-  
- +	/* Expanded the p2m? */
- +	if (pfn > xen_p2m_last_pfn) {
- +		xen_p2m_last_pfn = pfn;
- +		HYPERVISOR_shared_info->arch.max_pfn = xen_p2m_last_pfn;
- +	}
- +
-- 	return true;
-+ 	return 0;
-  }
-+ EXPORT_SYMBOL(xen_alloc_p2m_entry);
-  
-  unsigned long __init set_phys_range_identity(unsigned long pfn_s,
-  				      unsigned long pfn_e)
