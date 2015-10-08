@@ -1,51 +1,50 @@
-From: Chris Metcalf <cmetcalf@ezchip.com>
-Subject: [GIT PULL] strscpy powerpc fix for 3.4
-Date: Wed, 7 Oct 2015 20:27:38 -0400
-Message-ID: <5615B87A.80206@ezchip.com>
-References: <20151008094444.10d9cc68@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Thu, 8 Oct 2015 12:04:24 +1100
+Message-ID: <20151008120424.6813920f@canb.auug.org.au>
+References: <20150929114531.2d611a2a@canb.auug.org.au>
+	<20151002114932.043376ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151008094444.10d9cc68@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50540 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753764AbbJHBE1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Oct 2015 21:04:27 -0400
+In-Reply-To: <20151002114932.043376ca@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Belisko <marek@goldelico.com>
 
-On 10/7/2015 6:44 PM, Stephen Rothwell wrote:
-> Hi Linus,
+Hi Sebastian,
+
+On Fri, 2 Oct 2015 11:49:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> After merging Linus' tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> lib/string.c: In function 'strscpy':
-> lib/string.c:209:4: error: implicit declaration of function 'zero_bytemask' [-Werror=implicit-function-declaration]
->      *(unsigned long *)(dest+res) = c & zero_bytemask(data);
->      ^
->
-> Caused by commit
->
->    30035e45753b ("string: provide strscpy()")
+> On Tue, 29 Sep 2015 11:45:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the battery tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > ERROR (phandle_references): Reference to non-existent node or label "twl4030_madc"
+> > ERROR: Input tree has errors, aborting (use -f to force output)
+> > scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/omap3-beagle-xm-ab.dtb' failed
+> > 
+> > and many more ...
+> > 
+> > Caused by commit
+> > 
+> >   af19161aaed7 ("ARM: dts: twl4030: Add iio properties for bci subnode")
+> > 
+> > Presumably some updates to other files were missed.
+> > 
+> > I have used the battery tree from next-20150925 fot today.
+> 
+> I am still getting this error.
 
-I posted a change equivalent to yours earlier today:
-
-http://lkml.kernel.org/r/1444229188-19640-1-git-send-email-cmetcalf@ezchip.com
-
-I also did no testing, but since the rest of the PPC code is similar to the
-asm-generic version, I believe the zero_bytemask() definition should be OK.
-
-It probably should go through Linus' tree, like the previous set of patches.
-I just pushed it up to the linux-tile tree for Linus to grab as:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/cmetcalf/linux-tile.git strscpy
-
-Chris Metcalf (1):
-       arch/powerpc: provide zero_bytemask() for big-endian
-
-  arch/powerpc/include/asm/word-at-a-time.h | 5 +++++
-  1 file changed, 5 insertions(+)
+Ping?
 
 -- 
-Chris Metcalf, EZChip Semiconductor
-http://www.ezchip.com
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
