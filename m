@@ -1,53 +1,105 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: linux-next: build warning after merge of the driver-core tree
-Date: Thu, 8 Oct 2015 12:39:54 +0530
-Message-ID: <20151008070954.GE4570@linux>
-References: <20151007155146.41c4528f@canb.auug.org.au>
- <8672077.UYXmy4VzzX@vostro.rjw.lan>
- <20151008090427.61690eef@canb.auug.org.au>
- <1846544.jnahGernn9@vostro.rjw.lan>
+From: Jiri Olsa <jolsa@redhat.com>
+Subject: Re: next-20151007 perf build =?utf-8?Q?err?=
+ =?utf-8?Q?or_=22tools=2Finclude=2Flinux=2Fcompiler=2Eh=3A66=3A_error=3A_d?=
+ =?utf-8?Q?ereferencing_pointer_=E2=80=98res=2E41?= =?utf-8?B?4oCZ?= does
+ break strict-aliasing rules"
+Date: Thu, 8 Oct 2015 11:12:21 +0200
+Message-ID: <20151008091221.GC17581@krava.landal.opennet>
+References: <CAHTgTXXzH7id6qrpG1qvR8BsKPjny4+kjcvnA1zS6OaMx-+TtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:34721 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751876AbbJHHJ7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Oct 2015 03:09:59 -0400
-Received: by padhy16 with SMTP id hy16so46219408pad.1
-        for <linux-next@vger.kernel.org>; Thu, 08 Oct 2015 00:09:58 -0700 (PDT)
+Received: from mx1.redhat.com ([209.132.183.28]:60239 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755230AbbJHJMZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Oct 2015 05:12:25 -0400
 Content-Disposition: inline
-In-Reply-To: <1846544.jnahGernn9@vostro.rjw.lan>
+In-Reply-To: <CAHTgTXXzH7id6qrpG1qvR8BsKPjny4+kjcvnA1zS6OaMx-+TtA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next list <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Vinson Lee <vlee@twopensource.com>
+Cc: linux-next@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Andi Kleen <ak@linux.intel.com>, Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>, Rabin Vincent <rabin@rab.in>, Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>
 
-On 08-10-15, 00:47, Rafael J. Wysocki wrote:
-> Well, the conflicting commits here were from the same developer which is kind
-> of annoying.
+On Wed, Oct 07, 2015 at 11:28:26AM -0700, Vinson Lee wrote:
+> Hi.
+>=20
+> I hit this perf build error with next-20151007 with GCC 4.4.
+>=20
+>   CC       util/annotate.o
+> cc1: warnings being treated as errors
+> util/annotate.c: In function =E2=80=98disasm__purge=E2=80=99:
+> linux-next/tools/include/linux/compiler.h:66: error: dereferencing
+> pointer =E2=80=98res.41=E2=80=99 does break strict-aliasing rules
+> linux-next/tools/include/linux/compiler.h:66: note: initialized from =
+here
+> util/annotate.c: In function =E2=80=98symbol__annotate=E2=80=99:
+> linux-next/tools/include/linux/compiler.h:66: error: dereferencing
+> pointer =E2=80=98res.41=E2=80=99 does break strict-aliasing rules
+> linux-next/tools/include/linux/compiler.h:66: note: initialized from =
+here
+> linux-next/tools/include/linux/compiler.h:52: error: dereferencing
+> pointer =E2=80=98res.32=E2=80=99 does break strict-aliasing rules
+> linux-next/tools/include/linux/compiler.h:52: note: initialized from =
+here
+>=20
+> Cheers,
+> Vinson
 
-I do understand why its annoying, but I wasn't doing them in parallel.
-The patches in Greg's tree were written long after the other series
-got applied to your tree.
+we took this stuff from kernel, which is built with -fno-strict-aliasin=
+g
+which we use -Wstrict-aliasing=3D3
 
-So, I was kind of helpless here :(
+we need something like below defined for all the types, but I'm still
+hoping for some nicer solution.. however patch below fixed the build
+for me.. could you please test?
 
-> The new use in my tree can wait until the API update in the Greg's tree is
-> merged IMO.  That's why I've now dropped the commit that added it. :-)
+thanks,
+jirka
 
-Looking at the current state of your tree, looks like you have dropped
-way too many patches. Was it intentional?
 
-Missing commits:
-
-1840995c52d4 PM / OPP: reuse of_parse_phandle()
-f0489a5ef4d0 PM / OPP: Rename opp init/free table routines
-8f8d37b2537a PM / OPP: Prefix exported opp routines with dev_pm_opp_
-33692dc381f9 PM / OPP: Move opp core to its own directory
-f59d3ee8480d PM / OPP: Move cpu specific code to opp/cpu.c
-5cb5fdbf3877 PM / OPP: Add debugfs support
-
-I though you just dropped the last commit, but no.
-
--- 
-viresh
+---
+diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compi=
+ler.h
+index 9098083..0ed624f 100644
+--- a/tools/include/linux/compiler.h
++++ b/tools/include/linux/compiler.h
+@@ -43,13 +43,18 @@
+=20
+ #include <linux/types.h>
+=20
++typedef u64 __attribute__((__may_alias__)) u64_alias_t;
++
+ static __always_inline void __read_once_size(const volatile void *p, v=
+oid *res, int size)
+ {
++	u64_alias_t *u64_p =3D (u64_alias_t*) p;
++	u64_alias_t *u64_res =3D (u64_alias_t*) res;
++
+ 	switch (size) {
+ 	case 1: *(__u8 *)res =3D *(volatile __u8 *)p; break;
+ 	case 2: *(__u16 *)res =3D *(volatile __u16 *)p; break;
+ 	case 4: *(__u32 *)res =3D *(volatile __u32 *)p; break;
+-	case 8: *(__u64 *)res =3D *(volatile __u64 *)p; break;
++	case 8: *u64_res =3D *u64_p; break;
+ 	default:
+ 		barrier();
+ 		__builtin_memcpy((void *)res, (const void *)p, size);
+@@ -59,11 +64,14 @@ static __always_inline void __read_once_size(const =
+volatile void *p, void *res,
+=20
+ static __always_inline void __write_once_size(volatile void *p, void *=
+res, int size)
+ {
++	u64_alias_t *u64_p =3D (u64_alias_t*) p;
++	u64_alias_t *u64_res =3D (u64_alias_t*) res;
++
+ 	switch (size) {
+ 	case 1: *(volatile __u8 *)p =3D *(__u8 *)res; break;
+ 	case 2: *(volatile __u16 *)p =3D *(__u16 *)res; break;
+ 	case 4: *(volatile __u32 *)p =3D *(__u32 *)res; break;
+-	case 8: *(volatile __u64 *)p =3D *(__u64 *)res; break;
++	case 8: *u64_p =3D *u64_res; break;
+ 	default:
+ 		barrier();
+ 		__builtin_memcpy((void *)p, (const void *)res, size);
