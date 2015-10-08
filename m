@@ -1,78 +1,54 @@
-From: Chris Metcalf <cmetcalf@ezchip.com>
-Subject: [GIT PULL] strscpy powerpc fix for 4.3 - not 3.4 :-)
-Date: Thu, 8 Oct 2015 15:47:31 -0400
-Message-ID: <5616C853.6030708@ezchip.com>
-References: <20151008094444.10d9cc68@canb.auug.org.au>
- <5615B87A.80206@ezchip.com> <20151008184541.GA8373@roeck-us.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Date: Thu, 08 Oct 2015 22:30:45 +0200
+Message-ID: <80267074.mzAFagpz1h@vostro.rjw.lan>
+References: <20151007155146.41c4528f@canb.auug.org.au> <1846544.jnahGernn9@vostro.rjw.lan> <20151008070954.GE4570@linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-am1on0086.outbound.protection.outlook.com ([157.56.112.86]:11632
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752704AbbJHTrx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Oct 2015 15:47:53 -0400
-In-Reply-To: <20151008184541.GA8373@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151008070954.GE4570@linux>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next list <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 10/08/2015 02:45 PM, Guenter Roeck wrote:
-> On Wed, Oct 07, 2015 at 08:27:38PM -0400, Chris Metcalf wrote:
->> On 10/7/2015 6:44 PM, Stephen Rothwell wrote:
->>> Hi Linus,
->>>
->>> After merging Linus' tree, today's linux-next build (powerpc
->>> ppc64_defconfig) failed like this:
->>>
->>> lib/string.c: In function 'strscpy':
->>> lib/string.c:209:4: error: implicit declaration of function 'zero_bytemask' [-Werror=implicit-function-declaration]
->>>      *(unsigned long *)(dest+res) = c & zero_bytemask(data);
->>>      ^
->>>
->>> Caused by commit
->>>
->>>    30035e45753b ("string: provide strscpy()")
->> I posted a change equivalent to yours earlier today:
->>
->> http://lkml.kernel.org/r/1444229188-19640-1-git-send-email-cmetcalf@ezchip.com
->>
->> I also did no testing, but since the rest of the PPC code is similar to the
->> asm-generic version, I believe the zero_bytemask() definition should be OK.
->>
->> It probably should go through Linus' tree, like the previous set of patches.
->> I just pushed it up to the linux-tile tree for Linus to grab as:
->>
-> Wonder if Linus is going to realize that you meant 4.3 in your subject line,
-> not 3.4.
+On Thursday, October 08, 2015 12:39:54 PM Viresh Kumar wrote:
+> On 08-10-15, 00:47, Rafael J. Wysocki wrote:
+> > Well, the conflicting commits here were from the same developer which is kind
+> > of annoying.
+> 
+> I do understand why its annoying, but I wasn't doing them in parallel.
+> The patches in Greg's tree were written long after the other series
+> got applied to your tree.
+> 
+> So, I was kind of helpless here :(
 
-Oops, good catch :-)
+You could have asked me to drop that commit when you decided to rework the API.
 
-I updated the subject line of this reply so it will catch on Linus's mail
-filters better, if that helps!
+That would have been much less painful to everybody (and especially to the
+people who saw the breakage and have tried to fix it).
 
->> git://git.kernel.org/pub/scm/linux/kernel/git/cmetcalf/linux-tile.git strscpy
->>
->> Chris Metcalf (1):
->>        arch/powerpc: provide zero_bytemask() for big-endian
->>
->>   arch/powerpc/include/asm/word-at-a-time.h | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> -- 
->> Chris Metcalf, EZChip Semiconductor
->> http://www.ezchip.com
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
->>
->>
+> > The new use in my tree can wait until the API update in the Greg's tree is
+> > merged IMO.  That's why I've now dropped the commit that added it. :-)
+> 
+> Looking at the current state of your tree, looks like you have dropped
+> way too many patches. Was it intentional?
+> 
+> Missing commits:
+> 
+> 1840995c52d4 PM / OPP: reuse of_parse_phandle()
+> f0489a5ef4d0 PM / OPP: Rename opp init/free table routines
+> 8f8d37b2537a PM / OPP: Prefix exported opp routines with dev_pm_opp_
+> 33692dc381f9 PM / OPP: Move opp core to its own directory
+> f59d3ee8480d PM / OPP: Move cpu specific code to opp/cpu.c
+> 5cb5fdbf3877 PM / OPP: Add debugfs support
+> 
+> I though you just dropped the last commit, but no.
 
--- 
-Chris Metcalf, EZChip Semiconductor
-http://www.ezchip.com
+My bad, I rebased the pm-opp branch, but then have forgotten to merge it.
+
+Sorry about that, should be fixed now.
+
+Thanks,
+Rafael
