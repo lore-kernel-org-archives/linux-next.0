@@ -1,39 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the
- crypto-current tree
-Date: Fri, 9 Oct 2015 13:09:34 +1100
-Message-ID: <20151009130934.1affe26a@canb.auug.org.au>
-References: <20151009124700.46d8cf61@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the chrome-platform
+ tree
+Date: Fri, 9 Oct 2015 13:14:57 +1100
+Message-ID: <20151009131457.472bedeb@canb.auug.org.au>
+References: <20151008133443.1fde8318@canb.auug.org.au>
+	<CAOesGMg6fFdYZTebdZq7Rb873064GT65_B+TWesw+HD1_63aVA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151009124700.46d8cf61@canb.auug.org.au>
+In-Reply-To: <CAOesGMg6fFdYZTebdZq7Rb873064GT65_B+TWesw+HD1_63aVA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>, Dave Hansen <dave.hansen@linux.intel.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio.lopez@collabora.co.uk>, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Olof,
 
-On Fri, 9 Oct 2015 12:47:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 8 Oct 2015 16:43:55 -0700 Olof Johansson <olof@lixom.net> wrote:
 >
-> diff --cc arch/x86/crypto/camellia_aesni_avx_glue.c
-> index bacaa13acac5,12e729bfe71b..000000000000
-> --- a/arch/x86/crypto/camellia_aesni_avx_glue.c
-> +++ b/arch/x86/crypto/camellia_aesni_avx_glue.c
-> @@@ -554,12 -554,8 +554,14 @@@ static int __init camellia_aesni_init(v
->   {
->   	const char *feature_name;
->   
->  +	if (!cpu_has_avx || !cpu_has_aes || !cpu_has_osxsave) {
->  +		pr_info("AVX or AES-NI instructions are not detected.\n");
->  +		return -ENODEV;
->  +	}
->  +
->  +	if (!cpu_has_xfeatures(XSTATE_SSE | XSTATE_YMM, &feature_name)) {
+> Yeah, sorry about that. I got notified by the 0-day builder but by the
+> time I had sorted it out you must already have pulled the tree.
+> 
+> Should be fine today.
 
-OOPS, I clearly meant to remove that line as well (which I have now done).
+Yeah, I saw that, thanks.
 
 -- 
 Cheers,
