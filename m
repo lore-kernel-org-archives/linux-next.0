@@ -1,90 +1,59 @@
-From: Matt Fleming <matt@codeblueprint.co.uk>
-Subject: Re: linux-next: Tree for Sep 18 (build failures, up to 10/02)
-Date: Sat, 10 Oct 2015 17:26:23 +0100
-Message-ID: <20151010162623.GA2723@codeblueprint.co.uk>
-References: <20150918140810.6345bce9@canb.auug.org.au>
- <20150918142204.GA17018@roeck-us.net>
- <20151002161637.GA17786@roeck-us.net>
- <20151003222607.GA2682@codeblueprint.co.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the qcom tree with the arm-soc tree
+Date: Mon, 12 Oct 2015 10:19:12 +1100
+Message-ID: <20151012101912.33e77590@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:38421 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751460AbbJJQ0Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 10 Oct 2015 12:26:25 -0400
-Received: by wiclk2 with SMTP id lk2so102462599wic.1
-        for <linux-next@vger.kernel.org>; Sat, 10 Oct 2015 09:26:24 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20151003222607.GA2682@codeblueprint.co.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Zhang <zjzhang@codeaurora.org>, Andrew Morton <akpm@linux-foundation.org>, Matt Fleming <matt.fleming@intel.com>, linux-efi@vger.kernel.org, Tony Luck <tony.luck@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Gross <agross@codeaurora.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, 03 Oct, at 11:26:07PM, Matt Fleming wrote:
-> 
-> Urgh, sorry about this slipping through the cracks Guenter!
-> 
-> What about fixing it up with this patch?
-> 
-> ---
-> 
-> From 85ae872eafef767cf37a0a305266522a62b43fc2 Mon Sep 17 00:00:00 2001
-> From: Matt Fleming <matt.fleming@intel.com>
-> Date: Sat, 3 Oct 2015 20:44:52 +0100
-> Subject: [PATCH] efi: Use the generic efi.memmap instead of 'memmap'
-> 
-> Guenter reports that commit 7bf793115dd9 ("efi, x86: Rearrange
-> efi_mem_attributes()") breaks ia64 compilation with the following
-> error,
-> 
->  drivers/built-in.o: In function `efi_mem_attributes':
->   (.text+0xde962): undefined reference to `memmap'
->  drivers/built-in.o: In function `efi_mem_attributes':
->   (.text+0xde971): undefined reference to `memmap'
-> 
-> Instead of using the (rather poorly named) global variable 'memmap'
-> which doesn't exist on ia64, use efi.memmap which points to the
-> 'memmap' object on x86 and arm64 and which is NULL for ia64.
-> 
-> The fact that efi.memmap is NULL for ia64 is OK because ia64 provides
-> its own implementation of efi_mem_attributes().
-> 
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Cc: Jonathan Zhang <zjzhang@codeaurora.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Matt Fleming <matt.fleming@intel.com>
-> ---
->  drivers/firmware/efi/efi.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index dd153be03f56..335f4c1a1504 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -647,13 +647,15 @@ char * __init efi_md_typeattr_format(char *buf, size_t size,
->   */
->  u64 __weak efi_mem_attributes(unsigned long phys_addr)
->  {
-> +	struct efi_memory_map *map;
->  	efi_memory_desc_t *md;
->  	void *p;
->  
->  	if (!efi_enabled(EFI_MEMMAP))
->  		return 0;
->  
-> -	for (p = memmap.map; p < memmap.map_end; p += memmap.desc_size) {
-> +	map = efi.memmap;
-> +	for (p = map->map; p < map->map_end; p += map->desc_size) {
->  		md = p;
->  		if ((md->phys_addr <= phys_addr) &&
->  		    (phys_addr < (md->phys_addr +
+Hi Andy,
 
-tip folks, could you pick this up to fix the ia64 breakage in
-linux-next?
+Today's linux-next merge of the qcom tree got a conflict in:
+
+  arch/arm/configs/multi_v7_defconfig
+
+between commits:
+
+  b605aded4491 ("ARM: multi_v7_defconfig: Add missing QCOM APQ8064 configs")
+  cc68819a582c ("ARM: multi_v7_defconfig: Enable Rockchip display support")
+
+from the arm-soc tree and commit:
+
+  4e7fb93081f8 ("ARM: multi_v7_defconfig: Enable QCOM SMD/RPM")
+
+from the qcom tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
-Matt Fleming, Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/configs/multi_v7_defconfig
+index 0af319ec7047,41aecd75e2aa..000000000000
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@@ -425,7 -415,7 +425,8 @@@ CONFIG_REGULATOR_MAX77802=
+  CONFIG_REGULATOR_PALMAS=y
+  CONFIG_REGULATOR_PBIAS=y
+  CONFIG_REGULATOR_PWM=m
+ +CONFIG_REGULATOR_QCOM_RPM=y
++ CONFIG_REGULATOR_QCOM_SMD_RPM=y
+  CONFIG_REGULATOR_S2MPS11=y
+  CONFIG_REGULATOR_S5M8767=y
+  CONFIG_REGULATOR_TPS51632=y
+@@@ -645,7 -631,7 +649,8 @@@ CONFIG_APQ_MMCC_8084=
+  CONFIG_MSM_GCC_8660=y
+  CONFIG_MSM_MMCC_8960=y
+  CONFIG_MSM_MMCC_8974=y
+ +CONFIG_ROCKCHIP_IOMMU=y
++ CONFIG_HWSPINLOCK_QCOM=y
+  CONFIG_TEGRA_IOMMU_GART=y
+  CONFIG_TEGRA_IOMMU_SMMU=y
+  CONFIG_PM_DEVFREQ=y
