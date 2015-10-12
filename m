@@ -1,32 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the qcom tree with the arm-soc tree
-Date: Mon, 12 Oct 2015 10:19:12 +1100
-Message-ID: <20151012101912.33e77590@canb.auug.org.au>
+Subject: linux-next: manual merge of the jc_docs tree with Linus' tree
+Date: Mon, 12 Oct 2015 13:38:10 +1100
+Message-ID: <20151012133810.325d7bc5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Gross <agross@codeaurora.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33623 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752662AbbJLCiM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 Oct 2015 22:38:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Benoit Lemarchand <benoit.lemarchand@gmail.com>
 
-Hi Andy,
+Hi Jonathan,
 
-Today's linux-next merge of the qcom tree got a conflict in:
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-  arch/arm/configs/multi_v7_defconfig
+  Documentation/Changes
 
-between commits:
+between commit:
 
-  b605aded4491 ("ARM: multi_v7_defconfig: Add missing QCOM APQ8064 configs")
-  cc68819a582c ("ARM: multi_v7_defconfig: Enable Rockchip display support")
+  283e8ba2dfde ("MODSIGN: Change from CMS to PKCS#7 signing if the openssl is too old")
 
-from the arm-soc tree and commit:
+from Linus' tree and commit:
 
-  4e7fb93081f8 ("ARM: multi_v7_defconfig: Enable QCOM SMD/RPM")
+  1c3a54e257f7 ("Documentation/Changes: Add bc in "Current Minimal Requirements" section")
 
-from the qcom tree.
+from the jc_docs tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,25 +38,17 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/configs/multi_v7_defconfig
-index 0af319ec7047,41aecd75e2aa..000000000000
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@@ -425,7 -415,7 +425,8 @@@ CONFIG_REGULATOR_MAX77802=
-  CONFIG_REGULATOR_PALMAS=y
-  CONFIG_REGULATOR_PBIAS=y
-  CONFIG_REGULATOR_PWM=m
- +CONFIG_REGULATOR_QCOM_RPM=y
-+ CONFIG_REGULATOR_QCOM_SMD_RPM=y
-  CONFIG_REGULATOR_S2MPS11=y
-  CONFIG_REGULATOR_S5M8767=y
-  CONFIG_REGULATOR_TPS51632=y
-@@@ -645,7 -631,7 +649,8 @@@ CONFIG_APQ_MMCC_8084=
-  CONFIG_MSM_GCC_8660=y
-  CONFIG_MSM_MMCC_8960=y
-  CONFIG_MSM_MMCC_8974=y
- +CONFIG_ROCKCHIP_IOMMU=y
-+ CONFIG_HWSPINLOCK_QCOM=y
-  CONFIG_TEGRA_IOMMU_GART=y
-  CONFIG_TEGRA_IOMMU_SMMU=y
-  CONFIG_PM_DEVFREQ=y
+diff --cc Documentation/Changes
+index f447f0516f07,268a849c4cc0..000000000000
+--- a/Documentation/Changes
++++ b/Documentation/Changes
+@@@ -43,7 -43,8 +43,8 @@@ o  udev                   08
+  o  grub                   0.93                    # grub --version || grub-install --version
+  o  mcelog                 0.6                     # mcelog --version
+  o  iptables               1.4.2                   # iptables -V
+ -o  openssl & libcrypto    1.0.1k                  # openssl version
+ +o  openssl & libcrypto    1.0.0                   # openssl version
++ o  bc                     1.06.95                 # bc --version
+  
+  
+  Kernel compilation
