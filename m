@@ -1,56 +1,99 @@
-From: "Sell, Timothy C" <Timothy.Sell@unisys.com>
-Subject: RE: randconfig build error with next-20151013, in
- drivers/staging/unisys/visorinput
-Date: Tue, 13 Oct 2015 17:51:29 +0000
-Message-ID: <52c204c03ddd4d3c8596e6ed4ebfc7f5@US-EXCH13-2.na.uis.unisys.com>
-References: <CA+r1ZhjFFR2arvHeNp54qtKcSPTR=Fiws_oaFx2CZXYoPioB2A@mail.gmail.com>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: [GIT PULL 0/8] perf/core improvements and fixes
+Date: Tue, 13 Oct 2015 16:41:35 -0300
+Message-ID: <1444765303-8257-1-git-send-email-acme@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <CA+r1ZhjFFR2arvHeNp54qtKcSPTR=Fiws_oaFx2CZXYoPioB2A@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Jim Davis <jim.epost@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "Romer, Benjamin M" <Benjamin.Romer@unisys.com>, "Kershner, David A" <David.Kershner@unisys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, *S-Par-Maintainer <SParMaintainer@unisys.com>, devel <devel@driverdev.osuosl.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:34343 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752690AbbJMTl4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Oct 2015 15:41:56 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>, David Ahern <dsahern@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@redhat.com>, linux-next@vger.kernel.org, Martin Liska <mliska@suse.cz>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rabin Vincent <rabin.vincent@axis.com>, Stephane Eranian <eranian@google.com>, Wang Nan <wangnan0@huawei.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-We have a patch in the pipeline to add "INPUT" to the "depends on" in drivers/staging/unisys/visorinput/Kconfig, which will fix this problem.  Thanks Jim.
+Hi Ingo,
 
-- Tim Sell
+	Please consider pulling.
 
-> -----Original Message-----
-> From: Jim Davis [mailto:jim.epost@gmail.com]
-> Sent: Tuesday, October 13, 2015 1:34 PM
-> To: Stephen Rothwell; linux-next; linux-kernel; Romer, Benjamin M;
-> Kershner, David A; Greg Kroah-Hartman; *S-Par-Maintainer; devel
-> Subject: randconfig build error with next-20151013, in
-> drivers/staging/unisys/visorinput
-> 
-> Building with the attached random configuration file,
-> 
-> ERROR: "input_free_device"
-> [drivers/staging/unisys/visorinput/visorinput.ko] undefined!
-> ERROR: "input_set_capability"
-> [drivers/staging/unisys/visorinput/visorinput.ko] undefined!
-> ERROR: "input_set_abs_params"
-> [drivers/staging/unisys/visorinput/visorinput.ko] undefined!
-> ERROR: "input_register_device"
-> [drivers/staging/unisys/visorinput/visorinput.ko] undefined!
-> ERROR: "input_allocate_device"
-> [drivers/staging/unisys/visorinput/visorinput.ko]  undefined!
-> ERROR: "input_unregister_device"
-> [drivers/staging/unisys/visorinput/visorinput.ko] undefined!
-> ERROR: "input_event" [drivers/staging/unisys/visorinput/visorinput.ko]
-> undefined!
-> 
-> 
-> --
-> Jim
+- Arnaldo
+
+BTW.: There are several outstanding patchkits needing review and processing,
+I'll be out this week for a conference, will try and speed up processing next
+week.
+
+The following changes since commit 0e537fef24d64f7bf3ef61a27edf64a8d9a5424c:
+
+  Merge tag 'perf-core-for-mingo' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core (2015-10-08 10:52:44 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo
+
+for you to fetch changes up to 3a70fcd3a4db56731f67f0189514953c74257944:
+
+  tools build: Fix cross compile build (2015-10-13 11:59:43 -0300)
+
+----------------------------------------------------------------
+perf/core improvements and fixes:
+
+User visible:
+
+- Use the alternative with the most descriptive filename containing
+  a vmlinux file for a given build-id, providing a better title line
+  for tools such as 'annotate' (Arnaldo Carvalho de Melo)
+
+- Remove help messages about previous right and left arrow keybidings, that
+  were repurposed for horizontal scrolling (Arnaldo Carvalho de Melo)
+
+- Inform how to reset the symbol filter in the hists browser (top & report)
+  (Arnaldo Carvalho de Melo)
+
+- Add 'm' key for context menu display in the hists browser, that became
+  inacessible with the repurposing of the right arrow key for horizontal
+  scrolling (Namhyung Kim)
+
+- Use debug_frame for callchains if eh_frame is unusable (Rabin Vicent)
+
+Build fixes:
+
+- Fix strict-aliasing breakage with gcc 4.4 in the READ_ONCE/WRITE_ONCE code
+  adopted from the kernel tree, that builds with -fno-strict-aliasing while
+  tools/perf/ uses -Wstrict-aliasing=3 (Jiri Olsa)
+
+- Fix unw_word_t pointer casts in code using libunwind for callchains,
+  fixing the build in at least 32-bit MIPS systems (Rabin Vicent)
+
+- Workaround cross compile build problems related to fixdep (Jiri Olsa)
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Arnaldo Carvalho de Melo (3):
+      perf symbols: Try the .debug/ DSO cache as a last resort
+      perf ui browsers: Remove help messages about use of right and arrow keys
+      perf hists browser: Inform how to reset the symbol filter
+
+Jiri Olsa (2):
+      tools include: Fix strict-aliasing rules breakage
+      tools build: Fix cross compile build
+
+Namhyung Kim (1):
+      perf hists browser: Add 'm' key for context menu display
+
+Rabin Vincent (2):
+      perf callchain: Use debug_frame if eh_frame is unusable
+      perf callchains: Fix unw_word_t pointer casts
+
+ tools/build/Makefile.include       |  4 ++++
+ tools/include/linux/compiler.h     | 32 ++++++++++++++++++++++++--------
+ tools/perf/ui/browsers/annotate.c  |  6 +++---
+ tools/perf/ui/browsers/hists.c     | 13 ++++++++-----
+ tools/perf/ui/browsers/map.c       |  2 +-
+ tools/perf/ui/browsers/scripts.c   |  2 +-
+ tools/perf/util/symbol.c           | 18 +++++++++---------
+ tools/perf/util/unwind-libunwind.c | 14 ++++++++------
+ 8 files changed, 58 insertions(+), 33 deletions(-)
