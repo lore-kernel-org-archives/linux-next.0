@@ -1,116 +1,87 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH 7/8] tools include: Fix strict-aliasing rules breakage
-Date: Tue, 13 Oct 2015 16:41:42 -0300
-Message-ID: <1444765303-8257-8-git-send-email-acme@kernel.org>
-References: <1444765303-8257-1-git-send-email-acme@kernel.org>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: randconfig build error with next-20151013, in
+ fs/xfs/libxfs/xfs_alloc.c
+Date: Wed, 14 Oct 2015 07:41:19 +1100
+Message-ID: <20151013204119.GI31326@dastard>
+References: <CA+r1Zhg0y-47JuzOMANcXykyU=No-TEBksLnnT-g0OsTKwazRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444765303-8257-1-git-send-email-acme@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Andi Kleen <ak@linux.intel.com>, Martin Liska <mliska@suse.cz>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rabin Vincent <rabin@rab.in>, linux-next@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ipmail04.adl6.internode.on.net ([150.101.137.141]:55634 "EHLO
+	ipmail04.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752197AbbJMUlW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Oct 2015 16:41:22 -0400
+Content-Disposition: inline
+In-Reply-To: <CA+r1Zhg0y-47JuzOMANcXykyU=No-TEBksLnnT-g0OsTKwazRQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jim Davis <jim.epost@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, xfs@oss.sgi.com
 
-=46rom: Jiri Olsa <jolsa@redhat.com>
+On Tue, Oct 13, 2015 at 09:41:25AM -0700, Jim Davis wrote:
+> Building with the attached random configuration file,
+> 
+> fs/built-in.o: In function `xfs_free_ag_extent':
+> /home/jim/linux-next/fs/xfs/libxfs/xfs_alloc.c:1813: undefined
+> reference to `xfsstats'
 
-Vinson reported build breakage with gcc 4.4 due to strict-aliasing.
+Please test the patch below.
 
-   CC       util/annotate.o
- cc1: warnings being treated as errors
- util/annotate.c: In function =E2=80=98disasm__purge=E2=80=99:
- linux-next/tools/include/linux/compiler.h:66: error: dereferencing
- pointer =E2=80=98res.41=E2=80=99 does break strict-aliasing rules
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
-The reason is READ_ONCE/WRITE_ONCE code we took from kernel sources.  T=
-hey
-intentionaly break aliasing rules. While this is ok for kernel because =
-it's
-built with -fno-strict-aliasing, it breaks perf which is build with
--Wstrict-aliasing=3D3.
 
-Using extra __may_alias__ type to allow aliasing in this case.
+xfs: stats are no longer dependent on CONFIG_PROC_FS
 
-Reported-and-tested-by: Vinson Lee <vlee@twopensource.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Martin Liska <mliska@suse.cz>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Rabin Vincent <rabin@rab.in>
-Cc: linux-next@vger.kernel.org
-Link: http://lkml.kernel.org/r/20151013085214.GB2705@krava.brq.redhat.c=
-om
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Dave Chinner <dchinner@redhat.com>
+
+So we need to fix the makefile to understand this, otherwise build
+errors with CONFIG_PROC_FS=n occur.
+
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
 ---
- tools/include/linux/compiler.h | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ fs/xfs/Makefile    | 2 +-
+ fs/xfs/xfs_stats.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compi=
-ler.h
-index 9098083869c8..fa7208a32d76 100644
---- a/tools/include/linux/compiler.h
-+++ b/tools/include/linux/compiler.h
-@@ -43,13 +43,29 @@
-=20
- #include <linux/types.h>
-=20
-+/*
-+ * Following functions are taken from kernel sources and
-+ * break aliasing rules in their original form.
-+ *
-+ * While kernel is compiled with -fno-strict-aliasing,
-+ * perf uses -Wstrict-aliasing=3D3 which makes build fail
-+ * under gcc 4.4.
-+ *
-+ * Using extra __may_alias__ type to allow aliasing
-+ * in this case.
-+ */
-+typedef __u8  __attribute__((__may_alias__))  __u8_alias_t;
-+typedef __u16 __attribute__((__may_alias__)) __u16_alias_t;
-+typedef __u32 __attribute__((__may_alias__)) __u32_alias_t;
-+typedef __u64 __attribute__((__may_alias__)) __u64_alias_t;
-+
- static __always_inline void __read_once_size(const volatile void *p, v=
-oid *res, int size)
+diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+index 2fbf910..6506e87 100644
+--- a/fs/xfs/Makefile
++++ b/fs/xfs/Makefile
+@@ -84,6 +84,7 @@ xfs-y				+= xfs_aops.o \
+ 				   xfs_message.o \
+ 				   xfs_mount.o \
+ 				   xfs_mru_cache.o \
++				   xfs_stats.o \
+ 				   xfs_super.o \
+ 				   xfs_symlink.o \
+ 				   xfs_sysfs.o \
+@@ -118,7 +119,6 @@ xfs-$(CONFIG_XFS_QUOTA)		+= xfs_dquot.o \
+ xfs-$(CONFIG_XFS_RT)		+= xfs_rtalloc.o
+ 
+ xfs-$(CONFIG_XFS_POSIX_ACL)	+= xfs_acl.o
+-xfs-$(CONFIG_PROC_FS)		+= xfs_stats.o
+ xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
+ xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
+ xfs-$(CONFIG_NFSD_PNFS)		+= xfs_pnfs.o
+diff --git a/fs/xfs/xfs_stats.c b/fs/xfs/xfs_stats.c
+index bd50619..8686df6 100644
+--- a/fs/xfs/xfs_stats.c
++++ b/fs/xfs/xfs_stats.c
+@@ -161,6 +161,7 @@ static const struct file_operations xqmstat_proc_fops = {
+ };
+ #endif /* CONFIG_XFS_QUOTA */
+ 
++#ifdef CONFIG_PROC_FS
+ int
+ xfs_init_procfs(void)
  {
- 	switch (size) {
--	case 1: *(__u8 *)res =3D *(volatile __u8 *)p; break;
--	case 2: *(__u16 *)res =3D *(volatile __u16 *)p; break;
--	case 4: *(__u32 *)res =3D *(volatile __u32 *)p; break;
--	case 8: *(__u64 *)res =3D *(volatile __u64 *)p; break;
-+	case 1: *(__u8_alias_t  *) res =3D *(volatile __u8_alias_t  *) p; bre=
-ak;
-+	case 2: *(__u16_alias_t *) res =3D *(volatile __u16_alias_t *) p; bre=
-ak;
-+	case 4: *(__u32_alias_t *) res =3D *(volatile __u32_alias_t *) p; bre=
-ak;
-+	case 8: *(__u64_alias_t *) res =3D *(volatile __u64_alias_t *) p; bre=
-ak;
- 	default:
- 		barrier();
- 		__builtin_memcpy((void *)res, (const void *)p, size);
-@@ -60,10 +76,10 @@ static __always_inline void __read_once_size(const =
-volatile void *p, void *res,
- static __always_inline void __write_once_size(volatile void *p, void *=
-res, int size)
+@@ -191,3 +192,4 @@ xfs_cleanup_procfs(void)
  {
- 	switch (size) {
--	case 1: *(volatile __u8 *)p =3D *(__u8 *)res; break;
--	case 2: *(volatile __u16 *)p =3D *(__u16 *)res; break;
--	case 4: *(volatile __u32 *)p =3D *(__u32 *)res; break;
--	case 8: *(volatile __u64 *)p =3D *(__u64 *)res; break;
-+	case 1: *(volatile  __u8_alias_t *) p =3D *(__u8_alias_t  *) res; bre=
-ak;
-+	case 2: *(volatile __u16_alias_t *) p =3D *(__u16_alias_t *) res; bre=
-ak;
-+	case 4: *(volatile __u32_alias_t *) p =3D *(__u32_alias_t *) res; bre=
-ak;
-+	case 8: *(volatile __u64_alias_t *) p =3D *(__u64_alias_t *) res; bre=
-ak;
- 	default:
- 		barrier();
- 		__builtin_memcpy((void *)p, (const void *)res, size);
---=20
-2.1.0
+ 	remove_proc_subtree("fs/xfs", NULL);
+ }
++#endif /* CONFIG_PROC_FS */
