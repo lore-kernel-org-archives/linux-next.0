@@ -1,99 +1,116 @@
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [GIT PULL 0/8] perf/core improvements and fixes
-Date: Tue, 13 Oct 2015 16:41:35 -0300
-Message-ID: <1444765303-8257-1-git-send-email-acme@kernel.org>
+Subject: [PATCH 7/8] tools include: Fix strict-aliasing rules breakage
+Date: Tue, 13 Oct 2015 16:41:42 -0300
+Message-ID: <1444765303-8257-8-git-send-email-acme@kernel.org>
+References: <1444765303-8257-1-git-send-email-acme@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:34343 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752690AbbJMTl4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Oct 2015 15:41:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444765303-8257-1-git-send-email-acme@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>, David Ahern <dsahern@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@redhat.com>, linux-next@vger.kernel.org, Martin Liska <mliska@suse.cz>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rabin Vincent <rabin.vincent@axis.com>, Stephane Eranian <eranian@google.com>, Wang Nan <wangnan0@huawei.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Andi Kleen <ak@linux.intel.com>, Martin Liska <mliska@suse.cz>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rabin Vincent <rabin@rab.in>, linux-next@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Ingo,
+=46rom: Jiri Olsa <jolsa@redhat.com>
 
-	Please consider pulling.
+Vinson reported build breakage with gcc 4.4 due to strict-aliasing.
 
-- Arnaldo
+   CC       util/annotate.o
+ cc1: warnings being treated as errors
+ util/annotate.c: In function =E2=80=98disasm__purge=E2=80=99:
+ linux-next/tools/include/linux/compiler.h:66: error: dereferencing
+ pointer =E2=80=98res.41=E2=80=99 does break strict-aliasing rules
 
-BTW.: There are several outstanding patchkits needing review and processing,
-I'll be out this week for a conference, will try and speed up processing next
-week.
+The reason is READ_ONCE/WRITE_ONCE code we took from kernel sources.  T=
+hey
+intentionaly break aliasing rules. While this is ok for kernel because =
+it's
+built with -fno-strict-aliasing, it breaks perf which is build with
+-Wstrict-aliasing=3D3.
 
-The following changes since commit 0e537fef24d64f7bf3ef61a27edf64a8d9a5424c:
+Using extra __may_alias__ type to allow aliasing in this case.
 
-  Merge tag 'perf-core-for-mingo' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core (2015-10-08 10:52:44 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo
-
-for you to fetch changes up to 3a70fcd3a4db56731f67f0189514953c74257944:
-
-  tools build: Fix cross compile build (2015-10-13 11:59:43 -0300)
-
-----------------------------------------------------------------
-perf/core improvements and fixes:
-
-User visible:
-
-- Use the alternative with the most descriptive filename containing
-  a vmlinux file for a given build-id, providing a better title line
-  for tools such as 'annotate' (Arnaldo Carvalho de Melo)
-
-- Remove help messages about previous right and left arrow keybidings, that
-  were repurposed for horizontal scrolling (Arnaldo Carvalho de Melo)
-
-- Inform how to reset the symbol filter in the hists browser (top & report)
-  (Arnaldo Carvalho de Melo)
-
-- Add 'm' key for context menu display in the hists browser, that became
-  inacessible with the repurposing of the right arrow key for horizontal
-  scrolling (Namhyung Kim)
-
-- Use debug_frame for callchains if eh_frame is unusable (Rabin Vicent)
-
-Build fixes:
-
-- Fix strict-aliasing breakage with gcc 4.4 in the READ_ONCE/WRITE_ONCE code
-  adopted from the kernel tree, that builds with -fno-strict-aliasing while
-  tools/perf/ uses -Wstrict-aliasing=3 (Jiri Olsa)
-
-- Fix unw_word_t pointer casts in code using libunwind for callchains,
-  fixing the build in at least 32-bit MIPS systems (Rabin Vicent)
-
-- Workaround cross compile build problems related to fixdep (Jiri Olsa)
-
+Reported-and-tested-by: Vinson Lee <vlee@twopensource.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Martin Liska <mliska@suse.cz>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Rabin Vincent <rabin@rab.in>
+Cc: linux-next@vger.kernel.org
+Link: http://lkml.kernel.org/r/20151013085214.GB2705@krava.brq.redhat.c=
+om
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/include/linux/compiler.h | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-----------------------------------------------------------------
-Arnaldo Carvalho de Melo (3):
-      perf symbols: Try the .debug/ DSO cache as a last resort
-      perf ui browsers: Remove help messages about use of right and arrow keys
-      perf hists browser: Inform how to reset the symbol filter
-
-Jiri Olsa (2):
-      tools include: Fix strict-aliasing rules breakage
-      tools build: Fix cross compile build
-
-Namhyung Kim (1):
-      perf hists browser: Add 'm' key for context menu display
-
-Rabin Vincent (2):
-      perf callchain: Use debug_frame if eh_frame is unusable
-      perf callchains: Fix unw_word_t pointer casts
-
- tools/build/Makefile.include       |  4 ++++
- tools/include/linux/compiler.h     | 32 ++++++++++++++++++++++++--------
- tools/perf/ui/browsers/annotate.c  |  6 +++---
- tools/perf/ui/browsers/hists.c     | 13 ++++++++-----
- tools/perf/ui/browsers/map.c       |  2 +-
- tools/perf/ui/browsers/scripts.c   |  2 +-
- tools/perf/util/symbol.c           | 18 +++++++++---------
- tools/perf/util/unwind-libunwind.c | 14 ++++++++------
- 8 files changed, 58 insertions(+), 33 deletions(-)
+diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compi=
+ler.h
+index 9098083869c8..fa7208a32d76 100644
+--- a/tools/include/linux/compiler.h
++++ b/tools/include/linux/compiler.h
+@@ -43,13 +43,29 @@
+=20
+ #include <linux/types.h>
+=20
++/*
++ * Following functions are taken from kernel sources and
++ * break aliasing rules in their original form.
++ *
++ * While kernel is compiled with -fno-strict-aliasing,
++ * perf uses -Wstrict-aliasing=3D3 which makes build fail
++ * under gcc 4.4.
++ *
++ * Using extra __may_alias__ type to allow aliasing
++ * in this case.
++ */
++typedef __u8  __attribute__((__may_alias__))  __u8_alias_t;
++typedef __u16 __attribute__((__may_alias__)) __u16_alias_t;
++typedef __u32 __attribute__((__may_alias__)) __u32_alias_t;
++typedef __u64 __attribute__((__may_alias__)) __u64_alias_t;
++
+ static __always_inline void __read_once_size(const volatile void *p, v=
+oid *res, int size)
+ {
+ 	switch (size) {
+-	case 1: *(__u8 *)res =3D *(volatile __u8 *)p; break;
+-	case 2: *(__u16 *)res =3D *(volatile __u16 *)p; break;
+-	case 4: *(__u32 *)res =3D *(volatile __u32 *)p; break;
+-	case 8: *(__u64 *)res =3D *(volatile __u64 *)p; break;
++	case 1: *(__u8_alias_t  *) res =3D *(volatile __u8_alias_t  *) p; bre=
+ak;
++	case 2: *(__u16_alias_t *) res =3D *(volatile __u16_alias_t *) p; bre=
+ak;
++	case 4: *(__u32_alias_t *) res =3D *(volatile __u32_alias_t *) p; bre=
+ak;
++	case 8: *(__u64_alias_t *) res =3D *(volatile __u64_alias_t *) p; bre=
+ak;
+ 	default:
+ 		barrier();
+ 		__builtin_memcpy((void *)res, (const void *)p, size);
+@@ -60,10 +76,10 @@ static __always_inline void __read_once_size(const =
+volatile void *p, void *res,
+ static __always_inline void __write_once_size(volatile void *p, void *=
+res, int size)
+ {
+ 	switch (size) {
+-	case 1: *(volatile __u8 *)p =3D *(__u8 *)res; break;
+-	case 2: *(volatile __u16 *)p =3D *(__u16 *)res; break;
+-	case 4: *(volatile __u32 *)p =3D *(__u32 *)res; break;
+-	case 8: *(volatile __u64 *)p =3D *(__u64 *)res; break;
++	case 1: *(volatile  __u8_alias_t *) p =3D *(__u8_alias_t  *) res; bre=
+ak;
++	case 2: *(volatile __u16_alias_t *) p =3D *(__u16_alias_t *) res; bre=
+ak;
++	case 4: *(volatile __u32_alias_t *) p =3D *(__u32_alias_t *) res; bre=
+ak;
++	case 8: *(volatile __u64_alias_t *) p =3D *(__u64_alias_t *) res; bre=
+ak;
+ 	default:
+ 		barrier();
+ 		__builtin_memcpy((void *)p, (const void *)res, size);
+--=20
+2.1.0
