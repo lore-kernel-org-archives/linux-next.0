@@ -1,42 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bad base of the h8300 tree
-Date: Thu, 15 Oct 2015 09:21:57 +1100
-Message-ID: <20151015092157.757b4452@canb.auug.org.au>
-References: <20150831074304.0ce16f9f@canb.auug.org.au>
-	<20150901074033.4282c9c4@canb.auug.org.au>
-	<20150914095425.1c6c3470@canb.auug.org.au>
-	<20150915091030.13b2a149@canb.auug.org.au>
-	<20150915091201.6d1f620b@canb.auug.org.au>
-	<87vbappzob.wl-ysato@users.sourceforge.jp>
-	<20151003142838.4bcd9570@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the asm-generic tree
+Date: Thu, 15 Oct 2015 09:55:03 +1100
+Message-ID: <20151015095503.4f35b216@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40601 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53707 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753829AbbJNWWA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Oct 2015 18:22:00 -0400
-In-Reply-To: <20151003142838.4bcd9570@canb.auug.org.au>
+	id S1754166AbbJNWzG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Oct 2015 18:55:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-Hi,
+Hi Arnd,
 
-On Sat, 3 Oct 2015 14:28:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> It is now based on next-20150925.  As I have said before, you cannot
-> base your linux-next included branch on a linux-next release.  You
-> should either base it on Linus' tree, or one of the other linux-next
-> included branches (as long as that other branch is never rebased).
+After merging the asm-generic tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-OK, now your tree is no longer based on a linux-next release (thanks).
-However, you have managed to rebase a whole string of post v4.3-rc5
-commits from Linus' tree into your tree.  This would mean that we would
-end up with duplicates of those patches.  Please just rebase your
-patches (and just your patches) onto some part of Linus' tree.
+drivers/acpi/osl.c:46:47: fatal error: asm-generic/io-64-nonatomic-lo-hi.h: No such file or directory
+ #include <asm-generic/io-64-nonatomic-lo-hi.h>
+                                               ^
+
+Caused by commit
+
+  f626fe17485b ("move io-64-nonatomic*.h out of asm-generic")
+
+interacting with commit
+
+  3277b4ea216e ("ACPI / osl: replace custom implementation of readq / writeq")
+
+from Linus' tree (added before v4.3-rc1).
+
+I added the following build fix:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 15 Oct 2015 09:50:08 +1100
+Subject: [PATCH] fix for "move io-64-nonatomic*.h out of asm-generic"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/acpi/osl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index 739a4a6b3b9b..ed219da94904 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -40,10 +40,10 @@
+ #include <linux/list.h>
+ #include <linux/jiffies.h>
+ #include <linux/semaphore.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
+ 
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
+-#include <asm-generic/io-64-nonatomic-lo-hi.h>
+ 
+ #include "internal.h"
+ 
+-- 
+2.5.1
 
 -- 
 Cheers,
