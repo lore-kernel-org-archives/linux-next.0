@@ -1,104 +1,43 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: [GIT PULL 0/8] perf/core improvements and fixes
-Date: Wed, 14 Oct 2015 15:09:09 +0200
-Message-ID: <20151014130909.GA26864@gmail.com>
-References: <1444765303-8257-1-git-send-email-acme@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: bad base of the h8300 tree
+Date: Thu, 15 Oct 2015 09:21:57 +1100
+Message-ID: <20151015092157.757b4452@canb.auug.org.au>
+References: <20150831074304.0ce16f9f@canb.auug.org.au>
+	<20150901074033.4282c9c4@canb.auug.org.au>
+	<20150914095425.1c6c3470@canb.auug.org.au>
+	<20150915091030.13b2a149@canb.auug.org.au>
+	<20150915091201.6d1f620b@canb.auug.org.au>
+	<87vbappzob.wl-ysato@users.sourceforge.jp>
+	<20151003142838.4bcd9570@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1444765303-8257-1-git-send-email-acme@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>, David Ahern <dsahern@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@redhat.com>, linux-next@vger.kernel.org, Martin Liska <mliska@suse.cz>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rabin Vincent <rabin.vincent@axis.com>, Stephane Eranian <eranian@google.com>, Wang Nan <wangnan0@huawei.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40601 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753829AbbJNWWA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Oct 2015 18:22:00 -0400
+In-Reply-To: <20151003142838.4bcd9570@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hi,
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+On Sat, 3 Oct 2015 14:28:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> It is now based on next-20150925.  As I have said before, you cannot
+> base your linux-next included branch on a linux-next release.  You
+> should either base it on Linus' tree, or one of the other linux-next
+> included branches (as long as that other branch is never rebased).
 
-> Hi Ingo,
-> 
-> 	Please consider pulling.
-> 
-> - Arnaldo
-> 
-> BTW.: There are several outstanding patchkits needing review and processing,
-> I'll be out this week for a conference, will try and speed up processing next
-> week.
-> 
-> The following changes since commit 0e537fef24d64f7bf3ef61a27edf64a8d9a5424c:
-> 
->   Merge tag 'perf-core-for-mingo' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core (2015-10-08 10:52:44 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo
-> 
-> for you to fetch changes up to 3a70fcd3a4db56731f67f0189514953c74257944:
-> 
->   tools build: Fix cross compile build (2015-10-13 11:59:43 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/core improvements and fixes:
-> 
-> User visible:
-> 
-> - Use the alternative with the most descriptive filename containing
->   a vmlinux file for a given build-id, providing a better title line
->   for tools such as 'annotate' (Arnaldo Carvalho de Melo)
-> 
-> - Remove help messages about previous right and left arrow keybidings, that
->   were repurposed for horizontal scrolling (Arnaldo Carvalho de Melo)
-> 
-> - Inform how to reset the symbol filter in the hists browser (top & report)
->   (Arnaldo Carvalho de Melo)
-> 
-> - Add 'm' key for context menu display in the hists browser, that became
->   inacessible with the repurposing of the right arrow key for horizontal
->   scrolling (Namhyung Kim)
-> 
-> - Use debug_frame for callchains if eh_frame is unusable (Rabin Vicent)
-> 
-> Build fixes:
-> 
-> - Fix strict-aliasing breakage with gcc 4.4 in the READ_ONCE/WRITE_ONCE code
->   adopted from the kernel tree, that builds with -fno-strict-aliasing while
->   tools/perf/ uses -Wstrict-aliasing=3 (Jiri Olsa)
-> 
-> - Fix unw_word_t pointer casts in code using libunwind for callchains,
->   fixing the build in at least 32-bit MIPS systems (Rabin Vicent)
-> 
-> - Workaround cross compile build problems related to fixdep (Jiri Olsa)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Arnaldo Carvalho de Melo (3):
->       perf symbols: Try the .debug/ DSO cache as a last resort
->       perf ui browsers: Remove help messages about use of right and arrow keys
->       perf hists browser: Inform how to reset the symbol filter
-> 
-> Jiri Olsa (2):
->       tools include: Fix strict-aliasing rules breakage
->       tools build: Fix cross compile build
-> 
-> Namhyung Kim (1):
->       perf hists browser: Add 'm' key for context menu display
-> 
-> Rabin Vincent (2):
->       perf callchain: Use debug_frame if eh_frame is unusable
->       perf callchains: Fix unw_word_t pointer casts
-> 
->  tools/build/Makefile.include       |  4 ++++
->  tools/include/linux/compiler.h     | 32 ++++++++++++++++++++++++--------
->  tools/perf/ui/browsers/annotate.c  |  6 +++---
->  tools/perf/ui/browsers/hists.c     | 13 ++++++++-----
->  tools/perf/ui/browsers/map.c       |  2 +-
->  tools/perf/ui/browsers/scripts.c   |  2 +-
->  tools/perf/util/symbol.c           | 18 +++++++++---------
->  tools/perf/util/unwind-libunwind.c | 14 ++++++++------
->  8 files changed, 58 insertions(+), 33 deletions(-)
+OK, now your tree is no longer based on a linux-next release (thanks).
+However, you have managed to rebase a whole string of post v4.3-rc5
+commits from Linus' tree into your tree.  This would mean that we would
+end up with duplicates of those patches.  Please just rebase your
+patches (and just your patches) onto some part of Linus' tree.
 
-Pulled, thanks a lot Arnaldo!
-
-	Ingo
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
