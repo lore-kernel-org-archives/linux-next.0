@@ -1,42 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: linux-next: manual merge of the mfd tree with the arm-soc tree
-Date: Thu, 15 Oct 2015 11:23:28 +0900
-Message-ID: <CAJKOXPdug+xtGNYReqV-THnnNF1iRW7Rh54kEWMrw22k-wNPpw@mail.gmail.com>
-References: <20151015131911.3b3a7ca8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Thu, 15 Oct 2015 13:26:02 +1100
+Message-ID: <20151015132602.7816b658@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:34731 "EHLO
-	mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752957AbbJOCX3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2015 22:23:29 -0400
-In-Reply-To: <20151015131911.3b3a7ca8@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:51944 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751098AbbJOC0E (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Oct 2015 22:26:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+To: Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Hellwig <hch@lst.de>
 
-2015-10-15 11:19 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Lee,
->
-> Today's linux-next merge of the mfd tree got a conflict in:
->
->   Documentation/devicetree/bindings/mfd/s2mps11.txt
->
-> between commit:
->
->   6a4479f96543 ("dt-bindings: Document grounded ACOKB pin on S2MPS11")
->
-> from the arm-soc tree and commit:
->
->   db96ec728d69 ("mfd: dt-bindings: Document pulled down WRSTBI pin on S2MPS1X")
->
-> from the mfd tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi Lee,
 
-Thanks! The fix for conflict is good.
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Best regards,
-Krzysztof
+drivers/mfd/intel-lpss.c:29:47: fatal error: asm-generic/io-64-nonatomic-lo-hi.h: No such file or directory
+ #include <asm-generic/io-64-nonatomic-lo-hi.h>
+                                               ^
+
+Caused by commit
+
+  6a1d82fbc8e8 ("mfd: intel-lpss: Use writeq() helper")
+
+interacting with commit
+
+  f626fe17485b ("move io-64-nonatomic*.h out of asm-generic")
+
+from the asm-generic tree.
+
+I have added the following merge fix patch and can carry it as necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 15 Oct 2015 13:23:20 +1100
+Subject: [PATCH] mfd: fix for "move io-64-nonatomic*.h out of asm-generic"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/mfd/intel-lpss.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
+index 001a7d7708ce..6255513f54c7 100644
+--- a/drivers/mfd/intel-lpss.c
++++ b/drivers/mfd/intel-lpss.c
+@@ -25,8 +25,7 @@
+ #include <linux/pm_qos.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/seq_file.h>
+-
+-#include <asm-generic/io-64-nonatomic-lo-hi.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
+ 
+ #include "intel-lpss.h"
+ 
+-- 
+2.5.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
