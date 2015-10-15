@@ -1,55 +1,57 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: manual merge of the mfd tree with the arm-soc tree
-Date: Thu, 15 Oct 2015 09:04:06 +0100
-Message-ID: <20151015080406.GL32409@x1>
-References: <20151015131911.3b3a7ca8@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Thu, 15 Oct 2015 10:59:32 +0200
+Message-ID: <7853704.H00KElTCBt@wuerfel>
+References: <20151015132602.7816b658@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:33239 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750711AbbJOIEL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Oct 2015 04:04:11 -0400
-Received: by wijp11 with SMTP id p11so16618736wij.0
-        for <linux-next@vger.kernel.org>; Thu, 15 Oct 2015 01:04:09 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20151015131911.3b3a7ca8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151015132602.7816b658@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 15 Oct 2015, Stephen Rothwell wrote:
+On Thursday 15 October 2015 13:26:02 Stephen Rothwell wrote:
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/mfd/intel-lpss.c:29:47: fatal error: asm-generic/io-64-nonatomic-lo-hi.h: No such file or directory
+>  #include <asm-generic/io-64-nonatomic-lo-hi.h>
+>                                                ^
+> 
+> Caused by commit
+> 
+>   6a1d82fbc8e8 ("mfd: intel-lpss: Use writeq() helper")
+> 
+> interacting with commit
+> 
+>   f626fe17485b ("move io-64-nonatomic*.h out of asm-generic")
+> 
+> from the asm-generic tree.
+> 
+> I have added the following merge fix patch and can carry it as necessary.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 15 Oct 2015 13:23:20 +1100
+> Subject: [PATCH] mfd: fix for "move io-64-nonatomic*.h out of asm-generic"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-> Hi Lee,
->=20
-> Today's linux-next merge of the mfd tree got a conflict in:
->=20
->   Documentation/devicetree/bindings/mfd/s2mps11.txt
->=20
-> between commit:
->=20
->   6a4479f96543 ("dt-bindings: Document grounded ACOKB pin on S2MPS11"=
-)
->=20
-> from the arm-soc tree and commit:
->=20
->   db96ec728d69 ("mfd: dt-bindings: Document pulled down WRSTBI pin on=
- S2MPS1X")
->=20
-> from the mfd tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary (no acti=
-on
-> is required).
+The patch looks good, should we do something to prevent that from
+becoming a problem when Linus pulls our branches?
 
-Yeah, I thought this might happen.
+This commit is at the bottom of my asm-generic git tree, so Lee could merge
+that one commit into his tree and fix up the merge correctly.
 
-Hence: http://www.spinics.net/lists/devicetree/msg97548.html.
+However, I also now see that drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c
+has the same problem, so maybe it's better to add a temporary file
+with the old name containing "#include <linux/io-64-nonatomic-lo-hi.h>",
+which I will remove in the following merge window or as a follow-up.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Yet another way would be for me to wait until Linus has pulled both
+mfd and netdev been merged, and I'll let him know of the conflict
+in my pull request.
+
+	Arnd
