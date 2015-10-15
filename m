@@ -1,81 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Thu, 15 Oct 2015 10:17:52 +0100
-Message-ID: <20151015091752.GA31804@x1>
-References: <20151015132602.7816b658@canb.auug.org.au>
- <7853704.H00KElTCBt@wuerfel>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build problems (Was: [PATCH v3 1/2] Provide
+ READ_ONCE_NOCHECK())
+Date: Thu, 15 Oct 2015 20:18:34 +1100
+Message-ID: <20151015201834.350258bf@canb.auug.org.au>
+References: <1444739750-29241-1-git-send-email-aryabinin@virtuozzo.com>
+	<1444750088-24444-1-git-send-email-aryabinin@virtuozzo.com>
+	<1444750088-24444-2-git-send-email-aryabinin@virtuozzo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:36600 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750939AbbJOJR4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Oct 2015 05:17:56 -0400
-Received: by wicgb1 with SMTP id gb1so263437408wic.1
-        for <linux-next@vger.kernel.org>; Thu, 15 Oct 2015 02:17:55 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <7853704.H00KElTCBt@wuerfel>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444750088-24444-2-git-send-email-aryabinin@virtuozzo.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@amacapital.net>, Andrey Konovalov <andreyknvl@google.com>, Kostya Serebryany <kcc@google.com>, Alexander Potapenko <glider@google.com>, kasan-dev <kasan-dev@googlegroups.com>, Borislav Petkov <bp@alien8.de>, Denys Vlasenko <dvlasenk@redhat.com>, Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, Sasha Levin <sasha.levin@oracle.com>, Wolfram Gloger <wmglo@dent.med.uni-muenchen.de>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 15 Oct 2015, Arnd Bergmann wrote:
+Hi Andrey,
 
-> On Thursday 15 October 2015 13:26:02 Stephen Rothwell wrote:
-> > After merging the mfd tree, today's linux-next build (x86_64 allmod=
-config)
-> > failed like this:
-> >=20
-> > drivers/mfd/intel-lpss.c:29:47: fatal error: asm-generic/io-64-nona=
-tomic-lo-hi.h: No such file or directory
-> >  #include <asm-generic/io-64-nonatomic-lo-hi.h>
-> >                                                ^
-> >=20
-> > Caused by commit
-> >=20
-> >   6a1d82fbc8e8 ("mfd: intel-lpss: Use writeq() helper")
-> >=20
-> > interacting with commit
-> >=20
-> >   f626fe17485b ("move io-64-nonatomic*.h out of asm-generic")
-> >=20
-> > from the asm-generic tree.
-> >=20
-> > I have added the following merge fix patch and can carry it as nece=
-ssary.
-> >=20
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Thu, 15 Oct 2015 13:23:20 +1100
-> > Subject: [PATCH] mfd: fix for "move io-64-nonatomic*.h out of asm-g=
-eneric"
-> >=20
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> The patch looks good, should we do something to prevent that from
-> becoming a problem when Linus pulls our branches?
->=20
-> This commit is at the bottom of my asm-generic git tree, so Lee could=
- merge
-> that one commit into his tree and fix up the merge correctly.
->=20
-> However, I also now see that drivers/net/ethernet/hisilicon/hns/hns_d=
-saf_xgmac.c
-> has the same problem, so maybe it's better to add a temporary file
-> with the old name containing "#include <linux/io-64-nonatomic-lo-hi.h=
->",
-> which I will remove in the following merge window or as a follow-up.
->=20
-> Yet another way would be for me to wait until Linus has pulled both
-> mfd and netdev been merged, and I'll let him know of the conflict
-> in my pull request.
+On Tue, 13 Oct 2015 18:28:07 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>
+> Some code may perform racy by design memory reads. This could be harmless,
+> yet such code may produce KASAN warnings.
+> 
+> To hide such accesses from KASAN this patch introduces READ_ONCE_NOCHECK()
+> macro. KASAN will not check the memory accessed by READ_ONCE_NOCHECK().
+> 
+> This patch creates __read_once_size_nocheck() a clone of
+> __read_once_size_check() (renamed __read_once_size()).
+> The only difference between them is 'no_sanitized_address' attribute
+> appended to '*_nocheck' function. This attribute tells the compiler that
+> instrumentation of memory accesses should not be applied to that function.
+> We declare it as static '__maybe_unsed' because GCC is not capable to
+> inline such function: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
+> 
+> With KASAN=n READ_ONCE_NOCHECK() is just a clone of READ_ONCE().
+> 
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> ---
+>  include/linux/compiler-gcc.h | 13 ++++++++++
+>  include/linux/compiler.h     | 60 ++++++++++++++++++++++++++++++++++----------
+>  2 files changed, 60 insertions(+), 13 deletions(-)
 
-I'll remain flexible.  Whatever you think is the best solution we'll
-go with and I'll facilitate.
+I am pretty sure that this patch is causing quite a bit of compile
+breakage in linux-next today.  During the day I compile with gcc 4.9.0
+and did not see any problems with c86_64 allmodconfig, or i386
+defconfig etc, but overnight we compile with older compilers (gcc 4.6.3
+in particular) and are getting quite a few errors:
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+>From an i386 allnoconfig build:
+
+arch/x86/entry/vdso/vdso32.so.dbg: undefined symbols found
+/home/kisskb/slave/src/arch/x86/entry/vdso/Makefile:154: recipe for target 'arch/x86/entry/vdso/vdso32.so.dbg' failed
+
+>From an x86_64 allnoconfig build:
+
+arch/x86/entry/vdso/vclock_gettime.o: In function `__read_once_size_check':
+vclock_gettime.c:(.text+0x5f): undefined reference to `memcpy'
+arch/x86/entry/vdso/vgetcpu.o: In function `__read_once_size_check':
+vgetcpu.c:(.text+0x2f): undefined reference to `memcpy'
+
+and several others ...
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
