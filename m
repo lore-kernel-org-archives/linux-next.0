@@ -1,45 +1,71 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Thu, 15 Oct 2015 12:45:23 +0300
-Message-ID: <1444902323.8361.632.camel@linux.intel.com>
-References: <20151015132602.7816b658@canb.auug.org.au>
-	 <7853704.H00KElTCBt@wuerfel>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: linux-next: build problems (Was: [PATCH v3 1/2] Provide
+ READ_ONCE_NOCHECK())
+Date: Thu, 15 Oct 2015 13:03:11 +0300
+Message-ID: <561F79DF.3000402@virtuozzo.com>
+References: <1444739750-29241-1-git-send-email-aryabinin@virtuozzo.com>
+ <1444750088-24444-1-git-send-email-aryabinin@virtuozzo.com>
+ <1444750088-24444-2-git-send-email-aryabinin@virtuozzo.com>
+ <20151015201834.350258bf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:13491 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751011AbbJOJp2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Oct 2015 05:45:28 -0400
-In-Reply-To: <7853704.H00KElTCBt@wuerfel>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151015201834.350258bf@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@amacapital.net>, Andrey Konovalov <andreyknvl@google.com>, Kostya Serebryany <kcc@google.com>, Alexander Potapenko <glider@google.com>, kasan-dev <kasan-dev@googlegroups.com>, Borislav Petkov <bp@alien8.de>, Denys Vlasenko <dvlasenk@redhat.com>, Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, Sasha Levin <sasha.levin@oracle.com>, Wolfram Gloger <wmglo@dent.med.uni-muenchen.de>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2015-10-15 at 10:59 +0200, Arnd Bergmann wrote:
-> > 
-
-> On Thursday 15 October 2015 13:26:02 Stephen Rothwell wrote:
-> However, I also now see that 
-> drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c
-> has the same problem, so maybe it's better to add a temporary file
-> with the old name containing "#include <linux/io-64-nonatomic-lo
-> -hi.h>",
-> which I will remove in the following merge window or as a follow-up.
+On 10/15/2015 12:18 PM, Stephen Rothwell wrote:
+> Hi Andrey,
 > 
-> Yet another way would be for me to wait until Linus has pulled both
-> mfd and netdev been merged, and I'll let him know of the conflict
-> in my pull request.
+> On Tue, 13 Oct 2015 18:28:07 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>>
+>> Some code may perform racy by design memory reads. This could be harmless,
+>> yet such code may produce KASAN warnings.
+>>
+>> To hide such accesses from KASAN this patch introduces READ_ONCE_NOCHECK()
+>> macro. KASAN will not check the memory accessed by READ_ONCE_NOCHECK().
+>>
+>> This patch creates __read_once_size_nocheck() a clone of
+>> __read_once_size_check() (renamed __read_once_size()).
+>> The only difference between them is 'no_sanitized_address' attribute
+>> appended to '*_nocheck' function. This attribute tells the compiler that
+>> instrumentation of memory accesses should not be applied to that function.
+>> We declare it as static '__maybe_unsed' because GCC is not capable to
+>> inline such function: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
+>>
+>> With KASAN=n READ_ONCE_NOCHECK() is just a clone of READ_ONCE().
+>>
+>> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>> ---
+>>  include/linux/compiler-gcc.h | 13 ++++++++++
+>>  include/linux/compiler.h     | 60 ++++++++++++++++++++++++++++++++++----------
+>>  2 files changed, 60 insertions(+), 13 deletions(-)
+> 
+> I am pretty sure that this patch is causing quite a bit of compile
+> breakage in linux-next today.  During the day I compile with gcc 4.9.0
+> and did not see any problems with c86_64 allmodconfig, or i386
+> defconfig etc, but overnight we compile with older compilers (gcc 4.6.3
+> in particular) and are getting quite a few errors:
+> 
 
-There are at least couple of drivers where I introduced a use of
-lo_hi_* helpers (idma64.c and xhci header if the latter made Greg's
-tree). Though didn't check if it's should be fixed.
+Looks like that older GCC doesn't like __alias (or combination of static __always_inline __alias).
+It creates outline and unused copy of __read_once_size_check() function in the object file.
+Should be easy to work around this.
 
-For me looks like temporary (for one cycle) file might be a better work
-around.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> From an i386 allnoconfig build:
+> 
+> arch/x86/entry/vdso/vdso32.so.dbg: undefined symbols found
+> /home/kisskb/slave/src/arch/x86/entry/vdso/Makefile:154: recipe for target 'arch/x86/entry/vdso/vdso32.so.dbg' failed
+> 
+> From an x86_64 allnoconfig build:
+> 
+> arch/x86/entry/vdso/vclock_gettime.o: In function `__read_once_size_check':
+> vclock_gettime.c:(.text+0x5f): undefined reference to `memcpy'
+> arch/x86/entry/vdso/vgetcpu.o: In function `__read_once_size_check':
+> vgetcpu.c:(.text+0x2f): undefined reference to `memcpy'
+> 
+> and several others ...
+> 
