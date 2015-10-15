@@ -1,47 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with the drm-intel tree
-Date: Thu, 15 Oct 2015 13:04:58 +1100
-Message-ID: <20151015130458.030a2c01@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with the arm-soc tree
+Date: Thu, 15 Oct 2015 13:19:11 +1100
+Message-ID: <20151015131911.3b3a7ca8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Thierry Reding <treding@nvidia.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59701 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751098AbbJOCTN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Oct 2015 22:19:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Kukjin Kim <kgene@kernel.org>
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2lycS5jCgpiZXR3
-ZWVuIGNvbW1pdDoKCiAgZmQ4ZjUwN2MwZGU5ICgiZHJtL2k5MTU6IHMvUElQRV9GUk1DT1VOVF9H
-TTQ1L1BJUEVfRlJNQ09VTlRfRzRYLyBldGMuIikKCmZyb20gdGhlIGRybS1pbnRlbCB0cmVlIGFu
-ZCBjb21taXQ6CgogIDg4ZTcyNzE3YzJkZSAoImRybS9pcnE6IFVzZSB1bnNpZ25lZCBpbnQgcGlw
-ZSBpbiBwdWJsaWMgQVBJIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVw
-IChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkgKG5vIGFjdGlv
-bgppcyByZXF1aXJlZCkuCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAg
-ICAgICAgICBzZnJAY2FuYi5hdXVnLm9yZy5hdQoKZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS9p
-OTE1L2k5MTVfaXJxLmMKaW5kZXggZTI0Mzc4ZWU3ZWRhLGJjNzMyZWI1MmI1MC4uMDAwMDAwMDAw
-MDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfaXJxLmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2k5MTUvaTkxNV9pcnEuYwpAQEAgLTcxMCwxMSAtNjExLDEyICs3MTAsMTEgQEBAIHN0
-YXRpYyB1MzIgaTkxNV9nZXRfdmJsYW5rX2NvdW50ZXIoc3RydQogIAlyZXR1cm4gKCgoaGlnaDEg
-PDwgOCkgfCBsb3cpICsgKHBpeGVsID49IHZibF9zdGFydCkpICYgMHhmZmZmZmY7CiAgfQogIAot
-IHN0YXRpYyB1MzIgZzR4X2dldF92YmxhbmtfY291bnRlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
-LCBpbnQgcGlwZSkKIC1zdGF0aWMgdTMyIGdtNDVfZ2V0X3ZibGFua19jb3VudGVyKHN0cnVjdCBk
-cm1fZGV2aWNlICpkZXYsIHVuc2lnbmVkIGludCBwaXBlKQorK3N0YXRpYyB1MzIgZzR4X2dldF92
-YmxhbmtfY291bnRlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25lZCBpbnQgcGlwZSkK
-ICB7CiAgCXN0cnVjdCBkcm1faTkxNV9wcml2YXRlICpkZXZfcHJpdiA9IGRldi0+ZGV2X3ByaXZh
-dGU7CiAtCWludCByZWcgPSBQSVBFX0ZSTUNPVU5UX0dNNDUocGlwZSk7CiAgCiAtCXJldHVybiBJ
-OTE1X1JFQUQocmVnKTsKICsJcmV0dXJuIEk5MTVfUkVBRChQSVBFX0ZSTUNPVU5UX0c0WChwaXBl
-KSk7CiAgfQogIAogIC8qIHJhdyByZWFkcywgb25seSBmb3IgZmFzdCByZWFkcyBvZiBkaXNwbGF5
-IGJsb2NrLCBubyBuZWVkIGZvciBmb3JjZXdha2UgZXRjLiAqLwpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Lee,
+
+Today's linux-next merge of the mfd tree got a conflict in:
+
+  Documentation/devicetree/bindings/mfd/s2mps11.txt
+
+between commit:
+
+  6a4479f96543 ("dt-bindings: Document grounded ACOKB pin on S2MPS11")
+
+from the arm-soc tree and commit:
+
+  db96ec728d69 ("mfd: dt-bindings: Document pulled down WRSTBI pin on S2MPS1X")
+
+from the mfd tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc Documentation/devicetree/bindings/mfd/s2mps11.txt
+index 90eaef393325,a0bc753955c2..000000000000
+--- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
++++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+@@@ -15,10 -15,9 +15,13 @@@ Optional properties
+  - interrupt-parent: Specifies the phandle of the interrupt controller to which
+    the interrupts from s2mps11 are delivered to.
+  - interrupts: Interrupt specifiers for interrupt sources.
+ +- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
+ +  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
+ +  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
+ +  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
++ - samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
++   down. When the system is suspended it will always go down thus triggerring
++   unwanted buck warm reset (setting buck voltages to default values).
+  
+  Optional nodes:
+  - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
