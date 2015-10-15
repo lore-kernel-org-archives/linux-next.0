@@ -1,46 +1,47 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Thu, 15 Oct 2015 10:01:15 +0800
-Message-ID: <20151015020115.GB22342@gondor.apana.org.au>
-References: <20151015123700.6e5f3474@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with the drm-intel tree
+Date: Thu, 15 Oct 2015 13:04:58 +1100
+Message-ID: <20151015130458.030a2c01@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.hengli.com.au ([209.40.204.226]:59420 "EHLO
-	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752698AbbJOCBT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2015 22:01:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20151015123700.6e5f3474@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Thierry Reding <treding@nvidia.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 15, 2015 at 12:37:00PM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> After merging the crypto tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/char/hw_random/stm32-rng.c: In function 'stm32_rng_runtime_suspend':
-> drivers/char/hw_random/stm32-rng.c:163:51: error: 'pdev' undeclared (first use in this function)
->   struct stm32_rng_private *priv = dev_get_drvdata(pdev);
->                                                    ^
-> drivers/char/hw_random/stm32-rng.c:163:51: note: each undeclared identifier is reported only once for each function it appears in
-> drivers/char/hw_random/stm32-rng.c: In function 'stm32_rng_runtime_resume':
-> drivers/char/hw_random/stm32-rng.c:172:51: error: 'pdev' undeclared (first use in this function)
->   struct stm32_rng_private *priv = dev_get_drvdata(pdev);
->                                                    ^
-> 
-> Caused by commit
-> 
->   c6a97c42e399 ("Add support for STMicroelectronics STM32 random number generator.")
-> 
-> I have used the crypto tree from next-20151013 for today.
-
-Thanks Stephen!  I've just pushed out a fix for this.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
+dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2lycS5jCgpiZXR3
+ZWVuIGNvbW1pdDoKCiAgZmQ4ZjUwN2MwZGU5ICgiZHJtL2k5MTU6IHMvUElQRV9GUk1DT1VOVF9H
+TTQ1L1BJUEVfRlJNQ09VTlRfRzRYLyBldGMuIikKCmZyb20gdGhlIGRybS1pbnRlbCB0cmVlIGFu
+ZCBjb21taXQ6CgogIDg4ZTcyNzE3YzJkZSAoImRybS9pcnE6IFVzZSB1bnNpZ25lZCBpbnQgcGlw
+ZSBpbiBwdWJsaWMgQVBJIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVw
+IChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkgKG5vIGFjdGlv
+bgppcyByZXF1aXJlZCkuCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAg
+ICAgICAgICBzZnJAY2FuYi5hdXVnLm9yZy5hdQoKZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS9p
+OTE1L2k5MTVfaXJxLmMKaW5kZXggZTI0Mzc4ZWU3ZWRhLGJjNzMyZWI1MmI1MC4uMDAwMDAwMDAw
+MDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfaXJxLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2k5MTUvaTkxNV9pcnEuYwpAQEAgLTcxMCwxMSAtNjExLDEyICs3MTAsMTEgQEBAIHN0
+YXRpYyB1MzIgaTkxNV9nZXRfdmJsYW5rX2NvdW50ZXIoc3RydQogIAlyZXR1cm4gKCgoaGlnaDEg
+PDwgOCkgfCBsb3cpICsgKHBpeGVsID49IHZibF9zdGFydCkpICYgMHhmZmZmZmY7CiAgfQogIAot
+IHN0YXRpYyB1MzIgZzR4X2dldF92YmxhbmtfY291bnRlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
+LCBpbnQgcGlwZSkKIC1zdGF0aWMgdTMyIGdtNDVfZ2V0X3ZibGFua19jb3VudGVyKHN0cnVjdCBk
+cm1fZGV2aWNlICpkZXYsIHVuc2lnbmVkIGludCBwaXBlKQorK3N0YXRpYyB1MzIgZzR4X2dldF92
+YmxhbmtfY291bnRlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25lZCBpbnQgcGlwZSkK
+ICB7CiAgCXN0cnVjdCBkcm1faTkxNV9wcml2YXRlICpkZXZfcHJpdiA9IGRldi0+ZGV2X3ByaXZh
+dGU7CiAtCWludCByZWcgPSBQSVBFX0ZSTUNPVU5UX0dNNDUocGlwZSk7CiAgCiAtCXJldHVybiBJ
+OTE1X1JFQUQocmVnKTsKICsJcmV0dXJuIEk5MTVfUkVBRChQSVBFX0ZSTUNPVU5UX0c0WChwaXBl
+KSk7CiAgfQogIAogIC8qIHJhdyByZWFkcywgb25seSBmb3IgZmFzdCByZWFkcyBvZiBkaXNwbGF5
+IGJsb2NrLCBubyBuZWVkIGZvciBmb3JjZXdha2UgZXRjLiAqLwpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
