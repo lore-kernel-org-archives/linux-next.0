@@ -1,20 +1,27 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Oct 15 (bluetooth/hci_ldisc.c)
-Date: Thu, 15 Oct 2015 10:52:53 -0700
-Message-ID: <561FE7F5.5030502@infradead.org>
+Subject: Re: linux-next: Tree for Oct 15 (xfs)
+Date: Thu, 15 Oct 2015 10:55:51 -0700
+Message-ID: <561FE8A7.8070803@infradead.org>
 References: <20151015185150.76cecc3e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------090209050704070108060900"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="------------030602090703060405080006"
+Return-path: <xfs-bounces@oss.sgi.com>
 In-Reply-To: <20151015185150.76cecc3e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
 To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
+Cc: linux-kernel@vger.kernel.org, xfs@oss.sgi.com
 List-Id: linux-next.vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------090209050704070108060900
+--------------030602090703060405080006
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 
@@ -26,37 +33,38 @@ On 10/15/15 00:51, Stephen Rothwell wrote:
 
 on x86_64:
 
-drivers/built-in.o: In function `hci_uart_tty_receive':
-hci_ldisc.c:(.text+0x13df43f): undefined reference to `tty_unthrottle'
-drivers/built-in.o: In function `hci_uart_tty_ioctl':
-hci_ldisc.c:(.text+0x13df799): undefined reference to `n_tty_ioctl_helper'
-drivers/built-in.o: In function `hci_uart_flush':
-hci_ldisc.c:(.text+0x13df929): undefined reference to `tty_ldisc_flush'
-hci_ldisc.c:(.text+0x13df939): undefined reference to `tty_driver_flush_buffer'
-drivers/built-in.o: In function `hci_uart_tty_open':
-hci_ldisc.c:(.text+0x13dfdef): undefined reference to `tty_driver_flush_buffer'
-drivers/built-in.o: In function `hci_uart_set_flow_control':
-(.text+0x13e00bb): undefined reference to `tty_set_termios'
-drivers/built-in.o: In function `hci_uart_set_flow_control':
-(.text+0x13e01a4): undefined reference to `tty_set_termios'
-drivers/built-in.o: In function `hci_uart_init_tty':
-(.text+0x13e0279): undefined reference to `tty_set_termios'
-drivers/built-in.o: In function `hci_uart_set_baudrate':
-(.text+0x13e0311): undefined reference to `tty_termios_encode_baud_rate'
-drivers/built-in.o: In function `hci_uart_set_baudrate':
-(.text+0x13e0325): undefined reference to `tty_set_termios'
-drivers/built-in.o: In function `hci_uart_init':
-hci_ldisc.c:(.init.text+0x2a652): undefined reference to `tty_register_ldisc'
-drivers/built-in.o: In function `hci_uart_exit':
-hci_ldisc.c:(.exit.text+0xbbfc): undefined reference to `tty_unregister_ldisc'
+fs/built-in.o: In function `xfs_free_ag_extent':
+xfs_alloc.c:(.text+0x1f36a0): undefined reference to `xfsstats'
+fs/built-in.o: In function `xfs_alloc_ag_vextent':
+xfs_alloc.c:(.text+0x1f5ccf): undefined reference to `xfsstats'
+xfs_alloc.c:(.text+0x1f5d0b): undefined reference to `xfsstats'
+fs/built-in.o: In function `xfs_attr_get':
+(.text+0x1f9cb8): undefined reference to `xfsstats'
+fs/built-in.o: In function `xfs_attr_set':
+(.text+0x1f9eed): undefined reference to `xfsstats'
+fs/built-in.o:(.text+0x1fa4c8): more undefined references to `xfsstats' follow
+fs/built-in.o: In function `stats_clear_store':
+xfs_sysfs.c:(.text+0x274e3a): undefined reference to `xfs_stats_clearall'
+fs/built-in.o: In function `stats_show':
+xfs_sysfs.c:(.text+0x274e71): undefined reference to `xfs_stats_format'
+fs/built-in.o: In function `__xfs_trans_commit':
+xfs_trans.c:(.text+0x276b5b): undefined reference to `xfsstats'
+xfs_trans.c:(.text+0x276b8e): undefined reference to `xfsstats'
+xfs_trans.c:(.text+0x276c8d): undefined reference to `xfsstats'
+fs/built-in.o: In function `xlog_grant_head_wait':
+xfs_log.c:(.text+0x278184): undefined reference to `xfsstats'
+fs/built-in.o: In function `xfs_log_regrant':
+(.text+0x27a1de): undefined reference to `xfsstats'
+fs/built-in.o:xfs_log.c:(.text+0x27af4c): more undefined references to `xfsstats' follow
 
 
 Full randconfig file is attached.
 
+
 -- 
 ~Randy
 
---------------090209050704070108060900
+--------------030602090703060405080006
 Content-Type: text/plain; charset=UTF-8;
  name="config-r6480"
 Content-Transfer-Encoding: 7bit
@@ -5080,4 +5088,15 @@ CONFIG_ARCH_HAS_SG_CHAIN=y
 CONFIG_ARCH_HAS_PMEM_API=y
 CONFIG_ARCH_HAS_MMIO_FLUSH=y
 
---------------090209050704070108060900--
+--------------030602090703060405080006
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
+
+--------------030602090703060405080006--
