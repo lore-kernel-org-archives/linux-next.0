@@ -1,43 +1,43 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20151015 build: 3 failures 46 warnings (next-20151015)
-Date: Thu, 15 Oct 2015 15:29:34 +0200
-Message-ID: <6421942.GNUzHZNjcs@wuerfel>
-References: <E1Zmgkk-0005iq-39@optimist> <20151015115933.GD14956@sirena.org.uk>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Thu, 15 Oct 2015 16:07:51 +0200
+Message-ID: <5852722.yfOrjUKMax@wuerfel>
+References: <20151015115108.57c04f61@canb.auug.org.au> <1444880141.2926.28.camel@intel.com> <20151015145142.54e537a4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:54368 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.24]:51608 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753150AbbJON36 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Oct 2015 09:29:58 -0400
-In-Reply-To: <20151015115933.GD14956@sirena.org.uk>
+	with ESMTP id S1750807AbbJOOIB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Oct 2015 10:08:01 -0400
+In-Reply-To: <20151015145142.54e537a4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linaro-kernel@lists.linaro.org
-Cc: Mark Brown <broonie@kernel.org>, Christoph Hellwig <hch@lst.de>, Darren Hart <dvhart@linux.intel.com>, Hitoshi Mitake <mitake.hitoshi@lab.ntt.co.jp>, "David S. Miller" <davem@davemloft.net>, huangdaode <huangdaode@hisilicon.com>, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Koul, Vinod" <vinod.koul@intel.com>, "hch@lst.de" <hch@lst.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Thursday 15 October 2015 12:59:33 Mark Brown wrote:
-> On Thu, Oct 15, 2015 at 12:31:22PM +0100, Build bot for Mark Brown wrote:
+On Thursday 15 October 2015 14:51:42 Stephen Rothwell wrote:
+> Hi Vinod,
 > 
-> Today's linux-next fails to build both arm and arm64 allmodconfig with:
+> On Thu, 15 Oct 2015 03:35:42 +0000 "Koul, Vinod" <vinod.koul@intel.com> wrote:
+> >
+> > So should I ask Linus to apply this fix once merge window opens or you will send
+> > this, how do we go about fixing this one 
+> > 
+> > Or should I merge the above commit from asm-generic tree?
 > 
-> >       arm64-allmodconfig
-> > ../drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c:10:47: fatal error: asm-generic/io-64-nonatomic-hi-lo.h: No such file or directory
+> Up to you.  Though you should only merge fro mthe asm-generic tree if
+> the maintainer guarantees it will not be rebased.
 > 
-> >       arm-allmodconfig
-> > ../drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c:10:47: fatal error: asm-generic/io-64-nonatomic-hi-lo.h: No such file or directory
-> 
-> This was triggered by f626fe17485b6dc (move io-64-nonatomic*.h out of
-> asm-generic) which moved these helpers out of asm-generic (which should
-> never be directly referenced outside of arch code anyway so arches can
-> provide their own implementations as needed) and into linux/.  Since the
-> HiSilicon driver has been added in -next it wasn't updated as part of
-> the same commit.
+> You could just wait and tell Linus that this fixup is needed when the
+> two trees are merged.  It really need to go into the merge commit to
+> avoid bisection problems.
 > 
 
-I've added a workaround in my asm-generic branch now, by adding back
-a header in the old place that we can remove in 4.5 after we change over
-this one and another one in mtd that Stephen has caught in linux-next.
+I've added a workaround to the asm-generic tree, no need to worry about
+it for now. We can change over the remaining users of
+asm-generic/io-64-nonatomic-lo-hi.h for the following merge window and
+then remove the wrapper.
 
 	Arnd
