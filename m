@@ -1,48 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm64 tree
-Date: Thu, 15 Oct 2015 14:05:11 +1100
-Message-ID: <20151015140511.0b1e0a2f@canb.auug.org.au>
+From: "Koul, Vinod" <vinod.koul@intel.com>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Thu, 15 Oct 2015 03:35:42 +0000
+Message-ID: <1444880141.2926.28.camel@intel.com>
+References: <20151015115108.57c04f61@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Leif Lindholm <leif.lindholm@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:9380 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753217AbbJODf4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Oct 2015 23:35:56 -0400
+In-Reply-To: <20151015115108.57c04f61@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <1A6AF9697855DD40BE44244C88D422A9@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "arnd@arndb.de" <arnd@arndb.de>
+Cc: "hch@lst.de" <hch@lst.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-Hi all,
-
-Today's linux-next merge of the tip tree got a conflict in:
-
-  Documentation/arm/uefi.txt
-
-between commit:
-
-  d4dddfdbbc75 ("arm64/efi: remove /chosen/linux, uefi-stub-kern-ver DT property")
-
-from the arm64 tree and commit:
-
-  c9494dc81875 ("arm64: Use core efi=debug instead of uefi_debug command line parameter")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc Documentation/arm/uefi.txt
-index 7f1bed8872f3,7b3fdfe0f7ba..000000000000
---- a/Documentation/arm/uefi.txt
-+++ b/Documentation/arm/uefi.txt
-@@@ -58,5 -58,5 +58,3 @@@ linux,uefi-mmap-desc-size | 32-bit | Si
-  --------------------------------------------------------------------------------
-  linux,uefi-mmap-desc-ver  | 32-bit | Version of the mmap descriptor format.
-  --------------------------------------------------------------------------------
-- 
-- For verbose debug messages, specify 'uefi_debug' on the kernel command line.
- -linux,uefi-stub-kern-ver  | string | Copy of linux_banner from build.
- ---------------------------------------------------------------------------------
+T24gVGh1LCAyMDE1LTEwLTE1IGF0IDExOjUxICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Og0KPiBIaSBWaW5vZCwNCj4gDQo+IEFmdGVyIG1lcmdpbmcgdGhlIHNsYXZlLWRtYSB0cmVlLCB0
+b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NA0KPiBhbGxtb2Rjb25maWcpIGZhaWxlZCBs
+aWtlIHRoaXM6DQo+IA0KPiBkcml2ZXJzL2RtYS9pZG1hNjQuaDoxOTo0NzogZmF0YWwgZXJyb3I6
+IGFzbS1nZW5lcmljL2lvLTY0LW5vbmF0b21pYy1sby1oaS5oOiBObw0KPiBzdWNoIGZpbGUgb3Ig
+ZGlyZWN0b3J5DQo+ICAjaW5jbHVkZSA8YXNtLWdlbmVyaWMvaW8tNjQtbm9uYXRvbWljLWxvLWhp
+Lmg+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0K
+PiANCj4gQ2F1c2VkIGJ5IGNvbW1pdA0KPiANCj4gICA5N2MzN2FjY2QzOGYgKCJkbWFlbmdpbmU6
+IGlkbWE2NDogdXNlIGxvX2hpX3JlYWRxKCkgLyBsb19oaV93cml0ZXEoKSIpDQo+IA0KPiBpbnRl
+cmFjdGluZyB3aXRoIGNvbW1pdA0KPiANCj4gICBmNjI2ZmUxNzQ4NWIgKCJtb3ZlIGlvLTY0LW5v
+bmF0b21pYyouaCBvdXQgb2YgYXNtLWdlbmVyaWMiKQ0KPiANCj4gZnJvbSB0aGUgYXNtLWdlbmVy
+aWMgdHJlZS4NCj4gDQo+IEkgaGF2ZSBhcHBsaWVkIHRoZSBmb2xsaW5nIG1lcmdlIGZpeCBwYXRj
+aCBhbmQgY2FuIGNhcnJ5IGl0IGFzIG5lY2Vzc2FyeS4NCg0KVGhhbmtzIFN0ZXBoZW4sIFRoaXMg
+bG9va3MgZmluZSB0byBtZS4NCg0KU28gc2hvdWxkIEkgYXNrIExpbnVzIHRvIGFwcGx5IHRoaXMg
+Zml4IG9uY2UgbWVyZ2Ugd2luZG93IG9wZW5zIG9yIHlvdSB3aWxsIHNlbmQNCnRoaXMsIGhvdyBk
+byB3ZSBnbyBhYm91dCBmaXhpbmcgdGhpcyBvbmUgOikNCg0KT3Igc2hvdWxkIEkgbWVyZ2UgdGhl
+IGFib3ZlIGNvbW1pdCBmcm9tIGFzbS1nZW5lcmljIHRyZWU/DQoNCi0tIA0KflZpbm9kDQo=
