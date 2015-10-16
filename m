@@ -1,135 +1,40 @@
-From: =?ks_c_5601-1987?B?RGF2aWQgS3dvbiAosce/+MirKQ==?=
-	<wonhong.kwon@lge.com>
-Subject: RE: Runtime PM causes oops on next-20151015
-Date: Fri, 16 Oct 2015 08:35:39 +0900
-Message-ID: <021501d107a2$3351cbb0$99f56310$@lge.com>
-References: <20151015092213.GA26614@ulmo.nvidia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Fri, 16 Oct 2015 12:27:04 +1100
+Message-ID: <20151016122704.4320da9e@canb.auug.org.au>
+References: <20151015132602.7816b658@canb.auug.org.au>
+	<7853704.H00KElTCBt@wuerfel>
+	<20151015120407.GA31945@lst.de>
+	<5895082.5iDhc8pylg@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="ks_c_5601-1987"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from LGEAMRELO13.lge.com ([156.147.23.53]:43309 "EHLO
-	lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751560AbbJOXfm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Oct 2015 19:35:42 -0400
-In-Reply-To: <20151015092213.GA26614@ulmo.nvidia.com>
-Content-Language: ko
+Received: from ozlabs.org ([103.22.144.67]:42659 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751222AbbJPB1I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Oct 2015 21:27:08 -0400
+In-Reply-To: <5895082.5iDhc8pylg@wuerfel>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Thierry Reding' <thierry.reding@gmail.com>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc: 'Len Brown' <len.brown@intel.com>, 'Pavel Machek' <pavel@ucw.cz>, linux-next@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, =?ks_c_5601-1987?B?J8DMsMfIoyc=?= <gunho.lee@lge.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Christoph Hellwig <hch@lst.de>, Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Dear Thierry, 
+Hi Arnd,
 
-> -----Original Message-----
-> From: Thierry Reding [mailto:thierry.reding@gmail.com]
-> Sent: Thursday, October 15, 2015 6:22 PM
-> To: Rafael J. Wysocki; Wonhong Kwon
-> Cc: Len Brown; Pavel Machek; linux-next@vger.kernel.org; linux-
-> pm@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Runtime PM causes oops on next-20151015
-> 
-> Hi Rafael, Wonhong,
-> 
-> Todays linux-next breaks rather spectacularly for drivers using runtime
-PM.
-> The culprit seems to be this commit:
-> 
-> 	commit 7d24068e144adc03b805806645d732cf79488717
-> 	Author: Wonhong Kwon <wonhongkwon@gmail.com>
-> 	Date:   Tue Oct 6 10:10:20 2015 +0900
-> 
-> 	    PM / hibernate: Move pm_init/pm_disk_init to late_initcall_sync
-> 
-> 	    pm_init is being invoked by core_initcall and
-> hibernate_image_size_init
-> 	    calculates preferred image size (image_size) based on total
-> pages
-> 	    (totalram_pages). This totalram_pages can be modified during
-> various
-> 	    initcall-s phase and this can cause miscalculated image_size.
-> 
-> 	    For example, when CMA is being used, init_cma_reserved_pageblock
-> tries
-> 	    to change the totalram_pages and this job is done during
-> core_initcall.
-> 	    In order words, the totalram_pages doesn't take CMA reserved
-> pages into
-> 	    account when image_size is calculated and it can be too small.
-> 
-> 	    Move pm_init and pm_disk_init to late_initcall_sync so that it
-> happens
-> 	    after all other initcall-s change the totalram_pages.
-> 
-> 	    Reported-by: Sangseok Lee <sangseok.lee@lge.com>
-> 	    Signed-off-by: Wonhong Kwon <wonhong.kwon@lge.com>
-> 	    Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> I can't reply to it directly because I don't have it in any of my mail
-> boxes (it seems to have been sent only to the linux-pm mailing list, even
-> Google finds only a single match).
-> 
-> Here's an extract of the oops:
-> 
-> 	[    1.395928] Unable to handle kernel NULL pointer dereference at
-> virtual address 00000100
-> 	[    1.404013] pgd = ffffffc000e0e000
-> 	[    1.407417] [00000100] *pgd=000000013c007003,
-> *pud=000000013c007003, *pmd=000000013c008003, *pte=0060000050041707
-> 	[    1.417746] Internal error: Oops: 96000005 [#1] PREEMPT SMP
-> 	[    1.423316] Modules linked in:
-> 	[    1.426400] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.3.0-rc5-
-> next-20151015+ #1338
-> 	[    1.434138] Hardware name: NVIDIA Tegra210 P2371 (P2180/P2597)
-> reference board (DT)
-> 	[    1.441789] task: ffffffc0bc0a8000 ti: ffffffc0bc084000 task.ti:
-> ffffffc0bc084000
-> 	[    1.449280] PC is at __queue_work+0x2c/0x240
-> 	[    1.453551] LR is at queue_work_on+0x60/0x78
-> 	...
-> 	[    1.836517] Call trace:
-> 	[    1.838968] [<ffffffc0000b4134>] __queue_work+0x2c/0x240
-> 	[    1.844280] [<ffffffc0000b43a4>] queue_work_on+0x5c/0x78
-> 	[    1.849599] [<ffffffc00052e508>] rpm_idle+0xc0/0x140
-> 	[    1.854565] [<ffffffc00052e5dc>] __pm_runtime_idle+0x54/0x98
-> 	[    1.860229] [<ffffffc00052414c>] driver_probe_device+0x164/0x2f8
-> 	[    1.866236] [<ffffffc000524378>] __driver_attach+0x98/0xa0
-> 	[    1.871724] [<ffffffc00052231c>] bus_for_each_dev+0x5c/0xa0
-> 	[    1.877294] [<ffffffc000523ab4>] driver_attach+0x1c/0x28
-> 	[    1.882608] [<ffffffc0005236e4>] bus_add_driver+0x1cc/0x238
-> 	[    1.888180] [<ffffffc000524b1c>] driver_register+0x5c/0xf8
-> 	[    1.893675] [<ffffffc000431800>]
-> mipi_dsi_driver_register_full+0x50/0x60
-> 	[    1.900374] [<ffffffc000ba1570>] panel_simple_init+0x2c/0x44
-> 	[    1.906035] [<ffffffc000082934>] do_one_initcall+0x8c/0x1a0
-> 	[    1.911612] [<ffffffc000b80aa8>] kernel_init_freeable+0x150/0x1f8
-> 	[    1.917711] [<ffffffc0007f78fc>] kernel_init+0xc/0xe0
-> 
-> Instrumenting the code shows that pm_wq (passed to queue_work in the
-> rpm_idle() function) is NULL at this point. This matches up with the
-> change done in the above-mentioned commit, since now pm_wq only gets
-> initialized at late_initcall time, whereas all built-in drivers will
-> already be probed at device_initcall time. So I suspect that this is going
-> to cause crashes on a whole lot of systems (essentially every system that
-> tries to use runtime PM from a built-in driver).
+On Thu, 15 Oct 2015 14:28:20 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> diff --git a/include/asm-generic/io-64-nonatomic-hi-lo.h b/include/asm-generic/io-64-nonatomic-hi-lo.h
+> new file mode 100644
+> index 000000000000..32b73abce1b0
+> --- /dev/null
+> +++ b/include/asm-generic/io-64-nonatomic-hi-lo.h
+> @@ -0,0 +1,2 @@
+> +/* XXX: delete asm-generic/io-64-nonatomic-hi-lo.h after converting new users */
+> +#include <linux/io-64-nonatomic-hi-lo.h>
 
-I should've considered rumtime PM. Really sorry for bothering you.
+Turns out you need the same for io-64-nonatomic-lo-hi.h as well ...
 
-> 
-> Given the commit message I suspect that the right fix would be to split
-> pm_init() into two functions, one that initializes the hibernation image
-> and another with the PM core initialization. The pm_hibernate_init() is
-> probably going to work fine as late_initcall (I assume this was tested)
-> but the rest should probably stay at core_initcall.
-
-I agree that rest of pm_init() should stay at core_initcall and only
-hibernation_image_size_init() goes to late_initcall.
-
-> 
-> I can provide a patch for the latter if everyone agrees that it's the
-> right thing, but in the meantime, can you please drop the above patch from
-> your tree to unbreak linux-next for all affected users?
-> 
-> Thanks,
-> Thierry
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
