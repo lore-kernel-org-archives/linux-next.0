@@ -1,39 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Fri, 16 Oct 2015 12:27:04 +1100
-Message-ID: <20151016122704.4320da9e@canb.auug.org.au>
-References: <20151015132602.7816b658@canb.auug.org.au>
-	<7853704.H00KElTCBt@wuerfel>
-	<20151015120407.GA31945@lst.de>
-	<5895082.5iDhc8pylg@wuerfel>
+Subject: linux-next: build failure after merge of the input tree
+Date: Fri, 16 Oct 2015 13:19:48 +1100
+Message-ID: <20151016131948.0a87d480@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42659 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48260 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751222AbbJPB1I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Oct 2015 21:27:08 -0400
-In-Reply-To: <5895082.5iDhc8pylg@wuerfel>
+	id S1751642AbbJPCTv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Oct 2015 22:19:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@lst.de>, Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-Hi Arnd,
+Hi Dmitry,
 
-On Thu, 15 Oct 2015 14:28:20 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> diff --git a/include/asm-generic/io-64-nonatomic-hi-lo.h b/include/asm-generic/io-64-nonatomic-hi-lo.h
-> new file mode 100644
-> index 000000000000..32b73abce1b0
-> --- /dev/null
-> +++ b/include/asm-generic/io-64-nonatomic-hi-lo.h
-> @@ -0,0 +1,2 @@
-> +/* XXX: delete asm-generic/io-64-nonatomic-hi-lo.h after converting new users */
-> +#include <linux/io-64-nonatomic-hi-lo.h>
+After merging the input tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Turns out you need the same for io-64-nonatomic-lo-hi.h as well ...
+In file included from samples/hidraw/hid-example.c:14:0:
+./usr/include/linux/input.h:17:31: fatal error: input-event-codes.h: No such file or directory
+
+Caused by commit
+
+  d794709c3916 ("Input: Add input-event-codes header file")
+
+I have used the input tree from next-20151015 for today.
 
 -- 
 Cheers,
