@@ -1,33 +1,39 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: Signed-off-by missing in the s390 tree
-Date: Fri, 16 Oct 2015 09:43:11 +0200
-Message-ID: <20151016094311.33ebf5fb@mschwide>
-References: <20151016091733.30454691@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Fri, 16 Oct 2015 12:10:45 +0200
+Message-ID: <4536236.o1KfIdZ0yO@wuerfel>
+References: <20151015132602.7816b658@canb.auug.org.au> <5895082.5iDhc8pylg@wuerfel> <20151016122704.4320da9e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151016091733.30454691@canb.auug.org.au>
+In-Reply-To: <20151016122704.4320da9e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 16 Oct 2015 09:17:33 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Martin,
+On Friday 16 October 2015 12:27:04 Stephen Rothwell wrote:
+> Hi Arnd,
 > 
-> I noticed that the top commit
+> On Thu, 15 Oct 2015 14:28:20 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > diff --git a/include/asm-generic/io-64-nonatomic-hi-lo.h b/include/asm-generic/io-64-nonatomic-hi-lo.h
+> > new file mode 100644
+> > index 000000000000..32b73abce1b0
+> > --- /dev/null
+> > +++ b/include/asm-generic/io-64-nonatomic-hi-lo.h
+> > @@ -0,0 +1,2 @@
+> > +/* XXX: delete asm-generic/io-64-nonatomic-hi-lo.h after converting new users */
+> > +#include <linux/io-64-nonatomic-hi-lo.h>
 > 
->   748a000bdc07 ("s390/fpu: split fpu-internal.h into fpu internals, api, and type headers")
+> Turns out you need the same for io-64-nonatomic-lo-hi.h as well ...
 > 
-> in the s390 tree has no Signed-off-by tag from you as committer ...
- 
-Oopsy.. fixed. Thanks for the hint.
+> 
 
--- 
-blue skies,
-   Martin.
 
-"Reality continues to ruin my life." - Calvin.
+D'oh!
+
+fixed now, thanks for your patience.
+
+	Arnd
