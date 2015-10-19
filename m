@@ -1,84 +1,109 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the input tree
-Date: Sat, 17 Oct 2015 09:39:30 -0700
-Message-ID: <20151017163930.GC13470@dtor-ws>
-References: <20151016131948.0a87d480@canb.auug.org.au>
- <5620A93E.40508@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the omap tree
+Date: Mon, 19 Oct 2015 11:59:08 +1100
+Message-ID: <20151019115908.7f4d59d2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:34334 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753172AbbJQQje (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Oct 2015 12:39:34 -0400
-Content-Disposition: inline
-In-Reply-To: <5620A93E.40508@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tony Lindgren <tony@atomide.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <Marc.Zyngier@arm.com>, Felipe Balbi <balbi@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Oct 16, 2015 at 09:37:34AM +0200, Hans de Goede wrote:
-> Hio,
-> 
-> On 16-10-15 04:19, Stephen Rothwell wrote:
-> >Hi Dmitry,
-> >
-> >After merging the input tree, today's linux-next build (x86_64
-> >allmodconfig) failed like this:
-> >
-> >In file included from samples/hidraw/hid-example.c:14:0:
-> >./usr/include/linux/input.h:17:31: fatal error: input-event-codes.h: No such file or directory
-> >
-> >Caused by commit
-> >
-> >   d794709c3916 ("Input: Add input-event-codes header file")
-> >
-> >I have used the input tree from next-20151015 for today.
-> 
-> Sorry, my bad, I assumed anything under include/uapi would
-> automatically get installed as a usr header, but it turns out
-> any files added need to also be added to the Kbuild file, the
-> attached patch should fix this.
-> 
-> Dmitry, feel free to squash this into the original patch.
+Hi Rafael,
 
-Thanks Hans, I folded it into the original patch.
+Today's linux-next merge of the pm tree got a conflict in:
 
-> 
-> Regards,
-> 
-> Hans
+  arch/arm/mach-omap2/timer.c
 
-> From 0dd5544b6ca0cddfe25976b46ef9ba5c4adbc791 Mon Sep 17 00:00:00 2001
-> From: Hans de Goede <hdegoede@redhat.com>
-> Date: Fri, 16 Oct 2015 09:33:45 +0200
-> Subject: [PATCH] input: Add input-event-codes.h to usr headers to install
-> 
-> Add input-event-codes.h to the list of uapi headers to install, this fixes
-> build-failures of any userspace tools including linux/input.h .
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  include/uapi/linux/Kbuild | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/uapi/linux/Kbuild b/include/uapi/linux/Kbuild
-> index f7b2db4..0f26309 100644
-> --- a/include/uapi/linux/Kbuild
-> +++ b/include/uapi/linux/Kbuild
-> @@ -191,6 +191,7 @@ header-y += inet_diag.h
->  header-y += in.h
->  header-y += inotify.h
->  header-y += input.h
-> +header-y += input-event-codes.h
->  header-y += in_route.h
->  header-y += ioctl.h
->  header-y += ip6_tunnel.h
-> -- 
-> 2.5.0
-> 
+between commits:
 
+  3afbb9afe2c4 ("arm: omap2: timer: move realtime_counter_init() around")
+  9c46ffcd5214 ("arm: omap2: timer: always call clocksource_of_init() when DT")
+
+from the omap tree and commit:
+
+  3722ed2380ad ("clocksource: cosmetic: Drop OF 'dependency' from symbols")
+
+from the pm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
-Dmitry
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-omap2/timer.c
+index 05c17eb2f2d9,bef41837bf7f..000000000000
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@@ -469,64 -476,7 +469,64 @@@ static void __init omap2_gptimer_clocks
+  			clocksource_gpt.name, clksrc.rate);
+  }
+  
+ -#ifdef CONFIG_SOC_HAS_REALTIME_COUNTER
+ +static void __init __omap_sync32k_timer_init(int clkev_nr, const char *clkev_src,
+ +		const char *clkev_prop, int clksrc_nr, const char *clksrc_src,
+ +		const char *clksrc_prop, bool gptimer)
+ +{
+ +	omap_clk_init();
+ +	omap_dmtimer_init();
+ +	omap2_gp_clockevent_init(clkev_nr, clkev_src, clkev_prop);
+ +
+ +	/* Enable the use of clocksource="gp_timer" kernel parameter */
+ +	if (use_gptimer_clksrc || gptimer)
+ +		omap2_gptimer_clocksource_init(clksrc_nr, clksrc_src,
+ +						clksrc_prop);
+ +	else
+ +		omap2_sync32k_clocksource_init();
+ +}
+ +
+ +void __init omap_init_time(void)
+ +{
+ +	__omap_sync32k_timer_init(1, "timer_32k_ck", "ti,timer-alwon",
+ +			2, "timer_sys_ck", NULL, false);
+ +
+ +	if (of_have_populated_dt())
+- 		clocksource_of_init();
+++		clocksource_probe();
+ +}
+ +
+ +#if defined(CONFIG_ARCH_OMAP3) || defined(CONFIG_SOC_AM43XX)
+ +void __init omap3_secure_sync32k_timer_init(void)
+ +{
+ +	__omap_sync32k_timer_init(12, "secure_32k_fck", "ti,timer-secure",
+ +			2, "timer_sys_ck", NULL, false);
+ +}
+ +#endif /* CONFIG_ARCH_OMAP3 */
+ +
+ +#if defined(CONFIG_ARCH_OMAP3) || defined(CONFIG_SOC_AM33XX)
+ +void __init omap3_gptimer_timer_init(void)
+ +{
+ +	__omap_sync32k_timer_init(2, "timer_sys_ck", NULL,
+ +			1, "timer_sys_ck", "ti,timer-alwon", true);
+ +}
+ +#endif
+ +
+ +#if defined(CONFIG_ARCH_OMAP4) || defined(CONFIG_SOC_OMAP5) ||		\
+ +	defined(CONFIG_SOC_DRA7XX) || defined(CONFIG_SOC_AM43XX)
+ +static void __init omap4_sync32k_timer_init(void)
+ +{
+ +	__omap_sync32k_timer_init(1, "timer_32k_ck", "ti,timer-alwon",
+ +			2, "sys_clkin_ck", NULL, false);
+ +}
+ +
+ +void __init omap4_local_timer_init(void)
+ +{
+ +	omap4_sync32k_timer_init();
+- 	clocksource_of_init();
+++	clocksource_probe();
+ +}
+ +#endif
+ +
+ +#if defined(CONFIG_SOC_OMAP5) || defined(CONFIG_SOC_DRA7XX)
+ +
+  /*
+   * The realtime counter also called master counter, is a free-running
+   * counter, which is related to real time. It produces the count used
