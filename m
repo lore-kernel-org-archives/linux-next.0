@@ -1,26 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the nfs tree
-Date: Tue, 20 Oct 2015 15:37:29 +1100
-Message-ID: <20151020153729.732c0fb6@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the powerpc tree
+Date: Tue, 20 Oct 2015 16:21:55 +1100
+Message-ID: <20151020162155.01391301@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peng Tao <tao.peng@primarydata.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denis Kirjanov <kda@linux-powerpc.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Trond,
+Hi all,
 
-After merging the nfs tree, today's linux-next build (powerpc allyesconfig
-produced this warning:
+After merging the powerpc tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-./usr/include/linux/nfs.h:40: found __[us]{8,16,32,64} type without #include <linux/types.h>
+WARNING: vmlinux.o(.text+0x9367c): Section mismatch in reference from the function .msi_bitmap_alloc() to the function .init.text:.memblock_virt_alloc_try_nid()
+The function .msi_bitmap_alloc() references
+the function __init .memblock_virt_alloc_try_nid().
+This is often because .msi_bitmap_alloc lacks a __init
+annotation or the annotation of .memblock_virt_alloc_try_nid is wrong.
 
-Introduced by commit
+Introduced (probably) by commit
 
-  a340abcf4173 ("nfs42: add NFS_IOC_CLONE_RANGE ioctl")
+  cb2d3883c603 ("powerpc/msi: Free the bitmap if it was slab allocated")
 
 -- 
 Cheers,
