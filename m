@@ -1,48 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the powerpc tree
-Date: Wed, 21 Oct 2015 07:45:07 +1100
-Message-ID: <20151021074507.46c85604@canb.auug.org.au>
-References: <20151020162155.01391301@canb.auug.org.au>
-	<1445335611.2152.4.camel@ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Wed, 21 Oct 2015 09:32:56 +1100
+Message-ID: <20151021093256.1198358f@canb.auug.org.au>
+References: <20150929114531.2d611a2a@canb.auug.org.au>
+	<20151002114932.043376ca@canb.auug.org.au>
+	<20151008120424.6813920f@canb.auug.org.au>
+	<20151016012639.420c31c7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34918 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751216AbbJTUpJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Oct 2015 16:45:09 -0400
-In-Reply-To: <1445335611.2152.4.camel@ellerman.id.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denis Kirjanov <kda@linux-powerpc.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151016012639.420c31c7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Belisko <marek@goldelico.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Michael,
+Hi Sebastian,
 
-On Tue, 20 Oct 2015 21:06:51 +1100 Michael Ellerman <mpe@ellerman.id.au> wrote:
+On Fri, 16 Oct 2015 01:26:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> On Tue, 2015-10-20 at 16:21 +1100, Stephen Rothwell wrote:
-> 
-> > After merging the powerpc tree, today's linux-next build (powerpc
-> > allyesconfig) produced this warning:
+> On Thu, 8 Oct 2015 12:04:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Fri, 2 Oct 2015 11:49:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
+> > >
+> > > On Tue, 29 Sep 2015 11:45:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:    
+> > > >
+> > > > After merging the battery tree, today's linux-next build (arm
+> > > > multi_v7_defconfig) failed like this:
+> > > > 
+> > > > ERROR (phandle_references): Reference to non-existent node or label "twl4030_madc"
+> > > > ERROR: Input tree has errors, aborting (use -f to force output)
+> > > > scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/omap3-beagle-xm-ab.dtb' failed
+> > > > 
+> > > > and many more ...
+> > > > 
+> > > > Caused by commit
+> > > > 
+> > > >   af19161aaed7 ("ARM: dts: twl4030: Add iio properties for bci subnode")
+> > > > 
+> > > > Presumably some updates to other files were missed.
+> > > > 
+> > > > I have used the battery tree from next-20150925 fot today.    
+> > > 
+> > > I am still getting this error.    
 > > 
-> > WARNING: vmlinux.o(.text+0x9367c): Section mismatch in reference from the function .msi_bitmap_alloc() to the function .init.text:.memblock_virt_alloc_try_nid()
-> > The function .msi_bitmap_alloc() references
-> > the function __init .memblock_virt_alloc_try_nid().
-> > This is often because .msi_bitmap_alloc lacks a __init
-> > annotation or the annotation of .memblock_virt_alloc_try_nid is wrong.
-> > 
-> > Introduced (probably) by commit
-> > 
-> >   cb2d3883c603 ("powerpc/msi: Free the bitmap if it was slab allocated")  
+> > Ping?  
 > 
-> Yeah that's correct, though it should be safe in practice.
-> 
-> I'm not sure why you only saw that now though, the patch has been in next since
-> the 13th of October.
+> I still got this error today ...
 
-I don't always notice new warnings immediately among all the others :-(
+And still ... This has been going on for 4 weeks now ... either revert
+the commit or get it fixed.  Nothing added to the battery tree since
+September 25 has been able to be tested in linux-next.
 
 -- 
 Cheers,
