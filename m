@@ -1,58 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the battery tree
-Date: Wed, 21 Oct 2015 09:32:56 +1100
-Message-ID: <20151021093256.1198358f@canb.auug.org.au>
-References: <20150929114531.2d611a2a@canb.auug.org.au>
-	<20151002114932.043376ca@canb.auug.org.au>
-	<20151008120424.6813920f@canb.auug.org.au>
-	<20151016012639.420c31c7@canb.auug.org.au>
+Subject: linux-next: no releases after tomorrow for 10 days (Was: Linux
+ 4.3-rc6)
+Date: Wed, 21 Oct 2015 10:31:13 +1100
+Message-ID: <20151021103113.29534482@canb.auug.org.au>
+References: <CA+55aFzxNK9_0TrVbgCfPA5dj1KY3y15S0cyVGCLWs2cOp25aQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151016012639.420c31c7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Belisko <marek@goldelico.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53708 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750910AbbJTXbP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Oct 2015 19:31:15 -0400
+In-Reply-To: <CA+55aFzxNK9_0TrVbgCfPA5dj1KY3y15S0cyVGCLWs2cOp25aQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Sebastian,
+Hi Linus,
 
-On Fri, 16 Oct 2015 01:26:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Sun, 18 Oct 2015 16:45:42 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
 >
-> On Thu, 8 Oct 2015 12:04:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Fri, 2 Oct 2015 11:49:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
-> > >
-> > > On Tue, 29 Sep 2015 11:45:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:    
-> > > >
-> > > > After merging the battery tree, today's linux-next build (arm
-> > > > multi_v7_defconfig) failed like this:
-> > > > 
-> > > > ERROR (phandle_references): Reference to non-existent node or label "twl4030_madc"
-> > > > ERROR: Input tree has errors, aborting (use -f to force output)
-> > > > scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/omap3-beagle-xm-ab.dtb' failed
-> > > > 
-> > > > and many more ...
-> > > > 
-> > > > Caused by commit
-> > > > 
-> > > >   af19161aaed7 ("ARM: dts: twl4030: Add iio properties for bci subnode")
-> > > > 
-> > > > Presumably some updates to other files were missed.
-> > > > 
-> > > > I have used the battery tree from next-20150925 fot today.    
-> > > 
-> > > I am still getting this error.    
-> > 
-> > Ping?  
+> Things continue to be calm, and in fact have gotten progressively
+> calmer. All of which makes me really happy, although my suspicious
+> nature looks for things to blame. Are people just on their best
+> behavior because the Kernel Summit is imminent, and everybody is
+> putting their best foot forward?
 > 
-> I still got this error today ...
+> Or maybe this just ended up being one of those rare painless releases
+> when nothing bad happens.
+> 
+> That would be lovely.
 
-And still ... This has been going on for 4 weeks now ... either revert
-the commit or get it fixed.  Nothing added to the battery tree since
-September 25 has been able to be tested in linux-next.
+I will be away from linux-next starting Friday until Monday week (i.e.
+Nov 2) attending Kernel Summit and taking a short break.  Two of my
+past victims/helpers will also be at Kernel Summit.
 
+So if you do the usual -rc7 (this Sunday) then release (a week later),
+there will be no linux-next releases during that time.   If this is
+seen as a problem, you could delay the release, or suprise everyone and
+release this weekend :-)
+
+I suspect a reasonable amount of code for v4.4 is still pending as we
+only have ~8500 commits in linux-next so far (and nothing in the vfs
+tree for example).  I would expect about 10000 commits in a normal
+release.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
