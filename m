@@ -1,83 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 21 Oct 2015 16:59:32 +1100
-Message-ID: <20151021165932.3160cb59@canb.auug.org.au>
+From: Belisko Marek <marek.belisko@gmail.com>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Wed, 21 Oct 2015 08:12:37 +0200
+Message-ID: <CAAfyv36mLX2FZW5HYsH1Lh7ybTVLyUh1K1EwCyCxa9gKRV+v6w@mail.gmail.com>
+References: <20150929114531.2d611a2a@canb.auug.org.au>
+	<20151002114932.043376ca@canb.auug.org.au>
+	<20151008120424.6813920f@canb.auug.org.au>
+	<20151016012639.420c31c7@canb.auug.org.au>
+	<20151021093256.1198358f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37900 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753158AbbJUF7e (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Oct 2015 01:59:34 -0400
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:36143 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752694AbbJUGMj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Oct 2015 02:12:39 -0400
+In-Reply-To: <20151021093256.1198358f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Dufour <ldufour@linux.vnet.ibm.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Pavel Emelyanov <xemul@parallels.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
 
-Hi Andrew,
+Adding Tony to CC
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-allnoconfig) failed like this:
+On Wed, Oct 21, 2015 at 12:32 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Sebastian,
+>
+> On Fri, 16 Oct 2015 01:26:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> On Thu, 8 Oct 2015 12:04:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> >
+>> > On Fri, 2 Oct 2015 11:49:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > >
+>> > > On Tue, 29 Sep 2015 11:45:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > > >
+>> > > > After merging the battery tree, today's linux-next build (arm
+>> > > > multi_v7_defconfig) failed like this:
+>> > > >
+>> > > > ERROR (phandle_references): Reference to non-existent node or label "twl4030_madc"
+>> > > > ERROR: Input tree has errors, aborting (use -f to force output)
+>> > > > scripts/Makefile.lib:293: recipe for target 'arch/arm/boot/dts/omap3-beagle-xm-ab.dtb' failed
+>> > > >
+>> > > > and many more ...
+>> > > >
+>> > > > Caused by commit
+>> > > >
+>> > > >   af19161aaed7 ("ARM: dts: twl4030: Add iio properties for bci subnode")
+>> > > >
+>> > > > Presumably some updates to other files were missed.
+>> > > >
+>> > > > I have used the battery tree from next-20150925 fot today.
+>> > >
+>> > > I am still getting this error.
+>> >
+>> > Ping?
+>>
+>> I still got this error today ...
+>
+> And still ... This has been going on for 4 weeks now ... either revert
+> the commit or get it fixed.  Nothing added to the battery tree since
+> September 25 has been able to be tested in linux-next.
+I posted last week fix [0]. Tony can you please merge it? Thanks.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-In file included from arch/powerpc/include/asm/thread_info.h:34:0,
-                 from include/linux/thread_info.h:54,
-                 from include/asm-generic/preempt.h:4,
-                 from arch/powerpc/include/generated/asm/preempt.h:1,
-                 from include/linux/preempt.h:59,
-                 from include/linux/spinlock.h:50,
-                 from include/linux/seqlock.h:35,
-                 from include/linux/time.h:5,
-                 from include/uapi/linux/timex.h:56,
-                 from include/linux/timex.h:56,
-                 from include/linux/sched.h:19,
-                 from arch/powerpc/kernel/asm-offsets.c:17:
-arch/powerpc/include/asm/pgtable.h: In function 'pte_pgprot':
-arch/powerpc/include/asm/pte-common.h:104:18: error: '_PAGE_SOFT_DIRTY' undeclared (first use in this function)
-     _PAGE_EXEC | _PAGE_SOFT_DIRTY)
-                  ^
-arch/powerpc/include/asm/page.h:359:22: note: in definition of macro '__pgprot'
- #define __pgprot(x) (x)
-                      ^
-arch/powerpc/include/asm/pgtable.h:39:79: note: in expansion of macro 'PAGE_PROT_BITS'
- static inline pgprot_t pte_pgprot(pte_t pte) { return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
-                                                                               ^
-arch/powerpc/include/asm/pte-common.h:104:18: note: each undeclared identifier is reported only once for each function it appears in
-     _PAGE_EXEC | _PAGE_SOFT_DIRTY) 
-                  ^
-arch/powerpc/include/asm/page.h:359:22: note: in definition of macro '__pgprot'
- #define __pgprot(x) (x)
-                      ^
-arch/powerpc/include/asm/pgtable.h:39:79: note: in expansion of macro 'PAGE_PROT_BITS'
- static inline pgprot_t pte_pgprot(pte_t pte) { return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
-                                                                               ^
-In file included from include/linux/mm.h:55:0,
-                 from include/linux/mman.h:4,
-                 from arch/powerpc/kernel/asm-offsets.c:22:
-arch/powerpc/include/asm/pgtable.h: In function 'pte_mkdirty':
-arch/powerpc/include/asm/pgtable.h:130:32: error: '_PAGE_SOFT_DIRTY' undeclared (first use in this function)
-  pte_val(pte) |= _PAGE_DIRTY | _PAGE_SOFT_DIRTY; return pte; }
-                                ^   
-In file included from arch/powerpc/include/asm/pgtable-ppc32.h:123:0,
-                 from arch/powerpc/include/asm/pgtable.h:19,
-                 from include/linux/mm.h:55,
-                 from include/linux/mman.h:4,
-                 from arch/powerpc/kernel/asm-offsets.c:22:
-arch/powerpc/include/asm/pgtable.h: In function 'pte_modify':
-arch/powerpc/include/asm/pte-common.h:97:38: error: '_PAGE_SOFT_DIRTY' undeclared (first use in this function)
-     _PAGE_ACCESSED | _PAGE_SPECIAL | _PAGE_SOFT_DIRTY)
-                                      ^
-arch/powerpc/include/asm/pgtable.h:139:33: note: in expansion of macro '_PAGE_CHG_MASK'
-  pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) | pgprot_val(newprot);
-                                 ^  
-./Kbuild:80: recipe for target 'arch/powerpc/kernel/asm-offsets.s' failed
+[0] - https://lkml.org/lkml/2015/10/13/816
 
-Caused by commit
+BR,
 
-  8bd232790748 ("powerpc/mm: add page soft dirty tracking")
-
-I have reverted that commit for today.
+marek
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+as simple and primitive as possible
+-------------------------------------------------
+Marek Belisko - OPEN-NANDRA
+Freelance Developer
+
+Ruska Nova Ves 219 | Presov, 08005 Slovak Republic
+Tel: +421 915 052 184
+skype: marekwhite
+twitter: #opennandra
+web: http://open-nandra.com
