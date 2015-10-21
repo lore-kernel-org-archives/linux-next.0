@@ -1,37 +1,45 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 21 Oct 2015 21:08:53 +1100
-Message-ID: <1445422133.472.1.camel@ellerman.id.au>
-References: <20151021165932.3160cb59@canb.auug.org.au>
+From: Keyon <yang.jie@linux.intel.com>
+Subject: Re: linux-next: Tree for Oct 20 (sound/soc/intel)
+Date: Wed, 21 Oct 2015 20:27:00 +0800
+Message-ID: <56278494.4080401@linux.intel.com>
+References: <20151020162604.4b5b6381@canb.auug.org.au>
+ <56266FE5.6090304@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151021165932.3160cb59@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Dufour <ldufour@linux.vnet.ibm.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Pavel Emelyanov <xemul@parallels.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:39843 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751982AbbJUMUx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Oct 2015 08:20:53 -0400
+In-Reply-To: <56266FE5.6090304@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, moderated for non-subscribers <alsa-devel@alsa-project.org>
 
-On Wed, 2015-10-21 at 16:59 +1100, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
- 
-> arch/powerpc/include/asm/pgtable.h: In function 'pte_pgprot':
-> arch/powerpc/include/asm/pte-common.h:104:18: error: '_PAGE_SOFT_DIRTY' undeclared (first use in this function)
->      _PAGE_EXEC | _PAGE_SOFT_DIRTY)
 
-That's probably my fault, Andrew asked if we wanted to take it via powerpc and
-I thought "yes" but never actually replied.
+On 2015=E5=B9=B410=E6=9C=8821=E6=97=A5 00:46, Randy Dunlap wrote:
+> On 10/19/15 22:26, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20151019:
+>>
+> on x86_64:
+>
+> when CONFIG_DW_DMAC is not enabled.
+>
+>
+> sound/built-in.o: In function `sst_dma_new':
+> (.text+0xd7b38): undefined reference to `dw_dma_probe'
+> sound/built-in.o: In function `sst_dma_free':
+> (.text+0xd7c0a): undefined reference to `dw_dma_remove'
+>
+>
+> Full randconfig file is attached.
+>
 
-Andrew can you drop this one and we'll take it via powerpc?
+thanks for reporting it, will submit patch to fix it soon.
 
-It might take a while to actually hit the powerpc tree because Aneesh is doing
-a lot of work in this area at the moment.
-
-Without knowing the code, the change logs make me think we probably also need
-to take the other two from Laurent for it to make sense. Laurent?
-
-cheers
+~Keyon
