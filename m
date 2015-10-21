@@ -1,45 +1,85 @@
-From: Keyon <yang.jie@linux.intel.com>
-Subject: Re: linux-next: Tree for Oct 20 (sound/soc/intel)
-Date: Wed, 21 Oct 2015 20:27:00 +0800
-Message-ID: <56278494.4080401@linux.intel.com>
-References: <20151020162604.4b5b6381@canb.auug.org.au>
- <56266FE5.6090304@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jie Yang <yang.jie@intel.com>
+Subject: [PATCH] ASoC: Intel: sst: only use sst-firmware when DW DMAC is available
+Date: Wed, 21 Oct 2015 20:33:05 +0800
+Message-ID: <1445430785-27554-1-git-send-email-yang.jie@intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:39843 "EHLO mga14.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:26726 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751982AbbJUMUx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Oct 2015 08:20:53 -0400
-In-Reply-To: <56266FE5.6090304@infradead.org>
+	id S1754517AbbJUM1r (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Oct 2015 08:27:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, moderated for non-subscribers <alsa-devel@alsa-project.org>
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, rdunlap@infradead.org, sfr@canb.auug.org.au, liam.r.girdwood@intel.com, yang.jie@intel.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vinod.koul@intel.com
 
+Currentlly, we use Synopsys DesignWare DMA Controller for
+baytrail/haswell/broadwell ADSP firmware loading, but for
+skylake, we don't use it, compiling sst-firmware.c may
+introduce error when CONFIG_DW_DMAC_CORE is not enabled:
 
-On 2015=E5=B9=B410=E6=9C=8821=E6=97=A5 00:46, Randy Dunlap wrote:
-> On 10/19/15 22:26, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20151019:
->>
-> on x86_64:
->
-> when CONFIG_DW_DMAC is not enabled.
->
->
-> sound/built-in.o: In function `sst_dma_new':
-> (.text+0xd7b38): undefined reference to `dw_dma_probe'
-> sound/built-in.o: In function `sst_dma_free':
-> (.text+0xd7c0a): undefined reference to `dw_dma_remove'
->
->
-> Full randconfig file is attached.
->
+    sound/built-in.o: In function `sst_dma_new':
+    (.text+0xd7b38): undefined reference to `dw_dma_probe'
+    sound/built-in.o: In function `sst_dma_free':
+    (.text+0xd7c0a): undefined reference to `dw_dma_remove'
 
-thanks for reporting it, will submit patch to fix it soon.
+Here we only compile sst-firmware when CONFIG_DW_DMAC_CORE
+is selected, to fix the linking error issue.
 
-~Keyon
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Jie Yang <yang.jie@intel.com>
+---
+ sound/soc/intel/common/Makefile  | 3 ++-
+ sound/soc/intel/common/sst-dsp.c | 2 ++
+ sound/soc/intel/common/sst-dsp.h | 2 ++
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/common/Makefile b/sound/soc/intel/common/Makefile
+index f24154c..55342a1 100644
+--- a/sound/soc/intel/common/Makefile
++++ b/sound/soc/intel/common/Makefile
+@@ -1,4 +1,5 @@
+-snd-soc-sst-dsp-objs := sst-dsp.o sst-firmware.o
++snd-soc-sst-dsp-objs := sst-dsp.o
++snd-soc-sst-dsp-$(CONFIG_DW_DMAC_CORE) += sst-firmware.o
+ snd-soc-sst-acpi-objs := sst-acpi.o
+ snd-soc-sst-ipc-objs := sst-ipc.o
+ 
+diff --git a/sound/soc/intel/common/sst-dsp.c b/sound/soc/intel/common/sst-dsp.c
+index a627236..b5bbdf4 100644
+--- a/sound/soc/intel/common/sst-dsp.c
++++ b/sound/soc/intel/common/sst-dsp.c
+@@ -420,6 +420,7 @@ void sst_dsp_inbox_read(struct sst_dsp *sst, void *message, size_t bytes)
+ }
+ EXPORT_SYMBOL_GPL(sst_dsp_inbox_read);
+ 
++#ifdef CONFIG_DW_DMAC_CORE
+ struct sst_dsp *sst_dsp_new(struct device *dev,
+ 	struct sst_dsp_device *sst_dev, struct sst_pdata *pdata)
+ {
+@@ -484,6 +485,7 @@ void sst_dsp_free(struct sst_dsp *sst)
+ 	sst_dma_free(sst->dma);
+ }
+ EXPORT_SYMBOL_GPL(sst_dsp_free);
++#endif
+ 
+ /* Module information */
+ MODULE_AUTHOR("Liam Girdwood");
+diff --git a/sound/soc/intel/common/sst-dsp.h b/sound/soc/intel/common/sst-dsp.h
+index 1f45f18..0b84c71 100644
+--- a/sound/soc/intel/common/sst-dsp.h
++++ b/sound/soc/intel/common/sst-dsp.h
+@@ -216,10 +216,12 @@ struct sst_pdata {
+ 	void *dsp;
+ };
+ 
++#ifdef CONFIG_DW_DMAC_CORE
+ /* Initialization */
+ struct sst_dsp *sst_dsp_new(struct device *dev,
+ 	struct sst_dsp_device *sst_dev, struct sst_pdata *pdata);
+ void sst_dsp_free(struct sst_dsp *sst);
++#endif
+ 
+ /* SHIM Read / Write */
+ void sst_dsp_shim_write(struct sst_dsp *sst, u32 offset, u32 value);
+-- 
+2.1.4
