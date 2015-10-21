@@ -1,17 +1,17 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Oct 21
- (drivers/i2c/busses/i2c-designware-platdrv.c)
-Date: Wed, 21 Oct 2015 13:28:14 -0700
-Message-ID: <5627F55E.1010009@infradead.org>
+Subject: Re: linux-next: Tree for Oct 21 (regmap-spmi.c caused by
+ QCOM_SPMI_TEMP_ALARM)
+Date: Wed, 21 Oct 2015 13:54:22 -0700
+Message-ID: <5627FB7E.60300@infradead.org>
 References: <20151021171623.2d651735@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
 In-Reply-To: <20151021171623.2d651735@canb.auug.org.au>
-Sender: linux-i2c-owner@vger.kernel.org
+Sender: linux-pm-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, linux-i2c@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 On 10/20/15 23:16, Stephen Rothwell wrote:
@@ -23,17 +23,28 @@ On 10/20/15 23:16, Stephen Rothwell wrote:
 > Changes since 20151020:
 > 
 
-on i386 or x86_64:
+on x86_64:
 
-when CONFIG_PM_SLEEP is not enabled:
+warning: (QCOM_SPMI_TEMP_ALARM) selects REGMAP_SPMI which has unmet direct dependencies (SPMI)
 
-../drivers/i2c/busses/i2c-designware-platdrv.c:340:13: error: 'dw_i2c_plat_prepare' undeclared here (not in a function)
-  .prepare = dw_i2c_plat_prepare,
-             ^
-../drivers/i2c/busses/i2c-designware-platdrv.c:341:14: error: 'dw_i2c_plat_complete' undeclared here (not in a function)
-  .complete = dw_i2c_plat_complete,
-              ^
+drivers/built-in.o: In function `regmap_spmi_base_read':
+regmap-spmi.c:(.text+0x1bef59): undefined reference to `spmi_register_read'
+drivers/built-in.o: In function `regmap_spmi_base_gather_write':
+regmap-spmi.c:(.text+0x1befd3): undefined reference to `spmi_register_zero_write'
+regmap-spmi.c:(.text+0x1bf007): undefined reference to `spmi_register_write'
+drivers/built-in.o: In function `regmap_spmi_ext_read':
+regmap-spmi.c:(.text+0x1bf106): undefined reference to `spmi_ext_register_read'
+regmap-spmi.c:(.text+0x1bf14d): undefined reference to `spmi_ext_register_readl'
+drivers/built-in.o: In function `regmap_spmi_ext_gather_write':
+regmap-spmi.c:(.text+0x1bf1f6): undefined reference to `spmi_ext_register_write'
+regmap-spmi.c:(.text+0x1bf23d): undefined reference to `spmi_ext_register_writel'
 
+
+
+CONFIG_REGMAP_SPMI=y
+CONFIG_SPMI is not enabled.
+CONFIG_QCOM_SPMI_TEMP_ALARM=y
+CONFIG_COMPILE_TEST=y
 
 
 
