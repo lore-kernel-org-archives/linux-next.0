@@ -1,61 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Apply for adding my tree for linux-next
-Date: Sun, 1 Nov 2015 09:25:46 +1100
-Message-ID: <20151101092546.093cddfe@canb.auug.org.au>
-References: <20151022025150.GA16895@shlinux2>
+Subject: linux-next: manual merge of the mvebu tree with the arm-soc tree
+Date: Sun, 1 Nov 2015 10:35:55 +1100
+Message-ID: <20151101103555.2464c0ee@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55726 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46681 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750783AbbJaWZu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 31 Oct 2015 18:25:50 -0400
-In-Reply-To: <20151022025150.GA16895@shlinux2>
+	id S1751060AbbJaXgA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 31 Oct 2015 19:36:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Chen <peter.chen@freescale.com>, linux-next@vger.kernel.org
-Cc: Greg KH <greg@kroah.com>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>
 
-Hi Peter,
+Hi all,
 
-On Thu, 22 Oct 2015 10:51:51 +0800 Peter Chen <peter.chen@freescale.com> wrote:
->
-> Would you please help adding my tree for linux-next tree,
-> currently it is mainly for usb chipidea driver, later it
-> will include USB OTG stuff.
-> 
-> Tree:
-> git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/usb.git
-> 
-> Fix stuff 
-> Name: usb-chipidea-fixes
-> branch name: ci-for-usb-stable
-> 
-> Next stuff
-> Name: usb-chipidea-next
-> branch name: ci-for-usb-next
+Today's linux-next merge of the mvebu tree got a conflict in:
 
-Added from today.
+  arch/arm/mach-mvebu/pmsu.c
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+between commit:
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
+  9d2ea95a599a ("ARM: mvebu: add broken-idle option")
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+from the arm-soc tree and commit:
+
+  da6ee32a42c0 ("ARM: mvebu: add broken-idle option")
+
+from the mvebu tree.
+
+I fixed it up (looks like 2 version of the same thing (though different)
+so I just used the version from the arm-doc tree) and can carry the fix
+as necessary (no action is required).
 
 -- 
 Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
