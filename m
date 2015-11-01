@@ -1,83 +1,60 @@
 From: Oleg Nesterov <oleg@redhat.com>
 Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Sun, 1 Nov 2015 19:26:46 +0100
-Message-ID: <20151101182645.GA32642@redhat.com>
-References: <20151102031508.59636627@canb.auug.org.au>
+Date: Sun, 1 Nov 2015 19:37:55 +0100
+Message-ID: <20151101183754.GB32642@redhat.com>
+References: <20151102031508.59636627@canb.auug.org.au> <201511020011.5wu2fYbn%fengguang.wu@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:52175 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:57296 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752067AbbKARab (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2015 12:30:31 -0500
+	id S1752375AbbKARlj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 12:41:39 -0500
 Content-Disposition: inline
-In-Reply-To: <20151102031508.59636627@canb.auug.org.au>
+In-Reply-To: <201511020011.5wu2fYbn%fengguang.wu@intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markus Pargmann <mpa@pengutronix.de>, Jens Axboe <axboe@fb.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kbuild-all@01.org, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markus Pargmann <mpa@pengutronix.de>, Jens Axboe <axboe@fb.com>
 
-On 11/02, Stephen Rothwell wrote:
+On 11/02, kbuild test robot wrote:
 >
-> Hi Andrew,
+> Hi Stephen,
 >
-> After merging the akpm-current tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> [auto build test ERROR on v4.3-rc7 -- if it's inappropriate base, please suggest rules for selecting the more suitable base]
 >
-> drivers/block/nbd.c: In function 'nbd_thread_send':
-> drivers/block/nbd.c:592:3: error: implicit declaration of function 'dequeue_signal_lock' [-Werror=implicit-function-declaration]
->    dequeue_signal_lock(current, &current->blocked, &info);
->    ^
+> url:    https://github.com/0day-ci/linux/commits/Stephen-Rothwell/linux-next-build-failure-after-merge-of-the-akpm-current-tree/20151102-001657
+> config: i386-randconfig-x004-11010709 (attached as .config)
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
 >
-> Caused by commit
+> All errors (new ones prefixed by >>):
 >
->   ffcb8dc55a97 ("signal: turn dequeue_signal_lock() into kernel_dequeue_signal()")
+>    drivers/block/nbd.c: In function 'nbd_thread_send':
+> >> drivers/block/nbd.c:596:3: error: implicit declaration of function 'kernel_dequeue_signal' [-Werror=implicit-function-declaration]
+>       kernel_dequeue_signal(NULL);
+>       ^
+>    cc1: some warnings being treated as errors
 >
-> interacting with commit
+> vim +/kernel_dequeue_signal +596 drivers/block/nbd.c
 >
->   dcc909d90ccd ("nbd: Add locking for tasks")
->
-> from Linus' tree.
+>    590		spin_lock_irqsave(&nbd->tasks_lock, flags);
+>    591		nbd->task_send = NULL;
+>    592		spin_unlock_irqrestore(&nbd->tasks_lock, flags);
+>    593
+>    594		/* Clear maybe pending signals */
+>    595		if (signal_pending(current))
+>  > 596			kernel_dequeue_signal(NULL);
+>    597
+>    598		return 0;
+>    599	}
 
-Yes, thanks, this should be fixed by
+Yes, de90fc653be60b4cec1a4d40f0e82164ec79f077 ("linux-next: build failure
+after merge of the akpm-current tree") should be applied on top of -mm.
 
-	signal-turn-dequeue_signal_lock-into-kernel_dequeue_signal-fix.patch
+Hopefully this all was fixed by
+signal-turn-dequeue_signal_lock-into-kernel_dequeue_signal-fix.patch
+already in -mm.
 
-in -mm tree,
-
-> I added this merge fix patch:
-
-the same as the patch above, thanks.
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 2 Nov 2015 03:04:27 +1100
-> Subject: [PATCH] ndb: fix up for dequeue_signal_lock API change
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/block/nbd.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 5101fd2aca77..93b3f99b6865 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -587,10 +587,8 @@ static int nbd_thread_send(void *data)
->  	spin_unlock_irqrestore(&nbd->tasks_lock, flags);
->
->  	/* Clear maybe pending signals */
-> -	if (signal_pending(current)) {
-> -		siginfo_t info;
-> -		dequeue_signal_lock(current, &current->blocked, &info);
-> -	}
-> +	if (signal_pending(current))
-> +		kernel_dequeue_signal(NULL);
->
->  	return 0;
->  }
-> --
-> 2.6.1
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+Oleg.
