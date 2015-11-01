@@ -1,42 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the y2038 tree with the staging tree
-Date: Mon, 2 Nov 2015 01:44:49 +1100
-Message-ID: <20151102014449.5ae120ab@canb.auug.org.au>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: linux-next: build failure after merge of the iommu tree
+Date: Sun, 1 Nov 2015 16:14:58 +0100
+Message-ID: <20151101151457.GM27420@8bytes.org>
+References: <20151101224252.09e11a3c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44833 "EHLO ozlabs.org"
+Received: from 8bytes.org ([81.169.241.247]:49801 "EHLO theia.8bytes.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752500AbbKAOox (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2015 09:44:53 -0500
+	id S1751999AbbKAPPA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 10:15:00 -0500
+Content-Disposition: inline
+In-Reply-To: <20151101224252.09e11a3c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>, Tapasweni Pathak <tapaswenipathak@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>
 
-Hi Arnd,
+Hi Stephen,
 
-Today's linux-next merge of the y2038 tree got conflicts in:
+On Sun, Nov 01, 2015 at 10:42:52PM +1100, Stephen Rothwell wrote:
+> After merging the iommu tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/iommu/ipmmu-vmsa.c:24:27: fatal error: asm/dma-iommu.h: No such file or directory
+> 
+> Caused by commit
+> 
+>   bad78b13e305 ("iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency")
+> 
+> Only arm has the include file ...
+> 
+> I have used the iommu tree from next-20151022 for today.
 
-  drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c
-  drivers/staging/ft1000/ft1000-usb/ft1000_debug.c
-  drivers/staging/ft1000/ft1000-usb/ft1000_hw.c
-  drivers/staging/ft1000/ft1000.h
+Thanks, I reverted the broken commit and will push out an updated tree
+soon.
 
-between commit:
 
-  6512edec48b2 ("staging: ft1000: remove obsolete driver")
-
-from the staging tree and commit:
-
-  8b37bf430656 ("staging: ft1000: Replace timeval and time_t with time64_t")
-
-from the y2038 tree.
-
-I fixed it up (the former removed the files) and can carry the fix as
-necessary (no action is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+	Joerg
