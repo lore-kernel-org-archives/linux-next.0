@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the spi tree with the net-next tree
-Date: Sun, 1 Nov 2015 23:18:35 +1100
-Message-ID: <20151101231835.06ea249c@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the l2-mtd tree
+Date: Mon, 2 Nov 2015 00:35:53 +1100
+Message-ID: <20151102003553.75b8236d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52890 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34201 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752347AbbKAMSj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2015 07:18:39 -0500
+	id S1751270AbbKANf5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 08:35:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Greg KH <greg@kroah.com>, Brian Norris <computersforpeace@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris BREZILLON <boris.brezillon@free-electrons.com>, Eva Rachel Retuya <eraretuya@gmail.com>
 
-Hi Mark,
+Hi Greg,
 
-Today's linux-next merge of the spi tree got a conflict in:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  drivers/nfc/trf7970a.c
+  drivers/staging/mt29f_spinand/mt29f_spinand.c
 
 between commit:
 
-  3c39c1a54a26 ("NFC: trf7970a: Add OF match table")
+  45aaeff94719 ("mtd: nand: pass page number to ecc->write_xxx() methods")
 
-from the net-next tree and commit:
+from the l2-mtd tree and commits:
 
-  3821a065f567 ("spi: Drop owner assignment from spi_drivers")
+  74f63bd664b6 ("Staging: mt29f_spinand: Use preferred kernel types")
+  92fdd777976e ("Staging: mt29f_spinand: Indent to match open parenthesis")
 
-from the spi tree.
+from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,16 +39,22 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/nfc/trf7970a.c
-index 123aa981c9d8,4036788c78b6..000000000000
---- a/drivers/nfc/trf7970a.c
-+++ b/drivers/nfc/trf7970a.c
-@@@ -2229,8 -2223,6 +2229,7 @@@ static struct spi_driver trf7970a_spi_d
-  	.id_table	= trf7970a_id_table,
-  	.driver		= {
-  		.name	= "trf7970a",
- +		.of_match_table = of_match_ptr(trf7970a_of_match),
-- 		.owner	= THIS_MODULE,
-  		.pm	= &trf7970a_pm_ops,
-  	},
-  };
+diff --cc drivers/staging/mt29f_spinand/mt29f_spinand.c
+index b2e6237ae913,20a3f8eeb264..000000000000
+--- a/drivers/staging/mt29f_spinand/mt29f_spinand.c
++++ b/drivers/staging/mt29f_spinand/mt29f_spinand.c
+@@@ -612,10 -612,10 +612,10 @@@ static int spinand_erase_block(struct s
+  
+  #ifdef CONFIG_MTD_SPINAND_ONDIEECC
+  static int spinand_write_page_hwecc(struct mtd_info *mtd,
+- 		struct nand_chip *chip, const uint8_t *buf, int oob_required,
+- 		int page)
++ 				    struct nand_chip *chip,
+ -				    const u8 *buf, int oob_required)
+++				    const u8 *buf, int oob_required, int page)
+  {
+- 	const uint8_t *p = buf;
++ 	const u8 *p = buf;
+  	int eccsize = chip->ecc.size;
+  	int eccsteps = chip->ecc.steps;
+  
