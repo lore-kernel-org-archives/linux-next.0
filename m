@@ -1,34 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the iommu tree
-Date: Sun, 1 Nov 2015 22:42:52 +1100
-Message-ID: <20151101224252.09e11a3c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mailbox tree
+Date: Sun, 1 Nov 2015 23:12:53 +1100
+Message-ID: <20151101231253.64beff47@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57414 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43799 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751453AbbKALm4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2015 06:42:56 -0500
+	id S1752347AbbKAMM6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 07:12:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>
+To: Jassi Brar <jaswinder.singh@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 
-Hi Joerg,
+Hi Jassi,
 
-After merging the iommu tree, today's linux-next build (x86_64
+After merging the mailbox tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/iommu/ipmmu-vmsa.c:24:27: fatal error: asm/dma-iommu.h: No such file or directory
+drivers/mailbox/mailbox-test.c: In function 'mbox_test_receive_message':
+drivers/mailbox/mailbox-test.c:226:11: error: implicit declaration of function '__io_virt' [-Werror=implicit-function-declaration]
+           __io_virt(tdev->mmio), MBOX_MAX_MSG_LEN, true);
+           ^
 
 Caused by commit
 
-  bad78b13e305 ("iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency")
+  a133f8b65d59 ("mailbox: mailbox-test: Correctly repair Sparse warnings")
 
-Only arm has the include file ...
-
-I have used the iommu tree from next-20151022 for today.
+I have used the mailbox tree from next-20151022 for today.
 
 -- 
 Cheers,
