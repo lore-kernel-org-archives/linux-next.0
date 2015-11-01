@@ -1,48 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 2 Nov 2015 08:48:11 +1100
-Message-ID: <20151102084811.52bf5f29@canb.auug.org.au>
-References: <20151102031508.59636627@canb.auug.org.au>
-	<20151101182645.GA32642@redhat.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ block tree
+Date: Mon, 2 Nov 2015 08:51:12 +1100
+Message-ID: <20151102085112.0505410a@canb.auug.org.au>
+References: <20151102025125.0f335513@canb.auug.org.au>
+	<20151101183853.GB22902@techsingularity.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151101182645.GA32642@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Markus Pargmann <mpa@pengutronix.de>, Jens Axboe <axboe@fb.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40863 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752672AbbKAVvR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 16:51:17 -0500
+In-Reply-To: <20151101183853.GB22902@techsingularity.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
 
-Hi Oleg,
+Hi Mel,
 
-On Sun, 1 Nov 2015 19:26:46 +0100 Oleg Nesterov <oleg@redhat.com> wrote:
+On Sun, 1 Nov 2015 18:38:53 +0000 Mel Gorman <mgorman@techsingularity.net> wrote:
 >
-> On 11/02, Stephen Rothwell wrote:
-> >
-> > After merging the akpm-current tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >
-> > drivers/block/nbd.c: In function 'nbd_thread_send':
-> > drivers/block/nbd.c:592:3: error: implicit declaration of function 'dequeue_signal_lock' [-Werror=implicit-function-declaration]
-> >    dequeue_signal_lock(current, &current->blocked, &info);
-> >    ^
-> >
-> > Caused by commit
-> >
-> >   ffcb8dc55a97 ("signal: turn dequeue_signal_lock() into kernel_dequeue_signal()")
-> >
-> > interacting with commit
-> >
-> >   dcc909d90ccd ("nbd: Add locking for tasks")
-> >
-> > from Linus' tree.  
+> On Mon, Nov 02, 2015 at 02:51:25AM +1100, Stephen Rothwell wrote:
+> > 
+> > @@ -2038,7 +2038,7 @@ void generic_make_request(struct bio *bio)
+> >  	do {
+> >  		struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+> >  
+> > -		if (likely(blk_queue_enter(q, __GFP_WAIT) == 0)) {
+> > +		if (likely(blk_queue_enter(q, __GFP_RECLAIM) == 0)) {
+> >  
+> >  			q->make_request_fn(q, bio);
 > 
-> Yes, thanks, this should be fixed by
-> 
-> 	signal-turn-dequeue_signal_lock-into-kernel_dequeue_signal-fix.patch
+> ___GFP_DIRECT_RECLAIM is more appropriate than __GFP_RECLAIM in the
+> second hunk.
 
-But not published yet ... but thanks for the confirmation.
+OK, I have done that for today, thanks.
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
