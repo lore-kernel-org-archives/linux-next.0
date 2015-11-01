@@ -1,40 +1,59 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: linux-next: build failure after merge of the iommu tree
-Date: Sun, 1 Nov 2015 16:14:58 +0100
-Message-ID: <20151101151457.GM27420@8bytes.org>
-References: <20151101224252.09e11a3c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Mon, 2 Nov 2015 02:23:07 +1100
+Message-ID: <20151102022307.774bde2c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 8bytes.org ([81.169.241.247]:49801 "EHLO theia.8bytes.org"
+Received: from ozlabs.org ([103.22.144.67]:57083 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751999AbbKAPPA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2015 10:15:00 -0500
-Content-Disposition: inline
-In-Reply-To: <20151101224252.09e11a3c@canb.auug.org.au>
+	id S1751999AbbKAPXL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 10:23:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm+renesas@opensource.se>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ley Foon Tan <lftan@altera.com>
 
-Hi Stephen,
+Hi Bjorn,
 
-On Sun, Nov 01, 2015 at 10:42:52PM +1100, Stephen Rothwell wrote:
-> After merging the iommu tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/iommu/ipmmu-vmsa.c:24:27: fatal error: asm/dma-iommu.h: No such file or directory
-> 
-> Caused by commit
-> 
->   bad78b13e305 ("iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency")
-> 
-> Only arm has the include file ...
-> 
-> I have used the iommu tree from next-20151022 for today.
+After merging the pci tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Thanks, I reverted the broken commit and will push out an updated tree
-soon.
+In file included from include/linux/kvm_host.h:20:0,
+                 from arch/powerpc/kernel/asm-offsets.c:54:
+include/linux/msi.h:174:21: fatal error: asm/msi.h: No such file or directory
 
+Caused by commit
 
-	Joerg
+  f19eafec930f ("PCI: altera: Add Altera PCIe MSI driver")
+
+I have disabled that driver for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 Nov 2015 02:12:54 +1100
+Subject: [PATCH] PCI: altera: disable MSI driver for now
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/pci/host/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+index 2af0571356e8..7a31ebbc4379 100644
+--- a/drivers/pci/host/Kconfig
++++ b/drivers/pci/host/Kconfig
+@@ -158,6 +158,7 @@ config PCIE_ALTERA
+ config PCIE_ALTERA_MSI
+ 	bool "Altera PCIe MSI feature"
+ 	depends on PCI_MSI
++	depends on BROKEN
+ 	select PCI_MSI_IRQ_DOMAIN
+ 	help
+ 	  Say Y here if you want PCIe MSI support for the Altera FPGA.
+-- 
+2.6.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
