@@ -1,64 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Sun, 1 Nov 2015 17:57:18 +1100
-Message-ID: <20151101175718.130f33f2@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma tree with Linus' tree
+Date: Sun, 1 Nov 2015 18:48:15 +1100
+Message-ID: <20151101184815.1c854867@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Marc Zyngier <Marc.Zyngier@arm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43806 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751047AbbKAHsT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 02:48:19 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Doug Ledford <dledford@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sagi Grimberg <sagig@mellanox.com>, Steve Wise <swise@opengridcomputing.com>, "J. Bruce Fields" <bfields@redhat.com>
 
-Hi Rafael,
+Hi Doug,
 
-After merging the pm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the rdma tree got a conflict in:
 
-arch/arm/mach-mediatek/mediatek.c: In function 'mediatek_timer_init':
-arch/arm/mach-mediatek/mediatek.c:43:2: error: implicit declaration of function 'clocksource_of_init' [-Werror=implicit-function-declaration]
-  clocksource_of_init();
-  ^
+  net/sunrpc/xprtrdma/svc_rdma_recvfrom.c
 
-Caused by commit
+between commit:
 
-  3722ed2380ad ("clocksource: cosmetic: Drop OF 'dependency' from symbols")
+  c91aed989694 ("svcrdma: handle rdma read with a non-zero initial page offset")
 
-interacting with commit
+from Linus' tree and commit:
 
-  9821e545c5e0 ("ARM: mediatek: enable gpt6 on boot up to make arch timer working")
+  412a15c0fe53 ("svcrdma: Port to new memory registration API")
 
-from the arm-soc tree.
+from the rdma tree.
 
-I applied the following merge fix patch for today (someone should tell
-Linus when theese trees are merged):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sun, 1 Nov 2015 17:52:26 +1100
-Subject: [PATCH] ARM: mediatek: fixup for clocksource_of_init API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/mach-mediatek/mediatek.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-mediatek/mediatek.c b/arch/arm/mach-mediatek/mediatek.c
-index 19dc738c1abc..c88a47a3dc37 100644
---- a/arch/arm/mach-mediatek/mediatek.c
-+++ b/arch/arm/mach-mediatek/mediatek.c
-@@ -40,7 +40,7 @@ static void __init mediatek_timer_init(void)
- 	}
- 
- 	of_clk_init(NULL);
--	clocksource_of_init();
-+	clocksource_probe();
- };
- 
- static const char * const mediatek_board_dt_compat[] = {
--- 
-2.6.1
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/sunrpc/xprtrdma/svc_rdma_recvfrom.c
+index f0c3ff67ca98,cb0991345816..000000000000
+--- a/net/sunrpc/xprtrdma/svc_rdma_recvfrom.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_recvfrom.c
+@@@ -235,17 -234,14 +235,14 @@@ int rdma_read_chunk_frmr(struct svcxprt
+  
+  	ctxt->direction = DMA_FROM_DEVICE;
+  	ctxt->frmr = frmr;
+- 	pages_needed = min_t(int, pages_needed, xprt->sc_frmr_pg_list_len);
+- 	read = min_t(int, (pages_needed << PAGE_SHIFT) - *page_offset,
+- 		     rs_length);
++ 	nents = min_t(unsigned int, nents, xprt->sc_frmr_pg_list_len);
+ -	read = min_t(int, nents << PAGE_SHIFT, rs_length);
+++	read = min_t(int, (nents << PAGE_SHIFT) - *page_offset, rs_length);
+  
+- 	frmr->kva = page_address(rqstp->rq_arg.pages[pg_no]);
+  	frmr->direction = DMA_FROM_DEVICE;
+  	frmr->access_flags = (IB_ACCESS_LOCAL_WRITE|IB_ACCESS_REMOTE_WRITE);
+- 	frmr->map_len = pages_needed << PAGE_SHIFT;
+- 	frmr->page_list_len = pages_needed;
++ 	frmr->sg_nents = nents;
+  
+- 	for (pno = 0; pno < pages_needed; pno++) {
++ 	for (pno = 0; pno < nents; pno++) {
+  		int len = min_t(int, rs_length, PAGE_SIZE - pg_off);
+  
+  		head->arg.pages[pg_no] = rqstp->rq_arg.pages[pg_no];
