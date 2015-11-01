@@ -1,59 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree
-Date: Mon, 2 Nov 2015 02:23:07 +1100
-Message-ID: <20151102022307.774bde2c@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the arc tree
+Date: Mon, 2 Nov 2015 02:30:03 +1100
+Message-ID: <20151102023003.4495b39a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57083 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49282 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751999AbbKAPXL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2015 10:23:11 -0500
+	id S1751123AbbKAPaH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2015 10:30:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ley Foon Tan <lftan@altera.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-Hi Bjorn,
+Hi Andrew,
 
-After merging the pci tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-In file included from include/linux/kvm_host.h:20:0,
-                 from arch/powerpc/kernel/asm-offsets.c:54:
-include/linux/msi.h:174:21: fatal error: asm/msi.h: No such file or directory
+  arch/arc/mm/cache.c
 
-Caused by commit
+between commit:
 
-  f19eafec930f ("PCI: altera: Add Altera PCIe MSI driver")
+  336e2136e135 ("ARC: mm: preps ahead of HIGHMEM support")
 
-I have disabled that driver for today:
+from the arc tree and commit:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 2 Nov 2015 02:12:54 +1100
-Subject: [PATCH] PCI: altera: disable MSI driver for now
+  c386768017da ("mm: differentiate page_mapped() from page_mapcount() for compound pages")
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/pci/host/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+from the akpm-current tree.
 
-diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-index 2af0571356e8..7a31ebbc4379 100644
---- a/drivers/pci/host/Kconfig
-+++ b/drivers/pci/host/Kconfig
-@@ -158,6 +158,7 @@ config PCIE_ALTERA
- config PCIE_ALTERA_MSI
- 	bool "Altera PCIe MSI feature"
- 	depends on PCI_MSI
-+	depends on BROKEN
- 	select PCI_MSI_IRQ_DOMAIN
- 	help
- 	  Say Y here if you want PCIe MSI support for the Altera FPGA.
--- 
-2.6.1
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arc/mm/cache.c
+index ff7ff6cbb811,875ac2e918c5..000000000000
+--- a/arch/arc/mm/cache.c
++++ b/arch/arc/mm/cache.c
+@@@ -617,10 -582,10 +617,10 @@@ void flush_dcache_page(struct page *pag
+  	 */
+  	if (!mapping_mapped(mapping)) {
+  		clear_bit(PG_dc_clean, &page->flags);
+- 	} else if (page_mapped(page)) {
++ 	} else if (page_mapcount(page)) {
+  
+  		/* kernel reading from page with U-mapping */
+ -		unsigned long paddr = (unsigned long)page_address(page);
+ +		phys_addr_t paddr = (unsigned long)page_address(page);
+  		unsigned long vaddr = page->index << PAGE_CACHE_SHIFT;
+  
+  		if (addr_not_cache_congruent(paddr, vaddr))
+@@@ -853,12 -818,9 +853,12 @@@ void copy_user_highpage(struct page *to
+  	 *
+  	 * Note that while @u_vaddr refers to DST page's userspace vaddr, it is
+  	 * equally valid for SRC page as well
+ +	 *
+ +	 * For !VIPT cache, all of this gets compiled out as
+ +	 * addr_not_cache_congruent() is 0
+  	 */
+- 	if (page_mapped(from) && addr_not_cache_congruent(kfrom, u_vaddr)) {
++ 	if (page_mapcount(from) && addr_not_cache_congruent(kfrom, u_vaddr)) {
+ -		__flush_dcache_page(kfrom, u_vaddr);
+ +		__flush_dcache_page((unsigned long)kfrom, u_vaddr);
+  		clean_src_k_mappings = 1;
+  	}
+  
