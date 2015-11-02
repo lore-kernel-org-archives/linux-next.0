@@ -1,103 +1,81 @@
-From: Thiago Macieira <thiago.macieira@intel.com>
-Subject: Re: linux-next: Tree for Nov 1 (xconfig problem)
-Date: Mon, 02 Nov 2015 11:58:27 -0500
-Message-ID: <1734407.lgNIi16vzN@tjmaciei-mobl4>
-References: <20151102035340.17310681@canb.auug.org.au> <2030804.WKiRYyHexJ@tjmaciei-mobl4> <563792D1.2040301@infradead.org>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Mon, 2 Nov 2015 12:12:17 -0600
+Message-ID: <CAErSpo4AaRQ8QCUrdu7JdAP5_Vz5mKfX5K2ujeE8H+Oo_8K17w@mail.gmail.com>
+References: <20151102022307.774bde2c@canb.auug.org.au> <E7E66AD1AD65064486AD57C361DF091C05C7B391@PG-ITEXCH01.altera.priv.altera.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="nextPart1759666.Y5EAeU57h2"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:64199 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754175AbbKBQ62 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Nov 2015 11:58:28 -0500
-In-Reply-To: <563792D1.2040301@infradead.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:36317 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754081AbbKBSMi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Nov 2015 13:12:38 -0500
+Received: by wicfx6 with SMTP id fx6so55159125wic.1
+        for <linux-next@vger.kernel.org>; Mon, 02 Nov 2015 10:12:37 -0800 (PST)
+In-Reply-To: <E7E66AD1AD65064486AD57C361DF091C05C7B391@PG-ITEXCH01.altera.priv.altera.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Boris Barbulovski <bbarbulovski@gmail.com>
+To: Ley Foon Tan <lftan@altera.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
+On Sun, Nov 1, 2015 at 6:00 PM, Ley Foon Tan <lftan@altera.com> wrote:
+> On Isn, 2015-11-02 at 02:23 +1100, Stephen Rothwell wrote:
+>> Hi Bjorn,
+>>
+>> After merging the pci tree, today's linux-next build (powerpc
+>> allyesconfig) failed like this:
+>>
+>> In file included from include/linux/kvm_host.h:20:0,
+>>                  from arch/powerpc/kernel/asm-offsets.c:54:
+>> include/linux/msi.h:174:21: fatal error: asm/msi.h: No such file or directory
+>>
+>> Caused by commit
+>>
+>>   f19eafec930f ("PCI: altera: Add Altera PCIe MSI driver")
+>>
+>> I have disabled that driver for today:
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Mon, 2 Nov 2015 02:12:54 +1100
+>> Subject: [PATCH] PCI: altera: disable MSI driver for now
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>>  drivers/pci/host/Kconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+>> index 2af0571356e8..7a31ebbc4379 100644
+>> --- a/drivers/pci/host/Kconfig
+>> +++ b/drivers/pci/host/Kconfig
+>> @@ -158,6 +158,7 @@ config PCIE_ALTERA
+>>  config PCIE_ALTERA_MSI
+>>       bool "Altera PCIe MSI feature"
+>>       depends on PCI_MSI
+>> +     depends on BROKEN
+>>       select PCI_MSI_IRQ_DOMAIN
+>>       help
+>>         Say Y here if you want PCIe MSI support for the Altera FPGA.
+>> --
+>> 2.6.1
+>>
+> Hi Bjorn
+>
+> This driver depends on the asm/msi.h and not all architectures include
+> the asm/msi.h.
+> We can fix this by adding "depends on ARM || NIOS2" to Kconfig, same as
+> altera pcie driver. What do you think?
 
---nextPart1759666.Y5EAeU57h2
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+I don't think your driver depends on asm/msi.h because ARM doesn't
+have asm/msi.h either.
 
-On Monday 02 November 2015 08:44:01 Randy Dunlap wrote:
-> > Randy, we need a backtrace. The problem is on the function that called
-> > first(). Can you make sure the crash generates a core dump, then get the
-> > bt
-> > from that?
-> 
-> ASSERT: "!isEmpty()" in file /usr/include/QtCore/qlist.h, line 282
-> ../scripts/kconfig/Makefile:22: recipe for target 'xconfig' failed
-> make[2]: *** [xconfig] Aborted (core dumped)
-[cut]
-> #4  0x00007f858c3eec44 in qFatal(char const*, ...) ()
->     at /usr/lib64/libQtCore.so.4
-> #5  0x00007f858c3eec8a in  () at /usr/lib64/libQtCore.so.4
-> #6  0x00000000004206cc in ConfigList::updateSelection() ()
+I think the best thing is to do this:
 
-Thanks, Randy.
+config PCIE_ALTERA_MSI
+        bool "Altera PCIe MSI feature"
+        depends on PCIE_ALTERA && PCI_MSI
 
-This seems to be it:
+That way we don't have to repeat the constraints from PCIE_ALTERA.
+This is the same strategy used by PCI_XGENE & PCI_XGENE_MSI.
 
-        if (selectedItems().count() == 0)
-                return;
-
-        ConfigItem* item = (ConfigItem*)selectedItems().first();
-
-Which means this shouldn't be happening. I don't know how the list could be 
-non-empty in one call and empty in the next.  It's wasteful to call 
-selectedItems() twice (it's not a cheap function), but it shouldn't cause this 
-issue.
-
-We can easily just cache the result and this is what the attached patch does, 
-but given that this error makes no sense to me, I cannot guarantee that you 
-don't have another problem elsewhere.
-
-Boris, do you have another idea?
--- 
-Thiago Macieira - thiago.macieira (AT) intel.com
-  Software Architect - Intel Open Source Technology Center
-
---nextPart1759666.Y5EAeU57h2
-Content-Disposition: attachment; filename="0001-Cache-the-result-of-QTreeWidget-selectedItems.patch"
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/x-patch; charset="UTF-8"; name="0001-Cache-the-result-of-QTreeWidget-selectedItems.patch"
-
->From 32426c8282d0ec48f20000bc8e9a9c89c3060c8d Mon Sep 17 00:00:00 2001
-From: Thiago Macieira <thiago.macieira@intel.com>
-Date: Mon, 2 Nov 2015 11:55:56 -0500
-Subject: [PATCH 1/1] Cache the result of QTreeWidget::selectedItems()
-
-It's not a cheap function, so let's not call it twice.
-
-Signed-off-by: Thiago Macieira <thiago.macieira@intel.com>
----
- scripts/kconfig/qconf.cc | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-index 91b7e6f..920a252 100644
---- a/scripts/kconfig/qconf.cc
-+++ b/scripts/kconfig/qconf.cc
-@@ -400,10 +400,11 @@ void ConfigList::updateSelection(void)
- 	struct menu *menu;
- 	enum prop_type type;
- 
--	if (selectedItems().count() == 0)
-+	QList<QTreeWidgetItem *> items = selectedItems();
-+	if (items.count() == 0)
- 		return;
- 
--	ConfigItem* item = (ConfigItem*)selectedItems().first();
-+	ConfigItem* item = (ConfigItem*)items.first();
- 	if (!item)
- 		return;
- 
--- 
-2.6.2
-
-
---nextPart1759666.Y5EAeU57h2--
+Bjorn
