@@ -1,44 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- block tree
-Date: Mon, 2 Nov 2015 08:51:12 +1100
-Message-ID: <20151102085112.0505410a@canb.auug.org.au>
-References: <20151102025125.0f335513@canb.auug.org.au>
-	<20151101183853.GB22902@techsingularity.net>
+From: Ley Foon Tan <lftan@altera.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Mon, 2 Nov 2015 00:00:19 +0000
+Message-ID: <E7E66AD1AD65064486AD57C361DF091C05C7B391@PG-ITEXCH01.altera.priv.altera.com>
+References: <20151102022307.774bde2c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40863 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752672AbbKAVvR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2015 16:51:17 -0500
-In-Reply-To: <20151101183853.GB22902@techsingularity.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151102022307.774bde2c@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mel,
-
-On Sun, 1 Nov 2015 18:38:53 +0000 Mel Gorman <mgorman@techsingularity.net> wrote:
->
-> On Mon, Nov 02, 2015 at 02:51:25AM +1100, Stephen Rothwell wrote:
-> > 
-> > @@ -2038,7 +2038,7 @@ void generic_make_request(struct bio *bio)
-> >  	do {
-> >  		struct request_queue *q = bdev_get_queue(bio->bi_bdev);
-> >  
-> > -		if (likely(blk_queue_enter(q, __GFP_WAIT) == 0)) {
-> > +		if (likely(blk_queue_enter(q, __GFP_RECLAIM) == 0)) {
-> >  
-> >  			q->make_request_fn(q, bio);
-> 
-> ___GFP_DIRECT_RECLAIM is more appropriate than __GFP_RECLAIM in the
-> second hunk.
-
-OK, I have done that for today, thanks.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+T24gSXNuLCAyMDE1LTExLTAyIGF0IDAyOjIzICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Og0KPiBIaSBCam9ybiwNCj4NCj4gQWZ0ZXIgbWVyZ2luZyB0aGUgcGNpIHRyZWUsIHRvZGF5J3Mg
+bGludXgtbmV4dCBidWlsZCAocG93ZXJwYw0KPiBhbGx5ZXNjb25maWcpIGZhaWxlZCBsaWtlIHRo
+aXM6DQo+DQo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2xpbnV4L2t2bV9ob3N0Lmg6
+MjA6MCwNCj4gICAgICAgICAgICAgICAgICBmcm9tIGFyY2gvcG93ZXJwYy9rZXJuZWwvYXNtLW9m
+ZnNldHMuYzo1NDoNCj4gaW5jbHVkZS9saW51eC9tc2kuaDoxNzQ6MjE6IGZhdGFsIGVycm9yOiBh
+c20vbXNpLmg6IE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkNCj4NCj4gQ2F1c2VkIGJ5IGNvbW1p
+dA0KPg0KPiAgIGYxOWVhZmVjOTMwZiAoIlBDSTogYWx0ZXJhOiBBZGQgQWx0ZXJhIFBDSWUgTVNJ
+IGRyaXZlciIpDQo+DQo+IEkgaGF2ZSBkaXNhYmxlZCB0aGF0IGRyaXZlciBmb3IgdG9kYXk6DQo+
+DQo+IEZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pg0KPiBEYXRl
+OiBNb24sIDIgTm92IDIwMTUgMDI6MTI6NTQgKzExMDANCj4gU3ViamVjdDogW1BBVENIXSBQQ0k6
+IGFsdGVyYTogZGlzYWJsZSBNU0kgZHJpdmVyIGZvciBub3cNCj4NCj4gU2lnbmVkLW9mZi1ieTog
+U3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQo+IC0tLQ0KPiAgZHJpdmVy
+cy9wY2kvaG9zdC9LY29uZmlnIHwgMSArDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
+KykNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2hvc3QvS2NvbmZpZyBiL2RyaXZlcnMv
+cGNpL2hvc3QvS2NvbmZpZw0KPiBpbmRleCAyYWYwNTcxMzU2ZTguLjdhMzFlYmJjNDM3OSAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy9wY2kvaG9zdC9LY29uZmlnDQo+ICsrKyBiL2RyaXZlcnMvcGNp
+L2hvc3QvS2NvbmZpZw0KPiBAQCAtMTU4LDYgKzE1OCw3IEBAIGNvbmZpZyBQQ0lFX0FMVEVSQQ0K
+PiAgY29uZmlnIFBDSUVfQUxURVJBX01TSQ0KPiAgICAgICBib29sICJBbHRlcmEgUENJZSBNU0kg
+ZmVhdHVyZSINCj4gICAgICAgZGVwZW5kcyBvbiBQQ0lfTVNJDQo+ICsgICAgIGRlcGVuZHMgb24g
+QlJPS0VODQo+ICAgICAgIHNlbGVjdCBQQ0lfTVNJX0lSUV9ET01BSU4NCj4gICAgICAgaGVscA0K
+PiAgICAgICAgIFNheSBZIGhlcmUgaWYgeW91IHdhbnQgUENJZSBNU0kgc3VwcG9ydCBmb3IgdGhl
+IEFsdGVyYSBGUEdBLg0KPiAtLQ0KPiAyLjYuMQ0KPg0KSGkgQmpvcm4NCg0KVGhpcyBkcml2ZXIg
+ZGVwZW5kcyBvbiB0aGUgYXNtL21zaS5oIGFuZCBub3QgYWxsIGFyY2hpdGVjdHVyZXMgaW5jbHVk
+ZQ0KdGhlIGFzbS9tc2kuaC4NCldlIGNhbiBmaXggdGhpcyBieSBhZGRpbmcgImRlcGVuZHMgb24g
+QVJNIHx8IE5JT1MyIiB0byBLY29uZmlnLCBzYW1lIGFzDQphbHRlcmEgcGNpZSBkcml2ZXIuIFdo
+YXQgZG8geW91IHRoaW5rPw0KDQpUaGFua3MuDQoNClJlZ2FyZHMNCkxleSBGb29uDQoNCg0KX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCg0KQ29uZmlkZW50aWFsaXR5IE5vdGljZS4N
+ClRoaXMgbWVzc2FnZSBtYXkgY29udGFpbiBpbmZvcm1hdGlvbiB0aGF0IGlzIGNvbmZpZGVudGlh
+bCBvciBvdGhlcndpc2UgcHJvdGVjdGVkIGZyb20gZGlzY2xvc3VyZS4gSWYgeW91IGFyZSBub3Qg
+dGhlIGludGVuZGVkIHJlY2lwaWVudCwgeW91IGFyZSBoZXJlYnkgbm90aWZpZWQgdGhhdCBhbnkg
+dXNlLCBkaXNjbG9zdXJlLCBkaXNzZW1pbmF0aW9uLCBkaXN0cmlidXRpb24sIG9yIGNvcHlpbmcg
+b2YgdGhpcyBtZXNzYWdlLCBvciBhbnkgYXR0YWNobWVudHMsIGlzIHN0cmljdGx5IHByb2hpYml0
+ZWQuIElmIHlvdSBoYXZlIHJlY2VpdmVkIHRoaXMgbWVzc2FnZSBpbiBlcnJvciwgcGxlYXNlIGFk
+dmlzZSB0aGUgc2VuZGVyIGJ5IHJlcGx5IGUtbWFpbCwgYW5kIGRlbGV0ZSB0aGUgbWVzc2FnZSBh
+bmQgYW55IGF0dGFjaG1lbnRzLiBUaGFuayB5b3UuDQo=
