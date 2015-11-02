@@ -1,43 +1,29 @@
-From: Thiago Macieira <thiago.macieira@intel.com>
-Subject: Re: linux-next: Tree for Nov 1 (xconfig problem)
-Date: Mon, 02 Nov 2015 08:51:40 -0500
-Message-ID: <2030804.WKiRYyHexJ@tjmaciei-mobl4>
-References: <20151102035340.17310681@canb.auug.org.au> <5636D465.4060104@infradead.org> <56376784.3030804@suse.cz>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for Nov 2
+Date: Mon, 2 Nov 2015 09:33:54 -0500
+Message-ID: <20151102093354.3fd39d56@gandalf.local.home>
+References: <20151102154017.6817486c@canb.auug.org.au>
+	<20151102055816.GA434@swordfish>
+	<20151102173023.52237c7f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <56376784.3030804@suse.cz>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Boris Barbulovski <bbarbulovski@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151102173023.52237c7f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Monday 02 November 2015 14:39:16 Michal Marek wrote:
-> On 2015-11-02 04:11, Randy Dunlap wrote:
-> > On 11/01/15 08:53, Stephen Rothwell wrote:
-> >> Hi all,
-> >> 
-> >> I start again a day early, and this is how you all repay me? ;-)
-> > 
-> >> Changes since 20151022:
-> > on x86_64:
-> > 
-> > 'make xconfig' dies a quick death when I try to use it:
-> > 
-> > linux-next-20151101> ASSERT: "!isEmpty()" in file
-> > /usr/include/QtCore/qlist.h, line 282
-> Added Boris and Thiago to Cc.
+On Mon, 2 Nov 2015 17:30:23 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+
+> So I guess I need that (or something similar) in linux-next until these
+> trees are merged.
 > 
-> Are you using Qt4 or Qt5? An
 
-Given the line number, it's a Qt 4.
+Yeah, the fixup looks fine to me. It will be something that Linus will
+need to do himself when he hits the conflict too.
 
-Randy, we need a backtrace. The problem is on the function that called 
-first(). Can you make sure the crash generates a core dump, then get the bt 
-from that?
-
--- 
-Thiago Macieira - thiago.macieira (AT) intel.com
-  Software Architect - Intel Open Source Technology Center
-
+-- Steve
