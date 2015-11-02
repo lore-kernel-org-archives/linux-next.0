@@ -1,81 +1,62 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Mon, 2 Nov 2015 12:12:17 -0600
-Message-ID: <CAErSpo4AaRQ8QCUrdu7JdAP5_Vz5mKfX5K2ujeE8H+Oo_8K17w@mail.gmail.com>
-References: <20151102022307.774bde2c@canb.auug.org.au> <E7E66AD1AD65064486AD57C361DF091C05C7B391@PG-ITEXCH01.altera.priv.altera.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Nov 1 (xconfig problem)
+Date: Mon, 2 Nov 2015 10:48:00 -0800
+Message-ID: <5637AFE0.6060001@infradead.org>
+References: <20151102035340.17310681@canb.auug.org.au>
+ <2030804.WKiRYyHexJ@tjmaciei-mobl4> <563792D1.2040301@infradead.org>
+ <1734407.lgNIi16vzN@tjmaciei-mobl4>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:36317 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754081AbbKBSMi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Nov 2015 13:12:38 -0500
-Received: by wicfx6 with SMTP id fx6so55159125wic.1
-        for <linux-next@vger.kernel.org>; Mon, 02 Nov 2015 10:12:37 -0800 (PST)
-In-Reply-To: <E7E66AD1AD65064486AD57C361DF091C05C7B391@PG-ITEXCH01.altera.priv.altera.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ley Foon Tan <lftan@altera.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <1734407.lgNIi16vzN@tjmaciei-mobl4>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Thiago Macieira <thiago.macieira@intel.com>
+Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Boris Barbulovski <bbarbulovski@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Nov 1, 2015 at 6:00 PM, Ley Foon Tan <lftan@altera.com> wrote:
-> On Isn, 2015-11-02 at 02:23 +1100, Stephen Rothwell wrote:
->> Hi Bjorn,
+On 11/02/15 08:58, Thiago Macieira wrote:
+> On Monday 02 November 2015 08:44:01 Randy Dunlap wrote:
+>>> Randy, we need a backtrace. The problem is on the function that called
+>>> first(). Can you make sure the crash generates a core dump, then get the
+>>> bt
+>>> from that?
 >>
->> After merging the pci tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->>
->> In file included from include/linux/kvm_host.h:20:0,
->>                  from arch/powerpc/kernel/asm-offsets.c:54:
->> include/linux/msi.h:174:21: fatal error: asm/msi.h: No such file or directory
->>
->> Caused by commit
->>
->>   f19eafec930f ("PCI: altera: Add Altera PCIe MSI driver")
->>
->> I have disabled that driver for today:
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Mon, 2 Nov 2015 02:12:54 +1100
->> Subject: [PATCH] PCI: altera: disable MSI driver for now
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  drivers/pci/host/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
->> index 2af0571356e8..7a31ebbc4379 100644
->> --- a/drivers/pci/host/Kconfig
->> +++ b/drivers/pci/host/Kconfig
->> @@ -158,6 +158,7 @@ config PCIE_ALTERA
->>  config PCIE_ALTERA_MSI
->>       bool "Altera PCIe MSI feature"
->>       depends on PCI_MSI
->> +     depends on BROKEN
->>       select PCI_MSI_IRQ_DOMAIN
->>       help
->>         Say Y here if you want PCIe MSI support for the Altera FPGA.
->> --
->> 2.6.1
->>
-> Hi Bjorn
->
-> This driver depends on the asm/msi.h and not all architectures include
-> the asm/msi.h.
-> We can fix this by adding "depends on ARM || NIOS2" to Kconfig, same as
-> altera pcie driver. What do you think?
+>> ASSERT: "!isEmpty()" in file /usr/include/QtCore/qlist.h, line 282
+>> ../scripts/kconfig/Makefile:22: recipe for target 'xconfig' failed
+>> make[2]: *** [xconfig] Aborted (core dumped)
+> [cut]
+>> #4  0x00007f858c3eec44 in qFatal(char const*, ...) ()
+>>     at /usr/lib64/libQtCore.so.4
+>> #5  0x00007f858c3eec8a in  () at /usr/lib64/libQtCore.so.4
+>> #6  0x00000000004206cc in ConfigList::updateSelection() ()
+> 
+> Thanks, Randy.
+> 
+> This seems to be it:
+> 
+>         if (selectedItems().count() == 0)
+>                 return;
+> 
+>         ConfigItem* item = (ConfigItem*)selectedItems().first();
+> 
+> Which means this shouldn't be happening. I don't know how the list could be 
+> non-empty in one call and empty in the next.  It's wasteful to call 
+> selectedItems() twice (it's not a cheap function), but it shouldn't cause this 
+> issue.
+> 
+> We can easily just cache the result and this is what the attached patch does, 
+> but given that this error makes no sense to me, I cannot guarantee that you 
+> don't have another problem elsewhere.
+> 
+> Boris, do you have another idea?
+> 
 
-I don't think your driver depends on asm/msi.h because ARM doesn't
-have asm/msi.h either.
+Hi,
+What does this patch apply to?
+I can't apply it cleanly to to 4.3 or linux-next of yesterday or today.
 
-I think the best thing is to do this:
+thanks,
 
-config PCIE_ALTERA_MSI
-        bool "Altera PCIe MSI feature"
-        depends on PCIE_ALTERA && PCI_MSI
-
-That way we don't have to repeat the constraints from PCIE_ALTERA.
-This is the same strategy used by PCI_XGENE & PCI_XGENE_MSI.
-
-Bjorn
+-- 
+~Randy
