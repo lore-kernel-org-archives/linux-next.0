@@ -1,52 +1,47 @@
-From: Ley Foon Tan <lftan@altera.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Mon, 2 Nov 2015 00:00:19 +0000
-Message-ID: <E7E66AD1AD65064486AD57C361DF091C05C7B391@PG-ITEXCH01.altera.priv.altera.com>
-References: <20151102022307.774bde2c@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Mon, 02 Nov 2015 01:37:46 +0100
+Message-ID: <2844514.qaeccbtn3B@vostro.rjw.lan>
+References: <20151101175718.130f33f2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151102022307.774bde2c@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <20151101175718.130f33f2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Marc Zyngier <Marc.Zyngier@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gSXNuLCAyMDE1LTExLTAyIGF0IDAyOjIzICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
-Og0KPiBIaSBCam9ybiwNCj4NCj4gQWZ0ZXIgbWVyZ2luZyB0aGUgcGNpIHRyZWUsIHRvZGF5J3Mg
-bGludXgtbmV4dCBidWlsZCAocG93ZXJwYw0KPiBhbGx5ZXNjb25maWcpIGZhaWxlZCBsaWtlIHRo
-aXM6DQo+DQo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2xpbnV4L2t2bV9ob3N0Lmg6
-MjA6MCwNCj4gICAgICAgICAgICAgICAgICBmcm9tIGFyY2gvcG93ZXJwYy9rZXJuZWwvYXNtLW9m
-ZnNldHMuYzo1NDoNCj4gaW5jbHVkZS9saW51eC9tc2kuaDoxNzQ6MjE6IGZhdGFsIGVycm9yOiBh
-c20vbXNpLmg6IE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkNCj4NCj4gQ2F1c2VkIGJ5IGNvbW1p
-dA0KPg0KPiAgIGYxOWVhZmVjOTMwZiAoIlBDSTogYWx0ZXJhOiBBZGQgQWx0ZXJhIFBDSWUgTVNJ
-IGRyaXZlciIpDQo+DQo+IEkgaGF2ZSBkaXNhYmxlZCB0aGF0IGRyaXZlciBmb3IgdG9kYXk6DQo+
-DQo+IEZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pg0KPiBEYXRl
-OiBNb24sIDIgTm92IDIwMTUgMDI6MTI6NTQgKzExMDANCj4gU3ViamVjdDogW1BBVENIXSBQQ0k6
-IGFsdGVyYTogZGlzYWJsZSBNU0kgZHJpdmVyIGZvciBub3cNCj4NCj4gU2lnbmVkLW9mZi1ieTog
-U3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQo+IC0tLQ0KPiAgZHJpdmVy
-cy9wY2kvaG9zdC9LY29uZmlnIHwgMSArDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KykNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2hvc3QvS2NvbmZpZyBiL2RyaXZlcnMv
-cGNpL2hvc3QvS2NvbmZpZw0KPiBpbmRleCAyYWYwNTcxMzU2ZTguLjdhMzFlYmJjNDM3OSAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9wY2kvaG9zdC9LY29uZmlnDQo+ICsrKyBiL2RyaXZlcnMvcGNp
-L2hvc3QvS2NvbmZpZw0KPiBAQCAtMTU4LDYgKzE1OCw3IEBAIGNvbmZpZyBQQ0lFX0FMVEVSQQ0K
-PiAgY29uZmlnIFBDSUVfQUxURVJBX01TSQ0KPiAgICAgICBib29sICJBbHRlcmEgUENJZSBNU0kg
-ZmVhdHVyZSINCj4gICAgICAgZGVwZW5kcyBvbiBQQ0lfTVNJDQo+ICsgICAgIGRlcGVuZHMgb24g
-QlJPS0VODQo+ICAgICAgIHNlbGVjdCBQQ0lfTVNJX0lSUV9ET01BSU4NCj4gICAgICAgaGVscA0K
-PiAgICAgICAgIFNheSBZIGhlcmUgaWYgeW91IHdhbnQgUENJZSBNU0kgc3VwcG9ydCBmb3IgdGhl
-IEFsdGVyYSBGUEdBLg0KPiAtLQ0KPiAyLjYuMQ0KPg0KSGkgQmpvcm4NCg0KVGhpcyBkcml2ZXIg
-ZGVwZW5kcyBvbiB0aGUgYXNtL21zaS5oIGFuZCBub3QgYWxsIGFyY2hpdGVjdHVyZXMgaW5jbHVk
-ZQ0KdGhlIGFzbS9tc2kuaC4NCldlIGNhbiBmaXggdGhpcyBieSBhZGRpbmcgImRlcGVuZHMgb24g
-QVJNIHx8IE5JT1MyIiB0byBLY29uZmlnLCBzYW1lIGFzDQphbHRlcmEgcGNpZSBkcml2ZXIuIFdo
-YXQgZG8geW91IHRoaW5rPw0KDQpUaGFua3MuDQoNClJlZ2FyZHMNCkxleSBGb29uDQoNCg0KX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCg0KQ29uZmlkZW50aWFsaXR5IE5vdGljZS4N
-ClRoaXMgbWVzc2FnZSBtYXkgY29udGFpbiBpbmZvcm1hdGlvbiB0aGF0IGlzIGNvbmZpZGVudGlh
-bCBvciBvdGhlcndpc2UgcHJvdGVjdGVkIGZyb20gZGlzY2xvc3VyZS4gSWYgeW91IGFyZSBub3Qg
-dGhlIGludGVuZGVkIHJlY2lwaWVudCwgeW91IGFyZSBoZXJlYnkgbm90aWZpZWQgdGhhdCBhbnkg
-dXNlLCBkaXNjbG9zdXJlLCBkaXNzZW1pbmF0aW9uLCBkaXN0cmlidXRpb24sIG9yIGNvcHlpbmcg
-b2YgdGhpcyBtZXNzYWdlLCBvciBhbnkgYXR0YWNobWVudHMsIGlzIHN0cmljdGx5IHByb2hpYml0
-ZWQuIElmIHlvdSBoYXZlIHJlY2VpdmVkIHRoaXMgbWVzc2FnZSBpbiBlcnJvciwgcGxlYXNlIGFk
-dmlzZSB0aGUgc2VuZGVyIGJ5IHJlcGx5IGUtbWFpbCwgYW5kIGRlbGV0ZSB0aGUgbWVzc2FnZSBh
-bmQgYW55IGF0dGFjaG1lbnRzLiBUaGFuayB5b3UuDQo=
+On Sunday, November 01, 2015 05:57:18 PM Stephen Rothwell wrote:
+> Hi Rafael,
+
+Hi,
+
+Thanks for the patch!
+
+> After merging the pm tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> arch/arm/mach-mediatek/mediatek.c: In function 'mediatek_timer_init':
+> arch/arm/mach-mediatek/mediatek.c:43:2: error: implicit declaration of function 'clocksource_of_init' [-Werror=implicit-function-declaration]
+>   clocksource_of_init();
+>   ^
+> 
+> Caused by commit
+> 
+>   3722ed2380ad ("clocksource: cosmetic: Drop OF 'dependency' from symbols")
+> 
+> interacting with commit
+> 
+>   9821e545c5e0 ("ARM: mediatek: enable gpt6 on boot up to make arch timer working")
+> 
+> from the arm-soc tree.
+> 
+> I applied the following merge fix patch for today (someone should tell
+> Linus when theese trees are merged):
+
+I'll do that.
+
+Thanks,
+Rafael
