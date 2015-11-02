@@ -1,41 +1,46 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Mon, 2 Nov 2015 10:39:13 +0000
-Message-ID: <20151102103911.GC11516@MBP>
-References: <20151101105327.49bffef4@canb.auug.org.au>
+From: Sagi Grimberg <sagig@mellanox.com>
+Subject: Re: linux-next: manual merge of the rdma tree with Linus' tree
+Date: Mon, 2 Nov 2015 12:40:05 +0200
+Message-ID: <56373D85.4070408@mellanox.com>
+References: <20151101184815.1c854867@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:50278 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752067AbbKBKjR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Nov 2015 05:39:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20151101105327.49bffef4@canb.auug.org.au>
+Received: from mail-db3on0086.outbound.protection.outlook.com ([157.55.234.86]:19097
+	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751910AbbKBKzH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Nov 2015 05:55:07 -0500
+In-Reply-To: <20151101184815.1c854867@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Will Deacon <will.deacon@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Doug Ledford <dledford@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, "J. Bruce Fields" <bfields@redhat.com>
 
-On Sun, Nov 01, 2015 at 10:53:27AM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm64 tree got a conflict in:
-> 
->   arch/arm64/kernel/suspend.c
-> 
+> Hi Doug,
+>
+> Today's linux-next merge of the rdma tree got a conflict in:
+>
+>    net/sunrpc/xprtrdma/svc_rdma_recvfrom.c
+>
 > between commit:
-> 
->   e13d918a19a7 ("arm64: kernel: fix tcr_el1.t0sz restore on systems with extended idmap")
-> 
+>
+>    c91aed989694 ("svcrdma: handle rdma read with a non-zero initial page offset")
+>
 > from Linus' tree and commit:
-> 
->   8e63d3887669 ("arm64: flush: use local TLB and I-cache invalidation")
-> 
-> from the arm64 tree.
-> 
+>
+>    412a15c0fe53 ("svcrdma: Port to new memory registration API")
+>
+> from the rdma tree.
+>
 > I fixed it up (I think - see below) and can carry the fix as necessary
 > (no action is required).
+>
 
-The fix-up is fine. Thanks.
+Hi Stephen,
 
--- 
-Catalin
+The fix looks correct to me.
+
+Cheers,
+Sagi.
