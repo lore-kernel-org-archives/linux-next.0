@@ -1,47 +1,67 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Mon, 02 Nov 2015 01:37:46 +0100
-Message-ID: <2844514.qaeccbtn3B@vostro.rjw.lan>
-References: <20151101175718.130f33f2@canb.auug.org.au>
+From: Ley Foon Tan <lftan@altera.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Mon, 2 Nov 2015 08:09:28 +0800
+Message-ID: <1446422968.13032.7.camel@leyfoon-vm>
+References: <20151102022307.774bde2c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151101175718.130f33f2@canb.auug.org.au>
+In-Reply-To: <20151102022307.774bde2c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Marc Zyngier <Marc.Zyngier@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Sunday, November 01, 2015 05:57:18 PM Stephen Rothwell wrote:
-> Hi Rafael,
-
-Hi,
-
-Thanks for the patch!
-
-> After merging the pm tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+On Isn, 2015-11-02 at 02:23 +1100, Stephen Rothwell wrote:
+> Hi Bjorn,
 > 
-> arch/arm/mach-mediatek/mediatek.c: In function 'mediatek_timer_init':
-> arch/arm/mach-mediatek/mediatek.c:43:2: error: implicit declaration of function 'clocksource_of_init' [-Werror=implicit-function-declaration]
->   clocksource_of_init();
->   ^
+> After merging the pci tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> In file included from include/linux/kvm_host.h:20:0,
+>                  from arch/powerpc/kernel/asm-offsets.c:54:
+> include/linux/msi.h:174:21: fatal error: asm/msi.h: No such file or directory
 > 
 > Caused by commit
 > 
->   3722ed2380ad ("clocksource: cosmetic: Drop OF 'dependency' from symbols")
+>   f19eafec930f ("PCI: altera: Add Altera PCIe MSI driver")
 > 
-> interacting with commit
+> I have disabled that driver for today:
 > 
->   9821e545c5e0 ("ARM: mediatek: enable gpt6 on boot up to make arch timer working")
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 2 Nov 2015 02:12:54 +1100
+> Subject: [PATCH] PCI: altera: disable MSI driver for now
 > 
-> from the arm-soc tree.
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/pci/host/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I applied the following merge fix patch for today (someone should tell
-> Linus when theese trees are merged):
+> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+> index 2af0571356e8..7a31ebbc4379 100644
+> --- a/drivers/pci/host/Kconfig
+> +++ b/drivers/pci/host/Kconfig
+> @@ -158,6 +158,7 @@ config PCIE_ALTERA
+>  config PCIE_ALTERA_MSI
+>  	bool "Altera PCIe MSI feature"
+>  	depends on PCI_MSI
+> +	depends on BROKEN
+>  	select PCI_MSI_IRQ_DOMAIN
+>  	help
+>  	  Say Y here if you want PCIe MSI support for the Altera FPGA.
+> -- 
+> 2.6.1
+> 
 
-I'll do that.
+Hi Bjorn
 
-Thanks,
-Rafael
+This driver depends on the asm/msi.h and not all architectures include
+the asm/msi.h.
+We can fix this by adding "depends on ARM || NIOS2" to Kconfig, same as
+altera pcie driver. What do you think?
+
+Thanks.
+
+Regards
+Ley Foon
