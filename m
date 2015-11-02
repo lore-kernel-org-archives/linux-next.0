@@ -1,25 +1,25 @@
-From: Jens Axboe <axboe@fb.com>
-Subject: Re: linux-next: Tree for Nov 1 (lightnvm)
-Date: Mon, 2 Nov 2015 08:37:11 -0700
-Message-ID: <56378327.4020500@fb.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Nov 1 (xconfig problem)
+Date: Mon, 2 Nov 2015 08:01:38 -0800
+Message-ID: <563788E2.9070902@infradead.org>
 References: <20151102035340.17310681@canb.auug.org.au>
- <5636B979.9010507@infradead.org> <56375A8B.9090006@bjorling.me>
+ <5636D465.4060104@infradead.org> <56376784.3030804@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:8215 "EHLO
-	mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753160AbbKBPhp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Nov 2015 10:37:45 -0500
-In-Reply-To: <56375A8B.9090006@bjorling.me>
+Received: from casper.infradead.org ([85.118.1.10]:55527 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751914AbbKBQBp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Nov 2015 11:01:45 -0500
+In-Reply-To: <56376784.3030804@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matias Bjorling <m@bjorling.me>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Boris Barbulovski <bbarbulovski@gmail.com>, Thiago Macieira <thiago.macieira@intel.com>
 
-On 11/02/2015 05:43 AM, Matias Bjorling wrote:
-> On 11/02/2015 02:16 AM, Randy Dunlap wrote:
+On 11/02/15 05:39, Michal Marek wrote:
+> On 2015-11-02 04:11, Randy Dunlap wrote:
 >> On 11/01/15 08:53, Stephen Rothwell wrote:
 >>> Hi all,
 >>>
@@ -28,21 +28,24 @@ On 11/02/2015 05:43 AM, Matias Bjorling wrote:
 >>> Changes since 20151022:
 >>>
 >>
->> on i386:
+>> on x86_64:
 >>
->> ../include/linux/lightnvm.h:143:4: error: width of 'resved' exceeds its type
+>> 'make xconfig' dies a quick death when I try to use it:
 >>
->> # CONFIG_LBDAF is not set
->>
->>
->
-> Thanks Randy.
->
-> Jens, how would you like to receive the patch? (I've currently attached
-> it in this mail)
+>> linux-next-20151101> ASSERT: "!isEmpty()" in file /usr/include/QtCore/qlist.h, line 282
+> 
+> Added Boris and Thiago to Cc.
+> 
+> Are you using Qt4 or Qt5? An
+> 
+>   ldd scripts/kconfig/qconf | grep Qt
+> 
+> will tell you.
 
-If it really needs to be 64-bit regardless of LBDAF, just make it a u64 
-instead of typedef'ing some new ppa_t that everybody would have to look up.
+says:
+	libQtGui.so.4 => /usr/lib64/libQtGui.so.4 (0x00007f08ee704000)
+	libQtCore.so.4 => /usr/lib64/libQtCore.so.4 (0x00007f08ee219000)
+
 
 -- 
-Jens Axboe
+~Randy
