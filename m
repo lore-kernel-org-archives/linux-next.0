@@ -1,82 +1,31 @@
-From: Ley Foon Tan <lftan@altera.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Tue, 3 Nov 2015 16:02:41 +0800
-Message-ID: <1446537761.13032.8.camel@leyfoon-vm>
-References: <20151102022307.774bde2c@canb.auug.org.au>
-	 <E7E66AD1AD65064486AD57C361DF091C05C7B391@PG-ITEXCH01.altera.priv.altera.com>
-	 <CAErSpo4AaRQ8QCUrdu7JdAP5_Vz5mKfX5K2ujeE8H+Oo_8K17w@mail.gmail.com>
+From: Unknown <unknown@unknown.invalid>
+Subject: ATTENTION
+Date: Tue, 3 Nov 2015 13:59:25 +0530
+Message-ID: <BM1PR01MB00675A8ECC8D9A3B431FDE69B82B0@BM1PR01MB0067.INDPRD01.PROD.OUTLOOK.COM>
+Reply-To: <mrsmariarose0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo4AaRQ8QCUrdu7JdAP5_Vz5mKfX5K2ujeE8H+Oo_8K17w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ma1ind01hn0249.outbound.protection.outlook.com ([104.47.100.249]:50534
+	"EHLO IND01-MA1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751266AbbKCIaJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Nov 2015 03:30:09 -0500
+Content-Description: Mail message body
+From: <>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Recipients@vger.kernel.org
 
-On Isn, 2015-11-02 at 12:12 -0600, Bjorn Helgaas wrote:
-> On Sun, Nov 1, 2015 at 6:00 PM, Ley Foon Tan <lftan@altera.com> wrote:
-> > On Isn, 2015-11-02 at 02:23 +1100, Stephen Rothwell wrote:
-> >> Hi Bjorn,
-> >>
-> >> After merging the pci tree, today's linux-next build (powerpc
-> >> allyesconfig) failed like this:
-> >>
-> >> In file included from include/linux/kvm_host.h:20:0,
-> >>                  from arch/powerpc/kernel/asm-offsets.c:54:
-> >> include/linux/msi.h:174:21: fatal error: asm/msi.h: No such file or directory
-> >>
-> >> Caused by commit
-> >>
-> >>   f19eafec930f ("PCI: altera: Add Altera PCIe MSI driver")
-> >>
-> >> I have disabled that driver for today:
-> >>
-> >> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> >> Date: Mon, 2 Nov 2015 02:12:54 +1100
-> >> Subject: [PATCH] PCI: altera: disable MSI driver for now
-> >>
-> >> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> >> ---
-> >>  drivers/pci/host/Kconfig | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-> >> index 2af0571356e8..7a31ebbc4379 100644
-> >> --- a/drivers/pci/host/Kconfig
-> >> +++ b/drivers/pci/host/Kconfig
-> >> @@ -158,6 +158,7 @@ config PCIE_ALTERA
-> >>  config PCIE_ALTERA_MSI
-> >>       bool "Altera PCIe MSI feature"
-> >>       depends on PCI_MSI
-> >> +     depends on BROKEN
-> >>       select PCI_MSI_IRQ_DOMAIN
-> >>       help
-> >>         Say Y here if you want PCIe MSI support for the Altera FPGA.
-> >> --
-> >> 2.6.1
-> >>
-> > Hi Bjorn
-> >
-> > This driver depends on the asm/msi.h and not all architectures include
-> > the asm/msi.h.
-> > We can fix this by adding "depends on ARM || NIOS2" to Kconfig, same as
-> > altera pcie driver. What do you think?
-> 
-> I don't think your driver depends on asm/msi.h because ARM doesn't
-> have asm/msi.h either.
-> 
-> I think the best thing is to do this:
-> 
-> config PCIE_ALTERA_MSI
->         bool "Altera PCIe MSI feature"
->         depends on PCIE_ALTERA && PCI_MSI
-> 
-> That way we don't have to repeat the constraints from PCIE_ALTERA.
-> This is the same strategy used by PCI_XGENE & PCI_XGENE_MSI.
-> 
-Okay. Thanks for the fix.
+Good day My Dear,
 
-Regards
-Ley Foon
+I am seeking the immediate assistance,of a reliable and trustworthy Indian
+businessman who understands India local language (Hindi) and a little
+English; to handle a profitable business for our mutual benefit.
+
+I await your reply for more details.
+
+Thanks and best regards,
+Dr. Maria Rose Anthony.
+Email:mrsmariarose0@gmail.com
