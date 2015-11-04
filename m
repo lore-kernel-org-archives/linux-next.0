@@ -1,29 +1,33 @@
-From: "Jose Calvache" <josecalvach.e@outlook.com>
-Subject: Eure Hilfe
-Date: Wed, 4 Nov 2015 02:56:29 -0500
-Message-ID: <f492d0c2249f0842024cf6fc4136ba4e.squirrel__32511.5701220513$1446625042$gmane$org@wdtraders.com>
-Reply-To: josecalvach.e@aim.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Wed, 4 Nov 2015 20:22:26 +1100
+Message-ID: <20151104202226.28468a03@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 18-230-194-104-dedicated.multacom.com ([104.194.230.18]:47698
-	"EHLO server.arnhost.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754095AbbKDIQm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Nov 2015 03:16:42 -0500
+Received: from ozlabs.org ([103.22.144.67]:57143 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751403AbbKDJWb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Nov 2015 04:22:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>
 
-Guten Tag,
+Hi Dave,
 
-Ich m=F6chte, dass Sie mich auf einem Geldtransfer zu unterst=FCtzen, w=
-enn Sie
-bereit und interessiert sind, antworten Sie mir bitte nach Erhalt diese=
-r
-E-Mails f=FCr mehr Klarheit und Modalit=E4ten f=FCr den erfolgreichen A=
-bschluss
-dieser Transaktion erforderlich.
-Dank und warten Sie Ihre dringende Antwort zu diesem Thema.
+After merging the drm tree, today's linux-next build (s390 allmodconfig)
+failed like this:
 
-=46reundliche Gr=FC=DFe,
-Mr. Jose Calvache.
+drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c:143:2: error: implicit declaration of function 'dma_to_phys' [-Werror=implicit-function-declaration]
+
+Caused by commit
+
+  69c4938249fb ("drm/nouveau/instmem/gk20a: use direct CPU access")
+
+Discovered after the release.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
