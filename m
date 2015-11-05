@@ -1,45 +1,45 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: manual merge of the ftrace tree with Linus' tree
-Date: Wed, 4 Nov 2015 22:20:25 -0500
-Message-ID: <20151104222025.0da837f6@grimm.local.home>
-References: <20151105135140.2399976f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the thermal-soc tree
+Date: Thu, 5 Nov 2015 16:01:13 +1100
+Message-ID: <20151105160113.5d6f73f7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay0047.hostedemail.com ([216.40.44.47]:46079 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1031670AbbKEDU1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Nov 2015 22:20:27 -0500
-In-Reply-To: <20151105135140.2399976f@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:40954 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750981AbbKEFBQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Nov 2015 00:01:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Caesar Wang <wxt@rock-chips.com>
 
-On Thu, 5 Nov 2015 13:51:40 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Eduardo,
 
-> Hi Steven,
-> 
-> Today's linux-next merge of the ftrace tree got a conflict in:
-> 
->   kernel/trace/trace_stack.c
-> 
-> between commit:
-> 
->   a2d762904832 ("tracing: Have stack tracer force RCU to be watching")
-> 
-> from Linus' tree and commit:
-> 
->   d332736df0c2 ("tracing: Rename max_stack_lock to stack_trace_max_lock")
-> 
-> from the ftrace tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
+After merging the thermal-soc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Thanks, the fix looks good.
+drivers/thermal/rockchip_thermal.c: In function 'rockchip_thermal_suspend':
+drivers/thermal/rockchip_thermal.c:641:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
+  pinctrl_pm_select_sleep_state(dev);
+  ^
+drivers/thermal/rockchip_thermal.c: In function 'rockchip_thermal_resume':
+drivers/thermal/rockchip_thermal.c:679:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
+  pinctrl_pm_select_default_state(dev);
+  ^
 
--- Steve
+Caused by commit
+
+  7e38a5b1daa1 ("thermal: rockchip: support the sleep pinctrl state to avoid glitches")
+
+Probably just a missing include file.
+
+I have reverted that commit for today.
+
+
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
