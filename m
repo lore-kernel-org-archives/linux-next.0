@@ -1,36 +1,53 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: linux-next: Tree for Nov 6
-Date: Fri, 6 Nov 2015 13:45:46 +0100
-Message-ID: <563CA0FA.1060306@de.ibm.com>
-References: <20151106142410.0f016358@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with Linus' tree
+Date: Mon, 9 Nov 2015 10:45:01 +1100
+Message-ID: <20151109104501.348445c7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp09.uk.ibm.com ([195.75.94.105]:51176 "EHLO
-	e06smtp09.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161202AbbKFMpx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Nov 2015 07:45:53 -0500
-Received: from localhost
-	by e06smtp09.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
-	Fri, 6 Nov 2015 12:45:51 -0000
-In-Reply-To: <20151106142410.0f016358@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:47627 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750791AbbKHXpF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Nov 2015 18:45:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Taku Izumi <izumi.taku@jp.fujitsu.com>, Bjorn Helgaas <bhelgaas@google.com>, "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
 
-Am 06.11.2015 um 04:24 schrieb Stephen Rothwell:
-> Merging access_once/linux-next (fc7f9754db6c s390/dma: Allow per device dma ops)
+Hi Rafael,
 
-Stephen,
+Today's linux-next merge of the pm tree got a conflict in:
 
-can you rename that branch to borntraeger/linux-next ?
+  drivers/pci/probe.c
 
-It used to carry the access_once reworks, but it will in general hold things
-that I work on.
+between commit:
 
-Thanks?
+  b07461a8e45b ("PCI/AER: Clear error status registers during enumeration and restore")
 
-Christian
+from Linus' tree and commit:
+
+  29dbe1f0af88 ("PCI: ACPI: Add support for PCI device DMA coherency")
+
+from the pm tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/pci/probe.c
+index f53b8e85f137,0dac52633f01..000000000000
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@@ -12,7 -13,7 +13,8 @@@
+  #include <linux/module.h>
+  #include <linux/cpumask.h>
+  #include <linux/pci-aspm.h>
+ +#include <linux/aer.h>
++ #include <linux/acpi.h>
+  #include <asm-generic/pci-bridge.h>
+  #include "pci.h"
+  
