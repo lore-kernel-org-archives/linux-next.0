@@ -1,31 +1,124 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Nov 6
-Date: Tue, 10 Nov 2015 08:31:26 +1100
-Message-ID: <20151110083126.0074368f@canb.auug.org.au>
-References: <20151106142410.0f016358@canb.auug.org.au>
-	<563CA0FA.1060306@de.ibm.com>
+Subject: linux-next: manual merge of the clockevents tree with the h8300
+ tree
+Date: Tue, 10 Nov 2015 10:49:47 +1100
+Message-ID: <20151110104947.53fb4f84@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49008 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751002AbbKIVb3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2015 16:31:29 -0500
-In-Reply-To: <563CA0FA.1060306@de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Christian,
+Hi Daniel,
 
-On Fri, 6 Nov 2015 13:45:46 +0100 Christian Borntraeger <borntraeger@de.ibm.com> wrote:
->
-> can you rename that branch to borntraeger/linux-next ?
+Today's linux-next merge of the clockevents tree got a conflict in:
 
-Done.
+  arch/h8300/include/asm/io.h
+
+between commit:
+
+  a795239b698d ("h8300: bit io fix")
+
+from the h8300 tree and commit:
+
+  fcd51e13e368 ("h8300: Rename ctlr_out/in[bwl] to raw_read/write[bwl]")
+
+from the clockevents tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/h8300/include/asm/io.h
+index bb837cded268,2d15508015ed..000000000000
+--- a/arch/h8300/include/asm/io.h
++++ b/arch/h8300/include/asm/io.h
+@@@ -3,55 -3,62 +3,62 @@@
+  
+  #ifdef __KERNEL__
+  
+- #include <asm-generic/io.h>
+- 
+  /* H8/300 internal I/O functions */
+- static inline unsigned char ctrl_inb(unsigned long addr)
++ 
++ #define __raw_readb __raw_readb
++ static inline u8 __raw_readb(const volatile void __iomem *addr)
+  {
+- 	return *(volatile unsigned char *)addr;
++ 	return *(volatile u8 *)addr;
+  }
+  
+- static inline unsigned short ctrl_inw(unsigned long addr)
++ #define __raw_readw __raw_readw
++ static inline u16 __raw_readw(const volatile void __iomem *addr)
+  {
+- 	return *(volatile unsigned short *)addr;
++ 	return *(volatile u16 *)addr;
+  }
+  
+- static inline unsigned long ctrl_inl(unsigned long addr)
++ #define __raw_readl __raw_readl
++ static inline u32  __raw_readl(const volatile void __iomem *addr)
+  {
+- 	return *(volatile unsigned long *)addr;
++ 	return *(volatile u32 *)addr;
+  }
+  
+- static inline void ctrl_outb(unsigned char b, unsigned long addr)
++ #define __raw_writeb __raw_writeb
++ static inline void __raw_writeb(u8 b, const volatile void __iomem *addr)
+  {
+- 	*(volatile unsigned char *)addr = b;
++ 	*(volatile u8 *)addr = b;
+  }
+  
+- static inline void ctrl_outw(unsigned short b, unsigned long addr)
++ #define __raw_writew __raw_writew
++ static inline void __raw_writew(u16 b, const volatile void __iomem *addr)
+  {
+- 	*(volatile unsigned short *)addr = b;
++ 	*(volatile u16 *)addr = b;
+  }
+  
+- static inline void ctrl_outl(unsigned long b, unsigned long addr)
++ #define __raw_writel __raw_writel
++ static inline void __raw_writel(u32 b, const volatile void __iomem *addr)
+  {
+- 	*(volatile unsigned long *)addr = b;
++ 	*(volatile u32 *)addr = b;
+  }
+  
+- static inline void ctrl_bclr(int b, unsigned char *addr)
++ static inline void ctrl_bclr(int b, void __iomem *addr)
+  {
+  	if (__builtin_constant_p(b))
+ -		__asm__("bclr %1,%0" : : "WU"(addr), "i"(b));
+ +		__asm__("bclr %1,%0" : "+WU"(*addr): "i"(b));
+  	else
+ -		__asm__("bclr %w1,%0" : : "WU"(addr), "r"(b));
+ +		__asm__("bclr %w1,%0" : "+WU"(*addr): "r"(b));
+  }
+  
+- static inline void ctrl_bset(int b, unsigned char *addr)
++ static inline void ctrl_bset(int b, void __iomem *addr)
+  {
+  	if (__builtin_constant_p(b))
+ -		__asm__("bset %1,%0" : : "WU"(addr), "i"(b));
+ +		__asm__("bset %1,%0" : "+WU"(*addr): "i"(b));
+  	else
+ -		__asm__("bset %w1,%0" : : "WU"(addr), "r"(b));
+ +		__asm__("bset %w1,%0" : "+WU"(*addr): "r"(b));
+  }
+  
++ #include <asm-generic/io.h>
++ 
+  #endif /* __KERNEL__ */
+  
+  #endif /* _H8300_IO_H */
