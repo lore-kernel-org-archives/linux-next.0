@@ -1,88 +1,31 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: linux-next: build failure after merge of the thermal-soc tree
-Date: Mon, 9 Nov 2015 11:17:30 -0800
-Message-ID: <20151109191729.GA10824@localhost.localdomain>
-References: <20151105160113.5d6f73f7@canb.auug.org.au>
- <563B2DC8.1080900@rock-chips.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Nov 6
+Date: Tue, 10 Nov 2015 08:31:26 +1100
+Message-ID: <20151110083126.0074368f@canb.auug.org.au>
+References: <20151106142410.0f016358@canb.auug.org.au>
+	<563CA0FA.1060306@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:34586 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792AbbKITRf convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Nov 2015 14:17:35 -0500
-Content-Disposition: inline
-In-Reply-To: <563B2DC8.1080900@rock-chips.com>
+Received: from ozlabs.org ([103.22.144.67]:49008 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751002AbbKIVb3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2015 16:31:29 -0500
+In-Reply-To: <563CA0FA.1060306@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen,
+Hi Christian,
 
-On Thu, Nov 05, 2015 at 06:22:00PM +0800, Caesar Wang wrote:
->=20
->=20
-> =E5=9C=A8 2015=E5=B9=B411=E6=9C=8805=E6=97=A5 13:01, Stephen Rothwell=
- =E5=86=99=E9=81=93:
-> >Hi Eduardo,
-> >
-> >After merging the thermal-soc tree, today's linux-next build (powerp=
-c
-> >allyesconfig) failed like this:
-> >
-> >drivers/thermal/rockchip_thermal.c: In function 'rockchip_thermal_su=
-spend':
-> >drivers/thermal/rockchip_thermal.c:641:2: error: implicit declaratio=
-n of function 'pinctrl_pm_select_sleep_state' [-Werror=3Dimplicit-funct=
-ion-declaration]
-> >   pinctrl_pm_select_sleep_state(dev);
-> >   ^
-> >drivers/thermal/rockchip_thermal.c: In function 'rockchip_thermal_re=
-sume':
-> >drivers/thermal/rockchip_thermal.c:679:2: error: implicit declaratio=
-n of function 'pinctrl_pm_select_default_state' [-Werror=3Dimplicit-fun=
-ction-declaration]
-> >   pinctrl_pm_select_default_state(dev);
-> >   ^
->=20
+On Fri, 6 Nov 2015 13:45:46 +0100 Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+>
+> can you rename that branch to borntraeger/linux-next ?
 
-Thanks, I wonder why I did not catch this in my bots.
+Done.
 
-> That's indeed wonder that I build up in next-kernel-v4.3, applied
-> into chromium v3.14 stable kernel.
->=20
-> from the log I guess wee need the include file:
-> "#include <linux/pinctrl/consumer.h>"
-
-Caesar, are you sending a patch or should I just take care of it?
-
-BR,
-
->=20
->=20
-> >
-> >Caused by commit
-> >
-> >   7e38a5b1daa1 ("thermal: rockchip: support the sleep pinctrl state=
- to avoid glitches")
-> >
-> >Probably just a missing include file.
-> >
-> >I have reverted that commit for today.
-> >
-> >
-> >
->=20
-> --=20
-> Yours,
-> Caesar
->=20
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
