@@ -1,33 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the nvdimm tree with Linus' tree
-Date: Tue, 10 Nov 2015 15:50:10 +1100
-Message-ID: <20151110155010.681645bf@canb.auug.org.au>
-References: <20151110122438.30cae894@canb.auug.org.au>
-	<CAPcyv4h7byf2O0YHDhKKtynGQ3cGb3sDoZZPerZe13VSLd35jg@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Tue, 10 Nov 2015 13:55:37 +0900
+Message-ID: <CAAVeFuKGscJfX8jw9ERqgxZhzo0AkrW4WO+OTg64voEQiDrJKg@mail.gmail.com>
+References: <20151104202226.28468a03@canb.auug.org.au> <20151109164510.GA26721@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPcyv4h7byf2O0YHDhKKtynGQ3cGb3sDoZZPerZe13VSLd35jg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:38460 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751885AbbKJEz5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Nov 2015 23:55:57 -0500
+In-Reply-To: <20151109164510.GA26721@roeck-us.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>
 
-Hi Dan,
-
-On Mon, 9 Nov 2015 18:42:31 -0800 Dan Williams <dan.j.williams@intel.com> wrote:
+On Tue, Nov 10, 2015 at 1:45 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On Wed, Nov 04, 2015 at 08:22:26PM +1100, Stephen Rothwell wrote:
+>> Hi Dave,
+>>
+>> After merging the drm tree, today's linux-next build (s390 allmodconfig)
+>> failed like this:
+>>
+>> drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c:143:2: error: implicit declaration of function 'dma_to_phys' [-Werror=implicit-function-declaration]
+>>
+>> Caused by commit
+>>
+>>   69c4938249fb ("drm/nouveau/instmem/gk20a: use direct CPU access")
+>>
+>> Discovered after the release.
+>>
+> Still seen in next-20151109, affecting at least alpha, i386, parisc, s390,
+> and xtensa, but probably other architectures as well.
 >
-> On Mon, Nov 9, 2015 at 5:24 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Is that new stuff in the nvdimm tree really meant for v4.4?  If not,
-> > please remove it until -rc1 has been released.  
-> 
-> Done.  I was indeed squeezing things into this window that I
-> shouldn't.  I have postponed these conflicting patches to post 4.4.
+> dma_to_phys() was until now not used from driver code, and is only declared
+> for an architecture if it is used/needed there.
 
-Thanks for that.
+Mmm there doesn't seem to be a portable way of getting a physical
+address from a DMA handle, which is what we are trying to do in this
+code.
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+In that particular case a cast is enough though, so we should probably
+just do that. I will send a patch for Ben/David to include in order to
+fix this issue at least.
