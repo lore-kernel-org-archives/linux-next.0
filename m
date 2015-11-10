@@ -1,53 +1,160 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH] instmem/gk20a: do not use non-portable dma_to_phys()
-Date: Tue, 10 Nov 2015 14:10:47 +0900
-Message-ID: <1447132247-9767-1-git-send-email-acourbot@nvidia.com>
+From: Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] staging/rdma/hfi1: add common routine for queuing acks
+Date: Tue, 10 Nov 2015 09:13:55 -0500
+Message-ID: <20151110141355.30166.93359.stgit@phlsvslse11.ph.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6338 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750896AbbKJFLD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Nov 2015 00:11:03 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-dma_to_phys() is not guaranteed to be available on all platforms and
-should not be used outside of arch/. Replace it with what it is expected
-to do in our case: simply cast the DMA handle to a physical address.
+This patch is a prelimary patch required to
+coalesce acks.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+The routine to "schedule" a QP for sending a NAK is
+now centralized in rc_defer_ack().  The flag is changed
+for clarity since the all acks will potentially use
+the deferral  mechanism.
+
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/staging/rdma/hfi1/driver.c |    4 ++-
+ drivers/staging/rdma/hfi1/rc.c     |   42 +++++++++++++-----------------------
+ drivers/staging/rdma/hfi1/verbs.h  |   12 ++++++----
+ 3 files changed, 24 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-index fc419bb8eab7..49451645a049 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-@@ -134,13 +134,17 @@ static void __iomem *
- gk20a_instobj_cpu_map_dma(struct nvkm_memory *memory)
- {
- 	struct gk20a_instobj_dma *node = gk20a_instobj_dma(memory);
--	struct device *dev = node->base.imem->base.subdev.device->dev;
- 	int npages = nvkm_memory_size(memory) >> 12;
- 	struct page *pages[npages];
- 	int i;
+diff --git a/drivers/staging/rdma/hfi1/driver.c b/drivers/staging/rdma/hfi1/driver.c
+index ce69141..e8e0f55 100644
+--- a/drivers/staging/rdma/hfi1/driver.c
++++ b/drivers/staging/rdma/hfi1/driver.c
+@@ -721,8 +721,8 @@ static inline void process_rcv_qp_work(struct hfi1_packet *packet)
+ 	 */
+ 	list_for_each_entry_safe(qp, nqp, &rcd->qp_wait_list, rspwait) {
+ 		list_del_init(&qp->rspwait);
+-		if (qp->r_flags & HFI1_R_RSP_NAK) {
+-			qp->r_flags &= ~HFI1_R_RSP_NAK;
++		if (qp->r_flags & HFI1_R_RSP_DEFERED_ACK) {
++			qp->r_flags &= ~HFI1_R_RSP_DEFERED_ACK;
+ 			hfi1_send_rc_ack(rcd, qp, 0);
+ 		}
+ 		if (qp->r_flags & HFI1_R_RSP_SEND) {
+diff --git a/drivers/staging/rdma/hfi1/rc.c b/drivers/staging/rdma/hfi1/rc.c
+index 0b19206..6fe0104 100644
+--- a/drivers/staging/rdma/hfi1/rc.c
++++ b/drivers/staging/rdma/hfi1/rc.c
+@@ -1608,6 +1608,16 @@ bail:
+ 	return;
+ }
  
--	/* phys_to_page does not exist on all platforms... */
--	pages[0] = pfn_to_page(dma_to_phys(dev, node->handle) >> PAGE_SHIFT);
-+	/*
-+	 * Ideally we would have a function to translate a handle to a physical
-+	 * address, but there is no portable way of doing this. However since we
-+	 * always use the DMA API without an IOMMU, we can assume that handles
-+	 * are actual physical addresses.
-+	 */
-+	pages[0] = pfn_to_page(((phys_addr_t)node->handle) >> PAGE_SHIFT);
- 	for (i = 1; i < npages; i++)
- 		pages[i] = pages[0] + i;
++static inline void rc_defered_ack(struct hfi1_ctxtdata *rcd,
++				  struct hfi1_qp *qp)
++{
++	if (list_empty(&qp->rspwait)) {
++		qp->r_flags |= HFI1_R_RSP_DEFERED_ACK;
++		atomic_inc(&qp->refcount);
++		list_add_tail(&qp->rspwait, &rcd->qp_wait_list);
++	}
++}
++
+ /**
+  * rc_rcv_error - process an incoming duplicate or error RC packet
+  * @ohdr: the other headers for this packet
+@@ -1650,11 +1660,7 @@ static noinline int rc_rcv_error(struct hfi1_other_headers *ohdr, void *data,
+ 			 * in the receive queue have been processed.
+ 			 * Otherwise, we end up propagating congestion.
+ 			 */
+-			if (list_empty(&qp->rspwait)) {
+-				qp->r_flags |= HFI1_R_RSP_NAK;
+-				atomic_inc(&qp->refcount);
+-				list_add_tail(&qp->rspwait, &rcd->qp_wait_list);
+-			}
++			rc_defered_ack(rcd, qp);
+ 		}
+ 		goto done;
+ 	}
+@@ -2337,11 +2343,7 @@ rnr_nak:
+ 	qp->r_nak_state = IB_RNR_NAK | qp->r_min_rnr_timer;
+ 	qp->r_ack_psn = qp->r_psn;
+ 	/* Queue RNR NAK for later */
+-	if (list_empty(&qp->rspwait)) {
+-		qp->r_flags |= HFI1_R_RSP_NAK;
+-		atomic_inc(&qp->refcount);
+-		list_add_tail(&qp->rspwait, &rcd->qp_wait_list);
+-	}
++	rc_defered_ack(rcd, qp);
+ 	return;
  
--- 
-2.6.2
+ nack_op_err:
+@@ -2349,11 +2351,7 @@ nack_op_err:
+ 	qp->r_nak_state = IB_NAK_REMOTE_OPERATIONAL_ERROR;
+ 	qp->r_ack_psn = qp->r_psn;
+ 	/* Queue NAK for later */
+-	if (list_empty(&qp->rspwait)) {
+-		qp->r_flags |= HFI1_R_RSP_NAK;
+-		atomic_inc(&qp->refcount);
+-		list_add_tail(&qp->rspwait, &rcd->qp_wait_list);
+-	}
++	rc_defered_ack(rcd, qp);
+ 	return;
+ 
+ nack_inv_unlck:
+@@ -2363,11 +2361,7 @@ nack_inv:
+ 	qp->r_nak_state = IB_NAK_INVALID_REQUEST;
+ 	qp->r_ack_psn = qp->r_psn;
+ 	/* Queue NAK for later */
+-	if (list_empty(&qp->rspwait)) {
+-		qp->r_flags |= HFI1_R_RSP_NAK;
+-		atomic_inc(&qp->refcount);
+-		list_add_tail(&qp->rspwait, &rcd->qp_wait_list);
+-	}
++	rc_defered_ack(rcd, qp);
+ 	return;
+ 
+ nack_acc_unlck:
+@@ -2421,13 +2415,7 @@ void hfi1_rc_hdrerr(
+ 			 * Otherwise, we end up
+ 			 * propagating congestion.
+ 			 */
+-			if (list_empty(&qp->rspwait)) {
+-				qp->r_flags |= HFI1_R_RSP_NAK;
+-				atomic_inc(&qp->refcount);
+-				list_add_tail(
+-					&qp->rspwait,
+-					&rcd->qp_wait_list);
+-				}
++			rc_defered_ack(rcd, qp);
+ 		} /* Out of sequence NAK */
+ 	} /* QP Request NAKs */
+ }
+diff --git a/drivers/staging/rdma/hfi1/verbs.h b/drivers/staging/rdma/hfi1/verbs.h
+index e4a8a0d..c5e6f47 100644
+--- a/drivers/staging/rdma/hfi1/verbs.h
++++ b/drivers/staging/rdma/hfi1/verbs.h
+@@ -547,11 +547,13 @@ struct hfi1_qp {
+ /*
+  * Bit definitions for r_flags.
+  */
+-#define HFI1_R_REUSE_SGE 0x01
+-#define HFI1_R_RDMAR_SEQ 0x02
+-#define HFI1_R_RSP_NAK   0x04
+-#define HFI1_R_RSP_SEND  0x08
+-#define HFI1_R_COMM_EST  0x10
++#define HFI1_R_REUSE_SGE       0x01
++#define HFI1_R_RDMAR_SEQ       0x02
++/* defer ack until end of interrupt session */
++#define HFI1_R_RSP_DEFERED_ACK 0x04
++/* relay ack to send engine */
++#define HFI1_R_RSP_SEND        0x08
++#define HFI1_R_COMM_EST        0x10
+ 
+ /*
+  * Bit definitions for s_flags.
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
