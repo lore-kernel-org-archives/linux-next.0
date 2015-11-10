@@ -1,32 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clockevents tree with the h8300
- tree
-Date: Tue, 10 Nov 2015 10:49:47 +1100
-Message-ID: <20151110104947.53fb4f84@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with Linus' tree
+Date: Tue, 10 Nov 2015 11:52:33 +1100
+Message-ID: <20151110115233.4f96c0e9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58653 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751561AbbKJAwg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2015 19:52:36 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takuya Yoshikawa <yoshikawa_takuya_b1@lab.ntt.co.jp>, Paolo Bonzini <pbonzini@redhat.com>
 
-Hi Daniel,
+Hi Dan,
 
-Today's linux-next merge of the clockevents tree got a conflict in:
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-  arch/h8300/include/asm/io.h
+  arch/x86/kvm/mmu.c
 
 between commit:
 
-  a795239b698d ("h8300: bit io fix")
+  cd1872f02855 ("KVM: x86: MMU: Make force_pt_level bool")
+  fd1369021878 ("KVM: x86: MMU: Move mapping_level_dirty_bitmap() call in mapping_level()")
 
-from the h8300 tree and commit:
+from Linus' tree and commit:
 
-  fcd51e13e368 ("h8300: Rename ctlr_out/in[bwl] to raw_read/write[bwl]")
+  8ddcb353467a ("kvm: rename pfn_t to kvm_pfn_t")
 
-from the clockevents tree.
+from the nvdimm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -35,90 +39,31 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/h8300/include/asm/io.h
-index bb837cded268,2d15508015ed..000000000000
---- a/arch/h8300/include/asm/io.h
-+++ b/arch/h8300/include/asm/io.h
-@@@ -3,55 -3,62 +3,62 @@@
-  
-  #ifdef __KERNEL__
-  
-- #include <asm-generic/io.h>
-- 
-  /* H8/300 internal I/O functions */
-- static inline unsigned char ctrl_inb(unsigned long addr)
-+ 
-+ #define __raw_readb __raw_readb
-+ static inline u8 __raw_readb(const volatile void __iomem *addr)
+diff --cc arch/x86/kvm/mmu.c
+index 7d85bcae3332,6ab963ae0427..000000000000
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@@ -2982,8 -2963,8 +2983,8 @@@ static int nonpaging_map(struct kvm_vcp
   {
-- 	return *(volatile unsigned char *)addr;
-+ 	return *(volatile u8 *)addr;
-  }
+  	int r;
+  	int level;
+ -	int force_pt_level;
+ +	bool force_pt_level = false;
+- 	pfn_t pfn;
++ 	kvm_pfn_t pfn;
+  	unsigned long mmu_seq;
+  	bool map_writable, write = error_code & PFERR_WRITE_MASK;
   
-- static inline unsigned short ctrl_inw(unsigned long addr)
-+ #define __raw_readw __raw_readw
-+ static inline u16 __raw_readw(const volatile void __iomem *addr)
+@@@ -3491,10 -3474,10 +3492,10 @@@ check_hugepage_cache_consistency(struc
+  static int tdp_page_fault(struct kvm_vcpu *vcpu, gva_t gpa, u32 error_code,
+  			  bool prefault)
   {
-- 	return *(volatile unsigned short *)addr;
-+ 	return *(volatile u16 *)addr;
-  }
-  
-- static inline unsigned long ctrl_inl(unsigned long addr)
-+ #define __raw_readl __raw_readl
-+ static inline u32  __raw_readl(const volatile void __iomem *addr)
-  {
-- 	return *(volatile unsigned long *)addr;
-+ 	return *(volatile u32 *)addr;
-  }
-  
-- static inline void ctrl_outb(unsigned char b, unsigned long addr)
-+ #define __raw_writeb __raw_writeb
-+ static inline void __raw_writeb(u8 b, const volatile void __iomem *addr)
-  {
-- 	*(volatile unsigned char *)addr = b;
-+ 	*(volatile u8 *)addr = b;
-  }
-  
-- static inline void ctrl_outw(unsigned short b, unsigned long addr)
-+ #define __raw_writew __raw_writew
-+ static inline void __raw_writew(u16 b, const volatile void __iomem *addr)
-  {
-- 	*(volatile unsigned short *)addr = b;
-+ 	*(volatile u16 *)addr = b;
-  }
-  
-- static inline void ctrl_outl(unsigned long b, unsigned long addr)
-+ #define __raw_writel __raw_writel
-+ static inline void __raw_writel(u32 b, const volatile void __iomem *addr)
-  {
-- 	*(volatile unsigned long *)addr = b;
-+ 	*(volatile u32 *)addr = b;
-  }
-  
-- static inline void ctrl_bclr(int b, unsigned char *addr)
-+ static inline void ctrl_bclr(int b, void __iomem *addr)
-  {
-  	if (__builtin_constant_p(b))
- -		__asm__("bclr %1,%0" : : "WU"(addr), "i"(b));
- +		__asm__("bclr %1,%0" : "+WU"(*addr): "i"(b));
-  	else
- -		__asm__("bclr %w1,%0" : : "WU"(addr), "r"(b));
- +		__asm__("bclr %w1,%0" : "+WU"(*addr): "r"(b));
-  }
-  
-- static inline void ctrl_bset(int b, unsigned char *addr)
-+ static inline void ctrl_bset(int b, void __iomem *addr)
-  {
-  	if (__builtin_constant_p(b))
- -		__asm__("bset %1,%0" : : "WU"(addr), "i"(b));
- +		__asm__("bset %1,%0" : "+WU"(*addr): "i"(b));
-  	else
- -		__asm__("bset %w1,%0" : : "WU"(addr), "r"(b));
- +		__asm__("bset %w1,%0" : "+WU"(*addr): "r"(b));
-  }
-  
-+ #include <asm-generic/io.h>
-+ 
-  #endif /* __KERNEL__ */
-  
-  #endif /* _H8300_IO_H */
+- 	pfn_t pfn;
++ 	kvm_pfn_t pfn;
+  	int r;
+  	int level;
+ -	int force_pt_level;
+ +	bool force_pt_level;
+  	gfn_t gfn = gpa >> PAGE_SHIFT;
+  	unsigned long mmu_seq;
+  	int write = error_code & PFERR_WRITE_MASK;
