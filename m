@@ -1,54 +1,93 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] instmem/gk20a: do not use non-portable dma_to_phys()
-Date: Tue, 10 Nov 2015 14:41:44 -0800
-Message-ID: <20151110144144.39c2a4109c26e91f4f3fb47b@linux-foundation.org>
-References: <1447132247-9767-1-git-send-email-acourbot@nvidia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the xfs tree
+Date: Wed, 11 Nov 2015 10:21:54 +1100
+Message-ID: <20151111102154.507e2a67@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447132247-9767-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Dave Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
+Return-path: <xfs-bounces@oss.sgi.com>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Al Viro <viro@ZenIV.linux.org.uk>, Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com
+Cc: Brian Foster <bfoster@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 10 Nov 2015 14:10:47 +0900 Alexandre Courbot <acourbot@nvidia.com> wrote:
+Hi Al,
 
-> dma_to_phys() is not guaranteed to be available on all platforms and
-> should not be used outside of arch/. Replace it with what it is expected
-> to do in our case: simply cast the DMA handle to a physical address.
+Today's linux-next merge of the vfs tree got a conflict in:
 
-mainline i386 allmodconfig is now busted.
+  fs/xfs/xfs_xattr.c
 
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-> @@ -134,13 +134,17 @@ static void __iomem *
->  gk20a_instobj_cpu_map_dma(struct nvkm_memory *memory)
->  {
->  	struct gk20a_instobj_dma *node = gk20a_instobj_dma(memory);
-> -	struct device *dev = node->base.imem->base.subdev.device->dev;
->  	int npages = nvkm_memory_size(memory) >> 12;
->  	struct page *pages[npages];
->  	int i;
->  
-> -	/* phys_to_page does not exist on all platforms... */
-> -	pages[0] = pfn_to_page(dma_to_phys(dev, node->handle) >> PAGE_SHIFT);
-> +	/*
-> +	 * Ideally we would have a function to translate a handle to a physical
-> +	 * address, but there is no portable way of doing this. However since we
-> +	 * always use the DMA API without an IOMMU, we can assume that handles
-> +	 * are actual physical addresses.
-> +	 */
-> +	pages[0] = pfn_to_page(((phys_addr_t)node->handle) >> PAGE_SHIFT);
+between commit:
 
-This looks ugly.
+  67d8e04e345e ("xfs: invalidate cached acl if set directly via xattr")
 
-What's actually going on here?  Why is this driver doing something which
-no other driver appears to need to do?
+from the xfs tree and commit:
 
-Is it the driver which is broken, or are the core kernel APIs inadequate?
+  64669c648bc0 ("xattr handlers: Pass handler to operations instead of flags")
 
-If the latter, what can we do to fix them up?
+from the vfs tree.
 
-IOW, how do we fix this properly?
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/xfs/xfs_xattr.c
+index 8294f86441bf,b1850e1489ef..000000000000
+--- a/fs/xfs/xfs_xattr.c
++++ b/fs/xfs/xfs_xattr.c
+@@@ -53,34 -54,12 +54,35 @@@ xfs_xattr_get(const struct xattr_handle
+  	return asize;
+  }
+  
+ +void
+ +xfs_forget_acl(
+ +	struct inode		*inode,
+ +	const char		*name,
+ +	int			xflags)
+ +{
+ +	/*
+ +	 * Invalidate any cached ACLs if the user has bypassed the ACL
+ +	 * interface. We don't validate the content whatsoever so it is caller
+ +	 * responsibility to provide data in valid format and ensure i_mode is
+ +	 * consistent.
+ +	 */
+ +	if (xflags & ATTR_ROOT) {
+ +#ifdef CONFIG_XFS_POSIX_ACL
+ +		if (!strcmp(name, SGI_ACL_FILE))
+ +			forget_cached_acl(inode, ACL_TYPE_ACCESS);
+ +		else if (!strcmp(name, SGI_ACL_DEFAULT))
+ +			forget_cached_acl(inode, ACL_TYPE_DEFAULT);
+ +#endif
+ +	}
+ +}
+ +
+  static int
+- xfs_xattr_set(struct dentry *dentry, const char *name, const void *value,
+- 		size_t size, int flags, int xflags)
++ xfs_xattr_set(const struct xattr_handler *handler, struct dentry *dentry,
++ 		const char *name, const void *value, size_t size, int flags)
+  {
+ -	int xflags = handler->flags;
+ -	struct xfs_inode *ip = XFS_I(d_inode(dentry));
+ +	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
+ +	int			error;
+++	int			xflags = handler->flags;
+  
+  	if (strcmp(name, "") == 0)
+  		return -EINVAL;
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
