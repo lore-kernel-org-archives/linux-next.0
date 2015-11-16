@@ -1,63 +1,40 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: manual merge of the target-merge tree with the scsi
- tree
-Date: Sun, 15 Nov 2015 21:59:02 -0800
-Message-ID: <1447653542.23230.64.camel@haakon3.risingtidesystems.com>
-References: <20151113120605.267e2627@canb.auug.org.au>
-	 <20151116130323.424af513@canb.auug.org.au>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: clean up the kbuild tree?
+Date: Mon, 16 Nov 2015 14:01:45 +0100
+Message-ID: <5649D3B9.7020701@suse.cz>
+References: <20151115112705.0bf4f0ed@canb.auug.org.au>
+ <20151115175848.GD10150@tassilo.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151116130323.424af513@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Calvin Owens <calvinowens@fb.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:33831 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751843AbbKPNBt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Nov 2015 08:01:49 -0500
+In-Reply-To: <20151115175848.GD10150@tassilo.jf.intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2015-11-16 at 13:03 +1100, Stephen Rothwell wrote:
-> Hi Nicholas,
+Dne 15.11.2015 v 18:58 Andi Kleen napsal(a):
+> On Sun, Nov 15, 2015 at 11:27:05AM +1100, Stephen Rothwell wrote:
+>> Hi Michal,
+>>
+>> I notice that the kbuild tree (relative to Linus' tree) only contains
+>> lots of merges and these 2 commits from April 2014:
 > 
-> On Fri, 13 Nov 2015 12:06:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the target-merge tree got conflicts in
-> > several files.  It looks like a newer version of all the commits in the
-> > target-merge tree has been applied to the scsi tree, so I just dropped
-> > the target-merge tree for today.  You might like to tidy it up with
-> > respect to the current scsi tree.
-> 
-> In particular this series from the target-merge tree:
-> 
-> 8edb1554f7c2 mpt3sas: Fix unprotected list lookup in v4.3-rc0 changes
-> db9e2f795915 mpt3sas: Refcount fw_events and fix unsafe list usage
-> 9dab68af61d6 mpt3sas: Refcount sas_device objects and fix unsafe list usage
-> 0f9b74e50d06 mpt2sas: Refcount fw_events and fix unsafe list usage
-> 2757abdc85c1 mpt2sas: Refcount sas_device objects and fix unsafe list usage
-> 
-> conflicts with this series (now from Linus' tree):
-> 
-> abc01f7d54da mpt3sas: Bump mpt3sas driver version to 09.102.00.00
-> c84b06a48c4d mpt3sas: Single driver module which supports both SAS 2.0 & SAS 3.0 HBAs
-> d0c627afb7a6 mpt2sas, mpt3sas: Update the driver versions
-> 08c4d550c579 mpt3sas: setpci reset kernel oops fix
-> 989e43c7ec34 mpt3sas: Added OEM Gen2 PnP ID branding names
-> 146b16c8071f mpt3sas: Refcount fw_events and fix unsafe list usage
-> d1cb5e495e53 mpt3sas: Refcount sas_device objects and fix unsafe list usage
-> 422630955ea3 mpt3sas: sysfs attribute to report Backup Rail Monitor Status
-> 7786ab6aff9c mpt3sas: Ported WarpDrive product SSS6200 support
-> 16e179bda58f mpt3sas: fix for driver fails EEH, recovery from injected pci bus error
-> 42081173c74e mpt3sas: Manage MSI-X vectors according to HBA device type
-> 45506049c7ab mpt3sas: Don't send PHYDISK_HIDDEN RAID action request on SAS2 HBAs
-> 471ef9d4e498 mpt3sas: Build MPI SGL LIST on GEN2 HBAs and IEEE SGL LIST on GEN3 HBAs
-> af0094115b08 mpt2sas, mpt3sas: Remove SCSI_MPTXSAS_LOGGING entry from Kconfig
-> d357e84d65df mpt3sas: Define 'hba_mpi_version_belonged' IOC variable
-> 09ec55ed74eb mpt2sas: Remove .c and .h files from mpt2sas driver
-> 78f97c8f612d mpt2sas: Move Gen2 HBA's device registration to a separate file
-> 7497392a1193 mpt3sas: Move Gen3 HBA's device registration to a separate file
-> 8a7e4c24e08f mpt3sas: Added mpt2sas driver definitions
-> 
-> So it would be nice if you could tidy up the target-merge tree.
+> Really should get in that patch officially. I have a variety of users.
+> And it clearly has been tested long enough in linux-next :)
+> Michal, enough to just repost it?
 
-Original WIP mpt3sas patches dropped.
+So the commit in kbuild.git tree is identical to what is being tested
+out of tree? Could you nevertheless provide an updated changelog? One
+(and actually only) of Linus' objections was that it was not clear at
+all what the actual benefits for the kernel itself are. Do you have some
+benchmarks perhaps, where LTO achieves a preformance gain? Also, did the
+compile time impact change with gcc 5.x?
 
-Thanks Stephen.
+Thanks,
+Michal
