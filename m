@@ -1,47 +1,73 @@
-From: Litmus@vger.kernel.org, Pharmaceuticals@vger.kernel.org,
-	Ltd@vger.kernel.org
-Subject: My Name is Mrs. Latifah Patricks
-Date: Tue, 17 Nov 2015 08:50:27 +0530
-Message-ID: <MAXPR01MB034624813F0D15F9E9AF7273B81D0@MAXPR01MB0346.INDPRD01.PROD.OUTLOOK.COM>
-Reply-To: <mr.slatifahpatricks@yahoo.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: next build: 235 warnings 3 failures (next/next-20151117)
+Date: Tue, 17 Nov 2015 09:57:30 +0100
+Message-ID: <4694362.ZPL12j6kR2@wuerfel>
+References: <564a9961.878b420a.331b8.fffffd62@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ma1ind01hn0218.outbound.protection.outlook.com ([104.47.100.218]:8272
-	"EHLO IND01-MA1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751032AbbKQDVF convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Nov 2015 22:21:05 -0500
-Content-Description: Mail message body
+Received: from mout.kundenserver.de ([212.227.126.131]:56069 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751940AbbKQI6K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2015 03:58:10 -0500
+In-Reply-To: <564a9961.878b420a.331b8.fffffd62@mx.google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com
+Cc: kernel-build-reports@lists.linaro.org, olof@lixom.net, David Miller <davem@davemloft.net>, eric.dumazet@gmail.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Litmus Pharmaceuticals Ltd    =20
-85 King William St, London EC4N 7BL,
-United Kingdom.
-Tel:   +448712374464
-=20
-My name is Mrs. Latifah Patricks. I am the purchasing manager of Litmus=
- pharmaceutical company UK.
-My company is in urgent need of KHAIR BITTER SEED. This seed is used fo=
-r production of diabetes medicine, hormone enhancement and treatment of=
- Parkinson disease.
-I need a very honest and reliable person from India who can partner wit=
-h me for the supply of this SEED from India.=20
-This bitter seed can be found in the Ranthambore National Park in India=
- as you can check this website for reference purpose: http://www.ecoind=
-ia.com/flora/trees/=20
-Immediately I receive your positive response, I will give you more deta=
-ils about the business and I shall immediately send you the contacts of=
- the local sellers of this seed so that you can contact them for purcha=
-se and then watch the big profit roll into your account.
-This Business is100% risk free. It=E2=80=99s a matter of Buy and Sell.
-=46or any queries or questions, please kindly send a mail to me at
-Email: mr.slatifahpatricks@yahoo.co.uk=20
-Phone: +448712374464
-NB: this is just business proposal. You can accept it or reject it. The=
- choice is yours.
-Yours faithfully,
-Mrs. Latifah Patricks
+On Monday 16 November 2015 19:05:05 Olof's autobuilder wrote:
+> 
+> Errors:
+> 
+>         arm64.allmodconfig:
+> arch/arm64/include/asm/barrier.h:71:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:75:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:79:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:83:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:71:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:75:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:79:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:83:3: error: read-only variable '___p1' used as 'asm' output
+> arch/arm64/include/asm/barrier.h:71:3: error: read-only variable '___p1' used as 'asm' output
+
+The patch below seems to fix it. Please review/apply.
+
+8<----
+Subject: ARM64: make smp_load_acquire() work with const arguments
+
+smp_load_acquire() uses typeof() to declare a local variable for temporarily
+storing the output of the memory access. This fails when the argument is
+constant, because the assembler complains about using a constant register
+as output:
+
+ arch/arm64/include/asm/barrier.h:71:3: error: read-only variable '___p1' used as 'asm' output
+
+This changes the implementation to use an 'unsigned long' for the temporary value
+and only cast it to the original type in the end.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
+index 624f9679f4b0..05fa329467f6 100644
+--- a/arch/arm64/include/asm/barrier.h
++++ b/arch/arm64/include/asm/barrier.h
+@@ -64,7 +64,7 @@ do {									\
+ 
+ #define smp_load_acquire(p)						\
+ ({									\
+-	typeof(*p) ___p1;						\
++	unsigned long ___p1;						\
+ 	compiletime_assert_atomic_type(*p);				\
+ 	switch (sizeof(*p)) {						\
+ 	case 1:								\
+@@ -84,7 +84,7 @@ do {									\
+ 			: "=r" (___p1) : "Q" (*p) : "memory");		\
+ 		break;							\
+ 	}								\
+-	___p1;								\
++	(typeof(*p))___p1;								\
+ })
+ 
+ #define read_barrier_depends()		do { } while(0)
