@@ -1,47 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next build: 235 warnings 3 failures (next/next-20151117)
-Date: Tue, 17 Nov 2015 20:17:17 +0100
-Message-ID: <3723928.99NZh1TC6E@wuerfel>
-References: <564a9961.878b420a.331b8.fffffd62@mx.google.com> <6370082.rfihnaNWhf@wuerfel> <20151117171236.GJ30101@arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tegra tree with the renesas tree
+Date: Wed, 18 Nov 2015 10:15:12 +1100
+Message-ID: <20151118101512.0691d12f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151117171236.GJ30101@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, kernel-build-reports@lists.linaro.org, olof@lixom.net, David Miller <davem@davemloft.net>, eric.dumazet@gmail.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>, Simon Horman <horms@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Magnus Damm <damm+renesas@opensource.se>
 List-Id: linux-next.vger.kernel.org
 
-On Tuesday 17 November 2015 17:12:37 Will Deacon wrote:
-> On Tue, Nov 17, 2015 at 06:03:40PM +0100, Arnd Bergmann wrote:
-> > On Tuesday 17 November 2015 16:44:53 Will Deacon wrote:
-> > > > 8<----
-> > > > Subject: ARM64: make smp_load_acquire() work with const arguments
-> > > > 
-> > > > smp_load_acquire() uses typeof() to declare a local variable for temporarily
-> > > > storing the output of the memory access. This fails when the argument is
-> > > > constant, because the assembler complains about using a constant register
-> > > > as output:
-> > > > 
-> > > >  arch/arm64/include/asm/barrier.h:71:3: error: read-only variable '___p1'
-> > > >  used as 'asm' output
-> > > 
-> > > Do you know the usage in the kernel causing this warning?
-> > 
-> > A newly introduced function in include/net/sock.h:
-> > 
-> > static inline int sk_state_load(const struct sock *sk)
-> > {
-> >         return smp_load_acquire(&sk->sk_state);
-> > }
-> 
-> Hmm, maybe we could play a similar trick to READ_ONCE by declaring an
-> anonymous union and writing through the non-const member?
+Hi all,
 
-Yes, I think that would work, if you think we need to care about the
-case where we read into a structure.
+Today's linux-next merge of the tegra tree got a conflict in:
 
-Can you come up with a patch for that?
+  arch/arm64/configs/defconfig
 
-	Arnd
+between commit:
+
+  727e8d0126e3 ("arm64: defconfig: renesas: Enable Renesas r8a7795 SoC")
+
+from the renesas tree and commit:
+
+  0a31289369f8 ("arm64: defconfig: Enable serial-tegra driver")
+
+from the tegra tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm64/configs/defconfig
+index a260e3a46f01,3852c51330e2..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -118,9 -116,7 +118,10 @@@ CONFIG_SERIAL_SAMSUNG=
+  CONFIG_SERIAL_SAMSUNG_UARTS_4=y
+  CONFIG_SERIAL_SAMSUNG_UARTS=4
+  CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+ +CONFIG_SERIAL_SH_SCI=y
+ +CONFIG_SERIAL_SH_SCI_NR_UARTS=11
+ +CONFIG_SERIAL_SH_SCI_CONSOLE=y
++ CONFIG_SERIAL_TEGRA=y
+  CONFIG_SERIAL_MSM=y
+  CONFIG_SERIAL_MSM_CONSOLE=y
+  CONFIG_SERIAL_OF_PLATFORM=y
