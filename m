@@ -1,114 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the
+Subject: linux-next: manual merge of the drm-misc tree with the
  drm-intel-fixes tree
-Date: Wed, 18 Nov 2015 11:30:54 +1100
-Message-ID: <20151118113054.3d4c702d@canb.auug.org.au>
+Date: Wed, 18 Nov 2015 11:41:47 +1100
+Message-ID: <20151118114147.0bbfbbc8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60186 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755046AbbKRAa5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Nov 2015 19:30:57 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
 To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>, Lukas Wunner <lukas@wunner.de>
+Cc: Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
-
-Today's linux-next merge of the drm-intel tree got a conflict in:
-
-  drivers/gpu/drm/i915/intel_display.c
-
-between commit:
-
-  76dc3769d7c3 ("drm/i915: Don't clobber the addfb2 ioctl params")
-
-from the drm-intel-fixes tree and commit:
-
-  dcb1394e74e3 ("drm/i915: On fb alloc failure, unref gem object where it gets refed")
-
-from the drm-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/i915/intel_display.c
-index 8f80bbeb1313,4cfcd3eea7d8..000000000000
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@@ -2398,26 -2385,23 +2394,25 @@@ intel_pin_and_fence_fb_obj(struct drm_p
-  	 * framebuffer compression.  For simplicity, we always install
-  	 * a fence as the cost is not that onerous.
-  	 */
- -	ret = i915_gem_object_get_fence(obj);
- -	if (ret == -EDEADLK) {
- -		/*
- -		 * -EDEADLK means there are no free fences
- -		 * no pending flips.
- -		 *
- -		 * This is propagated to atomic, but it uses
- -		 * -EDEADLK to force a locking recovery, so
- -		 * change the returned error to -EBUSY.
- -		 */
- -		ret = -EBUSY;
- -		goto err_unpin;
- -	} else if (ret)
- -		goto err_unpin;
- +	if (view.type == I915_GGTT_VIEW_NORMAL) {
- +		ret = i915_gem_object_get_fence(obj);
- +		if (ret == -EDEADLK) {
- +			/*
- +			 * -EDEADLK means there are no free fences
- +			 * no pending flips.
- +			 *
- +			 * This is propagated to atomic, but it uses
- +			 * -EDEADLK to force a locking recovery, so
- +			 * change the returned error to -EBUSY.
- +			 */
- +			ret = -EBUSY;
- +			goto err_unpin;
- +		} else if (ret)
- +			goto err_unpin;
-  
- -	i915_gem_object_pin_fence(obj);
- +		i915_gem_object_pin_fence(obj);
- +	}
-  
-- 	dev_priv->mm.interruptible = true;
-  	intel_runtime_pm_put(dev_priv);
-  	return 0;
-  
-@@@ -14369,17 -14560,21 +14583,22 @@@ static int intel_framebuffer_init(struc
-  static struct drm_framebuffer *
-  intel_user_framebuffer_create(struct drm_device *dev,
-  			      struct drm_file *filp,
- -			      struct drm_mode_fb_cmd2 *mode_cmd)
- +			      struct drm_mode_fb_cmd2 *user_mode_cmd)
-  {
-+ 	struct drm_framebuffer *fb;
-  	struct drm_i915_gem_object *obj;
- +	struct drm_mode_fb_cmd2 mode_cmd = *user_mode_cmd;
-  
-  	obj = to_intel_bo(drm_gem_object_lookup(dev, filp,
- -						mode_cmd->handles[0]));
- +						mode_cmd.handles[0]));
-  	if (&obj->base == NULL)
-  		return ERR_PTR(-ENOENT);
-  
-- 	return intel_framebuffer_create(dev, &mode_cmd, obj);
- -	fb = intel_framebuffer_create(dev, mode_cmd, obj);
-++	fb = intel_framebuffer_create(dev, &mode_cmd, obj);
-+ 	if (IS_ERR(fb))
-+ 		drm_gem_object_unreference_unlocked(&obj->base);
-+ 
-+ 	return fb;
-  }
-  
-  #ifndef CONFIG_DRM_FBDEV_EMULATION
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
+dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kaXNwbGF5LmMK
+CmJldHdlZW4gY29tbWl0OgoKICA3NmRjMzc2OWQ3YzMgKCJkcm0vaTkxNTogRG9uJ3QgY2xvYmJl
+ciB0aGUgYWRkZmIyIGlvY3RsIHBhcmFtcyIpCgpmcm9tIHRoZSBkcm0taW50ZWwtZml4ZXMgdHJl
+ZSBhbmQgY29tbWl0OgoKICA1MjgzNDQ0MTBiNWMgKCJkcm06IFBhc3MgdGhlIHVzZXIgZHJtX21v
+ZGVfZmJfY21kMiBhcyBjb25zdCB0byAuZmJfY3JlYXRlKCkiKQoKZnJvbSB0aGUgZHJtLW1pc2Mg
+dHJlZS4KCkkgZml4ZWQgaXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFz
+IG5lY2Vzc2FyeSAobm8gYWN0aW9uCmlzIHJlcXVpcmVkKS4KCkJUVywgdGhhdCBkcm0tbWlzYyBw
+YXRjaCBsb29rcyBpbmNvbXBsZXRlIHdpdGhvdXQgdGhlIGRybS1pbnRlbC1maXhlcwpwYXRjaCBh
+bmQgcHJlc3VtYWJseSBjYXVzZWQgYSBuZXcgYnVpbGQgd2FybmluZyAodW5sZXNzIHlvdSBvbmx5
+IHRlc3RlZAp0aGUgY29tYmluZWQgYnJhbmNoZXMpLgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3
+ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2FuYi5hdXVnLm9yZy5hdQoKZGlmZiAtLWNjIGRy
+aXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rpc3BsYXkuYwppbmRleCA5OGVhZWEzZTVlZDYsZTc4
+YmQ3ZjY5ZDcyLi4wMDAwMDAwMDAwMDAKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
+ZGlzcGxheS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rpc3BsYXkuYwpAQEAg
+LTE0NTgzLDE0IC0xNDM2NCwxMiArMTQ1ODMsMTQgQEBAIHN0YXRpYyBpbnQgaW50ZWxfZnJhbWVi
+dWZmZXJfaW5pdChzdHJ1YwogIHN0YXRpYyBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICoKICBpbnRl
+bF91c2VyX2ZyYW1lYnVmZmVyX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogIAkJCSAg
+ICAgIHN0cnVjdCBkcm1fZmlsZSAqZmlscCwKLSAJCQkgICAgICBzdHJ1Y3QgZHJtX21vZGVfZmJf
+Y21kMiAqdXNlcl9tb2RlX2NtZCkKIC0JCQkgICAgICBjb25zdCBzdHJ1Y3QgZHJtX21vZGVfZmJf
+Y21kMiAqbW9kZV9jbWQpCisrCQkJICAgICAgY29uc3Qgc3RydWN0IGRybV9tb2RlX2ZiX2NtZDIg
+KnVzZXJfbW9kZV9jbWQpCiAgewogKwlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYjsKICAJc3Ry
+dWN0IGRybV9pOTE1X2dlbV9vYmplY3QgKm9iajsKICsJc3RydWN0IGRybV9tb2RlX2ZiX2NtZDIg
+bW9kZV9jbWQgPSAqdXNlcl9tb2RlX2NtZDsKICAKICAJb2JqID0gdG9faW50ZWxfYm8oZHJtX2dl
+bV9vYmplY3RfbG9va3VwKGRldiwgZmlscCwKIC0JCQkJCQltb2RlX2NtZC0+aGFuZGxlc1swXSkp
+OwogKwkJCQkJCW1vZGVfY21kLmhhbmRsZXNbMF0pKTsKICAJaWYgKCZvYmotPmJhc2UgPT0gTlVM
+TCkKICAJCXJldHVybiBFUlJfUFRSKC1FTk9FTlQpOwogIApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdm
+eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
