@@ -1,81 +1,71 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: next build: 235 warnings 3 failures (next/next-20151117)
-Date: Wed, 18 Nov 2015 12:28:04 +0000
-Message-ID: <20151118122804.GD1588@arm.com>
-References: <564a9961.878b420a.331b8.fffffd62@mx.google.com>
- <6370082.rfihnaNWhf@wuerfel>
- <20151117171236.GJ30101@arm.com>
- <3723928.99NZh1TC6E@wuerfel>
- <20151118101427.GC22731@arm.com>
- <063D6719AE5E284EB5DD2968C1650D6D1CBD53BB@AcuExch.aculab.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: linux-next: manual merge of the tegra tree with the renesas tree
+Date: Wed, 18 Nov 2015 15:22:58 +0100
+Message-ID: <20151118142257.GA32301@ulmo.nvidia.com>
+References: <20151118101512.0691d12f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:34387 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751615AbbKRM2I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Nov 2015 07:28:08 -0500
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151118101512.0691d12f@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <063D6719AE5E284EB5DD2968C1650D6D1CBD53BB@AcuExch.aculab.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Laight <David.Laight@aculab.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, "kernel-build-reports@lists.linaro.org" <kernel-build-reports@lists.linaro.org>, "olof@lixom.net" <olof@lixom.net>, David Miller <davem@davemloft.net>, "eric.dumazet@gmail.com" <eric.dumazet@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Simon Horman <horms@verge.net.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Magnus Damm <damm+renesas@opensource.se>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 18, 2015 at 12:11:25PM +0000, David Laight wrote:
-> From: Will Deacon
-> > Sent: 18 November 2015 10:14
-> > On Tue, Nov 17, 2015 at 08:17:17PM +0100, Arnd Bergmann wrote:
-> > > On Tuesday 17 November 2015 17:12:37 Will Deacon wrote:
-> > > > On Tue, Nov 17, 2015 at 06:03:40PM +0100, Arnd Bergmann wrote:
-> > > > > On Tuesday 17 November 2015 16:44:53 Will Deacon wrote:
-> > > > > > > 8<----
-> > > > > > > Subject: ARM64: make smp_load_acquire() work with const arguments
-> > > > > > >
-> > > > > > > smp_load_acquire() uses typeof() to declare a local variable for temporarily
-> > > > > > > storing the output of the memory access. This fails when the argument is
-> > > > > > > constant, because the assembler complains about using a constant register
-> > > > > > > as output:
-> > > > > > >
-> > > > > > >  arch/arm64/include/asm/barrier.h:71:3: error: read-only variable '___p1'
-> > > > > > >  used as 'asm' output
-> > > > > >
-> > > > > > Do you know the usage in the kernel causing this warning?
-> > > > >
-> > > > > A newly introduced function in include/net/sock.h:
-> > > > >
-> > > > > static inline int sk_state_load(const struct sock *sk)
-> > > > > {
-> > > > >         return smp_load_acquire(&sk->sk_state);
-> > > > > }
-> > > >
-> > > > Hmm, maybe we could play a similar trick to READ_ONCE by declaring an
-> > > > anonymous union and writing through the non-const member?
-> > >
-> > > Yes, I think that would work, if you think we need to care about the
-> > > case where we read into a structure.
-> > >
-> > > Can you come up with a patch for that?
-> > 
-> > Done:
-> > 
-> >   http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/386094.html
-> 
-> That patch forces a memory write-read and returns uninitialised stack
-> for short reads.
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Really? The disassembly looks fine to me. Do you have a concrete example
-of where you think it goes wrong, please?
+On Wed, Nov 18, 2015 at 10:15:12AM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the tegra tree got a conflict in:
+>=20
+>   arch/arm64/configs/defconfig
+>=20
+> between commit:
+>=20
+>   727e8d0126e3 ("arm64: defconfig: renesas: Enable Renesas r8a7795 SoC")
+>=20
+> from the renesas tree and commit:
+>=20
+>   0a31289369f8 ("arm64: defconfig: Enable serial-tegra driver")
+>=20
+> from the tegra tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-> Who knows what happens on big-endian systems.
+Looks good, thanks.
 
-The same thing as READ_ONCE? I'll test it there to make sure, but I
-don't see a problem.
+Thierry
 
-> You need a static inline function with separate temporaries in each
-> branch.
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'm just following the precedent set out by READ_ONCE, since that's
-tackling exactly the same problem and appears to be working for people.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Will
+iQIcBAABCAAGBQJWTIm+AAoJEN0jrNd/PrOhRj0QAKOI8Udp/6/eUOVDPpMP8gWa
+AYLHxFxi9fG+hKA1ObtFi+BCMrtoI43oIrcqNsEiGS7aQH9n+AjikOvI31traetW
+Lg8wXeKxguB1g60+CrdKk+8RFY3mVx47UxoPaFUhRApKwJ/9b71I10PiAE0Z6KzC
+qVjq8JcnKLDEDIoYCdApfOWsjOLOw48R7MbNDwkYep2JFnt/8NEuhhLwgDvz/TrO
+aCl1PYZNbxN3ZCRNBZmlETacTCYhnkyiXeR2f1ATeUMuAy70ugWTnJVxTaZlZrUc
+vRXTshrc1hXkUusXX4XZBueKzi9ShY4BwN7+fL9NQbTvhlzly0bGFBOBMvxfjc3x
++4CpzfS6apC8jGAUAXTQ+YDqS+oFbf90KFrRJH6xV5+u4HUFOPWK3krPA3kZgvdZ
+JcPEvXVeyr1etHkZI37OkHc1zoB23MZHZR6ye1fuj89DdvnNQ1M+MaAqwkXBDLk9
+rDWwiyNw9ot6XsRum8OvxugICSUOwuvDHYtaqXA7lFzDaERgG4KzAdQSafyr1uen
+5R0E2XdaHn/+6qbnjUiuHjC8MJg3V92qhVy0iq/J8fKc5V/Hb1Pr0HN48v1bEGAr
+nybuDDzFUs0Iuse2iqoApEsEEM33CG+dcQRKkGrAnJoKfU9XlRqwLRohi24TSie2
+klkTUxxh71m6netr4k9M
+=KckM
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
