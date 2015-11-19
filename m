@@ -1,53 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the audit tree with Linus' tree
-Date: Thu, 19 Nov 2015 12:06:15 +1100
-Message-ID: <20151119120615.13b6ce0b@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 19 Nov 2015 08:32:09 +0530
+Message-ID: <20151119030209.GA25173@localhost>
+References: <20151119113528.7262d470@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, Richard Guy Briggs <rgb@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:5127 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755813AbbKSC61 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Nov 2015 21:58:27 -0500
+Content-Disposition: inline
+In-Reply-To: <20151119113528.7262d470@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mengdong Lin <mengdong.lin@linux.intel.com>, Harsha Priya <harshapriya.n@intel.com>, Conrad Cooke <conrad.cooke@intel.com>, Naveen M <naveen.m@intel.com>, Sathya Prakash M R <sathya.prakash.m.r@intel.com>, Yong Zhi <yong.zhi@intel.com>, "Fang, Yang A" <yang.a.fang@intel.com>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>
 
-Hi Paul,
+On Thu, Nov 19, 2015 at 11:35:28AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> sound/soc/fsl/fsl-asoc-card.c: In function 'fsl_asoc_card_late_probe':
+> sound/soc/fsl/fsl-asoc-card.c:420:38: error: 'struct snd_soc_card' has no member named 'rtd'
+>   struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
+>                                       ^
+> sound/soc/fsl/fsl-asoc-card.c:427:37: error: 'struct snd_soc_card' has no member named 'rtd'
+>    struct snd_soc_codec *codec = card->rtd[0].codec;
+>                                      ^
+> 
+> Caused by commit
+> 
+>   5015920a1732 ("ASoC: Vendor drivers get a link's runtime by snd_soc_get_pcm_runtime()")
+> 
+> sound/soc/intel/boards/skl_nau88l25_ssm4567.c: In function 'skl_get_codec_dai':
+> sound/soc/intel/boards/skl_nau88l25_ssm4567.c:43:13: error: 'struct snd_soc_card' has no member named 'rtd'
+>    rtd = card->rtd + i;
+>              ^
+> 
+> Caused by commit
+> 
+>   a86d505783e4 ("ASoC: Intel: Skylake: Adding nau88l25+ssm4567 machine driver")
+Okay both went it same time, I will send a patch for this
 
-Today's linux-next merge of the audit tree got a conflict in:
-
-  kernel/audit.c
-
-between commit:
-
-  d0164adc89f6 ("mm, page_alloc: distinguish between being unable to sleep, unwilling to sleep and avoiding waking kswapd")
-
-from Linus' tree and commit:
-
-  14eeba1d242e ("audit: include auditd's threads in audit_log_start() wait exception")
-
-from the audit tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Somehow Feng's bot missed this...
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/audit.c
-index bc2ff61bc1d6,ca1b9cda2766..000000000000
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@@ -1371,9 -1371,9 +1371,9 @@@ struct audit_buffer *audit_log_start(st
-  	if (unlikely(audit_filter_type(type)))
-  		return NULL;
-  
- -	if (gfp_mask & __GFP_WAIT) {
- +	if (gfp_mask & __GFP_DIRECT_RECLAIM) {
-- 		if (audit_pid && audit_pid == current->pid)
-+ 		if (audit_pid && audit_pid == current->tgid)
- -			gfp_mask &= ~__GFP_WAIT;
- +			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
-  		else
-  			reserve = 0;
-  	}
+~Vinod
