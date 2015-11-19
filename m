@@ -1,84 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Thu, 19 Nov 2015 11:23:23 +1100
-Message-ID: <20151119112323.1c4b95ef@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 19 Nov 2015 11:35:28 +1100
+Message-ID: <20151119113528.7262d470@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34032 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:53288 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755766AbbKSAX0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Nov 2015 19:23:26 -0500
+	id S1757338AbbKSAfd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Nov 2015 19:35:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, Jani Nikula <jani.nikula@intel.com>, Imre Deak <imre.deak@intel.com>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mengdong Lin <mengdong.lin@linux.intel.com>, Harsha Priya <harshapriya.n@intel.com>, Conrad Cooke <conrad.cooke@intel.com>, Naveen M <naveen.m@intel.com>, Sathya Prakash M R <sathya.prakash.m.r@intel.com>, Yong Zhi <yong.zhi@intel.com>, "Fang, Yang A" <yang.a.fang@intel.com>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>, Vinod Koul <vinod.koul@intel.com>
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/gpu/drm/i915/intel_runtime_pm.c
+sound/soc/fsl/fsl-asoc-card.c: In function 'fsl_asoc_card_late_probe':
+sound/soc/fsl/fsl-asoc-card.c:420:38: error: 'struct snd_soc_card' has no member named 'rtd'
+  struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
+                                      ^
+sound/soc/fsl/fsl-asoc-card.c:427:37: error: 'struct snd_soc_card' has no member named 'rtd'
+   struct snd_soc_codec *codec = card->rtd[0].codec;
+                                     ^
 
-between commitis:
+Caused by commit
 
-  bc5f2ab11ca6 ("drm/i915/skl: Don't call intel_prepare_ddi when encoder list isn't yet initialized.")
-  1b0e3a049efe ("drm/i915/skl: disable display side power well support for now")
+  5015920a1732 ("ASoC: Vendor drivers get a link's runtime by snd_soc_get_pcm_runtime()")
 
-from Linus' tree and commit:
+sound/soc/intel/boards/skl_nau88l25_ssm4567.c: In function 'skl_get_codec_dai':
+sound/soc/intel/boards/skl_nau88l25_ssm4567.c:43:13: error: 'struct snd_soc_card' has no member named 'rtd'
+   rtd = card->rtd + i;
+             ^
 
-  f0ab43e6c338 ("drm/i915: Introduce a gmbus power domain")
-  c2b16152e0b3 ("drm/i915/skl: remove redundant DDI/IRQ reinitialization during PW1 enabling")
+Caused by commit
 
-from the drm-intel tree.
+  a86d505783e4 ("ASoC: Intel: Skylake: Adding nau88l25+ssm4567 machine driver")
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
+I have used the sound-asoc tree from next-20151118 for today.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/i915/intel_runtime_pm.c
-index d89c1d0aa1b7,f8167753f91b..000000000000
---- a/drivers/gpu/drm/i915/intel_runtime_pm.c
-+++ b/drivers/gpu/drm/i915/intel_runtime_pm.c
-@@@ -1808,24 -1831,9 +1831,24 @@@ static struct i915_power_well bxt_power
-  		.domains = BXT_DISPLAY_POWERWELL_2_POWER_DOMAINS,
-  		.ops = &skl_power_well_ops,
-  		.data = SKL_DISP_PW_2,
-- 	}
-+ 	},
-  };
-  
- +static int
- +sanitize_disable_power_well_option(const struct drm_i915_private *dev_priv,
- +				   int disable_power_well)
- +{
- +	if (disable_power_well >= 0)
- +		return !!disable_power_well;
- +
- +	if (IS_SKYLAKE(dev_priv)) {
- +		DRM_DEBUG_KMS("Disabling display power well support\n");
- +		return 0;
- +	}
- +
- +	return 1;
- +}
- +
-  #define set_power_wells(power_domains, __power_wells) ({		\
-  	(power_domains)->power_wells = (__power_wells);			\
-  	(power_domains)->power_well_count = ARRAY_SIZE(__power_wells);	\
-@@@ -1842,9 -1850,8 +1865,11 @@@ int intel_power_domains_init(struct drm
-  {
-  	struct i915_power_domains *power_domains = &dev_priv->power_domains;
-  
-+ 	BUILD_BUG_ON(POWER_DOMAIN_NUM > 31);
-+ 
- +	i915.disable_power_well = sanitize_disable_power_well_option(dev_priv,
- +						     i915.disable_power_well);
- +
-  	mutex_init(&power_domains->lock);
-  
-  	/*
