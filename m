@@ -1,47 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 19 Nov 2015 11:35:28 +1100
-Message-ID: <20151119113528.7262d470@canb.auug.org.au>
+Subject: linux-next: manual merge of the audit tree with Linus' tree
+Date: Thu, 19 Nov 2015 12:06:15 +1100
+Message-ID: <20151119120615.13b6ce0b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53288 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757338AbbKSAfd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Nov 2015 19:35:33 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mengdong Lin <mengdong.lin@linux.intel.com>, Harsha Priya <harshapriya.n@intel.com>, Conrad Cooke <conrad.cooke@intel.com>, Naveen M <naveen.m@intel.com>, Sathya Prakash M R <sathya.prakash.m.r@intel.com>, Yong Zhi <yong.zhi@intel.com>, "Fang, Yang A" <yang.a.fang@intel.com>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>, Vinod Koul <vinod.koul@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, Richard Guy Briggs <rgb@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Paul,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the audit tree got a conflict in:
 
-sound/soc/fsl/fsl-asoc-card.c: In function 'fsl_asoc_card_late_probe':
-sound/soc/fsl/fsl-asoc-card.c:420:38: error: 'struct snd_soc_card' has no member named 'rtd'
-  struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
-                                      ^
-sound/soc/fsl/fsl-asoc-card.c:427:37: error: 'struct snd_soc_card' has no member named 'rtd'
-   struct snd_soc_codec *codec = card->rtd[0].codec;
-                                     ^
+  kernel/audit.c
 
-Caused by commit
+between commit:
 
-  5015920a1732 ("ASoC: Vendor drivers get a link's runtime by snd_soc_get_pcm_runtime()")
+  d0164adc89f6 ("mm, page_alloc: distinguish between being unable to sleep, unwilling to sleep and avoiding waking kswapd")
 
-sound/soc/intel/boards/skl_nau88l25_ssm4567.c: In function 'skl_get_codec_dai':
-sound/soc/intel/boards/skl_nau88l25_ssm4567.c:43:13: error: 'struct snd_soc_card' has no member named 'rtd'
-   rtd = card->rtd + i;
-             ^
+from Linus' tree and commit:
 
-Caused by commit
+  14eeba1d242e ("audit: include auditd's threads in audit_log_start() wait exception")
 
-  a86d505783e4 ("ASoC: Intel: Skylake: Adding nau88l25+ssm4567 machine driver")
+from the audit tree.
 
-I have used the sound-asoc tree from next-20151118 for today.
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/audit.c
+index bc2ff61bc1d6,ca1b9cda2766..000000000000
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@@ -1371,9 -1371,9 +1371,9 @@@ struct audit_buffer *audit_log_start(st
+  	if (unlikely(audit_filter_type(type)))
+  		return NULL;
+  
+ -	if (gfp_mask & __GFP_WAIT) {
+ +	if (gfp_mask & __GFP_DIRECT_RECLAIM) {
+- 		if (audit_pid && audit_pid == current->pid)
++ 		if (audit_pid && audit_pid == current->tgid)
+ -			gfp_mask &= ~__GFP_WAIT;
+ +			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
+  		else
+  			reserve = 0;
+  	}
