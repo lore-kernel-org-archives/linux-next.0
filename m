@@ -1,54 +1,60 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 19 Nov 2015 10:38:25 +0000
-Message-ID: <20151119103825.GM31303@sirena.org.uk>
-References: <20151119113528.7262d470@canb.auug.org.au>
- <20151119030209.GA25173@localhost>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: manual merge of the audit tree with Linus' tree
+Date: Thu, 19 Nov 2015 10:53:20 -0500
+Message-ID: <CAHC9VhS3VGaAn34dM6pJ5KGM=jZ9bdyA71xMjD_t--YsPXF8pw@mail.gmail.com>
+References: <20151119120615.13b6ce0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="V/VNt6jARIhH3MER"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38848 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758079AbbKSKik (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Nov 2015 05:38:40 -0500
-Content-Disposition: inline
-In-Reply-To: <20151119030209.GA25173@localhost>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mengdong Lin <mengdong.lin@linux.intel.com>, Harsha Priya <harshapriya.n@intel.com>, Conrad Cooke <conrad.cooke@intel.com>, Naveen M <naveen.m@intel.com>, Sathya Prakash M R <sathya.prakash.m.r@intel.com>, Yong Zhi <yong.zhi@intel.com>, "Fang, Yang A" <yang.a.fang@intel.com>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151119120615.13b6ce0b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>, Richard Guy Briggs <rgb@redhat.com>
+List-Id: linux-next.vger.kernel.org
+
+On Wed, Nov 18, 2015 at 8:06 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Paul,
+>
+> Today's linux-next merge of the audit tree got a conflict in:
+>
+>   kernel/audit.c
+>
+> between commit:
+>
+>   d0164adc89f6 ("mm, page_alloc: distinguish between being unable to sleep, unwilling to sleep and avoiding waking kswapd")
+>
+> from Linus' tree and commit:
+>
+>   14eeba1d242e ("audit: include auditd's threads in audit_log_start() wait exception")
+>
+> from the audit tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+
+Thanks Stephen, I found the same thing yesterday while doing some
+testing; your patch looks good to me.
+
+> diff --cc kernel/audit.c
+> index bc2ff61bc1d6,ca1b9cda2766..000000000000
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@@ -1371,9 -1371,9 +1371,9 @@@ struct audit_buffer *audit_log_start(st
+>         if (unlikely(audit_filter_type(type)))
+>                 return NULL;
+>
+>  -      if (gfp_mask & __GFP_WAIT) {
+>  +      if (gfp_mask & __GFP_DIRECT_RECLAIM) {
+> -               if (audit_pid && audit_pid == current->pid)
+> +               if (audit_pid && audit_pid == current->tgid)
+>  -                      gfp_mask &= ~__GFP_WAIT;
+>  +                      gfp_mask &= ~__GFP_DIRECT_RECLAIM;
+>                 else
+>                         reserve = 0;
+>         }
 
 
---V/VNt6jARIhH3MER
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Nov 19, 2015 at 08:32:09AM +0530, Vinod Koul wrote:
-> On Thu, Nov 19, 2015 at 11:35:28AM +1100, Stephen Rothwell wrote:
-
-> >   a86d505783e4 ("ASoC: Intel: Skylake: Adding nau88l25+ssm4567 machine driver")
-
-> Okay both went it same time, I will send a patch for this
-
-> Somehow Feng's bot missed this...
-
-There was a mail about it - it came out too close to when Stephen
-usually pulls for me to do anything about backing things out.
-
---V/VNt6jARIhH3MER
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWTaagAAoJECTWi3JdVIfQ0h4H/0soC68mmNPDQTDCmxn9UBSr
-HffWyMD4KAjQ2TsIpXM+g3Ov3skVreemkZYjxEh1tJK93qlgYpACy/RIUnH3eN2y
-XhrkQAoL2YTkqYG9NtgWc2R98B2QuwAGPvNPBhPhXuwk+1/nV1i1kKmK2E1R+0ds
-x7S+LkQOodaUE4exFwR+2+7B9fIfeV8og1rUq8WoLxWJnJzoBVAsmqElJ/86BaWr
-ahS2WEdY/ECZp7dmABUKHkynNlzEvnKzwA2ESe2r4kYUF6ChANVnYHv7mzmYmUYZ
-9uyVkGav/A26q97ykcbEGOuKwe3I9Ve2paRHKaGQuvAu8b4d4QlKCB/8HxikP58=
-=EiQe
------END PGP SIGNATURE-----
-
---V/VNt6jARIhH3MER--
+-- 
+paul moore
+www.paul-moore.com
