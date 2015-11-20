@@ -1,152 +1,55 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20151120 build: 2 failures 23 warnings (next-20151120)
-Date: Fri, 20 Nov 2015 10:03:30 +0000
-Message-ID: <E1ZziXR-0007wv-Ec@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 20 Nov 2015 12:06:13 +0000
+Message-ID: <20151120120613.GU31303@sirena.org.uk>
+References: <20151119113528.7262d470@canb.auug.org.au>
+ <20151119030209.GA25173@localhost>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RGwttE/plSABi47o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40434 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40736 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751366AbbKTKDg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Nov 2015 05:03:36 -0500
+	with ESMTP id S1161907AbbKTMGW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Nov 2015 07:06:22 -0500
+Content-Disposition: inline
+In-Reply-To: <20151119030209.GA25173@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20151120
-Git describe: next-20151120
-Commit: a78de01cfa Add linux-next specific files for 20151120
-
-Build Time: 123 min 43 sec
-
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
-
-Errors: 0
-Warnings: 23
-Section Mismatches: 4
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-     11 warnings    4 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      3 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      7 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 23
-	  3 ../drivers/regulator/core.c:142:6: warning: unused variable 'i' [-Wunused-variable]
-	  1 ../sound/soc/sh/fsi.c:1372:24: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../net/bluetooth/mgmt.c:6319:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:6319:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../mm/page_alloc.c:4166:16: warning: comparison between 'enum zone_type' and 'enum <anonymous>' [-Wenum-compare]
-	  1 ../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/net/ethernet/qlogic/qed/qed_dev.c:1676:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	  1 ../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	  1 ../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:6: warning: unused variable 'i' [-Wunused-variable]
-	  1 ../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:380:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:1079:7: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'long long int' [-Wformat]
-	  1 ../drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:1079:7: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
-	  1 ../drivers/clocksource/fsl_ftm_timer.c:233:13: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/clocksource/fsl_ftm_timer.c:206:13: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 4
-	  1 WARNING: vmlinux.o(.data+0x1ad768): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	  1 WARNING: drivers/pci/host/built-in.o(.data+0x1948): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	  1 WARNING: drivers/pci/built-in.o(.data+0x12ac8): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	  1 WARNING: drivers/built-in.o(.data+0x3e968): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mengdong Lin <mengdong.lin@linux.intel.com>, Harsha Priya <harshapriya.n@intel.com>, Conrad Cooke <conrad.cooke@intel.com>, Naveen M <naveen.m@intel.com>, Sathya Prakash M R <sathya.prakash.m.r@intel.com>, Yong Zhi <yong.zhi@intel.com>, "Fang, Yang A" <yang.a.fang@intel.com>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>
 
 
+--RGwttE/plSABi47o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Thu, Nov 19, 2015 at 08:32:09AM +0530, Vinod Koul wrote:
+> On Thu, Nov 19, 2015 at 11:35:28AM +1100, Stephen Rothwell wrote:
 
+> > Caused by commit
+> >=20
+> >   a86d505783e4 ("ASoC: Intel: Skylake: Adding nau88l25+ssm4567 machine =
+driver")
 
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+> Okay both went it same time, I will send a patch for this
 
-Warnings:
-	../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
+Not seeing that patch...
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 11 warnings, 4 section mismatches
+--RGwttE/plSABi47o
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Warnings:
-	../drivers/clocksource/fsl_ftm_timer.c:206:13: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/clocksource/fsl_ftm_timer.c:233:13: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../sound/soc/samsung/dmaengine.c:53:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../sound/soc/samsung/dmaengine.c:60:31: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../sound/soc/sh/fsi.c:1372:24: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/dec/tulip/winbond-840.c:910:2: warning: #warning Processor architecture undefined [-Wcpp]
-	../drivers/net/ethernet/dec/tulip/tulip_core.c:101:2: warning: #warning Processor architecture undefined! [-Wcpp]
-	../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Section Mismatches:
-	WARNING: drivers/pci/host/built-in.o(.data+0x1948): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	WARNING: drivers/pci/built-in.o(.data+0x12ac8): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	WARNING: drivers/built-in.o(.data+0x3e968): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	WARNING: vmlinux.o(.data+0x1ad768): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
+iQEcBAEBCAAGBQJWTwy1AAoJECTWi3JdVIfQfXQH/inobmexmjBQad+JJjLz99fo
+xbQVxaQsMiTkal2u4QUo1zxEZXnh32lJA6c8w1JaZSibiFseXQ+rERBbz7xAzahw
+1WfzkjF4KXWJ+Ap1HkTsaRkLY8wAlwGuqCK+dWrunrHN2iA9g2Dqd/3vB/mtYv3C
+jDZ4soChNGcmhfXsF+zD5+nSwz0dlGLxB9mWIz9ynGak9AobA54wLaCvMjX1tzDC
+2qPv89OCNij7aEXplZo29tNPkDgAenJUUD3V6h+xYe/XeQ3wBhvew1P8TeatgdLk
+6NuPLcEybW1OEocIo2l9sFGO8oryQmcllYUttCfki01jY0stXOKzEjRm1wj+dMU=
+=jm4m
+-----END PGP SIGNATURE-----
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:142:6: warning: unused variable 'i' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../net/bluetooth/mgmt.c:6319:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:6319:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/regulator/core.c:142:6: warning: unused variable 'i' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:4166:16: warning: comparison between 'enum zone_type' and 'enum <anonymous>' [-Wenum-compare]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:1079:7: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'long long int' [-Wformat]
-	../drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:1079:7: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'long long int' [-Wformat]
-	../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:6: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:380:6: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/qlogic/qed/qed_dev.c:1676:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:142:6: warning: unused variable 'i' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-allnoconfig
+--RGwttE/plSABi47o--
