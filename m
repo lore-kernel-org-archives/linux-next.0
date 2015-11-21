@@ -1,67 +1,55 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Fri, 20 Nov 2015 20:28:45 +0530
-Message-ID: <20151120145845.GK25173@localhost>
-References: <20151119113528.7262d470@canb.auug.org.au>
- <20151119030209.GA25173@localhost>
- <20151120120613.GU31303@sirena.org.uk>
+From: Andi Kleen <ak@linux.intel.com>
+Subject: Re: linux-next: clean up the kbuild tree?
+Date: Fri, 20 Nov 2015 17:00:33 -0800
+Message-ID: <20151121010033.GB8438@tassilo.jf.intel.com>
+References: <20151115112705.0bf4f0ed@canb.auug.org.au>
+ <20151115175848.GD10150@tassilo.jf.intel.com>
+ <5649D3B9.7020701@suse.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="opg8F0UgoHELSI+9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20151120120613.GU31303@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mengdong Lin <mengdong.lin@linux.intel.com>, Harsha Priya <harshapriya.n@intel.com>, Conrad Cooke <conrad.cooke@intel.com>, Naveen M <naveen.m@intel.com>, Sathya Prakash M R <sathya.prakash.m.r@intel.com>, Yong Zhi <yong.zhi@intel.com>, "Fang, Yang A" <yang.a.fang@intel.com>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>
-List-Id: linux-next.vger.kernel.org
-
-
---opg8F0UgoHELSI+9
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:64447 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759759AbbKUBAd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Nov 2015 20:00:33 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5649D3B9.7020701@suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 20, 2015 at 12:06:13PM +0000, Mark Brown wrote:
-> On Thu, Nov 19, 2015 at 08:32:09AM +0530, Vinod Koul wrote:
-> > On Thu, Nov 19, 2015 at 11:35:28AM +1100, Stephen Rothwell wrote:
->=20
-> > > Caused by commit
-> > >=20
-> > >   a86d505783e4 ("ASoC: Intel: Skylake: Adding nau88l25+ssm4567 machin=
-e driver")
->=20
-> > Okay both went it same time, I will send a patch for this
->=20
-> Not seeing that patch...
+Sorry for the delay.
 
-Sorry for the delay. I have the patches, testing it now. couple of hours and
-it should be on the list :)
+On Mon, Nov 16, 2015 at 02:01:45PM +0100, Michal Marek wrote:
+> Dne 15.11.2015 v 18:58 Andi Kleen napsal(a):
+> > On Sun, Nov 15, 2015 at 11:27:05AM +1100, Stephen Rothwell wrote:
+> >> Hi Michal,
+> >>
+> >> I notice that the kbuild tree (relative to Linus' tree) only contains
+> >> lots of merges and these 2 commits from April 2014:
+> > 
+> > Really should get in that patch officially. I have a variety of users.
+> > And it clearly has been tested long enough in linux-next :)
+> > Michal, enough to just repost it?
+> 
+> So the commit in kbuild.git tree is identical to what is being tested
+> out of tree? Could you nevertheless provide an updated changelog? One
 
-Thanks
---=20
-~Vinod
+Yes. I'll provide a new ChangeLog. 
 
---opg8F0UgoHELSI+9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> (and actually only) of Linus' objections was that it was not clear at
+> all what the actual benefits for the kernel itself are. Do you have some
+> benchmarks perhaps, where LTO achieves a preformance gain? 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+The main users use it to shrink the kernel. I'll run some new benchmarks.
 
-iQIcBAEBAgAGBQJWTzUlAAoJEHwUBw8lI4NHjHAQAJG4wBhaU4QXBm/plnN9nI6P
-KEzULZvtIRRvI16PlvOj/gntlqfsjhBBvkREgWQXGEUllNXXvK/KcCQ0mYqzLzoP
-0tPsjv9UmJUR9WvPUesroCCH4aCva6syOLLhDnil5A+ZrMpDs+z/mzlHK1tMRku+
-908Cybfm3l4390K/QEtIH3ZERzsardBvVlikxNschAOvq8vZhl4FeDLE2M/aAQSf
-U1PSl+AKeqHUlXoB7DX3FoDfEMLCyxkHDQyGtDTx6SgWw5NtaFbucSBp/CPzryUo
-XWXNZ+cY4NcijlBkTuj8Ag90YWnckXLuISU9CMMc7GdLOJyXFFG27ekPTljI/ujp
-fDJeksMrzqkBRlLYiLw4wXARDdi+b5MhYQIEj/yB2pjOFfDd4rKfPfNPcel19fC7
-c7BjYdGE9yvdwj7GUfJplHLTiLwM1DYnFDhLWSaBbQNtOc4BPNcPwI6z2+4O7Q9f
-0GJqIDPQxUPQWgUcQ1cxBXYN2Iaw2y0+SX/aeThUxZf1ynXv3WFET0U9Gl30O/f7
-/dzRGonLBdn3O3/xdm89V5yspZitWPdy8dFEy04j5h1IT9YaZv6Os4kkLDzyF5Bx
-2m/EnGMtHUj2vFfmKcaV3EFY3WsEjO7FfFw5Ln2NiIa8fvUpj0CTt0zEfeP0hZaF
-gxnDXD6Ia2ojUjz3Nzc0
-=+mhf
------END PGP SIGNATURE-----
+> Also, did the
+> compile time impact change with gcc 5.x?
 
---opg8F0UgoHELSI+9--
+5.x is better than 4.x but it's still a slower. It's also not incremential.
+
+-Andi
+
+-- 
+ak@linux.intel.com -- Speaking for myself only
