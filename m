@@ -1,627 +1,324 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: + arc-convert-to-dma_map_ops.patch added to -mm tree
-Date: Tue, 24 Nov 2015 04:21:28 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075F44D2EEF@IN01WEMBXA.internal.synopsys.com>
-References: <564b9e3a.DaXj5xWV8Mzu1fPX%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for Nov 24
+Date: Tue, 24 Nov 2015 15:26:44 +1100
+Message-ID: <20151124152644.19ae110a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="_002_C2D7FE5348E1B147BCA15975FBA23075F44D2EEFIN01WEMBXAinter_"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:42586 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752866AbbKXEXd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2015 23:23:33 -0500
-Content-Language: en-US
+Received: from ozlabs.org ([103.22.144.67]:32972 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751139AbbKXE0q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Nov 2015 23:26:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "hch@lst.de" <hch@lst.de>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, arcml <linux-snps-arc@lists.infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Anton Kolesov <Anton.Kolesov@synopsys.com>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
---_002_C2D7FE5348E1B147BCA15975FBA23075F44D2EEFIN01WEMBXAinter_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-On Wednesday 18 November 2015 03:08 AM, akpm@linux-foundation.org wrote:=0A=
-> The patch titled=0A=
->      Subject: arc: convert to dma_map_ops=0A=
-> has been added to the -mm tree.  Its filename is=0A=
->      arc-convert-to-dma_map_ops.patch=0A=
->=0A=
-> This patch should soon appear at=0A=
->     http://ozlabs.org/~akpm/mmots/broken-out/arc-convert-to-dma_map_ops.p=
-atch=0A=
-> and later at=0A=
->     http://ozlabs.org/~akpm/mmotm/broken-out/arc-convert-to-dma_map_ops.p=
-atch=0A=
->=0A=
-> Before you just go and hit "reply", please:=0A=
->    a) Consider who else should be cc'ed=0A=
->    b) Prefer to cc a suitable mailing list as well=0A=
->    c) Ideally: find the original patch on the mailing list and do a=0A=
->       reply-to-all to that, adding suitable additional cc's=0A=
->=0A=
-> *** Remember to use Documentation/SubmitChecklist when testing your code =
-***=0A=
->=0A=
-> The -mm tree is included into linux-next and is updated=0A=
-> there every 3-4 working days=0A=
->=0A=
-> ------------------------------------------------------=0A=
-> From: Christoph Hellwig <hch@lst.de>=0A=
-> Subject: arc: convert to dma_map_ops=0A=
->=0A=
-> Signed-off-by: Christoph Hellwig <hch@lst.de>=0A=
-> Cc: Vineet Gupta <vgupta@synopsys.com>=0A=
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>=0A=
-> ---=0A=
->=0A=
->  arch/arc/Kconfig                   |    1 =0A=
->  arch/arc/include/asm/dma-mapping.h |  187 ---------------------------=0A=
->  arch/arc/mm/dma.c                  |  151 +++++++++++++++------=0A=
->  3 files changed, 109 insertions(+), 230 deletions(-)=0A=
->=0A=
-> diff -puN arch/arc/Kconfig~arc-convert-to-dma_map_ops arch/arc/Kconfig=0A=
-> --- a/arch/arc/Kconfig~arc-convert-to-dma_map_ops=0A=
-> +++ a/arch/arc/Kconfig=0A=
-> @@ -38,6 +38,7 @@ config ARC=0A=
->  	select OF_EARLY_FLATTREE=0A=
->  	select PERF_USE_VMALLOC=0A=
->  	select HAVE_DEBUG_STACKOVERFLOW=0A=
-> +	select HAVE_DMA_ATTRS=0A=
->  =0A=
->  config TRACE_IRQFLAGS_SUPPORT=0A=
->  	def_bool y=0A=
-> diff -puN arch/arc/include/asm/dma-mapping.h~arc-convert-to-dma_map_ops a=
-rch/arc/include/asm/dma-mapping.h=0A=
-> --- a/arch/arc/include/asm/dma-mapping.h~arc-convert-to-dma_map_ops=0A=
-> +++ a/arch/arc/include/asm/dma-mapping.h=0A=
-> @@ -11,192 +11,13 @@=0A=
->  #ifndef ASM_ARC_DMA_MAPPING_H=0A=
->  #define ASM_ARC_DMA_MAPPING_H=0A=
->  =0A=
-> -#include <asm-generic/dma-coherent.h>=0A=
-> -#include <asm/cacheflush.h>=0A=
-> +extern struct dma_map_ops arc_dma_ops;=0A=
->  =0A=
-> -void *dma_alloc_noncoherent(struct device *dev, size_t size,=0A=
-> -			    dma_addr_t *dma_handle, gfp_t gfp);=0A=
-> -=0A=
-> -void dma_free_noncoherent(struct device *dev, size_t size, void *vaddr,=
-=0A=
-> -			  dma_addr_t dma_handle);=0A=
-> -=0A=
-> -void *dma_alloc_coherent(struct device *dev, size_t size,=0A=
-> -			 dma_addr_t *dma_handle, gfp_t gfp);=0A=
-> -=0A=
-> -void dma_free_coherent(struct device *dev, size_t size, void *kvaddr,=0A=
-> -		       dma_addr_t dma_handle);=0A=
-> -=0A=
-> -/* drivers/base/dma-mapping.c */=0A=
-> -extern int dma_common_mmap(struct device *dev, struct vm_area_struct *vm=
-a,=0A=
-> -			   void *cpu_addr, dma_addr_t dma_addr, size_t size);=0A=
-> -extern int dma_common_get_sgtable(struct device *dev, struct sg_table *s=
-gt,=0A=
-> -				  void *cpu_addr, dma_addr_t dma_addr,=0A=
-> -				  size_t size);=0A=
-> -=0A=
-> -#define dma_mmap_coherent(d, v, c, h, s) dma_common_mmap(d, v, c, h, s)=
-=0A=
-> -#define dma_get_sgtable(d, t, v, h, s) dma_common_get_sgtable(d, t, v, h=
-, s)=0A=
-> -=0A=
-> -/*=0A=
-> - * streaming DMA Mapping API...=0A=
-> - * CPU accesses page via normal paddr, thus needs to explicitly made=0A=
-> - * consistent before each use=0A=
-> - */=0A=
-> -=0A=
-> -static inline void __inline_dma_cache_sync(unsigned long paddr, size_t s=
-ize,=0A=
-> -					   enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	switch (dir) {=0A=
-> -	case DMA_FROM_DEVICE:=0A=
-> -		dma_cache_inv(paddr, size);=0A=
-> -		break;=0A=
-> -	case DMA_TO_DEVICE:=0A=
-> -		dma_cache_wback(paddr, size);=0A=
-> -		break;=0A=
-> -	case DMA_BIDIRECTIONAL:=0A=
-> -		dma_cache_wback_inv(paddr, size);=0A=
-> -		break;=0A=
-> -	default:=0A=
-> -		pr_err("Invalid DMA dir [%d] for OP @ %lx\n", dir, paddr);=0A=
-> -	}=0A=
-> -}=0A=
-> -=0A=
-> -void __arc_dma_cache_sync(unsigned long paddr, size_t size,=0A=
-> -			  enum dma_data_direction dir);=0A=
-> -=0A=
-> -#define _dma_cache_sync(addr, sz, dir)			\=0A=
-> -do {							\=0A=
-> -	if (__builtin_constant_p(dir))			\=0A=
-> -		__inline_dma_cache_sync(addr, sz, dir);	\=0A=
-> -	else						\=0A=
-> -		__arc_dma_cache_sync(addr, sz, dir);	\=0A=
-> -}							\=0A=
-> -while (0);=0A=
-> -=0A=
-> -static inline dma_addr_t=0A=
-> -dma_map_single(struct device *dev, void *cpu_addr, size_t size,=0A=
-> -	       enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	_dma_cache_sync((unsigned long)cpu_addr, size, dir);=0A=
-> -	return (dma_addr_t)cpu_addr;=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_unmap_single(struct device *dev, dma_addr_t dma_addr,=0A=
-> -		 size_t size, enum dma_data_direction dir)=0A=
-> -{=0A=
-> -}=0A=
-> -=0A=
-> -static inline dma_addr_t=0A=
-> -dma_map_page(struct device *dev, struct page *page,=0A=
-> -	     unsigned long offset, size_t size,=0A=
-> -	     enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	unsigned long paddr =3D page_to_phys(page) + offset;=0A=
-> -	return dma_map_single(dev, (void *)paddr, size, dir);=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_unmap_page(struct device *dev, dma_addr_t dma_handle,=0A=
-> -	       size_t size, enum dma_data_direction dir)=0A=
-> -{=0A=
-> -}=0A=
-> -=0A=
-> -static inline int=0A=
-> -dma_map_sg(struct device *dev, struct scatterlist *sg,=0A=
-> -	   int nents, enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	struct scatterlist *s;=0A=
-> -	int i;=0A=
-> -=0A=
-> -	for_each_sg(sg, s, nents, i)=0A=
-> -		s->dma_address =3D dma_map_page(dev, sg_page(s), s->offset,=0A=
-> -					       s->length, dir);=0A=
-> -=0A=
-> -	return nents;=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_unmap_sg(struct device *dev, struct scatterlist *sg,=0A=
-> -	     int nents, enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	struct scatterlist *s;=0A=
-> -	int i;=0A=
-> -=0A=
-> -	for_each_sg(sg, s, nents, i)=0A=
-> -		dma_unmap_page(dev, sg_dma_address(s), sg_dma_len(s), dir);=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_sync_single_for_cpu(struct device *dev, dma_addr_t dma_handle,=0A=
-> -			size_t size, enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	_dma_cache_sync(dma_handle, size, DMA_FROM_DEVICE);=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_sync_single_for_device(struct device *dev, dma_addr_t dma_handle,=0A=
-> -			   size_t size, enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	_dma_cache_sync(dma_handle, size, DMA_TO_DEVICE);=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_sync_single_range_for_cpu(struct device *dev, dma_addr_t dma_handle,=
-=0A=
-> -			      unsigned long offset, size_t size,=0A=
-> -			      enum dma_data_direction direction)=0A=
-> -{=0A=
-> -	_dma_cache_sync(dma_handle + offset, size, DMA_FROM_DEVICE);=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_sync_single_range_for_device(struct device *dev, dma_addr_t dma_hand=
-le,=0A=
-> -				 unsigned long offset, size_t size,=0A=
-> -				 enum dma_data_direction direction)=0A=
-> -{=0A=
-> -	_dma_cache_sync(dma_handle + offset, size, DMA_TO_DEVICE);=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sglist, int =
-nelems,=0A=
-> -		    enum dma_data_direction dir)=0A=
-> +static inline struct dma_map_ops *get_dma_ops(struct device *dev)=0A=
->  {=0A=
-> -	int i;=0A=
-> -	struct scatterlist *sg;=0A=
-> -=0A=
-> -	for_each_sg(sglist, sg, nelems, i)=0A=
-> -		_dma_cache_sync((unsigned int)sg_virt(sg), sg->length, dir);=0A=
-> -}=0A=
-> -=0A=
-> -static inline void=0A=
-> -dma_sync_sg_for_device(struct device *dev, struct scatterlist *sglist,=
-=0A=
-> -		       int nelems, enum dma_data_direction dir)=0A=
-> -{=0A=
-> -	int i;=0A=
-> -	struct scatterlist *sg;=0A=
-> -=0A=
-> -	for_each_sg(sglist, sg, nelems, i)=0A=
-> -		_dma_cache_sync((unsigned int)sg_virt(sg), sg->length, dir);=0A=
-> -}=0A=
-> -=0A=
-> -static inline int dma_supported(struct device *dev, u64 dma_mask)=0A=
-> -{=0A=
-> -	/* Support 32 bit DMA mask exclusively */=0A=
-> -	return dma_mask =3D=3D DMA_BIT_MASK(32);=0A=
-> +	return &arc_dma_ops;=0A=
->  }=0A=
->  =0A=
-> -static inline int dma_mapping_error(struct device *dev, dma_addr_t dma_a=
-ddr)=0A=
-> -{=0A=
-> -	return 0;=0A=
-> -}=0A=
-> -=0A=
-> -static inline int dma_set_mask(struct device *dev, u64 dma_mask)=0A=
-> -{=0A=
-> -	if (!dev->dma_mask || !dma_supported(dev, dma_mask))=0A=
-> -		return -EIO;=0A=
-> -=0A=
-> -	*dev->dma_mask =3D dma_mask;=0A=
-> -=0A=
-> -	return 0;=0A=
-> -}=0A=
-> +#include <asm-generic/dma-mapping-common.h>=0A=
->  =0A=
->  #endif=0A=
-> diff -puN arch/arc/mm/dma.c~arc-convert-to-dma_map_ops arch/arc/mm/dma.c=
-=0A=
-> --- a/arch/arc/mm/dma.c~arc-convert-to-dma_map_ops=0A=
-> +++ a/arch/arc/mm/dma.c=0A=
-> @@ -17,18 +17,14 @@=0A=
->   */=0A=
->  =0A=
->  #include <linux/dma-mapping.h>=0A=
-> -#include <linux/dma-debug.h>=0A=
-> -#include <linux/export.h>=0A=
->  #include <asm/cache.h>=0A=
->  #include <asm/cacheflush.h>=0A=
->  =0A=
-> -/*=0A=
-> - * Helpers for Coherent DMA API.=0A=
-> - */=0A=
-> -void *dma_alloc_noncoherent(struct device *dev, size_t size,=0A=
-> -			    dma_addr_t *dma_handle, gfp_t gfp)=0A=
-> +=0A=
-> +static void *arc_dma_alloc(struct device *dev, size_t size,=0A=
-> +		dma_addr_t *dma_handle, gfp_t gfp, struct dma_attrs *attrs)=0A=
->  {=0A=
-> -	void *paddr;=0A=
-> +	void *paddr, *kvaddr;=0A=
->  =0A=
->  	/* This is linear addr (0x8000_0000 based) */=0A=
->  	paddr =3D alloc_pages_exact(size, gfp);=0A=
-> @@ -38,22 +34,6 @@ void *dma_alloc_noncoherent(struct devic=0A=
->  	/* This is bus address, platform dependent */=0A=
->  	*dma_handle =3D (dma_addr_t)paddr;=0A=
->  =0A=
-> -	return paddr;=0A=
-> -}=0A=
-> -EXPORT_SYMBOL(dma_alloc_noncoherent);=0A=
-> -=0A=
-> -void dma_free_noncoherent(struct device *dev, size_t size, void *vaddr,=
-=0A=
-> -			  dma_addr_t dma_handle)=0A=
-> -{=0A=
-> -	free_pages_exact((void *)dma_handle, size);=0A=
-> -}=0A=
-> -EXPORT_SYMBOL(dma_free_noncoherent);=0A=
-> -=0A=
-> -void *dma_alloc_coherent(struct device *dev, size_t size,=0A=
-> -			 dma_addr_t *dma_handle, gfp_t gfp)=0A=
-> -{=0A=
-> -	void *paddr, *kvaddr;=0A=
-> -=0A=
->  	/*=0A=
->  	 * IOC relies on all data (even coherent DMA data) being in cache=0A=
->  	 * Thus allocate normal cached memory=0A=
-> @@ -65,22 +45,15 @@ void *dma_alloc_coherent(struct device *=0A=
->  	 *   -For coherent data, Read/Write to buffers terminate early in cache=
-=0A=
->  	 *   (vs. always going to memory - thus are faster)=0A=
->  	 */=0A=
-> -	if (is_isa_arcv2() && ioc_exists)=0A=
-> -		return dma_alloc_noncoherent(dev, size, dma_handle, gfp);=0A=
-> -=0A=
-> -	/* This is linear addr (0x8000_0000 based) */=0A=
-> -	paddr =3D alloc_pages_exact(size, gfp);=0A=
-> -	if (!paddr)=0A=
-> -		return NULL;=0A=
-> +	if ((is_isa_arcv2() && ioc_exists) ||=0A=
-> +	    dma_get_attr(DMA_ATTR_NON_CONSISTENT, attrs)=0A=
-> +		return paddr;=0A=
->  =0A=
->  	/* This is kernel Virtual address (0x7000_0000 based) */=0A=
->  	kvaddr =3D ioremap_nocache((unsigned long)paddr, size);=0A=
->  	if (kvaddr =3D=3D NULL)=0A=
->  		return NULL;=0A=
->  =0A=
-> -	/* This is bus address, platform dependent */=0A=
-> -	*dma_handle =3D (dma_addr_t)paddr;=0A=
-> -=0A=
->  	/*=0A=
->  	 * Evict any existing L1 and/or L2 lines for the backing page=0A=
->  	 * in case it was used earlier as a normal "cached" page.=0A=
-> @@ -95,26 +68,110 @@ void *dma_alloc_coherent(struct device *=0A=
->  =0A=
->  	return kvaddr;=0A=
->  }=0A=
-> -EXPORT_SYMBOL(dma_alloc_coherent);=0A=
->  =0A=
-> -void dma_free_coherent(struct device *dev, size_t size, void *kvaddr,=0A=
-> -		       dma_addr_t dma_handle)=0A=
-> +static void arc_dma_free(struct device *dev, size_t size, void *vaddr,=
-=0A=
-> +		dma_addr_t dma_handle, struct dma_attrs *attrs)=0A=
->  {=0A=
-> -	if (is_isa_arcv2() && ioc_exists)=0A=
-> -		return dma_free_noncoherent(dev, size, kvaddr, dma_handle);=0A=
-> -=0A=
-> -	iounmap((void __force __iomem *)kvaddr);=0A=
-> +	if (!(is_isa_arcv2() && ioc_exists) ||=0A=
-> +	    dma_get_attr(DMA_ATTR_NON_CONSISTENT, attrs))=0A=
-> +		iounmap((void __force __iomem *)kvaddr);=0A=
->  =0A=
->  	free_pages_exact((void *)dma_handle, size);=0A=
->  }=0A=
-> -EXPORT_SYMBOL(dma_free_coherent);=0A=
->  =0A=
->  /*=0A=
-> - * Helper for streaming DMA...=0A=
-> + * streaming DMA Mapping API...=0A=
-> + * CPU accesses page via normal paddr, thus needs to explicitly made=0A=
-> + * consistent before each use=0A=
->   */=0A=
-> -void __arc_dma_cache_sync(unsigned long paddr, size_t size,=0A=
-> -			  enum dma_data_direction dir)=0A=
-> +static void _dma_cache_sync(unsigned long paddr, size_t size,=0A=
-> +		enum dma_data_direction dir)=0A=
-> +{=0A=
-> +	switch (dir) {=0A=
-> +	case DMA_FROM_DEVICE:=0A=
-> +		dma_cache_inv(paddr, size);=0A=
-> +		break;=0A=
-> +	case DMA_TO_DEVICE:=0A=
-> +		dma_cache_wback(paddr, size);=0A=
-> +		break;=0A=
-> +	case DMA_BIDIRECTIONAL:=0A=
-> +		dma_cache_wback_inv(paddr, size);=0A=
-> +		break;=0A=
-> +	default:=0A=
-> +		pr_err("Invalid DMA dir [%d] for OP @ %lx\n", dir, paddr);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +static dma_addr_t arc_dma_map_page(struct device *dev, struct page *page=
-,=0A=
-> +		unsigned long offset, size_t size, enum dma_data_direction dir,=0A=
-> +		struct dma_attrs *attrs)=0A=
-> +{=0A=
-> +	unsigned long paddr =3D page_to_phys(page) + offset;=0A=
-> +	return dma_map_single(dev, (void *)paddr, size, dir);=0A=
-> +}=0A=
-> +=0A=
-> +static int arc_dma_map_sg(struct device *dev, struct scatterlist *sg,=0A=
-> +	   int nents, enum dma_data_direction dir, struct dma_attrs *attrs)=0A=
-> +{=0A=
-> +	struct scatterlist *s;=0A=
-> +	int i;=0A=
-> +=0A=
-> +	for_each_sg(sg, s, nents, i)=0A=
-> +		s->dma_address =3D dma_map_page(dev, sg_page(s), s->offset,=0A=
-> +					       s->length, dir);=0A=
-> +=0A=
-> +	return nents;=0A=
-> +}=0A=
-> +=0A=
-> +static void arc_dma_sync_single_for_cpu(struct device *dev,=0A=
-> +		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)=0A=
-> +{=0A=
-> +	_dma_cache_sync(dma_handle, size, DMA_FROM_DEVICE);=0A=
-> +}=0A=
-> +=0A=
-> +static void arc_dma_sync_single_for_device(struct device *dev,=0A=
-> +		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)=0A=
->  {=0A=
-> -	__inline_dma_cache_sync(paddr, size, dir);=0A=
-> +	_dma_cache_sync(dma_handle, size, DMA_TO_DEVICE);=0A=
->  }=0A=
-> -EXPORT_SYMBOL(__arc_dma_cache_sync);=0A=
-> +=0A=
-> +static void arm_dma_sync_sg_for_cpu(struct device *dev,=0A=
-> +		struct scatterlist *sglist, int nelems,=0A=
-> +		enum dma_data_direction dir)=0A=
-> +{=0A=
-> +	int i;=0A=
-> +	struct scatterlist *sg;=0A=
-> +=0A=
-> +	for_each_sg(sglist, sg, nelems, i)=0A=
-> +		_dma_cache_sync((unsigned int)sg_virt(sg), sg->length, dir);=0A=
-> +}=0A=
-> +=0A=
-> +static void arc_dma_sync_sg_for_device(struct device *dev,=0A=
-> +		struct scatterlist *sglist, int nelems,=0A=
-> +		enum dma_data_direction dir)=0A=
-> +{=0A=
-> +	int i;=0A=
-> +	struct scatterlist *sg;=0A=
-> +=0A=
-> +	for_each_sg(sglist, sg, nelems, i)=0A=
-> +		_dma_cache_sync((unsigned int)sg_virt(sg), sg->length, dir);=0A=
-> +}=0A=
-> +=0A=
-> +static int arc_dma_supported(struct device *dev, u64 dma_mask)=0A=
-> +{=0A=
-> +	/* Support 32 bit DMA mask exclusively */=0A=
-> +	return dma_mask =3D=3D DMA_BIT_MASK(32);=0A=
-> +}=0A=
-> +=0A=
-> +struct dma_map_ops arc_dma_ops =3D {=0A=
-> +	.alloc			=3D arc_dma_alloc,=0A=
-> +	.free			=3D arc_dma_free,=0A=
-> +	.map_page		=3D arc_dma_map_page,=0A=
-> +	.map_sg			=3D arc_dma_map_sg,=0A=
-> +	.sync_single_for_device	=3D arc_dma_sync_single_for_device,=0A=
-> +	.sync_single_for_cpu	=3D arc_dma_sync_single_for_cpu,=0A=
-> +	.sync_sg_for_cpu	=3D arc_dma_sync_sg_for_cpu,=0A=
-> +	.sync_sg_for_dev	=3D arc_dma_sync_sg_for_device,=0A=
-> +	.dma_supported		=3D arc_dma_supported,=0A=
-> +};=0A=
-> +EXPORT_SYMBOL(arc_dma_ops);=0A=
-> _=0A=
->=0A=
-> Patches currently in -mm which might be from hch@lst.de are=0A=
->=0A=
-> dma-mapping-make-the-generic-coherent-dma-mmap-implementation-optional.pa=
-tch=0A=
-> arc-convert-to-dma_map_ops.patch=0A=
-> avr32-convert-to-dma_map_ops.patch=0A=
-> blackfin-convert-to-dma_map_ops.patch=0A=
-> c6x-convert-to-dma_map_ops.patch=0A=
-> cris-convert-to-dma_map_ops.patch=0A=
-> nios2-convert-to-dma_map_ops.patch=0A=
-> frv-convert-to-dma_map_ops.patch=0A=
-> parisc-convert-to-dma_map_ops.patch=0A=
-> mn10300-convert-to-dma_map_ops.patch=0A=
-> m68k-convert-to-dma_map_ops.patch=0A=
-> metag-convert-to-dma_map_ops.patch=0A=
-> sparc-use-generic-dma_set_mask.patch=0A=
-> tile-uninline-dma_set_mask.patch=0A=
-> dma-mapping-always-provide-the-dma_map_ops-based-implementation.patch=0A=
-> dma-mapping-remove-asm-generic-dma-coherenth.patch=0A=
-=0A=
-Hi Christoph,=0A=
-=0A=
-This patch in linux-next breaks ARC build.=0A=
-=0A=
-Below is fixup patch which u can probably fold into your tree=0A=
------------->=0A=
->From d924a26542660cd1ac68f8f86f8b646835ef5179 Mon Sep 17 00:00:00 2001=0A=
-From: Vineet Gupta <vgupta@synopsys.com>=0A=
-Date: Tue, 24 Nov 2015 09:46:05 +0530=0A=
-Subject: [PATCH] arc: fix wreakage of conversion to dma_map_ops=0A=
-=0A=
-Obviously the initial patch was not build tested.=0A=
-=0A=
-Reported-by: Anton Kolesov <akolesov@synopsys.com>=0A=
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>=0A=
----=0A=
- arch/arc/mm/dma.c | 8 ++++----=0A=
- 1 file changed, 4 insertions(+), 4 deletions(-)=0A=
-=0A=
-diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c=0A=
-index da289cb30ca5..695029f41a48 100644=0A=
---- a/arch/arc/mm/dma.c=0A=
-+++ b/arch/arc/mm/dma.c=0A=
-@@ -46,7 +46,7 @@ static void *arc_dma_alloc(struct device *dev, size_t siz=
-e,=0A=
-      *   (vs. always going to memory - thus are faster)=0A=
-      */=0A=
-     if ((is_isa_arcv2() && ioc_exists) ||=0A=
--        dma_get_attr(DMA_ATTR_NON_CONSISTENT, attrs)=0A=
-+        dma_get_attr(DMA_ATTR_NON_CONSISTENT, attrs))=0A=
-         return paddr;=0A=
- =0A=
-     /* This is kernel Virtual address (0x7000_0000 based) */=0A=
-@@ -74,7 +74,7 @@ static void arc_dma_free(struct device *dev, size_t size,=
- void=0A=
-*vaddr,=0A=
- {=0A=
-     if (!(is_isa_arcv2() && ioc_exists) ||=0A=
-         dma_get_attr(DMA_ATTR_NON_CONSISTENT, attrs))=0A=
--        iounmap((void __force __iomem *)kvaddr);=0A=
-+        iounmap((void __force __iomem *)vaddr);=0A=
- =0A=
-     free_pages_exact((void *)dma_handle, size);=0A=
- }=0A=
-@@ -135,7 +135,7 @@ static void arc_dma_sync_single_for_device(struct devic=
-e *dev,=0A=
-     _dma_cache_sync(dma_handle, size, DMA_TO_DEVICE);=0A=
- }=0A=
- =0A=
--static void arm_dma_sync_sg_for_cpu(struct device *dev,=0A=
-+static void arc_dma_sync_sg_for_cpu(struct device *dev,=0A=
-         struct scatterlist *sglist, int nelems,=0A=
-         enum dma_data_direction dir)=0A=
- {=0A=
-@@ -171,7 +171,7 @@ struct dma_map_ops arc_dma_ops =3D {=0A=
-     .sync_single_for_device    =3D arc_dma_sync_single_for_device,=0A=
-     .sync_single_for_cpu    =3D arc_dma_sync_single_for_cpu,=0A=
-     .sync_sg_for_cpu    =3D arc_dma_sync_sg_for_cpu,=0A=
--    .sync_sg_for_dev    =3D arc_dma_sync_sg_for_device,=0A=
-+    .sync_sg_for_device    =3D arc_dma_sync_sg_for_device,=0A=
-     .dma_supported        =3D arc_dma_supported,=0A=
- };=0A=
- EXPORT_SYMBOL(arc_dma_ops);=0A=
--- =0A=
-1.9.1=0A=
-=0A=
-=0A=
+Changes since 20151123:
 
---_002_C2D7FE5348E1B147BCA15975FBA23075F44D2EEFIN01WEMBXAinter_
-Content-Type: text/x-patch;
-	name="0001-arc-fix-wreakage-of-conversion-to-dma_map_ops.patch"
-Content-Description: 0001-arc-fix-wreakage-of-conversion-to-dma_map_ops.patch
-Content-Disposition: attachment;
-	filename="0001-arc-fix-wreakage-of-conversion-to-dma_map_ops.patch";
-	size=2005; creation-date="Tue, 24 Nov 2015 04:21:27 GMT";
-	modification-date="Tue, 24 Nov 2015 04:21:27 GMT"
-Content-Transfer-Encoding: base64
+The net-next tree gained a conflict against the net tree.
 
-RnJvbSBkOTI0YTI2NTQyNjYwY2QxYWM2OGY4Zjg2ZjhiNjQ2ODM1ZWY1MTc5IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBWaW5lZXQgR3VwdGEgPHZndXB0YUBzeW5vcHN5cy5jb20+CkRh
-dGU6IFR1ZSwgMjQgTm92IDIwMTUgMDk6NDY6MDUgKzA1MzAKU3ViamVjdDogW1BBVENIXSBhcmM6
-IGZpeCB3cmVha2FnZSBvZiBjb252ZXJzaW9uIHRvIGRtYV9tYXBfb3BzCgpPYnZpb3VzbHkgdGhl
-IGluaXRpYWwgcGF0Y2ggd2FzIG5vdCBidWlsZCB0ZXN0ZWQuCgpSZXBvcnRlZC1ieTogQW50b24g
-S29sZXNvdiA8YWtvbGVzb3ZAc3lub3BzeXMuY29tPgpTaWduZWQtb2ZmLWJ5OiBWaW5lZXQgR3Vw
-dGEgPHZndXB0YUBzeW5vcHN5cy5jb20+Ci0tLQogYXJjaC9hcmMvbW0vZG1hLmMgfCA4ICsrKyst
-LS0tCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlm
-ZiAtLWdpdCBhL2FyY2gvYXJjL21tL2RtYS5jIGIvYXJjaC9hcmMvbW0vZG1hLmMKaW5kZXggZGEy
-ODljYjMwY2E1Li42OTUwMjlmNDFhNDggMTAwNjQ0Ci0tLSBhL2FyY2gvYXJjL21tL2RtYS5jCisr
-KyBiL2FyY2gvYXJjL21tL2RtYS5jCkBAIC00Niw3ICs0Niw3IEBAIHN0YXRpYyB2b2lkICphcmNf
-ZG1hX2FsbG9jKHN0cnVjdCBkZXZpY2UgKmRldiwgc2l6ZV90IHNpemUsCiAJICogICAodnMuIGFs
-d2F5cyBnb2luZyB0byBtZW1vcnkgLSB0aHVzIGFyZSBmYXN0ZXIpCiAJICovCiAJaWYgKChpc19p
-c2FfYXJjdjIoKSAmJiBpb2NfZXhpc3RzKSB8fAotCSAgICBkbWFfZ2V0X2F0dHIoRE1BX0FUVFJf
-Tk9OX0NPTlNJU1RFTlQsIGF0dHJzKQorCSAgICBkbWFfZ2V0X2F0dHIoRE1BX0FUVFJfTk9OX0NP
-TlNJU1RFTlQsIGF0dHJzKSkKIAkJcmV0dXJuIHBhZGRyOwogCiAJLyogVGhpcyBpcyBrZXJuZWwg
-VmlydHVhbCBhZGRyZXNzICgweDcwMDBfMDAwMCBiYXNlZCkgKi8KQEAgLTc0LDcgKzc0LDcgQEAg
-c3RhdGljIHZvaWQgYXJjX2RtYV9mcmVlKHN0cnVjdCBkZXZpY2UgKmRldiwgc2l6ZV90IHNpemUs
-IHZvaWQgKnZhZGRyLAogewogCWlmICghKGlzX2lzYV9hcmN2MigpICYmIGlvY19leGlzdHMpIHx8
-CiAJICAgIGRtYV9nZXRfYXR0cihETUFfQVRUUl9OT05fQ09OU0lTVEVOVCwgYXR0cnMpKQotCQlp
-b3VubWFwKCh2b2lkIF9fZm9yY2UgX19pb21lbSAqKWt2YWRkcik7CisJCWlvdW5tYXAoKHZvaWQg
-X19mb3JjZSBfX2lvbWVtICopdmFkZHIpOwogCiAJZnJlZV9wYWdlc19leGFjdCgodm9pZCAqKWRt
-YV9oYW5kbGUsIHNpemUpOwogfQpAQCAtMTM1LDcgKzEzNSw3IEBAIHN0YXRpYyB2b2lkIGFyY19k
-bWFfc3luY19zaW5nbGVfZm9yX2RldmljZShzdHJ1Y3QgZGV2aWNlICpkZXYsCiAJX2RtYV9jYWNo
-ZV9zeW5jKGRtYV9oYW5kbGUsIHNpemUsIERNQV9UT19ERVZJQ0UpOwogfQogCi1zdGF0aWMgdm9p
-ZCBhcm1fZG1hX3N5bmNfc2dfZm9yX2NwdShzdHJ1Y3QgZGV2aWNlICpkZXYsCitzdGF0aWMgdm9p
-ZCBhcmNfZG1hX3N5bmNfc2dfZm9yX2NwdShzdHJ1Y3QgZGV2aWNlICpkZXYsCiAJCXN0cnVjdCBz
-Y2F0dGVybGlzdCAqc2dsaXN0LCBpbnQgbmVsZW1zLAogCQllbnVtIGRtYV9kYXRhX2RpcmVjdGlv
-biBkaXIpCiB7CkBAIC0xNzEsNyArMTcxLDcgQEAgc3RydWN0IGRtYV9tYXBfb3BzIGFyY19kbWFf
-b3BzID0gewogCS5zeW5jX3NpbmdsZV9mb3JfZGV2aWNlCT0gYXJjX2RtYV9zeW5jX3NpbmdsZV9m
-b3JfZGV2aWNlLAogCS5zeW5jX3NpbmdsZV9mb3JfY3B1CT0gYXJjX2RtYV9zeW5jX3NpbmdsZV9m
-b3JfY3B1LAogCS5zeW5jX3NnX2Zvcl9jcHUJPSBhcmNfZG1hX3N5bmNfc2dfZm9yX2NwdSwKLQku
-c3luY19zZ19mb3JfZGV2CT0gYXJjX2RtYV9zeW5jX3NnX2Zvcl9kZXZpY2UsCisJLnN5bmNfc2df
-Zm9yX2RldmljZQk9IGFyY19kbWFfc3luY19zZ19mb3JfZGV2aWNlLAogCS5kbWFfc3VwcG9ydGVk
-CQk9IGFyY19kbWFfc3VwcG9ydGVkLAogfTsKIEVYUE9SVF9TWU1CT0woYXJjX2RtYV9vcHMpOwot
-LSAKMS45LjEKCg==
+The drm-panel tree gained a build failure so I used the version from
+next-20151123.
 
---_002_C2D7FE5348E1B147BCA15975FBA23075F44D2EEFIN01WEMBXAinter_--
+Non-merge commits (relative to Linus' tree): 2366
+ 2981 files changed, 92039 insertions(+), 35632 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with a ppc64_defconfig for powerpc and an allmodconfig for x86_64, a
+multi_v7_defconfig for arm and a native build of tools/perf. After the
+final fixups (if any), I do an x86_64 modules_install followed by builds
+for powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig
+(this fails its final link) and pseries_le_defconfig and i386, sparc,
+sparc64 and arm defconfig.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 231 trees (counting Linus' and 36 trees of patches
+pending for Linus' tree).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master (a2931547eee1 Merge tag 'linux-kselftest-4.4-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest)
+Merging fixes/master (25cb62b76430 Linux 4.3-rc5)
+Merging kbuild-current/rc-fixes (3d1450d54a4f Makefile: Force gzip and xz on module install)
+Merging arc-current/for-curr (049e6dde7e57 Linux 4.3-rc4)
+Merging arm-current/fixes (28fa99b7645a ARM: wire up mlock2 syscall)
+Merging m68k-current/for-linus (21d380e54c30 m68k: Wire up mlock2)
+Merging metag-fixes/fixes (0164a711c97b metag: Fix ioremap_wc/ioremap_cached build errors)
+Merging mips-fixes/mips-fixes (1795cd9b3a91 Linux 3.16-rc5)
+Merging powerpc-fixes/fixes (1451ad03fac3 powerpc: Wire up sys_mlock2())
+Merging powerpc-merge-mpe/fixes (bc0195aad0da Linux 4.2-rc2)
+Merging sparc/master (2c302e7e4105 Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc)
+Merging net/master (3d1a54e801b6 net/hsr: fix a warning message)
+Merging ipsec/master (a8a572a6b5f2 xfrm: dst_entries_init() per-net dst_ops)
+Merging ipvs/master (086f332167d6 netfilter: nf_tables: add clone interface to expression operations)
+Merging wireless-drivers/master (eeec5d0ef7ee rtlwifi: rtl8821ae: Fix lockups on boot)
+Merging mac80211/master (5ff3ca288894 mac80211: don't teardown sdata on sdata stop)
+Merging sound-current/for-linus (196543d54574 ALSA: hda - Apply HP headphone fixups more generically)
+Merging pci-current/for-linus (8005c49d9aea Linux 4.4-rc1)
+Merging driver-core.current/driver-core-linus (8005c49d9aea Linux 4.4-rc1)
+Merging tty.current/tty-linus (bd63acf9e9a6 serial: export fsl8250_handle_irq)
+Merging usb.current/usb-linus (19cd80a21482 usblp: do not set TASK_INTERRUPTIBLE before lock)
+Merging usb-gadget-fixes/fixes (f74875dc3613 usb: dwc2: fix kernel oops during driver probe)
+Merging usb-serial-fixes/usb-linus (a0e80fbd56b4 USB: serial: Another Infineon flash loader USB ID)
+Merging usb-chipidea-fixes/ci-for-usb-stable (6f51bc340d2a usb: chipidea: imx: fix a possible NULL dereference)
+Merging staging.current/staging-linus (1ec218373b8e Linux 4.4-rc2)
+Merging char-misc.current/char-misc-linus (1ec218373b8e Linux 4.4-rc2)
+Merging input-current/for-linus (0c6da0733bff Input: parkbd - clear unused function pointers)
+Merging crypto-current/master (79960943fdc1 crypto: talitos - Fix timing leak in ESP ICV verification)
+Merging ide/master (1b1050cdc5cd Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/ide)
+Merging devicetree-current/devicetree/merge (f76502aa9140 of/dynamic: Fix test for PPC_PSERIES)
+Merging rr-fixes/fixes (275d7d44d802 module: Fix locking in symbol_put_addr())
+Merging vfio-fixes/for-linus (4bc94d5dc95d vfio: Fix lockdep issue)
+Merging kselftest-fixes/fixes (2ce47b44b25d selftests/seccomp: Get page size from sysconf)
+Merging backlight-fixes/for-backlight-fixes (68feaca0b13e backlight: pwm: Handle EPROBE_DEFER while requesting the PWM)
+Merging ftrace-fixes/for-next-urgent (6224beb12e19 tracing: Have branch tracer use recursive field of task struct)
+Merging mfd-fixes/for-mfd-fixes (1b52e50f2a40 mfd: max77843: Fix max77843_chg_init() return on error)
+Merging drm-intel-fixes/for-linux-next-fixes (0b466dc238cb drm/i915: Mark uneven memory banks on gen4 desktop as unknown swizzling)
+Merging asm-generic/master (795291732663 asm-generic: page.h: Remove useless get_user_page and free_user_page)
+Merging arc/for-next (2e22502c080f ARC: dw2 unwind: Remove falllback linear search thru FDE entries)
+Merging arm/for-next (fa6af083e893 Merge branches 'fixes' and 'misc' into for-next)
+Merging arm-perf/for-next/perf (8005c49d9aea Linux 4.4-rc1)
+Merging arm-soc/for-next (851df3dc1113 scpi: hide get_scpi_ops in module from built-in code)
+Merging at91/at91-next (f05d836b8770 Merge tag 'at91-fixes' into at91-next)
+Merging bcm2835/for-next (b2776bf7149b Linux 3.18)
+Merging berlin/berlin/for-next (56c56eceb815 Merge branches 'berlin/dt' and 'berlin/doc' into berlin/for-next)
+Merging cortex-m/for-next (f719a0d6a854 ARM: efm32: switch to vendor,device compatible strings)
+Merging imx-mxs/for-next (f843df81257a Merge branch 'imx/defconfig' into for-next)
+Merging keystone/next (99d59777c089 Merge branch 'for_4.4-rcx/drivers-soc' into next)
+Merging mvebu/for-next (5442f0eadf28 ARM: dts: Kirkwood: Fix QNAP TS219 power-off)
+Merging omap/for-next (f2a148747f11 Merge branch 'omap-for-v4.3/fixes' into for-next)
+Merging omap-pending/for-next (30aa18d3bea5 MAINTAINERS: add maintainer for OMAP hwmod data)
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/omap_hwmod_43xx_data.c
+Merging qcom/qcom/for-next (c38ef6905153 ARM: defconfig: Update qcom_defconfig)
+Merging renesas/next (42a8ac3b3b7b Merge branch 'heads/fixes-for-v4.4' into next)
+Merging rockchip/for-next (78a6e39eae9b Merge branch 'v4.5-armsoc/dts64' into for-next)
+Merging rpi/for-rpi-next (bc0195aad0da Linux 4.2-rc2)
+Merging samsung/for-next (8005c49d9aea Linux 4.4-rc1)
+Merging samsung-krzk/for-next (4013eaa7e492 Merge branch 'next/defconfig' into for-next)
+Merging sunxi/sunxi/for-next (20d6ac3b2fa0 Merge branches 'sunxi/clocks-for-4.5', 'sunxi/defconfig-for-4.5', 'sunxi/dt-for-4.5' and 'sunxi/fixes-for-4.4' into sunxi/for-next)
+CONFLICT (content): Merge conflict in arch/arm/configs/multi_v7_defconfig
+Merging tegra/for-next (b924f95da320 Merge branch for-4.5/defconfig into for-next)
+CONFLICT (content): Merge conflict in arch/arm64/configs/defconfig
+Merging arm64/for-next/core (01b305a23494 arm64: suspend: make hw_breakpoint_restore static)
+Merging blackfin/for-linus (d91e14b3b9e1 eth: bf609 eth clock: add pclk clock for stmmac driver probe)
+Merging c6x/for-linux-next (ca3060d39ae7 c6x: Use generic clkdev.h header)
+Merging cris/for-next (918fc2ee791e cris: Drop reference to get_cmos_time())
+Merging h8300/h8300-next (5aef14e91de2 clk: h8300: Remove "sh73a0-" part from compatible value)
+Merging hexagon/linux-next (02cc2ccfe771 Revert "Hexagon: fix signal.c compile error")
+Merging ia64/next (7e26e9ff0a93 pstore: Fix return type of pstore_is_mounted())
+Merging m68k/for-next (70bc53b47343 m68k/mac: Kill psc_present)
+Merging m68knommu/for-next (1ec218373b8e Linux 4.4-rc2)
+Merging metag/for-next (f23d0e2468bc MAINTAINERS: Change Meta arch port status to Odd Fixes)
+Merging microblaze/next (b14132797d80 elf-em.h: move EM_MICROBLAZE to the common header)
+Merging mips/mips-for-linux-next (38c24e332ad6 MIPS: ath79: Remove some unused code from setup.c)
+Merging nios2/for-next (bb3fc5ddef93 nios2: Remove unnecessary #ifdef guards)
+Merging parisc-hd/for-next (6a13feb9c828 Linux 4.3)
+Merging powerpc/next (8005c49d9aea Linux 4.4-rc1)
+Merging powerpc-mpe/next (bc0195aad0da Linux 4.2-rc2)
+Merging fsl/next (e1f580e8ced5 powerpc/e6500: hw tablewalk: make sure we invalidate and write to the same tlb entry)
+Merging mpc5xxx/next (39e69f55f857 powerpc: Introduce the use of the managed version of kzalloc)
+Merging s390/features (dcd67b9abc55 s390: Delete unnecessary checks before the function call "debug_unregister")
+Merging sparc-next/master (9f935675d41a Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input)
+Merging tile/master (09745f38a74e arch/tile: turn off timer tick for oneshot_stopped state)
+Merging uml/linux-next (2eb5f31bc4ea um: Switch clocksource to hrtimers)
+Merging unicore32/unicore32 (d670878e2c9a unicore32: Remove ARCH_HAS_CPUFREQ config option)
+Merging xtensa/for_next (afaa7c542cc9 Merge tag 'xtensa-for-next-20151109' of git://github.com/jcmvbkbc/linux-xtensa)
+Merging btrfs/next (3a9508b0221d btrfs: fix compile when block cgroups are not enabled)
+Merging ceph/master (583d0fef756a libceph: clear msg->con in ceph_msg_release() only)
+Merging cifs/for-next (ccf7202a3486 update signing code)
+Merging ecryptfs/next (933c32fe0e42 ecryptfs: drop null test before destroy functions)
+Merging ext3/for_next (d4eb6dee4712 ext4: Update EXT4_USE_FOR_EXT2 description)
+Merging ext4/dev (be69e1c19f0e fs/ext4: remove unnecessary new_valid_dev check)
+Merging f2fs/dev (8005c49d9aea Linux 4.4-rc1)
+Merging fscache/fscache (b00c2ae2ed3c FS-Cache: Don't override netfs's primary_index if registering failed)
+Merging fuse/for-next (0b5da8db145b fuse: add support for SEEK_HOLE and SEEK_DATA in lseek)
+Merging gfs2/for-next (3bf1c7de6916 GFS2: Reintroduce a timeout in function gfs2_gl_hash_clear)
+Merging jfs/jfs-next (26456955719b jfs: clean up jfs_rename and fix out of order unlock)
+Merging nfs/linux-next (8005c49d9aea Linux 4.4-rc1)
+Merging nfsd/nfsd-next (a3d15cff7b1c nfsd: don't hold i_mutex over userspace upcalls)
+Merging orangefs/for-next (555fa0fa618b fs: out of bounds on stack in iov_iter_advance)
+Merging overlayfs/overlayfs-next (257f87199347 ovl: move super block magic number to magic.h)
+Merging squashfs/master (62421645bb70 Squashfs: Add LZ4 compression configuration option)
+Merging v9fs/for-next (3053600ed4f7 9p: trans_fd, bail out if recv fcall if missing)
+Merging ubifs/linux-next (8c1c5f263833 ubifs: introduce UBIFS_ATIME_SUPPORT to ubifs)
+Merging xfs/for-next (4e14e49a91e1 Merge branch 'xfs-misc-fixes-for-4.4-3' into for-next)
+Merging file-locks/linux-next (8ace5dfb983e locks: use list_first_entry_or_null())
+Merging vfs/for-next (1a487dec990b f2fs: xattr simplifications)
+CONFLICT (content): Merge conflict in fs/xfs/xfs_xattr.c
+Merging pci/next (8005c49d9aea Linux 4.4-rc1)
+Merging hid/for-next (e53fb58ca6d8 Merge branch 'for-4.5/core' into for-next)
+Merging i2c/i2c/for-next (8005c49d9aea Linux 4.4-rc1)
+Merging jdelvare-hwmon/master (69bb8a38c5a9 hwmon: (k10temp) Remove duplicate pci-id define)
+Merging dmi/master (1dc51b828800 Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
+Merging hwmon-staging/hwmon-next (18ed6787d9fd hwmon: (pmbus) Add client driver for LTC3815)
+Merging v4l-dvb/master (ca79e72cf39c Merge branch 'patchwork' into to_next)
+Merging kbuild/for-next (d023d4d774f7 Merge branch 'kbuild/misc' into kbuild/for-next)
+Merging kconfig/for-next (c0ddc8c745b7 localmodconfig: Use Kbuild files too)
+Merging libata/for-next (91df9bc6f966 Merge branch 'for-4.5' into for-next)
+Merging pm/linux-next (8c9fe57be26f Merge branch 'pm-cpuidle' into linux-next)
+Merging idle/next (6a13feb9c828 Linux 4.3)
+Merging apm/for-next (53675abbd1e5 x86, apm: Remove unused variable)
+Merging thermal/next (84f0e490bee0 thermal: rcar_thermal: remove redundant operation)
+Merging thermal-soc/next (f00b6e0caa71 Revert "thermal: qcom_spmi: allow compile test")
+Merging ieee1394/for-next (100ceb66d5c4 firewire: ohci: fix JMicron JMB38x IT context discovery)
+Merging dlm/next (a6b1533e9a57 dlm: make posix locks interruptible)
+Merging swiotlb/linux-next (9d99c7123c9a swiotlb: Enable it under x86 PAE)
+Merging slave-dma/next (14d34dad30f6 Merge branch 'topic/rcar' into next)
+Merging net-next/master (3b22dae38db1 VSOCK: constify vmci_transport_notify_ops structures)
+CONFLICT (content): Merge conflict in net/ipv4/ipmr.c
+Merging ipsec-next/master (cb866e3298cd xfrm: Increment statistic counter on inner mode error)
+Merging ipvs-next/master (c5a37883f42b Merge branch 'akpm' (patches from Andrew))
+Merging wireless-drivers-next/master (6d808eba602b mac80211_hwsim: move Kconfig entry for sorting alphabetically)
+Merging bluetooth/master (dc4270c0cd88 Bluetooth: Increment management interface revision)
+Merging mac80211-next/master (1b1050cdc5cd Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/ide)
+Merging rdma/for-next (db7489e07669 IB/core, cma: Make __attribute_const__ declarations sparse-friendly)
+Merging mtd/master (1ddaa021b000 MAINTAINERS: brcmnand: Add co-maintainer for Broadcom SoCs)
+Merging l2-mtd/master (3ce351b5354a mtd: mtk-nor: new Mediatek serial flash controller driver)
+Merging crypto/master (f53e38afdc3a crypto: picoxcell - set [src|dst]_nents and nents as signed int)
+Merging drm/drm-next (f20780f3e8fe Merge branch 'drm-sti-next-2015-11-03' of http://git.linaro.org/people/benjamin.gaignard/kernel into drm-next)
+Merging drm-panel/drm/panel/for-next (7942da05ab7f drm/panel: Add Sharp LS043T1LE01 MIPI DSI panel)
+$ git reset --hard HEAD^
+Merging next-20151123 version of drm-panel
+Merging drm-intel/for-linux-next (11c86db8f052 drm/i915/pm: Print offending domain in refcount failure)
+Merging drm-tegra/drm/tegra/for-next (71c909402c72 drm/tegra: Use drm_gem_object_unreference_unlocked())
+Merging drm-misc/topic/drm-misc (bda03d5d3f82 drm/mm: rewrite drm_mm_for_each_hole)
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_display.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_atomic_helper.c
+Merging drm-exynos/exynos-drm/for-next (1f1c7efcb8d8 drm/exynos: dsi: add runtime pm support)
+Merging drm-msm/msm-next (a9ee34b70e07 drm/msm: Remove local fbdev emulation Kconfig option)
+Merging sound/for-next (efdbe3c3edb6 ALSA: midi: constify snd_rawmidi_global_ops structures)
+Merging sound-asoc/for-next (8a4ae2deb734 Merge remote-tracking branches 'asoc/topic/wm8904', 'asoc/topic/wm8962' and 'asoc/topic/wm9713' into asoc-next)
+Merging modules/modules-next (d1189c63ea5e scripts: [modpost] add new sections to white list)
+Merging input/next (5e0baca8b324 Input: parkbd - drop bogus __init from parkbd_allocate_serio())
+Merging block/for-next (4ef4e4105a25 Merge branch 'for-4.4/io-poll' into for-next)
+Merging device-mapper/for-next (2cd0ff3536f6 dm thin metadata: speed up discard of partially mapped volumes)
+Merging pcmcia/master (e8e68fd86d22 pcmcia: do not break rsrc_nonstatic when handling anonymous cards)
+Merging mmc/mmc-next (11bc9381b277 mmc: sdhci-s3c: use mmc_of_parse and remove the card_tasklet)
+Merging mmc-uh/next (a1773e8291c5 mmc: fix mmc_{un,}register_pm_notifier prototypes)
+Merging kgdb/kgdb-next (2d289f14f00a kdb: Fix handling of kallsyms_symbol_next() return value)
+Merging md/for-next (3ac6b716f787 md-cluster: Allow spare devices to be marked as faulty)
+Merging mfd/for-mfd-next (271bb1773b1e bindings: mfd: s2mps11: Add documentation for s2mps15 PMIC)
+Merging backlight/for-backlight-next (9d6c243502b7 backlight: pm8941-wled: Add default-brightness property)
+Merging battery/master (0fe69b960ae2 power: bq27xxx_battery: Add I2C module check dependency in Kconfig)
+Merging omap_dss2/for-next (08bfb453f045 radeonfb: Deinline large functions)
+Merging regulator/for-next (04ee19818171 Merge remote-tracking branches 'regulator/topic/optional', 'regulator/topic/pv88060', 'regulator/topic/tps6105x' and 'regulator/topic/tps65086' into regulator-next)
+Merging security/next (ebd68df3f24b Sync to Linus v4.4-rc2 for LSM developers.)
+Merging integrity/next (72e1eed8abb1 integrity: prevent loading untrusted certificates on the IMA trusted keyring)
+Merging selinux/next (92f190d2a1ec selinux: rate-limit netlink message warnings in selinux_nlmsg_perm())
+Merging lblnet/next (b2776bf7149b Linux 3.18)
+Merging watchdog/master (5da2bf1ac8fb watchdog: mtk_wdt: Use MODE_KEY when stopping the watchdog)
+Merging iommu/next (b67ad2f7c751 Merge branches 'x86/vt-d', 'arm/omap', 'arm/smmu', 's390', 'core' and 'x86/amd' into next)
+Merging dwmw2-iommu/master (0bdec95ce52d iommu/vt-d: Fix rwxp flags in SVM device fault callback)
+Merging vfio/next (222e684ca762 vfio/pci: make an array larger)
+Merging jc_docs/docs-next (04bed3278abf Merge branch 'doc/4.5' into docs-next)
+CONFLICT (content): Merge conflict in Documentation/arm/Marvell/README
+Merging trivial/for-next (75021d28594d Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/trivial)
+Merging audit/next (4b5829e9edfa audit: Delete unnecessary checks before two function calls)
+CONFLICT (content): Merge conflict in kernel/audit.c
+Merging devicetree/devicetree/next (48a9b733e644 of/irq: Rename "intc_desc" to "of_intc_desc" to fix OF on sh)
+Merging dt-rh/for-next (b1d06b60e90c of: Provide static inline function for of_translate_address if needed)
+Merging mailbox/mailbox-for-next (cb1ca0b3bb66 mailbox: mailbox-test: avoid reading iomem twice)
+Merging spi/for-next (b26545ad89de Merge remote-tracking branches 'spi/topic/spidev' and 'spi/topic/sun4i' into spi-next)
+Merging tip/auto-latest (5a5b01e59771 Merge branch 'x86/urgent')
+Merging clockevents/clockevents/next (2527dfeb1f64 clocksource/drivers/tango-xtal: Replace code by clocksource_mmio_init)
+CONFLICT (content): Merge conflict in arch/h8300/include/asm/io.h
+CONFLICT (content): Merge conflict in arch/h8300/Kconfig
+CONFLICT (content): Merge conflict in arch/arm/mach-exynos/Kconfig
+Merging edac/linux_next (12f0721c5a70 sb_edac: correctly fetch DIMM width on Ivy Bridge and Haswell)
+Merging edac-amd/for-next (e8f937da744f EDAC, pci: Remove old disabled code)
+Merging irqchip/irqchip/for-next (8005c49d9aea Linux 4.4-rc1)
+Merging tiny/tiny/next (f114040e3ea6 Linux 3.18-rc1)
+Merging ftrace/for-next (e428abbbf616 tracing: #ifdef out uses of max trace when CONFIG_TRACER_MAX_TRACE is not set)
+Merging rcu/rcu/next (27cddb87da60 rcu: Print symbolic name for ->gp_state)
+Merging kvm/linux-next (d792abacaf1a Merge tag 'kvm-s390-master-4.4-1' of git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into kvm-master)
+Merging kvm-arm/next (26caea7693cb KVM: arm/arm64: Merge vgic_set_lr() and vgic_sync_lr_elrsr())
+Merging kvm-ppc/kvm-ppc-next (c63517c2e381 KVM: PPC: Book3S: correct width in XER handling)
+Merging kvm-ppc-paulus/kvm-ppc-next (a3eaa8649e4c KVM: VMX: Fix commit which broke PML)
+Merging kvms390/next (c921bf81ba6d KVM: s390: don't load kvm without virtualization support)
+Merging xen-tip/linux-next (009d042c86d4 xen/arm: account for stolen ticks)
+Merging percpu/for-next (18fc93fd6412 percpu: remove PERCPU_ENOUGH_ROOM which is stale definition)
+Merging workqueues/for-next (4fcfc3013144 Merge branch 'for-4.4' into for-next)
+Merging drivers-x86/for-next (0ab19793ecc0 apple-gmux: Assign apple_gmux_data before registering)
+Merging chrome-platform/for-next (ebaf31c46cce platform/chrome: Fix i2c-designware adapter name)
+Merging regmap/for-next (660d61d7be7b Merge remote-tracking branches 'regmap/topic/mmio' and 'regmap/topic/rbtree' into regmap-next)
+Merging hsi/for-next (403c5c065081 HSI: Remove struct hsi_client private fields from kernel-doc)
+Merging leds/for-next (649f0b23ef55 leds: powernv: removing NULL check)
+Merging ipmi/for-next (4193fcd31624 ipmi: Remove unnecessary pci_disable_device.)
+Merging driver-core/driver-core-next (8005c49d9aea Linux 4.4-rc1)
+Merging tty/tty-next (8005c49d9aea Linux 4.4-rc1)
+Merging usb/usb-next (8005c49d9aea Linux 4.4-rc1)
+Merging usb-gadget/next (8005c49d9aea Linux 4.4-rc1)
+Merging usb-serial/usb-next (d0bf1ff0ae32 USB: cp210x: work around cp2108 GET_LINE_CTL bug)
+Merging usb-chipidea-next/ci-for-usb-next (15af5aea51de usb: chipidea: removing of_find_property)
+Merging staging/staging-next (b26baffbc916 staging: rdma: ehca: Added a blank line)
+Merging char-misc/char-misc-next (1ec218373b8e Linux 4.4-rc2)
+Merging extcon/extcon-next (2ee649007bfb extcon: arizona: Update naming for second jack detection DT binding)
+Merging cgroup/for-next (6c2920926b10 cgroup: replace unified-hierarchy.txt with a proper cgroup v2 documentation)
+Merging scsi/for-next (59ae1adaafff Merge branch 'misc' into for-next)
+Merging target-updates/for-next (517982229f78 configfs: remove old API)
+Merging target-merge/for-next-merge (bc0195aad0da Linux 4.2-rc2)
+Merging pinctrl/for-next (b21bcac08c20 Merge branch 'devel' into for-next)
+Merging vhost/linux-next (d629f2b585cb virtio: introduce avail cache)
+Merging remoteproc/for-next (8de3dbd0895b remoteproc: fix !CONFIG_OF build breakage)
+Merging rpmsg/for-next (b1b9891441fa rpmsg: use less buffers when vrings are small)
+Merging gpio/for-next (b59d5fb7e9c7 gpio-tegra: Do not create the debugfs entry by default)
+Merging dma-mapping/dma-mapping-next (d770e558e219 Linux 4.2-rc1)
+Merging pwm/for-next (5dcd7b42f1d0 pwm: sunxi: Fix whitespace issue)
+Merging dma-buf/for-next (86ea07ca846a Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux)
+Merging userns/for-next (f2ca379642d7 namei: permit linking with CAP_FOWNER in userns)
+Merging ktest/for-next (b953c0d234bc Linux 4.1)
+Merging clk/clk-next (cf81a1cf711d clk: qcom: msm8916: Move xo and sleep clocks into DT)
+Merging random/dev (7185ad2672a7 crypto: memzero_explicit - make sure to clear out sensitive data)
+Merging aio/master (6ff33f3902c3 Linux 4.3-rc1)
+Merging llvmlinux/for-next (25d4aee23af2 arm: LLVMLinux: Use global stack register variable for percpu)
+Merging kselftest/next (4aaae2f2c74f scripts/kconfig/Makefile: add kselftest-mergeconfig)
+Merging y2038/y2038 (8750343a6505 coredump: Use 64bit time for unix time of coredump)
+Merging luto-misc/next (a6c5170d1ede Merge branch 'for-4.0' of git://linux-nfs.org/~bfields/linux)
+Merging borntraeger/linux-next (fc7f9754db6c s390/dma: Allow per device dma ops)
+Merging livepatching/for-next (2184037e40ce Merge branch 'for-4.4/upstream-fixes' into for-next)
+Merging coresight/next (a0aede15d496 coresight: checking for NULL string in coresight_name_match())
+Merging rtc/rtc-next (1e3929ef0e1c rtc: Add a driver for Micro Crystal RV8803)
+Merging hwspinlock/for-next (bd5717a4632c hwspinlock: qcom: Correct msb in regmap_field)
+Merging nvdimm/libnvdimm-for-next (8de5dff8bae6 libnvdimm: documentation clarifications)
+Merging akpm-current/current (c5257ff11a2f ipc/msg.c: use freezable blocking call)
+CONFLICT (content): Merge conflict in mm/slab.c
+$ git checkout -b akpm remotes/origin/akpm/master
+Applying: iio: core: introduce IIO configfs support
+Applying: iio: core: introduce IIO software triggers
+Applying: iio: core: fix ptr_ret.cocci warnings
+Applying: iio: trigger: introduce IIO hrtimer based trigger
+Applying: iio: Documentation: add IIO configfs documentation
+Merging akpm/master (9889cbcdfdba iio: Documentation: add IIO configfs documentation)
