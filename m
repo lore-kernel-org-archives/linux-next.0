@@ -1,36 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-panel tree
-Date: Tue, 24 Nov 2015 11:38:16 +1100
-Message-ID: <20151124113816.3ed66bcc@canb.auug.org.au>
+From: Andi Kleen <ak@linux.intel.com>
+Subject: Re: linux-next: clean up the kbuild tree?
+Date: Mon, 23 Nov 2015 18:12:31 -0800
+Message-ID: <20151124021231.GE8438@tassilo.jf.intel.com>
+References: <20151115112705.0bf4f0ed@canb.auug.org.au>
+ <20151115175848.GD10150@tassilo.jf.intel.com>
+ <5649D3B9.7020701@suse.cz>
+ <20151121010033.GB8438@tassilo.jf.intel.com>
+ <s5h4mgfzkno.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Werner Johansson <werner.johansson@sonymobile.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:48240 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751568AbbKXCMd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Nov 2015 21:12:33 -0500
+Content-Disposition: inline
+In-Reply-To: <s5h4mgfzkno.wl-tiwai@suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Thierry,
+> > 5.x is better than 4.x but it's still a slower. It's also not incremential.
+> 
+> At the last time I tested with the latest 5.x and stock binutils on
+> openSUSE Tumbleweed, I failed to build, unfortunately.  Partly the
+> detection of gcc version doesn't work for 5.x, and partly something is
 
-After merging the drm-panel tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Really? It work for me with gcc 5
 
-drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c: In function 'wuxga_nt_panel_on':
-drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c:65:8: error: implicit declaration of function 'mipi_dsi_turn_on_peripheral' [-Werror=implicit-function-declaration]
-  ret = mipi_dsi_turn_on_peripheral(dsi);
-        ^
-drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c: In function 'wuxga_nt_panel_disable':
-drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c:79:2: error: implicit declaration of function 'mipi_dsi_shutdown_peripheral' [-Werror=implicit-function-declaration]
-  mipi_dsi_shutdown_peripheral(wuxga_nt->dsi);
-  ^
+> missing in binutils side, although it's already built with plugin.
 
-Caused by commit
+Yes it needs HJ Lu's Linux binutils, not the standard FSF binutils.
+The patch to fix LTO with ld -r was submitted to standard binutils, but they
+didn't want to fix the issue.
 
-  086ceb6b42ca ("drm/panel: Add Panasonic VVX10F034N00 MIPI DSI panel")
 
-I have used the version of the drm-panel tree from next-20151123 for today.
-
+-Andi
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+ak@linux.intel.com -- Speaking for myself only
