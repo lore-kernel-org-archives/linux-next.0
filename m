@@ -1,27 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no releases tomorrow or next week
-Date: Tue, 24 Nov 2015 21:57:13 +1100
-Message-ID: <20151124215713.29903e7b@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: + arc-convert-to-dma_map_ops.patch added to -mm tree
+Date: Tue, 24 Nov 2015 22:01:22 +1100
+Message-ID: <1448362882.32654.1.camel@ellerman.id.au>
+References: <564b9e3a.DaXj5xWV8Mzu1fPX%akpm@linux-foundation.org>
+	 <C2D7FE5348E1B147BCA15975FBA23075F44D2EEF@IN01WEMBXA.internal.synopsys.com>
+	 <20151124075047.GA29572@lst.de>
+	 <C2D7FE5348E1B147BCA15975FBA23075F44D3928@IN01WEMBXA.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56171 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753962AbbKXK5R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2015 05:57:17 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075F44D3928@IN01WEMBXA.internal.synopsys.com>
+Sender: owner-linux-mm@kvack.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>, "hch@lst.de" <hch@lst.de>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, arcml <linux-snps-arc@lists.infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Anton Kolesov <Anton.Kolesov@synopsys.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Tue, 2015-11-24 at 09:46 +0000, Vineet Gupta wrote:
+> On Tuesday 24 November 2015 01:20 PM, hch@lst.de wrote:
+> > Hi Vineet,
+> > 
+> > the original version went through the buildbot, which succeeded.  It seems
+> > like the official buildbot does not support arc, and might benefit from
+> > helping to set up an arc environment. 
+> 
+> I have in the past asked kisskb service folks - but haven't heard back from them.
+> Stephan, Michael could you please add ARC toolchain to kisskb build service. I can
+> buy you guys a beer (or some other beverage of choice) next time we meet :-)
 
-I am taking a couple of breaks so there will be no linux-next release
-tomorrow (Nov 25) or all next week (Nov 30 - Dec 4).  Sorry about
-that.  I should start again on Dec 7 (and there will be release on Nov
-26 and 27).
+Sure, where do I get a toolchain? Can I just build upstream binutils + GCC?
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+chers
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
