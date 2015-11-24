@@ -1,43 +1,27 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: linux-next: build failure after merge of the drm-panel tree
-Date: Mon, 23 Nov 2015 22:03:44 -0800
-Message-ID: <CAJAp7Oi6iF-=a88SKoCpFubBQapDxwzrHu6zSKwG4MGxByg3WQ@mail.gmail.com>
-References: <20151124113816.3ed66bcc@canb.auug.org.au>
+From: "hch@lst.de" <hch@lst.de>
+Subject: Re: + arc-convert-to-dma_map_ops.patch added to -mm tree
+Date: Tue, 24 Nov 2015 08:50:47 +0100
+Message-ID: <20151124075047.GA29572@lst.de>
+References: <564b9e3a.DaXj5xWV8Mzu1fPX%akpm@linux-foundation.org> <C2D7FE5348E1B147BCA15975FBA23075F44D2EEF@IN01WEMBXA.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151124113816.3ed66bcc@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Werner Johansson <werner.johansson@sonymobile.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075F44D2EEF@IN01WEMBXA.internal.synopsys.com>
+Sender: owner-linux-mm@kvack.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: "hch@lst.de" <hch@lst.de>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, arcml <linux-snps-arc@lists.infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Anton Kolesov <Anton.Kolesov@synopsys.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Nov 23, 2015 at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Thierry,
->
-> After merging the drm-panel tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c: In function 'wuxga_nt_panel_on':
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c:65:8: error: implicit declaration of function 'mipi_dsi_turn_on_peripheral' [-Werror=implicit-function-declaration]
->   ret = mipi_dsi_turn_on_peripheral(dsi);
->         ^
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c: In function 'wuxga_nt_panel_disable':
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c:79:2: error: implicit declaration of function 'mipi_dsi_shutdown_peripheral' [-Werror=implicit-function-declaration]
->   mipi_dsi_shutdown_peripheral(wuxga_nt->dsi);
->   ^
->
-> Caused by commit
->
->   086ceb6b42ca ("drm/panel: Add Panasonic VVX10F034N00 MIPI DSI panel")
->
-> I have used the version of the drm-panel tree from next-20151123 for today.
->
+Hi Vineet,
 
-Thierry,
+the original version went through the buildbot, which succeeded.  It seems
+like the official buildbot does not support arc, and might benefit from
+helping to set up an arc environment.  However in the meantime Guenther
+send me output from his buildbot and I sent a fix for arc.
 
-This means that patch 1 of the series was not picked up. It can be
-found here: https://patchwork.kernel.org/patch/7530121/
-
-Regards,
-Bjorn
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
