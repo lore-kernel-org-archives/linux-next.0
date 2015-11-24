@@ -1,130 +1,76 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20151123 build: 2 failures 17 warnings (next-20151123)
-Date: Mon, 23 Nov 2015 08:08:23 +0000
-Message-ID: <E1a0mAh-0001UF-P4@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44023 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753416AbbKWIIa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2015 03:08:30 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 24 Nov 2015 11:18:35 +1100
+Message-ID: <20151124111835.0f5f0328@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20151123
-Git describe: next-20151123
-Commit: 6a1fd21b4d Add linux-next specific files for 20151123
+Hi all,
 
-Build Time: 63 min 55 sec
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
+  net/ipv4/ipmr.c
 
-Errors: 0
-Warnings: 17
-Section Mismatches: 4
+between commit:
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+  0e615e9601a1 ("net: ipmr: fix static mfc/dev leaks on table destruction")
 
-Errors:
+from the net tree and commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-      5 warnings    4 mismatches  : arm64-allmodconfig
-      6 warnings    0 mismatches  : arm-multi_v7_defconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
+  7ef8f65df976 ("net: ipmr: fix code and comment style")
 
--------------------------------------------------------------------------------
+from the net-next tree.
 
-Warnings Summary: 17
-	  3 ../sound/soc/sh/rcar/core.c:801:23: warning: unused variable 'soc_card' [-Wunused-variable]
-	  1 ../sound/soc/sh/rcar/mix.c:127:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/dvc.c:315:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:6320:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:6320:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../mm/page_alloc.c:4166:16: warning: comparison between 'enum zone_type' and 'enum <anonymous>' [-Wenum-compare]
-	  1 ../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/net/ethernet/qlogic/qed/qed_dev.c:1676:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:6: warning: unused variable 'i' [-Wunused-variable]
-	  1 ../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:380:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-Section Mismatch Summary: 4
-	  1 WARNING: vmlinux.o(.data+0x1ad5e8): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	  1 WARNING: drivers/pci/host/built-in.o(.data+0x1948): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	  1 WARNING: drivers/pci/built-in.o(.data+0x12ac8): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	  1 WARNING: drivers/built-in.o(.data+0x3e968): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/sched/rt.c:68:13: warning: 'push_irq_work_func' declared 'static' but never defined [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 5 warnings, 4 section mismatches
-
-Warnings:
-	../sound/soc/sh/rcar/core.c:801:23: warning: unused variable 'soc_card' [-Wunused-variable]
-	../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
-Section Mismatches:
-	WARNING: drivers/pci/host/built-in.o(.data+0x1948): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	WARNING: drivers/pci/built-in.o(.data+0x12ac8): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	WARNING: drivers/built-in.o(.data+0x3e968): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-	WARNING: vmlinux.o(.data+0x1ad5e8): Section mismatch in reference from the variable hisi_pcie_driver to the function .init.text:hisi_pcie_probe()
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../net/bluetooth/mgmt.c:6320:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:6320:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/core.c:801:23: warning: unused variable 'soc_card' [-Wunused-variable]
-	../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/mix.c:127:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/dvc.c:315:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../sound/soc/sh/rcar/core.c:801:23: warning: unused variable 'soc_card' [-Wunused-variable]
-	../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:6: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:380:6: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/scsi/advansys.c:7806:2: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/qlogic/qed/qed_dev.c:1676:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:4166:16: warning: comparison between 'enum zone_type' and 'enum <anonymous>' [-Wenum-compare]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-arm64-defconfig
+diff --cc net/ipv4/ipmr.c
+index 292123bc30fa,a2d248d9c35c..000000000000
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@@ -1204,30 -1210,24 +1210,25 @@@ static int ipmr_mfc_add(struct net *net
+  	return 0;
+  }
+  
+- /*
+-  *	Close the multicast socket, and clear the vif tables etc
+-  */
+- 
++ /* Close the multicast socket, and clear the vif tables etc */
+ -static void mroute_clean_tables(struct mr_table *mrt)
+ +static void mroute_clean_tables(struct mr_table *mrt, bool all)
+  {
+  	int i;
+  	LIST_HEAD(list);
+  	struct mfc_cache *c, *next;
+  
+  	/* Shut down all active vif entries */
+- 
+  	for (i = 0; i < mrt->maxvif; i++) {
+ -		if (!(mrt->vif_table[i].flags & VIFF_STATIC))
+ -			vif_delete(mrt, i, 0, &list);
+ +		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
+ +			continue;
+ +		vif_delete(mrt, i, 0, &list);
+  	}
+  	unregister_netdevice_many(&list);
+  
+  	/* Wipe the cache */
+- 
+  	for (i = 0; i < MFC_LINES; i++) {
+  		list_for_each_entry_safe(c, next, &mrt->mfc_cache_array[i], list) {
+ -			if (c->mfc_flags & MFC_STATIC)
+ +			if (!all && (c->mfc_flags & MFC_STATIC))
+  				continue;
+  			list_del_rcu(&c->list);
+  			mroute_netlink_event(mrt, c, RTM_DELROUTE);
