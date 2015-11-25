@@ -1,77 +1,95 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm-panel tree
-Date: Tue, 24 Nov 2015 18:07:23 +0100
-Message-ID: <20151124170723.GA14090@ulmo.nvidia.com>
-References: <20151124113816.3ed66bcc@canb.auug.org.au>
+From: Andi Kleen <ak@linux.intel.com>
+Subject: Re: LTO build errors (Re: linux-next: clean up the kbuild tree?)
+Date: Tue, 24 Nov 2015 20:33:44 -0800
+Message-ID: <20151125043344.GG8438@tassilo.jf.intel.com>
+References: <20151115112705.0bf4f0ed@canb.auug.org.au>
+ <20151115175848.GD10150@tassilo.jf.intel.com>
+ <5649D3B9.7020701@suse.cz>
+ <20151121010033.GB8438@tassilo.jf.intel.com>
+ <s5h4mgfzkno.wl-tiwai@suse.de>
+ <20151124021231.GE8438@tassilo.jf.intel.com>
+ <s5hy4dnicgv.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:63716 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754299AbbKYEdp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2015 23:33:45 -0500
 Content-Disposition: inline
-In-Reply-To: <20151124113816.3ed66bcc@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Werner Johansson <werner.johansson@sonymobile.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <s5hy4dnicgv.wl-tiwai@suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---17pEHd4RhPHOinZp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Takashi,
 
-On Tue, Nov 24, 2015 at 11:38:16AM +1100, Stephen Rothwell wrote:
-> Hi Thierry,
+On Tue, Nov 24, 2015 at 05:33:36PM +0100, Takashi Iwai wrote:
+>   LD      vmlinux
+> arch/x86/kernel/cpu/perf_event_intel_rapl.c:66:20: error: rapl_domain=
+_names causes a section type conflict with __setup_str_set_reset_device=
+s
+>  static const char *rapl_domain_names[NR_RAPL_DOMAINS] __initconst =3D=
+ {
+>                     ^
+> init/main.c:159:19: note: =E2=80=98__setup_str_set_reset_devices=E2=80=
+=99 was declared here
+>  __setup("reset_devices", set_reset_devices);
 >=20
-> After merging the drm-panel tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Hmm...  I see no direct relation, but OK, let's try to get rid of
+> __initconst.  Now it hits lots of other errors like:
+
+I hit the same issue, will send a patch. The other symbol is typically =
+some
+random correct symbol because gcc detects the conflict on a pair of sym=
+bols.
+
+The problem is that placing const correctly is too difficult, the corre=
+ct line
+would be=20
+
+static const char *const rapl_domain_names[NR_RAPL_DOMAINS] __initconst=
+ =3D {
+
 >=20
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c: In function 'wuxga_=
-nt_panel_on':
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c:65:8: error: implici=
-t declaration of function 'mipi_dsi_turn_on_peripheral' [-Werror=3Dimplicit=
--function-declaration]
->   ret =3D mipi_dsi_turn_on_peripheral(dsi);
->         ^
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c: In function 'wuxga_=
-nt_panel_disable':
-> drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c:79:2: error: implici=
-t declaration of function 'mipi_dsi_shutdown_peripheral' [-Werror=3Dimplici=
-t-function-declaration]
->   mipi_dsi_shutdown_peripheral(wuxga_nt->dsi);
->   ^
->=20
-> Caused by commit
->=20
->   086ceb6b42ca ("drm/panel: Add Panasonic VVX10F034N00 MIPI DSI panel")
->=20
-> I have used the version of the drm-panel tree from next-20151123 for toda=
-y.
+> `__sw_hweight32' referenced in section `.text' of /tmp/ccUCMU7n.ltran=
+s13.ltrans.o: defined in discarded section `.text' of lib/built-in.o (s=
+ymbol from plugin)
+> `__sw_hweight32' referenced in section `.text' of /tmp/ccUCMU7n.ltran=
+s13.ltrans.o: defined in discarded section `.text' of lib/built-in.o (s=
+ymbol from plugin)
+> `__sw_hweight32' referenced in section `.text' of /tmp/ccUCMU7n.ltran=
+s13.ltrans.o: defined in discarded section `.text' of lib/built-in.o (s=
+ymbol from plugin)
+> `__sw_hweight32' referenced in section `.text' of /tmp/ccUCMU7n.ltran=
+s13.ltrans.o: defined in discarded section `.text' of lib/built-in.o (s=
+ymbol from plugin)
 
-Okay, this should be fixed now in the drm/panel tree.
+This needs
 
-Thanks,
-Thierry
+https://git.kernel.org/cgit/linux/kernel/git/ak/linux-misc.git/commit/?=
+h=3Dlto-4.0&id=3Dd826425f7a9d935d521989bd0a871b76fb4c59e2
 
---17pEHd4RhPHOinZp
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> /tmp/ccUCMU7n.ltrans21.ltrans.o: In function `do_exit':
+> <artificial>:(.text+0xfc0): undefined reference to `sys_futex'
+> /tmp/ccUCMU7n.ltrans22.ltrans.o: In function `_do_fork':
+> <artificial>:(.text+0x39f7): undefined reference to `ret_from_fork'
+> <artificial>:(.text+0x4428): undefined reference to `ret_from_kernel_=
+thread'
 
-iQIcBAABCAAGBQJWVJlIAAoJEN0jrNd/PrOh7rsP/2wc7dx/td8fjUrl5K6tCCyE
-Vvidzjpl1v73wVOoY7YLtdzflZ3E6+0/Nk+eWbYXse9fy4mKPLfltpJNOCKGqGCF
-hQd0136z+RJwCKrJUdlA9iCy6Z1hExGDcIlDwUDGz3tJrTsg/rDyedYdW5ia312Z
-s/EFvFk//f4d1yL8w9vElicsqpWd3MKppdRa2SsYKa2NOL7a39wUNMe5Ut6aKFjT
-TXywP0ixTlnF9tZXUn0vwMzSZAfhi7Nfb4EUP5MF3q76aD1KpjPesnzNIHgE9DBr
-uEQC1Ny04VyVQo83hsFEJfFSpIOJ0ZycpSA3Bhi2PBrfPwO9t74wuwq+xPdSRrA0
-S134PtEun1XGb21MmPD9ub7leocU8bxn1AnEP8ZYW1HUDaSiJZ3HbTY2LTA3+5na
-Q/h90wQH9mfp8gF4NIpf6WATf+FxI3ShdER9x4VXNNrPbmGCiLnut8fGcUMGPzXc
-1aRr6/Oaak+g6izAdx1GJHCpL+eT2JyKgfgNZOYhMdWMF0X32/8GhVrB/qrBn3xp
-vpsuoppIIza+jyd0jHeSYs/KJGlOhtBhvjppbAUSFT5d1CMzZDW2aOH/o11kUZuP
-3JU2KRy6oNlamef5ieSUEx+P/q9Jytg5knGC5YRcBATTeu2qL6VRFX0Lr691JiYH
-Eqs9X9VsoECMnFzQeIK+
-=GYQO
------END PGP SIGNATURE-----
 
---17pEHd4RhPHOinZp--
+That's new, but can be fixed by adding __visible or asmlinkage to these=
+ symbols
+I guess it's from the recent entry* restructuring.
+
+I'll do an updated tree later.
+
+Everything that's called from assembler in C needs to be marked like th=
+is. It's
+fairly mechanic.
+
+-andi
