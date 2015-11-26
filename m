@@ -1,62 +1,62 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Daniel Cashman <dcashman@google.com>
 Subject: Re: next-20151126 build: 3 failures 15 warnings (next-20151126)
-Date: Thu, 26 Nov 2015 20:58:21 +0000
-Message-ID: <20151126205821.GI1929@sirena.org.uk>
+Date: Thu, 26 Nov 2015 15:30:51 -0800
+Message-ID: <CAJQetW5o4oMtqZ=2fqjwrNesw+0WZ==trF6AhAxGKgQvX39Vhw@mail.gmail.com>
 References: <E1a1sVV-00079q-My@optimist>
- <20151126121551.GE1929@sirena.org.uk>
- <87y4dllysz.fsf@kamboji.qca.qualcomm.com>
- <20151126132228.GG1929@sirena.org.uk>
- <87lh9kn1dz.fsf@kamboji.qca.qualcomm.com>
- <20151126170300.GH1929@sirena.org.uk>
- <878u5kmwya.fsf@kamboji.qca.qualcomm.com>
+	<20151126113213.GC1929@sirena.org.uk>
+	<20151126151053.GK3109@e104818-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Yvzb+MHGXtbPBi5F"
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <878u5kmwya.fsf-HodKDYzPHsUD5k0oWYwrnHL1okKdlPRT@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kalle Valo <kvalo-A+ZNKFmMK5xy9aJCnZT0Uw@public.gmane.org>
-Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ath10k-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:33367 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753330AbbKZXaw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2015 18:30:52 -0500
+Received: by oixx65 with SMTP id x65so53455835oix.0
+        for <linux-next@vger.kernel.org>; Thu, 26 Nov 2015 15:30:52 -0800 (PST)
+In-Reply-To: <20151126151053.GK3109@e104818-lin.cambridge.arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org, dcashman@android.com
+
+I think the proper course here is to make the use conditional,
+assuming that there will never be a 32-bit application running if
+CONFIG_COMPAT is not enabled.  Thank you Mark for catching this, and
+Catalin for your suggestions.  I've just posted patch-set v4, which
+addresses some of Catalin's remarks and this breakage; I'd have no
+objection to removing v3 from next, especially in light of this.
+
+Thank You,
+Dan
+
+On Thu, Nov 26, 2015 at 7:10 AM, Catalin Marinas
+<catalin.marinas@arm.com> wrote:
+> On Thu, Nov 26, 2015 at 11:32:13AM +0000, Mark Brown wrote:
+>> Today's -next fails to build an arm64 allnoconfig due to:
+>>
+>> >     arm64-allnoconfig
+>> > ../arch/arm64/mm/mmap.c:55:49: error: 'mmap_rnd_compat_bits' undeclared (first use in this function)
+>>
+>> which was introduced by a combination of 8f62c06c279a3 (mm: mmap: add
+>> new /proc tunable for mmap_base ASLR) and 9411708692954 (arm64: mm:
+>> support ARCH_MMAP_RND_BITS).  These add an unconditional use of
+>> mmap_rnd_compat_bits which is only defined in linux/mmap.h if
+>> HAVE_ARCH_MMAP_RND_COMPAT_BITS is selected but that is only enabled for
+>> arm64 if COMPAT is enabled.  Either the select needs to be unconditional
+>> or the use needs to be.
+>
+> There are other problems with these patches for arm64, I already replied
+> here:
+>
+> http://lkml.kernel.org/g/20151125120601.GC3109@e104818-lin.cambridge.arm.com
+>
+> So I don't think they should be in -next.
+>
+> --
+> Catalin
 
 
---Yvzb+MHGXtbPBi5F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Nov 26, 2015 at 08:34:20PM +0200, Kalle Valo wrote:
-> Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> writes:
-
-> > It still ought to be fixed regardless of why it showed up - the
-> > intention of the code is that we build the real thermal code regardless
-> > of if that's modular or not but that's not what the code actually does.
-
-> Like I said above Michal will apply a fix to his tree. Read the full
-> discussion from patchwork:
-
-> https://patchwork.kernel.org/patch/7707801/
-
-Oh, right - a fix for this specific issue rather than a fix for whatever
-change he made.
-
---Yvzb+MHGXtbPBi5F
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWV3JsAAoJECTWi3JdVIfQaXkIAIT3D4HnY5I5amYE4qZOqzsm
-466tTH6azFYF8jjum7ahnx0nOow+UEjW52wrXzzOdVkqvNt+n+7un4UF9nmZl5Cl
-bkrb+1rf+jh2aXXC642TXhozo3Je4veT6Xj7fJOFjvT+WAWWdcC5n66MhJyee7nt
-XQW9kTAW6mC+7IwtfoNC1cL3xjEKOb1nfaH2Bs12fjBM0noa4SxY5LLhRUbsDgCp
-jg45W1sS53aRB7MtGhOdZpydglsC58ycJWph9uahuMcCkz1Rm+mUgsrDPdHb9spJ
-QnleWMuoVbWP+E2YduLI5MeaFT6DyUtalBLBBf+jNttjkqW2kfqlkLZMDkCPouM=
-=eK5Z
------END PGP SIGNATURE-----
-
---Yvzb+MHGXtbPBi5F--
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Dan Cashman
