@@ -1,40 +1,42 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Nov 26 (mm/page_owner.c)
-Date: Thu, 26 Nov 2015 08:05:05 -0800
-Message-ID: <56572DB1.5070605@infradead.org>
-References: <20151126161655.281096bb@canb.auug.org.au>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Subject: Re: next-20151126 build: 3 failures 15 warnings (next-20151126)
+Date: Thu, 26 Nov 2015 18:58:32 +0200
+Message-ID: <87lh9kn1dz.fsf@kamboji.qca.qualcomm.com>
+References: <E1a1sVV-00079q-My@optimist> <20151126121551.GE1929@sirena.org.uk>
+	<87y4dllysz.fsf@kamboji.qca.qualcomm.com>
+	<20151126132228.GG1929@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:53204 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368AbbKZQFN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2015 11:05:13 -0500
-In-Reply-To: <20151126161655.281096bb@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20151126132228.GG1929@sirena.org.uk> (Mark Brown's message of
+	"Thu, 26 Nov 2015 13:22:28 +0000")
+Sender: netdev-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 11/25/15 21:16, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Reminder: there will be no linux-next release next week (Nov 30 - Dec 4).
-> 
-> Changes since 20151124:
-> 
+Mark Brown <broonie@kernel.org> writes:
 
-on i386:
+> On Thu, Nov 26, 2015 at 02:39:40PM +0200, Kalle Valo wrote:
+>> Mark Brown <broonie@kernel.org> writes:
+>
+>> > It looks like this was somehow triggered as part of the reorganisation
+>> > of the WiFi directory structure.
+>
+>> This is surprising and also worrying, any ideas why? It would be good to
+>> understand the root cause in case there's a bug in wireless drivers
+>> directory reorganisation.
+>
+> No, I didn't make much effort to check though since the use of ifdef was
+> clearly a bug waiting to happen anyway, I was more surprised it worked
+> at all than anything.
 
-mm/built-in.o: In function `read_page_owner':
-page_owner.c:(.text+0x25d89): undefined reference to `migrate_reason_names'
-mm/built-in.o: In function `__dump_page_owner':
-(.text+0x26137): undefined reference to `migrate_reason_names'
+Michal Marek explains[1] that this is due to commit cf4f21938e13
+("kbuild: Allow to specify composite modules with modname-m") and has
+nothing to do with the wireless drivers reorganisation. I'll drop this
+patch as Michal will apply his fix to the kbuild tree.
 
-
-when CONFIG_MIGRATION is not enabled.
-
+[1] https://patchwork.kernel.org/patch/7707801/
 
 -- 
-~Randy
+Kalle Valo
