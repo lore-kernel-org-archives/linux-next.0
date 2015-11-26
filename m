@@ -1,53 +1,79 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: next-20151126 build: 3 failures 15 warnings (next-20151126)
-Date: Thu, 26 Nov 2015 11:59:56 +0000
-Message-ID: <20151126115955.GD1929@sirena.org.uk>
+Date: Thu, 26 Nov 2015 12:15:51 +0000
+Message-ID: <20151126121551.GE1929@sirena.org.uk>
 References: <E1a1sVV-00079q-My@optimist>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NxDiCysn+RCvdoZt"
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Type: multipart/mixed; boundary="===============5716140196955500273=="
+Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
 In-Reply-To: <E1a1sVV-00079q-My@optimist>
-Sender: netdev-owner@vger.kernel.org
-To: Shaohui Xie <Shaohui.Xie@freescale.com>, "David S. Miller" <davem@davemloft.net>, Claudiu Manoil <claudiu.manoil@freescale.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
+List-Post: <mailto:ath10k@lists.infradead.org>
+List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
+Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
+Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
 
---NxDiCysn+RCvdoZt
+--===============5716140196955500273==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="m4E4Spob7u7JiHeu"
+Content-Disposition: inline
+
+
+--m4E4Spob7u7JiHeu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Thu, Nov 26, 2015 at 09:06:25AM +0000, Build bot for Mark Brown wrote:
 
-For the past couple of days an arm64 allmodconfig has been failing to
-build due to:
+Today's -next fails to build an arm64 allmodconfig due to:
 
 > 	arm64-allmodconfig
-> ../drivers/net/ethernet/freescale/gianfar.c:650:33: error: 'NO_IRQ' undeclared (first use in this function)
-> ../drivers/net/ethernet/freescale/gianfar_ptp.c:470:22: error: 'NO_IRQ' undeclared (first use in this function)
+> ../drivers/net/wireless/ath/ath10k/thermal.c:119:6: error: redefinition of 'ath10k_thermal_event_temperature'
+> ../drivers/net/wireless/ath/ath10k/thermal.c:136:6: error: redefinition of 'ath10k_thermal_set_throttling'
+> ../drivers/net/wireless/ath/ath10k/thermal.c:162:5: error: redefinition of 'ath10k_thermal_register'
+> ../drivers/net/wireless/ath/ath10k/thermal.c:216:6: error: redefinition of 'ath10k_thermal_unregister'
 
-introduced by fe761bcb9046029 (net: fsl: expands dependencies of
-NET_VENDOR_FREESCALE) which enables build of the Freescale networking
-drivers on arm64.  Since in common with many other architectures arm64
-does not provide a NO_IRQ (and even those that do aren't consistent) the
-driver should be modified to not rely on this and instead check the
-return values of the functions it uses to look up interrupts.
+This is happening because there are stub functions provided in the
+driver's thermal.h for !THERMAL cases but these are guarded by an #ifdef
+not an #if and so fails to do the right thing if the thermal code is
+built as a module.  It looks like this was somehow triggered as part of
+the reorganisation of the WiFi directory structure.
 
---NxDiCysn+RCvdoZt
+--m4E4Spob7u7JiHeu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWVvQ7AAoJECTWi3JdVIfQWvAH/32oA97yRxdwJQeNR0I1PHw2
-DTPupt9JHXuQj51zP34GX9utx4Tgr6pikOXTjSodrkk4gRqaB/7y+mp8Ix1lb02B
-JFpdUEGoa3cMhsQXNjaQDbunwHyjmB+3zq07uVOqb5BiJ72SKe22vSUw/V9NDX48
-wZREmzrh7glESYBeopCuxogu5BUCgHAhAawLJptcAh0KMzfrMp96/OW/5c/KMJjx
-kr6WaUIOYyZUxPq/3BMwQ/dBhkMyUVBnivFWn4V+42t2vNhRQ3HS8+ACHCMmyf0U
-hvS6LRxKiYXSXh07iQNEDDjnJB9+Fu/9w8bRMvkn7SudV+wZV1FIFtyTV+PdX+k=
-=6A6+
+iQEcBAEBCAAGBQJWVvf2AAoJECTWi3JdVIfQuiYH/23woji0tzwwjNpKGq5bC2ey
+9rl97Fivok7v2kwAx0FvEOgMySjQRhD9YwkYQNeYx/o4C5Tgh94R3kIyDjZD/Aec
+I7iYgjtmbp8zuGA1BQO9nAss+6GInScz08YW3Al6eUOM2dT4/3TeEK/BAiX+MqVZ
+Fnt3d9OMpDJppjgI3cZRF0Px3WYwtVhwRVKm+YpNAgbYodR5S2uRq/6IjQzeuPZI
+0l8X3jhN1KpYth3Yr4aGKQuEbHqkoBYQbMN5iO5AYRcS2QbRGVtTMjxmpBDQAt+D
+lKJavV6kA/1kCf/ba8A3Aduvz45+Ka/H1T3kim/F7rBwQb4t8aSu1J1J6eYKBmQ=
+=bf0c
 -----END PGP SIGNATURE-----
 
---NxDiCysn+RCvdoZt--
+--m4E4Spob7u7JiHeu--
+
+
+--===============5716140196955500273==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+ath10k mailing list
+ath10k@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/ath10k
+
+--===============5716140196955500273==--
