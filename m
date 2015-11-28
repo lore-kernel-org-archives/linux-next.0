@@ -1,41 +1,28 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: "ahci: per-port msix support" and ARM omap2plus_defconfig
-Date: Fri, 27 Nov 2015 13:54:43 -0500
-Message-ID: <CAP=VYLqT2MiaziwtewRto+JeNx0CcMjQ=q28FN1fVNTvt224eQ@mail.gmail.com>
+From: "HS09912HH3" <akva@comtv.ru>
+Subject: Reply Me For Details
+Date: Fri, 27 Nov 2015 20:13:52 -0800
+Message-ID: <auto-000047267789__18741.342801559$1448687693$gmane$org@fe02-cgp.akado.ru>
+Reply-To: <shu60w@qq.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:37313 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755017AbbK0SzO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Nov 2015 13:55:14 -0500
-Received: by wmww144 with SMTP id w144so68071523wmw.0
-        for <linux-next@vger.kernel.org>; Fri, 27 Nov 2015 10:55:13 -0800 (PST)
+Received: from fe02x03-cgp.akado.ru ([77.232.31.165]:55257 "EHLO akado.ru"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750732AbbK1FN7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 28 Nov 2015 00:13:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, Ricardo Neri <ricardo.neri@intel.com>, Tejun Heo <tj@kernel.org>
 
-Hi all,
+Good day,
 
-Recent linux-next builds have been failing the above config with:
+I wish to contact you personally for an important proposal that might be 
+of interest to you. I am sending this mail just to know if this email address
+is functional.
 
-drivers/ata/libahci.c: In function 'ahci_host_activate_multi_irqs':
-drivers/ata/libahci.c:2492:4: error: invalid use of undefined type
-'struct msix_entry'
-drivers/ata/libahci.c:2492:21: error: dereferencing pointer to incomplete type
-make[1]: *** [drivers/ata/libahci.o] Error 1
+I have something absolutely essential to discuss with you. Contact me for 
+details through my private email: shu60w@qq.com
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/12556138/
-
-A mindless bisect returns the following:
-
-d684a90d38e24dcaf95fdb32c83efe05f80d152a is the first bad commit
-commit d684a90d38e24dcaf95fdb32c83efe05f80d152a
-Author: Dan Williams <dan.j.williamps@intel.com>
-Date:   Wed Nov 11 16:27:33 2015 -0800
-
-    ahci: per-port msix support
-
-Alao note that the author field has been corrupted with a stray "p".
-
-Paul,
+Regards,
+shu60w@qq.com
