@@ -1,81 +1,54 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: manual merge of the ipvs-next tree with the  tree
-Date: Tue, 1 Dec 2015 20:55:44 +0100
-Message-ID: <20151201195544.GA6440@salvia>
-References: <20151201192609.d3b1069f650471db2bdd61f4@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: build failure after merge of the modules tree
+Date: Tue, 1 Dec 2015 20:23:12 +0000
+Message-ID: <20151201202312.d791b81fa0accaaf5b2f7ab5@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20151201192609.d3b1069f650471db2bdd61f4@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>, Michal Kubecek <mkubecek@suse.cz>, Florian Westphal <fw@strlen.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Joe Stringer <joestringer@nicira.com>, David Miller <davem@davemloft.net>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 01, 2015 at 07:26:09PM +0000, Mark Brown wrote:
-> Hi Simon,
-> 
-> Today's linux-next merge of the ipvs-next tree got a conflict in
-> between commit 264640fc2c5f4f ("ipv6: distinguish frag queues by
-> device for multicast and link-local packets") from the net tree and
-> commit 029f7f3b8701c ("netfilter: ipv6: nf_defrag: avoid/free clone
-> operations") from the ipvs-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+--Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This a clash between Florian's fragmentation work and David's net
-tree: https://lkml.org/lkml/2015/11/24/732
+Hi Rusty,
 
-I'll be using this here to resolve this conflict here before passing
-nf-next updates to David.
+After merging the modules tree, today's linux-next x86 allmodconfig build (=
+20151201) failed like this:
 
-Thanks.
+/home/broonie/next/next/arch/x86/kernel/livepatch.c: In function 'klp_write=
+_module_reloc':
+/home/broonie/next/next/arch/x86/kernel/livepatch.c:75:22: error: 'struct m=
+odule' has no member named 'core_ro_size'
+  if (loc < core + mod->core_ro_size)
+                      ^
+/home/broonie/next/next/scripts/Makefile.build:258: recipe for target 'arch=
+/x86/kernel/livepatch.o' failed
+make[3]: *** [arch/x86/kernel/livepatch.o] Error 1
 
-> diff --cc net/ipv6/netfilter/nf_conntrack_reasm.c
-> index bab4441ed4e4,912bc3afc183..000000000000
-> --- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-> +++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-> @@@ -582,31 -576,19 +577,21 @@@ int nf_ct_frag6_gather(struct net *net
->   	}
->   
->   	if (find_prev_fhdr(skb, &prevhdr, &nhoff, &fhoff) < 0)
-> - 		return skb;
-> + 		return -EINVAL;
->   
-> - 	clone = skb_clone(skb, GFP_ATOMIC);
-> - 	if (clone == NULL) {
-> - 		pr_debug("Can't clone skb\n");
-> - 		return skb;
-> - 	}
-> - 
-> - 	NFCT_FRAG6_CB(clone)->orig = skb;
-> - 
-> - 	if (!pskb_may_pull(clone, fhoff + sizeof(*fhdr))) {
-> - 		pr_debug("message is too short.\n");
-> - 		goto ret_orig;
-> - 	}
-> + 	if (!pskb_may_pull(skb, fhoff + sizeof(*fhdr)))
-> + 		return -ENOMEM;
->   
-> - 	skb_set_transport_header(clone, fhoff);
-> - 	hdr = ipv6_hdr(clone);
-> - 	fhdr = (struct frag_hdr *)skb_transport_header(clone);
-> + 	skb_set_transport_header(skb, fhoff);
-> + 	hdr = ipv6_hdr(skb);
-> + 	fhdr = (struct frag_hdr *)skb_transport_header(skb);
->   
->   	fq = fq_find(net, fhdr->identification, user, &hdr->saddr, &hdr->daddr,
->  -		     ip6_frag_ecn(hdr));
->  -	if (fq == NULL)
->  +		     skb->dev ? skb->dev->ifindex : 0, ip6_frag_ecn(hdr));
->  +	if (fq == NULL) {
->  +		pr_debug("Can't find and can't create new queue\n");
-> - 		goto ret_orig;
-> + 		return -ENOMEM;
->  +	}
->   
->   	spin_lock_bh(&fq->q.lock);
->   
+I've used the modules tree from the previous -next (which looks to be what'=
+s in Linus' tree already) instead. Or at least I'll try to, it looks like I=
+ had a bit of driver error with the scripts here...
+
+--Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWXgGwAAoJECTWi3JdVIfQJdsIAIRITXMxB3JHPHrx21TxK/M8
+AqTKZuAkYd+HNvcAiMq4iASKVhUT565JNHGlIel1M/C63K0G5zsvGjrUrFhI+n7I
+i2x/ssVi9NkXzG1VPW90yluXpw23dn8lcq9LxRwcGW5Upg7kMZS9+9lwIR6qVoBn
+10Okjg5YEWWiQE8FN86E4Sh9aHu6JBUTuCZDvYQnIBykcL3wgQSDYYHjDNbvvC69
+ygITLNumLzEghrME4clTViaKhco51TI/toJDGE7WK9GKz/Rn8rKaqPP+Xy3RPJ9E
+8xv6Iv8XpaayRU/xsPsjnO7OeYshNovGqijI+BzCY3u42gFsWjNpmttA8vKAszM=
+=nw0a
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X--
