@@ -1,54 +1,48 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: build failure after merge of the modules tree
-Date: Tue, 1 Dec 2015 20:23:12 +0000
-Message-ID: <20151201202312.d791b81fa0accaaf5b2f7ab5@kernel.org>
+Subject: Re: linux-next: no releases tomorrow or next week
+Date: Tue, 1 Dec 2015 23:35:28 +0000
+Message-ID: <20151201233528.GB1929@sirena.org.uk>
+References: <20151124215713.29903e7b@canb.auug.org.au>
+ <20151201134938.GI1929@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2jPU0V47ppUYV8oI"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20151201134938.GI1929@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X
-Content-Type: text/plain; charset=US-ASCII
+
+--2jPU0V47ppUYV8oI
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+On Tue, Dec 01, 2015 at 01:49:38PM +0000, Mark Brown wrote:
 
-After merging the modules tree, today's linux-next x86 allmodconfig build (=
-20151201) failed like this:
+> I just noticed this: I'll have a go at providing the reduced service
+> version of -next I've previously provided.  I'm starting late today so
+> we'll have to see if I manage to get a finished build today and I'm
+> unlikely to be able to do one on Friday either as I'm travelling then.
 
-/home/broonie/next/next/arch/x86/kernel/livepatch.c: In function 'klp_write=
-_module_reloc':
-/home/broonie/next/next/arch/x86/kernel/livepatch.c:75:22: error: 'struct m=
-odule' has no member named 'core_ro_size'
-  if (loc < core + mod->core_ro_size)
-                      ^
-/home/broonie/next/next/scripts/Makefile.build:258: recipe for target 'arch=
-/x86/kernel/livepatch.o' failed
-make[3]: *** [arch/x86/kernel/livepatch.o] Error 1
+Probably run out of time for a build today at current rate of progress
+- I started too late.  Should manage one tomorrow.
 
-I've used the modules tree from the previous -next (which looks to be what'=
-s in Linus' tree already) instead. Or at least I'll try to, it looks like I=
- had a bit of driver error with the scripts here...
-
---Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X
-Content-Type: application/pgp-signature
+--2jPU0V47ppUYV8oI
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWXgGwAAoJECTWi3JdVIfQJdsIAIRITXMxB3JHPHrx21TxK/M8
-AqTKZuAkYd+HNvcAiMq4iASKVhUT565JNHGlIel1M/C63K0G5zsvGjrUrFhI+n7I
-i2x/ssVi9NkXzG1VPW90yluXpw23dn8lcq9LxRwcGW5Upg7kMZS9+9lwIR6qVoBn
-10Okjg5YEWWiQE8FN86E4Sh9aHu6JBUTuCZDvYQnIBykcL3wgQSDYYHjDNbvvC69
-ygITLNumLzEghrME4clTViaKhco51TI/toJDGE7WK9GKz/Rn8rKaqPP+Xy3RPJ9E
-8xv6Iv8XpaayRU/xsPsjnO7OeYshNovGqijI+BzCY3u42gFsWjNpmttA8vKAszM=
-=nw0a
+iQEcBAEBCAAGBQJWXi7AAAoJECTWi3JdVIfQOZ8H/jqEWTSEi1ZZVBxRKa2rp03w
+jIWPQoYG5hKYX0b+jqnrT4kd2afyBeSqjm7qbxCTny/OoY7twMx5AjwzQvoJw/+l
+NljhcyQoVfaL+fNqoSGGlW56bPaqeb8/8hNJg6evZRKxxRkw/DUJr07Lp8T0k3LE
+4dDFIhSg5ho5ukQ2ojTgeZy8QrU62V3lEeEHU3HE+oGDbbm+JsoNoh9a99XHQTKY
+r3l8E7af0FIPtZjfhlxOEDDlW5W6vJqDvVQdGxy5Tg1m0Xps5leN2pxZAMa8fvi7
+5U0gj1oRPsyJP2Ql1z4E/dhH5jklg5gazEmcktk33u8PvC/qJqcoxtVoz5Mh/PE=
+=F4gm
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Dec_2015_20_23_12_+0000_Q=/DcZRBIROvi16X--
+--2jPU0V47ppUYV8oI--
