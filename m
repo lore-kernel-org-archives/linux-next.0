@@ -1,47 +1,65 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the staging tree with the  tree
-Date: Wed, 2 Dec 2015 20:17:43 +0000
-Message-ID: <20151202201743.15940e7e8853122af01ddff4@kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Wed, 2 Dec 2015 14:07:34 -0700
+Message-ID: <565F5D96.5050902@kernel.dk>
+References: <20151202161936.22b23668cf9dea9872b5079b@kernel.org>
+ <20151202164527.GA31048@lst.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58069 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755727AbbLBURu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2015 15:17:50 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151202164527.GA31048@lst.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>, Mark Brown <broonie@kernel.org>
+Cc: Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/02/2015 09:45 AM, Christoph Hellwig wrote:
+> Looks like I didn't test with CONFIG_NVM enabled, and neither did
+> the build bot.
+>
+> Most of this is really weird crazy shit in the lighnvm support, thoug=
+h.
+>
+> Struct nvme_ns is a structure for the NVM I/O command set, and it has
+> no business poking into it.  Second this commit:
+>
+> commit 47b3115ae7b799be8b77b0f024215ad4f68d6460
+> Author: Wenwei Tao <ww.tao0320@gmail.com>
+> Date:   Fri Nov 20 13:47:55 2015 +0100
+>
+>      nvme: lightnvm: use admin queues for admin cmds
+>
+> Does even more crazy stuff.  If a function gets a request_queue param=
+eter
+> passed it'd better use that and not look for another one.
+>
+> Quick patch below, but this code will need some more attention:
 
-Hi Greg,
+Christoph, for-4.5/nvme also fails if integrity isn't enabled:
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/rtl8188eu/include/phy.h between Linus' tree and commit
-"staging: rtl8188eu: using unique names is good" from the staging tree.
+   CC      drivers/nvme/host/core.o
+drivers/nvme/host/core.c: In function =91__nvme_submit_user_cmd=92:
+drivers/nvme/host/core.c:192:10: error: implicit declaration of functio=
+n=20
+=91bio_integrity_alloc=92 [-Werror=3Dimplicit-function-declaration]
+     bip =3D bio_integrity_alloc(bio, GFP_KERNEL, 1);
+           ^
+drivers/nvme/host/core.c:192:8: warning: assignment makes pointer from=20
+integer without a cast [-Wint-conversion]
+     bip =3D bio_integrity_alloc(bio, GFP_KERNEL, 1);
+         ^
+drivers/nvme/host/core.c:198:7: error: dereferencing pointer to=20
+incomplete type =91struct bio_integrity_payload=92
+     bip->bip_iter.bi_size =3D meta_len;
+        ^
+drivers/nvme/host/core.c:201:10: error: implicit declaration of functio=
+n=20
+=91bio_integrity_add_page=92 [-Werror=3Dimplicit-function-declaration]
+     ret =3D bio_integrity_add_page(bio, virt_to_page(meta),
+           ^
 
-It looks like the patch is already applied so I skipped it.
 
---Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWX1HnAAoJECTWi3JdVIfQ6pMH/iulQCyWpNktZCW3A27fy9uf
-8asHl14/19gG6ZHthyJU6o6c6DccNCmNwJmOtxDcJHS5ULHUXfwZHHk8MURyPATR
-p3M/xztB2hn7BZXij7GnosgZm/izVM0CRUdEr55a9ZElseuMM1bP6y5H1bXzv1XB
-FOigBYG+cE+/SUColntV6q2s7EIbMjlByg8nge+SaLnZ38aqKsGlbOMivIRHOo4m
-fQVLvl/SCgUlBzESp+6DrAJwM2csMZnr+wBof5LQo5YcudnXyE5MBFbKu62P6Y59
-JE8mXsLTKHXbX3JnLuWZly/EV+0WgXB5nls0nQL1pNDyZoshy9rKs8VshFGF6Uk=
-=vp25
------END PGP SIGNATURE-----
-
---Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T--
+--=20
+Jens Axboe
