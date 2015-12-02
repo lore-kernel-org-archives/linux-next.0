@@ -1,105 +1,63 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the v4l-dvb tree with the arm-soc tree
-Date: Wed, 2 Dec 2015 13:36:26 +0000
-Message-ID: <20151202133626.c5d9729eb0ffa811fb1ebe8e@kernel.org>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: linux-next: manual merge of the mvebu tree with the arm-soc tree
+Date: Wed, 02 Dec 2015 14:49:52 +0100
+Message-ID: <87bna92c5b.fsf@free-electrons.com>
+References: <20151202111244.b7ee49ee06b4a95e407e740d@kernel.org>
+	<20151202111829.GE1929@sirena.org.uk> <2428665.BrOON4cELy@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__2_Dec_2015_13_36_26_+0000_iCp=0bhJ6r6/RPFb"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57704 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932108AbbLBNgh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2015 08:36:37 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2428665.BrOON4cELy@wuerfel> (Arnd Bergmann's message of "Wed, 02
+	Dec 2015 12:21:21 +0100")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>, Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__2_Dec_2015_13_36_26_+0000_iCp=0bhJ6r6/RPFb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Arnd,
+=20
+ On mer., d=C3=A9c. 02 2015, Arnd Bergmann <arnd@arndb.de> wrote:
 
-Hi Mauro,
+> On Wednesday 02 December 2015 11:18:29 Mark Brown wrote:
+>> On Wed, Dec 02, 2015 at 11:12:44AM +0000, Mark Brown wrote:
+>> > Hi all,
+>> >=20
+>> > Today's linux-next merge of the mvebu tree got a conflict in  betw=
+een commit
+>> > 377524dc4d77f50e ("ARM: mmp: move into ARCH_MULTIPLATFORM") from t=
+he arm-soc
+>> > tree and commit 5f4423af9dd17 ("ARM: orion: multiplatform support"=
+) from the
+>> > mvebu tree.
+>>=20
+>> Ccing in Arnd since I forgot to do that.
+>>=20
+>
+> I was planning to merge all the multiplatform changes into one next/m=
+ultiplatform
+> branch, but the mvebu maintainers preferred to keep this one in their
+> tree at
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-arch/arm/mach-pxa/palmz72.c, arch/arm/mach-pxa/palmtreo.c and
-arch/arm/mach-pxa/mioa701.c between commit 4c25c5d2985c1 ("ARM:
-pxa: make more mach/*.h files local") from the arm-soc tree and commit a71d=
-aaa10ec2e325f ("[media] move media platform data to
-linux/platform_data/media") from the v4l-dvb tree.
+Indeed except the arch/arm/Kconfig file all the other files belong to
+the mbebu subsystem and it is easier to to keep in our tree to handle t=
+hem.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+> least initially. The conflict will go away once it's tested sufficien=
+tly and
+> I'm pulling it back.
 
-diff --cc arch/arm/mach-pxa/mioa701.c
-index a315f6e3c4a6,ccfd2b63c6a4..000000000000
---- a/arch/arm/mach-pxa/mioa701.c
-+++ b/arch/arm/mach-pxa/mioa701.c
-@@@ -52,9 -52,9 +52,9 @@@
-  #include <linux/platform_data/keypad-pxa27x.h>
-  #include <linux/platform_data/video-pxafb.h>
-  #include <linux/platform_data/mmc-pxamci.h>
- -#include <mach/udc.h>
- -#include <mach/pxa27x-udc.h>
- +#include "udc.h"
- +#include "pxa27x-udc.h"
-- #include <linux/platform_data/camera-pxa.h>
-+ #include <linux/platform_data/media/camera-pxa.h>
-  #include <mach/audio.h>
-  #include <mach/smemc.h>
-  #include <media/soc_camera.h>
-diff --cc arch/arm/mach-pxa/palmtreo.c
-index b2aae54bed42,2dc56062fb7e..000000000000
---- a/arch/arm/mach-pxa/palmtreo.c
-+++ b/arch/arm/mach-pxa/palmtreo.c
-@@@ -43,8 -43,8 +43,8 @@@
-  #include <linux/platform_data/usb-ohci-pxa27x.h>
-  #include <mach/pxa2xx-regs.h>
-  #include <linux/platform_data/asoc-palm27x.h>
-- #include <linux/platform_data/camera-pxa.h>
-+ #include <linux/platform_data/media/camera-pxa.h>
- -#include <mach/palm27x.h>
- +#include "palm27x.h"
- =20
-  #include <sound/pxa2xx-lib.h>
- =20
-diff --cc arch/arm/mach-pxa/palmz72.c
-index abba86f3e254,e3df17a7e8d4..000000000000
---- a/arch/arm/mach-pxa/palmz72.c
-+++ b/arch/arm/mach-pxa/palmz72.c
-@@@ -44,12 -44,12 +44,12 @@@
-  #include <linux/platform_data/video-pxafb.h>
-  #include <linux/platform_data/irda-pxaficp.h>
-  #include <linux/platform_data/keypad-pxa27x.h>
- -#include <mach/udc.h>
- +#include "udc.h"
-  #include <linux/platform_data/asoc-palm27x.h>
- -#include <mach/palm27x.h>
- +#include "palm27x.h"
- =20
- -#include <mach/pm.h>
- +#include "pm.h"
-- #include <linux/platform_data/camera-pxa.h>
-+ #include <linux/platform_data/media/camera-pxa.h>
- =20
-  #include <media/soc_camera.h>
- =20
+By the way, when you will pull our tree, we will still have it our own
+mvebu/for-next branch. Will git managed to automagically resolve the
+conflict by getting the resolution you will do in your branch?
 
---Signature=_Wed__2_Dec_2015_13_36_26_+0000_iCp=0bhJ6r6/RPFb
-Content-Type: application/pgp-signature
+A another solution could be to have a separate patch for the
+arch/arm/Kconfig file that you keep in arm-soc.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Gr=C3=A9gory
 
-iQEcBAEBCAAGBQJWXvPaAAoJECTWi3JdVIfQfiYH/13rubXwmraVpY3toTKYEJnX
-TAlYcICZuHh9vrnZ66p6l1j+DokgsuVtAuGVeaMOY9GfR/Uuhs64Pf6usIIENYnB
-I2lE+GwQqJdVNirOolTsdkI4xDr1t2AJoqjXHC5doFGyr52gImQ8RoieStt27BlN
-TDQLkjMjuGq9ZJbZPNgD6tPnHU0QNM/Et+Mht4esgnz2UhOlR4BIjHl+fw3pMOSJ
-ARp6UFqb+yNAMaRSJCL5vgMayYJj1f1jMTAZGN0tGiZhxsAtzaShdY3k81CfxBFp
-7hG0G9BPIfz7VtemljRUlu2jC418nSm/7cOVR0/TAIrUXhnFVfGQPkw1C9PyeW0=
-=Vqlk
------END PGP SIGNATURE-----
-
---Signature=_Wed__2_Dec_2015_13_36_26_+0000_iCp=0bhJ6r6/RPFb--
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
