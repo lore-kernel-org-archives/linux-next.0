@@ -1,72 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the rockchip tree with the  tree
-Date: Wed, 2 Dec 2015 11:34:25 +0000
-Message-ID: <20151202113425.f22805556b3009b7b9bfa351@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the renesas tree with the arm-soc tree
+Date: Wed, 02 Dec 2015 12:35:15 +0100
+Message-ID: <3662441.U0Roeq6f5X@wuerfel>
+References: <20151202112109.342837c08019e632b28020fc@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__2_Dec_2015_11_34_25_+0000_b3Q2N=ZI+55qhuob"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.134]:56356 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758010AbbLBLf7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2015 06:35:59 -0500
+In-Reply-To: <20151202112109.342837c08019e632b28020fc@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Simon Horman <horms@verge.net.au>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
---Signature=_Wed__2_Dec_2015_11_34_25_+0000_b3Q2N=ZI+55qhuob
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 02 December 2015 11:21:09 Mark Brown wrote:
+> 
+> Today's linux-next merge of the renesas tree got a conflict in
+> arch/arm/mach-shmobile/Kconfig between commit e32465429490 ("ARM: use "depends
+> on" for SoC configs instead of "if" after prompt") from the arm-soc tree and
+> commit 9b5ba0df4ea4f94 ("ARM: shmobile: Introduce ARCH_RENESAS") from the
+> renesas tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-Hi Heiko,
+(as predicted by Simon ;-) )
 
-Today's linux-next merge of the rockchip tree got a conflict in
-arch/arm/mach-rockchip/platsmp.c between commit 75305275a721d33ae9abf ("ARM:
-use const and __initconst for smp_operations") from the arm-soc tree and co=
-mmit
-9def7ccfe8d5b84 ("ARM: rockchip: add support smp for rk3036") from the rock=
-chip
-tree.
+I plan to put the cross-platform changes I have in next/cleanup into a separate
+branch that can be pulled into other branches to resolve those issues.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
-diff --cc arch/arm/mach-rockchip/platsmp.c
-index 938888fc55a1,5c138f9699f9..000000000000
---- a/arch/arm/mach-rockchip/platsmp.c
-+++ b/arch/arm/mach-rockchip/platsmp.c
-@@@ -340,7 -351,16 +351,16 @@@ static void rockchip_cpu_die(unsigned i
-  }
-  #endif
- =20
- -static struct smp_operations rk3036_smp_ops __initdata =3D {
-++static const struct smp_operations rk3036_smp_ops __initdata =3D {
-+ 	.smp_prepare_cpus	=3D rk3036_smp_prepare_cpus,
-+ 	.smp_boot_secondary	=3D rockchip_boot_secondary,
-+ #ifdef CONFIG_HOTPLUG_CPU
-+ 	.cpu_kill		=3D rockchip_cpu_kill,
-+ 	.cpu_die		=3D rockchip_cpu_die,
-+ #endif
-+ };
-+=20
- -static struct smp_operations rockchip_smp_ops __initdata =3D {
- +static const struct smp_operations rockchip_smp_ops __initconst =3D {
-  	.smp_prepare_cpus	=3D rockchip_smp_prepare_cpus,
-  	.smp_boot_secondary	=3D rockchip_boot_secondary,
-  #ifdef CONFIG_HOTPLUG_CPU
-
---Signature=_Wed__2_Dec_2015_11_34_25_+0000_b3Q2N=ZI+55qhuob
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWXtdBAAoJECTWi3JdVIfQEtEH/R5PXbmXLhCKfsPKvY5/Durg
-yawLQyeHeqXhwe+yG9HqJ5ethP7N/f4wjK963CPuoE78lmEWnhlbG1Cj5asPsbo3
-YFkhiT+WyvaZHOLTZFz0Dodsu5OdJoCCX/hBOwJNzOLpWFeIBsO0qmi/SCIqH5vx
-wimYNnFoA17M4VNrCd4e2RrqpZCGSWyg52mqvWR2EY5cqKVsw8X2yGDeK8P/yAFc
-aHQ3pzL4w6mIk7/ctD+TSTtaakv/HxRy6vSy0B+5iROB2aZEB9Riw/QWNfzqN6NK
-blV7c/BpxCWnRQ+uW1jY95jj3P0Trfn0epD7gVSfcHAmwA90ws2EzjTXRE+3gMs=
-=dOT6
------END PGP SIGNATURE-----
-
---Signature=_Wed__2_Dec_2015_11_34_25_+0000_b3Q2N=ZI+55qhuob--
+	Arnd
