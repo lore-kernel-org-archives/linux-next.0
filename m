@@ -1,71 +1,37 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the renesas tree with the arm-soc tree
-Date: Wed, 2 Dec 2015 11:21:09 +0000
-Message-ID: <20151202112109.342837c08019e632b28020fc@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the mvebu tree with the arm-soc tree
+Date: Wed, 02 Dec 2015 12:21:21 +0100
+Message-ID: <2428665.BrOON4cELy@wuerfel>
+References: <20151202111244.b7ee49ee06b4a95e407e740d@kernel.org> <20151202111829.GE1929@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__2_Dec_2015_11_21_09_+0000__mzMaogIRskAgyZw"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57508 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756723AbbLBLVT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2015 06:21:19 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:62471 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757923AbbLBLV7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2015 06:21:59 -0500
+In-Reply-To: <20151202111829.GE1929@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>, Masahiro Yamada <yamada.masahiro@socionext.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__2_Dec_2015_11_21_09_+0000__mzMaogIRskAgyZw
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 02 December 2015 11:18:29 Mark Brown wrote:
+> On Wed, Dec 02, 2015 at 11:12:44AM +0000, Mark Brown wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the mvebu tree got a conflict in  between commit
+> > 377524dc4d77f50e ("ARM: mmp: move into ARCH_MULTIPLATFORM") from the arm-soc
+> > tree and commit 5f4423af9dd17 ("ARM: orion: multiplatform support") from the
+> > mvebu tree.
+> 
+> Ccing in Arnd since I forgot to do that.
+> 
 
-Hi Simon,
-
-Today's linux-next merge of the renesas tree got a conflict in
-arch/arm/mach-shmobile/Kconfig between commit e32465429490 ("ARM: use "depe=
-nds
-on" for SoC configs instead of "if" after prompt") from the arm-soc tree and
-commit 9b5ba0df4ea4f94 ("ARM: shmobile: Introduce ARCH_RENESAS") from the
-renesas tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
-diff --cc arch/arm/mach-shmobile/Kconfig
-index 0f25f8fa2692,4ed72b124235..000000000000
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@@ -29,10 -31,11 +31,11 @@@ config ARCH_RMOBIL
-        select SYS_SUPPORTS_SH_CMT
-        select SYS_SUPPORTS_SH_TMU
- =20
-- menuconfig ARCH_SHMOBILE_MULTI
-+ menuconfig ARCH_RENESAS
- -      bool "Renesas ARM SoCs" if ARCH_MULTI_V7
- -      depends on MMU
- +      bool "Renesas ARM SoCs"
- +      depends on ARCH_MULTI_V7 && MMU
-        select ARCH_SHMOBILE
-+       select ARCH_SHMOBILE_MULTI
-        select HAVE_ARM_SCU if SMP
-        select HAVE_ARM_TWD if SMP
-        select ARM_GIC
-
---Signature=_Wed__2_Dec_2015_11_21_09_+0000__mzMaogIRskAgyZw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWXtQlAAoJECTWi3JdVIfQrcoH/0MtYN8udhjZKcZZKkdndjy9
-cBgkWMBAwVFcAoRxu6en1XCHPtZzj24x/1prJNn72PL5I8QXXOr9JiECRqc1Hchq
-Jv8avaoG6IcBRYuOix4UEl7SYzDG5Fr4hViqKXBNHrUb3d8mCEL+fe1WRO6dsDrK
-luBDs16PFJ4wpNQd5o/GGnqmDYX/7eakO5QF+gxGC6LcrKm/PqUAzKWECaPtGa8W
-XogPDhkCWMPbnxl7wcPOjziMnQukCouZBSPHoNOE9AHJs+F/WoMo/B1qPCYVlqeD
-naJ7wLH+iQrnFboI2+4ZX9Tix8L72P0y668HID7Th94i1R/TfkAwues39KNqQP4=
-=yYP3
------END PGP SIGNATURE-----
-
---Signature=_Wed__2_Dec_2015_11_21_09_+0000__mzMaogIRskAgyZw--
+I was planning to merge all the multiplatform changes into one next/multiplatform
+branch, but the mvebu maintainers preferred to keep this one in their tree at
+least initially. The conflict will go away once it's tested sufficiently and
+I'm pulling it back.
+	
+	Arnd
