@@ -1,34 +1,47 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: build failure after merge of the modules tree
-Date: Wed, 02 Dec 2015 13:53:26 +1030
-Message-ID: <878u5djzyp.fsf@rustcorp.com.au>
-References: <20151201202312.d791b81fa0accaaf5b2f7ab5@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the staging tree with the  tree
+Date: Wed, 2 Dec 2015 20:17:43 +0000
+Message-ID: <20151202201743.15940e7e8853122af01ddff4@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58817 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752550AbbLBTw2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Dec 2015 14:52:28 -0500
-In-Reply-To: <20151201202312.d791b81fa0accaaf5b2f7ab5@kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58069 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755727AbbLBURu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2015 15:17:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@redhat.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Mark Brown <broonie@kernel.org> writes:
-> Hi Rusty,
->
-> After merging the modules tree, today's linux-next x86 allmodconfig build (20151201) failed like this:
->
-> /home/broonie/next/next/arch/x86/kernel/livepatch.c: In function 'klp_write_module_reloc':
-> /home/broonie/next/next/arch/x86/kernel/livepatch.c:75:22: error: 'struct module' has no member named 'core_ro_size'
->   if (loc < core + mod->core_ro_size)
+--Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep, I missed that one.
+Hi Greg,
 
-I also missed an ARM case, so I'll rebase the tree (it's near the top
-anyway).
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/rtl8188eu/include/phy.h between Linus' tree and commit
+"staging: rtl8188eu: using unique names is good" from the staging tree.
 
-Cheers,
-Rusty.
+It looks like the patch is already applied so I skipped it.
+
+--Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWX1HnAAoJECTWi3JdVIfQ6pMH/iulQCyWpNktZCW3A27fy9uf
+8asHl14/19gG6ZHthyJU6o6c6DccNCmNwJmOtxDcJHS5ULHUXfwZHHk8MURyPATR
+p3M/xztB2hn7BZXij7GnosgZm/izVM0CRUdEr55a9ZElseuMM1bP6y5H1bXzv1XB
+FOigBYG+cE+/SUColntV6q2s7EIbMjlByg8nge+SaLnZ38aqKsGlbOMivIRHOo4m
+fQVLvl/SCgUlBzESp+6DrAJwM2csMZnr+wBof5LQo5YcudnXyE5MBFbKu62P6Y59
+JE8mXsLTKHXbX3JnLuWZly/EV+0WgXB5nls0nQL1pNDyZoshy9rKs8VshFGF6Uk=
+=vp25
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__2_Dec_2015_20_17_43_+0000_hSPpZY57XHnbnJ9T--
