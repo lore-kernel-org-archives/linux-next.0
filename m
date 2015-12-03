@@ -1,35 +1,53 @@
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <m@bjorling.me>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 3 Dec 2015 12:07:23 +0100
-Message-ID: <5660226B.5070800@bjorling.me>
-References: <20151202161936.22b23668cf9dea9872b5079b@kernel.org>
- <20151202164527.GA31048@lst.de> <565F5D96.5050902@kernel.dk>
- <565FFFA5.6000003@bjorling.me> <20151203090638.GA14329@lst.de>
- <566010EE.6050806@bjorling.me> <20151203095726.GA15428@lst.de>
- <566014BF.3080702@bjorling.me> <20151203102132.GA15905@lst.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the mac80211-next tree with the
+ mac80211 tree
+Date: Thu, 3 Dec 2015 11:28:31 +0000
+Message-ID: <20151203112831.9800fd1675c04b69c1324cbb@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151203102132.GA15905@lst.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>, Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_Dec_2015_11_28_31_+0000_3.hkvfikR6UTnRXr"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58847 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932971AbbLCL2n (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2015 06:28:43 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12/03/2015 11:21 AM, Christoph Hellwig wrote:
-> On Thu, Dec 03, 2015 at 11:09:03AM +0100, Matias Bj=F8rling wrote:
->> Similar to this?
->
-> For the interface yes.  Now just get rid of using nvme_ns entirely -
-> seems like you just want ns_id and lba_shift, and those should fit
-> well into nvm_dev I think.
->
+--Signature=_Thu__3_Dec_2015_11_28_31_+0000_3.hkvfikR6UTnRXr
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What is the reason to keep the nvme_ns internally to the nvme core?
+Hi Johannes,
 
-We can definitely move ->nsid and the lba_shift into nvm_dev. Only thin=
-g=20
-I have is that it moves a small part of nvme logic into the lightnvm co=
-re.
+Today's linux-next merge of the mac80211-next tree got a conflict in
+net/mac80211/cfg.c between commit c1df932c0574 ("mac80211: fix off-channel
+mgmt-tx uninitialized variable usage") from the mac80211 tree and commit
+a2aecd7d96ba ("mac80211: move off-channel/mgmt-tx code to offchannel.c") fr=
+om
+the mac80211-next tree.
+
+I fixed it up resulting in an empty diff and can carry the fix as necessary=
+ (no
+action is required).
+
+--Signature=_Thu__3_Dec_2015_11_28_31_+0000_3.hkvfikR6UTnRXr
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWYCdfAAoJECTWi3JdVIfQV4gH/1G5jKRnjmSKvCVOF3HWFOcU
+BRU0MV9CEuCnFoPGypjsL5wo2ifDQt0L6ZpmiHsIP5LARzlxGurJgAgt+XxiZJYg
+gYk7+InrICfkcKxSKjZWUNIvQy/ZC7KTvUNONQgDxUpoPLufSJiTRAI0ey/VUhGg
+PvOBVGM6dFCi3aBz1yG05BgrLTElMjuRc28VIcKpuDC4ltDjWoDY1VGVatpKXBXz
++lCoYftm1RAoN8v3wHgJXZllDbTrrHMjLnbeaT2ab3sBU63EXmfLQ8lN8WwUqcg0
+7+VcB3c1bGQrfqSuy17GOe3L/CD8iY8KLGxsFVBDY4/pUa5JbzSDuTEc3mqO6Y4=
+=Ve1r
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Dec_2015_11_28_31_+0000_3.hkvfikR6UTnRXr--
