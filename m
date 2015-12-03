@@ -1,31 +1,73 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 3 Dec 2015 17:42:59 +0100
-Message-ID: <20151203164259.GA14678@lst.de>
-References: <20151202161936.22b23668cf9dea9872b5079b@kernel.org> <20151202164527.GA31048@lst.de> <565F5D96.5050902@kernel.dk> <565FFFA5.6000003@bjorling.me> <20151203090638.GA14329@lst.de> <566010EE.6050806@bjorling.me> <20151203095726.GA15428@lst.de> <566014BF.3080702@bjorling.me> <20151203102132.GA15905@lst.de> <5660226B.5070800@bjorling.me>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Subject: [PATCH] staging/rdma/hfi1: fix pio progress routine race with
+ allocator
+Date: Thu, 03 Dec 2015 14:34:18 -0500
+Message-ID: <20151203193417.12617.62289.stgit@phlsvslse11.ph.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:35625 "EHLO newverein.lst.de"
+Received: from mga14.intel.com ([192.55.52.115]:1540 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750966AbbLCQnD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Dec 2015 11:43:03 -0500
-Content-Disposition: inline
-In-Reply-To: <5660226B.5070800@bjorling.me>
+	id S1752674AbbLCTeX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Dec 2015 14:34:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>, Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+To: devel@driverdev.osuosl.org
+Cc: linux-rdma@vger.kernel.org, dledford@redhat.com, linux-next@vger.kernel.org
 
-On Thu, Dec 03, 2015 at 12:07:23PM +0100, Matias Bj=F8rling wrote:
-> What is the reason to keep the nvme_ns internally to the nvme core?
->
-> We can definitely move ->nsid and the lba_shift into nvm_dev. Only th=
-ing I=20
-> have is that it moves a small part of nvme logic into the lightnvm co=
-re.
+The allocation code assumes that the shadow ring cannot
+be overrun because the credits will limit the allocation.
 
-It's a structure specific to the NVM command set, and the block device
-use to implement it in Linux.  Similar to how you wouldn't use the SCSI
-disk driver data structures to implement the tape driver for example.
+Unfortuately, the progress mechanism in sc_release_update() updates
+the free count prior to processing the shadow ring, allowing the
+shadow ring to be overrun by an allocation.
+
+Reviewed-by: Mark Debbage <mark.debbage@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+---
+ drivers/staging/rdma/hfi1/pio.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/rdma/hfi1/pio.c b/drivers/staging/rdma/hfi1/pio.c
+index eab58c1..8e10857 100644
+--- a/drivers/staging/rdma/hfi1/pio.c
++++ b/drivers/staging/rdma/hfi1/pio.c
+@@ -1565,6 +1565,7 @@ void sc_release_update(struct send_context *sc)
+ 	u64 hw_free;
+ 	u32 head, tail;
+ 	unsigned long old_free;
++	unsigned long free;
+ 	unsigned long extra;
+ 	unsigned long flags;
+ 	int code;
+@@ -1579,7 +1580,7 @@ void sc_release_update(struct send_context *sc)
+ 	extra = (((hw_free & CR_COUNTER_SMASK) >> CR_COUNTER_SHIFT)
+ 			- (old_free & CR_COUNTER_MASK))
+ 				& CR_COUNTER_MASK;
+-	sc->free = old_free + extra;
++	free = old_free + extra;
+ 	trace_hfi1_piofree(sc, extra);
+ 
+ 	/* call sent buffer callbacks */
+@@ -1589,7 +1590,7 @@ void sc_release_update(struct send_context *sc)
+ 	while (head != tail) {
+ 		pbuf = &sc->sr[tail].pbuf;
+ 
+-		if (sent_before(sc->free, pbuf->sent_at)) {
++		if (sent_before(free, pbuf->sent_at)) {
+ 			/* not sent yet */
+ 			break;
+ 		}
+@@ -1603,8 +1604,10 @@ void sc_release_update(struct send_context *sc)
+ 		if (tail >= sc->sr_size)
+ 			tail = 0;
+ 	}
+-	/* update tail, in case we moved it */
+ 	sc->sr_tail = tail;
++	/* make sure tail is updated before free */
++	smp_wmb();
++	sc->free = free;
+ 	spin_unlock_irqrestore(&sc->release_lock, flags);
+ 	sc_piobufavail(sc);
+ }
