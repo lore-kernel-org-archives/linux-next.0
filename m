@@ -1,38 +1,67 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 3 Dec 2015 08:35:22 +0100
-Message-ID: <20151203073522.GA12920@lst.de>
-References: <20151202161936.22b23668cf9dea9872b5079b@kernel.org> <20151202164527.GA31048@lst.de> <565F5D96.5050902@kernel.dk> <20151202211400.GB31364@localhost.localdomain> <565F624C.9090301@kernel.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:33365 "EHLO newverein.lst.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750858AbbLCHfY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Dec 2015 02:35:24 -0500
-Content-Disposition: inline
-In-Reply-To: <565F624C.9090301@kernel.dk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Keith Busch <keith.busch@intel.com>, Christoph Hellwig <hch@lst.de>, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] of: fix build failure
+Date: Thu,  3 Dec 2015 14:08:10 +0530
+Message-ID: <1449131890-21675-1-git-send-email-sudipm.mukherjee@gmail.com>
+References: <20151203011814.GC5727@sirena.org.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151203011814.GC5727@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 02, 2015 at 02:27:40PM -0700, Jens Axboe wrote:
-> On 12/02/2015 02:14 PM, Keith Busch wrote:
->> On Wed, Dec 02, 2015 at 02:07:34PM -0700, Jens Axboe wrote:
->>> Christoph, for-4.5/nvme also fails if integrity isn't enabled:
->>
->> I forgot about this since I've merged this in my repo to fix:
->>
->> https://lkml.org/lkml/2015/10/26/546
->>
->> That ok, or should we handle this differently?
->
-> I think that should make it compile, but the behavior will be a bit odd. If 
-> you pass in meta and integrity isn't enabled, you'll get an ENOMEM error. 
-> That seems a bit nonsensical.
->
-> We could make bio_integrity_alloc() return an error pointer. That way we 
-> could retain the ifdefs in the bip code, and not let it spread to drivers.
+We are having build failure with next-20151202 for sparc allmodconfig
+with the error messages:
+undefined reference to 'of_io_request_and_map'
 
-This looks reasonable to me.
+CONFIG_OF is defined for sparc so it is expected that we have a
+definition of of_io_request_and_map() but of/address.c is only compiled
+if it is !SPARC.
+
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+---
+
+build log is at:
+https://travis-ci.org/sudipm-mukherjee/parport/builds/94541627
+
+patch has been build tested with sparc allmodconfig and x86_64
+allmodconfig.
+
+ include/linux/of_address.h | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+index 507daad..7bf4603 100644
+--- a/include/linux/of_address.h
++++ b/include/linux/of_address.h
+@@ -112,8 +112,6 @@ static inline bool of_dma_is_coherent(struct device_node *np)
+ extern int of_address_to_resource(struct device_node *dev, int index,
+ 				  struct resource *r);
+ void __iomem *of_iomap(struct device_node *node, int index);
+-void __iomem *of_io_request_and_map(struct device_node *device,
+-					int index, const char *name);
+ #else
+ 
+ #include <linux/io.h>
+@@ -136,6 +134,19 @@ static inline void __iomem *of_io_request_and_map(struct device_node *device,
+ }
+ #endif
+ 
++#if defined(CONFIG_OF) && !defined(CONFIG_SPARC)
++void __iomem *of_io_request_and_map(struct device_node *device,
++					int index, const char *name);
++#else
++#include <linux/io.h>
++
++static inline void __iomem *of_io_request_and_map(struct device_node *device,
++					int index, const char *name)
++{
++	return IOMEM_ERR_PTR(-EINVAL);
++}
++#endif /* CONFIG_OF && !CONFIG_SPARC */
++
+ #if defined(CONFIG_OF_ADDRESS) && defined(CONFIG_PCI)
+ extern const __be32 *of_get_pci_address(struct device_node *dev, int bar_no,
+ 			       u64 *size, unsigned int *flags);
+-- 
+1.9.1
