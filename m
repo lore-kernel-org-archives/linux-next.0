@@ -1,46 +1,41 @@
-From: Imre Deak <imre.deak@intel.com>
-Subject: Re: linux-next: manual merge of the drm tree with the
- drm-intel-fixes tree
-Date: Thu, 03 Dec 2015 16:52:09 +0200
-Message-ID: <1449154329.23688.1.camel@intel.com>
-References: <20151203144741.8c03178c8344950783fa32db@kernel.org>
-Reply-To: imre.deak@intel.com
+From: Jani Nikula <jani.nikula@intel.com>
+Subject: Re: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Date: Thu, 03 Dec 2015 17:49:16 +0200
+Message-ID: <87h9jz1qir.fsf@intel.com>
+References: <20151203145139.512bebac25c08506a1791a5b@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:9966 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964978AbbLCOwN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Dec 2015 09:52:13 -0500
-In-Reply-To: <20151203144741.8c03178c8344950783fa32db@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Dave Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.jakobsson@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20151203145139.512bebac25c08506a1791a5b@kernel.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Brown <broonie@kernel.org>, Dave Airlie <airlied@linux.ie>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Imre Deak <imre.deak@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
 
-On to, 2015-12-03 at 14:47 +0000, Mark Brown wrote:
-> Hi Dave,
-> 
-> Today's linux-next merge of the drm tree got a conflict in
-> drivers/gpu/drm/i915/i915_drv.h and
-> drivers/gpu/drm/i915/i915_debugfs.c between
-> commit ac9b8236551d ("drm/i915: Introduce a gmbus power domain") from
-> the
-> drm-intel-fixes tree and commit dfa5762793a40b4b03 ("drm/i915: Add a
-> modeset
-> power domain") from the drm tree.
-> 
-> I notice that the modeset commit is missing a signoff from Imre who
-> is the
-> committer by the way, the commiter should have a signoff.
-
-Yes, sorry for that, I simply forgot to add those (it's also missing
-from a few others around the one you found). I'll make sure to sign off
-such commits in the future.
-
---Imre
-
-> I fixed it up (resulting in a null diff) and can carry the fix as
-> necessary (no
-> action is required).
+T24gVGh1LCAwMyBEZWMgMjAxNSwgTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPiB3cm90
+ZToKPiBIaSBEYXZlLAo+Cj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0gdHJl
+ZSBnb3QgYSBjb25mbGljdCBpbgo+IGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2hkbWkuYyBi
+ZXR3ZWVuIGNvbW1pdCBhYzliODIzNjU1MWQxICgiZHJtL2k5MTU6Cj4gSW50cm9kdWNlIGEgZ21i
+dXMgcG93ZXIgZG9tYWluIikgZnJvbSB0aGUgZHJtLWludGVsLWZpeGVzIHRyZWUgYW5kIGNvbW1p
+dCAKPiA2OTE3MmYyMTBlOWZmZmFmOCAoImRybS9pOTE1OiB0YWtlIGEgcG93ZXIgZG9tYWluIHJl
+ZiBvbmx5IHdoZW4gbmVlZGVkCj4gZHVyaW5nIEhETUkgZGV0ZWN0IikgZnJvbSB0aGUgZHJtIHRy
+ZWUuCj4KPiBJIGZpeGVkIGl0IHVwIChhZ2FpbiByZXN1bHRpbmcgaW4gYSBudWxsIGRpZmYpIGFu
+ZCBjYW4gY2FycnkgdGhlIGZpeCBhcwo+IG5lY2Vzc2FyeSAobm8gYWN0aW9uIGlzIHJlcXVpcmVk
+KS4KCkJvdGggb2YgdGhlc2Ugd2VyZSBkdWUgdG8gYmFja3BvcnRpbmcgb2YgZml2ZSBwYXRjaGVz
+IGZyb20gb3VyIC1uZXh0CmFpbWluZyBhdCB2NC41IHRvIG91ciAtZml4ZXMgYWltaW5nIGF0IHY0
+LjQuIFNvbWUgbW9yZSBkZXRhaWxzIGluIG15CnB1bGwgcmVxdWVzdCB0byBEYXZlIFsxXS4KCkJS
+LApKYW5pLgoKClsxXSBodHRwOi8vbWlkLmdtYW5lLm9yZy84N212dHIxdDZuLmZzZkBpbnRlbC5j
+b20KCgotLSAKSmFuaSBOaWt1bGEsIEludGVsIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVy
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
