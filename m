@@ -1,67 +1,48 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH] of: fix build failure
-Date: Thu,  3 Dec 2015 14:08:10 +0530
-Message-ID: <1449131890-21675-1-git-send-email-sudipm.mukherjee@gmail.com>
-References: <20151203011814.GC5727@sirena.org.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151203011814.GC5727@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-List-Id: linux-next.vger.kernel.org
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <m@bjorling.me>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Thu, 3 Dec 2015 09:39:01 +0100
+Message-ID: <565FFFA5.6000003@bjorling.me>
+References: <20151202161936.22b23668cf9dea9872b5079b@kernel.org>
+ <20151202164527.GA31048@lst.de> <565F5D96.5050902@kernel.dk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:34309 "EHLO
+	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758675AbbLCIjE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2015 03:39:04 -0500
+Received: by wmvv187 with SMTP id v187so15489429wmv.1
+        for <linux-next@vger.kernel.org>; Thu, 03 Dec 2015 00:39:03 -0800 (PST)
+In-Reply-To: <565F5D96.5050902@kernel.dk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Mark Brown <broonie@kernel.org>
+Cc: Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
 
-We are having build failure with next-20151202 for sparc allmodconfig
-with the error messages:
-undefined reference to 'of_io_request_and_map'
+On 12/02/2015 10:07 PM, Jens Axboe wrote:
+> On 12/02/2015 09:45 AM, Christoph Hellwig wrote:
+>> Looks like I didn't test with CONFIG_NVM enabled, and neither did
+>> the build bot.
+>>
+>> Most of this is really weird crazy shit in the lighnvm support, though.
+>>
+>> Struct nvme_ns is a structure for the NVM I/O command set, and it has
+>> no business poking into it.  Second this commit:
+>>
+>> commit 47b3115ae7b799be8b77b0f024215ad4f68d6460
+>> Author: Wenwei Tao <ww.tao0320@gmail.com>
+>> Date:   Fri Nov 20 13:47:55 2015 +0100
+>>
+>>      nvme: lightnvm: use admin queues for admin cmds
+>>
+>> Does even more crazy stuff.  If a function gets a request_queue parameter
+>> passed it'd better use that and not look for another one.
 
-CONFIG_OF is defined for sparc so it is expected that we have a
-definition of of_io_request_and_map() but of/address.c is only compiled
-if it is !SPARC.
+A little crazy yes. The reason is that the NVMe admin queues and NVMe 
+user queues are driven by different request queues. Previously this was 
+patched up with having two queues in the lightnvm core. One for admin 
+and another for user. But was later merged into a single queue.
 
-Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
----
-
-build log is at:
-https://travis-ci.org/sudipm-mukherjee/parport/builds/94541627
-
-patch has been build tested with sparc allmodconfig and x86_64
-allmodconfig.
-
- include/linux/of_address.h | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-index 507daad..7bf4603 100644
---- a/include/linux/of_address.h
-+++ b/include/linux/of_address.h
-@@ -112,8 +112,6 @@ static inline bool of_dma_is_coherent(struct device_node *np)
- extern int of_address_to_resource(struct device_node *dev, int index,
- 				  struct resource *r);
- void __iomem *of_iomap(struct device_node *node, int index);
--void __iomem *of_io_request_and_map(struct device_node *device,
--					int index, const char *name);
- #else
- 
- #include <linux/io.h>
-@@ -136,6 +134,19 @@ static inline void __iomem *of_io_request_and_map(struct device_node *device,
- }
- #endif
- 
-+#if defined(CONFIG_OF) && !defined(CONFIG_SPARC)
-+void __iomem *of_io_request_and_map(struct device_node *device,
-+					int index, const char *name);
-+#else
-+#include <linux/io.h>
-+
-+static inline void __iomem *of_io_request_and_map(struct device_node *device,
-+					int index, const char *name)
-+{
-+	return IOMEM_ERR_PTR(-EINVAL);
-+}
-+#endif /* CONFIG_OF && !CONFIG_SPARC */
-+
- #if defined(CONFIG_OF_ADDRESS) && defined(CONFIG_PCI)
- extern const __be32 *of_get_pci_address(struct device_node *dev, int bar_no,
- 			       u64 *size, unsigned int *flags);
--- 
-1.9.1
+We can pass both request queues into lightnvm core, but I prefer to 
+handle it in some good way in the nvme-lightnvm integration.
