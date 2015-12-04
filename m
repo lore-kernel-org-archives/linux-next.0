@@ -1,138 +1,68 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20151203 build: 1 failures 16 warnings (next-20151203)
-Date: Fri, 04 Dec 2015 05:48:57 +0000
-Message-ID: <E1a4jEm-0003to-09@optimist>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <m@bjorling.me>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Fri, 4 Dec 2015 13:16:21 +0100
+Message-ID: <56618415.3010405@bjorling.me>
+References: <20151202161936.22b23668cf9dea9872b5079b@kernel.org>
+ <20151202164527.GA31048@lst.de> <565F5D96.5050902@kernel.dk>
+ <565FFFA5.6000003@bjorling.me> <20151203090638.GA14329@lst.de>
+ <566010EE.6050806@bjorling.me> <20151203095726.GA15428@lst.de>
+ <566014BF.3080702@bjorling.me> <20151203102132.GA15905@lst.de>
+ <5660226B.5070800@bjorling.me> <20151203164259.GA14678@lst.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60051 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751361AbbLDFtG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2015 00:49:06 -0500
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35833 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752990AbbLDMQY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2015 07:16:24 -0500
+Received: by wmuu63 with SMTP id u63so59571819wmu.0
+        for <linux-next@vger.kernel.org>; Fri, 04 Dec 2015 04:16:23 -0800 (PST)
+In-Reply-To: <20151203164259.GA14678@lst.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20151203
-Git describe: next-20151203
-Commit: dcccebc04d Add linux-next specific files for 20151203
-
-Build Time: 144 min 11 sec
-
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
-
-Errors: 1
-Warnings: 16
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allnoconfig
-
-Errors:
-
-	arm64-allnoconfig
-../arch/arm64/mm/mmap.c:55:49: error: 'mmap_rnd_compat_bits' undeclared (first use in this function)
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      7 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ../arch/arm64/mm/mmap.c:55:49: error: 'mmap_rnd_compat_bits' undeclared (first use in this function)
-
-Warnings Summary: 16
-	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  1 ../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/codecs/da7218.c:2261:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../mm/page_alloc.c:4185:16: warning: comparison between 'enum zone_type' and 'enum <anonymous>' [-Wenum-compare]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/net/ethernet/qlogic/qed/qed_dev.c:1676:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/net/ethernet/freescale/fsl_pq_mdio.c:468:6: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'long int' [-Wformat=]
-	  1 ../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:6: warning: unused variable 'i' [-Wunused-variable]
-	  1 ../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:380:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Mark Brown <broonie@kernel.org>, Keith Busch <keith.busch@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
 
 
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On 12/03/2015 05:42 PM, Christoph Hellwig wrote:
+> On Thu, Dec 03, 2015 at 12:07:23PM +0100, Matias Bj=F8rling wrote:
+>> What is the reason to keep the nvme_ns internally to the nvme core?
+>>
+>> We can definitely move ->nsid and the lba_shift into nvm_dev. Only t=
+hing I
+>> have is that it moves a small part of nvme logic into the lightnvm c=
+ore.
+>
+> It's a structure specific to the NVM command set, and the block devic=
+e
+> use to implement it in Linux.  Similar to how you wouldn't use the SC=
+SI
+> disk driver data structures to implement the tape driver for example.
+>
 
+Granted. Taking a step back and see how it would look in the=20
+specification. For that case, the identify geometry should properly=20
+replace the identify namespace command and extend the controller=20
+identify with a method to expose identify geometry structures. It falls=
+=20
+back to that we don't have the appropriate bits in the specification (a=
+s=20
+there isn't a vendor specific command set (CSS) place at the moment).=20
+I'll rather not (and patches properly won't be accepted) push specific=20
+meanings to reserved bits in the standard, which then is overruled by=20
+vendor specific pci id's.
 
--------------------------------------------------------------------------------
-arm64-allnoconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+The NVMe and LightNVM still shares some common ground as I/O=20
+submission/completion still follows normal I/O submissions. The=20
+Submission/Completion sizes (SQES/CQES), ONCS bits, number of namespace=
+s=20
+could properly be either abstracted or duplicated in vendor specific bi=
+ts.
 
-Errors:
-	../arch/arm64/mm/mmap.c:55:49: error: 'mmap_rnd_compat_bits' undeclared (first use in this function)
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../sound/soc/codecs/da7218.c:2261:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/freescale/fsl_pq_mdio.c:468:6: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'long int' [-Wformat=]
-	../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:4185:16: warning: comparison between 'enum zone_type' and 'enum <anonymous>' [-Wenum-compare]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:6: warning: unused variable 'i' [-Wunused-variable]
-	../drivers/gpu/drm/exynos/exynos5433_drm_decon.c:380:6: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/net/ethernet/qlogic/qed/qed_dev.c:1676:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+I'll work on getting ->nsid, and lba_shift abstracted away. However, th=
+e=20
+best solution will be to get some bits in the spec and implement it=20
+appropriately.
