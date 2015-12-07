@@ -1,37 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-drivers-next tree with
- Linus' tree
-Date: Mon, 7 Dec 2015 14:13:25 +1100
-Message-ID: <20151207141325.1609aec1@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 7 Dec 2015 14:38:34 +1100
+Message-ID: <20151207143834.366ea1bf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55043 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37690 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755067AbbLGDN2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 6 Dec 2015 22:13:28 -0500
+	id S1755165AbbLGDig (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Dec 2015 22:38:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Natarajan <nataraja@qti.qualcomm.com>, Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Archit Taneja <architt@codeaurora.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Markus Elfring <elfring@users.sourceforge.net>, Philipp Zabel <p.zabel@pengutronix.de>
 
-Hi Kalle,
+Hi Dave,
 
-Today's linux-next merge of the wireless-drivers-next tree got a
-conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/net/wireless/ath/ath10k/pci.c
+  drivers/gpu/drm/imx/imx-drm-core.c
 
 between commit:
 
-  6419fdbb6f90 ("ath10k: poll HTT send completion when CE 5 is unused")
+  3f3a7280d4ca ("GPU-DRM-IMX: Delete an unnecessary check before drm_fbdev_cma_restore_mode()")
 
 from Linus' tree and commit:
 
-  afb0bf7f530b ("ath10k: add support for pktlog in QCA99X0")
+  c1ff5a7aa3c3 ("drm/imx: Remove local fbdev emulation Kconfig option")
 
-from the wireless-drivers-next tree.
+from the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -40,45 +38,21 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/ath/ath10k/pci.c
-index 930785a724e1,5c91a673cf80..000000000000
---- a/drivers/net/wireless/ath/ath10k/pci.c
-+++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@@ -107,9 -111,9 +107,10 @@@ static void ath10k_pci_htc_tx_cb(struc
-  static void ath10k_pci_htc_rx_cb(struct ath10k_ce_pipe *ce_state);
-  static void ath10k_pci_htt_tx_cb(struct ath10k_ce_pipe *ce_state);
-  static void ath10k_pci_htt_rx_cb(struct ath10k_ce_pipe *ce_state);
- +static void ath10k_pci_htt_htc_rx_cb(struct ath10k_ce_pipe *ce_state);
-+ static void ath10k_pci_pktlog_rx_cb(struct ath10k_ce_pipe *ce_state);
+diff --cc drivers/gpu/drm/imx/imx-drm-core.c
+index 7b990b4e96d2,6faa735376ec..000000000000
+--- a/drivers/gpu/drm/imx/imx-drm-core.c
++++ b/drivers/gpu/drm/imx/imx-drm-core.c
+@@@ -60,11 -62,10 +62,9 @@@ EXPORT_SYMBOL_GPL(imx_drm_crtc_id)
   
- -static const struct ce_attr host_ce_config_wlan[] = {
- +static struct ce_attr host_ce_config_wlan[] = {
-  	/* CE0: host->target HTC control and raw streams */
-  	{
-  		.flags = CE_ATTR_FLAGS,
-@@@ -1205,16 -1210,15 +1207,25 @@@ static void ath10k_pci_htc_rx_cb(struc
-  	ath10k_pci_process_rx_cb(ce_state, ath10k_htc_rx_completion_handler);
+  static void imx_drm_driver_lastclose(struct drm_device *drm)
+  {
+- #if IS_ENABLED(CONFIG_DRM_IMX_FB_HELPER)
+  	struct imx_drm_device *imxdrm = drm->dev_private;
+  
+ -	if (imxdrm->fbhelper)
+ -		drm_fbdev_cma_restore_mode(imxdrm->fbhelper);
+ +	drm_fbdev_cma_restore_mode(imxdrm->fbhelper);
+- #endif
   }
   
- +static void ath10k_pci_htt_htc_rx_cb(struct ath10k_ce_pipe *ce_state)
- +{
- +	/* CE4 polling needs to be done whenever CE pipe which transports
- +	 * HTT Rx (target->host) is processed.
- +	 */
- +	ath10k_ce_per_engine_service(ce_state->ar, 4);
- +
- +	ath10k_pci_process_rx_cb(ce_state, ath10k_htc_rx_completion_handler);
- +}
- +
-+ /* Called by lower (CE) layer when data is received from the Target.
-+  * Only 10.4 firmware uses separate CE to transfer pktlog data.
-+  */
-+ static void ath10k_pci_pktlog_rx_cb(struct ath10k_ce_pipe *ce_state)
-+ {
-+ 	ath10k_pci_process_rx_cb(ce_state,
-+ 				 ath10k_htt_rx_pktlog_completion_handler);
-+ }
-+ 
-  /* Called by lower (CE) layer when a send to HTT Target completes. */
-  static void ath10k_pci_htt_tx_cb(struct ath10k_ce_pipe *ce_state)
-  {
+  static int imx_drm_driver_unload(struct drm_device *drm)
