@@ -1,35 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for 3rd December
-Date: Mon, 7 Dec 2015 09:46:43 +1100
-Message-ID: <20151207094643.6e8df411@canb.auug.org.au>
-References: <20151203233143.GI5727@sirena.org.uk>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Mon, 7 Dec 2015 12:46:36 +1100
+Message-ID: <20151207124636.6ba25cdd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54439 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60531 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754544AbbLFWqp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 6 Dec 2015 17:46:45 -0500
-In-Reply-To: <20151203233143.GI5727@sirena.org.uk>
+	id S1754612AbbLGBqj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Dec 2015 20:46:39 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
 
-Hi Mark,
+Hi Al,
 
-On Thu, 3 Dec 2015 23:31:43 +0000 Mark Brown <broonie@kernel.org> wrote:
->
-> It is very unlikely that there will be a build tomorrow, Stephen will be
-> back and -next will be back to normal on Monday.
+Today's linux-next merge of the vfs tree got a conflict in:
 
-Thank you very much for taking this on again.  I am back and hopefully
-will be able to take over from where you got to.
+fs/overlayfs/inode.c
 
-I will try very hard not to send emails about the conflicts/build
-problems you have already noted, but there may be some overlap.
+between commit:
 
+  0f7ff2dabbc9 ("ovl: get rid of the dead code left from broken (and disabled) optimizations")
+
+from Linus' tree and commit:
+
+  58809fadd08b ("broken permission checks in overlayfs ->setattr()")
+
+from the vfs tree.
+
+I fixed it up (I used the name ovl_copy_up_truncate from Linus' tree instead of ovl_copy_up_last) and can carry the fix as necessary (no action is required).
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
