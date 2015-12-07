@@ -1,45 +1,30 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with Linus' tree
-Date: Mon, 7 Dec 2015 19:51:35 +0200
-Message-ID: <874mfucfko.fsf@kamboji.qca.qualcomm.com>
-References: <20151207141325.1609aec1@canb.auug.org.au>
-	<87r3iycnj4.fsf@kamboji.qca.qualcomm.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ block tree
+Date: Mon, 7 Dec 2015 11:44:31 -0800
+Message-ID: <20151207114431.5a5b50b54da49cbe6ab6ca67@linux-foundation.org>
+References: <20151207191239.3c1a1c01@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87r3iycnj4.fsf@kamboji.qca.qualcomm.com> (Kalle Valo's message
-	of "Mon, 07 Dec 2015 16:59:43 +0200")
+In-Reply-To: <20151207191239.3c1a1c01@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Natarajan <nataraja@qti.qualcomm.com>, Rajkumar Manoharan <rmanohar@qti.qualcomm.com>, linux-wireless@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
-Kalle Valo <kvalo@codeaurora.org> writes:
+On Mon, 7 Dec 2015 19:12:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->
->> Today's linux-next merge of the wireless-drivers-next tree got a
->> conflict in:
->>
->>   drivers/net/wireless/ath/ath10k/pci.c
->>
->> between commit:
->>
->>   6419fdbb6f90 ("ath10k: poll HTT send completion when CE 5 is unused")
->>
->> from Linus' tree and commit:
->>
->>   afb0bf7f530b ("ath10k: add support for pktlog in QCA99X0")
->>
->> from the wireless-drivers-next tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary (no action
->> is required).
->
-> Thanks, the fix looks good to me.
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@@ -432,7 -432,7 +432,7 @@@ int bdev_write_page(struct block_devic
+>   
+>   	if (!ops->rw_page || bdev_get_integrity(bdev))
+>   		return -EOPNOTSUPP;
+> - 	result = blk_queue_enter(bdev->bd_queue, false);
+>  -	result = blk_queue_enter(bdev->bd_queue, GFP_NOIO);
+> ++	result = blk_queue_enter(bdev->bd_queue, true);
+>   	if (result)
 
-BTW, this conflict should be fixed once Dave merges my
-wireless-drivers-next pull request.
-
--- 
-Kalle Valo
+We want nowait==false here.
