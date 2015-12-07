@@ -1,48 +1,57 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH] of: fix build failure
-Date: Mon, 7 Dec 2015 12:06:34 +0530
-Message-ID: <20151207063634.GD4122@sudip-pc>
-References: <20151203011814.GC5727@sirena.org.uk>
- <1449131890-21675-1-git-send-email-sudipm.mukherjee@gmail.com>
- <CAMuHMdWLURXVQNbTv4O9znB-dEH5_kFgPbTYuR5TgOcaDNrSJw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the arm tree
+Date: Mon, 7 Dec 2015 19:00:28 +1100
+Message-ID: <20151207190028.390223f2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWLURXVQNbTv4O9znB-dEH5_kFgPbTYuR5TgOcaDNrSJw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56663 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752383AbbLGIAb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Dec 2015 03:00:31 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Daniel Cashman <dcashman@google.com>
 
-On Sat, Dec 05, 2015 at 12:09:41PM +0100, Geert Uytterhoeven wrote:
-> Hi Sudip
-> 
-> On Thu, Dec 3, 2015 at 9:38 AM, Sudip Mukherjee
-> <sudipm.mukherjee@gmail.com> wrote:
-> > We are having build failure with next-20151202 for sparc allmodconfig
-> > with the error messages:
-> > undefined reference to 'of_io_request_and_map'
-> >
-> > CONFIG_OF is defined for sparc so it is expected that we have a
-> > definition of of_io_request_and_map() but of/address.c is only compiled
-> > if it is !SPARC.
-> 
-> No, it's compiled depending on CONFIG_OF_ADDRESS...
+Hi Andrew,
 
-yes, ofcourse. I did it looking at:
-config OF_ADDRESS
-def_bool y
-depends on !SPARC && HAS_IOMEM
-> 
-> > Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
-> > ---
-<snip>
-> > +#if defined(CONFIG_OF) && !defined(CONFIG_SPARC)
-> 
-> ... hence wouldn't it be better to use "#ifdef CONFIG_OF_ADDRESS" instead?
-> 
-I will test with today's next and send v2.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-regards
-sudip
+  arch/arm/Kconfig
+
+between commit:
+
+  437682eeab45 ("ARM: 8456/1: code patching only works on MMU")
+
+from the arm tree and commits:
+
+  47fb802e4fcd ("arm: mm: support ARCH_MMAP_RND_BITS")
+  8100fa068b27 ("ARM: avoid ARCH_MMAP_RND_BITS for NOMMU")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/Kconfig
+index 752775aab3ae,536a8e477a96..000000000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -33,8 -33,9 +33,9 @@@ config AR
+  	select HARDIRQS_SW_RESEND
+  	select HAVE_ARCH_AUDITSYSCALL if (AEABI && !OABI_COMPAT)
+  	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7) && !CPU_32v6
+ -	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32
+ -	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32
+ +	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU
+ +	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32 && MMU
++ 	select HAVE_ARCH_MMAP_RND_BITS if MMU
+  	select HAVE_ARCH_SECCOMP_FILTER if (AEABI && !OABI_COMPAT)
+  	select HAVE_ARCH_TRACEHOOK
+  	select HAVE_BPF_JIT
