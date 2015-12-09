@@ -1,46 +1,116 @@
-From: Borislav Petkov <bp@suse.de>
-Subject: Re: Crash caused by "EDAC: Rip out the edac_subsys reference
- counting" (was Re: linux-next: Tree for Dec 8)
-Date: Wed, 9 Dec 2015 20:20:40 +0100
-Message-ID: <20151209192040.GE10518@pd.tnic>
-References: <20151208154910.78d27c03@canb.auug.org.au>
- <1449657167.17265.4.camel@ellerman.id.au>
- <20151209111747.GA10518@pd.tnic>
- <20151209160301.GB10518@pd.tnic>
- <1449679809.15946.167.camel@freescale.com>
- <20151209173829.GD10518@pd.tnic>
- <1449683825.15946.207.camel@freescale.com>
+From: Mike Marshall <hubcap@omnibond.com>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Wed, 9 Dec 2015 16:30:34 -0500
+Message-ID: <CAOg9mSRoyq-yYXh2RMicwvjVPF8EGN=XdvSfZPfbTP62B+szDg@mail.gmail.com>
+References: <20151209121916.1d4cdba4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39965 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753302AbbLITU5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Dec 2015 14:20:57 -0500
-Content-Disposition: inline
-In-Reply-To: <1449683825.15946.207.camel@freescale.com>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:32774 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753147AbbLIVag (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Dec 2015 16:30:36 -0500
+Received: by lbbkw15 with SMTP id kw15so38374789lbb.0
+        for <linux-next@vger.kernel.org>; Wed, 09 Dec 2015 13:30:35 -0800 (PST)
+In-Reply-To: <20151209121916.1d4cdba4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Scott Wood <scottwood@freescale.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>, linux-edac@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>
 
-On Wed, Dec 09, 2015 at 11:57:05AM -0600, Scott Wood wrote:
-> I recall at the time suggesting that the PCIe controller driver insta=
-ntiate a
-> platform device for the EDAC driver to bind to -- it looks like that'=
-s what
-> we'll need to do.
+Hi all...
 
-Sounds better. Let me know if there's anything I can help with to get
-this sorted out.
+I'm having a chicken-and-egg moment here...
 
-Thanks.
+I think "posix acls: Remove duplicate xattr name definitions" got into
+linux-next after
+Linus committed  Linux 4.4-rc4.
 
---=20
-Regards/Gruss,
-    Boris.
+Unless I merge my for-next with Linus' tree at the current (arbitrary)
+point, I need to wait
+until I can merge with rc5 before I can apply this fix.
 
-SUSE Linux GmbH, GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Nort=
-on, HRB 21284 (AG N=C3=BCrnberg)
---=20
+I know Linus hates to get pull requests for stuff that's not based on
+a discrete tag,
+I'm not sure what's appropriate for linux-next... ?
+
+-Mike
+
+On Tue, Dec 8, 2015 at 8:19 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Al,
+>
+> After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> In file included from fs/orangefs/acl.c:8:0:
+> fs/orangefs/acl.c: In function 'pvfs2_get_acl':
+> fs/orangefs/pvfs2-kernel.h:203:38: error: 'POSIX_ACL_XATTR_ACCESS' undeclared (first use in this function)
+>  #define PVFS2_XATTR_NAME_ACL_ACCESS  POSIX_ACL_XATTR_ACCESS
+>                                       ^
+> fs/orangefs/acl.c:21:9: note: in expansion of macro 'PVFS2_XATTR_NAME_ACL_ACCESS'
+>    key = PVFS2_XATTR_NAME_ACL_ACCESS;
+>          ^
+> fs/orangefs/pvfs2-kernel.h:203:38: note: each undeclared identifier is reported only once for each function it appears in
+>  #define PVFS2_XATTR_NAME_ACL_ACCESS  POSIX_ACL_XATTR_ACCESS
+>                                       ^
+> fs/orangefs/acl.c:21:9: note: in expansion of macro 'PVFS2_XATTR_NAME_ACL_ACCESS'
+>    key = PVFS2_XATTR_NAME_ACL_ACCESS;
+>          ^
+> fs/orangefs/pvfs2-kernel.h:204:38: error: 'POSIX_ACL_XATTR_DEFAULT' undeclared (first use in this function)
+>  #define PVFS2_XATTR_NAME_ACL_DEFAULT POSIX_ACL_XATTR_DEFAULT
+>                                       ^
+> fs/orangefs/acl.c:24:9: note: in expansion of macro 'PVFS2_XATTR_NAME_ACL_DEFAULT'
+>    key = PVFS2_XATTR_NAME_ACL_DEFAULT;
+>          ^
+> fs/orangefs/acl.c: In function 'pvfs2_set_acl':
+> fs/orangefs/pvfs2-kernel.h:203:38: error: 'POSIX_ACL_XATTR_ACCESS' undeclared (first use in this function)
+>  #define PVFS2_XATTR_NAME_ACL_ACCESS  POSIX_ACL_XATTR_ACCESS
+>                                       ^
+> fs/orangefs/acl.c:77:10: note: in expansion of macro 'PVFS2_XATTR_NAME_ACL_ACCESS'
+>    name = PVFS2_XATTR_NAME_ACL_ACCESS;
+>           ^
+> fs/orangefs/pvfs2-kernel.h:204:38: error: 'POSIX_ACL_XATTR_DEFAULT' undeclared (first use in this function)
+>  #define PVFS2_XATTR_NAME_ACL_DEFAULT POSIX_ACL_XATTR_DEFAULT
+>                                       ^
+> fs/orangefs/acl.c:101:10: note: in expansion of macro 'PVFS2_XATTR_NAME_ACL_DEFAULT'
+>    name = PVFS2_XATTR_NAME_ACL_DEFAULT;
+>           ^
+>
+> Caused by commit
+>
+>   97d79299223b ("posix acls: Remove duplicate xattr name definitions")
+>
+> interacting with the addition of orangefs in the orangefs tree.
+>
+> I applied this merge fix patch:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 9 Dec 2015 12:13:37 +1100
+> Subject: [PATCH] orangefs: update for POSIX ACL name changes
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/orangefs/pvfs2-kernel.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/orangefs/pvfs2-kernel.h b/fs/orangefs/pvfs2-kernel.h
+> index 4295e263e25b..9beeddbf8aa9 100644
+> --- a/fs/orangefs/pvfs2-kernel.h
+> +++ b/fs/orangefs/pvfs2-kernel.h
+> @@ -200,8 +200,8 @@ struct client_debug_mask {
+>  #endif
+>  #endif
+>
+> -#define PVFS2_XATTR_NAME_ACL_ACCESS  POSIX_ACL_XATTR_ACCESS
+> -#define PVFS2_XATTR_NAME_ACL_DEFAULT POSIX_ACL_XATTR_DEFAULT
+> +#define PVFS2_XATTR_NAME_ACL_ACCESS  XATTR_NAME_POSIX_ACL_ACCESS
+> +#define PVFS2_XATTR_NAME_ACL_DEFAULT XATTR_NAME_POSIX_ACL_DEFAULT
+>  #define PVFS2_XATTR_NAME_TRUSTED_PREFIX "trusted."
+>  #define PVFS2_XATTR_NAME_DEFAULT_PREFIX ""
+>
+> --
+> 2.6.2
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
