@@ -1,67 +1,46 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: next-20151210 build: 4 failures 43 warnings (next-20151210)
-Date: Thu, 10 Dec 2015 17:14:01 +0000
-Message-ID: <20151210171401.GG21134@arm.com>
-References: <E1a6wEp-0000hU-7o@optimist>
- <20151210165513.GO5727@sirena.org.uk>
+From: Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] staging/rdma/hfi1: Fix for module parameter hdrq_entsize
+ when it's 0
+Date: Thu, 10 Dec 2015 16:02:49 -0500
+Message-ID: <20151210210249.2436.56776.stgit@phlsvslse11.ph.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:56501 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752647AbbLJRN7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Dec 2015 12:13:59 -0500
-Content-Disposition: inline
-In-Reply-To: <20151210165513.GO5727@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 10, 2015 at 04:55:13PM +0000, Mark Brown wrote:
-> On Thu, Dec 10, 2015 at 08:06:07AM +0000, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build most arm64 configs with some rather
-> spectacular errors below introduced by 02598e94ed5a78 (mm, printk:
-> introduce new format string for flags) from Andrew's tree.  These in
-> turn stem from the fact that we introduce an inclusion of
-> linux/tracepoint.h into linux/mmdebug.h which through a chain of nested
-> inclusions means that we end up attempting to use definitions from
-> headers before they have finished including.  For example:
-> 
-> > 	arm64-allnoconfig
-> > ../include/linux/wait.h:1217:2: error: implicit declaration of function 'atomic_read' [-Werror=implicit-function-declaration]
-> 
-> is a result of:
-> 
-> In file included from include/linux/completion.h:11:0,
->                  from include/linux/rcupdate.h:43,
->                  from include/linux/tracepoint.h:19,
->                  from include/linux/mmdebug.h:6,
->                  from ./arch/arm64/include/asm/cmpxchg.h:22,
->                  from ./arch/arm64/include/asm/atomic.h:41,
->                  from include/linux/atomic.h:4,
->                  from include/linux/spinlock.h:406,
->                  from include/linux/seqlock.h:35,
->                  from include/linux/time.h:5,
->                  from include/uapi/linux/timex.h:56,
->                  from include/linux/timex.h:56,
->                  from include/linux/sched.h:19,
->                  from arch/arm64/kernel/asm-offsets.c:21:
-> include/linux/wait.h: In function 'wait_on_atomic_t':
-> include/linux/wait.h:1218:2: error: implicit declaration of function 'atomic_read' [-Werror=implicit-function-declaration]
->   if (atomic_read(val) == 0)
-> 
-> where atomic_read() will be defined in atomic.h which is part of the
-> inclusion chain above but hasn't yet parsed far enough to actually
-> define anything.  This is all a bit of a horrific mess the root cause of
-> which appears to be that arm64 is unusual in including linux/mmdebug.h
-> in asm/cmpxchg.h which triggers the mess.  There doesn't seem to be any
-> reason for this inclusion, I've just sent a patch removing it.  It'd be
-> good to get this into -next as a matter of urgency.
+From: Sebastian Sanchez <sebastian.sanchez-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-I'll pick up your fix into the arm64 for-next/core branch.
+If driver is loaded with parameter hdrq_entsize=0, then
+there's a NULL dereference when the driver gets unloaded.
+This causes a kernel Oops and prevents the module  from
+being unloaded. This patch fixes this issue by making sure
+-EINVAL gets returned when hdrq_entsize=0.
 
-Cheers,
+Reviewed-by: Chegondi, Harish <harish.chegondi-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Reviewed-by: Haralanov, Mitko <mitko.haralanov-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Sebastian Sanchez <sebastian.sanchez-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+---
+ drivers/staging/rdma/hfi1/init.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Will
+diff --git a/drivers/staging/rdma/hfi1/init.c b/drivers/staging/rdma/hfi1/init.c
+index 1c8286f..b61a854 100644
+--- a/drivers/staging/rdma/hfi1/init.c
++++ b/drivers/staging/rdma/hfi1/init.c
+@@ -1350,6 +1350,7 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (!encode_rcv_header_entry_size(hfi1_hdrq_entsize)) {
+ 		hfi1_early_err(&pdev->dev, "Invalid HdrQ Entry size %u\n",
+ 			       hfi1_hdrq_entsize);
++		ret = -EINVAL;
+ 		goto bail;
+ 	}
+ 
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
