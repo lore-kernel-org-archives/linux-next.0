@@ -1,32 +1,140 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] staging/rdma/hfi1: Fix for module parameter
- hdrq_entsize when it's 0
-Date: Fri, 11 Dec 2015 09:42:27 +1100
-Message-ID: <20151211094227.08afd20d@canb.auug.org.au>
-References: <20151210210249.2436.56776.stgit@phlsvslse11.ph.intel.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: next-20151210 build: 4 failures 43 warnings (next-20151210)
+Date: Thu, 10 Dec 2015 14:47:08 -0800
+Message-ID: <20151210144708.65b7111eb795ddabbfad1ed3@linux-foundation.org>
+References: <E1a6wEp-0000hU-7o@optimist>
+	<20151210165513.GO5727@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58336 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752133AbbLJWm3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Dec 2015 17:42:29 -0500
-In-Reply-To: <20151210210249.2436.56776.stgit@phlsvslse11.ph.intel.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41831 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754211AbbLJWrK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Dec 2015 17:47:10 -0500
+In-Reply-To: <20151210165513.GO5727@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, dledford@redhat.com, linux-next@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Mike,
+On Thu, 10 Dec 2015 16:55:13 +0000 Mark Brown <broonie@kernel.org> wrote:
 
-On Thu, 10 Dec 2015 16:02:49 -0500 Mike Marciniszyn <mike.marciniszyn@intel.com> wrote:
->
-> From: Sebastian Sanchez <sebastian.sanchez@intel.com>
+> Today's -next fails to build most arm64 configs with some rather
+> spectacular errors below introduced by 02598e94ed5a78 (mm, printk:
+> introduce new format string for flags) from Andrew's tree.  These in
+> turn stem from the fact that we introduce an inclusion of
+> linux/tracepoint.h into linux/mmdebug.h which through a chain of nested
+> inclusions means that we end up attempting to use definitions from
+> headers before they have finished including.
 
-linux-nxt doesn't really need to be informed about random changes to
-stuff in staging unless it fixes a linux-next specific problem.
+Thanks.
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Further complexicating the include tree is something we don't need. 
+I'll try moving the offending declarations into mm/internal.h, see how
+that goes.
+
+Including ../mm/internal.h into lib/vsprintf.c is a bit grubby, but I
+guess it makes sense - vsprintf is poking about in mm internals, so it
+gets to include mm's internal.h.
+
+Vlastimil, the patch is rather bloaty - it adds 1.2k for something
+which few people will use.  I wonder if it should be conditioned by
+CONFIG_DEBUG_VM.
+
+
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: mm-printk-introduce-new-format-string-for-flags-fix-2
+
+move declaration of trace_print_flags arrays into mm/internal.h
+
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Michal Hocko <mhocko@suse.cz>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Sasha Levin <sasha.levin@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ include/linux/mmdebug.h |    6 ------
+ lib/vsprintf.c          |    3 ++-
+ mm/debug.c              |    2 ++
+ mm/internal.h           |    7 +++++++
+ 4 files changed, 11 insertions(+), 7 deletions(-)
+
+diff -puN include/linux/mmdebug.h~mm-printk-introduce-new-format-string-for-flags-fix-2 include/linux/mmdebug.h
+--- a/include/linux/mmdebug.h~mm-printk-introduce-new-format-string-for-flags-fix-2
++++ a/include/linux/mmdebug.h
+@@ -2,17 +2,11 @@
+ #define LINUX_MM_DEBUG_H 1
+ 
+ #include <linux/stringify.h>
+-#include <linux/types.h>
+-#include <linux/tracepoint.h>
+ 
+ struct page;
+ struct vm_area_struct;
+ struct mm_struct;
+ 
+-extern const struct trace_print_flags pageflag_names[];
+-extern const struct trace_print_flags vmaflag_names[];
+-extern const struct trace_print_flags gfpflag_names[];
+-
+ extern void dump_page(struct page *page, const char *reason);
+ extern void dump_page_badflags(struct page *page, const char *reason,
+ 			       unsigned long badflags);
+diff -puN lib/vsprintf.c~mm-printk-introduce-new-format-string-for-flags-fix-2 lib/vsprintf.c
+--- a/lib/vsprintf.c~mm-printk-introduce-new-format-string-for-flags-fix-2
++++ a/lib/vsprintf.c
+@@ -31,7 +31,8 @@
+ #include <linux/dcache.h>
+ #include <linux/cred.h>
+ #include <net/addrconf.h>
+-#include <linux/mmdebug.h>
++
++#include "../mm/internal.h"	/* For the trace_print_flags arrays */
+ 
+ #include <asm/page.h>		/* for PAGE_SIZE */
+ #include <asm/sections.h>	/* for dereference_function_descriptor() */
+diff -puN mm/debug.c~mm-printk-introduce-new-format-string-for-flags-fix-2 mm/debug.c
+--- a/mm/debug.c~mm-printk-introduce-new-format-string-for-flags-fix-2
++++ a/mm/debug.c
+@@ -13,6 +13,8 @@
+ #include <trace/events/gfpflags.h>
+ #include <linux/page_owner.h>
+ 
++#include "internal.h"
++
+ char *migrate_reason_names[MR_TYPES] = {
+ 	"compaction",
+ 	"memory_failure",
+diff -puN mm/internal.h~mm-printk-introduce-new-format-string-for-flags-fix-2 mm/internal.h
+--- a/mm/internal.h~mm-printk-introduce-new-format-string-for-flags-fix-2
++++ a/mm/internal.h
+@@ -11,9 +11,11 @@
+ #ifndef __MM_INTERNAL_H
+ #define __MM_INTERNAL_H
+ 
++#include <linux/types.h>
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/pagemap.h>
++#include <linux/tracepoint.h>
+ 
+ /*
+  * The set of flags that only affect watermark checking and reclaim
+@@ -441,4 +443,9 @@ static inline void try_to_unmap_flush_di
+ }
+ 
+ #endif /* CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH */
++
++extern const struct trace_print_flags pageflag_names[];
++extern const struct trace_print_flags vmaflag_names[];
++extern const struct trace_print_flags gfpflag_names[];
++
+ #endif	/* __MM_INTERNAL_H */
+_
