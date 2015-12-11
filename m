@@ -1,54 +1,118 @@
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: next-20151210 build: 4 failures 43 warnings (next-20151210)
-Date: Fri, 11 Dec 2015 08:12:38 +0100
-Message-ID: <566A7766.7060704@suse.cz>
-References: <E1a6wEp-0000hU-7o@optimist> <20151210165513.GO5727@sirena.org.uk>
- <20151210144708.65b7111eb795ddabbfad1ed3@linux-foundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20151211 build: 0 failures 14 warnings (next-20151211)
+Date: Fri, 11 Dec 2015 09:42:57 +0000
+Message-ID: <E1a7KE5-0000IU-7e@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:48528 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751538AbbLKHMl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Dec 2015 02:12:41 -0500
-In-Reply-To: <20151210144708.65b7111eb795ddabbfad1ed3@linux-foundation.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42514 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753129AbbLKJnF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Dec 2015 04:43:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 10.12.2015 23:47, Andrew Morton wrote:
-> On Thu, 10 Dec 2015 16:55:13 +0000 Mark Brown <broonie@kernel.org> wrote:
-> 
->> Today's -next fails to build most arm64 configs with some rather
->> spectacular errors below introduced by 02598e94ed5a78 (mm, printk:
->> introduce new format string for flags) from Andrew's tree.  These in
->> turn stem from the fact that we introduce an inclusion of
->> linux/tracepoint.h into linux/mmdebug.h which through a chain of nested
->> inclusions means that we end up attempting to use definitions from
->> headers before they have finished including.
-> 
-> Thanks.
-> 
-> Further complexicating the include tree is something we don't need. 
-> I'll try moving the offending declarations into mm/internal.h, see how
-> that goes.
+Tree/Branch: next-20151211
+Git describe: next-20151211
+Commit: 9379b04541 Add linux-next specific files for 20151211
 
-Yeah that works too, thanks.
+Build Time: 72 min 37 sec
 
-> Including ../mm/internal.h into lib/vsprintf.c is a bit grubby, but I
-> guess it makes sense - vsprintf is poking about in mm internals, so it
-> gets to include mm's internal.h.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-OK.
+Errors: 0
+Warnings: 14
+Section Mismatches: 0
 
-> Vlastimil, the patch is rather bloaty - it adds 1.2k for something
-> which few people will use.  I wonder if it should be conditioned by
-> CONFIG_DEBUG_VM.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v5_defconfig
+      8 warnings    0 mismatches  : arm-multi_v7_defconfig
+      5 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-Hmm, but one of the benefits is that we get e.g. the gfp flags translated
-in oom and alloc failure reports that users submit, and CONFIG_DEBUG_VM
-is not enabled by default. So the conditioning should be based on some
-option that people explicitly enable to make their kernels smaller knowing
-it's a tradeoff for functionality/convenience.
+-------------------------------------------------------------------------------
+
+Warnings Summary: 14
+	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	  2 ../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
+	  2 ../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
+	  2 ../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
+	../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
+	../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
+	../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
