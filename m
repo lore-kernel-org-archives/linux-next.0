@@ -1,118 +1,96 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20151211 build: 0 failures 14 warnings (next-20151211)
-Date: Fri, 11 Dec 2015 09:42:57 +0000
-Message-ID: <E1a7KE5-0000IU-7e@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42514 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753129AbbLKJnF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Dec 2015 04:43:05 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] staging/rdma/hfi1: Change num_rcv_contexts to
+ num_user_contexts and its meaning
+Date: Fri, 11 Dec 2015 08:44:48 -0500
+Message-ID: <20151211134448.27874.69204.stgit@phlsvslse11.ph.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20151211
-Git describe: next-20151211
-Commit: 9379b04541 Add linux-next specific files for 20151211
+From: Sebastian Sanchez <sebastian.sanchez-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-Build Time: 72 min 37 sec
+num_rcv_contexts sets the number of user contexts, both receive and send.
+Renaming it to num_user_contexts makes sense to reflect its true meaning.
+When num_rcv_contexts is 0, the default behavior is the number of CPU
+cores instead of 0 contexts. This commit changes the variable
+num_rcv_contexts to num_user_contexts, and it also makes any negative
+value for this variable default to the number of CPU cores, so if
+num_user_contexts is set >= 0, the value will number of contexts.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Sebastian Sanchez <sebastian.sanchez-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+---
+ drivers/staging/rdma/hfi1/chip.c |    9 +++------
+ drivers/staging/rdma/hfi1/hfi.h  |    2 +-
+ drivers/staging/rdma/hfi1/init.c |    6 +++---
+ 3 files changed, 7 insertions(+), 10 deletions(-)
 
-Errors: 0
-Warnings: 14
-Section Mismatches: 0
+diff --git a/drivers/staging/rdma/hfi1/chip.c b/drivers/staging/rdma/hfi1/chip.c
+index dc69159..510e5f6 100644
+--- a/drivers/staging/rdma/hfi1/chip.c
++++ b/drivers/staging/rdma/hfi1/chip.c
+@@ -9197,7 +9197,6 @@ fail:
+ static int set_up_context_variables(struct hfi1_devdata *dd)
+ {
+ 	int num_kernel_contexts;
+-	int num_user_contexts;
+ 	int total_contexts;
+ 	int ret;
+ 	unsigned ngroups;
+@@ -9234,12 +9233,10 @@ static int set_up_context_variables(struct hfi1_devdata *dd)
+ 	}
+ 	/*
+ 	 * User contexts: (to be fixed later)
+-	 *	- set to num_rcv_contexts if non-zero
+-	 *	- default to 1 user context per CPU
++	 *	- default to 1 user context per CPU if num_user_contexts is
++	 *	  negative
+ 	 */
+-	if (num_rcv_contexts)
+-		num_user_contexts = num_rcv_contexts;
+-	else
++	if (num_user_contexts < 0)
+ 		num_user_contexts = num_online_cpus();
+ 
+ 	total_contexts = num_kernel_contexts + num_user_contexts;
+diff --git a/drivers/staging/rdma/hfi1/hfi.h b/drivers/staging/rdma/hfi1/hfi.h
+index 54ed6b3..434a89b 100644
+--- a/drivers/staging/rdma/hfi1/hfi.h
++++ b/drivers/staging/rdma/hfi1/hfi.h
+@@ -1629,7 +1629,7 @@ void update_sge(struct hfi1_sge_state *ss, u32 length);
+ extern unsigned int hfi1_max_mtu;
+ extern unsigned int hfi1_cu;
+ extern unsigned int user_credit_return_threshold;
+-extern uint num_rcv_contexts;
++extern int num_user_contexts;
+ extern unsigned n_krcvqs;
+ extern u8 krcvqs[];
+ extern int krcvqsset;
+diff --git a/drivers/staging/rdma/hfi1/init.c b/drivers/staging/rdma/hfi1/init.c
+index 1c8286f..a091b6c 100644
+--- a/drivers/staging/rdma/hfi1/init.c
++++ b/drivers/staging/rdma/hfi1/init.c
+@@ -82,10 +82,10 @@
+  * Number of user receive contexts we are configured to use (to allow for more
+  * pio buffers per ctxt, etc.)  Zero means use one user context per CPU.
+  */
+-uint num_rcv_contexts;
+-module_param_named(num_rcv_contexts, num_rcv_contexts, uint, S_IRUGO);
++int num_user_contexts = -1;
++module_param_named(num_user_contexts, num_user_contexts, uint, S_IRUGO);
+ MODULE_PARM_DESC(
+-	num_rcv_contexts, "Set max number of user receive contexts to use");
++	num_user_contexts, "Set max number of user contexts to use");
+ 
+ u8 krcvqs[RXE_NUM_DATA_VL];
+ int krcvqsset;
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v5_defconfig
-      8 warnings    0 mismatches  : arm-multi_v7_defconfig
-      5 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 14
-	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  2 ../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
-	  2 ../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
-	  2 ../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
-	../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
-	../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
-	../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
