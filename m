@@ -1,64 +1,135 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
-Date: Mon, 14 Dec 2015 12:12:05 +1100
-Message-ID: <20151214121205.7323fbd7@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Mon, 14 Dec 2015 12:36:36 +1100
+Message-ID: <20151214123636.2a1d0c9d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Matias =?UTF-8?B?QmrDuHJsaW5n?= <m@bjorling.me>
 List-Id: linux-next.vger.kernel.org
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBjb25mbGljdHMgaW46CgogIGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2xkdS5jCiAg
-ZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCiAgZHJpdmVycy9ncHUvZHJtL3Zt
-d2dmeC92bXdnZnhfc3RkdS5jCgpiZXR3ZWVuIGNvbW1pdDoKCiAgOGZiZjlkOTJhN2JjICgiZHJt
-L3Ztd2dmeDogSW1wbGVtZW50IHRoZSBjdXJzb3Jfc2V0MiBjYWxsYmFjayB2MiIpCgpmcm9tIExp
-bnVzJyB0cmVlIGFuZCBjb21taXQ6CgogIGY4MGRlNjZlY2E2NSAoImRybS92bXdnZng6IERyb3Ag
-ZHVtbXkgc2F2ZS9yZXN0b3JlIGhvb2tzIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZp
-eGVkIGl0IHVwIChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3Nhcnkg
-KG5vIGFjdGlvbgppcyByZXF1aXJlZCkuCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsICAg
-ICAgICAgICAgICAgICAgICBzZnJAY2FuYi5hdXVnLm9yZy5hdQoKZGlmZiAtLWNjIGRyaXZlcnMv
-Z3B1L2RybS92bXdnZngvdm13Z2Z4X2xkdS5jCmluZGV4IDUyY2FlY2I0NTAyZSwyYWZmNWU1MWQ5
-MjYuLjAwMDAwMDAwMDAwMAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9sZHUu
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9sZHUuYwpAQEAgLTI5NSw5IC0y
-OTUsNyArMjk1LDcgQEBAIHN0YXRpYyBpbnQgdm13X2xkdV9jcnRjX3NldF9jb25maWcoc3RydQog
-IH0KICAKICBzdGF0aWMgc3RydWN0IGRybV9jcnRjX2Z1bmNzIHZtd19sZWdhY3lfY3J0Y19mdW5j
-cyA9IHsKLSAJLnNhdmUgPSB2bXdfZHVfY3J0Y19zYXZlLAotIAkucmVzdG9yZSA9IHZtd19kdV9j
-cnRjX3Jlc3RvcmUsCiAtCS5jdXJzb3Jfc2V0ID0gdm13X2R1X2NydGNfY3Vyc29yX3NldCwKICsJ
-LmN1cnNvcl9zZXQyID0gdm13X2R1X2NydGNfY3Vyc29yX3NldDIsCiAgCS5jdXJzb3JfbW92ZSA9
-IHZtd19kdV9jcnRjX2N1cnNvcl9tb3ZlLAogIAkuZ2FtbWFfc2V0ID0gdm13X2R1X2NydGNfZ2Ft
-bWFfc2V0LAogIAkuZGVzdHJveSA9IHZtd19sZHVfY3J0Y19kZXN0cm95LApkaWZmIC0tY2MgZHJp
-dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCmluZGV4IDEzOTI2ZmYxOTJlMyw2YmI3
-YWYzNzkzNGEuLjAwMDAwMDAwMDAwMAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dm
-eF9zY3JuLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCkBAQCAt
-NTMxLDkgLTUzMSw3ICs1MzEsNyBAQEAgb3V0X25vX2ZlbmNlCiAgfQogIAogIHN0YXRpYyBzdHJ1
-Y3QgZHJtX2NydGNfZnVuY3Mgdm13X3NjcmVlbl9vYmplY3RfY3J0Y19mdW5jcyA9IHsKLSAJLnNh
-dmUgPSB2bXdfZHVfY3J0Y19zYXZlLAotIAkucmVzdG9yZSA9IHZtd19kdV9jcnRjX3Jlc3RvcmUs
-CiAtCS5jdXJzb3Jfc2V0ID0gdm13X2R1X2NydGNfY3Vyc29yX3NldCwKICsJLmN1cnNvcl9zZXQy
-ID0gdm13X2R1X2NydGNfY3Vyc29yX3NldDIsCiAgCS5jdXJzb3JfbW92ZSA9IHZtd19kdV9jcnRj
-X2N1cnNvcl9tb3ZlLAogIAkuZ2FtbWFfc2V0ID0gdm13X2R1X2NydGNfZ2FtbWFfc2V0LAogIAku
-ZGVzdHJveSA9IHZtd19zb3VfY3J0Y19kZXN0cm95LApkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJt
-L3Ztd2dmeC92bXdnZnhfc3RkdS5jCmluZGV4IGY4MjNmYzNlZmVkNyw0NWU3MmMyZjE1Y2QuLjAw
-MDAwMDAwMDAwMAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zdGR1LmMKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jCkBAQCAtMTA0MSw5IC0xMDQx
-LDcgKzEwNDEsNyBAQEAgb3V0X2ZpbmlzaAogICAqICBTY3JlZW4gVGFyZ2V0IENSVEMgZGlzcGF0
-Y2ggdGFibGUKICAgKi8KICBzdGF0aWMgc3RydWN0IGRybV9jcnRjX2Z1bmNzIHZtd19zdGR1X2Ny
-dGNfZnVuY3MgPSB7Ci0gCS5zYXZlID0gdm13X2R1X2NydGNfc2F2ZSwKLSAJLnJlc3RvcmUgPSB2
-bXdfZHVfY3J0Y19yZXN0b3JlLAogLQkuY3Vyc29yX3NldCA9IHZtd19kdV9jcnRjX2N1cnNvcl9z
-ZXQsCiArCS5jdXJzb3Jfc2V0MiA9IHZtd19kdV9jcnRjX2N1cnNvcl9zZXQyLAogIAkuY3Vyc29y
-X21vdmUgPSB2bXdfZHVfY3J0Y19jdXJzb3JfbW92ZSwKICAJLmdhbW1hX3NldCA9IHZtd19kdV9j
-cnRjX2dhbW1hX3NldCwKICAJLmRlc3Ryb3kgPSB2bXdfc3RkdV9jcnRjX2Rlc3Ryb3ksCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Jens,
+
+Today's linux-next merge of the block tree got a conflict in:
+
+  drivers/nvme/host/lightnvm.c
+
+between commit:
+
+  16f26c3aa9b9 ("lightnvm: replace req queue with nvmdev for lld")
+
+from Linus' tree and commit:
+
+  ac02dddec633 ("NVMe: fix build with CONFIG_NVM enabled")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/nvme/host/lightnvm.c
+index 15f2acb4d5cd,09cf0b99d2fa..000000000000
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@@ -271,10 -273,9 +271,9 @@@ static int init_grps(struct nvm_id *nvm
+  	return 0;
+  }
+  
+ -static int nvme_nvm_identity(struct request_queue *q, struct nvm_id *nvm_id)
+ +static int nvme_nvm_identity(struct nvm_dev *nvmdev, struct nvm_id *nvm_id)
+  {
+ -	struct nvme_ns *ns = q->queuedata;
+ +	struct nvme_ns *ns = nvmdev->q->queuedata;
+- 	struct nvme_dev *dev = ns->dev;
+  	struct nvme_nvm_id *nvme_nvm_id;
+  	struct nvme_nvm_command c = {};
+  	int ret;
+@@@ -308,13 -309,12 +307,12 @@@ out
+  	return ret;
+  }
+  
+ -static int nvme_nvm_get_l2p_tbl(struct request_queue *q, u64 slba, u32 nlb,
+ +static int nvme_nvm_get_l2p_tbl(struct nvm_dev *nvmdev, u64 slba, u32 nlb,
+  				nvm_l2p_update_fn *update_l2p, void *priv)
+  {
+ -	struct nvme_ns *ns = q->queuedata;
+ +	struct nvme_ns *ns = nvmdev->q->queuedata;
+- 	struct nvme_dev *dev = ns->dev;
+  	struct nvme_nvm_command c = {};
+- 	u32 len = queue_max_hw_sectors(dev->admin_q) << 9;
++ 	u32 len = queue_max_hw_sectors(ns->ctrl->admin_q) << 9;
+  	u32 nlb_pr_rq = len / sizeof(u64);
+  	u64 cmd_slba = slba;
+  	void *entries;
+@@@ -359,9 -359,8 +357,9 @@@ static int nvme_nvm_get_bb_tbl(struct n
+  				int nr_blocks, nvm_bb_update_fn *update_bbtbl,
+  				void *priv)
+  {
+ +	struct request_queue *q = nvmdev->q;
+  	struct nvme_ns *ns = q->queuedata;
+- 	struct nvme_dev *dev = ns->dev;
++ 	struct nvme_ctrl *ctrl = ns->ctrl;
+  	struct nvme_nvm_command c = {};
+  	struct nvme_nvm_bb_tbl *bb_tbl;
+  	int tblsz = sizeof(struct nvme_nvm_bb_tbl) + nr_blocks;
+@@@ -415,11 -413,10 +413,10 @@@ out
+  	return ret;
+  }
+  
+ -static int nvme_nvm_set_bb_tbl(struct request_queue *q, struct nvm_rq *rqd,
+ +static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct nvm_rq *rqd,
+  								int type)
+  {
+ -	struct nvme_ns *ns = q->queuedata;
+ +	struct nvme_ns *ns = nvmdev->q->queuedata;
+- 	struct nvme_dev *dev = ns->dev;
+  	struct nvme_nvm_command c = {};
+  	int ret = 0;
+  
+@@@ -517,12 -512,11 +514,11 @@@ static int nvme_nvm_erase_block(struct 
+  	return nvme_submit_sync_cmd(q, (struct nvme_command *)&c, NULL, 0);
+  }
+  
+ -static void *nvme_nvm_create_dma_pool(struct request_queue *q, char *name)
+ +static void *nvme_nvm_create_dma_pool(struct nvm_dev *nvmdev, char *name)
+  {
+ -	struct nvme_ns *ns = q->queuedata;
+ +	struct nvme_ns *ns = nvmdev->q->queuedata;
+- 	struct nvme_dev *dev = ns->dev;
+  
+- 	return dma_pool_create(name, dev->dev, PAGE_SIZE, PAGE_SIZE, 0);
++ 	return dma_pool_create(name, ns->ctrl->dev, PAGE_SIZE, PAGE_SIZE, 0);
+  }
+  
+  static void nvme_nvm_destroy_dma_pool(void *pool)
+@@@ -573,19 -567,14 +569,20 @@@ void nvme_nvm_unregister(struct request
+  	nvm_unregister(disk_name);
+  }
+  
+ +/* move to shared place when used in multiple places. */
+ +#define PCI_VENDOR_ID_CNEX 0x1d1d
+ +#define PCI_DEVICE_ID_CNEX_WL 0x2807
+ +#define PCI_DEVICE_ID_CNEX_QEMU 0x1f1f
+ +
+  int nvme_nvm_ns_supported(struct nvme_ns *ns, struct nvme_id_ns *id)
+  {
+- 	struct nvme_dev *dev = ns->dev;
+- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
++ 	struct nvme_ctrl *ctrl = ns->ctrl;
++ 	/* XXX: this is poking into PCI structures from generic code! */
++ 	struct pci_dev *pdev = to_pci_dev(ctrl->dev);
+  
+  	/* QEMU NVMe simulator - PCI ID + Vendor specific bit */
+ -	if (pdev->vendor == PCI_VENDOR_ID_INTEL && pdev->device == 0x5845 &&
+ +	if (pdev->vendor == PCI_VENDOR_ID_CNEX &&
+ +				pdev->device == PCI_DEVICE_ID_CNEX_QEMU &&
+  							id->vs[0] == 0x1)
+  		return 1;
+  
