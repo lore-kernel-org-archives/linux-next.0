@@ -1,126 +1,98 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20151214 build: 0 failures 18 warnings (next-20151214)
-Date: Mon, 14 Dec 2015 11:42:38 +0000
-Message-ID: <E1a8RWY-0005QC-0f@optimist>
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Subject: Re: [PATCH] staging/rdma/hfi1: Fix a possible null pointer
+ dereference
+Date: Mon, 14 Dec 2015 13:28:49 +0000
+Message-ID: <20151214132849.GA22053@osadl.at>
+References: <20151210161338.3341.95259.stgit@phlsvslse11.ph.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47088 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932307AbbLNLmq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Dec 2015 06:42:46 -0500
+Received: from mail.osadl.at ([92.243.35.153]:48456 "EHLO mail.osadl.at"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932480AbbLNNgk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Dec 2015 08:36:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20151210161338.3341.95259.stgit@phlsvslse11.ph.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, dledford@redhat.com, linux-next@vger.kernel.org, Cocci@systeme.lip6.fr
 
-Tree/Branch: next-20151214
-Git describe: next-20151214
-Commit: 7e8998ee73 Add linux-next specific files for 20151214
+On Thu, Dec 10, 2015 at 11:13:38AM -0500, Mike Marciniszyn wrote:
+> From: Easwar Hariharan <easwar.hariharan@intel.com>
+> 
+> A code inspection pointed out that kmalloc_array may return NULL and
+> memset doesn't check the input pointer for NULL, resulting in a possible
+> NULL dereference. This patch fixes this.
+> 
+> Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+> Signed-off-by: Easwar Hariharan <easwar.hariharan@intel.com>
+> ---
+>  drivers/staging/rdma/hfi1/chip.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/staging/rdma/hfi1/chip.c b/drivers/staging/rdma/hfi1/chip.c
+> index dc69159..49d49b2 100644
+> --- a/drivers/staging/rdma/hfi1/chip.c
+> +++ b/drivers/staging/rdma/hfi1/chip.c
+> @@ -10129,6 +10129,8 @@ static void init_qos(struct hfi1_devdata *dd, u32 first_ctxt)
+>  	if (num_vls * qpns_per_vl > dd->chip_rcv_contexts)
+>  		goto bail;
+>  	rsmmap = kmalloc_array(NUM_MAP_REGS, sizeof(u64), GFP_KERNEL);
+> +	if (!rsmmap)
+> +		goto bail;
+>  	memset(rsmmap, rxcontext, NUM_MAP_REGS * sizeof(u64));
+>  	/* init the local copy of the table */
+>  	for (i = 0, ctxt = first_ctxt; i < num_vls; i++) {
+> 
+> --
 
-Build Time: 72 min 47 sec
+Based on this report a generalization of unchecked use turned up one more
+case in the current kernel (patch sent). Probably the  when  block needs 
+some cleanup, but findings like this definitely are a case for coccinelle 
+scanners.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+<snip>
+/// check for missing NULL check before use                                     
+//
+//  missing check in: 
+//  ./drivers/staging/rdma/hfi1/chip.c:10131 unchecked allocation
+//  in -next-20151214
+//  reported-by Mike Marciniszyn <mike.marciniszyn@intel.com> 
+//
+//  after generalization this also found:
+//  ./drivers/clk/shmobile/clk-div6.c:197 unchecked allocation
 
-Errors: 0
-Warnings: 18
-Section Mismatches: 0
+virtual context
+virtual org
+virtual report
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v5_defconfig
-      8 warnings    0 mismatches  : arm-multi_v7_defconfig
-      9 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
+@badmemset@
+expression mem;
+position p;
+statement S;
+@@
 
--------------------------------------------------------------------------------
+<+...
+*mem = kmalloc_array@p(...);
+  ... when != if (!mem || ...) S
+      when != if (... && !mem) S
+      when != if (mem == NULL || ...) S
+      when != if (... && mem == NULL) S
+      when != if (unlikely(mem == NULL)) S
+      when != if (unlikely(!mem)) S
+      when != if (likely(!mem)) S
+      when != if (likely(mem == NULL)) S
+  return;
+...+>
 
-Warnings Summary: 18
-	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  2 ../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
-	  2 ../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
-	  2 ../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/dma-mapping.h:211:18: warning: 'dma_buf' may be used uninitialized in this function [-Wuninitialized]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/net/ethernet/ti/netcp_core.c:776:14: warning: 'buf_ptr' may be used uninitialized in this function [-Wuninitialized]
-	  1 ../drivers/net/ethernet/ti/netcp_core.c:687:14: warning: 'ptr' may be used uninitialized in this function [-Wuninitialized]
-	  1 ../drivers/net/ethernet/ti/netcp_core.c:665:6: warning: 'org_buf_len' may be used uninitialized in this function [-Wuninitialized]
-	  1 ../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+@script:python@
+p << badmemset.p;
+@@
 
+print "%s:%s unchecked allocation" % (p[0].file,p[0].line)
 
+<snip>
 
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
-	../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
-	../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/ctu.c:88:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/mix.c:135:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/sh/rcar/dvc.c:337:13: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/scsi/device_handler/scsi_dh_alua.c:324:23: warning: unused variable 'vpd_pg83' [-Wunused-variable]
-	../drivers/scsi/device_handler/scsi_dh_alua.c:323:17: warning: unused variable 'd' [-Wunused-variable]
-	../drivers/net/ethernet/ti/netcp_core.c:776:14: warning: 'buf_ptr' may be used uninitialized in this function [-Wuninitialized]
-	../include/linux/dma-mapping.h:211:18: warning: 'dma_buf' may be used uninitialized in this function [-Wuninitialized]
-	../drivers/net/ethernet/ti/netcp_core.c:665:6: warning: 'org_buf_len' may be used uninitialized in this function [-Wuninitialized]
-	../drivers/net/ethernet/ti/netcp_core.c:687:14: warning: 'ptr' may be used uninitialized in this function [-Wuninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
+thx!
+hofrat
