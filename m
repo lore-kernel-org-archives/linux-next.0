@@ -1,98 +1,58 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: [PATCH] staging/rdma/hfi1: Fix a possible null pointer
- dereference
-Date: Mon, 14 Dec 2015 13:28:49 +0000
-Message-ID: <20151214132849.GA22053@osadl.at>
-References: <20151210161338.3341.95259.stgit@phlsvslse11.ph.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung-krzk tree with the renesas
+ tree
+Date: Tue, 15 Dec 2015 10:10:41 +1100
+Message-ID: <20151215101041.3a71eabb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.osadl.at ([92.243.35.153]:48456 "EHLO mail.osadl.at"
+Received: from ozlabs.org ([103.22.144.67]:57301 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932480AbbLNNgk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Dec 2015 08:36:40 -0500
-Content-Disposition: inline
-In-Reply-To: <20151210161338.3341.95259.stgit@phlsvslse11.ph.intel.com>
+	id S1753634AbbLNXKm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Dec 2015 18:10:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, dledford@redhat.com, linux-next@vger.kernel.org, Cocci@systeme.lip6.fr
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Simon Horman <horms@verge.net.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Dec 10, 2015 at 11:13:38AM -0500, Mike Marciniszyn wrote:
-> From: Easwar Hariharan <easwar.hariharan@intel.com>
-> 
-> A code inspection pointed out that kmalloc_array may return NULL and
-> memset doesn't check the input pointer for NULL, resulting in a possible
-> NULL dereference. This patch fixes this.
-> 
-> Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-> Signed-off-by: Easwar Hariharan <easwar.hariharan@intel.com>
-> ---
->  drivers/staging/rdma/hfi1/chip.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/staging/rdma/hfi1/chip.c b/drivers/staging/rdma/hfi1/chip.c
-> index dc69159..49d49b2 100644
-> --- a/drivers/staging/rdma/hfi1/chip.c
-> +++ b/drivers/staging/rdma/hfi1/chip.c
-> @@ -10129,6 +10129,8 @@ static void init_qos(struct hfi1_devdata *dd, u32 first_ctxt)
->  	if (num_vls * qpns_per_vl > dd->chip_rcv_contexts)
->  		goto bail;
->  	rsmmap = kmalloc_array(NUM_MAP_REGS, sizeof(u64), GFP_KERNEL);
-> +	if (!rsmmap)
-> +		goto bail;
->  	memset(rsmmap, rxcontext, NUM_MAP_REGS * sizeof(u64));
->  	/* init the local copy of the table */
->  	for (i = 0, ctxt = first_ctxt; i < num_vls; i++) {
-> 
-> --
+Hi Krzysztof,
 
-Based on this report a generalization of unchecked use turned up one more
-case in the current kernel (patch sent). Probably the  when  block needs 
-some cleanup, but findings like this definitely are a case for coccinelle 
-scanners.
+Today's linux-next merge of the samsung-krzk tree got a conflict in:
 
-<snip>
-/// check for missing NULL check before use                                     
-//
-//  missing check in: 
-//  ./drivers/staging/rdma/hfi1/chip.c:10131 unchecked allocation
-//  in -next-20151214
-//  reported-by Mike Marciniszyn <mike.marciniszyn@intel.com> 
-//
-//  after generalization this also found:
-//  ./drivers/clk/shmobile/clk-div6.c:197 unchecked allocation
+  arch/arm/configs/multi_v7_defconfig
 
-virtual context
-virtual org
-virtual report
+between commit:
 
-@badmemset@
-expression mem;
-position p;
-statement S;
-@@
+  954ceafd50cf ("ARM: multi_v7_defconfig: Enable missing Renesas ARM support based on DTSes")
 
-<+...
-*mem = kmalloc_array@p(...);
-  ... when != if (!mem || ...) S
-      when != if (... && !mem) S
-      when != if (mem == NULL || ...) S
-      when != if (... && mem == NULL) S
-      when != if (unlikely(mem == NULL)) S
-      when != if (unlikely(!mem)) S
-      when != if (likely(!mem)) S
-      when != if (likely(mem == NULL)) S
-  return;
-...+>
+from the renesas tree and commit:
 
-@script:python@
-p << badmemset.p;
-@@
+  23a526f0478c ("ARM: multi_v7_defconfig: Build ChromeOS EC drivers as modules")
 
-print "%s:%s unchecked allocation" % (p[0].file,p[0].line)
+from the samsung-krzk tree.
 
-<snip>
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-thx!
-hofrat
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/configs/multi_v7_defconfig
+index a4f8f5d37d82,e191a083d3ed..000000000000
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@@ -412,10 -400,9 +415,10 @@@ CONFIG_MFD_AS3722=
+  CONFIG_MFD_ATMEL_FLEXCOM=y
+  CONFIG_MFD_BCM590XX=y
+  CONFIG_MFD_AXP20X=y
+- CONFIG_MFD_CROS_EC=y
++ CONFIG_MFD_CROS_EC=m
+  CONFIG_MFD_CROS_EC_I2C=m
+- CONFIG_MFD_CROS_EC_SPI=y
++ CONFIG_MFD_CROS_EC_SPI=m
+ +CONFIG_MFD_DA9063=m
+  CONFIG_MFD_MAX14577=y
+  CONFIG_MFD_MAX77686=y
+  CONFIG_MFD_MAX77693=y
