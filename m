@@ -1,39 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the pci tree
-Date: Mon, 14 Dec 2015 11:27:21 +1100
-Message-ID: <20151214112721.7c60d4b0@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with the
+ drm-intel tree
+Date: Mon, 14 Dec 2015 12:06:49 +1100
+Message-ID: <20151214120649.00a5ee7b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47331 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751551AbbLNA1X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 13 Dec 2015 19:27:23 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Jason S. McMullan" <jason.mcmullan@netronome.com>, Jakub Kicinski <jakub.kicinski@netronome.com>, Rolf Neugebauer <rolf.neugebauer@netronome.com>, Simon Horman <simon.horman@netronome.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
-
-Today's linux-next merge of the net-next tree got a conflict in:
-
-  include/linux/pci_ids.h
-
-between commit:
-
-  a755e169031d ("PCI: Add Netronome vendor and device IDs")
-
-from the pci tree and commit:
-
-  2d1e0254ef83 ("pci_ids: add Netronome Systems vendor")
-
-from the net-next tree.
-
-I fixed it up (the former was just a superset of the latter, so I used
-that) and can carry the fix as necessary (no action is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
+dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kcC5jCgpiZXR3
+ZWVuIGNvbW1pdDoKCiAgODkzZGEwYzliY2IyICgiZHJtL2k5MTU6IGNoZWNrIGZvciByZXR1cm4g
+dmFsdWUiKQoKZnJvbSB0aGUgZHJtLWludGVsIHRyZWUgYW5kIGNvbW1pdDoKCiAgMTNhM2Q5MWYx
+N2E1ICgiZHJtOiBQYXNzICduYW1lJyB0byBkcm1fZW5jb2Rlcl9pbml0KCkiKQoKZnJvbSB0aGUg
+ZHJtLW1pc2MgdHJlZS4KCkkgZml4ZWQgaXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0
+aGUgZml4IGFzIG5lY2Vzc2FyeSAobm8gYWN0aW9uCmlzIHJlcXVpcmVkKS4KCi0tIApDaGVlcnMs
+ClN0ZXBoZW4gUm90aHdlbGwgICAgICAgICAgICAgICAgICAgIHNmckBjYW5iLmF1dWcub3JnLmF1
+CgpkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZHAuYwppbmRleCBhZTRjMjFm
+ZWJiYjUsOWIxMDUyNmNjNmRkLi4wMDAwMDAwMDAwMDAKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5
+MTUvaW50ZWxfZHAuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kcC5jCkBAQCAt
+NjAwOSw5IC01OTc2LDggKzYwMDksOSBAQEAgaW50ZWxfZHBfaW5pdChzdHJ1Y3QgZHJtX2Rldmlj
+ZSAqZGV2CiAgCWludGVsX2VuY29kZXIgPSAmaW50ZWxfZGlnX3BvcnQtPmJhc2U7CiAgCWVuY29k
+ZXIgPSAmaW50ZWxfZW5jb2Rlci0+YmFzZTsKICAKIC0JZHJtX2VuY29kZXJfaW5pdChkZXYsICZp
+bnRlbF9lbmNvZGVyLT5iYXNlLCAmaW50ZWxfZHBfZW5jX2Z1bmNzLAogLQkJCSBEUk1fTU9ERV9F
+TkNPREVSX1RNRFMsIE5VTEwpOwogKwlpZiAoZHJtX2VuY29kZXJfaW5pdChkZXYsICZpbnRlbF9l
+bmNvZGVyLT5iYXNlLCAmaW50ZWxfZHBfZW5jX2Z1bmNzLAotIAkJCSAgICAgRFJNX01PREVfRU5D
+T0RFUl9UTURTKSkKKysJCQkgICAgIERSTV9NT0RFX0VOQ09ERVJfVE1EUywgTlVMTCkpCiArCQln
+b3RvIGVycl9lbmNvZGVyX2luaXQ7CiAgCiAgCWludGVsX2VuY29kZXItPmNvbXB1dGVfY29uZmln
+ID0gaW50ZWxfZHBfY29tcHV0ZV9jb25maWc7CiAgCWludGVsX2VuY29kZXItPmRpc2FibGUgPSBp
+bnRlbF9kaXNhYmxlX2RwOwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVs
+LWdmeAo=
