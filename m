@@ -1,56 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 15 Dec 2015 11:31:29 +1100
-Message-ID: <20151215113129.197e5e0b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-msm tree
+Date: Tue, 15 Dec 2015 12:27:21 +1100
+Message-ID: <20151215122721.08ff1448@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53187 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932649AbbLOAbb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Dec 2015 19:31:31 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B Shelar <pshelar@nicira.com>, Tom Herbert <tom@herbertland.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Clark <robdclark@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Vinay Simha BN <vinaysimha@inforcecomputing.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Rob,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the drm-msm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  drivers/net/geneve.c
+drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c: In function 'mdp4_dsi_encoder_init':
+drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c:187:2: error: too few arguments to function 'drm_encoder_init'
+  drm_encoder_init(dev, encoder, &mdp4_dsi_encoder_funcs,
+  ^
+In file included from include/drm/drmP.h:68:0,
+                 from drivers/gpu/drm/msm/msm_drv.h:37,
+                 from drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.h:21,
+                 from drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c:20:
+include/drm/drm_crtc.h:2220:5: note: declared here
+ int drm_encoder_init(struct drm_device *dev,
+     ^
 
-between commit:
+Caused by commit
 
-  a322a1bcf329 ("geneve: Fix IPv6 xmit stats update.")
+  776638e73a19 ("drm/msm/dsi: Add a mdp4 encoder for DSI")
 
-from the net tree and commit:
+interacting withe commit
 
-  abe492b4f50c ("geneve: UDP checksum configuration via netlink")
+  13a3d91f17a5 ("drm: Pass 'name' to drm_encoder_init()")
 
-from the net-next tree.
+from the drm-misc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 15 Dec 2015 12:23:41 +1100
+Subject: [PATCH] drm/msm/dsi: update for drm_encoder_init() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c
+index 49052bb5d2e4..2f57e9453b67 100644
+--- a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c
++++ b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c
+@@ -185,7 +185,7 @@ struct drm_encoder *mdp4_dsi_encoder_init(struct drm_device *dev)
+ 	encoder = &mdp4_dsi_encoder->base;
+ 
+ 	drm_encoder_init(dev, encoder, &mdp4_dsi_encoder_funcs,
+-			 DRM_MODE_ENCODER_DSI);
++			 DRM_MODE_ENCODER_DSI, NULL);
+ 	drm_encoder_helper_add(encoder, &mdp4_dsi_encoder_helper_funcs);
+ 
+ 	return encoder;
+-- 
+2.6.2
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/geneve.c
-index c2b79f5d1c89,0750d7a93878..000000000000
---- a/drivers/net/geneve.c
-+++ b/drivers/net/geneve.c
-@@@ -966,7 -984,10 +984,8 @@@ static netdev_tx_t geneve6_xmit_skb(str
-  	}
-  	err = udp_tunnel6_xmit_skb(dst, gs6->sock->sk, skb, dev,
-  				   &fl6.saddr, &fl6.daddr, prio, ttl,
-- 				   sport, geneve->dst_port, !udp_csum);
-+ 				   sport, geneve->dst_port,
-+ 				   !!(flags & GENEVE_F_UDP_ZERO_CSUM6_TX));
- -
- -	iptunnel_xmit_stats(err, &dev->stats, dev->tstats);
-  	return NETDEV_TX_OK;
-  
-  tx_error:
