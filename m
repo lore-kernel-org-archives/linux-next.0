@@ -1,67 +1,122 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-msm tree
-Date: Tue, 15 Dec 2015 12:27:21 +1100
-Message-ID: <20151215122721.08ff1448@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the powerpc
+ tree
+Date: Tue, 15 Dec 2015 16:53:42 +1100
+Message-ID: <20151215165342.15bb4526@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Clark <robdclark@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Vinay Simha BN <vinaysimha@inforcecomputing.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43108 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751025AbbLOFxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Dec 2015 00:53:44 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-Hi Rob,
+Hi Andrew,
 
-After merging the drm-msm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got conflicts in:
 
-drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c: In function 'mdp4_dsi_encoder_init':
-drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c:187:2: error: too few arguments to function 'drm_encoder_init'
-  drm_encoder_init(dev, encoder, &mdp4_dsi_encoder_funcs,
-  ^
-In file included from include/drm/drmP.h:68:0,
-                 from drivers/gpu/drm/msm/msm_drv.h:37,
-                 from drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.h:21,
-                 from drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c:20:
-include/drm/drm_crtc.h:2220:5: note: declared here
- int drm_encoder_init(struct drm_device *dev,
-     ^
+  arch/powerpc/include/asm/nohash/64/pgtable.h
+  arch/powerpc/mm/pgtable_64.c
 
-Caused by commit
+between various commits from the powerpc tree and commits:
 
-  776638e73a19 ("drm/msm/dsi: Add a mdp4 encoder for DSI")
+  e56ebae0dd4c ("powerpc, thp: remove infrastructure for handling splitting PMDs")
 
-interacting withe commit
+from the akpm-current tree.
 
-  13a3d91f17a5 ("drm: Pass 'name' to drm_encoder_init()")
-
-from the drm-misc tree.
-
-I added the following merge fix patch:
+I used the powerpc tree version of the first and the akpm-current tree
+version of the second and then I applied the following merge fix patch:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 15 Dec 2015 12:23:41 +1100
-Subject: [PATCH] drm/msm/dsi: update for drm_encoder_init() API change
+Date: Tue, 15 Dec 2015 16:50:42 +1100
+Subject: [PATCH] merge fix for "powerpc, thp: remove infrastructure for
+ handling splitting PMDs"
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/book3s/64/hash-64k.h | 12 ------------
+ arch/powerpc/include/asm/book3s/64/hash.h     | 10 ++--------
+ arch/powerpc/include/asm/book3s/64/pgtable.h  |  4 ----
+ 3 files changed, 2 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c
-index 49052bb5d2e4..2f57e9453b67 100644
---- a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_dsi_encoder.c
-@@ -185,7 +185,7 @@ struct drm_encoder *mdp4_dsi_encoder_init(struct drm_device *dev)
- 	encoder = &mdp4_dsi_encoder->base;
+diff --git a/arch/powerpc/include/asm/book3s/64/hash-64k.h b/arch/powerpc/include/asm/book3s/64/hash-64k.h
+index 9f9942998587..f2072a4ca9e3 100644
+--- a/arch/powerpc/include/asm/book3s/64/hash-64k.h
++++ b/arch/powerpc/include/asm/book3s/64/hash-64k.h
+@@ -256,13 +256,6 @@ static inline int pmd_trans_huge(pmd_t pmd)
+ 		  (_PAGE_PTE | _PAGE_THP_HUGE));
+ }
  
- 	drm_encoder_init(dev, encoder, &mdp4_dsi_encoder_funcs,
--			 DRM_MODE_ENCODER_DSI);
-+			 DRM_MODE_ENCODER_DSI, NULL);
- 	drm_encoder_helper_add(encoder, &mdp4_dsi_encoder_helper_funcs);
+-static inline int pmd_trans_splitting(pmd_t pmd)
+-{
+-	if (pmd_trans_huge(pmd))
+-		return pmd_val(pmd) & _PAGE_SPLITTING;
+-	return 0;
+-}
+-
+ static inline int pmd_large(pmd_t pmd)
+ {
+ 	return !!(pmd_val(pmd) & _PAGE_PTE);
+@@ -273,11 +266,6 @@ static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+ 	return __pmd(pmd_val(pmd) & ~_PAGE_PRESENT);
+ }
  
- 	return encoder;
+-static inline pmd_t pmd_mksplitting(pmd_t pmd)
+-{
+-	return __pmd(pmd_val(pmd) | _PAGE_SPLITTING);
+-}
+-
+ #define __HAVE_ARCH_PMD_SAME
+ static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+ {
+diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/include/asm/book3s/64/hash.h
+index 8b929e531758..4e69d9a273ed 100644
+--- a/arch/powerpc/include/asm/book3s/64/hash.h
++++ b/arch/powerpc/include/asm/book3s/64/hash.h
+@@ -35,11 +35,6 @@
+ #define _PAGE_SPECIAL		0x10000 /* software: special page */
+ 
+ /*
+- * THP pages can't be special. So use the _PAGE_SPECIAL
+- */
+-#define _PAGE_SPLITTING _PAGE_SPECIAL
+-
+-/*
+  * We need to differentiate between explicit huge page and THP huge
+  * page, since THP huge page also need to track real subpage details
+  */
+@@ -48,9 +43,8 @@
+ /*
+  * set of bits not changed in pmd_modify.
+  */
+-#define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS |		\
+-			 _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_SPLITTING | \
+-			 _PAGE_THP_HUGE | _PAGE_PTE)
++#define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY |
++			 _PAGE_ACCESSED | _PAGE_THP_HUGE | _PAGE_PTE)
+ 
+ #ifdef CONFIG_PPC_64K_PAGES
+ #include <asm/book3s/64/hash-64k.h>
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index a2d4e0e37067..6306d6565ee0 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -232,10 +232,6 @@ extern int pmdp_clear_flush_young(struct vm_area_struct *vma,
+ extern pmd_t pmdp_huge_get_and_clear(struct mm_struct *mm,
+ 				     unsigned long addr, pmd_t *pmdp);
+ 
+-#define __HAVE_ARCH_PMDP_SPLITTING_FLUSH
+-extern void pmdp_splitting_flush(struct vm_area_struct *vma,
+-				 unsigned long address, pmd_t *pmdp);
+-
+ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+ 				 unsigned long address, pmd_t *pmdp);
+ #define pmdp_collapse_flush pmdp_collapse_flush
 -- 
 2.6.2
 
