@@ -1,28 +1,56 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: randconfig build error with next-20151214, in
- drivers/platform/x86/toshiba_acpi.c
-Date: Mon, 14 Dec 2015 15:47:40 -0800
-Message-ID: <20151214234740.GN11972@malice.jf.intel.com>
-References: <CA+r1ZhjPfPMHeBJDiD4DE1z0U3KT4g9vOad57KxJoOHaGiujsA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 15 Dec 2015 11:31:29 +1100
+Message-ID: <20151215113129.197e5e0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+r1ZhjPfPMHeBJDiD4DE1z0U3KT4g9vOad57KxJoOHaGiujsA@mail.gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Jim Davis <jim.epost@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, coproscefalo@gmail.com, platform-driver-x86@vger.kernel.org, Rafael Wysocki <rjw@rjwysocki.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53187 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932649AbbLOAbb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Dec 2015 19:31:31 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B Shelar <pshelar@nicira.com>, Tom Herbert <tom@herbertland.com>
 
-On Mon, Dec 14, 2015 at 04:31:48PM -0700, Jim Davis wrote:
-> Building with the attached random configuration file,
-> 
-> drivers/built-in.o: In function `toshiba_acpi_resume':
-> toshiba_acpi.c:(.text+0xbdab11): undefined reference to `rfkill_set_hw_state'
+Hi all,
 
-Thanks, Azael posted a patch which I have now merged to my testing and for-next
-branches.
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  drivers/net/geneve.c
+
+between commit:
+
+  a322a1bcf329 ("geneve: Fix IPv6 xmit stats update.")
+
+from the net tree and commit:
+
+  abe492b4f50c ("geneve: UDP checksum configuration via netlink")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
-Darren Hart
-Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/geneve.c
+index c2b79f5d1c89,0750d7a93878..000000000000
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@@ -966,7 -984,10 +984,8 @@@ static netdev_tx_t geneve6_xmit_skb(str
+  	}
+  	err = udp_tunnel6_xmit_skb(dst, gs6->sock->sk, skb, dev,
+  				   &fl6.saddr, &fl6.daddr, prio, ttl,
+- 				   sport, geneve->dst_port, !udp_csum);
++ 				   sport, geneve->dst_port,
++ 				   !!(flags & GENEVE_F_UDP_ZERO_CSUM6_TX));
+ -
+ -	iptunnel_xmit_stats(err, &dev->stats, dev->tstats);
+  	return NETDEV_TX_OK;
+  
+  tx_error:
