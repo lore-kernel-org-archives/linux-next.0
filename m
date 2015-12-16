@@ -1,19 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the gpio tree
-Date: Wed, 16 Dec 2015 14:37:55 +1100
-Message-ID: <20151216143755.67915348@canb.auug.org.au>
+From: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
+Subject: RE: linux-next: build failure after merge of the gpio tree
+Date: Wed, 16 Dec 2015 03:55:03 +0000
+Message-ID: <1B315A1C295D4642836F090C3F8FEB76042593B8@SJEXCHMB13.corp.ad.broadcom.com>
+References: <20151216143755.67915348@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40030 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965705AbbLPDh5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Dec 2015 22:37:57 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151216143755.67915348@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
+
+Hi Stephen,
+
+  Sorry. It's my mistake. In the first patch set, I tested it with "irq_clear_status_flags(irq, IRQ_NOREQUEST);" and in the v2 patch set the old one got in.
+
+Regards
+Dhananjay
+ 
+-----Original Message-----
+From: Stephen Rothwell [mailto:sfr@canb.auug.org.au] 
+Sent: Wednesday, December 16, 2015 9:08 AM
+To: Linus Walleij
+Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Yendapally Reddy Dhananjaya Reddy
+Subject: linux-next: build failure after merge of the gpio tree
 
 Hi Linus,
 
