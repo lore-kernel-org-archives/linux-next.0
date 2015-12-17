@@ -1,40 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the regulator tree with the qcom tree
-Date: Thu, 17 Dec 2015 13:01:29 +1100
-Message-ID: <20151217130129.7ba3b7ae@canb.auug.org.au>
+Subject: linux-next: manual merge of the clockevents tree with the h8300
+ tree
+Date: Thu, 17 Dec 2015 13:48:36 +1100
+Message-ID: <20151217134836.43dc67d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52227 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753607AbbLQCBb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Dec 2015 21:01:31 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Gross <agross@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Daniel,
 
-Today's linux-next merge of the regulator tree got a conflict in:
+Today's linux-next merge of the clockevents tree got a conflict in:
 
-  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
+  arch/h8300/Kconfig
 
 between commit:
 
-  f6251e80956d ("soc: qcom: documentation: Update SMD/RPM Docs")
-  9ee8373a1552 ("soc: qcom: smd-rpm: Add existing platform support")
+  a801eb26d124 ("h8300: Add LZO compression")
 
-from the qcom tree and commit:
+from the h8300 tree and commit:
 
-  7a400585893e ("soc: qcom: documentation: Update SMD/RPM Docs")
+  97a23beb8db9 ("clocksource/drivers/h8300_timer8: Separate the Kconfig option from the arch")
 
-from the regulator tree.
+from the clockevents tree.
 
-I fixed it up (I used the qcom tree version - please sort out the
-mess).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/h8300/Kconfig
+index 4e48d1224456,2e20333cbce9..000000000000
+--- a/arch/h8300/Kconfig
++++ b/arch/h8300/Kconfig
+@@@ -17,8 -17,7 +17,9 @@@ config H830
+  	select HAVE_MEMBLOCK
+  	select HAVE_DMA_ATTRS
+  	select CLKSRC_OF
+ +	select HAVE_KERNEL_GZIP
+ +	select HAVE_KERNEL_LZO
++ 	select H8300_TMR8
+  
+  config RWSEM_GENERIC_SPINLOCK
+  	def_bool y
