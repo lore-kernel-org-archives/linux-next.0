@@ -1,49 +1,51 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: + arc-convert-to-dma_map_ops.patch added to -mm tree
-Date: Wed, 16 Dec 2015 21:43:26 -0800
-Message-ID: <20151216214326.82515ce1.akpm@linux-foundation.org>
-References: <564b9e3a.DaXj5xWV8Mzu1fPX%akpm@linux-foundation.org>
-	<C2D7FE5348E1B147BCA15975FBA23075F44D2EEF@IN01WEMBXA.internal.synopsys.com>
-	<20151124075047.GA29572@lst.de>
-	<56724817.7090003@synopsys.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the arm-soc tree
+Date: Thu, 17 Dec 2015 17:40:14 +1100
+Message-ID: <20151217174014.711d87f1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <56724817.7090003@synopsys.com>
-Sender: owner-linux-mm@kvack.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: "hch@lst.de" <hch@lst.de>, arcml <linux-snps-arc@lists.infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 17 Dec 2015 10:58:55 +0530 Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+Hi all,
 
-> On Tuesday 24 November 2015 01:20 PM, hch@lst.de wrote:
-> > Hi Vineet,
-> > 
-> > the original version went through the buildbot, which succeeded.  It seems
-> > like the official buildbot does not support arc, and might benefit from
-> > helping to set up an arc environment.  However in the meantime Guenther
-> > send me output from his buildbot and I sent a fix for arc.
-> > 
-> 
-> Hi Andrew, Christoph
-> 
-> The dma mapping conversion build error fixlet (below) exists as a separate patch
-> which will break bisectability. Will it be possible to squash it into the orig commit.
-> 
+After merging the arm-soc tree, today's linux-next build (arm defconfig)
+failed like this:
 
-That's the plan.  In http://ozlabs.org/~akpm/mmots/series you'll see
+*** Default configuration is based on 'versatile_defconfig'
+#
+# configuration written to .config
+#
+make[1]: Leaving directory '/home/sfr/next/arm_defconfig'
+.config:2033:warning: symbol value '' invalid for DEBUG_UART_PHYS
+.config:2034:warning: symbol value '' invalid for DEBUG_UART_VIRT
+*
+* Restart config...
+*
+	.
+	.
+	.
+Kernel low-level debugging functions (read help!) (DEBUG_LL) [Y/n/?] y
+  Kernel low-level debugging port
+    1. Kernel low-level debugging messages via ARM Versatile UART (DEBUG_VERSATILE)
+    2. Kernel low-level debugging via EmbeddedICE DCC channel (DEBUG_ICEDCC)
+    3. Kernel low-level debug output via semihosting I/O (DEBUG_SEMIHOSTING)
+    4. Kernel low-level debugging via 8250 UART (DEBUG_LL_UART_8250)
+  > 5. Kernel low-level debugging via ARM Ltd PL01x Primecell UART (DEBUG_LL_UART_PL01X)
+  choice[1-5]: 5
+Physical base address of debug UART (DEBUG_UART_PHYS) [] (NEW) aborted!
 
-arc-convert-to-dma_map_ops.patch
-arc-convert-to-dma_map_ops-fix.patch
+Console input/output is redirected. Run 'make oldconfig' to update configuration.
 
-I keep the base patch(es) and its fixes separate for various
-tacking/history/bookkeeping reasons and fold them all together just
-before sending things off to Linus.
+Presumably caused by the changes to arch/arm/Kconfig.debug in today's
+arm-soc tree.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+I left it broken for today.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
