@@ -1,35 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rtc tree
-Date: Thu, 17 Dec 2015 16:03:44 +1100
-Message-ID: <20151217160344.096b4a9e@canb.auug.org.au>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: Re: + arc-convert-to-dma_map_ops.patch added to -mm tree
+Date: Thu, 17 Dec 2015 10:58:55 +0530
+Message-ID: <56724817.7090003@synopsys.com>
+References: <564b9e3a.DaXj5xWV8Mzu1fPX%akpm@linux-foundation.org>
+ <C2D7FE5348E1B147BCA15975FBA23075F44D2EEF@IN01WEMBXA.internal.synopsys.com>
+ <20151124075047.GA29572@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37630 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751013AbbLQFDq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Dec 2015 00:03:46 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:55742 "EHLO
+	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750985AbbLQF3Q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Dec 2015 00:29:16 -0500
+In-Reply-To: <20151124075047.GA29572@lst.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sasha Levin <sasha.levin@oracle.com>
+To: "hch@lst.de" <hch@lst.de>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, arcml <linux-snps-arc@lists.infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>arcml <linux-snps-arc@lists.infradead.org>
 
-Hi Alexandre,
+On Tuesday 24 November 2015 01:20 PM, hch@lst.de wrote:
+> Hi Vineet,
+> 
+> the original version went through the buildbot, which succeeded.  It seems
+> like the official buildbot does not support arc, and might benefit from
+> helping to set up an arc environment.  However in the meantime Guenther
+> send me output from his buildbot and I sent a fix for arc.
+> 
 
-After merging the rtc tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Hi Andrew, Christoph
 
-drivers/built-in.o: In function `rtc_time64_to_tm':
-sunxi_sid.c:(.text+0x366e54): undefined reference to `__aeabi_ldivmod'
-sunxi_sid.c:(.text+0x366e6c): undefined reference to `__aeabi_ldivmod'
+The dma mapping conversion build error fixlet (below) exists as a separate patch
+which will break bisectability. Will it be possible to squash it into the orig commit.
 
-Caused by commit
+Thx,
+-Vineet
 
-  bfad4c280be0 ("rtc: fix overflow and incorrect calculation in rtc_time64_to_tm")
+commit 7f33b4a409493b81c24741dbad6700aae99d8ed0
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Fri Dec 11 15:59:33 2015 +1100
 
-I have used the rtc tree from next-20151216 for today.
+    arc: dma mapping fixes
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Reported-by: Guenter Roeck <linux@roeck-us.net>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
