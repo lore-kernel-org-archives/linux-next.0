@@ -1,85 +1,131 @@
-From: Jiang Liu <jiang.liu@linux.intel.com>
-Subject: Re: Problems with x86/x86_64 qemu tests in linux-next due to 'Enhance
- __assign_irq_vector() to rollback ...'
-Date: Fri, 18 Dec 2015 17:14:41 +0800
-Message-ID: <5673CE81.1030502@linux.intel.com>
-References: <56734C4C.2050202@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56734C4C.2050202@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Joe Lawrence <joe.lawrence@stratus.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20151218 build: 1 failures 17 warnings (next-20151218)
+Date: Fri, 18 Dec 2015 11:29:12 +0000
+Message-ID: <E1a9tDk-0004dR-Bd@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40810 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752753AbbLRL3T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Dec 2015 06:29:19 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 2015/12/18 7:59, Guenter Roeck wrote:
-> Hi folks,
-> 
-> several of my qemu tests of linux-next started failing a couple of days
-> ago.
-> Logs are available at http://server.roeck-us.net:8010/builders, in the
-> 'next' column.
-> 
-> Bisect points to 'x86/irq: Enhance __assign_irq_vector() to rollback in
-> case of failure'.
-> Bisect log is attached below. Reverting this patch as well as the
-> subsequent patches
-> in arch/x86/kernel/apic/vector.c fixes the problem.
-Hi Guenter,
-	Thanks for reporting this issue. We have already had a fix
-for it, and will send the new patch out once it passes function tests.
-Thanks,
-Gerry
+Tree/Branch: next-20151218
+Git describe: next-20151218
+Commit: f7ac28a697 Add linux-next specific files for 20151218
 
-> 
-> Guenter
-> 
-> ---
-> # bad: [57036847fee7aa782ea834af770426517f1efc96] Add linux-next
-> specific files for 20151216
-> # good: [9f9499ae8e6415cefc4fe0a96ad0e27864353c89] Linux 4.4-rc5
-> git bisect start 'HEAD' 'v4.4-rc5'
-> # good: [cd61a37515d48ce6603e681f18f0ae59025c733a] Merge remote-tracking
-> branch 'crypto/master'
-> git bisect good cd61a37515d48ce6603e681f18f0ae59025c733a
-> # bad: [e12cc3355bf7fc7fdca05d12ae1aa53a2561af84] Merge remote-tracking
-> branch 'irqchip/irqchip/for-next'
-> git bisect bad e12cc3355bf7fc7fdca05d12ae1aa53a2561af84
-> # good: [2e27153f14236cc20bf1cad16da202b5a8fb6189] Merge remote-tracking
-> branch 'sound-asoc/for-next'
-> git bisect good 2e27153f14236cc20bf1cad16da202b5a8fb6189
-> # good: [95ecee8d876ddabcbe32fc48ec8c7272d1738645] Merge remote-tracking
-> branch 'mailbox/mailbox-for-next'
-> git bisect good 95ecee8d876ddabcbe32fc48ec8c7272d1738645
-> # good: [05a927fb715bd97ce3baed157b157c16a3216f55] Merge branch
-> 'timers/core'
-> git bisect good 05a927fb715bd97ce3baed157b157c16a3216f55
-> # bad: [acae1b21abdc2b1a0a8809d4263b7b06c380c065] Merge remote-tracking
-> branch 'tip/auto-latest'
-> git bisect bad acae1b21abdc2b1a0a8809d4263b7b06c380c065
-> # bad: [f45b7ee9ed0632acc1c7404a1e8f47a40146a07e] Merge branch 'x86/fpu'
-> git bisect bad f45b7ee9ed0632acc1c7404a1e8f47a40146a07e
-> # bad: [41c19d8bf8540c9016563b649b2034d1804ca0af] Merge branch 'x86/asm'
-> git bisect bad 41c19d8bf8540c9016563b649b2034d1804ca0af
-> # bad: [ba207f77e6e5642ad7c3dc7f2217c590cf1352cb] Merge branch
-> 'x86/urgent' into x86/apic
-> git bisect bad ba207f77e6e5642ad7c3dc7f2217c590cf1352cb
-> # good: [c61a0d31ba0ce75cb1b88bb4eb2f41a1b80bc90f] x86/apic: Wire up
-> single IPI for apic_numachip
-> git bisect good c61a0d31ba0ce75cb1b88bb4eb2f41a1b80bc90f
-> # good: [2fde46b79e2fdbc90d0d97cf992782732b5a371c] x86/smpboot:
-> Re-enable init_udelay=0 by default on modern CPUs
-> git bisect good 2fde46b79e2fdbc90d0d97cf992782732b5a371c
-> # bad: [21a1b3bf35018b446c943c15f0a6225e6f6497ae] x86/irq: Fix a race
-> window in x86_vector_free_irqs()
-> git bisect bad 21a1b3bf35018b446c943c15f0a6225e6f6497ae
-> # bad: [4c24cee6b2aeaee3dab896f76fef4fe79d9e4183] x86/irq: Enhance
-> __assign_irq_vector() to rollback in case of failure
-> git bisect bad 4c24cee6b2aeaee3dab896f76fef4fe79d9e4183
-> # good: [6dd7cb991fcbfef55d8bf3d22b8a87f9d5007e20] x86/irq: Do not reuse
-> struct apic_chip_data.old_domain as temporary buffer
-> git bisect good 6dd7cb991fcbfef55d8bf3d22b8a87f9d5007e20
-> # first bad commit: [4c24cee6b2aeaee3dab896f76fef4fe79d9e4183] x86/irq:
-> Enhance __assign_irq_vector() to rollback in case of failure
+Build Time: 72 min 57 sec
+
+Passed:    8 / 9   ( 88.89 %)
+Failed:    1 / 9   ( 11.11 %)
+
+Errors: 0
+Warnings: 17
+Section Mismatches: 0
+
+Failed defconfigs:
+
+Errors:
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      4 warnings    0 mismatches  : arm-multi_v5_defconfig
+      8 warnings    0 mismatches  : arm-multi_v7_defconfig
+      9 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 17
+	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	  3 ../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
+	  2 ../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 arch/arm/configs/multi_v7_defconfig:433:warning: symbol value 'm' invalid for MFD_DA9063
+	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/dma-mapping.h:211:18: warning: 'dma_buf' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/net/ethernet/ti/netcp_core.c:776:14: warning: 'buf_ptr' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../drivers/net/ethernet/ti/netcp_core.c:687:14: warning: 'ptr' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../drivers/net/ethernet/ti/netcp_core.c:665:6: warning: 'org_buf_len' may be used uninitialized in this function [-Wuninitialized]
+	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
+	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:433:warning: symbol value 'm' invalid for MFD_DA9063
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
+	../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	../drivers/net/ethernet/ti/netcp_core.c:776:14: warning: 'buf_ptr' may be used uninitialized in this function [-Wuninitialized]
+	../include/linux/dma-mapping.h:211:18: warning: 'dma_buf' may be used uninitialized in this function [-Wuninitialized]
+	../drivers/net/ethernet/ti/netcp_core.c:665:6: warning: 'org_buf_len' may be used uninitialized in this function [-Wuninitialized]
+	../drivers/net/ethernet/ti/netcp_core.c:687:14: warning: 'ptr' may be used uninitialized in this function [-Wuninitialized]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
