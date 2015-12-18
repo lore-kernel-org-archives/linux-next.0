@@ -1,69 +1,61 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: rebase of the drm-panel tree
-Date: Fri, 18 Dec 2015 07:44:31 +0100
-Message-ID: <20151218064431.GA8769@ulmo>
-References: <20151218091729.1e923834@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 18 Dec 2015 18:45:38 +1100
+Message-ID: <20151218184538.1bcc19d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20151218091729.1e923834@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@linux.ie>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39964 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752767AbbLRHpk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Dec 2015 02:45:40 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
 
+Hi Andrew,
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+After merging the akpm-current tree, today's linux-next build (powerpc
+pseries_le_defconfig) failed like this:
 
-On Fri, Dec 18, 2015 at 09:17:29AM +1100, Stephen Rothwell wrote:
-> Hi Thierry,
->=20
-> I noticed that you have rebased the drm-panel tree today.  Unfortunately,
-> Dave merged the previous version of your tree :-(
+mm/huge_memory.c: In function 'insert_pfn_pmd':
+mm/huge_memory.c:970:21: error: implicit declaration of func
+tion 'pfn_t_pmd' [-Werror=implicit-function-declaration]
+  entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
+                     ^
 
-And I had hoped to have been fast enough. Sorry for the mess.
+Caused by commit
 
-> So, now in linux-next today, we are going to have 2 copies of all theose
-> patches, plus at least 2 of the patches have beenm changed in you new
-> version so there will probably be conflicts.
+  e6cf6e9a2686 ("mm, dax: convert vmf_insert_pfn_pmd() to pfn_t")
 
-Yes, there were two changes (in two patches) which moved device tree
-bindings from a deprecated location to the new one.
+I added this patch for today:
 
-> Please either go back to the old version, or just rebase what you have
-> now on top of Dave's drm tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 18 Dec 2015 17:37:30 +1100
+Subject: [PATCH] mm, dax: convert vmf_insert_pfn_pmd() to pfn_t fix
 
-I'll revert to the old version and apply the changes as a separate patch
-on top.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/include/asm/book3s/64/pgtable.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Again, sorry for the inconvenience.
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index 03c1a5a21c0c..835fb5ec1de1 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -186,6 +186,7 @@ void pgtable_cache_init(void);
+ struct page *realmode_pfn_to_page(unsigned long pfn);
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#define pfn_pmd pfn_pmd
+ extern pmd_t pfn_pmd(unsigned long pfn, pgprot_t pgprot);
+ extern pmd_t mk_pmd(struct page *page, pgprot_t pgprot);
+ extern pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot);
+-- 
+2.6.2
 
-Thierry
-
---0OAP2g/MAC+5xKAE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWc6tMAAoJEN0jrNd/PrOhuH8P/A82UWgaR/v2Kb9HxmbAw4Vk
-1UKoPk/1VEZaVSig+Md0uZct755SlQAgDDLFWmSKduMZY+7ZyOblmbjo2qbUFob9
-ZKVmpLMb/66T+5hR8V6WtcT6gM9PnpziICTLT0+49GwFJbbCCnE9ghqPLR4oetRs
-G3Kqm+AGkFaj4YXQquUA2mkTn2Bc0tge/h6nKnDc8NUW8+eg+GNLUJ00syImyfUU
-pG2HrzqJb2cfOEeqcX2J7x3SeErdLb+NjXVB0cXhoJBuKnMI7oLJ6qvuh8D3PuqU
-kIuJ5nJgoNGsvw3DXGEgxbYJusWxvMoR8aLZSJdgIMwWmRFP0nhIP6YGmjyygW6y
-RfSoh18uoxzxueQPGDcoZ/hTnUAHXcdZkIijuib6mMx6Zo6jbfZkt6bavVvj6kJi
-5QwSLlX7zhjs25S8lbURJb8y0ottiZDuxBtcimdXcP9i7ikohI0ZM3pB5uVpNP16
-hk8lTJVNSvmJLPabos/zaEUKXqI73EPYXOX0b9lzuU6ARkrEDM4Gg7nFkNb+f9fk
-8oZsFiOW5OHWDtj9wQr0YVYPoz0R7OwL8C0CixSJMhno1TAaTORjFlIQp+Ksje6G
-2uiK5PWjyXS8AYBSBR/PESUzgVqDVmI6gv226af8pX4XdV4TQSke0IA4Pq9kI1WC
-DOpKS0Uzi8J9fusSFXGP
-=b+GV
------END PGP SIGNATURE-----
-
---0OAP2g/MAC+5xKAE--
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
