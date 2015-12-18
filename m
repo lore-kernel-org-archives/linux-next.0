@@ -1,86 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the kvm tree
-Date: Fri, 18 Dec 2015 16:26:57 +1100
-Message-ID: <20151218162657.6becb2dd@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the powerpc
+ tree
+Date: Fri, 18 Dec 2015 16:33:51 +1100
+Message-ID: <20151218163351.5bfd2def@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33319 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40174 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751484AbbLRF1F (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Dec 2015 00:27:05 -0500
+	id S1750850AbbLRFdx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Dec 2015 00:33:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Takuya Yoshikawa <yoshikawa_takuya_b1@lab.ntt.co.jp>, Paolo Bonzini <pbonzini@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/x86/kvm/mmu.c
+  arch/powerpc/include/asm/pgtable.h
 
-between commits:
+between commit:
 
-  7ee0e5b29d27 ("KVM: x86: MMU: Remove unused parameter of __direct_map()")
-  029499b47738 ("KVM: x86: MMU: Make mmu_set_spte() return emulate value")
+  ee4889c7bc2a ("powerpc/mm: Don't have generic headers introduce functions touching pte bits")
 
-from the kvm tree and commit:
+from the powerpc tree and commit:
 
-  7fd3f3e7c320 ("kvm: rename pfn_t to kvm_pfn_t")
+  e0e8474c0d55 ("mm, dax, gpu: convert vm_insert_mixed to pfn_t")
 
 from the akpm-current tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
+I fixed it up (the code being changed was moved from this file - I added
+the fix up patch below) and can carry the fix as necessary (no action
 is required).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 18 Dec 2015 16:30:47 +1100
+Subject: [PATCH] mm, dax, gpu: merge fix for convert vm_insert_mixed to pfn_t
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/include/asm/book3s/32/pgtable.h | 1 +
+ arch/powerpc/include/asm/book3s/64/hash.h    | 1 +
+ arch/powerpc/include/asm/nohash/pgtable.h    | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+index 38b33dcfcc9d..3ed3303c1295 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+@@ -313,6 +313,7 @@ static inline int pte_present(pte_t pte)
+  * Even if PTEs can be unsigned long long, a PFN is always an unsigned
+  * long for now.
+  */
++#define pfn_pte pfn_pte
+ static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot)
+ {
+ 	return __pte(((pte_basic_t)(pfn) << PTE_RPN_SHIFT) |
+diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/include/asm/book3s/64/hash.h
+index 9e861b4378bd..6ab967d0da00 100644
+--- a/arch/powerpc/include/asm/book3s/64/hash.h
++++ b/arch/powerpc/include/asm/book3s/64/hash.h
+@@ -410,6 +410,7 @@ static inline int pte_present(pte_t pte)
+  * Even if PTEs can be unsigned long long, a PFN is always an unsigned
+  * long for now.
+  */
++#define pfn_pte pfn_pte
+ static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot)
+ {
+ 	return __pte(((pte_basic_t)(pfn) << PTE_RPN_SHIFT) |
+diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
+index 1263c22d60d8..11e3767216c0 100644
+--- a/arch/powerpc/include/asm/nohash/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/pgtable.h
+@@ -49,6 +49,7 @@ static inline int pte_present(pte_t pte)
+  * Even if PTEs can be unsigned long long, a PFN is always an unsigned
+  * long for now.
+  */
++#define pfn_pte pfn_pte
+ static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot) {
+ 	return __pte(((pte_basic_t)(pfn) << PTE_RPN_SHIFT) |
+ 		     pgprot_val(pgprot)); }
+-- 
+2.6.2
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/x86/kvm/mmu.c
-index a1a3d1907fdc,2dd83650d867..000000000000
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@@ -2546,9 -2564,10 +2546,9 @@@ done
-  	return ret;
-  }
-  
- -static void mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep,
- -			 unsigned pte_access, int write_fault, int *emulate,
- -			 int level, gfn_t gfn, kvm_pfn_t pfn, bool speculative,
- -			 bool host_writable)
- +static bool mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep, unsigned pte_access,
-- 			 int write_fault, int level, gfn_t gfn, pfn_t pfn,
-++			 int write_fault, int level, gfn_t gfn, kvm_pfn_t pfn,
- +			 bool speculative, bool host_writable)
-  {
-  	int was_rmapped = 0;
-  	int rmap_count;
-@@@ -2606,11 -2624,9 +2606,11 @@@
-  	}
-  
-  	kvm_release_pfn_clean(pfn);
- +
- +	return emulate;
-  }
-  
-- static pfn_t pte_prefetch_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn,
-+ static kvm_pfn_t pte_prefetch_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn,
-  				     bool no_dirty_log)
-  {
-  	struct kvm_memory_slot *slot;
-@@@ -2691,8 -2708,9 +2691,8 @@@ static void direct_pte_prefetch(struct 
-  	__direct_pte_prefetch(vcpu, sp, sptep);
-  }
-  
- -static int __direct_map(struct kvm_vcpu *vcpu, gpa_t v, int write,
- -			int map_writable, int level, gfn_t gfn, kvm_pfn_t pfn,
- -			bool prefault)
- +static int __direct_map(struct kvm_vcpu *vcpu, int write, int map_writable,
-- 			int level, gfn_t gfn, pfn_t pfn, bool prefault)
-++			int level, gfn_t gfn, kvm_pfn_t pfn, bool prefault)
-  {
-  	struct kvm_shadow_walk_iterator iterator;
-  	struct kvm_mmu_page *sp;
