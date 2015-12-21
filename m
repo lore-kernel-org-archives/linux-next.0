@@ -1,60 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cgroup tree with the tip tree
-Date: Mon, 21 Dec 2015 15:41:21 +1100
-Message-ID: <20151221154121.4bfb97b7@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the cgroup tree with the tip tree
+Date: Sun, 20 Dec 2015 23:48:54 -0500
+Message-ID: <20151221044854.GB27493@htj.duckdns.org>
+References: <20151221154119.66094285@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54298 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750738AbbLUElX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 20 Dec 2015 23:41:23 -0500
+Received: from mail-qg0-f52.google.com ([209.85.192.52]:36317 "EHLO
+	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840AbbLUEs4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Dec 2015 23:48:56 -0500
+Content-Disposition: inline
+In-Reply-To: <20151221154119.66094285@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Oleg Nesterov <oleg@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Johannes Weiner <hannes@cmpxchg.org>
 
-Hi Tejun,
+On Mon, Dec 21, 2015 at 03:41:19PM +1100, Stephen Rothwell wrote:
+> Hi Tejun,
+> 
+> Today's linux-next merge of the cgroup tree got a conflict in:
+> 
+>   init/Kconfig
+> 
+> between commits:
+> 
+>   257372262056 ("x86/intel_rdt: Add support for Cache Allocation detection")
+>   5ad9144cdb9a ("x86,cgroup/intel_rdt : Add a cgroup interface to manage Intel cache allocation")
 
-Today's linux-next merge of the cgroup tree got a conflict in:
+Ingo, can you please revert the rdt cgroup.  I still don't think this
+is the right approach and tglx's new proposal seems a lot better.
 
-  include/linux/cgroup_subsys.h
-
-between commit:
-
-  5ad9144cdb9a ("x86,cgroup/intel_rdt : Add a cgroup interface to manage Intel cache allocation")
-
-from the tip tree and commit:
-
-  b53202e63089 ("cgroup: kill cgrp_ss_priv[CGROUP_CANFORK_COUNT] and friends")
-
-from the cgroup tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+Thanks.
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc include/linux/cgroup_subsys.h
-index c559ef5cae23,0df0336acee9..000000000000
---- a/include/linux/cgroup_subsys.h
-+++ b/include/linux/cgroup_subsys.h
-@@@ -58,15 -52,6 +52,10 @@@ SUBSYS(net_prio
-  SUBSYS(hugetlb)
-  #endif
-  
- +#if IS_ENABLED(CONFIG_INTEL_RDT)
- +SUBSYS(intel_rdt)
- +#endif
- +
-- /*
--  * Subsystems that implement the can_fork() family of callbacks.
--  */
-- SUBSYS_TAG(CANFORK_START)
-- 
-  #if IS_ENABLED(CONFIG_CGROUP_PIDS)
-  SUBSYS(pids)
-  #endif
+tejun
