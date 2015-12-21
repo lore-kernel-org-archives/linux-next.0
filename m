@@ -1,83 +1,71 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: next-20151221 build: 2 failures 13 warnings (next-20151221)
-Date: Mon, 21 Dec 2015 15:05:33 +0100
-Message-ID: <201512211505.34074.arnd@arndb.de>
+Date: Mon, 21 Dec 2015 15:41:49 +0000
+Message-ID: <20151221154149.GK5727@sirena.org.uk>
 References: <E1aAyjj-0007DR-4T@optimist>
+ <201512211505.34074.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hPB2oXVi+7W5/ekT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:62572 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbbLUOGS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Dec 2015 09:06:18 -0500
-In-Reply-To: <E1aAyjj-0007DR-4T@optimist>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45044 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751042AbbLUPmF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Dec 2015 10:42:05 -0500
+Content-Disposition: inline
+In-Reply-To: <201512211505.34074.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linaro-kernel@lists.linaro.org
-Cc: Build bot for Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Just looking at the remaining warnings/errors in linux-next:
 
-On Monday 21 December 2015, Build bot for Mark Brown wrote:
-> ../fs/orangefs/orangefs-kernel.h:773:2: error: implicit declaration of function 'ornagefs_inode_lock' [-Werror=implicit-function-declaration]
-> ../fs/orangefs/orangefs-kernel.h:773:2: error: implicit declaration of function 'ornagefs_inode_lock' [-Werror=implicit-function-declaration]
-> ../fs/orangefs/orangefs-kernel.h:773:2: error: implicit declaration of function 'ornagefs_inode_lock' [-Werror=implicit-function-declaration]
-> ../fs/orangefs/orangefs-kernel.h:773:2: error: implicit declaration of function 'ornagefs_inode_lock' [-Werror=implicit-function-declaration]
+--hPB2oXVi+7W5/ekT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I just sent a patch for this.
+On Mon, Dec 21, 2015 at 03:05:33PM +0100, Arnd Bergmann wrote:
 
-> arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-> 
-> Warnings:
->         ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
 
-I have a trivial patch, need to send it out.
+> Just looking at the remaining warnings/errors in linux-next:
 
->         ../drivers/staging/emxx_udc/emxx_udc.c:843:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->         ../drivers/staging/emxx_udc/emxx_udc.c:1085:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->         ../drivers/staging/emxx_udc/emxx_udc.c:2731:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+> > Warnings:
+> >         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
 
-Submitted this one again last week, I had sent it a month ago, but the maintainer was busy.
+> Not sure how we can improve this, the same thing seems to happen every time a new syscall gets
+> introduced. The actual change is trivial, but we need a better method to sync all architectures.
 
->         ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+Now we've got the warning count down sufficiently the autobuilders may
+actually be just fine here.
 
-rmk pointed out the problem when the patch was sent originally, no idea what we should do
-about it other than reverting the patch that introduced the unused code.
+> > arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
 
-> Warnings:
->         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+> > Warnings:
+> >         arch/arm/configs/multi_v7_defconfig:433:warning: symbol value 'm' invalid for MFD_DA9063
 
-Not sure how we can improve this, the same thing seems to happen every time a new syscall gets
-introduced. The actual change is trivial, but we need a better method to sync all architectures.
+> I need to look into this, probably the result of a defconfig change we merged, but it's not
+> clear whether the driver should be a module, or the defconfig should have it built-in.
 
->         ../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
+The driver should at least support building modularly, there was a patch
+sent to MFD IIRC but I guess it's not applied yet (Lee is on vacation I
+believe which probably won't help).
 
-Sent a patch the other day.
+--hPB2oXVi+7W5/ekT
+Content-Type: application/pgp-signature; name="signature.asc"
 
->         ../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Introduced by Bamvor, currently discussing a solution with him and Linus. We can either shut up
-the compiler or rewrite the function in a nicer way.
+iQEcBAEBCAAGBQJWeB28AAoJECTWi3JdVIfQmzMH/AiIOl9Xix5zUyWSExg6QBsD
+ZB1ZUOvkZv1KogDw2dzM54OXqEvbppzGbfaOqgHpGaaK5mQ+6AiljvB4HT7T5JyO
++/e8NIXvifX4IaZvIs/cTR4mOYe9ad2ME10fFNw4/XIIauPmYh5GUOwDg/Eosmhk
+rmDMGJyxgTncC1wxoZjCn3mz3saBzN13I5Ckdwukc9x1QnLwdCs1+ljX6g3HtTPh
+6slHVcmCDFQ/m7r9AwuDY0ITcjyQdi1K9nc79I+knfD+bKFa261W0dM9moy8qBVY
+9SHANxCwAT7O16wimNxWXBD6LJwjhPeRPGbMppyWP7vo8v1drAhz9eEGFro65xU=
+=Tb/U
+-----END PGP SIGNATURE-----
 
-> arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-> 
-> Warnings:
->         arch/arm/configs/multi_v7_defconfig:433:warning: symbol value 'm' invalid for MFD_DA9063
-
-I need to look into this, probably the result of a defconfig change we merged, but it's not
-clear whether the driver should be a module, or the defconfig should have it built-in.
-
->         ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
->         ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-I don't see these with gcc-5.1
-
->         ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-no this one. If we want to fix it, it's probably best to change the
-optimization level of the file, something gets misoptimzed here and it's
-clear it should not use that much stack.
-
-	Arnd
+--hPB2oXVi+7W5/ekT--
