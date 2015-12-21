@@ -1,183 +1,117 @@
-From: Pramod Kumar <pramodku@broadcom.com>
-Subject: RE: linux-next: build failure after merge of the pinctrl tree
-Date: Mon, 21 Dec 2015 06:23:42 +0000
-Message-ID: <0C803592FC378B4E83922050AB46442A2ADB298E@SJEXCHMB10.corp.ad.broadcom.com>
-References: <20151221155811.04a84bf1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the cgroup tree
+Date: Mon, 21 Dec 2015 18:13:26 +1100
+Message-ID: <20151221181326.069e7a42@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="_002_0C803592FC378B4E83922050AB46442A2ADB298ESJEXCHMB10corpa_"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:22005 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751237AbbLUGXo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Dec 2015 01:23:44 -0500
-In-Reply-To: <20151221155811.04a84bf1@canb.auug.org.au>
-Content-Language: en-US
+Received: from ozlabs.org ([103.22.144.67]:35920 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750794AbbLUHN3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Dec 2015 02:13:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
 
---_002_0C803592FC378B4E83922050AB46442A2ADB298ESJEXCHMB10corpa_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Hi Andrew,
 
-Hi Stephen Rothwell,
+Today's linux-next merge of the akpm tree got a conflict in:
 
-This is the same error what we discussed on Friday mail-chain. Please see t=
-he attachment of my reply.
+  init/Kconfig
 
-Regards,
-Pramod
+between commit:
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: 21 December 2015 10:28
-> To: Linus Walleij
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Pramod Kuma=
-r;
-> Ray Jui; Scott Branden
-> Subject: linux-next: build failure after merge of the pinctrl tree
->=20
-> Hi Linus,
->=20
-> After merging the pinctrl tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:640:50: warning: 'struct cygnus_=
-gpio'
-> declared inside parameter list  static void iproc_gpio_unregister_pinconf=
-(struct
-> cygnus_gpio *chip)
->                                                   ^
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:640:50: warning: its scope is on=
-ly this
-> definition or declaration, which is probably not what you want
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c: In function
-> 'iproc_gpio_unregister_pinconf':
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:642:25: error: dereferencing poi=
-nter to
-> incomplete type 'struct cygnus_gpio'
->   pinctrl_unregister(chip->pctl);
->                          ^
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c: In function 'iproc_gpio_probe':
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:738:32: warning: passing argumen=
-t 1 of
-> 'iproc_gpio_unregister_pinconf' from incompatible pointer type [-
-> Wincompatible-pointer-types]
->   iproc_gpio_unregister_pinconf(chip);
->                                 ^
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:640:13: note: expected 'struct
-> cygnus_gpio *' but argument is of type 'struct iproc_gpio *'
->  static void iproc_gpio_unregister_pinconf(struct cygnus_gpio *chip)
->              ^
->=20
-> Caused by commit
->=20
->  afc8c78d179d ("gpio: Rename func/macro/var to IP-block,iproc")
->=20
-> This does not look like it has even been build tested :-(
->=20
-> I have used the pinctrl tree from next-20151217 again as the previous
-> (fixed) error was hiding this one.
->=20
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+  6bf024e69333 ("cgroup: put controller Kconfig options in meaningful order")
 
+from the cgroup tree and commit:
 
---_002_0C803592FC378B4E83922050AB46442A2ADB298ESJEXCHMB10corpa_
-Content-Type: message/rfc822
-Content-Disposition: attachment;
-	creation-date="Mon, 21 Dec 2015 06:23:41 GMT";
-	modification-date="Mon, 21 Dec 2015 06:23:41 GMT"
+  "mm: memcontrol: introduce CONFIG_MEMCG_LEGACY_KMEM"
 
-From: Pramod Kumar <pramodku@broadcom.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij
-	<linus.walleij@linaro.org>
-CC: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Subject: RE: linux-next: build failure after merge of the pinctrl tree
-Thread-Topic: linux-next: build failure after merge of the pinctrl tree
-Thread-Index: AQHROUaUovEAQ2V1DkmdTMll8kYmt57QMAoQ
-Date: Fri, 18 Dec 2015 05:34:56 +0000
-References: <20151218144516.77c8e052@canb.auug.org.au>
-In-Reply-To: <20151218144516.77c8e052@canb.auug.org.au>
-Content-Language: en-IN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+from the akpm tree.
 
-Hi Stephen/Linus,
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-The patch " [PATCH v2 5/7] gpio: Rename func/macro/var to IP-block,iproc"=20
-(https://lkml.org/lkml/2015/11/18/1004) in "for-next" and "devel" of  pinct=
-rl
-tree ( http://git.linaro.org/people/linus.walleij/linux-pinctrl.git ) has l=
-ittle rebase issue.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Original patch has:
-<snip>
--static void cygnus_gpio_unregister_pinconf(struct cygnus_gpio *chip)
-+static void iproc_gpio_unregister_pinconf(struct iproc_gpio *chip)
-<snip>
-
-while "for-next" and "devel" branch of pinctrl tree has:
-<snip>
--static void cygnus_gpio_unregister_pinconf(struct cygnus_gpio *chip)
-+static void iproc_gpio_unregister_pinconf(struct cygnus_gpio *chip)=20
-<snip>
-
-Please suggest us how could we fix this issue.
-
-Regards,
-Pramod
-
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: 18 December 2015 09:15
-> To: Linus Walleij
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Pramod Kuma=
-r;
-> Ray Jui; Scott Branden
-> Subject: linux-next: build failure after merge of the pinctrl tree
->=20
-> Hi Linus,
->=20
-> After merging the pinctrl tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c: In function
-> 'iproc_gpio_unregister_pinconf':
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:642:25: error: dereferencing poi=
-nter to
-> incomplete type 'struct cygnus_gpio'
->   pinctrl_unregister(chip->pctl);
->                          ^
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c: In function 'iproc_gpio_probe':
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:738:32: warning: passing argumen=
-t 1 of
-> 'iproc_gpio_unregister_pinconf' from incompatible pointer type [-
-> Wincompatible-pointer-types]
->   iproc_gpio_unregister_pinconf(chip);
->                                 ^
-> drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:640:13: note: expected 'struct
-> cygnus_gpio *' but argument is of type 'struct iproc_gpio *'
->  static void iproc_gpio_unregister_pinconf(struct cygnus_gpio *chip)
->              ^
->=20
-> Caused by commit
->=20
->   616043d58a89 ("pinctrl: Rename gpio driver from cygnus to iproc")
->=20
-> I have used the pinctrl tree from next-20151217 for today.
->=20
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-
-
---_002_0C803592FC378B4E83922050AB46442A2ADB298ESJEXCHMB10corpa_--
+diff --cc init/Kconfig
+index faa4d087d69e,8185e8de04a1..000000000000
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@@ -1010,43 -1072,39 +1013,48 @@@ config MEMCG_KME
+  	  the kmem extension can use it to guarantee that no group of processes
+  	  will ever exhaust kernel resources alone.
+  
++ 	  This option affects the ORIGINAL cgroup interface. The cgroup2 memory
++ 	  controller includes important in-kernel memory consumers per default.
++ 
++ 	  If you're using cgroup2, say N.
++ 
+ -config CGROUP_HUGETLB
+ -	bool "HugeTLB Resource Controller for Control Groups"
+ -	depends on HUGETLB_PAGE
+ -	select PAGE_COUNTER
+ +config BLK_CGROUP
+ +	bool "IO controller"
+ +	depends on BLOCK
+  	default n
+ -	help
+ -	  Provides a cgroup Resource Controller for HugeTLB pages.
+ -	  When you enable this, you can put a per cgroup limit on HugeTLB usage.
+ -	  The limit is enforced during page fault. Since HugeTLB doesn't
+ -	  support page reclaim, enforcing the limit at page fault time implies
+ -	  that, the application will get SIGBUS signal if it tries to access
+ -	  HugeTLB pages beyond its limit. This requires the application to know
+ -	  beforehand how much HugeTLB pages it would require for its use. The
+ -	  control group is tracked in the third page lru pointer. This means
+ -	  that we cannot use the controller with huge page less than 3 pages.
+ +	---help---
+ +	Generic block IO controller cgroup interface. This is the common
+ +	cgroup interface which should be used by various IO controlling
+ +	policies.
+  
+ -config CGROUP_PERF
+ -	bool "Enable perf_event per-cpu per-container group (cgroup) monitoring"
+ -	depends on PERF_EVENTS && CGROUPS
+ -	help
+ -	  This option extends the per-cpu mode to restrict monitoring to
+ -	  threads which belong to the cgroup specified and run on the
+ -	  designated cpu.
+ +	Currently, CFQ IO scheduler uses it to recognize task groups and
+ +	control disk bandwidth allocation (proportional time slice allocation)
+ +	to such task groups. It is also used by bio throttling logic in
+ +	block layer to implement upper limit in IO rates on a device.
+  
+ -	  Say N if unsure.
+ +	This option only enables generic Block IO controller infrastructure.
+ +	One needs to also enable actual IO controlling logic/policy. For
+ +	enabling proportional weight division of disk bandwidth in CFQ, set
+ +	CONFIG_CFQ_GROUP_IOSCHED=y; for enabling throttling policy, set
+ +	CONFIG_BLK_DEV_THROTTLING=y.
+ +
+ +	See Documentation/cgroups/blkio-controller.txt for more information.
+ +
+ +config DEBUG_BLK_CGROUP
+ +	bool "IO controller debugging"
+ +	depends on BLK_CGROUP
+ +	default n
+ +	---help---
+ +	Enable some debugging help. Currently it exports additional stat
+ +	files in a cgroup which can be useful for debugging.
+ +
+ +config CGROUP_WRITEBACK
+ +	bool
+ +	depends on MEMCG && BLK_CGROUP
+ +	default y
+  
+  menuconfig CGROUP_SCHED
+ -	bool "Group CPU scheduler"
+ +	bool "CPU controller"
+  	default n
+  	help
+  	  This feature lets CPU scheduler recognize task groups and control CPU
+t
