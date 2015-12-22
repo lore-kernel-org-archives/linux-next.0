@@ -1,75 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Wed, 23 Dec 2015 10:06:15 +1100
-Message-ID: <20151223100615.7d8ec791@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Wed, 23 Dec 2015 00:58:34 +0100
+Message-ID: <CACRpkdaK_LTe=Lq1HeacQtT1wSrxhAt+hzHc8VqvOJdRC6SsyQ@mail.gmail.com>
+References: <20151222164210.170ec46c@canb.auug.org.au>
+	<87h9jbezsi.fsf@belgarion.home>
+	<CACRpkdaXd7nJYpix_nztF6iuSuKYb9H4FMgRr9NcxFRp+vEyzw@mail.gmail.com>
+	<20151223071016.6ae2f346@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54257 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932072AbbLVXGQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Dec 2015 18:06:16 -0500
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:35026 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753536AbbLVX6f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Dec 2015 18:58:35 -0500
+Received: by mail-ob0-f175.google.com with SMTP id 18so155702183obc.2
+        for <linux-next@vger.kernel.org>; Tue, 22 Dec 2015 15:58:34 -0800 (PST)
+In-Reply-To: <20151223071016.6ae2f346@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Ville =?UTF-8?B?U3lyasOk?= =?UTF-8?B?bMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Dave,
+On Tue, Dec 22, 2015 at 9:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Tue, 22 Dec 2015 10:08:58 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
+>>
+>> On Tue, Dec 22, 2015 at 7:57 AM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>> > Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>> >
+>> >> After merging the gpio tree, today's linux-next build (lots without
+>> >> CONFIG_OF) failed like this:
+>> >>
+>> >> drivers/gpio/gpio-pxa.c: In function 'pxa_gpio_probe':
+>> >> drivers/gpio/gpio-pxa.c:648:12: error: 'pxa_irq_domain_ops' undeclared (first use in this function)
+>> >>
+>> >> Caused by commit
+>> >>
+>> >>   384ca3c6a28d ("gpio: pxa: change the interrupt management")
+>> >>
+>> >> The reference to pxa_irq_domain_ops was moved out of the protection of
+>> >> CONFIG_OF ...
+>> >>
+>> >> Discovered after the release.
+>> >
+>> > Hi Stephen,
+>> >
+>> > The fix has been sent in http://www.spinics.net/lists/kernel/msg2147774.html but
+>> > did not reach Linus's next tree yet probably.
+>>
+>> Sorry, I'll pick it now-ish...
+>
+> Not in the published gpio tree, yet?
 
-Today's linux-next merge of the drm tree got a conflict in:
+Pushed now, I was waiting for the autobuilders to munch it first.
+Sorry for the delay :(
 
-  drivers/gpu/drm/i915/intel_display.c
-
-between commit:
-
-  57a2af6bbc7a ("drm/i915: Kill intel_crtc->cursor_bo")
-
-from the drm-intel-fixes tree and commit:
-
-  6285262259ca ("drm/i915: Only run commit when crtc is active, v2.")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/gpu/drm/i915/intel_display.c
-index beb0374a19f1,bda6b9c82e66..000000000000
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@@ -6322,13 -6351,12 +6366,14 @@@ static void intel_crtc_disable_noatomic
-  		return;
-  
-  	if (to_intel_plane_state(crtc->primary->state)->visible) {
-- 		intel_crtc_wait_for_pending_flips(crtc);
-+ 		WARN_ON(intel_crtc->unpin_work);
-+ 
-  		intel_pre_disable_primary(crtc);
- +
- +		intel_crtc_disable_planes(crtc, 1 << drm_plane_index(crtc->primary));
- +		to_intel_plane_state(crtc->primary->state)->visible = false;
-  	}
-  
- -	intel_crtc_disable_planes(crtc, crtc->state->plane_mask);
-  	dev_priv->display.crtc_disable(crtc);
-  	intel_crtc->active = false;
-  	intel_update_watermarks(crtc);
-@@@ -13809,9 -14051,10 +14077,8 @@@ intel_commit_cursor_plane(struct drm_pl
-  		addr = obj->phys_handle->busaddr;
-  
-  	intel_crtc->cursor_addr = addr;
- -	intel_crtc->cursor_bo = obj;
-  
-- 	if (crtc->state->active)
-- 		intel_crtc_update_cursor(crtc, state->visible);
- -update:
-+ 	intel_crtc_update_cursor(crtc, state->visible);
-  }
-  
-  static struct drm_plane *intel_cursor_plane_create(struct drm_device *dev,
+Yours,
+Linus Walleij
