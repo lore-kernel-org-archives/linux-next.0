@@ -1,43 +1,36 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Tue, 22 Dec 2015 07:57:17 +0100
-Message-ID: <87h9jbezsi.fsf@belgarion.home>
-References: <20151222164210.170ec46c@canb.auug.org.au>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: linux-next: Tree for Dec 22
+Date: Tue, 22 Dec 2015 13:08:16 +0530
+Message-ID: <20151222073815.GA21698@sudip-pc>
+References: <20151222162955.3f366781@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151222164210.170ec46c@canb.auug.org.au> (Stephen Rothwell's
-	message of "Tue, 22 Dec 2015 16:42:10 +1100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:34704 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752620AbbLVHi1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Dec 2015 02:38:27 -0500
+Content-Disposition: inline
+In-Reply-To: <20151222162955.3f366781@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Hans-Peter Nilsson <hans-peter.nilsson@axis.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Tue, Dec 22, 2015 at 04:29:55PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20151221:
 
-> Hi Linus,
->
-> After merging the gpio tree, today's linux-next build (lots without
-> CONFIG_OF) failed like this:
->
-> drivers/gpio/gpio-pxa.c: In function 'pxa_gpio_probe':
-> drivers/gpio/gpio-pxa.c:648:12: error: 'pxa_irq_domain_ops' undeclared (first use in this function)
->
-> Caused by commit
->
->   384ca3c6a28d ("gpio: pxa: change the interrupt management")
->
-> The reference to pxa_irq_domain_ops was moved out of the protection of
-> CONFIG_OF ...
->
-> Discovered after the release.
+cris allmodconfig fails with:
+../block/partitions/ldm.c: In function 'ldm_partition':
+../block/partitions/ldm.c:1567:1: internal compiler error: in gen_reg_rtx, at emit-rtl.c:1027
 
-Hi Stephen,
+compiler is based on gcc 5.3.0, and I guess since cris defconfig built
+properly I have not messed up while building the cross_compiler.
 
-The fix has been sent in http://www.spinics.net/lists/kernel/msg2147774.html but
-did not reach Linus's next tree yet probably.
+cris allmodconfig build log is at:
+https://travis-ci.org/sudipm-mukherjee/parport/jobs/98258283
 
-Cheers.
-
--- 
-Robert
+regards
+sudip
