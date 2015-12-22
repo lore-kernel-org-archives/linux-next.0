@@ -1,55 +1,45 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: next-20151222 build: 3 failures 13 warnings (next-20151222)
-Date: Tue, 22 Dec 2015 12:22:28 +0000
-Message-ID: <20151222122228.GL5727@sirena.org.uk>
-References: <E1aBIky-0007nI-7t@optimist>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Dec 22 (mm/memcontrol)
+Date: Tue, 22 Dec 2015 10:15:37 -0800
+Message-ID: <56799349.9090300@infradead.org>
+References: <20151222162955.3f366781@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="njUEgrJvs9ryr/H/"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <E1aBIky-0007nI-7t@optimist>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andy Gross <agross-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, =?iso-8859-1?Q?Bj=F6rn?= Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Ivan T. Ivanov" <iivanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:34622 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932093AbbLVSPj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Dec 2015 13:15:39 -0500
+In-Reply-To: <20151222162955.3f366781@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>
+
+On 12/21/15 21:29, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20151221:
+> 
+
+on i386 or x86_64:
+
+when CONFIG_SLOB=y:
+
+../mm/memcontrol.c: In function 'memcg_update_kmem_limit':
+../mm/memcontrol.c:2974:3: error: implicit declaration of function 'memcg_online_kmem' [-Werror=implicit-function-declaration]
+   ret = memcg_online_kmem(memcg);
+   ^
+../mm/memcontrol.c: In function 'mem_cgroup_css_alloc':
+../mm/memcontrol.c:4229:2: error: too many arguments to function 'memcg_propagate_kmem'
+  error = memcg_propagate_kmem(parent, memcg);
+  ^
+../mm/memcontrol.c:2949:12: note: declared here
+ static int memcg_propagate_kmem(struct mem_cgroup *memcg)
+            ^
 
 
---njUEgrJvs9ryr/H/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Dec 22, 2015 at 08:57:20AM +0000, Build bot for Mark Brown wrote:
-
-Today's linux-next fails to link an arm64 allmodconfig due to:
-
-> ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-mpp.ko] undefined!
-> ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-gpio.ko] undefined!
-> ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-mpp.ko] undefined!
-> ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-gpio.ko] undefined!
-
-which are caused by ab4256cfeab91569 (pinctrl: qcom: pmic-gpio/mpp:
-of_irq_count() == npins) which adds uses of irq_of_count() but that is
-not exported so can't be used in modules.  I've just sent a patch adding
-the export.
-
---njUEgrJvs9ryr/H/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWeUCDAAoJECTWi3JdVIfQDOgH/05kveaBhbb8lG+veY9ieUY3
-739gL71e7941x8k7nkq5ZqZ2xttkB6yl6MZh0WUWuODfY0+Aq23YEXRSY0tSt/Lp
-gjeND+8wLhObH4IQL2AhOpB0Zg9+DxX38qEEsD7QBdR1HKENyQgbv8INei1MRX0/
-N4hNRsAk8es/zaXf2y1iE4Qyw+Xob7U+x2D3wlwXO3BKcy7u1iLPxPIb4EcA+KCE
-zC4VCW2g6DEtID+IyfQ5Ra2qgTy6yPVN3HW86BJV17myfRokzp2QatfmBaogU7ub
-lNqDZ9LI1OAHTrhM+IkFs9UM8a01NW82Z28s92yeXXdrdZQG/R7BVSKf/1Hy9Eg=
-=dSuG
------END PGP SIGNATURE-----
-
---njUEgrJvs9ryr/H/--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+~Randy
