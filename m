@@ -1,40 +1,31 @@
-From: Florian Westphal <fw@strlen.de>
-Subject: Re: linux-next: kernel panic in ipv6_defrag
-Date: Wed, 23 Dec 2015 09:59:47 +0100
-Message-ID: <20151223085947.GD9692@breakpoint.cc>
-References: <567A0DCD.3060001@oracle.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: 842 - remove WARN inside printk
+Date: Wed, 23 Dec 2015 18:25:28 +0800
+Message-ID: <20151223102528.GB1205@gondor.apana.org.au>
+References: <5671C83C.7@infradead.org>
+ <1450720330-30676-1-git-send-email-ddstreet@ieee.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <567A0DCD.3060001@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, linux-next@vger.kernel.org, Linux Kernel mailing list <linux-kernel@vger.kernel.org>
+In-Reply-To: <1450720330-30676-1-git-send-email-ddstreet@ieee.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Dan Streetman <ddstreet@ieee.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Haren Myneni <haren@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Junxiao Bi <junxiao.bi@oracle.com> wrote:
-> The following panic happened when I run ocfs2-test on linux-next. Kernel
-> config is attached.
+On Mon, Dec 21, 2015 at 12:52:10PM -0500, Dan Streetman wrote:
+> Remove the WARN() from the beN_to_cpu macro, which is used as a param to a
+> pr_debug() call.  With a certain kernel config, this printk-in-printk
+> results in the no_printk() macro trying to recursively call the
+> no_printk() macro, and since macros can't recursively call themselves
+> a build error results.
 > 
-> [64910.905501] BUG: unable to handle kernel NULL pointer dereference at
->           (null)
-> [64910.906466] IP: [<ffffffff8183cc8d>] nf_ct_frag6_gather+0x7ad/0x9c0
-[..]
-> ocfs2_stack_o2cb(O) ocfs2_dlm(O) ocfs2_nodemanager(O) ocfs2_stackglue(O)
-> iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi xen_kbdfront
-> xen_netfront xen_fbfront xen_blkfront [last unloaded: ocfs2_stackglue]
-> [64910.906466] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G           O
-> 4.4.0-rc5-next-20151217 #1
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Dan Streetman <ddstreet@ieee.org>
 
-Seems like this snapshot still lacks
-
-e97ac12859dbf4d3ee0eddb9798867541d1d1e1e
-("netfilter: ipv6: nf_defrag: fix NULL deref panic"),
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/net/ipv6/netfilter/nf_conntrack_reasm.c?id=e97ac12859dbf4d3ee0eddb9798867541d1d1e1e
-
-Its included starting with next-20151221.
-
-Please report back if it occurs with above commit present.
-
-Thanks.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
