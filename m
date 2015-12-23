@@ -1,31 +1,56 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] crypto: 842 - remove WARN inside printk
-Date: Wed, 23 Dec 2015 18:25:28 +0800
-Message-ID: <20151223102528.GB1205@gondor.apana.org.au>
-References: <5671C83C.7@infradead.org>
- <1450720330-30676-1-git-send-email-ddstreet@ieee.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20151222 build: 3 failures 13 warnings (next-20151222)
+Date: Wed, 23 Dec 2015 11:37:12 +0000
+Message-ID: <20151223113712.GO16023@sirena.org.uk>
+References: <E1aBIky-0007nI-7t@optimist>
+ <20151222122228.GL5727@sirena.org.uk>
+ <20151223034636.GA4569@hector.tx.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PtLnLSExlPr13a2X"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47271 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752864AbbLWLhg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Dec 2015 06:37:36 -0500
 Content-Disposition: inline
-In-Reply-To: <1450720330-30676-1-git-send-email-ddstreet@ieee.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Dan Streetman <ddstreet@ieee.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Haren Myneni <haren@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20151223034636.GA4569@hector.tx.rr.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andy Gross <andy.gross@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <agross@codeaurora.org>, =?iso-8859-1?Q?Bj=F6rn?= Andersson <bjorn.andersson@sonymobile.com>, Linus Walleij <linus.walleij@linaro.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Mon, Dec 21, 2015 at 12:52:10PM -0500, Dan Streetman wrote:
-> Remove the WARN() from the beN_to_cpu macro, which is used as a param to a
-> pr_debug() call.  With a certain kernel config, this printk-in-printk
-> results in the no_printk() macro trying to recursively call the
-> no_printk() macro, and since macros can't recursively call themselves
-> a build error results.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Dan Streetman <ddstreet@ieee.org>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--PtLnLSExlPr13a2X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Dec 22, 2015 at 09:46:36PM -0600, Andy Gross wrote:
+> On Tue, Dec 22, 2015 at 12:22:28PM +0000, Mark Brown wrote:
+
+> > which are caused by ab4256cfeab91569 (pinctrl: qcom: pmic-gpio/mpp:
+> > of_irq_count() == npins) which adds uses of irq_of_count() but that is
+> > not exported so can't be used in modules.  I've just sent a patch adding
+> > the export.
+
+> Thanks for fixing that Mark.  I had seen it in the pinctrl builds but hadn't
+> gotten the screen time to send in a fix.
+
+It's not fixed, Rob didn't want the export.
+
+--PtLnLSExlPr13a2X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWeodoAAoJECTWi3JdVIfQRQIH/isXWGxioH1ShTA4wzVfpWbJ
++VZgfKrNaByPeSVCsT9Of9CpdcRAi5UevnQUFhOYF2wxDdCMS37ElwVf9PKAQPPb
+lvGB8ofg+Nr7IOPe7jgkJ2EZ6B8Nb9+Lpg/opmmnph+WTjXpX7MULT1p+LyWP9+S
+KsAHBYzXCWy8C691roOGUhTd6Za9lKpASXXS2CqBlSkQ+hinoyEqlOO0v7WCHcbh
+69vPDa7PtR7dOtAtHQIaY8T6lUn3av2NjyCMI3LG7ScqMes6UtNPx0lk8MbdUzDM
+FG//umNF3N8Yptb3A/39/ur8WrPEKNqFZByuC3WER/8V2vEUmFZ5KQAGPCCBNX4=
+=n75E
+-----END PGP SIGNATURE-----
+
+--PtLnLSExlPr13a2X--
