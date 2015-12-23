@@ -1,153 +1,40 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20151223 build: 2 failures 10 warnings (next-20151223)
-Date: Wed, 23 Dec 2015 07:13:12 +0000
-Message-ID: <E1aBdbk-0002Qn-8O@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47026 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752474AbbLWHNT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Dec 2015 02:13:19 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Florian Westphal <fw@strlen.de>
+Subject: Re: linux-next: kernel panic in ipv6_defrag
+Date: Wed, 23 Dec 2015 09:59:47 +0100
+Message-ID: <20151223085947.GD9692@breakpoint.cc>
+References: <567A0DCD.3060001@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <567A0DCD.3060001@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, linux-next@vger.kernel.org, Linux Kernel mailing list <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20151223
-Git describe: next-20151223
-Commit: 80c75a0f1d Add linux-next specific files for 20151223
+Junxiao Bi <junxiao.bi@oracle.com> wrote:
+> The following panic happened when I run ocfs2-test on linux-next. Kernel
+> config is attached.
+> 
+> [64910.905501] BUG: unable to handle kernel NULL pointer dereference at
+>           (null)
+> [64910.906466] IP: [<ffffffff8183cc8d>] nf_ct_frag6_gather+0x7ad/0x9c0
+[..]
+> ocfs2_stack_o2cb(O) ocfs2_dlm(O) ocfs2_nodemanager(O) ocfs2_stackglue(O)
+> iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi xen_kbdfront
+> xen_netfront xen_fbfront xen_blkfront [last unloaded: ocfs2_stackglue]
+> [64910.906466] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G           O
+> 4.4.0-rc5-next-20151217 #1
 
-Build Time: 65 min 25 sec
+Seems like this snapshot still lacks
 
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
+e97ac12859dbf4d3ee0eddb9798867541d1d1e1e
+("netfilter: ipv6: nf_defrag: fix NULL deref panic"),
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/net/ipv6/netfilter/nf_conntrack_reasm.c?id=e97ac12859dbf4d3ee0eddb9798867541d1d1e1e
 
-Errors: 5
-Warnings: 10
-Section Mismatches: 0
+Its included starting with next-20151221.
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+Please report back if it occurs with above commit present.
 
-Errors:
-
-	arm64-allmodconfig
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-mpp.ko] undefined!
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-gpio.ko] undefined!
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-mpp.ko] undefined!
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-gpio.ko] undefined!
-ERROR: "of_default_bus_match_table" [drivers/bus/uniphier-system-bus.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-mpp.ko] undefined!
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-gpio.ko] undefined!
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-mpp.ko] undefined!
-ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-gpio.ko] undefined!
-ERROR: "of_default_bus_match_table" [drivers/bus/uniphier-system-bus.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-multi_v5_defconfig
-      8 warnings    0 mismatches  : arm-multi_v7_defconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 5
-	  2 ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-mpp.ko] undefined!
-	  2 ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-gpio.ko] undefined!
-	  2 ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-mpp.ko] undefined!
-	  2 ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-gpio.ko] undefined!
-	  2 ERROR: "of_default_bus_match_table" [drivers/bus/uniphier-system-bus.ko] undefined!
-
-Warnings Summary: 10
-	  6 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	  3 ../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
-	  2 ../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 arch/arm/configs/multi_v7_defconfig:433:warning: symbol value 'm' invalid for MFD_DA9063
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 5 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-mpp.ko] undefined!
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-gpio.ko] undefined!
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-mpp.ko] undefined!
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-gpio.ko] undefined!
-	ERROR: "of_default_bus_match_table" [drivers/bus/uniphier-system-bus.ko] undefined!
-
-Warnings:
-	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
-	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm/configs/multi_v7_defconfig:433:warning: symbol value 'm' invalid for MFD_DA9063
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/gpio/gpiolib.c:225:31: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 5 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-mpp.ko] undefined!
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-ssbi-gpio.ko] undefined!
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-mpp.ko] undefined!
-	ERROR: "of_irq_count" [drivers/pinctrl/qcom/pinctrl-spmi-gpio.ko] undefined!
-	ERROR: "of_default_bus_match_table" [drivers/bus/uniphier-system-bus.ko] undefined!
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../kernel/printk/nmi.c:143:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' [-Wformat]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpio/gpiolib.c:193:20: warning: 'iterator' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
+Thanks.
