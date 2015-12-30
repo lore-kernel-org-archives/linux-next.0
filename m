@@ -1,67 +1,34 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 2/3] device property: the secondary fwnode needs to depend on the primary
-Date: Tue, 29 Dec 2015 13:07:49 +0200
-Message-ID: <1451387271-56535-3-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1451387271-56535-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 1/3] device property: add spaces to PROPERTY_ENTRY_STRING macro
+Date: Wed, 30 Dec 2015 02:49:26 +0100
+Message-ID: <1627434.AfSeGfofYv@vostro.rjw.lan>
+References: <1450877684-76316-1-git-send-email-andriy.shevchenko@linux.intel.com> <4285778.gtB2L18Hsx@vostro.rjw.lan> <1451301853.30729.326.camel@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1451387271-56535-1-git-send-email-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <1451301853.30729.326.camel@linux.intel.com>
 Sender: linux-acpi-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com, "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com, linux-acpi@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On Monday, December 28, 2015 01:24:13 PM Andy Shevchenko wrote:
+> On Mon, 2015-12-28 at 02:12 +0100, Rafael J. Wysocki wrote:
+> > On Wednesday, December 23, 2015 03:34:42 PM Andy Shevchenko wrote:
+> > > Just a style fix, no functional changes.
+> > > 
+> > > To be folded to Andrew's patch.
+> > 
+> > What patch?
+> 
+> In linux-next from Andrew:
+> 
+> e39ece7 include-linux-propertyh-fix-build-issues-with-gcc-444-fix
+> 40bb8a1 include/linux/property.h: fix build issues with gcc-4.4.4
 
-This fixes NULL pointer dereference when the primary fwnode handle
-does not exist, for example with PCI devices that do not have ACPI
-companion.
+Any pointers to the original patch submission(s)?
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/base/property.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 0b22c8a..b3429cc 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -218,7 +218,7 @@ bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
- 	bool ret;
- 
- 	ret = __fwnode_property_present(fwnode, propname);
--	if (ret == false && fwnode->secondary)
-+	if (ret == false && fwnode && fwnode->secondary)
- 		ret = __fwnode_property_present(fwnode->secondary, propname);
- 	return ret;
- }
-@@ -423,7 +423,7 @@ EXPORT_SYMBOL_GPL(device_property_match_string);
- 	int _ret_;									\
- 	_ret_ = FWNODE_PROP_READ(_fwnode_, _propname_, _type_, _proptype_,		\
- 				 _val_, _nval_);					\
--	if (_ret_ == -EINVAL && _fwnode_->secondary)					\
-+	if (_ret_ == -EINVAL && _fwnode_ && _fwnode_->secondary)			\
- 		_ret_ = FWNODE_PROP_READ(_fwnode_->secondary, _propname_, _type_,	\
- 				_proptype_, _val_, _nval_);				\
- 	_ret_;										\
-@@ -593,7 +593,7 @@ int fwnode_property_read_string_array(struct fwnode_handle *fwnode,
- 	int ret;
- 
- 	ret = __fwnode_property_read_string_array(fwnode, propname, val, nval);
--	if (ret == -EINVAL && fwnode->secondary)
-+	if (ret == -EINVAL && fwnode && fwnode->secondary)
- 		ret = __fwnode_property_read_string_array(fwnode->secondary,
- 							  propname, val, nval);
- 	return ret;
-@@ -621,7 +621,7 @@ int fwnode_property_read_string(struct fwnode_handle *fwnode,
- 	int ret;
- 
- 	ret = __fwnode_property_read_string(fwnode, propname, val);
--	if (ret == -EINVAL && fwnode->secondary)
-+	if (ret == -EINVAL && fwnode && fwnode->secondary)
- 		ret = __fwnode_property_read_string(fwnode->secondary,
- 						    propname, val);
- 	return ret;
--- 
-2.6.4
+Thanks,
+Rafael
 
