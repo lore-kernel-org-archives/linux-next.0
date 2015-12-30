@@ -1,101 +1,56 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 1/3] device property: add spaces to
- PROPERTY_ENTRY_STRING macro
-Date: Tue, 29 Dec 2015 17:44:48 -0800
-Message-ID: <20151229174448.dba9a7ab.akpm@linux-foundation.org>
-References: <1450877684-76316-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	<1627434.AfSeGfofYv@vostro.rjw.lan>
-	<20151229172453.b8bf71ef.akpm@linux-foundation.org>
-	<1850926.j60LlceTNY@vostro.rjw.lan>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: HDLCD tree for linux-next
+Date: Thu, 31 Dec 2015 09:00:03 +1100
+Message-ID: <20151231090003.1e8b4b6d@canb.auug.org.au>
+References: <20151223143022.GY960@e106497-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1850926.j60LlceTNY@vostro.rjw.lan>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com, linux-acpi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:49511 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750940AbbL3WAG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Dec 2015 17:00:06 -0500
+In-Reply-To: <20151223143022.GY960@e106497-lin.cambridge.arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
 
-On Wed, 30 Dec 2015 03:06:23 +0100 "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+Hi Liviu,
 
-> I'll apply it to my tree if you don't mind with the Andy's [1/3] on top
-> so we have all of that in one place.
+On Wed, 23 Dec 2015 14:30:23 +0000 Liviu Dudau <Liviu.Dudau@arm.com> wrote:
+>
+> I would like to add the HDLCD DRM driver tree to linux-next. I'm planning
+> to send a pull request for inclusion into v4.5 and I hope that getting a
+> wider exposure for a few weeks is beneficial.
+> 
+> Please add the following git tree:
+> 
+>    git://linux-arm.org/linux-ld for-upstream/hdlcd
+> 
+> It is based on Dave Airlie's drm-next tree as of 23rd of December.
 
-That version needed a fix.  Here's the one to apply:
+Added from today (though there may not be a release until Monday).
 
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: include/linux/property.h: fix build issues with gcc-4.4.4
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
 
-gcc-4.4.4 has problems with initialization of anonymous unions:
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-drivers/mfd/intel-lpss-acpi.c:30: error: unknown field 'value' specified in initializer
-
-work around this by crafting the initializers in a manner which the
-compiler can handle.
-
-Cc: Kevin Fenzi <kevin@scrye.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- include/linux/property.h |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff -puN include/linux/property.h~include-linux-propertyh-fix-build-issues-with-gcc-444 include/linux/property.h
---- a/include/linux/property.h~include-linux-propertyh-fix-build-issues-with-gcc-444
-+++ a/include/linux/property.h
-@@ -175,12 +175,19 @@ struct property_entry {
- 	};
- };
- 
-+/*
-+ * Note: the below four initializers for the anonymous union are carefully
-+ * crafted to avoid gcc-4.4.4's problems with initialization of anon unions
-+ * and structs.
-+ */
-+
- #define PROPERTY_ENTRY_INTEGER_ARRAY(_name_, _type_, _val_)	\
- {								\
- 	.name = _name_,						\
- 	.length = ARRAY_SIZE(_val_) * sizeof(_type_),		\
- 	.is_array = true,					\
--	.pointer._type_##_data = _val_,				\
-+	.is_string = false,					\
-+	{ .pointer = { _type_##_data = _val_ } },		\
- }
- 
- #define PROPERTY_ENTRY_U8_ARRAY(_name_, _val_)			\
-@@ -198,14 +205,15 @@ struct property_entry {
- 	.length = ARRAY_SIZE(_val_) * sizeof(const char *),	\
- 	.is_array = true,					\
- 	.is_string = true,					\
--	.pointer.str = _val_,					\
-+	{ .pointer = { .str = _val_ } },			\
- }
- 
- #define PROPERTY_ENTRY_INTEGER(_name_, _type_, _val_)	\
- {							\
- 	.name = _name_,					\
- 	.length = sizeof(_type_),			\
--	.value._type_##_data = _val_,			\
-+	.is_string = false,				\
-+	{ .value = { ._type_##_data = _val_ } },	\
- }
- 
- #define PROPERTY_ENTRY_U8(_name_, _val_)		\
-@@ -222,7 +230,7 @@ struct property_entry {
- 	.name = _name_,					\
- 	.length = sizeof(_val_),			\
- 	.is_string = true,				\
--	.value.str = _val_,				\
-+	{ .value = {.str = _val_} },			\
- }
- 
- #define PROPERTY_ENTRY_BOOL(_name_)		\
-_
-
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
