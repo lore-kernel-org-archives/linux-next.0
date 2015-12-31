@@ -1,31 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rdma tree with the nfsd tree
-Date: Thu, 31 Dec 2015 13:30:22 +1100
-Message-ID: <20151231133022.0b3ecab9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Thu, 31 Dec 2015 13:40:11 +1100
+Message-ID: <20151231134011.165b239b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42317 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752239AbbLaCkN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Dec 2015 21:40:13 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Yao <mark.yao@rock-chips.com>
 
-Hi Doug,
+Hi Dave,
 
-Today's linux-next merge of the rdma tree got conflicts in a quite a
-few files between (mostly, I think) commit:
+After merging the drm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  6c7b6d2d442c ("IB: merge struct ib_device_attr into struct ib_device")
+ERROR: "vop_component_ops" [drivers/gpu/drm/rockchip/rockchip_vop_reg.ko] undefined!
 
-from the nfsd tree and various commits from the rdma tree.
+Caused by commit
 
-It would have taken me considerable time to fix the conflicts up, so I
-have dropped teh rdma tree for today (just because it was merged second).
-Please have a conversation and figure out how you are going to cooperate
-and get these conflicts fixed e.g. set up a stable branch with Christoph's
-commit (and any other conflicting commits) in it and merge that into
-both trees.
+  a67719d18229 ("drm/rockchip: vop: spilt register related into rockchip_reg_vop.c")
+
+I have added the following fix patch for today (just because its
+Christmas :-)):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 31 Dec 2015 13:35:27 +1100
+Subject: [PATCH] drm/rockchip: vop: export vop_component_ops to modules
+
+Fixes: a67719d18229 ("drm/rockchip: vop: spilt register related into rockchip_reg_vop.c")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index d83bf87ba71e..f5b3da2f92d7 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1395,3 +1395,4 @@ const struct component_ops vop_component_ops = {
+ 	.bind = vop_bind,
+ 	.unbind = vop_unbind,
+ };
++EXPORT_SYMBOL_GPL(vop_component_ops);
+-- 
+2.6.4
 
 -- 
 Cheers,
