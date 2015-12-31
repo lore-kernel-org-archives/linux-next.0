@@ -1,68 +1,79 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: manual merge of the vhost tree with the tip tree
-Date: Thu, 31 Dec 2015 12:25:00 +0200
-Message-ID: <20151231121547-mutt-send-email-mst@redhat.com>
-References: <20151231202347.3090c74b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Thu, 31 Dec 2015 21:31:24 +1100
+Message-ID: <20151231213124.1973e995@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47423 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751250AbbLaKZF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2015 05:25:05 -0500
-Content-Disposition: inline
-In-Reply-To: <20151231202347.3090c74b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rex Zhu <Rex.Zhu@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 31, 2015 at 08:23:47PM +1100, Stephen Rothwell wrote:
-> Hi Michael,
-> 
-> Today's linux-next merge of the vhost tree got conflicts in:
-> 
->   arch/ia64/include/asm/barrier.h
->   arch/powerpc/include/asm/barrier.h
->   arch/s390/include/asm/barrier.h
->   include/asm-generic/barrier.h
-> 
-> between commit:
-> 
->   d5a73cadf3fd ("lcoking/barriers, arch: Use smp barriers in smp_store_release()")
-> 
-> from the tip tree and commit:
-> 
->   2683de3a1732 ("ia64: reuse asm-generic/barrier.h")
->   d78113bef3e0 ("powerpc: reuse asm-generic/barrier.h")
->   25bc870c914b ("s390: reuse asm-generic/barrier.h")
->   24888a057e97 ("asm-generic: add __smp_XXX wrappers")
-> 
-> from the vhost tree.
+Hi Dave,
 
-Thanks for letting me know.
+After merging the drm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I should probably cherry-pick d5a73cadf3fd - this will
-make it appear twice in git history, but seems cleaner
-than rebasing all of vhost on top of tip.
+drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/tonga_thermal.c: In function 'tonga_fan_ctrl_get_fan_speed_percent':
+drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/tonga_thermal.c:84:2: error: implicit declaration of function 'do_div' [-Werror=implicit-function-declaration]
+  do_div(tmp64, duty100);
+  ^
+drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/fiji_thermal.c: In function 'fiji_fan_ctrl_get_fan_speed_percent':
+drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/fiji_thermal.c:78:2: error: implicit declaration of function 'do_div' [-Werror=implicit-function-declaration]
+  do_div(tmp64, duty100);
+  ^
 
-Is everyone fine with this?
+Caused by commit
 
-Alternatively, I could submit the virt barriers + virtio patches for
-inclusion in tip.
+  1e4854e96c35 ("drm/amdgpu/powerplay: implement thermal control for tonga.")
 
-> I fixed it up (in each case taking the vhost tree version) and can
-> carry the fix as necessary (no action is required).
-> 
-> However, given the ongoing review and discussion, I do wonder if these
-> vhost tree commits should be in linux-next yet.
+[I notice that that commit does not have a Signed-off-by from its
+committer (Alex)]
 
-So far I got comments from David Miller about the API naming, and I'd
-like to get more feedback  - at least from Peter Zijlstra who gave me
-the idea.  Otherwise this seems rather like a safe bet, and
-this kind of integration issue seems like exactly the kind of thing
-linux-next helps figure out.
+I applied the following fix patch for today:
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 31 Dec 2015 21:20:20 +1100
+Subject: [PATCH] drm/amdgpu/powerplay: include asm/div64.h for do_div()
+
+Fixes: 1e4854e96c35 ("drm/amdgpu/powerplay: implement thermal control for tonga.")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c  | 2 +-
+ drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c b/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c
+index def57d0675ed..e76a7de9aa32 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c
+@@ -20,7 +20,7 @@
+  * OTHER DEALINGS IN THE SOFTWARE.
+  *
+  */
+-
++#include <asm/div64.h>
+ #include "fiji_thermal.h"
+ #include "fiji_hwmgr.h"
+ #include "fiji_smumgr.h"
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c b/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c
+index 2e159b003e71..a188174747c9 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c
+@@ -20,7 +20,7 @@
+  * OTHER DEALINGS IN THE SOFTWARE.
+  *
+  */
+-
++#include <asm/div64.h>
+ #include "tonga_thermal.h"
+ #include "tonga_hwmgr.h"
+ #include "tonga_smumgr.h"
+-- 
+2.6.4
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
