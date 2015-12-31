@@ -1,56 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the jc_docs
- tree
-Date: Thu, 31 Dec 2015 21:43:07 +1100
-Message-ID: <20151231214307.53f62bd2@canb.auug.org.au>
+From: Petko Manolov <petkan@mip-labs.com>
+Subject: Re: linux-next: manual merge of the security tree with the vfs tree
+Date: Thu, 31 Dec 2015 12:45:35 +0200
+Message-ID: <20151231104535.GA5555@localhost>
+References: <20151231152453.08cfae79@canb.auug.org.au>
+ <20151231043019.GD9938@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59140 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753516AbbLaKnI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2015 05:43:08 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Elliott <elliott@hpe.com>, Taku Izumi <izumi.taku@jp.fujitsu.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20151231043019.GD9938@ZenIV.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+On 15-12-31 04:30:19, Al Viro wrote:
+> On Thu, Dec 31, 2015 at 03:24:53PM +1100, Stephen Rothwell wrote:
+> > Hi James,
+> > 
+> > Today's linux-next merge of the security tree got a conflict in:
+> > 
+> >   security/integrity/ima/ima_fs.c
+> > 
+> > between commit:
+> > 
+> >   3bc8f29b149e ("new helper: memdup_user_nul()")
+> > 
+> > from the vfs tree and commit:
+> > 
+> >   38d859f991f3 ("IMA: policy can now be updated multiple times")
+> > 
+> > from the security tree.
+> > 
+> > I fixed it up (hopefully, see below) and can carry the fix as necessary
+> > (no action is required).
+>  
+> > + 	res = mutex_lock_interruptible(&ima_write_mutex);
+> > + 	if (res)
+> > + 		return res;
+> >   
+> >   	if (datalen >= PAGE_SIZE)
+> >   		datalen = PAGE_SIZE - 1;
+> >   
+> >   	/* No partial writes. */
+> > + 	result = -EINVAL;
+> >   	if (*ppos != 0)
+> > - 		return -EINVAL;
+> > + 		goto out;
+> >   
+> >  -	result = -ENOMEM;
+> >  -	data = kmalloc(datalen + 1, GFP_KERNEL);
+> >  -	if (!data)
+> >  -		goto out;
+> >  -
+> >  -	*(data + datalen) = '\0';
+> >  -
+> >  -	result = -EFAULT;
+> >  -	if (copy_from_user(data, buf, datalen))
+> >  +	data = memdup_user_nul(buf, datalen);
+> > - 	if (IS_ERR(data))
+> > - 		return PTR_ERR(data);
+> > ++	if (IS_ERR(data)) {
+> > ++		result = PTR_ERR(data);
+> > + 		goto out;
+> > ++	}
+> 
+> Why do it in this order?  With or without opencoding memdup_user_nul(),
+> what's the point of taking the mutex before copying the data from
+> userland?  All it achieves is holding it longer, over the area that
+> needs no exclusion whatsoever.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+I introduced the write mutex when ima_write_policy() stopped being serialized by 
+other means.  Come to think about it the semaphore could be taken right before 
+copy_from_user() so it is my fault, not Stephen's.
 
-  Documentation/kernel-parameters.txt
+The patch, however, leaves out a bug where free without allocation can occur.  
+Look at *ppos evaluation.  Instead of "goto out" it should be "return -EINVAL;".  
+This requires the mutex lock to be moved down, though.
 
-between commit:
 
-  9daacf51b428 ("Documentation/kernel-parameters: update KMG units")
-
-from the jc_docs tree and commit:
-
-  f0a906868be1 ("mm/page_alloc.c: introduce kernelcore=mirror option")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc Documentation/kernel-parameters.txt
-index adf540032a9d,2cfb638d138b..000000000000
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@@ -1710,7 -1696,8 +1714,8 @@@ Such letter suffixes can also be entire
-  
-  	keepinitrd	[HW,ARM]
-  
-- 	kernelcore=nn[KMGTPE]	[KNL,X86,IA-64,PPC] This parameter
- -	kernelcore=	Format: nn[KMG] | "mirror"
-++	kernelcore=	Format: nn[KMGTPE] | "mirror"
-+ 			[KNL,X86,IA-64,PPC] This parameter
-  			specifies the amount of memory usable by the kernel
-  			for non-movable allocations.  The requested amount is
-  			spread evenly throughout all nodes in the system. The
+cheers,
+Petko
