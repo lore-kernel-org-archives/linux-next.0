@@ -1,108 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-updates tree with the nfsd
- tree
-Date: Thu, 31 Dec 2015 19:28:06 +1100
-Message-ID: <20151231192806.0a2d7415@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the tip tree
+Date: Thu, 31 Dec 2015 20:23:47 +1100
+Message-ID: <20151231202347.3090c74b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54185 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55673 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751952AbbLaI2J (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2015 03:28:09 -0500
+	id S1750954AbbLaJXu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2015 04:23:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jenny Derzhavetz <jennyf@mellanox.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>
 
-Hi Nicholas,
+Hi Michael,
 
-Today's linux-next merge of the target-updates tree got conflicts in:
+Today's linux-next merge of the vhost tree got conflicts in:
 
-  drivers/infiniband/ulp/iser/iser_memory.c
-  drivers/infiniband/ulp/isert/ib_isert.c
+  arch/ia64/include/asm/barrier.h
+  arch/powerpc/include/asm/barrier.h
+  arch/s390/include/asm/barrier.h
+  include/asm-generic/barrier.h
 
 between commit:
 
-  6c7b6d2d442c ("IB: merge struct ib_device_attr into struct ib_device")
+  d5a73cadf3fd ("lcoking/barriers, arch: Use smp barriers in smp_store_release()")
 
-from the nfsd tree and commits:
+from the tip tree and commit:
 
-  6d2cb3ad4bc2 ("iser-target: Support the remote invalidation exception")
-  9a4a71456262 ("IB/iser: Support the remote invalidation exception")
+  2683de3a1732 ("ia64: reuse asm-generic/barrier.h")
+  d78113bef3e0 ("powerpc: reuse asm-generic/barrier.h")
+  25bc870c914b ("s390: reuse asm-generic/barrier.h")
+  24888a057e97 ("asm-generic: add __smp_XXX wrappers")
 
-from the target-updates tree.
+from the vhost tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (in each case taking the vhost tree version) and can
+carry the fix as necessary (no action is required).
+
+However, given the ongoing review and discussion, I do wonder if these
+vhost tree commits should be in linux-next yet.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/infiniband/ulp/iser/iser_memory.c
-index 81ad5e998fc2,8a57d4eadda6..000000000000
---- a/drivers/infiniband/ulp/iser/iser_memory.c
-+++ b/drivers/infiniband/ulp/iser/iser_memory.c
-@@@ -69,16 -69,17 +69,17 @@@ static struct iser_reg_ops fmr_ops = 
-  
-  int iser_assign_reg_ops(struct iser_device *device)
-  {
- -	struct ib_device_attr *dev_attr = &device->dev_attr;
- +	struct ib_device *ib_dev = device->ib_device;
-  
-  	/* Assign function handles  - based on FMR support */
- -	if (device->ib_device->alloc_fmr && device->ib_device->dealloc_fmr &&
- -	    device->ib_device->map_phys_fmr && device->ib_device->unmap_fmr) {
- +	if (ib_dev->alloc_fmr && ib_dev->dealloc_fmr &&
- +	    ib_dev->map_phys_fmr && ib_dev->unmap_fmr) {
-  		iser_info("FMR supported, using FMR for registration\n");
-  		device->reg_ops = &fmr_ops;
- -	} else if (dev_attr->device_cap_flags & IB_DEVICE_MEM_MGT_EXTENSIONS) {
- +	} else if (ib_dev->device_cap_flags & IB_DEVICE_MEM_MGT_EXTENSIONS) {
-  		iser_info("FastReg supported, using FastReg for registration\n");
-  		device->reg_ops = &fastreg_ops;
-+ 		device->remote_inv_sup = iser_always_reg;
-  	} else {
-  		iser_err("IB device does not support FMRs nor FastRegs, can't register memory\n");
-  		return -1;
-diff --cc drivers/infiniband/ulp/isert/ib_isert.c
-index 77f894970aeb,91eb22c4fdba..000000000000
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@@ -654,6 -679,32 +653,32 @@@ out_login_buf
-  	return ret;
-  }
-  
-+ static void
-+ isert_set_nego_params(struct isert_conn *isert_conn,
-+ 		      struct rdma_conn_param *param)
-+ {
-+ 	struct isert_device *device = isert_conn->device;
-+ 
-+ 	/* Set max inflight RDMA READ requests */
-+ 	isert_conn->initiator_depth = min_t(u8, param->initiator_depth,
- -				device->dev_attr.max_qp_init_rd_atom);
-++				device->ib_device->max_qp_init_rd_atom);
-+ 	isert_dbg("Using initiator_depth: %u\n", isert_conn->initiator_depth);
-+ 
-+ 	if (param->private_data) {
-+ 		u8 flags = *(u8 *)param->private_data;
-+ 
-+ 		/*
-+ 		 * use remote invalidation if the both initiator
-+ 		 * and the HCA support it
-+ 		 */
-+ 		isert_conn->snd_w_inv = !(flags & ISER_SEND_W_INV_NOT_SUP) &&
- -					  (device->dev_attr.device_cap_flags &
-++					  (device->ib_device->device_cap_flags &
-+ 					   IB_DEVICE_MEM_MGT_EXTENSIONS);
-+ 		if (isert_conn->snd_w_inv)
-+ 			isert_info("Using remote invalidation\n");
-+ 	}
-+ }
-+ 
-  static int
-  isert_connect_request(struct rdma_cm_id *cma_id, struct rdma_cm_event *event)
-  {
