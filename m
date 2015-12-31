@@ -1,73 +1,70 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the security tree with the vfs tree
-Date: Thu, 31 Dec 2015 04:30:19 +0000
-Message-ID: <20151231043019.GD9938@ZenIV.linux.org.uk>
-References: <20151231152453.08cfae79@canb.auug.org.au>
+From: Mark yao <mark.yao@rock-chips.com>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Thu, 31 Dec 2015 13:14:19 +0800
+Message-ID: <5684B9AB.7000703@rock-chips.com>
+References: <20151231134011.165b239b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56924 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752587AbbLaEaY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Dec 2015 23:30:24 -0500
-Content-Disposition: inline
-In-Reply-To: <20151231152453.08cfae79@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petko Manolov <petkan@mip-labs.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151231134011.165b239b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 31, 2015 at 03:24:53PM +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> Today's linux-next merge of the security tree got a conflict in:
-> 
->   security/integrity/ima/ima_fs.c
-> 
-> between commit:
-> 
->   3bc8f29b149e ("new helper: memdup_user_nul()")
-> 
-> from the vfs tree and commit:
-> 
->   38d859f991f3 ("IMA: policy can now be updated multiple times")
-> 
-> from the security tree.
-> 
-> I fixed it up (hopefully, see below) and can carry the fix as necessary
-> (no action is required).
- 
-> + 	res = mutex_lock_interruptible(&ima_write_mutex);
-> + 	if (res)
-> + 		return res;
->   
->   	if (datalen >= PAGE_SIZE)
->   		datalen = PAGE_SIZE - 1;
->   
->   	/* No partial writes. */
-> + 	result = -EINVAL;
->   	if (*ppos != 0)
-> - 		return -EINVAL;
-> + 		goto out;
->   
->  -	result = -ENOMEM;
->  -	data = kmalloc(datalen + 1, GFP_KERNEL);
->  -	if (!data)
->  -		goto out;
->  -
->  -	*(data + datalen) = '\0';
->  -
->  -	result = -EFAULT;
->  -	if (copy_from_user(data, buf, datalen))
->  +	data = memdup_user_nul(buf, datalen);
-> - 	if (IS_ERR(data))
-> - 		return PTR_ERR(data);
-> ++	if (IS_ERR(data)) {
-> ++		result = PTR_ERR(data);
-> + 		goto out;
-> ++	}
+On 2015=E5=B9=B412=E6=9C=8831=E6=97=A5 10:40, Stephen Rothwell wrote:
+> Hi Dave,
+>
+> After merging the drm tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>
+> ERROR: "vop_component_ops" [drivers/gpu/drm/rockchip/rockchip_vop_reg=
+=2Eko] undefined!
+>
+> Caused by commit
+>
+>    a67719d18229 ("drm/rockchip: vop: spilt register related into rock=
+chip_reg_vop.c")
+>
+> I have added the following fix patch for today (just because its
+> Christmas :-)):
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 31 Dec 2015 13:35:27 +1100
+> Subject: [PATCH] drm/rockchip: vop: export vop_component_ops to modul=
+es
+>
+> Fixes: a67719d18229 ("drm/rockchip: vop: spilt register related into =
+rockchip_reg_vop.c")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>   drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gp=
+u/drm/rockchip/rockchip_drm_vop.c
+> index d83bf87ba71e..f5b3da2f92d7 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -1395,3 +1395,4 @@ const struct component_ops vop_component_ops =3D=
+ {
+>   	.bind =3D vop_bind,
+>   	.unbind =3D vop_unbind,
+>   };
+> +EXPORT_SYMBOL_GPL(vop_component_ops);
+Hi Stephen
 
-Why do it in this order?  With or without opencoding memdup_user_nul(),
-what's the point of taking the mutex before copying the data from
-userland?  All it achieves is holding it longer, over the area that
-needs no exclusion whatsoever.
+Thanks for the fix, Sorry for forgetting test it with modules,  and
+
+Acked-by: Mark Yao <mark.yao@rock-chips.com>
+
+Hi Dave
+    Can you pick this one?
+
+
+Thanks.:-)
+
+--=20
+=EF=BC=ADark Yao
