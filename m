@@ -1,79 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Thu, 31 Dec 2015 21:31:24 +1100
-Message-ID: <20151231213124.1973e995@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the jc_docs
+ tree
+Date: Thu, 31 Dec 2015 21:43:07 +1100
+Message-ID: <20151231214307.53f62bd2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rex Zhu <Rex.Zhu@amd.com>, Alex Deucher <alexander.deucher@amd.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59140 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753516AbbLaKnI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2015 05:43:08 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Elliott <elliott@hpe.com>, Taku Izumi <izumi.taku@jp.fujitsu.com>
 
-Hi Dave,
+Hi Andrew,
 
-After merging the drm tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/tonga_thermal.c: In function 'tonga_fan_ctrl_get_fan_speed_percent':
-drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/tonga_thermal.c:84:2: error: implicit declaration of function 'do_div' [-Werror=implicit-function-declaration]
-  do_div(tmp64, duty100);
-  ^
-drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/fiji_thermal.c: In function 'fiji_fan_ctrl_get_fan_speed_percent':
-drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/fiji_thermal.c:78:2: error: implicit declaration of function 'do_div' [-Werror=implicit-function-declaration]
-  do_div(tmp64, duty100);
-  ^
+  Documentation/kernel-parameters.txt
 
-Caused by commit
+between commit:
 
-  1e4854e96c35 ("drm/amdgpu/powerplay: implement thermal control for tonga.")
+  9daacf51b428 ("Documentation/kernel-parameters: update KMG units")
 
-[I notice that that commit does not have a Signed-off-by from its
-committer (Alex)]
+from the jc_docs tree and commit:
 
-I applied the following fix patch for today:
+  f0a906868be1 ("mm/page_alloc.c: introduce kernelcore=mirror option")
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 31 Dec 2015 21:20:20 +1100
-Subject: [PATCH] drm/amdgpu/powerplay: include asm/div64.h for do_div()
+from the akpm-current tree.
 
-Fixes: 1e4854e96c35 ("drm/amdgpu/powerplay: implement thermal control for tonga.")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c  | 2 +-
- drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c b/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c
-index def57d0675ed..e76a7de9aa32 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/fiji_thermal.c
-@@ -20,7 +20,7 @@
-  * OTHER DEALINGS IN THE SOFTWARE.
-  *
-  */
--
-+#include <asm/div64.h>
- #include "fiji_thermal.h"
- #include "fiji_hwmgr.h"
- #include "fiji_smumgr.h"
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c b/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c
-index 2e159b003e71..a188174747c9 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/tonga_thermal.c
-@@ -20,7 +20,7 @@
-  * OTHER DEALINGS IN THE SOFTWARE.
-  *
-  */
--
-+#include <asm/div64.h>
- #include "tonga_thermal.h"
- #include "tonga_hwmgr.h"
- #include "tonga_smumgr.h"
--- 
-2.6.4
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc Documentation/kernel-parameters.txt
+index adf540032a9d,2cfb638d138b..000000000000
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@@ -1710,7 -1696,8 +1714,8 @@@ Such letter suffixes can also be entire
+  
+  	keepinitrd	[HW,ARM]
+  
+- 	kernelcore=nn[KMGTPE]	[KNL,X86,IA-64,PPC] This parameter
+ -	kernelcore=	Format: nn[KMG] | "mirror"
+++	kernelcore=	Format: nn[KMGTPE] | "mirror"
++ 			[KNL,X86,IA-64,PPC] This parameter
+  			specifies the amount of memory usable by the kernel
+  			for non-movable allocations.  The requested amount is
+  			spread evenly throughout all nodes in the system. The
