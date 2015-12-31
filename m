@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the nvdimm
+Subject: linux-next: manual merge of the akpm-current tree with the jc_docs
  tree
-Date: Thu, 31 Dec 2015 21:51:40 +1100
-Message-ID: <20151231215140.4905c760@canb.auug.org.au>
+Date: Thu, 31 Dec 2015 21:58:49 +1100
+Message-ID: <20151231215849.01be6998@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53231 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60304 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751215AbbLaKvm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2015 05:51:42 -0500
+	id S1751215AbbLaK6v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2015 05:58:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Elliott <elliott@hpe.com>, Taku Izumi <izumi.taku@jp.fujitsu.com>
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  lib/Kconfig.debug
+  mm/page_alloc.c
 
 between commit:
 
-  96efc4fed452 ("arch: consolidate CONFIG_STRICT_DEVM in lib/Kconfig.debug")
+  9daacf51b428 ("Documentation/kernel-parameters: update KMG units")
 
-from the nvdimm tree and commit:
+from the jc_docs tree and commit:
 
-  3e138efd477e ("UBSAN: run-time undefined behavior sanity checker")
+  f0a906868be1 ("mm/page_alloc.c: introduce kernelcore=mirror option")
 
 from the akpm-current tree.
 
@@ -39,52 +39,46 @@ is required).
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc lib/Kconfig.debug
-index 01be6fcceda2,19f7461e1594..000000000000
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@@ -1886,42 -1860,4 +1893,44 @@@ source "samples/Kconfig
+diff --cc mm/page_alloc.c
+index 13cf824f6d23,72218a4adab9..000000000000
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@@ -5500,7 -5718,37 +5718,37 @@@ static void __init find_zone_movable_pf
+  	}
   
-  source "lib/Kconfig.kgdb"
-  
- +config ARCH_HAS_DEVMEM_IS_ALLOWED
- +	bool
- +
- +config STRICT_DEVMEM
- +	bool "Filter access to /dev/mem"
- +	depends on MMU
- +	depends on ARCH_HAS_DEVMEM_IS_ALLOWED
- +	default y if TILE || PPC
- +	---help---
- +	  If this option is disabled, you allow userspace (root) access to all
- +	  of memory, including kernel and userspace memory. Accidental
- +	  access to this is obviously disastrous, but specific access can
- +	  be used by people debugging the kernel. Note that with PAT support
- +	  enabled, even in this case there are restrictions on /dev/mem
- +	  use due to the cache aliasing requirements.
- +
- +	  If this option is switched on, and IO_STRICT_DEVMEM=n, the /dev/mem
- +	  file only allows userspace access to PCI space and the BIOS code and
- +	  data regions.  This is sufficient for dosemu and X and all common
- +	  users of /dev/mem.
- +
- +	  If in doubt, say Y.
- +
- +config IO_STRICT_DEVMEM
- +	bool "Filter I/O access to /dev/mem"
- +	depends on STRICT_DEVMEM
- +	default STRICT_DEVMEM
- +	---help---
- +	  If this option is disabled, you allow userspace (root) access to all
- +	  io-memory regardless of whether a driver is actively using that
- +	  range.  Accidental access to this is obviously disastrous, but
- +	  specific access can be used by people debugging kernel drivers.
- +
- +	  If this option is switched on, the /dev/mem file only allows
- +	  userspace access to *idle* io-memory ranges (see /proc/iomem) This
- +	  may break traditional users of /dev/mem (dosemu, legacy X, etc...)
- +	  if the driver using a given range cannot be disabled.
- +
- +	  If in doubt, say Y.
-++
-+ source "lib/Kconfig.ubsan"
+  	/*
++ 	 * If kernelcore=mirror is specified, ignore movablecore option
++ 	 */
++ 	if (mirrored_kernelcore) {
++ 		bool mem_below_4gb_not_mirrored = false;
++ 
++ 		for_each_memblock(memory, r) {
++ 			if (memblock_is_mirror(r))
++ 				continue;
++ 
++ 			nid = r->nid;
++ 
++ 			usable_startpfn = memblock_region_memory_base_pfn(r);
++ 
++ 			if (usable_startpfn < 0x100000) {
++ 				mem_below_4gb_not_mirrored = true;
++ 				continue;
++ 			}
++ 
++ 			zone_movable_pfn[nid] = zone_movable_pfn[nid] ?
++ 				min(usable_startpfn, zone_movable_pfn[nid]) :
++ 				usable_startpfn;
++ 		}
++ 
++ 		if (mem_below_4gb_not_mirrored)
++ 			pr_warn("This configuration results in unmirrored kernel memory.");
++ 
++ 		goto out2;
++ 	}
++ 
++ 	/*
+ -	 * If movablecore=nn[KMG] was specified, calculate what size of
+ +	 * If movablecore=nn[KMGTPE] was specified, calculate what size of
+  	 * kernelcore that corresponds so that memory usable for
+  	 * any allocation type is evenly spread. If both kernelcore
+  	 * and movablecore are specified, then the value of kernelcore
