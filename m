@@ -1,56 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mmc-uh tree
-Date: Thu, 31 Dec 2015 14:53:29 +1100
-Message-ID: <20151231145329.63b42c86@canb.auug.org.au>
+Subject: linux-next: manual merge of the security tree with the vfs tree
+Date: Thu, 31 Dec 2015 15:24:53 +1100
+Message-ID: <20151231152453.08cfae79@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41505 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44931 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755186AbbLaDxc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Dec 2015 22:53:32 -0500
+	id S1752587AbbLaEYy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Dec 2015 23:24:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas Stach <dev@lynxeye.de>
+To: James Morris <jmorris@namei.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petko Manolov <petkan@mip-labs.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Hi Ulf,
+Hi James,
 
-After merging the mmc-uh tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the security tree got a conflict in:
 
-drivers/mmc/host/sdhci-tegra.c:361:38: error: redefinition of 'sdhci_tegra210_pdata'
- static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
-                                      ^
-drivers/mmc/host/sdhci-tegra.c:343:38: note: previous definition of 'sdhci_tegra210_pdata' was here
- static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
-                                      ^
-drivers/mmc/host/sdhci-tegra.c:370:42: error: redefinition of 'soc_data_tegra210'
- static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
-                                          ^
-drivers/mmc/host/sdhci-tegra.c:354:42: note: previous definition of 'soc_data_tegra210' was here
- static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
-                                          ^
-drivers/mmc/host/sdhci-tegra.c:372:14: error: 'NVQUIRK_DISABLE_SDR50' undeclared here (not in a function)
-  .nvquirks = NVQUIRK_DISABLE_SDR50 |
-              ^
-drivers/mmc/host/sdhci-tegra.c:373:7: error: 'NVQUIRK_DISABLE_DDR50' undeclared here (not in a function)
-       NVQUIRK_DISABLE_DDR50 |
-       ^
-drivers/mmc/host/sdhci-tegra.c:374:7: error: 'NVQUIRK_DISABLE_SDR104' undeclared here (not in a function)
-       NVQUIRK_DISABLE_SDR104,
-       ^
+  security/integrity/ima/ima_fs.c
 
-Caused by patch
+between commit:
 
-   "mmc: tegra: Add Tegra210 support"
+  3bc8f29b149e ("new helper: memdup_user_nul()")
 
-turning up in two trees (mmc-uh and tegra) as separate commits and then
-further changes to this file in the mmc-uh tree.
+from the vfs tree and commit:
 
-I used the version of the file from the mmc-uh tree.
+  38d859f991f3 ("IMA: policy can now be updated multiple times")
+
+from the security tree.
+
+I fixed it up (hopefully, see below) and can carry the fix as necessary
+(no action is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc security/integrity/ima/ima_fs.c
+index 71aa60b8d257,3caed6de610c..000000000000
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@@ -259,21 -261,35 +261,30 @@@ static const struct file_operations ima
+  static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+  				size_t datalen, loff_t *ppos)
+  {
+ -	char *data = NULL;
+  	ssize_t result;
+- 	char *data;
+++	char *data = NULL;
++ 	int res;
++ 
++ 	res = mutex_lock_interruptible(&ima_write_mutex);
++ 	if (res)
++ 		return res;
+  
+  	if (datalen >= PAGE_SIZE)
+  		datalen = PAGE_SIZE - 1;
+  
+  	/* No partial writes. */
++ 	result = -EINVAL;
+  	if (*ppos != 0)
+- 		return -EINVAL;
++ 		goto out;
+  
+ -	result = -ENOMEM;
+ -	data = kmalloc(datalen + 1, GFP_KERNEL);
+ -	if (!data)
+ -		goto out;
+ -
+ -	*(data + datalen) = '\0';
+ -
+ -	result = -EFAULT;
+ -	if (copy_from_user(data, buf, datalen))
+ +	data = memdup_user_nul(buf, datalen);
+- 	if (IS_ERR(data))
+- 		return PTR_ERR(data);
+++	if (IS_ERR(data)) {
+++		result = PTR_ERR(data);
++ 		goto out;
+++	}
+  
+  	result = ima_parse_add_rule(data);
++ out:
+  	if (result < 0)
+  		valid_policy = 0;
+  	kfree(data);
