@@ -1,84 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the jc_docs
- tree
-Date: Thu, 31 Dec 2015 21:58:49 +1100
-Message-ID: <20151231215849.01be6998@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 31 Dec 2015 22:15:29 +1100
+Message-ID: <20151231221529.1b997dce@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60304 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47422 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751215AbbLaK6v (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2015 05:58:51 -0500
+	id S1751715AbbLaLPd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2015 06:15:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Elliott <elliott@hpe.com>, Taku Izumi <izumi.taku@jp.fujitsu.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dan Williams <dan.j.williams@intel.com>
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+After merging the akpm-current tree, today's linux-next build (perf)
+failed like this:
 
-  mm/page_alloc.c
+In file included from /home/sfr/next/next/tools/include/linux/list.h:5:0,
+                 from arch/../util/map.h:6,
+                 from arch/../util/event.h:8,
+                 from arch/../util/debug.h:7,
+                 from arch/common.c:4:
+/home/sfr/next/next/tools/include/linux/../../../include/linux/list.h: In function 'list_force_poison':
+/home/sfr/next/next/tools/include/linux/../../../include/linux/list.h:123:56: error: unused parameter 'entry' [-Werror=unused-parameter]
+ static inline void list_force_poison(struct list_head *entry)
+                                                        ^
 
-between commit:
+and many more like that.
 
-  9daacf51b428 ("Documentation/kernel-parameters: update KMG units")
+Caused by commit
 
-from the jc_docs tree and commit:
+  a471eb786598 ("mm, dax, pmem: introduce {get|put}_dev_pagemap() for dax-gup")
 
-  f0a906868be1 ("mm/page_alloc.c: introduce kernelcore=mirror option")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I just left the perf build broken for today.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc mm/page_alloc.c
-index 13cf824f6d23,72218a4adab9..000000000000
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@@ -5500,7 -5718,37 +5718,37 @@@ static void __init find_zone_movable_pf
-  	}
-  
-  	/*
-+ 	 * If kernelcore=mirror is specified, ignore movablecore option
-+ 	 */
-+ 	if (mirrored_kernelcore) {
-+ 		bool mem_below_4gb_not_mirrored = false;
-+ 
-+ 		for_each_memblock(memory, r) {
-+ 			if (memblock_is_mirror(r))
-+ 				continue;
-+ 
-+ 			nid = r->nid;
-+ 
-+ 			usable_startpfn = memblock_region_memory_base_pfn(r);
-+ 
-+ 			if (usable_startpfn < 0x100000) {
-+ 				mem_below_4gb_not_mirrored = true;
-+ 				continue;
-+ 			}
-+ 
-+ 			zone_movable_pfn[nid] = zone_movable_pfn[nid] ?
-+ 				min(usable_startpfn, zone_movable_pfn[nid]) :
-+ 				usable_startpfn;
-+ 		}
-+ 
-+ 		if (mem_below_4gb_not_mirrored)
-+ 			pr_warn("This configuration results in unmirrored kernel memory.");
-+ 
-+ 		goto out2;
-+ 	}
-+ 
-+ 	/*
- -	 * If movablecore=nn[KMG] was specified, calculate what size of
- +	 * If movablecore=nn[KMGTPE] was specified, calculate what size of
-  	 * kernelcore that corresponds so that memory usable for
-  	 * any allocation type is evenly spread. If both kernelcore
-  	 * and movablecore are specified, then the value of kernelcore
