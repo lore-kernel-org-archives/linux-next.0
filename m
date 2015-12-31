@@ -1,76 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Thu, 31 Dec 2015 14:34:57 +1100
-Message-ID: <20151231143457.1004a5bd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc-uh tree
+Date: Thu, 31 Dec 2015 14:53:29 +1100
+Message-ID: <20151231145329.63b42c86@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47528 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41505 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752239AbbLaDe7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Dec 2015 22:34:59 -0500
+	id S1755186AbbLaDxc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Dec 2015 22:53:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Keith Busch <keith.busch@intel.com>, Christoph Hellwig <hch@lst.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas Stach <dev@lynxeye.de>
 
-Hi Jens,
+Hi Ulf,
 
-Today's linux-next merge of the block tree got a conflict in:
+After merging the mmc-uh tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  drivers/nvme/host/pci.c
+drivers/mmc/host/sdhci-tegra.c:361:38: error: redefinition of 'sdhci_tegra210_pdata'
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+                                      ^
+drivers/mmc/host/sdhci-tegra.c:343:38: note: previous definition of 'sdhci_tegra210_pdata' was here
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+                                      ^
+drivers/mmc/host/sdhci-tegra.c:370:42: error: redefinition of 'soc_data_tegra210'
+ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+                                          ^
+drivers/mmc/host/sdhci-tegra.c:354:42: note: previous definition of 'soc_data_tegra210' was here
+ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+                                          ^
+drivers/mmc/host/sdhci-tegra.c:372:14: error: 'NVQUIRK_DISABLE_SDR50' undeclared here (not in a function)
+  .nvquirks = NVQUIRK_DISABLE_SDR50 |
+              ^
+drivers/mmc/host/sdhci-tegra.c:373:7: error: 'NVQUIRK_DISABLE_DDR50' undeclared here (not in a function)
+       NVQUIRK_DISABLE_DDR50 |
+       ^
+drivers/mmc/host/sdhci-tegra.c:374:7: error: 'NVQUIRK_DISABLE_SDR104' undeclared here (not in a function)
+       NVQUIRK_DISABLE_SDR104,
+       ^
 
-between commit:
+Caused by patch
 
-  b5875222de2f ("NVMe: IO ending fixes on surprise removal")
+   "mmc: tegra: Add Tegra210 support"
 
-from Linus' tree and commit:
+turning up in two trees (mmc-uh and tegra) as separate commits and then
+further changes to this file in the mmc-uh tree.
 
-  5bae7f73d378 ("nvme: move namespace scanning to common code")
-
-from the block tree.
-
-I fixed it up (the code was moved - I added the fix patch below) and
-can carry the fix as necessary (no action is required).
-
-However, there was another part to the former patch that I could not
-quite figure out how to reproduce - the fix to nvme_dev_remove().
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 31 Dec 2015 14:21:38 +1100
-Subject: [PATCH] nvme: merge fix up for ns code movement
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/nvme/host/core.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 1437ff36e91c..1375a83593b5 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1118,8 +1118,17 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 	bool kill = nvme_io_incapable(ns->ctrl) &&
- 			!blk_queue_dying(ns->queue);
- 
--	if (kill)
-+	if (kill) {
- 		blk_set_queue_dying(ns->queue);
-+
-+		/*
-+		 * The controller was shutdown first if we got here through
-+		 * device removal. The shutdown may requeue outstanding
-+		 * requests. These need to be aborted immediately so
-+		 * del_gendisk doesn't block indefinitely for their completion.
-+		 */
-+		blk_mq_abort_requeue_list(ns->queue);
-+	}
- 	if (ns->disk->flags & GENHD_FL_UP) {
- 		if (blk_get_integrity(ns->disk))
- 			blk_integrity_unregister(ns->disk);
--- 
-2.6.4
+I used the version of the file from the mmc-uh tree.
 
 -- 
 Cheers,
