@@ -1,38 +1,25 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Dec 31 (net/xfrm/xfrm_input.c)
-Date: Thu, 31 Dec 2015 11:05:33 -0800
-Message-ID: <56857C7D.6010909@infradead.org>
-References: <20151231233008.41fc8451@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 1/3] device property: add spaces to PROPERTY_ENTRY_STRING macro
+Date: Fri, 01 Jan 2016 01:53:01 +0100
+Message-ID: <3371918.nJUnVMK5ih@vostro.rjw.lan>
+References: <1450877684-76316-1-git-send-email-andriy.shevchenko@linux.intel.com> <1850926.j60LlceTNY@vostro.rjw.lan> <20151229174448.dba9a7ab.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:47579 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750849AbbLaTFg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Dec 2015 14:05:36 -0500
-In-Reply-To: <20151231233008.41fc8451@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20151229174448.dba9a7ab.akpm@linux-foundation.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com, linux-acpi@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 12/31/15 04:30, Stephen Rothwell wrote:
-> Hi all,
+On Tuesday, December 29, 2015 05:44:48 PM Andrew Morton wrote:
+> On Wed, 30 Dec 2015 03:06:23 +0100 "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
 > 
-> Changes since 20151223:
+> > I'll apply it to my tree if you don't mind with the Andy's [1/3] on top
+> > so we have all of that in one place.
 > 
+> That version needed a fix.  Here's the one to apply:
 
+OK, thanks!
 
-seen on i386 or x86_64:
-
-In file included from ../net/xfrm/xfrm_input.c:17:0:
-../include/net/ip6_tunnel.h: In function 'ip6tunnel_xmit':
-../include/net/ip6_tunnel.h:93:2: error: implicit declaration of function 'iptunnel_xmit_stats' [-Werror=implicit-function-declaration]
-  iptunnel_xmit_stats(dev, pkt_len);
-  ^
-
-
-
--- 
-~Randy
