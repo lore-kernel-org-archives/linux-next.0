@@ -1,46 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the integrity tree with the vfs
- tree
-Date: Mon, 4 Jan 2016 16:23:08 +1100
-Message-ID: <20160104162308.52349acd@canb.auug.org.au>
-References: <20160104135221.0e5515ac@canb.auug.org.au>
-	<20160104031621.GP9938@ZenIV.linux.org.uk>
-	<1451883997.2772.27.camel@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the akpm-current tree with the drm tree
+Date: Mon, 4 Jan 2016 18:45:54 +1100
+Message-ID: <20160104184554.08661f70@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1451883997.2772.27.camel@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petko Manolov <petkan@mip-labs.com>, James Morris <jmorris@namei.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Mimi,
+Hi Andrew,
 
-On Mon, 04 Jan 2016 00:06:37 -0500 Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
->
-> On Mon, 2016-01-04 at 03:16 +0000, Al Viro wrote:
-> >
-> > FWIW, I'm going to pull the part that introduces memdup_user_nul() into
-> > a never-rebased branch and if security.git is willing to pull it and handle
-> > that conversion in ima_write_policy() themselves, I'll be only glad to drop
-> > the corresponding chunk in vfs.git#for-next  
-> 
-> As memdup_user_nul() is not in the security tree, it would break the
-> security tree builds.  Having the patch in the linux-integrity/next
-> branch wouldn't help matters.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-I think Al intends for you to merge his "never-rebased branch" that
-contains the memdup_user_nul patch into the integrity tree (or James to
-merge it into the security tree).  He will also merge the same branch
-into his vfs tree and remove the patch that updates ima_write_policy()
-to use memdup_user_nul() and you (or James) could apply that patch in
-the integrity (or security) tree.
+  drivers/gpu/drm/omapdrm/omap_gem.c
 
-This way we end up with the same commit creating memdup_user_nul() in
-both trees and no left over conflicts.
+between commit:
+
+  f4302747af02 ("drm: omapdrm: gem: Move global usergart variable to omap_drm_private")
+
+from the drm tree and commit:
+
+  0cf445f1b0c1 ("mm, dax, gpu: convert vm_insert_mixed to pfn_t")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/gpu/drm/omapdrm/omap_gem.c
+index 984462622291,ceba5459ceb7..000000000000
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@@ -496,8 -480,9 +498,9 @@@ static int fault_2d(struct drm_gem_obje
+  			pfn, pfn << PAGE_SHIFT);
+  
+  	for (i = n; i > 0; i--) {
+- 		vm_insert_mixed(vma, (unsigned long)vaddr, pfn);
++ 		vm_insert_mixed(vma, (unsigned long)vaddr,
++ 				__pfn_to_pfn_t(pfn, PFN_DEV));
+ -		pfn += usergart[fmt].stride_pfn;
+ +		pfn += priv->usergart[fmt].stride_pfn;
+  		vaddr += PAGE_SIZE * m;
+  	}
+  
