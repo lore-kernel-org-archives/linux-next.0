@@ -1,57 +1,92 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160104 build: 3 failures 15 warnings (next-20160104)
-Date: Mon, 4 Jan 2016 22:44:05 +0000
-Message-ID: <20160104224405.GV16023@sirena.org.uk>
-References: <E1aG3zo-0000gt-2t@optimist>
- <20160104165025.GN16023@sirena.org.uk>
- <3705737.6TGxRxdFzW@wuerfel>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Widespread boot failures on ARM due to
+ "mm/page_alloc.c: calculate zone_start_pfn at zone_spanned_pages_in_node()"
+Date: Mon, 4 Jan 2016 15:09:46 -0800
+Message-ID: <20160104150946.373ed02b8e8b81221340b7c8@linux-foundation.org>
+References: <20160104224233.GU16023@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="grb+5QKeMfpTKipq"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35980 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752012AbcADWoQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2016 17:44:16 -0500
-Content-Disposition: inline
-In-Reply-To: <3705737.6TGxRxdFzW@wuerfel>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32945 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752012AbcADXJr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2016 18:09:47 -0500
+In-Reply-To: <20160104224233.GU16023@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: kernel-build-reports@lists.linaro.org, Igal Liberman <igal.liberman@freescale.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>, Mel Gorman <mel@csn.ul.ie>, Xishi Qiu <qiuxishi@huawei.com>, Dave Hansen <dave.hansen@intel.com>, Matt Fleming <matt@codeblueprint.co.uk>, Kamezawa Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, Kevin.Hilman@linaro.org, Tyler.Baker@linaro.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+
+On Mon, 4 Jan 2016 22:42:33 +0000 Mark Brown <broonie@kernel.org> wrote:
+
+> Since 20151231 -next has been failing to boot on a wide range of ARM
+> platforms in the kernelci.org boot tests[1].  Doing bisections with
+> Arndale and BeagleBone Black identifies 904769ac82ebf (mm/page_alloc.c:
+> calculate zone_start_pfn at zone_spanned_pages_in_node()) from the akpm
+> tree as the first broken commit[2,3].  An example bootlog from the
+> failure is:
+> 
+>    http://storage.kernelci.org/next/next-20151231/arm-multi_v7_defconfig/lab-cambridge/boot-exynos5250-arndale.html
+> 
+> which shows no output on the console once we start the kernel, a brief
+> sampling of failing boards suggests this is the normal failure mode.
+> x86 and arm64 targets seem fine (juno shows up as failing but the boot
+> log seems fine so it's probably a false positive, Mustang was failing
+> already) and there are a small number of ARM platforms that boot.  I've
+> not yet had any time to investigate further than that (including trying
+> a revert of that commit), sorry.
+> 
+> [1] http://kernelci.org/boot/all/job/next/kernel/next-20151231/
+> [2] https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/135/console
+> [3] https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/136/console
+
+Thanks.  That patch has rather a blooper if
+CONFIG_HAVE_MEMBLOCK_NODE_MAP=n.  Is that the case in your testing?
+
+Arnd's tentative fix is below.
+
+I shall drop that patchset for now.
 
 
---grb+5QKeMfpTKipq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Jan 04, 2016 at 11:07:41PM +0100, Arnd Bergmann wrote:
-> On Monday 04 January 2016 16:50:25 Mark Brown wrote:
-> > On Mon, Jan 04, 2016 at 12:12:20PM +0000, Build bot for Mark Brown wrote:
 
-> > and various other linker errors caused by the fact that the new fman
-> > driver uses PHYLIB but does not depend on or select it.
 
-> This is the patch I submitted for the problem. I don't think that simply
-> adding the 'select' would be a good idea because that would force PHYLIB
-> builtin for allmodconfig.
 
-Indeed, that was why I held off on my own patch - I wanted to go back
-and try to understand why we were using a bool there.
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: mm/page_alloc.c: set a zone_start_pfn value in zone_spanned_pages_in_node
 
---grb+5QKeMfpTKipq
-Content-Type: application/pgp-signature; name="signature.asc"
+We got a new build warning in linux-next:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+mm/page_alloc.c: In function 'free_area_init_node':
+mm/page_alloc.c:5278:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wmaybe-uninitialized]
+    zone->zone_start_pfn = zone_start_pfn;
+mm/page_alloc.c:5265:17: note: 'zone_start_pfn' was declared here
+   unsigned long zone_start_pfn, zone_end_pfn;
 
-iQEcBAEBCAAGBQJWivW0AAoJECTWi3JdVIfQuosH/AiKJk6TyPcfyzucCTefco2i
-DSg5q2wRsHbO6wzIyK/uBMQ7UEjNQL9g2oZEAjWRUEWCBtlkYvt1P6iq1Gjl5S9y
-BsgWj6LS5eUg+8dxev7jINTXBqytJ3AF37cdDXalRE363/12QDuYbySVqeqE3dAR
-IKBDZXmYZMAQIEaJERC/K7UAizRPAEByORLxJQRnv3hpxAXZKX9ec4VwXLeSrWPx
-rYctfHibTHaz9uCf2EjgjV81OzCvHewvI4bzjyPmTKbo+ZDcG9dpsQPXiBHTKbYD
-mD1zGERoqdFtmHhEoxd5RtMGud7JhF5K1jkMOgd02HvvVB1/tdnaizbYiGdlyeo=
-=yYZb
------END PGP SIGNATURE-----
+The code indeed looks wrong, but this is just a guess of what the
+fix might be: I have not looked it in detail, so please treat this
+as a bug report.
 
---grb+5QKeMfpTKipq--
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/page_alloc.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff -puN mm/page_alloc.c~mm-calculate-zone_start_pfn-at-zone_spanned_pages_in_node-fix mm/page_alloc.c
+--- a/mm/page_alloc.c~mm-calculate-zone_start_pfn-at-zone_spanned_pages_in_node-fix
++++ a/mm/page_alloc.c
+@@ -5013,6 +5013,8 @@ static inline unsigned long __meminit zo
+ 					unsigned long *zone_end_pfn,
+ 					unsigned long *zones_size)
+ {
++	*zone_start_pfn = node_start_pfn;
++	*zone_end_pfn = node_end_pfn;
+ 	return zones_size[zone_type];
+ }
+ 
+_
