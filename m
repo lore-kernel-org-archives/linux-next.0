@@ -1,96 +1,83 @@
-From: Doug Ledford <dledford@redhat.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the nfsd tree
-Date: Sun, 3 Jan 2016 21:53:20 -0500
-Message-ID: <5689DEA0.1020803@redhat.com>
-References: <20151231133022.0b3ecab9@canb.auug.org.au>
- <20160104124450.7ba21c87@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the integrity tree with the vfs
+ tree
+Date: Mon, 4 Jan 2016 13:58:40 +1100
+Message-ID: <20160104135840.388f3fbc@canb.auug.org.au>
+References: <20160104135221.0e5515ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="XDnDB3Xi3ElNKaTp55DVEjjjRo5SrO0gK"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:53294 "EHLO mx1.redhat.com"
+Received: from ozlabs.org ([103.22.144.67]:57988 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751974AbcADCx2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 3 Jan 2016 21:53:28 -0500
-In-Reply-To: <20160104124450.7ba21c87@canb.auug.org.au>
+	id S1752136AbcADC6m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 3 Jan 2016 21:58:42 -0500
+In-Reply-To: <20160104135221.0e5515ac@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Ira Weiny <ira.weiny@intel.com>, Or Gerlitz <ogerlitz@mellanox.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petko Manolov <petkan@mip-labs.com>, James Morris <jmorris@namei.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---XDnDB3Xi3ElNKaTp55DVEjjjRo5SrO0gK
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+[Just cc'ing the security tree maintainer, since this will soon be in
+his tree and is related to a conflict between that tree and the vfs
+tree.]
 
-On 01/03/2016 08:44 PM, Stephen Rothwell wrote:
+On Mon, 4 Jan 2016 13:52:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
 > Hi all,
->=20
-> On Thu, 31 Dec 2015 13:30:22 +1100 Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
->>
->> Hi Doug,
->>
->> Today's linux-next merge of the rdma tree got conflicts in a quite a
->> few files between (mostly, I think) commit:
->>
->>   6c7b6d2d442c ("IB: merge struct ib_device_attr into struct ib_device=
-")
->>
->> from the nfsd tree and various commits from the rdma tree.
->>
->> It would have taken me considerable time to fix the conflicts up, so I=
-
->> have dropped teh rdma tree for today (just because it was merged secon=
-d).
->> Please have a conversation and figure out how you are going to coopera=
-te
->> and get these conflicts fixed e.g. set up a stable branch with Christo=
-ph's
->> commit (and any other conflicting commits) in it and merge that into
->> both trees.
->=20
-> So, on further inspection, it appears that there is a series of commits=
-
-> in the rdma tree that does basically the same as that nfsd tree commit
-> above.  So I have dropped the rdma tree again today.  Please have a
-> conversation guys ...
->=20
-
-The initial patchset was Christoph's.  It was later replaced with a
-different patchset from Or Gerlitz.  Bruce picked up some changes from
-Chuck Lever that were originally based on Christoph's work but now need
-to be rebased off of the current RDMA tree.
-
---=20
-Doug Ledford <dledford@redhat.com>
-              GPG KeyID: 0E572FDD
-
-
-
---XDnDB3Xi3ElNKaTp55DVEjjjRo5SrO0gK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJWid6gAAoJELgmozMOVy/dZzwP/RRYR3MhGmic14112Be7xhfv
-0ce+cGtsrTExfwVebR2tMSWxo9BFtudEgwmJDFjkQ7xDOcgVzzC8sWl+l6EeqP0h
-evotkqYE52TBlt73oyqx/HN0qOowPGsXjQAaLuTVXQl4TEGWWJOQHP5A72u9qPd2
-QVesTeoI+r5XEP9sR8ObztXRn3nOWJzzr0EIyJiPlRRLBFZyQJRaOuSYeWYvZyre
-aMH/aglfmCJoGOBAdzAovBFowk+1jRd8q9A/LHACJa9wdWvjwcE++JB4J9DnmJPt
-x7cq0D/t90KGaX4juyGYX09fr3FGSaUMSLVOe5ExaSsTDQabFIP+R1HSbEy0W0Bj
-d8rqNHscTpL1XpD0GXnHOpPpUBsFksJd+XO3MYGBW+rSMhHsn6FMxGlRtghnnVjU
-jOdh8Zm+qXkWp7UuesYJgD0DKfezh1h0bVdzOg5zFY0sZ0hYxZ/XhTCDJ2gfWl7w
-VWTREJO5onWVvuXTEJlb/2ai0wCRBmCnhiWolICUQx6RUkAlgPiJKdgzhBX5pVkR
-0akhLC0i7Hpan+V0jIzCmWfibTUtOOgpFhebDYb10FBhinODuRPRy4mha5sJl7fH
-3lAFBpm+v6CbMU7LIYNZbXP+5cxEJE5WT4JxS8UMfqDQGcd8uINVRvM7Syeh6Ap9
-ca4Ap/EaHJOsd1/qObRk
-=RZxz
------END PGP SIGNATURE-----
-
---XDnDB3Xi3ElNKaTp55DVEjjjRo5SrO0gK--
+> 
+> Today's linux-next merge of the integrity tree got a conflict in:
+> 
+>   security/integrity/ima/ima_fs.c
+> 
+> between commit:
+> 
+>   3bc8f29b149e ("new helper: memdup_user_nul()")
+> 
+> from the vfs tree and commit:
+> 
+>   6427e6c71c8b ("ima: ima_write_policy() limit locking")
+> 
+> from the integrity tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc security/integrity/ima/ima_fs.c
+> index a185b6f2f390,f355231997b4..000000000000
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@@ -277,13 -272,25 +272,20 @@@ static ssize_t ima_write_policy(struct 
+>   	if (*ppos != 0)
+>   		goto out;
+>   
+>  -	result = -ENOMEM;
+>  -	data = kmalloc(datalen + 1, GFP_KERNEL);
+>  -	if (!data)
+>  +	data = memdup_user_nul(buf, datalen);
+>  +	if (IS_ERR(data)) {
+>  +		result = PTR_ERR(data);
+>   		goto out;
+>  -
+>  -	*(data + datalen) = '\0';
+>  -
+>  -	result = -EFAULT;
+>  -	if (copy_from_user(data, buf, datalen))
+>  -		goto out_free;
+>  +	}
+>   
+> + 	result = mutex_lock_interruptible(&ima_write_mutex);
+> + 	if (result < 0)
+> + 		goto out_free;
+>   	result = ima_parse_add_rule(data);
+> + 	mutex_unlock(&ima_write_mutex);
+> + 
+> + out_free:
+> + 	kfree(data);
+>   out:
+>   	if (result < 0)
+>   		valid_policy = 0;
