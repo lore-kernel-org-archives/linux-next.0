@@ -1,164 +1,56 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160104 build: 3 failures 15 warnings (next-20160104)
-Date: Mon, 04 Jan 2016 12:12:20 +0000
-Message-ID: <E1aG3zo-0000gt-2t@optimist>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the integrity tree with the vfs tree
+Date: Mon, 04 Jan 2016 07:32:28 -0500
+Message-ID: <1451910748.2772.35.camel@linux.vnet.ibm.com>
+References: <20160104135221.0e5515ac@canb.auug.org.au>
+	 <20160104031621.GP9938@ZenIV.linux.org.uk>
+	 <1451883997.2772.27.camel@linux.vnet.ibm.com>
+	 <20160104162308.52349acd@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35408 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751456AbcADMM3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2016 07:12:29 -0500
+Received: from e28smtp07.in.ibm.com ([125.16.236.7]:53701 "EHLO
+	e28smtp07.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753603AbcADMcs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2016 07:32:48 -0500
+Received: from localhost
+	by e28smtp07.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+	Mon, 4 Jan 2016 18:02:45 +0530
+In-Reply-To: <20160104162308.52349acd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petko Manolov <petkan@mip-labs.com>, James Morris <jmorris@namei.org>
 
-Tree/Branch: next-20160104
-Git describe: next-20160104
-Commit: 57c4229929 Add linux-next specific files for 20160104
+On Mon, 2016-01-04 at 16:23 +1100, Stephen Rothwell wrote:
+> Hi Mimi,
+> 
+> On Mon, 04 Jan 2016 00:06:37 -0500 Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> >
+> > On Mon, 2016-01-04 at 03:16 +0000, Al Viro wrote:
+> > >
+> > > FWIW, I'm going to pull the part that introduces memdup_user_nul() into
+> > > a never-rebased branch and if security.git is willing to pull it and handle
+> > > that conversion in ima_write_policy() themselves, I'll be only glad to drop
+> > > the corresponding chunk in vfs.git#for-next  
+> > 
+> > As memdup_user_nul() is not in the security tree, it would break the
+> > security tree builds.  Having the patch in the linux-integrity/next
+> > branch wouldn't help matters.
+> 
+> I think Al intends for you to merge his "never-rebased branch" that
+> contains the memdup_user_nul patch into the integrity tree (or James to
+> merge it into the security tree).  He will also merge the same branch
+> into his vfs tree and remove the patch that updates ima_write_policy()
+> to use memdup_user_nul() and you (or James) could apply that patch in
+> the integrity (or security) tree.
+> 
+> This way we end up with the same commit creating memdup_user_nul() in
+> both trees and no left over conflicts.
 
-Build Time: 65 min 8 sec
+Thank you for the explanation.  It sounds like a plan.  James, are you
+ok with this?
 
-Passed:    6 / 9   ( 66.67 %)
-Failed:    3 / 9   ( 33.33 %)
-
-Errors: 1
-Warnings: 15
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-	arm64-defconfig
-
-Errors:
-
-	arm64-allmodconfig
-Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
-Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
-
-	arm64-defconfig
-Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allnoconfig
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      7 warnings    0 mismatches  : arm-multi_v5_defconfig
-      9 warnings    0 mismatches  : arm-multi_v7_defconfig
-      7 warnings    0 mismatches  : arm-allmodconfig
-      4 warnings    0 mismatches  : arm-allnoconfig
-      4 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  3 Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
-
-Warnings Summary: 15
-	  7 ../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	  7 ../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	  6 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  4 ../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wuninitialized]
-	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	  2 ../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 arch/arm/configs/multi_v7_defconfig:435:warning: symbol value 'm' invalid for MFD_DA9063
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/udf/inode.c:1974:3: warning: 'adsize' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/udf/inode.c:1927:28: warning: 'adsize' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/dax.c:916:17: warning: passing argument 1 of '__dax_dbg' from incompatible pointer type
-	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 2 errors, 5 warnings, 0 section mismatches
-
-Errors:
-	Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
-	Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
-
-Warnings:
-	../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	../fs/dax.c:916:17: warning: passing argument 1 of '__dax_dbg' from incompatible pointer type
-	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wuninitialized]
-	../fs/udf/inode.c:1974:3: warning: 'adsize' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/udf/inode.c:1927:28: warning: 'adsize' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm/configs/multi_v7_defconfig:435:warning: symbol value 'm' invalid for MFD_DA9063
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wuninitialized]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5471:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wuninitialized]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wuninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 1 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
-
-Warnings:
-	../mm/page_alloc.c:4617:37: warning: unused variable 'tmp' [-Wunused-variable]
-	../mm/page_alloc.c:4617:26: warning: unused variable 'r' [-Wunused-variable]
-	../mm/page_alloc.c:5276:25: warning: 'zone_start_pfn' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+Mimi
