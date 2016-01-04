@@ -1,57 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext4 tree
-Date: Mon, 4 Jan 2016 10:34:19 +1100
-Message-ID: <20160104103419.56719f0b@canb.auug.org.au>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the security tree with the vfs tree
+Date: Sun, 03 Jan 2016 20:37:20 -0500
+Message-ID: <1451871440.2772.16.camel@linux.vnet.ibm.com>
+References: <20151231152453.08cfae79@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58162 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751130AbcACXeX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 3 Jan 2016 18:34:23 -0500
+Received: from e28smtp04.in.ibm.com ([125.16.236.4]:34041 "EHLO
+	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752497AbcADBha (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Jan 2016 20:37:30 -0500
+Received: from localhost
+	by e28smtp04.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+	Mon, 4 Jan 2016 07:07:27 +0530
+In-Reply-To: <20151231152453.08cfae79@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Xi <pkuelelixi@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>, Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Petko Manolov <petkan@mip-labs.com>
 
-Hi Ted,
+On Thu, 2015-12-31 at 15:24 +1100, Stephen Rothwell wrote:
+> Hi James,
+> 
+> Today's linux-next merge of the security tree got a conflict in:
+> 
+>   security/integrity/ima/ima_fs.c
+> 
+> between commit:
+> 
+>   3bc8f29b149e ("new helper: memdup_user_nul()")
+> 
+> from the vfs tree and commit:
+> 
+>   38d859f991f3 ("IMA: policy can now be updated multiple times")
+> 
+> from the security tree.
+> 
+> I fixed it up (hopefully, see below) and can carry the fix as necessary
+> (no action is required).
 
-After merging the ext4 tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Hi Stephen,
 
-fs/ext4/ioctl.c: In function 'ext4_ioctl_setproject':
-fs/ext4/ioctl.c:399:26: error: implicit declaration of function 'dqget' [-Werror=implicit-function-declaration]
-  transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
-                          ^
-fs/ext4/ioctl.c:399:24: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-  transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
-                        ^
-fs/ext4/ioctl.c:401:9: error: implicit declaration of function '__dquot_transfer' [-Werror=implicit-function-declaration]
-   err = __dquot_transfer(inode, transfer_to);
-         ^
-fs/ext4/ioctl.c:402:3: error: implicit declaration of function 'dqput' [-Werror=implicit-function-declaration]
-   dqput(transfer_to[PRJQUOTA]);
-   ^
-fs/ext4/super.c: In function 'ext4_statfs_project':
-fs/ext4/super.c:4839:10: error: implicit declaration of function 'dqget' [-Werror=implicit-function-declaration]
-  dquot = dqget(sb, qid);
-          ^
-fs/ext4/super.c:4839:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-  dquot = dqget(sb, qid);
-        ^
-fs/ext4/super.c:4866:2: error: implicit declaration of function 'dqput' [-Werror=implicit-function-declaration]
-  dqput(dquot);
-  ^
+FYI, I pushed out Petko's patch to linux-integrity/next earlier today.
+His patch moves taking the ima_write_mutex to after the the call to
+copy_from_user(), as discussed.  This obviously won't fix the conflict
+with Al's patch.  How do you want to handle it?  Do I need to do
+anything?
 
-CONFIG_QUOTA is not set for this build.
+Thanks!
 
-Caused by commit
-
-  92a86644738b ("ext4: add FS_IOC_FSSETXATTR/FS_IOC_FSGETXATTR interface support")
-
-I have used the ext4 tree from next-20151231 for today.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Mimi
