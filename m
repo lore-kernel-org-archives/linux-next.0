@@ -1,58 +1,59 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160104 build: 3 failures 15 warnings (next-20160104)
-Date: Mon, 4 Jan 2016 16:50:25 +0000
-Message-ID: <20160104165025.GN16023@sirena.org.uk>
-References: <E1aG3zo-0000gt-2t@optimist>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: manual merge of the rdma tree with the nfsd tree
+Date: Mon, 4 Jan 2016 14:36:16 -0500
+Message-ID: <20160104193616.GB30315@fieldses.org>
+References: <20151231133022.0b3ecab9@canb.auug.org.au>
+ <20160104124450.7ba21c87@canb.auug.org.au>
+ <5689DEA0.1020803@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oWj5HoUXCVjyUFuT"
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <E1aG3zo-0000gt-2t@optimist>
-Sender: netdev-owner@vger.kernel.org
-To: Igal Liberman <igal.liberman@freescale.com>, "David S. Miller" <davem@davemloft.net>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
-
-
---oWj5HoUXCVjyUFuT
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from fieldses.org ([173.255.197.46]:52907 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751970AbcADTgR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Jan 2016 14:36:17 -0500
 Content-Disposition: inline
+In-Reply-To: <5689DEA0.1020803@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Doug Ledford <dledford@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Ira Weiny <ira.weiny@intel.com>, Or Gerlitz <ogerlitz@mellanox.com>, chuck.lever@oracle.com
 
-On Mon, Jan 04, 2016 at 12:12:20PM +0000, Build bot for Mark Brown wrote:
+On Sun, Jan 03, 2016 at 09:53:20PM -0500, Doug Ledford wrote:
+> On 01/03/2016 08:44 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > On Thu, 31 Dec 2015 13:30:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >>
+> >> Hi Doug,
+> >>
+> >> Today's linux-next merge of the rdma tree got conflicts in a quite a
+> >> few files between (mostly, I think) commit:
+> >>
+> >>   6c7b6d2d442c ("IB: merge struct ib_device_attr into struct ib_device")
+> >>
+> >> from the nfsd tree and various commits from the rdma tree.
+> >>
+> >> It would have taken me considerable time to fix the conflicts up, so I
+> >> have dropped teh rdma tree for today (just because it was merged second).
+> >> Please have a conversation and figure out how you are going to cooperate
+> >> and get these conflicts fixed e.g. set up a stable branch with Christoph's
+> >> commit (and any other conflicting commits) in it and merge that into
+> >> both trees.
+> > 
+> > So, on further inspection, it appears that there is a series of commits
+> > in the rdma tree that does basically the same as that nfsd tree commit
+> > above.  So I have dropped the rdma tree again today.  Please have a
+> > conversation guys ...
+> > 
+> 
+> The initial patchset was Christoph's.  It was later replaced with a
+> different patchset from Or Gerlitz.  Bruce picked up some changes from
+> Chuck Lever that were originally based on Christoph's work but now need
+> to be rebased off of the current RDMA tree.
 
-Today's linux-next fails to build an arm allmodconfig (and probably also
-at least arm64 though other errors prevent that getting to linking
-currently) due to:
+OK.  I'm assuming Chuck will want to do any necessary rebasing and
+retesting himself, so for now I've just dropped those patches, and
+expect to pick up new versions when Chuck gets back from the holidays.
 
-| drivers/built-in.o: In function `dtsec_restart_autoneg':
-| :(.text+0x30f86c): undefined reference to `mdiobus_read'
-| :(.text+0x30f89c): undefined reference to `mdiobus_write'
-| drivers/built-in.o: In function `dtsec_init':
-| :(.text+0x31008c): undefined reference to `mdiobus_write'
-| :(.text+0x3100b4): undefined reference to `mdiobus_write'
-| :(.text+0x3100dc): undefined reference to `mdiobus_write'
-| :(.text+0x310128): undefined reference to `mdiobus_write'
-| drivers/built-in.o::(.text+0x310150): more undefined references to `mdiobus_write' follow
-| drivers/built-in.o: In function `dtsec_config':
-| :(.text+0x310804): undefined reference to `of_phy_find_device'
-
-and various other linker errors caused by the fact that the new fman
-driver uses PHYLIB but does not depend on or select it.
-
---oWj5HoUXCVjyUFuT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWiqLQAAoJECTWi3JdVIfQw+YH/2jMB/LT8N+DFrTooXClhCbo
-pEYG/jkc3xZzOI9aCg2GjCMBq51hc+eRMJUc8KrT1OU6N1HH/qONBCktlgkvW5JV
-xsXCFwHZr26IOrKysfXAYn5oSxnF0KmUlR7zy4t8imUh++REhal9D4k3bkWC8tqx
-K5NX+tHl3gZtKmznlmbgMgB+foMMZRK9ziftiymtWujtHzwdycyip4q3YLmA2Krz
-Q81jnxUYH1KmH9MCySLekl+nOH3uFzjVyFCtAkhapEYYYK3HaLk3dpzw/mYBrdQB
-dUsku8mMV3soSAgsCsW/GXVPFqrzA5RL+LMgUXmgznwIktu7La0AK7xMgyxq9dE=
-=U39K
------END PGP SIGNATURE-----
-
---oWj5HoUXCVjyUFuT--
+--b.
