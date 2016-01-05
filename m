@@ -1,41 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Widespread boot failures on ARM due to "mm/page_alloc.c:
- calculate zone_start_pfn at zone_spanned_pages_in_node()"
-Date: Tue, 5 Jan 2016 11:49:18 +1100
-Message-ID: <20160105114918.2641f95d@canb.auug.org.au>
-References: <20160104224233.GU16023@sirena.org.uk>
-	<20160104150946.373ed02b8e8b81221340b7c8@linux-foundation.org>
-	<20160104235512.GW16023@sirena.org.uk>
-	<20160104163528.be56a4b1.akpm@linux-foundation.org>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: next-20160104 build: 3 failures 15 warnings (next-20160104)
+Date: Tue, 5 Jan 2016 02:04:11 +0100
+Message-ID: <568B168B.9060001@intel.com>
+References: <E1aG3zo-0000gt-2t@optimist>
+ <20160104153502.GK16023@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45770 "EHLO ozlabs.org"
+Received: from mga03.intel.com ([134.134.136.65]:26113 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753472AbcAEAtT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jan 2016 19:49:19 -0500
-In-Reply-To: <20160104163528.be56a4b1.akpm@linux-foundation.org>
+	id S1753472AbcAEBE1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Jan 2016 20:04:27 -0500
+In-Reply-To: <20160104153502.GK16023@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Taku Izumi <izumi.taku@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>, Mel Gorman <mel@csn.ul.ie>, Xishi Qiu <qiuxishi@huawei.com>, Dave Hansen <dave.hansen@intel.com>, Matt Fleming <matt@codeblueprint.co.uk>, Kamezawa Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, Kevin.Hilman@linaro.org, Tyler.Baker@linaro.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: Pi-Cheng Chen <pi-cheng.chen@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-Hi Andrew,
-
-On Mon, 4 Jan 2016 16:35:28 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+On 1/4/2016 4:35 PM, Mark Brown wrote:
+> On Mon, Jan 04, 2016 at 12:12:20PM +0000, Build bot for Mark Brown wrote:
 >
-> Stephen, can we please retain
-> 
-> mm-calculate-zone_start_pfn-at-zone_spanned_pages_in_node.patch
-> mm-introduce-kernelcore=mirror-option.patch
-> mm-introduce-kernelcore=mirror-option-fix.patch
-> mm-introduce-kernelcore=mirror-option-fix-2.patch
-> 
-> and add the below?
+> Today's linux-next fails to build for arm64 due to 44d3d051253 (ARM64:
+> dts: mt8173: Add CPU OPP, clock and regulator supply properties)
 
-Sure, that is easier than dropping the above patches, anyway.
+Thanks for letting me know, I've dropped this one.
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> in one of Raphael's trees:
+>
+>> 	arm64-allmodconfig
+>> Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
+>> Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
+>> 	arm64-defconfig
+>> Error: ../arch/arm64/boot/dts/mediatek/mt8173.dtsi:132.24-25 syntax error
+> which is failing because at least CLK_INFRA_CA53SEL is used but never
+> defined, presumably there is some dependency which wasn't integrated.
+> Normally we merge DT changes via the architecture to help avoid these
+> issues.
+
+Yes, that would be better.
+
+Thanks,
+Rafael
