@@ -1,43 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rdma tree with the net-next tree
-Date: Tue, 5 Jan 2016 12:51:54 +1100
-Message-ID: <20160105125154.36d9a0c4@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with the mtd tree
+Date: Tue, 5 Jan 2016 13:05:18 +1100
+Message-ID: <20160105130518.2c06c514@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41188 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35438 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753859AbcAEBv5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jan 2016 20:51:57 -0500
+	id S1753791AbcAECFT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Jan 2016 21:05:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>, Achiad Shochat <achiad@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
+To: Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Doug,
+Hi Brian,
 
-Today's linux-next merge of the rdma tree got conflicts in:
+Today's linux-next merge of the l2-mtd tree got a conflict in:
 
-  drivers/net/ethernet/mellanox/mlx5/core/vport.c
-  include/linux/mlx5/mlx5_ifc.h
-  include/linux/mlx5/vport.h
+  drivers/mtd/mtdcore.c
 
-between commits:
+between commit:
 
-  e1d7d349c69d ("net/mlx5: Update access functions to Query/Modify vport MAC address")
-  e75465148b7d ("net/mlx5: Introduce access functions to modify/query vport state")
+  472b444eef93 ("mtd: fix cmdlinepart parser, early naming for auto-filled MTD")
 
-from the net-next tree and commit:
+from the mtd tree and commit:
 
-  e5f6175c5b66 ("net/mlx5_core: Break down the vport mac address query function")
+  07fd2f871c5e ("mtd: partitions: pass around 'mtd_partitions' wrapper struct")
 
-from the rdma tree and maybe some others.
+from the l2-mtd tree.
 
-I have no hope of fixing this stuff up, so I have dropped the rdma tree
-again for today.  There is similar functionality being introduced in
-both trees ... please sort this mess out ...
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/mtd/mtdcore.c
+index ffa288474820,89d811e7b04a..000000000000
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@@ -590,22 -589,20 +595,22 @@@ int mtd_device_parse_register(struct mt
+  			      const struct mtd_partition *parts,
+  			      int nr_parts)
+  {
++ 	struct mtd_partitions parsed;
+  	int ret;
+- 	struct mtd_partition *real_parts = NULL;
+  
+ +	mtd_set_dev_defaults(mtd);
+ +
+- 	ret = parse_mtd_partitions(mtd, types, &real_parts, parser_data);
+- 	if (ret <= 0 && nr_parts && parts) {
+- 		real_parts = kmemdup(parts, sizeof(*parts) * nr_parts,
+- 				     GFP_KERNEL);
+- 		if (!real_parts)
+- 			ret = -ENOMEM;
+- 		else
+- 			ret = nr_parts;
+- 	}
+- 	/* Didn't come up with either parsed OR fallback partitions */
+- 	if (ret < 0) {
++ 	memset(&parsed, 0, sizeof(parsed));
++ 
++ 	ret = parse_mtd_partitions(mtd, types, &parsed, parser_data);
++ 	if ((ret < 0 || parsed.nr_parts == 0) && parts && nr_parts) {
++ 		/* Fall back to driver-provided partitions */
++ 		parsed = (struct mtd_partitions){
++ 			.parts		= parts,
++ 			.nr_parts	= nr_parts,
++ 		};
++ 	} else if (ret < 0) {
++ 		/* Didn't come up with parsed OR fallback partitions */
+  		pr_info("mtd: failed to find partitions; one or more parsers reports errors (%d)\n",
+  			ret);
+  		/* Don't abort on errors; we can still use unpartitioned MTD */
