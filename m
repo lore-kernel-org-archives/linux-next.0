@@ -1,63 +1,75 @@
-From: Mark Brown <broonie@kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
 Subject: Re: Widespread boot failures on ARM due to "mm/page_alloc.c:
  calculate zone_start_pfn at zone_spanned_pages_in_node()"
-Date: Tue, 5 Jan 2016 11:45:49 +0000
-Message-ID: <20160105114549.GX16023@sirena.org.uk>
+Date: Tue, 5 Jan 2016 12:21:51 +0000
+Message-ID: <568BB55F.2020709@arm.com>
 References: <20160104224233.GU16023@sirena.org.uk>
  <20160104150946.373ed02b8e8b81221340b7c8@linux-foundation.org>
  <20160104235512.GW16023@sirena.org.uk>
  <20160104163528.be56a4b1.akpm@linux-foundation.org>
+ <20160105114549.GX16023@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MikxO53xlyBvwArL"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36587 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752170AbcAELq0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jan 2016 06:46:26 -0500
-Content-Disposition: inline
-In-Reply-To: <20160104163528.be56a4b1.akpm@linux-foundation.org>
+Received: from foss.arm.com ([217.140.101.70]:57916 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751440AbcAEMV4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Jan 2016 07:21:56 -0500
+In-Reply-To: <20160105114549.GX16023@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>, Mel Gorman <mel@csn.ul.ie>, Xishi Qiu <qiuxishi@huawei.com>, Dave Hansen <dave.hansen@intel.com>, Matt Fleming <matt@codeblueprint.co.uk>, Kamezawa Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, Kevin.Hilman@linaro.org, Tyler.Baker@linaro.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>, Tony Luck <tony.luck@intel.com>, Russell King <linux@arm.linux.org.uk>, kernel-build-reports@lists.linaro.org, Mel Gorman <mel@csn.ul.ie>, Tyler.Baker@linaro.org, Dave Hansen <dave.hansen@intel.com>, Kevin.Hilman@linaro.org, linux-next@vger.kernel.org, Kamezawa Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Xishi Qiu <qiuxishi@huawei.com>, Taku Izumi <izumi.taku@jp.fujitsu.com>, Matt Fleming <matt@codeblueprint.co.uk>
 
 
---MikxO53xlyBvwArL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Jan 04, 2016 at 04:35:28PM -0800, Andrew Morton wrote:
-> On Mon, 4 Jan 2016 23:55:12 +0000 Mark Brown <broonie@kernel.org> wrote:
-> > On Mon, Jan 04, 2016 at 03:09:46PM -0800, Andrew Morton wrote:
+On 05/01/16 11:45, Mark Brown wrote:
+> On Mon, Jan 04, 2016 at 04:35:28PM -0800, Andrew Morton wrote:
+>> On Mon, 4 Jan 2016 23:55:12 +0000 Mark Brown <broonie@kernel.org> wrote:
+>>> On Mon, Jan 04, 2016 at 03:09:46PM -0800, Andrew Morton wrote:
+>
+>>>> Thanks.  That patch has rather a blooper if
+>>>> CONFIG_HAVE_MEMBLOCK_NODE_MAP=n.  Is that the case in your testing?
+>
+>>> Seems to be what's making a difference from a quick run through, yes.
+>
+>> OK, thanks.
+>
+> Seems like I was mistaken here somehow or there's some other problem -
+> I've kicked off another bisect for today's -next:
+>
+>     https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/137/console
+>
+> and will follow up with any results.
+>
 
-> > > Thanks.  That patch has rather a blooper if
-> > > CONFIG_HAVE_MEMBLOCK_NODE_MAP=n.  Is that the case in your testing?
+With both patches applied(one already in today's -next), I am able to
+boot on ARM64 platform but I get huge load(for each pfn) of below warning:
 
-> > Seems to be what's making a difference from a quick run through, yes.
+-->8
 
-> OK, thanks.
+BUG: Bad page state in process swapper  pfn:900000
+page:ffffffbde4000000 count:0 mapcount:1 mapping: (null) index:0x0
+flags: 0x0()
+page dumped because: nonzero mapcount
+Modules linked in:
+Hardware name: ARM Juno development board (r0) (DT)
+Call trace:
+[<ffffffc000089830>] dump_backtrace+0x0/0x180
+[<ffffffc0000899c4>] show_stack+0x14/0x20
+[<ffffffc000335008>] dump_stack+0x90/0xc8
+[<ffffffc0001531f8>] bad_page+0xd8/0x138
+[<ffffffc000153470>] free_pages_prepare+0x218/0x290
+[<ffffffc000154d4c>] __free_pages_ok+0x1c/0xb8
+[<ffffffc000155638>] __free_pages+0x30/0x50
+[<ffffffc00092fa9c>] __free_pages_bootmem+0xa0/0xa8
+[<ffffffc0009321d0>] free_all_bootmem+0x11c/0x184
+[<ffffffc000925264>] mem_init+0x48/0x1b4
+[<ffffffc0009217e0>] start_kernel+0x224/0x3b4
+[<0000000080663000>] 0x80663000
+Disabling lock debugging due to kernel taint
 
-Seems like I was mistaken here somehow or there's some other problem -
-I've kicked off another bisect for today's -next:
-
-   https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/137/console
-
-and will follow up with any results.
-
---MikxO53xlyBvwArL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWi6zsAAoJECTWi3JdVIfQrzMH/05q7M8dZRq3TD+Ks6Xj8zQb
-Lyu6by5xqxZYXQnrwlemK87iOoD8RjmhNOI5jPev7vd6RWiP3XEK/QXxzKBwcgYe
-gt3tCA7PmkjBt4MSaAbUW06EvkP3pzUnqZd1V7+Q/HVmyZznrmXbQCoOBuNLiRk3
-xObf0iKqGl96VngnOUNuftHepS04gCgh8cDmhjJM55zldX0i+cAhxbVS1xnU71GO
-/rATdzFXWDlIIIJ0iOor8rcnU+oNyPEBlp75VBSQebvK+0zS73GfYH9kdhmV5EMT
-zOcktkfCFn6qSwMpWAZCc2++kI1XvG0UvBqA6HlDVhn7hLeYw2RFsASGfjOcv1M=
-=SuMs
------END PGP SIGNATURE-----
-
---MikxO53xlyBvwArL--
+-- 
+Regards,
+Sudeep
