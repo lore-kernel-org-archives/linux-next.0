@@ -1,77 +1,43 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: linux-next: build failure after merge of the i2c tree
-Date: Tue, 5 Jan 2016 02:04:30 +0100
-Message-ID: <20160105010430.GA6567@katana>
-References: <20151216154813.2566a655@canb.auug.org.au>
- <20160105105507.335a4fae@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma tree with the net-next tree
+Date: Tue, 5 Jan 2016 12:51:54 +1100
+Message-ID: <20160105125154.36d9a0c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160105105507.335a4fae@canb.auug.org.au>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-i2c@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41188 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753859AbcAEBv5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Jan 2016 20:51:57 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>, Achiad Shochat <achiad@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
 
+Hi Doug,
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the rdma tree got conflicts in:
 
-Stephen,
+  drivers/net/ethernet/mellanox/mlx5/core/vport.c
+  include/linux/mlx5/mlx5_ifc.h
+  include/linux/mlx5/vport.h
 
-> > After merging the i2c tree, today's linux-next build (powerpc
-> > ppc44x_defconfig) failed like this:
+between commits:
 
-Oops, yes.
+  e1d7d349c69d ("net/mlx5: Update access functions to Query/Modify vport MAC address")
+  e75465148b7d ("net/mlx5: Introduce access functions to modify/query vport state")
 
-> >  /* Bus timings (in ns) for bit-banging */
-> > -static struct i2c_timings {
-> > +static struct ibm_i2c_timings {
+from the net-next tree and commit:
 
-I changed it to ibm_iic_timings for consistency reasons...
+  e5f6175c5b66 ("net/mlx5_core: Break down the vport mac address query function")
 
-> >  	volatile struct iic_regs __iomem *iic =3D dev->vaddr;
-> > -	const struct i2c_timings* t =3D &timings[dev->fast_mode ? 1 : 0];
-> > +	const struct ibm_i2c_timings* t =3D &timings[dev->fast_mode ? 1 : 0];
+from the rdma tree and maybe some others.
 
-=2E.. and fixed the placement of the * operator ...
+I have no hope of fixing this stuff up, so I have dropped the rdma tree
+again for today.  There is similar functionality being introduced in
+both trees ... please sort this mess out ...
 
-> >  	u8 mask, v, sda;
-> >  	int i, res;
-> > =20
-> > --=20
-> > 2.6.2
->=20
-> Ping?
-
-=2E.. and applied to for-next, thanks! The patch got lost because the
-i2c-list was not on CC and thus patchwork couldn't catch it.
-
-
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWixaeAAoJEBQN5MwUoCm2JJcQAIHL1wGYdv0YSZYrASekCKlH
-Fs6K62FFjRcnY2wg9vpqDjkWYSC8yhzMly4ThT1edZ9nY9zS+bgGunXgQ1tW1oVH
-J1hUfEas5WJsec8+ptDROMu8+mVtoE8UQ2o41jtiUYJ1sxpoG/cT/dpBZuCcn0Vb
-Enpsz4BKlDtTEcLT3+YaLpncTA7eTz0USZ+wZozG0YrWIbI6UrL1gT7gSEb6HWII
-VFvigjVpB7RppfyCgdRpZyE3PI2VQbDFsY3eko/RonX54pQZ7mw9BTengBjFI6Pe
-/33RQfW2FKCEQ8xELGIKFSd7Hk96P2+KutCbsN+MWsGjAHFVimtd3J+qnktgXJZu
-HHSr2aQXoRZtfH8hTQRi6I73Q9ZGuNF3gUX0rXeSR/jbLKmfjXM/twRb8K2a3KS1
-VJM0EQWtprtSlYUsZ/9X3rV5075noqnx77yy4CeCMB49gzxUOJuGV9IJ0zwfc0pb
-ujniyBWYYYAd8DDZ/5FmfyyEBZtG821YkEOC0BsSXYZK11Vf6y6s1NI8Rs2z1Z37
-QImxm3OKPjgg2IlRIkmSr0IalyN92JCokmcIMWF8X/4D/8qII027l6KbG4dvbN+v
-SehH7fEpa45oo+qvLpyY2xIYJjEoGAXXWz1WWlwxVwbZB5ln01jg1l4a/YJUX7wr
-JRHJ5fiPwNiJZYd23fiq
-=XSmr
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
