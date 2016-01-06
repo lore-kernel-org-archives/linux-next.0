@@ -1,44 +1,32 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: manual merge of the pm tree with the i2c tree
-Date: Wed, 06 Jan 2016 03:15:04 +0100
-Message-ID: <3075970.WbB6DJDsOa@vostro.rjw.lan>
-References: <20160106123911.2fff44b3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Wed, 6 Jan 2016 14:34:44 +1100
+Message-ID: <20160106143444.273f4ee1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:47048 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751978AbcAFBoX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jan 2016 20:44:23 -0500
-In-Reply-To: <20160106123911.2fff44b3@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Loc Ho <lho@apm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wednesday, January 06, 2016 12:39:11 PM Stephen Rothwell wrote:
-> Hi Rafael,
+Hi Mark,
 
-Hi,
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-> Today's linux-next merge of the pm tree got a conflict in:
-> 
->   drivers/i2c/busses/i2c-designware-platdrv.c
-> 
-> between commit:
-> 
->   90708ce22b48 ("i2c: designware: Add support for AMD Seattle I2C")
-> 
-> from the i2c tree and commit:
-> 
->   a90410e8ae3f ("i2c: dw: Add APM X-Gene ACPI I2C device support")
-> 
-> from the pm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+drivers/spi/spi-loopback-test.c: In function 'spi_loopback_test_probe':
+drivers/spi/spi-loopback-test.c:292:7: error: 'check_rx_buf' undeclared (first use in this function)
+  if (!check_rx_buf && (spi->master->mode_bits & SPI_LOOP)) {
+       ^
 
-Looks good to me and thanks for taking care of this!
+Caused by commit
 
-Rafael
+  b0632bfe5ec4 ("spi: loopback-test: added support for HW-loopback mode")
+
+I have used the spi tree from next-20160105 for today.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
