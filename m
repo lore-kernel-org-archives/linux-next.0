@@ -1,117 +1,68 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160106 build: 0 failures 13 warnings (next-20160106)
-Date: Wed, 06 Jan 2016 11:45:31 +0000
-Message-ID: <E1aGmWx-00038s-9M@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38143 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752025AbcAFLpi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jan 2016 06:45:38 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160106
-Git describe: next-20160106
-Commit: 600690a892 Add linux-next specific files for 20160106
-
-Build Time: 73 min 23 sec
-
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 13
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v5_defconfig
-      7 warnings    0 mismatches  : arm-multi_v7_defconfig
-      7 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 13
-	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	  2 ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	  1 arch/arm/configs/multi_v7_defconfig:435:warning: symbol value 'm' invalid for MFD_DA9063
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/orangefs/symlink.c:32:2: warning: initialization from incompatible pointer type [enabled by default]
-	  1 ../fs/orangefs/symlink.c:32:2: warning: (near initialization for 'orangefs_symlink_inode_operations.get_link') [enabled by default]
-	  1 ../fs/orangefs/symlink.c:32:14: warning: initialization from incompatible pointer type
-	  1 ../fs/orangefs/symlink.c:32:14: warning: (near initialization for 'orangefs_symlink_inode_operations.get_link')
-	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+From: Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: linux-next: manual merge of the rdma tree with the nfsd tree
+Date: Wed, 6 Jan 2016 07:01:14 -0500
+Message-ID: <24AC8112-95A2-4D7B-8048-3D7D50A78B90@oracle.com>
+References: <20151231133022.0b3ecab9@canb.auug.org.au> <20160104124450.7ba21c87@canb.auug.org.au> <5689DEA0.1020803@redhat.com> <20160104193616.GB30315@fieldses.org>
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160104193616.GB30315@fieldses.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>, Doug Ledford <dledford@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML Kernel <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Ira Weiny <ira.weiny@intel.com>, Or Gerlitz <ogerlitz@mellanox.com>
+List-Id: linux-next.vger.kernel.org
 
 
+> On Jan 4, 2016, at 2:36 PM, J. Bruce Fields <bfields@fieldses.org> wrote:
+> 
+> On Sun, Jan 03, 2016 at 09:53:20PM -0500, Doug Ledford wrote:
+>> On 01/03/2016 08:44 PM, Stephen Rothwell wrote:
+>>> Hi all,
+>>> 
+>>> On Thu, 31 Dec 2015 13:30:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> 
+>>>> Hi Doug,
+>>>> 
+>>>> Today's linux-next merge of the rdma tree got conflicts in a quite a
+>>>> few files between (mostly, I think) commit:
+>>>> 
+>>>>  6c7b6d2d442c ("IB: merge struct ib_device_attr into struct ib_device")
+>>>> 
+>>>> from the nfsd tree and various commits from the rdma tree.
+>>>> 
+>>>> It would have taken me considerable time to fix the conflicts up, so I
+>>>> have dropped teh rdma tree for today (just because it was merged second).
+>>>> Please have a conversation and figure out how you are going to cooperate
+>>>> and get these conflicts fixed e.g. set up a stable branch with Christoph's
+>>>> commit (and any other conflicting commits) in it and merge that into
+>>>> both trees.
+>>> 
+>>> So, on further inspection, it appears that there is a series of commits
+>>> in the rdma tree that does basically the same as that nfsd tree commit
+>>> above.  So I have dropped the rdma tree again today.  Please have a
+>>> conversation guys ...
+>>> 
+>> 
+>> The initial patchset was Christoph's.  It was later replaced with a
+>> different patchset from Or Gerlitz.  Bruce picked up some changes from
+>> Chuck Lever that were originally based on Christoph's work but now need
+>> to be rebased off of the current RDMA tree.
+> 
+> OK.  I'm assuming Chuck will want to do any necessary rebasing and
+> retesting himself, so for now I've just dropped those patches, and
+> expect to pick up new versions when Chuck gets back from the holidays.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+Part of the plan was that Doug's tree would be merged before
+Bruce's. But the above problem description looks like the
+maintainer trees were merged into linux-next in the other order.
+
+I'd like to make this simpler for everyone. Bruce, may I send
+my for-4.5 NFS/RDMA server patches to Doug with your Acked-by?
+That way, merge order won't matter.
+
+Doug, what is the URL for the branch I should rebase on?
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../fs/orangefs/symlink.c:32:14: warning: initialization from incompatible pointer type
-	../fs/orangefs/symlink.c:32:14: warning: (near initialization for 'orangefs_symlink_inode_operations.get_link')
-	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm/configs/multi_v7_defconfig:435:warning: symbol value 'm' invalid for MFD_DA9063
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../fs/orangefs/symlink.c:32:2: warning: initialization from incompatible pointer type [enabled by default]
-	../fs/orangefs/symlink.c:32:2: warning: (near initialization for 'orangefs_symlink_inode_operations.get_link') [enabled by default]
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
+--
+Chuck Lever
