@@ -1,68 +1,147 @@
-From: Or Gerlitz <ogerlitz@mellanox.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the nfsd tree
-Date: Wed, 6 Jan 2016 17:52:24 +0200
-Message-ID: <568D3838.7010606@mellanox.com>
-References: <20151231133022.0b3ecab9@canb.auug.org.au>
- <20160104124450.7ba21c87@canb.auug.org.au> <5689DEA0.1020803@redhat.com>
- <20160104193616.GB30315@fieldses.org>
- <24AC8112-95A2-4D7B-8048-3D7D50A78B90@oracle.com>
- <20160106121529.GA21780@lst.de>
- <90E07B04-AAFD-45E9-85EA-44C659191180@oracle.com>
- <568D28D2.4090507@mellanox.com>
- <3B1D726B-5225-40D5-8C94-CA87EF198D89@oracle.com>
+From: Steve Capper <steve.capper@linaro.org>
+Subject: Re: Widespread boot failures on ARM due to "mm/page_alloc.c:
+ calculate zone_start_pfn at zone_spanned_pages_in_node()"
+Date: Wed, 6 Jan 2016 15:56:34 +0000
+Message-ID: <CAPvkgC3q2WTBydBtS1_jzPVhW5QyA=bjHgWv_WN4Vgm6Qe1j4g@mail.gmail.com>
+References: <20160104224233.GU16023@sirena.org.uk>
+	<20160104150946.373ed02b8e8b81221340b7c8@linux-foundation.org>
+	<20160104235512.GW16023@sirena.org.uk>
+	<20160104163528.be56a4b1.akpm@linux-foundation.org>
+	<20160105114549.GX16023@sirena.org.uk>
+	<568BB55F.2020709@arm.com>
+	<CAPvkgC3w0oy53HTwDtqEXKoabL44i06hAXndno-Ms83L0Tm0CA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-am1on0093.outbound.protection.outlook.com ([157.56.112.93]:61504
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751595AbcAFPwf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Jan 2016 10:52:35 -0500
-In-Reply-To: <3B1D726B-5225-40D5-8C94-CA87EF198D89@oracle.com>
+Received: from mail-io0-f169.google.com ([209.85.223.169]:36149 "EHLO
+	mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751341AbcAFP4f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jan 2016 10:56:35 -0500
+Received: by mail-io0-f169.google.com with SMTP id g73so23569123ioe.3
+        for <linux-next@vger.kernel.org>; Wed, 06 Jan 2016 07:56:34 -0800 (PST)
+In-Reply-To: <CAPvkgC3w0oy53HTwDtqEXKoabL44i06hAXndno-Ms83L0Tm0CA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, "J. Bruce Fields" <bfields@fieldses.org>, Doug Ledford <dledford@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML Kernel <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Tony Luck <tony.luck@intel.com>, Russell King <linux@arm.linux.org.uk>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, Mel Gorman <mel@csn.ul.ie>, Tyler Baker <Tyler.Baker@linaro.org>, Dave Hansen <dave.hansen@intel.com>, Kevin Hilman <Kevin.Hilman@linaro.org>, linux-next@vger.kernel.org, Kamezawa Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Xishi Qiu <qiuxishi@huawei.com>, Taku Izumi <izumi.taku@jp.fujitsu.com>, Matt Fleming <matt@codeblueprint.co.uk>
 
-On 1/6/2016 5:20 PM, Chuck Lever wrote:
->> Chuck,
->> >
->> >Lets be concrete... anything wrong with patch [1]?
-> Yes. It is missing Acked-by: lines from the maintainers of
-> those files.
+On 5 January 2016 at 19:59, Steve Capper <steve.capper@linaro.org> wrote:
+> On 5 January 2016 at 12:21, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>
+>>
+>> On 05/01/16 11:45, Mark Brown wrote:
+>>>
+>>> On Mon, Jan 04, 2016 at 04:35:28PM -0800, Andrew Morton wrote:
+>>>>
+>>>> On Mon, 4 Jan 2016 23:55:12 +0000 Mark Brown <broonie@kernel.org> wrote:
+>>>>>
+>>>>> On Mon, Jan 04, 2016 at 03:09:46PM -0800, Andrew Morton wrote:
+>>>
+>>>
+>>>>>> Thanks.  That patch has rather a blooper if
+>>>>>> CONFIG_HAVE_MEMBLOCK_NODE_MAP=n.  Is that the case in your testing?
+>>>
+>>>
+>>>>> Seems to be what's making a difference from a quick run through, yes.
+>>>
+>>>
+>>>> OK, thanks.
+>>>
+>>>
+>>> Seems like I was mistaken here somehow or there's some other problem -
+>>> I've kicked off another bisect for today's -next:
+>>>
+>>>
+>>> https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/137/console
+>>>
+>>> and will follow up with any results.
+>>>
+>>
+>> With both patches applied(one already in today's -next), I am able to
+>> boot on ARM64 platform but I get huge load(for each pfn) of below warning:
+>>
+>> -->8
+>>
+>> BUG: Bad page state in process swapper  pfn:900000
+>> page:ffffffbde4000000 count:0 mapcount:1 mapping: (null) index:0x0
+>> flags: 0x0()
+>> page dumped because: nonzero mapcount
+>> Modules linked in:
+>> Hardware name: ARM Juno development board (r0) (DT)
+>> Call trace:
+>> [<ffffffc000089830>] dump_backtrace+0x0/0x180
+>> [<ffffffc0000899c4>] show_stack+0x14/0x20
+>> [<ffffffc000335008>] dump_stack+0x90/0xc8
+>> [<ffffffc0001531f8>] bad_page+0xd8/0x138
+>> [<ffffffc000153470>] free_pages_prepare+0x218/0x290
+>> [<ffffffc000154d4c>] __free_pages_ok+0x1c/0xb8
+>> [<ffffffc000155638>] __free_pages+0x30/0x50
+>> [<ffffffc00092fa9c>] __free_pages_bootmem+0xa0/0xa8
+>> [<ffffffc0009321d0>] free_all_bootmem+0x11c/0x184
+>> [<ffffffc000925264>] mem_init+0x48/0x1b4
+>> [<ffffffc0009217e0>] start_kernel+0x224/0x3b4
+>> [<0000000080663000>] 0x80663000
+>> Disabling lock debugging due to kernel taint
+>>
+>> --
 >
-> All changes to files under net/sunrpc need an Ack from one
-> of the maintainers listed in MAINTAINERS for that directory,
-> if the changes are going through another maintainer's tree.
+> I managed to get 904769ac82ebf60cb54f225f59ae7c064772a4d7 booting on
+> an arm64 machine without errors with the following changes:
 >
-> I have been personally asked to remind folks that the
-> nfs-sunrpc maintainers do not read linux-rdma, so they
-> must be contacted directly (and cc: linux-nfs) as part of
-> proposing finished patches in that area.
-
-I did that!!
-
-I copied you and Anna on the patch [1].
-
-Again, lets be concrete, this very small cleanup was picked and merged, 
-anything there
-need to be fixed?
-
-Or.
-
-[1] http://marc.info/?l=linux-rdma&m=145042924110411&w=2
-
-
-> Unfortunately I have not been able to review every patch
-> that has come by on linux-rdma in the past 9 months to
-> ensure the eyes are dotted and tees crossed. More than
-> a few commits in the tree are missing the proper tags.
+> =====================================
 >
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index a8bb70d..0edb608 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5013,6 +5013,15 @@ static inline unsigned long __meminit
+> zone_spanned_pages_in_node(int nid,
+>                                         unsigned long *zone_end_pfn,
+>                                         unsigned long *zones_size)
+>  {
+> +       unsigned int zone;
+> +
+> +       *zone_start_pfn = node_start_pfn;
+> +       for (zone = 0; zone < zone_type; zone++) {
+> +               *zone_start_pfn += zones_size[zone];
+> +       }
+> +
+> +       *zone_end_pfn = *zone_start_pfn + zones_size[zone_type];
+> +
+>         return zones_size[zone_type];
+>  }
 >
-> >[1]  commit e3e45b1 "xprtrdma: Avoid calling ib_query_device"
-> >
-> >in git://git.kernel.org/pub/scm/linux/kernel/git/dledford/rdma.git k.o/for-4.5
-> >
-> >http://git.kernel.org/cgit/linux/kernel/git/dledford/rdma.git/commit/?h=k.o/for-4.5&id=e3e45b1b43988b99007a9908ca0ba738b3fbd0ff
-> >
+> @@ -5328,6 +5337,8 @@ void __paginginit free_area_init_node(int nid,
+> unsigned long *zones_size,
+>         pr_info("Initmem setup node %d [mem %#018Lx-%#018Lx]\n", nid,
+>                 (u64)start_pfn << PAGE_SHIFT,
+>                 end_pfn ? ((u64)end_pfn << PAGE_SHIFT) - 1 : 0);
+> +#else
+> +       start_pfn = node_start_pfn;
+>  #endif
+>         calculate_node_totalpages(pgdat, start_pfn, end_pfn,
+>                                   zones_size, zholes_size);
+>
+> =====================================
+>
+> My understanding is that 904769a ("mm/page_alloc.c: calculate
+> zone_start_pfn at zone_spanned_pages_in_node()") inadvertently
+> discards information when pgdat->node_start_pfn is removed from
+> free_area_init_core (and zone_start_pfn is no longer updated by "size"
+> in the loop inside free_area_init_core). This isn't an issue with
+> systems where CONFIG_HAVE_MEMBLOCK_NODE_MAP is enabled as
+> zone_start_pfn is set correctly. On systems without
+> CONFIG_HAVE_MEMBLOCK_NODE_MAP, zone_start_pfn is always 0.
+>
+> When I ported the above fix to linux-next
+> (8ef79cd05e6894c01ab9b41aa918a402fa8022a7) I was able to boot in a VM
+> but not on my actual machine, I'll investigate that tomorrow.
+
+I got 8ef79cd05e6894c01ab9b41aa918a402fa8022a7 working on my main
+devboard with the fix above. (It turned out that I had a misconfigured
+earlycon command line option and this became a problem with one of the
+pl011 patches.)
+
+Cheers,
+-- 
+Steve
