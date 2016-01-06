@@ -1,40 +1,39 @@
-From: Or Gerlitz <ogerlitz@mellanox.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the nfsd tree
-Date: Wed, 6 Jan 2016 18:38:31 +0200
-Message-ID: <568D4307.1010405@mellanox.com>
-References: <20151231133022.0b3ecab9@canb.auug.org.au>
- <20160104124450.7ba21c87@canb.auug.org.au> <5689DEA0.1020803@redhat.com>
- <20160104193616.GB30315@fieldses.org>
- <24AC8112-95A2-4D7B-8048-3D7D50A78B90@oracle.com>
- <20160106121529.GA21780@lst.de>
- <90E07B04-AAFD-45E9-85EA-44C659191180@oracle.com>
- <568D28D2.4090507@mellanox.com>
- <3B1D726B-5225-40D5-8C94-CA87EF198D89@oracle.com>
- <568D3838.7010606@mellanox.com>
- <2118F38A-846F-4690-A6E8-0BA7A437D567@oracle.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jan 6 (clocksource/fsl_ftm_timer.c)
+Date: Wed, 6 Jan 2016 09:26:41 -0800
+Message-ID: <568D4E51.9030606@infradead.org>
+References: <20160106190119.3fb848fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-db3on0084.outbound.protection.outlook.com ([157.55.234.84]:53014
-	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751582AbcAFRNm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Jan 2016 12:13:42 -0500
-In-Reply-To: <2118F38A-846F-4690-A6E8-0BA7A437D567@oracle.com>
+Received: from casper.infradead.org ([85.118.1.10]:50830 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751595AbcAFR0s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jan 2016 12:26:48 -0500
+In-Reply-To: <20160106190119.3fb848fd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, "J. Bruce Fields" <bfields@fieldses.org>, Doug Ledford <dledford@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Xiubo Li <Li.Xiubo@freescale.com>
 
-On 1/6/2016 6:33 PM, Chuck Lever wrote:
-> Anna was the only NFS maintainer listed, and linux-nfs was not included on that e-mail at all.
+On 01/06/16 00:01, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160105:
+> 
 
-OK, will do better next time.
+on i386:
+when CLKSRC_MMIO is not enabled:
 
-> Did Anna ever reply with an Acked-by ? I don't see that in either the archive or my own inbox.
+drivers/built-in.o: In function `ftm_timer_init':
+fsl_ftm_timer.c:(.init.text+0x6842): undefined reference to `clocksource_mmio_readl_up'
+fsl_ftm_timer.c:(.init.text+0x6855): undefined reference to `clocksource_mmio_init'
 
-as you wrote, the patch is mechanical, I didn't think there's a deep 
-need to desperately chase people for that ack
 
-Or.
+Looks like FSL_FTM_TIMER needs to select CLKSRC_MMIO.
+
+
+
+-- 
+~Randy
