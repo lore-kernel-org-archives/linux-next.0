@@ -1,38 +1,104 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jan 7 (regulator/max8973)
-Date: Thu, 7 Jan 2016 10:38:03 -0800
-Message-ID: <568EB08B.7010707@infradead.org>
-References: <20160107212131.69b44a5d@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: next boot: 564 boots: 59 failed, 448 passed with 57 offline
+ (next-20160107)
+Date: Thu, 7 Jan 2016 10:57:39 -0800
+Message-ID: <20160107185739.GA29951@kroah.com>
+References: <568e8740.01941c0a.31072.ffffb67b@mx.google.com>
+ <20160107155958.GG6588@sirena.org.uk>
+ <20160107162810.GA25177@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160107212131.69b44a5d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42484 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752810AbcAGS5m (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2016 13:57:42 -0500
+Content-Disposition: inline
+In-Reply-To: <20160107162810.GA25177@ulmo>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 
-On 01/07/16 02:21, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Jan 07, 2016 at 05:28:10PM +0100, Thierry Reding wrote:
+> On Thu, Jan 07, 2016 at 03:59:58PM +0000, Mark Brown wrote:
+> > On Thu, Jan 07, 2016 at 07:41:52AM -0800, kernelci.org bot wrote:
+> > 
+> > > Tree: next
+> > > Branch: local/master
+> > > Git Describe: next-20160107
+> > > Git Commit: 0f023a298a7d2a8e99c54913f7277b3c08c1f5c9
+> > > Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > > Tested: 95 unique boards, 25 SoC families, 28 builds out of 135
+> > > 
+> > > Boot Failures Detected: https://kernelci.org/boot/?next-20160107&fail
+> > 
+> > For the past couple of days -next has been failing to boot on various
+> > Tegra platforms, there are failures involving either no kernel output or
+> > (with tegra_defconfig) backtraces during CMA allocation from USB, for
+> > example:
+> > 
+> >    http://storage.kernelci.org/next/next-20160107/arm-tegra_defconfig/lab-khilman/boot-tegra30-beaver.html
+> > 
+> > >     multi_v7_defconfig+CONFIG_THUMB2_KERNEL=y:
+> > >         tegra124-jetson-tk1: 2 failed labs
+> > >         tegra30-beaver: 1 failed lab
+> > > 
+> > >     tegra_defconfig:
+> > >         tegra124-jetson-tk1: 2 failed labs
+> > >         tegra124-jetson-tk1_rootfs:nfs: 1 failed lab
+> > >         tegra124-nyan-big: 1 failed lab
+> > >         tegra30-beaver: 1 failed lab
+> > > 
+> > >     multi_v7_defconfig+CONFIG_ARM_LPAE=y:
+> > >         tegra124-jetson-tk1: 1 failed lab
+> > >         tegra124-nyan-big: 1 failed lab
+> > > 
+> > >     multi_v7_defconfig:
+> > >         tegra124-jetson-tk1: 2 failed labs
+> > >         tegra30-beaver: 1 failed lab
+> > > 
+> > >     multi_v7_defconfig+CONFIG_LKDTM=y:
+> > >         tegra124-jetson-tk1: 2 failed labs
+> > >         tegra30-beaver: 1 failed lab
+> > > 
+> > >     multi_v7_defconfig+CONFIG_PROVE_LOCKING=y:
+> > >         tegra124-jetson-tk1: 2 failed labs
+> > >         tegra30-beaver: 1 failed lab
+> > 
+> > I did bisects yesterday but they were a bit inconclusive, showing a
+> > series of skipped commits in the TTY tree as being the culprits:
+> > 
+> > afd7f88f157796e586fc99d62da13a54024e0731 serial: 8250: move of_serial code to 8250 directory
+> > 4e33870b3bb691996354a8f9e8f69458b4fc34d9 serial: of: CONFIG_SERIAL_8250 is always set
+> > d1b5c87fa8058a3f477ae05555916dd1cea934ad serial: remove NWP serial support
+> > 
+> > which seems more than a little surprising and like they might be false
+> > positives, especially in the cases that do produce output.  The errors
+> > today look the same.  I've not investigated further than the bisects.
+> > 
+> > Full bisect logs:
+> > 
+> >  https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/140/console
+> >  https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/141/console
 > 
-> Changes since 20160106:
+> These should all be fixed by this patch:
 > 
+> 	serial: 8250: of: Fix the driver and actually compile the 8250_of
+> 
+> which can be found in patchwork here:
+> 
+> 	https://patchwork.kernel.org/patch/7883541/
+> 
+> I think this is merely waiting to be picked up into the tty tree. I
+> suspect the reason why there's output in the first place is because
+> of earlyprintk. I've seen recent linux-next work properly, with the
+> serial console hanging at some point (fbcon shows login prompt). If
+> I apply the above patch things are back to normal.
 
-on i386:
-when CONFIG_THERMAL=m
-and CONFIG_REGULATOR_MAX8973=y:
+I'll go queue that up later, but how is this suddenly showing up in
+-next?  The tty tree has been pretty quiet for a while now..
 
-drivers/built-in.o: In function `max8973_remove':
-max8973-regulator.c:(.text+0x170bbb): undefined reference to `thermal_zone_of_sensor_unregister'
-drivers/built-in.o: In function `max8973_thermal_irq':
-max8973-regulator.c:(.text+0x1713ec): undefined reference to `thermal_zone_device_update'
-drivers/built-in.o: In function `max8973_probe':
-max8973-regulator.c:(.text+0x172227): undefined reference to `thermal_zone_of_sensor_register'
-max8973-regulator.c:(.text+0x17238f): undefined reference to `thermal_zone_of_sensor_unregister'
+thanks,
 
-
-
-
--- 
-~Randy
+greg k-h
