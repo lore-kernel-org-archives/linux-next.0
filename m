@@ -1,184 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- powerpc tree
-Date: Thu, 7 Jan 2016 20:15:03 +1100
-Message-ID: <20160107201503.6d5ec159@canb.auug.org.au>
-References: <20151218163351.5bfd2def@canb.auug.org.au>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: manual merge of the target-updates tree with the
+ rdma tree
+Date: Thu, 07 Jan 2016 02:04:42 -0800
+Message-ID: <1452161082.14302.22.camel@haakon3.risingtidesystems.com>
+References: <20160107164212.4cfbbe02@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57526 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752339AbcAGJPG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Jan 2016 04:15:06 -0500
-In-Reply-To: <20151218163351.5bfd2def@canb.auug.org.au>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:52337 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752965AbcAGKE4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2016 05:04:56 -0500
+In-Reply-To: <20160107164212.4cfbbe02@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagig@mellanox.com>, Jenny Derzhavetz <jennyf@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
 
-Hi all,
+On Thu, 2016-01-07 at 16:42 +1100, Stephen Rothwell wrote:
+> Hi Nicholas,
+> 
+> Today's linux-next merge of the target-updates tree got conflicts in:
+> 
+>   drivers/infiniband/ulp/iser/iscsi_iser.h
+>   drivers/infiniband/ulp/iser/iser_initiator.c
+>   drivers/infiniband/ulp/iser/iser_memory.c
+>   drivers/infiniband/ulp/iser/iser_verbs.c
+>   drivers/infiniband/ulp/isert/ib_isert.c
+> 
+> between commits:
+> 
+>   4a061b287b1e ("IB/ulps: Avoid calling ib_query_device")
+>   cfeb91b375ad ("IB/iser: Convert to CQ abstraction")
+>   2392a4cdcb8d ("IB/iser: constify iser_reg_ops structure")
+>   422bd0acb062 ("IB/isert: Support the remote invalidation exception")
+>   59caaed7a72a ("IB/iser: Support the remote invalidation exception")
+> 
+> from the rdma tree and commit:
+> 
+>   ddca7d44ccd2 ("iser: Have initiator and target to share protocol structures and definitions")
+>   6d2cb3ad4bc2 ("iser-target: Support the remote invalidation exception")
+>   c37c810bae45 ("IB/iser: Increment the rkey when registering and not when invalidating")
+>   9a4a71456262 ("IB/iser: Support the remote invalidation exception")
+> 
+> from the target-updates tree.
+> 
+> I fixed it up (hopefully - mainly taking one of the other side (usually
+> the rdma tree version, so please check the result when I release it)
+> and can carry the fix as necessary (no action is required).
+> 
+> Seom of these patches are very similar ...
+> 
 
-On Fri, 18 Dec 2015 16:33:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the akpm-current tree got a conflict in:
-> 
->   arch/powerpc/include/asm/pgtable.h
-> 
-> between commit:
-> 
->   ee4889c7bc2a ("powerpc/mm: Don't have generic headers introduce functions touching pte bits")
-> 
-> from the powerpc tree and commit:
-> 
->   e0e8474c0d55 ("mm, dax, gpu: convert vm_insert_mixed to pfn_t")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (the code being changed was moved from this file - I added
-> the fix up patch below) and can carry the fix as necessary (no action
-> is required).
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 18 Dec 2015 16:30:47 +1100
-> Subject: [PATCH] mm, dax, gpu: merge fix for convert vm_insert_mixed to pfn_t
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/powerpc/include/asm/book3s/32/pgtable.h | 1 +
->  arch/powerpc/include/asm/book3s/64/hash.h    | 1 +
->  arch/powerpc/include/asm/nohash/pgtable.h    | 1 +
->  3 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-> index 38b33dcfcc9d..3ed3303c1295 100644
-> --- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-> +++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-> @@ -313,6 +313,7 @@ static inline int pte_present(pte_t pte)
->   * Even if PTEs can be unsigned long long, a PFN is always an unsigned
->   * long for now.
->   */
-> +#define pfn_pte pfn_pte
->  static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot)
->  {
->  	return __pte(((pte_basic_t)(pfn) << PTE_RPN_SHIFT) |
-> diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/include/asm/book3s/64/hash.h
-> index 9e861b4378bd..6ab967d0da00 100644
-> --- a/arch/powerpc/include/asm/book3s/64/hash.h
-> +++ b/arch/powerpc/include/asm/book3s/64/hash.h
-> @@ -410,6 +410,7 @@ static inline int pte_present(pte_t pte)
->   * Even if PTEs can be unsigned long long, a PFN is always an unsigned
->   * long for now.
->   */
-> +#define pfn_pte pfn_pte
->  static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot)
->  {
->  	return __pte(((pte_basic_t)(pfn) << PTE_RPN_SHIFT) |
-> diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-> index 1263c22d60d8..11e3767216c0 100644
-> --- a/arch/powerpc/include/asm/nohash/pgtable.h
-> +++ b/arch/powerpc/include/asm/nohash/pgtable.h
-> @@ -49,6 +49,7 @@ static inline int pte_present(pte_t pte)
->   * Even if PTEs can be unsigned long long, a PFN is always an unsigned
->   * long for now.
->   */
-> +#define pfn_pte pfn_pte
->  static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot) {
->  	return __pte(((pte_basic_t)(pfn) << PTE_RPN_SHIFT) |
->  		     pgprot_val(pgprot)); }
-> -- 
-> 2.6.2
+Thanks SFR.
 
-This merge fix up patch now looks like this:
+Sagi & Or, to confirm the iser/iser-target changes currently queued in
+Doug's rdma.git for-next branch means the -v2 series introducing
+remote invalidation support here:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 15 Dec 2015 16:50:42 +1100
-Subject: [PATCH] merge fix for "powerpc, thp: remove infrastructure for handling splitting PMDs"
+http://www.spinics.net/lists/target-devel/msg11289.html
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/include/asm/book3s/64/hash-64k.h | 12 ------------
- arch/powerpc/include/asm/book3s/64/hash.h     | 11 +++--------
- arch/powerpc/include/asm/book3s/64/pgtable.h  |  4 ----
- 3 files changed, 2 insertions(+), 24 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/book3s/64/hash-64k.h b/arch/powerpc/include/asm/book3s/64/hash-64k.h
-index 9e55e3b1fef0..849bbec80f7b 100644
---- a/arch/powerpc/include/asm/book3s/64/hash-64k.h
-+++ b/arch/powerpc/include/asm/book3s/64/hash-64k.h
-@@ -256,13 +256,6 @@ static inline int pmd_trans_huge(pmd_t pmd)
- 		  (_PAGE_PTE | _PAGE_THP_HUGE));
- }
- 
--static inline int pmd_trans_splitting(pmd_t pmd)
--{
--	if (pmd_trans_huge(pmd))
--		return pmd_val(pmd) & _PAGE_SPLITTING;
--	return 0;
--}
--
- static inline int pmd_large(pmd_t pmd)
- {
- 	return !!(pmd_val(pmd) & _PAGE_PTE);
-@@ -273,11 +266,6 @@ static inline pmd_t pmd_mknotpresent(pmd_t pmd)
- 	return __pmd(pmd_val(pmd) & ~_PAGE_PRESENT);
- }
- 
--static inline pmd_t pmd_mksplitting(pmd_t pmd)
--{
--	return __pmd(pmd_val(pmd) | _PAGE_SPLITTING);
--}
--
- #define __HAVE_ARCH_PMD_SAME
- static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
- {
-diff --git a/arch/powerpc/include/asm/book3s/64/hash.h b/arch/powerpc/include/asm/book3s/64/hash.h
-index 9e861b4378bd..b6827603e613 100644
---- a/arch/powerpc/include/asm/book3s/64/hash.h
-+++ b/arch/powerpc/include/asm/book3s/64/hash.h
-@@ -36,11 +36,6 @@
- #define _PAGE_SOFT_DIRTY	0x20000 /* software: software dirty tracking */
- 
- /*
-- * THP pages can't be special. So use the _PAGE_SPECIAL
-- */
--#define _PAGE_SPLITTING _PAGE_SPECIAL
--
--/*
-  * We need to differentiate between explicit huge page and THP huge
-  * page, since THP huge page also need to track real subpage details
-  */
-@@ -49,9 +44,9 @@
- /*
-  * set of bits not changed in pmd_modify.
-  */
--#define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS |		\
--			 _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_SPLITTING | \
--			 _PAGE_THP_HUGE | _PAGE_PTE | _PAGE_SOFT_DIRTY)
-+#define _HPAGE_CHG_MASK (PTE_RPN_MASK | _PAGE_HPTEFLAGS | _PAGE_DIRTY | \
-+			 _PAGE_ACCESSED | _PAGE_THP_HUGE | _PAGE_PTE | \
-+			 _PAGE_SOFT_DIRTY)
- 
- #ifdef CONFIG_PPC_64K_PAGES
- #include <asm/book3s/64/hash-64k.h>
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 03c1a5a21c0c..04022fad3708 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -258,10 +258,6 @@ extern int pmdp_clear_flush_young(struct vm_area_struct *vma,
- extern pmd_t pmdp_huge_get_and_clear(struct mm_struct *mm,
- 				     unsigned long addr, pmd_t *pmdp);
- 
--#define __HAVE_ARCH_PMDP_SPLITTING_FLUSH
--extern void pmdp_splitting_flush(struct vm_area_struct *vma,
--				 unsigned long address, pmd_t *pmdp);
--
- extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
- 				 unsigned long address, pmd_t *pmdp);
- #define pmdp_collapse_flush pmdp_collapse_flush
-
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+can now be safely dropped from target-pending/for-next, yes..?
