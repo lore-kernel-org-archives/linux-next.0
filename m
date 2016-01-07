@@ -1,109 +1,102 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160107 build: 0 failures 9 warnings (next-20160107)
-Date: Thu, 07 Jan 2016 14:00:48 +0000
-Message-ID: <E1aHB7Q-0005Va-P5@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40500 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751931AbcAGOBO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2016 09:01:14 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160107
-Git describe: next-20160107
-Commit: 0f023a298a Add linux-next specific files for 20160107
-
-Build Time: 73 min 34 sec
-
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 9
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v5_defconfig
-      7 warnings    0 mismatches  : arm-multi_v7_defconfig
-      5 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 9
-	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	  2 ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	  1 arch/arm/configs/multi_v7_defconfig:435:warning: symbol value 'm' invalid for MFD_DA9063
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: next boot: 564 boots: 59 failed, 448 passed with 57 offline
+ (next-20160107)
+Date: Thu, 7 Jan 2016 15:59:58 +0000
+Message-ID: <20160107155958.GG6588@sirena.org.uk>
+References: <568e8740.01941c0a.31072.ffffb67b@mx.google.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gJgGjUUWrnN4mpen"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <568e8740.01941c0a.31072.ffffb67b-ATjtLOhZ0NVl57MIdRCFDg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
 
+--gJgGjUUWrnN4mpen
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Thu, Jan 07, 2016 at 07:41:52AM -0800, kernelci.org bot wrote:
 
+> Tree: next
+> Branch: local/master
+> Git Describe: next-20160107
+> Git Commit: 0f023a298a7d2a8e99c54913f7277b3c08c1f5c9
+> Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> Tested: 95 unique boards, 25 SoC families, 28 builds out of 135
+>=20
+> Boot Failures Detected: https://kernelci.org/boot/?next-20160107&fail
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+For the past couple of days -next has been failing to boot on various
+Tegra platforms, there are failures involving either no kernel output or
+(with tegra_defconfig) backtraces during CMA allocation from USB, for
+example:
 
-Warnings:
-	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+   http://storage.kernelci.org/next/next-20160107/arm-tegra_defconfig/lab-k=
+hilman/boot-tegra30-beaver.html
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+>     multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy:
+>         tegra124-jetson-tk1: 2 failed labs
+>         tegra30-beaver: 1 failed lab
+>=20
+>     tegra_defconfig:
+>         tegra124-jetson-tk1: 2 failed labs
+>         tegra124-jetson-tk1_rootfs:nfs: 1 failed lab
+>         tegra124-nyan-big: 1 failed lab
+>         tegra30-beaver: 1 failed lab
+>=20
+>     multi_v7_defconfig+CONFIG_ARM_LPAE=3Dy:
+>         tegra124-jetson-tk1: 1 failed lab
+>         tegra124-nyan-big: 1 failed lab
+>=20
+>     multi_v7_defconfig:
+>         tegra124-jetson-tk1: 2 failed labs
+>         tegra30-beaver: 1 failed lab
+>=20
+>     multi_v7_defconfig+CONFIG_LKDTM=3Dy:
+>         tegra124-jetson-tk1: 2 failed labs
+>         tegra30-beaver: 1 failed lab
+>=20
+>     multi_v7_defconfig+CONFIG_PROVE_LOCKING=3Dy:
+>         tegra124-jetson-tk1: 2 failed labs
+>         tegra30-beaver: 1 failed lab
 
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+I did bisects yesterday but they were a bit inconclusive, showing a
+series of skipped commits in the TTY tree as being the culprits:
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+afd7f88f157796e586fc99d62da13a54024e0731 serial: 8250: move of_serial code =
+to 8250 directory
+4e33870b3bb691996354a8f9e8f69458b4fc34d9 serial: of: CONFIG_SERIAL_8250 is =
+always set
+d1b5c87fa8058a3f477ae05555916dd1cea934ad serial: remove NWP serial support
 
-Warnings:
-	arch/arm/configs/multi_v7_defconfig:435:warning: symbol value 'm' invalid for MFD_DA9063
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+which seems more than a little surprising and like they might be false
+positives, especially in the cases that do produce output.  The errors
+today look the same.  I've not investigated further than the bisects.
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+Full bisect logs:
 
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+ https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/140/console
+ https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/141/console
 
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+--gJgGjUUWrnN4mpen
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+iQEcBAEBCAAGBQJWjot9AAoJECTWi3JdVIfQyOEH/3USwh31OlnFOs2zke+2vTDd
+DNjDpqZ/yoIQk3LL4u4BC+vVqkSzU+FI/SV4AVm6APoWj89fW7rCP7uJkxBsFdYY
+UKxVGJLLlvErnSXUQ1KSjYUV3nEnEgkM9NuWk8Nv1q3WgxHMGY48Dr2kA4+BglL5
+7m0bLzYTKpZ0PjeHdTnkW8Opw9aF91zMD5s+jFBA7IfqfBQ+lmbYQ7OPN/TVsVN8
+vL+6nOlyqb6jGQKmXXd+vWwA1ROcfJgd+YSbC5rdmK6jPQ5A5COjO1eKipITFRYS
+GrL+Gr+mtgrIEgRV1Ub2xRxPegCicaTPR8iW/cAXYIwP+6mObTWAvELYmudtWjM=
+=r8D4
+-----END PGP SIGNATURE-----
 
-Warnings:
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
+--gJgGjUUWrnN4mpen--
