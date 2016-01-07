@@ -1,54 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-updates tree with the rdma
- tree
-Date: Thu, 7 Jan 2016 16:42:12 +1100
-Message-ID: <20160107164212.4cfbbe02@canb.auug.org.au>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: linux-next: error while fetching the microblaze tree
+Date: Thu, 7 Jan 2016 08:10:54 +0100
+Message-ID: <568E0F7E.8080208@monstr.eu>
+References: <20160107093856.779af583@canb.auug.org.au>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="h6LRqB9H3F4A59F6c3X8gBI0JDMHKA4sb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56369 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750756AbcAGFmN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Jan 2016 00:42:13 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:36924 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750707AbcAGHLB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2016 02:11:01 -0500
+Received: by mail-wm0-f46.google.com with SMTP id f206so108410932wmf.0
+        for <linux-next@vger.kernel.org>; Wed, 06 Jan 2016 23:11:00 -0800 (PST)
+In-Reply-To: <20160107093856.779af583@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Doug Ledford <dledford@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagig@mellanox.com>, Jenny Derzhavetz <jennyf@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Nicholas,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--h6LRqB9H3F4A59F6c3X8gBI0JDMHKA4sb
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the target-updates tree got conflicts in:
+Hi,
 
-  drivers/infiniband/ulp/iser/iscsi_iser.h
-  drivers/infiniband/ulp/iser/iser_initiator.c
-  drivers/infiniband/ulp/iser/iser_memory.c
-  drivers/infiniband/ulp/iser/iser_verbs.c
-  drivers/infiniband/ulp/isert/ib_isert.c
+On 6.1.2016 23:38, Stephen Rothwell wrote:
+> Hi Michal,
+>=20
+> Fetching the microblaze tree
+> (git://git.monstr.eu/linux-2.6-microblaze.git#next) produces this error=
+=2E
+>=20
+> fatal: read error: Connection reset by peer
+>=20
+> I will use the previously fetched version for today.
 
-between commits:
+git server in under maintenance. Hopefully it will be solved soon.
+Sorry for trouble.
 
-  4a061b287b1e ("IB/ulps: Avoid calling ib_query_device")
-  cfeb91b375ad ("IB/iser: Convert to CQ abstraction")
-  2392a4cdcb8d ("IB/iser: constify iser_reg_ops structure")
-  422bd0acb062 ("IB/isert: Support the remote invalidation exception")
-  59caaed7a72a ("IB/iser: Support the remote invalidation exception")
+Thanks,
+Michal
 
-from the rdma tree and commit:
 
-  ddca7d44ccd2 ("iser: Have initiator and target to share protocol structures and definitions")
-  6d2cb3ad4bc2 ("iser-target: Support the remote invalidation exception")
-  c37c810bae45 ("IB/iser: Increment the rkey when registering and not when invalidating")
-  9a4a71456262 ("IB/iser: Support the remote invalidation exception")
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
+Maintainer of Linux kernel - Xilinx Zynq ARM architecture
+Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
 
-from the target-updates tree.
 
-I fixed it up (hopefully - mainly taking one of the other side (usually
-the rdma tree version, so please check the result when I release it)
-and can carry the fix as necessary (no action is required).
 
-Seom of these patches are very similar ...
+--h6LRqB9H3F4A59F6c3X8gBI0JDMHKA4sb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlaOD4IACgkQykllyylKDCFTtQCffzR4yYEvsx2FptOjnqh0dxi6
+rSUAn3mwEH/PuCFYZwcFS8bisunwEG93
+=5eVb
+-----END PGP SIGNATURE-----
+
+--h6LRqB9H3F4A59F6c3X8gBI0JDMHKA4sb--
