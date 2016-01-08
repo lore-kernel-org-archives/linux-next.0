@@ -1,65 +1,109 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the vhost
- tree
-Date: Fri, 8 Jan 2016 09:38:43 +0200
-Message-ID: <20160108093621-mutt-send-email-mst@redhat.com>
-References: <20160108165908.2da89bfd@canb.auug.org.au>
- <20160108083449-mutt-send-email-mst@redhat.com>
- <20160108071706.GA9692@bbox>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160108 build: 0 failures 9 warnings (next-20160108)
+Date: Fri, 08 Jan 2016 11:01:02 +0000
+Message-ID: <E1aHUn0-0002LO-JW@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44824 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750794AbcAHHir (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Jan 2016 02:38:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20160108071706.GA9692@bbox>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41747 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754687AbcAHLBL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jan 2016 06:01:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Fri, Jan 08, 2016 at 04:17:06PM +0900, Minchan Kim wrote:
-> On Fri, Jan 08, 2016 at 08:46:15AM +0200, Michael S. Tsirkin wrote:
-> > On Fri, Jan 08, 2016 at 04:59:08PM +1100, Stephen Rothwell wrote:
-> > > Hi Andrew,
-> > > 
-> > > Today's linux-next merge of the akpm-current tree got a conflict in:
-> > > 
-> > >   mm/balloon_compaction.c
-> > > 
-> > > between commit:
-> > > 
-> > >   0b5ffdb4f7c6 ("balloon: fix page list locking")
-> > > 
-> > > from the vhost tree and commit:
-> > > 
-> > >   0c983ec0c078 ("virtio_balloon: fix race between migration and ballooning")
-> > > 
-> > > from the akpm-current tree.
-> > > 
-> > > I fixed it up (I think that the former is a superset of the latter, so
-> > > I used that, completely reversing the latter patch) and can carry the
-> > > fix as necessary (no action is required).
-> > 
-> > Oops, it isn't.
-> > 
-> > Andrew, your tree seems to still carry original patch by Minchan Kim:
-> > 
-> > 0c983ec0c078ed5d5c219cf97af06364e7a8e19f
-> > 
-> > I reported on list that it has a deadlock:
-> > http://article.gmane.org/gmane.linux.kernel.stable/159208
-> 
-> And I replied on your comment that it's not a deadlock but it seem
-> you lost my mail because you didn't reply to me.
-> Could you expalin why it's deadlock in my reply thread?
+Tree/Branch: next-20160108
+Git describe: next-20160108
+Commit: e04c94f10a Add linux-next specific files for 20160108
 
-I missed your mail, sorry. I don't remember the details.  I'll think
-about it some more and reply next week in any case.
+Build Time: 73 min 41 sec
 
-Thanks!
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
--- 
-MST
+Errors: 0
+Warnings: 9
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v5_defconfig
+      7 warnings    0 mismatches  : arm-multi_v7_defconfig
+      5 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 9
+	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	  2 ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
+	  1 arch/arm/configs/multi_v7_defconfig:436:warning: symbol value 'm' invalid for MFD_DA9063
+	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:436:warning: symbol value 'm' invalid for MFD_DA9063
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
